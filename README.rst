@@ -5,15 +5,8 @@ frontend-app-course-authoring
 
 Please tag **@edx/fedx-team** on any PRs or issues.  Thanks.
 
-Introduction
-------------
-
-This repository is a template for Open edX micro-frontend applications. It is flagged as a Template Repository, meaning it can be used as a basis for new GitHub repositories by clicking the green "Use this template" button above.  The rest of this document describes how to work with your new micro-frontend after you've created a new repository from the template.
-
 After Copying The Template
 --------------------------
-
-You'll want to do a find-and-replace to replace all instances of ``frontend-app-course-authoring`` with the name of your new repository.
 
 **Prerequisite**
 
