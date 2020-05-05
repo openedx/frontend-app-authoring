@@ -1,6 +1,6 @@
 |Build Status| |Codecov| |license|
 
-frontend-template-application
+frontend-app-course-authoring
 =================================
 
 Please tag **@edx/fedx-team** on any PRs or issues.  Thanks.
@@ -13,7 +13,7 @@ This repository is a template for Open edX micro-frontend applications. It is fl
 After Copying The Template
 --------------------------
 
-You'll want to do a find-and-replace to replace all instances of ``frontend-template-application`` with the name of your new repository.
+You'll want to do a find-and-replace to replace all instances of ``frontend-app-course-authoring`` with the name of your new repository.
 
 **Prerequisite**
 
@@ -21,15 +21,15 @@ You'll want to do a find-and-replace to replace all instances of ``frontend-temp
 
 **Installation and Startup**
 
-In the following steps, replace "frontend-template-application' with the name of the repo you created when copying this template above.
+In the following steps, replace "frontend-app-course-authoring' with the name of the repo you created when copying this template above.
 
 1. Clone your new repo:
 
-  ``git clone https://github.com/edx/frontend-template-application.git``
+  ``git clone https://github.com/edx/frontend-app-course-authoring.git``
 
 2. Install npm dependencies:
 
-  ``cd frontend-template-application && npm install``
+  ``cd frontend-app-course-authoring && npm install``
 
 3. Start the dev server:
 
@@ -40,7 +40,7 @@ The dev server is running at `http://localhost:8080 <http://localhost:8080>`_.
 Project Structure
 -----------------
 
-The source for this project is organized into nested submodules according to the ADR `Feature-based Application Organization <https://github.com/edx/frontend-template-application/blob/master/docs/decisions/0002-feature-based-application-organization.rst>`_.
+The source for this project is organized into nested submodules according to the ADR `Feature-based Application Organization <https://github.com/edx/frontend-app-course-authoring/blob/master/docs/decisions/0002-feature-based-application-organization.rst>`_.
 
 Build Process Notes
 -------------------
@@ -54,9 +54,9 @@ Internationalization
 
 Please see `edx/frontend-platform's i18n module <https://edx.github.io/frontend-platform/module-Internationalization.html>`_ for documentation on internationalization.  The documentation explains how to use it, and the `How To <https://github.com/edx/frontend-i18n/blob/master/docs/how_tos/i18n.rst>`_ has more detail.
 
-.. |Build Status| image:: https://api.travis-ci.org/edx/frontend-template-application.svg?branch=master
-   :target: https://travis-ci.org/edx/frontend-template-application
-.. |Codecov| image:: https://codecov.io/gh/edx/frontend-template-application/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/edx/frontend-template-application
-.. |license| image:: https://img.shields.io/npm/l/@edx/frontend-template-application.svg
-   :target: @edx/frontend-template-application
+.. |Build Status| image:: https://api.travis-ci.org/edx/frontend-app-course-authoring.svg?branch=master
+   :target: https://travis-ci.org/edx/frontend-app-course-authoring
+.. |Codecov| image:: https://codecov.io/gh/edx/frontend-app-course-authoring/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/edx/frontend-app-course-authoring
+.. |license| image:: https://img.shields.io/npm/l/@edx/frontend-app-course-authoring.svg
+   :target: @edx/frontend-app-course-authoring
