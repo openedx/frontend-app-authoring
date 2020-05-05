@@ -35,7 +35,7 @@ In the following steps, replace "frontend-app-course-authoring' with the name of
 
   ``npm start``
 
-The dev server is running at `http://localhost:8080 <http://localhost:8080>`_.
+The dev server is running at `http://localhost:2001 <http://localhost:2001>`_.
 
 Project Structure
 -----------------
