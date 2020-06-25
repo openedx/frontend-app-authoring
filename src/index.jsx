@@ -8,11 +8,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Route, Switch } from 'react-router-dom';
 
-import Header, { messages as headerMessages } from '@edx/frontend-component-header';
+import { messages as headerMessages } from '@edx/frontend-component-header';
 import Footer, { messages as footerMessages } from '@edx/frontend-component-footer';
 
 import appMessages from './i18n';
-import ExamplePage from './example/ExamplePage';
+import { CoursePageResources } from './course-page-resources';
 import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettings';
 import StudioHeader from './studio-header/Header';
 
@@ -36,10 +36,19 @@ subscribe(APP_READY, () => {
             );
           }}
         />
-        <Route path="/example">
-          <Header />
-          <ExamplePage />
-        </Route>
+        <Route
+          path="/course-pages/:course_id"
+          render={({ match }) => {
+            const courseId = decodeURIComponent(match.params.course_id);
+            return (
+              <>
+                <StudioHeader courseId={courseId} />
+                <CoursePageResources courseId={courseId} />
+                <Footer />
+              </>
+            );
+          }}
+        />
       </Switch>
       <Footer />
     </AppProvider>,

@@ -12,6 +12,9 @@ temp/babel-plugin-react-intl
 ### pyenv ###
 .python-version
 
+### vim ###
+*.swp
+
 ### Emacs ###
 *~
 /temp

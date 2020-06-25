@@ -1,5 +1,8 @@
 @import '~@edx/paragon/scss/edx/theme.scss';
 
+@import './course-page-resources/index.scss';
+
+@import "~@edx/frontend-component-header/dist/index";
 @import "~@edx/frontend-component-footer/dist/footer";
 
 @import "proctored-exam-settings/proctoredExamSettings.scss";
