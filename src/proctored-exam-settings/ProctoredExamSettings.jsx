@@ -5,7 +5,7 @@ import {
 
 import StudioApiService from '../data/services/StudioApiService';
 
-function ExamSettings(id) {
+function ExamSettings(props) {
   const [enableProctoredExams, setEnableProctoredExams] = useState(true);
   const [allowOptingOut, setAllowOptingOut] = useState(false);
   const [proctoringProvider, setProctoringProvider] = useState('');
@@ -49,7 +49,7 @@ function ExamSettings(id) {
 
   useEffect(
     () => {
-      StudioApiService.getProctoredExamSettingsData(id.id)
+      StudioApiService.getProctoredExamSettingsData(props.id)
         .then(
           response => {
             const proctoredExamSettings = response.data.proctored_exam_settings;
