@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 import {
   Button, CheckBox, Input, ValidationFormGroup,
@@ -144,7 +145,9 @@ function ExamSettings(props) {
   );
 }
 
-ExamSettings.propTypes = {};
+ExamSettings.propTypes = {
+  id: PropTypes.string.isRequired,
+};
 
 ExamSettings.defaultProps = {};
 
