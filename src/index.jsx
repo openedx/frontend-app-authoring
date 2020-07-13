@@ -6,12 +6,14 @@ import {
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Route, Switch } from 'react-router-dom';
 
 import Header, { messages as headerMessages } from '@edx/frontend-component-header';
 import Footer, { messages as footerMessages } from '@edx/frontend-component-footer';
 
 import appMessages from './i18n';
 import ExamplePage from './example/ExamplePage';
+import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettings';
 
 import './index.scss';
 import './assets/favicon.ico';
@@ -20,7 +22,18 @@ subscribe(APP_READY, () => {
   ReactDOM.render(
     <AppProvider>
       <Header />
-      <ExamplePage />
+      <Switch>
+        <Route
+          path="/proctored-exam-settings/:id"
+          exact
+          render={({ match }) => (
+            <ProctoredExamSettings id={match.params.id} />
+          )}
+        />
+        <Route path="/example">
+          <ExamplePage />
+        </Route>
+      </Switch>
       <Footer />
     </AppProvider>,
     document.getElementById('root'),
@@ -37,4 +50,5 @@ initialize({
     headerMessages,
     footerMessages,
   ],
+  requireAuthenticatedUser: true,
 });
