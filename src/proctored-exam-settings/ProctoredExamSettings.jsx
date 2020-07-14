@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 import {
   Button, CheckBox, Input, ValidationFormGroup,
@@ -5,7 +6,7 @@ import {
 
 import StudioApiService from '../data/services/StudioApiService';
 
-function ExamSettings() {
+function ExamSettings(props) {
   const [enableProctoredExams, setEnableProctoredExams] = useState(true);
   const [allowOptingOut, setAllowOptingOut] = useState(false);
   const [proctoringProvider, setProctoringProvider] = useState('');
@@ -49,7 +50,7 @@ function ExamSettings() {
 
   useEffect(
     () => {
-      StudioApiService.getProctoredExamSettingsData('course-v1:edX+DemoX+Demo_Course')
+      StudioApiService.getProctoredExamSettingsData(props.courseId)
         .then(
           response => {
             const proctoredExamSettings = response.data.proctored_exam_settings;
@@ -144,7 +145,9 @@ function ExamSettings() {
   );
 }
 
-ExamSettings.propTypes = {};
+ExamSettings.propTypes = {
+  courseId: PropTypes.string.isRequired,
+};
 
 ExamSettings.defaultProps = {};
 

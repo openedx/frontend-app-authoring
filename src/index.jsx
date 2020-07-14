@@ -23,9 +23,13 @@ subscribe(APP_READY, () => {
     <AppProvider>
       <Header />
       <Switch>
-        <Route path="/proctored-exam-settings">
-          <ProctoredExamSettings />
-        </Route>
+        <Route
+          path="/proctored-exam-settings/:course_id"
+          exact
+          render={({ match }) => (
+            <ProctoredExamSettings courseId={match.params.course_id} />
+          )}
+        />
         <Route path="/example">
           <ExamplePage />
         </Route>
