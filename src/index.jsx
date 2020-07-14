@@ -27,7 +27,7 @@ subscribe(APP_READY, () => {
           path="/proctored-exam-settings/:course_id"
           exact
           render={({ match }) => (
-            <ProctoredExamSettings courseKey={match.params.course_id} />
+            <ProctoredExamSettings courseId={match.params.course_id} />
           )}
         />
         <Route path="/example">

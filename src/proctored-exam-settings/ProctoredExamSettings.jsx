@@ -50,7 +50,7 @@ function ExamSettings(props) {
 
   useEffect(
     () => {
-      StudioApiService.getProctoredExamSettingsData(props.courseKey)
+      StudioApiService.getProctoredExamSettingsData(props.courseId)
         .then(
           response => {
             const proctoredExamSettings = response.data.proctored_exam_settings;
@@ -146,7 +146,7 @@ function ExamSettings(props) {
 }
 
 ExamSettings.propTypes = {
-  courseKey: PropTypes.string.isRequired,
+  courseId: PropTypes.string.isRequired,
 };
 
 ExamSettings.defaultProps = {};
