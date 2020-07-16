@@ -25,11 +25,18 @@ function ExamSettings(props) {
   }
 
   function onCreateZendeskTicketsChange(event) {
-    setAllowOptingOut(event);
+    setCreateZendeskTickets(event);
   }
 
   function onProctoringProviderChange(event) {
-    setProctoringProvider(event.target.value);
+    const provider = event.target.value;
+    setProctoringProvider(provider);
+
+    if (provider === 'proctortrack') {
+      setCreateZendeskTickets(false);
+    } else if (provider === 'software_secure') {
+      setCreateZendeskTickets(true);
+    }
   }
 
   function onProctortrackEscalationEmailChange(event) {
@@ -86,7 +93,7 @@ function ExamSettings(props) {
       </ValidationFormGroup>
       <ValidationFormGroup
         for="allowingOptingOut"
-        helpText="If checked, learners can choose to take proctored exams without proctoring. If not checked, all learners must take the exam with proctoring."
+        helpText="If selected, learners can choose to take proctored exams without proctoring. If not selected, all learners must take the exam with proctoring."
       >
         <CheckBox
           id="allowingOptingOut"
