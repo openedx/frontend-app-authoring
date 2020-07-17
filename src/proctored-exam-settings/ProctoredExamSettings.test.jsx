@@ -8,18 +8,19 @@ const defaultProps = {
 };
 
 describe('ProctoredExamSettings', () => {
-  it('updates settings based on proctoring provider', () => {
-    const component = mount(<ProctoredExamSettings {...defaultProps} />);
+  const component = mount(<ProctoredExamSettings {...defaultProps} />);
 
-    // confirm that changing proctoring provider to proctortrack changes zendesk ticket field
+  it('updates zendesk ticket field if proctortrack is provider', () => {
     component.find('select#proctoringProvider').simulate('change', { target: { value: 'proctortrack' } });
     expect(component.find('input#createZendeskTickets').prop('checked')).toEqual(false);
+  });
 
-    // confirm that changing proctoring provider to software_secure changes zendesk ticket field
+  it('updates zendesk ticket field if software_secure is provider', () => {
     component.find('select#proctoringProvider').simulate('change', { target: { value: 'software_secure' } });
     expect(component.find('input#createZendeskTickets').prop('checked')).toEqual(true);
+  });
 
-    // confirm that changing proctoring provider to any other provider does not change zendesk ticket field
+  it('does not update zendesk ticket field for any other provider', () => {
     component.find('select#proctoringProvider').simulate('change', { target: { value: 'mockprock' } });
     expect(component.find('input#createZendeskTickets').prop('checked')).toEqual(true);
   });
