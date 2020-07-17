@@ -93,7 +93,7 @@ function ExamSettings(props) {
       </ValidationFormGroup>
       <ValidationFormGroup
         for="allowingOptingOut"
-        helpText="If selected, learners can choose to take proctored exams without proctoring. If not selected, all learners must take the exam with proctoring."
+        helpText="If checked, learners can choose to take proctored exams without proctoring. If not checked, all learners must take the exam with proctoring."
       >
         <CheckBox
           id="allowingOptingOut"
