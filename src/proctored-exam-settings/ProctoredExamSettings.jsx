@@ -25,11 +25,18 @@ function ExamSettings(props) {
   }
 
   function onCreateZendeskTicketsChange(event) {
-    setAllowOptingOut(event);
+    setCreateZendeskTickets(event);
   }
 
   function onProctoringProviderChange(event) {
-    setProctoringProvider(event.target.value);
+    const provider = event.target.value;
+    setProctoringProvider(provider);
+
+    if (provider === 'proctortrack') {
+      setCreateZendeskTickets(false);
+    } else if (provider === 'software_secure') {
+      setCreateZendeskTickets(true);
+    }
   }
 
   function onProctortrackEscalationEmailChange(event) {
