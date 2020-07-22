@@ -154,8 +154,9 @@ function ExamSettings(props) {
     return (
       <div className="justify-content-center align-items-center flex-column">
         <div className="alert alert-danger">
-          The page encountered errors. Please try again later. If the problem persists, please
-          go to <a href="https://support.edx.org/hc/en-us">edX Support Page</a> to get help.
+          We encountered a technical error when loading this page.
+          This might be a temporary issue, so please try again in a few minutes.
+          If the problem persists, please go to <a href="https://support.edx.org/hc/en-us">edX Support Page</a> for help.
         </div>
       </div>
     );
@@ -165,7 +166,8 @@ function ExamSettings(props) {
     return (
       <div className="justify-content-center align-items-center flex-column">
         <div className="alert alert-danger">
-          You do not have enough permission to view this page.
+          You are not authorized to view this page. If you feel you should have access,
+          please reach out to your course team admin to be given access.
         </div>
       </div>
     );
