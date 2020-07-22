@@ -36,16 +36,99 @@ exports[`<Header /> renders correctly for authenticated users on desktop 1`] = `
         aria-label="Main"
         className="nav main-nav"
       >
-        <a
-          href="http://localhost:18010/course/course-v1:edX+DemoX+Demo_Course"
-          style={
-            Object {
-              "paddingLeft": "1rem",
-            }
-          }
+        <div
+          className="menu nav-item"
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
         >
-          Back to Studio Course Outline
-        </a>
+          <a
+            aria-expanded={false}
+            aria-haspopup="menu"
+            className="menu-trigger nav-link d-inline-flex align-items-center"
+            onClick={[Function]}
+          >
+            Content
+             
+            <svg
+              aria-hidden={true}
+              focusable="false"
+              height="16px"
+              role="img"
+              version="1.1"
+              viewBox="0 0 16 16"
+              width="16px"
+            >
+              <path
+                d="M7,4 L7,8 L11,8 L11,10 L5,10 L5,4 L7,4 Z"
+                fill="currentColor"
+                transform="translate(8.000000, 7.000000) rotate(-45.000000) translate(-8.000000, -7.000000) "
+              />
+            </svg>
+          </a>
+        </div>
+        <div
+          className="menu nav-item"
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+        >
+          <a
+            aria-expanded={false}
+            aria-haspopup="menu"
+            className="menu-trigger nav-link d-inline-flex align-items-center"
+            onClick={[Function]}
+          >
+            Settings
+             
+            <svg
+              aria-hidden={true}
+              focusable="false"
+              height="16px"
+              role="img"
+              version="1.1"
+              viewBox="0 0 16 16"
+              width="16px"
+            >
+              <path
+                d="M7,4 L7,8 L11,8 L11,10 L5,10 L5,4 L7,4 Z"
+                fill="currentColor"
+                transform="translate(8.000000, 7.000000) rotate(-45.000000) translate(-8.000000, -7.000000) "
+              />
+            </svg>
+          </a>
+        </div>
+        <div
+          className="menu nav-item"
+          onKeyDown={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+        >
+          <a
+            aria-expanded={false}
+            aria-haspopup="menu"
+            className="menu-trigger nav-link d-inline-flex align-items-center"
+            onClick={[Function]}
+          >
+            Tools
+             
+            <svg
+              aria-hidden={true}
+              focusable="false"
+              height="16px"
+              role="img"
+              version="1.1"
+              viewBox="0 0 16 16"
+              width="16px"
+            >
+              <path
+                d="M7,4 L7,8 L11,8 L11,10 L5,10 L5,4 L7,4 Z"
+                fill="currentColor"
+                transform="translate(8.000000, 7.000000) rotate(-45.000000) translate(-8.000000, -7.000000) "
+              />
+            </svg>
+          </a>
+        </div>
       </nav>
       <nav
         aria-label="Secondary"

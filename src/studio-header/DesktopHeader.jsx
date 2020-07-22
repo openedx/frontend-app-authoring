@@ -1,12 +1,15 @@
 // This file was copied from edx/frontend-component-header-edx.
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl } from '@edx/frontend-platform/i18n';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 // Local Components
 import { Menu, MenuTrigger, MenuContent } from './Menu';
 import Avatar from './Avatar';
 import { LinkedLogo, Logo } from './Logo';
+
+// i18n
+import messages from './Header.messages';
 
 // Assets
 import { CaretIcon } from './Icons';
@@ -56,13 +59,14 @@ class DesktopHeader extends React.Component {
       userMenu,
       avatar,
       username,
+      intl,
     } = this.props;
 
     return (
       <Menu transitionClassName="menu-dropdown" transitionTimeout={250}>
         <MenuTrigger
           tag="button"
-          aria-label={`Account menu for ${username}`}
+          aria-label={intl.formatMessage(messages['header.label.account.menu.for'], { username })}
           className="btn btn-light d-inline-flex align-items-center pl-2 pr-3"
         >
           <Avatar size="1.5em" src={avatar} alt="" className="mr-2" />
@@ -83,6 +87,7 @@ class DesktopHeader extends React.Component {
       logoAltText,
       logoDestination,
       courseTitleDestination,
+      intl,
     } = this.props;
     const logoProps = { src: logo, alt: logoAltText, href: logoDestination };
 
@@ -96,20 +101,18 @@ class DesktopHeader extends React.Component {
               className="course-title-lockup"
               style={{ lineHeight: 1 }}
               href={courseTitleDestination}
-              aria-label="Back to course outline in Studio"
+              aria-label={intl.formatMessage(messages['header.label.courseOutline'])}
             >
               {this.props.courseId}
             </a>
             <nav
-              aria-label="Main"
+              aria-label={intl.formatMessage(messages['header.label.main.nav'])}
               className="nav main-nav"
             >
-              {/* TODO: Create main menu items to populate main navigation. */}
-              {/* {this.renderMainMenu()} */}
-              <a style={{ paddingLeft: '1rem' }} href={courseTitleDestination}>Back to Studio Course Outline</a>
+              {this.renderMainMenu()}
             </nav>
             <nav
-              aria-label="Secondary"
+              aria-label={intl.formatMessage(messages['header.label.secondary.nav'])}
               className="nav secondary-menu-container align-items-center ml-auto"
             >
               {this.renderUserMenu()}
@@ -139,6 +142,9 @@ DesktopHeader.propTypes = {
   avatar: PropTypes.string,
   username: PropTypes.string,
   loggedIn: PropTypes.bool,
+
+  // i18n
+  intl: intlShape.isRequired,
 };
 
 DesktopHeader.defaultProps = {
