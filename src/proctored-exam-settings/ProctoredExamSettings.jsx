@@ -1,8 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
+import EmailValidator from 'email-validator';
+import moment from 'moment';
 import {
-  Button, CheckBox, Input, ValidationFormGroup,
+  Button, CheckBox, Input, ValidationFormGroup, StatusAlert,
 } from '@edx/paragon';
+import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 
 import StudioApiService from '../data/services/StudioApiService';
 
@@ -19,6 +22,8 @@ function ExamSettings(props) {
   // this causes some errors in the browser console
   const [proctortrackEscalationEmail, setProctortrackEscalationEmail] = useState('');
   const [createZendeskTickets, setCreateZendeskTickets] = useState(false);
+  const [proctortrackEscalationEmailError, setProctortrackEscalationEmailError] = useState('');
+  const [courseStartDate, setCourseStartDate] = useState('');
 
   function onEnableProctoredExamsChange(event) {
     setEnableProctoredExams(event);
@@ -48,13 +53,41 @@ function ExamSettings(props) {
   }
 
   function onButtonClick() {
+    if (proctoringProvider === 'proctortrack' && !EmailValidator.validate(proctortrackEscalationEmail)) {
+      setProctortrackEscalationEmailError('A valid escalation email must be provided if '
+                                            + 'Proctortrack is the selected provider.');
+    } else {
+      setProctortrackEscalationEmailError('');
     // TODO: implement POST
+    }
+  }
+
+  function cannotEditProctoringProvider() {
+    const currentDate = moment(moment()).format('YYYY-MM-DD[T]hh:mm:ss[Z]');
+    const isAfterCourseStart = currentDate > courseStartDate;
+
+    const isAdmin = getAuthenticatedUser().administrator;
+
+    // if the user is  not an administrator and it is after the course start date, user cannot edit proctoring provider
+    return !isAdmin && isAfterCourseStart;
+  }
+
+  function isDisabledOption(provider) {
+    let markDisabled = false;
+    if (cannotEditProctoringProvider()) {
+      markDisabled = provider !== proctoringProvider;
+    }
+    return markDisabled;
   }
 
   function getProctoringProviderOptions(providers) {
     return providers.reduce(
       (accumulator, currentValue) => {
-        accumulator.push({ value: currentValue, label: currentValue }); return accumulator;
+        accumulator.push({
+          value: currentValue,
+          label: currentValue,
+          disabled: isDisabledOption(currentValue),
+        }); return accumulator;
       }, [],
     );
   }
@@ -88,7 +121,7 @@ function ExamSettings(props) {
         </ValidationFormGroup>
         <ValidationFormGroup
           for="proctoringProvider"
-          helpText="Select the proctoring provider you want to use for this course run."
+          helpText={cannotEditProctoringProvider() ? ('Proctoring provider cannot be modified after course start date.') : ('Select the proctoring provider you want to use for this course run.')}
         >
           <label htmlFor="proctoringProvider">Proctoring Provider</label>
           <Input
@@ -125,6 +158,16 @@ function ExamSettings(props) {
             onChange={onCreateZendeskTicketsChange}
           />
         </ValidationFormGroup>
+        { proctortrackEscalationEmailError
+        && (
+        <StatusAlert
+          alertType="danger"
+          className="proctortrackEscalationEmailError"
+          dialog={proctortrackEscalationEmailError}
+          open
+          dismissible={false}
+        />
+        )}
         <Button
           className="btn-primary mb-3"
           onClick={onButtonClick}
@@ -181,6 +224,7 @@ function ExamSettings(props) {
             const proctoredExamSettings = response.data.proctored_exam_settings;
             setLoaded(true);
             setLoading(false);
+            setCourseStartDate(response.data.course_start_date);
             setEnableProctoredExams(proctoredExamSettings.enable_proctored_exams);
             setAllowOptingOut(proctoredExamSettings.allow_proctoring_opt_out);
             setProctoringProvider(proctoredExamSettings.proctoring_provider);
