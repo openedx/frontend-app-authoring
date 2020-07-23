@@ -189,6 +189,7 @@ function ExamSettings(props) {
               name="createZendeskTickets"
               checked={createZendeskTickets}
               onChange={() => onCreateZendeskTicketsChange(true)}
+              data-test-id="createZendeskTicketsYes"
             />
             <Form.Check
               type="radio"
@@ -198,6 +199,7 @@ function ExamSettings(props) {
               name="createZendeskTickets"
               checked={!createZendeskTickets}
               onChange={() => onCreateZendeskTicketsChange(false)}
+              data-test-id="createZendeskTicketsNo"
             />
             <Form.Text id="createZendeskTicketsText">
               If this value is &quot;Yes&quot;, a Zendesk ticket will be created for suspicious proctored exam attempts.
