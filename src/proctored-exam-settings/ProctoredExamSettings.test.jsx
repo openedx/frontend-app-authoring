@@ -166,11 +166,11 @@ describe('ProctoredExamSettings save settings tests', () => {
     expect(escalationEmail.value).toEqual('proctortrack@example.com');
     const submitButton = screen.getByTestId('submissionButton');
     await act(async () => {
-      fireEvent.click(submitButton, { target: { value: 'proctortrack@example.com' } });
+      fireEvent.click(submitButton);
     });
     expect(mockedFunctions.mockClientPost).toHaveBeenCalled();
     expect(mockedFunctions.mockClientPost).toHaveBeenCalledWith(
-      StudioApiService.getServiceUrl(defaultProps.courseId),
+      StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
       {
         proctored_exam_settings: {
           enable_proctored_exams: true,
@@ -203,7 +203,7 @@ describe('ProctoredExamSettings save settings tests', () => {
     expect(escalationEmail.value).toEqual('proctortrack@example.com');
     const submitButton = screen.getByTestId('submissionButton');
     await act(async () => {
-      fireEvent.click(submitButton, { target: { value: 'proctortrack@example.com' } });
+      fireEvent.click(submitButton);
     });
     expect(mockedFunctions.mockClientPost).toHaveBeenCalled();
     const errorAlert = screen.getByTestId('saveError');

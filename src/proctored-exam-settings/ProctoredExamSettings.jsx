@@ -275,7 +275,7 @@ function ExamSettings(props) {
   }
 
   function renderSaveSuccess() {
-    const studioURL = StudioApiService.getStudioUrl(props.courseId);
+    const studioCourseRunURL = StudioApiService.getStudioCourseRunUrl(props.courseId);
     return (
       <Alert
         variant="success"
@@ -283,8 +283,8 @@ function ExamSettings(props) {
         data-test-id="saveSuccess"
         onClose={() => setSaveSuccess(false)}
       >
-        Proctored exam settings saved successfully. You can go back to
-        <Alert.Link href={studioURL}>Studio here</Alert.Link>.
+        Proctored exam settings saved successfully.
+        You can go back to your course in Studio <Alert.Link href={studioCourseRunURL}>here</Alert.Link>.
       </Alert>
     );
   }
