@@ -24,6 +24,8 @@ function ExamSettings(props) {
   const [createZendeskTickets, setCreateZendeskTickets] = useState(false);
   const [proctortrackEscalationEmailError, setProctortrackEscalationEmailError] = useState('');
   const [courseStartDate, setCourseStartDate] = useState('');
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   function onEnableProctoredExamsChange(event) {
     setEnableProctoredExams(event.target.checked);
@@ -52,13 +54,32 @@ function ExamSettings(props) {
     setProctortrackEscalationEmail(event.target.value);
   }
 
+  function postSettingsBackToServer() {
+    const dataToPostBack = {
+      proctored_exam_settings: {
+        enable_proctored_exams: enableProctoredExams,
+        allow_proctoring_opt_out: allowOptingOut,
+        proctoring_provider: proctoringProvider,
+        proctoring_escalation_email: proctortrackEscalationEmail,
+        create_zendesk_tickets: createZendeskTickets,
+      },
+    };
+    StudioApiService.saveProctoredExamSettingsData(props.courseId, dataToPostBack).then(() => {
+      setSaveSuccess(true);
+      setSaveError(false);
+    }).catch(() => {
+      setSaveSuccess(false);
+      setSaveError(true);
+    });
+  }
+
   function onButtonClick() {
     if (proctoringProvider === 'proctortrack' && !EmailValidator.validate(proctortrackEscalationEmail)) {
       setProctortrackEscalationEmailError('A valid escalation email must be provided if '
         + 'Proctortrack is the selected provider.');
     } else {
       setProctortrackEscalationEmailError('');
-      // TODO: implement POST
+      postSettingsBackToServer();
     }
   }
 
@@ -165,6 +186,7 @@ function ExamSettings(props) {
           <Form.Label>Proctortrack Escalation Email</Form.Label>
           <Form.Control
             type="email"
+            data-test-id="escalationEmail"
             onChange={onProctortrackEscalationEmailChange}
             value={proctortrackEscalationEmail}
             isInvalid={!!proctortrackEscalationEmailError}
@@ -208,6 +230,7 @@ function ExamSettings(props) {
         </fieldset>
         <Button
           className="btn-primary mb-3"
+          data-test-id="submissionButton"
           onClick={onButtonClick}
         >
           Submit
@@ -237,7 +260,8 @@ function ExamSettings(props) {
       <Alert variant="danger" data-test-id="connectionError">
         We encountered a technical error when loading this page.
         This might be a temporary issue, so please try again in a few minutes.
-        If the problem persists, please go to <a href="https://support.edx.org/hc/en-us">edX Support Page</a> for help.
+        If the problem persists,
+        please go to <Alert.Link href="https://support.edx.org/hc/en-us">edX Support Page</Alert.Link> for help.
       </Alert>
     );
   }
@@ -247,6 +271,37 @@ function ExamSettings(props) {
       <Alert variant="danger" data-test-id="permissionError">
         You are not authorized to view this page. If you feel you should have access,
         please reach out to your course team admin to be given access.
+      </Alert>
+    );
+  }
+
+  function renderSaveSuccess() {
+    const studioCourseRunURL = StudioApiService.getStudioCourseRunUrl(props.courseId);
+    return (
+      <Alert
+        variant="success"
+        dismissible
+        data-test-id="saveSuccess"
+        onClose={() => setSaveSuccess(false)}
+      >
+        Proctored exam settings saved successfully.
+        You can go back to your course in Studio <Alert.Link href={studioCourseRunURL}>here</Alert.Link>.
+      </Alert>
+    );
+  }
+
+  function renderSaveError() {
+    return (
+      <Alert
+        variant="danger"
+        dismissible
+        data-test-id="saveError"
+        onClose={() => setSaveError(false)}
+      >
+        We encountered a technical error while trying to save proctored exam settings.
+        This might be a temporary issue, so please try again in a few minutes.
+        If the problem persists,
+        please go to <Alert.Link href="https://support.edx.org/hc/en-us">edX Support Page</Alert.Link> for help.
       </Alert>
     );
   }
@@ -288,6 +343,8 @@ function ExamSettings(props) {
       </h2>
       <div>
         {loading ? renderLoading() : null}
+        {saveSuccess ? renderSaveSuccess() : null}
+        {saveError ? renderSaveError() : null}
         {loaded ? renderContent() : null}
         {loadingConnectionError ? renderConnectionError() : null}
         {loadingPermissionError ? renderPermissionError() : null}
