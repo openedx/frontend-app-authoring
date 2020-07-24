@@ -223,6 +223,7 @@ function ExamSettings(props) {
         style={{
           height: '50vh',
         }}
+        data-test-id="spinnerContainer"
       >
         <Spinner className animation="border" role="status" variant="primary">
           <span className="sr-only">Loading...</span>
@@ -233,7 +234,7 @@ function ExamSettings(props) {
 
   function renderConnectionError() {
     return (
-      <Alert variant="danger">
+      <Alert variant="danger" data-test-id="connectionError">
         We encountered a technical error when loading this page.
         This might be a temporary issue, so please try again in a few minutes.
         If the problem persists, please go to <a href="https://support.edx.org/hc/en-us">edX Support Page</a> for help.
@@ -243,7 +244,7 @@ function ExamSettings(props) {
 
   function renderPermissionError() {
     return (
-      <Alert variant="danger">
+      <Alert variant="danger" data-test-id="permissionError">
         You are not authorized to view this page. If you feel you should have access,
         please reach out to your course team admin to be given access.
       </Alert>

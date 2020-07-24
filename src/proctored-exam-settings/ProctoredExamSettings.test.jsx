@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  render, screen, cleanup, waitFor, fireEvent, act,
+  render, screen, cleanup, waitFor, waitForElementToBeRemoved, fireEvent, act,
 } from '@testing-library/react';
 import * as auth from '@edx/frontend-platform/auth';
 import ProctoredExamSettings from './ProctoredExamSettings';
@@ -9,7 +9,7 @@ const defaultProps = {
   courseId: 'course-v1%3AedX%2BDemoX%2BDemo_Course',
 };
 
-describe('ProctoredExamSettings', () => {
+describe('ProctoredExamSettings check default on create zendesk ticket field tests', () => {
   auth.getAuthenticatedHttpClient = jest.fn(() => ({
     get: async () => ({
       data: {
@@ -70,5 +70,56 @@ describe('ProctoredExamSettings', () => {
     });
     const zendeskTicketInput = screen.getByTestId('createZendeskTicketsYes');
     expect(zendeskTicketInput.checked).toEqual(true);
+  });
+});
+
+describe('ProctoredExamSettings connection states tests', () => {
+  it('shows the spinner before the connection is complete', async () => {
+    render(<ProctoredExamSettings {...defaultProps} />);
+    const spinner = screen.getByTestId('spinnerContainer');
+    expect(spinner.textContent).toEqual('Loading...');
+    await waitForElementToBeRemoved(spinner);
+  });
+
+  it('show connection error message when we suffer server side error', async () => {
+    const errorObject = {
+      customAttributes: {
+        httpErrorStatus: 500,
+      },
+    };
+    auth.getAuthenticatedHttpClient = jest.fn(() => ({
+      get: async () => {
+        throw errorObject;
+      },
+    }));
+
+    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    const connectionError = screen.getByTestId('connectionError');
+    expect(connectionError.textContent).toEqual(
+      expect.stringContaining('We encountered a technical error'),
+    );
+  });
+
+  it('show permission error message when user do not have enough permission', async () => {
+    const errorObject = {
+      customAttributes: {
+        httpErrorStatus: 403,
+      },
+    };
+    auth.getAuthenticatedHttpClient = jest.fn(() => ({
+      get: async () => {
+        throw errorObject;
+      },
+    }));
+
+    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    const connectionError = screen.getByTestId('permissionError');
+    expect(connectionError.textContent).toEqual(
+      expect.stringContaining('You are not authorized to view this page'),
+    );
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 });
