@@ -10,26 +10,25 @@ const defaultProps = {
 };
 
 describe('ProctoredExamSettings check default on create zendesk ticket field tests', () => {
-  auth.getAuthenticatedHttpClient = jest.fn(() => ({
-    get: async () => ({
-      data: {
-        proctored_exam_settings: {
-          enable_proctored_exams: true,
-          allow_proctoring_opt_out: false,
-          proctoring_provider: 'mockproc',
-          proctoring_escalation_email: 'test@example.com',
-          create_zendesk_tickets: true,
-        },
-        available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
-        course_start_date: '2070-01-01T00:00:00Z',
-      },
-      catch: () => {},
-    }),
-  }));
-
-  auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: false }));
-
   beforeEach(async () => {
+    auth.getAuthenticatedHttpClient = jest.fn(() => ({
+      get: async () => ({
+        data: {
+          proctored_exam_settings: {
+            enable_proctored_exams: true,
+            allow_proctoring_opt_out: false,
+            proctoring_provider: 'mockproc',
+            proctoring_escalation_email: 'test@example.com',
+            create_zendesk_tickets: true,
+          },
+          available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
+          course_start_date: '2070-01-01T00:00:00Z',
+        },
+        catch: () => {},
+      }),
+    }));
+
+    auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: false }));
     await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
   });
 
@@ -75,26 +74,25 @@ describe('ProctoredExamSettings check default on create zendesk ticket field tes
 });
 
 describe('ProctoredExamSettings alert with invalid escalation email', () => {
-  auth.getAuthenticatedHttpClient = jest.fn(() => ({
-    get: async () => ({
-      data: {
-        proctored_exam_settings: {
-          enable_proctored_exams: true,
-          allow_proctoring_opt_out: false,
-          proctoring_provider: 'mockproc',
-          proctoring_escalation_email: 'test@example.com',
-          create_zendesk_tickets: true,
-        },
-        available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
-        course_start_date: '2070-01-01T00:00:00Z',
-      },
-      catch: () => {},
-    }),
-  }));
-
-  auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: false }));
-
   beforeEach(async () => {
+    auth.getAuthenticatedHttpClient = jest.fn(() => ({
+      get: async () => ({
+        data: {
+          proctored_exam_settings: {
+            enable_proctored_exams: true,
+            allow_proctoring_opt_out: false,
+            proctoring_provider: 'proctortrack',
+            proctoring_escalation_email: 'test@example.com',
+            create_zendesk_tickets: true,
+          },
+          available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
+          course_start_date: '2070-01-01T00:00:00Z',
+        },
+        catch: () => {},
+      }),
+    }));
+
+    auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: false }));
     await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
   });
 
@@ -104,17 +102,12 @@ describe('ProctoredExamSettings alert with invalid escalation email', () => {
 
   it('creates an alert when no proctoring escalation email is provided with proctortrack selected', async () => {
     await waitFor(() => {
-      screen.getByDisplayValue('mockproc');
-    });
-    const selectProviderElement = screen.getByDisplayValue('mockproc');
-    await act(async () => {
-      fireEvent.change(selectProviderElement, { target: { value: 'proctortrack' } });
+      screen.getByDisplayValue('proctortrack');
     });
     const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
     await act(async () => {
       fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
     });
-
     const selectButton = screen.getByTestId('submissionButton');
     await act(async () => {
       fireEvent.click(selectButton);
@@ -125,17 +118,12 @@ describe('ProctoredExamSettings alert with invalid escalation email', () => {
 
   it('creates an alert when invalid proctoring escalation email is provided with proctortrack selected', async () => {
     await waitFor(() => {
-      screen.getByDisplayValue('mockproc');
-    });
-    const selectProviderElement = screen.getByDisplayValue('mockproc');
-    await act(async () => {
-      fireEvent.change(selectProviderElement, { target: { value: 'proctortrack' } });
+      screen.getByDisplayValue('proctortrack');
     });
     const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
     await act(async () => {
       fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
     });
-
     const selectButton = screen.getByTestId('submissionButton');
     await act(async () => {
       fireEvent.click(selectButton);
@@ -146,17 +134,12 @@ describe('ProctoredExamSettings alert with invalid escalation email', () => {
 
   it('has no error when valid proctoring escalation email is provided with proctortrack selected', async () => {
     await waitFor(() => {
-      screen.getByDisplayValue('mockproc');
-    });
-    const selectProviderElement = screen.getByDisplayValue('mockproc');
-    await act(async () => {
-      fireEvent.change(selectProviderElement, { target: { value: 'proctortrack' } });
+      screen.getByDisplayValue('proctortrack');
     });
     const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
     await act(async () => {
       fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo@bar.com' } });
     });
-
     const selectButton = screen.getByTestId('submissionButton');
     await act(async () => {
       fireEvent.click(selectButton);
@@ -166,7 +149,7 @@ describe('ProctoredExamSettings alert with invalid escalation email', () => {
   });
 });
 
-describe('ProctoredExamSettings alert with invalid escalation email', () => {
+describe('Disables proctoring provider options', () => {
   const mockGetFutureCourseData = {
     data: {
       proctored_exam_settings: {
