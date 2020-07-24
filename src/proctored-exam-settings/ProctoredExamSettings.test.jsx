@@ -191,16 +191,6 @@ describe('ProctoredExamSettings save settings tests', () => {
     const mockedFunctions = mockAPI(mockGetData, false);
     await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
     // Make a change to the provider to proctortrack and set the email
-    const selectElement = screen.getByDisplayValue('mockproc');
-    await act(async () => {
-      fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
-    });
-    const escalationEmail = screen.getByTestId('escalationEmail');
-    expect(escalationEmail.value).toEqual('test@example.com');
-    await act(async () => {
-      fireEvent.change(escalationEmail, { target: { value: 'proctortrack@example.com' } });
-    });
-    expect(escalationEmail.value).toEqual('proctortrack@example.com');
     const submitButton = screen.getByTestId('submissionButton');
     await act(async () => {
       fireEvent.click(submitButton);

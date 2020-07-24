@@ -260,7 +260,8 @@ function ExamSettings(props) {
       <Alert variant="danger" data-test-id="connectionError">
         We encountered a technical error when loading this page.
         This might be a temporary issue, so please try again in a few minutes.
-        If the problem persists, please go to <a href="https://support.edx.org/hc/en-us">edX Support Page</a> for help.
+        If the problem persists,
+        please go to <Alert.Link href="https://support.edx.org/hc/en-us">edX Support Page</Alert.Link> for help.
       </Alert>
     );
   }
