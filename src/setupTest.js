@@ -1,10 +1,8 @@
 import 'babel-polyfill';
-import Enzyme from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
 import axios from 'axios';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { configure } from '@testing-library/react';
 
-Enzyme.configure({ adapter: new Adapter() });
-
+configure({ testIdAttribute: 'data-test-id' });
 jest.mock('@edx/frontend-platform/auth');
 getAuthenticatedHttpClient.mockReturnValue(axios);
