@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import EmailValidator from 'email-validator';
 import moment from 'moment';
 import {
@@ -22,13 +22,19 @@ function ExamSettings(props) {
   // this causes some errors in the browser console
   const [proctortrackEscalationEmail, setProctortrackEscalationEmail] = useState('');
   const [createZendeskTickets, setCreateZendeskTickets] = useState(false);
-  const [proctortrackEscalationEmailError, setProctortrackEscalationEmailError] = useState('');
   const [courseStartDate, setCourseStartDate] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState(false);
   const [submissionInProgress, setSubmissionInProgress] = useState(false);
   const [showProctortrackEscalationEmail, setShowProctortrackEscalationEmail] = useState(false);
   const isEdxStaff = getAuthenticatedUser().administrator;
+  const [formStatus, setFormStatus] = useState({
+    isValid: true,
+    errors: {},
+  });
+
+  const alertRef = React.createRef();
+  const proctoringEscalationEmailInputRef = useRef(null);
 
   function onEnableProctoredExamsChange(event) {
     setEnableProctoredExams(event.target.checked);
@@ -61,6 +67,12 @@ function ExamSettings(props) {
     setProctortrackEscalationEmail(event.target.value);
   }
 
+  function setFocusToProctortrackEscalationEmailInput() {
+    if (proctoringEscalationEmailInputRef && proctoringEscalationEmailInputRef.current) {
+      proctoringEscalationEmailInputRef.current.focus();
+    }
+  }
+
   function postSettingsBackToServer() {
     const dataToPostBack = {
       proctored_exam_settings: {
@@ -85,11 +97,39 @@ function ExamSettings(props) {
 
   function onButtonClick() {
     if (proctoringProvider === 'proctortrack' && !EmailValidator.validate(proctortrackEscalationEmail)) {
-      setProctortrackEscalationEmailError('A valid escalation email must be provided if '
-        + 'Proctortrack is the selected provider.');
+      if (proctortrackEscalationEmail === '') {
+        const errorMessage = 'The Proctortrack Escalation Email field cannot be empty if proctortrack is the selected provider.';
+
+        setFormStatus({
+          isValid: false,
+          errors: {
+            formProctortrackEscalationEmail: {
+              dialogErrorMessage: (<Alert.Link onClick={setFocusToProctortrackEscalationEmailInput} href="#formProctortrackEscalationEmail" data-test-id="proctorTrackEscalationEmailErrorLink">{errorMessage}</Alert.Link>),
+              inputErrorMessage: errorMessage,
+            },
+          },
+        });
+      } else {
+        const errorMessage = 'The Proctortrack Escalation Email field is in the wrong format and is not valid.';
+
+        setFormStatus({
+          isValid: false,
+          errors: {
+            formProctortrackEscalationEmail: {
+              dialogErrorMessage: (<Alert.Link onClick={setFocusToProctortrackEscalationEmailInput} href="#formProctortrackEscalationEmail" data-test-id="proctorTrackEscalationEmailErrorLink">{errorMessage}</Alert.Link>),
+              inputErrorMessage: errorMessage,
+            },
+          },
+        });
+      }
     } else {
-      setProctortrackEscalationEmailError('');
       postSettingsBackToServer();
+      const errors = { ...formStatus.errors };
+      delete errors.formProctortrackEscalationEmail;
+      setFormStatus({
+        isValid: true,
+        errors,
+      });
     }
   }
 
@@ -122,10 +162,24 @@ function ExamSettings(props) {
     ));
   }
 
+  function getFormErrorMessage() {
+    const numOfErrors = Object.keys(formStatus.errors).length;
+    const errors = Object.entries(formStatus.errors).map(([id, error]) => <li key={id}>{error.dialogErrorMessage}</li>);
+
+    return (
+      <>
+        <div>{numOfErrors > 1 ? `There are ${numOfErrors} errors in this form.` : 'There is 1 error in this form.'}</div>
+        <ul>
+          {errors}
+        </ul>
+      </>
+    );
+  }
+
   function renderContent() {
     return (
       <Form>
-        {proctortrackEscalationEmailError && enableProctoredExams
+        {enableProctoredExams && !formStatus.isValid && formStatus.errors.formProctortrackEscalationEmail
           && (
             // tabIndex="-1" to make non-focusable element focusable
             <Alert
@@ -133,8 +187,9 @@ function ExamSettings(props) {
               variant="danger"
               tabIndex="-1"
               data-test-id="proctortrackEscalationEmailError"
+              ref={alertRef}
             >
-              {proctortrackEscalationEmailError}
+              {getFormErrorMessage()}
             </Alert>
           )}
         {/* ENABLE PROCTORED EXAMS */}
@@ -186,19 +241,20 @@ function ExamSettings(props) {
           </fieldset>
         )}
 
-        {enableProctoredExams && (
-          <Form.Group controlId="formProctoringProvider">
-            {/* PROCTORING PROVIDER */}
-            <Form.Label>Proctoring Provider</Form.Label>
-            <Form.Control
-              as="select"
-              value={proctoringProvider}
-              onChange={onProctoringProviderChange}
-            >
-              {getProctoringProviderOptions(availableProctoringProviders)}
-            </Form.Control>
-            <Form.Text>{cannotEditProctoringProvider() ? ('Proctoring provider cannot be modified after course start date.') : ('Select the proctoring provider you want to use for this course run.')}</Form.Text>
-          </Form.Group>
+        {/* PROCTORING PROVIDER */}
+        { enableProctoredExams && (
+        <Form.Group controlId="formProctoringProvider">
+          <Form.Label>Proctoring Provider</Form.Label>
+          <Form.Control
+            as="select"
+            value={proctoringProvider}
+            onChange={onProctoringProviderChange}
+            aria-describedby="proctoringProviderHelpText"
+          >
+            {getProctoringProviderOptions(availableProctoringProviders)}
+          </Form.Control>
+          <Form.Text id="proctoringProviderHelpText">{cannotEditProctoringProvider() ? ('Proctoring provider cannot be modified after course start date.') : ('Select the proctoring provider you want to use for this course run.')}</Form.Text>
+        </Form.Group>
         )}
 
         {/* PROCTORTRACK ESCALATION EMAIL */}
@@ -206,21 +262,22 @@ function ExamSettings(props) {
           <Form.Group controlId="formProctortrackEscalationEmail">
             <Form.Label>Proctortrack Escalation Email</Form.Label>
             <Form.Control
+              ref={proctoringEscalationEmailInputRef}
               type="email"
               data-test-id="escalationEmail"
               onChange={onProctortrackEscalationEmailChange}
               value={proctortrackEscalationEmail}
-              isInvalid={!!proctortrackEscalationEmailError}
+              isInvalid={Object.prototype.hasOwnProperty.call(formStatus.errors, 'formProctortrackEscalationEmail')}
+              aria-describedby="proctortrackEscalationEmailHelpText"
             />
-            <Form.Control.Feedback type="invalid">{proctortrackEscalationEmailError}</Form.Control.Feedback>
-            <Form.Text>
+            <Form.Control.Feedback type="invalid">{formStatus.errors.formProctortrackEscalationEmail && formStatus.errors.formProctortrackEscalationEmail.inputErrorMessage} </Form.Control.Feedback>
+            <Form.Text id="proctortrackEscalationEmailHelpText">
               Required if &quot;proctortrack&quot; is selected as your proctoring provider.
               Enter an email address to be contacted by the support team whenever there are escalations
               (e.g. appeals, delayed reviews, etc.).
             </Form.Text>
           </Form.Group>
         )}
-
         {/* CREATE ZENDESK TICKETS */}
         { isEdxStaff && enableProctoredExams && (
           <fieldset aria-describedby="createZendeskTicketsText">
@@ -366,6 +423,12 @@ function ExamSettings(props) {
         );
     }, [],
   );
+
+  useEffect(() => {
+    if (!formStatus.isValid && !!alertRef.current) {
+      alertRef.current.focus();
+    }
+  }, [formStatus]);
 
   return (
     <div className="container">
