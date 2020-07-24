@@ -277,7 +277,12 @@ function ExamSettings(props) {
   function renderSaveSuccess() {
     const studioURL = StudioApiService.getStudioUrl(props.courseId);
     return (
-      <Alert variant="success" dismissble data-test-id="saveSuccess">
+      <Alert
+        variant="success"
+        dismissible
+        data-test-id="saveSuccess"
+        onClose={() => setSaveSuccess(false)}
+      >
         Proctored exam settings saved successfully. You can go back to
         <Alert.Link href={studioURL}>Studio here</Alert.Link>.
       </Alert>
@@ -286,11 +291,16 @@ function ExamSettings(props) {
 
   function renderSaveError() {
     return (
-      <Alert variant="danger" dismissble data-test-id="saveError">
+      <Alert
+        variant="danger"
+        dismissible
+        data-test-id="saveError"
+        onClose={() => setSaveError(false)}
+      >
         We encountered a technical error while trying to save proctored exam settings.
         This might be a temporary issue, so please try again in a few minutes.
-        If the problem persists, please go to
-        <Alert.Link href="https://support.edx.org/hc/en-us">edX Support Page</Alert.Link> for help.
+        If the problem persists,
+        please go to <Alert.Link href="https://support.edx.org/hc/en-us">edX Support Page</Alert.Link> for help.
       </Alert>
     );
   }
