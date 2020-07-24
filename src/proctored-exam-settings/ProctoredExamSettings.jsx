@@ -86,6 +86,7 @@ function ExamSettings(props) {
         key={provider}
         value={provider}
         disabled={isDisabledOption(provider)}
+        data-test-id={provider}
       >
         {provider}
       </option>
@@ -98,7 +99,12 @@ function ExamSettings(props) {
         {proctortrackEscalationEmailError
           && (
             // tabIndex="-1" to make non-focusable element focusable
-            <Alert id="proctortrackEscalationEmailError" variant="danger" tabIndex="-1">
+            <Alert
+              id="proctortrackEscalationEmailError"
+              variant="danger"
+              tabIndex="-1"
+              data-test-id="proctortrackEscalationEmailError"
+            >
               {proctortrackEscalationEmailError}
             </Alert>
           )}
@@ -165,6 +171,7 @@ function ExamSettings(props) {
           <Form.Label>Proctortrack Escalation Email</Form.Label>
           <Form.Control
             type="email"
+            data-test-id="escalationEmail"
             onChange={onProctortrackEscalationEmailChange}
             value={proctortrackEscalationEmail}
             isInvalid={!!proctortrackEscalationEmailError}
@@ -208,6 +215,7 @@ function ExamSettings(props) {
         </fieldset>
         <Button
           className="btn-primary mb-3"
+          data-test-id="submissionButton"
           onClick={onButtonClick}
         >
           Submit
