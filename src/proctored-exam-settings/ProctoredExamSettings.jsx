@@ -24,6 +24,8 @@ function ExamSettings(props) {
   const [createZendeskTickets, setCreateZendeskTickets] = useState(false);
   const [proctortrackEscalationEmailError, setProctortrackEscalationEmailError] = useState('');
   const [courseStartDate, setCourseStartDate] = useState('');
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   function onEnableProctoredExamsChange(event) {
     setEnableProctoredExams(event.target.checked);
@@ -52,13 +54,32 @@ function ExamSettings(props) {
     setProctortrackEscalationEmail(event.target.value);
   }
 
+  function postSettingsBackToServer() {
+    const dataToPostBack = {
+      proctored_exam_settings: {
+        enable_proctored_exams: enableProctoredExams,
+        allow_proctoring_opt_out: allowOptingOut,
+        proctoring_provider: proctoringProvider,
+        proctoring_escalation_email: proctortrackEscalationEmail,
+        create_zendesk_tickets: createZendeskTickets,
+      },
+    };
+    StudioApiService.saveProctoredExamSettingsData(props.courseId, dataToPostBack).then(() => {
+      setSaveSuccess(true);
+      setSaveError(false);
+    }).catch(() => {
+      setSaveSuccess(false);
+      setSaveError(true);
+    });
+  }
+
   function onButtonClick() {
     if (proctoringProvider === 'proctortrack' && !EmailValidator.validate(proctortrackEscalationEmail)) {
       setProctortrackEscalationEmailError('A valid escalation email must be provided if '
         + 'Proctortrack is the selected provider.');
     } else {
       setProctortrackEscalationEmailError('');
-      // TODO: implement POST
+      postSettingsBackToServer();
     }
   }
 
@@ -165,6 +186,7 @@ function ExamSettings(props) {
           <Form.Label>Proctortrack Escalation Email</Form.Label>
           <Form.Control
             type="email"
+            data-test-id="escalationEmail"
             onChange={onProctortrackEscalationEmailChange}
             value={proctortrackEscalationEmail}
             isInvalid={!!proctortrackEscalationEmailError}
@@ -208,6 +230,7 @@ function ExamSettings(props) {
         </fieldset>
         <Button
           className="btn-primary mb-3"
+          data-test-id="submissionButton"
           onClick={onButtonClick}
         >
           Submit
@@ -251,6 +274,27 @@ function ExamSettings(props) {
     );
   }
 
+  function renderSaveSuccess() {
+    const studioURL = StudioApiService.getStudioUrl(props.courseId);
+    return (
+      <Alert variant="success" dismissble data-test-id="saveSuccess">
+        Proctored exam settings saved successfully. You can go back to
+        <Alert.Link href={studioURL}>Studio here</Alert.Link>.
+      </Alert>
+    );
+  }
+
+  function renderSaveError() {
+    return (
+      <Alert variant="danger" dismissble data-test-id="saveError">
+        We encountered a technical error while trying to save proctored exam settings.
+        This might be a temporary issue, so please try again in a few minutes.
+        If the problem persists, please go to
+        <Alert.Link href="https://support.edx.org/hc/en-us">edX Support Page</Alert.Link> for help.
+      </Alert>
+    );
+  }
+
   useEffect(
     () => {
       StudioApiService.getProctoredExamSettingsData(props.courseId)
@@ -288,6 +332,8 @@ function ExamSettings(props) {
       </h2>
       <div>
         {loading ? renderLoading() : null}
+        {saveSuccess ? renderSaveSuccess() : null}
+        {saveError ? renderSaveError() : null}
         {loaded ? renderContent() : null}
         {loadingConnectionError ? renderConnectionError() : null}
         {loadingPermissionError ? renderPermissionError() : null}
