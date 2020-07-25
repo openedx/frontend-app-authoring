@@ -150,6 +150,19 @@ describe('ProctoredExamSettings save settings tests', () => {
     return { mockClientGet, mockClientPost };
   }
 
+  it('Show spinner while saving', async () => {
+    const mockedFunctions = mockAPI(mockGetData, { data: 'success' });
+    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    const submitButton = screen.getByTestId('submissionButton');
+    expect(screen.queryByTestId('saveInProgress')).toBeFalsy();
+    fireEvent.click(submitButton);
+    const submitSpinner = screen.getByTestId('saveInProgress');
+    expect(submitSpinner).toBeDefined();
+    expect(mockedFunctions.mockClientPost).toHaveBeenCalled();
+    await waitForElementToBeRemoved(submitSpinner);
+    expect(screen.queryByTestId('saveInProgress')).toBeFalsy();
+  });
+
   it('Makes API call successfully', async () => {
     const mockedFunctions = mockAPI(mockGetData, { data: 'success' });
     await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
