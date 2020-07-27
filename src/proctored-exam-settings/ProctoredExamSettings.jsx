@@ -240,7 +240,7 @@ function ExamSettings(props) {
         >
           Submit
         </Button> {' '}
-        {submissionInProgress && <Spinner animation="border" variant="primary" data-test-id="saveInProgress" />}
+        {submissionInProgress && <Spinner animation="border" variant="primary" data-test-id="saveInProgress" aria-label="Save in progress" />}
       </Form>
     );
   }
