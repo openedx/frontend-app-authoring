@@ -27,6 +27,7 @@ function ExamSettings(props) {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState(false);
   const [submissionInProgress, setSubmissionInProgress] = useState(false);
+  const [showProctortrackEscalationEmail, setShowProctortrackEscalationEmail] = useState(false);
 
   function onEnableProctoredExamsChange(event) {
     setEnableProctoredExams(event.target.checked);
@@ -46,8 +47,13 @@ function ExamSettings(props) {
 
     if (provider === 'proctortrack') {
       setCreateZendeskTickets(false);
-    } else if (provider === 'software_secure') {
-      setCreateZendeskTickets(true);
+      setShowProctortrackEscalationEmail(true);
+    } else {
+      if (provider === 'software_secure') {
+        setCreateZendeskTickets(true);
+      }
+      setProctortrackEscalationEmail('');
+      setShowProctortrackEscalationEmail(false);
     }
   }
 
@@ -192,22 +198,24 @@ function ExamSettings(props) {
         </Form.Group>
 
         {/* PROCTORTRACK ESCALATION EMAIL */}
-        <Form.Group controlId="formProctortrackEscalationEmail">
-          <Form.Label>Proctortrack Escalation Email</Form.Label>
-          <Form.Control
-            type="email"
-            data-test-id="escalationEmail"
-            onChange={onProctortrackEscalationEmailChange}
-            value={proctortrackEscalationEmail}
-            isInvalid={!!proctortrackEscalationEmailError}
-          />
-          <Form.Control.Feedback type="invalid">{proctortrackEscalationEmailError}</Form.Control.Feedback>
-          <Form.Text>
-            Required if &quot;proctortrack&quot; is selected as your proctoring provider.
-            Enter an email address to be contacted by the support team whenever there are escalations
-            (e.g. appeals, delayed reviews, etc.).
-          </Form.Text>
-        </Form.Group>
+        {showProctortrackEscalationEmail && (
+          <Form.Group controlId="formProctortrackEscalationEmail">
+            <Form.Label>Proctortrack Escalation Email</Form.Label>
+            <Form.Control
+              type="email"
+              data-test-id="escalationEmail"
+              onChange={onProctortrackEscalationEmailChange}
+              value={proctortrackEscalationEmail}
+              isInvalid={!!proctortrackEscalationEmailError}
+            />
+            <Form.Control.Feedback type="invalid">{proctortrackEscalationEmailError}</Form.Control.Feedback>
+            <Form.Text>
+              Required if &quot;proctortrack&quot; is selected as your proctoring provider.
+              Enter an email address to be contacted by the support team whenever there are escalations
+              (e.g. appeals, delayed reviews, etc.).
+            </Form.Text>
+          </Form.Group>
+        )}
 
         {/* CREATE ZENDESK TICKETS */}
         <fieldset aria-describedby="allowOptingOutHelpText">
@@ -331,6 +339,8 @@ function ExamSettings(props) {
             setEnableProctoredExams(proctoredExamSettings.enable_proctored_exams);
             setAllowOptingOut(proctoredExamSettings.allow_proctoring_opt_out);
             setProctoringProvider(proctoredExamSettings.proctoring_provider);
+            const isProctortrack = proctoredExamSettings.proctoring_provider === 'proctortrack';
+            setShowProctortrackEscalationEmail(isProctortrack);
             setAvailableProctoringProviders(response.data.available_proctoring_providers);
             setProctortrackEscalationEmail(proctoredExamSettings.proctoring_escalation_email);
             setCreateZendeskTickets(proctoredExamSettings.create_zendesk_tickets);
