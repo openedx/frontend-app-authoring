@@ -11,25 +11,25 @@ const defaultProps = {
 };
 
 describe('ProctoredExamSettings check default on create zendesk ticket field tests', () => {
-  auth.getAuthenticatedHttpClient = jest.fn(() => ({
-    get: async () => ({
-      data: {
-        proctored_exam_settings: {
-          enable_proctored_exams: true,
-          allow_proctoring_opt_out: false,
-          proctoring_provider: 'mockproc',
-          proctoring_escalation_email: 'test@example.com',
-          create_zendesk_tickets: true,
-        },
-        available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
-      },
-      catch: () => {},
-    }),
-  }));
-
-  auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3 }));
-
   beforeEach(async () => {
+    auth.getAuthenticatedHttpClient = jest.fn(() => ({
+      get: async () => ({
+        data: {
+          proctored_exam_settings: {
+            enable_proctored_exams: true,
+            allow_proctoring_opt_out: false,
+            proctoring_provider: 'mockproc',
+            proctoring_escalation_email: 'test@example.com',
+            create_zendesk_tickets: true,
+          },
+          available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
+          course_start_date: '2070-01-01T00:00:00Z',
+        },
+        catch: () => {},
+      }),
+    }));
+
+    auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: false }));
     await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
   });
 
@@ -71,6 +71,152 @@ describe('ProctoredExamSettings check default on create zendesk ticket field tes
     });
     const zendeskTicketInput = screen.getByTestId('createZendeskTicketsYes');
     expect(zendeskTicketInput.checked).toEqual(true);
+  });
+});
+
+describe('ProctoredExamSettings alert with invalid escalation email', () => {
+  beforeEach(async () => {
+    auth.getAuthenticatedHttpClient = jest.fn(() => ({
+      get: async () => ({
+        data: {
+          proctored_exam_settings: {
+            enable_proctored_exams: true,
+            allow_proctoring_opt_out: false,
+            proctoring_provider: 'proctortrack',
+            proctoring_escalation_email: 'test@example.com',
+            create_zendesk_tickets: true,
+          },
+          available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
+          course_start_date: '2070-01-01T00:00:00Z',
+        },
+        catch: () => {},
+      }),
+    }));
+
+    auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: false }));
+    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it('creates an alert when no proctoring escalation email is provided with proctortrack selected', async () => {
+    await waitFor(() => {
+      screen.getByDisplayValue('proctortrack');
+    });
+    const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
+    await act(async () => {
+      fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
+    });
+    const selectButton = screen.getByTestId('submissionButton');
+    await act(async () => {
+      fireEvent.click(selectButton);
+    });
+    const escalationEmailError = screen.getByTestId('proctortrackEscalationEmailError');
+    expect(escalationEmailError.textContent).not.toBeNull();
+  });
+
+  it('creates an alert when invalid proctoring escalation email is provided with proctortrack selected', async () => {
+    await waitFor(() => {
+      screen.getByDisplayValue('proctortrack');
+    });
+    const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
+    await act(async () => {
+      fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
+    });
+    const selectButton = screen.getByTestId('submissionButton');
+    await act(async () => {
+      fireEvent.click(selectButton);
+    });
+    const escalationEmailError = screen.getByTestId('proctortrackEscalationEmailError');
+    expect(escalationEmailError.textContent).not.toBeNull();
+  });
+
+  it('has no error when valid proctoring escalation email is provided with proctortrack selected', async () => {
+    await waitFor(() => {
+      screen.getByDisplayValue('proctortrack');
+    });
+    const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
+    await act(async () => {
+      fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo@bar.com' } });
+    });
+    const selectButton = screen.getByTestId('submissionButton');
+    await act(async () => {
+      fireEvent.click(selectButton);
+    });
+    const escalationEmailError = screen.queryByTestId('proctortrackEscalationEmailError');
+    expect(escalationEmailError).toBeNull();
+  });
+});
+
+describe('Disables proctoring provider options', () => {
+  const mockGetFutureCourseData = {
+    data: {
+      proctored_exam_settings: {
+        enable_proctored_exams: true,
+        allow_proctoring_opt_out: false,
+        proctoring_provider: 'mockproc',
+        proctoring_escalation_email: 'test@example.com',
+        create_zendesk_tickets: true,
+      },
+      available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
+      course_start_date: '2099-01-01T00:00:00Z',
+    },
+  };
+
+  const mockGetPastCourseData = {
+    data: {
+      proctored_exam_settings: {
+        enable_proctored_exams: true,
+        allow_proctoring_opt_out: false,
+        proctoring_provider: 'mockproc',
+        proctoring_escalation_email: 'test@example.com',
+        create_zendesk_tickets: true,
+      },
+      available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
+      course_start_date: '2013-01-01T00:00:00Z',
+    },
+  };
+
+  function mockAPI(getData, isAdmin) {
+    const mockClientGet = jest.fn(async () => (getData));
+    auth.getAuthenticatedHttpClient = jest.fn(() => ({
+      get: mockClientGet,
+    }));
+    auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: isAdmin }));
+  }
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it('disables irrelevant Proctoring Provider fields when user is not an administrator and it is after start date', async () => {
+    mockAPI(mockGetPastCourseData, false);
+    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    const providerOption = screen.getByTestId('proctortrack');
+    expect(providerOption.hasAttribute('disabled')).toEqual(true);
+  });
+
+  it('enables all Proctoring Provider options if user is not an administrator and it is before start date', async () => {
+    mockAPI(mockGetFutureCourseData, false);
+    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    const providerOption = screen.getByTestId('proctortrack');
+    expect(providerOption.hasAttribute('disabled')).toEqual(false);
+  });
+
+  it('enables all Proctoring Provider options if user administrator and it is after start date', async () => {
+    mockAPI(mockGetPastCourseData, true);
+    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    const providerOption = screen.getByTestId('proctortrack');
+    expect(providerOption.hasAttribute('disabled')).toEqual(false);
+  });
+
+  it('enables all Proctoring Provider options if user administrator and it is before start date', async () => {
+    mockAPI(mockGetFutureCourseData, true);
+    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    const providerOption = screen.getByTestId('proctortrack');
+    expect(providerOption.hasAttribute('disabled')).toEqual(false);
   });
 });
 
