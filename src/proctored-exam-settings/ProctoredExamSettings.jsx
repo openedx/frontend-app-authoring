@@ -26,6 +26,7 @@ function ExamSettings(props) {
   const [courseStartDate, setCourseStartDate] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState(false);
+  const [submissionInProgress, setSubmissionInProgress] = useState(false);
 
   function onEnableProctoredExamsChange(event) {
     setEnableProctoredExams(event.target.checked);
@@ -64,12 +65,15 @@ function ExamSettings(props) {
         create_zendesk_tickets: createZendeskTickets,
       },
     };
+    setSubmissionInProgress(true);
     StudioApiService.saveProctoredExamSettingsData(props.courseId, dataToPostBack).then(() => {
       setSaveSuccess(true);
       setSaveError(false);
+      setSubmissionInProgress(false);
     }).catch(() => {
       setSaveSuccess(false);
       setSaveError(true);
+      setSubmissionInProgress(false);
     });
   }
 
@@ -238,9 +242,11 @@ function ExamSettings(props) {
           className="btn-primary mb-3"
           data-test-id="submissionButton"
           onClick={onButtonClick}
+          disabled={submissionInProgress}
         >
           Submit
-        </Button>
+        </Button> {' '}
+        {submissionInProgress && <Spinner animation="border" variant="primary" data-test-id="saveInProgress" aria-label="Save in progress" />}
       </Form>
     );
   }
@@ -320,6 +326,7 @@ function ExamSettings(props) {
             const proctoredExamSettings = response.data.proctored_exam_settings;
             setLoaded(true);
             setLoading(false);
+            setSubmissionInProgress(false);
             setCourseStartDate(response.data.course_start_date);
             setEnableProctoredExams(proctoredExamSettings.enable_proctored_exams);
             setAllowOptingOut(proctoredExamSettings.allow_proctoring_opt_out);
@@ -337,6 +344,7 @@ function ExamSettings(props) {
             }
             setLoading(false);
             setLoaded(false);
+            setSubmissionInProgress(false);
           },
         );
     }, [],
