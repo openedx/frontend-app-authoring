@@ -282,19 +282,15 @@ describe('Hides fields based on user permissions', () => {
   it('hides opting out and zendesk tickets for non edX staff', async () => {
     mockAuthentication(false);
     await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
-    const allowOptingOut = screen.queryByTestId('allowOptingOutYes');
-    expect(allowOptingOut).toBeNull();
-    const createZendeskTickets = screen.queryByTestId('createZendeskTicketsYes');
-    expect(createZendeskTickets).toBeNull();
+    expect(screen.queryByTestId('allowOptingOutYes')).toBeNull();
+    expect(screen.queryByTestId('createZendeskTicketsYes')).toBeNull();
   });
 
   it('shows opting out and zendesk tickets for edX staff', async () => {
     mockAuthentication(true);
     await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
-    const allowOptingOut = screen.queryByTestId('allowOptingOutYes');
-    expect(allowOptingOut).not.toBeNull();
-    const createZendeskTickets = screen.queryByTestId('createZendeskTicketsYes');
-    expect(createZendeskTickets).not.toBeNull();
+    expect(screen.queryByTestId('allowOptingOutYes')).not.toBeNull();
+    expect(screen.queryByTestId('createZendeskTicketsYes')).not.toBeNull();
   });
 });
 
