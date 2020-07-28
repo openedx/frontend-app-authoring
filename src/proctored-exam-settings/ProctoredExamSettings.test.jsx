@@ -29,7 +29,7 @@ describe('ProctoredExamSettings check default on create zendesk ticket field tes
       }),
     }));
 
-    auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: false }));
+    auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: true }));
     await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
   });
 
@@ -248,6 +248,53 @@ describe('Disables proctoring provider options', () => {
     await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
     const providerOption = screen.getByTestId('proctortrack');
     expect(providerOption.hasAttribute('disabled')).toEqual(false);
+  });
+});
+
+describe('Hides fields based on user permissions', () => {
+  beforeEach(async () => {
+    auth.getAuthenticatedHttpClient = jest.fn(() => ({
+      get: async () => ({
+        data: {
+          proctored_exam_settings: {
+            enable_proctored_exams: true,
+            allow_proctoring_opt_out: false,
+            proctoring_provider: 'mockproc',
+            proctoring_escalation_email: 'test@example.com',
+            create_zendesk_tickets: true,
+          },
+          available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
+          course_start_date: '2070-01-01T00:00:00Z',
+        },
+        catch: () => {},
+      }),
+    }));
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  function mockAuthentication(isAdmin) {
+    auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: isAdmin }));
+  }
+
+  it('hides opting out and zendesk tickets for non edX staff', async () => {
+    mockAuthentication(false);
+    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    const allowOptingOut = screen.queryByTestId('allowOptingOutYes');
+    expect(allowOptingOut).toBeNull();
+    const createZendeskTickets = screen.queryByTestId('createZendeskTicketsYes');
+    expect(createZendeskTickets).toBeNull();
+  });
+
+  it('shows opting out and zendesk tickets for edX staff', async () => {
+    mockAuthentication(true);
+    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    const allowOptingOut = screen.queryByTestId('allowOptingOutYes');
+    expect(allowOptingOut).not.toBeNull();
+    const createZendeskTickets = screen.queryByTestId('createZendeskTicketsYes');
+    expect(createZendeskTickets).not.toBeNull();
   });
 });
 
