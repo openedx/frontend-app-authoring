@@ -52,7 +52,6 @@ function ExamSettings(props) {
       if (provider === 'software_secure') {
         setCreateZendeskTickets(true);
       }
-      setProctortrackEscalationEmail('');
       setShowProctortrackEscalationEmail(false);
     }
   }

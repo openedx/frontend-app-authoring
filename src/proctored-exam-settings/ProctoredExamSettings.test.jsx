@@ -177,7 +177,7 @@ describe('ProctoredExamSettings tests with escalation email', () => {
     });
     expect(screen.queryByTestId('escalationEmail')).toBeDefined();
     selectEscalationEmailElement = screen.getByTestId('escalationEmail');
-    expect(selectEscalationEmailElement.value).toEqual('');
+    expect(selectEscalationEmailElement.value).toEqual('test@example.com');
   });
 });
 
