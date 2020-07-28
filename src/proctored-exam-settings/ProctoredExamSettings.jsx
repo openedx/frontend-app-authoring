@@ -28,6 +28,7 @@ function ExamSettings(props) {
   const [saveError, setSaveError] = useState(false);
   const [submissionInProgress, setSubmissionInProgress] = useState(false);
   const [showProctortrackEscalationEmail, setShowProctortrackEscalationEmail] = useState(false);
+  const isEdxStaff = getAuthenticatedUser().administrator;
 
   function onEnableProctoredExamsChange(event) {
     setEnableProctoredExams(event.target.checked);
@@ -96,10 +97,8 @@ function ExamSettings(props) {
     const currentDate = moment(moment()).format('YYYY-MM-DD[T]hh:mm:ss[Z]');
     const isAfterCourseStart = currentDate > courseStartDate;
 
-    const isAdmin = getAuthenticatedUser().administrator;
-
-    // if the user is  not an administrator and it is after the course start date, user cannot edit proctoring provider
-    return !isAdmin && isAfterCourseStart;
+    // if the user is not edX staff and it is after the course start date, user cannot edit proctoring provider
+    return !isEdxStaff && isAfterCourseStart;
   }
 
   function isDisabledOption(provider) {
@@ -154,34 +153,38 @@ function ExamSettings(props) {
         </Form.Group>
 
         {/* ALLOW OPTING OUT OF PROCTORED EXAMS */}
-        <fieldset aria-describedby="allowOptingOutHelpText">
-          <Form.Group controlId="formAllowingOptingOut">
-            <Form.Label as="legend">Allow Opting Out of Proctored Exams</Form.Label>
-            <Form.Check
-              type="radio"
-              id="allowOptingOutYes"
-              name="allowOptingOut"
-              label="Yes"
-              inline
-              checked={allowOptingOut}
-              onChange={() => onAllowOptingOutChange(true)}
-            />
-            <Form.Check
-              type="radio"
-              id="allowOptingOutNo"
-              name="allowOptingOut"
-              label="No"
-              inline
-              checked={!allowOptingOut}
-              onChange={() => onAllowOptingOutChange(false)}
-            />
-            <Form.Text id="allowOptingOutHelpText">
-              If this value is &quot;Yes&quot;, learners can choose to take proctored exams without proctoring.
-              If this value is &quot;No&quot;, all learners must take the exam with proctoring.
-              This setting only applies if proctored exams are enabled for the course.
-            </Form.Text>
-          </Form.Group>
-        </fieldset>
+        { isEdxStaff && (
+          <fieldset aria-describedby="allowOptingOutHelpText">
+            <Form.Group controlId="formAllowingOptingOut">
+              <Form.Label as="legend">Allow Opting Out of Proctored Exams</Form.Label>
+              <Form.Check
+                type="radio"
+                id="allowOptingOutYes"
+                name="allowOptingOut"
+                label="Yes"
+                inline
+                checked={allowOptingOut}
+                onChange={() => onAllowOptingOutChange(true)}
+                data-test-id="allowOptingOutYes"
+              />
+              <Form.Check
+                type="radio"
+                id="allowOptingOutNo"
+                name="allowOptingOut"
+                label="No"
+                inline
+                checked={!allowOptingOut}
+                onChange={() => onAllowOptingOutChange(false)}
+                data-test-id="allowOptingOutNo"
+              />
+              <Form.Text id="allowOptingOutHelpText">
+                If this value is &quot;Yes&quot;, learners can choose to take proctored exams without proctoring.
+                If this value is &quot;No&quot;, all learners must take the exam with proctoring.
+                This setting only applies if proctored exams are enabled for the course.
+              </Form.Text>
+            </Form.Group>
+          </fieldset>
+        )}
 
         {/* PROCTORING PROVIDER */}
         <Form.Group controlId="formProctoringProvider">
@@ -217,34 +220,37 @@ function ExamSettings(props) {
         )}
 
         {/* CREATE ZENDESK TICKETS */}
-        <fieldset aria-describedby="allowOptingOutHelpText">
-          <Form.Group controlId="formCreateZendeskTickets">
-            <Form.Label as="legend">Create Zendesk Tickets for Suspicious Proctored Exam Attempts</Form.Label>
-            <Form.Check
-              type="radio"
-              id="createZendeskTicketsYes"
-              label="Yes"
-              inline
-              name="createZendeskTickets"
-              checked={createZendeskTickets}
-              onChange={() => onCreateZendeskTicketsChange(true)}
-              data-test-id="createZendeskTicketsYes"
-            />
-            <Form.Check
-              type="radio"
-              id="createZendeskTicketsNo"
-              label="No"
-              inline
-              name="createZendeskTickets"
-              checked={!createZendeskTickets}
-              onChange={() => onCreateZendeskTicketsChange(false)}
-              data-test-id="createZendeskTicketsNo"
-            />
-            <Form.Text id="createZendeskTicketsText">
-              If this value is &quot;Yes&quot;, a Zendesk ticket will be created for suspicious proctored exam attempts.
-            </Form.Text>
-          </Form.Group>
-        </fieldset>
+        { isEdxStaff && (
+          <fieldset aria-describedby="createZendeskTicketsText">
+            <Form.Group controlId="formCreateZendeskTickets">
+              <Form.Label as="legend">Create Zendesk Tickets for Suspicious Proctored Exam Attempts</Form.Label>
+              <Form.Check
+                type="radio"
+                id="createZendeskTicketsYes"
+                label="Yes"
+                inline
+                name="createZendeskTickets"
+                checked={createZendeskTickets}
+                onChange={() => onCreateZendeskTicketsChange(true)}
+                data-test-id="createZendeskTicketsYes"
+              />
+              <Form.Check
+                type="radio"
+                id="createZendeskTicketsNo"
+                label="No"
+                inline
+                name="createZendeskTickets"
+                checked={!createZendeskTickets}
+                onChange={() => onCreateZendeskTicketsChange(false)}
+                data-test-id="createZendeskTicketsNo"
+              />
+              <Form.Text id="createZendeskTicketsText">
+                If this value is &quot;Yes&quot;,
+                a Zendesk ticket will be created for suspicious proctored exam attempts.
+              </Form.Text>
+            </Form.Group>
+          </fieldset>
+        )}
         <Button
           className="btn-primary mb-3"
           data-test-id="submissionButton"
