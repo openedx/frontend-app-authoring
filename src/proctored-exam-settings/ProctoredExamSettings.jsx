@@ -125,7 +125,7 @@ function ExamSettings(props) {
   function renderContent() {
     return (
       <Form>
-        {proctortrackEscalationEmailError
+        {proctortrackEscalationEmailError && enableProctoredExams
           && (
             // tabIndex="-1" to make non-focusable element focusable
             <Alert
@@ -153,7 +153,7 @@ function ExamSettings(props) {
         </Form.Group>
 
         {/* ALLOW OPTING OUT OF PROCTORED EXAMS */}
-        { isEdxStaff && (
+        { isEdxStaff && enableProctoredExams && (
           <fieldset aria-describedby="allowOptingOutHelpText">
             <Form.Group controlId="formAllowingOptingOut">
               <Form.Label as="legend">Allow Opting Out of Proctored Exams</Form.Label>
@@ -186,21 +186,23 @@ function ExamSettings(props) {
           </fieldset>
         )}
 
-        {/* PROCTORING PROVIDER */}
-        <Form.Group controlId="formProctoringProvider">
-          <Form.Label>Proctoring Provider</Form.Label>
-          <Form.Control
-            as="select"
-            value={proctoringProvider}
-            onChange={onProctoringProviderChange}
-          >
-            {getProctoringProviderOptions(availableProctoringProviders)}
-          </Form.Control>
-          <Form.Text>{cannotEditProctoringProvider() ? ('Proctoring provider cannot be modified after course start date.') : ('Select the proctoring provider you want to use for this course run.')}</Form.Text>
-        </Form.Group>
+        {enableProctoredExams && (
+          <Form.Group controlId="formProctoringProvider">
+            {/* PROCTORING PROVIDER */}
+            <Form.Label>Proctoring Provider</Form.Label>
+            <Form.Control
+              as="select"
+              value={proctoringProvider}
+              onChange={onProctoringProviderChange}
+            >
+              {getProctoringProviderOptions(availableProctoringProviders)}
+            </Form.Control>
+            <Form.Text>{cannotEditProctoringProvider() ? ('Proctoring provider cannot be modified after course start date.') : ('Select the proctoring provider you want to use for this course run.')}</Form.Text>
+          </Form.Group>
+        )}
 
         {/* PROCTORTRACK ESCALATION EMAIL */}
-        {showProctortrackEscalationEmail && (
+        {showProctortrackEscalationEmail && enableProctoredExams && (
           <Form.Group controlId="formProctortrackEscalationEmail">
             <Form.Label>Proctortrack Escalation Email</Form.Label>
             <Form.Control
@@ -220,7 +222,7 @@ function ExamSettings(props) {
         )}
 
         {/* CREATE ZENDESK TICKETS */}
-        { isEdxStaff && (
+        { isEdxStaff && enableProctoredExams && (
           <fieldset aria-describedby="createZendeskTicketsText">
             <Form.Group controlId="formCreateZendeskTickets">
               <Form.Label as="legend">Create Zendesk Tickets for Suspicious Proctored Exam Attempts</Form.Label>
