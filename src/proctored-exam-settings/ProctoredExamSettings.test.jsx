@@ -74,7 +74,7 @@ describe('ProctoredExamSettings check default on create zendesk ticket field tes
   });
 });
 
-describe('ProctoredExamSettings alert with invalid escalation email', () => {
+describe('ProctoredExamSettings tests with escalation email', () => {
   beforeEach(async () => {
     auth.getAuthenticatedHttpClient = jest.fn(() => ({
       get: async () => ({
@@ -89,8 +89,8 @@ describe('ProctoredExamSettings alert with invalid escalation email', () => {
           available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
           course_start_date: '2070-01-01T00:00:00Z',
         },
-        catch: () => {},
       }),
+      post: async () => ({}),
     }));
 
     auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: false }));
@@ -147,6 +147,37 @@ describe('ProctoredExamSettings alert with invalid escalation email', () => {
     });
     const escalationEmailError = screen.queryByTestId('proctortrackEscalationEmailError');
     expect(escalationEmailError).toBeNull();
+  });
+
+  it('Escalation Email field hidden when proctoring backend is not Proctortrack', async () => {
+    await waitFor(() => {
+      screen.getByDisplayValue('proctortrack');
+    });
+    const proctoringBackendSelect = screen.getByDisplayValue('proctortrack');
+    const selectEscalationEmailElement = screen.getByTestId('escalationEmail');
+    expect(selectEscalationEmailElement.value).toEqual('test@example.com');
+    await act(async () => {
+      fireEvent.change(proctoringBackendSelect, { target: { value: 'software_secure' } });
+    });
+    expect(screen.queryByTestId('escalationEmail')).toBeNull();
+  });
+
+  it('Escalation Email Field Show when proctoring backend is switched back to Proctortrack', async () => {
+    await waitFor(() => {
+      screen.getByDisplayValue('proctortrack');
+    });
+    const proctoringBackendSelect = screen.getByDisplayValue('proctortrack');
+    let selectEscalationEmailElement = screen.getByTestId('escalationEmail');
+    await act(async () => {
+      fireEvent.change(proctoringBackendSelect, { target: { value: 'software_secure' } });
+    });
+    expect(screen.queryByTestId('escalationEmail')).toBeNull();
+    await act(async () => {
+      fireEvent.change(proctoringBackendSelect, { target: { value: 'proctortrack' } });
+    });
+    expect(screen.queryByTestId('escalationEmail')).toBeDefined();
+    selectEscalationEmailElement = screen.getByTestId('escalationEmail');
+    expect(selectEscalationEmailElement.value).toEqual('test@example.com');
   });
 });
 
