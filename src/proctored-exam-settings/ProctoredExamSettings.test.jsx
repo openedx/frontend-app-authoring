@@ -10,7 +10,7 @@ const defaultProps = {
   courseId: 'course-v1%3AedX%2BDemoX%2BDemo_Course',
 };
 
-describe('ProctoredExamSettings check default on create zendesk ticket field tests', () => {
+describe('ProctoredExamSettings field dependency tests', () => {
   beforeEach(async () => {
     auth.getAuthenticatedHttpClient = jest.fn(() => ({
       get: async () => ({
@@ -25,7 +25,6 @@ describe('ProctoredExamSettings check default on create zendesk ticket field tes
           available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
           course_start_date: '2070-01-01T00:00:00Z',
         },
-        catch: () => {},
       }),
     }));
 
@@ -72,6 +71,61 @@ describe('ProctoredExamSettings check default on create zendesk ticket field tes
     const zendeskTicketInput = screen.getByTestId('createZendeskTicketsYes');
     expect(zendeskTicketInput.checked).toEqual(true);
   });
+
+  it('Hides all other fields when enabledProctorExam is false when first loaded', async () => {
+    cleanup();
+    auth.getAuthenticatedHttpClient = jest.fn(() => ({
+      get: async () => ({
+        data: {
+          proctored_exam_settings: {
+            enable_proctored_exams: false,
+            allow_proctoring_opt_out: false,
+            proctoring_provider: 'mockproc',
+            proctoring_escalation_email: 'test@example.com',
+            create_zendesk_tickets: true,
+          },
+          available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
+          course_start_date: '2070-01-01T00:00:00Z',
+        },
+      }),
+    }));
+
+    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await waitFor(() => {
+      screen.getByLabelText('Enable Proctored Exams');
+    });
+    const enabledProctoredExamCheck = screen.getByLabelText('Enable Proctored Exams');
+    expect(enabledProctoredExamCheck.checked).toEqual(false);
+    expect(screen.queryByText('Allow Opting Out of Proctored Exams')).toBeNull();
+    expect(screen.queryByDisplayValue('mockproc')).toBeNull();
+    expect(screen.queryByTestId('escalationEmail')).toBeNull();
+    expect(screen.queryByTestId('createZendeskTicketsYes')).toBeNull();
+    expect(screen.queryByTestId('createZendeskTicketsNo')).toBeNull();
+  });
+
+  it('Hides all other fields when enableProctoredExams toggled to false', async () => {
+    await waitFor(() => {
+      screen.getByLabelText('Enable Proctored Exams');
+    });
+    expect(screen.queryByText('Allow Opting Out of Proctored Exams')).toBeDefined();
+    expect(screen.queryByDisplayValue('mockproc')).toBeDefined();
+    expect(screen.queryByTestId('escalationEmail')).toBeDefined();
+    expect(screen.queryByTestId('createZendeskTicketsYes')).toBeDefined();
+    expect(screen.queryByTestId('createZendeskTicketsNo')).toBeDefined();
+
+    let enabledProctorExamCheck = screen.getByLabelText('Enable Proctored Exams');
+    expect(enabledProctorExamCheck.checked).toEqual(true);
+    await act(async () => {
+      fireEvent.click(enabledProctorExamCheck, { target: { value: false } });
+    });
+    enabledProctorExamCheck = screen.getByLabelText('Enable Proctored Exams');
+    expect(enabledProctorExamCheck.checked).toEqual(false);
+    expect(screen.queryByText('Allow Opting Out of Proctored Exams')).toBeNull();
+    expect(screen.queryByDisplayValue('mockproc')).toBeNull();
+    expect(screen.queryByTestId('escalationEmail')).toBeNull();
+    expect(screen.queryByTestId('createZendeskTicketsYes')).toBeNull();
+    expect(screen.queryByTestId('createZendeskTicketsNo')).toBeNull();
+  });
 });
 
 describe('ProctoredExamSettings tests with escalation email', () => {
@@ -90,7 +144,7 @@ describe('ProctoredExamSettings tests with escalation email', () => {
           course_start_date: '2070-01-01T00:00:00Z',
         },
       }),
-      post: async () => ({}),
+      post: async () => {},
     }));
 
     auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: false }));
