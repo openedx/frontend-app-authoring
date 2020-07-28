@@ -128,7 +128,7 @@ describe('ProctoredExamSettings field dependency tests', () => {
   });
 });
 
-describe('ProctoredExamSettings tests with escalation email', () => {
+describe('ProctoredExamSettings validation with invalid escalation email', () => {
   beforeEach(async () => {
     auth.getAuthenticatedHttpClient = jest.fn(() => ({
       get: async () => ({
@@ -167,8 +167,20 @@ describe('ProctoredExamSettings tests with escalation email', () => {
     await act(async () => {
       fireEvent.click(selectButton);
     });
+
+    // verify alert content and focus management
     const escalationEmailError = screen.getByTestId('proctortrackEscalationEmailError');
     expect(escalationEmailError.textContent).not.toBeNull();
+    expect(document.activeElement).toEqual(escalationEmailError);
+
+    // verify alert link links to offending input
+    const errorLink = screen.getByTestId('proctorTrackEscalationEmailErrorLink');
+    await act(async () => {
+      fireEvent.click(errorLink);
+    });
+    fireEvent.click(errorLink);
+    const escalationEmailInput = screen.getByTestId('escalationEmail');
+    expect(document.activeElement).toEqual(escalationEmailInput);
   });
 
   it('creates an alert when invalid proctoring escalation email is provided with proctortrack selected', async () => {
@@ -183,8 +195,21 @@ describe('ProctoredExamSettings tests with escalation email', () => {
     await act(async () => {
       fireEvent.click(selectButton);
     });
+
+    // verify alert content and focus management
     const escalationEmailError = screen.getByTestId('proctortrackEscalationEmailError');
+    expect(document.activeElement).toEqual(escalationEmailError);
     expect(escalationEmailError.textContent).not.toBeNull();
+    expect(document.activeElement).toEqual(escalationEmailError);
+
+    // verify alert link links to offending input
+    const errorLink = screen.getByTestId('proctorTrackEscalationEmailErrorLink');
+    await act(async () => {
+      fireEvent.click(errorLink);
+    });
+    fireEvent.click(errorLink);
+    const escalationEmailInput = screen.getByTestId('escalationEmail');
+    expect(document.activeElement).toEqual(escalationEmailInput);
   });
 
   it('has no error when valid proctoring escalation email is provided with proctortrack selected', async () => {
@@ -199,8 +224,10 @@ describe('ProctoredExamSettings tests with escalation email', () => {
     await act(async () => {
       fireEvent.click(selectButton);
     });
-    const escalationEmailError = screen.queryByTestId('proctortrackEscalationEmailError');
-    expect(escalationEmailError).toBeNull();
+
+    // verify there is no alert and focus is maintained on the button
+    expect(screen.queryByTestId('proctortrackEscalationEmailError')).toBeNull();
+    expect(document.activeElement).toEqual(selectButton);
   });
 
   it('Escalation Email field hidden when proctoring backend is not Proctortrack', async () => {
