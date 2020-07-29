@@ -14,6 +14,7 @@ import Footer, { messages as footerMessages } from '@edx/frontend-component-foot
 import appMessages from './i18n';
 import ExamplePage from './example/ExamplePage';
 import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettings';
+import StudioHeader from './studio-header/Header';
 
 import './index.scss';
 import './assets/favicon.ico';
@@ -21,16 +22,22 @@ import './assets/favicon.ico';
 subscribe(APP_READY, () => {
   ReactDOM.render(
     <AppProvider>
-      <Header />
       <Switch>
         <Route
           path="/proctored-exam-settings/:course_id"
           exact
-          render={({ match }) => (
-            <ProctoredExamSettings courseId={match.params.course_id} />
-          )}
+          render={({ match }) => {
+            const courseId = decodeURIComponent(match.params.course_id);
+            return (
+              <>
+                <StudioHeader courseId={courseId} />
+                <ProctoredExamSettings courseId={courseId} />
+              </>
+            );
+          }}
         />
         <Route path="/example">
+          <Header />
           <ExamplePage />
         </Route>
       </Switch>

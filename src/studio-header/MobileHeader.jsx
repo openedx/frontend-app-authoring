@@ -1,15 +1,11 @@
 // This file was copied from edx/frontend-component-header-edx.
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-
+import { injectIntl } from '@edx/frontend-platform/i18n';
 // Local Components
 import { Menu, MenuTrigger, MenuContent } from './Menu';
 import Avatar from './Avatar';
 import { LinkedLogo, Logo } from './Logo';
-
-// i18n
-import messages from './Header.messages';
 
 // Assets
 import { MenuIcon } from './Icons';
@@ -23,7 +19,9 @@ class MobileHeader extends React.Component {
     const { mainMenu } = this.props;
 
     // Nodes are accepted as a prop
-    if (!Array.isArray(mainMenu)) return mainMenu;
+    if (!Array.isArray(mainMenu)) {
+      return mainMenu;
+    }
 
     return mainMenu.map((menuItem) => {
       const {
@@ -64,76 +62,60 @@ class MobileHeader extends React.Component {
     ));
   }
 
-  renderLoggedOutItems() {
-    const { loggedOutItems } = this.props;
-
-    return loggedOutItems.map(({ type, href, content }, i, arr) => (
-      <li className="nav-item px-3 my-2" key={`${type}-${content}`}>
-        <a
-          className={i < arr.length - 1 ? 'btn btn-block btn-outline-primary' : 'btn btn-block btn-primary'}
-          href={href}
-        >
-          {content}
-        </a>
-      </li>
-    ));
-  }
-
   render() {
     const {
       logo,
       logoAltText,
       logoDestination,
-      loggedIn,
       avatar,
       username,
       stickyOnMobile,
-      intl,
       mainMenu,
     } = this.props;
     const logoProps = { src: logo, alt: logoAltText, href: logoDestination };
     const stickyClassName = stickyOnMobile ? 'sticky-top' : '';
-
     return (
       <header
-        aria-label={intl.formatMessage(messages['header.label.main.header'])}
+        aria-label="Main"
         className={`site-header-mobile d-flex justify-content-between align-items-center shadow ${stickyClassName}`}
       >
         <div className="w-100 d-flex justify-content-start">
-          {mainMenu.length > 0 ?
-            <Menu className="position-static">
-              <MenuTrigger
-                tag="button"
-                className="icon-button"
-                aria-label={intl.formatMessage(messages['header.label.main.menu'])}
-                title={intl.formatMessage(messages['header.label.main.menu'])}
-              >
-                <MenuIcon role="img" aria-hidden focusable="false" style={{ width: '1.5rem', height: '1.5rem' }} />
-              </MenuTrigger>
-              <MenuContent
-                tag="nav"
-                aria-label={intl.formatMessage(messages['header.label.main.nav'])}
-                className="nav flex-column pin-left pin-right border-top shadow py-2"
-              >
-                {this.renderMainMenu()}
-              </MenuContent>
-            </Menu> : null }
+          {mainMenu.length > 0
+            ? (
+              <Menu className="position-static">
+                <MenuTrigger
+                  tag="button"
+                  className="icon-button"
+                  aria-label="Main Menu"
+                  title="Main Menu"
+                >
+                  <MenuIcon role="img" aria-hidden focusable="false" style={{ width: '1.5rem', height: '1.5rem' }} />
+                </MenuTrigger>
+                <MenuContent
+                  tag="nav"
+                  aria-label="Main"
+                  className="nav flex-column pin-left pin-right border-top shadow py-2"
+                >
+                  {this.renderMainMenu()}
+                </MenuContent>
+              </Menu>
+            ) : null}
         </div>
         <div className="w-100 d-flex justify-content-center">
-          { logoDestination === null ? <Logo className="logo" src={logo} alt={logoAltText} /> : <LinkedLogo className="logo" {...logoProps} itemType="http://schema.org/Organization" />}
+          {logoDestination === null ? <Logo className="logo" src={logo} alt={logoAltText} /> : <LinkedLogo className="logo" {...logoProps} itemType="http://schema.org/Organization" />}
         </div>
         <div className="w-100 d-flex justify-content-end align-items-center">
-          <Menu tag="nav" aria-label={intl.formatMessage(messages['header.label.secondary.nav'])} className="position-static">
+          <Menu tag="nav" aria-label="Secondary" className="position-static">
             <MenuTrigger
               tag="button"
               className="icon-button"
-              aria-label={intl.formatMessage(messages['header.label.account.menu'])}
-              title={intl.formatMessage(messages['header.label.account.menu'])}
+              aria-label="Account Menu"
+              title="Account Menu"
             >
               <Avatar size="1.5rem" src={avatar} alt={username} />
             </MenuTrigger>
             <MenuContent tag="ul" className="nav flex-column pin-left pin-right border-top shadow py-2">
-              {loggedIn ? this.renderUserMenuItems() : this.renderLoggedOutItems()}
+              {this.renderUserMenuItems()}
             </MenuContent>
           </Menu>
         </div>
@@ -153,33 +135,22 @@ MobileHeader.propTypes = {
     href: PropTypes.string,
     content: PropTypes.string,
   })),
-  loggedOutItems: PropTypes.arrayOf(PropTypes.shape({
-    type: PropTypes.oneOf(['item', 'menu']),
-    href: PropTypes.string,
-    content: PropTypes.string,
-  })),
   logo: PropTypes.string,
   logoAltText: PropTypes.string,
   logoDestination: PropTypes.string,
   avatar: PropTypes.string,
   username: PropTypes.string,
-  loggedIn: PropTypes.bool,
   stickyOnMobile: PropTypes.bool,
-
-  // i18n
-  intl: intlShape.isRequired,
 };
 
 MobileHeader.defaultProps = {
   mainMenu: [],
   userMenu: [],
-  loggedOutItems: [],
   logo: null,
   logoAltText: null,
   logoDestination: null,
   avatar: null,
   username: null,
-  loggedIn: false,
   stickyOnMobile: true,
 
 };

@@ -1,15 +1,12 @@
 // This file was copied from edx/frontend-component-header-edx.
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { injectIntl } from '@edx/frontend-platform/i18n';
 
 // Local Components
 import { Menu, MenuTrigger, MenuContent } from './Menu';
 import Avatar from './Avatar';
 import { LinkedLogo, Logo } from './Logo';
-
-// i18n
-import messages from './Header.messages';
 
 // Assets
 import { CaretIcon } from './Icons';
@@ -23,7 +20,9 @@ class DesktopHeader extends React.Component {
     const { mainMenu } = this.props;
 
     // Nodes are accepted as a prop
-    if (!Array.isArray(mainMenu)) return mainMenu;
+    if (!Array.isArray(mainMenu)) {
+      return mainMenu;
+    }
 
     return mainMenu.map((menuItem) => {
       const {
@@ -57,14 +56,13 @@ class DesktopHeader extends React.Component {
       userMenu,
       avatar,
       username,
-      intl,
     } = this.props;
 
     return (
       <Menu transitionClassName="menu-dropdown" transitionTimeout={250}>
         <MenuTrigger
           tag="button"
-          aria-label={intl.formatMessage(messages['header.label.account.menu.for'], { username })}
+          aria-label={`Account menu for ${username}`}
           className="btn btn-light d-inline-flex align-items-center pl-2 pr-3"
         >
           <Avatar size="1.5em" src={avatar} alt="" className="mr-2" />
@@ -79,27 +77,12 @@ class DesktopHeader extends React.Component {
     );
   }
 
-  renderLoggedOutItems() {
-    const { loggedOutItems } = this.props;
-
-    return loggedOutItems.map((item, i, arr) => (
-      <a
-        key={`${item.type}-${item.content}`}
-        className={i < arr.length - 1 ? 'btn mr-2 btn-link' : 'btn mr-2 btn-outline-primary'}
-        href={item.href}
-      >
-        {item.content}
-      </a>
-    ));
-  }
-
   render() {
     const {
       logo,
       logoAltText,
       logoDestination,
-      loggedIn,
-      intl,
+      courseTitleDestination,
     } = this.props;
     const logoProps = { src: logo, alt: logoAltText, href: logoDestination };
 
@@ -107,18 +90,29 @@ class DesktopHeader extends React.Component {
       <header className="site-header-desktop">
         <div className="container-fluid">
           <div className="nav-container position-relative d-flex align-items-center">
-            { logoDestination === null ? <Logo className="logo" src={logo} alt={logoAltText} /> : <LinkedLogo className="logo" {...logoProps} />}
+            {logoDestination === null ? <Logo className="logo" src={logo} alt={logoAltText} /> : <LinkedLogo className="logo" {...logoProps} />}
+            {/* This lockup HTML was copied from edx/frontend-app-learning/src/course-header/Header.jsx. */}
+            <a
+              className="course-title-lockup"
+              style={{ lineHeight: 1 }}
+              href={courseTitleDestination}
+              aria-label="Back to course outline in Studio"
+            >
+              {this.props.courseId}
+            </a>
             <nav
-              aria-label={intl.formatMessage(messages['header.label.main.nav'])}
+              aria-label="Main"
               className="nav main-nav"
             >
-              {this.renderMainMenu()}
+              {/* TODO: Create main menu items to populate main navigation. */}
+              {/* {this.renderMainMenu()} */}
+              <a style={{ paddingLeft: '1rem' }} href={courseTitleDestination}>Back to Studio Course Outline</a>
             </nav>
             <nav
-              aria-label={intl.formatMessage(messages['header.label.secondary.nav'])}
+              aria-label="Secondary"
               className="nav secondary-menu-container align-items-center ml-auto"
             >
-              {loggedIn ? this.renderUserMenu() : this.renderLoggedOutItems()}
+              {this.renderUserMenu()}
             </nav>
           </div>
         </div>
@@ -137,29 +131,24 @@ DesktopHeader.propTypes = {
     href: PropTypes.string,
     content: PropTypes.string,
   })),
-  loggedOutItems: PropTypes.arrayOf(PropTypes.shape({
-    type: PropTypes.oneOf(['item', 'menu']),
-    href: PropTypes.string,
-    content: PropTypes.string,
-  })),
   logo: PropTypes.string,
   logoAltText: PropTypes.string,
   logoDestination: PropTypes.string,
+  courseTitleDestination: PropTypes.string,
+  courseId: PropTypes.string,
   avatar: PropTypes.string,
   username: PropTypes.string,
   loggedIn: PropTypes.bool,
-
-  // i18n
-  intl: intlShape.isRequired,
 };
 
 DesktopHeader.defaultProps = {
   mainMenu: [],
   userMenu: [],
-  loggedOutItems: [],
   logo: null,
   logoAltText: null,
   logoDestination: null,
+  courseTitleDestination: null,
+  courseId: null,
   avatar: null,
   username: null,
   loggedIn: false,

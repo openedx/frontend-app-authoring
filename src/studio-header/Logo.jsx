@@ -2,7 +2,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-
 function Logo({ src, alt, ...attributes }) {
   return (
     <img src={src} alt={alt} {...attributes} />
