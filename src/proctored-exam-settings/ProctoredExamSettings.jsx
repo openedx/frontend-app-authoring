@@ -201,6 +201,7 @@ function ExamSettings(props) {
             aria-describedby="enableProctoredExamsHelpText"
             onChange={onEnableProctoredExamsChange}
             checked={enableProctoredExams}
+            inline
           />
           <Form.Text id="enableProctoredExamsHelpText">
             If checked, proctored exams are enabled in your course.
