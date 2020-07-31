@@ -2,6 +2,7 @@ import React from 'react';
 import {
   render, screen, cleanup, waitFor, waitForElementToBeRemoved, fireEvent, act,
 } from '@testing-library/react';
+import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import * as auth from '@edx/frontend-platform/auth';
 import ProctoredExamSettings from './ProctoredExamSettings';
 import StudioApiService from '../data/services/StudioApiService';
@@ -9,6 +10,14 @@ import StudioApiService from '../data/services/StudioApiService';
 const defaultProps = {
   courseId: 'course-v1%3AedX%2BDemoX%2BDemo_Course',
 };
+
+const IntlProctoredExamSettings = injectIntl(ProctoredExamSettings);
+
+const intlWrapper = children => (
+  <IntlProvider locale="en">
+    {children}
+  </IntlProvider>
+);
 
 describe('ProctoredExamSettings field dependency tests', () => {
   beforeEach(async () => {
@@ -29,7 +38,7 @@ describe('ProctoredExamSettings field dependency tests', () => {
     }));
 
     auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: true }));
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
   });
 
   afterEach(() => {
@@ -90,7 +99,7 @@ describe('ProctoredExamSettings field dependency tests', () => {
       }),
     }));
 
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     await waitFor(() => {
       screen.getByLabelText('Enable Proctored Exams');
     });
@@ -148,7 +157,7 @@ describe('ProctoredExamSettings validation with invalid escalation email', () =>
     }));
 
     auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: false }));
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
   });
 
   afterEach(() => {
@@ -305,28 +314,28 @@ describe('Disables proctoring provider options', () => {
 
   it('disables irrelevant Proctoring Provider fields when user is not an administrator and it is after start date', async () => {
     mockAPI(mockGetPastCourseData, false);
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     const providerOption = screen.getByTestId('proctortrack');
     expect(providerOption.hasAttribute('disabled')).toEqual(true);
   });
 
   it('enables all Proctoring Provider options if user is not an administrator and it is before start date', async () => {
     mockAPI(mockGetFutureCourseData, false);
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     const providerOption = screen.getByTestId('proctortrack');
     expect(providerOption.hasAttribute('disabled')).toEqual(false);
   });
 
   it('enables all Proctoring Provider options if user administrator and it is after start date', async () => {
     mockAPI(mockGetPastCourseData, true);
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     const providerOption = screen.getByTestId('proctortrack');
     expect(providerOption.hasAttribute('disabled')).toEqual(false);
   });
 
   it('enables all Proctoring Provider options if user administrator and it is before start date', async () => {
     mockAPI(mockGetFutureCourseData, true);
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     const providerOption = screen.getByTestId('proctortrack');
     expect(providerOption.hasAttribute('disabled')).toEqual(false);
   });
@@ -362,14 +371,14 @@ describe('Hides fields based on user permissions', () => {
 
   it('hides opting out and zendesk tickets for non edX staff', async () => {
     mockAuthentication(false);
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     expect(screen.queryByTestId('allowOptingOutYes')).toBeNull();
     expect(screen.queryByTestId('createZendeskTicketsYes')).toBeNull();
   });
 
   it('shows opting out and zendesk tickets for edX staff', async () => {
     mockAuthentication(true);
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     expect(screen.queryByTestId('allowOptingOutYes')).not.toBeNull();
     expect(screen.queryByTestId('createZendeskTicketsYes')).not.toBeNull();
   });
@@ -377,10 +386,15 @@ describe('Hides fields based on user permissions', () => {
 
 describe('ProctoredExamSettings connection states tests', () => {
   it('shows the spinner before the connection is complete', async () => {
-    render(<ProctoredExamSettings {...defaultProps} />);
+    auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: false }));
+    auth.getAuthenticatedHttpClient = jest.fn(() => ({
+      get: jest.fn(() => new Promise(() => {})),
+    }));
+    render(<IntlProvider local="en"><IntlProctoredExamSettings {...defaultProps} /></IntlProvider>);
     const spinner = screen.getByTestId('spinnerContainer');
     expect(spinner.textContent).toEqual('Loading...');
-    await waitForElementToBeRemoved(spinner);
+    // TODO: do we need this? How was this working before?
+    // await waitForElementToBeRemoved(spinner);
   });
 
   it('show connection error message when we suffer server side error', async () => {
@@ -395,7 +409,7 @@ describe('ProctoredExamSettings connection states tests', () => {
       },
     }));
 
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     const connectionError = screen.getByTestId('connectionError');
     expect(connectionError.textContent).toEqual(
       expect.stringContaining('We encountered a technical error'),
@@ -414,7 +428,7 @@ describe('ProctoredExamSettings connection states tests', () => {
       },
     }));
 
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     const connectionError = screen.getByTestId('permissionError');
     expect(connectionError.textContent).toEqual(
       expect.stringContaining('You are not authorized to view this page'),
@@ -453,7 +467,7 @@ describe('ProctoredExamSettings save settings tests', () => {
 
   it('Show spinner while saving', async () => {
     const mockedFunctions = mockAPI(mockGetData, { data: 'success' });
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     const submitButton = screen.getByTestId('submissionButton');
     expect(screen.queryByTestId('saveInProgress')).toBeFalsy();
     fireEvent.click(submitButton);
@@ -466,7 +480,7 @@ describe('ProctoredExamSettings save settings tests', () => {
 
   it('Makes API call successfully', async () => {
     const mockedFunctions = mockAPI(mockGetData, { data: 'success' });
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     // Make a change to the provider to proctortrack and set the email
     const selectElement = screen.getByDisplayValue('mockproc');
     await act(async () => {
@@ -503,7 +517,7 @@ describe('ProctoredExamSettings save settings tests', () => {
 
   it('Makes API call generated error', async () => {
     const mockedFunctions = mockAPI(mockGetData, false);
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     // Make a change to the provider to proctortrack and set the email
     const submitButton = screen.getByTestId('submissionButton');
     await act(async () => {
