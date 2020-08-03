@@ -1,0 +1,12 @@
+// This SCSS was copied from edx/frontend-app-learning/src/index.scss.
+.course-title-lockup {
+    padding: 1rem 0;
+    padding-right: 1rem;
+    border-right: 1px solid #e5e5e5;
+    min-width: 0;
+    span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+}

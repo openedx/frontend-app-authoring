@@ -50,8 +50,10 @@
     "react": "16.12.0",
     "react-dom": "16.12.0",
     "react-redux": "7.1.3",
+    "react-responsive": "^8.1.0",
     "react-router": "5.1.2",
     "react-router-dom": "5.1.2",
+    "react-transition-group": "^4.4.1",
     "redux": "4.0.5"
   },
   "devDependencies": {
@@ -64,6 +66,7 @@
     "glob": "7.1.6",
     "husky": "3.1.0",
     "jest": "24.9.0",
-    "reactifex": "1.1.1"
+    "reactifex": "1.1.1",
+    "react-test-renderer": "16.9.0"
   }
 }
