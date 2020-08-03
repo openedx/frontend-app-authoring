@@ -447,7 +447,7 @@ describe('ProctoredExamSettings save settings tests', () => {
       get: mockClientGet,
       post: mockClientPost,
     }));
-    auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3 }));
+    auth.getAuthenticatedUser = jest.fn(() => ({ userId: 3, administrator: true }));
     return { mockClientGet, mockClientPost };
   }
 
