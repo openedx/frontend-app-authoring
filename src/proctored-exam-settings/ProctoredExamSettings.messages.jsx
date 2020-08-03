@@ -1,11 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-  'authoring.examsettings.allowoptout.help': {
-    id: 'authoring.examsettings.allowoptout.help',
-    defaultMessage: 'If this value is "Yes", learners can choose to take proctored exams without proctoring. If this value is "No", all learners must take the exam with proctoring. This setting only applies if proctored exams are enabled for the course.',
-    description: '',
-  },
   'authoring.examsettings.allowoptout.no': {
     id: 'authoring.examsettings.allowoptout.no',
     defaultMessage: 'No',
@@ -19,6 +14,11 @@ const messages = defineMessages({
   'authoring.examsettings.createzendesk.no': {
     id: 'authoring.examsettings.createzendesk.no',
     defaultMessage: 'No',
+    description: '',
+  },
+  'authoring.examsettings.support.text': {
+    id: 'authoring.examsettings.support.text',
+    defaultMessage: 'edX Support Page',
     description: '',
   },
   'authoring.examsettings.createzendesk.yes': {
@@ -49,11 +49,6 @@ const messages = defineMessages({
   'authoring.examsettings.escalationemail.error.multiple': {
     id: 'authoring.examsettings.escalationemail.error.multiple',
     defaultMessage: 'There are {numOfErrors} errors in this form.',
-    description: '',
-  },
-  'authoring.examsettings.escalationemail.help': {
-    id: 'authoring.examsettings.escalationemail.help',
-    defaultMessage: 'Required if "proctortrack" is selected as your proctoring provider.Enter an email address to be contacted by the support team whenever there are escalations (e.g. appeals, delayed reviews, etc.).',
     description: '',
   },
   'authoring.examsettings.provider.label': {

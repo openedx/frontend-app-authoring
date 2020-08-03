@@ -250,7 +250,15 @@ function ExamSettings(props) {
                 data-test-id="allowOptingOutNo"
               />
               <Form.Text id="allowOptingOutHelpText">
-                {props.intl.formatMessage(messages['authoring.examsettings.allowoptout.help'])}
+                <FormattedMessage
+                  id="authoring.examsettings.allowoptout.help"
+                  defaultMessage={`
+                    If this value is "Yes", learners can choose to take proctored exams without proctoring. 
+                    If this value is "No", all learners must take the exam with proctoring. 
+                    This setting only applies if proctored exams are enabled for the course.
+                  `}
+                  description=""
+                />
               </Form.Text>
             </Form.Group>
           </fieldset>
@@ -301,7 +309,14 @@ function ExamSettings(props) {
             />
             <Form.Control.Feedback type="invalid">{formStatus.errors.formProctortrackEscalationEmail && formStatus.errors.formProctortrackEscalationEmail.inputErrorMessage} </Form.Control.Feedback>
             <Form.Text id="proctortrackEscalationEmailHelpText">
-              {props.intl.formatMessage(messages['authoring.examsettings.escalationemail.help'])}
+              <FormattedMessage
+                id="authoring.examsettings.escalationemail.help"
+                defaultMessage={`
+                  Required if "proctortrack" is selected as your proctoring provider.Enter an email address to be 
+                  contacted by the support team whenever there are escalations (e.g. appeals, delayed reviews, etc.).
+                `}
+                description=""
+              />
             </Form.Text>
           </Form.Group>
         )}
@@ -388,10 +403,15 @@ function ExamSettings(props) {
   function renderConnectionError() {
     return (
       <Alert variant="danger" data-test-id="connectionError">
-        We encountered a technical error when loading this page.
-        This might be a temporary issue, so please try again in a few minutes.
-        If the problem persists,
-        please go to <Alert.Link href="https://support.edx.org/hc/en-us">edX Support Page</Alert.Link> for help.
+        <FormattedMessage
+          id="authoring.examsettings.alert.error.connection"
+          defaultMessage={`
+            We encountered a technical error when loading this page. This might be a temporary issue, 
+            so please try again in a few minutes. If the problem persists, please go to {support_link} for help.
+          `}
+          values={{ support_link: <Alert.Link href="https://support.edx.org/hc/en-us">{props.intl.formatMessage(messages['authoring.examsettings.support.text'])}</Alert.Link> }}
+          description=""
+        />
       </Alert>
     );
   }
@@ -399,8 +419,13 @@ function ExamSettings(props) {
   function renderPermissionError() {
     return (
       <Alert variant="danger" data-test-id="permissionError">
-        You are not authorized to view this page. If you feel you should have access,
-        please reach out to your course team admin to be given access.
+        <FormattedMessage
+          id="authoring.examsettings.alert.error.permission"
+          defaultMessage={`
+            You are not authorized to view this page. If you feel you should have access,
+            please reach out to your course team admin to be given access.
+          `}
+        />
       </Alert>
     );
   }
@@ -414,8 +439,14 @@ function ExamSettings(props) {
         data-test-id="saveSuccess"
         onClose={() => setSaveSuccess(false)}
       >
-        Proctored exam settings saved successfully.
-        You can go back to your course in Studio <Alert.Link href={studioCourseRunURL}>here</Alert.Link>.
+        <FormattedMessage
+          id="authoring.examsettings.alert.success"
+          defaultMessage={`
+            Proctored exam settings saved successfully.
+            You can go back to your course in Studio {studioCourseRunURL}.
+          `}
+          values={{ studioCourseRunURL: <Alert.Link href={studioCourseRunURL}>here</Alert.Link> }}
+        />
       </Alert>
     );
   }
@@ -428,10 +459,16 @@ function ExamSettings(props) {
         data-test-id="saveError"
         onClose={() => setSaveError(false)}
       >
-        We encountered a technical error while trying to save proctored exam settings.
-        This might be a temporary issue, so please try again in a few minutes.
-        If the problem persists,
-        please go to <Alert.Link href="https://support.edx.org/hc/en-us">edX Support Page</Alert.Link> for help.
+        <FormattedMessage
+          id="authoring.examsettings.alert.success"
+          defaultMessage={`
+            We encountered a technical error while trying to save proctored exam settings.
+            This might be a temporary issue, so please try again in a few minutes.
+            If the problem persists,
+            please go to {support_link} for help.
+          `}
+          values={{ support_link: <Alert.Link href="https://support.edx.org/hc/en-us">{props.intl.formatMessage(messages['authoring.examsettings.support.text'])}</Alert.Link> }}
+        />
       </Alert>
     );
   }
