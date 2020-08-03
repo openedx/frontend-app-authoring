@@ -29,23 +29,38 @@ function Header({ courseId }) {
     },
   ];
 
-  const userMenu = authenticatedUser === null ? [] : [
-    {
-      type: 'item',
-      href: config.STUDIO_BASE_URL,
-      content: 'Studio Home',
-    },
-    {
-      type: 'item',
-      href: `${config.STUDIO_BASE_URL}/maintenance`,
-      content: 'Maintenance',
-    },
-    {
-      type: 'item',
-      href: config.LOGOUT_URL,
-      content: 'Sign Out',
-    },
-  ];
+  const studioHomeItem = {
+    type: 'item',
+    href: config.STUDIO_BASE_URL,
+    content: 'Studio Home',
+  };
+
+  const logoutItem = {
+    type: 'item',
+    href: config.LOGOUT_URL,
+    content: 'Sign Out',
+  };
+
+  let userMenu = [];
+
+  if (authenticatedUser !== null) {
+    if (authenticatedUser.administrator) {
+      userMenu = [
+        studioHomeItem,
+        {
+          type: 'item',
+          href: `${config.STUDIO_BASE_URL}/maintenance`,
+          content: 'Maintenance',
+        },
+        logoutItem,
+      ];
+    } else {
+      userMenu = [
+        studioHomeItem,
+        logoutItem,
+      ];
+    }
+  }
 
   const props = {
     logo: StudioLogoPNG,
