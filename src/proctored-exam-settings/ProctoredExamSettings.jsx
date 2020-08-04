@@ -171,7 +171,7 @@ function ExamSettings(props) {
   function getFormErrorMessage() {
     const numOfErrors = Object.keys(formStatus.errors).length;
     const errors = Object.entries(formStatus.errors).map(([id, error]) => <li key={id}>{error.dialogErrorMessage}</li>);
-    const messageId = numOfErrors > 1 ? 'authoring.examsettings.escalationemail.error.single' : 'authoring.examsettings.escalationemail.error.multiple';
+    const messageId = numOfErrors > 1 ? 'authoring.examsettings.error.single' : 'authoring.examsettings.error.multiple';
 
     return (
       <>
@@ -213,7 +213,7 @@ function ExamSettings(props) {
             <FormattedMessage
               id="authoring.examsettings.enableproctoredexams.help"
               defaultMessage="If checked, proctored exams are enabled in your course."
-              description=""
+              description="Help text for checkbox to enable proctored exams."
             />
           </Form.Text>
         </Form.Group>
@@ -226,7 +226,7 @@ function ExamSettings(props) {
                 <FormattedMessage
                   id="authoring.examsettings.allowoptout.label"
                   defaultMessage="Allow Opting Out of Proctored Exams"
-                  description=""
+                  description="Label for radio selection allowing proctored exam opt out"
                 />
               </Form.Label>
               <Form.Check
@@ -257,7 +257,7 @@ function ExamSettings(props) {
                     If this value is "No", all learners must take the exam with proctoring. 
                     This setting only applies if proctored exams are enabled for the course.
                   `}
-                  description=""
+                  description="Help text for proctored exam opt out radio selection"
                 />
               </Form.Text>
             </Form.Group>
@@ -271,7 +271,7 @@ function ExamSettings(props) {
             <FormattedMessage
               id="authoring.examsettings.provider.label"
               defaultMessage="Proctoring Provider"
-              description=""
+              description="Label for proctoring provider dropdown selection"
             />
           </Form.Label>
           <Form.Control
@@ -295,7 +295,7 @@ function ExamSettings(props) {
               <FormattedMessage
                 id="authoring.examsettings.escalationemail.label"
                 defaultMessage="Proctortrack Escalation Email"
-                description=""
+                description="Label for escalation email text field"
               />
             </Form.Label>
             <Form.Control
@@ -312,10 +312,10 @@ function ExamSettings(props) {
               <FormattedMessage
                 id="authoring.examsettings.escalationemail.help"
                 defaultMessage={`
-                  Required if "proctortrack" is selected as your proctoring provider.Enter an email address to be 
+                  Required if "proctortrack" is selected as your proctoring provider. Enter an email address to be 
                   contacted by the support team whenever there are escalations (e.g. appeals, delayed reviews, etc.).
                 `}
-                description=""
+                description="Help text explaining escalation email field."
               />
             </Form.Text>
           </Form.Group>
@@ -328,7 +328,7 @@ function ExamSettings(props) {
                 <FormattedMessage
                   id="authoring.examsettings.createzendesk.label"
                   defaultMessage="Create Zendesk Tickets for Suspicious Proctored Exam Attempts"
-                  description=""
+                  description="Label for Zendesk ticket creation radio select."
                 />
               </Form.Label>
               <Form.Check
@@ -355,7 +355,7 @@ function ExamSettings(props) {
                 <FormattedMessage
                   id="authoring.examsettings.createzendesk.help"
                   defaultMessage="If this value is &quot;Yes&quot;, a Zendesk ticket will be created for suspicious proctored exam attempts."
-                  description=""
+                  description="Help text for Zendesk ticket creation radio select"
                 />
               </Form.Text>
             </Form.Group>
@@ -370,7 +370,7 @@ function ExamSettings(props) {
           <FormattedMessage
             id="authoring.examsettings.submit"
             defaultMessage="Submit"
-            description=""
+            description="Form submit button"
           />
         </Button> {' '}
         {submissionInProgress && <Spinner animation="border" variant="primary" data-test-id="saveInProgress" aria-label="Save in progress" />}
@@ -460,7 +460,7 @@ function ExamSettings(props) {
         onClose={() => setSaveError(false)}
       >
         <FormattedMessage
-          id="authoring.examsettings.alert.success"
+          id="authoring.examsettings.alert.error"
           defaultMessage={`
             We encountered a technical error while trying to save proctored exam settings.
             This might be a temporary issue, so please try again in a few minutes.
