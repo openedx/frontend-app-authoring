@@ -393,8 +393,6 @@ describe('ProctoredExamSettings connection states tests', () => {
     render(<IntlProvider local="en"><IntlProctoredExamSettings {...defaultProps} /></IntlProvider>);
     const spinner = screen.getByTestId('spinnerContainer');
     expect(spinner.textContent).toEqual('Loading...');
-    // TODO: do we need this? How was this working before?
-    // await waitForElementToBeRemoved(spinner);
   });
 
   it('show connection error message when we suffer server side error', async () => {
