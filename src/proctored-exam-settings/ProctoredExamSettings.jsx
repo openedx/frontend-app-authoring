@@ -18,8 +18,6 @@ function ExamSettings(props) {
   const [allowOptingOut, setAllowOptingOut] = useState(false);
   const [proctoringProvider, setProctoringProvider] = useState('');
   const [availableProctoringProviders, setAvailableProctoringProviders] = useState([]);
-  // TODO: we'll probably want to hide this field when proctortrack is not selected; currently,
-  // this causes some errors in the browser console
   const [proctortrackEscalationEmail, setProctortrackEscalationEmail] = useState('');
   const [createZendeskTickets, setCreateZendeskTickets] = useState(false);
   const [courseStartDate, setCourseStartDate] = useState('');
@@ -78,13 +76,17 @@ function ExamSettings(props) {
       proctored_exam_settings: {
         enable_proctored_exams: enableProctoredExams,
         proctoring_provider: proctoringProvider,
-        proctoring_escalation_email: proctortrackEscalationEmail,
       },
     };
     if (isEdxStaff) {
       dataToPostBack.proctored_exam_settings.allow_proctoring_opt_out = allowOptingOut;
       dataToPostBack.proctored_exam_settings.create_zendesk_tickets = createZendeskTickets;
     }
+
+    if (proctoringProvider === 'proctortrack') {
+      dataToPostBack.proctored_exam_settings.proctoring_escalation_email = proctortrackEscalationEmail === '' ? null : proctortrackEscalationEmail;
+    }
+
     setSubmissionInProgress(true);
     StudioApiService.saveProctoredExamSettingsData(props.courseId, dataToPostBack).then(() => {
       setSaveSuccess(true);
@@ -409,7 +411,13 @@ function ExamSettings(props) {
             const isProctortrack = proctoredExamSettings.proctoring_provider === 'proctortrack';
             setShowProctortrackEscalationEmail(isProctortrack);
             setAvailableProctoringProviders(response.data.available_proctoring_providers);
-            setProctortrackEscalationEmail(proctoredExamSettings.proctoring_escalation_email);
+
+            // The backend API may return null for the proctoringEscalationEmail value, which is the default.
+            // In order to keep our email input component controlled, we use the empty string as the default
+            // and perform this conversion during GETs and POSTs.
+            const proctoringEscalationEmail = proctoredExamSettings.proctoring_escalation_email;
+            setProctortrackEscalationEmail(proctoringEscalationEmail === null ? '' : proctoringEscalationEmail);
+
             setCreateZendeskTickets(proctoredExamSettings.create_zendesk_tickets);
           },
         ).catch(

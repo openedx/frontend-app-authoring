@@ -464,7 +464,7 @@ describe('ProctoredExamSettings save settings tests', () => {
     expect(screen.queryByTestId('saveInProgress')).toBeFalsy();
   });
 
-  it('Makes API call successfully', async () => {
+  it('Makes API call successfully with proctoring_escalation_email if proctortrack', async () => {
     const mockedFunctions = mockAPI(mockGetData, { data: 'success' });
     await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
     // Make a change to the provider to proctortrack and set the email
@@ -492,6 +492,35 @@ describe('ProctoredExamSettings save settings tests', () => {
           proctoring_provider: 'proctortrack',
           proctoring_escalation_email: 'proctortrack@example.com',
           create_zendesk_tickets: false,
+        },
+      },
+    );
+    const errorAlert = screen.getByTestId('saveSuccess');
+    expect(errorAlert.textContent).toEqual(
+      expect.stringContaining('Proctored exam settings saved successfully.'),
+    );
+  });
+
+  it('Makes API call successfully without proctoring_escalation_email if not proctortrack', async () => {
+    const mockedFunctions = mockAPI(mockGetData, { data: 'success' });
+    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+
+    // make sure we have not selected proctortrack as the proctoring provider
+    expect(screen.getByDisplayValue('mockproc')).toBeDefined();
+
+    const submitButton = screen.getByTestId('submissionButton');
+    await act(async () => {
+      fireEvent.click(submitButton);
+    });
+    expect(mockedFunctions.mockClientPost).toHaveBeenCalled();
+    expect(mockedFunctions.mockClientPost).toHaveBeenCalledWith(
+      StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
+      {
+        proctored_exam_settings: {
+          enable_proctored_exams: true,
+          allow_proctoring_opt_out: false,
+          proctoring_provider: 'mockproc',
+          create_zendesk_tickets: true,
         },
       },
     );
