@@ -171,7 +171,7 @@ function ExamSettings(props) {
   function getFormErrorMessage() {
     const numOfErrors = Object.keys(formStatus.errors).length;
     const errors = Object.entries(formStatus.errors).map(([id, error]) => <li key={id}>{error.dialogErrorMessage}</li>);
-    const messageId = numOfErrors > 1 ? 'authoring.examsettings.error.single' : 'authoring.examsettings.error.multiple';
+    const messageId = numOfErrors > 1 ? 'authoring.examsettings.error.multiple' : 'authoring.examsettings.error.single';
 
     return (
       <>
