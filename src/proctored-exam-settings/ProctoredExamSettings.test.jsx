@@ -515,7 +515,7 @@ describe('ProctoredExamSettings save settings tests', () => {
 
   it('Makes API call successfully without proctoring_escalation_email if not proctortrack', async () => {
     const mockedFunctions = mockAPI(mockGetData, { data: 'success' });
-    await act(async () => render(<ProctoredExamSettings {...defaultProps} />));
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
 
     // make sure we have not selected proctortrack as the proctoring provider
     expect(screen.getByDisplayValue('mockproc')).toBeDefined();
