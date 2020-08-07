@@ -105,7 +105,8 @@ function ExamSettings(props) {
     });
   }
 
-  function onButtonClick() {
+  function handleSubmit(event) {
+    event.preventDefault();
     if (proctoringProvider === 'proctortrack' && !EmailValidator.validate(proctortrackEscalationEmail)) {
       if (proctortrackEscalationEmail === '') {
         const errorMessage = props.intl.formatMessage(messages['authoring.examsettings.escalationemail.error.blank']);
@@ -189,7 +190,7 @@ function ExamSettings(props) {
 
   function renderContent() {
     return (
-      <Form>
+      <Form onSubmit={handleSubmit} data-test-id="proctoringForm">
         {enableProctoredExams && !formStatus.isValid && formStatus.errors.formProctortrackEscalationEmail
           && (
             // tabIndex="-1" to make non-focusable element focusable
@@ -369,7 +370,7 @@ function ExamSettings(props) {
         <Button
           className="btn-primary mb-3"
           data-test-id="submissionButton"
-          onClick={onButtonClick}
+          type="submit"
           disabled={submissionInProgress}
         >
           <FormattedMessage
