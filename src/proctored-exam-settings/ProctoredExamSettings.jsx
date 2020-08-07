@@ -143,6 +143,11 @@ function ExamSettings(props) {
     }
   }
 
+  function handleSubmit(event) {
+    event.preventDefault();
+    onButtonClick();
+  }
+
   function cannotEditProctoringProvider() {
     const currentDate = moment(moment()).format('YYYY-MM-DD[T]hh:mm:ss[Z]');
     const isAfterCourseStart = currentDate > courseStartDate;
@@ -189,7 +194,7 @@ function ExamSettings(props) {
 
   function renderContent() {
     return (
-      <Form>
+      <Form onSubmit={handleSubmit} data-test-id="proctoringForm">
         {enableProctoredExams && !formStatus.isValid && formStatus.errors.formProctortrackEscalationEmail
           && (
             // tabIndex="-1" to make non-focusable element focusable

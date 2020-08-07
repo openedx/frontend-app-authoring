@@ -269,6 +269,21 @@ describe('ProctoredExamSettings validation with invalid escalation email', () =>
     selectEscalationEmailElement = screen.getByTestId('escalationEmail');
     expect(selectEscalationEmailElement.value).toEqual('test@example.com');
   });
+
+  it('submits form when "Enter" key is hit in the escalation email field', async () => {
+    await waitFor(() => {
+      screen.getByDisplayValue('proctortrack');
+    });
+    const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
+    await act(async () => {
+      fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
+    });
+    await act(async () => {
+      fireEvent.submit(selectEscalationEmailElement);
+    });
+    // if the error appears, the form has been submitted
+    expect(screen.getByTestId('proctortrackEscalationEmailError')).toBeDefined();
+  });
 });
 
 describe('Disables proctoring provider options', () => {
