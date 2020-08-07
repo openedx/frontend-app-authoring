@@ -105,7 +105,8 @@ function ExamSettings(props) {
     });
   }
 
-  function onButtonClick() {
+  function handleSubmit(event) {
+    event.preventDefault();
     if (proctoringProvider === 'proctortrack' && !EmailValidator.validate(proctortrackEscalationEmail)) {
       if (proctortrackEscalationEmail === '') {
         const errorMessage = props.intl.formatMessage(messages['authoring.examsettings.escalationemail.error.blank']);
@@ -141,11 +142,6 @@ function ExamSettings(props) {
         errors,
       });
     }
-  }
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    onButtonClick();
   }
 
   function cannotEditProctoringProvider() {
@@ -374,7 +370,7 @@ function ExamSettings(props) {
         <Button
           className="btn-primary mb-3"
           data-test-id="submissionButton"
-          onClick={onButtonClick}
+          type="submit"
           disabled={submissionInProgress}
         >
           <FormattedMessage
