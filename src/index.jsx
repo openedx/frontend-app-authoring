@@ -11,7 +11,13 @@ import Footer, { messages as footerMessages } from '@edx/frontend-component-foot
 import appMessages from './i18n';
 import store from './store';
 import { NotFoundPage } from './generic';
-import { LibraryDetailPage, StudioHeader, LibraryListPage } from './library-authoring';
+import {
+  ROUTES,
+  LibraryBlockPage,
+  LibraryDetailPage,
+  LibraryListPage,
+  StudioHeader,
+} from './library-authoring';
 import './index.scss';
 import './assets/favicon.ico';
 
@@ -27,8 +33,13 @@ subscribe(APP_READY, () => {
         <StudioHeader />
         <main>
           <Switch>
-            <Route exact path="/" component={LibraryListPage} />
-            <Route path="/library/:libraryId" component={LibraryDetailPage} />
+            <Route exact path={ROUTES.List.HOME} component={LibraryListPage} />
+            <Route exact path={ROUTES.Detail.HOME} component={LibraryDetailPage} />
+            <Route exact path={ROUTES.Block.HOME} component={LibraryBlockPage} />
+            <Route exact path={ROUTES.Block.EDIT} component={LibraryBlockPage} />
+            <Route exact path={ROUTES.Block.ASSETS} component={LibraryBlockPage} />
+            <Route exact path={ROUTES.Block.SOURCE} component={LibraryBlockPage} />
+            <Route exact path={ROUTES.Block.LEARN} component={LibraryBlockPage} />
             <Route path="*" component={NotFoundPage} />
           </Switch>
         </main>

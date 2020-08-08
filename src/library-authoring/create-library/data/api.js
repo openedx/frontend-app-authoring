@@ -8,7 +8,8 @@ ensureConfig([
   'BLOCKSTORE_COLLECTION_UUID',
 ], 'Library API service');
 
-async function createLibrary({ type, ...data }) {
+/* eslint-disable-next-line import/prefer-default-export */
+export async function createLibrary({ type, ...data }) {
   const client = getAuthenticatedHttpClient();
   const { STUDIO_BASE_URL, BLOCKSTORE_COLLECTION_UUID } = getConfig();
 
@@ -64,5 +65,3 @@ async function createLibrary({ type, ...data }) {
 
   return library;
 }
-
-export default createLibrary;

@@ -1,17 +1,20 @@
 import { configureStore } from '@reduxjs/toolkit';
 import {
+  libraryBlockReducer,
+  libraryBlockStoreName,
   libraryDetailReducer,
   libraryDetailStoreName,
-  libraryCreateFormReducer,
-  libraryCreateFormStoreName,
+  libraryCreateReducer,
+  libraryCreateStoreName,
   libraryListReducer,
   libraryListStoreName,
 } from './library-authoring';
 
 const store = configureStore({
   reducer: {
+    [libraryBlockStoreName]: libraryBlockReducer,
     [libraryDetailStoreName]: libraryDetailReducer,
-    [libraryCreateFormStoreName]: libraryCreateFormReducer,
+    [libraryCreateStoreName]: libraryCreateReducer,
     [libraryListStoreName]: libraryListReducer,
   },
 });

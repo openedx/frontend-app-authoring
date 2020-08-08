@@ -1,10 +1,10 @@
 import { createSelector } from 'reselect';
 import { initLibraryUrl } from '../../common';
-import { libraryCreateFormStoreName as storeName } from './slice';
+import { libraryCreateStoreName as storeName } from './slice';
 
 const stateSelector = state => ({ ...state[storeName] });
 
-const selectLibraryCreateForm = createSelector(
+const selectLibraryCreate = createSelector(
   stateSelector,
   (state) => ({
     ...state,
@@ -12,4 +12,4 @@ const selectLibraryCreateForm = createSelector(
   }),
 );
 
-export default selectLibraryCreateForm;
+export default selectLibraryCreate;

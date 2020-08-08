@@ -3,9 +3,9 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { SUBMISSION_STATUS } from '../../common';
 
-export const libraryCreateFormStoreName = 'libraryCreateForm';
+export const libraryCreateStoreName = 'libraryCreate';
 
-export const libraryCreateFormInitialState = {
+export const libraryCreateInitialState = {
   createdLibrary: null,
   errorMessage: null,
   errorFields: null,
@@ -13,30 +13,30 @@ export const libraryCreateFormInitialState = {
 };
 
 const slice = createSlice({
-  name: libraryCreateFormStoreName,
-  initialState: libraryCreateFormInitialState,
+  name: libraryCreateStoreName,
+  initialState: libraryCreateInitialState,
   reducers: {
-    libraryCreateFormRequest: (state) => {
+    libraryCreateRequest: (state) => {
       state.status = SUBMISSION_STATUS.SUBMITTING;
       state.createdLibrary = null;
     },
-    libraryCreateFormSuccess: (state, { payload }) => {
+    libraryCreateSuccess: (state, { payload }) => {
       state.createdLibrary = payload.library;
       state.status = SUBMISSION_STATUS.SUBMITTED;
     },
-    libraryCreateFormFailed: (state, { payload }) => {
+    libraryCreateFailed: (state, { payload }) => {
       state.errorMessage = payload.errorMessage;
       state.errorFields = payload.errorFields;
       state.status = SUBMISSION_STATUS.FAILED;
     },
-    libraryCreateFormReset: (state) => {
-      state.createdLibrary = libraryCreateFormInitialState.createdLibrary;
-      state.errorMessage = libraryCreateFormInitialState.errorMessage;
-      state.errorFields = libraryCreateFormInitialState.errorFields;
-      state.status = libraryCreateFormInitialState.status;
+    libraryCreateReset: (state) => {
+      state.createdLibrary = libraryCreateInitialState.createdLibrary;
+      state.errorMessage = libraryCreateInitialState.errorMessage;
+      state.errorFields = libraryCreateInitialState.errorFields;
+      state.status = libraryCreateInitialState.status;
     },
   },
 });
 
-export const libraryCreateFormActions = slice.actions;
-export const libraryCreateFormReducer = slice.reducer;
+export const libraryCreateActions = slice.actions;
+export const libraryCreateReducer = slice.reducer;

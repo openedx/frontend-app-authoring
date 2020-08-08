@@ -1,6 +1,6 @@
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 
-import { LIBRARY_TYPES } from './constants';
+import { LIBRARY_TYPES, BLOCK_TYPE_DENYLIST } from './constants';
 
 ensureConfig(['STUDIO_BASE_URL'], 'library utils');
 
@@ -21,6 +21,26 @@ export const initLibraryUrl = (library) => {
   return {
     ...library,
     url,
+  };
+};
+
+/** Remove unsupported block types from a library object. */
+export const filterSupportedBlockTypes = (library) => {
+  if (library === null) {
+    return null;
+  }
+
+  if (library.blockTypes === null) {
+    return library;
+  }
+
+  const blockTypes = library.blockTypes.filter(blockType => (
+    !BLOCK_TYPE_DENYLIST.includes(blockType.block_type)
+  ));
+
+  return {
+    ...library,
+    blockTypes,
   };
 };
 

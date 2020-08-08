@@ -74,7 +74,7 @@ class LibraryListPage extends React.Component {
               <ul>
                 <li className="nav-item">
                   <Button
-                    className="btn-success"
+                    variant="success"
                     onClick={this.showForm}
                   >
                     <FontAwesomeIcon icon={faPlus} className="pr-3" />

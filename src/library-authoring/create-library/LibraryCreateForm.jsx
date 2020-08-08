@@ -3,13 +3,16 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import {
-  Button, Icon, Input, StatefulButton, StatusAlert, ValidationFormGroup,
+  Button, Icon, Input, StatefulButton, Alert, ValidationFormGroup,
 } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { LIBRARY_TYPES, SUBMISSION_STATUS, libraryShape } from '../common';
 import {
-  createLibrary, libraryCreateFormInitialState, resetForm, selectLibraryCreateForm,
+  createLibrary,
+  libraryCreateInitialState,
+  resetForm,
+  selectLibraryCreate,
 } from './data';
 
 import messages from './messages';
@@ -122,8 +125,8 @@ class LibraryCreateForm extends React.Component {
         <fieldset>
           {errorMessage
           && (
-          <StatusAlert
-            alertType="danger"
+          <Alert
+            variant="danger"
             dialog={errorMessage}
             onClose={() => {}}
             open
@@ -260,10 +263,10 @@ LibraryCreateForm.propTypes = {
   status: PropTypes.oneOf(Object.values(SUBMISSION_STATUS)).isRequired,
 };
 
-LibraryCreateForm.defaultProps = libraryCreateFormInitialState;
+LibraryCreateForm.defaultProps = libraryCreateInitialState;
 
 export default connect(
-  selectLibraryCreateForm,
+  selectLibraryCreate,
   {
     resetForm,
     createLibrary,

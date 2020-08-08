@@ -1,6 +1,19 @@
 import PropTypes from 'prop-types';
 
-const libraryShape = PropTypes.shape({
+export const libraryBlockShape = PropTypes.shape({
+  id: PropTypes.string.isRequired,
+  def_key: PropTypes.string.isRequired,
+  block_type: PropTypes.string.isRequired,
+  display_name: PropTypes.string.isRequired,
+  has_unpublished_changes: PropTypes.bool.isRequired,
+});
+
+export const libraryBlockTypeShape = PropTypes.shape({
+  block_type: PropTypes.string.isRequired,
+  display_name: PropTypes.string.isRequired,
+});
+
+export const libraryShape = PropTypes.shape({
   id: PropTypes.string.isRequired,
   org: PropTypes.string.isRequired,
   slug: PropTypes.string.isRequired,
@@ -10,6 +23,6 @@ const libraryShape = PropTypes.shape({
   version: PropTypes.number,
   has_unpublished_changes: PropTypes.bool.isRequired,
   has_unpublished_deletes: PropTypes.bool.isRequired,
+  blocks: PropTypes.arrayOf(libraryBlockShape),
+  blockTypes: PropTypes.arrayOf(libraryBlockTypeShape),
 });
-
-export default libraryShape;

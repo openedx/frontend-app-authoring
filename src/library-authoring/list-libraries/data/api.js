@@ -5,6 +5,7 @@ import { LIBRARY_TYPES, unpackLibraryKey } from '../../common';
 
 ensureConfig(['STUDIO_BASE_URL'], 'library API service');
 
+/* eslint-disable-next-line import/prefer-default-export */
 export async function getLibraryList() {
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;
@@ -58,24 +59,4 @@ export async function getLibraryList() {
   });
 
   return libraries;
-}
-
-export async function createLibrary({ type, ...data }) {
-  const client = getAuthenticatedHttpClient();
-  const baseUrl = getConfig().STUDIO_BASE_URL;
-
-  let response;
-  if (type === LIBRARY_TYPES.COMPLEX) {
-    response = await client.post(`${baseUrl}/api/libraries/v2/`, { data });
-  } else if (type === LIBRARY_TYPES.LEGACY) {
-    response = await client.post(`${baseUrl}/library/`, {
-      org: data.org,
-      number: data.slug,
-      display_name: data.title,
-    });
-  } else {
-    throw new Error('Unknown library type.');
-  }
-
-  return response.data;
 }
