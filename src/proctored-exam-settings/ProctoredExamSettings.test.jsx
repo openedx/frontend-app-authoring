@@ -234,9 +234,14 @@ describe('ProctoredExamSettings validation with invalid escalation email', () =>
       fireEvent.click(selectButton);
     });
 
-    // verify there is no alert and focus is maintained on the button
+    // verify there is no escalation email alert, and focus has been set on save success alert
     expect(screen.queryByTestId('proctortrackEscalationEmailError')).toBeNull();
-    expect(document.activeElement).toEqual(selectButton);
+
+    const errorAlert = screen.getByTestId('saveSuccess');
+    expect(errorAlert.textContent).toEqual(
+      expect.stringContaining('Proctored exam settings saved successfully.'),
+    );
+    expect(document.activeElement).toEqual(errorAlert);
   });
 
   it('Escalation Email field hidden when proctoring backend is not Proctortrack', async () => {
@@ -526,6 +531,7 @@ describe('ProctoredExamSettings save settings tests', () => {
     expect(errorAlert.textContent).toEqual(
       expect.stringContaining('Proctored exam settings saved successfully.'),
     );
+    expect(document.activeElement).toEqual(errorAlert);
   });
 
   it('Makes API call successfully without proctoring_escalation_email if not proctortrack', async () => {
@@ -555,12 +561,12 @@ describe('ProctoredExamSettings save settings tests', () => {
     expect(errorAlert.textContent).toEqual(
       expect.stringContaining('Proctored exam settings saved successfully.'),
     );
+    expect(document.activeElement).toEqual(errorAlert);
   });
 
   it('Makes API call generated error', async () => {
     const mockedFunctions = mockAPI(mockGetData, false);
     await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
-    // Make a change to the provider to proctortrack and set the email
     const submitButton = screen.getByTestId('submissionButton');
     await act(async () => {
       fireEvent.click(submitButton);
@@ -570,6 +576,35 @@ describe('ProctoredExamSettings save settings tests', () => {
     expect(errorAlert.textContent).toEqual(
       expect.stringContaining('We encountered a technical error while trying to save proctored exam settings'),
     );
+    expect(document.activeElement).toEqual(errorAlert);
+  });
+
+  it('Manages focus correctly after different save statuses', async () => {
+    // first make a call that will cause a save error
+    const mockedFunctionsBadCall = mockAPI(mockGetData, false);
+    await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
+    const submitButton = screen.getByTestId('submissionButton');
+    await act(async () => {
+      fireEvent.click(submitButton);
+    });
+    expect(mockedFunctionsBadCall.mockClientPost).toHaveBeenCalled();
+    const errorAlert = screen.getByTestId('saveError');
+    expect(errorAlert.textContent).toEqual(
+      expect.stringContaining('We encountered a technical error while trying to save proctored exam settings'),
+    );
+    expect(document.activeElement).toEqual(errorAlert);
+
+    // now make a call that will allow for a successful save
+    const mockedFunctionsGoodCall = mockAPI(mockGetData, { data: 'success' });
+    await act(async () => {
+      fireEvent.click(submitButton);
+    });
+    expect(mockedFunctionsGoodCall.mockClientPost).toHaveBeenCalled();
+    const successAlert = screen.getByTestId('saveSuccess');
+    expect(successAlert.textContent).toEqual(
+      expect.stringContaining('Proctored exam settings saved successfully.'),
+    );
+    expect(document.activeElement).toEqual(successAlert);
   });
 
   afterEach(() => {

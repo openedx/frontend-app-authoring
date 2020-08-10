@@ -38,6 +38,7 @@ function ExamSettings(props) {
   });
 
   const alertRef = React.createRef();
+  const saveStatusAlertRef = React.createRef();
   const proctoringEscalationEmailInputRef = useRef(null);
 
   function onEnableProctoredExamsChange(event) {
@@ -260,8 +261,7 @@ function ExamSettings(props) {
                   id="authoring.examsettings.allowoptout.help"
                   defaultMessage={`
                     If this value is "Yes", learners can choose to take proctored exams without proctoring. 
-                    If this value is "No", all learners must take the exam with proctoring. 
-                    This setting only applies if proctored exams are enabled for the course.
+                    If this value is "No", all learners must take the exam with proctoring.
                   `}
                   description="Help text for proctored exam opt out radio selection"
                 />
@@ -443,6 +443,8 @@ function ExamSettings(props) {
         variant="success"
         dismissible
         data-test-id="saveSuccess"
+        tabIndex="-1"
+        ref={saveStatusAlertRef}
         onClose={() => setSaveSuccess(false)}
       >
         <FormattedMessage
@@ -463,6 +465,8 @@ function ExamSettings(props) {
         variant="danger"
         dismissible
         data-test-id="saveError"
+        tabIndex="-1"
+        ref={saveStatusAlertRef}
         onClose={() => setSaveError(false)}
       >
         <FormattedMessage
@@ -520,10 +524,13 @@ function ExamSettings(props) {
   );
 
   useEffect(() => {
+    if ((saveSuccess || saveError) && !!saveStatusAlertRef.current) {
+      saveStatusAlertRef.current.focus();
+    }
     if (!formStatus.isValid && !!alertRef.current) {
       alertRef.current.focus();
     }
-  }, [formStatus]);
+  }, [formStatus, saveSuccess, saveError]);
 
   return (
     <div className="container">
