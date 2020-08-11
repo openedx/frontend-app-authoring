@@ -1,0 +1,31 @@
+/* Adapted from:
+ * edx-platform/cms/static/sass/views/_dashboard.scss
+ */
+.library-index-tabs {
+  margin: 0;
+  padding: 0;
+  font-size: 1.4rem;
+
+  li {
+    display: inline-block;
+    line-height: $baseline*2;
+    margin: 0 10px;
+
+    &.active {
+      border-bottom: 4px solid #0075b4;
+    }
+
+    &.active,
+    &:hover {
+      a {
+        color: $gray-d2;
+      }
+    }
+
+    a {
+      color: #0075b4;
+      cursor: pointer;
+      display: inline-block;
+    }
+  }
+}

@@ -1,7 +1,7 @@
 |Build Status| |Codecov| |license|
 
-frontend-template-application
-=================================
+frontend-app-library-authoring
+==============================
 
 Please tag **@edx/fedx-team** on any PRs or issues.  Thanks.
 
@@ -54,9 +54,9 @@ Internationalization
 
 Please see `edx/frontend-platform's i18n module <https://edx.github.io/frontend-platform/module-Internationalization.html>`_ for documentation on internationalization.  The documentation explains how to use it, and the `How To <https://github.com/edx/frontend-i18n/blob/master/docs/how_tos/i18n.rst>`_ has more detail.
 
-.. |Build Status| image:: https://api.travis-ci.org/edx/frontend-template-application.svg?branch=master
-   :target: https://travis-ci.org/edx/frontend-template-application
-.. |Codecov| image:: https://codecov.io/gh/edx/frontend-template-application/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/edx/frontend-template-application
-.. |license| image:: https://img.shields.io/npm/l/@edx/frontend-template-application.svg
-   :target: @edx/frontend-template-application
+.. |Build Status| image:: https://api.travis-ci.org/edx/frontend-app-library-authoring.svg?branch=master
+   :target: https://travis-ci.org/edx/frontend-app-library-authoring
+.. |Codecov| image:: https://codecov.io/gh/edx/frontend-app-library-authoring/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/edx/frontend-app-library-authoring
+.. |license| image:: https://img.shields.io/npm/l/@edx/frontend-app-library-authoring.svg
+   :target: @edx/frontend-app-library-authoring

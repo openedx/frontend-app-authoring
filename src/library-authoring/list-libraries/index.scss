@@ -1,0 +1,113 @@
+/* Adapted from:
+ * edx-platform/cms/static/sass/views/_dashboard.scss
+ */
+.library-list-wrapper {
+  margin: 0;
+  font-size: 1.4rem;
+
+  .library-list {
+    border-radius: 3px;
+    border: 1px solid $gray-l2;
+    background: $white;
+    box-shadow: 0 1px 1px $shadow-l1;
+    padding: 0;
+    margin: 0;
+
+    li {
+      display: inline-block;
+      line-height: $baseline*2;
+      margin: 0;
+
+      a {
+        color: #0075b4;
+        cursor: pointer;
+        display: inline-block;
+        text-decoration: none;
+      }
+
+      &:hover {
+        a {
+          color: #065683;
+        }
+      }
+    }
+
+    li:last-child {
+      margin-bottom: 0;
+    }
+
+    .library-item {
+      box-sizing: border-box;
+      width: 100%;
+      position: relative;
+      border-bottom: 1px solid $gray-l2;
+
+      &:hover {
+        background: $paleYellow;
+      }
+
+      .library-link {
+        @extend %ui-depth2;
+        @include margin-right(2%);
+
+        width: 100%;
+        padding: $baseline;
+        box-sizing: border-box;
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      .library-title {
+        @extend %t-title4;
+
+        @include margin(0, ($baseline*2), ($baseline/4), 0);
+
+        font-weight: 300;
+      }
+
+      .library-metadata {
+        @extend %t-copy-sub1;
+
+        @include transition(opacity $tmg-f1 ease-in-out 0);
+
+        color: $gray-d2;
+
+        .metadata-item {
+          display: inline-block;
+
+          & + .metadata-item::before {
+            content: "/";
+            margin-left: ($baseline/4);
+            margin-right: ($baseline/4);
+            color: $gray-l4;
+          }
+
+          .label {
+            @extend %cont-text-sr;
+          }
+        }
+      }
+
+      &.is-processing {
+        .course-status .value {
+          color: $gray-l2;
+        }
+      }
+
+      &.has-error {
+        .course-status {
+          color: $red;
+        }
+
+        ~ .status-message {
+          background: $red-l1;
+          color: $white;
+        }
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}

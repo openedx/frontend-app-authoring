@@ -1,0 +1,1038 @@
+// Imported from:
+// edx-platform/cms/static/sass/assets/_fonts.scss
+@font-face {
+  font-family: 'Open Sans';
+  src:
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Light-webfont.woff2') format('woff2'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Light-webfont.woff') format('woff'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Light-webfont.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src:
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-LightItalic-webfont.woff2') format('woff2'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-LightItalic-webfont.woff') format('woff'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-LightItalic-webfont.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src:
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Regular-webfont.woff2') format('woff2'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Regular-webfont.woff') format('woff'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Regular-webfont.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src:
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Italic-webfont.woff2') format('woff2'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Italic-webfont.woff') format('woff'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Italic-webfont.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src:
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Semibold-webfont.woff2') format('woff2'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Semibold-webfont.woff') format('woff'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Semibold-webfont.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src:
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-SemiboldItalic-webfont.woff2') format('woff2'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-SemiboldItalic-webfont.woff') format('woff'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-SemiboldItalic-webfont.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src:
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Bold-webfont.woff2') format('woff2'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Bold-webfont.woff') format('woff'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-Bold-webfont.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src:
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-BoldItalic-webfont.woff2') format('woff2'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-BoldItalic-webfont.woff') format('woff'),
+    url('~edx-pattern-library/pattern-library/fonts/OpenSans/OpenSans-BoldItalic-webfont.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+// Imported from:
+// edx-platform/common/static/sass/bourbon/functions/_tint-shade.scss
+
+@function tint($color, $percent) {
+  @return mix(white, $color, $percent);
+}
+
+@function shade($color, $percent) {
+  @return mix(black, $color, $percent);
+}
+
+// Imported from:
+// edx-platform/common/static/sass/bourbon/functions/_flex-grid.scss
+
+@function flex-grid($columns, $container-columns: $fg-max-columns) {
+  $width: $columns * $fg-column + ($columns - 1) * $fg-gutter;
+  $container-width: $container-columns * $fg-column + ($container-columns - 1) * $fg-gutter;
+  @return percentage($width / $container-width);
+}
+
+@function flex-gutter($container-columns: $fg-max-columns, $gutter: $fg-gutter) {
+  $container-width: $container-columns * $fg-column + ($container-columns - 1) * $fg-gutter;
+  @return percentage($gutter / $container-width);
+}
+
+// Imported from:
+// edx-platform/common/static/sass/bourbon/addons/_prefixer.scss
+
+$prefix-for-webkit:    true !default;
+$prefix-for-mozilla:   true !default;
+$prefix-for-microsoft: true !default;
+$prefix-for-opera:     true !default;
+$prefix-for-spec:      true !default; // required for keyframe mixin
+
+@mixin prefixer ($property, $value, $prefixes) {
+  @each $prefix in $prefixes {
+    @if $prefix == webkit {
+      @if $prefix-for-webkit {
+        -webkit-#{$property}: $value;
+      }
+    }
+    @else if $prefix == moz {
+      @if $prefix-for-mozilla {
+        -moz-#{$property}: $value;
+      }
+    }
+    @else if $prefix == ms {
+      @if $prefix-for-microsoft {
+        -ms-#{$property}: $value;
+      }
+    }
+    @else if $prefix == o {
+      @if $prefix-for-opera {
+        -o-#{$property}: $value;
+      }
+    }
+    @else if $prefix == spec {
+      @if $prefix-for-spec {
+        #{$property}: $value;
+      }
+    }
+    @else  {
+      @warn "Unrecognized prefix: #{$prefix}";
+    }
+  }
+}
+
+// Imported from:
+// edx-platform/common/static/sass/bourbon/css3/_animation.scss
+
+@mixin animation ($animations...) {
+  @include prefixer(animation, $animations, spec);
+}
+
+// Imported from:
+// edx-platform/cms/static/sass/partials/cms/theme/_variables-v1.scss
+$baseline: 20px;
+$gw-column: ($baseline*3);
+$gw-gutter: $baseline;
+$fg-max-width: 1280px;
+$fg-min-width: 900px;
+$fg-column: $gw-column;
+$fg-gutter: $gw-gutter;
+$fg-max-columns: 12;
+$red: rgb(178, 6, 16) !default;  // #b20610;
+$red-l1: tint($red, 20%) !default;
+$black: rgb(0, 0, 0) !default;
+$paleYellow: #fffcf1 !default;
+$gray: rgb(127, 127, 127) !default;
+$gray-d1: shade($gray, 20%) !default;
+$gray-d2: shade($gray, 40%) !default;
+$gray-d3: shade($gray, 60%) !default;
+$gray-d4: shade($gray, 80%) !default;
+$gray-l1: tint($gray, 20%) !default;
+$gray-l2: tint($gray, 40%) !default;
+$gray-l3: tint($gray, 60%) !default;
+$gray-l4: tint($gray, 80%) !default;
+$gray-l5: tint($gray, 90%) !default;
+$gray-l6: tint($gray, 95%) !default;
+$shadow: rgba($black, 0.2) !default;
+$shadow-l1: rgba($black, 0.1) !default;
+$shadow-l2: rgba($black, 0.05) !default;
+$uxpl-blue-hover-active: rgb(6, 86, 131) !default; // wcag2a compliant
+$uxpl-grayscale-x-back: rgb(245, 245, 245) !default;
+$tmg-f1: 0.5s;
+$tmg-f2: 0.25s;
+$tmg-f3: 0.125s;
+$f-sans-serif: 'Open Sans','Helvetica Neue', Helvetica, Arial, sans-serif;
+
+// Imported from:
+// edx-platform/common/static/sass/_mixins.scss
+
+%cont-no-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+
+  li {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+%ui-window {
+  @include clearfix();
+
+  border-radius: ($baseline/10);
+  box-shadow: 0 1px 1px $shadow-l2;
+  margin-bottom: $baseline;
+  border: 1px solid $gray-l2;
+  background: $white;
+
+  // STATE: hover/active
+  &:hover,
+  &:active {
+    box-shadow: 0 1px 1px $shadow;
+  }
+}
+
+// Imported from:
+// edx-platform/cms/static/sass/assets/_anims.scss
+
+%anim-fadeIn {
+  @include animation(fadeIn $tmg-f2 linear 1);
+}
+
+%anim-fadeOut {
+  @include animation(fadeOut $tmg-f2 linear 1);
+}
+
+// Imported from:
+// edx-platform/cms/static/sass/_mixins.scss
+%ui-depth2 { z-index: 100; }
+%ui-depth3 { z-index: 1000; }
+
+%ui-disabled {
+  pointer-events: none;
+  outline: none;
+  cursor: default;
+}
+
+%cont-truncated {
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@mixin line-height($fontSize: auto) {
+  line-height: ($fontSize*1.48) + px;
+  line-height: (($fontSize/10)*1.48) + rem;
+}
+
+@mixin font-size($sizeValue: 16) {
+  font-size: $sizeValue + px;
+  font-size: ($sizeValue/10) + rem;
+}
+
+%cont-text-sr {
+  // clip has been deprecated but is still supported
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  position: absolute;
+  margin: -1px;
+  height: 1px;
+  width: 1px;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+  // ensure there are spaces in sr text
+  word-wrap: normal;
+}
+
+%ui-btn {
+  box-sizing: border-box;
+
+  @include transition(color $tmg-f2 ease-in-out 0s, border-color $tmg-f2 ease-in-out 0s, background $tmg-f2 ease-in-out 0s, box-shadow $tmg-f2 ease-in-out 0s);
+
+  display: inline-block;
+  cursor: pointer;
+
+  &.disabled,
+  &[disabled],
+  &.is-disabled {
+    cursor: default;
+    pointer-events: none;
+    border: 1px solid $gray-l3;
+    background-color: $gray-l3;
+    color: $gray-l5;
+  }
+
+  .icon-inline {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: ($baseline/4);
+  }
+}
+
+%ui-btn-pill {
+  border-radius: ($baseline/5);
+}
+
+%ui-fake-link {
+  cursor: pointer;
+}
+
+// Imported from:
+// edx-platform/cms/static/sass/elements/_typography.scss
+%t-regular {
+  font-weight: 400;
+}
+
+%t-copy {
+  font-family: $f-sans-serif;
+}
+
+%t-copy-base {
+  @extend %t-copy;
+
+  @include font-size(16);
+  @include line-height(16);
+}
+
+%t-copy-sub1 {
+  @extend %t-copy;
+
+  @include font-size(14);
+  @include line-height(14);
+}
+
+%t-copy-sub2 {
+  @extend %t-copy;
+
+  @include font-size(12);
+  @include line-height(12);
+}
+
+%t-title {
+  font-family: $f-sans-serif;
+}
+
+%t-title1 {
+  @extend %t-title;
+
+  @include font-size(60);
+  @include line-height(60);
+}
+
+%t-title2 {
+  @extend %t-title;
+
+  @include font-size(48);
+  @include line-height(48);
+}
+
+%t-title3 {
+  @include font-size(36);
+  @include line-height(36);
+}
+
+%t-title4 {
+  @extend %t-title;
+
+  @include font-size(24);
+  @include line-height(24);
+}
+
+%t-title5 {
+  @extend %t-title;
+
+  @include font-size(18);
+  @include line-height(18);
+}
+
+%t-title6 {
+  @extend %t-title;
+
+  @include font-size(16);
+  @include line-height(16);
+}
+
+%t-title7 {
+  @extend %t-title;
+
+  @include font-size(14);
+  @include line-height(14);
+}
+
+%t-title8 {
+  @extend %t-title;
+
+  @include font-size(12);
+  @include line-height(12);
+}
+
+%t-title9 {
+  @extend %t-title;
+
+  @include font-size(11);
+  @include line-height(11);
+}
+
+%t-action1 {
+  @include font-size(18);
+  @include line-height(18);
+}
+
+%t-action2 {
+  @include font-size(16);
+  @include line-height(16);
+}
+
+%t-action3 {
+  @include font-size(14);
+  @include line-height(14);
+}
+
+%t-action4 {
+  @include font-size(12);
+  @include line-height(12);
+}
+
+%t-action5 {
+  @include font-size(10);
+  @include line-height(10);
+}
+
+%t-strong {
+  font-weight: 600;
+}
+
+// Imported from:
+// edx-platform/cms/static/sass/elements/_controls.scss
+%ui-btn-dd {
+  @extend %ui-btn;
+  @extend %ui-btn-pill;
+
+  padding: ($baseline/4) ($baseline/2);
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  text-align: center;
+
+  &:hover,
+  &:active {
+    @extend %ui-fake-link;
+
+    border-color: $gray-l3;
+  }
+
+  &.current,
+  &.active,
+  &.is-selected {
+    box-shadow: inset 0 1px 2px 1px $shadow-l1;
+    border-color: $gray-l3;
+  }
+}
+
+%ui-btn-dd-nav-primary {
+  @extend %ui-btn-dd;
+
+  background: $white;
+  border-color: $white;
+  color: $gray-d1;
+
+  &:hover,
+  &:active {
+    background: $white;
+    color: $uxpl-blue-hover-active;
+  }
+
+  &.current,
+  &.active {
+    background: $white;
+    color: $gray-d4;
+
+    &:hover,
+    &:active {
+      color: $uxpl-blue-hover-active;
+    }
+  }
+}
+
+// Imported from:
+// edx-platform/cms/static/sass/elements/_forms.scss
+.form-create {
+  @extend %ui-window;
+
+  .title {
+    @extend %t-title4;
+    @extend %t-strong;
+
+    padding: $baseline ($baseline*1.5) 0 ($baseline*1.5);
+  }
+
+  fieldset {
+    padding: $baseline ($baseline*1.5);
+  }
+
+
+  .list-input {
+    @extend %cont-no-list;
+
+    .field {
+      margin: 0 0 ($baseline*0.75) 0;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &.required {
+        label {
+          @extend %t-strong;
+        }
+
+        label::after {
+          margin-left: ($baseline/4);
+          content: "*";
+        }
+      }
+
+      label,
+      input,
+      textarea {
+        display: block;
+      }
+
+      label {
+        @extend %t-copy-sub1;
+
+        @include transition(color $tmg-f3 ease-in-out 0s);
+
+        margin: 0 0 ($baseline/4) 0;
+
+        &.is-focused {
+          color: $blue;
+        }
+      }
+
+
+      input,
+      textarea {
+        @extend %t-copy-base;
+
+        @include transition(all $tmg-f2 ease-in-out 0s);
+
+        height: 100%;
+        width: 100%;
+        padding: ($baseline/2);
+
+        &.long {
+          width: 100%;
+        }
+
+        &.short {
+          width: 25%;
+        }
+
+        &:focus {
+          + .text-muted {
+            color: $gray-d1;
+          }
+        }
+      }
+
+      textarea.long {
+        height: ($baseline*5);
+      }
+
+      input[type="checkbox"] {
+        display: inline-block;
+        margin-right: ($baseline/4);
+        width: auto;
+        height: auto;
+
+        & + label {
+          display: inline-block;
+        }
+      }
+
+      .text-muted, .invalid-feedback {
+        @extend %t-copy-sub2;
+
+        @include transition(color 0.15s ease-in-out);
+
+
+        display: block;
+        margin-top: ($baseline/4);
+        color: $gray-d1;
+      }
+
+      .tip-note {
+        display: block;
+        margin-top: ($baseline/4);
+      }
+
+      .tip-error {
+        display: none;
+        float: none;
+      }
+
+      .invalid-feedback {
+        color: $red;
+
+        &::before {
+          vertical-align: unset;
+        }
+      }
+
+      &.error {
+        label {
+          color: $red;
+        }
+
+        .is-showing {
+          @extend %anim-fadeIn;
+        }
+
+        .is-hiding {
+          @extend %anim-fadeOut;
+        }
+
+        .tip-error {
+          display: block;
+          color: $red;
+        }
+
+        input {
+          border-color: $red;
+        }
+      }
+    }
+
+    .field-inline {
+      input,
+      textarea,
+      select {
+        width: 62%;
+        display: inline-block;
+      }
+
+      .tip-stacked {
+        display: inline-block;
+        float: right;
+        width: 35%;
+        margin-top: 0;
+      }
+    }
+
+    .field-group {
+      @include clearfix();
+
+      margin: 0 0 ($baseline/2) 0;
+
+      .field {
+        display: block;
+        width: 47%;
+        border-bottom: none;
+        margin: 0 ($baseline*0.75) 0 0;
+        padding: ($baseline/4) 0 0 0;
+        float: left;
+        position: relative;
+
+        &:nth-child(odd) {
+          float: left;
+        }
+
+        &:nth-child(even) {
+          float: right;
+          margin-right: 0;
+        }
+
+        input,
+        textarea {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .actions {
+    box-shadow: inset 0 1px 2px $shadow;
+    margin-top: ($baseline*0.75);
+    border-top: 1px solid $gray-l1;
+    padding: ($baseline*0.75) ($baseline*1.5);
+    background: $gray-l6;
+
+    .action {
+      @include transition(all $tmg-f2 linear 0s);
+
+      @extend %t-strong;
+
+      display: inline-block;
+      padding: ($baseline/5) $baseline;
+      text-transform: uppercase;
+      font-size: 1.2rem;
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Imported from:
+// edx-platform/cms/static/sass/vendor/bi-app/_mixins.scss
+$bi-app-direction       : ltr;
+$bi-app-left            : left;
+$bi-app-right           : right;
+
+@mixin bi-app-compact($property, $top, $right, $bottom, $left) {
+  @if $bi-app-direction == ltr {
+    #{$property}: $top $right $bottom $left;
+  }
+
+  @else {
+    #{$property}: $top $left $bottom $right;
+  }
+}
+
+@mixin margin($top, $right, $bottom, $left) {
+  @include bi-app-compact(margin, $top, $right, $bottom, $left);
+}
+
+@mixin margin-right($distance) {
+  margin-#{$bi-app-right}: $distance;
+}
+
+@mixin bi-app-float-left {
+  float: $bi-app-left;
+}
+
+@mixin bi-app-float-right {
+  float: $bi-app-right;
+}
+
+@mixin float($direction) {
+  @if $direction == left {
+    @include bi-app-float-left;
+  }
+
+  @else if $direction == right {
+    @include bi-app-float-right;
+  }
+
+  @else {
+    float: $direction;
+  }
+}
+
+@mixin bi-app-text-align-left {
+  text-align: $bi-app-left;
+}
+
+@mixin bi-app-text-align-right {
+  text-align: $bi-app-right;
+}
+
+@mixin text-align($direction) {
+  @if $direction == left {
+    @include bi-app-text-align-left;
+  }
+
+  @else if $direction == right {
+    @include bi-app-text-align-right;
+  }
+
+  @else {
+    text-align: $direction;
+  }
+}
+
+@mixin border-right($border-style) {
+  border-#{$bi-app-right}: $border-style;
+}
+
+// Imported from:
+// edx-platform/cms/static/sass/_base.scss
+html {
+  font-size: 62.5%;
+  height: 102%; // force scrollbar to prevent jump when scroll appears, cannot use overflow because it breaks drag
+}
+
+body {
+  @extend %t-copy-base;
+
+  min-width: $fg-min-width;
+  background: $uxpl-grayscale-x-back;
+  color: $gray-d3;
+}
+
+body,
+input,
+button {
+  font-family: $f-sans-serif;
+}
+
+.page-header {
+  @extend %t-title3;
+  @extend %t-strong;
+
+  display: block;
+  color: $gray-d3;
+
+  .navigation,
+  .subtitle {
+    @extend %t-title7;
+    @extend %t-regular;
+
+    position: relative;
+    top: ($baseline/4);
+    display: block;
+    color: $gray-d2;
+  }
+}
+
+.wrapper {
+  @include clearfix();
+
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.wrapper-mast {
+  margin: ($baseline*1.5) 0 0 0;
+  padding: 0 $baseline;
+  position: relative;
+
+  .mast,
+  .metadata {
+    @include clearfix();
+
+    position: relative;
+    max-width: $fg-max-width;
+    min-width: $fg-min-width;
+    width: flex-grid(12);
+    margin: 0 auto $baseline auto;
+    color: $gray-d2;
+  }
+
+  .mast {
+    border-bottom: 1px solid $gray-l4;
+    padding-bottom: ($baseline/2);
+
+    // layout without actions
+    .page-header {
+      font-family: $f-sans-serif;
+      width: flex-grid(12);
+      font-size: 3.6rem;
+      line-height: 5.328rem;
+      font-weight: 600;
+      color: $gray-d3;
+    }
+
+    // layout with actions
+    &.has-actions {
+      @include clearfix();
+
+      .page-header {
+        @include float(left);
+
+        width: flex-grid(6, 12);
+
+        @include margin-right(flex-gutter());
+
+        .page-header-title {
+          @extend %t-title4;
+          @extend %t-strong;
+
+          margin: 12px 0;
+        }
+      }
+
+      .nav-actions {
+        position: relative;
+
+        @include float(right);
+
+        width: flex-grid(6, 12);
+
+        @include text-align(right);
+
+        .nav-item {
+          display: inline-block;
+          vertical-align: top;
+          line-height: 1.776rem;
+
+          button {
+            font-size: 1.2rem;
+            font-weight: 600;
+
+            svg {
+              width: 2rem;
+            }
+          }
+
+          @include margin-right(($baseline/2));
+
+          &:last-child {
+            @include margin-right(0);
+          }
+        }
+      }
+    }
+  }
+}
+
+.wrapper-content {
+  margin: 0;
+  padding: 0 $baseline;
+  position: relative;
+}
+
+.content {
+  @include clearfix();
+
+  @extend %t-copy-base;
+
+  display: flex;
+  max-width: $fg-max-width;
+  min-width: $fg-min-width;
+  width: flex-grid(12);
+  margin: 0 auto;
+  color: $gray-d2;
+
+  header {
+    position: relative;
+    margin-bottom: $baseline;
+    border-bottom: 1px solid $gray-l4;
+    padding-bottom: ($baseline/2);
+
+    .title-sub {
+      @extend %t-copy-sub1;
+
+      display: block;
+      margin: 0;
+      color: $gray-l2;
+    }
+
+    .title-1 {
+      @extend %t-title3;
+
+      margin: 0;
+      padding: 0;
+      font-weight: 600;
+      color: $gray-d3;
+    }
+  }
+}
+
+.content-primary,
+.content-supplementary {
+  box-sizing: border-box;
+}
+
+.content-primary {
+  flex: 0 0 75%;
+  width: 75%;
+  margin-right: 2.12%;
+
+  .title-1 {
+    @extend %t-title3;
+  }
+
+  .title-2 {
+    @extend %t-title4;
+
+    margin: 0 0 ($baseline/2) 0;
+  }
+
+  .title-3 {
+    @extend %t-title6;
+
+    margin: 0 0 ($baseline/2) 0;
+  }
+
+  header {
+    @include clearfix();
+
+    .title-2 {
+      width: flex-grid(5, 12);
+      margin: 0 flex-gutter() 0 0;
+      float: left;
+    }
+
+    .tip {
+      @extend %t-copy-sub2;
+
+      @include text-align(right);
+      @include float(right);
+
+      width: flex-grid(7, 12);
+      margin-top: ($baseline/2);
+      color: $gray-d1;
+    }
+  }
+}
+
+.content-supplementary {
+  flex: 0 0 25%;
+  max-width: 25%;
+
+  .bit {
+    @extend %t-copy-sub1;
+
+    margin: 0 0 $baseline 0;
+    border-bottom: 1px solid $gray-l4;
+    padding: 0 0 $baseline 0;
+    color: $gray-d1;
+
+    &:last-child {
+      margin-bottom: 0;
+      border: none;
+      padding-bottom: 0;
+    }
+
+    h3 {
+      @extend %t-title7;
+      @extend %t-strong;
+
+      margin: 0 0 ($baseline/4) 0;
+      color: $gray-d2;
+    }
+
+    p {
+      line-height: 20.7167px;
+    }
+
+    .list-actions {
+      list-style: none;
+      padding: 0;
+
+      a {
+        color: #0075b4;
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+// Vendor verrides
+
+// Paragon
+$font-family-sans-serif: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif !default;
+
+// Bootstrap
+.container-fluid {
+  padding-bottom: 30px;
+}
+
+// frontend-component-footer
+.footer {
+  background-color: transparent;
+}
