@@ -1,21 +1,28 @@
 // This file was copied from edx/frontend-component-header-edx.
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import TestRenderer from 'react-test-renderer';
 import { AppContext } from '@edx/frontend-platform/react';
-import { getConfig } from '@edx/frontend-platform';
 import { Context as ResponsiveContext } from 'react-responsive';
+import * as auth from '@edx/frontend-platform/auth';
+import {
+  act,
+  cleanup,
+  render,
+  screen,
+} from '@testing-library/react';
 
 import Header from './Header';
 
-jest.mock('@edx/frontend-platform');
-
-getConfig.mockReturnValue({});
-
 describe('<Header />', () => {
-  it('renders correctly for authenticated users on desktop', () => {
-    const component = (
-      <ResponsiveContext.Provider value={{ width: 1280 }}>
+  function mockRequest(getFunction) {
+    auth.getAuthenticatedHttpClient = jest.fn(() => ({
+      get: getFunction,
+    }));
+  }
+
+  function createComponent(screenWidth) {
+    return (
+      <ResponsiveContext.Provider value={{ width: screenWidth }}>
         <IntlProvider locale="en" messages={{}}>
           <AppContext.Provider value={{
             authenticatedUser: {
@@ -26,6 +33,7 @@ describe('<Header />', () => {
             },
             config: {
               STUDIO_BASE_URL: process.env.STUDIO_BASE_URL,
+              LMS_BASE_URL: process.env.LMS_BASE_URL,
               LOGIN_URL: process.env.LOGIN_URL,
               LOGOUT_URL: process.env.LOGOUT_URL,
             },
@@ -36,38 +44,59 @@ describe('<Header />', () => {
         </IntlProvider>
       </ResponsiveContext.Provider>
     );
+  }
 
-    const wrapper = TestRenderer.create(component);
-
-    expect(wrapper.toJSON()).toMatchSnapshot();
+  const successfulCall = async () => ({
+    data: {
+      number: 'DemoX',
+      org: 'edX',
+      name: 'Demonstration Course',
+    },
   });
 
-  it('renders correctly for authenticated users on mobile', () => {
-    const component = (
-      <ResponsiveContext.Provider value={{ width: 500 }}>
-        <IntlProvider locale="en" messages={{}}>
-          <AppContext.Provider value={{
-            authenticatedUser: {
-              userId: 'abc123',
-              username: 'edX',
-              roles: [],
-              administrator: false,
-            },
-            config: {
-              STUDIO_BASE_URL: process.env.STUDIO_BASE_URL,
-              LOGIN_URL: process.env.LOGIN_URL,
-              LOGOUT_URL: process.env.LOGOUT_URL,
-            },
-          }}
-          >
-            <Header courseId="course-v1:edX+DemoX+Demo_Course" />
-          </AppContext.Provider>
-        </IntlProvider>
-      </ResponsiveContext.Provider>
-    );
+  const errorObject = {
+    customAttributes: {
+      httpErrorStatus: 404,
+    },
+  };
 
-    const wrapper = TestRenderer.create(component);
+  const badCall = async () => { throw errorObject; };
 
-    expect(wrapper.toJSON()).toMatchSnapshot();
+  it('renders desktop header correctly with API call', async () => {
+    mockRequest(successfulCall);
+    const component = createComponent(1280);
+
+    await act(async () => render(component));
+    expect(screen.getByTestId('course-org-number').textContent).toEqual(expect.stringContaining('edX DemoX'));
+    expect(screen.getByTestId('course-title').textContent).toEqual(expect.stringContaining('Demonstration Course'));
+  });
+
+  it('renders mobile header correctly with API call', async () => {
+    mockRequest(successfulCall);
+    const component = createComponent(500);
+
+    await act(async () => render(component));
+    expect(screen.getAllByTestId('course-org-number')[0].textContent).toEqual(expect.stringContaining('edX DemoX'));
+    expect(screen.getAllByTestId('course-title')[0].textContent).toEqual(expect.stringContaining('Demonstration Course'));
+  });
+
+  it('renders desktop header correctly with bad API call', async () => {
+    mockRequest(badCall);
+    const component = createComponent(1280);
+
+    await act(async () => render(component));
+    expect(screen.getByTestId('course-title').textContent).toEqual(expect.stringContaining('course-v1:edX+DemoX+Demo_Course'));
+  });
+
+  it('renders mobile header correctly with bad API call', async () => {
+    mockRequest(badCall);
+    const component = createComponent(500);
+
+    await act(async () => render(component));
+    expect(screen.getAllByTestId('course-title')[0].textContent).toEqual(expect.stringContaining('course-v1:edX+DemoX+Demo_Course'));
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 });
