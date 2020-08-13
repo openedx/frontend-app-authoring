@@ -86,7 +86,6 @@ class DesktopHeader extends React.Component {
       logo,
       logoAltText,
       logoDestination,
-      courseTitleDestination,
       intl,
     } = this.props;
     const logoProps = { src: logo, alt: logoAltText, href: logoDestination };
@@ -97,14 +96,7 @@ class DesktopHeader extends React.Component {
           <div className="nav-container position-relative d-flex align-items-center">
             {logoDestination === null ? <Logo className="logo" src={logo} alt={logoAltText} /> : <LinkedLogo className="logo" {...logoProps} />}
             {/* This lockup HTML was copied from edx/frontend-app-learning/src/course-header/Header.jsx. */}
-            <a
-              className="course-title-lockup"
-              style={{ lineHeight: 1 }}
-              href={courseTitleDestination}
-              aria-label={intl.formatMessage(messages['header.label.courseOutline'])}
-            >
-              {this.props.courseId}
-            </a>
+            { this.props.courseLockUp }
             <nav
               aria-label={intl.formatMessage(messages['header.label.main.nav'])}
               className="nav main-nav"
@@ -137,11 +129,11 @@ DesktopHeader.propTypes = {
   logo: PropTypes.string,
   logoAltText: PropTypes.string,
   logoDestination: PropTypes.string,
-  courseTitleDestination: PropTypes.string,
   courseId: PropTypes.string,
   avatar: PropTypes.string,
   username: PropTypes.string,
   loggedIn: PropTypes.bool,
+  courseLockUp: PropTypes.node.isRequired,
 
   // i18n
   intl: intlShape.isRequired,
@@ -153,7 +145,6 @@ DesktopHeader.defaultProps = {
   logo: null,
   logoAltText: null,
   logoDestination: null,
-  courseTitleDestination: null,
   courseId: null,
   avatar: null,
   username: null,
