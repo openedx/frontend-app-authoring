@@ -1,11 +1,15 @@
 // This file was copied from edx/frontend-component-header-edx.
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl } from '@edx/frontend-platform/i18n';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+
 // Local Components
 import { Menu, MenuTrigger, MenuContent } from './Menu';
 import Avatar from './Avatar';
 import { LinkedLogo, Logo } from './Logo';
+
+// i18n
+import messages from './Header.messages';
 
 // Assets
 import { MenuIcon } from './Icons';
@@ -71,12 +75,13 @@ class MobileHeader extends React.Component {
       username,
       stickyOnMobile,
       mainMenu,
+      intl,
     } = this.props;
     const logoProps = { src: logo, alt: logoAltText, href: logoDestination };
     const stickyClassName = stickyOnMobile ? 'sticky-top' : '';
     return (
       <header
-        aria-label="Main"
+        aria-label={intl.formatMessage(messages['header.label.main.header'])}
         className={`site-header-mobile d-flex justify-content-between align-items-center shadow ${stickyClassName}`}
       >
         <div className="w-100 d-flex justify-content-start">
@@ -86,14 +91,14 @@ class MobileHeader extends React.Component {
                 <MenuTrigger
                   tag="button"
                   className="icon-button"
-                  aria-label="Main Menu"
-                  title="Main Menu"
+                  aria-label={intl.formatMessage(messages['header.label.main.menu'])}
+                  title={intl.formatMessage(messages['header.label.main.menu'])}
                 >
                   <MenuIcon role="img" aria-hidden focusable="false" style={{ width: '1.5rem', height: '1.5rem' }} />
                 </MenuTrigger>
                 <MenuContent
                   tag="nav"
-                  aria-label="Main"
+                  aria-label={intl.formatMessage(messages['header.label.main.nav'])}
                   className="nav flex-column pin-left pin-right border-top shadow py-2"
                 >
                   {this.renderMainMenu()}
@@ -101,16 +106,17 @@ class MobileHeader extends React.Component {
               </Menu>
             ) : null}
         </div>
-        <div className="w-100 d-flex justify-content-center">
+        <div className="w-100 d-flex align-items-center mobile-lockup">
           {logoDestination === null ? <Logo className="logo" src={logo} alt={logoAltText} /> : <LinkedLogo className="logo" {...logoProps} itemType="http://schema.org/Organization" />}
+          { this.props.courseLockUp }
         </div>
         <div className="w-100 d-flex justify-content-end align-items-center">
           <Menu tag="nav" aria-label="Secondary" className="position-static">
             <MenuTrigger
               tag="button"
               className="icon-button"
-              aria-label="Account Menu"
-              title="Account Menu"
+              aria-label={intl.formatMessage(messages['header.label.account.menu'])}
+              title={intl.formatMessage(messages['header.label.account.menu'])}
             >
               <Avatar size="1.5rem" src={avatar} alt={username} />
             </MenuTrigger>
@@ -141,6 +147,10 @@ MobileHeader.propTypes = {
   avatar: PropTypes.string,
   username: PropTypes.string,
   stickyOnMobile: PropTypes.bool,
+  courseLockUp: PropTypes.node.isRequired,
+
+  // i18n
+  intl: intlShape.isRequired,
 };
 
 MobileHeader.defaultProps = {
@@ -152,7 +162,6 @@ MobileHeader.defaultProps = {
   avatar: null,
   username: null,
   stickyOnMobile: true,
-
 };
 
 export default injectIntl(MobileHeader);
