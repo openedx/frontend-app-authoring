@@ -60,3 +60,25 @@ Please see `edx/frontend-platform's i18n module <https://edx.github.io/frontend-
    :target: https://codecov.io/gh/edx/frontend-app-library-authoring
 .. |license| image:: https://img.shields.io/npm/l/@edx/frontend-app-library-authoring.svg
    :target: @edx/frontend-app-library-authoring
+
+Known Issues
+------------
+
+* This MFE is missing unit tests.
+
+* This MFE requires a copy review.
+
+* This MFE requires an accessibility audit.
+
+* The styling in the account dropdown menu in the header does not currently
+  match Studio's very well.  This will be improved shortly.
+
+* The current component editing flow is a direct port of
+  [ramshackle](https://github.com/open-craft/ramshackle) with only minor
+  improvements.  It is pending an UX audit and internationalization,
+  among other things.
+
+* Some component types, such as text, videos and CAPA problems, can be added to
+  libraries but cannot be edited using Studio's authoring view.  This is a
+  limitation of Studio, not this MFE.  Work is under way to improve Studio
+  accordingly.
