@@ -74,7 +74,7 @@ Known Issues
   match Studio's very well.  This will be improved shortly.
 
 * The current component editing flow is a direct port of
-  [ramshackle](https://github.com/open-craft/ramshackle) with only minor
+  `ramshackle <https://github.com/open-craft/ramshackle>`_ with only minor
   improvements.  It is pending an UX audit and internationalization,
   among other things.
 
