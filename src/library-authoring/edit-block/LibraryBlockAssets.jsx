@@ -20,7 +20,7 @@ const LibraryBlockAssets = (props) => {
             <li key={assetFile.path}>
               <a href={assetFile.url}>/static/{assetFile.path}</a> {' '}
               ({Math.round(assetFile.size / 1024.0)} KB)
-              (<Button onClick={() => props.onDeleteFile(assetFile.path)} className="btn btn-link p-0" title="Delete this file">x</Button>)
+              (<Button variant="link" onClick={() => props.onDeleteFile(assetFile.path)} className="p-0" title="Delete this file">x</Button>)
             </li>
           ))
         }

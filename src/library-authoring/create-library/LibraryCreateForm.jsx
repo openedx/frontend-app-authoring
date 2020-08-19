@@ -7,8 +7,14 @@ import {
 } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
-import { LIBRARY_TYPES, SUBMISSION_STATUS, libraryShape } from '../common';
 import {
+  LIBRARY_TYPES,
+  SUBMISSION_STATUS,
+  libraryShape,
+  truncateErrorMessage,
+} from '../common';
+import {
+  clearFormError,
   createLibrary,
   libraryCreateInitialState,
   resetForm,
@@ -115,6 +121,10 @@ class LibraryCreateForm extends React.Component {
     return state;
   }
 
+  handleDismissAlert = () => {
+    this.props.clearFormError();
+  }
+
   render() {
     const { intl, errorMessage } = this.props;
     const { data } = this.state;
@@ -127,10 +137,11 @@ class LibraryCreateForm extends React.Component {
           && (
           <Alert
             variant="danger"
-            dialog={errorMessage}
-            onClose={() => {}}
-            open
-          />
+            onClose={this.handleDismissAlert}
+            dismissible
+          >
+            {truncateErrorMessage(errorMessage)}
+          </Alert>
           )}
           <ol className="list-input">
             <li className="field">
@@ -250,6 +261,7 @@ class LibraryCreateForm extends React.Component {
 }
 
 LibraryCreateForm.propTypes = {
+  clearFormError: PropTypes.func.isRequired,
   createdLibrary: libraryShape,
   createLibrary: PropTypes.func.isRequired,
   errorFields: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -268,7 +280,8 @@ LibraryCreateForm.defaultProps = libraryCreateInitialState;
 export default connect(
   selectLibraryCreate,
   {
-    resetForm,
+    clearFormError,
     createLibrary,
+    resetForm,
   },
 )(injectIntl(withRouter(LibraryCreateForm)));

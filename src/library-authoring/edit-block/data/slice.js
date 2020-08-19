@@ -58,6 +58,9 @@ const slice = createSlice({
       state.errorMessage = payload.errorMessage;
       state.status = LOADING_STATUS.FAILED;
     },
+    libraryBlockClearError: (state) => {
+      state.errorMessage = null;
+    },
   },
 });
 

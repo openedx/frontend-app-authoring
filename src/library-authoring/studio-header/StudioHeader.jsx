@@ -63,13 +63,14 @@ const StudioHeader = ({ intl, library }) => {
               </li>
               <li className="nav-item nav-account-user">
                 <Dropdown>
-                  <Dropdown.Toggle>
+                  <Dropdown.Toggle variant="outline-light">
                     {authenticatedUser.username}
                     <Icon className="fa fa-caret-down pl-3" alt="" />
                   </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item href={config.STUDIO_BASE_URL}>{intl.formatMessage(messages['library.header.account.studiohome'])}</Dropdown.Item>
-                    <Dropdown.Item href={config.LOGOUT_URL}>{intl.formatMessage(messages['library.header.account.signout'])}</Dropdown.Item>
+                  <Dropdown.Menu className="dropdown-menu-right p-4 mt-3 fade">
+                    <Dropdown.Item className="p-0 mb-3" href={config.STUDIO_BASE_URL}>{intl.formatMessage(messages['library.header.account.studiohome'])}</Dropdown.Item>
+                    <Dropdown.Item className="p-0 mb-3" href={`${config.STUDIO_BASE_URL}/maintenance`}>{intl.formatMessage(messages['library.header.account.maintenance'])}</Dropdown.Item>
+                    <Dropdown.Item className="p-0" href={config.LOGOUT_URL}>{intl.formatMessage(messages['library.header.account.signout'])}</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
               </li>

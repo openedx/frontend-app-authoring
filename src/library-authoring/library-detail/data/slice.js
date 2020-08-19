@@ -28,6 +28,9 @@ const slice = createSlice({
       state.errorMessage = payload.errorMessage;
       state.status = LOADING_STATUS.FAILED;
     },
+    libraryDetailClearError: (state) => {
+      state.errorMessage = null;
+    },
     libraryCreateBlockSuccess: (state, { payload }) => {
       state.errorMessage = null;
       state.status = LOADING_STATUS.LOADED;

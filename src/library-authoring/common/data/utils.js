@@ -44,7 +44,7 @@ export const filterSupportedBlockTypes = (library) => {
   };
 };
 
-/* Given a v1 library key, unpack it into org and slug. */
+/** Given a v1 library key, unpack it into org and slug. */
 export const unpackLibraryKey = (key) => {
   const re = /library-v1:(?<org>.+)\+(?<slug>.+)/;
   const match = key.match(re);
@@ -56,3 +56,8 @@ export const unpackLibraryKey = (key) => {
     slug: null,
   };
 };
+
+/** Truncate an error message to 255 characters if it's longer than that. */
+export const truncateErrorMessage = (errorMessage) => (
+  errorMessage.length > 255 ? `${errorMessage.substring(0, 255)}...` : errorMessage
+);

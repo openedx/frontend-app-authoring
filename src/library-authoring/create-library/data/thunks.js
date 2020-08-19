@@ -16,3 +16,7 @@ export const createLibrary = ({ data }) => async (dispatch) => {
 export const resetForm = () => async (dispatch) => {
   dispatch(actions.libraryCreateReset());
 };
+
+export const clearFormError = () => async (dispatch) => {
+  dispatch(actions.libraryCreateClearError());
+};

@@ -36,6 +36,11 @@ const messages = defineMessages({
     defaultMessage: 'Studio Home',
     description: 'Text for link to studio.',
   },
+  'library.header.account.maintenance': {
+    id: 'library.header.account.maintenance',
+    defaultMessage: 'Maintenance',
+    description: 'Text for link to maintenance.',
+  },
   'library.header.account.signout': {
     id: 'library.header.account.signout',
     defaultMessage: 'Sign Out',

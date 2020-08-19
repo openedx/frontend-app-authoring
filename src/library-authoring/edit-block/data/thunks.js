@@ -44,6 +44,10 @@ export const uploadLibraryBlockAssets = ({ blockId, files }) => async (dispatch)
      * A parallelized implementation would be faster but currently
      * doesn't work due to a race condition in blockstore. */
     files.forEach(file => api.addLibraryBlockAsset(blockId, file.name, file));
+
+    /* This is hackish, but we have to wait for Studio/blockstore to process the files before refreshing them. */
+    await new Promise(r => setTimeout(r, 1000));
+
     dispatch(actions.libraryBlockAssetsSuccess({
       assets: await api.getLibraryBlockAssets(blockId),
       metadata: await api.getLibraryBlock(blockId),
@@ -102,4 +106,12 @@ export const deleteLibraryBlock = ({ blockId }) => async (dispatch) => {
     dispatch(actions.libraryBlockFailed({ errorMessage: error.message }));
     logError(error);
   }
+};
+
+export const setLibraryBlockError = ({ errorMessage }) => async (dispatch) => {
+  dispatch(actions.libraryBlockFailed({ errorMessage }));
+};
+
+export const clearLibraryBlockError = () => async (dispatch) => {
+  dispatch(actions.libraryBlockClearError());
 };

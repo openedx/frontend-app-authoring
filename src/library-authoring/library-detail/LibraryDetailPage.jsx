@@ -8,8 +8,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import { LoadingPage } from '../../generic';
-import { LOADING_STATUS, libraryShape } from '../common';
+import { LOADING_STATUS, libraryShape, truncateErrorMessage } from '../common';
 import {
+  clearLibraryError,
   createLibraryBlock,
   commitLibraryChanges,
   fetchLibraryDetail,
@@ -60,6 +61,10 @@ class LibraryDetailPage extends React.Component {
         definition_id: this.state.newBlockSlug,
       },
     });
+  }
+
+  handleDismissAlert = () => {
+    this.props.clearLibraryError();
   }
 
   scrollToAddComponent = () => {
@@ -113,10 +118,11 @@ class LibraryDetailPage extends React.Component {
               && (
               <Alert
                 variant="danger"
-                dialog={errorMessage}
-                onClose={() => {}}
-                open
-              />
+                onClose={this.handleDismissAlert}
+                dismissible
+              >
+                {truncateErrorMessage(errorMessage)}
+              </Alert>
               )}
               <div className="row">
                 {library.blocks && library.blocks.map((block) => (
@@ -249,6 +255,7 @@ class LibraryDetailPage extends React.Component {
 LibraryDetailPage.contextType = AppContext;
 
 LibraryDetailPage.propTypes = {
+  clearLibraryError: PropTypes.func.isRequired,
   commitLibraryChanges: PropTypes.func.isRequired,
   createLibraryBlock: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
@@ -269,6 +276,7 @@ LibraryDetailPage.defaultProps = libraryDetailInitialState;
 export default connect(
   selectLibraryDetail,
   {
+    clearLibraryError,
     createLibraryBlock,
     commitLibraryChanges,
     revertLibraryChanges,

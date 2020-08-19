@@ -29,6 +29,9 @@ const slice = createSlice({
       state.errorFields = payload.errorFields;
       state.status = SUBMISSION_STATUS.FAILED;
     },
+    libraryCreateClearError: (state) => {
+      state.errorMessage = null;
+    },
     libraryCreateReset: (state) => {
       state.createdLibrary = libraryCreateInitialState.createdLibrary;
       state.errorMessage = libraryCreateInitialState.errorMessage;

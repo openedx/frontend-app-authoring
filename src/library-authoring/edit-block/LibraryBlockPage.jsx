@@ -10,12 +10,13 @@ import { logError } from '@edx/frontend-platform/logging';
 import { AppContext } from '@edx/frontend-platform/react';
 
 import {
+  BLOCK_TYPE_EDIT_DENYLIST,
   libraryBlockShape,
   libraryShape,
   LOADING_STATUS,
   ROUTES,
+  truncateErrorMessage,
   XBLOCK_VIEW_SYSTEM,
-  BLOCK_TYPE_EDIT_DENYLIST,
 } from '../common';
 import {
   commitLibraryChanges,
@@ -23,6 +24,7 @@ import {
   revertLibraryChanges,
 } from '../library-detail';
 import {
+  clearLibraryBlockError,
   getXBlockHandlerUrl,
   deleteLibraryBlock,
   deleteLibraryBlockAsset,
@@ -32,6 +34,7 @@ import {
   fetchLibraryBlockView,
   libraryBlockInitialState,
   selectLibraryBlock,
+  setLibraryBlockError,
   setLibraryBlockOlx,
   uploadLibraryBlockAssets,
 } from './data';
@@ -42,13 +45,6 @@ import LibraryBlockOlx from './LibraryBlockOlx';
 import messages from './messages';
 
 class LibraryBlockPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      errorMessage: null,
-    };
-  }
-
   componentDidMount() {
     this.loadData();
 
@@ -99,9 +95,8 @@ class LibraryBlockPage extends React.Component {
       const { libraryId, blockId } = this.props.match.params;
       this.props.history.push(ROUTES.Block.HOME_SLUG(libraryId, blockId));
     } else if (event.eventType === 'error') {
-      this.setState({
-        errorMessage: `${event.title || 'Error'}: ${event.message}`,
-      });
+      const errorMessage = `${event.title || 'Error'}: ${event.message}`;
+      this.props.setLibraryBlockError({ errorMessage });
     } else {
       logError(`Unknown XBlock runtime event: ${event}`);
     }
@@ -149,6 +144,10 @@ class LibraryBlockPage extends React.Component {
     this.props.fetchLibraryBlockMetadata({ blockId });
   }
 
+  handleDismissAlert = () => {
+    this.props.clearLibraryBlockError();
+  }
+
   loadData() {
     const { blockId } = this.props.match.params;
 
@@ -193,9 +192,13 @@ class LibraryBlockPage extends React.Component {
   }
 
   renderContent() {
-    const { intl, metadata, status } = this.props;
+    const {
+      errorMessage,
+      intl,
+      metadata,
+      status,
+    } = this.props;
     const { blockId, libraryId } = this.props.match.params;
-    const errorMessage = this.props.errorMessage || this.state.errorMessage;
     const hasChanges = metadata ? metadata.has_unpublished_changes : false;
 
     return (
@@ -215,10 +218,11 @@ class LibraryBlockPage extends React.Component {
               && (
               <Alert
                 variant="danger"
-                dialog={errorMessage.length > 255 ? `${errorMessage.substring(0, 255)}...` : errorMessage}
-                onClose={() => {}}
-                open
-              />
+                onClose={this.handleDismissAlert}
+                dismissible
+              >
+                {truncateErrorMessage(errorMessage)}
+              </Alert>
               )}
               <div className="card">
                 <div className="card-header">
@@ -370,6 +374,7 @@ LibraryBlockPage.contextType = AppContext;
 
 LibraryBlockPage.propTypes = {
   assets: PropTypes.arrayOf(PropTypes.object),
+  clearLibraryBlockError: PropTypes.func.isRequired,
   commitLibraryChanges: PropTypes.func.isRequired,
   deleteLibraryBlock: PropTypes.func.isRequired,
   deleteLibraryBlockAsset: PropTypes.func.isRequired,
@@ -396,6 +401,7 @@ LibraryBlockPage.propTypes = {
   redirectToLibrary: PropTypes.bool,
   revertLibraryChanges: PropTypes.func.isRequired,
   setLibraryBlockOlx: PropTypes.func.isRequired,
+  setLibraryBlockError: PropTypes.func.isRequired,
   status: PropTypes.oneOf(Object.values(LOADING_STATUS)).isRequired,
   uploadLibraryBlockAssets: PropTypes.func.isRequired,
   view: PropTypes.shape({
@@ -409,6 +415,7 @@ LibraryBlockPage.defaultProps = libraryBlockInitialState;
 export default connect(
   selectLibraryBlock,
   {
+    clearLibraryBlockError,
     commitLibraryChanges,
     deleteLibraryBlock,
     deleteLibraryBlockAsset,
@@ -419,6 +426,7 @@ export default connect(
     fetchLibraryDetail,
     revertLibraryChanges,
     setLibraryBlockOlx,
+    setLibraryBlockError,
     uploadLibraryBlockAssets,
   },
 )(injectIntl(withRouter(LibraryBlockPage)));
