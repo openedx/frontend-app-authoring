@@ -5,6 +5,7 @@ import { PageRoute } from '@edx/frontend-platform/react';
 
 import DiscussionAppList from './DiscussionAppList';
 import DiscussionConfig from './DiscussionConfig';
+import SettingsModal from './settings/SettingsModal';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -27,6 +28,9 @@ export default function DiscussionsRoutes({ courseId }) {
     <Switch>
       <PageRoute exact path={`${path}`}>
         <DiscussionAppList courseId={courseId} />
+      </PageRoute>
+      <PageRoute path={`${path}/settings/:appId/`}>
+        <SettingsModal courseId={courseId} />
       </PageRoute>
       <PageRoute path={`${path}/configure/:appId`}>
         <DiscussionConfig courseId={courseId} />
