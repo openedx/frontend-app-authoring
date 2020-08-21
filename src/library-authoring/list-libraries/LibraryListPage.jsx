@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Button } from '@edx/paragon';
+import { Button, Form, Input } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { AppContext } from '@edx/frontend-platform/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 import { LoadingPage } from '../../generic';
 import { LOADING_STATUS, LibraryIndexTabs, libraryShape } from '../common';
@@ -24,11 +24,15 @@ class LibraryListPage extends React.Component {
 
     this.state = {
       showForm: false,
+      filterParams: {
+        text_search: '',
+        org: '',
+      },
     };
   }
 
   componentDidMount() {
-    this.props.fetchLibraryList();
+    this.props.fetchLibraryList({ params: this.state.filterParams });
   }
 
   showForm = () => {
@@ -41,6 +45,31 @@ class LibraryListPage extends React.Component {
     this.setState({
       showForm: false,
     });
+  }
+
+  handleFilterChange = (event) => {
+    const { name, value } = event.target;
+    this.setState(state => ({
+      filterParams: {
+        ...state.filterParams,
+        [name]: value,
+      },
+    }));
+  }
+
+  handleFilterOrgChange = (event) => {
+    this.handleFilterChange(event);
+    this.props.fetchLibraryList({
+      params: {
+        ...this.state.filterParams,
+        org: event.target.value,
+      },
+    });
+  }
+
+  handleFilterSubmit = (event) => {
+    event.preventDefault();
+    this.props.fetchLibraryList({ params: this.state.filterParams });
   }
 
   renderError() {
@@ -62,8 +91,22 @@ class LibraryListPage extends React.Component {
   }
 
   renderContent() {
-    const { intl, libraries } = this.props;
-    const { showForm } = this.state;
+    const { intl, libraries, orgs } = this.props;
+    const { showForm, filterParams } = this.state;
+
+    const orgOptions = [
+      {
+        value: '',
+        label: intl.formatMessage(messages['library.list.filter.options.org.all']),
+      },
+      {
+        label: intl.formatMessage(messages['library.list.filter.options.org.organizations']),
+        group: orgs.map(orgName => ({
+          value: orgName,
+          label: orgName,
+        })),
+      },
+    ];
 
     return (
       <div className="library-list-wrapper">
@@ -115,6 +158,46 @@ class LibraryListPage extends React.Component {
                   </li>
                 </ul>
               </div>
+              <div className="bit">
+                <Form onSubmit={this.handleFilterSubmit} className="filter-form">
+                  <Form.Row>
+                    <Form.Group className="w-100">
+                      <Form.Label className="title title-3">
+                        {intl.formatMessage(messages['library.list.filter.title'])}
+                      </Form.Label>
+                      <div className="d-flex flex-row">
+                        <Form.Control
+                          name="text_search"
+                          placeholder={intl.formatMessage(messages['library.list.filter.input.default'])}
+                          defaultValue={filterParams ? filterParams.text_search : null}
+                          onChange={this.handleFilterChange}
+                        />
+                        <Button
+                          type="submit"
+                          variant="primary"
+                          className="ml-2 py-1 px-3 d-inline"
+                        >
+                          <FontAwesomeIcon icon={faSearch} />
+                        </Button>
+                      </div>
+                    </Form.Group>
+                  </Form.Row>
+                  <Form.Row>
+                    <Form.Group className="w-100">
+                      <Form.Label className="title title-3">
+                        {intl.formatMessage(messages['library.list.filter.options.org.label'])}
+                      </Form.Label>
+                      <Input
+                        name="org"
+                        type="select"
+                        options={orgOptions}
+                        defaultValue={filterParams ? filterParams.org : null}
+                        onChange={this.handleFilterOrgChange}
+                      />
+                    </Form.Group>
+                  </Form.Row>
+                </Form>
+              </div>
             </aside>
           </section>
         </div>
@@ -149,6 +232,7 @@ LibraryListPage.propTypes = {
   fetchLibraryList: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
   libraries: PropTypes.arrayOf(libraryShape),
+  orgs: PropTypes.arrayOf(PropTypes.string),
   status: PropTypes.oneOf(Object.values(LOADING_STATUS)).isRequired,
 };
 

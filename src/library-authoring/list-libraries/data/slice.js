@@ -8,6 +8,7 @@ export const libraryListStoreName = 'libraryList';
 export const libraryListInitialState = {
   errorMessage: null,
   libraries: [],
+  orgs: [],
   status: LOADING_STATUS.LOADING,
 };
 
@@ -20,6 +21,7 @@ const slice = createSlice({
     },
     libraryListSuccess: (state, { payload }) => {
       state.libraries = payload.libraries;
+      state.orgs = payload.orgs;
       state.status = LOADING_STATUS.LOADED;
     },
     libraryListFailed: (state, { payload }) => {

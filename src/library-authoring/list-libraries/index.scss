@@ -110,4 +110,15 @@
       }
     }
   }
+
+  .filter-form {
+    .form-label {
+      font-weight: 600;
+    }
+
+    button,
+    .form-control {
+      font-size: 1.4rem;
+    }
+  }
 }

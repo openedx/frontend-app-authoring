@@ -5,15 +5,22 @@ import { LIBRARY_TYPES, unpackLibraryKey } from '../../common';
 
 ensureConfig(['STUDIO_BASE_URL'], 'library API service');
 
-/* eslint-disable-next-line import/prefer-default-export */
-export async function getLibraryList() {
+export async function getOrgList() {
+  const client = getAuthenticatedHttpClient();
+  const baseUrl = getConfig().STUDIO_BASE_URL;
+  const response = await client.get(`${baseUrl}/organizations`);
+
+  return response.data;
+}
+
+export async function getLibraryList(params) {
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;
 
   /* Fetch modulestore and blockstore libraries simultaneously. */
   const [v1Response, v2Response] = await Promise.all([
-    client.get(`${baseUrl}/library/`),
-    client.get(`${baseUrl}/api/libraries/v2/`),
+    client.get(`${baseUrl}/library/`, { params }),
+    client.get(`${baseUrl}/api/libraries/v2/`, { params }),
   ]);
 
   /* Normalize modulestore properties to conform to the v2 API, marking them as

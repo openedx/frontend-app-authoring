@@ -46,6 +46,31 @@ const messages = defineMessages({
     defaultMessage: 'Library slug:',
     description: 'Label of the library slug metadata item',
   },
+  'library.list.filter.title': {
+    id: 'library.list.filter.title',
+    defaultMessage: 'Find a library',
+    description: 'Title text for the filter box.',
+  },
+  'library.list.filter.input.default': {
+    id: 'library.list.filter.input.default',
+    defaultMessage: 'Enter ID, title, or organization.',
+    description: 'Default value for the filter input field.',
+  },
+  'library.list.filter.options.org.label': {
+    id: 'library.list.filter.options.org.label',
+    defaultMessage: 'Organization',
+    description: 'Label for the organization form group.',
+  },
+  'library.list.filter.options.org.all': {
+    id: 'library.list.filter.options.org.all',
+    defaultMessage: 'All',
+    description: 'Label for the empty organization option.',
+  },
+  'library.list.filter.options.org.organizations': {
+    id: 'library.list.filter.options.org.organizations',
+    defaultMessage: 'Organizations',
+    description: 'Label for the main organization option group.',
+  },
   'library.list.aside.title': {
     id: 'library.list.aside.title',
     defaultMessage: 'New to Studio?',
