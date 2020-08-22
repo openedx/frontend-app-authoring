@@ -23,6 +23,8 @@ export const ROUTES = {
   Detail: {
     HOME: '/library/:libraryId',
     HOME_SLUG: (libraryId) => `/library/${libraryId}`,
+    EDIT: '/library/:libraryId/edit',
+    EDIT_SLUG: (libraryId) => `/library/${libraryId}/edit`,
   },
   Block: {
     HOME: '/library/:libraryId/blocks/:blockId',

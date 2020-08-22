@@ -12,3 +12,9 @@ $font-family-sans-serif: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-s
 .footer {
   background-color: transparent;
 }
+
+.container-fluid {
+  max-width: 1280px;
+  padding-left: 0;
+  padding-right: 0;
+}

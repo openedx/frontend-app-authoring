@@ -21,7 +21,7 @@ import {
 import LibraryBlockCard from './LibraryBlockCard';
 import messages from './messages';
 
-class LibraryDetailPage extends React.Component {
+class LibraryPage extends React.Component {
   constructor(props) {
     super(props);
     this.addComponentRef = React.createRef();
@@ -252,9 +252,9 @@ class LibraryDetailPage extends React.Component {
   }
 }
 
-LibraryDetailPage.contextType = AppContext;
+LibraryPage.contextType = AppContext;
 
-LibraryDetailPage.propTypes = {
+LibraryPage.propTypes = {
   clearLibraryError: PropTypes.func.isRequired,
   commitLibraryChanges: PropTypes.func.isRequired,
   createLibraryBlock: PropTypes.func.isRequired,
@@ -271,7 +271,7 @@ LibraryDetailPage.propTypes = {
   status: PropTypes.oneOf(Object.values(LOADING_STATUS)).isRequired,
 };
 
-LibraryDetailPage.defaultProps = libraryDetailInitialState;
+LibraryPage.defaultProps = libraryDetailInitialState;
 
 export default connect(
   selectLibraryDetail,
@@ -282,4 +282,4 @@ export default connect(
     revertLibraryChanges,
     fetchLibraryDetail,
   },
-)(injectIntl(LibraryDetailPage));
+)(injectIntl(LibraryPage));

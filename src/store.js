@@ -4,6 +4,8 @@ import {
   libraryBlockStoreName,
   libraryDetailReducer,
   libraryDetailStoreName,
+  libraryEditReducer,
+  libraryEditStoreName,
   libraryCreateReducer,
   libraryCreateStoreName,
   libraryListReducer,
@@ -14,6 +16,7 @@ const store = configureStore({
   reducer: {
     [libraryBlockStoreName]: libraryBlockReducer,
     [libraryDetailStoreName]: libraryDetailReducer,
+    [libraryEditStoreName]: libraryEditReducer,
     [libraryCreateStoreName]: libraryCreateReducer,
     [libraryListStoreName]: libraryListReducer,
   },

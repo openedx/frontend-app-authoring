@@ -1111,7 +1111,7 @@ button {
 
 .wrapper-mast {
   margin: ($baseline*1.5) 0 0 0;
-  padding: 0 $baseline;
+  padding: 0;
   position: relative;
 
   .mast,
@@ -1195,7 +1195,7 @@ button {
 
 .wrapper-content {
   margin: 0;
-  padding: 0 $baseline;
+  padding: 0;
   position: relative;
 }
 

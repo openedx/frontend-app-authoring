@@ -31,6 +31,7 @@
 
   .wrapper-l {
     @include float(left);
+    width: 74.46809%;
   }
 
   .wrapper-r {
@@ -71,46 +72,11 @@
       .dropdown-menu {
         font-size: 1.4rem;
         width: 160px;
-
       }
 
-      // This is a dirty fix for a Bootstrap positioning bug that breaks right menu alignment on certain screen widths.
-      .dropdown-menu-right.show {
-        inset: 0px 0px auto auto !important;
-        transform: translate(0px, 43px) !important;
-      }
-
-      .dropdown-menu:before {
-        position: absolute;
-        top: -11px;
-        left: 9px;
-        display: inline-block;
-        border-right: 11px solid transparent;
-        border-bottom: 11px solid #CCC;
-        border-left: 11px solid transparent;
-        border-bottom-color: rgba(0, 0, 0, 0.2);
-        content: '';
-      }
-
-      .dropdown-menu:after {
-        position: absolute;
-        top: -10px;
-        left: 10px;
-        display: inline-block;
-        border-right: 10px solid transparent;
-        border-bottom: 10px solid white;
-        border-left: 10px solid transparent;
-        content: '';
-      }
-
-      .dropdown-menu:before, .dropdown-menu.pull-right:before {
-        right: 12px;
-        left: auto;
-      }
-
-      .dropdown-menu::after, .dropdown-menu.pull-right:after {
-        right: 13px;
-        left: auto;
+      .dropdown-item:active {
+        color: $uxpl-blue-hover-active;
+        background-color: white;
       }
     }
 
@@ -169,7 +135,7 @@
   .info-library {
     @include margin-right(2%);
     @include border-right(1px solid $gray-l4);
-    width: 50%;
+    width: 25%;
     padding: ($baseline*0.75) 2% ($baseline*0.75) 0;
 
     .library-org,

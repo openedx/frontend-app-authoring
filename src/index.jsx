@@ -14,7 +14,8 @@ import { NotFoundPage } from './generic';
 import {
   ROUTES,
   LibraryBlockPage,
-  LibraryDetailPage,
+  LibraryEditPage,
+  LibraryPage,
   LibraryListPage,
   StudioHeader,
 } from './library-authoring';
@@ -34,7 +35,8 @@ subscribe(APP_READY, () => {
         <main>
           <Switch>
             <Route exact path={ROUTES.List.HOME} component={LibraryListPage} />
-            <Route exact path={ROUTES.Detail.HOME} component={LibraryDetailPage} />
+            <Route exact path={ROUTES.Detail.HOME} component={LibraryPage} />
+            <Route exact path={ROUTES.Detail.EDIT} component={LibraryEditPage} />
             <Route exact path={ROUTES.Block.HOME} component={LibraryBlockPage} />
             <Route exact path={ROUTES.Block.EDIT} component={LibraryBlockPage} />
             <Route exact path={ROUTES.Block.ASSETS} component={LibraryBlockPage} />

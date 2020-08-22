@@ -6,7 +6,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { AppContext } from '@edx/frontend-platform/react';
 import { ensureConfig } from '@edx/frontend-platform/config';
 
-import { libraryShape } from '../common';
+import { ROUTES, libraryShape } from '../common';
 import { selectLibraryDetail } from '../library-detail';
 import StudioLogo from './assets/studio-logo.png';
 import messages from './messages';
@@ -34,20 +34,33 @@ const StudioHeader = ({ intl, library }) => {
           <Route path="/library">
             {library
             && (
-            <h2 className="info-library">
-              <Link to={library.url} className="library-link">
-                <span className="library-org">{library.org}</span>
-                <span className="library-id">{library.id}</span>
-                <span className="library-title" title={library.title}>{library.title}</span>
-              </Link>
-            </h2>
+              <>
+                <h2 className="info-library">
+                  <Link to={library.url} className="library-link">
+                    <span className="library-org">{library.org}</span>
+                    <span className="library-id">{library.id}</span>
+                    <span className="library-title" title={library.title}>{library.title}</span>
+                  </Link>
+                </h2>
+                <nav className="p-4 mt-2">
+                  <Dropdown>
+                    <Dropdown.Toggle variant="outline-light">
+                      {intl.formatMessage(messages['library.header.settings.menu'])}
+                      <Icon className="fa fa-caret-down pl-3" alt="" />
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu className="p-4 mt-1 fade">
+                      <Dropdown.Item className="p-0" as={Link} to={ROUTES.Detail.EDIT_SLUG(library.id)}>{intl.formatMessage(messages['library.header.settings.details'])}</Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </nav>
+              </>
             )}
           </Route>
         </div>
         <div className="wrapper-r">
           {authenticatedUser !== null
           && (
-          <nav className="nav-account" aria-label={intl.formatMessage(messages['library.header.account.label'])}>
+          <nav className="p-4 mt-2" aria-label={intl.formatMessage(messages['library.header.account.label'])}>
             <ol>
               <li className="nav-item nav-account-help">
                 <h3 className="title">
@@ -67,7 +80,7 @@ const StudioHeader = ({ intl, library }) => {
                     {authenticatedUser.username}
                     <Icon className="fa fa-caret-down pl-3" alt="" />
                   </Dropdown.Toggle>
-                  <Dropdown.Menu className="dropdown-menu-right p-4 mt-3 fade">
+                  <Dropdown.Menu className="dropdown-menu-right p-4 mt-1 fade">
                     <Dropdown.Item className="p-0 mb-3" href={config.STUDIO_BASE_URL}>{intl.formatMessage(messages['library.header.account.studiohome'])}</Dropdown.Item>
                     <Dropdown.Item className="p-0 mb-3" href={`${config.STUDIO_BASE_URL}/maintenance`}>{intl.formatMessage(messages['library.header.account.maintenance'])}</Dropdown.Item>
                     <Dropdown.Item className="p-0" href={config.LOGOUT_URL}>{intl.formatMessage(messages['library.header.account.signout'])}</Dropdown.Item>

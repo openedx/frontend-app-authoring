@@ -1,2 +1,2 @@
-export { default as LibraryDetailPage } from './LibraryDetailPage';
+export { default as LibraryPage } from './LibraryPage';
 export * from './data';

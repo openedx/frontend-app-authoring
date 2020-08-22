@@ -6,6 +6,16 @@ const messages = defineMessages({
     defaultMessage: 'Content Libraries',
     description: 'Alt text for the the header logo.',
   },
+  'library.header.settings.menu': {
+    id: 'library.header.settings.menu',
+    defaultMessage: 'Settings',
+    description: 'Title text for the settings menu.',
+  },
+  'library.header.settings.details': {
+    id: 'library.header.settings.details',
+    defaultMessage: 'Details',
+    description: 'Text for the details item in the settings menu.',
+  },
   'library.header.nav.help.title': {
     id: 'library.header.nav.help.title',
     defaultMessage: 'Online Help',
