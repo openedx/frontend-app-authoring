@@ -18,6 +18,7 @@ import {
   LibraryPage,
   LibraryListPage,
   StudioHeader,
+  LibraryAccessPage,
 } from './library-authoring';
 import './index.scss';
 import './assets/favicon.ico';
@@ -37,6 +38,7 @@ subscribe(APP_READY, () => {
             <Route exact path={ROUTES.List.HOME} component={LibraryListPage} />
             <Route exact path={ROUTES.Detail.HOME} component={LibraryPage} />
             <Route exact path={ROUTES.Detail.EDIT} component={LibraryEditPage} />
+            <Route exact path={ROUTES.Detail.ACCESS} component={LibraryAccessPage} />
             <Route exact path={ROUTES.Block.HOME} component={LibraryBlockPage} />
             <Route exact path={ROUTES.Block.EDIT} component={LibraryBlockPage} />
             <Route exact path={ROUTES.Block.ASSETS} component={LibraryBlockPage} />

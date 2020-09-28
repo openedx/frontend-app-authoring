@@ -319,6 +319,22 @@ $tmg-f3: 0.125s;
 $f-sans-serif: 'Open Sans','Helvetica Neue', Helvetica, Arial, sans-serif;
 $white: rgb(255, 255, 255) !default;
 $white-t3: rgba($white, 0.75) !default;
+$yellow: rgb(237, 189, 60) !default;
+$yellow-l1: tint($yellow, 20%) !default;
+$yellow-l2: tint($yellow, 40%) !default;
+$yellow-l3: tint($yellow, 60%) !default;
+$yellow-l4: tint($yellow, 80%) !default;
+$yellow-l5: tint($yellow, 90%) !default;
+$yellow-d1: shade($yellow, 20%) !default;
+$yellow-d2: shade($yellow, 40%) !default;
+$yellow-d3: shade($yellow, 60%) !default;
+$yellow-d4: shade($yellow, 80%) !default;
+$yellow-s1: saturate($yellow, 15%) !default;
+$yellow-s2: saturate($yellow, 30%) !default;
+$yellow-s3: saturate($yellow, 45%) !default;
+$yellow-u1: desaturate($yellow, 15%) !default;
+$yellow-u2: desaturate($yellow, 30%) !default;
+$yellow-u3: desaturate($yellow, 45%) !default;
 
 // Imported from:
 // edx-platform/common/cms/static/sass/bootstrap/_mixins.scss

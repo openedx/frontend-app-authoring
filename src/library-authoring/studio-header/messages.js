@@ -16,6 +16,11 @@ const messages = defineMessages({
     defaultMessage: 'Details',
     description: 'Text for the details item in the settings menu.',
   },
+  'library.header.settings.access': {
+    id: 'library.header.settings.access',
+    defaultMessage: 'User Access',
+    description: 'Text for the user access permissions item in the settings menu.',
+  },
   'library.header.nav.help.title': {
     id: 'library.header.nav.help.title',
     defaultMessage: 'Online Help',

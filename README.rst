@@ -82,3 +82,6 @@ Known Issues
   libraries but cannot be edited using Studio's authoring view.  This is a
   limitation of Studio, not this MFE.  Work is under way to improve Studio
   accordingly.
+
+* Users with view only access are able to see the 'User Access' menu item, despite
+  the fact it will just kick them back to the detail view.

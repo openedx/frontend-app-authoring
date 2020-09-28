@@ -5,3 +5,4 @@ export * from './edit-library';
 export * from './library-detail';
 export * from './list-libraries';
 export * from './studio-header';
+export * from './library-access';

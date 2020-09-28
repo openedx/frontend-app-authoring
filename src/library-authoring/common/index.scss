@@ -29,3 +29,11 @@
     }
   }
 }
+
+.well {
+  border: 1px solid $gray-l3;
+  border-radius: ($baseline/4);
+  box-shadow: 0 1px 3px $shadow inset;
+  background-color: $gray-l5;
+  padding: ($baseline/2);
+}

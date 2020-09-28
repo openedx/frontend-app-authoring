@@ -10,6 +10,8 @@ import {
   libraryCreateStoreName,
   libraryListReducer,
   libraryListStoreName,
+  libraryAccessStoreName,
+  libraryAccessReducer,
 } from './library-authoring';
 
 const store = configureStore({
@@ -19,6 +21,7 @@ const store = configureStore({
     [libraryEditStoreName]: libraryEditReducer,
     [libraryCreateStoreName]: libraryCreateReducer,
     [libraryListStoreName]: libraryListReducer,
+    [libraryAccessStoreName]: libraryAccessReducer,
   },
 });
 

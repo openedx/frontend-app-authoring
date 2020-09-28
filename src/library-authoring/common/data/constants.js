@@ -16,6 +16,12 @@ export const SUBMISSION_STATUS = {
   FAILED: 'failed',
 };
 
+export const LIBRARY_ACCESS = {
+  ADMIN: 'admin',
+  AUTHOR: 'author',
+  READ: 'read',
+};
+
 export const ROUTES = {
   List: {
     HOME: '/',
@@ -25,6 +31,8 @@ export const ROUTES = {
     HOME_SLUG: (libraryId) => `/library/${libraryId}`,
     EDIT: '/library/:libraryId/edit',
     EDIT_SLUG: (libraryId) => `/library/${libraryId}/edit`,
+    ACCESS: '/library/:libraryId/access',
+    ACCESS_SLUG: (libraryId) => `/library/${libraryId}/access`,
   },
   Block: {
     HOME: '/library/:libraryId/blocks/:blockId',

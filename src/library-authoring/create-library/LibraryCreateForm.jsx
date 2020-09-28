@@ -21,6 +21,7 @@ import {
   selectLibraryCreate,
 } from './data';
 
+import commonMessages from '../common/messages';
 import messages from './messages';
 
 class LibraryCreateForm extends React.Component {
@@ -237,9 +238,9 @@ class LibraryCreateForm extends React.Component {
           <StatefulButton
             state={this.getSubmitButtonState()}
             labels={{
-              disabled: intl.formatMessage(messages['library.form.button.submit']),
-              enabled: intl.formatMessage(messages['library.form.button.submit']),
-              pending: intl.formatMessage(messages['library.form.button.submitting']),
+              disabled: intl.formatMessage(commonMessages['library.common.forms.button.submit']),
+              enabled: intl.formatMessage(commonMessages['library.common.forms.button.submit']),
+              pending: intl.formatMessage(commonMessages['library.common.forms.button.submitting']),
             }}
             icons={{
               pending: <Icon className="fa fa-spinner fa-spin" />,
@@ -252,7 +253,7 @@ class LibraryCreateForm extends React.Component {
             className="action btn-light"
             onClick={this.onCancel}
           >
-            {intl.formatMessage(messages['library.form.button.cancel'])}
+            {intl.formatMessage(commonMessages['library.common.forms.button.cancel'])}
           </Button>
         </div>
       </form>

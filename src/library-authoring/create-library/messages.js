@@ -68,16 +68,6 @@ const messages = defineMessages({
     defaultMessage: 'The type of library that will be created.',
     description: 'Help text for the type field.',
   },
-  'library.form.button.submit': {
-    id: 'library.form.button.submit',
-    defaultMessage: 'Create',
-    description: 'Text for the submit button.',
-  },
-  'library.form.button.submitting': {
-    id: 'library.form.button.submitting',
-    defaultMessage: 'Creating',
-    description: 'Text for the submit button when submitting.',
-  },
   'library.form.button.cancel': {
     id: 'library.form.button.cancel',
     defaultMessage: 'Cancel',
