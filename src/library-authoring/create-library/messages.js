@@ -73,9 +73,19 @@ const messages = defineMessages({
     defaultMessage: 'Cancel',
     description: 'Text for the cancel button.',
   },
+  'library.form.type.label.video': {
+    id: 'library.form.type.label.video',
+    defaultMessage: 'Video (beta)',
+    description: 'Label for the video library type.',
+  },
+  'library.form.type.label.problem': {
+    id: 'library.form.type.label.problem',
+    defaultMessage: 'Problem (beta)',
+    description: 'Label for the problem library type.',
+  },
   'library.form.type.label.complex': {
     id: 'library.form.type.label.complex',
-    defaultMessage: 'Complex',
+    defaultMessage: 'Complex (beta)',
     description: 'Label for the complex library type.',
   },
   'library.form.type.label.legacy': {

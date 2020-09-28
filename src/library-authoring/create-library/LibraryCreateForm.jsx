@@ -51,10 +51,10 @@ class LibraryCreateForm extends React.Component {
       && createdLibrary !== prevProps.createdLibrary
       && createdLibrary !== null
     ) {
-      if (createdLibrary.type === LIBRARY_TYPES.COMPLEX) {
-        this.props.history.push(createdLibrary.url);
-      } else if (createdLibrary.type === LIBRARY_TYPES.LEGACY) {
+      if (createdLibrary.type === LIBRARY_TYPES.LEGACY) {
         window.location.href = createdLibrary.url;
+      } else if (Object.values(LIBRARY_TYPES).includes(createdLibrary.type)) {
+        this.props.history.push(createdLibrary.url);
       }
     }
   }

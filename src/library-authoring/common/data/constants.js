@@ -1,4 +1,6 @@
 export const LIBRARY_TYPES = {
+  VIDEO: 'video', // blockstore/v2
+  PROBLEM: 'problem', // blockstore/v2
   COMPLEX: 'complex', // blockstore/v2
   LEGACY: 'legacy', // modulestore/v1
 };

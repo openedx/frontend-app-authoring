@@ -17,36 +17,47 @@ export async function getLibraryList(params) {
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;
 
-  /* Fetch modulestore and blockstore libraries simultaneously. */
-  const [v1Response, v2Response] = await Promise.all([
-    client.get(`${baseUrl}/library/`, { params }),
-    client.get(`${baseUrl}/api/libraries/v2/`, { params }),
-  ]);
+  /* Fetch modulestore and blockstore libraries simultaneously, if required. */
+  let v1Request;
+  let v2Request;
+  if (params.type === LIBRARY_TYPES.LEGACY) {
+    v1Request = client.get(`${baseUrl}/library/`, { params });
+  } else if (!params.type) {
+    v1Request = client.get(`${baseUrl}/library/`, { params });
+    v2Request = client.get(`${baseUrl}/api/libraries/v2/`, { params });
+  } else {
+    v2Request = client.get(`${baseUrl}/api/libraries/v2/`, { params });
+  }
+  const promises = [v1Request, v2Request].filter(x => !!x);
+  await Promise.all(promises);
+  let v1Libraries = [];
+  let v2Libraries = [];
 
   /* Normalize modulestore properties to conform to the v2 API, marking them as
    * type LEGACY in the process. */
-  const v1Libraries = v1Response.data.map(library => {
-    const { org, slug } = unpackLibraryKey(library.library_key);
+  if (v1Request) {
+    // Should return immediately since promise was already fulfilled.
+    v1Libraries = (await v1Request).data.map(library => {
+      const { org, slug } = unpackLibraryKey(library.library_key);
+      return {
+        id: library.library_key,
+        org,
+        slug,
+        bundle_uuid: null,
+        title: library.display_name,
+        description: null,
+        version: null,
+        has_unpublished_changes: false,
+        has_unpublished_deletes: false,
+        type: LIBRARY_TYPES.LEGACY,
+      };
+    });
+  }
 
-    return {
-      id: library.library_key,
-      org,
-      slug,
-      bundle_uuid: null,
-      title: library.display_name,
-      description: null,
-      version: null,
-      has_unpublished_changes: false,
-      has_unpublished_deletes: false,
-      type: LIBRARY_TYPES.LEGACY,
-    };
-  });
-
-  /* Mark blockstore libraries as COMPLEX. */
-  const v2Libraries = v2Response.data.map(lib => ({
-    ...lib,
-    type: LIBRARY_TYPES.COMPLEX,
-  }));
+  if (v2Request) {
+    // Should return immediately since promise was already fulfilled.
+    v2Libraries = (await v2Request).data;
+  }
 
   /* Concatenate the libraries and sort them by title. */
   const libraries = v2Libraries.concat(v1Libraries);

@@ -1,8 +1,6 @@
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-import { LIBRARY_TYPES } from '../../common';
-
 ensureConfig(['STUDIO_BASE_URL'], 'library API service');
 
 export async function getLibraryDetail(libraryId) {
@@ -23,7 +21,6 @@ export async function getLibraryDetail(libraryId) {
     ...detailResponse.data,
     blocks: blockResponse.data,
     blockTypes: blockTypeResponse.data,
-    type: LIBRARY_TYPES.COMPLEX,
   };
 
   return library;

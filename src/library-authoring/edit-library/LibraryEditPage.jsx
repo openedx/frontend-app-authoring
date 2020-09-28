@@ -19,7 +19,7 @@ import {
   LOADING_STATUS,
   SUBMISSION_STATUS,
   libraryShape,
-  truncateErrorMessage,
+  truncateErrorMessage, LIBRARY_TYPES,
 } from '../common';
 import {
   fetchLibraryDetail,
@@ -37,9 +37,10 @@ class LibraryEditPage extends React.Component {
     super(props);
     this.state = {
       data: {
-        id: null,
+        libraryId: null,
         title: '',
         description: '',
+        type: null,
         allow_public_learning: false,
         allow_public_read: false,
       },
@@ -75,6 +76,7 @@ class LibraryEditPage extends React.Component {
         libraryId: library.id,
         title: library.title,
         description: library.description,
+        type: library.type,
         allow_public_learning: library.allow_public_learning,
         allow_public_read: library.allow_public_read,
       },
@@ -143,6 +145,10 @@ class LibraryEditPage extends React.Component {
     this.props.updateLibrary({ data: this.state.data });
   }
 
+  componentWillUnmount = () => {
+    this.props.clearError();
+  }
+
   handleCancel = () => {
     this.props.history.push(this.props.library.url);
   }
@@ -158,6 +164,11 @@ class LibraryEditPage extends React.Component {
   renderContent() {
     const { errorMessage, intl, library } = this.props;
     const { data } = this.state;
+
+    const validTypes = Object.values(LIBRARY_TYPES).filter((type) => type !== LIBRARY_TYPES.LEGACY);
+    const typeOptions = validTypes.map((value) => (
+      { value, label: intl.formatMessage(messages[`library.edit.type.label.${value}`]) }
+    ));
 
     return (
       <div className="library-edit-wrapper">
@@ -226,6 +237,28 @@ class LibraryEditPage extends React.Component {
                           onChange={this.handleValueChange}
                         />
                       </ValidationFormGroup>
+                    </li>
+                    <li className="field">
+                      {data.libraryId && (
+                        <ValidationFormGroup
+                          for="type"
+                          helpText={intl.formatMessage(messages['library.edit.type.help'])}
+                          invalid={this.hasFieldError('type')}
+                          invalidMessage={this.getFieldError('type')}
+                          className="mb-0 mr-2"
+                        >
+                          <label className="h6 d-block" htmlFor="type">
+                            {intl.formatMessage(messages['library.edit.type.label'])}
+                          </label>
+                          <Input
+                            name="type"
+                            type="select"
+                            options={typeOptions}
+                            defaultValue={data.type}
+                            onChange={this.handleValueChange}
+                          />
+                        </ValidationFormGroup>
+                      ) }
                     </li>
                     <li className="field">
                       <Form.Group>

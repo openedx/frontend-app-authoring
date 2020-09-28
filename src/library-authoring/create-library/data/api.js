@@ -15,23 +15,7 @@ export async function createLibrary({ type, ...data }) {
 
   let response;
   let library;
-  if (type === LIBRARY_TYPES.COMPLEX) {
-    response = await client.post(`${STUDIO_BASE_URL}/api/libraries/v2/`, {
-      ...data,
-      description: data.title,
-      collection_uuid: BLOCKSTORE_COLLECTION_UUID,
-    }).catch((error) => {
-      /* Normalize error data. */
-      const apiError = Object.create(error);
-      apiError.message = null;
-      apiError.fields = JSON.parse(error.customAttributes.httpErrorResponseData);
-      throw apiError;
-    });
-    library = {
-      ...response.data,
-      type,
-    };
-  } else if (type === LIBRARY_TYPES.LEGACY) {
+  if (type === LIBRARY_TYPES.LEGACY) {
     response = await client.post(`${STUDIO_BASE_URL}/library/`, {
       org: data.org,
       number: data.slug,
@@ -51,8 +35,25 @@ export async function createLibrary({ type, ...data }) {
       title: data.title,
       description: null,
       version: null,
+      type: LIBRARY_TYPES.LEGACY,
       has_unpublished_changes: false,
       has_unpublished_deletes: false,
+    };
+  } else if (Object.values(LIBRARY_TYPES).includes(type)) {
+    response = await client.post(`${STUDIO_BASE_URL}/api/libraries/v2/`, {
+      ...data,
+      type,
+      description: data.title,
+      collection_uuid: BLOCKSTORE_COLLECTION_UUID,
+    }).catch((error) => {
+      /* Normalize error data. */
+      const apiError = Object.create(error);
+      apiError.message = null;
+      apiError.fields = JSON.parse(error.customAttributes.httpErrorResponseData);
+      throw apiError;
+    });
+    library = {
+      ...response.data,
       type,
     };
   } else {

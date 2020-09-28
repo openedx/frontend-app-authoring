@@ -26,9 +26,19 @@ const messages = defineMessages({
     defaultMessage: 'Type:',
     description: 'Label of the library type metadata item',
   },
+  'library.list.item.type.video': {
+    id: 'library.list.item.type.video',
+    defaultMessage: 'Video (beta)',
+    description: 'Label for the video library type.',
+  },
+  'library.list.item.type.problem': {
+    id: 'library.list.item.type.problem',
+    defaultMessage: 'Problem (beta)',
+    description: 'Label for the problem library type.',
+  },
   'library.list.item.type.complex': {
     id: 'library.list.item.type.complex',
-    defaultMessage: 'Complex',
+    defaultMessage: 'Complex (beta)',
     description: 'Label for the complex library type.',
   },
   'library.list.item.type.legacy': {
@@ -70,6 +80,41 @@ const messages = defineMessages({
     id: 'library.list.filter.options.org.organizations',
     defaultMessage: 'Organizations',
     description: 'Label for the main organization option group.',
+  },
+  'library.list.filter.options.type.label': {
+    id: 'library.list.filter.options.type.label',
+    defaultMessage: 'Type',
+    description: 'Label for the type form group.',
+  },
+  'library.list.filter.options.type.all': {
+    id: 'library.list.filter.options.type.all',
+    defaultMessage: 'All',
+    description: 'Label for the empty type option.',
+  },
+  'library.list.filter.options.type.types': {
+    id: 'library.list.filter.options.type.types',
+    defaultMessage: 'Types',
+    description: 'Label for the main type option group.',
+  },
+  'library.list.filter.options.type.legacy': {
+    id: 'library.list.filter.options.type.legacy',
+    defaultMessage: 'Legacy',
+    description: 'Label for the legacy type option.',
+  },
+  'library.list.filter.options.type.complex': {
+    id: 'library.list.filter.options.type.complex',
+    defaultMessage: 'Complex (beta)',
+    description: 'Label for the complex type option.',
+  },
+  'library.list.filter.options.type.video': {
+    id: 'library.list.filter.options.type.video',
+    defaultMessage: 'Video (beta)',
+    description: 'Label for the video type option.',
+  },
+  'library.list.filter.options.type.problem': {
+    id: 'library.list.filter.options.type.problem',
+    defaultMessage: 'Problem (beta)',
+    description: 'Label for the video type option.',
   },
   'library.list.aside.title': {
     id: 'library.list.aside.title',

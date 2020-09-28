@@ -14,5 +14,5 @@ export const updateLibrary = ({ data }) => async (dispatch) => {
 };
 
 export const clearError = () => async (dispatch) => {
-  dispatch(actions.libraryEditClearError());
+  dispatch(actions.libraryClearError());
 };

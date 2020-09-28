@@ -8,7 +8,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 import { LoadingPage } from '../../generic';
-import { LOADING_STATUS, LibraryIndexTabs, libraryShape } from '../common';
+import {
+  LOADING_STATUS, LibraryIndexTabs, libraryShape, LIBRARY_TYPES,
+} from '../common';
 import { LibraryCreateForm } from '../create-library';
 import {
   fetchLibraryList,
@@ -67,6 +69,16 @@ class LibraryListPage extends React.Component {
     });
   }
 
+  handleFilterTypeChange = (event) => {
+    this.handleFilterChange(event);
+    this.props.fetchLibraryList({
+      params: {
+        ...this.state.filterParams,
+        type: event.target.value,
+      },
+    });
+  }
+
   handleFilterSubmit = (event) => {
     event.preventDefault();
     this.props.fetchLibraryList({ params: this.state.filterParams });
@@ -107,6 +119,14 @@ class LibraryListPage extends React.Component {
         })),
       },
     ];
+
+    const typeOptions = [{
+      label: intl.formatMessage(messages['library.list.filter.options.type.types']),
+      group: Object.values(LIBRARY_TYPES).map((value) => (
+        { value, label: intl.formatMessage(messages[`library.list.filter.options.type.${value}`]) }
+      )),
+    }];
+    typeOptions.unshift({ value: '', label: intl.formatMessage(messages['library.list.filter.options.type.all']) });
 
     return (
       <div className="library-list-wrapper">
@@ -193,6 +213,20 @@ class LibraryListPage extends React.Component {
                         options={orgOptions}
                         defaultValue={filterParams ? filterParams.org : null}
                         onChange={this.handleFilterOrgChange}
+                      />
+                    </Form.Group>
+                  </Form.Row>
+                  <Form.Row>
+                    <Form.Group className="w-100">
+                      <Form.Label className="title title-3">
+                        {intl.formatMessage(messages['library.list.filter.options.type.label'])}
+                      </Form.Label>
+                      <Input
+                        name="type"
+                        type="select"
+                        options={typeOptions}
+                        defaultValue={filterParams ? filterParams.type : null}
+                        onChange={this.handleFilterTypeChange}
                       />
                     </Form.Group>
                   </Form.Row>

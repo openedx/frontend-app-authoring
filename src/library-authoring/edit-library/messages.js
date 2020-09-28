@@ -41,6 +41,31 @@ const messages = defineMessages({
     defaultMessage: 'The description for your library.',
     description: 'Help text for the description field.',
   },
+  'library.edit.type.label': {
+    id: 'library.edit.type.label',
+    defaultMessage: 'Library Type *',
+    description: 'Label for the type field.',
+  },
+  'library.edit.type.help': {
+    id: 'library.edit.type.help',
+    defaultMessage: 'The type of library.',
+    description: 'Help text for the type field.',
+  },
+  'library.edit.type.label.video': {
+    id: 'library.edit.type.label.video',
+    defaultMessage: 'Video (beta)',
+    description: 'Label for the video library type.',
+  },
+  'library.edit.type.label.problem': {
+    id: 'library.edit.type.label.problem',
+    defaultMessage: 'Problem (beta)',
+    description: 'Label for the problem library type.',
+  },
+  'library.edit.type.label.complex': {
+    id: 'library.edit.type.label.complex',
+    defaultMessage: 'Complex (beta)',
+    description: 'Label for the complex library type.',
+  },
   'library.edit.public_learning.label': {
     id: 'library.edit.public_learning.label',
     defaultMessage: 'Allow public learning',

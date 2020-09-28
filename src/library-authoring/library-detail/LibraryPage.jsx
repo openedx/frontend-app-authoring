@@ -36,6 +36,16 @@ class LibraryPage extends React.Component {
     this.props.fetchLibraryDetail({ libraryId });
   }
 
+  componentDidUpdate(prevProps) {
+    const oldBlockTypes = (prevProps.library && prevProps.library.blockTypes) || [];
+    const newBlockTypes = (this.props.library && this.props.library.blockTypes) || [];
+    // Identity check is good enough here. In all current scenarios it should have the same effect as deep equality
+    // checking. Might change this if we suddenly allow switching libraries in place from this page.
+    if ((oldBlockTypes !== newBlockTypes) && newBlockTypes.length) {
+      this.updateBlockDefault();
+    }
+  }
+
   handleCommitChanges = () => {
     this.props.commitLibraryChanges({ libraryId: this.props.library.id });
   }
@@ -72,6 +82,16 @@ class LibraryPage extends React.Component {
       this.addComponentRef.current.scrollIntoView({
         behaviour: 'smooth',
       });
+    }
+  }
+
+  updateBlockDefault() {
+    // The default block type is 'html', but this will break the form if we're in a video or problem library.
+    // In the case we're in one of those, the server should only return one valid block type, which we can then set.
+    const { library } = this.props;
+    const currentBlockValid = !!library.blockTypes.filter((type) => type.block_type === this.state.newBlockType).length;
+    if (library.blockTypes.length && !currentBlockValid) {
+      this.setState({ newBlockType: library.blockTypes[0].block_type });
     }
   }
 
