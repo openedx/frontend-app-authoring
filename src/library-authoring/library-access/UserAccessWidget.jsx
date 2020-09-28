@@ -19,7 +19,7 @@ import { LIBRARY_ACCESS, libraryShape } from '../common/data';
 import commonMessages from '../common/messages';
 import messages from './messages';
 
-export const UserAccessContainer = ({
+export const UserAccessWidget = ({
   intl, library, user, multipleAdmins, setAccessLevel, removeAccess, isUser, showRemoveModal, setShowRemoveModal,
   showDeprivModal, setShowDeprivModal, isAdmin, adminLocked,
 }) => (
@@ -50,7 +50,7 @@ export const UserAccessContainer = ({
               {user.access_level === LIBRARY_ACCESS.ADMIN && multipleAdmins && (
               <Col xs={10} className="text-left text-md-right">
                 <Button size="lg" variant="secondary" onClick={() => setShowDeprivModal(true)}>
-                  {intl.formatMessage(messages['library.access.user.remove_admin'])}
+                  {intl.formatMessage(messages['library.access.remove_admin'])}
                 </Button>
                 <Modal
                   open={showDeprivModal}
@@ -79,7 +79,7 @@ export const UserAccessContainer = ({
               {user.access_level === LIBRARY_ACCESS.READ && (
               <Col xs={10} className="text-left text-md-right">
                 <Button size="lg" variant="primary" onClick={() => setAccessLevel(LIBRARY_ACCESS.AUTHOR)}>
-                  {intl.formatMessage(messages['library.access.user.add_author'])}
+                  {intl.formatMessage(messages['library.access.add_author'])}
                 </Button>
               </Col>
               )}
@@ -87,20 +87,26 @@ export const UserAccessContainer = ({
                 <>
                   <Col xs={5} className="text-left text-md-right pl-md-1">
                     <Button size="lg" variant="secondary" onClick={() => setAccessLevel(LIBRARY_ACCESS.READ)}>
-                      {intl.formatMessage(messages['library.access.user.remove_author'])}
+                      {intl.formatMessage(messages['library.access.remove_author'])}
                     </Button>
                   </Col>
                   <Col xs={5} className="text-left text-md-right pl-md-1">
                     <Button size="lg" variant="primary" onClick={() => setAccessLevel(LIBRARY_ACCESS.ADMIN)}>
-                      {intl.formatMessage(messages['library.access.user.add_admin'])}
+                      {intl.formatMessage(messages['library.access.add_admin'])}
                     </Button>
                   </Col>
                 </>
               )}
               {(!((user.access_level === LIBRARY_ACCESS.ADMIN) && adminLocked)) && (
               <Col xs={2} className="text-right text-md-center">
-                <Button size="lg" variant="danger" onClick={() => setShowRemoveModal(true)}>
-                  <span className="sr-only">{intl.formatMessage(messages['library.access.user.remove_user'])}</span>
+                <Button
+                  size="lg"
+                  variant="danger"
+                  onClick={() => setShowRemoveModal(true)}
+                  aria-label={
+                    intl.formatMessage(messages['library.access.remove_user'])
+                  }
+                >
                   <FontAwesomeIcon icon={faTrash} />
                 </Button>
                 <Modal
@@ -133,7 +139,7 @@ export const UserAccessContainer = ({
     </Card>
   </Col>
 );
-export const UserAccessContainerBase = injectIntl(({
+export const UserAccessWidgetContainerBase = ({
   user, ...props
 }) => {
   const { authenticatedUser } = useContext(AppContext);
@@ -158,10 +164,10 @@ export const UserAccessContainerBase = injectIntl(({
     setAccessLevel,
     removeAccess,
   };
-  return <UserAccessContainer {...newProps} />;
-});
+  return <UserAccessWidget {...newProps} />;
+};
 
-UserAccessContainerBase.propTypes = {
+UserAccessWidgetContainerBase.propTypes = {
   user: libraryUserShape.isRequired,
   intl: intlShape.isRequired,
   library: libraryShape.isRequired,
@@ -170,8 +176,8 @@ UserAccessContainerBase.propTypes = {
   removeUserAccess: PropTypes.func.isRequired,
 };
 
-UserAccessContainer.propTypes = {
-  ...UserAccessContainerBase.propTypes,
+UserAccessWidget.propTypes = {
+  ...UserAccessWidgetContainerBase.propTypes,
   isUser: PropTypes.bool.isRequired,
   showRemoveModal: PropTypes.bool.isRequired,
   setShowRemoveModal: PropTypes.func.isRequired,
@@ -179,10 +185,12 @@ UserAccessContainer.propTypes = {
   setShowDeprivModal: PropTypes.func.isRequired,
 };
 
-export default connect(
+const UserAccessWidgetContainer = connect(
   selectLibraryAccess,
   {
     setUserAccess,
     removeUserAccess,
   },
-)(injectIntl(UserAccessContainerBase));
+)(injectIntl(UserAccessWidgetContainerBase));
+
+export default UserAccessWidgetContainer;

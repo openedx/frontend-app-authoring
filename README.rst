@@ -64,11 +64,13 @@ Please see `edx/frontend-platform's i18n module <https://edx.github.io/frontend-
 Known Issues
 ------------
 
-* This MFE is missing unit tests.
-
 * This MFE requires a copy review.
 
 * This MFE requires an accessibility audit.
+
+* There are a handful of non-fatal errors that appear when running tests.
+  They appear to be related to the Modal component from Paragon not being up to
+  date with the version of React in this repository.
 
 * The styling in the account dropdown menu in the header does not currently
   match Studio's very well.  This will be improved shortly.

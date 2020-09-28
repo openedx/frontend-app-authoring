@@ -15,9 +15,12 @@
     "i18n_extract": "BABEL_ENV=i18n fedx-scripts babel src --quiet > /dev/null",
     "is-es5": "es-check es5 ./dist/*.js",
     "lint": "fedx-scripts eslint --ext .js --ext .jsx .",
+    "lint:fix": "fedx-scripts eslint --ext .js --ext .jsx . --fix",
     "snapshot": "fedx-scripts jest --updateSnapshot",
     "start": "fedx-scripts webpack-dev-server --progress",
-    "test": "fedx-scripts jest --coverage --passWithNoTests"
+    "test": "fedx-scripts jest --coverage",
+    "test:watch": "fedx-scripts jest --coverage --watchAll --watch",
+    "clear-jest": "fedx-scripts jest --clearCache"
   },
   "husky": {
     "hooks": {
@@ -49,7 +52,7 @@
     "prop-types": "15.7.2",
     "react": "16.12.0",
     "react-dom": "16.12.0",
-    "react-dropzone": "^11.0.2",
+    "react-dropzone": "^11.1.0",
     "react-redux": "7.1.3",
     "react-router": "5.1.2",
     "react-router-dom": "5.1.2",
@@ -58,14 +61,19 @@
   },
   "devDependencies": {
     "@edx/frontend-build": "3.0.0",
+    "@sheerun/mutationobserver-shim": "^0.3.3",
+    "@testing-library/dom": "^7.24.2",
+    "@testing-library/react": "^11.0.4",
     "codecov": "3.7.1",
-    "copy-webpack-plugin": "^6.0.3",
+    "copy-webpack-plugin": "^6.1.0",
     "es-check": "5.1.0",
     "glob": "7.1.6",
     "husky": "3.1.0",
-    "jest": "24.9.0",
+    "jest": "26.4.2",
     "reactifex": "1.1.1",
+    "redux-mock-store": "^1.5.4",
     "rosie": "2.0.1",
+    "uuid": "^8.3.0",
     "webpack-merge": "4.2.2"
   }
 }

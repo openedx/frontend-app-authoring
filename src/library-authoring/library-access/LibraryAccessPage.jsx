@@ -29,7 +29,7 @@ import {
   selectLibraryAccess,
 } from './data';
 // eslint-disable-next-line import/no-named-as-default
-import UserAccessContainer from './UserAccessContainer';
+import UserAccessWidgetContainer from './UserAccessWidget';
 
 
 /**
@@ -86,7 +86,7 @@ const LibraryAccessPage = ({
           <Row>
             { ((users && users.map((user) => (
               (
-                <UserAccessContainer
+                <UserAccessWidgetContainer
                   intl={intl}
                   user={user}
                   key={user.username}

@@ -120,30 +120,30 @@ const messages = defineMessages({
     defaultMessage: 'Read Only',
     description: 'Label for the read only access level.',
   },
-  'library.access.user.add_admin': {
-    id: 'library.access.user.add_admin',
+  'library.access.add_admin': {
+    id: 'library.access.add_admin',
     defaultMessage: 'Add Admin Access',
     description: 'Label for button that grants a user admin access.',
   },
-  'library.access.user.remove_admin': {
-    id: 'library.access.user.remove_admin',
+  'library.access.remove_admin': {
+    id: 'library.access.remove_admin',
     defaultMessage: 'Remove Admin Access',
     description: 'Label for button that removes a user\'s admin access.',
   },
-  'library.access.user.add_author': {
-    id: 'library.access.user.add_author',
+  'library.access.add_author': {
+    id: 'library.access.add_author',
     defaultMessage: 'Add Author Access',
     description: 'Label for button that grants a user author access.',
   },
-  'library.access.user.remove_author': {
-    id: 'library.access.user.remove_author',
+  'library.access.remove_author': {
+    id: 'library.access.remove_author',
     defaultMessage: 'Remove Author Access',
     description: 'Label for button that removes a user\'s author access level.',
   },
-  'library.access.user.remove_user': {
-    id: 'library.access.user.remove_user',
+  'library.access.remove_user': {
+    id: 'library.access.remove_user',
     defaultMessage: 'Remove user',
-    description: 'Label for button that removes a user from a library entirely. Screen-reader only.',
+    description: 'Aria label for button that removes a user\'s access entirely.',
   },
   'library.access.modal.remove.title': {
     id: 'library.access.modal.remove.title',

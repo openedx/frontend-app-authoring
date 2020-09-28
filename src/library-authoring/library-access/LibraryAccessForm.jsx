@@ -185,6 +185,8 @@ LibraryAccessFormContainer.propTypes = {
   }),
 };
 
+export const RawLibraryAccessFormContainer = LibraryAccessFormContainer;
+
 export default connect(
   selectLibraryAccess,
   {
