@@ -48,6 +48,8 @@
     "@reduxjs/toolkit": "^1.2.3",
     "babel-polyfill": "6.26.0",
     "edx-pattern-library": "0.18.1",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.5",
     "history": "^5.0.0",
     "immutability-helper": "3.0.2",
     "jest-fetch-mock": "^3.0.3",

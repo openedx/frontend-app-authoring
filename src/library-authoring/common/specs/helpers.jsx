@@ -1,4 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
+import jest from 'jest-mock';
+import { mount } from 'enzyme';
 import { render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import * as React from 'react';
@@ -157,6 +159,14 @@ export const ctxRender = async (ui, {
     options,
   );
 };
+
+export const ctxMount = (ui, context) => mount(
+  <AppContext.Provider value={context}>
+    <IntlProvider locale="en">
+      {ui}
+    </IntlProvider>
+  </AppContext.Provider>,
+);
 
 /**
  * immediate

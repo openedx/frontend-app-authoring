@@ -57,6 +57,31 @@ const messages = defineMessages({
     defaultMessage: 'Library slug:',
     description: 'Label of the library slug metadata item',
   },
+  'library.list.pagination.labels.previous': {
+    id: 'library.list.pagination.labels.previous',
+    defaultMessage: 'Previous',
+    description: 'Label of the pagination item for previous button',
+  },
+  'library.list.pagination.labels.next': {
+    id: 'library.list.pagination.labels.next',
+    defaultMessage: 'Next',
+    description: 'Label of the pagination item for next button',
+  },
+  'library.list.pagination.labels.page': {
+    id: 'library.list.pagination.labels.page',
+    defaultMessage: 'Page',
+    description: 'Label of the pagination item for page used for aria text',
+  },
+  'library.list.pagination.labels.currentPage': {
+    id: 'library.list.pagination.labels.currentPage',
+    defaultMessage: 'Current page',
+    description: 'Label of the pagination item for the current page used for aria text',
+  },
+  'library.list.pagination.labels.pageOfCount': {
+    id: 'library.list.pagination.labels.pageOfCount',
+    defaultMessage: 'PageOfCount',
+    description: 'Label of the pagination item for page of count used for aria text',
+  },
   'library.list.filter.title': {
     id: 'library.list.filter.title',
     defaultMessage: 'Find a library',
@@ -86,11 +111,6 @@ const messages = defineMessages({
     id: 'library.list.filter.options.type.label',
     defaultMessage: 'Type',
     description: 'Label for the type form group.',
-  },
-  'library.list.filter.options.type.all': {
-    id: 'library.list.filter.options.type.all',
-    defaultMessage: 'All',
-    description: 'Label for the empty type option.',
   },
   'library.list.filter.options.type.types': {
     id: 'library.list.filter.options.type.types',

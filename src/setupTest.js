@@ -1,7 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import 'babel-polyfill';
+import Enzyme from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 import MutationObserver from '@sheerun/mutationobserver-shim';
 import { mergeConfig } from '@edx/frontend-platform';
+
+Enzyme.configure({ adapter: new Adapter() });
 
 mergeConfig({
   STUDIO_BASE_URL: process.env.STUDIO_BASE_URL,

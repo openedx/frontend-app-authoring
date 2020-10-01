@@ -16,28 +16,20 @@ export async function getOrgList() {
 export async function getLibraryList(params) {
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;
+  const isLegacyLibraryType = params.type === LIBRARY_TYPES.LEGACY;
 
-  /* Fetch modulestore and blockstore libraries simultaneously, if required. */
-  let v1Request;
-  let v2Request;
-  if (params.type === LIBRARY_TYPES.LEGACY) {
-    v1Request = client.get(`${baseUrl}/library/`, { params });
-  } else if (!params.type) {
-    v1Request = client.get(`${baseUrl}/library/`, { params });
-    v2Request = client.get(`${baseUrl}/api/libraries/v2/`, { params });
-  } else {
-    v2Request = client.get(`${baseUrl}/api/libraries/v2/`, { params });
-  }
-  const promises = [v1Request, v2Request].filter(x => !!x);
-  await Promise.all(promises);
-  let v1Libraries = [];
-  let v2Libraries = [];
+  const apiUrl = isLegacyLibraryType ? `${baseUrl}/library/` : `${baseUrl}/api/libraries/v2/`;
+  const request = await client.get(apiUrl, {
+    params: {
+      ...params,
+      pagination: true,
+    },
+  });
 
-  /* Normalize modulestore properties to conform to the v2 API, marking them as
-   * type LEGACY in the process. */
-  if (v1Request) {
-    // Should return immediately since promise was already fulfilled.
-    v1Libraries = (await v1Request).data.map(library => {
+  // Should return immediately since promise was already fulfilled.
+  const response = (await request).data;
+  const libraries = isLegacyLibraryType
+    ? response.results.map(library => {
       const { org, slug } = unpackLibraryKey(library.library_key);
       return {
         id: library.library_key,
@@ -52,30 +44,11 @@ export async function getLibraryList(params) {
         license: '',
         type: LIBRARY_TYPES.LEGACY,
       };
-    });
-  }
+    })
+    : response.results;
 
-  if (v2Request) {
-    // Should return immediately since promise was already fulfilled.
-    v2Libraries = (await v2Request).data;
-  }
-
-  /* Concatenate the libraries and sort them by title. */
-  const libraries = v2Libraries.concat(v1Libraries);
-  libraries.sort((a, b) => {
-    const titleA = a.title.toLowerCase();
-    const titleB = b.title.toLowerCase();
-
-    if (titleA < titleB) {
-      return -1;
-    }
-
-    if (titleA > titleB) {
-      return 1;
-    }
-
-    return 0;
-  });
-
-  return libraries;
+  return {
+    data: libraries,
+    count: response.count,
+  };
 }
