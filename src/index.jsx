@@ -12,6 +12,7 @@ import { Route, Switch } from 'react-router-dom';
 import { messages as footerMessages } from '@edx/frontend-component-footer';
 
 import appMessages from './i18n';
+import DiscussionToolSelectorContainer from './discussion-tool-selector/DiscussionToolSelectorContainer';
 
 import initializeStore from './store';
 import './index.scss';
@@ -40,6 +41,18 @@ subscribe(APP_READY, () => {
             const { params: { courseId } } = match;
             return (
               <CourseAuthoringRoutes courseId={courseId} />
+            );
+          }}
+        />
+	<Route
+          path="/course-pages/:course_id/discussions/setup"
+          exact
+          render={({ match }) => {
+            const courseId = decodeURIComponent(match.params.course_id);
+            return (
+              <>
+                <DiscussionToolSelectorContainer courseId={courseId} />
+              </>
             );
           }}
         />

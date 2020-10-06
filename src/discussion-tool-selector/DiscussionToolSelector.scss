@@ -1,0 +1,16 @@
+.discussion-tool {
+    &:hover,
+    &:focus {
+        border-color: theme-color("primary", "hover") !important;
+    }
+}
+
+.features-table {
+    scroll-snap-type: x mandatory;
+
+    th {
+        min-width: 7.5rem;
+        white-space: nowrap;
+        scroll-snap-align: center;
+    }
+}
