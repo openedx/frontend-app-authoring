@@ -2,3 +2,17 @@
   margin: 0;
   font-size: 1.4rem;
 }
+
+// The following to be removed when a proper interface for library authoring is fully specced out.
+// This should make error messages visible in the mean time.
+.library-detail-wrapper {
+  .invalid-feedback {
+    display: block;
+    background-color: $white;
+    font-size: 70%;
+    border-radius: 3px;
+  }
+  .add-xblock-component .new-component-type .add-xblock-component-button {
+    height: auto;
+  }
+}

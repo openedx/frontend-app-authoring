@@ -13,13 +13,13 @@ export const fetchLibraryDetail = ({ libraryId }) => async (dispatch) => {
   }
 };
 
-export const createLibraryBlock = ({ data }) => async (dispatch) => {
+export const createLibraryBlock = ({ libraryId, data }) => async (dispatch) => {
   try {
     dispatch(actions.libraryDetailRequest());
-    const libraryBlock = await api.createLibraryBlock(data);
+    const libraryBlock = await api.createLibraryBlock({ libraryId, data });
     dispatch(actions.libraryCreateBlockSuccess({ libraryBlock }));
   } catch (error) {
-    dispatch(actions.libraryDetailFailed({ errorMessage: error.message }));
+    dispatch(actions.libraryCreateBlockFailed({ errorMessage: error.message, errorFields: error.fields }));
     logError(error);
   }
 };

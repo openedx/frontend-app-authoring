@@ -8,6 +8,7 @@ export const libraryDetailStoreName = 'libraryDetail';
 
 export const libraryDetailInitialState = {
   errorMessage: null,
+  errorFields: null,
   library: null,
   status: LOADING_STATUS.LOADING,
 };
@@ -38,6 +39,11 @@ const slice = createSlice({
         has_unpublished_changes: { $set: true },
         blocks: { $push: [payload.libraryBlock] },
       });
+    },
+    libraryCreateBlockFailed: (state, { payload }) => {
+      state.status = LOADING_STATUS.FAILED;
+      state.errorMessage = payload.errorMessage;
+      state.errorFields = payload.errorFields;
     },
   },
 });

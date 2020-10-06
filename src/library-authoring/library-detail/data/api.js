@@ -1,5 +1,6 @@
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { normalizeErrors } from '../../common/helpers';
 
 ensureConfig(['STUDIO_BASE_URL'], 'library API service');
 
@@ -26,18 +27,13 @@ export async function getLibraryDetail(libraryId) {
   return library;
 }
 
-export async function createLibraryBlock({ libraryId, ...data }) {
+export async function createLibraryBlock({ libraryId, data }) {
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;
   const response = await client.post(
     `${baseUrl}/api/libraries/v2/${libraryId}/blocks/`,
     data,
-  ).catch((error) => {
-    /* Normalize error data. */
-    const apiError = Object.create(error);
-    [apiError.message] = JSON.parse(error.customAttributes.httpErrorResponseData);
-    throw apiError;
-  });
+  ).catch(normalizeErrors);
 
   return response.data;
 }

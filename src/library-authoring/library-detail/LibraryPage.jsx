@@ -1,6 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Alert } from '@edx/paragon';
+import {
+  Button,
+  Alert,
+  ValidationFormGroup,
+  Input,
+  Form,
+} from '@edx/paragon';
 import { connect } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { AppContext } from '@edx/frontend-platform/react';
@@ -19,6 +25,7 @@ import {
   selectLibraryDetail,
 } from './data';
 import LibraryBlockCard from './LibraryBlockCard';
+import commonMessages from '../common/messages';
 import messages from './messages';
 
 class LibraryPage extends React.Component {
@@ -26,8 +33,10 @@ class LibraryPage extends React.Component {
     super(props);
     this.addComponentRef = React.createRef();
     this.state = {
-      newBlockType: 'html',
-      newBlockSlug: '',
+      data: {
+        block_type: 'html',
+        definition_id: '',
+      },
     };
   }
 
@@ -54,22 +63,34 @@ class LibraryPage extends React.Component {
     this.props.revertLibraryChanges({ libraryId: this.props.library.id });
   }
 
-  handleChangeNewBlockType = (event) => {
-    this.setState({ newBlockType: event.target.value });
+  onValueChange = (event) => {
+    const { name, value } = event.target;
+    this.setState(state => ({
+      data: {
+        ...state.data,
+        [name]: value,
+      },
+    }));
   }
 
-  handleChangeNewBlockSlug = (event) => {
-    this.setState({ newBlockSlug: event.target.value });
+  hasFieldError = (fieldName) => {
+    const { errorFields } = this.props;
+    return !!(errorFields && (fieldName in errorFields));
   }
+
+  getFieldError = (fieldName) => {
+    if (this.hasFieldError(fieldName)) {
+      return this.props.errorFields[fieldName];
+    }
+    return null;
+  }
+
 
   handleAddNewBlock = (event) => {
     event.preventDefault();
     this.props.createLibraryBlock({
-      data: {
-        libraryId: this.props.library.id,
-        block_type: this.state.newBlockType,
-        definition_id: this.state.newBlockSlug,
-      },
+      libraryId: this.props.library.id,
+      data: this.state.data,
     });
   }
 
@@ -134,14 +155,14 @@ class LibraryPage extends React.Component {
         <div className="wrapper-content wrapper">
           <section className="content">
             <article className="content-primary" role="main">
-              {errorMessage
+              {(errorMessage !== null)
               && (
               <Alert
                 variant="danger"
                 onClose={this.handleDismissAlert}
                 dismissible
               >
-                {truncateErrorMessage(errorMessage)}
+                {truncateErrorMessage(errorMessage || intl.formatMessage(commonMessages['library.server.error.generic']))}
               </Alert>
               )}
               <div className="row">
@@ -152,48 +173,58 @@ class LibraryPage extends React.Component {
               <div ref={this.addComponentRef} className="add-xblock-component new-component-item adding">
                 <div className="new-component">
                   <h5>{intl.formatMessage(messages['library.detail.add.new.component'])}</h5>
-                  <form>
-                    <div className="new-component-type row justify-content-center">
-                      <div className="form-group add-xblock-component-button w-auto p-4">
-                        <label htmlFor="newBlockType" className="mt-1 mb-4">
-                          {intl.formatMessage(messages['library.detail.add.new.component.type'])}
-                        </label>
-                        <select
-                          id="newBlockType"
-                          className="form-control w-auto m-auto"
-                          value={this.state.newBlockType}
-                          onChange={this.handleChangeNewBlockType}
-                        >
-                          {library.blockTypes && library.blockTypes.map(blockType => (
-                            <option value={blockType.block_type} key={blockType.block_type}>
-                              {blockType.block_type} ({blockType.display_name})
-                            </option>
-                          ))}
-                        </select>
+                  <Form onSubmit={this.handleAddNewBlock}>
+                    <fieldset>
+                      <div className="new-component-type row justify-content-center">
+                        <div className="form-group add-xblock-component-button w-auto p-4">
+                          <ValidationFormGroup
+                            for="block_type"
+                            invalid={this.hasFieldError('block_type')}
+                            invalidMessage={this.getFieldError('block_type')}
+                          >
+                            <label htmlFor="block_type" className="mt-1 mb-4">
+                              {intl.formatMessage(messages['library.detail.add.new.component.type'])}
+                            </label>
+                            <Input
+                              name="block_type"
+                              type="select"
+                              defaultValue={this.state.data.block_type}
+                              onChange={this.onValueChange}
+                              options={library.blockTypes && library.blockTypes.map(blockType => (
+                                { value: blockType.block_type, label: blockType.display_name }
+                              ))}
+                            />
+                          </ValidationFormGroup>
+                        </div>
+                        <div className="form-group add-xblock-component-button w-auto p-4">
+                          <ValidationFormGroup
+                            for="definition_id"
+                            invalid={this.hasFieldError('definition_id')}
+                            invalidMessage={this.getFieldError('definition_id')}
+                          >
+                            <label htmlFor="newBlockSlug" className="mt-1 mb-4">
+                              {intl.formatMessage(messages['library.detail.add.new.component.slug'])}
+                            </label>
+                          </ValidationFormGroup>
+                          <Input
+                            type="text"
+                            name="definition_id"
+                            placeholder={`${this.state.data.block_type}1`}
+                            value={this.state.data.definition_id}
+                            onChange={this.onValueChange}
+                          />
+                        </div>
                       </div>
-                      <div className="form-group add-xblock-component-button w-auto p-4">
-                        <label htmlFor="newBlockSlug" className="mt-1 mb-4">
-                          {intl.formatMessage(messages['library.detail.add.new.component.slug'])}
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control w-auto m-auto"
-                          id="newBlockSlug"
-                          placeholder={`${this.state.newBlockType}1`}
-                          value={this.state.newBlockSlug}
-                          onChange={this.handleChangeNewBlockSlug}
-                        />
-                      </div>
-                    </div>
-                    <button
-                      type="submit"
-                      disabled={!this.state.newBlockType || !this.state.newBlockSlug}
-                      className="btn btn-primary"
-                      onClick={this.handleAddNewBlock}
-                    >
-                      {intl.formatMessage(messages['library.detail.add.new.component.button'])}
-                    </button>
-                  </form>
+                      <button
+                        type="submit"
+                        disabled={!this.state.data.block_type || !this.state.data.definition_id}
+                        className="btn btn-primary"
+                        onClick={this.handleAddNewBlock}
+                      >
+                        {intl.formatMessage(messages['library.detail.add.new.component.button'])}
+                      </button>
+                    </fieldset>
+                  </Form>
                 </div>
               </div>
             </article>
@@ -279,6 +310,10 @@ LibraryPage.propTypes = {
   commitLibraryChanges: PropTypes.func.isRequired,
   createLibraryBlock: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
+  errorFields: PropTypes.shape({
+    block_type: PropTypes.arrayOf(PropTypes.string),
+    definition_id: PropTypes.arrayOf(PropTypes.string),
+  }), // eslint-disable-line react/forbid-prop-types
   fetchLibraryDetail: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
   library: libraryShape,

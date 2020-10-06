@@ -31,6 +31,11 @@ const messages = defineMessages({
     defaultMessage: 'Yes.',
     description: 'Default label for "Yes" on a confirmation prompt.',
   },
+  'library.server.error.generic': {
+    id: 'library.server.error.generic',
+    defaultMessage: 'We had an issue contacting the server. Please try again later!',
+    description: 'Default error message when contacting server.',
+  },
 });
 
 export default messages;
