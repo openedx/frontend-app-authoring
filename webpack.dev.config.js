@@ -4,7 +4,7 @@ const Merge = require('webpack-merge');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 /**
- * Serve xblock-bootstrap.html from the MFE itself.
+ * Allow serving xblock-bootstrap.html from the MFE itself.
  */
 const baseConfig = getBaseConfig('webpack-dev');
 module.exports = Merge.smart(baseConfig, {

@@ -4,7 +4,7 @@ import { ensureConfig, getConfig } from '@edx/frontend-platform';
 
 import wrapBlockHtmlForIFrame from './wrap';
 
-ensureConfig(['LMS_BASE_URL'], 'library block component');
+ensureConfig(['LMS_BASE_URL', 'SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL'], 'library block component');
 
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -114,7 +114,7 @@ class LibraryBlock extends React.Component {
         <iframe
           ref={this.iframeRef}
           title="block"
-          src="/xblock-bootstrap.html"
+          src={getConfig().SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL}
           style={{
             position: 'absolute',
             left: 0,
