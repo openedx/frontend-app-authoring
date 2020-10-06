@@ -14,6 +14,7 @@ import Footer, { messages as footerMessages } from '@edx/frontend-component-foot
 import appMessages from './i18n';
 import ExamplePage from './example/ExamplePage';
 import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettings';
+import DiscussionToolSelectorContainer from './discussion-tool-selector/DiscussionToolSelectorContainer';
 import StudioHeader from './studio-header/Header';
 
 import './index.scss';
@@ -32,6 +33,7 @@ subscribe(APP_READY, () => {
               <>
                 <StudioHeader courseId={courseId} />
                 <ProctoredExamSettings courseId={courseId} />
+                <Footer />
               </>
             );
           }}
@@ -39,9 +41,21 @@ subscribe(APP_READY, () => {
         <Route path="/example">
           <Header />
           <ExamplePage />
+          <Footer />
         </Route>
+        <Route
+          path="/course-pages/:course_id/discussions/setup"
+          exact
+          render={({ match }) => {
+            const courseId = decodeURIComponent(match.params.course_id);
+            return (
+              <>
+                <DiscussionToolSelectorContainer courseId={courseId} />
+              </>
+            );
+          }}
+        />
       </Switch>
-      <Footer />
     </AppProvider>,
     document.getElementById('root'),
   );
