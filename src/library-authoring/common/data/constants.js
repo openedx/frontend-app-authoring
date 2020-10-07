@@ -87,3 +87,6 @@ export const BLOCK_TYPE_EDIT_DENYLIST = [
   'videoalpha',
   'word_cloud',
 ];
+
+// This is the only version we support right now.
+export const CC_LICENSE_VERSION = '4.0';

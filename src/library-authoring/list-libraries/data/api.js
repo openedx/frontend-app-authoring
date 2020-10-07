@@ -49,6 +49,7 @@ export async function getLibraryList(params) {
         version: null,
         has_unpublished_changes: false,
         has_unpublished_deletes: false,
+        license: '',
         type: LIBRARY_TYPES.LEGACY,
       };
     });

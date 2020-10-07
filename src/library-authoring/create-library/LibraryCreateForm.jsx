@@ -23,6 +23,7 @@ import {
 
 import commonMessages from '../common/messages';
 import messages from './messages';
+import { LicenseFieldContainer } from '../common/LicenseField';
 
 class LibraryCreateForm extends React.Component {
   constructor(props) {
@@ -34,6 +35,7 @@ class LibraryCreateForm extends React.Component {
         org: '',
         slug: '',
         type: LIBRARY_TYPES.COMPLEX,
+        license: '',
       },
     };
   }
@@ -68,6 +70,8 @@ class LibraryCreateForm extends React.Component {
       },
     }));
   }
+
+  mockInputChange = (name) => (value) => this.onValueChange({ target: { value, name, type: 'text' } })
 
   onCancel = () => {
     this.props.resetForm();
@@ -231,6 +235,13 @@ class LibraryCreateForm extends React.Component {
                   onChange={this.onValueChange}
                 />
               </ValidationFormGroup>
+            </li>
+            <li className={`field ${(data.type === 'legacy' && 'd-none') || ''}`}>
+              { /* Retain caching capabilities by hiding rather than removing this field. */ }
+              <LicenseFieldContainer
+                value={data.license}
+                updateValue={this.mockInputChange('license')}
+              />
             </li>
           </ol>
         </fieldset>

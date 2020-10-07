@@ -19,7 +19,8 @@ import {
   LOADING_STATUS,
   SUBMISSION_STATUS,
   libraryShape,
-  truncateErrorMessage, LIBRARY_TYPES,
+  truncateErrorMessage,
+  LIBRARY_TYPES,
 } from '../common';
 import {
   fetchLibraryDetail,
@@ -31,6 +32,7 @@ import {
   updateLibrary,
 } from './data';
 import messages from './messages';
+import { LicenseFieldContainer } from '../common/LicenseField';
 
 class LibraryEditPage extends React.Component {
   constructor(props) {
@@ -43,6 +45,7 @@ class LibraryEditPage extends React.Component {
         type: null,
         allow_public_learning: false,
         allow_public_read: false,
+        license: null,
       },
     };
   }
@@ -79,6 +82,7 @@ class LibraryEditPage extends React.Component {
         type: library.type,
         allow_public_learning: library.allow_public_learning,
         allow_public_read: library.allow_public_read,
+        license: library.license,
       },
     });
   }
@@ -129,6 +133,8 @@ class LibraryEditPage extends React.Component {
   handleDismissAlert = () => {
     this.props.clearError();
   }
+
+  mockInputChange = (name) => (value) => this.handleValueChange({ target: { value, name, type: 'text' } })
 
   handleValueChange = (event) => {
     const el = event.target;
@@ -280,6 +286,15 @@ class LibraryEditPage extends React.Component {
                           onChange={this.handleValueChange}
                         />
                       </Form.Group>
+                    </li>
+                    <li className="field">
+                      { /* Checking null here since we cache the initial value. */ }
+                      {(data.license !== null) && (
+                        <LicenseFieldContainer
+                          value={data.license}
+                          updateValue={this.mockInputChange('license')}
+                        />
+                      )}
                     </li>
                   </ol>
                 </fieldset>

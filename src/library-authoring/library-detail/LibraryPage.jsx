@@ -27,6 +27,7 @@ import {
 import LibraryBlockCard from './LibraryBlockCard';
 import commonMessages from '../common/messages';
 import messages from './messages';
+import { LicenseContainer } from '../common/License';
 
 class LibraryPage extends React.Component {
   constructor(props) {
@@ -275,6 +276,8 @@ class LibraryPage extends React.Component {
                         </Button>
                       </li>
                     </ul>
+                    <h4>Library License:</h4>
+                    <LicenseContainer spec={library.license} />
                   </div>
                 </div>
               </div>

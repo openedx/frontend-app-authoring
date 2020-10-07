@@ -21,8 +21,16 @@ export const libraryShape = PropTypes.shape({
   title: PropTypes.string.isRequired,
   description: PropTypes.string,
   version: PropTypes.number,
+  license: PropTypes.string.isRequired,
   has_unpublished_changes: PropTypes.bool.isRequired,
   has_unpublished_deletes: PropTypes.bool.isRequired,
   blocks: PropTypes.arrayOf(libraryBlockShape),
   blockTypes: PropTypes.arrayOf(libraryBlockTypeShape),
+});
+
+export const commonsOptionsShape = PropTypes.shape({
+  attribution: PropTypes.bool.isRequired,
+  nonCommercial: PropTypes.bool.isRequired,
+  noDerivatives: PropTypes.bool.isRequired,
+  shareAlike: PropTypes.bool.isRequired,
 });
