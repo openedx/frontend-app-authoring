@@ -2,8 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { LOADING_STATUS, SUBMISSION_STATUS } from '../../common';
-
-export const libraryEditStoreName = 'libraryEdit';
+import { STORE_NAMES } from '../../common/data';
 
 export const libraryEditInitialState = {
   library: null,
@@ -14,7 +13,7 @@ export const libraryEditInitialState = {
 };
 
 const slice = createSlice({
-  name: libraryEditStoreName,
+  name: STORE_NAMES.EDIT,
   initialState: libraryEditInitialState,
   reducers: {
     libraryUpdateRequest: (state) => {

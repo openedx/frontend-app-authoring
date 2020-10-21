@@ -1,28 +1,26 @@
 import { configureStore } from '@reduxjs/toolkit';
 import {
   libraryBlockReducer,
-  libraryBlockStoreName,
   libraryDetailReducer,
-  libraryDetailStoreName,
   libraryEditReducer,
-  libraryEditStoreName,
   libraryCreateReducer,
-  libraryCreateStoreName,
   libraryListReducer,
-  libraryListStoreName,
-  libraryAccessStoreName,
   libraryAccessReducer,
 } from './library-authoring';
+import { STORE_NAMES } from './library-authoring/common/data';
 
-const store = configureStore({
+export const buildStore = (overrides = {}) => configureStore({
   reducer: {
-    [libraryBlockStoreName]: libraryBlockReducer,
-    [libraryDetailStoreName]: libraryDetailReducer,
-    [libraryEditStoreName]: libraryEditReducer,
-    [libraryCreateStoreName]: libraryCreateReducer,
-    [libraryListStoreName]: libraryListReducer,
-    [libraryAccessStoreName]: libraryAccessReducer,
+    [STORE_NAMES.BLOCKS]: libraryBlockReducer,
+    [STORE_NAMES.DETAIL]: libraryDetailReducer,
+    [STORE_NAMES.EDIT]: libraryEditReducer,
+    [STORE_NAMES.CREATE]: libraryCreateReducer,
+    [STORE_NAMES.LIST]: libraryListReducer,
+    [STORE_NAMES.ACCESS]: libraryAccessReducer,
   },
+  ...overrides,
 });
+
+const store = buildStore();
 
 export default store;

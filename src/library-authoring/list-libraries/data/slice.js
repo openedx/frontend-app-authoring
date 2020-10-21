@@ -2,8 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { LOADING_STATUS } from '../../common';
-
-export const libraryListStoreName = 'libraryList';
+import { STORE_NAMES } from '../../common/data';
 
 export const libraryListInitialState = {
   errorMessage: null,
@@ -13,7 +12,7 @@ export const libraryListInitialState = {
 };
 
 const slice = createSlice({
-  name: libraryListStoreName,
+  name: STORE_NAMES.LIST,
   initialState: libraryListInitialState,
   reducers: {
     libraryListRequest: (state) => {

@@ -7,10 +7,10 @@ ensureConfig(['STUDIO_BASE_URL'], 'library API service');
 export async function updateLibrary({ libraryId, ...data }) {
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;
-  await client.patch(
+  return client.patch(
     `${baseUrl}/api/libraries/v2/${libraryId}/`,
     data,
-  ).catch((error) => {
+  ).then((response) => response.data).catch((error) => {
     /* Normalize error data. */
     const apiError = Object.create(error);
     apiError.message = null;

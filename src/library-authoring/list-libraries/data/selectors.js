@@ -1,8 +1,7 @@
 import { createSelector } from 'reselect';
-import { initLibraryUrl } from '../../common';
-import { libraryListStoreName as storeName } from './slice';
+import { initLibraryUrl, STORE_NAMES } from '../../common';
 
-const stateSelector = state => ({ ...state[storeName] });
+const stateSelector = state => ({ ...state[STORE_NAMES.LIST] });
 
 const selectLibraryList = createSelector(
   stateSelector,

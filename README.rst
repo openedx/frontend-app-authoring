@@ -87,3 +87,9 @@ Known Issues
 
 * Users with view only access are able to see the 'User Access' menu item, despite
   the fact it will just kick them back to the detail view.
+
+* The library isn't always updated between when it is changed in the edit view/create view
+  and when you return to the authoring view. So sometimes you may need to refresh after changing
+  a library to get the right authoring view.
+
+* Block previews may be jittery in the authoring view.

@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
-import { libraryAccessStoreName as storeName } from './slice';
 import { selectLibraryDetail } from '../../library-detail/data';
+import { STORE_NAMES } from '../../common/data';
 
-const stateSelector = state => ({ ...state[storeName] });
+const stateSelector = state => ({ ...state[STORE_NAMES.ACCESS] });
 
 const selectLibraryAccess = createSelector(
   stateSelector,

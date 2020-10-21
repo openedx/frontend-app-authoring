@@ -49,6 +49,7 @@
     "babel-polyfill": "6.26.0",
     "edx-pattern-library": "0.18.1",
     "immutability-helper": "3.0.2",
+    "jest-fetch-mock": "^3.0.3",
     "prop-types": "15.7.2",
     "react": "16.12.0",
     "react-dom": "16.12.0",
@@ -57,7 +58,8 @@
     "react-router": "5.1.2",
     "react-router-dom": "5.1.2",
     "redux": "4.0.5",
-    "reselect": "4.0.0"
+    "reselect": "4.0.0",
+    "uuid": "^8.3.0"
   },
   "devDependencies": {
     "@edx/frontend-build": "3.0.0",
@@ -73,7 +75,6 @@
     "reactifex": "1.1.1",
     "redux-mock-store": "^1.5.4",
     "rosie": "2.0.1",
-    "uuid": "^8.3.0",
     "webpack-merge": "4.2.2"
   }
 }

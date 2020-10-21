@@ -2,8 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { SUBMISSION_STATUS } from '../../common';
-
-export const libraryCreateStoreName = 'libraryCreate';
+import { STORE_NAMES } from '../../common/data';
 
 export const libraryCreateInitialState = {
   createdLibrary: null,
@@ -13,7 +12,7 @@ export const libraryCreateInitialState = {
 };
 
 const slice = createSlice({
-  name: libraryCreateStoreName,
+  name: STORE_NAMES.CREATE,
   initialState: libraryCreateInitialState,
   reducers: {
     libraryCreateRequest: (state) => {

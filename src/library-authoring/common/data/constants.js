@@ -33,6 +33,8 @@ export const ROUTES = {
     HOME_SLUG: (libraryId) => `/library/${libraryId}`,
     EDIT: '/library/:libraryId/edit',
     EDIT_SLUG: (libraryId) => `/library/${libraryId}/edit`,
+    OLD_HOME: '/library/:libraryId/old',
+    OLD_HOME_SLUG: (libraryId) => `/library/${libraryId}/old`,
     ACCESS: '/library/:libraryId/access',
     ACCESS_SLUG: (libraryId) => `/library/${libraryId}/access`,
   },
@@ -90,3 +92,12 @@ export const BLOCK_TYPE_EDIT_DENYLIST = [
 
 // This is the only version we support right now.
 export const CC_LICENSE_VERSION = '4.0';
+
+export const STORE_NAMES = {
+  DETAIL: 'detail',
+  BLOCKS: 'blocks',
+  CREATE: 'create',
+  ACCESS: 'access',
+  LIST: 'list',
+  EDIT: 'edit',
+};

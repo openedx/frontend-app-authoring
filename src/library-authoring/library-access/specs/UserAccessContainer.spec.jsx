@@ -34,7 +34,7 @@ describe('<UserAccessWidgetContainer />', () => {
         <UserAccessWidgetContainer
           {...props}
         />,
-        { authenticatedUser: currentUser },
+        { context: { authenticatedUser: currentUser } },
       );
       const badge = screen.getByText(text);
       expect(badge).toBeTruthy();
@@ -74,7 +74,7 @@ describe('<UserAccessWidgetContainer />', () => {
         <UserAccessWidgetContainer
           {...props}
         />,
-        { authenticatedUser: currentUser },
+        { context: { authenticatedUser: currentUser } },
       );
       if (buttonsShown) {
         const removeButton = getByRole(container, 'button', { name: /Remove Admin/ });
@@ -117,7 +117,7 @@ describe('<UserAccessWidgetContainer />', () => {
         <UserAccessWidgetContainer
           {...props}
         />,
-        { authenticatedUser: currentUser },
+        { context: { authenticatedUser: currentUser } },
       );
       if (buttonsShown) {
         const removeButton = getByRole(container, 'button', { name: /Remove Author/ });
@@ -157,7 +157,7 @@ describe('<UserAccessWidgetContainer />', () => {
         <UserAccessWidgetContainer
           {...props}
         />,
-        { authenticatedUser: currentUser },
+        { context: { authenticatedUser: currentUser } },
       );
       const buttonList = queryAllByRole(container, 'button', { name: /Add Author/ });
       if (buttonShown) {
@@ -208,7 +208,7 @@ describe('<UserAccessWidgetContainer />', () => {
         <UserAccessWidgetContainer
           {...props}
         />,
-        { authenticatedUser: currentUser },
+        { context: { authenticatedUser: currentUser } },
       );
       const buttonList = queryAllByRole(container, 'button', { name: /Remove user/ });
       if (buttonShown) {

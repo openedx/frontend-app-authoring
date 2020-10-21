@@ -1,32 +1,33 @@
 import { logError } from '@edx/frontend-platform/logging';
 import * as api from './api';
 import { libraryBlockActions as actions } from './slice';
+import { libraryDetailActions as detailActions } from '../../library-detail/data';
 
 export const fetchLibraryBlockMetadata = ({ blockId }) => async (dispatch) => {
   try {
-    dispatch(actions.libraryBlockRequest());
+    dispatch(actions.libraryBlockRequest({ blockId }));
     const metadata = await api.getLibraryBlock(blockId);
-    dispatch(actions.libraryBlockMetadataSuccess({ metadata }));
+    dispatch(actions.libraryBlockMetadataSuccess({ blockId, metadata }));
   } catch (error) {
-    dispatch(actions.libraryBlockFailed({ errorMessage: error.message }));
+    dispatch(actions.libraryBlockFailed({ blockId, errorMessage: error.message }));
     logError(error);
   }
 };
 
 export const fetchLibraryBlockView = ({ blockId, viewSystem, viewName }) => async (dispatch) => {
   try {
-    dispatch(actions.libraryBlockRequest());
+    dispatch(actions.libraryBlockRequest({ blockId }));
     const view = await api.renderXBlockView(blockId, viewSystem, viewName);
-    dispatch(actions.libraryBlockViewSuccess({ view }));
+    dispatch(actions.libraryBlockViewSuccess({ view, blockId }));
   } catch (error) {
-    dispatch(actions.libraryBlockFailed({ errorMessage: error.message }));
+    dispatch(actions.libraryBlockFailed({ errorMessage: error.message, blockId }));
     logError(error);
   }
 };
 
 export const fetchLibraryBlockAssets = ({ blockId }) => async (dispatch) => {
   try {
-    dispatch(actions.libraryBlockRequest());
+    dispatch(actions.libraryBlockRequest({ blockId }));
     const assets = await api.getLibraryBlockAssets(blockId);
     dispatch(actions.libraryBlockAssetsSuccess({ assets }));
   } catch (error) {
@@ -37,7 +38,7 @@ export const fetchLibraryBlockAssets = ({ blockId }) => async (dispatch) => {
 
 export const uploadLibraryBlockAssets = ({ blockId, files }) => async (dispatch) => {
   try {
-    dispatch(actions.libraryBlockRequest());
+    dispatch(actions.libraryBlockRequest({ blockId }));
 
     /* Upload each file to this block's static assets.
      *
@@ -53,65 +54,81 @@ export const uploadLibraryBlockAssets = ({ blockId, files }) => async (dispatch)
       metadata: await api.getLibraryBlock(blockId),
     }));
   } catch (error) {
-    dispatch(actions.libraryBlockFailed({ errorMessage: error.message }));
+    dispatch(actions.libraryBlockFailed({ blockId, errorMessage: error.message }));
     logError(error);
   }
 };
 
 export const deleteLibraryBlockAsset = ({ blockId, fileName }) => async (dispatch) => {
   try {
-    dispatch(actions.libraryBlockRequest());
+    dispatch(actions.libraryBlockRequest({ blockId }));
     await api.deleteLibraryBlockAsset(blockId, fileName);
     dispatch(actions.libraryBlockAssetsSuccess({
       assets: await api.getLibraryBlockAssets(blockId),
       metadata: await api.getLibraryBlock(blockId),
+      blockId,
     }));
   } catch (error) {
-    dispatch(actions.libraryBlockFailed({ errorMessage: error.message }));
+    dispatch(actions.libraryBlockFailed({ errorMessage: error.message, blockId }));
     logError(error);
   }
 };
 
 export const fetchLibraryBlockOlx = ({ blockId }) => async (dispatch) => {
   try {
-    dispatch(actions.libraryBlockRequest());
+    dispatch(actions.libraryBlockRequest({ blockId }));
     const olx = await api.getLibraryBlockOlx(blockId);
-    dispatch(actions.libraryBlockOlxSuccess({ olx }));
+    dispatch(actions.libraryBlockOlxSuccess({ olx, blockId }));
   } catch (error) {
-    dispatch(actions.libraryBlockFailed({ errorMessage: error.message }));
+    dispatch(actions.libraryBlockFailed({ errorMessage: error.message, blockId }));
     logError(error);
   }
 };
 
 export const setLibraryBlockOlx = ({ blockId, olx }) => async (dispatch) => {
   try {
-    dispatch(actions.libraryBlockRequest());
+    dispatch(actions.libraryBlockRequest({ blockId }));
     await api.setLibraryBlockOlx(blockId, olx);
     dispatch(actions.libraryBlockOlxSuccess({
       olx: await api.getLibraryBlockOlx(blockId),
       metadata: await api.getLibraryBlock(blockId),
+      blockId,
     }));
   } catch (error) {
-    dispatch(actions.libraryBlockFailed({ errorMessage: error.message }));
+    dispatch(actions.libraryBlockFailed({ errorMessage: error.message, blockId }));
     logError(error);
   }
 };
 
 export const deleteLibraryBlock = ({ blockId }) => async (dispatch) => {
   try {
-    dispatch(actions.libraryBlockRequest());
+    dispatch(actions.libraryBlockRequest({ blockId }));
     await api.deleteLibraryBlock(blockId);
-    dispatch(actions.libraryBlockDeleteSuccess());
+    dispatch(detailActions.libraryDetailBlockDeleted({ blockId }));
+    dispatch(actions.libraryBlockDeleteSuccess({ blockId }));
   } catch (error) {
-    dispatch(actions.libraryBlockFailed({ errorMessage: error.message }));
-    logError(error);
+    dispatch(actions.libraryBlockFailed({ errorMessage: error.message, blockId }));
+    throw error;
   }
 };
 
-export const setLibraryBlockError = ({ errorMessage }) => async (dispatch) => {
-  dispatch(actions.libraryBlockFailed({ errorMessage }));
+export const setLibraryBlockError = ({ errorMessage, blockId }) => async (dispatch) => {
+  dispatch(actions.libraryBlockFailed({ errorMessage, blockId }));
 };
 
-export const clearLibraryBlockError = () => async (dispatch) => {
-  dispatch(actions.libraryBlockClearError());
+export const clearLibraryBlockError = ({ blockId }) => async (dispatch) => {
+  dispatch(actions.libraryBlockClearError({ blockId }));
+};
+
+export const focusBlock = ({ blockId }) => async (dispatch) => {
+  dispatch(actions.libraryEnsureBlock({ blockId }));
+  dispatch(actions.libraryFocusBlock({ blockId }));
+};
+
+export const initializeBlock = ({ blockId }) => async (dispatch) => {
+  dispatch(actions.libraryEnsureBlock({ blockId }));
+};
+
+export const removeBlockCache = ({ blockId }) => async (dispatch) => {
+  dispatch(actions.libraryClearBlock({ blockId }));
 };

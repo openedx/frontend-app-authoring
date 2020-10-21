@@ -14,8 +14,10 @@ export const initLibraryUrl = (library) => {
   let url;
   if (library.type === LIBRARY_TYPES.LEGACY) {
     url = `${getConfig().STUDIO_BASE_URL}/library/${library.id}`;
-  } else {
+  } else if ([LIBRARY_TYPES.VIDEO, LIBRARY_TYPES.PROBLEM].includes(library.type)) {
     url = `/library/${library.id}`;
+  } else {
+    url = `/library/${library.id}/old`;
   }
 
   return {

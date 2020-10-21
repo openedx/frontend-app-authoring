@@ -25,7 +25,6 @@ import {
 } from '../library-detail';
 import {
   clearLibraryBlockError,
-  getXBlockHandlerUrl,
   deleteLibraryBlock,
   deleteLibraryBlockAsset,
   fetchLibraryBlockAssets,
@@ -37,17 +36,18 @@ import {
   setLibraryBlockError,
   setLibraryBlockOlx,
   uploadLibraryBlockAssets,
+  focusBlock,
 } from './data';
 import { LibraryBlock } from './LibraryBlock';
 import LibraryBlockAssets from './LibraryBlockAssets';
 import LibraryBlockOlx from './LibraryBlockOlx';
 
 import messages from './messages';
+import { getXBlockHandlerUrl, LIBRARY_TYPES } from '../common/data';
 
 class LibraryBlockPage extends React.Component {
   componentDidMount() {
     this.loadData();
-
     /* This is required if the user reached the page directly. */
     if (this.props.library === null) {
       const { libraryId } = this.props.match.params;
@@ -56,10 +56,6 @@ class LibraryBlockPage extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.redirectToLibrary) {
-      this.props.history.push(ROUTES.Detail.HOME_SLUG(this.props.match.params.libraryId));
-    }
-
     if (this.props.match.path !== prevProps.match.path) {
       this.loadData();
     }
@@ -95,8 +91,9 @@ class LibraryBlockPage extends React.Component {
       const { libraryId, blockId } = this.props.match.params;
       this.props.history.push(ROUTES.Block.HOME_SLUG(libraryId, blockId));
     } else if (event.eventType === 'error') {
+      const { blockId } = this.props.match.params;
       const errorMessage = `${event.title || 'Error'}: ${event.message}`;
-      this.props.setLibraryBlockError({ errorMessage });
+      this.props.setLibraryBlockError({ errorMessage, blockId });
     } else {
       logError(`Unknown XBlock runtime event: ${event}`);
     }
@@ -106,7 +103,13 @@ class LibraryBlockPage extends React.Component {
     const { blockId } = this.props.match.params;
     /* eslint-disable-next-line no-alert */
     if (window.confirm('Are you sure you want to delete this XBlock? There is no undo.')) {
-      this.props.deleteLibraryBlock({ blockId });
+      this.props.deleteLibraryBlock({ blockId }).then(() => {
+        if (this.props.library.type === LIBRARY_TYPES.COMPLEX) {
+          this.props.history.push(ROUTES.Detail.OLD_HOME_SLUG(this.props.match.params.libraryId));
+        } else {
+          this.props.history.push(ROUTES.Detail.HOME_SLUG(this.props.match.params.libraryId));
+        }
+      });
     }
   }
 
@@ -150,6 +153,7 @@ class LibraryBlockPage extends React.Component {
 
   loadData() {
     const { blockId } = this.props.match.params;
+    this.props.focusBlock({ blockId });
 
     /* Always load block metadata. */
     this.props.fetchLibraryBlockMetadata({ blockId });
@@ -384,6 +388,7 @@ LibraryBlockPage.propTypes = {
   fetchLibraryBlockOlx: PropTypes.func.isRequired,
   fetchLibraryBlockView: PropTypes.func.isRequired,
   fetchLibraryDetail: PropTypes.func.isRequired,
+  focusBlock: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }),
@@ -398,7 +403,6 @@ LibraryBlockPage.propTypes = {
   library: libraryShape,
   metadata: libraryBlockShape,
   olx: PropTypes.string,
-  redirectToLibrary: PropTypes.bool,
   revertLibraryChanges: PropTypes.func.isRequired,
   setLibraryBlockOlx: PropTypes.func.isRequired,
   setLibraryBlockError: PropTypes.func.isRequired,
@@ -415,6 +419,7 @@ LibraryBlockPage.defaultProps = libraryBlockInitialState;
 export default connect(
   selectLibraryBlock,
   {
+    focusBlock,
     clearLibraryBlockError,
     commitLibraryChanges,
     deleteLibraryBlock,

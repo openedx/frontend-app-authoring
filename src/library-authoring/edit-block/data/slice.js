@@ -2,64 +2,79 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { LOADING_STATUS } from '../../common';
-
-export const libraryBlockStoreName = 'libraryBlock';
+import { STORE_NAMES } from '../../common/data';
 
 export const libraryBlockInitialState = {
   assets: [],
   errorMessage: null,
   metadata: null,
   olx: null,
-  redirectToLibrary: false,
   status: LOADING_STATUS.LOADING,
   view: null,
 };
 
 const slice = createSlice({
-  name: libraryBlockStoreName,
-  initialState: libraryBlockInitialState,
+  name: STORE_NAMES.BLOCKS,
+  // State will be defined by block ID.
+  initialState: { blocks: {}, focusedBlock: null },
   reducers: {
-    libraryBlockRequest: (state) => {
-      state.errorMessage = null;
-      state.redirectToLibrary = false;
-      state.view = null;
-      state.status = LOADING_STATUS.LOADING;
+    libraryEnsureBlock: (state, { payload }) => {
+      if (state[payload.blockId] === undefined) {
+        state.blocks[payload.blockId] = { ...libraryBlockInitialState };
+      }
+    },
+    libraryFocusBlock: (state, { payload }) => {
+      state.focusedBlock = payload.blockId;
+    },
+    libraryBlockRequest: (state, { payload }) => {
+      state.blocks[payload.blockId].errorMessage = null;
+      state.blocks[payload.blockId].view = null;
+      state.blocks[payload.blockId].status = LOADING_STATUS.LOADING;
     },
     libraryBlockMetadataSuccess: (state, { payload }) => {
-      state.errorMessage = null;
-      state.metadata = payload.metadata;
-      state.status = LOADING_STATUS.LOADED;
+      state.blocks[payload.blockId].errorMessage = null;
+      state.blocks[payload.blockId].metadata = payload.metadata;
+      state.blocks[payload.blockId].status = LOADING_STATUS.LOADED;
     },
     libraryBlockViewSuccess: (state, { payload }) => {
-      state.errorMessage = null;
-      state.view = payload.view;
-      state.status = LOADING_STATUS.LOADED;
+      state.blocks[payload.blockId].errorMessage = null;
+      state.blocks[payload.blockId].view = payload.view;
+      state.blocks[payload.blockId].status = LOADING_STATUS.LOADED;
     },
     libraryBlockAssetsSuccess: (state, { payload }) => {
-      state.errorMessage = null;
-      state.assets = payload.assets;
+      state.blocks[payload.blockId].errorMessage = null;
+      state.blocks[payload.blockId].assets = payload.assets;
       if (payload.metadata) {
-        state.metadata = payload.metadata;
+        state.blocks[payload.blockId].metadata = payload.metadata;
       }
-      state.status = LOADING_STATUS.LOADED;
+      state.blocks[payload.blockId].status = LOADING_STATUS.LOADED;
     },
     libraryBlockOlxSuccess: (state, { payload }) => {
-      state.errorMessage = null;
-      state.olx = payload.olx;
+      state.blocks[payload.blockId].errorMessage = null;
+      state.blocks[payload.blockId].olx = payload.olx;
       if (payload.metadata) {
-        state.metadata = payload.metadata;
+        state.blocks[payload.blockId].metadata = payload.metadata;
       }
-      state.status = LOADING_STATUS.LOADED;
+      state.blocks[payload.blockId].status = LOADING_STATUS.LOADED;
     },
-    libraryBlockDeleteSuccess: (state) => {
-      state.redirectToLibrary = true;
+    libraryBlockDeleteSuccess: (state, { payload }) => {
+      delete state.blocks[payload.blockId];
+      if (state.focusedBlock === payload.blockId) {
+        state.focusedBlock = null;
+      }
     },
     libraryBlockFailed: (state, { payload }) => {
-      state.errorMessage = payload.errorMessage;
-      state.status = LOADING_STATUS.FAILED;
+      state.blocks[payload.blockId].errorMessage = payload.errorMessage;
+      state.blocks[payload.blockId].status = LOADING_STATUS.FAILED;
     },
-    libraryBlockClearError: (state) => {
-      state.errorMessage = null;
+    libraryBlockClearError: (state, { payload }) => {
+      state.blocks[payload.blockId].errorMessage = null;
+    },
+    libraryClearBlock: (state, { payload }) => {
+      delete state.blocks[payload.blockId];
+      if (state.focusedBlock === payload.blockId) {
+        state.focusedBlock = null;
+      }
     },
   },
 });

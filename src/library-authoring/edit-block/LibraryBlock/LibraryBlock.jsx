@@ -115,6 +115,7 @@ class LibraryBlock extends React.Component {
           ref={this.iframeRef}
           title="block"
           src={getConfig().SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL}
+          data-testid="block-preview"
           style={{
             position: 'absolute',
             left: 0,

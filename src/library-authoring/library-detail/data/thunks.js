@@ -51,3 +51,7 @@ export const revertLibraryChanges = ({ libraryId }) => async (dispatch) => {
 export const clearLibraryError = () => async (dispatch) => {
   dispatch(actions.libraryDetailClearError());
 };
+
+export const clearLibrary = () => async (dispatch) => {
+  dispatch(actions.libraryDetailReset());
+};

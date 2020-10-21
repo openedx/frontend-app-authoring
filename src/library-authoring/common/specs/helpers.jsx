@@ -4,6 +4,9 @@ import { render } from '@testing-library/react';
 import AppContext from '@edx/frontend-platform/react/AppContext';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import * as React from 'react';
+import { Provider } from 'react-redux';
+import { getDefaultMiddleware } from '@reduxjs/toolkit';
+import { buildStore } from '../../../store';
 
 /**
  * mocksFromNames
@@ -59,14 +62,15 @@ function* toInfiniteGenerator(iterable) {
  * const users = makeN(line, 6)
  *
  * @param wrapped: A factory function.
+ * @param options: A value that will be passed to every iteration.
  * @returns {function(*=): Generator<*, void, *>}
  */
-export function makeManufacturer(wrapped) {
+export function makeManufacturer(wrapped, options) {
   // I've stretched this metaphor so far I think I can see through it.
   function* conveyorBelt(overridesList) {
     const infiniteGenerator = toInfiniteGenerator(overridesList || []);
     while (true) {
-      yield wrapped(infiniteGenerator.next().value);
+      yield wrapped(infiniteGenerator.next().value, options);
     }
   }
 
@@ -90,13 +94,36 @@ export function makeN(generator, count) {
   return result;
 }
 
-export const ctxRender = (ui, context) => render(
-  <AppContext.Provider value={context}>
-    <IntlProvider locale="en">
-      {ui}
-    </IntlProvider>
-  </AppContext.Provider>,
-);
+export const monitor = jest.fn();
+
+export const cleanUp = () => {
+  monitor.mockReset();
+  fetch.resetMocks();
+  window.localStorage.reset();
+};
+
+export const expectAction = (name, payload) => expect(monitor).toHaveBeenCalledWith({ type: name, payload });
+
+export const spyMiddleware = () => (next) => (action) => {
+  monitor(action);
+  return next(action);
+};
+
+export const ctxRender = (ui, {
+  options, context, storeOptions,
+} = {}) => {
+  const store = buildStore({ middleware: [...getDefaultMiddleware(), spyMiddleware], ...storeOptions });
+  return render(
+    <Provider store={store}>
+      <AppContext.Provider value={context}>
+        <IntlProvider locale="en">
+          {ui}
+        </IntlProvider>
+      </AppContext.Provider>
+    </Provider>,
+    options,
+  );
+};
 
 /**
  * immediate

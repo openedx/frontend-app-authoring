@@ -101,6 +101,87 @@ const messages = defineMessages({
     defaultMessage: 'Discard changes',
     description: 'Text for the discard button.',
   },
+  'library.detail.block.edit': {
+    id: 'library.detail.block.edit',
+    defaultMessage: 'Edit',
+    description: 'Button text for edit button',
+  },
+  'library.detail.block.delete': {
+    id: 'library.detail.block.delete',
+    defaultMessage: 'Delete',
+    description: 'Aria label for delete button',
+  },
+  'library.detail.block.delete.modal.title': {
+    id: 'library.detail.block.delete.modal.title',
+    defaultMessage: 'Delete this component?',
+    description: 'Title bar for the block deletion modal.',
+  },
+  'library.detail.block.delete.modal.body': {
+    id: 'library.detail.block.delete.modal.body',
+    defaultMessage: 'Deleting this component is permanent and cannot be undone.',
+    description: 'Body for the block deletion modal.',
+  },
+  'library.detail.block.copy': {
+    id: 'library.detail.block.copy',
+    defaultMessage: 'Copy',
+    description: 'Aria label for copy button',
+  },
+  'library.detail.add_video': {
+    id: 'library.detail.add_video',
+    defaultMessage: 'Add Video',
+    description: 'Button text for the "Add Video" button on video libraries.',
+  },
+  'library.detail.add_problem': {
+    id: 'library.detail.add_problem',
+    defaultMessage: 'Add Problem',
+    description: 'Button text for the "Add Video" button on video libraries.',
+  },
+  'library.detail.add_complex': {
+    id: 'library.detail.add_complex',
+    defaultMessage: 'Add Component',
+    description: 'Button text for the "Add Component" button on complex libraries.',
+  },
+  'library.detail.show_previews': {
+    id: 'library.detail.show_previews',
+    defaultMessage: 'Show Previews',
+    description: 'Text for button which enables previews',
+  },
+  'library.detail.hide_previews': {
+    id: 'library.detail.hide_previews',
+    defaultMessage: 'Hide Previews',
+    description: 'Text for button which disables previews',
+  },
+  'library.detail.sidebar.adding.heading': {
+    id: 'library.detail.sidebar.adding.heading',
+    defaultMessage: 'Adding content to your library',
+    description: 'Header for the sidebar instructions for adding content to your library.',
+  },
+  'library.detail.sidebar.adding.first': {
+    id: 'library.detail.sidebar.adding.first',
+    defaultMessage: 'Add components to your library for use in courses, using the Add button at the bottom of '
+      + 'this page.',
+    description: 'First paragraph of instructional text about how to add content to a library.',
+  },
+  'library.detail.sidebar.adding.second': {
+    id: 'library.detail.sidebar.adding.second',
+    defaultMessage: 'Components are listed in the order in which they are added, with the most recently added at the '
+      + 'bottom. Use the pagination arrows to navigate from page to page if you have more than one page of components '
+      + 'in your library.',
+    description: 'Second paragraph of instructional text about how to add content to a library.',
+  },
+  'library.detail.sidebar.using.heading': {
+    id: 'library.detail.sidebar.using.heading',
+    defaultMessage: 'Using library content in courses',
+    description: 'Header for the sidebar instructions for using library content.',
+  },
+  'library.detail.sidebar.using.first': {
+    id: 'library.detail.sidebar.using.first',
+    defaultMessage: 'Use library content in courses by adding the "library_content" policy key to the Advanced Module '
+      + 'List in the course\'s Advanced Settings, then adding a Randomized Content Block to your courseware. In the '
+      + 'settings for each Randomized Content Block, select this library as the source library, and specify the number '
+      + 'of problems to be randomly selected and displayed to each student.',
+    description: 'The first (and presently only) paragraph of instructional text about how to use library content.',
+  },
 });
 
 export default messages;

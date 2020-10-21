@@ -15,6 +15,9 @@ function commonMocks() {
 }
 
 describe('<LibraryAccessForm />', () => {
+  beforeEach(() => {
+    fetch.resetMocks();
+  });
   it('Renders an error for the email field', () => {
     const library = libraryFactory();
     const props = { library, errorFields: { email: 'Too difficult to remember.' }, ...commonMocks() };
@@ -45,7 +48,6 @@ describe('<LibraryAccessForm />', () => {
       <LibraryAccessFormContainer
         {...props}
       />,
-      {},
     );
     const button = getByRole(container, 'button', { name: /Cancel/ });
     fireEvent.click(button);

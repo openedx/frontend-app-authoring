@@ -32,14 +32,6 @@ export async function renderXBlockView(blockId, viewSystem, viewName) {
   };
 }
 
-export async function getXBlockHandlerUrl(blockId, viewSystem, handlerName) {
-  const client = getAuthenticatedHttpClient();
-  const baseUrl = viewSystem === XBLOCK_VIEW_SYSTEM.Studio ? getConfig().STUDIO_BASE_URL : getConfig().LMS_BASE_URL;
-  const response = await client.get(`${baseUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/${handlerName}/`);
-
-  return response.data.handler_url;
-}
-
 /** Get the OLX source code of the given block */
 export async function getLibraryBlockOlx(blockId) {
   const client = getAuthenticatedHttpClient();
