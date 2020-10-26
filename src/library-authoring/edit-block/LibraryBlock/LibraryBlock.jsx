@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 
 import wrapBlockHtmlForIFrame from './wrap';
+import { blockViewShape, fetchable } from '../data/shapes';
 
 ensureConfig(['LMS_BASE_URL', 'SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL'], 'library block component');
 
@@ -83,10 +84,10 @@ class LibraryBlock extends React.Component {
 
   processView() {
     const { view } = this.props;
-    if (view) {
+    if (view.value) {
       const html = wrapBlockHtmlForIFrame(
-        view.content,
-        view.resources,
+        view.value.content,
+        view.value.resources,
         getConfig().LMS_BASE_URL,
       );
 
@@ -149,15 +150,11 @@ class LibraryBlock extends React.Component {
 LibraryBlock.propTypes = {
   getHandlerUrl: PropTypes.func.isRequired,
   onBlockNotification: PropTypes.func,
-  view: PropTypes.shape({
-    content: PropTypes.string.isRequired,
-    resources: PropTypes.arrayOf(PropTypes.object).isRequired,
-  }),
+  view: fetchable(blockViewShape).isRequired,
 };
 
 LibraryBlock.defaultProps = {
   onBlockNotification: null,
-  view: null,
 };
 
 export default LibraryBlock;

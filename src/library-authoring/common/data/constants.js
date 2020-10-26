@@ -6,6 +6,7 @@ export const LIBRARY_TYPES = {
 };
 
 export const LOADING_STATUS = {
+  STANDBY: 'standby', // Structure has been created but is not yet loading.
   LOADING: 'loading',
   LOADED: 'loaded',
   FAILED: 'failed',
@@ -33,8 +34,6 @@ export const ROUTES = {
     HOME_SLUG: (libraryId) => `/library/${libraryId}`,
     EDIT: '/library/:libraryId/edit',
     EDIT_SLUG: (libraryId) => `/library/${libraryId}/edit`,
-    OLD_HOME: '/library/:libraryId/old',
-    OLD_HOME_SLUG: (libraryId) => `/library/${libraryId}/old`,
     ACCESS: '/library/:libraryId/access',
     ACCESS_SLUG: (libraryId) => `/library/${libraryId}/access`,
   },
@@ -94,10 +93,20 @@ export const BLOCK_TYPE_EDIT_DENYLIST = [
 export const CC_LICENSE_VERSION = '4.0';
 
 export const STORE_NAMES = {
-  DETAIL: 'detail',
+  AUTHORING: 'authoring',
   BLOCKS: 'blocks',
   CREATE: 'create',
   ACCESS: 'access',
   LIST: 'list',
   EDIT: 'edit',
 };
+
+export const BLOCK_FILTER_ORDER = [
+  'video',
+  'problem',
+  'html',
+  '^', // Will be used as a key to indicate 'other component'
+  'unit',
+  'sequential',
+  'chapter',
+];

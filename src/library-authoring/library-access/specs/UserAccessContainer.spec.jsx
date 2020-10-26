@@ -5,7 +5,7 @@ import {
   getByRole, getByText, queryAllByRole, queryAllByText,
 } from '@testing-library/dom';
 import { UserAccessWidgetContainerBase } from '../UserAccessWidget';
-import { ctxRender, mocksFromNames } from '../../common/specs/helpers';
+import { ctxRender, mocksFromNames, testSuite } from '../../common/specs/helpers';
 import { libraryFactoryLine, userFactoryLine } from '../../common/specs/factories';
 import { LIBRARY_ACCESS } from '../../common/data';
 
@@ -17,7 +17,7 @@ function commonMocks() {
 
 const UserAccessWidgetContainer = injectIntl(UserAccessWidgetContainerBase);
 
-describe('<UserAccessWidgetContainer />', () => {
+testSuite('<UserAccessWidgetContainer />', () => {
   [
     [LIBRARY_ACCESS.READ, 'Read Only'],
     [LIBRARY_ACCESS.ADMIN, 'Admin'],
@@ -30,7 +30,7 @@ describe('<UserAccessWidgetContainer />', () => {
       const props = {
         library, user, multipleAdmins: false, ...commonMocks(),
       };
-      ctxRender(
+      await ctxRender(
         <UserAccessWidgetContainer
           {...props}
         />,
@@ -50,7 +50,7 @@ describe('<UserAccessWidgetContainer />', () => {
     [true, LIBRARY_ACCESS.READ, false, false],
     [false, LIBRARY_ACCESS.ADMIN, true, false],
     [false, LIBRARY_ACCESS.ADMIN, false, false],
-  ].forEach(([isAdmin, accessLevel, multipleAdmins, buttonsShown]) => {
+  ].forEach(async ([isAdmin, accessLevel, multipleAdmins, buttonsShown]) => {
     let testName = 'The admin privilege management buttons are ';
     if (!buttonsShown) {
       testName += 'not ';
@@ -70,7 +70,7 @@ describe('<UserAccessWidgetContainer />', () => {
       const props = {
         library, user: targetUser, multipleAdmins, isAdmin, ...commonMocks(),
       };
-      const { container } = ctxRender(
+      const { container } = await ctxRender(
         <UserAccessWidgetContainer
           {...props}
         />,
@@ -96,7 +96,7 @@ describe('<UserAccessWidgetContainer />', () => {
     [true, LIBRARY_ACCESS.AUTHOR, true],
     [true, LIBRARY_ACCESS.READ, false],
     [false, LIBRARY_ACCESS.AUTHOR, false],
-  ].forEach(([isAdmin, accessLevel, buttonsShown]) => {
+  ].forEach(async ([isAdmin, accessLevel, buttonsShown]) => {
     let testName = 'The staff management buttons are ';
     if (!buttonsShown) {
       testName += 'not ';
@@ -113,7 +113,7 @@ describe('<UserAccessWidgetContainer />', () => {
       const props = {
         library, user: targetUser, multipleAdmins: false, isAdmin, ...commonMocks(),
       };
-      const { container } = ctxRender(
+      const { container } = await ctxRender(
         <UserAccessWidgetContainer
           {...props}
         />,
@@ -136,7 +136,7 @@ describe('<UserAccessWidgetContainer />', () => {
     [true, LIBRARY_ACCESS.AUTHOR, false],
     [true, LIBRARY_ACCESS.READ, true],
     [false, LIBRARY_ACCESS.READ, false],
-  ].forEach(([isAdmin, accessLevel, buttonShown]) => {
+  ].forEach(async ([isAdmin, accessLevel, buttonShown]) => {
     let testName = 'The add author privileges button is ';
     if (!buttonShown) {
       testName += 'not ';
@@ -153,7 +153,7 @@ describe('<UserAccessWidgetContainer />', () => {
       const props = {
         library, user: targetUser, multipleAdmins: false, isAdmin, ...commonMocks(),
       };
-      const { container } = ctxRender(
+      const { container } = await ctxRender(
         <UserAccessWidgetContainer
           {...props}
         />,
@@ -204,7 +204,7 @@ describe('<UserAccessWidgetContainer />', () => {
       const props = {
         library, user: targetUser, multipleAdmins, isAdmin, ...commonMocks(),
       };
-      const { container } = ctxRender(
+      const { container } = await ctxRender(
         <UserAccessWidgetContainer
           {...props}
         />,

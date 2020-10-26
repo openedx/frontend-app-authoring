@@ -152,7 +152,6 @@ export const LicenceFieldBase = (
   </div>
 );
 
-
 LicenceFieldBase.propTypes = {
   intl: intlShape.isRequired,
   reservedVariant: PropTypes.string.isRequired,
@@ -172,7 +171,6 @@ LicenceFieldBase.propTypes = {
 
 // We inject later because code introspection tools get confused about 'intl' otherwise.
 export const LicenseField = injectIntl(LicenceFieldBase);
-
 
 /**
  * LicenseFieldContainer

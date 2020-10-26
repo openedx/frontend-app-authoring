@@ -24,7 +24,6 @@ export const libraryShape = PropTypes.shape({
   license: PropTypes.string.isRequired,
   has_unpublished_changes: PropTypes.bool.isRequired,
   has_unpublished_deletes: PropTypes.bool.isRequired,
-  blocks: PropTypes.arrayOf(libraryBlockShape),
   blockTypes: PropTypes.arrayOf(libraryBlockTypeShape),
 });
 

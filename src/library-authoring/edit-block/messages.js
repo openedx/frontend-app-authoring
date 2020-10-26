@@ -1,10 +1,16 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
+import { messageGuard } from '../common/data';
 
 const messages = defineMessages({
   'library.block.page.heading': {
     id: 'library.block.page.heading',
     defaultMessage: 'Component',
     description: 'The page heading for the library.block page.',
+  },
+  'library.block.page.back_to_library': {
+    id: 'library.block.page.back_to_library',
+    defaultMessage: 'Back to Library',
+    description: 'Text for the button that takes you back to the library authoring page.',
   },
   'library.block.loading.message': {
     id: 'library.block.loading.message',
@@ -73,4 +79,4 @@ const messages = defineMessages({
   },
 });
 
-export default messages;
+export default messageGuard(messages);

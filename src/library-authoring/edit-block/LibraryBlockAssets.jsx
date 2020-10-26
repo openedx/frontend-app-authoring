@@ -2,6 +2,8 @@ import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import PropTypes from 'prop-types';
 import { Button } from '@edx/paragon';
+import { fetchable } from './data/shapes';
+import { LoadingPage } from '../../generic';
 
 /**
  * Display the static assets associated with an XBlock
@@ -9,14 +11,18 @@ import { Button } from '@edx/paragon';
 const LibraryBlockAssets = (props) => {
   const onDrop = useCallback(props.onDropFiles, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  if (props.assets.value === null) {
+    return <LoadingPage loadingMessage="Loading..." />;
+  }
+  const assets = props.assets.value || [];
 
   return (
     <>
       <h1 className="float-right"><span className="sr-only">Static Assets</span></h1>
-      <p>There are {props.assets.length} static asset files for this XBlock:</p>
+      <p>There are {assets.length} static asset files for this XBlock:</p>
       <ul>
         {
-          props.assets.map(assetFile => (
+          assets.map(assetFile => (
             <li key={assetFile.path}>
               <a href={assetFile.url}>/static/{assetFile.path}</a> {' '}
               ({Math.round(assetFile.size / 1024.0)} KB)
@@ -52,7 +58,7 @@ const LibraryBlockAssets = (props) => {
 };
 
 LibraryBlockAssets.propTypes = {
-  assets: PropTypes.arrayOf(PropTypes.object).isRequired,
+  assets: fetchable(PropTypes.arrayOf(PropTypes.object)).isRequired,
   onDropFiles: PropTypes.func.isRequired,
   onDeleteFile: PropTypes.func.isRequired,
 };

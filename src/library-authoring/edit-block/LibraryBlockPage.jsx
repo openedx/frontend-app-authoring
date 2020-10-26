@@ -9,6 +9,8 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { logError } from '@edx/frontend-platform/logging';
 import { AppContext } from '@edx/frontend-platform/react';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import {
   BLOCK_TYPE_EDIT_DENYLIST,
   libraryBlockShape,
@@ -22,7 +24,7 @@ import {
   commitLibraryChanges,
   fetchLibraryDetail,
   revertLibraryChanges,
-} from '../library-detail';
+} from '../author-library';
 import {
   clearLibraryBlockError,
   deleteLibraryBlock,
@@ -36,14 +38,15 @@ import {
   setLibraryBlockError,
   setLibraryBlockOlx,
   uploadLibraryBlockAssets,
-  focusBlock,
+  focusBlock, initializeBlock,
 } from './data';
 import { LibraryBlock } from './LibraryBlock';
 import LibraryBlockAssets from './LibraryBlockAssets';
 import LibraryBlockOlx from './LibraryBlockOlx';
 
 import messages from './messages';
-import { getXBlockHandlerUrl, LIBRARY_TYPES } from '../common/data';
+import { getXBlockHandlerUrl } from '../common/data';
+import { blockViewShape, fetchable } from './data/shapes';
 
 class LibraryBlockPage extends React.Component {
   componentDidMount() {
@@ -53,6 +56,7 @@ class LibraryBlockPage extends React.Component {
       const { libraryId } = this.props.match.params;
       this.props.fetchLibraryDetail({ libraryId });
     }
+    this.props.initializeBlock(this.props.match.params.blockId);
   }
 
   componentDidUpdate(prevProps) {
@@ -104,11 +108,7 @@ class LibraryBlockPage extends React.Component {
     /* eslint-disable-next-line no-alert */
     if (window.confirm('Are you sure you want to delete this XBlock? There is no undo.')) {
       this.props.deleteLibraryBlock({ blockId }).then(() => {
-        if (this.props.library.type === LIBRARY_TYPES.COMPLEX) {
-          this.props.history.push(ROUTES.Detail.OLD_HOME_SLUG(this.props.match.params.libraryId));
-        } else {
-          this.props.history.push(ROUTES.Detail.HOME_SLUG(this.props.match.params.libraryId));
-        }
+        this.props.history.push(ROUTES.Detail.HOME_SLUG(this.props.match.params.libraryId));
       });
     }
   }
@@ -200,7 +200,6 @@ class LibraryBlockPage extends React.Component {
       errorMessage,
       intl,
       metadata,
-      status,
     } = this.props;
     const { blockId, libraryId } = this.props.match.params;
     const hasChanges = metadata ? metadata.has_unpublished_changes : false;
@@ -210,6 +209,10 @@ class LibraryBlockPage extends React.Component {
         <div className="wrapper-mast wrapper">
           <header className="mast has-actions has-navigation has-subtitle">
             <div className="page-header">
+              <Button href={ROUTES.Detail.HOME_SLUG(libraryId)} className="my-1">
+                <FontAwesomeIcon icon={faArrowLeft} className="pr-1" />
+                {intl.formatMessage(messages['library.block.page.back_to_library'])}
+              </Button>
               <small className="subtitle">{intl.formatMessage(messages['library.block.page.heading'])}</small>
               <h1 className="page-header-title">{metadata !== null && metadata.display_name}</h1>
             </div>
@@ -251,7 +254,7 @@ class LibraryBlockPage extends React.Component {
                   </ul>
                 </div>
                 <div className="card-body">
-                  { status === LOADING_STATUS.LOADING ? (
+                  { this.props.view.status === LOADING_STATUS.LOADING ? (
                     <div
                       className="d-flex justify-content-center align-items-center flex-column"
                       style={{ height: '400px' }}
@@ -377,7 +380,7 @@ class LibraryBlockPage extends React.Component {
 LibraryBlockPage.contextType = AppContext;
 
 LibraryBlockPage.propTypes = {
-  assets: PropTypes.arrayOf(PropTypes.object),
+  assets: fetchable(PropTypes.arrayOf(PropTypes.object)),
   clearLibraryBlockError: PropTypes.func.isRequired,
   commitLibraryChanges: PropTypes.func.isRequired,
   deleteLibraryBlock: PropTypes.func.isRequired,
@@ -388,6 +391,7 @@ LibraryBlockPage.propTypes = {
   fetchLibraryBlockOlx: PropTypes.func.isRequired,
   fetchLibraryBlockView: PropTypes.func.isRequired,
   fetchLibraryDetail: PropTypes.func.isRequired,
+  initializeBlock: PropTypes.func.isRequired,
   focusBlock: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
@@ -401,17 +405,13 @@ LibraryBlockPage.propTypes = {
     path: PropTypes.string.isRequired,
   }).isRequired,
   library: libraryShape,
-  metadata: libraryBlockShape,
-  olx: PropTypes.string,
+  metadata: fetchable(libraryBlockShape).isRequired,
+  olx: fetchable(PropTypes.string).isRequired,
   revertLibraryChanges: PropTypes.func.isRequired,
   setLibraryBlockOlx: PropTypes.func.isRequired,
   setLibraryBlockError: PropTypes.func.isRequired,
-  status: PropTypes.oneOf(Object.values(LOADING_STATUS)).isRequired,
   uploadLibraryBlockAssets: PropTypes.func.isRequired,
-  view: PropTypes.shape({
-    content: PropTypes.string.isRequired,
-    resources: PropTypes.arrayOf(PropTypes.object).isRequired,
-  }),
+  view: fetchable(blockViewShape).isRequired,
 };
 
 LibraryBlockPage.defaultProps = libraryBlockInitialState;
@@ -433,5 +433,6 @@ export default connect(
     setLibraryBlockOlx,
     setLibraryBlockError,
     uploadLibraryBlockAssets,
+    initializeBlock,
   },
 )(injectIntl(withRouter(LibraryBlockPage)));

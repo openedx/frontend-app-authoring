@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import {
   libraryBlockReducer,
-  libraryDetailReducer,
+  libraryAuthoringReducer,
   libraryEditReducer,
   libraryCreateReducer,
   libraryListReducer,
@@ -12,7 +12,7 @@ import { STORE_NAMES } from './library-authoring/common/data';
 export const buildStore = (overrides = {}) => configureStore({
   reducer: {
     [STORE_NAMES.BLOCKS]: libraryBlockReducer,
-    [STORE_NAMES.DETAIL]: libraryDetailReducer,
+    [STORE_NAMES.AUTHORING]: libraryAuthoringReducer,
     [STORE_NAMES.EDIT]: libraryEditReducer,
     [STORE_NAMES.CREATE]: libraryCreateReducer,
     [STORE_NAMES.LIST]: libraryListReducer,

@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
-import { selectLibraryDetail } from '../../library-detail';
 import { STORE_NAMES } from '../../common/data';
+import selectLibraryDetail from '../../common/data/selectors';
 
 const stateSelector = state => ({ ...state[STORE_NAMES.EDIT] });
 
@@ -11,7 +11,7 @@ const selectLibraryEdit = createSelector(
   (editState, libraryState) => ({
     ...editState,
     library: libraryState.library,
-    loadingStatus: libraryState.status,
+    loadingStatus: libraryState.loadingStatus,
   }),
 );
 

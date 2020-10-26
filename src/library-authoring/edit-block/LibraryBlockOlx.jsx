@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@edx/paragon';
+import { fetchable } from './data/shapes';
 
 /**
  * Display the OLX source of an XBlock.
@@ -23,14 +24,14 @@ class LibraryBlockOlx extends React.Component {
   showEditMode = () => {
     this.setState({
       isEditing: true,
-      olx: this.props.olx,
+      olx: this.props.olx.value,
     });
   }
 
   cancelEditMode = () => {
     this.setState({
       isEditing: false,
-      olx: this.props.olx,
+      olx: this.props.olx.value,
     });
   }
 
@@ -59,7 +60,7 @@ class LibraryBlockOlx extends React.Component {
     }
     return (
       <>
-        <pre>{this.props.olx}</pre><br />
+        <pre>{this.props.olx.value}</pre><br />
         <Button variant="outline-secondary" onClick={this.showEditMode}>Edit OLX</Button>
       </>
     );
@@ -67,12 +68,8 @@ class LibraryBlockOlx extends React.Component {
 }
 
 LibraryBlockOlx.propTypes = {
-  olx: PropTypes.string,
+  olx: fetchable(PropTypes.string).isRequired,
   onSaveOlx: PropTypes.func.isRequired,
-};
-
-LibraryBlockOlx.defaultProps = {
-  olx: '',
 };
 
 export default LibraryBlockOlx;

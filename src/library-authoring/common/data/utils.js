@@ -1,5 +1,6 @@
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 
+import { logError as platformLogger } from '@edx/frontend-platform/logging';
 import { LIBRARY_TYPES, BLOCK_TYPE_DENYLIST, CC_LICENSE_VERSION } from './constants';
 
 ensureConfig(['STUDIO_BASE_URL'], 'library utils');
@@ -14,10 +15,8 @@ export const initLibraryUrl = (library) => {
   let url;
   if (library.type === LIBRARY_TYPES.LEGACY) {
     url = `${getConfig().STUDIO_BASE_URL}/library/${library.id}`;
-  } else if ([LIBRARY_TYPES.VIDEO, LIBRARY_TYPES.PROBLEM].includes(library.type)) {
-    url = `/library/${library.id}`;
   } else {
-    url = `/library/${library.id}/old`;
+    url = `/library/${library.id}`;
   }
 
   return {
@@ -64,7 +63,6 @@ export const truncateErrorMessage = (errorMessage) => (
   errorMessage.length > 255 ? `${errorMessage.substring(0, 255)}...` : errorMessage
 );
 
-
 const tagMap = [
   ['attribution', 'BY'],
   ['nonCommercial', 'NC'],
@@ -96,7 +94,6 @@ const optionsMatchers = {
 /**
  * @typedef {{noDerivatives: boolean, nonCommercial: boolean, attribution: boolean, shareAlike: boolean}} CommonsOptions
  */
-
 
 /**
  * Given a current set of options for Creative Commons, change the flag to the requested value and return
@@ -187,3 +184,126 @@ export const linkFromSpec = (spec) => linkFromFlags(
     commonsOptionsFromSpec(spec),
   ),
 );
+
+/**
+ * Need to be able to mock out the logger without affecting other definitions in the library.
+ */
+let logger = platformLogger;
+
+if (process.env.NODE_ENV === 'test') {
+  logger = jest.fn();
+}
+
+export const logError = logger;
+
+/**
+ * Proxy object that allows us to know WHICH intl message was missing by sending it to the console. Also
+ * aids in testing by forcing failure if a message is missing. Wrap your messages dictionaries with it.
+ */
+export const messageGuard = (messageSet) => {
+  if (process.env.NODE_ENV === 'production') {
+    return messageSet;
+  }
+  return new Proxy(messageSet, {
+    get: (target, key) => {
+      if (process.env.NODE_ENV === 'test') {
+        // Fatal when running tests.
+        expect(key).i18nDefinedIn(target);
+      }
+      if (target[key] === undefined) {
+        const error = new Error(`i18n error: "${key}" is not a known message key.`);
+        logError(error);
+        return {
+          // Should never actually get translated. We just want to quell the error message from upstream.
+          id: `meta.i18n.missing_key.${key}`,
+          defaultMessage: `"${key}" MISSING!`,
+          description: 'Diagnostic error message for missing i18n messages. Do not translate.',
+        };
+      }
+      return target[key];
+    },
+  });
+};
+
+// We need a way to spy on thunks effectively. This allows us to intercept all calls to thunks which have been
+// annotated with annotateThunk, and keep track of what they were called with. We can also make these thunks return
+// or throw by using their respective resolve and reject commands.
+const thunkMockMap = new Map();
+const testSettings = { useRealThunks: false, useRealApis: false };
+let thunkWrapper = (thunk) => thunk;
+
+if (process.env.NODE_ENV === 'test') {
+  thunkWrapper = (thunk) => {
+    const wrapper = (...args) => (dispatch) => {
+      if (testSettings.useRealThunks) {
+        // Less useful to have this information in this case, but for sake of consistency, including it.
+        // Note that reject and resolve will be undefined for cases where we're not mocking out the promise.
+        thunkMockMap.get(wrapper).calls.push({ args, dispatch });
+        return thunk(dispatch)(...args);
+      }
+      return new Promise((resolve, reject) => {
+        thunkMockMap.get(wrapper).calls.push({
+          args,
+          resolve,
+          reject,
+          dispatch,
+        });
+        wrapper.fn(...args);
+      });
+    };
+    const fn = jest.fn();
+    thunkMockMap.set(wrapper, { fn, calls: [] });
+    Object.defineProperty(wrapper, 'calls', { get: () => thunkMockMap.get(wrapper).calls });
+    // Now we can do expect(thunk).fn.toHaveBeenCalledWith(whatever)
+    wrapper.fn = fn;
+    return wrapper;
+  };
+}
+
+export const annotateThunk = thunkWrapper;
+export const resetThunks = () => {
+  thunkMockMap.forEach((value) => {
+    value.fn.mockReset();
+    // eslint-disable-next-line no-param-reassign
+    value.calls = [];
+  });
+};
+
+// Change context so that we can enable or disable the behavior of real thunks. We still record information about
+// the calls, but we let the thunk code return its own values if this is enabled.
+export const useRealThunks = (value) => {
+  testSettings.useRealThunks = value;
+};
+
+// Same deal, but for simpler async functions like API calls.
+let apiWrapper = (func) => func;
+
+if (process.env.NODE_ENV === 'test') {
+  apiWrapper = (func) => {
+    const wrapper = (...args) => {
+      if (testSettings.useRealApis) {
+        // We can still act as a spy here.
+        wrapper.fn(...args);
+        return func(...args);
+      }
+      // You'll want to use Immediate(value) or InstaFail(value) as mockImplementation, depending on what you're
+      // testing.
+      return wrapper.fn(...args);
+    };
+    wrapper.fn = jest.fn();
+    return wrapper;
+  };
+}
+
+export const annotateCall = apiWrapper;
+const apiMockMap = new Map();
+
+export const useRealApis = (value) => {
+  testSettings.useRealApis = value;
+};
+
+export const resetApis = () => {
+  apiMockMap.forEach((value) => {
+    value.fn.mockReset();
+  });
+};

@@ -1,8 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import 'babel-polyfill';
 import MutationObserver from '@sheerun/mutationobserver-shim';
-import { initialize, mergeConfig } from '@edx/frontend-platform';
-import fetchMock from 'jest-fetch-mock';
+import { mergeConfig } from '@edx/frontend-platform';
 
 mergeConfig({
   STUDIO_BASE_URL: process.env.STUDIO_BASE_URL,
@@ -11,9 +10,6 @@ mergeConfig({
 });
 
 window.MutationObserver = MutationObserver;
-
-fetchMock.enableMocks();
-initialize({ messages: [] });
 
 let store = {};
 

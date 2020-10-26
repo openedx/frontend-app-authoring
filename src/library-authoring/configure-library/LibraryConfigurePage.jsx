@@ -24,7 +24,7 @@ import {
 } from '../common';
 import {
   fetchLibraryDetail,
-} from '../library-detail';
+} from '../author-library';
 import {
   clearError,
   libraryEditInitialState,
@@ -34,7 +34,7 @@ import {
 import messages from './messages';
 import { LicenseFieldContainer } from '../common/LicenseField';
 
-class LibraryEditPage extends React.Component {
+class LibraryConfigurePage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -351,7 +351,7 @@ class LibraryEditPage extends React.Component {
     const { loadingStatus } = this.props;
 
     let content;
-    if (loadingStatus === LOADING_STATUS.LOADING) {
+    if (loadingStatus === LOADING_STATUS.LOADING || loadingStatus === LOADING_STATUS.STANDBY) {
       content = this.renderLoading();
     } else {
       content = this.renderContent();
@@ -365,9 +365,9 @@ class LibraryEditPage extends React.Component {
   }
 }
 
-LibraryEditPage.contextType = AppContext;
+LibraryConfigurePage.contextType = AppContext;
 
-LibraryEditPage.propTypes = {
+LibraryConfigurePage.propTypes = {
   clearError: PropTypes.func.isRequired,
   errorFields: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   errorMessage: PropTypes.string,
@@ -387,7 +387,7 @@ LibraryEditPage.propTypes = {
   updateLibrary: PropTypes.func.isRequired,
 };
 
-LibraryEditPage.defaultProps = libraryEditInitialState;
+LibraryConfigurePage.defaultProps = libraryEditInitialState;
 
 export default connect(
   selectLibraryEdit,
@@ -396,4 +396,4 @@ export default connect(
     fetchLibraryDetail,
     updateLibrary,
   },
-)(injectIntl(withRouter(LibraryEditPage)));
+)(injectIntl(withRouter(LibraryConfigurePage)));

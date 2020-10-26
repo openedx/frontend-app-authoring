@@ -7,9 +7,9 @@ import { AppContext } from '@edx/frontend-platform/react';
 import { ensureConfig } from '@edx/frontend-platform/config';
 
 import { ROUTES, libraryShape } from '../common';
-import { selectLibraryDetail } from '../library-detail';
 import StudioLogo from './assets/studio-logo.png';
 import messages from './messages';
+import selectLibraryDetail from '../common/data/selectors';
 
 ensureConfig([
   'STUDIO_BASE_URL',

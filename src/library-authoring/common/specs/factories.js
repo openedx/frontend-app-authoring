@@ -4,15 +4,13 @@ import { LIBRARY_ACCESS, LIBRARY_TYPES, LOADING_STATUS } from '../data';
 import {
   HTML_TYPE, POLL_TYPE, PROBLEM_TYPE, VIDEO_TYPE,
 } from './constants';
-import { makeManufacturer, makeN } from './helpers';
-
+import { makeManufacturer } from './helpers';
 
 const currentIds = {
   user: 0,
   library: 0,
   blocks: 0,
 };
-
 
 export function userFactory(overrides = undefined) {
   currentIds.user += 1;
@@ -25,11 +23,9 @@ export function userFactory(overrides = undefined) {
   };
 }
 
-
 export function libraryFactory(overrides = undefined) {
   currentIds.library += 1;
   const id = currentIds.library;
-  const blocks = (overrides && overrides.blocks) || [];
   const base = {
     org: `TestOrg${id}`,
     slug: `TestSlug${id}`,
@@ -41,25 +37,34 @@ export function libraryFactory(overrides = undefined) {
     has_unpublished_deletes: false,
     type: LIBRARY_TYPES.COMPLEX,
     license: '',
-    blocks: [],
     blockTypes: [VIDEO_TYPE, POLL_TYPE, HTML_TYPE, PROBLEM_TYPE],
     ...overrides,
   };
-  const withId = {
+  return {
     ...base,
     id: `lib:${base.org}:${base.slug}`,
     // Use overrides one more time in case id was overridden.
     ...overrides,
   };
-  return {
-    ...withId,
-    // Specify a set of overrides for blocks, and blocks will be generated for them.
-    // eslint-disable-next-line no-use-before-define
-    blocks: makeN(makeManufacturer(blockFactory, { library: withId })(blocks), blocks.length),
-  };
 }
 
-export function blockMetadataFactory(overrides = undefined, { block } = {}) {
+const fetchableFactory = (baseFactory, defaultStatus = LOADING_STATUS.STANDBY) => (overrides, options) => {
+  let newOverrides = overrides || {};
+  const base = { status: defaultStatus, value: null };
+  if (newOverrides.value !== null) {
+    newOverrides = { value: baseFactory(newOverrides.value, options) };
+  }
+  return { ...base, ...newOverrides };
+};
+
+const defaultLiteral = (literal) => (override) => {
+  if (override !== undefined) {
+    return override;
+  }
+  return literal();
+};
+
+function blockMetadataFactoryBase(overrides = undefined, { block } = {}) {
   return {
     block_type: block.block_type,
     display_name: block.display_name,
@@ -68,6 +73,8 @@ export function blockMetadataFactory(overrides = undefined, { block } = {}) {
     ...overrides,
   };
 }
+
+export const blockMetadataFactory = fetchableFactory(blockMetadataFactoryBase, LOADING_STATUS.STANDBY);
 
 export function blockFactory(overrides = undefined, { library } = {}) {
   currentIds.blocks += 1;
@@ -81,7 +88,7 @@ export function blockFactory(overrides = undefined, { library } = {}) {
   };
   return {
     ...base,
-    id: `lb:${baseLibrary.id}:${base.block_type}`,
+    id: `lb:${baseLibrary.id}:${base.block_type}:${id}`,
     // Not accurate to how studio builds this.
     def_key: `bundle-olx:${uuidv4()}:test/${id}.xml`,
     // id may be overridden.
@@ -89,27 +96,36 @@ export function blockFactory(overrides = undefined, { library } = {}) {
   };
 }
 
+const viewFactoryBase = (overrides, { block } = {}) => {
+  const sourceBlock = block || blockFactory();
+  return {
+    content: `<div>Block ${sourceBlock.id}</div>`,
+    resources: [],
+    ...overrides,
+  };
+};
+
+const viewFactory = fetchableFactory(viewFactoryBase, LOADING_STATUS.LOADED);
+
+const assetsFactory = fetchableFactory(defaultLiteral(() => []), LOADING_STATUS.LOADED);
+const olxFactory = fetchableFactory(defaultLiteral(() => ''), LOADING_STATUS.LOADED);
+const deletionFactory = fetchableFactory(defaultLiteral(() => null), LOADING_STATUS.STANDBY);
 
 export function blockStateFactory(overrides = undefined, { block } = {}) {
   const baseBlock = block || blockFactory();
-  const base = {
-    metadata: blockMetadataFactory(overrides && overrides.metadata, { block: baseBlock }),
-    assets: [],
-    errorMessage: '',
-    olx: '',
-    status: LOADING_STATUS.LOADED,
-    ...overrides,
-  };
+  const newOverrides = overrides || {};
   return {
-    ...base,
-    view: {
-      content: `<div>Block ${base.id}</div>`,
-      resources: [],
-    },
-    ...overrides,
+    errorMessage: null,
+    status: LOADING_STATUS.LOADED,
+    ...newOverrides,
+    deletion: deletionFactory(newOverrides.metadata),
+    metadata: blockMetadataFactory(newOverrides.metadata, { block: baseBlock }),
+    assets: assetsFactory(newOverrides.assets),
+    olx: olxFactory(newOverrides.olx),
+    view: viewFactory(newOverrides.view),
   };
 }
 
-
 export const userFactoryLine = makeManufacturer(userFactory);
 export const libraryFactoryLine = makeManufacturer(libraryFactory);
+export const blockFactoryLine = makeManufacturer(blockFactory);

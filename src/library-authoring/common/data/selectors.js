@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { filterSupportedBlockTypes, initLibraryUrl } from './utils';
 import { STORE_NAMES } from './constants';
 
-const detailStateSelector = state => ({ ...state[STORE_NAMES.DETAIL] });
+const detailStateSelector = state => ({ ...state[STORE_NAMES.AUTHORING] });
 const blockStateSelector = state => ({ ...state[STORE_NAMES.BLOCKS] });
 
 // This selector is used by several features.
@@ -11,8 +11,9 @@ const selectLibraryDetail = createSelector(
   blockStateSelector,
   (state, blockState) => ({
     ...state,
-    blocks: blockState.blocks,
-    library: filterSupportedBlockTypes(initLibraryUrl(state.library)),
+    blockStates: blockState.blocks,
+    library: filterSupportedBlockTypes(initLibraryUrl(state.library.value)),
+    loadingStatus: state.library.status,
   }),
 );
 export default selectLibraryDetail;

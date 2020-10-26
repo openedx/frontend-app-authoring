@@ -1,4 +1,5 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
+import { messageGuard } from '../common/data';
 
 const messages = defineMessages({
   'library.form.generic.error': {
@@ -95,4 +96,4 @@ const messages = defineMessages({
   },
 });
 
-export default messages;
+export default messageGuard(messages);

@@ -5,12 +5,12 @@ import { LOADING_STATUS } from '../../common';
 import { STORE_NAMES } from '../../common/data';
 
 export const libraryBlockInitialState = {
-  assets: [],
+  assets: ({ status: LOADING_STATUS.STANDBY, value: null }),
   errorMessage: null,
-  metadata: null,
-  olx: null,
-  status: LOADING_STATUS.LOADING,
-  view: null,
+  deletion: ({ status: LOADING_STATUS.STANDBY, value: null }),
+  view: ({ status: LOADING_STATUS.STANDBY, value: null }),
+  metadata: ({ status: LOADING_STATUS.STANDBY, value: null }),
+  olx: ({ status: LOADING_STATUS.STANDBY, value: null }),
 };
 
 const slice = createSlice({
@@ -27,48 +27,23 @@ const slice = createSlice({
       state.focusedBlock = payload.blockId;
     },
     libraryBlockRequest: (state, { payload }) => {
-      state.blocks[payload.blockId].errorMessage = null;
-      state.blocks[payload.blockId].view = null;
-      state.blocks[payload.blockId].status = LOADING_STATUS.LOADING;
+      const { attr } = payload;
+      state.blocks[payload.blockId][attr].status = LOADING_STATUS.LOADING;
+      state.blocks[payload.blockId][attr].value = null;
     },
-    libraryBlockMetadataSuccess: (state, { payload }) => {
-      state.blocks[payload.blockId].errorMessage = null;
-      state.blocks[payload.blockId].metadata = payload.metadata;
-      state.blocks[payload.blockId].status = LOADING_STATUS.LOADED;
-    },
-    libraryBlockViewSuccess: (state, { payload }) => {
-      state.blocks[payload.blockId].errorMessage = null;
-      state.blocks[payload.blockId].view = payload.view;
-      state.blocks[payload.blockId].status = LOADING_STATUS.LOADED;
-    },
-    libraryBlockAssetsSuccess: (state, { payload }) => {
-      state.blocks[payload.blockId].errorMessage = null;
-      state.blocks[payload.blockId].assets = payload.assets;
-      if (payload.metadata) {
-        state.blocks[payload.blockId].metadata = payload.metadata;
-      }
-      state.blocks[payload.blockId].status = LOADING_STATUS.LOADED;
-    },
-    libraryBlockOlxSuccess: (state, { payload }) => {
-      state.blocks[payload.blockId].errorMessage = null;
-      state.blocks[payload.blockId].olx = payload.olx;
-      if (payload.metadata) {
-        state.blocks[payload.blockId].metadata = payload.metadata;
-      }
-      state.blocks[payload.blockId].status = LOADING_STATUS.LOADED;
-    },
-    libraryBlockDeleteSuccess: (state, { payload }) => {
-      delete state.blocks[payload.blockId];
-      if (state.focusedBlock === payload.blockId) {
-        state.focusedBlock = null;
-      }
+    libraryBlockSuccess: (state, { payload }) => {
+      const { attr, value } = payload;
+      state.blocks[payload.blockId][attr].value = value;
+      state.blocks[payload.blockId][attr].status = LOADING_STATUS.LOADED;
     },
     libraryBlockFailed: (state, { payload }) => {
-      state.blocks[payload.blockId].errorMessage = payload.errorMessage;
-      state.blocks[payload.blockId].status = LOADING_STATUS.FAILED;
+      const { attr, blockId, errorMessage } = payload;
+      state.blocks[blockId][attr].status = LOADING_STATUS.FAILED;
+      state.blocks[blockId].errorMessage = errorMessage;
     },
     libraryBlockClearError: (state, { payload }) => {
-      state.blocks[payload.blockId].errorMessage = null;
+      const { blockId } = payload;
+      state.blocks[blockId].errorMessage = null;
     },
     libraryClearBlock: (state, { payload }) => {
       delete state.blocks[payload.blockId];

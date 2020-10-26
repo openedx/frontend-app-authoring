@@ -1,37 +1,41 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { Col } from '@edx/paragon';
 import PropTypes from 'prop-types';
 
-export default class LoadingPage extends Component {
-  renderLoadingMessage() {
-    if (!this.props.loadingMessage) {
-      return null;
-    }
-
-    return (
+const LoadingPage = ({ loadingMessage }) => (
+  <Col
+    xs={12}
+    className="justify-content-center d-flex"
+    style={{
+      height: '50vh',
+    }}
+  >
+    <div className="spinner-border text-primary text-center align-self-center" role="status">
+      {loadingMessage && (
       <span className="sr-only">
-        {this.props.loadingMessage}
+        {loadingMessage}
       </span>
-    );
-  }
-
-  render() {
-    return (
-      <div>
-        <div
-          className="d-flex justify-content-center align-items-center flex-column"
-          style={{
-            height: '50vh',
-          }}
-        >
-          <div className="spinner-border text-primary" role="status">
-            {this.renderLoadingMessage()}
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
+      )}
+    </div>
+  </Col>
+);
 
 LoadingPage.propTypes = {
   loadingMessage: PropTypes.string.isRequired,
+};
+
+export const LoadGuard = ({ condition, children, loadingMessage }) => (
+  <>
+    {condition && children()}
+    {condition || <LoadingPage loadingMessage={loadingMessage} />}
+  </>
+);
+
+export default LoadingPage;
+
+LoadGuard.propTypes = {
+  loadingMessage: PropTypes.string.isRequired,
+  children: PropTypes.func.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  condition: PropTypes.any.isRequired,
 };

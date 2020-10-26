@@ -14,7 +14,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { AppContext } from '@edx/frontend-platform/react';
 import messages from './messages';
 import { LoadingPage } from '../../generic';
-import { fetchLibraryDetail } from '../library-detail/data';
+import { fetchLibraryDetail } from '../author-library/data';
 import LibraryAccessFormContainer from './LibraryAccessForm';
 import {
   LIBRARY_ACCESS, libraryShape, LOADING_STATUS, ROUTES, truncateErrorMessage,
@@ -30,7 +30,6 @@ import {
 } from './data';
 // eslint-disable-next-line import/no-named-as-default
 import UserAccessWidgetContainer from './UserAccessWidget';
-
 
 /**
  * LibraryAccessPage:
@@ -232,7 +231,6 @@ const LibraryAccessPageContainer = ({
     </div>
   );
 };
-
 
 LibraryAccessPageContainer.propTypes = {
   // errorMessage: PropTypes.string,

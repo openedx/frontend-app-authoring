@@ -1,4 +1,5 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
+import { messageGuard } from '../common/data';
 
 const messages = defineMessages({
   'library.detail.page.heading': {
@@ -126,6 +127,26 @@ const messages = defineMessages({
     defaultMessage: 'Copy',
     description: 'Aria label for copy button',
   },
+  'library.detail.search': {
+    id: 'library.detail.search',
+    defaultMessage: 'Search...',
+    description: 'Label for block search field',
+  },
+  'library.detail.all_types': {
+    id: 'library.detail.all_types',
+    defaultMessage: 'All types',
+    description: 'Label for the default block filter, which allows everything.',
+  },
+  'library.detail.other_component': {
+    id: 'library.detail.other_component',
+    defaultMessage: 'Other Component',
+    description: 'Label for all other components not listed in the filter.',
+  },
+  'library.detail.add_component_heading': {
+    id: 'library.detail.add_component_heading',
+    defaultMessage: 'Add New Component',
+    description: 'Heading placed above the varying add component buttons on complex libraries.',
+  },
   'library.detail.add_video': {
     id: 'library.detail.add_video',
     defaultMessage: 'Add Video',
@@ -184,4 +205,4 @@ const messages = defineMessages({
   },
 });
 
-export default messages;
+export default messageGuard(messages);

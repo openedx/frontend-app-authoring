@@ -1,5 +1,6 @@
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { normalizeErrors } from '../../common/helpers';
 
 ensureConfig(['STUDIO_BASE_URL'], 'library API service');
 
@@ -10,11 +11,5 @@ export async function updateLibrary({ libraryId, ...data }) {
   return client.patch(
     `${baseUrl}/api/libraries/v2/${libraryId}/`,
     data,
-  ).then((response) => response.data).catch((error) => {
-    /* Normalize error data. */
-    const apiError = Object.create(error);
-    apiError.message = null;
-    apiError.fields = JSON.parse(error.customAttributes.httpErrorResponseData);
-    throw apiError;
-  });
+  ).then((response) => response.data).catch((error) => normalizeErrors(error));
 }

@@ -1,12 +1,20 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import jest from 'jest-mock';
 import { render } from '@testing-library/react';
-import AppContext from '@edx/frontend-platform/react/AppContext';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import * as React from 'react';
-import { Provider } from 'react-redux';
 import { getDefaultMiddleware } from '@reduxjs/toolkit';
+import { initialize } from '@edx/frontend-platform';
+import AppContext from '@edx/frontend-platform/react/AppContext';
+import { Provider } from 'react-redux';
+import { createBrowserHistory } from 'history';
+import { Router } from 'react-router-dom';
+import fetchMock from 'jest-fetch-mock';
+import { newMockXhr } from 'mock-xmlhttprequest';
 import { buildStore } from '../../../store';
+import appMessages from '../../../i18n';
+import {
+  logError, resetApis, resetThunks, useRealThunks,
+} from '../data';
 
 /**
  * mocksFromNames
@@ -65,9 +73,9 @@ function* toInfiniteGenerator(iterable) {
  * @param options: A value that will be passed to every iteration.
  * @returns {function(*=): Generator<*, void, *>}
  */
-export function makeManufacturer(wrapped, options) {
+export function makeManufacturer(wrapped) {
   // I've stretched this metaphor so far I think I can see through it.
-  function* conveyorBelt(overridesList) {
+  function* conveyorBelt(overridesList, options = undefined) {
     const infiniteGenerator = toInfiniteGenerator(overridesList || []);
     while (true) {
       yield wrapped(infiniteGenerator.next().value, options);
@@ -96,10 +104,32 @@ export function makeN(generator, count) {
 
 export const monitor = jest.fn();
 
+export const setUp = () => {
+  global.XMLHttpRequest = newMockXhr();
+  fetchMock.enableMocks();
+};
+
 export const cleanUp = () => {
   monitor.mockReset();
-  fetch.resetMocks();
+  fetchMock.resetMocks();
   window.localStorage.reset();
+  resetThunks();
+  resetApis();
+  useRealThunks(false);
+  logError.mockReset();
+  delete global.XMLHttpRequest;
+};
+
+export const testSuite = (suiteName, suite) => {
+  describe(suiteName, () => {
+    beforeEach(() => {
+      setUp();
+    });
+    afterEach(() => {
+      cleanUp();
+    });
+    suite();
+  });
 };
 
 export const expectAction = (name, payload) => expect(monitor).toHaveBeenCalledWith({ type: name, payload });
@@ -109,17 +139,20 @@ export const spyMiddleware = () => (next) => (action) => {
   return next(action);
 };
 
-export const ctxRender = (ui, {
-  options, context, storeOptions,
+export const ctxRender = async (ui, {
+  options, context, storeOptions, history = createBrowserHistory(),
 } = {}) => {
   const store = buildStore({ middleware: [...getDefaultMiddleware(), spyMiddleware], ...storeOptions });
+  await initialize({ messages: [appMessages] });
   return render(
     <Provider store={store}>
-      <AppContext.Provider value={context}>
-        <IntlProvider locale="en">
-          {ui}
-        </IntlProvider>
-      </AppContext.Provider>
+      <Router history={history}>
+        <AppContext.Provider value={context}>
+          <IntlProvider locale="en">
+            {ui}
+          </IntlProvider>
+        </AppContext.Provider>
+      </Router>
     </Provider>,
     options,
   );
@@ -129,7 +162,7 @@ export const ctxRender = (ui, {
  * immediate
  *
  * Creates a promise which resolves immediately with a given value. Good for use when an API requires a promise, but
- * you already have the required data.
+ * you already have the required data-- such as in tests.
  *
  * @param val
  * @returns {Promise<any>}
@@ -137,5 +170,19 @@ export const ctxRender = (ui, {
 export function immediate(val) {
   return new Promise((resolve) => {
     resolve(val);
+  });
+}
+
+/**
+ * instaFail
+ *
+ * Creates a promise which immediately rejects with a given value. Good for when an API requires a promise, but you
+ * already have determined failure-- such as in tests.
+ * @param exception Error
+ * @returns {Promise<never>}
+ */
+export function instaFail(exception) {
+  return new Promise((resolve, reject) => {
+    reject(exception);
   });
 }

@@ -1,4 +1,5 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
+import { messageGuard } from './data';
 
 const messages = defineMessages({
   'library.common.tabs.courses': {
@@ -12,7 +13,7 @@ const messages = defineMessages({
     description: 'Text on the libraries tab.',
   },
   'library.common.forms.button.cancel': {
-    id: 'library.common.forms.cancel',
+    id: 'library.common.forms.button.cancel',
     defaultMessage: 'Cancel',
     description: 'Default label for "Cancel" buttons.',
   },
@@ -117,4 +118,4 @@ const messages = defineMessages({
   },
 });
 
-export default messages;
+export default messageGuard(messages);

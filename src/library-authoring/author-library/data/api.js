@@ -1,10 +1,11 @@
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { normalizeErrors } from '../../common/helpers';
+import querystring from 'querystring';
+import { annotateCall } from '../../common/data';
 
 ensureConfig(['STUDIO_BASE_URL'], 'library API service');
 
-export async function getLibraryDetail(libraryId) {
+export const getLibraryDetail = annotateCall(async (libraryId) => {
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;
 
@@ -12,33 +13,52 @@ export async function getLibraryDetail(libraryId) {
    *
    * This is temporary: in the future, block metadata will be fetched
    * separately so that it can be paginated. */
-  const [detailResponse, blockResponse, blockTypeResponse] = await Promise.all([
+  const [detailResponse, blockTypeResponse] = await Promise.all([
     client.get(`${baseUrl}/api/libraries/v2/${libraryId}/`),
-    client.get(`${baseUrl}/api/libraries/v2/${libraryId}/blocks/`),
     client.get(`${baseUrl}/api/libraries/v2/${libraryId}/block_types/`),
   ]);
 
   const library = {
     ...detailResponse.data,
-    blocks: blockResponse.data,
     blockTypes: blockTypeResponse.data,
   };
 
   return library;
-}
+});
 
-export async function createLibraryBlock({ libraryId, data }) {
+export const getBlocks = annotateCall(async ({ libraryId, query = '', types = [] }) => {
+  const client = getAuthenticatedHttpClient();
+  const baseUrl = getConfig().STUDIO_BASE_URL;
+  const params = {};
+  if (query) {
+    params.text_search = query;
+  }
+  if (types.length) {
+    params.block_type = types;
+  }
+  let qs = querystring.stringify(params);
+  if (qs) {
+    qs = `?${qs}`;
+  }
+  return client.get(
+    `${baseUrl}/api/libraries/v2/${libraryId}/blocks/${qs}`,
+  ).then(
+    (response) => response.data,
+  );
+});
+
+export const createLibraryBlock = annotateCall(async ({ libraryId, data }) => {
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;
   const response = await client.post(
     `${baseUrl}/api/libraries/v2/${libraryId}/blocks/`,
     data,
-  ).catch(normalizeErrors);
+  );
 
   return response.data;
-}
+});
 
-export async function commitLibraryChanges(libraryId) {
+export const commitLibraryChanges = annotateCall(async libraryId => {
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;
   const response = await client.post(
@@ -51,9 +71,9 @@ export async function commitLibraryChanges(libraryId) {
   });
 
   return response.data;
-}
+});
 
-export async function revertLibraryChanges(libraryId) {
+export const revertLibraryChanges = annotateCall(async libraryId => {
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;
   const response = await client.delete(
@@ -66,4 +86,4 @@ export async function revertLibraryChanges(libraryId) {
   });
 
   return response.data;
-}
+});

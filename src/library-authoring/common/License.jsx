@@ -11,7 +11,6 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { commonsOptionsFromSpec, commonsOptionsShape, linkFromSpec } from './data';
 import messages from './messages';
 
-
 /**
  * CreativeCommonsLicense
  * Displays a Creative Commons license in an accessible manner.
@@ -56,7 +55,6 @@ CreativeCommonsLicenseBase.propTypes = {
 };
 
 export const CreativeCommonsLicense = injectIntl(CreativeCommonsLicenseBase);
-
 
 /**
  * Displays an 'All Rights Reserved' tag.

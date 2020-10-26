@@ -6,7 +6,10 @@ import {
   Row,
   Button,
   Card,
-  Navbar, Modal,
+  Navbar,
+  Modal,
+  Dropdown,
+  SearchField, Input,
 } from '@edx/paragon';
 import { v4 as uuid4 } from 'uuid';
 import { faPlus, faSync } from '@fortawesome/free-solid-svg-icons';
@@ -20,16 +23,21 @@ import {
   clearLibrary,
   clearLibraryError,
   commitLibraryChanges,
-  createLibraryBlock,
+  createBlock,
+  fetchBlocks,
   fetchLibraryDetail,
   revertLibraryChanges,
-  selectLibraryDetail,
+  searchLibrary,
 } from './data';
 import {
+  BLOCK_FILTER_ORDER,
   BLOCK_TYPE_EDIT_DENYLIST,
   getXBlockHandlerUrl,
+  LIBRARY_TYPES,
   libraryBlockShape,
-  libraryShape, ROUTES,
+  libraryShape,
+  LOADING_STATUS,
+  ROUTES,
   XBLOCK_VIEW_SYSTEM,
 } from '../common/data';
 import { LoadingPage } from '../../generic';
@@ -40,9 +48,13 @@ import {
   fetchLibraryBlockView,
   initializeBlock,
 } from '../edit-block/data';
-import { blocksShape, blockViewShape } from '../edit-block/data/shapes';
+import { blockStatesShape, blockViewShape, fetchable } from '../edit-block/data/shapes';
 import commonMessages from '../common/messages';
+import selectLibraryDetail from '../common/data/selectors';
+import { ErrorAlert } from '../common/ErrorAlert';
+import { LoadGuard } from '../../generic/LoadingPage';
 
+const getHandlerUrl = async (blockId) => getXBlockHandlerUrl(blockId, XBLOCK_VIEW_SYSTEM.Studio, 'handler_name');
 
 /**
  * BlockPreviewBase
@@ -50,22 +62,19 @@ import commonMessages from '../common/messages';
  * components and render controls for them in a library listing.
  */
 export const BlockPreviewBase = ({
-  intl, block, view, canEdit, showPreviews, getHandlerUrl, showDeleteModal,
-  setShowDeleteModal, library, previewKey, ...props
+  intl, block, view, canEdit, showPreviews, showDeleteModal,
+  setShowDeleteModal, library, previewKey, editView, ...props
 }) => (
   <>
     <Navbar className="border">
       <Navbar.Brand>{block.display_name}</Navbar.Brand>
       <Navbar.Collapse className="justify-content-end">
-        { /* This won't work until complex types are supported. */ }
-        {canEdit && (
-          <Link to={ROUTES.Block.EDIT_SLUG(library.id, block.id)}>
-            <Button size="lg" className="mr-1" disabled={canEdit}>
-              <FontAwesomeIcon icon={faEdit} className="pr-1" />
-              {intl.formatMessage(messages['library.detail.block.edit'])}
-            </Button>
-          </Link>
-        )}
+        <Link to={editView}>
+          <Button size="lg" className="mr-1">
+            <FontAwesomeIcon icon={faEdit} className="pr-1" />
+            {intl.formatMessage(messages['library.detail.block.edit'])}
+          </Button>
+        </Link>
         { /* Studio has a copy button, but we don't yet. */}
         <Button
           aria-label={intl.formatMessage(messages['library.detail.block.delete'])}
@@ -105,17 +114,13 @@ export const BlockPreviewBase = ({
   </>
 );
 
-BlockPreviewBase.defaultProps = {
-  view: null,
-};
-
 BlockPreviewBase.propTypes = {
   intl: intlShape.isRequired,
   block: libraryBlockShape.isRequired,
   library: libraryShape.isRequired,
-  getHandlerUrl: PropTypes.func.isRequired,
-  view: blockViewShape,
+  view: fetchable(blockViewShape).isRequired,
   canEdit: PropTypes.bool.isRequired,
+  editView: PropTypes.string.isRequired,
   showPreviews: PropTypes.bool.isRequired,
   showDeleteModal: PropTypes.bool.isRequired,
   setShowDeleteModal: PropTypes.func.isRequired,
@@ -125,34 +130,42 @@ BlockPreviewBase.propTypes = {
 
 export const BlockPreview = injectIntl(BlockPreviewBase);
 
+const inStandby = ({ blockStates, id, attr }) => blockStates[id][attr].status === LOADING_STATUS.STANDBY;
+const needsView = ({ blockStates, id }) => inStandby({ blockStates, id, attr: 'view' });
+const needsMeta = ({ blockStates, id }) => inStandby({ blockStates, id, attr: 'metadata' });
+
 /**
  * BlockPreviewContainerBase
  * Container component for the BlockPreview cards.
  * Handles the fetching of the block view and metadata.
  */
 const BlockPreviewContainerBase = ({
-  intl, getHandlerUrl, block, blockView, blocks, showPreviews, library, ...props
+  intl, block, blockView, blockStates, showPreviews, library, ...props
 }) => {
+  // There are enough events that trigger the effects here that we need to keep track of what we're doing to avoid
+  // doing it more than once, or running them when the state can no longer support these actions.
+  //
+  // This problem feels like there should be some way to generalize it and wrap it to avoid this issue.
   useEffect(() => {
     props.initializeBlock({
       blockId: block.id,
     });
   }, []);
   useEffect(() => {
-    if (!blocks[block.id] || !showPreviews) {
+    if (!blockStates[block.id] || !showPreviews) {
       return;
     }
-    if (blocks[block.id].metadata === null) {
+    if (needsMeta({ blockStates, id: block.id })) {
       props.fetchLibraryBlockMetadata({ blockId: block.id });
     }
-    if (blocks[block.id].view === null) {
+    if (needsView({ blockStates, id: block.id })) {
       props.fetchLibraryBlockView({
         blockId: block.id,
         viewSystem: XBLOCK_VIEW_SYSTEM.Studio,
         viewName: 'student_view',
       });
     }
-  }, [blocks[block.id], showPreviews]);
+  }, [blockStates[block.id], showPreviews]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   // Need to force the iframe to be different if navigating away. Otherwise landing on the edit page
@@ -161,18 +174,25 @@ const BlockPreviewContainerBase = ({
   // against us here. Setting an explicit key prevents it from matching the two.
   const previewKey = useMemo(() => `${uuid4()}`, [block.id]);
 
-  if (blocks[block.id] === undefined) {
+  if (blockStates[block.id] === undefined) {
     return <LoadingPage loadingMessage={intl.formatMessage(messages['library.detail.loading.message'])} />;
   }
-  const { metadata } = blocks[block.id];
+  const { metadata } = blockStates[block.id];
   const canEdit = metadata !== null && !BLOCK_TYPE_EDIT_DENYLIST.includes(metadata.block_type);
+
+  let editView;
+  if (canEdit) {
+    editView = ROUTES.Block.EDIT_SLUG(library.id, block.id);
+  } else {
+    editView = ROUTES.Detail.HOME_SLUG(library.id, block.id);
+  }
 
   return (
     <BlockPreview
-      getHandlerUrl={getHandlerUrl}
       view={blockView(block)}
       block={block}
       canEdit={canEdit}
+      editView={editView}
       showPreviews={showPreviews}
       showDeleteModal={showDeleteModal}
       setShowDeleteModal={setShowDeleteModal}
@@ -190,8 +210,7 @@ BlockPreviewContainerBase.defaultProps = {
 BlockPreviewContainerBase.propTypes = {
   intl: intlShape.isRequired,
   block: libraryBlockShape.isRequired,
-  blocks: blocksShape.isRequired,
-  getHandlerUrl: PropTypes.func.isRequired,
+  blockStates: blockStatesShape.isRequired,
   blockView: PropTypes.func,
   fetchLibraryBlockView: PropTypes.func.isRequired,
   fetchLibraryBlockMetadata: PropTypes.func.isRequired,
@@ -202,10 +221,10 @@ BlockPreviewContainerBase.propTypes = {
 };
 
 const ButtonTogglesBase = ({
-  library, setShowPreviews, showPreviews, sending, newBlock, intl,
+  library, setShowPreviews, showPreviews, sending, quickAddBehavior, intl,
 }) => (
   <>
-    <Button variant="success" className="mr-1" size="lg" disabled={sending} onClick={newBlock}>
+    <Button variant="success" className="mr-1" size="lg" disabled={sending} onClick={quickAddBehavior}>
       <FontAwesomeIcon icon={faPlus} className="pr-1" />
       {intl.formatMessage(messages[`library.detail.add_${library.type}`])}
     </Button>
@@ -223,7 +242,7 @@ ButtonTogglesBase.propTypes = {
   sending: PropTypes.bool.isRequired,
   showPreviews: PropTypes.bool.isRequired,
   setShowPreviews: PropTypes.func.isRequired,
-  newBlock: PropTypes.func.isRequired,
+  quickAddBehavior: PropTypes.func.isRequired,
 };
 
 const ButtonToggles = injectIntl(ButtonTogglesBase);
@@ -238,13 +257,38 @@ const BlockPreviewContainer = connect(
   },
 )(injectIntl(BlockPreviewContainerBase));
 
+const deriveTypeOptions = (blockTypes, intl) => {
+  let typeOptions = blockTypes.map((typeSpec) => (
+    { value: typeSpec.block_type, label: typeSpec.display_name }
+  ));
+  typeOptions.push({ value: '^', label: intl.formatMessage(messages['library.detail.other_component']) });
+  typeOptions = typeOptions.filter((entry) => BLOCK_FILTER_ORDER.includes(entry.value));
+  typeOptions.sort((a, b) => {
+    const aOrder = BLOCK_FILTER_ORDER.indexOf(a.value);
+    const bOrder = BLOCK_FILTER_ORDER.indexOf(b.value);
+    if (aOrder === bOrder) {
+      // Should never happen, but could cause problems if it did and we didn't indicate they should be treated the same.
+      return 0;
+    }
+    if (BLOCK_FILTER_ORDER.indexOf(a.value) > BLOCK_FILTER_ORDER.indexOf(b.value)) {
+      return 1;
+    }
+    return -1;
+  });
+
+  typeOptions.unshift({ value: '', label: intl.formatMessage(messages['library.detail.all_types']) });
+  return typeOptions;
+};
+
 /**
  * LibraryAuthoringPage
  * Template component for the library Authoring page.
  */
 export const LibraryAuthoringPageBase = ({
-  intl, library, getHandlerUrl, blockView, showPreviews, setShowPreviews,
-  sending, newBlock, revertChanges, commitChanges, hasChanges,
+  intl, library, blockView, showPreviews, setShowPreviews,
+  sending, addBlock, revertChanges, commitChanges, hasChanges, errorMessage,
+  quickAddBehavior, otherTypes, blocks, updateSearch, typeOptions, query, type,
+  ...props
 }) => (
   <Container fluid="lg">
     <Row className="pt-5 px-2 px-xl-0">
@@ -252,13 +296,14 @@ export const LibraryAuthoringPageBase = ({
         <small className="card-subtitle">{intl.formatMessage(messages['library.detail.page.heading'])}</small>
         <h1 className="page-header-title">{library.title}</h1>
       </Col>
+      <ErrorAlert errorMessage={errorMessage} onClose={props.clearLibraryError} />
       <Col xs={12} md={4} xl={3} className="text-center d-none d-md-block">
         <ButtonToggles
           setShowPreviews={setShowPreviews}
           showPreviews={showPreviews}
           library={library}
           sending={sending}
-          newBlock={newBlock}
+          quickAddBehavior={quickAddBehavior}
         />
       </Col>
       <Col xs={12} className="pb-5">
@@ -268,32 +313,100 @@ export const LibraryAuthoringPageBase = ({
         <Card>
           <Card.Body>
             <Row>
+              {(library.type === LIBRARY_TYPES.COMPLEX) && (
+                <>
+                  <Col xs={12} md={9} className="pb-2">
+                    <SearchField
+                      label={intl.formatMessage(messages['library.detail.search'])}
+                      value={query}
+                      onSubmit={(value) => updateSearch({ query: value })}
+                      onChange={(value) => updateSearch({ query: value })}
+                    />
+                  </Col>
+                  <Col xs={12} md={3} className="pb-2">
+                    <Input
+                      type="select"
+                      data-testid="filter-dropdown"
+                      value={type}
+                      options={typeOptions}
+                      onChange={(event) => updateSearch({ type: event.target.value })}
+                    />
+                  </Col>
+                </>
+              )}
               <Col xs={12} className="text-center d-md-none py-3">
                 <ButtonToggles
                   setShowPreviews={setShowPreviews}
                   showPreviews={showPreviews}
                   library={library}
                   sending={sending}
-                  newBlock={newBlock}
+                  quickAddBehavior={quickAddBehavior}
                   className="d-md-none py-3"
                 />
               </Col>
-              {library.blocks && library.blocks.map((block) => (
-                <Col xs={12} key={block.id} className="pb-3">
-                  <BlockPreviewContainer
-                    block={block}
-                    getHandlerUrl={getHandlerUrl(block.id)}
-                    blockView={blockView}
-                    showPreviews={showPreviews}
-                    library={library}
-                  />
-                </Col>
-              ))}
-              <Col xs={12} className="text-center py-3">
-                <Button variant="success" size="lg" disabled={sending} onClick={newBlock} className="cta-button">
+              <LoadGuard
+                loadingMessage={intl.formatMessage(messages['library.detail.loading.message'])}
+                condition={blocks.status !== LOADING_STATUS.LOADING}
+              >
+                {() => blocks.value.map((block) => (
+                  <Col xs={12} key={block.id} className="pb-3">
+                    <BlockPreviewContainer
+                      block={block}
+                      blockView={blockView}
+                      showPreviews={showPreviews}
+                      library={library}
+                    />
+                  </Col>
+                ))}
+              </LoadGuard>
+              <Col xs={12} className="text-center py-3 add-buttons-container">
+                {library.type !== LIBRARY_TYPES.COMPLEX && (
+                <Button
+                  variant="success"
+                  size="lg"
+                  disabled={sending}
+                  onClick={() => addBlock(library.type)}
+                  className="cta-button"
+                >
                   <FontAwesomeIcon icon={faPlus} className="pr-1" />
                   {intl.formatMessage(messages[`library.detail.add_${library.type}`])}
                 </Button>
+                )}
+                {library.type === LIBRARY_TYPES.COMPLEX && (
+                  <Row>
+                    <Col xs={12}>
+                      <h2>{intl.formatMessage(messages['library.detail.add_component_heading'])}</h2>
+                    </Col>
+                    <Col xs={12} className="text-center">
+                      <div className="d-inline-block">
+                        <Dropdown>
+                          <Dropdown.Toggle variant="success" size="lg" disabled={sending} className="cta-button mr-2">
+                            Advanced
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu size="lg">
+                            {otherTypes.map((blockSpec) => (
+                              <Dropdown.Item
+                                onClick={() => addBlock(blockSpec.block_type)}
+                                key={blockSpec.block_type}
+                              >
+                                {blockSpec.display_name}
+                              </Dropdown.Item>
+                            ))}
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </div>
+                      <Button variant="success" size="lg" disabled={sending} onClick={() => addBlock('html')} className="cta-button">
+                        HTML
+                      </Button>
+                      <Button variant="success" size="lg" disabled={sending} onClick={() => addBlock('problem')} className="cta-button mx-2">
+                        Problem
+                      </Button>
+                      <Button variant="success" size="lg" disabled={sending} onClick={() => addBlock('video')} className="cta-button">
+                        Video
+                      </Button>
+                    </Col>
+                  </Row>
+                )}
               </Col>
             </Row>
           </Card.Body>
@@ -339,18 +452,41 @@ export const LibraryAuthoringPageBase = ({
   </Container>
 );
 
+LibraryAuthoringPageBase.defaultProps = {
+  errorMessage: '',
+  blocks: null,
+};
+
 LibraryAuthoringPageBase.propTypes = {
   intl: intlShape.isRequired,
   library: libraryShape.isRequired,
-  getHandlerUrl: PropTypes.func.isRequired,
+  blocks: fetchable(PropTypes.arrayOf(libraryBlockShape)),
   blockView: PropTypes.func.isRequired,
   showPreviews: PropTypes.bool.isRequired,
+  searchLibrary: PropTypes.func.isRequired,
+  updateSearch: PropTypes.func.isRequired,
   setShowPreviews: PropTypes.func.isRequired,
+  typeOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
   sending: PropTypes.bool.isRequired,
-  newBlock: PropTypes.func.isRequired,
+  addBlock: PropTypes.func.isRequired,
   hasChanges: PropTypes.bool.isRequired,
   revertChanges: PropTypes.func.isRequired,
   commitChanges: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string,
+  clearLibraryError: PropTypes.func.isRequired,
+  quickAddBehavior: PropTypes.func.isRequired,
+  query: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  otherTypes: PropTypes.arrayOf(
+    PropTypes.shape({
+      block_type: PropTypes.string.isRequired, display_name: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
 };
 
 const LibraryAuthoringPage = injectIntl(LibraryAuthoringPageBase);
@@ -364,13 +500,16 @@ const LibraryAuthoringPage = injectIntl(LibraryAuthoringPageBase);
  * type libraries. Complex libraries will be supported in a later release.
  */
 export const LibraryAuthoringPageContainerBase = ({
-  intl, library, blocks, ...props
+  intl, library, blockStates, blocks, ...props
 }) => {
   // Explicit empty dependencies means on mount.
   useEffect(() => {
     const { libraryId } = props.match.params;
     if (!library || (library && library.id !== libraryId)) {
-      props.clearLibrary().then(() => props.fetchLibraryDetail({ libraryId }));
+      props.clearLibrary().then(() => {
+        props.fetchLibraryDetail({ libraryId });
+        props.fetchBlocks({ libraryId });
+      });
     }
   }, []);
   // If we end up needing this across components, or we end up needing more settings like this, we'll have to create
@@ -383,13 +522,15 @@ export const LibraryAuthoringPageContainerBase = ({
     baseSetShowPreviews(value);
   };
   const [sending, setSending] = useState(false);
+  const [query, setQuery] = useState('');
+  const [type, setType] = useState('');
 
-  const newBlock = () => {
+  const addBlock = (blockType) => {
     setSending(true);
     props.createLibraryBlock({
       libraryId: library.id,
       data: {
-        block_type: library.type,
+        block_type: blockType,
         definition_id: `${uuid4()}`,
       },
     }).finally(() => setSending(false));
@@ -409,32 +550,79 @@ export const LibraryAuthoringPageContainerBase = ({
     });
   };
 
+  const preSelected = ['video', 'html', 'problem'];
+  const otherTypes = (library
+    && library.blockTypes.filter((blockSpec) => !preSelected.includes(blockSpec.block_type))
+  ) || [];
+
   if (!library) {
     return <LoadingPage loadingMessage={intl.formatMessage(messages['library.detail.loading.message'])} />;
   }
+  const typeOptions = deriveTypeOptions(library.blockTypes, intl);
+
   const hasChanges = library.has_unpublished_changes || library.has_unpublished_deletes;
   const blockView = (block) => {
-    if (blocks[block.id]) {
-      return blocks[block.id].view;
+    if (blockStates[block.id]) {
+      return blockStates[block.id].view;
     }
-    return null;
+    return { value: null, status: LOADING_STATUS.STANDBY };
   };
-  const getHandlerUrl = (blockId) => () => getXBlockHandlerUrl(
-    blockId, XBLOCK_VIEW_SYSTEM.Studio, 'handler_url',
-  );
+  const quickAddBehavior = () => {
+    if (library.type === LIBRARY_TYPES.COMPLEX) {
+      document.querySelector('.add-buttons-container').scrollIntoView({ behavior: 'smooth' });
+    } else {
+      addBlock(library.type);
+    }
+  };
+  const updaters = { query: setQuery, type: setType };
+  const updateSearch = (patch) => {
+    Object.keys(patch).forEach((key) => {
+      updaters[key](patch[key]);
+    });
+    let typeNormalized = patch.type;
+    if (patch.type === undefined) {
+      typeNormalized = type;
+    }
+    if (typeNormalized === '^') {
+      typeNormalized = library.blockTypes.map((entry) => entry.block_type);
+      typeNormalized = typeNormalized.filter((entry) => (entry !== '') && (!BLOCK_FILTER_ORDER.includes(entry)));
+      if (typeNormalized.length === 0) {
+        // We're asking for 'other components', but there are no other components. Hand the API something that should
+        // return nothing.
+        typeNormalized = ['^'];
+      }
+    } else if (typeNormalized === '') {
+      typeNormalized = [];
+    } else {
+      typeNormalized = [typeNormalized];
+    }
+    // Conditionally override query if it's defined in the patch.
+    const clearedPatch = { ...patch };
+    // We've normalized type, so remove it.
+    delete clearedPatch.type;
+    props.searchLibrary({
+      query, types: typeNormalized, libraryId: library.id, ...clearedPatch,
+    });
+  };
   return (
     <LibraryAuthoringPage
-      getHandlerUrl={getHandlerUrl}
-      blocks={blocks}
+      blockStates={blockStates}
       blockView={blockView}
       library={library}
       showPreviews={showPreviews}
       setShowPreviews={setShowPreviews}
       sending={sending}
-      newBlock={newBlock}
+      addBlock={addBlock}
       hasChanges={hasChanges}
       commitChanges={commitChanges}
       revertChanges={revertChanges}
+      quickAddBehavior={quickAddBehavior}
+      typeOptions={typeOptions}
+      updateSearch={updateSearch}
+      query={query}
+      type={type}
+      otherTypes={otherTypes}
+      blocks={blocks}
       {...props}
     />
   );
@@ -442,17 +630,22 @@ export const LibraryAuthoringPageContainerBase = ({
 
 LibraryAuthoringPageContainerBase.defaultProps = {
   library: null,
+  errorMessage: null,
 };
 
 LibraryAuthoringPageContainerBase.propTypes = {
   intl: intlShape.isRequired,
   library: libraryShape,
   fetchLibraryDetail: PropTypes.func.isRequired,
-  blocks: blocksShape.isRequired,
+  fetchBlocks: PropTypes.func.isRequired,
+  searchLibrary: PropTypes.func.isRequired,
+  blockStates: blockStatesShape.isRequired,
+  blocks: fetchable(PropTypes.arrayOf(libraryBlockShape)).isRequired,
   createLibraryBlock: PropTypes.func.isRequired,
   clearLibrary: PropTypes.func.isRequired,
   commitLibraryChanges: PropTypes.func.isRequired,
   revertLibraryChanges: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string,
   match: PropTypes.shape({
     params: PropTypes.shape({
       libraryId: PropTypes.string.isRequired,
@@ -460,19 +653,18 @@ LibraryAuthoringPageContainerBase.propTypes = {
   }).isRequired,
 };
 
-
 const LibraryAuthoringPageContainer = connect(
   selectLibraryDetail,
   {
     clearLibraryError,
     clearLibrary,
-    createLibraryBlock,
+    createLibraryBlock: createBlock,
     commitLibraryChanges,
     revertLibraryChanges,
     fetchLibraryDetail,
+    fetchBlocks,
+    searchLibrary,
   },
 )(injectIntl(LibraryAuthoringPageContainerBase));
-
-window.LibraryAuthoringPageContainer = LibraryAuthoringPageContainer;
 
 export default LibraryAuthoringPageContainer;

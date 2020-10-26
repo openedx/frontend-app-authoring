@@ -1,4 +1,5 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
+import { messageGuard } from '../common/data';
 
 const messages = defineMessages({
   'library.list.page.heading': {
@@ -136,4 +137,4 @@ const messages = defineMessages({
   },
 });
 
-export default messages;
+export default messageGuard(messages);
