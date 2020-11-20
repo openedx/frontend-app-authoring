@@ -47,8 +47,8 @@ Internationalization
 
 Please see `edx/frontend-platform's i18n module <https://edx.github.io/frontend-platform/module-Internationalization.html>`_ for documentation on internationalization.  The documentation explains how to use it, and the `How To <https://github.com/edx/frontend-i18n/blob/master/docs/how_tos/i18n.rst>`_ has more detail.
 
-.. |Build Status| image:: https://api.travis-ci.org/edx/frontend-app-course-authoring.svg?branch=master
-   :target: https://travis-ci.org/edx/frontend-app-course-authoring
+.. |Build Status| image:: https://api.travis-ci.com/edx/frontend-app-course-authoring.svg?branch=master
+   :target: https://travis-ci.com/edx/frontend-app-course-authoring
 .. |Codecov| image:: https://codecov.io/gh/edx/frontend-app-course-authoring/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/edx/frontend-app-course-authoring
 .. |license| image:: https://img.shields.io/npm/l/@edx/frontend-app-course-authoring.svg
