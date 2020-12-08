@@ -3,3 +3,9 @@ legend {
     font-size: 1.0rem;
     font-weight: 700;
 }
+
+// override conflicting browser styles
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
