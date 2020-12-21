@@ -1,4 +1,5 @@
-import 'babel-polyfill';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 
 import {
   APP_INIT_ERROR, APP_READY, subscribe, initialize,
@@ -8,7 +9,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Route, Switch } from 'react-router-dom';
 
-import { messages as headerMessages } from '@edx/frontend-component-header';
 import Footer, { messages as footerMessages } from '@edx/frontend-component-footer';
 
 import appMessages from './i18n';
@@ -44,7 +44,6 @@ subscribe(APP_READY, () => {
               <>
                 <StudioHeader courseId={courseId} />
                 <CoursePageResources courseId={courseId} />
-                <Footer />
               </>
             );
           }}
@@ -63,7 +62,6 @@ subscribe(APP_INIT_ERROR, (error) => {
 initialize({
   messages: [
     appMessages,
-    headerMessages,
     footerMessages,
   ],
   requireAuthenticatedUser: true,
