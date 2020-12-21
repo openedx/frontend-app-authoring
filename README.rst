@@ -3,7 +3,7 @@
 frontend-app-course-authoring
 =================================
 
-Please tag **@edx/fedx-team** on any PRs or issues.  Thanks.
+Please tag `@edx/teaching-and-learning <https://github.com/orgs/edx/teams/teaching-and-learning>` on any PRs or issues.  Thanks.
 
 After Copying The Template
 --------------------------
