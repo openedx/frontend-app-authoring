@@ -5,18 +5,13 @@ frontend-app-course-authoring
 
 Please tag `@edx/teaching-and-learning <https://github.com/orgs/edx/teams/teaching-and-learning>`_ on any PRs or issues.  Thanks.
 
-After Copying The Template
---------------------------
-
 **Prerequisite**
 
 `Devstack <https://edx.readthedocs.io/projects/edx-installing-configuring-and-running/en/latest/installation/index.html>`_.  If you start Devstack with ``make dev.up.ecommerce`` that should give you everything you need as a companion to this frontend.
 
 **Installation and Startup**
 
-In the following steps, replace "frontend-app-course-authoring' with the name of the repo you created when copying this template above.
-
-1. Clone your new repo:
+1. Clone the repo:
 
   ``git clone https://github.com/edx/frontend-app-course-authoring.git``
 
