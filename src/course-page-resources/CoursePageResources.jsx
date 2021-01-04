@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { AppContext } from '@edx/frontend-platform/react';
 import { Button } from '@edx/paragon';
@@ -65,7 +65,7 @@ const coursePages = [
   },
 ];
 
-function CoursePageResources({ intl, courseId }) {
+function CoursePageResources({ courseId, intl }) {
   const { config } = useContext(AppContext);
   const lmsCourseURL = `${config.LMS_BASE_URL}/courses/${courseId}`;
   return (
@@ -112,8 +112,8 @@ function CoursePageResources({ intl, courseId }) {
 }
 
 CoursePageResources.propTypes = {
-  intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
+  intl: intlShape.isRequired,
 };
 
 export default injectIntl(CoursePageResources);
