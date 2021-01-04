@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { AppContext } from '@edx/frontend-platform/react';
+import { Button } from '@edx/paragon';
 
 import CoursePageConfigCard from './course-page/CoursePageConfigCard';
 import messages from './messages';
@@ -99,9 +100,9 @@ function CoursePageResources({ intl, courseId }) {
               {intl.formatMessage(messages['resources.custom.description'])}
             </div>
             <div className="col-2 text-right">
-              <a className="btn btn-outline-info" href="/#" role="button">
+              <Button variant="outline-primary">
                 {intl.formatMessage(messages['resources.newPage.button'])}
-              </a>
+              </Button>
             </div>
           </div>
         </div>
