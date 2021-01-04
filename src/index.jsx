@@ -9,48 +9,28 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Route, Switch } from 'react-router-dom';
 
-import Footer, { messages as footerMessages } from '@edx/frontend-component-footer';
+import { messages as footerMessages } from '@edx/frontend-component-footer';
 
 import appMessages from './i18n';
-import { CoursePageResources } from './course-page-resources';
-import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettings';
-import StudioHeader from './studio-header/Header';
 
 import initializeStore from './store';
 import './index.scss';
 import './assets/favicon.ico';
+import CourseAuthoringRoutes from './CourseAuthoringRoutes';
+import LegacyProctoringRoute from './proctored-exam-settings/LegacyProctoringRoute';
 
 subscribe(APP_READY, () => {
   ReactDOM.render(
     <AppProvider store={initializeStore()}>
       <Switch>
-        <Route
-          path="/proctored-exam-settings/:course_id"
-          exact
-          render={({ match }) => {
-            const courseId = decodeURIComponent(match.params.course_id);
-            return (
-              <>
-                <StudioHeader courseId={courseId} />
-                <ProctoredExamSettings courseId={courseId} />
-              </>
-            );
-          }}
-        />
-        <Route
-          path="/course-pages/:course_id"
-          render={({ match }) => {
-            const courseId = decodeURIComponent(match.params.course_id);
-            return (
-              <>
-                <StudioHeader courseId={courseId} />
-                <CoursePageResources courseId={courseId} />
-              </>
-            );
-          }}
-        />
+        <Route exact path="/proctored-exam-settings/:courseId">
+          {/* See component for details on what this is */}
+          <LegacyProctoringRoute />
+        </Route>
+        <Route path="/course/:courseId">
+          <CourseAuthoringRoutes />
+        </Route>
       </Switch>
-      <Footer />
     </AppProvider>,
     document.getElementById('root'),
   );

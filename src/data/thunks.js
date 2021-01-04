@@ -18,7 +18,6 @@ export function fetchCourseDetail(courseId) {
 
       dispatch(addModel({ modelType: 'courseDetails', model: courseDetail }));
     } catch (error) {
-      console.error(error);
       dispatch(updateStatus({ courseId, status: FAILED }));
     }
   };

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable jsx-a11y/anchor-has-content */
 import PropTypes from 'prop-types';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import Responsive from 'react-responsive';
 import { AppContext } from '@edx/frontend-platform/react';
 import { ensureConfig } from '@edx/frontend-platform';
@@ -15,7 +15,6 @@ import MobileHeader from './MobileHeader';
 import messages from './Header.messages';
 
 import StudioLogoPNG from './assets/studio-logo.png';
-import LmsApiService from '../data/services/LmsApiService';
 
 ensureConfig([
   'STUDIO_BASE_URL',
@@ -23,30 +22,10 @@ ensureConfig([
   'LOGIN_URL',
 ], 'Header component');
 
-function Header({ courseId, intl }) {
+function Header({
+  courseId, courseNumber, courseOrg, courseTitle, intl,
+}) {
   const { authenticatedUser, config } = useContext(AppContext);
-  const [courseNumber, setCourseNumber] = useState('');
-  const [courseOrg, setCourseOrg] = useState('');
-  const [courseTitle, setCourseTitle] = useState('');
-
-  useEffect(
-    () => {
-      LmsApiService.getCourseDetailsData(courseId)
-        .then(
-          response => {
-            setCourseNumber(response.data.number);
-            setCourseOrg(response.data.org);
-            setCourseTitle(response.data.name);
-          },
-        ).catch(
-          () => {
-            setCourseNumber('');
-            setCourseOrg('');
-            setCourseTitle(courseId);
-          },
-        );
-    }, [],
-  );
 
   const mainMenu = [
     {
@@ -160,7 +139,15 @@ function Header({ courseId, intl }) {
 
 Header.propTypes = {
   courseId: PropTypes.string.isRequired,
+  courseNumber: PropTypes.string,
+  courseOrg: PropTypes.string,
+  courseTitle: PropTypes.string.isRequired,
   intl: intlShape.isRequired,
+};
+
+Header.defaultProps = {
+  courseNumber: null,
+  courseOrg: null,
 };
 
 export default injectIntl(Header);
