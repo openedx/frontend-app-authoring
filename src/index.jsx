@@ -16,12 +16,13 @@ import { CoursePageResources } from './course-page-resources';
 import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettings';
 import StudioHeader from './studio-header/Header';
 
+import initializeStore from './store';
 import './index.scss';
 import './assets/favicon.ico';
 
 subscribe(APP_READY, () => {
   ReactDOM.render(
-    <AppProvider>
+    <AppProvider store={initializeStore()}>
       <Switch>
         <Route
           path="/proctored-exam-settings/:course_id"
