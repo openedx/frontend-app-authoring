@@ -1,4 +1,4 @@
-import { addModel } from '../../generic/model-store';
+import { addModel } from '../generic/model-store';
 import { getCourseDetail } from './api';
 import {
   updateStatus,
