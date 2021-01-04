@@ -410,7 +410,7 @@ describe('ProctoredExamSettings connection states tests', () => {
     auth.getAuthenticatedHttpClient = jest.fn(() => ({
       get: jest.fn(() => new Promise(() => {})),
     }));
-    render(<IntlProvider local="en"><IntlProctoredExamSettings {...defaultProps} /></IntlProvider>);
+    render(<IntlProvider locale="en"><IntlProctoredExamSettings {...defaultProps} /></IntlProvider>);
     const spinner = screen.getByTestId('spinnerContainer');
     expect(spinner.textContent).toEqual('Loading...');
   });
