@@ -61,14 +61,14 @@
   "devDependencies": {
     "@edx/frontend-build": "^3.0.0",
     "@testing-library/react": "^10.4.7",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "axios-mock-adapter": "^1.18.1",
     "codecov": "3.7.1",
     "es-check": "5.1.0",
     "glob": "7.1.6",
     "husky": "3.1.0",
     "jest": "24.9.0",
-    "reactifex": "1.1.1",
-    "react-test-renderer": "16.9.0"
+    "react-test-renderer": "16.9.0",
+    "reactifex": "1.1.1"
   }
 }
