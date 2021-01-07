@@ -44,7 +44,11 @@ function DiscussionToolSelectorContainer({ intl }) {
   const [selectedForumId, setSelectedForumId] = useState(null);
 
   const onSelectForum = (forumId) => {
-    setSelectedForumId(forumId);
+    if (selectedForumId === forumId) {
+      setSelectedForumId(null);
+    } else {
+      setSelectedForumId(forumId);
+    }
   };
 
   return (

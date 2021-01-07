@@ -11,6 +11,9 @@ export default function DiscussionToolOption({
     <Col className="mb-4" xs={12} sm={6} lg={4} xl={3}>
       <div
         className="d-flex discussion-tool flex-column p-3 h-100 shadow border border-white"
+        style={{
+          cursor: 'pointer',
+        }}
         tabIndex={forum.isAvailable ? '-1' : ''}
         onClick={() => { if (forum.isAvailable) { onSelect(forum.forumId); } }}
         onKeyPress={() => { if (forum.isAvailable) { onSelect(forum.forumId); } }}
