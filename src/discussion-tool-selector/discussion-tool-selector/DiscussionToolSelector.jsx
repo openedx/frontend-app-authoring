@@ -1,6 +1,6 @@
 import React from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Container, Row } from '@edx/paragon';
+import { Button, Container, Row } from '@edx/paragon';
 import PropTypes from 'prop-types';
 import DiscussionToolOption from './discussion-tool-option/DiscussionToolOption';
 import FeaturesTable from './features-table/FeaturesTable';
@@ -24,7 +24,16 @@ function DiscussionToolSelector({
         ))}
       </Row>
 
-      <h2 className="my-3">{intl.formatMessage(messages.supportedFeatures)}</h2>
+      <div className="d-flex justify-content-between align-items-center">
+        <h2 className="my-3">
+          {intl.formatMessage(messages.supportedFeatures)}
+        </h2>
+        {selectedForumId && (
+          <Button variant="primary">
+            {intl.formatMessage(messages.configureTool, { toolName: selectedForumId })}
+          </Button>
+        )}
+      </div>
 
       <FeaturesTable forums={forums} featuresList={featuresList} />
     </Container>

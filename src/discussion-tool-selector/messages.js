@@ -9,6 +9,14 @@ const messages = defineMessages({
     id: 'authoring.forumSelectorTool.supportedFeatures',
     defaultMessage: 'Supported Features',
   },
+  configureTool: {
+    id: 'authoring.forumSelectorTool.configureTool',
+    defaultMessage: 'Configure {toolName}',
+  },
+  toolLogo: {
+    id: 'authoring.forumSelectorTool.toolLogo',
+    defaultMessage: '{toolName} Logo',
+  },
 });
 
 export default messages;
