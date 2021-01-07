@@ -10,7 +10,7 @@ function DiscussionToolSelector({
   intl, forums, featuresList, onSelectForum, selectedForumId,
 }) {
   return (
-    <Container fluid className="text-info-300">
+    <Container fluid className="text-info-500">
       <h6 className="my-4 text-center">{intl.formatMessage(messages.heading)}</h6>
 
       <Row>

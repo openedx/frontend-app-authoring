@@ -20,8 +20,10 @@ export default function DiscussionToolOption({
         role="radio"
         aria-checked={selected}
       >
-        <div className="d-flex flex-row">
-          <div className="d-flex justify-content-center"><Image fluid src={forum.logo} alt="Logo" /></div>
+        <div className="d-flex flex-row justify-content-between">
+          <div className="d-flex justify-content-center">
+            <Image height={100} src={forum.logo} alt="Logo" />
+          </div>
           <div className="d-flex">
             {forum.isAvailable ? (
               <CheckBox checked={selected} />
