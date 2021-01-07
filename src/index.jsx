@@ -1,4 +1,5 @@
-import 'babel-polyfill';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 
 import {
   APP_INIT_ERROR, APP_READY, subscribe, initialize,
@@ -8,49 +9,41 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Route, Switch } from 'react-router-dom';
 
-import { messages as headerMessages } from '@edx/frontend-component-header';
-import Footer, { messages as footerMessages } from '@edx/frontend-component-footer';
+import { messages as footerMessages } from '@edx/frontend-component-footer';
 
 import appMessages from './i18n';
-import { CoursePageResources } from './course-page-resources';
-import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettings';
-import StudioHeader from './studio-header/Header';
 
+import initializeStore from './store';
 import './index.scss';
 import './assets/favicon.ico';
+import CourseAuthoringRoutes from './CourseAuthoringRoutes';
+import LegacyProctoringRoute from './proctored-exam-settings/LegacyProctoringRoute';
 
 subscribe(APP_READY, () => {
   ReactDOM.render(
-    <AppProvider>
+    <AppProvider store={initializeStore()}>
       <Switch>
         <Route
-          path="/proctored-exam-settings/:course_id"
           exact
+          path="/proctored-exam-settings/:courseId"
           render={({ match }) => {
-            const courseId = decodeURIComponent(match.params.course_id);
+            const { params: { courseId } } = match;
+            /* See component for details on what this is */
             return (
-              <>
-                <StudioHeader courseId={courseId} />
-                <ProctoredExamSettings courseId={courseId} />
-              </>
+              <LegacyProctoringRoute courseId={courseId} />
             );
           }}
         />
         <Route
-          path="/course-pages/:course_id"
+          path="/course/:courseId"
           render={({ match }) => {
-            const courseId = decodeURIComponent(match.params.course_id);
+            const { params: { courseId } } = match;
             return (
-              <>
-                <StudioHeader courseId={courseId} />
-                <CoursePageResources courseId={courseId} />
-                <Footer />
-              </>
+              <CourseAuthoringRoutes courseId={courseId} />
             );
           }}
         />
       </Switch>
-      <Footer />
     </AppProvider>,
     document.getElementById('root'),
   );
@@ -63,7 +56,6 @@ subscribe(APP_INIT_ERROR, (error) => {
 initialize({
   messages: [
     appMessages,
-    headerMessages,
     footerMessages,
   ],
   requireAuthenticatedUser: true,

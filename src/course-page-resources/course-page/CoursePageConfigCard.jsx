@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import classNames from 'classnames';
+
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { Button } from '@edx/paragon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
-import { Button } from '@edx/paragon';
 
-import classNames from 'classnames';
 import messages from '../messages';
 
 const CoursePageShape = PropTypes.shape({
@@ -45,7 +46,7 @@ function CoursePageConfigCard({ intl, coursePage }) {
 
       {coursePage.showEnable && !coursePage.isEnabled && (
         <div className="d-flex justify-content-center">
-          <Button className="btn btn-outline-primary">
+          <Button variant="outline-primary">
             {intl.formatMessage(messages['enable.button'])}
           </Button>
         </div>

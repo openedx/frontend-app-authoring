@@ -3,9 +3,7 @@ import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppContext } from '@edx/frontend-platform/react';
 import { Context as ResponsiveContext } from 'react-responsive';
-import * as auth from '@edx/frontend-platform/auth';
 import {
-  act,
   cleanup,
   render,
   screen,
@@ -14,13 +12,7 @@ import {
 import Header from './Header';
 
 describe('<Header />', () => {
-  function mockRequest(getFunction) {
-    auth.getAuthenticatedHttpClient = jest.fn(() => ({
-      get: getFunction,
-    }));
-  }
-
-  function createComponent(screenWidth) {
+  function createComponent(screenWidth, component) {
     return (
       <ResponsiveContext.Provider value={{ width: screenWidth }}>
         <IntlProvider locale="en" messages={{}}>
@@ -39,60 +31,68 @@ describe('<Header />', () => {
             },
           }}
           >
-            <Header courseId="course-v1:edX+DemoX+Demo_Course" />
+            {component}
           </AppContext.Provider>
         </IntlProvider>
       </ResponsiveContext.Provider>
     );
   }
 
-  const successfulCall = async () => ({
-    data: {
-      number: 'DemoX',
-      org: 'edX',
-      name: 'Demonstration Course',
-    },
-  });
-
-  const errorObject = {
-    customAttributes: {
-      httpErrorStatus: 404,
-    },
-  };
-
-  const badCall = async () => { throw errorObject; };
-
   it('renders desktop header correctly with API call', async () => {
-    mockRequest(successfulCall);
-    const component = createComponent(1280);
+    const component = createComponent(1280, (
+      <Header
+        courseId="course-v1:edX+DemoX+Demo_Course"
+        courseNumber="DemoX"
+        courseOrg="edX"
+        courseTitle="Demonstration Course"
+      />
+    ));
 
-    await act(async () => render(component));
+    render(component);
     expect(screen.getByTestId('course-org-number').textContent).toEqual(expect.stringContaining('edX DemoX'));
     expect(screen.getByTestId('course-title').textContent).toEqual(expect.stringContaining('Demonstration Course'));
   });
 
   it('renders mobile header correctly with API call', async () => {
-    mockRequest(successfulCall);
-    const component = createComponent(500);
+    const component = createComponent(500, (
+      <Header
+        courseId="course-v1:edX+DemoX+Demo_Course"
+        courseNumber="DemoX"
+        courseOrg="edX"
+        courseTitle="Demonstration Course"
+      />
+    ));
 
-    await act(async () => render(component));
+    render(component);
     expect(screen.getAllByTestId('course-org-number')[0].textContent).toEqual(expect.stringContaining('edX DemoX'));
     expect(screen.getAllByTestId('course-title')[0].textContent).toEqual(expect.stringContaining('Demonstration Course'));
   });
 
   it('renders desktop header correctly with bad API call', async () => {
-    mockRequest(badCall);
-    const component = createComponent(1280);
+    const component = createComponent(1280, (
+      <Header
+        courseId="course-v1:edX+DemoX+Demo_Course"
+        courseNumber={null}
+        courseOrg={null}
+        courseTitle="course-v1:edX+DemoX+Demo_Course"
+      />
+    ));
 
-    await act(async () => render(component));
+    render(component);
     expect(screen.getByTestId('course-title').textContent).toEqual(expect.stringContaining('course-v1:edX+DemoX+Demo_Course'));
   });
 
   it('renders mobile header correctly with bad API call', async () => {
-    mockRequest(badCall);
-    const component = createComponent(500);
+    const component = createComponent(500, (
+      <Header
+        courseId="course-v1:edX+DemoX+Demo_Course"
+        courseNumber={null}
+        courseOrg={null}
+        courseTitle="course-v1:edX+DemoX+Demo_Course"
+      />
+    ));
 
-    await act(async () => render(component));
+    render(component);
     expect(screen.getAllByTestId('course-title')[0].textContent).toEqual(expect.stringContaining('course-v1:edX+DemoX+Demo_Course'));
   });
 

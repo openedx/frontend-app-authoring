@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
 import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import EmailValidator from 'email-validator';
 import moment from 'moment';
 import {
@@ -15,7 +15,7 @@ import {
 import messages from './ProctoredExamSettings.messages';
 import StudioApiService from '../data/services/StudioApiService';
 
-function ExamSettings(props) {
+function ProctoredExamSettings({ courseId, intl }) {
   const [loading, setLoading] = useState(true);
   const [loaded, setLoaded] = useState(false);
   const [loadingConnectionError, setLoadingConnectionError] = useState(false);
@@ -95,7 +95,7 @@ function ExamSettings(props) {
     }
 
     setSubmissionInProgress(true);
-    StudioApiService.saveProctoredExamSettingsData(props.courseId, dataToPostBack).then(() => {
+    StudioApiService.saveProctoredExamSettingsData(courseId, dataToPostBack).then(() => {
       setSaveSuccess(true);
       setSaveError(false);
       setSubmissionInProgress(false);
@@ -110,7 +110,7 @@ function ExamSettings(props) {
     event.preventDefault();
     if (proctoringProvider === 'proctortrack' && !EmailValidator.validate(proctortrackEscalationEmail)) {
       if (proctortrackEscalationEmail === '') {
-        const errorMessage = props.intl.formatMessage(messages['authoring.examsettings.escalationemail.error.blank']);
+        const errorMessage = intl.formatMessage(messages['authoring.examsettings.escalationemail.error.blank']);
 
         setFormStatus({
           isValid: false,
@@ -122,7 +122,7 @@ function ExamSettings(props) {
           },
         });
       } else {
-        const errorMessage = props.intl.formatMessage(messages['authoring.examsettings.escalationemail.error.invalid']);
+        const errorMessage = intl.formatMessage(messages['authoring.examsettings.escalationemail.error.invalid']);
 
         setFormStatus({
           isValid: false,
@@ -181,7 +181,7 @@ function ExamSettings(props) {
 
     return (
       <>
-        <div>{props.intl.formatMessage(messages[messageId], { numOfErrors })}</div>
+        <div>{intl.formatMessage(messages[messageId], { numOfErrors })}</div>
         <ul>
           {errors}
         </ul>
@@ -210,7 +210,7 @@ function ExamSettings(props) {
           <Form.Check
             type="checkbox"
             id="enableProctoredExams"
-            label={props.intl.formatMessage(messages['authoring.examsettings.enableproctoredexams.label'])}
+            label={intl.formatMessage(messages['authoring.examsettings.enableproctoredexams.label'])}
             aria-describedby="enableProctoredExamsHelpText"
             onChange={onEnableProctoredExamsChange}
             checked={enableProctoredExams}
@@ -240,7 +240,7 @@ function ExamSettings(props) {
                 type="radio"
                 id="allowOptingOutYes"
                 name="allowOptingOut"
-                label={props.intl.formatMessage(messages['authoring.examsettings.allowoptout.yes'])}
+                label={intl.formatMessage(messages['authoring.examsettings.allowoptout.yes'])}
                 inline
                 checked={allowOptingOut}
                 onChange={() => onAllowOptingOutChange(true)}
@@ -250,7 +250,7 @@ function ExamSettings(props) {
                 type="radio"
                 id="allowOptingOutNo"
                 name="allowOptingOut"
-                label={props.intl.formatMessage(messages['authoring.examsettings.allowoptout.no'])}
+                label={intl.formatMessage(messages['authoring.examsettings.allowoptout.no'])}
                 inline
                 checked={!allowOptingOut}
                 onChange={() => onAllowOptingOutChange(false)}
@@ -260,7 +260,7 @@ function ExamSettings(props) {
                 <FormattedMessage
                   id="authoring.examsettings.allowoptout.help"
                   defaultMessage={`
-                    If this value is "Yes", learners can choose to take proctored exams without proctoring. 
+                    If this value is "Yes", learners can choose to take proctored exams without proctoring.
                     If this value is "No", all learners must take the exam with proctoring.
                   `}
                   description="Help text for proctored exam opt out radio selection"
@@ -289,7 +289,7 @@ function ExamSettings(props) {
             {getProctoringProviderOptions(availableProctoringProviders)}
           </Form.Control>
           <Form.Text id="proctoringProviderHelpText">
-            {cannotEditProctoringProvider() ? props.intl.formatMessage(messages['authoring.examsettings.provider.help.aftercoursestart']) : props.intl.formatMessage(messages['authoring.examsettings.provider.help'])}
+            {cannotEditProctoringProvider() ? intl.formatMessage(messages['authoring.examsettings.provider.help.aftercoursestart']) : intl.formatMessage(messages['authoring.examsettings.provider.help'])}
           </Form.Text>
         </Form.Group>
         )}
@@ -318,7 +318,7 @@ function ExamSettings(props) {
               <FormattedMessage
                 id="authoring.examsettings.escalationemail.help"
                 defaultMessage={`
-                  Required if "proctortrack" is selected as your proctoring provider. Enter an email address to be 
+                  Required if "proctortrack" is selected as your proctoring provider. Enter an email address to be
                   contacted by the support team whenever there are escalations (e.g. appeals, delayed reviews, etc.).
                 `}
                 description="Help text explaining escalation email field."
@@ -340,7 +340,7 @@ function ExamSettings(props) {
               <Form.Check
                 type="radio"
                 id="createZendeskTicketsYes"
-                label={props.intl.formatMessage(messages['authoring.examsettings.createzendesk.yes'])}
+                label={intl.formatMessage(messages['authoring.examsettings.createzendesk.yes'])}
                 inline
                 name="createZendeskTickets"
                 checked={createZendeskTickets}
@@ -350,7 +350,7 @@ function ExamSettings(props) {
               <Form.Check
                 type="radio"
                 id="createZendeskTicketsNo"
-                label={props.intl.formatMessage(messages['authoring.examsettings.createzendesk.no'])}
+                label={intl.formatMessage(messages['authoring.examsettings.createzendesk.no'])}
                 inline
                 name="createZendeskTickets"
                 checked={!createZendeskTickets}
@@ -413,10 +413,10 @@ function ExamSettings(props) {
         <FormattedMessage
           id="authoring.examsettings.alert.error.connection"
           defaultMessage={`
-            We encountered a technical error when loading this page. This might be a temporary issue, 
+            We encountered a technical error when loading this page. This might be a temporary issue,
             so please try again in a few minutes. If the problem persists, please go to {support_link} for help.
           `}
-          values={{ support_link: <Alert.Link href="https://support.edx.org/hc/en-us">{props.intl.formatMessage(messages['authoring.examsettings.support.text'])}</Alert.Link> }}
+          values={{ support_link: <Alert.Link href="https://support.edx.org/hc/en-us">{intl.formatMessage(messages['authoring.examsettings.support.text'])}</Alert.Link> }}
           description=""
         />
       </Alert>
@@ -438,7 +438,7 @@ function ExamSettings(props) {
   }
 
   function renderSaveSuccess() {
-    const studioCourseRunURL = StudioApiService.getStudioCourseRunUrl(props.courseId);
+    const studioCourseRunURL = StudioApiService.getStudioCourseRunUrl(courseId);
     return (
       <Alert
         variant="success"
@@ -478,7 +478,7 @@ function ExamSettings(props) {
             If the problem persists,
             please go to {support_link} for help.
           `}
-          values={{ support_link: <Alert.Link href="https://support.edx.org/hc/en-us">{props.intl.formatMessage(messages['authoring.examsettings.support.text'])}</Alert.Link> }}
+          values={{ support_link: <Alert.Link href="https://support.edx.org/hc/en-us">{intl.formatMessage(messages['authoring.examsettings.support.text'])}</Alert.Link> }}
         />
       </Alert>
     );
@@ -486,7 +486,7 @@ function ExamSettings(props) {
 
   useEffect(
     () => {
-      StudioApiService.getProctoredExamSettingsData(props.courseId)
+      StudioApiService.getProctoredExamSettingsData(courseId)
         .then(
           response => {
             const proctoredExamSettings = response.data.proctored_exam_settings;
@@ -550,11 +550,11 @@ function ExamSettings(props) {
   );
 }
 
-ExamSettings.propTypes = {
-  intl: intlShape.isRequired,
+ProctoredExamSettings.propTypes = {
   courseId: PropTypes.string.isRequired,
+  intl: intlShape.isRequired,
 };
 
-ExamSettings.defaultProps = {};
+ProctoredExamSettings.defaultProps = {};
 
-export default injectIntl(ExamSettings);
+export default injectIntl(ProctoredExamSettings);

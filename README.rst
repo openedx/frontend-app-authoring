@@ -1,15 +1,17 @@
 |Build Status| |Codecov| |license|
 
 frontend-app-course-authoring
-=================================
+=============================
 
 Please tag `@edx/teaching-and-learning <https://github.com/orgs/edx/teams/teaching-and-learning>`_ on any PRs or issues.  Thanks.
 
-**Prerequisite**
+Prerequisite
+------------
 
-`Devstack <https://edx.readthedocs.io/projects/edx-installing-configuring-and-running/en/latest/installation/index.html>`_.  If you start Devstack with ``make dev.up.ecommerce`` that should give you everything you need as a companion to this frontend.
+`Devstack <https://edx.readthedocs.io/projects/edx-installing-configuring-and-running/en/latest/installation/index.html>`_.  If you start Devstack with ``make dev.up.studio`` that should give you everything you need as a companion to this frontend.
 
-**Installation and Startup**
+Installation and Startup
+------------------------
 
 1. Clone the repo:
 
@@ -25,22 +27,15 @@ Please tag `@edx/teaching-and-learning <https://github.com/orgs/edx/teams/teachi
 
 The dev server is running at `http://localhost:2001 <http://localhost:2001>`_.
 
-Project Structure
------------------
+If your devstack includes the default Demo course, you can visit the following URLs to see content:
 
-The source for this project is organized into nested submodules according to the ADR `Feature-based Application Organization <https://github.com/edx/frontend-app-course-authoring/blob/master/docs/decisions/0002-feature-based-application-organization.rst>`_.
+- `Proctored Exam Settings <http://localhost:2001/course-v1:edX+DemoX+Demo_Course/proctored-exam-settings>`_
+- `Pages and Resources <http://localhost:2001/course-v1:edX+DemoX+Demo_Course/pages>`_ (work in progress)
 
-Build Process Notes
--------------------
-
-**Production Build**
+Production Build
+----------------
 
 The production build is created with ``npm run build``.
-
-Internationalization
---------------------
-
-Please see `edx/frontend-platform's i18n module <https://edx.github.io/frontend-platform/module-Internationalization.html>`_ for documentation on internationalization.  The documentation explains how to use it, and the `How To <https://github.com/edx/frontend-i18n/blob/master/docs/how_tos/i18n.rst>`_ has more detail.
 
 .. |Build Status| image:: https://api.travis-ci.com/edx/frontend-app-course-authoring.svg?branch=master
    :target: https://travis-ci.com/edx/frontend-app-course-authoring
