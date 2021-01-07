@@ -23,13 +23,26 @@ subscribe(APP_READY, () => {
   ReactDOM.render(
     <AppProvider store={initializeStore()}>
       <Switch>
-        <Route exact path="/proctored-exam-settings/:courseId">
-          {/* See component for details on what this is */}
-          <LegacyProctoringRoute />
-        </Route>
-        <Route path="/course/:courseId">
-          <CourseAuthoringRoutes />
-        </Route>
+        <Route
+          exact
+          path="/proctored-exam-settings/:courseId"
+          render={({ match }) => {
+            const { params: { courseId } } = match;
+            /* See component for details on what this is */
+            return (
+              <LegacyProctoringRoute courseId={courseId} />
+            );
+          }}
+        />
+        <Route
+          path="/course/:courseId"
+          render={({ match }) => {
+            const { params: { courseId } } = match;
+            return (
+              <CourseAuthoringRoutes courseId={courseId} />
+            );
+          }}
+        />
       </Switch>
     </AppProvider>,
     document.getElementById('root'),

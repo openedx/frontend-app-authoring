@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRouteMatch } from 'react-router';
+import PropTypes from 'prop-types';
 
 import CourseAuthoringPage from '../CourseAuthoringPage';
 import ProctoredExamSettings from './ProctoredExamSettings';
@@ -14,11 +14,14 @@ import ProctoredExamSettings from './ProctoredExamSettings';
  * that we flip the routes so that the pages follow the courseId, since they're conceptually
  * children of it.
   */
-export default function LegacyProctoringRoute() {
-  const { params: { courseId } } = useRouteMatch();
+export default function LegacyProctoringRoute({ courseId }) {
   return (
-    <CourseAuthoringPage>
+    <CourseAuthoringPage courseId={courseId}>
       <ProctoredExamSettings courseId={courseId} />
     </CourseAuthoringPage>
   );
 }
+
+LegacyProctoringRoute.propTypes = {
+  courseId: PropTypes.string.isRequired,
+};

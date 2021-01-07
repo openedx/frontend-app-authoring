@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useRouteMatch } from 'react-router';
 import Footer from '@edx/frontend-component-footer';
 import { useDispatch } from 'react-redux';
 
@@ -8,9 +7,7 @@ import Header from './studio-header/Header';
 import { fetchCourseDetail } from './data/thunks';
 import { useModel } from './generic/model-store';
 
-export default function CourseAuthoringPage({ children }) {
-  const { params: { courseId } } = useRouteMatch();
-
+export default function CourseAuthoringPage({ courseId, children }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -31,7 +28,6 @@ export default function CourseAuthoringPage({ children }) {
         courseTitle={courseTitle}
         courseId={courseId}
       />
-
       {children}
       <Footer />
     </>
@@ -40,6 +36,7 @@ export default function CourseAuthoringPage({ children }) {
 
 CourseAuthoringPage.propTypes = {
   children: PropTypes.node,
+  courseId: PropTypes.string.isRequired,
 };
 
 CourseAuthoringPage.defaultProps = {
