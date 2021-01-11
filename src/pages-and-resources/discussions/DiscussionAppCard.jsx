@@ -46,8 +46,8 @@ function DiscussionAppCard({
             <Image
               height={100}
               src={app.logo}
-              alt={intl.formatMessage(messages.toolLogo, {
-                toolName: app.id,
+              alt={intl.formatMessage(messages.appLogo, {
+                name: app.name,
               })}
             />
           </div>
