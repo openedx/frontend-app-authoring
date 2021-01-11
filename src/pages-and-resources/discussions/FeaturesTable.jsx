@@ -34,5 +34,5 @@ export default function FeaturesTable({ forums, featuresList }) {
 
 FeaturesTable.propTypes = {
   forums: PropTypes.arrayOf(PropTypes.object).isRequired,
-  featuresList: PropTypes.arrayOf(PropTypes.object).isRequired,
+  featuresList: PropTypes.arrayOf(PropTypes.string).isRequired,
 };

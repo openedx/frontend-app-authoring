@@ -1,11 +1,13 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CheckBox, Image, Col } from '@edx/paragon';
+import {
+  Image, Col, Input,
+} from '@edx/paragon';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
-import messages from '../../messages';
+import messages from './messages';
 
 function DiscussionToolOption({
   intl, forum, selected, onSelect,
@@ -13,7 +15,7 @@ function DiscussionToolOption({
   return (
     <Col className="mb-4" xs={12} sm={6} lg={4} xl={3}>
       <div
-        className="d-flex discussion-tool flex-column p-3 h-100 shadow border border-white"
+        className="d-flex position-relative discussion-tool flex-column p-3 h-100 shadow border border-white"
         style={{
           cursor: 'pointer',
         }}
@@ -23,7 +25,23 @@ function DiscussionToolOption({
         role="radio"
         aria-checked={selected}
       >
-        <div className="d-flex flex-row justify-content-between">
+        <div
+          className="position-absolute"
+          style={{
+            // This positioning of 0.75rem aligns the checkbox with the top of the logo
+            top: '0.75rem',
+            right: '0.75rem',
+          }}
+        >
+          {forum.isAvailable ? (
+            <Input readOnly type="checkbox" checked={selected} />
+          ) : (
+            <FontAwesomeIcon icon={faLock} />
+
+          )}
+        </div>
+
+        <div className="d-flex flex-row justify-content-center">
           <div className="d-flex justify-content-center">
             <Image
               height={100}
@@ -33,13 +51,7 @@ function DiscussionToolOption({
               })}
             />
           </div>
-          <div className="d-flex">
-            {forum.isAvailable ? (
-              <CheckBox checked={selected} />
-            ) : (
-              <FontAwesomeIcon icon={faLock} />
-            )}
-          </div>
+
         </div>
         <br />
         <div className="py-4">{forum.description}</div>
