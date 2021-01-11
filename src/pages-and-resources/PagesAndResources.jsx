@@ -65,7 +65,7 @@ const coursePages = [
   },
 ];
 
-function CoursePageResources({ courseId, intl }) {
+function PagesAndResources({ courseId, intl }) {
   const { config } = useContext(AppContext);
   const lmsCourseURL = `${config.LMS_BASE_URL}/courses/${courseId}`;
   return (
@@ -111,9 +111,9 @@ function CoursePageResources({ courseId, intl }) {
   );
 }
 
-CoursePageResources.propTypes = {
+PagesAndResources.propTypes = {
   courseId: PropTypes.string.isRequired,
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(CoursePageResources);
+export default injectIntl(PagesAndResources);
