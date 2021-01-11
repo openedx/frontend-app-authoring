@@ -2,20 +2,20 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
   heading: {
-    id: 'authoring.forumSelectorTool.heading',
+    id: 'authoring.discussions.heading',
     defaultMessage: 'Which discussion tool would you like to use for this course?',
   },
   supportedFeatures: {
-    id: 'authoring.forumSelectorTool.supportedFeatures',
+    id: 'authoring.discussions.supportedFeatures',
     defaultMessage: 'Supported Features',
   },
-  configureTool: {
-    id: 'authoring.forumSelectorTool.configureTool',
-    defaultMessage: 'Configure {toolName}',
+  configureApp: {
+    id: 'authoring.discussions.configureApp',
+    defaultMessage: 'Configure {name}',
   },
-  toolLogo: {
-    id: 'authoring.forumSelectorTool.toolLogo',
-    defaultMessage: '{toolName} Logo',
+  appLogo: {
+    id: 'authoring.discussions.appLogo',
+    defaultMessage: '{name} Logo',
   },
 });
 
