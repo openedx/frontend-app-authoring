@@ -4,9 +4,9 @@ import { Switch, useRouteMatch } from 'react-router';
 import { PageRoute } from '@edx/frontend-platform/react';
 
 import CourseAuthoringPage from './CourseAuthoringPage';
-import { CoursePageResources } from './course-page-resources';
+import { PagesAndResources } from './pages-and-resources';
 import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettings';
-import DiscussionToolSelectorContainer from './discussion-tool-selector/DiscussionToolSelectorContainer';
+import DiscussionAppList from './pages-and-resources/discussions/DiscussionAppList';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -28,11 +28,11 @@ export default function CourseAuthoringRoutes({ courseId }) {
   return (
     <CourseAuthoringPage courseId={courseId}>
       <Switch>
-        <PageRoute exact path={`${path}/pages`}>
-          <CoursePageResources courseId={courseId} />
+        <PageRoute exact path={`${path}/pages-and-resources`}>
+          <PagesAndResources courseId={courseId} />
         </PageRoute>
-        <PageRoute path={`${path}/pages/discussion`}>
-          <DiscussionToolSelectorContainer courseId={courseId} />
+        <PageRoute path={`${path}/pages-and-resources/discussion`}>
+          <DiscussionAppList courseId={courseId} />
         </PageRoute>
         <PageRoute path={`${path}/proctored-exam-settings`}>
           <ProctoredExamSettings courseId={courseId} />
