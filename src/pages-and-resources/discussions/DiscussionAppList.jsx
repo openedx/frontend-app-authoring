@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import messages from './messages';
 import DiscussionAppCard from './DiscussionAppCard';
 import FeaturesTable from './FeaturesTable';
-import { useModels } from '../../generic/model-store';
+import { useModel, useModels } from '../../generic/model-store';
 import { fetchApps } from './data/thunks';
 
 function DiscussionAppList({ courseId, intl }) {
@@ -22,6 +22,8 @@ function DiscussionAppList({ courseId, intl }) {
   const featureIds = useSelector(state => state.discussions.featureIds);
   const apps = useModels('apps', appIds);
   const features = useModels('features', featureIds);
+
+  const selectedApp = useModel('apps', selectedAppId);
 
   const handleSelectApp = useCallback((appId) => {
     if (selectedAppId === appId) {
@@ -52,7 +54,7 @@ function DiscussionAppList({ courseId, intl }) {
         </h2>
         {selectedAppId && (
           <Button variant="primary">
-            {intl.formatMessage(messages.configureTool, { toolName: selectedAppId })}
+            {intl.formatMessage(messages.configureApp, { name: selectedApp.name })}
           </Button>
         )}
       </div>
