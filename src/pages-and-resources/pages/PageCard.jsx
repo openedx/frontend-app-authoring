@@ -9,7 +9,7 @@ import { faCog } from '@fortawesome/free-solid-svg-icons';
 
 import messages from '../messages';
 
-const CoursePageShape = PropTypes.shape({
+const pageShape = PropTypes.shape({
   id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
@@ -19,9 +19,7 @@ const CoursePageShape = PropTypes.shape({
   showEnable: PropTypes.bool.isRequired,
 });
 
-export { CoursePageShape };
-
-function CoursePageConfigCard({ intl, coursePage }) {
+function PageCard({ intl, coursePage }) {
   const pageStatusMsgId = coursePage.isEnabled ? 'pageStatus.enabled' : 'pageStatus.disabled';
   const componentClasses = classNames(
     'course-page-config-card d-flex flex-column align-content-stretch',
@@ -55,9 +53,9 @@ function CoursePageConfigCard({ intl, coursePage }) {
   );
 }
 
-CoursePageConfigCard.propTypes = {
+PageCard.propTypes = {
   intl: intlShape.isRequired,
-  coursePage: CoursePageShape.isRequired,
+  coursePage: pageShape.isRequired,
 };
 
-export default injectIntl(CoursePageConfigCard);
+export default injectIntl(PageCard);

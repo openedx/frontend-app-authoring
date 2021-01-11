@@ -4,7 +4,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { AppContext } from '@edx/frontend-platform/react';
 import { Button } from '@edx/paragon';
 
-import CoursePageConfigCard from './course-page/CoursePageConfigCard';
+import PageCard from './pages/PageCard';
 import messages from './messages';
 
 // XXX this is just for testing and should be removed ASAP
@@ -87,7 +87,7 @@ function PagesAndResources({ courseId, intl }) {
                 className="d-flex flex-column align-content-stretch p-3 col-sm-12 col-md-6 col-lg-4"
                 key={coursePage.id}
               >
-                <CoursePageConfigCard coursePage={coursePage} />
+                <PageCard coursePage={coursePage} />
               </div>
             ))}
           </div>
