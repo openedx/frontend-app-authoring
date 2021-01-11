@@ -1,14 +1,11 @@
 
-@import './pages-and-resources/index.scss';
 @import "~@edx/brand/paragon/fonts";
 @import "~@edx/brand/paragon/variables";
 @import "~@edx/paragon/scss/core/core";
 @import "~@edx/brand/paragon/overrides";
 
+@import "studio-header/header";
 @import "~@edx/frontend-component-footer/dist/footer";
 
-@import "proctored-exam-settings/proctoredExamSettings.scss";
-
-@import "pages-and-resources/discussions/DiscussionToolSelector.scss";
-
-@import "studio-header/header.scss";
+@import "pages-and-resources/index";
+@import "proctored-exam-settings/proctoredExamSettings";
