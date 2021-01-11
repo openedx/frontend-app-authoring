@@ -15,7 +15,7 @@ function DiscussionAppCard({
   return (
     <Col className="mb-4" xs={12} sm={6} lg={4} xl={3}>
       <div
-        className="d-flex position-relative discussion-tool flex-column p-3 h-100 shadow border border-white"
+        className="d-flex position-relative discussion-app-card flex-column p-3 h-100 shadow border border-white"
         style={{
           cursor: 'pointer',
         }}
