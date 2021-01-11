@@ -9,8 +9,8 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 
-function DiscussionToolOption({
-  intl, forum, selected, onSelect,
+function DiscussionAppCard({
+  intl, app, selected, clickHandler,
 }) {
   return (
     <Col className="mb-4" xs={12} sm={6} lg={4} xl={3}>
@@ -19,9 +19,9 @@ function DiscussionToolOption({
         style={{
           cursor: 'pointer',
         }}
-        tabIndex={forum.isAvailable ? '-1' : ''}
-        onClick={() => { if (forum.isAvailable) { onSelect(forum.forumId); } }}
-        onKeyPress={() => { if (forum.isAvailable) { onSelect(forum.forumId); } }}
+        tabIndex={app.isAvailable ? '-1' : ''}
+        onClick={() => { if (app.isAvailable) { clickHandler(app.id); } }}
+        onKeyPress={() => { if (app.isAvailable) { clickHandler(app.id); } }}
         role="radio"
         aria-checked={selected}
       >
@@ -33,7 +33,7 @@ function DiscussionToolOption({
             right: '0.75rem',
           }}
         >
-          {forum.isAvailable ? (
+          {app.isAvailable ? (
             <Input readOnly type="checkbox" checked={selected} />
           ) : (
             <FontAwesomeIcon icon={faLock} />
@@ -45,28 +45,28 @@ function DiscussionToolOption({
           <div className="d-flex justify-content-center">
             <Image
               height={100}
-              src={forum.logo}
+              src={app.logo}
               alt={intl.formatMessage(messages.toolLogo, {
-                toolName: forum.forumId,
+                toolName: app.id,
               })}
             />
           </div>
 
         </div>
         <br />
-        <div className="py-4">{forum.description}</div>
+        <div className="py-4">{app.description}</div>
         <br />
-        <div className="mt-auto font-weight-bold">{forum.supportLevel}</div>
+        <div className="mt-auto font-weight-bold">{app.supportLevel}</div>
       </div>
     </Col>
   );
 }
 
-DiscussionToolOption.propTypes = {
+DiscussionAppCard.propTypes = {
   intl: intlShape.isRequired,
-  forum: PropTypes.objectOf(PropTypes.any).isRequired,
+  app: PropTypes.objectOf(PropTypes.any).isRequired,
   selected: PropTypes.bool.isRequired,
-  onSelect: PropTypes.func.isRequired,
+  clickHandler: PropTypes.func.isRequired,
 };
 
-export default injectIntl(DiscussionToolOption);
+export default injectIntl(DiscussionAppCard);
