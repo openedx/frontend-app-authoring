@@ -16,6 +16,12 @@ It is being built to provide an updated library authoring experience, with impro
 blocks and the ability to directly reference library content blocks in existing courses. This experience is to be
 powered by the new `blockstore <https://github.com/edx/blockstore>`_ storage engine.
 
+.. note::
+
+   A content library is a collection of learning components (XBlocks) designed for re-use in other contexts. Components
+   in a content library can be integrated into a course, used as a problem bank for randomized exams, and/or shown to
+   learners directly for à la carte learning.
+
 Devstack Installation
 ---------------------
 
@@ -64,30 +70,11 @@ Follw these steps to provision, run, and enable an instance of the Library Autho
 
    This will setup the blockstore container, configure the LMS and the CMS to accept requests from it (and vice-versa),
    create a "Devstack Content Collection" in blockstore, and finally create a sample "DeveloperInc" organization in the
-   LMS that can be used to create content.  Make a note of the UUID used to create the "Devstack Content Collection".
-   At the time of writing, the value suggested in the README is:
-
-   .. code-block::
-
-      11111111-2111-4111-8111-111111111111
+   LMS that can be used to create content.
 
    There's no need to log in to blockstore in your web browser directly, so feel free to skip the last step.
 
-5. Edit ``frontend-app-library-authoring/.env.development`` and add the "Devstack Content Collection" UUID you obtained
-   above to ``BLOCKSTORE_COLLECTION_UUID``:
-
-   .. code-block::
-
-      BLOCKSTORE_COLLECTION_UUID=11111111-2111-4111-8111-111111111111
-
-   Restart the frontend-app-library-authoring container to apply the change:
-
-   .. code-block::
-
-      cd devstack
-      make dev.restart-container.frontend-app-library-authoring
-
-6. In a Studio shell, enable the ``ENABLE_LIBRARY_AUTHORING_MICROFRONTEND`` feature flag:
+5. In a Studio shell, enable the ``ENABLE_LIBRARY_AUTHORING_MICROFRONTEND`` feature flag:
 
    .. code-block::
 
@@ -103,13 +90,25 @@ Follw these steps to provision, run, and enable an instance of the Library Autho
 
       make studio-restart
 
-7. On a browser, go to http://localhost:18010/admin/waffle/flag/, log in as an admin (such as the sample user ``edx``)
+6. On a browser, go to http://localhost:18010/admin/waffle/flag/, log in as an admin (such as the sample user ``edx``)
    and create a ``studio.library_authoring_mfe`` waffle flag, and enabling it for everyone.
 
    This will make it so that clicking on the Libraries tab in `Studio <http://localhost:18010/home/>`_ will take you to
    the Library Authoring MFE as a logged-in user.
 
    .. image:: ./docs/images/screenshot_mfe.png
+
+7. Once at the `Library Authoring page <http://localhost:3001>`_, to create a blockstore-based library click on the "New
+   Library" button on the top right-hand corner, filling in Title, Organization, and ID, and making sure to select the
+   "Complex (beta)" type.  (In contrast, creating a "Legacy" library would have it backed by modulestore.)
+
+   .. image:: ./docs/images/screenshot_creating.png
+
+8. Finally, adding components is done by selecting the desired type under the "Add New Component" heading at the bottom
+   of the list of existing ones.  You can edit them by clicking on the corresponding "Edit" button, once they're visible
+   in the list.
+
+   .. image:: ./docs/images/screenshot_adding_components.png
 
 Project Structure
 -----------------
@@ -143,8 +142,8 @@ The documentation explains how to use it, and the `How To
 Known Issues
 ------------
 
-* There is a fatal `blockstore integration <https://github.com/edx/blockstore/#running-integration-tests>`_ test failure
-  that is likely triggering search bugs.
+* [SE-3989] There is a fatal blockstore integration test failure that is likely triggering search bugs, related to
+  `edx/edx-search#104 <https://github.com/edx/edx-search/pull/104>`_.
 
 * Some component types, such as text (HTML), videos and CAPA problems, can be added to libraries but cannot be edited
   using Studio's visual authoring tools.  The issue manifests itself as either an error message when clicking the "Edit"
