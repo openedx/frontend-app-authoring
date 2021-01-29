@@ -37,24 +37,26 @@ function DiscussionAppCard({
             <Input readOnly type="checkbox" checked={selected} />
           ) : (
             <FontAwesomeIcon icon={faLock} />
-
           )}
         </div>
 
         <div className="d-flex flex-row justify-content-center">
-          <div className="d-flex justify-content-center">
+          <div className="d-flex justify-content-center px-3">
             <Image
-              height={100}
+              style={{
+                height: 100,
+                maxWidth: '100%',
+                objectFit: 'contain',
+              }}
               src={app.logo}
               alt={intl.formatMessage(messages.appLogo, {
                 name: app.name,
               })}
             />
           </div>
-
         </div>
         <br />
-        <div className="py-4">{app.description}</div>
+        <div className="pb-4">{app.description}</div>
         <br />
         <div className="mt-auto font-weight-bold">{app.supportLevel}</div>
       </div>

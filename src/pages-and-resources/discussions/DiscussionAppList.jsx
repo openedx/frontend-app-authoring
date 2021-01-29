@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Button, Container, Row } from '@edx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
+import { history } from '@edx/frontend-platform';
 
+import { useLocation } from 'react-router';
 import messages from './messages';
 import DiscussionAppCard from './DiscussionAppCard';
 import FeaturesTable from './FeaturesTable';
@@ -12,6 +14,7 @@ import { fetchApps } from './data/thunks';
 
 function DiscussionAppList({ courseId, intl }) {
   const [selectedAppId, setSelectedAppId] = useState(null);
+  const { pathname } = useLocation();
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -33,37 +36,43 @@ function DiscussionAppList({ courseId, intl }) {
     }
   }, [selectedAppId]);
 
+  const handleConfigureApp = () => {
+    history.push(`${pathname}/configure/${selectedAppId}`);
+  };
+
   return (
-    <Container fluid className="text-info-500">
-      <h6 className="my-4 text-center">{intl.formatMessage(messages.heading)}</h6>
+    <div className="m-5">
+      <Container fluid className="text-info-500">
+        <h6 className="my-4 text-center">{intl.formatMessage(messages.heading)}</h6>
 
-      <Row>
-        {apps.map(app => (
-          <DiscussionAppCard
-            key={app.id}
-            app={app}
-            selected={app.id === selectedAppId}
-            clickHandler={handleSelectApp}
-          />
-        ))}
-      </Row>
+        <Row>
+          {apps.map(app => (
+            <DiscussionAppCard
+              key={app.id}
+              app={app}
+              selected={app.id === selectedAppId}
+              clickHandler={handleSelectApp}
+            />
+          ))}
+        </Row>
 
-      <div className="d-flex justify-content-between align-items-center">
-        <h2 className="my-3">
-          {intl.formatMessage(messages.supportedFeatures)}
-        </h2>
-        {selectedAppId && (
-          <Button variant="primary">
+        <div className="d-flex justify-content-between align-items-center">
+          <h2 className="my-3">
+            {intl.formatMessage(messages.supportedFeatures)}
+          </h2>
+          {selectedAppId && (
+          <Button variant="primary" onClick={handleConfigureApp}>
             {intl.formatMessage(messages.configureApp, { name: selectedApp.name })}
           </Button>
-        )}
-      </div>
+          )}
+        </div>
 
-      <FeaturesTable
-        apps={apps}
-        features={features}
-      />
-    </Container>
+        <FeaturesTable
+          apps={apps}
+          features={features}
+        />
+      </Container>
+    </div>
   );
 }
 
