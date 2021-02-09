@@ -34,7 +34,7 @@ const piazzaApp = {
 const yellowdigApp = {
   id: 'yellowdig',
   name: 'Yellowdig',
-  logo: 'https://yellowdig.com/static-images/branding/yellowdig-logo.png',
+  logo: 'https://static.wixstatic.com/media/e53d7e_f8a17bd41db64a57a8d62bea4fdf3174~mv2.png/v1/crop/x_5,y_0,w_895,h_196/fill/w_366,h_80,al_c,q_85,usm_0.66_1.00_0.01/yellowdig-logo.webp',
   description: 'Yellowdig is the digital solution that impacts the entire student lifecycle and enables lifelong learning.',
   supportLevel: 'Coming soon',
   isAvailable: false,
