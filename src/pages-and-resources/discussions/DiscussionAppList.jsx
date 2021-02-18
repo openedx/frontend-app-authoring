@@ -57,6 +57,7 @@ function DiscussionAppList({ courseId, intl }) {
       >
         {apps.map(app => (
           <Card
+            key={app.id}
             tabIndex={app.isAvailable ? '-1' : ''}
             onClick={() => { if (app.isAvailable) { handleSelectApp(app.id); } }}
             onKeyPress={() => { if (app.isAvailable) { handleSelectApp(app.id); } }}

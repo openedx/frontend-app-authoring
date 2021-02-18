@@ -12,7 +12,11 @@ export default function FeaturesTable({ apps, features }) {
         data={features.map(feature => {
           const appChecks = {};
           apps.forEach(app => {
-            appChecks[app.id] = app.featureIds.includes(feature.id) ? <FontAwesomeIcon icon={faCheck} /> : null;
+            appChecks[app.id] = app.featureIds.includes(feature.id) ? (
+              <div key={`${app.id}&${feature.id}`}>
+                <FontAwesomeIcon icon={faCheck} />
+              </div>
+            ) : null;
           });
 
           return {
