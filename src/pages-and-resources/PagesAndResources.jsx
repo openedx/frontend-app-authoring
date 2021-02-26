@@ -10,7 +10,7 @@ import ResourceList from './resources/ResourcesList';
 // XXX this is just for testing and should be removed ASAP
 const pages = [
   {
-    id: 'cp-discussion',
+    id: 'discussion',
     title: 'Discussion',
     isEnabled: false,
     showSettings: false,
@@ -19,7 +19,7 @@ const pages = [
     description: 'Encourage participation and engagement in your course with discussion forums',
   },
   {
-    id: 'cp-teams',
+    id: 'teams',
     title: 'Teams',
     isEnabled: true,
     showSettings: true,
@@ -28,7 +28,7 @@ const pages = [
     description: 'Leverage teams to allow learners to connect by topic of interest',
   },
   {
-    id: 'cp-progress',
+    id: 'progress',
     title: 'Progress',
     isEnabled: false,
     showSettings: true,
@@ -37,7 +37,7 @@ const pages = [
     description: 'Allow students to track their progress throughout the course lorem ipsum',
   },
   {
-    id: 'cp-textbooks',
+    id: 'textbooks',
     title: 'Textbooks',
     isEnabled: true,
     showSettings: true,
@@ -46,7 +46,7 @@ const pages = [
     description: 'Provide links to applicable resources for your course',
   },
   {
-    id: 'cp-notes',
+    id: 'notes',
     title: 'Notes',
     isEnabled: true,
     showSettings: true,
@@ -55,7 +55,7 @@ const pages = [
     description: 'Support individual note taking that is visible only to the students',
   },
   {
-    id: 'cp-wiki',
+    id: 'wiki',
     title: 'Wiki',
     isEnabled: false,
     showSettings: false,

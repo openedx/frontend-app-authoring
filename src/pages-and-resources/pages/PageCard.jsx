@@ -6,6 +6,8 @@ import { Button } from '@edx/paragon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
 
+import { useLocation } from 'react-router';
+import { history } from '@edx/frontend-platform';
 import messages from '../messages';
 
 const CoursePageShape = PropTypes.shape({
@@ -21,12 +23,18 @@ const CoursePageShape = PropTypes.shape({
 export { CoursePageShape };
 
 function PageCard({ intl, page }) {
+  const { pathname } = useLocation();
+
   const pageStatusMsgId = page.isEnabled ? 'pageStatus.enabled' : 'pageStatus.disabled';
   const componentClasses = classNames(
     'd-flex flex-column align-content-stretch',
     'bg-white p-3 border shadow',
     { 'border-info-300': page.isEnabled, 'border-gray-100': !page.isEnabled },
   );
+
+  const handleClick = () => {
+    history.push(`${pathname}/${page.id}`);
+  };
 
   return (
     <div
@@ -52,11 +60,11 @@ function PageCard({ intl, page }) {
         </div>
 
         {page.showEnable && !page.isEnabled && (
-        <div className="d-flex justify-content-center">
-          <Button variant="outline-primary">
-            {intl.formatMessage(messages['enable.button'])}
-          </Button>
-        </div>
+          <div className="d-flex justify-content-center">
+            <Button variant="outline-primary" onClick={handleClick}>
+              {intl.formatMessage(messages['enable.button'])}
+            </Button>
+          </div>
         )}
       </div>
     </div>

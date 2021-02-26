@@ -1,72 +1,80 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Image, Col, Input,
-} from '@edx/paragon';
-import { faLock } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { Card, Input } from '@edx/paragon';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 import messages from './messages';
 
 function DiscussionAppCard({
-  intl, app, selected, clickHandler,
+  app, clickHandler, intl, selected,
 }) {
   return (
-    <Col className="mb-4" xs={12} sm={6} lg={4} xl={3}>
+    <Card
+      key={app.id}
+      tabIndex={app.isAvailable ? '-1' : ''}
+      onClick={() => { if (app.isAvailable) { clickHandler(app.id); } }}
+      onKeyPress={() => { if (app.isAvailable) { clickHandler(app.id); } }}
+      role="radio"
+      aria-checked={selected}
+      style={{
+        cursor: 'pointer',
+      }}
+      className={classNames({
+        'border-primary': selected,
+      })}
+    >
       <div
-        className="d-flex position-relative discussion-app-card flex-column p-3 h-100 shadow border border-white"
+        className="position-absolute"
         style={{
-          cursor: 'pointer',
+          // This positioning of 0.75rem aligns the checkbox with the top of the logo
+          top: '0.75rem',
+          right: '0.75rem',
         }}
-        tabIndex={app.isAvailable ? '-1' : ''}
-        onClick={() => { if (app.isAvailable) { clickHandler(app.id); } }}
-        onKeyPress={() => { if (app.isAvailable) { clickHandler(app.id); } }}
-        role="radio"
-        aria-checked={selected}
       >
-        <div
-          className="position-absolute"
-          style={{
-            // This positioning of 0.75rem aligns the checkbox with the top of the logo
-            top: '0.75rem',
-            right: '0.75rem',
-          }}
-        >
-          {app.isAvailable ? (
-            <Input readOnly type="checkbox" checked={selected} />
-          ) : (
-            <FontAwesomeIcon icon={faLock} />
-
-          )}
-        </div>
-
-        <div className="d-flex flex-row justify-content-center">
-          <div className="d-flex justify-content-center">
-            <Image
-              height={100}
-              src={app.logo}
-              alt={intl.formatMessage(messages.appLogo, {
-                name: app.name,
-              })}
-            />
-          </div>
-
-        </div>
-        <br />
-        <div className="py-4">{app.description}</div>
-        <br />
-        <div className="mt-auto font-weight-bold">{app.supportLevel}</div>
+        {app.isAvailable ? (
+          <Input readOnly type="checkbox" checked={selected} />
+        ) : (
+          <FontAwesomeIcon icon={faLock} />
+        )}
       </div>
-    </Col>
+      <Card.Img
+        variant="top"
+        style={{
+          maxHeight: 100,
+          objectFit: 'contain',
+        }}
+        className="py-3 pl-3 pr-5"
+        src={app.logo}
+        alt={intl.formatMessage(messages.appLogo, {
+          name: app.name,
+        })}
+      />
+      <Card.Body>
+        <Card.Title>{app.name}</Card.Title>
+        <Card.Text>{app.description}</Card.Text>
+      </Card.Body>
+      <Card.Footer>
+        {app.supportLevel}
+      </Card.Footer>
+    </Card>
   );
 }
 
 DiscussionAppCard.propTypes = {
-  intl: intlShape.isRequired,
-  app: PropTypes.objectOf(PropTypes.any).isRequired,
-  selected: PropTypes.bool.isRequired,
+  app: PropTypes.shape({
+    description: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+    isAvailable: PropTypes.bool.isRequired,
+    logo: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    supportLevel: PropTypes.string.isRequired,
+  }).isRequired,
   clickHandler: PropTypes.func.isRequired,
+  selected: PropTypes.bool.isRequired,
+  intl: intlShape.isRequired,
 };
 
 export default injectIntl(DiscussionAppCard);

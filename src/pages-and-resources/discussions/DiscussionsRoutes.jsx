@@ -3,10 +3,8 @@ import PropTypes from 'prop-types';
 import { Switch, useRouteMatch } from 'react-router';
 import { PageRoute } from '@edx/frontend-platform/react';
 
-import CourseAuthoringPage from './CourseAuthoringPage';
-import { PagesAndResources } from './pages-and-resources';
-import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettings';
-import DiscussionsRoutes from './pages-and-resources/discussions/DiscussionsRoutes';
+import DiscussionAppList from './DiscussionAppList';
+import DiscussionConfig from './DiscussionConfig';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -23,25 +21,20 @@ import DiscussionsRoutes from './pages-and-resources/discussions/DiscussionsRout
  * can move the Header/Footer rendering to this component and likely pull the course detail loading
  * in as well, and it'd feel a bit better-factored and the roles would feel more clear.
  */
-export default function CourseAuthoringRoutes({ courseId }) {
+export default function DiscussionsRoutes({ courseId }) {
   const { path } = useRouteMatch();
   return (
-    <CourseAuthoringPage courseId={courseId}>
-      <Switch>
-        <PageRoute exact path={`${path}/pages-and-resources`}>
-          <PagesAndResources courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/pages-and-resources/discussion`}>
-          <DiscussionsRoutes courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/proctored-exam-settings`}>
-          <ProctoredExamSettings courseId={courseId} />
-        </PageRoute>
-      </Switch>
-    </CourseAuthoringPage>
+    <Switch>
+      <PageRoute exact path={`${path}`}>
+        <DiscussionAppList courseId={courseId} />
+      </PageRoute>
+      <PageRoute path={`${path}/configure/:appId`}>
+        <DiscussionConfig courseId={courseId} />
+      </PageRoute>
+    </Switch>
   );
 }
 
-CourseAuthoringRoutes.propTypes = {
+DiscussionsRoutes.propTypes = {
   courseId: PropTypes.string.isRequired,
 };

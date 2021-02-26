@@ -4,11 +4,16 @@ import { createSlice } from '@reduxjs/toolkit';
 export const LOADING = 'LOADING';
 export const LOADED = 'LOADED';
 export const FAILED = 'FAILED';
+export const SAVING = 'SAVING';
+export const SAVED = 'SAVED';
+export const DIRTY = 'DIRTY';
 
 const slice = createSlice({
   name: 'discussions',
   initialState: {
     appIds: [],
+    activeAppId: null,
+    activeAppConfigId: null,
     featureIds: [],
     status: LOADING,
   },
@@ -16,7 +21,11 @@ const slice = createSlice({
     fetchAppsSuccess: (state, { payload }) => {
       state.appIds = payload.appIds;
       state.featureIds = payload.featureIds;
-      state.status = LOADED;
+    },
+    fetchAppConfigSuccess: (state, { payload }) => {
+      state.activeAppId = payload.activeAppId;
+      state.activeAppConfigId = payload.activeAppConfigId;
+      state.featureIds = payload.featureIds;
     },
     updateStatus: (state, { payload }) => {
       state.status = payload.status;
@@ -26,6 +35,7 @@ const slice = createSlice({
 
 export const {
   fetchAppsSuccess,
+  fetchAppConfigSuccess,
   updateStatus,
 } = slice.actions;
 
