@@ -36,7 +36,7 @@ export default function DiscussionConfig({ courseId }) {
       courseId={courseId}
       app={app}
       appConfig={appConfig}
-      submitHandler={handleSubmit}
+      onSubmit={handleSubmit}
     />
   );
 }

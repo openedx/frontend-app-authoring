@@ -58,7 +58,7 @@ function DiscussionAppList({ courseId, intl }) {
             key={app.id}
             app={app}
             selected={app.id === selectedAppId}
-            clickHandler={handleSelectApp}
+            onClick={handleSelectApp}
           />
         ))}
       </CardGrid>
