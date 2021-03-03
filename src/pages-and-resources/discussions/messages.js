@@ -10,7 +10,7 @@ const messages = defineMessages({
     defaultMessage: 'Supported Features',
   },
   configureApp: {
-    id: 'authoring.discussions.configureApp',
+    id: 'authoring.discussions.configure.app',
     defaultMessage: 'Configure {name}',
   },
   appLogo: {
