@@ -12,10 +12,10 @@ import { useModel, useModels } from '../../generic/model-store';
 
 import messages from './messages';
 import { fetchApps } from './data/thunks';
-import DiscussionAppCard from './DiscussionAppCard';
+import AppCard from './AppCard';
 import FeaturesTable from './FeaturesTable';
 
-function DiscussionAppList({ courseId, intl }) {
+function AppList({ courseId, intl }) {
   const [selectedAppId, setSelectedAppId] = useState(null);
   const { pathname } = useLocation();
 
@@ -54,7 +54,7 @@ function DiscussionAppList({ courseId, intl }) {
         }}
       >
         {apps.map(app => (
-          <DiscussionAppCard
+          <AppCard
             key={app.id}
             app={app}
             selected={app.id === selectedAppId}
@@ -82,9 +82,9 @@ function DiscussionAppList({ courseId, intl }) {
   );
 }
 
-DiscussionAppList.propTypes = {
+AppList.propTypes = {
   courseId: PropTypes.string.isRequired,
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(DiscussionAppList);
+export default injectIntl(AppList);

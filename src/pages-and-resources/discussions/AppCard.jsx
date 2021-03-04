@@ -8,7 +8,7 @@ import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 import messages from './messages';
 
-function DiscussionAppCard({
+function AppCard({
   app, onClick, intl, selected,
 }) {
   return (
@@ -63,7 +63,7 @@ function DiscussionAppCard({
   );
 }
 
-DiscussionAppCard.propTypes = {
+AppCard.propTypes = {
   app: PropTypes.shape({
     description: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
@@ -77,4 +77,4 @@ DiscussionAppCard.propTypes = {
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(DiscussionAppCard);
+export default injectIntl(AppCard);
