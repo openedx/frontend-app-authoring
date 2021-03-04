@@ -1,73 +1,28 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { AppContext } from '@edx/frontend-platform/react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import messages from './messages';
 import PageGrid from './pages/PageGrid';
 import ResourceList from './resources/ResourcesList';
 
-// XXX this is just for testing and should be removed ASAP
-const pages = [
-  {
-    id: 'discussion',
-    title: 'Discussion',
-    isEnabled: false,
-    showSettings: false,
-    showStatus: false,
-    showEnable: true,
-    description: 'Encourage participation and engagement in your course with discussion forums',
-  },
-  {
-    id: 'teams',
-    title: 'Teams',
-    isEnabled: true,
-    showSettings: true,
-    showStatus: true,
-    showEnable: false,
-    description: 'Leverage teams to allow learners to connect by topic of interest',
-  },
-  {
-    id: 'progress',
-    title: 'Progress',
-    isEnabled: false,
-    showSettings: true,
-    showStatus: true,
-    showEnable: false,
-    description: 'Allow students to track their progress throughout the course lorem ipsum',
-  },
-  {
-    id: 'textbooks',
-    title: 'Textbooks',
-    isEnabled: true,
-    showSettings: true,
-    showStatus: true,
-    showEnable: false,
-    description: 'Provide links to applicable resources for your course',
-  },
-  {
-    id: 'notes',
-    title: 'Notes',
-    isEnabled: true,
-    showSettings: true,
-    showStatus: true,
-    showEnable: false,
-    description: 'Support individual note taking that is visible only to the students',
-  },
-  {
-    id: 'wiki',
-    title: 'Wiki',
-    isEnabled: false,
-    showSettings: false,
-    showStatus: false,
-    showEnable: true,
-    description: 'Share your wiki content to provide additional course material',
-  },
-];
+import { fetchPages } from './data/thunks';
+import { useModels } from '../generic/model-store';
 
 function PagesAndResources({ courseId, intl }) {
   const { config } = useContext(AppContext);
   const lmsCourseURL = `${config.LMS_BASE_URL}/courses/${courseId}`;
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchPages(courseId));
+  }, [courseId]);
+
+  const pageIds = useSelector(state => state.pagesAndResources.pageIds);
+  const pages = useModels('pages', pageIds);
+
   return (
     <main>
       <div className="container-fluid bg-info-100 pb-3">
