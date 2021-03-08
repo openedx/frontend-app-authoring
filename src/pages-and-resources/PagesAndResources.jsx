@@ -1,10 +1,14 @@
 import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { AppContext } from '@edx/frontend-platform/react';
+import { AppContext, PageRoute } from '@edx/frontend-platform/react';
+
+import { Switch, useRouteMatch } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 
 import messages from './messages';
+import Discussions from './discussions';
+
 import PageGrid from './pages/PageGrid';
 import ResourceList from './resources/ResourcesList';
 
@@ -12,6 +16,7 @@ import { fetchPages } from './data/thunks';
 import { useModels } from '../generic/model-store';
 
 function PagesAndResources({ courseId, intl }) {
+  const { path } = useRouteMatch();
   const { config } = useContext(AppContext);
   const lmsCourseURL = `${config.LMS_BASE_URL}/courses/${courseId}`;
 
@@ -35,6 +40,11 @@ function PagesAndResources({ courseId, intl }) {
         <PageGrid pages={pages} />
         <ResourceList />
       </div>
+      <Switch>
+        <PageRoute path={`${path}/discussions`}>
+          <Discussions courseId={courseId} />
+        </PageRoute>
+      </Switch>
     </main>
   );
 }

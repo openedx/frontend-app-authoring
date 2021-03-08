@@ -3,8 +3,8 @@ export function getPages() {
   return Promise.resolve({
     pages: [
       {
-        id: 'discussion',
-        title: 'Discussion',
+        id: 'discussions',
+        title: 'Discussions',
         isEnabled: false,
         showSettings: false,
         showStatus: false,
