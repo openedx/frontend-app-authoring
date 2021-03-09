@@ -15,7 +15,6 @@ import appMessages from './i18n';
 
 import initializeStore from './store';
 import './index.scss';
-import './assets/favicon.ico';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import LegacyProctoringRoute from './proctored-exam-settings/LegacyProctoringRoute';
 

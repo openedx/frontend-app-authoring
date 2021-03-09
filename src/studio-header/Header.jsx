@@ -14,7 +14,7 @@ import DesktopHeader from './DesktopHeader';
 import MobileHeader from './MobileHeader';
 import messages from './Header.messages';
 
-import StudioLogoPNG from './assets/studio-logo.png';
+import StudioLogoSVG from './assets/studio-logo.svg';
 
 ensureConfig([
   'STUDIO_BASE_URL',
@@ -114,7 +114,7 @@ function Header({
   );
 
   const props = {
-    logo: StudioLogoPNG,
+    logo: StudioLogoSVG,
     logoAltText: 'Studio edX',
     siteName: 'edX',
     logoDestination: config.STUDIO_BASE_URL,
