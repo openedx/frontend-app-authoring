@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function FullScreenModalBody({ children }) {
+export default function Body({ children }) {
   return (
     <div className="flex-grow-1 overflow-auto">
       {children}
@@ -9,6 +9,6 @@ export default function FullScreenModalBody({ children }) {
   );
 }
 
-FullScreenModalBody.propTypes = {
+Body.propTypes = {
   children: PropTypes.node.isRequired,
 };

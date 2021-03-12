@@ -4,19 +4,18 @@ import { ModalCloseButton } from '@edx/paragon';
 import { Close } from '@edx/paragon/icons';
 import classNames from 'classnames';
 
-export default function FullScreenModalHeader({ className, title }) {
+export default function Header({ className, title }) {
   return (
     <div
       className={classNames(
         'bg-primary',
-        'text-white',
         'd-flex',
         'justify-content-between',
         'align-items-center',
         className,
       )}
     >
-      <h2 className="pl-3 h6 mb-0">{title}</h2>
+      <h3 className="text-white pl-3 mb-0">{title}</h3>
       <ModalCloseButton variant="outline-link" className="text-white">
         <Close />
       </ModalCloseButton>
@@ -24,11 +23,11 @@ export default function FullScreenModalHeader({ className, title }) {
   );
 }
 
-FullScreenModalHeader.propTypes = {
+Header.propTypes = {
   className: PropTypes.string,
   title: PropTypes.string.isRequired,
 };
 
-FullScreenModalHeader.defaultProps = {
+Header.defaultProps = {
   className: null,
 };

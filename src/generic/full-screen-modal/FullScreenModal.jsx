@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ModalLayer } from '@edx/paragon';
 import classNames from 'classnames';
+import Header from './Header';
+import Body from './Body';
 
 export default function FullScreenModal({ children, title, onClose }) {
   return (
@@ -28,3 +30,6 @@ FullScreenModal.propTypes = {
   title: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
 };
+
+FullScreenModal.Header = Header;
+FullScreenModal.Body = Body;
