@@ -10,8 +10,12 @@ const messages = defineMessages({
     defaultMessage: 'Supported Features',
   },
   configureApp: {
-    id: 'authoring.discussions.configureApp',
+    id: 'authoring.discussions.configure.app',
     defaultMessage: 'Configure {name}',
+  },
+  configure: {
+    id: 'authoring.discussions.configure',
+    defaultMessage: 'Configure Discussions',
   },
   appLogo: {
     id: 'authoring.discussions.appLogo',
@@ -38,7 +42,7 @@ const messages = defineMessages({
   },
   documentationPage: {
     id: 'authoring.discussions.documentationPage',
-    defaultMessage: 'documentation page',
+    defaultMessage: 'Visit the {name} documentation page',
   },
   consumerKey: {
     id: 'authoring.discussions.consumerKey',
@@ -73,7 +77,17 @@ const messages = defineMessages({
   backButton: {
     id: 'authoring.discussions.backButton',
     defaultMessage: 'Back',
-    description: 'Back button allowing the user to return to discussion app selection.',
+    description: 'Button allowing the user to return to discussion app selection.',
+  },
+  nextButton: {
+    id: 'authoring.discussions.nexyButton',
+    defaultMessage: 'Next',
+    description: 'Button allowing the user to advance to the second step of discussion configuration.',
+  },
+  applyButton: {
+    id: 'authoring.discussions.applyButton',
+    defaultMessage: 'Apply',
+    description: 'Button allowing the user to submit their discussion configuration.',
   },
 });
 

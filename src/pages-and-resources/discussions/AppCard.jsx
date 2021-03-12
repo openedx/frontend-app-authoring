@@ -8,15 +8,15 @@ import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 import messages from './messages';
 
-function DiscussionAppCard({
-  app, clickHandler, intl, selected,
+function AppCard({
+  app, onClick, intl, selected,
 }) {
   return (
     <Card
       key={app.id}
       tabIndex={app.isAvailable ? '-1' : ''}
-      onClick={() => { if (app.isAvailable) { clickHandler(app.id); } }}
-      onKeyPress={() => { if (app.isAvailable) { clickHandler(app.id); } }}
+      onClick={() => { if (app.isAvailable) { onClick(app.id); } }}
+      onKeyPress={() => { if (app.isAvailable) { onClick(app.id); } }}
       role="radio"
       aria-checked={selected}
       style={{
@@ -63,7 +63,7 @@ function DiscussionAppCard({
   );
 }
 
-DiscussionAppCard.propTypes = {
+AppCard.propTypes = {
   app: PropTypes.shape({
     description: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
@@ -72,9 +72,9 @@ DiscussionAppCard.propTypes = {
     name: PropTypes.string.isRequired,
     supportLevel: PropTypes.string.isRequired,
   }).isRequired,
-  clickHandler: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(DiscussionAppCard);
+export default injectIntl(AppCard);

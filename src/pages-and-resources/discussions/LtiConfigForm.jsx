@@ -2,16 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
-  StatefulButton, Form, Button, Hyperlink,
+  Form, Hyperlink,
 } from '@edx/paragon';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-import { history } from '@edx/frontend-platform';
 import messages from './messages';
 
-function DiscussionConfigForm({
-  courseId, appConfig, app, submitHandler, intl,
+function LtiConfigForm({
+  appConfig, app, onSubmit, intl, formRef,
 }) {
   const {
     handleSubmit,
@@ -19,7 +18,6 @@ function DiscussionConfigForm({
     handleBlur,
     values,
     errors,
-    isSubmitting,
   } = useFormik({
     initialValues: appConfig,
     validationSchema: Yup.object().shape({
@@ -27,23 +25,25 @@ function DiscussionConfigForm({
       consumerSecret: Yup.string().required(intl.formatMessage(messages.consumerSecretRequired)),
       launchUrl: Yup.string().required(intl.formatMessage(messages.launchUrlRequired)),
     }),
-    onSubmit: submitHandler,
+    onSubmit,
   });
 
-  const submitButtonState = isSubmitting ? 'pending' : 'default';
-
   return (
-    <Form className="m-5" onSubmit={handleSubmit}>
+    <Form ref={formRef} className="m-5" onSubmit={handleSubmit}>
       <h1>{intl.formatMessage(messages.configureApp, { name: app.name })}</h1>
       <p>
         <FormattedMessage
           id="authoring.discussions.appDocInstructions"
-          defaultMessage="Please visit the {documentationPageLink} for {name} to set up the tool, then paste your consumer key and consumer secret here."
-          description="Instructions for the user to go visit a third party app's documentation to learn how to generate a set of values needed in this form."
+          defaultMessage="{documentationPageLink} to set up the tool, then paste your consumer key and consumer secret below:"
+          description="Instructions for the user to go visit a third party app's documentation to learn how to generate a set of values needed in this form.  documentationPageLink says 'Visit the {name} documentation page'"
           values={{
             documentationPageLink: (
-              <Hyperlink destination={app.documentationUrl}>
-                {intl.formatMessage(messages.documentationPage)}
+              <Hyperlink
+                destination={app.documentationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {intl.formatMessage(messages.documentationPage, { name: app.name })}
               </Hyperlink>
             ),
             name: app.name,
@@ -89,22 +89,11 @@ function DiscussionConfigForm({
           {intl.formatMessage(messages.launchUrlRequired)}
         </Form.Control.Feedback>
       </Form.Group>
-      <StatefulButton
-        labels={{
-          default: intl.formatMessage(messages.saveConfig),
-          pending: intl.formatMessage(messages.savingConfig),
-          complete: intl.formatMessage(messages.savedConfig),
-        }}
-        type="submit"
-        state={submitButtonState}
-        className="mr-3"
-      />
-      <Button variant="link" onClick={() => history.push(`/course/${courseId}/pages-and-resources/discussion`)}>{intl.formatMessage(messages.backButton)}</Button>
     </Form>
   );
 }
 
-DiscussionConfigForm.propTypes = {
+LtiConfigForm.propTypes = {
   app: PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
@@ -115,9 +104,10 @@ DiscussionConfigForm.propTypes = {
     consumerSecret: PropTypes.string.isRequired,
     launchUrl: PropTypes.string.isRequired,
   }).isRequired,
-  courseId: PropTypes.string.isRequired,
   intl: intlShape.isRequired,
-  submitHandler: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  formRef: PropTypes.object.isRequired,
 };
 
-export default injectIntl(DiscussionConfigForm);
+export default injectIntl(LtiConfigForm);
