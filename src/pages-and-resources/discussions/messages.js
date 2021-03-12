@@ -40,40 +40,6 @@ const messages = defineMessages({
     defaultMessage: 'Saved',
     description: 'Button text shown once a discussion config has been saved to the server.',
   },
-  documentationPage: {
-    id: 'authoring.discussions.documentationPage',
-    defaultMessage: 'Visit the {name} documentation page',
-  },
-  consumerKey: {
-    id: 'authoring.discussions.consumerKey',
-    defaultMessage: 'Consumer Key',
-    description: 'Label for the Consumer Key field.',
-  },
-  consumerSecret: {
-    id: 'authoring.discussions.consumerSecret',
-    defaultMessage: 'Consumer Secret',
-    description: 'Label for the Consumer Secret field.',
-  },
-  launchUrl: {
-    id: 'authoring.discussions.launchUrl',
-    defaultMessage: 'Launch URL',
-    description: 'Label for the Launch URL field.',
-  },
-  consumerKeyRequired: {
-    id: 'authoring.discussions.consumerKey.required',
-    defaultMessage: 'Consumer Key is a required field.',
-    description: 'Tells the user that the Consumer Key field is required and must have a value.',
-  },
-  consumerSecretRequired: {
-    id: 'authoring.discussions.consumerSecret.required',
-    defaultMessage: 'Consumer Secret is a required field.',
-    description: 'Tells the user that the Consumer Secret field is required and must have a value.',
-  },
-  launchUrlRequired: {
-    id: 'authoring.discussions.launchUrl.required',
-    defaultMessage: 'Launch URL is a required field.',
-    description: 'Tells the user that the Launch URL field is required and must have a value.',
-  },
   backButton: {
     id: 'authoring.discussions.backButton',
     defaultMessage: 'Back',
@@ -88,6 +54,11 @@ const messages = defineMessages({
     id: 'authoring.discussions.applyButton',
     defaultMessage: 'Apply',
     description: 'Button allowing the user to submit their discussion configuration.',
+  },
+  selectDiscussionTool: {
+    id: 'authoring.discussions.selectDiscussionTool',
+    defaultMessage: 'Select discussion tool',
+    description: 'A label for the first step of a wizard where the user chooses a discussion tool to configure.',
   },
 });
 
