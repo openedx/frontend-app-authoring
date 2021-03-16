@@ -30,9 +30,9 @@ function PagesAndResources({ courseId, intl }) {
 
   return (
     <main>
-      <div className="container-fluid bg-info-100 pb-3">
+      <div className="container-fluid pb-3">
         <div className="d-flex justify-content-between align-items-center border-bottom">
-          <h1 className="mt-3 text-info-500">{intl.formatMessage(messages.heading)}</h1>
+          <h1 className="mt-3">{intl.formatMessage(messages.heading)}</h1>
           <a className="btn btn-primary" href={lmsCourseURL} role="button">
             {intl.formatMessage(messages['viewLive.button'])}
           </a>

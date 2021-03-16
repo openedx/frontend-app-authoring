@@ -14,35 +14,52 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Button, StatefulButton } from '@edx/paragon';
 import { Check } from '@edx/paragon/icons';
 
-import FullScreenModal from '../../generic/full-screen-modal/FullScreenModal';
-import Stepper from '../../generic/stepper/Stepper';
+import FullScreenModal from '../../generic/full-screen-modal';
+import Stepper from '../../generic/stepper';
+import { useModel } from '../../generic/model-store';
 
-import messages from './messages';
 import AppList from './AppList';
 import ConfigFormContainer from './ConfigFormContainer';
+import messages from './messages';
 import { fetchApps, saveAppConfig } from './data/thunks';
-import StepperFooter from '../../generic/stepper/StepperFooter';
-import StepperHeader from '../../generic/stepper/StepperHeader';
-import StepperBody from '../../generic/stepper/StepperBody';
-import FullScreenModalHeader from '../../generic/full-screen-modal/FullScreenModalHeader';
-import FullScreenModalBody from '../../generic/full-screen-modal/FullScreenModalBody';
 
 function Discussions({ courseId, intl }) {
-  const discussionsPath = `/course/${courseId}/pages-and-resources/discussions`;
-
   const [selectedAppId, setSelectedAppId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef();
-
   const { path } = useRouteMatch();
   const { pathname } = useLocation();
   const dispatch = useDispatch();
+  const app = useModel('apps', selectedAppId);
+
+  // Route paths
+  // TODO: pagesAndResourcesPath should probably be passed in.
+  const pagesAndResourcesPath = `/course/${courseId}/pages-and-resources`;
+  const discussionsPath = `${pagesAndResourcesPath}/discussions`;
+  const selectedAppConfigPath = `${discussionsPath}/configure/${selectedAppId}`;
+
+  const isFirstStep = pathname === discussionsPath;
+  const submitButtonState = isSubmitting ? 'pending' : 'default';
+
+  const steps = [{
+    label: intl.formatMessage(messages.selectDiscussionTool),
+    iconLabel: isFirstStep ? undefined : (
+      <Check style={{ width: '1rem', height: '1rem' }} />
+    ),
+    incomplete: false,
+  },
+  {
+    label: intl.formatMessage(messages.configureApp, {
+      name: app ? app.name : 'discussions',
+    }),
+    incomplete: isFirstStep,
+  }];
 
   useEffect(() => {
     dispatch(fetchApps(courseId));
   }, [courseId]);
 
-  const onSelectApp = useCallback((appId) => {
+  const handleSelectApp = useCallback((appId) => {
     if (selectedAppId === appId) {
       setSelectedAppId(null);
     } else {
@@ -50,57 +67,48 @@ function Discussions({ courseId, intl }) {
     }
   }, [selectedAppId]);
 
-  const onClose = useCallback(() => {
-    history.push(`/course/${courseId}/pages-and-resources`);
+  const handleClose = useCallback(() => {
+    history.push(pagesAndResourcesPath);
   }, [courseId]);
 
-  const onStartConfig = useCallback(() => {
-    history.push(`${discussionsPath}/configure/${selectedAppId}`);
+  const handleStartConfig = useCallback(() => {
+    history.push(selectedAppConfigPath);
   }, [discussionsPath, selectedAppId]);
 
   // This causes the form to be submitted from a button outside the form.
-  const onApply = () => {
+  const handleApply = () => {
     setIsSubmitting(true);
     formRef.current.requestSubmit();
   };
 
   // This is a callback that gets called after the form has been submitted successfully.
-  const onSubmit = useCallback((values) => {
+  const handleSubmit = useCallback((values) => {
+    console.log(values);
     dispatch(saveAppConfig(courseId, selectedAppId, values)).then(() => {
-      history.push(`/course/${courseId}/pages-and-resources`);
+      history.push(pagesAndResourcesPath);
     });
   }, [courseId, selectedAppId, courseId]);
 
-  const onBack = useCallback(() => {
-    history.push(discussionsPath);
-    setSelectedAppId(null);
+  const handleBack = useCallback(() => {
+    if (isFirstStep) {
+      history.push(pagesAndResourcesPath);
+    } else {
+      history.push(discussionsPath);
+      setSelectedAppId(null);
+    }
   }, [discussionsPath]);
 
-  const isFirstStep = pathname === discussionsPath;
-
-  const steps = [{
-    label: 'Select discussion tool',
-    iconLabel: isFirstStep ? undefined : (
-      <Check style={{ width: '1rem', height: '1rem' }} />
-    ),
-  },
-  {
-    label: 'Configure discussions',
-  }];
-
-  const submitButtonState = isSubmitting ? 'pending' : 'default';
-
   return (
-    <FullScreenModal title={intl.formatMessage(messages.configure)} onClose={onClose}>
-      <FullScreenModalHeader title={intl.formatMessage(messages.configure)} />
-      <FullScreenModalBody className="d-flex flex-column">
+    <FullScreenModal title={intl.formatMessage(messages.configure)} onClose={handleClose}>
+      <FullScreenModal.Header title={intl.formatMessage(messages.configure)} />
+      <FullScreenModal.Body className="d-flex flex-column">
         <Stepper className="h-100">
-          <StepperHeader steps={steps} />
-          <StepperBody>
+          <Stepper.Header steps={steps} />
+          <Stepper.Body className="bg-light-200">
             <Switch>
               <PageRoute exact path={`${path}`}>
                 <AppList
-                  onSelectApp={onSelectApp}
+                  onSelectApp={handleSelectApp}
                   selectedAppId={selectedAppId}
                 />
               </PageRoute>
@@ -108,18 +116,18 @@ function Discussions({ courseId, intl }) {
                 <ConfigFormContainer
                   courseId={courseId}
                   selectedAppId={selectedAppId}
-                  onSubmit={onSubmit}
+                  onSubmit={handleSubmit}
                   formRef={formRef}
                 />
               </PageRoute>
             </Switch>
-          </StepperBody>
-          <StepperFooter className="d-flex justify-content-between align-items-center">
-            <Button variant="outline-primary" onClick={onBack} disabled={isFirstStep}>
+          </Stepper.Body>
+          <Stepper.Footer className="d-flex justify-content-end align-items-center">
+            <Button variant="outline-primary" className="mr-2" onClick={handleBack}>
               {intl.formatMessage(messages.backButton)}
             </Button>
             {isFirstStep && (
-              <Button variant="primary" onClick={onStartConfig} disabled={!selectedAppId}>
+              <Button variant="primary" onClick={handleStartConfig} disabled={!selectedAppId}>
                 {intl.formatMessage(messages.nextButton)}
               </Button>
             )}
@@ -132,12 +140,12 @@ function Discussions({ courseId, intl }) {
                 }}
                 state={submitButtonState}
                 className="mr-3"
-                onClick={onApply}
+                onClick={handleApply}
               />
             )}
-          </StepperFooter>
+          </Stepper.Footer>
         </Stepper>
-      </FullScreenModalBody>
+      </FullScreenModal.Body>
     </FullScreenModal>
   );
 }

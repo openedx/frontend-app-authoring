@@ -1,10 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
-export default function StepIcon({ children, size }) {
+export default function Icon({ children, size, className }) {
   return (
     <div
-      className="rounded-circle small mr-2 bg-primary text-white d-flex justify-content-center align-items-center"
+      className={classNames(
+        'rounded-circle',
+        'small',
+        'mr-2',
+        'text-white',
+        'd-flex',
+        'justify-content-center',
+        'align-items-center',
+        className,
+      )}
       style={{
         // TODO: Is there a better way to lock the shape of this thing?
         width: size,
@@ -20,11 +30,13 @@ export default function StepIcon({ children, size }) {
   );
 }
 
-StepIcon.propTypes = {
+Icon.propTypes = {
+  className: PropTypes.string,
   children: PropTypes.node.isRequired,
   size: PropTypes.string,
 };
 
-StepIcon.defaultProps = {
+Icon.defaultProps = {
+  className: null,
   size: '1.3rem',
 };

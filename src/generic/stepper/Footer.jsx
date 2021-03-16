@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { StepperContext } from './StepperContext';
 
-export default function StepperFooter({ children, className }) {
+export default function Footer({ children, className }) {
+  const { isAtBottom } = useContext(StepperContext);
   return (
     <div
       className={classNames(
@@ -12,10 +14,12 @@ export default function StepperFooter({ children, className }) {
         // above the content in the div with our content.
         'position-relative',
         'w-100',
+        'border-top',
+        'border-light',
         className,
       )}
       style={{
-        boxShadow: '0 -0.25rem 0.5rem rgba(0, 0, 0, 0.3)',
+        boxShadow: isAtBottom ? null : '0 -0.25rem 0.5rem rgba(0, 0, 0, 0.3)',
       }}
     >
       {children}
@@ -23,11 +27,11 @@ export default function StepperFooter({ children, className }) {
   );
 }
 
-StepperFooter.propTypes = {
+Footer.propTypes = {
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
 };
 
-StepperFooter.defaultProps = {
+Footer.defaultProps = {
   className: null,
 };

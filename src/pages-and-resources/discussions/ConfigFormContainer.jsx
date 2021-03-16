@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-
 import { useRouteMatch } from 'react-router';
+import { Card, Container } from '@edx/paragon';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+
 import { useModel } from '../../generic/model-store';
-
-import LtiConfigForm from './LtiConfigForm';
 import { fetchAppConfig } from './data/thunks';
+import LegacyConfigForm from './apps/legacy';
+import LtiConfigForm from './apps/lti';
+import messages from './messages';
 
-// eslint-disable-next-line no-unused-vars
-export default function ConfigFormContainer({
-  courseId, onSubmit, formRef,
+function ConfigFormContainer({
+  courseId, onSubmit, formRef, intl,
 }) {
   const { params: { appId: routeAppId } } = useRouteMatch();
 
@@ -28,13 +30,35 @@ export default function ConfigFormContainer({
     return null;
   }
 
+  let form = null;
+
+  if (app.id === 'edx-discussions') {
+    form = (
+      <LegacyConfigForm
+        formRef={formRef}
+        appConfig={appConfig}
+        onSubmit={onSubmit}
+      />
+    );
+  } else {
+    form = (
+      <LtiConfigForm
+        formRef={formRef}
+        app={app}
+        appConfig={appConfig}
+        onSubmit={onSubmit}
+      />
+    );
+  }
   return (
-    <LtiConfigForm
-      formRef={formRef}
-      app={app}
-      appConfig={appConfig}
-      onSubmit={onSubmit}
-    />
+    <Container size="xs" className="px-sm-0">
+      <h3 className="my-4">
+        {intl.formatMessage(messages.configureApp, { name: app.name })}
+      </h3>
+      <Card className="mb-5 p-5">
+        {form}
+      </Card>
+    </Container>
   );
 }
 
@@ -43,4 +67,7 @@ ConfigFormContainer.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
+  intl: intlShape.isRequired,
 };
+
+export default injectIntl(ConfigFormContainer);

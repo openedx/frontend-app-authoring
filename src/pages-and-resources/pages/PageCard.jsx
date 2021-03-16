@@ -29,7 +29,7 @@ function PageCard({ intl, page }) {
   const componentClasses = classNames(
     'd-flex flex-column align-content-stretch',
     'bg-white p-3 border shadow',
-    { 'border-info-300': page.isEnabled, 'border-gray-100': !page.isEnabled },
+    { 'border-gray-500': page.isEnabled, 'border-gray-100': !page.isEnabled },
   );
 
   const handleClick = () => {

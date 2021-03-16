@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import {
-  Form, Hyperlink,
-} from '@edx/paragon';
+import { Form, Hyperlink } from '@edx/paragon';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -29,8 +27,7 @@ function LtiConfigForm({
   });
 
   return (
-    <Form ref={formRef} className="m-5" onSubmit={handleSubmit}>
-      <h1>{intl.formatMessage(messages.configureApp, { name: app.name })}</h1>
+    <Form ref={formRef} onSubmit={handleSubmit}>
       <p>
         <FormattedMessage
           id="authoring.discussions.appDocInstructions"

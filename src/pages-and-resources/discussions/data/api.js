@@ -1,6 +1,6 @@
-const edXForumsApp = {
-  id: 'edx-forums',
-  name: 'edX Forum',
+const legacyEdXDiscussions = {
+  id: 'edx-discussions',
+  name: 'edX Discussions',
   logo: 'https://cdn-blog.lawrencemcdaniel.com/wp-content/uploads/2018/01/22125436/edx-logo.png',
   description: 'Start conversations with other learners, ask questions, and interact with other learners in the course.',
   supportLevel: 'Full support',
@@ -72,7 +72,7 @@ export function getApps() {
       },
     ],
     apps: [
-      edXForumsApp,
+      legacyEdXDiscussions,
       piazzaApp,
       yellowdigApp,
     ],
@@ -90,17 +90,37 @@ export function getAppConfig(courseId, appId) {
       app = yellowdigApp;
       break;
     default:
-      app = edXForumsApp;
+      app = legacyEdXDiscussions;
+  }
+
+  let appConfig = {
+    id: 'appConfig1',
+    consumerSecret: 'its-a-secret-to-everybody',
+    consumerKey: 'abc123',
+    launchUrl: 'https://localhost/launch',
+  };
+
+  if (appId === 'edx-discussions') {
+    appConfig = {
+      id: 'appConfig2',
+      divideByCohorts: false,
+      allowDivisionByUnit: false,
+      divideCourseWideTopics: false,
+      divideGeneralTopic: false,
+      divideQuestionsForTAs: false,
+      inContextDiscussion: false,
+      gradedUnitPages: false,
+      groupInContextSubsection: false,
+      allowUnitLevelVisibility: false,
+      allowAnonymousPosts: false,
+      allowAnonymousPostsPeers: false,
+      blackoutDates: '[]',
+    };
   }
 
   return Promise.resolve({
     app,
-    appConfig: {
-      id: 'appConfig1',
-      consumerSecret: 'its-a-secret-to-everybody',
-      consumerKey: 'abc123',
-      launchUrl: 'https://localhost/launch',
-    },
+    appConfig,
     features: [
       {
         id: 'lti',
@@ -136,7 +156,7 @@ export function postAppConfig(courseId, appId, drafts) {
       app = yellowdigApp;
       break;
     default:
-      app = edXForumsApp;
+      app = legacyEdXDiscussions;
   }
   return new Promise((resolve) => {
     setTimeout(() => {
