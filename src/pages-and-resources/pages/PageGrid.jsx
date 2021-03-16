@@ -7,7 +7,7 @@ import messages from '../messages';
 
 function PageGrid({ intl, pages }) {
   return (
-    <div className="text-info-500">
+    <div>
       <h3 className="mt-3">
         {intl.formatMessage(messages['pages.subheading'])}
       </h3>
