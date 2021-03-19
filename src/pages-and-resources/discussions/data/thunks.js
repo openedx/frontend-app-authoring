@@ -21,11 +21,12 @@ export function fetchApps(courseId) {
     dispatch(updateStatus({ courseId, status: LOADING }));
 
     try {
-      const { apps, features } = await getApps(courseId);
+      const { apps, features, activeAppId } = await getApps(courseId);
 
       dispatch(addModels({ modelType: 'apps', models: apps }));
       dispatch(addModels({ modelType: 'features', models: features }));
       dispatch(fetchAppsSuccess({
+        activeAppId,
         appIds: apps.map(app => app.id),
         featureIds: features.map(feature => feature.id),
       }));

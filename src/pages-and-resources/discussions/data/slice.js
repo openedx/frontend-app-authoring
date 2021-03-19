@@ -21,6 +21,7 @@ const slice = createSlice({
     fetchAppsSuccess: (state, { payload }) => {
       state.appIds = payload.appIds;
       state.featureIds = payload.featureIds;
+      state.activeAppId = payload.activeAppId;
     },
     fetchAppConfigSuccess: (state, { payload }) => {
       state.activeAppId = payload.activeAppId;

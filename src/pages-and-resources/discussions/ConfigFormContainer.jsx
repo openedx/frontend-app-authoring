@@ -32,7 +32,7 @@ function ConfigFormContainer({
 
   let form = null;
 
-  if (app.id === 'edx-discussions') {
+  if (app.id === 'legacy') {
     form = (
       <LegacyConfigForm
         formRef={formRef}
