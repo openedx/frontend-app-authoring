@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { DataTable } from '@edx/paragon';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import messages from './messages';
 
-export default function FeaturesTable({ apps, features }) {
+function FeaturesTable({ apps, features, intl }) {
   return (
     <>
       <DataTable
@@ -24,7 +26,7 @@ export default function FeaturesTable({ apps, features }) {
           });
 
           return {
-            feature: feature.name, // 'feature' is the identifier for cells in the first column.
+            feature: intl.formatMessage(messages[`featureName-${feature.id}`]), // 'feature' is the identifier for cells in the first column.
             // This is spreading the app IDs from appCheckmarkCells into the return array, creating
             // one object with 'feature' and the app.id keys from above.  The values are the JSX
             // above with the font awesome checkmarks in 'em
@@ -39,7 +41,7 @@ export default function FeaturesTable({ apps, features }) {
           // We're converting our apps array into a bunch of objects with "Header" and "accessor"
           // keys, like DataTable expects.
           ...apps.map(app => ({
-            Header: app.name,
+            Header: intl.formatMessage(messages[`appName-${app.id}`]),
             accessor: app.id,
           })),
         ]}
@@ -50,7 +52,10 @@ export default function FeaturesTable({ apps, features }) {
   );
 }
 
+export default injectIntl(FeaturesTable);
+
 FeaturesTable.propTypes = {
   apps: PropTypes.arrayOf(PropTypes.object).isRequired,
   features: PropTypes.arrayOf(PropTypes.object).isRequired,
+  intl: intlShape.isRequired,
 };
