@@ -510,8 +510,8 @@ function ProctoredExamSettings({ courseId, intl }) {
             setCreateZendeskTickets(proctoredExamSettings.create_zendesk_tickets);
           },
         ).catch(
-          errorDetails => {
-            if (errorDetails.customAttributes.httpErrorStatus === 403) {
+          error => {
+            if (error.response.status === 403) {
               setLoadingPermissionError(true);
             } else {
               setLoadingConnectionError(true);
