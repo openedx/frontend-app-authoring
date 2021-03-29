@@ -238,6 +238,53 @@ describe('ProctoredExamSettings', () => {
       expect(document.activeElement).toEqual(escalationEmailInput);
     });
 
+    it('Creates an alert when invalid proctoring escalation email is provided with proctoring disabled', async () => {
+      await waitFor(() => {
+        screen.getByDisplayValue('proctortrack');
+      });
+      const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
+      await act(async () => {
+        fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
+      });
+      const enableProctoringElement = screen.getByLabelText('Enable Proctored Exams');
+      await act(async () => fireEvent.click(enableProctoringElement));
+      const selectButton = screen.getByTestId('submissionButton');
+      await act(async () => {
+        fireEvent.click(selectButton);
+      });
+
+      // verify alert content and focus management
+      const escalationEmailError = screen.getByTestId('proctortrackEscalationEmailError');
+      expect(document.activeElement).toEqual(escalationEmailError);
+      expect(escalationEmailError.textContent).not.toBeNull();
+      expect(document.activeElement).toEqual(escalationEmailError);
+    });
+
+    it('Has no error when invalid proctoring escalation email is provided with proctoring disabled', async () => {
+      await waitFor(() => {
+        screen.getByDisplayValue('proctortrack');
+      });
+      const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
+      await act(async () => {
+        fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
+      });
+      const enableProctoringElement = screen.getByLabelText('Enable Proctored Exams');
+      await act(async () => fireEvent.click(enableProctoringElement));
+      const selectButton = screen.getByTestId('submissionButton');
+      await act(async () => {
+        fireEvent.click(selectButton);
+      });
+
+      // verify there is no escalation email alert, and focus has been set on save success alert
+      expect(screen.queryByTestId('proctortrackEscalationEmailError')).toBeNull();
+
+      const errorAlert = screen.getByTestId('saveSuccess');
+      expect(errorAlert.textContent).toEqual(
+        expect.stringContaining('Proctored exam settings saved successfully.'),
+      );
+      expect(document.activeElement).toEqual(errorAlert);
+    });
+
     it('Has no error when valid proctoring escalation email is provided with proctortrack selected', async () => {
       await waitFor(() => {
         screen.getByDisplayValue('proctortrack');

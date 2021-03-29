@@ -108,7 +108,7 @@ function ProctoredExamSettings({ courseId, intl }) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    if (proctoringProvider === 'proctortrack' && !EmailValidator.validate(proctortrackEscalationEmail)) {
+    if (proctoringProvider === 'proctortrack' && !EmailValidator.validate(proctortrackEscalationEmail) && !(proctortrackEscalationEmail === '' && !enableProctoredExams)) {
       if (proctortrackEscalationEmail === '') {
         const errorMessage = intl.formatMessage(messages['authoring.examsettings.escalationemail.error.blank']);
 
@@ -192,7 +192,7 @@ function ProctoredExamSettings({ courseId, intl }) {
   function renderContent() {
     return (
       <Form onSubmit={handleSubmit} data-test-id="proctoringForm">
-        {enableProctoredExams && !formStatus.isValid && formStatus.errors.formProctortrackEscalationEmail
+        {!formStatus.isValid && formStatus.errors.formProctortrackEscalationEmail
           && (
             // tabIndex="-1" to make non-focusable element focusable
             <Alert
