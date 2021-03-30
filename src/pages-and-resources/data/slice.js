@@ -1,29 +1,31 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-
-export const LOADING = 'LOADING';
-export const LOADED = 'LOADED';
-export const FAILED = 'FAILED';
+import { RequestStatus } from '../../data/constants';
 
 const slice = createSlice({
   name: 'pagesAndResources',
   initialState: {
-    pageIds: [],
-    status: LOADING,
+    courseAppIds: [],
+    loadingStatus: RequestStatus.IN_PROGRESS,
+    savingStatus: RequestStatus.SUCCESSFUL,
   },
   reducers: {
-    fetchPagesSuccess: (state, { payload }) => {
-      state.pageIds = payload.pageIds;
+    fetchCourseAppsSuccess: (state, { payload }) => {
+      state.courseAppIds = payload.courseAppIds;
     },
-    updateStatus: (state, { payload }) => {
-      state.status = payload.status;
+    updateLoadingStatus: (state, { payload }) => {
+      state.loadingStatus = payload.status;
+    },
+    updateSavingStatus: (state, { payload }) => {
+      state.savingStatus = payload.status;
     },
   },
 });
 
 export const {
-  fetchPagesSuccess,
-  updateStatus,
+  fetchCourseAppsSuccess,
+  updateLoadingStatus,
+  updateSavingStatus,
 } = slice.actions;
 
 export const {

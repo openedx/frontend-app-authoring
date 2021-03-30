@@ -40,8 +40,8 @@ function renderComponent() {
         <Switch>
           <PageRoute
             path={[
-              `/course/${courseId}/pages-and-resources/discussions/configure/:appId`,
-              `/course/${courseId}/pages-and-resources/discussions`,
+              `/course/${courseId}/pages-and-resources/discussion/configure/:appId`,
+              `/course/${courseId}/pages-and-resources/discussion`,
             ]}
           >
             <DiscussionsSettings courseId={courseId} />
@@ -79,7 +79,7 @@ describe('DiscussionsSettings', () => {
     });
 
     test('sets selection step from routes', async () => {
-      history.push(`/course/${courseId}/pages-and-resources/discussions`);
+      history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
@@ -90,7 +90,7 @@ describe('DiscussionsSettings', () => {
     });
 
     test('sets settings step from routes', async () => {
-      history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
+      history.push(`/course/${courseId}/pages-and-resources/discussion/configure/piazza`);
 
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
@@ -101,7 +101,7 @@ describe('DiscussionsSettings', () => {
     });
 
     test('successfully advances to settings step for lti', async () => {
-      history.push(`/course/${courseId}/pages-and-resources/discussions`);
+      history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
@@ -119,7 +119,7 @@ describe('DiscussionsSettings', () => {
     test('successfully advances to settings step for legacy', async () => {
       axiosMock.onGet(getAppsUrl(courseId)).reply(200, legacyApiResponse);
       renderComponent();
-      history.push(`/course/${courseId}/pages-and-resources/discussions`);
+      history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
@@ -135,7 +135,7 @@ describe('DiscussionsSettings', () => {
     });
 
     test('successfully goes back to first step', async () => {
-      history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
+      history.push(`/course/${courseId}/pages-and-resources/discussion/configure/piazza`);
 
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
@@ -150,7 +150,7 @@ describe('DiscussionsSettings', () => {
     });
 
     test('successfully closes the modal', async () => {
-      history.push(`/course/${courseId}/pages-and-resources/discussions`);
+      history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
@@ -167,7 +167,7 @@ describe('DiscussionsSettings', () => {
     });
 
     test('successfully submit the modal', async () => {
-      history.push(`/course/${courseId}/pages-and-resources/discussions`);
+      history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
       axiosMock.onPost(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
 
@@ -205,7 +205,7 @@ describe('DiscussionsSettings', () => {
     });
 
     test('shows connection error alert', async () => {
-      history.push(`/course/${courseId}/pages-and-resources/discussions`);
+      history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
@@ -232,7 +232,7 @@ describe('DiscussionsSettings', () => {
     });
 
     test('shows connection error alert at top of form', async () => {
-      history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
+      history.push(`/course/${courseId}/pages-and-resources/discussion/configure/piazza`);
 
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
@@ -262,7 +262,7 @@ describe('DiscussionsSettings', () => {
     });
 
     test('shows permission denied alert', async () => {
-      history.push(`/course/${courseId}/pages-and-resources/discussions`);
+      history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
@@ -283,7 +283,7 @@ describe('DiscussionsSettings', () => {
     });
 
     test('shows permission denied alert at top of form', async () => {
-      history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
+      history.push(`/course/${courseId}/pages-and-resources/discussion/configure/piazza`);
 
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
@@ -300,7 +300,7 @@ describe('DiscussionsSettings', () => {
       expect(queryByTestId(container, 'appConfigForm')).not.toBeInTheDocument();
 
       // We don't technically leave the route in this case, though the modal is hidden.
-      expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
+      expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussion/configure/piazza`);
 
       const alert = queryByRole(container, 'alert');
       expect(alert).toBeInTheDocument();

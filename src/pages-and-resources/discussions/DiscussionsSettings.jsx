@@ -36,7 +36,7 @@ function DiscussionsSettings({ courseId, intl }) {
     dispatch(fetchApps(courseId));
   }, [courseId]);
 
-  const discussionsPath = `${pagesAndResourcesPath}/discussions`;
+  const discussionsPath = `${pagesAndResourcesPath}/discussion`;
   const { params: { appId } } = useRouteMatch();
 
   const startStep = appId ? SETTINGS_STEP : SELECTION_STEP;

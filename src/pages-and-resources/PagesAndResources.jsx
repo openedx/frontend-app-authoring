@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { PageRoute } from '@edx/frontend-platform/react';
@@ -12,39 +12,59 @@ import DiscussionsSettings from './discussions';
 import PageGrid from './pages/PageGrid';
 import ResourceList from './resources/ResourcesList';
 
-import { fetchPages } from './data/thunks';
+import { fetchCourseApps } from './data/thunks';
 import { useModels } from '../generic/model-store';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 
 function PagesAndResources({ courseId, intl }) {
-  const { path } = useRouteMatch();
+  const { path, url } = useRouteMatch();
 
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(fetchPages(courseId));
+    dispatch(fetchCourseApps(courseId));
   }, [courseId]);
 
-  const pageIds = useSelector(state => state.pagesAndResources.pageIds);
-  const pages = useModels('pages', pageIds);
+  const courseAppIds = useSelector(state => state.pagesAndResources.courseAppIds);
+  // Each page here is driven by a course app
+  const pages = useModels('courseApps', courseAppIds);
 
   return (
     <PagesAndResourcesProvider courseId={courseId}>
-      <main>
-        <div className="container-fluid pb-3">
-          <div className="d-flex justify-content-between align-items-center border-bottom">
-            <h1 className="mt-3">{intl.formatMessage(messages.heading)}</h1>
-          </div>
-          <PageGrid pages={pages} />
-          <ResourceList />
-        </div>
+      <main className="container container-mw-md">
+        <h3 className="mt-5 mb-5">{intl.formatMessage(messages.heading)}</h3>
+        <PageGrid pages={pages} />
+        <ResourceList />
         <Switch>
           <PageRoute
             path={[
-              `${path}/discussions/configure/:appId`,
-              `${path}/discussions`,
+              `${path}/discussion/configure/:appId`,
+              `${path}/discussion`,
             ]}
           >
             <DiscussionsSettings courseId={courseId} />
+          </PageRoute>
+          <PageRoute path={`${path}/:appId/settings`}>
+            {
+              ({ match, history }) => {
+                const SettingsComponent = React.lazy(async () => {
+                  try {
+                    // There seems to be a bug in babel-eslint that causes the checker to crash with the following error
+                    // if we use a template string here:
+                    //     TypeError: Cannot read property 'range' of null with using template strings here.
+                    // Ref: https://github.com/babel/babel-eslint/issues/530
+                    return await import('./' + match.params.appId + '/Settings.jsx'); // eslint-disable-line
+                  } catch (error) {
+                    console.trace(error); // eslint-disable-line no-console
+                    return null;
+                  }
+                });
+                return (
+                  <Suspense fallback="...">
+                    <SettingsComponent onClose={() => history.push(url)} />
+                  </Suspense>
+                );
+              }
+            }
           </PageRoute>
         </Switch>
       </main>

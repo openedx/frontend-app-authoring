@@ -1,33 +1,47 @@
+import { RequestStatus } from '../../data/constants';
 import {
-  getPages,
+  getCourseApps,
+  updateCourseApp,
 } from './api';
-import { addModels } from '../../generic/model-store';
+import { addModels, updateModel } from '../../generic/model-store';
 import {
-  FAILED,
-  fetchPagesSuccess,
-  LOADING,
-  updateStatus,
-  LOADED,
+  fetchCourseAppsSuccess,
+  updateLoadingStatus,
+  updateSavingStatus,
 } from './slice';
 
 /* eslint-disable import/prefer-default-export */
-export function fetchPages(courseId) {
+export function fetchCourseApps(courseId) {
   return async (dispatch) => {
-    dispatch(updateStatus({ courseId, status: LOADING }));
+    dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
 
     try {
-      const { pages } = await getPages(courseId);
+      const courseApps = await getCourseApps(courseId);
 
-      dispatch(addModels({ modelType: 'pages', models: pages }));
-      dispatch(fetchPagesSuccess({
-        pageIds: pages.map(page => page.id),
+      dispatch(addModels({ modelType: 'courseApps', models: courseApps }));
+      dispatch(fetchCourseAppsSuccess({
+        courseAppIds: courseApps.map(courseApp => courseApp.id),
       }));
-      dispatch(updateStatus({ courseId, status: LOADED }));
+      dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       // TODO: We need generic error handling in the app for when a request just fails... in other
       // parts of the app (proctored exam settings) we show a nice message and ask the user to
       // reload/try again later.
-      dispatch(updateStatus({ courseId, status: FAILED }));
+      dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function updateAppStatus(courseId, appId, state) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      await updateCourseApp(courseId, appId, state);
+      dispatch(updateModel({ modelType: 'courseApps', model: { id: appId, enabled: state } }));
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   };
 }

@@ -1,73 +1,75 @@
+import { history } from '@edx/frontend-platform';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import {
+  Button, Card, Icon, IconButton,
+} from '@edx/paragon';
+import { Settings } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
-import classNames from 'classnames';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Button } from '@edx/paragon';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog } from '@fortawesome/free-solid-svg-icons';
-
-import { history } from '@edx/frontend-platform';
+import StatusBadge from '../../generic/status-badge/StatusBadge';
 import messages from '../messages';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 
 const CoursePageShape = PropTypes.shape({
   id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  isEnabled: PropTypes.bool.isRequired,
-  showSettings: PropTypes.bool.isRequired,
-  showStatus: PropTypes.bool.isRequired,
-  showEnable: PropTypes.bool.isRequired,
+  enabled: PropTypes.bool.isRequired,
+  allowedOperations: PropTypes.shape({
+    enable: PropTypes.bool.isRequired,
+    configure: PropTypes.bool.isRequired,
+  }).isRequired,
 });
 
 export { CoursePageShape };
 
-function PageCard({ intl, page }) {
+function PageCard({
+  intl,
+  page,
+}) {
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
-
-  const pageStatusMsgId = page.isEnabled ? 'pageStatus.enabled' : 'pageStatus.disabled';
-  const componentClasses = classNames(
-    'd-flex flex-column align-content-stretch',
-    'bg-light-100 p-3 border shadow',
-    { 'border-gray-500': page.isEnabled, 'border-gray-100': !page.isEnabled },
-  );
 
   const handleClick = () => {
     history.push(`${pagesAndResourcesPath}/${page.id}`);
   };
 
   return (
-    <div
-      className="d-flex flex-column align-content-stretch p-3 col-sm-12 col-md-6 col-lg-4"
+    <Card
+      className="shadow card"
+      style={{
+        width: '19rem',
+        height: '14rem',
+      }}
     >
-      <div
-        className={componentClasses}
-        style={{
-          flexBasis: '100%',
-        }}
-      >
-        <div className="d-flex flex-row">
-          <span className="font-weight-bold">{page.title}</span>
-          {page.showSettings && <FontAwesomeIcon icon={faCog} className="ml-auto" />}
-        </div>
+      <Card.Body className="d-flex flex-column">
+        <Card.Title className="d-flex mb-0 align-items-center justify-content-between">
+          <h4 className="m-0 p-0">{page.name}</h4>
+          {(page.allowedOperations.configure || page.allowedOperations.enable)
+          && (
+            <IconButton
+              className="mb-0 mr-1"
+              src={Settings}
+              iconAs={Icon}
+              size="inline"
+              alt={intl.formatMessage(messages.settings)}
+              onClick={() => history.push(`${pagesAndResourcesPath}/${page.id}/settings`)}
+            />
+          )}
+        </Card.Title>
 
-        <div>
-          {page.showStatus && <span>{intl.formatMessage(messages[pageStatusMsgId])}</span>}
-        </div>
+        <div className="mb-2"><StatusBadge status={page.enabled} /></div>
 
-        <div className="mt-3">
-          <p>{page.description}</p>
-        </div>
+        <Card.Text className="flex-grow-1 m-0">
+          {page.description}
+        </Card.Text>
 
-        {page.showEnable && !page.isEnabled && (
-          <div className="d-flex justify-content-center">
-            <Button variant="outline-primary" onClick={handleClick}>
-              {intl.formatMessage(messages['enable.button'])}
-            </Button>
-          </div>
+        {(page.allowedOperations.enable && !page.enabled) && (
+          <Button variant="outline-primary" size="sm" onClick={handleClick} className="align-self-end">
+            {intl.formatMessage(messages['enable.button'])}
+          </Button>
         )}
-      </div>
-    </div>
+      </Card.Body>
+    </Card>
   );
 }
 
