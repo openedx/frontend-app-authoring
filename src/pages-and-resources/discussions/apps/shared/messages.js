@@ -1,6 +1,7 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  // Division fields
   divisionByGroup: {
     id: 'authoring.discussions.builtIn.divisionByGroup',
     defaultMessage: 'Division by group',
@@ -29,6 +30,8 @@ const messages = defineMessages({
     id: 'authoring.discussions.builtIn.divideCourseWideTopics.help',
     defaultMessage: 'Choose which of your general course wide discussion topics you would like to divide.',
   },
+
+  // In-context discussion fields
   visibilityInContext: {
     id: 'authoring.discussions.builtIn.visibilityInContext',
     defaultMessage: 'Visibility of in-context discussions',
@@ -65,6 +68,8 @@ const messages = defineMessages({
     id: 'authoring.discussions.builtIn.allowUnitLevelVisibility.help',
     defaultMessage: 'With this advanced setting enabled you will be able to override the global visibility setting and turn discussions on or off for each unit from the course outline view..',
   },
+
+  // Anonymous posting fields
   anonymousPosting: {
     id: 'authoring.discussions.builtIn.anonymousPosting',
     defaultMessage: 'Anonymous posting',
@@ -85,9 +90,16 @@ const messages = defineMessages({
     id: 'authoring.discussions.builtIn.allowAnonymousPeers.help',
     defaultMessage: 'Enter true or false. If true, students can create discussion posts that are anonymous to other students. This setting does not make posts anonymous to course staff.',
   },
+
+  // Blackout dates
+  blackoutDates: {
+    id: 'authoring.discussions.blackoutDates',
+    defaultMessage: 'Discussion blackout dates',
+
+  },
   blackoutDatesLabel: {
     id: 'authoring.discussions.builtIn.blackoutDates.label',
-    defaultMessage: 'Discussion Blackout Dates',
+    defaultMessage: 'Blackout dates',
   },
   blackoutDatesHelp: {
     id: 'authoring.discussions.builtIn.blackoutDates.help',
