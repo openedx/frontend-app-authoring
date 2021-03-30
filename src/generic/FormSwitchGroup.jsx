@@ -6,12 +6,27 @@ export default function FormSwitchGroup({
   id, label, helpText, className, onChange, onBlur, checked,
 }) {
   const helpTextId = `${id}HelpText`;
+
+  // Note that we use controlId here _and_ set some IDs and aria-describedby attributes manually.
+  // controlId doesn't cover Form.Switch properly, so controlId is just helping to attach
+  // a 'for' attribute to the Label.
   return (
-    <Form.Group className={className}>
+    <Form.Group
+      controlId={id}
+      className={className}
+    >
       <div className="d-flex justify-content-between">
-        <Form.Label>
-          {label}
-        </Form.Label>
+        <div className="pr-3">
+          <Form.Label>
+            {label}
+          </Form.Label>
+          <Form.Text
+            id={helpTextId}
+            muted
+          >
+            {helpText}
+          </Form.Text>
+        </div>
         <Form.Switch
           id={id}
           aria-describedby={helpTextId}
@@ -20,9 +35,7 @@ export default function FormSwitchGroup({
           checked={checked}
         />
       </div>
-      <Form.Text id={helpTextId} muted>
-        {helpText}
-      </Form.Text>
+
     </Form.Group>
   );
 }
