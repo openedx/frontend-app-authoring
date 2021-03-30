@@ -50,9 +50,10 @@ export function fetchAppConfig(courseId, appId) {
       dispatch(addModel({ modelType: 'apps', model: app }));
       dispatch(addModels({ modelType: 'features', models: features }));
       dispatch(addModel({ modelType: 'appConfigs', model: appConfig }));
+
       dispatch(fetchAppConfigSuccess({
-        activeAppId: app.id,
-        activeAppConfigId: appConfig.id,
+        displayedAppId: app.id,
+        displayedAppConfigId: appConfig.id,
         featureIds: features.map(feature => feature.id),
       }));
       dispatch(updateStatus({ courseId, status: LOADED }));

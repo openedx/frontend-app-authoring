@@ -21,10 +21,10 @@ function ConfigFormContainer({
     dispatch(fetchAppConfig(courseId, routeAppId));
   }, [courseId]);
 
-  const { activeAppId, activeAppConfigId } = useSelector(state => state.discussions);
+  const { displayedAppId, displayedAppConfigId } = useSelector(state => state.discussions);
 
-  const app = useModel('apps', activeAppId);
-  const appConfig = useModel('appConfigs', activeAppConfigId);
+  const app = useModel('apps', displayedAppId);
+  const appConfig = useModel('appConfigs', displayedAppConfigId);
 
   if (!appConfig || !app) {
     return null;
@@ -51,7 +51,7 @@ function ConfigFormContainer({
     );
   }
   return (
-    <Container size="xs" className="px-sm-0">
+    <Container size="sm" className="px-sm-0">
       <h3 className="my-4">
         {intl.formatMessage(messages.configureApp, { name: app.name })}
       </h3>
