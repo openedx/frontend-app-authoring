@@ -23,25 +23,25 @@ import AppConfigFormDivider from '../discussions/app-config-form/apps/shared/App
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import messages from './messages';
 
-function AppSettingsForm({ formikProps, children }) {
+function AppSettingsForm({ formikProps, children, showForm }) {
   return children && (
     <TransitionReplace>
-      {formikProps.values.enabled
-        ? (
-          <React.Fragment key="app-enabled">
-            {children(formikProps)}
-          </React.Fragment>
-        ) : (
-          <React.Fragment key="app-disabled" />
-        )}
+      {showForm ? (
+        <React.Fragment key="app-enabled">
+          {children(formikProps)}
+        </React.Fragment>
+      ) : (
+        <React.Fragment key="app-disabled" />
+      )}
     </TransitionReplace>
   );
 }
 
 AppSettingsForm.propTypes = {
-  formikProps: PropTypes.shape({
-    values: PropTypes.shape({ enabled: PropTypes.bool.isRequired }),
-  }).isRequired,
+  // Ignore the warning here since we're just passing along the props as-is and the child component should validate
+  // eslint-disable-next-line react/forbid-prop-types
+  formikProps: PropTypes.object.isRequired,
+  showForm: PropTypes.bool.isRequired,
   children: PropTypes.func,
 };
 
@@ -101,6 +101,7 @@ function AppSettingsModal({
   appId,
   title,
   children,
+  configureBeforeEnable,
   initialValues,
   validationSchema,
   onClose,
@@ -210,9 +211,9 @@ function AppSettingsModal({
                   </div>
                 )}
               />
-              {formikProps.values.enabled && children
+              {(formikProps.values.enabled || configureBeforeEnable) && children
               && <AppConfigFormDivider marginAdj={{ default: 0, sm: 0 }} />}
-              <AppSettingsForm formikProps={formikProps}>
+              <AppSettingsForm formikProps={formikProps} showForm={formikProps.values.enabled || configureBeforeEnable}>
                 {children}
               </AppSettingsForm>
             </AppSettingsModalBase>
@@ -251,6 +252,7 @@ AppSettingsModal.propTypes = {
   enableAppLabel: PropTypes.string.isRequired,
   enableAppHelp: PropTypes.string.isRequired,
   learnMoreText: PropTypes.string.isRequired,
+  configureBeforeEnable: PropTypes.bool,
 };
 
 AppSettingsModal.defaultProps = {
@@ -258,6 +260,7 @@ AppSettingsModal.defaultProps = {
   onSettingsSave: null,
   initialValues: {},
   validationSchema: {},
+  configureBeforeEnable: false,
 };
 
 export default injectIntl(AppSettingsModal);
