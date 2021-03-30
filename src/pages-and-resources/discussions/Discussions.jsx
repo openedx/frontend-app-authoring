@@ -83,7 +83,6 @@ function Discussions({ courseId, intl }) {
 
   // This is a callback that gets called after the form has been submitted successfully.
   const handleSubmit = useCallback((values) => {
-    console.log(values);
     dispatch(saveAppConfig(courseId, selectedAppId, values)).then(() => {
       history.push(pagesAndResourcesPath);
     });
