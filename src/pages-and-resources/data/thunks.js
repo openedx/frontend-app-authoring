@@ -1,14 +1,16 @@
 import { RequestStatus } from '../../data/constants';
-import {
-  getCourseApps,
-  updateCourseApp,
-} from './api';
 import { addModels, updateModel } from '../../generic/model-store';
 import {
+  getCourseAdvancedSettings,
+  getCourseApps, updateCourseAdvancedSettings,
+  updateCourseApp,
+} from './api';
+import {
+  fetchCourseAppsSettingsSuccess,
   fetchCourseAppsSuccess,
+  updateCourseAppsApiStatus, updateCourseAppsSettingsSuccess,
   updateLoadingStatus,
   updateSavingStatus,
-  updateCourseAppsApiStatus,
 } from './slice';
 
 const COURSE_APPS_ORDER = [
@@ -54,6 +56,34 @@ export function updateAppStatus(courseId, appId, state) {
     try {
       await updateCourseApp(courseId, appId, state);
       dispatch(updateModel({ modelType: 'courseApps', model: { id: appId, enabled: state } }));
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function fetchCourseAppSettings(courseId, settings) {
+  return async (dispatch) => {
+    dispatch(updateLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      const settingValues = await getCourseAdvancedSettings(courseId, settings);
+      dispatch(fetchCourseAppsSettingsSuccess(settingValues));
+      dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateLoadingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function updateCourseAppSetting(courseId, setting, value) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      const settingValues = await updateCourseAdvancedSettings(courseId, setting, value);
+      dispatch(updateCourseAppsSettingsSuccess(settingValues));
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));

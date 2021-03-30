@@ -6,22 +6,22 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
 import messages from './messages';
 
-function CalculatorSettings({ intl, onClose }) {
+function NotesSettings({ intl, onClose }) {
   return (
     <AppSettingsModal
-      appId="calculator"
+      appId="edxnotes"
       title={intl.formatMessage(messages.heading)}
-      enableAppHelp={intl.formatMessage(messages.enableCalculatorHelp)}
-      enableAppLabel={intl.formatMessage(messages.enableCalculatorLabel)}
-      learnMoreText={intl.formatMessage(messages.enableCalculatorLink)}
+      enableAppHelp={intl.formatMessage(messages.enableNotesHelp)}
+      enableAppLabel={intl.formatMessage(messages.enableNotesLabel)}
+      learnMoreText={intl.formatMessage(messages.enableNotesLink)}
       onClose={onClose}
     />
   );
 }
 
-CalculatorSettings.propTypes = {
+NotesSettings.propTypes = {
   intl: intlShape.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
-export default injectIntl(CalculatorSettings);
+export default injectIntl(NotesSettings);
