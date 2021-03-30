@@ -7,6 +7,7 @@ export default function PagesAndResourcesProvider({ courseId, children }) {
   return (
     <PagesAndResourcesContext.Provider
       value={{
+        courseId,
         path: `/course/${courseId}/pages-and-resources`,
       }}
     >

@@ -37,6 +37,10 @@ const messages = defineMessages({
     id: 'course-authoring.pages-resources.resources.newPage.button',
     defaultMessage: 'New Page',
   },
+  settings: {
+    id: 'course-authoring.pages-resources.resources.settings.button',
+    defaultMessage: 'settings',
+  },
 });
 
 export default messages;
