@@ -47,44 +47,44 @@ function LtiConfigForm({
           }}
         />
       </p>
-      <Form.Group controlId="consumerKey">
+      <Form.Group controlId="consumerKey" isInvalid={errors.consumerKey}>
         <Form.Label>{intl.formatMessage(messages.consumerKey)}</Form.Label>
         <Form.Control
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.consumerKey}
-          className={{ 'is-invalid': !!errors.consumerKey }}
-          aria-describedby="consumerKeyFeedback"
         />
-        <Form.Control.Feedback id="consumerKeyFeedback" type="invalid">
-          {intl.formatMessage(messages.consumerKeyRequired)}
-        </Form.Control.Feedback>
+        {errors.consumerKey && (
+          <Form.Control.Feedback type="invalid">
+            {errors.consumerKey}
+          </Form.Control.Feedback>
+        )}
       </Form.Group>
-      <Form.Group controlId="consumerSecret">
+      <Form.Group controlId="consumerSecret" isInvalid={errors.consumerSecret}>
         <Form.Label>{intl.formatMessage(messages.consumerSecret)}</Form.Label>
         <Form.Control
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.consumerSecret}
-          className={{ 'is-invalid': !!errors.consumerSecret }}
-          aria-describedby="consumerSecretFeedback"
         />
-        <Form.Control.Feedback id="consumerSecretFeedback" type="invalid">
-          {intl.formatMessage(messages.consumerSecretRequired)}
-        </Form.Control.Feedback>
+        {errors.consumerSecret && (
+          <Form.Control.Feedback type="invalid">
+            {errors.consumerSecret}
+          </Form.Control.Feedback>
+        )}
       </Form.Group>
-      <Form.Group controlId="launchUrl">
+      <Form.Group controlId="launchUrl" isInvalid={errors.launchUrl}>
         <Form.Label>{intl.formatMessage(messages.launchUrl)}</Form.Label>
         <Form.Control
           onChange={handleChange}
           onBlur={handleBlur}
           value={values.launchUrl}
-          className={{ 'is-invalid': !!errors.launchUrl }}
-          aria-describedby="launchUrlFeedback"
         />
-        <Form.Control.Feedback id="launchUrlFeedback" type="invalid">
-          {intl.formatMessage(messages.launchUrlRequired)}
-        </Form.Control.Feedback>
+        {errors.launchUrl && (
+          <Form.Control.Feedback type="invalid">
+            {errors.launchUrl}
+          </Form.Control.Feedback>
+        )}
       </Form.Group>
     </Form>
   );

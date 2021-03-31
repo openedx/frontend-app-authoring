@@ -111,6 +111,10 @@ const messages = defineMessages({
       the date and time. For example, an entry defining two blackout periods looks like this, including
       the outer pair of square brackets: [["2015-09-15", "2015-09-21"], ["2015-10-01", "2015-10-08"]]`,
   },
+  blackoutDatesFormattingError: {
+    id: 'authoring.discussions.builtIn.blackoutDates.formattingError',
+    defaultMessage: "There's a formatting error in your blackout dates.",
+  },
 });
 
 export default messages;
