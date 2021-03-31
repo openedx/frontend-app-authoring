@@ -12,20 +12,24 @@ const slice = createSlice({
   name: 'discussions',
   initialState: {
     appIds: [],
+    // "active" IDs are for the app and config that has been enabled for the course.
     activeAppId: null,
-    activeAppConfigId: null,
+    // "displayed" IDs are for the app and config that are being configured in the UI.  They may be
+    // the same as the "active" IDs.
+    displayedAppId: null,
+    displayedAppConfigId: null,
     featureIds: [],
     status: LOADING,
   },
   reducers: {
     fetchAppsSuccess: (state, { payload }) => {
+      state.activeAppId = payload.activeAppId;
       state.appIds = payload.appIds;
       state.featureIds = payload.featureIds;
-      state.activeAppId = payload.activeAppId;
     },
     fetchAppConfigSuccess: (state, { payload }) => {
-      state.activeAppId = payload.activeAppId;
-      state.activeAppConfigId = payload.activeAppConfigId;
+      state.displayedAppConfigId = payload.displayedAppConfigId;
+      state.displayedAppId = payload.displayedAppId;
       state.featureIds = payload.featureIds;
     },
     updateStatus: (state, { payload }) => {

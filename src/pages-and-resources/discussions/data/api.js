@@ -27,30 +27,18 @@ export async function getApps(courseId) {
 }
 
 const legacyEdXDiscussions = {
-  id: 'edx-discussions',
-  name: 'edX Discussions',
-  logo: 'https://cdn-blog.lawrencemcdaniel.com/wp-content/uploads/2018/01/22125436/edx-logo.png',
-  description: 'Start conversations with other learners, ask questions, and interact with other learners in the course.',
-  supportLevel: 'Full support',
-  isAvailable: true,
-  documentationUrl: 'https://localhost/docs',
+  id: 'legacy',
+  hasFullSupport: false,
   featureIds: [
-    'lti',
     'discussion-page',
     'embedded-course-sections',
-    'embedded-course-units',
     'wcag-2.1',
   ],
 };
 
 const piazzaApp = {
   id: 'piazza',
-  name: 'Piazza',
-  logo: 'https://piazza.com/images/splash2/topbar/piazza_logo_blue.png',
-  description: 'Piazza is designed to connect students, TAs, and professors so every student can get the help they need when they need it.',
-  supportLevel: 'Partial support',
-  isAvailable: true,
-  documentationUrl: 'https://localhost/docs',
+  hasFullSupport: false,
   featureIds: [
     'lti',
     'discussion-page',
@@ -61,12 +49,7 @@ const piazzaApp = {
 
 const yellowdigApp = {
   id: 'yellowdig',
-  name: 'Yellowdig',
-  logo: 'https://static.wixstatic.com/media/e53d7e_f8a17bd41db64a57a8d62bea4fdf3174~mv2.png/v1/crop/x_5,y_0,w_895,h_196/fill/w_366,h_80,al_c,q_85,usm_0.66_1.00_0.01/yellowdig-logo.webp',
-  description: 'Yellowdig is the digital solution that impacts the entire student lifecycle and enables lifelong learning.',
-  supportLevel: 'Coming soon',
-  isAvailable: false,
-  documentationUrl: 'https://localhost/docs',
+  hasFullSupport: false,
   featureIds: [
     'lti',
     'discussion-page',
@@ -95,9 +78,9 @@ export function getAppConfig(courseId, appId) {
     launchUrl: 'https://localhost/launch',
   };
 
-  if (appId === 'edx-discussions') {
+  if (appId === 'legacy') {
     appConfig = {
-      id: 'appConfig2',
+      id: 'legacy',
       divideByCohorts: false,
       allowDivisionByUnit: false,
       divideCourseWideTopics: false,
