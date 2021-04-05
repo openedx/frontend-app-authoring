@@ -60,13 +60,13 @@ import messages from './messages';
  * date, there shouldn't be another comma, but this regex errors on the side of looseness.
  *     (,){0,1}
  * This entire group, ["YYYY-MM-DDTHH:MM", "YYYY-MM-DDTHH:MM"], can be repeated zero or more times.
- *     )+
+ *     )*
  * Close out the last square bracket around all the groups:
  *    \]
  * End of string:
  *    $
  */
-export const blackoutDatesRegex = /^\[(\[("[0-9]{4}-(0[1-9]|1[0-2])-[0-3][0-9](T([0-1][0-9]|2[0-3]):([0-5][0-9])){0,1}"),("[0-9]{4}-(0[1-9]|1[0-2])-[0-3][0-9](T([0-1][0-9]|2[0-3]):([0-5][0-9])){0,1}")\](,){0,1})+\]$/;
+export const blackoutDatesRegex = /^\[(\[("[0-9]{4}-(0[1-9]|1[0-2])-[0-3][0-9](T([0-1][0-9]|2[0-3]):([0-5][0-9])){0,1}"),("[0-9]{4}-(0[1-9]|1[0-2])-[0-3][0-9](T([0-1][0-9]|2[0-3]):([0-5][0-9])){0,1}")\](,){0,1})*\]$/;
 
 function BlackoutDatesField({
   onBlur,
