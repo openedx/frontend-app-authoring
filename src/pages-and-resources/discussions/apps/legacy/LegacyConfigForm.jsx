@@ -2,21 +2,32 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form } from '@edx/paragon';
 import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import DivisionByGroupFields from '../shared/DivisionByGroupFields';
 import AnonymousPostingFields from '../shared/AnonymousPostingFields';
-import BlackoutDatesField from '../shared/BlackoutDatesField';
+import BlackoutDatesField, { blackoutDatesRegex } from '../shared/BlackoutDatesField';
 
-export default function LegacyConfigForm({
-  appConfig, onSubmit, formRef,
+import messages from '../shared/messages';
+
+function LegacyConfigForm({
+  appConfig, onSubmit, formRef, intl,
 }) {
   const {
     handleSubmit,
     handleChange,
     handleBlur,
     values,
+    errors,
   } = useFormik({
     initialValues: appConfig,
+    validationSchema: Yup.object().shape({
+      blackoutDates: Yup.string().matches(
+        blackoutDatesRegex,
+        intl.formatMessage(messages.blackoutDatesFormattingError),
+      ),
+    }),
     onSubmit,
   });
 
@@ -37,6 +48,7 @@ export default function LegacyConfigForm({
         values={values}
       />
       <BlackoutDatesField
+        errors={errors}
         onBlur={handleBlur}
         onChange={handleChange}
         values={values}
@@ -59,4 +71,7 @@ LegacyConfigForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
+  intl: intlShape.isRequired,
 };
+
+export default injectIntl(LegacyConfigForm);
