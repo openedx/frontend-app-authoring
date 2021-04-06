@@ -1,6 +1,11 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  settings: {
+    id: 'authoring.discussions.settings',
+    defaultMessage: 'Settings',
+    description: 'A label for the second step of the app configuration stepper.',
+  },
   configure: {
     id: 'authoring.discussions.configure',
     defaultMessage: 'Configure Discussions',

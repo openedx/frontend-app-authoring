@@ -16,7 +16,6 @@ import { Check } from '@edx/paragon/icons';
 
 import FullScreenModal from '../../generic/full-screen-modal';
 import Stepper from '../../generic/stepper';
-import { useModel } from '../../generic/model-store';
 
 import AppList from './app-list';
 import AppConfigForm from './app-config-form';
@@ -32,7 +31,6 @@ function DiscussionsSettings({ courseId, intl }) {
   const { path } = useRouteMatch();
   const { pathname } = useLocation();
   const dispatch = useDispatch();
-  const app = useModel('apps', selectedAppId);
 
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
 
@@ -51,9 +49,7 @@ function DiscussionsSettings({ courseId, intl }) {
     incomplete: false,
   },
   {
-    label: intl.formatMessage(messages.configureApp, {
-      name: app ? app.name : 'discussions',
-    }),
+    label: intl.formatMessage(messages.settings),
     incomplete: isFirstStep,
   }];
 
