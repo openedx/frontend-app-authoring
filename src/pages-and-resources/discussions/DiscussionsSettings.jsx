@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useEffect, useRef, useState,
+  useCallback, useContext, useEffect, useRef, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
@@ -22,6 +22,7 @@ import AppList from './AppList';
 import ConfigFormContainer from './ConfigFormContainer';
 import messages from './messages';
 import { fetchApps, saveAppConfig } from './data/thunks';
+import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 
 function DiscussionsSettings({ courseId, intl }) {
   const [selectedAppId, setSelectedAppId] = useState(null);
@@ -32,9 +33,9 @@ function DiscussionsSettings({ courseId, intl }) {
   const dispatch = useDispatch();
   const app = useModel('apps', selectedAppId);
 
+  const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
+
   // Route paths
-  // TODO: pagesAndResourcesPath should probably be passed in.
-  const pagesAndResourcesPath = `/course/${courseId}/pages-and-resources`;
   const discussionsPath = `${pagesAndResourcesPath}/discussions`;
   const selectedAppConfigPath = `${discussionsPath}/configure/${selectedAppId}`;
 
