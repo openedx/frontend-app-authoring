@@ -25,21 +25,6 @@ const messages = defineMessages({
     id: 'authoring.discussions.modalTitle',
     defaultMessage: 'Configure {name}',
   },
-  saveConfig: {
-    id: 'authoring.discussions.saveConfig',
-    defaultMessage: 'Save',
-    description: 'Button allowing a user to save their discussions config.',
-  },
-  savingConfig: {
-    id: 'authoring.discussions.savingConfig',
-    defaultMessage: 'Saving',
-    description: 'Button text shown while a discussion config is being saved.',
-  },
-  savedConfig: {
-    id: 'authoring.discussions.savedConfig',
-    defaultMessage: 'Saved',
-    description: 'Button text shown once a discussion config has been saved to the server.',
-  },
   backButton: {
     id: 'authoring.discussions.backButton',
     defaultMessage: 'Back',
@@ -54,6 +39,16 @@ const messages = defineMessages({
     id: 'authoring.discussions.applyButton',
     defaultMessage: 'Apply',
     description: 'Button allowing the user to submit their discussion configuration.',
+  },
+  applyingButton: {
+    id: 'authoring.discussions.applyingButton',
+    defaultMessage: 'Applying',
+    description: 'Button label when the discussion configuration is being submitted.',
+  },
+  appliedButton: {
+    id: 'authoring.discussions.appliedButton',
+    defaultMessage: 'Applied',
+    description: 'Button label when the discussion configuration has been successfully submitted.',
   },
   selectDiscussionTool: {
     id: 'authoring.discussions.selectDiscussionTool',

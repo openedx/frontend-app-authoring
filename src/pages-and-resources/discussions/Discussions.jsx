@@ -134,8 +134,8 @@ function Discussions({ courseId, intl }) {
               <StatefulButton
                 labels={{
                   default: intl.formatMessage(messages.applyButton),
-                  pending: intl.formatMessage(messages.savingConfig),
-                  complete: intl.formatMessage(messages.savedConfig),
+                  pending: intl.formatMessage(messages.applyingButton),
+                  complete: intl.formatMessage(messages.appliedButton),
                 }}
                 state={submitButtonState}
                 className="mr-3"
