@@ -7,7 +7,7 @@ import { Switch, useRouteMatch } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 
 import messages from './messages';
-import Discussions from './discussions';
+import DiscussionsSettings from './discussions';
 
 import PageGrid from './pages/PageGrid';
 import ResourceList from './resources/ResourcesList';
@@ -42,7 +42,7 @@ function PagesAndResources({ courseId, intl }) {
       </div>
       <Switch>
         <PageRoute path={`${path}/discussions`}>
-          <Discussions courseId={courseId} />
+          <DiscussionsSettings courseId={courseId} />
         </PageRoute>
       </Switch>
     </main>

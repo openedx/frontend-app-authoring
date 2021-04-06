@@ -23,7 +23,7 @@ import ConfigFormContainer from './ConfigFormContainer';
 import messages from './messages';
 import { fetchApps, saveAppConfig } from './data/thunks';
 
-function Discussions({ courseId, intl }) {
+function DiscussionsSettings({ courseId, intl }) {
   const [selectedAppId, setSelectedAppId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef();
@@ -149,9 +149,9 @@ function Discussions({ courseId, intl }) {
   );
 }
 
-Discussions.propTypes = {
+DiscussionsSettings.propTypes = {
   courseId: PropTypes.string.isRequired,
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(Discussions);
+export default injectIntl(DiscussionsSettings);

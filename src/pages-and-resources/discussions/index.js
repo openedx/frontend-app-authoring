@@ -1,1 +1,1 @@
-export { default } from './Discussions';
+export { default } from './DiscussionsSettings';
