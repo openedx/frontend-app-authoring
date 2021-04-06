@@ -23,6 +23,7 @@ import AppConfigForm from './app-config-form';
 import messages from './messages';
 import { fetchApps, saveAppConfig } from './data/thunks';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
+import DiscussionsProvider from './DiscussionsProvider';
 
 function DiscussionsSettings({ courseId, intl }) {
   const [selectedAppId, setSelectedAppId] = useState(null);
@@ -99,39 +100,40 @@ function DiscussionsSettings({ courseId, intl }) {
   }, [discussionsPath]);
 
   return (
-    <FullScreenModal title={intl.formatMessage(messages.configure)} onClose={handleClose}>
-      <FullScreenModal.Header title={intl.formatMessage(messages.configure)} />
-      <FullScreenModal.Body className="d-flex flex-column">
-        <Stepper className="h-100">
-          <Stepper.Header steps={steps} />
-          <Stepper.Body className="bg-light-200">
-            <Switch>
-              <PageRoute exact path={`${path}`}>
-                <AppList
-                  onSelectApp={handleSelectApp}
-                  selectedAppId={selectedAppId}
-                />
-              </PageRoute>
-              <PageRoute path={`${path}/configure/:appId`}>
-                <AppConfigForm
-                  courseId={courseId}
-                  selectedAppId={selectedAppId}
-                  onSubmit={handleSubmit}
-                  formRef={formRef}
-                />
-              </PageRoute>
-            </Switch>
-          </Stepper.Body>
-          <Stepper.Footer className="d-flex justify-content-end align-items-center">
-            <Button variant="outline-primary" className="mr-2" onClick={handleBack}>
-              {intl.formatMessage(messages.backButton)}
-            </Button>
-            {isFirstStep && (
+    <DiscussionsProvider path={discussionsPath}>
+      <FullScreenModal title={intl.formatMessage(messages.configure)} onClose={handleClose}>
+        <FullScreenModal.Header title={intl.formatMessage(messages.configure)} />
+        <FullScreenModal.Body className="d-flex flex-column">
+          <Stepper className="h-100">
+            <Stepper.Header steps={steps} />
+            <Stepper.Body className="bg-light-200">
+              <Switch>
+                <PageRoute exact path={`${path}`}>
+                  <AppList
+                    onSelectApp={handleSelectApp}
+                    selectedAppId={selectedAppId}
+                  />
+                </PageRoute>
+                <PageRoute path={`${path}/configure/:appId`}>
+                  <AppConfigForm
+                    courseId={courseId}
+                    selectedAppId={selectedAppId}
+                    onSubmit={handleSubmit}
+                    formRef={formRef}
+                  />
+                </PageRoute>
+              </Switch>
+            </Stepper.Body>
+            <Stepper.Footer className="d-flex justify-content-end align-items-center">
+              <Button variant="outline-primary" className="mr-2" onClick={handleBack}>
+                {intl.formatMessage(messages.backButton)}
+              </Button>
+              {isFirstStep && (
               <Button variant="primary" onClick={handleStartConfig} disabled={!selectedAppId}>
                 {intl.formatMessage(messages.nextButton)}
               </Button>
-            )}
-            {!isFirstStep && (
+              )}
+              {!isFirstStep && (
               <StatefulButton
                 labels={{
                   default: intl.formatMessage(messages.applyButton),
@@ -142,11 +144,12 @@ function DiscussionsSettings({ courseId, intl }) {
                 className="mr-3"
                 onClick={handleApply}
               />
-            )}
-          </Stepper.Footer>
-        </Stepper>
-      </FullScreenModal.Body>
-    </FullScreenModal>
+              )}
+            </Stepper.Footer>
+          </Stepper>
+        </FullScreenModal.Body>
+      </FullScreenModal>
+    </DiscussionsProvider>
   );
 }
 
