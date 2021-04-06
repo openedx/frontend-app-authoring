@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { TransitionReplace } from '@edx/paragon';
-import FormSwitchGroup from '../../../../generic/FormSwitchGroup';
+import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from './messages';
 
 function InContextDiscussionFields({

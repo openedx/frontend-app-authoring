@@ -1,20 +1,12 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-  configureApp: {
-    id: 'authoring.discussions.configure.app',
-    defaultMessage: 'Configure {name}',
-  },
   configure: {
     id: 'authoring.discussions.configure',
     defaultMessage: 'Configure Discussions',
   },
-  appLogo: {
-    id: 'authoring.discussions.appLogo',
-    defaultMessage: '{name} Logo',
-  },
-  configModalTitle: {
-    id: 'authoring.discussions.modalTitle',
+  configureApp: {
+    id: 'authoring.discussions.configure.app',
     defaultMessage: 'Configure {name}',
   },
   backButton: {

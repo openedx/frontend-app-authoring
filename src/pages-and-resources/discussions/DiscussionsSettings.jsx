@@ -19,7 +19,7 @@ import Stepper from '../../generic/stepper';
 import { useModel } from '../../generic/model-store';
 
 import AppList from './app-list';
-import ConfigFormContainer from './ConfigFormContainer';
+import ConfigFormContainer from './app-config-form';
 import messages from './messages';
 import { fetchApps, saveAppConfig } from './data/thunks';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';

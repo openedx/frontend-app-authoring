@@ -5,8 +5,8 @@ import { useRouteMatch } from 'react-router';
 import { Card, Container } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
-import { useModel } from '../../generic/model-store';
-import { fetchAppConfig } from './data/thunks';
+import { useModel } from '../../../generic/model-store';
+import { fetchAppConfig } from '../data/thunks';
 import LegacyConfigForm from './apps/legacy';
 import LtiConfigForm from './apps/lti';
 import messages from './messages';
