@@ -4,7 +4,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { CardGrid, Container } from '@edx/paragon';
 import { useSelector } from 'react-redux';
 
-import { useModels } from '../../generic/model-store';
+import { useModels } from '../../../generic/model-store';
 
 import AppCard from './AppCard';
 import messages from './messages';

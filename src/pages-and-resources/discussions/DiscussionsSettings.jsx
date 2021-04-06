@@ -18,7 +18,7 @@ import FullScreenModal from '../../generic/full-screen-modal';
 import Stepper from '../../generic/stepper';
 import { useModel } from '../../generic/model-store';
 
-import AppList from './AppList';
+import AppList from './app-list';
 import ConfigFormContainer from './ConfigFormContainer';
 import messages from './messages';
 import { fetchApps, saveAppConfig } from './data/thunks';
