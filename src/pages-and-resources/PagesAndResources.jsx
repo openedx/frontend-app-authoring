@@ -14,6 +14,7 @@ import ResourceList from './resources/ResourcesList';
 
 import { fetchPages } from './data/thunks';
 import { useModels } from '../generic/model-store';
+import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 
 function PagesAndResources({ courseId, intl }) {
   const { path } = useRouteMatch();
@@ -29,23 +30,25 @@ function PagesAndResources({ courseId, intl }) {
   const pages = useModels('pages', pageIds);
 
   return (
-    <main>
-      <div className="container-fluid pb-3">
-        <div className="d-flex justify-content-between align-items-center border-bottom">
-          <h1 className="mt-3">{intl.formatMessage(messages.heading)}</h1>
-          <a className="btn btn-primary" href={lmsCourseURL} role="button">
-            {intl.formatMessage(messages['viewLive.button'])}
-          </a>
+    <PagesAndResourcesProvider courseId={courseId}>
+      <main>
+        <div className="container-fluid pb-3">
+          <div className="d-flex justify-content-between align-items-center border-bottom">
+            <h1 className="mt-3">{intl.formatMessage(messages.heading)}</h1>
+            <a className="btn btn-primary" href={lmsCourseURL} role="button">
+              {intl.formatMessage(messages['viewLive.button'])}
+            </a>
+          </div>
+          <PageGrid pages={pages} />
+          <ResourceList />
         </div>
-        <PageGrid pages={pages} />
-        <ResourceList />
-      </div>
-      <Switch>
-        <PageRoute path={`${path}/discussions`}>
-          <DiscussionsSettings courseId={courseId} />
-        </PageRoute>
-      </Switch>
-    </main>
+        <Switch>
+          <PageRoute path={`${path}/discussions`}>
+            <DiscussionsSettings courseId={courseId} />
+          </PageRoute>
+        </Switch>
+      </main>
+    </PagesAndResourcesProvider>
   );
 }
 
