@@ -11,7 +11,7 @@ import LegacyConfigForm from './apps/legacy';
 import LtiConfigForm from './apps/lti';
 import messages from './messages';
 
-function ConfigFormContainer({
+function AppConfigForm({
   courseId, onSubmit, formRef, intl,
 }) {
   const { params: { appId: routeAppId } } = useRouteMatch();
@@ -62,7 +62,7 @@ function ConfigFormContainer({
   );
 }
 
-ConfigFormContainer.propTypes = {
+AppConfigForm.propTypes = {
   courseId: PropTypes.string.isRequired,
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
@@ -70,4 +70,4 @@ ConfigFormContainer.propTypes = {
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(ConfigFormContainer);
+export default injectIntl(AppConfigForm);

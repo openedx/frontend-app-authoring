@@ -19,7 +19,7 @@ import Stepper from '../../generic/stepper';
 import { useModel } from '../../generic/model-store';
 
 import AppList from './app-list';
-import ConfigFormContainer from './app-config-form';
+import AppConfigForm from './app-config-form';
 import messages from './messages';
 import { fetchApps, saveAppConfig } from './data/thunks';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
@@ -113,7 +113,7 @@ function DiscussionsSettings({ courseId, intl }) {
                 />
               </PageRoute>
               <PageRoute path={`${path}/configure/:appId`}>
-                <ConfigFormContainer
+                <AppConfigForm
                   courseId={courseId}
                   selectedAppId={selectedAppId}
                   onSubmit={handleSubmit}

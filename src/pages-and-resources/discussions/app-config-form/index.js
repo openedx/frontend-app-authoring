@@ -1,1 +1,1 @@
-export { default } from './ConfigFormContainer';
+export { default } from './AppConfigForm';
