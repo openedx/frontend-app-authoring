@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { CardGrid } from '@edx/paragon';
+import { CardGrid, Container } from '@edx/paragon';
 import { useSelector } from 'react-redux';
 
 import { useModels } from '../../generic/model-store';
@@ -17,6 +17,14 @@ function AppList({
   const featureIds = useSelector(state => state.discussions.featureIds);
   const apps = useModels('apps', appIds);
   const features = useModels('features', featureIds);
+
+  if (apps.length === 0) {
+    return (
+      <Container className="mt-5">
+        <p>{intl.formatMessage(messages.noApps)}</p>
+      </Container>
+    );
+  }
 
   return (
     <div className="m-5">

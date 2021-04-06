@@ -70,6 +70,12 @@ const messages = defineMessages({
     defaultMessage: 'Partial support',
     description: 'A label indicating that an app only supports a subset of the possible features of a discussions app.',
   },
+  noApps: {
+    id: 'authoring.discussions.noApps',
+    defaultMessage: 'There are no discussions providers available for your course.',
+    description: 'A message shown when there are no discussions providers available to be displayed.',
+  },
+
   // Legacy
   'appName-legacy': {
     id: 'authoring.discussions.appName-legacy',
