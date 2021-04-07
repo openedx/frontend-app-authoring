@@ -4,6 +4,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Form, TransitionReplace } from '@edx/paragon';
 import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from './messages';
+import AppConfigFormDivider from './AppConfigFormDivider';
 
 function DivisionByGroupFields({
   onBlur,
@@ -26,6 +27,7 @@ function DivisionByGroupFields({
       <TransitionReplace>
         {values.divideByCohorts ? (
           <React.Fragment key="open">
+            <AppConfigFormDivider />
             <FormSwitchGroup
               onChange={onChange}
               onBlur={onBlur}
@@ -35,6 +37,7 @@ function DivisionByGroupFields({
               label={intl.formatMessage(messages.allowDivisionByUnitLabel)}
               helpText={intl.formatMessage(messages.allowDivisionByUnitHelp)}
             />
+            <AppConfigFormDivider />
             <FormSwitchGroup
               onChange={onChange}
               onBlur={onBlur}
