@@ -24,10 +24,10 @@ function DivisionByGroupFields({
         label={intl.formatMessage(messages.divideByCohortsLabel)}
         helpText={intl.formatMessage(messages.divideByCohortsHelp)}
       />
-      <AppConfigFormDivider />
       <TransitionReplace>
         {values.divideByCohorts ? (
           <React.Fragment key="open">
+            <AppConfigFormDivider />
             <FormSwitchGroup
               onChange={onChange}
               onBlur={onBlur}
@@ -63,7 +63,6 @@ function DivisionByGroupFields({
                 label="Questions for the TAs"
               />
             </Form.Group>
-            <AppConfigFormDivider />
           </React.Fragment>
         ) : <React.Fragment key="closed" />}
       </TransitionReplace>

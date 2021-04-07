@@ -42,11 +42,13 @@ function LegacyConfigForm({
           onChange={handleChange}
           values={values}
         />
+        <AppConfigFormDivider thick />
         <AnonymousPostingFields
           onBlur={handleBlur}
           onChange={handleChange}
           values={values}
         />
+        <AppConfigFormDivider thick />
         <BlackoutDatesField
           errors={errors}
           onBlur={handleBlur}
