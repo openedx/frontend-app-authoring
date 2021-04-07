@@ -32,23 +32,23 @@ const messages = defineMessages({
 
   // Legacy
   'appName-legacy': {
-    id: 'authoring.discussions.appName-legacy',
-    defaultMessage: 'Legacy edX Discussions',
+    id: 'authoring.discussions.appList.appName-legacy',
+    defaultMessage: 'edX Discussions',
     description: 'The name of the Legacy edX Discussions app.',
   },
   'appDescription-legacy': {
-    id: 'authoring.discussions.appDescription-legacy',
+    id: 'authoring.discussions.appList.appDescription-legacy',
     defaultMessage: 'Start conversations with other learners, ask questions, and interact with other learners in the course.',
     description: 'A description of the Legacy edX Discussions app.',
   },
   // Piazza
   'appName-piazza': {
-    id: 'authoring.discussions.appName-piazza',
+    id: 'authoring.discussions.appList.appName-piazza',
     defaultMessage: 'Piazza',
     description: 'The name of the Piazza app.',
   },
   'appDescription-piazza': {
-    id: 'authoring.discussions.appDescription-piazza',
+    id: 'authoring.discussions.appList.appDescription-piazza',
     defaultMessage: 'Piazza is designed to connect students, TAs, and professors so every student can get the help they need when they need it.',
     description: 'A description of the Piazza app.',
   },

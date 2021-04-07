@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form } from '@edx/paragon';
+import { Card, Form } from '@edx/paragon';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -13,7 +13,7 @@ import messages from '../shared/messages';
 import AppConfigFormDivider from '../shared/AppConfigFormDivider';
 
 function LegacyConfigForm({
-  appConfig, onSubmit, formRef, intl,
+  appConfig, onSubmit, formRef, intl, title,
 }) {
   const {
     handleSubmit,
@@ -33,26 +33,28 @@ function LegacyConfigForm({
   });
 
   return (
-    <Form ref={formRef} onSubmit={handleSubmit}>
-      <h3>Legacy Discussions</h3>
+    <Card className="mb-5 pt-3 px-5 pb-5">
+      <Form ref={formRef} onSubmit={handleSubmit}>
+        <h3>{title}</h3>
         <AppConfigFormDivider />
-      <DivisionByGroupFields
-        onBlur={handleBlur}
-        onChange={handleChange}
-        values={values}
-      />
-      <AnonymousPostingFields
-        onBlur={handleBlur}
-        onChange={handleChange}
-        values={values}
-      />
-      <BlackoutDatesField
-        errors={errors}
-        onBlur={handleBlur}
-        onChange={handleChange}
-        values={values}
-      />
-    </Form>
+        <DivisionByGroupFields
+          onBlur={handleBlur}
+          onChange={handleChange}
+          values={values}
+        />
+        <AnonymousPostingFields
+          onBlur={handleBlur}
+          onChange={handleChange}
+          values={values}
+        />
+        <BlackoutDatesField
+          errors={errors}
+          onBlur={handleBlur}
+          onChange={handleChange}
+          values={values}
+        />
+      </Form>
+    </Card>
   );
 }
 
@@ -71,6 +73,7 @@ LegacyConfigForm.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
   intl: intlShape.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 export default injectIntl(LegacyConfigForm);

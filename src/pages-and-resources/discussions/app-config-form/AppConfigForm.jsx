@@ -4,7 +4,7 @@ import React, {
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
-import { Card, Container } from '@edx/paragon';
+import { Container } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { history } from '@edx/frontend-platform';
 import { useModel } from '../../../generic/model-store';
@@ -52,6 +52,7 @@ function AppConfigForm({
         formRef={formRef}
         appConfig={appConfig}
         onSubmit={handleSubmit}
+        title={intl.formatMessage(messages[`appName-${app.id}`])}
       />
     );
   } else {
@@ -61,17 +62,13 @@ function AppConfigForm({
         app={app}
         appConfig={appConfig}
         onSubmit={handleSubmit}
+        title={intl.formatMessage(messages[`appName-${app.id}`])}
       />
     );
   }
   return (
-    <Container size="sm" className="px-sm-0">
-      <h3 className="my-4">
-        {intl.formatMessage(messages.configureApp, { name: app.name })}
-      </h3>
-      <Card className="mb-5 p-5">
-        {form}
-      </Card>
+    <Container size="sm" className="px-sm-0 py-5">
+      {form}
     </Container>
   );
 }

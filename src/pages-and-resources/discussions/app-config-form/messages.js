@@ -29,6 +29,18 @@ const messages = defineMessages({
     defaultMessage: 'Applied',
     description: 'Button label when the discussion configuration has been successfully submitted.',
   },
+
+  // App names
+  'appName-piazza': {
+    id: 'authoring.discussions.appConfigForm.appName-piazza',
+    defaultMessage: 'Piazza',
+    description: 'The name of the Piazza app.',
+  },
+  'appName-legacy': {
+    id: 'authoring.discussions.appConfigForm.appName-legacy',
+    defaultMessage: 'edX Discussions',
+    description: 'The name of the Legacy edX Discussions app.',
+  },
 });
 
 export default messages;
