@@ -29,11 +29,6 @@ const messages = defineMessages({
     defaultMessage: 'Applied',
     description: 'Button label when the discussion configuration has been successfully submitted.',
   },
-  selectDiscussionTool: {
-    id: 'authoring.discussions.selectDiscussionTool',
-    defaultMessage: 'Select discussion tool',
-    description: 'A label for the first step of a wizard where the user chooses a discussion tool to configure.',
-  },
 });
 
 export default messages;

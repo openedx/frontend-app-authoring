@@ -31,7 +31,7 @@ function DiscussionsSettings({ courseId, intl }) {
   const isFirstStep = pathname === discussionsPath;
 
   const steps = [{
-    label: intl.formatMessage(messages.selectDiscussionTool),
+    label: intl.formatMessage(messages.providerSelection),
     iconLabel: isFirstStep ? undefined : (
       <Check style={{ width: '1rem', height: '1rem' }} />
     ),
