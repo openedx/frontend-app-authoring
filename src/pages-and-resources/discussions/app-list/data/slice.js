@@ -25,8 +25,8 @@ const slice = createSlice({
       state.featureIds = payload.featureIds;
       state.status = LOADED;
     },
-    selectApp: (state, { selectedAppId }) => {
-      state.selectedAppId = selectedAppId;
+    selectApp: (state, { appId }) => {
+      state.selectedAppId = appId;
     },
     updateStatus: (state, { status }) => {
       state.status = status;

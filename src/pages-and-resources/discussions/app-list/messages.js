@@ -14,6 +14,11 @@ const messages = defineMessages({
     defaultMessage: 'There are no discussions providers available for your course.',
     description: 'A message shown when there are no discussions providers available to be displayed.',
   },
+  nextButton: {
+    id: 'authoring.discussions.nextButton',
+    defaultMessage: 'Next',
+    description: 'Button allowing the user to advance to the second step of discussion configuration.',
+  },
   appFullSupport: {
     id: 'authoring.discussions.appFullSupport',
     defaultMessage: 'Full support',

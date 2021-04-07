@@ -19,11 +19,6 @@ const messages = defineMessages({
     defaultMessage: 'Back',
     description: 'Button allowing the user to return to discussion app selection.',
   },
-  nextButton: {
-    id: 'authoring.discussions.nextButton',
-    defaultMessage: 'Next',
-    description: 'Button allowing the user to advance to the second step of discussion configuration.',
-  },
   applyButton: {
     id: 'authoring.discussions.applyButton',
     defaultMessage: 'Apply',

@@ -33,10 +33,7 @@ function DiscussionsSettings({ courseId, intl }) {
   const dispatch = useDispatch();
 
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
-
-  // Route paths
   const discussionsPath = `${pagesAndResourcesPath}/discussions`;
-  const selectedAppConfigPath = `${discussionsPath}/configure/${selectedAppId}`;
 
   const isFirstStep = pathname === discussionsPath;
   const submitButtonState = isSubmitting ? 'pending' : 'default';
@@ -53,25 +50,9 @@ function DiscussionsSettings({ courseId, intl }) {
     incomplete: isFirstStep,
   }];
 
-  useEffect(() => {
-    dispatch(fetchApps(courseId));
-  }, [courseId]);
-
-  const handleSelectApp = useCallback((appId) => {
-    if (selectedAppId === appId) {
-      setSelectedAppId(null);
-    } else {
-      setSelectedAppId(appId);
-    }
-  }, [selectedAppId]);
-
   const handleClose = useCallback(() => {
     history.push(pagesAndResourcesPath);
   }, [courseId]);
-
-  const handleStartConfig = useCallback(() => {
-    history.push(selectedAppConfigPath);
-  }, [discussionsPath, selectedAppId]);
 
   // This causes the form to be submitted from a button outside the form.
   const handleApply = () => {
@@ -91,7 +72,6 @@ function DiscussionsSettings({ courseId, intl }) {
       history.push(pagesAndResourcesPath);
     } else {
       history.push(discussionsPath);
-      setSelectedAppId(null);
     }
   }, [discussionsPath]);
 
@@ -107,8 +87,7 @@ function DiscussionsSettings({ courseId, intl }) {
               <Switch>
                 <PageRoute exact path={`${path}`}>
                   <AppList
-                    onSelectApp={handleSelectApp}
-                    selectedAppId={selectedAppId}
+                      courseId={courseId}
                   />
                 </PageRoute>
                 <PageRoute path={`${path}/configure/:appId`}>
@@ -126,9 +105,7 @@ function DiscussionsSettings({ courseId, intl }) {
                 {intl.formatMessage(messages.backButton)}
               </Button>
               {isFirstStep && (
-              <Button variant="primary" onClick={handleStartConfig} disabled={!selectedAppId}>
-                {intl.formatMessage(messages.nextButton)}
-              </Button>
+                  <AppList.NextButton />
               )}
               {!isFirstStep && (
               <StatefulButton

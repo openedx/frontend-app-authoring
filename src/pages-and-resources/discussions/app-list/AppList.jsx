@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { CardGrid, Container } from '@edx/paragon';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { useModels } from '../../../generic/model-store';
 
@@ -11,15 +11,26 @@ import messages from './messages';
 import FeaturesTable from './FeaturesTable';
 import AppListNextButton from './AppListNextButton';
 
-function AppList({
-  intl, onSelectApp, selectedAppId,
-}) {
-  const appIds = useSelector(state => state.discussions.appIds);
-  const featureIds = useSelector(state => state.discussions.featureIds);
+import { fetchApps } from './data/thunks';
+import { selectApp, LOADED } from './data/slice';
+
+function AppList({ courseId, intl }) {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchApps(courseId));
+  }, [courseId]);
+
+  const {
+    appIds, featureIds, status, selectedAppId,
+  } = useSelector(state => state.discussions.appList);
   const apps = useModels('apps', appIds);
   const features = useModels('features', featureIds);
 
-  if (apps.length === 0) {
+  const handleSelectApp = useCallback((appId) => {
+    dispatch(selectApp({ appId }));
+  }, [selectedAppId]);
+
+  if (status === LOADED && apps.length === 0) {
     return (
       <Container className="mt-5">
         <p>{intl.formatMessage(messages.noApps)}</p>
@@ -42,7 +53,7 @@ function AppList({
             key={app.id}
             app={app}
             selected={app.id === selectedAppId}
-            onClick={onSelectApp}
+            onClick={handleSelectApp}
           />
         ))}
       </CardGrid>
@@ -60,14 +71,10 @@ function AppList({
 }
 
 AppList.propTypes = {
+  courseId: PropTypes.string.isRequired,
   intl: intlShape.isRequired,
-  onSelectApp: PropTypes.func.isRequired,
-  selectedAppId: PropTypes.string,
 };
 
-AppList.defaultProps = {
-  selectedAppId: null,
-};
 const IntlAppList = injectIntl(AppList);
 
 IntlAppList.NextButton = AppListNextButton;
