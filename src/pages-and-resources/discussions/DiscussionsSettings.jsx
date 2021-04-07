@@ -100,6 +100,7 @@ function DiscussionsSettings({ courseId, intl }) {
       <FullScreenModal title={intl.formatMessage(messages.configure)} onClose={handleClose}>
         <FullScreenModal.Header title={intl.formatMessage(messages.configure)} />
         <FullScreenModal.Body className="d-flex flex-column">
+          <AppConfigForm.Provider>
           <Stepper className="h-100">
             <Stepper.Header steps={steps} />
             <Stepper.Body className="bg-light-200">
@@ -143,6 +144,7 @@ function DiscussionsSettings({ courseId, intl }) {
               )}
             </Stepper.Footer>
           </Stepper>
+          </AppConfigForm.Provider>
         </FullScreenModal.Body>
       </FullScreenModal>
     </DiscussionsProvider>

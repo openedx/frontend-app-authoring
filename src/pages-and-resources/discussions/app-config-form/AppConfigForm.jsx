@@ -10,6 +10,8 @@ import { fetchAppConfig } from '../data/thunks';
 import LegacyConfigForm from './apps/legacy';
 import LtiConfigForm from './apps/lti';
 import messages from './messages';
+import AppConfigFormProvider from './AppConfigFormProvider';
+import AppConfigFormApplyButton from './AppConfigFormApplyButton';
 
 function AppConfigForm({
   courseId, onSubmit, formRef, intl,
@@ -70,4 +72,9 @@ AppConfigForm.propTypes = {
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(AppConfigForm);
+const IntlAppConfigForm = injectIntl(AppConfigForm);
+
+IntlAppConfigForm.Provider = AppConfigFormProvider;
+IntlAppConfigForm.ApplyButton = AppConfigFormApplyButton;
+
+export default IntlAppConfigForm;
