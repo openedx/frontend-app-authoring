@@ -9,6 +9,7 @@ import { useModels } from '../../../generic/model-store';
 import AppCard from './AppCard';
 import messages from './messages';
 import FeaturesTable from './FeaturesTable';
+import AppListNextButton from './AppListNextButton';
 
 function AppList({
   intl, onSelectApp, selectedAppId,
@@ -67,5 +68,8 @@ AppList.propTypes = {
 AppList.defaultProps = {
   selectedAppId: null,
 };
+const IntlAppList = injectIntl(AppList);
 
-export default injectIntl(AppList);
+IntlAppList.NextButton = AppListNextButton;
+
+export default IntlAppList;
