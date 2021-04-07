@@ -10,6 +10,7 @@ import AnonymousPostingFields from '../shared/AnonymousPostingFields';
 import BlackoutDatesField, { blackoutDatesRegex } from '../shared/BlackoutDatesField';
 
 import messages from '../shared/messages';
+import AppConfigFormDivider from '../shared/AppConfigFormDivider';
 
 function LegacyConfigForm({
   appConfig, onSubmit, formRef, intl,
@@ -31,17 +32,15 @@ function LegacyConfigForm({
     onSubmit,
   });
 
-  const divider = <hr className="my-2" />;
-
   return (
     <Form ref={formRef} onSubmit={handleSubmit}>
       <h3>Legacy Discussions</h3>
+        <AppConfigFormDivider />
       <DivisionByGroupFields
         onBlur={handleBlur}
         onChange={handleChange}
         values={values}
       />
-      {divider}
       <AnonymousPostingFields
         onBlur={handleBlur}
         onChange={handleChange}

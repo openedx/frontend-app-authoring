@@ -6,6 +6,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 import messages from './messages';
+import AppConfigFormDivider from '../shared/AppConfigFormDivider';
 
 function LtiConfigForm({
   appConfig, app, onSubmit, intl, formRef,
@@ -28,6 +29,7 @@ function LtiConfigForm({
 
   return (
     <Form ref={formRef} onSubmit={handleSubmit}>
+        <AppConfigFormDivider />
       <p>
         <FormattedMessage
           id="authoring.discussions.appDocInstructions"

@@ -4,6 +4,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { TransitionReplace } from '@edx/paragon';
 import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from './messages';
+import AppConfigFormDivider from './AppConfigFormDivider';
 
 function InContextDiscussionFields({
   onBlur,
@@ -22,6 +23,7 @@ function InContextDiscussionFields({
         label={intl.formatMessage(messages.inContextDiscussionLabel)}
         helpText={intl.formatMessage(messages.inContextDiscussionHelp)}
       />
+      <AppConfigFormDivider />
       <TransitionReplace>
         {values.inContextDiscussion ? (
           <React.Fragment key="open">
@@ -34,6 +36,7 @@ function InContextDiscussionFields({
               label={intl.formatMessage(messages.gradedUnitPagesLabel)}
               helpText={intl.formatMessage(messages.gradedUnitPagesHelp)}
             />
+            <AppConfigFormDivider />
             <FormSwitchGroup
               onChange={onChange}
               onBlur={onBlur}
@@ -43,6 +46,7 @@ function InContextDiscussionFields({
               label={intl.formatMessage(messages.groupInContextSubsectionLabel)}
               helpText={intl.formatMessage(messages.groupInContextSubsectionHelp)}
             />
+            <AppConfigFormDivider />
             <FormSwitchGroup
               onChange={onChange}
               onBlur={onBlur}
@@ -52,6 +56,7 @@ function InContextDiscussionFields({
               label={intl.formatMessage(messages.allowUnitLevelVisibilityLabel)}
               helpText={intl.formatMessage(messages.allowUnitLevelVisibilityHelp)}
             />
+            <AppConfigFormDivider />
           </React.Fragment>
         ) : <React.Fragment key="closed" />}
 

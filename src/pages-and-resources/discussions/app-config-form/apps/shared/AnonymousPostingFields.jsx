@@ -4,6 +4,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { TransitionReplace } from '@edx/paragon';
 import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from './messages';
+import AppConfigFormDivider from './AppConfigFormDivider';
 
 function AnonymousPostingFields({
   onBlur,
@@ -22,6 +23,7 @@ function AnonymousPostingFields({
         label={intl.formatMessage(messages.allowAnonymousPostsLabel)}
         helpText={intl.formatMessage(messages.allowAnonymousPostsHelp)}
       />
+      <AppConfigFormDivider />
       <TransitionReplace>
         {values.allowAnonymousPosts ? (
           <React.Fragment key="open">
@@ -34,6 +36,7 @@ function AnonymousPostingFields({
               label={intl.formatMessage(messages.allowAnonymousPostsPeersLabel)}
               helpText={intl.formatMessage(messages.allowAnonymousPostsPeersHelp)}
             />
+            <AppConfigFormDivider />
           </React.Fragment>
         ) : <React.Fragment key="closed" />}
       </TransitionReplace>
