@@ -1,8 +1,7 @@
 import React, {
-  useCallback, useContext, useEffect, useRef, useState,
+  useCallback, useContext,
 } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
 import {
   Switch,
   useLocation,
@@ -11,32 +10,25 @@ import {
 import { history } from '@edx/frontend-platform';
 import { PageRoute } from '@edx/frontend-platform/react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Button, StatefulButton } from '@edx/paragon';
+import { Button } from '@edx/paragon';
 import { Check } from '@edx/paragon/icons';
 
 import FullScreenModal from '../../generic/full-screen-modal';
 import Stepper from '../../generic/stepper';
-
+import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import AppList from './app-list';
 import AppConfigForm from './app-config-form';
 import messages from './messages';
-import { fetchApps, saveAppConfig } from './data/thunks';
-import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import DiscussionsProvider from './DiscussionsProvider';
 
 function DiscussionsSettings({ courseId, intl }) {
-  const [selectedAppId, setSelectedAppId] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const formRef = useRef();
   const { path } = useRouteMatch();
   const { pathname } = useLocation();
-  const dispatch = useDispatch();
 
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const discussionsPath = `${pagesAndResourcesPath}/discussions`;
 
   const isFirstStep = pathname === discussionsPath;
-  const submitButtonState = isSubmitting ? 'pending' : 'default';
 
   const steps = [{
     label: intl.formatMessage(messages.selectDiscussionTool),
@@ -54,19 +46,6 @@ function DiscussionsSettings({ courseId, intl }) {
     history.push(pagesAndResourcesPath);
   }, [courseId]);
 
-  // This causes the form to be submitted from a button outside the form.
-  const handleApply = () => {
-    setIsSubmitting(true);
-    formRef.current.requestSubmit();
-  };
-
-  // This is a callback that gets called after the form has been submitted successfully.
-  const handleSubmit = useCallback((values) => {
-    dispatch(saveAppConfig(courseId, selectedAppId, values)).then(() => {
-      history.push(pagesAndResourcesPath);
-    });
-  }, [courseId, selectedAppId, courseId]);
-
   const handleBack = useCallback(() => {
     if (isFirstStep) {
       history.push(pagesAndResourcesPath);
@@ -81,46 +60,34 @@ function DiscussionsSettings({ courseId, intl }) {
         <FullScreenModal.Header title={intl.formatMessage(messages.configure)} />
         <FullScreenModal.Body className="d-flex flex-column">
           <AppConfigForm.Provider>
-          <Stepper className="h-100">
-            <Stepper.Header steps={steps} />
-            <Stepper.Body className="bg-light-200">
-              <Switch>
-                <PageRoute exact path={`${path}`}>
-                  <AppList
+            <Stepper className="h-100">
+              <Stepper.Header steps={steps} />
+              <Stepper.Body className="bg-light-200">
+                <Switch>
+                  <PageRoute exact path={`${path}`}>
+                    <AppList
                       courseId={courseId}
-                  />
-                </PageRoute>
-                <PageRoute path={`${path}/configure/:appId`}>
-                  <AppConfigForm
-                    courseId={courseId}
-                    selectedAppId={selectedAppId}
-                    onSubmit={handleSubmit}
-                    formRef={formRef}
-                  />
-                </PageRoute>
-              </Switch>
-            </Stepper.Body>
-            <Stepper.Footer className="d-flex justify-content-end align-items-center">
-              <Button variant="outline-primary" className="mr-2" onClick={handleBack}>
-                {intl.formatMessage(messages.backButton)}
-              </Button>
-              {isFirstStep && (
+                    />
+                  </PageRoute>
+                  <PageRoute path={`${path}/configure/:appId`}>
+                    <AppConfigForm
+                      courseId={courseId}
+                    />
+                  </PageRoute>
+                </Switch>
+              </Stepper.Body>
+              <Stepper.Footer className="d-flex justify-content-end align-items-center">
+                <Button variant="outline-primary" className="mr-2" onClick={handleBack}>
+                  {intl.formatMessage(messages.backButton)}
+                </Button>
+                {isFirstStep && (
                   <AppList.NextButton />
-              )}
-              {!isFirstStep && (
-              <StatefulButton
-                labels={{
-                  default: intl.formatMessage(messages.applyButton),
-                  pending: intl.formatMessage(messages.applyingButton),
-                  complete: intl.formatMessage(messages.appliedButton),
-                }}
-                state={submitButtonState}
-                className="mr-3"
-                onClick={handleApply}
-              />
-              )}
-            </Stepper.Footer>
-          </Stepper>
+                )}
+                {!isFirstStep && (
+                  <AppConfigForm.ApplyButton />
+                )}
+              </Stepper.Footer>
+            </Stepper>
           </AppConfigForm.Provider>
         </FullScreenModal.Body>
       </FullScreenModal>

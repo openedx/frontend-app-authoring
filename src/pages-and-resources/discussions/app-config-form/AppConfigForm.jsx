@@ -1,32 +1,44 @@
-import React, { useEffect } from 'react';
+import React, {
+  useCallback, useContext, useEffect, useRef,
+} from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 import { Card, Container } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-
+import { history } from '@edx/frontend-platform';
 import { useModel } from '../../../generic/model-store';
-import { fetchAppConfig } from '../data/thunks';
+import { fetchAppConfig, saveAppConfig } from './data/thunks';
 import LegacyConfigForm from './apps/legacy';
 import LtiConfigForm from './apps/lti';
 import messages from './messages';
+import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
 import AppConfigFormProvider from './AppConfigFormProvider';
 import AppConfigFormApplyButton from './AppConfigFormApplyButton';
 
 function AppConfigForm({
-  courseId, onSubmit, formRef, intl,
+  courseId, intl,
 }) {
   const { params: { appId: routeAppId } } = useRouteMatch();
+  const formRef = useRef();
+  const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
 
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchAppConfig(courseId, routeAppId));
   }, [courseId]);
 
-  const { displayedAppId, displayedAppConfigId } = useSelector(state => state.discussions);
+  const { appId, appConfigId } = useSelector(state => state.discussions.appConfigForm);
 
-  const app = useModel('apps', displayedAppId);
-  const appConfig = useModel('appConfigs', displayedAppConfigId);
+  // This is a callback that gets called after the form has been submitted successfully.
+  const handleSubmit = useCallback((values) => {
+    dispatch(saveAppConfig(courseId, appId, values)).then(() => {
+      history.push(pagesAndResourcesPath);
+    });
+  }, [courseId, appId, courseId]);
+
+  const app = useModel('apps', appId);
+  const appConfig = useModel('appConfigs', appConfigId);
 
   if (!appConfig || !app) {
     return null;
@@ -39,7 +51,7 @@ function AppConfigForm({
       <LegacyConfigForm
         formRef={formRef}
         appConfig={appConfig}
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
       />
     );
   } else {
@@ -48,7 +60,7 @@ function AppConfigForm({
         formRef={formRef}
         app={app}
         appConfig={appConfig}
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
       />
     );
   }
@@ -66,9 +78,6 @@ function AppConfigForm({
 
 AppConfigForm.propTypes = {
   courseId: PropTypes.string.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
-  formRef: PropTypes.object.isRequired,
   intl: intlShape.isRequired,
 };
 
