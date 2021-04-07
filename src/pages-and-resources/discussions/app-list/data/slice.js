@@ -21,11 +21,15 @@ const slice = createSlice({
   reducers: {
     loadApps: (state, { payload }) => {
       state.activeAppId = payload.activeAppId;
+      // When the UI loads, we want to set the selectedAppId to the activeAppId.  This ensures the
+      // active one will be checked.
+      state.selectedAppId = payload.activeAppId;
       state.appIds = payload.appIds;
       state.featureIds = payload.featureIds;
       state.status = LOADED;
     },
-    selectApp: (state, { appId }) => {
+    selectApp: (state, { payload }) => {
+      const { appId } = payload;
       state.selectedAppId = appId;
     },
     updateStatus: (state, { status }) => {

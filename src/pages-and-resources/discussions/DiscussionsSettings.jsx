@@ -52,7 +52,7 @@ function DiscussionsSettings({ courseId, intl }) {
     } else {
       history.push(discussionsPath);
     }
-  }, [discussionsPath]);
+  }, [discussionsPath, isFirstStep, pagesAndResourcesPath]);
 
   return (
     <DiscussionsProvider path={discussionsPath}>
