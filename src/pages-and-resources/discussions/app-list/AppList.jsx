@@ -40,7 +40,9 @@ function AppList({ courseId, intl }) {
 
   return (
     <div className="m-5">
-      <h2 className="my-4 text-center">{intl.formatMessage(messages.heading)}</h2>
+      <h3 className="my-4">
+        {intl.formatMessage(messages.heading)}
+      </h3>
       <CardGrid
         columnSizes={{
           xs: 12,
@@ -58,9 +60,9 @@ function AppList({ courseId, intl }) {
         ))}
       </CardGrid>
 
-      <h2 className="my-3">
+      <h3 className="my-3">
         {intl.formatMessage(messages.supportedFeatures)}
-      </h2>
+      </h3>
 
       <FeaturesTable
         apps={apps}
