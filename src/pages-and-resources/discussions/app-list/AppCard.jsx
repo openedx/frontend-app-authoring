@@ -29,19 +29,19 @@ function AppCard({
       })}
     >
       <div
-        className="position-absolute"
+        className="position-absolute mt-3 mr-3"
         style={{
           top: '0.75rem',
           right: '0.75rem',
         }}
       >
-        <Input readOnly type="checkbox" checked={selected} />
+        <Input readOnly type="checkbox" style={{ width: '18px', height: '18px' }} checked={selected} />
       </div>
-      <Card.Body>
-        <Card.Title>
+      <Card.Body className="m-2">
+        <div className="h4 card-title">
           {intl.formatMessage(messages[`appName-${app.id}`])}
-        </Card.Title>
-        <Card.Subtitle className="mb-2 text-muted">{supportText}</Card.Subtitle>
+        </div>
+        <Card.Subtitle className="mb-3 text-muted">{supportText}</Card.Subtitle>
         <Card.Text>{intl.formatMessage(messages[`appDescription-${app.id}`])}</Card.Text>
       </Card.Body>
     </Card>

@@ -3,7 +3,7 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   heading: {
     id: 'authoring.discussions.heading',
-    defaultMessage: 'Which discussion tool would you like to use for this course?',
+    defaultMessage: 'Select a discussion tool for this course',
   },
   supportedFeatures: {
     id: 'authoring.discussions.supportedFeatures',
