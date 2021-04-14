@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { Remove } from '@edx/paragon/icons';
 import { DataTable } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from './messages';
@@ -21,7 +22,9 @@ function FeaturesTable({ apps, features, intl }) {
             <div key={`${app.id}&${feature.id}`}>
               <FontAwesomeIcon icon={faCheck} />
             </div>
-          ) : null;
+          ) : (
+            <div key={`${app.id}&${feature.id}`}><Remove /></div>
+          );
         });
 
         return {
