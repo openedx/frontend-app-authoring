@@ -16,6 +16,7 @@ function LtiConfigForm({
     handleChange,
     handleBlur,
     values,
+    touched,
     errors,
   } = useFormik({
     initialValues: appConfig,
@@ -26,6 +27,10 @@ function LtiConfigForm({
     }),
     onSubmit,
   });
+
+  const isInvalidConsumerKey = touched.consumerKey && errors.consumerKey;
+  const isInvalidConsumerSecret = touched.consumerSecret && errors.consumerSecret;
+  const isInvalidLaunchUrl = touched.launchUrl && errors.launchUrl;
 
   return (
     <Card className="mb-5 pt-3 px-5 pb-5">
@@ -51,40 +56,40 @@ function LtiConfigForm({
             }}
           />
         </p>
-        <Form.Group controlId="consumerKey" isInvalid={errors.consumerKey}>
+        <Form.Group controlId="consumerKey" isInvalid={isInvalidConsumerKey}>
           <Form.Label>{intl.formatMessage(messages.consumerKey)}</Form.Label>
           <Form.Control
             onChange={handleChange}
             onBlur={handleBlur}
             value={values.consumerKey}
           />
-          {errors.consumerKey && (
+          {isInvalidConsumerKey && (
           <Form.Control.Feedback type="invalid">
             {errors.consumerKey}
           </Form.Control.Feedback>
           )}
         </Form.Group>
-        <Form.Group controlId="consumerSecret" isInvalid={errors.consumerSecret}>
+        <Form.Group controlId="consumerSecret" isInvalid={isInvalidConsumerSecret}>
           <Form.Label>{intl.formatMessage(messages.consumerSecret)}</Form.Label>
           <Form.Control
             onChange={handleChange}
             onBlur={handleBlur}
             value={values.consumerSecret}
           />
-          {errors.consumerSecret && (
+          {isInvalidConsumerSecret && (
           <Form.Control.Feedback type="invalid">
             {errors.consumerSecret}
           </Form.Control.Feedback>
           )}
         </Form.Group>
-        <Form.Group controlId="launchUrl" isInvalid={errors.launchUrl}>
+        <Form.Group controlId="launchUrl" isInvalid={isInvalidLaunchUrl}>
           <Form.Label>{intl.formatMessage(messages.launchUrl)}</Form.Label>
           <Form.Control
             onChange={handleChange}
             onBlur={handleBlur}
             value={values.launchUrl}
           />
-          {errors.launchUrl && (
+          {isInvalidLaunchUrl && (
           <Form.Control.Feedback type="invalid">
             {errors.launchUrl}
           </Form.Control.Feedback>
