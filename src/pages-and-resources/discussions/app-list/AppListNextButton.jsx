@@ -9,7 +9,7 @@ import { DiscussionsContext } from '../DiscussionsProvider';
 import messages from './messages';
 
 function AppListNextButton({ intl }) {
-  const { selectedAppId } = useSelector(state => state.discussions.appList);
+  const { selectedAppId } = useSelector(state => state.discussions);
   const { path: discussionsPath } = useContext(DiscussionsContext);
 
   const handleStartConfig = useCallback(() => {

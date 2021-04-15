@@ -1,34 +1,31 @@
-import React, { useCallback, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { CardGrid, Container } from '@edx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useModels } from '../../../generic/model-store';
+import { selectApp, LOADED } from '../data/slice';
 
 import AppCard from './AppCard';
 import messages from './messages';
 import FeaturesTable from './FeaturesTable';
 import AppListNextButton from './AppListNextButton';
 
-import { fetchApps } from './data/thunks';
-import { selectApp, LOADED } from './data/slice';
-
-function AppList({ courseId, intl }) {
+function AppList({ intl }) {
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchApps(courseId));
-  }, [courseId]);
 
   const {
-    appIds, featureIds, status, selectedAppId,
-  } = useSelector(state => state.discussions.appList);
+    appIds, featureIds, status, activeAppId, selectedAppId,
+  } = useSelector(state => state.discussions);
   const apps = useModels('apps', appIds);
   const features = useModels('features', featureIds);
 
   const handleSelectApp = useCallback((appId) => {
     dispatch(selectApp({ appId }));
   }, [selectedAppId]);
+
+  // If selectedAppId is not set, use activeAppId
+  const finalSelectedAppId = selectedAppId || activeAppId;
 
   if (status === LOADED && apps.length === 0) {
     return (
@@ -54,7 +51,7 @@ function AppList({ courseId, intl }) {
           <AppCard
             key={app.id}
             app={app}
-            selected={app.id === selectedAppId}
+            selected={app.id === finalSelectedAppId}
             onClick={handleSelectApp}
           />
         ))}
@@ -73,7 +70,6 @@ function AppList({ courseId, intl }) {
 }
 
 AppList.propTypes = {
-  courseId: PropTypes.string.isRequired,
   intl: intlShape.isRequired,
 };
 
