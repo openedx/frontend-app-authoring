@@ -108,12 +108,20 @@ LtiConfigForm.propTypes = {
     consumerKey: PropTypes.string.isRequired,
     consumerSecret: PropTypes.string.isRequired,
     launchUrl: PropTypes.string.isRequired,
-  }).isRequired,
+  }),
   intl: intlShape.isRequired,
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
   title: PropTypes.string.isRequired,
+};
+
+LtiConfigForm.defaultProps = {
+  appConfig: {
+    consumerKey: '',
+    consumerSecret: '',
+    launchUrl: '',
+  },
 };
 
 export default injectIntl(LtiConfigForm);

@@ -70,12 +70,25 @@ LegacyConfigForm.propTypes = {
     allowAnonymousPosts: PropTypes.bool.isRequired,
     allowAnonymousPostsPeers: PropTypes.bool.isRequired,
     blackoutDates: PropTypes.string.isRequired,
-  }).isRequired,
+  }),
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
   intl: intlShape.isRequired,
   title: PropTypes.string.isRequired,
+};
+
+LegacyConfigForm.defaultProps = {
+  appConfig: {
+    divideByCohorts: false,
+    allowDivisionByUnit: false,
+    divideCourseWideTopics: false,
+    divideGeneralTopic: false,
+    divideQuestionsForTAs: false,
+    allowAnonymousPosts: false,
+    allowAnonymousPostsPeers: false,
+    blackoutDates: '[]',
+  },
 };
 
 export default injectIntl(LegacyConfigForm);
