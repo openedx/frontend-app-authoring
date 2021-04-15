@@ -19,7 +19,7 @@ function FeaturesTable({ apps, features, intl }) {
           // i.e, if this app has the current feature, check it!
           appCheckmarkCells[app.id] = app.featureIds.includes(feature.id) ? (
             <div key={`${app.id}&${feature.id}`}>
-              <FontAwesomeIcon icon={faCheck} />
+              <FontAwesomeIcon icon={faCheck} color="green" />
             </div>
           ) : null;
         });
