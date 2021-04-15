@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useContext } from 'react';
 import classNames from 'classnames';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Button } from '@edx/paragon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog } from '@fortawesome/free-solid-svg-icons';
 
-import { useLocation } from 'react-router';
 import { history } from '@edx/frontend-platform';
 import messages from '../messages';
+import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 
 const CoursePageShape = PropTypes.shape({
   id: PropTypes.string.isRequired,
@@ -23,7 +23,7 @@ const CoursePageShape = PropTypes.shape({
 export { CoursePageShape };
 
 function PageCard({ intl, page }) {
-  const { pathname } = useLocation();
+  const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
 
   const pageStatusMsgId = page.isEnabled ? 'pageStatus.enabled' : 'pageStatus.disabled';
   const componentClasses = classNames(
@@ -33,7 +33,7 @@ function PageCard({ intl, page }) {
   );
 
   const handleClick = () => {
-    history.push(`${pathname}/${page.id}`);
+    history.push(`${pagesAndResourcesPath}/${page.id}`);
   };
 
   return (
