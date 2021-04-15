@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useContext, useEffect, useRef,
+  useCallback, useContext, useEffect,
 } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,7 +20,7 @@ function AppConfigForm({
   courseId, intl,
 }) {
   const { params: { appId: routeAppId } } = useRouteMatch();
-  const formRef = useRef();
+  const { formRef } = useContext(AppConfigFormContext);
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
 
   const dispatch = useDispatch();
