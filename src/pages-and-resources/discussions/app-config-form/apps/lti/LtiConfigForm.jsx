@@ -49,10 +49,9 @@ function LtiConfigForm({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {intl.formatMessage(messages.documentationPage, { name: app.name })}
+                  {intl.formatMessage(messages.documentationPage, { name: title })}
                 </Hyperlink>
               ),
-              name: app.name,
             }}
           />
         </p>
@@ -103,7 +102,6 @@ function LtiConfigForm({
 LtiConfigForm.propTypes = {
   app: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
     documentationUrl: PropTypes.string.isRequired,
   }).isRequired,
   appConfig: PropTypes.shape({
