@@ -4,7 +4,7 @@ const messages = defineMessages({
   // Division by cohort fields
   divisionByGroup: {
     id: 'authoring.discussions.builtIn.divisionByGroup',
-    defaultMessage: 'Division by group',
+    defaultMessage: 'Cohorts',
   },
   divideByCohortsLabel: {
     id: 'authoring.discussions.builtIn.divideByCohorts.label',

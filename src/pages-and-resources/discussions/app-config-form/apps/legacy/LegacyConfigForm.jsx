@@ -36,14 +36,14 @@ function LegacyConfigForm({
     <Card className="mb-5 pt-3 px-5 pb-5" data-testid="legacyConfigForm">
       <Form ref={formRef} onSubmit={handleSubmit}>
         <h3>{title}</h3>
-        <AppConfigFormDivider />
-        <DivisionByGroupFields
+        <AppConfigFormDivider thick />
+        <AnonymousPostingFields
           onBlur={handleBlur}
           onChange={handleChange}
           values={values}
         />
-        <AppConfigFormDivider thick />
-        <AnonymousPostingFields
+        <AppConfigFormDivider />
+        <DivisionByGroupFields
           onBlur={handleBlur}
           onChange={handleChange}
           values={values}
