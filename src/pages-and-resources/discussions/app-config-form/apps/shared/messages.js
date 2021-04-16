@@ -58,7 +58,7 @@ const messages = defineMessages({
   },
   inContextDiscussionHelp: {
     id: 'authoring.discussions.builtIn.inContextDiscussion.help',
-    defaultMessage: 'Learners will eb able to view or hide a discussion side panel to engage with discussion on te course unit page.',
+    defaultMessage: 'Learners will be able to view or hide a discussion side panel to engage with discussion on the course unit page.',
   },
   gradedUnitPagesLabel: {
     id: 'authoring.discussions.builtIn.gradedUnitPages.label',
