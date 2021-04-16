@@ -4,12 +4,13 @@ import { CardGrid, Container } from '@edx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useModels } from '../../../generic/model-store';
-import { selectApp, LOADED } from '../data/slice';
+import { selectApp, LOADED, LOADING } from '../data/slice';
 
 import AppCard from './AppCard';
 import messages from './messages';
 import FeaturesTable from './FeaturesTable';
 import AppListNextButton from './AppListNextButton';
+import Loading from '../../../generic/Loading';
 
 function AppList({ intl }) {
   const dispatch = useDispatch();
@@ -26,6 +27,12 @@ function AppList({ intl }) {
 
   // If selectedAppId is not set, use activeAppId
   const finalSelectedAppId = selectedAppId || activeAppId;
+
+  if (status === LOADING) {
+    return (
+      <Loading />
+    );
+  }
 
   if (status === LOADED && apps.length === 0) {
     return (
