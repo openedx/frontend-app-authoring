@@ -108,7 +108,6 @@ describe('LegacyConfigForm', () => {
     // DivisionByGroupFields
     expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
     expect(container.querySelector('#divideByCohorts')).toBeChecked();
-    expect(container.querySelector('#allowDivisionByUnit')).toBeInTheDocument();
     expect(container.querySelector('#allowDivisionByUnit')).not.toBeChecked();
     expect(container.querySelector('#divideCourseWideTopics')).toBeInTheDocument();
     expect(container.querySelector('#divideCourseWideTopics')).not.toBeChecked();
