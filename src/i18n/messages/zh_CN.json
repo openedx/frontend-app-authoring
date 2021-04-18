@@ -40,7 +40,7 @@
   "authoring.discussions.appliedButton": "Applied",
   "authoring.discussions.appConfigForm.appName-piazza": "Piazza",
   "authoring.discussions.appConfigForm.appName-legacy": "edX Discussions",
-  "authoring.discussions.heading": "Which discussion tool would you like to use for this course?",
+  "authoring.discussions.heading": "Select a discussion tool for this course",
   "authoring.discussions.supportedFeatures": "Supported Features",
   "authoring.discussions.noApps": "There are no discussions providers available for your course.",
   "authoring.discussions.nextButton": "Next",
