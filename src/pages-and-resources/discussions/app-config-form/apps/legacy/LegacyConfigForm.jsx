@@ -7,7 +7,6 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import DivisionByGroupFields from '../shared/DivisionByGroupFields';
 import AnonymousPostingFields from '../shared/AnonymousPostingFields';
-import InContextDiscussionFields from '../shared/InContextDiscussionFields';
 import BlackoutDatesField, { blackoutDatesRegex } from '../shared/BlackoutDatesField';
 
 import messages from '../shared/messages';
@@ -36,13 +35,7 @@ function LegacyConfigForm({
   return (
     <Card className="mb-5 pt-3 px-5 pb-5" data-testid="legacyConfigForm">
       <Form ref={formRef} onSubmit={handleSubmit}>
-        <h3>{title}</h3>
-        <AppConfigFormDivider thick />
-        <InContextDiscussionFields
-          onBlur={handleBlur}
-          onChange={handleChange}
-          values={values}
-        />
+        <h3 className="mb-4 mt-2">{title}</h3>
         <AppConfigFormDivider thick />
         <AnonymousPostingFields
           onBlur={handleBlur}
@@ -70,7 +63,6 @@ function LegacyConfigForm({
 LegacyConfigForm.propTypes = {
   appConfig: PropTypes.shape({
     divideByCohorts: PropTypes.bool.isRequired,
-    allowDivisionByUnit: PropTypes.bool.isRequired,
     divideCourseWideTopics: PropTypes.bool.isRequired,
     divideGeneralTopic: PropTypes.bool.isRequired,
     divideQuestionsForTAsTopic: PropTypes.bool.isRequired,

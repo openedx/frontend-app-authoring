@@ -67,7 +67,6 @@ DivisionByGroupFields.propTypes = {
   intl: intlShape.isRequired,
   values: PropTypes.shape({
     divideByCohorts: PropTypes.bool,
-    allowDivisionByUnit: PropTypes.bool,
     divideCourseWideTopics: PropTypes.bool,
     divideGeneralTopic: PropTypes.bool,
     divideQuestionsForTAsTopic: PropTypes.bool,

@@ -77,7 +77,7 @@ function BlackoutDatesField({
 }) {
   return (
     <>
-      <h5 className="mb-3">{intl.formatMessage(messages.blackoutDates)}</h5>
+      <h5 className="mb-5 mt-4 text-gray-500">{intl.formatMessage(messages.blackoutDates)}</h5>
       <Form.Group
         controlId="blackoutDates"
       >
@@ -85,6 +85,7 @@ function BlackoutDatesField({
           value={values.blackoutDates}
           onChange={onChange}
           onBlur={onBlur}
+          className="mb-3"
           floatingLabel={intl.formatMessage(messages.blackoutDatesLabel)}
         />
         {errors.blackoutDates && (
