@@ -76,9 +76,9 @@ function DiscussionsSettings({ courseId, intl }) {
                   </PageRoute>
                 </Switch>
               </Stepper.Body>
-              <Stepper.Footer className="d-flex justify-content-end align-items-center">
+              <Stepper.Footer className={`d-flex ${isFirstStep ? 'justify-content-end' : 'justify-content-between'} align-items-center`}>
                 {!isFirstStep && (
-                  <Button variant="outline-primary" className="mr-2" onClick={handleBack}>
+                  <Button variant="outline-primary" className="ml-2" onClick={handleBack}>
                     {intl.formatMessage(messages.backButton)}
                   </Button>
                 )}

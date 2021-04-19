@@ -26,7 +26,7 @@ function AppConfigFormApplyButton({ intl }) {
         complete: intl.formatMessage(messages.appliedButton),
       }}
       state={submitButtonState}
-      className="mr-3"
+      className="mr-2"
       onClick={handleApply}
     />
   );
