@@ -1,0 +1,11 @@
+.app-list-heading {
+  @extend .my-5;
+}
+
+@media (max-width: 768px) {
+  /* For mobile phones: */
+  .app-list-heading {
+    margin-top: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+}
