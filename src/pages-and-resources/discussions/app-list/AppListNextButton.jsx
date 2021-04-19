@@ -17,7 +17,7 @@ function AppListNextButton({ intl }) {
   }, [discussionsPath, selectedAppId]);
 
   return (
-    <Button variant="primary" onClick={handleStartConfig}>
+    <Button variant="primary" onClick={handleStartConfig} className="mr-2">
       {intl.formatMessage(messages.nextButton)}
     </Button>
   );
