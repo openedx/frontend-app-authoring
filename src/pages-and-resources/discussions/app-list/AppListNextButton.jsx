@@ -20,7 +20,6 @@ function AppListNextButton({ intl }) {
     <Button
       variant="primary"
       onClick={handleStartConfig}
-      className="mr-2"
     >
       {intl.formatMessage(messages.nextButton)}
     </Button>
