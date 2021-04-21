@@ -27,13 +27,15 @@ export default function FormSwitchGroup({
             {helpText}
           </Form.Text>
         </div>
-        <SwitchControl
-          id={id}
-          aria-describedby={helpTextId}
-          onChange={onChange}
-          onBlur={onBlur}
-          checked={checked}
-        />
+        <div>
+          <SwitchControl
+            id={id}
+            aria-describedby={helpTextId}
+            onChange={onChange}
+            onBlur={onBlur}
+            checked={checked}
+          />
+        </div>
       </div>
 
     </Form.Group>
