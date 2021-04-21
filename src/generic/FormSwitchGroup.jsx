@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form } from '@edx/paragon';
+import { Form, SwitchControl } from '@edx/paragon';
 
 export default function FormSwitchGroup({
   id, label, helpText, className, onChange, onBlur, checked,
@@ -27,13 +27,15 @@ export default function FormSwitchGroup({
             {helpText}
           </Form.Text>
         </div>
-        <Form.Switch
-          id={id}
-          aria-describedby={helpTextId}
-          onChange={onChange}
-          onBlur={onBlur}
-          checked={checked}
-        />
+        <div>
+          <SwitchControl
+            id={id}
+            aria-describedby={helpTextId}
+            onChange={onChange}
+            onBlur={onBlur}
+            checked={checked}
+          />
+        </div>
       </div>
 
     </Form.Group>
