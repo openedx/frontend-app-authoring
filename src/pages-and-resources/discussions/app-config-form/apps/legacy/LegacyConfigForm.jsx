@@ -33,9 +33,9 @@ function LegacyConfigForm({
   });
 
   return (
-    <Card className="mb-5 pt-3 px-5 pb-5" data-testid="legacyConfigForm">
+    <Card className="mb-5 px-4 px-sm-5 pb-5" data-testid="legacyConfigForm">
       <Form ref={formRef} onSubmit={handleSubmit}>
-        <h3 className="mb-4 mt-2">{title}</h3>
+        <h3 className="text-primary-500 my-3">{title}</h3>
         <AppConfigFormDivider thick />
         <AnonymousPostingFields
           onBlur={handleBlur}
