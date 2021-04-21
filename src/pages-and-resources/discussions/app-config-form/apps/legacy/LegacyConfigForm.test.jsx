@@ -16,6 +16,20 @@ const defaultAppConfig = {
 };
 
 describe('LegacyConfigForm', () => {
+  test('title rendering', () => {
+    const { container } = render(
+      <IntlProvider locale="en">
+        <LegacyConfigForm
+          title="Test Legacy edX Discussions"
+          appConfig={defaultAppConfig}
+          onSubmit={jest.fn()}
+          formRef={createRef()}
+        />
+      </IntlProvider>,
+    );
+
+    expect(container.querySelector('h3')).toHaveTextContent('Test Legacy edX Discussions');
+  });
   test('calls onSubmit when the formRef is submitted', async () => {
     const formRef = createRef();
     const handleSubmit = jest.fn();
@@ -23,6 +37,7 @@ describe('LegacyConfigForm', () => {
     render(
       <IntlProvider locale="en">
         <LegacyConfigForm
+          title="Test Legacy edX Discussions"
           appConfig={defaultAppConfig}
           onSubmit={handleSubmit}
           formRef={formRef}
@@ -48,6 +63,7 @@ describe('LegacyConfigForm', () => {
     const { container } = render(
       <IntlProvider locale="en">
         <LegacyConfigForm
+          title="Test Legacy edX Discussions"
           appConfig={defaultAppConfig}
           onSubmit={jest.fn()}
           formRef={createRef()}
@@ -77,6 +93,7 @@ describe('LegacyConfigForm', () => {
     const { container } = render(
       <IntlProvider locale="en">
         <LegacyConfigForm
+          title="Test Legacy edX Discussions"
           appConfig={{
             ...defaultAppConfig,
             divideByCohorts: true,
