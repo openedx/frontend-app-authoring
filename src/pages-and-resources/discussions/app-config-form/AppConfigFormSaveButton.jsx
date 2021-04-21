@@ -26,7 +26,6 @@ function AppConfigFormSaveButton({ intl }) {
         complete: intl.formatMessage(messages.savedButton),
       }}
       state={submitButtonState}
-      className="mr-2"
       onClick={handleSave}
     />
   );
