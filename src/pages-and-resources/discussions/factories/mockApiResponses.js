@@ -27,7 +27,10 @@ export const piazzaApiResponse = {
       },
       piazza: {
         features: [
+          // We give piazza all features just so we can test our "full support" text.
           'discussion-page',
+          'embedded-course-sections',
+          'wcag-2.1',
           'lti',
         ],
       },
@@ -65,7 +68,10 @@ export const legacyApiResponse = {
       },
       piazza: {
         features: [
+          // We give piazza all features just so we can test our "full support" text.
           'discussion-page',
+          'embedded-course-sections',
+          'wcag-2.1',
           'lti',
         ],
       },

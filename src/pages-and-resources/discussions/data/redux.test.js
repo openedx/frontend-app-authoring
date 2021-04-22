@@ -54,10 +54,12 @@ const piazzaApp = {
   id: 'piazza',
   featureIds: [
     'discussion-page',
+    'embedded-course-sections',
+    'wcag-2.1',
     'lti',
   ],
   documentationUrl: 'http://example.com',
-  hasFullSupport: false,
+  hasFullSupport: true,
 };
 
 let axiosMock;
