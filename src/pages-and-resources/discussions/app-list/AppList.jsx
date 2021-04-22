@@ -47,7 +47,7 @@ function AppList({ intl }) {
   }
 
   return (
-    <div className="m-5">
+    <div className="m-5" data-testid="appList">
       <h3 className="my-sm-5 my-4">
         {intl.formatMessage(messages.heading)}
       </h3>

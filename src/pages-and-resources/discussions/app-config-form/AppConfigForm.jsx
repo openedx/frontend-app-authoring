@@ -77,7 +77,7 @@ function AppConfigForm({
     );
   }
   return (
-    <Container size="sm" className="px-sm-0 py-5">
+    <Container size="sm" className="px-sm-0 py-5" data-testid="appConfigForm">
       {form}
     </Container>
   );
