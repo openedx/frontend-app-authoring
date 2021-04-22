@@ -10,7 +10,7 @@ import { Container } from '@edx/paragon';
 
 import { useModel } from '../../../generic/model-store';
 import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
-import { LOADED, selectApp } from '../data/slice';
+import { LOADED, LOADING, selectApp } from '../data/slice';
 import { saveAppConfig } from '../data/thunks';
 
 import messages from './messages';
@@ -18,6 +18,7 @@ import AppConfigFormProvider, { AppConfigFormContext } from './AppConfigFormProv
 import AppConfigFormApplyButton from './AppConfigFormApplyButton';
 import LegacyConfigForm from './apps/legacy';
 import LtiConfigForm from './apps/lti';
+import Loading from '../../../generic/Loading';
 
 function AppConfigForm({
   courseId, intl,
@@ -48,8 +49,10 @@ function AppConfigForm({
     });
   }, [courseId, selectedAppId, courseId]);
 
-  if (!selectedAppId || status !== LOADED) {
-    return null;
+  if (!selectedAppId || status === LOADING) {
+    return (
+      <Loading />
+    );
   }
 
   let form = null;
