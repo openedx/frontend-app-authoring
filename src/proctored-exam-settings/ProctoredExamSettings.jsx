@@ -14,6 +14,7 @@ import {
 
 import messages from './ProctoredExamSettings.messages';
 import StudioApiService from '../data/services/StudioApiService';
+import Loading from '../generic/Loading';
 
 function ProctoredExamSettings({ courseId, intl }) {
   const [loading, setLoading] = useState(true);
@@ -387,23 +388,7 @@ function ProctoredExamSettings({ courseId, intl }) {
 
   function renderLoading() {
     return (
-      <div
-        className="d-flex justify-content-center align-items-center flex-column"
-        style={{
-          height: '50vh',
-        }}
-        data-test-id="spinnerContainer"
-      >
-        <Spinner className animation="border" role="status" variant="primary">
-          <span className="sr-only">
-            <FormattedMessage
-              id="authoring.examsettings.loading"
-              defaultMessage="Loading..."
-              description=""
-            />
-          </span>
-        </Spinner>
-      </div>
+      <Loading />
     );
   }
 

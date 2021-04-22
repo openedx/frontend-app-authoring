@@ -4,14 +4,14 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { StatefulButton } from '@edx/paragon';
 
 import messages from './messages';
-import { SAVING } from './data/slice';
+import { SAVING } from '../data/slice';
 import { AppConfigFormContext } from './AppConfigFormProvider';
 
 function AppConfigFormApplyButton({ intl }) {
-  const status = useSelector(state => state.discussions.appConfigForm.status);
+  const saveStatus = useSelector(state => state.discussions.saveStatus);
   const { formRef } = useContext(AppConfigFormContext);
 
-  const submitButtonState = status === SAVING ? 'pending' : 'default';
+  const submitButtonState = saveStatus === SAVING ? 'pending' : 'default';
 
   // This causes the form to be submitted from a button outside the form.
   const handleApply = useCallback(() => {

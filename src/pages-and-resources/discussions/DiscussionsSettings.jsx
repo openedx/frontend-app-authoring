@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useContext,
+  useCallback, useContext, useEffect,
 } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -7,6 +7,7 @@ import {
   useLocation,
   useRouteMatch,
 } from 'react-router';
+import { useDispatch } from 'react-redux';
 import { history } from '@edx/frontend-platform';
 import { PageRoute } from '@edx/frontend-platform/react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -16,18 +17,24 @@ import { Check } from '@edx/paragon/icons';
 import FullScreenModal from '../../generic/full-screen-modal';
 import Stepper from '../../generic/stepper';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
-import AppList from './app-list';
-import AppConfigForm from './app-config-form';
+
 import messages from './messages';
 import DiscussionsProvider from './DiscussionsProvider';
+import { fetchApps } from './data/thunks';
+import AppList from './app-list';
+import AppConfigForm from './app-config-form';
 
 function DiscussionsSettings({ courseId, intl }) {
+  const dispatch = useDispatch();
   const { path } = useRouteMatch();
   const { pathname } = useLocation();
-
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
-  const discussionsPath = `${pagesAndResourcesPath}/discussions`;
 
+  useEffect(() => {
+    dispatch(fetchApps(courseId));
+  }, [courseId]);
+
+  const discussionsPath = `${pagesAndResourcesPath}/discussions`;
   const isFirstStep = pathname === discussionsPath;
 
   const steps = [{
@@ -65,9 +72,7 @@ function DiscussionsSettings({ courseId, intl }) {
               <Stepper.Body className="bg-light-200">
                 <Switch>
                   <PageRoute exact path={`${path}`}>
-                    <AppList
-                      courseId={courseId}
-                    />
+                    <AppList />
                   </PageRoute>
                   <PageRoute path={`${path}/configure/:appId`}>
                     <AppConfigForm

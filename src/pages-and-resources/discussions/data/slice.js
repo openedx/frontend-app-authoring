@@ -4,9 +4,11 @@ import { createSlice } from '@reduxjs/toolkit';
 export const LOADING = 'LOADING';
 export const LOADED = 'LOADED';
 export const FAILED = 'FAILED';
+export const SAVING = 'SAVING';
+export const SAVED = 'SAVED';
 
 const slice = createSlice({
-  name: 'appList',
+  name: 'discussions',
   initialState: {
     appIds: [],
     featureIds: [],
@@ -17,23 +19,27 @@ const slice = createSlice({
     // instead.
     selectedAppId: null,
     status: LOADING,
+    saveStatus: SAVED,
   },
   reducers: {
     loadApps: (state, { payload }) => {
       state.activeAppId = payload.activeAppId;
-      // When the UI loads, we want to set the selectedAppId to the activeAppId.  This ensures the
-      // active one will be checked.
-      state.selectedAppId = payload.activeAppId;
       state.appIds = payload.appIds;
       state.featureIds = payload.featureIds;
       state.status = LOADED;
+      state.saveStatus = SAVED;
     },
     selectApp: (state, { payload }) => {
       const { appId } = payload;
       state.selectedAppId = appId;
     },
-    updateStatus: (state, { status }) => {
+    updateStatus: (state, { payload }) => {
+      const { status } = payload;
       state.status = status;
+    },
+    updateSaveStatus: (state, { payload }) => {
+      const { status } = payload;
+      state.saveStatus = status;
     },
   },
 });
@@ -42,6 +48,7 @@ export const {
   loadApps,
   selectApp,
   updateStatus,
+  updateSaveStatus,
 } = slice.actions;
 
 export const {
