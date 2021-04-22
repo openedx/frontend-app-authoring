@@ -21,6 +21,11 @@ function AppList({ intl }) {
   const apps = useModels('apps', appIds);
   const features = useModels('features', featureIds);
 
+  // This could be a bit confusing.  activeAppId is the ID of the app that is currently configured
+  // according to the server.  selectedAppId is the ID of the app that we _want_ to configure here
+  // in the UI.  The two don't always agree, and a selectedAppId may not yet be set when the app is
+  // loaded.  This effect is responsible for setting a selected app based on the active app -
+  // effectively defaulting to it - if a selected app hasn't been set yet.
   useEffect(() => {
     // If selectedAppId is not set, use activeAppId
     if (!selectedAppId) {
