@@ -18,7 +18,6 @@ function AppListNextButton({ intl }) {
 
   return (
     <Button
-      aria-label={intl.formatMessage(messages.nextButton)}
       variant="primary"
       onClick={handleStartConfig}
       className="mr-2"

@@ -2,7 +2,7 @@ import React from 'react';
 
 import {
   queryByLabelText,
-  queryByTestId, render, screen, waitForElementToBeRemoved,
+  queryByTestId, queryByText, render, screen, waitForElementToBeRemoved, act,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AppProvider, PageRoute } from '@edx/frontend-platform/react';
@@ -95,7 +95,7 @@ describe('DiscussionsSettings', () => {
     await waitForElementToBeRemoved(screen.getByRole('status'));
 
     userEvent.click(queryByLabelText(container, 'Select Piazza'));
-    userEvent.click(queryByLabelText(container, 'Next'));
+    userEvent.click(queryByText(container, 'Next'));
 
     expect(queryByTestId(container, 'appList')).not.toBeInTheDocument();
     expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
@@ -110,7 +110,7 @@ describe('DiscussionsSettings', () => {
 
     expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
 
-    userEvent.click(queryByLabelText(container, 'Back'));
+    userEvent.click(queryByText(container, 'Back'));
 
     expect(queryByTestId(container, 'appList')).toBeInTheDocument();
     expect(queryByTestId(container, 'appConfigForm')).not.toBeInTheDocument();

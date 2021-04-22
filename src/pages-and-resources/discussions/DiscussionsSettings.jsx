@@ -67,7 +67,6 @@ function DiscussionsSettings({ courseId, intl }) {
                 <Stepper.ActionRow eventKey={SETTINGS_STEP}>
                   <div className="d-flex w-100 justify-content-between">
                     <Button
-                      aria-label={intl.formatMessage(messages.backButton)}
                       variant="outline-primary"
                       onClick={handleBack}
                     >
