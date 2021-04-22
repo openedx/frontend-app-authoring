@@ -53,14 +53,14 @@ function DivisionByGroupFields({
                 onChange={onChange}
                 onBlur={onBlur}
                 checked={values.divideGeneralTopic}
-                label="General"
+                label={intl.formatMessage(messages.divideGeneralTopic)}
               />
               <Form.Check
                 id="divideQuestionsForTAs"
                 onChange={onChange}
                 onBlur={onBlur}
                 checked={values.divideQuestionsForTAs}
-                label="Questions for the TAs"
+                label={intl.formatMessage(messages.divideQuestionsForTAsTopic)}
               />
             </Form.Group>
           </React.Fragment>

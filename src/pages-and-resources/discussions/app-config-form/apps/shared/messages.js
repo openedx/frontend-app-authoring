@@ -30,6 +30,16 @@ const messages = defineMessages({
     id: 'authoring.discussions.builtIn.divideCourseWideTopics.help',
     defaultMessage: 'Choose which of your general course wide discussion topics you would like to divide.',
   },
+  divideGeneralTopic: {
+    id: 'authoring.discussions.builtIn.divideGeneralTopic.label',
+    defaultMessage: 'General',
+    description: 'Label for a checkbox allowing a user to divide the General course wide topic.',
+  },
+  divideQuestionsForTAsTopic: {
+    id: 'authoring.discussions.builtIn.divideQuestionsForTAsTopic.label',
+    defaultMessage: 'Questions for the TAs',
+    description: 'Label for a checkbox allowing a user to divide the Questions for the TAs course wide topic.',
+  },
 
   // In-context discussion fields
   visibilityInContext: {
