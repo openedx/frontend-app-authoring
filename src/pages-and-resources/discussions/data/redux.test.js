@@ -1,6 +1,7 @@
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform/testing';
+import { history } from '@edx/frontend-platform';
 import initializeStore from '../../../store';
 import { getAppsUrl } from './api';
 import { FAILED, SAVED, selectApp } from './slice';
@@ -16,7 +17,7 @@ const executeThunk = async (thunk, dispatch, getState) => {
 };
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
-
+const pagesAndResourcesPath = `/course/${courseId}/pages-and-resources`;
 const featuresState = {
   'discussion-page': {
     id: 'discussion-page',
@@ -170,14 +171,18 @@ describe('Data layer integration tests', () => {
 
   describe('saveAppConfig', () => {
     test('network error', async () => {
+      history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
+
       axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
       axiosMock.onPost(getAppsUrl(courseId)).networkError();
 
       // We call fetchApps and selectApp here too just to get us into a real state.
       await executeThunk(fetchApps(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'piazza' }));
-      await executeThunk(saveAppConfig(courseId, 'piazza', {}), store.dispatch);
+      await executeThunk(saveAppConfig(courseId, 'piazza', {}, pagesAndResourcesPath), store.dispatch);
 
+      // Assert we're still on the form.
+      expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
           appIds: ['legacy', 'piazza'],
@@ -191,6 +196,8 @@ describe('Data layer integration tests', () => {
     });
 
     test('successfully saves an LTI configuration', async () => {
+      history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
+
       axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
       axiosMock.onPost(getAppsUrl(courseId), {
         context_key: courseId,
@@ -217,12 +224,18 @@ describe('Data layer integration tests', () => {
       // We call fetchApps and selectApp here too just to get us into a real state.
       await executeThunk(fetchApps(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'piazza' }));
-      await executeThunk(saveAppConfig(courseId, 'piazza', {
+      await executeThunk(saveAppConfig(
+        courseId,
+        'piazza',
+        {
         consumerKey: 'new_consumer_key',
         consumerSecret: 'new_consumer_secret',
         launchUrl: 'http://localhost/new_launch_url',
-      }), store.dispatch);
+        },
+        pagesAndResourcesPath,
+      ), store.dispatch);
 
+      expect(window.location.pathname).toEqual(pagesAndResourcesPath);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
           appIds: ['legacy', 'piazza'],
@@ -242,6 +255,8 @@ describe('Data layer integration tests', () => {
     });
 
     test('successfully saves a Legacy configuration', async () => {
+      history.push(`/course/${courseId}/pages-and-resources/discussions/configure/legacy`);
+
       axiosMock.onGet(getAppsUrl(courseId)).reply(200, legacyApiResponse);
       axiosMock.onPost(getAppsUrl(courseId), {
         context_key: courseId,
@@ -266,7 +281,10 @@ describe('Data layer integration tests', () => {
       // We call fetchApps and selectApp here too just to get us into a real state.
       await executeThunk(fetchApps(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'legacy' }));
-      await executeThunk(saveAppConfig(courseId, 'legacy', {
+      await executeThunk(saveAppConfig(
+        courseId,
+        'legacy',
+        {
         allowAnonymousPosts: true,
         allowAnonymousPostsPeers: true,
         blackoutDates: '[["2015-09-15","2015-09-21"],["2015-10-01","2015-10-08"]]',
@@ -277,8 +295,11 @@ describe('Data layer integration tests', () => {
         divideCourseWideTopics: true,
         divideGeneralTopic: true,
         divideQuestionsForTAsTopic: true,
-      }), store.dispatch);
+        },
+        pagesAndResourcesPath,
+      ), store.dispatch);
 
+      expect(window.location.pathname).toEqual(pagesAndResourcesPath);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
           appIds: ['legacy', 'piazza'],

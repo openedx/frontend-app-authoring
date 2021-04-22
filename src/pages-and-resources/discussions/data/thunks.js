@@ -1,3 +1,4 @@
+import { history } from '@edx/frontend-platform';
 import { addModel, addModels } from '../../../generic/model-store';
 
 import { getApps, postAppConfig } from './api';
@@ -39,7 +40,7 @@ export function fetchApps(courseId) {
   };
 }
 
-export function saveAppConfig(courseId, appId, drafts) {
+export function saveAppConfig(courseId, appId, drafts, successPath) {
   return async (dispatch) => {
     dispatch(updateSaveStatus({ status: SAVING }));
 
@@ -60,6 +61,8 @@ export function saveAppConfig(courseId, appId, drafts) {
         featureIds: features.map(feature => feature.id),
       }));
       dispatch(updateSaveStatus({ status: SAVED }));
+      // Note that we redirect here to avoid having to work with the promise over in AppConfigForm.
+      history.push(successPath);
     } catch (error) {
       // TODO: We need generic error handling in the app for when a request just fails... in other
       // parts of the app (proctored exam settings) we show a nice message and ask the user to

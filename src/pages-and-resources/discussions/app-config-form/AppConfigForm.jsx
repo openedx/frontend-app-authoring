@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { history } from '@edx/frontend-platform';
 import { Container } from '@edx/paragon';
 
 import { useModel } from '../../../generic/model-store';
@@ -44,9 +43,8 @@ function AppConfigForm({
 
   // This is a callback that gets called after the form has been submitted successfully.
   const handleSubmit = useCallback((values) => {
-    dispatch(saveAppConfig(courseId, selectedAppId, values)).then(() => {
-      history.push(pagesAndResourcesPath);
-    });
+    // Note that when this action succeeds, we redirect to pagesAndResurcesPath in the thunk.
+    dispatch(saveAppConfig(courseId, selectedAppId, values, pagesAndResourcesPath));
   }, [courseId, selectedAppId, courseId]);
 
   if (!selectedAppId || status === LOADING) {
