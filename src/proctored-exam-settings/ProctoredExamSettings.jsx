@@ -117,7 +117,7 @@ function ProctoredExamSettings({ courseId, intl }) {
           isValid: false,
           errors: {
             formProctortrackEscalationEmail: {
-              dialogErrorMessage: (<Alert.Link onClick={setFocusToProctortrackEscalationEmailInput} href="#formProctortrackEscalationEmail" data-test-id="proctorTrackEscalationEmailErrorLink">{errorMessage}</Alert.Link>),
+              dialogErrorMessage: (<Alert.Link onClick={setFocusToProctortrackEscalationEmailInput} href="#formProctortrackEscalationEmail" data-testid="proctorTrackEscalationEmailErrorLink">{errorMessage}</Alert.Link>),
               inputErrorMessage: errorMessage,
             },
           },
@@ -129,7 +129,7 @@ function ProctoredExamSettings({ courseId, intl }) {
           isValid: false,
           errors: {
             formProctortrackEscalationEmail: {
-              dialogErrorMessage: (<Alert.Link onClick={setFocusToProctortrackEscalationEmailInput} href="#formProctortrackEscalationEmail" data-test-id="proctorTrackEscalationEmailErrorLink">{errorMessage}</Alert.Link>),
+              dialogErrorMessage: (<Alert.Link onClick={setFocusToProctortrackEscalationEmailInput} href="#formProctortrackEscalationEmail" data-testid="proctorTrackEscalationEmailErrorLink">{errorMessage}</Alert.Link>),
               inputErrorMessage: errorMessage,
             },
           },
@@ -168,7 +168,7 @@ function ProctoredExamSettings({ courseId, intl }) {
         key={provider}
         value={provider}
         disabled={isDisabledOption(provider)}
-        data-test-id={provider}
+        data-testid={provider}
       >
         {provider}
       </option>
@@ -192,7 +192,7 @@ function ProctoredExamSettings({ courseId, intl }) {
 
   function renderContent() {
     return (
-      <Form onSubmit={handleSubmit} data-test-id="proctoringForm">
+      <Form onSubmit={handleSubmit} data-testid="proctoringForm">
         {!formStatus.isValid && formStatus.errors.formProctortrackEscalationEmail
           && (
             // tabIndex="-1" to make non-focusable element focusable
@@ -200,7 +200,7 @@ function ProctoredExamSettings({ courseId, intl }) {
               id="proctortrackEscalationEmailError"
               variant="danger"
               tabIndex="-1"
-              data-test-id="proctortrackEscalationEmailError"
+              data-testid="proctortrackEscalationEmailError"
               ref={alertRef}
             >
               {getFormErrorMessage()}
@@ -245,7 +245,7 @@ function ProctoredExamSettings({ courseId, intl }) {
                 inline
                 checked={allowOptingOut}
                 onChange={() => onAllowOptingOutChange(true)}
-                data-test-id="allowOptingOutYes"
+                data-testid="allowOptingOutYes"
               />
               <Form.Check
                 type="radio"
@@ -255,7 +255,7 @@ function ProctoredExamSettings({ courseId, intl }) {
                 inline
                 checked={!allowOptingOut}
                 onChange={() => onAllowOptingOutChange(false)}
-                data-test-id="allowOptingOutNo"
+                data-testid="allowOptingOutNo"
               />
               <Form.Text id="allowOptingOutHelpText">
                 <FormattedMessage
@@ -308,7 +308,7 @@ function ProctoredExamSettings({ courseId, intl }) {
             <Form.Control
               ref={proctoringEscalationEmailInputRef}
               type="email"
-              data-test-id="escalationEmail"
+              data-testid="escalationEmail"
               onChange={onProctortrackEscalationEmailChange}
               value={proctortrackEscalationEmail}
               isInvalid={Object.prototype.hasOwnProperty.call(formStatus.errors, 'formProctortrackEscalationEmail')}
@@ -346,7 +346,7 @@ function ProctoredExamSettings({ courseId, intl }) {
                 name="createZendeskTickets"
                 checked={createZendeskTickets}
                 onChange={() => onCreateZendeskTicketsChange(true)}
-                data-test-id="createZendeskTicketsYes"
+                data-testid="createZendeskTicketsYes"
               />
               <Form.Check
                 type="radio"
@@ -356,7 +356,7 @@ function ProctoredExamSettings({ courseId, intl }) {
                 name="createZendeskTickets"
                 checked={!createZendeskTickets}
                 onChange={() => onCreateZendeskTicketsChange(false)}
-                data-test-id="createZendeskTicketsNo"
+                data-testid="createZendeskTicketsNo"
               />
               <Form.Text id="createZendeskTicketsText">
                 <FormattedMessage
@@ -371,7 +371,7 @@ function ProctoredExamSettings({ courseId, intl }) {
         <Button
           variant="primary"
           className="mb-3"
-          data-test-id="submissionButton"
+          data-testid="submissionButton"
           type="submit"
           disabled={submissionInProgress}
         >
@@ -381,7 +381,7 @@ function ProctoredExamSettings({ courseId, intl }) {
             description="Form submit button"
           />
         </Button> {' '}
-        {submissionInProgress && <Spinner animation="border" variant="primary" data-test-id="saveInProgress" aria-label="Save in progress" />}
+        {submissionInProgress && <Spinner animation="border" variant="primary" data-testid="saveInProgress" aria-label="Save in progress" />}
       </Form>
     );
   }
@@ -394,7 +394,7 @@ function ProctoredExamSettings({ courseId, intl }) {
 
   function renderConnectionError() {
     return (
-      <Alert variant="danger" data-test-id="connectionError">
+      <Alert variant="danger" data-testid="connectionError">
         <FormattedMessage
           id="authoring.examsettings.alert.error.connection"
           defaultMessage={`
@@ -410,7 +410,7 @@ function ProctoredExamSettings({ courseId, intl }) {
 
   function renderPermissionError() {
     return (
-      <Alert variant="danger" data-test-id="permissionError">
+      <Alert variant="danger" data-testid="permissionError">
         <FormattedMessage
           id="authoring.examsettings.alert.error.permission"
           defaultMessage={`
@@ -428,7 +428,7 @@ function ProctoredExamSettings({ courseId, intl }) {
       <Alert
         variant="success"
         dismissible
-        data-test-id="saveSuccess"
+        data-testid="saveSuccess"
         tabIndex="-1"
         ref={saveStatusAlertRef}
         onClose={() => setSaveSuccess(false)}
@@ -450,7 +450,7 @@ function ProctoredExamSettings({ courseId, intl }) {
       <Alert
         variant="danger"
         dismissible
-        data-test-id="saveError"
+        data-testid="saveError"
         tabIndex="-1"
         ref={saveStatusAlertRef}
         onClose={() => setSaveError(false)}
