@@ -9,7 +9,7 @@ export default function Loading() {
       style={{
         height: '50vh',
       }}
-      data-test-id="spinnerContainer"
+      data-testid="spinnerContainer"
     >
       <Spinner className animation="border" role="status" variant="primary">
         <span className="sr-only">
