@@ -56,10 +56,10 @@ function DivisionByGroupFields({
                 label={intl.formatMessage(messages.divideGeneralTopic)}
               />
               <Form.Check
-                id="divideQuestionsForTAs"
+                id="divideQuestionsForTAsTopic"
                 onChange={onChange}
                 onBlur={onBlur}
-                checked={values.divideQuestionsForTAs}
+                checked={values.divideQuestionsForTAsTopic}
                 label={intl.formatMessage(messages.divideQuestionsForTAsTopic)}
               />
             </Form.Group>
@@ -79,7 +79,7 @@ DivisionByGroupFields.propTypes = {
     allowDivisionByUnit: PropTypes.bool,
     divideCourseWideTopics: PropTypes.bool,
     divideGeneralTopic: PropTypes.bool,
-    divideQuestionsForTAs: PropTypes.bool,
+    divideQuestionsForTAsTopic: PropTypes.bool,
   }).isRequired,
 };
 

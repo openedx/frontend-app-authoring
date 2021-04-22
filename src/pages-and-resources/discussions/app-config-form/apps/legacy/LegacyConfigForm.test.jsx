@@ -9,7 +9,7 @@ const defaultAppConfig = {
   allowDivisionByUnit: false,
   divideCourseWideTopics: false,
   divideGeneralTopic: false,
-  divideQuestionsForTAs: false,
+  divideQuestionsForTAsTopic: false,
   allowAnonymousPosts: false,
   allowAnonymousPostsPeers: false,
   blackoutDates: '[]',
@@ -77,7 +77,7 @@ describe('LegacyConfigForm', () => {
     expect(container.querySelector('#allowDivisionByUnit')).not.toBeInTheDocument();
     expect(container.querySelector('#divideCourseWideTopics')).not.toBeInTheDocument();
     expect(container.querySelector('#divideGeneralTopic')).not.toBeInTheDocument();
-    expect(container.querySelector('#divideQuestionsForTAs')).not.toBeInTheDocument();
+    expect(container.querySelector('#divideQuestionsForTAsTopic')).not.toBeInTheDocument();
 
     // AnonymousPostingFields
     expect(container.querySelector('#allowAnonymousPosts')).toBeInTheDocument();
@@ -114,8 +114,8 @@ describe('LegacyConfigForm', () => {
     expect(container.querySelector('#divideCourseWideTopics')).not.toBeChecked();
     expect(container.querySelector('#divideGeneralTopic')).toBeInTheDocument();
     expect(container.querySelector('#divideGeneralTopic')).not.toBeChecked();
-    expect(container.querySelector('#divideQuestionsForTAs')).toBeInTheDocument();
-    expect(container.querySelector('#divideQuestionsForTAs')).not.toBeChecked();
+    expect(container.querySelector('#divideQuestionsForTAsTopic')).toBeInTheDocument();
+    expect(container.querySelector('#divideQuestionsForTAsTopic')).not.toBeChecked();
 
     // AnonymousPostingFields
     expect(container.querySelector('#allowAnonymousPosts')).toBeInTheDocument();
