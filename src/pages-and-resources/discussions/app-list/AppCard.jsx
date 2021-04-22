@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Card, Input } from '@edx/paragon';
+import { Card, CheckboxControl } from '@edx/paragon';
 
 import messages from './messages';
 
@@ -35,7 +35,13 @@ function AppCard({
           right: '0.75rem',
         }}
       >
-        <Input readOnly type="checkbox" style={{ width: '18px', height: '18px' }} checked={selected} />
+        <CheckboxControl
+          checked={selected}
+          readOnly
+          aria-label={intl.formatMessage(messages.selectApp, {
+            appName: intl.formatMessage(messages[`appName-${app.id}`]),
+          })}
+        />
       </div>
       <Card.Body className="m-2">
         <div className="h4 card-title">
