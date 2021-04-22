@@ -4,7 +4,9 @@ import { initializeMockApp } from '@edx/frontend-platform/testing';
 import { history } from '@edx/frontend-platform';
 import initializeStore from '../../../store';
 import { getAppsUrl } from './api';
-import { FAILED, SAVED, selectApp } from './slice';
+import {
+  FAILED, SAVED, DENIED, selectApp,
+} from './slice';
 import { fetchApps, saveAppConfig } from './thunks';
 import { LOADED } from '../../../data/slice';
 import { legacyApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
@@ -104,6 +106,23 @@ describe('Data layer integration tests', () => {
       );
     });
 
+    test('permission denied error', async () => {
+      axiosMock.onGet(getAppsUrl(courseId)).reply(403);
+
+      await executeThunk(fetchApps(courseId), store.dispatch);
+
+      expect(store.getState().discussions).toEqual(
+        expect.objectContaining({
+          appIds: [],
+          featureIds: [],
+          activeAppId: null,
+          selectedAppId: null,
+          status: DENIED,
+          saveStatus: SAVED,
+        }),
+      );
+    });
+
     test('successfully loads an LTI configuration', async () => {
       axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
 
@@ -195,6 +214,31 @@ describe('Data layer integration tests', () => {
       );
     });
 
+    test('permission denied error', async () => {
+      history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
+
+      axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
+      axiosMock.onPost(getAppsUrl(courseId)).reply(403);
+
+      // We call fetchApps and selectApp here too just to get us into a real state.
+      await executeThunk(fetchApps(courseId), store.dispatch);
+      store.dispatch(selectApp({ appId: 'piazza' }));
+      await executeThunk(saveAppConfig(courseId, 'piazza', {}, pagesAndResourcesPath), store.dispatch);
+
+      // Assert we're still on the form.
+      expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
+      expect(store.getState().discussions).toEqual(
+        expect.objectContaining({
+          appIds: ['legacy', 'piazza'],
+          featureIds,
+          activeAppId: 'piazza',
+          selectedAppId: 'piazza',
+          status: DENIED, // We set BOTH statuses to DENIED for saveAppConfig - this removes the UI.
+          saveStatus: DENIED,
+        }),
+      );
+    });
+
     test('successfully saves an LTI configuration', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
 
@@ -228,9 +272,9 @@ describe('Data layer integration tests', () => {
         courseId,
         'piazza',
         {
-        consumerKey: 'new_consumer_key',
-        consumerSecret: 'new_consumer_secret',
-        launchUrl: 'http://localhost/new_launch_url',
+          consumerKey: 'new_consumer_key',
+          consumerSecret: 'new_consumer_secret',
+          launchUrl: 'http://localhost/new_launch_url',
         },
         pagesAndResourcesPath,
       ), store.dispatch);
@@ -285,16 +329,16 @@ describe('Data layer integration tests', () => {
         courseId,
         'legacy',
         {
-        allowAnonymousPosts: true,
-        allowAnonymousPostsPeers: true,
-        blackoutDates: '[["2015-09-15","2015-09-21"],["2015-10-01","2015-10-08"]]',
-        // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
-        // but we technically send it to the thunk, so here it is.
-        divideByCohorts: true,
-        allowDivisionByUnit: true,
-        divideCourseWideTopics: true,
-        divideGeneralTopic: true,
-        divideQuestionsForTAsTopic: true,
+          allowAnonymousPosts: true,
+          allowAnonymousPostsPeers: true,
+          blackoutDates: '[["2015-09-15","2015-09-21"],["2015-10-01","2015-10-08"]]',
+          // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
+          // but we technically send it to the thunk, so here it is.
+          divideByCohorts: true,
+          allowDivisionByUnit: true,
+          divideCourseWideTopics: true,
+          divideGeneralTopic: true,
+          divideQuestionsForTAsTopic: true,
         },
         pagesAndResourcesPath,
       ), store.dispatch);
