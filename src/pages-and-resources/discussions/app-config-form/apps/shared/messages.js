@@ -1,7 +1,7 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-  // Division fields
+  // Division by cohort fields
   divisionByGroup: {
     id: 'authoring.discussions.builtIn.divisionByGroup',
     defaultMessage: 'Division by group',
@@ -9,26 +9,42 @@ const messages = defineMessages({
   divideByCohortsLabel: {
     id: 'authoring.discussions.builtIn.divideByCohorts.label',
     defaultMessage: 'Divide discussions by cohorts',
+    description: 'Label for a switch that enables dividing discussions by cohorts.  allowDivisionByUnit, divideCourseWideTopics, divideGeneralTopic, and divideQuestionsForTAs are only used if this setting is true.',
   },
   divideByCohortsHelp: {
     id: 'authoring.discussions.builtIn.divideByCohorts.help',
     defaultMessage: 'Learners will only be able to view and respond to discussions posted by members of their cohort.',
+    description: 'Help text for a switch that enables dividing discussions by cohorts.',
   },
   allowDivisionByUnitLabel: {
     id: 'authoring.discussions.builtIn.allowDivisionByUnit.label',
     defaultMessage: 'Allow cohort division for each course unit',
+    description: 'Label for a switch that enables dividing discussions in course units by cohort.',
   },
   allowDivisionByUnitHelp: {
     id: 'authoring.discussions.builtIn.allowDivisionByUnit.help',
     defaultMessage: 'With this advanced setting enabled, you will be able to override the global visibility, and turn the division of cohorts on or off for each unit from the course outline view.',
+    description: 'Help text for a switch that enables dividing discussions in course units by cohort.',
   },
   divideCourseWideTopicsLabel: {
     id: 'authoring.discussions.builtIn.divideCourseWideTopics.label',
     defaultMessage: 'Divide course wide discussion topics',
+    description: 'Label for a switch that enables dividing course wide topics by cohorts.',
   },
   divideCourseWideTopicsHelp: {
     id: 'authoring.discussions.builtIn.divideCourseWideTopics.help',
     defaultMessage: 'Choose which of your general course wide discussion topics you would like to divide.',
+    description: 'Help text asking the user to pick course-wide topics that should be divided by cohort.',
+  },
+  divideGeneralTopic: {
+    id: 'authoring.discussions.builtIn.divideGeneralTopic.label',
+    defaultMessage: 'General',
+    description: 'Label for a checkbox allowing a user to divide the General course wide topic by cohorts.',
+  },
+  divideQuestionsForTAsTopic: {
+    id: 'authoring.discussions.builtIn.divideQuestionsForTAsTopic.label',
+    defaultMessage: 'Questions for the TAs',
+    description: 'Label for a checkbox allowing a user to divide the Questions for the TAs (TA stands for "teaching assistant") course wide topic by cohorts.',
   },
 
   // In-context discussion fields

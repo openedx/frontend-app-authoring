@@ -53,14 +53,14 @@ function DivisionByGroupFields({
                 onChange={onChange}
                 onBlur={onBlur}
                 checked={values.divideGeneralTopic}
-                label="General"
+                label={intl.formatMessage(messages.divideGeneralTopic)}
               />
               <Form.Check
-                id="divideQuestionsForTAs"
+                id="divideQuestionsForTAsTopic"
                 onChange={onChange}
                 onBlur={onBlur}
-                checked={values.divideQuestionsForTAs}
-                label="Questions for the TAs"
+                checked={values.divideQuestionsForTAsTopic}
+                label={intl.formatMessage(messages.divideQuestionsForTAsTopic)}
               />
             </Form.Group>
           </React.Fragment>
@@ -79,7 +79,7 @@ DivisionByGroupFields.propTypes = {
     allowDivisionByUnit: PropTypes.bool,
     divideCourseWideTopics: PropTypes.bool,
     divideGeneralTopic: PropTypes.bool,
-    divideQuestionsForTAs: PropTypes.bool,
+    divideQuestionsForTAsTopic: PropTypes.bool,
   }).isRequired,
 };
 

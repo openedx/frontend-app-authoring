@@ -154,7 +154,7 @@ describe('Data layer integration tests', () => {
         allowDivisionByUnit: false,
         divideCourseWideTopics: false,
         divideGeneralTopic: false,
-        divideQuestionsForTAs: false,
+        divideQuestionsForTAsTopic: false,
       });
     });
   });
@@ -276,7 +276,7 @@ describe('Data layer integration tests', () => {
         allowDivisionByUnit: true,
         divideCourseWideTopics: true,
         divideGeneralTopic: true,
-        divideQuestionsForTAs: true,
+        divideQuestionsForTAsTopic: true,
       }), store.dispatch);
 
       expect(store.getState().discussions).toEqual(
@@ -301,7 +301,7 @@ describe('Data layer integration tests', () => {
         allowDivisionByUnit: false,
         divideCourseWideTopics: false,
         divideGeneralTopic: false,
-        divideQuestionsForTAs: false,
+        divideQuestionsForTAsTopic: false,
       });
     });
   });

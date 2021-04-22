@@ -32,7 +32,7 @@ function normalizePluginConfig(data) {
     // two, I think we could check for the existence of "General" for the first, but I'm not sure
     // what the topic title is for the second.  "Questions for TAs" maybe?
     divideGeneralTopic: false,
-    divideQuestionsForTAs: false,
+    divideQuestionsForTAsTopic: false,
   };
 }
 
@@ -68,7 +68,7 @@ function denormalizeData(courseId, appId, data) {
   allowDivisionByUnit
   divideCourseWideTopics
   divideGeneralTopic
-  divideQuestionsForTAs
+  divideQuestionsForTAsTopic
   */
   const pluginConfiguration = {};
 
