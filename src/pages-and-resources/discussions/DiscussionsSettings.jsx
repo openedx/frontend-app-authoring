@@ -59,6 +59,7 @@ function DiscussionsSettings({ courseId, intl }) {
             title={intl.formatMessage(messages.configure)}
             onClose={handleClose}
             isOpen
+            beforeBodyNode={<Stepper.Header className="border-bottom border-light" />}
             footerNode={(
               <>
                 <Stepper.ActionRow eventKey={SELECTION_STEP}>
