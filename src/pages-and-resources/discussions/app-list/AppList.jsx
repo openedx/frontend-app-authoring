@@ -40,7 +40,7 @@ function AppList({ courseId, intl }) {
 
   return (
     <div className="m-5">
-      <h3 className="my-5">
+      <h3 className="my-sm-5 my-4">
         {intl.formatMessage(messages.heading)}
       </h3>
       <CardGrid
@@ -60,7 +60,7 @@ function AppList({ courseId, intl }) {
         ))}
       </CardGrid>
 
-      <h3 className="my-5">
+      <h3 className="my-sm-5 my-4">
         {intl.formatMessage(messages.supportedFeatures)}
       </h3>
 
