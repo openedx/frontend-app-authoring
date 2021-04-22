@@ -12,9 +12,12 @@ import {
   FormattedMessage,
 } from '@edx/frontend-platform/i18n';
 
+import { getConfig } from '@edx/frontend-platform';
 import messages from './ProctoredExamSettings.messages';
 import StudioApiService from '../data/services/StudioApiService';
 import Loading from '../generic/Loading';
+import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
+import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 
 function ProctoredExamSettings({ courseId, intl }) {
   const [loading, setLoading] = useState(true);
@@ -394,31 +397,13 @@ function ProctoredExamSettings({ courseId, intl }) {
 
   function renderConnectionError() {
     return (
-      <Alert variant="danger" data-testid="connectionError">
-        <FormattedMessage
-          id="authoring.examsettings.alert.error.connection"
-          defaultMessage={`
-            We encountered a technical error when loading this page. This might be a temporary issue,
-            so please try again in a few minutes. If the problem persists, please go to {support_link} for help.
-          `}
-          values={{ support_link: <Alert.Link href="https://support.edx.org/hc/en-us">{intl.formatMessage(messages['authoring.examsettings.support.text'])}</Alert.Link> }}
-          description=""
-        />
-      </Alert>
+      <ConnectionErrorAlert />
     );
   }
 
   function renderPermissionError() {
     return (
-      <Alert variant="danger" data-testid="permissionError">
-        <FormattedMessage
-          id="authoring.examsettings.alert.error.permission"
-          defaultMessage={`
-            You are not authorized to view this page. If you feel you should have access,
-            please reach out to your course team admin to be given access.
-          `}
-        />
-      </Alert>
+      <PermissionDeniedAlert />
     );
   }
 
@@ -461,9 +446,15 @@ function ProctoredExamSettings({ courseId, intl }) {
             We encountered a technical error while trying to save proctored exam settings.
             This might be a temporary issue, so please try again in a few minutes.
             If the problem persists,
-            please go to {support_link} for help.
+            please go to the {support_link} for help.
           `}
-          values={{ support_link: <Alert.Link href="https://support.edx.org/hc/en-us">{intl.formatMessage(messages['authoring.examsettings.support.text'])}</Alert.Link> }}
+          values={{
+            support_link: (
+              <Alert.Link href={getConfig().SUPPORT_URL}>
+                {intl.formatMessage(messages['authoring.examsettings.support.text'])}
+              </Alert.Link>
+            ),
+          }}
         />
       </Alert>
     );

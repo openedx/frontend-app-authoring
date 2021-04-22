@@ -23,7 +23,7 @@ const messages = defineMessages({
   },
   'authoring.examsettings.support.text': {
     id: 'authoring.examsettings.support.text',
-    defaultMessage: 'edX Support Page',
+    defaultMessage: 'Support Page',
     description: 'Text linking to the support page.',
   },
   'authoring.examsettings.enableproctoredexams.label': {
