@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { CardGrid, Container } from '@edx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,14 +21,18 @@ function AppList({ intl }) {
   const apps = useModels('apps', appIds);
   const features = useModels('features', featureIds);
 
+  useEffect(() => {
+    // If selectedAppId is not set, use activeAppId
+    if (!selectedAppId) {
+      dispatch(selectApp({ appId: activeAppId }));
+    }
+  }, [selectedAppId, activeAppId]);
+
   const handleSelectApp = useCallback((appId) => {
     dispatch(selectApp({ appId }));
   }, [selectedAppId]);
 
-  // If selectedAppId is not set, use activeAppId
-  const finalSelectedAppId = selectedAppId || activeAppId;
-
-  if (status === LOADING) {
+  if (!selectedAppId || status === LOADING) {
     return (
       <Loading />
     );
@@ -58,7 +62,7 @@ function AppList({ intl }) {
           <AppCard
             key={app.id}
             app={app}
-            selected={app.id === finalSelectedAppId}
+            selected={app.id === selectedAppId}
             onClick={handleSelectApp}
           />
         ))}
