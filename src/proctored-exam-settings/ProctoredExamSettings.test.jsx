@@ -480,7 +480,7 @@ describe('ProctoredExamSettings', () => {
       await act(async () => {
         render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />));
         // This expectation is _inside_ the `act` intentionally, so that it executes immediately.
-        const spinner = screen.getByTestId('spinnerContainer');
+        const spinner = screen.getByRole('status');
         expect(spinner.textContent).toEqual('Loading...');
       });
     });

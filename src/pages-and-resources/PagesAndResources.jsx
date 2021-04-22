@@ -38,7 +38,12 @@ function PagesAndResources({ courseId, intl }) {
           <ResourceList />
         </div>
         <Switch>
-          <PageRoute path={`${path}/discussions`}>
+          <PageRoute
+            path={[
+              `${path}/discussions/configure/:appId`,
+              `${path}/discussions`,
+            ]}
+          >
             <DiscussionsSettings courseId={courseId} />
           </PageRoute>
         </Switch>

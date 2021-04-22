@@ -33,7 +33,7 @@ function LtiConfigForm({
   const isInvalidLaunchUrl = touched.launchUrl && errors.launchUrl;
 
   return (
-    <Card className="mb-5 pt-3 px-5 pb-5">
+    <Card className="mb-5 pt-3 px-5 pb-5" data-testid="ltiConfigForm">
       <Form ref={formRef} onSubmit={handleSubmit}>
         <h3>{title}</h3>
         <AppConfigFormDivider />

@@ -6,9 +6,7 @@ import { getAppsUrl } from './api';
 import { FAILED, SAVED, selectApp } from './slice';
 import { fetchApps, saveAppConfig } from './thunks';
 import { LOADED } from '../../../data/slice';
-
-let axiosMock;
-let store;
+import { legacyApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
 
 // Helper, that is used to forcibly finalize all promises
 // in thunk before running matcher against state.
@@ -18,81 +16,6 @@ const executeThunk = async (thunk, dispatch, getState) => {
 };
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
-
-const piazzaApiResponse = {
-  context_key: 'course-v1:edX+DemoX+Demo_Course',
-  enabled: true,
-  provider_type: 'piazza',
-  features: [
-    'discussion-page',
-    'embedded-course-sections',
-    'wcag-2.1',
-    'lti',
-  ],
-  lti_configuration: {
-    lti_1p1_client_key: 'client_key_123',
-    lti_1p1_client_secret: 'client_secret_123',
-    lti_1p1_launch_url: 'https://localhost/example',
-    version: 'lti_1p1',
-  },
-  plugin_configuration: {},
-  providers: {
-    active: 'piazza',
-    available: {
-      legacy: {
-        features: [
-          'discussion-page',
-          'embedded-course-sections',
-          'wcag-2.1',
-        ],
-      },
-      piazza: {
-        features: [
-          'discussion-page',
-          'lti',
-        ],
-      },
-    },
-  },
-};
-
-const legacyApiResponse = {
-  context_key: 'course-v1:edX+DemoX+Demo_Course',
-  enabled: true,
-  provider_type: 'legacy',
-  features: [
-    'discussion-page',
-    'embedded-course-sections',
-    'wcag-2.1',
-    'lti',
-  ],
-  lti_configuration: {},
-  plugin_configuration: {
-    allow_anonymous: false,
-    allow_anonymous_to_peers: false,
-    // Note, this gets stringified when normalized into the app, but the API returns it as an
-    // actual array.  Argh.
-    discussion_blackouts: [],
-  },
-  providers: {
-    active: 'legacy',
-    available: {
-      legacy: {
-        features: [
-          'discussion-page',
-          'embedded-course-sections',
-          'wcag-2.1',
-        ],
-      },
-      piazza: {
-        features: [
-          'discussion-page',
-          'lti',
-        ],
-      },
-    },
-  },
-};
 
 const featuresState = {
   'discussion-page': {
@@ -131,11 +54,16 @@ const piazzaApp = {
   id: 'piazza',
   featureIds: [
     'discussion-page',
+    'embedded-course-sections',
+    'wcag-2.1',
     'lti',
   ],
   documentationUrl: 'http://example.com',
-  hasFullSupport: false,
+  hasFullSupport: true,
 };
+
+let axiosMock;
+let store;
 
 describe('Data layer integration tests', () => {
   beforeEach(() => {

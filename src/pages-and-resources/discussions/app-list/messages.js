@@ -29,6 +29,11 @@ const messages = defineMessages({
     defaultMessage: 'Partial support',
     description: 'A label indicating that an app only supports a subset of the possible features of a discussions app.',
   },
+  selectApp: {
+    id: 'authoring.discussions.selectApp',
+    defaultMessage: 'Select {appName}',
+    description: 'A label for the checkbox that allows a user to select the discussions app they want to configure.',
+  },
 
   // Legacy
   'appName-legacy': {

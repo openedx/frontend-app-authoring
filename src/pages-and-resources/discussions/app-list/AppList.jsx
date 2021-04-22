@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { CardGrid, Container } from '@edx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,14 +21,23 @@ function AppList({ intl }) {
   const apps = useModels('apps', appIds);
   const features = useModels('features', featureIds);
 
+  // This could be a bit confusing.  activeAppId is the ID of the app that is currently configured
+  // according to the server.  selectedAppId is the ID of the app that we _want_ to configure here
+  // in the UI.  The two don't always agree, and a selectedAppId may not yet be set when the app is
+  // loaded.  This effect is responsible for setting a selected app based on the active app -
+  // effectively defaulting to it - if a selected app hasn't been set yet.
+  useEffect(() => {
+    // If selectedAppId is not set, use activeAppId
+    if (!selectedAppId) {
+      dispatch(selectApp({ appId: activeAppId }));
+    }
+  }, [selectedAppId, activeAppId]);
+
   const handleSelectApp = useCallback((appId) => {
     dispatch(selectApp({ appId }));
   }, [selectedAppId]);
 
-  // If selectedAppId is not set, use activeAppId
-  const finalSelectedAppId = selectedAppId || activeAppId;
-
-  if (status === LOADING) {
+  if (!selectedAppId || status === LOADING) {
     return (
       <Loading />
     );
@@ -43,7 +52,7 @@ function AppList({ intl }) {
   }
 
   return (
-    <div className="m-5">
+    <div className="m-5" data-testid="appList">
       <h3 className="my-sm-5 my-4">
         {intl.formatMessage(messages.heading)}
       </h3>
@@ -58,7 +67,7 @@ function AppList({ intl }) {
           <AppCard
             key={app.id}
             app={app}
-            selected={app.id === finalSelectedAppId}
+            selected={app.id === selectedAppId}
             onClick={handleSelectApp}
           />
         ))}

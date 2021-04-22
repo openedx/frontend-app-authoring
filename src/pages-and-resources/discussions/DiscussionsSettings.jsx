@@ -1,21 +1,18 @@
 import React, {
-  useCallback, useContext, useEffect,
+  useCallback, useContext, useEffect, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Switch,
-  useLocation,
   useRouteMatch,
 } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { history } from '@edx/frontend-platform';
-import { PageRoute } from '@edx/frontend-platform/react';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Button } from '@edx/paragon';
-import { Check } from '@edx/paragon/icons';
 
-import FullScreenModal from '../../generic/full-screen-modal';
-import Stepper from '../../generic/stepper';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import {
+  Button, FullscreenModal, Stepper,
+} from '@edx/paragon';
+
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 
 import messages from './messages';
@@ -24,10 +21,11 @@ import { fetchApps } from './data/thunks';
 import AppList from './app-list';
 import AppConfigForm from './app-config-form';
 
+const SELECTION_STEP = 'selection';
+const SETTINGS_STEP = 'settings';
+
 function DiscussionsSettings({ courseId, intl }) {
   const dispatch = useDispatch();
-  const { path } = useRouteMatch();
-  const { pathname } = useLocation();
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
 
   useEffect(() => {
@@ -35,69 +33,68 @@ function DiscussionsSettings({ courseId, intl }) {
   }, [courseId]);
 
   const discussionsPath = `${pagesAndResourcesPath}/discussions`;
-  const isFirstStep = pathname === discussionsPath;
+  const { params: { appId } } = useRouteMatch();
 
-  const steps = [{
-    label: intl.formatMessage(messages.providerSelection),
-    iconLabel: isFirstStep ? undefined : (
-      <Check style={{ width: '1rem', height: '1rem' }} />
-    ),
-    incomplete: false,
-  },
-  {
-    label: intl.formatMessage(messages.settings),
-    incomplete: isFirstStep,
-  }];
+  const startStep = appId ? SETTINGS_STEP : SELECTION_STEP;
+  const [currentStep, setCurrentStep] = useState(startStep);
+
+  useEffect(() => {
+    setCurrentStep(appId ? SETTINGS_STEP : SELECTION_STEP);
+  }, [appId]);
 
   const handleClose = useCallback(() => {
     history.push(pagesAndResourcesPath);
-  }, [courseId]);
+  }, [pagesAndResourcesPath]);
 
   const handleBack = useCallback(() => {
-    if (isFirstStep) {
-      history.push(pagesAndResourcesPath);
-    } else {
-      history.push(discussionsPath);
-    }
-  }, [discussionsPath, isFirstStep, pagesAndResourcesPath]);
+    history.push(discussionsPath);
+  }, [discussionsPath]);
 
   return (
     <DiscussionsProvider path={discussionsPath}>
-      <FullScreenModal title={intl.formatMessage(messages.configure)} onClose={handleClose}>
-        <FullScreenModal.Header title={intl.formatMessage(messages.configure)} />
-        <FullScreenModal.Body className="d-flex flex-column">
-          <AppConfigForm.Provider>
-            <Stepper className="h-100">
-              <Stepper.Header steps={steps} />
-              <Stepper.Body className="bg-light-200">
-                <Switch>
-                  <PageRoute exact path={`${path}`}>
-                    <AppList />
-                  </PageRoute>
-                  <PageRoute path={`${path}/configure/:appId`}>
-                    <AppConfigForm
-                      courseId={courseId}
-                    />
-                  </PageRoute>
-                </Switch>
-              </Stepper.Body>
-              <Stepper.Footer className={`d-flex ${isFirstStep ? 'justify-content-end' : 'justify-content-between'} align-items-center`}>
-                {!isFirstStep && (
-                  <Button variant="outline-primary" className="ml-2" onClick={handleBack}>
-                    {intl.formatMessage(messages.backButton)}
-                  </Button>
-                )}
-                {isFirstStep && (
+      <AppConfigForm.Provider>
+        <Stepper activeKey={currentStep}>
+          <FullscreenModal
+            className="bg-light-200"
+            title={intl.formatMessage(messages.configure)}
+            onClose={handleClose}
+            isOpen
+            footerNode={(
+              <>
+                <Stepper.ActionRow eventKey={SELECTION_STEP}>
                   <AppList.NextButton />
-                )}
-                {!isFirstStep && (
-                  <AppConfigForm.ApplyButton />
-                )}
-              </Stepper.Footer>
-            </Stepper>
-          </AppConfigForm.Provider>
-        </FullScreenModal.Body>
-      </FullScreenModal>
+                </Stepper.ActionRow>
+                <Stepper.ActionRow eventKey={SETTINGS_STEP}>
+                  <div className="d-flex w-100 justify-content-between">
+                    <Button
+                      variant="outline-primary"
+                      onClick={handleBack}
+                    >
+                      {intl.formatMessage(messages.backButton)}
+                    </Button>
+                    <AppConfigForm.ApplyButton />
+                  </div>
+                </Stepper.ActionRow>
+              </>
+            )}
+          >
+            <Stepper.Step
+              eventKey={SELECTION_STEP}
+              title={intl.formatMessage(messages.providerSelection)}
+            >
+              <AppList />
+            </Stepper.Step>
+            <Stepper.Step
+              eventKey={SETTINGS_STEP}
+              title={intl.formatMessage(messages.settings)}
+            >
+              <AppConfigForm
+                courseId={courseId}
+              />
+            </Stepper.Step>
+          </FullscreenModal>
+        </Stepper>
+      </AppConfigForm.Provider>
     </DiscussionsProvider>
   );
 }
