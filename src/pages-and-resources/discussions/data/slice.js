@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const LOADING = 'LOADING';
 export const LOADED = 'LOADED';
 export const FAILED = 'FAILED';
+export const DENIED = 'DENIED';
 export const SAVING = 'SAVING';
 export const SAVED = 'SAVED';
 

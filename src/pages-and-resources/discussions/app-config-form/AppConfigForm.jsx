@@ -5,12 +5,13 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { history } from '@edx/frontend-platform';
 import { Container } from '@edx/paragon';
 
 import { useModel } from '../../../generic/model-store';
 import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
-import { LOADED, LOADING, selectApp } from '../data/slice';
+import {
+  FAILED, LOADED, LOADING, selectApp,
+} from '../data/slice';
 import { saveAppConfig } from '../data/thunks';
 
 import messages from './messages';
@@ -19,6 +20,7 @@ import AppConfigFormApplyButton from './AppConfigFormApplyButton';
 import LegacyConfigForm from './apps/legacy';
 import LtiConfigForm from './apps/lti';
 import Loading from '../../../generic/Loading';
+import SaveFormConnectionErrorAlert from '../../../generic/SaveFormConnectionErrorAlert';
 
 function AppConfigForm({
   courseId, intl,
@@ -27,7 +29,7 @@ function AppConfigForm({
   const { formRef } = useContext(AppConfigFormContext);
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const { params: { appId: routeAppId } } = useRouteMatch();
-  const { selectedAppId, status } = useSelector(state => state.discussions);
+  const { selectedAppId, status, saveStatus } = useSelector(state => state.discussions);
   const app = useModel('apps', selectedAppId);
   // appConfigs have no ID of their own, so we use the active app ID to reference them.
   // This appConfig may come back as null if the selectedAppId is not the activeAppId, i.e.,
@@ -44,14 +46,20 @@ function AppConfigForm({
 
   // This is a callback that gets called after the form has been submitted successfully.
   const handleSubmit = useCallback((values) => {
-    dispatch(saveAppConfig(courseId, selectedAppId, values)).then(() => {
-      history.push(pagesAndResourcesPath);
-    });
+    // Note that when this action succeeds, we redirect to pagesAndResurcesPath in the thunk.
+    dispatch(saveAppConfig(courseId, selectedAppId, values, pagesAndResourcesPath));
   }, [courseId, selectedAppId, courseId]);
 
   if (!selectedAppId || status === LOADING) {
     return (
       <Loading />
+    );
+  }
+
+  let alert = null;
+  if (saveStatus === FAILED) {
+    alert = (
+      <SaveFormConnectionErrorAlert />
     );
   }
 
@@ -78,6 +86,7 @@ function AppConfigForm({
   }
   return (
     <Container size="sm" className="px-sm-0 py-5" data-testid="appConfigForm">
+      {alert}
       {form}
     </Container>
   );

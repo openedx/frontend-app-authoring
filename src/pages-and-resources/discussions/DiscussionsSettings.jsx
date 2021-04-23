@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import {
   useRouteMatch,
 } from 'react-router';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { history } from '@edx/frontend-platform';
 
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -20,6 +20,9 @@ import DiscussionsProvider from './DiscussionsProvider';
 import { fetchApps } from './data/thunks';
 import AppList from './app-list';
 import AppConfigForm from './app-config-form';
+import { DENIED, FAILED } from './data/slice';
+import ConnectionErrorAlert from '../../generic/ConnectionErrorAlert';
+import PermissionDeniedAlert from '../../generic/PermissionDeniedAlert';
 
 const SELECTION_STEP = 'selection';
 const SETTINGS_STEP = 'settings';
@@ -27,6 +30,7 @@ const SETTINGS_STEP = 'settings';
 function DiscussionsSettings({ courseId, intl }) {
   const dispatch = useDispatch();
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
+  const { status } = useSelector(state => state.discussions);
 
   useEffect(() => {
     dispatch(fetchApps(courseId));
@@ -49,6 +53,32 @@ function DiscussionsSettings({ courseId, intl }) {
   const handleBack = useCallback(() => {
     history.push(discussionsPath);
   }, [discussionsPath]);
+
+  if (status === FAILED) {
+    return (
+      <FullscreenModal
+        className="bg-light-200"
+        title={intl.formatMessage(messages.configure)}
+        onClose={handleClose}
+        isOpen
+      >
+        <ConnectionErrorAlert />
+      </FullscreenModal>
+    );
+  }
+
+  if (status === DENIED) {
+    return (
+      <FullscreenModal
+        className="bg-light-200"
+        title={intl.formatMessage(messages.configure)}
+        onClose={handleClose}
+        isOpen
+      >
+        <PermissionDeniedAlert />
+      </FullscreenModal>
+    );
+  }
 
   return (
     <DiscussionsProvider path={discussionsPath}>

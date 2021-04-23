@@ -491,9 +491,9 @@ describe('ProctoredExamSettings', () => {
       ).reply(500);
 
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
-      const connectionError = screen.getByTestId('connectionError');
+      const connectionError = screen.getByTestId('connectionErrorAlert');
       expect(connectionError.textContent).toEqual(
-        expect.stringContaining('We encountered a technical error'),
+        expect.stringContaining('We encountered a technical error when loading this page.'),
       );
     });
 
@@ -503,8 +503,8 @@ describe('ProctoredExamSettings', () => {
       ).reply(403);
 
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
-      const connectionError = screen.getByTestId('permissionError');
-      expect(connectionError.textContent).toEqual(
+      const permissionError = screen.getByTestId('permissionDeniedAlert');
+      expect(permissionError.textContent).toEqual(
         expect.stringContaining('You are not authorized to view this page'),
       );
     });

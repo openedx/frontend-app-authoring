@@ -1,3 +1,4 @@
+import { history } from '@edx/frontend-platform';
 import { addModel, addModels } from '../../../generic/model-store';
 
 import { getApps, postAppConfig } from './api';
@@ -9,6 +10,7 @@ import {
   SAVING,
   updateStatus,
   updateSaveStatus,
+  DENIED,
 } from './slice';
 
 export function fetchApps(courseId) {
@@ -31,15 +33,16 @@ export function fetchApps(courseId) {
         featureIds: features.map(feature => feature.id),
       }));
     } catch (error) {
-      // TODO: We need generic error handling in the app for when a request just fails... in other
-      // parts of the app (proctored exam settings) we show a nice message and ask the user to
-      // reload/try again later.
-      dispatch(updateStatus({ status: FAILED }));
+      if (error.response && error.response.status === 403) {
+        dispatch(updateStatus({ status: DENIED }));
+      } else {
+        dispatch(updateStatus({ status: FAILED }));
+      }
     }
   };
 }
 
-export function saveAppConfig(courseId, appId, drafts) {
+export function saveAppConfig(courseId, appId, drafts, successPath) {
   return async (dispatch) => {
     dispatch(updateSaveStatus({ status: SAVING }));
 
@@ -60,11 +63,16 @@ export function saveAppConfig(courseId, appId, drafts) {
         featureIds: features.map(feature => feature.id),
       }));
       dispatch(updateSaveStatus({ status: SAVED }));
+      // Note that we redirect here to avoid having to work with the promise over in AppConfigForm.
+      history.push(successPath);
     } catch (error) {
-      // TODO: We need generic error handling in the app for when a request just fails... in other
-      // parts of the app (proctored exam settings) we show a nice message and ask the user to
-      // reload/try again later.
-      dispatch(updateSaveStatus({ status: FAILED }));
+      if (error.response && error.response.status === 403) {
+        dispatch(updateSaveStatus({ status: DENIED }));
+        // This second one will remove the interface as well and hide it from the user.
+        dispatch(updateStatus({ status: DENIED }));
+      } else {
+        dispatch(updateSaveStatus({ status: FAILED }));
+      }
     }
   };
 }
