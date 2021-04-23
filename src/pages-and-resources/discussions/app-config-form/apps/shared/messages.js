@@ -16,19 +16,6 @@ const messages = defineMessages({
     defaultMessage: 'Learners will only be able to view and respond to discussions posted by members of their cohort.',
     description: 'Help text for a switch that enables dividing discussions by cohorts.',
   },
-<<<<<<< HEAD
-  allowDivisionByUnitLabel: {
-    id: 'authoring.discussions.builtIn.allowDivisionByUnit.label',
-    defaultMessage: 'Allow cohort division for each course unit',
-    description: 'Label for a switch that enables dividing discussions in course units by cohort.',
-  },
-  allowDivisionByUnitHelp: {
-    id: 'authoring.discussions.builtIn.allowDivisionByUnit.help',
-    defaultMessage: 'With this advanced setting enabled, you will be able to override the global visibility, and turn the division of cohorts on or off for each unit from the course outline view.',
-    description: 'Help text for a switch that enables dividing discussions in course units by cohort.',
-  },
-=======
->>>>>>> bf9e330... Refactored code
   divideCourseWideTopicsLabel: {
     id: 'authoring.discussions.builtIn.divideCourseWideTopics.label',
     defaultMessage: 'Divide course wide discussion topics',
