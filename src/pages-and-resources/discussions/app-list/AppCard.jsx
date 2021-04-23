@@ -41,6 +41,7 @@ function AppCard({
           aria-label={intl.formatMessage(messages.selectApp, {
             appName: intl.formatMessage(messages[`appName-${app.id}`]),
           })}
+          data-testid="checkbox"
         />
       </div>
       <Card.Body className="m-2">

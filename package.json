@@ -73,6 +73,7 @@
     "husky": "3.1.0",
     "jest": "24.9.0",
     "react-test-renderer": "16.9.0",
-    "reactifex": "1.1.1"
+    "reactifex": "1.1.1",
+    "rosie": "2.1.0"
   }
 }
