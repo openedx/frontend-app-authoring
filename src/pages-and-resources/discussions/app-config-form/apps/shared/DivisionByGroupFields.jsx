@@ -14,10 +14,11 @@ function DivisionByGroupFields({
 }) {
   return (
     <>
-      <h5>{intl.formatMessage(messages.divisionByGroup)}</h5>
+      <h5 className="text-gray-500">{intl.formatMessage(messages.divisionByGroup)}</h5>
 
       <FormSwitchGroup
         onChange={onChange}
+        className="mt-3"
         onBlur={onBlur}
         id="divideByCohorts"
         checked={values.divideByCohorts}
@@ -31,17 +32,7 @@ function DivisionByGroupFields({
             <FormSwitchGroup
               onChange={onChange}
               onBlur={onBlur}
-              className="ml-4"
-              id="allowDivisionByUnit"
-              checked={values.allowDivisionByUnit}
-              label={intl.formatMessage(messages.allowDivisionByUnitLabel)}
-              helpText={intl.formatMessage(messages.allowDivisionByUnitHelp)}
-            />
-            <AppConfigFormDivider />
-            <FormSwitchGroup
-              onChange={onChange}
-              onBlur={onBlur}
-              className="ml-4"
+              className="ml-4 mt-3"
               id="divideCourseWideTopics"
               checked={values.divideCourseWideTopics}
               label={intl.formatMessage(messages.divideCourseWideTopicsLabel)}
@@ -76,7 +67,6 @@ DivisionByGroupFields.propTypes = {
   intl: intlShape.isRequired,
   values: PropTypes.shape({
     divideByCohorts: PropTypes.bool,
-    allowDivisionByUnit: PropTypes.bool,
     divideCourseWideTopics: PropTypes.bool,
     divideGeneralTopic: PropTypes.bool,
     divideQuestionsForTAsTopic: PropTypes.bool,

@@ -14,7 +14,7 @@ function InContextDiscussionFields({
 }) {
   return (
     <>
-      <h5>{intl.formatMessage(messages.visibilityInContext)}</h5>
+      <h5 className="text-gray-500 mt-4">{intl.formatMessage(messages.visibilityInContext)}</h5>
       <FormSwitchGroup
         onChange={onChange}
         onBlur={onBlur}
@@ -23,10 +23,10 @@ function InContextDiscussionFields({
         label={intl.formatMessage(messages.inContextDiscussionLabel)}
         helpText={intl.formatMessage(messages.inContextDiscussionHelp)}
       />
-      <AppConfigFormDivider />
       <TransitionReplace>
         {values.inContextDiscussion ? (
           <React.Fragment key="open">
+            <AppConfigFormDivider />
             <FormSwitchGroup
               onChange={onChange}
               onBlur={onBlur}
@@ -56,7 +56,6 @@ function InContextDiscussionFields({
               label={intl.formatMessage(messages.allowUnitLevelVisibilityLabel)}
               helpText={intl.formatMessage(messages.allowUnitLevelVisibilityHelp)}
             />
-            <AppConfigFormDivider />
           </React.Fragment>
         ) : <React.Fragment key="closed" />}
 

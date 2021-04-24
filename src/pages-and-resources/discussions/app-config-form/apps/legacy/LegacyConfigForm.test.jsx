@@ -6,7 +6,6 @@ import LegacyConfigForm from './LegacyConfigForm';
 const defaultAppConfig = {
   id: 'legacy',
   divideByCohorts: false,
-  allowDivisionByUnit: false,
   divideCourseWideTopics: false,
   divideGeneralTopic: false,
   divideQuestionsForTAsTopic: false,
@@ -74,7 +73,6 @@ describe('LegacyConfigForm', () => {
     // DivisionByGroupFields
     expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
     expect(container.querySelector('#divideByCohorts')).not.toBeChecked();
-    expect(container.querySelector('#allowDivisionByUnit')).not.toBeInTheDocument();
     expect(container.querySelector('#divideCourseWideTopics')).not.toBeInTheDocument();
     expect(container.querySelector('#divideGeneralTopic')).not.toBeInTheDocument();
     expect(container.querySelector('#divideQuestionsForTAsTopic')).not.toBeInTheDocument();
@@ -108,8 +106,6 @@ describe('LegacyConfigForm', () => {
     // DivisionByGroupFields
     expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
     expect(container.querySelector('#divideByCohorts')).toBeChecked();
-    expect(container.querySelector('#allowDivisionByUnit')).toBeInTheDocument();
-    expect(container.querySelector('#allowDivisionByUnit')).not.toBeChecked();
     expect(container.querySelector('#divideCourseWideTopics')).toBeInTheDocument();
     expect(container.querySelector('#divideCourseWideTopics')).not.toBeChecked();
     expect(container.querySelector('#divideGeneralTopic')).toBeInTheDocument();

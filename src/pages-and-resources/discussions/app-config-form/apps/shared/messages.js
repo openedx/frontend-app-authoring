@@ -4,7 +4,7 @@ const messages = defineMessages({
   // Division by cohort fields
   divisionByGroup: {
     id: 'authoring.discussions.builtIn.divisionByGroup',
-    defaultMessage: 'Division by group',
+    defaultMessage: 'Cohorts',
   },
   divideByCohortsLabel: {
     id: 'authoring.discussions.builtIn.divideByCohorts.label',
@@ -15,16 +15,6 @@ const messages = defineMessages({
     id: 'authoring.discussions.builtIn.divideByCohorts.help',
     defaultMessage: 'Learners will only be able to view and respond to discussions posted by members of their cohort.',
     description: 'Help text for a switch that enables dividing discussions by cohorts.',
-  },
-  allowDivisionByUnitLabel: {
-    id: 'authoring.discussions.builtIn.allowDivisionByUnit.label',
-    defaultMessage: 'Allow cohort division for each course unit',
-    description: 'Label for a switch that enables dividing discussions in course units by cohort.',
-  },
-  allowDivisionByUnitHelp: {
-    id: 'authoring.discussions.builtIn.allowDivisionByUnit.help',
-    defaultMessage: 'With this advanced setting enabled, you will be able to override the global visibility, and turn the division of cohorts on or off for each unit from the course outline view.',
-    description: 'Help text for a switch that enables dividing discussions in course units by cohort.',
   },
   divideCourseWideTopicsLabel: {
     id: 'authoring.discussions.builtIn.divideCourseWideTopics.label',
@@ -58,7 +48,7 @@ const messages = defineMessages({
   },
   inContextDiscussionHelp: {
     id: 'authoring.discussions.builtIn.inContextDiscussion.help',
-    defaultMessage: 'Learners will eb able to view or hide a discussion side panel to engage with discussion on te course unit page.',
+    defaultMessage: 'Learners will be able to view or hide a discussion side panel to engage with discussion on the course unit page.',
   },
   gradedUnitPagesLabel: {
     id: 'authoring.discussions.builtIn.gradedUnitPages.label',
