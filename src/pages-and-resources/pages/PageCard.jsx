@@ -28,7 +28,7 @@ function PageCard({ intl, page }) {
   const pageStatusMsgId = page.isEnabled ? 'pageStatus.enabled' : 'pageStatus.disabled';
   const componentClasses = classNames(
     'd-flex flex-column align-content-stretch',
-    'bg-white p-3 border shadow',
+    'bg-light-100 p-3 border shadow',
     { 'border-gray-500': page.isEnabled, 'border-gray-100': !page.isEnabled },
   );
 
