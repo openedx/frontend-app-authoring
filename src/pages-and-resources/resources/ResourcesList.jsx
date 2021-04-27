@@ -9,7 +9,7 @@ function ResourceList({ intl, resources }) {
   return (
     <div>
       <h3 className="text-info-500">{intl.formatMessage(messages['resources.subheading'])}</h3>
-      <div className="row bg-white text-info-500 border shadow justify-content-center align-items-center my-3 mx-1">
+      <div className="row bg-light-100 text-info-500 border shadow justify-content-center align-items-center my-3 mx-1">
         <div className="col-1 font-weight-bold">{intl.formatMessage(messages['resources.custom.title'])}</div>
         <div className="col-8 my-3">
           {intl.formatMessage(messages['resources.custom.description'])}
