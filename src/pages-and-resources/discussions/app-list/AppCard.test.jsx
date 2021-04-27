@@ -8,76 +8,66 @@ import messages from './messages';
 import '../data/__factories__/index';
 
 describe('AppCard', () => {
-  const partailSupportApp = Factory.build('app');
-  const fullSupportApp = Factory.build('app', { hasFullSupport: true });
-  const selected = true;
+  let app;
+  let selected;
+  let wrapper;
+
+  beforeEach(() => {
+    app = Factory.build('app');
+    selected = true;
+    wrapper = (data) => {
+      render(
+        <IntlProvider locale="en">
+          <AppCard
+            app={data}
+            onClick={() => jest.fn()}
+            selected={selected}
+          />
+        </IntlProvider>,
+      );
+    };
+  });
 
   test('checkbox input is checked when AppCard is selected', () => {
-    render(
-      <IntlProvider locale="en">
-        <AppCard
-          app={fullSupportApp}
-          onClick={() => jest.fn()}
-          selected={selected}
-        />
-      </IntlProvider>,
-    );
+    wrapper(app);
 
     const radioInput = screen.getByRole('radio');
     expect(radioInput.getAttribute('aria-checked')).toBe(selected.toString());
     expect(screen.getByTestId('checkbox').checked).toBe(selected);
   });
 
-  test('title, subtitle, and text from app are displayed', () => {
-    const support = partailSupportApp.hasFullSupport
-      ? messages.appFullSupport : messages.appPartialSupport;
-    const title = messages[`appName-${partailSupportApp.id}`].defaultMessage;
-    const subtitle = support.defaultMessage;
-    const text = messages[`appDescription-${partailSupportApp.id}`].defaultMessage;
+  test.each(
+    [
+      ['partial', Factory.build('app')],
+      ['full', Factory.build('app', { hasFullSupport: true })],
+    ],
+  )(
+    'title, subtitle, and text from the app are displayed with %s support', (type, data) => {
+      const support = data.hasFullSupport
+        ? messages.appFullSupport : messages.appPartialSupport;
+      const title = messages[`appName-${data.id}`].defaultMessage;
+      const subtitle = support.defaultMessage;
+      const text = messages[`appDescription-${data.id}`].defaultMessage;
 
-    render(
-      <IntlProvider locale="en">
-        <AppCard
-          app={partailSupportApp}
-          onClick={() => jest.fn()}
-          selected={selected}
-        />
-      </IntlProvider>,
-    );
+      wrapper(data);
 
-    expect(screen.getByText(title)).toBeInTheDocument();
-    expect(screen.getByText(subtitle)).toBeInTheDocument();
-    expect(screen.getByText(text)).toBeInTheDocument();
-  });
+      expect(screen.getByText(title)).toBeInTheDocument();
+      expect(screen.getByText(subtitle)).toBeInTheDocument();
+      expect(screen.getByText(text)).toBeInTheDocument();
+    },
+  );
 
   test('full support message shown when hasFullSupport is true', () => {
     const subtitle = messages.appFullSupport.defaultMessage;
-
-    render(
-      <IntlProvider locale="en">
-        <AppCard
-          app={fullSupportApp}
-          onClick={() => jest.fn()}
-          selected={selected}
-        />
-      </IntlProvider>,
-    );
+    app.hasFullSupport = true;
+    wrapper(app);
 
     expect(screen.getByText(subtitle)).toHaveTextContent(subtitle);
   });
 
   test('partial support message shown when hasFullSupport is false', () => {
     const subtitle = messages.appPartialSupport.defaultMessage;
-
-    render(
-      <IntlProvider locale="en">
-        <AppCard
-          app={partailSupportApp}
-          onClick={() => jest.fn()}
-          selected={selected}
-        />
-      </IntlProvider>,
-    );
+    wrapper(app);
 
     expect(screen.getByText(subtitle)).toHaveTextContent(subtitle);
   });
