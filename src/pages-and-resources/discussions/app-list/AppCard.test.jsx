@@ -38,22 +38,15 @@ describe('AppCard', () => {
     expect(queryByLabelText(container, labelText, { selector: 'input[type="checkbox"]' })).toBeChecked();
   });
 
-  test('title and text from the app are displayed with full support', () => {
-    const title = messages[`appName-${app.id}`].defaultMessage;
-    const text = messages[`appDescription-${app.id}`].defaultMessage;
+  test.each([
+    [true],
+    [false],
+  ])('title and text from the app are displayed with full support %s', (hasFullSupport) => {
+    const appWithCustomSupport = { ...app, hasFullSupport };
+    const title = messages[`appName-${appWithCustomSupport.id}`].defaultMessage;
+    const text = messages[`appDescription-${appWithCustomSupport.id}`].defaultMessage;
 
-    const { container } = wrapper(app);
-
-    expect(container.querySelector('.card-title')).toHaveTextContent(title);
-    expect(container.querySelector('.card-text')).toHaveTextContent(text);
-  });
-
-  test('title and text from the app are displayed with partial support', () => {
-    const appWithPartialSupport = { ...app, hasFullSupport: false };
-    const title = messages[`appName-${app.id}`].defaultMessage;
-    const text = messages[`appDescription-${app.id}`].defaultMessage;
-
-    const { container } = wrapper(appWithPartialSupport);
+    const { container } = wrapper(appWithCustomSupport);
 
     expect(container.querySelector('.card-title')).toHaveTextContent(title);
     expect(container.querySelector('.card-text')).toHaveTextContent(text);
