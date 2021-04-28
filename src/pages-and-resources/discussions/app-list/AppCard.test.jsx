@@ -14,7 +14,7 @@ describe('AppCard', () => {
     selected = true;
     app = {
       id: 'legacy',
-      hasFullSupport: false,
+      hasFullSupport: true,
       featureIds: ['discussion-page', 'embedded-course-sections', 'wcag-2.1'],
     };
 
@@ -30,47 +30,48 @@ describe('AppCard', () => {
   });
 
   test('checkbox input is checked when AppCard is selected', () => {
-    const labelText = new RegExp(`Select ${messages[`appName-${app.id}`].defaultMessage}`, 'i');
+    const labelText = `Select ${messages[`appName-${app.id}`].defaultMessage}`;
+
     const { container } = wrapper(app);
 
     expect(container.querySelector('[role="radio"]')).toBeChecked();
-    expect(queryByLabelText(container, labelText, { selector: 'input' })).toBeChecked();
+    expect(queryByLabelText(container, labelText, { selector: 'input[type="checkbox"]' })).toBeChecked();
   });
 
-  test('title, subtitle, and text from the app are displayed with partial support', () => {
+  test('title and text from the app are displayed with full support', () => {
     const title = messages[`appName-${app.id}`].defaultMessage;
-    const subtitle = messages.appPartialSupport.defaultMessage;
     const text = messages[`appDescription-${app.id}`].defaultMessage;
+
     const { container } = wrapper(app);
 
     expect(container.querySelector('.card-title')).toHaveTextContent(title);
-    expect(container.querySelector('.card-subtitle')).toHaveTextContent(subtitle);
     expect(container.querySelector('.card-text')).toHaveTextContent(text);
   });
 
-  test('title, subtitle, and text from the app are displayed with full support', () => {
+  test('title and text from the app are displayed with partial support', () => {
+    const appWithPartialSupport = { ...app, hasFullSupport: false };
     const title = messages[`appName-${app.id}`].defaultMessage;
-    const subtitle = messages.appFullSupport.defaultMessage;
     const text = messages[`appDescription-${app.id}`].defaultMessage;
-    app.hasFullSupport = true;
-    const { container } = wrapper(app);
+
+    const { container } = wrapper(appWithPartialSupport);
 
     expect(container.querySelector('.card-title')).toHaveTextContent(title);
-    expect(container.querySelector('.card-subtitle')).toHaveTextContent(subtitle);
     expect(container.querySelector('.card-text')).toHaveTextContent(text);
   });
 
-  test('full support message shown when hasFullSupport is true', () => {
+  test('full support subtitle shown when hasFullSupport is true', () => {
     const subtitle = messages.appFullSupport.defaultMessage;
-    app.hasFullSupport = true;
+
     const { container } = wrapper(app);
 
     expect(container.querySelector('.card-subtitle')).toHaveTextContent(subtitle);
   });
 
-  test('partial support message shown when hasFullSupport is false', () => {
+  test('partial support subtitle shown when hasFullSupport is false', () => {
+    const appWithPartialSupport = { ...app, hasFullSupport: false };
     const subtitle = messages.appPartialSupport.defaultMessage;
-    const { container } = wrapper(app);
+
+    const { container } = wrapper(appWithPartialSupport);
 
     expect(container.querySelector('.card-subtitle')).toHaveTextContent(subtitle);
   });
