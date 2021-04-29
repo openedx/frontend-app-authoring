@@ -1,4 +1,8 @@
 .app-list-data-table {
+  table {
+    table-layout: fixed;
+  }
+
   .pgn__data-table-container {
     tr {
       th {
