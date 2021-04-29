@@ -2,12 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Card, CheckboxControl } from '@edx/paragon';
-
+import {
+  Card, CheckboxControl, ExtraSmall,
+} from '@edx/paragon';
 import messages from './messages';
+import FeaturesList from './FeaturesList';
 
 function AppCard({
-  app, onClick, intl, selected,
+  app, onClick, intl, selected, features,
 }) {
   const supportText = app.hasFullSupport
     ? intl.formatMessage(messages.appFullSupport)
@@ -49,6 +51,12 @@ function AppCard({
         </div>
         <Card.Subtitle className="mb-3 text-muted">{supportText}</Card.Subtitle>
         <Card.Text>{intl.formatMessage(messages[`appDescription-${app.id}`])}</Card.Text>
+        <ExtraSmall>
+          <FeaturesList
+            features={features}
+            app={app}
+          />
+        </ExtraSmall>
       </Card.Body>
     </Card>
   );
@@ -63,6 +71,7 @@ AppCard.propTypes = {
   onClick: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
   intl: intlShape.isRequired,
+  features: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default injectIntl(AppCard);

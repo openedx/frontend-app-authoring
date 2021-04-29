@@ -9,6 +9,16 @@ const messages = defineMessages({
     id: 'authoring.discussions.supportedFeatures',
     defaultMessage: 'Supported Features',
   },
+  'supportedFeatureList-mobile-show': {
+    id: 'authoring.discussions.supportedFeatureList-mobile-show',
+    defaultMessage: 'Show supported features',
+    description: 'This is used in mobile view as supported feature list heading when close',
+  },
+  'supportedFeatureList-mobile-hide': {
+    id: 'authoring.discussions.supportedFeatureList-mobile-hide',
+    defaultMessage: 'Hide supported features',
+    description: 'This is used in mobile view as supported feature list heading when opened',
+  },
   noApps: {
     id: 'authoring.discussions.noApps',
     defaultMessage: 'There are no discussions providers available for your course.',
