@@ -1,0 +1,23 @@
+.app-list-data-table {
+  .pgn__data-table-container {
+    tr {
+      th {
+        background-color: $white;
+        text-align: center;
+
+        .d-flex, span {
+          display: block !important;
+        }
+      }
+
+      td {
+        background-color: $white;
+
+        .pgn__data-table-cell-wrap {
+          max-width: unset;
+        }
+
+      }
+    }
+  }
+}
