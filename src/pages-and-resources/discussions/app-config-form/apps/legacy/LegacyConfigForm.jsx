@@ -7,6 +7,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import DivisionByGroupFields from '../shared/DivisionByGroupFields';
 import AnonymousPostingFields from '../shared/AnonymousPostingFields';
+import DiscussionTopics from '../shared/discussion-topics/DiscussionTopics';
 import BlackoutDatesField, { blackoutDatesRegex } from '../shared/BlackoutDatesField';
 
 import messages from '../shared/messages';
@@ -48,6 +49,8 @@ function LegacyConfigForm({
           onChange={handleChange}
           values={values}
         />
+        <AppConfigFormDivider thick />
+        <DiscussionTopics />
         <AppConfigFormDivider thick />
         <BlackoutDatesField
           errors={errors}

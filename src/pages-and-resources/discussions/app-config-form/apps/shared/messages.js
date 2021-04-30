@@ -97,6 +97,11 @@ const messages = defineMessages({
     defaultMessage: 'Enter true or false. If true, students can create discussion posts that are anonymous to other students. This setting does not make posts anonymous to course staff.',
   },
 
+  // Discussion Topics
+  discussionTopics: {
+    id: 'authoring.discussions.discussionTopics',
+    defaultMessage: 'Discussion topics',
+  },
   // Blackout dates
   blackoutDates: {
     id: 'authoring.discussions.blackoutDates',
