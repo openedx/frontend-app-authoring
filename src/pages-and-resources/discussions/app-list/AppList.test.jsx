@@ -2,12 +2,12 @@ import React from 'react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import {
-  queryByText, render, queryAllByRole, queryByRole, getByRole, queryByLabelText,
+  queryByText, render, queryAllByRole, queryByRole, getByRole, queryByLabelText, getByLabelText,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { Context as ResponsiveContext } from 'react-responsive';
+// import { Context as ResponsiveContext } from 'react-responsive';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import AppList from './AppList';
 import initializeStore from '../../../store';
@@ -16,6 +16,8 @@ import { executeThunk } from '../data/redux.test';
 import { getAppsUrl } from '../data/api';
 import { legacyApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
 import { updateStatus, LOADED, selectApp } from '../data/slice';
+import messages from './messages';
+import '../../../__mocks__/reactResponsive.mock';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 
@@ -24,14 +26,12 @@ describe('AppList', () => {
   let store;
   let container;
 
-  function createComponent(screenWidth = 1280) {
+  function createComponent() {
     return (
       <AppProvider store={store}>
-        <ResponsiveContext.Provider value={{ width: screenWidth }}>
-          <IntlProvider locale="en" messages={{}}>
-            <AppList />
-          </IntlProvider>
-        </ResponsiveContext.Provider>
+        <IntlProvider locale="en" messages={{}}>
+          <AppList />
+        </IntlProvider>
       </AppProvider>
     );
   }
@@ -64,7 +64,7 @@ describe('AppList', () => {
     const wrapper = render(component);
     container = wrapper.container;
     // assert test case results
-    expect(queryByText(container, 'There are no discussions providers available for your course.')).toBeInTheDocument();
+    expect(queryByText(container, `${messages.noApps.defaultMessage}`)).toBeInTheDocument();
   });
 
   test('displays loading state when there is no selected App', () => {
@@ -72,53 +72,61 @@ describe('AppList', () => {
     const component = createComponent();
     const wrapper = render(component);
     container = wrapper.container;
-    expect(queryByText(container, 'Loading...')).toBeInTheDocument();
+    expect(queryByRole(container, 'status')).toBeInTheDocument();
   });
 
   test('display a card for each available app', async () => {
     // mock data in redux store
     axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
     await executeThunk(fetchApps(courseId), store.dispatch);
-    // render componenet
+    // render component
     const component = createComponent();
     const wrapper = render(component);
     container = wrapper.container;
     // assert test results
     const appCount = store.getState().discussions.appIds.length;
-    const nodeCount = queryAllByRole(container, 'radio').length;
-    expect(nodeCount === appCount);
+    expect(queryAllByRole(container, 'radio')).toHaveLength(appCount);
   });
 
   test('displays the FeaturesTable at desktop sizes', async () => {
     axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
     await executeThunk(fetchApps(courseId), store.dispatch);
+    global.innerWidth = 1280;
     const component = createComponent();
     const wrapper = render(component);
     container = wrapper.container;
     expect(queryByRole(container, 'table')).toBeInTheDocument();
   });
 
-  /** Implementation needed to be done in App list component for hiding table on mobile screens
-   test('hides the FeaturesTable at mobile sizes', () => {
+  test('hides the FeaturesTable at mobile sizes', async () => {
+    const { debug } = render();
     axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
     await executeThunk(fetchApps(courseId), store.dispatch);
-    const component = createComponent(500);
-    const wrapper = render(component);
-    container = wrapper.container;
-    expect(screen.queryByRole('table')).not.toBeInTheDocument();
-  }); */
-
-  test('onSelectApp is called when an app is clicked', async () => {
-    // default  mocked data selected legacy app
-    axiosMock.onGet(getAppsUrl(courseId)).reply(200, legacyApiResponse);
-    await executeThunk(fetchApps(courseId), store.dispatch);
+    global.innerWidth = 500;
     const component = createComponent();
     const wrapper = render(component);
     container = wrapper.container;
-    const uncheckedCard = getByRole(container, 'radio', { checked: false });
-    expect(queryByLabelText(uncheckedCard, 'Select Pizza'));
-    userEvent.click(uncheckedCard);
-    const checkedCard = getByRole(container, 'radio', { checked: true });
-    expect(queryByLabelText(checkedCard, 'Select Pizza'));
+    debug(container);
+    expect(queryByRole(container, 'table')).not.toBeInTheDocument();
+  });
+
+  test('selectApp is called when an app is clicked', async () => {
+    // default  mocked data selected legacy app
+    axiosMock.onGet(getAppsUrl(courseId)).reply(200, legacyApiResponse);
+    await executeThunk(fetchApps(courseId), store.dispatch);
+    // render component with mock data
+    const component = createComponent();
+    const wrapper = render(component);
+    container = wrapper.container;
+    // check if default selected is legacy app
+    const selectedDefault = getByRole(container, 'radio', { checked: true });
+    expect(queryByLabelText(selectedDefault, 'Select edX Discussions')).toBeInTheDocument();
+    // select an unchecked app e.g piazza
+    const uncheckedOption = getByLabelText(container, 'Select Piazza');
+    // click the piazza card
+    userEvent.click(uncheckedOption);
+    // get checked option and assert that checked option is piazza
+    const clickedCard = getByRole(container, 'radio', { checked: true });
+    expect(queryByLabelText(clickedCard, 'Select Piazza')).toBeInTheDocument();
   });
 });
