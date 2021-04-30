@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { CardGrid, Container } from '@edx/paragon';
+import { CardGrid, Container, LargerThanExtraSmall } from '@edx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useModels } from '../../../generic/model-store';
@@ -69,21 +69,21 @@ function AppList({ intl }) {
             app={app}
             selected={app.id === selectedAppId}
             onClick={handleSelectApp}
+            features={features}
           />
         ))}
       </CardGrid>
-
-      <h3 className="my-sm-5 my-4">
-        {intl.formatMessage(messages.supportedFeatures)}
-      </h3>
-
-      <div className="app-list-data-table">
-        <FeaturesTable
-          apps={apps}
-          features={features}
-        />
-      </div>
-
+      <LargerThanExtraSmall>
+        <h3 className="my-sm-5 my-4">
+          {intl.formatMessage(messages.supportedFeatures)}
+        </h3>
+        <div className="app-list-data-table">
+          <FeaturesTable
+            apps={apps}
+            features={features}
+          />
+        </div>
+      </LargerThanExtraSmall>
     </div>
   );
 }
