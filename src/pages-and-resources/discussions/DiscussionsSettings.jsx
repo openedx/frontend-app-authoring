@@ -97,7 +97,7 @@ function DiscussionsSettings({ courseId, intl }) {
                   <AppList.NextButton />
                 </Stepper.ActionRow>
                 <Stepper.ActionRow eventKey={SETTINGS_STEP}>
-                  <div className="d-flex w-100 justify-content-betwesrc/pages-and-resources/discussions/app-config-form/apps/shared/DivisionByGroupFields.jsxen">
+                  <div className="d-flex w-100 justify-content-between">
                     <Button
                       variant="outline-primary"
                       onClick={handleBack}
