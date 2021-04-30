@@ -77,10 +77,13 @@ function AppList({ intl }) {
         {intl.formatMessage(messages.supportedFeatures)}
       </h3>
 
-      <FeaturesTable
-        apps={apps}
-        features={features}
-      />
+      <div className="app-list-data-table">
+        <FeaturesTable
+          apps={apps}
+          features={features}
+        />
+      </div>
+
     </div>
   );
 }

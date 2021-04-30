@@ -19,11 +19,11 @@ function FeaturesTable({ apps, features, intl }) {
           // If our app's set of feature Ids includes this feature, return a checkmark.
           // i.e, if this app has the current feature, check it!
           appCheckmarkCells[app.id] = app.featureIds.includes(feature.id) ? (
-            <div key={`${app.id}&${feature.id}`}>
+            <div className="text-center" key={`${app.id}&${feature.id}`}>
               <FontAwesomeIcon icon={faCheck} color="green" />
             </div>
           ) : (
-            <div key={`${app.id}&${feature.id}`}><Remove /></div>
+            <div className="text-center" key={`${app.id}&${feature.id}`}><Remove /></div>
           );
         });
 
