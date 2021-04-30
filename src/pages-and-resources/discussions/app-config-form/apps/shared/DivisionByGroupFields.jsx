@@ -14,11 +14,11 @@ function DivisionByGroupFields({
 }) {
   return (
     <>
-      <h5 className="text-gray-500 my-3">{intl.formatMessage(messages.divisionByGroup)}</h5>
+      <h5 className="text-gray-500 mb-2 mt-4">{intl.formatMessage(messages.divisionByGroup)}</h5>
 
       <FormSwitchGroup
         onChange={onChange}
-        className="mt-3"
+        className="mt-2"
         onBlur={onBlur}
         id="divideByCohorts"
         checked={values.divideByCohorts}

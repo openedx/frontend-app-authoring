@@ -4,11 +4,9 @@ import PropTypes from 'prop-types';
 export default function AppConfigFormDivider({ thick }) {
   return (
     <hr
-      className="my-2"
+      className="my-2 mx-sm-n5 mx-n4"
       style={{
         borderTopWidth: thick ? '3px' : '1px',
-        marginLeft: '-48px',
-        marginRight: '-48px',
       }}
     />
   );

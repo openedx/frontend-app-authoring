@@ -77,7 +77,7 @@ function BlackoutDatesField({
 }) {
   return (
     <>
-      <h5 className="mb-5 mt-4 text-gray-500">{intl.formatMessage(messages.blackoutDates)}</h5>
+      <h5 className="my-4 text-gray-500">{intl.formatMessage(messages.blackoutDates)}</h5>
       <Form.Group
         controlId="blackoutDates"
       >
