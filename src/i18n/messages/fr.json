@@ -47,6 +47,8 @@
   "authoring.discussions.appConfigForm.appName-legacy": "edX Discussions",
   "authoring.discussions.heading": "Select a discussion tool for this course",
   "authoring.discussions.supportedFeatures": "Supported Features",
+  "authoring.discussions.supportedFeatureList-mobile-show": "Show supported features",
+  "authoring.discussions.supportedFeatureList-mobile-hide": "Hide supported features",
   "authoring.discussions.noApps": "There are no discussions providers available for your course.",
   "authoring.discussions.nextButton": "Next",
   "authoring.discussions.appFullSupport": "Full support",
