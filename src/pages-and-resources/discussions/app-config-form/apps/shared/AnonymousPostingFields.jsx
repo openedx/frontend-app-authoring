@@ -14,7 +14,7 @@ function AnonymousPostingFields({
 }) {
   return (
     <>
-      <h5 className="mt-4">{intl.formatMessage(messages.anonymousPosting)}</h5>
+      <h5 className="mt-4 text-gray-500">{intl.formatMessage(messages.anonymousPosting)}</h5>
       <FormSwitchGroup
         onChange={onChange}
         onBlur={onBlur}

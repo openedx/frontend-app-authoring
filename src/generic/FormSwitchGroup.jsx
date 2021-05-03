@@ -17,10 +17,11 @@ export default function FormSwitchGroup({
     >
       <div className="d-flex justify-content-between">
         <div className="pr-3">
-          <Form.Label className="h4 mt-3">
+          <Form.Label className="h4 mt-2 text-primary-500">
             {label}
           </Form.Label>
           <Form.Text
+            className="mt-0"
             id={helpTextId}
             muted
           >
