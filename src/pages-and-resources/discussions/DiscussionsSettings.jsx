@@ -86,7 +86,7 @@ function DiscussionsSettings({ courseId, intl }) {
         <Stepper activeKey={currentStep}>
           <FullscreenModal
             className="bg-light-200"
-            modalBodyClassName="p-0"
+            modalBodyClassName="px-sm-4 p-0"
             title={intl.formatMessage(messages.configure)}
             onClose={handleClose}
             isOpen
