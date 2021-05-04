@@ -87,11 +87,11 @@ function ProctoredExamSettings({ courseId, intl }) {
       proctored_exam_settings: {
         enable_proctored_exams: enableProctoredExams,
         proctoring_provider: proctoringProvider,
+        create_zendesk_tickets: createZendeskTickets,
       },
     };
     if (isEdxStaff) {
       dataToPostBack.proctored_exam_settings.allow_proctoring_opt_out = allowOptingOut;
-      dataToPostBack.proctored_exam_settings.create_zendesk_tickets = createZendeskTickets;
     }
 
     if (proctoringProvider === 'proctortrack') {
