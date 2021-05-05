@@ -39,6 +39,11 @@ const messages = defineMessages({
     defaultMessage: 'Provider selection',
     description: 'A label for the first step of a wizard where the user chooses a discussion tool to configure.',
   },
+  Incomplete: {
+    id: 'authoring.discussions.Incomplete',
+    defaultMessage: 'Incomplete',
+    description: 'A description for the second step of the app configuration stepper.',
+  },
 });
 
 export default messages;
