@@ -21,6 +21,8 @@ const slice = createSlice({
     selectedAppId: null,
     status: LOADING,
     saveStatus: SAVED,
+    // ValidationError is the Flag that represents a form validation status.
+    hasValidationError: false,
   },
   reducers: {
     loadApps: (state, { payload }) => {
@@ -42,6 +44,10 @@ const slice = createSlice({
       const { status } = payload;
       state.saveStatus = status;
     },
+    updateValidationStatus: (state, { payload }) => {
+      const { hasError } = payload;
+      state.hasValidationError = hasError;
+    },
   },
 });
 
@@ -50,6 +56,7 @@ export const {
   selectApp,
   updateStatus,
   updateSaveStatus,
+  updateValidationStatus,
 } = slice.actions;
 
 export const {

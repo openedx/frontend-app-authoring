@@ -5,7 +5,7 @@ import { history } from '@edx/frontend-platform';
 import initializeStore from '../../../store';
 import { getAppsUrl } from './api';
 import {
-  FAILED, SAVED, DENIED, selectApp,
+  FAILED, SAVED, DENIED, selectApp, updateValidationStatus,
 } from './slice';
 import { fetchApps, saveAppConfig } from './thunks';
 import { LOADED } from '../../../data/slice';
@@ -102,6 +102,7 @@ describe('Data layer integration tests', () => {
           selectedAppId: null,
           status: FAILED,
           saveStatus: SAVED,
+          hasValidationError: false,
         }),
       );
     });
@@ -119,6 +120,7 @@ describe('Data layer integration tests', () => {
           selectedAppId: null,
           status: DENIED,
           saveStatus: SAVED,
+          hasValidationError: false,
         }),
       );
     });
@@ -135,6 +137,7 @@ describe('Data layer integration tests', () => {
         selectedAppId: null,
         status: LOADED,
         saveStatus: SAVED,
+        hasValidationError: false,
       });
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
@@ -159,6 +162,7 @@ describe('Data layer integration tests', () => {
         selectedAppId: null,
         status: LOADED,
         saveStatus: SAVED,
+        hasValidationError: false,
       });
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
@@ -188,6 +192,14 @@ describe('Data layer integration tests', () => {
     });
   });
 
+  describe('updateValidationStatus', () => {
+    test.each([true, false])('sets hasValidationError value to %s ', (hasError) => {
+      store.dispatch(updateValidationStatus({ hasError }));
+
+      expect(store.getState().discussions.hasValidationError).toEqual(hasError);
+    });
+  });
+
   describe('saveAppConfig', () => {
     test('network error', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
@@ -210,6 +222,7 @@ describe('Data layer integration tests', () => {
           selectedAppId: 'piazza',
           status: LOADED,
           saveStatus: FAILED,
+          hasValidationError: false,
         }),
       );
     });
@@ -235,6 +248,7 @@ describe('Data layer integration tests', () => {
           selectedAppId: 'piazza',
           status: DENIED, // We set BOTH statuses to DENIED for saveAppConfig - this removes the UI.
           saveStatus: DENIED,
+          hasValidationError: false,
         }),
       );
     });
@@ -288,6 +302,7 @@ describe('Data layer integration tests', () => {
           selectedAppId: 'piazza',
           status: LOADED,
           saveStatus: SAVED,
+          hasValidationError: false,
         }),
       );
       expect(store.getState().models.appConfigs.piazza).toEqual({
@@ -352,6 +367,7 @@ describe('Data layer integration tests', () => {
           selectedAppId: 'legacy',
           status: LOADED,
           saveStatus: SAVED,
+          hasValidationError: false,
         }),
       );
       expect(store.getState().models.appConfigs.legacy).toEqual({
