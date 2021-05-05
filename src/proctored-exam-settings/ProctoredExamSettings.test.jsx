@@ -676,5 +676,51 @@ describe('ProctoredExamSettings', () => {
       );
       expect(document.activeElement).toEqual(successAlert);
     });
+
+    it('Include Zendesk ticket in post request if user is not an admin', async () => {
+      // use non-admin user for test
+      initializeMockApp({
+        authenticatedUser: {
+          userId: 4,
+          username: 'abc1234',
+          administrator: false,
+          roles: [],
+        },
+      });
+      axiosMock = new MockAdapter(getAuthenticatedHttpClient(), { onNoMatch: 'throwException' });
+      axiosMock.onGet(StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId)).reply(200, {
+        proctored_exam_settings: {
+          enable_proctored_exams: true,
+          allow_proctoring_opt_out: false,
+          proctoring_provider: 'mockproc',
+          proctoring_escalation_email: 'test@example.com',
+          create_zendesk_tickets: true,
+        },
+        available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
+      });
+      axiosMock.onPost(
+        StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
+      ).reply(200, 'success');
+
+      await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
+      // Make a change to the proctoring provider
+      const selectElement = screen.getByDisplayValue('mockproc');
+      await act(async () => {
+        fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
+      });
+      const submitButton = screen.getByTestId('submissionButton');
+      await act(async () => {
+        fireEvent.click(submitButton);
+      });
+      expect(axiosMock.history.post.length).toBe(1);
+      expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+        proctored_exam_settings: {
+          enable_proctored_exams: true,
+          proctoring_provider: 'proctortrack',
+          proctoring_escalation_email: 'test@example.com',
+          create_zendesk_tickets: false,
+        },
+      });
+    });
   });
 });
