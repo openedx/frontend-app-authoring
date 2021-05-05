@@ -30,7 +30,7 @@ const SETTINGS_STEP = 'settings';
 function DiscussionsSettings({ courseId, intl }) {
   const dispatch = useDispatch();
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
-  const { status } = useSelector(state => state.discussions);
+  const { status, hasValidationError } = useSelector(state => state.discussions);
 
   useEffect(() => {
     dispatch(fetchApps(courseId));
@@ -119,6 +119,8 @@ function DiscussionsSettings({ courseId, intl }) {
             <Stepper.Step
               eventKey={SETTINGS_STEP}
               title={intl.formatMessage(messages.settings)}
+              description={hasValidationError ? intl.formatMessage(messages.Incomplete) : ''}
+              hasError={hasValidationError}
             >
               <AppConfigForm
                 courseId={courseId}
