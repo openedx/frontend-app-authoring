@@ -1,19 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { Remove } from '@edx/paragon/icons';
+import { Remove, Check } from '@edx/paragon/icons';
 import { Collapsible } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
 const SupportedFeature = (
   <span className="mr-3">
-    <FontAwesomeIcon icon={faCheck} color="green" />
+    <Check id="check-icon" className="text-success-500" />
   </span>
 );
 const NonSupportedFeature = (
-  <span className="mr-3"> <Remove /></span>
+  <span className="mr-3">
+    <Remove id="remove-icon" className="text-light-700" />
+  </span>
 );
 
 function FeaturesList({ app, features, intl }) {
@@ -46,7 +46,10 @@ function FeaturesList({ app, features, intl }) {
 export default injectIntl(FeaturesList);
 
 FeaturesList.propTypes = {
-  app: PropTypes.arrayOf(PropTypes.object).isRequired,
+  app: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    featureIds: PropTypes.array.isRequired,
+  }).isRequired,
   features: PropTypes.arrayOf(PropTypes.object).isRequired,
   intl: intlShape.isRequired,
 };
