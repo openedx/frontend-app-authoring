@@ -2,12 +2,12 @@ import React from 'react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import {
-  queryByText, render, queryAllByRole, queryByRole, getByRole, queryByLabelText, getByLabelText,
+  queryByText, render, queryAllByRole, queryByRole, getByRole, queryByLabelText, getByLabelText, queryAllByText,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
-// import { Context as ResponsiveContext } from 'react-responsive';
+import { Context as ResponsiveContext } from 'react-responsive';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import AppList from './AppList';
 import initializeStore from '../../../store';
@@ -26,12 +26,14 @@ describe('AppList', () => {
   let store;
   let container;
 
-  function createComponent() {
+  function createComponent(screenWidth = 1280) {
     return (
       <AppProvider store={store}>
-        <IntlProvider locale="en" messages={{}}>
-          <AppList />
-        </IntlProvider>
+        <ResponsiveContext.Provider value={{ width: screenWidth }}>
+          <IntlProvider locale="en" messages={{}}>
+            <AppList />
+          </IntlProvider>
+        </ResponsiveContext.Provider>
       </AppProvider>
     );
   }
@@ -91,7 +93,6 @@ describe('AppList', () => {
   test('displays the FeaturesTable at desktop sizes', async () => {
     axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
     await executeThunk(fetchApps(courseId), store.dispatch);
-    global.innerWidth = 1280;
     const component = createComponent();
     const wrapper = render(component);
     container = wrapper.container;
@@ -102,12 +103,30 @@ describe('AppList', () => {
     const { debug } = render();
     axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
     await executeThunk(fetchApps(courseId), store.dispatch);
-    global.innerWidth = 500;
-    const component = createComponent();
+    const component = createComponent(575);
     const wrapper = render(component);
     container = wrapper.container;
     debug(container);
     expect(queryByRole(container, 'table')).not.toBeInTheDocument();
+  });
+
+  test('hides the FeaturesList at desktop sizes', async () => {
+    axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
+    await executeThunk(fetchApps(courseId), store.dispatch);
+    const component = createComponent();
+    const wrapper = render(component);
+    container = wrapper.container;
+    expect(queryByText(container, messages['supportedFeatureList-mobile-show'].defaultMessage)).not.toBeInTheDocument();
+  });
+
+  test('displays the FeaturesList at mobile sizes', async () => {
+    axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
+    await executeThunk(fetchApps(courseId), store.dispatch);
+    const component = createComponent(575);
+    const wrapper = render(component);
+    container = wrapper.container;
+    const appCount = store.getState().discussions.appIds.length;
+    expect(queryAllByText(container, messages['supportedFeatureList-mobile-show'].defaultMessage)).toHaveLength(appCount);
   });
 
   test('selectApp is called when an app is clicked', async () => {

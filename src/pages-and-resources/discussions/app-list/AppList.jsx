@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { CardGrid, Container, LargerThanExtraSmall } from '@edx/paragon';
+import { CardGrid, Container } from '@edx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
-
+import Responsive from 'react-responsive';
 import { useModels } from '../../../generic/model-store';
 import { selectApp, LOADED, LOADING } from '../data/slice';
 
@@ -73,7 +73,7 @@ function AppList({ intl }) {
           />
         ))}
       </CardGrid>
-      <LargerThanExtraSmall>
+      <Responsive minWidth={576}>
         <h3 className="my-sm-5 my-4">
           {intl.formatMessage(messages.supportedFeatures)}
         </h3>
@@ -83,7 +83,7 @@ function AppList({ intl }) {
             features={features}
           />
         </div>
-      </LargerThanExtraSmall>
+      </Responsive>
     </div>
   );
 }
