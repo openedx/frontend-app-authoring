@@ -1,27 +1,20 @@
-import { Collapsible, Form, Button } from '@edx/paragon';
+import React, { useState, useEffect } from 'react';
 import { Add } from '@edx/paragon/icons';
-import React, { useState } from 'react';
+import { Button } from '@edx/paragon';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FieldArray, useFormikContext } from 'formik';
+import { v4 as uuid } from 'uuid';
+
 import messages from '../messages';
 import TopicItem from './TopicItem';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
-const newTopic = { id: 'unique-id', name: '' };
-const dataTopics = [
-  {
-    id: 'id-general',
-    name: 'General',
-  },
-  {
-    id: 'id-intro',
-    name: 'Introductoin',
-  },
-];
+const DiscussionTopics = ({ intl }) => {
+  const { values } = useFormikContext();
+  const [topics, setTopics] = useState(values.discussionTopics);
 
-function DiscussionTopics({ intl }) {
-  const [topics, setTopics] = useState(dataTopics);
-  const handleAddNewTopic = () => {
-    setTopics([...topics, newTopic]);
-  };
+  useEffect(() => {
+    setTopics(values.discussionTopics);
+  }, [values]);
 
   return (
     <>
@@ -34,26 +27,42 @@ function DiscussionTopics({ intl }) {
         structure. All courses have a general topic by default.
       </div>
       <div>
-        {topics.map((topic) => (
-          <TopicItem {...topic} key={`topic-${topic.id}`} />
-        ))}
-      </div>
+        <FieldArray
+          name="discussionTopics"
+          render={({ push, remove }) => (
+            <div>
+              {
+                topics.map((topic, index) => (
+                  <TopicItem
+                    {...topic}
+                    key={`topic-${topic.id}`}
+                    index={index}
+                    onDelete={(topicIndex) => remove(topicIndex)}
+                  />
+                ))
 
-      <div className="mb-3">
-        <Add />
-        <Button
-          onClick={handleAddNewTopic}
-          variant="link"
-          size="inline"
-          className="mr-1 text-primary-500"
-        >
-          Add topic
-        </Button>
+              }
+              <div className="mb-3">
+                <Add />
+                <Button
+                  onClick={() => push({ id: uuid(), name: '' })}
+                  variant="link"
+                  size="inline"
+                  className="mr-1 text-primary-500"
+                >
+                  Add topic
+                </Button>
+              </div>
+            </div>
+          )}
+        />
       </div>
     </>
   );
-}
+};
 
-DiscussionTopics.propTypes = {};
+DiscussionTopics.propTypes = {
+  intl: intlShape.isRequired,
+};
 
 export default injectIntl(DiscussionTopics);

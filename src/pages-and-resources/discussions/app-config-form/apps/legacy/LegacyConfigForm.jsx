@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Card, Form } from '@edx/paragon';
-import { useFormik } from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
@@ -16,50 +16,62 @@ import AppConfigFormDivider from '../shared/AppConfigFormDivider';
 function LegacyConfigForm({
   appConfig, onSubmit, formRef, intl, title,
 }) {
-  const {
-    handleSubmit,
-    handleChange,
-    handleBlur,
-    values,
-    errors,
-  } = useFormik({
-    initialValues: appConfig,
-    validationSchema: Yup.object().shape({
-      blackoutDates: Yup.string().matches(
-        blackoutDatesRegex,
-        intl.formatMessage(messages.blackoutDatesFormattingError),
-      ),
-    }),
-    onSubmit,
-  });
-
   return (
-    <Card className="mb-5 px-4 px-sm-5 pb-5" data-testid="legacyConfigForm">
-      <Form ref={formRef} onSubmit={handleSubmit}>
-        <h3 className="text-primary-500 my-3">{title}</h3>
-        <AppConfigFormDivider thick />
-        <AnonymousPostingFields
-          onBlur={handleBlur}
-          onChange={handleChange}
-          values={values}
-        />
-        <AppConfigFormDivider />
-        <DivisionByGroupFields
-          onBlur={handleBlur}
-          onChange={handleChange}
-          values={values}
-        />
-        <AppConfigFormDivider thick />
-        <DiscussionTopics />
-        <AppConfigFormDivider thick />
-        <BlackoutDatesField
-          errors={errors}
-          onBlur={handleBlur}
-          onChange={handleChange}
-          values={values}
-        />
-      </Form>
-    </Card>
+    <Formik
+      initialValues={appConfig}
+      validationSchema={
+        Yup.object().shape({
+          blackoutDates: Yup.string().matches(
+            blackoutDatesRegex,
+            intl.formatMessage(messages.blackoutDatesFormattingError),
+          ),
+          discussionTopics: Yup.array()
+            .of(
+              Yup.object().shape({
+                name: Yup.string().required(intl.formatMessage(messages.discussionTopicRequired)),
+              }),
+            ),
+        })
+      }
+      onSubmit={(values) => (onSubmit(values))}
+    >
+      {(
+        {
+          handleSubmit,
+          handleChange,
+          handleBlur,
+          values,
+          errors,
+        },
+      ) => (
+        <Card className="mb-5 px-4 px-sm-5 pb-5" data-testid="legacyConfigForm">
+          <Form ref={formRef} onSubmit={handleSubmit}>
+            <h3 className="text-primary-500 my-3">{title}</h3>
+            <AppConfigFormDivider thick />
+            <AnonymousPostingFields
+              onBlur={handleBlur}
+              onChange={handleChange}
+              values={values}
+            />
+            <AppConfigFormDivider />
+            <DivisionByGroupFields
+              onBlur={handleBlur}
+              onChange={handleChange}
+              values={values}
+            />
+            <AppConfigFormDivider thick />
+            <DiscussionTopics />
+            <AppConfigFormDivider thick />
+            <BlackoutDatesField
+              errors={errors}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              values={values}
+            />
+          </Form>
+        </Card>
+      )}
+    </Formik>
   );
 }
 
@@ -72,6 +84,7 @@ LegacyConfigForm.propTypes = {
     allowAnonymousPosts: PropTypes.bool.isRequired,
     allowAnonymousPostsPeers: PropTypes.bool.isRequired,
     blackoutDates: PropTypes.string.isRequired,
+    discussionTopics: PropTypes.arrayOf(PropTypes.object),
   }),
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types

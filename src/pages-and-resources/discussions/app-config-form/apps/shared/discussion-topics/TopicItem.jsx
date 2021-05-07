@@ -1,100 +1,143 @@
-import { Collapsible, Form } from '@edx/paragon';
 import React, { useState } from 'react';
-import messages from '../messages';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { ExpandLess, ExpandMore } from '@edx/paragon/icons';
+import PropTypes from 'prop-types';
+import {
+  Collapsible, Form, Card, Button,
+} from '@edx/paragon';
+import { injectIntl } from '@edx/frontend-platform/i18n';
+import { useFormikContext } from 'formik';
+import { ExpandLess, ExpandMore, Delete } from '@edx/paragon/icons';
 
-function TopicItem({ name, intl }) {
+const TopicItem = ({
+  index, name, onDelete,
+}) => {
+  const [title, setTitle] = useState(name);
+  const [isRemove, setIsRemove] = useState(false);
   const {
-    handleSubmit,
-    data,
     handleChange,
     handleBlur,
-    values,
     touched,
     errors,
-    validateForm,
-  } = useFormik({
-    initialValues: { topicNameKey: name },
-    validationSchema: Yup.object().shape({
-      topicNameKey: Yup.string()
-        .required
-        // intl.formatMessage('lahore is missing'),
-        (),
-    }),
-  });
-  const [title, setTitle] = useState(name);
-  const isInvalidtopicNameKey = !!(touched.topicNameKey && errors.topicNameKey);
-  const isNewTopic = title === '';
+  } = useFormikContext();
+  const isInvalidtopicNameKey = (
+    (touched?.discussionTopics && touched.discussionTopics[index]?.name)
+    && (errors?.discussionTopics && errors?.discussionTopics[index]?.name)
+  );
 
   const getHeading = (isOpen = false) => {
-    if (isNewTopic) {
-      return <span className="h4 p-2">Configure topic</span>;
+    let heading;
+    if (!title) {
+      heading = <span className="h4 py-2 mr-auto">Configure topic</span>;
+    } else if (isOpen) {
+      heading = <span className="h4 py-2 mr-auto">Rename {title} topic</span>;
+    } else {
+      heading = <span className="py-2">{title}</span>;
     }
-    if (isOpen) {
-      return <span className="h4 p-2">Rename {title} topic</span>;
-    }
-    return <span className="p-2">{title}</span>;
+    return heading;
   };
 
   const handleToggle = (isOpen) => {
-    console.log('Collapsible toggled and open is: ', isOpen);
     if (!isOpen && !isInvalidtopicNameKey) {
-      setTitle(values.topicNameKey);
+      setTitle(name);
     }
   };
-  
+
+  const handleDelete = (event) => {
+    event.stopPropagation();
+    setIsRemove(true);
+  };
+
   return (
     <>
-      <Collapsible.Advanced
-        className="collapsible-card rounded mb-3"
-        onToggle={handleToggle}
-        defaultOpen={isNewTopic}
-      >
-        <Collapsible.Trigger className="collapsible-trigger d-flex border-0">
-          <Collapsible.Visible whenClosed>
-            {getHeading(false)}
-            <div>
-              <ExpandMore />
-            </div>
-          </Collapsible.Visible>
-          <Collapsible.Visible whenOpen>
-            {getHeading(true)}
-            <ExpandLess />
-          </Collapsible.Visible>
-        </Collapsible.Trigger>
-        <Collapsible.Body className="collapsible-body rounded">
-          <Form.Group
-            controlId="topicNameKey"
-            isInvalid={isInvalidtopicNameKey}
-            className="m-2"
-            size="sm"
+      {
+        isRemove ? (
+          <Card className="rounded mb-3 p-1">
+            <Card.Body>
+              <div className="h4 card-title">Delete this topic?</div>
+              <Card.Text className="text-gray-700 text-justify">
+                edX recommends that you do not delete discussion topics once your course is running.
+              </Card.Text>
+              <div className="d-flex justify-content-end">
+                <Button
+                  variant="tertiary"
+                  onClick={() => setIsRemove(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="outline-brand"
+                  className="ml-2"
+                  onClick={() => onDelete(index)}
+                >
+                  Delete
+                </Button>
+              </div>
+            </Card.Body>
+          </Card>
+        ) : (
+          <Collapsible.Advanced
+            className="collapsible-card rounded mb-3 px-3 py-2"
+            onToggle={handleToggle}
+            defaultOpen={!title}
           >
-            <Form.Control
-              floatingLabel="Topic name"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.topicNameKey}
-            />
-            {isInvalidtopicNameKey && (
-              <Form.Control.Feedback type="invalid" hasIcon={false}>
-                <div className="small">Topic name is a required fields</div>
-              </Form.Control.Feedback>
-            )}
-            {!isInvalidtopicNameKey && (
-              <Form.Control.Feedback>
-                <div className="small">Choose a unique name for your topic</div>
-              </Form.Control.Feedback>
-            )}
-          </Form.Group>
-        </Collapsible.Body>
-      </Collapsible.Advanced>
+            <Collapsible.Trigger
+              className="collapsible-trigger d-flex border-0"
+              style={{ justifyContent: 'unset' }}
+            >
+              <Collapsible.Visible whenClosed>
+                {getHeading(false)}
+                <div className="py-2 ml-auto">
+                  <ExpandMore />
+                </div>
+              </Collapsible.Visible>
+              <Collapsible.Visible whenOpen>
+                {getHeading(true)}
+                {name !== 'General' && (
+                  <div className="pr-4 border-right">
+                    <Delete onClick={handleDelete} />
+                  </div>
+                )}
+                <div className="pl-4">
+                  <ExpandLess />
+                </div>
+              </Collapsible.Visible>
+            </Collapsible.Trigger>
+            <Collapsible.Body className="collapsible-body rounded px-0">
+              <Form.Group
+                controlId={`discussionTopics.${index}.name`}
+                isInvalid={isInvalidtopicNameKey}
+                className="m-2"
+              >
+                <Form.Control
+                  floatingLabel="Topic name"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={name}
+                  readOnly={name === 'General'}
+                  controlClassName="bg-white"
+                />
+                {isInvalidtopicNameKey && (
+                  <Form.Control.Feedback type="invalid" hasIcon={false}>
+                    <div className="small">Topic name is a required fields</div>
+                  </Form.Control.Feedback>
+                )}
+                {!isInvalidtopicNameKey && (
+                  <Form.Control.Feedback>
+                    <div className="small">Choose a unique name for your topic</div>
+                  </Form.Control.Feedback>
+                )}
+              </Form.Group>
+            </Collapsible.Body>
+          </Collapsible.Advanced>
+        )
+      }
     </>
   );
-}
+};
 
-TopicItem.propTypes = {};
+TopicItem.propTypes = {
+  name: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  onDelete: PropTypes.func.isRequired,
+};
 
 export default injectIntl(TopicItem);

@@ -102,6 +102,11 @@ const messages = defineMessages({
     id: 'authoring.discussions.discussionTopics',
     defaultMessage: 'Discussion topics',
   },
+  discussionTopicRequired: {
+    id: 'authoring.discussions.discussionTopic.required',
+    defaultMessage: 'Topic name is a required field',
+    description: 'Tells the user that the discussion topic field is required and must have a value.',
+  },
   // Blackout dates
   blackoutDates: {
     id: 'authoring.discussions.blackoutDates',

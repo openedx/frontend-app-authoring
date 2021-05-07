@@ -33,6 +33,12 @@ function normalizePluginConfig(data) {
     // what the topic title is for the second.  "Questions for TAs" maybe?
     divideGeneralTopic: false,
     divideQuestionsForTAsTopic: false,
+    discussionTopics: Object.entries(data.discussion_topics).map(([key, value]) => (
+      {
+        name: key,
+        id: value.id,
+      }
+    )),
   };
 }
 
@@ -80,6 +86,13 @@ function denormalizeData(courseId, appId, data) {
   }
   if (data.blackoutDates) {
     pluginConfiguration.discussion_blackouts = JSON.parse(data.blackoutDates);
+  }
+  if (data.discussionTopics.length) {
+    pluginConfiguration.discussion_topics = data.discussionTopics.reduce((topics, currentTopic) => {
+      const newTopics = { ...topics };
+      newTopics[currentTopic.name] = { id: currentTopic.id };
+      return newTopics;
+    }, {});
   }
 
   const ltiConfiguration = {};
