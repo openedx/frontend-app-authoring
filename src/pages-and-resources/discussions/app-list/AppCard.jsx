@@ -2,8 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import Responsive from 'react-responsive';
 import {
-  Card, CheckboxControl, ExtraSmall,
+  Card, CheckboxControl, breakpoints,
 } from '@edx/paragon';
 import messages from './messages';
 import FeaturesList from './FeaturesList';
@@ -51,12 +52,12 @@ function AppCard({
         </div>
         <Card.Subtitle className="mb-3 text-muted">{supportText}</Card.Subtitle>
         <Card.Text>{intl.formatMessage(messages[`appDescription-${app.id}`])}</Card.Text>
-        <ExtraSmall>
+        <Responsive maxWidth={breakpoints.extraSmall.maxWidth}>
           <FeaturesList
             features={features}
             app={app}
           />
-        </ExtraSmall>
+        </Responsive>
       </Card.Body>
     </Card>
   );

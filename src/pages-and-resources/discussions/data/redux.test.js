@@ -10,13 +10,7 @@ import {
 import { fetchApps, saveAppConfig } from './thunks';
 import { LOADED } from '../../../data/slice';
 import { legacyApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
-
-// Helper, that is used to forcibly finalize all promises
-// in thunk before running matcher against state.
-const executeThunk = async (thunk, dispatch, getState) => {
-  await thunk(dispatch, getState);
-  await new Promise(setImmediate);
-};
+import executeThunk from '../../../utils';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const pagesAndResourcesPath = `/course/${courseId}/pages-and-resources`;
