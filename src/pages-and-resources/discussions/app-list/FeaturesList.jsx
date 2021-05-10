@@ -36,7 +36,7 @@ function FeaturesList({ app, features, intl }) {
           {app.featureIds.includes(feature.id)
             ? SupportedFeature
             : NonSupportedFeature}
-          {feature.id}
+          {intl.formatMessage(messages[`featureName-${feature.id}`])}
         </div>
       ))}
     </Collapsible>

@@ -28,6 +28,7 @@ function AppCard({
       }}
       className={classNames({
         'border-primary': selected,
+        'w-100': 'width',
       })}
     >
       <div
