@@ -28,7 +28,7 @@ function AppCard({
       }}
       className={classNames({
         'border-primary': selected,
-      })}
+      }, 'w-100')}
     >
       <div
         className="position-absolute mt-3 mr-3"
