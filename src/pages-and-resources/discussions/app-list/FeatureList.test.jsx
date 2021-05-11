@@ -49,7 +49,7 @@ describe('FeaturesList', () => {
     userEvent.click(button);
     features.forEach((feature) => {
       const featureNodes = queryAllByText(
-        container, feature.id,
+        container, messages[`featureName-${feature.id}`].defaultMessage,
       );
       expect(featureNodes.map(node => node.closest('div'))).toHaveLength(1);
     });
@@ -59,7 +59,7 @@ describe('FeaturesList', () => {
     const button = getByRole(container, 'button');
     userEvent.click(button);
     features.forEach((feature) => {
-      const featureElement = queryByText(container, feature.id);
+      const featureElement = queryByText(container, messages[`featureName-${feature.id}`].defaultMessage);
       if (app.featureIds.includes(feature.id)) {
         expect(featureElement.querySelector('svg')).toHaveAttribute('id', 'check-icon');
       }
@@ -70,7 +70,7 @@ describe('FeaturesList', () => {
     const button = getByRole(container, 'button');
     userEvent.click(button);
     features.forEach((feature) => {
-      const featureElement = queryByText(container, feature.id);
+      const featureElement = queryByText(container, messages[`featureName-${feature.id}`].defaultMessage);
       if (!app.featureIds.includes(feature.id)) {
         expect(featureElement.querySelector('svg')).toHaveAttribute('id', 'remove-icon');
       }

@@ -144,7 +144,7 @@ const messages = defineMessages({
   },
   'featureName-advanced_in_context_discussion': {
     id: 'authoring.discussions.featureName-advanced_in_context_discussion',
-    defaultMessage: 'WCAG 2.1 Support',
+    defaultMessage: 'Advanced In Context Discussion',
     description: 'The name of a discussions feature.',
   },
   'featureName-anonymous_posting': {
@@ -217,7 +217,7 @@ const messages = defineMessages({
     defaultMessage: 'Primary Discussion App Experience',
     description: 'The name of a discussions feature.',
   },
-  'featureName-question_&_discussion_support': {
+  'featureName-question_discussion_support': {
     id: 'authoring.discussions.featureName-question_&_discussion_support',
     defaultMessage: 'Question & Discussion Support',
     description: 'The name of a discussions feature.',
@@ -242,8 +242,8 @@ const messages = defineMessages({
     defaultMessage: 'User Mentions',
     description: 'The name of a discussions feature.',
   },
-  'featureName-wcag-2.1': {
-    id: 'authoring.discussions.featureName-wcag-2.1',
+  'featureName-wcag_2.1': {
+    id: 'authoring.discussions.featureName-wcag_2.1',
     defaultMessage: 'WCAG 2.1 Support',
     description: 'The name of a discussions feature.',
   },
