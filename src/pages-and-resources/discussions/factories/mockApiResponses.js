@@ -70,3 +70,18 @@ export const legacyApiResponse = {
     },
   },
 };
+
+export const emptyAppApiResponse = {
+  context_key: '',
+  enabled: null,
+  provider_type: '',
+  features: [],
+  lti_configuration: {},
+  plugin_configuration: {},
+  providers: {
+    active: 'legacy',
+    available: {
+
+    },
+  },
+};
