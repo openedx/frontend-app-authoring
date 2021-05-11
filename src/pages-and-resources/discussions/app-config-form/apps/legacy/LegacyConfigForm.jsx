@@ -30,7 +30,24 @@ function LegacyConfigForm({
               Yup.object().shape({
                 name: Yup.string().required(intl.formatMessage(messages.discussionTopicRequired)),
               }),
-            ),
+            ).test('unique', (
+              list,
+              testContext,
+              message = intl.formatMessage(messages.discussionTopicNameAlreadyExist),
+            ) => {
+              const mapper = x => x.name;
+              const set = [...new Set(list.map(mapper))];
+              const isUnique = list.length === set.length;
+              if (isUnique) {
+                return true;
+              }
+
+              const idx = list.findIndex((l, i) => mapper(l) !== set[i]);
+              return testContext.createError({
+                path: `[${idx}].name`,
+                message,
+              });
+            }),
         })
       }
       onSubmit={(values) => (onSubmit(values))}

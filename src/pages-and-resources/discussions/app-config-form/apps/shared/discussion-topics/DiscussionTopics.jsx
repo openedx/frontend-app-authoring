@@ -37,13 +37,14 @@ const DiscussionTopics = ({ intl }) => {
 
   return (
     <>
-      <h5 className="text-gray-500">
+      <h5 className="text-gray-500 mt-4 mb-2">
         {intl.formatMessage(messages.discussionTopics)}
       </h5>
-      <h4>General discussion topics</h4>
-      <div className="small mb-4">
-        Discussions can include general topics not contained to the course
-        structure. All courses have a general topic by default.
+      <label className="text-primary-500 mb-2 h4">
+        {intl.formatMessage(messages.discussionTopicsLabel)}
+      </label>
+      <div className="small mb-4 mt-0 text-muted">
+        {intl.formatMessage(messages.discussionTopicsHelp)}
       </div>
       <div>
         <FieldArray
@@ -61,7 +62,7 @@ const DiscussionTopics = ({ intl }) => {
                 ))
 
               }
-              <div className="mb-3">
+              <div className="mb-4">
                 <Add />
                 <Button
                   onClick={() => addNewtopic(push)}
@@ -69,7 +70,7 @@ const DiscussionTopics = ({ intl }) => {
                   size="inline"
                   className="mr-1 text-primary-500"
                 >
-                  Add topic
+                  {intl.formatMessage(messages.addTopicButton)}
                 </Button>
               </div>
             </div>

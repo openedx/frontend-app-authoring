@@ -3,12 +3,13 @@ import PropTypes from 'prop-types';
 import {
   Collapsible, Form, Card, Button,
 } from '@edx/paragon';
-import { injectIntl } from '@edx/frontend-platform/i18n';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { useFormikContext } from 'formik';
 import { ExpandLess, ExpandMore, Delete } from '@edx/paragon/icons';
+import messages from '../messages';
 
 const TopicItem = ({
-  index, name, onDelete,
+  intl, index, name, onDelete,
 }) => {
   const [title, setTitle] = useState(name);
   const [isRemove, setIsRemove] = useState(false);
@@ -26,6 +27,11 @@ const TopicItem = ({
   const isInvalidtopicNameKey = (
     (touched?.discussionTopics && touched.discussionTopics[index]?.name)
     && (errors?.discussionTopics && errors?.discussionTopics[index]?.name)
+  );
+
+  const isExistedName = (
+    (touched?.discussionTopics && touched.discussionTopics[index]?.name)
+    && (errors && errors[index]?.name)
   );
 
   const getHeading = (isOpen = false) => {
@@ -57,23 +63,25 @@ const TopicItem = ({
         isRemove ? (
           <Card className="rounded mb-3 p-1">
             <Card.Body>
-              <div className="h4 card-title">Delete this topic?</div>
-              <Card.Text className="text-gray-700 text-justify">
-                edX recommends that you do not delete discussion topics once your course is running.
+              <div className="text-primary-500 mb-2 h4">
+                {intl.formatMessage(messages.discussionTopicDeletionLabel)}
+              </div>
+              <Card.Text className="text-justify text-muted">
+                {intl.formatMessage(messages.discussionTopicDeletionHelp)}
               </Card.Text>
               <div className="d-flex justify-content-end">
                 <Button
                   variant="tertiary"
                   onClick={() => setIsRemove(false)}
                 >
-                  Cancel
+                  {intl.formatMessage(messages.cancelButton)}
                 </Button>
                 <Button
                   variant="outline-brand"
                   className="ml-2"
                   onClick={() => onDelete()}
                 >
-                  Delete
+                  {intl.formatMessage(messages.deleteButton)}
                 </Button>
               </div>
             </Card.Body>
@@ -122,12 +130,14 @@ const TopicItem = ({
                 />
                 {isInvalidtopicNameKey && (
                   <Form.Control.Feedback type="invalid" hasIcon={false}>
-                    <div className="small">Topic name is a required fields</div>
+                    <div className="small">
+                      {intl.formatMessage(messages.discussionTopicRequired)}
+                    </div>
                   </Form.Control.Feedback>
                 )}
-                {!isInvalidtopicNameKey && (
-                  <Form.Control.Feedback>
-                    <div className="small">Choose a unique name for your topic</div>
+                {isExistedName && (
+                  <Form.Control.Feedback type="invalid" hasIcon={false}>
+                    <div className="small">{isExistedName}</div>
                   </Form.Control.Feedback>
                 )}
               </Form.Group>
@@ -143,6 +153,7 @@ TopicItem.propTypes = {
   name: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   onDelete: PropTypes.func.isRequired,
+  intl: intlShape.isRequired,
 };
 
 export default injectIntl(TopicItem);
