@@ -81,7 +81,7 @@ const messages = defineMessages({
     description: 'A description of the edx next app.',
   },
 
-  // edX Next
+  // yellowdig
   'appName-yellowdig': {
     id: 'authoring.discussions.appList.appName-yellowdig',
     defaultMessage: 'Yellowdig',
