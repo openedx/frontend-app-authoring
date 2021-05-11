@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { Add } from '@edx/paragon/icons';
 import { Button } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -7,14 +8,32 @@ import { v4 as uuid } from 'uuid';
 
 import messages from '../messages';
 import TopicItem from './TopicItem';
+import { removeModel } from '../../../../../../generic/model-store';
+import { updateDiscussionTopicIds } from '../../../../data/slice';
+import { updatedDiscussionTopics } from '../../../../data/thunks';
 
 const DiscussionTopics = ({ intl }) => {
+  const dispatch = useDispatch();
   const { values } = useFormikContext();
   const [topics, setTopics] = useState(values.discussionTopics);
 
   useEffect(() => {
+    const updatedDiscussionTopicIds = values.discussionTopics?.map(topic => topic.id);
+
     setTopics(values.discussionTopics);
-  }, [values]);
+    dispatch(updateDiscussionTopicIds(updatedDiscussionTopicIds));
+    dispatch(updatedDiscussionTopics(values));
+  }, [values.discussionTopics]);
+
+  const handleTopicDelete = (topicIndex, topicId, remove) => {
+    remove(topicIndex);
+    dispatch(removeModel({ modelType: 'discussionTopics', id: topicId }));
+  };
+
+  const addNewtopic = (push) => {
+    const payload = { name: '', id: uuid() };
+    push(payload);
+  };
 
   return (
     <>
@@ -37,7 +56,7 @@ const DiscussionTopics = ({ intl }) => {
                     {...topic}
                     key={`topic-${topic.id}`}
                     index={index}
-                    onDelete={(topicIndex) => remove(topicIndex)}
+                    onDelete={() => handleTopicDelete(index, topic.id, remove)}
                   />
                 ))
 
@@ -45,7 +64,7 @@ const DiscussionTopics = ({ intl }) => {
               <div className="mb-3">
                 <Add />
                 <Button
-                  onClick={() => push({ id: uuid(), name: '' })}
+                  onClick={() => addNewtopic(push)}
                   variant="link"
                   size="inline"
                   className="mr-1 text-primary-500"

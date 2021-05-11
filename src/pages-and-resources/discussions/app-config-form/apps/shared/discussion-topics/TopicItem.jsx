@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Collapsible, Form, Card, Button,
@@ -18,6 +18,11 @@ const TopicItem = ({
     touched,
     errors,
   } = useFormikContext();
+
+  useEffect(() => {
+    setTitle(name);
+  }, [name]);
+
   const isInvalidtopicNameKey = (
     (touched?.discussionTopics && touched.discussionTopics[index]?.name)
     && (errors?.discussionTopics && errors?.discussionTopics[index]?.name)
@@ -41,7 +46,7 @@ const TopicItem = ({
     }
   };
 
-  const handleDelete = (event) => {
+  const DeleteDiscussionTopic = (event) => {
     event.stopPropagation();
     setIsRemove(true);
   };
@@ -66,7 +71,7 @@ const TopicItem = ({
                 <Button
                   variant="outline-brand"
                   className="ml-2"
-                  onClick={() => onDelete(index)}
+                  onClick={() => onDelete()}
                 >
                   Delete
                 </Button>
@@ -93,7 +98,7 @@ const TopicItem = ({
                 {getHeading(true)}
                 {name !== 'General' && (
                   <div className="pr-4 border-right">
-                    <Delete onClick={handleDelete} />
+                    <Delete onClick={DeleteDiscussionTopic} />
                   </div>
                 )}
                 <div className="pl-4">

@@ -7,7 +7,7 @@ import { useRouteMatch } from 'react-router';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Container } from '@edx/paragon';
 
-import { useModel } from '../../../generic/model-store';
+import { useModel, useModels } from '../../../generic/model-store';
 import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
 import {
   FAILED, LOADED, LOADING, selectApp,
@@ -29,12 +29,16 @@ function AppConfigForm({
   const { formRef } = useContext(AppConfigFormContext);
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const { params: { appId: routeAppId } } = useRouteMatch();
-  const { selectedAppId, status, saveStatus } = useSelector(state => state.discussions);
+  const {
+    selectedAppId, status, saveStatus, discussionTopicIds,
+  } = useSelector(state => state.discussions);
   const app = useModel('apps', selectedAppId);
   // appConfigs have no ID of their own, so we use the active app ID to reference them.
   // This appConfig may come back as null if the selectedAppId is not the activeAppId, i.e.,
   // if we're configuring a new app.
-  const appConfig = useModel('appConfigs', selectedAppId);
+  const appConfigObj = useModel('appConfigs', selectedAppId);
+  const discussionTopics = useModels('discussionTopics', discussionTopicIds);
+  const appConfig = { ...appConfigObj, discussionTopics };
 
   useEffect(() => {
     if (status === LOADED) {

@@ -13,6 +13,15 @@ function normalizeLtiConfig(data) {
   };
 }
 
+function normalizeDiscussionTopic(data) {
+  return Object.entries(data).map(([key, value]) => (
+    {
+      name: key,
+      id: value.id,
+    }
+  ));
+}
+
 function normalizePluginConfig(data) {
   if (!data || Object.keys(data).length < 1) {
     return {};
@@ -33,12 +42,6 @@ function normalizePluginConfig(data) {
     // what the topic title is for the second.  "Questions for TAs" maybe?
     divideGeneralTopic: false,
     divideQuestionsForTAsTopic: false,
-    discussionTopics: Object.entries(data.discussion_topics).map(([key, value]) => (
-      {
-        name: key,
-        id: value.id,
-      }
-    )),
   };
 }
 
@@ -63,6 +66,11 @@ function normalizeApps(data) {
     },
     activeAppId: data.providers.active,
     apps,
+    discussionTopicIds: Object.entries(
+      data.plugin_configuration.discussion_topics,
+    // eslint-disable-next-line no-unused-vars
+    ).map(([key, value]) => value.id),
+    discussionTopics: normalizeDiscussionTopic(data.plugin_configuration.discussion_topics),
   };
 }
 
