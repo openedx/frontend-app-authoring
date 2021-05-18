@@ -24,14 +24,14 @@ const TopicItem = ({
     setTitle(name);
   }, [name]);
 
-  const isInvalidtopicNameKey = (
-    (touched?.discussionTopics && touched.discussionTopics[index]?.name)
-    && (errors?.discussionTopics && errors?.discussionTopics[index]?.name)
+  const isInvalidtopicNameKey = Boolean(
+    (touched.discussionTopics && touched.discussionTopics[index]?.name)
+    && (errors.discussionTopics && errors?.discussionTopics[index]?.name),
   );
 
-  const isExistedName = (
-    (touched?.discussionTopics && touched.discussionTopics[index]?.name)
-    && (errors && errors[index]?.name)
+  const isExistedName = Boolean(
+    (touched.discussionTopics && touched.discussionTopics[index]?.name)
+    && (errors && errors[index]?.name),
   );
 
   const getHeading = (isOpen = false) => {
@@ -57,7 +57,7 @@ const TopicItem = ({
     setShowDeletePopup(true);
   };
 
-  const deletePopup = (
+  const deletetopic = (
     <Card className="rounded mb-3 p-1">
       <Card.Body>
         <div className="text-primary-500 mb-2 h4">
@@ -89,7 +89,7 @@ const TopicItem = ({
     <>
       {
         showDeletePopup ? (
-          deletePopup
+          deletetopic
         ) : (
           <Collapsible.Advanced
             className="collapsible-card rounded mb-3 px-3 py-2"
@@ -138,7 +138,9 @@ const TopicItem = ({
                 )}
                 {isExistedName && (
                   <Form.Control.Feedback type="invalid" hasIcon={false}>
-                    <div className="small">{isExistedName}</div>
+                    <div className="small">
+                      {intl.formatMessage(messages.discussionTopicNameAlreadyExist)}
+                    </div>
                   </Form.Control.Feedback>
                 )}
               </Form.Group>
