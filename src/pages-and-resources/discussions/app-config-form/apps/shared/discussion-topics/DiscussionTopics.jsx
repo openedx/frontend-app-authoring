@@ -22,7 +22,7 @@ const DiscussionTopics = ({ intl }) => {
 
     setTopics(values.discussionTopics);
     dispatch(updateDiscussionTopicIds(updatedDiscussionTopicIds));
-    dispatch(updatedDiscussionTopics(values));
+    dispatch(updatedDiscussionTopics(values.discussionTopics));
   }, [values.discussionTopics]);
 
   const handleTopicDelete = (topicIndex, topicId, remove) => {

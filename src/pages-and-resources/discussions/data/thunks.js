@@ -1,6 +1,6 @@
 import { history } from '@edx/frontend-platform';
 import {
-  addModel, addModels, updateModel, updateModels,
+  addModel, addModels, updateModels,
 } from '../../../generic/model-store';
 
 import { getApps, postAppConfig } from './api';
@@ -91,9 +91,6 @@ export function saveAppConfig(courseId, appId, drafts, successPath) {
 
 export function updatedDiscussionTopics(payload) {
   return (dispatch) => {
-    const { discussionTopics, ...appConfig } = payload;
-
-    dispatch(updateModel({ modelType: 'appConfigs', model: appConfig }));
-    dispatch(updateModels({ modelType: 'discussionTopics', models: discussionTopics }));
+    dispatch(updateModels({ modelType: 'discussionTopics', models: payload }));
   };
 }

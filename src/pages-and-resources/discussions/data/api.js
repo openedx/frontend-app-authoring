@@ -22,6 +22,13 @@ function normalizeDiscussionTopic(data) {
   ));
 }
 
+function extractDiscussionTopicIds(data) {
+  return Object.entries(
+    data,
+    // eslint-disable-next-line no-unused-vars
+  ).map(([key, value]) => value.id);
+}
+
 function normalizePluginConfig(data) {
   if (!data || Object.keys(data).length < 1) {
     return {};
@@ -66,11 +73,10 @@ function normalizeApps(data) {
     },
     activeAppId: data.providers.active,
     apps,
-    discussionTopicIds: Object.entries(
-      data.plugin_configuration.discussion_topics,
-    // eslint-disable-next-line no-unused-vars
-    ).map(([key, value]) => value.id),
-    discussionTopics: normalizeDiscussionTopic(data.plugin_configuration.discussion_topics),
+    discussionTopicIds: data.plugin_configuration.discussion_topics
+      ? extractDiscussionTopicIds(data.plugin_configuration.discussion_topics) : [],
+    discussionTopics: data.plugin_configuration.discussion_topics
+      ? normalizeDiscussionTopic(data.plugin_configuration.discussion_topics) : [],
   };
 }
 
@@ -95,7 +101,7 @@ function denormalizeData(courseId, appId, data) {
   if (data.blackoutDates) {
     pluginConfiguration.discussion_blackouts = JSON.parse(data.blackoutDates);
   }
-  if (data.discussionTopics.length) {
+  if (data.discussionTopics?.length) {
     pluginConfiguration.discussion_topics = data.discussionTopics.reduce((topics, currentTopic) => {
       const newTopics = { ...topics };
       newTopics[currentTopic.name] = { id: currentTopic.id };
