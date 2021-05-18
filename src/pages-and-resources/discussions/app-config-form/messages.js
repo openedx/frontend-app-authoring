@@ -14,19 +14,19 @@ const messages = defineMessages({
     defaultMessage: 'Back',
     description: 'Button allowing the user to return to discussion app selection.',
   },
-  applyButton: {
-    id: 'authoring.discussions.applyButton',
-    defaultMessage: 'Apply',
+  saveButton: {
+    id: 'authoring.discussions.saveButton',
+    defaultMessage: 'Save',
     description: 'Button allowing the user to submit their discussion configuration.',
   },
-  applyingButton: {
-    id: 'authoring.discussions.applyingButton',
-    defaultMessage: 'Applying',
+  savingButton: {
+    id: 'authoring.discussions.savingButton',
+    defaultMessage: 'Saving',
     description: 'Button label when the discussion configuration is being submitted.',
   },
-  appliedButton: {
-    id: 'authoring.discussions.appliedButton',
-    defaultMessage: 'Applied',
+  savedButton: {
+    id: 'authoring.discussions.savedButton',
+    defaultMessage: 'Saved',
     description: 'Button label when the discussion configuration has been successfully submitted.',
   },
 

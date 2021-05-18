@@ -7,33 +7,33 @@ import messages from './messages';
 import { SAVING } from '../data/slice';
 import { AppConfigFormContext } from './AppConfigFormProvider';
 
-function AppConfigFormApplyButton({ intl }) {
+function AppConfigFormSaveButton({ intl }) {
   const saveStatus = useSelector(state => state.discussions.saveStatus);
   const { formRef } = useContext(AppConfigFormContext);
 
   const submitButtonState = saveStatus === SAVING ? 'pending' : 'default';
 
   // This causes the form to be submitted from a button outside the form.
-  const handleApply = useCallback(() => {
+  const handleSave = useCallback(() => {
     formRef.current.requestSubmit();
   }, [formRef]);
 
   return (
     <StatefulButton
       labels={{
-        default: intl.formatMessage(messages.applyButton),
-        pending: intl.formatMessage(messages.applyingButton),
-        complete: intl.formatMessage(messages.appliedButton),
+        default: intl.formatMessage(messages.saveButton),
+        pending: intl.formatMessage(messages.savingButton),
+        complete: intl.formatMessage(messages.savedButton),
       }}
       state={submitButtonState}
       className="mr-2"
-      onClick={handleApply}
+      onClick={handleSave}
     />
   );
 }
 
-AppConfigFormApplyButton.propTypes = {
+AppConfigFormSaveButton.propTypes = {
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(AppConfigFormApplyButton);
+export default injectIntl(AppConfigFormSaveButton);
