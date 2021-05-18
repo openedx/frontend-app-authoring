@@ -104,7 +104,7 @@ function DiscussionsSettings({ courseId, intl }) {
                     >
                       {intl.formatMessage(messages.backButton)}
                     </Button>
-                    <AppConfigForm.ApplyButton />
+                    <AppConfigForm.SaveButton />
                   </div>
                 </Stepper.ActionRow>
               </>

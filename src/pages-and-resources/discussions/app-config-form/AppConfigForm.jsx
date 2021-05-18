@@ -16,7 +16,7 @@ import { saveAppConfig } from '../data/thunks';
 
 import messages from './messages';
 import AppConfigFormProvider, { AppConfigFormContext } from './AppConfigFormProvider';
-import AppConfigFormApplyButton from './AppConfigFormApplyButton';
+import AppConfigFormSaveButton from './AppConfigFormSaveButton';
 import LegacyConfigForm from './apps/legacy';
 import LtiConfigForm from './apps/lti';
 import Loading from '../../../generic/Loading';
@@ -100,6 +100,6 @@ AppConfigForm.propTypes = {
 const IntlAppConfigForm = injectIntl(AppConfigForm);
 
 IntlAppConfigForm.Provider = AppConfigFormProvider;
-IntlAppConfigForm.ApplyButton = AppConfigFormApplyButton;
+IntlAppConfigForm.SaveButton = AppConfigFormSaveButton;
 
 export default IntlAppConfigForm;
