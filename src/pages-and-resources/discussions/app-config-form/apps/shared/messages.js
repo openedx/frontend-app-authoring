@@ -105,10 +105,12 @@ const messages = defineMessages({
   discussionTopicsLabel: {
     id: 'authoring.discussions.discussionTopics.label',
     defaultMessage: 'General discussion topics',
+    description: 'Label for a discussion topic section allowing a user to add new topic.',
   },
   discussionTopicsHelp: {
     id: 'authoring.discussions.discussionTopics.help',
     defaultMessage: 'Discussions can include general topics not contained to the course structure. All courses have a general topic by default.',
+    description: 'Help text for adding new discussion topics that in general discussion topic section.',
   },
   discussionTopicRequired: {
     id: 'authoring.discussions.discussionTopic.required',
@@ -138,10 +140,12 @@ const messages = defineMessages({
   discussionTopicDeletionHelp: {
     id: 'authoring.discussions.discussionTopicDeletion.help',
     defaultMessage: ' edX recommends that you do not delete discussion topics once your course is running.',
+    description: 'Help text for delete a discussion topic from discussion topic section.',
   },
   discussionTopicDeletionLabel: {
     id: 'authoring.discussions.discussionTopicDeletion.label',
     defaultMessage: 'Delete this topic?',
+    description: 'Label for discussion topic delete popup allowing a user to delete a topic.',
   },
   // Blackout dates
   blackoutDates: {

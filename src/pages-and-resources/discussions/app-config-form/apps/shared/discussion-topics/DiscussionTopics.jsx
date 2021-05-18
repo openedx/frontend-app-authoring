@@ -30,7 +30,7 @@ const DiscussionTopics = ({ intl }) => {
     dispatch(removeModel({ modelType: 'discussionTopics', id: topicId }));
   };
 
-  const addNewtopic = (push) => {
+  const addNewTopic = (push) => {
     const payload = { name: '', id: uuid() };
     push(payload);
   };
@@ -43,7 +43,7 @@ const DiscussionTopics = ({ intl }) => {
       <label className="text-primary-500 mb-2 h4">
         {intl.formatMessage(messages.discussionTopicsLabel)}
       </label>
-      <div className="small mb-4 mt-0 text-muted">
+      <div className="small mb-4 text-muted">
         {intl.formatMessage(messages.discussionTopicsHelp)}
       </div>
       <div>
@@ -65,7 +65,7 @@ const DiscussionTopics = ({ intl }) => {
               <div className="mb-4">
                 <Add />
                 <Button
-                  onClick={() => addNewtopic(push)}
+                  onClick={() => addNewTopic(push)}
                   variant="link"
                   size="inline"
                   className="mr-1 text-primary-500"

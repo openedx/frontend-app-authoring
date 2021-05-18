@@ -12,7 +12,7 @@ const TopicItem = ({
   intl, index, name, onDelete,
 }) => {
   const [title, setTitle] = useState(name);
-  const [isRemove, setIsRemove] = useState(false);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
   const {
     handleChange,
     handleBlur,
@@ -52,40 +52,44 @@ const TopicItem = ({
     }
   };
 
-  const DeleteDiscussionTopic = (event) => {
+  const deleteDiscussionTopic = (event) => {
     event.stopPropagation();
-    setIsRemove(true);
+    setShowDeletePopup(true);
   };
+
+  const deletePopup = (
+    <Card className="rounded mb-3 p-1">
+      <Card.Body>
+        <div className="text-primary-500 mb-2 h4">
+          {intl.formatMessage(messages.discussionTopicDeletionLabel)}
+        </div>
+        <Card.Text className="text-justify text-muted">
+          {intl.formatMessage(messages.discussionTopicDeletionHelp)}
+        </Card.Text>
+        <div className="d-flex justify-content-end">
+          <Button
+            variant="tertiary"
+            onClick={() => setShowDeletePopup(false)}
+          >
+            {intl.formatMessage(messages.cancelButton)}
+          </Button>
+          <Button
+            variant="outline-brand"
+            className="ml-2"
+            onClick={() => onDelete()}
+          >
+            {intl.formatMessage(messages.deleteButton)}
+          </Button>
+        </div>
+      </Card.Body>
+    </Card>
+  );
 
   return (
     <>
       {
-        isRemove ? (
-          <Card className="rounded mb-3 p-1">
-            <Card.Body>
-              <div className="text-primary-500 mb-2 h4">
-                {intl.formatMessage(messages.discussionTopicDeletionLabel)}
-              </div>
-              <Card.Text className="text-justify text-muted">
-                {intl.formatMessage(messages.discussionTopicDeletionHelp)}
-              </Card.Text>
-              <div className="d-flex justify-content-end">
-                <Button
-                  variant="tertiary"
-                  onClick={() => setIsRemove(false)}
-                >
-                  {intl.formatMessage(messages.cancelButton)}
-                </Button>
-                <Button
-                  variant="outline-brand"
-                  className="ml-2"
-                  onClick={() => onDelete()}
-                >
-                  {intl.formatMessage(messages.deleteButton)}
-                </Button>
-              </div>
-            </Card.Body>
-          </Card>
+        showDeletePopup ? (
+          deletePopup
         ) : (
           <Collapsible.Advanced
             className="collapsible-card rounded mb-3 px-3 py-2"
@@ -104,11 +108,9 @@ const TopicItem = ({
               </Collapsible.Visible>
               <Collapsible.Visible whenOpen>
                 {getHeading(true)}
-                {name !== 'General' && (
-                  <div className="pr-4 border-right">
-                    <Delete onClick={DeleteDiscussionTopic} />
-                  </div>
-                )}
+                <div className="pr-4 border-right">
+                  <Delete onClick={deleteDiscussionTopic} />
+                </div>
                 <div className="pl-4">
                   <ExpandLess />
                 </div>
@@ -125,7 +127,6 @@ const TopicItem = ({
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={name}
-                  readOnly={name === 'General'}
                   controlClassName="bg-white"
                 />
                 {isInvalidtopicNameKey && (

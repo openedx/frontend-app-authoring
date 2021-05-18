@@ -16,40 +16,41 @@ import AppConfigFormDivider from '../shared/AppConfigFormDivider';
 function LegacyConfigForm({
   appConfig, onSubmit, formRef, intl, title,
 }) {
+  const legacyFormValidationSchema = Yup.object().shape({
+    blackoutDates: Yup.string().matches(
+      blackoutDatesRegex,
+      intl.formatMessage(messages.blackoutDatesFormattingError),
+    ),
+    discussionTopics: Yup.array()
+      .of(
+        Yup.object().shape({
+          name: Yup.string().required(intl.formatMessage(messages.discussionTopicRequired)),
+        }),
+      ).test('unique', (
+        discussionTopics,
+        testContext,
+        message = intl.formatMessage(messages.discussionTopicNameAlreadyExist),
+      ) => {
+        const uniqueDiscussionTopics = [...new Set(discussionTopics.map(topic => topic.name))];
+        const isUnique = discussionTopics.length === uniqueDiscussionTopics.length;
+        if (isUnique) {
+          return true;
+        }
+
+        const duplicateNameIndex = discussionTopics.findIndex(
+          (topic, index) => topic.name !== uniqueDiscussionTopics[index],
+        );
+        return testContext.createError({
+          path: `[${duplicateNameIndex}].name`,
+          message,
+        });
+      }),
+  });
+
   return (
     <Formik
       initialValues={appConfig}
-      validationSchema={
-        Yup.object().shape({
-          blackoutDates: Yup.string().matches(
-            blackoutDatesRegex,
-            intl.formatMessage(messages.blackoutDatesFormattingError),
-          ),
-          discussionTopics: Yup.array()
-            .of(
-              Yup.object().shape({
-                name: Yup.string().required(intl.formatMessage(messages.discussionTopicRequired)),
-              }),
-            ).test('unique', (
-              list,
-              testContext,
-              message = intl.formatMessage(messages.discussionTopicNameAlreadyExist),
-            ) => {
-              const mapper = x => x.name;
-              const set = [...new Set(list.map(mapper))];
-              const isUnique = list.length === set.length;
-              if (isUnique) {
-                return true;
-              }
-
-              const idx = list.findIndex((l, i) => mapper(l) !== set[i]);
-              return testContext.createError({
-                path: `[${idx}].name`,
-                message,
-              });
-            }),
-        })
-      }
+      validationSchema={legacyFormValidationSchema}
       onSubmit={(values) => (onSubmit(values))}
     >
       {(
@@ -101,7 +102,9 @@ LegacyConfigForm.propTypes = {
     allowAnonymousPosts: PropTypes.bool.isRequired,
     allowAnonymousPostsPeers: PropTypes.bool.isRequired,
     blackoutDates: PropTypes.string.isRequired,
-    discussionTopics: PropTypes.arrayOf(PropTypes.object),
+    discussionTopics: PropTypes.arrayOf(PropTypes.shape({
+      name: PropTypes.string.isRequired,
+    })),
   }),
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
