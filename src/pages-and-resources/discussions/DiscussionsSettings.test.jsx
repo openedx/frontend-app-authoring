@@ -25,9 +25,10 @@ import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 import initializeStore from '../../store';
 import { getAppsUrl } from './data/api';
 import { piazzaApiResponse } from './factories/mockApiResponses';
+import appMessages from './app-config-form/messages';
+import appListMessages from './app-list/messages';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
-
 let axiosMock;
 let store;
 let container;
@@ -107,7 +108,7 @@ describe('DiscussionsSettings', () => {
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
       userEvent.click(queryByLabelText(container, 'Select Piazza'));
-      userEvent.click(queryByText(container, 'Next'));
+      userEvent.click(queryByText(container, appListMessages.nextButton.defaultMessage));
 
       expect(queryByTestId(container, 'appList')).not.toBeInTheDocument();
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
@@ -123,7 +124,7 @@ describe('DiscussionsSettings', () => {
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
       userEvent.click(queryByLabelText(container, 'Select edX Discussions'));
-      userEvent.click(queryByText(container, 'Next'));
+      userEvent.click(queryByText(container, appListMessages.nextButton.defaultMessage));
 
       expect(queryByTestId(container, 'appList')).not.toBeInTheDocument();
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
@@ -140,7 +141,7 @@ describe('DiscussionsSettings', () => {
 
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
 
-      userEvent.click(queryByText(container, 'Back'));
+      userEvent.click(queryByText(container, appMessages.backButton.defaultMessage));
 
       expect(queryByTestId(container, 'appList')).toBeInTheDocument();
       expect(queryByTestId(container, 'appConfigForm')).not.toBeInTheDocument();
@@ -173,10 +174,10 @@ describe('DiscussionsSettings', () => {
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
       userEvent.click(queryByLabelText(container, 'Select Piazza'));
-      userEvent.click(queryByText(container, 'Next'));
+      userEvent.click(queryByText(container, appListMessages.nextButton.defaultMessage));
       // Apply causes an async action to take place
       act(() => {
-        userEvent.click(queryByText(container, 'Apply'));
+        userEvent.click(queryByText(container, appMessages.saveButton.defaultMessage));
       });
 
       // This is an important line that ensures the Close button has been removed, which implies that
@@ -237,7 +238,7 @@ describe('DiscussionsSettings', () => {
 
       // Apply causes an async action to take place
       act(() => {
-        userEvent.click(queryByText(container, 'Apply'));
+        userEvent.click(queryByText(container, appMessages.saveButton.defaultMessage));
       });
 
       await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
@@ -288,7 +289,7 @@ describe('DiscussionsSettings', () => {
 
       // Apply causes an async action to take place
       act(() => {
-        userEvent.click(queryByText(container, 'Apply'));
+        userEvent.click(queryByText(container, appMessages.saveButton.defaultMessage));
       });
 
       await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
