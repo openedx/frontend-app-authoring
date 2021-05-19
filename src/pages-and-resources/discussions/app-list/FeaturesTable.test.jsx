@@ -1,9 +1,8 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { render, queryAllByText, queryAllByTestId } from '@testing-library/react';
+import { render, queryByTestId } from '@testing-library/react';
 
 import FeaturesTable from './FeaturesTable';
-import messages from './messages';
 
 describe('FeaturesTable', () => {
   let apps;
@@ -51,23 +50,16 @@ describe('FeaturesTable', () => {
 
   test('displays a row for each available feature', () => {
     expect(container.querySelectorAll('tbody > tr')).toHaveLength(features.length);
-
-    features.forEach((feature) => {
-      const featureNodes = queryAllByText(
-        container, messages[`featureName-${feature.id}`].defaultMessage,
-      );
-      expect(featureNodes.map(node => node.closest('tr'))).toHaveLength(1);
-    });
   });
 
   test('apps columns receive a check for each feature they support', () => {
     features.forEach((feature) => {
       apps.forEach(app => {
-        const columnId = `${app.id}-${feature.id.replaceAll('.', '-')}`;
-        const columnCells = queryAllByTestId(container, columnId);
-
         if (app.featureIds.includes(feature.id)) {
-          expect(columnCells.map(cell => cell.querySelectorAll('check-icon'))).toHaveLength(1);
+          const columnId = `${app.id}-${feature.id.replaceAll('.', '-')}`;
+          const columnCell = queryByTestId(container, columnId);
+
+          expect(columnCell.querySelector('#check-icon')).toBeInTheDocument();
         }
       });
     });
@@ -76,11 +68,11 @@ describe('FeaturesTable', () => {
   test('apps columns receive a dash for each unsupported feature', () => {
     features.forEach((feature) => {
       apps.forEach(app => {
-        const columnId = `${app.id}-${feature.id.replaceAll('.', '-')}`;
-        const columnCells = queryAllByTestId(container, columnId);
-
         if (!app.featureIds.includes(feature.id)) {
-          expect(columnCells.map(cell => cell.querySelectorAll('remove-icon'))).toHaveLength(1);
+          const columnId = `${app.id}-${feature.id.replaceAll('.', '-')}`;
+          const columnCell = queryByTestId(container, columnId);
+
+          expect(columnCell.querySelector('#remove-icon')).toBeInTheDocument();
         }
       });
     });

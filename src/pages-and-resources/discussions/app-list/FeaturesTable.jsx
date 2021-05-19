@@ -16,21 +16,17 @@ function FeaturesTable({ apps, features, intl }) {
         apps.forEach(app => {
           // If our app's set of feature Ids includes this feature, return a checkmark.
           // i.e, if this app has the current feature, check it!
-          appCheckmarkCells[app.id] = app.featureIds.includes(feature.id) ? (
+          appCheckmarkCells[app.id] = (
             <div
               className="text-center"
               key={`${app.id}&${feature.id}`}
               data-testid={`${app.id}-${feature.id.replaceAll('.', '-')}`}
             >
-              <Check id="check-icon" className="text-success-500" />
-            </div>
-          ) : (
-            <div
-              className="text-center"
-              key={`${app.id}&${feature.id}`}
-              data-testid={`${app.id}-${feature.id.replaceAll('.', '-')}`}
-            >
-              <Remove id="remove-icon" className="text-light-700" />
+              {
+                app.featureIds.includes(feature.id)
+                  ? <Check id="check-icon" className="text-success-500" />
+                  : <Remove id="remove-icon" className="text-light-700" />
+              }
             </div>
           );
         });
