@@ -97,6 +97,56 @@ const messages = defineMessages({
     defaultMessage: 'Enter true or false. If true, students can create discussion posts that are anonymous to other students. This setting does not make posts anonymous to course staff.',
   },
 
+  // Discussion Topics
+  discussionTopics: {
+    id: 'authoring.discussions.discussionTopics',
+    defaultMessage: 'Discussion topics',
+  },
+  discussionTopicsLabel: {
+    id: 'authoring.discussions.discussionTopics.label',
+    defaultMessage: 'General discussion topics',
+    description: 'Label for a discussion topic section allowing a user to add new topic.',
+  },
+  discussionTopicsHelp: {
+    id: 'authoring.discussions.discussionTopics.help',
+    defaultMessage: 'Discussions can include general topics not contained to the course structure. All courses have a general topic by default.',
+    description: 'Help text for adding new discussion topics that in general discussion topic section.',
+  },
+  discussionTopicRequired: {
+    id: 'authoring.discussions.discussionTopic.required',
+    defaultMessage: 'Topic name is a required field',
+    description: 'Tells the user that the discussion topic field is required and must have a value.',
+  },
+  discussionTopicNameAlreadyExist: {
+    id: 'authoring.discussions.discussionTopic.alreadyExistError',
+    defaultMessage: 'It looks like this name is already in use',
+    description: 'Tells the user that the discussion topic name already in use and must have a unique name.',
+  },
+  addTopicButton: {
+    id: 'authoring.discussions.addTopicButton',
+    defaultMessage: 'Add Topic',
+    description: 'Button label when Add a new discussion topic.',
+  },
+  deleteButton: {
+    id: 'authoring.discussions.deleteButton',
+    defaultMessage: 'Delete',
+    description: 'Button label when delete discussion topic from conformation card.',
+  },
+  cancelButton: {
+    id: 'authoring.discussions.cancelButton',
+    defaultMessage: 'Cancel',
+    description: 'Button label when cancel discussion topic deletion conformation.',
+  },
+  discussionTopicDeletionHelp: {
+    id: 'authoring.discussions.discussionTopicDeletion.help',
+    defaultMessage: ' edX recommends that you do not delete discussion topics once your course is running.',
+    description: 'Help text for delete a discussion topic from discussion topic section.',
+  },
+  discussionTopicDeletionLabel: {
+    id: 'authoring.discussions.discussionTopicDeletion.label',
+    defaultMessage: 'Delete this topic?',
+    description: 'Label for discussion topic delete popup allowing a user to delete a topic.',
+  },
   // Blackout dates
   blackoutDates: {
     id: 'authoring.discussions.blackoutDates',

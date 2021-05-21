@@ -132,6 +132,7 @@ describe('Data layer integration tests', () => {
         status: LOADED,
         saveStatus: SAVED,
         hasValidationError: false,
+        discussionTopicIds: [],
       });
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
@@ -157,6 +158,10 @@ describe('Data layer integration tests', () => {
         status: LOADED,
         saveStatus: SAVED,
         hasValidationError: false,
+        discussionTopicIds: [
+          '13f106c6-6735-4e84-b097-0456cff55960',
+          'course-generated-id-123-client-made-this-up',
+        ],
       });
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
