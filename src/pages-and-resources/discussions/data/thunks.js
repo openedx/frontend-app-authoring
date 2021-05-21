@@ -90,7 +90,7 @@ export function saveAppConfig(courseId, appId, drafts, successPath) {
 }
 
 export function updatedDiscussionTopics(payload) {
-  return (dispatch) => {
+  return async (dispatch) => {
     dispatch(updateModels({ modelType: 'discussionTopics', models: payload }));
   };
 }

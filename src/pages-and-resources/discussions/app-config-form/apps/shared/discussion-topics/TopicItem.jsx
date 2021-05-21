@@ -24,12 +24,12 @@ const TopicItem = ({
     setTitle(name);
   }, [name]);
 
-  const isInvalidtopicNameKey = Boolean(
+  const isInvalidTopicNameKey = Boolean(
     (touched.discussionTopics && touched.discussionTopics[index]?.name)
     && (errors.discussionTopics && errors?.discussionTopics[index]?.name),
   );
 
-  const isExistedName = Boolean(
+  const isExistingName = Boolean(
     (touched.discussionTopics && touched.discussionTopics[index]?.name)
     && (errors && errors[index]?.name),
   );
@@ -47,7 +47,7 @@ const TopicItem = ({
   };
 
   const handleToggle = (isOpen) => {
-    if (!isOpen && !isInvalidtopicNameKey) {
+    if (!isOpen && !isInvalidTopicNameKey) {
       setTitle(name);
     }
   };
@@ -119,7 +119,7 @@ const TopicItem = ({
             <Collapsible.Body className="collapsible-body rounded px-0">
               <Form.Group
                 controlId={`discussionTopics.${index}.name`}
-                isInvalid={isInvalidtopicNameKey}
+                isInvalid={isInvalidTopicNameKey}
                 className="m-2"
               >
                 <Form.Control
@@ -129,14 +129,14 @@ const TopicItem = ({
                   value={name}
                   controlClassName="bg-white"
                 />
-                {isInvalidtopicNameKey && (
+                {isInvalidTopicNameKey && (
                   <Form.Control.Feedback type="invalid" hasIcon={false}>
                     <div className="small">
                       {intl.formatMessage(messages.discussionTopicRequired)}
                     </div>
                   </Form.Control.Feedback>
                 )}
-                {isExistedName && (
+                {isExistingName && (
                   <Form.Control.Feedback type="invalid" hasIcon={false}>
                     <div className="small">
                       {intl.formatMessage(messages.discussionTopicNameAlreadyExist)}
