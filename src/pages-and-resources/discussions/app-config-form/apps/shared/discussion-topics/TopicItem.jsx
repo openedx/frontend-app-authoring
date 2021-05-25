@@ -30,8 +30,10 @@ const TopicItem = ({
   }, [name]);
 
   useEffect(() => {
-    dispatch(updateValidationStatus({ hasError: Object.keys(errors).length > 0 }));
-  }, [errors]);
+    if (Object.keys(touched).length) {
+      dispatch(updateValidationStatus({ hasError: Object.keys(errors).length > 0 }));
+    }
+  }, [errors, touched]);
 
   const isInvalidTopicNameKey = Boolean(
     (touched.discussionTopics && touched.discussionTopics[index]?.name)

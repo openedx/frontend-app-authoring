@@ -4,7 +4,10 @@ import { CardGrid, Container, breakpoints } from '@edx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 import Responsive from 'react-responsive';
 import { useModels } from '../../../generic/model-store';
-import { selectApp, LOADED, LOADING } from '../data/slice';
+import {
+  selectApp, LOADED, LOADING,
+  updateValidationStatus,
+} from '../data/slice';
 import AppCard from './AppCard';
 import messages from './messages';
 import FeaturesTable from './FeaturesTable';
@@ -30,6 +33,7 @@ function AppList({ intl }) {
     if (!selectedAppId) {
       dispatch(selectApp({ appId: activeAppId }));
     }
+    dispatch(updateValidationStatus({ hasError: false }));
   }, [selectedAppId, activeAppId]);
 
   const handleSelectApp = useCallback((appId) => {
