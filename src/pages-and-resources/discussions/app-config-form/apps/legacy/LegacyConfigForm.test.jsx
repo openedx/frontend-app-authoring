@@ -21,14 +21,17 @@ const defaultAppConfig = {
   id: 'legacy',
   divideByCohorts: false,
   divideCourseWideTopics: false,
-  divideGeneralTopic: false,
-  divideQuestionsForTAsTopic: false,
   discussionTopics: [
     { name: 'General', id: 'course-generated-id-123-client-made-this-up' },
     { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
   ],
+  dividedCourseWideDiscussionsIds: [
+    'course-generated-id-123-client-made-this-up',
+    '13f106c6-6735-4e84-b097-0456cff55960',
+  ],
   allowAnonymousPosts: false,
   allowAnonymousPostsPeers: false,
+  allowDivisionByUnit: false,
   blackoutDates: '[]',
 };
 
@@ -89,7 +92,10 @@ describe('LegacyConfigForm', () => {
     const handleSubmit = jest.fn();
 
     await mockStore(legacyApiResponse);
-    createComponent(defaultAppConfig, handleSubmit, formRef);
+    createComponent({
+      ...defaultAppConfig,
+      divideByCohorts: true,
+    }, handleSubmit, formRef);
 
     await act(async () => {
       formRef.current.submit();
@@ -99,7 +105,10 @@ describe('LegacyConfigForm', () => {
       // Because we use defaultAppConfig as the initialValues of the form, and we haven't changed
       // any of the form inputs, this exact object shape is returned back to us, so we're reusing
       // it here.  It's not supposed to be 'the same object', it just happens to be.
-      defaultAppConfig,
+      {
+        ...defaultAppConfig,
+        divideByCohorts: true,
+      },
     );
   });
 
@@ -113,12 +122,10 @@ describe('LegacyConfigForm', () => {
     expect(
       container.querySelector('#divideCourseWideTopics'),
     ).not.toBeInTheDocument();
-    expect(
-      container.querySelector('#divideGeneralTopic'),
-    ).not.toBeInTheDocument();
-    expect(
-      container.querySelector('#divideQuestionsForTAsTopic'),
-    ).not.toBeInTheDocument();
+
+    defaultAppConfig.dividedCourseWideDiscussionsIds.forEach(id => expect(
+      container.querySelector(`#checkbox-${id}`),
+    ).not.toBeInTheDocument());
 
     // AnonymousPostingFields
     expect(container.querySelector('#allowAnonymousPosts')).toBeInTheDocument();
@@ -149,14 +156,10 @@ describe('LegacyConfigForm', () => {
     expect(
       container.querySelector('#divideCourseWideTopics'),
     ).not.toBeChecked();
-    expect(container.querySelector('#divideGeneralTopic')).toBeInTheDocument();
-    expect(container.querySelector('#divideGeneralTopic')).not.toBeChecked();
-    expect(
-      container.querySelector('#divideQuestionsForTAsTopic'),
-    ).toBeInTheDocument();
-    expect(
-      container.querySelector('#divideQuestionsForTAsTopic'),
-    ).not.toBeChecked();
+
+    defaultAppConfig.dividedCourseWideDiscussionsIds.forEach(id => expect(
+      container.querySelector(`#checkbox-${id}`),
+    ).not.toBeInTheDocument());
 
     // AnonymousPostingFields
     expect(container.querySelector('#allowAnonymousPosts')).toBeInTheDocument();
@@ -168,4 +171,25 @@ describe('LegacyConfigForm', () => {
       container.querySelector('#allowAnonymousPostsPeers'),
     ).not.toBeChecked();
   });
+
+  test('folded discussion topics are in the DOM when divideByCohorts and divideCourseWideTopicsare enabled',
+    async () => {
+      await mockStore(legacyApiResponse);
+      createComponent({
+        ...defaultAppConfig,
+        divideByCohorts: true,
+        divideCourseWideTopics: true,
+      });
+
+      // DivisionByGroupFields
+      expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
+      expect(container.querySelector('#divideByCohorts')).toBeChecked();
+      expect(container.querySelector('#divideCourseWideTopics')).toBeInTheDocument();
+      expect(container.querySelector('#divideCourseWideTopics')).toBeChecked();
+
+      defaultAppConfig.dividedCourseWideDiscussionsIds.forEach(id => {
+        expect(container.querySelector(`#checkbox-${id}`)).toBeInTheDocument();
+        expect(container.querySelector(`#checkbox-${id}`)).toBeChecked();
+      });
+    });
 });

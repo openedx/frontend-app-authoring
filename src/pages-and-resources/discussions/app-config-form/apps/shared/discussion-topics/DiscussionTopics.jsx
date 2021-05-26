@@ -14,7 +14,7 @@ import { updatedDiscussionTopics } from '../../../../data/thunks';
 
 const DiscussionTopics = ({ intl }) => {
   const dispatch = useDispatch();
-  const { values } = useFormikContext();
+  const { values, setFieldValue } = useFormikContext();
   const [topics, setTopics] = useState(values.discussionTopics);
 
   useEffect(() => {
@@ -28,11 +28,16 @@ const DiscussionTopics = ({ intl }) => {
   const handleTopicDelete = (topicIndex, topicId, remove) => {
     remove(topicIndex);
     dispatch(removeModel({ modelType: 'discussionTopics', id: topicId }));
+    const updatedDividedCourseWideDiscussionsIds = values.dividedCourseWideDiscussionsIds.filter(
+      (id) => id !== topicId,
+    );
+    setFieldValue('dividedCourseWideDiscussionsIds', updatedDividedCourseWideDiscussionsIds);
   };
 
   const addNewTopic = (push) => {
     const payload = { name: '', id: uuid() };
     push(payload);
+    setFieldValue('dividedCourseWideDiscussionsIds', [...values.dividedCourseWideDiscussionsIds, payload.id]);
   };
 
   return (

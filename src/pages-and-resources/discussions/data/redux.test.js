@@ -162,6 +162,10 @@ describe('Data layer integration tests', () => {
           '13f106c6-6735-4e84-b097-0456cff55960',
           'course-generated-id-123-client-made-this-up',
         ],
+        dividedCourseWideDiscussionsIds: [
+          '13f106c6-6735-4e84-b097-0456cff55960',
+          'course-generated-id-123-client-made-this-up',
+        ],
       });
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
@@ -173,11 +177,9 @@ describe('Data layer integration tests', () => {
         blackoutDates: '[]',
         // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
         // but we add it in during normalization.
-        divideByCohorts: false,
+        divideByCohorts: true,
         allowDivisionByUnit: false,
         divideCourseWideTopics: false,
-        divideGeneralTopic: false,
-        divideQuestionsForTAsTopic: false,
       });
     });
   });
@@ -324,6 +326,14 @@ describe('Data layer integration tests', () => {
           allow_anonymous: true,
           allow_anonymous_to_peers: true,
           discussion_blackouts: [['2015-09-15', '2015-09-21'], ['2015-10-01', '2015-10-08']],
+          discussion_topics: {
+            Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
+            General: { id: 'course-generated-id-123-client-made-this-up' },
+          },
+          divided_course_wide_discussions: [
+            '13f106c6-6735-4e84-b097-0456cff55960',
+            'course-generated-id-123-client-made-this-up',
+          ],
         },
         provider_type: 'legacy',
       }).reply(200, {
@@ -333,6 +343,14 @@ describe('Data layer integration tests', () => {
           allow_anonymous: true,
           allow_anonymous_to_peers: true,
           discussion_blackouts: [['2015-09-15', '2015-09-21'], ['2015-10-01', '2015-10-08']],
+          discussion_topics: {
+            Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
+            General: { id: 'course-generated-id-123-client-made-this-up' },
+          },
+          divided_course_wide_discussions: [
+            '13f106c6-6735-4e84-b097-0456cff55960',
+            'course-generated-id-123-client-made-this-up',
+          ],
         },
       });
 
@@ -350,9 +368,15 @@ describe('Data layer integration tests', () => {
           // but we technically send it to the thunk, so here it is.
           divideByCohorts: true,
           allowDivisionByUnit: true,
-          divideCourseWideTopics: true,
-          divideGeneralTopic: true,
-          divideQuestionsForTAsTopic: true,
+          divideCourseWideTopics: false,
+          dividedCourseWideDiscussionsIds: [
+            '13f106c6-6735-4e84-b097-0456cff55960',
+            'course-generated-id-123-client-made-this-up',
+          ],
+          discussionTopics: [
+            { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
+            { name: 'General', id: 'course-generated-id-123-client-made-this-up' },
+          ],
         },
         pagesAndResourcesPath,
       ), store.dispatch);
@@ -367,6 +391,14 @@ describe('Data layer integration tests', () => {
           status: LOADED,
           saveStatus: SAVED,
           hasValidationError: false,
+          dividedCourseWideDiscussionsIds: [
+            '13f106c6-6735-4e84-b097-0456cff55960',
+            'course-generated-id-123-client-made-this-up',
+          ],
+          discussionTopicIds: [
+            '13f106c6-6735-4e84-b097-0456cff55960',
+            'course-generated-id-123-client-made-this-up',
+          ],
         }),
       );
       expect(store.getState().models.appConfigs.legacy).toEqual({
@@ -377,11 +409,9 @@ describe('Data layer integration tests', () => {
         blackoutDates: '[["2015-09-15","2015-09-21"],["2015-10-01","2015-10-08"]]',
         // TODO: Note!  The values we tried to save were ignored, this test reflects what currently
         // happens, but NOT what we want to have happen!
-        divideByCohorts: false,
+        divideByCohorts: true,
         allowDivisionByUnit: false,
         divideCourseWideTopics: false,
-        divideGeneralTopic: false,
-        divideQuestionsForTAsTopic: false,
       });
     });
   });
