@@ -8,29 +8,35 @@ import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from './messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
 import { updateDividedCourseWideDiscussionsIds } from '../../../data/slice';
-import { updateAppConfigs } from '../../../data/thunks';
+import { updateModel } from '../../../../../generic/model-store';
 
 function DivisionByGroupFields({
-  onBlur, onChange, intl, values,
+  onBlur, onChange, intl, appConfig,
 }) {
   const dispatch = useDispatch();
   const { setFieldValue } = useFormikContext();
+  const {
+    dividedCourseWideDiscussionsIds: courseWideDiscussionsIds,
+    discussionTopics: generalDiscussionTopics,
+    divideByCohorts,
+    divideCourseWideTopics,
+  } = appConfig;
 
   useEffect(() => {
-    dispatch(updateDividedCourseWideDiscussionsIds(values.dividedCourseWideDiscussionsIds));
-  }, [values.dividedCourseWideDiscussionsIds]);
+    dispatch(updateDividedCourseWideDiscussionsIds(courseWideDiscussionsIds));
+  }, [courseWideDiscussionsIds]);
 
   useEffect(() => {
-    const discussionTopicIds = values.discussionTopics?.map(
-      (topic) => topic.id
+    const discussionTopicIds = generalDiscussionTopics.map(
+      (topic) => topic.id,
     );
     const divideCourseWideTopicsSwitchOff = (
-      discussionTopicIds.length === values.dividedCourseWideDiscussionsIds?.length
-      && discussionTopicIds.every((topicId) => values.dividedCourseWideDiscussionsIds?.includes(topicId))
-    ) || !values.dividedCourseWideDiscussionsIds?.length;
+      discussionTopicIds.length === courseWideDiscussionsIds.length
+      && discussionTopicIds.every((topicId) => courseWideDiscussionsIds.includes(topicId))
+    ) || !courseWideDiscussionsIds.length;
 
-    if (values.divideByCohorts) {
-      if (divideCourseWideTopicsSwitchOff && !values.divideCourseWideTopics) {
+    if (divideByCohorts) {
+      if (divideCourseWideTopicsSwitchOff && !divideCourseWideTopics) {
         setFieldValue('divideCourseWideTopics', false);
         setFieldValue('dividedCourseWideDiscussionsIds', discussionTopicIds);
       } else {
@@ -41,19 +47,19 @@ function DivisionByGroupFields({
       setFieldValue('divideCourseWideTopics', false);
     }
 
-    const { dividedCourseWideDiscussionsIds, discussionTopics, ...payload } = values;
-    dispatch(updateAppConfigs(payload));
+    const { dividedCourseWideDiscussionsIds, discussionTopics, ...payload } = appConfig;
+    dispatch(updateModel({ modelType: 'appConfigs', model: payload }));
   }, [
-    values.divideByCohorts,
-    values.divideCourseWideTopics,
-    values.discussionTopics,
+    divideByCohorts,
+    divideCourseWideTopics,
+    generalDiscussionTopics,
   ]);
 
   const handleCheckBoxToggle = (event, push, remove) => {
     if (event.target.checked) {
       push(event.target.value);
     } else {
-      const index = values.dividedCourseWideDiscussionsIds?.indexOf(event.target.value);
+      const index = courseWideDiscussionsIds.indexOf(event.target.value);
       remove(index);
     }
   };
@@ -75,12 +81,12 @@ function DivisionByGroupFields({
         className="mt-2"
         onBlur={onBlur}
         id="divideByCohorts"
-        checked={values.divideByCohorts}
+        checked={divideByCohorts}
         label={intl.formatMessage(messages.divideByCohortsLabel)}
         helpText={intl.formatMessage(messages.divideByCohortsHelp)}
       />
       <TransitionReplace>
-        {values.divideByCohorts ? (
+        {divideByCohorts ? (
           <React.Fragment key="open">
             <AppConfigFormDivider />
             <FormSwitchGroup
@@ -88,25 +94,25 @@ function DivisionByGroupFields({
               onBlur={onBlur}
               className="ml-4 mt-3"
               id="divideCourseWideTopics"
-              checked={values.divideCourseWideTopics}
+              checked={divideCourseWideTopics}
               label={intl.formatMessage(messages.divideCourseWideTopicsLabel)}
               helpText={intl.formatMessage(messages.divideCourseWideTopicsHelp)}
             />
             <TransitionReplace>
-              {values.divideCourseWideTopics ? (
+              {divideCourseWideTopics ? (
                 <React.Fragment key="open">
                   <FieldArray
                     name="dividedCourseWideDiscussionsIds"
                     render={({ push, remove }) => (
                       <Form.Group className="ml-4">
-                        {values.discussionTopics?.map((topic) => (
+                        {generalDiscussionTopics.map((topic) => (
                           <Form.Check
                             key={`checkbox-${topic.id}`}
                             id={`checkbox-${topic.id}`}
                             value={topic.id}
                             onChange={(event) => handleCheckBoxToggle(event, push, remove)}
                             onBlur={onBlur}
-                            checked={values.dividedCourseWideDiscussionsIds?.includes(
+                            checked={courseWideDiscussionsIds.includes(
                               topic.id,
                             )}
                             label={topic.name}
@@ -133,7 +139,7 @@ DivisionByGroupFields.propTypes = {
   onBlur: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
-  values: PropTypes.shape({
+  appConfig: PropTypes.shape({
     divideByCohorts: PropTypes.bool,
     divideCourseWideTopics: PropTypes.bool,
     discussionTopics: PropTypes.arrayOf(PropTypes.shape({

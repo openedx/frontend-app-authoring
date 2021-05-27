@@ -75,7 +75,7 @@ function LegacyConfigForm({
             <DivisionByGroupFields
               onBlur={handleBlur}
               onChange={handleChange}
-              values={values}
+              appConfig={values}
             />
             <AppConfigFormDivider thick />
             <DiscussionTopics />

@@ -1,8 +1,5 @@
 import { history } from '@edx/frontend-platform';
-import {
-  addModel, addModels, updateModels, updateModel,
-} from '../../../generic/model-store';
-
+import { addModel, addModels } from '../../../generic/model-store';
 import { getApps, postAppConfig } from './api';
 import {
   FAILED,
@@ -90,17 +87,5 @@ export function saveAppConfig(courseId, appId, drafts, successPath) {
         dispatch(updateSaveStatus({ status: FAILED }));
       }
     }
-  };
-}
-
-export function updatedDiscussionTopics(payload) {
-  return async (dispatch) => {
-    dispatch(updateModels({ modelType: 'discussionTopics', models: payload }));
-  };
-}
-
-export function updateAppConfigs(payload) {
-  return async (dispatch) => {
-    dispatch(updateModel({ modelType: 'appConfigs', model: payload }));
   };
 }

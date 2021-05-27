@@ -61,6 +61,8 @@ const piazzaApp = {
 
 let axiosMock;
 let store;
+let dividedCourseWideDiscussionsIds;
+let discussionTopicIds;
 
 describe('Data layer integration tests', () => {
   beforeEach(() => {
@@ -76,6 +78,14 @@ describe('Data layer integration tests', () => {
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
     store = initializeStore();
+    dividedCourseWideDiscussionsIds = [
+      '13f106c6-6735-4e84-b097-0456cff55960',
+      'course-generated-id-123-client-made-this-up',
+    ];
+    discussionTopicIds = [
+      '13f106c6-6735-4e84-b097-0456cff55960',
+      'course-generated-id-123-client-made-this-up',
+    ];
   });
 
   afterEach(() => {
@@ -158,14 +168,8 @@ describe('Data layer integration tests', () => {
         status: LOADED,
         saveStatus: SAVED,
         hasValidationError: false,
-        discussionTopicIds: [
-          '13f106c6-6735-4e84-b097-0456cff55960',
-          'course-generated-id-123-client-made-this-up',
-        ],
-        dividedCourseWideDiscussionsIds: [
-          '13f106c6-6735-4e84-b097-0456cff55960',
-          'course-generated-id-123-client-made-this-up',
-        ],
+        discussionTopicIds,
+        dividedCourseWideDiscussionsIds,
       });
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
@@ -369,10 +373,7 @@ describe('Data layer integration tests', () => {
           divideByCohorts: true,
           allowDivisionByUnit: true,
           divideCourseWideTopics: false,
-          dividedCourseWideDiscussionsIds: [
-            '13f106c6-6735-4e84-b097-0456cff55960',
-            'course-generated-id-123-client-made-this-up',
-          ],
+          dividedCourseWideDiscussionsIds,
           discussionTopics: [
             { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
             { name: 'General', id: 'course-generated-id-123-client-made-this-up' },
@@ -391,14 +392,8 @@ describe('Data layer integration tests', () => {
           status: LOADED,
           saveStatus: SAVED,
           hasValidationError: false,
-          dividedCourseWideDiscussionsIds: [
-            '13f106c6-6735-4e84-b097-0456cff55960',
-            'course-generated-id-123-client-made-this-up',
-          ],
-          discussionTopicIds: [
-            '13f106c6-6735-4e84-b097-0456cff55960',
-            'course-generated-id-123-client-made-this-up',
-          ],
+          dividedCourseWideDiscussionsIds,
+          discussionTopicIds,
         }),
       );
       expect(store.getState().models.appConfigs.legacy).toEqual({

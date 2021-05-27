@@ -8,27 +8,27 @@ import { v4 as uuid } from 'uuid';
 
 import messages from '../messages';
 import TopicItem from './TopicItem';
-import { removeModel } from '../../../../../../generic/model-store';
+import { removeModel, updateModels } from '../../../../../../generic/model-store';
 import { updateDiscussionTopicIds } from '../../../../data/slice';
-import { updatedDiscussionTopics } from '../../../../data/thunks';
 
 const DiscussionTopics = ({ intl }) => {
   const dispatch = useDispatch();
-  const { values, setFieldValue } = useFormikContext();
-  const [topics, setTopics] = useState(values.discussionTopics);
+  const { values: appConfig, setFieldValue } = useFormikContext();
+  const { discussionTopics, dividedCourseWideDiscussionsIds } = appConfig;
+  const [topics, setTopics] = useState(discussionTopics);
 
   useEffect(() => {
-    const updatedDiscussionTopicIds = values.discussionTopics?.map(topic => topic.id);
+    const updatedDiscussionTopicIds = discussionTopics.map(topic => topic.id);
 
-    setTopics(values.discussionTopics);
+    setTopics(discussionTopics);
     dispatch(updateDiscussionTopicIds(updatedDiscussionTopicIds));
-    dispatch(updatedDiscussionTopics(values.discussionTopics));
-  }, [values.discussionTopics]);
+    dispatch(updateModels({ modelType: 'discussionTopics', models: discussionTopics }));
+  }, [discussionTopics]);
 
   const handleTopicDelete = (topicIndex, topicId, remove) => {
     remove(topicIndex);
     dispatch(removeModel({ modelType: 'discussionTopics', id: topicId }));
-    const updatedDividedCourseWideDiscussionsIds = values.dividedCourseWideDiscussionsIds.filter(
+    const updatedDividedCourseWideDiscussionsIds = dividedCourseWideDiscussionsIds.filter(
       (id) => id !== topicId,
     );
     setFieldValue('dividedCourseWideDiscussionsIds', updatedDividedCourseWideDiscussionsIds);
@@ -37,7 +37,7 @@ const DiscussionTopics = ({ intl }) => {
   const addNewTopic = (push) => {
     const payload = { name: '', id: uuid() };
     push(payload);
-    setFieldValue('dividedCourseWideDiscussionsIds', [...values.dividedCourseWideDiscussionsIds, payload.id]);
+    setFieldValue('dividedCourseWideDiscussionsIds', [...dividedCourseWideDiscussionsIds, payload.id]);
   };
 
   return (

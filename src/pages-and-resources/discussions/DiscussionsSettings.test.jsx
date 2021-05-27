@@ -24,7 +24,7 @@ import DiscussionsSettings from './DiscussionsSettings';
 import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 import initializeStore from '../../store';
 import { getAppsUrl } from './data/api';
-import { piazzaApiResponse } from './factories/mockApiResponses';
+import { piazzaApiResponse, legacyApiResponse } from './factories/mockApiResponses';
 import appMessages from './app-config-form/messages';
 import appListMessages from './app-list/messages';
 
@@ -117,6 +117,8 @@ describe('DiscussionsSettings', () => {
     });
 
     test('successfully advances to settings step for legacy', async () => {
+      axiosMock.onGet(getAppsUrl(courseId)).reply(200, legacyApiResponse);
+      renderComponent();
       history.push(`/course/${courseId}/pages-and-resources/discussions`);
 
       // This is an important line that ensures the spinner has been removed - and thus our main
