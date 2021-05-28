@@ -110,19 +110,21 @@ function DivisionByGroupFields({
                     name="dividedDiscussionsIds"
                     render={({ push, remove }) => (
                       <Form.Group className="ml-4">
-                        {discussionTopics.map((topic) => (
-                          <Form.Check
-                            key={`checkbox-${topic.id}`}
-                            id={`checkbox-${topic.id}`}
-                            value={topic.id}
-                            onChange={(event) => handleCheckBoxToggle(event, push, remove)}
-                            onBlur={onBlur}
-                            checked={dividedDiscussionsIds.includes(
-                              topic.id,
-                            )}
-                            label={topic.name}
-                          />
-                        ))}
+                        <Form.CheckboxSet
+                          onChange={(event) => handleCheckBoxToggle(event, push, remove)}
+                          onBlur={onBlur}
+                          defaultValue={dividedDiscussionsIds}
+                        >
+                          {discussionTopics.map((topic) => (
+                            <Form.Checkbox
+                              key={`checkbox-${topic.id}`}
+                              id={`checkbox-${topic.id}`}
+                              value={topic.id}
+                            >
+                              {topic.name}
+                            </Form.Checkbox>
+                          ))}
+                        </Form.CheckboxSet>
                       </Form.Group>
                     )}
                   />
