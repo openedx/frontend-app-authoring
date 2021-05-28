@@ -61,7 +61,7 @@ const piazzaApp = {
 
 let axiosMock;
 let store;
-let dividedCourseWideDiscussionsIds;
+let dividedDiscussionsIds;
 let discussionTopicIds;
 
 describe('Data layer integration tests', () => {
@@ -78,7 +78,7 @@ describe('Data layer integration tests', () => {
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
     store = initializeStore();
-    dividedCourseWideDiscussionsIds = [
+    dividedDiscussionsIds = [
       '13f106c6-6735-4e84-b097-0456cff55960',
       'course-generated-id-123-client-made-this-up',
     ];
@@ -169,7 +169,7 @@ describe('Data layer integration tests', () => {
         saveStatus: SAVED,
         hasValidationError: false,
         discussionTopicIds,
-        dividedCourseWideDiscussionsIds,
+        dividedDiscussionsIds,
       });
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
@@ -183,7 +183,7 @@ describe('Data layer integration tests', () => {
         // but we add it in during normalization.
         divideByCohorts: true,
         allowDivisionByUnit: false,
-        divideCourseWideTopics: false,
+        divideCourseTopics: false,
       });
     });
   });
@@ -372,8 +372,8 @@ describe('Data layer integration tests', () => {
           // but we technically send it to the thunk, so here it is.
           divideByCohorts: true,
           allowDivisionByUnit: true,
-          divideCourseWideTopics: false,
-          dividedCourseWideDiscussionsIds,
+          divideCourseTopics: false,
+          dividedDiscussionsIds,
           discussionTopics: [
             { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
             { name: 'General', id: 'course-generated-id-123-client-made-this-up' },
@@ -392,7 +392,7 @@ describe('Data layer integration tests', () => {
           status: LOADED,
           saveStatus: SAVED,
           hasValidationError: false,
-          dividedCourseWideDiscussionsIds,
+          dividedDiscussionsIds,
           discussionTopicIds,
         }),
       );
@@ -406,7 +406,7 @@ describe('Data layer integration tests', () => {
         // happens, but NOT what we want to have happen!
         divideByCohorts: true,
         allowDivisionByUnit: false,
-        divideCourseWideTopics: false,
+        divideCourseTopics: false,
       });
     });
   });

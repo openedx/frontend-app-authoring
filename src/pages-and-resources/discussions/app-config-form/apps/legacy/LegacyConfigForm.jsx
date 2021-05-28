@@ -96,7 +96,7 @@ function LegacyConfigForm({
 LegacyConfigForm.propTypes = {
   appConfig: PropTypes.shape({
     divideByCohorts: PropTypes.bool.isRequired,
-    divideCourseWideTopics: PropTypes.bool.isRequired,
+    divideCourseTopics: PropTypes.bool.isRequired,
     allowAnonymousPosts: PropTypes.bool.isRequired,
     allowAnonymousPostsPeers: PropTypes.bool.isRequired,
     blackoutDates: PropTypes.string.isRequired,
@@ -116,7 +116,7 @@ LegacyConfigForm.defaultProps = {
   appConfig: {
     divideByCohorts: false,
     allowDivisionByUnit: false,
-    divideCourseWideTopics: false,
+    divideCourseTopics: false,
     allowAnonymousPosts: false,
     allowAnonymousPostsPeers: false,
     blackoutDates: '[]',

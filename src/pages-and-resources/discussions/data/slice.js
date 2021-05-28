@@ -24,7 +24,7 @@ const slice = createSlice({
     // ValidationError is the Flag that represents a form validation status.
     hasValidationError: false,
     discussionTopicIds: [],
-    dividedCourseWideDiscussionsIds: [],
+    dividedDiscussionsIds: [],
   },
   reducers: {
     loadApps: (state, { payload }) => {
@@ -34,7 +34,7 @@ const slice = createSlice({
       state.status = LOADED;
       state.saveStatus = SAVED;
       state.discussionTopicIds = payload.discussionTopicIds;
-      state.dividedCourseWideDiscussionsIds = payload.dividedCourseWideDiscussionsIds;
+      state.dividedDiscussionsIds = payload.dividedDiscussionsIds;
     },
     selectApp: (state, { payload }) => {
       const { appId } = payload;
@@ -53,10 +53,12 @@ const slice = createSlice({
       state.hasValidationError = hasError;
     },
     updateDiscussionTopicIds: (state, { payload }) => {
-      state.discussionTopicIds = payload;
+      const { updatedDiscussionTopicIds } = payload;
+      state.discussionTopicIds = updatedDiscussionTopicIds;
     },
-    updateDividedCourseWideDiscussionsIds: (state, { payload }) => {
-      state.dividedCourseWideDiscussionsIds = payload;
+    updateDividedDiscussionsIds: (state, { payload }) => {
+      const { dividedDiscussionsIds } = payload;
+      state.dividedDiscussionsIds = dividedDiscussionsIds;
     },
   },
 });
@@ -68,7 +70,7 @@ export const {
   updateSaveStatus,
   updateValidationStatus,
   updateDiscussionTopicIds,
-  updateDividedCourseWideDiscussionsIds,
+  updateDividedDiscussionsIds,
 } = slice.actions;
 
 export const {

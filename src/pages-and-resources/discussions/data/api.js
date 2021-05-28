@@ -39,7 +39,7 @@ function normalizePluginConfig(data) {
     blackoutDates: JSON.stringify(data.discussion_blackouts),
     allowDivisionByUnit: false,
     divideByCohorts: data.divided_course_wide_discussions.length > 0,
-    divideCourseWideTopics: false,
+    divideCourseTopics: false,
   };
 }
 
@@ -68,7 +68,7 @@ function normalizeApps(data) {
       ? extractDiscussionTopicIds(data.plugin_configuration.discussion_topics) : [],
     discussionTopics: data.plugin_configuration.discussion_topics
       ? normalizeDiscussionTopic(data.plugin_configuration.discussion_topics) : [],
-    dividedCourseWideDiscussionsIds: data.plugin_configuration.divided_course_wide_discussions,
+    dividedDiscussionsIds: data.plugin_configuration.divided_course_wide_discussions,
   };
 }
 
@@ -91,8 +91,8 @@ function denormalizeData(courseId, appId, data) {
       return newTopics;
     }, {});
   }
-  if (data.dividedCourseWideDiscussionsIds) {
-    pluginConfiguration.divided_course_wide_discussions = data.dividedCourseWideDiscussionsIds;
+  if (data.dividedDiscussionsIds) {
+    pluginConfiguration.divided_course_wide_discussions = data.dividedDiscussionsIds;
   }
 
   const ltiConfiguration = {};

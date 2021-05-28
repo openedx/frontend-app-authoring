@@ -23,7 +23,7 @@ export function fetchApps(courseId) {
         appConfig,
         discussionTopicIds,
         discussionTopics,
-        dividedCourseWideDiscussionsIds,
+        dividedDiscussionsIds,
       } = await getApps(courseId);
 
       dispatch(addModel({ modelType: 'appConfigs', model: appConfig }));
@@ -36,7 +36,7 @@ export function fetchApps(courseId) {
         appIds: apps.map(app => app.id),
         featureIds: features.map(feature => feature.id),
         discussionTopicIds,
-        dividedCourseWideDiscussionsIds,
+        dividedDiscussionsIds,
       }));
     } catch (error) {
       if (error.response && error.response.status === 403) {
@@ -60,7 +60,7 @@ export function saveAppConfig(courseId, appId, drafts, successPath) {
         appConfig,
         discussionTopicIds,
         discussionTopics,
-        dividedCourseWideDiscussionsIds,
+        dividedDiscussionsIds,
       } = await postAppConfig(courseId, appId, drafts);
 
       dispatch(addModel({ modelType: 'appConfigs', model: appConfig }));
@@ -73,7 +73,7 @@ export function saveAppConfig(courseId, appId, drafts, successPath) {
         appIds: apps.map(app => app.id),
         featureIds: features.map(feature => feature.id),
         discussionTopicIds,
-        dividedCourseWideDiscussionsIds,
+        dividedDiscussionsIds,
       }));
       dispatch(updateSaveStatus({ status: SAVED }));
       // Note that we redirect here to avoid having to work with the promise over in AppConfigForm.

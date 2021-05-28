@@ -20,12 +20,12 @@ const courseId = 'course-v1:edX+TestX+Test_Course';
 const defaultAppConfig = {
   id: 'legacy',
   divideByCohorts: false,
-  divideCourseWideTopics: false,
+  divideCourseTopics: false,
   discussionTopics: [
     { name: 'General', id: 'course-generated-id-123-client-made-this-up' },
     { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
   ],
-  dividedCourseWideDiscussionsIds: [
+  dividedDiscussionsIds: [
     'course-generated-id-123-client-made-this-up',
     '13f106c6-6735-4e84-b097-0456cff55960',
   ],
@@ -120,10 +120,10 @@ describe('LegacyConfigForm', () => {
     expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
     expect(container.querySelector('#divideByCohorts')).not.toBeChecked();
     expect(
-      container.querySelector('#divideCourseWideTopics'),
+      container.querySelector('#divideCourseTopics'),
     ).not.toBeInTheDocument();
 
-    defaultAppConfig.dividedCourseWideDiscussionsIds.forEach(id => expect(
+    defaultAppConfig.dividedDiscussionsIds.forEach(id => expect(
       container.querySelector(`#checkbox-${id}`),
     ).not.toBeInTheDocument());
 
@@ -151,13 +151,13 @@ describe('LegacyConfigForm', () => {
     expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
     expect(container.querySelector('#divideByCohorts')).toBeChecked();
     expect(
-      container.querySelector('#divideCourseWideTopics'),
+      container.querySelector('#divideCourseTopics'),
     ).toBeInTheDocument();
     expect(
-      container.querySelector('#divideCourseWideTopics'),
+      container.querySelector('#divideCourseTopics'),
     ).not.toBeChecked();
 
-    defaultAppConfig.dividedCourseWideDiscussionsIds.forEach(id => expect(
+    defaultAppConfig.dividedDiscussionsIds.forEach(id => expect(
       container.querySelector(`#checkbox-${id}`),
     ).not.toBeInTheDocument());
 
@@ -178,16 +178,16 @@ describe('LegacyConfigForm', () => {
       createComponent({
         ...defaultAppConfig,
         divideByCohorts: true,
-        divideCourseWideTopics: true,
+        divideCourseTopics: true,
       });
 
       // DivisionByGroupFields
       expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
       expect(container.querySelector('#divideByCohorts')).toBeChecked();
-      expect(container.querySelector('#divideCourseWideTopics')).toBeInTheDocument();
-      expect(container.querySelector('#divideCourseWideTopics')).toBeChecked();
+      expect(container.querySelector('#divideCourseTopics')).toBeInTheDocument();
+      expect(container.querySelector('#divideCourseTopics')).toBeChecked();
 
-      defaultAppConfig.dividedCourseWideDiscussionsIds.forEach(id => {
+      defaultAppConfig.dividedDiscussionsIds.forEach(id => {
         expect(container.querySelector(`#checkbox-${id}`)).toBeInTheDocument();
         expect(container.querySelector(`#checkbox-${id}`)).toBeChecked();
       });

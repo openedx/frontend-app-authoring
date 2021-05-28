@@ -14,30 +14,30 @@ import { updateDiscussionTopicIds } from '../../../../data/slice';
 const DiscussionTopics = ({ intl }) => {
   const dispatch = useDispatch();
   const { values: appConfig, setFieldValue } = useFormikContext();
-  const { discussionTopics, dividedCourseWideDiscussionsIds } = appConfig;
+  const { discussionTopics, dividedDiscussionsIds } = appConfig;
   const [topics, setTopics] = useState(discussionTopics);
 
   useEffect(() => {
     const updatedDiscussionTopicIds = discussionTopics.map(topic => topic.id);
 
     setTopics(discussionTopics);
-    dispatch(updateDiscussionTopicIds(updatedDiscussionTopicIds));
+    dispatch(updateDiscussionTopicIds({ updatedDiscussionTopicIds }));
     dispatch(updateModels({ modelType: 'discussionTopics', models: discussionTopics }));
   }, [discussionTopics]);
 
   const handleTopicDelete = (topicIndex, topicId, remove) => {
     remove(topicIndex);
     dispatch(removeModel({ modelType: 'discussionTopics', id: topicId }));
-    const updatedDividedCourseWideDiscussionsIds = dividedCourseWideDiscussionsIds.filter(
+    const updatedDividedDiscussionsIds = dividedDiscussionsIds.filter(
       (id) => id !== topicId,
     );
-    setFieldValue('dividedCourseWideDiscussionsIds', updatedDividedCourseWideDiscussionsIds);
+    setFieldValue('dividedDiscussionsIds', updatedDividedDiscussionsIds);
   };
 
   const addNewTopic = (push) => {
     const payload = { name: '', id: uuid() };
     push(payload);
-    setFieldValue('dividedCourseWideDiscussionsIds', [...dividedCourseWideDiscussionsIds, payload.id]);
+    setFieldValue('dividedDiscussionsIds', [...dividedDiscussionsIds, payload.id]);
   };
 
   return (
