@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Collapsible, Form, Card, Button,
+  Collapsible, Form, Card, Button, IconButton, Icon,
 } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { useFormikContext } from 'formik';
@@ -102,17 +102,33 @@ const TopicItem = ({
             >
               <Collapsible.Visible whenClosed>
                 {getHeading(false)}
-                <div className="py-2 ml-auto">
-                  <ExpandMore />
+                <div className="ml-auto">
+                  <IconButton
+                    alt={intl.formatMessage(messages.expandAltText)}
+                    src={ExpandMore}
+                    iconAs={Icon}
+                    variant="dark"
+                  />
                 </div>
               </Collapsible.Visible>
               <Collapsible.Visible whenOpen>
                 {getHeading(true)}
                 <div className="pr-4 border-right">
-                  <Delete onClick={deleteDiscussionTopic} />
+                  <IconButton
+                    onClick={deleteDiscussionTopic}
+                    alt={intl.formatMessage(messages.deleteAltText)}
+                    src={Delete}
+                    iconAs={Icon}
+                    variant="dark"
+                  />
                 </div>
                 <div className="pl-4">
-                  <ExpandLess />
+                  <IconButton
+                    alt={intl.formatMessage(messages.collapseAltText)}
+                    src={ExpandLess}
+                    iconAs={Icon}
+                    variant="dark"
+                  />
                 </div>
               </Collapsible.Visible>
             </Collapsible.Trigger>

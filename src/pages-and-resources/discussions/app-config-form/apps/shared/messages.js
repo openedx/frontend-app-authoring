@@ -171,6 +171,18 @@ const messages = defineMessages({
     id: 'authoring.discussions.builtIn.blackoutDates.formattingError',
     defaultMessage: "There's a formatting error in your blackout dates.",
   },
+  deleteAltText: {
+    id: 'authoring.topics.delete',
+    defaultMessage: 'Delete Topic',
+  },
+  expandAltText: {
+    id: 'authoring.topics.expand',
+    defaultMessage: 'Expand',
+  },
+  collapseAltText: {
+    id: 'authoring.topics.collapse',
+    defaultMessage: 'Collapse',
+  },
 });
 
 export default messages;
