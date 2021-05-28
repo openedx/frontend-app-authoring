@@ -53,12 +53,12 @@ function normalizePluginConfig(data) {
 }
 
 function normalizeApps(data) {
-  const apps = Object.entries(data.providers.available).map(([key, appFeatures]) => ({
+  const apps = Object.entries(data.providers.available).map(([key, app]) => ({
     id: key,
-    featureIds: appFeatures,
+    featureIds: app.features,
     // TODO: Fix this and get it from the backend!
-    documentationUrl: 'http://example.com',
-    hasFullSupport: appFeatures.length >= data.features.length,
+    documentationUrls: app.documentation_urls,
+    hasFullSupport: app.features.length >= data.features.length,
   }));
   return {
     courseId: data.context_key,
