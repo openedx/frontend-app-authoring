@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Card, Form, Hyperlink } from '@edx/paragon';
+import {
+  Card, Form, Hyperlink, MailtoLink,
+} from '@edx/paragon';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
@@ -10,6 +12,54 @@ import {
   updateValidationStatus,
 } from '../../../data/slice';
 import messages from './messages';
+
+const messageFormatting = (title, instructionType, intl, documentationUrls) => (
+  documentationUrls[instructionType]
+  && (
+    <>
+      <FormattedMessage
+        {...messages[instructionType]}
+        values={{
+          link: (
+            instructionType === 'email_id'
+              ? (
+                <MailtoLink
+                  to={documentationUrls[instructionType]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {documentationUrls[instructionType]}
+                </MailtoLink>
+              )
+              : (
+                <Hyperlink
+                  destination={documentationUrls[instructionType]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {instructionType === 'learn_more' ? intl.formatMessage(messages.reviewLinkText) : intl.formatMessage(messages.linkText)}
+                </Hyperlink>
+              )
+          ),
+          title,
+          email_address: documentationUrls.emailId,
+        }}
+      />
+    </>
+  )
+);
+
+const appDocInstructions = (app, intl, title) => {
+  const { documentationUrls } = app;
+  const appInstructions = Object.keys(documentationUrls);
+  return (
+    <>
+      {appInstructions.map((instructionType) => (
+        messageFormatting(title, instructionType, intl, documentationUrls)
+      ))}
+    </>
+  );
+};
 
 function LtiConfigForm({
   appConfig, app, onSubmit, intl, formRef, title,
@@ -45,22 +95,7 @@ function LtiConfigForm({
       <Form ref={formRef} onSubmit={handleSubmit}>
         <h3 className="mb-3">{title}</h3>
         <p className="mb-4">
-          <FormattedMessage
-            id="authoring.discussions.appDocInstructions"
-            defaultMessage="{documentationPageLink} to set up the tool, then paste your consumer key and consumer secret below:"
-            description="Instructions for the user to go visit a third party app's documentation to learn how to generate a set of values needed in this form.  documentationPageLink says 'Visit the {name} documentation page'"
-            values={{
-              documentationPageLink: (
-                <Hyperlink
-                  destination={app.documentationUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {intl.formatMessage(messages.documentationPage, { name: title })}
-                </Hyperlink>
-              ),
-            }}
-          />
+          {appDocInstructions(app, intl, title)}
         </p>
         <Form.Group controlId="consumerKey" isInvalid={isInvalidConsumerKey} className="mb-4">
           <Form.Control
@@ -109,7 +144,13 @@ function LtiConfigForm({
 LtiConfigForm.propTypes = {
   app: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    documentationUrl: PropTypes.string.isRequired,
+    documentationUrls: PropTypes.shape({
+      learn_more: PropTypes.string,
+      configuration_documentation: PropTypes.string,
+      documentation: PropTypes.string,
+      accessibility_documentation: PropTypes.string,
+      emailId: PropTypes.string,
+    }).isRequired,
   }).isRequired,
   appConfig: PropTypes.shape({
     consumerKey: PropTypes.string.isRequired,
