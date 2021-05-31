@@ -13,7 +13,7 @@ import {
 } from '../../../../data/slice';
 
 const TopicItem = ({
-  intl, index, name, onDelete,
+  intl, index, name, onDelete, id,
 }) => {
   const [title, setTitle] = useState(name);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
@@ -47,10 +47,10 @@ const TopicItem = ({
 
   const getHeading = (isOpen = false) => {
     let heading;
-    if (!title) {
-      heading = <span className="h4 py-2 mr-auto">Configure topic</span>;
+    if (id === 'default' && isOpen) {
+      heading = <span className="h4 py-2 mr-auto">{intl.formatMessage(messages.renameDefaultTopic)}</span>;
     } else if (isOpen) {
-      heading = <span className="h4 py-2 mr-auto">Rename {title} topic</span>;
+      heading = <span className="h4 py-2 mr-auto">{intl.formatMessage(messages.configureAdditionalTopic)}</span>;
     } else {
       heading = <span className="py-2">{title}</span>;
     }
@@ -124,15 +124,19 @@ const TopicItem = ({
               </Collapsible.Visible>
               <Collapsible.Visible whenOpen>
                 {getHeading(true)}
-                <div className="pr-4 border-right">
-                  <IconButton
-                    onClick={deleteDiscussionTopic}
-                    alt={intl.formatMessage(messages.deleteAltText)}
-                    src={Delete}
-                    iconAs={Icon}
-                    variant="dark"
-                  />
-                </div>
+                {
+                  id !== 'default' && (
+                    <div className="pr-4 border-right">
+                      <IconButton
+                        onClick={deleteDiscussionTopic}
+                        alt={intl.formatMessage(messages.deleteAltText)}
+                        src={Delete}
+                        iconAs={Icon}
+                        variant="dark"
+                      />
+                    </div>
+                  )
+                }
                 <div className="pl-4">
                   <IconButton
                     alt={intl.formatMessage(messages.collapseAltText)}
@@ -181,6 +185,7 @@ const TopicItem = ({
 
 TopicItem.propTypes = {
   name: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   onDelete: PropTypes.func.isRequired,
   intl: intlShape.isRequired,

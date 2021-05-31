@@ -147,6 +147,16 @@ const messages = defineMessages({
     defaultMessage: 'Delete this topic?',
     description: 'Label for discussion topic delete popup allowing a user to delete a topic.',
   },
+  renameDefaultTopic: {
+    id: 'authoring.discussions.builtIn.renameDefaultTopic.label',
+    defaultMessage: 'Rename general topic',
+    description: 'Label for default topic allowing user to rename default general topic',
+  },
+  configureAdditionalTopic: {
+    id: 'authoring.discussions.builtIn.configureAdditionalTopic.label',
+    defaultMessage: 'Configure topic',
+    description: 'Label for Additional topic allowing user to configure additional topic name',
+  },
   // Blackout dates
   blackoutDates: {
     id: 'authoring.discussions.blackoutDates',
