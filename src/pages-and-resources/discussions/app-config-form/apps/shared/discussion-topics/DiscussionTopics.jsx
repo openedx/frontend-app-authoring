@@ -14,7 +14,7 @@ import { updateDiscussionTopicIds } from '../../../../data/slice';
 const DiscussionTopics = ({ intl }) => {
   const dispatch = useDispatch();
   const { values: appConfig, setFieldValue } = useFormikContext();
-  const { discussionTopics, dividedDiscussionsIds } = appConfig;
+  const { discussionTopics, divideDiscussionIds } = appConfig;
   const [topics, setTopics] = useState(discussionTopics);
 
   useEffect(() => {
@@ -28,16 +28,16 @@ const DiscussionTopics = ({ intl }) => {
   const handleTopicDelete = (topicIndex, topicId, remove) => {
     remove(topicIndex);
     dispatch(removeModel({ modelType: 'discussionTopics', id: topicId }));
-    const updatedDividedDiscussionsIds = dividedDiscussionsIds.filter(
+    const updatedDividedDiscussionsIds = divideDiscussionIds.filter(
       (id) => id !== topicId,
     );
-    setFieldValue('dividedDiscussionsIds', updatedDividedDiscussionsIds);
+    setFieldValue('divideDiscussionIds', updatedDividedDiscussionsIds);
   };
 
   const addNewTopic = (push) => {
     const payload = { name: '', id: uuid() };
     push(payload);
-    setFieldValue('dividedDiscussionsIds', [...dividedDiscussionsIds, payload.id]);
+    setFieldValue('divideDiscussionIds', [...divideDiscussionIds, payload.id]);
   };
 
   return (

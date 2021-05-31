@@ -30,7 +30,7 @@ function AppConfigForm({
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const { params: { appId: routeAppId } } = useRouteMatch();
   const {
-    selectedAppId, status, saveStatus, discussionTopicIds, dividedDiscussionsIds,
+    selectedAppId, status, saveStatus, discussionTopicIds, divideDiscussionIds,
   } = useSelector(state => state.discussions);
   const app = useModel('apps', selectedAppId);
   // appConfigs have no ID of their own, so we use the active app ID to reference them.
@@ -38,7 +38,7 @@ function AppConfigForm({
   // if we're configuring a new app.
   const appConfigObj = useModel('appConfigs', selectedAppId);
   const discussionTopics = useModels('discussionTopics', discussionTopicIds);
-  const appConfig = { ...appConfigObj, discussionTopics, dividedDiscussionsIds };
+  const appConfig = { ...appConfigObj, discussionTopics, divideDiscussionIds };
 
   useEffect(() => {
     if (status === LOADED) {

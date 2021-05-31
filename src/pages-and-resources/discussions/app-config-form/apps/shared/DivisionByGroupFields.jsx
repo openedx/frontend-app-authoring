@@ -16,46 +16,46 @@ function DivisionByGroupFields({
   const dispatch = useDispatch();
   const { setFieldValue } = useFormikContext();
   const {
-    dividedDiscussionsIds,
+    divideDiscussionIds,
     discussionTopics,
     divideByCohorts,
-    divideCourseTopics,
+    divideCourseTopicsByCohorts,
   } = appConfig;
 
   useEffect(() => {
-    dispatch(updateDividedDiscussionsIds({ dividedDiscussionsIds }));
-  }, [dividedDiscussionsIds]);
+    dispatch(updateDividedDiscussionsIds({ divideDiscussionIds }));
+  }, [divideDiscussionIds]);
 
   useEffect(() => {
     const discussionTopicIds = discussionTopics.map(
       (topic) => topic.id,
     );
-    const divideCourseTopicsSwitchOff = (
-      discussionTopicIds.length === dividedDiscussionsIds.length
-      && discussionTopicIds.every((topicId) => dividedDiscussionsIds.includes(topicId))
-    ) || !dividedDiscussionsIds.length;
+    const divideCourseTopicsByCohortsOff = (
+      discussionTopicIds.length === divideDiscussionIds.length
+      && discussionTopicIds.every((topicId) => divideDiscussionIds.includes(topicId))
+    ) || !divideDiscussionIds.length;
 
     if (divideByCohorts) {
-      if (divideCourseTopicsSwitchOff && !divideCourseTopics) {
-        setFieldValue('divideCourseTopics', false);
-        setFieldValue('dividedDiscussionsIds', discussionTopicIds);
+      if (divideCourseTopicsByCohortsOff && !divideCourseTopicsByCohorts) {
+        setFieldValue('divideCourseTopicsByCohorts', false);
+        setFieldValue('divideDiscussionIds', discussionTopicIds);
       } else {
-        setFieldValue('divideCourseTopics', true);
+        setFieldValue('divideCourseTopicsByCohorts', true);
       }
     } else {
-      setFieldValue('dividedDiscussionsIds', []);
-      setFieldValue('divideCourseTopics', false);
+      setFieldValue('divideDiscussionIds', []);
+      setFieldValue('divideCourseTopicsByCohorts', false);
     }
 
     const {
-      dividedDiscussionsIds: courseDividedDiscussionsIds,
+      divideDiscussionIds: courseDividedDiscussionsIds,
       discussionTopics: courseDiscussionTopics,
       ...payload
     } = appConfig;
     dispatch(updateModel({ modelType: 'appConfigs', model: payload }));
   }, [
     divideByCohorts,
-    divideCourseTopics,
+    divideCourseTopicsByCohorts,
     discussionTopics,
   ]);
 
@@ -64,14 +64,14 @@ function DivisionByGroupFields({
     if (checked) {
       push(value);
     } else {
-      remove(dividedDiscussionsIds.indexOf(value));
+      remove(divideDiscussionIds.indexOf(value));
     }
   };
 
-  const handleDivideCourseWideTopicsSwitch = (event) => {
+  const handleDivideCourseTopicsByCohortsToggle = (event) => {
     const { checked } = event.target;
     if (!checked) {
-      setFieldValue('dividedDiscussionsIds', []);
+      setFieldValue('divideDiscussionIds', []);
     }
     onChange(event);
   };
@@ -95,25 +95,25 @@ function DivisionByGroupFields({
           <React.Fragment key="open">
             <AppConfigFormDivider />
             <FormSwitchGroup
-              onChange={(event) => handleDivideCourseWideTopicsSwitch(event)}
+              onChange={(event) => handleDivideCourseTopicsByCohortsToggle(event)}
               onBlur={onBlur}
               className="ml-4 mt-3"
-              id="divideCourseTopics"
-              checked={divideCourseTopics}
-              label={intl.formatMessage(messages.divideCourseTopicsLabel)}
-              helpText={intl.formatMessage(messages.divideCourseTopicsHelp)}
+              id="divideCourseTopicsByCohorts"
+              checked={divideCourseTopicsByCohorts}
+              label={intl.formatMessage(messages.divideCourseTopicsByCohortsLabel)}
+              helpText={intl.formatMessage(messages.divideCourseTopicsByCohortsHelp)}
             />
             <TransitionReplace>
-              {divideCourseTopics ? (
+              {divideCourseTopicsByCohorts ? (
                 <React.Fragment key="open">
                   <FieldArray
-                    name="dividedDiscussionsIds"
+                    name="divideDiscussionIds"
                     render={({ push, remove }) => (
                       <Form.Group className="ml-4">
                         <Form.CheckboxSet
                           onChange={(event) => handleCheckBoxToggle(event, push, remove)}
                           onBlur={onBlur}
-                          defaultValue={dividedDiscussionsIds}
+                          defaultValue={divideDiscussionIds}
                         >
                           {discussionTopics.map((topic) => (
                             <Form.Checkbox
@@ -148,12 +148,12 @@ DivisionByGroupFields.propTypes = {
   intl: intlShape.isRequired,
   appConfig: PropTypes.shape({
     divideByCohorts: PropTypes.bool,
-    divideCourseTopics: PropTypes.bool,
+    divideCourseTopicsByCohorts: PropTypes.bool,
     discussionTopics: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string,
       id: PropTypes.string,
     })),
-    dividedDiscussionsIds: PropTypes.arrayOf(PropTypes.string),
+    divideDiscussionIds: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
 };
 

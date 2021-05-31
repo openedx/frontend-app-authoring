@@ -61,7 +61,7 @@ const piazzaApp = {
 
 let axiosMock;
 let store;
-let dividedDiscussionsIds;
+let divideDiscussionIds;
 let discussionTopicIds;
 
 describe('Data layer integration tests', () => {
@@ -78,13 +78,13 @@ describe('Data layer integration tests', () => {
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
     store = initializeStore();
-    dividedDiscussionsIds = [
+    divideDiscussionIds = [
       '13f106c6-6735-4e84-b097-0456cff55960',
-      'course-generated-id-123-client-made-this-up',
+      'course',
     ];
     discussionTopicIds = [
       '13f106c6-6735-4e84-b097-0456cff55960',
-      'course-generated-id-123-client-made-this-up',
+      'course',
     ];
   });
 
@@ -169,7 +169,7 @@ describe('Data layer integration tests', () => {
         saveStatus: SAVED,
         hasValidationError: false,
         discussionTopicIds,
-        dividedDiscussionsIds,
+        divideDiscussionIds,
       });
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
@@ -183,7 +183,7 @@ describe('Data layer integration tests', () => {
         // but we add it in during normalization.
         divideByCohorts: true,
         allowDivisionByUnit: false,
-        divideCourseTopics: false,
+        divideCourseTopicsByCohorts: false,
       });
     });
   });
@@ -332,11 +332,11 @@ describe('Data layer integration tests', () => {
           discussion_blackouts: [['2015-09-15', '2015-09-21'], ['2015-10-01', '2015-10-08']],
           discussion_topics: {
             Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
-            General: { id: 'course-generated-id-123-client-made-this-up' },
+            General: { id: 'course' },
           },
           divided_course_wide_discussions: [
             '13f106c6-6735-4e84-b097-0456cff55960',
-            'course-generated-id-123-client-made-this-up',
+            'course',
           ],
         },
         provider_type: 'legacy',
@@ -349,11 +349,11 @@ describe('Data layer integration tests', () => {
           discussion_blackouts: [['2015-09-15', '2015-09-21'], ['2015-10-01', '2015-10-08']],
           discussion_topics: {
             Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
-            General: { id: 'course-generated-id-123-client-made-this-up' },
+            General: { id: 'course' },
           },
           divided_course_wide_discussions: [
             '13f106c6-6735-4e84-b097-0456cff55960',
-            'course-generated-id-123-client-made-this-up',
+            'course',
           ],
         },
       });
@@ -372,11 +372,11 @@ describe('Data layer integration tests', () => {
           // but we technically send it to the thunk, so here it is.
           divideByCohorts: true,
           allowDivisionByUnit: true,
-          divideCourseTopics: false,
-          dividedDiscussionsIds,
+          divideCourseTopicsByCohorts: false,
+          divideDiscussionIds,
           discussionTopics: [
             { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
-            { name: 'General', id: 'course-generated-id-123-client-made-this-up' },
+            { name: 'General', id: 'course' },
           ],
         },
         pagesAndResourcesPath,
@@ -392,7 +392,7 @@ describe('Data layer integration tests', () => {
           status: LOADED,
           saveStatus: SAVED,
           hasValidationError: false,
-          dividedDiscussionsIds,
+          divideDiscussionIds,
           discussionTopicIds,
         }),
       );
@@ -406,7 +406,7 @@ describe('Data layer integration tests', () => {
         // happens, but NOT what we want to have happen!
         divideByCohorts: true,
         allowDivisionByUnit: false,
-        divideCourseTopics: false,
+        divideCourseTopicsByCohorts: false,
       });
     });
   });

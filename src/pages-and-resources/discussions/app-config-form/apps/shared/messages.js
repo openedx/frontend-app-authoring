@@ -16,13 +16,13 @@ const messages = defineMessages({
     defaultMessage: 'Learners will only be able to view and respond to discussions posted by members of their cohort.',
     description: 'Help text for a switch that enables dividing discussions by cohorts.',
   },
-  divideCourseTopicsLabel: {
-    id: 'authoring.discussions.builtIn.divideCourseTopics.label',
+  divideCourseTopicsByCohortsLabel: {
+    id: 'authoring.discussions.builtIn.divideCourseTopicsByCohorts.label',
     defaultMessage: 'Divide course wide discussion topics',
     description: 'Label for a switch that enables dividing course wide topics by cohorts.',
   },
-  divideCourseTopicsHelp: {
-    id: 'authoring.discussions.builtIn.divideCourseTopics.help',
+  divideCourseTopicsByCohortsHelp: {
+    id: 'authoring.discussions.builtIn.divideCourseTopicsByCohorts.help',
     defaultMessage: 'Choose which of your general course wide discussion topics you would like to divide.',
     description: 'Help text asking the user to pick course-wide topics that should be divided by cohort.',
   },
