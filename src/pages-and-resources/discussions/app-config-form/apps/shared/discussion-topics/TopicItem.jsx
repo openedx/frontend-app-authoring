@@ -47,7 +47,7 @@ const TopicItem = ({
 
   const getHeading = (isOpen = false) => {
     let heading;
-    if (id === 'default' && isOpen) {
+    if (id === 'course' && isOpen) {
       heading = <span className="h4 py-2 mr-auto">{intl.formatMessage(messages.renameDefaultTopic)}</span>;
     } else if (isOpen) {
       heading = <span className="h4 py-2 mr-auto">{intl.formatMessage(messages.configureAdditionalTopic)}</span>;
@@ -125,7 +125,7 @@ const TopicItem = ({
               <Collapsible.Visible whenOpen>
                 {getHeading(true)}
                 {
-                  id !== 'default' && (
+                  id !== 'course' && (
                     <div className="pr-4 border-right">
                       <IconButton
                         onClick={deleteDiscussionTopic}
