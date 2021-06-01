@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   Collapsible, Form, Card, Button, IconButton, Icon,
@@ -7,6 +8,9 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { useFormikContext } from 'formik';
 import { ExpandLess, ExpandMore, Delete } from '@edx/paragon/icons';
 import messages from '../messages';
+import {
+  updateValidationStatus,
+} from '../../../../data/slice';
 
 const TopicItem = ({
   intl, index, name, onDelete,
@@ -19,10 +23,17 @@ const TopicItem = ({
     touched,
     errors,
   } = useFormikContext();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setTitle(name);
   }, [name]);
+
+  useEffect(() => {
+    if (Object.keys(touched).length) {
+      dispatch(updateValidationStatus({ hasError: Object.keys(errors).length > 0 }));
+    }
+  }, [errors, touched]);
 
   const isInvalidTopicNameKey = Boolean(
     (touched.discussionTopics && touched.discussionTopics[index]?.name)
