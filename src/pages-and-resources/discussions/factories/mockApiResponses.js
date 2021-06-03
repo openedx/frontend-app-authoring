@@ -53,6 +53,23 @@ export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false) => ({
         has_full_support: false,
         admin_only_config: piazzaAdminOnlyConfig,
       },
+      discourse: {
+        features: [
+          'discussion-page',
+          'embedded-course-sections',
+          'wcag-2.1',
+          'lti',
+        ],
+        external_links: {
+          learn_more: '',
+          configuration: '',
+          general: '',
+          accessibility: '',
+          contact_email: '',
+        },
+        messages: [],
+        has_full_support: false,
+      },
     },
   },
 });

@@ -29,6 +29,12 @@ function LtiConfigForm({
     piiShareUsername: appConfig.piiShareUsername,
     piiShareEmail: appConfig.piiShareEmail,
   };
+
+  const handleFormikSubmit = (values, actions) => {
+    onSubmit(values);
+    actions.setSubmitting(false);
+  };
+
   const user = getAuthenticatedUser();
   const dispatch = useDispatch();
   const { externalLinks } = app;
@@ -48,7 +54,7 @@ function LtiConfigForm({
       piiShareUsername: Yup.bool(),
       piiShareEmail: Yup.bool(),
     }),
-    onSubmit,
+    onSubmit: handleFormikSubmit,
   });
   const isInvalidConsumerKey = Boolean(touched.consumerKey && errors.consumerKey);
   const isInvalidConsumerSecret = Boolean(touched.consumerSecret && errors.consumerSecret);

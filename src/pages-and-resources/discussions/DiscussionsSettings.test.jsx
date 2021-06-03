@@ -5,6 +5,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider, PageRoute } from '@edx/frontend-platform/react';
 import {
   act,
+  getByRole,
   queryByLabelText,
   queryByRole,
   queryByTestId,
@@ -63,7 +64,15 @@ describe('DiscussionsSettings', () => {
       },
     });
 
-    store = initializeStore();
+    store = initializeStore({
+      models: {
+        courseDetails: {
+          [courseId]: {
+            start: Date(),
+          },
+        },
+      },
+    });
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
     // Leave the DiscussionsSettings route after the test.
@@ -174,18 +183,67 @@ describe('DiscussionsSettings', () => {
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
       userEvent.click(queryByLabelText(container, 'Select Piazza'));
-      userEvent.click(queryByText(container, appListMessages.nextButton.defaultMessage));
-      // Apply causes an async action to take place
-      act(() => {
-        userEvent.click(queryByText(container, appMessages.saveButton.defaultMessage));
-      });
+
+      userEvent.click(getByRole(container, 'button', { name: 'Next' }));
+
+      userEvent.click(getByRole(container, 'button', { name: 'Save' }));
 
       // This is an important line that ensures the Close button has been removed, which implies that
       // the full screen modal has been closed following our click of Apply.  Once this has happened,
       // then it's safe to proceed with our expectations.
-      await waitForElementToBeRemoved(screen.queryByLabelText('Close'));
+      await waitForElementToBeRemoved(queryByRole(container, 'button', { name: 'Close' }));
 
-      expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources`);
+      await waitFor(() => expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources`));
+    });
+
+    test('requires confirmation if changing provider', async () => {
+      history.push(`/course/${courseId}/pages-and-resources/discussion`);
+
+      axiosMock.onPost(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
+
+      // This is an important line that ensures the spinner has been removed - and thus our main
+      // content has been loaded - prior to proceeding with our expectations.
+      await waitForElementToBeRemoved(screen.getByRole('status'));
+
+      userEvent.click(getByRole(container, 'checkbox', { name: 'Select Discourse' }));
+
+      userEvent.click(getByRole(container, 'button', { name: 'Next' }));
+
+      userEvent.type(getByRole(container, 'textbox', { name: 'Consumer Key' }), 'key');
+      userEvent.type(getByRole(container, 'textbox', { name: 'Consumer Secret' }), 'secret');
+      userEvent.type(getByRole(container, 'textbox', { name: 'Launch URL' }), 'http://example.test');
+      userEvent.click(getByRole(container, 'button', { name: 'Save' }));
+
+      await waitFor(() => getByRole(container, 'dialog', { name: 'Confirm' }));
+    });
+
+    test('can cancel confirmation', async () => {
+      history.push(`/course/${courseId}/pages-and-resources/discussion`);
+
+      axiosMock.onPost(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
+
+      // This is an important line that ensures the spinner has been removed - and thus our main
+      // content has been loaded - prior to proceeding with our expectations.
+      await waitForElementToBeRemoved(screen.getByRole('status'));
+
+      const discourseBox = getByRole(container, 'checkbox', { name: 'Select Discourse' });
+      expect(discourseBox).not.toBeDisabled();
+      userEvent.click(discourseBox);
+
+      userEvent.click(getByRole(container, 'button', { name: 'Next' }));
+
+      expect(getByRole(container, 'heading', { name: 'Discourse' })).toBeInTheDocument();
+
+      userEvent.type(getByRole(container, 'textbox', { name: 'Consumer Key' }), 'a');
+      userEvent.type(getByRole(container, 'textbox', { name: 'Consumer Secret' }), 'secret');
+      userEvent.type(getByRole(container, 'textbox', { name: 'Launch URL' }), 'http://example.test');
+      userEvent.click(getByRole(container, 'button', { name: 'Save' }));
+
+      await waitFor(() => expect(getByRole(container, 'dialog', { name: 'Confirm' })).toBeInTheDocument());
+      userEvent.click(getByRole(container, 'button', { name: 'Back' }));
+
+      expect(queryByRole(container, 'dialog', { name: 'Confirm' })).not.toBeInTheDocument();
+      expect(queryByRole(container, 'dialog', { name: 'Configure discussion' }));
     });
   });
 
@@ -287,10 +345,7 @@ describe('DiscussionsSettings', () => {
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
-      // Apply causes an async action to take place
-      act(() => {
-        userEvent.click(queryByText(container, appMessages.saveButton.defaultMessage));
-      });
+      userEvent.click(getByRole(container, 'button', { name: 'Save' }));
 
       await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
 
@@ -323,7 +378,13 @@ describe.each([
       },
     });
 
-    store = initializeStore();
+    store = initializeStore({
+      models: {
+        courseDetails: {
+          [courseId]: {},
+        },
+      },
+    });
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
     // Leave the DiscussionsSettings route after the test.
