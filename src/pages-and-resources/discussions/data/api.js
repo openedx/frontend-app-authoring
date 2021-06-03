@@ -33,22 +33,13 @@ function normalizePluginConfig(data) {
   if (!data || Object.keys(data).length < 1) {
     return {};
   }
-
   return {
     allowAnonymousPosts: data.allow_anonymous,
     allowAnonymousPostsPeers: data.allow_anonymous_to_peers,
     blackoutDates: JSON.stringify(data.discussion_blackouts),
-    // TODO: We need all these added to the API.  ... default them for now
-    divideByCohorts: false,
     allowDivisionByUnit: false,
-    divideCourseWideTopics: false,
-    // TODO: Note that these last two are in the `discussion_topics` data, but we haven't been able
-    // to add them properly here yet.  I'm not sure the data is in a usable state as is, since it
-    // only seems to include the topics for which these would be "true".  Assuming its only these
-    // two, I think we could check for the existence of "General" for the first, but I'm not sure
-    // what the topic title is for the second.  "Questions for TAs" maybe?
-    divideGeneralTopic: false,
-    divideQuestionsForTAsTopic: false,
+    divideByCohorts: data.divided_course_wide_discussions.length > 0,
+    divideCourseTopicsByCohorts: false,
   };
 }
 
@@ -77,19 +68,11 @@ function normalizeApps(data) {
       ? extractDiscussionTopicIds(data.plugin_configuration.discussion_topics) : [],
     discussionTopics: data.plugin_configuration.discussion_topics
       ? normalizeDiscussionTopic(data.plugin_configuration.discussion_topics) : [],
+    divideDiscussionIds: data.plugin_configuration.divided_course_wide_discussions,
   };
 }
 
 function denormalizeData(courseId, appId, data) {
-  /*
-  TODO: What about these?  Some are from the instructor dashboard, presumably... but I don't think they all are.
-
-  divideByCohorts
-  allowDivisionByUnit
-  divideCourseWideTopics
-  divideGeneralTopic
-  divideQuestionsForTAsTopic
-  */
   const pluginConfiguration = {};
 
   if (data.allowAnonymousPosts) {
@@ -107,6 +90,9 @@ function denormalizeData(courseId, appId, data) {
       newTopics[currentTopic.name] = { id: currentTopic.id };
       return newTopics;
     }, {});
+  }
+  if (data.divideDiscussionIds) {
+    pluginConfiguration.divided_course_wide_discussions = data.divideDiscussionIds;
   }
 
   const ltiConfiguration = {};

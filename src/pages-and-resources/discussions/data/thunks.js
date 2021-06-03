@@ -1,8 +1,5 @@
 import { history } from '@edx/frontend-platform';
-import {
-  addModel, addModels, updateModels,
-} from '../../../generic/model-store';
-
+import { addModel, addModels } from '../../../generic/model-store';
 import { getApps, postAppConfig } from './api';
 import {
   FAILED,
@@ -26,11 +23,12 @@ export function fetchApps(courseId) {
         appConfig,
         discussionTopicIds,
         discussionTopics,
+        divideDiscussionIds,
       } = await getApps(courseId);
 
+      dispatch(addModel({ modelType: 'appConfigs', model: appConfig }));
       dispatch(addModels({ modelType: 'apps', models: apps }));
       dispatch(addModels({ modelType: 'features', models: features }));
-      dispatch(addModel({ modelType: 'appConfigs', model: appConfig }));
       dispatch(addModels({ modelType: 'discussionTopics', models: discussionTopics }));
 
       dispatch(loadApps({
@@ -38,6 +36,7 @@ export function fetchApps(courseId) {
         appIds: apps.map(app => app.id),
         featureIds: features.map(feature => feature.id),
         discussionTopicIds,
+        divideDiscussionIds,
       }));
     } catch (error) {
       if (error.response && error.response.status === 403) {
@@ -61,11 +60,12 @@ export function saveAppConfig(courseId, appId, drafts, successPath) {
         appConfig,
         discussionTopicIds,
         discussionTopics,
+        divideDiscussionIds,
       } = await postAppConfig(courseId, appId, drafts);
 
+      dispatch(addModel({ modelType: 'appConfigs', model: appConfig }));
       dispatch(addModels({ modelType: 'apps', models: apps }));
       dispatch(addModels({ modelType: 'features', models: features }));
-      dispatch(addModel({ modelType: 'appConfigs', model: appConfig }));
       dispatch(addModels({ modelType: 'discussionTopics', models: discussionTopics }));
 
       dispatch(loadApps({
@@ -73,6 +73,7 @@ export function saveAppConfig(courseId, appId, drafts, successPath) {
         appIds: apps.map(app => app.id),
         featureIds: features.map(feature => feature.id),
         discussionTopicIds,
+        divideDiscussionIds,
       }));
       dispatch(updateSaveStatus({ status: SAVED }));
       // Note that we redirect here to avoid having to work with the promise over in AppConfigForm.
@@ -86,11 +87,5 @@ export function saveAppConfig(courseId, appId, drafts, successPath) {
         dispatch(updateSaveStatus({ status: FAILED }));
       }
     }
-  };
-}
-
-export function updatedDiscussionTopics(payload) {
-  return async (dispatch) => {
-    dispatch(updateModels({ modelType: 'discussionTopics', models: payload }));
   };
 }

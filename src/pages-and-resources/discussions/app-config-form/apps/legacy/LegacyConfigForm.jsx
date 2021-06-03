@@ -75,7 +75,7 @@ function LegacyConfigForm({
             <DivisionByGroupFields
               onBlur={handleBlur}
               onChange={handleChange}
-              values={values}
+              appConfig={values}
             />
             <AppConfigFormDivider thick />
             <DiscussionTopics />
@@ -96,14 +96,13 @@ function LegacyConfigForm({
 LegacyConfigForm.propTypes = {
   appConfig: PropTypes.shape({
     divideByCohorts: PropTypes.bool.isRequired,
-    divideCourseWideTopics: PropTypes.bool.isRequired,
-    divideGeneralTopic: PropTypes.bool.isRequired,
-    divideQuestionsForTAsTopic: PropTypes.bool.isRequired,
+    divideCourseTopicsByCohorts: PropTypes.bool.isRequired,
     allowAnonymousPosts: PropTypes.bool.isRequired,
     allowAnonymousPostsPeers: PropTypes.bool.isRequired,
     blackoutDates: PropTypes.string.isRequired,
     discussionTopics: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
+      name: PropTypes.string,
+      id: PropTypes.string,
     })),
   }),
   onSubmit: PropTypes.func.isRequired,
@@ -117,9 +116,7 @@ LegacyConfigForm.defaultProps = {
   appConfig: {
     divideByCohorts: false,
     allowDivisionByUnit: false,
-    divideCourseWideTopics: false,
-    divideGeneralTopic: false,
-    divideQuestionsForTAsTopic: false,
+    divideCourseTopicsByCohorts: false,
     allowAnonymousPosts: false,
     allowAnonymousPostsPeers: false,
     blackoutDates: '[]',

@@ -8,31 +8,36 @@ import { v4 as uuid } from 'uuid';
 
 import messages from '../messages';
 import TopicItem from './TopicItem';
-import { removeModel } from '../../../../../../generic/model-store';
+import { removeModel, updateModels } from '../../../../../../generic/model-store';
 import { updateDiscussionTopicIds } from '../../../../data/slice';
-import { updatedDiscussionTopics } from '../../../../data/thunks';
 
 const DiscussionTopics = ({ intl }) => {
   const dispatch = useDispatch();
-  const { values } = useFormikContext();
-  const [topics, setTopics] = useState(values.discussionTopics);
+  const { values: appConfig, setFieldValue } = useFormikContext();
+  const { discussionTopics, divideDiscussionIds } = appConfig;
+  const [topics, setTopics] = useState(discussionTopics);
 
   useEffect(() => {
-    const updatedDiscussionTopicIds = values.discussionTopics?.map(topic => topic.id);
+    const updatedDiscussionTopicIds = discussionTopics.map(topic => topic.id);
 
-    setTopics(values.discussionTopics);
-    dispatch(updateDiscussionTopicIds(updatedDiscussionTopicIds));
-    dispatch(updatedDiscussionTopics(values.discussionTopics));
-  }, [values.discussionTopics]);
+    setTopics(discussionTopics);
+    dispatch(updateDiscussionTopicIds({ updatedDiscussionTopicIds }));
+    dispatch(updateModels({ modelType: 'discussionTopics', models: discussionTopics }));
+  }, [discussionTopics]);
 
   const handleTopicDelete = (topicIndex, topicId, remove) => {
     remove(topicIndex);
     dispatch(removeModel({ modelType: 'discussionTopics', id: topicId }));
+    const updatedDividedDiscussionsIds = divideDiscussionIds.filter(
+      (id) => id !== topicId,
+    );
+    setFieldValue('divideDiscussionIds', updatedDividedDiscussionsIds);
   };
 
   const addNewTopic = (push) => {
     const payload = { name: '', id: uuid() };
     push(payload);
+    setFieldValue('divideDiscussionIds', [...divideDiscussionIds, payload.id]);
   };
 
   return (

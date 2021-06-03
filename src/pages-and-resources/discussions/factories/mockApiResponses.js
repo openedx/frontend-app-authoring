@@ -52,9 +52,12 @@ export const legacyApiResponse = {
     available_division_schemes: ['enrollment_track'],
     discussion_topics: {
       Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
-      General: { id: 'course-generated-id-123-client-made-this-up' },
+      General: { id: 'course' },
     },
-    divided_course_wide_discussions: [],
+    divided_course_wide_discussions: [
+      '13f106c6-6735-4e84-b097-0456cff55960',
+      'course',
+    ],
     divided_inline_discussions: [],
     division_scheme: 'none',
     // Note, this gets stringified when normalized into the app, but the API returns it as an
