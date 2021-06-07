@@ -147,8 +147,8 @@ const messages = defineMessages({
     defaultMessage: 'Delete this topic?',
     description: 'Label for discussion topic delete popup allowing a user to delete a topic.',
   },
-  renameDefaultTopic: {
-    id: 'authoring.discussions.builtIn.renameDefaultTopic.label',
+  renameGeneralTopic: {
+    id: 'authoring.discussions.builtIn.renameGeneralTopic.label',
     defaultMessage: 'Rename general topic',
     description: 'Label for default topic allowing user to rename default general topic',
   },

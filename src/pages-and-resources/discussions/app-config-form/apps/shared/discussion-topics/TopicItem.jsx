@@ -24,6 +24,7 @@ const TopicItem = ({
     errors,
   } = useFormikContext();
   const dispatch = useDispatch();
+  const isGeneralTopic = id === 'course';
 
   useEffect(() => {
     setTitle(name);
@@ -47,8 +48,8 @@ const TopicItem = ({
 
   const getHeading = (isOpen = false) => {
     let heading;
-    if (id === 'course' && isOpen) {
-      heading = <span className="h4 py-2 mr-auto">{intl.formatMessage(messages.renameDefaultTopic)}</span>;
+    if (isGeneralTopic && isOpen) {
+      heading = <span className="h4 py-2 mr-auto">{intl.formatMessage(messages.renameGeneralTopic)}</span>;
     } else if (isOpen) {
       heading = <span className="h4 py-2 mr-auto">{intl.formatMessage(messages.configureAdditionalTopic)}</span>;
     } else {
@@ -125,7 +126,7 @@ const TopicItem = ({
               <Collapsible.Visible whenOpen>
                 {getHeading(true)}
                 {
-                  id !== 'course' && (
+                  isGeneralTopic && (
                     <div className="pr-4 border-right">
                       <IconButton
                         onClick={deleteDiscussionTopic}
