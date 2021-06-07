@@ -126,7 +126,7 @@ const TopicItem = ({
               <Collapsible.Visible whenOpen>
                 {getHeading(true)}
                 {
-                  isGeneralTopic && (
+                  !isGeneralTopic && (
                     <div className="pr-4 border-right">
                       <IconButton
                         onClick={deleteDiscussionTopic}
