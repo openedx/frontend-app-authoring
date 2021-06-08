@@ -107,6 +107,7 @@ const TopicItem = ({
             className="collapsible-card rounded mb-3 px-3 py-2"
             onToggle={handleToggle}
             defaultOpen={!title}
+            id={id}
           >
             <Collapsible.Trigger
               className="collapsible-trigger d-flex border-0"

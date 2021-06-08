@@ -65,7 +65,6 @@ const DiscussionTopics = ({ intl }) => {
                     onDelete={() => handleTopicDelete(index, topic.id, remove)}
                   />
                 ))
-
               }
               <div className="mb-4">
                 <Add />
