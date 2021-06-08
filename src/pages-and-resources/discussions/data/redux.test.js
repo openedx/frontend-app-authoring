@@ -43,7 +43,13 @@ const legacyApp = {
     'embedded-course-sections',
     'wcag-2.1',
   ],
-  documentationUrl: 'http://example.com',
+  documentationUrls: {
+    learn_more: '',
+    configuration_documentation: '',
+    documentation: '',
+    accessibility_documentation: '',
+    email_id: '',
+  },
   hasFullSupport: false,
 };
 
@@ -55,7 +61,13 @@ const piazzaApp = {
     'wcag-2.1',
     'lti',
   ],
-  documentationUrl: 'http://example.com',
+  documentationUrls: {
+    learn_more: '',
+    configuration_documentation: '',
+    documentation: '',
+    accessibility_documentation: '',
+    email_id: '',
+  },
   hasFullSupport: true,
 };
 

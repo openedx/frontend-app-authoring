@@ -9,7 +9,7 @@ import messages from './messages';
 
 describe('FeaturesList', () => {
   const app = {
-    documentationUrl: 'http://example.com',
+    documentationUrls: {},
     featureIds: ['discussion-page', 'embedded-course-sections', 'wcag-2.1'],
     hasFullSupport: false,
     id: 'legacy',
