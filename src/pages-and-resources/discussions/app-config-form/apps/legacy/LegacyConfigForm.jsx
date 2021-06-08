@@ -71,14 +71,14 @@ function LegacyConfigForm({
               onChange={handleChange}
               values={values}
             />
-            <AppConfigFormDivider />
+            <AppConfigFormDivider thick />
+            <DiscussionTopics />
+            <AppConfigFormDivider thick />
             <DivisionByGroupFields
               onBlur={handleBlur}
               onChange={handleChange}
               appConfig={values}
             />
-            <AppConfigFormDivider thick />
-            <DiscussionTopics />
             <AppConfigFormDivider thick />
             <BlackoutDatesField
               errors={errors}

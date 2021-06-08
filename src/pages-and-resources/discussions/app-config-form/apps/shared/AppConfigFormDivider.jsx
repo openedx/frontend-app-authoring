@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 export default function AppConfigFormDivider({ thick }) {
   return (
     <hr
-      className="my-2 mx-sm-n5 mx-n4"
+      className="my-2 mx-sm-n5 mx-n4 border-light-300"
       style={{
         borderTopWidth: thick ? '3px' : '1px',
       }}
