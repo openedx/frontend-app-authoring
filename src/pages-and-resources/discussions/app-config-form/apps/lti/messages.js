@@ -44,22 +44,22 @@ const messages = defineMessages({
     defaultMessage: 'Contact: {link}',
     description: 'Contact',
   },
-  documentation: {
+  general: {
     id: 'authoring.discussions.appDocInstructions.documentationLink',
     defaultMessage: 'General documentation',
     description: 'Application Document Instructions message for documentation link',
   },
-  accessibility_documentation: {
+  accessibility: {
     id: 'authoring.discussions.appDocInstructions.accessibilityDocumentationLink',
     defaultMessage: 'Accessibility documentation',
     description: 'Application Document Instructions message for accessibility link',
   },
-  configuration_documentation: {
-    id: 'authoring.discussions.appDocInstructions.configurationDocumentationLink',
+  configuration: {
+    id: 'authoring.discussions.appDocInstructions.configurationLink',
     defaultMessage: 'Configuration documentation',
     description: 'Application Document Instructions message for configurations link',
   },
-  learn_more: {
+  learnMore: {
     id: 'authoring.discussions.appDocInstructions.learnMoreLink',
     defaultMessage: 'Learn more about {title}',
     description: 'Application Document Instructions message for learn more links',

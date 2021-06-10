@@ -48,7 +48,13 @@ function normalizeApps(data) {
     id: key,
     featureIds: app.features,
     // TODO: Fix this and get it from the backend!
-    documentationUrls: app.documentation_urls,
+    externalLinks: {
+      learnMore: app.external_links.learn_more,
+      configuration: app.external_links.configuration,
+      general: app.external_links.general,
+      accessibility: app.external_links.accessibility,
+      contactEmail: app.external_links.contact_email,
+    },
     hasFullSupport: app.features.length >= data.features.length,
   }));
   return {
