@@ -12,13 +12,13 @@ describe('FeaturesTable', () => {
   beforeEach(() => {
     apps = [
       {
-        documentationUrls: {},
+        externalLinks: {},
         featureIds: ['discussion-page', 'embedded-course-sections', 'wcag-2.1'],
         hasFullSupport: false,
         id: 'legacy',
       },
       {
-        documentationUrls: {},
+        externalLinks: {},
         featureIds: ['discussion-page', 'lti'],
         hasFullSupport: false,
         id: 'piazza',

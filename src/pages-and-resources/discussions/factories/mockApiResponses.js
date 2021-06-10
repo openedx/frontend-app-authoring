@@ -24,12 +24,12 @@ export const piazzaApiResponse = {
           'embedded-course-sections',
           'wcag-2.1',
         ],
-        documentation_urls: {
+        external_links: {
           learn_more: '',
-          configuration_documentation: '',
-          documentation: '',
-          accessibility_documentation: '',
-          email_id: '',
+          configuration: '',
+          general: '',
+          accessibility: '',
+          contact_email: '',
         },
       },
       piazza: {
@@ -40,12 +40,12 @@ export const piazzaApiResponse = {
           'wcag-2.1',
           'lti',
         ],
-        documentation_urls: {
+        external_links: {
           learn_more: '',
-          configuration_documentation: '',
-          documentation: '',
-          accessibility_documentation: '',
-          email_id: '',
+          configuration: '',
+          general: '',
+          accessibility: '',
+          contact_email: '',
         },
       },
     },
@@ -88,12 +88,12 @@ export const legacyApiResponse = {
           'embedded-course-sections',
           'wcag-2.1',
         ],
-        documentation_urls: {
+        external_links: {
           learn_more: '',
-          configuration_documentation: '',
-          documentation: '',
-          accessibility_documentation: '',
-          email_id: '',
+          configuration: '',
+          general: '',
+          accessibility: '',
+          contact_email: '',
         },
       },
       piazza: {
@@ -104,12 +104,12 @@ export const legacyApiResponse = {
           'wcag-2.1',
           'lti',
         ],
-        documentation_urls: {
+        external_links: {
           learn_more: '',
-          configuration_documentation: '',
-          documentation: '',
-          accessibility_documentation: '',
-          email_id: '',
+          configuration: '',
+          general: '',
+          accessibility: '',
+          contact_email: '',
         },
       },
     },

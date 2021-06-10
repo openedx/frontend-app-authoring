@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
 
 import AppConfigFormDivider from '../shared/AppConfigFormDivider';
-import ExternalDocumentations from '../shared/ExternalDocumentations';
+import AppExternalLinks from '../shared/AppExternalLinks';
 
 import {
   updateValidationStatus,
@@ -20,6 +20,7 @@ function LtiConfigForm({
   appConfig, app, onSubmit, intl, formRef, title,
 }) {
   const dispatch = useDispatch();
+  const { externalLinks } = app;
   const {
     handleSubmit,
     handleChange,
@@ -91,7 +92,7 @@ function LtiConfigForm({
         </Form.Group>
       </Form>
       <AppConfigFormDivider thick />
-      <ExternalDocumentations app={app} title={title} />
+      <AppExternalLinks externalLinks={externalLinks} title={title} />
     </Card>
   );
 }
@@ -99,12 +100,12 @@ function LtiConfigForm({
 LtiConfigForm.propTypes = {
   app: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    documentationUrls: PropTypes.shape({
-      learn_more: PropTypes.string,
-      configuration_documentation: PropTypes.string,
-      documentation: PropTypes.string,
-      accessibility_documentation: PropTypes.string,
-      emailId: PropTypes.string,
+    externalLinks: PropTypes.shape({
+      learnMore: PropTypes.string,
+      configuration: PropTypes.string,
+      general: PropTypes.string,
+      accessibility: PropTypes.string,
+      contactEmail: PropTypes.string,
     }).isRequired,
   }).isRequired,
   appConfig: PropTypes.shape({
