@@ -16,23 +16,11 @@ import appMessages from './i18n';
 import initializeStore from './store';
 import './index.scss';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
-import LegacyProctoringRoute from './proctored-exam-settings/LegacyProctoringRoute';
 
 subscribe(APP_READY, () => {
   ReactDOM.render(
     <AppProvider store={initializeStore()}>
       <Switch>
-        <Route
-          exact
-          path="/proctored-exam-settings/:courseId"
-          render={({ match }) => {
-            const { params: { courseId } } = match;
-            /* See component for details on what this is */
-            return (
-              <LegacyProctoringRoute courseId={courseId} />
-            );
-          }}
-        />
         <Route
           path="/course/:courseId"
           render={({ match }) => {
