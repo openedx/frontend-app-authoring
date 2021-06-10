@@ -1,65 +1,20 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
-  Card, Form, Hyperlink, MailtoLink,
+  Card, Form,
 } from '@edx/paragon';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
 
+import AppConfigFormDivider from '../shared/AppConfigFormDivider';
+import ExternalDocumentations from '../shared/ExternalDocumentations';
+
 import {
   updateValidationStatus,
 } from '../../../data/slice';
 import messages from './messages';
-
-const messageFormatting = (title, instructionType, intl, documentationUrls) => (
-  documentationUrls[instructionType]
-  && (
-    <>
-      <FormattedMessage
-        {...messages[instructionType]}
-        values={{
-          link: (
-            instructionType === 'email_id'
-              ? (
-                <MailtoLink
-                  to={documentationUrls[instructionType]}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {documentationUrls[instructionType]}
-                </MailtoLink>
-              )
-              : (
-                <Hyperlink
-                  destination={documentationUrls[instructionType]}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {instructionType === 'learn_more' ? intl.formatMessage(messages.reviewLinkText) : intl.formatMessage(messages.linkText)}
-                </Hyperlink>
-              )
-          ),
-          title,
-          email_address: documentationUrls.emailId,
-        }}
-      />
-    </>
-  )
-);
-
-const appDocInstructions = (app, intl, title) => {
-  const { documentationUrls } = app;
-  const appInstructions = Object.keys(documentationUrls);
-  return (
-    <>
-      {appInstructions.map((instructionType) => (
-        messageFormatting(title, instructionType, intl, documentationUrls)
-      ))}
-    </>
-  );
-};
 
 function LtiConfigForm({
   appConfig, app, onSubmit, intl, formRef, title,
@@ -91,12 +46,10 @@ function LtiConfigForm({
   }, [errors]);
 
   return (
-    <Card className="mb-5 p-4" data-testid="ltiConfigForm">
+    <Card className="mb-5 p-5" data-testid="ltiConfigForm">
       <Form ref={formRef} onSubmit={handleSubmit}>
         <h3 className="mb-3">{title}</h3>
-        <p className="mb-4">
-          {appDocInstructions(app, intl, title)}
-        </p>
+        <p>{intl.formatMessage(messages.formInstructions)}</p>
         <Form.Group controlId="consumerKey" isInvalid={isInvalidConsumerKey} className="mb-4">
           <Form.Control
             floatingLabel={intl.formatMessage(messages.consumerKey)}
@@ -137,6 +90,8 @@ function LtiConfigForm({
           )}
         </Form.Group>
       </Form>
+      <AppConfigFormDivider thick />
+      <ExternalDocumentations app={app} title={title} />
     </Card>
   );
 }
