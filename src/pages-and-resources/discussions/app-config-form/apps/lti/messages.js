@@ -5,6 +5,10 @@ const messages = defineMessages({
     id: 'authoring.discussions.documentationPage',
     defaultMessage: 'Visit the {name} documentation page',
   },
+  formInstructions: {
+    id: 'authoring.discussions.formInstructions',
+    defaultMessage: 'Complete the fields below to set up your discussion tool.',
+  },
   consumerKey: {
     id: 'authoring.discussions.consumerKey',
     defaultMessage: 'Consumer Key',
@@ -35,40 +39,40 @@ const messages = defineMessages({
     defaultMessage: 'Launch URL is a required field',
     description: 'Tells the user that the Launch URL field is required and must have a value.',
   },
-  emailId: {
-    id: 'authoring.discussions.appDocInstructions.emailID',
-    defaultMessage: 'To get in touch with the team at {title} you may reach them at {link}.',
-    description: 'Application Document Instructions message for email id',
+  contact: {
+    id: 'authoring.discussions.appDocInstructions.contact',
+    defaultMessage: 'Contact: {link}',
+    description: 'Contact',
   },
   documentation: {
     id: 'authoring.discussions.appDocInstructions.documentationLink',
-    defaultMessage: 'General documentation for this tool can be found on {link}.',
+    defaultMessage: 'General documentation',
     description: 'Application Document Instructions message for documentation link',
   },
-  accessibilityDocumentation: {
+  accessibility_documentation: {
     id: 'authoring.discussions.appDocInstructions.accessibilityDocumentationLink',
-    defaultMessage: "Additional details on this tool's accessibility documentation can be found on {link}.",
+    defaultMessage: 'Accessibility documentation',
     description: 'Application Document Instructions message for accessibility link',
   },
-  configurationDocumentation: {
+  configuration_documentation: {
     id: 'authoring.discussions.appDocInstructions.configurationDocumentationLink',
-    defaultMessage: 'Configuration documentation can be found on {link}.',
+    defaultMessage: 'Configuration documentation',
     description: 'Application Document Instructions message for configurations link',
   },
-  learnMore: {
+  learn_more: {
     id: 'authoring.discussions.appDocInstructions.learnMoreLink',
-    defaultMessage: 'To learn more about {title} you can {link}.',
+    defaultMessage: 'Learn more about {title}',
     description: 'Application Document Instructions message for learn more links',
   },
-  reviewLinkText: {
-    id: 'authoring.discussions.appDocInstructions.reviewLink',
-    defaultMessage: 'review this page',
-    description: 'learn more link text',
+  linkTextHeading: {
+    id: 'authoring.discussions.appDocInstructions.linkTextHeading',
+    defaultMessage: 'External help and documentation',
+    description: 'External help and documentation heading',
   },
   linkText: {
     id: 'authoring.discussions.appDocInstructions.linkText',
-    defaultMessage: 'this page',
-    description: 'general link text',
+    defaultMessage: '{link}',
+    description: 'link',
   },
 });
 
