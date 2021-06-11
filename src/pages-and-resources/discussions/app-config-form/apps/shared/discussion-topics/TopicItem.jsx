@@ -17,7 +17,7 @@ const TopicItem = ({
 }) => {
   const [title, setTitle] = useState(name);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
-  const [collapseIsOpen, setCollapseOpen] = useState(!name.length);
+  const [collapseIsOpen, setCollapseIsOpen] = useState(!name.length);
 
   const {
     handleChange,
@@ -70,9 +70,9 @@ const TopicItem = ({
     const inputHasError = !isOpen && (!title.length || isExistingName);
 
     if (inputHasError || inputIsUnTouch) {
-      setCollapseOpen(true);
+      setCollapseIsOpen(true);
     } else {
-      setCollapseOpen(false);
+      setCollapseIsOpen(false);
     }
   };
 
