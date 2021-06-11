@@ -17,6 +17,8 @@ const TopicItem = ({
 }) => {
   const [title, setTitle] = useState(name);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [collapseIsOpen, setCollapseOpen] = useState(!name.length);
+
   const {
     handleChange,
     handleBlur,
@@ -49,7 +51,12 @@ const TopicItem = ({
   const getHeading = (isOpen = false) => {
     let heading;
     if (isGeneralTopic && isOpen) {
-      heading = <span className="h4 py-2 mr-auto">{intl.formatMessage(messages.renameGeneralTopic)}</span>;
+      heading = (
+        <div className="h4 py-2 mr-auto">
+          {intl.formatMessage(messages.renameGeneralTopic)}
+          <div className="small text-muted mt-2">{intl.formatMessage(messages.generalTopicHelp)}</div>
+        </div>
+      );
     } else if (isOpen) {
       heading = <span className="h4 py-2 mr-auto">{intl.formatMessage(messages.configureAdditionalTopic)}</span>;
     } else {
@@ -58,10 +65,27 @@ const TopicItem = ({
     return heading;
   };
 
-  const handleToggle = (isOpen) => {
-    if (!isOpen && !isInvalidTopicNameKey) {
+  const collapseCardValidation = (isOpen) => {
+    const inputIsUnTouch = isOpen || !title.length;
+    const inputHasError = !isOpen && (!title.length || isExistingName);
+
+    if (inputHasError || inputIsUnTouch) {
+      setCollapseOpen(true);
+    } else {
+      setCollapseOpen(false);
+    }
+  };
+
+  const updateTitle = (isOpen) => {
+    const inputHasError = !isOpen && !isInvalidTopicNameKey && !isExistingName;
+    if (inputHasError) {
       setTitle(name);
     }
+  };
+
+  const handleToggle = (isOpen) => {
+    collapseCardValidation(isOpen);
+    updateTitle(isOpen);
   };
 
   const deleteDiscussionTopic = (event) => {
@@ -107,6 +131,7 @@ const TopicItem = ({
             className="collapsible-card rounded mb-3 px-3 py-2"
             onToggle={handleToggle}
             defaultOpen={!title}
+            open={collapseIsOpen}
             id={id}
           >
             <Collapsible.Trigger

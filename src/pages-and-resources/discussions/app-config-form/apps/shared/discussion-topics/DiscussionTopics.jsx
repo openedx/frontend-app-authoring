@@ -67,12 +67,11 @@ const DiscussionTopics = ({ intl }) => {
                 ))
               }
               <div className="mb-4">
-                <Add />
                 <Button
                   onClick={() => addNewTopic(push)}
                   variant="link"
-                  size="inline"
-                  className="mr-1 text-primary-500"
+                  iconBefore={Add}
+                  className="text-primary-500 p-0"
                 >
                   {intl.formatMessage(messages.addTopicButton)}
                 </Button>
