@@ -116,13 +116,15 @@ function DivisionByGroupFields({
                           defaultValue={divideDiscussionIds}
                         >
                           {discussionTopics.map((topic) => (
-                            <Form.Checkbox
-                              key={`checkbox-${topic.id}`}
-                              id={`checkbox-${topic.id}`}
-                              value={topic.id}
-                            >
-                              {topic.name}
-                            </Form.Checkbox>
+                            topic.name ? (
+                              <Form.Checkbox
+                                key={`checkbox-${topic.id}`}
+                                id={`checkbox-${topic.id}`}
+                                value={topic.id}
+                              >
+                                {topic.name}
+                              </Form.Checkbox>
+                            ) : null
                           ))}
                         </Form.CheckboxSet>
                       </Form.Group>

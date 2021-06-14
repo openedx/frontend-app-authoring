@@ -17,6 +17,8 @@ const TopicItem = ({
 }) => {
   const [title, setTitle] = useState(name);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [collapseIsOpen, setCollapseIsOpen] = useState(!name.length);
+
   const {
     handleChange,
     handleBlur,
@@ -49,7 +51,12 @@ const TopicItem = ({
   const getHeading = (isOpen = false) => {
     let heading;
     if (isGeneralTopic && isOpen) {
-      heading = <span className="h4 py-2 mr-auto">{intl.formatMessage(messages.renameGeneralTopic)}</span>;
+      heading = (
+        <div className="h4 py-2 mr-auto">
+          {intl.formatMessage(messages.renameGeneralTopic)}
+          <div className="small text-muted mt-2">{intl.formatMessage(messages.generalTopicHelp)}</div>
+        </div>
+      );
     } else if (isOpen) {
       heading = <span className="h4 py-2 mr-auto">{intl.formatMessage(messages.configureAdditionalTopic)}</span>;
     } else {
@@ -59,8 +66,11 @@ const TopicItem = ({
   };
 
   const handleToggle = (isOpen) => {
-    if (!isOpen && !isInvalidTopicNameKey) {
-      setTitle(name);
+    if (!isOpen) {
+      const inputHasError = !name.length || isExistingName || isInvalidTopicNameKey;
+      setCollapseIsOpen(inputHasError);
+    } else {
+      setCollapseIsOpen(isOpen);
     }
   };
 
@@ -107,6 +117,7 @@ const TopicItem = ({
             className="collapsible-card rounded mb-3 px-3 py-2"
             onToggle={handleToggle}
             defaultOpen={!title}
+            open={collapseIsOpen}
             id={id}
           >
             <Collapsible.Trigger

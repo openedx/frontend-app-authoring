@@ -152,6 +152,11 @@ const messages = defineMessages({
     defaultMessage: 'Rename general topic',
     description: 'Label for default topic allowing user to rename default general topic',
   },
+  generalTopicHelp: {
+    id: 'authoring.discussions.generalTopicHelp.help',
+    defaultMessage: 'This is the default discussion topic for your course.',
+    description: 'Help text for general discussion topic collapsible card.',
+  },
   configureAdditionalTopic: {
     id: 'authoring.discussions.builtIn.configureAdditionalTopic.label',
     defaultMessage: 'Configure topic',
