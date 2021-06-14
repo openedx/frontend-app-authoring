@@ -65,27 +65,13 @@ const TopicItem = ({
     return heading;
   };
 
-  const collapseCardValidation = (isOpen) => {
-    const inputIsUnTouch = isOpen || !title.length;
-    const inputHasError = !isOpen && (!title.length || isExistingName);
-
-    if (inputHasError || inputIsUnTouch) {
-      setCollapseIsOpen(true);
-    } else {
-      setCollapseIsOpen(false);
-    }
-  };
-
-  const updateTitle = (isOpen) => {
-    const inputHasError = !isOpen && !isInvalidTopicNameKey && !isExistingName;
-    if (inputHasError) {
-      setTitle(name);
-    }
-  };
-
   const handleToggle = (isOpen) => {
-    collapseCardValidation(isOpen);
-    updateTitle(isOpen);
+    if (!isOpen) {
+      const inputHasError = !name.length || isExistingName || isInvalidTopicNameKey;
+      setCollapseIsOpen(inputHasError);
+    } else {
+      setCollapseIsOpen(isOpen);
+    }
   };
 
   const deleteDiscussionTopic = (event) => {
