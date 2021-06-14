@@ -8,7 +8,6 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
 
-import AppConfigFormDivider from '../shared/AppConfigFormDivider';
 import AppExternalLinks from '../shared/AppExternalLinks';
 
 import {
@@ -91,7 +90,6 @@ function LtiConfigForm({
           )}
         </Form.Group>
       </Form>
-      <AppConfigFormDivider thick />
       <AppExternalLinks externalLinks={externalLinks} title={title} />
     </Card>
   );
