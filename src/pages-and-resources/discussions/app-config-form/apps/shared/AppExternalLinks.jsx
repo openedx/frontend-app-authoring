@@ -5,6 +5,8 @@ import {
   Hyperlink, MailtoLink,
 } from '@edx/paragon';
 
+import AppConfigFormDivider from './AppConfigFormDivider';
+
 import messages from '../lti/messages';
 
 function AppExternalLinks({
@@ -13,26 +15,30 @@ function AppExternalLinks({
   title,
 }) {
   const { contactEmail, ...links } = externalLinks;
-  const linkTypes = Object.keys(links);
+  const linkTypes = Object.keys(links).filter(key => links[key]);
   return (
     <div className="pt-4">
-      <h4>{intl.formatMessage(messages.linkTextHeading)}</h4>
-      <div className="small text-muted">
-        {linkTypes.map((type) => (
-          links[type] && (
-            <div key={type}>
-              <Hyperlink
-                destination={externalLinks[type]}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {intl.formatMessage(messages[type], { title })}
-              </Hyperlink>
-            </div>
-          )
-        ))}
-        <hr />
-        {contactEmail && (
+      {linkTypes.length
+        ? (
+          <>
+            <AppConfigFormDivider thick />
+            <h4 className="pt-4">{intl.formatMessage(messages.linkTextHeading)}</h4>
+            {linkTypes.map((type) => (
+              <div key={type} className="small text-muted">
+                <Hyperlink
+                  destination={externalLinks[type]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  { intl.formatMessage(messages[type], { title }) }
+                </Hyperlink>
+              </div>
+            ))}
+          </>
+        ) : null}
+      {contactEmail && (
+        <div className="small text-muted">
+          <hr />
           <FormattedMessage
             {...messages.contact}
             values={{
@@ -41,13 +47,13 @@ function AppExternalLinks({
                   to={contactEmail}
                   rel="noopener noreferrer"
                 >
-                  {contactEmail}
+                  { contactEmail }
                 </MailtoLink>
               ),
             }}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
