@@ -131,6 +131,7 @@ const TopicItem = ({
                     alt={intl.formatMessage(messages.expandAltText)}
                     src={ExpandMore}
                     iconAs={Icon}
+                    onClick={() => {}}
                     variant="dark"
                   />
                 </div>
@@ -155,6 +156,7 @@ const TopicItem = ({
                     alt={intl.formatMessage(messages.collapseAltText)}
                     src={ExpandLess}
                     iconAs={Icon}
+                    onClick={() => {}}
                     variant="dark"
                   />
                 </div>
