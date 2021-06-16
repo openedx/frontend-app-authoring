@@ -111,6 +111,7 @@ function DivisionByGroupFields({
                     render={({ push, remove }) => (
                       <Form.Group className="ml-4">
                         <Form.CheckboxSet
+                          name="dividedTopics"
                           onChange={(event) => handleCheckBoxToggle(event, push, remove)}
                           onBlur={onBlur}
                           defaultValue={divideDiscussionIds}

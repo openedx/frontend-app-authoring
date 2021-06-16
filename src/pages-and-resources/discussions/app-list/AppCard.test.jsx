@@ -24,6 +24,7 @@ describe('AppCard', () => {
           app={data}
           onClick={() => jest.fn()}
           selected={selected}
+          features={[]}
         />
       </IntlProvider>,
     );
