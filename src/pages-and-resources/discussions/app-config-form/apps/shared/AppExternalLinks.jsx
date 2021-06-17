@@ -21,7 +21,7 @@ function AppExternalLinks({
       {linkTypes.length
         ? (
           <>
-            <AppConfigFormDivider thick />
+            <AppConfigFormDivider />
             <h4 className="pt-4">{intl.formatMessage(messages.linkTextHeading)}</h4>
             {linkTypes.map((type) => (
               <div key={type} className="small text-muted">
@@ -29,6 +29,7 @@ function AppExternalLinks({
                   destination={externalLinks[type]}
                   target="_blank"
                   rel="noopener noreferrer"
+                  showLaunchIcon={false}
                 >
                   { intl.formatMessage(messages[type], { title }) }
                 </Hyperlink>
