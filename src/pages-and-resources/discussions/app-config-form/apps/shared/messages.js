@@ -124,7 +124,7 @@ const messages = defineMessages({
   },
   addTopicButton: {
     id: 'authoring.discussions.addTopicButton',
-    defaultMessage: 'Add Topic',
+    defaultMessage: 'Add topic',
     description: 'Button label when Add a new discussion topic.',
   },
   deleteButton: {
@@ -161,6 +161,11 @@ const messages = defineMessages({
     id: 'authoring.discussions.builtIn.configureAdditionalTopic.label',
     defaultMessage: 'Configure topic',
     description: 'Label for Additional topic allowing user to configure additional topic name',
+  },
+  addTopicHelpText: {
+    id: 'authoring.discussions.addTopicHelpText',
+    defaultMessage: 'Choose a unique name for your topic',
+    description: 'Help text for input field in adding a discussion topic',
   },
   // Blackout dates
   blackoutDates: {

@@ -8,26 +8,39 @@ import { v4 as uuid } from 'uuid';
 
 import messages from '../messages';
 import TopicItem from './TopicItem';
-import { removeModel, updateModels } from '../../../../../../generic/model-store';
-import { updateDiscussionTopicIds } from '../../../../data/slice';
+import { updateValidationStatus } from '../../../../data/slice';
 
 const DiscussionTopics = ({ intl }) => {
-  const dispatch = useDispatch();
-  const { values: appConfig, setFieldValue } = useFormikContext();
+  const {
+    values: appConfig,
+    setFieldValue,
+    errors,
+    touched,
+    validateForm,
+  } = useFormikContext();
   const { discussionTopics, divideDiscussionIds } = appConfig;
   const [topics, setTopics] = useState(discussionTopics);
+  const dispatch = useDispatch();
+
+  const fieldErrors = topics.map((value, index) => Boolean(
+    touched.discussionTopics
+      && touched.discussionTopics[index]?.name
+      && errors.discussionTopics
+      && errors?.discussionTopics[index]?.name,
+  ));
+
+  const isFormInvalid = fieldErrors.some((error) => error === true);
+  useEffect(() => {
+    dispatch(updateValidationStatus({ hasError: isFormInvalid }));
+  }, [isFormInvalid]);
 
   useEffect(() => {
-    const updatedDiscussionTopicIds = discussionTopics.map(topic => topic.id);
-
     setTopics(discussionTopics);
-    dispatch(updateDiscussionTopicIds({ updatedDiscussionTopicIds }));
-    dispatch(updateModels({ modelType: 'discussionTopics', models: discussionTopics }));
   }, [discussionTopics]);
 
-  const handleTopicDelete = (topicIndex, topicId, remove) => {
-    remove(topicIndex);
-    dispatch(removeModel({ modelType: 'discussionTopics', id: topicId }));
+  const handleTopicDelete = async (topicIndex, topicId, remove) => {
+    await remove(topicIndex);
+    validateForm();
     const updatedDividedDiscussionsIds = divideDiscussionIds.filter(
       (id) => id !== topicId,
     );
@@ -56,16 +69,15 @@ const DiscussionTopics = ({ intl }) => {
           name="discussionTopics"
           render={({ push, remove }) => (
             <div>
-              {
-                topics.map((topic, index) => (
-                  <TopicItem
-                    {...topic}
-                    key={`topic-${topic.id}`}
-                    index={index}
-                    onDelete={() => handleTopicDelete(index, topic.id, remove)}
-                  />
-                ))
-              }
+              {topics.map((topic, index) => (
+                <TopicItem
+                  {...topic}
+                  key={`topic-${topic.id}`}
+                  index={index}
+                  onDelete={() => handleTopicDelete(index, topic.id, remove)}
+                  hasError={fieldErrors[index]}
+                />
+              ))}
               <div className="mb-4">
                 <Button
                   onClick={() => addNewTopic(push)}

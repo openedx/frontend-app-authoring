@@ -13,6 +13,24 @@ import BlackoutDatesField, { blackoutDatesRegex } from '../shared/BlackoutDatesF
 import messages from '../shared/messages';
 import AppConfigFormDivider from '../shared/AppConfigFormDivider';
 
+Yup.addMethod(Yup.object, 'uniqueProperty', function (propertyName, message) {
+  return this.test('unique', message, function (discussionTopic) {
+    if (!discussionTopic || !discussionTopic[propertyName]) {
+      return true;
+    }
+    const isDuplicate = this.parent.filter(topic => topic !== discussionTopic)
+      .some(topic => topic[propertyName] === discussionTopic[propertyName]);
+
+    if (isDuplicate) {
+      throw this.createError({
+        path: `${this.path}.${propertyName}`,
+        error: message,
+      });
+    }
+    return true;
+  });
+});
+
 function LegacyConfigForm({
   appConfig, onSubmit, formRef, intl, title,
 }) {
@@ -21,35 +39,17 @@ function LegacyConfigForm({
       blackoutDatesRegex,
       intl.formatMessage(messages.blackoutDatesFormattingError),
     ),
-    discussionTopics: Yup.array()
-      .of(
-        Yup.object().shape({
-          name: Yup.string().required(intl.formatMessage(messages.discussionTopicRequired)),
-        }),
-      ).test('unique', (
-        discussionTopics,
-        testContext,
-        message = intl.formatMessage(messages.discussionTopicNameAlreadyExist),
-      ) => {
-        const uniqueDiscussionTopics = [...new Set(discussionTopics.map(topic => topic.name))];
-        const isUnique = discussionTopics.length === uniqueDiscussionTopics.length;
-        if (isUnique) {
-          return true;
-        }
-
-        const duplicateNameIndex = discussionTopics.findIndex(
-          (topic, index) => topic.name !== uniqueDiscussionTopics[index],
-        );
-        return testContext.createError({
-          path: `[${duplicateNameIndex}].name`,
-          message,
-        });
-      }),
+    discussionTopics: Yup.array(
+      Yup.object({
+        name: Yup.string().required(intl.formatMessage(messages.discussionTopicRequired)),
+      }).uniqueProperty('name', intl.formatMessage(messages.discussionTopicNameAlreadyExist)),
+    ),
   });
 
   return (
     <Formik
       initialValues={appConfig}
+      validateOnChange={false}
       validationSchema={legacyFormValidationSchema}
       onSubmit={(values) => (onSubmit(values))}
     >
