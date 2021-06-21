@@ -19,7 +19,7 @@ Yup.addMethod(Yup.object, 'uniqueProperty', function (propertyName, message) {
       return true;
     }
     const isDuplicate = this.parent.filter(topic => topic !== discussionTopic)
-      .some(topic => topic[propertyName] === discussionTopic[propertyName]);
+      .some(topic => topic[propertyName]?.toLowerCase() === discussionTopic[propertyName].toLowerCase());
 
     if (isDuplicate) {
       throw this.createError({

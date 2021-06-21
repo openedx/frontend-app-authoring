@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -7,6 +7,7 @@ import {
   Form,
   Icon,
   IconButton,
+  TransitionReplace,
 } from '@edx/paragon';
 import { Delete, ExpandLess, ExpandMore } from '@edx/paragon/icons';
 import { useFormikContext } from 'formik';
@@ -17,14 +18,10 @@ const TopicItem = ({
   intl, index, name, onDelete, id, hasError,
 }) => {
   const { handleChange, handleBlur, errors } = useFormikContext();
-  const [title, setTitle] = useState(name);
+  const [focusIn, setFocusIn] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [collapseIsOpen, setCollapseOpen] = useState();
   const isGeneralTopic = id === 'course';
-
-  useEffect(() => {
-    setTitle(name);
-  }, [name]);
 
   const getHeading = (isOpen = false) => {
     let heading;
@@ -44,7 +41,7 @@ const TopicItem = ({
         </span>
       );
     } else {
-      heading = <span className="py-2">{title}</span>;
+      heading = <span className="py-2">{name}</span>;
     }
     return heading;
   };
@@ -67,14 +64,9 @@ const TopicItem = ({
     </Form.Control.Feedback>
   );
 
-  const renderErrorMessage = () => renderFormFeedback(errors?.discussionTopics[index].name, 'invalid');
-
-  const renderHelpText = () => {
-    let helpText = '';
-    if (!isGeneralTopic) {
-      helpText = renderFormFeedback(intl.formatMessage(messages.addTopicHelpText));
-    }
-    return helpText;
+  const handleFocusOut = (event) => {
+    handleBlur(event);
+    setFocusIn(false);
   };
 
   const deleteTopicPopup = (
@@ -163,11 +155,29 @@ const TopicItem = ({
               <Form.Control
                 floatingLabel="Topic name"
                 onChange={handleChange}
-                onBlur={handleBlur}
+                onBlur={(event) => handleFocusOut(event)}
                 value={name}
                 controlClassName="bg-white"
+                onFocus={() => setFocusIn(true)}
               />
-              {hasError ? renderErrorMessage() : renderHelpText()}
+              <TransitionReplace key={id} className="mt-1">
+                {focusIn ? (
+                  <React.Fragment key="open">
+                    {renderFormFeedback(intl.formatMessage(messages.addTopicHelpText))}
+                  </React.Fragment>
+                ) : (
+                  <React.Fragment key="closed" />
+                )}
+              </TransitionReplace>
+              <TransitionReplace key={`${name}-${id}`}>
+                {hasError ? (
+                  <React.Fragment key="open">
+                    {renderFormFeedback(errors?.discussionTopics[index].name, 'invalid')}
+                  </React.Fragment>
+                ) : (
+                  <React.Fragment key="closed" />
+                )}
+              </TransitionReplace>
             </Form.Group>
           </Collapsible.Body>
         </Collapsible.Advanced>
