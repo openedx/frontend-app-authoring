@@ -149,7 +149,7 @@ const TopicItem = ({
           <Collapsible.Body className="collapsible-body rounded px-0">
             <Form.Group
               controlId={`discussionTopics.${index}.name`}
-              isInvalid={hasError}
+              isInvalid={hasError && !focusIn}
               className="m-2"
             >
               <Form.Control
@@ -170,7 +170,7 @@ const TopicItem = ({
                 )}
               </TransitionReplace>
               <TransitionReplace key={`${name}-${id}`}>
-                {hasError ? (
+                {hasError && !focusIn ? (
                   <React.Fragment key="open">
                     {renderFormFeedback(errors?.discussionTopics[index].name, 'invalid')}
                   </React.Fragment>
