@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Card, Form } from '@edx/paragon';
