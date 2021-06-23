@@ -7,19 +7,19 @@ import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from './messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
 
-function DivisionByGroupFields({
-  onBlur, onChange, intl, appConfig,
-}) {
-  const { setFieldValue } = useFormikContext();
+const DivisionByGroupFields = ({ intl, fieldErrors }) => {
+  const {
+    handleChange,
+    handleBlur,
+    values: appConfig,
+    setFieldValue,
+  } = useFormikContext();
   const {
     divideDiscussionIds,
     discussionTopics,
     divideByCohorts,
     divideCourseTopicsByCohorts,
   } = appConfig;
-
-  useEffect(() => {
-  }, [divideDiscussionIds]);
 
   useEffect(() => {
     const discussionTopicIds = discussionTopics.map(
@@ -61,7 +61,7 @@ function DivisionByGroupFields({
     if (!checked) {
       setFieldValue('divideDiscussionIds', []);
     }
-    onChange(event);
+    handleChange(event);
   };
 
   return (
@@ -70,9 +70,9 @@ function DivisionByGroupFields({
         {intl.formatMessage(messages.divisionByGroup)}
       </h5>
       <FormSwitchGroup
-        onChange={onChange}
+        onChange={handleChange}
         className="mt-2"
-        onBlur={onBlur}
+        onBlur={handleBlur}
         id="divideByCohorts"
         checked={divideByCohorts}
         label={intl.formatMessage(messages.divideByCohortsLabel)}
@@ -84,7 +84,7 @@ function DivisionByGroupFields({
             <AppConfigFormDivider />
             <FormSwitchGroup
               onChange={(event) => handleDivideCourseTopicsByCohortsToggle(event)}
-              onBlur={onBlur}
+              onBlur={handleBlur}
               className="ml-4 mt-3"
               id="divideCourseTopicsByCohorts"
               checked={divideCourseTopicsByCohorts}
@@ -101,11 +101,11 @@ function DivisionByGroupFields({
                         <Form.CheckboxSet
                           name="dividedTopics"
                           onChange={(event) => handleCheckBoxToggle(event, push, remove)}
-                          onBlur={onBlur}
+                          onBlur={handleBlur}
                           defaultValue={divideDiscussionIds}
                         >
-                          {discussionTopics.map((topic) => (
-                            topic.name ? (
+                          {discussionTopics.map((topic, index) => (
+                            topic.name && !fieldErrors[index] ? (
                               <Form.Checkbox
                                 key={`checkbox-${topic.id}`}
                                 id={`checkbox-${topic.id}`}
@@ -131,21 +131,11 @@ function DivisionByGroupFields({
       </TransitionReplace>
     </>
   );
-}
+};
 
 DivisionByGroupFields.propTypes = {
-  onBlur: PropTypes.func.isRequired,
-  onChange: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
-  appConfig: PropTypes.shape({
-    divideByCohorts: PropTypes.bool,
-    divideCourseTopicsByCohorts: PropTypes.bool,
-    discussionTopics: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string,
-      id: PropTypes.string,
-    })),
-    divideDiscussionIds: PropTypes.arrayOf(PropTypes.string),
-  }).isRequired,
+  fieldErrors: PropTypes.arrayOf(PropTypes.bool).isRequired,
 };
 
 export default injectIntl(DivisionByGroupFields);

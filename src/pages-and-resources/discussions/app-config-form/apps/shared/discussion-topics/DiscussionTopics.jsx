@@ -1,42 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Add } from '@edx/paragon/icons';
 import { Button } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { FieldArray, useFormikContext } from 'formik';
 import { v4 as uuid } from 'uuid';
+import PropTypes from 'prop-types';
 
 import messages from '../messages';
 import TopicItem from './TopicItem';
 import { updateValidationStatus } from '../../../../data/slice';
 
-const DiscussionTopics = ({ intl }) => {
+const DiscussionTopics = ({ intl, fieldErrors }) => {
   const {
     values: appConfig,
     setFieldValue,
-    errors,
-    touched,
     validateForm,
   } = useFormikContext();
   const { discussionTopics, divideDiscussionIds } = appConfig;
-  const [topics, setTopics] = useState(discussionTopics);
   const dispatch = useDispatch();
-
-  const fieldErrors = topics.map((value, index) => Boolean(
-    touched.discussionTopics
-      && touched.discussionTopics[index]?.name
-      && errors.discussionTopics
-      && errors?.discussionTopics[index]?.name,
-  ));
 
   const isFormInvalid = fieldErrors.some((error) => error === true);
   useEffect(() => {
     dispatch(updateValidationStatus({ hasError: isFormInvalid }));
   }, [isFormInvalid]);
-
-  useEffect(() => {
-    setTopics(discussionTopics);
-  }, [discussionTopics]);
 
   const handleTopicDelete = async (topicIndex, topicId, remove) => {
     await remove(topicIndex);
@@ -69,7 +56,7 @@ const DiscussionTopics = ({ intl }) => {
           name="discussionTopics"
           render={({ push, remove }) => (
             <div>
-              {topics.map((topic, index) => (
+              {discussionTopics.map((topic, index) => (
                 <TopicItem
                   {...topic}
                   key={`topic-${topic.id}`}
@@ -98,6 +85,7 @@ const DiscussionTopics = ({ intl }) => {
 
 DiscussionTopics.propTypes = {
   intl: intlShape.isRequired,
+  fieldErrors: PropTypes.arrayOf(PropTypes.bool).isRequired,
 };
 
 export default injectIntl(DiscussionTopics);

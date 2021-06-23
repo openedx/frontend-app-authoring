@@ -18,7 +18,7 @@ const TopicItem = ({
   intl, index, name, onDelete, id, hasError,
 }) => {
   const { handleChange, handleBlur, errors } = useFormikContext();
-  const [focusIn, setFocusIn] = useState(false);
+  const [inFocus, setInFocus] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [collapseIsOpen, setCollapseOpen] = useState();
   const isGeneralTopic = id === 'course';
@@ -66,7 +66,7 @@ const TopicItem = ({
 
   const handleFocusOut = (event) => {
     handleBlur(event);
-    setFocusIn(false);
+    setInFocus(false);
   };
 
   const deleteTopicPopup = (
@@ -149,7 +149,7 @@ const TopicItem = ({
           <Collapsible.Body className="collapsible-body rounded px-0">
             <Form.Group
               controlId={`discussionTopics.${index}.name`}
-              isInvalid={hasError && !focusIn}
+              isInvalid={hasError && !inFocus}
               className="m-2"
             >
               <Form.Control
@@ -158,10 +158,10 @@ const TopicItem = ({
                 onBlur={(event) => handleFocusOut(event)}
                 value={name}
                 controlClassName="bg-white"
-                onFocus={() => setFocusIn(true)}
+                onFocus={() => setInFocus(true)}
               />
               <TransitionReplace key={id} className="mt-1">
-                {focusIn ? (
+                {inFocus ? (
                   <React.Fragment key="open">
                     {renderFormFeedback(intl.formatMessage(messages.addTopicHelpText))}
                   </React.Fragment>
@@ -170,7 +170,7 @@ const TopicItem = ({
                 )}
               </TransitionReplace>
               <TransitionReplace key={`${name}-${id}`}>
-                {hasError && !focusIn ? (
+                {hasError && !inFocus ? (
                   <React.Fragment key="open">
                     {renderFormFeedback(errors?.discussionTopics[index].name, 'invalid')}
                   </React.Fragment>

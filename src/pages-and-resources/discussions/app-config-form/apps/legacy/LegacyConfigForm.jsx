@@ -61,35 +61,42 @@ function LegacyConfigForm({
           handleBlur,
           values,
           errors,
+          touched,
         },
-      ) => (
-        <Card className="mb-5 px-4 px-sm-5 pb-5" data-testid="legacyConfigForm">
-          <Form ref={formRef} onSubmit={handleSubmit}>
-            <h3 className="text-primary-500 my-3">{title}</h3>
-            <AppConfigFormDivider thick />
-            <AnonymousPostingFields
-              onBlur={handleBlur}
-              onChange={handleChange}
-              values={values}
-            />
-            <AppConfigFormDivider thick />
-            <DiscussionTopics />
-            <AppConfigFormDivider thick />
-            <DivisionByGroupFields
-              onBlur={handleBlur}
-              onChange={handleChange}
-              appConfig={values}
-            />
-            <AppConfigFormDivider thick />
-            <BlackoutDatesField
-              errors={errors}
-              onBlur={handleBlur}
-              onChange={handleChange}
-              values={values}
-            />
-          </Form>
-        </Card>
-      )}
+      ) => {
+        const { discussionTopics } = values;
+        const fieldErrors = discussionTopics.map((value, index) => Boolean(
+          touched.discussionTopics
+          && touched.discussionTopics[index]?.name
+          && errors.discussionTopics
+          && errors?.discussionTopics[index]?.name,
+        ));
+
+        return (
+          <Card className="mb-5 px-4 px-sm-5 pb-5" data-testid="legacyConfigForm">
+            <Form ref={formRef} onSubmit={handleSubmit}>
+              <h3 className="text-primary-500 my-3">{title}</h3>
+              <AppConfigFormDivider thick />
+              <AnonymousPostingFields
+                onBlur={handleBlur}
+                onChange={handleChange}
+                values={values}
+              />
+              <AppConfigFormDivider thick />
+              <DiscussionTopics fieldErrors={fieldErrors} />
+              <AppConfigFormDivider thick />
+              <DivisionByGroupFields fieldErrors={fieldErrors} />
+              <AppConfigFormDivider thick />
+              <BlackoutDatesField
+                errors={errors}
+                onBlur={handleBlur}
+                onChange={handleChange}
+                values={values}
+              />
+            </Form>
+          </Card>
+        );
+      }}
     </Formik>
   );
 }
