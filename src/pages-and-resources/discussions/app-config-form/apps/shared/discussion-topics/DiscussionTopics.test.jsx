@@ -36,6 +36,7 @@ const appConfig = {
   blackoutDates: '[]',
 };
 
+const fieldErrors = [false, false];
 const courseId = 'course-v1:edX+TestX+Test_Course';
 
 describe('DiscussionTopics', () => {
@@ -65,10 +66,8 @@ describe('DiscussionTopics', () => {
     const wrapper = render(
       <AppProvider store={store}>
         <IntlProvider locale="en">
-          <Formik
-            initialValues={data}
-          >
-            <DiscussionTopics />
+          <Formik initialValues={data}>
+            <DiscussionTopics fieldErrors={fieldErrors} />
           </Formik>
         </IntlProvider>
       </AppProvider>,
