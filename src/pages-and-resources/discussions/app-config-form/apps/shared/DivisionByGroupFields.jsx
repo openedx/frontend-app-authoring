@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Form, TransitionReplace } from '@edx/paragon';
@@ -7,24 +6,20 @@ import { FieldArray, useFormikContext } from 'formik';
 import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from './messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
-import { updateDividedDiscussionsIds } from '../../../data/slice';
-import { updateModel } from '../../../../../generic/model-store';
 
-function DivisionByGroupFields({
-  onBlur, onChange, intl, appConfig,
-}) {
-  const dispatch = useDispatch();
-  const { setFieldValue } = useFormikContext();
+const DivisionByGroupFields = ({ intl, discussionTopicErrors }) => {
+  const {
+    handleChange,
+    handleBlur,
+    values: appConfig,
+    setFieldValue,
+  } = useFormikContext();
   const {
     divideDiscussionIds,
     discussionTopics,
     divideByCohorts,
     divideCourseTopicsByCohorts,
   } = appConfig;
-
-  useEffect(() => {
-    dispatch(updateDividedDiscussionsIds({ divideDiscussionIds }));
-  }, [divideDiscussionIds]);
 
   useEffect(() => {
     const discussionTopicIds = discussionTopics.map(
@@ -46,13 +41,6 @@ function DivisionByGroupFields({
       setFieldValue('divideDiscussionIds', []);
       setFieldValue('divideCourseTopicsByCohorts', false);
     }
-
-    const {
-      divideDiscussionIds: courseDividedDiscussionsIds,
-      discussionTopics: courseDiscussionTopics,
-      ...payload
-    } = appConfig;
-    dispatch(updateModel({ modelType: 'appConfigs', model: payload }));
   }, [
     divideByCohorts,
     divideCourseTopicsByCohorts,
@@ -73,7 +61,7 @@ function DivisionByGroupFields({
     if (!checked) {
       setFieldValue('divideDiscussionIds', []);
     }
-    onChange(event);
+    handleChange(event);
   };
 
   return (
@@ -82,9 +70,9 @@ function DivisionByGroupFields({
         {intl.formatMessage(messages.divisionByGroup)}
       </h5>
       <FormSwitchGroup
-        onChange={onChange}
+        onChange={handleChange}
         className="mt-2"
-        onBlur={onBlur}
+        onBlur={handleBlur}
         id="divideByCohorts"
         checked={divideByCohorts}
         label={intl.formatMessage(messages.divideByCohortsLabel)}
@@ -96,7 +84,7 @@ function DivisionByGroupFields({
             <AppConfigFormDivider />
             <FormSwitchGroup
               onChange={(event) => handleDivideCourseTopicsByCohortsToggle(event)}
-              onBlur={onBlur}
+              onBlur={handleBlur}
               className="ml-4 mt-3"
               id="divideCourseTopicsByCohorts"
               checked={divideCourseTopicsByCohorts}
@@ -113,11 +101,11 @@ function DivisionByGroupFields({
                         <Form.CheckboxSet
                           name="dividedTopics"
                           onChange={(event) => handleCheckBoxToggle(event, push, remove)}
-                          onBlur={onBlur}
+                          onBlur={handleBlur}
                           defaultValue={divideDiscussionIds}
                         >
-                          {discussionTopics.map((topic) => (
-                            topic.name ? (
+                          {discussionTopics.map((topic, index) => (
+                            topic.name && !discussionTopicErrors[index] ? (
                               <Form.Checkbox
                                 key={`checkbox-${topic.id}`}
                                 id={`checkbox-${topic.id}`}
@@ -143,21 +131,11 @@ function DivisionByGroupFields({
       </TransitionReplace>
     </>
   );
-}
+};
 
 DivisionByGroupFields.propTypes = {
-  onBlur: PropTypes.func.isRequired,
-  onChange: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
-  appConfig: PropTypes.shape({
-    divideByCohorts: PropTypes.bool,
-    divideCourseTopicsByCohorts: PropTypes.bool,
-    discussionTopics: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string,
-      id: PropTypes.string,
-    })),
-    divideDiscussionIds: PropTypes.arrayOf(PropTypes.string),
-  }).isRequired,
+  discussionTopicErrors: PropTypes.arrayOf(PropTypes.bool).isRequired,
 };
 
 export default injectIntl(DivisionByGroupFields);

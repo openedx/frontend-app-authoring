@@ -13,6 +13,26 @@ import BlackoutDatesField, { blackoutDatesRegex } from '../shared/BlackoutDatesF
 import messages from '../shared/messages';
 import AppConfigFormDivider from '../shared/AppConfigFormDivider';
 
+// eslint-disable-next-line func-names
+Yup.addMethod(Yup.object, 'uniqueProperty', function (propertyName, message) {
+  // eslint-disable-next-line func-names
+  return this.test('unique', message, function (discussionTopic) {
+    if (!discussionTopic || !discussionTopic[propertyName]) {
+      return true;
+    }
+    const isDuplicate = this.parent.filter(topic => topic !== discussionTopic)
+      .some(topic => topic[propertyName]?.toLowerCase() === discussionTopic[propertyName].toLowerCase());
+
+    if (isDuplicate) {
+      throw this.createError({
+        path: `${this.path}.${propertyName}`,
+        error: message,
+      });
+    }
+    return true;
+  });
+});
+
 function LegacyConfigForm({
   appConfig, onSubmit, formRef, intl, title,
 }) {
@@ -21,35 +41,17 @@ function LegacyConfigForm({
       blackoutDatesRegex,
       intl.formatMessage(messages.blackoutDatesFormattingError),
     ),
-    discussionTopics: Yup.array()
-      .of(
-        Yup.object().shape({
-          name: Yup.string().required(intl.formatMessage(messages.discussionTopicRequired)),
-        }),
-      ).test('unique', (
-        discussionTopics,
-        testContext,
-        message = intl.formatMessage(messages.discussionTopicNameAlreadyExist),
-      ) => {
-        const uniqueDiscussionTopics = [...new Set(discussionTopics.map(topic => topic.name))];
-        const isUnique = discussionTopics.length === uniqueDiscussionTopics.length;
-        if (isUnique) {
-          return true;
-        }
-
-        const duplicateNameIndex = discussionTopics.findIndex(
-          (topic, index) => topic.name !== uniqueDiscussionTopics[index],
-        );
-        return testContext.createError({
-          path: `[${duplicateNameIndex}].name`,
-          message,
-        });
-      }),
+    discussionTopics: Yup.array(
+      Yup.object({
+        name: Yup.string().required(intl.formatMessage(messages.discussionTopicRequired)),
+      }).uniqueProperty('name', intl.formatMessage(messages.discussionTopicNameAlreadyExist)),
+    ),
   });
 
   return (
     <Formik
       initialValues={appConfig}
+      validateOnChange={false}
       validationSchema={legacyFormValidationSchema}
       onSubmit={(values) => (onSubmit(values))}
     >
@@ -60,35 +62,42 @@ function LegacyConfigForm({
           handleBlur,
           values,
           errors,
+          touched,
         },
-      ) => (
-        <Card className="mb-5 px-4 px-sm-5 pb-5" data-testid="legacyConfigForm">
-          <Form ref={formRef} onSubmit={handleSubmit}>
-            <h3 className="text-primary-500 my-3">{title}</h3>
-            <AppConfigFormDivider thick />
-            <AnonymousPostingFields
-              onBlur={handleBlur}
-              onChange={handleChange}
-              values={values}
-            />
-            <AppConfigFormDivider thick />
-            <DiscussionTopics />
-            <AppConfigFormDivider thick />
-            <DivisionByGroupFields
-              onBlur={handleBlur}
-              onChange={handleChange}
-              appConfig={values}
-            />
-            <AppConfigFormDivider thick />
-            <BlackoutDatesField
-              errors={errors}
-              onBlur={handleBlur}
-              onChange={handleChange}
-              values={values}
-            />
-          </Form>
-        </Card>
-      )}
+      ) => {
+        const { discussionTopics } = values;
+        const discussionTopicErrors = discussionTopics.map((value, index) => Boolean(
+          touched.discussionTopics
+          && touched.discussionTopics[index]?.name
+          && errors.discussionTopics
+          && errors?.discussionTopics[index]?.name,
+        ));
+
+        return (
+          <Card className="mb-5 px-4 px-sm-5 pb-5" data-testid="legacyConfigForm">
+            <Form ref={formRef} onSubmit={handleSubmit}>
+              <h3 className="text-primary-500 my-3">{title}</h3>
+              <AppConfigFormDivider thick />
+              <AnonymousPostingFields
+                onBlur={handleBlur}
+                onChange={handleChange}
+                values={values}
+              />
+              <AppConfigFormDivider thick />
+              <DiscussionTopics discussionTopicErrors={discussionTopicErrors} />
+              <AppConfigFormDivider thick />
+              <DivisionByGroupFields discussionTopicErrors={discussionTopicErrors} />
+              <AppConfigFormDivider thick />
+              <BlackoutDatesField
+                errors={errors}
+                onBlur={handleBlur}
+                onChange={handleChange}
+                values={values}
+              />
+            </Form>
+          </Card>
+        );
+      }}
     </Formik>
   );
 }
