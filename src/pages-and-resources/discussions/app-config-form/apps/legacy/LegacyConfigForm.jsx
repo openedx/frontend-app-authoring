@@ -1,4 +1,3 @@
-/* eslint-disable func-names */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Card, Form } from '@edx/paragon';
@@ -14,7 +13,9 @@ import BlackoutDatesField, { blackoutDatesRegex } from '../shared/BlackoutDatesF
 import messages from '../shared/messages';
 import AppConfigFormDivider from '../shared/AppConfigFormDivider';
 
+// eslint-disable-next-line func-names
 Yup.addMethod(Yup.object, 'uniqueProperty', function (propertyName, message) {
+  // eslint-disable-next-line func-names
   return this.test('unique', message, function (discussionTopic) {
     if (!discussionTopic || !discussionTopic[propertyName]) {
       return true;
@@ -65,7 +66,7 @@ function LegacyConfigForm({
         },
       ) => {
         const { discussionTopics } = values;
-        const fieldErrors = discussionTopics.map((value, index) => Boolean(
+        const discussionTopicErrors = discussionTopics.map((value, index) => Boolean(
           touched.discussionTopics
           && touched.discussionTopics[index]?.name
           && errors.discussionTopics
@@ -83,9 +84,9 @@ function LegacyConfigForm({
                 values={values}
               />
               <AppConfigFormDivider thick />
-              <DiscussionTopics fieldErrors={fieldErrors} />
+              <DiscussionTopics discussionTopicErrors={discussionTopicErrors} />
               <AppConfigFormDivider thick />
-              <DivisionByGroupFields fieldErrors={fieldErrors} />
+              <DivisionByGroupFields discussionTopicErrors={discussionTopicErrors} />
               <AppConfigFormDivider thick />
               <BlackoutDatesField
                 errors={errors}

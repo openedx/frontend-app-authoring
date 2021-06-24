@@ -7,7 +7,7 @@ import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from './messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
 
-const DivisionByGroupFields = ({ intl, fieldErrors }) => {
+const DivisionByGroupFields = ({ intl, discussionTopicErrors }) => {
   const {
     handleChange,
     handleBlur,
@@ -105,7 +105,7 @@ const DivisionByGroupFields = ({ intl, fieldErrors }) => {
                           defaultValue={divideDiscussionIds}
                         >
                           {discussionTopics.map((topic, index) => (
-                            topic.name && !fieldErrors[index] ? (
+                            topic.name && !discussionTopicErrors[index] ? (
                               <Form.Checkbox
                                 key={`checkbox-${topic.id}`}
                                 id={`checkbox-${topic.id}`}
@@ -135,7 +135,7 @@ const DivisionByGroupFields = ({ intl, fieldErrors }) => {
 
 DivisionByGroupFields.propTypes = {
   intl: intlShape.isRequired,
-  fieldErrors: PropTypes.arrayOf(PropTypes.bool).isRequired,
+  discussionTopicErrors: PropTypes.arrayOf(PropTypes.bool).isRequired,
 };
 
 export default injectIntl(DivisionByGroupFields);

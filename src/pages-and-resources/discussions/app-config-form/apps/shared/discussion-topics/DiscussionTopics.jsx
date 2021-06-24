@@ -11,7 +11,7 @@ import messages from '../messages';
 import TopicItem from './TopicItem';
 import { updateValidationStatus } from '../../../../data/slice';
 
-const DiscussionTopics = ({ intl, fieldErrors }) => {
+const DiscussionTopics = ({ intl, discussionTopicErrors }) => {
   const {
     values: appConfig,
     setFieldValue,
@@ -20,7 +20,7 @@ const DiscussionTopics = ({ intl, fieldErrors }) => {
   const { discussionTopics, divideDiscussionIds } = appConfig;
   const dispatch = useDispatch();
 
-  const isFormInvalid = fieldErrors.some((error) => error === true);
+  const isFormInvalid = discussionTopicErrors.some((error) => error === true);
   useEffect(() => {
     dispatch(updateValidationStatus({ hasError: isFormInvalid }));
   }, [isFormInvalid]);
@@ -62,7 +62,7 @@ const DiscussionTopics = ({ intl, fieldErrors }) => {
                   key={`topic-${topic.id}`}
                   index={index}
                   onDelete={() => handleTopicDelete(index, topic.id, remove)}
-                  hasError={fieldErrors[index]}
+                  hasError={discussionTopicErrors[index]}
                 />
               ))}
               <div className="mb-4">
@@ -85,7 +85,7 @@ const DiscussionTopics = ({ intl, fieldErrors }) => {
 
 DiscussionTopics.propTypes = {
   intl: intlShape.isRequired,
-  fieldErrors: PropTypes.arrayOf(PropTypes.bool).isRequired,
+  discussionTopicErrors: PropTypes.arrayOf(PropTypes.bool).isRequired,
 };
 
 export default injectIntl(DiscussionTopics);
