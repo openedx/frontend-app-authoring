@@ -129,17 +129,17 @@ const messages = defineMessages({
   // Features
   'featureName-discussion-page': {
     id: 'authoring.discussions.featureName-discussion-page',
-    defaultMessage: 'Discussion Page',
+    defaultMessage: 'Discussion page',
     description: 'The name of a discussions feature.',
   },
   'featureName-embedded-course-sections': {
     id: 'authoring.discussions.featureName-embedded-course-sections',
-    defaultMessage: 'Embedded Course Sections',
+    defaultMessage: 'Embedded course sections',
     description: 'The name of a discussions feature.',
   },
   'featureName-lti': {
     id: 'authoring.discussions.featureName-lti',
-    defaultMessage: 'LTI Integration',
+    defaultMessage: 'LTI integration',
     description: 'The name of a discussions feature.',
   },
   'featureName-advanced-in-context-discussion': {
