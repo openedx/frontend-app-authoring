@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -13,15 +13,39 @@ import { Delete, ExpandLess, ExpandMore } from '@edx/paragon/icons';
 import { useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
 import messages from '../messages';
+import { LegacyConfigFormContext } from '../../legacy/LegacyConfigFormProvider';
+import uniqueItems from '../../../utils';
 
 const TopicItem = ({
   intl, index, name, onDelete, id, hasError,
 }) => {
-  const { handleChange, handleBlur, errors } = useFormikContext();
+  const {
+    handleChange, handleBlur, errors, values: appConfig, setFieldValue,
+  } = useFormikContext();
   const [inFocus, setInFocus] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [collapseIsOpen, setCollapseOpen] = useState();
   const isGeneralTopic = id === 'course';
+  const {
+    validDiscussionTopics,
+    setValidDiscussionTopics,
+  } = useContext(LegacyConfigFormContext);
+  const { discussionTopics, divideDiscussionIds } = appConfig;
+
+  useEffect(() => {
+    if (hasError) {
+      const updatedValidDiscussionTopics = validDiscussionTopics.filter(topic => topic.id !== id);
+      setValidDiscussionTopics(updatedValidDiscussionTopics);
+      setFieldValue('divideDiscussionIds', divideDiscussionIds.filter(topic => topic.id !== id));
+    } else {
+      const validDiscussionTopicIds = uniqueItems(validDiscussionTopics.map(topic => topic.id), [id]);
+      const updatedValidDiscussionTopics = discussionTopics.filter(
+        topic => validDiscussionTopicIds.includes(topic.id),
+      );
+      setValidDiscussionTopics(updatedValidDiscussionTopics);
+      setFieldValue('divideDiscussionIds', uniqueItems(divideDiscussionIds, [id]));
+    }
+  }, [hasError, inFocus]);
 
   const getHeading = (isOpen = false) => {
     let heading;
