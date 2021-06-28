@@ -32,17 +32,24 @@ const TopicItem = ({
   } = useContext(LegacyConfigFormContext);
   const { discussionTopics, divideDiscussionIds } = appConfig;
 
+  /**
+ * Update valid discussion topics & divided discussion topics.
+ * Removes a specific topic from valid discussion topics & divided discussion topics
+ * if it is invalid.
+ * Adds a specific topic to valid discussion topics & divided discussion topics
+ * if it is invalid.
+ */
   useEffect(() => {
     if (hasError) {
-      const updatedValidDiscussionTopics = validDiscussionTopics.filter(topic => topic.id !== id);
-      setValidDiscussionTopics(updatedValidDiscussionTopics);
+      const validTopicsIds = validDiscussionTopics.filter(topic => topic.id !== id);
+      setValidDiscussionTopics(validTopicsIds);
       setFieldValue('divideDiscussionIds', divideDiscussionIds.filter(topic => topic.id !== id));
     } else {
-      const validDiscussionTopicIds = uniqueItems(validDiscussionTopics.map(topic => topic.id), [id]);
-      const updatedValidDiscussionTopics = discussionTopics.filter(
-        topic => validDiscussionTopicIds.includes(topic.id),
+      const validTopicsIds = uniqueItems(validDiscussionTopics.map(topic => topic.id), [id]);
+      const validTopics = discussionTopics.filter(
+        topic => validTopicsIds.includes(topic.id),
       );
-      setValidDiscussionTopics(updatedValidDiscussionTopics);
+      setValidDiscussionTopics(validTopics);
       setFieldValue('divideDiscussionIds', uniqueItems(divideDiscussionIds, [id]));
     }
   }, [hasError, inFocus]);

@@ -32,8 +32,8 @@ const DiscussionTopics = ({ intl }) => {
   const handleTopicDelete = async (topicIndex, topicId, remove) => {
     await remove(topicIndex);
     validateForm();
-    const updatedValidDiscussionTopics = validDiscussionTopics.filter(topic => topic.id !== topicId);
-    setValidDiscussionTopics(updatedValidDiscussionTopics);
+    const validTopics = validDiscussionTopics.filter(topic => topic.id !== topicId);
+    setValidDiscussionTopics(validTopics);
   };
 
   const addNewTopic = (push) => {
