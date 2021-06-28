@@ -8,7 +8,7 @@ const messages = defineMessages({
   },
   configure: {
     id: 'authoring.discussions.configure',
-    defaultMessage: 'Configure Discussions',
+    defaultMessage: 'Configure discussions',
   },
   configureApp: {
     id: 'authoring.discussions.configure.app',

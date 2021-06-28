@@ -9,7 +9,7 @@ export function getPages() {
         showSettings: false,
         showStatus: false,
         showEnable: true,
-        description: 'Encourage participation and engagement in your course with discussion forums',
+        description: 'Encourage participation and engagement in your course with discussion forums.',
       },
       {
         id: 'teams',
@@ -18,7 +18,7 @@ export function getPages() {
         showSettings: true,
         showStatus: true,
         showEnable: false,
-        description: 'Leverage teams to allow learners to connect by topic of interest',
+        description: 'Leverage teams to allow learners to connect by topic of interest.',
       },
       {
         id: 'progress',
@@ -27,7 +27,7 @@ export function getPages() {
         showSettings: true,
         showStatus: true,
         showEnable: false,
-        description: 'Allow students to track their progress throughout the course lorem ipsum',
+        description: 'Allow students to track their progress throughout the course lorem ipsum.',
       },
       {
         id: 'textbooks',
@@ -36,7 +36,7 @@ export function getPages() {
         showSettings: true,
         showStatus: true,
         showEnable: false,
-        description: 'Provide links to applicable resources for your course',
+        description: 'Provide links to applicable resources for your course.',
       },
       {
         id: 'notes',
@@ -45,7 +45,7 @@ export function getPages() {
         showSettings: true,
         showStatus: true,
         showEnable: false,
-        description: 'Support individual note taking that is visible only to the students',
+        description: 'Support individual note taking that is visible only to the students.',
       },
       {
         id: 'wiki',
@@ -54,7 +54,7 @@ export function getPages() {
         showSettings: false,
         showStatus: false,
         showEnable: true,
-        description: 'Share your wiki content to provide additional course material',
+        description: 'Share your wiki content to provide additional course material.',
       },
     ],
   });

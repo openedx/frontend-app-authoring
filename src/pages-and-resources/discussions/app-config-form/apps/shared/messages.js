@@ -90,11 +90,11 @@ const messages = defineMessages({
   },
   allowAnonymousPostsPeersLabel: {
     id: 'authoring.discussions.builtIn.allowAnonymousPeers.label',
-    defaultMessage: 'Allow Anonymous Discussion Posts to Peers',
+    defaultMessage: 'Allow anonymous discussion posts to peers',
   },
   allowAnonymousPostsPeersHelp: {
     id: 'authoring.discussions.builtIn.allowAnonymousPeers.help',
-    defaultMessage: 'Enter true or false. If true, students can create discussion posts that are anonymous to other students. This setting does not make posts anonymous to course staff.',
+    defaultMessage: 'Learners will be able to post anonymously to other peers but all posts will be visible to course staff.',
   },
 
   // Discussion Topics
