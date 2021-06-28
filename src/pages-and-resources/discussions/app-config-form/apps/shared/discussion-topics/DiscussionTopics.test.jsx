@@ -20,6 +20,7 @@ import { getAppsUrl } from '../../../../data/api';
 import { fetchApps } from '../../../../data/thunks';
 import executeThunk from '../../../../../../utils';
 import { legacyApiResponse } from '../../../../factories/mockApiResponses';
+import LegacyConfigFormProvider from '../../legacy/LegacyConfigFormProvider';
 
 const appConfig = {
   id: 'legacy',
@@ -36,7 +37,15 @@ const appConfig = {
   blackoutDates: '[]',
 };
 
-const discussionTopicErrors = [false, false];
+const contextValue = {
+  validDiscussionTopics: [
+    { name: 'General', id: 'course' },
+    { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
+  ],
+  setValidDiscussionTopics: jest.fn(),
+  discussionTopicErrors: [false, false],
+};
+
 const courseId = 'course-v1:edX+TestX+Test_Course';
 
 describe('DiscussionTopics', () => {
@@ -66,9 +75,11 @@ describe('DiscussionTopics', () => {
     const wrapper = render(
       <AppProvider store={store}>
         <IntlProvider locale="en">
-          <Formik initialValues={data}>
-            <DiscussionTopics discussionTopicErrors={discussionTopicErrors} />
-          </Formik>
+          <LegacyConfigFormProvider value={contextValue}>
+            <Formik initialValues={data}>
+              <DiscussionTopics />
+            </Formik>
+          </LegacyConfigFormProvider>
         </IntlProvider>
       </AppProvider>,
     );
