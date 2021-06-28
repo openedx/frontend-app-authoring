@@ -7,7 +7,7 @@ const messages = defineMessages({
   },
   supportedFeatures: {
     id: 'authoring.discussions.supportedFeatures',
-    defaultMessage: 'Supported Features',
+    defaultMessage: 'Supported features',
   },
   'supportedFeatureList-mobile-show': {
     id: 'authoring.discussions.supportedFeatureList-mobile-show',
@@ -48,7 +48,7 @@ const messages = defineMessages({
   // Legacy
   'appName-legacy': {
     id: 'authoring.discussions.appList.appName-legacy',
-    defaultMessage: 'edX Discussions',
+    defaultMessage: 'edX',
     description: 'The name of the Legacy edX Discussions app.',
   },
   'appDescription-legacy': {
@@ -95,12 +95,12 @@ const messages = defineMessages({
   // edX inscribe
   'appName-inscribe': {
     id: 'authoring.discussions.appList.appName-inscribe',
-    defaultMessage: 'Inscribe',
+    defaultMessage: 'InScribe',
     description: 'The name of the inscribe app.',
   },
   'appDescription-inscribe': {
     id: 'authoring.discussions.appList.appDescription-inscribe',
-    defaultMessage: 'InScribe · InScribe leverages the power of community + artificial intelligence to connect individuals to the answers, resources, and people they need to succeed.',
+    defaultMessage: 'InScribe leverages the power of community + artificial intelligence to connect individuals to the answers, resources, and people they need to succeed.',
     description: 'A description of the inscibe app.',
   },
   // discourse
@@ -144,112 +144,112 @@ const messages = defineMessages({
   },
   'featureName-advanced-in-context-discussion': {
     id: 'authoring.discussions.featureName-advanced-in-context-discussion',
-    defaultMessage: 'Advanced In Context Discussion',
+    defaultMessage: 'Advanced in context discussion',
     description: 'The name of a discussions feature.',
   },
   'featureName-anonymous-posting': {
     id: 'authoring.discussions.featureName-anonymous-posting',
-    defaultMessage: 'Anonymous Posting',
+    defaultMessage: 'Anonymous posting',
     description: 'The name of a discussions feature.',
   },
   'featureName-automatic-learner-enrollment': {
     id: 'authoring.discussions.featureName-automatic-learner-enrollment',
-    defaultMessage: 'Automatic Learner Enrollment',
+    defaultMessage: 'Automatic learner enrollment',
     description: 'The name of a discussions feature.',
   },
   'featureName-blackout-discussion-dates': {
     id: 'authoring.discussions.featureName-blackout-discussion-dates',
-    defaultMessage: 'Blackout Discussion Dates',
+    defaultMessage: 'Blackout discussion dates',
     description: 'The name of a discussions feature.',
   },
   'featureName-community-ta-support': {
     id: 'authoring.discussions.featureName-community-ta-support',
-    defaultMessage: 'Community TA Support',
+    defaultMessage: 'Community TA support',
     description: 'The name of a discussions feature.',
   },
   'featureName-course-cohort-support': {
     id: 'authoring.discussions.featureName-course-cohort-support',
-    defaultMessage: 'Course Cohort Support',
+    defaultMessage: 'Course cohort support',
     description: 'The name of a discussions feature.',
   },
   'featureName-direct-messages-from-instructors': {
     id: 'authoring.discussions.featureName-direct-messages-from-instructors',
-    defaultMessage: 'Direct Messages from Instructors',
+    defaultMessage: 'Direct messages from instructors',
     description: 'The name of a discussions feature.',
   },
   'featureName-discussion-content-prompts': {
     id: 'authoring.discussions.featureName-discussion-content-prompts',
-    defaultMessage: 'Discussion Content Prompts',
+    defaultMessage: 'Discussion content prompts',
     description: 'The name of a discussions feature.',
   },
   'featureName-email-notifications': {
     id: 'authoring.discussions.featureName-email-notifications',
-    defaultMessage: 'Email Notifications',
+    defaultMessage: 'Email notifications',
     description: 'The name of a discussions feature.',
   },
   'featureName-graded-discussions': {
     id: 'authoring.discussions.featureName-graded-discussions',
-    defaultMessage: 'Graded Discussions',
+    defaultMessage: 'Graded discussions',
     description: 'The name of a discussions feature.',
   },
   'featureName-in-platform-notifications': {
     id: 'authoring.discussions.featureName-in-platform-notifications',
-    defaultMessage: 'In Platform Notifications',
+    defaultMessage: 'In-platform notifications',
     description: 'The name of a discussions feature.',
   },
   'featureName-internationalization-support': {
     id: 'authoring.discussions.featureName-internationalization-support',
-    defaultMessage: 'Internationalization Support',
+    defaultMessage: 'Internationalization support',
     description: 'The name of a discussions feature.',
   },
   'featureName-lti-advanced-sharing-mode': {
     id: 'authoring.discussions.featureName-lti-advanced-sharing-mode',
-    defaultMessage: 'LTI Advanced Sharing Mode',
+    defaultMessage: 'LTI advanced sharing mode',
     description: 'The name of a discussions feature.',
   },
   'featureName-lti-basic-configuration': {
     id: 'authoring.discussions.featureName-lti-basic-configuration',
-    defaultMessage: 'LTI Basic Configuration',
+    defaultMessage: 'LTI basic configuration',
     description: 'The name of a discussions feature.',
   },
   'featureName-primary-discussion-app-experience': {
     id: 'authoring.discussions.featureName-primary-discussion-app-experience',
-    defaultMessage: 'Primary Discussion App Experience',
+    defaultMessage: 'Primary discussion app experience',
     description: 'The name of a discussions feature.',
   },
   'featureName-question-discussion-support': {
     id: 'authoring.discussions.featureName-question-&-discussion-support',
-    defaultMessage: 'Question & Discussion Support',
+    defaultMessage: 'Question & discussion support',
     description: 'The name of a discussions feature.',
   },
   'featureName-report/flag-content-to-moderators': {
     id: 'authoring.discussions.featureName-report/flag-content-to-moderators',
-    defaultMessage: 'Report / Flag Content to Moderators',
+    defaultMessage: 'Report/flag content to moderators',
     description: 'The name of a discussions feature.',
   },
   'featureName-research-data-events': {
     id: 'authoring.discussions.featureName-research-data-events',
-    defaultMessage: 'Research Data Events',
+    defaultMessage: 'Research data events',
     description: 'The name of a discussions feature.',
   },
   'featureName-simplified-in-context-discussion': {
     id: 'authoring.discussions.featureName-simplified-in-context-discussion',
-    defaultMessage: 'Simplified In Context Discussion',
+    defaultMessage: 'Simplified in-context discussion',
     description: 'The name of a discussions feature.',
   },
   'featureName-user-mentions': {
     id: 'authoring.discussions.featureName-user-mentions',
-    defaultMessage: 'User Mentions',
+    defaultMessage: 'User mentions',
     description: 'The name of a discussions feature.',
   },
   'featureName-wcag-2.1': {
     id: 'authoring.discussions.featureName-wcag-2.1',
-    defaultMessage: 'WCAG 2.1 Support',
+    defaultMessage: 'WCAG 2.1 support',
     description: 'The name of a discussions feature.',
   },
   'featureName-wcag-2.0-support': {
     id: 'authoring.discussions.wcag-2.0-support',
-    defaultMessage: 'WCAG 2.0 Support',
+    defaultMessage: 'WCAG 2.0 support',
     description: 'The name of a discussions feature.',
   },
 });

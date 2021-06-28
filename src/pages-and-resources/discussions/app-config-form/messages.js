@@ -7,7 +7,7 @@ const messages = defineMessages({
   },
   configure: {
     id: 'authoring.discussions.configure',
-    defaultMessage: 'Configure Discussions',
+    defaultMessage: 'Configure discussions',
   },
   backButton: {
     id: 'authoring.discussions.backButton',
@@ -48,7 +48,7 @@ const messages = defineMessages({
   },
   'appName-inscribe': {
     id: 'authoring.discussions.appConfigForm.appName-inscribe',
-    defaultMessage: 'Inscribe',
+    defaultMessage: 'InScribe',
     description: 'The name of the inscribe app.',
   },
   'appName-discourse': {
