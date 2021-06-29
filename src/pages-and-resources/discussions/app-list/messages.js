@@ -68,19 +68,6 @@ const messages = defineMessages({
     description: 'A description of the Piazza app.',
   },
 
-  // edX Next
-  'appName-edx-next': {
-    id: 'authoring.discussions.appList.appName-edx-next',
-    defaultMessage: 'edX Next',
-    description: 'The name of the edX Next app.',
-  },
-  'appDescription-edx-next': {
-    id: 'authoring.discussions.appList.appDescription-edx-next',
-    // @todo update default message for edx-next
-    defaultMessage: 'edX Next',
-    description: 'A description of the edx next app.',
-  },
-
   // yellowdig
   'appName-yellowdig': {
     id: 'authoring.discussions.appList.appName-yellowdig',
