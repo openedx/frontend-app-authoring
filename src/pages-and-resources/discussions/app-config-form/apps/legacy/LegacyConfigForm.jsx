@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Card, Form } from '@edx/paragon';
 import { Formik } from 'formik';
@@ -9,6 +9,7 @@ import DivisionByGroupFields from '../shared/DivisionByGroupFields';
 import AnonymousPostingFields from '../shared/AnonymousPostingFields';
 import DiscussionTopics from '../shared/discussion-topics/DiscussionTopics';
 import BlackoutDatesField, { blackoutDatesRegex } from '../shared/BlackoutDatesField';
+import LegacyConfigFormProvider from './LegacyConfigFormProvider';
 
 import messages from '../shared/messages';
 import AppConfigFormDivider from '../shared/AppConfigFormDivider';
@@ -36,6 +37,7 @@ Yup.addMethod(Yup.object, 'uniqueProperty', function (propertyName, message) {
 function LegacyConfigForm({
   appConfig, onSubmit, formRef, intl, title,
 }) {
+  const [validDiscussionTopics, setValidDiscussionTopics] = useState(appConfig.discussionTopics);
   const legacyFormValidationSchema = Yup.object().shape({
     blackoutDates: Yup.string().matches(
       blackoutDatesRegex,
@@ -72,30 +74,37 @@ function LegacyConfigForm({
           && errors.discussionTopics
           && errors?.discussionTopics[index]?.name,
         ));
+        const contextValue = {
+          validDiscussionTopics,
+          setValidDiscussionTopics,
+          discussionTopicErrors,
+        };
 
         return (
-          <Card className="mb-5 px-4 px-sm-5 pb-5" data-testid="legacyConfigForm">
-            <Form ref={formRef} onSubmit={handleSubmit}>
-              <h3 className="text-primary-500 my-3">{title}</h3>
-              <AppConfigFormDivider thick />
-              <AnonymousPostingFields
-                onBlur={handleBlur}
-                onChange={handleChange}
-                values={values}
-              />
-              <AppConfigFormDivider thick />
-              <DiscussionTopics discussionTopicErrors={discussionTopicErrors} />
-              <AppConfigFormDivider thick />
-              <DivisionByGroupFields discussionTopicErrors={discussionTopicErrors} />
-              <AppConfigFormDivider thick />
-              <BlackoutDatesField
-                errors={errors}
-                onBlur={handleBlur}
-                onChange={handleChange}
-                values={values}
-              />
-            </Form>
-          </Card>
+          <LegacyConfigFormProvider value={contextValue}>
+            <Card className="mb-5 px-4 px-sm-5 pb-5" data-testid="legacyConfigForm">
+              <Form ref={formRef} onSubmit={handleSubmit}>
+                <h3 className="text-primary-500 my-3">{title}</h3>
+                <AppConfigFormDivider thick />
+                <AnonymousPostingFields
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  values={values}
+                />
+                <AppConfigFormDivider thick />
+                <DiscussionTopics />
+                <AppConfigFormDivider thick />
+                <DivisionByGroupFields />
+                <AppConfigFormDivider thick />
+                <BlackoutDatesField
+                  errors={errors}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  values={values}
+                />
+              </Form>
+            </Card>
+          </LegacyConfigFormProvider>
         );
       }}
     </Formik>

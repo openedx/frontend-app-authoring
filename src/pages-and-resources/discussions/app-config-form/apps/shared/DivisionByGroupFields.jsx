@@ -1,13 +1,14 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useContext } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Form, TransitionReplace } from '@edx/paragon';
 import { FieldArray, useFormikContext } from 'formik';
 import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from './messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
+import { LegacyConfigFormContext } from '../legacy/LegacyConfigFormProvider';
 
-const DivisionByGroupFields = ({ intl, discussionTopicErrors }) => {
+const DivisionByGroupFields = ({ intl }) => {
+  const { validDiscussionTopics } = useContext(LegacyConfigFormContext);
   const {
     handleChange,
     handleBlur,
@@ -104,8 +105,8 @@ const DivisionByGroupFields = ({ intl, discussionTopicErrors }) => {
                           onBlur={handleBlur}
                           defaultValue={divideDiscussionIds}
                         >
-                          {discussionTopics.map((topic, index) => (
-                            topic.name && !discussionTopicErrors[index] ? (
+                          {validDiscussionTopics.map((topic) => (
+                            topic.name ? (
                               <Form.Checkbox
                                 key={`checkbox-${topic.id}`}
                                 id={`checkbox-${topic.id}`}
@@ -135,7 +136,6 @@ const DivisionByGroupFields = ({ intl, discussionTopicErrors }) => {
 
 DivisionByGroupFields.propTypes = {
   intl: intlShape.isRequired,
-  discussionTopicErrors: PropTypes.arrayOf(PropTypes.bool).isRequired,
 };
 
 export default injectIntl(DivisionByGroupFields);
