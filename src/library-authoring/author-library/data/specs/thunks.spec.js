@@ -94,12 +94,36 @@ testSuite('Library detail thunks', () => {
 
   it('Creates a library block', async () => {
     const block = blockFactory();
-    api.createLibraryBlock.fn.mockImplementation(() => immediate(block));
     const blockSpec = { block_type: 'video', description_id: 'test' };
-    await createBlock(dispatch)({ libraryId: 'testLibrary', data: blockSpec });
+    const paginationParams = {
+      page: 1,
+      page_size: 20,
+    };
+
+    api.createLibraryBlock.fn.mockImplementation(() => immediate(block));
+    api.getBlocks.fn.mockImplementation(() => immediate({ data: [block], count: 1 }));
+
+    await createBlock(dispatch)({
+      libraryId: 'testLibrary', data: blockSpec, paginationParams, query: '', types: '',
+    });
+
+    expect(dispatch).toHaveBeenCalledWith(actions.libraryAuthoringRequest({ attr: 'blocks' }));
     expect(api.createLibraryBlock.fn).toHaveBeenCalledWith({ libraryId: 'testLibrary', data: blockSpec });
-    checkRequested('blocks');
-    expect(dispatch).toHaveBeenCalledWith(actions.libraryCreateBlockSuccess({ libraryBlock: block }));
+    expect(api.getBlocks.fn).toHaveBeenCalledWith({
+      libraryId: 'testLibrary',
+      paginationParams,
+      query: '',
+      types: '',
+    });
+
+    // checkRequested('blocks');
+    expect(dispatch).toHaveBeenCalledWith(actions.libraryAuthoringSuccess({
+      value: {
+        data: [block],
+        count: 1,
+      },
+      attr: 'blocks',
+    }));
   });
 
   it('Handles a block creation failure', async () => {

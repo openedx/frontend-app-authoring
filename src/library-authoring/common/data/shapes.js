@@ -1,4 +1,10 @@
 import PropTypes from 'prop-types';
+import { LOADING_STATUS } from './constants';
+
+export const libraryBlockTypeShape = PropTypes.shape({
+  block_type: PropTypes.string.isRequired,
+  display_name: PropTypes.string.isRequired,
+});
 
 export const libraryBlockShape = PropTypes.shape({
   id: PropTypes.string.isRequired,
@@ -6,11 +12,6 @@ export const libraryBlockShape = PropTypes.shape({
   block_type: PropTypes.string.isRequired,
   display_name: PropTypes.string.isRequired,
   has_unpublished_changes: PropTypes.bool.isRequired,
-});
-
-export const libraryBlockTypeShape = PropTypes.shape({
-  block_type: PropTypes.string.isRequired,
-  display_name: PropTypes.string.isRequired,
 });
 
 export const libraryShape = PropTypes.shape({
@@ -35,7 +36,14 @@ export const commonsOptionsShape = PropTypes.shape({
   shareAlike: PropTypes.bool.isRequired,
 });
 
-export const paginatedLibrariesShape = PropTypes.shape({
-  data: PropTypes.arrayOf(libraryShape),
-  count: PropTypes.number.isRequired,
+export const statusShape = PropTypes.oneOf(Object.values(LOADING_STATUS));
+
+export const fetchable = (valueShape) => PropTypes.shape({
+  status: statusShape,
+  value: valueShape,
+});
+
+export const paginated = (dataShape) => PropTypes.shape({
+  data: PropTypes.arrayOf(dataShape),
+  count: PropTypes.number,
 });

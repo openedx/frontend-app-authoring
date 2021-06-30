@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 
 import wrapBlockHtmlForIFrame from './wrap';
-import { blockViewShape, fetchable } from '../data/shapes';
+import { fetchable } from '../../common';
+import { blockViewShape } from '../data/shapes';
 
 ensureConfig(['LMS_BASE_URL', 'SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL'], 'library block component');
 

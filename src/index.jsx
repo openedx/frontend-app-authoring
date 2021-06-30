@@ -13,6 +13,7 @@ import store from './store';
 import { NotFoundPage } from './generic';
 import {
   ROUTES,
+  CourseImportPage,
   LibraryBlockPage,
   LibraryEditPage,
   LibraryListPage,
@@ -40,6 +41,7 @@ subscribe(APP_READY, () => {
             <Route exact path={ROUTES.Detail.HOME} component={LibraryAuthoringPage} />
             <Route exact path={ROUTES.Detail.EDIT} component={LibraryEditPage} />
             <Route exact path={ROUTES.Detail.ACCESS} component={LibraryAccessPage} />
+            <Route exact path={ROUTES.Detail.IMPORT} component={CourseImportPage} />
             <Route exact path={ROUTES.Block.HOME} component={LibraryBlockPage} />
             <Route exact path={ROUTES.Block.EDIT} component={LibraryBlockPage} />
             <Route exact path={ROUTES.Block.ASSETS} component={LibraryBlockPage} />

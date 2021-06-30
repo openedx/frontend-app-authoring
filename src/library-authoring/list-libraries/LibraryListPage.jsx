@@ -11,7 +11,7 @@ import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 import { LoadingPage } from '../../generic';
 import {
-  LOADING_STATUS, LibraryIndexTabs, paginatedLibrariesShape, LIBRARY_TYPES,
+  LOADING_STATUS, LibraryIndexTabs, libraryShape, LIBRARY_TYPES, paginated,
 } from '../common';
 import { LibraryCreateForm } from '../create-library';
 import {
@@ -21,6 +21,7 @@ import {
 } from './data';
 import LibraryListItem from './LibraryListItem';
 import messages from './messages';
+import commonMessages from '../common/messages';
 
 export class LibraryListPage extends React.Component {
   constructor(props) {
@@ -145,11 +146,11 @@ export class LibraryListPage extends React.Component {
       currentPage: this.state.paginationParams.page,
       pageCount: Math.ceil(libraries.count / this.state.paginationParams.page_size),
       buttonLabels: {
-        previous: intl.formatMessage(messages['library.list.pagination.labels.previous']),
-        next: intl.formatMessage(messages['library.list.pagination.labels.next']),
-        page: intl.formatMessage(messages['library.list.pagination.labels.page']),
-        currentPage: intl.formatMessage(messages['library.list.pagination.labels.currentPage']),
-        pageOfCount: intl.formatMessage(messages['library.list.pagination.labels.pageOfCount']),
+        previous: intl.formatMessage(commonMessages['library.common.pagination.labels.previous']),
+        next: intl.formatMessage(commonMessages['library.common.pagination.labels.next']),
+        page: intl.formatMessage(commonMessages['library.common.pagination.labels.page']),
+        currentPage: intl.formatMessage(commonMessages['library.common.pagination.labels.currentPage']),
+        pageOfCount: intl.formatMessage(commonMessages['library.common.pagination.labels.pageOfCount']),
       },
     };
 
@@ -323,7 +324,7 @@ LibraryListPage.propTypes = {
   errorMessage: PropTypes.string,
   fetchLibraryList: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
-  libraries: paginatedLibrariesShape.isRequired,
+  libraries: paginated(libraryShape).isRequired,
   orgs: PropTypes.arrayOf(PropTypes.string),
   status: PropTypes.oneOf(Object.values(LOADING_STATUS)).isRequired,
 };

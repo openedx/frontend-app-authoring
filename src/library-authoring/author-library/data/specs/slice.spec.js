@@ -39,37 +39,21 @@ describe('library detail reducers', () => {
     const state = {
       library: { value: library, status: LOADING_STATUS.LOADED },
       blocks: {
-        value: [
-          blockFactory({ id: 'firstBlock' }, { library }),
-          blockFactory({ id: 'deletedBlock' }, { library }),
-          blockFactory({ id: 'lastBlock' }, { library }),
-        ],
+        value: {
+          data: [
+            blockFactory({ id: 'firstBlock' }, { library }),
+            blockFactory({ id: 'deletedBlock' }, { library }),
+            blockFactory({ id: 'lastBlock' }, { library }),
+          ],
+          count: 3,
+        },
         status: LOADING_STATUS.FAILED,
       },
     };
     reducers.libraryAuthoringBlockDeleted(state, { payload: { blockId: 'deletedBlock' } });
-    expect(state.blocks.value.length).toBe(2);
-    expect(state.blocks.value[0].id).toEqual('firstBlock');
-    expect(state.blocks.value[1].id).toEqual('lastBlock');
-  });
-
-  it('Adds a block to the block list', () => {
-    const library = libraryFactory({
-      has_unpublished_changes: false,
-    });
-    const state = {
-      library: { value: library, status: LOADING_STATUS.LOADING },
-      blocks: { value: [blockFactory({ id: 'firstBlock' })], status: LOADING_STATUS.LOADED },
-    };
-    reducers.libraryCreateBlockSuccess(
-      state,
-      { payload: { libraryBlock: blockFactory({ id: 'test' }, { library }) } },
-    );
-    expect(state.blocks.value.length).toEqual(2);
-    expect(state.blocks.value[0].id).toEqual('firstBlock');
-    expect(state.blocks.value[1].id).toEqual('test');
-    expect(state.library.value.has_unpublished_changes).toBe(true);
-    expect(state.blocks.status).toEqual(LOADING_STATUS.LOADED);
+    expect(state.blocks.value.data.length).toBe(2);
+    expect(state.blocks.value.data[0].id).toEqual('firstBlock');
+    expect(state.blocks.value.data[1].id).toEqual('lastBlock');
   });
 
   it('Resets the library detail settings', () => {

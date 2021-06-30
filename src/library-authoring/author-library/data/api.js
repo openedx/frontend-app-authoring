@@ -26,25 +26,37 @@ export const getLibraryDetail = annotateCall(async (libraryId) => {
   return library;
 });
 
-export const getBlocks = annotateCall(async ({ libraryId, query = '', types = [] }) => {
+export const getBlocks = annotateCall(async ({
+  libraryId, paginationParams, query = '', types = [],
+}) => {
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;
-  const params = {};
+  const params = {
+    ...paginationParams,
+    pagination: true,
+  };
+
   if (query) {
     params.text_search = query;
   }
+
   if (types.length) {
     params.block_type = types;
   }
+
   let qs = querystring.stringify(params);
   if (qs) {
     qs = `?${qs}`;
   }
-  return client.get(
+
+  const response = await client.get(
     `${baseUrl}/api/libraries/v2/${libraryId}/blocks/${qs}`,
-  ).then(
-    (response) => response.data,
   );
+
+  return {
+    data: response.data.results,
+    count: response.data.count,
+  };
 });
 
 export const getBlockLtiUrl = annotateCall(async ({ blockId }) => {

@@ -21,3 +21,22 @@
   padding: 1rem 2rem;
   font-size: 120%;
 }
+
+.library-blocks-pagination {
+  display: block;
+  margin-top: 1.5em;
+
+  * {
+    font-size: 1.4rem;
+  }
+
+  .pagination {
+    .page-item {
+      .btn {
+        min-width: 2.5em;
+        min-height: 2.5em;
+        border: 1px solid $gray-l2;
+      }
+    }
+  }
+}

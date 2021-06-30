@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { LOADING_STATUS } from '../../common/data';
+import { fetchable } from '../../common';
 
 export const blockMetadataShape = PropTypes.shape({
   block_type: PropTypes.string.isRequired,
@@ -10,10 +10,6 @@ export const blockViewShape = PropTypes.shape({
   content: PropTypes.string.isRequired,
   resources: PropTypes.arrayOf(PropTypes.object).isRequired,
 });
-
-export const statusShape = PropTypes.oneOf(Object.values(LOADING_STATUS));
-
-export const fetchable = (valueType) => PropTypes.shape({ status: statusShape, value: valueType });
 
 export const blockStateShape = PropTypes.shape({
   errorMessage: PropTypes.string,

@@ -51,6 +51,7 @@ const StudioHeader = ({ intl, library }) => {
                     <Dropdown.Menu className="p-4 mt-1 fade">
                       <Dropdown.Item className="p-0" as={Link} to={ROUTES.Detail.EDIT_SLUG(library.id)}>{intl.formatMessage(messages['library.header.settings.details'])}</Dropdown.Item>
                       <Dropdown.Item className="p-0" as={Link} to={ROUTES.Detail.ACCESS_SLUG(library.id)}>{intl.formatMessage(messages['library.header.settings.access'])}</Dropdown.Item>
+                      <Dropdown.Item className="p-0" as={Link} to={ROUTES.Detail.IMPORT_SLUG(library.id)}>{intl.formatMessage(messages['library.header.settings.import'])}</Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
                 </nav>

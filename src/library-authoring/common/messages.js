@@ -116,6 +116,31 @@ const messages = defineMessages({
     defaultMessage: 'All Rights Reserved',
     description: 'Text/Label for a license where all rights are reserved.',
   },
+  'library.common.pagination.labels.previous': {
+    id: 'library.common.pagination.labels.previous',
+    defaultMessage: 'Previous',
+    description: 'Label of the pagination item for previous button',
+  },
+  'library.common.pagination.labels.next': {
+    id: 'library.common.pagination.labels.next',
+    defaultMessage: 'Next',
+    description: 'Label of the pagination item for next button',
+  },
+  'library.common.pagination.labels.page': {
+    id: 'library.common.pagination.labels.page',
+    defaultMessage: 'Page',
+    description: 'Label of the pagination item for page used for aria text',
+  },
+  'library.common.pagination.labels.currentPage': {
+    id: 'library.common.pagination.labels.currentPage',
+    defaultMessage: 'Current page',
+    description: 'Label of the pagination item for the current page used for aria text',
+  },
+  'library.common.pagination.labels.pageOfCount': {
+    id: 'library.common.pagination.labels.pageOfCount',
+    defaultMessage: 'PageOfCount',
+    description: 'Label of the pagination item for page of count used for aria text',
+  },
 });
 
 export default messageGuard(messages);

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import PropTypes from 'prop-types';
 import { Button } from '@edx/paragon';
-import { fetchable } from './data/shapes';
+import { fetchable } from '../common';
 import { LoadingPage } from '../../generic';
 
 /**

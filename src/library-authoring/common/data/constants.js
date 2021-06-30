@@ -36,6 +36,8 @@ export const ROUTES = {
     EDIT_SLUG: (libraryId) => `/library/${libraryId}/edit`,
     ACCESS: '/library/:libraryId/access',
     ACCESS_SLUG: (libraryId) => `/library/${libraryId}/access`,
+    IMPORT: '/library/:libraryId/import',
+    IMPORT_SLUG: (libraryId) => `/library/${libraryId}/import`,
   },
   Block: {
     HOME: '/library/:libraryId/blocks/:blockId',
@@ -97,6 +99,7 @@ export const STORE_NAMES = {
   BLOCKS: 'blocks',
   CREATE: 'create',
   ACCESS: 'access',
+  COURSE_IMPORT: 'courseImport',
   LIST: 'list',
   EDIT: 'edit',
 };

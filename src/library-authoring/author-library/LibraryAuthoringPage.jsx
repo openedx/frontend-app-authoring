@@ -9,7 +9,9 @@ import {
   Navbar,
   Modal,
   Dropdown,
-  SearchField, Input,
+  SearchField,
+  Input,
+  Pagination,
 } from '@edx/paragon';
 import { v4 as uuid4 } from 'uuid';
 import { faPlus, faSync } from '@fortawesome/free-solid-svg-icons';
@@ -42,7 +44,9 @@ import {
   LOADING_STATUS,
   ROUTES,
   XBLOCK_VIEW_SYSTEM,
-} from '../common/data';
+  fetchable,
+  paginated,
+} from '../common';
 import { LoadingPage } from '../../generic';
 import messages from './messages';
 import {
@@ -51,7 +55,7 @@ import {
   fetchLibraryBlockView,
   initializeBlock,
 } from '../edit-block/data';
-import { blockStatesShape, blockViewShape, fetchable } from '../edit-block/data/shapes';
+import { blockStatesShape, blockViewShape } from '../edit-block/data/shapes';
 import commonMessages from '../common/messages';
 import selectLibraryDetail from '../common/data/selectors';
 import { ErrorAlert } from '../common/ErrorAlert';
@@ -320,8 +324,8 @@ const deriveTypeOptions = (blockTypes, intl) => {
 export const LibraryAuthoringPageBase = ({
   intl, library, blockView, showPreviews, setShowPreviews,
   sending, addBlock, revertChanges, commitChanges, hasChanges, errorMessage, successMessage,
-  quickAddBehavior, otherTypes, blocks, updateSearch, typeOptions, query, type,
-  ...props
+  quickAddBehavior, otherTypes, blocks, changeQuery, changeType, changePage,
+  paginationOptions, typeOptions, query, type, ...props
 }) => (
   <Container fluid="lg">
     <Row className="pt-5 px-2 px-xl-0">
@@ -353,8 +357,8 @@ export const LibraryAuthoringPageBase = ({
                     <SearchField
                       label={intl.formatMessage(messages['library.detail.search'])}
                       value={query}
-                      onSubmit={(value) => updateSearch({ query: value })}
-                      onChange={(value) => updateSearch({ query: value })}
+                      onSubmit={(value) => changeQuery(value)}
+                      onChange={(value) => changeQuery(value)}
                     />
                   </Col>
                   <Col xs={12} md={3} className="pb-2">
@@ -363,7 +367,7 @@ export const LibraryAuthoringPageBase = ({
                       data-testid="filter-dropdown"
                       value={type}
                       options={typeOptions}
-                      onChange={(event) => updateSearch({ type: event.target.value })}
+                      onChange={(event) => changeType(event.target.value)}
                     />
                   </Col>
                 </>
@@ -382,7 +386,7 @@ export const LibraryAuthoringPageBase = ({
                 loadingMessage={intl.formatMessage(messages['library.detail.loading.message'])}
                 condition={blocks.status !== LOADING_STATUS.LOADING}
               >
-                {() => blocks.value.map((block) => (
+                {() => blocks.value.data.map((block) => (
                   <Col xs={12} key={block.id} className="pb-3">
                     <BlockPreviewContainer
                       block={block}
@@ -393,6 +397,20 @@ export const LibraryAuthoringPageBase = ({
                   </Col>
                 ))}
               </LoadGuard>
+              {blocks.value.count > 0
+                ? (
+                  <Col xs={12}>
+                    <Pagination
+                      className="library-blocks-pagination"
+                      paginationLabel="pagination navigation"
+                      currentPage={paginationOptions.currentPage}
+                      pageCount={paginationOptions.pageCount}
+                      buttonLabels={paginationOptions.buttonLabels}
+                      onPageSelect={(page) => changePage(page)}
+                    />
+                  </Col>
+                )
+                : null}
               <Col xs={12} className="text-center py-3 add-buttons-container">
                 {library.type !== LIBRARY_TYPES.COMPLEX && (
                 <Button
@@ -495,11 +513,24 @@ LibraryAuthoringPageBase.defaultProps = {
 LibraryAuthoringPageBase.propTypes = {
   intl: intlShape.isRequired,
   library: libraryShape.isRequired,
-  blocks: fetchable(PropTypes.arrayOf(libraryBlockShape)),
+  blocks: fetchable(paginated(libraryBlockShape)),
   blockView: PropTypes.func.isRequired,
   showPreviews: PropTypes.bool.isRequired,
   searchLibrary: PropTypes.func.isRequired,
-  updateSearch: PropTypes.func.isRequired,
+  paginationOptions: PropTypes.shape({
+    currentPage: PropTypes.number.isRequired,
+    pageCount: PropTypes.number.isRequired,
+    buttonLabels: PropTypes.shape({
+      previous: PropTypes.string.isRequired,
+      next: PropTypes.string.isRequired,
+      page: PropTypes.string.isRequired,
+      currentPage: PropTypes.string.isRequired,
+      pageOfCount: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
+  changeQuery: PropTypes.func.isRequired,
+  changeType: PropTypes.func.isRequired,
+  changePage: PropTypes.func.isRequired,
   setShowPreviews: PropTypes.func.isRequired,
   typeOptions: PropTypes.arrayOf(
     PropTypes.shape({
@@ -521,7 +552,8 @@ LibraryAuthoringPageBase.propTypes = {
   type: PropTypes.string.isRequired,
   otherTypes: PropTypes.arrayOf(
     PropTypes.shape({
-      block_type: PropTypes.string.isRequired, display_name: PropTypes.string.isRequired,
+      block_type: PropTypes.string.isRequired,
+      display_name: PropTypes.string.isRequired,
     }),
   ).isRequired,
 };
@@ -532,23 +564,75 @@ const LibraryAuthoringPage = injectIntl(LibraryAuthoringPageBase);
  * LibraryAuthoringPageContainerBase
  *
  * Container for the Library Authoring page.
- * This is the main page for the authoring tool-- or it will be.
- * It replaces LibraryPage. Currently, it only supports Video and Problem
- * type libraries. Complex libraries will be supported in a later release.
+ * This is the main page for the authoring tool.
  */
 export const LibraryAuthoringPageContainerBase = ({
   intl, library, blockStates, blocks, ...props
 }) => {
-  // Explicit empty dependencies means on mount.
+  const { libraryId } = props.match.params;
+  const [query, setQuery] = useState('');
+  const [type, setType] = useState('');
+  const [page, setPage] = useState(1);
+  const [sending, setSending] = useState(false);
+
+  const pageSize = 20;
+  const paginationParams = {
+    page,
+    page_size: pageSize,
+  };
+
+  // On mount.
   useEffect(() => {
-    const { libraryId } = props.match.params;
     if (!library || (library && library.id !== libraryId)) {
       props.clearLibrary().then(() => {
         props.fetchLibraryDetail({ libraryId });
-        props.fetchBlocks({ libraryId });
+        props.fetchBlocks({ libraryId, paginationParams });
       });
     }
   }, []);
+
+  const normalizeTypes = () => {
+    let types;
+    if (type === '^' && library) {
+      types = library.blockTypes.map((entry) => entry.block_type);
+      types = types.filter((entry) => (entry !== '') && (!BLOCK_FILTER_ORDER.includes(entry)));
+      if (types.length === 0) {
+        // We're asking for 'other components', but there are no other components. Hand the API something that should
+        // return nothing.
+        types = ['^'];
+      }
+    } else if (type === '') {
+      types = [];
+    } else {
+      types = [type];
+    }
+
+    return types;
+  };
+
+  // Refresh page on query, type, or page changes.
+  useEffect(() => {
+    if (!sending) {
+      props.searchLibrary({
+        libraryId, paginationParams, query, types: normalizeTypes(),
+      });
+    }
+  }, [query, type, page]);
+
+  const changeQuery = (newQuery) => {
+    setPage(1);
+    setQuery(newQuery);
+  };
+
+  const changeType = (newType) => {
+    setPage(1);
+    setType(newType);
+  };
+
+  const changePage = (newPage) => {
+    setPage(newPage);
+  };
+
   // If we end up needing this across components, or we end up needing more settings like this, we'll have to create
   // another redux slice for 'common' settings which hydrates from localStorage.
   let initialPreviewState = localStorage.getItem('showPreviews');
@@ -558,31 +642,49 @@ export const LibraryAuthoringPageContainerBase = ({
     localStorage.setItem('showPreviews', value);
     baseSetShowPreviews(value);
   };
-  const [sending, setSending] = useState(false);
-  const [query, setQuery] = useState('');
-  const [type, setType] = useState('');
+
+  // We need the library to be loaded for what follows.  We can't put this further up because it would change the order
+  // of the useState/useEffect hooks on subsequent renders.
+  if (!library || !blocks) {
+    return <LoadingPage loadingMessage={intl.formatMessage(messages['library.detail.loading.message'])} />;
+  }
+
+  const lastPage = Math.ceil(blocks.value.count / pageSize) || 1;
 
   const addBlock = (blockType) => {
+    let nextPage = lastPage;
+    if (blocks.value.count && blocks.value.count % pageSize === 0) {
+      nextPage += 1;
+    }
     setSending(true);
-    props.createLibraryBlock({
-      libraryId: library.id,
+    setPage(nextPage);
+    props.createBlock({
+      libraryId,
       data: {
         block_type: blockType,
         definition_id: `${uuid4()}`,
       },
-    }).finally(() => setSending(false));
+      paginationParams: {
+        ...paginationParams,
+        page: nextPage,
+      },
+      query,
+      types: normalizeTypes(),
+    }).finally(() => {
+      setSending(false);
+    });
   };
 
   const commitChanges = () => {
     setSending(true);
-    props.commitLibraryChanges({ libraryId: library.id }).finally(() => {
+    props.commitLibraryChanges({ libraryId }).finally(() => {
       setSending(false);
     });
   };
 
   const revertChanges = () => {
     setSending(true);
-    props.revertLibraryChanges({ libraryId: library.id }).finally(() => {
+    props.revertLibraryChanges({ libraryId, paginationParams }).finally(() => {
       setSending(false);
     });
   };
@@ -592,9 +694,6 @@ export const LibraryAuthoringPageContainerBase = ({
     && library.blockTypes.filter((blockSpec) => !preSelected.includes(blockSpec.block_type))
   ) || [];
 
-  if (!library) {
-    return <LoadingPage loadingMessage={intl.formatMessage(messages['library.detail.loading.message'])} />;
-  }
   const typeOptions = deriveTypeOptions(library.blockTypes, intl);
 
   const hasChanges = library.has_unpublished_changes || library.has_unpublished_deletes;
@@ -604,6 +703,7 @@ export const LibraryAuthoringPageContainerBase = ({
     }
     return { value: null, status: LOADING_STATUS.STANDBY };
   };
+
   const quickAddBehavior = () => {
     if (library.type === LIBRARY_TYPES.COMPLEX) {
       document.querySelector('.add-buttons-container').scrollIntoView({ behavior: 'smooth' });
@@ -611,36 +711,19 @@ export const LibraryAuthoringPageContainerBase = ({
       addBlock(library.type);
     }
   };
-  const updaters = { query: setQuery, type: setType };
-  const updateSearch = (patch) => {
-    Object.keys(patch).forEach((key) => {
-      updaters[key](patch[key]);
-    });
-    let typeNormalized = patch.type;
-    if (patch.type === undefined) {
-      typeNormalized = type;
-    }
-    if (typeNormalized === '^') {
-      typeNormalized = library.blockTypes.map((entry) => entry.block_type);
-      typeNormalized = typeNormalized.filter((entry) => (entry !== '') && (!BLOCK_FILTER_ORDER.includes(entry)));
-      if (typeNormalized.length === 0) {
-        // We're asking for 'other components', but there are no other components. Hand the API something that should
-        // return nothing.
-        typeNormalized = ['^'];
-      }
-    } else if (typeNormalized === '') {
-      typeNormalized = [];
-    } else {
-      typeNormalized = [typeNormalized];
-    }
-    // Conditionally override query if it's defined in the patch.
-    const clearedPatch = { ...patch };
-    // We've normalized type, so remove it.
-    delete clearedPatch.type;
-    props.searchLibrary({
-      query, types: typeNormalized, libraryId: library.id, ...clearedPatch,
-    });
+
+  const paginationOptions = {
+    currentPage: paginationParams.page,
+    pageCount: lastPage,
+    buttonLabels: {
+      previous: intl.formatMessage(commonMessages['library.common.pagination.labels.previous']),
+      next: intl.formatMessage(commonMessages['library.common.pagination.labels.next']),
+      page: intl.formatMessage(commonMessages['library.common.pagination.labels.page']),
+      currentPage: intl.formatMessage(commonMessages['library.common.pagination.labels.currentPage']),
+      pageOfCount: intl.formatMessage(commonMessages['library.common.pagination.labels.pageOfCount']),
+    },
   };
+
   return (
     <LibraryAuthoringPage
       blockStates={blockStates}
@@ -655,7 +738,10 @@ export const LibraryAuthoringPageContainerBase = ({
       revertChanges={revertChanges}
       quickAddBehavior={quickAddBehavior}
       typeOptions={typeOptions}
-      updateSearch={updateSearch}
+      paginationOptions={paginationOptions}
+      changeQuery={changeQuery}
+      changeType={changeType}
+      changePage={changePage}
       query={query}
       type={type}
       otherTypes={otherTypes}
@@ -678,8 +764,8 @@ LibraryAuthoringPageContainerBase.propTypes = {
   fetchBlocks: PropTypes.func.isRequired,
   searchLibrary: PropTypes.func.isRequired,
   blockStates: blockStatesShape.isRequired,
-  blocks: fetchable(PropTypes.arrayOf(libraryBlockShape)).isRequired,
-  createLibraryBlock: PropTypes.func.isRequired,
+  blocks: fetchable(paginated(libraryBlockShape)).isRequired,
+  createBlock: PropTypes.func.isRequired,
   clearLibrary: PropTypes.func.isRequired,
   commitLibraryChanges: PropTypes.func.isRequired,
   revertLibraryChanges: PropTypes.func.isRequired,
@@ -698,7 +784,7 @@ const LibraryAuthoringPageContainer = connect(
     clearLibraryError,
     clearLibrarySuccess,
     clearLibrary,
-    createLibraryBlock: createBlock,
+    createBlock,
     commitLibraryChanges,
     revertLibraryChanges,
     fetchLibraryDetail,
