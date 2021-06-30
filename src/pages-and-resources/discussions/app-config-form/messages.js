@@ -36,11 +36,6 @@ const messages = defineMessages({
     defaultMessage: 'Piazza',
     description: 'The name of the Piazza app.',
   },
-  'appName-edx-next': {
-    id: 'authoring.discussions.appConfigForm.appName-edx-next',
-    defaultMessage: 'EdX Next',
-    description: 'The name of the EdX Next app.',
-  },
   'appName-yellowdig': {
     id: 'authoring.discussions.appConfigForm.appName-yellowdig',
     defaultMessage: 'Yellowdig',
@@ -63,7 +58,7 @@ const messages = defineMessages({
   },
   'appName-legacy': {
     id: 'authoring.discussions.appConfigForm.appName-legacy',
-    defaultMessage: 'edX Discussions',
+    defaultMessage: 'edX',
     description: 'The name of the Legacy edX Discussions app.',
   },
 });

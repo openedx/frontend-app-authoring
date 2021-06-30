@@ -82,11 +82,11 @@ const messages = defineMessages({
   },
   allowAnonymousPostsLabel: {
     id: 'authoring.discussions.builtIn.allowAnonymous.label',
-    defaultMessage: 'Allow Anonymous Discussion Posts',
+    defaultMessage: 'Allow anonymous discussion posts',
   },
   allowAnonymousPostsHelp: {
     id: 'authoring.discussions.builtIn.allowAnonymous.help',
-    defaultMessage: 'Enter true or false. If true, students can create discussion posts that are anonymous to all users.',
+    defaultMessage: 'If enabled, learners can create posts that are anonymous to all users.',
   },
   allowAnonymousPostsPeersLabel: {
     id: 'authoring.discussions.builtIn.allowAnonymousPeers.label',
