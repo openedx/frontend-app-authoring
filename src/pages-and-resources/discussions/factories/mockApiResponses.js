@@ -31,6 +31,7 @@ export const piazzaApiResponse = {
           accessibility: '',
           contact_email: '',
         },
+        messages: [],
       },
       piazza: {
         features: [
@@ -47,6 +48,7 @@ export const piazzaApiResponse = {
           accessibility: '',
           contact_email: '',
         },
+        messages: [],
       },
     },
   },
@@ -98,6 +100,7 @@ export const legacyApiResponse = {
           accessibility: '',
           contact_email: '',
         },
+        messages: [],
       },
       piazza: {
         features: [
@@ -114,6 +117,7 @@ export const legacyApiResponse = {
           accessibility: '',
           contact_email: '',
         },
+        messages: [],
       },
     },
   },
