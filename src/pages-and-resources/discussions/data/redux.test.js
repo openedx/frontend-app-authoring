@@ -51,6 +51,7 @@ const legacyApp = {
     contactEmail: '',
   },
   hasFullSupport: false,
+  messages: [],
 };
 
 const piazzaApp = {
@@ -69,6 +70,7 @@ const piazzaApp = {
     contactEmail: '',
   },
   hasFullSupport: true,
+  messages: [],
 };
 
 let axiosMock;
