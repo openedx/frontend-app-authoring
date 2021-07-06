@@ -36,6 +36,7 @@ function PagesAndResources({ courseId, intl }) {
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     return <></>;
   }
+
   return (
     <PagesAndResourcesProvider courseId={courseId}>
       <main className="container container-mw-md">

@@ -1,9 +1,9 @@
 import { history } from '@edx/frontend-platform';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
-  Card, Icon, IconButton, Badge,
+  Badge, Card, Icon, IconButton, Hyperlink,
 } from '@edx/paragon';
-import { Settings } from '@edx/paragon/icons';
+import { ArrowForward, Settings } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import messages from '../messages';
@@ -28,6 +28,31 @@ function PageCard({
 }) {
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
 
+  const SettingsButton = () => {
+    if (page.legacyLink) {
+      return (
+        <Hyperlink destination={page.legacyLink}>
+          <Icon
+            className="mb-0 mr-1"
+            src={ArrowForward}
+            size="inline"
+            screenReaderText={intl.formatMessage(messages.settings)}
+          />
+        </Hyperlink>
+      );
+    }
+    return (page.allowedOperations.configure || page.allowedOperations.enable) && (
+      <IconButton
+        className="mb-0 mr-1"
+        src={Settings}
+        iconAs={Icon}
+        size="inline"
+        alt={intl.formatMessage(messages.settings)}
+        onClick={() => history.push(`${pagesAndResourcesPath}/${page.id}/settings`)}
+      />
+    );
+  };
+
   return (
     <Card
       className="shadow card"
@@ -37,29 +62,18 @@ function PageCard({
       }}
     >
       <Card.Body className="d-flex flex-column justify-content-between">
-        <div>
-          <Card.Title className="d-flex mb-0 align-items-center justify-content-between">
-            <h4 className="m-0 p-0">{page.name}</h4>
-            {(page.allowedOperations.configure || page.allowedOperations.enable)
-          && (
-            <IconButton
-              className="mb-0 mr-1"
-              src={Settings}
-              iconAs={Icon}
-              size="inline"
-              alt={intl.formatMessage(messages.settings)}
-              onClick={() => history.push(`${pagesAndResourcesPath}/${page.id}/settings`)}
-            />
-          )}
-          </Card.Title>
-          {
-            page.enabled && (
-              <Badge className="py-1" variant="success">
-                {intl.formatMessage(messages.enabled)}
-              </Badge>
-            )
-          }
-        </div>
+        <Card.Title className="d-flex mb-0 align-items-center justify-content-between">
+          <h4 className="m-0 p-0">{page.name}</h4>
+          <SettingsButton />
+        </Card.Title>
+
+        {
+          page.enabled && (
+            <Badge className="py-1" variant="success">
+              {intl.formatMessage(messages.enabled)}
+            </Badge>
+          )
+        }
 
         <Card.Text className="m-0">
           {page.description}
