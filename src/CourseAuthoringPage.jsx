@@ -41,11 +41,11 @@ export default function CourseAuthoringPage({ courseId, children }) {
   );
 
   return (
-    <>
+    <div className="bg-light-200">
       {inProgress ? <Loading /> : AppHeader()}
       {children}
       {!inProgress && <Footer />}
-    </>
+    </div>
   );
 }
 
