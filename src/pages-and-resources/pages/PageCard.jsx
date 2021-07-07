@@ -1,8 +1,6 @@
 import { history } from '@edx/frontend-platform';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import {
-  Button, Card, Icon, IconButton,
-} from '@edx/paragon';
+import { Card, Icon, IconButton } from '@edx/paragon';
 import { Settings } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
@@ -29,10 +27,6 @@ function PageCard({
 }) {
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
 
-  const handleClick = () => {
-    history.push(`${pagesAndResourcesPath}/${page.id}`);
-  };
-
   return (
     <Card
       className="shadow card"
@@ -41,10 +35,11 @@ function PageCard({
         height: '14rem',
       }}
     >
-      <Card.Body className="d-flex flex-column">
-        <Card.Title className="d-flex mb-0 align-items-center justify-content-between">
-          <h4 className="m-0 p-0">{page.name}</h4>
-          {(page.allowedOperations.configure || page.allowedOperations.enable)
+      <Card.Body className="d-flex flex-column justify-content-between">
+        <div>
+          <Card.Title className="d-flex mb-0 align-items-center justify-content-between">
+            <h4 className="m-0 p-0">{page.name}</h4>
+            {(page.allowedOperations.configure || page.allowedOperations.enable)
           && (
             <IconButton
               className="mb-0 mr-1"
@@ -55,19 +50,14 @@ function PageCard({
               onClick={() => history.push(`${pagesAndResourcesPath}/${page.id}/settings`)}
             />
           )}
-        </Card.Title>
+          </Card.Title>
+          <StatusBadge status={page.enabled} />
+        </div>
 
-        <div className="mb-2"><StatusBadge status={page.enabled} /></div>
-
-        <Card.Text className="flex-grow-1 m-0">
+        <Card.Text className="m-0">
           {page.description}
         </Card.Text>
 
-        {(page.allowedOperations.enable && !page.enabled) && (
-          <Button variant="outline-primary" size="sm" onClick={handleClick} className="align-self-end">
-            {intl.formatMessage(messages['enable.button'])}
-          </Button>
-        )}
       </Card.Body>
     </Card>
   );
