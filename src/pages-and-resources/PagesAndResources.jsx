@@ -11,8 +11,6 @@ import messages from './messages';
 import DiscussionsSettings from './discussions';
 
 import PageGrid from './pages/PageGrid';
-import ResourceList from './resources/ResourcesList';
-
 import { fetchCourseApps } from './data/thunks';
 import { useModels } from '../generic/model-store';
 import { getLoadingStatus } from './data/selectors';
@@ -54,7 +52,6 @@ function PagesAndResources({ courseId, intl }) {
         </div>
 
         <PageGrid pages={pages} />
-        <ResourceList />
         <Switch>
           <PageRoute
             path={[
