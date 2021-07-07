@@ -18,6 +18,12 @@ import messages from './messages';
 function LtiConfigForm({
   appConfig, app, onSubmit, intl, formRef, title,
 }) {
+  const ltiAppConfig = {
+    consumerKey: appConfig.consumerKey || '',
+    consumerSecret: appConfig.consumerSecret || '',
+    launchUrl: appConfig.launchUrl || '',
+  };
+
   const dispatch = useDispatch();
   const { externalLinks } = app;
   const {
@@ -28,7 +34,7 @@ function LtiConfigForm({
     touched,
     errors,
   } = useFormik({
-    initialValues: appConfig,
+    initialValues: ltiAppConfig,
     validationSchema: Yup.object().shape({
       consumerKey: Yup.string().required(intl.formatMessage(messages.consumerKeyRequired)),
       consumerSecret: Yup.string().required(intl.formatMessage(messages.consumerSecretRequired)),
