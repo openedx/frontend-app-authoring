@@ -9,9 +9,7 @@ function StatusBadge({ intl, status, label }) {
   return (
     <>
       {label && `${label} `}
-      {status
-        ? <Badge variant="success">{intl.formatMessage(messages.enabled)}</Badge>
-        : <Badge variant="secondary">{intl.formatMessage(messages.disabled)}</Badge>}
+      {status && <Badge className="py-1" variant="success">{intl.formatMessage(messages.enabled)}</Badge>}
     </>
   );
 }
