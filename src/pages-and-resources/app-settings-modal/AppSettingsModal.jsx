@@ -1,18 +1,20 @@
+import React, { useContext, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Button, Form, Hyperlink, ModalLayer, Spinner, TransitionReplace,
+  StatefulButton,
 } from '@edx/paragon';
 import { Formik } from 'formik';
-import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { RequestStatus } from '../../data/constants';
 import FormSwitchGroup from '../../generic/FormSwitchGroup';
 import { useModel } from '../../generic/model-store';
 import StatusBadge from '../../generic/status-badge/StatusBadge';
-import { getLoadingStatus } from '../data/selectors';
+import { getLoadingStatus, getSavingStatus } from '../data/selectors';
 import { updateAppStatus } from '../data/thunks';
+import { updateSavingStatus } from '../data/slice';
 import AppConfigFormDivider from '../discussions/app-config-form/apps/shared/AppConfigFormDivider';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import messages from './messages';
@@ -59,8 +61,18 @@ function AppSettingsModal({
 }) {
   const { courseId } = useContext(PagesAndResourcesContext);
   const loadingStatus = useSelector(getLoadingStatus);
+  const SavingStatus = useSelector(getSavingStatus);
   const appInfo = useModel('courseApps', appId);
   const dispatch = useDispatch();
+  const submitButtonState = SavingStatus === RequestStatus.IN_PROGRESS ? 'pending' : 'default';
+
+  useEffect(() => {
+    if (SavingStatus === RequestStatus.SUCCESSFUL) {
+      dispatch(updateSavingStatus({ status: '' }));
+      onClose();
+    }
+  }, [SavingStatus]);
+
   const handleFormSubmit = (values) => {
     // If the app's enabled/disabled loadingStatus has changed, set that first.
     if (appInfo.enabled !== values.enabled) {
@@ -71,6 +83,7 @@ function AppSettingsModal({
       onSettingsSave();
     }
   };
+
   const learnMoreLink = (
     <Hyperlink
       className="text-primary-500"
@@ -135,9 +148,15 @@ function AppSettingsModal({
                   <Button variant="link" onClick={onClose}>
                     {intl.formatMessage(messages.cancel)}
                   </Button>
-                  <Button type="submit" variant="primary" data-autofocus>
-                    {intl.formatMessage(messages.apply)}
-                  </Button>
+                  <StatefulButton
+                    labels={{
+                      default: intl.formatMessage(messages.apply),
+                      pending: intl.formatMessage(messages.applying),
+                      complete: intl.formatMessage(messages.applied),
+                    }}
+                    state={submitButtonState}
+                    onClick={formikProps.handleSubmit}
+                  />
                 </div>
               </Form>
             )}

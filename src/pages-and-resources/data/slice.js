@@ -7,7 +7,7 @@ const slice = createSlice({
   initialState: {
     courseAppIds: [],
     loadingStatus: RequestStatus.IN_PROGRESS,
-    savingStatus: RequestStatus.SUCCESSFUL,
+    savingStatus: '',
     courseAppsApiStatus: {},
   },
   reducers: {
