@@ -25,7 +25,6 @@ export default function CourseAuthoringPage({ courseId, children }) {
   const courseTitle = courseDetail ? courseDetail.name : courseId;
   const courseAppsApiStatus = useSelector(getCourseAppsApiStatus);
   const inProgress = useSelector(getLoadingStatus) === RequestStatus.IN_PROGRESS;
-  console.log(courseAppsApiStatus);
   if (courseAppsApiStatus === RequestStatus.DENIED) {
     return (
       <PermissionDeniedAlert />
