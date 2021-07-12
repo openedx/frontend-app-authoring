@@ -73,6 +73,7 @@ function AppSettingsModal({
   };
   const learnMoreLink = (
     <Hyperlink
+      className="text-primary-500"
       destination={learnMoreURL}
       target="_blank"
       rel="noreferrer noopener"
@@ -123,7 +124,7 @@ function AppSettingsModal({
                       <StatusBadge status={formikProps.values.enabled} />
                     </>
                   )}
-                  helpText={(<p>{enableAppHelp}<br />{learnMoreLink}</p>)}
+                  helpText={(<p>{enableAppHelp}<br /> <div className="pt-3">{learnMoreLink}</div> </p>)}
                 />
                 <AppSettingsForm formikProps={formikProps}>
                   {children}
@@ -131,10 +132,10 @@ function AppSettingsModal({
                 {formikProps.values.enabled && children
                   && <AppConfigFormDivider marginAdj={{ default: 3, sm: null }} />}
                 <div className="d-flex justify-content-end">
-                  <Button variant="cancel" className="btn btn-link" onClick={onClose}>
+                  <Button variant="link" onClick={onClose}>
                     {intl.formatMessage(messages.cancel)}
                   </Button>
-                  <Button type="submit" variant="success" data-autofocus>
+                  <Button type="submit" variant="primary" data-autofocus>
                     {intl.formatMessage(messages.apply)}
                   </Button>
                 </div>
