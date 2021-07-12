@@ -5,10 +5,6 @@ const messages = defineMessages({
     id: 'course-authoring.pages-resources.heading',
     defaultMessage: 'Pages & Resources',
   },
-  'enable.button': {
-    id: 'course-authoring.pages-resources.enable.button',
-    defaultMessage: 'Enable',
-  },
   'pages.subheading': {
     id: 'course-authoring.pages-resources.pages.subheading',
     defaultMessage: 'Course pages',

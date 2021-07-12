@@ -5,11 +5,6 @@ const messages = defineMessages({
     id: 'course-authoring.badge.enabled',
     defaultMessage: 'Enabled',
   },
-  disabled: {
-    id: 'course-authoring.badge.disabled',
-    defaultMessage: 'Disabled',
-  },
-
 });
 
 export default messages;

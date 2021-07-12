@@ -61,17 +61,17 @@ function AppSettingsModal({
 }) {
   const { courseId } = useContext(PagesAndResourcesContext);
   const loadingStatus = useSelector(getLoadingStatus);
-  const SavingStatus = useSelector(getSavingStatus);
+  const appliedSettingsStatus = useSelector(getSavingStatus);
   const appInfo = useModel('courseApps', appId);
   const dispatch = useDispatch();
-  const submitButtonState = SavingStatus === RequestStatus.IN_PROGRESS ? 'pending' : 'default';
+  const submitButtonState = appliedSettingsStatus === RequestStatus.IN_PROGRESS ? 'pending' : 'default';
 
   useEffect(() => {
-    if (SavingStatus === RequestStatus.SUCCESSFUL) {
+    if (appliedSettingsStatus === RequestStatus.SUCCESSFUL) {
       dispatch(updateSavingStatus({ status: '' }));
       onClose();
     }
-  }, [SavingStatus]);
+  }, [appliedSettingsStatus]);
 
   const handleFormSubmit = (values) => {
     // If the app's enabled/disabled loadingStatus has changed, set that first.
