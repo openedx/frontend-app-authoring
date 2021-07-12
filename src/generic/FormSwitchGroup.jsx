@@ -37,9 +37,11 @@ export default function FormSwitchGroup({
           />
         </div>
         <Form.Text
-          className="mt-0 pr-3"
+          className="mt-0 pr-3 text-gray-700"
+          style={{
+            fontSize: '1.125rem',
+          }}
           id={helpTextId}
-          muted
         >
           {helpText}
         </Form.Text>
