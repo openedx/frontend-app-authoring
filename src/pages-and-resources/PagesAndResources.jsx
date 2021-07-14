@@ -1,11 +1,12 @@
-import React, { useEffect, Suspense } from 'react';
+import React, { useContext, useEffect, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { PageRoute } from '@edx/frontend-platform/react';
+import { PageRoute, AppContext } from '@edx/frontend-platform/react';
 
 import { Switch, useRouteMatch } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { Button, Hyperlink } from '@edx/paragon';
 import messages from './messages';
 import DiscussionsSettings from './discussions';
 
@@ -28,6 +29,10 @@ function PagesAndResources({ courseId, intl }) {
 
   const courseAppIds = useSelector(state => state.pagesAndResources.courseAppIds);
   const loadingStatus = useSelector(getLoadingStatus);
+
+  const { config } = useContext(AppContext);
+  const lmsCourseURL = `${config.LMS_BASE_URL}/courses/${courseId}`;
+
   // Each page here is driven by a course app
   const pages = useModels('courseApps', courseAppIds);
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
@@ -36,7 +41,18 @@ function PagesAndResources({ courseId, intl }) {
   return (
     <PagesAndResourcesProvider courseId={courseId}>
       <main className="container container-mw-md">
-        <h3 className="mt-5 mb-5">{intl.formatMessage(messages.heading)}</h3>
+        <div className="d-flex justify-content-between my-5">
+          <h3>{intl.formatMessage(messages.heading)}</h3>
+          <Hyperlink
+            destination={lmsCourseURL}
+            target="_blank"
+            rel="noopener noreferrer"
+            showLaunchIcon={false}
+          >
+            <Button variant="outline-primary"> {intl.formatMessage(messages.viewLiveButton)}</Button>
+          </Hyperlink>
+        </div>
+
         <PageGrid pages={pages} />
         <ResourceList />
         <Switch>
