@@ -41,6 +41,10 @@ const messages = defineMessages({
     id: 'course-authoring.pages-resources.resources.settings.button',
     defaultMessage: 'settings',
   },
+  viewLiveButton: {
+    id: 'course-authoring.pages-resources.viewLive.button',
+    defaultMessage: 'View Live',
+  },
 });
 
 export default messages;
