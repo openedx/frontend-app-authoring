@@ -142,7 +142,7 @@ function AppSettingsModal({
                       }
                     </>
                   )}
-                  helpText={(<p>{enableAppHelp}<br /> <div className="pt-3">{learnMoreLink}</div> </p>)}
+                  helpText={(<p>{enableAppHelp}<br /> <span className="pt-3">{learnMoreLink}</span> </p>)}
                 />
                 <AppSettingsForm formikProps={formikProps}>
                   {children}
