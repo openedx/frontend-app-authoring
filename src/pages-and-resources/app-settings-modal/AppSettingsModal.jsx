@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Button, Form, Hyperlink, ModalLayer, Spinner, TransitionReplace,
-  StatefulButton,
+  StatefulButton, Badge,
 } from '@edx/paragon';
 import { Formik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +11,6 @@ import * as Yup from 'yup';
 import { RequestStatus } from '../../data/constants';
 import FormSwitchGroup from '../../generic/FormSwitchGroup';
 import { useModel } from '../../generic/model-store';
-import StatusBadge from '../../generic/status-badge/StatusBadge';
 import { getLoadingStatus, getSavingStatus } from '../data/selectors';
 import { updateAppStatus } from '../data/thunks';
 import { updateSavingStatus } from '../data/slice';
@@ -61,17 +60,17 @@ function AppSettingsModal({
 }) {
   const { courseId } = useContext(PagesAndResourcesContext);
   const loadingStatus = useSelector(getLoadingStatus);
-  const appliedSettingsStatus = useSelector(getSavingStatus);
+  const updateSettingsRequestStatus = useSelector(getSavingStatus);
   const appInfo = useModel('courseApps', appId);
   const dispatch = useDispatch();
-  const submitButtonState = appliedSettingsStatus === RequestStatus.IN_PROGRESS ? 'pending' : 'default';
+  const submitButtonState = updateSettingsRequestStatus === RequestStatus.IN_PROGRESS ? 'pending' : 'default';
 
   useEffect(() => {
-    if (appliedSettingsStatus === RequestStatus.SUCCESSFUL) {
+    if (updateSettingsRequestStatus === RequestStatus.SUCCESSFUL) {
       dispatch(updateSavingStatus({ status: '' }));
       onClose();
     }
-  }, [appliedSettingsStatus]);
+  }, [updateSettingsRequestStatus]);
 
   const handleFormSubmit = (values) => {
     // If the app's enabled/disabled loadingStatus has changed, set that first.
@@ -134,7 +133,13 @@ function AppSettingsModal({
                   label={(
                     <>
                       {enableAppLabel}&nbsp;
-                      <StatusBadge status={formikProps.values.enabled} />
+                      {
+                        formikProps.values.enabled && (
+                          <Badge className="py-1" variant="success">
+                            {intl.formatMessage(messages.enabled)}
+                          </Badge>
+                        )
+                      }
                     </>
                   )}
                   helpText={(<p>{enableAppHelp}<br /> <div className="pt-3">{learnMoreLink}</div> </p>)}

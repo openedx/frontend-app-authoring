@@ -43,9 +43,9 @@ function LtiConfigForm({
     onSubmit,
   });
 
-  const isInvalidConsumerKey = touched.consumerKey && errors.consumerKey;
-  const isInvalidConsumerSecret = touched.consumerSecret && errors.consumerSecret;
-  const isInvalidLaunchUrl = touched.launchUrl && errors.launchUrl;
+  const isInvalidConsumerKey = Boolean(touched.consumerKey && errors.consumerKey);
+  const isInvalidConsumerSecret = Boolean(touched.consumerSecret && errors.consumerSecret);
+  const isInvalidLaunchUrl = Boolean(touched.launchUrl && errors.launchUrl);
 
   useEffect(() => {
     dispatch(updateValidationStatus({ hasError: Object.keys(errors).length > 0 }));
@@ -113,9 +113,9 @@ LtiConfigForm.propTypes = {
     }).isRequired,
   }).isRequired,
   appConfig: PropTypes.shape({
-    consumerKey: PropTypes.string.isRequired,
-    consumerSecret: PropTypes.string.isRequired,
-    launchUrl: PropTypes.string.isRequired,
+    consumerKey: PropTypes.string,
+    consumerSecret: PropTypes.string,
+    launchUrl: PropTypes.string,
   }),
   intl: intlShape.isRequired,
   onSubmit: PropTypes.func.isRequired,
