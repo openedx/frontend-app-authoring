@@ -18,6 +18,12 @@ import messages from './messages';
 function LtiConfigForm({
   appConfig, app, onSubmit, intl, formRef, title,
 }) {
+  const ltiAppConfig = {
+    consumerKey: appConfig.consumerKey || '',
+    consumerSecret: appConfig.consumerSecret || '',
+    launchUrl: appConfig.launchUrl || '',
+  };
+
   const dispatch = useDispatch();
   const { externalLinks } = app;
   const {
@@ -28,7 +34,7 @@ function LtiConfigForm({
     touched,
     errors,
   } = useFormik({
-    initialValues: appConfig,
+    initialValues: ltiAppConfig,
     validationSchema: Yup.object().shape({
       consumerKey: Yup.string().required(intl.formatMessage(messages.consumerKeyRequired)),
       consumerSecret: Yup.string().required(intl.formatMessage(messages.consumerSecretRequired)),
@@ -37,9 +43,9 @@ function LtiConfigForm({
     onSubmit,
   });
 
-  const isInvalidConsumerKey = touched.consumerKey && errors.consumerKey;
-  const isInvalidConsumerSecret = touched.consumerSecret && errors.consumerSecret;
-  const isInvalidLaunchUrl = touched.launchUrl && errors.launchUrl;
+  const isInvalidConsumerKey = Boolean(touched.consumerKey && errors.consumerKey);
+  const isInvalidConsumerSecret = Boolean(touched.consumerSecret && errors.consumerSecret);
+  const isInvalidLaunchUrl = Boolean(touched.launchUrl && errors.launchUrl);
 
   useEffect(() => {
     dispatch(updateValidationStatus({ hasError: Object.keys(errors).length > 0 }));
@@ -107,9 +113,9 @@ LtiConfigForm.propTypes = {
     }).isRequired,
   }).isRequired,
   appConfig: PropTypes.shape({
-    consumerKey: PropTypes.string.isRequired,
-    consumerSecret: PropTypes.string.isRequired,
-    launchUrl: PropTypes.string.isRequired,
+    consumerKey: PropTypes.string,
+    consumerSecret: PropTypes.string,
+    launchUrl: PropTypes.string,
   }),
   intl: intlShape.isRequired,
   onSubmit: PropTypes.func.isRequired,

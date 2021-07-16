@@ -29,7 +29,6 @@ const messages = defineMessages({
     id: 'course-authoring.pages-resources.app-settings-modal.badge.disabled',
     defaultMessage: 'Disabled',
   },
-
 });
 
 export default messages;
