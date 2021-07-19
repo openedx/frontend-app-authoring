@@ -8,7 +8,7 @@ import {
 import { Formik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { useMediaQuery } from 'react-responsive/src';
+import { useMediaQuery } from 'react-responsive';
 import { RequestStatus } from '../../data/constants';
 import FormSwitchGroup from '../../generic/FormSwitchGroup';
 import { useModel } from '../../generic/model-store';
