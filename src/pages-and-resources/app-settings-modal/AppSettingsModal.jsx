@@ -8,7 +8,6 @@ import {
 import { Formik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { useMediaQuery } from 'react-responsive';
 import { RequestStatus } from '../../data/constants';
 import FormSwitchGroup from '../../generic/FormSwitchGroup';
 import { useModel } from '../../generic/model-store';
@@ -18,6 +17,7 @@ import { updateSavingStatus } from '../data/slice';
 import AppConfigFormDivider from '../discussions/app-config-form/apps/shared/AppConfigFormDivider';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import messages from './messages';
+import { useIsMobile } from '../../utils';
 
 function AppSettingsForm({ formikProps, children }) {
   return children && (
@@ -65,7 +65,7 @@ function AppSettingsModal({
   const appInfo = useModel('courseApps', appId);
   const dispatch = useDispatch();
   const submitButtonState = updateSettingsRequestStatus === RequestStatus.IN_PROGRESS ? 'pending' : 'default';
-  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 768px)' });
+  const isTabletOrMobile = useIsMobile();
   const modalVariant = isTabletOrMobile ? 'dark' : 'default';
 
   useEffect(() => {

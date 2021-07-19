@@ -9,7 +9,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { getAppsUrl } from '../../../data/api';
 import { fetchApps } from '../../../data/thunks';
 import initializeStore from '../../../../../store';
-import executeThunk from '../../../../../utils';
+import { executeThunk } from '../../../../../utils';
 import {
   legacyApiResponse,
 } from '../../../factories/mockApiResponses';

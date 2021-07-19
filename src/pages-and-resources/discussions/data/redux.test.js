@@ -10,7 +10,7 @@ import {
 import { fetchApps, saveAppConfig } from './thunks';
 import { LOADED } from '../../../data/slice';
 import { legacyApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
-import executeThunk from '../../../utils';
+import { executeThunk } from '../../../utils';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const pagesAndResourcesPath = `/course/${courseId}/pages-and-resources`;
