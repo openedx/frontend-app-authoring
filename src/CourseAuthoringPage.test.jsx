@@ -10,7 +10,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import initializeStore from './store';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import PagesAndResources from './pages-and-resources/PagesAndResources';
-import executeThunk from './utils';
+import { executeThunk } from './utils';
 import { fetchCourseApps } from './pages-and-resources/data/thunks';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';

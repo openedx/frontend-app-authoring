@@ -13,7 +13,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { Context as ResponsiveContext } from 'react-responsive';
 
 import initializeStore from '../../../store';
-import executeThunk from '../../../utils';
+import { executeThunk } from '../../../utils';
 import { getAppsUrl } from '../data/api';
 import { fetchApps } from '../data/thunks';
 import { emptyAppApiResponse, legacyApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';

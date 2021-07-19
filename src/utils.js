@@ -1,6 +1,10 @@
-const executeThunk = async (thunk, dispatch, getState) => {
+import { useMediaQuery } from 'react-responsive';
+
+export const executeThunk = async (thunk, dispatch, getState) => {
   await thunk(dispatch, getState);
   await new Promise(setImmediate);
 };
 
-export default executeThunk;
+export function useIsMobile() {
+  return useMediaQuery({ query: '(max-width: 768px)' });
+}
