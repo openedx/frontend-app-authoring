@@ -101,42 +101,43 @@ describe('DiscussionTopics', () => {
     expect(queryAllByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960')).toHaveLength(1);
   });
 
-  test('renders title', async () => {
+  test('renders page title', async () => {
     await mockStore(legacyApiResponse);
     createComponent(appConfig);
 
-    expect(container.querySelector('h5')).toHaveTextContent(messages.discussionTopics.defaultMessage);
+    expect(queryByText(container, messages.discussionTopics.defaultMessage)).toBeInTheDocument();
   });
 
-  test('renders label text', async () => {
+  test('renders discussion topic label', async () => {
     await mockStore(legacyApiResponse);
     createComponent(appConfig);
 
-    expect(container.querySelector('label')).toHaveTextContent(messages.discussionTopicsLabel.defaultMessage);
+    expect(queryByText(container, messages.discussionTopicsLabel.defaultMessage)).toBeInTheDocument();
   });
 
   test('renders helping text', async () => {
     await mockStore(legacyApiResponse);
     createComponent(appConfig);
 
-    expect(queryByText(container, `${messages.discussionTopicsHelp.defaultMessage}`)).toBeInTheDocument();
+    expect(queryByText(container, messages.discussionTopicsHelp.defaultMessage)).toBeInTheDocument();
   });
 
-  test('renders a Add topic button', async () => {
+  test('add topic button is rendered correctly', async () => {
     await mockStore(legacyApiResponse);
     createComponent(appConfig);
 
-    expect(queryByText(container, `${messages.addTopicButton.defaultMessage}`)).toBeInTheDocument();
+    expect(queryByText(container, messages.addTopicButton.defaultMessage)).toBeInTheDocument();
   });
 
   test('calls "onClick" when add topic button click', async () => {
     await mockStore(legacyApiResponse);
     createComponent(appConfig);
 
-    const addTopicButton = queryByText(container, `${messages.addTopicButton.defaultMessage}`);
-    fireEvent.click(addTopicButton);
+    const addTopicButton = queryByText(container, messages.addTopicButton.defaultMessage);
 
-    expect(queryByText(container, `${messages.configureAdditionalTopic.defaultMessage}`)).toBeInTheDocument();
+    expect(queryByText(container, messages.configureAdditionalTopic.defaultMessage)).not.toBeInTheDocument();
+    fireEvent.click(addTopicButton);
+    expect(queryByText(container, messages.configureAdditionalTopic.defaultMessage)).toBeInTheDocument();
   });
 
   test('updates discussion topic name', async () => {

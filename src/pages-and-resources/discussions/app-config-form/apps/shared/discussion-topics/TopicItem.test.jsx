@@ -6,7 +6,6 @@ import {
   queryAllByTestId,
   queryByTestId,
   queryByText,
-  waitForElementToBeRemoved,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -165,23 +164,23 @@ describe('TopicItem', () => {
     });
 
     test('when click on Delete topic button', async () => {
-      expect(queryAllByText(container, `${messages.discussionTopicDeletionLabel.defaultMessage}`)).toHaveLength(1);
+      expect(queryAllByText(container, messages.discussionTopicDeletionLabel.defaultMessage)).toHaveLength(1);
     });
 
     test('with title text', async () => {
-      expect(queryByText(container, `${messages.discussionTopicDeletionLabel.defaultMessage}`)).toBeInTheDocument();
+      expect(queryByText(container, messages.discussionTopicDeletionLabel.defaultMessage)).toBeInTheDocument();
     });
 
     test('with helping text', async () => {
-      expect(queryByText(container, `${messages.discussionTopicDeletionHelp.defaultMessage}`)).toBeInTheDocument();
+      expect(queryByText(container, messages.discussionTopicDeletionHelp.defaultMessage)).toBeInTheDocument();
     });
 
     test('with a delete button', async () => {
-      expect(queryByText(container, `${messages.deleteButton.defaultMessage}`)).toBeInTheDocument();
+      expect(queryByText(container, messages.deleteButton.defaultMessage)).toBeInTheDocument();
     });
 
     test('with a cancel button', async () => {
-      expect(queryByText(container, `${messages.cancelButton.defaultMessage}`)).toBeInTheDocument();
+      expect(queryByText(container, messages.cancelButton.defaultMessage)).toBeInTheDocument();
     });
   });
 
@@ -193,23 +192,6 @@ describe('TopicItem', () => {
     userEvent.click(queryByLabelText(topicCard, 'Expand'));
     topicCard.querySelector('input').focus();
 
-    expect(queryByText(topicCard, 'Choose a unique name for your topic')).toBeInTheDocument();
-  });
-
-  test('No errors on field when passing valid topic name', async () => {
-    await mockStore(legacyApiResponse);
-    createComponent(additionalTopic);
-
-    const topicCard = queryByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960');
-    userEvent.click(queryByLabelText(topicCard, 'Expand'));
-    const topicInput = topicCard.querySelector('input');
-    topicInput.focus();
-    topicInput.blur();
-    await waitForElementToBeRemoved(queryByText(topicCard, 'Choose a unique name for your topic'));
-    const duplicateError = queryByText(topicCard, 'It looks like this name is already in use');
-    const Requirederror = queryByText(topicCard, 'Topic name is a required field');
-
-    expect(Requirederror).not.toBeInTheDocument();
-    expect(duplicateError).not.toBeInTheDocument();
+    expect(queryByText(topicCard, messages.addTopicHelpText.defaultMessage)).toBeInTheDocument();
   });
 });
