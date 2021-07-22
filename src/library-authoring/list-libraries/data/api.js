@@ -5,15 +5,7 @@ import { LIBRARY_TYPES, unpackLibraryKey } from '../../common';
 
 ensureConfig(['STUDIO_BASE_URL'], 'library API service');
 
-export async function getOrgList() {
-  const client = getAuthenticatedHttpClient();
-  const baseUrl = getConfig().STUDIO_BASE_URL;
-  const response = await client.get(`${baseUrl}/organizations`);
-
-  return response.data;
-}
-
-export async function getLibraryList(params) {
+export async function getLibraryList(params) { // eslint-disable-line import/prefer-default-export
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;
   const isLegacyLibraryType = params.type === LIBRARY_TYPES.LEGACY;

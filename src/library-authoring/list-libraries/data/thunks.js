@@ -1,4 +1,5 @@
 import { logError } from '@edx/frontend-platform/logging';
+import { getOrganizations } from '../../common';
 import * as api from './api';
 import { libraryListActions as actions } from './slice';
 
@@ -7,7 +8,7 @@ const fetchLibraryList = ({ params }) => async (dispatch) => {
     dispatch(actions.libraryListRequest());
     const [libraries, orgs] = await Promise.all([
       api.getLibraryList(params),
-      api.getOrgList(),
+      getOrganizations(),
     ]);
     dispatch(actions.libraryListSuccess({ libraries, orgs }));
   } catch (error) {

@@ -32,13 +32,24 @@ import {
 // values which are state for interacting with that block.
 const toBlockInfo = (current, value) => ({ ...current, [value.id]: blockStateFactory(value) });
 
+const paginationParams = {
+  page: 1,
+  page_size: 20,
+};
+
 const genState = (library, blocks = []) => (
   {
     storeOptions: {
       preloadedState: {
         [STORE_NAMES.AUTHORING]: {
           library: { value: library, status: LOADING_STATUS.LOADED },
-          blocks: { value: blocks, status: LOADING_STATUS.LOADED },
+          blocks: {
+            status: LOADING_STATUS.LOADED,
+            value: {
+              data: blocks,
+              count: blocks.length,
+            },
+          },
           ltiUrlClipboard: { value: { blockId: null, lti_url: null }, status: LOADING_STATUS.STANDBY },
         },
         [STORE_NAMES.BLOCKS]: {
@@ -177,6 +188,9 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
         block_type: VIDEO_TYPE.block_type,
         definition_id: expect.any(String),
       },
+      query: '',
+      types: [],
+      paginationParams,
     });
   });
 
@@ -197,6 +211,9 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
         block_type: 'test',
         definition_id: expect.any(String),
       },
+      query: '',
+      types: [],
+      paginationParams,
     }));
   });
 
@@ -215,6 +232,9 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
           block_type: blockDef.block_type,
           definition_id: expect.any(String),
         },
+        query: '',
+        types: [],
+        paginationParams,
       });
     });
   });
@@ -227,7 +247,10 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
       fireEvent.change(search, { target: { value: 'boop' } });
     });
     await waitFor(() => expect(searchLibrary.fn).toHaveBeenCalledWith({
-      libraryId: library.id, query: 'boop', types: [],
+      libraryId: library.id,
+      query: 'boop',
+      types: [],
+      paginationParams,
     }));
   });
 
@@ -239,7 +262,10 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
       fireEvent.change(filter, { target: { value: 'html' } });
     });
     await waitFor(() => expect(searchLibrary.fn).toHaveBeenCalledWith({
-      libraryId: library.id, query: '', types: ['html'],
+      libraryId: library.id,
+      query: '',
+      types: ['html'],
+      paginationParams,
     }));
   });
 
@@ -257,7 +283,10 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
       fireEvent.change(filter, { target: { value: '^' } });
     });
     await waitFor(() => expect(searchLibrary.fn).toHaveBeenCalledWith({
-      libraryId: library.id, query: '', types: ['squirrel', 'fox'],
+      libraryId: library.id,
+      query: '',
+      types: ['squirrel', 'fox'],
+      paginationParams,
     }));
   });
 
@@ -272,7 +301,10 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
     const library = libraryFactory({ has_unpublished_changes: true });
     await render(library, genState(library));
     screen.getByText('Discard changes').click();
-    expect(revertLibraryChanges.fn).toHaveBeenCalledWith({ libraryId: library.id });
+    expect(revertLibraryChanges.fn).toHaveBeenCalledWith({
+      libraryId: library.id,
+      paginationParams,
+    });
   });
 
   it('Deletes a block', async () => {

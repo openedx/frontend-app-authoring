@@ -4,7 +4,7 @@ import { injectIntl } from '@edx/frontend-platform/i18n';
 import { LibraryListPage } from '../LibraryListPage';
 import { libraryListInitialState } from '../data';
 import { LOADING_STATUS } from '../../common';
-import { ctxRender, ctxMount } from '../../common/specs/helpers';
+import { ctxMount } from '../../common/specs/helpers';
 
 const InjectedLibraryListPage = injectIntl(LibraryListPage);
 
@@ -22,11 +22,19 @@ describe('list-libraries/LibraryListPage.jsx', () => {
   });
 
   it('renders library list page without error', () => {
-    ctxRender(<InjectedLibraryListPage {...props} />);
+    ctxMount(
+      <BrowserRouter>
+        <InjectedLibraryListPage {...props} />
+      </BrowserRouter>,
+    );
   });
 
   it('fetches library list on mount', () => {
-    ctxRender(<InjectedLibraryListPage {...props} />);
+    ctxMount(
+      <BrowserRouter>
+        <InjectedLibraryListPage {...props} />
+      </BrowserRouter>,
+    );
 
     expect(mockLibraryFetcher).toHaveBeenCalledWith({
       params: {
@@ -40,9 +48,13 @@ describe('list-libraries/LibraryListPage.jsx', () => {
   });
 
   it('shows no pagination for empty library list', () => {
-    const { container } = ctxRender(<InjectedLibraryListPage {...props} />);
+    const container = ctxMount(
+      <BrowserRouter>
+        <InjectedLibraryListPage {...props} />
+      </BrowserRouter>,
+    );
 
-    expect(container.querySelector('.library-list-pagination')).toBeNull();
+    expect(container.find('.library-list-pagination').length).toBe(0);
   });
 
   it('Paginates on big library list', () => {

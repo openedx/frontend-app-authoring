@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import {
+  courseImportReducer,
   libraryBlockReducer,
   libraryAuthoringReducer,
   libraryEditReducer,
@@ -15,6 +16,7 @@ export const buildStore = (overrides = {}) => configureStore({
     [STORE_NAMES.AUTHORING]: libraryAuthoringReducer,
     [STORE_NAMES.EDIT]: libraryEditReducer,
     [STORE_NAMES.CREATE]: libraryCreateReducer,
+    [STORE_NAMES.COURSE_IMPORT]: courseImportReducer,
     [STORE_NAMES.LIST]: libraryListReducer,
     [STORE_NAMES.ACCESS]: libraryAccessReducer,
   },

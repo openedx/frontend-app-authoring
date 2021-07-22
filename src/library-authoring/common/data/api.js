@@ -10,3 +10,11 @@ export const getXBlockHandlerUrl = async (blockId, viewSystem, handlerName) => {
 
   return response.data.handler_url;
 };
+
+export const getOrganizations = async () => {
+  const client = getAuthenticatedHttpClient();
+  const baseUrl = getConfig().STUDIO_BASE_URL;
+
+  const response = await client.get(`${baseUrl}/organizations`);
+  return response.data;
+};

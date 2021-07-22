@@ -55,6 +55,12 @@
       margin-bottom: 0;
     }
 
+    .library-item.no-hover-bg {
+      &:hover {
+        background: none;
+      }
+    }
+
     .library-item {
       box-sizing: border-box;
       width: 100%;

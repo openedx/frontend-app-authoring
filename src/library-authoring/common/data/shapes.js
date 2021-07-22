@@ -47,3 +47,13 @@ export const paginated = (dataShape) => PropTypes.shape({
   data: PropTypes.arrayOf(dataShape),
   count: PropTypes.number,
 });
+
+export const paginationParamsShape = PropTypes.shape({
+  page: PropTypes.number,
+  page_size: PropTypes.number,
+});
+
+export const legacyFilterParamsShape = PropTypes.shape({
+  org: PropTypes.string,
+  search_term: PropTypes.string,
+});
