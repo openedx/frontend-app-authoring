@@ -19,7 +19,7 @@ import TopicItem from './TopicItem';
 import initializeStore from '../../../../../../store';
 import { getAppsUrl } from '../../../../data/api';
 import { fetchApps } from '../../../../data/thunks';
-import executeThunk from '../../../../../../utils';
+import { executeThunk } from '../../../../../../utils';
 import { legacyApiResponse } from '../../../../factories/mockApiResponses';
 import LegacyConfigFormProvider from '../../legacy/LegacyConfigFormProvider';
 import messages from '../messages';
