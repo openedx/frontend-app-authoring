@@ -25,18 +25,11 @@ import LegacyConfigFormProvider from '../../legacy/LegacyConfigFormProvider';
 import messages from '../messages';
 
 const appConfig = {
-  id: 'legacy',
-  divideByCohorts: false,
-  divideCourseTopicsByCohorts: false,
   discussionTopics: [
     { name: 'General', id: 'course' },
     { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
   ],
   divideDiscussionIds: [],
-  allowAnonymousPosts: false,
-  allowAnonymousPostsPeers: false,
-  allowDivisionByUnit: false,
-  blackoutDates: '[]',
 };
 
 const generalTopic = {
@@ -61,7 +54,6 @@ const contextValue = {
     { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
   ],
   setValidDiscussionTopics: jest.fn(),
-  discussionTopicErrors: [false, false],
 };
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
@@ -134,8 +126,8 @@ describe('TopicItem', () => {
     const generalTopicNode = queryByTestId(container, 'course');
     userEvent.click(queryByLabelText(generalTopicNode, 'Expand'));
 
-    expect(generalTopicNode.querySelector('button[aria-label="Collapse"]')).toBeInTheDocument();
     expect(generalTopicNode.querySelector('button[aria-label="Expand"]')).not.toBeInTheDocument();
+    expect(generalTopicNode.querySelector('button[aria-label="Collapse"]')).toBeInTheDocument();
     expect(generalTopicNode.querySelector('button[aria-label="Delete Topic"]')).not.toBeInTheDocument();
     expect(generalTopicNode.querySelector('input')).toBeInTheDocument();
   });
@@ -153,35 +145,20 @@ describe('TopicItem', () => {
     expect(topicCard.querySelector('input')).toBeInTheDocument();
   });
 
-  describe('renders delete topic popup', () => {
-    beforeEach(async () => {
-      await mockStore(legacyApiResponse);
-      createComponent(additionalTopic);
+  test('renders delete topic popup with title, label, helping text, a delete and a cancel button', async () => {
+    await mockStore(legacyApiResponse);
+    createComponent(additionalTopic);
 
-      const topicCard = queryByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960');
-      userEvent.click(queryByLabelText(topicCard, 'Expand'));
-      userEvent.click(queryByLabelText(topicCard, 'Delete Topic'));
-    });
+    const topicCard = queryByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960');
+    userEvent.click(queryByLabelText(topicCard, 'Expand'));
+    userEvent.click(queryByLabelText(topicCard, 'Delete Topic'));
 
-    test('when click on Delete topic button', async () => {
-      expect(queryAllByText(container, messages.discussionTopicDeletionLabel.defaultMessage)).toHaveLength(1);
-    });
-
-    test('with title text', async () => {
-      expect(queryByText(container, messages.discussionTopicDeletionLabel.defaultMessage)).toBeInTheDocument();
-    });
-
-    test('with helping text', async () => {
-      expect(queryByText(container, messages.discussionTopicDeletionHelp.defaultMessage)).toBeInTheDocument();
-    });
-
-    test('with a delete button', async () => {
-      expect(queryByText(container, messages.deleteButton.defaultMessage)).toBeInTheDocument();
-    });
-
-    test('with a cancel button', async () => {
-      expect(queryByText(container, messages.cancelButton.defaultMessage)).toBeInTheDocument();
-    });
+    expect(queryAllByText(container, messages.discussionTopicDeletionLabel.defaultMessage)).toHaveLength(1);
+    expect(queryByText(container, messages.discussionTopicDeletionLabel.defaultMessage)).toBeInTheDocument();
+    expect(queryByText(container, messages.discussionTopicDeletionHelp.defaultMessage)).toBeInTheDocument();
+    expect(queryByText(container, messages.discussionTopicDeletionHelp.defaultMessage)).toBeInTheDocument();
+    expect(queryByText(container, messages.deleteButton.defaultMessage)).toBeInTheDocument();
+    expect(queryByText(container, messages.cancelButton.defaultMessage)).toBeInTheDocument();
   });
 
   test('shows help text on field focus', async () => {

@@ -93,7 +93,7 @@ describe('DiscussionTopics', () => {
     await executeThunk(fetchApps(courseId), store.dispatch);
   };
 
-  test('displays a collapsible card for each discussion topic', async () => {
+  test('renders each discussion topic correctly', async () => {
     await mockStore(legacyApiResponse);
     createComponent(appConfig);
 
@@ -101,24 +101,12 @@ describe('DiscussionTopics', () => {
     expect(queryAllByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960')).toHaveLength(1);
   });
 
-  test('renders page title', async () => {
+  test('renders discussion topic heading, label and helping text', async () => {
     await mockStore(legacyApiResponse);
     createComponent(appConfig);
 
     expect(queryByText(container, messages.discussionTopics.defaultMessage)).toBeInTheDocument();
-  });
-
-  test('renders discussion topic label', async () => {
-    await mockStore(legacyApiResponse);
-    createComponent(appConfig);
-
     expect(queryByText(container, messages.discussionTopicsLabel.defaultMessage)).toBeInTheDocument();
-  });
-
-  test('renders helping text', async () => {
-    await mockStore(legacyApiResponse);
-    createComponent(appConfig);
-
     expect(queryByText(container, messages.discussionTopicsHelp.defaultMessage)).toBeInTheDocument();
   });
 
@@ -126,14 +114,14 @@ describe('DiscussionTopics', () => {
     await mockStore(legacyApiResponse);
     createComponent(appConfig);
 
-    expect(queryByText(container, messages.addTopicButton.defaultMessage)).toBeInTheDocument();
+    expect(queryByText(container, messages.addTopicButton.defaultMessage, { selector: 'button' })).toBeInTheDocument();
   });
 
-  test('calls "onClick" when add topic button click', async () => {
+  test('calls "onClick" callback when add topic button is clicked', async () => {
     await mockStore(legacyApiResponse);
     createComponent(appConfig);
 
-    const addTopicButton = queryByText(container, messages.addTopicButton.defaultMessage);
+    const addTopicButton = queryByText(container, messages.addTopicButton.defaultMessage, { selector: 'button' });
 
     expect(queryByText(container, messages.configureAdditionalTopic.defaultMessage)).not.toBeInTheDocument();
     fireEvent.click(addTopicButton);
