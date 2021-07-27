@@ -23,6 +23,7 @@ import {
   legacyApiResponse,
 } from '../../../factories/mockApiResponses';
 import LegacyConfigForm from './LegacyConfigForm';
+import messages from '../shared/messages';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const defaultAppConfig = {
@@ -213,13 +214,15 @@ describe('LegacyConfigForm', () => {
   };
 
   const assertTopicNameRequiredValidation = (topicCard, expectExists = true) => {
-    const error = queryByText(topicCard, 'Topic name is a required field');
+    const error = queryByText(topicCard, messages.discussionTopicRequired.defaultMessage);
     if (expectExists) { expect(error).toBeInTheDocument(); } else { expect(error).not.toBeInTheDocument(); }
   };
 
   const assertDuplicateTopicNameValidation = async (topicCard, waitForBlur = true, expectExists = true) => {
-    if (waitForBlur) { await waitForElementToBeRemoved(queryByText(topicCard, 'Choose a unique name for your topic')); }
-    const error = queryByText(topicCard, 'It looks like this name is already in use');
+    if (waitForBlur) {
+      await waitForElementToBeRemoved(queryByText(topicCard, messages.addTopicHelpText.defaultMessage));
+    }
+    const error = queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage);
     if (expectExists) { expect(error).toBeInTheDocument(); } else { expect(error).not.toBeInTheDocument(); }
   };
 
@@ -229,7 +232,7 @@ describe('LegacyConfigForm', () => {
       createComponent(defaultAppConfig);
 
       const topicCard = await updateTopicName('13f106c6-6735-4e84-b097-0456cff55960', '');
-      await waitForElementToBeRemoved(queryByText(topicCard, 'Choose a unique name for your topic'));
+      await waitForElementToBeRemoved(queryByText(topicCard, messages.addTopicHelpText.defaultMessage));
       assertTopicNameRequiredValidation(topicCard);
     });
 
@@ -271,7 +274,9 @@ describe('LegacyConfigForm', () => {
       userEvent.type(duplicateTopicInput, 'valid');
       duplicateTopicInput.blur();
 
-      await waitForElementToBeRemoved(queryByText(duplicateTopicCard, 'It looks like this name is already in use'));
+      await waitForElementToBeRemoved(
+        queryByText(duplicateTopicCard, messages.discussionTopicNameAlreadyExist.defaultMessage),
+      );
       await assertDuplicateTopicNameValidation(duplicateTopicCard, false, false);
     });
 
@@ -279,12 +284,16 @@ describe('LegacyConfigForm', () => {
       await assertDuplicateTopicNameValidation(topicCard);
       await assertDuplicateTopicNameValidation(duplicateTopicCard, false);
 
-      userEvent.click(queryByLabelText(duplicateTopicCard, 'Delete Topic', { selector: 'button' }));
-      userEvent.click(queryByText(container, 'Delete', { selector: 'button' }));
-      await waitForElementToBeRemoved(queryByText(topicCard, 'It looks like this name is already in use'));
+      userEvent.click(
+        queryByLabelText(duplicateTopicCard, messages.deleteAltText.defaultMessage, { selector: 'button' }),
+      );
+      userEvent.click(
+        queryByText(container, messages.deleteButton.defaultMessage, { selector: 'button' }),
+      );
+      await waitForElementToBeRemoved(queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage));
 
       expect(duplicateTopicCard).not.toBeInTheDocument();
-      expect(queryByText(topicCard, 'It looks like this name is already in use')).not.toBeInTheDocument();
+      expect(queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage)).not.toBeInTheDocument();
     });
   });
 });
