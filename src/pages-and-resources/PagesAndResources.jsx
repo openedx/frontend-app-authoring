@@ -40,15 +40,15 @@ function PagesAndResources({ courseId, intl }) {
   return (
     <PagesAndResourcesProvider courseId={courseId}>
       <main className="container container-mw-md">
-        <div className="d-flex justify-content-between my-5">
-          <h3>{intl.formatMessage(messages.heading)}</h3>
+        <div className="d-flex justify-content-between my-5" style={{ 'align-items': 'center' }}>
+          <h3 className="m-0">{intl.formatMessage(messages.heading)}</h3>
           <Hyperlink
             destination={lmsCourseURL}
             target="_blank"
             rel="noopener noreferrer"
             showLaunchIcon={false}
           >
-            <Button variant="outline-primary"> {intl.formatMessage(messages.viewLiveButton)}</Button>
+            <Button variant="outline-primary" className="p-10"> {intl.formatMessage(messages.viewLiveButton)}</Button>
           </Hyperlink>
         </div>
 
