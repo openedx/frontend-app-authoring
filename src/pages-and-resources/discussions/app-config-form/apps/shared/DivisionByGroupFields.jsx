@@ -2,6 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Form, TransitionReplace } from '@edx/paragon';
 import { FieldArray, useFormikContext } from 'formik';
+import _ from 'lodash';
 import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from './messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
@@ -23,20 +24,9 @@ const DivisionByGroupFields = ({ intl }) => {
   } = appConfig;
 
   useEffect(() => {
-    const discussionTopicIds = discussionTopics.map(
-      (topic) => topic.id,
-    );
-    const divideCourseTopicsByCohortsOff = (
-      discussionTopicIds.length === divideDiscussionIds.length
-      && discussionTopicIds.every((topicId) => divideDiscussionIds.includes(topicId))
-    ) || !divideDiscussionIds.length;
-
     if (divideByCohorts) {
-      if (divideCourseTopicsByCohortsOff && !divideCourseTopicsByCohorts) {
-        setFieldValue('divideCourseTopicsByCohorts', false);
-        setFieldValue('divideDiscussionIds', discussionTopicIds);
-      } else {
-        setFieldValue('divideCourseTopicsByCohorts', true);
+      if (!divideCourseTopicsByCohorts && _.size(discussionTopics) !== _.size(divideDiscussionIds)) {
+        setFieldValue('divideDiscussionIds', discussionTopics.map(topic => topic.id));
       }
     } else {
       setFieldValue('divideDiscussionIds', []);
@@ -45,7 +35,6 @@ const DivisionByGroupFields = ({ intl }) => {
   }, [
     divideByCohorts,
     divideCourseTopicsByCohorts,
-    discussionTopics,
   ]);
 
   const handleCheckBoxToggle = (event, push, remove) => {

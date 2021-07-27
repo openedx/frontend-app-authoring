@@ -1,6 +1,5 @@
-/** Append items and makes sure the items are unique. */
-const uniqueItems = (sourceArray, items = []) => (
-  [...new Set([...sourceArray, ...items])]
+const filterItemFromObject = (array, key, value) => (
+  array.filter(item => item[key] !== value)
 );
 
-export default uniqueItems;
+export default filterItemFromObject;
