@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -13,46 +13,27 @@ import { Delete, ExpandLess, ExpandMore } from '@edx/paragon/icons';
 import { useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
 import messages from '../messages';
-import { LegacyConfigFormContext } from '../../legacy/LegacyConfigFormProvider';
-import uniqueItems from '../../../utils';
 
 const TopicItem = ({
-  intl, index, name, onDelete, id, hasError,
+  intl,
+  index,
+  id,
+  name,
+  onDelete,
+  hasError,
+  onFocus,
 }) => {
   const {
-    handleChange, handleBlur, errors, values: appConfig, setFieldValue,
+    handleChange, handleBlur, errors,
   } = useFormikContext();
   const [inFocus, setInFocus] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [collapseIsOpen, setCollapseOpen] = useState();
   const isGeneralTopic = id === 'course';
-  const {
-    validDiscussionTopics,
-    setValidDiscussionTopics,
-  } = useContext(LegacyConfigFormContext);
-  const { discussionTopics, divideDiscussionIds } = appConfig;
 
-  /**
- * Update valid discussion topics & divided discussion topics.
- * Removes a specific topic from valid discussion topics & divided discussion topics
- * if it is invalid.
- * Adds a specific topic to valid discussion topics & divided discussion topics
- * if it is invalid.
- */
   useEffect(() => {
-    if (hasError) {
-      const validTopicsIds = validDiscussionTopics.filter(topic => topic.id !== id);
-      setValidDiscussionTopics(validTopicsIds);
-      setFieldValue('divideDiscussionIds', divideDiscussionIds.filter(topic => topic.id !== id));
-    } else {
-      const validTopicsIds = uniqueItems(validDiscussionTopics.map(topic => topic.id), [id]);
-      const validTopics = discussionTopics.filter(
-        topic => validTopicsIds.includes(topic.id),
-      );
-      setValidDiscussionTopics(validTopics);
-      setFieldValue('divideDiscussionIds', uniqueItems(divideDiscussionIds, [id]));
-    }
-  }, [hasError, inFocus]);
+    onFocus(hasError);
+  }, [inFocus, hasError]);
 
   const getHeading = (isOpen = false) => {
     let heading;
@@ -224,6 +205,7 @@ TopicItem.propTypes = {
   onDelete: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
   hasError: PropTypes.bool.isRequired,
+  onFocus: PropTypes.func.isRequired,
 };
 
 export default injectIntl(TopicItem);

@@ -1,5 +1,6 @@
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import _ from 'lodash';
 
 function normalizeLtiConfig(data) {
   if (!data || Object.keys(data).length < 1) {
@@ -33,13 +34,18 @@ function normalizePluginConfig(data) {
   if (!data || Object.keys(data).length < 1) {
     return {};
   }
+  const discussionDividedTopicsCount = _.size(data.divided_course_wide_discussions);
+  const discussionTopicsCount = _.size(data.discussion_topics);
+  const enableDivideCourseTopicsByCohorts = (
+    discussionDividedTopicsCount && discussionDividedTopicsCount !== discussionTopicsCount
+  );
   return {
     allowAnonymousPosts: data.allow_anonymous,
     allowAnonymousPostsPeers: data.allow_anonymous_to_peers,
     blackoutDates: JSON.stringify(data.discussion_blackouts),
     allowDivisionByUnit: false,
-    divideByCohorts: data.divided_course_wide_discussions.length > 0,
-    divideCourseTopicsByCohorts: false,
+    divideByCohorts: discussionDividedTopicsCount > 0,
+    divideCourseTopicsByCohorts: enableDivideCourseTopicsByCohorts,
   };
 }
 
@@ -48,7 +54,6 @@ function normalizeApps(data) {
     id: key,
     messages: app.messages,
     featureIds: app.features,
-    // TODO: Fix this and get it from the backend!
     externalLinks: {
       learnMore: app.external_links.learn_more,
       configuration: app.external_links.configuration,

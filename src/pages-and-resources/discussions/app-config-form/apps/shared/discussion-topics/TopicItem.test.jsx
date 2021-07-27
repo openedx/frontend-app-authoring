@@ -21,7 +21,6 @@ import { getAppsUrl } from '../../../../data/api';
 import { fetchApps } from '../../../../data/thunks';
 import { executeThunk } from '../../../../../../utils';
 import { legacyApiResponse } from '../../../../factories/mockApiResponses';
-import LegacyConfigFormProvider from '../../legacy/LegacyConfigFormProvider';
 import messages from '../messages';
 
 const appConfig = {
@@ -38,6 +37,7 @@ const generalTopic = {
   onDelete: jest.fn(),
   id: 'course',
   hasError: false,
+  onFocus: jest.fn(),
 };
 
 const additionalTopic = {
@@ -46,14 +46,7 @@ const additionalTopic = {
   onDelete: jest.fn(),
   id: '13f106c6-6735-4e84-b097-0456cff55960',
   hasError: false,
-};
-
-const contextValue = {
-  validDiscussionTopics: [
-    { name: 'General', id: 'course' },
-    { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
-  ],
-  setValidDiscussionTopics: jest.fn(),
+  onFocus: jest.fn(),
 };
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
@@ -85,11 +78,9 @@ describe('TopicItem', () => {
     const wrapper = render(
       <AppProvider store={store}>
         <IntlProvider locale="en">
-          <LegacyConfigFormProvider value={contextValue}>
-            <Formik initialValues={appConfig}>
-              <TopicItem {...props} />
-            </Formik>
-          </LegacyConfigFormProvider>
+          <Formik initialValues={appConfig}>
+            <TopicItem {...props} />
+          </Formik>
         </IntlProvider>
       </AppProvider>,
     );
