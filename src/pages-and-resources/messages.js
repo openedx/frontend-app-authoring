@@ -11,7 +11,7 @@ const messages = defineMessages({
   },
   viewLiveButton: {
     id: 'course-authoring.pages-resources.viewLive.button',
-    defaultMessage: 'View Live',
+    defaultMessage: 'View live',
   },
   enabled: {
     id: 'course-authoring.badge.enabled',
