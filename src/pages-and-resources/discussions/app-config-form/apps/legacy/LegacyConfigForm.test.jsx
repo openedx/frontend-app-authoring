@@ -271,7 +271,7 @@ describe('LegacyConfigForm', () => {
       userEvent.type(duplicateTopicInput, 'valid');
       duplicateTopicInput.blur();
 
-      await waitForElementToBeRemoved(queryByText(topicCard, 'It looks like this name is already in use'));
+      await waitForElementToBeRemoved(queryByText(duplicateTopicCard, 'It looks like this name is already in use'));
       await assertDuplicateTopicNameValidation(duplicateTopicCard, false, false);
     });
 
