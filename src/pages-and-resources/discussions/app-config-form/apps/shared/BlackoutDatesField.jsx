@@ -1,8 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Form } from '@edx/paragon';
+import { Form, TransitionReplace } from '@edx/paragon';
+import { useFormikContext } from 'formik';
 import messages from './messages';
+import { updateValidationStatus } from '../../../data/slice';
 
 /**
  * Lets break this regex down.
@@ -68,49 +70,62 @@ import messages from './messages';
  */
 export const blackoutDatesRegex = /^\[(\[("[0-9]{4}-(0[1-9]|1[0-2])-[0-3][0-9](T([0-1][0-9]|2[0-3]):([0-5][0-9])){0,1}"),("[0-9]{4}-(0[1-9]|1[0-2])-[0-3][0-9](T([0-1][0-9]|2[0-3]):([0-5][0-9])){0,1}")\](,){0,1})*\]$/;
 
-function BlackoutDatesField({
-  onBlur,
-  onChange,
-  intl,
-  values,
-  errors,
-}) {
+const BlackoutDatesField = ({ intl }) => {
+  const [inFocus, setInFocus] = useState(false);
+  const dispatch = useDispatch();
+  const {
+    handleChange, handleBlur, errors,
+    touched, values: appConfig,
+  } = useFormikContext();
+
+  const hasError = Boolean(touched.blackoutDates && errors.blackoutDates);
+
+  useEffect(() => {
+    dispatch(updateValidationStatus({ hasError }));
+  }, [hasError]);
+
+  const handleFocusOut = (event) => {
+    handleBlur(event);
+    setInFocus(false);
+  };
+
   return (
     <>
       <h5 className="my-4 text-gray-500">{intl.formatMessage(messages.blackoutDates)}</h5>
       <Form.Group
         controlId="blackoutDates"
+        isInvalid={hasError && !inFocus}
+        className="m-2"
       >
         <Form.Control
-          value={values.blackoutDates}
-          onChange={onChange}
-          onBlur={onBlur}
-          className="mb-3"
+          value={appConfig.blackoutDates}
+          onChange={handleChange}
+          onBlur={(event) => handleFocusOut(event)}
+          className="mb-1"
           floatingLabel={intl.formatMessage(messages.blackoutDatesLabel)}
+          onFocus={() => setInFocus(true)}
         />
-        {errors.blackoutDates && (
-          <Form.Control.Feedback type="invalid">
-            {errors.blackoutDates}
-          </Form.Control.Feedback>
-        )}
-        <Form.Text muted>
+        <TransitionReplace key="blackoutDates">
+          {hasError && !inFocus ? (
+            <React.Fragment key="open">
+              <Form.Control.Feedback type="invalid" hasIcon={false}>
+                <div className="small">{errors.blackoutDates}</div>
+              </Form.Control.Feedback>
+            </React.Fragment>
+          ) : (
+            <React.Fragment key="closed" />
+          )}
+        </TransitionReplace>
+        <Form.Text muted className="mt-3">
           {intl.formatMessage(messages.blackoutDatesHelp)}
         </Form.Text>
       </Form.Group>
     </>
   );
-}
+};
 
 BlackoutDatesField.propTypes = {
-  onBlur: PropTypes.func.isRequired,
-  onChange: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
-  values: PropTypes.shape({
-    blackoutDates: PropTypes.string,
-  }).isRequired,
-  errors: PropTypes.shape({
-    blackoutDates: PropTypes.string,
-  }).isRequired,
 };
 
 export default injectIntl(BlackoutDatesField);

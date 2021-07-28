@@ -96,12 +96,7 @@ function LegacyConfigForm({
                 <AppConfigFormDivider thick />
                 <DivisionByGroupFields />
                 <AppConfigFormDivider thick />
-                <BlackoutDatesField
-                  errors={errors}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  values={values}
-                />
+                <BlackoutDatesField />
               </Form>
             </Card>
           </LegacyConfigFormProvider>
