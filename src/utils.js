@@ -6,5 +6,5 @@ export const executeThunk = async (thunk, dispatch, getState) => {
 };
 
 export function useIsMobile() {
-  return useMediaQuery({ query: '(max-width: 768px)' });
+  return useMediaQuery({ query: '(max-width: 767.98px)' });
 }
