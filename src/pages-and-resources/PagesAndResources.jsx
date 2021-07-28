@@ -48,7 +48,7 @@ function PagesAndResources({ courseId, intl }) {
             rel="noopener noreferrer"
             showLaunchIcon={false}
           >
-            <Button variant="outline-primary" className="p-10"> {intl.formatMessage(messages.viewLiveButton)}</Button>
+            <Button variant="outline-primary" className="p-2"> {intl.formatMessage(messages.viewLiveButton)}</Button>
           </Hyperlink>
         </div>
 
