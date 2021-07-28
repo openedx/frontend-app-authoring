@@ -129,7 +129,7 @@ function AppSettingsModal({
                     {title}
                   </ModalDialog.Title>
                 </ModalDialog.Header>
-                <ModalDialog.Body className="min-height-300">
+                <ModalDialog.Body className="modal-body">
                   <FormSwitchGroup
                     id={`enable-${appId}-toggle`}
                     name="enabled"
@@ -148,7 +148,12 @@ function AppSettingsModal({
                         }
                       </div>
                     )}
-                    helpText={(<p>{enableAppHelp}<br /> <span className="pt-3">{learnMoreLink}</span></p>)}
+                    helpText={(
+                      <div>
+                        <p>{enableAppHelp}</p>
+                        <span className="py-3">{learnMoreLink}</span>
+                      </div>
+                    )}
                   />
                   <AppSettingsForm formikProps={formikProps}>
                     {children}
@@ -158,7 +163,7 @@ function AppSettingsModal({
                 {formikProps.values.enabled && children
                   && <AppConfigFormDivider marginAdj={{ default: 3, sm: null }} />}
 
-                <ModalDialog.Footer style={{ position: 'absolute', width: '100%' }}>
+                <ModalDialog.Footer className="p-4 modal-footer">
                   <ActionRow>
                     <ModalDialog.CloseButton variant="tertiary">
                       {intl.formatMessage(messages.cancel)}
