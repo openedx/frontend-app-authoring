@@ -1,6 +1,8 @@
-import { Form, SwitchControl } from '@edx/paragon';
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
+import { Form, SwitchControl } from '@edx/paragon';
+
+import './FormSwitchGroup.scss';
 
 export default function FormSwitchGroup({
   id,
@@ -23,7 +25,7 @@ export default function FormSwitchGroup({
       className={className}
     >
       <div className="d-flex flex-column">
-        <div className="d-flex flex-row justify-content-between align-items-center pb-2">
+        <div className="d-flex flex-row justify-content-between align-items-center pb-2 min-height-37">
           <Form.Label className="h4 text-primary-500 m-0">
             {label}
           </Form.Label>
@@ -37,10 +39,7 @@ export default function FormSwitchGroup({
           />
         </div>
         <Form.Text
-          className="mt-0 pr-3 text-gray-700"
-          style={{
-            fontSize: '1.125rem',
-          }}
+          className="mt-0 pr-3 text-gray-700 helper-text"
           id={helpTextId}
         >
           {helpText}

@@ -19,6 +19,8 @@ import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import messages from './messages';
 import { useIsMobile } from '../../utils';
 
+import './AppSettingsModal.scss';
+
 function AppSettingsForm({ formikProps, children }) {
   return children && (
     <TransitionReplace>
@@ -127,7 +129,7 @@ function AppSettingsModal({
                     {title}
                   </ModalDialog.Title>
                 </ModalDialog.Header>
-                <ModalDialog.Body style={{ minHeight: '300px' }}>
+                <ModalDialog.Body className="min-height-300">
                   <FormSwitchGroup
                     id={`enable-${appId}-toggle`}
                     name="enabled"
