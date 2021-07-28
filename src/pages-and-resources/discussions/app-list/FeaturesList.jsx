@@ -19,6 +19,7 @@ const NonSupportedFeature = (
 function FeaturesList({ app, features, intl }) {
   return (
     <Collapsible
+      onClick={(event) => event.stopPropagation()}
       title={(
         <>
           <Collapsible.Visible whenClosed>
