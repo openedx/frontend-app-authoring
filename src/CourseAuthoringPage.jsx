@@ -40,11 +40,17 @@ export default function CourseAuthoringPage({ courseId, children }) {
     />
   );
 
+  const AppFooter = () => (
+    <div className="mt-6">
+      <Footer />
+    </div>
+  );
+
   return (
     <div className="bg-light-200">
-      {inProgress ? <Loading /> : AppHeader()}
+      {inProgress ? <Loading /> : <AppHeader />}
       {children}
-      {!inProgress && <Footer />}
+      {!inProgress && <AppFooter />}
     </div>
   );
 }
