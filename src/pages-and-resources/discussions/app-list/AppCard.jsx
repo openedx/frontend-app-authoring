@@ -45,7 +45,7 @@ function AppCard({
           })}
         />
       </div>
-      <Card.Body className="m-2">
+      <Card.Body>
         <div className="h4 card-title">
           {intl.formatMessage(messages[`appName-${app.id}`])}
         </div>
