@@ -14,8 +14,7 @@ function AppCard({
 }) {
   const supportText = app.hasFullSupport
     ? intl.formatMessage(messages.appFullSupport)
-    : intl.formatMessage(messages.appPartialSupport);
-
+    : intl.formatMessage(messages.appBasicSupport);
   return (
     <Card
       key={app.id}

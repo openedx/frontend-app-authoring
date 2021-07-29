@@ -24,8 +24,8 @@ const featuresState = {
   'wcag-2.1': {
     id: 'wcag-2.1',
   },
-  lti: {
-    id: 'lti',
+  'lti-basic-configuration': {
+    id: 'lti-basic-configuration',
   },
 };
 
@@ -33,7 +33,7 @@ const featureIds = [
   'discussion-page',
   'embedded-course-sections',
   'wcag-2.1',
-  'lti',
+  'lti-basic-configuration',
 ];
 
 const legacyApp = {
@@ -50,7 +50,7 @@ const legacyApp = {
     accessibility: '',
     contactEmail: '',
   },
-  hasFullSupport: false,
+  hasFullSupport: true,
   messages: [],
 };
 
@@ -60,7 +60,7 @@ const piazzaApp = {
     'discussion-page',
     'embedded-course-sections',
     'wcag-2.1',
-    'lti',
+    'lti-basic-configuration',
   ],
   externalLinks: {
     learnMore: '',
@@ -69,7 +69,7 @@ const piazzaApp = {
     accessibility: '',
     contactEmail: '',
   },
-  hasFullSupport: true,
+  hasFullSupport: false,
   messages: [],
 };
 

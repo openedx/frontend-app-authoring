@@ -6,7 +6,7 @@ export const piazzaApiResponse = {
     'discussion-page',
     'embedded-course-sections',
     'wcag-2.1',
-    'lti',
+    'lti-basic-configuration',
   ],
   lti_configuration: {
     lti_1p1_client_key: 'client_key_123',
@@ -32,6 +32,7 @@ export const piazzaApiResponse = {
           contact_email: '',
         },
         messages: [],
+        has_full_support: true,
       },
       piazza: {
         features: [
@@ -39,7 +40,7 @@ export const piazzaApiResponse = {
           'discussion-page',
           'embedded-course-sections',
           'wcag-2.1',
-          'lti',
+          'lti-basic-configuration',
         ],
         external_links: {
           learn_more: '',
@@ -49,6 +50,7 @@ export const piazzaApiResponse = {
           contact_email: '',
         },
         messages: [],
+        has_full_support: false,
       },
     },
   },
@@ -62,7 +64,7 @@ export const legacyApiResponse = {
     'discussion-page',
     'embedded-course-sections',
     'wcag-2.1',
-    'lti',
+    'lti-basic-configuration',
   ],
   lti_configuration: {},
   plugin_configuration: {
@@ -101,6 +103,7 @@ export const legacyApiResponse = {
           contact_email: '',
         },
         messages: [],
+        has_full_support: true,
       },
       piazza: {
         features: [
@@ -108,7 +111,7 @@ export const legacyApiResponse = {
           'discussion-page',
           'embedded-course-sections',
           'wcag-2.1',
-          'lti',
+          'lti-basic-configuration',
         ],
         external_links: {
           learn_more: '',
@@ -118,6 +121,7 @@ export const legacyApiResponse = {
           contact_email: '',
         },
         messages: [],
+        has_full_support: false,
       },
     },
   },
@@ -133,7 +137,6 @@ export const emptyAppApiResponse = {
   providers: {
     active: 'legacy',
     available: {
-
     },
   },
 };
