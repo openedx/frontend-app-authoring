@@ -226,6 +226,10 @@ describe('LegacyConfigForm', () => {
     if (expectExists) { expect(error).toBeInTheDocument(); } else { expect(error).not.toBeInTheDocument(); }
   };
 
+  const assertHasErrorValidation = (expectExists = true) => {
+    expect(store.getState().discussions.hasValidationError).toBe(expectExists);
+  };
+
   test('show required error on field when leaving empty topic name',
     async () => {
       await mockStore(legacyApiResponse);
@@ -234,6 +238,7 @@ describe('LegacyConfigForm', () => {
       const topicCard = await updateTopicName('13f106c6-6735-4e84-b097-0456cff55960', '');
       await waitForElementToBeRemoved(queryByText(topicCard, messages.addTopicHelpText.defaultMessage));
       assertTopicNameRequiredValidation(topicCard);
+      assertHasErrorValidation();
     });
 
   test('check field is not collapsible in case of error', async () => {
@@ -247,7 +252,7 @@ describe('LegacyConfigForm', () => {
     expect(collapseButton).toBeInTheDocument();
   });
 
-  describe('Duplicate Validation test cases', () => {
+  describe('Duplicate validation test cases', () => {
     let topicCard;
     let duplicateTopicCard;
 
@@ -259,18 +264,16 @@ describe('LegacyConfigForm', () => {
       duplicateTopicCard = await updateTopicName('13f106c6-6735-4e84-b097-0456cff55960', 'EDX');
     });
 
-    test('Show duplicate errors on fields when passing duplicate topic name', async () => {
+    test('show duplicate errors on fields when passing duplicate topic name', async () => {
       await assertDuplicateTopicNameValidation(topicCard);
       await assertDuplicateTopicNameValidation(duplicateTopicCard);
+      assertHasErrorValidation();
     });
 
     test('check duplicate error is removed on fields when name is fixed', async () => {
-      await assertDuplicateTopicNameValidation(topicCard);
-      await assertDuplicateTopicNameValidation(duplicateTopicCard, false);
-
       const duplicateTopicInput = duplicateTopicCard.querySelector('input');
+
       duplicateTopicInput.focus();
-      duplicateTopicInput.setSelectionRange(0, duplicateTopicInput.value.length);
       userEvent.type(duplicateTopicInput, 'valid');
       duplicateTopicInput.blur();
 
@@ -278,12 +281,11 @@ describe('LegacyConfigForm', () => {
         queryByText(duplicateTopicCard, messages.discussionTopicNameAlreadyExist.defaultMessage),
       );
       await assertDuplicateTopicNameValidation(duplicateTopicCard, false, false);
+      await assertDuplicateTopicNameValidation(topicCard, false, false);
+      assertHasErrorValidation(false);
     });
 
     test('check duplicate error is removed on deleting duplicate topic', async () => {
-      await assertDuplicateTopicNameValidation(topicCard);
-      await assertDuplicateTopicNameValidation(duplicateTopicCard, false);
-
       userEvent.click(
         queryByLabelText(duplicateTopicCard, messages.deleteAltText.defaultMessage, { selector: 'button' }),
       );
@@ -293,7 +295,8 @@ describe('LegacyConfigForm', () => {
       await waitForElementToBeRemoved(queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage));
 
       expect(duplicateTopicCard).not.toBeInTheDocument();
-      expect(queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage)).not.toBeInTheDocument();
+      await assertDuplicateTopicNameValidation(topicCard, false, false);
+      assertHasErrorValidation(false);
     });
   });
 });
