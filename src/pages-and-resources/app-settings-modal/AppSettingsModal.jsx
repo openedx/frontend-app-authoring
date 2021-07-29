@@ -141,7 +141,7 @@ function AppSettingsModal({
                         {enableAppLabel}
                         {
                           formikProps.values.enabled && (
-                            <Badge className="py-1 ml-2" variant="success">
+                            <Badge className="ml-2" variant="success">
                               {intl.formatMessage(messages.enabled)}
                             </Badge>
                           )

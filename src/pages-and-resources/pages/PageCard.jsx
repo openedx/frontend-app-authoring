@@ -68,19 +68,19 @@ function PageCard({
       )}
     >
       <Card.Body className="d-flex flex-column justify-content-between">
-        <Card.Title className="d-flex mb-0 align-items-center justify-content-between">
-          <h4 className="m-0 p-0">{page.name}</h4>
-          <SettingsButton />
-        </Card.Title>
-
-        {
-          page.enabled && (
-            <Badge className="py-1" variant="success">
-              {intl.formatMessage(messages.enabled)}
-            </Badge>
-          )
-        }
-
+        <div>
+          <Card.Title className="d-flex mb-1 align-items-center justify-content-between">
+            <h4 className="m-0 p-0">{page.name}</h4>
+            <SettingsButton />
+          </Card.Title>
+          {
+            page.enabled && (
+              <Badge variant="success">
+                {intl.formatMessage(messages.enabled)}
+              </Badge>
+            )
+          }
+        </div>
         <Card.Text className="m-0">
           {page.description}
         </Card.Text>
