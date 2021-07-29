@@ -1,4 +1,5 @@
 import { history } from '@edx/frontend-platform';
+import classNames from 'classnames';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Badge, Card, Icon, IconButton, Hyperlink,
@@ -8,6 +9,8 @@ import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import messages from '../messages';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
+import { useIsDesktop } from '../../utils';
+import './PageCard.scss';
 
 const CoursePageShape = PropTypes.shape({
   id: PropTypes.string.isRequired,
@@ -27,6 +30,7 @@ function PageCard({
   page,
 }) {
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
+  const isDesktop = useIsDesktop();
 
   const SettingsButton = () => {
     if (page.legacyLink) {
@@ -55,11 +59,13 @@ function PageCard({
 
   return (
     <Card
-      className="shadow card"
-      style={{
-        width: '19rem',
-        height: '14rem',
-      }}
+      className={classNames(
+        'shadow card',
+        {
+          'desktop-card': isDesktop,
+          'mobile-card': !isDesktop,
+        },
+      )}
     >
       <Card.Body className="d-flex flex-column justify-content-between">
         <Card.Title className="d-flex mb-0 align-items-center justify-content-between">
