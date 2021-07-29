@@ -19,13 +19,13 @@ describe('FeaturesTable', () => {
       },
       {
         externalLinks: {},
-        featureIds: ['discussion-page', 'lti'],
+        featureIds: ['discussion-page', 'lti-basic-configuration'],
         hasFullSupport: false,
         id: 'piazza',
       }];
 
     features = [
-      { id: 'lti' },
+      { id: 'lti-basic-configuration' },
       { id: 'wcag-2.1' },
       { id: 'discussion-page' },
       { id: 'embedded-course-sections' },

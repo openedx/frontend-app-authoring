@@ -34,9 +34,9 @@ const messages = defineMessages({
     defaultMessage: 'Full support',
     description: 'A label indicating that an app supports the full set of possible features for a discussions app.',
   },
-  appPartialSupport: {
-    id: 'authoring.discussions.appPartialSupport',
-    defaultMessage: 'Partial support',
+  appBasicSupport: {
+    id: 'authoring.discussions.appBasicSupport',
+    defaultMessage: 'Basic support',
     description: 'A label indicating that an app only supports a subset of the possible features of a discussions app.',
   },
   selectApp: {
@@ -122,11 +122,6 @@ const messages = defineMessages({
   'featureName-embedded-course-sections': {
     id: 'authoring.discussions.featureName-embedded-course-sections',
     defaultMessage: 'Embedded course sections',
-    description: 'The name of a discussions feature.',
-  },
-  'featureName-lti': {
-    id: 'authoring.discussions.featureName-lti',
-    defaultMessage: 'LTI integration',
     description: 'The name of a discussions feature.',
   },
   'featureName-advanced-in-context-discussion': {

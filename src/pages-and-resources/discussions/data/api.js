@@ -61,7 +61,7 @@ function normalizeApps(data) {
       accessibility: app.external_links.accessibility,
       contactEmail: app.external_links.contact_email,
     },
-    hasFullSupport: app.features.length >= data.features.length,
+    hasFullSupport: app.has_full_support,
   }));
   return {
     courseId: data.context_key,

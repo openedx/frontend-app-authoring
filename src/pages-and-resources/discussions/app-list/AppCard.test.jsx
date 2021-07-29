@@ -62,10 +62,10 @@ describe('AppCard', () => {
   });
 
   test('partial support subtitle shown when hasFullSupport is false', () => {
-    const appWithPartialSupport = { ...app, hasFullSupport: false };
-    const subtitle = messages.appPartialSupport.defaultMessage;
+    const appWithBasicSupport = { ...app, hasFullSupport: false };
+    const subtitle = messages.appBasicSupport.defaultMessage;
 
-    const { container } = wrapper(appWithPartialSupport);
+    const { container } = wrapper(appWithBasicSupport);
 
     expect(container.querySelector('.card-subtitle')).toHaveTextContent(subtitle);
   });
