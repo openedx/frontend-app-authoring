@@ -59,7 +59,6 @@ function AppSettingsModal({
   onSettingsSave,
   enableAppLabel,
   enableAppHelp,
-  learnMoreURL,
   learnMoreText,
 }) {
   const { courseId } = useContext(PagesAndResourcesContext);
@@ -86,10 +85,10 @@ function AppSettingsModal({
     }
   };
 
-  const learnMoreLink = (
+  const learnMoreLink = appInfo.documentationLinks?.learnMoreConfiguration && (
     <Hyperlink
       className="text-primary-500"
-      destination={learnMoreURL}
+      destination={appInfo.documentationLinks.learnMoreConfiguration}
       target="_blank"
       rel="noreferrer noopener"
     >
@@ -210,7 +209,6 @@ AppSettingsModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   enableAppLabel: PropTypes.string.isRequired,
   enableAppHelp: PropTypes.string.isRequired,
-  learnMoreURL: PropTypes.string.isRequired,
   learnMoreText: PropTypes.string.isRequired,
 };
 
