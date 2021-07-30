@@ -74,7 +74,6 @@ describe('DiscussionsSettings', () => {
   describe('with successful network connections', () => {
     beforeEach(() => {
       axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
-
       renderComponent();
     });
 

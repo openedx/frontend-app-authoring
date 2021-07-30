@@ -1,10 +1,19 @@
 import React, { createRef } from 'react';
-import { act, render } from '@testing-library/react';
+import {
+  act,
+  render,
+  waitForElementToBeRemoved,
+  queryByText,
+  queryByLabelText,
+  queryByTestId,
+  fireEvent,
+} from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import MockAdapter from 'axios-mock-adapter';
+import userEvent from '@testing-library/user-event';
 
 import { getAppsUrl } from '../../../data/api';
 import { fetchApps } from '../../../data/thunks';
@@ -14,9 +23,9 @@ import {
   legacyApiResponse,
 } from '../../../factories/mockApiResponses';
 import LegacyConfigForm from './LegacyConfigForm';
+import messages from '../shared/messages';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
-
 const defaultAppConfig = {
   id: 'legacy',
   divideByCohorts: false,
@@ -34,7 +43,6 @@ const defaultAppConfig = {
   allowDivisionByUnit: false,
   blackoutDates: '[]',
 };
-
 describe('LegacyConfigForm', () => {
   let axiosMock;
   let store;
@@ -172,7 +180,7 @@ describe('LegacyConfigForm', () => {
     ).not.toBeChecked();
   });
 
-  test('folded discussion topics are in the DOM when divideByCohorts and divideCourseWideTopicsare enabled',
+  test('folded discussion topics are in the DOM when divideByCohorts and divideCourseWideTopics are enabled',
     async () => {
       await mockStore(legacyApiResponse);
       createComponent({
@@ -192,4 +200,103 @@ describe('LegacyConfigForm', () => {
         expect(container.querySelector(`#checkbox-${id}`)).toBeChecked();
       });
     });
+
+  const updateTopicName = async (topicId, topicName) => {
+    const topicCard = queryByTestId(container, topicId);
+
+    userEvent.click(queryByLabelText(topicCard, 'Expand'));
+    const topicInput = topicCard.querySelector('input');
+    topicInput.focus();
+    await act(async () => { fireEvent.change(topicInput, { target: { value: topicName } }); });
+    topicInput.blur();
+
+    return topicCard;
+  };
+
+  const assertTopicNameRequiredValidation = (topicCard, expectExists = true) => {
+    const error = queryByText(topicCard, messages.discussionTopicRequired.defaultMessage);
+    if (expectExists) { expect(error).toBeInTheDocument(); } else { expect(error).not.toBeInTheDocument(); }
+  };
+
+  const assertDuplicateTopicNameValidation = async (topicCard, waitForBlur = true, expectExists = true) => {
+    if (waitForBlur) {
+      await waitForElementToBeRemoved(queryByText(topicCard, messages.addTopicHelpText.defaultMessage));
+    }
+    const error = queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage);
+    if (expectExists) { expect(error).toBeInTheDocument(); } else { expect(error).not.toBeInTheDocument(); }
+  };
+
+  const assertHasErrorValidation = (expectExists = true) => {
+    expect(store.getState().discussions.hasValidationError).toBe(expectExists);
+  };
+
+  test('show required error on field when leaving empty topic name',
+    async () => {
+      await mockStore(legacyApiResponse);
+      createComponent(defaultAppConfig);
+
+      const topicCard = await updateTopicName('13f106c6-6735-4e84-b097-0456cff55960', '');
+      await waitForElementToBeRemoved(queryByText(topicCard, messages.addTopicHelpText.defaultMessage));
+      assertTopicNameRequiredValidation(topicCard);
+      assertHasErrorValidation();
+    });
+
+  test('check field is not collapsible in case of error', async () => {
+    await mockStore(legacyApiResponse);
+    createComponent(defaultAppConfig);
+
+    const topicCard = await updateTopicName('13f106c6-6735-4e84-b097-0456cff55960', '');
+    const collapseButton = topicCard.querySelector('button[aria-label="Collapse"]');
+    userEvent.click(collapseButton);
+
+    expect(collapseButton).toBeInTheDocument();
+  });
+
+  describe('Duplicate validation test cases', () => {
+    let topicCard;
+    let duplicateTopicCard;
+
+    beforeEach(async () => {
+      await mockStore(legacyApiResponse);
+      createComponent(defaultAppConfig);
+
+      topicCard = await updateTopicName('course', 'edx');
+      duplicateTopicCard = await updateTopicName('13f106c6-6735-4e84-b097-0456cff55960', 'EDX');
+    });
+
+    test('show duplicate errors on fields when passing duplicate topic name', async () => {
+      await assertDuplicateTopicNameValidation(topicCard);
+      await assertDuplicateTopicNameValidation(duplicateTopicCard);
+      assertHasErrorValidation();
+    });
+
+    test('check duplicate error is removed on fields when name is fixed', async () => {
+      const duplicateTopicInput = duplicateTopicCard.querySelector('input');
+
+      duplicateTopicInput.focus();
+      userEvent.type(duplicateTopicInput, 'valid');
+      duplicateTopicInput.blur();
+
+      await waitForElementToBeRemoved(
+        queryByText(duplicateTopicCard, messages.discussionTopicNameAlreadyExist.defaultMessage),
+      );
+      await assertDuplicateTopicNameValidation(duplicateTopicCard, false, false);
+      await assertDuplicateTopicNameValidation(topicCard, false, false);
+      assertHasErrorValidation(false);
+    });
+
+    test('check duplicate error is removed on deleting duplicate topic', async () => {
+      userEvent.click(
+        queryByLabelText(duplicateTopicCard, messages.deleteAltText.defaultMessage, { selector: 'button' }),
+      );
+      userEvent.click(
+        queryByText(container, messages.deleteButton.defaultMessage, { selector: 'button' }),
+      );
+      await waitForElementToBeRemoved(queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage));
+
+      expect(duplicateTopicCard).not.toBeInTheDocument();
+      await assertDuplicateTopicNameValidation(topicCard, false, false);
+      assertHasErrorValidation(false);
+    });
+  });
 });
