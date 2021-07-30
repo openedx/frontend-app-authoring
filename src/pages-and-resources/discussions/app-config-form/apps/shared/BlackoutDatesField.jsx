@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Form, TransitionReplace } from '@edx/paragon';
 import { useFormikContext } from 'formik';
 import messages from './messages';
-import { updateValidationStatus } from '../../../data/slice';
 
 /**
  * Lets break this regex down.
@@ -72,17 +70,12 @@ export const blackoutDatesRegex = /^\[(\[("[0-9]{4}-(0[1-9]|1[0-2])-[0-3][0-9](T
 
 const BlackoutDatesField = ({ intl }) => {
   const [inFocus, setInFocus] = useState(false);
-  const dispatch = useDispatch();
   const {
     handleChange, handleBlur, errors,
     touched, values: appConfig,
   } = useFormikContext();
 
   const hasError = Boolean(touched.blackoutDates && errors.blackoutDates);
-
-  useEffect(() => {
-    dispatch(updateValidationStatus({ hasError }));
-  }, [hasError]);
 
   const handleFocusOut = (event) => {
     handleBlur(event);
