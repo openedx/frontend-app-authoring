@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Card, Form } from '@edx/paragon';
-import { useDispatch } from 'react-redux';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -11,7 +10,6 @@ import AnonymousPostingFields from '../shared/AnonymousPostingFields';
 import DiscussionTopics from '../shared/discussion-topics/DiscussionTopics';
 import BlackoutDatesField, { blackoutDatesRegex } from '../shared/BlackoutDatesField';
 import LegacyConfigFormProvider from './LegacyConfigFormProvider';
-import { updateValidationStatus } from '../../../data/slice';
 
 import messages from '../shared/messages';
 import AppConfigFormDivider from '../shared/AppConfigFormDivider';
@@ -39,13 +37,6 @@ Yup.addMethod(Yup.object, 'uniqueProperty', function (propertyName, message) {
 function LegacyConfigForm({
   appConfig, onSubmit, formRef, intl, title,
 }) {
-  const [isFormInvalid, setIsFormInvalid] = useState(false);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(updateValidationStatus({ hasError: isFormInvalid }));
-  }, [isFormInvalid]);
-
   const [validDiscussionTopics, setValidDiscussionTopics] = useState(appConfig.discussionTopics);
   const legacyFormValidationSchema = Yup.object().shape({
     blackoutDates: Yup.string().matches(
@@ -87,9 +78,9 @@ function LegacyConfigForm({
           validDiscussionTopics,
           setValidDiscussionTopics,
           discussionTopicErrors,
+          isFormInvalid: discussionTopicErrors.some((error) => error === true)
+          || Boolean(touched.blackoutDates && errors.blackoutDates),
         };
-        setIsFormInvalid(discussionTopicErrors.some((error) => error === true)
-          || Boolean(touched.blackoutDates && errors.blackoutDates));
 
         return (
           <LegacyConfigFormProvider value={contextValue}>

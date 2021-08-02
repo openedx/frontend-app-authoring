@@ -1,9 +1,17 @@
-import React, { createContext } from 'react';
+import React, { createContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import { updateValidationStatus } from '../../../data/slice';
 
 export const LegacyConfigFormContext = createContext({});
 
 export default function LegacyConfigFormProvider({ children, value }) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(updateValidationStatus({ hasError: value.isFormInvalid }));
+  }, [value.isFormInvalid]);
+
   return (
     <LegacyConfigFormContext.Provider value={value}>
       {children}
@@ -22,5 +30,6 @@ LegacyConfigFormProvider.propTypes = {
       })),
       setValidDiscussionTopics: PropTypes.func,
     })),
+    isFormInvalid: PropTypes.bool,
   }).isRequired,
 };

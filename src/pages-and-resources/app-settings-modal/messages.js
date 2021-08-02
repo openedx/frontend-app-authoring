@@ -5,17 +5,17 @@ const messages = defineMessages({
     id: 'course-authoring.pages-resources.app-settings-modal.button.cancel',
     defaultMessage: 'Cancel',
   },
-  apply: {
-    id: 'course-authoring.pages-resources.app-settings-modal.button.apply',
-    defaultMessage: 'Apply',
+  save: {
+    id: 'course-authoring.pages-resources.app-settings-modal.button.save',
+    defaultMessage: 'Save',
   },
-  applying: {
-    id: 'course-authoring.pages-resources.app-settings-modal.button.applying',
-    defaultMessage: 'Applying',
+  saving: {
+    id: 'course-authoring.pages-resources.app-settings-modal.button.saving',
+    defaultMessage: 'Saving',
   },
-  applied: {
-    id: 'course-authoring.pages-resources.app-settings-modal.button.applied',
-    defaultMessage: 'Applied',
+  saved: {
+    id: 'course-authoring.pages-resources.app-settings-modal.button.saved',
+    defaultMessage: 'Saved',
   },
   retry: {
     id: 'course-authoring.pages-resources.app-settings-modal.button.retry',

@@ -5,6 +5,7 @@ import {
   Form, Hyperlink, ModalDialog, Spinner, TransitionReplace,
   StatefulButton, Badge, ActionRow,
 } from '@edx/paragon';
+import classNames from 'classnames';
 import { Formik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
@@ -18,6 +19,8 @@ import AppConfigFormDivider from '../discussions/app-config-form/apps/shared/App
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import messages from './messages';
 import { useIsMobile } from '../../utils';
+
+import './AppSettingsModal.scss';
 
 function AppSettingsForm({ formikProps, children }) {
   return children && (
@@ -76,10 +79,7 @@ function AppSettingsModal({
   }, [updateSettingsRequestStatus]);
 
   const handleFormSubmit = (values) => {
-    // If the app's enabled/disabled loadingStatus has changed, set that first.
-    if (appInfo.enabled !== values.enabled) {
-      dispatch(updateAppStatus(courseId, appInfo.id, values.enabled, true));
-    }
+    dispatch(updateAppStatus(courseId, appInfo.id, values.enabled));
     // Call the submit handler for the settings component to save its settings
     if (onSettingsSave) {
       onSettingsSave();
@@ -99,12 +99,12 @@ function AppSettingsModal({
 
   return (
     <ModalDialog
+      title={title}
       isOpen
-      closeText={intl.formatMessage(messages.cancel)}
-      dialogClassName="modal-dialog-centered modal-lg"
-      hasCloseButton={isMobile}
       onClose={onClose}
+      size="md"
       variant={modalVariant}
+      hasCloseButton={isMobile}
       isFullscreenOnMobile
     >
       {
@@ -130,26 +130,31 @@ function AppSettingsModal({
                     {title}
                   </ModalDialog.Title>
                 </ModalDialog.Header>
-                <ModalDialog.Body>
+                <ModalDialog.Body className="overflow-hidden">
                   <FormSwitchGroup
                     id={`enable-${appId}-toggle`}
                     name="enabled"
-                    onChange={formikProps.handleChange}
+                    onChange={(event) => formikProps.handleChange(event)}
                     onBlur={formikProps.handleBlur}
                     checked={formikProps.values.enabled}
                     label={(
-                      <>
-                        {enableAppLabel}&nbsp;
+                      <div className="d-flex align-items-center">
+                        {enableAppLabel}
                         {
                           formikProps.values.enabled && (
-                            <Badge className="py-1" variant="success">
+                            <Badge className="ml-2" variant="success">
                               {intl.formatMessage(messages.enabled)}
                             </Badge>
                           )
                         }
-                      </>
+                      </div>
                     )}
-                    helpText={(<p>{enableAppHelp}<br /> <span className="pt-3">{learnMoreLink}</span></p>)}
+                    helpText={(
+                      <div>
+                        <p>{enableAppHelp}</p>
+                        <span className="py-3">{learnMoreLink}</span>
+                      </div>
+                    )}
                   />
                   <AppSettingsForm formikProps={formikProps}>
                     {children}
@@ -159,16 +164,23 @@ function AppSettingsModal({
                 {formikProps.values.enabled && children
                   && <AppConfigFormDivider marginAdj={{ default: 3, sm: null }} />}
 
-                <ModalDialog.Footer style={{ position: 'absolute', width: '100%' }}>
+                <ModalDialog.Footer
+                  className={classNames(
+                    'p-4',
+                    {
+                      'modal-footer': isMobile,
+                    },
+                  )}
+                >
                   <ActionRow>
                     <ModalDialog.CloseButton variant="tertiary">
                       {intl.formatMessage(messages.cancel)}
                     </ModalDialog.CloseButton>
                     <StatefulButton
                       labels={{
-                        default: intl.formatMessage(messages.apply),
-                        pending: intl.formatMessage(messages.applying),
-                        complete: intl.formatMessage(messages.applied),
+                        default: intl.formatMessage(messages.save),
+                        pending: intl.formatMessage(messages.saving),
+                        complete: intl.formatMessage(messages.saved),
                       }}
                       state={submitButtonState}
                       onClick={formikProps.handleSubmit}
