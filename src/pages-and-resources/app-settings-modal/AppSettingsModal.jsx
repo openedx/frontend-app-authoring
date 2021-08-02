@@ -5,6 +5,7 @@ import {
   Form, Hyperlink, ModalDialog, Spinner, TransitionReplace,
   StatefulButton, Badge, ActionRow,
 } from '@edx/paragon';
+import classNames from 'classnames';
 import { Formik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
@@ -98,12 +99,12 @@ function AppSettingsModal({
 
   return (
     <ModalDialog
+      title={title}
       isOpen
-      closeText={intl.formatMessage(messages.cancel)}
-      dialogClassName="modal-dialog-centered modal-lg"
-      hasCloseButton={isMobile}
       onClose={onClose}
+      size="md"
       variant={modalVariant}
+      hasCloseButton={isMobile}
       isFullscreenOnMobile
     >
       {
@@ -129,7 +130,7 @@ function AppSettingsModal({
                     {title}
                   </ModalDialog.Title>
                 </ModalDialog.Header>
-                <ModalDialog.Body className="modal-body">
+                <ModalDialog.Body className="overflow-hidden">
                   <FormSwitchGroup
                     id={`enable-${appId}-toggle`}
                     name="enabled"
@@ -163,7 +164,14 @@ function AppSettingsModal({
                 {formikProps.values.enabled && children
                   && <AppConfigFormDivider marginAdj={{ default: 3, sm: null }} />}
 
-                <ModalDialog.Footer className="p-4 modal-footer">
+                <ModalDialog.Footer
+                  className={classNames(
+                    'p-4',
+                    {
+                      'modal-footer': isMobile,
+                    },
+                  )}
+                >
                   <ActionRow>
                     <ModalDialog.CloseButton variant="tertiary">
                       {intl.formatMessage(messages.cancel)}

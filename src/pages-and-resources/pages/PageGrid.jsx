@@ -14,8 +14,8 @@ function PageGrid({ pages }) {
     }}
     >
       {pages.map((page) => (
-        <div className="justify-content-center w-100 d-flex">
-          <PageCard key={page.id} page={page} />
+        <div key={page.id} className="justify-content-center w-100 d-flex">
+          <PageCard page={page} />
         </div>
       ))}
     </CardGrid>

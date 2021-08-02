@@ -25,7 +25,7 @@ export default function FormSwitchGroup({
       className={className}
     >
       <div className="d-flex flex-column">
-        <div className="d-flex flex-row justify-content-between align-items-center pb-2 min-height-37">
+        <div className="d-flex flex-row justify-content-between align-items-center pb-2 z-index-3">
           <Form.Label className="h4 text-primary-500 m-0">
             {label}
           </Form.Label>
@@ -39,7 +39,7 @@ export default function FormSwitchGroup({
           />
         </div>
         <Form.Text
-          className="mt-0 pr-3 text-gray-700 helper-text"
+          className="mt-0 text-gray-700 helper-text"
           id={helpTextId}
         >
           {helpText}
