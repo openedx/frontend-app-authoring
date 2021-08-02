@@ -11,6 +11,9 @@ function normalizeLtiConfig(data) {
     consumerKey: data.lti_1p1_client_key,
     consumerSecret: data.lti_1p1_client_secret,
     launchUrl: data.lti_1p1_launch_url,
+    piiSharing: 'pii_share_username' in data || 'pii_share_email' in data,
+    piiShareUsername: data.pii_share_username,
+    piiShareEmail: data.pii_share_email,
   };
 }
 
@@ -117,6 +120,12 @@ function denormalizeData(courseId, appId, data) {
   }
   if (data.launchUrl) {
     ltiConfiguration.lti_1p1_launch_url = data.launchUrl;
+  }
+  if ('piiShareUsername' in data) {
+    ltiConfiguration.pii_share_username = data.piiShareUsername;
+  }
+  if ('piiShareEmail' in data) {
+    ltiConfiguration.pii_share_email = data.piiShareEmail;
   }
 
   if (Object.keys(ltiConfiguration).length > 0) {

@@ -39,6 +39,20 @@ const messages = defineMessages({
     defaultMessage: 'Launch URL is a required field',
     description: 'Tells the user that the Launch URL field is required and must have a value.',
   },
+  piiSharing: {
+    id: 'authoring.discussions.piiSharing',
+    defaultMessage: 'Optionally share a user\'s username and/or email with the LTI provider:',
+  },
+  piiShareUsername: {
+    id: 'authoring.discussions.piiShareUsername',
+    defaultMessage: 'Share username',
+    description: 'Label for the Share Username field.',
+  },
+  piiShareEmail: {
+    id: 'authoring.discussions.piiShareEmail',
+    defaultMessage: 'Share email',
+    description: 'Label for the Share Email field.',
+  },
   contact: {
     id: 'authoring.discussions.appDocInstructions.contact',
     defaultMessage: 'Contact: {link}',

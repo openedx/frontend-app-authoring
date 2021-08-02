@@ -166,6 +166,45 @@ describe('Data layer integration tests', () => {
         consumerKey: 'client_key_123',
         consumerSecret: 'client_secret_123',
         launchUrl: 'https://localhost/example',
+        piiSharing: false,
+        piiShareUsername: undefined,
+        piiShareEmail: undefined,
+      });
+    });
+
+    test('successfully loads an LTI configuration with PII Sharing', async () => {
+      axiosMock.onGet(getAppsUrl(courseId)).reply(200, {
+        ...piazzaApiResponse,
+        lti_configuration: {
+          ...piazzaApiResponse.lti_configuration,
+          pii_share_username: true,
+          pii_share_email: false,
+        },
+      });
+
+      await executeThunk(fetchApps(courseId), store.dispatch);
+
+      expect(store.getState().discussions).toEqual({
+        appIds: ['legacy', 'piazza'],
+        featureIds,
+        activeAppId: 'piazza',
+        selectedAppId: null,
+        status: LOADED,
+        saveStatus: SAVED,
+        hasValidationError: false,
+        discussionTopicIds: [],
+      });
+      expect(store.getState().models.apps.legacy).toEqual(legacyApp);
+      expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
+      expect(store.getState().models.features).toEqual(featuresState);
+      expect(store.getState().models.appConfigs.piazza).toEqual({
+        id: 'piazza',
+        consumerKey: 'client_key_123',
+        consumerSecret: 'client_secret_123',
+        launchUrl: 'https://localhost/example',
+        piiSharing: true,
+        piiShareUsername: true,
+        piiShareEmail: false,
       });
     });
 
@@ -329,6 +368,9 @@ describe('Data layer integration tests', () => {
         consumerKey: 'new_consumer_key',
         consumerSecret: 'new_consumer_secret',
         launchUrl: 'https://localhost/new_launch_url',
+        piiSharing: false,
+        piiShareUsername: undefined,
+        piiShareEmail: undefined,
       });
     });
 

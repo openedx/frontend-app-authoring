@@ -40,7 +40,7 @@ function PagesAndResources({ courseId, intl }) {
   return (
     <PagesAndResourcesProvider courseId={courseId}>
       <main className="container container-mw-md">
-        <div className="d-flex justify-content-between my-5" style={{ 'align-items': 'center' }}>
+        <div className="d-flex justify-content-between my-5 align-items-center">
           <h3 className="m-0">{intl.formatMessage(messages.heading)}</h3>
           <Hyperlink
             destination={lmsCourseURL}

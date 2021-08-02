@@ -1,18 +1,19 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Card, Form,
 } from '@edx/paragon';
+
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
 
-import AppExternalLinks from '../shared/AppExternalLinks';
-
 import {
   updateValidationStatus,
 } from '../../../data/slice';
+import AppExternalLinks from '../shared/AppExternalLinks';
 import messages from './messages';
 
 function LtiConfigForm({
@@ -22,6 +23,8 @@ function LtiConfigForm({
     consumerKey: appConfig.consumerKey || '',
     consumerSecret: appConfig.consumerSecret || '',
     launchUrl: appConfig.launchUrl || '',
+    piiShareUsername: appConfig.piiShareUsername,
+    piiShareEmail: appConfig.piiShareEmail,
   };
 
   const dispatch = useDispatch();
@@ -39,6 +42,8 @@ function LtiConfigForm({
       consumerKey: Yup.string().required(intl.formatMessage(messages.consumerKeyRequired)),
       consumerSecret: Yup.string().required(intl.formatMessage(messages.consumerSecretRequired)),
       launchUrl: Yup.string().required(intl.formatMessage(messages.launchUrlRequired)),
+      piiShareUsername: Yup.bool(),
+      piiShareEmail: Yup.bool(),
     }),
     onSubmit,
   });
@@ -67,9 +72,9 @@ function LtiConfigForm({
             value={values.consumerKey}
           />
           {isInvalidConsumerKey && (
-          <Form.Control.Feedback type="invalid" hasIcon={false}>
-            <span className="x-small">{errors.consumerKey}</span>
-          </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid" hasIcon={false}>
+              <span className="x-small">{errors.consumerKey}</span>
+            </Form.Control.Feedback>
           )}
         </Form.Group>
         <Form.Group controlId="consumerSecret" isInvalid={isInvalidConsumerSecret} className="mb-4">
@@ -80,9 +85,9 @@ function LtiConfigForm({
             value={values.consumerSecret}
           />
           {isInvalidConsumerSecret && (
-          <Form.Control.Feedback type="invalid" hasIcon={false}>
-            <span className="x-small">{errors.consumerSecret}</span>
-          </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid" hasIcon={false}>
+              <span className="x-small">{errors.consumerSecret}</span>
+            </Form.Control.Feedback>
           )}
         </Form.Group>
         <Form.Group controlId="launchUrl" isInvalid={isInvalidLaunchUrl}>
@@ -93,11 +98,36 @@ function LtiConfigForm({
             value={values.launchUrl}
           />
           {isInvalidLaunchUrl && (
-          <Form.Control.Feedback type="invalid" hasIcon={false}>
-            <span className="x-small">{errors.launchUrl}</span>
-          </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid" hasIcon={false}>
+              <span className="x-small">{errors.launchUrl}</span>
+            </Form.Control.Feedback>
           )}
         </Form.Group>
+        {appConfig.piiSharing && (
+          <>
+            <Form.Text className="my-2">
+              {intl.formatMessage(messages.piiSharing)}
+            </Form.Text>
+            <Form.Group controlId="piiSharing">
+              <Form.Check
+                type="checkbox"
+                name="piiShareUsername"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                checked={values.piiShareUsername}
+                label={intl.formatMessage(messages.piiShareUsername)}
+              />
+              <Form.Check
+                type="checkbox"
+                name="piiShareEmail"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                checked={values.piiShareEmail}
+                label={intl.formatMessage(messages.piiShareEmail)}
+              />
+            </Form.Group>
+          </>
+        )}
       </Form>
       <AppExternalLinks externalLinks={externalLinks} title={title} />
     </Card>
@@ -120,6 +150,9 @@ LtiConfigForm.propTypes = {
     consumerKey: PropTypes.string,
     consumerSecret: PropTypes.string,
     launchUrl: PropTypes.string,
+    piiSharing: PropTypes.bool.isRequired,
+    piiShareUsername: PropTypes.bool.isRequired,
+    piiShareEmail: PropTypes.bool.isRequired,
   }),
   intl: intlShape.isRequired,
   onSubmit: PropTypes.func.isRequired,
