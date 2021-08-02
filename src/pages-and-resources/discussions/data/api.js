@@ -65,6 +65,7 @@ function normalizeApps(data) {
       contactEmail: app.external_links.contact_email,
     },
     hasFullSupport: app.has_full_support,
+    adminOnlyConfig: !!app.admin_only_config,
   }));
   return {
     courseId: data.context_key,

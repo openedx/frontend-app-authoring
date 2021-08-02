@@ -136,7 +136,7 @@ describe('TopicItem', () => {
     expect(topicCard.querySelector('input')).toBeInTheDocument();
   });
 
-  test('renders delete topic popup with title, label, helping text, a delete and a cancel button', async () => {
+  test('renders delete topic popup with providerName, label, helping text, a delete and a cancel button', async () => {
     await mockStore(legacyApiResponse);
     createComponent(additionalTopic);
 

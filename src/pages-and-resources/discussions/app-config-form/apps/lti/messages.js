@@ -39,6 +39,10 @@ const messages = defineMessages({
     defaultMessage: 'Launch URL is a required field',
     description: 'Tells the user that the Launch URL field is required and must have a value.',
   },
+  adminOnlyConfig: {
+    id: 'authoring.discussions.adminOnlyConfig',
+    defaultMessage: '{providerName} can only be configured by {platformName} administrators. Please contact {supportEmail} to enable this feature.',
+  },
   piiSharing: {
     id: 'authoring.discussions.piiSharing',
     defaultMessage: 'Optionally share a user\'s username and/or email with the LTI provider:',
@@ -75,7 +79,7 @@ const messages = defineMessages({
   },
   learnMore: {
     id: 'authoring.discussions.appDocInstructions.learnMoreLink',
-    defaultMessage: 'Learn more about {title}',
+    defaultMessage: 'Learn more about {providerName}',
     description: 'Application Document Instructions message for learn more links',
   },
   linkTextHeading: {

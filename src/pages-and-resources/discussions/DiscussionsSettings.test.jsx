@@ -1,32 +1,31 @@
-import React from 'react';
-
+import {
+  getConfig, history, initializeMockApp, setConfig,
+} from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { AppProvider, PageRoute } from '@edx/frontend-platform/react';
 import {
   act,
   queryByLabelText,
+  queryByRole,
   queryByTestId,
   queryByText,
   render,
   screen,
-  waitForElementToBeRemoved,
-  queryByRole,
   waitFor,
+  waitForElementToBeRemoved,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { AppProvider, PageRoute } from '@edx/frontend-platform/react';
-import { Switch } from 'react-router';
-
-import {
-  getConfig, history, initializeMockApp, setConfig,
-} from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import DiscussionsSettings from './DiscussionsSettings';
-import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
+import React from 'react';
+import { Switch } from 'react-router';
 import initializeStore from '../../store';
-import { getAppsUrl } from './data/api';
-import { piazzaApiResponse, legacyApiResponse } from './factories/mockApiResponses';
+import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 import appMessages from './app-config-form/messages';
 import appListMessages from './app-list/messages';
+import ltiMessages from './app-config-form/apps/lti/messages';
+import { getAppsUrl } from './data/api';
+import DiscussionsSettings from './DiscussionsSettings';
+import { generatePiazzaApiResponse, legacyApiResponse, piazzaApiResponse } from './factories/mockApiResponses';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 let axiosMock;
@@ -305,5 +304,51 @@ describe('DiscussionsSettings', () => {
       expect(alert).toBeInTheDocument();
       expect(alert.textContent).toEqual(expect.stringContaining('You are not authorized to view this page.'));
     });
+  });
+});
+
+describe.each([
+  { isAdmin: false, isAdminOnlyConfig: false },
+  { isAdmin: false, isAdminOnlyConfig: true },
+  { isAdmin: true, isAdminOnlyConfig: false },
+  { isAdmin: true, isAdminOnlyConfig: true },
+])('LTI Admin only config test', ({ isAdmin, isAdminOnlyConfig }) => {
+  beforeEach(() => {
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: isAdmin,
+        roles: [],
+      },
+    });
+
+    store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+
+    // Leave the DiscussionsSettings route after the test.
+    history.push(`/course/${courseId}/pages-and-resources`);
+    axiosMock.onGet(getAppsUrl(courseId)).reply(200, generatePiazzaApiResponse(isAdminOnlyConfig));
+    renderComponent();
+  });
+
+  test(`successfully advances to settings step for lti when adminOnlyConfig=${isAdminOnlyConfig} and user ${isAdmin ? 'is' : 'is not'} admin`, async () => {
+    const showLTIConfig = isAdmin || !isAdminOnlyConfig;
+    history.push(`/course/${courseId}/pages-and-resources/discussion`);
+
+    // This is an important line that ensures the spinner has been removed - and thus our main
+    // content has been loaded - prior to proceeding with our expectations.
+    await waitForElementToBeRemoved(screen.getByRole('status'));
+
+    userEvent.click(queryByLabelText(container, 'Select Piazza'));
+    userEvent.click(queryByText(container, appListMessages.nextButton.defaultMessage));
+
+    if (showLTIConfig) {
+      expect(queryByText(container, ltiMessages.formInstructions.defaultMessage)).toBeInTheDocument();
+      expect(queryByTestId(container, 'ltiConfigFields')).toBeInTheDocument();
+    } else {
+      expect(queryByText(container, ltiMessages.formInstructions.defaultMessage)).not.toBeInTheDocument();
+      expect(queryByTestId(container, 'ltiConfigFields')).not.toBeInTheDocument();
+    }
   });
 });

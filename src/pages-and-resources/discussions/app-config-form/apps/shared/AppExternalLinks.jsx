@@ -12,7 +12,7 @@ import messages from '../lti/messages';
 function AppExternalLinks({
   externalLinks,
   intl,
-  title,
+  providerName,
 }) {
   const { contactEmail, ...links } = externalLinks;
   const linkTypes = Object.keys(links).filter(key => links[key]);
@@ -31,7 +31,7 @@ function AppExternalLinks({
                   rel="noopener noreferrer"
                   showLaunchIcon={false}
                 >
-                  { intl.formatMessage(messages[type], { title }) }
+                  { intl.formatMessage(messages[type], { providerName }) }
                 </Hyperlink>
               </div>
             ))}
@@ -67,7 +67,7 @@ AppExternalLinks.propTypes = {
     accessibility: PropTypes.string,
     contactEmail: PropTypes.string,
   }).isRequired,
-  title: PropTypes.string.isRequired,
+  providerName: PropTypes.string.isRequired,
   intl: intlShape.isRequired,
 };
 
