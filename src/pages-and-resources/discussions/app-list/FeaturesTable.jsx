@@ -4,6 +4,7 @@ import { Remove, Check } from '@edx/paragon/icons';
 import { DataTable } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from './messages';
+import './FeaturesTable.scss';
 
 function FeaturesTable({ apps, features, intl }) {
   return (

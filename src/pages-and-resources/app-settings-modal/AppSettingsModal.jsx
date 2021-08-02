@@ -65,8 +65,8 @@ function AppSettingsModal({
   const appInfo = useModel('courseApps', appId);
   const dispatch = useDispatch();
   const submitButtonState = updateSettingsRequestStatus === RequestStatus.IN_PROGRESS ? 'pending' : 'default';
-  const isTabletOrMobile = useIsMobile();
-  const modalVariant = isTabletOrMobile ? 'dark' : 'default';
+  const isMobile = useIsMobile();
+  const modalVariant = isMobile ? 'dark' : 'default';
 
   useEffect(() => {
     if (updateSettingsRequestStatus === RequestStatus.SUCCESSFUL) {
@@ -102,7 +102,7 @@ function AppSettingsModal({
       isOpen
       closeText={intl.formatMessage(messages.cancel)}
       dialogClassName="modal-dialog-centered modal-lg"
-      hasCloseButton={isTabletOrMobile}
+      hasCloseButton={isMobile}
       onClose={onClose}
       variant={modalVariant}
       isFullscreenOnMobile

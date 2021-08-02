@@ -19,6 +19,7 @@ const NonSupportedFeature = (
 function FeaturesList({ app, features, intl }) {
   return (
     <Collapsible
+      onClick={(event) => event.stopPropagation()}
       title={(
         <>
           <Collapsible.Visible whenClosed>
@@ -32,7 +33,7 @@ function FeaturesList({ app, features, intl }) {
       styling="basic"
     >
       {features && features.map((feature) => (
-        <div key={`collapsible-${app.id}&${feature.id}`}>
+        <div key={`collapsible-${app.id}&${feature.id}`} className="d-flex mb-1">
           {app.featureIds.includes(feature.id)
             ? SupportedFeature
             : NonSupportedFeature}

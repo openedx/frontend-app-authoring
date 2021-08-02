@@ -1,5 +1,4 @@
-import React, { useEffect, useContext, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useContext, useCallback } from 'react';
 import { Add } from '@edx/paragon/icons';
 import { Button } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -8,7 +7,6 @@ import { v4 as uuid } from 'uuid';
 import _ from 'lodash';
 import messages from '../messages';
 import TopicItem from './TopicItem';
-import { updateValidationStatus } from '../../../../data/slice';
 import { LegacyConfigFormContext } from '../../legacy/LegacyConfigFormProvider';
 import filterItemFromObject from '../../../utils';
 
@@ -19,17 +17,11 @@ const DiscussionTopics = ({ intl }) => {
     setFieldValue,
   } = useFormikContext();
   const { discussionTopics, divideDiscussionIds } = appConfig;
-  const dispatch = useDispatch();
   const {
     discussionTopicErrors,
     validDiscussionTopics,
     setValidDiscussionTopics,
   } = useContext(LegacyConfigFormContext);
-
-  const isFormInvalid = discussionTopicErrors.some((error) => error === true);
-  useEffect(() => {
-    dispatch(updateValidationStatus({ hasError: isFormInvalid }));
-  }, [isFormInvalid]);
 
   const handleTopicDelete = async (topicIndex, topicId, remove) => {
     await remove(topicIndex);
