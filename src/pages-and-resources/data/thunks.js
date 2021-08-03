@@ -11,6 +11,16 @@ import {
   updateCourseAppsApiStatus,
 } from './slice';
 
+const COURSE_APPS_ORDER = [
+  'progress',
+  'discussion',
+  'teams',
+  'edxnotes',
+  'wiki',
+  'calculator',
+  'textbooks',
+];
+
 /* eslint-disable import/prefer-default-export */
 export function fetchCourseApps(courseId) {
   return async (dispatch) => {
@@ -18,6 +28,9 @@ export function fetchCourseApps(courseId) {
 
     try {
       const courseApps = await getCourseApps(courseId);
+
+      courseApps.sort((firstEl, secondEl) => (
+        COURSE_APPS_ORDER.indexOf(firstEl.id) - COURSE_APPS_ORDER.indexOf(secondEl.id)));
 
       dispatch(addModels({ modelType: 'courseApps', models: courseApps }));
       dispatch(fetchCourseAppsSuccess({
