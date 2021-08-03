@@ -20,8 +20,6 @@ import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import messages from './messages';
 import { useIsMobile } from '../../utils';
 
-import './AppSettingsModal.scss';
-
 function AppSettingsForm({ formikProps, children }) {
   return children && (
     <TransitionReplace>
@@ -98,20 +96,7 @@ function AppSettingsModal({
   );
 
   return (
-    <ModalDialog
-      title={title}
-      isOpen
-      onClose={onClose}
-      size="md"
-      variant={modalVariant}
-      hasCloseButton={isMobile}
-      isFullscreenOnMobile
-    >
-      <ModalDialog.Header>
-        <ModalDialog.Title>
-          {title}
-        </ModalDialog.Title>
-      </ModalDialog.Header>
+    <>
       {
         loadingStatus === RequestStatus.SUCCESSFUL && (
           <Formik
@@ -131,65 +116,76 @@ function AppSettingsModal({
             {(formikProps) => (
               <Form
                 onSubmit={formikProps.handleSubmit}
-                style={{
-                  width: '100%', height: '100%', display: 'flex', 'flex-flow': 'column',
-                }}
               >
-
-                <ModalDialog.Body>
-                  <FormSwitchGroup
-                    id={`enable-${appId}-toggle`}
-                    name="enabled"
-                    onChange={(event) => formikProps.handleChange(event)}
-                    onBlur={formikProps.handleBlur}
-                    checked={formikProps.values.enabled}
-                    label={(
-                      <div className="d-flex align-items-center">
-                        {enableAppLabel}
-                        {
+                <ModalDialog
+                  title={title}
+                  isOpen
+                  onClose={onClose}
+                  size="md"
+                  variant={modalVariant}
+                  hasCloseButton={isMobile}
+                  isFullscreenOnMobile
+                >
+                  <ModalDialog.Header>
+                    <ModalDialog.Title>
+                      {title}
+                    </ModalDialog.Title>
+                  </ModalDialog.Header>
+                  <ModalDialog.Body>
+                    <FormSwitchGroup
+                      id={`enable-${appId}-toggle`}
+                      name="enabled"
+                      onChange={(event) => formikProps.handleChange(event)}
+                      onBlur={formikProps.handleBlur}
+                      checked={formikProps.values.enabled}
+                      label={(
+                        <div className="d-flex align-items-center">
+                          {enableAppLabel}
+                          {
                           formikProps.values.enabled && (
                             <Badge className="ml-2" variant="success">
                               {intl.formatMessage(messages.enabled)}
                             </Badge>
                           )
                         }
-                      </div>
+                        </div>
                     )}
-                    helpText={(
-                      <div>
-                        <p>{enableAppHelp}</p>
-                        <span className="py-3">{learnMoreLink}</span>
-                      </div>
+                      helpText={(
+                        <div>
+                          <p>{enableAppHelp}</p>
+                          <span className="py-3">{learnMoreLink}</span>
+                        </div>
                     )}
-                  />
-                  <AppSettingsForm formikProps={formikProps}>
-                    {children}
-                  </AppSettingsForm>
-                </ModalDialog.Body>
+                    />
+                    <AppSettingsForm formikProps={formikProps}>
+                      {children}
+                    </AppSettingsForm>
+                  </ModalDialog.Body>
 
-                {formikProps.values.enabled && children
+                  {formikProps.values.enabled && children
                   && <AppConfigFormDivider marginAdj={{ default: 3, sm: null }} />}
 
-                <ModalDialog.Footer
-                  className={classNames(
-                    'p-4',
-                  )}
-                >
-                  <ActionRow>
-                    <ModalDialog.CloseButton variant="tertiary">
-                      {intl.formatMessage(messages.cancel)}
-                    </ModalDialog.CloseButton>
-                    <StatefulButton
-                      labels={{
-                        default: intl.formatMessage(messages.save),
-                        pending: intl.formatMessage(messages.saving),
-                        complete: intl.formatMessage(messages.saved),
-                      }}
-                      state={submitButtonState}
-                      onClick={formikProps.handleSubmit}
-                    />
-                  </ActionRow>
-                </ModalDialog.Footer>
+                  <ModalDialog.Footer
+                    className={classNames(
+                      'p-4',
+                    )}
+                  >
+                    <ActionRow>
+                      <ModalDialog.CloseButton variant="tertiary">
+                        {intl.formatMessage(messages.cancel)}
+                      </ModalDialog.CloseButton>
+                      <StatefulButton
+                        labels={{
+                          default: intl.formatMessage(messages.save),
+                          pending: intl.formatMessage(messages.saving),
+                          complete: intl.formatMessage(messages.saved),
+                        }}
+                        state={submitButtonState}
+                        onClick={formikProps.handleSubmit}
+                      />
+                    </ActionRow>
+                  </ModalDialog.Footer>
+                </ModalDialog>
               </Form>
             )}
           </Formik>
@@ -198,7 +194,7 @@ function AppSettingsModal({
       {loadingStatus === RequestStatus.IN_PROGRESS && (
         <Spinner animation="border" variant="primary" className="align-self-center" />
       )}
-    </ModalDialog>
+    </>
   );
 }
 
