@@ -106,6 +106,11 @@ function AppSettingsModal({
       hasCloseButton={isMobile}
       isFullscreenOnMobile
     >
+      <ModalDialog.Header>
+        <ModalDialog.Title>
+          {title}
+        </ModalDialog.Title>
+      </ModalDialog.Header>
       {
         loadingStatus === RequestStatus.SUCCESSFUL && (
           <Formik
@@ -123,13 +128,14 @@ function AppSettingsModal({
             onSubmit={handleFormSubmit}
           >
             {(formikProps) => (
-              <Form onSubmit={formikProps.handleSubmit}>
-                <ModalDialog.Header>
-                  <ModalDialog.Title>
-                    {title}
-                  </ModalDialog.Title>
-                </ModalDialog.Header>
-                <ModalDialog.Body className="overflow-hidden">
+              <Form
+                onSubmit={formikProps.handleSubmit}
+                style={{
+                  width: '100%', height: '100%', display: 'flex', 'flex-flow': 'column',
+                }}
+              >
+
+                <ModalDialog.Body>
                   <FormSwitchGroup
                     id={`enable-${appId}-toggle`}
                     name="enabled"
@@ -166,9 +172,6 @@ function AppSettingsModal({
                 <ModalDialog.Footer
                   className={classNames(
                     'p-4',
-                    {
-                      'modal-footer': isMobile,
-                    },
                   )}
                 >
                   <ActionRow>
