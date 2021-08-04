@@ -36,11 +36,12 @@ function PageCard({
     if (page.legacyLink) {
       return (
         <Hyperlink destination={page.legacyLink}>
-          <Icon
+          <IconButton
             className="mb-0 mr-1"
             src={ArrowForward}
+            iconAs={Icon}
             size="inline"
-            screenReaderText={intl.formatMessage(messages.settings)}
+            alt={intl.formatMessage(messages.settings)}
           />
         </Hyperlink>
       );
