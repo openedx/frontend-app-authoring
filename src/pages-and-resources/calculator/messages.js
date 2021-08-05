@@ -5,17 +5,17 @@ const messages = defineMessages({
     id: 'course-authoring.pages-resources.calculator.heading',
     defaultMessage: 'Configure calculator',
   },
-  enableProgressLabel: {
+  enableCalculatorLabel: {
     id: 'course-authoring.pages-resources.calculator.enable-calculator.label',
     defaultMessage: 'Calculator',
   },
-  enableProgressHelp: {
+  enableCalculatorHelp: {
     id: 'course-authoring.pages-resources.calculator.enable-calculator.help',
     defaultMessage: `The calculator supports numbers, operators, constants,
       functions, and other mathematical concepts. When enabled, an icon to
       access the calculator appears on all pages in the body of your course.`,
   },
-  enableProgressLink: {
+  enableCalculatorLink: {
     id: 'course-authoring.pages-resources.calculator.enable-calculator.link',
     defaultMessage: 'Learn more about the calculator',
   },
