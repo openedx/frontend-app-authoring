@@ -42,7 +42,7 @@ describe('AppCard', () => {
   test.each([
     [true],
     [false],
-  ])('title and text from the app are displayed with full support %s', (hasFullSupport) => {
+  ])('providerName and text from the app are displayed with full support %s', (hasFullSupport) => {
     const appWithCustomSupport = { ...app, hasFullSupport };
     const title = messages[`appName-${appWithCustomSupport.id}`].defaultMessage;
     const text = messages[`appDescription-${appWithCustomSupport.id}`].defaultMessage;

@@ -1,4 +1,4 @@
-export const piazzaApiResponse = {
+export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false) => ({
   context_key: 'course-v1:edX+DemoX+Demo_Course',
   enabled: true,
   provider_type: 'piazza',
@@ -51,10 +51,11 @@ export const piazzaApiResponse = {
         },
         messages: [],
         has_full_support: false,
+        admin_only_config: piazzaAdminOnlyConfig,
       },
     },
   },
-};
+});
 
 export const legacyApiResponse = {
   context_key: 'course-v1:edX+DemoX+Demo_Course',
@@ -140,3 +141,5 @@ export const emptyAppApiResponse = {
     },
   },
 };
+
+export const piazzaApiResponse = generatePiazzaApiResponse(false);

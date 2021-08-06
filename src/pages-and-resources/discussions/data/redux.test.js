@@ -52,10 +52,12 @@ const legacyApp = {
   },
   hasFullSupport: true,
   messages: [],
+  adminOnlyConfig: false,
 };
 
 const piazzaApp = {
   id: 'piazza',
+  adminOnlyConfig: false,
   featureIds: [
     'discussion-page',
     'embedded-course-sections',

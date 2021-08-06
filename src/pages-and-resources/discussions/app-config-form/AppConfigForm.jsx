@@ -84,7 +84,7 @@ function AppConfigForm({
         app={app}
         appConfig={appConfig}
         onSubmit={handleSubmit}
-        title={intl.formatMessage(messages[`appName-${app.id}`])}
+        providerName={intl.formatMessage(messages[`appName-${app.id}`])}
       />
     );
   }

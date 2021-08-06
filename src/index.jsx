@@ -45,6 +45,7 @@ initialize({
     config: () => {
       mergeConfig({
         SUPPORT_URL: process.env.SUPPORT_URL || null,
+        SUPPORT_EMAIL: process.env.SUPPORT_EMAIL || null,
         CALCULATOR_HELP_URL: process.env.CALCULATOR_HELP_URL || null,
       }, 'CourseAuthoringConfig');
     },
