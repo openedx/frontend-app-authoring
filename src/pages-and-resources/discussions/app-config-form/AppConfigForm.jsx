@@ -7,7 +7,6 @@ import { useRouteMatch } from 'react-router';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
-  Button,
   Container,
   ModalDialog,
 } from '@edx/paragon';
@@ -106,6 +105,7 @@ function AppConfigForm({
       />
     );
   }
+
   return (
     <Container size="sm" className="px-sm-0 py-sm-5 p-0" data-testid="appConfigForm">
       {alert}
@@ -114,24 +114,22 @@ function AppConfigForm({
         hasCloseButton={false}
         isOpen={confirmationDialogVisible}
         onClose={() => setConfirmationDialogVisible(false)}
-        title={intl.formatMessage(messages.confirm)}
+        title={intl.formatMessage(messages.ok)}
       >
-        <ModalDialog.Header>
-          <ModalDialog.Title>
+        <ModalDialog.Header className="pt-4">
+          <ModalDialog.Title className="h4 m-0" style={{ fontSize: '1.125rem' }}>
             {intl.formatMessage(messages.confirmConfigurationChange)}
           </ModalDialog.Title>
         </ModalDialog.Header>
-        <ModalDialog.Body>
+        <ModalDialog.Body className="overflow-hidden text-primary-700">
           {intl.formatMessage(messages.configurationChangeConsequence)}
         </ModalDialog.Body>
-        <ModalDialog.Footer>
+        <ModalDialog.Footer className="pb-4">
           <ActionRow>
-            <Button
-              onClick={() => setConfirmationDialogVisible(false)}
-            >
-              {intl.formatMessage(messages.backButton)}
-            </Button>
-            <AppConfigFormSaveButton />
+            <ModalDialog.CloseButton variant="tertiary">
+              {intl.formatMessage(messages.cancel)}
+            </ModalDialog.CloseButton>
+            <AppConfigFormSaveButton labelText={intl.formatMessage(messages.ok)} />
           </ActionRow>
         </ModalDialog.Footer>
       </ModalDialog>

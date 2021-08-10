@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { useSelector } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import Responsive from 'react-responsive';
 import {
@@ -10,23 +11,18 @@ import messages from './messages';
 import FeaturesList from './FeaturesList';
 
 function AppCard({
-  app, disabled, onClick, intl, selected, features,
+  app, onClick, intl, selected, features,
 }) {
+  const { canChangeProviders } = useSelector(state => state.courseDetail);
   const supportText = app.hasFullSupport
     ? intl.formatMessage(messages.appFullSupport)
     : intl.formatMessage(messages.appBasicSupport);
 
-  const handleCardSelect = () => {
-    if (!disabled) {
-      onClick(app.id);
-    }
-  };
-
   return (
     <Card
       tabIndex="-1"
-      onClick={handleCardSelect}
-      onKeyPress={handleCardSelect}
+      onClick={() => canChangeProviders && onClick(app.id)}
+      onKeyPress={() => canChangeProviders && onClick(app.id)}
       role="radio"
       aria-checked={selected}
       style={{
@@ -45,7 +41,7 @@ function AppCard({
       >
         <CheckboxControl
           checked={selected}
-          disabled={disabled}
+          disabled={!canChangeProviders}
           readOnly
           aria-label={intl.formatMessage(messages.selectApp, {
             appName: intl.formatMessage(messages[`appName-${app.id}`]),
@@ -75,15 +71,10 @@ AppCard.propTypes = {
     featureIds: PropTypes.arrayOf(PropTypes.string).isRequired,
     hasFullSupport: PropTypes.bool.isRequired,
   }).isRequired,
-  disabled: PropTypes.bool,
   onClick: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
   intl: intlShape.isRequired,
   features: PropTypes.arrayOf(PropTypes.object).isRequired,
-};
-
-AppCard.defaultProps = {
-  disabled: false,
 };
 
 export default injectIntl(AppCard);

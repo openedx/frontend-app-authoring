@@ -10,17 +10,22 @@ const slice = createSlice({
   initialState: {
     courseId: null,
     status: null,
+    canChangeProvider: null,
   },
   reducers: {
     updateStatus: (state, { payload }) => {
       state.courseId = payload.courseId;
       state.status = payload.status;
     },
+    updateCanChangeProviders: (state, { payload }) => {
+      state.canChangeProviders = payload.canChangeProviders;
+    },
   },
 });
 
 export const {
   updateStatus,
+  updateCanChangeProviders,
 } = slice.actions;
 
 export const {

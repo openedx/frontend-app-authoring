@@ -3,7 +3,6 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { CardGrid, Container, breakpoints } from '@edx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 import Responsive from 'react-responsive';
-import PropTypes from 'prop-types';
 import { useModels } from '../../../generic/model-store';
 import {
   selectApp, LOADED, LOADING,
@@ -15,7 +14,7 @@ import FeaturesTable from './FeaturesTable';
 import AppListNextButton from './AppListNextButton';
 import Loading from '../../../generic/Loading';
 
-function AppList({ disabled, intl }) {
+function AppList({ intl }) {
   const dispatch = useDispatch();
 
   const {
@@ -71,7 +70,6 @@ function AppList({ disabled, intl }) {
           <AppCard
             key={app.id}
             app={app}
-            disabled={disabled}
             selected={app.id === selectedAppId}
             onClick={handleSelectApp}
             features={features}
@@ -94,12 +92,7 @@ function AppList({ disabled, intl }) {
 }
 
 AppList.propTypes = {
-  disabled: PropTypes.bool,
   intl: intlShape.isRequired,
-};
-
-AppList.defaultProps = {
-  disabled: false,
 };
 
 const IntlAppList = injectIntl(AppList);

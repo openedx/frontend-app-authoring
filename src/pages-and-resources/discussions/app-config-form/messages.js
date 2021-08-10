@@ -18,9 +18,15 @@ const messages = defineMessages({
     id: 'authoring.discussions.configure',
     defaultMessage: 'Configure discussions',
   },
-  confirm: {
-    id: 'authoring.discussions.confirm',
-    defaultMessage: 'Confirm',
+  ok: {
+    id: 'authoring.discussions.ok',
+    defaultMessage: 'OK',
+    description: 'Button allowing the user to acknowledge the provider change.',
+  },
+  cancel: {
+    id: 'authoring.discussions.cancel',
+    defaultMessage: 'Cancel',
+    description: 'Button allowing the user to return to discussion provider configurations.',
   },
   confirmConfigurationChange: {
     id: 'authoring.discussions.confirmConfigurationChange',

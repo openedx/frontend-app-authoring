@@ -50,17 +50,12 @@ function LegacyConfigForm({
     ),
   });
 
-  const handleFormikSubmit = (values, actions) => {
-    onSubmit(values);
-    actions.setSubmitting(false);
-  };
-
   return (
     <Formik
       initialValues={appConfig}
       validateOnChange={false}
       validationSchema={legacyFormValidationSchema}
-      onSubmit={handleFormikSubmit}
+      onSubmit={(values) => onSubmit(values)}
     >
       {(
         {

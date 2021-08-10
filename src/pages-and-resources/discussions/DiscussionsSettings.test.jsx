@@ -26,7 +26,14 @@ import appListMessages from './app-list/messages';
 import ltiMessages from './app-config-form/apps/lti/messages';
 import { getAppsUrl } from './data/api';
 import DiscussionsSettings from './DiscussionsSettings';
-import { generatePiazzaApiResponse, legacyApiResponse, piazzaApiResponse } from './factories/mockApiResponses';
+import {
+  generatePiazzaApiResponse,
+  legacyApiResponse,
+  piazzaApiResponse,
+  courseDetailResponse,
+} from './factories/mockApiResponses';
+import { executeThunk } from '../../utils';
+import { fetchCourseDetail } from '../../data/thunks';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 let axiosMock;
@@ -197,16 +204,15 @@ describe('DiscussionsSettings', () => {
     });
 
     test('requires confirmation if changing provider', async () => {
+      axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}`).reply(200, courseDetailResponse);
+      await executeThunk(fetchCourseDetail(courseId), store.dispatch);
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
-
-      axiosMock.onPost(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
 
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
       userEvent.click(getByRole(container, 'checkbox', { name: 'Select Discourse' }));
-
       userEvent.click(getByRole(container, 'button', { name: 'Next' }));
 
       userEvent.type(getByRole(container, 'textbox', { name: 'Consumer Key' }), 'key');
@@ -214,13 +220,13 @@ describe('DiscussionsSettings', () => {
       userEvent.type(getByRole(container, 'textbox', { name: 'Launch URL' }), 'http://example.test');
       userEvent.click(getByRole(container, 'button', { name: 'Save' }));
 
-      await waitFor(() => getByRole(container, 'dialog', { name: 'Confirm' }));
+      await waitFor(() => expect(getByRole(container, 'dialog', { name: 'OK' })).toBeInTheDocument());
     });
 
     test('can cancel confirmation', async () => {
+      axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}`).reply(200, courseDetailResponse);
+      await executeThunk(fetchCourseDetail(courseId), store.dispatch);
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
-
-      axiosMock.onPost(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
 
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
@@ -231,7 +237,6 @@ describe('DiscussionsSettings', () => {
       userEvent.click(discourseBox);
 
       userEvent.click(getByRole(container, 'button', { name: 'Next' }));
-
       expect(getByRole(container, 'heading', { name: 'Discourse' })).toBeInTheDocument();
 
       userEvent.type(getByRole(container, 'textbox', { name: 'Consumer Key' }), 'a');
@@ -239,8 +244,8 @@ describe('DiscussionsSettings', () => {
       userEvent.type(getByRole(container, 'textbox', { name: 'Launch URL' }), 'http://example.test');
       userEvent.click(getByRole(container, 'button', { name: 'Save' }));
 
-      await waitFor(() => expect(getByRole(container, 'dialog', { name: 'Confirm' })).toBeInTheDocument());
-      userEvent.click(getByRole(container, 'button', { name: 'Back' }));
+      await waitFor(() => expect(getByRole(container, 'dialog', { name: 'OK' })).toBeInTheDocument());
+      userEvent.click(getByRole(container, 'button', { name: 'Cancel' }));
 
       expect(queryByRole(container, 'dialog', { name: 'Confirm' })).not.toBeInTheDocument();
       expect(queryByRole(container, 'dialog', { name: 'Configure discussion' }));

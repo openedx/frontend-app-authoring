@@ -7,7 +7,6 @@ import {
 } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { history } from '@edx/frontend-platform';
-import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Alert, Button, FullscreenModal, Stepper,
@@ -33,6 +32,7 @@ function DiscussionsSettings({ courseId, intl }) {
   const dispatch = useDispatch();
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const { status, hasValidationError } = useSelector(state => state.discussions);
+  const { canChangeProviders } = useSelector(state => state.courseDetail);
   const courseDetail = useModel('courseDetails', courseId);
 
   useEffect(() => {
@@ -60,9 +60,6 @@ function DiscussionsSettings({ courseId, intl }) {
   if (!courseDetail) {
     return <Loading />;
   }
-
-  const courseStarted = new Date(courseDetail.start) <= new Date();
-  const canChangeProviders = getAuthenticatedUser().administrator || !courseStarted;
 
   if (status === FAILED) {
     return (
@@ -124,13 +121,14 @@ function DiscussionsSettings({ courseId, intl }) {
               eventKey={SELECTION_STEP}
               title={intl.formatMessage(messages.providerSelection)}
             >
-              {!canChangeProviders
-                && (
+              <AppList />
+              {
+                !canChangeProviders && (
                   <Alert variant="warning">
                     {intl.formatMessage(messages.noProviderSwitchAfterCourseStarted)}
                   </Alert>
-                )}
-              <AppList disabled={!canChangeProviders} />
+                )
+              }
             </Stepper.Step>
             <Stepper.Step
               eventKey={SETTINGS_STEP}
