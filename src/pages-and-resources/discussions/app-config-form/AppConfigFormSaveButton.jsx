@@ -1,5 +1,6 @@
 import React, { useCallback, useContext } from 'react';
 import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { StatefulButton } from '@edx/paragon';
 
@@ -7,7 +8,7 @@ import messages from './messages';
 import { SAVING } from '../data/slice';
 import { AppConfigFormContext } from './AppConfigFormProvider';
 
-function AppConfigFormSaveButton({ intl }) {
+function AppConfigFormSaveButton({ intl, labelText }) {
   const saveStatus = useSelector(state => state.discussions.saveStatus);
   const { formRef } = useContext(AppConfigFormContext);
 
@@ -21,18 +22,24 @@ function AppConfigFormSaveButton({ intl }) {
   return (
     <StatefulButton
       labels={{
-        default: intl.formatMessage(messages.saveButton),
+        default: labelText || intl.formatMessage(messages.saveButton),
         pending: intl.formatMessage(messages.savingButton),
         complete: intl.formatMessage(messages.savedButton),
       }}
       state={submitButtonState}
       onClick={handleSave}
+      style={{ minWidth: '88px' }}
     />
   );
 }
 
 AppConfigFormSaveButton.propTypes = {
   intl: intlShape.isRequired,
+  labelText: PropTypes.string,
+};
+
+AppConfigFormSaveButton.defaultProps = {
+  labelText: '',
 };
 
 export default injectIntl(AppConfigFormSaveButton);

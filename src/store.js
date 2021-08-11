@@ -5,7 +5,7 @@ import { reducer as courseDetailReducer } from './data/slice';
 import { reducer as discussionsReducer } from './pages-and-resources/discussions';
 import { reducer as pagesAndResourcesReducer } from './pages-and-resources/data/slice';
 
-export default function initializeStore() {
+export default function initializeStore(preloadedState = undefined) {
   return configureStore({
     reducer: {
       courseDetail: courseDetailReducer,
@@ -13,5 +13,6 @@ export default function initializeStore() {
       pagesAndResources: pagesAndResourcesReducer,
       models: modelsReducer,
     },
+    preloadedState,
   });
 }

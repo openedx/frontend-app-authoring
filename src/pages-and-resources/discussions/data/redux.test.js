@@ -151,7 +151,7 @@ describe('Data layer integration tests', () => {
       await executeThunk(fetchApps(courseId), store.dispatch);
 
       expect(store.getState().discussions).toEqual({
-        appIds: ['legacy', 'piazza'],
+        appIds: ['legacy', 'piazza', 'discourse'],
         featureIds,
         activeAppId: 'piazza',
         selectedAppId: null,
@@ -187,7 +187,7 @@ describe('Data layer integration tests', () => {
       await executeThunk(fetchApps(courseId), store.dispatch);
 
       expect(store.getState().discussions).toEqual({
-        appIds: ['legacy', 'piazza'],
+        appIds: ['legacy', 'piazza', 'discourse'],
         featureIds,
         activeAppId: 'piazza',
         selectedAppId: null,
@@ -276,7 +276,7 @@ describe('Data layer integration tests', () => {
       expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
-          appIds: ['legacy', 'piazza'],
+          appIds: ['legacy', 'piazza', 'discourse'],
           featureIds,
           activeAppId: 'piazza',
           selectedAppId: 'piazza',
@@ -302,7 +302,7 @@ describe('Data layer integration tests', () => {
       expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
-          appIds: ['legacy', 'piazza'],
+          appIds: ['legacy', 'piazza', 'discourse'],
           featureIds,
           activeAppId: 'piazza',
           selectedAppId: 'piazza',
@@ -356,7 +356,7 @@ describe('Data layer integration tests', () => {
       expect(window.location.pathname).toEqual(pagesAndResourcesPath);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
-          appIds: ['legacy', 'piazza'],
+          appIds: ['legacy', 'piazza', 'discourse'],
           featureIds,
           activeAppId: 'piazza',
           selectedAppId: 'piazza',

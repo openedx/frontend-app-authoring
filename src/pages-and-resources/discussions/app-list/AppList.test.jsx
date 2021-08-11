@@ -16,7 +16,7 @@ import initializeStore from '../../../store';
 import { executeThunk } from '../../../utils';
 import { getAppsUrl } from '../data/api';
 import { fetchApps } from '../data/thunks';
-import { emptyAppApiResponse, legacyApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
+import { emptyAppApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
 import AppList from './AppList';
 import messages from './messages';
 
@@ -99,7 +99,7 @@ describe('AppList', () => {
   });
 
   test('selectApp is called when an app is clicked', async () => {
-    await mockStore(legacyApiResponse);
+    await mockStore(piazzaApiResponse);
     userEvent.click(getByLabelText(container, 'Select Piazza'));
     const clickedCard = getByRole(container, 'radio', { checked: true });
     expect(queryByLabelText(clickedCard, 'Select Piazza')).toBeInTheDocument();

@@ -1,6 +1,15 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  configurationChangeConsequence: {
+    id: 'authoring.discussions.configurationChangeConsequences',
+    defaultMessage:
+      'Students will lose access to any active or previous'
+      + ' discussion posts for your course.',
+    description:
+      'Describes that, as a consequence of changing configuration,'
+      + ' students will lose access posts on the course.',
+  },
   configureApp: {
     id: 'authoring.discussions.configure.app',
     defaultMessage: 'Configure {name}',
@@ -8,6 +17,21 @@ const messages = defineMessages({
   configure: {
     id: 'authoring.discussions.configure',
     defaultMessage: 'Configure discussions',
+  },
+  ok: {
+    id: 'authoring.discussions.ok',
+    defaultMessage: 'OK',
+    description: 'Button allowing the user to acknowledge the provider change.',
+  },
+  cancel: {
+    id: 'authoring.discussions.cancel',
+    defaultMessage: 'Cancel',
+    description: 'Button allowing the user to return to discussion provider configurations.',
+  },
+  confirmConfigurationChange: {
+    id: 'authoring.discussions.confirmConfigurationChange',
+    defaultMessage: 'Are you sure you want to change the discussion settings?',
+    description: 'Asks the user whether he/she really wants to change settings.',
   },
   backButton: {
     id: 'authoring.discussions.backButton',

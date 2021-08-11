@@ -29,6 +29,7 @@ function LtiConfigForm({
     piiShareUsername: appConfig.piiShareUsername,
     piiShareEmail: appConfig.piiShareEmail,
   };
+
   const user = getAuthenticatedUser();
   const dispatch = useDispatch();
   const { externalLinks } = app;

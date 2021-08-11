@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { useSelector } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import Responsive from 'react-responsive';
 import {
@@ -12,15 +13,16 @@ import FeaturesList from './FeaturesList';
 function AppCard({
   app, onClick, intl, selected, features,
 }) {
+  const { canChangeProviders } = useSelector(state => state.courseDetail);
   const supportText = app.hasFullSupport
     ? intl.formatMessage(messages.appFullSupport)
     : intl.formatMessage(messages.appBasicSupport);
+
   return (
     <Card
-      key={app.id}
       tabIndex="-1"
-      onClick={() => onClick(app.id)}
-      onKeyPress={() => onClick(app.id)}
+      onClick={() => canChangeProviders && onClick(app.id)}
+      onKeyPress={() => canChangeProviders && onClick(app.id)}
       role="radio"
       aria-checked={selected}
       style={{
@@ -39,6 +41,7 @@ function AppCard({
       >
         <CheckboxControl
           checked={selected}
+          disabled={!canChangeProviders}
           readOnly
           aria-label={intl.formatMessage(messages.selectApp, {
             appName: intl.formatMessage(messages[`appName-${app.id}`]),

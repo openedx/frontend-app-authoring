@@ -55,7 +55,7 @@ function LegacyConfigForm({
       initialValues={appConfig}
       validateOnChange={false}
       validationSchema={legacyFormValidationSchema}
-      onSubmit={(values) => (onSubmit(values))}
+      onSubmit={(values) => onSubmit(values)}
     >
       {(
         {

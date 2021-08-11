@@ -1,7 +1,9 @@
+import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { addModel } from '../generic/model-store';
 import { getCourseDetail } from './api';
 import {
   updateStatus,
+  updateCanChangeProviders,
   LOADING,
   LOADED,
   FAILED,
@@ -17,6 +19,9 @@ export function fetchCourseDetail(courseId) {
       dispatch(updateStatus({ courseId, status: LOADED }));
 
       dispatch(addModel({ modelType: 'courseDetails', model: courseDetail }));
+      dispatch(updateCanChangeProviders({
+        canChangeProviders: getAuthenticatedUser().administrator || new Date(courseDetail.start) > new Date(),
+      }));
     } catch (error) {
       dispatch(updateStatus({ courseId, status: FAILED }));
     }
