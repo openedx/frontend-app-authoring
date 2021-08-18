@@ -7,8 +7,10 @@ import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { AppProvider } from '@edx/frontend-platform/react';
 import ProctoredExamSettings from './ProctoredExamSettings';
 import StudioApiService from '../data/services/StudioApiService';
+import initializeStore from '../store';
 
 const defaultProps = {
   courseId: 'course-v1%3AedX%2BDemoX%2BDemo_Course',
@@ -16,12 +18,16 @@ const defaultProps = {
 
 const IntlProctoredExamSettings = injectIntl(ProctoredExamSettings);
 
-const intlWrapper = children => (
-  <IntlProvider locale="en">
-    {children}
-  </IntlProvider>
-);
 let axiosMock;
+let store;
+
+const intlWrapper = children => (
+  <AppProvider store={store}>
+    <IntlProvider locale="en">
+      {children}
+    </IntlProvider>
+  </AppProvider>
+);
 
 describe('ProctoredExamSettings', () => {
   afterEach(() => {
@@ -39,6 +45,7 @@ describe('ProctoredExamSettings', () => {
         },
       });
 
+      store = initializeStore();
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
       axiosMock.onGet(

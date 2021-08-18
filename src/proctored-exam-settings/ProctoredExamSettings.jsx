@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import EmailValidator from 'email-validator';
 import moment from 'moment';
@@ -18,8 +19,14 @@ import StudioApiService from '../data/services/StudioApiService';
 import Loading from '../generic/Loading';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
+import {
+  fetchExamSettingsFailure,
+  fetchExamSettingsPending,
+  fetchExamSettingsSuccess,
+} from './data/thunks';
 
 function ProctoredExamSettings({ courseId, intl }) {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [loaded, setLoaded] = useState(false);
   const [loadingConnectionError, setLoadingConnectionError] = useState(false);
@@ -462,6 +469,7 @@ function ProctoredExamSettings({ courseId, intl }) {
 
   useEffect(
     () => {
+      dispatch(fetchExamSettingsPending(courseId));
       StudioApiService.getProctoredExamSettingsData(courseId)
         .then(
           response => {
@@ -484,6 +492,7 @@ function ProctoredExamSettings({ courseId, intl }) {
             setProctortrackEscalationEmail(proctoringEscalationEmail === null ? '' : proctoringEscalationEmail);
 
             setCreateZendeskTickets(proctoredExamSettings.create_zendesk_tickets);
+            dispatch(fetchExamSettingsSuccess(courseId));
           },
         ).catch(
           error => {
@@ -495,6 +504,7 @@ function ProctoredExamSettings({ courseId, intl }) {
             setLoading(false);
             setLoaded(false);
             setSubmissionInProgress(false);
+            dispatch(fetchExamSettingsFailure(courseId));
           },
         );
     }, [],
