@@ -3,24 +3,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl } from '@edx/frontend-platform/i18n';
 import { truncateMessage } from './data';
-import commonMessages from './messages';
 
 // eslint-disable-next-line import/prefer-default-export
-export const ErrorAlert = injectIntl(({ intl, errorMessage, onClose }) => (
-  errorMessage !== null && (
+export const SuccessAlert = injectIntl(({ successMessage, onClose }) => (
+  successMessage !== null && (
     <Col xs={12} className="mt-4">
       <Alert
-        variant="danger"
+        variant="success"
         onClose={onClose}
         dismissible
       >
-        {truncateMessage(errorMessage || intl.formatMessage(commonMessages['library.server.error.generic']))}
+        {truncateMessage(successMessage)}
       </Alert>
     </Col>
   )
 ));
 
-ErrorAlert.propTypes = {
-  errorMessage: PropTypes.string,
+SuccessAlert.propTypes = {
+  successMessage: PropTypes.string,
   onClose: PropTypes.func.isRequired,
 };

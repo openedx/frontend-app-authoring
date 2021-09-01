@@ -11,7 +11,7 @@ import {
   LIBRARY_TYPES,
   SUBMISSION_STATUS,
   libraryShape,
-  truncateErrorMessage,
+  truncateMessage,
 } from '../common';
 import {
   clearFormError,
@@ -145,7 +145,7 @@ class LibraryCreateForm extends React.Component {
             onClose={this.handleDismissAlert}
             dismissible
           >
-            {truncateErrorMessage(errorMessage)}
+            {truncateMessage(errorMessage)}
           </Alert>
           )}
           <ol className="list-input">

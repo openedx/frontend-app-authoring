@@ -29,6 +29,20 @@ export const fetchBlocks = annotateThunk(({ libraryId, query }) => async (dispat
   }
 });
 
+export const fetchBlockLtiUrl = annotateThunk(({ blockId }) => async (dispatch) => {
+  try {
+    dispatch(actions.libraryBlockLtiUrlFetchRequest({ blockId }));
+    const libraryBlockLtiUrl = await api.getBlockLtiUrl({ blockId }).catch(normalizeErrors);
+    dispatch(actions.libraryAuthoringSuccess({
+      value: { blockId, lti_url: libraryBlockLtiUrl.lti_url },
+      attr: 'ltiUrlClipboard',
+      message: 'LTI URL copied to clipboard.',
+    }));
+  } catch (error) {
+    toError(dispatch, error, 'ltiUrlClipboard');
+  }
+});
+
 export const createBlock = annotateThunk(({ libraryId, data }) => async (dispatch) => {
   try {
     dispatch(actions.libraryAuthoringRequest({ attr: 'blocks' }));
@@ -67,6 +81,10 @@ export const revertLibraryChanges = annotateThunk(({ libraryId }) => async (disp
 
 export const clearLibraryError = annotateThunk(() => async (dispatch) => {
   dispatch(actions.libraryAuthoringClearError());
+});
+
+export const clearLibrarySuccess = annotateThunk(() => async (dispatch) => {
+  dispatch(actions.libraryAuthoringClearSuccess());
 });
 
 export const clearLibrary = annotateThunk(() => async (dispatch) => {

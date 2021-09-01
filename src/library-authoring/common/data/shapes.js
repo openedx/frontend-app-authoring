@@ -25,6 +25,7 @@ export const libraryShape = PropTypes.shape({
   has_unpublished_changes: PropTypes.bool.isRequired,
   has_unpublished_deletes: PropTypes.bool.isRequired,
   blockTypes: PropTypes.arrayOf(libraryBlockTypeShape),
+  allow_lti: PropTypes.bool.isRequired,
 });
 
 export const commonsOptionsShape = PropTypes.shape({

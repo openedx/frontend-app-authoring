@@ -102,6 +102,11 @@ const messages = defineMessages({
     defaultMessage: 'Discard changes',
     description: 'Text for the discard button.',
   },
+  'library.detail.block.copy_lti_url': {
+    id: 'library.detail.block.copy_lti_url',
+    defaultMessage: 'Copy LTI Url',
+    description: 'Button text for LTI URL copy button',
+  },
   'library.detail.block.edit': {
     id: 'library.detail.block.edit',
     defaultMessage: 'Edit',

@@ -17,7 +17,7 @@ import {
   libraryShape,
   LOADING_STATUS,
   ROUTES,
-  truncateErrorMessage,
+  truncateMessage,
   XBLOCK_VIEW_SYSTEM,
 } from '../common';
 import {
@@ -228,7 +228,7 @@ class LibraryBlockPage extends React.Component {
                 onClose={this.handleDismissAlert}
                 dismissible
               >
-                {truncateErrorMessage(errorMessage)}
+                {truncateMessage(errorMessage)}
               </Alert>
               )}
               <div className="card">

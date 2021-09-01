@@ -17,7 +17,7 @@ import { LoadingPage } from '../../generic';
 import { fetchLibraryDetail } from '../author-library/data';
 import LibraryAccessFormContainer from './LibraryAccessForm';
 import {
-  LIBRARY_ACCESS, libraryShape, LOADING_STATUS, ROUTES, truncateErrorMessage,
+  LIBRARY_ACCESS, libraryShape, LOADING_STATUS, ROUTES, truncateMessage,
 } from '../common/data';
 import {
   addUser,
@@ -72,7 +72,7 @@ const LibraryAccessPage = ({
               onClose={() => handleDismissAlert()}
               dismissible
             >
-              {truncateErrorMessage(errorMessage)}
+              {truncateMessage(errorMessage)}
             </Alert>
           )}
           {showAdd

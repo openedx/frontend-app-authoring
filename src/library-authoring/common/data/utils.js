@@ -58,9 +58,9 @@ export const unpackLibraryKey = (key) => {
   };
 };
 
-/** Truncate an error message to 255 characters if it's longer than that. */
-export const truncateErrorMessage = (errorMessage) => (
-  errorMessage.length > 255 ? `${errorMessage.substring(0, 255)}...` : errorMessage
+/** Truncate a message to 255 characters if it's longer than that. */
+export const truncateMessage = (message) => (
+  message.length > 255 ? `${message.substring(0, 255)}...` : message
 );
 
 const tagMap = [

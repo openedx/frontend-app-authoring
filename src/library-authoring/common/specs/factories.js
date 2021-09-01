@@ -38,6 +38,7 @@ export function libraryFactory(overrides = undefined) {
     type: LIBRARY_TYPES.COMPLEX,
     license: '',
     blockTypes: [VIDEO_TYPE, POLL_TYPE, HTML_TYPE, PROBLEM_TYPE],
+    allow_lti: false,
     ...overrides,
   };
   return {

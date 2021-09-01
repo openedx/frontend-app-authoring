@@ -14,16 +14,19 @@ import {
 import { v4 as uuid4 } from 'uuid';
 import { faPlus, faSync } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { faClipboard, faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { connect } from 'react-redux';
+import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Link } from 'react-router-dom';
 import { LibraryBlock } from '../edit-block/LibraryBlock';
 import {
   clearLibrary,
   clearLibraryError,
+  clearLibrarySuccess,
   commitLibraryChanges,
   createBlock,
+  fetchBlockLtiUrl,
   fetchBlocks,
   fetchLibraryDetail,
   revertLibraryChanges,
@@ -52,8 +55,10 @@ import { blockStatesShape, blockViewShape, fetchable } from '../edit-block/data/
 import commonMessages from '../common/messages';
 import selectLibraryDetail from '../common/data/selectors';
 import { ErrorAlert } from '../common/ErrorAlert';
+import { SuccessAlert } from '../common/SuccessAlert';
 import { LoadGuard } from '../../generic/LoadingPage';
 
+ensureConfig(['STUDIO_BASE_URL'], 'library API service');
 const getHandlerUrl = async (blockId) => getXBlockHandlerUrl(blockId, XBLOCK_VIEW_SYSTEM.Studio, 'handler_name');
 
 /**
@@ -63,12 +68,21 @@ const getHandlerUrl = async (blockId) => getXBlockHandlerUrl(blockId, XBLOCK_VIE
  */
 export const BlockPreviewBase = ({
   intl, block, view, canEdit, showPreviews, showDeleteModal,
-  setShowDeleteModal, library, previewKey, editView, ...props
+  setShowDeleteModal, library, previewKey, editView, isLtiUrlGenerating,
+  ...props
 }) => (
   <>
     <Navbar className="border">
       <Navbar.Brand>{block.display_name}</Navbar.Brand>
       <Navbar.Collapse className="justify-content-end">
+        { library.allow_lti && (
+          <>
+            <Button disabled={isLtiUrlGenerating} size="lg" className="mr-1" onClick={() => { props.fetchBlockLtiUrl({ blockId: block.id }); }}>
+              <FontAwesomeIcon icon={faClipboard} className="pr-1" />
+              {intl.formatMessage(messages['library.detail.block.copy_lti_url'])}
+            </Button>
+          </>
+        )}
         <Link to={editView}>
           <Button size="lg" className="mr-1">
             <FontAwesomeIcon icon={faEdit} className="pr-1" />
@@ -126,6 +140,8 @@ BlockPreviewBase.propTypes = {
   setShowDeleteModal: PropTypes.func.isRequired,
   deleteLibraryBlock: PropTypes.func.isRequired,
   previewKey: PropTypes.string.isRequired,
+  isLtiUrlGenerating: PropTypes.bool.isRequired,
+  fetchBlockLtiUrl: PropTypes.func.isRequired,
 };
 
 export const BlockPreview = injectIntl(BlockPreviewBase);
@@ -140,7 +156,7 @@ const needsMeta = ({ blockStates, id }) => inStandby({ blockStates, id, attr: 'm
  * Handles the fetching of the block view and metadata.
  */
 const BlockPreviewContainerBase = ({
-  intl, block, blockView, blockStates, showPreviews, library, ...props
+  intl, block, blockView, blockStates, showPreviews, library, ltiUrlClipboard, ...props
 }) => {
   // There are enough events that trigger the effects here that we need to keep track of what we're doing to avoid
   // doing it more than once, or running them when the state can no longer support these actions.
@@ -187,6 +203,18 @@ const BlockPreviewContainerBase = ({
     editView = ROUTES.Detail.HOME_SLUG(library.id, block.id);
   }
 
+  const isBlockOnClipboard = ltiUrlClipboard.value.blockId === block.id;
+  const isLtiUrlGenerating = isBlockOnClipboard && ltiUrlClipboard.status === LOADING_STATUS.LOADING;
+
+  if (isBlockOnClipboard && ltiUrlClipboard.status === LOADING_STATUS.LOADED) {
+    const clipboard = document.createElement('textarea');
+    clipboard.value = getConfig().STUDIO_BASE_URL + ltiUrlClipboard.value.lti_url;
+    document.body.appendChild(clipboard);
+    clipboard.select();
+    document.execCommand('copy');
+    document.body.removeChild(clipboard);
+  }
+
   return (
     <BlockPreview
       view={blockView(block)}
@@ -199,6 +227,8 @@ const BlockPreviewContainerBase = ({
       deleteLibraryBlock={props.deleteLibraryBlock}
       library={library}
       previewKey={previewKey}
+      isLtiUrlGenerating={isLtiUrlGenerating}
+      fetchBlockLtiUrl={props.fetchBlockLtiUrl}
     />
   );
 };
@@ -212,12 +242,14 @@ BlockPreviewContainerBase.propTypes = {
   block: libraryBlockShape.isRequired,
   blockStates: blockStatesShape.isRequired,
   blockView: PropTypes.func,
+  fetchBlockLtiUrl: PropTypes.func.isRequired,
   fetchLibraryBlockView: PropTypes.func.isRequired,
   fetchLibraryBlockMetadata: PropTypes.func.isRequired,
   initializeBlock: PropTypes.func.isRequired,
   showPreviews: PropTypes.bool.isRequired,
   deleteLibraryBlock: PropTypes.func.isRequired,
   library: libraryShape.isRequired,
+  ltiUrlClipboard: fetchable(PropTypes.Object).isRequired,
 };
 
 const ButtonTogglesBase = ({
@@ -250,6 +282,7 @@ const ButtonToggles = injectIntl(ButtonTogglesBase);
 const BlockPreviewContainer = connect(
   selectLibraryDetail,
   {
+    fetchBlockLtiUrl,
     fetchLibraryBlockView,
     fetchLibraryBlockMetadata,
     initializeBlock,
@@ -286,7 +319,7 @@ const deriveTypeOptions = (blockTypes, intl) => {
  */
 export const LibraryAuthoringPageBase = ({
   intl, library, blockView, showPreviews, setShowPreviews,
-  sending, addBlock, revertChanges, commitChanges, hasChanges, errorMessage,
+  sending, addBlock, revertChanges, commitChanges, hasChanges, errorMessage, successMessage,
   quickAddBehavior, otherTypes, blocks, updateSearch, typeOptions, query, type,
   ...props
 }) => (
@@ -296,7 +329,6 @@ export const LibraryAuthoringPageBase = ({
         <small className="card-subtitle">{intl.formatMessage(messages['library.detail.page.heading'])}</small>
         <h1 className="page-header-title">{library.title}</h1>
       </Col>
-      <ErrorAlert errorMessage={errorMessage} onClose={props.clearLibraryError} />
       <Col xs={12} md={4} xl={3} className="text-center d-none d-md-block">
         <ButtonToggles
           setShowPreviews={setShowPreviews}
@@ -306,6 +338,8 @@ export const LibraryAuthoringPageBase = ({
           quickAddBehavior={quickAddBehavior}
         />
       </Col>
+      <ErrorAlert errorMessage={errorMessage} onClose={props.clearLibraryError} />
+      <SuccessAlert successMessage={successMessage} onClose={props.clearLibrarySuccess} />
       <Col xs={12} className="pb-5">
         <hr />
       </Col>
@@ -454,6 +488,7 @@ export const LibraryAuthoringPageBase = ({
 
 LibraryAuthoringPageBase.defaultProps = {
   errorMessage: '',
+  successMessage: null,
   blocks: null,
 };
 
@@ -478,7 +513,9 @@ LibraryAuthoringPageBase.propTypes = {
   revertChanges: PropTypes.func.isRequired,
   commitChanges: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
+  successMessage: PropTypes.string,
   clearLibraryError: PropTypes.func.isRequired,
+  clearLibrarySuccess: PropTypes.func.isRequired,
   quickAddBehavior: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
@@ -631,6 +668,7 @@ export const LibraryAuthoringPageContainerBase = ({
 LibraryAuthoringPageContainerBase.defaultProps = {
   library: null,
   errorMessage: null,
+  successMessage: null,
 };
 
 LibraryAuthoringPageContainerBase.propTypes = {
@@ -646,6 +684,7 @@ LibraryAuthoringPageContainerBase.propTypes = {
   commitLibraryChanges: PropTypes.func.isRequired,
   revertLibraryChanges: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
+  successMessage: PropTypes.string,
   match: PropTypes.shape({
     params: PropTypes.shape({
       libraryId: PropTypes.string.isRequired,
@@ -657,6 +696,7 @@ const LibraryAuthoringPageContainer = connect(
   selectLibraryDetail,
   {
     clearLibraryError,
+    clearLibrarySuccess,
     clearLibrary,
     createLibraryBlock: createBlock,
     commitLibraryChanges,

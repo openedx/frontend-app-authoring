@@ -19,7 +19,7 @@ import {
   LOADING_STATUS,
   SUBMISSION_STATUS,
   libraryShape,
-  truncateErrorMessage,
+  truncateMessage,
   LIBRARY_TYPES,
 } from '../common';
 import {
@@ -196,7 +196,7 @@ class LibraryConfigurePage extends React.Component {
                 onClose={this.handleDismissAlert}
                 dismissible
               >
-                {truncateErrorMessage(errorMessage)}
+                {truncateMessage(errorMessage)}
               </Alert>
               )}
               <Form onSubmit={this.handleSubmit} className="form-create">

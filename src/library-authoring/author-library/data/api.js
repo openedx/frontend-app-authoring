@@ -47,6 +47,14 @@ export const getBlocks = annotateCall(async ({ libraryId, query = '', types = []
   );
 });
 
+export const getBlockLtiUrl = annotateCall(async ({ blockId }) => {
+  const client = getAuthenticatedHttpClient();
+  const baseUrl = getConfig().STUDIO_BASE_URL;
+
+  const response = await client.get(`${baseUrl}/api/libraries/v2/blocks/${blockId}/lti/`);
+  return response.data;
+});
+
 export const createLibraryBlock = annotateCall(async ({ libraryId, data }) => {
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;

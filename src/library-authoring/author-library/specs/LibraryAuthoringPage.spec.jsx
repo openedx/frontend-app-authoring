@@ -20,6 +20,8 @@ import {
   fetchLibraryDetail,
   revertLibraryChanges,
   searchLibrary,
+  fetchBlockLtiUrl,
+  libraryAuthoringActions,
 } from '../data';
 import { HTML_TYPE, PROBLEM_TYPE, VIDEO_TYPE } from '../../common/specs/constants';
 import {
@@ -37,6 +39,7 @@ const genState = (library, blocks = []) => (
         [STORE_NAMES.AUTHORING]: {
           library: { value: library, status: LOADING_STATUS.LOADED },
           blocks: { value: blocks, status: LOADING_STATUS.LOADED },
+          ltiUrlClipboard: { value: { blockId: null, lti_url: null }, status: LOADING_STATUS.STANDBY },
         },
         [STORE_NAMES.BLOCKS]: {
           blocks: blocks.reduce(toBlockInfo, {}),
@@ -120,6 +123,45 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
       },
     ));
     expect(fetchLibraryBlockView.fn).toHaveBeenCalledTimes(1);
+  });
+
+  it('Fetches block LTI URL to clipboard', async () => {
+    const library = libraryFactory({ allow_lti: true });
+    const blocks = makeN(blockFactoryLine([], { library }), 2);
+
+    await render(library, genState(library, blocks));
+    expect(screen.getByText(blocks[0].display_name)).toBeTruthy();
+    expect(screen.getByText(blocks[1].display_name)).toBeTruthy();
+
+    const copyToClipboardButtons = screen.getAllByText('Copy LTI Url');
+    expect(copyToClipboardButtons.length).toBe(2);
+
+    copyToClipboardButtons[0].click();
+
+    await waitFor(() => fetchBlockLtiUrl.calls[0].dispatch(
+      libraryAuthoringActions.libraryBlockLtiUrlFetchRequest({ blockId: blocks[0].id }),
+    ));
+
+    expect(fetchBlockLtiUrl.fn).toHaveBeenCalledWith({ blockId: blocks[0].id });
+
+    await waitFor(() => fetchBlockLtiUrl.calls[0].dispatch(
+      libraryAuthoringActions.libraryAuthoringSuccess({
+        value: { blockId: blocks[0], lti_url: 'a' },
+        attr: 'ltiUrlClipboard',
+      }),
+    ));
+  });
+
+  it('Copy LTI URL not shown unless it is enabled', async () => {
+    const library = libraryFactory();
+    const blocks = makeN(blockFactoryLine([], { library }), 2);
+
+    await render(library, genState(library, blocks));
+    expect(screen.getByText(blocks[0].display_name)).toBeTruthy();
+    expect(screen.getByText(blocks[1].display_name)).toBeTruthy();
+
+    const copyToClipboardButtons = screen.queryAllByAltText('Copy LTI Url');
+    expect(copyToClipboardButtons.length).toBe(0);
   });
 
   it('Adds a predefined block type', async () => {
