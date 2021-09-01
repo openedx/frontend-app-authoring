@@ -304,7 +304,7 @@ export default function wrapBlockHtmlForIFrame(html, resources, lmsBaseUrl) {
           files (defined in webpack.common.config.js) to get that entry point and all
           of its dependencies.
       -->
-      <script type="text/javascript" src="${lmsBaseUrl}/static/xmodule_js/common_static/bundles/commons.js"></script>
+      <script type="text/javascript" src="${lmsBaseUrl}/static/bundles/commons.js"></script>
       <!-- The video XBlock (and perhaps others?) expect this global: -->
       <script>
       window.onTouchBasedDevice = function() { return navigator.userAgent.match(/iPhone|iPod|iPad|Android/i); };
@@ -316,6 +316,50 @@ export default function wrapBlockHtmlForIFrame(html, resources, lmsBaseUrl) {
       <link rel="stylesheet" href="${lmsBaseUrl}/static/js/vendor/CodeMirror/codemirror.css">
       <!-- Built-in XBlocks (and some plugins) depends on LMS CSS -->
       <link rel="stylesheet" href="${lmsBaseUrl}/static/css/lms-course.css">
+      <!-- Configure and load MathJax -->
+      <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [
+              ['\\\\(','\\\\)'],
+              ['[mathjaxinline]','[/mathjaxinline]']
+            ],
+            displayMath: [
+              ['\\\\[','\\\\]'],
+              ['[mathjax]','[/mathjax]']
+            ]
+          }
+        });
+      </script>
+      <script type="text/x-mathjax-config">
+        MathJax.Hub.signal.Interest(function(message) {
+          if(message[0] === "End Math") {
+              set_mathjax_display_div_settings();
+          }
+        });
+        function set_mathjax_display_div_settings() {
+          $('.MathJax_Display').each(function( index ) {
+            this.setAttribute('tabindex', '0');
+            this.setAttribute('aria-live', 'off');
+            this.removeAttribute('role');
+            this.removeAttribute('aria-readonly');
+          });
+        }
+      </script>
+      <script type="text/javascript">
+          // Activating Mathjax accessibility files
+          window.MathJax = {
+              menuSettings: {
+                  collapsible: true,
+                  autocollapse: false,
+                  explorer: true
+              }
+          };
+      </script>
+      <!-- This must appear after all mathjax-config blocks, so it is after the imports from the other templates.
+           It can't be run through static.url because MathJax uses crazy url introspection to do lazy loading of
+           MathJax extension libraries -->
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-MML-AM_SVG"></script>
     `;
   }
 
