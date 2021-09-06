@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
+
 import { RequestStatus } from '../../data/constants';
 
 const slice = createSlice({
@@ -9,6 +10,7 @@ const slice = createSlice({
     loadingStatus: RequestStatus.IN_PROGRESS,
     savingStatus: '',
     courseAppsApiStatus: {},
+    courseAppSettings: {},
   },
   reducers: {
     fetchCourseAppsSuccess: (state, { payload }) => {
@@ -23,6 +25,12 @@ const slice = createSlice({
     updateCourseAppsApiStatus: (state, { payload }) => {
       state.courseAppsApiStatus = payload.status;
     },
+    fetchCourseAppsSettingsSuccess: (state, { payload }) => {
+      Object.assign(state.courseAppSettings, payload);
+    },
+    updateCourseAppsSettingsSuccess: (state, { payload }) => {
+      Object.assign(state.courseAppSettings, payload);
+    },
   },
 });
 
@@ -31,6 +39,8 @@ export const {
   updateLoadingStatus,
   updateSavingStatus,
   updateCourseAppsApiStatus,
+  fetchCourseAppsSettingsSuccess,
+  updateCourseAppsSettingsSuccess,
 } = slice.actions;
 
 export const {
