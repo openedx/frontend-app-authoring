@@ -1,13 +1,22 @@
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow, Badge, Form, Hyperlink, ModalDialog, StatefulButton, TransitionReplace,
-} from '@edx/paragon';
+import React, { useContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
 import { Formik } from 'formik';
-import PropTypes from 'prop-types';
-import React, { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
+
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import {
+  ActionRow,
+  Alert,
+  Badge,
+  Form,
+  Hyperlink,
+  ModalDialog,
+  StatefulButton,
+  TransitionReplace,
+} from '@edx/paragon';
+import { Info } from '@edx/paragon/icons';
 
 import { RequestStatus } from '../../data/constants';
 import ConnectionErrorAlert from '../../generic/ConnectionErrorAlert';
@@ -57,7 +66,7 @@ function AppSettingsModalBase({
       title={title}
       isOpen
       onClose={onClose}
-      size="md"
+      size="lg"
       variant={variant}
       hasCloseButton={isMobile}
       isFullscreenOnMobile
@@ -113,6 +122,7 @@ function AppSettingsModal({
   const { courseId } = useContext(PagesAndResourcesContext);
   const loadingStatus = useSelector(getLoadingStatus);
   const updateSettingsRequestStatus = useSelector(getSavingStatus);
+  const [saveError, setSaveError] = useState(false);
   const appInfo = useModel('courseApps', appId);
   const dispatch = useDispatch();
   const submitButtonState = updateSettingsRequestStatus === RequestStatus.IN_PROGRESS ? 'pending' : 'default';
@@ -126,14 +136,16 @@ function AppSettingsModal({
     }
   }, [updateSettingsRequestStatus]);
 
-  const handleFormSubmit = (values) => {
+  const handleFormSubmit = async (values) => {
+    let success = true;
     if (appInfo.enabled !== values.enabled) {
-      dispatch(updateAppStatus(courseId, appInfo.id, values.enabled));
+      success = await dispatch(updateAppStatus(courseId, appInfo.id, values.enabled));
     }
     // Call the submit handler for the settings component to save its settings
     if (onSettingsSave) {
-      onSettingsSave(values);
+      success = success && await onSettingsSave(values);
     }
+    setSaveError(!success);
   };
 
   const learnMoreLink = appInfo.documentationLinks?.learnMoreConfiguration && (
@@ -171,7 +183,6 @@ function AppSettingsModal({
               title={title}
               isOpen
               onClose={onClose}
-              size="md"
               variant={modalVariant}
               isMobile={isMobile}
               isFullscreenOnMobile
@@ -188,6 +199,14 @@ function AppSettingsModal({
                 />
               )}
             >
+              {saveError && (
+                <Alert variant="danger" icon={Info}>
+                  <Alert.Heading>
+                    {intl.formatMessage(messages.errorSavingTitle)}
+                  </Alert.Heading>
+                  {intl.formatMessage(messages.errorSavingMessage)}
+                </Alert>
+              )}
               <FormSwitchGroup
                 id={`enable-${appId}-toggle`}
                 name="enabled"
