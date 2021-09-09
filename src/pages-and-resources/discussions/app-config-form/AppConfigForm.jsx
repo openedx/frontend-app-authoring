@@ -2,8 +2,10 @@ import React, {
   useCallback, useContext, useEffect, useState,
 } from 'react';
 import PropTypes from 'prop-types';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
+
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -11,22 +13,21 @@ import {
   ModalDialog,
 } from '@edx/paragon';
 
+import Loading from '../../../generic/Loading';
 import { useModel, useModels } from '../../../generic/model-store';
+import PermissionDeniedAlert from '../../../generic/PermissionDeniedAlert';
+import SaveFormConnectionErrorAlert from '../../../generic/SaveFormConnectionErrorAlert';
 import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
 import {
   DENIED,
   FAILED, LOADED, LOADING, selectApp,
 } from '../data/slice';
 import { saveAppConfig } from '../data/thunks';
-
-import messages from './messages';
-import AppConfigFormProvider, { AppConfigFormContext } from './AppConfigFormProvider';
-import AppConfigFormSaveButton from './AppConfigFormSaveButton';
 import LegacyConfigForm from './apps/legacy';
 import LtiConfigForm from './apps/lti';
-import Loading from '../../../generic/Loading';
-import SaveFormConnectionErrorAlert from '../../../generic/SaveFormConnectionErrorAlert';
-import PermissionDeniedAlert from '../../../generic/PermissionDeniedAlert';
+import AppConfigFormProvider, { AppConfigFormContext } from './AppConfigFormProvider';
+import AppConfigFormSaveButton from './AppConfigFormSaveButton';
+import messages from './messages';
 
 function AppConfigForm({
   courseId, intl,
@@ -124,7 +125,7 @@ function AppConfigForm({
         <ModalDialog.Body className="overflow-hidden text-primary-700">
           {intl.formatMessage(messages.configurationChangeConsequence)}
         </ModalDialog.Body>
-        <ModalDialog.Footer className="pb-4">
+        <ModalDialog.Footer>
           <ActionRow>
             <ModalDialog.CloseButton variant="tertiary">
               {intl.formatMessage(messages.cancel)}

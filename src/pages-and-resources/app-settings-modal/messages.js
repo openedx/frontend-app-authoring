@@ -29,6 +29,14 @@ const messages = defineMessages({
     id: 'course-authoring.pages-resources.app-settings-modal.badge.disabled',
     defaultMessage: 'Disabled',
   },
+  errorSavingTitle: {
+    id: 'course-authoring.pages-resources.app-settings-modal.save-error.title',
+    defaultMessage: 'We couldn\'t apply your changes.',
+  },
+  errorSavingMessage: {
+    id: 'course-authoring.pages-resources.app-settings-modal.save-error.message',
+    defaultMessage: 'Please check your entries and try again.',
+  },
 });
 
 export default messages;

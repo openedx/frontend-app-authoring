@@ -1,29 +1,31 @@
 import React, { createRef } from 'react';
+
 import {
   act,
+  fireEvent,
+  getByText,
+  queryByLabelText,
+  queryByRole,
+  queryByTestId,
+  queryByText,
   render,
   waitForElementToBeRemoved,
-  queryByText,
-  queryByLabelText,
-  queryByTestId,
-  fireEvent,
 } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import MockAdapter from 'axios-mock-adapter';
 import userEvent from '@testing-library/user-event';
+import MockAdapter from 'axios-mock-adapter';
 
-import { getAppsUrl } from '../../../data/api';
-import { fetchApps } from '../../../data/thunks';
+import { initializeMockApp } from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { AppProvider } from '@edx/frontend-platform/react';
+
 import initializeStore from '../../../../../store';
 import { executeThunk } from '../../../../../utils';
-import {
-  legacyApiResponse,
-} from '../../../factories/mockApiResponses';
-import LegacyConfigForm from './LegacyConfigForm';
+import { getAppsUrl } from '../../../data/api';
+import { fetchApps } from '../../../data/thunks';
+import { legacyApiResponse } from '../../../factories/mockApiResponses';
 import messages from '../shared/messages';
+import LegacyConfigForm from './LegacyConfigForm';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const defaultAppConfig = {
@@ -204,7 +206,7 @@ describe('LegacyConfigForm', () => {
   const updateTopicName = async (topicId, topicName) => {
     const topicCard = queryByTestId(container, topicId);
 
-    userEvent.click(queryByLabelText(topicCard, 'Expand'));
+    userEvent.click(queryByText(topicCard, 'Expand'));
     const topicInput = topicCard.querySelector('input');
     topicInput.focus();
     await act(async () => { fireEvent.change(topicInput, { target: { value: topicName } }); });
@@ -246,8 +248,8 @@ describe('LegacyConfigForm', () => {
     createComponent(defaultAppConfig);
 
     const topicCard = await updateTopicName('13f106c6-6735-4e84-b097-0456cff55960', '');
-    const collapseButton = topicCard.querySelector('button[aria-label="Collapse"]');
-    userEvent.click(collapseButton);
+    const collapseButton = getByText(topicCard, 'Collapse');
+    await act(async () => userEvent.click(collapseButton));
 
     expect(collapseButton).toBeInTheDocument();
   });
@@ -290,8 +292,9 @@ describe('LegacyConfigForm', () => {
         queryByLabelText(duplicateTopicCard, messages.deleteAltText.defaultMessage, { selector: 'button' }),
       );
       userEvent.click(
-        queryByText(container, messages.deleteButton.defaultMessage, { selector: 'button' }),
+        queryByRole(container, 'button', { name: messages.deleteButton.defaultMessage }),
       );
+
       await waitForElementToBeRemoved(queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage));
 
       expect(duplicateTopicCard).not.toBeInTheDocument();

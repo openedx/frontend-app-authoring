@@ -11,12 +11,27 @@ const messages = defineMessages({
   },
   enableTeamsHelp: {
     id: 'authoring.pagesAndResources.teams.enableTeams.help',
-    defaultMessage: `Define the structure of teams in your course by adding
-    team-sets; groups focussed around specific topics you create`,
+    defaultMessage: 'Create team-sets to allow learners to work in small groups on specific projects of activities.',
   },
   enableTeamsLink: {
     id: 'authoring.pagesAndResources.teams.enableTeams.link',
     defaultMessage: 'Learn more about the teams',
+  },
+  teamSize: {
+    id: 'authoring.pagesAndResources.teams.teamSize.heading',
+    defaultMessage: 'Team Size',
+  },
+  maxTeamSize: {
+    id: 'authoring.pagesAndResources.teams.teamSize.maxTeamSize',
+    defaultMessage: 'Max team size',
+  },
+  maxTeamSizeEmpty: {
+    id: 'authoring.pagesAndResources.teams.teamSize.maxTeamSizeInvalid',
+    defaultMessage: 'Enter max team size',
+  },
+  maxTeamSizeTooHigh: {
+    id: 'authoring.pagesAndResources.teams.teamSize.maxTeamSizeTooHigh',
+    defaultMessage: 'Max team size must less than {max}',
   },
   teamSets: {
     id: 'authoring.pagesAndResources.teams.teamSets.heading',
@@ -32,11 +47,15 @@ const messages = defineMessages({
   },
   teamSetFormNameHelp: {
     id: 'authoring.pagesAndResources.teams.teamSet.name.help',
-    defaultMessage: 'The name learners will see when interacting with your team-set',
+    defaultMessage: 'Choose a unique name for your team-set',
   },
-  teamSetFormNameError: {
-    id: 'authoring.pagesAndResources.teams.teamSet.name.error',
-    defaultMessage: 'Team set name can\'t be blank',
+  teamSetFormNameEmpty: {
+    id: 'authoring.pagesAndResources.teams.teamSet.name.error.empty',
+    defaultMessage: 'Enter a unique name for your team set',
+  },
+  teamSetFormNameExists: {
+    id: 'authoring.pagesAndResources.teams.teamSet.name.error.exists',
+    defaultMessage: 'It looks like this name is already in use',
   },
   teamSetFormDescriptionLabel: {
     id: 'authoring.pagesAndResources.teams.teamSet.description.label',
@@ -44,11 +63,11 @@ const messages = defineMessages({
   },
   teamSetFormDescriptionHelp: {
     id: 'authoring.pagesAndResources.teams.teamSet.description.help',
-    defaultMessage: 'Details about your team-set, displayed below the team-set name.',
+    defaultMessage: 'Details about your team-set',
   },
   teamSetFormDescriptionError: {
     id: 'authoring.pagesAndResources.teams.teamSet.description.error',
-    defaultMessage: 'Team set description can\'t be blank.',
+    defaultMessage: 'Enter a description for your team-set',
   },
   teamSetFormTypeLabel: {
     id: 'authoring.pagesAndResources.teams.teamSet.type.label',
@@ -62,32 +81,52 @@ const messages = defineMessages({
     id: 'authoring.pagesAndResources.teams.teamSet.types.open',
     defaultMessage: 'Open',
   },
+  teamSetTypeOpenDescription: {
+    id: 'authoring.pagesAndResources.teams.teamSet.types.open.description',
+    defaultMessage: 'Learners can create, join, leave, and see other teams',
+  },
   teamSetTypePublicManaged: {
     id: 'authoring.pagesAndResources.teams.teamSet.types.public_managed',
     defaultMessage: 'Public Managed',
+  },
+  teamSetTypePublicManagedDescription: {
+    id: 'authoring.pagesAndResources.teams.teamSet.types.public_managed.description',
+    defaultMessage: 'Only course staff can control teams and memberships. Learners can see other teams.',
   },
   teamSetTypePrivateManaged: {
     id: 'authoring.pagesAndResources.teams.teamSet.types.private_managed',
     defaultMessage: 'Private Managed',
   },
+  teamSetTypePrivateManagedDescription: {
+    id: 'authoring.pagesAndResources.teams.teamSet.types.private_managed.description',
+    defaultMessage: 'Only course staff can control teams, memberships, and see other teams',
+  },
   teamSetFormMaxSizeLabel: {
     id: 'authoring.pagesAndResources.teams.teamSet.maxSize.label',
-    defaultMessage: 'Max team size',
+    defaultMessage: 'Max team size (optional)',
   },
   teamSetFormMaxSizeHelp: {
     id: 'authoring.pagesAndResources.teams.teamSet.maxSize.help',
     defaultMessage: 'The maximum number of learners that can join a team',
   },
-  teamSetFormMaxSizeError: {
-    id: 'authoring.pagesAndResources.teams.teamSet.maxSize.error',
-    defaultMessage: 'The maximum team size must be a number between {min} and {max}',
-  },
   addTeamSet: {
     id: 'authoring.pagesAndResources.teams.addTeamSet.button',
     defaultMessage: 'Add team-set',
   },
+  deleteAlt: {
+    id: 'authoring.pagesAndResources.teams.teamsSet.delete',
+    defaultMessage: 'Delete',
+  },
+  expandAlt: {
+    id: 'authoring.pagesAndResources.teams.teamsSet.expand',
+    defaultMessage: 'Expand team set editor',
+  },
+  collapseAlt: {
+    id: 'authoring.pagesAndResources.teams.teamSet.collapse',
+    defaultMessage: 'Close team set editor',
+  },
   delete: {
-    id: 'authoring.pagesAndResources.teams.deleteTeamSet.delete.button',
+    id: 'authoring.pagesAndResources.teams.deleteTeamSet.initiateDelete',
     defaultMessage: 'Delete',
   },
   cancel: {
@@ -100,10 +139,7 @@ const messages = defineMessages({
   },
   teamSetDeleteBody: {
     id: 'authoring.pagesAndResources.teams.deleteTeamSet.body',
-    defaultMessage: `EdX recommends that you do not delete team-sets once your
-    course is running. Your team-set will no longer be visible in the LMS and
-    learners will not be able to leave teams associated with it. Please delete
-    learners from teams before deleting the associated teamSet.`,
+    defaultMessage: 'edX recommends that you do not delete team-sets once your course is running.',
   },
 });
 

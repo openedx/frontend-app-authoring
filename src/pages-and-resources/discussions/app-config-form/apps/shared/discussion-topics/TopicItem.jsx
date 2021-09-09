@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+
+import { useFormikContext } from 'formik';
+
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
-  Button,
-  Card,
-  Collapsible,
-  Form,
-  Icon,
-  IconButton,
-  TransitionReplace,
+  Button, Card, Form, TransitionReplace,
 } from '@edx/paragon';
-import { Delete, ExpandLess, ExpandMore } from '@edx/paragon/icons';
-import { useFormikContext } from 'formik';
-import PropTypes from 'prop-types';
+
+import CollapsableEditor from '../../../../../../generic/CollapsableEditor';
 import messages from '../messages';
 
 const TopicItem = ({
@@ -28,17 +25,16 @@ const TopicItem = ({
   } = useFormikContext();
   const [inFocus, setInFocus] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
-  const [collapseIsOpen, setCollapseOpen] = useState();
+  const [collapseIsOpen, setCollapseOpen] = useState(!name || hasError);
   const isGeneralTopic = id === 'course';
 
   useEffect(() => {
     onFocus(hasError);
   }, [inFocus, hasError]);
 
-  const getHeading = (isOpen = false) => {
-    let heading;
+  const getHeading = (isOpen) => {
     if (isGeneralTopic && isOpen) {
-      heading = (
+      return (
         <div className="h4 py-2 mr-auto">
           {intl.formatMessage(messages.renameGeneralTopic)}
           <div className="small text-muted mt-2">
@@ -46,16 +42,14 @@ const TopicItem = ({
           </div>
         </div>
       );
-    } else if (isOpen) {
-      heading = (
+    } if (isOpen) {
+      return (
         <span className="h4 py-2 mr-auto">
           {intl.formatMessage(messages.configureAdditionalTopic)}
         </span>
       );
-    } else {
-      heading = <span className="py-2">{name}</span>;
     }
-    return heading;
+    return <span className="py-2">{name}</span>;
   };
 
   const handleToggle = (isOpen) => {
@@ -65,8 +59,7 @@ const TopicItem = ({
     return setCollapseOpen(isOpen);
   };
 
-  const deleteDiscussionTopic = (event) => {
-    event.stopPropagation();
+  const deleteDiscussionTopic = () => {
     setShowDeletePopup(true);
   };
 
@@ -97,7 +90,7 @@ const TopicItem = ({
           <Button
             variant="outline-brand"
             className="ml-2"
-            onClick={() => onDelete()}
+            onClick={onDelete}
           >
             {intl.formatMessage(messages.deleteButton)}
           </Button>
@@ -106,96 +99,53 @@ const TopicItem = ({
     </Card>
   );
 
-  return (
-    <>
-      {showDeletePopup ? (
-        deleteTopicPopup
-      ) : (
-        <Collapsible.Advanced
-          className="collapsible-card rounded mb-3 px-3 py-2"
-          onToggle={handleToggle}
-          defaultOpen={!name || hasError}
-          open={collapseIsOpen}
-          data-testid={id}
+  return showDeletePopup
+    ? deleteTopicPopup
+    : (
+      <CollapsableEditor
+        open={collapseIsOpen}
+        onToggle={handleToggle}
+        title={getHeading(collapseIsOpen)}
+        onDelete={isGeneralTopic ? null : deleteDiscussionTopic}
+        expandAlt={intl.formatMessage(messages.expandAltText)}
+        collapseAlt={intl.formatMessage(messages.collapseAltText)}
+        deleteAlt={intl.formatMessage(messages.deleteAltText)}
+        data-testid={id}
+      >
+        <Form.Group
+          controlId={`discussionTopics.${index}.name`}
+          isInvalid={hasError && !inFocus}
+          className="m-2"
         >
-          <Collapsible.Trigger
-            className="collapsible-trigger d-flex border-0"
-            style={{ justifyContent: 'unset' }}
-          >
-            <Collapsible.Visible whenClosed>
-              {getHeading(false)}
-              <div className="ml-auto">
-                <IconButton
-                  alt={intl.formatMessage(messages.expandAltText)}
-                  src={ExpandMore}
-                  iconAs={Icon}
-                  onClick={() => {}}
-                  variant="dark"
-                />
-              </div>
-            </Collapsible.Visible>
-            <Collapsible.Visible whenOpen>
-              {getHeading(true)}
-              {!isGeneralTopic && (
-                <div className="pr-4 border-right">
-                  <IconButton
-                    onClick={deleteDiscussionTopic}
-                    alt={intl.formatMessage(messages.deleteAltText)}
-                    src={Delete}
-                    iconAs={Icon}
-                    variant="dark"
-                  />
-                </div>
-              )}
-              <div className="pl-4">
-                <IconButton
-                  alt={intl.formatMessage(messages.collapseAltText)}
-                  src={ExpandLess}
-                  iconAs={Icon}
-                  onClick={() => {}}
-                  variant="dark"
-                />
-              </div>
-            </Collapsible.Visible>
-          </Collapsible.Trigger>
-          <Collapsible.Body className="collapsible-body rounded px-0">
-            <Form.Group
-              controlId={`discussionTopics.${index}.name`}
-              isInvalid={hasError && !inFocus}
-              className="m-2"
-            >
-              <Form.Control
-                floatingLabel="Topic name"
-                onChange={handleChange}
-                onBlur={(event) => handleFocusOut(event)}
-                value={name}
-                controlClassName="bg-white"
-                onFocus={() => setInFocus(true)}
-              />
-              <TransitionReplace key={id} className="mt-1">
-                {inFocus ? (
-                  <React.Fragment key="open">
-                    {renderFormFeedback(intl.formatMessage(messages.addTopicHelpText))}
-                  </React.Fragment>
-                ) : (
-                  <React.Fragment key="closed" />
-                )}
-              </TransitionReplace>
-              <TransitionReplace key={`${name}-${id}`}>
-                {hasError && !inFocus ? (
-                  <React.Fragment key="open">
-                    {renderFormFeedback(errors?.discussionTopics[index].name, 'invalid')}
-                  </React.Fragment>
-                ) : (
-                  <React.Fragment key="closed" />
-                )}
-              </TransitionReplace>
-            </Form.Group>
-          </Collapsible.Body>
-        </Collapsible.Advanced>
-      )}
-    </>
-  );
+          <Form.Control
+            floatingLabel="Topic name"
+            onChange={handleChange}
+            onBlur={(event) => handleFocusOut(event)}
+            value={name}
+            controlClassName="bg-white"
+            onFocus={() => setInFocus(true)}
+          />
+          <TransitionReplace key={id} className="mt-1">
+            {inFocus ? (
+              <React.Fragment key="open">
+                {renderFormFeedback(intl.formatMessage(messages.addTopicHelpText))}
+              </React.Fragment>
+            ) : (
+              <React.Fragment key="closed" />
+            )}
+          </TransitionReplace>
+          <TransitionReplace key={`${name}-${id}`}>
+            {hasError && !inFocus ? (
+              <React.Fragment key="open">
+                {renderFormFeedback(errors?.discussionTopics[index].name, 'invalid')}
+              </React.Fragment>
+            ) : (
+              <React.Fragment key="closed" />
+            )}
+          </TransitionReplace>
+        </Form.Group>
+      </CollapsableEditor>
+    );
 };
 
 TopicItem.propTypes = {

@@ -1,6 +1,7 @@
 import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery } from 'react-responsive';
+import * as Yup from 'yup';
 import { RequestStatus } from './data/constants';
 import { getCourseAppSettingValue, getLoadingStatus } from './pages-and-resources/data/selectors';
 import { fetchCourseAppSettings, updateCourseAppSetting } from './pages-and-resources/data/thunks';
@@ -33,6 +34,39 @@ export function useAppSetting(settingName) {
     }
   }, [courseId]);
 
-  const saveSetting = (value) => dispatch(updateCourseAppSetting(courseId, settingName, value));
+  const saveSetting = async (value) => dispatch(updateCourseAppSetting(courseId, settingName, value));
   return [settingValue, saveSetting];
+}
+
+/**
+ * Adds additional validation methods to Yup.
+ */
+export function setupYupExtensions() {
+  // Add a uniqueProperty method to arrays that allows validating that the specified property path is unique
+  // across all objects in the array.
+  // Credit: https://github.com/jquense/yup/issues/345#issuecomment-717400071
+  Yup.addMethod(Yup.array, 'uniqueProperty', function uniqueProperty(property, message) {
+    return this.test('unique', '', function testUniqueness(list) {
+      const errors = [];
+
+      list.forEach((item, index) => {
+        const propertyValue = item[property];
+
+        if (propertyValue && list.filter(entry => entry[property] === propertyValue).length > 1) {
+          errors.push(
+            this.createError({
+              path: `${this.path}[${index}].${property}`,
+              message,
+            }),
+          );
+        }
+      });
+
+      if (errors.length > 0) {
+        throw new Yup.ValidationError(errors);
+      }
+
+      return true;
+    });
+  });
 }
