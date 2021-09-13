@@ -15,15 +15,19 @@ const messages = defineMessages({
   },
   enableTeamsLink: {
     id: 'authoring.pagesAndResources.teams.enableTeams.link',
-    defaultMessage: 'Learn more about the teams',
+    defaultMessage: 'Learn more about teams',
   },
   teamSize: {
     id: 'authoring.pagesAndResources.teams.teamSize.heading',
-    defaultMessage: 'Team Size',
+    defaultMessage: 'Team size',
   },
   maxTeamSize: {
     id: 'authoring.pagesAndResources.teams.teamSize.maxTeamSize',
     defaultMessage: 'Max team size',
+  },
+  maxTeamSizeHelp: {
+    id: 'authoring.pagesAndResources.teams.teamSize.maxTeamSizeHelp',
+    defaultMessage: 'The maximum number of learners that can join a team',
   },
   maxTeamSizeEmpty: {
     id: 'authoring.pagesAndResources.teams.teamSize.maxTeamSizeInvalid',
@@ -107,7 +111,7 @@ const messages = defineMessages({
   },
   teamSetFormMaxSizeHelp: {
     id: 'authoring.pagesAndResources.teams.teamSet.maxSize.help',
-    defaultMessage: 'The maximum number of learners that can join a team',
+    defaultMessage: 'Override the global max team size',
   },
   addTeamSet: {
     id: 'authoring.pagesAndResources.teams.addTeamSet.button',

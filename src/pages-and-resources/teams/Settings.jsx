@@ -94,7 +94,7 @@ function TeamSettings({
           handleChange, handleBlur, values, errors,
         }) => (
           <>
-            <h4 className="my-3">{intl.formatMessage(messages.teamSize)}</h4>
+            <h4 className="my-3 pb-2">{intl.formatMessage(messages.teamSize)}</h4>
             <Form.Group className="pb-1">
               <Form.Control
                 className="pb-2"
@@ -105,10 +105,11 @@ function TeamSettings({
                 onBlur={handleBlur}
                 value={values.maxTeamSize}
               />
+              <Form.Text>{intl.formatMessage(messages.maxTeamSizeHelp)}</Form.Text>
               <FormikErrorFeedback name="maxTeamSize" />
             </Form.Group>
             <div className="bg-light-200 d-flex flex-column mx-n4 px-4 py-4 border border-top">
-              <h4 className="mb-3">{intl.formatMessage(messages.teamSets)}</h4>
+              <h4 className="mb-4">{intl.formatMessage(messages.teamSets)}</h4>
               <FieldArray name="topics">
                 {({ push, remove }) => (
                   <>
@@ -125,7 +126,7 @@ function TeamSettings({
                     ))}
                     <Button
                       variant="plain"
-                      className="p-0 align-self-start"
+                      className="p-0 align-self-start mt-3"
                       onClick={() => push(blankNewTopic)}
                     >
                       <Icon src={Add} /> {intl.formatMessage(messages.addTeamSet)}
