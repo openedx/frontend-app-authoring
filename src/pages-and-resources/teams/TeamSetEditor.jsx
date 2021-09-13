@@ -47,11 +47,13 @@ function TeamSetEditor({
   intl, teamSet, onDelete, onChange, onBlur, fieldNameCommonBase, errors,
 }) {
   const [isDeleting, setDeleting] = useState(false);
-  const [isOpen, setOpen] = useState(teamSet.id === null);
+  const [isOpen, setOpen] = useState((teamSet.id === null) || true);
   const initiateDeletion = () => setDeleting(true);
   const cancelDeletion = () => setDeleting(false);
 
   const handleToggle = (open) => setOpen(Boolean(errors.name || errors.maxTeamSize || errors.description) || open);
+
+  const formGroupClasses = 'mb-4';
 
   return (
     <TransitionReplace>
@@ -83,7 +85,7 @@ function TeamSetEditor({
             title={
               isOpen
                 ? (
-                  <div className="d-flex flex-column small flex-shrink-1 h4">
+                  <div className="d-flex flex-column flex-shrink-1 h4 p-0 m-0">
                     {intl.formatMessage(messages.configureTeamSet)}
                   </div>
                 ) : (
@@ -95,7 +97,7 @@ function TeamSetEditor({
                 )
             }
           >
-            <Form.Group>
+            <Form.Group className={`${formGroupClasses} mt-2.5`}>
               <Form.Control
                 name={`${fieldNameCommonBase}.name`}
                 floatingLabel={intl.formatMessage(messages.teamSetFormNameLabel)}
@@ -106,7 +108,7 @@ function TeamSetEditor({
               <Form.Text>{intl.formatMessage(messages.teamSetFormNameHelp)}</Form.Text>
               <FormikErrorFeedback name={`${fieldNameCommonBase}.name`} />
             </Form.Group>
-            <Form.Group>
+            <Form.Group className={formGroupClasses}>
               <Form.Control
                 name={`${fieldNameCommonBase}.description`}
                 floatingLabel={intl.formatMessage(messages.teamSetFormDescriptionLabel)}
@@ -117,8 +119,8 @@ function TeamSetEditor({
               <Form.Text>{intl.formatMessage(messages.teamSetFormDescriptionHelp)}</Form.Text>
               <FormikErrorFeedback name={`${fieldNameCommonBase}.description`} />
             </Form.Group>
-            <Form.Group>
-              <Form.Label>
+            <Form.Group className={formGroupClasses}>
+              <Form.Label className="h4 my-3">
                 {intl.formatMessage(messages.teamSetFormTypeLabel)}
               </Form.Label>
               <Form.RadioSet
@@ -132,6 +134,7 @@ function TeamSetEditor({
                     key={teamSetType}
                     value={teamSetType}
                     description={intl.formatMessage(TeamTypeNameMessage[teamSetType].description)}
+                    className="my-2"
                   >
                     {intl.formatMessage(TeamTypeNameMessage[teamSetType].label)}
                   </Form.Radio>
@@ -139,6 +142,7 @@ function TeamSetEditor({
               </Form.RadioSet>
             </Form.Group>
             <Form.Group>
+              <Form.Label className="h4 pb-4">{intl.formatMessage(messages.teamSize)}</Form.Label>
               <Form.Control
                 type="number"
                 name={`${fieldNameCommonBase}.maxTeamSize`}
@@ -150,7 +154,6 @@ function TeamSetEditor({
               <Form.Text>{intl.formatMessage(messages.teamSetFormMaxSizeHelp)}</Form.Text>
               <FormikErrorFeedback name={`${fieldNameCommonBase}.maxTeamSize`} />
             </Form.Group>
-
           </CollapsableEditor>
         )}
     </TransitionReplace>

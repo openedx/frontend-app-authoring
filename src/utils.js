@@ -1,7 +1,9 @@
 import { useContext, useEffect } from 'react';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery } from 'react-responsive';
 import * as Yup from 'yup';
+
 import { RequestStatus } from './data/constants';
 import { getCourseAppSettingValue, getLoadingStatus } from './pages-and-resources/data/selectors';
 import { fetchCourseAppSettings, updateCourseAppSetting } from './pages-and-resources/data/thunks';
