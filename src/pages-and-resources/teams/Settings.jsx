@@ -8,12 +8,13 @@ import * as Yup from 'yup';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Button, Form, Icon } from '@edx/paragon';
 import { Add } from '@edx/paragon/icons';
+import { TeamSetTypes, TeamSizes } from '../../data/constants';
 
 import FormikErrorFeedback from '../../generic/FormikErrorFeedback';
 import { setupYupExtensions, useAppSetting } from '../../utils';
 import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
 import messages from './messages';
-import TeamSetEditor, { TeamSetTypes, TeamSizes } from './TeamSetEditor';
+import TeamSetEditor from './TeamSetEditor';
 
 setupYupExtensions();
 
@@ -22,24 +23,25 @@ function TeamSettings({
   onClose,
 }) {
   const [teamsConfiguration, saveSettings] = useAppSetting('teamsConfiguration');
-  const blankNewTopic = {
+  const blankNewTeamSet = {
     name: '',
     description: '',
-    type: 'open',
+    type: TeamSetTypes.OPEN,
     maxTeamSize: TeamSizes.DEFAULT,
     id: null,
+    key: uuid(),
   };
 
   const handleSettingsSave = async (values) => {
     // For newly-added teams, fill in an id.
-    const topics = values.topics?.map(topic => ({
-      id: topic.id || uuid(),
-      name: topic.name,
-      type: topic.type,
-      description: topic.description,
-      max_team_size: topic.maxTeamSize,
+    const teamSets = values.topics?.map(teamSet => ({
+      id: teamSet.id || uuid(),
+      name: teamSet.name,
+      type: teamSet.type,
+      description: teamSet.description,
+      max_team_size: teamSet.maxTeamSize,
     }));
-    return saveSettings({ topics, max_team_size: values.maxTeamSize });
+    return saveSettings({ topics: teamSets, max_team_size: values.maxTeamSize });
   };
 
   return (
@@ -115,7 +117,7 @@ function TeamSettings({
                   <>
                     {values.topics?.map((topic, index) => (
                       <TeamSetEditor
-                        key={index}
+                        key={topic.id || topic.key}
                         teamSet={topic}
                         errors={errors.topics?.[index]}
                         fieldNameCommonBase={`topics.${index}`}
@@ -127,7 +129,7 @@ function TeamSettings({
                     <Button
                       variant="plain"
                       className="p-0 align-self-start mt-3"
-                      onClick={() => push(blankNewTopic)}
+                      onClick={() => push(blankNewTeamSet)}
                     >
                       <Icon src={Add} /> {intl.formatMessage(messages.addTeamSet)}
                     </Button>

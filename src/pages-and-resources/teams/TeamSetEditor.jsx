@@ -1,38 +1,19 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Button, Form, TransitionReplace } from '@edx/paragon';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import { TeamSetTypes } from '../../data/constants';
 
 import CollapsableEditor from '../../generic/CollapsableEditor';
 import FormikErrorFeedback from '../../generic/FormikErrorFeedback';
 import messages from './messages';
 
-/**
- * Team sizes enum
- * @enum
- * @type {{MIN: number, MAX: number, DEFAULT: number}}
- */
-export const TeamSizes = {
-  DEFAULT: 50,
-  MIN: 1,
-  MAX: 500,
-};
-
-/**
- * Team types enum
- * @enum
- * @type {{PRIVATE_MANAGED: string, PUBLIC_MANAGED: string, OPEN: string}}
- */
-export const TeamSetTypes = {
-  OPEN: 'open',
-  PUBLIC_MANAGED: 'public_managed',
-  PRIVATE_MANAGED: 'private_managed',
-};
-
 // Maps a team type to its corresponding intl message
 const TeamTypeNameMessage = {
-  [TeamSetTypes.OPEN]: { label: messages.teamSetTypeOpen, description: messages.teamSetTypeOpenDescription },
+  [TeamSetTypes.OPEN]: {
+    label: messages.teamSetTypeOpen,
+    description: messages.teamSetTypeOpenDescription,
+  },
   [TeamSetTypes.PUBLIC_MANAGED]: {
     label: messages.teamSetTypePublicManaged,
     description: messages.teamSetTypePublicManagedDescription,
@@ -47,7 +28,7 @@ function TeamSetEditor({
   intl, teamSet, onDelete, onChange, onBlur, fieldNameCommonBase, errors,
 }) {
   const [isDeleting, setDeleting] = useState(false);
-  const [isOpen, setOpen] = useState((teamSet.id === null) || true);
+  const [isOpen, setOpen] = useState(teamSet.id === null);
   const initiateDeletion = () => setDeleting(true);
   const cancelDeletion = () => setDeleting(false);
 
