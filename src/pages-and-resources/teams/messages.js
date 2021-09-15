@@ -30,8 +30,12 @@ const messages = defineMessages({
     defaultMessage: 'The maximum number of learners that can join a team',
   },
   maxTeamSizeEmpty: {
-    id: 'authoring.pagesAndResources.teams.teamSize.maxTeamSizeInvalid',
+    id: 'authoring.pagesAndResources.teams.teamSize.maxTeamSizeEmpty',
     defaultMessage: 'Enter max team size',
+  },
+  maxTeamSizeInvalid: {
+    id: 'authoring.pagesAndResources.teams.teamSize.maxTeamSizeInvalid',
+    defaultMessage: 'Max team size must be a positive number larger than zero.',
   },
   maxTeamSizeTooHigh: {
     id: 'authoring.pagesAndResources.teams.teamSize.maxTeamSizeTooHigh',

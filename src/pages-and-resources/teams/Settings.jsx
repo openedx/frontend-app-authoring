@@ -61,7 +61,7 @@ function TeamSettings({
       validationSchema={{
         maxTeamSize: Yup.number()
           .required(intl.formatMessage(messages.maxTeamSizeEmpty))
-          .min(TeamSizes.MIN)
+          .min(TeamSizes.MIN, intl.formatMessage(messages.maxTeamSizeInvalid))
           .max(
             TeamSizes.MAX,
             intl.formatMessage(messages.maxTeamSizeTooHigh, {
@@ -79,8 +79,8 @@ function TeamSettings({
               .required(intl.formatMessage(messages.teamSetFormDescriptionError))
               .trim(),
             maxTeamSize: Yup.number()
-              .required(intl.formatMessage(messages.maxTeamSizeEmpty))
-              .min(TeamSizes.MIN)
+              .nullable()
+              .min(TeamSizes.MIN, intl.formatMessage(messages.maxTeamSizeInvalid))
               .max(
                 TeamSizes.MAX,
                 intl.formatMessage(messages.maxTeamSizeTooHigh, {
