@@ -34,14 +34,14 @@ function TeamSettings({
 
   const handleSettingsSave = async (values) => {
     // For newly-added teams, fill in an id.
-    const teamSets = values.topics?.map(teamSet => ({
+    const teamSets = values.teamSets?.map(teamSet => ({
       id: teamSet.id || uuid(),
       name: teamSet.name,
       type: teamSet.type,
       description: teamSet.description,
       max_team_size: teamSet.maxTeamSize,
     }));
-    return saveSettings({ topics: teamSets, max_team_size: values.maxTeamSize });
+    return saveSettings({ team_sets: teamSets, max_team_size: values.maxTeamSize });
   };
 
   return (
@@ -52,7 +52,12 @@ function TeamSettings({
       enableAppLabel={intl.formatMessage(messages.enableTeamsLabel)}
       learnMoreText={intl.formatMessage(messages.enableTeamsLink)}
       onClose={onClose}
-      initialValues={{ ...teamsConfiguration }}
+      // Topic is supported for backwards compatibility, the new field is team_sets:
+      // ref: https://github.com/edx/edx-platform/blob/15461d3b6e6c0a724a7b8ed09241d970f201e5e7/openedx/core/lib/teams_config.py#L104-L108
+      initialValues={{
+        maxTeamSize: teamsConfiguration?.maxTeamSize,
+        teamSets: teamsConfiguration?.teamSets || teamsConfiguration?.topics,
+      }}
       validationSchema={{
         maxTeamSize: Yup.number()
           .required(intl.formatMessage(messages.maxTeamSizeEmpty))
@@ -63,7 +68,7 @@ function TeamSettings({
               max: TeamSizes.MAX,
             }),
           ),
-        topics: Yup.array().of(
+        teamSets: Yup.array().of(
           Yup.object({
             id: Yup.string().nullable(),
             name: Yup.string()
@@ -112,15 +117,15 @@ function TeamSettings({
             </Form.Group>
             <div className="bg-light-200 d-flex flex-column mx-n4 px-4 py-4 border border-top">
               <h4 className="mb-4">{intl.formatMessage(messages.teamSets)}</h4>
-              <FieldArray name="topics">
+              <FieldArray name="teamSets">
                 {({ push, remove }) => (
                   <>
-                    {values.topics?.map((topic, index) => (
+                    {values.teamSets?.map((teamSet, index) => (
                       <TeamSetEditor
-                        key={topic.id || topic.key}
-                        teamSet={topic}
-                        errors={errors.topics?.[index]}
-                        fieldNameCommonBase={`topics.${index}`}
+                        key={teamSet.id || teamSet.key}
+                        teamSet={teamSet}
+                        errors={errors.teamSets?.[index]}
+                        fieldNameCommonBase={`teamSets.${index}`}
                         onDelete={() => remove(index)}
                         onChange={handleChange}
                         onBlur={handleBlur}
