@@ -3,13 +3,9 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Button,
   Card,
-  Collapsible,
   Form,
-  Icon,
-  IconButton,
   Badge,
 } from '@edx/paragon';
-import { Delete, ExpandLess, ExpandMore } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
@@ -21,6 +17,7 @@ import {
   deleteHelperText,
   badgeVariant,
 } from '../../../../data/constants';
+import CollapsableEditor from '../../../../../../generic/CollapsableEditor';
 
 const BlackoutDatesItem = ({
   intl,
@@ -28,7 +25,7 @@ const BlackoutDatesItem = ({
   blackoutDate,
   onDelete,
   hasError,
-  onCollapse,
+  onClose,
 }) => {
   const blackoutDatesHasError = !blackoutDate.startDate || !blackoutDate.endDate || hasError;
   const [showDeletePopup, setShowDeletePopup] = useState(false);
@@ -90,101 +87,65 @@ const BlackoutDatesItem = ({
         showDeletePopup ? (
           deleteBlackoutDatesPopup(blackoutDate.status)
         ) : (
-          <Collapsible.Advanced
-            className="collapsible-card rounded mb-3 px-3"
-            onToggle={handleToggle}
+          <CollapsableEditor
             open={collapseIsOpen}
-            defaultOpen={blackoutDatesHasError}
+            onToggle={handleToggle}
+            title={getHeading(collapseIsOpen)}
+            onDelete={() => setShowDeletePopup(true)}
+            expandAlt={intl.formatMessage(messages.expandAltText)}
+            collapseAlt={intl.formatMessage(messages.collapseAltText)}
+            deleteAlt={intl.formatMessage(messages.deleteAltText)}
             data-testid={blackoutDate.id}
+            onClose={() => onClose(hasError)}
           >
-            <Collapsible.Trigger
-              className="collapsible-trigger d-flex border-0"
-              style={{ justifyContent: 'unset' }}
-            >
-              <Collapsible.Visible whenClosed>
-                {getHeading(false)}
-                <div className="ml-auto">
-                  <IconButton
-                    alt={intl.formatMessage(messages.expandAltText)}
-                    src={ExpandMore}
-                    iconAs={Icon}
-                    onClick={() => {}}
-                    variant="dark"
-                  />
-                </div>
-              </Collapsible.Visible>
-              <Collapsible.Visible whenOpen>
-                {getHeading(true)}
-                <div className="pr-4 border-right">
-                  <IconButton
-                    onClick={() => setShowDeletePopup(true)}
-                    alt={intl.formatMessage(messages.deleteBlackoutDatesAltText)}
-                    src={Delete}
-                    iconAs={Icon}
-                    variant="dark"
-                  />
-                </div>
-                <div className="pl-4">
-                  <IconButton
-                    alt={intl.formatMessage(messages.collapseAltText)}
-                    src={ExpandLess}
-                    iconAs={Icon}
-                    onClick={() => onCollapse()}
-                    variant="dark"
-                  />
-                </div>
-              </Collapsible.Visible>
-            </Collapsible.Trigger>
-            <Collapsible.Body className="collapsible-body rounded px-0">
-              <Form.Row className="mx-2 pt-3">
-                <BlackoutDatesInput
-                  index={index}
-                  value={blackoutDate.startDate}
-                  type="date"
-                  label="Start date"
-                  helpText={intl.formatMessage(messages.blackoutStartDateHelp)}
-                  fieldName="startDate"
-                  formGroupClasses="pl-md-0"
-                  fieldClasses="pr-md-2"
-                />
-                <BlackoutDatesInput
-                  index={index}
-                  value={blackoutDate.startTime}
-                  type="time"
-                  label="Start time (optional)"
-                  helpText={intl.formatMessage(messages.blackoutStartTimeHelp)}
-                  fieldName="startTime"
-                  formGroupClasses="pr-md-0"
-                  fieldClasses="ml-md-2"
-                  helperClasses="ml-md-2"
-                />
-              </Form.Row>
-              <hr className="mx-2 my-2 border-light-400" />
-              <Form.Row className="mx-2 pt-4">
-                <BlackoutDatesInput
-                  index={index}
-                  value={blackoutDate.endDate}
-                  type="date"
-                  label="End date"
-                  helpText={intl.formatMessage(messages.blackoutEndDateHelp)}
-                  fieldName="endDate"
-                  formGroupClasses="pl-md-0"
-                  fieldClasses="pr-md-2"
-                />
-                <BlackoutDatesInput
-                  index={index}
-                  value={blackoutDate.endTime}
-                  type="time"
-                  label="End time (optional)"
-                  helpText={intl.formatMessage(messages.blackoutEndTimeHelp)}
-                  fieldName="endTime"
-                  formGroupClasses="pr-md-0"
-                  fieldClasses="ml-md-2"
-                  helperClasses="ml-md-2"
-                />
-              </Form.Row>
-            </Collapsible.Body>
-          </Collapsible.Advanced>
+            <Form.Row className="mx-2 pt-3">
+              <BlackoutDatesInput
+                index={index}
+                value={blackoutDate.startDate}
+                type="date"
+                label="Start date"
+                helpText={intl.formatMessage(messages.blackoutStartDateHelp)}
+                fieldName="startDate"
+                formGroupClasses="pl-md-0"
+                fieldClasses="pr-md-2"
+              />
+              <BlackoutDatesInput
+                index={index}
+                value={blackoutDate.startTime}
+                type="time"
+                label="Start time (optional)"
+                helpText={intl.formatMessage(messages.blackoutStartTimeHelp)}
+                fieldName="startTime"
+                formGroupClasses="pr-md-0"
+                fieldClasses="ml-md-2"
+                helperClasses="ml-md-2"
+              />
+            </Form.Row>
+            <hr className="mx-2 my-2 border-light-400" />
+            <Form.Row className="mx-2 pt-4">
+              <BlackoutDatesInput
+                index={index}
+                value={blackoutDate.endDate}
+                type="date"
+                label="End date"
+                helpText={intl.formatMessage(messages.blackoutEndDateHelp)}
+                fieldName="endDate"
+                formGroupClasses="pl-md-0"
+                fieldClasses="pr-md-2"
+              />
+              <BlackoutDatesInput
+                index={index}
+                value={blackoutDate.endTime}
+                type="time"
+                label="End time (optional)"
+                helpText={intl.formatMessage(messages.blackoutEndTimeHelp)}
+                fieldName="endTime"
+                formGroupClasses="pr-md-0"
+                fieldClasses="ml-md-2"
+                helperClasses="ml-md-2"
+              />
+            </Form.Row>
+          </CollapsableEditor>
         )
       }
     </>
@@ -196,7 +157,7 @@ BlackoutDatesItem.propTypes = {
   index: PropTypes.number.isRequired,
   onDelete: PropTypes.func.isRequired,
   hasError: PropTypes.bool.isRequired,
-  onCollapse: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   blackoutDate: PropTypes.shape({
     id: PropTypes.string,
     startDate: PropTypes.string,

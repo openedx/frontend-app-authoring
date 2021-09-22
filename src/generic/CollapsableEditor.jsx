@@ -9,6 +9,7 @@ const CollapsableEditor = ({
   open,
   defaultOpen,
   onToggle,
+  onClose,
   onDelete,
   children,
   expandAlt,
@@ -19,6 +20,7 @@ const CollapsableEditor = ({
   <Collapsible.Advanced
     className="collapsible-card rounded mb-3 px-3 py-2"
     onToggle={onToggle}
+    onClose={onClose}
     defaultOpen={defaultOpen}
     open={open}
     {...props}
@@ -31,9 +33,11 @@ const CollapsableEditor = ({
         {title}
       </div>
       <Collapsible.Visible whenClosed>
-        <Icon
-          screenReaderText={expandAlt}
+        <IconButton
+          alt={expandAlt}
           src={ExpandMore}
+          iconAs={Icon}
+          onClick={() => {}}
           variant="dark"
         />
       </Collapsible.Visible>
@@ -53,9 +57,11 @@ const CollapsableEditor = ({
           </div>
         )}
         <div className="pl-4">
-          <Icon
-            screenReaderText={collapseAlt}
+          <IconButton
+            alt={collapseAlt}
             src={ExpandLess}
+            iconAs={Icon}
+            onClick={() => {}}
             variant="dark"
           />
         </div>
@@ -77,12 +83,14 @@ CollapsableEditor.propTypes = {
   expandAlt: PropTypes.string.isRequired,
   deleteAlt: PropTypes.string.isRequired,
   collapseAlt: PropTypes.string.isRequired,
+  onClose: PropTypes.func,
 };
 
 CollapsableEditor.defaultProps = {
   onDelete: null,
   defaultOpen: undefined,
   open: undefined,
+  onClose: () => {},
 };
 
 export default CollapsableEditor;

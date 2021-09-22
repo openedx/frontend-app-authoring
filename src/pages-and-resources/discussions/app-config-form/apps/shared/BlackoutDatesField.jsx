@@ -21,7 +21,7 @@ const BlackoutDatesField = ({ intl }) => {
   const { blackoutDates } = appConfig;
   const { blackoutDatesErrors } = useContext(LegacyConfigFormContext);
 
-  const handleOnCollapse = useCallback((id, hasError) => {
+  const handleOnClose = useCallback((id, hasError) => {
     if (!hasError) {
       const updatedBlackoutDates = blackoutDates.map((date) => {
         if (date.id === id) {
@@ -67,7 +67,7 @@ const BlackoutDatesField = ({ intl }) => {
                   index={index}
                   id={blackoutDate.id}
                   onDelete={() => remove(index)}
-                  onCollapse={(hasError) => handleOnCollapse(blackoutDate.id, hasError)}
+                  onClose={(hasError) => handleOnClose(blackoutDate.id, hasError)}
                   hasError={blackoutDatesErrors[index]}
                 />
               ))}

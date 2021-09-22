@@ -113,7 +113,7 @@ function normalizeApps(data) {
 export function denormalizeBlackoutDate(date) {
   return [
     formatDate(date.startDate, date.startTime),
-    formatDate(date.endDate, date.endDate),
+    formatDate(date.endDate, date.endTime),
   ];
 }
 
@@ -130,6 +130,8 @@ function denormalizeData(courseId, appId, data) {
     pluginConfiguration.discussion_blackouts = data.blackoutDates.map((blackoutDates) => (
       denormalizeBlackoutDate(blackoutDates)
     ));
+  } else {
+    pluginConfiguration.discussion_blackouts = [];
   }
   if (data.discussionTopics?.length) {
     pluginConfiguration.discussion_topics = data.discussionTopics.reduce((topics, currentTopic) => {
