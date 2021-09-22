@@ -26,17 +26,23 @@ function ProgressSettings({ intl, onClose }) {
       onSettingsSave={handleSettingsSave}
     >
       {
-        ({ handleChange, handleBlur, values }) => (
-          <FormSwitchGroup
-            id="enable-progress-graph"
-            name="enableProgressGraph"
-            label={intl.formatMessage(messages.enableGraphLabel)}
-            helpText={intl.formatMessage(messages.enableGraphHelp)}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            checked={values.enableProgressGraph}
-          />
-        )
+        ({ handleChange, handleBlur, values }) => {
+          let formSwitch = null;
+          if (process.env.ENABLE_PROGRESS_GRAPH_SETTINGS === 'true') {
+            formSwitch = (
+              <FormSwitchGroup
+                id="enable-progress-graph"
+                name="enableProgressGraph"
+                label={intl.formatMessage(messages.enableGraphLabel)}
+                helpText={intl.formatMessage(messages.enableGraphHelp)}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                checked={values.enableProgressGraph}
+              />
+            );
+          }
+          return formSwitch;
+        }
       }
     </AppSettingsModal>
   );
