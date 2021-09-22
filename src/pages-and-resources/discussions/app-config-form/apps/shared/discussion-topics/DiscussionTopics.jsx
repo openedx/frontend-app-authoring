@@ -8,7 +8,7 @@ import _ from 'lodash';
 import messages from '../messages';
 import TopicItem from './TopicItem';
 import { LegacyConfigFormContext } from '../../legacy/LegacyConfigFormProvider';
-import filterItemFromObject from '../../../utils';
+import { filterItemFromObject } from '../../../utils';
 
 const DiscussionTopics = ({ intl }) => {
   const {
@@ -53,7 +53,7 @@ const DiscussionTopics = ({ intl }) => {
       <h5 className="text-gray-500 mt-4 mb-2">
         {intl.formatMessage(messages.discussionTopics)}
       </h5>
-      <label className="text-primary-500 mb-2 h4">
+      <label className="text-primary-500 mb-1 h4">
         {intl.formatMessage(messages.discussionTopicsLabel)}
       </label>
       <div className="small mb-4 text-muted">

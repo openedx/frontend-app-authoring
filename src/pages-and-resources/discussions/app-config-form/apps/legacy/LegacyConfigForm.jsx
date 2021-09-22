@@ -4,15 +4,16 @@ import { Card, Form } from '@edx/paragon';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import moment from 'moment';
 
 import DivisionByGroupFields from '../shared/DivisionByGroupFields';
 import AnonymousPostingFields from '../shared/AnonymousPostingFields';
 import DiscussionTopics from '../shared/discussion-topics/DiscussionTopics';
-import BlackoutDatesField, { blackoutDatesRegex } from '../shared/BlackoutDatesField';
+import BlackoutDatesField from '../shared/BlackoutDatesField';
 import LegacyConfigFormProvider from './LegacyConfigFormProvider';
-
 import messages from '../shared/messages';
 import AppConfigFormDivider from '../shared/AppConfigFormDivider';
+import { checkFieldErrors } from '../../utils';
 
 // eslint-disable-next-line func-names
 Yup.addMethod(Yup.object, 'uniqueProperty', function (propertyName, message) {
@@ -34,14 +35,41 @@ Yup.addMethod(Yup.object, 'uniqueProperty', function (propertyName, message) {
   });
 });
 
+// eslint-disable-next-line func-names
+Yup.addMethod(Yup.string, 'compare', function (message) {
+  // eslint-disable-next-line func-names
+  return this.test('isGreater', message, function () {
+    if (!this.parent || !this.parent.startTime || !this.parent.endTime) {
+      return true;
+    }
+    const isStartTimeGreater = moment(`${moment(this.parent.startDate).format('YYYY-MM-DD')}T${this.parent.startTime}`)
+      .isSameOrAfter(moment(`${moment(this.parent.endDate).format('YYYY-MM-DD')}T${this.parent.endTime}`));
+
+    if (isStartTimeGreater) {
+      throw this.createError({
+        path: `${this.path}`,
+        error: message,
+      });
+    }
+    return true;
+  });
+});
+
 function LegacyConfigForm({
   appConfig, onSubmit, formRef, intl, title,
 }) {
   const [validDiscussionTopics, setValidDiscussionTopics] = useState(appConfig.discussionTopics);
   const legacyFormValidationSchema = Yup.object().shape({
-    blackoutDates: Yup.string().matches(
-      blackoutDatesRegex,
-      intl.formatMessage(messages.blackoutDatesFormattingError),
+    blackoutDates: Yup.array(
+      Yup.object().shape({
+        startDate: Yup.date().required(intl.formatMessage(messages.blackoutStartDateRequired)),
+        endDate: Yup.date().required(intl.formatMessage(messages.blackoutEndDateRequired)).when('startDate', {
+          is: (startDate) => startDate,
+          then: Yup.date().min(Yup.ref('startDate'), intl.formatMessage(messages.blackoutEndDateInPast)),
+        }),
+        startTime: Yup.string(),
+        endTime: Yup.string().compare(intl.formatMessage(messages.blackoutEndTimeInPast)),
+      }),
     ),
     discussionTopics: Yup.array(
       Yup.object({
@@ -67,19 +95,22 @@ function LegacyConfigForm({
           touched,
         },
       ) => {
-        const { discussionTopics } = values;
-        const discussionTopicErrors = discussionTopics.map((value, index) => Boolean(
-          touched.discussionTopics
-          && touched.discussionTopics[index]?.name
-          && errors.discussionTopics
-          && errors?.discussionTopics[index]?.name,
+        const { discussionTopics, blackoutDates } = values;
+        const discussionTopicErrors = discussionTopics.map((value, index) => (
+          checkFieldErrors(touched, errors, 'discussionTopics', 'name', index)
         ));
+        const blackoutDatesErrors = blackoutDates.map((value, index) => (
+          checkFieldErrors(touched, errors, 'blackoutDates', 'startDate', index)
+          || checkFieldErrors(touched, errors, 'blackoutDates', 'endDate', index)
+          || checkFieldErrors(touched, errors, 'blackoutDates', 'startTime', index)
+          || checkFieldErrors(touched, errors, 'blackoutDates', 'endTime', index)));
+
         const contextValue = {
           validDiscussionTopics,
           setValidDiscussionTopics,
           discussionTopicErrors,
-          isFormInvalid: discussionTopicErrors.some((error) => error === true)
-          || Boolean(touched.blackoutDates && errors.blackoutDates),
+          blackoutDatesErrors,
+          isFormInvalid: discussionTopicErrors.some((error) => error) || blackoutDatesErrors.some((error) => error),
         };
 
         return (
@@ -114,7 +145,14 @@ LegacyConfigForm.propTypes = {
     divideCourseTopicsByCohorts: PropTypes.bool.isRequired,
     allowAnonymousPosts: PropTypes.bool.isRequired,
     allowAnonymousPostsPeers: PropTypes.bool.isRequired,
-    blackoutDates: PropTypes.string.isRequired,
+    blackoutDates: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string,
+      startDate: PropTypes.string,
+      endDate: PropTypes.string,
+      startTime: PropTypes.string,
+      endTime: PropTypes.string,
+      status: PropTypes.string,
+    })),
     discussionTopics: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string,
       id: PropTypes.string,
@@ -134,7 +172,7 @@ LegacyConfigForm.defaultProps = {
     divideCourseTopicsByCohorts: false,
     allowAnonymousPosts: false,
     allowAnonymousPostsPeers: false,
-    blackoutDates: '[]',
+    blackoutDates: [],
   },
 };
 
