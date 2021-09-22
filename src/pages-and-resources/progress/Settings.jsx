@@ -2,7 +2,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import React from 'react';
 import * as Yup from 'yup';
-
+import { getConfig } from '@edx/frontend-platform';
 import FormSwitchGroup from '../../generic/FormSwitchGroup';
 import { useAppSetting } from '../../utils';
 import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
@@ -28,7 +28,7 @@ function ProgressSettings({ intl, onClose }) {
       {
         ({ handleChange, handleBlur, values }) => {
           let formSwitch = null;
-          if (process.env.ENABLE_PROGRESS_GRAPH_SETTINGS === 'true') {
+          if (getConfig().ENABLE_PROGRESS_GRAPH_SETTINGS === 'true') {
             formSwitch = (
               <FormSwitchGroup
                 id="enable-progress-graph"
