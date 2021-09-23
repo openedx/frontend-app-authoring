@@ -28,7 +28,7 @@ function ProgressSettings({ intl, onClose }) {
       {
         ({ handleChange, handleBlur, values }) => {
           let formSwitch = null;
-          if (getConfig().ENABLE_PROGRESS_GRAPH_SETTINGS === 'true') {
+          if (getConfig().ENABLE_PROGRESS_GRAPH_SETTINGS.toLowerCase() === 'true') {
             formSwitch = (
               <FormSwitchGroup
                 id="enable-progress-graph"
