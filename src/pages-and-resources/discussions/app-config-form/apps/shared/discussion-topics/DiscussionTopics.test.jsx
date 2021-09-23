@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-  act, fireEvent, queryAllByTestId, queryByTestId, queryByText, render, waitFor,
+  act, fireEvent, queryAllByTestId, queryByTestId, queryByText, render, waitFor, queryByLabelText,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
@@ -33,7 +33,7 @@ const appConfig = {
   allowAnonymousPosts: false,
   allowAnonymousPostsPeers: false,
   allowDivisionByUnit: false,
-  blackoutDates: '[]',
+  blackoutDates: [],
 };
 
 const contextValue = {
@@ -134,11 +134,11 @@ describe('DiscussionTopics', () => {
     createComponent(appConfig);
     const topicCard = queryByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960');
 
-    await act(async () => userEvent.click(queryByText(topicCard, 'Expand')));
+    await act(async () => userEvent.click(queryByLabelText(topicCard, 'Expand')));
     await act(async () => {
       fireEvent.change(topicCard.querySelector('input'), { target: { value: 'new name' } });
     });
-    await act(async () => userEvent.click(queryByText(topicCard, 'Collapse')));
+    await act(async () => userEvent.click(queryByLabelText(topicCard, 'Collapse')));
 
     expect(queryByText(topicCard, 'new name')).toBeInTheDocument();
   });

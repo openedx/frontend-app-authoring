@@ -38,7 +38,7 @@ function extractDiscussionTopicIds(data) {
   ).map(([key, value]) => value.id);
 }
 
-function normalizeBlackoutDates(data) {
+export function normalizeBlackoutDates(data) {
   const normaizeData = data.map(([startDate, endDate]) => ({
     id: uuid(),
     startDate: moment(startDate).format('YYYY-MM-DD'),

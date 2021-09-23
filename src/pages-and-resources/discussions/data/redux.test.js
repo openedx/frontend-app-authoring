@@ -233,7 +233,7 @@ describe('Data layer integration tests', () => {
         id: 'legacy',
         allowAnonymousPosts: false,
         allowAnonymousPostsPeers: false,
-        blackoutDates: '[]',
+        blackoutDates: [],
         // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
         // but we add it in during normalization.
         divideByCohorts: true,
