@@ -10,8 +10,11 @@ import messages from './messages';
 
 function ProgressSettings({ intl, onClose }) {
   const [disableProgressGraph, saveSetting] = useAppSetting('disableProgressGraph');
+  const showProgressGraphSetting = getConfig().ENABLE_PROGRESS_GRAPH_SETTINGS.toLowerCase() === 'true';
 
-  const handleSettingsSave = (values) => saveSetting(!values.enableProgressGraph);
+  const handleSettingsSave = (values) => {
+    if (showProgressGraphSetting) { saveSetting(!values.enableProgressGraph); }
+  };
 
   return (
     <AppSettingsModal
@@ -26,23 +29,19 @@ function ProgressSettings({ intl, onClose }) {
       onSettingsSave={handleSettingsSave}
     >
       {
-        ({ handleChange, handleBlur, values }) => {
-          let formSwitch = null;
-          if (getConfig().ENABLE_PROGRESS_GRAPH_SETTINGS === 'true') {
-            formSwitch = (
-              <FormSwitchGroup
-                id="enable-progress-graph"
-                name="enableProgressGraph"
-                label={intl.formatMessage(messages.enableGraphLabel)}
-                helpText={intl.formatMessage(messages.enableGraphHelp)}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                checked={values.enableProgressGraph}
-              />
-            );
-          }
-          return formSwitch;
-        }
+        ({ handleChange, handleBlur, values }) => (
+          showProgressGraphSetting && (
+          <FormSwitchGroup
+            id="enable-progress-graph"
+            name="enableProgressGraph"
+            label={intl.formatMessage(messages.enableGraphLabel)}
+            helpText={intl.formatMessage(messages.enableGraphHelp)}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            checked={values.enableProgressGraph}
+          />
+          )
+        )
       }
     </AppSettingsModal>
   );
