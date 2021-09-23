@@ -20,28 +20,20 @@ const BlackoutDatesField = ({ intl }) => {
   } = useFormikContext();
   const { blackoutDates } = appConfig;
   const { blackoutDatesErrors } = useContext(LegacyConfigFormContext);
-
-  const handleOnClose = useCallback((id, hasError) => {
+  const handleOnClose = useCallback((index, hasError) => {
     if (!hasError) {
-      const updatedBlackoutDates = blackoutDates.map((date) => {
-        if (date.id === id) {
-          return { ...date, status: checkStatus(denormalizeBlackoutDate(date)) };
-        }
-        return date;
-      });
-      setFieldValue('blackoutDates', updatedBlackoutDates);
+      blackoutDates[index].status = checkStatus(denormalizeBlackoutDate(blackoutDates[index]));
+      setFieldValue('blackoutDates', blackoutDates);
     }
   }, [blackoutDates]);
 
-  const addNewBlackoutDates = (push) => {
-    push({
-      id: uuid(),
-      startDate: '',
-      startTime: '',
-      endDate: '',
-      endTime: '',
-      status: constants.ACTIVE,
-    });
+  const newBlackoutDateItem = {
+    id: uuid(),
+    startDate: '',
+    startTime: '',
+    endDate: '',
+    endTime: '',
+    status: constants.ACTIVE,
   };
 
   return (
@@ -67,13 +59,13 @@ const BlackoutDatesField = ({ intl }) => {
                   index={index}
                   id={blackoutDate.id}
                   onDelete={() => remove(index)}
-                  onClose={(hasError) => handleOnClose(blackoutDate.id, hasError)}
+                  onClose={(hasError) => handleOnClose(index, hasError)}
                   hasError={blackoutDatesErrors[index]}
                 />
               ))}
               <div className="mb-4">
                 <Button
-                  onClick={() => addNewBlackoutDates(push)}
+                  onClick={() => push(newBlackoutDateItem)}
                   variant="link"
                   iconBefore={Add}
                   className="text-primary-500 p-0"

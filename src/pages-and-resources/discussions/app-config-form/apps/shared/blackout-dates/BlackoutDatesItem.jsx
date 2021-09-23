@@ -31,6 +31,13 @@ const BlackoutDatesItem = ({
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [collapseIsOpen, setCollapseOpen] = useState(blackoutDatesHasError);
 
+  const handleToggle = (isOpen) => {
+    if (!isOpen && blackoutDatesHasError) {
+      return setCollapseOpen(true);
+    }
+    return setCollapseOpen(isOpen);
+  };
+
   const getHeading = (isOpen) => {
     if (isOpen) {
       return (
@@ -74,81 +81,68 @@ const BlackoutDatesItem = ({
     </Card>
   );
 
-  const handleToggle = (isOpen) => {
-    if (!isOpen && blackoutDatesHasError) {
-      return setCollapseOpen(true);
-    }
-    return setCollapseOpen(isOpen);
-  };
+  if (showDeletePopup) { return deleteBlackoutDatesPopup(blackoutDate.status); }
 
   return (
-    <>
-      {
-        showDeletePopup ? (
-          deleteBlackoutDatesPopup(blackoutDate.status)
-        ) : (
-          <CollapsableEditor
-            open={collapseIsOpen}
-            onToggle={handleToggle}
-            title={getHeading(collapseIsOpen)}
-            onDelete={() => setShowDeletePopup(true)}
-            expandAlt={intl.formatMessage(messages.expandAltText)}
-            collapseAlt={intl.formatMessage(messages.collapseAltText)}
-            deleteAlt={intl.formatMessage(messages.deleteAltText)}
-            data-testid={blackoutDate.id}
-            onClose={() => onClose(hasError)}
-          >
-            <Form.Row className="mx-2 pt-3">
-              <BlackoutDatesInput
-                index={index}
-                value={blackoutDate.startDate}
-                type="date"
-                label="Start date"
-                helpText={intl.formatMessage(messages.blackoutStartDateHelp)}
-                fieldName="startDate"
-                formGroupClasses="pl-md-0"
-                fieldClasses="pr-md-2"
-              />
-              <BlackoutDatesInput
-                index={index}
-                value={blackoutDate.startTime}
-                type="time"
-                label="Start time (optional)"
-                helpText={intl.formatMessage(messages.blackoutStartTimeHelp)}
-                fieldName="startTime"
-                formGroupClasses="pr-md-0"
-                fieldClasses="ml-md-2"
-                helperClasses="ml-md-2"
-              />
-            </Form.Row>
-            <hr className="mx-2 my-2 border-light-400" />
-            <Form.Row className="mx-2 pt-4">
-              <BlackoutDatesInput
-                index={index}
-                value={blackoutDate.endDate}
-                type="date"
-                label="End date"
-                helpText={intl.formatMessage(messages.blackoutEndDateHelp)}
-                fieldName="endDate"
-                formGroupClasses="pl-md-0"
-                fieldClasses="pr-md-2"
-              />
-              <BlackoutDatesInput
-                index={index}
-                value={blackoutDate.endTime}
-                type="time"
-                label="End time (optional)"
-                helpText={intl.formatMessage(messages.blackoutEndTimeHelp)}
-                fieldName="endTime"
-                formGroupClasses="pr-md-0"
-                fieldClasses="ml-md-2"
-                helperClasses="ml-md-2"
-              />
-            </Form.Row>
-          </CollapsableEditor>
-        )
-      }
-    </>
+    <CollapsableEditor
+      open={collapseIsOpen}
+      onToggle={handleToggle}
+      title={getHeading(collapseIsOpen)}
+      onDelete={() => setShowDeletePopup(true)}
+      expandAlt={intl.formatMessage(messages.expandAltText)}
+      collapseAlt={intl.formatMessage(messages.collapseAltText)}
+      deleteAlt={intl.formatMessage(messages.deleteAltText)}
+      data-testid={blackoutDate.id}
+      onClose={() => onClose(hasError)}
+    >
+      <Form.Row className="mx-2 pt-3">
+        <BlackoutDatesInput
+          index={index}
+          value={blackoutDate.startDate}
+          type="date"
+          label="Start date"
+          helpText={intl.formatMessage(messages.blackoutStartDateHelp)}
+          fieldName="startDate"
+          formGroupClasses="pl-md-0"
+          fieldClasses="pr-md-2"
+        />
+        <BlackoutDatesInput
+          index={index}
+          value={blackoutDate.startTime}
+          type="time"
+          label="Start time (optional)"
+          helpText={intl.formatMessage(messages.blackoutStartTimeHelp)}
+          fieldName="startTime"
+          formGroupClasses="pr-md-0"
+          fieldClasses="ml-md-2"
+          helperClasses="ml-md-2"
+        />
+      </Form.Row>
+      <hr className="mx-2 my-2 border-light-400" />
+      <Form.Row className="mx-2 pt-4">
+        <BlackoutDatesInput
+          index={index}
+          value={blackoutDate.endDate}
+          type="date"
+          label="End date"
+          helpText={intl.formatMessage(messages.blackoutEndDateHelp)}
+          fieldName="endDate"
+          formGroupClasses="pl-md-0"
+          fieldClasses="pr-md-2"
+        />
+        <BlackoutDatesInput
+          index={index}
+          value={blackoutDate.endTime}
+          type="time"
+          label="End time (optional)"
+          helpText={intl.formatMessage(messages.blackoutEndTimeHelp)}
+          fieldName="endTime"
+          formGroupClasses="pr-md-0"
+          fieldClasses="ml-md-2"
+          helperClasses="ml-md-2"
+        />
+      </Form.Row>
+    </CollapsableEditor>
   );
 };
 
