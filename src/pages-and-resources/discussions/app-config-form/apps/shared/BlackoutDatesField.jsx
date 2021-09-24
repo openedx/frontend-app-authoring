@@ -11,7 +11,7 @@ import BlackoutDatesItem from './blackout-dates/BlackoutDatesItem';
 import { LegacyConfigFormContext } from '../legacy/LegacyConfigFormProvider';
 import { checkStatus } from '../../utils';
 import { denormalizeBlackoutDate } from '../../../data/api';
-import { blackoutDatesStatus as constants } from '../../../data/constants';
+import { blackoutDatesStatus as STATUS } from '../../../data/constants';
 
 const BlackoutDatesField = ({ intl }) => {
   const {
@@ -20,10 +20,15 @@ const BlackoutDatesField = ({ intl }) => {
   } = useFormikContext();
   const { blackoutDates } = appConfig;
   const { blackoutDatesErrors } = useContext(LegacyConfigFormContext);
+
   const handleOnClose = useCallback((index, hasError) => {
     if (!hasError) {
-      blackoutDates[index].status = checkStatus(denormalizeBlackoutDate(blackoutDates[index]));
-      setFieldValue('blackoutDates', blackoutDates);
+      const updatedBlackoutDates = [...blackoutDates];
+      updatedBlackoutDates[index] = {
+        ...updatedBlackoutDates[index],
+        status: checkStatus(denormalizeBlackoutDate(updatedBlackoutDates[index])),
+      };
+      setFieldValue('blackoutDates', updatedBlackoutDates);
     }
   }, [blackoutDates]);
 
@@ -33,7 +38,7 @@ const BlackoutDatesField = ({ intl }) => {
     startTime: '',
     endDate: '',
     endTime: '',
-    status: constants.ACTIVE,
+    status: STATUS.COMPLETE,
   };
 
   return (

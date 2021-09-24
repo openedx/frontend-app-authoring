@@ -39,7 +39,9 @@ function extractDiscussionTopicIds(data) {
 }
 
 export function normalizeBlackoutDates(data) {
-  const normaizeData = data.map(([startDate, endDate]) => ({
+  if (!data.length) { return []; }
+
+  const normalizeData = data.map(([startDate, endDate]) => ({
     id: uuid(),
     startDate: moment(startDate).format('YYYY-MM-DD'),
     startTime: startDate.split('T')[1] || '',
@@ -49,9 +51,9 @@ export function normalizeBlackoutDates(data) {
   }));
 
   return [
-    ...sortBlackoutDatesByStatus(normaizeData, constants.ACTIVE, 'desc'),
-    ...sortBlackoutDatesByStatus(normaizeData, constants.UPCOMING, 'asc'),
-    ...sortBlackoutDatesByStatus(normaizeData, constants.COMPLETE, 'desc'),
+    ...sortBlackoutDatesByStatus(normalizeData, constants.ACTIVE, 'desc'),
+    ...sortBlackoutDatesByStatus(normalizeData, constants.UPCOMING, 'asc'),
+    ...sortBlackoutDatesByStatus(normalizeData, constants.COMPLETE, 'desc'),
   ];
 }
 
@@ -130,7 +132,7 @@ function denormalizeData(courseId, appId, data) {
     pluginConfiguration.discussion_blackouts = data.blackoutDates.map((blackoutDates) => (
       denormalizeBlackoutDate(blackoutDates)
     ));
-  } else {
+  } else if (data.blackoutDates?.length === 0) {
     pluginConfiguration.discussion_blackouts = [];
   }
   if (data.discussionTopics?.length) {

@@ -1,5 +1,6 @@
 import moment from 'moment';
 import _ from 'lodash';
+import { getIn } from 'formik';
 
 import { blackoutDatesStatus as constants } from '../data/constants';
 
@@ -8,8 +9,7 @@ export const filterItemFromObject = (array, key, value) => (
 );
 
 export const checkFieldErrors = (touched, errors, field, propertyName, index) => Boolean(
-  touched[field] && touched[field][index] && touched[field][index][propertyName]
-  && errors[field] && errors[field][index] && errors[field][index][propertyName],
+  getIn(errors, `${field}[${index}].${propertyName}`) && getIn(touched, `${field}[${index}].${propertyName}`),
 );
 
 export const checkStatus = ([startDate, endDate]) => {
@@ -43,24 +43,38 @@ export const formatBlackoutDates = ({
   const hasSameMonth = isSameMonth(startDate, endDate);
   const hasSameYear = isSameYear(startDate, endDate);
   const isTimeAvailable = Boolean(startTime && endTime);
+  const mStartDate = moment(startDate);
+  const mEndDate = moment(endDate);
+  const mStartDateTime = moment(`${startDate}T${startTime}`);
+  const mEndDateTime = moment(`${endDate}T${endTime}`);
 
   if (hasSameDay && !isTimeAvailable) {
-    formattedDate = moment(startDate).format('MMMM D, YYYY');
+    formattedDate = mStartDate.format('MMMM D, YYYY');
   } else if (hasSameDay && isTimeAvailable) {
-    formattedDate = `${moment(`${startDate}T${startTime}`).format('MMMM D, YYYY, h:mma')} -
-        ${moment(`${endDate}T${endTime}`).format('h:mma')}`;
+    formattedDate = `
+      ${mStartDateTime.format('MMMM D, YYYY, h:mma')} -
+      ${mEndDateTime.format('h:mma')}
+    `;
   } else if (hasSameMonth && !isTimeAvailable) {
-    formattedDate = `${moment(startDate).format('MMMM D')} -
-        ${moment(endDate).format('D, YYYY')}`;
+    formattedDate = `
+      ${mStartDate.format('MMMM D')} -
+      ${mEndDate.format('D, YYYY')}
+    `;
   } else if (hasSameMonth && isTimeAvailable) {
-    formattedDate = `${moment(`${startDate}T${startTime}`).format('MMMM D, YYYY, h:mma')} -
-        ${moment(`${endDate}T${endTime}`).format('MMMM D, YYYY, h:mma')}`;
+    formattedDate = `
+      ${mStartDateTime.format('MMMM D, YYYY, h:mma')} -
+      ${mEndDateTime.format('MMMM D, YYYY, h:mma')}
+    `;
   } else if (!hasSameMonth && hasSameYear) {
-    formattedDate = `${moment(startDate).format('MMMM D')} -
-        ${moment(endDate).format('MMMM D, YYYY')}`;
+    formattedDate = `
+      ${mStartDate.format('MMMM D')} -
+      ${mEndDate.format('MMMM D, YYYY')}
+    `;
   } else if (!hasSameMonth && !hasSameYear) {
-    formattedDate = `${moment(startDate).format('MMMM D, YYYY')} -
-        ${moment(endDate).format('MMMM D, YYYY')}`;
+    formattedDate = `
+      ${mStartDate.format('MMMM D, YYYY')} -
+      ${mEndDate.format('MMMM D, YYYY')}
+    `;
   }
   return formattedDate;
 };

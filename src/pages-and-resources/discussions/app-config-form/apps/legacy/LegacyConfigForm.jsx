@@ -4,7 +4,6 @@ import { Card, Form } from '@edx/paragon';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import moment from 'moment';
 
 import DivisionByGroupFields from '../shared/DivisionByGroupFields';
 import AnonymousPostingFields from '../shared/AnonymousPostingFields';
@@ -14,47 +13,9 @@ import LegacyConfigFormProvider from './LegacyConfigFormProvider';
 import messages from '../shared/messages';
 import AppConfigFormDivider from '../shared/AppConfigFormDivider';
 import { checkFieldErrors } from '../../utils';
+import { setupYupExtensions } from '../../../../../utils';
 
-// eslint-disable-next-line func-names
-Yup.addMethod(Yup.object, 'uniqueProperty', function (propertyName, message) {
-  // eslint-disable-next-line func-names
-  return this.test('unique', message, function (discussionTopic) {
-    if (!discussionTopic || !discussionTopic[propertyName]) {
-      return true;
-    }
-    const isDuplicate = this.parent.filter(topic => topic !== discussionTopic)
-      .some(topic => topic[propertyName]?.toLowerCase() === discussionTopic[propertyName].toLowerCase());
-
-    if (isDuplicate) {
-      throw this.createError({
-        path: `${this.path}.${propertyName}`,
-        error: message,
-      });
-    }
-    return true;
-  });
-});
-
-// eslint-disable-next-line func-names
-Yup.addMethod(Yup.string, 'compare', function (message) {
-  // eslint-disable-next-line func-names
-  return this.test('isGreater', message, function () {
-    if (!this.parent || !this.parent.startTime || !this.parent.endTime) {
-      return true;
-    }
-    const isStartTimeGreater = moment(`${moment(this.parent.startDate).format('YYYY-MM-DD')}T${this.parent.startTime}`)
-      .isSameOrAfter(moment(`${moment(this.parent.endDate).format('YYYY-MM-DD')}T${this.parent.endTime}`));
-
-    if (isStartTimeGreater) {
-      throw this.createError({
-        path: `${this.path}`,
-        error: message,
-      });
-    }
-    return true;
-  });
-});
-
+setupYupExtensions();
 function LegacyConfigForm({
   appConfig, onSubmit, formRef, intl, title,
 }) {
@@ -74,7 +35,7 @@ function LegacyConfigForm({
     discussionTopics: Yup.array(
       Yup.object({
         name: Yup.string().required(intl.formatMessage(messages.discussionTopicRequired)),
-      }).uniqueProperty('name', intl.formatMessage(messages.discussionTopicNameAlreadyExist)),
+      }).uniqueObjectProperty('name', intl.formatMessage(messages.discussionTopicNameAlreadyExist)),
     ),
   });
 

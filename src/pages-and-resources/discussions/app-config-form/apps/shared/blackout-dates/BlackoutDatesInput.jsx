@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Form, TransitionReplace } from '@edx/paragon';
-import { useFormikContext } from 'formik';
+import { Form } from '@edx/paragon';
+import { useFormikContext, getIn } from 'formik';
 import PropTypes from 'prop-types';
 
-import { checkFieldErrors } from '../../../utils';
+import FormikFieldFeedback from '../../../../../../generic/FormikFieldFeedback';
 
 const BlackoutDatesInput = ({
   index,
@@ -13,20 +13,16 @@ const BlackoutDatesInput = ({
   fieldName,
   helpText,
   fieldClasses,
-  helperClasses,
+  feedbackClasses,
   formGroupClasses,
 }) => {
   const {
     handleChange, handleBlur, errors, touched,
   } = useFormikContext();
   const [inFocus, setInFocus] = useState(false);
-  const isInvalidInput = checkFieldErrors(touched, errors, 'blackoutDates', fieldName, index);
-
-  const renderFormFeedback = (message, messageType = 'default') => (
-    <Form.Control.Feedback type={messageType} hasIcon={false}>
-      <div className={`small ${helperClasses}`}>{message}</div>
-    </Form.Control.Feedback>
-  );
+  const fieldError = getIn(errors, `blackoutDates[${index}].${fieldName}`);
+  const fieldTouched = getIn(touched, `blackoutDates[${index}].${fieldName}`);
+  const isInvalidInput = Boolean(!inFocus && fieldError && fieldTouched);
 
   const handleFocusOut = (event) => {
     handleBlur(event);
@@ -37,7 +33,7 @@ const BlackoutDatesInput = ({
     <Form.Group
       controlId={`blackoutDates.${index}.${fieldName}`}
       className={`col ${formGroupClasses}`}
-      isInvalid={!inFocus && isInvalidInput}
+      isInvalid={isInvalidInput}
     >
       <Form.Control
         value={value}
@@ -48,22 +44,19 @@ const BlackoutDatesInput = ({
         onBlur={(event) => handleFocusOut(event)}
         onFocus={() => setInFocus(true)}
       />
-      <TransitionReplace key={index} className="mt-1">
-        {inFocus ? (
-          <React.Fragment key="open">{renderFormFeedback(helpText)}</React.Fragment>
-        ) : (
-          <React.Fragment key="closed" />
-        )}
-      </TransitionReplace>
-      <TransitionReplace key={`${index}-error`}>
-        {!inFocus && isInvalidInput ? (
-          <React.Fragment key="open">
-            {renderFormFeedback(errors?.blackoutDates[index][fieldName], 'invalid')}
-          </React.Fragment>
-        ) : (
-          <React.Fragment key="closed" />
-        )}
-      </TransitionReplace>
+      <FormikFieldFeedback
+        renderCondition={inFocus}
+        feedback={helpText}
+        transitionClasses="mt-1"
+        feedbackClasses={feedbackClasses}
+      />
+      <FormikFieldFeedback
+        renderCondition={isInvalidInput}
+        feedback={fieldError || ''}
+        type="invalid"
+        transitionClasses="mt-1"
+        feedbackClasses={feedbackClasses}
+      />
     </Form.Group>
   );
 };
@@ -75,7 +68,7 @@ BlackoutDatesInput.propTypes = {
   label: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   helpText: PropTypes.string,
-  helperClasses: PropTypes.string,
+  feedbackClasses: PropTypes.string,
   fieldClasses: PropTypes.string,
   formGroupClasses: PropTypes.string,
 };
@@ -83,7 +76,7 @@ BlackoutDatesInput.propTypes = {
 BlackoutDatesInput.defaultProps = {
   fieldClasses: '',
   helpText: '',
-  helperClasses: '',
+  feedbackClasses: '',
   formGroupClasses: '',
 };
 

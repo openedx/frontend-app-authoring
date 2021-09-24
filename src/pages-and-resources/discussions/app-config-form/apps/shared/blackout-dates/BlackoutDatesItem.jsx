@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import {
-  Button,
-  Card,
-  Form,
-  Badge,
-} from '@edx/paragon';
+import { Form } from '@edx/paragon';
+import { useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
@@ -18,6 +14,8 @@ import {
   badgeVariant,
 } from '../../../../data/constants';
 import CollapsableEditor from '../../../../../../generic/CollapsableEditor';
+import DeletePopup from '../../../../../../generic/DeletePopup';
+import CollapseCardHeading from './CollapseCardHeading';
 
 const BlackoutDatesItem = ({
   intl,
@@ -30,6 +28,7 @@ const BlackoutDatesItem = ({
   const blackoutDatesHasError = !blackoutDate.startDate || !blackoutDate.endDate || hasError;
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [collapseIsOpen, setCollapseOpen] = useState(blackoutDatesHasError);
+  const { setFieldTouched } = useFormikContext();
 
   const handleToggle = (isOpen) => {
     if (!isOpen && blackoutDatesHasError) {
@@ -38,50 +37,39 @@ const BlackoutDatesItem = ({
     return setCollapseOpen(isOpen);
   };
 
-  const getHeading = (isOpen) => {
-    if (isOpen) {
-      return (
-        <span className="h4 py-2 mr-auto">
-          {intl.formatMessage(messages.configureBlackoutDates)}
-        </span>
-      );
-    }
-    return (
-      <div className="py-2">
-        <Badge variant={badgeVariant[blackoutDate.status]}>
-          {intl.formatMessage(messages.blackoutDatesStatus, {
-            status: _.startCase(_.toLower(blackoutDate.status)),
-          })}
-        </Badge>
-        <div>{formatBlackoutDates(blackoutDate)}</div>
-      </div>
-    );
-  };
-
-  const deleteBlackoutDatesPopup = (status) => (
-    <Card className="rounded mb-3 p-1">
-      <Card.Body>
-        <div className="text-primary-500 mb-2 h4">
-          {status === constants.ACTIVE
-            ? intl.formatMessage(messages.activeBlackoutDatesDeletionLabel)
-            : intl.formatMessage(messages.blackoutDatesDeletionLabel)}
-        </div>
-        <Card.Text className="text-justify text-muted">
-          {intl.formatMessage(deleteHelperText[blackoutDate.status])}
-        </Card.Text>
-        <div className="d-flex justify-content-end">
-          <Button variant="tertiary" onClick={() => setShowDeletePopup(false)}>
-            {intl.formatMessage(messages.cancelButton)}
-          </Button>
-          <Button variant="outline-brand" className="ml-2" onClick={onDelete}>
-            {intl.formatMessage(messages.deleteButton)}
-          </Button>
-        </div>
-      </Card.Body>
-    </Card>
+  const getHeading = (isOpen) => (
+    <CollapseCardHeading
+      isOpen={isOpen}
+      expandHeadingText={intl.formatMessage(messages.configureBlackoutDates)}
+      collapseHeadingText={formatBlackoutDates(blackoutDate)}
+      badgeVariant={badgeVariant[blackoutDate.status]}
+      badgeStatus={intl.formatMessage(messages.blackoutDatesStatus, {
+        status: _.startCase(_.toLower(blackoutDate.status)),
+      })}
+    />
   );
 
-  if (showDeletePopup) { return deleteBlackoutDatesPopup(blackoutDate.status); }
+  if (showDeletePopup) {
+    return (
+      <DeletePopup
+        label={blackoutDate.status === constants.ACTIVE
+          ? intl.formatMessage(messages.activeBlackoutDatesDeletionLabel)
+          : intl.formatMessage(messages.blackoutDatesDeletionLabel)}
+        bodyText={intl.formatMessage(deleteHelperText[blackoutDate.status])}
+        onDelete={onDelete}
+        deleteLabel={intl.formatMessage(messages.deleteButton)}
+        onCancel={() => setShowDeletePopup(false)}
+        cancelLabel={intl.formatMessage(messages.cancelButton)}
+      />
+    );
+  }
+
+  const handleOnClose = () => {
+    onClose(hasError);
+    ['startDate', 'startTime', 'endDate', 'endTime'].forEach(field => (
+      setFieldTouched(`blackoutDates.${index}.${field}`, true)
+    ));
+  };
 
   return (
     <CollapsableEditor
@@ -93,7 +81,7 @@ const BlackoutDatesItem = ({
       collapseAlt={intl.formatMessage(messages.collapseAltText)}
       deleteAlt={intl.formatMessage(messages.deleteAltText)}
       data-testid={blackoutDate.id}
-      onClose={() => onClose(hasError)}
+      onClose={() => handleOnClose()}
     >
       <Form.Row className="mx-2 pt-3">
         <BlackoutDatesInput
@@ -115,7 +103,7 @@ const BlackoutDatesItem = ({
           fieldName="startTime"
           formGroupClasses="pr-md-0"
           fieldClasses="ml-md-2"
-          helperClasses="ml-md-2"
+          feedbackClasses="ml-md-2"
         />
       </Form.Row>
       <hr className="mx-2 my-2 border-light-400" />
@@ -139,7 +127,7 @@ const BlackoutDatesItem = ({
           fieldName="endTime"
           formGroupClasses="pr-md-0"
           fieldClasses="ml-md-2"
-          helperClasses="ml-md-2"
+          feedbackClasses="ml-md-2"
         />
       </Form.Row>
     </CollapsableEditor>
