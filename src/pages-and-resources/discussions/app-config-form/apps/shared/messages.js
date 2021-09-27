@@ -282,6 +282,26 @@ const messages = defineMessages({
     id: 'authoring.topics.collapse',
     defaultMessage: 'Collapse',
   },
+  startDateLabel: {
+    id: 'authoring.blackoutDates.start.date',
+    defaultMessage: 'Start date',
+    description: 'Label for start date field',
+  },
+  startTimeLabel: {
+    id: 'authoring.blackoutDates.start.time',
+    defaultMessage: 'Start time (optional)',
+    description: 'label for start time field',
+  },
+  endDateLabel: {
+    id: 'authoring.blackoutDates.end.date',
+    defaultMessage: 'End date',
+    description: 'label for end date field',
+  },
+  endTimeLabel: {
+    id: 'authoring.blackoutDates.end.time',
+    defaultMessage: 'End time (optional)',
+    description: 'label for end time field',
+  },
 });
 
 export default messages;

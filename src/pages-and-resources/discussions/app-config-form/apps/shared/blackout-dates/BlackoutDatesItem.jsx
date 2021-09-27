@@ -89,7 +89,7 @@ const BlackoutDatesItem = ({
         <BlackoutDatesInput
           value={blackoutDate.startDate}
           type="date"
-          label="Start date"
+          label={intl.formatMessage(messages.startDateLabel)}
           helpText={intl.formatMessage(messages.blackoutStartDateHelp)}
           fieldName="startDate"
           formGroupClasses="pl-md-0"
@@ -99,7 +99,7 @@ const BlackoutDatesItem = ({
         <BlackoutDatesInput
           value={blackoutDate.startTime}
           type="time"
-          label="Start time (optional)"
+          label={intl.formatMessage(messages.startTimeLabel)}
           helpText={intl.formatMessage(messages.blackoutStartTimeHelp)}
           fieldName="startTime"
           formGroupClasses="pr-md-0"
@@ -113,7 +113,7 @@ const BlackoutDatesItem = ({
         <BlackoutDatesInput
           value={blackoutDate.endDate}
           type="date"
-          label="End date"
+          label={intl.formatMessage(messages.endDateLabel)}
           helpText={intl.formatMessage(messages.blackoutEndDateHelp)}
           fieldName="endDate"
           formGroupClasses="pl-md-0"
@@ -123,7 +123,7 @@ const BlackoutDatesItem = ({
         <BlackoutDatesInput
           value={blackoutDate.endTime}
           type="time"
-          label="End time (optional)"
+          label={intl.formatMessage(messages.endTimeLabel)}
           helpText={intl.formatMessage(messages.blackoutEndTimeHelp)}
           fieldName="endTime"
           formGroupClasses="pr-md-0"
