@@ -13,6 +13,10 @@ const messages = defineMessages({
     id: 'authoring.pagesAndResources.teams.enableTeams.help',
     defaultMessage: 'Create team-sets to allow learners to work in small groups on specific projects of activities.',
   },
+  configureTeamsHelp: {
+    id: 'authoring.pagesAndResources.teams.configureTeams.help',
+    defaultMessage: 'This app cannot be enabled or disabled the regular way',
+  },
   enableTeamsLink: {
     id: 'authoring.pagesAndResources.teams.enableTeams.link',
     defaultMessage: 'Learn more about teams',

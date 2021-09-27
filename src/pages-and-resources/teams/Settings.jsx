@@ -49,6 +49,7 @@ function TeamSettings({
       appId="teams"
       title={intl.formatMessage(messages.heading)}
       enableAppHelp={intl.formatMessage(messages.enableTeamsHelp)}
+      configureAppHelp={intl.formatMessage(messages.configureTeamsHelp)}
       enableAppLabel={intl.formatMessage(messages.enableTeamsLabel)}
       learnMoreText={intl.formatMessage(messages.enableTeamsLink)}
       onClose={onClose}

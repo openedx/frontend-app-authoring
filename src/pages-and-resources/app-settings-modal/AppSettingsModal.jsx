@@ -117,6 +117,7 @@ function AppSettingsModal({
   onSettingsSave,
   enableAppLabel,
   enableAppHelp,
+  configureAppHelp,
   learnMoreText,
 }) {
   const { courseId } = useContext(PagesAndResourcesContext);
@@ -207,29 +208,37 @@ function AppSettingsModal({
                   {intl.formatMessage(messages.errorSavingMessage)}
                 </Alert>
               )}
-              <FormSwitchGroup
-                id={`enable-${appId}-toggle`}
-                name="enabled"
-                onChange={(event) => formikProps.handleChange(event)}
-                onBlur={formikProps.handleBlur}
-                checked={formikProps.values.enabled}
-                label={(
-                  <div className="d-flex align-items-center">
-                    {enableAppLabel}
-                    {formikProps.values.enabled && (
-                      <Badge className="ml-2" variant="success">
-                        {intl.formatMessage(messages.enabled)}
-                      </Badge>
-                    )}
-                  </div>
-                )}
-                helpText={(
+              { (configureBeforeEnable && !formikProps.values.enabled)
+                ? (
                   <div>
-                    <p>{enableAppHelp}</p>
-                    <span className="py-3">{learnMoreLink}</span>
+                    <p>{configureAppHelp}</p>
                   </div>
+                )
+                : (
+                  <FormSwitchGroup
+                    id={`enable-${appId}-toggle`}
+                    name="enabled"
+                    onChange={(event) => formikProps.handleChange(event)}
+                    onBlur={formikProps.handleBlur}
+                    checked={formikProps.values.enabled}
+                    label={(
+                      <div className="d-flex align-items-center">
+                        {enableAppLabel}
+                        {formikProps.values.enabled && (
+                        <Badge className="ml-2" variant="success">
+                          {intl.formatMessage(messages.enabled)}
+                        </Badge>
+                        )}
+                      </div>
                 )}
-              />
+                    helpText={(
+                      <div>
+                        <p>{enableAppHelp}</p>
+                        <span className="py-3">{learnMoreLink}</span>
+                      </div>
+                )}
+                  />
+                )}
               {(formikProps.values.enabled || configureBeforeEnable) && children
               && <AppConfigFormDivider marginAdj={{ default: 0, sm: 0 }} />}
               <AppSettingsForm formikProps={formikProps} showForm={formikProps.values.enabled || configureBeforeEnable}>
@@ -270,6 +279,7 @@ AppSettingsModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   enableAppLabel: PropTypes.string.isRequired,
   enableAppHelp: PropTypes.string.isRequired,
+  configureAppHelp: PropTypes.string,
   learnMoreText: PropTypes.string.isRequired,
   configureBeforeEnable: PropTypes.bool,
 };
@@ -280,6 +290,7 @@ AppSettingsModal.defaultProps = {
   initialValues: {},
   validationSchema: {},
   configureBeforeEnable: false,
+  configureAppHelp: null,
 };
 
 export default injectIntl(AppSettingsModal);
