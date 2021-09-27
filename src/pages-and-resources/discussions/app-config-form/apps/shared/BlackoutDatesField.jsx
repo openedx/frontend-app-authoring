@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Button } from '@edx/paragon';
 import { Add } from '@edx/paragon/icons';
@@ -8,7 +8,6 @@ import { v4 as uuid } from 'uuid';
 
 import messages from './messages';
 import BlackoutDatesItem from './blackout-dates/BlackoutDatesItem';
-import { LegacyConfigFormContext } from '../legacy/LegacyConfigFormProvider';
 import { checkStatus } from '../../utils';
 import { denormalizeBlackoutDate } from '../../../data/api';
 import { blackoutDatesStatus as STATUS } from '../../../data/constants';
@@ -17,19 +16,17 @@ const BlackoutDatesField = ({ intl }) => {
   const {
     values: appConfig,
     setFieldValue,
+    errors,
   } = useFormikContext();
   const { blackoutDates } = appConfig;
-  const { blackoutDatesErrors } = useContext(LegacyConfigFormContext);
 
-  const handleOnClose = useCallback((index, hasError) => {
-    if (!hasError) {
-      const updatedBlackoutDates = [...blackoutDates];
-      updatedBlackoutDates[index] = {
-        ...updatedBlackoutDates[index],
-        status: checkStatus(denormalizeBlackoutDate(updatedBlackoutDates[index])),
-      };
-      setFieldValue('blackoutDates', updatedBlackoutDates);
-    }
+  const handleOnClose = useCallback((index) => {
+    const updatedBlackoutDates = [...blackoutDates];
+    updatedBlackoutDates[index] = {
+      ...updatedBlackoutDates[index],
+      status: checkStatus(denormalizeBlackoutDate(updatedBlackoutDates[index])),
+    };
+    setFieldValue('blackoutDates', updatedBlackoutDates);
   }, [blackoutDates]);
 
   const newBlackoutDateItem = {
@@ -38,7 +35,7 @@ const BlackoutDatesField = ({ intl }) => {
     startTime: '',
     endDate: '',
     endTime: '',
-    status: STATUS.COMPLETE,
+    status: STATUS.NEW,
   };
 
   return (
@@ -59,13 +56,13 @@ const BlackoutDatesField = ({ intl }) => {
             <div>
               {blackoutDates.map((blackoutDate, index) => (
                 <BlackoutDatesItem
+                  fieldNameCommonBase={`blackoutDates.${index}`}
                   blackoutDate={blackoutDate}
                   key={`date-${blackoutDate.id}`}
-                  index={index}
                   id={blackoutDate.id}
                   onDelete={() => remove(index)}
-                  onClose={(hasError) => handleOnClose(index, hasError)}
-                  hasError={blackoutDatesErrors[index]}
+                  onClose={() => handleOnClose(index)}
+                  hasError={errors?.blackoutDates?.[index]}
                 />
               ))}
               <div className="mb-4">

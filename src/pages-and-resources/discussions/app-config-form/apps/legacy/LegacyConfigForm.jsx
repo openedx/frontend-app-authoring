@@ -58,13 +58,13 @@ function LegacyConfigForm({
       ) => {
         const { discussionTopics, blackoutDates } = values;
         const discussionTopicErrors = discussionTopics.map((value, index) => (
-          checkFieldErrors(touched, errors, 'discussionTopics', 'name', index)
+          checkFieldErrors(touched, errors, `discussionTopics.${index}`, 'name')
         ));
         const blackoutDatesErrors = blackoutDates.map((value, index) => (
-          checkFieldErrors(touched, errors, 'blackoutDates', 'startDate', index)
-          || checkFieldErrors(touched, errors, 'blackoutDates', 'endDate', index)
-          || checkFieldErrors(touched, errors, 'blackoutDates', 'startTime', index)
-          || checkFieldErrors(touched, errors, 'blackoutDates', 'endTime', index)));
+          checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'startDate')
+          || checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'endDate')
+          || checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'startTime')
+          || checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'endTime')));
 
         const contextValue = {
           validDiscussionTopics,

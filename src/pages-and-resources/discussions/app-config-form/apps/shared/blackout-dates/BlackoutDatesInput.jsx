@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import FormikFieldFeedback from '../../../../../../generic/FormikFieldFeedback';
 
 const BlackoutDatesInput = ({
-  index,
   value,
   type,
   label,
@@ -15,13 +14,15 @@ const BlackoutDatesInput = ({
   fieldClasses,
   feedbackClasses,
   formGroupClasses,
+  fieldNameCommonBase,
 }) => {
   const {
     handleChange, handleBlur, errors, touched,
   } = useFormikContext();
+
   const [inFocus, setInFocus] = useState(false);
-  const fieldError = getIn(errors, `blackoutDates[${index}].${fieldName}`);
-  const fieldTouched = getIn(touched, `blackoutDates[${index}].${fieldName}`);
+  const fieldError = getIn(errors, `${fieldNameCommonBase}.${fieldName}`);
+  const fieldTouched = getIn(touched, `${fieldNameCommonBase}.${fieldName}`);
   const isInvalidInput = Boolean(!inFocus && fieldError && fieldTouched);
 
   const handleFocusOut = (event) => {
@@ -31,11 +32,12 @@ const BlackoutDatesInput = ({
 
   return (
     <Form.Group
-      controlId={`blackoutDates.${index}.${fieldName}`}
+      controlId={`${fieldNameCommonBase}.${fieldName}`}
       className={`col ${formGroupClasses}`}
       isInvalid={isInvalidInput}
     >
       <Form.Control
+        name={`${fieldNameCommonBase}.${fieldName}`}
         value={value}
         type={type}
         onChange={handleChange}
@@ -62,7 +64,6 @@ const BlackoutDatesInput = ({
 };
 
 BlackoutDatesInput.propTypes = {
-  index: PropTypes.number.isRequired,
   value: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
@@ -71,6 +72,7 @@ BlackoutDatesInput.propTypes = {
   feedbackClasses: PropTypes.string,
   fieldClasses: PropTypes.string,
   formGroupClasses: PropTypes.string,
+  fieldNameCommonBase: PropTypes.string.isRequired,
 };
 
 BlackoutDatesInput.defaultProps = {

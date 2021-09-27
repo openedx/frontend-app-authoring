@@ -19,11 +19,11 @@ import CollapseCardHeading from './CollapseCardHeading';
 
 const BlackoutDatesItem = ({
   intl,
-  index,
   blackoutDate,
   onDelete,
   hasError,
   onClose,
+  fieldNameCommonBase,
 }) => {
   const blackoutDatesHasError = !blackoutDate.startDate || !blackoutDate.endDate || hasError;
   const [showDeletePopup, setShowDeletePopup] = useState(false);
@@ -65,10 +65,12 @@ const BlackoutDatesItem = ({
   }
 
   const handleOnClose = () => {
-    onClose(hasError);
     ['startDate', 'startTime', 'endDate', 'endTime'].forEach(field => (
-      setFieldTouched(`blackoutDates.${index}.${field}`, true)
+      setFieldTouched(`${fieldNameCommonBase}.${field}`, true)
     ));
+    if (!hasError) {
+      onClose();
+    }
   };
 
   return (
@@ -85,7 +87,6 @@ const BlackoutDatesItem = ({
     >
       <Form.Row className="mx-2 pt-3">
         <BlackoutDatesInput
-          index={index}
           value={blackoutDate.startDate}
           type="date"
           label="Start date"
@@ -93,9 +94,9 @@ const BlackoutDatesItem = ({
           fieldName="startDate"
           formGroupClasses="pl-md-0"
           fieldClasses="pr-md-2"
+          fieldNameCommonBase={fieldNameCommonBase}
         />
         <BlackoutDatesInput
-          index={index}
           value={blackoutDate.startTime}
           type="time"
           label="Start time (optional)"
@@ -104,12 +105,12 @@ const BlackoutDatesItem = ({
           formGroupClasses="pr-md-0"
           fieldClasses="ml-md-2"
           feedbackClasses="ml-md-2"
+          fieldNameCommonBase={fieldNameCommonBase}
         />
       </Form.Row>
       <hr className="mx-2 my-2 border-light-400" />
       <Form.Row className="mx-2 pt-4">
         <BlackoutDatesInput
-          index={index}
           value={blackoutDate.endDate}
           type="date"
           label="End date"
@@ -117,9 +118,9 @@ const BlackoutDatesItem = ({
           fieldName="endDate"
           formGroupClasses="pl-md-0"
           fieldClasses="pr-md-2"
+          fieldNameCommonBase={fieldNameCommonBase}
         />
         <BlackoutDatesInput
-          index={index}
           value={blackoutDate.endTime}
           type="time"
           label="End time (optional)"
@@ -128,6 +129,7 @@ const BlackoutDatesItem = ({
           formGroupClasses="pr-md-0"
           fieldClasses="ml-md-2"
           feedbackClasses="ml-md-2"
+          fieldNameCommonBase={fieldNameCommonBase}
         />
       </Form.Row>
     </CollapsableEditor>
@@ -136,10 +138,10 @@ const BlackoutDatesItem = ({
 
 BlackoutDatesItem.propTypes = {
   intl: intlShape.isRequired,
-  index: PropTypes.number.isRequired,
   onDelete: PropTypes.func.isRequired,
   hasError: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  fieldNameCommonBase: PropTypes.string.isRequired,
   blackoutDate: PropTypes.shape({
     id: PropTypes.string,
     startDate: PropTypes.string,

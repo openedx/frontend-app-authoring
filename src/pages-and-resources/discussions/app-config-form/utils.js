@@ -8,9 +8,11 @@ export const filterItemFromObject = (array, key, value) => (
   array.filter(item => item[key] !== value)
 );
 
-export const checkFieldErrors = (touched, errors, field, propertyName, index) => Boolean(
-  getIn(errors, `${field}[${index}].${propertyName}`) && getIn(touched, `${field}[${index}].${propertyName}`),
+export const checkFieldErrors = (touched, errors, fieldPath, propertyName) => Boolean(
+  getIn(errors, `${fieldPath}.${propertyName}`) && getIn(touched, `${fieldPath}.${propertyName}`),
 );
+
+export const errorExists = (errors, fieldPath, propertyName) => getIn(errors, `${fieldPath}.${propertyName}`);
 
 export const checkStatus = ([startDate, endDate]) => {
   const today = moment(); let status;
