@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   configureTeamsHelp: {
     id: 'authoring.pagesAndResources.teams.configureTeams.help',
-    defaultMessage: 'This app cannot be enabled or disabled the regular way',
+    defaultMessage: 'This app needs to be configured before it can be enabled',
   },
   enableTeamsLink: {
     id: 'authoring.pagesAndResources.teams.enableTeams.link',
