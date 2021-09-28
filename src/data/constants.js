@@ -18,17 +18,17 @@ export const RequestStatus = {
  * @type {{MIN: number, MAX: number, DEFAULT: number}}
  */
 export const TeamSizes = {
-  DEFAULT: 50,
+  DEFAULT: 5,
   MIN: 1,
   MAX: 500,
 };
 
 /**
- * Team types enum
+ * Group types enum
  * @enum
  * @type {{PRIVATE_MANAGED: string, PUBLIC_MANAGED: string, OPEN: string}}
  */
-export const TeamSetTypes = {
+export const GroupTypes = {
   OPEN: 'open',
   PUBLIC_MANAGED: 'public_managed',
   PRIVATE_MANAGED: 'private_managed',

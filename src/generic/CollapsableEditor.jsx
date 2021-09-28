@@ -1,8 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-
 import { Collapsible, Icon, IconButton } from '@edx/paragon';
 import { Delete, ExpandLess, ExpandMore } from '@edx/paragon/icons';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const CollapsableEditor = ({
   title,
@@ -26,7 +25,7 @@ const CollapsableEditor = ({
     {...props}
   >
     <Collapsible.Trigger
-      className="collapsible-trigger d-flex border-0"
+      className="collapsible-trigger d-flex border-0 align-items-center"
       style={{ justifyContent: 'unset' }}
     >
       <div className="d-flex flex-grow-1">
@@ -56,7 +55,7 @@ const CollapsableEditor = ({
             />
           </div>
         )}
-        <div className="pl-4">
+        <div className="pl-4 d-flex">
           <IconButton
             alt={collapseAlt}
             src={ExpandLess}

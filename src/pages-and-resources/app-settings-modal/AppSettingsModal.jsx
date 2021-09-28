@@ -32,7 +32,9 @@ import AppConfigFormDivider from '../discussions/app-config-form/apps/shared/App
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import messages from './messages';
 
-function AppSettingsForm({ formikProps, children, showForm }) {
+function AppSettingsForm({
+  formikProps, children, showForm,
+}) {
   return children && (
     <TransitionReplace>
       {showForm ? (
