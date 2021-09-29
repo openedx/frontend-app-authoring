@@ -179,17 +179,96 @@ const messages = defineMessages({
   },
   blackoutDatesHelp: {
     id: 'authoring.discussions.builtIn.blackoutDates.help',
-    defaultMessage:
-      `Enter pairs of dates between which students cannot post to discussion forums. Inside the provided
-      brackets, enter an additional set of square brackets surrounding each pair of dates you add.
-      Format each pair of dates as ["YYYY-MM-DD", "YYYY-MM-DD"]. To specify times as well as dates,
-      format each pair as ["YYYY-MM-DDTHH:MM", "YYYY-MM-DDTHH:MM"]. Be sure to include the "T" between
-      the date and time. For example, an entry defining two blackout periods looks like this, including
-      the outer pair of square brackets: [["2015-09-15", "2015-09-21"], ["2015-10-01", "2015-10-08"]]`,
+    defaultMessage: 'If added, learners will not be able to post in discussions between these dates.',
   },
-  blackoutDatesFormattingError: {
-    id: 'authoring.discussions.builtIn.blackoutDates.formattingError',
-    defaultMessage: "There's a formatting error in your blackout dates.",
+  addBlackoutDatesButton: {
+    id: 'authoring.discussions.addBlackoutDatesButton',
+    defaultMessage: 'Add blackout date range',
+    description: 'Button label when Add a new blackout date.',
+  },
+  configureBlackoutDates: {
+    id: 'authoring.discussions.builtIn.configureBlackoutDates.label',
+    defaultMessage: 'Configure blackout date range',
+    description: 'Label for blockout dates allowing user to configure blackout dates',
+  },
+  blackoutStartDateHelp: {
+    id: 'authoring.discussions.blackoutStartDate.help',
+    defaultMessage: 'Enter a start date, e.g. 12/10/2023',
+  },
+  blackoutEndDateHelp: {
+    id: 'authoring.discussions.blackoutEndDate.help',
+    defaultMessage: 'Enter an end date, e.g. 12/17/2023',
+  },
+  blackoutStartTimeHelp: {
+    id: 'authoring.discussions.blackoutStartTime.help',
+    defaultMessage: 'Enter a start time, e.g. 09:00 AM',
+  },
+  blackoutEndTimeHelp: {
+    id: 'authoring.discussions.blackoutEndTime.help',
+    defaultMessage: 'Enter an end time, e.g. 05:00 PM',
+  },
+  activeBlackoutDatesDeletionHelp: {
+    id: 'authoring.discussions.activeBlackoutDatesDeletion.help',
+    defaultMessage: 'These blackout dates are currently active. If deleted, learners will be able to post in discussions during these dates. Are you sure you want to proceed?',
+    description: 'Help text for delete a active blackout dates from blackout dates section.',
+  },
+  blackoutDatesDeletionHelp: {
+    id: 'authoring.discussions.blackoutDatesDeletion.help',
+    defaultMessage: 'If deleted, learners will be able to post in discussions during these dates.',
+    description: 'Help text for delete a upcoming blackout dates from blackout dates section.',
+  },
+  completeBlackoutDatesDeletionHelp: {
+    id: 'authoring.discussions.completeBlackoutDatesDeletion.help',
+    defaultMessage: 'Are you sure you want to delete these blackout dates?',
+    description: 'Help text for delete a complete blackout dates from blackout dates section.',
+  },
+  activeBlackoutDatesDeletionLabel: {
+    id: 'authoring.discussions.activeBlackoutDatesDeletion.label',
+    defaultMessage: 'Delete active blackout dates?',
+    description: 'Label for active blackout dates delete popup allowing a user to delete a blackout date range.',
+  },
+  blackoutDatesDeletionLabel: {
+    id: 'authoring.discussions.blackoutDatesDeletion.label',
+    defaultMessage: 'Delete blackout dates?',
+    description: 'Label for blackout dates delete popup allowing a user to delete a blackout date range.',
+  },
+  deleteBlackoutDatesAltText: {
+    id: 'authoring.blackoutDates.delete',
+    defaultMessage: 'Delete Blackout Dates',
+  },
+  blackoutDatesStatus: {
+    id: 'authoring.blackoutDates.status',
+    defaultMessage: '{status}',
+  },
+  blackoutStartDateRequired: {
+    id: 'authoring.blackoutDates.startDate.required',
+    defaultMessage: 'Start date is a required field',
+    description: 'Tells the user that the blackout dates must have start date and it is required.',
+  },
+  blackoutEndDateRequired: {
+    id: 'authoring.blackoutDates.endDate.required',
+    defaultMessage: 'End date is a required field',
+    description: 'Tells the user that the blackout dates must have end date and it is required.',
+  },
+  blackoutStartDateInPast: {
+    id: 'authoring.blackoutDates.startDate.inPast',
+    defaultMessage: 'Start date cannot be after end date',
+    description: 'Tells the user that the blackout start date cannot be in past and cannot be after end date',
+  },
+  blackoutEndDateInPast: {
+    id: 'authoring.blackoutDates.endDate.inPast',
+    defaultMessage: 'End date cannot be before start date',
+    description: 'Tells the user that the blackout end date cannot be in past and cannot be before start date',
+  },
+  blackoutStartTimeInPast: {
+    id: 'authoring.blackoutDates.startTime.inPast',
+    defaultMessage: 'Start time cannot be after end time',
+    description: 'Tells the user that the blackout start time cannot be in past and cannot be after end time',
+  },
+  blackoutEndTimeInPast: {
+    id: 'authoring.blackoutDates.endTime.inPast',
+    defaultMessage: 'End time cannot be before start time',
+    description: 'Tells the user that the blackout end time cannot be in past and cannot be before start time',
   },
   deleteAltText: {
     id: 'authoring.topics.delete',
@@ -202,6 +281,26 @@ const messages = defineMessages({
   collapseAltText: {
     id: 'authoring.topics.collapse',
     defaultMessage: 'Collapse',
+  },
+  startDateLabel: {
+    id: 'authoring.blackoutDates.start.date',
+    defaultMessage: 'Start date',
+    description: 'Label for start date field',
+  },
+  startTimeLabel: {
+    id: 'authoring.blackoutDates.start.time',
+    defaultMessage: 'Start time (optional)',
+    description: 'label for start time field',
+  },
+  endDateLabel: {
+    id: 'authoring.blackoutDates.end.date',
+    defaultMessage: 'End date',
+    description: 'label for end date field',
+  },
+  endTimeLabel: {
+    id: 'authoring.blackoutDates.end.time',
+    defaultMessage: 'End time (optional)',
+    description: 'label for end time field',
   },
 });
 

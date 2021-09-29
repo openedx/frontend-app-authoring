@@ -3,6 +3,7 @@ import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery } from 'react-responsive';
 import * as Yup from 'yup';
+import moment from 'moment';
 
 import { RequestStatus } from './data/constants';
 import { getCourseAppSettingValue, getLoadingStatus } from './pages-and-resources/data/selectors';
@@ -68,6 +69,42 @@ export function setupYupExtensions() {
         throw new Yup.ValidationError(errors);
       }
 
+      return true;
+    });
+  });
+
+  Yup.addMethod(Yup.object, 'uniqueObjectProperty', function uniqueObjectProperty(propertyName, message) {
+    return this.test('unique', message, function testUniqueness(discussionTopic) {
+      if (!discussionTopic || !discussionTopic[propertyName]) {
+        return true;
+      }
+      const isDuplicate = this.parent.filter(topic => topic !== discussionTopic)
+        .some(topic => topic[propertyName]?.toLowerCase() === discussionTopic[propertyName].toLowerCase());
+
+      if (isDuplicate) {
+        throw this.createError({
+          path: `${this.path}.${propertyName}`,
+          error: message,
+        });
+      }
+      return true;
+    });
+  });
+
+  Yup.addMethod(Yup.string, 'compare', function compare(message) {
+    return this.test('isGreater', message, function isGreater() {
+      if (!this.parent || !this.parent.startTime || !this.parent.endTime) {
+        return true;
+      }
+      const isInvalidStartDateTime = moment(`${moment(this.parent.startDate).format('YYYY-MM-DD')}T${this.parent.startTime}`)
+        .isSameOrAfter(moment(`${moment(this.parent.endDate).format('YYYY-MM-DD')}T${this.parent.endTime}`));
+
+      if (isInvalidStartDateTime) {
+        throw this.createError({
+          path: `${this.path}`,
+          error: message,
+        });
+      }
       return true;
     });
   });

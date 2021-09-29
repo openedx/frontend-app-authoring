@@ -233,7 +233,7 @@ describe('Data layer integration tests', () => {
         id: 'legacy',
         allowAnonymousPosts: false,
         allowAnonymousPostsPeers: false,
-        blackoutDates: '[]',
+        blackoutDates: [],
         // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
         // but we add it in during normalization.
         divideByCohorts: true,
@@ -387,7 +387,7 @@ describe('Data layer integration tests', () => {
         plugin_configuration: {
           allow_anonymous: true,
           allow_anonymous_to_peers: true,
-          discussion_blackouts: [['2015-09-15', '2015-09-21'], ['2015-10-01', '2015-10-08']],
+          discussion_blackouts: [],
           discussion_topics: {
             Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
             General: { id: 'course' },
@@ -404,7 +404,7 @@ describe('Data layer integration tests', () => {
         plugin_configuration: {
           allow_anonymous: true,
           allow_anonymous_to_peers: true,
-          discussion_blackouts: [['2015-09-15', '2015-09-21'], ['2015-10-01', '2015-10-08']],
+          discussion_blackouts: [],
           discussion_topics: {
             Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
             General: { id: 'course' },
@@ -425,7 +425,7 @@ describe('Data layer integration tests', () => {
         {
           allowAnonymousPosts: true,
           allowAnonymousPostsPeers: true,
-          blackoutDates: '[["2015-09-15","2015-09-21"],["2015-10-01","2015-10-08"]]',
+          blackoutDates: [],
           // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
           // but we technically send it to the thunk, so here it is.
           divideByCohorts: true,
@@ -459,7 +459,7 @@ describe('Data layer integration tests', () => {
         // These three fields should be updated.
         allowAnonymousPosts: true,
         allowAnonymousPostsPeers: true,
-        blackoutDates: '[["2015-09-15","2015-09-21"],["2015-10-01","2015-10-08"]]',
+        blackoutDates: [],
         // TODO: Note!  The values we tried to save were ignored, this test reflects what currently
         // happens, but NOT what we want to have happen!
         divideByCohorts: true,

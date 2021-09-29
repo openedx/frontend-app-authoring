@@ -3,7 +3,6 @@ import React, { createRef } from 'react';
 import {
   act,
   fireEvent,
-  getByText,
   queryByLabelText,
   queryByRole,
   queryByTestId,
@@ -43,7 +42,7 @@ const defaultAppConfig = {
   allowAnonymousPosts: false,
   allowAnonymousPostsPeers: false,
   allowDivisionByUnit: false,
-  blackoutDates: '[]',
+  blackoutDates: [],
 };
 describe('LegacyConfigForm', () => {
   let axiosMock;
@@ -145,8 +144,7 @@ describe('LegacyConfigForm', () => {
     ).not.toBeInTheDocument();
 
     // BlackoutDatesField
-    expect(container.querySelector('#blackoutDates')).toBeInTheDocument();
-    expect(container.querySelector('#blackoutDates')).toHaveValue('[]');
+    expect(queryByText(container, messages.blackoutDatesLabel.defaultMessage)).toBeInTheDocument();
   });
 
   test('folded sub-fields are in the DOM when parents are enabled', async () => {
@@ -206,7 +204,7 @@ describe('LegacyConfigForm', () => {
   const updateTopicName = async (topicId, topicName) => {
     const topicCard = queryByTestId(container, topicId);
 
-    userEvent.click(queryByText(topicCard, 'Expand'));
+    userEvent.click(queryByLabelText(topicCard, 'Expand'));
     const topicInput = topicCard.querySelector('input');
     topicInput.focus();
     await act(async () => { fireEvent.change(topicInput, { target: { value: topicName } }); });
@@ -220,10 +218,7 @@ describe('LegacyConfigForm', () => {
     if (expectExists) { expect(error).toBeInTheDocument(); } else { expect(error).not.toBeInTheDocument(); }
   };
 
-  const assertDuplicateTopicNameValidation = async (topicCard, waitForBlur = true, expectExists = true) => {
-    if (waitForBlur) {
-      await waitForElementToBeRemoved(queryByText(topicCard, messages.addTopicHelpText.defaultMessage));
-    }
+  const assertDuplicateTopicNameValidation = async (topicCard, expectExists = true) => {
     const error = queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage);
     if (expectExists) { expect(error).toBeInTheDocument(); } else { expect(error).not.toBeInTheDocument(); }
   };
@@ -248,7 +243,7 @@ describe('LegacyConfigForm', () => {
     createComponent(defaultAppConfig);
 
     const topicCard = await updateTopicName('13f106c6-6735-4e84-b097-0456cff55960', '');
-    const collapseButton = getByText(topicCard, 'Collapse');
+    const collapseButton = queryByLabelText(topicCard, 'Collapse');
     await act(async () => userEvent.click(collapseButton));
 
     expect(collapseButton).toBeInTheDocument();

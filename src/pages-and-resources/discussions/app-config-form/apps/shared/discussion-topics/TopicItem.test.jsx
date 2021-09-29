@@ -6,6 +6,7 @@ import {
   queryByRole,
   queryByTestId,
   queryByText,
+  queryByLabelText,
   render,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -106,8 +107,8 @@ describe('TopicItem', () => {
     createComponent(generalTopic);
 
     const generalTopicNode = queryByTestId(container, 'course');
-    expect(queryByText(generalTopicNode, 'Expand')).toBeInTheDocument();
-    expect(queryByText(generalTopicNode, 'Collapse')).not.toBeInTheDocument();
+    expect(queryByLabelText(generalTopicNode, 'Expand')).toBeInTheDocument();
+    expect(queryByLabelText(generalTopicNode, 'Collapse')).not.toBeInTheDocument();
     expect(queryByText(generalTopicNode, 'General')).toBeInTheDocument();
   });
 
@@ -116,10 +117,10 @@ describe('TopicItem', () => {
     createComponent(generalTopic);
 
     const generalTopicNode = queryByTestId(container, 'course');
-    userEvent.click(queryByText(generalTopicNode, 'Expand'));
+    userEvent.click(queryByLabelText(generalTopicNode, 'Expand'));
 
-    expect(queryByText(generalTopicNode, 'Expand')).not.toBeInTheDocument();
-    expect(queryByText(generalTopicNode, 'Collapse')).toBeInTheDocument();
+    expect(queryByLabelText(generalTopicNode, 'Expand')).not.toBeInTheDocument();
+    expect(queryByLabelText(generalTopicNode, 'Collapse')).toBeInTheDocument();
     expect(queryByRole(generalTopicNode, 'button', { name: 'Delete Topic' })).not.toBeInTheDocument();
     expect(generalTopicNode.querySelector('input')).toBeInTheDocument();
   });
@@ -129,10 +130,10 @@ describe('TopicItem', () => {
     createComponent(additionalTopic);
 
     const topicCard = queryByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960');
-    userEvent.click(queryByText(topicCard, 'Expand'));
+    userEvent.click(queryByLabelText(topicCard, 'Expand'));
 
-    expect(queryByText(topicCard, 'Expand')).not.toBeInTheDocument();
-    expect(queryByText(topicCard, 'Collapse')).toBeInTheDocument();
+    expect(queryByLabelText(topicCard, 'Expand')).not.toBeInTheDocument();
+    expect(queryByLabelText(topicCard, 'Collapse')).toBeInTheDocument();
     expect(queryByRole(topicCard, 'button', { name: 'Delete Topic' })).toBeInTheDocument();
     expect(topicCard.querySelector('input')).toBeInTheDocument();
   });
@@ -142,7 +143,7 @@ describe('TopicItem', () => {
     createComponent(additionalTopic);
 
     const topicCard = queryByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960');
-    userEvent.click(queryByText(topicCard, 'Expand'));
+    userEvent.click(queryByLabelText(topicCard, 'Expand'));
     userEvent.click(queryByRole(topicCard, 'button', { name: 'Delete Topic' }));
 
     expect(queryAllByText(container, messages.discussionTopicDeletionLabel.defaultMessage)).toHaveLength(1);
@@ -158,7 +159,7 @@ describe('TopicItem', () => {
     createComponent(additionalTopic);
 
     const topicCard = queryByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960');
-    userEvent.click(queryByText(topicCard, 'Expand'));
+    userEvent.click(queryByLabelText(topicCard, 'Expand'));
     topicCard.querySelector('input').focus();
 
     expect(queryByText(topicCard, messages.addTopicHelpText.defaultMessage)).toBeInTheDocument();

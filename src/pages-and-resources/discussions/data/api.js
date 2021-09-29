@@ -1,6 +1,11 @@
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import _ from 'lodash';
+import moment from 'moment';
+import { v4 as uuid } from 'uuid';
+
+import { checkStatus, sortBlackoutDatesByStatus, formatDate } from '../app-config-form/utils';
+import { blackoutDatesStatus as constants } from './constants';
 
 function normalizeLtiConfig(data) {
   if (!data || Object.keys(data).length < 1) {
@@ -33,6 +38,25 @@ function extractDiscussionTopicIds(data) {
   ).map(([key, value]) => value.id);
 }
 
+export function normalizeBlackoutDates(data) {
+  if (!data.length) { return []; }
+
+  const normalizeData = data.map(([startDate, endDate]) => ({
+    id: uuid(),
+    startDate: moment(startDate).format('YYYY-MM-DD'),
+    startTime: startDate.split('T')[1] || '',
+    endDate: moment(endDate).format('YYYY-MM-DD'),
+    endTime: endDate.split('T')[1] || '',
+    status: checkStatus([startDate, endDate]),
+  }));
+
+  return [
+    ...sortBlackoutDatesByStatus(normalizeData, constants.ACTIVE, 'desc'),
+    ...sortBlackoutDatesByStatus(normalizeData, constants.UPCOMING, 'asc'),
+    ...sortBlackoutDatesByStatus(normalizeData, constants.COMPLETE, 'desc'),
+  ];
+}
+
 function normalizePluginConfig(data) {
   if (!data || Object.keys(data).length < 1) {
     return {};
@@ -45,7 +69,7 @@ function normalizePluginConfig(data) {
   return {
     allowAnonymousPosts: data.allow_anonymous,
     allowAnonymousPostsPeers: data.allow_anonymous_to_peers,
-    blackoutDates: JSON.stringify(data.discussion_blackouts),
+    blackoutDates: normalizeBlackoutDates(data.discussion_blackouts),
     allowDivisionByUnit: false,
     divideByCohorts: discussionDividedTopicsCount > 0,
     divideCourseTopicsByCohorts: enableDivideCourseTopicsByCohorts,
@@ -88,6 +112,13 @@ function normalizeApps(data) {
   };
 }
 
+export function denormalizeBlackoutDate(date) {
+  return [
+    formatDate(date.startDate, date.startTime),
+    formatDate(date.endDate, date.endTime),
+  ];
+}
+
 function denormalizeData(courseId, appId, data) {
   const pluginConfiguration = {};
 
@@ -97,8 +128,12 @@ function denormalizeData(courseId, appId, data) {
   if (data.allowAnonymousPostsPeers) {
     pluginConfiguration.allow_anonymous_to_peers = data.allowAnonymousPostsPeers;
   }
-  if (data.blackoutDates) {
-    pluginConfiguration.discussion_blackouts = JSON.parse(data.blackoutDates);
+  if (data.blackoutDates?.length) {
+    pluginConfiguration.discussion_blackouts = data.blackoutDates.map((blackoutDates) => (
+      denormalizeBlackoutDate(blackoutDates)
+    ));
+  } else if (data.blackoutDates?.length === 0) {
+    pluginConfiguration.discussion_blackouts = [];
   }
   if (data.discussionTopics?.length) {
     pluginConfiguration.discussion_topics = data.discussionTopics.reduce((topics, currentTopic) => {

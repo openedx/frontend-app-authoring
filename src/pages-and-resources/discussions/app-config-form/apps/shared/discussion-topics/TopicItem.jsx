@@ -5,11 +5,12 @@ import { useFormikContext } from 'formik';
 
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
-  Button, Card, Form, TransitionReplace,
+  Button, Card, Form,
 } from '@edx/paragon';
 
 import CollapsableEditor from '../../../../../../generic/CollapsableEditor';
 import messages from '../messages';
+import FieldFeedback from '../../../../../../generic/FieldFeedback';
 
 const TopicItem = ({
   intl,
@@ -62,12 +63,6 @@ const TopicItem = ({
   const deleteDiscussionTopic = () => {
     setShowDeletePopup(true);
   };
-
-  const renderFormFeedback = (message, messageType = 'default') => (
-    <Form.Control.Feedback type={messageType} hasIcon={false}>
-      <div className="small">{message}</div>
-    </Form.Control.Feedback>
-  );
 
   const handleFocusOut = (event) => {
     handleBlur(event);
@@ -125,24 +120,17 @@ const TopicItem = ({
             controlClassName="bg-white"
             onFocus={() => setInFocus(true)}
           />
-          <TransitionReplace key={id} className="mt-1">
-            {inFocus ? (
-              <React.Fragment key="open">
-                {renderFormFeedback(intl.formatMessage(messages.addTopicHelpText))}
-              </React.Fragment>
-            ) : (
-              <React.Fragment key="closed" />
-            )}
-          </TransitionReplace>
-          <TransitionReplace key={`${name}-${id}`}>
-            {hasError && !inFocus ? (
-              <React.Fragment key="open">
-                {renderFormFeedback(errors?.discussionTopics[index].name, 'invalid')}
-              </React.Fragment>
-            ) : (
-              <React.Fragment key="closed" />
-            )}
-          </TransitionReplace>
+          <FieldFeedback
+            renderCondition={inFocus}
+            feedback={intl.formatMessage(messages.addTopicHelpText)}
+            transitionClasses="mt-1"
+          />
+          <FieldFeedback
+            renderCondition={hasError && !inFocus}
+            feedback={errors?.discussionTopics?.[index]?.name || ''}
+            type="invalid"
+            transitionClasses="mt-1"
+          />
         </Form.Group>
       </CollapsableEditor>
     );
