@@ -17,6 +17,7 @@ const BlackoutDatesField = ({ intl }) => {
     values: appConfig,
     setFieldValue,
     errors,
+    validateForm,
   } = useFormikContext();
   const { blackoutDates } = appConfig;
 
@@ -38,6 +39,10 @@ const BlackoutDatesField = ({ intl }) => {
     status: STATUS.NEW,
   };
 
+  const onAddNewItem = async (push) => {
+    await push(newBlackoutDateItem);
+    validateForm();
+  };
   return (
     <>
       <h5 className="text-gray-500 mt-4 mb-2">
@@ -62,12 +67,12 @@ const BlackoutDatesField = ({ intl }) => {
                   id={blackoutDate.id}
                   onDelete={() => remove(index)}
                   onClose={() => handleOnClose(index)}
-                  hasError={errors?.blackoutDates?.[index]}
+                  hasError={Boolean(errors?.blackoutDates?.[index])}
                 />
               ))}
               <div className="mb-4">
                 <Button
-                  onClick={() => push(newBlackoutDateItem)}
+                  onClick={() => onAddNewItem(push)}
                   variant="link"
                   iconBefore={Add}
                   className="text-primary-500 p-0"

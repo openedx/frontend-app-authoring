@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Form } from '@edx/paragon';
 import { useFormikContext } from 'formik';
@@ -25,17 +25,20 @@ const BlackoutDatesItem = ({
   onClose,
   fieldNameCommonBase,
 }) => {
-  const blackoutDatesHasError = !blackoutDate.startDate || !blackoutDate.endDate || hasError;
   const [showDeletePopup, setShowDeletePopup] = useState(false);
-  const [collapseIsOpen, setCollapseOpen] = useState(blackoutDatesHasError);
+  const [collapseIsOpen, setCollapseOpen] = useState(hasError);
   const { setFieldTouched } = useFormikContext();
 
   const handleToggle = (isOpen) => {
-    if (!isOpen && blackoutDatesHasError) {
+    if (!isOpen && hasError) {
       return setCollapseOpen(true);
     }
     return setCollapseOpen(isOpen);
   };
+
+  useEffect(() => {
+    setCollapseOpen(hasError);
+  }, [hasError]);
 
   const getHeading = (isOpen) => (
     <CollapseCardHeading

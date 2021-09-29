@@ -3,7 +3,7 @@ import { Form } from '@edx/paragon';
 import { useFormikContext, getIn } from 'formik';
 import PropTypes from 'prop-types';
 
-import FormikFieldFeedback from '../../../../../../generic/FormikFieldFeedback';
+import FieldFeedback from '../../../../../../generic/FieldFeedback';
 
 const BlackoutDatesInput = ({
   value,
@@ -46,13 +46,13 @@ const BlackoutDatesInput = ({
         onBlur={(event) => handleFocusOut(event)}
         onFocus={() => setInFocus(true)}
       />
-      <FormikFieldFeedback
+      <FieldFeedback
         renderCondition={inFocus}
         feedback={helpText}
         transitionClasses="mt-1"
         feedbackClasses={feedbackClasses}
       />
-      <FormikFieldFeedback
+      <FieldFeedback
         renderCondition={isInvalidInput}
         feedback={fieldError || ''}
         type="invalid"

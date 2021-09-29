@@ -10,7 +10,7 @@ import {
 
 import CollapsableEditor from '../../../../../../generic/CollapsableEditor';
 import messages from '../messages';
-import FormikFieldFeedback from '../../../../../../generic/FormikFieldFeedback';
+import FieldFeedback from '../../../../../../generic/FieldFeedback';
 
 const TopicItem = ({
   intl,
@@ -120,12 +120,12 @@ const TopicItem = ({
             controlClassName="bg-white"
             onFocus={() => setInFocus(true)}
           />
-          <FormikFieldFeedback
+          <FieldFeedback
             renderCondition={inFocus}
             feedback={intl.formatMessage(messages.addTopicHelpText)}
             transitionClasses="mt-1"
           />
-          <FormikFieldFeedback
+          <FieldFeedback
             renderCondition={hasError && !inFocus}
             feedback={errors?.discussionTopics?.[index]?.name || ''}
             type="invalid"

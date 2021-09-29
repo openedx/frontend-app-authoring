@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, TransitionReplace } from '@edx/paragon';
 
-function FormikFieldFeedback({
+function FieldFeedback({
   renderCondition,
   feedback,
   type,
@@ -25,7 +25,7 @@ function FormikFieldFeedback({
   );
 }
 
-FormikFieldFeedback.propTypes = {
+FieldFeedback.propTypes = {
   feedback: PropTypes.string.isRequired,
   type: PropTypes.string,
   renderCondition: PropTypes.bool.isRequired,
@@ -34,11 +34,11 @@ FormikFieldFeedback.propTypes = {
   transitionClasses: PropTypes.string,
 };
 
-FormikFieldFeedback.defaultProps = {
+FieldFeedback.defaultProps = {
   type: 'default',
   hasIcon: false,
   feedbackClasses: '',
   transitionClasses: '',
 };
 
-export default FormikFieldFeedback;
+export default FieldFeedback;

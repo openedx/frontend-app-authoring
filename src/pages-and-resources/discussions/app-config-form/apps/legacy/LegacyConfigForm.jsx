@@ -16,6 +16,7 @@ import { checkFieldErrors } from '../../utils';
 import { setupYupExtensions } from '../../../../../utils';
 
 setupYupExtensions();
+
 function LegacyConfigForm({
   appConfig, onSubmit, formRef, intl, title,
 }) {
