@@ -32,13 +32,15 @@ const CollapsableEditor = ({
         {title}
       </div>
       <Collapsible.Visible whenClosed>
-        <IconButton
-          alt={expandAlt}
-          src={ExpandMore}
-          iconAs={Icon}
-          onClick={() => {}}
-          variant="dark"
-        />
+        <div className="align-self-start">
+          <IconButton
+            alt={expandAlt}
+            src={ExpandMore}
+            iconAs={Icon}
+            onClick={() => {}}
+            variant="dark"
+          />
+        </div>
       </Collapsible.Visible>
       <Collapsible.Visible whenOpen>
         {onDelete && (
@@ -89,7 +91,8 @@ CollapsableEditor.defaultProps = {
   onDelete: null,
   defaultOpen: undefined,
   open: undefined,
-  onClose: () => {},
+  onClose: () => {
+  },
 };
 
 export default CollapsableEditor;

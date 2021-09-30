@@ -73,7 +73,7 @@ function GroupEditor({
                     {intl.formatMessage(messages.configureGroup)}
                   </div>
                 ) : (
-                  <div className="d-flex flex-column flex-shrink-1">
+                  <div className="d-flex flex-column flex-shrink-1 small">
                     <span className="small text-gray-500">{intl.formatMessage(TeamTypeNameMessage[group.type].label)}</span>
                     <span className="text-truncate text-black">{group.name || '<new>'}</span>
                     <span className="small text-muted text-gray-500">{group.description || '<new>'}</span>

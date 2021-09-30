@@ -118,7 +118,8 @@ function TeamSettings({
               </FormikErrorFeedback>
             </Form.Group>
             <div className="bg-light-200 d-flex flex-column mx-n4 px-4 py-4 border border-top mb-n3.5">
-              <h4 className="mb-4">{intl.formatMessage(messages.groups)}</h4>
+              <h4>{intl.formatMessage(messages.groups)}</h4>
+              <Form.Text className="mb-3">{intl.formatMessage(messages.groupsHelp)}</Form.Text>
               <FieldArray name="groups">
                 {({ push, remove }) => (
                   <>
