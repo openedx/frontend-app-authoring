@@ -20,6 +20,8 @@ const COURSE_APPS_ORDER = [
   'edxnotes',
   'wiki',
   'calculator',
+  'custom_pages',
+  'proctoring',
   'textbooks',
 ];
 
