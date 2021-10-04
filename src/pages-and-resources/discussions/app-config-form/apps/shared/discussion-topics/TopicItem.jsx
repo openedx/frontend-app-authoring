@@ -121,14 +121,10 @@ const TopicItem = ({
             onFocus={() => setInFocus(true)}
           />
           <FieldFeedback
-            renderCondition={inFocus}
-            feedback={intl.formatMessage(messages.addTopicHelpText)}
-            transitionClasses="mt-1"
-          />
-          <FieldFeedback
-            renderCondition={hasError && !inFocus}
-            feedback={errors?.discussionTopics?.[index]?.name || ''}
-            type="invalid"
+            errorCondition={hasError && !inFocus}
+            feedbackCondition={inFocus}
+            feedbackMessage={intl.formatMessage(messages.addTopicHelpText)}
+            errorMessage={errors?.discussionTopics?.[index]?.name || ''}
             transitionClasses="mt-1"
           />
         </Form.Group>

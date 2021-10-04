@@ -6,21 +6,18 @@ export const blackoutDatesStatus = {
   UPCOMING: 'UPCOMING',
   COMPLETE: 'COMPLETE',
   ACTIVE: 'ACTIVE',
-  NEW: 'NEW',
 };
 
 export const badgeVariant = {
   UPCOMING: 'primary',
   COMPLETE: 'light',
   ACTIVE: 'success',
-  NEW: 'LIGHT',
 };
 
 export const deleteHelperText = {
   UPCOMING: messages.blackoutDatesDeletionHelp,
   COMPLETE: messages.completeBlackoutDatesDeletionHelp,
   ACTIVE: messages.activeBlackoutDatesDeletionHelp,
-  NEW: messages.completeBlackoutDatesDeletionHelp,
 };
 
 export const today = moment();

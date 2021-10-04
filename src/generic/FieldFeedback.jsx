@@ -3,40 +3,48 @@ import PropTypes from 'prop-types';
 import { Form, TransitionReplace } from '@edx/paragon';
 
 function FieldFeedback({
-  renderCondition,
-  feedback,
-  type,
-  hasIcon,
   feedbackClasses,
   transitionClasses,
+  errorCondition,
+  feedbackCondition,
+  feedbackMessage,
+  errorMessage,
 }) {
   return (
-    <TransitionReplace className={transitionClasses}>
-      {renderCondition ? (
-        <React.Fragment key="open">
-          <Form.Control.Feedback type={type} hasIcon={hasIcon} key={`${feedback}-feedback`}>
-            <div className={`small ${feedbackClasses}`}>{feedback}</div>
-          </Form.Control.Feedback>
-        </React.Fragment>
-      ) : (
-        <React.Fragment key="close" />
-      )}
-    </TransitionReplace>
+    <>
+      <TransitionReplace className={transitionClasses}>
+        {feedbackCondition ? (
+          <React.Fragment key="open1">
+            <Form.Control.Feedback type="default" hasIcon={false} key={`${feedbackMessage}-feedback`}>
+              <div className={`small ${feedbackClasses}`}>{feedbackMessage}</div>
+            </Form.Control.Feedback>
+          </React.Fragment>
+        ) : <React.Fragment key="close1" />}
+      </TransitionReplace>
+
+      <TransitionReplace>
+        {errorCondition ? (
+          <React.Fragment key="open">
+            <Form.Control.Feedback type="invalid" hasIcon={false} key={`${errorMessage}-feedback`}>
+              <div className={`small ${feedbackClasses}`}>{errorMessage}</div>
+            </Form.Control.Feedback>
+          </React.Fragment>
+        ) : <React.Fragment key="close" />}
+      </TransitionReplace>
+    </>
   );
 }
 
 FieldFeedback.propTypes = {
-  feedback: PropTypes.string.isRequired,
-  type: PropTypes.string,
-  renderCondition: PropTypes.bool.isRequired,
-  hasIcon: PropTypes.bool,
+  errorMessage: PropTypes.string.isRequired,
+  feedbackMessage: PropTypes.string.isRequired,
+  errorCondition: PropTypes.bool.isRequired,
+  feedbackCondition: PropTypes.bool.isRequired,
   feedbackClasses: PropTypes.string,
   transitionClasses: PropTypes.string,
 };
 
 FieldFeedback.defaultProps = {
-  type: 'default',
-  hasIcon: false,
   feedbackClasses: '',
   transitionClasses: '',
 };
