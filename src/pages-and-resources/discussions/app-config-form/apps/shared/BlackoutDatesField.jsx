@@ -36,7 +36,7 @@ const BlackoutDatesField = ({ intl }) => {
     startTime: '',
     endDate: '',
     endTime: '',
-    status: STATUS.NEW,
+    status: STATUS.UPCOMING,
   };
 
   const onAddNewItem = async (push) => {

@@ -47,15 +47,10 @@ const BlackoutDatesInput = ({
         onFocus={() => setInFocus(true)}
       />
       <FieldFeedback
-        renderCondition={inFocus}
-        feedback={helpText}
-        transitionClasses="mt-1"
-        feedbackClasses={feedbackClasses}
-      />
-      <FieldFeedback
-        renderCondition={isInvalidInput}
-        feedback={fieldError || ''}
-        type="invalid"
+        feedbackCondition={inFocus}
+        errorCondition={isInvalidInput}
+        errorMessage={fieldError || ''}
+        feedbackMessage={helpText}
         transitionClasses="mt-1"
         feedbackClasses={feedbackClasses}
       />
