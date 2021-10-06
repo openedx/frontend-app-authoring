@@ -1,4 +1,4 @@
-import { getConfig, camelCaseObject } from '@edx/frontend-platform';
+import { ensureConfig, getConfig, camelCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
@@ -12,6 +12,10 @@ import {
   getTime,
 } from '../app-config-form/utils';
 import { blackoutDatesStatus as constants } from './constants';
+
+ensureConfig([
+  'STUDIO_BASE_URL',
+], 'Course Apps API service');
 
 function normalizeLtiConfig(data) {
   if (!data || Object.keys(data).length < 1) {
@@ -141,10 +145,10 @@ export function denormalizeBlackoutDate(blackoutPeriod) {
 function denormalizeData(courseId, appId, data) {
   const pluginConfiguration = {};
 
-  if (data.allowAnonymousPosts) {
+  if ('allowAnonymousPosts' in data) {
     pluginConfiguration.allow_anonymous = data.allowAnonymousPosts;
   }
-  if (data.allowAnonymousPostsPeers) {
+  if ('allowAnonymousPostsPeers' in data) {
     pluginConfiguration.allow_anonymous_to_peers = data.allowAnonymousPostsPeers;
   }
   if (data.blackoutDates?.length) {
@@ -199,7 +203,7 @@ function denormalizeData(courseId, appId, data) {
 }
 
 export function getAppsUrl(courseId) {
-  return `${getConfig().LMS_BASE_URL}/discussions/api/v0/${courseId}`;
+  return `${getConfig().STUDIO_BASE_URL}/api/discussions/v0/${courseId}`;
 }
 
 export async function getApps(courseId) {
