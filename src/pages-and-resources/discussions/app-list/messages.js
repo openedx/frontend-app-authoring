@@ -234,6 +234,26 @@ const messages = defineMessages({
     defaultMessage: 'WCAG 2.0 support',
     description: 'The name of a discussions feature.',
   },
+  'featureType-basic': {
+    id: 'authoring.discussions.basic-support',
+    defaultMessage: 'Basic support',
+    description: 'The type of a discussions feature.',
+  },
+  'featureType-partial': {
+    id: 'authoring.discussions.partial-support',
+    defaultMessage: 'Partial support',
+    description: 'The type of a discussions feature.',
+  },
+  'featureType-full': {
+    id: 'authoring.discussions.full-support',
+    defaultMessage: 'Full support',
+    description: 'The type of a discussions feature.',
+  },
+  'featureType-common': {
+    id: 'authoring.discussions.common-support',
+    defaultMessage: 'Commonly requested',
+    description: 'The type of a discussions feature.',
+  },
 });
 
 export default messages;
