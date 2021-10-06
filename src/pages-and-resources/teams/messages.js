@@ -11,7 +11,7 @@ const messages = defineMessages({
   },
   enableTeamsHelp: {
     id: 'authoring.pagesAndResources.teams.enableTeams.help',
-    defaultMessage: 'Create team-sets to allow learners to work in small groups on specific projects of activities.',
+    defaultMessage: 'Allow learners to work in small groups on specific projects or activities.',
   },
   enableTeamsLink: {
     id: 'authoring.pagesAndResources.teams.enableTeams.link',
@@ -39,115 +39,119 @@ const messages = defineMessages({
   },
   maxTeamSizeTooHigh: {
     id: 'authoring.pagesAndResources.teams.teamSize.maxTeamSizeTooHigh',
-    defaultMessage: 'Max team size must less than {max}',
+    defaultMessage: 'Max team size cannot be great than {max}',
   },
-  teamSets: {
-    id: 'authoring.pagesAndResources.teams.teamSets.heading',
-    defaultMessage: 'Team-sets',
+  groups: {
+    id: 'authoring.pagesAndResources.teams.groups.heading',
+    defaultMessage: 'Groups',
   },
-  configureTeamSet: {
-    id: 'authoring.pagesAndResources.teams.configureTeamSet.heading',
-    defaultMessage: 'Configure team-set',
+  groupsHelp: {
+    id: 'authoring.pagesAndResources.teams.groups.help',
+    defaultMessage: 'Groups are spaced where learners can create or join teams.',
   },
-  teamSetFormNameLabel: {
-    id: 'authoring.pagesAndResources.teams.teamSet.name.label',
+  configureGroup: {
+    id: 'authoring.pagesAndResources.teams.configureGroup.heading',
+    defaultMessage: 'Configure group',
+  },
+  groupFormNameLabel: {
+    id: 'authoring.pagesAndResources.teams.group.name.label',
     defaultMessage: 'Name',
   },
-  teamSetFormNameHelp: {
-    id: 'authoring.pagesAndResources.teams.teamSet.name.help',
-    defaultMessage: 'Choose a unique name for your team-set',
+  groupFormNameHelp: {
+    id: 'authoring.pagesAndResources.teams.group.name.help',
+    defaultMessage: 'Choose a unique name for this group',
   },
-  teamSetFormNameEmpty: {
-    id: 'authoring.pagesAndResources.teams.teamSet.name.error.empty',
-    defaultMessage: 'Enter a unique name for your team set',
+  groupFormNameEmpty: {
+    id: 'authoring.pagesAndResources.teams.group.name.error.empty',
+    defaultMessage: 'Enter a unique name for your group',
   },
-  teamSetFormNameExists: {
-    id: 'authoring.pagesAndResources.teams.teamSet.name.error.exists',
+  groupFormNameExists: {
+    id: 'authoring.pagesAndResources.teams.group.name.error.exists',
     defaultMessage: 'It looks like this name is already in use',
   },
-  teamSetFormDescriptionLabel: {
-    id: 'authoring.pagesAndResources.teams.teamSet.description.label',
+  groupFormDescriptionLabel: {
+    id: 'authoring.pagesAndResources.teams.group.description.label',
     defaultMessage: 'Description',
   },
-  teamSetFormDescriptionHelp: {
-    id: 'authoring.pagesAndResources.teams.teamSet.description.help',
-    defaultMessage: 'Details about your team-set',
+  groupFormDescriptionHelp: {
+    id: 'authoring.pagesAndResources.teams.group.description.help',
+    defaultMessage: 'Enter details about this group',
   },
-  teamSetFormDescriptionError: {
-    id: 'authoring.pagesAndResources.teams.teamSet.description.error',
-    defaultMessage: 'Enter a description for your team-set',
+  groupFormDescriptionError: {
+    id: 'authoring.pagesAndResources.teams.group.description.error',
+    defaultMessage: 'Enter a description for your group',
   },
-  teamSetFormTypeLabel: {
-    id: 'authoring.pagesAndResources.teams.teamSet.type.label',
+  groupFormTypeLabel: {
+    id: 'authoring.pagesAndResources.teams.group.type.label',
     defaultMessage: 'Type',
   },
-  teamSetFormTypeHelp: {
-    id: 'authoring.pagesAndResources.teams.teamSet.type.help',
+  groupFormTypeHelp: {
+    id: 'authoring.pagesAndResources.teams.group.type.help',
     defaultMessage: 'Control who can see, create and join teams',
   },
-  teamSetTypeOpen: {
-    id: 'authoring.pagesAndResources.teams.teamSet.types.open',
+  groupTypeOpen: {
+    id: 'authoring.pagesAndResources.teams.group.types.open',
     defaultMessage: 'Open',
   },
-  teamSetTypeOpenDescription: {
-    id: 'authoring.pagesAndResources.teams.teamSet.types.open.description',
+  groupTypeOpenDescription: {
+    id: 'authoring.pagesAndResources.teams.group.types.open.description',
     defaultMessage: 'Learners can create, join, leave, and see other teams',
   },
-  teamSetTypePublicManaged: {
-    id: 'authoring.pagesAndResources.teams.teamSet.types.public_managed',
-    defaultMessage: 'Public Managed',
+  groupTypePublicManaged: {
+    id: 'authoring.pagesAndResources.teams.group.types.public_managed',
+    defaultMessage: 'Public managed',
   },
-  teamSetTypePublicManagedDescription: {
-    id: 'authoring.pagesAndResources.teams.teamSet.types.public_managed.description',
+  groupTypePublicManagedDescription: {
+    id: 'authoring.pagesAndResources.teams.group.types.public_managed.description',
     defaultMessage: 'Only course staff can control teams and memberships. Learners can see other teams.',
   },
-  teamSetTypePrivateManaged: {
-    id: 'authoring.pagesAndResources.teams.teamSet.types.private_managed',
-    defaultMessage: 'Private Managed',
+  groupTypePrivateManaged: {
+    id: 'authoring.pagesAndResources.teams.group.types.private_managed',
+    defaultMessage: 'Private managed',
   },
-  teamSetTypePrivateManagedDescription: {
-    id: 'authoring.pagesAndResources.teams.teamSet.types.private_managed.description',
+  groupTypePrivateManagedDescription: {
+    id: 'authoring.pagesAndResources.teams.group.types.private_managed.description',
     defaultMessage: 'Only course staff can control teams, memberships, and see other teams',
   },
-  teamSetFormMaxSizeLabel: {
-    id: 'authoring.pagesAndResources.teams.teamSet.maxSize.label',
+  groupFormMaxSizeLabel: {
+    id: 'authoring.pagesAndResources.teams.group.maxSize.label',
     defaultMessage: 'Max team size (optional)',
   },
-  teamSetFormMaxSizeHelp: {
-    id: 'authoring.pagesAndResources.teams.teamSet.maxSize.help',
+  groupFormMaxSizeHelp: {
+    id: 'authoring.pagesAndResources.teams.group.maxSize.help',
     defaultMessage: 'Override the global max team size',
   },
-  addTeamSet: {
-    id: 'authoring.pagesAndResources.teams.addTeamSet.button',
-    defaultMessage: 'Add team-set',
+  addGroup: {
+    id: 'authoring.pagesAndResources.teams.addGroup.button',
+    defaultMessage: 'Add group',
   },
   deleteAlt: {
-    id: 'authoring.pagesAndResources.teams.teamsSet.delete',
+    id: 'authoring.pagesAndResources.teams.group.delete',
     defaultMessage: 'Delete',
   },
   expandAlt: {
-    id: 'authoring.pagesAndResources.teams.teamsSet.expand',
-    defaultMessage: 'Expand team set editor',
+    id: 'authoring.pagesAndResources.teams.group.expand',
+    defaultMessage: 'Expand group editor',
   },
   collapseAlt: {
-    id: 'authoring.pagesAndResources.teams.teamSet.collapse',
-    defaultMessage: 'Close team set editor',
+    id: 'authoring.pagesAndResources.teams.group.collapse',
+    defaultMessage: 'Close group editor',
   },
   delete: {
-    id: 'authoring.pagesAndResources.teams.deleteTeamSet.initiateDelete',
+    id: 'authoring.pagesAndResources.teams.deleteGroup.initiateDelete',
     defaultMessage: 'Delete',
   },
   cancel: {
-    id: 'authoring.pagesAndResources.teams.deleteTeamSet.cancel-delete.button',
+    id: 'authoring.pagesAndResources.teams.deleteGroup.cancel-delete.button',
     defaultMessage: 'Cancel',
   },
-  teamSetDeleteHeading: {
-    id: 'authoring.pagesAndResources.teams.deleteTeamSet.heading',
-    defaultMessage: 'Delete team-set?',
+  groupDeleteHeading: {
+    id: 'authoring.pagesAndResources.teams.deleteGroup.heading',
+    defaultMessage: 'Delete this group?',
   },
-  teamSetDeleteBody: {
-    id: 'authoring.pagesAndResources.teams.deleteTeamSet.body',
-    defaultMessage: 'edX recommends that you do not delete team-sets once your course is running.',
+  groupDeleteBody: {
+    id: 'authoring.pagesAndResources.teams.deleteGroup.body',
+    defaultMessage: 'edX recommends that you do not delete groups once your course is running.',
   },
 });
 

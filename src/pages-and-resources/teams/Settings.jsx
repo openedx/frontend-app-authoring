@@ -1,20 +1,19 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { Button, Form } from '@edx/paragon';
+import { Add } from '@edx/paragon/icons';
 
 import { FieldArray } from 'formik';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { v4 as uuid } from 'uuid';
 import * as Yup from 'yup';
-
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Button, Form, Icon } from '@edx/paragon';
-import { Add } from '@edx/paragon/icons';
-import { TeamSetTypes, TeamSizes } from '../../data/constants';
+import { GroupTypes, TeamSizes } from '../../data/constants';
 
 import FormikErrorFeedback from '../../generic/FormikErrorFeedback';
 import { setupYupExtensions, useAppSetting } from '../../utils';
 import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
+import GroupEditor from './GroupEditor';
 import messages from './messages';
-import TeamSetEditor from './TeamSetEditor';
 
 setupYupExtensions();
 
@@ -23,10 +22,10 @@ function TeamSettings({
   onClose,
 }) {
   const [teamsConfiguration, saveSettings] = useAppSetting('teamsConfiguration');
-  const blankNewTeamSet = {
+  const blankNewGroup = {
     name: '',
     description: '',
-    type: TeamSetTypes.OPEN,
+    type: GroupTypes.OPEN,
     maxTeamSize: TeamSizes.DEFAULT,
     id: null,
     key: uuid(),
@@ -34,14 +33,14 @@ function TeamSettings({
 
   const handleSettingsSave = async (values) => {
     // For newly-added teams, fill in an id.
-    const teamSets = values.teamSets?.map(teamSet => ({
-      id: teamSet.id || uuid(),
-      name: teamSet.name,
-      type: teamSet.type,
-      description: teamSet.description,
-      max_team_size: teamSet.maxTeamSize,
+    const groups = values.groups?.map(group => ({
+      id: group.id || uuid(),
+      name: group.name,
+      type: group.type,
+      description: group.description,
+      max_team_size: group.maxTeamSize,
     }));
-    return saveSettings({ team_sets: teamSets, max_team_size: values.maxTeamSize });
+    return saveSettings({ team_sets: groups, max_team_size: values.maxTeamSize });
   };
 
   return (
@@ -52,11 +51,12 @@ function TeamSettings({
       enableAppLabel={intl.formatMessage(messages.enableTeamsLabel)}
       learnMoreText={intl.formatMessage(messages.enableTeamsLink)}
       onClose={onClose}
+      bodyClassName="bg-light-200"
       // Topic is supported for backwards compatibility, the new field is team_sets:
       // ref: https://github.com/edx/edx-platform/blob/15461d3b6e6c0a724a7b8ed09241d970f201e5e7/openedx/core/lib/teams_config.py#L104-L108
       initialValues={{
         maxTeamSize: teamsConfiguration?.maxTeamSize,
-        teamSets: teamsConfiguration?.teamSets || teamsConfiguration?.topics,
+        groups: teamsConfiguration?.teamSets || teamsConfiguration?.topics,
       }}
       validationSchema={{
         maxTeamSize: Yup.number()
@@ -68,15 +68,15 @@ function TeamSettings({
               max: TeamSizes.MAX,
             }),
           ),
-        teamSets: Yup.array().of(
+        groups: Yup.array().of(
           Yup.object({
             id: Yup.string().nullable(),
             name: Yup.string()
-              .required(intl.formatMessage(messages.teamSetFormNameEmpty))
+              .required(intl.formatMessage(messages.groupFormNameEmpty))
               .trim(),
-            type: Yup.string().oneOf(Object.values(TeamSetTypes)),
+            type: Yup.string().oneOf(Object.values(GroupTypes)),
             description: Yup.string()
-              .required(intl.formatMessage(messages.teamSetFormDescriptionError))
+              .required(intl.formatMessage(messages.groupFormDescriptionError))
               .trim(),
             maxTeamSize: Yup.number()
               .nullable()
@@ -91,14 +91,14 @@ function TeamSettings({
           }),
         )
           .default([])
-          .uniqueProperty('name', intl.formatMessage(messages.teamSetFormNameExists)),
+          .uniqueProperty('name', intl.formatMessage(messages.groupFormNameExists)),
       }}
       onSettingsSave={handleSettingsSave}
       configureBeforeEnable
     >
       {
         ({
-          handleChange, handleBlur, values, errors,
+          handleChange, handleBlur, values, errors, setFieldError,
         }) => (
           <>
             <h4 className="my-3 pb-2">{intl.formatMessage(messages.teamSize)}</h4>
@@ -111,32 +111,37 @@ function TeamSettings({
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.maxTeamSize}
+                onFocus={(event) => setFieldError(event.target.name, undefined)}
               />
-              <Form.Text>{intl.formatMessage(messages.maxTeamSizeHelp)}</Form.Text>
-              <FormikErrorFeedback name="maxTeamSize" />
+              <FormikErrorFeedback name="maxTeamSize">
+                <Form.Text>{intl.formatMessage(messages.maxTeamSizeHelp)}</Form.Text>
+              </FormikErrorFeedback>
             </Form.Group>
-            <div className="bg-light-200 d-flex flex-column mx-n4 px-4 py-4 border border-top">
-              <h4 className="mb-4">{intl.formatMessage(messages.teamSets)}</h4>
-              <FieldArray name="teamSets">
+            <div className="bg-light-200 d-flex flex-column mx-n4 px-4 py-4 border border-top mb-n3.5">
+              <h4>{intl.formatMessage(messages.groups)}</h4>
+              <Form.Text className="mb-3">{intl.formatMessage(messages.groupsHelp)}</Form.Text>
+              <FieldArray name="groups">
                 {({ push, remove }) => (
                   <>
-                    {values.teamSets?.map((teamSet, index) => (
-                      <TeamSetEditor
-                        key={teamSet.id || teamSet.key}
-                        teamSet={teamSet}
-                        errors={errors.teamSets?.[index]}
-                        fieldNameCommonBase={`teamSets.${index}`}
+                    {values.groups?.map((group, index) => (
+                      <GroupEditor
+                        key={group.id || group.key}
+                        group={group}
+                        errors={errors.groups?.[index]}
+                        fieldNameCommonBase={`groups.${index}`}
                         onDelete={() => remove(index)}
                         onChange={handleChange}
                         onBlur={handleBlur}
+                        setFieldError={setFieldError}
                       />
                     ))}
                     <Button
                       variant="plain"
                       className="p-0 align-self-start mt-3"
-                      onClick={() => push(blankNewTeamSet)}
+                      iconBefore={Add}
+                      onClick={() => push(blankNewGroup)}
                     >
-                      <Icon src={Add} /> {intl.formatMessage(messages.addTeamSet)}
+                      {intl.formatMessage(messages.addGroup)}
                     </Button>
                   </>
                 )}
