@@ -25,10 +25,10 @@ describe('FeaturesTable', () => {
       }];
 
     features = [
-      { id: 'lti-basic-configuration' },
-      { id: 'wcag-2.1' },
-      { id: 'discussion-page' },
-      { id: 'embedded-course-sections' },
+      { id: 'discussion-page', featureSupportType: 'basic' },
+      { id: 'embedded-course-sections', featureSupportType: 'full' },
+      { id: 'wcag-2.1', featureSupportType: 'partial' },
+      { id: 'lti-basic-configuration', featureSupportType: 'common' },
     ];
 
     const wrapper = render(
@@ -49,7 +49,7 @@ describe('FeaturesTable', () => {
   });
 
   test('displays a row for each available feature', () => {
-    expect(container.querySelectorAll('tbody > tr')).toHaveLength(features.length);
+    expect(container.querySelectorAll('tbody > tr')).toHaveLength(8);
   });
 
   test('apps columns receive a check for each feature they support', () => {
