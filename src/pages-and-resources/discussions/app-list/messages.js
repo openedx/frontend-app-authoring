@@ -186,12 +186,12 @@ const messages = defineMessages({
   },
   'featureName-lti-advanced-sharing-mode': {
     id: 'authoring.discussions.featureName-lti-advanced-sharing-mode',
-    defaultMessage: 'LTI advanced sharing mode',
+    defaultMessage: 'LTI advanced sharing',
     description: 'The name of a discussions feature.',
   },
   'featureName-lti-basic-configuration': {
     id: 'authoring.discussions.featureName-lti-basic-configuration',
-    defaultMessage: 'LTI basic configuration',
+    defaultMessage: 'Basic configuration',
     description: 'The name of a discussions feature.',
   },
   'featureName-primary-discussion-app-experience': {
@@ -206,7 +206,7 @@ const messages = defineMessages({
   },
   'featureName-report/flag-content-to-moderators': {
     id: 'authoring.discussions.featureName-report/flag-content-to-moderators',
-    defaultMessage: 'Report/flag content to moderators',
+    defaultMessage: 'Report content to moderators',
     description: 'The name of a discussions feature.',
   },
   'featureName-research-data-events': {
