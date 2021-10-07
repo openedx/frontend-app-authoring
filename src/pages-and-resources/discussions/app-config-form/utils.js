@@ -62,20 +62,20 @@ export const formatBlackoutDates = ({
       ${mStartDate.format('MMMM D')} -
       ${mEndDate.format('D, YYYY')}
     `;
-  } else if (hasSameMonth && isTimeAvailable) {
-    formattedDate = `
-      ${mStartDateTime.format('MMMM D, YYYY, h:mma')} -
-      ${mEndDateTime.format('MMMM D, YYYY, h:mma')}
-    `;
-  } else if (!hasSameMonth && hasSameYear) {
+  } else if (!hasSameMonth && hasSameYear && !isTimeAvailable) {
     formattedDate = `
       ${mStartDate.format('MMMM D')} -
       ${mEndDate.format('MMMM D, YYYY')}
     `;
-  } else if (!hasSameMonth && !hasSameYear) {
+  } else if (!hasSameMonth && !hasSameYear && !isTimeAvailable) {
     formattedDate = `
       ${mStartDate.format('MMMM D, YYYY')} -
       ${mEndDate.format('MMMM D, YYYY')}
+    `;
+  } else {
+    formattedDate = `
+      ${mStartDateTime.format('MMMM D, YYYY, h:mma')} -
+      ${mEndDateTime.format('MMMM D, YYYY, h:mma')}
     `;
   }
   return formattedDate;
