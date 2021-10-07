@@ -16,7 +16,7 @@ const CollapseCardHeading = ({
   return (
     <div className="py-2">
       {badgeStatus && <Badge variant={badgeVariant}>{badgeStatus}</Badge>}
-      <div>{collapseHeadingText}</div>
+      <div className="mt-2">{collapseHeadingText}</div>
     </div>
   );
 };
