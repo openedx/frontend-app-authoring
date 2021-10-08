@@ -17,15 +17,21 @@ const pagesAndResourcesPath = `/course/${courseId}/pages-and-resources`;
 const featuresState = {
   'discussion-page': {
     id: 'discussion-page',
+    featureSupportType: 'basic',
   },
   'embedded-course-sections': {
     id: 'embedded-course-sections',
+    featureSupportType: 'full',
   },
   'wcag-2.1': {
     id: 'wcag-2.1',
+    featureSupportType: 'partial',
+
   },
   'lti-basic-configuration': {
     id: 'lti-basic-configuration',
+    featureSupportType: 'common',
+
   },
 };
 

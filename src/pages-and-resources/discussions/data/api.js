@@ -1,4 +1,4 @@
-import { getConfig } from '@edx/frontend-platform';
+import { getConfig, camelCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import _ from 'lodash';
 import moment from 'moment';
@@ -76,6 +76,15 @@ function normalizePluginConfig(data) {
   };
 }
 
+function normalizeFeatures(data, apps) {
+  if (!data || data.length < 1) {
+    return [];
+  }
+
+  return camelCaseObject(data.filter((feature) => (
+    apps.map(app => app.featureIds.includes(feature.id)).some((supported) => supported))));
+}
+
 function normalizeApps(data) {
   const apps = Object.entries(data.providers.available).map(([key, app]) => ({
     id: key,
@@ -94,9 +103,7 @@ function normalizeApps(data) {
   return {
     courseId: data.context_key,
     enabled: data.enabled,
-    features: data.features.map(id => ({
-      id,
-    })),
+    features: normalizeFeatures(data.features, apps),
     appConfig: {
       id: data.providers.active,
       ...normalizePluginConfig(data.plugin_configuration),

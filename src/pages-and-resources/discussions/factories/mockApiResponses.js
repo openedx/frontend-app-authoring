@@ -3,10 +3,10 @@ export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false) => ({
   enabled: true,
   provider_type: 'piazza',
   features: [
-    'discussion-page',
-    'embedded-course-sections',
-    'wcag-2.1',
-    'lti-basic-configuration',
+    { id: 'discussion-page', feature_support_type: 'basic' },
+    { id: 'embedded-course-sections', feature_support_type: 'full' },
+    { id: 'wcag-2.1', feature_support_type: 'partial' },
+    { id: 'lti-basic-configuration', feature_support_type: 'common' },
   ],
   lti_configuration: {
     lti_1p1_client_key: 'client_key_123',
@@ -79,10 +79,10 @@ export const legacyApiResponse = {
   enabled: true,
   provider_type: 'legacy',
   features: [
-    'discussion-page',
-    'embedded-course-sections',
-    'wcag-2.1',
-    'lti-basic-configuration',
+    { id: 'discussion-page', feature_support_type: 'basic' },
+    { id: 'embedded-course-sections', feature_support_type: 'full' },
+    { id: 'wcag-2.1', feature_support_type: 'partial' },
+    { id: 'lti-basic-configuration', feature_support_type: 'common' },
   ],
   lti_configuration: {},
   plugin_configuration: {

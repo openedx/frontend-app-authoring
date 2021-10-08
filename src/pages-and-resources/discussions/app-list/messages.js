@@ -105,8 +105,8 @@ const messages = defineMessages({
   // Ed Discuss
   'appName-ed-discuss': {
     id: 'authoring.discussions.appList.appName-ed-discuss',
-    defaultMessage: 'Ed Discuss',
-    description: 'The name of the Ed Discuss app.',
+    defaultMessage: 'Ed Discussion',
+    description: 'The name of the Ed Discussion app.',
   },
   'appDescription-ed-discuss': {
     id: 'authoring.discussions.appList.appDescription-ed-discus',
@@ -186,12 +186,12 @@ const messages = defineMessages({
   },
   'featureName-lti-advanced-sharing-mode': {
     id: 'authoring.discussions.featureName-lti-advanced-sharing-mode',
-    defaultMessage: 'LTI advanced sharing mode',
+    defaultMessage: 'LTI advanced sharing',
     description: 'The name of a discussions feature.',
   },
   'featureName-lti-basic-configuration': {
     id: 'authoring.discussions.featureName-lti-basic-configuration',
-    defaultMessage: 'LTI basic configuration',
+    defaultMessage: 'Basic configuration',
     description: 'The name of a discussions feature.',
   },
   'featureName-primary-discussion-app-experience': {
@@ -206,7 +206,7 @@ const messages = defineMessages({
   },
   'featureName-report/flag-content-to-moderators': {
     id: 'authoring.discussions.featureName-report/flag-content-to-moderators',
-    defaultMessage: 'Report/flag content to moderators',
+    defaultMessage: 'Report content to moderators',
     description: 'The name of a discussions feature.',
   },
   'featureName-research-data-events': {
@@ -233,6 +233,26 @@ const messages = defineMessages({
     id: 'authoring.discussions.wcag-2.0-support',
     defaultMessage: 'WCAG 2.0 support',
     description: 'The name of a discussions feature.',
+  },
+  'featureType-basic': {
+    id: 'authoring.discussions.basic-support',
+    defaultMessage: 'Basic support',
+    description: 'The type of a discussions feature.',
+  },
+  'featureType-partial': {
+    id: 'authoring.discussions.partial-support',
+    defaultMessage: 'Partial support',
+    description: 'The type of a discussions feature.',
+  },
+  'featureType-full': {
+    id: 'authoring.discussions.full-support',
+    defaultMessage: 'Full support',
+    description: 'The type of a discussions feature.',
+  },
+  'featureType-common': {
+    id: 'authoring.discussions.common-support',
+    defaultMessage: 'Commonly requested',
+    description: 'The type of a discussions feature.',
   },
 });
 
