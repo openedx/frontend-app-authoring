@@ -105,8 +105,8 @@ const messages = defineMessages({
   // Ed Discuss
   'appName-ed-discuss': {
     id: 'authoring.discussions.appList.appName-ed-discuss',
-    defaultMessage: 'Ed Discuss',
-    description: 'The name of the Ed Discuss app.',
+    defaultMessage: 'Ed Discussion',
+    description: 'The name of the Ed Discussion app.',
   },
   'appDescription-ed-discuss': {
     id: 'authoring.discussions.appList.appDescription-ed-discus',
