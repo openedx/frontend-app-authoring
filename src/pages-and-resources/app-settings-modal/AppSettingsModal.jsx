@@ -1,4 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {
+  useContext, useEffect, useRef, useState,
+} from 'react';
 import PropTypes from 'prop-types';
 
 import { Formik } from 'formik';
@@ -124,6 +126,7 @@ function AppSettingsModal({
   const { courseId } = useContext(PagesAndResourcesContext);
   const loadingStatus = useSelector(getLoadingStatus);
   const updateSettingsRequestStatus = useSelector(getSavingStatus);
+  const alertRef = useRef(null);
   const [saveError, setSaveError] = useState(false);
   const appInfo = useModel('courseApps', appId);
   const dispatch = useDispatch();
@@ -147,7 +150,17 @@ function AppSettingsModal({
     if (onSettingsSave) {
       success = success && await onSettingsSave(values);
     }
-    setSaveError(!success);
+    await setSaveError(!success);
+    !success && alertRef?.current.scrollIntoView(); // eslint-disable-line no-unused-expressions
+  };
+
+  const handleFormikSubmit = ({ handleSubmit, errors }) => async (event) => {
+    // If submitting the form with errors, show the alert and scroll to it.
+    await handleSubmit(event);
+    if (Object.keys(errors).length > 0) {
+      await setSaveError(true);
+      alertRef?.current.scrollIntoView(); // eslint-disable-line no-unused-expressions
+    }
   };
 
   const learnMoreLink = appInfo.documentationLinks?.learnMoreConfiguration && (
@@ -178,9 +191,7 @@ function AppSettingsModal({
         onSubmit={handleFormSubmit}
       >
         {(formikProps) => (
-          <Form
-            onSubmit={formikProps.handleSubmit}
-          >
+          <Form onSubmit={handleFormikSubmit(formikProps)}>
             <AppSettingsModalBase
               title={title}
               isOpen
@@ -197,12 +208,12 @@ function AppSettingsModal({
                     complete: intl.formatMessage(messages.saved),
                   }}
                   state={submitButtonState}
-                  onClick={formikProps.handleSubmit}
+                  onClick={handleFormikSubmit(formikProps)}
                 />
               )}
             >
               {saveError && (
-                <Alert variant="danger" icon={Info}>
+                <Alert variant="danger" icon={Info} ref={alertRef}>
                   <Alert.Heading>
                     {intl.formatMessage(messages.errorSavingTitle)}
                   </Alert.Heading>

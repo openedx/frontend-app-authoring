@@ -1,13 +1,11 @@
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import {
-  Button, Form, TransitionReplace,
-} from '@edx/paragon';
+import { Button, Form, TransitionReplace } from '@edx/paragon';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { GroupTypes, TeamSizes } from '../../data/constants';
 
 import CollapsableEditor from '../../generic/CollapsableEditor';
-import FormikErrorFeedback from '../../generic/FormikErrorFeedback';
+import FormikControl from '../../generic/FormikControl';
 import messages from './messages';
 
 // Maps a team type to its corresponding intl message
@@ -27,7 +25,7 @@ const TeamTypeNameMessage = {
 };
 
 function GroupEditor({
-  intl, group, onDelete, onChange, onBlur, fieldNameCommonBase, errors, setFieldError,
+  intl, group, onDelete, onChange, onBlur, fieldNameCommonBase, errors,
 }) {
   const [isDeleting, setDeleting] = useState(false);
   const [isOpen, setOpen] = useState(group.id === null);
@@ -35,7 +33,6 @@ function GroupEditor({
   const cancelDeletion = () => setDeleting(false);
 
   const handleToggle = (open) => setOpen(Boolean(errors.name || errors.maxTeamSize || errors.description) || open);
-  const handleFocus = (e) => setFieldError(e.target.name, undefined);
 
   const formGroupClasses = 'mb-4 mx-2';
 
@@ -73,44 +70,31 @@ function GroupEditor({
                     {intl.formatMessage(messages.configureGroup)}
                   </div>
                 ) : (
-                  <div className="d-flex flex-column flex-shrink-1 small">
-                    <span className="small text-gray-500">{intl.formatMessage(TeamTypeNameMessage[group.type].label)}</span>
-                    <span className="text-truncate text-black">{group.name || '<new>'}</span>
-                    <span className="small text-muted text-gray-500">{group.description || '<new>'}</span>
+                  <div className="d-flex flex-column flex-shrink-1 small mw-100">
+                    <div className="small text-gray-500">{intl.formatMessage(TeamTypeNameMessage[group.type].label)}</div>
+                    <div className="h4 text-truncate my-1">{group.name}</div>
+                    <div className="small text-truncate text-muted text-gray-500">{group.description}</div>
                   </div>
                 )
             }
           >
-            <Form.Group className={`${formGroupClasses} mt-2.5`}>
-              <Form.Control
-                className="pb-2"
-                name={`${fieldNameCommonBase}.name`}
-                floatingLabel={intl.formatMessage(messages.groupFormNameLabel)}
-                defaultValue={group.name}
-                onChange={onChange}
-                onBlur={onBlur}
-                onFocus={handleFocus}
-              />
-              <FormikErrorFeedback name={`${fieldNameCommonBase}.name`}>
-                <Form.Text>{intl.formatMessage(messages.groupFormNameHelp)}</Form.Text>
-              </FormikErrorFeedback>
-            </Form.Group>
-            <Form.Group className={formGroupClasses}>
-              <Form.Control
-                className="pb-2"
-                as="textarea"
-                rows={4}
-                name={`${fieldNameCommonBase}.description`}
-                floatingLabel={intl.formatMessage(messages.groupFormDescriptionLabel)}
-                defaultValue={group.description}
-                onChange={onChange}
-                onBlur={onBlur}
-                onFocus={handleFocus}
-              />
-              <FormikErrorFeedback name={`${fieldNameCommonBase}.description`}>
-                <Form.Text>{intl.formatMessage(messages.groupFormDescriptionHelp)}</Form.Text>
-              </FormikErrorFeedback>
-            </Form.Group>
+            <FormikControl
+              name={`${fieldNameCommonBase}.name`}
+              value={group.name}
+              floatingLabel={intl.formatMessage(messages.groupFormNameLabel)}
+              help={intl.formatMessage(messages.groupFormNameHelp)}
+              className={`${formGroupClasses} mt-2.5`}
+            />
+            <FormikControl
+              name={`${fieldNameCommonBase}.description`}
+              value={group.description}
+              floatingLabel={intl.formatMessage(messages.groupFormDescriptionLabel)}
+              help={intl.formatMessage(messages.groupFormDescriptionHelp)}
+              as="textarea"
+              rows={4}
+              style={{ minHeight: '2.5rem' }}
+              className={formGroupClasses}
+            />
             <Form.Group className={formGroupClasses}>
               <Form.Label className="h4 my-3">
                 {intl.formatMessage(messages.groupFormTypeLabel)}
@@ -135,22 +119,16 @@ function GroupEditor({
                 ))}
               </Form.RadioSet>
             </Form.Group>
-            <Form.Group className="mx-2">
-              <Form.Label className="h4 pb-4">{intl.formatMessage(messages.teamSize)}</Form.Label>
-              <Form.Control
-                type="number"
-                name={`${fieldNameCommonBase}.maxTeamSize`}
-                floatingLabel={intl.formatMessage(messages.groupFormMaxSizeLabel)}
-                value={group.maxTeamSize}
-                placeholder={TeamSizes.DEFAULT}
-                onChange={onChange}
-                onBlur={onBlur}
-                onFocus={handleFocus}
-              />
-              <FormikErrorFeedback name={`${fieldNameCommonBase}.maxTeamSize`}>
-                <Form.Text>{intl.formatMessage(messages.groupFormMaxSizeHelp)}</Form.Text>
-              </FormikErrorFeedback>
-            </Form.Group>
+            <FormikControl
+              type="number"
+              name={`${fieldNameCommonBase}.maxTeamSize`}
+              floatingLabel={intl.formatMessage(messages.groupFormMaxSizeLabel)}
+              value={group.maxTeamSize}
+              help={intl.formatMessage(messages.groupFormMaxSizeHelp)}
+              label={<Form.Label className="h4 pb-4">{intl.formatMessage(messages.teamSize)}</Form.Label>}
+              className="mx-2"
+              placeholder={TeamSizes.DEFAULT}
+            />
           </CollapsableEditor>
         )}
     </TransitionReplace>
@@ -177,7 +155,6 @@ GroupEditor.propTypes = {
   onDelete: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
   onBlur: PropTypes.func.isRequired,
-  setFieldError: PropTypes.func.isRequired,
 };
 
 GroupEditor.defaultProps = {

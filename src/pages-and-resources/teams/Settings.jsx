@@ -8,8 +8,7 @@ import React from 'react';
 import { v4 as uuid } from 'uuid';
 import * as Yup from 'yup';
 import { GroupTypes, TeamSizes } from '../../data/constants';
-
-import FormikErrorFeedback from '../../generic/FormikErrorFeedback';
+import FormikControl from '../../generic/FormikControl';
 import { setupYupExtensions, useAppSetting } from '../../utils';
 import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
 import GroupEditor from './GroupEditor';
@@ -26,7 +25,7 @@ function TeamSettings({
     name: '',
     description: '',
     type: GroupTypes.OPEN,
-    maxTeamSize: TeamSizes.DEFAULT,
+    maxTeamSize: null,
     id: null,
     key: uuid(),
   };
@@ -90,6 +89,11 @@ function TeamSettings({
               .default(null),
           }),
         )
+          .when('enabled', {
+            is: true,
+            then: Yup.array().min(1),
+            otherwise: Yup.array().length(0),
+          })
           .default([])
           .uniqueProperty('name', intl.formatMessage(messages.groupFormNameExists)),
       }}
@@ -98,25 +102,18 @@ function TeamSettings({
     >
       {
         ({
-          handleChange, handleBlur, values, errors, setFieldError,
+          handleChange, handleBlur, values, errors,
         }) => (
           <>
             <h4 className="my-3 pb-2">{intl.formatMessage(messages.teamSize)}</h4>
-            <Form.Group className="pb-1">
-              <Form.Control
-                className="pb-2"
-                type="number"
-                name="maxTeamSize"
-                floatingLabel={intl.formatMessage(messages.maxTeamSize)}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.maxTeamSize}
-                onFocus={(event) => setFieldError(event.target.name, undefined)}
-              />
-              <FormikErrorFeedback name="maxTeamSize">
-                <Form.Text>{intl.formatMessage(messages.maxTeamSizeHelp)}</Form.Text>
-              </FormikErrorFeedback>
-            </Form.Group>
+            <FormikControl
+              name="maxTeamSize"
+              value={values.maxTeamSize}
+              floatingLabel={intl.formatMessage(messages.maxTeamSize)}
+              help={intl.formatMessage(messages.maxTeamSizeHelp)}
+              className="pb-1"
+              type="number"
+            />
             <div className="bg-light-200 d-flex flex-column mx-n4 px-4 py-4 border border-top mb-n3.5">
               <h4>{intl.formatMessage(messages.groups)}</h4>
               <Form.Text className="mb-3">{intl.formatMessage(messages.groupsHelp)}</Form.Text>
@@ -132,7 +129,6 @@ function TeamSettings({
                         onDelete={() => remove(index)}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        setFieldError={setFieldError}
                       />
                     ))}
                     <Button
