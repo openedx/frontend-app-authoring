@@ -42,7 +42,7 @@ function GroupEditor({
         ? (
           <div className="d-flex flex-column card rounded mb-3 px-3 py-2 p-4" key="isDeleting">
             <h3>{intl.formatMessage(messages.groupDeleteHeading)}</h3>
-            <p>{intl.formatMessage(messages.groupDeleteBody)}</p>
+            {intl.formatMessage(messages.groupDeleteBody).split('\n').map(text => <p>{text}</p>)}
             <div className="d-flex flex-row justify-content-end">
               <Button variant="muted" size="sm" onClick={cancelDeletion}>
                 {intl.formatMessage(messages.cancel)}
