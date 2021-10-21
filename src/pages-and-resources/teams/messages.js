@@ -11,7 +11,7 @@ const messages = defineMessages({
   },
   enableTeamsHelp: {
     id: 'authoring.pagesAndResources.teams.enableTeams.help',
-    defaultMessage: 'Allow learners to work in small groups on specific projects or activities.',
+    defaultMessage: 'Allow learners to work together on specific projects or activities.',
   },
   enableTeamsLink: {
     id: 'authoring.pagesAndResources.teams.enableTeams.link',
@@ -39,7 +39,7 @@ const messages = defineMessages({
   },
   maxTeamSizeTooHigh: {
     id: 'authoring.pagesAndResources.teams.teamSize.maxTeamSizeTooHigh',
-    defaultMessage: 'Max team size cannot be great than {max}',
+    defaultMessage: 'Max team size cannot be greater than {max}',
   },
   groups: {
     id: 'authoring.pagesAndResources.teams.groups.heading',
@@ -47,7 +47,7 @@ const messages = defineMessages({
   },
   groupsHelp: {
     id: 'authoring.pagesAndResources.teams.groups.help',
-    defaultMessage: 'Groups are spaced where learners can create or join teams.',
+    defaultMessage: 'Groups are spaces where learners can create or join teams.',
   },
   configureGroup: {
     id: 'authoring.pagesAndResources.teams.configureGroup.heading',
@@ -63,7 +63,7 @@ const messages = defineMessages({
   },
   groupFormNameEmpty: {
     id: 'authoring.pagesAndResources.teams.group.name.error.empty',
-    defaultMessage: 'Enter a unique name for your group',
+    defaultMessage: 'Enter a unique name for this group',
   },
   groupFormNameExists: {
     id: 'authoring.pagesAndResources.teams.group.name.error.exists',
@@ -79,7 +79,7 @@ const messages = defineMessages({
   },
   groupFormDescriptionError: {
     id: 'authoring.pagesAndResources.teams.group.description.error',
-    defaultMessage: 'Enter a description for your group',
+    defaultMessage: 'Enter a description for this group',
   },
   groupFormTypeLabel: {
     id: 'authoring.pagesAndResources.teams.group.type.label',
@@ -151,7 +151,10 @@ const messages = defineMessages({
   },
   groupDeleteBody: {
     id: 'authoring.pagesAndResources.teams.deleteGroup.body',
-    defaultMessage: 'edX recommends that you do not delete groups once your course is running.',
+    defaultMessage: `edX recommends that you do not delete groups once your course is running.\n
+    Your group will no longer be visible in the LMS and learners will not be able to leave teams associated with it.\n
+    Please delete learners from teams before deleting the associated group.`,
+    description: 'Message displayed to admins when deleting a group. Make sure to include the \\n line breaks so that the final text is rendered properly.',
   },
 });
 

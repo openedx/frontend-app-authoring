@@ -28,7 +28,7 @@ const CollapsableEditor = ({
       className="collapsible-trigger d-flex border-0 align-items-center"
       style={{ justifyContent: 'unset' }}
     >
-      <div className="d-flex flex-grow-1">
+      <div className="d-flex flex-grow-1 w-75">
         {title}
       </div>
       <Collapsible.Visible whenClosed>
