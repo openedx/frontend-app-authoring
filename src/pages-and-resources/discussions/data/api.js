@@ -1,10 +1,16 @@
 import { getConfig, camelCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import _ from 'lodash';
-import moment from 'moment';
 import { v4 as uuid } from 'uuid';
 
-import { checkStatus, sortBlackoutDatesByStatus, formatDate } from '../app-config-form/utils';
+import {
+  checkStatus,
+  sortBlackoutDatesByStatus,
+  stringifyDateTime,
+  formatDate,
+  formatTime,
+  normalizeTime,
+} from '../app-config-form/utils';
 import { blackoutDatesStatus as constants } from './constants';
 
 function normalizeLtiConfig(data) {
@@ -43,10 +49,10 @@ export function normalizeBlackoutDates(data) {
 
   const normalizeData = data.map(([startDate, endDate]) => ({
     id: uuid(),
-    startDate: moment(startDate).format('YYYY-MM-DD'),
-    startTime: startDate.split('T')[1] || '',
-    endDate: moment(endDate).format('YYYY-MM-DD'),
-    endTime: endDate.split('T')[1] || '',
+    startDate: formatDate(startDate),
+    startTime: normalizeTime(startDate),
+    endDate: formatDate(endDate),
+    endTime: normalizeTime(endDate),
     status: checkStatus([startDate, endDate]),
   }));
 
@@ -119,10 +125,10 @@ function normalizeApps(data) {
   };
 }
 
-export function denormalizeBlackoutDate(date) {
+export function denormalizeBlackoutDate(object) {
   return [
-    formatDate(date.startDate, date.startTime),
-    formatDate(date.endDate, date.endTime),
+    stringifyDateTime(formatDate(object.startDate), formatTime(object.startTime)),
+    stringifyDateTime(formatDate(object.endDate), formatTime(object.endTime)),
   ];
 }
 

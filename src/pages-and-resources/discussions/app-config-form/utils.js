@@ -1,7 +1,6 @@
 import moment from 'moment';
 import _ from 'lodash';
 import { getIn } from 'formik';
-
 import { blackoutDatesStatus as constants } from '../data/constants';
 
 export const filterItemFromObject = (array, key, value) => (
@@ -27,14 +26,34 @@ export const checkStatus = ([startDate, endDate]) => {
   return status;
 };
 
-export const formatDate = (date, time) => (time ? `${date}T${time}` : date);
+export const stringifyDateTime = (date, time) => {
+  if (date && time && time !== 'Invalid date') {
+    return `${date}T${time}`;
+  }
+  return date;
+};
+
 export const isSameDay = (startDate, endDate) => moment(startDate).isSame(endDate, 'day');
 export const isSameMonth = (startDate, endDate) => moment(startDate).isSame(endDate, 'month');
 export const isSameYear = (startDate, endDate) => moment(startDate).isSame(endDate, 'year');
+export const normalizeTime = (dateTime) => dateTime.split('T')[1] || '';
+export const hasValidDateFormat = (date) => moment(date, ['MM/DD/YYYY', 'YYYY-MM-DD'], true).isValid();
+export const hasValidTimeFormat = (time) => time && moment(time, ['hh:mm A', 'HH:mm'], true).isValid();
+export const formatTime = (time) => time && moment(time, ['hh:mm A', 'HH:mm'], true).format('HH:mm');
+export const formatDate = (date) => moment(
+  date, ['MM/DD/YYYY', 'YYYY-MM-DDTHH:mm', 'YYYY-MM-DD'], true,
+).format('YYYY-MM-DD');
+
+export const ISODateTimeFormat = (date, time) => {
+  const dDate = formatDate(date);
+  const dTime = formatTime(time);
+
+  return moment(stringifyDateTime(dDate, dTime));
+};
 
 export const sortBlackoutDatesByStatus = (data, status, order) => (
   _.orderBy(data.filter(date => date.status === status),
-    [(obj) => moment(formatDate(obj.startDate, obj.startTime))], [order])
+    [(obj) => ISODateTimeFormat(obj.startDate, obj.startTime)], [order])
 );
 
 export const formatBlackoutDates = ({
@@ -47,8 +66,8 @@ export const formatBlackoutDates = ({
   const isTimeAvailable = Boolean(startTime && endTime);
   const mStartDate = moment(startDate);
   const mEndDate = moment(endDate);
-  const mStartDateTime = moment(`${startDate}T${startTime}`);
-  const mEndDateTime = moment(`${endDate}T${endTime}`);
+  const mStartDateTime = ISODateTimeFormat(startDate, startTime);
+  const mEndDateTime = ISODateTimeFormat(endDate, endTime);
 
   if (hasSameDay && !isTimeAvailable) {
     formattedDate = mStartDate.format('MMMM D, YYYY');
