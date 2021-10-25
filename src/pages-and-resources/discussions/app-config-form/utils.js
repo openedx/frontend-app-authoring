@@ -26,8 +26,8 @@ export const checkStatus = ([startDate, endDate]) => {
   return status;
 };
 
-export const stringifyDateTime = (date, time) => {
-  if (date && time && time !== 'Invalid date') {
+export const mergeDateTime = (date, time) => {
+  if (date && time) {
     return `${date}T${time}`;
   }
   return date;
@@ -39,16 +39,16 @@ export const isSameYear = (startDate, endDate) => moment(startDate).isSame(endDa
 export const normalizeTime = (dateTime) => dateTime.split('T')[1] || '';
 export const hasValidDateFormat = (date) => moment(date, ['MM/DD/YYYY', 'YYYY-MM-DD'], true).isValid();
 export const hasValidTimeFormat = (time) => time && moment(time, ['hh:mm A', 'HH:mm'], true).isValid();
-export const formatTime = (time) => time && moment(time, ['hh:mm A', 'HH:mm'], true).format('HH:mm');
-export const formatDate = (date) => moment(
+export const validateAndFormatTime = (time) => time && moment(time, ['hh:mm A', 'HH:mm'], true).format('HH:mm');
+export const validateAndFormatDate = (date) => moment(
   date, ['MM/DD/YYYY', 'YYYY-MM-DDTHH:mm', 'YYYY-MM-DD'], true,
 ).format('YYYY-MM-DD');
 
 export const ISODateTimeFormat = (date, time) => {
-  const dDate = formatDate(date);
-  const dTime = formatTime(time);
+  const dDate = validateAndFormatDate(date);
+  const dTime = validateAndFormatTime(time);
 
-  return moment(stringifyDateTime(dDate, dTime));
+  return moment(mergeDateTime(dDate, dTime));
 };
 
 export const sortBlackoutDatesByStatus = (data, status, order) => (

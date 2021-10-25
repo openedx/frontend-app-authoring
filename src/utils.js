@@ -95,6 +95,10 @@ export function setupYupExtensions() {
 
   Yup.addMethod(Yup.string, 'compare', function compare(message, type) {
     return this.test('isGreater', message, function isGreater() {
+      // This function compare 2 dates or 2 times. It return no error if dateInstance/timeInstance is empty
+      // of if startTime or endTime is not present for time comparesion
+      // or startDate or endDate is not present for date comparesion
+
       if (!this.parent
         || (!(this.parent.startTime && this.parent.endTime) && type === 'time')
         || (!(this.parent.startDate && this.parent.endDate) && type === 'date')
