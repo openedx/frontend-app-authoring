@@ -34,21 +34,21 @@ export const isSameYear = (startDate, endDate) => moment(startDate).isSame(endDa
 export const getTime = (dateTime) => dateTime.split('T')[1] || '';
 export const hasValidDateFormat = (date) => moment(date, ['MM/DD/YYYY', 'YYYY-MM-DD'], true).isValid();
 export const hasValidTimeFormat = (time) => time && moment(time, validTimeFormats, true).isValid();
-export const validateAndFormatTime = (time) => time && moment(time, validTimeFormats, true).format('HH:mm');
-export const validateAndFormatDate = (date) => moment(
+export const normalizeTime = (time) => time && moment(time, validTimeFormats, true).format('HH:mm');
+export const normalizeDate = (date) => moment(
   date, ['MM/DD/YYYY', 'YYYY-MM-DDTHH:mm', 'YYYY-MM-DD'], true,
 ).format('YYYY-MM-DD');
 
-export const ISODateTimeFormat = (date, time) => {
-  const dDate = validateAndFormatDate(date);
-  const dTime = validateAndFormatTime(time);
+export const decodeDateTime = (date, time) => {
+  const nDate = normalizeDate(date);
+  const nTime = normalizeTime(time);
 
-  return moment(mergeDateTime(dDate, dTime));
+  return moment(mergeDateTime(nDate, nTime));
 };
 
 export const sortBlackoutDatesByStatus = (data, status, order) => (
   _.orderBy(data.filter(date => date.status === status),
-    [(obj) => ISODateTimeFormat(obj.startDate, obj.startTime)], [order])
+    [(obj) => decodeDateTime(obj.startDate, obj.startTime)], [order])
 );
 
 export const formatBlackoutDates = ({
@@ -61,8 +61,8 @@ export const formatBlackoutDates = ({
   const isTimeAvailable = Boolean(startTime && endTime);
   const mStartDate = moment(startDate);
   const mEndDate = moment(endDate);
-  const mStartDateTime = ISODateTimeFormat(startDate, startTime);
-  const mEndDateTime = ISODateTimeFormat(endDate, endTime);
+  const mStartDateTime = decodeDateTime(startDate, startTime);
+  const mEndDateTime = decodeDateTime(endDate, endTime);
 
   if (hasSameDay && !isTimeAvailable) {
     formattedDate = mStartDate.format('MMMM D, YYYY');

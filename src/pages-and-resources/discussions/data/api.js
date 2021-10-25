@@ -7,8 +7,8 @@ import {
   checkStatus,
   sortBlackoutDatesByStatus,
   mergeDateTime,
-  validateAndFormatDate,
-  validateAndFormatTime,
+  normalizeDate,
+  normalizeTime,
   getTime,
 } from '../app-config-form/utils';
 import { blackoutDatesStatus as constants } from './constants';
@@ -49,9 +49,9 @@ export function normalizeBlackoutDates(data) {
 
   const normalizeData = data.map(([startDate, endDate]) => ({
     id: uuid(),
-    startDate: validateAndFormatDate(startDate),
+    startDate: normalizeDate(startDate),
     startTime: getTime(startDate),
-    endDate: validateAndFormatDate(endDate),
+    endDate: normalizeDate(endDate),
     endTime: getTime(endDate),
     status: checkStatus([startDate, endDate]),
   }));
@@ -125,15 +125,15 @@ function normalizeApps(data) {
   };
 }
 
-export function denormalizeBlackoutDate(blackoutDateInstance) {
+export function denormalizeBlackoutDate(blackoutPeriod) {
   return [
     mergeDateTime(
-      validateAndFormatDate(blackoutDateInstance.startDate),
-      validateAndFormatTime(blackoutDateInstance.startTime),
+      normalizeDate(blackoutPeriod.startDate),
+      normalizeTime(blackoutPeriod.startTime),
     ),
     mergeDateTime(
-      validateAndFormatDate(blackoutDateInstance.endDate),
-      validateAndFormatTime(blackoutDateInstance.endTime),
+      normalizeDate(blackoutPeriod.endDate),
+      normalizeTime(blackoutPeriod.endTime),
     ),
   ];
 }
