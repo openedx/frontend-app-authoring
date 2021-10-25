@@ -151,10 +151,20 @@ const messages = defineMessages({
   },
   groupDeleteBody: {
     id: 'authoring.pagesAndResources.teams.deleteGroup.body',
-    defaultMessage: `edX recommends that you do not delete groups once your course is running.\n
-    Your group will no longer be visible in the LMS and learners will not be able to leave teams associated with it.\n
+    defaultMessage: `edX recommends that you do not delete groups once your course is running.
+    Your group will no longer be visible in the LMS and learners will not be able to leave teams associated with it.
     Please delete learners from teams before deleting the associated group.`,
-    description: 'Message displayed to admins when deleting a group. Make sure to include the \\n line breaks so that the final text is rendered properly.',
+    description: 'Message displayed to admins when deleting a group. Make sure to include line breaks so that the final text is rendered properly.',
+  },
+  noGroupsErrorTitle: {
+    id: 'authoring.pagesAndResources.teams.enableGroups.error.noGroupsFound.title',
+    defaultMessage: 'No groups found',
+    description: 'Title of error message displayed when a user tries to enable teams but no group is defined.',
+  },
+  noGroupsErrorMessage: {
+    id: 'authoring.pagesAndResources.teams.enableGroups.error.noGroupsFound.message',
+    defaultMessage: 'Add one or more groups to enable teams.',
+    description: 'Body of error message displayed when a user tries to enable teams but no group is defined.',
   },
 });
 
