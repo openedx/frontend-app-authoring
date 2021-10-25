@@ -26,20 +26,15 @@ export const checkStatus = ([startDate, endDate]) => {
   return status;
 };
 
-export const mergeDateTime = (date, time) => {
-  if (date && time) {
-    return `${date}T${time}`;
-  }
-  return date;
-};
-
+export const validTimeFormats = ['hh:mm A', 'HH:mm'];
+export const mergeDateTime = (date, time) => ((date && time) ? `${date}T${time}` : date);
 export const isSameDay = (startDate, endDate) => moment(startDate).isSame(endDate, 'day');
 export const isSameMonth = (startDate, endDate) => moment(startDate).isSame(endDate, 'month');
 export const isSameYear = (startDate, endDate) => moment(startDate).isSame(endDate, 'year');
-export const normalizeTime = (dateTime) => dateTime.split('T')[1] || '';
+export const getTime = (dateTime) => dateTime.split('T')[1] || '';
 export const hasValidDateFormat = (date) => moment(date, ['MM/DD/YYYY', 'YYYY-MM-DD'], true).isValid();
-export const hasValidTimeFormat = (time) => time && moment(time, ['hh:mm A', 'HH:mm'], true).isValid();
-export const validateAndFormatTime = (time) => time && moment(time, ['hh:mm A', 'HH:mm'], true).format('HH:mm');
+export const hasValidTimeFormat = (time) => time && moment(time, validTimeFormats, true).isValid();
+export const validateAndFormatTime = (time) => time && moment(time, validTimeFormats, true).format('HH:mm');
 export const validateAndFormatDate = (date) => moment(
   date, ['MM/DD/YYYY', 'YYYY-MM-DDTHH:mm', 'YYYY-MM-DD'], true,
 ).format('YYYY-MM-DD');
