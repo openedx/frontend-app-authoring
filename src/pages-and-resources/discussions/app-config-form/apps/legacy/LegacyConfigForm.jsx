@@ -24,13 +24,24 @@ function LegacyConfigForm({
   const legacyFormValidationSchema = Yup.object().shape({
     blackoutDates: Yup.array(
       Yup.object().shape({
-        startDate: Yup.date().required(intl.formatMessage(messages.blackoutStartDateRequired)),
-        endDate: Yup.date().required(intl.formatMessage(messages.blackoutEndDateRequired)).when('startDate', {
+        startDate: Yup.string().checkFormat(
+          intl.formatMessage(messages.blackoutStartDateInValidFormat), 'date',
+        ).required(intl.formatMessage(messages.blackoutStartDateRequired)),
+        endDate: Yup.string().checkFormat(
+          intl.formatMessage(messages.blackoutEndDateInValidFormat), 'date',
+        ).required(intl.formatMessage(messages.blackoutEndDateRequired)).when('startDate', {
           is: (startDate) => startDate,
-          then: Yup.date().min(Yup.ref('startDate'), intl.formatMessage(messages.blackoutEndDateInPast)),
+          then: Yup.string().compare(intl.formatMessage(messages.blackoutEndDateInPast), 'date'),
         }),
-        startTime: Yup.string(),
-        endTime: Yup.string().compare(intl.formatMessage(messages.blackoutEndTimeInPast)),
+        startTime: Yup.string().checkFormat(
+          intl.formatMessage(messages.blackoutStartTimeInValidFormat), 'time',
+        ),
+        endTime: Yup.string().checkFormat(
+          intl.formatMessage(messages.blackoutEndTimeInValidFormat), 'time',
+        ).when('startTime', {
+          is: (startTime) => startTime,
+          then: Yup.string().compare(intl.formatMessage(messages.blackoutEndTimeInPast), 'time'),
+        }),
       }),
     ),
     discussionTopics: Yup.array(

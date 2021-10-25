@@ -3,12 +3,14 @@ import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery } from 'react-responsive';
 import * as Yup from 'yup';
-import moment from 'moment';
 
 import { RequestStatus } from './data/constants';
 import { getCourseAppSettingValue, getLoadingStatus } from './pages-and-resources/data/selectors';
 import { fetchCourseAppSettings, updateCourseAppSetting } from './pages-and-resources/data/thunks';
 import { PagesAndResourcesContext } from './pages-and-resources/PagesAndResourcesProvider';
+import {
+  hasValidDateFormat, hasValidTimeFormat, decodeDateTime,
+} from './pages-and-resources/discussions/app-config-form/utils';
 
 export const executeThunk = async (thunk, dispatch, getState) => {
   await thunk(dispatch, getState);
@@ -91,15 +93,53 @@ export function setupYupExtensions() {
     });
   });
 
-  Yup.addMethod(Yup.string, 'compare', function compare(message) {
+  Yup.addMethod(Yup.string, 'compare', function compare(message, type) {
     return this.test('isGreater', message, function isGreater() {
-      if (!this.parent || !this.parent.startTime || !this.parent.endTime) {
+      // This function compare 2 dates or 2 times. It return no error if dateInstance/timeInstance is empty
+      // of if startTime or endTime is not present for time comparesion
+      // or startDate or endDate is not present for date comparesion
+
+      if (!this.parent
+        || (!(this.parent.startTime && this.parent.endTime) && type === 'time')
+        || (!(this.parent.startDate && this.parent.endDate) && type === 'date')
+      ) {
         return true;
       }
-      const isInvalidStartDateTime = moment(`${moment(this.parent.startDate).format('YYYY-MM-DD')}T${this.parent.startTime}`)
-        .isSameOrAfter(moment(`${moment(this.parent.endDate).format('YYYY-MM-DD')}T${this.parent.endTime}`));
+
+      const startDateTime = decodeDateTime(this.parent.startDate, this.parent.startTime);
+      const endDateTime = decodeDateTime(this.parent.endDate, this.parent.endTime);
+      let isInvalidStartDateTime;
+
+      if (type === 'date') {
+        isInvalidStartDateTime = startDateTime.isAfter(endDateTime);
+      } else if (type === 'time') {
+        isInvalidStartDateTime = startDateTime.isSameOrAfter(endDateTime);
+      }
 
       if (isInvalidStartDateTime) {
+        throw this.createError({
+          path: `${this.path}`,
+          error: message,
+        });
+      }
+      return true;
+    });
+  });
+
+  Yup.addMethod(Yup.string, 'checkFormat', function checkFormat(message, type) {
+    return this.test('isValidFormat', message, function isValidFormat() {
+      if (!this.originalValue) {
+        return true;
+      }
+      let isValid;
+
+      if (type === 'date') {
+        isValid = hasValidDateFormat(this.originalValue);
+      } else if (type === 'time') {
+        isValid = hasValidTimeFormat(this.originalValue);
+      }
+
+      if (!isValid) {
         throw this.createError({
           path: `${this.path}`,
           error: message,

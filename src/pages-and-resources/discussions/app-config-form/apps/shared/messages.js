@@ -270,6 +270,26 @@ const messages = defineMessages({
     defaultMessage: 'End time cannot be before start time',
     description: 'Tells the user that the blackout end time cannot be in past and cannot be before start time',
   },
+  blackoutStartTimeInValidFormat: {
+    id: 'authoring.blackoutDates.startTime.inValidFormat',
+    defaultMessage: 'Enter a valid start time',
+    description: 'Tells the user that the blackout start time format is in valid',
+  },
+  blackoutEndTimeInValidFormat: {
+    id: 'authoring.blackoutDates.endTime.inValidFormat',
+    defaultMessage: 'Enter a valid end time',
+    description: 'Tells the user that the blackout end time format is in valid',
+  },
+  blackoutStartDateInValidFormat: {
+    id: 'authoring.blackoutDates.startDate.inValidFormat',
+    defaultMessage: 'Enter a valid start Date',
+    description: 'Tells the user that the blackout start date format is in valid',
+  },
+  blackoutEndDateInValidFormat: {
+    id: 'authoring.blackoutDates.endDate.inValidFormat',
+    defaultMessage: 'Enter a valid end date',
+    description: 'Tells the user that the blackout end date format is in valid',
+  },
   deleteAltText: {
     id: 'authoring.topics.delete',
     defaultMessage: 'Delete Topic',
