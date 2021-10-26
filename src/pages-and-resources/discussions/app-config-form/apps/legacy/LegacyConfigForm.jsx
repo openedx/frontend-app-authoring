@@ -22,7 +22,7 @@ function LegacyConfigForm({
 }) {
   const LegacyAppConfig = {
     ...appConfig,
-    allowAnonymousPosts: appConfig.allowAnonymousPosts || true,
+    allowAnonymousPosts: appConfig.allowAnonymousPosts || false,
     allowAnonymousPostsPeers: appConfig.allowAnonymousPostsPeers || false,
     blackoutDates: appConfig.blackoutDates || [],
     discussionTopics: appConfig.discussionTopics || [],
