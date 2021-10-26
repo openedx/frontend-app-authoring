@@ -28,8 +28,8 @@ const featuresState = {
     featureSupportType: 'partial',
 
   },
-  'lti-basic-configuration': {
-    id: 'lti-basic-configuration',
+  'basic-configuration': {
+    id: 'basic-configuration',
     featureSupportType: 'common',
 
   },
@@ -39,7 +39,7 @@ const featureIds = [
   'discussion-page',
   'embedded-course-sections',
   'wcag-2.1',
-  'lti-basic-configuration',
+  'basic-configuration',
 ];
 
 const legacyApp = {
@@ -68,7 +68,7 @@ const piazzaApp = {
     'discussion-page',
     'embedded-course-sections',
     'wcag-2.1',
-    'lti-basic-configuration',
+    'basic-configuration',
   ],
   externalLinks: {
     learnMore: '',

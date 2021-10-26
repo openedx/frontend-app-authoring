@@ -20,9 +20,9 @@ const COURSE_APPS_ORDER = [
   'edxnotes',
   'wiki',
   'calculator',
-  'custom_pages',
   'proctoring',
   'textbooks',
+  'custom_pages',
 ];
 
 /* eslint-disable import/prefer-default-export */

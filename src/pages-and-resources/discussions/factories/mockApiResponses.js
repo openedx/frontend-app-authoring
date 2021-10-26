@@ -6,7 +6,7 @@ export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false) => ({
     { id: 'discussion-page', feature_support_type: 'basic' },
     { id: 'embedded-course-sections', feature_support_type: 'full' },
     { id: 'wcag-2.1', feature_support_type: 'partial' },
-    { id: 'lti-basic-configuration', feature_support_type: 'common' },
+    { id: 'basic-configuration', feature_support_type: 'common' },
   ],
   lti_configuration: {
     lti_1p1_client_key: 'client_key_123',
@@ -40,7 +40,7 @@ export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false) => ({
           'discussion-page',
           'embedded-course-sections',
           'wcag-2.1',
-          'lti-basic-configuration',
+          'basic-configuration',
         ],
         external_links: {
           learn_more: '',
@@ -82,7 +82,7 @@ export const legacyApiResponse = {
     { id: 'discussion-page', feature_support_type: 'basic' },
     { id: 'embedded-course-sections', feature_support_type: 'full' },
     { id: 'wcag-2.1', feature_support_type: 'partial' },
-    { id: 'lti-basic-configuration', feature_support_type: 'common' },
+    { id: 'basic-configuration', feature_support_type: 'common' },
   ],
   lti_configuration: {},
   plugin_configuration: {
@@ -129,7 +129,7 @@ export const legacyApiResponse = {
           'discussion-page',
           'embedded-course-sections',
           'wcag-2.1',
-          'lti-basic-configuration',
+          'basic-configuration',
         ],
         external_links: {
           learn_more: '',
