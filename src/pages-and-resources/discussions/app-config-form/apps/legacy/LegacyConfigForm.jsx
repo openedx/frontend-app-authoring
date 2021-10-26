@@ -20,6 +20,16 @@ setupYupExtensions();
 function LegacyConfigForm({
   appConfig, onSubmit, formRef, intl, title,
 }) {
+  const LegacyAppConfig = {
+    allowAnonymousPosts: appConfig.allowAnonymousPosts || true,
+    allowAnonymousPostsPeers: appConfig.allowAnonymousPostsPeers || false,
+    blackoutDates: appConfig.blackoutDates || [],
+    discussionTopics: appConfig.discussionTopics || [],
+    divideByCohorts: appConfig.divideByCohorts || false,
+    divideCourseTopicsByCohorts: appConfig.divideCourseTopicsByCohorts || false,
+    ...appConfig,
+  };
+
   const [validDiscussionTopics, setValidDiscussionTopics] = useState(appConfig.discussionTopics);
   const legacyFormValidationSchema = Yup.object().shape({
     blackoutDates: Yup.array(
@@ -53,7 +63,7 @@ function LegacyConfigForm({
 
   return (
     <Formik
-      initialValues={appConfig}
+      initialValues={LegacyAppConfig}
       validateOnChange={false}
       validationSchema={legacyFormValidationSchema}
       onSubmit={(values) => onSubmit(values)}
