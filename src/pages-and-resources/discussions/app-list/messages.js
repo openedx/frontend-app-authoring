@@ -189,8 +189,8 @@ const messages = defineMessages({
     defaultMessage: 'LTI advanced sharing',
     description: 'The name of a discussions feature.',
   },
-  'featureName-lti-basic-configuration': {
-    id: 'authoring.discussions.featureName-lti-basic-configuration',
+  'featureName-basic-configuration': {
+    id: 'authoring.discussions.featureName-basic-configuration',
     defaultMessage: 'Basic configuration',
     description: 'The name of a discussions feature.',
   },

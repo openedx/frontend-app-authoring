@@ -15,7 +15,7 @@ describe('FeaturesList', () => {
     id: 'legacy',
   };
   const features = [
-    { id: 'lti-basic-configuration' },
+    { id: 'basic-configuration' },
     { id: 'wcag-2.1' },
     { id: 'discussion-page' },
     { id: 'embedded-course-sections' },

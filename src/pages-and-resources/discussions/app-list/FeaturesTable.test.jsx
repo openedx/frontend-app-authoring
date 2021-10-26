@@ -19,7 +19,7 @@ describe('FeaturesTable', () => {
       },
       {
         externalLinks: {},
-        featureIds: ['discussion-page', 'lti-basic-configuration'],
+        featureIds: ['discussion-page', 'basic-configuration'],
         hasFullSupport: false,
         id: 'piazza',
       }];
@@ -28,7 +28,7 @@ describe('FeaturesTable', () => {
       { id: 'discussion-page', featureSupportType: 'basic' },
       { id: 'embedded-course-sections', featureSupportType: 'full' },
       { id: 'wcag-2.1', featureSupportType: 'partial' },
-      { id: 'lti-basic-configuration', featureSupportType: 'common' },
+      { id: 'basic-configuration', featureSupportType: 'common' },
     ];
 
     const wrapper = render(
