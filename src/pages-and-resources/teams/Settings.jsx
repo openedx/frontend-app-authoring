@@ -39,7 +39,15 @@ function TeamSettings({
       description: group.description,
       max_team_size: group.maxTeamSize,
     }));
-    return saveSettings({ team_sets: groups, max_team_size: values.maxTeamSize });
+    return saveSettings({
+      team_sets: groups,
+      max_team_size: values.maxTeamSize,
+      enabled: values.enabled,
+    });
+  };
+  const enableAppError = {
+    title: intl.formatMessage(messages.noGroupsErrorTitle),
+    message: intl.formatMessage(messages.noGroupsErrorMessage),
   };
 
   return (
@@ -58,6 +66,12 @@ function TeamSettings({
         groups: teamsConfiguration?.teamSets || teamsConfiguration?.topics,
       }}
       validationSchema={{
+        enabled: Yup.boolean()
+          .test(
+            'has-groups',
+            enableAppError,
+            (value, context) => (!value || context.parent.groups.length > 0),
+          ),
         maxTeamSize: Yup.number()
           .required(intl.formatMessage(messages.maxTeamSizeEmpty))
           .min(TeamSizes.MIN, intl.formatMessage(messages.maxTeamSizeInvalid))
@@ -92,7 +106,6 @@ function TeamSettings({
           .when('enabled', {
             is: true,
             then: Yup.array().min(1),
-            otherwise: Yup.array().length(0),
           })
           .default([])
           .uniqueProperty('name', intl.formatMessage(messages.groupFormNameExists)),

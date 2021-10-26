@@ -1,12 +1,3 @@
-import React, {
-  useContext, useEffect, useRef, useState,
-} from 'react';
-import PropTypes from 'prop-types';
-
-import { Formik } from 'formik';
-import { useDispatch, useSelector } from 'react-redux';
-import * as Yup from 'yup';
-
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -19,6 +10,14 @@ import {
   TransitionReplace,
 } from '@edx/paragon';
 import { Info } from '@edx/paragon/icons';
+
+import { Formik } from 'formik';
+import PropTypes from 'prop-types';
+import React, {
+  useContext, useEffect, useRef, useState,
+} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import * as Yup from 'yup';
 
 import { RequestStatus } from '../../data/constants';
 import ConnectionErrorAlert from '../../generic/ConnectionErrorAlert';
@@ -215,9 +214,9 @@ function AppSettingsModal({
               {saveError && (
                 <Alert variant="danger" icon={Info} ref={alertRef}>
                   <Alert.Heading>
-                    {intl.formatMessage(messages.errorSavingTitle)}
+                    {formikProps.errors.enabled?.title ?? intl.formatMessage(messages.errorSavingTitle)}
                   </Alert.Heading>
-                  {intl.formatMessage(messages.errorSavingMessage)}
+                  {formikProps.errors.enabled?.message ?? intl.formatMessage(messages.errorSavingMessage)}
                 </Alert>
               )}
               <FormSwitchGroup
@@ -244,7 +243,7 @@ function AppSettingsModal({
                 )}
               />
               {(formikProps.values.enabled || configureBeforeEnable) && children
-              && <AppConfigFormDivider marginAdj={{ default: 0, sm: 0 }} />}
+                && <AppConfigFormDivider marginAdj={{ default: 0, sm: 0 }} />}
               <AppSettingsForm formikProps={formikProps} showForm={formikProps.values.enabled || configureBeforeEnable}>
                 {children}
               </AppSettingsForm>

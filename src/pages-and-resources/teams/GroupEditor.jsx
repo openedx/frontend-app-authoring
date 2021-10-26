@@ -40,8 +40,8 @@ function GroupEditor({
     <TransitionReplace>
       {isDeleting
         ? (
-          <div className="d-flex flex-column card rounded mb-3 px-3 py-2 p-4" key="isDeleting">
-            <h3>{intl.formatMessage(messages.groupDeleteHeading)}</h3>
+          <div className="d-flex flex-column card rounded mb-3 px-4 py-2 p-4" key="isDeleting">
+            <h4 className="mb-3">{intl.formatMessage(messages.groupDeleteHeading)}</h4>
             {intl.formatMessage(messages.groupDeleteBody).split('\n').map(text => <p>{text}</p>)}
             <div className="d-flex flex-row justify-content-end">
               <Button variant="muted" size="sm" onClick={cancelDeletion}>
@@ -72,7 +72,7 @@ function GroupEditor({
                 ) : (
                   <div className="d-flex flex-column flex-shrink-1 small mw-100">
                     <div className="small text-gray-500">{intl.formatMessage(TeamTypeNameMessage[group.type].label)}</div>
-                    <div className="h4 text-truncate my-1">{group.name}</div>
+                    <div className="h4 text-truncate my-1 font-weight-normal">{group.name}</div>
                     <div className="small text-truncate text-muted text-gray-500">{group.description}</div>
                   </div>
                 )
