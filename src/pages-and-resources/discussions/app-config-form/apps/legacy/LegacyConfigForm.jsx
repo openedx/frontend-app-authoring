@@ -21,13 +21,13 @@ function LegacyConfigForm({
   appConfig, onSubmit, formRef, intl, title,
 }) {
   const LegacyAppConfig = {
+    ...appConfig,
     allowAnonymousPosts: appConfig.allowAnonymousPosts || true,
     allowAnonymousPostsPeers: appConfig.allowAnonymousPostsPeers || false,
     blackoutDates: appConfig.blackoutDates || [],
     discussionTopics: appConfig.discussionTopics || [],
     divideByCohorts: appConfig.divideByCohorts || false,
     divideCourseTopicsByCohorts: appConfig.divideCourseTopicsByCohorts || false,
-    ...appConfig,
   };
 
   const [validDiscussionTopics, setValidDiscussionTopics] = useState(appConfig.discussionTopics);
