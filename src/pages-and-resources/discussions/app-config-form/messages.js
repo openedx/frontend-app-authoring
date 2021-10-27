@@ -77,8 +77,8 @@ const messages = defineMessages({
   },
   'appName-ed-discuss': {
     id: 'authoring.discussions.appConfigForm.appName-ed-discuss',
-    defaultMessage: 'Ed Discuss',
-    description: 'The name of the Ed Discuss app.',
+    defaultMessage: 'Ed Discussion',
+    description: 'The name of the Ed Discussion app.',
   },
   'appName-legacy': {
     id: 'authoring.discussions.appConfigForm.appName-legacy',
