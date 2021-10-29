@@ -9,7 +9,7 @@ import { getCourseAppSettingValue, getLoadingStatus } from './pages-and-resource
 import { fetchCourseAppSettings, updateCourseAppSetting } from './pages-and-resources/data/thunks';
 import { PagesAndResourcesContext } from './pages-and-resources/PagesAndResourcesProvider';
 import {
-  hasValidDateFormat, hasValidTimeFormat, decodeDateTime,
+  hasValidDateFormat, hasValidTimeFormat, decodeDateTime, endOfDayTime, startOfDayTime,
 } from './pages-and-resources/discussions/app-config-form/utils';
 
 export const executeThunk = async (thunk, dispatch, getState) => {
@@ -106,8 +106,8 @@ export function setupYupExtensions() {
         return true;
       }
 
-      const startDateTime = decodeDateTime(this.parent.startDate, this.parent.startTime);
-      const endDateTime = decodeDateTime(this.parent.endDate, this.parent.endTime);
+      const startDateTime = decodeDateTime(this.parent.startDate, startOfDayTime(this.parent.startTime));
+      const endDateTime = decodeDateTime(this.parent.endDate, endOfDayTime(this.parent.endTime));
       let isInvalidStartDateTime;
 
       if (type === 'date') {

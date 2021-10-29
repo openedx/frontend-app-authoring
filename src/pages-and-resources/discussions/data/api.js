@@ -10,6 +10,8 @@ import {
   normalizeDate,
   normalizeTime,
   getTime,
+  startOfDayTime,
+  endOfDayTime,
 } from '../app-config-form/utils';
 import { blackoutDatesStatus as constants } from './constants';
 
@@ -133,11 +135,11 @@ export function denormalizeBlackoutDate(blackoutPeriod) {
   return [
     mergeDateTime(
       normalizeDate(blackoutPeriod.startDate),
-      normalizeTime(blackoutPeriod.startTime),
+      normalizeTime(startOfDayTime(blackoutPeriod.startTime)),
     ),
     mergeDateTime(
       normalizeDate(blackoutPeriod.endDate),
-      normalizeTime(blackoutPeriod.endTime),
+      normalizeTime(endOfDayTime(blackoutPeriod.endTime)),
     ),
   ];
 }
