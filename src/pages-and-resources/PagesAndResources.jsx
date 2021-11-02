@@ -29,7 +29,7 @@ function PagesAndResources({ courseId, intl }) {
   const loadingStatus = useSelector(getLoadingStatus);
 
   const { config } = useContext(AppContext);
-  const lmsCourseURL = `${config.LMS_BASE_URL}/courses/${courseId}`;
+  const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
 
   // Each page here is driven by a course app
   const pages = useModels('courseApps', courseAppIds);
@@ -43,7 +43,7 @@ function PagesAndResources({ courseId, intl }) {
         <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
           <h3 className="m-0">{intl.formatMessage(messages.heading)}</h3>
           <Hyperlink
-            destination={lmsCourseURL}
+            destination={learningCourseURL}
             target="_blank"
             rel="noopener noreferrer"
             showLaunchIcon={false}
