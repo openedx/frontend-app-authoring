@@ -51,7 +51,7 @@ push_translations:
 pull_translations:
 	tx pull -f --mode reviewed --language=$(transifex_langs)
 
-# This target is used by Travis.
+# This target is used by CI.
 validate-no-uncommitted-package-lock-changes:
 	# Checking for package-lock.json changes...
 	git diff --exit-code package-lock.json

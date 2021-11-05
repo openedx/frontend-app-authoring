@@ -132,8 +132,8 @@ Please see `edx/frontend-platform's i18n module
 The documentation explains how to use it, and the `How To
 <https://github.com/edx/frontend-i18n/blob/master/docs/how_tos/i18n.rst>`_ has more detail.
 
-.. |Build Status| image:: https://api.travis-ci.com/edx/frontend-app-library-authoring.svg?branch=master
-   :target: https://travis-ci.com/edx/frontend-app-library-authoring
+.. |Build Status| image:: https://github.com/edx/frontend-app-library-authoring/workflows/node_js%20CI/badge.svg?branch=master
+   :target: https://github.com/edx/frontend-app-library-authoring/actions?query=workflow%3A%22node_js+CI%22
 .. |Codecov| image:: https://codecov.io/gh/edx/frontend-app-library-authoring/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/edx/frontend-app-library-authoring
 .. |license| image:: https://img.shields.io/npm/l/@edx/frontend-app-library-authoring.svg
