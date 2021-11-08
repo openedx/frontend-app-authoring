@@ -48,10 +48,12 @@ describe('FeaturesList', () => {
     const button = getByRole(container, 'button');
     userEvent.click(button);
     features.forEach((feature) => {
-      const featureNodes = queryAllByText(
-        container, messages[`featureName-${feature.id}`].defaultMessage,
-      );
-      expect(featureNodes.map(node => node.closest('div'))).toHaveLength(1);
+      if (app.featureIds.includes(feature.id)) {
+        const featureNodes = queryAllByText(
+          container, messages[`featureName-${feature.id}`].defaultMessage,
+        );
+        expect(featureNodes.map(node => node.closest('div'))).toHaveLength(1);
+      }
     });
   });
 
@@ -62,17 +64,6 @@ describe('FeaturesList', () => {
       const featureElement = queryByText(container, messages[`featureName-${feature.id}`].defaultMessage);
       if (app.featureIds.includes(feature.id)) {
         expect(featureElement.querySelector('svg')).toHaveAttribute('id', 'check-icon');
-      }
-    });
-  });
-
-  test('A dash icon is shown with each unsupported feature', () => {
-    const button = getByRole(container, 'button');
-    userEvent.click(button);
-    features.forEach((feature) => {
-      const featureElement = queryByText(container, messages[`featureName-${feature.id}`].defaultMessage);
-      if (!app.featureIds.includes(feature.id)) {
-        expect(featureElement.querySelector('svg')).toHaveAttribute('id', 'remove-icon');
       }
     });
   });
