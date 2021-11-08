@@ -1,19 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Remove, Check } from '@edx/paragon/icons';
+import { Check } from '@edx/paragon/icons';
 import { Collapsible } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
-const SupportedFeature = (
-  <span className="mr-3">
-    <Check id="check-icon" className="text-success-500" />
-  </span>
-);
-const NonSupportedFeature = (
-  <span className="mr-3">
-    <Remove id="remove-icon" className="text-light-700" />
-  </span>
+const SupportedFeature = (featureName) => (
+  <>
+    <span className="mr-3">
+      <Check id="check-icon" className="text-success-500" />
+    </span>
+    {featureName}
+  </>
 );
 
 function FeaturesList({ app, features, intl }) {
@@ -34,10 +32,9 @@ function FeaturesList({ app, features, intl }) {
     >
       {features && features.map((feature) => (
         <div key={`collapsible-${app.id}&${feature.id}`} className="d-flex mb-1">
-          {app.featureIds.includes(feature.id)
-            ? SupportedFeature
-            : NonSupportedFeature}
-          {intl.formatMessage(messages[`featureName-${feature.id}`])}
+          {app.featureIds.includes(feature.id) && (
+            SupportedFeature(intl.formatMessage(messages[`featureName-${feature.id}`]))
+          )}
         </div>
       ))}
     </Collapsible>
