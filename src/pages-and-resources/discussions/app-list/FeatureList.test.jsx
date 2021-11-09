@@ -14,12 +14,6 @@ describe('FeaturesList', () => {
     hasFullSupport: false,
     id: 'legacy',
   };
-  const features = [
-    { id: 'basic-configuration' },
-    { id: 'wcag-2.1' },
-    { id: 'discussion-page' },
-    { id: 'embedded-course-sections' },
-  ];
   let container;
 
   beforeEach(() => {
@@ -27,7 +21,6 @@ describe('FeaturesList', () => {
       <IntlProvider locale="en">
         <FeaturesList
           app={app}
-          features={features}
         />
       </IntlProvider>,
     );
@@ -47,9 +40,9 @@ describe('FeaturesList', () => {
   test('displays a row for each available feature', () => {
     const button = getByRole(container, 'button');
     userEvent.click(button);
-    features.forEach((feature) => {
+    app.featureIds.forEach((id) => {
       const featureNodes = queryAllByText(
-        container, messages[`featureName-${feature.id}`].defaultMessage,
+        container, messages[`featureName-${id}`].defaultMessage,
       );
       expect(featureNodes.map(node => node.closest('div'))).toHaveLength(1);
     });
@@ -58,22 +51,9 @@ describe('FeaturesList', () => {
   test('A check icon is shown with each supported feature', () => {
     const button = getByRole(container, 'button');
     userEvent.click(button);
-    features.forEach((feature) => {
-      const featureElement = queryByText(container, messages[`featureName-${feature.id}`].defaultMessage);
-      if (app.featureIds.includes(feature.id)) {
-        expect(featureElement.querySelector('svg')).toHaveAttribute('id', 'check-icon');
-      }
-    });
-  });
-
-  test('A dash icon is shown with each unsupported feature', () => {
-    const button = getByRole(container, 'button');
-    userEvent.click(button);
-    features.forEach((feature) => {
-      const featureElement = queryByText(container, messages[`featureName-${feature.id}`].defaultMessage);
-      if (!app.featureIds.includes(feature.id)) {
-        expect(featureElement.querySelector('svg')).toHaveAttribute('id', 'remove-icon');
-      }
+    app.featureIds.forEach((id) => {
+      const featureElement = queryByText(container, messages[`featureName-${id}`].defaultMessage);
+      expect(featureElement.querySelector('svg')).toHaveAttribute('id', 'check-icon');
     });
   });
 });
