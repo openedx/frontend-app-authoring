@@ -21,9 +21,7 @@ ensureConfig(['SITE_NAME', 'SUPPORT_EMAIL'], 'LTI Config Form');
 function LtiConfigForm({ onSubmit, intl, formRef }) {
   const dispatch = useDispatch();
 
-  const { selectedAppId } = useSelector((state) => state.discussions);
-
-  const piiConfig = useModel('appConfigs', 'pii');
+  const { selectedAppId, piiConfig } = useSelector((state) => state.discussions);
   const appConfig = useModel('appConfigs', selectedAppId);
   const app = useModel('apps', selectedAppId);
   const providerName = intl.formatMessage(appMessages[`appName-${app?.id}`]);

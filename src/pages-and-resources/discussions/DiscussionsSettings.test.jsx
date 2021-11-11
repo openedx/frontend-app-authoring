@@ -5,6 +5,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider, PageRoute } from '@edx/frontend-platform/react';
 import {
   act,
+  findByRole,
   getByRole,
   queryByLabelText,
   queryByRole,
@@ -19,21 +20,22 @@ import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 import React from 'react';
 import { Switch } from 'react-router';
+import { fetchCourseDetail } from '../../data/thunks';
 import initializeStore from '../../store';
+import { executeThunk } from '../../utils';
 import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
+import ltiMessages from './app-config-form/apps/lti/messages';
 import appMessages from './app-config-form/messages';
 import messages from './app-list/messages';
-import ltiMessages from './app-config-form/apps/lti/messages';
-import { getAppsUrl } from './data/api';
+import { getDiscussionsProvidersUrl, getDiscussionsSettingsUrl } from './data/api';
 import DiscussionsSettings from './DiscussionsSettings';
 import {
+  courseDetailResponse,
   generatePiazzaApiResponse,
+  generateProvidersApiResponse,
   legacyApiResponse,
   piazzaApiResponse,
-  courseDetailResponse,
 } from './factories/mockApiResponses';
-import { executeThunk } from '../../utils';
-import { fetchCourseDetail } from '../../data/thunks';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 let axiosMock;
@@ -88,7 +90,10 @@ describe('DiscussionsSettings', () => {
 
   describe('with successful network connections', () => {
     beforeEach(() => {
-      axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
+        .reply(200, generateProvidersApiResponse(false));
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
+        .reply(200, piazzaApiResponse);
       renderComponent();
     });
 
@@ -124,6 +129,8 @@ describe('DiscussionsSettings', () => {
       userEvent.click(queryByLabelText(container, 'Select Piazza'));
       userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
 
+      await waitForElementToBeRemoved(screen.getByRole('status'));
+
       expect(queryByTestId(container, 'appList')).not.toBeInTheDocument();
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
       expect(queryByTestId(container, 'ltiConfigForm')).toBeInTheDocument();
@@ -131,7 +138,8 @@ describe('DiscussionsSettings', () => {
     });
 
     test('successfully advances to settings step for legacy', async () => {
-      axiosMock.onGet(getAppsUrl(courseId)).reply(200, legacyApiResponse);
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse(false, 'legacy'));
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, legacyApiResponse);
       renderComponent();
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
@@ -139,8 +147,10 @@ describe('DiscussionsSettings', () => {
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
-      userEvent.click(queryByLabelText(container, 'Select edX'));
+      userEvent.click(queryByLabelText(container, 'Select edX (Legacy)'));
       userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
+
+      await waitForElementToBeRemoved(screen.getByRole('status'));
 
       expect(queryByTestId(container, 'appList')).not.toBeInTheDocument();
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
@@ -183,7 +193,7 @@ describe('DiscussionsSettings', () => {
     test('successfully submit the modal', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
-      axiosMock.onPost(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
+      axiosMock.onPost(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
 
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
@@ -193,7 +203,7 @@ describe('DiscussionsSettings', () => {
 
       userEvent.click(getByRole(container, 'button', { name: 'Next' }));
 
-      userEvent.click(getByRole(container, 'button', { name: 'Save' }));
+      userEvent.click(await findByRole(container, 'button', { name: 'Save' }));
 
       // This is an important line that ensures the Close button has been removed, which implies that
       // the full screen modal has been closed following our click of Apply.  Once this has happened,
@@ -215,6 +225,7 @@ describe('DiscussionsSettings', () => {
       userEvent.click(getByRole(container, 'checkbox', { name: 'Select Discourse' }));
       userEvent.click(getByRole(container, 'button', { name: 'Next' }));
 
+      await findByRole(container, 'button', { name: 'Save' });
       userEvent.type(getByRole(container, 'textbox', { name: 'Consumer Key' }), 'key');
       userEvent.type(getByRole(container, 'textbox', { name: 'Consumer Secret' }), 'secret');
       userEvent.type(getByRole(container, 'textbox', { name: 'Launch URL' }), 'http://example.test');
@@ -237,6 +248,7 @@ describe('DiscussionsSettings', () => {
       userEvent.click(discourseBox);
 
       userEvent.click(getByRole(container, 'button', { name: 'Next' }));
+      await waitForElementToBeRemoved(screen.getByRole('status'));
       expect(getByRole(container, 'heading', { name: 'Discourse' })).toBeInTheDocument();
 
       userEvent.type(getByRole(container, 'textbox', { name: 'Consumer Key' }), 'a');
@@ -252,7 +264,7 @@ describe('DiscussionsSettings', () => {
     });
   });
 
-  describe('with network error fetchApps API requests', () => {
+  describe('with network error fetchProviders API requests', () => {
     beforeEach(() => {
       // Expedient way of getting SUPPORT_URL into config.
       setConfig({
@@ -260,8 +272,8 @@ describe('DiscussionsSettings', () => {
         SUPPORT_URL: 'http://support.edx.org',
       });
 
-      axiosMock.onGet(getAppsUrl(courseId)).networkError();
-
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).networkError();
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).networkError();
       renderComponent();
     });
 
@@ -287,8 +299,11 @@ describe('DiscussionsSettings', () => {
         SUPPORT_URL: 'http://support.edx.org',
       });
 
-      axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
-      axiosMock.onPost(getAppsUrl(courseId)).networkError();
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
+        .reply(200, generateProvidersApiResponse());
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
+        .reply(200, piazzaApiResponse);
+      axiosMock.onPost(getDiscussionsSettingsUrl(courseId)).networkError();
       renderComponent();
     });
 
@@ -307,17 +322,17 @@ describe('DiscussionsSettings', () => {
       await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
 
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
-
-      const alert = queryByRole(container, 'alert');
+      const alert = await findByRole(container, 'alert');
       expect(alert).toBeInTheDocument();
       expect(alert.textContent).toEqual(expect.stringContaining('We encountered a technical error when applying changes.'));
       expect(alert.innerHTML).toEqual(expect.stringContaining(getConfig().SUPPORT_URL));
     });
   });
 
-  describe('with permission denied error for fetchApps API requests', () => {
+  describe('with permission denied error for fetchProviders API requests', () => {
     beforeEach(() => {
-      axiosMock.onGet(getAppsUrl(courseId)).reply(403);
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(403);
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(403);
 
       renderComponent();
     });
@@ -337,8 +352,10 @@ describe('DiscussionsSettings', () => {
 
   describe('with permission denied error for postAppConfig API requests', () => {
     beforeEach(() => {
-      axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
-      axiosMock.onPost(getAppsUrl(courseId)).reply(403);
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
+        .reply(200, generateProvidersApiResponse());
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
+      axiosMock.onPost(getDiscussionsSettingsUrl(courseId)).reply(403);
 
       renderComponent();
     });
@@ -360,7 +377,7 @@ describe('DiscussionsSettings', () => {
       // We don't technically leave the route in this case, though the modal is hidden.
       expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussion/configure/piazza`);
 
-      const alert = queryByRole(container, 'alert');
+      const alert = await findByRole(container, 'alert');
       expect(alert).toBeInTheDocument();
       expect(alert.textContent).toEqual(expect.stringContaining('You are not authorized to view this page.'));
     });
@@ -394,7 +411,10 @@ describe.each([
 
     // Leave the DiscussionsSettings route after the test.
     history.push(`/course/${courseId}/pages-and-resources`);
-    axiosMock.onGet(getAppsUrl(courseId)).reply(200, generatePiazzaApiResponse(isAdminOnlyConfig));
+    axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
+      .reply(200, generateProvidersApiResponse(isAdminOnlyConfig));
+    axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
+      .reply(200, generatePiazzaApiResponse());
     renderComponent();
   });
 
@@ -408,6 +428,7 @@ describe.each([
 
     userEvent.click(queryByLabelText(container, 'Select Piazza'));
     userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
+    await waitForElementToBeRemoved(screen.getByRole('status'));
 
     if (showLTIConfig) {
       expect(queryByText(container, ltiMessages.formInstructions.defaultMessage)).toBeInTheDocument();
@@ -446,7 +467,10 @@ describe.each([
 
     // Leave the DiscussionsSettings route after the test.
     history.push(`/course/${courseId}/pages-and-resources`);
-    axiosMock.onGet(getAppsUrl(courseId)).reply(200, generatePiazzaApiResponse(false, piiSharingAllowed));
+    axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
+      .reply(200, generateProvidersApiResponse(false));
+    axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
+      .reply(200, generatePiazzaApiResponse(piiSharingAllowed));
     renderComponent();
   });
 
@@ -460,6 +484,7 @@ describe.each([
 
     userEvent.click(queryByLabelText(container, 'Select Piazza'));
     userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
+    await waitForElementToBeRemoved(screen.getByRole('status'));
     if (enablePIISharing) {
       expect(queryByTestId(container, 'piiSharingFields')).toBeInTheDocument();
     } else {

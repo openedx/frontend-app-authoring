@@ -11,8 +11,8 @@ import messages from './messages';
 import appMessages from '../app-config-form/messages';
 import initializeStore from '../../../store';
 import { executeThunk } from '../../../utils';
-import { getAppsUrl } from '../data/api';
-import { fetchApps } from '../data/thunks';
+import { getDiscussionsProvidersUrl } from '../data/api';
+import { fetchProviders } from '../data/thunks';
 import { legacyApiResponse } from '../factories/mockApiResponses';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
@@ -43,8 +43,8 @@ describe('AppCard', () => {
   });
 
   const mockStore = async (mockResponse) => {
-    axiosMock.onGet(getAppsUrl(courseId)).reply(200, mockResponse);
-    await executeThunk(fetchApps(courseId), store.dispatch);
+    axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, mockResponse);
+    await executeThunk(fetchProviders(courseId), store.dispatch);
   };
 
   const createComponent = (data) => {

@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { updateValidationStatus } from '../../../data/slice';
 
-export const LegacyConfigFormContext = createContext({});
+export const OpenedXConfigFormContext = createContext({});
 
-export default function LegacyConfigFormProvider({ children, value }) {
+export default function OpenedXConfigFormProvider({ children, value }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -13,13 +13,13 @@ export default function LegacyConfigFormProvider({ children, value }) {
   }, [value.isFormInvalid]);
 
   return (
-    <LegacyConfigFormContext.Provider value={value}>
+    <OpenedXConfigFormContext.Provider value={value}>
       {children}
-    </LegacyConfigFormContext.Provider>
+    </OpenedXConfigFormContext.Provider>
   );
 }
 
-LegacyConfigFormProvider.propTypes = {
+OpenedXConfigFormProvider.propTypes = {
   children: PropTypes.node.isRequired,
   value: PropTypes.shape({
     discussionTopicErrors: PropTypes.arrayOf(PropTypes.bool),

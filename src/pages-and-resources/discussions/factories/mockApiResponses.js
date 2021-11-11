@@ -1,15 +1,9 @@
 import { DivisionSchemes } from '../../../data/constants';
 
-export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false, piiSharingAllowed = false) => ({
+export const generatePiazzaApiResponse = (piiSharingAllowed = false) => ({
   context_key: 'course-v1:edX+DemoX+Demo_Course',
   enabled: true,
   provider_type: 'piazza',
-  features: [
-    { id: 'discussion-page', feature_support_type: 'basic' },
-    { id: 'embedded-course-sections', feature_support_type: 'full' },
-    { id: 'wcag-2.1', feature_support_type: 'partial' },
-    { id: 'basic-configuration', feature_support_type: 'common' },
-  ],
   lti_configuration: {
     lti_1p1_client_key: 'client_key_123',
     lti_1p1_client_secret: 'client_secret_123',
@@ -20,63 +14,70 @@ export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false, piiShar
     version: 'lti_1p1',
   },
   plugin_configuration: {},
-  providers: {
-    active: 'piazza',
-    available: {
-      legacy: {
-        features: [
-          'discussion-page',
-          'embedded-course-sections',
-          'wcag-2.1',
-        ],
-        external_links: {
-          learn_more: '',
-          configuration: '',
-          general: '',
-          accessibility: '',
-          contact_email: '',
-        },
-        messages: [],
-        has_full_support: true,
-        admin_only_config: false,
+});
+
+export const generateProvidersApiResponse = (piazzaAdminOnlyConfig = false, activeProvider = 'piazza') => ({
+  active: activeProvider,
+  features: [
+    { id: 'discussion-page', feature_support_type: 'basic' },
+    { id: 'embedded-course-sections', feature_support_type: 'full' },
+    { id: 'wcag-2.1', feature_support_type: 'partial' },
+    { id: 'basic-configuration', feature_support_type: 'common' },
+  ],
+  available: {
+    legacy: {
+      features: [
+        'discussion-page',
+        'embedded-course-sections',
+        'wcag-2.1',
+      ],
+      external_links: {
+        learn_more: '',
+        configuration: '',
+        general: '',
+        accessibility: '',
+        contact_email: '',
       },
-      piazza: {
-        features: [
-          // We give piazza all features just so we can test our "full support" text.
-          'discussion-page',
-          'embedded-course-sections',
-          'wcag-2.1',
-          'basic-configuration',
-        ],
-        external_links: {
-          learn_more: '',
-          configuration: '',
-          general: '',
-          accessibility: '',
-          contact_email: '',
-        },
-        messages: [],
-        has_full_support: false,
-        admin_only_config: piazzaAdminOnlyConfig,
+      messages: [],
+      has_full_support: true,
+      admin_only_config: false,
+    },
+    piazza: {
+      features: [
+        // We give piazza all features just so we can test our "full support" text.
+        'discussion-page',
+        'embedded-course-sections',
+        'wcag-2.1',
+        'basic-configuration',
+      ],
+      external_links: {
+        learn_more: '',
+        configuration: '',
+        general: '',
+        accessibility: '',
+        contact_email: '',
       },
-      discourse: {
-        features: [
-          'discussion-page',
-          'embedded-course-sections',
-          'wcag-2.1',
-          'lti',
-        ],
-        external_links: {
-          learn_more: '',
-          configuration: '',
-          general: '',
-          accessibility: '',
-          contact_email: '',
-        },
-        messages: [],
-        has_full_support: false,
-        admin_only_config: false,
+      messages: [],
+      has_full_support: false,
+      admin_only_config: piazzaAdminOnlyConfig,
+    },
+    discourse: {
+      features: [
+        'discussion-page',
+        'embedded-course-sections',
+        'wcag-2.1',
+        'lti',
+      ],
+      external_links: {
+        learn_more: '',
+        configuration: '',
+        general: '',
+        accessibility: '',
+        contact_email: '',
       },
+      messages: [],
+      has_full_support: false,
+      admin_only_config: false,
     },
   },
 });
@@ -85,12 +86,6 @@ export const generateLegacyApiResponse = () => ({
   context_key: 'course-v1:edX+DemoX+Demo_Course',
   enabled: true,
   provider_type: 'legacy',
-  features: [
-    { id: 'discussion-page', feature_support_type: 'basic' },
-    { id: 'embedded-course-sections', feature_support_type: 'full' },
-    { id: 'wcag-2.1', feature_support_type: 'partial' },
-    { id: 'basic-configuration', feature_support_type: 'common' },
-  ],
   lti_configuration: {},
   plugin_configuration: {
     allow_anonymous: false,
@@ -125,7 +120,6 @@ export const generateLegacyApiResponse = () => ({
         },
         messages: [],
         has_full_support: true,
-        admin_only_config: false,
       },
       piazza: {
         features: [
@@ -144,7 +138,6 @@ export const generateLegacyApiResponse = () => ({
         },
         messages: [],
         has_full_support: false,
-        admin_only_config: false,
       },
     },
   },
@@ -165,7 +158,7 @@ export const emptyAppApiResponse = {
   },
 };
 
-export const piazzaApiResponse = generatePiazzaApiResponse(false);
+export const piazzaApiResponse = generatePiazzaApiResponse();
 
 export const courseDetailResponse = {
   blocks_url: 'http://localhost:18000/api/courses/v2/blocks/?course_id=course-v1%3AedX%2BDemoX%2BDemo_Course',

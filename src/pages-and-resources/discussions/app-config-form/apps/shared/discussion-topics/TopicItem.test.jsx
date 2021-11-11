@@ -20,8 +20,8 @@ import { AppProvider } from '@edx/frontend-platform/react';
 
 import initializeStore from '../../../../../../store';
 import { executeThunk } from '../../../../../../utils';
-import { getAppsUrl } from '../../../../data/api';
-import { fetchApps } from '../../../../data/thunks';
+import { getDiscussionsProvidersUrl } from '../../../../data/api';
+import { fetchProviders } from '../../../../data/thunks';
 import { legacyApiResponse } from '../../../../factories/mockApiResponses';
 import messages from '../../../messages';
 import TopicItem from './TopicItem';
@@ -91,8 +91,8 @@ describe('TopicItem', () => {
   };
 
   const mockStore = async (mockResponse) => {
-    axiosMock.onGet(getAppsUrl(courseId)).reply(200, mockResponse);
-    await executeThunk(fetchApps(courseId), store.dispatch);
+    axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, mockResponse);
+    await executeThunk(fetchProviders(courseId), store.dispatch);
   };
 
   test('displays a collapsible card for discussion topic', async () => {

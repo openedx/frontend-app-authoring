@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid';
 import _ from 'lodash';
 import messages from '../../../messages';
 import TopicItem from './TopicItem';
-import { LegacyConfigFormContext } from '../../legacy/LegacyConfigFormProvider';
+import { OpenedXConfigFormContext } from '../../openedx/OpenedXConfigFormProvider';
 import { filterItemFromObject } from '../../../utils';
 
 const DiscussionTopics = ({ intl }) => {
@@ -21,7 +21,7 @@ const DiscussionTopics = ({ intl }) => {
     discussionTopicErrors,
     validDiscussionTopics,
     setValidDiscussionTopics,
-  } = useContext(LegacyConfigFormContext);
+  } = useContext(OpenedXConfigFormContext);
 
   const handleTopicDelete = async (topicIndex, topicId, remove) => {
     await remove(topicIndex);

@@ -45,10 +45,33 @@ const messages = defineMessages({
     description: 'A label for the checkbox that allows a user to select the discussions app they want to configure.',
   },
 
+  // Legacy
+  'appName-legacy': {
+    id: 'authoring.discussions.appList.appName-legacy',
+    defaultMessage: 'edX (Legacy)',
+    description: 'The name of the Legacy edX Discussions app.',
+  },
   'appDescription-legacy': {
     id: 'authoring.discussions.appList.appDescription-legacy',
     defaultMessage: 'Start conversations with other learners, ask questions, and interact with other learners in the course.',
     description: 'A description of the Legacy edX Discussions app.',
+  },
+  // New provider
+  'appName-openedx': {
+    id: 'authoring.discussions.appList.appName-openedx',
+    defaultMessage: 'edX',
+    description: 'The name of the new edX Discussions app.',
+  },
+  'appDescription-openedx': {
+    id: 'authoring.discussions.appList.appDescription-openedx',
+    defaultMessage: 'Start conversations with other learners, ask questions, and interact with other learners in the course.',
+    description: 'A description of the new edX Discussions app.',
+  },
+  // Piazza
+  'appName-piazza': {
+    id: 'authoring.discussions.appList.appName-piazza',
+    defaultMessage: 'Piazza',
+    description: 'The name of the Piazza app.',
   },
   'appDescription-piazza': {
     id: 'authoring.discussions.appList.appDescription-piazza',

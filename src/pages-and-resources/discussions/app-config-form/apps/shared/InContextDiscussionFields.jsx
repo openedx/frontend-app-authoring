@@ -18,21 +18,21 @@ function InContextDiscussionFields({
       <FormSwitchGroup
         onChange={onChange}
         onBlur={onBlur}
-        id="inContextDiscussion"
-        checked={values.inContextDiscussion}
+        id="enableInContext"
+        checked={values.enableInContext}
         label={intl.formatMessage(messages.inContextDiscussionLabel)}
         helpText={intl.formatMessage(messages.inContextDiscussionHelp)}
       />
       <TransitionReplace>
-        {values.inContextDiscussion ? (
+        {values.enableInContext ? (
           <React.Fragment key="open">
             <AppConfigFormDivider />
             <FormSwitchGroup
               onChange={onChange}
               onBlur={onBlur}
               className="ml-4"
-              id="gradedUnitPages"
-              checked={values.gradedUnitPages}
+              id="enableGradedUnits"
+              checked={values.enableGradedUnits}
               label={intl.formatMessage(messages.gradedUnitPagesLabel)}
               helpText={intl.formatMessage(messages.gradedUnitPagesHelp)}
             />
@@ -41,8 +41,8 @@ function InContextDiscussionFields({
               onChange={onChange}
               onBlur={onBlur}
               className="ml-4"
-              id="groupInContextSubsection"
-              checked={values.groupInContextSubsection}
+              id="groupAtSubsection"
+              checked={values.groupAtSubsection}
               label={intl.formatMessage(messages.groupInContextSubsectionLabel)}
               helpText={intl.formatMessage(messages.groupInContextSubsectionHelp)}
             />
@@ -51,8 +51,8 @@ function InContextDiscussionFields({
               onChange={onChange}
               onBlur={onBlur}
               className="ml-4"
-              id="allowUnitLevelVisibility"
-              checked={values.allowUnitLevelVisibility}
+              id="unitLevelVisibility"
+              checked={values.unitLevelVisibility}
               label={intl.formatMessage(messages.allowUnitLevelVisibilityLabel)}
               helpText={intl.formatMessage(messages.allowUnitLevelVisibilityHelp)}
             />
@@ -69,10 +69,10 @@ InContextDiscussionFields.propTypes = {
   onChange: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
   values: PropTypes.shape({
-    inContextDiscussion: PropTypes.bool,
-    gradedUnitPages: PropTypes.bool,
-    groupInContextSubsection: PropTypes.bool,
-    allowUnitLevelVisibility: PropTypes.bool,
+    enableInContext: PropTypes.bool,
+    enableGradedUnits: PropTypes.bool,
+    groupAtSubsection: PropTypes.bool,
+    unitLevelVisibility: PropTypes.bool,
   }).isRequired,
 };
 

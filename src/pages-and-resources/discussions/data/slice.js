@@ -25,16 +25,15 @@ const slice = createSlice({
     hasValidationError: false,
     discussionTopicIds: [],
     divideDiscussionIds: [],
+    enableInContext: false,
+    enableGradedUnits: false,
+    unitLevelVisibility: false,
   },
   reducers: {
     loadApps: (state, { payload }) => {
-      state.activeAppId = payload.activeAppId;
-      state.appIds = payload.appIds;
-      state.featureIds = payload.featureIds;
       state.status = LOADED;
       state.saveStatus = SAVED;
-      state.discussionTopicIds = payload.discussionTopicIds;
-      state.divideDiscussionIds = payload.divideDiscussionIds;
+      Object.assign(state, payload);
     },
     selectApp: (state, { payload }) => {
       const { appId } = payload;

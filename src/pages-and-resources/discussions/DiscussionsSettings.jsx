@@ -16,7 +16,7 @@ import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 
 import messages from './messages';
 import DiscussionsProvider from './DiscussionsProvider';
-import { fetchApps } from './data/thunks';
+import { fetchProviders } from './data/thunks';
 import AppList from './app-list';
 import AppConfigForm from './app-config-form';
 import { DENIED, FAILED } from './data/slice';
@@ -36,7 +36,7 @@ function DiscussionsSettings({ courseId, intl }) {
   const courseDetail = useModel('courseDetails', courseId);
 
   useEffect(() => {
-    dispatch(fetchApps(courseId));
+    dispatch(fetchProviders(courseId));
   }, [courseId]);
 
   const discussionsPath = `${pagesAndResourcesPath}/discussion`;
