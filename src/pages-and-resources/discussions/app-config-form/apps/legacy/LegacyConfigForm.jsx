@@ -22,7 +22,6 @@ setupYupExtensions();
 function LegacyConfigForm({ onSubmit, formRef, intl }) {
   const { discussionTopicIds, divideDiscussionIds, selectedAppId } = useSelector((state) => state.discussions);
   const appConfigObj = useModel('appConfigs', selectedAppId);
-  const app = useModel('apps', selectedAppId);
   const discussionTopicsModel = useModels('discussionTopics', discussionTopicIds);
   const appConfig = { ...appConfigObj, discussionTopics: discussionTopicsModel, divideDiscussionIds };
   const LegacyAppConfig = {
@@ -101,7 +100,7 @@ function LegacyConfigForm({ onSubmit, formRef, intl }) {
           <LegacyConfigFormProvider value={contextValue}>
             <Card className="mb-5 px-4 px-sm-5 pb-5" data-testid="legacyConfigForm">
               <Form ref={formRef} onSubmit={handleSubmit}>
-                <h3 className="text-primary-500 my-3">{intl.formatMessage(messages[`appName-${app?.id}`])}</h3>
+                <h3 className="text-primary-500 my-3">{intl.formatMessage(messages[`appName-${selectedAppId}`])}</h3>
                 <AppConfigFormDivider thick />
                 <AnonymousPostingFields
                   onBlur={handleBlur}
