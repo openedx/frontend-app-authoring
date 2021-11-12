@@ -14,6 +14,7 @@ import { executeThunk } from '../../../utils';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const pagesAndResourcesPath = `/course/${courseId}/pages-and-resources`;
+
 const featuresState = {
   'discussion-page': {
     id: 'discussion-page',
@@ -174,9 +175,6 @@ describe('Data layer integration tests', () => {
         consumerKey: 'client_key_123',
         consumerSecret: 'client_secret_123',
         launchUrl: 'https://localhost/example',
-        piiSharing: false,
-        piiShareUsername: undefined,
-        piiShareEmail: undefined,
       });
     });
 
@@ -187,6 +185,7 @@ describe('Data layer integration tests', () => {
           ...piazzaApiResponse.lti_configuration,
           pii_share_username: true,
           pii_share_email: false,
+          piiSharing: true,
         },
       });
 
@@ -210,9 +209,6 @@ describe('Data layer integration tests', () => {
         consumerKey: 'client_key_123',
         consumerSecret: 'client_secret_123',
         launchUrl: 'https://localhost/example',
-        piiSharing: true,
-        piiShareUsername: true,
-        piiShareEmail: false,
       });
     });
 
@@ -376,9 +372,6 @@ describe('Data layer integration tests', () => {
         consumerKey: 'new_consumer_key',
         consumerSecret: 'new_consumer_secret',
         launchUrl: 'https://localhost/new_launch_url',
-        piiSharing: false,
-        piiShareUsername: undefined,
-        piiShareEmail: undefined,
       });
     });
 

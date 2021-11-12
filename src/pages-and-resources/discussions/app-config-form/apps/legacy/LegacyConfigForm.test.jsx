@@ -25,6 +25,7 @@ import { fetchApps } from '../../../data/thunks';
 import { legacyApiResponse } from '../../../factories/mockApiResponses';
 import messages from '../../messages';
 import LegacyConfigForm from './LegacyConfigForm';
+import { selectApp } from '../../../data/slice';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const defaultAppConfig = {
@@ -32,12 +33,12 @@ const defaultAppConfig = {
   divideByCohorts: false,
   divideCourseTopicsByCohorts: false,
   discussionTopics: [
-    { name: 'General', id: 'course' },
     { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
+    { name: 'General', id: 'course' },
   ],
   divideDiscussionIds: [
-    'course',
     '13f106c6-6735-4e84-b097-0456cff55960',
+    'course',
   ],
   allowAnonymousPosts: false,
   allowAnonymousPostsPeers: false,
@@ -49,7 +50,7 @@ describe('LegacyConfigForm', () => {
   let store;
   let container;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
@@ -58,7 +59,6 @@ describe('LegacyConfigForm', () => {
         roles: [],
       },
     });
-
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     store = initializeStore();
   });
@@ -67,13 +67,11 @@ describe('LegacyConfigForm', () => {
     axiosMock.reset();
   });
 
-  const createComponent = (appConfig, onSubmit = jest.fn(), formRef = createRef()) => {
+  const createComponent = (onSubmit = jest.fn(), formRef = createRef()) => {
     const wrapper = render(
       <AppProvider store={store}>
         <IntlProvider locale="en">
           <LegacyConfigForm
-            title="Test Legacy edX Discussions"
-            appConfig={appConfig}
             onSubmit={onSubmit}
             formRef={formRef}
           />
@@ -87,13 +85,13 @@ describe('LegacyConfigForm', () => {
   const mockStore = async (mockResponse) => {
     axiosMock.onGet(getAppsUrl(courseId)).reply(200, mockResponse);
     await executeThunk(fetchApps(courseId), store.dispatch);
+    store.dispatch(selectApp({ appId: 'legacy' }));
   };
 
   test('title rendering', async () => {
     await mockStore(legacyApiResponse);
-    createComponent(defaultAppConfig);
-
-    expect(container.querySelector('h3')).toHaveTextContent('Test Legacy edX Discussions');
+    createComponent();
+    expect(container.querySelector('h3')).toHaveTextContent('edX');
   });
 
   test('calls onSubmit when the formRef is submitted', async () => {
@@ -101,10 +99,7 @@ describe('LegacyConfigForm', () => {
     const handleSubmit = jest.fn();
 
     await mockStore(legacyApiResponse);
-    createComponent({
-      ...defaultAppConfig,
-      divideByCohorts: true,
-    }, handleSubmit, formRef);
+    createComponent(handleSubmit, formRef);
 
     await act(async () => {
       formRef.current.submit();
@@ -122,15 +117,12 @@ describe('LegacyConfigForm', () => {
   });
 
   test('default field states are correct, including removal of folded sub-fields', async () => {
-    await mockStore(legacyApiResponse);
-    createComponent(defaultAppConfig);
-
+    await mockStore({ ...legacyApiResponse, plugin_configuration: { divided_course_wide_discussions: [] } });
+    createComponent();
     // DivisionByGroupFields
     expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
     expect(container.querySelector('#divideByCohorts')).not.toBeChecked();
-    expect(
-      container.querySelector('#divideCourseTopicsByCohorts'),
-    ).not.toBeInTheDocument();
+    expect(container.querySelector('#divideCourseTopicsByCohorts')).not.toBeInTheDocument();
 
     defaultAppConfig.divideDiscussionIds.forEach(id => expect(
       container.querySelector(`#checkbox-${id}`),
@@ -148,12 +140,11 @@ describe('LegacyConfigForm', () => {
   });
 
   test('folded sub-fields are in the DOM when parents are enabled', async () => {
-    await mockStore(legacyApiResponse);
-    createComponent({
-      ...defaultAppConfig,
-      divideByCohorts: true,
-      allowAnonymousPosts: true,
+    await mockStore({
+      ...legacyApiResponse,
+      plugin_configuration: { ...legacyApiResponse.plugin_configuration, allow_anonymous: true },
     });
+    createComponent();
 
     // DivisionByGroupFields
     expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
@@ -182,12 +173,15 @@ describe('LegacyConfigForm', () => {
 
   test('folded discussion topics are in the DOM when divideByCohorts and divideCourseWideTopics are enabled',
     async () => {
-      await mockStore(legacyApiResponse);
-      createComponent({
-        ...defaultAppConfig,
-        divideByCohorts: true,
-        divideCourseTopicsByCohorts: true,
+      await mockStore({
+        ...legacyApiResponse,
+        plugin_configuration: {
+          ...legacyApiResponse.plugin_configuration,
+          divided_course_wide_discussions: ['13f106c6-6735-4e84-b097-0456cff55960',
+            'course', 'test-topic'],
+        },
       });
+      createComponent();
 
       // DivisionByGroupFields
       expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
@@ -230,7 +224,7 @@ describe('LegacyConfigForm', () => {
   test('show required error on field when leaving empty topic name',
     async () => {
       await mockStore(legacyApiResponse);
-      createComponent(defaultAppConfig);
+      createComponent();
 
       const topicCard = await updateTopicName('13f106c6-6735-4e84-b097-0456cff55960', '');
       await waitForElementToBeRemoved(queryByText(topicCard, messages.addTopicHelpText.defaultMessage));
@@ -255,7 +249,7 @@ describe('LegacyConfigForm', () => {
 
     beforeEach(async () => {
       await mockStore(legacyApiResponse);
-      createComponent(defaultAppConfig);
+      createComponent();
 
       topicCard = await updateTopicName('course', 'edx');
       duplicateTopicCard = await updateTopicName('13f106c6-6735-4e84-b097-0456cff55960', 'EDX');

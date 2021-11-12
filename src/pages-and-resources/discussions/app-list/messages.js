@@ -75,6 +75,12 @@ const messages = defineMessages({
     defaultMessage: 'Ed Discussion helps scale class communication in a beautiful and intuitive interface. Questions reach and benefit the whole class. Less emails, more time saved.',
     description: 'A description of the Ed discus app.',
   },
+  // Features
+  'featureName-discussion-page': {
+    id: 'authoring.discussions.featureName-discussion-page',
+    defaultMessage: 'Discussion page',
+    description: 'The name of a discussions feature.',
+  },
   'featureName-embedded-course-sections': {
     id: 'authoring.discussions.featureName-embedded-course-sections',
     defaultMessage: 'Embedded course sections',

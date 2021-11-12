@@ -58,8 +58,8 @@ function normalizePluginConfig(data) {
   }
   const discussionDividedTopicsCount = _.size(data.divided_course_wide_discussions);
   const discussionTopicsCount = _.size(data.discussion_topics);
-  const enableDivideCourseTopicsByCohorts = discussionDividedTopicsCount
-    && (discussionDividedTopicsCount !== discussionTopicsCount);
+  const enableDivideCourseTopicsByCohorts = Boolean(discussionDividedTopicsCount
+    && (discussionDividedTopicsCount !== discussionTopicsCount));
   return {
     allowAnonymousPosts: data.allow_anonymous,
     allowAnonymousPostsPeers: data.allow_anonymous_to_peers,
