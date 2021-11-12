@@ -74,7 +74,7 @@ export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false) => ({
   },
 });
 
-export const legacyApiResponse = {
+export const generateLegacyApiResponse = () => ({
   context_key: 'course-v1:edX+DemoX+Demo_Course',
   enabled: true,
   provider_type: 'legacy',
@@ -143,7 +143,8 @@ export const legacyApiResponse = {
       },
     },
   },
-};
+});
+export const legacyApiResponse = generateLegacyApiResponse();
 
 export const emptyAppApiResponse = {
   context_key: '',

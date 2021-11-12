@@ -8,6 +8,7 @@ import { render, queryByLabelText } from '@testing-library/react';
 
 import AppCard from './AppCard';
 import messages from './messages';
+import appMessages from '../app-config-form/messages';
 import initializeStore from '../../../store';
 import { executeThunk } from '../../../utils';
 import { getAppsUrl } from '../data/api';
@@ -64,7 +65,7 @@ describe('AppCard', () => {
   };
 
   test('checkbox input is checked when AppCard is selected', async () => {
-    const labelText = `Select ${messages[`appName-${app.id}`].defaultMessage}`;
+    const labelText = `Select ${appMessages[`appName-${app.id}`].defaultMessage}`;
 
     await mockStore(legacyApiResponse);
     createComponent(app);
@@ -78,7 +79,7 @@ describe('AppCard', () => {
     [false],
   ])('providerName and text from the app are displayed with full support %s', async (hasFullSupport) => {
     const appWithCustomSupport = { ...app, hasFullSupport };
-    const title = messages[`appName-${appWithCustomSupport.id}`].defaultMessage;
+    const title = appMessages[`appName-${appWithCustomSupport.id}`].defaultMessage;
     const text = messages[`appDescription-${appWithCustomSupport.id}`].defaultMessage;
 
     await mockStore(legacyApiResponse);
