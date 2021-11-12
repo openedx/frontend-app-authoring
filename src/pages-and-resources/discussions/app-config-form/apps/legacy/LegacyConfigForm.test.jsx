@@ -2,7 +2,7 @@ import React, { createRef } from 'react';
 
 import {
   act,
-  fireEvent,
+  fireEvent, queryAllByText,
   queryByLabelText,
   queryByRole,
   queryByTestId,
@@ -198,7 +198,7 @@ describe('LegacyConfigForm', () => {
   const updateTopicName = async (topicId, topicName) => {
     const topicCard = queryByTestId(container, topicId);
 
-    userEvent.click(queryByLabelText(topicCard, 'Expand'));
+    await act(async () => { userEvent.click(queryByLabelText(topicCard, 'Expand')); });
     const topicInput = topicCard.querySelector('input');
     topicInput.focus();
     await act(async () => { fireEvent.change(topicInput, { target: { value: topicName } }); });
@@ -234,7 +234,7 @@ describe('LegacyConfigForm', () => {
 
   test('check field is not collapsible in case of error', async () => {
     await mockStore(legacyApiResponse);
-    createComponent(defaultAppConfig);
+    createComponent();
 
     const topicCard = await updateTopicName('13f106c6-6735-4e84-b097-0456cff55960', '');
     const collapseButton = queryByLabelText(topicCard, 'Collapse');
@@ -263,31 +263,36 @@ describe('LegacyConfigForm', () => {
 
     test('check duplicate error is removed on fields when name is fixed', async () => {
       const duplicateTopicInput = duplicateTopicCard.querySelector('input');
-
       duplicateTopicInput.focus();
-      userEvent.type(duplicateTopicInput, 'valid');
+      await act(async () => { userEvent.type(duplicateTopicInput, 'valid'); });
       duplicateTopicInput.blur();
 
       await waitForElementToBeRemoved(
-        queryByText(duplicateTopicCard, messages.discussionTopicNameAlreadyExist.defaultMessage),
+        queryAllByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage),
       );
-      await assertDuplicateTopicNameValidation(duplicateTopicCard, false, false);
-      await assertDuplicateTopicNameValidation(topicCard, false, false);
+
+      await assertDuplicateTopicNameValidation(duplicateTopicCard, false);
+      await assertDuplicateTopicNameValidation(topicCard, false);
       assertHasErrorValidation(false);
     });
 
     test('check duplicate error is removed on deleting duplicate topic', async () => {
-      userEvent.click(
-        queryByLabelText(duplicateTopicCard, messages.deleteAltText.defaultMessage, { selector: 'button' }),
-      );
-      userEvent.click(
-        queryByRole(container, 'button', { name: messages.deleteButton.defaultMessage }),
-      );
+      await act(async () => {
+        userEvent.click(
+          queryByLabelText(duplicateTopicCard, messages.deleteAltText.defaultMessage, { selector: 'button' }),
+        );
+      });
+
+      await act(async () => {
+        userEvent.click(
+          queryByRole(container, 'button', { name: messages.deleteButton.defaultMessage }),
+        );
+      });
 
       await waitForElementToBeRemoved(queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage));
 
       expect(duplicateTopicCard).not.toBeInTheDocument();
-      await assertDuplicateTopicNameValidation(topicCard, false, false);
+      await assertDuplicateTopicNameValidation(topicCard, false);
       assertHasErrorValidation(false);
     });
   });
