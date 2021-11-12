@@ -5,7 +5,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { FieldArray, useFormikContext } from 'formik';
 import { v4 as uuid } from 'uuid';
 import _ from 'lodash';
-import messages from '../messages';
+import messages from '../../../messages';
 import TopicItem from './TopicItem';
 import { LegacyConfigFormContext } from '../../legacy/LegacyConfigFormProvider';
 import { filterItemFromObject } from '../../../utils';

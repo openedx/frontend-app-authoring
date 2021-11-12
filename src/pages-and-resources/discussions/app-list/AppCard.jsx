@@ -8,6 +8,7 @@ import {
   Card, CheckboxControl, breakpoints,
 } from '@edx/paragon';
 import messages from './messages';
+import appMessages from '../app-config-form/messages';
 import FeaturesList from './FeaturesList';
 
 function AppCard({
@@ -44,13 +45,13 @@ function AppCard({
           disabled={!canChangeProviders}
           readOnly
           aria-label={intl.formatMessage(messages.selectApp, {
-            appName: intl.formatMessage(messages[`appName-${app.id}`]),
+            appName: intl.formatMessage(appMessages[`appName-${app.id}`]),
           })}
         />
       </div>
       <Card.Body>
         <div className="h4 card-title">
-          {intl.formatMessage(messages[`appName-${app.id}`])}
+          {intl.formatMessage(appMessages[`appName-${app.id}`])}
         </div>
         <Card.Subtitle className="mb-3 text-muted">{supportText}</Card.Subtitle>
         <Card.Text>{intl.formatMessage(messages[`appDescription-${app.id}`])}</Card.Text>

@@ -9,7 +9,7 @@ import {
 } from '@edx/paragon';
 
 import CollapsableEditor from '../../../../../../generic/CollapsableEditor';
-import messages from '../messages';
+import messages from '../../../messages';
 import FieldFeedback from '../../../../../../generic/FieldFeedback';
 
 const TopicItem = ({

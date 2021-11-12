@@ -7,39 +7,37 @@ import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/
 import { Card, Form, MailtoLink } from '@edx/paragon';
 
 import { useFormik } from 'formik';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 
 import { updateValidationStatus } from '../../../data/slice';
 import AppExternalLinks from '../shared/AppExternalLinks';
 import messages from './messages';
+import appMessages from '../../messages';
+import { useModel } from '../../../../../generic/model-store';
 
-ensureConfig([
-  'SITE_NAME',
-  'SUPPORT_EMAIL',
-], 'LTI Config Form');
+ensureConfig(['SITE_NAME', 'SUPPORT_EMAIL'], 'LTI Config Form');
 
-function LtiConfigForm({
-  appConfig, app, onSubmit, intl, formRef, providerName,
-}) {
-  const ltiAppConfig = {
-    consumerKey: appConfig.consumerKey || '',
-    consumerSecret: appConfig.consumerSecret || '',
-    launchUrl: appConfig.launchUrl || '',
-    piiShareUsername: appConfig.piiShareUsername,
-    piiShareEmail: appConfig.piiShareEmail,
-  };
-
-  const user = getAuthenticatedUser();
+function LtiConfigForm({ onSubmit, intl, formRef }) {
   const dispatch = useDispatch();
+
+  const { selectedAppId } = useSelector((state) => state.discussions);
+
+  const piiConfig = useModel('appConfigs', 'pii');
+  const appConfig = useModel('appConfigs', selectedAppId);
+  const app = useModel('apps', selectedAppId);
+  const providerName = intl.formatMessage(appMessages[`appName-${app?.id}`]);
+  const ltiAppConfig = {
+    consumerKey: appConfig?.consumerKey || '',
+    consumerSecret: appConfig?.consumerSecret || '',
+    launchUrl: appConfig?.launchUrl || '',
+    piiShareUsername: piiConfig.piiShareUsername,
+    piiShareEmail: piiConfig.piiShareEmail,
+  };
+  const user = getAuthenticatedUser();
   const { externalLinks } = app;
   const {
-    handleSubmit,
-    handleChange,
-    handleBlur,
-    values,
-    touched,
-    errors,
+    handleSubmit, handleChange, handleBlur, values, touched, errors,
   } = useFormik({
     initialValues: ltiAppConfig,
     validationSchema: Yup.object().shape({
@@ -65,27 +63,33 @@ function LtiConfigForm({
     <Card className="mb-5 p-5" data-testid="ltiConfigForm">
       <Form ref={formRef} onSubmit={handleSubmit}>
         <h3 className="mb-3">{providerName}</h3>
-        <p>{showLTIConfig
-          ? intl.formatMessage(messages.formInstructions)
-          : (
+        <p>
+          {showLTIConfig ? (
+            intl.formatMessage(messages.formInstructions)
+          ) : (
             <FormattedMessage
               {...messages.adminOnlyConfig}
               values={{
                 providerName,
                 platformName: getConfig().SITE_NAME,
-                supportEmail: supportEmail
-                  ? <MailtoLink to={supportEmail}>{supportEmail}</MailtoLink>
-                  : 'support',
+                supportEmail: supportEmail ? (
+                  <MailtoLink to={supportEmail}>{supportEmail}</MailtoLink>
+                ) : (
+                  'support'
+                ),
               }}
             />
           )}
         </p>
-        {app.messages && app.messages.map(msg => (
-          <p key={msg}>{msg}</p>
-        ))}
+        {app.ltiMessages && app.ltiMessages.map((msg) => <p key={msg}>{msg}</p>)}
         {showLTIConfig && (
           <>
-            <Form.Group controlId="consumerKey" isInvalid={isInvalidConsumerKey} className="mb-4" data-testid="ltiConfigFields">
+            <Form.Group
+              controlId="consumerKey"
+              isInvalid={isInvalidConsumerKey}
+              className="mb-4"
+              data-testid="ltiConfigFields"
+            >
               <Form.Control
                 floatingLabel={intl.formatMessage(messages.consumerKey)}
                 onChange={handleChange}
@@ -98,7 +102,11 @@ function LtiConfigForm({
                 </Form.Control.Feedback>
               )}
             </Form.Group>
-            <Form.Group controlId="consumerSecret" isInvalid={isInvalidConsumerSecret} className="mb-4">
+            <Form.Group
+              controlId="consumerSecret"
+              isInvalid={isInvalidConsumerSecret}
+              className="mb-4"
+            >
               <Form.Control
                 floatingLabel={intl.formatMessage(messages.consumerSecret)}
                 onChange={handleChange}
@@ -126,11 +134,9 @@ function LtiConfigForm({
             </Form.Group>
           </>
         )}
-        {appConfig.piiSharing && (
+        {piiConfig.piiSharing && (
           <>
-            <Form.Text className="my-2">
-              {intl.formatMessage(messages.piiSharing)}
-            </Form.Text>
+            <Form.Text className="my-2">{intl.formatMessage(messages.piiSharing)}</Form.Text>
             <Form.Group controlId="piiSharing">
               <Form.Check
                 type="checkbox"
@@ -158,39 +164,10 @@ function LtiConfigForm({
 }
 
 LtiConfigForm.propTypes = {
-  app: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    adminOnlyConfig: PropTypes.bool,
-    externalLinks: PropTypes.shape({
-      learnMore: PropTypes.string,
-      configuration: PropTypes.string,
-      general: PropTypes.string,
-      accessibility: PropTypes.string,
-      contactEmail: PropTypes.string,
-    }).isRequired,
-    messages: PropTypes.arrayOf(PropTypes.string),
-  }).isRequired,
-  appConfig: PropTypes.shape({
-    consumerKey: PropTypes.string,
-    consumerSecret: PropTypes.string,
-    launchUrl: PropTypes.string,
-    piiSharing: PropTypes.bool.isRequired,
-    piiShareUsername: PropTypes.bool.isRequired,
-    piiShareEmail: PropTypes.bool.isRequired,
-  }),
   intl: intlShape.isRequired,
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
-  providerName: PropTypes.string.isRequired,
-};
-
-LtiConfigForm.defaultProps = {
-  appConfig: {
-    consumerKey: '',
-    consumerSecret: '',
-    launchUrl: '',
-  },
 };
 
 export default injectIntl(LtiConfigForm);

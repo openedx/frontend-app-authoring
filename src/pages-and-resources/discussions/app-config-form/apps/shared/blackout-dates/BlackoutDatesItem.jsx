@@ -5,7 +5,7 @@ import { useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-import messages from '../messages';
+import messages from '../../../messages';
 import BlackoutDatesInput from './BlackoutDatesInput';
 import { formatBlackoutDates } from '../../../utils';
 import {

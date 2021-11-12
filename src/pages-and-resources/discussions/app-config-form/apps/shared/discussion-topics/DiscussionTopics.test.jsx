@@ -18,7 +18,7 @@ import { getAppsUrl } from '../../../../data/api';
 import { fetchApps } from '../../../../data/thunks';
 import { legacyApiResponse } from '../../../../factories/mockApiResponses';
 import LegacyConfigFormProvider from '../../legacy/LegacyConfigFormProvider';
-import messages from '../messages';
+import messages from '../../../messages';
 import DiscussionTopics from './DiscussionTopics';
 
 const appConfig = {

@@ -1,5 +1,5 @@
 import { history } from '@edx/frontend-platform';
-import { addModel, addModels } from '../../../generic/model-store';
+import { addModels } from '../../../generic/model-store';
 import { getApps, postAppConfig } from './api';
 import {
   FAILED,
@@ -16,7 +16,7 @@ function updateAppState({
   apps,
   features,
   activeAppId,
-  appConfig,
+  appConfigs,
   discussionTopicIds,
   discussionTopics,
   divideDiscussionIds,
@@ -25,17 +25,19 @@ function updateAppState({
   return async (dispatch) => {
     dispatch(addModels({ modelType: 'apps', models: apps }));
     dispatch(addModels({ modelType: 'features', models: features }));
-    dispatch(addModel({ modelType: 'appConfigs', model: appConfig }));
+    dispatch(addModels({ modelType: 'appConfigs', models: appConfigs }));
     dispatch(addModels({ modelType: 'discussionTopics', models: discussionTopics }));
 
-    dispatch(loadApps({
-      activeAppId,
-      appIds: apps.map(app => app.id),
-      featureIds: features.map(feature => feature.id),
-      discussionTopicIds,
-      divideDiscussionIds,
-      userPermissions,
-    }));
+    dispatch(
+      loadApps({
+        activeAppId,
+        appIds: apps.map((app) => app.id),
+        featureIds: features.map((feature) => feature.id),
+        discussionTopicIds,
+        divideDiscussionIds,
+        userPermissions,
+      }),
+    );
   };
 }
 

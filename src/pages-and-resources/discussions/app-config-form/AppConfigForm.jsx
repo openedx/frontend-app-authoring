@@ -14,7 +14,6 @@ import {
 } from '@edx/paragon';
 
 import Loading from '../../../generic/Loading';
-import { useModel, useModels } from '../../../generic/model-store';
 import PermissionDeniedAlert from '../../../generic/PermissionDeniedAlert';
 import SaveFormConnectionErrorAlert from '../../../generic/SaveFormConnectionErrorAlert';
 import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
@@ -33,19 +32,13 @@ function AppConfigForm({
   courseId, intl,
 }) {
   const dispatch = useDispatch();
+
   const { formRef } = useContext(AppConfigFormContext);
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const { params: { appId: routeAppId } } = useRouteMatch();
   const {
-    activeAppId, discussionTopicIds, divideDiscussionIds, selectedAppId, status, saveStatus,
+    activeAppId, selectedAppId, status, saveStatus,
   } = useSelector(state => state.discussions);
-  const app = useModel('apps', selectedAppId);
-  // appConfigs have no ID of their own, so we use the active app ID to reference them.
-  // This appConfig may come back as null if the selectedAppId is not the activeAppId, i.e.,
-  // if we're configuring a new app.
-  const appConfigObj = useModel('appConfigs', selectedAppId);
-  const discussionTopics = useModels('discussionTopics', discussionTopicIds);
-  const appConfig = { ...appConfigObj, discussionTopics, divideDiscussionIds };
 
   const [confirmationDialogVisible, setConfirmationDialogVisible] = useState(false);
 
@@ -86,23 +79,18 @@ function AppConfigForm({
   }
 
   let form = null;
-  if (app.id === 'legacy') {
+  if (selectedAppId === 'legacy') {
     form = (
       <LegacyConfigForm
         formRef={formRef}
-        appConfig={appConfig}
         onSubmit={handleSubmit}
-        title={intl.formatMessage(messages[`appName-${app.id}`])}
       />
     );
   } else {
     form = (
       <LtiConfigForm
         formRef={formRef}
-        app={app}
-        appConfig={appConfig}
         onSubmit={handleSubmit}
-        providerName={intl.formatMessage(messages[`appName-${app.id}`])}
       />
     );
   }
