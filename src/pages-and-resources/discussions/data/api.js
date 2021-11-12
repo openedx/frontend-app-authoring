@@ -28,30 +28,13 @@ function normalizeLtiConfig(data) {
     consumerKey: data.lti_1p1_client_key,
     consumerSecret: data.lti_1p1_client_secret,
     launchUrl: data.lti_1p1_launch_url,
-    piiSharing: 'pii_share_username' in data || 'pii_share_email' in data,
-    piiShareUsername: data.pii_share_username,
-    piiShareEmail: data.pii_share_email,
   };
 }
 
-function normalizeDiscussionTopic(data) {
-  return Object.entries(data).map(([key, value]) => (
-    {
-      name: key,
-      id: value.id,
-    }
-  ));
-}
-
-function extractDiscussionTopicIds(data) {
-  return Object.entries(
-    data,
-    // eslint-disable-next-line no-unused-vars
-  ).map(([key, value]) => value.id);
-}
-
 export function normalizeBlackoutDates(data) {
-  if (!data.length) { return []; }
+  if (!data.length) {
+    return [];
+  }
 
   const normalizeData = data.map(([startDate, endDate]) => ({
     id: uuid(),
@@ -75,9 +58,8 @@ function normalizePluginConfig(data) {
   }
   const discussionDividedTopicsCount = _.size(data.divided_course_wide_discussions);
   const discussionTopicsCount = _.size(data.discussion_topics);
-  const enableDivideCourseTopicsByCohorts = (
-    discussionDividedTopicsCount && (discussionDividedTopicsCount !== discussionTopicsCount)
-  );
+  const enableDivideCourseTopicsByCohorts = discussionDividedTopicsCount
+    && (discussionDividedTopicsCount !== discussionTopicsCount);
   return {
     allowAnonymousPosts: data.allow_anonymous,
     allowAnonymousPostsPeers: data.allow_anonymous_to_peers,
@@ -88,13 +70,55 @@ function normalizePluginConfig(data) {
   };
 }
 
+function normalizePiiSharing(data) {
+  return {
+    piiSharing: 'pii_share_username' in data || 'pii_share_email' in data,
+    piiShareUsername: data.pii_share_username,
+    piiShareEmail: data.pii_share_email,
+  };
+}
+
+function normalizeAppConfig(data) {
+  let ltiConfig = {};
+  const legacyConfig = {
+    id: 'legacy',
+    ...normalizePluginConfig(data.plugin_configuration),
+  };
+  const piiConfig = {
+    id: 'pii',
+    ...normalizePiiSharing(data.lti_configuration),
+  };
+  if (data.providers.active !== 'legacy') {
+    ltiConfig = {
+      id: data.providers.active,
+      ...normalizeLtiConfig(data.lti_configuration),
+    };
+  }
+  return [legacyConfig, ltiConfig, piiConfig];
+}
+
+function normalizeDiscussionTopic(data) {
+  return Object.entries(data).map(([key, value]) => ({
+    name: key,
+    id: value.id,
+  }));
+}
+
+function extractDiscussionTopicIds(data) {
+  return Object.entries(
+    data,
+    // eslint-disable-next-line no-unused-vars
+  ).map(([key, value]) => value.id);
+}
+
 function normalizeFeatures(data, apps) {
   if (!data || data.length < 1) {
     return [];
   }
 
-  return camelCaseObject(data.filter((feature) => (
-    apps.map(app => app.featureIds.includes(feature.id)).some((supported) => supported))));
+  return camelCaseObject(
+    data.filter((feature) => apps.map((app) => app.featureIds.includes(feature.id)).some((supported) => supported)),
+  );
 }
 
 function normalizeApps(data) {
@@ -116,17 +140,15 @@ function normalizeApps(data) {
     courseId: data.context_key,
     enabled: data.enabled,
     features: normalizeFeatures(data.features, apps),
-    appConfig: {
-      id: data.providers.active,
-      ...normalizePluginConfig(data.plugin_configuration),
-      ...normalizeLtiConfig(data.lti_configuration),
-    },
+    appConfigs: normalizeAppConfig(data),
     activeAppId: data.providers.active,
     apps,
     discussionTopicIds: data.plugin_configuration.discussion_topics
-      ? extractDiscussionTopicIds(data.plugin_configuration.discussion_topics) : [],
+      ? extractDiscussionTopicIds(data.plugin_configuration.discussion_topics)
+      : [],
     discussionTopics: data.plugin_configuration.discussion_topics
-      ? normalizeDiscussionTopic(data.plugin_configuration.discussion_topics) : [],
+      ? normalizeDiscussionTopic(data.plugin_configuration.discussion_topics)
+      : [],
     divideDiscussionIds: data.plugin_configuration.divided_course_wide_discussions,
   };
 }

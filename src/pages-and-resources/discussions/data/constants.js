@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import messages from '../app-config-form/apps/shared/messages';
+import messages from '../app-config-form/messages';
 
 export const blackoutDatesStatus = {
   UPCOMING: 'UPCOMING',

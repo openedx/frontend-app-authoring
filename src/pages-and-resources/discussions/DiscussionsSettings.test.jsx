@@ -22,7 +22,7 @@ import { Switch } from 'react-router';
 import initializeStore from '../../store';
 import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 import appMessages from './app-config-form/messages';
-import appListMessages from './app-list/messages';
+import messages from './app-list/messages';
 import ltiMessages from './app-config-form/apps/lti/messages';
 import { getAppsUrl } from './data/api';
 import DiscussionsSettings from './DiscussionsSettings';
@@ -122,7 +122,7 @@ describe('DiscussionsSettings', () => {
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
       userEvent.click(queryByLabelText(container, 'Select Piazza'));
-      userEvent.click(queryByText(container, appListMessages.nextButton.defaultMessage));
+      userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
 
       expect(queryByTestId(container, 'appList')).not.toBeInTheDocument();
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
@@ -140,7 +140,7 @@ describe('DiscussionsSettings', () => {
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
       userEvent.click(queryByLabelText(container, 'Select edX'));
-      userEvent.click(queryByText(container, appListMessages.nextButton.defaultMessage));
+      userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
 
       expect(queryByTestId(container, 'appList')).not.toBeInTheDocument();
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
@@ -407,7 +407,7 @@ describe.each([
     await waitForElementToBeRemoved(screen.getByRole('status'));
 
     userEvent.click(queryByLabelText(container, 'Select Piazza'));
-    userEvent.click(queryByText(container, appListMessages.nextButton.defaultMessage));
+    userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
 
     if (showLTIConfig) {
       expect(queryByText(container, ltiMessages.formInstructions.defaultMessage)).toBeInTheDocument();

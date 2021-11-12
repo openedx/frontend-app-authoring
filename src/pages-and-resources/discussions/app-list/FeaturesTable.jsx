@@ -6,6 +6,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import _ from 'lodash';
 
 import messages from './messages';
+import appMessages from '../app-config-form/messages';
 import { FEATURE_TYPES } from '../data/constants';
 import './FeaturesTable.scss';
 
@@ -78,7 +79,7 @@ function FeaturesTable({ apps, features, intl }) {
         // We're converting our apps array into a bunch of objects with "Header" and "accessor"
         // keys, like DataTable expects.
         ...apps.map(app => ({
-          Header: intl.formatMessage(messages[`appName-${app.id}`]),
+          Header: intl.formatMessage(appMessages[`appName-${app.id}`]),
           accessor: app.id,
         })),
       ]}

@@ -23,7 +23,7 @@ import { executeThunk } from '../../../../../utils';
 import { getAppsUrl } from '../../../data/api';
 import { fetchApps } from '../../../data/thunks';
 import { legacyApiResponse } from '../../../factories/mockApiResponses';
-import messages from '../shared/messages';
+import messages from '../../messages';
 import LegacyConfigForm from './LegacyConfigForm';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';

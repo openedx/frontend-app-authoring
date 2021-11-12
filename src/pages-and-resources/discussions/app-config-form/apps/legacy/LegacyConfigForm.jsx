@@ -5,21 +5,26 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
+import { useSelector } from 'react-redux';
 import DivisionByGroupFields from '../shared/DivisionByGroupFields';
 import AnonymousPostingFields from '../shared/AnonymousPostingFields';
 import DiscussionTopics from '../shared/discussion-topics/DiscussionTopics';
 import BlackoutDatesField from '../shared/BlackoutDatesField';
 import LegacyConfigFormProvider from './LegacyConfigFormProvider';
-import messages from '../shared/messages';
 import AppConfigFormDivider from '../shared/AppConfigFormDivider';
 import { checkFieldErrors } from '../../utils';
 import { setupYupExtensions } from '../../../../../utils';
+import { useModel, useModels } from '../../../../../generic/model-store';
+import messages from '../../messages';
 
 setupYupExtensions();
 
-function LegacyConfigForm({
-  appConfig, onSubmit, formRef, intl, title,
-}) {
+function LegacyConfigForm({ onSubmit, formRef, intl }) {
+  const { discussionTopicIds, divideDiscussionIds, selectedAppId } = useSelector((state) => state.discussions);
+  const appConfigObj = useModel('appConfigs', selectedAppId);
+  const app = useModel('apps', selectedAppId);
+  const discussionTopicsModel = useModels('discussionTopics', discussionTopicIds);
+  const appConfig = { ...appConfigObj, discussionTopics: discussionTopicsModel, divideDiscussionIds };
   const LegacyAppConfig = {
     ...appConfig,
     allowAnonymousPosts: appConfig.allowAnonymousPosts || false,
@@ -34,24 +39,26 @@ function LegacyConfigForm({
   const legacyFormValidationSchema = Yup.object().shape({
     blackoutDates: Yup.array(
       Yup.object().shape({
-        startDate: Yup.string().checkFormat(
-          intl.formatMessage(messages.blackoutStartDateInValidFormat), 'date',
-        ).required(intl.formatMessage(messages.blackoutStartDateRequired)),
-        endDate: Yup.string().checkFormat(
-          intl.formatMessage(messages.blackoutEndDateInValidFormat), 'date',
-        ).required(intl.formatMessage(messages.blackoutEndDateRequired)).when('startDate', {
-          is: (startDate) => startDate,
-          then: Yup.string().compare(intl.formatMessage(messages.blackoutEndDateInPast), 'date'),
-        }),
+        startDate: Yup.string()
+          .checkFormat(intl.formatMessage(messages.blackoutStartDateInValidFormat), 'date')
+          .required(intl.formatMessage(messages.blackoutStartDateRequired)),
+        endDate: Yup.string()
+          .checkFormat(intl.formatMessage(messages.blackoutEndDateInValidFormat), 'date')
+          .required(intl.formatMessage(messages.blackoutEndDateRequired))
+          .when('startDate', {
+            is: (startDate) => startDate,
+            then: Yup.string().compare(intl.formatMessage(messages.blackoutEndDateInPast), 'date'),
+          }),
         startTime: Yup.string().checkFormat(
-          intl.formatMessage(messages.blackoutStartTimeInValidFormat), 'time',
+          intl.formatMessage(messages.blackoutStartTimeInValidFormat),
+          'time',
         ),
-        endTime: Yup.string().checkFormat(
-          intl.formatMessage(messages.blackoutEndTimeInValidFormat), 'time',
-        ).when('startTime', {
-          is: (startTime) => startTime,
-          then: Yup.string().compare(intl.formatMessage(messages.blackoutEndTimeInPast), 'time'),
-        }),
+        endTime: Yup.string()
+          .checkFormat(intl.formatMessage(messages.blackoutEndTimeInValidFormat), 'time')
+          .when('startTime', {
+            is: (startTime) => startTime,
+            then: Yup.string().compare(intl.formatMessage(messages.blackoutEndTimeInPast), 'time'),
+          }),
       }),
     ),
     discussionTopics: Yup.array(
@@ -68,39 +75,33 @@ function LegacyConfigForm({
       validationSchema={legacyFormValidationSchema}
       onSubmit={(values) => onSubmit(values)}
     >
-      {(
-        {
-          handleSubmit,
-          handleChange,
-          handleBlur,
-          values,
-          errors,
-          touched,
-        },
-      ) => {
+      {({
+        handleSubmit, handleChange, handleBlur, values, errors, touched,
+      }) => {
         const { discussionTopics, blackoutDates } = values;
-        const discussionTopicErrors = discussionTopics.map((value, index) => (
-          checkFieldErrors(touched, errors, `discussionTopics.${index}`, 'name')
-        ));
-        const blackoutDatesErrors = blackoutDates.map((value, index) => (
-          checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'startDate')
-          || checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'endDate')
-          || checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'startTime')
-          || checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'endTime')));
+        const discussionTopicErrors = discussionTopics.map((value, index) => checkFieldErrors(touched, errors, `discussionTopics.${index}`, 'name'));
+        const blackoutDatesErrors = blackoutDates.map(
+          (value, index) => checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'startDate')
+            || checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'endDate')
+            || checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'startTime')
+            || checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'endTime'),
+        );
 
         const contextValue = {
           validDiscussionTopics,
           setValidDiscussionTopics,
           discussionTopicErrors,
           blackoutDatesErrors,
-          isFormInvalid: discussionTopicErrors.some((error) => error) || blackoutDatesErrors.some((error) => error),
+          isFormInvalid:
+            discussionTopicErrors.some((error) => error)
+            || blackoutDatesErrors.some((error) => error),
         };
 
         return (
           <LegacyConfigFormProvider value={contextValue}>
             <Card className="mb-5 px-4 px-sm-5 pb-5" data-testid="legacyConfigForm">
               <Form ref={formRef} onSubmit={handleSubmit}>
-                <h3 className="text-primary-500 my-3">{title}</h3>
+                <h3 className="text-primary-500 my-3">{intl.formatMessage(messages[`appName-${app?.id}`])}</h3>
                 <AppConfigFormDivider thick />
                 <AnonymousPostingFields
                   onBlur={handleBlur}
@@ -123,40 +124,10 @@ function LegacyConfigForm({
 }
 
 LegacyConfigForm.propTypes = {
-  appConfig: PropTypes.shape({
-    divideByCohorts: PropTypes.bool.isRequired,
-    divideCourseTopicsByCohorts: PropTypes.bool.isRequired,
-    allowAnonymousPosts: PropTypes.bool.isRequired,
-    allowAnonymousPostsPeers: PropTypes.bool.isRequired,
-    blackoutDates: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string,
-      startDate: PropTypes.string,
-      endDate: PropTypes.string,
-      startTime: PropTypes.string,
-      endTime: PropTypes.string,
-      status: PropTypes.string,
-    })),
-    discussionTopics: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string,
-      id: PropTypes.string,
-    })),
-  }),
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
   intl: intlShape.isRequired,
-  title: PropTypes.string.isRequired,
-};
-
-LegacyConfigForm.defaultProps = {
-  appConfig: {
-    divideByCohorts: false,
-    allowDivisionByUnit: false,
-    divideCourseTopicsByCohorts: false,
-    allowAnonymousPosts: false,
-    allowAnonymousPostsPeers: false,
-    blackoutDates: [],
-  },
 };
 
 export default injectIntl(LegacyConfigForm);

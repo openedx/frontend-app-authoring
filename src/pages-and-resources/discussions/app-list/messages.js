@@ -45,79 +45,35 @@ const messages = defineMessages({
     description: 'A label for the checkbox that allows a user to select the discussions app they want to configure.',
   },
 
-  // Legacy
-  'appName-legacy': {
-    id: 'authoring.discussions.appList.appName-legacy',
-    defaultMessage: 'edX',
-    description: 'The name of the Legacy edX Discussions app.',
-  },
   'appDescription-legacy': {
     id: 'authoring.discussions.appList.appDescription-legacy',
     defaultMessage: 'Start conversations with other learners, ask questions, and interact with other learners in the course.',
     description: 'A description of the Legacy edX Discussions app.',
-  },
-  // Piazza
-  'appName-piazza': {
-    id: 'authoring.discussions.appList.appName-piazza',
-    defaultMessage: 'Piazza',
-    description: 'The name of the Piazza app.',
   },
   'appDescription-piazza': {
     id: 'authoring.discussions.appList.appDescription-piazza',
     defaultMessage: 'Piazza is designed to connect students, TAs, and professors so every student can get the help they need when they need it.',
     description: 'A description of the Piazza app.',
   },
-
-  // yellowdig
-  'appName-yellowdig': {
-    id: 'authoring.discussions.appList.appName-yellowdig',
-    defaultMessage: 'Yellowdig',
-    description: 'The name of the yellowdig app.',
-  },
   'appDescription-yellowdig': {
     id: 'authoring.discussions.appList.appDescription-yellowdig',
     defaultMessage: 'Yellowdig offers educators a gameful learning digital solution to improve student engagement by building learning communities for any course modality.',
     description: 'A description of the Yellowdig app.',
-  },
-  // edX inscribe
-  'appName-inscribe': {
-    id: 'authoring.discussions.appList.appName-inscribe',
-    defaultMessage: 'InScribe',
-    description: 'The name of the inscribe app.',
   },
   'appDescription-inscribe': {
     id: 'authoring.discussions.appList.appDescription-inscribe',
     defaultMessage: 'InScribe leverages the power of community + artificial intelligence to connect individuals to the answers, resources, and people they need to succeed.',
     description: 'A description of the inscibe app.',
   },
-  // discourse
-  'appName-discourse': {
-    id: 'authoring.discussions.appList.appName-discourse',
-    defaultMessage: 'Discourse',
-    description: 'The name of the discourse app.',
-  },
   'appDescription-discourse': {
     id: 'authoring.discussions.appList.appDescription-discourse',
     defaultMessage: 'Discourse is modern forum software for your community. Use it as a mailing list, discussion forum, long-form chat room, and more!',
     description: 'A description of the discourse app.',
   },
-
-  // Ed Discuss
-  'appName-ed-discuss': {
-    id: 'authoring.discussions.appList.appName-ed-discuss',
-    defaultMessage: 'Ed Discussion',
-    description: 'The name of the Ed Discussion app.',
-  },
   'appDescription-ed-discuss': {
     id: 'authoring.discussions.appList.appDescription-ed-discus',
     defaultMessage: 'Ed Discussion helps scale class communication in a beautiful and intuitive interface. Questions reach and benefit the whole class. Less emails, more time saved.',
     description: 'A description of the Ed discus app.',
-  },
-  // Features
-  'featureName-discussion-page': {
-    id: 'authoring.discussions.featureName-discussion-page',
-    defaultMessage: 'Discussion page',
-    description: 'The name of a discussions feature.',
   },
   'featureName-embedded-course-sections': {
     id: 'authoring.discussions.featureName-embedded-course-sections',

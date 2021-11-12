@@ -4,7 +4,7 @@ import { Form, TransitionReplace } from '@edx/paragon';
 import { FieldArray, useFormikContext } from 'formik';
 import _ from 'lodash';
 import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
-import messages from './messages';
+import messages from '../../messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
 import { LegacyConfigFormContext } from '../legacy/LegacyConfigFormProvider';
 

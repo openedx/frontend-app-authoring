@@ -23,7 +23,7 @@ import { executeThunk } from '../../../../../../utils';
 import { getAppsUrl } from '../../../../data/api';
 import { fetchApps } from '../../../../data/thunks';
 import { legacyApiResponse } from '../../../../factories/mockApiResponses';
-import messages from '../messages';
+import messages from '../../../messages';
 import TopicItem from './TopicItem';
 
 const appConfig = {

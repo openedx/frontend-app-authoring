@@ -6,7 +6,7 @@ import { Add } from '@edx/paragon/icons';
 import { FieldArray, useFormikContext } from 'formik';
 import { v4 as uuid } from 'uuid';
 
-import messages from './messages';
+import messages from '../../messages';
 import BlackoutDatesItem from './blackout-dates/BlackoutDatesItem';
 import { checkStatus } from '../../utils';
 import { denormalizeBlackoutDate } from '../../../data/api';
