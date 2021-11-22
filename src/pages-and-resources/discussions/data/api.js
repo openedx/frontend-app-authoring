@@ -94,7 +94,8 @@ function normalizeAppConfig(data) {
       ...normalizeLtiConfig(data.lti_configuration),
     };
   }
-  return [legacyConfig, ltiConfig, piiConfig];
+  if (!_.isEmpty(ltiConfig)) { return [legacyConfig, ltiConfig, piiConfig]; }
+  return [legacyConfig, piiConfig];
 }
 
 function normalizeDiscussionTopic(data) {
