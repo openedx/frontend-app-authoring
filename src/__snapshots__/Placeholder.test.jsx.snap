@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Placeholder /> renders correctly 1`] = `
+<div
+  className="Placeholder"
+>
+  <h1>
+    Under Construction
+    <br />
+    Coming Soon
+  </h1>
+</div>
+`;
