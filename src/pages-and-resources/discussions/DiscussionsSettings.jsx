@@ -121,7 +121,6 @@ function DiscussionsSettings({ courseId, intl }) {
               eventKey={SELECTION_STEP}
               title={intl.formatMessage(messages.providerSelection)}
             >
-              <AppList />
               {
                 !canChangeProviders && (
                   <Alert variant="warning">
@@ -129,6 +128,7 @@ function DiscussionsSettings({ courseId, intl }) {
                   </Alert>
                 )
               }
+              <AppList />
             </Stepper.Step>
             <Stepper.Step
               eventKey={SETTINGS_STEP}

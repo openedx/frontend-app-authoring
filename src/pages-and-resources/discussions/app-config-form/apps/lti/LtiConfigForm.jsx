@@ -64,22 +64,21 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
       <Form ref={formRef} onSubmit={handleSubmit}>
         <h3 className="mb-3">{providerName}</h3>
         <p>
-          {showLTIConfig ? (
-            intl.formatMessage(messages.formInstructions)
-          ) : (
-            <FormattedMessage
-              {...messages.adminOnlyConfig}
-              values={{
-                providerName,
-                platformName: getConfig().SITE_NAME,
-                supportEmail: supportEmail ? (
-                  <MailtoLink to={supportEmail}>{supportEmail}</MailtoLink>
-                ) : (
-                  'support'
-                ),
-              }}
-            />
-          )}
+          <FormattedMessage
+            {...messages.adminOnlyConfig}
+            values={{
+              providerName,
+              platformName: getConfig().SITE_NAME,
+              supportEmail: supportEmail ? (
+                <MailtoLink to={supportEmail}>{supportEmail}</MailtoLink>
+              ) : (
+                'support'
+              ),
+            }}
+          />
+        </p>
+        <p>
+          {showLTIConfig && intl.formatMessage(messages.formInstructions)}
         </p>
         {app.ltiMessages && app.ltiMessages.map((msg) => <p key={msg}>{msg}</p>)}
         {showLTIConfig && (
