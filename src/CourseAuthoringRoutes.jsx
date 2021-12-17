@@ -2,12 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Switch, useParams, useRouteMatch } from 'react-router';
 import { PageRoute } from '@edx/frontend-platform/react';
-import { getConfig } from '@edx/frontend-platform';
-
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';
 import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettings';
-import EditorPage from './editors/EditorPage';
+import EditorProvider from './editors/EditorProvider';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -39,8 +37,10 @@ export default function CourseAuthoringRoutes({ courseId }) {
         </PageRoute>
 
         <PageRoute path = {`${path}/editor/:blockType/:blockId`} >
-        {process.env.ENABLE_NEW_EDITOR_PAGES &
-            <EditorPage courseId = {courseId}/>
+        {process.env.ENABLE_NEW_EDITOR_PAGES === "true" &&
+            <EditorProvider
+            courseId = {courseId}
+            />
         }
         </PageRoute>
       </Switch>
@@ -50,4 +50,10 @@ export default function CourseAuthoringRoutes({ courseId }) {
 
 CourseAuthoringRoutes.propTypes = {
   courseId: PropTypes.string.isRequired,
+  blockId: PropTypes.string,
+  blockType: PropTypes.string,
+};
+CourseAuthoringRoutes.defaultProps = {
+  blockId: null,
+  blockType: null,
 };

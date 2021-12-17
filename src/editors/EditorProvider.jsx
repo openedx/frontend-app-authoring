@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { useParams } from 'react-router';
 import Placeholder from '@edx/frontend-lib-content-components';
 
-const EditorPage = ({
+
+const EditorProvider = ({
     courseId,
 }) =>{
     const params = useParams();
@@ -15,8 +16,8 @@ const EditorPage = ({
         </div>
     );
 }
-EditorPage.propTypes = {
+EditorProvider.propTypes = {
     courseId: PropTypes.string.isRequired,
   };
 
-export default EditorPage;
+export default EditorProvider;
