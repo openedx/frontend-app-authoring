@@ -31,8 +31,8 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
     consumerKey: appConfig?.consumerKey || '',
     consumerSecret: appConfig?.consumerSecret || '',
     launchUrl: appConfig?.launchUrl || '',
-    piiShareUsername: piiConfig.piiShareUsername,
-    piiShareEmail: piiConfig.piiShareEmail,
+    piiShareUsername: piiConfig.piiSharing ? piiConfig.piiShareUsername : undefined,
+    piiShareEmail: piiConfig.piiSharing ? piiConfig.piiShareEmail : undefined,
   };
   const user = getAuthenticatedUser();
   const { externalLinks } = app;
