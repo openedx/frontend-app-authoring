@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Switch, useParams, useRouteMatch } from 'react-router';
+import { Switch, useRouteMatch } from 'react-router';
 import { PageRoute } from '@edx/frontend-platform/react';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';
@@ -25,7 +25,6 @@ import EditorProvider from './editors/EditorProvider';
  */
 export default function CourseAuthoringRoutes({ courseId }) {
   const { path } = useRouteMatch();
-  console.log(process.env.ENABLE_NEW_EDITOR_PAGES);
   return (
     <CourseAuthoringPage courseId={courseId}>
       <Switch>
@@ -35,13 +34,12 @@ export default function CourseAuthoringRoutes({ courseId }) {
         <PageRoute path={`${path}/proctored-exam-settings`}>
           <ProctoredExamSettings courseId={courseId} />
         </PageRoute>
-
-        <PageRoute path = {`${path}/editor/:blockType/:blockId`} >
-        {process.env.ENABLE_NEW_EDITOR_PAGES === "true" &&
+        <PageRoute path={`${path}/editor/:blockType/:blockId`}>
+          {process.env.ENABLE_NEW_EDITOR_PAGES==='true'
+            &&
             <EditorProvider
-            courseId = {courseId}
-            />
-        }
+              courseId={courseId}
+            />}
         </PageRoute>
       </Switch>
     </CourseAuthoringPage>
@@ -50,8 +48,6 @@ export default function CourseAuthoringRoutes({ courseId }) {
 
 CourseAuthoringRoutes.propTypes = {
   courseId: PropTypes.string.isRequired,
-  blockId: PropTypes.string,
-  blockType: PropTypes.string,
 };
 CourseAuthoringRoutes.defaultProps = {
   blockId: null,
