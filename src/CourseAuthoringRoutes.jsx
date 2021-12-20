@@ -35,11 +35,12 @@ export default function CourseAuthoringRoutes({ courseId }) {
           <ProctoredExamSettings courseId={courseId} />
         </PageRoute>
         <PageRoute path={`${path}/editor/:blockType/:blockId`}>
-          {process.env.ENABLE_NEW_EDITOR_PAGES==='true'
-            &&
+          {process.env.ENABLE_NEW_EDITOR_PAGES === 'true'
+            && (
             <EditorProvider
               courseId={courseId}
-            />}
+            />
+            )}
         </PageRoute>
       </Switch>
     </CourseAuthoringPage>
@@ -48,8 +49,4 @@ export default function CourseAuthoringRoutes({ courseId }) {
 
 CourseAuthoringRoutes.propTypes = {
   courseId: PropTypes.string.isRequired,
-};
-CourseAuthoringRoutes.defaultProps = {
-  blockId: null,
-  blockType: null,
 };
