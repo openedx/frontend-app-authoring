@@ -134,7 +134,7 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
           </>
         )}
         {piiConfig.piiSharing && (
-          <>
+          <div data-testid="piiSharingFields">
             <Form.Text className="my-2">{intl.formatMessage(messages.piiSharing)}</Form.Text>
             <Form.Group controlId="piiSharing">
               <Form.Check
@@ -154,7 +154,7 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
                 label={intl.formatMessage(messages.piiShareEmail)}
               />
             </Form.Group>
-          </>
+          </div>
         )}
       </Form>
       <AppExternalLinks externalLinks={externalLinks} providerName={providerName} />

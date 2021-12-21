@@ -1,4 +1,4 @@
-export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false) => ({
+export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false, piiSharingAllowed = false) => ({
   context_key: 'course-v1:edX+DemoX+Demo_Course',
   enabled: true,
   provider_type: 'piazza',
@@ -12,6 +12,9 @@ export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false) => ({
     lti_1p1_client_key: 'client_key_123',
     lti_1p1_client_secret: 'client_secret_123',
     lti_1p1_launch_url: 'https://localhost/example',
+    pii_sharing_allowed: piiSharingAllowed,
+    pii_share_email: false,
+    pii_share_username: false,
     version: 'lti_1p1',
   },
   plugin_configuration: {},
