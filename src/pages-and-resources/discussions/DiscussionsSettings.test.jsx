@@ -418,3 +418,50 @@ describe.each([
     }
   });
 });
+
+describe.each([
+  { piiSharingAllowed: false },
+  { piiSharingAllowed: true },
+])('PII sharing fields test', ({ piiSharingAllowed }) => {
+  beforeEach(() => {
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+
+    store = initializeStore({
+      models: {
+        courseDetails: {
+          [courseId]: {},
+        },
+      },
+    });
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+
+    // Leave the DiscussionsSettings route after the test.
+    history.push(`/course/${courseId}/pages-and-resources`);
+    axiosMock.onGet(getAppsUrl(courseId)).reply(200, generatePiazzaApiResponse(false, piiSharingAllowed));
+    renderComponent();
+  });
+
+  test(`${piiSharingAllowed ? 'shows PII share username/email field when piiSharingAllowed is true'
+    : 'hides PII share username/email field when piiSharingAllowed is false'}`, async () => {
+    history.push(`/course/${courseId}/pages-and-resources/discussion`);
+
+    // This is an important line that ensures the spinner has been removed - and thus our main
+    // content has been loaded - prior to proceeding with our expectations.
+    await waitForElementToBeRemoved(screen.getByRole('status'));
+
+    userEvent.click(queryByLabelText(container, 'Select Piazza'));
+    userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
+    if (piiSharingAllowed) {
+      expect(queryByTestId(container, 'piiSharingFields')).toBeInTheDocument();
+    } else {
+      expect(queryByTestId(container, 'piiSharingFields')).not.toBeInTheDocument();
+    }
+  });
+});
