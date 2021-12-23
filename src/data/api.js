@@ -9,9 +9,9 @@ function normalizeCourseDetail(data) {
   };
 }
 
-export async function getCourseDetail(courseId) {
+export async function getCourseDetail(courseId, username) {
   const { data } = await getAuthenticatedHttpClient()
-    .get(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}`);
+    .get(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=${username}`);
 
   return normalizeCourseDetail(data);
 }

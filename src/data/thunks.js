@@ -15,7 +15,7 @@ export function fetchCourseDetail(courseId) {
     dispatch(updateStatus({ courseId, status: LOADING }));
 
     try {
-      const courseDetail = await getCourseDetail(courseId);
+      const courseDetail = await getCourseDetail(courseId, getAuthenticatedUser().username);
       dispatch(updateStatus({ courseId, status: LOADED }));
 
       dispatch(addModel({ modelType: 'courseDetails', model: courseDetail }));

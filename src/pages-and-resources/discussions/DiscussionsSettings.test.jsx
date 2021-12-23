@@ -204,7 +204,7 @@ describe('DiscussionsSettings', () => {
     });
 
     test('requires confirmation if changing provider', async () => {
-      axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}`).reply(200, courseDetailResponse);
+      axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=abc123`).reply(200, courseDetailResponse);
       await executeThunk(fetchCourseDetail(courseId), store.dispatch);
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
@@ -224,7 +224,7 @@ describe('DiscussionsSettings', () => {
     });
 
     test('can cancel confirmation', async () => {
-      axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}`).reply(200, courseDetailResponse);
+      axiosMock.onGet(`${getConfig().LMS_BASE_URL}/api/courses/v1/courses/${courseId}?username=abc123`).reply(200, courseDetailResponse);
       await executeThunk(fetchCourseDetail(courseId), store.dispatch);
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
