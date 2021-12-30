@@ -238,6 +238,7 @@ describe('Data layer integration tests', () => {
         blackoutDates: [],
         // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
         // but we add it in during normalization.
+        divisionScheme: 'none',
         divideByCohorts: true,
         allowDivisionByUnit: false,
         divideCourseTopicsByCohorts: false,
@@ -387,6 +388,7 @@ describe('Data layer integration tests', () => {
           allow_anonymous: true,
           allow_anonymous_to_peers: true,
           discussion_blackouts: [],
+          division_scheme: 'none',
           discussion_topics: {
             Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
             General: { id: 'course' },
@@ -404,6 +406,7 @@ describe('Data layer integration tests', () => {
           allow_anonymous: true,
           allow_anonymous_to_peers: true,
           discussion_blackouts: [],
+          division_scheme: 'cohorts',
           discussion_topics: {
             Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
             General: { id: 'course' },
@@ -427,7 +430,7 @@ describe('Data layer integration tests', () => {
           blackoutDates: [],
           // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
           // but we technically send it to the thunk, so here it is.
-          divideByCohorts: true,
+          divideByCohorts: false,
           allowDivisionByUnit: true,
           divideCourseTopicsByCohorts: false,
           divideDiscussionIds,
@@ -462,6 +465,7 @@ describe('Data layer integration tests', () => {
         // TODO: Note!  The values we tried to save were ignored, this test reflects what currently
         // happens, but NOT what we want to have happen!
         divideByCohorts: true,
+        divisionScheme: 'cohorts',
         allowDivisionByUnit: false,
         divideCourseTopicsByCohorts: false,
       });
