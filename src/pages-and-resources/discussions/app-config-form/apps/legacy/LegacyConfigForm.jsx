@@ -32,6 +32,7 @@ function LegacyConfigForm({ onSubmit, formRef, intl }) {
     discussionTopics: appConfig.discussionTopics || [],
     divideByCohorts: appConfig.divideByCohorts || false,
     divideCourseTopicsByCohorts: appConfig.divideCourseTopicsByCohorts || false,
+
   };
 
   const [validDiscussionTopics, setValidDiscussionTopics] = useState(appConfig.discussionTopics);
