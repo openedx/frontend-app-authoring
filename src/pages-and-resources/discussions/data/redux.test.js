@@ -11,6 +11,7 @@ import { fetchApps, saveAppConfig } from './thunks';
 import { LOADED } from '../../../data/slice';
 import { legacyApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
 import { executeThunk } from '../../../utils';
+import { DivisionSchemes } from '../../../data/constants';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const pagesAndResourcesPath = `/course/${courseId}/pages-and-resources`;
@@ -238,7 +239,7 @@ describe('Data layer integration tests', () => {
         blackoutDates: [],
         // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
         // but we add it in during normalization.
-        divisionScheme: 'none',
+        divisionScheme: DivisionSchemes.COHORT,
         divideByCohorts: true,
         allowDivisionByUnit: false,
         divideCourseTopicsByCohorts: false,
@@ -388,7 +389,7 @@ describe('Data layer integration tests', () => {
           allow_anonymous: true,
           allow_anonymous_to_peers: true,
           discussion_blackouts: [],
-          division_scheme: 'none',
+          division_scheme: DivisionSchemes.NONE,
           discussion_topics: {
             Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
             General: { id: 'course' },
@@ -406,7 +407,7 @@ describe('Data layer integration tests', () => {
           allow_anonymous: true,
           allow_anonymous_to_peers: true,
           discussion_blackouts: [],
-          division_scheme: 'cohorts',
+          division_scheme: DivisionSchemes.COHORT,
           discussion_topics: {
             Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
             General: { id: 'course' },
@@ -465,7 +466,7 @@ describe('Data layer integration tests', () => {
         // TODO: Note!  The values we tried to save were ignored, this test reflects what currently
         // happens, but NOT what we want to have happen!
         divideByCohorts: true,
-        divisionScheme: 'cohorts',
+        divisionScheme: DivisionSchemes.COHORT,
         allowDivisionByUnit: false,
         divideCourseTopicsByCohorts: false,
       });

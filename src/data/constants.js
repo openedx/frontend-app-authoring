@@ -33,3 +33,8 @@ export const GroupTypes = {
   PUBLIC_MANAGED: 'public_managed',
   PRIVATE_MANAGED: 'private_managed',
 };
+
+export const DivisionSchemes = {
+  NONE: 'none',
+  COHORT: 'cohort',
+};

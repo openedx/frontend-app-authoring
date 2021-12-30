@@ -26,6 +26,7 @@ import { legacyApiResponse } from '../../../factories/mockApiResponses';
 import messages from '../../messages';
 import LegacyConfigForm from './LegacyConfigForm';
 import { selectApp } from '../../../data/slice';
+import { DivisionSchemes } from '../../../../../data/constants';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const defaultAppConfig = {
@@ -112,6 +113,7 @@ describe('LegacyConfigForm', () => {
       {
         ...defaultAppConfig,
         divideByCohorts: true,
+        divisionScheme: DivisionSchemes.COHORT,
       },
     );
   });
