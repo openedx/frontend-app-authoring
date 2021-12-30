@@ -25,7 +25,6 @@ const DivisionByGroupFields = ({ intl }) => {
 
   useEffect(() => {
     if (divideByCohorts) {
-      // setFieldValue('divisionScheme')
       if (!divideCourseTopicsByCohorts && _.size(discussionTopics) !== _.size(divideDiscussionIds)) {
         setFieldValue('divideDiscussionIds', discussionTopics.map(topic => topic.id));
       }

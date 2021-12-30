@@ -1,3 +1,5 @@
+import { DivisionSchemes } from '../../../data/constants';
+
 export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false, piiSharingAllowed = false) => ({
   context_key: 'course-v1:edX+DemoX+Demo_Course',
   enabled: true,
@@ -102,7 +104,7 @@ export const generateLegacyApiResponse = () => ({
       'course',
     ],
     divided_inline_discussions: [],
-    division_scheme: 'none',
+    division_scheme: DivisionSchemes.COHORT,
     // Note, this gets stringified when normalized into the app, but the API returns it as an
     // actual array.  Argh.
     discussion_blackouts: [],

@@ -14,6 +14,7 @@ import {
   endOfDayTime,
 } from '../app-config-form/utils';
 import { blackoutDatesStatus as constants } from './constants';
+import { DivisionSchemes } from '../../../data/constants';
 
 ensureConfig([
   'STUDIO_BASE_URL',
@@ -178,7 +179,7 @@ function denormalizeData(courseId, appId, data) {
     pluginConfiguration.allow_anonymous_to_peers = data.allowAnonymousPostsPeers;
   }
   if ('divideByCohorts' in data) {
-    pluginConfiguration.division_scheme = data.divideByCohorts ? 'cohorts' : 'none';
+    pluginConfiguration.division_scheme = data.divideByCohorts ? DivisionSchemes.COHORT : DivisionSchemes.NONE;
   }
   if (data.blackoutDates?.length) {
     pluginConfiguration.discussion_blackouts = data.blackoutDates.map((blackoutDates) => (
