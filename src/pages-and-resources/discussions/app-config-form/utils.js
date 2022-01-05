@@ -31,7 +31,7 @@ export const mergeDateTime = (date, time) => ((date && time) ? `${date}T${time}`
 export const isSameDay = (startDate, endDate) => moment(startDate).isSame(endDate, 'day');
 export const isSameMonth = (startDate, endDate) => moment(startDate).isSame(endDate, 'month');
 export const isSameYear = (startDate, endDate) => moment(startDate).isSame(endDate, 'year');
-export const getTime = (dateTime) => dateTime.split('T')[1] || '';
+export const getTime = (dateTime) => (dateTime ? dateTime.split('T')[1] : '');
 export const hasValidDateFormat = (date) => moment(date, ['MM/DD/YYYY', 'YYYY-MM-DD'], true).isValid();
 export const hasValidTimeFormat = (time) => time && moment(time, validTimeFormats, true).isValid();
 export const startOfDayTime = (time) => time || moment().startOf('day').format('HH:mm');
