@@ -28,7 +28,7 @@ const messages = defineMessages({
   },
   'header.links.pages': {
     id: 'header.links.pages',
-    defaultMessage: 'Pages',
+    defaultMessage: 'Pages & Resources',
     description: 'Link to Studio Pages page',
   },
   'header.links.filesAndUploads': {
