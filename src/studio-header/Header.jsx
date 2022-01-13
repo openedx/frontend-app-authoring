@@ -35,53 +35,22 @@ function Header({
       submenuContent: (
         <>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/course/${courseId}`}
-            >
-              {intl.formatMessage(messages['header.links.outline'])}
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/course/${courseId}`}>{intl.formatMessage(messages['header.links.outline'])}</a>
           </div>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/course_info/${courseId}`}
-            >
-              {intl.formatMessage(messages['header.links.updates'])}
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/course_info/${courseId}`}>{intl.formatMessage(messages['header.links.updates'])}</a>
           </div>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/tabs/${courseId}`}
-            >
-              {intl.formatMessage(messages['header.links.pages'])}
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/tabs/${courseId}`}>{intl.formatMessage(messages['header.links.pages'])}</a>
           </div>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/assets/${courseId}`}
-            >
-              {intl.formatMessage(messages['header.links.filesAndUploads'])}
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/assets/${courseId}`}>{intl.formatMessage(messages['header.links.filesAndUploads'])}</a>
           </div>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/textbooks/${courseId}`}
-            >
-              {intl.formatMessage(messages['header.links.textbooks'])}
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/textbooks/${courseId}`}>{intl.formatMessage(messages['header.links.textbooks'])}</a>
           </div>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/videos/${courseId}`}
-            >{
-              intl.formatMessage(messages['header.links.videoUploads'])
-            }
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/videos/${courseId}`}>{intl.formatMessage(messages['header.links.videoUploads'])}</a>
           </div>
         </>
       ),
@@ -92,52 +61,22 @@ function Header({
       submenuContent: (
         <>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/settings/details/${courseId}`}
-            >
-              {intl.formatMessage(messages['header.links.scheduleAndDetails'])}
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/settings/details/${courseId}`}>{intl.formatMessage(messages['header.links.scheduleAndDetails'])}</a>
           </div>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/settings/grading/${courseId}`}
-            >
-              {intl.formatMessage(messages['header.links.grading'])}
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/settings/grading/${courseId}`}>{intl.formatMessage(messages['header.links.grading'])}</a>
           </div>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/course_team/${courseId}`}
-            >
-              {intl.formatMessage(messages['header.links.courseTeam'])}
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/course_team/${courseId}`}>{intl.formatMessage(messages['header.links.courseTeam'])}</a>
           </div>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/group_configurations/${courseId}`}
-            >
-              {intl.formatMessage(messages['header.links.groupConfigurations'])}
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/group_configurations/${courseId}`}>{intl.formatMessage(messages['header.links.groupConfigurations'])}</a>
           </div>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/settings/advanced/${courseId}`}
-            >
-              {intl.formatMessage(messages['header.links.advancedSettings'])}
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/settings/advanced/${courseId}`}>{intl.formatMessage(messages['header.links.advancedSettings'])}</a>
           </div>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/certificates/${courseId}`}
-            >
-              {intl.formatMessage(messages['header.links.certificates'])}
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/certificates/${courseId}`}>{intl.formatMessage(messages['header.links.certificates'])}</a>
           </div>
         </>
       ),
@@ -148,28 +87,13 @@ function Header({
       submenuContent: (
         <>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/import/${courseId}`}
-            >
-              {intl.formatMessage(messages['header.links.import'])}
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/import/${courseId}`}>{intl.formatMessage(messages['header.links.import'])}</a>
           </div>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/export/${courseId}`}
-            >
-              {intl.formatMessage(messages['header.links.export'])}
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/export/${courseId}`}>{intl.formatMessage(messages['header.links.export'])}</a>
           </div>
           <div className="mb-1 small">
-            <a
-              rel="noopener"
-              href={`${config.STUDIO_BASE_URL}/checklists/${courseId}`}
-            >
-              {intl.formatMessage(messages['header.links.checklists'])}
-            </a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/checklists/${courseId}`}>{intl.formatMessage(messages['header.links.checklists'])}</a>
           </div>
         </>
       ),
@@ -219,8 +143,8 @@ function Header({
       )}
     >
       <a
-        className="course-title-lockup"
-        style={{ lineHeight: 1, width: '25%' }}
+        className="course-title-lockup w-25"
+        style={{ lineHeight: 1 }}
         href={`${config.STUDIO_BASE_URL}/course/${courseId}`}
         aria-label={intl.formatMessage(messages['header.label.courseOutline'])}
       >
