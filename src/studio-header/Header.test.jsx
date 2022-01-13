@@ -64,8 +64,7 @@ describe('<Header />', () => {
     ));
 
     render(component);
-    expect(screen.getAllByTestId('course-org-number')[0].textContent).toEqual(expect.stringContaining('edX DemoX'));
-    expect(screen.getAllByTestId('course-title')[0].textContent).toEqual(expect.stringContaining('Demonstration Course'));
+    expect(screen.getByTestId('edx-header-logo'));
   });
 
   it('renders desktop header correctly with bad API call', async () => {
@@ -93,7 +92,7 @@ describe('<Header />', () => {
     ));
 
     render(component);
-    expect(screen.getAllByTestId('course-title')[0].textContent).toEqual(expect.stringContaining('course-v1:edX+DemoX+Demo_Course'));
+    expect(screen.getByTestId('edx-header-logo'));
   });
 
   afterEach(() => {
