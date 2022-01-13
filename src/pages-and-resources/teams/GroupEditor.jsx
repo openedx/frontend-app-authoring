@@ -73,7 +73,7 @@ function GroupEditor({
                   </div>
                 ) : (
                   <div className="d-flex flex-column flex-shrink-1 small mw-100">
-                    <div className="small text-gray-500">{intl.formatMessage(TeamTypeNameMessage[group.type].label)}</div>
+                    <div className="small text-gray-500">{intl.formatMessage(TeamTypeNameMessage[group.type ? group.type : GroupTypes.OPEN].label)} </div>
                     <div className="h4 text-truncate my-1 font-weight-normal">{group.name}</div>
                     <div className="small text-truncate text-muted text-gray-500">{group.description}</div>
                   </div>
