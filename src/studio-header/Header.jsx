@@ -5,6 +5,7 @@ import React, { useContext } from 'react';
 import Responsive from 'react-responsive';
 import { AppContext } from '@edx/frontend-platform/react';
 import { ensureConfig } from '@edx/frontend-platform';
+import { OverlayTrigger, Tooltip } from '@edx/paragon';
 import {
   injectIntl,
   intlShape,
@@ -33,12 +34,55 @@ function Header({
       content: intl.formatMessage(messages['header.links.content']),
       submenuContent: (
         <>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/course/${courseId}`}>{intl.formatMessage(messages['header.links.outline'])}</a></div>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/course_info/${courseId}`}>{intl.formatMessage(messages['header.links.updates'])}</a></div>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/tabs/${courseId}`}>{intl.formatMessage(messages['header.links.pages'])}</a></div>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/assets/${courseId}`}>{intl.formatMessage(messages['header.links.filesAndUploads'])}</a></div>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/textbooks/${courseId}`}>{intl.formatMessage(messages['header.links.textbooks'])}</a></div>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/videos/${courseId}`}>{intl.formatMessage(messages['header.links.videoUploads'])}</a></div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/course/${courseId}`}
+            >
+              {intl.formatMessage(messages['header.links.outline'])}
+            </a>
+          </div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/course_info/${courseId}`}
+            >
+              {intl.formatMessage(messages['header.links.updates'])}
+            </a>
+          </div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/tabs/${courseId}`}
+            >
+              {intl.formatMessage(messages['header.links.pages'])}
+            </a>
+          </div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/assets/${courseId}`}
+            >
+              {intl.formatMessage(messages['header.links.filesAndUploads'])}
+            </a>
+          </div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/textbooks/${courseId}`}
+            >
+              {intl.formatMessage(messages['header.links.textbooks'])}
+            </a>
+          </div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/videos/${courseId}`}
+            >{
+              intl.formatMessage(messages['header.links.videoUploads'])
+            }
+            </a>
+          </div>
         </>
       ),
     },
@@ -47,12 +91,54 @@ function Header({
       content: intl.formatMessage(messages['header.links.settings']),
       submenuContent: (
         <>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/settings/details/${courseId}`}>{intl.formatMessage(messages['header.links.scheduleAndDetails'])}</a></div>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/settings/grading/${courseId}`}>{intl.formatMessage(messages['header.links.grading'])}</a></div>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/course_team/${courseId}`}>{intl.formatMessage(messages['header.links.courseTeam'])}</a></div>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/group_configurations/${courseId}`}>{intl.formatMessage(messages['header.links.groupConfigurations'])}</a></div>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/settings/advanced/${courseId}`}>{intl.formatMessage(messages['header.links.advancedSettings'])}</a></div>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/certificates/${courseId}`}>{intl.formatMessage(messages['header.links.certificates'])}</a></div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/settings/details/${courseId}`}
+            >
+              {intl.formatMessage(messages['header.links.scheduleAndDetails'])}
+            </a>
+          </div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/settings/grading/${courseId}`}
+            >
+              {intl.formatMessage(messages['header.links.grading'])}
+            </a>
+          </div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/course_team/${courseId}`}
+            >
+              {intl.formatMessage(messages['header.links.courseTeam'])}
+            </a>
+          </div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/group_configurations/${courseId}`}
+            >
+              {intl.formatMessage(messages['header.links.groupConfigurations'])}
+            </a>
+          </div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/settings/advanced/${courseId}`}
+            >
+              {intl.formatMessage(messages['header.links.advancedSettings'])}
+            </a>
+          </div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/certificates/${courseId}`}
+            >
+              {intl.formatMessage(messages['header.links.certificates'])}
+            </a>
+          </div>
         </>
       ),
     },
@@ -61,9 +147,30 @@ function Header({
       content: intl.formatMessage(messages['header.links.tools']),
       submenuContent: (
         <>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/import/${courseId}`}>{intl.formatMessage(messages['header.links.import'])}</a></div>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/export/${courseId}`}>{intl.formatMessage(messages['header.links.export'])}</a></div>
-          <div className="mb-1 small"><a rel="noopener" href={`${config.STUDIO_BASE_URL}/checklists/${courseId}`}>{intl.formatMessage(messages['header.links.checklists'])}</a></div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/import/${courseId}`}
+            >
+              {intl.formatMessage(messages['header.links.import'])}
+            </a>
+          </div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/export/${courseId}`}
+            >
+              {intl.formatMessage(messages['header.links.export'])}
+            </a>
+          </div>
+          <div className="mb-1 small">
+            <a
+              rel="noopener"
+              href={`${config.STUDIO_BASE_URL}/checklists/${courseId}`}
+            >
+              {intl.formatMessage(messages['header.links.checklists'])}
+            </a>
+          </div>
         </>
       ),
     },
@@ -103,15 +210,24 @@ function Header({
   }
 
   const courseLockUp = (
-    <a
-      className="course-title-lockup"
-      style={{ lineHeight: 1 }}
-      href={`${config.STUDIO_BASE_URL}/course/${courseId}`}
-      aria-label={intl.formatMessage(messages['header.label.courseOutline'])}
+    <OverlayTrigger
+      placement="bottom"
+      overlay={(
+        <Tooltip variant="light">
+          {courseTitle}
+        </Tooltip>
+      )}
     >
-      <span className="d-block small m-0" data-testid="course-org-number">{courseOrg} {courseNumber}</span>
-      <span className="d-block m-0 font-weight-bold" data-testid="course-title">{courseTitle}</span>
-    </a>
+      <a
+        className="course-title-lockup"
+        style={{ lineHeight: 1, width: '25%' }}
+        href={`${config.STUDIO_BASE_URL}/course/${courseId}`}
+        aria-label={intl.formatMessage(messages['header.label.courseOutline'])}
+      >
+        <span className="d-block small m-0" data-testid="course-org-number">{courseOrg} {courseNumber}</span>
+        <span className="d-block m-0 font-weight-bold" data-testid="course-title">{courseTitle}</span>
+      </a>
+    </OverlayTrigger>
   );
 
   const props = {

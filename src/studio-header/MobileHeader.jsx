@@ -106,9 +106,8 @@ class MobileHeader extends React.Component {
               </Menu>
             ) : null}
         </div>
-        <div className="w-100 d-flex align-items-center mobile-lockup">
+        <div className="d-flex align-items-center mobile-lockup">
           {logoDestination === null ? <Logo className="logo" src={logo} alt={logoAltText} /> : <LinkedLogo className="logo" {...logoProps} itemType="http://schema.org/Organization" />}
-          { this.props.courseLockUp }
         </div>
         <div className="w-100 d-flex justify-content-end align-items-center">
           <Menu tag="nav" aria-label="Secondary" className="position-static">
