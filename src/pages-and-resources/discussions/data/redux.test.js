@@ -241,8 +241,10 @@ describe('Data layer integration tests', () => {
         // but we add it in during normalization.
         divisionScheme: DivisionSchemes.COHORT,
         divideByCohorts: true,
+        alwaysDivideInlineDiscussions: true,
+        dividedInlineDiscussions: [],
         allowDivisionByUnit: false,
-        divideCourseTopicsByCohorts: false,
+        divideCourseTopicsByCohorts: true,
       });
     });
   });
@@ -388,8 +390,9 @@ describe('Data layer integration tests', () => {
         plugin_configuration: {
           allow_anonymous: true,
           allow_anonymous_to_peers: true,
+          always_divide_inline_discussions: true,
           discussion_blackouts: [],
-          division_scheme: DivisionSchemes.NONE,
+          division_scheme: DivisionSchemes.COHORT,
           discussion_topics: {
             Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
             General: { id: 'course' },
@@ -406,6 +409,7 @@ describe('Data layer integration tests', () => {
         plugin_configuration: {
           allow_anonymous: true,
           allow_anonymous_to_peers: true,
+          always_divide_inline_discussions: true,
           discussion_blackouts: [],
           division_scheme: DivisionSchemes.COHORT,
           discussion_topics: {
@@ -431,9 +435,10 @@ describe('Data layer integration tests', () => {
           blackoutDates: [],
           // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
           // but we technically send it to the thunk, so here it is.
-          divideByCohorts: false,
-          allowDivisionByUnit: true,
-          divideCourseTopicsByCohorts: false,
+          divideByCohorts: true,
+          allowDivisionsByUnit: true,
+          alwaysDivideInlineDiscussions: true,
+          divideCourseTopicsByCohorts: true,
           divideDiscussionIds,
           discussionTopics: [
             { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
@@ -462,13 +467,14 @@ describe('Data layer integration tests', () => {
         // These three fields should be updated.
         allowAnonymousPosts: true,
         allowAnonymousPostsPeers: true,
+        alwaysDivideInlineDiscussions: true,
         blackoutDates: [],
         // TODO: Note!  The values we tried to save were ignored, this test reflects what currently
         // happens, but NOT what we want to have happen!
         divideByCohorts: true,
         divisionScheme: DivisionSchemes.COHORT,
         allowDivisionByUnit: false,
-        divideCourseTopicsByCohorts: false,
+        divideCourseTopicsByCohorts: true,
       });
     });
   });

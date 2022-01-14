@@ -31,8 +31,9 @@ import { DivisionSchemes } from '../../../../../data/constants';
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const defaultAppConfig = {
   id: 'legacy',
-  divideByCohorts: false,
-  divideCourseTopicsByCohorts: false,
+  divideByCohorts: true,
+  divideCourseTopicsByCohorts: true,
+  alwaysDivideInlineDiscussions: true,
   discussionTopics: [
     { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
     { name: 'General', id: 'course' },
@@ -45,6 +46,7 @@ const defaultAppConfig = {
   allowAnonymousPostsPeers: false,
   allowDivisionByUnit: false,
   blackoutDates: [],
+  dividedInlineDiscussions: [],
 };
 describe('LegacyConfigForm', () => {
   let axiosMock;
@@ -156,11 +158,11 @@ describe('LegacyConfigForm', () => {
     ).toBeInTheDocument();
     expect(
       container.querySelector('#divideCourseTopicsByCohorts'),
-    ).not.toBeChecked();
+    ).toBeChecked();
 
     defaultAppConfig.divideDiscussionIds.forEach(id => expect(
       container.querySelector(`#checkbox-${id}`),
-    ).not.toBeInTheDocument());
+    ).toBeInTheDocument());
 
     // AnonymousPostingFields
     expect(container.querySelector('#allowAnonymousPosts')).toBeInTheDocument();

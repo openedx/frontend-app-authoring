@@ -93,7 +93,7 @@ export const generateLegacyApiResponse = () => ({
   plugin_configuration: {
     allow_anonymous: false,
     allow_anonymous_to_peers: false,
-    always_divide_inline_discussions: false,
+    always_divide_inline_discussions: true,
     available_division_schemes: ['enrollment_track'],
     discussion_topics: {
       Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
