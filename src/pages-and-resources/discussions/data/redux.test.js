@@ -227,7 +227,7 @@ describe('Data layer integration tests', () => {
         saveStatus: SAVED,
         hasValidationError: false,
         discussionTopicIds,
-        divideDiscussionIds,
+        divideDiscussionIds: [],
       });
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
@@ -240,11 +240,11 @@ describe('Data layer integration tests', () => {
         // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
         // but we add it in during normalization.
         divisionScheme: DivisionSchemes.COHORT,
-        divideByCohorts: true,
-        alwaysDivideInlineDiscussions: true,
+        divideByCohorts: false,
+        alwaysDivideInlineDiscussions: false,
         dividedInlineDiscussions: [],
         allowDivisionByUnit: false,
-        divideCourseTopicsByCohorts: true,
+        divideCourseTopicsByCohorts: false,
       });
     });
   });
