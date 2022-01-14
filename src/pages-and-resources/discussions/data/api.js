@@ -57,17 +57,17 @@ function normalizePluginConfig(data) {
   if (!data || Object.keys(data).length < 1) {
     return {};
   }
-  const discussionDividedTopicsCount = _.size(data.divided_course_wide_discussions);
-  const discussionTopicsCount = _.size(data.discussion_topics);
-  const enableDivideCourseTopicsByCohorts = Boolean(discussionDividedTopicsCount
-    && (discussionDividedTopicsCount !== discussionTopicsCount));
+  const enableDivideByCohorts = data.always_divide_inline_discussions && data.division_scheme === 'cohort';
+  const enableDivideCourseTopicsByCohorts = enableDivideByCohorts && data.divided_course_wide_discussions.length > 0;
   return {
     allowAnonymousPosts: data.allow_anonymous,
     allowAnonymousPostsPeers: data.allow_anonymous_to_peers,
     divisionScheme: data.division_scheme,
+    alwaysDivideInlineDiscussions: data.always_divide_inline_discussions,
+    dividedInlineDiscussions: data.divided_inline_discussions,
     blackoutDates: normalizeBlackoutDates(data.discussion_blackouts),
     allowDivisionByUnit: false,
-    divideByCohorts: discussionDividedTopicsCount > 0,
+    divideByCohorts: enableDivideByCohorts,
     divideCourseTopicsByCohorts: enableDivideCourseTopicsByCohorts,
   };
 }
@@ -180,6 +180,7 @@ function denormalizeData(courseId, appId, data) {
   }
   if ('divideByCohorts' in data) {
     pluginConfiguration.division_scheme = data.divideByCohorts ? DivisionSchemes.COHORT : DivisionSchemes.NONE;
+    pluginConfiguration.always_divide_inline_discussions = data.divideByCohorts;
   }
   if (data.blackoutDates?.length) {
     pluginConfiguration.discussion_blackouts = data.blackoutDates.map((blackoutDates) => (
@@ -195,8 +196,9 @@ function denormalizeData(courseId, appId, data) {
       return newTopics;
     }, {});
   }
-  if (data.divideDiscussionIds) {
-    pluginConfiguration.divided_course_wide_discussions = data.divideDiscussionIds;
+  if ('divideCourseTopicsByCohorts' in data) {
+    pluginConfiguration.divided_course_wide_discussions = data.divideCourseTopicsByCohorts
+      ? data.divideDiscussionIds : [];
   }
 
   const ltiConfiguration = {};
