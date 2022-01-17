@@ -100,7 +100,6 @@ export const generateLegacyApiResponse = () => ({
       General: { id: 'course' },
     },
     divided_course_wide_discussions: [],
-    divided_inline_discussions: [],
     division_scheme: DivisionSchemes.COHORT,
     // Note, this gets stringified when normalized into the app, but the API returns it as an
     // actual array.  Argh.

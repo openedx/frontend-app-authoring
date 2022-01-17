@@ -64,7 +64,6 @@ function normalizePluginConfig(data) {
     allowAnonymousPostsPeers: data.allow_anonymous_to_peers,
     divisionScheme: data.division_scheme,
     alwaysDivideInlineDiscussions: data.always_divide_inline_discussions,
-    dividedInlineDiscussions: data.divided_inline_discussions,
     blackoutDates: normalizeBlackoutDates(data.discussion_blackouts),
     allowDivisionByUnit: false,
     divideByCohorts: enableDivideByCohorts,

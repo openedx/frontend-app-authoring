@@ -242,7 +242,6 @@ describe('Data layer integration tests', () => {
         divisionScheme: DivisionSchemes.COHORT,
         divideByCohorts: false,
         alwaysDivideInlineDiscussions: false,
-        dividedInlineDiscussions: [],
         allowDivisionByUnit: false,
         divideCourseTopicsByCohorts: false,
       });

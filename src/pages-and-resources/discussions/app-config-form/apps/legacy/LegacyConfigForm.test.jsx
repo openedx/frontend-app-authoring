@@ -39,7 +39,6 @@ const defaultAppConfig = (divideDiscussionIds = []) => ({
     { name: 'General', id: 'course' },
   ],
   divideDiscussionIds,
-  dividedInlineDiscussions: [],
   allowAnonymousPosts: false,
   allowAnonymousPostsPeers: false,
   allowDivisionByUnit: false,
