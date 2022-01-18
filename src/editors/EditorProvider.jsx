@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { useParams } from 'react-router';
 import {EditorPage} from '@edx/frontend-lib-content-components';
 
-
 const EditorProvider = ({
     courseId,
 }) =>{
