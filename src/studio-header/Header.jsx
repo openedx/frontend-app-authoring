@@ -137,14 +137,13 @@ function Header({
     <OverlayTrigger
       placement="bottom"
       overlay={(
-        <Tooltip variant="light">
+        <Tooltip>
           {courseTitle}
         </Tooltip>
       )}
     >
       <a
         className="course-title-lockup w-25"
-        style={{ lineHeight: 1 }}
         href={`${config.STUDIO_BASE_URL}/course/${courseId}`}
         aria-label={intl.formatMessage(messages['header.label.courseOutline'])}
       >

@@ -21,7 +21,11 @@ $white: #fff;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      line-height: 1rem;
     }
+  a {
+    line-height: 1rem;
+  }
 }
 
 .mobile-lockup {
@@ -89,7 +93,7 @@ $white: #fff;
   .main-nav {
     flex-wrap: nowrap;
     .nav-link {
-      padding: 1.125rem 1rem;
+      padding: 1rem;
       text-decoration: none;
       font-weight: 500;
       letter-spacing: .01em;
