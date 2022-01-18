@@ -42,7 +42,7 @@ Follw these steps to provision, run, and enable an instance of the Library Autho
    .. code-block::
 
       DEFAULT_SERVICES ?= \
-      credentials+discovery+ecommerce+edx_notes_api+forum+frontend-app-publisher+frontend-app-learning+gradebook+lms+studio+frontend-app-library-authoring
+      credentials+discovery+ecommerce+edx_notes_api+forum+frontend-app-publisher+frontend-app-gradebook+lms+studio+frontend-app-library-authoring
 
    This adds ``frontend-app-library-authoring`` to the list of services the devstack will provision and enable automatically.
 
