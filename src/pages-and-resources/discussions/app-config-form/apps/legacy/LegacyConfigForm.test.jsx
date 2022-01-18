@@ -29,23 +29,21 @@ import { selectApp } from '../../../data/slice';
 import { DivisionSchemes } from '../../../../../data/constants';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
-const defaultAppConfig = {
+const defaultAppConfig = (divideDiscussionIds = []) => ({
   id: 'legacy',
   divideByCohorts: false,
   divideCourseTopicsByCohorts: false,
+  alwaysDivideInlineDiscussions: false,
   discussionTopics: [
     { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
     { name: 'General', id: 'course' },
   ],
-  divideDiscussionIds: [
-    '13f106c6-6735-4e84-b097-0456cff55960',
-    'course',
-  ],
+  divideDiscussionIds,
   allowAnonymousPosts: false,
   allowAnonymousPostsPeers: false,
   allowDivisionByUnit: false,
   blackoutDates: [],
-};
+});
 describe('LegacyConfigForm', () => {
   let axiosMock;
   let store;
@@ -111,8 +109,8 @@ describe('LegacyConfigForm', () => {
       // any of the form inputs, this exact object shape is returned back to us, so we're reusing
       // it here.  It's not supposed to be 'the same object', it just happens to be.
       {
-        ...defaultAppConfig,
-        divideByCohorts: true,
+        ...defaultAppConfig(),
+        divideByCohorts: false,
         divisionScheme: DivisionSchemes.COHORT,
       },
     );
@@ -121,12 +119,14 @@ describe('LegacyConfigForm', () => {
   test('default field states are correct, including removal of folded sub-fields', async () => {
     await mockStore({ ...legacyApiResponse, plugin_configuration: { divided_course_wide_discussions: [] } });
     createComponent();
+    const { divideDiscussionIds } = defaultAppConfig(['13f106c6-6735-4e84-b097-0456cff55960', 'course']);
+
     // DivisionByGroupFields
     expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
     expect(container.querySelector('#divideByCohorts')).not.toBeChecked();
     expect(container.querySelector('#divideCourseTopicsByCohorts')).not.toBeInTheDocument();
 
-    defaultAppConfig.divideDiscussionIds.forEach(id => expect(
+    divideDiscussionIds.forEach(id => expect(
       container.querySelector(`#checkbox-${id}`),
     ).not.toBeInTheDocument());
 
@@ -144,9 +144,15 @@ describe('LegacyConfigForm', () => {
   test('folded sub-fields are in the DOM when parents are enabled', async () => {
     await mockStore({
       ...legacyApiResponse,
-      plugin_configuration: { ...legacyApiResponse.plugin_configuration, allow_anonymous: true },
+      plugin_configuration: {
+        ...legacyApiResponse.plugin_configuration,
+        allow_anonymous: true,
+        always_divide_inline_discussions: true,
+        divided_course_wide_discussions: [],
+      },
     });
     createComponent();
+    const { divideDiscussionIds } = defaultAppConfig(['13f106c6-6735-4e84-b097-0456cff55960', 'course']);
 
     // DivisionByGroupFields
     expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
@@ -158,7 +164,7 @@ describe('LegacyConfigForm', () => {
       container.querySelector('#divideCourseTopicsByCohorts'),
     ).not.toBeChecked();
 
-    defaultAppConfig.divideDiscussionIds.forEach(id => expect(
+    divideDiscussionIds.forEach(id => expect(
       container.querySelector(`#checkbox-${id}`),
     ).not.toBeInTheDocument());
 
@@ -179,11 +185,13 @@ describe('LegacyConfigForm', () => {
         ...legacyApiResponse,
         plugin_configuration: {
           ...legacyApiResponse.plugin_configuration,
-          divided_course_wide_discussions: ['13f106c6-6735-4e84-b097-0456cff55960',
-            'course', 'test-topic'],
+          allow_anonymous: true,
+          always_divide_inline_discussions: true,
+          divided_course_wide_discussions: ['13f106c6-6735-4e84-b097-0456cff55960', 'course'],
         },
       });
       createComponent();
+      const { divideDiscussionIds } = defaultAppConfig(['13f106c6-6735-4e84-b097-0456cff55960', 'course']);
 
       // DivisionByGroupFields
       expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
@@ -191,7 +199,7 @@ describe('LegacyConfigForm', () => {
       expect(container.querySelector('#divideCourseTopicsByCohorts')).toBeInTheDocument();
       expect(container.querySelector('#divideCourseTopicsByCohorts')).toBeChecked();
 
-      defaultAppConfig.divideDiscussionIds.forEach(id => {
+      divideDiscussionIds.forEach(id => {
         expect(container.querySelector(`#checkbox-${id}`)).toBeInTheDocument();
         expect(container.querySelector(`#checkbox-${id}`)).toBeChecked();
       });
