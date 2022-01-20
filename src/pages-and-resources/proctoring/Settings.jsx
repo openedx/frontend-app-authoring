@@ -92,7 +92,7 @@ function ProctoringSettings({ intl, onClose }) {
   }
 
   function postSettingsBackToServer() {
-    const dataToPostBack = {
+    let dataToPostBack = {
       proctored_exam_settings: {
         enable_proctored_exams: formValues.enableProctoredExams,
         proctoring_provider: formValues.proctoringProvider,
@@ -101,6 +101,17 @@ function ProctoringSettings({ intl, onClose }) {
     };
     if (isEdxStaff) {
       dataToPostBack.proctored_exam_settings.allow_proctoring_opt_out = formValues.allowOptingOut;
+    }
+
+    if(!formValues.enableProctoredExams){
+      dataToPostBack = {
+        proctored_exam_settings: {
+          enable_proctored_exams: false,
+          proctoring_provider: null,
+          create_zendesk_tickets: false,
+          allow_proctoring_opt_out: false,
+        },
+      };
     }
 
     if (formValues.proctoringProvider === 'proctortrack') {

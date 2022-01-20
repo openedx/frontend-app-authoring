@@ -154,6 +154,41 @@ describe('ProctoredExamSettings', () => {
       expect(screen.queryByTestId('createZendeskTicketsYes')).toBeNull();
       expect(screen.queryByTestId('createZendeskTicketsNo')).toBeNull();
     });
+
+    it('resets proctoringProvider field to have null when enableProctoredExam toggled to false', async() => {
+      await waitFor(() => {
+        screen.getByLabelText('Enable Proctored Exams');
+      });
+      expect(screen.queryByText('Allow Opting Out of Proctored Exams')).toBeDefined();
+      expect(screen.queryByDisplayValue('mockproc')).toBeDefined();
+  
+      let enabledProctorExamCheck = screen.getByLabelText('Enable Proctored Exams');
+      expect(enabledProctorExamCheck.checked).toEqual(true);
+      await act(async () => {
+        fireEvent.click(enabledProctorExamCheck, { target: { value: false } });
+      });
+      enabledProctorExamCheck = screen.getByLabelText('Enable Proctored Exams');
+      expect(enabledProctorExamCheck.checked).toEqual(false);
+      expect(screen.queryByTestId('proctoringProvider')).toBeNull();
+
+      axiosMock.onPost(
+        StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
+      ).reply(200, 'success');
+
+      const submitButton = screen.getByTestId('submissionButton');
+      await act(async () => {
+        fireEvent.click(submitButton);
+      });
+      expect(axiosMock.history.post.length).toBe(1);
+      expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+        proctored_exam_settings: {
+          enable_proctored_exams: false,
+          allow_proctoring_opt_out: false,
+          proctoring_provider: '',
+          create_zendesk_tickets: false,
+        },
+      });
+    });
   });
 
   describe('Validation with invalid escalation email', () => {
