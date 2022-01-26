@@ -99,7 +99,7 @@ const BlackoutDatesItem = ({
         <BlackoutDatesInput
           value={blackoutDate.startTime}
           type="time"
-          label={intl.formatMessage(messages.startTimeLabel)}
+          label={intl.formatMessage(messages.startTimeLabel, { zone: 'UTC' })}
           helpText={intl.formatMessage(messages.blackoutStartTimeHelp)}
           fieldName="startTime"
           formGroupClasses="pr-md-0"
@@ -123,7 +123,7 @@ const BlackoutDatesItem = ({
         <BlackoutDatesInput
           value={blackoutDate.endTime}
           type="time"
-          label={intl.formatMessage(messages.endTimeLabel)}
+          label={intl.formatMessage(messages.endTimeLabel, { zone: 'UTC' })}
           helpText={intl.formatMessage(messages.blackoutEndTimeHelp)}
           fieldName="endTime"
           formGroupClasses="pr-md-0"
