@@ -392,7 +392,7 @@ const messages = defineMessages({
   },
   startTimeLabel: {
     id: 'authoring.blackoutDates.start.time',
-    defaultMessage: 'Start time (optional)',
+    defaultMessage: 'Start time (optional) ({zone})',
     description: 'label for start time field',
   },
   endDateLabel: {
@@ -402,7 +402,7 @@ const messages = defineMessages({
   },
   endTimeLabel: {
     id: 'authoring.blackoutDates.end.time',
-    defaultMessage: 'End time (optional)',
+    defaultMessage: 'End time (optional) ({zone})',
     description: 'label for end time field',
   },
 });
