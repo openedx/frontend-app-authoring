@@ -53,7 +53,7 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
   const isInvalidConsumerSecret = Boolean(touched.consumerSecret && errors.consumerSecret);
   const isInvalidLaunchUrl = Boolean(touched.launchUrl && errors.launchUrl);
   const supportEmail = getConfig().SUPPORT_EMAIL;
-  const showLTIConfig = user.administrator && app.adminOnlyConfig;
+  const showLTIConfig = user.administrator;
   const enablePIISharing = false;
 
   useEffect(() => {

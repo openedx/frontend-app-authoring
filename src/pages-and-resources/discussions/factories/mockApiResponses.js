@@ -38,6 +38,7 @@ export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false, piiShar
         },
         messages: [],
         has_full_support: true,
+        admin_only_config: false,
       },
       piazza: {
         features: [
@@ -74,6 +75,7 @@ export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false, piiShar
         },
         messages: [],
         has_full_support: false,
+        admin_only_config: false,
       },
     },
   },
@@ -123,6 +125,7 @@ export const generateLegacyApiResponse = () => ({
         },
         messages: [],
         has_full_support: true,
+        admin_only_config: false,
       },
       piazza: {
         features: [
@@ -141,6 +144,7 @@ export const generateLegacyApiResponse = () => ({
         },
         messages: [],
         has_full_support: false,
+        admin_only_config: false,
       },
     },
   },
