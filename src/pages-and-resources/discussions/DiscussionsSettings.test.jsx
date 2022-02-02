@@ -368,11 +368,9 @@ describe('DiscussionsSettings', () => {
 });
 
 describe.each([
-  { isAdmin: false, isAdminOnlyConfig: false },
-  { isAdmin: false, isAdminOnlyConfig: true },
-  { isAdmin: true, isAdminOnlyConfig: false },
-  { isAdmin: true, isAdminOnlyConfig: true },
-])('LTI Admin only config test', ({ isAdmin, isAdminOnlyConfig }) => {
+  { isAdmin: false },
+  { isAdmin: true },
+])('LTI Admin only config test', ({ isAdmin }) => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
@@ -394,11 +392,11 @@ describe.each([
 
     // Leave the DiscussionsSettings route after the test.
     history.push(`/course/${courseId}/pages-and-resources`);
-    axiosMock.onGet(getAppsUrl(courseId)).reply(200, generatePiazzaApiResponse(isAdminOnlyConfig));
+    axiosMock.onGet(getAppsUrl(courseId)).reply(200, generatePiazzaApiResponse());
     renderComponent();
   });
 
-  test(`successfully advances to settings step for lti when adminOnlyConfig=${isAdminOnlyConfig} and user ${isAdmin ? 'is' : 'is not'} admin`, async () => {
+  test(`successfully advances to settings step for lti when user ${isAdmin ? 'is' : 'is not'} admin`, async () => {
     const showLTIConfig = isAdmin;
     history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
@@ -446,7 +444,7 @@ describe.each([
 
     // Leave the DiscussionsSettings route after the test.
     history.push(`/course/${courseId}/pages-and-resources`);
-    axiosMock.onGet(getAppsUrl(courseId)).reply(200, generatePiazzaApiResponse(false, piiSharingAllowed));
+    axiosMock.onGet(getAppsUrl(courseId)).reply(200, generatePiazzaApiResponse(piiSharingAllowed));
     renderComponent();
   });
 

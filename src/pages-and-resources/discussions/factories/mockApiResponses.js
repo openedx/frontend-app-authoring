@@ -1,6 +1,6 @@
 import { DivisionSchemes } from '../../../data/constants';
 
-export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false, piiSharingAllowed = false) => ({
+export const generatePiazzaApiResponse = (piiSharingAllowed = false) => ({
   context_key: 'course-v1:edX+DemoX+Demo_Course',
   enabled: true,
   provider_type: 'piazza',
@@ -38,7 +38,7 @@ export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false, piiShar
         },
         messages: [],
         has_full_support: true,
-        admin_only_config: false,
+        admin_only_config: true,
       },
       piazza: {
         features: [
@@ -57,7 +57,7 @@ export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false, piiShar
         },
         messages: [],
         has_full_support: false,
-        admin_only_config: piazzaAdminOnlyConfig,
+        admin_only_config: true,
       },
       discourse: {
         features: [
@@ -75,7 +75,7 @@ export const generatePiazzaApiResponse = (piazzaAdminOnlyConfig = false, piiShar
         },
         messages: [],
         has_full_support: false,
-        admin_only_config: false,
+        admin_only_config: true,
       },
     },
   },
@@ -125,7 +125,7 @@ export const generateLegacyApiResponse = () => ({
         },
         messages: [],
         has_full_support: true,
-        admin_only_config: false,
+        admin_only_config: true,
       },
       piazza: {
         features: [
@@ -144,7 +144,7 @@ export const generateLegacyApiResponse = () => ({
         },
         messages: [],
         has_full_support: false,
-        admin_only_config: false,
+        admin_only_config: true,
       },
     },
   },
