@@ -74,8 +74,8 @@ function normalizePluginConfig(data) {
 function normalizePiiSharing(data) {
   return {
     piiSharing: data.pii_sharing_allowed,
-    piiShareUsername: data.pii_share_username,
-    piiShareEmail: data.pii_share_email,
+    piiShareUsername: data.pii_sharing_allowed,
+    piiShareEmail: data.pii_sharing_allowed,
   };
 }
 

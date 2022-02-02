@@ -53,7 +53,8 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
   const isInvalidConsumerSecret = Boolean(touched.consumerSecret && errors.consumerSecret);
   const isInvalidLaunchUrl = Boolean(touched.launchUrl && errors.launchUrl);
   const supportEmail = getConfig().SUPPORT_EMAIL;
-  const showLTIConfig = user.administrator || !app.adminOnlyConfig;
+  const showLTIConfig = user.administrator;
+  const enablePIISharing = false;
 
   useEffect(() => {
     dispatch(updateValidationStatus({ hasError: Object.keys(errors).length > 0 }));
@@ -63,26 +64,10 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
     <Card className="mb-5 p-5" data-testid="ltiConfigForm">
       <Form ref={formRef} onSubmit={handleSubmit}>
         <h3 className="mb-3">{providerName}</h3>
-        <p>
-          <FormattedMessage
-            {...messages.adminOnlyConfig}
-            values={{
-              providerName,
-              platformName: getConfig().SITE_NAME,
-              supportEmail: supportEmail ? (
-                <MailtoLink to={supportEmail}>{supportEmail}</MailtoLink>
-              ) : (
-                'support'
-              ),
-            }}
-          />
-        </p>
-        <p>
-          {showLTIConfig && intl.formatMessage(messages.formInstructions)}
-        </p>
-        {app.ltiMessages && app.ltiMessages.map((msg) => <p key={msg}>{msg}</p>)}
-        {showLTIConfig && (
+        {showLTIConfig ? (
           <>
+            <p>{intl.formatMessage(messages.adminOnlyConfig, { providerName })}</p>
+            <p>{intl.formatMessage(messages.formInstructions)}</p>
             <Form.Group
               controlId="consumerKey"
               isInvalid={isInvalidConsumerKey}
@@ -132,8 +117,23 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
               )}
             </Form.Group>
           </>
+        ) : (
+          <p>
+            <FormattedMessage
+              {...messages.stuffOnlyConfig}
+              values={{
+                providerName,
+                platformName: getConfig().SITE_NAME,
+                supportEmail: supportEmail ? (
+                  <MailtoLink to={supportEmail}>{supportEmail}</MailtoLink>
+                ) : (
+                  'support'
+                ),
+              }}
+            />
+          </p>
         )}
-        {piiConfig.piiSharing && (
+        {(enablePIISharing) && (
           <div data-testid="piiSharingFields">
             <Form.Text className="my-2">{intl.formatMessage(messages.piiSharing)}</Form.Text>
             <Form.Group controlId="piiSharing">

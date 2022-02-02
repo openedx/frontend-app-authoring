@@ -399,7 +399,7 @@ describe.each([
   });
 
   test(`successfully advances to settings step for lti when adminOnlyConfig=${isAdminOnlyConfig} and user ${isAdmin ? 'is' : 'is not'} admin`, async () => {
-    const showLTIConfig = isAdmin || !isAdminOnlyConfig;
+    const showLTIConfig = isAdmin;
     history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
     // This is an important line that ensures the spinner has been removed - and thus our main
@@ -423,6 +423,8 @@ describe.each([
   { piiSharingAllowed: false },
   { piiSharingAllowed: true },
 ])('PII sharing fields test', ({ piiSharingAllowed }) => {
+  const enablePIISharing = false;
+
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
@@ -458,7 +460,7 @@ describe.each([
 
     userEvent.click(queryByLabelText(container, 'Select Piazza'));
     userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
-    if (piiSharingAllowed) {
+    if (enablePIISharing) {
       expect(queryByTestId(container, 'piiSharingFields')).toBeInTheDocument();
     } else {
       expect(queryByTestId(container, 'piiSharingFields')).not.toBeInTheDocument();
