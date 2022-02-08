@@ -26,24 +26,27 @@ import EditorContainer from './editors/EditorContainer';
 export default function CourseAuthoringRoutes({ courseId }) {
   const { path } = useRouteMatch();
   return (
-    <CourseAuthoringPage courseId={courseId}>
-      <Switch>
-        <PageRoute path={`${path}/pages-and-resources`}>
+
+    <Switch>
+      <PageRoute path={`${path}/pages-and-resources`}>
+        <CourseAuthoringPage courseId={courseId}>
           <PagesAndResources courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/proctored-exam-settings`}>
+        </CourseAuthoringPage>
+      </PageRoute>
+      <PageRoute path={`${path}/proctored-exam-settings`}>
+        <CourseAuthoringPage courseId={courseId}>
           <ProctoredExamSettings courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/editor/:blockType/:blockId`}>
-          {process.env.ENABLE_NEW_EDITOR_PAGES === 'true'
+        </CourseAuthoringPage>
+      </PageRoute>
+      <PageRoute path={`${path}/editor/:blockType/:blockId`}>
+        {process.env.ENABLE_NEW_EDITOR_PAGES === 'true'
             && (
             <EditorContainer
               courseId={courseId}
             />
             )}
-        </PageRoute>
-      </Switch>
-    </CourseAuthoringPage>
+      </PageRoute>
+    </Switch>
   );
 }
 
