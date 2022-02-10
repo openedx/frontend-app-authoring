@@ -2,7 +2,6 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Button, Form, TransitionReplace } from '@edx/paragon';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import { getConfig } from '@edx/frontend-platform';
 import { GroupTypes, TeamSizes } from '../../data/constants';
 
 import CollapsableEditor from '../../generic/CollapsableEditor';
@@ -32,7 +31,6 @@ function GroupEditor({
   const [isOpen, setOpen] = useState(group.id === null);
   const initiateDeletion = () => setDeleting(true);
   const cancelDeletion = () => setDeleting(false);
-  const showTeamTypeSetting = getConfig().ENABLE_TEAM_TYPE_SETTING;
 
   const handleToggle = (open) => setOpen(Boolean(errors.name || errors.maxTeamSize || errors.description) || open);
 
@@ -97,7 +95,6 @@ function GroupEditor({
               style={{ minHeight: '2.5rem' }}
               className={formGroupClasses}
             />
-            {showTeamTypeSetting && (
             <Form.Group className={formGroupClasses}>
               <Form.Label className="h4 my-3">
                 {intl.formatMessage(messages.groupFormTypeLabel)}
@@ -122,7 +119,6 @@ function GroupEditor({
                 ))}
               </Form.RadioSet>
             </Form.Group>
-            )}
             <FormikControl
               type="number"
               name={`${fieldNameCommonBase}.maxTeamSize`}
