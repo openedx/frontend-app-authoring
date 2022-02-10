@@ -3,14 +3,17 @@ name: node_js CI
 on:
   push:
     branches:
-      - master
+    - master
   pull_request:
     branches:
-      - '**'
+    - '**'
 
 jobs:
-  build:
+  tests:
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        node: [12, 14, 16]
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -18,7 +21,7 @@ jobs:
     - name: Setup Nodejs
       uses: actions/setup-node@v1
       with:
-        node-version: 12
+        node-version: ${{ matrix.node }}
 
     - name: Install dependencies
       run: npm ci
