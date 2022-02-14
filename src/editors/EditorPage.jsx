@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ModalDialog } from '@edx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import TextEditor from './TextEditor/TextEditor';
 import VideoEditor from './VideoEditor/VideoEditor';
@@ -41,20 +40,17 @@ export default function EditorPage({
       blockId={blockId}
       studioEndpointUrl={studioEndpointUrl}
     >
-      <ModalDialog
-        title={blockType}
-        isOpen
-        size="fullscreen"
-        onClose={() => {}}
-        hasCloseButton={false}
-        variant="dark"
-      >
-        <div className="d-flex flex-column vh-100">
+      <div className="d-flex flex-column vh-100">
+        <div
+          className="pgn__modal-fullscreen"
+          role="dialog"
+          aria-label={blockType}
+        >
           <EditorHeader title={blockType} />
           {selectEditor(blockType)}
           <EditorFooter />
         </div>
-      </ModalDialog>
+      </div>
     </EditorPageProvider>
   );
 }
