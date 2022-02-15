@@ -61,3 +61,29 @@ describe('DiscussionsSettings', () => {
     expect(queryByTestId(container, 'permissionDeniedAlert')).toBeInTheDocument();
   });
 });
+
+describe('Editor Pages Load no header', () => {
+  beforeEach(() => {
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+    store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    jest.mock('react-router-dom', () => ({
+      ...jest.requireActual('react-router-dom'),
+      useLocation: () => ({
+        pathname: 'editor',
+      }),
+    }));
+  });
+  test('renders no loading wheel on editor pages', async () => {
+    await mockStore();
+    renderComponent();
+    expect(queryByTestId(container, 'loading')).not.toBeInTheDocument();
+  });
+});
