@@ -77,7 +77,7 @@ describe('Editor Pages Load no header', () => {
     jest.mock('react-router-dom', () => ({
       ...jest.requireActual('react-router-dom'),
       useLocation: () => ({
-        pathname: 'editor',
+        pathname: '/editor/',
       }),
     }));
   });
