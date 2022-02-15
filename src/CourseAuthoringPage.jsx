@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import Footer from '@edx/frontend-component-footer';
 import { useDispatch, useSelector } from 'react-redux';
 
+import {
+  useLocation,
+} from 'react-router-dom';
 import Header from './studio-header/Header';
 import { fetchCourseDetail } from './data/thunks';
 import { useModel } from './generic/model-store';
@@ -46,9 +49,14 @@ export default function CourseAuthoringPage({ courseId, children }) {
     </div>
   );
 
+  const { pathname } = useLocation();
   return (
     <div className="bg-light-200">
-      {inProgress ? <Loading /> : <AppHeader />}
+      {/* While V2 Editors are tempoarily served from thier own pages
+      using url pattern containing /editor/,
+      we shouldn't have the header and footer on these pages.
+      This functionality will be removed in TNL-9591 */}
+      {inProgress ? !pathname.includes('/editor/') && <Loading /> : <AppHeader />}
       {children}
       {!inProgress && <AppFooter />}
     </div>
