@@ -48,9 +48,14 @@ export default function CourseAuthoringPage({ courseId, children }) {
       <Footer />
     </div>
   );
+
   const { pathname } = useLocation();
   return (
     <div className="bg-light-200">
+      {/* While V2 Editors are tempoarily served from thier own pages
+      using url pattern containing /editor/,
+      we shouldn't have the header and footer on these pages.
+      This functionality will be removed in TNL-9591 */}
       {inProgress ? !pathname.includes('/editor/') && <Loading /> : <AppHeader />}
       {children}
       {!inProgress && <AppFooter />}
