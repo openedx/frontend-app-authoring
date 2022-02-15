@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import Footer from '@edx/frontend-component-footer';
 import { useDispatch, useSelector } from 'react-redux';
 
+import {
+  useLocation,
+} from 'react-router-dom';
 import Header from './studio-header/Header';
 import { fetchCourseDetail } from './data/thunks';
 import { useModel } from './generic/model-store';
@@ -45,10 +48,10 @@ export default function CourseAuthoringPage({ courseId, children }) {
       <Footer />
     </div>
   );
-
+  const { pathname } = useLocation();
   return (
     <div className="bg-light-200">
-      {inProgress ? <Loading /> : <AppHeader />}
+      {inProgress ? !pathname.includes('/editor/') && <Loading /> : <AppHeader />}
       {children}
       {!inProgress && <AppFooter />}
     </div>
