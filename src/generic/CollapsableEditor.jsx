@@ -28,18 +28,10 @@ const CollapsableEditor = ({
       className="collapsible-trigger d-flex border-0 align-items-center"
       style={{ justifyContent: 'unset' }}
     >
-      <div className="d-flex flex-grow-1 w-75">
-        {title}
-      </div>
+      <div className="d-flex flex-grow-1 w-75">{title}</div>
       <Collapsible.Visible whenClosed>
         <div className="align-self-start">
-          <IconButton
-            alt={expandAlt}
-            src={ExpandMore}
-            iconAs={Icon}
-            onClick={() => {}}
-            variant="dark"
-          />
+          <IconButton alt={expandAlt} src={ExpandMore} iconAs={Icon} variant="dark" />
         </div>
       </Collapsible.Visible>
       <Collapsible.Visible whenOpen>
@@ -58,19 +50,11 @@ const CollapsableEditor = ({
           </div>
         )}
         <div className="pl-4 d-flex">
-          <IconButton
-            alt={collapseAlt}
-            src={ExpandLess}
-            iconAs={Icon}
-            onClick={() => {}}
-            variant="dark"
-          />
+          <IconButton alt={collapseAlt} src={ExpandLess} iconAs={Icon} variant="dark" />
         </div>
       </Collapsible.Visible>
     </Collapsible.Trigger>
-    <Collapsible.Body className="collapsible-body rounded px-0">
-      {children}
-    </Collapsible.Body>
+    <Collapsible.Body className="collapsible-body rounded px-0">{children}</Collapsible.Body>
   </Collapsible.Advanced>
 );
 
