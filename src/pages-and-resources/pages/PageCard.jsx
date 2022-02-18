@@ -42,7 +42,6 @@ function PageCard({
             iconAs={Icon}
             size="inline"
             alt={intl.formatMessage(messages.settings)}
-            onClick={() => {}}
           />
         </Hyperlink>
       );
