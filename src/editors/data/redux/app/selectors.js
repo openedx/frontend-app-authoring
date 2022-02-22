@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
 import { blockTypes } from '../../constants/app';
-import * as urls from '../../services/lms/urls';
+import * as urls from '../../services/cms/urls';
 import * as module from './selectors';
 
 export const appSelector = (state) => state.app;

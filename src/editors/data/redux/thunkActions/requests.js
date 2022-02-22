@@ -2,7 +2,7 @@ import { StrictDict } from '../../../utils';
 
 import { RequestKeys } from '../../constants/requests';
 import { actions, selectors } from '..';
-import * as api from '../../services/lms/api';
+import * as api from '../../services/cms/api';
 
 import * as module from './requests';
 

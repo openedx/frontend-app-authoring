@@ -1,11 +1,5 @@
 import { StrictDict } from '../../utils';
 
-export const ReqeustKeys = StrictDict({
-  fetchBlock: 'fetchBlock',
-  fetchUnit: 'fetchUnit',
-  saveBlock: 'saveBlock',
-});
-
 export const RequestStates = StrictDict({
   inactive: 'inactive',
   pending: 'pending',

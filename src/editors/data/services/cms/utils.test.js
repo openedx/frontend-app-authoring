@@ -9,7 +9,7 @@ jest.mock('@edx/frontend-platform/auth', () => ({
   getAuthenticatedHttpClient: jest.fn(),
 }));
 
-describe('lms service utils', () => {
+describe('cms service utils', () => {
   describe('get', () => {
     it('forwards arguments to authenticatedHttpClient().get', () => {
       const get = jest.fn((...args) => ({ get: args }));

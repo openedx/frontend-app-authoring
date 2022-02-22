@@ -19,13 +19,8 @@ export const errorCode = (request) => request.error?.response?.data;
 
 export const data = (request) => request.data;
 
-export const allowNavigation = ({ requests }) => (
-  !Object.keys(requests).some(requestKey => module.isPending(requests[requestKey]))
-);
-
 export default StrictDict({
   requestStatus,
-  allowNavigation,
   isInactive: statusSelector(isInactive),
   isPending: statusSelector(isPending),
   isCompleted: statusSelector(isCompleted),
