@@ -10,10 +10,11 @@ import {
   Toast,
 } from '@edx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { nullMethod, saveTextBlock, navigateCallback } from '../../hooks';
 
 import { RequestKeys } from '../../data/constants/requests';
 import { selectors, thunkActions } from '../../data/redux';
-import { saveTextBlock, navigateCallback } from '../../hooks';
+
 import messages from '../messages';
 import * as module from '.';
 
@@ -30,7 +31,7 @@ export const EditorFooter = ({
 }) => (
   <div className="editor-footer mt-auto">
     {saveFailed && (
-      <Toast><FormattedMessage {...messages.contentSaveFailed} /></Toast>
+      <Toast show onClose={nullMethod}><FormattedMessage {...messages.contentSaveFailed} /></Toast>
     )}
 
     <ModalDialog.Footer>

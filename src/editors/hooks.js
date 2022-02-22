@@ -1,4 +1,6 @@
-import { useRef, useEffect, useCallback, useState } from 'react';
+import {
+  useRef, useEffect, useCallback, useState,
+} from 'react';
 
 export const initializeApp = ({ initialize, data }) => useEffect(() => initialize(data), []);
 
@@ -28,3 +30,6 @@ export const saveTextBlock = ({
     content: editorRef.current.getContent(),
   });
 };
+
+// for toast onClose to avoid console warnings
+export const nullMethod = () => {};
