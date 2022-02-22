@@ -1,17 +1,17 @@
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import MockAdapter from 'axios-mock-adapter';
-import { initializeMockApp } from '@edx/frontend-platform/testing';
 import { history } from '@edx/frontend-platform';
-import initializeStore from '../../../store';
-import { getAppsUrl } from './api';
-import {
-  FAILED, SAVED, DENIED, selectApp, updateValidationStatus,
-} from './slice';
-import { fetchApps, saveAppConfig } from './thunks';
-import { LOADED } from '../../../data/slice';
-import { legacyApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
-import { executeThunk } from '../../../utils';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { initializeMockApp } from '@edx/frontend-platform/testing';
+import MockAdapter from 'axios-mock-adapter';
 import { DivisionSchemes } from '../../../data/constants';
+import { LOADED } from '../../../data/slice';
+import initializeStore from '../../../store';
+import { executeThunk } from '../../../utils';
+import { generateProvidersApiResponse, legacyApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
+import { getDiscussionsProvidersUrl, getDiscussionsSettingsUrl } from './api';
+import {
+  DENIED, FAILED, SAVED, selectApp, updateValidationStatus,
+} from './slice';
+import { fetchDiscussionSettings, fetchProviders, saveProviderConfig } from './thunks';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const pagesAndResourcesPath = `/course/${courseId}/pages-and-resources`;
@@ -116,11 +116,11 @@ describe('Data layer integration tests', () => {
     axiosMock.reset();
   });
 
-  describe('fetchApps', () => {
+  describe('fetchProviders', () => {
     test('network error', async () => {
-      axiosMock.onGet(getAppsUrl(courseId)).networkError();
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).networkError();
 
-      await executeThunk(fetchApps(courseId), store.dispatch);
+      await executeThunk(fetchProviders(courseId), store.dispatch);
 
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
@@ -136,9 +136,9 @@ describe('Data layer integration tests', () => {
     });
 
     test('permission denied error', async () => {
-      axiosMock.onGet(getAppsUrl(courseId)).reply(403);
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(403);
 
-      await executeThunk(fetchApps(courseId), store.dispatch);
+      await executeThunk(fetchProviders(courseId), store.dispatch);
 
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
@@ -154,11 +154,13 @@ describe('Data layer integration tests', () => {
     });
 
     test('successfully loads an LTI configuration', async () => {
-      axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse());
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
 
-      await executeThunk(fetchApps(courseId), store.dispatch);
+      await executeThunk(fetchProviders(courseId), store.dispatch);
+      await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
 
-      expect(store.getState().discussions).toEqual({
+      expect(store.getState().discussions).toEqual(expect.objectContaining({
         appIds: ['legacy', 'piazza', 'discourse'],
         featureIds,
         activeAppId: 'piazza',
@@ -167,7 +169,7 @@ describe('Data layer integration tests', () => {
         saveStatus: SAVED,
         hasValidationError: false,
         discussionTopicIds: [],
-      });
+      }));
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
       expect(store.getState().models.features).toEqual(featuresState);
@@ -180,7 +182,8 @@ describe('Data layer integration tests', () => {
     });
 
     test('successfully loads an LTI configuration with PII Sharing', async () => {
-      axiosMock.onGet(getAppsUrl(courseId)).reply(200, {
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse());
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, {
         ...piazzaApiResponse,
         lti_configuration: {
           ...piazzaApiResponse.lti_configuration,
@@ -190,9 +193,10 @@ describe('Data layer integration tests', () => {
         },
       });
 
-      await executeThunk(fetchApps(courseId), store.dispatch);
+      await executeThunk(fetchProviders(courseId), store.dispatch);
+      await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
 
-      expect(store.getState().discussions).toEqual({
+      expect(store.getState().discussions).toEqual(expect.objectContaining({
         appIds: ['legacy', 'piazza', 'discourse'],
         featureIds,
         activeAppId: 'piazza',
@@ -201,7 +205,7 @@ describe('Data layer integration tests', () => {
         saveStatus: SAVED,
         hasValidationError: false,
         discussionTopicIds: [],
-      });
+      }));
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
       expect(store.getState().models.features).toEqual(featuresState);
@@ -214,12 +218,14 @@ describe('Data layer integration tests', () => {
     });
 
     test('successfully loads a Legacy configuration', async () => {
-      axiosMock.onGet(getAppsUrl(courseId)).reply(200, legacyApiResponse);
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse(false, 'legacy'));
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, legacyApiResponse);
 
-      await executeThunk(fetchApps(courseId), store.dispatch);
+      await executeThunk(fetchProviders(courseId), store.dispatch);
+      await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
 
-      expect(store.getState().discussions).toEqual({
-        appIds: ['legacy', 'piazza'],
+      expect(store.getState().discussions).toEqual(expect.objectContaining({
+        appIds: ['legacy', 'piazza', 'discourse'],
         featureIds,
         activeAppId: 'legacy',
         selectedAppId: null,
@@ -228,7 +234,7 @@ describe('Data layer integration tests', () => {
         hasValidationError: false,
         discussionTopicIds,
         divideDiscussionIds: [],
-      });
+      }));
       expect(store.getState().models.apps.legacy).toEqual(legacyApp);
       expect(store.getState().models.apps.piazza).toEqual(piazzaApp);
       expect(store.getState().models.features).toEqual(featuresState);
@@ -269,13 +275,15 @@ describe('Data layer integration tests', () => {
     test('network error', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
 
-      axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
-      axiosMock.onPost(getAppsUrl(courseId)).networkError();
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse());
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
+      axiosMock.onPost(getDiscussionsSettingsUrl(courseId)).networkError();
 
-      // We call fetchApps and selectApp here too just to get us into a real state.
-      await executeThunk(fetchApps(courseId), store.dispatch);
+      // We call fetchProviders and selectApp here too just to get us into a real state.
+      await executeThunk(fetchProviders(courseId), store.dispatch);
+      await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'piazza' }));
-      await executeThunk(saveAppConfig(courseId, 'piazza', {}, pagesAndResourcesPath), store.dispatch);
+      await executeThunk(saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath), store.dispatch);
 
       // Assert we're still on the form.
       expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
@@ -295,13 +303,14 @@ describe('Data layer integration tests', () => {
     test('permission denied error', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
 
-      axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
-      axiosMock.onPost(getAppsUrl(courseId)).reply(403);
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse());
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
+      axiosMock.onPost(getDiscussionsSettingsUrl(courseId)).reply(403);
 
-      // We call fetchApps and selectApp here too just to get us into a real state.
-      await executeThunk(fetchApps(courseId), store.dispatch);
+      // We call fetchProviders and selectApp here too just to get us into a real state.
+      await executeThunk(fetchProviders(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'piazza' }));
-      await executeThunk(saveAppConfig(courseId, 'piazza', {}, pagesAndResourcesPath), store.dispatch);
+      await executeThunk(saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath), store.dispatch);
 
       // Assert we're still on the form.
       expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
@@ -311,7 +320,7 @@ describe('Data layer integration tests', () => {
           featureIds,
           activeAppId: 'piazza',
           selectedAppId: 'piazza',
-          status: DENIED, // We set BOTH statuses to DENIED for saveAppConfig - this removes the UI.
+          status: DENIED, // We set BOTH statuses to DENIED for saveProviderConfig - this removes the UI.
           saveStatus: DENIED,
           hasValidationError: false,
         }),
@@ -321,8 +330,9 @@ describe('Data layer integration tests', () => {
     test('successfully saves an LTI configuration', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
 
-      axiosMock.onGet(getAppsUrl(courseId)).reply(200, piazzaApiResponse);
-      axiosMock.onPost(getAppsUrl(courseId), {
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse());
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
+      axiosMock.onPost(getDiscussionsSettingsUrl(courseId), {
         context_key: courseId,
         enabled: true,
         lti_configuration: {
@@ -344,10 +354,10 @@ describe('Data layer integration tests', () => {
         },
       });
 
-      // We call fetchApps and selectApp here too just to get us into a real state.
-      await executeThunk(fetchApps(courseId), store.dispatch);
+      // We call fetchProviders and selectApp here too just to get us into a real state.
+      await executeThunk(fetchProviders(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'piazza' }));
-      await executeThunk(saveAppConfig(
+      await executeThunk(saveProviderConfig(
         courseId,
         'piazza',
         {
@@ -381,8 +391,9 @@ describe('Data layer integration tests', () => {
     test('successfully saves a Legacy configuration', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussions/configure/legacy`);
 
-      axiosMock.onGet(getAppsUrl(courseId)).reply(200, legacyApiResponse);
-      axiosMock.onPost(getAppsUrl(courseId), {
+      axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse(false, 'legacy'));
+      axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, legacyApiResponse);
+      axiosMock.onPost(getDiscussionsSettingsUrl(courseId), {
         context_key: courseId,
         enabled: true,
         lti_configuration: {},
@@ -422,10 +433,11 @@ describe('Data layer integration tests', () => {
         },
       });
 
-      // We call fetchApps and selectApp here too just to get us into a real state.
-      await executeThunk(fetchApps(courseId), store.dispatch);
+      // We call fetchProviders and selectApp here too just to get us into a real state.
+      await executeThunk(fetchProviders(courseId), store.dispatch);
+      await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'legacy' }));
-      await executeThunk(saveAppConfig(
+      await executeThunk(saveProviderConfig(
         courseId,
         'legacy',
         {
@@ -450,7 +462,7 @@ describe('Data layer integration tests', () => {
       expect(window.location.pathname).toEqual(pagesAndResourcesPath);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
-          appIds: ['legacy', 'piazza'],
+          appIds: ['legacy', 'piazza', 'discourse'],
           featureIds,
           activeAppId: 'legacy',
           selectedAppId: 'legacy',

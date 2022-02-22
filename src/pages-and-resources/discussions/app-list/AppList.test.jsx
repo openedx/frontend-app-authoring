@@ -14,9 +14,12 @@ import { Context as ResponsiveContext } from 'react-responsive';
 
 import initializeStore from '../../../store';
 import { executeThunk } from '../../../utils';
-import { getAppsUrl } from '../data/api';
-import { fetchApps } from '../data/thunks';
-import { emptyAppApiResponse, piazzaApiResponse } from '../factories/mockApiResponses';
+import { getDiscussionsProvidersUrl, getDiscussionsSettingsUrl } from '../data/api';
+import { fetchDiscussionSettings, fetchProviders } from '../data/thunks';
+import {
+  generateProvidersApiResponse,
+  piazzaApiResponse,
+} from '../factories/mockApiResponses';
 import AppList from './AppList';
 import messages from './messages';
 
@@ -54,22 +57,14 @@ describe('AppList', () => {
   });
 
   const mockStore = async (mockResponse, screenWidth = breakpoints.extraLarge.minWidth) => {
-    axiosMock.onGet(getAppsUrl(courseId)).reply(200, mockResponse);
-    await executeThunk(fetchApps(courseId), store.dispatch);
+    axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse());
+    axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, mockResponse);
+    await executeThunk(fetchProviders(courseId), store.dispatch);
+    await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
     const component = createComponent(screenWidth);
     const wrapper = render(component);
     container = wrapper.container;
   };
-
-  test('displays a message when there are no apps available', async () => {
-    await mockStore(emptyAppApiResponse);
-    expect(queryByText(container, `${messages.noApps.defaultMessage}`)).toBeInTheDocument();
-  });
-
-  test('displays loading state when there is no active App', async () => {
-    await mockStore({});
-    expect(queryByRole(container, 'status')).toBeInTheDocument();
-  });
 
   test('display a card for each available app', async () => {
     await mockStore(piazzaApiResponse);

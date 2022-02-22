@@ -1,41 +1,57 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Card, Form } from '@edx/paragon';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 
 import { useSelector } from 'react-redux';
-import DivisionByGroupFields from '../shared/DivisionByGroupFields';
-import AnonymousPostingFields from '../shared/AnonymousPostingFields';
-import DiscussionTopics from '../shared/discussion-topics/DiscussionTopics';
-import BlackoutDatesField from '../shared/BlackoutDatesField';
-import LegacyConfigFormProvider from './LegacyConfigFormProvider';
-import AppConfigFormDivider from '../shared/AppConfigFormDivider';
-import { checkFieldErrors } from '../../utils';
-import { setupYupExtensions } from '../../../../../utils';
+import * as Yup from 'yup';
 import { useModel, useModels } from '../../../../../generic/model-store';
+import { setupYupExtensions } from '../../../../../utils';
 import messages from '../../messages';
+import { checkFieldErrors } from '../../utils';
+import AnonymousPostingFields from '../shared/AnonymousPostingFields';
+import AppConfigFormDivider from '../shared/AppConfigFormDivider';
+import BlackoutDatesField from '../shared/BlackoutDatesField';
+import DiscussionTopics from '../shared/discussion-topics/DiscussionTopics';
+import DivisionByGroupFields from '../shared/DivisionByGroupFields';
+import InContextDiscussionFields from '../shared/InContextDiscussionFields';
+import OpenedXConfigFormProvider from './OpenedXConfigFormProvider';
 
 setupYupExtensions();
 
-function LegacyConfigForm({ onSubmit, formRef, intl }) {
-  const { discussionTopicIds, divideDiscussionIds, selectedAppId } = useSelector((state) => state.discussions);
+function OpenedXConfigForm({
+  onSubmit, formRef, intl, legacy,
+}) {
+  const {
+    selectedAppId, enableInContext, enableGradedUnits, unitLevelVisibility, discussionTopicIds, divideDiscussionIds,
+  } = useSelector(state => state.discussions);
   const appConfigObj = useModel('appConfigs', selectedAppId);
   const discussionTopicsModel = useModels('discussionTopics', discussionTopicIds);
-  const appConfig = { ...appConfigObj, discussionTopics: discussionTopicsModel, divideDiscussionIds };
-  const LegacyAppConfig = {
-    ...appConfig,
-    allowAnonymousPosts: appConfig.allowAnonymousPosts || false,
-    allowAnonymousPostsPeers: appConfig.allowAnonymousPostsPeers || false,
-    blackoutDates: appConfig.blackoutDates || [],
-    discussionTopics: appConfig.discussionTopics || [],
-    divideByCohorts: appConfig.divideByCohorts || false,
-    divideCourseTopicsByCohorts: appConfig.divideCourseTopicsByCohorts || false,
+  const legacyAppConfig = {
+    ...(appConfigObj || {}),
+    divideDiscussionIds,
+    enableInContext,
+    enableGradedUnits,
+    unitLevelVisibility,
+    allowAnonymousPosts: appConfigObj?.allowAnonymousPosts || false,
+    allowAnonymousPostsPeers: appConfigObj?.allowAnonymousPostsPeers || false,
+    blackoutDates: appConfigObj?.blackoutDates || [],
+    discussionTopics: discussionTopicsModel || [],
+    divideByCohorts: appConfigObj?.divideByCohorts || false,
+    divideCourseTopicsByCohorts: appConfigObj?.divideCourseTopicsByCohorts || false,
+    groupAtSubsection: appConfigObj?.groupAtSubsection || false,
   };
 
-  const [validDiscussionTopics, setValidDiscussionTopics] = useState(appConfig.discussionTopics);
-  const legacyFormValidationSchema = Yup.object().shape({
+  const [validDiscussionTopics, setValidDiscussionTopics] = useState(discussionTopicsModel);
+  // These fields are only used for the new provider and aren't supported for legacy.
+  const additionalFields = legacy ? {} : {
+    enableInContext: Yup.bool().default(true),
+    enabledGradedUnits: Yup.bool().default(false),
+    groupAtSubsection: Yup.bool().default(false),
+    unitLevelVisibility: Yup.bool().default(false),
+  };
+  const validationSchema = Yup.object().shape({
     blackoutDates: Yup.array(
       Yup.object().shape({
         startDate: Yup.string()
@@ -65,13 +81,14 @@ function LegacyConfigForm({ onSubmit, formRef, intl }) {
         name: Yup.string().required(intl.formatMessage(messages.discussionTopicRequired)),
       }).uniqueObjectProperty('name', intl.formatMessage(messages.discussionTopicNameAlreadyExist)),
     ),
+    ...additionalFields,
   });
 
   return (
     <Formik
-      initialValues={LegacyAppConfig}
+      initialValues={legacyAppConfig}
       validateOnChange={false}
-      validationSchema={legacyFormValidationSchema}
+      validationSchema={validationSchema}
       onSubmit={(values) => onSubmit(values)}
     >
       {({
@@ -97,11 +114,18 @@ function LegacyConfigForm({ onSubmit, formRef, intl }) {
         };
 
         return (
-          <LegacyConfigFormProvider value={contextValue}>
+          <OpenedXConfigFormProvider value={contextValue}>
             <Card className="mb-5 px-4 px-sm-5 pb-5" data-testid="legacyConfigForm">
               <Form ref={formRef} onSubmit={handleSubmit}>
                 <h3 className="text-primary-500 my-3">{intl.formatMessage(messages[`appName-${selectedAppId}`])}</h3>
                 <AppConfigFormDivider thick />
+                {!legacy
+                  && (
+                    <>
+                      <InContextDiscussionFields onBlur={handleBlur} onChange={handleChange} values={values} />
+                      <AppConfigFormDivider thick />
+                    </>
+                  )}
                 <AnonymousPostingFields
                   onBlur={handleBlur}
                   onChange={handleChange}
@@ -115,18 +139,19 @@ function LegacyConfigForm({ onSubmit, formRef, intl }) {
                 <BlackoutDatesField />
               </Form>
             </Card>
-          </LegacyConfigFormProvider>
+          </OpenedXConfigFormProvider>
         );
       }}
     </Formik>
   );
 }
 
-LegacyConfigForm.propTypes = {
+OpenedXConfigForm.propTypes = {
+  legacy: PropTypes.bool.isRequired,
   onSubmit: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(LegacyConfigForm);
+export default injectIntl(OpenedXConfigForm);

@@ -1,20 +1,19 @@
-import { ensureConfig, getConfig, camelCaseObject } from '@edx/frontend-platform';
+import { camelCaseObject, ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
+import { DivisionSchemes } from '../../../data/constants';
 
 import {
   checkStatus,
-  sortBlackoutDatesByStatus,
+  endOfDayTime,
+  getTime,
   mergeDateTime,
   normalizeDate,
   normalizeTime,
-  getTime,
+  sortBlackoutDatesByStatus,
   startOfDayTime,
-  endOfDayTime,
 } from '../app-config-form/utils';
 import { blackoutDatesStatus as constants } from './constants';
-import { DivisionSchemes } from '../../../data/constants';
 
 ensureConfig([
   'STUDIO_BASE_URL',
@@ -80,23 +79,11 @@ function normalizePiiSharing(data) {
 }
 
 function normalizeAppConfig(data) {
-  let ltiConfig = {};
-  const legacyConfig = {
-    id: 'legacy',
+  return {
+    id: data.provider_type,
     ...normalizePluginConfig(data.plugin_configuration),
+    ...normalizeLtiConfig(data.lti_configuration),
   };
-  const piiConfig = {
-    id: 'pii',
-    ...normalizePiiSharing(data.lti_configuration),
-  };
-  if (data.providers.active !== 'legacy') {
-    ltiConfig = {
-      id: data.providers.active,
-      ...normalizeLtiConfig(data.lti_configuration),
-    };
-  }
-  if (!_.isEmpty(ltiConfig)) { return [legacyConfig, ltiConfig, piiConfig]; }
-  return [legacyConfig, piiConfig];
 }
 
 function normalizeDiscussionTopic(data) {
@@ -123,8 +110,8 @@ function normalizeFeatures(data, apps) {
   );
 }
 
-function normalizeApps(data) {
-  const apps = Object.entries(data.providers.available).map(([key, app]) => ({
+function normalizeProviders(data) {
+  const apps = Object.entries(data.available).map(([key, app]) => ({
     id: key,
     messages: app.messages,
     featureIds: app.features,
@@ -139,12 +126,20 @@ function normalizeApps(data) {
     adminOnlyConfig: !!app.admin_only_config,
   }));
   return {
-    courseId: data.context_key,
-    enabled: data.enabled,
     features: normalizeFeatures(data.features, apps),
-    appConfigs: normalizeAppConfig(data),
-    activeAppId: data.providers.active,
+    activeAppId: data.active,
     apps,
+  };
+}
+
+function normalizeSettings(data) {
+  return {
+    enabled: data.enabled,
+    enableInContext: data.enable_in_context,
+    enableGradedUnits: data.enable_graded_units,
+    unitLevelVisibility: data.unit_level_visibility,
+    appConfig: normalizeAppConfig(data),
+    piiConfig: normalizePiiSharing(data.lti_configuration),
     discussionTopicIds: data.plugin_configuration.discussion_topics
       ? extractDiscussionTopicIds(data.plugin_configuration.discussion_topics)
       : [],
@@ -180,6 +175,9 @@ function denormalizeData(courseId, appId, data) {
   if ('divideByCohorts' in data) {
     pluginConfiguration.division_scheme = data.divideByCohorts ? DivisionSchemes.COHORT : DivisionSchemes.NONE;
     pluginConfiguration.always_divide_inline_discussions = data.divideByCohorts;
+  }
+  if ('groupAtSubsection' in data) {
+    pluginConfiguration.group_at_subsection = data.groupAtSubsection;
   }
   if (data.blackoutDates?.length) {
     pluginConfiguration.discussion_blackouts = data.blackoutDates.map((blackoutDates) => (
@@ -224,31 +222,57 @@ function denormalizeData(courseId, appId, data) {
     ltiConfiguration.version = 'lti_1p1';
   }
 
-  return {
+  const apiData = {
     context_key: courseId,
     enabled: true,
     lti_configuration: ltiConfiguration,
     plugin_configuration: pluginConfiguration,
     provider_type: appId,
   };
+  if ('enableInContext' in data) {
+    apiData.enable_in_context = data.enableInContext;
+  }
+  if ('enableGradedUnits' in data) {
+    apiData.enable_graded_units = data.enableGradedUnits;
+  }
+  if ('unitLevelVisibility' in data) {
+    apiData.unit_level_visibility = data.unitLevelVisibility;
+  }
+  return apiData;
 }
 
-export function getAppsUrl(courseId) {
-  return `${getConfig().STUDIO_BASE_URL}/api/discussions/v0/${courseId}`;
+export function getDiscussionsProvidersUrl(courseId) {
+  return `${getConfig().STUDIO_BASE_URL}/api/discussions/v0/course/${courseId}/providers`;
 }
 
-export async function getApps(courseId) {
+export function getDiscussionsSettingsUrl(courseId) {
+  return `${getConfig().STUDIO_BASE_URL}/api/discussions/v0/course/${courseId}/settings`;
+}
+
+export async function getDiscussionsProviders(courseId) {
   const { data } = await getAuthenticatedHttpClient()
-    .get(getAppsUrl(courseId));
+    .get(getDiscussionsProvidersUrl(courseId));
 
-  return normalizeApps(data);
+  return normalizeProviders(data);
 }
 
-export async function postAppConfig(courseId, appId, values) {
+export async function getDiscussionsSettings(courseId, providerId = null) {
+  const params = {};
+  if (providerId) {
+    params.params = { provider_id: providerId };
+  }
+  const url = getDiscussionsSettingsUrl(courseId);
+  const { data } = await getAuthenticatedHttpClient()
+    .get(url, params);
+
+  return normalizeSettings(data);
+}
+
+export async function postDiscussionsSettings(courseId, appId, values) {
   const { data } = await getAuthenticatedHttpClient().post(
-    getAppsUrl(courseId),
+    getDiscussionsSettingsUrl(courseId),
     denormalizeData(courseId, appId, values),
   );
 
-  return normalizeApps(data);
+  return normalizeSettings(data);
 }

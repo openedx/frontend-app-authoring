@@ -21,8 +21,8 @@ import {
   DENIED,
   FAILED, LOADED, LOADING, selectApp,
 } from '../data/slice';
-import { saveAppConfig } from '../data/thunks';
-import LegacyConfigForm from './apps/legacy';
+import { fetchDiscussionSettings, saveProviderConfig } from '../data/thunks';
+import OpenedXConfigForm from './apps/openedx';
 import LtiConfigForm from './apps/lti';
 import AppConfigFormProvider, { AppConfigFormContext } from './AppConfigFormProvider';
 import AppConfigFormSaveButton from './AppConfigFormSaveButton';
@@ -36,11 +36,19 @@ function AppConfigForm({
   const { formRef } = useContext(AppConfigFormContext);
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const { params: { appId: routeAppId } } = useRouteMatch();
+  const [isLoading, setLoading] = useState(true);
   const {
     activeAppId, selectedAppId, status, saveStatus,
   } = useSelector(state => state.discussions);
 
   const [confirmationDialogVisible, setConfirmationDialogVisible] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      await dispatch(fetchDiscussionSettings(courseId, selectedAppId));
+      setLoading(false);
+    })();
+  }, [courseId, selectedAppId]);
 
   useEffect(() => {
     if (status === LOADED) {
@@ -57,12 +65,12 @@ function AppConfigForm({
       setConfirmationDialogVisible(true);
     } else {
       setConfirmationDialogVisible(false);
-      // Note that when this action succeeds, we redirect to pagesAndResurcesPath in the thunk.
-      dispatch(saveAppConfig(courseId, selectedAppId, values, pagesAndResourcesPath));
+      // Note that when this action succeeds, we redirect to pagesAndResourcesPath in the thunk.
+      dispatch(saveProviderConfig(courseId, selectedAppId, values, pagesAndResourcesPath));
     }
   }, [activeAppId, confirmationDialogVisible, courseId, selectedAppId]);
 
-  if (!selectedAppId || status === LOADING) {
+  if (!selectedAppId || status === LOADING || isLoading) {
     return (
       <Loading />
     );
@@ -78,12 +86,21 @@ function AppConfigForm({
     alert = <PermissionDeniedAlert />;
   }
 
-  let form = null;
+  let form;
   if (selectedAppId === 'legacy') {
     form = (
-      <LegacyConfigForm
+      <OpenedXConfigForm
         formRef={formRef}
         onSubmit={handleSubmit}
+        legacy
+      />
+    );
+  } else if (selectedAppId === 'openedx') {
+    form = (
+      <OpenedXConfigForm
+        formRef={formRef}
+        onSubmit={handleSubmit}
+        legacy={false}
       />
     );
   } else {

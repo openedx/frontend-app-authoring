@@ -82,8 +82,13 @@ const messages = defineMessages({
   },
   'appName-legacy': {
     id: 'authoring.discussions.appConfigForm.appName-legacy',
-    defaultMessage: 'edX',
+    defaultMessage: 'edX (Legacy)',
     description: 'The name of the Legacy edX Discussions app.',
+  },
+  'appName-openedx': {
+    id: 'authoring.discussions.appConfigForm.appName-openedx',
+    defaultMessage: 'edX (NEW)',
+    description: 'The name of the new edX Discussions app.',
   },
   divisionByGroup: {
     id: 'authoring.discussions.builtIn.divisionByGroup',

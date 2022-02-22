@@ -1,52 +1,47 @@
 import { history } from '@edx/frontend-platform';
-import { addModels } from '../../../generic/model-store';
-import { getApps, postAppConfig } from './api';
+import { addModel, addModels } from '../../../generic/model-store';
+import { getDiscussionsProviders, getDiscussionsSettings, postDiscussionsSettings } from './api';
 import {
-  FAILED,
-  loadApps,
-  LOADING,
-  SAVED,
-  SAVING,
-  updateStatus,
-  updateSaveStatus,
-  DENIED,
+  DENIED, FAILED, loadApps, LOADING, SAVED, SAVING, updateSaveStatus, updateStatus,
 } from './slice';
 
-function updateAppState({
+function updateDiscussionSettingsState({
+  appConfig,
+  discussionTopics,
+  ...discussionSettings
+}) {
+  return async (dispatch) => {
+    dispatch(addModel({ modelType: 'appConfigs', model: appConfig }));
+    dispatch(addModels({ modelType: 'discussionTopics', models: discussionTopics }));
+    dispatch(loadApps(discussionSettings));
+  };
+}
+
+function updateProviderState({
   apps,
   features,
   activeAppId,
-  appConfigs,
-  discussionTopicIds,
-  discussionTopics,
-  divideDiscussionIds,
-  userPermissions,
 }) {
   return async (dispatch) => {
     dispatch(addModels({ modelType: 'apps', models: apps }));
     dispatch(addModels({ modelType: 'features', models: features }));
-    dispatch(addModels({ modelType: 'appConfigs', models: appConfigs }));
-    dispatch(addModels({ modelType: 'discussionTopics', models: discussionTopics }));
 
     dispatch(
       loadApps({
         activeAppId,
         appIds: apps.map((app) => app.id),
         featureIds: features.map((feature) => feature.id),
-        discussionTopicIds,
-        divideDiscussionIds,
-        userPermissions,
       }),
     );
   };
 }
 
-export function fetchApps(courseId) {
+export function fetchProviders(courseId) {
   return async (dispatch) => {
     dispatch(updateStatus({ status: LOADING }));
     try {
-      const apps = await getApps(courseId);
-      dispatch(updateAppState(apps));
+      const apps = await getDiscussionsProviders(courseId);
+      dispatch(updateProviderState(apps));
     } catch (error) {
       if (error.response && error.response.status === 403) {
         dispatch(updateStatus({ status: DENIED }));
@@ -57,13 +52,29 @@ export function fetchApps(courseId) {
   };
 }
 
-export function saveAppConfig(courseId, appId, drafts, successPath) {
+export function fetchDiscussionSettings(courseId, providerId = null) {
+  return async (dispatch) => {
+    dispatch(updateStatus({ status: LOADING }));
+    try {
+      const apps = await getDiscussionsSettings(courseId, providerId);
+      dispatch(updateDiscussionSettingsState(apps));
+    } catch (error) {
+      if (error.response && error.response.status === 403) {
+        dispatch(updateStatus({ status: DENIED }));
+      } else {
+        dispatch(updateStatus({ status: FAILED }));
+      }
+    }
+  };
+}
+
+export function saveProviderConfig(courseId, appId, drafts, successPath) {
   return async (dispatch) => {
     dispatch(updateSaveStatus({ status: SAVING }));
 
     try {
-      const apps = await postAppConfig(courseId, appId, drafts);
-      dispatch(updateAppState(apps));
+      const apps = await postDiscussionsSettings(courseId, appId, drafts);
+      dispatch(updateDiscussionSettingsState(apps));
 
       dispatch(updateSaveStatus({ status: SAVED }));
       // Note that we redirect here to avoid having to work with the promise over in AppConfigForm.

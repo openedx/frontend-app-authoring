@@ -6,10 +6,10 @@ import _ from 'lodash';
 import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from '../../messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
-import { LegacyConfigFormContext } from '../legacy/LegacyConfigFormProvider';
+import { OpenedXConfigFormContext } from '../openedx/OpenedXConfigFormProvider';
 
 const DivisionByGroupFields = ({ intl }) => {
-  const { validDiscussionTopics } = useContext(LegacyConfigFormContext);
+  const { validDiscussionTopics } = useContext(OpenedXConfigFormContext);
   const {
     handleChange,
     handleBlur,

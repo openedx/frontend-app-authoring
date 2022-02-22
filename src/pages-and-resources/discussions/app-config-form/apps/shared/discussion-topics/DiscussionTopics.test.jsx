@@ -14,10 +14,10 @@ import { AppProvider } from '@edx/frontend-platform/react';
 
 import initializeStore from '../../../../../../store';
 import { executeThunk } from '../../../../../../utils';
-import { getAppsUrl } from '../../../../data/api';
-import { fetchApps } from '../../../../data/thunks';
+import { getDiscussionsProvidersUrl } from '../../../../data/api';
+import { fetchProviders } from '../../../../data/thunks';
 import { legacyApiResponse } from '../../../../factories/mockApiResponses';
-import LegacyConfigFormProvider from '../../legacy/LegacyConfigFormProvider';
+import OpenedXConfigFormProvider from '../../openedx/OpenedXConfigFormProvider';
 import messages from '../../../messages';
 import DiscussionTopics from './DiscussionTopics';
 
@@ -73,11 +73,11 @@ describe('DiscussionTopics', () => {
     const wrapper = render(
       <AppProvider store={store}>
         <IntlProvider locale="en">
-          <LegacyConfigFormProvider value={contextValue}>
+          <OpenedXConfigFormProvider value={contextValue}>
             <Formik initialValues={data}>
               <DiscussionTopics />
             </Formik>
-          </LegacyConfigFormProvider>
+          </OpenedXConfigFormProvider>
         </IntlProvider>
       </AppProvider>,
     );
@@ -85,8 +85,8 @@ describe('DiscussionTopics', () => {
   };
 
   const mockStore = async (mockResponse) => {
-    axiosMock.onGet(getAppsUrl(courseId)).reply(200, mockResponse);
-    await executeThunk(fetchApps(courseId), store.dispatch);
+    axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, mockResponse);
+    await executeThunk(fetchProviders(courseId), store.dispatch);
   };
 
   test('renders each discussion topic correctly', async () => {
