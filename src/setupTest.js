@@ -43,3 +43,41 @@ process.env.LOGO_URL = 'https://edx-cdn.org/v3/default/logo.svg';
 process.env.LOGO_TRADEMARK_URL = 'https://edx-cdn.org/v3/default/logo-trademark.svg';
 process.env.LOGO_WHITE_URL = 'https://edx-cdn.org/v3/default/logo-white.svg';
 process.env.FAVICON_URL = 'https://edx-cdn.org/v3/default/favicon.ico';
+
+jest.mock('@edx/frontend-platform/i18n', () => {
+  const i18n = jest.requireActual('@edx/frontend-platform/i18n');
+  const PropTypes = jest.requireActual('prop-types');
+  return {
+    ...i18n,
+    intlShape: PropTypes.shape({
+      formatMessage: PropTypes.func,
+    }),
+    defineMessages: m => m,
+    FormattedMessage: () => 'FormattedMessage',
+  };
+});
+
+jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedComponents({
+  ActionRow: 'ActionRow',
+  Button: 'Button',
+  Icon: 'Icon',
+  IconButton: 'IconButton',
+  ModalDialog: {
+    Header: 'ModalDialog.Header',
+    Title: 'ModalDialog.Title',
+  },
+  Form: {
+    Control: {
+      Feedback: 'Form.Control.Feedback',
+    },
+    Group: 'Form.Group',
+    Label: 'Form.Label',
+  },
+  Spinner: 'Spinner',
+  Toast: 'Toast',
+}));
+
+jest.mock('@edx/paragon/icons', () => ({
+  Close: jest.fn().mockName('icons.Close'),
+  Edit: jest.fn().mockName('icons.Edit'),
+}));
