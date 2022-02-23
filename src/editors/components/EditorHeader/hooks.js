@@ -1,23 +1,31 @@
 import React from 'react';
+import * as module from './hooks';
 
-/* eslint-disable import/prefer-default-export */
-export const localTitleHooks = ({
-  editorRef,
-  setBlockTitle,
-  typeHeader,
-}) => {
-  console.log('localTitleHooks');
-  const [isEditing, setIsEditing] = React.useState(false);
-  const startEditing = () => setIsEditing(true);
-  const stopEditing = () => setIsEditing(false);
-  const [localTitle, setLocalTitle] = React.useState(typeHeader);
-  const inputRef = React.createRef();
-  const updateTitle = () => {
-    setBlockTitle(localTitle);
-    stopEditing();
-  };
-
-  const handleKeyDown = (e) => {
+export const hooks = {
+  isEditing: () => {
+    const [isEditing, setIsEditing] = React.useState(false);
+    return {
+      isEditing,
+      startEditing: () => setIsEditing(true),
+      stopEditing: () => setIsEditing(false),
+    };
+  },
+  localTitle: ({
+    setBlockTitle,
+    stopEditing,
+    typeHeader,
+  }) => {
+    const [localTitle, setLocalTitle] = React.useState(typeHeader);
+    return {
+      updateTitle: () => {
+        setBlockTitle(localTitle);
+        stopEditing();
+      },
+      handleChange: (e) => setLocalTitle(e.target.value),
+      localTitle,
+    };
+  },
+  handleKeyDown: ({ stopEditing, editorRef }) => (e) => {
     if (e.key === 'Enter') {
       stopEditing();
     }
@@ -25,18 +33,31 @@ export const localTitleHooks = ({
       e.preventDefault();
       editorRef.current.focus();
     }
-  };
+  },
+};
 
-  const handleChange = (e) => setLocalTitle(e.target.value);
-
+/* eslint-disable import/prefer-default-export */
+export const localTitleHooks = ({
+  editorRef,
+  setBlockTitle,
+  typeHeader,
+}) => {
+  const { isEditing, startEditing, stopEditing } = module.hooks.isEditing();
+  const { localTitle, handleChange, updateTitle } = module.hooks.localTitle({
+    setBlockTitle,
+    stopEditing,
+    typeHeader,
+  });
   return {
     isEditing,
-    handleChange,
     startEditing,
     stopEditing,
+
     localTitle,
-    inputRef,
-    handleKeyDown,
     updateTitle,
+    handleChange,
+
+    inputRef: React.createRef(),
+    handleKeyDown: module.hooks.handleKeyDown({ stopEditing, editorRef }),
   };
 };
