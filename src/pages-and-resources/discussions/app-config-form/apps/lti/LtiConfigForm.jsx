@@ -62,9 +62,22 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
     <Card className="mb-5 p-5" data-testid="ltiConfigForm">
       <Form ref={formRef} onSubmit={handleSubmit}>
         <h3 className="mb-3">{providerName}</h3>
-        {showLTIConfig ? (
+        <p>
+          <FormattedMessage
+            {...messages.stuffOnlyConfig}
+            values={{
+              providerName,
+              platformName: getConfig().SITE_NAME,
+              supportEmail: supportEmail ? (
+                <MailtoLink to={supportEmail}>{supportEmail}</MailtoLink>
+              ) : (
+                'support'
+              ),
+            }}
+          />
+        </p>
+        {showLTIConfig && (
           <>
-            <p>{intl.formatMessage(messages.adminOnlyConfig, { providerName })}</p>
             <p>{intl.formatMessage(messages.formInstructions)}</p>
             <Form.Group
               controlId="consumerKey"
@@ -115,21 +128,6 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
               )}
             </Form.Group>
           </>
-        ) : (
-          <p>
-            <FormattedMessage
-              {...messages.stuffOnlyConfig}
-              values={{
-                providerName,
-                platformName: getConfig().SITE_NAME,
-                supportEmail: supportEmail ? (
-                  <MailtoLink to={supportEmail}>{supportEmail}</MailtoLink>
-                ) : (
-                  'support'
-                ),
-              }}
-            />
-          </p>
         )}
         {(enablePIISharing) && (
           <div data-testid="piiSharingFields">

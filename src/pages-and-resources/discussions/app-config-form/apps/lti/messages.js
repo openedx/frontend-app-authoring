@@ -43,10 +43,6 @@ const messages = defineMessages({
     id: 'authoring.discussions.stuffConfig',
     defaultMessage: '{providerName} can only be configured by {platformName} administrators. Please contact {supportEmail} to enable this feature. This will require sharing usernames and emails of learners and the course team with {providerName}',
   },
-  adminOnlyConfig: {
-    id: 'authoring.discussions.adminOnlyConfig',
-    defaultMessage: 'This configuration will require sharing usernames and emails of learners and the course team with {providerName}',
-  },
   piiSharing: {
     id: 'authoring.discussions.piiSharing',
     defaultMessage: 'Optionally share a user\'s username and/or email with the LTI provider:',
