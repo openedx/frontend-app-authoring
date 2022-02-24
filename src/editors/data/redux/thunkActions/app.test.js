@@ -1,11 +1,13 @@
-import { locationId } from './data/constants/app';
-
-import { actions } from './data/redux';
-import thunkActions from './app';
+import { actions } from '..';
+import * as thunkActions from './app';
 
 jest.mock('./requests', () => ({
-  initializeApp: (args) => ({ initializeApp: args }),
+  fetchBlock: (args) => ({ fetchBlock: args }),
+  fetchUnit: (args) => ({ fetchUnit: args }),
+  saveBlock: (args) => ({ saveBlock: args }),
 }));
+
+const testValue = 'test VALUE';
 
 describe('app thunkActions', () => {
   let dispatch;
@@ -13,30 +15,81 @@ describe('app thunkActions', () => {
   beforeEach(() => {
     dispatch = jest.fn((action) => ({ dispatch: action }));
   });
-  describe('initialize', () => {
+  describe('fetchBlock', () => {
     beforeEach(() => {
-      thunkActions.initialize()(dispatch);
+      thunkActions.fetchBlock()(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
     });
-    it('dispatches initializeApp with locationId and onSuccess', () => {
-      expect(dispatchedAction.initializeApp.locationId).toEqual(locationId);
-      expect(typeof dispatchedAction.initializeApp.onSuccess).toEqual('function');
+    it('dispatches fetchBlock action', () => {
+      expect(dispatchedAction.fetchBlock).not.toEqual(undefined);
     });
-    describe('on success', () => {
-      test('loads oraMetadata, courseMetadata and list data', () => {
-        dispatch.mockClear();
-        const response = {
-          oraMetadata: { some: 'ora-metadata' },
-          courseMetadata: { some: 'course-metadata' },
-          submissions: { some: 'submissions' },
-        };
-        dispatchedAction.initializeApp.onSuccess(response);
-        expect(dispatch.mock.calls).toEqual([
-          [actions.app.loadOraMetadata(response.oraMetadata)],
-          [actions.app.loadCourseMetadata(response.courseMetadata)],
-          [actions.submissions.loadList(response.submissions)],
-        ]);
-      });
+    it('dispatches actions.app.setBlockValue on success', () => {
+      dispatch.mockClear();
+      dispatchedAction.fetchBlock.onSuccess(testValue);
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setBlockValue(testValue));
+    });
+    it('dispatches actions.app.setBlockValue on failure', () => {
+      dispatch.mockClear();
+      dispatchedAction.fetchBlock.onFailure(testValue);
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setBlockValue(testValue));
+    });
+  });
+  describe('fetchUnit', () => {
+    beforeEach(() => {
+      thunkActions.fetchUnit()(dispatch);
+      [[dispatchedAction]] = dispatch.mock.calls;
+    });
+    it('dispatches fetchUnit action', () => {
+      expect(dispatchedAction.fetchUnit).not.toEqual(undefined);
+    });
+    it('dispatches actions.app.setUnitUrl on success', () => {
+      dispatch.mockClear();
+      dispatchedAction.fetchUnit.onSuccess(testValue);
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setUnitUrl(testValue));
+    });
+    it('dispatches actions.app.setUnitUrl on failure', () => {
+      dispatch.mockClear();
+      dispatchedAction.fetchUnit.onFailure(testValue);
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setUnitUrl(testValue));
+    });
+  });
+  describe('initialize', () => {
+    it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
+      const { fetchBlock, fetchUnit } = thunkActions;
+      thunkActions.fetchBlock = () => 'fetchBlock';
+      thunkActions.fetchUnit = () => 'fetchUnit';
+      thunkActions.initialize(testValue)(dispatch);
+      expect(dispatch.mock.calls).toEqual([
+        [actions.app.initialize(testValue)],
+        [thunkActions.fetchBlock()],
+        [thunkActions.fetchUnit()],
+      ]);
+      thunkActions.fetchBlock = fetchBlock;
+      thunkActions.fetchUnit = fetchUnit;
+    });
+  });
+  describe('saveBlock', () => {
+    let returnToUnit;
+    let calls;
+    beforeEach(() => {
+      returnToUnit = jest.fn();
+      thunkActions.saveBlock({ content: testValue, returnToUnit })(dispatch);
+      calls = dispatch.mock.calls;
+    });
+    it('dispatches actions.app.setBlockContent with content, before dispatching saveBlock', () => {
+      expect(calls[0]).toEqual([actions.app.setBlockContent(testValue)]);
+      const saveCall = calls[1][0];
+      expect(saveCall.saveBlock).not.toEqual(undefined);
+    });
+    it('dispatches saveBlock with passed content', () => {
+      expect(calls[1][0].saveBlock.content).toEqual(testValue);
+    });
+    it('dispatches actions.app.setSaveResponse with response and then calls returnToUnit', () => {
+      dispatch.mockClear();
+      const response = 'testRESPONSE';
+      calls[1][0].saveBlock.onSuccess(response);
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setSaveResponse(response));
+      expect(returnToUnit).toHaveBeenCalled();
     });
   });
 });

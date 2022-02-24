@@ -3,11 +3,11 @@ import thunkMiddleware from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension/logOnlyInProduction';
 import { createLogger } from 'redux-logger';
 
-import rootReducer, { actions, selectors } from 'data/redux';
+import rootReducer, { actions, selectors } from './redux';
 
 import exportedStore, { createStore } from './store';
 
-jest.mock('data/redux', () => ({
+jest.mock('./redux', () => ({
   __esModule: true,
   default: 'REDUCER',
   actions: 'ACTIONS',

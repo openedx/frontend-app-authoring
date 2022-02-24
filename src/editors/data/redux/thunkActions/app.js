@@ -1,6 +1,7 @@
 import { StrictDict } from '../../../utils';
-import { actions, selectors } from '..';
+import { actions } from '..';
 import * as requests from './requests';
+import * as module from './app';
 
 export const fetchBlock = () => (dispatch) => {
   dispatch(requests.fetchBlock({
@@ -24,14 +25,14 @@ export const fetchUnit = () => (dispatch) => {
  */
 export const initialize = (data) => (dispatch) => {
   dispatch(actions.app.initialize(data));
-  dispatch(fetchBlock());
-  dispatch(fetchUnit());
+  dispatch(module.fetchBlock());
+  dispatch(module.fetchUnit());
 };
 
 /**
  * @param {func} onSuccess
  */
-export const saveBlock = ({ content, returnToUnit }) => (dispatch, getState) => {
+export const saveBlock = ({ content, returnToUnit }) => (dispatch) => {
   dispatch(actions.app.setBlockContent(content));
   dispatch(requests.saveBlock({
     content,
