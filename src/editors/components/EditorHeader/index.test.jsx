@@ -1,58 +1,56 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import EditorHeader from './EditorHeader';
-import EditorPageContext from './EditorPageContext';
-import { ActionStates } from './data/constants';
+import { shallow } from 'enzyme';
 
-const locationTemp = window.location;
-beforeEach(() => {
-  delete window.location;
-  window.location = {
-    assign: jest.fn(),
-  };
-});
-afterAll(() => {
-  window.location = locationTemp;
-});
+import { IconButton } from '@edx/paragon';
+import * as module from './index';
+import { selectors } from '../../data/redux';
+import * as appHooks from '../../hooks';
 
-test('Rendering And Click Close Button: Does not Navigate off of Page When Loading', () => {
-  const title = 'An Awesome Block';
-  const context = {
-    unitUrlLoading: ActionStates.IN_PROGRESS,
-  };
-  render(
-    <EditorPageContext.Provider value={context}>
-      <EditorHeader title={title} />
-    </EditorPageContext.Provider>,
-  );
-  expect(screen.getByText(title)).toBeTruthy();
-  expect(screen.getByLabelText('Close')).toBeTruthy();
-  userEvent.click(screen.getByLabelText('Close'));
-  expect(window.location.assign).not.toHaveBeenCalled();
-});
+jest.mock('.', () => ({
+  __esModule: true, // Use it when dealing with esModules
+  ...jest.requireActual('./index'),
+  handleCloseClicked: jest.fn(args => ({ handleCloseClicked: args })),
+}));
 
-test('Rendering And Click Button: Loaded Navigates Away', () => {
-  const title = 'An Awesome Block';
-  const context = {
-    unitUrlLoading: ActionStates.FINISHED,
-    unitUrl: {
-      data: {
-        ancestors:
-        [
-          { id: 'fakeblockid' },
-        ],
-      },
+jest.mock('../../data/redux', () => ({
+  selectors: {
+    app: {
+      returnUrl: jest.fn().mockName('actions.app.returnUrl'),
     },
-    studioEndpointUrl: 'Testurl',
+  },
+}));
+
+jest.mock('../../hooks', () => ({
+  navigateCallback: jest.fn(),
+}));
+
+jest.mock('./HeaderTitle', () => 'HeaderTitle');
+
+describe('Editor Header index', () => {
+  const props = {
+    returnUrl: 'TeST-ReTurNurL',
   };
-  render(
-    <EditorPageContext.Provider value={context}>
-      <EditorHeader title={title} />
-    </EditorPageContext.Provider>,
-  );
-  expect(screen.getByText(title)).toBeTruthy();
-  expect(screen.getByLabelText('Close')).toBeTruthy();
-  userEvent.click(screen.getByLabelText('Close'));
-  expect(window.location.assign).toHaveBeenCalled();
+  const { EditorHeader } = module;
+  let el;
+  el = shallow(<EditorHeader {...props} />);
+  
+  describe('behavior', () => {
+    test('IconButton onClick calls navigateCallback', () => {
+      const iconButtonControl = el.find(IconButton);
+      iconButtonControl.simulate('click');
+      expect(appHooks.navigateCallback).toHaveBeenCalledWith(props.returnUrl);
+    });
+  });
+
+  describe('snapshot', () => {
+    expect(el).toMatchSnapshot();
+  });
+
+  describe('mapStateToProps', () => {
+    const testState = { T: 'est', S: 'tate' };
+    test('returnUrl from app.returnUrl', () => {
+      expect(module.mapStateToProps(testState).returnUrl)
+        .toEqual(selectors.app.returnUrl(testState));
+    });
+  });
 });

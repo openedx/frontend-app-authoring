@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[` 1`] = `
+<div
+  className="editor-header"
+>
+  <ModalDialog.Header>
+    <ActionRow>
+      <ModalDialog.Title>
+        <HeaderTitle />
+      </ModalDialog.Title>
+      <ActionRow.Spacer />
+      <IconButton
+        alt="Close"
+        aria-label="Cancel Changes and Return to Learning Context"
+        className="mr-2"
+        iconAs="Icon"
+        src={[MockFunction icons.Close]}
+        variant="light"
+      />
+    </ActionRow>
+  </ModalDialog.Header>
+</div>
+`;

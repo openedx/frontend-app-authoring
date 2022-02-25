@@ -58,7 +58,9 @@ jest.mock('@edx/frontend-platform/i18n', () => {
 });
 
 jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedComponents({
-  ActionRow: 'ActionRow',
+  ActionRow: {
+    Spacer: 'ActionRow.Spacer',
+  },
   Button: 'Button',
   Icon: 'Icon',
   IconButton: 'IconButton',

@@ -40,7 +40,6 @@ export const TextEditor = ({
   blockFinished,
   initializeEditor,
 }) => {
-  console.log({ blockValue, blockFailed, blockFinished, test: 1 });
   const { isOpen, openModal, closeModal } = modalToggle();
 
   return (
@@ -61,7 +60,10 @@ export const TextEditor = ({
           </div>
         )
         : (
-          <Editor {...editorConfig({ setEditorRef, blockValue, openModal, initializeEditor })} />
+          <Editor {...editorConfig({
+            setEditorRef, blockValue, openModal, initializeEditor,
+          })}
+          />
         )}
     </div>
   );
@@ -87,7 +89,7 @@ export const mapStateToProps = (state) => ({
 });
 
 export const mapDispatchToProps = {
- initializeEditor: actions.app.initializeEditor,
+  initializeEditor: actions.app.initializeEditor,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TextEditor);
