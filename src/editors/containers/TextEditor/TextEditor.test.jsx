@@ -1,51 +1,91 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import TextEditor from './TextEditor';
-import EditorPageContext from '../EditorPageContext';
-import { ActionStates } from '../data/constants';
+import { shallow } from 'enzyme';
+import { TextEditor, mapStateToProps, mapDispatchToProps } from './TextEditor';
+import { actions, selectors } from '../../data/redux';
+import { RequestKeys } from '../../data/constants/requests';
+import { modalToggle } from './hooks';
 
 // Per https://github.com/tinymce/tinymce-react/issues/91 React unit testing in JSDOM is not supported by tinymce.
 // Consequently, mock the Editor out.
-const mockRole = 'Tiny-MCE-Mock';
 jest.mock('@tinymce/tinymce-react', () => {
   const originalModule = jest.requireActual('@tinymce/tinymce-react');
   return {
     __esModule: true,
     ...originalModule,
-    Editor: () => <div role={mockRole} />
+    Editor: () => 'TiNYmCE EDitOR'
     ,
   };
 });
 
-test('Loading State:', () => {
-  const context = {
-    blockValue: null,
-    blockError: null,
-    blockLoading: ActionStates.IN_PROGRESS,
-    editorRef: null,
+jest.mock('./hooks', () => ({
+  editorConfig: jest.fn(args => ({ editorConfig: args })),
+  modalToggle: jest.fn(args => ({ modalToggle: args })),
+  nullMethod: jest.fn().mockName('nullMethod'),
+}));
+
+jest.mock('../../data/redux', () => ({
+  actions: {
+    app: {
+      initializeEditor: jest.fn().mockName('actions.app.initializeEditor'),
+    },
+  },
+  selectors: {
+    app: {
+      blockValue: jest.fn(state => ({ blockValue: state })),
+    },
+    requests: {
+      isFailed: jest.fn((state, params) => ({ isFailed: { state, params } })),
+      isFinished: jest.fn((state, params) => ({ isFailed: { state, params } })),
+    },
+  },
+}));
+
+describe('TextEditor', () => {
+  const props = {
+    setEditorRef: jest.fn().mockName('args.setEditorRef'),
+    // redux
+    blockValue: { data: 'eDiTablE Text' },
+    blockFailed: false,
+    blockFinished: true,
+    initializeEditor: jest.fn().mockName('args.intializeEditor'),
   };
-  render(
-    <EditorPageContext.Provider value={context}>
-      <TextEditor />
-    </EditorPageContext.Provider>,
-  );
-  expect(screen.queryByRole(mockRole)).not.toBeTruthy();
-});
-test('Loaded State-- No Error', () => {
-  const htmltext = 'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
-  const context = {
-    blockValue:
-      {
-        data:
-      { data: { htmltext } },
-      },
-    blockError: null,
-    blockLoading: ActionStates.FINISHED,
-  };
-  render(
-    <EditorPageContext.Provider value={context}>
-      <TextEditor />
-    </EditorPageContext.Provider>,
-  );
-  expect(screen.findByRole(mockRole)).toBeTruthy();
+  describe('snapshots', () => {
+    modalToggle.mockReturnValue({
+      isOpen: false,
+      openModal: jest.fn().mockName('modal.openModal'),
+      closeModal: jest.fn().mockName('modal.closeModal'),
+    });
+    test('renders as expected with default behavior', () => {
+      expect(shallow(<TextEditor {...props} />)).toMatchSnapshot();
+    });
+    test('not yet loaded, Spinner appears', () => {
+      expect(shallow(<TextEditor {...props} blockFinished={false} />)).toMatchSnapshot();
+    });
+    test('block failed to load, Toast is shown', () => {
+      expect(shallow(<TextEditor {...props} blockFailed />)).toMatchSnapshot();
+    });
+  });
+  describe('mapStateToProps', () => {
+    const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
+    test('blockValue from app.blockValue', () => {
+      expect(
+        mapStateToProps(testState).blockValue,
+      ).toEqual(selectors.app.blockValue(testState));
+    });
+    test('blockFailed from requests.isFailed', () => {
+      expect(
+        mapStateToProps(testState).blockFailed,
+      ).toEqual(selectors.requests.isFailed(testState, { requestKey: RequestKeys.fetchBlock }));
+    });
+    test('blockFinished from requests.isFinished', () => {
+      expect(
+        mapStateToProps(testState).blockFinished,
+      ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchBlock }));
+    });
+  });
+  describe('mapDispatchToProps', () => {
+    test('initializeEditor from actions.app.initializeEditor', () => {
+      expect(mapDispatchToProps.initializeEditor).toEqual(actions.app.initializeEditor);
+    });
+  });
 });

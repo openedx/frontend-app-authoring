@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
+<div
+  className="editor-body h-75"
+>
+  <ImageUploadModal
+    close={[MockFunction modal.closeModal]}
+    isOpen={false}
+  />
+  <Toast
+    onClose={[MockFunction nullMethod]}
+    show={true}
+  >
+    <FormattedMessage
+      defaultMessage="Error: Could Not Load Text Content"
+      description="Error Message Dispayed When HTML content fails to Load"
+      id="authoring.texteditor.load.error"
+    />
+  </Toast>
+  <Editor
+    editorConfig={
+      Object {
+        "blockValue": Object {
+          "data": "HYleTsEditTeaxt",
+        },
+        "initializeEditor": [MockFunction args.intializeEditor],
+        "openModal": [MockFunction modal.openModal],
+        "setEditorRef": [MockFunction args.setEditorRef],
+      }
+    }
+  />
+</div>
+`;
+
+exports[`TextEditor snapshots not yet loaded, Spinner appears 1`] = `
+<div
+  className="editor-body h-75"
+>
+  <ImageUploadModal
+    close={[MockFunction modal.closeModal]}
+    isOpen={false}
+  />
+  <Toast
+    onClose={[MockFunction nullMethod]}
+    show={false}
+  >
+    <FormattedMessage
+      defaultMessage="Error: Could Not Load Text Content"
+      description="Error Message Dispayed When HTML content fails to Load"
+      id="authoring.texteditor.load.error"
+    />
+  </Toast>
+  <div
+    className="text-center p-6"
+  >
+    <Spinner
+      animation="border"
+      className="m-3"
+      screenreadertext="loading"
+    />
+  </div>
+</div>
+`;
+
+exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
+<div
+  className="editor-body h-75"
+>
+  <ImageUploadModal
+    close={[MockFunction modal.closeModal]}
+    isOpen={false}
+  />
+  <Toast
+    onClose={[MockFunction nullMethod]}
+    show={false}
+  >
+    <FormattedMessage
+      defaultMessage="Error: Could Not Load Text Content"
+      description="Error Message Dispayed When HTML content fails to Load"
+      id="authoring.texteditor.load.error"
+    />
+  </Toast>
+  <Editor
+    editorConfig={
+      Object {
+        "blockValue": Object {
+          "data": "HYleTsEditTeaxt",
+        },
+        "initializeEditor": [MockFunction args.intializeEditor],
+        "openModal": [MockFunction modal.openModal],
+        "setEditorRef": [MockFunction args.setEditorRef],
+      }
+    }
+  />
+</div>
+`;
