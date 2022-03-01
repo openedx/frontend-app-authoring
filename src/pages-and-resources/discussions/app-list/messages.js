@@ -48,7 +48,7 @@ const messages = defineMessages({
   // Legacy
   'appName-legacy': {
     id: 'authoring.discussions.appList.appName-legacy',
-    defaultMessage: 'edX (Legacy)',
+    defaultMessage: 'edX',
     description: 'The name of the Legacy edX Discussions app.',
   },
   'appDescription-legacy': {
