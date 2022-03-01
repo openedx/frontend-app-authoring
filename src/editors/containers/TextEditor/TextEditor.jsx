@@ -30,7 +30,7 @@ import {
   nullMethod,
 } from './hooks';
 import messages from './messages';
-import ImageUploadModal from './ImageUpload/ImageUploadModal';
+import ImageUploadModal from './components/ImageUploadModal';
 
 export const TextEditor = ({
   setEditorRef,
@@ -60,9 +60,13 @@ export const TextEditor = ({
           </div>
         )
         : (
-          <Editor {...editorConfig({
-            setEditorRef, blockValue, openModal, initializeEditor,
-          })}
+          <Editor
+            {...editorConfig({
+              setEditorRef,
+              blockValue,
+              openModal,
+              initializeEditor,
+            })}
           />
         )}
     </div>

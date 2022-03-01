@@ -37,10 +37,14 @@ export const isInitialized = createSelector(
 
 export const typeHeader = createSelector(
   [module.simpleSelectors.blockType],
-  (blockType) => ((blockType === blockTypes.html)
-    ? 'Text'
-    : blockType[0].toUpperCase() + blockType.substring(1)
-  ),
+  (blockType) => {
+    if (blockType === null) {
+      return null;
+    }
+    return (blockType === blockTypes.html)
+      ? 'Text'
+      : blockType[0].toUpperCase() + blockType.substring(1);
+  },
 );
 
 export default {

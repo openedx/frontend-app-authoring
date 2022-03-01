@@ -87,6 +87,9 @@ describe('app selectors unit tests', () => {
     it('is memoized based on blockType', () => {
       expect(selectors.typeHeader.preSelectors).toEqual([simpleSelectors.blockType]);
     });
+    it('returns null if blockType is null', () => {
+      expect(selectors.typeHeader.cb(null)).toEqual(null);
+    });
     it('returns Text if the blockType is html', () => {
       expect(selectors.typeHeader.cb('html')).toEqual('Text');
     });

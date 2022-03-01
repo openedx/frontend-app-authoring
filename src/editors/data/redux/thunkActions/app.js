@@ -1,4 +1,5 @@
 import { StrictDict } from '../../../utils';
+import mockData from '../../constants/mockData';
 import { actions } from '..';
 import * as requests from './requests';
 import * as module from './app';
@@ -43,9 +44,15 @@ export const saveBlock = ({ content, returnToUnit }) => (dispatch) => {
   }));
 };
 
+export const fetchImages = ({ onSuccess }) => () => {
+  // get images
+  onSuccess(mockData.mockImageData);
+};
+
 export default StrictDict({
   fetchBlock,
   fetchUnit,
   initialize,
   saveBlock,
+  fetchImages,
 });
