@@ -57,11 +57,11 @@ describe('HeaderTitle', () => {
       expect(shallow(<module.HeaderTitle {...props} />)).toMatchSnapshot();
     });
     test('initialized', () => {
-      localTitleHooks.mockReturnValue(hookProps);
+      localTitleHooks.mockReturnValue(localTitleHooksProps);
       expect(shallow(<module.HeaderTitle {...props} isInitialized />)).toMatchSnapshot();
     });
     test('editing', () => {
-      localTitleHooks.mockReturnValue({ ...hookProps, isEditing: true });
+      localTitleHooks.mockReturnValue({ ...localTitleHooksProps, isEditing: true });
       expect(shallow(<module.HeaderTitle {...props} isInitialized />)).toMatchSnapshot();
     });
   });

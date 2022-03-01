@@ -31,9 +31,8 @@ describe('Editor Header index', () => {
     returnUrl: 'TeST-ReTurNurL',
   };
   const { EditorHeader } = module;
-  let el;
-  el = shallow(<EditorHeader {...props} />);
-  
+  const el = shallow(<EditorHeader {...props} />);
+
   describe('behavior', () => {
     test('IconButton onClick calls navigateCallback', () => {
       const iconButtonControl = el.find(IconButton);

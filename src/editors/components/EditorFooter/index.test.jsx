@@ -23,11 +23,11 @@ jest.mock('../../data/redux', () => ({
 }));
 
 jest.mock('.', () => ({
-    __esModule: true, // Use it when dealing with esModules
-    ...jest.requireActual('./index'),
-    handleCancelClicked: jest.fn(args => ({ handleCancelClicked: args })),
-    handleSaveClicked: jest.fn(args => ({ handleSaveClicked: args })),
-  }
+  __esModule: true, // Use it when dealing with esModules
+  ...jest.requireActual('./index'),
+  handleCancelClicked: jest.fn(args => ({ handleCancelClicked: args })),
+  handleSaveClicked: jest.fn(args => ({ handleSaveClicked: args })),
+}
 ));
 
 jest.mock('../../hooks', () => ({

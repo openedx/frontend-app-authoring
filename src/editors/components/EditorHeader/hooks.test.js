@@ -132,7 +132,7 @@ describe('EditorHeader hooks', () => {
       expect(output.startEditing).toEqual(values.startEditing);
       expect(output.stopEditing).toEqual(values.stopEditing);
     });
-    it('returns localTitle, updateTitle, and handleChange, tied to the localTitle hook', () => { 
+    it('returns localTitle, updateTitle, and handleChange, tied to the localTitle hook', () => {
       expect(output.updateTitle).toEqual({
         setBlockTitle,
         stopEditing: values.stopEditing,

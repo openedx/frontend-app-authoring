@@ -1,66 +1,83 @@
-import axios from 'axios'; // eslint-disable-line import/no-extraneous-dependencies
-import { fetchBlockById, fetchUnitById, saveBlock } from './api';
+import {
+  fetchBlockById, fetchByUnitId, normalizeContent, saveBlock,
+} from './api';
+import * as urls from './urls';
+import { get, post } from './utils';
 
-const get = jest.spyOn(axios, 'get');
-const post = jest.spyOn(axios, 'post');
+jest.mock('./urls', () => ({
+  block: jest.fn().mockName('urls.block'),
+  blockAncestor: jest.fn().mockName('urls.blockAncestor'),
+}));
 
-const saveFunctionsGet = {
-  setValue: jest.fn(),
-  setError: jest.fn(),
-  setLoading: jest.fn(),
-};
-const saveFunctionsSave = {
-  setResponse: jest.fn(),
-  setInProgress: jest.fn(),
-};
+jest.mock('./utils', () => ({
+  get: jest.fn().mockName('get'),
+  post: jest.fn().mockName('post'),
+}));
+
 const blockId = 'coursev1:2uX@4345432';
+const content = 'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
+const courseId = 'demo2uX';
 const studioEndpointUrl = 'hortus.coa';
+const title = 'remember this needs to go into metadata to save';
 
-test('fetchBlockById 404', () => {
-  get.mockRejectedValue({ response: { status: 404 } });
-  fetchBlockById(saveFunctionsGet, blockId, studioEndpointUrl);
-  expect(saveFunctionsGet.setLoading).toHaveBeenCalled();
-  expect(saveFunctionsGet.setError).toHaveBeenCalled();
-});
-test('fetchBlockById 403', () => {
-  get.mockRejectedValue({ response: { status: 403 } });
-  fetchBlockById(saveFunctionsGet, blockId, studioEndpointUrl);
-  expect(saveFunctionsGet.setLoading).toHaveBeenCalled();
-  expect(saveFunctionsGet.setError).toHaveBeenCalled();
-});
-test('fetchBlockById 408', () => {
-  get.mockRejectedValue({ response: { status: 408 } });
-  fetchBlockById(saveFunctionsGet, blockId, studioEndpointUrl);
-  expect(saveFunctionsGet.setLoading).toHaveBeenCalled();
-  expect(saveFunctionsGet.setError).toHaveBeenCalled();
-});
-test('fetchBlockById 404', () => {
-  get.mockRejectedValue({ response: { status: 404 } });
-  fetchBlockById(saveFunctionsGet, blockId, studioEndpointUrl);
-  expect(saveFunctionsGet.setLoading).toHaveBeenCalled();
-  expect(saveFunctionsGet.setError).toHaveBeenCalled();
-});
-test('fetchUnitById 401', () => {
-  get.mockRejectedValue({ response: { status: 401 } });
-  fetchUnitById(saveFunctionsGet, blockId, studioEndpointUrl);
-  expect(saveFunctionsGet.setLoading).toHaveBeenCalled();
-  expect(saveFunctionsGet.setError).toHaveBeenCalled();
-});
-test('fetchUnitById 404', () => {
-  get.mockRejectedValue({ response: { status: 404 } });
-  fetchUnitById(saveFunctionsGet, blockId, studioEndpointUrl);
-  expect(saveFunctionsGet.setLoading).toHaveBeenCalled();
-  expect(saveFunctionsGet.setError).toHaveBeenCalled();
-});
-test('saveBlock 408', () => {
-  post.mockRejectedValue({ response: { status: 408 } });
-  saveBlock(blockId, 'html', 'demo2uX', studioEndpointUrl, 'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.', saveFunctionsSave);
-  expect(saveFunctionsSave.setInProgress).toHaveBeenCalled();
-  expect(saveFunctionsSave.setResponse).toHaveBeenCalled();
-});
-test('saveBlock 404', () => {
-  post.mockRejectedValue({ response: { status: 404 } });
-  saveBlock(blockId, 'html', 'demo2uX', studioEndpointUrl, 'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.', saveFunctionsSave);
-  expect(saveFunctionsSave.setInProgress).toHaveBeenCalled();
-  expect(saveFunctionsSave.setResponse).toHaveBeenCalled();
+describe('cms api', () => {
+  describe('fetchBlockId', () => {
+    it('should call get with url.blocks', () => {
+      fetchBlockById({ blockId, studioEndpointUrl });
+      expect(get).toHaveBeenCalledWith(urls.block({ blockId, studioEndpointUrl }));
+    });
+  });
+
+  describe('fetchByUnitId', () => {
+    it('should call get with url.blockAncestor', () => {
+      fetchByUnitId({ blockId, studioEndpointUrl });
+      expect(get).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }));
+    });
+  });
+
+  describe('normalizeContent', () => {
+    test('return value for blockType: html', () => {
+      expect(normalizeContent({
+        blockId,
+        blockType: 'html',
+        content,
+        courseId,
+        title,
+      })).toEqual({
+        category: 'html',
+        couseKey: courseId,
+        data: content,
+        has_changes: true,
+        id: blockId,
+        metadata: { display_name: title },
+      });
+    });
+    test('throw error for invalid blockType', () => {
+      expect(() => { normalizeContent({ blockType: 'somethingINVALID' }); })
+        .toThrow(TypeError);
+    });
+  });
+
+  describe('saveBlock', () => {
+    it('should call post with urls.block and normalizeContent', () => {
+      saveBlock({
+        blockId,
+        blockType: 'html',
+        content,
+        courseId,
+        studioEndpointUrl,
+        title,
+      });
+      expect(post).toHaveBeenCalledWith(
+        urls.block({ studioEndpointUrl }),
+        normalizeContent({
+          blockType: 'html',
+          content,
+          blockId,
+          courseId,
+          title,
+        }),
+      );
+    });
+  });
 });
