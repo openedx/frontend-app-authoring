@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Hyperlink } from '@edx/paragon';
 import messages from './messages';
 import DiscussionsSettings from './discussions';
+import LiveSettings from './live';
 
 import PageGrid from './pages/PageGrid';
 import { fetchCourseApps } from './data/thunks';
@@ -61,6 +62,14 @@ function PagesAndResources({ courseId, intl }) {
             ]}
           >
             <DiscussionsSettings courseId={courseId} />
+          </PageRoute>
+          <PageRoute
+            path={[
+              `${path}/live/configure/:appId`,
+              `${path}/live`,
+            ]}
+          >
+            <LiveSettings courseId={courseId} />
           </PageRoute>
           <PageRoute path={`${path}/:appId/settings`}>
             {

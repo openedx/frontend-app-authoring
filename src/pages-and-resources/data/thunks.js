@@ -21,6 +21,7 @@ const COURSE_APPS_ORDER = [
   'wiki',
   'calculator',
   'proctoring',
+  'live',
   'textbooks',
   'custom_pages',
 ];
@@ -32,6 +33,16 @@ export function fetchCourseApps(courseId) {
 
     try {
       const courseApps = await getCourseApps(courseId);
+      courseApps.push({
+        allowedOperations: { enable: false, configure: true },
+        description: 'Enable in-plateform video conferencing by configuring Zoom',
+        documentationLinks: {
+          learnMoreConfiguration: 'https://edx.readthedocs.io/projects/open-edx-build…ress#hiding-or-showing-the-wiki-or-progress-pages',
+        },
+        enabled: true,
+        id: 'live',
+        name: 'Live',
+      });
 
       courseApps.sort((firstEl, secondEl) => (
         COURSE_APPS_ORDER.indexOf(firstEl.id) - COURSE_APPS_ORDER.indexOf(secondEl.id)));
