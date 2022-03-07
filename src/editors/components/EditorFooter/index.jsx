@@ -10,7 +10,7 @@ import {
   Toast,
 } from '@edx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { nullMethod, saveTextBlock, navigateCallback } from '../../hooks';
+import { nullMethod, saveBlock, navigateCallback } from '../../hooks';
 
 import { RequestKeys } from '../../data/constants/requests';
 import { selectors, thunkActions } from '../../data/redux';
@@ -18,7 +18,7 @@ import { selectors, thunkActions } from '../../data/redux';
 import messages from '../messages';
 import * as module from '.';
 
-export const handleSaveClicked = (props) => () => saveTextBlock(props);
+export const handleSaveClicked = (props) => () => saveBlock(props);
 export const handleCancelClicked = ({ returnUrl }) => navigateCallback(returnUrl);
 
 export const EditorFooter = ({

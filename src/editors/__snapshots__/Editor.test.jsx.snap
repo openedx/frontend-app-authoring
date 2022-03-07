@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Editor snapshots presents error message if no relevant editor found and ref ready 1`] = `
+<div
+  className="d-flex flex-column vh-100"
+>
+  <div
+    aria-label="fAkEBlock"
+    className="pgn__modal-fullscreen"
+    role="dialog"
+  >
+    <EditorHeader
+      editorRef={
+        Object {
+          "current": "ref",
+        }
+      }
+    />
+    <FormattedMessage
+      defaultMessage="Error: Could Not find Editor"
+      description="Error Message Dispayed When An unsopported Editor is desired in V2"
+      id="authoring.editorpage.selecteditor.error"
+    />
+    <EditorFooter
+      editorRef={
+        Object {
+          "current": "ref",
+        }
+      }
+    />
+  </div>
+</div>
+`;
+
+exports[`Editor snapshots renders "html" editor when ref is ready 1`] = `
+<div
+  className="d-flex flex-column vh-100"
+>
+  <div
+    aria-label="html"
+    className="pgn__modal-fullscreen"
+    role="dialog"
+  >
+    <EditorHeader
+      editorRef={
+        Object {
+          "current": "ref",
+        }
+      }
+    />
+    <TextEditor
+      setEditorRef={[MockFunction setEditorRef]}
+    />
+    <EditorFooter
+      editorRef={
+        Object {
+          "current": "ref",
+        }
+      }
+    />
+  </div>
+</div>
+`;
+
+exports[`Editor snapshots renders no editor when ref isnt ready 1`] = `
+<div
+  className="d-flex flex-column vh-100"
+>
+  <div
+    aria-label="AblOck"
+    className="pgn__modal-fullscreen"
+    role="dialog"
+  />
+</div>
+`;

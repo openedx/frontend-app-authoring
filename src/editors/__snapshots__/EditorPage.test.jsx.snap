@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Editor Page snapshots rendering correctly with expected Input 1`] = `
+<Provider
+  store={
+    Object {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(Symbol.observable): [Function],
+    }
+  }
+>
+  <Editor
+    blockId="block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4"
+    blockType="html"
+    courseId="course-v1:edX+DemoX+Demo_Course"
+    studioEndpointUrl="fakeurl.com"
+  />
+</Provider>
+`;
