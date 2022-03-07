@@ -2,11 +2,11 @@
 
 exports[`HeaderTitle snapshots editing 1`] = `
 <EditableHeader
-  handleChange={[MockFunction titleHooks.handleChange]}
-  handleKeyDown={[MockFunction titleHooks.handleKeyDown]}
-  inputRef={[MockFunction titleHooks.inputRef]}
+  handleChange={[MockFunction localTitleHooks.handleChange]}
+  handleKeyDown={[MockFunction localTitleHooks.handleKeyDown]}
+  inputRef={[MockFunction localTitleHooks.inputRef]}
   localTitle="TeST LocALtitLE"
-  updateTitle={[MockFunction titleHooks.updateTitle]}
+  updateTitle={[MockFunction localTitleHooks.updateTitle]}
 />
 `;
 
@@ -29,7 +29,7 @@ exports[`HeaderTitle snapshots initialized 1`] = `
     aria-label="Edit Title"
     className="mr-2"
     iconAs="Icon"
-    onClick={[MockFunction titleHooks.startEditing]}
+    onClick={[MockFunction localTitleHooks.startEditing]}
     size="sm"
     src={[MockFunction icons.Edit]}
   />

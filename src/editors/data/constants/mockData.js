@@ -1,4 +1,5 @@
-/* eslint-disable import/prefer-default-export */
+import { blockTypes } from './app';
+
 export const mockImageData = [
   {
     displayName: 'shahrukh.jpg',
@@ -45,3 +46,5 @@ export const mockImageData = [
     id: 'asset-v1:edX+test101+2021_T1+type@asset+block@Tennis_Ball.jpeg',
   },
 ];
+
+export const mockBlockIdByType = (type) => `${type}-block-id`;

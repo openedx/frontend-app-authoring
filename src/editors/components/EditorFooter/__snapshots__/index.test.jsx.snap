@@ -14,9 +14,9 @@ exports[`EditorFooter snapshots Save Failed, error message raised 1`] = `
       id="authoring.editorfooter.save.error"
     />
   </Toast>
-  <Component>
+  <ModalDialog.Footer>
     <ActionRow>
-      <Component />
+      <ActionRow.Spacer />
       <Button
         aria-label="Discard Changes and Return to Learning Context"
         onClick={
@@ -50,7 +50,7 @@ exports[`EditorFooter snapshots Save Failed, error message raised 1`] = `
         />
       </Button>
     </ActionRow>
-  </Component>
+  </ModalDialog.Footer>
 </div>
 `;
 
@@ -58,9 +58,9 @@ exports[`EditorFooter snapshots not intialized, Spinner appears and button is di
 <div
   className="editor-footer mt-auto"
 >
-  <Component>
+  <ModalDialog.Footer>
     <ActionRow>
-      <Component />
+      <ActionRow.Spacer />
       <Button
         aria-label="Discard Changes and Return to Learning Context"
         onClick={
@@ -93,7 +93,7 @@ exports[`EditorFooter snapshots not intialized, Spinner appears and button is di
         />
       </Button>
     </ActionRow>
-  </Component>
+  </ModalDialog.Footer>
 </div>
 `;
 
@@ -101,9 +101,9 @@ exports[`EditorFooter snapshots renders as expected with default behavior 1`] = 
 <div
   className="editor-footer mt-auto"
 >
-  <Component>
+  <ModalDialog.Footer>
     <ActionRow>
-      <Component />
+      <ActionRow.Spacer />
       <Button
         aria-label="Discard Changes and Return to Learning Context"
         onClick={
@@ -137,6 +137,6 @@ exports[`EditorFooter snapshots renders as expected with default behavior 1`] = 
         />
       </Button>
     </ActionRow>
-  </Component>
+  </ModalDialog.Footer>
 </div>
 `;

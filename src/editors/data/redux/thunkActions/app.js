@@ -1,5 +1,5 @@
 import { StrictDict } from '../../../utils';
-import mockData from '../../constants/mockData';
+import * as mockData from '../../constants/mockData';
 import { actions } from '..';
 import * as requests from './requests';
 import * as module from './app';

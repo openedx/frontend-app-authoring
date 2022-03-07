@@ -27,8 +27,7 @@ jest.mock('.', () => ({
   ...jest.requireActual('./index'),
   handleCancelClicked: jest.fn(args => ({ handleCancelClicked: args })),
   handleSaveClicked: jest.fn(args => ({ handleSaveClicked: args })),
-}
-));
+}));
 
 jest.mock('../../hooks', () => ({
   saveTextBlock: jest.fn(),

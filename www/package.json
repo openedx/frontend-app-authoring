@@ -1,0 +1,26 @@
+{
+  "name": "content-components-gallery",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.jsx",
+  "scripts": {
+    "start": "fedx-scripts webpack-dev-server --progress",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@edx/brand": "npm:@edx/brand-openedx@1.1.0",
+    "@edx/frontend-build": "^9.1.1",
+    "@edx/frontend-platform": "^1.15.0",
+    "@edx/frontend-lib-content-components": "file:..",
+    "@edx/paragon": "16.17.0",
+    "core-js": "^3.21.1",
+    "dotenv": "^16.0.0",
+    "prop-types": "^15.5.10",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "react-intl": "^5.24.6",
+    "regenerator-runtime": "^0.13.9"
+  }
+}

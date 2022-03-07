@@ -1,23 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EditableHeader snapshot 1`] = `
-<Form.Group>
-  <Form.Control
-    autoFocus={true}
-    onBlur={[MockFunction args.updateTitle]}
-    onChange={[MockFunction args.handleChange]}
-    onKeyDown={[MockFunction args.handleKeyDown]}
-    placeholder="Title"
-    trailingInputElement={
-      <Icon
-        src={[MockFunction icons.Edit]}
-      />
-    }
-    value="test-title-text"
-  />
-</Form.Group>
-`;
-
 exports[`EditableHeader snapshot snapshot 1`] = `
 <Form.Group>
   <Form.Control
