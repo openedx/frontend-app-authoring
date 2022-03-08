@@ -29,7 +29,11 @@ const app = createSlice({
       blockType: payload.blockType,
     }),
     setUnitUrl: (state, { payload }) => ({ ...state, unitUrl: payload }),
-    setBlockValue: (state, { payload }) => ({ ...state, blockValue: payload }),
+    setBlockValue: (state, { payload }) => ({
+      ...state,
+      blockValue: payload,
+      blockTitle: payload.data.display_name,
+    }),
     setBlockContent: (state, { payload }) => ({ ...state, blockContent: payload }),
     setBlockTitle: (state, { payload }) => ({ ...state, blockTitle: payload }),
     setSaveResponse: (state, { payload }) => ({ ...state, saveResponse: payload }),

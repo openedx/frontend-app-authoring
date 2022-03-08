@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Form } from '@edx/paragon';
-
+// eslint-disable-next-line
 import { EditorPage } from '@edx/frontend-lib-content-components';
 // eslint-disable-next-line
 import { blockTypes } from '@edx/frontend-lib-content-components/editors/data/constants/app';

@@ -19,7 +19,7 @@ export const EditableHeader = ({
       onKeyDown={handleKeyDown}
       placeholder="Title"
       ref={inputRef}
-      trailingInputElement={<Icon src={Edit} />}
+      trailingElement={<Icon src={Edit} />}
       value={localTitle}
     />
   </Form.Group>

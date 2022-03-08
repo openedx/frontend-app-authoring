@@ -58,11 +58,11 @@ describe('TextEditor hooks', () => {
         initializeEditor: jest.fn(),
       };
       let output;
-      test('It creates an onInit which calls initializeEditor, but not setEditorRef', () => {
+      test('It creates an onInit which calls initializeEditor and setEditorRef', () => {
         output = module.editorConfig(props);
         output.onInit();
         expect(props.initializeEditor).toHaveBeenCalled();
-        expect(props.setEditorRef).not.toHaveBeenCalled();
+        expect(props.setEditorRef).toHaveBeenCalled();
       });
       test('It sets the blockvalue to be empty string by default', () => {
         output = module.editorConfig(props);

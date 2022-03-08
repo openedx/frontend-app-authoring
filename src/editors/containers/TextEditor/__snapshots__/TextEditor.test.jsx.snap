@@ -22,7 +22,7 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
     editorConfig={
       Object {
         "blockValue": Object {
-          "data": "HYleTsEditTeaxt",
+          "data": "eDiTablE Text",
         },
         "initializeEditor": [MockFunction args.intializeEditor],
         "openModal": [MockFunction modal.openModal],
@@ -85,7 +85,7 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
     editorConfig={
       Object {
         "blockValue": Object {
-          "data": "HYleTsEditTeaxt",
+          "data": "eDiTablE Text",
         },
         "initializeEditor": [MockFunction args.intializeEditor],
         "openModal": [MockFunction modal.openModal],

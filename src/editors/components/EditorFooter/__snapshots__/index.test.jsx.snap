@@ -38,7 +38,7 @@ exports[`EditorFooter snapshots Save Failed, error message raised 1`] = `
             "handleSaveClicked": Object {
               "editorRef": [MockFunction args.editorRef],
               "returnUrl": "hocuspocus.ca",
-              "saveBlock": [MockFunction args.saveBlock],
+              "saveBlockContent": [MockFunction args.saveBlock],
             },
           }
         }
@@ -82,7 +82,7 @@ exports[`EditorFooter snapshots not intialized, Spinner appears and button is di
             "handleSaveClicked": Object {
               "editorRef": [MockFunction args.editorRef],
               "returnUrl": "hocuspocus.ca",
-              "saveBlock": [MockFunction args.saveBlock],
+              "saveBlockContent": [MockFunction args.saveBlock],
             },
           }
         }
@@ -125,7 +125,7 @@ exports[`EditorFooter snapshots renders as expected with default behavior 1`] = 
             "handleSaveClicked": Object {
               "editorRef": [MockFunction args.editorRef],
               "returnUrl": "hocuspocus.ca",
-              "saveBlock": [MockFunction args.saveBlock],
+              "saveBlockContent": [MockFunction args.saveBlock],
             },
           }
         }

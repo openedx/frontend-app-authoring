@@ -1,15 +1,24 @@
-import { actions } from '..';
 import { RequestKeys } from '../../constants/requests';
 import api from '../../services/cms/api';
 import * as requests from './requests';
+import { actions, selectors } from '../index';
 
-jest.mock('data/services/lms/api', () => ({
-  initializeApp: (locationId) => ({ initializeApp: locationId }),
-  fetchSubmissionStatus: (submissionUUID) => ({ fetchSubmissionStatus: submissionUUID }),
-  fetchSubmission: (submissionUUID) => ({ fetchSubmission: submissionUUID }),
-  lockSubmission: ({ submissionUUID }) => ({ lockSubmission: { submissionUUID } }),
-  unlockSubmission: ({ submissionUUID }) => ({ unlockSubmission: { submissionUUID } }),
-  updateGrade: (submissionUUID, gradeData) => ({ updateGrade: { submissionUUID, gradeData } }),
+const testState = {
+  some: 'data',
+};
+
+jest.mock('../app/selectors', () => ({
+  studioEndpointUrl: (state) => ({ studioEndpointUrl: state }),
+  blockId: (state) => ({ blockId: state }),
+  blockType: (state) => ({ blockType: state }),
+  courseId: (state) => ({ courseId: state }),
+  blockTitle: (state) => ({ title: state }),
+}));
+
+jest.mock('../../services/cms/api', () => ({
+  fetchBlockById: ({ id, url }) => ({ id, url }),
+  fetchByUnitId: ({ id, url }) => ({ id, url }),
+  saveBlock: (args) => args,
 }));
 
 let dispatch;
@@ -24,7 +33,7 @@ describe('requests thunkActions module', () => {
 
   describe('networkRequest', () => {
     const requestKey = 'test-request';
-    const testData = { some: 'test data' };
+    const testData = ({ some: 'test data' });
     let resolveFn;
     let rejectFn;
     beforeEach(() => {
@@ -83,7 +92,7 @@ describe('requests thunkActions module', () => {
   }) => {
     let dispatchedAction;
     beforeEach(() => {
-      action({ ...args, onSuccess, onFailure })(dispatch);
+      action({ ...args, onSuccess, onFailure })(dispatch, () => testState);
       [[dispatchedAction]] = dispatch.mock.calls;
     });
     it('dispatches networkRequest', () => {
@@ -101,77 +110,58 @@ describe('requests thunkActions module', () => {
       });
     });
   };
-
   describe('network request actions', () => {
-    const submissionUUID = 'test-submission-id';
-    const locationId = 'test-location-id';
+    const fetchParams = { fetchParam1: 'param1', fetchParam2: 'param2' };
     beforeEach(() => {
       requests.networkRequest = jest.fn(args => ({ networkRequest: args }));
     });
-    describe('initializeApp', () => {
+    describe('fetchBlock', () => {
       testNetworkRequestAction({
-        action: requests.initializeApp,
-        args: { locationId },
-        expectedString: 'with initialize key, initializeApp promise',
+        action: requests.fetchBlock,
+        args: fetchParams,
+        expectedString: 'with fetchBlock promise',
         expectedData: {
-          requestKey: RequestKeys.initialize,
-          promise: api.initializeApp(locationId),
+          ...fetchParams,
+          requestKey: RequestKeys.fetchBlock,
+          promise: api.fetchBlockById({
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+            blockId: selectors.app.blockId(testState),
+          }),
         },
       });
     });
-    describe('fetchSubmissionStatus', () => {
+    describe('fetchUnit', () => {
       testNetworkRequestAction({
-        action: requests.fetchSubmissionStatus,
-        args: { submissionUUID },
-        expectedString: 'with fetchSubmissionStatus promise',
+        action: requests.fetchUnit,
+        args: fetchParams,
+        expectedString: 'with fetchUnit promise',
         expectedData: {
-          requestKey: RequestKeys.fetchSubmissionStatus,
-          promise: api.fetchSubmissionStatus(submissionUUID),
+          ...fetchParams,
+          requestKey: RequestKeys.fetchUnit,
+          promise: api.fetchByUnitId({
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+            blockId: selectors.app.blockId(testState),
+          }),
         },
       });
     });
-    describe('fetchSubmission', () => {
+    describe('saveBlock', () => {
+      const content = 'SoME HtMl CoNtent As String';
       testNetworkRequestAction({
-        action: requests.fetchSubmission,
-        args: { submissionUUID },
-        expectedString: 'with fetchSubmission promise',
+        action: requests.saveBlock,
+        args: { content, some: 'data' },
+        expectedString: 'with saveBlock promise',
         expectedData: {
-          requestKey: RequestKeys.fetchSubmission,
-          promise: api.fetchSubmission(submissionUUID),
-        },
-      });
-    });
-    describe('setLock: true', () => {
-      testNetworkRequestAction({
-        action: requests.setLock,
-        args: { submissionUUID, value: true },
-        expectedString: 'with setLock promise',
-        expectedData: {
-          requestKey: RequestKeys.setLock,
-          promise: api.lockSubmission(submissionUUID),
-        },
-      });
-    });
-    describe('setLock: false', () => {
-      testNetworkRequestAction({
-        action: requests.setLock,
-        args: { submissionUUID, value: false },
-        expectedString: 'with setLock promise',
-        expectedData: {
-          requestKey: RequestKeys.setLock,
-          promise: api.unlockSubmission(submissionUUID),
-        },
-      });
-    });
-    describe('submitGrade', () => {
-      const gradeData = 'test-grade-data';
-      testNetworkRequestAction({
-        action: requests.submitGrade,
-        args: { submissionUUID, gradeData },
-        expectedString: 'with submitGrade promise',
-        expectedData: {
-          requestKey: RequestKeys.submitGrade,
-          promise: api.updateGrade(submissionUUID, gradeData),
+          ...testState,
+          requestKey: RequestKeys.saveBlock,
+          promise: api.saveBlock({
+            blockId: selectors.app.blockId(testState),
+            blockType: selectors.app.blockType(testState),
+            courseId: selectors.app.courseId(testState),
+            content,
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+            title: selectors.app.blockTitle(testState),
+          }),
         },
       });
     });

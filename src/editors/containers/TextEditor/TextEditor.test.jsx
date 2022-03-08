@@ -16,6 +16,9 @@ jest.mock('@tinymce/tinymce-react', () => {
     ,
   };
 });
+jest.mock('./components/ImageUploadModal', () => 'ImageUploadModal');
+jest.mock('./components/SelectImageModal', () => 'SelectImageModal');
+jest.mock('./components/ImageSettingsModal', () => 'ImageSettingsModal');
 
 jest.mock('./hooks', () => ({
   editorConfig: jest.fn(args => ({ editorConfig: args })),
@@ -27,6 +30,7 @@ jest.mock('../../data/redux', () => ({
   actions: {
     app: {
       initializeEditor: jest.fn().mockName('actions.app.initializeEditor'),
+      fetchImages: jest.fn().mockName('actions.app.fetchImages'),
     },
   },
   selectors: {

@@ -8,7 +8,7 @@ exports[`EditableHeader snapshot snapshot 1`] = `
     onChange={[MockFunction args.handleChange]}
     onKeyDown={[MockFunction args.handleKeyDown]}
     placeholder="Title"
-    trailingInputElement={
+    trailingElement={
       <Icon
         src={[MockFunction icons.Edit]}
       />

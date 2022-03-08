@@ -19,6 +19,7 @@ export const simpleSelectors = {
   saveResponse: mkSimpleSelector(app => app.saveResponse),
   studioEndpointUrl: mkSimpleSelector(app => app.studioEndpointUrl),
   unitUrl: mkSimpleSelector(app => app.unitUrl),
+  blockTitle: mkSimpleSelector(app => app.blockTitle),
 };
 
 export const returnUrl = createSelector(

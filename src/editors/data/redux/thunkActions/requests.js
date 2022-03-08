@@ -82,7 +82,7 @@ export const saveBlock = ({ content, ...rest }) => (dispatch, getState) => {
       courseId: selectors.app.courseId(getState()),
       content,
       studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
-      title: selectors.app.title(getState()),
+      title: selectors.app.blockTitle(getState()),
     }),
     ...rest,
   }));

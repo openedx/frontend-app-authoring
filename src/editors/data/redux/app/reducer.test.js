@@ -42,7 +42,6 @@ describe('app reducer', () => {
     };
     [
       ['setUnitUrl', 'unitUrl'],
-      ['setBlockValue', 'blockValue'],
       ['setBlockContent', 'blockContent'],
       ['setBlockTitle', 'blockTitle'],
       ['setSaveResponse', 'saveResponse'],

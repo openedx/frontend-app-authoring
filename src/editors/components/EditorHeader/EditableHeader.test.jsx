@@ -23,7 +23,7 @@ describe('EditableHeader', () => {
     });
     test('displays Edit Icon', () => {
       const formControl = el.find(Form.Control);
-      expect(formControl.props().trailingInputElement).toMatchObject(<Icon src={Edit} />);
+      expect(formControl.props().trailingElement).toMatchObject(<Icon src={Edit} />);
     });
   });
 });

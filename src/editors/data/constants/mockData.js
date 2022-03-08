@@ -1,5 +1,3 @@
-import { blockTypes } from './app';
-
 export const mockImageData = [
   {
     displayName: 'shahrukh.jpg',

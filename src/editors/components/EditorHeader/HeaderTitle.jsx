@@ -18,7 +18,6 @@ export const HeaderTitle = ({
   typeHeader,
 }) => {
   if (!isInitialized) { return <FormattedMessage {...messages.loading} />; }
-
   const {
     inputRef,
     isEditing,

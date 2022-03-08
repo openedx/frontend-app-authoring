@@ -1,6 +1,4 @@
-import {
-  fetchBlockById, fetchByUnitId, normalizeContent, saveBlock,
-} from './api';
+import { apiMethods } from './api';
 import * as urls from './urls';
 import { get, post } from './utils';
 
@@ -23,21 +21,21 @@ const title = 'remember this needs to go into metadata to save';
 describe('cms api', () => {
   describe('fetchBlockId', () => {
     it('should call get with url.blocks', () => {
-      fetchBlockById({ blockId, studioEndpointUrl });
+      apiMethods.fetchBlockById({ blockId, studioEndpointUrl });
       expect(get).toHaveBeenCalledWith(urls.block({ blockId, studioEndpointUrl }));
     });
   });
 
   describe('fetchByUnitId', () => {
     it('should call get with url.blockAncestor', () => {
-      fetchByUnitId({ blockId, studioEndpointUrl });
+      apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
       expect(get).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }));
     });
   });
 
   describe('normalizeContent', () => {
     test('return value for blockType: html', () => {
-      expect(normalizeContent({
+      expect(apiMethods.normalizeContent({
         blockId,
         blockType: 'html',
         content,
@@ -53,14 +51,14 @@ describe('cms api', () => {
       });
     });
     test('throw error for invalid blockType', () => {
-      expect(() => { normalizeContent({ blockType: 'somethingINVALID' }); })
+      expect(() => { apiMethods.normalizeContent({ blockType: 'somethingINVALID' }); })
         .toThrow(TypeError);
     });
   });
 
   describe('saveBlock', () => {
     it('should call post with urls.block and normalizeContent', () => {
-      saveBlock({
+      apiMethods.saveBlock({
         blockId,
         blockType: 'html',
         content,
@@ -70,7 +68,7 @@ describe('cms api', () => {
       });
       expect(post).toHaveBeenCalledWith(
         urls.block({ studioEndpointUrl }),
-        normalizeContent({
+        apiMethods.normalizeContent({
           blockType: 'html',
           content,
           blockId,
