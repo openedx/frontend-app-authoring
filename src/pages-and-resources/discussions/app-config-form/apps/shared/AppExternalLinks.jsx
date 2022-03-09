@@ -13,6 +13,8 @@ function AppExternalLinks({
   externalLinks,
   intl,
   providerName,
+  showLaunchIcon,
+  customClasses,
 }) {
   const { contactEmail, ...links } = externalLinks;
   const linkTypes = Object.keys(links).filter(key => links[key]);
@@ -24,12 +26,13 @@ function AppExternalLinks({
             <AppConfigFormDivider />
             <h4 className="pt-4">{intl.formatMessage(messages.linkTextHeading)}</h4>
             {linkTypes.map((type) => (
-              <div key={type} className="small text-muted">
+              <div key={type}>
                 <Hyperlink
                   destination={externalLinks[type]}
                   target="_blank"
                   rel="noopener noreferrer"
-                  showLaunchIcon={false}
+                  showLaunchIcon={showLaunchIcon}
+                  className={customClasses}
                 >
                   { intl.formatMessage(messages[type], { providerName }) }
                 </Hyperlink>
@@ -38,7 +41,7 @@ function AppExternalLinks({
           </>
         ) : null}
       {contactEmail && (
-        <div className="small text-muted">
+        <div className={customClasses}>
           <hr />
           <FormattedMessage
             {...messages.contact}
@@ -48,7 +51,7 @@ function AppExternalLinks({
                   to={contactEmail}
                   rel="noopener noreferrer"
                 >
-                  { contactEmail }
+                  <span className={customClasses}>{ contactEmail }</span>
                 </MailtoLink>
               ),
             }}
@@ -69,6 +72,13 @@ AppExternalLinks.propTypes = {
   }).isRequired,
   providerName: PropTypes.string.isRequired,
   intl: intlShape.isRequired,
+  showLaunchIcon: PropTypes.bool,
+  customClasses: PropTypes.string,
+};
+
+AppExternalLinks.defaultProps = {
+  showLaunchIcon: false,
+  customClasses: '',
 };
 
 export default injectIntl(AppExternalLinks);

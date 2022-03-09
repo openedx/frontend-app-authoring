@@ -39,13 +39,19 @@ function FormikControl({
 
 FormikControl.propTypes = {
   name: PropTypes.element.isRequired,
-  label: PropTypes.element.isRequired,
-  help: PropTypes.element.isRequired,
-  className: PropTypes.string.isRequired,
+  label: PropTypes.element,
+  help: PropTypes.element,
+  className: PropTypes.string,
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
   ]).isRequired,
+};
+
+FormikControl.defaultProps = {
+  help: <></>,
+  label: <></>,
+  className: '',
 };
 
 export default FormikControl;
