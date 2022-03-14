@@ -10,15 +10,20 @@ export default function Loading() {
         height: '50vh',
       }}
     >
-      <Spinner className animation="border" role="status" variant="primary">
-        <span className="sr-only">
-          <FormattedMessage
-            id="authoring.loading"
-            defaultMessage="Loading..."
-            description="Screen-reader message for when a page is loading."
-          />
-        </span>
-      </Spinner>
+      <Spinner
+        animation="border"
+        role="status"
+        variant="primary"
+        screenReaderText={(
+          <span className="sr-only">
+            <FormattedMessage
+              id="authoring.loading"
+              defaultMessage="Loading..."
+              description="Screen-reader message for when a page is loading."
+            />
+          </span>
+        )}
+      />
     </div>
   );
 }

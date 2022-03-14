@@ -24,13 +24,15 @@ function AppCard({
       isClickable
       onClick={() => canChangeProviders && onClick(app.id)}
       onKeyPress={() => canChangeProviders && onClick(app.id)}
+      role="radio"
+      aria-checked={selected}
       className={classNames({
         'border-primary': selected,
       }, 'w-100')}
     >
       <Card.Header
-        title={intl.formatMessage(appMessages[`appName-${app.id}`])}
-        subtitle={<div className="h6 text-muted">{supportText}</div>}
+        title={<div data-testid="card-title">{intl.formatMessage(appMessages[`appName-${app.id}`])}</div>}
+        subtitle={<div className="h6 text-muted" data-testid="card-subtitle">{supportText}</div>}
         actions={(
           <div className="mt-2.5">
             <CheckboxControl
@@ -46,15 +48,17 @@ function AppCard({
         size="sm"
       />
       <Card.Body>
-        <Card.Section className="pt-2">
-          {intl.formatMessage(messages[`appDescription-${app.id}`])}
-          <Responsive maxWidth={breakpoints.extraSmall.maxWidth}>
-            <FeaturesList
-              features={features}
-              app={app}
-            />
-          </Responsive>
-        </Card.Section>
+        <div data-testid="card-text">
+          <Card.Section className="pt-2">
+            {intl.formatMessage(messages[`appDescription-${app.id}`])}
+            <Responsive maxWidth={breakpoints.extraSmall.maxWidth}>
+              <FeaturesList
+                features={features}
+                app={app}
+              />
+            </Responsive>
+          </Card.Section>
+        </div>
       </Card.Body>
     </Card>
   );

@@ -70,15 +70,17 @@ const TopicItem = ({
   };
 
   const deleteTopicPopup = (
-    <Card className="rounded mb-3 p-1">
+    <Card className="rounded mb-3 px-1">
+      <Card.Header
+        className="text-primary-500"
+        title={intl.formatMessage(messages.discussionTopicDeletionLabel)}
+        size="sm"
+      />
       <Card.Body>
-        <div className="text-primary-500 mb-2 h4">
-          {intl.formatMessage(messages.discussionTopicDeletionLabel)}
-        </div>
-        <Card.Text className="text-justify text-muted">
+        <Card.Section className="text-justify text-muted pt-2 pb-3">
           {intl.formatMessage(messages.discussionTopicDeletionHelp)}
-        </Card.Text>
-        <div className="d-flex justify-content-end">
+        </Card.Section>
+        <Card.Footer>
           <Button variant="tertiary" onClick={() => setShowDeletePopup(false)}>
             {intl.formatMessage(messages.cancelButton)}
           </Button>
@@ -89,7 +91,7 @@ const TopicItem = ({
           >
             {intl.formatMessage(messages.deleteButton)}
           </Button>
-        </div>
+        </Card.Footer>
       </Card.Body>
     </Card>
   );

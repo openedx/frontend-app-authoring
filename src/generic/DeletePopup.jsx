@@ -10,18 +10,22 @@ const DeletePopup = ({
   onCancel,
   cancelLabel,
 }) => (
-  <Card className="rounded mb-3 p-1">
+  <Card className="rounded mb-3 px-1">
+    <Card.Header
+      className="text-primary-500"
+      title={label}
+      size="sm"
+    />
     <Card.Body>
-      <div className="text-primary-500 mb-2 h4">{label}</div>
-      <Card.Text className="text-justify text-muted">{bodyText}</Card.Text>
-      <div className="d-flex justify-content-end">
+      <Card.Section className="text-justify text-muted pt-2 pb-3">{bodyText}</Card.Section>
+      <Card.Footer>
         <Button variant="tertiary" onClick={onCancel}>
           {cancelLabel}
         </Button>
         <Button variant="outline-brand" className="ml-2" onClick={onDelete}>
           {deleteLabel}
         </Button>
-      </div>
+      </Card.Footer>
     </Card.Body>
   </Card>
 );
