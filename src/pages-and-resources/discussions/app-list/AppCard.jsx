@@ -21,46 +21,40 @@ function AppCard({
 
   return (
     <Card
-      tabIndex="-1"
+      isClickable
       onClick={() => canChangeProviders && onClick(app.id)}
       onKeyPress={() => canChangeProviders && onClick(app.id)}
-      role="radio"
-      aria-checked={selected}
-      style={{
-        cursor: 'pointer',
-      }}
       className={classNames({
         'border-primary': selected,
       }, 'w-100')}
     >
-      <div
-        className="position-absolute mt-3 mr-3"
-        style={{
-          top: '0.75rem',
-          right: '0.75rem',
-        }}
-      >
-        <CheckboxControl
-          checked={selected}
-          disabled={!canChangeProviders}
-          readOnly
-          aria-label={intl.formatMessage(messages.selectApp, {
-            appName: intl.formatMessage(appMessages[`appName-${app.id}`]),
-          })}
-        />
-      </div>
+      <Card.Header
+        title={intl.formatMessage(appMessages[`appName-${app.id}`])}
+        subtitle={<div className="h6 text-muted">{supportText}</div>}
+        actions={(
+          <div className="mt-2.5">
+            <CheckboxControl
+              checked={selected}
+              disabled={!canChangeProviders}
+              readOnly
+              aria-label={intl.formatMessage(messages.selectApp, {
+                appName: intl.formatMessage(appMessages[`appName-${app.id}`]),
+              })}
+            />
+          </div>
+        )}
+        size="sm"
+      />
       <Card.Body>
-        <div className="h4 card-title">
-          {intl.formatMessage(appMessages[`appName-${app.id}`])}
-        </div>
-        <Card.Subtitle className="mb-3 text-muted">{supportText}</Card.Subtitle>
-        <Card.Text>{intl.formatMessage(messages[`appDescription-${app.id}`])}</Card.Text>
-        <Responsive maxWidth={breakpoints.extraSmall.maxWidth}>
-          <FeaturesList
-            features={features}
-            app={app}
-          />
-        </Responsive>
+        <Card.Section className="pt-2">
+          {intl.formatMessage(messages[`appDescription-${app.id}`])}
+          <Responsive maxWidth={breakpoints.extraSmall.maxWidth}>
+            <FeaturesList
+              features={features}
+              app={app}
+            />
+          </Responsive>
+        </Card.Section>
       </Card.Body>
     </Card>
   );

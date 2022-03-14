@@ -37,7 +37,6 @@ function PageCard({
       return (
         <Hyperlink destination={page.legacyLink}>
           <IconButton
-            className="mb-0 mr-1"
             src={ArrowForward}
             iconAs={Icon}
             size="inline"
@@ -48,7 +47,6 @@ function PageCard({
     }
     return (page.allowedOperations.configure || page.allowedOperations.enable) && (
       <IconButton
-        className="mb-0 mr-1"
         src={Settings}
         iconAs={Icon}
         size="inline"
@@ -60,32 +58,25 @@ function PageCard({
 
   return (
     <Card
-      className={classNames(
-        'shadow card',
-        {
-          'desktop-card': isDesktop,
-          'mobile-card': !isDesktop,
-        },
-      )}
+      className={classNames('shadow justify-content-between', {
+        'desktop-card': isDesktop,
+        'mobile-card': !isDesktop,
+      })}
     >
-      <Card.Body className="d-flex flex-column justify-content-between">
-        <div>
-          <Card.Title className="d-flex mb-1 align-items-center justify-content-between">
-            <h4 className="m-0 p-0">{page.name}</h4>
-            <SettingsButton />
-          </Card.Title>
-          {
-            page.enabled && (
-              <Badge variant="success">
-                {intl.formatMessage(messages.enabled)}
-              </Badge>
-            )
-          }
-        </div>
-        <Card.Text className="m-0">
+      <Card.Header
+        title={page.name}
+        subtitle={page.enabled && (
+          <Badge variant="success" className="mt-1">
+            {intl.formatMessage(messages.enabled)}
+          </Badge>
+        )}
+        actions={<div className="mt-1"><SettingsButton /></div>}
+        size="sm"
+      />
+      <Card.Body>
+        <Card.Section>
           {page.description}
-        </Card.Text>
-
+        </Card.Section>
       </Card.Body>
     </Card>
   );
