@@ -4,18 +4,22 @@ const messages = defineMessages({
   heading: {
     id: 'authoring.pagesAndResources.live.enableLive.heading',
     defaultMessage: 'Configure Live',
+    description: 'Heading for live configuration',
   },
   enableLiveLabel: {
     id: 'authoring.pagesAndResources.live.enableLive.label',
     defaultMessage: 'Live',
+    description: 'Title for configuration',
   },
   enableLiveHelp: {
     id: 'authoring.pagesAndResources.live.enableLive.help',
     defaultMessage: 'Schedule meetings and conduct live course sessions with learners.',
+    description: 'Tells the purpose of live configuration',
   },
   enableLiveLink: {
     id: 'authoring.pagesAndResources.live.enableLive.link',
     defaultMessage: 'Learn more about live',
+    description: 'Link text that tells the user to learn about the live',
   },
   saveButton: {
     id: 'authoring.discussions.saveButton',
@@ -35,10 +39,12 @@ const messages = defineMessages({
   selectProvider: {
     id: 'authoring.live.selectProvider',
     defaultMessage: 'Select a video conferencing tool',
+    description: '',
   },
   formInstructions: {
     id: 'authoring.live.formInstructions',
     defaultMessage: 'Complete the fields below to set up your video conferencing tool.',
+    description: 'Instruction for configure the video conferencing tool.',
   },
   consumerKey: {
     id: 'authoring.live.consumerKey',
@@ -83,20 +89,12 @@ const messages = defineMessages({
   providerHelperText: {
     id: 'authoring.live.provider.helpText',
     defaultMessage: 'This configuration will require sharing username and emails of learners and the course team with {providerName}',
+    description: 'Tells the user that sharing username and email is required for configuration',
   },
-  piiSharing: {
-    id: 'authoring.live.piiSharing',
-    defaultMessage: 'Optionally share a user\'s username and/or email with the LTI provider:',
-  },
-  piiShareUsername: {
-    id: 'authoring.live.piiShareUsername',
-    defaultMessage: 'Share username',
-    description: 'Label for the Share Username field.',
-  },
-  piiShareEmail: {
-    id: 'authoring.live.piiShareEmail',
-    defaultMessage: 'Share email',
-    description: 'Label for the Share Email field.',
+  requestPiiSharingEnable: {
+    id: 'authoring.live.requestPiiSharingEnable',
+    defaultMessage: 'Request your edX support team to enable the PII sharing for this course, in order to access the LTI configurations for a provider',
+    description: 'Tells the user that request edx support team to enable the PII sharing to access the LTO configuration for a provider.',
   },
   general: {
     id: 'authoring.live.appDocInstructions.documentationLink',
@@ -127,6 +125,21 @@ const messages = defineMessages({
     id: 'authoring.live.appDocInstructions.linkText',
     defaultMessage: '{link}',
     description: 'link',
+  },
+  'appName-zoom': {
+    id: 'authoring.live.appName-yellowdig',
+    defaultMessage: 'Zoom',
+    description: 'The name of the Zoom app.',
+  },
+  'appName-googleMeet': {
+    id: 'authoring.live.appName-googleMeet',
+    defaultMessage: 'Google Meet',
+    description: 'The name of the Google Meet app.',
+  },
+  'appName-microsoftTeams': {
+    id: 'authoring.live.appName-microsoftTeams',
+    defaultMessage: 'Microsoft Teams',
+    description: 'The name of the Microsoft Teams app.',
   },
 });
 
