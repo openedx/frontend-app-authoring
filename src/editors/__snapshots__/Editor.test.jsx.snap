@@ -49,6 +49,11 @@ exports[`Editor snapshots renders "html" editor when ref is ready 1`] = `
       }
     />
     <TextEditor
+      editorRef={
+        Object {
+          "current": "ref",
+        }
+      }
       setEditorRef={[MockFunction setEditorRef]}
     />
     <EditorFooter

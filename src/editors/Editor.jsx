@@ -54,7 +54,7 @@ export const Editor = ({
           <>
             <EditorHeader editorRef={editorRef} />
             {(EditorComponent !== undefined)
-              ? <EditorComponent {...{ setEditorRef }} />
+              ? <EditorComponent {...{ setEditorRef, editorRef }} />
               : <FormattedMessage {...messages.couldNotFindEditor} />}
             <EditorFooter editorRef={editorRef} />
           </>

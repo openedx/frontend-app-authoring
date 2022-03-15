@@ -20,17 +20,29 @@ jest.mock('./components/ImageUploadModal', () => 'ImageUploadModal');
 jest.mock('./components/SelectImageModal', () => 'SelectImageModal');
 jest.mock('./components/ImageSettingsModal', () => 'ImageSettingsModal');
 
-jest.mock('./hooks', () => ({
-  editorConfig: jest.fn(args => ({ editorConfig: args })),
-  modalToggle: jest.fn(args => ({ modalToggle: args })),
-  nullMethod: jest.fn().mockName('nullMethod'),
-}));
+jest.mock('./hooks', () => {
+  const updateState = jest.fn();
+  return ({
+    editorConfig: jest.fn(args => ({ editorConfig: args })),
+    modalToggle: jest.fn(args => ({ modalToggle: args })),
+    selectedImage: jest.fn(val => ([{ state: val }, jest.fn((newVal) => updateState({ val, newVal })).mockName('setSelection')])),
+    nullMethod: jest.fn().mockName('nullMethod'),
+  });
+});
+
+jest.mock('react', () => {
+  const updateState = jest.fn();
+  return {
+    ...jest.requireActual('react'),
+    updateState,
+    useState: jest.fn(val => ([{ state: val }, jest.fn().mockName('setState')])),
+  };
+});
 
 jest.mock('../../data/redux', () => ({
   actions: {
     app: {
       initializeEditor: jest.fn().mockName('actions.app.initializeEditor'),
-      fetchImages: jest.fn().mockName('actions.app.fetchImages'),
     },
   },
   selectors: {
@@ -42,11 +54,17 @@ jest.mock('../../data/redux', () => ({
       isFinished: jest.fn((state, params) => ({ isFailed: { state, params } })),
     },
   },
+  thunkActions: {
+    app: {
+      fetchImages: jest.fn().mockName('actions.app.fetchImages'),
+    },
+  },
 }));
 
 describe('TextEditor', () => {
   const props = {
     setEditorRef: jest.fn().mockName('args.setEditorRef'),
+    editorRef: { current: { value: 'something' } },
     // redux
     blockValue: { data: 'eDiTablE Text' },
     blockFailed: false,

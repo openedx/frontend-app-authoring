@@ -1,46 +1,102 @@
 import { useState } from 'react';
 import * as module from './hooks';
+import { StrictDict } from '../../utils/index';
 
-export const addImageUploadButton = (openModal) => (editor) => {
+export const openModalWithSelectedImage = (editor, setImage, openModal) => () => {
+  const imgHTML = editor.selection.getNode();
+  setImage({
+    externalUrl: imgHTML.src,
+    altText: imgHTML.alt,
+    width: imgHTML.width,
+    height: imgHTML.height,
+  });
+  openModal();
+};
+
+export const addImageUploadBehavior = ({ openModal, setImage }) => (editor) => {
   editor.ui.registry.addButton('imageuploadbutton', {
     icon: 'image',
     onAction: openModal,
   });
+  editor.ui.registry.addButton('editimagesettings', {
+    icon: 'image',
+    onAction: module.openModalWithSelectedImage(editor, setImage, openModal),
+  });
 };
 
-export const initializeEditorRef = (setRef) => (evt, editor) => {
+export const initializeEditorRef = (setRef, initializeEditor) => (editor) => {
   setRef(editor);
+  initializeEditor();
 };
 
 // for toast onClose to avoid console warnings
 export const nullMethod = () => {};
+
+export const pluginConfig = {
+  plugins: StrictDict({
+    link: 'link',
+    codesample: 'codesample',
+    emoticons: 'emoticons',
+    table: 'table',
+    charmap: 'charmap',
+    code: 'code',
+    autoresize: 'autoresize',
+    image: 'image',
+    imagetools: 'imagetools',
+  }),
+  menubar: false,
+  toolbar: StrictDict({
+    do: 'undo redo',
+    formatselect: 'formatselect',
+    wieght: 'bold italic backcolor',
+    align: 'alignleft aligncenter alignright alignjustify',
+    indents: 'bullist numlist outdent indent ',
+    imageupload: 'imageuploadbutton',
+    link: 'link',
+    emoticons: 'emoticons',
+    table: 'table',
+    codesample: 'codesample',
+    charmap: 'charmap',
+    removeformat: 'removeformat',
+    hr: 'hr',
+    code: 'code',
+  }),
+  imageToolbar: StrictDict({
+    rotate: 'rotateleft rotateright',
+    flip: 'flipv fliph',
+    editImageSettings: 'editimagesettings',
+  }),
+};
+export const getConfig = (key) => {
+  if (key === 'imageToolbar' || key === 'toolbar') {
+    return Object.values(module.pluginConfig[key]).join(' | ');
+  }
+  return Object.values(module.pluginConfig[key]).join(' ');
+};
 
 export const editorConfig = ({
   setEditorRef,
   blockValue,
   openModal,
   initializeEditor,
+  setSelection,
 }) => ({
-  onInit: (evt, editor) => {
-    module.initializeEditorRef(setEditorRef)(evt, editor);
-    initializeEditor();
-  },
+  onInit: (evt, editor) => module.initializeEditorRef(setEditorRef, initializeEditor)(editor),
   initialValue: blockValue ? blockValue.data.data : '',
   init: {
-    setup: module.addImageUploadButton(openModal),
-    plugins: 'link codesample emoticons table charmap code autoresize',
+    setup: module.addImageUploadBehavior({ openModal, setImage: setSelection }),
+    plugins: module.getConfig('plugins'),
     menubar: false,
-    toolbar: 'undo redo | formatselect | '
-      + 'bold italic backcolor | alignleft aligncenter '
-      + 'alignright alignjustify | bullist numlist outdent indent |'
-      + 'imageuploadbutton | link | emoticons | table | codesample | charmap |'
-      + 'removeformat | hr |code',
+    toolbar: module.getConfig('toolbar'),
+    imagetools_toolbar: module.getConfig('imageToolbar'),
+    imagetools_cors_hosts: ['courses.edx.org'],
     height: '100%',
-    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
     min_height: 1000,
     branding: false,
   },
 });
+
+export const selectedImage = (val) => useState(val);
 
 export const modalToggle = () => {
   const [isOpen, setIsOpen] = useState(false);

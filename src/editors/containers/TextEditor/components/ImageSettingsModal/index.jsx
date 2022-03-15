@@ -28,8 +28,8 @@ export const hooks = {
       setWidth,
     };
   },
-  altText: () => {
-    const [altText, setAltText] = React.useState('');
+  altText: (savedText) => {
+    const [altText, setAltText] = React.useState(savedText || '');
     const [isDecorative, setIsDecorative] = React.useState(false);
     return {
       value: altText,
@@ -38,10 +38,10 @@ export const hooks = {
       setIsDecorative,
     };
   },
-  onImgLoad: (initializeDimensions) => ({ target: img }) => {
+  onImgLoad: (initializeDimensions, selection) => ({ target: img }) => {
     initializeDimensions({
-      height: img.naturalHeight,
-      width: img.naturalWidth,
+      height: selection.height ? selection.height : img.naturalHeight,
+      width: selection.width ? selection.width : img.naturalWidth,
     });
   },
   onInputChange: (handleValue) => (e) => handleValue(e.target.value),
@@ -66,9 +66,9 @@ export const ImageSettingsModal = ({
   returnToSelection,
 }) => {
   const dimensions = module.hooks.dimensions();
-  const altText = module.hooks.altText();
-  const onImgLoad = module.hooks.onImgLoad(dimensions.initialize);
-  const onSaveClick = module.hooks.onSave({
+  const altText = module.hooks.altText(selection.altText);
+  const onImgLoad = module.hooks.onImgLoad(dimensions.initialize, selection);
+  const onSaveClick = () => module.hooks.onSave({
     saveToEditor,
     dimensions: dimensions.value,
     altText: altText.value,
@@ -94,7 +94,6 @@ export const ImageSettingsModal = ({
         onLoad={onImgLoad}
         src={selection.externalUrl}
       />
-
       { dimensions.value && (
         <Form.Group>
           <Form.Label>Image Dimensions</Form.Label>
@@ -140,6 +139,7 @@ ImageSettingsModal.propTypes = {
   selection: PropTypes.shape({
     url: PropTypes.string,
     externalUrl: PropTypes.string,
+    altText: PropTypes.bool,
   }).isRequired,
   saveToEditor: PropTypes.func.isRequired,
   returnToSelection: PropTypes.func.isRequired,

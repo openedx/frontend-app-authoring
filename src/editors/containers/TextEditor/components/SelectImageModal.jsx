@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { Button, Image } from '@edx/paragon';
-
-import { actions } from '../../../data/redux';
+import { thunkActions } from '../../../data/redux';
 import BaseModal from './BaseModal';
 import * as module from './SelectImageModal';
 
@@ -60,7 +59,7 @@ SelectImageModal.propTypes = {
 
 export const mapStateToProps = () => ({});
 export const mapDispatchToProps = {
-  fetchImages: actions.app.fetchImages,
+  fetchImages: thunkActions.app.fetchImages,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectImageModal);

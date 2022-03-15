@@ -1,24 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import ImageSettingsModal from './ImageSettingsModal';
 import SelectImageModal from './SelectImageModal';
+import * as module from './ImageUploadModal';
+
+export const hooks = {
+  createSaveCallback: ({
+    close, editorRef, setSelection, selection,
+  }) => (settings) => {
+    editorRef.current.execCommand('mceInsertContent', false, module.hooks.getImgTag({ settings, selection }));
+    setSelection(null);
+    close();
+  },
+  getImgTag: ({ settings, selection }) => `<img src="${selection.externalUrl}" alt="${settings.isDecorative ? '' : settings.altText}" width="${settings.dimensions.width}" height="${settings.dimensions.height}">`,
+};
 
 const ImageUploadModal = ({
   // eslint-disable-next-line
   editorRef,
   isOpen,
   close,
+  selection,
+  setSelection,
 }) => {
-  // selected image file reference data object.
-  // existance of this field determines which child modal is displayed
-  const [selection, setSelection] = React.useState(null);
-  const clearSelection = () => setSelection(null);
-  const saveToEditor = (settings) => {
-    // eslint-disable-next-line
-    console.log({ selection, settings });
-    // tell editor ref to insert content at cursor location();
-  };
+  const saveToEditor = module.hooks.createSaveCallback({
+    close, editorRef, setSelection, selection,
+  });
+
   const closeAndReset = () => {
     setSelection(null);
     close();
@@ -31,7 +39,7 @@ const ImageUploadModal = ({
           close: closeAndReset,
           selection,
           saveToEditor,
-          returnToSelection: clearSelection,
+          returnToSelection: () => setSelection(null),
         }}
       />
     );
@@ -43,6 +51,12 @@ ImageUploadModal.defaultProps = {
   editorRef: null,
 };
 ImageUploadModal.propTypes = {
+  selection: PropTypes.shape({
+    url: PropTypes.string,
+    externalUrl: PropTypes.string,
+    altText: PropTypes.bool,
+  }).isRequired,
+  setSelection: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
   editorRef: PropTypes.oneOfType([
