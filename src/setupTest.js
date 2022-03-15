@@ -64,12 +64,14 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
   Button: 'Button',
   Icon: 'Icon',
   IconButton: 'IconButton',
+  Image: 'Image',
   ModalDialog: {
     Footer: 'ModalDialog.Footer',
     Header: 'ModalDialog.Header',
     Title: 'ModalDialog.Title',
   },
   Form: {
+    Checkbox: 'Form.Checkbox',
     Control: {
       Feedback: 'Form.Control.Feedback',
     },
@@ -83,4 +85,6 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
 jest.mock('@edx/paragon/icons', () => ({
   Close: jest.fn().mockName('icons.Close'),
   Edit: jest.fn().mockName('icons.Edit'),
+  Locked: jest.fn().mockName('icons.Locked'),
+  Unlocked: jest.fn().mockName('icons.Unlocked'),
 }));

@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DimensionControls render null value: empty snapshot 1`] = `""`;
+
+exports[`DimensionControls render snapshot 1`] = `
+<Form.Group>
+  <Form.Label
+    as="h4"
+  >
+    Image Dimensions
+  </Form.Label>
+  <div
+    className="mt-4.5"
+  >
+    <Form.Control
+      className="dimension-input"
+      floatingLabel="Width"
+      min={1}
+      onBlur={[MockFunction props.updateDimensions]}
+      onChange={
+        Object {
+          "hooks.onInputChange": [MockFunction props.setWidth],
+        }
+      }
+      type="number"
+      value={20}
+    />
+    <Form.Control
+      className="dimension-input"
+      floatingLabel="Height"
+      min={1}
+      onBlur={[MockFunction props.updateDimensions]}
+      onChange={
+        Object {
+          "hooks.onInputChange": [MockFunction props.setHeight],
+        }
+      }
+      type="number"
+      value={40}
+    />
+    <IconButton
+      alt="unlock dimensions"
+      className="d-inline-block"
+      iconAs="Icon"
+      onClick={[MockFunction props.unlock]}
+      src={[MockFunction icons.Locked]}
+    />
+  </div>
+</Form.Group>
+`;

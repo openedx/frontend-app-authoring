@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AltTextControls render snapshot: isDecorative=true 1`] = `
+<Form.Group
+  className="mt-4.5"
+>
+  <Form.Label
+    as="h4"
+  >
+    Accessibility
+  </Form.Label>
+  <Form.Control
+    className="mt-4.5"
+    disabled={true}
+    floatingLabel="Alt Text"
+    onChange={
+      Object {
+        "hooks.onInputChange": [MockFunction props.setValue],
+      }
+    }
+    type="input"
+    value="props.value"
+  />
+  <Form.Checkbox
+    checked={true}
+    className="mt-4.5 decorative-control-label"
+    onChange={
+      Object {
+        "hooks.onCheckboxChange": [MockFunction props.setIsDecorative],
+      }
+    }
+  >
+    <Form.Label>
+      This image is decorative (no alt text required).
+    </Form.Label>
+  </Form.Checkbox>
+</Form.Group>
+`;

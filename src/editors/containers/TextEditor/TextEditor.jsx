@@ -32,8 +32,8 @@ import {
   nullMethod,
   selectedImage,
 } from './hooks';
-import messages from './messages';
 import ImageUploadModal from './components/ImageUploadModal';
+import messages from './messages';
 
 export const TextEditor = ({
   setEditorRef,

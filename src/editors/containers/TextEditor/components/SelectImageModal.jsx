@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { Button, Image } from '@edx/paragon';
+
 import { thunkActions } from '../../../data/redux';
 import BaseModal from './BaseModal';
 import * as module from './SelectImageModal';

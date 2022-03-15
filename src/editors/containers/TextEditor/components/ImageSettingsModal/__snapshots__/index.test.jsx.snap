@@ -1,0 +1,108 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ImageSettingsModal render snapshot 1`] = `
+<BaseModal
+  close={[MockFunction props.close]}
+  confirmAction={
+    <Button
+      disabled={
+        Object {
+          "hooks.isSaveDisabled": Object {
+            "isDecorative": false,
+            "value": "alternative Taxes",
+          },
+        }
+      }
+      onClick={
+        Object {
+          "hooks.onSaveClick": Object {
+            "altText": "alternative Taxes",
+            "dimensions": Object {
+              "height": 13,
+              "width": 12,
+            },
+            "isDecorative": false,
+            "saveToEditor": [MockFunction props.saveToEditor],
+          },
+        }
+      }
+      variant="primary"
+    >
+      Save
+    </Button>
+  }
+  isOpen={false}
+  title="Image Settings"
+>
+  <Button
+    onClick={[MockFunction props.returnToSelector]}
+    size="inline"
+    variant="link"
+  >
+    Replace image
+  </Button>
+  <br />
+  <div
+    className="d-flex flex-row m-2 img-settings-form-container"
+  >
+    <div
+      className="img-settings-thumbnail-container"
+    >
+      <Image
+        className="img-settings-thumbnail"
+        onLoad={
+          Object {
+            "hooks.dimensions.onImgLoad.callback": Object {
+              "selection": Object {
+                "selected": "image data",
+              },
+            },
+          }
+        }
+      />
+    </div>
+    <hr
+      className="h-100 bg-primary-200 m-0"
+    />
+    <div
+      className="img-settings-form-controls"
+    >
+      <DimensionControls
+        onImgLoad={
+          [MockFunction hooks.dimensions.onImgLoad] {
+            "calls": Array [
+              Array [
+                Object {
+                  "selected": "image data",
+                },
+              ],
+            ],
+            "results": Array [
+              Object {
+                "type": "return",
+                "value": Object {
+                  "hooks.dimensions.onImgLoad.callback": Object {
+                    "selection": Object {
+                      "selected": "image data",
+                    },
+                  },
+                },
+              },
+            ],
+          }
+        }
+        value={
+          Object {
+            "height": 13,
+            "width": 12,
+          }
+        }
+      />
+      <AltTextControls
+        isDecorative={false}
+        value="alternative Taxes"
+      />
+    </div>
+  </div>
+</BaseModal>
+`;

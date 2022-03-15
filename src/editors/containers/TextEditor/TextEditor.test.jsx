@@ -17,8 +17,6 @@ jest.mock('@tinymce/tinymce-react', () => {
   };
 });
 jest.mock('./components/ImageUploadModal', () => 'ImageUploadModal');
-jest.mock('./components/SelectImageModal', () => 'SelectImageModal');
-jest.mock('./components/ImageSettingsModal', () => 'ImageSettingsModal');
 
 jest.mock('./hooks', () => {
   const updateState = jest.fn();
@@ -54,11 +52,6 @@ jest.mock('../../data/redux', () => ({
       isFinished: jest.fn((state, params) => ({ isFailed: { state, params } })),
     },
   },
-  thunkActions: {
-    app: {
-      fetchImages: jest.fn().mockName('actions.app.fetchImages'),
-    },
-  },
 }));
 
 describe('TextEditor', () => {
@@ -66,7 +59,7 @@ describe('TextEditor', () => {
     setEditorRef: jest.fn().mockName('args.setEditorRef'),
     editorRef: { current: { value: 'something' } },
     // redux
-    blockValue: { data: 'eDiTablE Text' },
+    blockValue: { data: { some: 'eDiTablE Text' } },
     blockFailed: false,
     blockFinished: true,
     initializeEditor: jest.fn().mockName('args.intializeEditor'),

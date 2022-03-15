@@ -26,7 +26,6 @@ const ImageUploadModal = ({
   const saveToEditor = module.hooks.createSaveCallback({
     close, editorRef, setSelection, selection,
   });
-
   const closeAndReset = () => {
     setSelection(null);
     close();
@@ -49,13 +48,14 @@ const ImageUploadModal = ({
 
 ImageUploadModal.defaultProps = {
   editorRef: null,
+  selection: null,
 };
 ImageUploadModal.propTypes = {
   selection: PropTypes.shape({
     url: PropTypes.string,
     externalUrl: PropTypes.string,
     altText: PropTypes.bool,
-  }).isRequired,
+  }),
   setSelection: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,

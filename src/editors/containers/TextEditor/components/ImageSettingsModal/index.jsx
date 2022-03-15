@@ -1,63 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Button,
-  Form,
-  Image,
-} from '@edx/paragon';
+import { Button, Image } from '@edx/paragon';
+import { ArrowBackIos } from '@edx/paragon/icons';
 
 import BaseModal from '../BaseModal';
-import * as module from '.';
 
-export const hooks = {
-  dimensions: () => {
-    const [baseDimensions, setBaseDimensions] = React.useState(null);
-    const [dimensions, setDimensions] = React.useState(null);
-    const initialize = ({ height, width }) => {
-      setBaseDimensions({ height, width });
-      setDimensions({ height, width });
-    };
-    const reset = () => setDimensions(baseDimensions);
-    const setWidth = (width) => setDimensions({ ...dimensions, width });
-    const setHeight = (height) => setDimensions({ ...dimensions, height });
-    return {
-      value: dimensions,
-      initialize,
-      reset,
-      setHeight,
-      setWidth,
-    };
-  },
-  altText: (savedText) => {
-    const [altText, setAltText] = React.useState(savedText || '');
-    const [isDecorative, setIsDecorative] = React.useState(false);
-    return {
-      value: altText,
-      set: setAltText,
-      isDecorative,
-      setIsDecorative,
-    };
-  },
-  onImgLoad: (initializeDimensions, selection) => ({ target: img }) => {
-    initializeDimensions({
-      height: selection.height ? selection.height : img.naturalHeight,
-      width: selection.width ? selection.width : img.naturalWidth,
-    });
-  },
-  onInputChange: (handleValue) => (e) => handleValue(e.target.value),
-  onCheckboxChange: (handleValue) => (e) => handleValue(e.target.checked),
-  onSave: ({
-    saveToEditor,
-    dimensions,
-    altText,
-    isDecorative,
-  }) => saveToEditor({
-    dimensions,
-    altText,
-    isDecorative,
-  }),
-};
+import AltTextControls from './AltTextControls';
+import DimensionControls from './DimensionControls';
+import hooks from './hooks';
+import './index.scss';
 
+/**
+ * Modal display wrapping the dimension and alt-text controls for image tags
+ * inserted into the TextEditor TinyMCE context.
+ * Provides a thumbnail and populates dimension and alt-text controls.
+ * @param {bool} isOpen - is the modal open?
+ * @param {func} close - close the modal
+ * @param {obj} selection - current image selection object
+ * @param {func} saveToEditor - save the current settings to the editor
+ * @param {func} returnToSelection - return to image selection
+ */
 export const ImageSettingsModal = ({
   isOpen,
   close,
@@ -65,10 +27,9 @@ export const ImageSettingsModal = ({
   saveToEditor,
   returnToSelection,
 }) => {
-  const dimensions = module.hooks.dimensions();
-  const altText = module.hooks.altText(selection.altText);
-  const onImgLoad = module.hooks.onImgLoad(dimensions.initialize, selection);
-  const onSaveClick = () => module.hooks.onSave({
+  const dimensions = hooks.dimensions();
+  const altText = hooks.altText();
+  const onSaveClick = hooks.onSaveClick({
     saveToEditor,
     dimensions: dimensions.value,
     altText: altText.value,
@@ -80,55 +41,38 @@ export const ImageSettingsModal = ({
       close={close}
       isOpen={isOpen}
       confirmAction={(
-        <Button variant="primary" onClick={onSaveClick}>
+        <Button
+          variant="primary"
+          onClick={onSaveClick}
+          disabled={hooks.isSaveDisabled(altText)}
+        >
           Save
         </Button>
       )}
     >
-      <Button onClick={returnToSelection} variant="link" size="inline">
-        Select another image
+      <Button
+        onClick={returnToSelection}
+        variant="link"
+        size="inline"
+        iconBefore={ArrowBackIos}
+      >
+        Replace image
       </Button>
       <br />
-      <Image
-        style={{ maxWidth: '200px', maxHeight: '200px' }}
-        onLoad={onImgLoad}
-        src={selection.externalUrl}
-      />
-      { dimensions.value && (
-        <Form.Group>
-          <Form.Label>Image Dimensions</Form.Label>
-          <Form.Control
-            type="number"
-            value={dimensions.value.width}
-            min={0}
-            onChange={module.hooks.onInputChange(dimensions.setWidth)}
-            floatingLabel="Width"
+      <div className="d-flex flex-row m-2 img-settings-form-container">
+        <div className="img-settings-thumbnail-container">
+          <Image
+            className="img-settings-thumbnail"
+            onLoad={dimensions.onImgLoad(selection)}
+            src={selection.externalUrl}
           />
-          <Form.Control
-            type="number"
-            value={dimensions.value.height}
-            min={0}
-            onChange={module.hooks.onInputChange(dimensions.setHeight)}
-            floatingLabel="Height"
-          />
-        </Form.Group>
-      )}
-      <Form.Group>
-        <Form.Label>Accessibility</Form.Label>
-        <Form.Control
-          type="input"
-          value={altText.value}
-          disabled={altText.isDecorative}
-          onChange={module.hooks.onInputChange(altText.set)}
-          floatingLabel="Alt Text"
-        />
-        <Form.Checkbox
-          checked={altText.isDecorative}
-          onChange={module.hooks.onCheckboxChange(altText.setIsDecorative)}
-        >
-          This image is decorative (no alt text required).
-        </Form.Checkbox>
-      </Form.Group>
+        </div>
+        <hr className="h-100 bg-primary-200 m-0" />
+        <div className="img-settings-form-controls">
+          <DimensionControls {...dimensions} />
+          <AltTextControls {...altText} />
+        </div>
+      </div>
     </BaseModal>
   );
 };

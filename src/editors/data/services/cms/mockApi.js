@@ -11,7 +11,9 @@ export const fetchBlockById = ({ blockId, studioEndpointUrl }) => mockPromise({
   },
 });
 
-export const fetchByUnitId = () => mockPromise({
+// TODO: update to return block data appropriate per block ID, which will equal block type
+// eslint-disable-next-line
+export const fetchByUnitId = ({ blockId, studioEndpointUrl }) => mockPromise({
   data: { ancestors: [{ id: 'unitUrl' }] },
 });
 
