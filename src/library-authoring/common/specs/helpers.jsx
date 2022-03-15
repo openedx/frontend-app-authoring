@@ -5,7 +5,7 @@ import { render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import * as React from 'react';
 import { getDefaultMiddleware } from '@reduxjs/toolkit';
-import { initialize } from '@edx/frontend-platform';
+import { initializeMockApp } from '@edx/frontend-platform';
 import AppContext from '@edx/frontend-platform/react/AppContext';
 import { Provider } from 'react-redux';
 import { createBrowserHistory } from 'history';
@@ -145,7 +145,7 @@ export const ctxRender = async (ui, {
   options, context, storeOptions, history = createBrowserHistory(),
 } = {}) => {
   const store = buildStore({ middleware: [...getDefaultMiddleware(), spyMiddleware], ...storeOptions });
-  await initialize({ messages: [appMessages] });
+  await initializeMockApp({ messages: [appMessages] });
   return render(
     <Provider store={store}>
       <Router history={history}>

@@ -1,13 +1,13 @@
 const path = require('path');
 const { getBaseConfig } = require('@edx/frontend-build');
-const Merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 /**
  * Allow serving xblock-bootstrap.html from the MFE itself.
  */
 const baseConfig = getBaseConfig('webpack-dev');
-module.exports = Merge.smart(baseConfig, {
+module.exports = merge(baseConfig, {
   plugins: [
     new CopyWebpackPlugin({
       patterns: [{

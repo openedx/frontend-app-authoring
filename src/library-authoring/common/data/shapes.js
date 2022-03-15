@@ -23,8 +23,8 @@ export const libraryShape = PropTypes.shape({
   description: PropTypes.string,
   version: PropTypes.number,
   license: PropTypes.string.isRequired,
-  has_unpublished_changes: PropTypes.bool.isRequired,
-  has_unpublished_deletes: PropTypes.bool.isRequired,
+  has_unpublished_changes: PropTypes.bool,
+  has_unpublished_deletes: PropTypes.bool,
   blockTypes: PropTypes.arrayOf(libraryBlockTypeShape),
   allow_lti: PropTypes.bool.isRequired,
 });

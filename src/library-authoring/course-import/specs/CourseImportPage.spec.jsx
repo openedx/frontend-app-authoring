@@ -92,7 +92,7 @@ describe('course-import/CourseImportPage/CourseImportPage.jsx', () => {
     props.importTasks = [{
       id: 1,
       progress: 1,
-      library: 'lib-1',
+      library: 1,
       state: 'Pending',
       org: 'edx',
       course_id: 'course-1',

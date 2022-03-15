@@ -151,9 +151,6 @@ Known Issues
   limitation of Studio, not this MFE, and work is under way to address the issue accordingly.  (It is still possible to
   edit a block with OLX, however.)
 
-* Block previews may be jittery in the authoring preview.  This is particularly true of the video block.  It does not
-  affect usage of the block in the LMS or elsewhere, though.
-
 * The current component editing flow is a direct port of `ramshackle <https://github.com/open-craft/ramshackle>`_ with
   only minor improvements.  It is pending an UX audit and internationalization, among other things.
 
@@ -163,10 +160,17 @@ Known Issues
 * The library isn't always updated between when it is changed in the edit view/create view and when you return to the
   authoring view. So sometimes you may need to refresh after changing a library to get the right authoring view.
 
-* Styling is not final, and is pending a Paragon update so that the UI will more closely match Studio's.
+* The in-library search box loses focus after each letter is typed.
 
-* There are a handful of non-fatal errors that appear when running tests.  They appear to be related to the Modal
-  component from Paragon not being up to date with the version of React in this repository.
+* Styling needs love: to speed up development, we we originally relied on the old edX theme as provided by Paragon to
+  match Studio's look. That was removed on Paragon@13.0.0, so many components are now visually broken.  We need to go
+  back to the (literal, in this case) drawing board.
+
+* We should take `frontend-app-learning`'s lead as far as test tooling is concerned (remove enzyme, use
+  axios-mock-adapter, etc).  This should help avoid the handful of non-fatal console errors that appear when running
+  tests.
+
+* Test coverage can, and should, be improved.
 
 Development Roadmap
 -------------------

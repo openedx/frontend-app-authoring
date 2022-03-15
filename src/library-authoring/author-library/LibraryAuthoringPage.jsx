@@ -144,8 +144,12 @@ BlockPreviewBase.propTypes = {
   setShowDeleteModal: PropTypes.func.isRequired,
   deleteLibraryBlock: PropTypes.func.isRequired,
   previewKey: PropTypes.string.isRequired,
-  isLtiUrlGenerating: PropTypes.bool.isRequired,
   fetchBlockLtiUrl: PropTypes.func.isRequired,
+  isLtiUrlGenerating: PropTypes.bool,
+};
+
+BlockPreviewBase.defaultProps = {
+  isLtiUrlGenerating: false,
 };
 
 export const BlockPreview = injectIntl(BlockPreviewBase);
@@ -207,16 +211,19 @@ const BlockPreviewContainerBase = ({
     editView = ROUTES.Detail.HOME_SLUG(library.id, block.id);
   }
 
-  const isBlockOnClipboard = ltiUrlClipboard.value.blockId === block.id;
-  const isLtiUrlGenerating = isBlockOnClipboard && ltiUrlClipboard.status === LOADING_STATUS.LOADING;
+  let isLtiUrlGenerating;
+  if (library.allow_lti) {
+    const isBlockOnClipboard = ltiUrlClipboard.value.blockId === block.id;
+    isLtiUrlGenerating = isBlockOnClipboard && ltiUrlClipboard.status === LOADING_STATUS.LOADING;
 
-  if (isBlockOnClipboard && ltiUrlClipboard.status === LOADING_STATUS.LOADED) {
-    const clipboard = document.createElement('textarea');
-    clipboard.value = getConfig().STUDIO_BASE_URL + ltiUrlClipboard.value.lti_url;
-    document.body.appendChild(clipboard);
-    clipboard.select();
-    document.execCommand('copy');
-    document.body.removeChild(clipboard);
+    if (isBlockOnClipboard && ltiUrlClipboard.status === LOADING_STATUS.LOADED) {
+      const clipboard = document.createElement('textarea');
+      clipboard.value = getConfig().STUDIO_BASE_URL + ltiUrlClipboard.value.lti_url;
+      document.body.appendChild(clipboard);
+      clipboard.select();
+      document.execCommand('copy');
+      document.body.removeChild(clipboard);
+    }
   }
 
   return (
@@ -239,6 +246,7 @@ const BlockPreviewContainerBase = ({
 
 BlockPreviewContainerBase.defaultProps = {
   blockView: null,
+  ltiUrlClipboard: null,
 };
 
 BlockPreviewContainerBase.propTypes = {
@@ -253,7 +261,7 @@ BlockPreviewContainerBase.propTypes = {
   showPreviews: PropTypes.bool.isRequired,
   deleteLibraryBlock: PropTypes.func.isRequired,
   library: libraryShape.isRequired,
-  ltiUrlClipboard: fetchable(PropTypes.Object).isRequired,
+  ltiUrlClipboard: fetchable(PropTypes.object),
 };
 
 const ButtonTogglesBase = ({
@@ -266,8 +274,7 @@ const ButtonTogglesBase = ({
     </Button>
     <Button variant="primary" className="ml-1" onClick={() => setShowPreviews(!showPreviews)} size="lg">
       <FontAwesomeIcon icon={faSync} className="pr-1" />
-      { showPreviews && intl.formatMessage(messages['library.detail.hide_previews']) }
-      { showPreviews || intl.formatMessage(messages['library.detail.show_previews']) }
+      { intl.formatMessage(showPreviews ? messages['library.detail.hide_previews'] : messages['library.detail.show_previews']) }
     </Button>
   </>
 );
@@ -327,7 +334,7 @@ export const LibraryAuthoringPageBase = ({
   quickAddBehavior, otherTypes, blocks, changeQuery, changeType, changePage,
   paginationOptions, typeOptions, query, type, ...props
 }) => (
-  <Container fluid="lg">
+  <Container fluid>
     <Row className="pt-5 px-2 px-xl-0">
       <Col xs={12} md={8} xl={9} className="page-header-section">
         <small className="card-subtitle">{intl.formatMessage(messages['library.detail.page.heading'])}</small>
@@ -432,7 +439,7 @@ export const LibraryAuthoringPageBase = ({
                     <Col xs={12} className="text-center">
                       <div className="d-inline-block">
                         <Dropdown>
-                          <Dropdown.Toggle variant="success" size="lg" disabled={sending} className="cta-button mr-2">
+                          <Dropdown.Toggle variant="success" size="lg" disabled={sending} className="cta-button mr-2" id="library-detail-add-component-dropdown">
                             Advanced
                           </Dropdown.Toggle>
                           <Dropdown.Menu size="lg">

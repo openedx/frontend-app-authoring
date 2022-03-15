@@ -1,4 +1,5 @@
 import React from 'react';
+import update from 'immutability-helper';
 import { BrowserRouter } from 'react-router-dom';
 import { injectIntl } from '@edx/frontend-platform/i18n';
 import { LibraryListPage } from '../LibraryListPage';
@@ -58,11 +59,13 @@ describe('list-libraries/LibraryListPage.jsx', () => {
   });
 
   it('Paginates on big library list', () => {
-    props.libraries.count = 60;
+    const newProps = update(props, {
+      libraries: { count: { $set: 60 } },
+    });
 
     const container = ctxMount(
       <BrowserRouter>
-        <InjectedLibraryListPage {...props} />
+        <InjectedLibraryListPage {...newProps} />
       </BrowserRouter>,
     );
 

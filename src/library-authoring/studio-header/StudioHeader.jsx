@@ -44,7 +44,7 @@ const StudioHeader = ({ intl, library }) => {
                 </h2>
                 <nav className="p-4 mt-2">
                   <Dropdown>
-                    <Dropdown.Toggle variant="outline-light">
+                    <Dropdown.Toggle variant="outline-light" id="library-header-menu-dropdown">
                       {intl.formatMessage(messages['library.header.settings.menu'])}
                       <Icon className="fa fa-caret-down pl-3" alt="" />
                     </Dropdown.Toggle>
@@ -78,7 +78,7 @@ const StudioHeader = ({ intl, library }) => {
               </li>
               <li className="nav-item nav-account-user">
                 <Dropdown>
-                  <Dropdown.Toggle variant="outline-light">
+                  <Dropdown.Toggle variant="outline-light" id="library-header-account-dropdown">
                     {authenticatedUser.username}
                     <Icon className="fa fa-caret-down pl-3" alt="" />
                   </Dropdown.Toggle>

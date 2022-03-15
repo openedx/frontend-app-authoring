@@ -29,9 +29,11 @@ const LibraryAccessForm = (
     <Row className="mb-2">
       <form className="col-12" onSubmit={onSubmit}>
         <Card>
-          <Card.Body>
+          <Card.Header
+            title={intl.formatMessage(messages['library.access.form.title'])}
+          />
+          <Card.Section>
             <div className="form-create">
-              <Card.Title>{intl.formatMessage(messages['library.access.form.title'])}</Card.Title>
               <fieldset>
                 <ol className="list-input">
                   <li className="field">
@@ -58,10 +60,10 @@ const LibraryAccessForm = (
                 </ol>
               </fieldset>
             </div>
-          </Card.Body>
+          </Card.Section>
         </Card>
         <Card className="mb-5">
-          <Card.Body>
+          <Card.Section>
             <StatefulButton
               variant="primary"
               type="submit"
@@ -81,7 +83,7 @@ const LibraryAccessForm = (
             <Button size="lg" variant="secondary" className="mx-3 font-weight-bold text-uppercase" onClick={() => setShowAdd(false)}>
               {intl.formatMessage(commonMessages['library.common.forms.button.cancel'])}
             </Button>
-          </Card.Body>
+          </Card.Section>
         </Card>
       </form>
     </Row>
