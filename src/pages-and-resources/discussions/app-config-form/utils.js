@@ -7,9 +7,10 @@ export const filterItemFromObject = (array, key, value) => (
   array.filter(item => item[key] !== value)
 );
 
-export const checkFieldErrors = (touched, errors, fieldPath, propertyName) => Boolean(
-  getIn(errors, `${fieldPath}.${propertyName}`) && getIn(touched, `${fieldPath}.${propertyName}`),
-);
+export const checkFieldErrors = (touched, errors, fieldPath, propertyName) => {
+  const path = fieldPath ? `${fieldPath}.${propertyName}` : propertyName;
+  return Boolean(getIn(errors, path) && getIn(touched, path));
+};
 
 export const errorExists = (errors, fieldPath, propertyName) => getIn(errors, `${fieldPath}.${propertyName}`);
 

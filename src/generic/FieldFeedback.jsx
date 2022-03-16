@@ -36,10 +36,10 @@ function FieldFeedback({
 }
 
 FieldFeedback.propTypes = {
-  errorMessage: PropTypes.string.isRequired,
-  feedbackMessage: PropTypes.string.isRequired,
   errorCondition: PropTypes.bool.isRequired,
-  feedbackCondition: PropTypes.bool.isRequired,
+  errorMessage: PropTypes.string,
+  feedbackMessage: PropTypes.string,
+  feedbackCondition: PropTypes.bool,
   feedbackClasses: PropTypes.string,
   transitionClasses: PropTypes.string,
 };
@@ -47,6 +47,9 @@ FieldFeedback.propTypes = {
 FieldFeedback.defaultProps = {
   feedbackClasses: '',
   transitionClasses: '',
+  feedbackMessage: '',
+  feedbackCondition: false,
+  errorMessage: '',
 };
 
 export default FieldFeedback;

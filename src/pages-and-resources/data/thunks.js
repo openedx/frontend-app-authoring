@@ -21,6 +21,7 @@ const COURSE_APPS_ORDER = [
   'wiki',
   'calculator',
   'proctoring',
+  'live',
   'textbooks',
   'custom_pages',
 ];

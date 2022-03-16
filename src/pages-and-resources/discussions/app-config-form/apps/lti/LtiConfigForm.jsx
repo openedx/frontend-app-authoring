@@ -153,7 +153,11 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
           </div>
         )}
       </Form>
-      <AppExternalLinks externalLinks={externalLinks} providerName={providerName} />
+      <AppExternalLinks
+        externalLinks={externalLinks}
+        providerName={providerName}
+        customClasses="small text-muted"
+      />
     </Card>
   );
 }
