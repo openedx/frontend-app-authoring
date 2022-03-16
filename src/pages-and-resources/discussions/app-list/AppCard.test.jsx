@@ -4,7 +4,7 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import MockAdapter from 'axios-mock-adapter';
-import { render, queryByLabelText } from '@testing-library/react';
+import { render, queryByLabelText, queryByTestId } from '@testing-library/react';
 
 import AppCard from './AppCard';
 import messages from './messages';
@@ -85,8 +85,8 @@ describe('AppCard', () => {
     await mockStore(legacyApiResponse);
     createComponent(appWithCustomSupport);
 
-    expect(container.querySelector('.card-title')).toHaveTextContent(title);
-    expect(container.querySelector('.card-text')).toHaveTextContent(text);
+    expect(queryByTestId(container, 'card-title')).toHaveTextContent(title);
+    expect(queryByTestId(container, 'card-text')).toHaveTextContent(text);
   });
 
   test('full support subtitle shown when hasFullSupport is true', async () => {
@@ -95,7 +95,7 @@ describe('AppCard', () => {
     await mockStore(legacyApiResponse);
     createComponent(app);
 
-    expect(container.querySelector('.card-subtitle')).toHaveTextContent(subtitle);
+    expect(queryByTestId(container, 'card-subtitle')).toHaveTextContent(subtitle);
   });
 
   test('partial support subtitle shown when hasFullSupport is false', async () => {
@@ -105,6 +105,6 @@ describe('AppCard', () => {
     await mockStore(legacyApiResponse);
     createComponent(appWithBasicSupport);
 
-    expect(container.querySelector('.card-subtitle')).toHaveTextContent(subtitle);
+    expect(queryByTestId(container, 'card-subtitle')).toHaveTextContent(subtitle);
   });
 });

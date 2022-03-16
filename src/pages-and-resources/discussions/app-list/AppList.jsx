@@ -55,7 +55,7 @@ function AppList({ intl }) {
   }
 
   return (
-    <div className="m-1  my-sm-5" data-testid="appList">
+    <div className="my-sm-5 m-1" data-testid="appList">
       <h3 className="my-sm-5 my-4">
         {intl.formatMessage(messages.heading)}
       </h3>
@@ -64,6 +64,7 @@ function AppList({ intl }) {
           xs: 12,
           sm: 6,
           lg: 4,
+          xl: 4,
         }}
       >
         {apps.map(app => (
