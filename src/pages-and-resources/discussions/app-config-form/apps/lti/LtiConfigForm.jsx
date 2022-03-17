@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import { ensureConfig, getConfig } from '@edx/frontend-platform';
+import { ensureConfig } from '@edx/frontend-platform';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Card, Form, MailtoLink } from '@edx/paragon';
@@ -50,9 +50,14 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
   const isInvalidConsumerKey = Boolean(touched.consumerKey && errors.consumerKey);
   const isInvalidConsumerSecret = Boolean(touched.consumerSecret && errors.consumerSecret);
   const isInvalidLaunchUrl = Boolean(touched.launchUrl && errors.launchUrl);
-  const supportEmail = getConfig().SUPPORT_EMAIL;
   const showLTIConfig = user.administrator;
   const enablePIISharing = false;
+  const supportEmails = {
+    Yellowdig: 'learnmore@yellowdig.com',
+    'Ed Discussion': 'team@edstem.org',
+    InScribe: 'hello@inscribeapp.com',
+    Piazza: 'team@piazza.com',
+  };
 
   useEffect(() => {
     dispatch(updateValidationStatus({ hasError: Object.keys(errors).length > 0 }));
@@ -67,9 +72,8 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
             {...messages.stuffOnlyConfig}
             values={{
               providerName,
-              platformName: getConfig().SITE_NAME,
-              supportEmail: supportEmail ? (
-                <MailtoLink to={supportEmail}>{supportEmail}</MailtoLink>
+              supportEmail: supportEmails[providerName] ? (
+                <MailtoLink to={supportEmails[providerName]}>{supportEmails[providerName]}</MailtoLink>
               ) : (
                 'support'
               ),
