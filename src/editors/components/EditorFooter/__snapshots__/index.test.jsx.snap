@@ -28,7 +28,11 @@ exports[`EditorFooter snapshots Save Failed, error message raised 1`] = `
         }
         variant="tertiary"
       >
-        Cancel
+        <FormattedMessage
+          defaultMessage="Cancel"
+          description="Label for cancel button"
+          id="authoring.editorfooter.cancelButton.label"
+        />
       </Button>
       <Button
         aria-label="Save Changes and Return to Learning Context"
@@ -72,7 +76,11 @@ exports[`EditorFooter snapshots not intialized, Spinner appears and button is di
         }
         variant="tertiary"
       >
-        Cancel
+        <FormattedMessage
+          defaultMessage="Cancel"
+          description="Label for cancel button"
+          id="authoring.editorfooter.cancelButton.label"
+        />
       </Button>
       <Button
         aria-label="Save Changes and Return to Learning Context"
@@ -115,7 +123,11 @@ exports[`EditorFooter snapshots renders as expected with default behavior 1`] = 
         }
         variant="tertiary"
       >
-        Cancel
+        <FormattedMessage
+          defaultMessage="Cancel"
+          description="Label for cancel button"
+          id="authoring.editorfooter.cancelButton.label"
+        />
       </Button>
       <Button
         aria-label="Save Changes and Return to Learning Context"

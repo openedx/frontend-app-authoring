@@ -9,23 +9,24 @@ import {
   ModalDialog,
 } from '@edx/paragon';
 import { Close } from '@edx/paragon/icons';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { selectors } from '../../data/redux';
 import * as appHooks from '../../hooks';
 
 import HeaderTitle from './HeaderTitle';
+import messages from './messages';
 
-export const EditorHeader = ({ returnUrl }) => (
+export const EditorHeader = ({ intl, returnUrl }) => (
   <div className="editor-header">
     <ModalDialog.Header>
       <ActionRow>
         <ModalDialog.Title><HeaderTitle /></ModalDialog.Title>
         <ActionRow.Spacer />
         <IconButton
-          aria-label="Cancel Changes and Return to Learning Context"
+          alt={intl.formatMessage(messages.cancelChangesLabel)}
           src={Close}
           iconAs={Icon}
-          alt="Close"
           onClick={appHooks.navigateCallback(returnUrl)}
           variant="light"
           className="mr-2"
@@ -35,10 +36,13 @@ export const EditorHeader = ({ returnUrl }) => (
   </div>
 );
 EditorHeader.propTypes = {
+  // injected
+  intl: intlShape.isRequired,
+  // redux
   returnUrl: PropTypes.string.isRequired,
 };
 export const mapStateToProps = (state) => ({
   returnUrl: selectors.app.returnUrl(state),
 });
 
-export default connect(mapStateToProps)(EditorHeader);
+export default injectIntl(connect(mapStateToProps)(EditorHeader));

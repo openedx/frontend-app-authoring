@@ -1,9 +1,11 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import * as module from './index';
+
+import { formatMessage } from '../../../testUtils';
 import { selectors, thunkActions } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 import { saveBlock, navigateCallback } from '../../hooks';
+import * as module from './index';
 
 jest.mock('../../data/redux', () => ({
   thunkActions: {
@@ -39,6 +41,7 @@ jest.mock('../../hooks', () => ({
 
 describe('EditorFooter', () => {
   const props = {
+    intl: { formatMessage },
     editorRef: jest.fn().mockName('args.editorRef'),
     isInitialized: true,
     returnUrl: 'hocuspocus.ca',

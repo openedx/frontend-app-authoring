@@ -9,13 +9,13 @@ import {
   ModalDialog,
   Toast,
 } from '@edx/paragon';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { nullMethod, saveBlock, navigateCallback } from '../../hooks';
 
 import { RequestKeys } from '../../data/constants/requests';
 import { selectors, thunkActions } from '../../data/redux';
 
-import messages from '../messages';
+import messages from './messages';
 import * as module from '.';
 
 export const handleSaveClicked = (props) => () => saveBlock(props);
@@ -23,6 +23,8 @@ export const handleCancelClicked = ({ returnUrl }) => navigateCallback(returnUrl
 
 export const EditorFooter = ({
   editorRef,
+  // injected
+  intl,
   // redux
   isInitialized,
   returnUrl,
@@ -38,14 +40,14 @@ export const EditorFooter = ({
       <ActionRow>
         <ActionRow.Spacer />
         <Button
-          aria-label="Discard Changes and Return to Learning Context"
+          aria-label={intl.formatMessage(messages.cancelButtonAriaLabel)}
           variant="tertiary"
           onClick={module.handleCancelClicked({ returnUrl })}
         >
-          Cancel
+          <FormattedMessage {...messages.cancelButtonLabel} />
         </Button>
         <Button
-          aria-label="Save Changes and Return to Learning Context"
+          aria-label={intl.formatMessage(messages.saveButtonAriaLabel)}
           onClick={module.handleSaveClicked({
             editorRef,
             returnUrl,
@@ -70,6 +72,8 @@ EditorFooter.propTypes = {
     PropTypes.func,
     PropTypes.shape({ current: PropTypes.any }),
   ]),
+  // injected
+  intl: intlShape.isRequired,
   // redux
   isInitialized: PropTypes.bool.isRequired,
   returnUrl: PropTypes.string,
@@ -88,4 +92,4 @@ export const mapDispatchToProps = {
   saveBlockContent: thunkActions.app.saveBlock,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditorFooter);
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(EditorFooter));

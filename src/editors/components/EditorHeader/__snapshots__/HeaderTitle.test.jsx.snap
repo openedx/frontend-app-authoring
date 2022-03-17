@@ -25,8 +25,7 @@ exports[`HeaderTitle snapshots initialized 1`] = `
     TeST LocALtitLE
   </div>
   <IconButton
-    alt="Edit"
-    aria-label="Edit Title"
+    alt="Edit Title"
     className="mr-2"
     iconAs="Icon"
     onClick={[MockFunction localTitleHooks.startEditing]}
@@ -36,10 +35,4 @@ exports[`HeaderTitle snapshots initialized 1`] = `
 </div>
 `;
 
-exports[`HeaderTitle snapshots not initialized 1`] = `
-<FormattedMessage
-  defaultMessage="Loading..."
-  description="Message displayed while loading content"
-  id="authoring.texteditor.title.loading"
-/>
-`;
+exports[`HeaderTitle snapshots not initialized 1`] = `"Loading..."`;

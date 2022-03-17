@@ -1,9 +1,10 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import * as module from './HeaderTitle';
+import { formatMessage } from '../../../testUtils';
 import { actions, selectors } from '../../data/redux';
 import { localTitleHooks } from './hooks';
+import * as module from './HeaderTitle';
 
 jest.mock('../../data/redux', () => ({
   actions: {
@@ -25,6 +26,7 @@ jest.mock('./hooks', () => ({
 
 describe('HeaderTitle', () => {
   const props = {
+    intl: { formatMessage },
     editorRef: jest.fn().mockName('args.editorRef'),
     isInitialized: false,
     setBlockTitle: jest.fn().mockName('args.setBlockTitle'),

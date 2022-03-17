@@ -4,20 +4,21 @@ import PropTypes from 'prop-types';
 
 import { Icon, IconButton } from '@edx/paragon';
 import { Edit } from '@edx/paragon/icons';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { actions, selectors } from '../../data/redux';
 import { localTitleHooks } from './hooks';
-import messages from '../messages';
+import messages from './messages';
 import EditableHeader from './EditableHeader';
 
 export const HeaderTitle = ({
   editorRef,
+  intl,
   isInitialized,
   setBlockTitle,
   typeHeader,
 }) => {
-  if (!isInitialized) { return <FormattedMessage {...messages.loading} />; }
+  if (!isInitialized) { return intl.formatMessage(messages.loading); }
   const {
     inputRef,
     isEditing,
@@ -51,8 +52,7 @@ export const HeaderTitle = ({
         {localTitle}
       </div>
       <IconButton
-        alt="Edit"
-        aria-label="Edit Title"
+        alt={intl.formatMessage(messages.editTitleLabel)}
         className="mr-2"
         iconAs={Icon}
         onClick={startEditing}
@@ -70,6 +70,8 @@ HeaderTitle.propTypes = {
     PropTypes.func,
     PropTypes.shape({ current: PropTypes.any }),
   ]),
+  // injected
+  intl: intlShape.isRequired,
   // redux
   isInitialized: PropTypes.bool.isRequired,
   setBlockTitle: PropTypes.func.isRequired,
@@ -85,4 +87,4 @@ export const mapDispatchToProps = {
   setBlockTitle: actions.app.setBlockTitle,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(HeaderTitle);
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(HeaderTitle));

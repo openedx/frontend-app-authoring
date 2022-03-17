@@ -59,8 +59,8 @@ export const getValidDimensions = ({
   // if closest valid iteration is current iteration, move one iteration in the change direction
   if (iter === (dimensions[keys.changed] / minInc[keys.changed])) { iter += direction; }
 
-  out[keys.changed] = iter * minInc[keys.changed];
-  out[keys.other] = out[keys.changed] * (locked[keys.other] / locked[keys.changed]);
+  out[keys.changed] = Math.round(iter * minInc[keys.changed]);
+  out[keys.other] = Math.round(out[keys.changed] * (locked[keys.other] / locked[keys.changed]));
 
   return out;
 };

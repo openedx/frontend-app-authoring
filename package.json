@@ -70,8 +70,8 @@
     "tinymce": "^5.10.2"
   },
   "peerDependencies": {
-    "@edx/frontend-platform": "^1.8.0",
     "@edx/paragon": ">= 7.0.0 < 20.0.0",
+    "@edx/frontend-platform": "1.14.0",
     "prop-types": "^15.5.10",
     "react": "^16.14.0",
     "react-dom": "^16.14.0"

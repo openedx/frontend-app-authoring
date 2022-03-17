@@ -2,9 +2,11 @@ import React from 'react';
 import { shallow } from 'enzyme';
 
 import { IconButton } from '@edx/paragon';
-import * as module from './index';
+
+import { formatMessage } from '../../../testUtils';
 import { selectors } from '../../data/redux';
 import * as appHooks from '../../hooks';
+import * as module from './index';
 
 jest.mock('.', () => ({
   __esModule: true, // Use it when dealing with esModules
@@ -28,6 +30,7 @@ jest.mock('./HeaderTitle', () => 'HeaderTitle');
 
 describe('Editor Header index', () => {
   const props = {
+    intl: { formatMessage },
     returnUrl: 'TeST-ReTurNurL',
   };
   const { EditorHeader } = module;

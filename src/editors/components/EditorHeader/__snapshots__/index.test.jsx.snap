@@ -11,8 +11,7 @@ exports[` 1`] = `
       </ModalDialog.Title>
       <ActionRow.Spacer />
       <IconButton
-        alt="Close"
-        aria-label="Cancel Changes and Return to Learning Context"
+        alt="Cancel Changes and Return to Learning Context"
         className="mr-2"
         iconAs="Icon"
         src={[MockFunction icons.Close]}
