@@ -41,7 +41,7 @@ const messages = defineMessages({
   },
   stuffOnlyConfig: {
     id: 'authoring.discussions.stuffConfig',
-    defaultMessage: '{providerName} can only be configured by {platformName} administrators. Please contact {supportEmail} to enable this feature. This will require sharing usernames and emails of learners and the course team with {providerName}',
+    defaultMessage: 'To enable {providerName} for your course, please contact their support team at {supportEmail} to learn more about pricing and usage. To fully configure {providerName} will also require sharing usernames and emails for learners and course team. Please contact your edX project coordinator to enable PII sharing for this course.',
   },
   piiSharing: {
     id: 'authoring.discussions.piiSharing',
