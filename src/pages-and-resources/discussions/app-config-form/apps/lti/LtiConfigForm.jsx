@@ -69,7 +69,20 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
         <h3 className="mb-3">{providerName}</h3>
         <p>
           <FormattedMessage
-            {...messages.stuffOnlyConfig}
+            {...messages.stuffOnlyConfigInfo}
+            values={{
+              providerName,
+              supportEmail: supportEmails[providerName] ? (
+                <MailtoLink to={supportEmails[providerName]}>{supportEmails[providerName]}</MailtoLink>
+              ) : (
+                'support'
+              ),
+            }}
+          />
+        </p>
+        <p>
+          <FormattedMessage
+            {...messages.stuffOnlyConfigGuide}
             values={{
               providerName,
               supportEmail: supportEmails[providerName] ? (
