@@ -39,11 +39,11 @@ const messages = defineMessages({
     defaultMessage: 'Launch URL is a required field',
     description: 'Tells the user that the Launch URL field is required and must have a value.',
   },
-  stuffOnlyConfigInfo: {
+  staffOnlyConfigInfo: {
     id: 'authoring.discussions.stuffOnlyConfigInfo',
     defaultMessage: 'To enable {providerName} for your course, please contact their support team at {supportEmail} to learn more about pricing and usage.',
   },
-  stuffOnlyConfigGuide: {
+  staffOnlyConfigGuide: {
     id: 'authoring.discussions.stuffOnlyConfigGuide',
     defaultMessage: 'To fully configure {providerName} will also require sharing usernames and emails for learners and course team. Please contact your edX project coordinator to enable PII sharing for this course.',
   },

@@ -69,7 +69,7 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
         <h3 className="mb-3">{providerName}</h3>
         <p>
           <FormattedMessage
-            {...messages.stuffOnlyConfigInfo}
+            {...messages.staffOnlyConfigInfo}
             values={{
               providerName,
               supportEmail: supportEmails[providerName] ? (
@@ -82,7 +82,7 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
         </p>
         <p>
           <FormattedMessage
-            {...messages.stuffOnlyConfigGuide}
+            {...messages.staffOnlyConfigGuide}
             values={{
               providerName,
               supportEmail: supportEmails[providerName] ? (
