@@ -1,3 +1,4 @@
+import React from 'react';
 import { StrictDict } from '../../../../utils';
 import { MockUseState } from '../../../../../testUtils';
 import * as hooks from './hooks';
@@ -5,6 +6,7 @@ import * as hooks from './hooks';
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
   useEffect: jest.fn(),
+  useState: (val) => ({ useState: val }),
 }));
 
 const simpleDims = { width: 3, height: 4 };
@@ -24,29 +26,69 @@ const hookKeys = StrictDict(Object.keys(hooks).reduce(
 
 let hook;
 
+const testVal = 'MY test VALUE';
+
+describe('state values', () => {
+  const testStateMethod = (key) => {
+    expect(hooks.state[key](testVal)).toEqual(React.useState(testVal));
+  };
+  test('provides altText state value', () => testStateMethod(state.keys.altText));
+  test('provides dimensions state value', () => testStateMethod(state.keys.dimensions));
+  test('provides isDecorative state value', () => testStateMethod(state.keys.isDecorative));
+  test('provides isLocked state value', () => testStateMethod(state.keys.isLocked));
+  test('provides local state value', () => testStateMethod(state.keys.local));
+  test('provides lockDims state value', () => testStateMethod(state.keys.lockDims));
+  test('provides lockInitialized state value', () => testStateMethod(state.keys.lockInitialized));
+});
+
 describe('ImageSettingsModal hooks', () => {
   describe('dimensions-related hooks', () => {
     describe('getValidDimensions', () => {
+      it('returns local dimensions if not locked', () => {
+        expect(hooks.getValidDimensions({
+          dimensions: simpleDims,
+          local: reducedDims,
+          isLocked: false,
+          lockDims: simpleDims,
+        })).toEqual(reducedDims);
+      });
+      it('returns local dimensions if the same as stored', () => {
+        expect(hooks.getValidDimensions({
+          dimensions: simpleDims,
+          local: simpleDims,
+          isLocked: true,
+          lockDims: reducedDims,
+        })).toEqual(simpleDims);
+      });
       describe('decreasing change when at minimum valid increment', () => {
         it('returns current dimensions', () => {
           const dimensions = { ...reducedDims };
-          const locked = { minInc: { ...dimensions, gcd } };
+          const lockDims = { ...dimensions };
           let local = { ...dimensions, width: dimensions.width - 1 };
           expect(
-            hooks.getValidDimensions({ dimensions, local, locked }),
+            hooks.getValidDimensions({
+              dimensions,
+              isLocked: true,
+              local,
+              lockDims,
+            }),
           ).toEqual(dimensions);
           local = { ...dimensions, height: dimensions.height - 1 };
           expect(
-            hooks.getValidDimensions({ dimensions, local, locked }),
+            hooks.getValidDimensions({
+              dimensions,
+              isLocked: true,
+              local,
+              lockDims,
+            }),
           ).toEqual(dimensions);
         });
       });
       describe('valid change', () => {
         it(
-          'returns the nearest valid pair of dimensions in the change direciton',
+          'returns the nearest valid pair of dimensions in the change direction',
           () => {
-            const w = 7;
-            const h = 13;
+            const [w, h] = [7, 13];
             const values = [
               // bumps up if direction is up but nearest is current
               [[w + 1, h], [w * 2, h * 2]],
@@ -66,74 +108,13 @@ describe('ImageSettingsModal hooks', () => {
               expect(hooks.getValidDimensions({
                 dimensions,
                 local: { width: local[0], height: local[1] },
-                locked: { ...dimensions, minInc: { ...dimensions, gcd: 1 } },
+                lockDims: { ...dimensions },
+                isLocked: true,
               })).toEqual({ width: expected[0], height: expected[1] });
             });
           },
         );
       });
-    });
-    describe('newDimensions', () => {
-      it('returns the local values if not locked, or if local is equal to dimensions', () => {
-        expect(hooks.newDimensions({
-          dimensions: { ...simpleDims },
-          local: { ...simpleDims },
-          locked: { ...simpleDims },
-        })).toEqual({ ...simpleDims });
-        expect(hooks.newDimensions({
-          dimensions: { ...simpleDims },
-          local: { ...reducedDims },
-          locked: null,
-        })).toEqual({ ...reducedDims });
-      });
-      it('returns getValidDimensions if locked and local has changed', () => {
-        const getValidDimensions = (args) => ({ getValidDimensions: args });
-        jest.spyOn(hooks, hookKeys.getValidDimensions).mockImplementationOnce(getValidDimensions);
-        const args = {
-          dimensions: { ...simpleDims },
-          local: { ...multiDims },
-          locked: { ...reducedDims },
-        };
-        expect(hooks.newDimensions(args)).toEqual(getValidDimensions(args));
-      });
-    });
-    describe('lockDimensions', () => {
-      it('does not call setLocked if lockInitialized is false', () => {
-        state.setState.locked = jest.fn();
-        hooks.lockDimensions({
-          dimensions: simpleDims,
-          setLocked: state.setState.locked,
-          lockInitialized: false,
-        });
-        expect(state.setState.locked).not.toHaveBeenCalled();
-      });
-      it(
-        'calls setLocked with the given dimensions and minInc, including gcd',
-        () => {
-          state.setState.locked = jest.fn();
-          hooks.lockDimensions({
-            dimensions: simpleDims,
-            setLocked: state.setState.locked,
-            lockInitialized: true,
-          });
-          expect(state.setState.locked).toHaveBeenCalledWith({
-            ...simpleDims,
-            minInc: { gcd: 1, ...simpleDims },
-          });
-          state.setState.locked.mockClear();
-
-          hooks.lockDimensions({
-            dimensions: multiDims,
-            setLocked: state.setState.locked,
-            lockInitialized: true,
-          });
-          expect(hooks.findGcd(multiDims.width, multiDims.height)).toEqual(7);
-          expect(state.setState.locked).toHaveBeenCalledWith({
-            ...multiDims,
-            minInc: { gcd, ...reducedDims },
-          });
-        },
-      );
     });
     describe('dimensionLockHooks', () => {
       beforeEach(() => {
@@ -143,29 +124,27 @@ describe('ImageSettingsModal hooks', () => {
       afterEach(() => {
         state.restore();
       });
-
-      test('locked is initially null', () => {
-        expect(hook.locked).toEqual(null);
+      test('lockDims defaults to null', () => {
+        expect(hook.lockDims).toEqual(null);
       });
-      test('initializeLock calls setLockInitialized with true', () => {
-        hook.initializeLock();
-        expect(state.setState.lockInitialized).toHaveBeenCalledWith(true);
+      test('isLocked defaults to true', () => {
+        expect(hook.isLocked).toEqual(true);
       });
-      test('lock calls lockDimensions with lockInitialized, dimensions, and setLocked', () => {
-        state.mockVal(state.keys.lockInitialized, true, state.setState.lockInitialized);
-        hook = hooks.dimensionLockHooks({ dimensions: simpleDims });
-        const lockDimensionsSpy = jest.spyOn(hooks, hookKeys.lockDimensions);
-        hook.lock();
-        expect(lockDimensionsSpy).toHaveBeenCalledWith({
-          dimensions: simpleDims,
-          setLocked: state.setState.locked,
-          lockInitialized: true,
+      describe('initializeLock', () => {
+        it('calls setLockDims with the passed dimensions divided by their gcd', () => {
+          hook.initializeLock(multiDims);
+          expect(state.setState.lockDims).toHaveBeenCalledWith(reducedDims);
         });
+      });
+      test('lock sets isLocked to true', () => {
+        hook = hooks.dimensionLockHooks({ dimensions: simpleDims });
+        hook.lock();
+        expect(state.setState.isLocked).toHaveBeenCalledWith(true);
       });
       test('unlock sets locked to null', () => {
         hook = hooks.dimensionLockHooks({ dimensions: simpleDims });
         hook.unlock();
-        expect(state.setState.locked).toHaveBeenCalledWith(null);
+        expect(state.setState.isLocked).toHaveBeenCalledWith(false);
       });
     });
     describe('dimensionHooks', () => {
@@ -230,17 +209,21 @@ describe('ImageSettingsModal hooks', () => {
       });
       describe('updateDimensions', () => {
         it('sets local and stored dimensions to newDimensions output', () => {
-          const newDimensions = (args) => ({ newDimensions: args });
-          state.mockVal(state.keys.dimensions, simpleDims, state.setState.dimensions);
-          state.mockVal(state.keys.locked, reducedDims, state.setState.locked);
-          state.mockVal(state.keys.local, multiDims, state.setState.local);
-          jest.spyOn(hooks, hookKeys.newDimensions).mockImplementationOnce(newDimensions);
+          // store values we care about under height or width, and add junk data to be stripped out.
+          const testDims = (args) => ({ ...simpleDims, height: args });
+          const getValidDimensions = (args) => ({ ...testDims(args), junk: 'data' });
+          state.mockVal(state.keys.isLocked, true);
+          state.mockVal(state.keys.dimensions, simpleDims);
+          state.mockVal(state.keys.lockDims, reducedDims);
+          state.mockVal(state.keys.local, multiDims);
+          jest.spyOn(hooks, hookKeys.getValidDimensions).mockImplementationOnce(getValidDimensions);
           hook = hooks.dimensionHooks();
           hook.updateDimensions();
-          const expected = newDimensions({
+          const expected = testDims({
             dimensions: simpleDims,
-            locked: reducedDims,
+            lockDims: reducedDims,
             local: multiDims,
+            isLocked: true,
           });
           expect(state.setState.local).toHaveBeenCalledWith(expected);
           expect(state.setState.dimensions).toHaveBeenCalledWith(expected);

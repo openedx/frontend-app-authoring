@@ -8,7 +8,9 @@ jest.mock('./hooks', () => ({
 
 describe('DimensionControls', () => {
   const props = {
+    lockDims: { width: 12, height: 15 },
     locked: { 'props.locked': 'lockedValue' },
+    isLocked: true,
     value: { width: 20, height: 40 },
   };
   beforeEach(() => {
@@ -26,6 +28,10 @@ describe('DimensionControls', () => {
       const el = shallow(<DimensionControls {...props} value={null} />);
       expect(el).toMatchSnapshot();
       expect(el.isEmptyRender()).toEqual(true);
+    });
+    test('unlocked dimensions', () => {
+      const el = shallow(<DimensionControls {...props} isLocked={false} />);
+      expect(el).toMatchSnapshot();
     });
   });
 });

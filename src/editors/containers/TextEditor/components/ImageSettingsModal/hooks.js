@@ -5,12 +5,13 @@ import * as module from './hooks';
 
 // Simple wrappers for useState to allow easy mocking for tests.
 export const state = {
-  dimensions: (val) => React.useState(val),
-  locked: (val) => React.useState(val),
-  local: (val) => React.useState(val),
-  lockInitialized: (val) => React.useState(val),
   altText: (val) => React.useState(val),
+  dimensions: (val) => React.useState(val),
   isDecorative: (val) => React.useState(val),
+  isLocked: (val) => React.useState(val),
+  local: (val) => React.useState(val),
+  lockDims: (val) => React.useState(val),
+  lockInitialized: (val) => React.useState(val),
 };
 
 export const dimKeys = StrictDict({
@@ -39,12 +40,15 @@ const checkEqual = (d1, d2) => (d1.height === d2.height && d1.width === d2.width
 export const getValidDimensions = ({
   dimensions,
   local,
-  locked,
+  isLocked,
+  lockDims,
 }) => {
+  if (!isLocked || checkEqual(local, dimensions)) {
+    return local;
+  }
   const out = {};
   let iter;
-  const { minInc } = locked;
-  const isMin = dimensions.height === minInc.height;
+  const isMin = dimensions.height === lockDims.height;
 
   const keys = (local.height !== dimensions.height)
     ? { changed: dimKeys.height, other: dimKeys.width }
@@ -55,49 +59,14 @@ export const getValidDimensions = ({
   // don't move down if already at minimum size
   if (direction < 0 && isMin) { return dimensions; }
   // find closest valid iteration of the changed field
-  iter = Math.max(Math.round(local[keys.changed] / minInc[keys.changed]), 1);
+  iter = Math.max(Math.round(local[keys.changed] / lockDims[keys.changed]), 1);
   // if closest valid iteration is current iteration, move one iteration in the change direction
-  if (iter === (dimensions[keys.changed] / minInc[keys.changed])) { iter += direction; }
+  if (iter === (dimensions[keys.changed] / lockDims[keys.changed])) { iter += direction; }
 
-  out[keys.changed] = Math.round(iter * minInc[keys.changed]);
-  out[keys.other] = Math.round(out[keys.changed] * (locked[keys.other] / locked[keys.changed]));
+  out[keys.changed] = Math.round(iter * lockDims[keys.changed]);
+  out[keys.other] = Math.round(out[keys.changed] * (lockDims[keys.other] / lockDims[keys.changed]));
 
   return out;
-};
-
-/**
- * newDimensions({ dimensions, local, locked })
- * Returns the local dimensions if unlocked or unchanged, and otherwise returns new valid
- * dimensions.
- * @param {obj} dimensions - current stored dimensions
- * @param {obj} local - local (active) dimensions in the inputs
- * @param {obj} locked - locked dimensions
- * @return {obj} - output dimensions after attempted move ({ height, width })
- */
-export const newDimensions = ({ dimensions, local, locked }) => (
-  (!locked || checkEqual(local, dimensions))
-    ? local
-    : module.getValidDimensions({ dimensions, local, locked })
-);
-
-/**
- * lockDimensions({ dimensions, lockInitialized, setLocked })
- * Lock dimensions if lock initialized.  Store minimum valid increment on lock so
- * that we don't have re-compute.
- * @param {obj} dimensions - current stored dimensions
- * @param {bool} lockInitialized - has the lock state initialized?
- * @param {func} setLocked - set lock state
- */
-export const lockDimensions = ({ dimensions, lockInitialized, setLocked }) => {
-  if (!lockInitialized) { return; }
-
-  // find minimum viable increment
-  let gcd = findGcd(dimensions.width, dimensions.height);
-  if ([dimensions.width, dimensions.height].some(v => !Number.isInteger(v / gcd))) {
-    gcd = 1;
-  }
-  const minInc = { width: dimensions.width / gcd, height: dimensions.height / gcd, gcd };
-  setLocked({ ...dimensions, minInc });
 };
 
 /**
@@ -107,22 +76,30 @@ export const lockDimensions = ({ dimensions, lockInitialized, setLocked }) => {
  * @param {obj} dimensions - current stored dimensions
  * @return {obj} - dimension lock hooks
  *   {func} initializeLock - enable the lock mechanism
- *   {obj} locked - current locked state
- *   {func} lock - lock the current dimensions
+ *   {bool} isLocked - are dimensions locked?
+ *   {obj} lockDims - image dimensions ({ height, width })
+ *   {func} lock - lock the dimensions
  *   {func} unlock - unlock the dimensions
  */
-export const dimensionLockHooks = ({ dimensions }) => {
-  const [locked, setLocked] = module.state.locked(null);
-  const [lockInitialized, setLockInitialized] = module.state.lockInitialized(null);
-  const lock = () => module.lockDimensions({ lockInitialized, dimensions, setLocked });
+export const dimensionLockHooks = () => {
+  const [lockDims, setLockDims] = module.state.lockDims(null);
+  const [isLocked, setIsLocked] = module.state.isLocked(true);
 
-  React.useEffect(lock, [lockInitialized]);
+  const initializeLock = ({ width, height }) => {
+    // find minimum viable increment
+    let gcd = findGcd(width, height);
+    if ([width, height].some(v => !Number.isInteger(v / gcd))) {
+      gcd = 1;
+    }
+    setLockDims({ width: width / gcd, height: height / gcd });
+  };
 
   return {
-    initializeLock: () => setLockInitialized(true),
-    locked,
-    lock,
-    unlock: () => setLocked(null),
+    initializeLock,
+    isLocked,
+    lock: () => setIsLocked(true),
+    lockDims,
+    unlock: () => setIsLocked(false),
   };
 };
 
@@ -146,31 +123,36 @@ export const dimensionLockHooks = ({ dimensions }) => {
 export const dimensionHooks = () => {
   const [dimensions, setDimensions] = module.state.dimensions(null);
   const [local, setLocal] = module.state.local(null);
-  const setAll = (value) => {
-    setDimensions(value);
-    setLocal(value);
+  const setAll = ({ height, width }) => {
+    setDimensions({ height, width });
+    setLocal({ height, width });
   };
   const {
     initializeLock,
+    isLocked,
     lock,
-    locked,
+    lockDims,
     unlock,
   } = module.dimensionLockHooks({ dimensions });
+
   return {
     onImgLoad: (selection) => ({ target: img }) => {
-      setAll({
-        height: selection.height || img.naturalHeight,
-        width: selection.width || img.naturalWidth,
-      });
-      initializeLock();
+      const imageDims = { height: img.naturalHeight, width: img.naturalWidth };
+      setAll(selection.height ? selection : imageDims);
+      initializeLock(imageDims);
     },
-    locked,
+    isLocked,
     lock,
     unlock,
     value: local,
     setHeight: (height) => setLocal({ ...local, height: parseInt(height, 10) }),
     setWidth: (width) => setLocal({ ...local, width: parseInt(width, 10) }),
-    updateDimensions: () => setAll(module.newDimensions({ dimensions, local, locked })),
+    updateDimensions: () => setAll(module.getValidDimensions({
+      dimensions,
+      local,
+      isLocked,
+      lockDims,
+    })),
   };
 };
 

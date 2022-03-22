@@ -48,3 +48,50 @@ exports[`DimensionControls render snapshot 1`] = `
   </div>
 </Form.Group>
 `;
+
+exports[`DimensionControls render unlocked dimensions 1`] = `
+<Form.Group>
+  <Form.Label
+    as="h4"
+  >
+    Image Dimensions
+  </Form.Label>
+  <div
+    className="mt-4.5"
+  >
+    <Form.Control
+      className="dimension-input"
+      floatingLabel="Width"
+      min={1}
+      onBlur={[MockFunction props.updateDimensions]}
+      onChange={
+        Object {
+          "hooks.onInputChange": [MockFunction props.setWidth],
+        }
+      }
+      type="number"
+      value={20}
+    />
+    <Form.Control
+      className="dimension-input"
+      floatingLabel="Height"
+      min={1}
+      onBlur={[MockFunction props.updateDimensions]}
+      onChange={
+        Object {
+          "hooks.onInputChange": [MockFunction props.setHeight],
+        }
+      }
+      type="number"
+      value={40}
+    />
+    <IconButton
+      alt="lock dimensions"
+      className="d-inline-block"
+      iconAs="Icon"
+      onClick={[MockFunction props.lock]}
+      src={[MockFunction icons.Unlocked]}
+    />
+  </div>
+</Form.Group>
+`;

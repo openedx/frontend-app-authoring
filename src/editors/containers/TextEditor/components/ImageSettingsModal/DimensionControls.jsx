@@ -14,7 +14,7 @@ import hooks from './hooks';
 
 /**
  * Wrapper for image dimension inputs and the lock checkbox.
- * @param {obj} locked - locked dimension object
+ * @param {bool} isLocked - are dimensions locked
  * @param {func} lock - lock dimensions
  * @param {func} setHeight - updates dimensions based on new height
  * @param {func} setWidth - updates dimensions based on new width
@@ -23,7 +23,7 @@ import hooks from './hooks';
  * @param {obj} value - local dimension values { height, width }
  */
 export const DimensionControls = ({
-  locked,
+  isLocked,
   lock,
   setHeight,
   setWidth,
@@ -54,16 +54,15 @@ export const DimensionControls = ({
       />
       <IconButton
         className="d-inline-block"
-        alt={locked ? 'unlock dimensions' : 'lock dimensions'}
+        alt={isLocked ? 'unlock dimensions' : 'lock dimensions'}
         iconAs={Icon}
-        src={locked ? Locked : Unlocked}
-        onClick={locked ? unlock : lock}
+        src={isLocked ? Locked : Unlocked}
+        onClick={isLocked ? unlock : lock}
       />
     </div>
   </Form.Group>
 ));
 DimensionControls.defaultProps = {
-  locked: null,
   value: {
     height: 100,
     width: 100,
@@ -76,10 +75,7 @@ DimensionControls.propTypes = ({
   }),
   setHeight: PropTypes.func.isRequired,
   setWidth: PropTypes.func.isRequired,
-  locked: PropTypes.shape({
-    width: PropTypes.number,
-    height: PropTypes.number,
-  }),
+  isLocked: PropTypes.bool.isRequired,
   lock: PropTypes.func.isRequired,
   unlock: PropTypes.func.isRequired,
   updateDimensions: PropTypes.func.isRequired,
