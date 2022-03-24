@@ -46,7 +46,50 @@ export const saveBlock = ({ content, returnToUnit }) => (dispatch) => {
 
 export const fetchImages = ({ onSuccess }) => () => {
   // get images
-  onSuccess(mockData.mockImageData);
+  const processedData = mockData.mockImageData.reduce(
+    (obj, el) => {
+      const dateAdded = new Date(el.dateAdded.replace(' at', '')).getTime();
+      return { ...obj, [el.id]: { ...el, dateAdded } };
+    },
+    {},
+  );
+  return onSuccess(processedData);
+};
+
+export const uploadImage = ({
+  file, startLoading, stopLoading, resetFile, setError,
+}) => () => {
+  // input file
+  // lastModified: 1643131112097
+  // lastModifiedDate: Tue Jan 25 2022 12:18:32 GMT-0500 (Eastern Standard Time) {}
+  // name: "Profile.jpg"
+  // size: 21015
+  // type: "image/jpeg"
+
+  // api will respond with the following JSON
+  // {
+  //   "asset": {
+  //     "display_name": "journey_escape.jpg",
+  //     "content_type": "image/jpeg",
+  //     "date_added": "Jan 05, 2022 at 21:26 UTC",
+  //     "url": "/asset-v1:edX+test101+2021_T1+type@asset+block@journey_escape.jpg",
+  //     "external_url": "https://courses.edx.org/asset-v1:edX+test101+2021_T1+type@asset+block@journey_escape.jpg",
+  //     "portable_url": "/static/journey_escape.jpg",
+  //     "thumbnail": "/asset-v1:edX+test101+2021_T1+type@thumbnail+block@journey_escape.jpg",
+  //     "locked": false,
+  //     "id": "asset-v1:edX+test101+2021_T1+type@asset+block@journey_escape.jpg"
+  //   },
+  //   "msg": "Upload completed"
+  // }
+
+  console.log(file);
+  startLoading();
+  setTimeout(() => {
+    stopLoading();
+    resetFile();
+    setError('test error');
+  }, 5000);
+  return null;
 };
 
 export default StrictDict({
@@ -55,4 +98,5 @@ export default StrictDict({
   initialize,
   saveBlock,
   fetchImages,
+  uploadImage,
 });

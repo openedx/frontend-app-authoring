@@ -11,6 +11,7 @@ describe('BaseModal ImageUploadModal template component', () => {
       title: 'props.title node',
       children: 'props.children node',
       confirmAction: 'props.confirmAction node',
+      footerAction: 'props.footerAction node',
     };
     expect(shallow(<BaseModal {...props} />)).toMatchSnapshot();
   });

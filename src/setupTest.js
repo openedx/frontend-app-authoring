@@ -53,7 +53,9 @@ jest.mock('@edx/frontend-platform/i18n', () => {
       formatMessage: PropTypes.func,
     }),
     defineMessages: m => m,
+    FormattedDate: () => 'FormattedDate',
     FormattedMessage: () => 'FormattedMessage',
+    FormattedTime: () => 'FormattedTime',
   };
 });
 
@@ -62,6 +64,11 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
     Spacer: 'ActionRow.Spacer',
   },
   Button: 'Button',
+  Dropdown: {
+    Item: 'Dropdown.Item',
+    Menu: 'Dropdown.Menu',
+    Toggle: 'Dropdown.Toggle',
+  },
   Icon: 'Icon',
   IconButton: 'IconButton',
   Image: 'Image',
@@ -80,7 +87,9 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
     Group: 'Form.Group',
     Label: 'Form.Label',
   },
+  SelectableBox: 'SelectableBox',
   Spinner: 'Spinner',
+  Stack: 'Stack',
   Toast: 'Toast',
 }));
 

@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
+<SelectableBox
+  className="card bg-white"
+  key="props.img.externalUrl"
+  type="radio"
+>
+  <div
+    className="card-div d-flex flex-row flex-nowrap"
+  >
+    <Image
+      src="props.img.externalUrl"
+      style={
+        Object {
+          "height": "100px",
+          "width": "100px",
+        }
+      }
+    />
+    <div
+      className="img-text p-3"
+    >
+      <h3>
+        props.img.displayName
+      </h3>
+      <p>
+        <FormattedMessage
+          defaultMessage="Added {date} at {time}"
+          description="File date-added string"
+          id="authoring.texteditor.selectimagemodal.addedDate.part1.label"
+          values={
+            Object {
+              "date": <FormattedDate
+                value={12345}
+              />,
+              "time": <FormattedTime
+                value={12345}
+              />,
+            }
+          }
+        />
+      </p>
+    </div>
+  </div>
+</SelectableBox>
+`;

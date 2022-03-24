@@ -4,6 +4,7 @@ exports[`BaseModal ImageUploadModal template component snapshot 1`] = `
 <ModalDialog
   hasCloseButton={true}
   isFullscreenOnMobile={true}
+  isFullscreenScroll={true}
   isOpen={true}
   onClose={[MockFunction props.close]}
   size="lg"
@@ -20,6 +21,8 @@ exports[`BaseModal ImageUploadModal template component snapshot 1`] = `
   </ModalDialog.Body>
   <ModalDialog.Footer>
     <ActionRow>
+      props.footerAction node
+      <ActionRow.Spacer />
       <ModalDialog.CloseButton
         onClick={[MockFunction props.close]}
         variant="tertiary"

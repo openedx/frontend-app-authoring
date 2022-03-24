@@ -1,0 +1,152 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SearchSort component snapshots with search string (close button) 1`] = `
+<ActionRow>
+  <Form.Group
+    style={
+      Object {
+        "margin": 0,
+      }
+    }
+  >
+    <Form.Control
+      autoFocus={true}
+      onChange={[MockFunction props.onSearchChange]}
+      placeholder="Search"
+      trailingElement={
+        <IconButton
+          iconAs="Icon"
+          invertColors={true}
+          isActive={true}
+          onClick={[MockFunction props.clearSearchString]}
+          size="sm"
+          src={[MockFunction icons.Close]}
+        />
+      }
+      value="props.searchString"
+    />
+  </Form.Group>
+  <ActionRow.Spacer />
+  <Dropdown>
+    <Dropdown.Toggle
+      id="img-sort-button"
+      variant="tertiary"
+    >
+      <FormattedMessage
+        defaultMessage="By date added (oldest)"
+        description="Dropdown label for sorting by date (oldest)"
+        id="authoring.texteditor.selectimagemodal.sort.dateoldest.label"
+      />
+    </Dropdown.Toggle>
+    <Dropdown.Menu>
+      <Dropdown.Item
+        key="dateNewest"
+      >
+        <FormattedMessage
+          defaultMessage="By date added (newest)"
+          description="Dropdown label for sorting by date (newest)"
+          id="authoring.texteditor.selectimagemodal.sort.datenewest.label"
+        />
+      </Dropdown.Item>
+      <Dropdown.Item
+        key="dateOldest"
+      >
+        <FormattedMessage
+          defaultMessage="By date added (oldest)"
+          description="Dropdown label for sorting by date (oldest)"
+          id="authoring.texteditor.selectimagemodal.sort.dateoldest.label"
+        />
+      </Dropdown.Item>
+      <Dropdown.Item
+        key="nameAscending"
+      >
+        <FormattedMessage
+          defaultMessage="By name (ascending)"
+          description="Dropdown label for sorting by name (ascending)"
+          id="authoring.texteditor.selectimagemodal.sort.nameascending.label"
+        />
+      </Dropdown.Item>
+      <Dropdown.Item
+        key="nameDescending"
+      >
+        <FormattedMessage
+          defaultMessage="By name (descending)"
+          description="Dropdown label for sorting by name (descending)"
+          id="authoring.texteditor.selectimagemodal.sort.namedescending.label"
+        />
+      </Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
+</ActionRow>
+`;
+
+exports[`SearchSort component snapshots without search string (search icon) 1`] = `
+<ActionRow>
+  <Form.Group
+    style={
+      Object {
+        "margin": 0,
+      }
+    }
+  >
+    <Form.Control
+      autoFocus={true}
+      onChange={[MockFunction props.onSearchChange]}
+      placeholder="Search"
+      trailingElement={<Icon />}
+      value=""
+    />
+  </Form.Group>
+  <ActionRow.Spacer />
+  <Dropdown>
+    <Dropdown.Toggle
+      id="img-sort-button"
+      variant="tertiary"
+    >
+      <FormattedMessage
+        defaultMessage="By date added (oldest)"
+        description="Dropdown label for sorting by date (oldest)"
+        id="authoring.texteditor.selectimagemodal.sort.dateoldest.label"
+      />
+    </Dropdown.Toggle>
+    <Dropdown.Menu>
+      <Dropdown.Item
+        key="dateNewest"
+      >
+        <FormattedMessage
+          defaultMessage="By date added (newest)"
+          description="Dropdown label for sorting by date (newest)"
+          id="authoring.texteditor.selectimagemodal.sort.datenewest.label"
+        />
+      </Dropdown.Item>
+      <Dropdown.Item
+        key="dateOldest"
+      >
+        <FormattedMessage
+          defaultMessage="By date added (oldest)"
+          description="Dropdown label for sorting by date (oldest)"
+          id="authoring.texteditor.selectimagemodal.sort.dateoldest.label"
+        />
+      </Dropdown.Item>
+      <Dropdown.Item
+        key="nameAscending"
+      >
+        <FormattedMessage
+          defaultMessage="By name (ascending)"
+          description="Dropdown label for sorting by name (ascending)"
+          id="authoring.texteditor.selectimagemodal.sort.nameascending.label"
+        />
+      </Dropdown.Item>
+      <Dropdown.Item
+        key="nameDescending"
+      >
+        <FormattedMessage
+          defaultMessage="By name (descending)"
+          description="Dropdown label for sorting by name (descending)"
+          id="authoring.texteditor.selectimagemodal.sort.namedescending.label"
+        />
+      </Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
+</ActionRow>
+`;
