@@ -1,17 +1,20 @@
-import React from 'react';
 import * as module from './hooks';
 
-jest.mock('react', () => {
-  const updateState = jest.fn();
-  return {
-    updateState,
-    useState: jest.fn(val => ([{ state: val }, (newVal) => updateState({ val, newVal })])),
-    createRef: jest.fn(val => ({ ref: val })),
-  };
-});
+import { MockUseState } from '../../../testUtils';
+
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  createRef: jest.fn(val => ({ ref: val })),
+}));
+
+const state = new MockUseState(module);
 
 describe('TextEditor hooks', () => {
   describe('Editor Init hooks', () => {
+    describe('state hooks', () => {
+      state.testGetter(state.keys.isModalOpen);
+      state.testGetter(state.keys.imageSelection);
+    });
     const mockOpenModal = jest.fn();
     const mockAddbutton = jest.fn(val => ({ onAction: val }));
     const mockNode = {
@@ -136,37 +139,42 @@ describe('TextEditor hooks', () => {
       });
     });
   });
-  describe('selectedImage', () => {
+  describe('selectedImage hooks', () => {
     const val = { a: 'VaLUe' };
-    const newVal = { some: 'vAlUe' };
-    let output;
-    let setter;
+    let hook;
     beforeEach(() => {
-      [output, setter] = module.selectedImage(val);
+      state.mock();
+      hook = module.selectedImage(val);
     });
-    test('returns a field which with state input val', () => {
-      expect(output).toMatchObject({ state: val });
+    test('selection: state value', () => {
+      expect(hook.selection).toEqual(state.stateVals[state.keys.imageSelection]);
     });
-    test('calling setter with new val sets with respect to new val', () => {
-      setter(newVal);
-      expect(React.updateState).toHaveBeenCalledWith({ val, newVal });
+    test('setSelection: setter for value', () => {
+      expect(hook.setSelection).toEqual(state.setState[state.keys.imageSelection]);
+    });
+    test('clearSelection: calls setter with null', () => {
+      expect(hook.setSelection).not.toHaveBeenCalled();
+      hook.clearSelection();
+      expect(hook.setSelection).toHaveBeenCalledWith(null);
     });
   });
   describe('modalToggle hook', () => {
-    let output;
+    let hook;
+    const hookKey = state.keys.isModalOpen;
     beforeEach(() => {
-      output = module.modalToggle();
+      state.mock();
+      hook = module.modalToggle();
     });
-    test('returns isOpen field, defaulted to false', () => {
-      expect(output.isOpen).toEqual({ state: false });
+    test('isOpen: state value', () => {
+      expect(hook.isOpen).toEqual(state.stateVals[hookKey]);
     });
-    test('returns openModal field, which sets modal to true and calls updateState', () => {
-      output.openModal();
-      expect(React.updateState).toHaveBeenCalledWith({ val: false, newVal: true });
+    test('openModal: calls setter with true', () => {
+      hook.openModal();
+      expect(state.setState[hookKey]).toHaveBeenCalledWith(true);
     });
-    test('returns closeModal field, which sets modal to true and calls updateState', () => {
-      output.closeModal();
-      expect(React.updateState).toHaveBeenCalledWith({ val: false, newVal: false });
+    test('closeModal: calls setter with false', () => {
+      hook.closeModal();
+      expect(state.setState[hookKey]).toHaveBeenCalledWith(false);
     });
   });
   describe('nullMethod hook', () => {

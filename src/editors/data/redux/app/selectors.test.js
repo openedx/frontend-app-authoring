@@ -1,4 +1,5 @@
 // import * in order to mock in-file references
+import { keyStore } from '../../../utils';
 import * as urls from '../../services/cms/urls';
 import * as selectors from './selectors';
 
@@ -30,17 +31,19 @@ describe('app selectors unit tests', () => {
         expect(cb({ ...testState, [key]: testValue })).toEqual(testValue);
       });
     };
+    const simpleKeys = keyStore(simpleSelectors);
     describe('simple selectors link their values from app store', () => {
       [
-        'blockContent',
-        'blockId',
-        'blockType',
-        'blockValue',
-        'courseId',
-        'editorInitialized',
-        'saveResponse',
-        'studioEndpointUrl',
-        'unitUrl',
+        simpleKeys.blockContent,
+        simpleKeys.blockId,
+        simpleKeys.blockTitle,
+        simpleKeys.blockType,
+        simpleKeys.blockValue,
+        simpleKeys.courseId,
+        simpleKeys.editorInitialized,
+        simpleKeys.saveResponse,
+        simpleKeys.studioEndpointUrl,
+        simpleKeys.unitUrl,
       ].map(testSimpleSelector);
     });
   });

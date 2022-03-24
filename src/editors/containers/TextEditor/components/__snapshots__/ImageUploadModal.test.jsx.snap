@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ImageUploadModal component snapshot: no selection (Select Image Modal) 1`] = `
+<SelectImageModal
+  close={[MockFunction props.close]}
+  isOpen={false}
+  setSelection={[MockFunction props.setSelection]}
+/>
+`;
+
+exports[`ImageUploadModal component snapshot: with selection content (ImageSettingsUpload) 1`] = `
+<ImageSettingsModal
+  isOpen={false}
+  returnToSelection={[MockFunction props.clearSelection]}
+  selection={
+    Object {
+      "some": "images",
+    }
+  }
+/>
+`;

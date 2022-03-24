@@ -87,7 +87,7 @@ export const dimensionLockHooks = () => {
 
   const initializeLock = ({ width, height }) => {
     // find minimum viable increment
-    let gcd = findGcd(width, height);
+    let gcd = module.findGcd(width, height);
     if ([width, height].some(v => !Number.isInteger(v / gcd))) {
       gcd = 1;
     }

@@ -135,6 +135,11 @@ describe('ImageSettingsModal hooks', () => {
           hook.initializeLock(multiDims);
           expect(state.setState.lockDims).toHaveBeenCalledWith(reducedDims);
         });
+        it('returns the values themselves if they have no gcd', () => {
+          jest.spyOn(hooks, hookKeys.findGcd).mockReturnValueOnce(2);
+          hook.initializeLock(simpleDims);
+          expect(state.setState.lockDims).toHaveBeenCalledWith(simpleDims);
+        });
       });
       test('lock sets isLocked to true', () => {
         hook = hooks.dimensionLockHooks({ dimensions: simpleDims });
@@ -278,6 +283,14 @@ describe('ImageSettingsModal hooks', () => {
         dimensions,
         isDecorative,
       });
+    });
+  });
+  describe('isSaveDisabled', () => {
+    it('returns true iff is not decorative and altText value is empty', () => {
+      hook = hooks.isSaveDisabled;
+      expect(hook({ isDecorative: false, value: '' })).toEqual(true);
+      expect(hook({ isDecorative: false, value: 'test' })).toEqual(false);
+      expect(hook({ isDecorative: true, value: '' })).toEqual(false);
     });
   });
 });

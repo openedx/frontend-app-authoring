@@ -46,6 +46,16 @@ describe('app reducer', () => {
       ['setBlockTitle', 'blockTitle'],
       ['setSaveResponse', 'saveResponse'],
     ].map(args => setterTest(...args));
+    describe('setBlockValue', () => {
+      it('sets blockValue, as well as setting the blockTitle from data.display_name', () => {
+        const blockValue = { data: { display_name: 'my test name' }, other: 'data' };
+        expect(reducer(testingState, actions.setBlockValue(blockValue))).toEqual({
+          ...testingState,
+          blockValue,
+          blockTitle: blockValue.data.display_name,
+        });
+      });
+    });
     describe('initializeEditor', () => {
       it('sets editorInitialized to true', () => {
         expect(reducer(testingState, actions.initializeEditor())).toEqual({

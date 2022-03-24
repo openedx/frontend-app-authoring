@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import * as urls from './urls';
 
 const mockPromise = (returnValue) => new Promise(resolve => resolve(returnValue));

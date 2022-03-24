@@ -5,6 +5,7 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
   className="editor-body h-75"
 >
   <ImageUploadModal
+    clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
     close={[MockFunction modal.closeModal]}
     editorRef={
       Object {
@@ -14,15 +15,11 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
       }
     }
     isOpen={false}
-    selection={
-      Object {
-        "state": null,
-      }
-    }
-    setSelection={[MockFunction setSelection]}
+    selection="hooks.selectedImage.selection"
+    setSelection={[MockFunction hooks.selectedImage.setSelection]}
   />
   <Toast
-    onClose={[MockFunction nullMethod]}
+    onClose={[MockFunction hooks.nullMethod]}
     show={true}
   >
     <FormattedMessage
@@ -39,10 +36,11 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
             "some": "eDiTablE Text",
           },
         },
+        "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
         "initializeEditor": [MockFunction args.intializeEditor],
         "openModal": [MockFunction modal.openModal],
         "setEditorRef": [MockFunction args.setEditorRef],
-        "setSelection": [MockFunction setSelection],
+        "setSelection": [MockFunction hooks.selectedImage.setSelection],
       }
     }
   />
@@ -54,6 +52,7 @@ exports[`TextEditor snapshots not yet loaded, Spinner appears 1`] = `
   className="editor-body h-75"
 >
   <ImageUploadModal
+    clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
     close={[MockFunction modal.closeModal]}
     editorRef={
       Object {
@@ -63,15 +62,11 @@ exports[`TextEditor snapshots not yet loaded, Spinner appears 1`] = `
       }
     }
     isOpen={false}
-    selection={
-      Object {
-        "state": null,
-      }
-    }
-    setSelection={[MockFunction setSelection]}
+    selection="hooks.selectedImage.selection"
+    setSelection={[MockFunction hooks.selectedImage.setSelection]}
   />
   <Toast
-    onClose={[MockFunction nullMethod]}
+    onClose={[MockFunction hooks.nullMethod]}
     show={false}
   >
     <FormattedMessage
@@ -97,6 +92,7 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
   className="editor-body h-75"
 >
   <ImageUploadModal
+    clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
     close={[MockFunction modal.closeModal]}
     editorRef={
       Object {
@@ -106,15 +102,11 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
       }
     }
     isOpen={false}
-    selection={
-      Object {
-        "state": null,
-      }
-    }
-    setSelection={[MockFunction setSelection]}
+    selection="hooks.selectedImage.selection"
+    setSelection={[MockFunction hooks.selectedImage.setSelection]}
   />
   <Toast
-    onClose={[MockFunction nullMethod]}
+    onClose={[MockFunction hooks.nullMethod]}
     show={false}
   >
     <FormattedMessage
@@ -131,10 +123,11 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
             "some": "eDiTablE Text",
           },
         },
+        "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
         "initializeEditor": [MockFunction args.intializeEditor],
         "openModal": [MockFunction modal.openModal],
         "setEditorRef": [MockFunction args.setEditorRef],
-        "setSelection": [MockFunction setSelection],
+        "setSelection": [MockFunction hooks.selectedImage.setSelection],
       }
     }
   />

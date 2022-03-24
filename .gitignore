@@ -108,3 +108,5 @@ dist
 *.swo
 *.swp
 
+### local overrides ###
+module.config.js

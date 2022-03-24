@@ -48,7 +48,7 @@ export const TextEditor = ({
 
   // selected image file reference data object.
   // this field determines the step of the ImageUploadModal
-  const [imageSelection, setImageSelection] = selectedImage(null);
+  const imageSelection = selectedImage(null);
 
   return (
     <div className="editor-body h-75">
@@ -56,8 +56,7 @@ export const TextEditor = ({
         isOpen={isOpen}
         close={closeModal}
         editorRef={editorRef}
-        selection={imageSelection}
-        setSelection={setImageSelection}
+        {...imageSelection}
       />
 
       <Toast show={blockFailed} onClose={nullMethod}>
@@ -77,7 +76,8 @@ export const TextEditor = ({
               blockValue,
               openModal,
               initializeEditor,
-              setSelection: setImageSelection,
+              setSelection: imageSelection.setSelection,
+              clearSelection: imageSelection.clearSelection,
             })}
           />
         )}

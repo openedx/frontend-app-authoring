@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+import react from 'react';
 import { StrictDict } from './editors/utils';
 /**
  * Mocked formatMessage provided by react-intl
@@ -90,6 +92,11 @@ export const mockNestedComponents = (mapping) => Object.entries(mapping).reduce(
  *   import * as hooks from './hooks';
  *   const state = new MockUseState(hooks)
  *   ...
+ *   describe('state hooks', () => {
+ *     state.testGetter(state.keys.isOpen);
+ *     state.testGetter(state.keys.hasDoors);
+ *     state.testGetter(state.keys.selected);
+ *   });
  *   describe('exampleHook', () => {
  *     beforeEach(() => { state.mock(); });
  *     it('returns null if isOpen is default value', () => {
@@ -112,10 +119,12 @@ export class MockUseState {
     this.hooks = hooks;
     this.oldState = null;
     this.setState = {};
+    this.stateVals = {};
 
     this.mock = this.mock.bind(this);
     this.restore = this.restore.bind(this);
     this.mockVal = this.mockVal.bind(this);
+    this.testGetter = this.testGetter.bind(this);
   }
 
   /**
@@ -134,10 +143,18 @@ export class MockUseState {
   mock() {
     this.oldState = this.hooks.state;
     Object.keys(this.keys).forEach(key => {
-      this.hooks.state[key] = jest.fn(val => [val, this.setState[key]]);
+      this.hooks.state[key] = jest.fn(val => {
+        this.stateVals[key] = val;
+        return [val, this.setState[key]];
+      });
     });
     this.setState = Object.keys(this.keys).reduce(
-      (obj, key) => ({ ...obj, [key]: jest.fn() }),
+      (obj, key) => ({
+        ...obj,
+        [key]: jest.fn(val => {
+          this.hooks.state[key] = val;
+        }),
+      }),
       {},
     );
   }
@@ -156,5 +173,14 @@ export class MockUseState {
    */
   mockVal(key, val) {
     this.hooks.state[key].mockReturnValueOnce([val, this.setState[key]]);
+  }
+
+  testGetter(key) {
+    test(`${key} state getter should return useState passthrough`, () => {
+      const testValue = 'some value';
+      const useState = (val) => ({ useState: val });
+      jest.spyOn(react, 'useState').mockImplementationOnce(useState);
+      expect(this.hooks.state[key](testValue)).toEqual(useState(testValue));
+    });
   }
 }

@@ -36,50 +36,88 @@ describe('requests thunkActions module', () => {
     const testData = ({ some: 'test data' });
     let resolveFn;
     let rejectFn;
-    beforeEach(() => {
-      onSuccess = jest.fn();
-      onFailure = jest.fn();
-      requests.networkRequest({
-        requestKey,
-        promise: new Promise((resolve, reject) => {
-          resolveFn = resolve;
-          rejectFn = reject;
-        }),
-        onSuccess,
-        onFailure,
-      })(dispatch);
+    describe('without success and failure handlers', () => {
+      beforeEach(() => {
+        requests.networkRequest({
+          requestKey,
+          promise: new Promise((resolve, reject) => {
+            resolveFn = resolve;
+            rejectFn = reject;
+          }),
+        })(dispatch);
+      });
+      test('calls startRequest action with requestKey', async () => {
+        expect(dispatch.mock.calls).toEqual([[actions.requests.startRequest(requestKey)]]);
+      });
+      describe('on success', () => {
+        beforeEach(async () => {
+          await resolveFn(testData);
+        });
+        it('dispatches completeRequest', async () => {
+          expect(dispatch.mock.calls).toEqual([
+            [actions.requests.startRequest(requestKey)],
+            [actions.requests.completeRequest({ requestKey, response: testData })],
+          ]);
+        });
+      });
+      describe('on failure', () => {
+        beforeEach(async () => {
+          await rejectFn(testData);
+        });
+        test('dispatches completeRequest', async () => {
+          expect(dispatch.mock.calls).toEqual([
+            [actions.requests.startRequest(requestKey)],
+            [actions.requests.failRequest({ requestKey, error: testData })],
+          ]);
+        });
+      });
     });
-    test('calls startRequest action with requestKey', async () => {
-      expect(dispatch.mock.calls).toEqual([[actions.requests.startRequest(requestKey)]]);
-    });
-    describe('on success', () => {
-      beforeEach(async () => {
-        await resolveFn(testData);
+    describe('with handlers', () => {
+      beforeEach(() => {
+        onSuccess = jest.fn();
+        onFailure = jest.fn();
+        requests.networkRequest({
+          requestKey,
+          promise: new Promise((resolve, reject) => {
+            resolveFn = resolve;
+            rejectFn = reject;
+          }),
+          onSuccess,
+          onFailure,
+        })(dispatch);
       });
-      it('dispatches completeRequest', async () => {
-        expect(dispatch.mock.calls).toEqual([
-          [actions.requests.startRequest(requestKey)],
-          [actions.requests.completeRequest({ requestKey, response: testData })],
-        ]);
+      test('calls startRequest action with requestKey', async () => {
+        expect(dispatch.mock.calls).toEqual([[actions.requests.startRequest(requestKey)]]);
       });
-      it('calls onSuccess with response', async () => {
-        expect(onSuccess).toHaveBeenCalledWith(testData);
-        expect(onFailure).not.toHaveBeenCalled();
+      describe('on success', () => {
+        beforeEach(async () => {
+          await resolveFn(testData);
+        });
+        it('dispatches completeRequest', async () => {
+          expect(dispatch.mock.calls).toEqual([
+            [actions.requests.startRequest(requestKey)],
+            [actions.requests.completeRequest({ requestKey, response: testData })],
+          ]);
+        });
+        it('calls onSuccess with response', async () => {
+          expect(onSuccess).toHaveBeenCalledWith(testData);
+          expect(onFailure).not.toHaveBeenCalled();
+        });
       });
-    });
-    describe('on failure', () => {
-      beforeEach(async () => {
-        await rejectFn(testData);
-      });
-      test('dispatches completeRequest', async () => {
-        expect(dispatch.mock.calls).toEqual([
-          [actions.requests.startRequest(requestKey)],
-          [actions.requests.failRequest({ requestKey, error: testData })],
-        ]);
-      });
-      test('calls onSuccess with response', async () => {
-        expect(onFailure).toHaveBeenCalledWith(testData);
-        expect(onSuccess).not.toHaveBeenCalled();
+      describe('on failure', () => {
+        beforeEach(async () => {
+          await rejectFn(testData);
+        });
+        test('dispatches completeRequest', async () => {
+          expect(dispatch.mock.calls).toEqual([
+            [actions.requests.startRequest(requestKey)],
+            [actions.requests.failRequest({ requestKey, error: testData })],
+          ]);
+        });
+        test('calls onFailure with response', async () => {
+          expect(onFailure).toHaveBeenCalledWith(testData);
+          expect(onSuccess).not.toHaveBeenCalled();
+        });
       });
     });
   });

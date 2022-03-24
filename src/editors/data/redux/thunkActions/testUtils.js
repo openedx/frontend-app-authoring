@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+/* istanbul ignore file */
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 

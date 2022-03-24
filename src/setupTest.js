@@ -69,6 +69,8 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
     Footer: 'ModalDialog.Footer',
     Header: 'ModalDialog.Header',
     Title: 'ModalDialog.Title',
+    Body: 'ModalDialog.Body',
+    CloseButton: 'ModalDialog.CloseButton',
   },
   Form: {
     Checkbox: 'Form.Checkbox',
