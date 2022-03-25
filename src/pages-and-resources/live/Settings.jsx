@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { camelCase } from 'lodash';
+import { SelectableBox, Icon } from '@edx/paragon';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { SelectableBox, Icon } from '@edx/paragon';
-import { camelCase } from 'lodash';
+import { fetchLiveData, saveLiveConfiguration } from './data/thunks';
 import FormikControl from '../../generic/FormikControl';
-import { useAppSetting } from '../../utils';
-import AppExternalLinks from '../discussions/app-config-form/apps/shared/AppExternalLinks';
 import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
 import iconsSrc from './constants';
 import messages from './messages';
@@ -15,17 +15,15 @@ function LiveSettings({
   intl,
   onClose,
 }) {
-  const [liveConfiguration, saveSettings] = useAppSetting('liveConfiguration');
-  const liveData = {
-    consumerKey: liveConfiguration?.consumerKey || '',
-    consumerSecret: liveConfiguration?.consumerSecret || '',
-    launchUrl: liveConfiguration?.launchUrl || '',
-    launchEmail: liveConfiguration?.launchEmail || '',
-    provider: liveConfiguration?.provider || 'zoom',
-    piiSharingEnable: liveConfiguration?.piiSharing
-      ? liveConfiguration.piiShareUsername && liveConfiguration.piiShareEmail
-      : false,
-  };
+  const dispatch = useDispatch();
+  const courseId = useSelector(state => state.courseDetail.courseId);
+  const liveConfiguration = useSelector((state) => state.live.configuration);
+  const availableProviders = useSelector((state) => state.live.appIds);
+
+  useEffect(() => {
+    dispatch(fetchLiveData(courseId));
+  }, [courseId]);
+
   const validationSchema = {
     enabled: Yup.boolean(),
     consumerKey: Yup.string().required(intl.formatMessage(messages.consumerKeyRequired)),
@@ -34,7 +32,9 @@ function LiveSettings({
     launchEmail: Yup.string().required(intl.formatMessage(messages.launchEmailRequired)),
   };
 
-  const handleSettingsSave = async (values) => saveSettings(values);
+  const handleSettingsSave = async (values) => {
+    await dispatch(saveLiveConfiguration(courseId, values));
+  };
   const handleProviderChange = (selectedProvider, setFieldValue) => {
     setFieldValue('provider', selectedProvider);
   };
@@ -47,10 +47,11 @@ function LiveSettings({
       enableAppLabel={intl.formatMessage(messages.enableLiveLabel)}
       learnMoreText={intl.formatMessage(messages.enableLiveLink)}
       onClose={onClose}
-      initialValues={liveData}
+      initialValues={liveConfiguration}
       validationSchema={validationSchema}
       onSettingsSave={handleSettingsSave}
       configureBeforeEnable
+      enableReinitialize
     >
       {
         ({ values, setFieldValue }) => (
@@ -64,7 +65,7 @@ function LiveSettings({
               columns={3}
               className="mb-3"
             >
-              {[{ id: 'zoom' }, { id: 'google meet' }, { id: 'microsoft teams' }].map((app) => (
+              {availableProviders.map((app) => (
                 <SelectableBox value={app.id} type="checkbox" key={app.id}>
                   <div className="d-flex flex-column align-items-center">
                     <Icon src={iconsSrc[`${camelCase(app.id)}`]} alt={app.id} />
@@ -74,7 +75,7 @@ function LiveSettings({
               ))}
             </SelectableBox.Set>
             <p>{intl.formatMessage(messages.providerHelperText, { providerName: 'Zoom' })}</p>
-            {liveData.piiSharingEnable ? (
+            {values.piiSharingEnable ? (
               <>
                 <p className="pb-2">{intl.formatMessage(messages.formInstructions)}</p>
                 <FormikControl
@@ -103,11 +104,6 @@ function LiveSettings({
                   value={values.launchEmail}
                   floatingLabel={intl.formatMessage(messages.launchEmail)}
                   type="input"
-                />
-                <AppExternalLinks
-                  externalLinks={liveConfiguration?.documentationLinks}
-                  providerName="live"
-                  showLaunchIcon
                 />
               </>
             ) : (
