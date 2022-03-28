@@ -121,6 +121,7 @@ function AppSettingsModal({
   enableAppLabel,
   enableAppHelp,
   learnMoreText,
+  enableReinitialize,
 }) {
   const { courseId } = useContext(PagesAndResourcesContext);
   const loadingStatus = useSelector(getLoadingStatus);
@@ -188,6 +189,7 @@ function AppSettingsModal({
             })
         }
         onSubmit={handleFormSubmit}
+        enableReinitialize={enableReinitialize}
       >
         {(formikProps) => (
           <Form onSubmit={handleFormikSubmit(formikProps)}>
@@ -284,6 +286,7 @@ AppSettingsModal.propTypes = {
   enableAppHelp: PropTypes.string.isRequired,
   learnMoreText: PropTypes.string.isRequired,
   configureBeforeEnable: PropTypes.bool,
+  enableReinitialize: PropTypes.bool,
 };
 
 AppSettingsModal.defaultProps = {
@@ -292,6 +295,7 @@ AppSettingsModal.defaultProps = {
   initialValues: {},
   validationSchema: {},
   configureBeforeEnable: false,
+  enableReinitialize: false,
 };
 
 export default injectIntl(AppSettingsModal);
