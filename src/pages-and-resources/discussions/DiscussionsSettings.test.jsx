@@ -93,7 +93,7 @@ describe('DiscussionsSettings', () => {
       axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
         .reply(200, generateProvidersApiResponse(false));
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
-        .reply(200, piazzaApiResponse);
+        .reply(200, generatePiazzaApiResponse(true));
       renderComponent();
     });
 
@@ -193,7 +193,7 @@ describe('DiscussionsSettings', () => {
     test('successfully submit the modal', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
-      axiosMock.onPost(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
+      axiosMock.onPost(getDiscussionsSettingsUrl(courseId)).reply(200, generatePiazzaApiResponse(true));
 
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
@@ -414,11 +414,11 @@ describe.each([
     axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
       .reply(200, generateProvidersApiResponse(isAdminOnlyConfig));
     axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
-      .reply(200, generatePiazzaApiResponse());
+      .reply(200, generatePiazzaApiResponse(true));
     renderComponent();
   });
 
-  test(`successfully advances to settings step for lti when adminOnlyConfig=${isAdminOnlyConfig} and user ${isAdmin ? 'is' : 'is not'} admin`, async () => {
+  test(`successfully advances to settings step for lti when adminOnlyConfig=${isAdminOnlyConfig} and user ${isAdmin ? 'is' : 'is not'} admin `, async () => {
     const showLTIConfig = isAdmin;
     history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
