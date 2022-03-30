@@ -1,6 +1,10 @@
 import React from 'react';
+import { dispatch } from 'react-redux';
+
 import { MockUseState } from '../../../../../testUtils';
 import { keyStore } from '../../../../utils';
+import { thunkActions } from '../../../../data/redux';
+
 import * as hooks from './hooks';
 import { sortFunctions, sortKeys } from './utils';
 
@@ -9,6 +13,24 @@ jest.mock('react', () => ({
   useRef: jest.fn(val => ({ current: val })),
   useEffect: jest.fn(),
   useCallback: (cb, prereqs) => ({ cb, prereqs }),
+}));
+
+jest.mock('react-redux', () => {
+  const dispatchFn = jest.fn();
+  return {
+    ...jest.requireActual('react-redux'),
+    dispatch: dispatchFn,
+    useDispatch: jest.fn(() => dispatchFn),
+  };
+});
+
+jest.mock('../../../../data/redux', () => ({
+  thunkActions: {
+    app: {
+      fetchImages: jest.fn(),
+      uploadImage: jest.fn(),
+    },
+  },
 }));
 
 const state = new MockUseState(hooks);
@@ -110,7 +132,6 @@ describe('SelectImageModal hooks', () => {
     });
     describe('imgListHooks outputs', () => {
       const props = {
-        fetchImages: jest.fn(),
         setSelection: jest.fn(),
         searchSortProps: { searchString: 'Es', sortBy: sortKeys.dateNewest },
       };
@@ -126,13 +147,14 @@ describe('SelectImageModal hooks', () => {
         expect(state.stateVals.images).toEqual(hook.images);
         expect(state.stateVals.images).toEqual({});
       });
-      it('calls fetchImages once, with setImages as onSuccess param', () => {
+      it('dispatches fetchImages thunkAction once, with setImages as onSuccess param', () => {
         expect(React.useEffect.mock.calls.length).toEqual(1);
         const [cb, prereqs] = React.useEffect.mock.calls[0];
         expect(prereqs).toEqual([]);
-        expect(props.fetchImages).not.toHaveBeenCalled();
         cb();
-        expect(props.fetchImages).toHaveBeenCalledWith({ onSuccess: state.setState.images });
+        expect(dispatch).toHaveBeenCalledWith(
+          thunkActions.app.fetchImages({ setImages: state.setState.images }),
+        );
       });
       describe('selectBtnProps', () => {
         it('is disabled if nothing is highlighted', () => {
@@ -170,9 +192,9 @@ describe('SelectImageModal hooks', () => {
     });
   });
   describe('fileInputHooks', () => {
-    const uploadImage = jest.fn();
+    const setSelection = jest.fn();
     beforeEach(() => {
-      hook = hooks.fileInputHooks({ uploadImage });
+      hook = hooks.fileInputHooks({ setSelection });
     });
     it('returns a ref for the file input', () => {
       expect(hook.ref).toEqual({ current: undefined });
@@ -180,24 +202,18 @@ describe('SelectImageModal hooks', () => {
     test('click calls current.click on the ref', () => {
       const click = jest.fn();
       React.useRef.mockReturnValueOnce({ current: { click } });
-      hook = hooks.fileInputHooks({ uploadImage });
+      hook = hooks.fileInputHooks({ setSelection });
       hook.click();
       expect(click).toHaveBeenCalled();
     });
     describe('addFile (uploadImage args)', () => {
       const event = { target: { files: [testValue] } };
-      it('calls uploadImage with the first target file', () => {
+      it('dispatches uploadImage thunkAction with the first target file and setSelection', () => {
         hook.addFile(event);
-        expect(uploadImage).toHaveBeenCalled();
-        expect(uploadImage.mock.calls[0][0].file).toEqual(testValue);
-      });
-      it('passes a resetFile callback that sets ref.current.value to empty string', () => {
-        React.useRef.mockReturnValueOnce({ current: { value: 'not empty' } });
-        hook = hooks.fileInputHooks({ uploadImage });
-        hook.addFile(event);
-        expect(uploadImage).toHaveBeenCalled();
-        uploadImage.mock.calls[0][0].resetFile();
-        expect(hook.ref.current.value).toEqual('');
+        expect(dispatch).toHaveBeenCalledWith(thunkActions.app.uploadImage({
+          file: testValue,
+          setSelection,
+        }));
       });
     });
   });
@@ -209,8 +225,6 @@ describe('SelectImageModal hooks', () => {
     const searchAndSortHooks = { search: 'props' };
     const fileInputHooks = { file: 'input hooks' };
 
-    const fetchImages = jest.fn();
-    const uploadImage = jest.fn();
     const setSelection = jest.fn();
     const spies = {};
     beforeEach(() => {
@@ -220,19 +234,18 @@ describe('SelectImageModal hooks', () => {
         .mockReturnValueOnce(searchAndSortHooks);
       spies.file = jest.spyOn(hooks, hookKeys.fileInputHooks)
         .mockReturnValueOnce(fileInputHooks);
-      hook = hooks.imgHooks({ fetchImages, uploadImage, setSelection });
+      hook = hooks.imgHooks({ setSelection });
     });
     it('forwards fileInputHooks as fileInput, called with uploadImage prop', () => {
       expect(hook.fileInput).toEqual(fileInputHooks);
       expect(spies.file.mock.calls.length).toEqual(1);
       expect(spies.file).toHaveBeenCalledWith({
-        uploadImage,
+        setSelection,
       });
     });
-    it('initializes imgListHooks with fetchImages, setSelection and searchAndSortHooks', () => {
+    it('initializes imgListHooks with setSelection and searchAndSortHooks', () => {
       expect(spies.imgList.mock.calls.length).toEqual(1);
       expect(spies.imgList).toHaveBeenCalledWith({
-        fetchImages,
         setSelection,
         searchSortProps: searchAndSortHooks,
       });
@@ -240,7 +253,7 @@ describe('SelectImageModal hooks', () => {
     it('forwards searchAndSortHooks as searchSortProps', () => {
       expect(hook.searchSortProps).toEqual(searchAndSortHooks);
       expect(spies.file.mock.calls.length).toEqual(1);
-      expect(spies.file).toHaveBeenCalledWith({ uploadImage });
+      expect(spies.file).toHaveBeenCalledWith({ setSelection });
     });
     it('forwards galleryProps and selectBtnProps from the image list hooks', () => {
       expect(hook.galleryProps).toEqual(imgListHooks.galleryProps);

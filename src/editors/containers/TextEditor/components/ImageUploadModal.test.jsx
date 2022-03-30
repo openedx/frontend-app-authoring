@@ -84,7 +84,7 @@ describe('ImageUploadModal', () => {
       it('takes and calls clearSelection and close callbacks', () => {
         const clearSelection = jest.fn();
         const close = jest.fn();
-        module.hooks.onClose({ clearSelection, close });
+        module.hooks.onClose({ clearSelection, close })();
         expect(clearSelection).toHaveBeenCalled();
         expect(close).toHaveBeenCalled();
       });

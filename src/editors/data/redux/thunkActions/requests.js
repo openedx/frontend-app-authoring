@@ -2,7 +2,7 @@ import { StrictDict } from '../../../utils';
 
 import { RequestKeys } from '../../constants/requests';
 import { actions, selectors } from '..';
-import api from '../../services/cms/api';
+import api, { loadImages } from '../../services/cms/api';
 
 import * as module from './requests';
 
@@ -87,8 +87,32 @@ export const saveBlock = ({ content, ...rest }) => (dispatch, getState) => {
     ...rest,
   }));
 };
+export const uploadImage = ({ image, ...rest }) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.uploadImage,
+    promise: api.uploadImage({
+      courseId: selectors.app.courseId(getState()),
+      image,
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+    }),
+    ...rest,
+  }));
+};
+
+export const fetchImages = ({ ...rest }) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.fetchImages,
+    promise: api.fetchImages({
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      courseId: selectors.app.courseId(getState()),
+    }).then((response) => loadImages(response.data.assets)),
+    ...rest,
+  }));
+};
 
 export default StrictDict({
+  uploadImage,
+  fetchImages,
   fetchUnit,
   fetchBlock,
   saveBlock,

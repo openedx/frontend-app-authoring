@@ -87,7 +87,10 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
     Group: 'Form.Group',
     Label: 'Form.Label',
   },
-  SelectableBox: 'SelectableBox',
+  Scrollable: 'Scrollable',
+  SelectableBox: {
+    Set: 'SelectableBox.Set',
+  },
   Spinner: 'Spinner',
   Stack: 'Stack',
   Toast: 'Toast',

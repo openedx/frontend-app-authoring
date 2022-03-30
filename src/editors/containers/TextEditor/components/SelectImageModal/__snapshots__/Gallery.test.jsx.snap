@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TextEditor Image Gallery component component snapshot: loaded, show gallery 1`] = `
+<Scrollable
+  className="gallery bg-gray-100"
+  style={
+    Object {
+      "height": "375px",
+    }
+  }
+>
+  <div
+    className="p-4"
+  >
+    <SelectableBox.Set
+      columns={1}
+      name="images"
+      onChange={[MockFunction props.onHighlightChange]}
+      type="radio"
+      value="props.highlighted"
+    >
+      <GalleryCard
+        img={
+          Object {
+            "id": 1,
+          }
+        }
+        key="1"
+      />
+      <GalleryCard
+        img={
+          Object {
+            "id": 2,
+          }
+        }
+        key="2"
+      />
+      <GalleryCard
+        img={
+          Object {
+            "id": 3,
+          }
+        }
+        key="3"
+      />
+    </SelectableBox.Set>
+  </div>
+</Scrollable>
+`;
+
+exports[`TextEditor Image Gallery component component snapshot: not loaded, show spinner 1`] = `
+<Spinner
+  animation="border"
+  className="mie-3"
+  screenReaderText="loading..."
+/>
+`;

@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FileInput component snapshot 1`] = `
+<FileInput
+  fileInput={
+    Object {
+      "addFile": [MockFunction props.fileInput.addFile],
+      "ref": [Function],
+    }
+  }
+>
+  <input
+    accept=".gif,.jpg,.jpeg,.png,.tif,.tiff"
+    className="upload d-none"
+    onChange={[MockFunction props.fileInput.addFile]}
+    type="file"
+  />
+</FileInput>
+`;

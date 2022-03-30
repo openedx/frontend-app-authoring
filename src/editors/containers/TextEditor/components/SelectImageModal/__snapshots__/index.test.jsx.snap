@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SelectImageModal component snapshot 1`] = `
+<BaseModal
+  close={[MockFunction props.close]}
+  confirmAction={
+    <Button
+      select="btnProps"
+      variant="primary"
+    >
+      <FormattedMessage
+        defaultMessage="Next"
+        description="Label for Next button"
+        id="authoring.texteditor.selectimagemodal.next.label"
+      />
+    </Button>
+  }
+  footerAction={
+    <Button
+      onClick="imgHooks.fileInput.click"
+      variant="link"
+    >
+      <FormattedMessage
+        defaultMessage="Upload a new image"
+        description="Label for upload button"
+        id="authoring.texteditor.selectimagemodal.upload.label"
+      />
+    </Button>
+  }
+  isOpen={true}
+  title="Add an image"
+>
+  <Stack
+    gap={3}
+  >
+    <SearchSort
+      search="sortProps"
+    />
+    <Gallery
+      gallery="props"
+    />
+    <FileInput
+      fileInput={
+        Object {
+          "addFile": "imgHooks.fileInput.addFile",
+          "click": "imgHooks.fileInput.click",
+          "ref": "imgHooks.fileInput.ref",
+        }
+      }
+    />
+  </Stack>
+</BaseModal>
+`;

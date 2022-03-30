@@ -8,6 +8,8 @@ const initialState = {
   [RequestKeys.fetchUnit]: { status: RequestStates.inactive },
   [RequestKeys.fetchBlock]: { status: RequestStates.inactive },
   [RequestKeys.saveBlock]: { status: RequestStates.inactive },
+  [RequestKeys.fetchImages]: { status: RequestStates.inactive },
+  [RequestKeys.uploadImage]: { status: RequestStates.inactive },
 };
 
 // eslint-disable-next-line no-unused-vars

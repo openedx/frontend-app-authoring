@@ -1,3 +1,4 @@
+import { camelizeKeys } from '../../../utils';
 import * as urls from './urls';
 import { get, post } from './utils';
 import * as module from './api';
@@ -9,6 +10,17 @@ export const apiMethods = {
   ),
   fetchByUnitId: ({ blockId, studioEndpointUrl }) => get(
     urls.blockAncestor({ studioEndpointUrl, blockId }),
+  ),
+  fetchImages: ({ courseId, studioEndpointUrl }) => get(
+    urls.courseImages({ studioEndpointUrl, courseId }),
+  ),
+  uploadImage: ({
+    courseId,
+    studioEndpointUrl,
+    image,
+  }) => post(
+    urls.courseAssets({ studioEndpointUrl, courseId }),
+    image,
   ),
   normalizeContent: ({
     blockId,
@@ -47,6 +59,16 @@ export const apiMethods = {
     }),
   ),
 };
+
+export const loadImage = (imageData) => ({
+  ...imageData,
+  dateAdded: new Date(imageData.dateAdded.replace(' at', '')).getTime(),
+});
+
+export const loadImages = (rawImages) => camelizeKeys(rawImages).reduce(
+  (obj, image) => ({ ...obj, [image.id]: module.loadImage(image) }),
+  {},
+);
 
 export const checkMockApi = (key) => {
   if (process.env.REACT_APP_DEVGALLERY) {

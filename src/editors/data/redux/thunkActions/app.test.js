@@ -1,13 +1,21 @@
 import { actions } from '..';
+import { camelizeKeys } from '../../../utils';
 import * as thunkActions from './app';
 
 jest.mock('./requests', () => ({
   fetchBlock: (args) => ({ fetchBlock: args }),
   fetchUnit: (args) => ({ fetchUnit: args }),
   saveBlock: (args) => ({ saveBlock: args }),
+  fetchImages: (args) => ({ fetchImages: args }),
+  uploadImage: (args) => ({ uploadImage: args }),
 }));
 
-const testValue = 'test VALUE';
+jest.mock('../../../utils', () => ({
+  camelizeKeys: (args) => ([{ camelizeKeys: args }]),
+  ...jest.requireActual('../../../utils'),
+}));
+
+const testValue = { data: { assets: 'test VALUE' } };
 
 describe('app thunkActions', () => {
   let dispatch;
@@ -90,6 +98,31 @@ describe('app thunkActions', () => {
       calls[1][0].saveBlock.onSuccess(response);
       expect(dispatch).toHaveBeenCalledWith(actions.app.setSaveResponse(response));
       expect(returnToUnit).toHaveBeenCalled();
+    });
+  });
+  describe('fetchImages', () => {
+    it('dispatches fetchUnit action with setImages for onSuccess param', () => {
+      const setImages = jest.fn();
+      thunkActions.fetchImages({ setImages })(dispatch);
+      [[dispatchedAction]] = dispatch.mock.calls;
+      expect(dispatchedAction.fetchImages).toEqual({ onSuccess: setImages });
+    });
+  });
+  describe('uploadImage', () => {
+    const setSelection = jest.fn();
+    beforeEach(() => {
+      thunkActions.uploadImage({ file: testValue, setSelection })(dispatch);
+      [[dispatchedAction]] = dispatch.mock.calls;
+    });
+    it('dispatches uploadImage action', () => {
+      expect(dispatchedAction.uploadImage).not.toBe(undefined);
+    });
+    test('passes file as image prop', () => {
+      expect(dispatchedAction.uploadImage.image).toEqual(testValue);
+    });
+    test('onSuccess: calls setSelection with camelized response.data.asset', () => {
+      dispatchedAction.uploadImage.onSuccess({ data: { asset: testValue } });
+      expect(setSelection).toHaveBeenCalledWith(camelizeKeys(testValue));
     });
   });
 });

@@ -29,7 +29,7 @@ export const hooks = {
     setSelection(null);
     close();
   },
-  onClose: ({ clearSelection, close }) => {
+  onClose: ({ clearSelection, close }) => () => {
     clearSelection();
     close();
   },
@@ -66,7 +66,9 @@ export const ImageUploadModal = ({
       />
     );
   }
-  return (<SelectImageModal {...{ isOpen, close, setSelection }} />);
+  return (
+    <SelectImageModal {...{ isOpen, close, setSelection }} />
+  );
 };
 
 ImageUploadModal.defaultProps = {

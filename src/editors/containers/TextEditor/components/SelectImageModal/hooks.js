@@ -1,4 +1,7 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+
+import { thunkActions } from '../../../../data/redux';
 import * as module from './hooks';
 import { sortFunctions, sortKeys } from './utils';
 
@@ -31,15 +34,15 @@ export const displayList = ({ sortBy, searchString, images }) => module.filtered
 }).sort(sortFunctions[sortBy in sortKeys ? sortKeys[sortBy] : sortKeys.dateNewest]);
 
 export const imgListHooks = ({
-  fetchImages,
   setSelection,
   searchSortProps,
 }) => {
+  const dispatch = useDispatch();
   const [images, setImages] = module.state.images({});
   const [highlighted, setHighlighted] = module.state.highlighted(null);
 
   React.useEffect(() => {
-    fetchImages({ onSuccess: setImages });
+    dispatch(thunkActions.app.fetchImages({ setImages }));
   }, []);
 
   return {
@@ -57,14 +60,17 @@ export const imgListHooks = ({
   };
 };
 
-export const fileInputHooks = ({ uploadImage }) => {
+export const fileInputHooks = ({ setSelection }) => {
+  const dispatch = useDispatch();
   const ref = React.useRef();
   const click = () => ref.current.click();
-  const resetFile = () => { ref.current.value = ''; };
-  const addFile = (e) => uploadImage({
-    file: e.target.files[0],
-    resetFile,
-  });
+  const addFile = (e) => {
+    dispatch(thunkActions.app.uploadImage({
+      file: e.target.files[0],
+      setSelection,
+    }));
+  };
+
   return {
     click,
     addFile,
@@ -72,10 +78,10 @@ export const fileInputHooks = ({ uploadImage }) => {
   };
 };
 
-export const imgHooks = ({ fetchImages, uploadImage, setSelection }) => {
+export const imgHooks = ({ setSelection }) => {
   const searchSortProps = module.searchAndSortHooks();
-  const imgList = module.imgListHooks({ fetchImages, setSelection, searchSortProps });
-  const fileInput = module.fileInputHooks({ uploadImage });
+  const imgList = module.imgListHooks({ setSelection, searchSortProps });
+  const fileInput = module.fileInputHooks({ setSelection });
   const { selectBtnProps, galleryProps } = imgList;
 
   return {

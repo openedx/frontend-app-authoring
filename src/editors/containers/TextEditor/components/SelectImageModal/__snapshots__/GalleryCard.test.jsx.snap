@@ -28,7 +28,7 @@ exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
         <FormattedMessage
           defaultMessage="Added {date} at {time}"
           description="File date-added string"
-          id="authoring.texteditor.selectimagemodal.addedDate.part1.label"
+          id="authoring.texteditor.selectimagemodal.addedDate.label"
           values={
             Object {
               "date": <FormattedDate

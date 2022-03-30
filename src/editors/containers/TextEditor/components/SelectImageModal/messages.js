@@ -39,11 +39,15 @@ export const messages = {
     defaultMessage: 'By name (descending)',
     description: 'Dropdown label for sorting by name (descending)',
   },
-  // Date added messages
   addedDate: {
-    id: 'authoring.texteditor.selectimagemodal.addedDate.part1.label',
+    id: 'authoring.texteditor.selectimagemodal.addedDate.label',
     defaultMessage: 'Added {date} at {time}',
     description: 'File date-added string',
+  },
+  loading: {
+    id: 'authoring.texteditor.selectimagemodal.spinner.readertext',
+    defaultMessage: 'loading...',
+    description: 'Gallery loading spinner screen-reader text',
   },
 };
 

@@ -11,4 +11,7 @@ module.exports = createConfig('jest', {
   snapshotSerializers: [
     'enzyme-to-json/serializer',
   ],
+  moduleNameMapper: {
+    '^lodash-es$': 'lodash',
+  },
 });

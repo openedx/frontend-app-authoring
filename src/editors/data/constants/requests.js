@@ -11,4 +11,6 @@ export const RequestKeys = StrictDict({
   fetchBlock: 'fetchBlock',
   fetchUnit: 'fetchUnit',
   saveBlock: 'saveBlock',
+  fetchImages: 'fetchImages',
+  uploadImage: 'uploadImage',
 });
