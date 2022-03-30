@@ -93,7 +93,7 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
             }}
           />
         </p>
-        {showLTIConfig && (
+        {(showLTIConfig && piiConfig.piiSharing) && (
           <>
             <p>{intl.formatMessage(messages.formInstructions)}</p>
             <Form.Group
