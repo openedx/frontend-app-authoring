@@ -8,7 +8,6 @@ exports[`BaseModal ImageUploadModal template component snapshot 1`] = `
   isOpen={true}
   onClose={[MockFunction props.close]}
   size="lg"
-  title="My dialog"
   variant="default"
 >
   <ModalDialog.Header>
@@ -27,7 +26,11 @@ exports[`BaseModal ImageUploadModal template component snapshot 1`] = `
         onClick={[MockFunction props.close]}
         variant="tertiary"
       >
-        Cancel
+        <FormattedMessage
+          defaultMessage="Cancel"
+          description="Label for cancel button."
+          id="authoring.texteditor.baseModal.cancelButtonLabel"
+        />
       </ModalDialog.CloseButton>
       props.confirmAction node
     </ActionRow>

@@ -28,7 +28,11 @@ exports[`ImageSettingsModal render snapshot 1`] = `
       }
       variant="primary"
     >
-      Save
+      <FormattedMessage
+        defaultMessage="Save"
+        description="Label for save button."
+        id="authoring.texteditor.imagesettingsmodal.saveButtonLabel"
+      />
     </Button>
   }
   footerAction={null}
@@ -40,7 +44,11 @@ exports[`ImageSettingsModal render snapshot 1`] = `
     size="inline"
     variant="link"
   >
-    Replace image
+    <FormattedMessage
+      defaultMessage="Replace image"
+      description="Label for replace image button."
+      id="authoring.texteditor.imagesettingsmodal.replaceImageButtonLabel"
+    />
   </Button>
   <br />
   <div

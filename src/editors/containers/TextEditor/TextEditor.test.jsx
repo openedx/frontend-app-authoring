@@ -1,5 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
+
+import { formatMessage } from '../../../testUtils';
 import { TextEditor, mapStateToProps, mapDispatchToProps } from './TextEditor';
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
@@ -68,6 +70,8 @@ describe('TextEditor', () => {
     blockFailed: false,
     blockFinished: true,
     initializeEditor: jest.fn().mockName('args.intializeEditor'),
+    // inject
+    intl: { formatMessage },
   };
   describe('snapshots', () => {
     modalToggle.mockReturnValue({

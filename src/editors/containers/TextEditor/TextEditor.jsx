@@ -18,11 +18,11 @@ import 'tinymce/plugins/autoresize';
 import 'tinymce/plugins/image';
 import 'tinymce/plugins/imagetools';
 
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   Spinner,
   Toast,
 } from '@edx/paragon';
+import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
@@ -43,6 +43,8 @@ export const TextEditor = ({
   blockFailed,
   blockFinished,
   initializeEditor,
+  // inject
+  intl,
 }) => {
   const { isOpen, openModal, closeModal } = modalToggle();
 
@@ -66,7 +68,7 @@ export const TextEditor = ({
       {(!blockFinished)
         ? (
           <div className="text-center p-6">
-            <Spinner animation="border" className="m-3" screenreadertext="loading" />
+            <Spinner animation="border" className="m-3" screenreadertext={intl.formatMessage(messages.spinnerScreenReaderText)} />
           </div>
         )
         : (
@@ -101,6 +103,8 @@ TextEditor.propTypes = {
   blockFailed: PropTypes.bool.isRequired,
   blockFinished: PropTypes.bool.isRequired,
   initializeEditor: PropTypes.func.isRequired,
+  // inject
+  intl: intlShape.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
@@ -113,4 +117,4 @@ export const mapDispatchToProps = {
   initializeEditor: actions.app.initializeEditor,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(TextEditor);
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(TextEditor));

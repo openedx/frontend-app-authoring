@@ -1,6 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import AltTextControls from './AltTextControls';
+
+import { formatMessage } from '../../../../../testUtils';
+import { AltTextControls } from './AltTextControls';
 
 jest.mock('./hooks', () => ({
   onInputChange: (handler) => ({ 'hooks.onInputChange': handler }),
@@ -11,6 +13,8 @@ describe('AltTextControls', () => {
   const props = {
     isDecorative: true,
     value: 'props.value',
+    // inject
+    intl: { formatMessage },
   };
   beforeEach(() => {
     props.setValue = jest.fn().mockName('props.setValue');

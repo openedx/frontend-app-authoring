@@ -7,7 +7,11 @@ exports[`AltTextControls render snapshot: isDecorative=true 1`] = `
   <Form.Label
     as="h4"
   >
-    Accessibility
+    <FormattedMessage
+      defaultMessage="Accessibility"
+      description="Label title for accessibility section."
+      id="authoring.texteditor.imagesettingsmodal.accessibilityLabel"
+    />
   </Form.Label>
   <Form.Control
     className="mt-4.5"
@@ -31,7 +35,11 @@ exports[`AltTextControls render snapshot: isDecorative=true 1`] = `
     }
   >
     <Form.Label>
-      This image is decorative (no alt text required).
+      <FormattedMessage
+        defaultMessage="This image is decorative (no alt text required)."
+        description="Checkbox label for whether or not an image is decorative."
+        id="authoring.texteditor.imagesettingsmodal.decorativeCheckboxLabel"
+      />
     </Form.Label>
   </Form.Checkbox>
 </Form.Group>

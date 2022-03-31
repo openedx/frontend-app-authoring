@@ -2,12 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Image } from '@edx/paragon';
 import { ArrowBackIos } from '@edx/paragon/icons';
+import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import BaseModal from '../BaseModal';
 
 import AltTextControls from './AltTextControls';
 import DimensionControls from './DimensionControls';
 import hooks from './hooks';
+import messages from './messages';
 import './index.scss';
 
 /**
@@ -26,6 +28,8 @@ export const ImageSettingsModal = ({
   selection,
   saveToEditor,
   returnToSelection,
+  // inject
+  intl,
 }) => {
   const dimensions = hooks.dimensions();
   const altText = hooks.altText();
@@ -37,7 +41,7 @@ export const ImageSettingsModal = ({
   });
   return (
     <BaseModal
-      title="Image Settings"
+      title={intl.formatMessage(messages.titleLabel)}
       close={close}
       isOpen={isOpen}
       confirmAction={(
@@ -46,7 +50,7 @@ export const ImageSettingsModal = ({
           onClick={onSaveClick}
           disabled={hooks.isSaveDisabled(altText)}
         >
-          Save
+          <FormattedMessage {...messages.saveButtonLabel} />
         </Button>
       )}
     >
@@ -56,7 +60,7 @@ export const ImageSettingsModal = ({
         size="inline"
         iconBefore={ArrowBackIos}
       >
-        Replace image
+        <FormattedMessage {...messages.replaceImageButtonLabel} />
       </Button>
       <br />
       <div className="d-flex flex-row m-2 img-settings-form-container">
@@ -87,5 +91,7 @@ ImageSettingsModal.propTypes = {
   }).isRequired,
   saveToEditor: PropTypes.func.isRequired,
   returnToSelection: PropTypes.func.isRequired,
+  // inject
+  intl: intlShape.isRequired,
 };
-export default ImageSettingsModal;
+export default injectIntl(ImageSettingsModal);

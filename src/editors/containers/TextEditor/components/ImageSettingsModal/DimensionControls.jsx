@@ -9,8 +9,10 @@ import {
   Locked,
   Unlocked,
 } from '@edx/paragon/icons';
+import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import hooks from './hooks';
+import messages from './messages';
 
 /**
  * Wrapper for image dimension inputs and the lock checkbox.
@@ -30,9 +32,13 @@ export const DimensionControls = ({
   unlock,
   updateDimensions,
   value,
+  // inject
+  intl,
 }) => ((value !== null) && (
   <Form.Group>
-    <Form.Label as="h4">Image Dimensions</Form.Label>
+    <Form.Label as="h4">
+      <FormattedMessage {...messages.imageDimensionsLabel} />
+    </Form.Label>
     <div className="mt-4.5">
       <Form.Control
         className="dimension-input"
@@ -41,7 +47,7 @@ export const DimensionControls = ({
         min={1}
         onChange={hooks.onInputChange(setWidth)}
         onBlur={updateDimensions}
-        floatingLabel="Width"
+        floatingLabel={intl.formatMessage(messages.widthFloatingLabel)}
       />
       <Form.Control
         className="dimension-input"
@@ -50,11 +56,15 @@ export const DimensionControls = ({
         min={1}
         onChange={hooks.onInputChange(setHeight)}
         onBlur={updateDimensions}
-        floatingLabel="Height"
+        floatingLabel={intl.formatMessage(messages.heightFloatingLabel)}
       />
       <IconButton
         className="d-inline-block"
-        alt={isLocked ? 'unlock dimensions' : 'lock dimensions'}
+        alt={
+          isLocked
+            ? intl.formatMessage(messages.unlockDimensionsLabel)
+            : intl.formatMessage(messages.lockDimensionsLabel)
+        }
         iconAs={Icon}
         src={isLocked ? Locked : Unlocked}
         onClick={isLocked ? unlock : lock}
@@ -79,6 +89,8 @@ DimensionControls.propTypes = ({
   lock: PropTypes.func.isRequired,
   unlock: PropTypes.func.isRequired,
   updateDimensions: PropTypes.func.isRequired,
+  // inject
+  intl: intlShape.isRequired,
 });
 
-export default DimensionControls;
+export default injectIntl(DimensionControls);

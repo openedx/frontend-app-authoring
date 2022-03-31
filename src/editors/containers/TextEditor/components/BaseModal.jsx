@@ -5,6 +5,9 @@ import {
   ActionRow,
   ModalDialog,
 } from '@edx/paragon';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
+
+import messages from './messages';
 
 export const BaseModal = ({
   isOpen,
@@ -15,7 +18,6 @@ export const BaseModal = ({
   footerAction,
 }) => (
   <ModalDialog
-    title="My dialog"
     isOpen={isOpen}
     onClose={close}
     size="lg"
@@ -37,7 +39,7 @@ export const BaseModal = ({
         {footerAction}
         <ActionRow.Spacer />
         <ModalDialog.CloseButton variant="tertiary" onClick={close}>
-          Cancel
+          <FormattedMessage {...messages.cancelButtonLabel} />
         </ModalDialog.CloseButton>
         {confirmAction}
       </ActionRow>

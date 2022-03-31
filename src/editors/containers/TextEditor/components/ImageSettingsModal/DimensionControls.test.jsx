@@ -1,6 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import DimensionControls from './DimensionControls';
+
+import { formatMessage } from '../../../../../testUtils';
+import { DimensionControls } from './DimensionControls';
 
 jest.mock('./hooks', () => ({
   onInputChange: (handler) => ({ 'hooks.onInputChange': handler }),
@@ -12,6 +14,8 @@ describe('DimensionControls', () => {
     locked: { 'props.locked': 'lockedValue' },
     isLocked: true,
     value: { width: 20, height: 40 },
+    // inject
+    intl: { formatMessage },
   };
   beforeEach(() => {
     props.setWidth = jest.fn().mockName('props.setWidth');
