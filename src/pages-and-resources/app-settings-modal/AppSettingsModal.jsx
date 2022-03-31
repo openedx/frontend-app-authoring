@@ -75,7 +75,7 @@ function AppSettingsModalBase({
       isFullscreenOnMobile
     >
       <ModalDialog.Header>
-        <ModalDialog.Title>
+        <ModalDialog.Title data-testid="modal-title">
           {title}
         </ModalDialog.Title>
       </ModalDialog.Header>
@@ -159,7 +159,7 @@ function AppSettingsModal({
     await handleSubmit(event);
     if (Object.keys(errors).length > 0) {
       await setSaveError(true);
-      alertRef?.current.scrollIntoView(); // eslint-disable-line no-unused-expressions
+      alertRef?.current.scrollIntoView?.(); // eslint-disable-line no-unused-expressions
     }
   };
 

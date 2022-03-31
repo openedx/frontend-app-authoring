@@ -8,8 +8,8 @@ ensureConfig([
 
 const apiBaseUrl = getConfig().STUDIO_BASE_URL;
 
-const providersApiUrl = `${apiBaseUrl}/api/course_live/providers`;
-const providerConfigurationApiUrl = `${apiBaseUrl}/api/course_live/course`;
+export const providersApiUrl = `${apiBaseUrl}/api/course_live/providers`;
+export const providerConfigurationApiUrl = `${apiBaseUrl}/api/course_live/course`;
 
 /**
  * Fetches providers for provided course
