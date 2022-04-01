@@ -51,7 +51,7 @@ export const EditorFooter = ({
           onClick={module.handleSaveClicked({
             editorRef,
             returnUrl,
-            saveBlockContent,
+            saveFunction: saveBlockContent,
           })}
           disabled={!isInitialized}
         >
