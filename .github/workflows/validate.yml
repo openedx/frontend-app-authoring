@@ -7,14 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version:
-        - 12
         node: [16]
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v2
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: ${{ matrix.noden }}
     - run: make validate.ci
     - name: Upload coverage
       uses: codecov/codecov-action@v2
