@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Editor Container snapshots rendering correctly with expected Input 1`] = `
+<div
+  className="editor-page"
+>
+  <EditorPage
+    blockId="company-id1"
+    blockType="html"
+    courseId="cOuRsEId"
+    studioEndpointUrl="http://localhost:18010"
+  />
+</div>
+`;
