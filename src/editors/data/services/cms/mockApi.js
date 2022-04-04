@@ -108,7 +108,6 @@ export const saveBlock = ({
   }),
 });
 
-// eslint-disable-next-line
 export const uploadImage = ({
   courseId,
   studioEndpointUrl,

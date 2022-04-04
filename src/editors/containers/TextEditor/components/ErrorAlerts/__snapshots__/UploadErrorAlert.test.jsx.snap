@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UploadErrorAlert Snapshots snapshot:  is ErrorAlert with Message error (ErrorAlert) 1`] = `
+<ErrorAlert
+  isError={true}
+>
+  <FormattedMessage
+    defaultMessage="Failed to Upload Image. Please Try again."
+    description="Message presented to user when image fails to upload"
+    id="authoring.texteditor.selectimagemodal.error.uploadImageError"
+  />
+</ErrorAlert>
+`;

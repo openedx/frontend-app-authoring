@@ -18,10 +18,14 @@ export const apiMethods = {
     courseId,
     studioEndpointUrl,
     image,
-  }) => post(
-    urls.courseAssets({ studioEndpointUrl, courseId }),
-    image,
-  ),
+  }) => {
+    const data = new FormData();
+    data.append('file', image);
+    return post(
+      urls.courseAssets({ studioEndpointUrl, courseId }),
+      data,
+    );
+  },
   normalizeContent: ({
     blockId,
     blockType,

@@ -105,7 +105,9 @@ describe('cms api', () => {
 
     describe('uploadImage', () => {
       const image = { photo: 'dAta' };
-      it('should call post with urls.block and normalizeContent', () => {
+      it('should call post with urls.courseAssets and imgdata', () => {
+        const mockFormdata = new FormData();
+        mockFormdata.append('file', image);
         apiMethods.uploadImage({
           courseId,
           studioEndpointUrl,
@@ -113,7 +115,7 @@ describe('cms api', () => {
         });
         expect(post).toHaveBeenCalledWith(
           urls.courseAssets({ studioEndpointUrl, courseId }),
-          image,
+          mockFormdata,
         );
       });
     });

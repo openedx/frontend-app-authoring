@@ -11,6 +11,8 @@ import BaseModal from '../BaseModal';
 import SearchSort from './SearchSort';
 import Gallery from './Gallery';
 import FileInput from './FileInput';
+import FetchErrorAlert from '../ErrorAlerts/FetchErrorAlert';
+import UploadErrorAlert from '../ErrorAlerts/UploadErrorAlert';
 
 export const SelectImageModal = ({
   isOpen,
@@ -25,7 +27,6 @@ export const SelectImageModal = ({
     selectBtnProps,
     fileInput,
   } = hooks.imgHooks({ setSelection });
-
   return (
     <BaseModal
       close={close}
@@ -42,6 +43,8 @@ export const SelectImageModal = ({
       )}
       title={intl.formatMessage(messages.titleLabel)}
     >
+      <FetchErrorAlert />
+      <UploadErrorAlert />
       <Stack gap={3}>
         <SearchSort {...searchSortProps} />
         <Gallery {...galleryProps} />

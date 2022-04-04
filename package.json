@@ -34,7 +34,7 @@
   "homepage": "https://github.com/edx/frontend-lib-content-components#readme",
   "devDependencies": {
     "@edx/frontend-build": "9.1.1",
-    "@edx/frontend-platform": "1.15.2",
+    "@edx/frontend-platform": "1.15.5",
     "@edx/paragon": "19.6.0",
     "@testing-library/dom": "^8.11.1",
     "@testing-library/react": "12.1.1",
@@ -73,7 +73,7 @@
   },
   "peerDependencies": {
     "@edx/paragon": ">= 7.0.0 < 20.0.0",
-    "@edx/frontend-platform": "1.14.0",
+    "@edx/frontend-platform": ">1.15.0",
     "prop-types": "^15.5.10",
     "react": "^16.14.0",
     "react-dom": "^16.14.0"

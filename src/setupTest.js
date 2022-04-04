@@ -60,6 +60,9 @@ jest.mock('@edx/frontend-platform/i18n', () => {
 });
 
 jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedComponents({
+  Alert: {
+    Heading: 'Alert.Heading',
+  },
   ActionRow: {
     Spacer: 'ActionRow.Spacer',
   },

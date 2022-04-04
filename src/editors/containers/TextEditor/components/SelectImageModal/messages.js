@@ -49,6 +49,21 @@ export const messages = {
     defaultMessage: 'loading...',
     description: 'Gallery loading spinner screen-reader text',
   },
+  uploadImageError: {
+    id: 'authoring.texteditor.selectimagemodal.error.uploadImageError',
+    defaultMessage: 'Failed to Upload Image. Please Try again.',
+    description: 'Message presented to user when image fails to upload',
+  },
+  fetchImagesError: {
+    id: 'authoring.texteditor.selectimagemodal.error.fetchImagesError',
+    defaultMessage: 'Failed to obtain course Images. Please Try again.',
+    description: 'Message presented to user when images are not found',
+  },
+  errorTitle: {
+    id: 'authoring.texteditor.selectimagemodal.error.errorTitle',
+    defaultMessage: 'Error',
+    description: 'Title of message presented to user when something goes wrong',
+  },
 };
 
 export default messages;

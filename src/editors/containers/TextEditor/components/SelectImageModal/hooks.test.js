@@ -33,6 +33,24 @@ jest.mock('../../../../data/redux', () => ({
   },
 }));
 
+jest.mock('react-redux', () => {
+  const dispatchFn = jest.fn();
+  return {
+    ...jest.requireActual('react-redux'),
+    dispatch: dispatchFn,
+    useDispatch: jest.fn(() => dispatchFn),
+  };
+});
+
+jest.mock('../../../../data/redux', () => ({
+  thunkActions: {
+    app: {
+      fetchImages: jest.fn(),
+      uploadImage: jest.fn(),
+    },
+  },
+}));
+
 const state = new MockUseState(hooks);
 const hookKeys = keyStore(hooks);
 let hook;
