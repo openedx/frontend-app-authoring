@@ -25,7 +25,7 @@ As applications grow, it's acknowledged by the community that this organization 
 
 This ADR documents an approach and rules of thumb for organizing code modularly by feature, informed by articles and prior art.
 
-Note on terminology: "feature" and "module" are used interchangeably in this ADR. In general, the feature refers to the semantically significant thing, whereas the module refers to the directory of code pertaining to that feature.
+Note on terminology: "feature" and "module" are used interchangeably in this ADR. In general, the feature refers to the semantically significant thing, whereas the module refers to the directory of code pertaining to that feature..
 
 Decision
 --------
