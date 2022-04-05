@@ -74,7 +74,7 @@ function LiveSettings({
                 </SelectableBox>
               ))}
             </SelectableBox.Set>
-            <p>{intl.formatMessage(messages.providerHelperText, { providerName: 'Zoom' })}</p>
+            <p data-testid="helper-text">{intl.formatMessage(messages.providerHelperText, { providerName: 'Zoom' })}</p>
             {values.piiSharingEnable ? (
               <>
                 <p className="pb-2">{intl.formatMessage(messages.formInstructions)}</p>
@@ -107,7 +107,7 @@ function LiveSettings({
                 />
               </>
             ) : (
-              <p>{intl.formatMessage(messages.requestPiiSharingEnable)}</p>
+              <p data-testid="request-pii-sharing">{intl.formatMessage(messages.requestPiiSharingEnable)}</p>
             )}
           </>
         )

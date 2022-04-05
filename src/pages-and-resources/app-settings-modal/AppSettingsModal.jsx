@@ -75,7 +75,7 @@ function AppSettingsModalBase({
       isFullscreenOnMobile
     >
       <ModalDialog.Header>
-        <ModalDialog.Title>
+        <ModalDialog.Title data-testid="modal-title">
           {title}
         </ModalDialog.Title>
       </ModalDialog.Header>
@@ -159,7 +159,7 @@ function AppSettingsModal({
     await handleSubmit(event);
     if (Object.keys(errors).length > 0) {
       await setSaveError(true);
-      alertRef?.current.scrollIntoView(); // eslint-disable-line no-unused-expressions
+      alertRef?.current.scrollIntoView?.(); // eslint-disable-line no-unused-expressions
     }
   };
 
@@ -216,9 +216,9 @@ function AppSettingsModal({
               {saveError && (
                 <Alert variant="danger" icon={Info} ref={alertRef}>
                   <Alert.Heading>
-                    {formikProps.errors.enabled?.title ?? intl.formatMessage(messages.errorSavingTitle)}
+                    {formikProps.errors.enabled?.title || intl.formatMessage(messages.errorSavingTitle)}
                   </Alert.Heading>
-                  {formikProps.errors.enabled?.message ?? intl.formatMessage(messages.errorSavingMessage)}
+                  {formikProps.errors.enabled?.message || intl.formatMessage(messages.errorSavingMessage)}
                 </Alert>
               )}
               <FormSwitchGroup
