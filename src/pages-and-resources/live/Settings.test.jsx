@@ -34,8 +34,8 @@ let container;
 let store;
 const liveSettingsUrl = `/course/${courseId}/pages-and-resources/live/settings`;
 
-const renderComponent = async () => {
-  const wrapper = await render(
+const renderComponent = () => {
+  const wrapper = render(
     <IntlProvider locale="en">
       <AppProvider store={store}>
         <PagesAndResourcesProvider courseId={courseId}>
@@ -67,20 +67,25 @@ describe('LiveSettings', () => {
   });
 
   test('Live Configuration modal is visible', async () => {
-    await renderComponent();
+    renderComponent();
+
     expect(queryByRole(container, 'dialog')).toBeVisible();
   });
 
   test('Displays "Configure Live" heading', async () => {
-    await renderComponent();
+    renderComponent();
+
     const headingElement = queryByTestId(container, 'modal-title');
+
     expect(headingElement).toHaveTextContent(messages.heading.defaultMessage);
   });
 
   test('Displays title, helper and badge when live configuration button is enabled', async () => {
-    await renderComponent();
+    renderComponent();
+
     const label = container.querySelector('label[for="enable-live-toggle"]');
     const helperText = queryByTestId(container, 'helper-text');
+
     expect(label).toHaveTextContent(messages.enableLiveLabel.defaultMessage);
     expect(label.firstChild).toHaveTextContent('Enabled');
     expect(helperText).toHaveTextContent(
@@ -88,16 +93,18 @@ describe('LiveSettings', () => {
     );
   });
 
-  test(' Displays title, helper and hides badge when live configuration button is disabled', async () => {
+  test('Displays title, helper and hides badge when live configuration button is disabled', async () => {
     const fetchProviderConfigUrl = `${providerConfigurationApiUrl}/${courseId}/`;
     axiosMock.onGet(fetchProviderConfigUrl).reply(
       200,
       generateLiveConfigurationApiResponse(false, false),
     );
     await executeThunk(fetchLiveConfiguration(courseId), store.dispatch);
-    await renderComponent();
+    renderComponent();
+
     const label = container.querySelector('label[for="enable-live-toggle"]');
     const helperText = queryByTestId(container, 'helper-text');
+
     expect(label).toHaveTextContent('Live');
     expect(label.firstChild).not.toHaveTextContent('Enabled');
     expect(helperText).toHaveTextContent(
@@ -112,9 +119,11 @@ describe('LiveSettings', () => {
       generateLiveConfigurationApiResponse(false, false),
     );
     await executeThunk(fetchLiveConfiguration(courseId), store.dispatch);
-    await renderComponent();
+    renderComponent();
+
     const providers = queryByRole(container, 'group');
     const helperText = queryByTestId(container, 'helper-text');
+
     expect(providers.childElementCount).toBe(1);
     expect(providers).toHaveTextContent('Zoom');
     expect(helperText).toHaveTextContent(
@@ -129,7 +138,7 @@ describe('LiveSettings', () => {
       generateLiveConfigurationApiResponse(),
     );
     await executeThunk(fetchLiveConfiguration(courseId), store.dispatch);
-    await renderComponent();
+    renderComponent();
 
     const consumerKey = container.querySelector('input[name="consumerKey"]').parentElement;
     const consumerSecret = container.querySelector('input[name="consumerSecret"]').parentElement;
@@ -153,16 +162,15 @@ describe('LiveSettings', () => {
       generateLiveConfigurationApiResponse(false, false),
     );
     await executeThunk(fetchLiveConfiguration(courseId), store.dispatch);
-    await renderComponent();
+    renderComponent();
+
     const requestPiiText = queryByTestId(container, 'request-pii-sharing');
     const consumerKey = container.querySelector('input[name="consumerKey"]');
     const consumerSecret = container.querySelector('input[name="consumerSecret"]');
     const launchUrl = container.querySelector('input[name="launchUrl"]');
     const launchEmail = container.querySelector('input[name="launchEmail"]');
 
-    expect(requestPiiText).toHaveTextContent(
-      messages.requestPiiSharingEnable.defaultMessage,
-    );
+    expect(requestPiiText).toHaveTextContent(messages.requestPiiSharingEnable.defaultMessage);
     expect(consumerKey).not.toBeInTheDocument();
     expect(consumerSecret).not.toBeInTheDocument();
     expect(launchUrl).not.toBeInTheDocument();
@@ -175,8 +183,10 @@ describe('LiveSettings', () => {
     axiosMock.onPost(fetchProviderConfigUrl, apiDefaultResponse).reply(200, apiDefaultResponse);
     axiosMock.onGet(fetchProviderConfigUrl).reply(200, apiDefaultResponse);
     await executeThunk(fetchLiveConfiguration(courseId), store.dispatch);
-    await renderComponent();
+    renderComponent();
+
     const saveButton = queryByText(container, 'Save');
+
     await waitFor(async () => {
       await act(async () => fireEvent.click(saveButton));
       expect(queryByRole(container, 'dialog')).not.toBeInTheDocument();
@@ -188,7 +198,7 @@ describe('LiveSettings', () => {
     const apiDefaultResponse = generateLiveConfigurationApiResponse();
     axiosMock.onGet(fetchProviderConfigUrl).reply(200, apiDefaultResponse);
     await executeThunk(fetchLiveConfiguration(courseId), store.dispatch);
-    await renderComponent();
+    renderComponent();
 
     const consumerKey = container.querySelector('input[name="consumerKey"]');
     const consumerSecret = container.querySelector('input[name="consumerSecret"]');
@@ -210,9 +220,10 @@ describe('LiveSettings', () => {
 
     axiosMock.onGet(fetchProviderConfigUrl).reply(200, apiDefaultResponse);
     await executeThunk(fetchLiveConfiguration(courseId), store.dispatch);
+    renderComponent();
 
-    await renderComponent();
     const saveButton = queryByText(container, 'Save');
+
     await waitFor(async () => {
       await act(async () => fireEvent.click(saveButton));
       expect(queryByRole(container, 'alert')).toBeVisible();
