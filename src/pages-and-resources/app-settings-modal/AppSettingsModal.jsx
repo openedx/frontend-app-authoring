@@ -216,9 +216,9 @@ function AppSettingsModal({
               {saveError && (
                 <Alert variant="danger" icon={Info} ref={alertRef}>
                   <Alert.Heading>
-                    {formikProps.errors.enabled?.title ?? intl.formatMessage(messages.errorSavingTitle)}
+                    {formikProps.errors.enabled?.title || intl.formatMessage(messages.errorSavingTitle)}
                   </Alert.Heading>
-                  {formikProps.errors.enabled?.message ?? intl.formatMessage(messages.errorSavingMessage)}
+                  {formikProps.errors.enabled?.message || intl.formatMessage(messages.errorSavingMessage)}
                 </Alert>
               )}
               <FormSwitchGroup
