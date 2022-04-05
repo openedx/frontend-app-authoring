@@ -32,6 +32,7 @@ const appConfig = {
   divideDiscussionIds: [],
   allowAnonymousPosts: false,
   allowAnonymousPostsPeers: false,
+  reportedContentEmailNotifications: false,
   allowDivisionByUnit: false,
   blackoutDates: [],
 };

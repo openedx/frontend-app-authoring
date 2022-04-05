@@ -61,6 +61,7 @@ function normalizePluginConfig(data) {
   return {
     allowAnonymousPosts: data.allow_anonymous,
     allowAnonymousPostsPeers: data.allow_anonymous_to_peers,
+    reportedContentEmailNotifications: data.reported_content_email_notifications,
     divisionScheme: data.division_scheme,
     alwaysDivideInlineDiscussions: data.always_divide_inline_discussions,
     blackoutDates: normalizeBlackoutDates(data.discussion_blackouts),
@@ -171,6 +172,9 @@ function denormalizeData(courseId, appId, data) {
   }
   if ('allowAnonymousPostsPeers' in data) {
     pluginConfiguration.allow_anonymous_to_peers = data.allowAnonymousPostsPeers;
+  }
+  if ('reportedContentEmailNotifications' in data) {
+    pluginConfiguration.reported_content_email_notifications = data.reportedContentEmailNotifications;
   }
   if ('divideByCohorts' in data) {
     pluginConfiguration.division_scheme = data.divideByCohorts ? DivisionSchemes.COHORT : DivisionSchemes.NONE;

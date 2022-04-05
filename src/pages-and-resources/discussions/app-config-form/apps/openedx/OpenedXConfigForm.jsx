@@ -15,6 +15,7 @@ import AppConfigFormDivider from '../shared/AppConfigFormDivider';
 import BlackoutDatesField from '../shared/BlackoutDatesField';
 import DiscussionTopics from '../shared/discussion-topics/DiscussionTopics';
 import DivisionByGroupFields from '../shared/DivisionByGroupFields';
+import ReportedContentEmailNotifications from '../shared/ReportedContentEmailNotifications';
 import InContextDiscussionFields from '../shared/InContextDiscussionFields';
 import OpenedXConfigFormProvider from './OpenedXConfigFormProvider';
 
@@ -36,6 +37,7 @@ function OpenedXConfigForm({
     unitLevelVisibility,
     allowAnonymousPosts: appConfigObj?.allowAnonymousPosts || false,
     allowAnonymousPostsPeers: appConfigObj?.allowAnonymousPostsPeers || false,
+    reportedContentEmailNotifications: appConfigObj?.reportedContentEmailNotifications || false,
     blackoutDates: appConfigObj?.blackoutDates || [],
     discussionTopics: discussionTopicsModel || [],
     divideByCohorts: appConfigObj?.divideByCohorts || false,
@@ -135,6 +137,8 @@ function OpenedXConfigForm({
                 <DiscussionTopics />
                 <AppConfigFormDivider thick />
                 <DivisionByGroupFields />
+                <AppConfigFormDivider thick />
+                <ReportedContentEmailNotifications />
                 <AppConfigFormDivider thick />
                 <BlackoutDatesField />
               </Form>

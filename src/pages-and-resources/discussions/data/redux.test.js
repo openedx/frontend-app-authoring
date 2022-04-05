@@ -242,6 +242,7 @@ describe('Data layer integration tests', () => {
         id: 'legacy',
         allowAnonymousPosts: false,
         allowAnonymousPostsPeers: false,
+        reportedContentEmailNotifications: false,
         blackoutDates: [],
         // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
         // but we add it in during normalization.
@@ -400,6 +401,7 @@ describe('Data layer integration tests', () => {
         plugin_configuration: {
           allow_anonymous: true,
           allow_anonymous_to_peers: true,
+          reported_content_email_notifications: true,
           always_divide_inline_discussions: true,
           discussion_blackouts: [],
           division_scheme: DivisionSchemes.COHORT,
@@ -419,6 +421,7 @@ describe('Data layer integration tests', () => {
         plugin_configuration: {
           allow_anonymous: true,
           allow_anonymous_to_peers: true,
+          reported_content_email_notifications: true,
           always_divide_inline_discussions: true,
           discussion_blackouts: [],
           division_scheme: DivisionSchemes.COHORT,
@@ -443,6 +446,7 @@ describe('Data layer integration tests', () => {
         {
           allowAnonymousPosts: true,
           allowAnonymousPostsPeers: true,
+          reportedContentEmailNotifications: true,
           blackoutDates: [],
           // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
           // but we technically send it to the thunk, so here it is.
@@ -478,6 +482,7 @@ describe('Data layer integration tests', () => {
         // These three fields should be updated.
         allowAnonymousPosts: true,
         allowAnonymousPostsPeers: true,
+        reportedContentEmailNotifications: true,
         alwaysDivideInlineDiscussions: true,
         blackoutDates: [],
         // TODO: Note!  The values we tried to save were ignored, this test reflects what currently
