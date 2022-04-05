@@ -64,6 +64,16 @@ export const messages = {
     defaultMessage: 'Error',
     description: 'Title of message presented to user when something goes wrong',
   },
+  emptyGalleryLabel: {
+    id: 'authoring.texteditor.selectimagemodal.emptyGalleryLabel',
+    defaultMessage: 'No images found in your gallery. Please upload an image using the button below.',
+    description: 'Label for when image gallery is empty.',
+  },
+  emptySearchLabel: {
+    id: 'authoring.texteditor.selectimagemodal.emptySearchLabel',
+    defaultMessage: 'No search results.',
+    description: 'Label for when search returns nothing.',
+  },
 };
 
 export default messages;

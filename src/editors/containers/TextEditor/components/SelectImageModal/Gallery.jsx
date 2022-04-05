@@ -6,7 +6,7 @@ import {
   Scrollable, SelectableBox, Spinner,
 } from '@edx/paragon';
 
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { selectors } from '../../../../data/redux';
 import { RequestKeys } from '../../../../data/constants/requests';
@@ -15,6 +15,8 @@ import messages from './messages';
 import GalleryCard from './GalleryCard';
 
 export const Gallery = ({
+  galleryIsEmpty,
+  searchIsEmpty,
   displayList,
   highlighted,
   onHighlightChange,
@@ -30,6 +32,20 @@ export const Gallery = ({
         className="mie-3"
         screenReaderText={intl.formatMessage(messages.loading)}
       />
+    );
+  }
+  if (galleryIsEmpty) {
+    return (
+      <div className="gallery p-4 bg-gray-100" style={{ height: '375px' }}>
+        <FormattedMessage {...messages.emptyGalleryLabel} />
+      </div>
+    );
+  }
+  if (searchIsEmpty) {
+    return (
+      <div className="gallery p-4 bg-gray-100" style={{ height: '375px' }}>
+        <FormattedMessage {...messages.emptySearchLabel} />
+      </div>
     );
   }
   return (
@@ -53,6 +69,8 @@ Gallery.defaultProps = {
   highlighted: '',
 };
 Gallery.propTypes = {
+  galleryIsEmpty: PropTypes.bool.isRequired,
+  searchIsEmpty: PropTypes.bool.isRequired,
   displayList: PropTypes.arrayOf(PropTypes.object).isRequired,
   highlighted: PropTypes.string,
   onHighlightChange: PropTypes.func.isRequired,

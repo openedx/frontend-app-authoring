@@ -40,6 +40,7 @@ export const imgListHooks = ({
   const dispatch = useDispatch();
   const [images, setImages] = module.state.images({});
   const [highlighted, setHighlighted] = module.state.highlighted(null);
+  const list = module.displayList({ ...searchSortProps, images });
 
   React.useEffect(() => {
     dispatch(thunkActions.app.fetchImages({ setImages }));
@@ -53,9 +54,11 @@ export const imgListHooks = ({
       onClick: () => setSelection(images[highlighted]),
     },
     galleryProps: {
+      galleryIsEmpty: Object.keys(images).length === 0,
+      searchIsEmpty: list.length === 0,
+      displayList: list,
       highlighted,
       onHighlightChange: e => setHighlighted(e.target.value),
-      displayList: module.displayList({ ...searchSortProps, images }),
     },
   };
 };
