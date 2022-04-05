@@ -1,6 +1,8 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { shallow } from 'enzyme';
 import EditorContainer from './EditorContainer';
+
+jest.mock('@edx/frontend-lib-content-components', () => ({ EditorPage: () => 'HeaderTitle' }));
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'), // use actual for all non-hook parts
@@ -10,24 +12,12 @@ jest.mock('react-router', () => ({
   }),
 }));
 
-const mockRole = 'Tiny-MCE-Mock';
-jest.mock('@tinymce/tinymce-react', () => {
-  const originalModule = jest.requireActual('@tinymce/tinymce-react');
-  return {
-    __esModule: true,
-    ...originalModule,
-    Editor: () => <div role={mockRole} />
-    ,
-  };
-});
+const props = { courseId: 'cOuRsEId' };
 
 describe('Editor Container', () => {
-  it('shows a rich text editor loading with an error', () => {
-    render(<EditorContainer
-      courseId="demoXDemocourse"
-    />);
-    expect(screen.getByText('Cancel')).toBeTruthy();
-    expect(screen.getByText('Add To Course')).toBeTruthy();
-    expect(screen.findByRole(mockRole)).toBeTruthy();
+  describe('snapshots', () => {
+    test('rendering correctly with expected Input', () => {
+      expect(shallow(<EditorContainer {...props} />)).toMatchSnapshot();
+    });
   });
 });

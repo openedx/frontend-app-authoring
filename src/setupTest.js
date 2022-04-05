@@ -4,6 +4,13 @@ import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
 import ReactDOM from 'react-dom';
 
+/* eslint-disable import/no-extraneous-dependencies */
+import Enzyme from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+import 'babel-polyfill';
+
+Enzyme.configure({ adapter: new Adapter() });
+
 /* need to mock window for tinymce on import, as it is JSDOM incompatible */
 
 Object.defineProperty(window, 'matchMedia', {
