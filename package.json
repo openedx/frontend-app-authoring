@@ -33,10 +33,11 @@
     "url": "https://github.com/edx/frontend-app-course-authoring/issues"
   },
   "dependencies": {
+    "@edx/frontend-build": "8.0.4",
     "@edx/brand": "npm:@edx/brand-openedx@1.1.0",
     "@edx/frontend-component-footer": "10.1.6",
-    "@edx/frontend-lib-content-components": "1.2.0",
-    "@edx/frontend-platform": "1.14.0",
+    "@edx/frontend-lib-content-components": "1.9.0",
+    "@edx/frontend-platform": "1.15.5",
     "@edx/paragon": "19.9.0",
     "@fortawesome/fontawesome-svg-core": "1.2.28",
     "@fortawesome/free-brands-svg-icons": "5.11.2",
@@ -67,6 +68,9 @@
     "@edx/browserslist-config": "1.0.0",
     "@edx/frontend-build": "8.0.4",
     "@edx/reactifex": "^1.0.3",
+    "enzyme": "3.11.0",
+    "enzyme-adapter-react-16": "1.15.6",
+    "enzyme-to-json": "^3.6.2",
     "@testing-library/jest-dom": "5.14.1",
     "@testing-library/react": "12.1.1",
     "@testing-library/user-event": "^13.2.1",

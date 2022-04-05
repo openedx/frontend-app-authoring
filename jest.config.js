@@ -8,4 +8,10 @@ module.exports = createConfig('jest', {
     'src/setupTest.js',
     'src/i18n',
   ],
+  snapshotSerializers: [
+    'enzyme-to-json/serializer',
+  ],
+  moduleNameMapper: {
+    '^lodash-es$': 'lodash',
+  },
 });
