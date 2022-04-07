@@ -19,9 +19,9 @@ export const messages = {
     defaultMessage: 'Save Changes and Return to Learning Context',
     description: 'Aria label for save button',
   },
-  addToCourse: {
+  saveButtonLabel: {
     id: 'authoring.editorfooter.savebutton.label',
-    defaultMessage: 'Save',
+    defaultMessage: 'Save Changes and Return to Learning Context',
     description: 'Label for Save button',
   },
 };

@@ -56,7 +56,7 @@ export const EditorFooter = ({
           disabled={!isInitialized}
         >
           {isInitialized
-            ? <FormattedMessage {...messages.addToCourse} />
+            ? <FormattedMessage {...messages.saveButtonLabel} />
             : <Spinner animation="border" className="mr-3" />}
         </Button>
       </ActionRow>
