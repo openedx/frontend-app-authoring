@@ -45,7 +45,7 @@ push_translations:
 	# Pushing comments to Transifex...
 	./node_modules/@edx/reactifex/bash_scripts/put_comments_v3.sh
 
-# Pulls translations from Transifex.
+# Pulls translations from Transifex with new Go client.
 pull_translations:
 	tx pull -f --mode reviewed --languages=$(transifex_langs)
 
