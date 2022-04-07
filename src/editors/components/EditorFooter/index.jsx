@@ -31,7 +31,7 @@ export const EditorFooter = ({
   saveFailed,
   saveBlockContent,
 }) => (
-  <div className="editor-footer mt-auto">
+  <div className="editor-footer fixed-bottom">
     {saveFailed && (
       <Toast show onClose={nullMethod}><FormattedMessage {...messages.contentSaveFailed} /></Toast>
     )}

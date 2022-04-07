@@ -97,7 +97,7 @@ export const editorConfig = ({
     imagetools_toolbar: module.getConfig('imageToolbar'),
     imagetools_cors_hosts: ['courses.edx.org'],
     height: '100%',
-    min_height: 1000,
+    min_height: 500,
     branding: false,
   },
 });

@@ -53,7 +53,7 @@ export const TextEditor = ({
   const imageSelection = selectedImage(null);
 
   return (
-    <div className="editor-body h-75">
+    <div className="editor-body h-75 overflow-auto">
       <ImageUploadModal
         isOpen={isOpen}
         close={closeModal}

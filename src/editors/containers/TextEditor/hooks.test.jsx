@@ -134,7 +134,7 @@ describe('TextEditor hooks', () => {
         expect(output.init.menubar).toBe(false);
         expect(output.init.imagetools_cors_hosts).toMatchObject(['courses.edx.org']);
         expect(output.init.height).toBe('100%');
-        expect(output.init.min_height).toBe(1000);
+        expect(output.init.min_height).toBe(500);
         expect(output.init.branding).toBe(false);
       });
     });

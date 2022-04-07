@@ -2,7 +2,7 @@
 
 exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
 <div
-  className="editor-body h-75"
+  className="editor-body h-75 overflow-auto"
 >
   <ImageUploadModal
     clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
@@ -49,7 +49,7 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
 
 exports[`TextEditor snapshots not yet loaded, Spinner appears 1`] = `
 <div
-  className="editor-body h-75"
+  className="editor-body h-75 overflow-auto"
 >
   <ImageUploadModal
     clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
@@ -89,7 +89,7 @@ exports[`TextEditor snapshots not yet loaded, Spinner appears 1`] = `
 
 exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
 <div
-  className="editor-body h-75"
+  className="editor-body h-75 overflow-auto"
 >
   <ImageUploadModal
     clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
