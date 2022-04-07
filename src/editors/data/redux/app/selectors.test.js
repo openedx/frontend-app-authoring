@@ -44,6 +44,7 @@ describe('app selectors unit tests', () => {
         simpleKeys.saveResponse,
         simpleKeys.studioEndpointUrl,
         simpleKeys.unitUrl,
+        simpleKeys.blockTitle,
       ].map(testSimpleSelector);
     });
   });
@@ -86,19 +87,26 @@ describe('app selectors unit tests', () => {
       ].map(([args, expected]) => expect(cb(...args)).toEqual(expected));
     });
   });
-  describe('typeHeader', () => {
-    it('is memoized based on blockType', () => {
-      expect(selectors.typeHeader.preSelectors).toEqual([simpleSelectors.blockType]);
+  describe('returnTitle', () => {
+    const title = 'tItLe';
+    it('is memoized based on blockType and blockTitle', () => {
+      expect(selectors.returnTitle.preSelectors).toEqual([
+        simpleSelectors.blockType,
+        simpleSelectors.blockTitle,
+      ]);
     });
     it('returns null if blockType is null', () => {
-      expect(selectors.typeHeader.cb(null)).toEqual(null);
+      expect(selectors.returnTitle.cb(null, title)).toEqual(null);
+    });
+    it('returns blockTitle if blockTitle is not null', () => {
+      expect(selectors.returnTitle.cb('html', title)).toEqual(title);
     });
     it('returns Text if the blockType is html', () => {
-      expect(selectors.typeHeader.cb('html')).toEqual('Text');
+      expect(selectors.returnTitle.cb('html', null)).toEqual('Text');
     });
     it('returns the blockType capitalized if not html', () => {
-      expect(selectors.typeHeader.cb('video')).toEqual('Video');
-      expect(selectors.typeHeader.cb('random')).toEqual('Random');
+      expect(selectors.returnTitle.cb('video', null)).toEqual('Video');
+      expect(selectors.returnTitle.cb('random', null)).toEqual('Random');
     });
   });
 });

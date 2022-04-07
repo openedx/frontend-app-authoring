@@ -16,7 +16,7 @@ export const HeaderTitle = ({
   intl,
   isInitialized,
   setBlockTitle,
-  typeHeader,
+  returnTitle,
 }) => {
   if (!isInitialized) { return intl.formatMessage(messages.loading); }
   const {
@@ -30,7 +30,7 @@ export const HeaderTitle = ({
   } = localTitleHooks({
     editorRef,
     setBlockTitle,
-    typeHeader,
+    returnTitle,
   });
 
   if (isEditing) {
@@ -75,11 +75,11 @@ HeaderTitle.propTypes = {
   // redux
   isInitialized: PropTypes.bool.isRequired,
   setBlockTitle: PropTypes.func.isRequired,
-  typeHeader: PropTypes.string.isRequired,
+  returnTitle: PropTypes.string.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
-  typeHeader: selectors.app.typeHeader(state),
+  returnTitle: selectors.app.returnTitle(state),
   isInitialized: selectors.app.isInitialized(state),
 });
 

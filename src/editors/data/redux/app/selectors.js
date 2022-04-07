@@ -36,11 +36,17 @@ export const isInitialized = createSelector(
   (unitUrl, editorInitialized, blockValue) => !!(unitUrl && blockValue && editorInitialized),
 );
 
-export const typeHeader = createSelector(
-  [module.simpleSelectors.blockType],
-  (blockType) => {
+export const returnTitle = createSelector(
+  [
+    module.simpleSelectors.blockType,
+    module.simpleSelectors.blockTitle,
+  ],
+  (blockType, blockTitle) => {
     if (blockType === null) {
       return null;
+    }
+    if (blockTitle !== null) {
+      return blockTitle;
     }
     return (blockType === blockTypes.html)
       ? 'Text'
@@ -52,5 +58,5 @@ export default {
   ...simpleSelectors,
   isInitialized,
   returnUrl,
-  typeHeader,
+  returnTitle,
 };

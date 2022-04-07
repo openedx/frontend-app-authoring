@@ -14,7 +14,7 @@ jest.mock('../../data/redux', () => ({
   },
   selectors: {
     app: {
-      typeHeader: jest.fn(state => ({ typeHeader: state })),
+      returnTitle: jest.fn(state => ({ returnTitle: state })),
       isInitialized: jest.fn(state => ({ studioEndpointUrl: state })),
     },
   },
@@ -30,7 +30,7 @@ describe('HeaderTitle', () => {
     editorRef: jest.fn().mockName('args.editorRef'),
     isInitialized: false,
     setBlockTitle: jest.fn().mockName('args.setBlockTitle'),
-    typeHeader: 'html',
+    returnTitle: 'html',
   };
   const localTitleHooksProps = {
     inputRef: jest.fn().mockName('localTitleHooks.inputRef'),
@@ -49,7 +49,7 @@ describe('HeaderTitle', () => {
       expect(localTitleHooks).toHaveBeenCalledWith({
         editorRef: props.editorRef,
         setBlockTitle: props.setBlockTitle,
-        typeHeader: props.typeHeader,
+        returnTitle: props.returnTitle,
       });
     });
   });
@@ -70,9 +70,9 @@ describe('HeaderTitle', () => {
 
   describe('mapStateToProps', () => {
     const testState = { T: 'esting', S: 'tate' };
-    test('typeHeader from app.typeHeader', () => {
-      expect(module.mapStateToProps(testState).typeHeader)
-        .toEqual(selectors.app.typeHeader(testState));
+    test('returnTitle from app.returnTitle', () => {
+      expect(module.mapStateToProps(testState).returnTitle)
+        .toEqual(selectors.app.returnTitle(testState));
     });
     test('isInitialized from app.isInitialized', () => {
       expect(module.mapStateToProps(testState).isInitialized)

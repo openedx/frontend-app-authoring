@@ -12,7 +12,7 @@ jest.mock('react', () => {
 
 describe('EditorHeader hooks', () => {
   const editorRef = { current: {} };
-  const typeHeader = 'Type Header';
+  const returnTitle = 'Type Header';
   let setBlockTitle;
   let output;
   beforeEach(() => {
@@ -42,11 +42,11 @@ describe('EditorHeader hooks', () => {
         output = module.hooks.localTitle({
           setBlockTitle,
           stopEditing,
-          typeHeader,
+          returnTitle,
         });
       });
-      test('returns the state value for localTitle, defaulted to typeHeader', () => {
-        expect(output.localTitle).toEqual({ state: typeHeader });
+      test('returns the state value for localTitle, defaulted to returnTitle', () => {
+        expect(output.localTitle).toEqual({ state: returnTitle });
       });
       describe('updateTitle hook', () => {
         it('calls setBlockTitle with localTitle, and stopEditing', () => {
@@ -60,7 +60,7 @@ describe('EditorHeader hooks', () => {
           const value = 'SOME VALUe';
           output.handleChange({ target: { value } });
           expect(React.updateState).toHaveBeenCalledWith({
-            val: typeHeader,
+            val: returnTitle,
             newVal: value,
           });
         });
@@ -122,7 +122,7 @@ describe('EditorHeader hooks', () => {
       module.hooks.isEditing = newHooks.isEditing;
       module.hooks.localTitle = newHooks.localTitle;
       module.hooks.handleKeyDown = newHooks.handleKeyDown;
-      output = module.localTitleHooks({ editorRef, setBlockTitle, typeHeader });
+      output = module.localTitleHooks({ editorRef, setBlockTitle, returnTitle });
     });
     afterEach(() => {
       module.hooks = oldHooks;
@@ -136,7 +136,7 @@ describe('EditorHeader hooks', () => {
       expect(output.updateTitle).toEqual({
         setBlockTitle,
         stopEditing: values.stopEditing,
-        typeHeader,
+        returnTitle,
       });
       expect(output.handleChange).toEqual(values.handleChange);
       expect(output.localTitle).toEqual(values.localTitle);

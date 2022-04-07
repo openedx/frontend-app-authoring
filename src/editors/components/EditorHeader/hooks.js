@@ -13,9 +13,9 @@ export const hooks = {
   localTitle: ({
     setBlockTitle,
     stopEditing,
-    typeHeader,
+    returnTitle,
   }) => {
-    const [localTitle, setLocalTitle] = React.useState(typeHeader);
+    const [localTitle, setLocalTitle] = React.useState(returnTitle);
     return {
       updateTitle: () => {
         setBlockTitle(localTitle);
@@ -40,13 +40,13 @@ export const hooks = {
 export const localTitleHooks = ({
   editorRef,
   setBlockTitle,
-  typeHeader,
+  returnTitle,
 }) => {
   const { isEditing, startEditing, stopEditing } = module.hooks.isEditing();
   const { localTitle, handleChange, updateTitle } = module.hooks.localTitle({
     setBlockTitle,
     stopEditing,
-    typeHeader,
+    returnTitle,
   });
   return {
     isEditing,
