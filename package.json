@@ -65,7 +65,7 @@
   },
   "devDependencies": {
     "@edx/browserslist-config": "1.0.2",
-    "@edx/frontend-build": "9.1.2",
+    "@edx/frontend-build": "9.1.4",
     "@sheerun/mutationobserver-shim": "0.3.3",
     "@testing-library/dom": "8.11.3",
     "@testing-library/react": "12.1.4",
