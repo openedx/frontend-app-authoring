@@ -7,7 +7,9 @@ exports[` 1`] = `
   <ModalDialog.Header>
     <ActionRow>
       <ModalDialog.Title>
-        <HeaderTitle />
+        <HeaderTitle
+          editorRef="refOfTHEeditTOR"
+        />
       </ModalDialog.Title>
       <ActionRow.Spacer />
       <IconButton

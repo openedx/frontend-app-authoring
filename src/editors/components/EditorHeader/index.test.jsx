@@ -30,6 +30,7 @@ jest.mock('./HeaderTitle', () => 'HeaderTitle');
 
 describe('Editor Header index', () => {
   const props = {
+    editorRef: 'refOfTHEeditTOR',
     intl: { formatMessage },
     returnUrl: 'TeST-ReTurNurL',
   };

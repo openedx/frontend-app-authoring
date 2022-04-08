@@ -73,13 +73,15 @@ describe('EditorHeader hooks', () => {
         editorRef.current.focus = jest.fn();
         output = module.hooks.handleKeyDown({ stopEditing, editorRef });
       });
-      describe('Enter-key event', () => {
-        it('calls stopEditing', () => {
-          output({ key: 'Enter' });
-          expect(stopEditing).toHaveBeenCalled();
+      describe('enter-key event', () => {
+        it('calls preventDefault on the event, and focuses to the editorRef', () => {
+          const preventDefault = jest.fn();
+          output({ key: 'Enter', preventDefault });
+          expect(preventDefault).toHaveBeenCalled();
+          expect(editorRef.current.focus).toHaveBeenCalled();
         });
       });
-      describe('tab event', () => {
+      describe('tab-key event', () => {
         it('calls preventDefault on the event, and focuses to the editorRef', () => {
           const preventDefault = jest.fn();
           output({ key: 'Tab', preventDefault });
@@ -146,7 +148,6 @@ describe('EditorHeader hooks', () => {
     });
     it('returns handleKeyDown, tied to handleKeyDown hook', () => {
       expect(output.handleKeyDown).toEqual(newHooks.handleKeyDown({
-        stopEditing: values.stopEditing,
         editorRef,
       }));
     });

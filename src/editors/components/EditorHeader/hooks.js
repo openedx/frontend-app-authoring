@@ -25,11 +25,8 @@ export const hooks = {
       localTitle,
     };
   },
-  handleKeyDown: ({ stopEditing, editorRef }) => (e) => {
-    if (e.key === 'Enter') {
-      stopEditing();
-    }
-    if (e.key === 'Tab' && editorRef) {
+  handleKeyDown: ({ editorRef }) => (e) => {
+    if (editorRef && (e.key === 'Tab' || e.key === 'Enter')) {
       e.preventDefault();
       editorRef.current.focus();
     }
@@ -58,6 +55,6 @@ export const localTitleHooks = ({
     handleChange,
 
     inputRef: React.createRef(),
-    handleKeyDown: module.hooks.handleKeyDown({ stopEditing, editorRef }),
+    handleKeyDown: module.hooks.handleKeyDown({ editorRef }),
   };
 };
