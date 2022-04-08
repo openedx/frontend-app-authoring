@@ -20,6 +20,7 @@ const props = {
   courseId: 'course-v1:edX+DemoX+Demo_Course',
   blockId: 'block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4',
   studioEndpointUrl: 'fakeurl.com',
+  lmsEndpointUrl: 'evenfakerurl.com',
   initialize: jest.fn(),
 };
 

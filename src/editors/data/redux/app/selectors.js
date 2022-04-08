@@ -17,6 +17,7 @@ export const simpleSelectors = {
   courseId: mkSimpleSelector(app => app.courseId),
   editorInitialized: mkSimpleSelector(app => app.editorInitialized),
   saveResponse: mkSimpleSelector(app => app.saveResponse),
+  lmsEndpointUrl: mkSimpleSelector(app => app.lmsEndpointUrl),
   studioEndpointUrl: mkSimpleSelector(app => app.studioEndpointUrl),
   unitUrl: mkSimpleSelector(app => app.unitUrl),
   blockTitle: mkSimpleSelector(app => app.blockTitle),

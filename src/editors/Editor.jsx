@@ -25,6 +25,7 @@ export const Editor = ({
   courseId,
   blockType,
   blockId,
+  lmsEndpointUrl,
   studioEndpointUrl,
   // redux
   initialize,
@@ -35,6 +36,7 @@ export const Editor = ({
       blockId,
       blockType,
       courseId,
+      lmsEndpointUrl,
       studioEndpointUrl,
     },
   });
@@ -67,6 +69,7 @@ export const Editor = ({
 Editor.defaultProps = {
   courseId: null,
   blockId: null,
+  lmsEndpointUrl: null,
   studioEndpointUrl: null,
 };
 
@@ -74,6 +77,7 @@ Editor.propTypes = {
   courseId: PropTypes.string,
   blockType: PropTypes.string.isRequired,
   blockId: PropTypes.string,
+  lmsEndpointUrl: PropTypes.string,
   studioEndpointUrl: PropTypes.string,
   // redux
   initialize: PropTypes.func.isRequired,

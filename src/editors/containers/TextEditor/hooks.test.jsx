@@ -88,11 +88,13 @@ describe('TextEditor hooks', () => {
     });
     describe('editorConfig', () => {
       const blockvalue = null;
+      const lmsEndpointUrl = 'sOmEuRL.cOm';
       const props = {
         setEditorRef: jest.fn(),
         blockValue: blockvalue,
         openModal: jest.fn(),
         initializeEditor: jest.fn(),
+        lmsEndpointUrl,
       };
       let output;
       test('It creates an onInit which calls initializeEditor and setEditorRef', () => {
@@ -132,7 +134,7 @@ describe('TextEditor hooks', () => {
           value => expect(output.init.imagetools_toolbar.includes(value)).toBe(true),
         );
         expect(output.init.menubar).toBe(false);
-        expect(output.init.imagetools_cors_hosts).toMatchObject(['courses.edx.org']);
+        expect(output.init.imagetools_cors_hosts).toMatchObject([lmsEndpointUrl]);
         expect(output.init.height).toBe('100%');
         expect(output.init.min_height).toBe(500);
         expect(output.init.branding).toBe(false);

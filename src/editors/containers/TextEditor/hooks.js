@@ -68,8 +68,6 @@ export const pluginConfig = {
     code: 'code',
   }),
   imageToolbar: StrictDict({
-    rotate: 'rotateleft rotateright',
-    flip: 'flipv fliph',
     editImageSettings: 'editimagesettings',
   }),
 };
@@ -86,6 +84,7 @@ export const editorConfig = ({
   openModal,
   initializeEditor,
   setSelection,
+  lmsEndpointUrl,
 }) => ({
   onInit: (evt, editor) => module.initializeEditorRef(setEditorRef, initializeEditor)(editor),
   initialValue: blockValue ? blockValue.data.data : '',
@@ -95,7 +94,7 @@ export const editorConfig = ({
     menubar: false,
     toolbar: module.getConfig('toolbar'),
     imagetools_toolbar: module.getConfig('imageToolbar'),
-    imagetools_cors_hosts: ['courses.edx.org'],
+    imagetools_cors_hosts: [lmsEndpointUrl], // as image assets come from lms, we need to whitelist it.
     height: '100%',
     min_height: 500,
     branding: false,

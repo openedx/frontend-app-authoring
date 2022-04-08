@@ -14,6 +14,7 @@ const initialState = {
   courseId: null,
   editorInitialized: false,
   studioEndpointUrl: null,
+  lmsEndpointUrl: null,
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -24,6 +25,7 @@ const app = createSlice({
     initialize: (state, { payload }) => ({
       ...state,
       studioEndpointUrl: payload.studioEndpointUrl,
+      lmsEndpointUrl: payload.lmsEndpointUrl,
       blockId: payload.blockId,
       courseId: payload.courseId,
       blockType: payload.blockType,

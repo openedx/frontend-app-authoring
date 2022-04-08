@@ -6,6 +6,7 @@ const props = {
   courseId: 'course-v1:edX+DemoX+Demo_Course',
   blockType: 'html',
   blockId: 'block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4',
+  lmsEndpointUrl: 'evenfakerurl.com',
   studioEndpointUrl: 'fakeurl.com',
 };
 jest.mock('react-redux', () => ({

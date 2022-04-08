@@ -53,6 +53,7 @@ jest.mock('../../data/redux', () => ({
   selectors: {
     app: {
       blockValue: jest.fn(state => ({ blockValue: state })),
+      lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
     },
     requests: {
       isFailed: jest.fn((state, params) => ({ isFailed: { state, params } })),
@@ -67,6 +68,7 @@ describe('TextEditor', () => {
     editorRef: { current: { value: 'something' } },
     // redux
     blockValue: { data: { some: 'eDiTablE Text' } },
+    lmsEndpointUrl: 'sOmEvaLue.cOm',
     blockFailed: false,
     blockFinished: true,
     initializeEditor: jest.fn().mockName('args.intializeEditor'),
@@ -95,6 +97,11 @@ describe('TextEditor', () => {
       expect(
         mapStateToProps(testState).blockValue,
       ).toEqual(selectors.app.blockValue(testState));
+    });
+    test('lmsEndpointUrl from app.lmsEndpointUrl', () => {
+      expect(
+        mapStateToProps(testState).lmsEndpointUrl,
+      ).toEqual(selectors.app.lmsEndpointUrl(testState));
     });
     test('blockFailed from requests.isFailed', () => {
       expect(

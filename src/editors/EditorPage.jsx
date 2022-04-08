@@ -9,6 +9,7 @@ export const EditorPage = ({
   courseId,
   blockType,
   blockId,
+  lmsEndpointUrl,
   studioEndpointUrl,
 }) => (
   <Provider store={store}>
@@ -17,6 +18,7 @@ export const EditorPage = ({
         courseId,
         blockType,
         blockId,
+        lmsEndpointUrl,
         studioEndpointUrl,
       }}
     />
@@ -25,6 +27,7 @@ export const EditorPage = ({
 EditorPage.defaultProps = {
   courseId: null,
   blockId: null,
+  lmsEndpointUrl: null,
   studioEndpointUrl: null,
 };
 
@@ -32,6 +35,7 @@ EditorPage.propTypes = {
   courseId: PropTypes.string,
   blockType: PropTypes.string.isRequired,
   blockId: PropTypes.string,
+  lmsEndpointUrl: PropTypes.string,
   studioEndpointUrl: PropTypes.string,
 };
 

@@ -16,6 +16,7 @@ export const EditorGallery = () => {
   }, {});
   const courseId = 'fake-course-id';
   const studioEndpointUrl = 'fake-studio-endpoint-url';
+  const lmsEndpointUrl = 'courses.edx.org'; // this is hardcoded because that is where the image data is from.
   const handleChange = (e) => setBlockType(e.target.value);
   return (
     <div className="gallery">
@@ -36,6 +37,7 @@ export const EditorGallery = () => {
           blockType,
           courseId,
           studioEndpointUrl,
+          lmsEndpointUrl,
         }}
       />
     </div>

@@ -17,6 +17,7 @@ describe('app reducer', () => {
       it('loads initial input fields into the store', () => {
         const data = {
           studioEndpointUrl: 'testURL',
+          lmsEndpointUrl: 'sOmEOtherTestuRl',
           blockId: 'anID',
           courseId: 'OTHERid',
           blockType: 'someTYPE',
