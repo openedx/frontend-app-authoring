@@ -14,6 +14,7 @@ const EditorContainer = ({
         blockType={blockType}
         blockId={blockId}
         studioEndpointUrl={process.env.STUDIO_BASE_URL}
+        lmsEndpointUrl={process.env.LMS_BASE_URL}
       />
     </div>
   );
