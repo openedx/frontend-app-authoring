@@ -40,7 +40,8 @@ describe('Editor', () => {
       if (blockType === 'html') { // snap just one editor to make viewing easier
         expect(wrapper).toMatchSnapshot();
       }
-      expect(wrapper.children().children().at(1).is(supportedEditors[blockType])).toBe(true);
+      expect(wrapper.children().children().children().at(1)
+        .is(supportedEditors[blockType])).toBe(true);
     });
     test('presents error message if no relevant editor found and ref ready', () => {
       hooks.prepareEditorRef.mockImplementationOnce(

@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Stack } from '@edx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { blockTypes } from './data/constants/app';
@@ -53,13 +54,13 @@ export const Editor = ({
         aria-label={blockType}
       >
         {refReady && (
-          <>
+          <Stack>
             <EditorHeader editorRef={editorRef} />
             {(EditorComponent !== undefined)
               ? <EditorComponent {...{ setEditorRef, editorRef }} />
               : <FormattedMessage {...messages.couldNotFindEditor} />}
             <EditorFooter editorRef={editorRef} />
-          </>
+          </Stack>
         )}
 
       </div>
