@@ -91,6 +91,7 @@ export const generateLegacyApiResponse = () => ({
     allow_anonymous: false,
     allow_anonymous_to_peers: false,
     reported_content_email_notifications: false,
+    reported_content_email_notifications_flag: false,
     always_divide_inline_discussions: false,
     available_division_schemes: ['enrollment_track'],
     discussion_topics: {

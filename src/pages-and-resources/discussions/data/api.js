@@ -62,6 +62,7 @@ function normalizePluginConfig(data) {
     allowAnonymousPosts: data.allow_anonymous,
     allowAnonymousPostsPeers: data.allow_anonymous_to_peers,
     reportedContentEmailNotifications: data.reported_content_email_notifications,
+    enableReportedContentEmailNotifications: data.reported_content_email_notifications_flag,
     divisionScheme: data.division_scheme,
     alwaysDivideInlineDiscussions: data.always_divide_inline_discussions,
     blackoutDates: normalizeBlackoutDates(data.discussion_blackouts),

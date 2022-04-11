@@ -38,6 +38,7 @@ function OpenedXConfigForm({
     allowAnonymousPosts: appConfigObj?.allowAnonymousPosts || false,
     allowAnonymousPostsPeers: appConfigObj?.allowAnonymousPostsPeers || false,
     reportedContentEmailNotifications: appConfigObj?.reportedContentEmailNotifications || false,
+    enableReportedContentEmailNotifications: appConfigObj?.enableReportedContentEmailNotifications || false,
     blackoutDates: appConfigObj?.blackoutDates || [],
     discussionTopics: discussionTopicsModel || [],
     divideByCohorts: appConfigObj?.divideByCohorts || false,
@@ -139,7 +140,6 @@ function OpenedXConfigForm({
                 <DivisionByGroupFields />
                 <AppConfigFormDivider thick />
                 <ReportedContentEmailNotifications />
-                <AppConfigFormDivider thick />
                 <BlackoutDatesField />
               </Form>
             </Card>

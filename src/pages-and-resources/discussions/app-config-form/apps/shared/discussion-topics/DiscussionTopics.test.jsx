@@ -33,6 +33,7 @@ const appConfig = {
   allowAnonymousPosts: false,
   allowAnonymousPostsPeers: false,
   reportedContentEmailNotifications: false,
+  enableReportedContentEmailNotifications: false,
   allowDivisionByUnit: false,
   blackoutDates: [],
 };
