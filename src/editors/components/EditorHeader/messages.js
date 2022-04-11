@@ -1,8 +1,8 @@
 export const messages = {
   loading: {
     id: 'authoring.texteditor.title.loading',
-    description: 'Message displayed while loading content',
     defaultMessage: 'Loading...',
+    description: 'Message displayed while loading content',
   },
   cancelChangesLabel: {
     id: 'authoring.texteditor.header.cancelChangesLabel',
