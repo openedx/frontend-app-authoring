@@ -8,6 +8,7 @@ import 'tinymce/themes/silver';
 import 'tinymce/skins/ui/oxide/skin.css';
 import 'tinymce/icons/default';
 import 'tinymce/plugins/link';
+import 'tinymce/plugins/lists';
 import 'tinymce/plugins/table';
 import 'tinymce/plugins/codesample';
 import 'tinymce/plugins/emoticons';

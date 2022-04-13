@@ -6,6 +6,7 @@ const mapToolbars = toolbars => toolbars.map(toolbar => toolbar.join(' ')).join(
 export default StrictDict({
   plugins: [
     plugins.link,
+    plugins.lists,
     plugins.codesample,
     plugins.emoticons,
     plugins.table,
