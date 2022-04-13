@@ -185,6 +185,20 @@ const messages = defineMessages({
     defaultMessage: 'Learners will be able to post anonymously to other peers but all posts will be visible to course staff.',
   },
 
+  // Reported Email Notifications
+  reportedContentEmailNotifications: {
+    id: 'authoring.discussions.builtIn.reportedContentEmailNotifications',
+    defaultMessage: 'Notifications',
+  },
+  reportedContentEmailNotificationsLabel: {
+    id: 'authoring.discussions.builtIn.reportedContentEmailNotifications.label',
+    defaultMessage: 'Email notifications for reported content',
+  },
+  reportedContentEmailNotificationsHelp: {
+    id: 'authoring.discussions.builtIn.reportedContentEmailNotifications.help',
+    defaultMessage: 'Discussion Admins, Moderators, Community TAs and Group Community TAs (only for their own cohort) will receive an email notification when content is reported.',
+  },
+
   // Discussion Topics
   discussionTopics: {
     id: 'authoring.discussions.discussionTopics',

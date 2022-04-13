@@ -46,6 +46,8 @@ const defaultAppConfig = (divideDiscussionIds = []) => ({
   unitLevelVisibility: undefined,
   allowAnonymousPosts: false,
   allowAnonymousPostsPeers: false,
+  reportedContentEmailNotifications: false,
+  enableReportedContentEmailNotifications: false,
   allowDivisionByUnit: false,
   blackoutDates: [],
 });
@@ -134,7 +136,14 @@ describe('OpenedXConfigForm', () => {
   });
 
   test('default field states are correct, including removal of folded sub-fields', async () => {
-    await mockStore({ ...legacyApiResponse, plugin_configuration: { divided_course_wide_discussions: [] } });
+    await mockStore({
+      ...legacyApiResponse,
+      plugin_configuration: {
+         ...legacyApiResponse.plugin_configuration,
+        reported_content_email_notifications_flag: true,
+        divided_course_wide_discussions: [],
+      },
+    });
     createComponent();
     const { divideDiscussionIds } = defaultAppConfig(['13f106c6-6735-4e84-b097-0456cff55960', 'course']);
 
@@ -154,6 +163,10 @@ describe('OpenedXConfigForm', () => {
       container.querySelector('#allowAnonymousPostsPeers'),
     ).not.toBeInTheDocument();
 
+    // ReportedContentEmailNotifications
+    expect(container.querySelector('#reportedContentEmailNotifications')).toBeInTheDocument();
+    expect(container.querySelector('#reportedContentEmailNotifications')).not.toBeChecked();
+
     // BlackoutDatesField
     expect(queryByText(container, messages.blackoutDatesLabel.defaultMessage)).toBeInTheDocument();
   });
@@ -164,6 +177,8 @@ describe('OpenedXConfigForm', () => {
       plugin_configuration: {
         ...legacyApiResponse.plugin_configuration,
         allow_anonymous: true,
+        reported_content_email_notifications: true,
+        reported_content_email_notifications_flag: true,
         always_divide_inline_discussions: true,
         divided_course_wide_discussions: [],
       },
@@ -194,6 +209,10 @@ describe('OpenedXConfigForm', () => {
     expect(
       container.querySelector('#allowAnonymousPostsPeers'),
     ).not.toBeChecked();
+
+    // ReportedContentEmailNotifications
+    expect(container.querySelector('#reportedContentEmailNotifications')).toBeInTheDocument();
+    expect(container.querySelector('#reportedContentEmailNotifications')).toBeChecked();
   });
 
   test('folded discussion topics are in the DOM when divideByCohorts and divideCourseWideTopics are enabled',
@@ -203,6 +222,8 @@ describe('OpenedXConfigForm', () => {
         plugin_configuration: {
           ...legacyApiResponse.plugin_configuration,
           allow_anonymous: true,
+          reported_content_email_notifications: true,
+          reported_content_email_notifications_flag: true,
           always_divide_inline_discussions: true,
           divided_course_wide_discussions: ['13f106c6-6735-4e84-b097-0456cff55960', 'course'],
         },
