@@ -1,61 +1,52 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { shallow } from 'enzyme';
-import { Editor, mapDispatchToProps, supportedEditors } from './Editor';
-import { thunkActions } from './data/redux';
+import { Editor, supportedEditors } from './Editor';
 import * as hooks from './hooks';
 import { blockTypes } from './data/constants/app';
 
 jest.mock('./hooks', () => ({
   initializeApp: jest.fn(),
-  prepareEditorRef: jest.fn().mockName('prepareEditorRef'),
 }));
 
-jest.mock('./containers/TextEditor/TextEditor', () => 'TextEditor');
-jest.mock('./containers/VideoEditor/VideoEditor', () => 'VideoEditor');
+jest.mock('./containers/TextEditor', () => 'TextEditor');
+jest.mock('./containers/VideoEditor', () => 'VideoEditor');
 jest.mock('./containers/ProblemEditor/ProblemEditor', () => 'ProblemEditor');
-jest.mock('./components/EditorFooter', () => 'EditorFooter');
-jest.mock('./components/EditorHeader', () => 'EditorHeader');
 
-const props = {
-  courseId: 'course-v1:edX+DemoX+Demo_Course',
+const initData = {
   blockId: 'block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4',
-  studioEndpointUrl: 'fakeurl.com',
+  blockType: blockTypes.html,
+  courseId: 'course-v1:edX+DemoX+Demo_Course',
   lmsEndpointUrl: 'evenfakerurl.com',
+  studioEndpointUrl: 'fakeurl.com',
+};
+const props = {
   initialize: jest.fn(),
+  onClose: jest.fn().mockName('props.onClose'),
+  ...initData,
 };
 
+let el;
 describe('Editor', () => {
-  describe('snapshots', () => {
-    test('renders no editor when ref isnt ready', () => {
-      hooks.prepareEditorRef.mockImplementationOnce(
-        () => ({ editorRef: null, refReady: false, setEditorRef: jest.fn() }),
-      );
-      expect(shallow(<Editor blockType="AblOck" {...props} />)).toMatchSnapshot();
-    });
-    test.each(Object.values(blockTypes))('renders %p editor when ref is ready', (blockType) => {
-      hooks.prepareEditorRef.mockImplementationOnce(
-        () => ({ editorRef: { current: 'ref' }, refReady: true, setEditorRef: jest.fn().mockName('setEditorRef') }),
-      );
-      const wrapper = shallow(<Editor blockType={blockType} {...props} />);
-      if (blockType === 'html') { // snap just one editor to make viewing easier
-        expect(wrapper).toMatchSnapshot();
-      }
-      expect(wrapper.children().children().children().at(1)
-        .is(supportedEditors[blockType])).toBe(true);
+  describe('render', () => {
+    test('snapshot: renders correct editor given blockType (html -> TextEditor)', () => {
+      expect(shallow(<Editor {...props} />)).toMatchSnapshot();
     });
     test('presents error message if no relevant editor found and ref ready', () => {
-      hooks.prepareEditorRef.mockImplementationOnce(
-        () => ({ editorRef: { current: 'ref' }, refReady: true, setEditorRef: jest.fn().mockName('setEditorRef') }),
-      );
-      expect(shallow(<Editor
-        {...props}
-        blockType="fAkEBlock"
-      />)).toMatchSnapshot();
+      expect(shallow(<Editor {...props} blockType="fAkEBlock" />)).toMatchSnapshot();
+    });
+    test.each(Object.values(blockTypes))('renders %p editor when ref is ready', (blockType) => {
+      el = shallow(<Editor {...props} blockType={blockType} />);
+      expect(el.children().children().at(0).is(supportedEditors[blockType])).toBe(true);
     });
   });
-  describe('mapDispatchToProps', () => {
-    test('initialize from thunkActions.app.initialize', () => {
-      expect(mapDispatchToProps.initialize).toEqual(thunkActions.app.initialize);
+  describe('behavior', () => {
+    it('calls initializeApp hook with dispatch, and passed data', () => {
+      el = shallow(<Editor {...props} blockType={blockTypes.html} />);
+      expect(hooks.initializeApp).toHaveBeenCalledWith({
+        dispatch: useDispatch(),
+        data: initData,
+      });
     });
   });
 });

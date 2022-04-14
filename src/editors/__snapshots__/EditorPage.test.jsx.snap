@@ -1,5 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Editor Page snapshots props besides blockType default to null 1`] = `
+<Provider
+  store={
+    Object {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(Symbol.observable): [Function],
+    }
+  }
+>
+  <Editor
+    blockId={null}
+    blockType="html"
+    courseId={null}
+    lmsEndpointUrl={null}
+    onClose={null}
+    studioEndpointUrl={null}
+  />
+</Provider>
+`;
+
 exports[`Editor Page snapshots rendering correctly with expected Input 1`] = `
 <Provider
   store={
@@ -17,6 +40,7 @@ exports[`Editor Page snapshots rendering correctly with expected Input 1`] = `
     blockType="html"
     courseId="course-v1:edX+DemoX+Demo_Course"
     lmsEndpointUrl="evenfakerurl.com"
+    onClose={[MockFunction props.onClose]}
     studioEndpointUrl="fakeurl.com"
   />
 </Provider>

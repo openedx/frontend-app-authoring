@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TitleHeader snapshots editing 1`] = `
+<EditableHeader
+  handleChange={[MockFunction localTitleHooks.handleChange]}
+  handleKeyDown={[MockFunction localTitleHooks.handleKeyDown]}
+  inputRef={[MockFunction localTitleHooks.inputRef]}
+  localTitle="TeST LocALtitLE"
+  updateTitle={[MockFunction localTitleHooks.updateTitle]}
+/>
+`;
+
+exports[`TitleHeader snapshots initialized 1`] = `
+<div
+  className="d-flex"
+>
+  <div
+    style={
+      Object {
+        "lineHeight": "1.5",
+        "paddingRight": ".25em",
+      }
+    }
+  >
+    TeST LocALtitLE
+  </div>
+  <IconButton
+    alt="Edit Title"
+    className="mr-2"
+    iconAs="Icon"
+    onClick={[MockFunction localTitleHooks.startEditing]}
+    size="sm"
+    src={[MockFunction icons.Edit]}
+  />
+</div>
+`;
+
+exports[`TitleHeader snapshots not initialized 1`] = `"Loading..."`;

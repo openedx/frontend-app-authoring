@@ -36,11 +36,6 @@ describe('app thunkActions', () => {
       dispatchedAction.fetchBlock.onSuccess(testValue);
       expect(dispatch).toHaveBeenCalledWith(actions.app.setBlockValue(testValue));
     });
-    it('dispatches actions.app.setBlockValue on failure', () => {
-      dispatch.mockClear();
-      dispatchedAction.fetchBlock.onFailure(testValue);
-      expect(dispatch).toHaveBeenCalledWith(actions.app.setBlockValue(testValue));
-    });
   });
   describe('fetchUnit', () => {
     beforeEach(() => {

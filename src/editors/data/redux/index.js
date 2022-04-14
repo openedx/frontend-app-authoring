@@ -4,6 +4,7 @@ import { StrictDict } from '../../utils';
 
 import * as app from './app';
 import * as requests from './requests';
+import * as video from './video';
 
 /* eslint-disable import/no-cycle */
 export { default as thunkActions } from './thunkActions';
@@ -11,6 +12,7 @@ export { default as thunkActions } from './thunkActions';
 const modules = {
   app,
   requests,
+  video,
 };
 
 const moduleProps = (propName) => Object.keys(modules).reduce(

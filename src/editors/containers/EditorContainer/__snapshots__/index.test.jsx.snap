@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditorContainer component render snapshot: initialized. enable save and pass to header 1`] = `
+<FullscreenModal
+  footerNode={
+    <InjectIntl(ShimmedIntlComponent)
+      disableSave={false}
+      onCancel={
+        Object {
+          "handleCancelClicked": Object {
+            "onClose": [MockFunction props.onClose],
+          },
+        }
+      }
+      onSave={
+        Object {
+          "handleSaveClicked": Object {
+            "dispatch": [MockFunction react-redux.dispatch],
+            "getContent": [MockFunction props.getContent],
+          },
+        }
+      }
+    />
+  }
+  isOpen={true}
+  onClose={
+    Object {
+      "handleCancelClicked": Object {
+        "onClose": [MockFunction props.onClose],
+      },
+    }
+  }
+  title={
+    <InjectIntl(ShimmedIntlComponent)
+      isInitialized={true}
+    />
+  }
+  variant="primary"
+>
+  <h1>
+    My test content
+  </h1>
+</FullscreenModal>
+`;
+
+exports[`EditorContainer component render snapshot: not initialized. disable save and pass to header 1`] = `
+<FullscreenModal
+  footerNode={
+    <InjectIntl(ShimmedIntlComponent)
+      disableSave={true}
+      onCancel={
+        Object {
+          "handleCancelClicked": Object {
+            "onClose": [MockFunction props.onClose],
+          },
+        }
+      }
+      onSave={
+        Object {
+          "handleSaveClicked": Object {
+            "dispatch": [MockFunction react-redux.dispatch],
+            "getContent": [MockFunction props.getContent],
+          },
+        }
+      }
+    />
+  }
+  isOpen={true}
+  onClose={
+    Object {
+      "handleCancelClicked": Object {
+        "onClose": [MockFunction props.onClose],
+      },
+    }
+  }
+  title={
+    <InjectIntl(ShimmedIntlComponent)
+      isInitialized={false}
+    />
+  }
+  variant="primary"
+>
+  <h1>
+    My test content
+  </h1>
+</FullscreenModal>
+`;

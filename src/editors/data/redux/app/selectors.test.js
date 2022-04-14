@@ -87,26 +87,26 @@ describe('app selectors unit tests', () => {
       ].map(([args, expected]) => expect(cb(...args)).toEqual(expected));
     });
   });
-  describe('returnTitle', () => {
+  describe('displayTitle', () => {
     const title = 'tItLe';
     it('is memoized based on blockType and blockTitle', () => {
-      expect(selectors.returnTitle.preSelectors).toEqual([
+      expect(selectors.displayTitle.preSelectors).toEqual([
         simpleSelectors.blockType,
         simpleSelectors.blockTitle,
       ]);
     });
     it('returns null if blockType is null', () => {
-      expect(selectors.returnTitle.cb(null, title)).toEqual(null);
+      expect(selectors.displayTitle.cb(null, title)).toEqual(null);
     });
     it('returns blockTitle if blockTitle is not null', () => {
-      expect(selectors.returnTitle.cb('html', title)).toEqual(title);
+      expect(selectors.displayTitle.cb('html', title)).toEqual(title);
     });
     it('returns Text if the blockType is html', () => {
-      expect(selectors.returnTitle.cb('html', null)).toEqual('Text');
+      expect(selectors.displayTitle.cb('html', null)).toEqual('Text');
     });
     it('returns the blockType capitalized if not html', () => {
-      expect(selectors.returnTitle.cb('video', null)).toEqual('Video');
-      expect(selectors.returnTitle.cb('random', null)).toEqual('Random');
+      expect(selectors.displayTitle.cb('video', null)).toEqual('Video');
+      expect(selectors.displayTitle.cb('random', null)).toEqual('Random');
     });
   });
 });

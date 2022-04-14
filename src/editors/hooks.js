@@ -1,28 +1,13 @@
-import {
-  useRef, useEffect, useCallback, useState,
-} from 'react';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
-import { StrictDict } from './utils';
+import { selectors, thunkActions } from './data/redux';
 import * as module from './hooks';
 
-export const state = StrictDict({
-  refReady: (val) => useState(val),
-});
-
-export const initializeApp = ({ initialize, data }) => useEffect(
-  () => initialize(data),
+export const initializeApp = ({ dispatch, data }) => useEffect(
+  () => dispatch(thunkActions.app.initialize(data)),
   [],
 );
-
-export const prepareEditorRef = () => {
-  const editorRef = useRef(null);
-  const setEditorRef = useCallback((ref) => {
-    editorRef.current = ref;
-  }, []);
-  const [refReady, setRefReady] = module.state.refReady(false);
-  useEffect(() => setRefReady(true), []);
-  return { editorRef, refReady, setEditorRef };
-};
 
 export const navigateTo = (destination) => {
   window.location.assign(destination);
@@ -30,16 +15,12 @@ export const navigateTo = (destination) => {
 
 export const navigateCallback = (destination) => () => module.navigateTo(destination);
 
-export const saveBlock = ({
-  editorRef,
-  returnUrl,
-  saveFunction,
-}) => {
-  saveFunction({
-    returnToUnit: module.navigateCallback(returnUrl),
-    content: editorRef.current.getContent(),
-  });
-};
+export const nullMethod = () => ({});
 
-// for toast onClose to avoid console warnings
-export const nullMethod = () => {};
+export const saveBlock = ({
+  content,
+  dispatch,
+}) => dispatch(thunkActions.app.saveBlock({
+  returnToUnit: module.navigateCallback(useSelector(selectors.app.returnUrl)),
+  content,
+}));

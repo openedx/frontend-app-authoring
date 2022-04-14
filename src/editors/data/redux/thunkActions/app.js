@@ -6,7 +6,7 @@ import * as module from './app';
 export const fetchBlock = () => (dispatch) => {
   dispatch(requests.fetchBlock({
     onSuccess: (response) => dispatch(actions.app.setBlockValue(response)),
-    onFailure: (e) => dispatch(actions.app.setBlockValue(e)),
+    onFailure: (e) => console.log({ fetchFailure: e }),
   }));
 };
 
@@ -54,6 +54,11 @@ export const uploadImage = ({ file, setSelection }) => (dispatch) => {
   }));
 };
 
+export const fetchVideos = ({ onSuccess }) => (dispatch) => {
+  dispatch(requests.fetchImages({ onSuccess }));
+  // onSuccess(mockData.mockVideoData);
+};
+
 export default StrictDict({
   fetchBlock,
   fetchUnit,
@@ -61,4 +66,5 @@ export default StrictDict({
   saveBlock,
   fetchImages,
   uploadImage,
+  fetchVideos,
 });

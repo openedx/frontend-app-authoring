@@ -11,10 +11,12 @@ export const EditorPage = ({
   blockId,
   lmsEndpointUrl,
   studioEndpointUrl,
+  onClose,
 }) => (
   <Provider store={store}>
     <Editor
       {...{
+        onClose,
         courseId,
         blockType,
         blockId,
@@ -25,6 +27,7 @@ export const EditorPage = ({
   </Provider>
 );
 EditorPage.defaultProps = {
+  onClose: null,
   courseId: null,
   blockId: null,
   lmsEndpointUrl: null,
@@ -36,6 +39,7 @@ EditorPage.propTypes = {
   blockType: PropTypes.string.isRequired,
   blockId: PropTypes.string,
   lmsEndpointUrl: PropTypes.string,
+  onClose: PropTypes.func,
   studioEndpointUrl: PropTypes.string,
 };
 

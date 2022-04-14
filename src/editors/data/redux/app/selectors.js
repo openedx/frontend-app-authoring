@@ -37,7 +37,7 @@ export const isInitialized = createSelector(
   (unitUrl, editorInitialized, blockValue) => !!(unitUrl && blockValue && editorInitialized),
 );
 
-export const returnTitle = createSelector(
+export const displayTitle = createSelector(
   [
     module.simpleSelectors.blockType,
     module.simpleSelectors.blockTitle,
@@ -59,5 +59,5 @@ export default {
   ...simpleSelectors,
   isInitialized,
   returnUrl,
-  returnTitle,
+  displayTitle,
 };

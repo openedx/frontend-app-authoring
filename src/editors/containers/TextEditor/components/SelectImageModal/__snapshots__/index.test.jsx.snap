@@ -30,8 +30,8 @@ exports[`SelectImageModal component snapshot 1`] = `
   isOpen={true}
   title="Add an image"
 >
-  <Connect(FetchErrorAlert) />
-  <Connect(UploadErrorAlert) />
+  <FetchErrorAlert />
+  <UploadErrorAlert />
   <Stack
     gap={3}
   >

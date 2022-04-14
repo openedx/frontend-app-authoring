@@ -90,6 +90,7 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
     Group: 'Form.Group',
     Label: 'Form.Label',
   },
+  FullscreenModal: 'FullscreenModal',
   Scrollable: 'Scrollable',
   SelectableBox: {
     Set: 'SelectableBox.Set',
@@ -105,3 +106,18 @@ jest.mock('@edx/paragon/icons', () => ({
   Locked: jest.fn().mockName('icons.Locked'),
   Unlocked: jest.fn().mockName('icons.Unlocked'),
 }));
+
+// Mock react-redux hooks
+// unmock for integration tests
+jest.mock('react-redux', () => {
+  const dispatch = jest.fn((...args) => ({ dispatch: args })).mockName('react-redux.dispatch');
+  return {
+    connect: (mapStateToProps, mapDispatchToProps) => (component) => ({
+      mapStateToProps,
+      mapDispatchToProps,
+      component,
+    }),
+    useDispatch: jest.fn(() => dispatch),
+    useSelector: jest.fn((selector) => ({ useSelector: selector })),
+  };
+});

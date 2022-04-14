@@ -41,9 +41,6 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.26.1",
     "codecov": "3.8.3",
-    "enzyme": "3.11.0",
-    "enzyme-adapter-react-16": "1.15.6",
-    "enzyme-to-json": "^3.6.2",
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.25.4",
     "husky": "7.0.4",
@@ -58,7 +55,11 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.7.2",
     "@tinymce/tinymce-react": "^3.13.0",
+    "enzyme": "3.11.0",
+    "enzyme-adapter-react-16": "1.15.6",
+    "enzyme-to-json": "^3.6.2",
     "babel-polyfill": "6.26.0",
+    "lodash-es": "^4.17.21",
     "react-redux": "^7.2.6",
     "react-responsive": "8.2.0",
     "react-transition-group": "4.4.2",
@@ -69,7 +70,8 @@
     "redux-thunk": "^2.4.1",
     "reselect": "^4.1.5",
     "tinymce": "^5.10.2",
-    "lodash-es": "^4.17.21"
+    "video-react": "^0.15.0",
+    "video.js": "^7.18.1"
   },
   "peerDependencies": {
     "@edx/paragon": ">= 7.0.0 < 20.0.0",
