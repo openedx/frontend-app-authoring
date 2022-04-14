@@ -35,7 +35,6 @@ function OpenedXConfigForm({
     enableInContext,
     enableGradedUnits,
     unitLevelVisibility,
-    allowAnonymousPosts: appConfigObj?.allowAnonymousPosts || false,
     allowAnonymousPostsPeers: appConfigObj?.allowAnonymousPostsPeers || false,
     reportedContentEmailNotifications: appConfigObj?.reportedContentEmailNotifications || false,
     enableReportedContentEmailNotifications: appConfigObj?.enableReportedContentEmailNotifications || false,

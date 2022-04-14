@@ -157,11 +157,10 @@ describe('OpenedXConfigForm', () => {
     ).not.toBeInTheDocument());
 
     // AnonymousPostingFields
-    expect(container.querySelector('#allowAnonymousPosts')).toBeInTheDocument();
-    expect(container.querySelector('#allowAnonymousPosts')).not.toBeChecked();
     expect(
       container.querySelector('#allowAnonymousPostsPeers'),
-    ).not.toBeInTheDocument();
+    ).toBeInTheDocument();
+    expect(container.querySelector('#allowAnonymousPostsPeers')).not.toBeChecked();
 
     // ReportedContentEmailNotifications
     expect(container.querySelector('#reportedContentEmailNotifications')).toBeInTheDocument();
@@ -201,8 +200,6 @@ describe('OpenedXConfigForm', () => {
     ).not.toBeInTheDocument());
 
     // AnonymousPostingFields
-    expect(container.querySelector('#allowAnonymousPosts')).toBeInTheDocument();
-    expect(container.querySelector('#allowAnonymousPosts')).toBeChecked();
     expect(
       container.querySelector('#allowAnonymousPostsPeers'),
     ).toBeInTheDocument();
