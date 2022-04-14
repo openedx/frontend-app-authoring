@@ -200,8 +200,6 @@ describe('OpenedXConfigForm', () => {
     ).not.toBeInTheDocument());
 
     // AnonymousPostingFields
-    expect(container.querySelector('#allowAnonymousPosts')).toBeInTheDocument();
-    expect(container.querySelector('#allowAnonymousPosts')).toBeChecked();
     expect(
       container.querySelector('#allowAnonymousPostsPeers'),
     ).toBeInTheDocument();
