@@ -48,6 +48,7 @@ export const buttons = StrictDict({
 
 export const plugins = listKeyStore([
   'link',
+  'lists',
   'codesample',
   'emoticons',
   'table',
