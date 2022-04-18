@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+
+import { sendTrackEvent } from '@edx/frontend-platform/analytics';
+import analyticsEvt from './data/constants/analyticsEvt';
 
 import { keyStore } from './utils';
-import { selectors, thunkActions } from './data/redux';
+import { thunkActions } from './data/redux';
 import * as hooks from './hooks';
 
 jest.mock('react', () => ({
@@ -24,6 +26,10 @@ jest.mock('./data/redux', () => ({
       returnUrl: jest.fn(),
     },
   },
+}));
+
+jest.mock('@edx/frontend-platform/analytics', () => ({
+  sendTrackEvent: jest.fn(),
 }));
 
 const hookKeys = keyStore(hooks);
@@ -65,9 +71,28 @@ describe('hooks', () => {
 
   describe('navigateCallback', () => {
     let output;
+    const SAVED_ENV = process.env;
     const destination = 'hOmE';
     beforeEach(() => {
-      output = hooks.navigateCallback(destination);
+      jest.resetModules();
+      process.env = { ...SAVED_ENV };
+      output = hooks.navigateCallback({ destination });
+    });
+    afterAll(() => {
+      process.env = SAVED_ENV;
+    });
+    test('it calls sendTrackEvent if given analyticsEvent and analytics', () => {
+      process.env.NODE_ENV = 'prod';
+      const analyticsEvent = 'iThapPeneDEVent';
+      const analytics = 'dATAonEveNT';
+      output = hooks.navigateCallback({
+        destination,
+        analyticsEvent,
+        analytics,
+      });
+      output();
+      expect(sendTrackEvent).toHaveBeenCalledTimes(1);
+      expect(sendTrackEvent).toHaveBeenCalledWith(analyticsEvent, analytics);
     });
     test('it calls navigateTo with output destination', () => {
       const spy = jest.spyOn(hooks, hookKeys.navigateTo);
@@ -86,11 +111,22 @@ describe('hooks', () => {
     it('dispatches thunkActions.app.saveBlock with navigateCallback, and passed content', () => {
       const navigateCallback = (args) => ({ navigateCallback: args });
       const dispatch = jest.fn();
+      const destination = 'uRLwhENsAved';
+      const analytics = 'dATAonEveNT';
       const content = 'myContent';
       jest.spyOn(hooks, hookKeys.navigateCallback).mockImplementationOnce(navigateCallback);
-      hooks.saveBlock({ content, dispatch });
+      hooks.saveBlock({
+        content,
+        destination,
+        analytics,
+        dispatch,
+      });
       expect(dispatch).toHaveBeenCalledWith(thunkActions.app.saveBlock({
-        returnToUnit: navigateCallback(useSelector(selectors.app.returnUrl)),
+        returnToUnit: navigateCallback({
+          destination,
+          analyticsEvent: analyticsEvt.editorSaveClick,
+          analytics,
+        }),
         content,
       }));
     });

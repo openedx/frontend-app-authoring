@@ -28,7 +28,7 @@ export const EditorFooter = ({
       </Toast>
     )}
 
-    <ModalDialog.Footer>
+    <ModalDialog.Footer className="border-top-0">
       <ActionRow>
         <ActionRow.Spacer />
         <Button

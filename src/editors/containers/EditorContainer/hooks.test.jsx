@@ -5,6 +5,7 @@ import { selectors } from '../../data/redux';
 
 import * as appHooks from '../../hooks';
 import * as hooks from './hooks';
+import analyticsEvt from '../../data/constants/analyticsEvt';
 
 jest.mock('../../data/redux', () => ({
   selectors: {
@@ -41,18 +42,31 @@ describe('EditorContainer hooks', () => {
     });
     describe('handleSaveClicked', () => {
       it('returns callback to saveBlock with dispatch and content from getContent', () => {
-        const saveBlock = (args) => ({ saveBlock: args });
         const getContent = () => 'myTestContentValue';
-        expect(hooks.handleSaveClicked({ getContent, dispatch })()).toEqual(
-          saveBlock({ content: getContent(), dispatch }),
-        );
+        const output = hooks.handleSaveClicked({
+          getContent,
+          destination: 'testDEsTURL',
+          analytics: 'soMEanALytics',
+          dispatch,
+        });
+        output();
+        expect(appHooks.saveBlock).toHaveBeenCalledWith({
+          content: getContent(),
+          destination: reactRedux.useSelector(selectors.app.returnUrl),
+          analytics: reactRedux.useSelector(selectors.app.analytics),
+          dispatch,
+        });
       });
     });
     describe('handleCancelClicked', () => {
       it('calls navigateCallback to returnUrl if onClose is not passed', () => {
-        expect(hooks.handleCancelClicked({})).toEqual(appHooks.navigateCallback(
-          reactRedux.useSelector(selectors.app.returnUrl),
-        ));
+        expect(hooks.handleCancelClicked({})).toEqual(
+          appHooks.navigateCallback({
+            destination: reactRedux.useSelector(selectors.app.returnUrl),
+            analyticsEvent: analyticsEvt.editorCancelClick,
+            analytics: reactRedux.useSelector(selectors.app.analytics),
+          }),
+        );
       });
       it('calls onClose and not navigateCallback if onClose is passed', () => {
         const onClose = () => 'my close value';

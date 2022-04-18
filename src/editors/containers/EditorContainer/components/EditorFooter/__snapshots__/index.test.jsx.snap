@@ -4,7 +4,9 @@ exports[`EditorFooter render snapshot: default args (disableSave: false, saveFai
 <div
   className="editor-footer"
 >
-  <ModalDialog.Footer>
+  <ModalDialog.Footer
+    className="border-top-0"
+  >
     <ActionRow>
       <ActionRow.Spacer />
       <Button
@@ -38,7 +40,9 @@ exports[`EditorFooter render snapshot: save disabled. Show button spinner 1`] = 
 <div
   className="editor-footer"
 >
-  <ModalDialog.Footer>
+  <ModalDialog.Footer
+    className="border-top-0"
+  >
     <ActionRow>
       <ActionRow.Spacer />
       <Button
@@ -81,7 +85,9 @@ exports[`EditorFooter render snapshot: save failed.  Show error message 1`] = `
       id="authoring.editorfooter.save.error"
     />
   </Toast>
-  <ModalDialog.Footer>
+  <ModalDialog.Footer
+    className="border-top-0"
+  >
     <ActionRow>
       <ActionRow.Spacer />
       <Button

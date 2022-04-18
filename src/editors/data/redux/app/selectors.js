@@ -54,10 +54,21 @@ export const displayTitle = createSelector(
       : blockType[0].toUpperCase() + blockType.substring(1);
   },
 );
+export const analytics = createSelector(
+  [
+    module.simpleSelectors.blockId,
+    module.simpleSelectors.blockType,
+    module.simpleSelectors.courseId,
+  ],
+  (blockId, blockType, courseId) => (
+    { blockId, blockType, courseId }
+  ),
+);
 
 export default {
   ...simpleSelectors,
   isInitialized,
   returnUrl,
   displayTitle,
+  analytics,
 };
