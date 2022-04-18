@@ -89,7 +89,7 @@ describe('LiveSettings', () => {
     expect(label).toHaveTextContent(messages.enableLiveLabel.defaultMessage);
     expect(label.firstChild).toHaveTextContent('Enabled');
     expect(helperText).toHaveTextContent(
-      messages.providerHelperText.defaultMessage.replace('{providerName}', 'Zoom'),
+      messages.providerHelperText.defaultMessage.replace('{providerName}', 'zoom'),
     );
   });
 
@@ -108,7 +108,7 @@ describe('LiveSettings', () => {
     expect(label).toHaveTextContent('Live');
     expect(label.firstChild).not.toHaveTextContent('Enabled');
     expect(helperText).toHaveTextContent(
-      messages.providerHelperText.defaultMessage.replace('{providerName}', 'Zoom'),
+      messages.providerHelperText.defaultMessage.replace('{providerName}', 'zoom'),
     );
   });
 
@@ -127,7 +127,7 @@ describe('LiveSettings', () => {
     expect(providers.childElementCount).toBe(1);
     expect(providers).toHaveTextContent('Zoom');
     expect(helperText).toHaveTextContent(
-      messages.providerHelperText.defaultMessage.replace('{providerName}', 'Zoom'),
+      messages.providerHelperText.defaultMessage.replace('{providerName}', 'zoom'),
     );
   });
 
@@ -170,7 +170,9 @@ describe('LiveSettings', () => {
     const launchUrl = container.querySelector('input[name="launchUrl"]');
     const launchEmail = container.querySelector('input[name="launchEmail"]');
 
-    expect(requestPiiText).toHaveTextContent(messages.requestPiiSharingEnable.defaultMessage);
+    expect(requestPiiText).toHaveTextContent(
+      messages.requestPiiSharingEnable.defaultMessage.replaceAll('{provider}', 'zoom'),
+    );
     expect(consumerKey).not.toBeInTheDocument();
     expect(consumerSecret).not.toBeInTheDocument();
     expect(launchUrl).not.toBeInTheDocument();
