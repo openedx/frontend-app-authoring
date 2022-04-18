@@ -10,6 +10,7 @@ import 'tinymce/icons/default';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/table';
+import 'tinymce/plugins/hr';
 import 'tinymce/plugins/codesample';
 import 'tinymce/plugins/emoticons';
 import 'tinymce/plugins/emoticons/js/emojis';
