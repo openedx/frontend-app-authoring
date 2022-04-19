@@ -36,7 +36,7 @@ export default StrictDict({
     ],
     [buttons.imageUploadButton, buttons.link, buttons.unlink, buttons.codesample, buttons.table],
     [buttons.emoticons, buttons.charmap, buttons.hr],
-    [buttons.removeFormat, buttons.code],
+    [buttons.removeFormat],
   ]),
   imageToolbar: mapToolbars([
     // [buttons.rotate.left, buttons.rotate.right],

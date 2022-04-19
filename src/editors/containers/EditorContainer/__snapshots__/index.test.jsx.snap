@@ -1,87 +1,82 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EditorContainer component render snapshot: initialized. enable save and pass to header 1`] = `
-<FullscreenModal
-  footerNode={
-    <InjectIntl(ShimmedIntlComponent)
-      disableSave={false}
-      onCancel={
-        Object {
-          "handleCancelClicked": Object {
-            "onClose": [MockFunction props.onClose],
-          },
-        }
-      }
-      onSave={
-        Object {
-          "handleSaveClicked": Object {
-            "dispatch": [MockFunction react-redux.dispatch],
-            "getContent": [MockFunction props.getContent],
-          },
-        }
-      }
-    />
-  }
-  isOpen={true}
-  onClose={
-    Object {
-      "handleCancelClicked": Object {
-        "onClose": [MockFunction props.onClose],
-      },
-    }
-  }
-  title={
-    <InjectIntl(ShimmedIntlComponent)
-      isInitialized={true}
-    />
-  }
-  variant="primary"
->
+<div>
+  <ModalDialog.Header>
+    <ModalDialog.Title>
+      <InjectIntl(ShimmedIntlComponent)
+        isInitialized={true}
+      />
+      <div
+        className="pgn__modal-close-container"
+      >
+        <IconButton
+          iconAs="Icon"
+          onClick={[MockFunction props.onClose]}
+          src={[MockFunction icons.Close]}
+        />
+      </div>
+    </ModalDialog.Title>
+  </ModalDialog.Header>
   <h1>
     My test content
   </h1>
-</FullscreenModal>
+  <InjectIntl(ShimmedIntlComponent)
+    disableSave={false}
+    onCancel={
+      Object {
+        "handleCancelClicked": Object {
+          "onClose": [MockFunction props.onClose],
+        },
+      }
+    }
+    onSave={
+      Object {
+        "handleSaveClicked": Object {
+          "dispatch": [MockFunction react-redux.dispatch],
+          "getContent": [MockFunction props.getContent],
+        },
+      }
+    }
+  />
+</div>
 `;
 
 exports[`EditorContainer component render snapshot: not initialized. disable save and pass to header 1`] = `
-<FullscreenModal
-  footerNode={
-    <InjectIntl(ShimmedIntlComponent)
-      disableSave={true}
-      onCancel={
-        Object {
-          "handleCancelClicked": Object {
-            "onClose": [MockFunction props.onClose],
-          },
-        }
+<div>
+  <ModalDialog.Header>
+    <ModalDialog.Title>
+      <InjectIntl(ShimmedIntlComponent)
+        isInitialized={false}
+      />
+      <div
+        className="pgn__modal-close-container"
+      >
+        <IconButton
+          iconAs="Icon"
+          onClick={[MockFunction props.onClose]}
+          src={[MockFunction icons.Close]}
+        />
+      </div>
+    </ModalDialog.Title>
+  </ModalDialog.Header>
+  <InjectIntl(ShimmedIntlComponent)
+    disableSave={true}
+    onCancel={
+      Object {
+        "handleCancelClicked": Object {
+          "onClose": [MockFunction props.onClose],
+        },
       }
-      onSave={
-        Object {
-          "handleSaveClicked": Object {
-            "dispatch": [MockFunction react-redux.dispatch],
-            "getContent": [MockFunction props.getContent],
-          },
-        }
-      }
-    />
-  }
-  isOpen={true}
-  onClose={
-    Object {
-      "handleCancelClicked": Object {
-        "onClose": [MockFunction props.onClose],
-      },
     }
-  }
-  title={
-    <InjectIntl(ShimmedIntlComponent)
-      isInitialized={false}
-    />
-  }
-  variant="primary"
->
-  <h1>
-    My test content
-  </h1>
-</FullscreenModal>
+    onSave={
+      Object {
+        "handleSaveClicked": Object {
+          "dispatch": [MockFunction react-redux.dispatch],
+          "getContent": [MockFunction props.getContent],
+        },
+      }
+    }
+  />
+</div>
 `;

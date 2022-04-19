@@ -3,6 +3,12 @@
 exports[`EditorFooter render snapshot: default args (disableSave: false, saveFailed: false) 1`] = `
 <div
   className="editor-footer"
+  style={
+    Object {
+      "bottom": 0,
+      "position": "sticky",
+    }
+  }
 >
   <ModalDialog.Footer
     className="border-top-0"
@@ -39,6 +45,12 @@ exports[`EditorFooter render snapshot: default args (disableSave: false, saveFai
 exports[`EditorFooter render snapshot: save disabled. Show button spinner 1`] = `
 <div
   className="editor-footer"
+  style={
+    Object {
+      "bottom": 0,
+      "position": "sticky",
+    }
+  }
 >
   <ModalDialog.Footer
     className="border-top-0"
@@ -74,6 +86,12 @@ exports[`EditorFooter render snapshot: save disabled. Show button spinner 1`] = 
 exports[`EditorFooter render snapshot: save failed.  Show error message 1`] = `
 <div
   className="editor-footer"
+  style={
+    Object {
+      "bottom": 0,
+      "position": "sticky",
+    }
+  }
 >
   <Toast
     onClose={[MockFunction hooks.nullMethod]}

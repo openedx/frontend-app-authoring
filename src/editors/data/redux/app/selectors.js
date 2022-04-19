@@ -31,10 +31,9 @@ export const returnUrl = createSelector(
 export const isInitialized = createSelector(
   [
     module.simpleSelectors.unitUrl,
-    module.simpleSelectors.editorInitialized,
     module.simpleSelectors.blockValue,
   ],
-  (unitUrl, editorInitialized, blockValue) => !!(unitUrl && blockValue && editorInitialized),
+  (unitUrl, blockValue) => !!(unitUrl && blockValue),
 );
 
 export const displayTitle = createSelector(

@@ -38,13 +38,14 @@ describe('EditorContainer component', () => {
       });
       test('close behavior is linked to modal onClose and footer onCancel', () => {
         const expected = hooks.handleCancelClicked({ onClose: props.onClose });
-        expect(el.at(0).props().onClose).toEqual(expected);
-        expect(el.at(0).props().footerNode.props.onCancel).toEqual(expected);
+        expect(el.children().at(2).props().onCancel).toEqual(expected);
       });
       test('save behavior is linked to footer onSave', () => {
-        expect(el.at(0).props().footerNode.props.onSave).toEqual(
-          hooks.handleSaveClicked({ dispatch: useDispatch(), getContent: props.getContent }),
-        );
+        const expected = hooks.handleSaveClicked({
+          getContent: props.getContent,
+          dispatch: useDispatch(),
+        });
+        expect(el.children().at(2).props().onSave).toEqual(expected);
       });
     });
   });

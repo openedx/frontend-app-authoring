@@ -67,7 +67,6 @@ describe('app selectors unit tests', () => {
     it('is memoized based on unitUrl, editorInitialized, and blockValue', () => {
       expect(selectors.isInitialized.preSelectors).toEqual([
         simpleSelectors.unitUrl,
-        simpleSelectors.editorInitialized,
         simpleSelectors.blockValue,
       ]);
     });
@@ -76,14 +75,12 @@ describe('app selectors unit tests', () => {
       const truthy = {
         url: { url: 'data' },
         blockValue: { block: 'value' },
-        editorInitialized: true,
       };
 
       [
-        [[truthy.url, truthy.blockValue, false], false],
-        [[null, truthy.blockValue, true], false],
-        [[truthy.url, null, true], false],
-        [[truthy.url, truthy.blockValue, true], true],
+        [[null, truthy.blockValue], false],
+        [[truthy.url, null], false],
+        [[truthy.url, truthy.blockValue], true],
       ].map(([args, expected]) => expect(cb(...args)).toEqual(expected));
     });
   });
