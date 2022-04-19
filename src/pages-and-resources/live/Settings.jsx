@@ -74,11 +74,11 @@ function LiveSettings({
                 </SelectableBox>
               ))}
             </SelectableBox.Set>
-            <p data-testid="helper-text">
-              {intl.formatMessage(messages.providerHelperText, { providerName: values.provider })}
-            </p>
             {values.piiSharingEnable ? (
               <>
+                <p data-testid="helper-text">
+                  {intl.formatMessage(messages.providerHelperText, { providerName: values.provider })}
+                </p>
                 <p className="pb-2">{intl.formatMessage(messages.formInstructions)}</p>
                 <FormikControl
                   name="consumerKey"

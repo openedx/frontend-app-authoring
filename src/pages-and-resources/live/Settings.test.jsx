@@ -93,7 +93,7 @@ describe('LiveSettings', () => {
     );
   });
 
-  test('Displays title, helper and hides badge when live configuration button is disabled', async () => {
+  test('Displays title, helper text and hides badge when live configuration button is disabled', async () => {
     const fetchProviderConfigUrl = `${providerConfigurationApiUrl}/${courseId}/`;
     axiosMock.onGet(fetchProviderConfigUrl).reply(
       200,
@@ -103,20 +103,18 @@ describe('LiveSettings', () => {
     renderComponent();
 
     const label = container.querySelector('label[for="enable-live-toggle"]');
-    const helperText = queryByTestId(container, 'helper-text');
+    const helperText = queryByText(container, messages.enableLiveHelp.defaultMessage);
 
     expect(label).toHaveTextContent('Live');
     expect(label.firstChild).not.toHaveTextContent('Enabled');
-    expect(helperText).toHaveTextContent(
-      messages.providerHelperText.defaultMessage.replace('{providerName}', 'zoom'),
-    );
+    expect(helperText).toHaveTextContent(messages.enableLiveHelp.defaultMessage);
   });
 
-  test('Displays provider heading, helper and all providers', async () => {
+  test('Displays provider heading, helper text and all providers', async () => {
     const fetchProviderConfigUrl = `${providerConfigurationApiUrl}/${courseId}/`;
     axiosMock.onGet(fetchProviderConfigUrl).reply(
       200,
-      generateLiveConfigurationApiResponse(false, false),
+      generateLiveConfigurationApiResponse(false, true),
     );
     await executeThunk(fetchLiveConfiguration(courseId), store.dispatch);
     renderComponent();

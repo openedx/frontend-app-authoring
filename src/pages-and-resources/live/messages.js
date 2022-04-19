@@ -88,7 +88,7 @@ const messages = defineMessages({
   },
   providerHelperText: {
     id: 'authoring.live.provider.helpText',
-    defaultMessage: 'This configuration will require sharing username and emails of learners and the course team with {providerName}',
+    defaultMessage: 'This configuration will require sharing username and emails of learners and the course team with {providerName}.',
     description: 'Tells the user that sharing username and email is required for configuration',
   },
   requestPiiSharingEnable: {
