@@ -56,7 +56,6 @@ export const initialState = {
       launchUrl: '',
       launchEmail: '',
       provider: 'zoom',
-      piiSharingEnable: true,
     },
     saveStatus: 'successful',
     configuredProvider: 'zoom',
@@ -65,7 +64,6 @@ export const initialState = {
 
 export const generateLiveConfigurationApiResponse = (
   enabled = true,
-  piiSharingAllowed = true,
 ) => ({
   course_key: courseId,
   provider_type: 'zoom',
@@ -81,5 +79,4 @@ export const generateLiveConfigurationApiResponse = (
       },
     },
   },
-  pii_sharing_allowed: piiSharingAllowed,
 });

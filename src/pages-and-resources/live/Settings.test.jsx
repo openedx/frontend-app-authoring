@@ -97,7 +97,7 @@ describe('LiveSettings', () => {
     const fetchProviderConfigUrl = `${providerConfigurationApiUrl}/${courseId}/`;
     axiosMock.onGet(fetchProviderConfigUrl).reply(
       200,
-      generateLiveConfigurationApiResponse(false, false),
+      generateLiveConfigurationApiResponse(false),
     );
     await executeThunk(fetchLiveConfiguration(courseId), store.dispatch);
     renderComponent();
@@ -114,7 +114,7 @@ describe('LiveSettings', () => {
     const fetchProviderConfigUrl = `${providerConfigurationApiUrl}/${courseId}/`;
     axiosMock.onGet(fetchProviderConfigUrl).reply(
       200,
-      generateLiveConfigurationApiResponse(false, true),
+      generateLiveConfigurationApiResponse(false),
     );
     await executeThunk(fetchLiveConfiguration(courseId), store.dispatch);
     renderComponent();
@@ -129,7 +129,7 @@ describe('LiveSettings', () => {
     );
   });
 
-  test('Only helper text and lti fields are visible when pii sharing is enabled', async () => {
+  test('Displays helper text and lti fields for selected provider', async () => {
     const fetchProviderConfigUrl = `${providerConfigurationApiUrl}/${courseId}/`;
     axiosMock.onGet(fetchProviderConfigUrl).reply(
       200,
@@ -151,30 +151,6 @@ describe('LiveSettings', () => {
     expect(launchUrl.lastChild).toHaveTextContent(messages.launchUrl.defaultMessage);
     expect(launchEmail.firstChild).toBeVisible();
     expect(launchEmail.lastChild).toHaveTextContent(messages.launchEmail.defaultMessage);
-  });
-
-  test('Only connect to support is visible when pii sharing is disabled', async () => {
-    const fetchProviderConfigUrl = `${providerConfigurationApiUrl}/${courseId}/`;
-    axiosMock.onGet(fetchProviderConfigUrl).reply(
-      200,
-      generateLiveConfigurationApiResponse(false, false),
-    );
-    await executeThunk(fetchLiveConfiguration(courseId), store.dispatch);
-    renderComponent();
-
-    const requestPiiText = queryByTestId(container, 'request-pii-sharing');
-    const consumerKey = container.querySelector('input[name="consumerKey"]');
-    const consumerSecret = container.querySelector('input[name="consumerSecret"]');
-    const launchUrl = container.querySelector('input[name="launchUrl"]');
-    const launchEmail = container.querySelector('input[name="launchEmail"]');
-
-    expect(requestPiiText).toHaveTextContent(
-      messages.requestPiiSharingEnable.defaultMessage.replaceAll('{provider}', 'zoom'),
-    );
-    expect(consumerKey).not.toBeInTheDocument();
-    expect(consumerSecret).not.toBeInTheDocument();
-    expect(launchUrl).not.toBeInTheDocument();
-    expect(launchEmail).not.toBeInTheDocument();
   });
 
   test('Form should be submitted and closed when valid data is provided', async () => {

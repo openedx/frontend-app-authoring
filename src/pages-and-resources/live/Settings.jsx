@@ -74,45 +74,39 @@ function LiveSettings({
                 </SelectableBox>
               ))}
             </SelectableBox.Set>
-            {values.piiSharingEnable ? (
-              <>
-                <p data-testid="helper-text">
-                  {intl.formatMessage(messages.providerHelperText, { providerName: values.provider })}
-                </p>
-                <p className="pb-2">{intl.formatMessage(messages.formInstructions)}</p>
-                <FormikControl
-                  name="consumerKey"
-                  value={values.consumerKey}
-                  floatingLabel={intl.formatMessage(messages.consumerKey)}
-                  className="pb-1"
-                  type="input"
-                />
-                <FormikControl
-                  name="consumerSecret"
-                  value={values.consumerSecret}
-                  floatingLabel={intl.formatMessage(messages.consumerSecret)}
-                  className="pb-1"
-                  type="input"
-                />
-                <FormikControl
-                  name="launchUrl"
-                  value={values.launchUrl}
-                  floatingLabel={intl.formatMessage(messages.launchUrl)}
-                  className="pb-1"
-                  type="input"
-                />
-                <FormikControl
-                  name="launchEmail"
-                  value={values.launchEmail}
-                  floatingLabel={intl.formatMessage(messages.launchEmail)}
-                  type="input"
-                />
-              </>
-            ) : (
-              <p data-testid="request-pii-sharing">
-                {intl.formatMessage(messages.requestPiiSharingEnable, { provider: values.provider })}
+            <>
+              <p data-testid="helper-text">
+                {intl.formatMessage(messages.providerHelperText, { providerName: values.provider })}
               </p>
-            )}
+              <p className="pb-2">{intl.formatMessage(messages.formInstructions)}</p>
+              <FormikControl
+                name="consumerKey"
+                value={values.consumerKey}
+                floatingLabel={intl.formatMessage(messages.consumerKey)}
+                className="pb-1"
+                type="input"
+              />
+              <FormikControl
+                name="consumerSecret"
+                value={values.consumerSecret}
+                floatingLabel={intl.formatMessage(messages.consumerSecret)}
+                className="pb-1"
+                type="input"
+              />
+              <FormikControl
+                name="launchUrl"
+                value={values.launchUrl}
+                floatingLabel={intl.formatMessage(messages.launchUrl)}
+                className="pb-1"
+                type="input"
+              />
+              <FormikControl
+                name="launchEmail"
+                value={values.launchEmail}
+                floatingLabel={intl.formatMessage(messages.launchEmail)}
+                type="input"
+              />
+            </>
           </>
         )
       }
