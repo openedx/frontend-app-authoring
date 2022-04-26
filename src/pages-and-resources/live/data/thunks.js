@@ -15,6 +15,7 @@ function normalizeLiveConfig(config) {
   configuration.launchUrl = config?.ltiConfiguration?.lti1P1LaunchUrl || '';
   configuration.launchEmail = config?.ltiConfiguration?.ltiConfig?.additionalParameters?.customInstructorEmail || '';
   configuration.provider = config?.providerType || 'zoom';
+  configuration.piiSharingEnable = config?.piiSharingAllowed || false;
   return configuration;
 }
 
@@ -34,6 +35,7 @@ function deNormalizeLiveConfig(config) {
       },
     },
   };
+  configuration.pii_sharing_allowed = config?.piiSharingEnable || false;
   return configuration;
 }
 

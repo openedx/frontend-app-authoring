@@ -91,6 +91,11 @@ const messages = defineMessages({
     defaultMessage: 'This configuration will require sharing username and emails of learners and the course team with {providerName}.',
     description: 'Tells the user that sharing username and email is required for configuration',
   },
+  requestPiiSharingEnable: {
+    id: 'authoring.live.requestPiiSharingEnable',
+    defaultMessage: 'This configuration will require sharing usernames and emails of learners and the course team with {provider}. To access the LTI configuration for {provider}, please request your edX project coordinator to get PII sharing enabled for this course.',
+    description: 'Tells the user that request edx project coordinator to enable the PII sharing to access the LTI configuration for a provider.',
+  },
   general: {
     id: 'authoring.live.appDocInstructions.documentationLink',
     defaultMessage: 'General documentation',
