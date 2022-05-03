@@ -16,14 +16,23 @@ export const state = StrictDict({
   refReady: (val) => useState(val),
 });
 
-export const addImageUploadBehavior = ({ openModal, setImage }) => (editor) => {
+export const setupCustomBehavior = ({ openModal, setImage }) => (editor) => {
+  // image upload button
   editor.ui.registry.addButton(tinyMCE.buttons.imageUploadButton, {
     icon: 'image',
     onAction: openModal,
   });
+  // editing an existing image
   editor.ui.registry.addButton(tinyMCE.buttons.editImageSettings, {
     icon: 'image',
     onAction: module.openModalWithSelectedImage({ editor, setImage, openModal }),
+  });
+  // overriding the code plugin's icon with 'HTML' text
+  const openCodeEditor = () => editor.execCommand('mceCodeEditor');
+  editor.ui.registry.addButton(tinyMCE.buttons.code, {
+    text: 'HTML',
+    tooltip: 'Source code',
+    onAction: openCodeEditor,
   });
 };
 
@@ -40,7 +49,7 @@ export const editorConfig = ({
   },
   initialValue: blockValue ? blockValue.data.data : '',
   init: {
-    setup: module.addImageUploadBehavior({ openModal, setImage: setSelection }),
+    setup: module.setupCustomBehavior({ openModal, setImage: setSelection }),
     plugins: pluginConfig.plugins,
     imagetools_toolbar: pluginConfig.imageToolbar,
     toolbar: pluginConfig.toolbar,
