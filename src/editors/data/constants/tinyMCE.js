@@ -21,7 +21,7 @@ export const buttons = StrictDict({
   bold: 'bold',
   bullist: 'bullist',
   charmap: 'charmap',
-  code: 'code',
+  code: 'code-modified', // use a custom button name, consistently, for our text-only button
   codesample: 'codesample',
   editImageSettings: 'editimagesettings',
   emoticons: 'emoticons',

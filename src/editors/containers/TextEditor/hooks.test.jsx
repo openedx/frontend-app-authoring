@@ -54,7 +54,7 @@ describe('TextEditor hooks', () => {
     beforeEach(() => { state.mock(); });
     afterEach(() => { state.restore(); });
 
-    describe('addImageUploadBehavior', () => {
+    describe('setupCustomBehavior', () => {
       test('It calls addButton in the editor, but openModal is not called', () => {
         const addButton = jest.fn();
         const openModal = jest.fn();
@@ -64,12 +64,14 @@ describe('TextEditor hooks', () => {
         };
         const mockOpenModalWithImage = args => ({ openModalWithSelectedImage: args });
         const expectedSettingsAction = mockOpenModalWithImage({ editor, setImage, openModal });
+        const openCodeEditor = expect.any(Function);
         jest.spyOn(module, moduleKeys.openModalWithSelectedImage)
           .mockImplementationOnce(mockOpenModalWithImage);
-        output = module.addImageUploadBehavior({ openModal, setImage })(editor);
+        output = module.setupCustomBehavior({ openModal, setImage })(editor);
         expect(addButton.mock.calls).toEqual([
           [tinyMCE.buttons.imageUploadButton, { icon: 'image', onAction: openModal }],
           [tinyMCE.buttons.editImageSettings, { icon: 'image', onAction: expectedSettingsAction }],
+          [tinyMCE.buttons.code, { text: 'HTML', tooltip: 'Source code', onAction: openCodeEditor }],
         ]);
         expect(openModal).not.toHaveBeenCalled();
       });
@@ -82,13 +84,13 @@ describe('TextEditor hooks', () => {
       };
       const evt = 'fakeEvent';
       const editor = 'myEditor';
-      const addImageUploadBehavior = args => ({ addImageUploadBehvaior: args });
+      const setupCustomBehavior = args => ({ setupCustomBehavior: args });
       beforeEach(() => {
         props.setEditorRef = jest.fn();
         props.openModal = jest.fn();
         props.initializeEditor = jest.fn();
-        jest.spyOn(module, moduleKeys.addImageUploadBehavior)
-          .mockImplementationOnce(addImageUploadBehavior);
+        jest.spyOn(module, moduleKeys.setupCustomBehavior)
+          .mockImplementationOnce(setupCustomBehavior);
         output = module.editorConfig(props);
       });
       test('It creates an onInit which calls initializeEditor and setEditorRef', () => {
@@ -115,9 +117,9 @@ describe('TextEditor hooks', () => {
         // Commented out as we investigate whether this is only needed for image proxy
         // expect(output.init.imagetools_cors_hosts).toMatchObject([props.lmsEndpointUrl]);
       });
-      it('calls addImageUploadBehavior on setup', () => {
+      it('calls setupCustomBehavior on setup', () => {
         expect(output.init.setup).toEqual(
-          addImageUploadBehavior({ openModal: props.openModal, setImage: props.setSelection }),
+          setupCustomBehavior({ openModal: props.openModal, setImage: props.setSelection }),
         );
       });
     });
