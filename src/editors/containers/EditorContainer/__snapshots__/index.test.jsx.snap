@@ -12,7 +12,13 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
       >
         <IconButton
           iconAs="Icon"
-          onClick={[MockFunction props.onClose]}
+          onClick={
+            Object {
+              "handleCancelClicked": Object {
+                "onClose": [MockFunction props.onClose],
+              },
+            }
+          }
           src={[MockFunction icons.Close]}
         />
       </div>
@@ -54,7 +60,13 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
       >
         <IconButton
           iconAs="Icon"
-          onClick={[MockFunction props.onClose]}
+          onClick={
+            Object {
+              "handleCancelClicked": Object {
+                "onClose": [MockFunction props.onClose],
+              },
+            }
+          }
           src={[MockFunction icons.Close]}
         />
       </div>

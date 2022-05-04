@@ -27,7 +27,7 @@ export const EditorContainer = ({
             <IconButton
               src={Close}
               iconAs={Icon}
-              onClick={onClose}
+              onClick={handleCancelClicked}
             />
           </div>
         </ModalDialog.Title>

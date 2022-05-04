@@ -1,3 +1,4 @@
+import { IconButton } from '@edx/paragon';
 import { shallow } from 'enzyme';
 import { useDispatch } from 'react-redux';
 
@@ -36,16 +37,23 @@ describe('EditorContainer component', () => {
       beforeEach(() => {
         el = shallow(<EditorContainer {...props}>{testContent}</EditorContainer>);
       });
-      test('close behavior is linked to modal onClose and footer onCancel', () => {
+      test('close behavior is linked to modal onClose', () => {
         const expected = hooks.handleCancelClicked({ onClose: props.onClose });
-        expect(el.children().at(2).props().onCancel).toEqual(expected);
+        expect(el.find(IconButton)
+          .props().onClick).toEqual(expected);
+      });
+      test('close behavior is linked to footer onCancel', () => {
+        const expected = hooks.handleCancelClicked({ onClose: props.onClose });
+        expect(el.children().at(2)
+          .props().onCancel).toEqual(expected);
       });
       test('save behavior is linked to footer onSave', () => {
         const expected = hooks.handleSaveClicked({
           getContent: props.getContent,
           dispatch: useDispatch(),
         });
-        expect(el.children().at(2).props().onSave).toEqual(expected);
+        expect(el.children().at(2)
+          .props().onSave).toEqual(expected);
       });
     });
   });
