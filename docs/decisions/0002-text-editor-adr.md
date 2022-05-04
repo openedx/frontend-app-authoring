@@ -4,7 +4,8 @@ Accepted
 
 # Context
 
-We seek to hoist the lecacy text (HTML) text editor out of the monolith into a decoupled React application.
+We seek to hoist the legacy text (HTML) text editor out of the monolith into a decoupled React application
+without reducing editor capabilities in the process.
 
 The legacy editor delegates the bulk of its operations to the tinyMCE editor
 
