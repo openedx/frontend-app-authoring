@@ -21,7 +21,7 @@ a user-friendly interface".
     
 # Consequences
 
-## Rely on editor-wide BlockStore networking decision
+## Rely on editors-wide XBlock API (network access) decision
 No complexity associated with CRUD operations on XBlock content, irrespective of where the XBlocks are stored.
 
 ## Continue using the tinyMCE editor
