@@ -5,10 +5,18 @@ import { useDispatch } from 'react-redux';
 import hooks from './hooks';
 import CollapsibleFormWidget from './CollapsibleFormWidget';
 
+/**
+ * Collapsible Form widget controlling videe licence type and details
+ */
 export const LicenseWidget = () => {
   const dispatch = useDispatch();
-  const licenseType = hooks.widgetValue(hooks.selectorKeys.licenseType, dispatch);
-  const licenseDetails = hooks.widgetValue(hooks.selectorKeys.licenseDetails, dispatch);
+  const { licenseType, licenseDetails } = hooks.widgetValues({
+    dispatch,
+    fields: {
+      [hooks.selectorKeys.licenseType]: hooks.genericWidget,
+      [hooks.selectorKeys.licenseDetails]: hooks.objectWidget,
+    },
+  });
   return (
     <CollapsibleFormWidget title="License">
       <div>License Widget</div>

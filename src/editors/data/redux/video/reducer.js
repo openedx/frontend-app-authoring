@@ -3,16 +3,19 @@ import { createSlice } from '@reduxjs/toolkit';
 import { StrictDict } from '../../../utils';
 
 const initialState = {
-  videoSource: null,
-  fallbackVideos: [],
+  videoSource: '',
+  fallbackVideos: [
+    '',
+    '',
+  ],
   allowVideoDownloads: false,
   thumbnail: null,
   transcripts: {},
   allowTranscriptDownloads: false,
   duration: {
-    startTime: null,
-    stopTime: null,
-    total: null,
+    startTime: '00:00:00',
+    stopTime: '00:00:00',
+    total: '00:00:00',
   },
   showTranscriptByDefault: false,
   handout: null,
@@ -30,6 +33,10 @@ const video = createSlice({
   name: 'video',
   initialState,
   reducers: {
+    updateField: (state, { payload }) => ({
+      ...state,
+      ...payload,
+    }),
     load: (state, { payload }) => ({
       ...payload,
     }),

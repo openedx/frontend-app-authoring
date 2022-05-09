@@ -5,17 +5,24 @@ import { useDispatch } from 'react-redux';
 import hooks from './hooks';
 import CollapsibleFormWidget from './CollapsibleFormWidget';
 
+/**
+ * Collapsible Form widget controlling video transcripts
+ */
 export const TranscriptWidget = () => {
   const dispatch = useDispatch();
-  const transcripts = hooks.widgetValue(hooks.selectorKeys.transcripts, dispatch);
-  const allowDownload = hooks.widgetValue(
-    hooks.selectorKeys.allowTranscriptDownloads,
+  const values = hooks.widgetValues({
     dispatch,
-  );
-  const showByDefault = hooks.widgetValue(
-    hooks.selectorKeys.showTranscriptByDefault,
-    dispatch,
-  );
+    fields: {
+      [hooks.selectorKeys.transcripts]: hooks.objectWidget,
+      [hooks.selectorKeys.allowTranscriptDownloads]: hooks.genericWidget,
+      [hooks.selectorKeys.showTranscriptByDefault]: hooks.genericWidget,
+    },
+  });
+  const {
+    transcripts,
+    allowTranscriptDownloads: allowDownload,
+    showTranscriptByDefault: showByDefault,
+  } = values;
   return (
     <CollapsibleFormWidget title="Transcript">
       <b>Transcripts</b>

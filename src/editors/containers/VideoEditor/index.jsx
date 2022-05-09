@@ -8,7 +8,10 @@ export default function VideoEditor({
   onClose,
 }) {
   return (
-    <EditorContainer onClose={onClose}>
+    <EditorContainer
+      onClose={onClose}
+      getContent={() => ({})}
+    >
       <div className="video-editor">
         <VideoEditorModal />
       </div>

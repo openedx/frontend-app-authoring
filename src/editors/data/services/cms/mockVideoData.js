@@ -36,10 +36,10 @@ export const singleVideoData = {
     english: 'my-transcript-url',
   },
   allowTranscriptDownloads: false,
-  duration: { // in ms
+  duration: {
     startTime: 0,
-    endTime: 0,
-    total: 5000,
+    stopTime: 0,
+    total: 0,
   },
   showTranscriptByDefault: false,
   handout: 'my-handout-url',
