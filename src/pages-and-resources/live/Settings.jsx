@@ -113,9 +113,12 @@ function LiveSettings({
                     </p>
                   ) : (
                     <>
-                      <p data-testid="helper-text">
-                        {intl.formatMessage(messages.providerHelperText, { providerName: values.provider })}
-                      </p>
+                      {(values.piiSharingEmail || values.piiSharingUsername)
+                        && (
+                        <p data-testid="helper-text">
+                          {intl.formatMessage(messages.providerHelperText, { providerName: values.provider })}
+                        </p>
+                      )}
                       <p className="pb-2">{intl.formatMessage(messages.formInstructions)}</p>
                       <FormikControl
                         name="consumerKey"
