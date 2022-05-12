@@ -60,6 +60,7 @@ export function saveLiveConfiguration(courseId, config) {
   return async (dispatch) => {
     dispatch(updateSaveStatus({ status: RequestStatus.IN_PROGRESS }));
     try {
+      console.log('saveLiveConfiguration', config);
       const apps = await postLiveConfiguration(courseId, config);
       dispatch(updateLiveSettingsState(apps));
 

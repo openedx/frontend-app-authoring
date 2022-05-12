@@ -82,7 +82,7 @@ export function deNormalizeSettings(data) {
     provider_type: data?.provider || 'zoom',
     pii_sharing_allowed: data?.piiSharingEnable || false,
   };
-
+  console.log('deNormalizeSettings', apiData);
   return apiData;
 }
 
@@ -111,10 +111,17 @@ export async function getLiveConfiguration(courseId) {
 }
 
 export async function postLiveConfiguration(courseId, config) {
+  console.log('postLiveConfiguration', config);
+
   const { data } = await getAuthenticatedHttpClient().post(
     `${providerConfigurationApiUrl}/${courseId}/`,
     deNormalizeSettings(config),
   );
+
+  console.log('api_response', await getAuthenticatedHttpClient().post(
+    `${providerConfigurationApiUrl}/${courseId}/`,
+    deNormalizeSettings(config),
+  ));
 
   return normalizeSettings(data);
 }

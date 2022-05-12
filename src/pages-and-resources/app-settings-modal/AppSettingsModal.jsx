@@ -231,7 +231,7 @@ function AppSettingsModal({
                   <div className="d-flex align-items-center">
                     {enableAppLabel}
                     {formikProps.values.enabled && (
-                      <Badge className="ml-2" variant="success">
+                      <Badge className="ml-2" variant="success" data-testid="enable-badge">
                         {intl.formatMessage(messages.enabled)}
                       </Badge>
                     )}

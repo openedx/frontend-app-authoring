@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { camelCase } from 'lodash';
 import { SelectableBox, Icon } from '@edx/paragon';
@@ -21,7 +21,6 @@ function LiveSettings({
   onClose,
 }) {
   const dispatch = useDispatch();
-  const [isLoading, setLoading] = useState(true);
   const courseId = useSelector(state => state.courseDetail.courseId);
   const availableProviders = useSelector((state) => state.live.appIds);
   const {
@@ -43,6 +42,10 @@ function LiveSettings({
     piiSharingEmail: app?.piiSharing.email || false,
   };
 
+  console.log('liveConfiguration', liveConfiguration);
+  console.log('app', app);
+  console.log('piiSharingAllowed', piiSharingAllowed);
+
   const validationSchema = {
     enabled: Yup.boolean(),
     consumerKey: Yup.string().required(intl.formatMessage(messages.consumerKeyRequired)),
@@ -62,10 +65,7 @@ function LiveSettings({
   };
 
   useEffect(() => {
-    (async () => {
-      await dispatch(fetchLiveData(courseId));
-      setLoading(false);
-    })();
+    dispatch(fetchLiveData(courseId));
   }, [courseId]);
 
   return (
@@ -85,7 +85,7 @@ function LiveSettings({
       >
         {({ values, setFieldValue }) => (
           <>
-            {(status === RequestStatus.IN_PROGRESS || isLoading) ? (
+            {(status === RequestStatus.IN_PROGRESS) ? (
               <Loading />
               ) : (
                 <>
