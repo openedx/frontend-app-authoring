@@ -35,7 +35,6 @@ import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 let axiosMock;
 let container;
 let store;
-let debug;
 const liveSettingsUrl = `/course/${courseId}/pages-and-resources/live/settings`;
 
 const renderComponent = () => {
@@ -53,7 +52,6 @@ const renderComponent = () => {
     </IntlProvider>,
   );
   container = wrapper.container;
-  debug = wrapper.debug;
 };
 
 const mockStore = async ({
@@ -108,9 +106,6 @@ describe('LiveSettings', () => {
     const label = container.querySelector('label[for="enable-live-toggle"]');
     const helperText = container.querySelector('#enable-live-toggleHelpText');
     const enableBadge = queryByTestId(container, 'enable-badge');
-
-    debug(enableBadge);
-    debug(helperText);
 
     expect(label).toHaveTextContent(messages.enableLiveLabel.defaultMessage);
     expect(enableBadge).toHaveTextContent('Enabled');
