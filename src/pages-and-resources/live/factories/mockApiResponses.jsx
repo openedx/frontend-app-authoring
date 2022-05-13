@@ -31,44 +31,40 @@ export const initialState = {
       },
     },
   },
-  live: {
-    providers: {
-      available: {
-        zoom: {
-          name: 'Zoom LTI PRO',
-          features: [],
-        },
-      },
-      selectedProvider: {},
-      active: 'zoom',
-    },
-    appIds: [
-      {
-        id: 'zoom',
-      },
-    ],
-    status: 'successful',
-    configuration: {
-      courseKey: '',
-      enabled: true,
-      consumerKey: '',
-      consumerSecret: '',
-      launchUrl: '',
-      launchEmail: '',
-      provider: 'zoom',
-      piiSharingEnable: true,
-    },
-    saveStatus: 'successful',
-    configuredProvider: 'zoom',
-  },
 };
 
+export const configurationProviders = (
+  emailSharing,
+  usernameSharing,
+) => ({
+  providers: {
+    active: 'zoom',
+    available: {
+      zoom: {
+        features: [],
+        name: 'Zoom LTI PRO',
+        pii_sharing: {
+          email: emailSharing,
+          username: usernameSharing,
+        },
+      },
+      googleMeet: {
+        features: [],
+        name: 'Google Meet',
+        pii_sharing: {
+          email: true,
+          username: true,
+        },
+      },
+    },
+  },
+});
+
 export const generateLiveConfigurationApiResponse = (
-  enabled = true,
-  piiSharingAllowed = true,
+  enabled,
+  piiSharingAllowed,
 ) => ({
   course_key: courseId,
-  provider_type: 'zoom',
   enabled,
   lti_configuration: {
     lti_1p1_client_key: 'consumer_key',
@@ -82,4 +78,5 @@ export const generateLiveConfigurationApiResponse = (
     },
   },
   pii_sharing_allowed: piiSharingAllowed,
+  provider_type: 'zoom',
 });
