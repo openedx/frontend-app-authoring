@@ -42,10 +42,6 @@ function LiveSettings({
     piiSharingEmail: app?.piiSharing.email || false,
   };
 
-  console.log('liveConfiguration', liveConfiguration);
-  console.log('app', app);
-  console.log('piiSharingAllowed', piiSharingAllowed);
-
   const validationSchema = {
     enabled: Yup.boolean(),
     consumerKey: Yup.string().required(intl.formatMessage(messages.consumerKeyRequired)),

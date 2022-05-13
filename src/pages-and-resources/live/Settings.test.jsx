@@ -197,50 +197,6 @@ describe('LiveSettings', () => {
     },
   );
 
-  // test('Form should be submitted and closed when valid data is provided', async () => {
-  //   const fetchProviderConfigUrl = `${providersApiUrl}/${courseId}/`;
-  //   const fetchLiveConfigUrl = `${providerConfigurationApiUrl}/${courseId}/`;
-  //   const apiDefaultResponse = generateLiveConfigurationApiResponse(true, true);
-  //   axiosMock.onGet(fetchProviderConfigUrl).reply(200, configurationProviders(false, false));
-  //   axiosMock.onGet(fetchLiveConfigUrl).reply(200, apiDefaultResponse);
-  //   axiosMock.onPost(fetchLiveConfigUrl, apiDefaultResponse).reply(200, apiDefaultResponse);
-
-  //   await executeThunk(fetchLiveProviders(courseId), store.dispatch);
-  //   await executeThunk(fetchLiveConfiguration(courseId), store.dispatch);
-
-  //   // axiosMock.onGet(fetchProviderConfigUrl).reply(200, configurationProviders(emailSharing, usernameSharing));
-  //   // axiosMock.onGet(fetchLiveConfigUrl).reply(200, generateLiveConfigurationApiResponse(enabled, piiSharingAllowed));
-  //   // await executeThunk(fetchLiveConfiguration(courseId), store.dispatch);
-  //   console.log('store', store.getState().live);
-  //   console.log('apiDefaultResponse', apiDefaultResponse);
-
-  //   renderComponent();
-  //   const spinner = getByRole(container, 'status');
-  //   await waitForElementToBeRemoved(spinner);
-
-  //   const consumerKey = container.querySelector('input[name="consumerKey"]').parentElement;
-  //   const consumerSecret = container.querySelector('input[name="consumerSecret"]').parentElement;
-  //   const launchUrl = container.querySelector('input[name="launchUrl"]').parentElement;
-  //   const launchEmail = container.querySelector('input[name="launchEmail"]').parentElement;
-
-  //   expect(consumerKey.firstChild).toBeVisible();
-  //   expect(consumerKey.lastChild).toHaveTextContent(messages.consumerKey.defaultMessage);
-  //   expect(consumerSecret.firstChild).toBeVisible();
-  //   expect(consumerSecret.lastChild).toHaveTextContent(messages.consumerSecret.defaultMessage);
-  //   expect(launchUrl.firstChild).toBeVisible();
-  //   expect(launchUrl.lastChild).toHaveTextContent(messages.launchUrl.defaultMessage);
-  //   expect(launchEmail.firstChild).toBeVisible();
-  //   expect(launchEmail.lastChild).toHaveTextContent(messages.launchEmail.defaultMessage);
-
-  //   const saveButton = queryByText(container, 'Save');
-
-  //   await waitFor(async () => {
-  //     await act(async () => fireEvent.click(saveButton));
-  //     debug();
-  //     expect(queryByRole(container, 'dialog')).not.toBeInTheDocument();
-  //   });
-  // });
-
   test('Provider Configuration should be displayed correctly', async () => {
     const apiDefaultResponse = generateLiveConfigurationApiResponse(true, true);
     await mockStore({ emailSharing: false, piiSharingAllowed: false });
