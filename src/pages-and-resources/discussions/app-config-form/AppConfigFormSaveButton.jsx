@@ -15,7 +15,7 @@ function AppConfigFormSaveButton({ intl, labelText }) {
   const { selectedAppId } = useSelector((state) => state.discussions);
 
   const app = useModel('apps', selectedAppId);
-  const canSubmit = getAuthenticatedUser().administrator || !app.adminOnlyConfig;
+  const canSubmit = getAuthenticatedUser().administrator || !app?.adminOnlyConfig;
 
   const { formRef } = useContext(AppConfigFormContext);
 
@@ -23,7 +23,12 @@ function AppConfigFormSaveButton({ intl, labelText }) {
 
   // This causes the form to be submitted from a button outside the form.
   const handleSave = useCallback(() => {
-    formRef.current.requestSubmit();
+    // https://developer.mozilla.org/en-US/docs/Web/API/Event/Event
+    // cancelable: (optional) a Boolean indicating whether the event can be canceled. The default is false.
+    // cancelable: true cancels the untrusted event and safari, chrome cancel the untrusted event by default
+    formRef.current.dispatchEvent(new Event('submit', {
+      cancelable: true,
+    }));
   }, [formRef]);
 
   return (
