@@ -19,6 +19,8 @@ export const messages = {
     defaultMessage: 'Search',
     description: 'Placeholder text for search bar',
   },
+
+  // Sort Dropdown
   sortByDateNewest: {
     id: 'authoring.texteditor.selectimagemodal.sort.datenewest.label',
     defaultMessage: 'By date added (newest)',
@@ -39,6 +41,8 @@ export const messages = {
     defaultMessage: 'By name (descending)',
     description: 'Dropdown label for sorting by name (descending)',
   },
+
+  // Gallery
   addedDate: {
     id: 'authoring.texteditor.selectimagemodal.addedDate.label',
     defaultMessage: 'Added {date} at {time}',
@@ -48,6 +52,23 @@ export const messages = {
     id: 'authoring.texteditor.selectimagemodal.spinner.readertext',
     defaultMessage: 'loading...',
     description: 'Gallery loading spinner screen-reader text',
+  },
+  emptyGalleryLabel: {
+    id: 'authoring.texteditor.selectimagemodal.emptyGalleryLabel',
+    defaultMessage: 'No images found in your gallery. Please upload an image using the button below.',
+    description: 'Label for when image gallery is empty.',
+  },
+  emptySearchLabel: {
+    id: 'authoring.texteditor.selectimagemodal.emptySearchLabel',
+    defaultMessage: 'No search results.',
+    description: 'Label for when search returns nothing.',
+  },
+
+  // Errors
+  errorTitle: {
+    id: 'authoring.texteditor.selectimagemodal.error.errorTitle',
+    defaultMessage: 'Error',
+    description: 'Title of message presented to user when something goes wrong',
   },
   uploadImageError: {
     id: 'authoring.texteditor.selectimagemodal.error.uploadImageError',
@@ -59,20 +80,10 @@ export const messages = {
     defaultMessage: 'Failed to obtain course Images. Please Try again.',
     description: 'Message presented to user when images are not found',
   },
-  errorTitle: {
-    id: 'authoring.texteditor.selectimagemodal.error.errorTitle',
-    defaultMessage: 'Error',
-    description: 'Title of message presented to user when something goes wrong',
-  },
-  emptyGalleryLabel: {
-    id: 'authoring.texteditor.selectimagemodal.emptyGalleryLabel',
-    defaultMessage: 'No images found in your gallery. Please upload an image using the button below.',
-    description: 'Label for when image gallery is empty.',
-  },
-  emptySearchLabel: {
-    id: 'authoring.texteditor.selectimagemodal.emptySearchLabel',
-    defaultMessage: 'No search results.',
-    description: 'Label for when search returns nothing.',
+  selectImageError: {
+    id: 'authoring.texteditor.selectimagemodal.error.selectImageError',
+    defaultMessage: 'Select an image to continue.',
+    description: 'Message presented to user when clicking Next without selecting an image',
   },
 };
 

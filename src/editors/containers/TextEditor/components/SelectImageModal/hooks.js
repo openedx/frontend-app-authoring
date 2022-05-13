@@ -6,8 +6,9 @@ import * as module from './hooks';
 import { sortFunctions, sortKeys } from './utils';
 
 export const state = {
-  images: (val) => React.useState(val),
   highlighted: (val) => React.useState(val),
+  images: (val) => React.useState(val),
+  showSelectImageError: (val) => React.useState(val),
   searchString: (val) => React.useState(val),
   sortBy: (val) => React.useState(val),
 };
@@ -34,12 +35,13 @@ export const displayList = ({ sortBy, searchString, images }) => module.filtered
 }).sort(sortFunctions[sortBy in sortKeys ? sortKeys[sortBy] : sortKeys.dateNewest]);
 
 export const imgListHooks = ({
-  setSelection,
   searchSortProps,
+  setSelection,
 }) => {
   const dispatch = useDispatch();
   const [images, setImages] = module.state.images({});
   const [highlighted, setHighlighted] = module.state.highlighted(null);
+  const [showSelectImageError, setShowSelectImageError] = module.state.showSelectImageError(false);
   const list = module.displayList({ ...searchSortProps, images });
 
   React.useEffect(() => {
@@ -47,18 +49,28 @@ export const imgListHooks = ({
   }, []);
 
   return {
-    images,
-    // highlight by id
-    selectBtnProps: {
-      disabled: !highlighted,
-      onClick: () => setSelection(images[highlighted]),
+    error: {
+      show: showSelectImageError,
+      set: () => setShowSelectImageError(true),
+      dismiss: () => setShowSelectImageError(false),
     },
+    images,
     galleryProps: {
       galleryIsEmpty: Object.keys(images).length === 0,
       searchIsEmpty: list.length === 0,
       displayList: list,
       highlighted,
       onHighlightChange: e => setHighlighted(e.target.value),
+    },
+    // highlight by id
+    selectBtnProps: {
+      onClick: () => {
+        if (highlighted) {
+          setSelection(images[highlighted]);
+        } else {
+          setShowSelectImageError(true);
+        }
+      },
     },
   };
 };
@@ -85,13 +97,18 @@ export const imgHooks = ({ setSelection }) => {
   const searchSortProps = module.searchAndSortHooks();
   const imgList = module.imgListHooks({ setSelection, searchSortProps });
   const fileInput = module.fileInputHooks({ setSelection });
-  const { selectBtnProps, galleryProps } = imgList;
-
-  return {
-    fileInput,
+  const {
+    error,
     galleryProps,
     selectBtnProps,
+  } = imgList;
+
+  return {
+    error,
+    fileInput,
+    galleryProps,
     searchSortProps,
+    selectBtnProps,
   };
 };
 

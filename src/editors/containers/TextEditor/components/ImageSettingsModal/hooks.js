@@ -7,6 +7,8 @@ import * as module from './hooks';
 export const state = {
   altText: (val) => React.useState(val),
   dimensions: (val) => React.useState(val),
+  showDismissibleError: (val) => React.useState(val),
+  showSubmissionError: (val) => React.useState(val),
   isDecorative: (val) => React.useState(val),
   isLocked: (val) => React.useState(val),
   local: (val) => React.useState(val),
@@ -119,6 +121,16 @@ export const dimensionLockHooks = () => {
  *   {func} setWidth - set width
  *     @param {string} - new width string
  *   {func} updateDimensions - set dimensions based on state
+ *   {obj} errorProps - props for user feedback error
+ *     {bool} isError - true if dimensions are blank
+ *     {func} setError - sets isError to true
+ *     {func} dismissError - sets isError to false
+ *     {bool} isHeightValid - true if height field is ready to save
+ *     {func} setHeightValid - sets isHeightValid to true
+ *     {func} setHeightNotValid - sets isHeightValid to false
+ *     {bool} isWidthValid - true if width field is ready to save
+ *     {func} setWidthValid - sets isWidthValid to true
+ *     {func} setWidthNotValid - sets isWidthValid to false
  */
 export const dimensionHooks = () => {
   const [dimensions, setDimensions] = module.state.dimensions(null);
@@ -165,16 +177,50 @@ export const dimensionHooks = () => {
  *     @param {string} - new alt text
  *   {bool} isDecorative - is the image decorative?
  *   {func} setIsDecorative - set isDecorative field
- *     @param {bool} isDecorative
+ *   {obj} error - error at top of page
+ *     {bool} show - is error being displayed?
+ *     {func} set - set show to true
+ *     {func} dismiss - set show to false
+ *   {obj} validation - local alt text error
+ *     {bool} show - is validation error being displayed?
+ *     {func} set - set validation to true
+ *     {func} dismiss - set validation to false
  */
 export const altTextHooks = (savedText) => {
   const [value, setValue] = module.state.altText(savedText || '');
   const [isDecorative, setIsDecorative] = module.state.isDecorative(false);
+  const [showDismissibleError, setShowDismissibleError] = module.state.showDismissibleError(false);
+  const [showSubmissionError, setShowSubmissionError] = module.state.showSubmissionError(false);
+
+  const validateAltText = (newVal, newDecorative) => {
+    if (showSubmissionError) {
+      if (newVal || newDecorative) {
+        setShowSubmissionError(false);
+      }
+    }
+  };
+
   return {
     value,
-    setValue,
+    setValue: (val) => {
+      setValue(val);
+      validateAltText(val, null);
+    },
     isDecorative,
-    setIsDecorative,
+    setIsDecorative: (decorative) => {
+      setIsDecorative(decorative);
+      validateAltText(null, decorative);
+    },
+    error: {
+      show: showDismissibleError,
+      set: () => setShowDismissibleError(true),
+      dismiss: () => setShowDismissibleError(false),
+    },
+    validation: {
+      show: showSubmissionError,
+      set: () => setShowSubmissionError(true),
+      dismiss: () => setShowSubmissionError(false),
+    },
   };
 };
 
@@ -195,6 +241,25 @@ export const onInputChange = (handleValue) => (e) => handleValue(e.target.value)
 export const onCheckboxChange = (handleValue) => (e) => handleValue(e.target.checked);
 
 /**
+ * checkFormValidation({ altText, isDecorative, onAltTextFail })
+ * Handle saving the image context to the text editor
+ * @param {string} altText - image alt text
+ * @param {bool} isDecorative - is the image decorative?
+ * @param {func} onAltTextFail - called if alt text validation fails
+ */
+export const checkFormValidation = ({
+  altText,
+  isDecorative,
+  onAltTextFail,
+}) => {
+  if (!isDecorative && altText === '') {
+    onAltTextFail();
+    return false;
+  }
+  return true;
+};
+
+/**
  * onSave({ altText, dimensions, isDecorative, saveToEditor })
  * Handle saving the image context to the text editor
  * @param {string} altText - image alt text
@@ -207,27 +272,30 @@ export const onSaveClick = ({
   dimensions,
   isDecorative,
   saveToEditor,
-}) => () => saveToEditor({
-  altText,
-  dimensions,
-  isDecorative,
-});
-
-/**
- * isSaveDisabled(altText)
- * Returns true the save button should be disabled (altText is missing and not decorative)
- * @param {object} altText - altText hook object
- *   {bool} isDecorative - is the image decorative?
- *   {string} value - alt text value
- * @return {bool} - should the save button be disabled?
- */
-export const isSaveDisabled = (altText) => !altText.isDecorative && (altText.value === '');
+}) => () => {
+  if (module.checkFormValidation({
+    altText: altText.value,
+    isDecorative,
+    onAltTextFail: () => {
+      altText.error.set();
+      altText.validation.set();
+    },
+  })) {
+    altText.error.dismiss();
+    altText.validation.dismiss();
+    saveToEditor({
+      altText: altText.value,
+      dimensions,
+      isDecorative,
+    });
+  }
+};
 
 export default {
   altText: altTextHooks,
   dimensions: dimensionHooks,
-  isSaveDisabled,
   onCheckboxChange,
   onInputChange,
   onSaveClick,
+  checkFormValidation,
 };

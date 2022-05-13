@@ -34,6 +34,8 @@ describe('state values', () => {
   };
   test('provides altText state value', () => testStateMethod(state.keys.altText));
   test('provides dimensions state value', () => testStateMethod(state.keys.dimensions));
+  test('provides showDismissibleError state value', () => testStateMethod(state.keys.showDismissibleError));
+  test('provides showSubmissionError state value', () => testStateMethod(state.keys.showSubmissionError));
   test('provides isDecorative state value', () => testStateMethod(state.keys.isDecorative));
   test('provides isLocked state value', () => testStateMethod(state.keys.isLocked));
   test('provides local state value', () => testStateMethod(state.keys.local));
@@ -42,6 +44,9 @@ describe('state values', () => {
 });
 
 describe('ImageSettingsModal hooks', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
   describe('dimensions-related hooks', () => {
     describe('getValidDimensions', () => {
       it('returns local dimensions if not locked', () => {
@@ -169,12 +174,12 @@ describe('ImageSettingsModal hooks', () => {
         state.restore();
       });
       it('initializes dimension lock hooks with incoming dimension value', () => {
-        state.mockVal(state.keys.dimensions, reducedDims, state.setState.local);
+        state.mockVal(state.keys.dimensions, reducedDims);
         hook = hooks.dimensionHooks();
         expect(hooks.dimensionLockHooks).toHaveBeenCalledWith({ dimensions: reducedDims });
       });
       test('value is tied to local state', () => {
-        state.mockVal(state.keys.local, simpleDims, state.setState.local);
+        state.mockVal(state.keys.local, simpleDims);
         hook = hooks.dimensionHooks();
         expect(hook.value).toEqual(simpleDims);
       });
@@ -200,14 +205,14 @@ describe('ImageSettingsModal hooks', () => {
       });
       describe('setHeight', () => {
         it('sets local height to int value of argument', () => {
-          state.mockVal(state.keys.local, simpleDims, state.setState.local);
+          state.mockVal(state.keys.local, simpleDims);
           hooks.dimensionHooks().setHeight('23.4');
           expect(state.setState.local).toHaveBeenCalledWith({ ...simpleDims, height: 23 });
         });
       });
       describe('setWidth', () => {
         it('sets local width to int value of argument', () => {
-          state.mockVal(state.keys.local, simpleDims, state.setState.local);
+          state.mockVal(state.keys.local, simpleDims);
           hooks.dimensionHooks().setWidth('34.5');
           expect(state.setState.local).toHaveBeenCalledWith({ ...simpleDims, width: 34 });
         });
@@ -237,17 +242,67 @@ describe('ImageSettingsModal hooks', () => {
     });
   });
   describe('altTextHooks', () => {
-    it('returns value and isDecorative, along with associated setters', () => {
+    const value = 'myVAL';
+    const isDecorative = true;
+    const showDismissibleError = 'dismiSSiBLE';
+    const showSubmissionError = 'subMISsion';
+    beforeEach(() => {
       state.mock();
-      const value = 'myVAL';
-      const isDecorative = 'IS WE Decorating?';
-      state.mockVal(state.keys.altText, value, state.setState.altText);
-      state.mockVal(state.keys.isDecorative, isDecorative, state.setState.isDecorative);
+      hook = hooks.altTextHooks();
+    });
+    afterEach(() => {
+      state.restore();
+    });
+    it('returns value and isDecorative', () => {
+      state.mockVal(state.keys.altText, value);
+      state.mockVal(state.keys.isDecorative, isDecorative);
       hook = hooks.altTextHooks();
       expect(hook.value).toEqual(value);
-      expect(hook.setValue).toEqual(state.setState.altText);
       expect(hook.isDecorative).toEqual(isDecorative);
-      expect(hook.setIsDecorative).toEqual(state.setState.isDecorative);
+    });
+    test('setValue sets value', () => {
+      state.mockVal(state.keys.altText, value);
+      hook = hooks.altTextHooks();
+      hook.setValue(value);
+      expect(state.setState.altText).toHaveBeenCalledWith(value);
+    });
+    test('setIsDecorative sets isDecorative', () => {
+      state.mockVal(state.keys.altText, value);
+      hook = hooks.altTextHooks();
+      hook.setIsDecorative(value);
+      expect(state.setState.isDecorative).toHaveBeenCalledWith(value);
+    });
+    describe('error', () => {
+      test('show is initialized to false and returns properly', () => {
+        expect(hook.error.show).toEqual(false);
+        state.mockVal(state.keys.showDismissibleError, showDismissibleError);
+        hook = hooks.altTextHooks();
+        expect(hook.error.show).toEqual(showDismissibleError);
+      });
+      test('set sets showDismissibleError to true', () => {
+        hook.error.set();
+        expect(state.setState.showDismissibleError).toHaveBeenCalledWith(true);
+      });
+      test('dismiss sets showDismissibleError to false', () => {
+        hook.error.dismiss();
+        expect(state.setState.showDismissibleError).toHaveBeenCalledWith(false);
+      });
+    });
+    describe('validation', () => {
+      test('show is initialized to false and returns properly', () => {
+        expect(hook.validation.show).toEqual(false);
+        state.mockVal(state.keys.showSubmissionError, showSubmissionError);
+        hook = hooks.altTextHooks();
+        expect(hook.validation.show).toEqual(showSubmissionError);
+      });
+      test('set sets showSubmissionError to true', () => {
+        hook.validation.set();
+        expect(state.setState.showSubmissionError).toHaveBeenCalledWith(true);
+      });
+      test('dismiss sets showSubmissionError to false', () => {
+        hook.validation.dismiss();
+        expect(state.setState.showSubmissionError).toHaveBeenCalledWith(false);
+      });
     });
   });
   describe('onInputChange', () => {
@@ -266,31 +321,71 @@ describe('ImageSettingsModal hooks', () => {
       expect(onChange).toHaveBeenCalledWith(checked);
     });
   });
-  describe('onSaveClick', () => {
-    it('calls saveToEditor with dimensions, altText, and isDecorative', () => {
-      const dimensions = simpleDims;
-      const altText = 'What is this?';
-      const isDecorative = 'probably';
-      const saveToEditor = jest.fn();
-      hooks.onSaveClick({
-        altText,
-        dimensions,
-        isDecorative,
-        saveToEditor,
-      })();
-      expect(saveToEditor).toHaveBeenCalledWith({
-        altText,
-        dimensions,
-        isDecorative,
-      });
+  describe('checkFormValidation', () => {
+    const props = {
+      onAltTextFail: jest.fn().mockName('onAltTextFail'),
+    };
+    beforeEach(() => {
+      props.altText = '';
+      props.isDecorative = false;
+    });
+    it('calls onAltTextFail when isDecorative is false and altText is an empty string', () => {
+      hooks.checkFormValidation({ ...props });
+      expect(props.onAltTextFail).toHaveBeenCalled();
+    });
+    it('returns false when isDeocrative is false and altText is an empty string', () => {
+      expect(hooks.checkFormValidation({ ...props })).toEqual(false);
+    });
+    it('returns true when isDecorative is true', () => {
+      props.isDecorative = true;
+      expect(hooks.checkFormValidation({ ...props })).toEqual(true);
     });
   });
-  describe('isSaveDisabled', () => {
-    it('returns true iff is not decorative and altText value is empty', () => {
-      hook = hooks.isSaveDisabled;
-      expect(hook({ isDecorative: false, value: '' })).toEqual(true);
-      expect(hook({ isDecorative: false, value: 'test' })).toEqual(false);
-      expect(hook({ isDecorative: true, value: '' })).toEqual(false);
+  describe('onSaveClick', () => {
+    const props = {
+      altText: {
+        error: {
+          show: true,
+          set: jest.fn(),
+          dismiss: jest.fn(),
+        },
+        validation: {
+          show: true,
+          set: jest.fn(),
+          dismiss: jest.fn(),
+        },
+      },
+      dimensions: simpleDims,
+      saveToEditor: jest.fn().mockName('saveToEditor'),
+    };
+    beforeEach(() => {
+      props.altText.value = 'What is this?';
+      props.isDecorative = false;
+    });
+    it('calls checkFormValidation', () => {
+      jest.spyOn(hooks, hookKeys.checkFormValidation);
+      hooks.onSaveClick({ ...props })();
+      expect(hooks.checkFormValidation).toHaveBeenCalled();
+    });
+    it('calls saveToEditor with dimensions, altText and isDecorative when checkFormValidation is true', () => {
+      jest.spyOn(hooks, hookKeys.checkFormValidation).mockReturnValueOnce(true);
+      hooks.onSaveClick({ ...props })();
+      expect(props.saveToEditor).toHaveBeenCalledWith({
+        altText: props.altText.value,
+        dimensions: props.dimensions,
+        isDecorative: props.isDecorative,
+      });
+    });
+    it('calls dismissError and sets showSubmissionError to false when checkFormValidation is true', () => {
+      jest.spyOn(hooks, hookKeys.checkFormValidation).mockReturnValueOnce(true);
+      hooks.onSaveClick({ ...props })();
+      expect(props.altText.error.dismiss).toHaveBeenCalled();
+      expect(props.altText.validation.dismiss).toHaveBeenCalled();
+    });
+    it('does not call saveEditor when checkFormValidation is false', () => {
+      jest.spyOn(hooks, hookKeys.checkFormValidation).mockReturnValueOnce(false);
+      hooks.onSaveClick({ ...props })();
+      expect(props.saveToEditor).not.toHaveBeenCalled();
     });
   });
 });

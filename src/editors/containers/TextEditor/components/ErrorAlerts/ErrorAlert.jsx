@@ -11,7 +11,7 @@ export const hooks = {
   state: {
     isDismissed: (val) => React.useState(val),
   },
-  dismissalHooks: ({ isError }) => {
+  dismissalHooks: ({ dismissError, isError }) => {
     const [isDismissed, setIsDismissed] = hooks.state.isDismissed(false);
     React.useEffect(() => {
       setIsDismissed(isDismissed && !isError);
@@ -19,16 +19,21 @@ export const hooks = {
     [isError]);
     return {
       isDismissed,
-      dismissAlert: () => setIsDismissed(true),
+      dismissAlert: () => {
+        setIsDismissed(true);
+        dismissError();
+      },
     };
   },
 };
 
 export const ErrorAlert = ({
+  dismissError,
+  hideHeading,
   isError,
   children,
 }) => {
-  const { isDismissed, dismissAlert } = hooks.dismissalHooks({ isError });
+  const { isDismissed, dismissAlert } = hooks.dismissalHooks({ dismissError, isError });
   if (!isError || isDismissed) {
     return null;
   }
@@ -39,17 +44,25 @@ export const ErrorAlert = ({
       dismissible
       onClose={dismissAlert}
     >
-      <Alert.Heading>
-        <FormattedMessage
-          {...messages.errorTitle}
-        />
-      </Alert.Heading>
+      {!hideHeading
+        && (
+          <Alert.Heading>
+            <FormattedMessage {...messages.errorTitle} />
+          </Alert.Heading>
+        )}
       {children}
     </Alert>
   );
 };
 
+ErrorAlert.defaultProps = {
+  dismissError: null,
+  hideHeading: false,
+};
+
 ErrorAlert.propTypes = {
+  dismissError: PropTypes.func,
+  hideHeading: PropTypes.bool,
   isError: PropTypes.bool.isRequired,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),

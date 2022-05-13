@@ -59,6 +59,18 @@ export const messages = {
     defaultMessage: 'This image is decorative (no alt text required).',
     description: 'Checkbox label for whether or not an image is decorative.',
   },
+
+  // User Feedback Errors
+  altTextError: {
+    id: 'authoring.texteditor.imagesettingsmodal.error.altTextError',
+    defaultMessage: 'Enter alt text or specify that the image is decorative only.',
+    description: 'Message presented to user when user attempts to save unaccepted altText configuration.',
+  },
+  altTextLocalFeedback: {
+    id: 'authoring.texteditor.imagesettingsmodal.error.altTextLocalFeedback',
+    defaultMessage: 'Enter alt text',
+    description: 'Message feedback for user below the alt text field.',
+  },
 };
 
 export default messages;

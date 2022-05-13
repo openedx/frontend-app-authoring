@@ -28,15 +28,20 @@ describe('ErrorAlert component', () => {
       beforeEach(() => { state.mock(); });
       afterEach(() => { state.restore(); });
       describe('dismissalHooks', () => {
+        const props = {
+          dismissError: jest.fn(),
+          isError: testValue,
+        };
         beforeEach(() => {
-          hook = module.hooks.dismissalHooks({ isError: testValue });
+          hook = module.hooks.dismissalHooks(props);
         });
         it('returns isDismissed value, initialized to false', () => {
           expect(state.stateVals.isDismissed).toEqual(hook.isDismissed);
         });
-        test('dismissAlert sets isDismissed to true', () => {
+        test('dismissAlert sets isDismissed to true and calls dismissError', () => {
           hook.dismissAlert();
           expect(state.setState.isDismissed).toHaveBeenCalledWith(true);
+          expect(props.dismissError).toHaveBeenCalled();
         });
         test('On Render, calls setIsDismissed', () => {
           expect(React.useEffect.mock.calls.length).toEqual(1);
@@ -51,20 +56,27 @@ describe('ErrorAlert component', () => {
   describe('Component', () => {
     describe('Snapshots', () => {
       let props;
+      const msg = <p> An Error Message </p>;
       beforeAll(() => {
         props = {
-          isError: false,
+          dismissError: jest.fn(),
         };
-        jest.spyOn(module.hooks, 'dismissalHooks').mockImplementation((value) => ({ isError: value }));
+        jest.spyOn(module.hooks, 'dismissalHooks').mockImplementation(() => ({
+          isDismissed: false,
+          dismissAlert: jest.fn().mockName('dismissAlert'),
+        }));
       });
       afterAll(() => {
         jest.clearAllMocks();
       });
-      test('snapshot:  is Null when no error (ErrorAlert)', () => {
-        expect(shallow(<ErrorAlert {...props}> <p> An Error Message </p></ErrorAlert>)).toMatchSnapshot();
+      test('snapshot: is Null when no error (ErrorAlert)', () => {
+        expect(shallow(<ErrorAlert {...props}> <p> An Error Message </p> </ErrorAlert>)).toMatchSnapshot();
       });
       test('snapshot: Loads children and component when error (ErrorAlert)', () => {
-        expect(shallow(<ErrorAlert {...props} isError> <p> An Error Message </p> </ErrorAlert>)).toMatchSnapshot();
+        expect(shallow(<ErrorAlert {...props} isError hideHeading={false}>{msg}</ErrorAlert>)).toMatchSnapshot();
+      });
+      test('snapshot: Does not load heading when hideHeading is true', () => {
+        expect(shallow(<ErrorAlert {...props} isError hideHeading>{msg}</ErrorAlert>)).toMatchSnapshot();
       });
     });
   });

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AltTextControls render snapshot: isDecorative=true 1`] = `
+exports[`AltTextControls render snapshot: isDecorative=true errorProps.showSubmissionError=false 1`] = `
 <Form.Group
   className="mt-4.5"
 >
@@ -17,6 +17,7 @@ exports[`AltTextControls render snapshot: isDecorative=true 1`] = `
     className="mt-4.5"
     disabled={true}
     floatingLabel="Alt Text"
+    isInvalid={false}
     onChange={
       Object {
         "hooks.onInputChange": [MockFunction props.setValue],
@@ -25,6 +26,61 @@ exports[`AltTextControls render snapshot: isDecorative=true 1`] = `
     type="input"
     value="props.value"
   />
+  <Form.Checkbox
+    checked={true}
+    className="mt-4.5 decorative-control-label"
+    onChange={
+      Object {
+        "hooks.onCheckboxChange": [MockFunction props.setIsDecorative],
+      }
+    }
+  >
+    <Form.Label>
+      <FormattedMessage
+        defaultMessage="This image is decorative (no alt text required)."
+        description="Checkbox label for whether or not an image is decorative."
+        id="authoring.texteditor.imagesettingsmodal.decorativeCheckboxLabel"
+      />
+    </Form.Label>
+  </Form.Checkbox>
+</Form.Group>
+`;
+
+exports[`AltTextControls render snapshot: isDecorative=true errorProps.showSubmissionError=true 1`] = `
+<Form.Group
+  className="mt-4.5"
+>
+  <Form.Label
+    as="h4"
+  >
+    <FormattedMessage
+      defaultMessage="Accessibility"
+      description="Label title for accessibility section."
+      id="authoring.texteditor.imagesettingsmodal.accessibilityLabel"
+    />
+  </Form.Label>
+  <Form.Control
+    className="mt-4.5"
+    disabled={true}
+    floatingLabel="Alt Text"
+    isInvalid={true}
+    onChange={
+      Object {
+        "hooks.onInputChange": [MockFunction props.setValue],
+      }
+    }
+    type="input"
+    value="props.value"
+  />
+  <Form.Control.Feedback
+    type="invalid"
+  >
+    <FormattedMessage
+      defaultMessage="Enter alt text"
+      description="Message feedback for user below the alt text field."
+      id="authoring.texteditor.imagesettingsmodal.error.altTextLocalFeedback"
+    />
+  </Form.Control.Feedback>
   <Form.Checkbox
     checked={true}
     className="mt-4.5 decorative-control-label"

@@ -32,6 +32,17 @@ exports[`SelectImageModal component snapshot 1`] = `
 >
   <FetchErrorAlert />
   <UploadErrorAlert />
+  <ErrorAlert
+    dismissError={[MockFunction]}
+    hideHeading={true}
+    isError="ShoWERror"
+  >
+    <FormattedMessage
+      defaultMessage="Select an image to continue."
+      description="Message presented to user when clicking Next without selecting an image"
+      id="authoring.texteditor.selectimagemodal.error.selectImageError"
+    />
+  </ErrorAlert>
   <Stack
     gap={3}
   >

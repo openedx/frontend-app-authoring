@@ -9,6 +9,8 @@ import messages from './messages';
 
 /**
  * Wrapper for alt-text input and isDecorative checkbox control
+ * @param {obj} errorProps - props for error handling
+ *   {bool} isValid - are alt-text fields valid for saving?
  * @param {bool} isDecorative - is the image decorative?
  * @param {func} setIsDecorative - handle isDecorative change event
  * @param {func} setValue - update alt-text value
@@ -18,6 +20,7 @@ export const AltTextControls = ({
   isDecorative,
   setIsDecorative,
   setValue,
+  validation,
   value,
   // inject
   intl,
@@ -28,15 +31,22 @@ export const AltTextControls = ({
     </Form.Label>
     <Form.Control
       className="mt-4.5"
+      disabled={isDecorative}
+      floatingLabel={intl.formatMessage(messages.altTextFloatingLabel)}
+      isInvalid={validation.show}
+      onChange={hooks.onInputChange(setValue)}
       type="input"
       value={value}
-      disabled={isDecorative}
-      onChange={hooks.onInputChange(setValue)}
-      floatingLabel={intl.formatMessage(messages.altTextFloatingLabel)}
     />
+    {validation.show
+      && (
+        <Form.Control.Feedback type="invalid">
+          <FormattedMessage {...messages.altTextLocalFeedback} />
+        </Form.Control.Feedback>
+      )}
     <Form.Checkbox
-      className="mt-4.5 decorative-control-label"
       checked={isDecorative}
+      className="mt-4.5 decorative-control-label"
       onChange={hooks.onCheckboxChange(setIsDecorative)}
     >
       <Form.Label>
@@ -46,10 +56,16 @@ export const AltTextControls = ({
   </Form.Group>
 );
 AltTextControls.propTypes = {
+  error: PropTypes.shape({
+    show: PropTypes.bool,
+  }).isRequired,
   isDecorative: PropTypes.bool.isRequired,
-  value: PropTypes.string.isRequired,
   setValue: PropTypes.func.isRequired,
   setIsDecorative: PropTypes.func.isRequired,
+  validation: PropTypes.shape({
+    show: PropTypes.bool,
+  }).isRequired,
+  value: PropTypes.string.isRequired,
   // inject
   intl: intlShape.isRequired,
 };

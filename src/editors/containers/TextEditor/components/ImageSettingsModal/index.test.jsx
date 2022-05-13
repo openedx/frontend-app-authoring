@@ -17,9 +17,12 @@ jest.mock('./hooks', () => ({
   altText: () => ({
     value: 'alternative Taxes',
     isDecorative: false,
+    error: {
+      show: 'sHoW',
+      dismiss: jest.fn(),
+    },
   }),
   onSaveClick: (args) => ({ 'hooks.onSaveClick': args }),
-  isSaveDisabled: (args) => ({ 'hooks.isSaveDisabled': args }),
 }));
 
 describe('ImageSettingsModal', () => {

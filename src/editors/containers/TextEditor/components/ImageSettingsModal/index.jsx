@@ -1,16 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { Button, Image } from '@edx/paragon';
 import { ArrowBackIos } from '@edx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
-import BaseModal from '../BaseModal';
-
-import AltTextControls from './AltTextControls';
-import DimensionControls from './DimensionControls';
+import './index.scss';
 import hooks from './hooks';
 import messages from './messages';
-import './index.scss';
+import BaseModal from '../BaseModal';
+import AltTextControls from './AltTextControls';
+import DimensionControls from './DimensionControls';
+import ErrorAlert from '../ErrorAlerts/ErrorAlert';
 
 /**
  * Modal display wrapping the dimension and alt-text controls for image tags
@@ -34,10 +35,10 @@ export const ImageSettingsModal = ({
   const dimensions = hooks.dimensions();
   const altText = hooks.altText();
   const onSaveClick = hooks.onSaveClick({
-    saveToEditor,
+    altText,
     dimensions: dimensions.value,
-    altText: altText.value,
     isDecorative: altText.isDecorative,
+    saveToEditor,
   });
   return (
     <BaseModal
@@ -48,12 +49,18 @@ export const ImageSettingsModal = ({
         <Button
           variant="primary"
           onClick={onSaveClick}
-          disabled={hooks.isSaveDisabled(altText)}
         >
           <FormattedMessage {...messages.saveButtonLabel} />
         </Button>
       )}
     >
+      <ErrorAlert
+        dismissError={altText.error.dismiss}
+        hideHeading
+        isError={altText.error.show}
+      >
+        <FormattedMessage {...messages.altTextError} />
+      </ErrorAlert>
       <Button
         onClick={returnToSelection}
         variant="link"

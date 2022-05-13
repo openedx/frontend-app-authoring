@@ -18,14 +18,19 @@ jest.mock('../ErrorAlerts/UploadErrorAlert', () => 'UploadErrorAlert');
 
 jest.mock('./hooks', () => ({
   imgHooks: jest.fn(() => ({
-    searchSortProps: { search: 'sortProps' },
-    galleryProps: { gallery: 'props' },
-    selectBtnProps: { select: 'btnProps' },
+    error: {
+      show: 'ShoWERror',
+      set: jest.fn(),
+      dismiss: jest.fn(),
+    },
     fileInput: {
       addFile: 'imgHooks.fileInput.addFile',
       click: 'imgHooks.fileInput.click',
       ref: 'imgHooks.fileInput.ref',
     },
+    galleryProps: { gallery: 'props' },
+    searchSortProps: { search: 'sortProps' },
+    selectBtnProps: { select: 'btnProps' },
   })),
 }));
 
