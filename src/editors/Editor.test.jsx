@@ -1,7 +1,8 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { shallow } from 'enzyme';
-import { Editor, supportedEditors } from './Editor';
+import { Editor } from './Editor';
+import supportedEditors from './supportedEditors';
 import * as hooks from './hooks';
 import { blockTypes } from './data/constants/app';
 

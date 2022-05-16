@@ -49,6 +49,7 @@ export const editorConfig = ({
   },
   initialValue: blockValue ? blockValue.data.data : '',
   init: {
+
     setup: module.setupCustomBehavior({ openModal, setImage: setSelection }),
     plugins: pluginConfig.plugins,
     imagetools_toolbar: pluginConfig.imageToolbar,

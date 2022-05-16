@@ -26,9 +26,10 @@ export const EditorGallery = () => {
           onChange={handleChange}
           value={blockType}
         >
-          <Form.Radio value="html">Text</Form.Radio>
-          <Form.Radio value="video">Video</Form.Radio>
-          <Form.Radio value="problem">Problem</Form.Radio>
+          { Object.values(blockTypes).map((e) => (
+            <Form.Radio value={e}> {e} </Form.Radio>
+          ))}
+
         </Form.RadioSet>
       </Form.Group>
       <EditorPage

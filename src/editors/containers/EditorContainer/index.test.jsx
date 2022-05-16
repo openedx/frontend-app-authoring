@@ -37,6 +37,7 @@ describe('EditorContainer component', () => {
       beforeEach(() => {
         el = shallow(<EditorContainer {...props}>{testContent}</EditorContainer>);
       });
+
       test('close behavior is linked to modal onClose', () => {
         const expected = hooks.handleCancelClicked({ onClose: props.onClose });
         expect(el.find(IconButton)

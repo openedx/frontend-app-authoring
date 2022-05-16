@@ -3,20 +3,10 @@ import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
-import { blockTypes } from './data/constants/app';
-
-import TextEditor from './containers/TextEditor';
-import VideoEditor from './containers/VideoEditor';
-import ProblemEditor from './containers/ProblemEditor/ProblemEditor';
-
 import messages from './messages';
 import * as hooks from './hooks';
 
-export const supportedEditors = {
-  [blockTypes.html]: TextEditor,
-  [blockTypes.video]: VideoEditor,
-  [blockTypes.problem]: ProblemEditor,
-};
+import supportedEditors from './supportedEditors';
 
 export const Editor = ({
   courseId,

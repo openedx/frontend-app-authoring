@@ -117,6 +117,7 @@ describe('TextEditor hooks', () => {
         // Commented out as we investigate whether this is only needed for image proxy
         // expect(output.init.imagetools_cors_hosts).toMatchObject([props.lmsEndpointUrl]);
       });
+
       it('calls setupCustomBehavior on setup', () => {
         expect(output.init.setup).toEqual(
           setupCustomBehavior({ openModal: props.openModal, setImage: props.setSelection }),
