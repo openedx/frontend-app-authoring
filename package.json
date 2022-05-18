@@ -36,7 +36,7 @@
     "@edx/frontend-build": "8.0.4",
     "@edx/brand": "npm:@edx/brand-openedx@1.1.0",
     "@edx/frontend-component-footer": "10.1.6",
-    "@edx/frontend-lib-content-components": "1.13.0",
+    "@edx/frontend-lib-content-components": "1.18.0",
     "@edx/frontend-platform": "1.15.5",
     "@edx/paragon": "19.9.0",
     "@fortawesome/fontawesome-svg-core": "1.2.28",
