@@ -56,6 +56,7 @@ export const editorConfig = ({
     toolbar: pluginConfig.toolbar,
     contextmenu: 'link table',
     ...pluginConfig.config,
+    valid_elements: '*[*]',
   },
 });
 
