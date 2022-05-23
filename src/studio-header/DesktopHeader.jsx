@@ -91,7 +91,7 @@ class DesktopHeader extends React.Component {
     const logoProps = { src: logo, alt: logoAltText, href: logoDestination };
 
     return (
-      <header className="site-header-desktop">
+      <header className="site-header-desktop bg-white">
         <div className="px-5">
           <div className="nav-container position-relative d-flex align-items-center">
             {logoDestination === null ? <Logo className="logo" src={logo} alt={logoAltText} /> : <LinkedLogo className="logo" {...logoProps} />}

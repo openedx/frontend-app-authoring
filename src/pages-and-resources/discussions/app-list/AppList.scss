@@ -6,7 +6,8 @@
   .pgn__data-table-container {
     tr {
       th {
-        background-color: $white;
+        background-color: white;
+        background-color: var(--white);
         text-align: center;
 
         .d-flex, span {
@@ -15,7 +16,8 @@
       }
 
       td {
-        background-color: $white;
+          background-color: white;
+          background-color: var(--white);
 
         .pgn__data-table-cell-wrap {
           max-width: unset;

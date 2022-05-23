@@ -21,7 +21,7 @@ const MenuTriggerType = <MenuTrigger />.type;
 
 function MenuContent({ tag, className, ...attributes }) {
   return React.createElement(tag, {
-    className: ['menu-content', className].join(' '),
+    className: ['menu-content border-primary', className].join(' '),
     ...attributes,
   });
 }
