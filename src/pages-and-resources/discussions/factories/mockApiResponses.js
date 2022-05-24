@@ -93,7 +93,7 @@ export const generateLegacyApiResponse = () => ({
     reported_content_email_notifications: false,
     reported_content_email_notifications_flag: false,
     always_divide_inline_discussions: false,
-    available_division_schemes: ['enrollment_track'],
+    available_division_schemes: [],
     discussion_topics: {
       Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
       General: { id: 'course' },
