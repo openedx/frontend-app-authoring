@@ -10,6 +10,8 @@ export const commands = StrictDict({
 
 export const buttons = StrictDict({
   addImageButton: 'addimagebutton',
+  blockQuote: 'blockQuote',
+  codeBlock: 'codeBlock',
   align: StrictDict({
     center: 'aligncenter',
     justify: 'alignjustify',

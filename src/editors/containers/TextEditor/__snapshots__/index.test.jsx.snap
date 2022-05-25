@@ -56,6 +56,7 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
           "openModal": [MockFunction modal.openModal],
           "setEditorRef": [MockFunction hooks.prepareEditorRef.setEditorRef],
           "setSelection": [MockFunction hooks.selectedImage.setSelection],
+          "studioEndpointUrl": "sOmEoThERvaLue.cOm",
         }
       }
     />
@@ -174,6 +175,7 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
           "openModal": [MockFunction modal.openModal],
           "setEditorRef": [MockFunction hooks.prepareEditorRef.setEditorRef],
           "setSelection": [MockFunction hooks.selectedImage.setSelection],
+          "studioEndpointUrl": "sOmEoThERvaLue.cOm",
         }
       }
     />

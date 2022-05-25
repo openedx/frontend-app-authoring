@@ -34,8 +34,8 @@ export default StrictDict({
       buttons.outdent,
       buttons.indent,
     ],
-    [buttons.imageUploadButton, buttons.link, buttons.unlink, buttons.table],
-    [buttons.emoticons, buttons.charmap, buttons.hr],
+    [buttons.imageUploadButton, buttons.link, buttons.unlink, buttons.blockQuote, buttons.codeBlock],
+    [buttons.table, buttons.emoticons, buttons.charmap, buttons.hr],
     [buttons.removeFormat, buttons.code],
   ]),
   imageToolbar: mapToolbars([
