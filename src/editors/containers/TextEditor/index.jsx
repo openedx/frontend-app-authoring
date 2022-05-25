@@ -39,6 +39,7 @@ export const TextEditor = ({
   // redux
   blockValue,
   lmsEndpointUrl,
+  studioEndpointUrl,
   blockFailed,
   blockFinished,
   initializeEditor,
@@ -86,6 +87,7 @@ export const TextEditor = ({
                 openModal,
                 initializeEditor,
                 lmsEndpointUrl,
+                studioEndpointUrl,
                 setSelection: imageSelection.setSelection,
                 clearSelection: imageSelection.clearSelection,
               })}
@@ -99,6 +101,7 @@ export const TextEditor = ({
 TextEditor.defaultProps = {
   blockValue: null,
   lmsEndpointUrl: null,
+  studioEndpointUrl: null,
 };
 TextEditor.propTypes = {
   onClose: PropTypes.func.isRequired,
@@ -107,6 +110,7 @@ TextEditor.propTypes = {
     data: PropTypes.shape({ data: PropTypes.string }),
   }),
   lmsEndpointUrl: PropTypes.string,
+  studioEndpointUrl: PropTypes.string,
   blockFailed: PropTypes.bool.isRequired,
   blockFinished: PropTypes.bool.isRequired,
   initializeEditor: PropTypes.func.isRequired,
@@ -117,6 +121,7 @@ TextEditor.propTypes = {
 export const mapStateToProps = (state) => ({
   blockValue: selectors.app.blockValue(state),
   lmsEndpointUrl: selectors.app.lmsEndpointUrl(state),
+  studioEndpointUrl: selectors.app.studioEndpointUrl(state),
   blockFailed: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
   blockFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
 });

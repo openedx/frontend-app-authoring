@@ -65,13 +65,17 @@ describe('TextEditor hooks', () => {
         const mockOpenModalWithImage = args => ({ openModalWithSelectedImage: args });
         const expectedSettingsAction = mockOpenModalWithImage({ editor, setImage, openModal });
         const openCodeEditor = expect.any(Function);
+        const toggleCodeFormatting = expect.any(Function);
+        const toggleBlockQuoteFormatting = expect.any(Function);
         jest.spyOn(module, moduleKeys.openModalWithSelectedImage)
           .mockImplementationOnce(mockOpenModalWithImage);
         output = module.setupCustomBehavior({ openModal, setImage })(editor);
         expect(addButton.mock.calls).toEqual([
-          [tinyMCE.buttons.imageUploadButton, { icon: 'image', onAction: openModal }],
-          [tinyMCE.buttons.editImageSettings, { icon: 'image', onAction: expectedSettingsAction }],
+          [tinyMCE.buttons.imageUploadButton, { icon: 'image', tooltip: 'Add Image', onAction: openModal }],
+          [tinyMCE.buttons.editImageSettings, { icon: 'image', tooltip: 'Edit Image Settings', onAction: expectedSettingsAction }],
           [tinyMCE.buttons.code, { text: 'HTML', tooltip: 'Source code', onAction: openCodeEditor }],
+          [tinyMCE.buttons.codeBlock, { icon: 'sourcecode', tooltip: 'Code Block', onAction: toggleCodeFormatting }],
+          [tinyMCE.buttons.blockQuote, { icon: 'quote', tooltip: 'Block Quote', onAction: toggleBlockQuoteFormatting }],
         ]);
         expect(openModal).not.toHaveBeenCalled();
       });
@@ -80,7 +84,8 @@ describe('TextEditor hooks', () => {
     describe('editorConfig', () => {
       const props = {
         blockValue: null,
-        // lmsEndpointUrl: 'sOmEuRl.cOm',
+        lmsEndpointUrl: 'sOmEuRl.cOm',
+        studioEndpointUrl: 'sOmEoThEruRl.cOm',
       };
       const evt = 'fakeEvent';
       const editor = 'myEditor';
