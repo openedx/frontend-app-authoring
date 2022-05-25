@@ -57,6 +57,7 @@ export const editorConfig = ({
     contextmenu: 'link table',
     ...pluginConfig.config,
     valid_elements: '*[*]',
+    valid_children: '+body[style]',
   },
 });
 
