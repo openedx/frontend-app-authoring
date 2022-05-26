@@ -77,6 +77,7 @@ export const editorConfig = ({
     contextmenu: 'link table',
     ...pluginConfig.config,
     valid_elements: '*[*]',
+    valid_children: '+body[style]',
     imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
   },
 });
