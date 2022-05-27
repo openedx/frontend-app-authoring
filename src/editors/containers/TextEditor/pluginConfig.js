@@ -48,5 +48,6 @@ export default StrictDict({
     height: '100%',
     menubar: false,
     min_height: 500,
+    toolbar_sticky: true,
   },
 });
