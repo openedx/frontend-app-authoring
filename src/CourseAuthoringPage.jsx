@@ -28,6 +28,7 @@ export default function CourseAuthoringPage({ courseId, children }) {
   const courseTitle = courseDetail ? courseDetail.name : courseId;
   const courseAppsApiStatus = useSelector(getCourseAppsApiStatus);
   const inProgress = useSelector(getLoadingStatus) === RequestStatus.IN_PROGRESS;
+  const { pathname } = useLocation();
   if (courseAppsApiStatus === RequestStatus.DENIED) {
     return (
       <PermissionDeniedAlert />
@@ -49,7 +50,6 @@ export default function CourseAuthoringPage({ courseId, children }) {
     </div>
   );
 
-  const { pathname } = useLocation();
   return (
     <div className="bg-light-200">
       {/* While V2 Editors are tempoarily served from thier own pages
