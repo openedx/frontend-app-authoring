@@ -1,5 +1,7 @@
 import {
+  returnUrl,
   unit,
+  libraryV1,
   block,
   blockAncestor,
   courseAssets,
@@ -9,8 +11,10 @@ import {
 describe('cms url methods', () => {
   const studioEndpointUrl = 'urLgoeStOstudiO';
   const blockId = 'blOckIDTeST123';
-  const courseId = 'coUrseiD321';
-  describe('unit', () => {
+  const learningContextId = 'lEarnIngCOntextId123';
+  const courseId = 'course-v1:courseId123';
+  const libraryV1Id = 'library-v1:libaryId123';
+  describe('return to learning context urls', () => {
     const unitUrl = {
       data: {
         ancestors: [
@@ -20,6 +24,22 @@ describe('cms url methods', () => {
         ],
       },
     };
+    it('returns the library page when given the library', () => {
+      expect(returnUrl({ studioEndpointUrl, unitUrl, learningContextId: libraryV1Id }))
+        .toEqual(`${studioEndpointUrl}/library/${libraryV1Id}`);
+    });
+    it('returns url with studioEndpointUrl and unitUrl', () => {
+      expect(returnUrl({ studioEndpointUrl, unitUrl, learningContextId: courseId }))
+        .toEqual(`${studioEndpointUrl}/container/${unitUrl.data.ancestors[0].id}`);
+    });
+    it('returns empty string if no unit url', () => {
+      expect(returnUrl({ studioEndpointUrl, unitUrl: null, learningContextId: courseId }))
+        .toEqual('');
+    });
+    it('returns the library page when given the library', () => {
+      expect(libraryV1({ studioEndpointUrl, learningContextId: libraryV1Id }))
+        .toEqual(`${studioEndpointUrl}/library/${libraryV1Id}`);
+    });
     it('returns url with studioEndpointUrl and unitUrl', () => {
       expect(unit({ studioEndpointUrl, unitUrl }))
         .toEqual(`${studioEndpointUrl}/container/${unitUrl.data.ancestors[0].id}`);
@@ -38,15 +58,15 @@ describe('cms url methods', () => {
     });
   });
   describe('courseAssets', () => {
-    it('returns url with studioEndpointUrl and courseId', () => {
-      expect(courseAssets({ studioEndpointUrl, courseId }))
-        .toEqual(`${studioEndpointUrl}/assets/${courseId}/`);
+    it('returns url with studioEndpointUrl and learningContextId', () => {
+      expect(courseAssets({ studioEndpointUrl, learningContextId }))
+        .toEqual(`${studioEndpointUrl}/assets/${learningContextId}/`);
     });
   });
   describe('courseImages', () => {
-    it('returns url with studioEndpointUrl, courseId and courseAssets query', () => {
-      expect(courseImages({ studioEndpointUrl, courseId }))
-        .toEqual(`${courseAssets({ studioEndpointUrl, courseId })}?sort=uploadDate&direction=desc&asset_type=Images`);
+    it('returns url with studioEndpointUrl, learningContextId and courseAssets query', () => {
+      expect(courseImages({ studioEndpointUrl, learningContextId }))
+        .toEqual(`${courseAssets({ studioEndpointUrl, learningContextId })}?sort=uploadDate&direction=desc&asset_type=Images`);
     });
   });
 });

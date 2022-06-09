@@ -17,7 +17,7 @@ export const EditorPage = ({
     <Editor
       {...{
         onClose,
-        courseId,
+        learningContextId: courseId,
         blockType,
         blockId,
         lmsEndpointUrl,

@@ -19,7 +19,7 @@ export const fetchByUnitId = ({ blockId, studioEndpointUrl }) => mockPromise({
   data: { ancestors: [{ id: 'unitUrl' }] },
 });
 // eslint-disable-next-line
-export const fetchImages = ({ courseId, studioEndpointUrl }) => mockPromise({
+export const fetchImages = ({ learningContextId, studioEndpointUrl }) => mockPromise({
   data: {
     assets: [
       {
@@ -74,13 +74,13 @@ export const normalizeContent = ({
   blockId,
   blockType,
   content,
-  courseId,
+  learningContextId,
   title,
 }) => {
   if (blockType === 'html') {
     return {
       category: blockType,
-      couseKey: courseId,
+      couseKey: learningContextId,
       data: content,
       has_changes: true,
       id: blockId,
@@ -94,7 +94,7 @@ export const saveBlock = ({
   blockId,
   blockType,
   content,
-  courseId,
+  learningContextId,
   studioEndpointUrl,
   title,
 }) => mockPromise({
@@ -103,17 +103,17 @@ export const saveBlock = ({
     blockType,
     content,
     blockId,
-    courseId,
+    learningContextId,
     title,
   }),
 });
 
 export const uploadImage = ({
-  courseId,
+  learningContextId,
   studioEndpointUrl,
   // image,
 }) => mockPromise({
-  url: urls.courseAssets({ studioEndpointUrl, courseId }),
+  url: urls.courseAssets({ studioEndpointUrl, learningContextId }),
   image: {
     asset: {
       display_name: 'journey_escape.jpg',

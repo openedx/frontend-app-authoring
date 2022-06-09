@@ -14,7 +14,7 @@ export const simpleSelectors = {
   blockId: mkSimpleSelector(app => app.blockId),
   blockType: mkSimpleSelector(app => app.blockType),
   blockValue: mkSimpleSelector(app => app.blockValue),
-  courseId: mkSimpleSelector(app => app.courseId),
+  learningContextId: mkSimpleSelector(app => app.learningContextId),
   editorInitialized: mkSimpleSelector(app => app.editorInitialized),
   saveResponse: mkSimpleSelector(app => app.saveResponse),
   lmsEndpointUrl: mkSimpleSelector(app => app.lmsEndpointUrl),
@@ -24,8 +24,10 @@ export const simpleSelectors = {
 };
 
 export const returnUrl = createSelector(
-  [module.simpleSelectors.unitUrl, module.simpleSelectors.studioEndpointUrl],
-  (unitUrl, studioEndpointUrl) => (unitUrl ? urls.unit({ studioEndpointUrl, unitUrl }) : ''),
+  [module.simpleSelectors.unitUrl, module.simpleSelectors.studioEndpointUrl, module.simpleSelectors.learningContextId],
+  (unitUrl, studioEndpointUrl, learningContextId) => (
+    urls.returnUrl({ studioEndpointUrl, unitUrl, learningContextId })
+  ),
 );
 
 export const isInitialized = createSelector(
@@ -57,10 +59,10 @@ export const analytics = createSelector(
   [
     module.simpleSelectors.blockId,
     module.simpleSelectors.blockType,
-    module.simpleSelectors.courseId,
+    module.simpleSelectors.learningContextId,
   ],
-  (blockId, blockType, courseId) => (
-    { blockId, blockType, courseId }
+  (blockId, blockType, learningContextId) => (
+    { blockId, blockType, learningContextId }
   ),
 );
 

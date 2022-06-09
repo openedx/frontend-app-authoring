@@ -17,13 +17,14 @@ jest.mock('./containers/ProblemEditor/ProblemEditor', () => 'ProblemEditor');
 const initData = {
   blockId: 'block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4',
   blockType: blockTypes.html,
-  courseId: 'course-v1:edX+DemoX+Demo_Course',
+  learningContextId: 'course-v1:edX+DemoX+Demo_Course',
   lmsEndpointUrl: 'evenfakerurl.com',
   studioEndpointUrl: 'fakeurl.com',
 };
 const props = {
   initialize: jest.fn(),
   onClose: jest.fn().mockName('props.onClose'),
+  courseId: 'course-v1:edX+DemoX+Demo_Course',
   ...initData,
 };
 

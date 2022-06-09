@@ -12,7 +12,7 @@ jest.mock('../app/selectors', () => ({
   studioEndpointUrl: (state) => ({ studioEndpointUrl: state }),
   blockId: (state) => ({ blockId: state }),
   blockType: (state) => ({ blockType: state }),
-  courseId: (state) => ({ courseId: state }),
+  learningContextId: (state) => ({ learningContextId: state }),
   blockTitle: (state) => ({ title: state }),
 }));
 
@@ -198,7 +198,7 @@ describe('requests thunkActions module', () => {
       let dispatchedAction;
       const expectedArgs = {
         studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
-        courseId: selectors.app.courseId(testState),
+        learningContextId: selectors.app.learningContextId(testState),
       };
       beforeEach(() => {
         fetchImages = jest.fn((args) => new Promise((resolve) => {
@@ -216,7 +216,7 @@ describe('requests thunkActions module', () => {
         expect(dispatchedAction.networkRequest.onSuccess).toEqual(onSuccess);
         expect(dispatchedAction.networkRequest.onFailure).toEqual(onFailure);
       });
-      test('api.fetchImages promise called with studioEndpointUrl and courseId', () => {
+      test('api.fetchImages promise called with studioEndpointUrl and learningContextId', () => {
         expect(fetchImages).toHaveBeenCalledWith(expectedArgs);
       });
       test('promise is chained with api.loadImages', () => {
@@ -236,7 +236,7 @@ describe('requests thunkActions module', () => {
           promise: api.saveBlock({
             blockId: selectors.app.blockId(testState),
             blockType: selectors.app.blockType(testState),
-            courseId: selectors.app.courseId(testState),
+            learningContextId: selectors.app.learningContextId(testState),
             content,
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
             title: selectors.app.blockTitle(testState),
@@ -255,7 +255,7 @@ describe('requests thunkActions module', () => {
           ...fetchParams,
           requestKey: RequestKeys.uploadImage,
           promise: api.uploadImage({
-            courseId: selectors.app.courseId(testState),
+            learningContextId: selectors.app.learningContextId(testState),
             image,
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
           }),

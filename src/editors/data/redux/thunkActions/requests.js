@@ -79,7 +79,7 @@ export const saveBlock = ({ content, ...rest }) => (dispatch, getState) => {
     promise: api.saveBlock({
       blockId: selectors.app.blockId(getState()),
       blockType: selectors.app.blockType(getState()),
-      courseId: selectors.app.courseId(getState()),
+      learningContextId: selectors.app.learningContextId(getState()),
       content,
       studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
       title: selectors.app.blockTitle(getState()),
@@ -91,7 +91,7 @@ export const uploadImage = ({ image, ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
     requestKey: RequestKeys.uploadImage,
     promise: api.uploadImage({
-      courseId: selectors.app.courseId(getState()),
+      learningContextId: selectors.app.learningContextId(getState()),
       image,
       studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
     }),
@@ -104,7 +104,7 @@ export const fetchImages = ({ ...rest }) => (dispatch, getState) => {
     requestKey: RequestKeys.fetchImages,
     promise: api.fetchImages({
       studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
-      courseId: selectors.app.courseId(getState()),
+      learningContextId: selectors.app.learningContextId(getState()),
     }).then((response) => loadImages(response.data.assets)),
     ...rest,
   }));

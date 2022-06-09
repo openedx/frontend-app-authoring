@@ -19,7 +19,7 @@ describe('app reducer', () => {
           studioEndpointUrl: 'testURL',
           lmsEndpointUrl: 'sOmEOtherTestuRl',
           blockId: 'anID',
-          courseId: 'OTHERid',
+          learningContextId: 'OTHERid',
           blockType: 'someTYPE',
         };
         expect(reducer(

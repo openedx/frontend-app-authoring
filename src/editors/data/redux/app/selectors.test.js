@@ -7,7 +7,7 @@ jest.mock('reselect', () => ({
   createSelector: jest.fn((preSelectors, cb) => ({ preSelectors, cb })),
 }));
 jest.mock('../../services/cms/urls', () => ({
-  unit: (args) => ({ unit: args }),
+  returnUrl: (args) => ({ returnUrl: args }),
 }));
 
 const testState = { some: 'arbitraryValue' };
@@ -39,7 +39,7 @@ describe('app selectors unit tests', () => {
         simpleKeys.blockTitle,
         simpleKeys.blockType,
         simpleKeys.blockValue,
-        simpleKeys.courseId,
+        simpleKeys.learningContextId,
         simpleKeys.editorInitialized,
         simpleKeys.saveResponse,
         simpleKeys.studioEndpointUrl,
@@ -53,14 +53,19 @@ describe('app selectors unit tests', () => {
       expect(selectors.returnUrl.preSelectors).toEqual([
         simpleSelectors.unitUrl,
         simpleSelectors.studioEndpointUrl,
+        simpleSelectors.learningContextId,
       ]);
     });
-    it('returns urls.unit with the unitUrl if loaded, else an empty string', () => {
+    it('returns urls.returnUrl with the returnUrl', () => {
       const { cb } = selectors.returnUrl;
       const studioEndpointUrl = 'baseURL';
       const unitUrl = 'some unit url';
-      expect(cb(null, studioEndpointUrl)).toEqual('');
-      expect(cb(unitUrl, studioEndpointUrl)).toEqual(urls.unit({ unitUrl, studioEndpointUrl }));
+      const learningContextId = 'some learning context';
+      expect(
+        cb(unitUrl, studioEndpointUrl, learningContextId),
+      ).toEqual(
+        urls.returnUrl({ unitUrl, studioEndpointUrl, learningContextId }),
+      );
     });
   });
   describe('isInitialized selector', () => {

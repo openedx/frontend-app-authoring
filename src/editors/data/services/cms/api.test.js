@@ -30,7 +30,7 @@ const { apiMethods } = api;
 
 const blockId = 'coursev1:2uX@4345432';
 const content = 'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
-const courseId = 'demo2uX';
+const learningContextId = 'demo2uX';
 const studioEndpointUrl = 'hortus.coa';
 const title = 'remember this needs to go into metadata to save';
 
@@ -52,8 +52,8 @@ describe('cms api', () => {
 
     describe('fetchImages', () => {
       it('should call get with url.courseImages', () => {
-        apiMethods.fetchImages({ courseId, studioEndpointUrl });
-        expect(get).toHaveBeenCalledWith(urls.courseImages({ studioEndpointUrl, courseId }));
+        apiMethods.fetchImages({ learningContextId, studioEndpointUrl });
+        expect(get).toHaveBeenCalledWith(urls.courseImages({ studioEndpointUrl, learningContextId }));
       });
     });
 
@@ -63,11 +63,11 @@ describe('cms api', () => {
           blockId,
           blockType: 'html',
           content,
-          courseId,
+          learningContextId,
           title,
         })).toEqual({
           category: 'html',
-          couseKey: courseId,
+          couseKey: learningContextId,
           data: content,
           has_changes: true,
           id: blockId,
@@ -86,7 +86,7 @@ describe('cms api', () => {
           blockId,
           blockType: 'html',
           content,
-          courseId,
+          learningContextId,
           studioEndpointUrl,
           title,
         });
@@ -96,7 +96,7 @@ describe('cms api', () => {
             blockType: 'html',
             content,
             blockId,
-            courseId,
+            learningContextId,
             title,
           }),
         );
@@ -109,12 +109,12 @@ describe('cms api', () => {
         const mockFormdata = new FormData();
         mockFormdata.append('file', image);
         apiMethods.uploadImage({
-          courseId,
+          learningContextId,
           studioEndpointUrl,
           image,
         });
         expect(post).toHaveBeenCalledWith(
-          urls.courseAssets({ studioEndpointUrl, courseId }),
+          urls.courseAssets({ studioEndpointUrl, learningContextId }),
           mockFormdata,
         );
       });

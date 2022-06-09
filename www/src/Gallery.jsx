@@ -14,7 +14,7 @@ export const EditorGallery = () => {
     const type = blockTypes[blockTypeKey];
     return { ...obj, [type]: mockBlockIdByType(type) };
   }, {});
-  const courseId = 'fake-course-id';
+  const courseId = 'library-v1:EDX+apmjoemaonmeonaoenan';
   const studioEndpointUrl = 'fake-studio-endpoint-url';
   const lmsEndpointUrl = 'https://courses.edx.org'; // this is hardcoded because that is where the image data is from.
   const handleChange = (e) => setBlockType(e.target.value);

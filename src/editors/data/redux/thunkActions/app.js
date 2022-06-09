@@ -20,7 +20,7 @@ export const fetchUnit = () => (dispatch) => {
 /**
  * @param {string} studioEndpointUrl
  * @param {string} blockId
- * @param {string} courseId
+ * @param {string} learningContextId
  * @param {string} blockType
  */
 export const initialize = (data) => (dispatch) => {

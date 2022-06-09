@@ -11,18 +11,18 @@ export const apiMethods = {
   fetchByUnitId: ({ blockId, studioEndpointUrl }) => get(
     urls.blockAncestor({ studioEndpointUrl, blockId }),
   ),
-  fetchImages: ({ courseId, studioEndpointUrl }) => get(
-    urls.courseImages({ studioEndpointUrl, courseId }),
+  fetchImages: ({ learningContextId, studioEndpointUrl }) => get(
+    urls.courseImages({ studioEndpointUrl, learningContextId }),
   ),
   uploadImage: ({
-    courseId,
+    learningContextId,
     studioEndpointUrl,
     image,
   }) => {
     const data = new FormData();
     data.append('file', image);
     return post(
-      urls.courseAssets({ studioEndpointUrl, courseId }),
+      urls.courseAssets({ studioEndpointUrl, learningContextId }),
       data,
     );
   },
@@ -30,13 +30,13 @@ export const apiMethods = {
     blockId,
     blockType,
     content,
-    courseId,
+    learningContextId,
     title,
   }) => {
     if (blockType === 'html') {
       return {
         category: blockType,
-        couseKey: courseId,
+        couseKey: learningContextId,
         data: content,
         has_changes: true,
         id: blockId,
@@ -49,7 +49,7 @@ export const apiMethods = {
     blockId,
     blockType,
     content,
-    courseId,
+    learningContextId,
     studioEndpointUrl,
     title,
   }) => post(
@@ -58,7 +58,7 @@ export const apiMethods = {
       blockType,
       content,
       blockId,
-      courseId,
+      learningContextId,
       title,
     }),
   ),

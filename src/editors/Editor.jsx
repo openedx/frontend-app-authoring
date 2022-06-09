@@ -9,7 +9,7 @@ import * as hooks from './hooks';
 import supportedEditors from './supportedEditors';
 
 export const Editor = ({
-  courseId,
+  learningContextId,
   blockType,
   blockId,
   lmsEndpointUrl,
@@ -22,7 +22,7 @@ export const Editor = ({
     data: {
       blockId,
       blockType,
-      courseId,
+      learningContextId,
       lmsEndpointUrl,
       studioEndpointUrl,
     },
@@ -44,7 +44,7 @@ export const Editor = ({
   );
 };
 Editor.defaultProps = {
-  courseId: null,
+  learningContextId: null,
   blockId: null,
   lmsEndpointUrl: null,
   studioEndpointUrl: null,
@@ -52,7 +52,7 @@ Editor.defaultProps = {
 };
 
 Editor.propTypes = {
-  courseId: PropTypes.string,
+  learningContextId: PropTypes.string,
   blockType: PropTypes.string.isRequired,
   blockId: PropTypes.string,
   lmsEndpointUrl: PropTypes.string,
