@@ -7,6 +7,7 @@ module.exports = createConfig('eslint',
         controlComponents: ['Input'],
       }],
       'template-curly-spacing': 'off',
+      'react-hooks/exhaustive-deps': 'off',
       indent: 'off',
     },
   });

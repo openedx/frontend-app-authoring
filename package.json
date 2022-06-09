@@ -33,10 +33,10 @@
     "url": "https://github.com/edx/frontend-app-course-authoring/issues"
   },
   "dependencies": {
-    "@edx/frontend-build": "8.0.4",
     "@edx/brand": "npm:@edx/brand-openedx@1.1.0",
+    "@edx/frontend-build": "^11.0.0",
     "@edx/frontend-component-footer": "10.1.6",
-    "@edx/frontend-lib-content-components": "1.20.0",
+    "@edx/frontend-lib-content-components": "^1.20.1",
     "@edx/frontend-platform": "1.15.5",
     "@edx/paragon": "19.9.0",
     "@fortawesome/fontawesome-svg-core": "1.2.28",
@@ -66,19 +66,18 @@
   },
   "devDependencies": {
     "@edx/browserslist-config": "1.0.0",
-    "@edx/frontend-build": "8.0.4",
+    "@edx/frontend-build": "^11.0.0",
     "@edx/reactifex": "^1.0.3",
-    "enzyme": "3.11.0",
-    "enzyme-adapter-react-16": "1.15.6",
-    "enzyme-to-json": "^3.6.2",
-    "@testing-library/jest-dom": "5.14.1",
+    "@testing-library/jest-dom": "5.16.4",
     "@testing-library/react": "12.1.1",
     "@testing-library/user-event": "^13.2.1",
     "axios-mock-adapter": "1.20.0",
     "codecov": "3.8.3",
+    "enzyme": "3.11.0",
+    "enzyme-adapter-react-16": "1.15.6",
+    "enzyme-to-json": "^3.6.2",
     "glob": "7.1.6",
     "husky": "3.1.0",
-    "jest": "24.9.0",
     "react-test-renderer": "16.9.0",
     "reactifex": "1.1.1"
   }
