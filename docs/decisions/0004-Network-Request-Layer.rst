@@ -38,8 +38,7 @@ The actual chain the an example request to save an xblock code is:
 
 Status
 ------
-
-Proposed
+Adopted
 
 Context
 -------
