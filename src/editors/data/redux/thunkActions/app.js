@@ -10,6 +10,13 @@ export const fetchBlock = () => (dispatch) => {
   }));
 };
 
+export const fetchStudioView = () => (dispatch) => {
+  dispatch(requests.fetchStudioView({
+    onSuccess: (response) => dispatch(actions.app.setStudioView(response)),
+    onFailure: (e) => dispatch(actions.app.setStudioView(e)),
+  }));
+};
+
 export const fetchUnit = () => (dispatch) => {
   dispatch(requests.fetchUnit({
     onSuccess: (response) => dispatch(actions.app.setUnitUrl(response)),
@@ -27,6 +34,7 @@ export const initialize = (data) => (dispatch) => {
   dispatch(actions.app.initialize(data));
   dispatch(module.fetchBlock());
   dispatch(module.fetchUnit());
+  dispatch(module.fetchStudioView());
 };
 
 /**
@@ -67,4 +75,5 @@ export default StrictDict({
   fetchImages,
   uploadImage,
   fetchVideos,
+  fetchStudioView,
 });

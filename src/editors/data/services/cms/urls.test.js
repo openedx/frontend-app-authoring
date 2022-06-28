@@ -4,6 +4,7 @@ import {
   libraryV1,
   block,
   blockAncestor,
+  blockStudioView,
   courseAssets,
   courseImages,
 } from './urls';
@@ -57,6 +58,13 @@ describe('cms url methods', () => {
         .toEqual(`${block({ studioEndpointUrl, blockId })}?fields=ancestorInfo`);
     });
   });
+  describe('blockStudioView', () => {
+    it('returns url with studioEndpointUrl, blockId and studio_view query', () => {
+      expect(blockStudioView({ studioEndpointUrl, blockId }))
+        .toEqual(`${block({ studioEndpointUrl, blockId })}/studio_view`);
+    });
+  });
+
   describe('courseAssets', () => {
     it('returns url with studioEndpointUrl and learningContextId', () => {
       expect(courseAssets({ studioEndpointUrl, learningContextId }))

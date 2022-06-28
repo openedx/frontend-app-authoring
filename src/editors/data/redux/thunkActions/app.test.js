@@ -8,6 +8,7 @@ jest.mock('./requests', () => ({
   saveBlock: (args) => ({ saveBlock: args }),
   fetchImages: (args) => ({ fetchImages: args }),
   uploadImage: (args) => ({ uploadImage: args }),
+  fetchStudioView: (args) => ({ fetchStudioView: args }),
 }));
 
 jest.mock('../../../utils', () => ({
@@ -37,6 +38,27 @@ describe('app thunkActions', () => {
       expect(dispatch).toHaveBeenCalledWith(actions.app.setBlockValue(testValue));
     });
   });
+
+  describe('fetchStudioView', () => {
+    beforeEach(() => {
+      thunkActions.fetchStudioView()(dispatch);
+      [[dispatchedAction]] = dispatch.mock.calls;
+    });
+    it('dispatches fetchStudioView action', () => {
+      expect(dispatchedAction.fetchStudioView).not.toEqual(undefined);
+    });
+    it('dispatches actions.app.setStudioViewe on success', () => {
+      dispatch.mockClear();
+      dispatchedAction.fetchStudioView.onSuccess(testValue);
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setStudioView(testValue));
+    });
+    it('dispatches setStudioView on failure', () => {
+      dispatch.mockClear();
+      dispatchedAction.fetchStudioView.onFailure(testValue);
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setStudioView(testValue));
+    });
+  });
+
   describe('fetchUnit', () => {
     beforeEach(() => {
       thunkActions.fetchUnit()(dispatch);
@@ -58,17 +80,20 @@ describe('app thunkActions', () => {
   });
   describe('initialize', () => {
     it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
-      const { fetchBlock, fetchUnit } = thunkActions;
+      const { fetchBlock, fetchUnit, fetchStudioView } = thunkActions;
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
+      thunkActions.fetchStudioView = () => 'fetchStudioView';
       thunkActions.initialize(testValue)(dispatch);
       expect(dispatch.mock.calls).toEqual([
         [actions.app.initialize(testValue)],
         [thunkActions.fetchBlock()],
         [thunkActions.fetchUnit()],
+        [thunkActions.fetchStudioView()],
       ]);
       thunkActions.fetchBlock = fetchBlock;
       thunkActions.fetchUnit = fetchUnit;
+      thunkActions.fetchStudioView = fetchStudioView;
     });
   });
   describe('saveBlock', () => {

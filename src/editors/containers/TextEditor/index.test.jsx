@@ -61,7 +61,8 @@ jest.mock('../../data/redux', () => ({
     app: {
       blockValue: jest.fn(state => ({ blockValue: state })),
       lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
-      studioEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
+      studioEndpointUrl: jest.fn(state => ({ studioEndpointUrl: state })),
+      isRaw: jest.fn(state => ({ isRaw: state })),
     },
     requests: {
       isFailed: jest.fn((state, params) => ({ isFailed: { state, params } })),
@@ -80,6 +81,7 @@ describe('TextEditor', () => {
     blockFailed: false,
     blockFinished: true,
     initializeEditor: jest.fn().mockName('args.intializeEditor'),
+    isRaw: false,
     // inject
     intl: { formatMessage },
   };
@@ -94,6 +96,9 @@ describe('TextEditor', () => {
     });
     test('not yet loaded, Spinner appears', () => {
       expect(shallow(<TextEditor {...props} blockFinished={false} />)).toMatchSnapshot();
+    });
+    test('loaded, raw editor', () => {
+      expect(shallow(<TextEditor {...props} isRaw />)).toMatchSnapshot();
     });
     test('block failed to load, Toast is shown', () => {
       expect(shallow(<TextEditor {...props} blockFailed />)).toMatchSnapshot();

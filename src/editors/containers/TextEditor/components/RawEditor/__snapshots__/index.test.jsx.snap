@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ImageSettingsModal renders as expected with default behavior 1`] = `
+<div
+  className="form-group"
+  style={
+    Object {
+      "padding": "10px 30px",
+    }
+  }
+>
+  <Alert
+    variant="danger"
+  >
+    You are using the raw HTML editor.
+  </Alert>
+  <textarea
+    className="form-control"
+    rows="12"
+  >
+    sOmErAwHtml
+  </textarea>
+</div>
+`;

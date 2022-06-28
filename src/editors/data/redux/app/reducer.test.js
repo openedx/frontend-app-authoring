@@ -43,6 +43,7 @@ describe('app reducer', () => {
     };
     [
       ['setUnitUrl', 'unitUrl'],
+      ['setStudioView', 'studioView'],
       ['setBlockContent', 'blockContent'],
       ['setBlockTitle', 'blockTitle'],
       ['setSaveResponse', 'saveResponse'],

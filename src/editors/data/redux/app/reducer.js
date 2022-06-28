@@ -6,6 +6,7 @@ const initialState = {
   blockValue: null,
   unitUrl: null,
   blockContent: null,
+  studioView: null,
   saveResponse: null,
 
   blockId: null,
@@ -35,6 +36,10 @@ const app = createSlice({
       ...state,
       blockValue: payload,
       blockTitle: payload.data.display_name,
+    }),
+    setStudioView: (state, { payload }) => ({
+      ...state,
+      studioView: payload,
     }),
     setBlockContent: (state, { payload }) => ({ ...state, blockContent: payload }),
     setBlockTitle: (state, { payload }) => ({ ...state, blockTitle: payload }),

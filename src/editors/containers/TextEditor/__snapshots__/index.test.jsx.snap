@@ -10,6 +10,7 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
             "value": "something",
           },
         },
+        "isRaw": false,
       },
     }
   }
@@ -64,6 +65,62 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
 </EditorContainer>
 `;
 
+exports[`TextEditor snapshots loaded, raw editor 1`] = `
+<EditorContainer
+  getContent={
+    Object {
+      "getContent": Object {
+        "editorRef": Object {
+          "current": Object {
+            "value": "something",
+          },
+        },
+        "isRaw": true,
+      },
+    }
+  }
+  onClose={[MockFunction props.onClose]}
+>
+  <div
+    className="editor-body h-75 overflow-auto"
+  >
+    <ImageUploadModal
+      clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
+      close={[MockFunction modal.closeModal]}
+      editorRef={
+        Object {
+          "current": Object {
+            "value": "something",
+          },
+        }
+      }
+      isOpen={false}
+      selection="hooks.selectedImage.selection"
+      setSelection={[MockFunction hooks.selectedImage.setSelection]}
+    />
+    <Toast
+      onClose={[MockFunction hooks.nullMethod]}
+      show={false}
+    >
+      <FormattedMessage
+        defaultMessage="Error: Could Not Load Text Content"
+        description="Error Message Dispayed When HTML content fails to Load"
+        id="authoring.texteditor.load.error"
+      />
+    </Toast>
+    <RawEditor
+      editorRef={
+        Object {
+          "current": Object {
+            "value": "something",
+          },
+        }
+      }
+    />
+  </div>
+</EditorContainer>
+`;
+
 exports[`TextEditor snapshots not yet loaded, Spinner appears 1`] = `
 <EditorContainer
   getContent={
@@ -74,6 +131,7 @@ exports[`TextEditor snapshots not yet loaded, Spinner appears 1`] = `
             "value": "something",
           },
         },
+        "isRaw": false,
       },
     }
   }
@@ -129,6 +187,7 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
             "value": "something",
           },
         },
+        "isRaw": false,
       },
     }
   }

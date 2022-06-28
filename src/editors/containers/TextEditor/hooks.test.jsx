@@ -188,6 +188,21 @@ describe('TextEditor hooks', () => {
       });
     });
 
+    describe('getContent', () => {
+      const visualContent = 'sOmEViSualContent';
+      const rawContent = 'soMeRawContent';
+      const editorRef = {
+        current: {
+          getContent: () => visualContent,
+          value: rawContent,
+        },
+      };
+      test('returns correct ontent based on isRaw', () => {
+        expect(module.getContent({ editorRef, isRaw: false })()).toEqual(visualContent);
+        expect(module.getContent({ editorRef, isRaw: true })()).toEqual(rawContent);
+      });
+    });
+
     describe('selectedImage hooks', () => {
       const val = { a: 'VaLUe' };
       beforeEach(() => {

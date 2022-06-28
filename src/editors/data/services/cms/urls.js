@@ -23,6 +23,10 @@ export const blockAncestor = ({ studioEndpointUrl, blockId }) => (
   `${block({ studioEndpointUrl, blockId })}?fields=ancestorInfo`
 );
 
+export const blockStudioView = ({ studioEndpointUrl, blockId }) => (
+  `${block({ studioEndpointUrl, blockId })}/studio_view`
+);
+
 export const courseAssets = ({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/assets/${learningContextId}/`
 );

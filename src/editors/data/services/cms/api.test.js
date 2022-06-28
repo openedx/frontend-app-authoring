@@ -15,6 +15,7 @@ jest.mock('../../../utils', () => {
 jest.mock('./urls', () => ({
   block: jest.fn().mockName('urls.block'),
   blockAncestor: jest.fn().mockName('urls.blockAncestor'),
+  blockStudioView: jest.fn().mockName('urls.StudioView'),
   courseImages: jest.fn().mockName('urls.courseImages'),
   courseAssets: jest.fn().mockName('urls.courseAssets'),
 }));
@@ -47,6 +48,13 @@ describe('cms api', () => {
       it('should call get with url.blockAncestor', () => {
         apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
         expect(get).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }));
+      });
+    });
+
+    describe('fetchStudioView', () => {
+      it('should call get with url.blockStudioView', () => {
+        apiMethods.fetchStudioView({ blockId, studioEndpointUrl });
+        expect(get).toHaveBeenCalledWith(urls.blockStudioView({ studioEndpointUrl, blockId }));
       });
     });
 

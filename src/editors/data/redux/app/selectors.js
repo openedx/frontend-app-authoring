@@ -14,6 +14,7 @@ export const simpleSelectors = {
   blockId: mkSimpleSelector(app => app.blockId),
   blockType: mkSimpleSelector(app => app.blockType),
   blockValue: mkSimpleSelector(app => app.blockValue),
+  studioView: mkSimpleSelector(app => app.studioView),
   learningContextId: mkSimpleSelector(app => app.learningContextId),
   editorInitialized: mkSimpleSelector(app => app.editorInitialized),
   saveResponse: mkSimpleSelector(app => app.saveResponse),
@@ -55,6 +56,7 @@ export const displayTitle = createSelector(
       : blockType[0].toUpperCase() + blockType.substring(1);
   },
 );
+
 export const analytics = createSelector(
   [
     module.simpleSelectors.blockId,
@@ -66,10 +68,24 @@ export const analytics = createSelector(
   ),
 );
 
+export const isRaw = createSelector(
+  [module.simpleSelectors.studioView],
+  (studioView) => {
+    if (!studioView || !studioView.data || !studioView.data.html) {
+      return null;
+    }
+    if (studioView.data.html.includes('data-editor="raw"')) {
+      return true;
+    }
+    return false;
+  },
+);
+
 export default {
   ...simpleSelectors,
   isInitialized,
   returnUrl,
   displayTitle,
   analytics,
+  isRaw,
 };

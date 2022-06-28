@@ -15,9 +15,20 @@ export const fetchBlockById = ({ blockId, studioEndpointUrl }) => mockPromise({
 
 // TODO: update to return block data appropriate per block ID, which will equal block type
 // eslint-disable-next-line
+export const fetchStudioView = ({ blockId, studioEndpointUrl }) => mockPromise({
+  data: {
+    data_editor: 'raw',
+    data: '<p>Test prompt content</p>',
+    display_name: 'My Text Prompt',
+  },
+});
+
+// TODO: update to return block data appropriate per block ID, which will equal block type
+// eslint-disable-next-line
 export const fetchByUnitId = ({ blockId, studioEndpointUrl }) => mockPromise({
   data: { ancestors: [{ id: 'unitUrl' }] },
 });
+
 // eslint-disable-next-line
 export const fetchImages = ({ learningContextId, studioEndpointUrl }) => mockPromise({
   data: {

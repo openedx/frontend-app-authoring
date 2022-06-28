@@ -18,6 +18,7 @@ jest.mock('../app/selectors', () => ({
 
 jest.mock('../../services/cms/api', () => ({
   fetchBlockById: ({ id, url }) => ({ id, url }),
+  fetchStudioView: ({ id, url }) => ({ id, url }),
   fetchByUnitId: ({ id, url }) => ({ id, url }),
   saveBlock: (args) => args,
   fetchImages: ({ id, url }) => ({ id, url }),
@@ -185,6 +186,21 @@ describe('requests thunkActions module', () => {
           ...fetchParams,
           requestKey: RequestKeys.fetchUnit,
           promise: api.fetchByUnitId({
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+            blockId: selectors.app.blockId(testState),
+          }),
+        },
+      });
+    });
+    describe('fetchStudioView', () => {
+      testNetworkRequestAction({
+        action: requests.fetchStudioView,
+        args: fetchParams,
+        expectedString: 'with fetchStudioView promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.fetchStudioView,
+          promise: api.fetchStudioView({
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
             blockId: selectors.app.blockId(testState),
           }),
