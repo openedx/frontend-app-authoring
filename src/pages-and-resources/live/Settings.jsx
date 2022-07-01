@@ -5,16 +5,16 @@ import { SelectableBox, Icon } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-
 import { fetchLiveData, saveLiveConfiguration, saveLiveConfigurationAsDraft } from './data/thunks';
 import { selectApp } from './data/slice';
-import FormikControl from '../../generic/FormikControl';
 import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
 import { useModel } from '../../generic/model-store';
 import Loading from '../../generic/Loading';
-import iconsSrc from './constants';
+import { iconsSrc, bbbPlanTypes } from './constants';
 import { RequestStatus } from '../../data/constants';
 import messages from './messages';
+import ZoomSettings from './ZoomSettings';
+import BBBSettings from './BBBSettings';
 
 function LiveSettings({
   intl,
@@ -24,7 +24,7 @@ function LiveSettings({
   const courseId = useSelector(state => state.courseDetail.courseId);
   const availableProviders = useSelector((state) => state.live.appIds);
   const {
-    piiSharingAllowed, selectedAppId, enabled, status,
+    piiSharingAllowed, selectedAppId, enabled, status, tierType,
   } = useSelector(state => state.live);
 
   const appConfig = useModel('liveAppConfigs', selectedAppId);
@@ -38,16 +38,29 @@ function LiveSettings({
     launchEmail: appConfig?.launchEmail || '',
     provider: selectedAppId || 'zoom',
     piiSharingEnable: piiSharingAllowed || false,
-    piiSharingUsername: app?.piiSharing.username || false,
-    piiSharingEmail: app?.piiSharing.email || false,
+    piiSharingUsername: app?.piiSharing?.username || false,
+    piiSharingEmail: app?.piiSharing?.email || false,
+    tierType: tierType || '',
   };
 
   const validationSchema = {
     enabled: Yup.boolean(),
-    consumerKey: Yup.string().required(intl.formatMessage(messages.consumerKeyRequired)),
-    consumerSecret: Yup.string().required(intl.formatMessage(messages.consumerSecretRequired)),
-    launchUrl: Yup.string().required(intl.formatMessage(messages.launchUrlRequired)),
-    launchEmail: Yup.string().required(intl.formatMessage(messages.launchEmailRequired)),
+    consumerKey: Yup.string().when(['provider', 'tierType'], {
+      is: (provider, tier) => provider === 'zoom' || (provider === 'big_blue_button' && tier === bbbPlanTypes.commercial),
+      then: Yup.string().required(intl.formatMessage(messages.consumerKeyRequired)),
+    }),
+    consumerSecret: Yup.string().when(['provider', 'tierType'], {
+      is: (provider, tier) => provider === 'zoom' || (provider === 'big_blue_button' && tier === bbbPlanTypes.commercial),
+      then: Yup.string().required(intl.formatMessage(messages.consumerSecretRequired)),
+    }),
+    launchUrl: Yup.string().when(['provider', 'tierType'], {
+      is: (provider, tier) => provider === 'zoom' || (provider === 'big_blue_button' && tier === bbbPlanTypes.commercial),
+      then: Yup.string().required(intl.formatMessage(messages.launchUrlRequired)),
+    }),
+    launchEmail: Yup.string().when('provider', {
+      is: 'zoom',
+      then: Yup.string().required(intl.formatMessage(messages.launchEmailRequired)),
+    }),
   };
 
   const handleProviderChange = (providerId, setFieldValue, values) => {
@@ -103,48 +116,13 @@ function LiveSettings({
                       </SelectableBox>
                     ))}
                   </SelectableBox.Set>
-                  {(!values.piiSharingEnable && (values.piiSharingEmail || values.piiSharingUsername)) ? (
-                    <p data-testid="request-pii-sharing">
-                      {intl.formatMessage(messages.requestPiiSharingEnable, { provider: values.provider })}
-                    </p>
-                  ) : (
-                    <>
-                      {(values.piiSharingEmail || values.piiSharingUsername)
-                        && (
-                        <p data-testid="helper-text">
-                          {intl.formatMessage(messages.providerHelperText, { providerName: values.provider })}
-                        </p>
-                      )}
-                      <p className="pb-2">{intl.formatMessage(messages.formInstructions)}</p>
-                      <FormikControl
-                        name="consumerKey"
-                        value={values.consumerKey}
-                        floatingLabel={intl.formatMessage(messages.consumerKey)}
-                        className="pb-1"
-                        type="input"
+                  {values.provider === 'zoom' ? <ZoomSettings values={values} />
+                    : (
+                      <BBBSettings
+                        values={values}
+                        setFieldValue={setFieldValue}
                       />
-                      <FormikControl
-                        name="consumerSecret"
-                        value={values.consumerSecret}
-                        floatingLabel={intl.formatMessage(messages.consumerSecret)}
-                        className="pb-1"
-                        type="input"
-                      />
-                      <FormikControl
-                        name="launchUrl"
-                        value={values.launchUrl}
-                        floatingLabel={intl.formatMessage(messages.launchUrl)}
-                        className="pb-1"
-                        type="input"
-                      />
-                      <FormikControl
-                        name="launchEmail"
-                        value={values.launchEmail}
-                        floatingLabel={intl.formatMessage(messages.launchEmail)}
-                        type="input"
-                      />
-                    </>
-                  )}
+                    )}
                 </>
               )}
           </>

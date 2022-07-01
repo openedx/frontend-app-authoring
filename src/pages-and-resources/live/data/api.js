@@ -1,6 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { bbbPlanTypes } from '../constants';
 
 ensureConfig([
   'STUDIO_BASE_URL',
@@ -40,9 +41,14 @@ function normalizeLtiConfig(data) {
 }
 
 export function normalizeSettings(data) {
+  let tier;
+  if (data.provider_type === 'big_blue_button') {
+    tier = data.free_tier === true ? bbbPlanTypes.free : bbbPlanTypes.commercial;
+  }
   return {
     enabled: data.enabled,
     piiSharingAllowed: data.pii_sharing_allowed,
+    tierType: tier,
     appConfig: {
       id: data.provider_type,
       ...normalizeLtiConfig(data.lti_configuration),
@@ -52,7 +58,6 @@ export function normalizeSettings(data) {
 
 export function deNormalizeSettings(data) {
   const ltiConfiguration = {};
-
   if (data.consumerKey) {
     ltiConfiguration.lti_1p1_client_key = data.consumerKey;
   }
@@ -69,7 +74,6 @@ export function deNormalizeSettings(data) {
       },
     };
   }
-
   if (Object.keys(ltiConfiguration).length > 0) {
     // Only add this in if we're sending LTI fields.
     // TODO: Eventually support LTI v1.3 here.
@@ -81,6 +85,7 @@ export function deNormalizeSettings(data) {
     lti_configuration: ltiConfiguration,
     provider_type: data?.provider || 'zoom',
     pii_sharing_allowed: data?.piiSharingEnable || false,
+    free_tier: Boolean(data.tierType === 'Free'),
   };
   return apiData;
 }
