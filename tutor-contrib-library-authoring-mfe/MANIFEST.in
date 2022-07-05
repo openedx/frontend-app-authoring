@@ -1,0 +1,2 @@
+recursive-include tutor_library_authoring_mfe/patches *
+recursive-include tutor_library_authoring_mfe/templates *
