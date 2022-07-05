@@ -4,7 +4,7 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
 <div>
   <ModalDialog.Header>
     <ModalDialog.Title>
-      <InjectIntl(ShimmedIntlComponent)
+      <injectIntl(ShimmedIntlComponent)
         isInitialized={true}
       />
       <div
@@ -27,7 +27,7 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
   <h1>
     My test content
   </h1>
-  <InjectIntl(ShimmedIntlComponent)
+  <injectIntl(ShimmedIntlComponent)
     disableSave={false}
     onCancel={
       Object {
@@ -52,7 +52,7 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
 <div>
   <ModalDialog.Header>
     <ModalDialog.Title>
-      <InjectIntl(ShimmedIntlComponent)
+      <injectIntl(ShimmedIntlComponent)
         isInitialized={false}
       />
       <div
@@ -72,7 +72,7 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
       </div>
     </ModalDialog.Title>
   </ModalDialog.Header>
-  <InjectIntl(ShimmedIntlComponent)
+  <injectIntl(ShimmedIntlComponent)
     disableSave={true}
     onCancel={
       Object {
