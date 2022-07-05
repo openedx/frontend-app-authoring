@@ -160,7 +160,7 @@ const messages = defineMessages({
 
   freePlanMessage: {
     id: 'authoring.live.freePlanMessage',
-    defaultMessage: 'Free plan come pre-configured and no additional configurations are required',
+    defaultMessage: 'The free plan is pre-configured, and no additional configurations are required.',
     description: 'Tells user that free plans requires no additional configurations',
   },
 });
