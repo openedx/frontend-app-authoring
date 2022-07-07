@@ -3,7 +3,7 @@ A library of high-level components for content handling (viewing, editing, etc. 
 
 # How to setup development of V2 content Editors for this Package for use in Studio and course Authoring MFE.
 
-This guide presumes you have a functioning devstack.
+This guide presumes you have a functioning devstack. 
 
 1. Enable Studio to use an editor for your xblock using waffle flags
     1. Add the string name of your editor e.g. `html` to the flag check at line 3976 of `edx-platform/common/lib/xmodule/xmodule/js/common_static/bundles/js/factories/container.js`
