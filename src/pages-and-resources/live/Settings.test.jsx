@@ -87,15 +87,12 @@ describe('LiveSettings', () => {
 
   test('Live Configuration modal is visible', async () => {
     renderComponent();
-
     expect(queryByRole(container, 'dialog')).toBeVisible();
   });
 
   test('Displays "Configure Live" heading', async () => {
     renderComponent();
-
     const headingElement = queryByTestId(container, 'modal-title');
-
     expect(headingElement).toHaveTextContent(messages.heading.defaultMessage);
   });
 
@@ -140,76 +137,9 @@ describe('LiveSettings', () => {
 
     expect(providers.childElementCount).toBe(2);
     expect(providers).toHaveTextContent('Zoom');
+    expect(providers).toHaveTextContent('BigBlueButton');
     expect(helperText).toHaveTextContent(
-      messages.providerHelperText.defaultMessage.replace('{providerName}', 'zoom'),
-    );
-  });
-
-  test('LTI fields are visible when pii sharing is enabled and email or username sharing required', async () => {
-    await mockStore({ emailSharing: true });
-    renderComponent();
-
-    const spinner = getByRole(container, 'status');
-    await waitForElementToBeRemoved(spinner);
-
-    const consumerKey = container.querySelector('input[name="consumerKey"]').parentElement;
-    const consumerSecret = container.querySelector('input[name="consumerSecret"]').parentElement;
-    const launchUrl = container.querySelector('input[name="launchUrl"]').parentElement;
-    const launchEmail = container.querySelector('input[name="launchEmail"]').parentElement;
-
-    expect(consumerKey.firstChild).toBeVisible();
-    expect(consumerKey.lastChild).toHaveTextContent(messages.consumerKey.defaultMessage);
-    expect(consumerSecret.firstChild).toBeVisible();
-    expect(consumerSecret.lastChild).toHaveTextContent(messages.consumerSecret.defaultMessage);
-    expect(launchUrl.firstChild).toBeVisible();
-    expect(launchUrl.lastChild).toHaveTextContent(messages.launchUrl.defaultMessage);
-    expect(launchEmail.firstChild).toBeVisible();
-    expect(launchEmail.lastChild).toHaveTextContent(messages.launchEmail.defaultMessage);
-  });
-
-  test(
-    'Only connect to support message is visible when pii sharing is disabled and email or username sharing is required',
-    async () => {
-        await mockStore({ emailSharing: true, piiSharingAllowed: false });
-        renderComponent();
-
-        const spinner = getByRole(container, 'status');
-        await waitForElementToBeRemoved(spinner);
-
-        const requestPiiText = queryByTestId(container, 'request-pii-sharing');
-        const consumerKey = container.querySelector('input[name="consumerKey"]');
-        const consumerSecret = container.querySelector('input[name="consumerSecret"]');
-        const launchUrl = container.querySelector('input[name="launchUrl"]');
-        const launchEmail = container.querySelector('input[name="launchEmail"]');
-
-        expect(requestPiiText).toHaveTextContent(
-          messages.requestPiiSharingEnable.defaultMessage.replaceAll('{provider}', 'zoom'),
-        );
-        expect(consumerKey).not.toBeInTheDocument();
-        expect(consumerSecret).not.toBeInTheDocument();
-        expect(launchUrl).not.toBeInTheDocument();
-        expect(launchEmail).not.toBeInTheDocument();
-    },
-  );
-
-  test('Provider Configuration should be displayed correctly', async () => {
-    const apiDefaultResponse = generateLiveConfigurationApiResponse(true, true);
-    await mockStore({ emailSharing: false, piiSharingAllowed: false });
-    renderComponent();
-
-    const spinner = getByRole(container, 'status');
-    await waitForElementToBeRemoved(spinner);
-
-    const consumerKey = container.querySelector('input[name="consumerKey"]');
-    const consumerSecret = container.querySelector('input[name="consumerSecret"]');
-    const launchUrl = container.querySelector('input[name="launchUrl"]');
-    const launchEmail = container.querySelector('input[name="launchEmail"]');
-
-    expect(consumerKey.value).toBe(apiDefaultResponse.lti_configuration.lti_1p1_client_key);
-    expect(consumerSecret.value).toBe(apiDefaultResponse.lti_configuration.lti_1p1_client_secret);
-    expect(launchUrl.value).toBe(apiDefaultResponse.lti_configuration.lti_1p1_launch_url);
-    expect(launchEmail.value).toBe(
-      apiDefaultResponse.lti_configuration.lti_config.additional_parameters.custom_instructor_email,
+      messages.providerHelperText.defaultMessage.replace('{providerName}', 'Zoom'),
     );
   });
 

@@ -141,6 +141,28 @@ const messages = defineMessages({
     defaultMessage: 'Microsoft Teams',
     description: 'The name of the Microsoft Teams app.',
   },
+  'appName-bigBlueButton': {
+    id: 'authoring.live.appName-bigBlueButton',
+    defaultMessage: 'BigBlueButton',
+    description: 'The name of the Big Blue Button Teams app.',
+  },
+  requestPiiSharingEnableForBbb: {
+    id: 'authoring.live.requestPiiSharingEnableForBbb',
+    defaultMessage: 'This configuration will require sharing usernames of learners and the course team with {provider}.',
+    description: 'Tells the user that they require sharing usernames with the provider to use this feature',
+  },
+
+  piiSharingEnableHelpTextBbb: {
+    id: 'authoring.live.piiSharingEnableHelpText',
+    defaultMessage: 'To enable this feature, contact your edX support team to enable PII sharing for this course.',
+    description: 'Tells the user that request edx project coordinator to enable the PII sharing to access the LTI configuration for a provider.',
+  },
+
+  freePlanMessage: {
+    id: 'authoring.live.freePlanMessage',
+    defaultMessage: 'The free plan is pre-configured, and no additional configurations are required.',
+    description: 'Tells user that free plans requires no additional configurations',
+  },
 });
 
 export default messages;
