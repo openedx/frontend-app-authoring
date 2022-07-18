@@ -1,5 +1,4 @@
 from glob import glob
-import os
 import pkg_resources
 
 from tutor import hooks
@@ -13,7 +12,7 @@ hooks.Filters.ENV_PATCHES.add_item(("cms-env-features",
 
 # Set the URL of the MFE:
 hooks.Filters.ENV_PATCHES.add_item(("openedx-cms-development-settings",
-    'LIBRARY_AUTHORING_MICROFRONTEND_URL = "http://{{ MFE_HOST }}:3001/library_authoring"'
+    'LIBRARY_AUTHORING_MICROFRONTEND_URL = "http://{{ MFE_HOST }}:3001/library-authoring"'
 ))
 # Currently Tutor does not set CMS_BASE correctly - it still defaults to 'localhost:18010' not 'localhost:8001' like we need
 hooks.Filters.ENV_PATCHES.add_item(("openedx-cms-development-settings",
@@ -30,7 +29,7 @@ hooks.Filters.ENV_PATCHES.add_item(("openedx-development-settings",
 
 # Tell the tutor-mfe plugin about this MFE so we can build, run, and use it:
 hooks.Filters.CONFIG_DEFAULTS.add_item(("LIBRARY_AUTHORING_MFE_APP", {
-    "name": "library_authoring",
+    "name": "library-authoring",
     "repository": "https://github.com/openedx/frontend-app-library-authoring",
     "port": 3001,
     "env": {

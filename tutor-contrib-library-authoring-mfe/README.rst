@@ -17,6 +17,15 @@ Then, follow these instructions to enable this microfrontend:
 2. Enable the plugin: ``tutor plugins enable library_authoring_mfe``
 3. Run ``tutor config save``.
 4. Run ``tutor dev init -l library_authoring_mfe`` to set the required waffle flags in the CMS.
-5. Restart your Tutor Nightly Dev environment and also start this with ``tutor dev start library_authoring``
+5. Restart your Tutor Nightly Dev environment and also start this with ``tutor dev start library-authoring``
 6. Go to http://studio.local.overhang.io:8001/home/ , click "Libraries", and create a new library with
    "Library Type: Complex (beta)"
+
+
+If you want to run this MFE in
+`development mode <https://github.com/overhangio/tutor-mfe/#mfe-development>`
+(to make changes to the code), instead of step 5 above, do this::
+
+   cd /path/to/frontend-app-library-authoring
+   tutor dev run --mount=. library-authoring npm install  # Ensure NPM requirements are installed into your fork.
+   tutor dev start --mount=. library-authoring
