@@ -3,8 +3,9 @@ import * as api from './api';
 import * as detailApi from '../../author-library/data/api';
 import { libraryEditActions as actions } from './slice';
 import { libraryAuthoringActions as detailActions } from '../../author-library/data';
+import { annotateThunk } from '../../common/data';
 
-export const updateLibrary = ({ data }) => async (dispatch) => {
+export const updateLibrary = annotateThunk(({ data }) => async (dispatch) => {
   try {
     dispatch(actions.libraryUpdateRequest());
     await api.updateLibrary(data);
@@ -15,8 +16,8 @@ export const updateLibrary = ({ data }) => async (dispatch) => {
     dispatch(actions.libraryUpdateFailed({ errorMessage: error.message, errorFields: error.fields }));
     logError(error);
   }
-};
+});
 
-export const clearError = () => async (dispatch) => {
+export const clearError = annotateThunk(() => async (dispatch) => {
   dispatch(actions.libraryClearError());
-};
+});

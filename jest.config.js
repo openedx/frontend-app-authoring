@@ -11,7 +11,7 @@ module.exports = createConfig('jest', {
     "**/*.{js,jsx}",
   ],
   testMatch: [
-    '**/specs/**/*.spec.(js|jsx)|**/__tests__/*.(js|jsx)',
+    '**/specs/**/*.spec.(js|jsx)|**/__tests__/*.(js|jsx)|**/specs/*.spec.(js|jsx)',
   ],
   roots: [
     '<rootDir>src/',

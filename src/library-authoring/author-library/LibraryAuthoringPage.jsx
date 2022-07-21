@@ -339,7 +339,7 @@ const LibraryAuthoringPageHeaderBase = ({intl, library, ...props}) => {
   const [inputIsActive, setIsActive] = useState(false);
   const handleOnBlur = (event) => {
     var newTitle = event.target.value;
-    if (event.target.value){
+    if (newTitle && newTitle != library.title) {
       props.updateLibrary({ data: { title: newTitle, libraryId: library.id } });
     }
     setIsActive(false);
@@ -354,32 +354,30 @@ const LibraryAuthoringPageHeaderBase = ({intl, library, ...props}) => {
       <h1 className="page-header-title">
         {inputIsActive
           ? (
-            <>
-              <Input
-                autoFocus
-                name="title"
-                id="title"
-                type="text"
-                defaultValue={library.title}
-                onBlur={handleOnBlur}
-              />
-            </>
+            <Input
+              autoFocus
+              name="title"
+              id="title"
+              type="text"
+              aria-label="Title input"
+              defaultValue={library.title}
+              onBlur={handleOnBlur}
+            />
           )
           : (
             <>
               {library.title}
-                <IconButton 
-                  invertColors
-                  isActive
-                  iconAs={Edit}
-                  alt="Edit"
-                  onClick={handleClick}
-                  className="ml-3"
-                />
+              <IconButton
+                invertColors
+                isActive
+                iconAs={Edit}
+                alt="Edit name button"
+                onClick={handleClick}
+                className="ml-3"
+              />
             </>
           )
         }
-        
       </h1>
     </>
   );
