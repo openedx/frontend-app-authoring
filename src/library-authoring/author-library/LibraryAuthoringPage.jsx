@@ -5,6 +5,7 @@ import {
   Container,
   Row,
   Button,
+  IconButton,
   Card,
   Navbar,
   Modal,
@@ -13,6 +14,7 @@ import {
   Form,
   Pagination,
 } from '@edx/paragon';
+import { Edit } from '@edx/paragon/icons';
 import { v4 as uuid4 } from 'uuid';
 import { faPlus, faSync } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -34,6 +36,10 @@ import {
   revertLibraryChanges,
   searchLibrary,
 } from './data';
+import {
+  selectLibraryEdit,
+  updateLibrary,
+} from '../configure-library/data'
 import {
   BLOCK_FILTER_ORDER,
   BLOCK_TYPE_EDIT_DENYLIST,
@@ -324,6 +330,73 @@ const deriveTypeOptions = (blockTypes, intl) => {
   return typeOptions;
 };
 
+
+/**
+ * LibraryAuthoringPageHeaderBase
+ * Title component for the LibraryAuthoringPageBase.
+ */
+const LibraryAuthoringPageHeaderBase = ({intl, library, ...props}) => {
+  const [inputIsActive, setIsActive] = useState(false);
+  const handleOnBlur = (event) => {
+    var newTitle = event.target.value;
+    if (event.target.value){
+      props.updateLibrary({ data: { title: newTitle, libraryId: library.id } });
+    }
+    setIsActive(false);
+  };
+  const handleClick = (event) => {
+    setIsActive(true);
+  };
+
+  return (
+    <>
+      <small className="card-subtitle">{intl.formatMessage(messages['library.detail.page.heading'])}</small>
+      <h1 className="page-header-title">
+        {inputIsActive
+          ? (
+            <>
+              <Input
+                autoFocus
+                name="title"
+                id="title"
+                type="text"
+                defaultValue={library.title}
+                onBlur={handleOnBlur}
+              />
+            </>
+          )
+          : (
+            <>
+              {library.title}
+                <IconButton 
+                  invertColors
+                  isActive
+                  iconAs={Edit}
+                  alt="Edit"
+                  onClick={handleClick}
+                  className="ml-3"
+                />
+            </>
+          )
+        }
+        
+      </h1>
+    </>
+  );
+};
+
+LibraryAuthoringPageHeaderBase.propTypes = {
+  intl: intlShape.isRequired,
+  library: libraryShape.isRequired,
+};
+
+const LibraryAuthoringPageHeader = connect(
+  selectLibraryEdit,
+  {
+    updateLibrary,
+  },
+)(injectIntl(LibraryAuthoringPageHeaderBase));
+
 /**
  * LibraryAuthoringPage
  * Template component for the library Authoring page.
@@ -337,8 +410,9 @@ export const LibraryAuthoringPageBase = ({
   <Container fluid>
     <Row className="pt-5 px-2 px-xl-0">
       <Col xs={12} md={8} xl={9} className="page-header-section">
-        <small className="card-subtitle">{intl.formatMessage(messages['library.detail.page.heading'])}</small>
-        <h1 className="page-header-title">{library.title}</h1>
+        <LibraryAuthoringPageHeader
+          library={library}
+        />
       </Col>
       <Col xs={12} md={4} xl={3} className="text-center d-none d-md-block">
         <ButtonToggles
