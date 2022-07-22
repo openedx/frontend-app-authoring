@@ -53,7 +53,7 @@ describe('hooks', () => {
       hooks.initializeApp({ dispatch, data: fakeData });
       expect(dispatch).not.toHaveBeenCalledWith(fakeData);
       const [cb, prereqs] = useEffect.mock.calls[0];
-      expect(prereqs).toStrictEqual([]);
+      expect(prereqs).toStrictEqual([fakeData]);
       cb();
       expect(dispatch).toHaveBeenCalledWith(thunkActions.app.initialize(fakeData));
     });

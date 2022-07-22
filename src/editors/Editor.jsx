@@ -44,17 +44,17 @@ export const Editor = ({
   );
 };
 Editor.defaultProps = {
-  learningContextId: null,
   blockId: null,
+  learningContextId: null,
   lmsEndpointUrl: null,
-  studioEndpointUrl: null,
   onClose: null,
+  studioEndpointUrl: null,
 };
 
 Editor.propTypes = {
-  learningContextId: PropTypes.string,
-  blockType: PropTypes.string.isRequired,
   blockId: PropTypes.string,
+  blockType: PropTypes.string.isRequired,
+  learningContextId: PropTypes.string,
   lmsEndpointUrl: PropTypes.string,
   onClose: PropTypes.func,
   studioEndpointUrl: PropTypes.string,

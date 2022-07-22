@@ -8,7 +8,7 @@ import * as module from './hooks';
 
 export const initializeApp = ({ dispatch, data }) => useEffect(
   () => dispatch(thunkActions.app.initialize(data)),
-  [],
+  [data],
 );
 
 export const navigateTo = (destination) => {

@@ -113,9 +113,9 @@ export const TextEditor = ({
 };
 TextEditor.defaultProps = {
   blockValue: null,
+  isRaw: null,
   lmsEndpointUrl: null,
   studioEndpointUrl: null,
-  isRaw: null,
 };
 TextEditor.propTypes = {
   onClose: PropTypes.func.isRequired,
