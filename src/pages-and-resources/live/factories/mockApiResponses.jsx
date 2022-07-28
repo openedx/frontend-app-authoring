@@ -36,9 +36,11 @@ export const initialState = {
 export const configurationProviders = (
   emailSharing,
   usernameSharing,
+  activeProvider = 'zoom',
+  isFreeTier,
 ) => ({
   providers: {
-    active: 'zoom',
+    active: activeProvider,
     available: {
       zoom: {
         features: [],
@@ -48,13 +50,12 @@ export const configurationProviders = (
           username: usernameSharing,
         },
       },
-      googleMeet: {
+
+      big_blue_button: {
+        additional_parameters: [],
         features: [],
-        name: 'Google Meet',
-        pii_sharing: {
-          email: true,
-          username: true,
-        },
+        has_free_tier: isFreeTier,
+        name: 'Big Blue Button',
       },
     },
   },
@@ -63,6 +64,8 @@ export const configurationProviders = (
 export const generateLiveConfigurationApiResponse = (
   enabled,
   piiSharingAllowed,
+  providerType = 'zoom',
+  isFreeTier,
 ) => ({
   course_key: courseId,
   enabled,
@@ -78,5 +81,6 @@ export const generateLiveConfigurationApiResponse = (
     },
   },
   pii_sharing_allowed: piiSharingAllowed,
-  provider_type: 'zoom',
+  provider_type: providerType,
+  free_tier: providerType === 'bigBlueButton' ? isFreeTier : undefined,
 });
