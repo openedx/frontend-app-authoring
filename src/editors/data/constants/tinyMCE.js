@@ -48,6 +48,7 @@ export const buttons = StrictDict({
   }),
   table: 'table',
   undo: 'undo',
+  underline: 'underline',
 });
 
 export const plugins = listKeyStore([
