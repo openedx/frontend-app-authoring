@@ -21,7 +21,7 @@ export default StrictDict({
   toolbar: mapToolbars([
     [buttons.undo, buttons.redo],
     [buttons.formatSelect],
-    [buttons.bold, buttons.italic, buttons.foreColor, buttons.backColor],
+    [buttons.bold, buttons.italic, buttons.underline, buttons.foreColor, buttons.backColor],
     [
       buttons.align.left,
       buttons.align.center,
