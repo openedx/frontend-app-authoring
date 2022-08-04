@@ -103,7 +103,8 @@ describe('BBB Settings', () => {
     expect(getAllByRole(dropDown, 'option').length).toBe(3);
   });
 
-  test('Connect to support and PII sharing message is visible and plans selection is disabled, When pii sharing is disabled, ',
+  test(
+'Connect to support and PII sharing message is visible and plans selection is disabled, When pii sharing is disabled, ',
     async () => {
       await mockStore({ piiSharingAllowed: false });
       renderComponent();
@@ -116,7 +117,8 @@ describe('BBB Settings', () => {
       );
       expect(helpRequestPiiText).toHaveTextContent(messages.piiSharingEnableHelpTextBbb.defaultMessage);
       expect(container.querySelector('select[name="tierType"]')).toBeDisabled();
-    });
+    },
+);
 
   test('free plans message is visible when free plan is selected', async () => {
     await mockStore({ emailSharing: true, isFreeTier: true });

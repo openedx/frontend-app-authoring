@@ -17,14 +17,14 @@ import CollapsableEditor from '../../../../../../generic/CollapsableEditor';
 import DeletePopup from '../../../../../../generic/DeletePopup';
 import CollapseCardHeading from './CollapseCardHeading';
 
-const BlackoutDatesItem = ({
+function BlackoutDatesItem({
   intl,
   blackoutDate,
   onDelete,
   hasError,
   onClose,
   fieldNameCommonBase,
-}) => {
+}) {
   const blackoutDateError = !blackoutDate.startDate || !blackoutDate.endDate || hasError;
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [collapseIsOpen, setCollapseOpen] = useState(blackoutDateError);
@@ -134,7 +134,7 @@ const BlackoutDatesItem = ({
       </Form.Row>
     </CollapsableEditor>
   );
-};
+}
 
 BlackoutDatesItem.propTypes = {
   intl: intlShape.isRequired,

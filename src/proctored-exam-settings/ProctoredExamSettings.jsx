@@ -467,8 +467,7 @@ function ProctoredExamSettings({ courseId, intl }) {
     );
   }
 
-  useEffect(
-    () => {
+  useEffect(() => {
       dispatch(fetchExamSettingsPending(courseId));
       StudioApiService.getProctoredExamSettingsData(courseId)
         .then(
@@ -507,8 +506,7 @@ function ProctoredExamSettings({ courseId, intl }) {
             dispatch(fetchExamSettingsFailure(courseId));
           },
         );
-    }, [],
-  );
+    }, []);
 
   useEffect(() => {
     if ((saveSuccess || saveError) && !!saveStatusAlertRef.current) {

@@ -78,24 +78,23 @@ function LiveSettings({
   }, [courseId]);
 
   return (
-    <>
-      <AppSettingsModal
-        appId="live"
-        title={intl.formatMessage(messages.heading)}
-        enableAppHelp={intl.formatMessage(messages.enableLiveHelp)}
-        enableAppLabel={intl.formatMessage(messages.enableLiveLabel)}
-        learnMoreText={intl.formatMessage(messages.enableLiveLink)}
-        onClose={onClose}
-        initialValues={liveConfiguration}
-        validationSchema={validationSchema}
-        onSettingsSave={handleSettingsSave}
-        configureBeforeEnable
-        enableReinitialize
-      >
-        {({ values, setFieldValue }) => (
-          <>
-            {(status === RequestStatus.IN_PROGRESS) ? (
-              <Loading />
+    <AppSettingsModal
+      appId="live"
+      title={intl.formatMessage(messages.heading)}
+      enableAppHelp={intl.formatMessage(messages.enableLiveHelp)}
+      enableAppLabel={intl.formatMessage(messages.enableLiveLabel)}
+      learnMoreText={intl.formatMessage(messages.enableLiveLink)}
+      onClose={onClose}
+      initialValues={liveConfiguration}
+      validationSchema={validationSchema}
+      onSettingsSave={handleSettingsSave}
+      configureBeforeEnable
+      enableReinitialize
+    >
+      {({ values, setFieldValue }) => (
+        <>
+          {(status === RequestStatus.IN_PROGRESS) ? (
+            <Loading />
               ) : (
                 <>
                   <h4 className="my-3">{intl.formatMessage(messages.selectProvider)}</h4>
@@ -125,10 +124,9 @@ function LiveSettings({
                     )}
                 </>
               )}
-          </>
+        </>
           )}
-      </AppSettingsModal>
-    </>
+    </AppSettingsModal>
   );
 }
 

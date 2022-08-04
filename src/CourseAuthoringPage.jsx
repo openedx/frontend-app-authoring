@@ -35,7 +35,8 @@ export default function CourseAuthoringPage({ courseId, children }) {
     );
   }
 
-  const AppHeader = () => (
+  function AppHeader() {
+  return (
     <Header
       courseNumber={courseNumber}
       courseOrg={courseOrg}
@@ -43,12 +44,15 @@ export default function CourseAuthoringPage({ courseId, children }) {
       courseId={courseId}
     />
   );
+}
 
-  const AppFooter = () => (
+  function AppFooter() {
+  return (
     <div className="mt-6">
       <Footer />
     </div>
   );
+}
 
   return (
     <div className="bg-light-200">

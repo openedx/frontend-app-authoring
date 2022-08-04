@@ -1,6 +1,7 @@
 const { createConfig } = require('@edx/frontend-build');
 
-module.exports = createConfig('eslint',
+module.exports = createConfig(
+'eslint',
   {
     rules: {
       'jsx-a11y/label-has-associated-control': [2, {
@@ -10,4 +11,5 @@ module.exports = createConfig('eslint',
       'react-hooks/exhaustive-deps': 'off',
       indent: 'off',
     },
-  });
+  },
+);

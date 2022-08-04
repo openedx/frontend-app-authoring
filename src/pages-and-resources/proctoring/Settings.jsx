@@ -444,8 +444,7 @@ function ProctoringSettings({ intl, onClose }) {
     );
   }
 
-  useEffect(
-    () => {
+  useEffect(() => {
       StudioApiService.getProctoredExamSettingsData(courseId)
         .then(
           response => {
@@ -483,8 +482,7 @@ function ProctoringSettings({ intl, onClose }) {
             setSubmissionInProgress(false);
           },
         );
-    }, [],
-  );
+    }, []);
 
   useEffect(() => {
     if ((saveSuccess || saveError) && !!saveStatusAlertRef.current) {

@@ -39,14 +39,16 @@ describe('<Header />', () => {
   }
 
   it('renders desktop header correctly with API call', async () => {
-    const component = createComponent(1280, (
-      <Header
-        courseId="course-v1:edX+DemoX+Demo_Course"
-        courseNumber="DemoX"
-        courseOrg="edX"
-        courseTitle="Demonstration Course"
-      />
-    ));
+    const component = createComponent(
+1280, (
+  <Header
+    courseId="course-v1:edX+DemoX+Demo_Course"
+    courseNumber="DemoX"
+    courseOrg="edX"
+    courseTitle="Demonstration Course"
+  />
+    ),
+);
 
     render(component);
     expect(screen.getByTestId('course-org-number').textContent).toEqual(expect.stringContaining('edX DemoX'));
@@ -54,42 +56,48 @@ describe('<Header />', () => {
   });
 
   it('renders mobile header correctly with API call', async () => {
-    const component = createComponent(500, (
-      <Header
-        courseId="course-v1:edX+DemoX+Demo_Course"
-        courseNumber="DemoX"
-        courseOrg="edX"
-        courseTitle="Demonstration Course"
-      />
-    ));
+    const component = createComponent(
+500, (
+  <Header
+    courseId="course-v1:edX+DemoX+Demo_Course"
+    courseNumber="DemoX"
+    courseOrg="edX"
+    courseTitle="Demonstration Course"
+  />
+    ),
+);
 
     render(component);
     expect(screen.getByTestId('edx-header-logo'));
   });
 
   it('renders desktop header correctly with bad API call', async () => {
-    const component = createComponent(1280, (
-      <Header
-        courseId="course-v1:edX+DemoX+Demo_Course"
-        courseNumber={null}
-        courseOrg={null}
-        courseTitle="course-v1:edX+DemoX+Demo_Course"
-      />
-    ));
+    const component = createComponent(
+1280, (
+  <Header
+    courseId="course-v1:edX+DemoX+Demo_Course"
+    courseNumber={null}
+    courseOrg={null}
+    courseTitle="course-v1:edX+DemoX+Demo_Course"
+  />
+    ),
+);
 
     render(component);
     expect(screen.getByTestId('course-title').textContent).toEqual(expect.stringContaining('course-v1:edX+DemoX+Demo_Course'));
   });
 
   it('renders mobile header correctly with bad API call', async () => {
-    const component = createComponent(500, (
-      <Header
-        courseId="course-v1:edX+DemoX+Demo_Course"
-        courseNumber={null}
-        courseOrg={null}
-        courseTitle="course-v1:edX+DemoX+Demo_Course"
-      />
-    ));
+    const component = createComponent(
+500, (
+  <Header
+    courseId="course-v1:edX+DemoX+Demo_Course"
+    courseNumber={null}
+    courseOrg={null}
+    courseTitle="course-v1:edX+DemoX+Demo_Course"
+  />
+    ),
+);
 
     render(component);
     expect(screen.getByTestId('edx-header-logo'));

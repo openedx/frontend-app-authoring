@@ -32,7 +32,7 @@ function PageCard({
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const isDesktop = useIsDesktop();
 
-  const SettingsButton = () => {
+  function SettingsButton() {
     if (page.legacyLink) {
       return (
         <Hyperlink destination={page.legacyLink}>
@@ -54,7 +54,7 @@ function PageCard({
         onClick={() => history.push(`${pagesAndResourcesPath}/${page.id}/settings`)}
       />
     );
-  };
+  }
 
   return (
     <Card

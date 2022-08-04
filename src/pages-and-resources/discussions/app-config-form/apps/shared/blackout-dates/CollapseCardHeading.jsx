@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Badge } from '@edx/paragon';
 
-const CollapseCardHeading = ({
+function CollapseCardHeading({
   isOpen,
   expandHeadingText,
   collapseHeadingText,
   badgeVariant,
   badgeStatus,
-}) => {
+}) {
   if (isOpen) {
     return <span className="h4 py-2 mr-auto">{expandHeadingText}</span>;
   }
@@ -19,7 +19,7 @@ const CollapseCardHeading = ({
       <div className="mt-2">{collapseHeadingText}</div>
     </div>
   );
-};
+}
 
 CollapseCardHeading.propTypes = {
   isOpen: PropTypes.bool.isRequired,

@@ -38,9 +38,7 @@ export const hasValidTimeFormat = (time) => time && moment(time, validTimeFormat
 export const startOfDayTime = (time) => time || moment().startOf('day').format('HH:mm');
 export const endOfDayTime = (time) => time || moment().endOf('day').format('HH:mm');
 export const normalizeTime = (time) => time && moment(time, validTimeFormats, true).format('HH:mm');
-export const normalizeDate = (date) => moment(
-  date, ['MM/DD/YYYY', 'YYYY-MM-DDTHH:mm', 'YYYY-MM-DD'], true,
-).format('YYYY-MM-DD');
+export const normalizeDate = (date) => moment(date, ['MM/DD/YYYY', 'YYYY-MM-DDTHH:mm', 'YYYY-MM-DD'], true).format('YYYY-MM-DD');
 
 export const decodeDateTime = (date, time) => {
   const nDate = normalizeDate(date);
@@ -50,8 +48,11 @@ export const decodeDateTime = (date, time) => {
 };
 
 export const sortBlackoutDatesByStatus = (data, status, order) => (
-  _.orderBy(data.filter(date => date.status === status),
-    [(obj) => decodeDateTime(obj.startDate, startOfDayTime(obj.startTime))], [order])
+  _.orderBy(
+data.filter(date => date.status === status),
+    [(obj) => decodeDateTime(obj.startDate, startOfDayTime(obj.startTime))],
+[order],
+)
 );
 
 export const formatBlackoutDates = ({

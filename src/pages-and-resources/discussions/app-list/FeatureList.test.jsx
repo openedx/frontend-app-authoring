@@ -41,9 +41,7 @@ describe('FeaturesList', () => {
     const button = getByRole(container, 'button');
     userEvent.click(button);
     app.featureIds.forEach((id) => {
-      const featureNodes = queryAllByText(
-        container, messages[`featureName-${id}`].defaultMessage,
-      );
+      const featureNodes = queryAllByText(container, messages[`featureName-${id}`].defaultMessage);
       expect(featureNodes.map(node => node.closest('div'))).toHaveLength(1);
     });
   });

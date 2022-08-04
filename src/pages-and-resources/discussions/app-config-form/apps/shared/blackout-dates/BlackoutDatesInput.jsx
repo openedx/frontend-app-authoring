@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import FieldFeedback from '../../../../../../generic/FieldFeedback';
 
-const BlackoutDatesInput = ({
+function BlackoutDatesInput({
   value,
   type,
   label,
@@ -15,7 +15,7 @@ const BlackoutDatesInput = ({
   feedbackClasses,
   formGroupClasses,
   fieldNameCommonBase,
-}) => {
+}) {
   const {
     handleChange, handleBlur, errors, touched,
   } = useFormikContext();
@@ -56,7 +56,7 @@ const BlackoutDatesInput = ({
       />
     </Form.Group>
   );
-};
+}
 
 BlackoutDatesInput.propTypes = {
   value: PropTypes.string.isRequired,
