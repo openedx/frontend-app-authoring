@@ -49,8 +49,8 @@ FormikControl.propTypes = {
 };
 
 FormikControl.defaultProps = {
-  help: <></>,
-  label: <></>,
+  help: null,
+  label: null,
   className: '',
 };
 

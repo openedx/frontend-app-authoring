@@ -73,7 +73,7 @@ AppCard.propTypes = {
   onClick: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
   intl: intlShape.isRequired,
-  features: PropTypes.arrayOf(PropTypes.object).isRequired,
+  features: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 
 export default injectIntl(AppCard);

@@ -92,7 +92,7 @@ function FeaturesTable({ apps, features, intl }) {
 export default injectIntl(FeaturesTable);
 
 FeaturesTable.propTypes = {
-  apps: PropTypes.arrayOf(PropTypes.object).isRequired,
-  features: PropTypes.arrayOf(PropTypes.object).isRequired,
+  apps: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  features: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   intl: intlShape.isRequired,
 };

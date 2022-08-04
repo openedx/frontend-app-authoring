@@ -14,6 +14,25 @@ import { getCourseAppsApiStatus, getLoadingStatus } from './pages-and-resources/
 import { RequestStatus } from './data/constants';
 import Loading from './generic/Loading';
 
+function AppHeader(courseNumber, courseOrg, courseTitle, courseId) {
+  return (
+    <Header
+      courseNumber={courseNumber}
+      courseOrg={courseOrg}
+      courseTitle={courseTitle}
+      courseId={courseId}
+    />
+  );
+}
+
+  function AppFooter() {
+  return (
+    <div className="mt-6">
+      <Footer />
+    </div>
+  );
+}
+
 export default function CourseAuthoringPage({ courseId, children }) {
   const dispatch = useDispatch();
 
@@ -35,32 +54,14 @@ export default function CourseAuthoringPage({ courseId, children }) {
     );
   }
 
-  function AppHeader() {
-  return (
-    <Header
-      courseNumber={courseNumber}
-      courseOrg={courseOrg}
-      courseTitle={courseTitle}
-      courseId={courseId}
-    />
-  );
-}
-
-  function AppFooter() {
-  return (
-    <div className="mt-6">
-      <Footer />
-    </div>
-  );
-}
-
   return (
     <div className="bg-light-200">
       {/* While V2 Editors are tempoarily served from thier own pages
       using url pattern containing /editor/,
       we shouldn't have the header and footer on these pages.
       This functionality will be removed in TNL-9591 */}
-      {inProgress ? !pathname.includes('/editor/') && <Loading /> : <AppHeader />}
+      {inProgress ? !pathname.includes('/editor/') && <Loading />
+        : <AppHeader courseNumber={courseNumber} courseOrg={courseOrg} courseTitle={courseTitle} courseId={courseId} />}
       {children}
       {!inProgress && <AppFooter />}
     </div>

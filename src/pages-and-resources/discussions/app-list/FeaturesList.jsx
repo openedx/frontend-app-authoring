@@ -36,7 +36,7 @@ export default injectIntl(FeaturesList);
 FeaturesList.propTypes = {
   app: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    featureIds: PropTypes.array.isRequired,
+    featureIds: PropTypes.shape([]).isRequired,
   }).isRequired,
   intl: intlShape.isRequired,
 };

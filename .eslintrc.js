@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { createConfig } = require('@edx/frontend-build');
 
 module.exports = createConfig(
@@ -10,6 +11,7 @@ module.exports = createConfig(
       'template-curly-spacing': 'off',
       'react-hooks/exhaustive-deps': 'off',
       indent: 'off',
+      'react/jsx-no-bind': [0, { ignoreDOMComponents: true }],
     },
   },
 );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 export const DiscussionsContext = React.createContext({});
@@ -6,9 +6,11 @@ export const DiscussionsContext = React.createContext({});
 export default function DiscussionsProvider({ children, path }) {
   return (
     <DiscussionsContext.Provider
-      value={{
+      value={
+        useMemo(() => ({
         path,
-      }}
+      }), [])
+    }
     >
       {children}
     </DiscussionsContext.Provider>

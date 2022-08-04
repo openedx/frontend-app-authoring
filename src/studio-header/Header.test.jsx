@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-constructed-context-values */
 // This file was copied from edx/frontend-component-header-edx.
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';

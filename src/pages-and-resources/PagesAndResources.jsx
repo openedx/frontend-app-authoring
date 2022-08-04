@@ -34,7 +34,7 @@ function PagesAndResources({ courseId, intl }) {
   // Each page here is driven by a course app
   const pages = useModels('courseApps', courseAppIds);
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
-    return <></>;
+    return null;
   }
 
   return (

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-constructed-context-values */
 import React from 'react';
 
 import { initializeMockApp } from '@edx/frontend-platform';

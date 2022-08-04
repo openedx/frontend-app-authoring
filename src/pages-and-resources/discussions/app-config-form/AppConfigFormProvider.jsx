@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 export const AppConfigFormContext = React.createContext({});
@@ -8,9 +8,11 @@ export default function AppConfigFormProvider({ children }) {
 
   return (
     <AppConfigFormContext.Provider
-      value={{
+      value={
+        useMemo(() => ({
         formRef,
-      }}
+      }), [])
+    }
     >
       {children}
     </AppConfigFormContext.Provider>
