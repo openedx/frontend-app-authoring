@@ -22,10 +22,10 @@ describe('AltTextControls', () => {
     props.validation = { show: true };
   });
   describe('render', () => {
-    test('snapshot: isDecorative=true errorProps.showSubmissionError=true', () => {
+    test('snapshot: isDecorative=true errorProps.showAltTextSubmissionError=true', () => {
       expect(shallow(<AltTextControls {...props} />)).toMatchSnapshot();
     });
-    test('snapshot: isDecorative=true errorProps.showSubmissionError=false', () => {
+    test('snapshot: isDecorative=true errorProps.showAltTextSubmissionError=false', () => {
       props.validation.show = false;
       expect(shallow(<AltTextControls {...props} />)).toMatchSnapshot();
     });

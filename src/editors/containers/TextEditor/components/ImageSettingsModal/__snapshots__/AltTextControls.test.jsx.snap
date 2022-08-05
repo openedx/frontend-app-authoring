@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AltTextControls render snapshot: isDecorative=true errorProps.showSubmissionError=false 1`] = `
+exports[`AltTextControls render snapshot: isDecorative=true errorProps.showAltTextSubmissionError=false 1`] = `
 <Form.Group
   className="mt-4.5"
 >
@@ -39,14 +39,14 @@ exports[`AltTextControls render snapshot: isDecorative=true errorProps.showSubmi
       <FormattedMessage
         defaultMessage="This image is decorative (no alt text required)."
         description="Checkbox label for whether or not an image is decorative."
-        id="authoring.texteditor.imagesettingsmodal.decorativeCheckboxLabel"
+        id="authoring.texteditor.imagesettingsmodal.decorativeAltTextCheckboxLabel"
       />
     </Form.Label>
   </Form.Checkbox>
 </Form.Group>
 `;
 
-exports[`AltTextControls render snapshot: isDecorative=true errorProps.showSubmissionError=true 1`] = `
+exports[`AltTextControls render snapshot: isDecorative=true errorProps.showAltTextSubmissionError=true 1`] = `
 <Form.Group
   className="mt-4.5"
 >
@@ -94,7 +94,7 @@ exports[`AltTextControls render snapshot: isDecorative=true errorProps.showSubmi
       <FormattedMessage
         defaultMessage="This image is decorative (no alt text required)."
         description="Checkbox label for whether or not an image is decorative."
-        id="authoring.texteditor.imagesettingsmodal.decorativeCheckboxLabel"
+        id="authoring.texteditor.imagesettingsmodal.decorativeAltTextCheckboxLabel"
       />
     </Form.Label>
   </Form.Checkbox>

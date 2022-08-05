@@ -19,27 +19,23 @@ exports[`DimensionControls render snapshot 1`] = `
     <Form.Control
       className="dimension-input"
       floatingLabel="Width"
-      min={1}
       onBlur={[MockFunction props.updateDimensions]}
       onChange={
         Object {
           "hooks.onInputChange": [MockFunction props.setWidth],
         }
       }
-      type="number"
       value={20}
     />
     <Form.Control
       className="dimension-input"
       floatingLabel="Height"
-      min={1}
       onBlur={[MockFunction props.updateDimensions]}
       onChange={
         Object {
           "hooks.onInputChange": [MockFunction props.setHeight],
         }
       }
-      type="number"
       value={40}
     />
     <IconButton
@@ -70,27 +66,23 @@ exports[`DimensionControls render unlocked dimensions 1`] = `
     <Form.Control
       className="dimension-input"
       floatingLabel="Width"
-      min={1}
       onBlur={[MockFunction props.updateDimensions]}
       onChange={
         Object {
           "hooks.onInputChange": [MockFunction props.setWidth],
         }
       }
-      type="number"
       value={20}
     />
     <Form.Control
       className="dimension-input"
       floatingLabel="Height"
-      min={1}
       onBlur={[MockFunction props.updateDimensions]}
       onChange={
         Object {
           "hooks.onInputChange": [MockFunction props.setHeight],
         }
       }
-      type="number"
       value={40}
     />
     <IconButton

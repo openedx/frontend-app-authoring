@@ -7,8 +7,8 @@ import * as module from './hooks';
 export const state = {
   altText: (val) => React.useState(val),
   dimensions: (val) => React.useState(val),
-  showDismissibleError: (val) => React.useState(val),
-  showSubmissionError: (val) => React.useState(val),
+  showAltTextDismissibleError: (val) => React.useState(val),
+  showAltTextSubmissionError: (val) => React.useState(val),
   isDecorative: (val) => React.useState(val),
   isLocked: (val) => React.useState(val),
   local: (val) => React.useState(val),
@@ -135,6 +135,7 @@ export const dimensionLockHooks = () => {
 export const dimensionHooks = () => {
   const [dimensions, setDimensions] = module.state.dimensions(null);
   const [local, setLocal] = module.state.local(null);
+
   const setAll = ({ height, width }) => {
     setDimensions({ height, width });
     setLocal({ height, width });
@@ -157,8 +158,22 @@ export const dimensionHooks = () => {
     lock,
     unlock,
     value: local,
-    setHeight: (height) => setLocal({ ...local, height: parseInt(height, 10) }),
-    setWidth: (width) => setLocal({ ...local, width: parseInt(width, 10) }),
+    setHeight: (height) => {
+      if (height.match(/[0-9]+[%]{1}/)) {
+        const heightPercent = height.match(/[0-9]+[%]{1}/)[0];
+        setLocal({ ...local, height: heightPercent });
+      } else if (height.match(/[0-9]/)) {
+        setLocal({ ...local, height: parseInt(height, 10) });
+      }
+    },
+    setWidth: (width) => {
+      if (width.match(/[0-9]+[%]{1}/)) {
+        const widthPercent = width.match(/[0-9]+[%]{1}/)[0];
+        setLocal({ ...local, width: widthPercent });
+      } else if (width.match(/[0-9]/)) {
+        setLocal({ ...local, width: parseInt(width, 10) });
+      }
+    },
     updateDimensions: () => setAll(module.getValidDimensions({
       dimensions,
       local,
@@ -189,13 +204,13 @@ export const dimensionHooks = () => {
 export const altTextHooks = (savedText) => {
   const [value, setValue] = module.state.altText(savedText || '');
   const [isDecorative, setIsDecorative] = module.state.isDecorative(false);
-  const [showDismissibleError, setShowDismissibleError] = module.state.showDismissibleError(false);
-  const [showSubmissionError, setShowSubmissionError] = module.state.showSubmissionError(false);
+  const [showAltTextDismissibleError, setShowAltTextDismissibleError] = module.state.showAltTextDismissibleError(false);
+  const [showAltTextSubmissionError, setShowAltTextSubmissionError] = module.state.showAltTextSubmissionError(false);
 
   const validateAltText = (newVal, newDecorative) => {
-    if (showSubmissionError) {
+    if (showAltTextSubmissionError) {
       if (newVal || newDecorative) {
-        setShowSubmissionError(false);
+        setShowAltTextSubmissionError(false);
       }
     }
   };
@@ -212,14 +227,14 @@ export const altTextHooks = (savedText) => {
       validateAltText(null, decorative);
     },
     error: {
-      show: showDismissibleError,
-      set: () => setShowDismissibleError(true),
-      dismiss: () => setShowDismissibleError(false),
+      show: showAltTextDismissibleError,
+      set: () => setShowAltTextDismissibleError(true),
+      dismiss: () => setShowAltTextDismissibleError(false),
     },
     validation: {
-      show: showSubmissionError,
-      set: () => setShowSubmissionError(true),
-      dismiss: () => setShowSubmissionError(false),
+      show: showAltTextSubmissionError,
+      set: () => setShowAltTextSubmissionError(true),
+      dismiss: () => setShowAltTextSubmissionError(false),
     },
   };
 };
@@ -263,7 +278,7 @@ export const checkFormValidation = ({
  * onSave({ altText, dimensions, isDecorative, saveToEditor })
  * Handle saving the image context to the text editor
  * @param {string} altText - image alt text
- * @param {object} dimension - image dimensions ({ width, height })
+ * @param {object} dimensions - image dimensions ({ width, height })
  * @param {bool} isDecorative - is the image decorative?
  * @param {func} saveToEditor - save method for submitting image settings.
  */

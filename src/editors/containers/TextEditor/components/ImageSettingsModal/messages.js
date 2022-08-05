@@ -42,6 +42,11 @@ export const messages = {
     defaultMessage: 'lock dimensions',
     description: 'Label for button when locking dimensions.',
   },
+  decorativeDimensionCheckboxLabel: {
+    id: 'authoring.texteditor.imagesettingsmodal.decorativeDimensionCheckboxLabel',
+    defaultMessage: "Use percentages for the image's width and height",
+    description: 'Checkbox label for whether or not an image uses percentages for width and height.',
+  },
 
   // AltTextControls
   accessibilityLabel: {
@@ -54,8 +59,8 @@ export const messages = {
     defaultMessage: 'Alt Text',
     description: 'Floating label title for alt text input.',
   },
-  decorativeCheckboxLabel: {
-    id: 'authoring.texteditor.imagesettingsmodal.decorativeCheckboxLabel',
+  decorativeAltTextCheckboxLabel: {
+    id: 'authoring.texteditor.imagesettingsmodal.decorativeAltTextCheckboxLabel',
     defaultMessage: 'This image is decorative (no alt text required).',
     description: 'Checkbox label for whether or not an image is decorative.',
   },
@@ -70,6 +75,16 @@ export const messages = {
     id: 'authoring.texteditor.imagesettingsmodal.error.altTextLocalFeedback',
     defaultMessage: 'Enter alt text',
     description: 'Message feedback for user below the alt text field.',
+  },
+  dimensionError: {
+    id: 'authoring.texteditor.imagesettingsmodal.error.dimensionError',
+    defaultMessage: 'Dimension values must be less than or equal to 100.',
+    description: 'Message presented to user when user attempts to save unaccepted dimension configuration.',
+  },
+  dimensionLocalFeedback: {
+    id: 'authoring.texteditor.imagesettingsmodal.error.dimensionFeedback',
+    defaultMessage: 'Enter a value less than or equal to 100.',
+    description: 'Message feedback for user below the dimension fields.',
   },
 };
 

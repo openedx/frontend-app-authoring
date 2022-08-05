@@ -34,8 +34,8 @@ describe('state values', () => {
   };
   test('provides altText state value', () => testStateMethod(state.keys.altText));
   test('provides dimensions state value', () => testStateMethod(state.keys.dimensions));
-  test('provides showDismissibleError state value', () => testStateMethod(state.keys.showDismissibleError));
-  test('provides showSubmissionError state value', () => testStateMethod(state.keys.showSubmissionError));
+  test('provides showAltTextDismissibleError state value', () => testStateMethod(state.keys.showAltTextDismissibleError));
+  test('provides showAltTextSubmissionError state value', () => testStateMethod(state.keys.showAltTextSubmissionError));
   test('provides isDecorative state value', () => testStateMethod(state.keys.isDecorative));
   test('provides isLocked state value', () => testStateMethod(state.keys.isLocked));
   test('provides local state value', () => testStateMethod(state.keys.local));
@@ -244,8 +244,8 @@ describe('ImageSettingsModal hooks', () => {
   describe('altTextHooks', () => {
     const value = 'myVAL';
     const isDecorative = true;
-    const showDismissibleError = 'dismiSSiBLE';
-    const showSubmissionError = 'subMISsion';
+    const showAltTextDismissibleError = 'dismiSSiBLE';
+    const showAltTextSubmissionError = 'subMISsion';
     beforeEach(() => {
       state.mock();
       hook = hooks.altTextHooks();
@@ -275,33 +275,33 @@ describe('ImageSettingsModal hooks', () => {
     describe('error', () => {
       test('show is initialized to false and returns properly', () => {
         expect(hook.error.show).toEqual(false);
-        state.mockVal(state.keys.showDismissibleError, showDismissibleError);
+        state.mockVal(state.keys.showAltTextDismissibleError, showAltTextDismissibleError);
         hook = hooks.altTextHooks();
-        expect(hook.error.show).toEqual(showDismissibleError);
+        expect(hook.error.show).toEqual(showAltTextDismissibleError);
       });
-      test('set sets showDismissibleError to true', () => {
+      test('set sets showAltTextDismissibleError to true', () => {
         hook.error.set();
-        expect(state.setState.showDismissibleError).toHaveBeenCalledWith(true);
+        expect(state.setState.showAltTextDismissibleError).toHaveBeenCalledWith(true);
       });
-      test('dismiss sets showDismissibleError to false', () => {
+      test('dismiss sets showAltTextDismissibleError to false', () => {
         hook.error.dismiss();
-        expect(state.setState.showDismissibleError).toHaveBeenCalledWith(false);
+        expect(state.setState.showAltTextDismissibleError).toHaveBeenCalledWith(false);
       });
     });
     describe('validation', () => {
       test('show is initialized to false and returns properly', () => {
         expect(hook.validation.show).toEqual(false);
-        state.mockVal(state.keys.showSubmissionError, showSubmissionError);
+        state.mockVal(state.keys.showAltTextSubmissionError, showAltTextSubmissionError);
         hook = hooks.altTextHooks();
-        expect(hook.validation.show).toEqual(showSubmissionError);
+        expect(hook.validation.show).toEqual(showAltTextSubmissionError);
       });
-      test('set sets showSubmissionError to true', () => {
+      test('set sets showAltTextSubmissionError to true', () => {
         hook.validation.set();
-        expect(state.setState.showSubmissionError).toHaveBeenCalledWith(true);
+        expect(state.setState.showAltTextSubmissionError).toHaveBeenCalledWith(true);
       });
-      test('dismiss sets showSubmissionError to false', () => {
+      test('dismiss sets showAltTextSubmissionError to false', () => {
         hook.validation.dismiss();
-        expect(state.setState.showSubmissionError).toHaveBeenCalledWith(false);
+        expect(state.setState.showAltTextSubmissionError).toHaveBeenCalledWith(false);
       });
     });
   });
@@ -376,7 +376,7 @@ describe('ImageSettingsModal hooks', () => {
         isDecorative: props.isDecorative,
       });
     });
-    it('calls dismissError and sets showSubmissionError to false when checkFormValidation is true', () => {
+    it('calls dismissError and sets showAltTextSubmissionError to false when checkFormValidation is true', () => {
       jest.spyOn(hooks, hookKeys.checkFormValidation).mockReturnValueOnce(true);
       hooks.onSaveClick({ ...props })();
       expect(props.altText.error.dismiss).toHaveBeenCalled();

@@ -50,7 +50,7 @@ export const AltTextControls = ({
       onChange={hooks.onCheckboxChange(setIsDecorative)}
     >
       <Form.Label>
-        <FormattedMessage {...messages.decorativeCheckboxLabel} />
+        <FormattedMessage {...messages.decorativeAltTextCheckboxLabel} />
       </Form.Label>
     </Form.Checkbox>
   </Form.Group>
