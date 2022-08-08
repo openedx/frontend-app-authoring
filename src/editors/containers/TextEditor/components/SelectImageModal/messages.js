@@ -6,7 +6,7 @@ export const messages = {
   },
   uploadButtonLabel: {
     id: 'authoring.texteditor.selectimagemodal.upload.label',
-    defaultMessage: 'Upload a new image',
+    defaultMessage: 'Upload a new image (10 MB max)',
     description: 'Label for upload button',
   },
   titleLabel: {
@@ -55,7 +55,8 @@ export const messages = {
   },
   emptyGalleryLabel: {
     id: 'authoring.texteditor.selectimagemodal.emptyGalleryLabel',
-    defaultMessage: 'No images found in your gallery. Please upload an image using the button below.',
+    defaultMessage:
+      'No images found in your gallery. Please upload an image using the button below.',
     description: 'Label for when image gallery is empty.',
   },
   emptySearchLabel: {
@@ -72,18 +73,26 @@ export const messages = {
   },
   uploadImageError: {
     id: 'authoring.texteditor.selectimagemodal.error.uploadImageError',
-    defaultMessage: 'Failed to Upload Image. Please Try again.',
+    defaultMessage: 'Failed to upload image. Please try again.',
     description: 'Message presented to user when image fails to upload',
   },
   fetchImagesError: {
     id: 'authoring.texteditor.selectimagemodal.error.fetchImagesError',
-    defaultMessage: 'Failed to obtain course Images. Please Try again.',
+    defaultMessage: 'Failed to obtain course images. Please try again.',
     description: 'Message presented to user when images are not found',
+  },
+  fileSizeError: {
+    id: 'authoring.texteditor.selectimagemodal.error.fileSizeError',
+    defaultMessage:
+      'Images must be 10 MB or less. Please resize image and try again.',
+    description:
+      ' Message presented to user when file size of image is larger than 10 MB',
   },
   selectImageError: {
     id: 'authoring.texteditor.selectimagemodal.error.selectImageError',
     defaultMessage: 'Select an image to continue.',
-    description: 'Message presented to user when clicking Next without selecting an image',
+    description:
+      'Message presented to user when clicking Next without selecting an image',
   },
 };
 

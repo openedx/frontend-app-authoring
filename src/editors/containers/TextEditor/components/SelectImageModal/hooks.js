@@ -11,6 +11,7 @@ export const state = {
   showSelectImageError: (val) => React.useState(val),
   searchString: (val) => React.useState(val),
   sortBy: (val) => React.useState(val),
+  showSizeError: (val) => React.useState(val),
 };
 
 export const searchAndSortHooks = () => {
@@ -18,30 +19,32 @@ export const searchAndSortHooks = () => {
   const [sortBy, setSortBy] = module.state.sortBy(sortKeys.dateNewest);
   return {
     searchString,
-    onSearchChange: e => setSearchString(e.target.value),
+    onSearchChange: (e) => setSearchString(e.target.value),
     clearSearchString: () => setSearchString(''),
     sortBy,
-    onSortClick: key => () => setSortBy(key),
+    onSortClick: (key) => () => setSortBy(key),
   };
 };
 
-export const filteredList = ({ searchString, imageList }) => imageList.filter(
-  ({ displayName }) => displayName.toLowerCase().includes(searchString.toLowerCase()),
+export const filteredList = ({ searchString, imageList }) => (
+  imageList.filter(({ displayName }) => displayName.toLowerCase().includes(searchString.toLowerCase()))
 );
 
-export const displayList = ({ sortBy, searchString, images }) => module.filteredList({
-  searchString,
-  imageList: Object.values(images),
-}).sort(sortFunctions[sortBy in sortKeys ? sortKeys[sortBy] : sortKeys.dateNewest]);
+export const displayList = ({ sortBy, searchString, images }) => (
+  module.filteredList({
+    searchString,
+    imageList: Object.values(images),
+  }).sort(sortFunctions[sortBy in sortKeys ? sortKeys[sortBy] : sortKeys.dateNewest]));
 
-export const imgListHooks = ({
-  searchSortProps,
-  setSelection,
-}) => {
+export const imgListHooks = ({ searchSortProps, setSelection }) => {
   const dispatch = useDispatch();
   const [images, setImages] = module.state.images({});
   const [highlighted, setHighlighted] = module.state.highlighted(null);
-  const [showSelectImageError, setShowSelectImageError] = module.state.showSelectImageError(false);
+  const [
+    showSelectImageError,
+    setShowSelectImageError,
+  ] = module.state.showSelectImageError(false);
+  const [showSizeError, setShowSizeError] = module.state.showSelectImageError(false);
   const list = module.displayList({ ...searchSortProps, images });
 
   React.useEffect(() => {
@@ -49,10 +52,15 @@ export const imgListHooks = ({
   }, []);
 
   return {
-    error: {
+    galleryError: {
       show: showSelectImageError,
       set: () => setShowSelectImageError(true),
       dismiss: () => setShowSelectImageError(false),
+    },
+    inputError: {
+      show: showSizeError,
+      set: () => setShowSizeError(true),
+      dismiss: () => setShowSizeError(false),
     },
     images,
     galleryProps: {
@@ -60,7 +68,7 @@ export const imgListHooks = ({
       searchIsEmpty: list.length === 0,
       displayList: list,
       highlighted,
-      onHighlightChange: e => setHighlighted(e.target.value),
+      onHighlightChange: (e) => setHighlighted(e.target.value),
     },
     // highlight by id
     selectBtnProps: {
@@ -75,15 +83,40 @@ export const imgListHooks = ({
   };
 };
 
-export const fileInputHooks = ({ setSelection }) => {
+export const checkValidFileSize = ({
+  selectedFile,
+  clearSelection,
+  onSizeFail,
+}) => {
+  // Check if the file size is greater than 10 MB, upload size limit
+  if (selectedFile.size > 1000000) {
+    clearSelection();
+    onSizeFail();
+    return false;
+  }
+  return true;
+};
+
+export const fileInputHooks = ({ setSelection, clearSelection, imgList }) => {
   const dispatch = useDispatch();
   const ref = React.useRef();
   const click = () => ref.current.click();
   const addFile = (e) => {
-    dispatch(thunkActions.app.uploadImage({
-      file: e.target.files[0],
-      setSelection,
-    }));
+    const selectedFile = e.target.files[0];
+    if (selectedFile && module.checkValidFileSize({
+      selectedFile,
+      clearSelection,
+      onSizeFail: () => {
+        imgList.inputError.set();
+      },
+    })) {
+      dispatch(
+        thunkActions.app.uploadImage({
+          file: selectedFile,
+          setSelection,
+        }),
+      );
+    }
   };
 
   return {
@@ -93,18 +126,24 @@ export const fileInputHooks = ({ setSelection }) => {
   };
 };
 
-export const imgHooks = ({ setSelection }) => {
+export const imgHooks = ({ setSelection, clearSelection }) => {
   const searchSortProps = module.searchAndSortHooks();
   const imgList = module.imgListHooks({ setSelection, searchSortProps });
-  const fileInput = module.fileInputHooks({ setSelection });
+  const fileInput = module.fileInputHooks({
+    setSelection,
+    clearSelection,
+    imgList,
+  });
   const {
-    error,
+    galleryError,
     galleryProps,
+    inputError,
     selectBtnProps,
   } = imgList;
 
   return {
-    error,
+    galleryError,
+    inputError,
     fileInput,
     galleryProps,
     searchSortProps,

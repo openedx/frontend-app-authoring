@@ -1,9 +1,16 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { Button, Stack } from '@edx/paragon';
+import { Button, Stack, Spinner } from '@edx/paragon';
 import { Add } from '@edx/paragon/icons';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import {
+  FormattedMessage,
+  injectIntl,
+  intlShape,
+} from '@edx/frontend-platform/i18n';
+import { selectors } from '../../../../data/redux';
+import { RequestKeys } from '../../../../data/constants/requests';
 
 import hooks from './hooks';
 import messages from './messages';
@@ -19,16 +26,21 @@ export const SelectImageModal = ({
   isOpen,
   close,
   setSelection,
+  clearSelection,
   // injected
   intl,
+  // redux
+  inputIsLoading,
 }) => {
   const {
-    error,
+    galleryError,
+    inputError,
     fileInput,
     galleryProps,
     searchSortProps,
     selectBtnProps,
-  } = hooks.imgHooks({ setSelection });
+  } = hooks.imgHooks({ setSelection, clearSelection });
+
   return (
     <BaseModal
       close={close}
@@ -45,27 +57,37 @@ export const SelectImageModal = ({
       )}
       title={intl.formatMessage(messages.titleLabel)}
     >
-
       {/* Error Alerts */}
       <FetchErrorAlert />
       <UploadErrorAlert />
+      <ErrorAlert
+        dismissError={inputError.dismiss}
+        hideHeading
+        isError={inputError.show}
+      >
+        <FormattedMessage {...messages.fileSizeError} />
+      </ErrorAlert>
 
       {/* User Feedback Alerts */}
       <ErrorAlert
-        dismissError={error.dismiss}
+        dismissError={galleryError.dismiss}
         hideHeading
-        isError={error.show}
+        isError={galleryError.show}
       >
         <FormattedMessage {...messages.selectImageError} />
       </ErrorAlert>
-
       <Stack gap={3}>
         <SearchSort {...searchSortProps} />
-        <Gallery {...galleryProps} />
+        {!inputIsLoading ? <Gallery {...galleryProps} /> : (
+          <Spinner
+            animation="border"
+            className="mie-3"
+            screenReaderText={intl.formatMessage(messages.loading)}
+          />
+        )}
         <FileInput fileInput={fileInput} />
       </Stack>
     </BaseModal>
-
   );
 };
 
@@ -73,8 +95,17 @@ SelectImageModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
   setSelection: PropTypes.func.isRequired,
+  clearSelection: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
+  // redux
+  inputIsLoading: PropTypes.bool.isRequired,
 };
 
-export default injectIntl(SelectImageModal);
+export const mapStateToProps = (state) => ({
+  inputIsLoading: selectors.requests.isPending(state, { requestKey: RequestKeys.uploadImage }),
+});
+
+export const mapDispatchToProps = {};
+
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SelectImageModal));

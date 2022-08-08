@@ -6,9 +6,9 @@ import ImageSettingsModal from './ImageSettingsModal';
 import SelectImageModal from './SelectImageModal';
 import * as module from './ImageUploadModal';
 
-export const propsString = (props) => Object.keys(props)
-  .map(key => `${key}="${props[key]}"`)
-  .join(' ');
+export const propsString = (props) => (
+  Object.keys(props).map((key) => `${key}="${props[key]}"`).join(' ')
+);
 
 export const imgProps = ({ settings, selection }) => ({
   src: selection.externalUrl,
@@ -19,8 +19,13 @@ export const imgProps = ({ settings, selection }) => ({
 
 export const hooks = {
   createSaveCallback: ({
-    close, editorRef, setSelection, selection,
-  }) => (settings) => {
+    close,
+    editorRef,
+    setSelection,
+    selection,
+  }) => (
+    settings,
+  ) => {
     editorRef.current.execCommand(
       tinyMCEKeys.commands.insertContent,
       false,
@@ -67,7 +72,14 @@ export const ImageUploadModal = ({
     );
   }
   return (
-    <SelectImageModal {...{ isOpen, close, setSelection }} />
+    <SelectImageModal
+      {...{
+        isOpen,
+        close,
+        setSelection,
+        clearSelection,
+      }}
+    />
   );
 };
 

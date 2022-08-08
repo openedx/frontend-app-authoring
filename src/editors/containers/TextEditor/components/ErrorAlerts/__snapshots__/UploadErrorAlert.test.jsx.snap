@@ -7,7 +7,7 @@ exports[`UploadErrorAlert Snapshots snapshot:  is ErrorAlert with Message error 
   isError={true}
 >
   <FormattedMessage
-    defaultMessage="Failed to Upload Image. Please Try again."
+    defaultMessage="Failed to upload image. Please try again."
     description="Message presented to user when image fails to upload"
     id="authoring.texteditor.selectimagemodal.error.uploadImageError"
   />

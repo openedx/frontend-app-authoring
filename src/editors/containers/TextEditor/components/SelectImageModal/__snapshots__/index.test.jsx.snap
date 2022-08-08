@@ -21,7 +21,7 @@ exports[`SelectImageModal component snapshot 1`] = `
       variant="link"
     >
       <FormattedMessage
-        defaultMessage="Upload a new image"
+        defaultMessage="Upload a new image (10 MB max)"
         description="Label for upload button"
         id="authoring.texteditor.selectimagemodal.upload.label"
       />
@@ -35,7 +35,18 @@ exports[`SelectImageModal component snapshot 1`] = `
   <ErrorAlert
     dismissError={[MockFunction]}
     hideHeading={true}
-    isError="ShoWERror"
+    isError="ShoWERror inPUT"
+  >
+    <FormattedMessage
+      defaultMessage="Images must be 10 MB or less. Please resize image and try again."
+      description=" Message presented to user when file size of image is larger than 10 MB"
+      id="authoring.texteditor.selectimagemodal.error.fileSizeError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={[MockFunction]}
+    hideHeading={true}
+    isError="ShoWERror gAlLery"
   >
     <FormattedMessage
       defaultMessage="Select an image to continue."
@@ -51,6 +62,84 @@ exports[`SelectImageModal component snapshot 1`] = `
     />
     <Gallery
       gallery="props"
+    />
+    <FileInput
+      fileInput={
+        Object {
+          "addFile": "imgHooks.fileInput.addFile",
+          "click": "imgHooks.fileInput.click",
+          "ref": "imgHooks.fileInput.ref",
+        }
+      }
+    />
+  </Stack>
+</BaseModal>
+`;
+
+exports[`SelectImageModal component snapshot: uploaded image not loaded, show spinner 1`] = `
+<BaseModal
+  close={[MockFunction props.close]}
+  confirmAction={
+    <Button
+      select="btnProps"
+      variant="primary"
+    >
+      <FormattedMessage
+        defaultMessage="Next"
+        description="Label for Next button"
+        id="authoring.texteditor.selectimagemodal.next.label"
+      />
+    </Button>
+  }
+  footerAction={
+    <Button
+      onClick="imgHooks.fileInput.click"
+      variant="link"
+    >
+      <FormattedMessage
+        defaultMessage="Upload a new image (10 MB max)"
+        description="Label for upload button"
+        id="authoring.texteditor.selectimagemodal.upload.label"
+      />
+    </Button>
+  }
+  isOpen={true}
+  title="Add an image"
+>
+  <FetchErrorAlert />
+  <UploadErrorAlert />
+  <ErrorAlert
+    dismissError={[MockFunction]}
+    hideHeading={true}
+    isError="ShoWERror inPUT"
+  >
+    <FormattedMessage
+      defaultMessage="Images must be 10 MB or less. Please resize image and try again."
+      description=" Message presented to user when file size of image is larger than 10 MB"
+      id="authoring.texteditor.selectimagemodal.error.fileSizeError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={[MockFunction]}
+    hideHeading={true}
+    isError="ShoWERror gAlLery"
+  >
+    <FormattedMessage
+      defaultMessage="Select an image to continue."
+      description="Message presented to user when clicking Next without selecting an image"
+      id="authoring.texteditor.selectimagemodal.error.selectImageError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <SearchSort
+      search="sortProps"
+    />
+    <Spinner
+      animation="border"
+      className="mie-3"
+      screenReaderText="loading..."
     />
     <FileInput
       fileInput={

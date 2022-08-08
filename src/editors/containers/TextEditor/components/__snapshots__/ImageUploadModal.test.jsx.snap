@@ -2,6 +2,7 @@
 
 exports[`ImageUploadModal component snapshot: no selection (Select Image Modal) 1`] = `
 <SelectImageModal
+  clearSelection={[MockFunction props.clearSelection]}
   close={[MockFunction props.close]}
   isOpen={false}
   setSelection={[MockFunction props.setSelection]}

@@ -24,13 +24,19 @@ export const networkRequest = ({
   onFailure,
 }) => (dispatch) => {
   dispatch(actions.requests.startRequest(requestKey));
-  return promise.then((response) => {
-    if (onSuccess) { onSuccess(response); }
-    dispatch(actions.requests.completeRequest({ requestKey, response }));
-  }).catch((error) => {
-    if (onFailure) { onFailure(error); }
-    dispatch(actions.requests.failRequest({ requestKey, error }));
-  });
+  return promise
+    .then((response) => {
+      if (onSuccess) {
+        onSuccess(response);
+      }
+      dispatch(actions.requests.completeRequest({ requestKey, response }));
+    })
+    .catch((error) => {
+      if (onFailure) {
+        onFailure(error);
+      }
+      dispatch(actions.requests.failRequest({ requestKey, error }));
+    });
 };
 
 /**
@@ -119,10 +125,12 @@ export const uploadImage = ({ image, ...rest }) => (dispatch, getState) => {
 export const fetchImages = ({ ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
     requestKey: RequestKeys.fetchImages,
-    promise: api.fetchImages({
-      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
-      learningContextId: selectors.app.learningContextId(getState()),
-    }).then((response) => loadImages(response.data.assets)),
+    promise: api
+      .fetchImages({
+        studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+        learningContextId: selectors.app.learningContextId(getState()),
+      })
+      .then((response) => loadImages(response.data.assets)),
     ...rest,
   }));
 };
