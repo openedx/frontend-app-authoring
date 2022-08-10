@@ -55,18 +55,19 @@ describe('TextEditor hooks', () => {
     afterEach(() => { state.restore(); });
 
     describe('setupCustomBehavior', () => {
-      test('It calls addButton in the editor, but openModal is not called', () => {
+      test('It calls addButton and addToggleButton in the editor, but openModal is not called', () => {
         const addButton = jest.fn();
+        const addToggleButton = jest.fn();
         const openModal = jest.fn();
         const setImage = jest.fn();
         const editor = {
-          ui: { registry: { addButton } },
+          ui: { registry: { addButton, addToggleButton } },
         };
         const mockOpenModalWithImage = args => ({ openModalWithSelectedImage: args });
         const expectedSettingsAction = mockOpenModalWithImage({ editor, setImage, openModal });
         const openCodeEditor = expect.any(Function);
         const toggleCodeFormatting = expect.any(Function);
-        const toggleBlockQuoteFormatting = expect.any(Function);
+        const setupCodeFormatting = expect.any(Function);
         jest.spyOn(module, moduleKeys.openModalWithSelectedImage)
           .mockImplementationOnce(mockOpenModalWithImage);
         output = module.setupCustomBehavior({ openModal, setImage })(editor);
@@ -74,8 +75,11 @@ describe('TextEditor hooks', () => {
           [tinyMCE.buttons.imageUploadButton, { icon: 'image', tooltip: 'Add Image', onAction: openModal }],
           [tinyMCE.buttons.editImageSettings, { icon: 'image', tooltip: 'Edit Image Settings', onAction: expectedSettingsAction }],
           [tinyMCE.buttons.code, { text: 'HTML', tooltip: 'Source code', onAction: openCodeEditor }],
-          [tinyMCE.buttons.codeBlock, { icon: 'sourcecode', tooltip: 'Code Block', onAction: toggleCodeFormatting }],
-          [tinyMCE.buttons.blockQuote, { icon: 'quote', tooltip: 'Block Quote', onAction: toggleBlockQuoteFormatting }],
+        ]);
+        expect(addToggleButton.mock.calls).toEqual([
+          [tinyMCE.buttons.codeBlock, {
+            icon: 'sourcecode', tooltip: 'Code Block', onAction: toggleCodeFormatting, onSetup: setupCodeFormatting,
+          }],
         ]);
         expect(openModal).not.toHaveBeenCalled();
       });

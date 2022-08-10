@@ -37,17 +37,22 @@ export const setupCustomBehavior = ({ openModal, setImage }) => (editor) => {
     onAction: openCodeEditor,
   });
   // add a custom simple inline code block formatter.
-  const toggleCodeFormatting = () => editor.formatter.toggle('code');
-  editor.ui.registry.addButton(tinyMCE.buttons.codeBlock, {
+  const setupCodeFormatting = (api) => {
+    editor.formatter.formatChanged(
+      'code',
+      (active) => api.setActive(active),
+    );
+  };
+  const toggleCodeFormatting = () => {
+    editor.formatter.toggle('code');
+    editor.undoManager.add();
+    editor.focus();
+  };
+  editor.ui.registry.addToggleButton(tinyMCE.buttons.codeBlock, {
     icon: 'sourcecode',
     tooltip: 'Code Block',
     onAction: toggleCodeFormatting,
-  });
-  const toggleBlockQuoteFormatting = () => editor.formatter.toggle('blockquote');
-  editor.ui.registry.addButton(tinyMCE.buttons.blockQuote, {
-    icon: 'quote',
-    tooltip: 'Block Quote',
-    onAction: toggleBlockQuoteFormatting,
+    onSetup: setupCodeFormatting,
   });
 };
 
@@ -55,12 +60,12 @@ export const setupCustomBehavior = ({ openModal, setImage }) => (editor) => {
 export const removeProtocolFromUrl = (url) => url.replace(/^https?:\/\//, '');
 
 export const editorConfig = ({
-  setEditorRef,
   blockValue,
-  openModal,
   initializeEditor,
-  setSelection,
   lmsEndpointUrl,
+  openModal,
+  setEditorRef,
+  setSelection,
   studioEndpointUrl,
 }) => ({
   onInit: (evt, editor) => {
@@ -69,16 +74,15 @@ export const editorConfig = ({
   },
   initialValue: blockValue ? blockValue.data.data : '',
   init: {
-
-    setup: module.setupCustomBehavior({ openModal, setImage: setSelection }),
-    plugins: pluginConfig.plugins,
-    imagetools_toolbar: pluginConfig.imageToolbar,
-    toolbar: pluginConfig.toolbar,
-    contextmenu: 'link table',
     ...pluginConfig.config,
-    valid_elements: '*[*]',
-    valid_children: '+body[style]',
+    contextmenu: 'link table',
     imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
+    imagetools_toolbar: pluginConfig.imageToolbar,
+    plugins: pluginConfig.plugins,
+    setup: module.setupCustomBehavior({ openModal, setImage: setSelection }),
+    toolbar: pluginConfig.toolbar,
+    valid_children: '+body[style]',
+    valid_elements: '*[*]',
   },
 });
 
