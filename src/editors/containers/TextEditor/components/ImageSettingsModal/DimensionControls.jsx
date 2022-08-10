@@ -70,8 +70,8 @@ export const DimensionControls = ({
 ));
 DimensionControls.defaultProps = {
   value: {
-    height: 100,
-    width: 100,
+    height: '100',
+    width: '100',
   },
 };
 DimensionControls.propTypes = ({

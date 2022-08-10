@@ -32,8 +32,8 @@ export const ImageSettingsModal = ({
   // inject
   intl,
 }) => {
-  const dimensions = hooks.dimensions();
-  const altText = hooks.altText();
+  const altText = hooks.altText(selection.altText);
+  const dimensions = hooks.dimensions(altText);
   const onSaveClick = hooks.onSaveClick({
     altText,
     dimensions: dimensions.value,
@@ -94,7 +94,7 @@ ImageSettingsModal.propTypes = {
   selection: PropTypes.shape({
     url: PropTypes.string,
     externalUrl: PropTypes.string,
-    altText: PropTypes.bool,
+    altText: PropTypes.string,
   }).isRequired,
   saveToEditor: PropTypes.func.isRequired,
   returnToSelection: PropTypes.func.isRequired,
