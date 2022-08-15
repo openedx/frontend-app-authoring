@@ -76,6 +76,8 @@ export const editorConfig = ({
   initialValue: blockValue ? blockValue.data.data : '',
   init: {
     ...pluginConfig.config,
+    skin: false,
+    content_css: false,
     content_style: tinyMCEStyles,
     contextmenu: 'link table',
     imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
