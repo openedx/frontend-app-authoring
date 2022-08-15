@@ -2,11 +2,6 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 import { messageGuard } from '../common/data';
 
 const messages = defineMessages({
-  'library.form.generic.error': {
-    id: 'library.form.generic.error',
-    defaultMessage: 'Invalid field',
-    description: 'Text to display on field errors.',
-  },
   'library.form.generic.error.title': {
     id: 'library.form.generic.error.title',
     defaultMessage: 'We couldn\'t save your changes.',
@@ -16,6 +11,21 @@ const messages = defineMessages({
     id: 'library.form.generic.error.description',
     defaultMessage: 'Please check your entries and try again.',
     description: 'Text to display on alert description errors.',
+  },
+  'library.form.field.error.empty': {
+    id: 'library.form.field.error.empty',
+    defaultMessage: 'This field may not be blank.',
+    description: 'Text to display when field is empty.',
+  },
+  'library.form.field.error.mismatch.org': {
+    id: 'library.form.field.error.mismatch.org',
+    defaultMessage: 'The organization might be selected from the options list.',
+    description: 'Text to display when organization name not on the list.',
+  },
+  'library.form.field.error.invalid.slug': {
+    id: 'library.form.field.error.invalid.slug',
+    defaultMessage: 'Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or hyphens.',
+    description: 'Text to display when slug id has invalid symbols.',
   },
   'library.form.create.library': {
     id: 'library.form.create.library',

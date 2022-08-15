@@ -114,3 +114,5 @@ export const BLOCK_FILTER_ORDER = [
   'sequential',
   'chapter',
 ];
+
+export const VALID_SLUG_ID_REGEX = /^[a-zA-Z\d]+(?:[\w -]*[a-zA-Z\d]+)*$/;

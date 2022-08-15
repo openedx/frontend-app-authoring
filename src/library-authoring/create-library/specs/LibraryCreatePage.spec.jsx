@@ -60,7 +60,7 @@ describe('create-library/LibraryCreatePage.jsx', () => {
     expect(mockCreateLibrary).toHaveBeenCalled();
   });
 
-  it('submits form with error', () => {
+  it('shows form errors', () => {
     const newProps = { ...props, errorFields: { slug: 'Error message' } };
     const container = ctxMount(
       <BrowserRouter>
@@ -68,8 +68,14 @@ describe('create-library/LibraryCreatePage.jsx', () => {
       </BrowserRouter>,
       { config },
     );
-
-    expect(container.find('div[feedback-for="slug"]').text()).toEqual('Error message');
+    container.find('input').at(0).simulate('blur');
+    container.find('input').at(1).simulate('change', { target: { value: 'org2', name: 'org' } });
+    container.find('input').at(1).simulate('blur');
+    container.find('input').at(2).simulate('change', { target: { value: '###', name: 'slug' } });
+    container.find('input').at(2).simulate('blur');
+    expect(container.find('.pgn__form-text-invalid').at(0).text()).toEqual('This field may not be blank.');
+    expect(container.find('.pgn__form-text-invalid').at(1).text()).toEqual('The organization might be selected from the options list.');
+    expect(container.find('.pgn__form-text-invalid').at(2).text()).toEqual('Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or hyphens.');
   });
 
   it('shows processing text on button', () => {
