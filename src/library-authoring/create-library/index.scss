@@ -1,0 +1,39 @@
+.pgn__alert-modal {
+    max-width: 450px;
+
+    .pgn__modal-title {
+        @include font-size(22);
+        @include line-height(28);
+
+        font-weight: 700;
+    }
+
+    .pgn__modal-header {
+        padding: 2.5rem 2.5rem 0;
+    }
+
+    .pgn__modal-body {
+        padding: 0.8rem 2.5rem;
+    }
+
+    .pgn__modal-body-content {
+        @include font-size(18);
+        @include line-height(28);
+
+        font-weight: 400;
+    }
+
+    .pgn__modal-footer {
+        padding: 6px 2rem 2.5rem;
+    }
+
+    .btn {
+        @include font-size(18);
+        @include line-height(24);
+
+        font-weight: 500;
+        padding: 1rem 1.5rem;
+        min-width: 92px;
+        margin-right: 0.3rem;
+    }
+}

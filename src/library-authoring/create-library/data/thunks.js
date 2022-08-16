@@ -1,6 +1,7 @@
 import { logError } from '@edx/frontend-platform/logging';
 import * as api from './api';
 import { libraryCreateActions as actions } from './slice';
+import { getOrganizations } from '../../common';
 
 export const createLibrary = ({ data }) => async (dispatch) => {
   try {
@@ -13,10 +14,16 @@ export const createLibrary = ({ data }) => async (dispatch) => {
   }
 };
 
-export const resetForm = () => async (dispatch) => {
-  dispatch(actions.libraryCreateReset());
+export const fetchOrganizations = () => async (dispatch) => {
+  try {
+    const orgs = await getOrganizations();
+    dispatch(actions.libraryOrganizationsSuccess({ orgs }));
+  } catch (error) {
+    dispatch(actions.libraryOrganizationsFailed({ errorMessage: error.message }));
+    logError(error);
+  }
 };
 
-export const clearFormError = () => async (dispatch) => {
-  dispatch(actions.libraryCreateClearError());
+export const resetForm = () => async (dispatch) => {
+  dispatch(actions.libraryCreateReset());
 };

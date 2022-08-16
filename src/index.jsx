@@ -18,6 +18,7 @@ import {
   LibraryBlockPage,
   LibraryEditPage,
   LibraryListPage,
+  LibraryCreatePage,
   StudioHeader,
   LibraryAccessPage,
   LibraryAuthoringPage,
@@ -39,6 +40,7 @@ subscribe(APP_READY, () => {
         <main>
           <Switch>
             <Route exact path={ROUTES.List.HOME} component={LibraryListPage} />
+            <Route exact path={ROUTES.List.CREATE} component={LibraryCreatePage} />
             <Route exact path={ROUTES.Detail.HOME} component={LibraryAuthoringPage} />
             <Route exact path={ROUTES.Detail.EDIT} component={LibraryEditPage} />
             <Route exact path={ROUTES.Detail.ACCESS} component={LibraryAccessPage} />

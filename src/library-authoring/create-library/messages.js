@@ -7,14 +7,24 @@ const messages = defineMessages({
     defaultMessage: 'Invalid field',
     description: 'Text to display on field errors.',
   },
+  'library.form.generic.error.title': {
+    id: 'library.form.generic.error.title',
+    defaultMessage: 'We couldn\'t save your changes.',
+    description: 'Text to display on alert title errors.',
+  },
+  'library.form.generic.error.description': {
+    id: 'library.form.generic.error.description',
+    defaultMessage: 'Please check your entries and try again.',
+    description: 'Text to display on alert description errors.',
+  },
   'library.form.create.library': {
     id: 'library.form.create.library',
-    defaultMessage: 'Create a New Library',
+    defaultMessage: 'Create new library',
     description: 'Text for the form header.',
   },
   'library.form.title.label': {
     id: 'library.form.title.label',
-    defaultMessage: 'Library Title *',
+    defaultMessage: 'Library name',
     description: 'Label for the title field.',
   },
   'library.form.title.placeholder': {
@@ -24,12 +34,12 @@ const messages = defineMessages({
   },
   'library.form.title.help': {
     id: 'library.form.title.help',
-    defaultMessage: 'The title for your library.',
+    defaultMessage: 'The name for your library',
     description: 'Help text for the title field.',
   },
   'library.form.org.label': {
     id: 'library.form.org.label',
-    defaultMessage: 'Organization *',
+    defaultMessage: 'Organization',
     description: 'Label for the organization field.',
   },
   'library.form.org.placeholder': {
@@ -44,7 +54,7 @@ const messages = defineMessages({
   },
   'library.form.slug.label': {
     id: 'library.form.slug.label',
-    defaultMessage: 'Library ID *',
+    defaultMessage: 'Library ID',
     description: 'Label for the slug field.',
   },
   'library.form.slug.placeholder': {
@@ -54,45 +64,40 @@ const messages = defineMessages({
   },
   'library.form.slug.help': {
     id: 'library.form.slug.help',
-    defaultMessage: `The unique id that identifies this library. Note: This is
-    part of your library URL, so no spaces or special characters are allowed.
+    defaultMessage: `The unique code that identifies this library. Note: This is 
+    part of your library URL, so no spaces or special characters are allowed. 
     This cannot be changed.`,
     description: 'Help text for the slug field.',
-  },
-  'library.form.type.label': {
-    id: 'library.form.type.label',
-    defaultMessage: 'Library Type *',
-    description: 'Label for the type field.',
-  },
-  'library.form.type.help': {
-    id: 'library.form.type.help',
-    defaultMessage: 'The type of library that will be created.',
-    description: 'Help text for the type field.',
   },
   'library.form.button.cancel': {
     id: 'library.form.button.cancel',
     defaultMessage: 'Cancel',
     description: 'Text for the cancel button.',
   },
-  'library.form.type.label.video': {
-    id: 'library.form.type.label.video',
-    defaultMessage: 'Video (beta)',
-    description: 'Label for the video library type.',
+  'library.form.breadcrumbs.home': {
+    id: 'library.form.breadcrumbs.home',
+    defaultMessage: 'Studio',
+    description: 'Label for the breadcrumbs home link.',
   },
-  'library.form.type.label.problem': {
-    id: 'library.form.type.label.problem',
-    defaultMessage: 'Problem (beta)',
-    description: 'Label for the problem library type.',
+  'library.form.breadcrumbs.list': {
+    id: 'library.form.breadcrumbs.list',
+    defaultMessage: 'Libraries',
+    description: 'Label for the breadcrumbs parent link.',
   },
-  'library.form.type.label.complex': {
-    id: 'library.form.type.label.complex',
-    defaultMessage: 'Complex (beta)',
-    description: 'Label for the complex library type.',
+  'library.form.breadcrumbs.current': {
+    id: 'library.form.breadcrumbs.current',
+    defaultMessage: 'Library authoring',
+    description: 'Label for the breadcrumbs current link.',
   },
-  'library.form.type.label.legacy': {
-    id: 'library.form.type.label.legacy',
-    defaultMessage: 'Legacy',
-    description: 'Label for the legacy library type.',
+  'library.form.modal.title': {
+    id: 'library.form.modal.title',
+    defaultMessage: 'Unsaved changes',
+    description: 'Text to display as a title on alert modal.',
+  },
+  'library.form.modal.description': {
+    id: 'library.form.modal.description',
+    defaultMessage: 'Are you sure you want to leave this page? Changes you made will be lost if you proceed.',
+    description: 'Text to display as a message on alert modal.',
   },
 });
 

@@ -8,6 +8,7 @@ export const libraryCreateInitialState = {
   createdLibrary: null,
   errorMessage: null,
   errorFields: null,
+  orgs: [],
   status: SUBMISSION_STATUS.UNSUBMITTED,
 };
 
@@ -18,6 +19,12 @@ const slice = createSlice({
     libraryCreateRequest: (state) => {
       state.status = SUBMISSION_STATUS.SUBMITTING;
       state.createdLibrary = null;
+    },
+    libraryOrganizationsSuccess: (state, { payload }) => {
+      state.orgs = payload.orgs;
+    },
+    libraryOrganizationsFailed: (state, { payload }) => {
+      state.errorMessage = payload.errorMessage;
     },
     libraryCreateSuccess: (state, { payload }) => {
       state.createdLibrary = payload.library;

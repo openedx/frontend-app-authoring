@@ -1,2 +1,2 @@
-export { default as LibraryCreateForm } from './LibraryCreateForm';
+export { default as LibraryCreatePage } from './LibraryCreatePage';
 export * from './data';

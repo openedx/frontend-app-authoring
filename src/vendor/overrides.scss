@@ -1,20 +1,15 @@
 // Vendor verrides
 
+// edx-pattern-library
+$pink: #e83e8c !default;
+
 // Paragon
 $font-family-sans-serif: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif !default;
 
 // Bootstrap
 .container-fluid {
   padding-bottom: 30px;
-}
-
-// frontend-component-footer
-.footer {
-  background-color: transparent;
-}
-
-.container-fluid {
-  max-width: 1280px;
+  max-width: 1376px;
   padding-left: 0;
   padding-right: 0;
 }

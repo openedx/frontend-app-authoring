@@ -1,5 +1,3 @@
-@import "~bootstrap/scss/bootstrap";
-
 // Imported from:
 // edx-platform/cms/static/sass/assets/_fonts.scss
 @font-face {
@@ -272,7 +270,7 @@ $m-green-l2: tint($m-green, 40%) !default;
 $baseline: 20px;
 $gw-column: ($baseline*3);
 $gw-gutter: $baseline;
-$fg-max-width: 1280px;
+$fg-max-width: 1376px;
 $fg-min-width: 900px;
 $fg-column: $gw-column;
 $fg-gutter: $gw-gutter;
@@ -363,11 +361,12 @@ $yellow-u3: desaturate($yellow, 45%) !default;
 %ui-window {
   @include clearfix();
 
-  border-radius: ($baseline/10);
+  border-radius: ($baseline*0.3);
   box-shadow: 0 1px 1px $shadow-l2;
   margin-bottom: $baseline;
   border: 1px solid $gray-l2;
   background: $white;
+  width: 100%;
 
   // STATE: hover/active
   &:hover,
@@ -435,9 +434,9 @@ $yellow-u3: desaturate($yellow, 45%) !default;
   text-overflow: ellipsis;
 }
 
-@mixin line-height($fontSize: auto) {
-  line-height: ($fontSize*1.48) + px;
-  line-height: (($fontSize/10)*1.48) + rem;
+@mixin line-height($fontSize: 16) {
+  line-height: $fontSize + px;
+  line-height: ($fontSize/10) + rem;
 }
 
 @mixin font-size($sizeValue: 16) {
@@ -506,8 +505,8 @@ $yellow-u3: desaturate($yellow, 45%) !default;
 %t-copy-base {
   @extend %t-copy;
 
-  @include font-size(16);
-  @include line-height(16);
+  @include font-size(14);
+  @include line-height(24);
 }
 
 %t-copy-sub1 {
@@ -535,91 +534,95 @@ $yellow-u3: desaturate($yellow, 45%) !default;
 %t-title1 {
   @extend %t-title;
 
-  @include font-size(60);
-  @include line-height(60);
+  @include font-size(40);
+  @include line-height(50);
 }
 
 %t-title2 {
   @extend %t-title;
 
-  @include font-size(48);
-  @include line-height(48);
+  @include font-size(32);
+  @include line-height(40);
 }
 
 %t-title3 {
-  @include font-size(36);
-  @include line-height(36);
+  @include font-size(22);
+  @include line-height(27);
 }
 
 %t-title4 {
   @extend %t-title;
 
-  @include font-size(24);
-  @include line-height(24);
+  @include font-size(18);
+  @include line-height(22);
 }
 
 %t-title5 {
   @extend %t-title;
 
-  @include font-size(18);
-  @include line-height(18);
+  @include font-size(14);
+  @include line-height(17);
 }
 
 %t-title6 {
   @extend %t-title;
 
-  @include font-size(16);
-  @include line-height(16);
+  @include font-size(12);
+  @include line-height(15);
 }
 
 %t-title7 {
   @extend %t-title;
 
   @include font-size(14);
-  @include line-height(14);
+  @include line-height(18);
 }
 
 %t-title8 {
   @extend %t-title;
 
   @include font-size(12);
-  @include line-height(12);
+  @include line-height(16);
 }
 
 %t-title9 {
   @extend %t-title;
 
   @include font-size(11);
-  @include line-height(11);
+  @include line-height(15);
 }
 
 %t-action1 {
   @include font-size(18);
-  @include line-height(18);
+  @include line-height(22);
 }
 
 %t-action2 {
   @include font-size(16);
-  @include line-height(16);
+  @include line-height(20);
 }
 
 %t-action3 {
   @include font-size(14);
-  @include line-height(14);
+  @include line-height(18);
 }
 
 %t-action4 {
   @include font-size(12);
-  @include line-height(12);
+  @include line-height(16);
 }
 
 %t-action5 {
   @include font-size(10);
-  @include line-height(10);
+  @include line-height(14);
 }
 
 %t-strong {
   font-weight: 600;
+}
+
+%t-bold {
+  font-weight: 700;
 }
 
 %t-weight3 {
@@ -781,11 +784,50 @@ $yellow-u3: desaturate($yellow, 45%) !default;
   }
 }
 
+.form-create-alert {
+  margin-top: ($baseline*1.6);
+  padding: ($baseline*1.2);
+
+  .alert-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .alert-message-content {
+    @include font-size(14);
+
+    margin-bottom: ($baseline*0.4);
+  }
+
+  .alert-heading {
+    @include font-size(18);
+    @include line-height(24);
+  }
+}
+
+.pgn__breadcrumb {
+  @include font-size(18);
+  @include line-height(24);
+
+  margin: ($baseline*2.2) 0 ($baseline*2);
+
+  .pgn__icon {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+}
+
 
 // Imported from:
 // edx-platform/cms/static/sass/elements/_forms.scss
 .form-create {
   @extend %ui-window;
+
+  margin-top: ($baseline*2);
+
+  .content-primary & {
+    margin-top: 0;
+  }
 
   .title {
     @extend %t-title4;
@@ -795,15 +837,14 @@ $yellow-u3: desaturate($yellow, 45%) !default;
   }
 
   fieldset {
-    padding: $baseline ($baseline*1.5);
+    padding: ($baseline*2.15) ($baseline*2) $baseline;
   }
-
 
   .list-input {
     @extend %cont-no-list;
 
     .field {
-      margin: 0 0 ($baseline*0.75) 0;
+      margin: 0 0 ($baseline*1.9) 0;
 
       &:last-child {
         margin-bottom: 0;
@@ -829,8 +870,6 @@ $yellow-u3: desaturate($yellow, 45%) !default;
       label {
         @extend %t-copy-sub1;
 
-        @include transition(color $tmg-f3 ease-in-out 0s);
-
         margin: 0 0 ($baseline/4) 0;
 
         &.is-focused {
@@ -844,10 +883,6 @@ $yellow-u3: desaturate($yellow, 45%) !default;
         @extend %t-copy-base;
 
         @include transition(all $tmg-f2 ease-in-out 0s);
-
-        height: 100%;
-        width: 100%;
-        padding: ($baseline/2);
 
         &.long {
           width: 100%;
@@ -932,6 +967,11 @@ $yellow-u3: desaturate($yellow, 45%) !default;
       }
     }
 
+    .library-create-wrapper & .form-control {
+      padding: ($baseline*0.5) ($baseline*0.75);
+      height: ($baseline*2.2);
+    }
+
     .field-inline {
       input,
       textarea,
@@ -979,23 +1019,29 @@ $yellow-u3: desaturate($yellow, 45%) !default;
     }
   }
 
+  .pgn__form-control-description {
+    @include font-size(11);
+    @include line-height(22);
+
+    .pgn__icon {
+      display: none;
+    }
+  }
+
   .actions {
-    box-shadow: inset 0 1px 2px $shadow;
-    margin-top: ($baseline*0.75);
-    border-top: 1px solid $gray-l1;
-    padding: ($baseline*0.75) ($baseline*1.5);
-    background: $gray-l6;
+    padding: ($baseline*0.5) ($baseline*2) $baseline;
+    text-align: right;
 
     .action {
       @include transition(all $tmg-f2 linear 0s);
+      @include font-size(18);
+      @include line-height(18);
 
-      @extend %t-strong;
+      @extend %t-weight3;
 
       display: inline-block;
-      padding: ($baseline/5) $baseline;
-      text-transform: uppercase;
-      font-size: 1.2rem;
-      margin-right: 0.5rem;
+      padding: ($baseline*0.6) ($baseline*0.75);
+      margin-left: 1rem;
     }
   }
 }
@@ -1102,11 +1148,10 @@ button {
 }
 
 .page-header {
-  @extend %t-title3;
-  @extend %t-strong;
+  @extend %t-title2;
+  @extend %t-bold;
 
   display: block;
-  color: $gray-d3;
 
   .navigation,
   .subtitle {
@@ -1152,10 +1197,6 @@ button {
     .page-header {
       font-family: $f-sans-serif;
       width: flex-grid(12);
-      font-size: 3.6rem;
-      line-height: 5.328rem;
-      font-weight: 600;
-      color: $gray-d3;
     }
 
     // layout with actions
@@ -1844,4 +1885,48 @@ button {
       }
     }
   }
+}
+
+.dropdown-group-wrapper {
+  position: relative;
+
+  .pgn__form-control-decorator-trailing {
+    @include font-size(22);
+
+    .btn-icon.btn-icon-sm {
+      width: 3.6rem;
+      height: 3.6rem;
+    }
+
+    .pgn__icon.btn-icon__icon {
+      height: 2.4rem;
+      width: 2.4rem;
+    }
+  }
+}
+
+.dropdown-container {
+  @include pgn-box-shadow(1, 'centered');
+
+  border-radius: ($baseline*0.2);
+  max-height: 200px;
+  font-size: 1rem;
+  font-weight: normal;
+  line-height: 1.25rem;
+  overflow-y: scroll;
+  position: absolute;
+  background-color: $white;
+  width: 100%;
+  z-index: 100 !important;
+
+  .dropdown-item {
+    @include font-size(16);
+    @include line-height(20);
+
+    padding: ($baseline*0.5) ($baseline*0.8);
+  }
+}
+
+.wrapper .list-inline-item:not(:last-child) {
+  margin-right: 0.3rem;
 }

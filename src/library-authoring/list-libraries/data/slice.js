@@ -6,6 +6,7 @@ import { STORE_NAMES } from '../../common/data';
 
 export const libraryListInitialState = {
   errorMessage: null,
+  history: {},
   libraries: {
     data: [],
     count: 0,

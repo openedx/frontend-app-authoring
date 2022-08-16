@@ -28,6 +28,7 @@ export const LIBRARY_ACCESS = {
 export const ROUTES = {
   List: {
     HOME: '/',
+    CREATE: '/create',
   },
   Detail: {
     HOME: '/library/:libraryId',
