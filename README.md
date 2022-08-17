@@ -1,18 +1,16 @@
 # frontend-lib-content-components
 A library of high-level components for content handling (viewing, editing, etc. of HTML, video, problems, etc.), to be shared by multiple MFEs.
 
-# How to setup development of V2 content Editors for this Package for use in Studio and course Authoring MFE.
+# How to set up development workflow of V2 content Editors in Studio and course Authoring MFE.
 
-This guide presumes you have a functioning devstack. 
+This guide presumes you have a functioning devstack.
 
 1. Enable Studio to use an editor for your xblock using waffle flags
-    1. Add the string name of your editor e.g. `html` to the flag check at line 3976 of `edx-platform/common/lib/xmodule/xmodule/js/common_static/bundles/js/factories/container.js`
-    2. In devstack + venv, run `$make dev up frontend-app-course-authoring` to make up the required services
-    3. run `$make dev.shell.lms` to enter the lms shell, then run `$paver update_assets lms` to update the static assets. This could take a minute.
-    4. In http://localhost:18000/admin/waffle/flag/ turn on `new_core_editors.use_new_text_editor`
-    5. refresh the studio page.
-2. clone this repo into src directory the sibling repo of your edx devstack `/src`.
-3. In the course authoring app, follow the guide to use your local verison of frontend-lib-content-components.  https://github.com/openedx/frontend-build#local-module-configuration-for-webpack. your moduleconfig.js will look like something like this:
+    1. Add the string name of your editor e.g. `html` to the flag check in the [edx-platform repo.](https://github.com/openedx/edx-platform/blob/369e5af85ab58c51a4bf4baf249d5cb36c1961fe/cms/static/js/views/pages/container.js#L190)
+    2. In devstack + venv, run `$ make dev.provision.lms+studio+frontend-app-course-authoring` to make up the required services. Minimum services required are lms, studio and frontend-app-course-authoring.
+    4. In [Studio Django Admin](http://localhost:18000/admin/waffle/flag/) turn on `new_core_editors.use_new_text_editor` flag for HTML editor. The list of supported flags is in [toggles.py. ](https://github.com/openedx/edx-platform/blob/master/cms/djangoapps/contentstore/toggles.py)
+2. Clone this repo into the [`${DEVSTACK_WORKSPACE}/src` directory](https://edx.readthedocs.io/projects/open-edx-devstack/en/latest/readme.html?highlight=DEVSTACK_WORKSPACE#id9) the sibling repo of your edx devstack `/src`.
+3. In the course authoring app, follow the guide to use your [local verison of frontend-lib-content-components. ](https://github.com/openedx/frontend-build#local-module-configuration-for-webpack) The moduleconfig.js in the frontend-app-course-authoring repo will be:
 
 ```
     module.exports = {
@@ -44,34 +42,45 @@ This guide presumes you have a functioning devstack.
         // { moduleName: '@edx/paragon/icons', dir: '../paragon', dist: 'icons' },
         // { moduleName: '@edx/paragon', dir: '../paragon', dist: 'dist' },
         // { moduleName: '@edx/frontend-platform', dir: '../frontend-platform', dist: 'dist' },
-        { moduleName: '@edx/frontend-lib-content-components', dir: '../../src/frontend-lib-content-components', dist: 'dist' },
+        // NOTE: This is the relative path of the frontend-lib-content-components in the frontend-app-course-authoring container.
+        { moduleName: '@edx/frontend-lib-content-components', dir: '../src/frontend-lib-content-components', dist: 'dist' },
     ],
     };
 
 ```
 
-4. open a terminal at the folder you just cloned in, frontend-lib-content-components.
+4. Open a terminal
+    1. `cd ${DEVSTACK_WORKSPACE}/src/frontend-lib-content-components`
     1. run `$ npm install`
-    2. run `$ npm run-script-build` when you want to see your changes.
+    2. run `$ npm build` when you want to see your changes.
 
-    # Add A New Xblock Editor
-    1. run `$ npm run-script addXblock <yourxblock string name ex: html>`
-    2. edit your componentry at `src/frontend-lib-content-components/src/editors/containers`
+5. In devstack run `make studio-static` followed by `$ make dev.down.frontend-app-course-authoring` and `$ make dev.up.frontend-app-course-authoring`.
 
-5. Now, after a `make dev.down` and `make dev.up` for your devstack services, you should be able to realize your changes.
+6. Go to [studio](http://localhost:18010) and edit a course or add the Xblock with the developing editor, it should redirect to `frontend-app-course-authoring`
+   MFE and the editor should load.
 
 # Using the gallery view.
-The gallery view runs the editor components with mocked out block data, and sometimes does not replicate all desired behaviors, but can be used for faster iteration on UI related changes. To run the gallery view, from the root directory, run
+
+The gallery view runs the editor components with mocked-out block data, and sometimes does not replicate all desired behaviors, but can be used for faster iteration on UI-related changes. To run the gallery view, from the root directory, run
 
 $ cd www
 $ npm start
 
-and now the gallery will be live at http://localhost:8080/index.html. use the toggle at the top to switch between availible editors.
+and now the gallery will be live at http://localhost:8080/index.html. use the toggle at the top to switch between available editors.
 
-# Creating Your own editor
-If you wish to make your own editor, to being coding the editor, simply run the command
+# Creating Xblock Editor
 
-$ npm run-script addXblock <name of xblock>
+To develop a custom Xblock editor, run the command:
 
-from the frontend-lib-content-components source directory. It will create an editor you can then veiw at src/editors/containers. It will also configure the editor to be viewable in the gallery view. Adding the editor to be used in studio will require the following steps:
+`$ npm run-script addXblock <name of xblock>`
+
+from the frontend-lib-content-components source directory. It will create an editor you can then view at `src/editors/containers`.
+It will also configure the editor to be viewable in the gallery view. Adding the editor to be used in studio will require the following steps:
+
+1. Adding a flag in [toggles.py](https://github.com/openedx/edx-platform/blob/master/cms/djangoapps/contentstore/toggles.py)
+2. Activating the Flag in [Studio Django Admin. ](http://localhost:18000/admin/waffle/flag/)
+3. Add the function in [studio_xblock_wrapper.html](https://github.com/openedx/edx-platform/blob/master/cms/templates/studio_xblock_wrapper.html#L13)
+4. Make appropriate changes in [container.js in the edx-platform repo.](https://github.com/openedx/edx-platform/blob/369e5af85ab58c51a4bf4baf249d5cb36c1961fe/cms/static/js/views/pages/container.js#L190)
+5. Activate the flag.
+6. Follow steps 4 to 6 from [above](#how-to-set-up-development-workflow-of-v2-content-editors-in-studio-and-course-authoring-mfe)
 
