@@ -80,6 +80,7 @@ export const editorConfig = ({
     content_css: false,
     content_style: tinyMCEStyles,
     contextmenu: 'link table',
+    document_base_url: lmsEndpointUrl,
     imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
     imagetools_toolbar: pluginConfig.imageToolbar,
     plugins: pluginConfig.plugins,
