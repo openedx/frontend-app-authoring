@@ -16,11 +16,12 @@ export const BaseModal = ({
   children,
   confirmAction,
   footerAction,
+  size,
 }) => (
   <ModalDialog
     isOpen={isOpen}
     onClose={close}
-    size="lg"
+    size={size}
     variant="default"
     hasCloseButton
     isFullscreenOnMobile
@@ -49,6 +50,7 @@ export const BaseModal = ({
 
 BaseModal.defaultProps = {
   footerAction: null,
+  size: 'lg',
 };
 
 BaseModal.propTypes = {
@@ -58,6 +60,7 @@ BaseModal.propTypes = {
   children: PropTypes.node.isRequired,
   confirmAction: PropTypes.node.isRequired,
   footerAction: PropTypes.node,
+  size: PropTypes.string,
 };
 
 export default BaseModal;

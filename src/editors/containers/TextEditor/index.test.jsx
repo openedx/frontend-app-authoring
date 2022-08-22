@@ -4,7 +4,7 @@ import { shallow } from 'enzyme';
 import { formatMessage } from '../../../testUtils';
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
-import { modalToggle } from './hooks';
+import { imgModalToggle, sourceCodeModalToggle } from './hooks';
 import { TextEditor, mapStateToProps, mapDispatchToProps } from '.';
 
 // Per https://github.com/tinymce/tinymce-react/issues/91 React unit testing in JSDOM is not supported by tinymce.
@@ -19,15 +19,22 @@ jest.mock('@tinymce/tinymce-react', () => {
 });
 
 jest.mock('../EditorContainer', () => 'EditorContainer');
+
 jest.mock('./components/ImageUploadModal', () => 'ImageUploadModal');
+jest.mock('./components/SourceCodeModal', () => 'SourceCodeModal');
 
 jest.mock('./hooks', () => ({
   editorConfig: jest.fn(args => ({ editorConfig: args })),
   getContent: jest.fn(args => ({ getContent: args })),
-  modalToggle: jest.fn(() => ({
-    isOpen: true,
-    openModal: jest.fn().mockName('openModal'),
-    closeModal: jest.fn().mockName('closeModal'),
+  imgModalToggle: jest.fn(() => ({
+    isImgOpen: true,
+    openImgModal: jest.fn().mockName('openModal'),
+    closeImgModal: jest.fn().mockName('closeModal'),
+  })),
+  sourceCodeModalToggle: jest.fn(() => ({
+    isSourceCodeOpen: true,
+    openSourceCodeModal: jest.fn().mockName('openModal'),
+    closeSourceCodeModal: jest.fn().mockName('closeModal'),
   })),
   selectedImage: jest.fn(() => ({
     selection: 'hooks.selectedImage.selection',
@@ -86,10 +93,15 @@ describe('TextEditor', () => {
     intl: { formatMessage },
   };
   describe('snapshots', () => {
-    modalToggle.mockReturnValue({
-      isOpen: false,
-      openModal: jest.fn().mockName('modal.openModal'),
-      closeModal: jest.fn().mockName('modal.closeModal'),
+    imgModalToggle.mockReturnValue({
+      isImgOpen: false,
+      openImgModal: jest.fn().mockName('modal.openModal'),
+      closeImgModal: jest.fn().mockName('modal.closeModal'),
+    });
+    sourceCodeModalToggle.mockReturnValue({
+      isSourceCodeOpen: false,
+      openSourceCodeModal: jest.fn().mockName('modal.openModal'),
+      closeSourceCodeModal: jest.fn().mockName('modal.closeModal'),
     });
     test('renders as expected with default behavior', () => {
       expect(shallow(<TextEditor {...props} />)).toMatchSnapshot();

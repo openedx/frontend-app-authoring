@@ -36,6 +36,7 @@ exports[`ImageSettingsModal render snapshot 1`] = `
   }
   footerAction={null}
   isOpen={false}
+  size="lg"
   title="Image Settings"
 >
   <ErrorAlert

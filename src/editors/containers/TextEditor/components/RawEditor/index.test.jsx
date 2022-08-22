@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 
 import { RawEditor } from '.';
 
-describe('ImageSettingsModal', () => {
+describe('RawEditor', () => {
   const props = {
     editorRef: {
       current: {

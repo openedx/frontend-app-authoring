@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CodeEditor Component Snapshots Renders and calls Hooks  1`] = `
+<div>
+  <div
+    id="editor"
+  />
+</div>
+`;

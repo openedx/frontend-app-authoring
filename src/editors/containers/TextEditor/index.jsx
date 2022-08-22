@@ -31,6 +31,7 @@ import { RequestKeys } from '../../data/constants/requests';
 
 import EditorContainer from '../EditorContainer';
 import ImageUploadModal from './components/ImageUploadModal';
+import SourceCodeModal from './components/SourceCodeModal';
 import RawEditor from './components/RawEditor';
 import * as hooks from './hooks';
 import messages from './messages';
@@ -49,7 +50,8 @@ export const TextEditor = ({
   intl,
 }) => {
   const { editorRef, refReady, setEditorRef } = hooks.prepareEditorRef();
-  const { isOpen, openModal, closeModal } = hooks.modalToggle();
+  const { isImgOpen, openImgModal, closeImgModal } = hooks.imgModalToggle();
+  const { isSourceCodeOpen, openSourceCodeModal, closeSourceCodeModal } = hooks.sourceCodeModalToggle();
   const imageSelection = hooks.selectedImage(null);
 
   if (!refReady) { return null; }
@@ -68,7 +70,8 @@ export const TextEditor = ({
         {...hooks.editorConfig({
           setEditorRef,
           blockValue,
-          openModal,
+          openImgModal,
+          openSourceCodeModal,
           initializeEditor,
           lmsEndpointUrl,
           studioEndpointUrl,
@@ -86,10 +89,15 @@ export const TextEditor = ({
     >
       <div className="editor-body h-75 overflow-auto">
         <ImageUploadModal
-          isOpen={isOpen}
-          close={closeModal}
+          isOpen={isImgOpen}
+          close={closeImgModal}
           editorRef={editorRef}
           {...imageSelection}
+        />
+        <SourceCodeModal
+          isOpen={isSourceCodeOpen}
+          close={closeSourceCodeModal}
+          editorRef={editorRef}
         />
 
         <Toast show={blockFailed} onClose={hooks.nullMethod}>

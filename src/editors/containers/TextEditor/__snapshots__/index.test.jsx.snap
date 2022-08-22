@@ -33,6 +33,17 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
       selection="hooks.selectedImage.selection"
       setSelection={[MockFunction hooks.selectedImage.setSelection]}
     />
+    <SourceCodeModal
+      close={[MockFunction modal.closeModal]}
+      editorRef={
+        Object {
+          "current": Object {
+            "value": "something",
+          },
+        }
+      }
+      isOpen={false}
+    />
     <Toast
       onClose={[MockFunction hooks.nullMethod]}
       show={true}
@@ -54,7 +65,8 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
           "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
           "initializeEditor": [MockFunction args.intializeEditor],
           "lmsEndpointUrl": "sOmEvaLue.cOm",
-          "openModal": [MockFunction modal.openModal],
+          "openImgModal": [MockFunction modal.openModal],
+          "openSourceCodeModal": [MockFunction modal.openModal],
           "setEditorRef": [MockFunction hooks.prepareEditorRef.setEditorRef],
           "setSelection": [MockFunction hooks.selectedImage.setSelection],
           "studioEndpointUrl": "sOmEoThERvaLue.cOm",
@@ -97,6 +109,17 @@ exports[`TextEditor snapshots loaded, raw editor 1`] = `
       isOpen={false}
       selection="hooks.selectedImage.selection"
       setSelection={[MockFunction hooks.selectedImage.setSelection]}
+    />
+    <SourceCodeModal
+      close={[MockFunction modal.closeModal]}
+      editorRef={
+        Object {
+          "current": Object {
+            "value": "something",
+          },
+        }
+      }
+      isOpen={false}
     />
     <Toast
       onClose={[MockFunction hooks.nullMethod]}
@@ -154,6 +177,17 @@ exports[`TextEditor snapshots not yet loaded, Spinner appears 1`] = `
       selection="hooks.selectedImage.selection"
       setSelection={[MockFunction hooks.selectedImage.setSelection]}
     />
+    <SourceCodeModal
+      close={[MockFunction modal.closeModal]}
+      editorRef={
+        Object {
+          "current": Object {
+            "value": "something",
+          },
+        }
+      }
+      isOpen={false}
+    />
     <Toast
       onClose={[MockFunction hooks.nullMethod]}
       show={false}
@@ -210,6 +244,17 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
       selection="hooks.selectedImage.selection"
       setSelection={[MockFunction hooks.selectedImage.setSelection]}
     />
+    <SourceCodeModal
+      close={[MockFunction modal.closeModal]}
+      editorRef={
+        Object {
+          "current": Object {
+            "value": "something",
+          },
+        }
+      }
+      isOpen={false}
+    />
     <Toast
       onClose={[MockFunction hooks.nullMethod]}
       show={false}
@@ -231,7 +276,8 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
           "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
           "initializeEditor": [MockFunction args.intializeEditor],
           "lmsEndpointUrl": "sOmEvaLue.cOm",
-          "openModal": [MockFunction modal.openModal],
+          "openImgModal": [MockFunction modal.openModal],
+          "openSourceCodeModal": [MockFunction modal.openModal],
           "setEditorRef": [MockFunction hooks.prepareEditorRef.setEditorRef],
           "setSelection": [MockFunction hooks.selectedImage.setSelection],
           "studioEndpointUrl": "sOmEoThERvaLue.cOm",

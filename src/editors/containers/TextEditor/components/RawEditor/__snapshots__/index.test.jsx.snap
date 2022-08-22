@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ImageSettingsModal renders as expected with default behavior 1`] = `
+exports[`RawEditor renders as expected with default behavior 1`] = `
 <div
-  className="form-group"
   style={
     Object {
+      "height": "600px",
       "padding": "10px 30px",
     }
   }
@@ -14,11 +14,15 @@ exports[`ImageSettingsModal renders as expected with default behavior 1`] = `
   >
     You are using the raw HTML editor.
   </Alert>
-  <textarea
-    className="form-control"
-    rows="12"
-  >
-    sOmErAwHtml
-  </textarea>
+  <CodeEditor
+    innerRef={
+      Object {
+        "current": Object {
+          "value": "Ref Value",
+        },
+      }
+    }
+    value="sOmErAwHtml"
+  />
 </div>
 `;
