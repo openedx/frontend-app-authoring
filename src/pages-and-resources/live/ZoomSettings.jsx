@@ -11,27 +11,30 @@ function ZoomsSettings({
  values,
 }) {
   return (
-    (!values.piiSharingEnable && (values.piiSharingEmail || values.piiSharingUsername)) ? (
-      <p data-testid="request-pii-sharing">
-        {intl.formatMessage(messages.requestPiiSharingEnable, { provider: providerNames[values.provider] })}
-      </p>
-    ) : (
-      <>
-        {(values.piiSharingEmail || values.piiSharingUsername)
-        && (
-          <p data-testid="helper-text">
-            {intl.formatMessage(messages.providerHelperText, { providerName: providerNames[values.provider] })}
-          </p>
-        )}
-        <LiveCommonFields values={values} />
-        <FormikControl
-          name="launchEmail"
-          value={values.launchEmail}
-          floatingLabel={intl.formatMessage(messages.launchEmail)}
-          type="input"
-        />
-      </>
-    )
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>
+      {(!values.piiSharingEnable && (values.piiSharingEmail || values.piiSharingUsername)) ? (
+        <p data-testid="request-pii-sharing">
+          {intl.formatMessage(messages.requestPiiSharingEnable, { provider: providerNames[values.provider] })}
+        </p>
+      ) : (
+        <>
+          {(values.piiSharingEmail || values.piiSharingUsername)
+          && (
+            <p data-testid="helper-text">
+              {intl.formatMessage(messages.providerHelperText, { providerName: providerNames[values.provider] })}
+            </p>
+          )}
+          <LiveCommonFields values={values} />
+          <FormikControl
+            name="launchEmail"
+            value={values.launchEmail}
+            floatingLabel={intl.formatMessage(messages.launchEmail)}
+            type="input"
+          />
+        </>
+      )}
+    </>
   );
 }
 

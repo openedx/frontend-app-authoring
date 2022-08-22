@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 import { Form } from '@edx/paragon';
 import { getIn, useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
@@ -49,8 +50,8 @@ FormikControl.propTypes = {
 };
 
 FormikControl.defaultProps = {
-  help: null,
-  label: null,
+  help: <></>,
+  label: <></>,
   className: '',
 };
 
