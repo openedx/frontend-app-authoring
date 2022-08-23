@@ -24,11 +24,11 @@ import ErrorAlert from '../ErrorAlerts/ErrorAlert';
  * @param {func} returnToSelection - return to image selection
  */
 export const ImageSettingsModal = ({
-  isOpen,
   close,
-  selection,
-  saveToEditor,
+  isOpen,
   returnToSelection,
+  saveToEditor,
+  selection,
   // inject
   intl,
 }) => {
@@ -42,9 +42,7 @@ export const ImageSettingsModal = ({
   });
   return (
     <BaseModal
-      title={intl.formatMessage(messages.titleLabel)}
       close={close}
-      isOpen={isOpen}
       confirmAction={(
         <Button
           variant="primary"
@@ -53,6 +51,8 @@ export const ImageSettingsModal = ({
           <FormattedMessage {...messages.saveButtonLabel} />
         </Button>
       )}
+      isOpen={isOpen}
+      title={intl.formatMessage(messages.titleLabel)}
     >
       <ErrorAlert
         dismissError={altText.error.dismiss}
@@ -62,10 +62,10 @@ export const ImageSettingsModal = ({
         <FormattedMessage {...messages.altTextError} />
       </ErrorAlert>
       <Button
-        onClick={returnToSelection}
-        variant="link"
-        size="inline"
         iconBefore={ArrowBackIos}
+        onClick={returnToSelection}
+        size="inline"
+        variant="link"
       >
         <FormattedMessage {...messages.replaceImageButtonLabel} />
       </Button>
@@ -74,6 +74,7 @@ export const ImageSettingsModal = ({
         <div className="img-settings-thumbnail-container">
           <Image
             className="img-settings-thumbnail"
+            onError={dimensions.onImgLoad(selection)}
             onLoad={dimensions.onImgLoad(selection)}
             src={selection.externalUrl}
           />
@@ -89,15 +90,15 @@ export const ImageSettingsModal = ({
 };
 
 ImageSettingsModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
-  selection: PropTypes.shape({
-    url: PropTypes.string,
-    externalUrl: PropTypes.string,
-    altText: PropTypes.string,
-  }).isRequired,
-  saveToEditor: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
   returnToSelection: PropTypes.func.isRequired,
+  saveToEditor: PropTypes.func.isRequired,
+  selection: PropTypes.shape({
+    altText: PropTypes.string,
+    externalUrl: PropTypes.string,
+    url: PropTypes.string,
+  }).isRequired,
   // inject
   intl: intlShape.isRequired,
 };

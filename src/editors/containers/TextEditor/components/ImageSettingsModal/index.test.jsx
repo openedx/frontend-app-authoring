@@ -8,19 +8,19 @@ jest.mock('./AltTextControls', () => 'AltTextControls');
 jest.mock('./DimensionControls', () => 'DimensionControls');
 
 jest.mock('./hooks', () => ({
-  dimensions: () => ({
-    value: { width: 12, height: 13 },
-    onImgLoad: jest.fn(
-      (selection) => ({ 'hooks.dimensions.onImgLoad.callback': { selection } }),
-    ).mockName('hooks.dimensions.onImgLoad'),
-  }),
   altText: () => ({
-    value: 'alternative Taxes',
-    isDecorative: false,
     error: {
       show: 'sHoW',
       dismiss: jest.fn(),
     },
+    isDecorative: false,
+    value: 'alternative Taxes',
+  }),
+  dimensions: () => ({
+    onImgLoad: jest.fn(
+      (selection) => ({ 'hooks.dimensions.onImgLoad.callback': { selection } }),
+    ).mockName('hooks.dimensions.onImgLoad'),
+    value: { width: 12, height: 13 },
   }),
   onSaveClick: (args) => ({ 'hooks.onSaveClick': args }),
 }));
@@ -28,7 +28,11 @@ jest.mock('./hooks', () => ({
 describe('ImageSettingsModal', () => {
   const props = {
     isOpen: false,
-    selection: { selected: 'image data' },
+    selection: {
+      altText: 'AlTTExt',
+      externalUrl: 'ExtERNALurL',
+      url: 'UrL',
+    },
     // inject
     intl: { formatMessage },
   };

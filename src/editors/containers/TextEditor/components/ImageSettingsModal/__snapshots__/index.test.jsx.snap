@@ -70,15 +70,29 @@ exports[`ImageSettingsModal render snapshot 1`] = `
     >
       <Image
         className="img-settings-thumbnail"
-        onLoad={
+        onError={
           Object {
             "hooks.dimensions.onImgLoad.callback": Object {
               "selection": Object {
-                "selected": "image data",
+                "altText": "AlTTExt",
+                "externalUrl": "ExtERNALurL",
+                "url": "UrL",
               },
             },
           }
         }
+        onLoad={
+          Object {
+            "hooks.dimensions.onImgLoad.callback": Object {
+              "selection": Object {
+                "altText": "AlTTExt",
+                "externalUrl": "ExtERNALurL",
+                "url": "UrL",
+              },
+            },
+          }
+        }
+        src="ExtERNALurL"
       />
     </div>
     <hr
@@ -93,7 +107,16 @@ exports[`ImageSettingsModal render snapshot 1`] = `
             "calls": Array [
               Array [
                 Object {
-                  "selected": "image data",
+                  "altText": "AlTTExt",
+                  "externalUrl": "ExtERNALurL",
+                  "url": "UrL",
+                },
+              ],
+              Array [
+                Object {
+                  "altText": "AlTTExt",
+                  "externalUrl": "ExtERNALurL",
+                  "url": "UrL",
                 },
               ],
             ],
@@ -103,7 +126,21 @@ exports[`ImageSettingsModal render snapshot 1`] = `
                 "value": Object {
                   "hooks.dimensions.onImgLoad.callback": Object {
                     "selection": Object {
-                      "selected": "image data",
+                      "altText": "AlTTExt",
+                      "externalUrl": "ExtERNALurL",
+                      "url": "UrL",
+                    },
+                  },
+                },
+              },
+              Object {
+                "type": "return",
+                "value": Object {
+                  "hooks.dimensions.onImgLoad.callback": Object {
+                    "selection": Object {
+                      "altText": "AlTTExt",
+                      "externalUrl": "ExtERNALurL",
+                      "url": "UrL",
                     },
                   },
                 },
