@@ -13,6 +13,7 @@ import appMessages from './i18n';
 import store from './store';
 import { NotFoundPage } from './generic';
 import {
+  AboutLibrariesHyperlink,
   ROUTES,
   CourseImportPage,
   LibraryBlockPage,
@@ -53,6 +54,7 @@ subscribe(APP_READY, () => {
             <Route path="*" component={NotFoundPage} />
           </Switch>
         </main>
+        <AboutLibrariesHyperlink />
         <Footer />
       </div>
     </AppProvider>,

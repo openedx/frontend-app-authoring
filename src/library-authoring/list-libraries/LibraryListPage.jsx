@@ -3,25 +3,26 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import {
-  Button, Form, Input, Pagination,
+  Button, Pagination, Breadcrumb, ActionRow, Icon, Card,
 } from '@edx/paragon';
+import { Add } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 import { AppContext } from '@edx/frontend-platform/react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 import { LoadingPage } from '../../generic';
 import {
-  LOADING_STATUS, LibraryIndexTabs, libraryShape, LIBRARY_TYPES, paginated, ROUTES,
+  LOADING_STATUS, libraryShape, paginated, ROUTES,
 } from '../common';
+import { EmptyPage } from '../empty-page';
 import {
   fetchLibraryList,
   libraryListInitialState,
   selectLibraryList,
 } from './data';
-import LibraryListItem from './LibraryListItem';
 import messages from './messages';
 import commonMessages from '../common/messages';
+import emptyPageMessages from '../empty-page/messages';
 
 export class LibraryListPage extends React.Component {
   constructor(props) {
@@ -30,7 +31,7 @@ export class LibraryListPage extends React.Component {
     this.state = {
       paginationParams: {
         page: 1,
-        page_size: 20,
+        page_size: +process.env.LIBRARY_LISTING_PAGINATION_PAGE_SIZE,
       },
       filterParams: {
         type: 'complex',
@@ -70,45 +71,8 @@ export class LibraryListPage extends React.Component {
     });
   }
 
-  handleFilterChange = (event) => {
-    const { name, value } = event.target;
-    this.setState(state => ({
-      paginationParams: {
-        ...state.paginationParams,
-        page: 1,
-      },
-      filterParams: {
-        ...state.filterParams,
-        [name]: value,
-      },
-    }));
-  }
-
-  handleFilterOrgChange = (event) => {
-    this.handleFilterChange(event);
-    this.props.fetchLibraryList({
-      params: {
-        ...this.state.filterParams,
-        org: event.target.value,
-        page_size: this.state.paginationParams.page_size,
-      },
-    });
-  }
-
-  handleFilterTypeChange = (event) => {
-    this.handleFilterChange(event);
-    this.props.fetchLibraryList({
-      params: {
-        ...this.state.filterParams,
-        type: event.target.value,
-        page_size: this.state.paginationParams.page_size,
-      },
-    });
-  }
-
-  handleFilterSubmit = (event) => {
-    event.preventDefault();
-    this.props.fetchLibraryList({ params: this.state.filterParams });
+  goToLibraryItem = (library) => {
+    this.props.history.push(library.url);
   }
 
   renderError() {
@@ -130,8 +94,7 @@ export class LibraryListPage extends React.Component {
   }
 
   renderContent() {
-    const { intl, libraries, orgs } = this.props;
-    const { filterParams } = this.state;
+    const { intl, libraries } = this.props;
 
     const paginationOptions = {
       currentPage: this.state.paginationParams.page,
@@ -145,42 +108,28 @@ export class LibraryListPage extends React.Component {
       },
     };
 
-    const orgOptions = [
-      {
-        value: '',
-        label: intl.formatMessage(messages['library.list.filter.options.org.all']),
-      },
-      {
-        label: intl.formatMessage(messages['library.list.filter.options.org.organizations']),
-        group: orgs.map(orgName => ({
-          value: orgName,
-          label: orgName,
-        })),
-      },
-    ];
-
-    const typeOptions = [{
-      label: intl.formatMessage(messages['library.list.filter.options.type.types']),
-      group: Object.values(LIBRARY_TYPES).map((value) => (
-        { value, label: intl.formatMessage(messages[`library.list.filter.options.type.${value}`]) }
-      )),
-    }];
-
     return (
       <div className="library-list-wrapper">
         <div className="wrapper-mast wrapper">
+          <Breadcrumb
+            links={[
+              { label: intl.formatMessage(commonMessages['library.common.breadcrumbs.studio']), url: getConfig().STUDIO_BASE_URL },
+            ]}
+            activeLabel={intl.formatMessage(messages['library.list.breadcrumbs.libraries'])}
+          />
           <header className="mast has-actions">
             <h1 className="page-header">{intl.formatMessage(messages['library.list.page.heading'])}</h1>
             <nav className="nav-actions">
-              <ul>
+              <ul className="nav-list">
                 <li className="nav-item">
+                  {libraries.count !== 0 && (
                   <Button
-                    variant="success"
+                    variant="outline-primary"
                     onClick={this.goToCreateLibraryPage}
                   >
-                    <FontAwesomeIcon icon={faPlus} className="pr-3" />
                     {intl.formatMessage(messages['library.list.new.library'])}
                   </Button>
+                  )}
                 </li>
               </ul>
             </nav>
@@ -189,16 +138,50 @@ export class LibraryListPage extends React.Component {
         <div className="wrapper-content wrapper">
           <section className="content">
             <article className="content-primary" role="main">
-              <LibraryIndexTabs />
-              <ul className="library-list">
-                {libraries.data.map((library) => (
-                  <li key={library.id} className="library-item">
-                    <LibraryListItem library={library} />
-                  </li>
-                ))}
-              </ul>
               {libraries.count > 0
                 ? (
+                  <ul className="library-list">
+                    {libraries.data.map(library => (
+                      <Card
+                        isClickable
+                        key={library.id}
+                        className="library-item"
+                        onClick={() => this.goToLibraryItem(library)}
+                      >
+                        <Card.Header
+                          className="library-title"
+                          title={library.title}
+                        />
+                        <div className="library-metadata">
+                          <span className="library-org metadata-item">
+                            <span className="value">{library.org}</span>
+                          </span>
+                          <span className="library-slug metadata-item">
+                            <span className="value">{library.slug}</span>
+                          </span>
+                        </div>
+                      </Card>
+                    ))}
+                  </ul>
+                ) : (
+                  <EmptyPage
+                    heading={intl.formatMessage(emptyPageMessages['library.list.empty.heading'])}
+                    body={intl.formatMessage(emptyPageMessages['library.list.empty.body'])}
+                  >
+                    <ActionRow>
+                      <Button
+                        variant="outline-primary"
+                        size="lg"
+                        onClick={this.goToCreateLibraryPage}
+                      >
+                        <Icon src={Add} />
+                        {intl.formatMessage(emptyPageMessages['library.list.empty.new.library'])}
+                      </Button>
+                    </ActionRow>
+                  </EmptyPage>
+                )}
+              {paginationOptions.pageCount > 1
+                && (
                   <Pagination
                     className="library-list-pagination"
                     paginationLabel="pagination navigation"
@@ -207,80 +190,8 @@ export class LibraryListPage extends React.Component {
                     buttonLabels={paginationOptions.buttonLabels}
                     onPageSelect={this.handlePageChange}
                   />
-                )
-                : null}
+                )}
             </article>
-            <aside className="content-supplementary">
-              <div className="bit">
-                <h3 className="title title-3">{intl.formatMessage(messages['library.list.aside.title'])}</h3>
-                <p>{intl.formatMessage(messages['library.list.aside.text'])}</p>
-                <ul className="list-actions">
-                  <li className="action-item">
-                    <a
-                      href="http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/course_components/libraries.html"
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      {intl.formatMessage(messages['library.list.aside.help.link'])}
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div className="bit">
-                <Form onSubmit={this.handleFilterSubmit} className="filter-form">
-                  <Form.Row>
-                    <Form.Group className="w-100">
-                      <Form.Label className="title title-3">
-                        {intl.formatMessage(messages['library.list.filter.title'])}
-                      </Form.Label>
-                      <div className="d-flex flex-row">
-                        <Form.Control
-                          name="text_search"
-                          placeholder={intl.formatMessage(messages['library.list.filter.input.default'])}
-                          defaultValue={filterParams ? filterParams.text_search : null}
-                          onChange={this.handleFilterChange}
-                        />
-                        <Button
-                          type="submit"
-                          variant="primary"
-                          className="ml-2 py-1 px-3 d-inline"
-                        >
-                          <FontAwesomeIcon icon={faSearch} />
-                        </Button>
-                      </div>
-                    </Form.Group>
-                  </Form.Row>
-                  <Form.Row>
-                    <Form.Group className="w-100">
-                      <Form.Label className="title title-3">
-                        {intl.formatMessage(messages['library.list.filter.options.org.label'])}
-                      </Form.Label>
-                      <Input
-                        name="org"
-                        type="select"
-                        options={orgOptions}
-                        defaultValue={filterParams ? filterParams.org : null}
-                        onChange={this.handleFilterOrgChange}
-                      />
-                    </Form.Group>
-                  </Form.Row>
-                  <Form.Row>
-                    <Form.Group className="w-100">
-                      <Form.Label className="title title-3">
-                        {intl.formatMessage(messages['library.list.filter.options.type.label'])}
-                      </Form.Label>
-                      <Input
-                        name="type"
-                        type="select"
-                        options={typeOptions}
-                        defaultValue={filterParams ? filterParams.type : null}
-                        onChange={this.handleFilterTypeChange}
-                      />
-                    </Form.Group>
-                  </Form.Row>
-                </Form>
-              </div>
-            </aside>
           </section>
         </div>
       </div>
@@ -314,7 +225,6 @@ LibraryListPage.propTypes = {
   fetchLibraryList: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
   libraries: paginated(libraryShape).isRequired,
-  orgs: PropTypes.arrayOf(PropTypes.string),
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,

@@ -1,0 +1,58 @@
+.empty {
+  &-sheet-wrapper {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    background: $light-200;
+  }
+
+  &-content {
+    @include clearfix();
+
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    border-radius: ($baseline/3.3);
+    padding: ($baseline*2) 0;
+    width: flex-grid(9);
+
+    .pgn__action-row {
+      gap: ($baseline*0.8);
+
+      .btn {
+        @extend %t-demi-strong;
+
+        @include font-size(22);
+        @include line-height(36);
+        box-shadow: $level-1-box-shadow;
+        padding: ($baseline*0.8);
+        color: $primary-500;
+        border-radius: ($baseline*0.2);
+
+        .pgn__icon {
+          width: ($baseline*1.25);
+          height: ($baseline*1.25);
+          right: ($baseline*0.25);
+        }
+      }
+    }
+  }
+
+  &-heading-text {
+    @extend %t-title3;
+    @extend %t-bold;
+
+    @include margin(($baseline*0.25), 0, ($baseline*0.75), 0);
+    color: $primary-500;
+  }
+
+  &-body-text {
+    @extend %t-title4;
+    @extend %t-regular;
+
+    margin-bottom: ($baseline*1.25);
+    color: $gray-700;
+  }
+}

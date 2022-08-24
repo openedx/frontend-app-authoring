@@ -817,7 +817,6 @@ $yellow-u3: desaturate($yellow, 45%) !default;
   }
 }
 
-
 // Imported from:
 // edx-platform/cms/static/sass/elements/_forms.scss
 .form-create {
@@ -1130,15 +1129,25 @@ $bi-app-right           : right;
 // edx-platform/cms/static/sass/_base.scss
 html {
   font-size: 62.5%;
-  height: 102%; // force scrollbar to prevent jump when scroll appears, cannot use overflow because it breaks drag
+  height: 100%; // force scrollbar to prevent jump when scroll appears, cannot use overflow because it breaks drag
 }
 
 body {
   @extend %t-copy-base;
 
   min-width: $fg-min-width;
-  background: $uxpl-grayscale-x-back;
   color: $gray-d3;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+
+  > .wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 body,
@@ -1173,7 +1182,7 @@ button {
 }
 
 .wrapper-mast {
-  margin: ($baseline*1.5) 0 0 0;
+  margin: ($baseline*2) 0 0 0;
   padding: 0;
   position: relative;
 
@@ -1185,16 +1194,17 @@ button {
     max-width: $fg-max-width;
     min-width: $fg-min-width;
     width: flex-grid(12);
-    margin: 0 auto $baseline auto;
+    margin: $baseline auto $baseline auto;
     color: $gray-d2;
   }
 
   .mast {
-    border-bottom: 1px solid $gray-l4;
     padding-bottom: ($baseline/2);
 
     // layout without actions
     .page-header {
+      @extend %t-bold;
+
       font-family: $f-sans-serif;
       width: flex-grid(12);
     }
@@ -1226,7 +1236,9 @@ button {
         width: flex-grid(6, 12);
 
         @include text-align(right);
-
+        .nav-list {
+          margin-top: ($baseline/1.5);
+        }
         .nav-item {
           display: inline-block;
           vertical-align: top;
@@ -1256,6 +1268,10 @@ button {
   margin: 0;
   padding: 0;
   position: relative;
+}
+
+main {
+  flex: 1 0 auto;
 }
 
 .content {
@@ -1301,8 +1317,8 @@ button {
 }
 
 .content-primary {
-  flex: 0 0 75%;
-  width: 75%;
+  flex: 0 0 100%;
+  width: 100%;
   margin-right: 2.12%;
 
   .title-1 {

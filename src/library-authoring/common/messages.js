@@ -156,6 +156,16 @@ const messages = defineMessages({
     defaultMessage: 'PageOfCount',
     description: 'Label of the pagination item for page of count used for aria text',
   },
+  'library.common.footer.hyperlink.about': {
+    id: 'library.common.footer.hyperlink.about',
+    defaultMessage: 'Learn more about libraries',
+    description: 'The link opens in a new tab that leads to the page on edx.org',
+  },
+  'library.common.breadcrumbs.studio': {
+    id: 'library.common.breadcrumbs.studio',
+    defaultMessage: 'Studio',
+    description: 'Text for link to studio.',
+  },
 });
 
 export default messageGuard(messages);

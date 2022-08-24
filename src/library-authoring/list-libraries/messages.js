@@ -4,7 +4,7 @@ import { messageGuard } from '../common/data';
 const messages = defineMessages({
   'library.list.page.heading': {
     id: 'library.list.page.heading',
-    defaultMessage: 'Content Libraries',
+    defaultMessage: 'Libraries',
     description: 'The page heading for the library list page.',
   },
   'library.list.new.library': {
@@ -129,6 +129,11 @@ const messages = defineMessages({
     id: 'library.list.aside.help.link',
     defaultMessage: 'Getting Started with Studio',
     description: 'Link text for the help link in the supplementary content.',
+  },
+  'library.list.breadcrumbs.libraries': {
+    id: 'library.list.breadcrumbs.libraries',
+    defaultMessage: 'Libraries',
+    description: 'Label for the breadcrumbs parent link.',
   },
 });
 
