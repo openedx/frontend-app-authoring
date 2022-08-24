@@ -36,7 +36,7 @@ function normalizeLtiConfig(data) {
     consumerKey: data.lti_1p1_client_key,
     consumerSecret: data.lti_1p1_client_secret,
     launchUrl: data.lti_1p1_launch_url,
-    launchEmail: data.lti_config.additional_parameters.custom_instructor_email,
+    launchEmail: data.lti_config.additional_parameters?.custom_instructor_email,
   };
 }
 
