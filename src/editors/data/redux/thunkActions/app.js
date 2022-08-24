@@ -24,6 +24,12 @@ export const fetchUnit = () => (dispatch) => {
   }));
 };
 
+export const fetchImages = () => (dispatch) => {
+  dispatch(requests.fetchImages({
+    onSuccess: (response) => dispatch(actions.app.setImages(response)),
+  }));
+};
+
 /**
  * @param {string} studioEndpointUrl
  * @param {string} blockId
@@ -35,6 +41,7 @@ export const initialize = (data) => (dispatch) => {
   dispatch(module.fetchBlock());
   dispatch(module.fetchUnit());
   dispatch(module.fetchStudioView());
+  dispatch(module.fetchImages());
 };
 
 /**
@@ -49,10 +56,6 @@ export const saveBlock = ({ content, returnToUnit }) => (dispatch) => {
       returnToUnit();
     },
   }));
-};
-
-export const fetchImages = ({ setImages }) => (dispatch) => {
-  dispatch(requests.fetchImages({ onSuccess: setImages }));
 };
 
 export const uploadImage = ({ file, setSelection }) => (dispatch) => {

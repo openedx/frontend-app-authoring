@@ -27,6 +27,7 @@ export const SelectImageModal = ({
   close,
   setSelection,
   clearSelection,
+  images,
   // injected
   intl,
   // redux
@@ -39,7 +40,7 @@ export const SelectImageModal = ({
     galleryProps,
     searchSortProps,
     selectBtnProps,
-  } = hooks.imgHooks({ setSelection, clearSelection });
+  } = hooks.imgHooks({ setSelection, clearSelection, images });
 
   return (
     <BaseModal
@@ -96,6 +97,7 @@ SelectImageModal.propTypes = {
   close: PropTypes.func.isRequired,
   setSelection: PropTypes.func.isRequired,
   clearSelection: PropTypes.func.isRequired,
+  images: PropTypes.shape({}).isRequired,
   // injected
   intl: intlShape.isRequired,
   // redux

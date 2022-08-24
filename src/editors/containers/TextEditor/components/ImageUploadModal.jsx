@@ -52,6 +52,7 @@ export const ImageUploadModal = ({
   clearSelection,
   selection,
   setSelection,
+  images,
 }) => {
   if (selection) {
     return (
@@ -78,6 +79,7 @@ export const ImageUploadModal = ({
         close,
         setSelection,
         clearSelection,
+        images,
       }}
     />
   );
@@ -101,5 +103,6 @@ ImageUploadModal.propTypes = {
     altText: PropTypes.bool,
   }),
   setSelection: PropTypes.func.isRequired,
+  images: PropTypes.shape({}).isRequired,
 };
 export default ImageUploadModal;

@@ -60,6 +60,33 @@ export const setupCustomBehavior = ({
   });
 };
 
+export const replaceStaticwithAsset = (editor, imageUrls) => {
+  const content = editor.getContent();
+  const imageSrcs = content.split('img src="');
+  imageSrcs.forEach(src => {
+    if (src.startsWith('/static/') && imageUrls.length > 0) {
+      const imgName = src.substring(8, src.indexOf('"'));
+      let staticFullUrl;
+      imageUrls.forEach((url) => {
+        if (url.includes(imgName)) {
+          staticFullUrl = url;
+        }
+      });
+      const currentSrc = src.substring(0, src.indexOf('"'));
+      const updatedContent = content.replace(currentSrc, staticFullUrl);
+      editor.setContent(updatedContent);
+    }
+  });
+};
+
+export const checkRelativeUrl = (imageUrls) => (editor) => {
+  editor.on('ExecCommand', (e) => {
+    if (e.command === 'mceFocus') {
+      module.replaceStaticwithAsset(editor, imageUrls);
+    }
+  });
+};
+
 // imagetools_cors_hosts needs a protocol-sanatized url
 export const removeProtocolFromUrl = (url) => url.replace(/^https?:\/\//, '');
 
@@ -72,6 +99,7 @@ export const editorConfig = ({
   setEditorRef,
   setSelection,
   studioEndpointUrl,
+  images,
 }) => ({
   onInit: (evt, editor) => {
     setEditorRef(editor);
@@ -85,6 +113,7 @@ export const editorConfig = ({
     content_style: tinyMCEStyles,
     contextmenu: 'link table',
     document_base_url: lmsEndpointUrl,
+    init_instance_callback: module.checkRelativeUrl(module.fetchImageUrls(images)),
     imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
     imagetools_toolbar: pluginConfig.imageToolbar,
     plugins: pluginConfig.plugins,
@@ -108,12 +137,15 @@ export const imgModalToggle = () => {
   };
 };
 
-export const sourceCodeModalToggle = () => {
+export const sourceCodeModalToggle = (editorRef) => {
   const [isSourceCodeOpen, setIsOpen] = module.state.isSourceCodeModalOpen(false);
   return {
     isSourceCodeOpen,
     openSourceCodeModal: () => setIsOpen(true),
-    closeSourceCodeModal: () => setIsOpen(false),
+    closeSourceCodeModal: () => {
+      setIsOpen(false);
+      editorRef.current.focus();
+    },
   };
 };
 
@@ -143,6 +175,15 @@ export const getContent = ({ editorRef, isRaw }) => () => {
     return editorRef.current.state.doc.toString();
   }
   return editorRef.current?.getContent();
+};
+
+export const fetchImageUrls = (images) => {
+  const imageUrls = [];
+  const imgsArray = Object.values(images);
+  imgsArray.forEach(image => {
+    imageUrls.push(image.staticFullUrl);
+  });
+  return imageUrls;
 };
 
 export const selectedImage = (val) => {

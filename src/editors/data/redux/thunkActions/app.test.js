@@ -80,20 +80,28 @@ describe('app thunkActions', () => {
   });
   describe('initialize', () => {
     it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
-      const { fetchBlock, fetchUnit, fetchStudioView } = thunkActions;
+      const {
+        fetchBlock,
+        fetchUnit,
+        fetchStudioView,
+        fetchImages,
+      } = thunkActions;
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
       thunkActions.fetchStudioView = () => 'fetchStudioView';
+      thunkActions.fetchImages = () => 'fetchImages';
       thunkActions.initialize(testValue)(dispatch);
       expect(dispatch.mock.calls).toEqual([
         [actions.app.initialize(testValue)],
         [thunkActions.fetchBlock()],
         [thunkActions.fetchUnit()],
         [thunkActions.fetchStudioView()],
+        [thunkActions.fetchImages()],
       ]);
       thunkActions.fetchBlock = fetchBlock;
       thunkActions.fetchUnit = fetchUnit;
       thunkActions.fetchStudioView = fetchStudioView;
+      thunkActions.fetchImages = fetchImages;
     });
   });
   describe('saveBlock', () => {
@@ -122,10 +130,11 @@ describe('app thunkActions', () => {
   });
   describe('fetchImages', () => {
     it('dispatches fetchUnit action with setImages for onSuccess param', () => {
-      const setImages = jest.fn();
-      thunkActions.fetchImages({ setImages })(dispatch);
-      [[dispatchedAction]] = dispatch.mock.calls;
-      expect(dispatchedAction.fetchImages).toEqual({ onSuccess: setImages });
+      const response = 'testRESPONSE';
+      thunkActions.fetchImages()(dispatch);
+      const [[dispatchCall]] = dispatch.mock.calls;
+      dispatchCall.fetchImages.onSuccess(response);
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setImages(response));
     });
   });
   describe('uploadImage', () => {

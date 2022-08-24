@@ -44,14 +44,15 @@ export const TextEditor = ({
   lmsEndpointUrl,
   studioEndpointUrl,
   blockFailed,
-  blockFinished,
   initializeEditor,
+  images,
+  imagesFinished,
   // inject
   intl,
 }) => {
   const { editorRef, refReady, setEditorRef } = hooks.prepareEditorRef();
   const { isImgOpen, openImgModal, closeImgModal } = hooks.imgModalToggle();
-  const { isSourceCodeOpen, openSourceCodeModal, closeSourceCodeModal } = hooks.sourceCodeModalToggle();
+  const { isSourceCodeOpen, openSourceCodeModal, closeSourceCodeModal } = hooks.sourceCodeModalToggle(editorRef);
   const imageSelection = hooks.selectedImage(null);
 
   if (!refReady) { return null; }
@@ -75,6 +76,7 @@ export const TextEditor = ({
           initializeEditor,
           lmsEndpointUrl,
           studioEndpointUrl,
+          images,
           setSelection: imageSelection.setSelection,
           clearSelection: imageSelection.clearSelection,
         })}
@@ -92,6 +94,7 @@ export const TextEditor = ({
           isOpen={isImgOpen}
           close={closeImgModal}
           editorRef={editorRef}
+          images={images}
           {...imageSelection}
         />
         <SourceCodeModal
@@ -104,7 +107,7 @@ export const TextEditor = ({
           <FormattedMessage {...messages.couldNotLoadTextContext} />
         </Toast>
 
-        {(!blockFinished)
+        {(!imagesFinished)
           ? (
             <div className="text-center p-6">
               <Spinner
@@ -124,6 +127,8 @@ TextEditor.defaultProps = {
   isRaw: null,
   lmsEndpointUrl: null,
   studioEndpointUrl: null,
+  images: null,
+  imagesFinished: null,
 };
 TextEditor.propTypes = {
   onClose: PropTypes.func.isRequired,
@@ -134,9 +139,10 @@ TextEditor.propTypes = {
   lmsEndpointUrl: PropTypes.string,
   studioEndpointUrl: PropTypes.string,
   blockFailed: PropTypes.bool.isRequired,
-  blockFinished: PropTypes.bool.isRequired,
   initializeEditor: PropTypes.func.isRequired,
   isRaw: PropTypes.bool,
+  imagesFinished: PropTypes.bool,
+  images: PropTypes.shape({}),
   // inject
   intl: intlShape.isRequired,
 };
@@ -146,8 +152,9 @@ export const mapStateToProps = (state) => ({
   lmsEndpointUrl: selectors.app.lmsEndpointUrl(state),
   studioEndpointUrl: selectors.app.studioEndpointUrl(state),
   blockFailed: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
-  blockFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
   isRaw: selectors.app.isRaw(state),
+  imagesFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchImages }),
+  images: selectors.app.images(state),
 });
 
 export const mapDispatchToProps = {
