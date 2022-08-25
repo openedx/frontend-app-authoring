@@ -25,7 +25,7 @@ function OpenedXConfigForm({
   onSubmit, formRef, intl, legacy,
 }) {
   const {
-    selectedAppId, enableInContext, enableGradedUnits, unitLevelVisibility, discussionTopicIds, divideDiscussionIds,
+    selectedAppId, enableInContext, enableGradedUnits, discussionTopicIds, divideDiscussionIds,
   } = useSelector(state => state.discussions);
   const appConfigObj = useModel('appConfigs', selectedAppId);
   const discussionTopicsModel = useModels('discussionTopics', discussionTopicIds);
@@ -34,7 +34,7 @@ function OpenedXConfigForm({
     divideDiscussionIds,
     enableInContext,
     enableGradedUnits,
-    unitLevelVisibility,
+    unitLevelVisibility: true,
     allowAnonymousPostsPeers: appConfigObj?.allowAnonymousPostsPeers || false,
     reportedContentEmailNotifications: appConfigObj?.reportedContentEmailNotifications || false,
     enableReportedContentEmailNotifications: appConfigObj?.enableReportedContentEmailNotifications || false,
@@ -51,7 +51,6 @@ function OpenedXConfigForm({
     enableInContext: Yup.bool().default(true),
     enabledGradedUnits: Yup.bool().default(false),
     groupAtSubsection: Yup.bool().default(false),
-    unitLevelVisibility: Yup.bool().default(false),
   };
   const validationSchema = Yup.object().shape({
     blackoutDates: Yup.array(

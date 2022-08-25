@@ -43,7 +43,7 @@ const defaultAppConfig = (divideDiscussionIds = []) => ({
   enableGradedUnits: undefined,
   enableInContext: undefined,
   groupAtSubsection: false,
-  unitLevelVisibility: undefined,
+  unitLevelVisibility: true,
   allowAnonymousPosts: false,
   allowAnonymousPostsPeers: false,
   reportedContentEmailNotifications: false,
@@ -109,7 +109,6 @@ describe('OpenedXConfigForm', () => {
     expect(queryByText(container, messages.visibilityInContext.defaultMessage)).toBeInTheDocument();
     expect(queryByText(container, messages.gradedUnitPagesLabel.defaultMessage)).toBeInTheDocument();
     expect(queryByText(container, messages.groupInContextSubsectionLabel.defaultMessage)).toBeInTheDocument();
-    expect(queryByText(container, messages.allowUnitLevelVisibilityLabel.defaultMessage)).toBeInTheDocument();
   });
 
   test('calls onSubmit when the formRef is submitted', async () => {
@@ -139,7 +138,7 @@ describe('OpenedXConfigForm', () => {
     await mockStore({
       ...legacyApiResponse,
       plugin_configuration: {
-         ...legacyApiResponse.plugin_configuration,
+        ...legacyApiResponse.plugin_configuration,
         reported_content_email_notifications_flag: true,
         divided_course_wide_discussions: [],
       },

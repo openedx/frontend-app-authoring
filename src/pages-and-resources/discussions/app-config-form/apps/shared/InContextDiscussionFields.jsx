@@ -46,16 +46,6 @@ function InContextDiscussionFields({
               label={intl.formatMessage(messages.groupInContextSubsectionLabel)}
               helpText={intl.formatMessage(messages.groupInContextSubsectionHelp)}
             />
-            <AppConfigFormDivider />
-            <FormSwitchGroup
-              onChange={onChange}
-              onBlur={onBlur}
-              className="ml-4"
-              id="unitLevelVisibility"
-              checked={values.unitLevelVisibility}
-              label={intl.formatMessage(messages.allowUnitLevelVisibilityLabel)}
-              helpText={intl.formatMessage(messages.allowUnitLevelVisibilityHelp)}
-            />
           </React.Fragment>
         ) : <React.Fragment key="closed" />}
 
@@ -72,7 +62,6 @@ InContextDiscussionFields.propTypes = {
     enableInContext: PropTypes.bool,
     enableGradedUnits: PropTypes.bool,
     groupAtSubsection: PropTypes.bool,
-    unitLevelVisibility: PropTypes.bool,
   }).isRequired,
 };
 
