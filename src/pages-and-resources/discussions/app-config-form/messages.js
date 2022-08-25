@@ -132,7 +132,7 @@ const messages = defineMessages({
   },
   gradedUnitPagesLabel: {
     id: 'authoring.discussions.builtIn.gradedUnitPages.label',
-    defaultMessage: 'Graded unit pages',
+    defaultMessage: 'Enable discussions on units in graded subsections',
   },
   gradedUnitPagesHelp: {
     id: 'authoring.discussions.builtIn.gradedUnitPages.help',
