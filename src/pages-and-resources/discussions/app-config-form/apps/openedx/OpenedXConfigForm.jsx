@@ -25,14 +25,14 @@ function OpenedXConfigForm({
   onSubmit, formRef, intl, legacy,
 }) {
   const {
-    selectedAppId, enableInContext, enableGradedUnits, discussionTopicIds, divideDiscussionIds,
+    selectedAppId, enableGradedUnits, discussionTopicIds, divideDiscussionIds,
   } = useSelector(state => state.discussions);
   const appConfigObj = useModel('appConfigs', selectedAppId);
   const discussionTopicsModel = useModels('discussionTopics', discussionTopicIds);
   const legacyAppConfig = {
     ...(appConfigObj || {}),
     divideDiscussionIds,
-    enableInContext,
+    enableInContext: true,
     enableGradedUnits,
     unitLevelVisibility: true,
     allowAnonymousPostsPeers: appConfigObj?.allowAnonymousPostsPeers || false,
@@ -48,7 +48,6 @@ function OpenedXConfigForm({
   const [validDiscussionTopics, setValidDiscussionTopics] = useState(discussionTopicsModel);
   // These fields are only used for the new provider and aren't supported for legacy.
   const additionalFields = legacy ? {} : {
-    enableInContext: Yup.bool().default(true),
     enabledGradedUnits: Yup.bool().default(false),
     groupAtSubsection: Yup.bool().default(false),
   };

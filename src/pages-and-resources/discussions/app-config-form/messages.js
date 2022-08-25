@@ -130,14 +130,6 @@ const messages = defineMessages({
     id: 'authoring.discussions.builtIn.visibilityInContext',
     defaultMessage: 'Visibility of in-context discussions',
   },
-  inContextDiscussionLabel: {
-    id: 'authoring.discussions.builtIn.inContextDiscussion.label',
-    defaultMessage: 'In-context discussion',
-  },
-  inContextDiscussionHelp: {
-    id: 'authoring.discussions.builtIn.inContextDiscussion.help',
-    defaultMessage: 'Learners will be able to view or hide a discussion side panel to engage with discussion on the course unit page.',
-  },
   gradedUnitPagesLabel: {
     id: 'authoring.discussions.builtIn.gradedUnitPages.label',
     defaultMessage: 'Graded unit pages',

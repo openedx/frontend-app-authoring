@@ -41,7 +41,7 @@ const defaultAppConfig = (divideDiscussionIds = []) => ({
   ],
   divideDiscussionIds,
   enableGradedUnits: undefined,
-  enableInContext: undefined,
+  enableInContext: true,
   groupAtSubsection: false,
   unitLevelVisibility: true,
   allowAnonymousPosts: false,
