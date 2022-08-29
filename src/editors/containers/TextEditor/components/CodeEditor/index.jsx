@@ -14,11 +14,12 @@ export const hooks = {
     useEffect(() => {
       const state = EditorState.create({
         doc: initialText,
-        extensions: [basicSetup, html()],
+        extensions: [basicSetup, html(), EditorView.lineWrapping],
       });
       const view = new EditorView({ state, parent: ref.current });
       // eslint-disable-next-line no-param-reassign
       upstreamRef.current = view;
+      view.focus();
       return () => {
         // called on cleanup
         view.destroy();
