@@ -100,6 +100,7 @@ export const editorConfig = ({
   setSelection,
   studioEndpointUrl,
   images,
+  isLibrary,
 }) => ({
   onInit: (evt, editor) => {
     setEditorRef(editor);
@@ -107,7 +108,7 @@ export const editorConfig = ({
   },
   initialValue: blockValue ? blockValue.data.data : '',
   init: {
-    ...pluginConfig.config,
+    ...pluginConfig(isLibrary).config,
     skin: false,
     content_css: false,
     content_style: tinyMCEStyles,
@@ -115,14 +116,14 @@ export const editorConfig = ({
     document_base_url: lmsEndpointUrl,
     init_instance_callback: module.checkRelativeUrl(module.fetchImageUrls(images)),
     imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
-    imagetools_toolbar: pluginConfig.imageToolbar,
-    plugins: pluginConfig.plugins,
+    imagetools_toolbar: pluginConfig(isLibrary).imageToolbar,
+    plugins: pluginConfig(isLibrary).plugins,
     setup: module.setupCustomBehavior({
       openImgModal,
       openSourceCodeModal,
       setImage: setSelection,
     }),
-    toolbar: pluginConfig.toolbar,
+    toolbar: pluginConfig(isLibrary).toolbar,
     valid_children: '+body[style]',
     valid_elements: '*[*]',
   },

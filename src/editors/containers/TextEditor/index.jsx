@@ -40,6 +40,7 @@ export const TextEditor = ({
   onClose,
   // redux
   isRaw,
+  isLibrary,
   blockValue,
   lmsEndpointUrl,
   studioEndpointUrl,
@@ -76,6 +77,7 @@ export const TextEditor = ({
           initializeEditor,
           lmsEndpointUrl,
           studioEndpointUrl,
+          isLibrary,
           images,
           setSelection: imageSelection.setSelection,
           clearSelection: imageSelection.clearSelection,
@@ -90,13 +92,15 @@ export const TextEditor = ({
       onClose={onClose}
     >
       <div className="editor-body h-75 overflow-auto">
-        <ImageUploadModal
-          isOpen={isImgOpen}
-          close={closeImgModal}
-          editorRef={editorRef}
-          images={images}
-          {...imageSelection}
-        />
+        {isLibrary ? null : (
+          <ImageUploadModal
+            isOpen={isImgOpen}
+            close={closeImgModal}
+            editorRef={editorRef}
+            images={images}
+            {...imageSelection}
+          />
+        )}
         <SourceCodeModal
           isOpen={isSourceCodeOpen}
           close={closeSourceCodeModal}
@@ -125,6 +129,7 @@ export const TextEditor = ({
 TextEditor.defaultProps = {
   blockValue: null,
   isRaw: null,
+  isLibrary: null,
   lmsEndpointUrl: null,
   studioEndpointUrl: null,
   images: null,
@@ -141,6 +146,7 @@ TextEditor.propTypes = {
   blockFailed: PropTypes.bool.isRequired,
   initializeEditor: PropTypes.func.isRequired,
   isRaw: PropTypes.bool,
+  isLibrary: PropTypes.bool,
   imagesFinished: PropTypes.bool,
   images: PropTypes.shape({}),
   // inject
@@ -153,6 +159,7 @@ export const mapStateToProps = (state) => ({
   studioEndpointUrl: selectors.app.studioEndpointUrl(state),
   blockFailed: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
   isRaw: selectors.app.isRaw(state),
+  isLibrary: selectors.app.isLibrary(state),
   imagesFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchImages }),
   images: selectors.app.images(state),
 });

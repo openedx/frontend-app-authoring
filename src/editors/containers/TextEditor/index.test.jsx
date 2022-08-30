@@ -71,6 +71,7 @@ jest.mock('../../data/redux', () => ({
       studioEndpointUrl: jest.fn(state => ({ studioEndpointUrl: state })),
       isRaw: jest.fn(state => ({ isRaw: state })),
       images: jest.fn(state => ({ images: state })),
+      isLibrary: jest.fn(state => ({ isLibrary: state })),
     },
     requests: {
       isFailed: jest.fn((state, params) => ({ isFailed: { state, params } })),
@@ -89,6 +90,7 @@ describe('TextEditor', () => {
     blockFailed: false,
     initializeEditor: jest.fn().mockName('args.intializeEditor'),
     isRaw: false,
+    isLibrary: false,
     imagesFinished: true,
     images: { sOmEuiMAge: { staTICUrl: '/assets/sOmEuiMAge' } },
     // inject
@@ -117,7 +119,11 @@ describe('TextEditor', () => {
     test('block failed to load, Toast is shown', () => {
       expect(shallow(<TextEditor {...props} blockFailed />)).toMatchSnapshot();
     });
+    test('ImageUploadModal is not rendered', () => {
+      expect(shallow(<TextEditor {...props} isLibrary />)).toMatchSnapshot();
+    });
   });
+
   describe('mapStateToProps', () => {
     const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
     test('blockValue from app.blockValue', () => {

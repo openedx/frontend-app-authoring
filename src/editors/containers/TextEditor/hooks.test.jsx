@@ -107,6 +107,7 @@ describe('TextEditor hooks', () => {
         lmsEndpointUrl: 'sOmEuRl.cOm',
         studioEndpointUrl: 'sOmEoThEruRl.cOm',
         images: { sOmEuiMAge: { staTICUrl: '/assets/sOmEuiMAge' } },
+        isLibrary: false,
       };
       const evt = 'fakeEvent';
       const editor = 'myEditor';
@@ -135,11 +136,11 @@ describe('TextEditor hooks', () => {
         expect(output.initialValue).toBe(htmltext);
       });
       test('It configures plugins and toolbars correctly', () => {
-        expect(output.init.plugins).toEqual(pluginConfig.plugins);
-        expect(output.init.imagetools_toolbar).toEqual(pluginConfig.imageToolbar);
-        expect(output.init.toolbar).toEqual(pluginConfig.toolbar);
-        Object.keys(pluginConfig.config).forEach(key => {
-          expect(output.init[key]).toEqual(pluginConfig.config[key]);
+        expect(output.init.plugins).toEqual(pluginConfig(props.isLibrary).plugins);
+        expect(output.init.imagetools_toolbar).toEqual(pluginConfig(props.isLibrary).imageToolbar);
+        expect(output.init.toolbar).toEqual(pluginConfig(props.isLibrary).toolbar);
+        Object.keys(pluginConfig(props.isLibrary).config).forEach(key => {
+          expect(output.init[key]).toEqual(pluginConfig(props.isLibrary).config[key]);
         });
         // Commented out as we investigate whether this is only needed for image proxy
         // expect(output.init.imagetools_cors_hosts).toMatchObject([props.lmsEndpointUrl]);

@@ -1,5 +1,74 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`TextEditor snapshots ImageUploadModal is not rendered 1`] = `
+<EditorContainer
+  getContent={
+    Object {
+      "getContent": Object {
+        "editorRef": Object {
+          "current": Object {
+            "value": "something",
+          },
+        },
+        "isRaw": false,
+      },
+    }
+  }
+  onClose={[MockFunction props.onClose]}
+>
+  <div
+    className="editor-body h-75 overflow-auto"
+  >
+    <SourceCodeModal
+      close={[MockFunction modal.closeModal]}
+      editorRef={
+        Object {
+          "current": Object {
+            "value": "something",
+          },
+        }
+      }
+      isOpen={false}
+    />
+    <Toast
+      onClose={[MockFunction hooks.nullMethod]}
+      show={false}
+    >
+      <FormattedMessage
+        defaultMessage="Error: Could Not Load Text Content"
+        description="Error Message Dispayed When HTML content fails to Load"
+        id="authoring.texteditor.load.error"
+      />
+    </Toast>
+    <Editor
+      editorConfig={
+        Object {
+          "blockValue": Object {
+            "data": Object {
+              "some": "eDiTablE Text",
+            },
+          },
+          "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
+          "images": Object {
+            "sOmEuiMAge": Object {
+              "staTICUrl": "/assets/sOmEuiMAge",
+            },
+          },
+          "initializeEditor": [MockFunction args.intializeEditor],
+          "isLibrary": true,
+          "lmsEndpointUrl": "sOmEvaLue.cOm",
+          "openImgModal": [MockFunction modal.openModal],
+          "openSourceCodeModal": [MockFunction modal.openModal],
+          "setEditorRef": [MockFunction hooks.prepareEditorRef.setEditorRef],
+          "setSelection": [MockFunction hooks.selectedImage.setSelection],
+          "studioEndpointUrl": "sOmEoThERvaLue.cOm",
+        }
+      }
+    />
+  </div>
+</EditorContainer>
+`;
+
 exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
 <EditorContainer
   getContent={
@@ -76,6 +145,7 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
             },
           },
           "initializeEditor": [MockFunction args.intializeEditor],
+          "isLibrary": false,
           "lmsEndpointUrl": "sOmEvaLue.cOm",
           "openImgModal": [MockFunction modal.openModal],
           "openSourceCodeModal": [MockFunction modal.openModal],
@@ -313,6 +383,7 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
             },
           },
           "initializeEditor": [MockFunction args.intializeEditor],
+          "isLibrary": false,
           "lmsEndpointUrl": "sOmEvaLue.cOm",
           "openImgModal": [MockFunction modal.openModal],
           "openSourceCodeModal": [MockFunction modal.openModal],
