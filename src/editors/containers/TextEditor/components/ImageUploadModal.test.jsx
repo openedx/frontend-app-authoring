@@ -25,9 +25,9 @@ const settings = {
 describe('ImageUploadModal', () => {
   describe('hooks', () => {
     describe('imgTag', () => {
-      const selection = { externalUrl: 'sOmEuRl.cOm' };
+      const selection = { url: 'sOmEuRl.cOm' };
       const expected = {
-        src: selection.externalUrl,
+        src: selection.url,
         alt: settings.altText,
         width: settings.dimensions.width,
         height: settings.dimensions.height,

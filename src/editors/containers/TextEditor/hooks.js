@@ -62,19 +62,21 @@ export const setupCustomBehavior = ({
 
 export const replaceStaticwithAsset = (editor, imageUrls) => {
   const content = editor.getContent();
-  const imageSrcs = content.split('img src="');
+  const imageSrcs = content.split('src="');
   imageSrcs.forEach(src => {
     if (src.startsWith('/static/') && imageUrls.length > 0) {
       const imgName = src.substring(8, src.indexOf('"'));
       let staticFullUrl;
       imageUrls.forEach((url) => {
-        if (url.includes(imgName)) {
-          staticFullUrl = url;
+        if (imgName === url.displayName) {
+          staticFullUrl = url.staticFullUrl;
         }
       });
-      const currentSrc = src.substring(0, src.indexOf('"'));
-      const updatedContent = content.replace(currentSrc, staticFullUrl);
-      editor.setContent(updatedContent);
+      if (staticFullUrl) {
+        const currentSrc = src.substring(0, src.indexOf('"'));
+        const updatedContent = content.replace(currentSrc, staticFullUrl);
+        editor.setContent(updatedContent);
+      }
     }
   });
 };
@@ -182,7 +184,7 @@ export const fetchImageUrls = (images) => {
   const imageUrls = [];
   const imgsArray = Object.values(images);
   imgsArray.forEach(image => {
-    imageUrls.push(image.staticFullUrl);
+    imageUrls.push({ staticFullUrl: image.staticFullUrl, displayName: image.displayName });
   });
   return imageUrls;
 };

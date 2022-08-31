@@ -11,7 +11,7 @@ export const propsString = (props) => (
 );
 
 export const imgProps = ({ settings, selection }) => ({
-  src: selection.externalUrl,
+  src: selection.url,
   alt: settings.isDecorative ? '' : settings.altText,
   width: settings.dimensions.width,
   height: settings.dimensions.height,

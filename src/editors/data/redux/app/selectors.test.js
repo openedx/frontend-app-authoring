@@ -42,6 +42,7 @@ describe('app selectors unit tests', () => {
         simpleKeys.learningContextId,
         simpleKeys.editorInitialized,
         simpleKeys.saveResponse,
+        simpleKeys.lmsEndpointUrl,
         simpleKeys.studioEndpointUrl,
         simpleKeys.unitUrl,
         simpleKeys.blockTitle,

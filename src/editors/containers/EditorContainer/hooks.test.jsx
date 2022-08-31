@@ -11,6 +11,7 @@ jest.mock('../../data/redux', () => ({
   selectors: {
     app: {
       isInitialized: (state) => ({ isInitialized: state }),
+      images: (state) => ({ images: state }),
     },
     requests: {
       isFailed: (...args) => ({ requestFailed: args }),
@@ -25,6 +26,20 @@ jest.mock('../../hooks', () => ({
 
 const dispatch = jest.fn();
 describe('EditorContainer hooks', () => {
+  describe('non-state hooks', () => {
+    describe('replaceStaticwithAsset', () => {
+      it('returns content with updated img links', () => {
+        const getContent = jest.fn(() => '<img src="/asset@asset-block/soMEImagEURl1"/> <img src="/asset@soMEImagEURl" />');
+        const images = [
+          { portableUrl: '/static/soMEImagEURl', displayName: 'soMEImagEURl' },
+          { portableUrl: '/static/soMEImagEURl1', displayName: 'soMEImagEURl1' },
+        ];
+        const content = hooks.setAssetToStaticUrl(images, getContent);
+        expect(getContent).toHaveBeenCalled();
+        expect(content).toEqual('<img src="/static/soMEImagEURl1"/> <img src="/static/soMEImagEURl" />');
+      });
+    });
+  });
   describe('forwarded hooks', () => {
     it('forwards navigateCallback from app hooks', () => {
       expect(hooks.navigateCallback).toEqual(appHooks.navigateCallback);
@@ -41,17 +56,19 @@ describe('EditorContainer hooks', () => {
       jest.clearAllMocks();
     });
     describe('handleSaveClicked', () => {
-      it('returns callback to saveBlock with dispatch and content from getContent', () => {
+      it('returns callback to saveBlock with dispatch and content from setAssetToStaticUrl', () => {
         const getContent = () => 'myTestContentValue';
+        const setAssetToStaticUrl = () => 'myTestContentValue';
         const output = hooks.handleSaveClicked({
           getContent,
+          images: { portableUrl: '/static/sOmEuiMAge.jpeg', displayName: 'sOmEuiMAge' },
           destination: 'testDEsTURL',
           analytics: 'soMEanALytics',
           dispatch,
         });
         output();
         expect(appHooks.saveBlock).toHaveBeenCalledWith({
-          content: getContent(),
+          content: setAssetToStaticUrl(reactRedux.useSelector(selectors.app.images), getContent),
           destination: reactRedux.useSelector(selectors.app.returnUrl),
           analytics: reactRedux.useSelector(selectors.app.analytics),
           dispatch,
