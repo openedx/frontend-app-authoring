@@ -37,7 +37,7 @@ export const configurationProviders = (
   emailSharing,
   usernameSharing,
   activeProvider = 'zoom',
-  isFreeTier,
+  hasFreeTier,
 ) => ({
   providers: {
     active: activeProvider,
@@ -54,7 +54,7 @@ export const configurationProviders = (
       big_blue_button: {
         additional_parameters: [],
         features: [],
-        has_free_tier: isFreeTier,
+        has_free_tier: hasFreeTier,
         name: 'Big Blue Button',
       },
     },

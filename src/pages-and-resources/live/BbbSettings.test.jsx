@@ -94,13 +94,13 @@ describe('BBB Settings', () => {
     expect(container.querySelector('select[name="tierType"]')).not.toBeDisabled();
   });
 
-  it('Plan dropdown should display correct number of options', async () => {
-    await mockStore({ emailSharing: true });
+  test.each([[true, 3], [false, 2]])('Plan dropdown should display correct number of options', async (isFreeTier, noOfOptions) => {
+    await mockStore({ emailSharing: true, isFreeTier });
     renderComponent();
     const spinner = getByRole(container, 'status');
     await waitForElementToBeRemoved(spinner);
     const dropDown = queryByTestId(container, 'plansDropDown');
-    expect(getAllByRole(dropDown, 'option').length).toBe(3);
+    expect(getAllByRole(dropDown, 'option').length).toBe(noOfOptions);
   });
 
   test('Connect to support and PII sharing message is visible and plans selection is disabled, When pii sharing is disabled, ',
