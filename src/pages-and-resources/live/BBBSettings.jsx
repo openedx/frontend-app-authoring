@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Form, Hyperlink } from '@edx/paragon';
 import PropTypes from 'prop-types';
@@ -14,10 +14,17 @@ function BbbSettings({
   setFieldValue,
 }) {
   const [bbbPlan, setBbbPlan] = useState(values.tierType);
+
+  useEffect(() => {
+    setBbbPlan(values.tierType);
+  }, [values.tierType]);
+
   const appInfo = useModel('courseApps', 'live');
+  const app = useModel('liveApps', 'big_blue_button');
   const isPiiDisabled = !values.piiSharingEnable;
   function getBbbPlanOptions() {
-    const options = ['Select', bbbPlanTypes.free, bbbPlanTypes.commercial];
+    const options = ['Select', bbbPlanTypes.commercial];
+    if (app.hasFreeTier) { options.push(bbbPlanTypes.free); }
     return options.map(option => (
       <option
         key={option}
