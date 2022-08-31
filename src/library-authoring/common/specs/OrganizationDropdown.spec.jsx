@@ -1,7 +1,8 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
+import { injectIntl } from '@edx/frontend-platform/i18n';
 import OrganizationDropdown from '../OrganizationDropdown';
+import { ctxMount } from './helpers';
 
 const initFireEvent = () => {
   const map = {};
@@ -29,16 +30,17 @@ const props = {
   errorCode: null,
   readOnly: false,
 };
+const InjectedOrganizationDropdown = injectIntl(OrganizationDropdown);
 
 describe('common/OrganizationDropdown.jsx', () => {
   it('renders component without error', () => {
-    mount(<OrganizationDropdown {...props} />);
+    ctxMount(<InjectedOrganizationDropdown {...props} />);
   });
 
   it('handles element focus', () => {
     const mockHandleFocus = jest.fn();
     const newProps = { ...props, handleFocus: mockHandleFocus };
-    const container = mount(<OrganizationDropdown {...newProps} />);
+    const container = ctxMount(<InjectedOrganizationDropdown {...newProps} />);
     container.find('input').simulate('focus');
 
     expect(mockHandleFocus).toHaveBeenCalled();
@@ -47,7 +49,7 @@ describe('common/OrganizationDropdown.jsx', () => {
   it('handles element blur', () => {
     const mockHandleBlur = jest.fn();
     const newProps = { ...props, handleBlur: mockHandleBlur };
-    const container = mount(<OrganizationDropdown {...newProps} />);
+    const container = ctxMount(<InjectedOrganizationDropdown {...newProps} />);
     container.find('input').simulate('blur');
 
     expect(mockHandleBlur).toHaveBeenCalled();
@@ -55,7 +57,7 @@ describe('common/OrganizationDropdown.jsx', () => {
 
   it('renders component with options', () => {
     const newProps = { ...props, options: ['opt1', 'opt2'] };
-    const container = mount(<OrganizationDropdown {...newProps} />);
+    const container = ctxMount(<InjectedOrganizationDropdown {...newProps} />);
 
     container.find('input').simulate('click');
     container.update();
@@ -65,7 +67,7 @@ describe('common/OrganizationDropdown.jsx', () => {
 
   it('selects option', () => {
     const newProps = { ...props, options: ['opt1', 'opt2'] };
-    const container = mount(<OrganizationDropdown {...newProps} />);
+    const container = ctxMount(<InjectedOrganizationDropdown {...newProps} />);
 
     container.find('input').simulate('click');
     container.find('.dropdown-container').find('button').at(0).simulate('click');
@@ -74,7 +76,7 @@ describe('common/OrganizationDropdown.jsx', () => {
 
   it('toggles options list', () => {
     const newProps = { ...props, options: ['opt1', 'opt2'] };
-    const container = mount(<OrganizationDropdown {...newProps} />);
+    const container = ctxMount(<InjectedOrganizationDropdown {...newProps} />);
 
     expect(container.find('.dropdown-container').find('button').length).toEqual(0);
     container.find('button.expand-more').simulate('click');
@@ -85,7 +87,7 @@ describe('common/OrganizationDropdown.jsx', () => {
 
   it('shows options list depends on field value', () => {
     const newProps = { ...props, options: ['opt1', 'opt2'] };
-    const container = mount(<OrganizationDropdown {...newProps} />);
+    const container = ctxMount(<InjectedOrganizationDropdown {...newProps} />);
 
     container.find('input').simulate('change', { target: { value: '1' } });
     expect(container.find('.dropdown-container').find('button').length).toEqual(1);
@@ -94,12 +96,22 @@ describe('common/OrganizationDropdown.jsx', () => {
   it('closes options list on click outside', () => {
     const fireEvent = initFireEvent();
     const newProps = { ...props, options: ['opt1', 'opt2'] };
-    const container = mount(<OrganizationDropdown {...newProps} />);
+    const container = ctxMount(<InjectedOrganizationDropdown {...newProps} />);
 
     container.find('input').simulate('click');
     expect(container.find('.dropdown-container').find('button').length).toEqual(2);
     act(() => { fireEvent.mousedown({ target: document.body }); });
     container.update();
     expect(container.find('.dropdown-container').find('button').length).toEqual(0);
+  });
+
+  it('shows empty options list depends on field value', () => {
+    const newProps = { ...props, options: ['opt1', 'opt2'] };
+    const container = ctxMount(<InjectedOrganizationDropdown {...newProps} />);
+
+    container.find('input').simulate('change', { target: { value: '3' } });
+    container.find('input').simulate('focus');
+    expect(container.find('.dropdown-container').find('button').length).toEqual(1);
+    expect(container.find('.dropdown-container').find('button').at(0).text()).toEqual('No options');
   });
 });

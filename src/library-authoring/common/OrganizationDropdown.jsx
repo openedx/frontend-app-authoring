@@ -5,12 +5,16 @@ import { ExpandLess, ExpandMore } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
 // eslint-disable-next-line import/no-unresolved
 import onClickOutside from 'react-onclickoutside';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import FormGroup from './FormGroup';
+
+import messages from './messages';
 
 class OrganizationDropdown extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      isFocused: false,
       displayValue: '',
       icon: this.expandMoreButton(),
       errorMessage: '',
@@ -133,10 +137,12 @@ class OrganizationDropdown extends React.Component {
   }
 
   handleFocus(e) {
+    this.setState({ isFocused: true });
     if (this.props.handleFocus) { this.props.handleFocus(e); }
   }
 
   handleOnBlur(e) {
+    this.setState({ isFocused: false });
     if (this.props.handleBlur) { this.props.handleBlur(e); }
   }
 
@@ -174,6 +180,12 @@ class OrganizationDropdown extends React.Component {
   }
 
   render() {
+    const noOptionsMessage = (
+      <button className="dropdown-item" type="button" disabled>
+        {this.props.intl.formatMessage(messages['library.organizations.list.empty'])}
+      </button>
+    );
+    const dropDownEmptyList = this.state.dropDownItems && this.state.isFocused ? noOptionsMessage : null;
     return (
       <div className="dropdown-group-wrapper">
         <FormGroup
@@ -193,7 +205,7 @@ class OrganizationDropdown extends React.Component {
           handleFocus={this.handleFocus}
         />
         <div className="dropdown-container">
-          { this.state.dropDownItems.length > 0 ? this.state.dropDownItems : null }
+          { this.state.dropDownItems.length > 0 ? this.state.dropDownItems : dropDownEmptyList }
         </div>
       </div>
     );
@@ -215,6 +227,7 @@ OrganizationDropdown.defaultProps = {
 };
 
 OrganizationDropdown.propTypes = {
+  intl: intlShape.isRequired,
   options: PropTypes.arrayOf(PropTypes.string),
   floatingLabel: PropTypes.string,
   handleFocus: PropTypes.func,
@@ -229,4 +242,4 @@ OrganizationDropdown.propTypes = {
   controlClassName: PropTypes.string,
 };
 
-export default onClickOutside(OrganizationDropdown);
+export default injectIntl(onClickOutside(OrganizationDropdown));

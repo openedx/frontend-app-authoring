@@ -166,6 +166,11 @@ const messages = defineMessages({
     defaultMessage: 'Studio',
     description: 'Text for link to studio.',
   },
+  'library.organizations.list.empty': {
+    id: 'library.organizations.list.empty',
+    defaultMessage: 'No options',
+    description: 'Text for empty organizations options list.',
+  },
 });
 
 export default messageGuard(messages);

@@ -246,6 +246,7 @@ export class LibraryCreatePage extends React.Component {
                         disabled
                         type="text"
                         name="org"
+                        intl={intl}
                         readOnly={false}
                         value={data.org}
                         options={orgs}
