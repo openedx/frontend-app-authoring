@@ -63,7 +63,7 @@ export const TextEditor = ({
       return (
         <RawEditor
           editorRef={editorRef}
-          text={blockValue.data.data}
+          text={blockValue}
         />
       );
     }

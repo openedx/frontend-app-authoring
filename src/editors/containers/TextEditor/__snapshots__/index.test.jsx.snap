@@ -45,7 +45,7 @@ exports[`TextEditor snapshots ImageUploadModal is not rendered 1`] = `
         Object {
           "blockValue": Object {
             "data": Object {
-              "some": "eDiTablE Text",
+              "data": "eDiTablE Text",
             },
           },
           "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
@@ -135,7 +135,7 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
         Object {
           "blockValue": Object {
             "data": Object {
-              "some": "eDiTablE Text",
+              "data": "eDiTablE Text",
             },
           },
           "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
@@ -225,6 +225,13 @@ exports[`TextEditor snapshots loaded, raw editor 1`] = `
         Object {
           "current": Object {
             "value": "something",
+          },
+        }
+      }
+      text={
+        Object {
+          "data": Object {
+            "data": "eDiTablE Text",
           },
         }
       }
@@ -373,7 +380,7 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
         Object {
           "blockValue": Object {
             "data": Object {
-              "some": "eDiTablE Text",
+              "data": "eDiTablE Text",
             },
           },
           "clearSelection": [MockFunction hooks.selectedImage.clearSelection],

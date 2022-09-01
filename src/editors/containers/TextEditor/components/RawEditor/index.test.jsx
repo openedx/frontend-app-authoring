@@ -10,7 +10,7 @@ describe('RawEditor', () => {
         value: 'Ref Value',
       },
     },
-    text: 'sOmErAwHtml',
+    text: { data: { data: 'eDiTablE Text' } },
   };
   test('renders as expected with default behavior', () => {
     expect(shallow(<RawEditor {...props} />)).toMatchSnapshot();

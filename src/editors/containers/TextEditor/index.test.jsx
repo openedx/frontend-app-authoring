@@ -84,7 +84,7 @@ describe('TextEditor', () => {
   const props = {
     onClose: jest.fn().mockName('props.onClose'),
     // redux
-    blockValue: { data: { some: 'eDiTablE Text' } },
+    blockValue: { data: { data: 'eDiTablE Text' } },
     lmsEndpointUrl: 'sOmEvaLue.cOm',
     studioEndpointUrl: 'sOmEoThERvaLue.cOm',
     blockFailed: false,

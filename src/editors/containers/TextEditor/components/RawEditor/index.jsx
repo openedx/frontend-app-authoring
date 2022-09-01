@@ -12,21 +12,27 @@ export const RawEditor = ({
     <Alert variant="danger">
       You are using the raw HTML editor.
     </Alert>
-    <CodeEditor
-      innerRef={editorRef}
-      value={text}
-    />
+    { text && text.data.data ? (
+      <CodeEditor
+        innerRef={editorRef}
+        value={text.data.data}
+      />
+    ) : null}
+
   </div>
 );
 RawEditor.defaultProps = {
   editorRef: null,
+  text: null,
 };
 RawEditor.propTypes = {
   editorRef: PropTypes.oneOfType([
     PropTypes.func,
     PropTypes.shape({ current: PropTypes.any }),
   ]),
-  text: PropTypes.string.isRequired,
+  text: PropTypes.shape({
+    data: PropTypes.shape({ data: PropTypes.string }),
+  }),
 };
 
 export default RawEditor;

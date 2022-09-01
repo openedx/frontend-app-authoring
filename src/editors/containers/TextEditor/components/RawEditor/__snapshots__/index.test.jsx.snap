@@ -22,7 +22,7 @@ exports[`RawEditor renders as expected with default behavior 1`] = `
         },
       }
     }
-    value="sOmErAwHtml"
+    value="eDiTablE Text"
   />
 </div>
 `;
