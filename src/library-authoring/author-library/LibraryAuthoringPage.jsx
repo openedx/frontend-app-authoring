@@ -39,7 +39,7 @@ import {
 import {
   selectLibraryEdit,
   updateLibrary,
-} from '../configure-library/data'
+} from '../configure-library/data';
 import {
   BLOCK_FILTER_ORDER,
   BLOCK_TYPE_EDIT_DENYLIST,
@@ -330,21 +330,20 @@ const deriveTypeOptions = (blockTypes, intl) => {
   return typeOptions;
 };
 
-
 /**
  * LibraryAuthoringPageHeaderBase
  * Title component for the LibraryAuthoringPageBase.
  */
-const LibraryAuthoringPageHeaderBase = ({intl, library, ...props}) => {
+const LibraryAuthoringPageHeaderBase = ({ intl, library, ...props }) => {
   const [inputIsActive, setIsActive] = useState(false);
   const handleOnBlur = (event) => {
-    var newTitle = event.target.value;
-    if (newTitle && newTitle != library.title) {
+    const newTitle = event.target.value;
+    if (newTitle && newTitle !== library.title) {
       props.updateLibrary({ data: { title: newTitle, libraryId: library.id } });
     }
     setIsActive(false);
   };
-  const handleClick = (event) => {
+  const handleClick = () => {
     setIsActive(true);
   };
 
@@ -352,7 +351,7 @@ const LibraryAuthoringPageHeaderBase = ({intl, library, ...props}) => {
     <>
       <small className="card-subtitle">{intl.formatMessage(messages['library.detail.page.heading'])}</small>
       <h1 className="page-header-title">
-        {inputIsActive
+        { inputIsActive
           ? (
             <Input
               autoFocus
@@ -376,8 +375,7 @@ const LibraryAuthoringPageHeaderBase = ({intl, library, ...props}) => {
                 className="ml-3"
               />
             </>
-          )
-        }
+          )}
       </h1>
     </>
   );
@@ -386,6 +384,7 @@ const LibraryAuthoringPageHeaderBase = ({intl, library, ...props}) => {
 LibraryAuthoringPageHeaderBase.propTypes = {
   intl: intlShape.isRequired,
   library: libraryShape.isRequired,
+  updateLibrary: PropTypes.func.isRequired,
 };
 
 const LibraryAuthoringPageHeader = connect(

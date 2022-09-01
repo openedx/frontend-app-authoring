@@ -29,7 +29,7 @@ import {
 } from '../../edit-block/data';
 import {
   updateLibrary,
-} from '../../configure-library/data'
+} from '../../configure-library/data';
 
 // Reducing function which is used to take an array of blocks and creates an object with keys that are their ids and
 // values which are state for interacting with that block.
@@ -331,14 +331,14 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
     const library = libraryFactory();
     const block = blockFactory(undefined, { library });
     await render(library, genState(library, [block]));
-    
-    const editButton = screen.getByRole('button', { name: /edit name button/i })
+
+    const editButton = screen.getByRole('button', { name: /edit name button/i });
     editButton.click();
-    const input = await screen.getByRole('textbox', { name: /title input/i })
-    fireEvent.change(input, {target: {value: 'New title'}});
+    const input = await screen.getByRole('textbox', { name: /title input/i });
+    fireEvent.change(input, { target: { value: 'New title' } });
     fireEvent.focusOut(input);
     await waitFor(
-      () => expect(updateLibrary.fn).toHaveBeenCalledWith({ data: { title: 'New title', libraryId: library.id }}),
+      () => expect(updateLibrary.fn).toHaveBeenCalledWith({ data: { title: 'New title', libraryId: library.id } }),
     );
   });
 });
