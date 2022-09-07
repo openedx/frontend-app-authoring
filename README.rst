@@ -14,7 +14,7 @@ This is the Library Authoring micro-frontend, currently under joint development 
 
 It is being built to provide an updated library authoring experience, with improved tools for both randomized content
 blocks and the ability to directly reference library content blocks in existing courses. This experience is to be
-powered by the new `blockstore <https://github.com/edx/blockstore>`_ storage engine.
+powered by the new `blockstore <https://github.com/openedx/blockstore>`_ storage engine.
 
 .. note::
 
@@ -35,7 +35,7 @@ Follw these steps to provision, run, and enable an instance of the Library Autho
 
       mkdir -p ~/workspace/
       cd ~/workspace/
-      git clone https://github.com/edx/devstack.git
+      git clone https://github.com/openedx/devstack.git
 
 2. Create a ``devstack/options.local.mk`` file with the following contents:
 
@@ -47,9 +47,9 @@ Follw these steps to provision, run, and enable an instance of the Library Autho
    This adds ``frontend-app-library-authoring`` to the list of services the devstack will provision and enable automatically.
 
 3. Proceed with the setup of the devstack as described in the README's `Getting Started section
-   <https://github.com/edx/devstack#getting-started>`_.
+   <https://github.com/openedx/devstack#getting-started>`_.
 
-   When running ``make dev.clone``, `this repository <https://github.com/edx/frontend-app-library-authoring.git>`_ will
+   When running ``make dev.clone``, `this repository <https://github.com/openedx/frontend-app-library-authoring.git>`_ will
    be cloned automatically as a the sibling to the `~/workspace/devstack/` directory.
 
    Once devstack provisioning is complete, check that this MFE's container is running by executing the following from
@@ -66,7 +66,7 @@ Follw these steps to provision, run, and enable an instance of the Library Autho
       edx.devstack.frontend-app-library-authoring   docker-entrypoint.sh bash  ...   Up       0.0.0.0:3001->3001/tcp
 
 4. Now set up blockstore for this devstack exactly as described in its README's `Using with Docker Devstack
-   <https://github.com/edx/blockstore/#using-with-docker-devstack>`_ section.
+   <https://github.com/openedx/blockstore/#using-with-docker-devstack>`_ section.
 
    This will setup the blockstore container, configure the LMS and the CMS to accept requests from it (and vice-versa),
    create a "Devstack Content Collection" in blockstore, and finally create a sample "DeveloperInc" organization in the
@@ -115,7 +115,7 @@ Project Structure
 
 The source for this project is organized into nested submodules according to the ADR `Feature-based Application
 Organization
-<https://github.com/edx/frontend-template-application/blob/master/docs/decisions/0002-feature-based-application-organization.rst>`_.
+<https://github.com/openedx/frontend-template-application/blob/master/docs/decisions/0002-feature-based-application-organization.rst>`_.
 
 Build Process Notes
 -------------------
@@ -130,10 +130,10 @@ Internationalization
 Please see `edx/frontend-platform's i18n module
 <https://edx.github.io/frontend-platform/module-Internationalization.html>`_ for documentation on internationalization.
 The documentation explains how to use it, and the `How To
-<https://github.com/edx/frontend-i18n/blob/master/docs/how_tos/i18n.rst>`_ has more detail.
+<https://github.com/openedx/frontend-i18n/blob/master/docs/how_tos/i18n.rst>`_ has more detail.
 
-.. |Build Status| image:: https://github.com/edx/frontend-app-library-authoring/workflows/node_js%20CI/badge.svg?branch=master
-   :target: https://github.com/edx/frontend-app-library-authoring/actions?query=workflow%3A%22node_js+CI%22
+.. |Build Status| image:: https://github.com/openedx/frontend-app-library-authoring/workflows/node_js%20CI/badge.svg?branch=master
+   :target: https://github.com/openedx/frontend-app-library-authoring/actions?query=workflow%3A%22node_js+CI%22
 .. |Codecov| image:: https://codecov.io/gh/edx/frontend-app-library-authoring/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/edx/frontend-app-library-authoring
 .. |license| image:: https://img.shields.io/npm/l/@edx/frontend-app-library-authoring.svg
@@ -143,7 +143,7 @@ Known Issues
 ------------
 
 * [SE-3989] There is a fatal blockstore integration test failure that is likely triggering search bugs, related to
-  `edx/edx-search#104 <https://github.com/edx/edx-search/pull/104>`_.
+  `edx/edx-search#104 <https://github.com/openedx/edx-search/pull/104>`_.
 
 * Some component types, such as text (HTML), videos and CAPA problems, can be added to libraries but cannot be edited
   using Studio's visual authoring tools.  The issue manifests itself as either an error message when clicking the "Edit"
