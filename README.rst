@@ -29,7 +29,7 @@ Follw these steps to provision, run, and enable an instance of the Library Autho
 `official Open edX devstack
 <https://edx.readthedocs.io/projects/edx-installing-configuring-and-running/en/latest/installation/index.html>`_.
 
-1. To start, clone the devstack repository as a child of an arbitrary ``~/workspace/`` directory.
+#. To start, clone the devstack repository as a child of an arbitrary ``~/workspace/`` directory.
 
    .. code-block::
 
@@ -37,7 +37,11 @@ Follw these steps to provision, run, and enable an instance of the Library Autho
       cd ~/workspace/
       git clone https://github.com/openedx/devstack.git
 
-2. Create a ``devstack/options.local.mk`` file with the following contents:
+#. Configure default services and setup devstack
+   
+   **Note: If you are planning on running** ``frontend-app-library-authoring`` **locally outside of docker, skip this step to avoid address conflicts.**
+
+   Create a ``devstack/options.local.mk`` file with the following contents:
 
    .. code-block::
 
@@ -46,12 +50,8 @@ Follw these steps to provision, run, and enable an instance of the Library Autho
 
    This adds ``frontend-app-library-authoring`` to the list of services the devstack will provision and enable automatically.
 
-3. Proceed with the setup of the devstack as described in the README's `Getting Started section
-   <https://github.com/openedx/devstack#getting-started>`_.
-
-   When running ``make dev.clone``, `this repository <https://github.com/openedx/frontend-app-library-authoring.git>`_ will
-   be cloned automatically as a the sibling to the `~/workspace/devstack/` directory.
-
+   During the devstack setup process, running ``make dev.clone`` will automatically clone `this repository <https://github.com/openedx/frontend-app-library-authoring.git>`_ as a the sibling to the ``~/workspace/devstack/`` directory.
+   
    Once devstack provisioning is complete, check that this MFE's container is running by executing the following from
    inside ``~/workspace/devstack``:
 
@@ -63,9 +63,14 @@ Follw these steps to provision, run, and enable an instance of the Library Autho
 
    .. code-block::
 
-      edx.devstack.frontend-app-library-authoring   docker-entrypoint.sh bash  ...   Up       0.0.0.0:3001->3001/tcp
+      edx.devstack.frontend-app-library-authoring   docker-entrypoint.sh bash  ...   Up       0.0.0.0:3001->3001/tcp   
 
-4. Now set up blockstore for this devstack exactly as described in its README's `Using with Docker Devstack
+#. Proceed with the setup of the devstack as described in the README's `Getting Started section
+   <https://github.com/openedx/devstack#getting-started>`_.
+
+
+
+#. Now set up blockstore for this devstack exactly as described in its README's `Using with Docker Devstack
    <https://github.com/openedx/blockstore/#using-with-docker-devstack>`_ section.
 
    This will setup the blockstore container, configure the LMS and the CMS to accept requests from it (and vice-versa),
@@ -74,7 +79,7 @@ Follw these steps to provision, run, and enable an instance of the Library Autho
 
    There's no need to log in to blockstore in your web browser directly, so feel free to skip the last step.
 
-5. In a Studio shell, enable the ``ENABLE_LIBRARY_AUTHORING_MICROFRONTEND`` feature flag:
+#. In a Studio shell, enable the ``ENABLE_LIBRARY_AUTHORING_MICROFRONTEND`` feature flag:
 
    .. code-block::
 
@@ -90,7 +95,7 @@ Follw these steps to provision, run, and enable an instance of the Library Autho
 
       make studio-restart
 
-6. On a browser, go to http://localhost:18010/admin/waffle/flag/, log in as an admin (such as the sample user ``edx``)
+#. On a browser, go to http://localhost:18010/admin/waffle/flag/, log in as an admin (such as the sample user ``edx``)
    and create a ``studio.library_authoring_mfe`` waffle flag, and enabling it for everyone.
 
    This will make it so that clicking on the Libraries tab in `Studio <http://localhost:18010/home/>`_ will take you to
@@ -98,13 +103,13 @@ Follw these steps to provision, run, and enable an instance of the Library Autho
 
    .. image:: ./docs/images/screenshot_mfe.png
 
-7. Once at the `Library Authoring page <http://localhost:3001>`_, to create a blockstore-based library click on the "New
+#. Once at the `Library Authoring page <http://localhost:3001>`_, to create a blockstore-based library click on the "New
    Library" button on the top right-hand corner, filling in Title, Organization, and ID, and making sure to select the
    "Complex (beta)" type.  (In contrast, creating a "Legacy" library would have it backed by modulestore.)
 
    .. image:: ./docs/images/screenshot_creating.png
 
-8. Finally, adding components is done by selecting the desired type under the "Add New Component" heading at the bottom
+#. Finally, adding components is done by selecting the desired type under the "Add New Component" heading at the bottom
    of the list of existing ones.  You can edit them by clicking on the corresponding "Edit" button, once they're visible
    in the list.
 
