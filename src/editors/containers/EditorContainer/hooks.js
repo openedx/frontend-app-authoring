@@ -23,7 +23,7 @@ export const setAssetToStaticUrl = (images, getContent) => {
   imgsArray.forEach(image => {
     imageUrls.push({ portableUrl: image.portableUrl, displayName: image.displayName });
   });
-  const imageSrcs = content.split('src="');
+  const imageSrcs = typeof content === 'string' ? content.split('src="') : [];
   imageSrcs.forEach(src => {
     if (src.startsWith('/asset') && imageUrls.length > 0) {
       const nameFromEditorSrc = src.substring(src.lastIndexOf('@') + 1, src.indexOf('"'));
@@ -44,15 +44,16 @@ export const setAssetToStaticUrl = (images, getContent) => {
   return content;
 };
 
-export const handleSaveClicked = ({ getContent, dispatch }) => {
+export const handleSaveClicked = ({ dispatch, getContent, validateEntry }) => {
   const destination = useSelector(selectors.app.returnUrl);
   const analytics = useSelector(selectors.app.analytics);
   const images = useSelector(selectors.app.images);
   return () => saveBlock({
+    analytics,
     content: setAssetToStaticUrl(images, getContent),
     destination,
-    analytics,
     dispatch,
+    validateEntry,
   });
 };
 export const handleCancelClicked = ({ onClose }) => {

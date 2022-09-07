@@ -8,6 +8,7 @@ import * as hooks from './hooks';
 const props = {
   getContent: jest.fn().mockName('props.getContent'),
   onClose: jest.fn().mockName('props.onClose'),
+  validateEntry: jest.fn().mockName('props.validateEntry'),
 };
 
 jest.mock('./hooks', () => ({
@@ -50,8 +51,9 @@ describe('EditorContainer component', () => {
       });
       test('save behavior is linked to footer onSave', () => {
         const expected = hooks.handleSaveClicked({
-          getContent: props.getContent,
           dispatch: useDispatch(),
+          getContent: props.getContent,
+          validateEntry: props.validateEntry,
         });
         expect(el.children().at(2)
           .props().onSave).toEqual(expected);

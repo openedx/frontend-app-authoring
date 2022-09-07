@@ -34,7 +34,9 @@ export const VideoSourceWidget = () => {
   });
 
   return (
-    <CollapsibleFormWidget title="Video source">
+    <CollapsibleFormWidget
+      title="Video source"
+    >
       <FormGroup size="sm">
         <div className="border-primary-100 border-bottom pb-4">
           <FormLabel size="sm">Video ID or URL</FormLabel>

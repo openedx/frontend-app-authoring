@@ -41,6 +41,7 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
         "handleSaveClicked": Object {
           "dispatch": [MockFunction react-redux.dispatch],
           "getContent": [MockFunction props.getContent],
+          "validateEntry": [MockFunction props.validateEntry],
         },
       }
     }
@@ -86,6 +87,7 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
         "handleSaveClicked": Object {
           "dispatch": [MockFunction react-redux.dispatch],
           "getContent": [MockFunction props.getContent],
+          "validateEntry": [MockFunction props.validateEntry],
         },
       }
     }

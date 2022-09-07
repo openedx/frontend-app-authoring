@@ -67,6 +67,12 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
     Spacer: 'ActionRow.Spacer',
   },
   Button: 'Button',
+  Collapsible: {
+    Advanced: 'Advanced',
+    Body: 'Body',
+    Trigger: 'Trigger',
+    Visible: 'Visible',
+  },
   Dropdown: {
     Item: 'Dropdown.Item',
     Menu: 'Dropdown.Menu',

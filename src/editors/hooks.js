@@ -29,17 +29,28 @@ export const navigateCallback = ({
 export const nullMethod = () => ({});
 
 export const saveBlock = ({
+  analytics,
   content,
   destination,
-  analytics,
   dispatch,
+  validateEntry,
 }) => {
-  dispatch(thunkActions.app.saveBlock({
-    returnToUnit: module.navigateCallback({
-      destination,
-      analyticsEvent: analyticsEvt.editorSaveClick,
-      analytics,
-    }),
-    content,
-  }));
+  let attemptSave = false;
+  if (validateEntry) {
+    if (validateEntry()) {
+      attemptSave = true;
+    }
+  } else {
+    attemptSave = true;
+  }
+  if (attemptSave) {
+    dispatch(thunkActions.app.saveBlock({
+      returnToUnit: module.navigateCallback({
+        destination,
+        analyticsEvent: analyticsEvt.editorSaveClick,
+        analytics,
+      }),
+      content,
+    }));
+  }
 };

@@ -1,7 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { thunkActions } from '../../../../data/redux';
 // import VideoPreview from './components/VideoPreview';
+import ErrorSummary from './components/ErrorSummary';
 import DurationWidget from './components/DurationWidget';
 import HandoutWidget from './components/HandoutWidget';
 import LicenseWidget from './components/LicenseWidget';
@@ -18,24 +20,39 @@ export const hooks = {
   },
 };
 
-export const VideoSettingsModal = () => (
+export const VideoSettingsModal = ({
+  error,
+}) => (
   <div className="video-settings-modal row">
     <div className="video-preview col col-4">
       Video Preview goes here
       {/* <VideoPreview /> */}
     </div>
     <div className="video-controls col col-8">
-      <VideoSourceWidget />
-      <ThumbnailWidget />
-      <TranscriptsWidget />
-      <DurationWidget />
-      <HandoutWidget />
-      <LicenseWidget />
+      <ErrorSummary {...{ error }} />
+      <h3>Settings</h3>
+      <VideoSourceWidget error={error.videoSource} />
+      <ThumbnailWidget error={error.thumbnail} />
+      <TranscriptsWidget error={error.transcripts} />
+      <DurationWidget error={error.duration} />
+      <HandoutWidget error={error.handout} />
+      <LicenseWidget error={error.license} />
     </div>
   </div>
 );
 
+VideoSettingsModal.defaultProps = {
+  error: {
+    duration: {},
+    handout: {},
+    license: {},
+    thumbnail: {},
+    transcripts: {},
+    videoSource: {},
+  },
+};
 VideoSettingsModal.propTypes = {
+  error: PropTypes.node,
 };
 
 export default VideoSettingsModal;

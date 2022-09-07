@@ -13,6 +13,7 @@ export const EditorContainer = ({
   children,
   getContent,
   onClose,
+  validateEntry,
 }) => {
   const dispatch = useDispatch();
   const isInitialized = hooks.isInitialized();
@@ -34,7 +35,7 @@ export const EditorContainer = ({
       {isInitialized && children}
       <EditorFooter
         onCancel={handleCancelClicked}
-        onSave={hooks.handleSaveClicked({ getContent, dispatch })}
+        onSave={hooks.handleSaveClicked({ dispatch, getContent, validateEntry })}
         disableSave={!isInitialized}
         saveFailed={hooks.saveFailed()}
       />
@@ -43,11 +44,13 @@ export const EditorContainer = ({
 };
 EditorContainer.defaultProps = {
   onClose: null,
+  validateEntry: null,
 };
 EditorContainer.propTypes = {
-  getContent: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
+  getContent: PropTypes.func.isRequired,
   onClose: PropTypes.func,
+  validateEntry: PropTypes.func,
 };
 
 export default EditorContainer;

@@ -205,15 +205,15 @@ export const arrayWidget = ({ dispatch, key }) => {
   const widget = module.valueHooks({ dispatch, key });
   return {
     ...widget,
-    onChange: handleIndexTransformEvent({
-      handler: onValue,
-      setter: widget.setLocal,
-      transform: module.updatedArray,
-      local: widget.local,
-    }),
     onBlur: handleIndexTransformEvent({
       handler: onValue,
       setter: widget.setAll,
+      transform: module.updatedArray,
+      local: widget.local,
+    }),
+    onChange: handleIndexTransformEvent({
+      handler: onValue,
+      setter: widget.setLocal,
       transform: module.updatedArray,
       local: widget.local,
     }),

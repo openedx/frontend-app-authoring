@@ -59,12 +59,17 @@ describe('EditorContainer hooks', () => {
       it('returns callback to saveBlock with dispatch and content from setAssetToStaticUrl', () => {
         const getContent = () => 'myTestContentValue';
         const setAssetToStaticUrl = () => 'myTestContentValue';
+        const validateEntry = () => 'vaLIdAteENTry';
         const output = hooks.handleSaveClicked({
           getContent,
-          images: { portableUrl: '/static/sOmEuiMAge.jpeg', displayName: 'sOmEuiMAge' },
+          images: {
+            portableUrl: '/static/sOmEuiMAge.jpeg',
+            displayName: 'sOmEuiMAge',
+          },
           destination: 'testDEsTURL',
           analytics: 'soMEanALytics',
           dispatch,
+          validateEntry,
         });
         output();
         expect(appHooks.saveBlock).toHaveBeenCalledWith({
@@ -72,6 +77,7 @@ describe('EditorContainer hooks', () => {
           destination: reactRedux.useSelector(selectors.app.returnUrl),
           analytics: reactRedux.useSelector(selectors.app.analytics),
           dispatch,
+          validateEntry,
         });
       });
     });
