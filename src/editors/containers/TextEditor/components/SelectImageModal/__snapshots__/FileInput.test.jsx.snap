@@ -10,7 +10,7 @@ exports[`FileInput component snapshot 1`] = `
   }
 >
   <input
-    accept=".gif,.jpg,.jpeg,.png,.tif,.tiff"
+    accept=".gif,.jpg,.jpeg,.png,.tif,.tiff,.ico"
     className="upload d-none"
     onChange={[MockFunction props.fileInput.addFile]}
     type="file"
