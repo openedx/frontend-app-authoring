@@ -13,7 +13,7 @@ recent (July 2022 or newer) version of edx-platform (`master` branch), and the
 
 Then, follow these instructions to enable this microfrontend:
 
-1. Install this plugin: ``pip install -e git+https://github.com/openedx/frontend-app-library-authoring.git#egg=tutor_library_authoring_mfe&subdirectory=tutor-contrib-library-authoring-mfe``
+1. Install this plugin: ``pip install -e 'git+https://github.com/openedx/frontend-app-library-authoring.git#egg=tutor-contrib-library-authoring-mfe&subdirectory=tutor-contrib-library-authoring-mfe'``
 2. Enable the plugin: ``tutor plugins enable library_authoring_mfe``
 3. Run ``tutor config save``.
 4. Run ``tutor dev init -l library_authoring_mfe`` to set the required waffle flags in the CMS.

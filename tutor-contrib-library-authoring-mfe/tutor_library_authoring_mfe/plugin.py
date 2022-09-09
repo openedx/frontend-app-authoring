@@ -36,7 +36,7 @@ hooks.Filters.CONFIG_DEFAULTS.add_item(("LIBRARY_AUTHORING_MFE_APP", {
         "development": {
             # Tutor requires the name of the MFE in the URL so this file won't be found at /xblock-bootstrap.html,
             # which is the default location for development.
-            "SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL": "/library_authoring/xblock-bootstrap.html",
+            "SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL": "/library-authoring/xblock-bootstrap.html",
             "LMS_BASE_URL": "http://local.overhang.io:8000",
             "STUDIO_BASE_URL": "http://studio.local.overhang.io:8001",
         },
