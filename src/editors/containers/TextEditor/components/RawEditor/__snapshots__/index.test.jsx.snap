@@ -14,7 +14,7 @@ exports[`RawEditor renders as expected with default behavior 1`] = `
   >
     You are using the raw HTML editor.
   </Alert>
-  <CodeEditor
+  <injectIntl(ShimmedIntlComponent)
     innerRef={
       Object {
         "current": Object {
