@@ -15,7 +15,7 @@ Installation and Startup
 
 1. Clone the repo:
 
-  ``git clone https://github.com/edx/frontend-app-course-authoring.git``
+  ``git clone https://github.com/openedx/frontend-app-course-authoring.git``
 
 2. Install npm dependencies:
 

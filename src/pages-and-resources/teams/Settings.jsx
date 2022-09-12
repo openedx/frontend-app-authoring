@@ -60,7 +60,7 @@ function TeamSettings({
       onClose={onClose}
       bodyClassName="bg-light-200"
       // Topic is supported for backwards compatibility, the new field is team_sets:
-      // ref: https://github.com/edx/edx-platform/blob/15461d3b6e6c0a724a7b8ed09241d970f201e5e7/openedx/core/lib/teams_config.py#L104-L108
+      // ref: https://github.com/openedx/edx-platform/blob/15461d3b6e6c0a724a7b8ed09241d970f201e5e7/openedx/core/lib/teams_config.py#L104-L108
       initialValues={{
         maxTeamSize: teamsConfiguration?.maxTeamSize,
         groups: teamsConfiguration?.teamSets || teamsConfiguration?.topics,
