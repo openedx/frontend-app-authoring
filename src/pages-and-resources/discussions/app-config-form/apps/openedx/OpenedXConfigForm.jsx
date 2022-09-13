@@ -25,16 +25,16 @@ function OpenedXConfigForm({
   onSubmit, formRef, intl, legacy,
 }) {
   const {
-    selectedAppId, enableInContext, enableGradedUnits, unitLevelVisibility, discussionTopicIds, divideDiscussionIds,
+    selectedAppId, enableGradedUnits, discussionTopicIds, divideDiscussionIds,
   } = useSelector(state => state.discussions);
   const appConfigObj = useModel('appConfigs', selectedAppId);
   const discussionTopicsModel = useModels('discussionTopics', discussionTopicIds);
   const legacyAppConfig = {
     ...(appConfigObj || {}),
     divideDiscussionIds,
-    enableInContext,
+    enableInContext: true,
     enableGradedUnits,
-    unitLevelVisibility,
+    unitLevelVisibility: true,
     allowAnonymousPostsPeers: appConfigObj?.allowAnonymousPostsPeers || false,
     reportedContentEmailNotifications: appConfigObj?.reportedContentEmailNotifications || false,
     enableReportedContentEmailNotifications: appConfigObj?.enableReportedContentEmailNotifications || false,
@@ -48,10 +48,8 @@ function OpenedXConfigForm({
   const [validDiscussionTopics, setValidDiscussionTopics] = useState(discussionTopicsModel);
   // These fields are only used for the new provider and aren't supported for legacy.
   const additionalFields = legacy ? {} : {
-    enableInContext: Yup.bool().default(true),
     enabledGradedUnits: Yup.bool().default(false),
     groupAtSubsection: Yup.bool().default(false),
-    unitLevelVisibility: Yup.bool().default(false),
   };
   const validationSchema = Yup.object().shape({
     // eslint-disable-next-line react/forbid-prop-types

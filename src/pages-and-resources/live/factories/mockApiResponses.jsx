@@ -36,11 +36,11 @@ export const initialState = {
 export const configurationProviders = (
   emailSharing,
   usernameSharing,
-  activeProvider = 'zoom',
-  isFreeTier = undefined,
+  activeProvider,
+  hasFreeTier,
 ) => ({
   providers: {
-    active: activeProvider,
+    active: activeProvider || 'zoom',
     available: {
       zoom: {
         features: [],
@@ -54,7 +54,7 @@ export const configurationProviders = (
       big_blue_button: {
         additional_parameters: [],
         features: [],
-        has_free_tier: isFreeTier,
+        has_free_tier: hasFreeTier,
         name: 'Big Blue Button',
       },
     },

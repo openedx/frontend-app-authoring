@@ -18,6 +18,7 @@ function normalizeProviders(data) {
     featureIds: app.features,
     name: app.name,
     piiSharing: app.pii_sharing,
+    hasFreeTier: app.has_free_tier,
   }));
 
   return {
@@ -36,7 +37,8 @@ function normalizeLtiConfig(data) {
     consumerKey: data.lti_1p1_client_key,
     consumerSecret: data.lti_1p1_client_secret,
     launchUrl: data.lti_1p1_launch_url,
-    launchEmail: data.lti_config.additional_parameters.custom_instructor_email,
+    launchEmail: data.lti_config?.additional_parameters?.custom_instructor_email,
+    tierType: data.tierType,
   };
 }
 
@@ -48,10 +50,9 @@ export function normalizeSettings(data) {
   return {
     enabled: data.enabled,
     piiSharingAllowed: data.pii_sharing_allowed,
-    tierType: tier,
     appConfig: {
       id: data.provider_type,
-      ...normalizeLtiConfig(data.lti_configuration),
+      ...normalizeLtiConfig({ ...data.lti_configuration, tierType: tier }),
     },
   };
 }
@@ -67,12 +68,13 @@ export function deNormalizeSettings(data) {
   if (data.launchUrl) {
     ltiConfiguration.lti_1p1_launch_url = data.launchUrl;
   }
-  if (data.launchEmail) {
-    ltiConfiguration.lti_config = {
-     additional_parameters: {
+  if (data?.provider === 'zoom' || data.tierType !== 'Free') {
+    ltiConfiguration.lti_config = {};
+    if (data.launchEmail) {
+      ltiConfiguration.lti_config.additional_parameters = {
         custom_instructor_email: data.launchEmail,
-      },
-    };
+      };
+    }
   }
   if (Object.keys(ltiConfiguration).length > 0) {
     // Only add this in if we're sending LTI fields.
@@ -82,10 +84,10 @@ export function deNormalizeSettings(data) {
 
   const apiData = {
     enabled: data?.enabled || false,
-    lti_configuration: ltiConfiguration,
+    lti_configuration: Object.keys(ltiConfiguration).length ? ltiConfiguration : undefined,
     provider_type: data?.provider || 'zoom',
     pii_sharing_allowed: data?.piiSharingEnable || false,
-    free_tier: Boolean(data.tierType === 'Free'),
+    free_tier: data?.provider === 'zoom' ? false : Boolean(data.tierType === 'Free'),
   };
   return apiData;
 }
@@ -110,7 +112,6 @@ export async function getLiveProviders(courseId) {
 export async function getLiveConfiguration(courseId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(`${providerConfigurationApiUrl}/${courseId}/`);
-
   return normalizeSettings(data);
 }
 
@@ -119,6 +120,5 @@ export async function postLiveConfiguration(courseId, config) {
     `${providerConfigurationApiUrl}/${courseId}/`,
     deNormalizeSettings(config),
   );
-
   return normalizeSettings(data);
 }

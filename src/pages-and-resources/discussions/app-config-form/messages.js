@@ -130,17 +130,9 @@ const messages = defineMessages({
     id: 'authoring.discussions.builtIn.visibilityInContext',
     defaultMessage: 'Visibility of in-context discussions',
   },
-  inContextDiscussionLabel: {
-    id: 'authoring.discussions.builtIn.inContextDiscussion.label',
-    defaultMessage: 'In-context discussion',
-  },
-  inContextDiscussionHelp: {
-    id: 'authoring.discussions.builtIn.inContextDiscussion.help',
-    defaultMessage: 'Learners will be able to view or hide a discussion side panel to engage with discussion on the course unit page.',
-  },
   gradedUnitPagesLabel: {
     id: 'authoring.discussions.builtIn.gradedUnitPages.label',
-    defaultMessage: 'Graded unit pages',
+    defaultMessage: 'Enable discussions on units in graded subsections',
   },
   gradedUnitPagesHelp: {
     id: 'authoring.discussions.builtIn.gradedUnitPages.help',
@@ -153,14 +145,6 @@ const messages = defineMessages({
   groupInContextSubsectionHelp: {
     id: 'authoring.discussions.builtIn.groupInContextSubsection.help',
     defaultMessage: 'Learners will be able to view any post in the sub-section no matter which unit page they are viewing. While this is not recommended, if your course has short learning sequences or low enrollment grouping may increase engagement.',
-  },
-  allowUnitLevelVisibilityLabel: {
-    id: 'authoring.discussions.builtIn.allowUnitLevelVisibility.label',
-    defaultMessage: 'Allow visibility configuration for each course unit',
-  },
-  allowUnitLevelVisibilityHelp: {
-    id: 'authoring.discussions.builtIn.allowUnitLevelVisibility.help',
-    defaultMessage: 'With this advanced setting enabled you will be able to override the global visibility setting and turn discussions on or off for each unit from the course outline view..',
   },
 
   // Anonymous posting fields

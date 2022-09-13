@@ -24,7 +24,7 @@ function LiveSettings({
   const courseId = useSelector(state => state.courseDetail.courseId);
   const availableProviders = useSelector((state) => state.live.appIds);
   const {
-    piiSharingAllowed, selectedAppId, enabled, status, tierType,
+    piiSharingAllowed, selectedAppId, enabled, status,
   } = useSelector(state => state.live);
 
   const appConfig = useModel('liveAppConfigs', selectedAppId);
@@ -40,7 +40,7 @@ function LiveSettings({
     piiSharingEnable: piiSharingAllowed || false,
     piiSharingUsername: app?.piiSharing?.username || false,
     piiSharingEmail: app?.piiSharing?.email || false,
-    tierType: tierType || '',
+    tierType: appConfig?.tierType || '',
   };
 
   const validationSchema = {
