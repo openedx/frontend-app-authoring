@@ -5,14 +5,11 @@ export const AppConfigFormContext = React.createContext({});
 
 export default function AppConfigFormProvider({ children }) {
   const formRef = React.createRef();
+  const contextValue = useMemo(() => ({ formRef }), []);
 
   return (
     <AppConfigFormContext.Provider
-      value={
-        useMemo(() => ({
-        formRef,
-      }), [])
-    }
+      value={contextValue}
     >
       {children}
     </AppConfigFormContext.Provider>

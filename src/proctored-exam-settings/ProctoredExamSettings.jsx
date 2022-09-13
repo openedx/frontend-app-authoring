@@ -52,9 +52,9 @@ function ProctoredExamSettings({ courseId, intl }) {
   const saveStatusAlertRef = React.createRef();
   const proctoringEscalationEmailInputRef = useRef(null);
 
-  function onEnableProctoredExamsChange(event) {
+  const onEnableProctoredExamsChange = (event) => {
     setEnableProctoredExams(event.target.checked);
-  }
+  };
 
   function onAllowOptingOutChange(value) {
     setAllowOptingOut(value);
@@ -64,7 +64,7 @@ function ProctoredExamSettings({ courseId, intl }) {
     setCreateZendeskTickets(value);
   }
 
-  function onProctoringProviderChange(event) {
+  const onProctoringProviderChange = (event) => {
     const provider = event.target.value;
     setProctoringProvider(provider);
 
@@ -77,17 +77,17 @@ function ProctoredExamSettings({ courseId, intl }) {
       }
       setShowProctortrackEscalationEmail(false);
     }
-  }
+  };
 
-  function onProctortrackEscalationEmailChange(event) {
+  const onProctortrackEscalationEmailChange = (event) => {
     setProctortrackEscalationEmail(event.target.value);
-  }
+  };
 
-  function setFocusToProctortrackEscalationEmailInput() {
+  const setFocusToProctortrackEscalationEmailInput = () => {
     if (proctoringEscalationEmailInputRef && proctoringEscalationEmailInputRef.current) {
       proctoringEscalationEmailInputRef.current.focus();
     }
-  }
+  };
 
   function postSettingsBackToServer() {
     const dataToPostBack = {
@@ -117,7 +117,7 @@ function ProctoredExamSettings({ courseId, intl }) {
     });
   }
 
-  function handleSubmit(event) {
+  const handleSubmit = (event) => {
     event.preventDefault();
     if (proctoringProvider === 'proctortrack' && !EmailValidator.validate(proctortrackEscalationEmail) && !(proctortrackEscalationEmail === '' && !enableProctoredExams)) {
       if (proctortrackEscalationEmail === '') {
@@ -154,7 +154,7 @@ function ProctoredExamSettings({ courseId, intl }) {
         errors,
       });
     }
-  }
+  };
 
   function cannotEditProctoringProvider() {
     const currentDate = moment(moment()).format('YYYY-MM-DD[T]hh:mm:ss[Z]');

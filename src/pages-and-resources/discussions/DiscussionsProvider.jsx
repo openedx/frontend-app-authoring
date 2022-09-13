@@ -4,13 +4,10 @@ import PropTypes from 'prop-types';
 export const DiscussionsContext = React.createContext({});
 
 export default function DiscussionsProvider({ children, path }) {
+  const contextValue = useMemo(() => ({ path }), []);
   return (
     <DiscussionsContext.Provider
-      value={
-        useMemo(() => ({
-        path,
-      }), [])
-    }
+      value={contextValue}
     >
       {children}
     </DiscussionsContext.Provider>

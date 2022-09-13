@@ -57,7 +57,7 @@ function ProctoringSettings({ intl, onClose }) {
   const proctoringEscalationEmailInputRef = useRef(null);
   const submitButtonState = submissionInProgress ? 'pending' : 'default';
 
-  function handleChange(event) {
+  const handleChange = (event) => {
     const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const { name } = target;
@@ -83,13 +83,13 @@ function ProctoringSettings({ intl, onClose }) {
     } else {
       setFormValues({ ...formValues, [name]: value });
     }
-  }
+  };
 
-  function setFocusToProctortrackEscalationEmailInput() {
+  const setFocusToProctortrackEscalationEmailInput = () => {
     if (proctoringEscalationEmailInputRef && proctoringEscalationEmailInputRef.current) {
       proctoringEscalationEmailInputRef.current.focus();
     }
-  }
+  };
 
   function postSettingsBackToServer() {
     const dataToPostBack = {
@@ -119,7 +119,7 @@ function ProctoringSettings({ intl, onClose }) {
     });
   }
 
-  function handleSubmit(event) {
+  const handleSubmit = (event) => {
     event.preventDefault();
     if (
       formValues.proctoringProvider === 'proctortrack'
@@ -160,7 +160,7 @@ function ProctoringSettings({ intl, onClose }) {
         errors,
       });
     }
-  }
+  };
 
   function cannotEditProctoringProvider() {
     const currentDate = moment(moment()).format('YYYY-MM-DD[T]hh:mm:ss[Z]');
