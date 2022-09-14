@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import * as module from './ErrorAlert';
-import { MockUseState } from '../../../../../testUtils';
+import { MockUseState } from '../../../testUtils';
 
 const { ErrorAlert } = module;
 

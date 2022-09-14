@@ -66,11 +66,6 @@ export const messages = {
   },
 
   // Errors
-  errorTitle: {
-    id: 'authoring.texteditor.selectimagemodal.error.errorTitle',
-    defaultMessage: 'Error',
-    description: 'Title of message presented to user when something goes wrong',
-  },
   uploadImageError: {
     id: 'authoring.texteditor.selectimagemodal.error.uploadImageError',
     defaultMessage: 'Failed to upload image. Please try again.',

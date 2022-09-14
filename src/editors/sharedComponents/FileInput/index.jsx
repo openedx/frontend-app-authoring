@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { acceptedImgKeys } from './utils';
-
-export const FileInput = ({ fileInput }) => (
+export const FileInput = ({ fileInput, acceptedFiles }) => (
   <input
-    accept={Object.values(acceptedImgKeys).join()}
+    accept={acceptedFiles}
     className="upload d-none"
     onChange={fileInput.addFile}
     ref={fileInput.ref}
@@ -14,6 +12,7 @@ export const FileInput = ({ fileInput }) => (
 );
 
 FileInput.propTypes = {
+  acceptedFiles: PropTypes.string.isRequired,
   fileInput: PropTypes.shape({
     addFile: PropTypes.func,
     ref: PropTypes.oneOfType([

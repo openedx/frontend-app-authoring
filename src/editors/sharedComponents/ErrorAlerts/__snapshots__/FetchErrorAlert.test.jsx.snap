@@ -6,10 +6,6 @@ exports[`FetchErrorAlert Snapshots snapshot:  is ErrorAlert with Message error (
   hideHeading={false}
   isError={true}
 >
-  <FormattedMessage
-    defaultMessage="Failed to obtain course images. Please try again."
-    description="Message presented to user when images are not found"
-    id="authoring.texteditor.selectimagemodal.error.fetchImagesError"
-  />
+  <FormattedMessage />
 </ErrorAlert>
 `;

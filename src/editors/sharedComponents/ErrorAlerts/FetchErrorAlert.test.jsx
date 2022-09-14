@@ -1,10 +1,10 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { FetchErrorAlert, mapStateToProps } from './FetchErrorAlert';
-import { selectors } from '../../../../data/redux';
-import { RequestKeys } from '../../../../data/constants/requests';
+import { selectors } from '../../data/redux';
+import { RequestKeys } from '../../data/constants/requests';
 
-jest.mock('../../../../data/redux', () => ({
+jest.mock('../../data/redux', () => ({
   selectors: {
     requests: {
       isFailed: jest.fn((state, params) => ({ isFailed: { state, params } })),

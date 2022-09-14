@@ -5,19 +5,19 @@ import { formatMessage } from '../../../../../testUtils';
 import { RequestKeys } from '../../../../data/constants/requests';
 import { selectors } from '../../../../data/redux';
 import BaseModal from '../BaseModal';
-import FileInput from './FileInput';
+import FileInput from '../../../../sharedComponents/FileInput';
 import Gallery from './Gallery';
 import SearchSort from './SearchSort';
 import hooks from './hooks';
 import { SelectImageModal, mapStateToProps, mapDispatchToProps } from '.';
 
 jest.mock('../BaseModal', () => 'BaseModal');
-jest.mock('./FileInput', () => 'FileInput');
+jest.mock('../../../../sharedComponents/FileInput', () => 'FileInput');
 jest.mock('./Gallery', () => 'Gallery');
 jest.mock('./SearchSort', () => 'SearchSort');
-jest.mock('../ErrorAlerts/FetchErrorAlert', () => 'FetchErrorAlert');
-jest.mock('../ErrorAlerts/UploadErrorAlert', () => 'UploadErrorAlert');
-jest.mock('../ErrorAlerts/ErrorAlert', () => 'ErrorAlert');
+jest.mock('../../../../sharedComponents/ErrorAlerts/FetchErrorAlert', () => 'FetchErrorAlert');
+jest.mock('../../../../sharedComponents/ErrorAlerts/UploadErrorAlert', () => 'UploadErrorAlert');
+jest.mock('../../../../sharedComponents/ErrorAlerts/ErrorAlert', () => 'ErrorAlert');
 
 jest.mock('./hooks', () => ({
   imgHooks: jest.fn(() => ({

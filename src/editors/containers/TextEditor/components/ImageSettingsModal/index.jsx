@@ -11,7 +11,7 @@ import messages from './messages';
 import BaseModal from '../BaseModal';
 import AltTextControls from './AltTextControls';
 import DimensionControls from './DimensionControls';
-import ErrorAlert from '../ErrorAlerts/ErrorAlert';
+import ErrorAlert from '../../../../sharedComponents/ErrorAlerts/ErrorAlert';
 
 /**
  * Modal display wrapping the dimension and alt-text controls for image tags

@@ -30,8 +30,24 @@ exports[`SelectImageModal component snapshot 1`] = `
   isOpen={true}
   title="Add an image"
 >
-  <FetchErrorAlert />
-  <UploadErrorAlert />
+  <FetchErrorAlert
+    message={
+      Object {
+        "defaultMessage": "Failed to obtain course images. Please try again.",
+        "description": "Message presented to user when images are not found",
+        "id": "authoring.texteditor.selectimagemodal.error.fetchImagesError",
+      }
+    }
+  />
+  <UploadErrorAlert
+    message={
+      Object {
+        "defaultMessage": "Failed to upload image. Please try again.",
+        "description": "Message presented to user when image fails to upload",
+        "id": "authoring.texteditor.selectimagemodal.error.uploadImageError",
+      }
+    }
+  />
   <ErrorAlert
     dismissError={[MockFunction]}
     hideHeading={true}
@@ -64,6 +80,7 @@ exports[`SelectImageModal component snapshot 1`] = `
       gallery="props"
     />
     <FileInput
+      acceptedFiles=".gif,.jpg,.jpeg,.png,.tif,.tiff,.ico"
       fileInput={
         Object {
           "addFile": "imgHooks.fileInput.addFile",
@@ -106,8 +123,24 @@ exports[`SelectImageModal component snapshot: uploaded image not loaded, show sp
   isOpen={true}
   title="Add an image"
 >
-  <FetchErrorAlert />
-  <UploadErrorAlert />
+  <FetchErrorAlert
+    message={
+      Object {
+        "defaultMessage": "Failed to obtain course images. Please try again.",
+        "description": "Message presented to user when images are not found",
+        "id": "authoring.texteditor.selectimagemodal.error.fetchImagesError",
+      }
+    }
+  />
+  <UploadErrorAlert
+    message={
+      Object {
+        "defaultMessage": "Failed to upload image. Please try again.",
+        "description": "Message presented to user when image fails to upload",
+        "id": "authoring.texteditor.selectimagemodal.error.uploadImageError",
+      }
+    }
+  />
   <ErrorAlert
     dismissError={[MockFunction]}
     hideHeading={true}
@@ -142,6 +175,7 @@ exports[`SelectImageModal component snapshot: uploaded image not loaded, show sp
       screenReaderText="loading..."
     />
     <FileInput
+      acceptedFiles=".gif,.jpg,.jpeg,.png,.tif,.tiff,.ico"
       fileInput={
         Object {
           "addFile": "imgHooks.fileInput.addFile",

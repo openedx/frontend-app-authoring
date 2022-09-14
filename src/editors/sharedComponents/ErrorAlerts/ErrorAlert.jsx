@@ -5,7 +5,7 @@ import { Alert } from '@edx/paragon';
 import { Info } from '@edx/paragon/icons';
 
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import messages from '../SelectImageModal/messages';
+import messages from './messages';
 
 export const hooks = {
   state: {

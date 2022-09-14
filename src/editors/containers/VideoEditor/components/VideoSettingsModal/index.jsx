@@ -8,7 +8,7 @@ import DurationWidget from './components/DurationWidget';
 import HandoutWidget from './components/HandoutWidget';
 import LicenseWidget from './components/LicenseWidget';
 import ThumbnailWidget from './components/ThumbnailWidget';
-import TranscriptsWidget from './components/TranscriptsWidget';
+import TranscriptWidget from './components/TranscriptWidget';
 import VideoSourceWidget from './components/VideoSourceWidget';
 import './index.scss';
 
@@ -33,7 +33,7 @@ export const VideoSettingsModal = ({
       <h3>Settings</h3>
       <VideoSourceWidget error={error.videoSource} />
       <ThumbnailWidget error={error.thumbnail} />
-      <TranscriptsWidget error={error.transcripts} />
+      <TranscriptWidget error={error.transcripts} />
       <DurationWidget error={error.duration} />
       <HandoutWidget error={error.handout} />
       <LicenseWidget error={error.license} />

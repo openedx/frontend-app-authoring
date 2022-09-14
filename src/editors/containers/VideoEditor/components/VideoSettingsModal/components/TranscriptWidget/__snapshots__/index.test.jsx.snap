@@ -1,0 +1,407 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TranscriptWidget snapshots snapshots: renders as expected with allowTranscriptDownloads true 1`] = `
+<injectIntl(ShimmedIntlComponent)
+  isError={false}
+  subtitle="english"
+  title="Transcript"
+>
+  <ErrorAlert
+    dismissError={[Function]}
+    hideHeading={true}
+    isError={true}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to upload transcript. Please try again."
+      description="Message presented to user when transcript fails to upload"
+      id="authoring.videoeditor.transcript.error.uploadTranscriptError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={[Function]}
+    hideHeading={true}
+    isError={true}
+  >
+    <FormattedMessage
+      defaultMessage="Transcript file size exeeds the maximum. Please try again."
+      description="Message presented to user when transcript file size is too large"
+      id="authoring.videoeditor.transcript.error.fileSizeError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <Form.Group
+      className="mt-4.5"
+    >
+      <b>
+        Transcript widget:
+      </b>
+      <div
+        className="mb-1"
+      >
+        <Form.Checkbox
+          checked={true}
+          className="mt-4.5 decorative-control-label"
+          onChange={[Function]}
+        >
+          <Form.Label>
+            <FormattedMessage
+              defaultMessage="Allow transcript downloads"
+              description="Label for allow transcript downloads checkbox"
+              id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
+            />
+          </Form.Label>
+        </Form.Checkbox>
+        <Component
+          key="right"
+          overlay={
+            <UNDEFINED>
+              <FormattedMessage
+                defaultMessage="Learners will see a link to download the transcript below the video."
+                description="Message for show by default checkbox"
+                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
+              />
+            </UNDEFINED>
+          }
+          placement="right"
+        >
+          <Icon
+            className="d-inline-block mx-3"
+          />
+        </Component>
+      </div>
+      <Form.Checkbox
+        checked={false}
+        className="mt-4.5 decorative-control-label"
+        onChange={[Function]}
+      >
+        <Form.Label
+          size="sm"
+        >
+          <FormattedMessage
+            defaultMessage="Show transcript in the video player by default"
+            description="Label for show by default checkbox"
+            id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
+          />
+        </Form.Label>
+      </Form.Checkbox>
+    </Form.Group>
+    <FileInput
+      acceptedFiles=".srt"
+      fileInput={
+        Object {
+          "addFile": [Function],
+          "click": [Function],
+          "ref": Object {
+            "current": undefined,
+          },
+        }
+      }
+    />
+    <Button
+      onClick={[Function]}
+      variant="link"
+    >
+      <FormattedMessage
+        defaultMessage="Upload Transcript"
+        description="Label for upload button"
+        id="authoring.videoeditor.transcripts.upload.label"
+      />
+    </Button>
+  </Stack>
+</injectIntl(ShimmedIntlComponent)>
+`;
+
+exports[`TranscriptWidget snapshots snapshots: renders as expected with default props 1`] = `
+<injectIntl(ShimmedIntlComponent)
+  isError={false}
+  subtitle="None"
+  title="Transcript"
+>
+  <ErrorAlert
+    dismissError={[Function]}
+    hideHeading={true}
+    isError={true}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to upload transcript. Please try again."
+      description="Message presented to user when transcript fails to upload"
+      id="authoring.videoeditor.transcript.error.uploadTranscriptError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={[Function]}
+    hideHeading={true}
+    isError={true}
+  >
+    <FormattedMessage
+      defaultMessage="Transcript file size exeeds the maximum. Please try again."
+      description="Message presented to user when transcript file size is too large"
+      id="authoring.videoeditor.transcript.error.fileSizeError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <Alert
+      variant="danger"
+    >
+      Only SRT files can be uploaded. Please select a file ending in .srt to upload.
+    </Alert>
+    <FormattedMessage
+      defaultMessage="Add video transcripts for improved accessibility."
+      description="Message for adding first transcript"
+      id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
+    />
+    <FileInput
+      acceptedFiles=".srt"
+      fileInput={
+        Object {
+          "addFile": [Function],
+          "click": [Function],
+          "ref": Object {
+            "current": undefined,
+          },
+        }
+      }
+    />
+    <Button
+      onClick={[Function]}
+      variant="link"
+    >
+      <FormattedMessage
+        defaultMessage="Upload Transcript"
+        description="Label for upload button"
+        id="authoring.videoeditor.transcripts.upload.label"
+      />
+    </Button>
+  </Stack>
+</injectIntl(ShimmedIntlComponent)>
+`;
+
+exports[`TranscriptWidget snapshots snapshots: renders as expected with showTranscriptByDefault true 1`] = `
+<injectIntl(ShimmedIntlComponent)
+  isError={false}
+  subtitle="english"
+  title="Transcript"
+>
+  <ErrorAlert
+    dismissError={[Function]}
+    hideHeading={true}
+    isError={true}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to upload transcript. Please try again."
+      description="Message presented to user when transcript fails to upload"
+      id="authoring.videoeditor.transcript.error.uploadTranscriptError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={[Function]}
+    hideHeading={true}
+    isError={true}
+  >
+    <FormattedMessage
+      defaultMessage="Transcript file size exeeds the maximum. Please try again."
+      description="Message presented to user when transcript file size is too large"
+      id="authoring.videoeditor.transcript.error.fileSizeError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <Form.Group
+      className="mt-4.5"
+    >
+      <b>
+        Transcript widget:
+      </b>
+      <div
+        className="mb-1"
+      >
+        <Form.Checkbox
+          checked={false}
+          className="mt-4.5 decorative-control-label"
+          onChange={[Function]}
+        >
+          <Form.Label>
+            <FormattedMessage
+              defaultMessage="Allow transcript downloads"
+              description="Label for allow transcript downloads checkbox"
+              id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
+            />
+          </Form.Label>
+        </Form.Checkbox>
+        <Component
+          key="right"
+          overlay={
+            <UNDEFINED>
+              <FormattedMessage
+                defaultMessage="Learners will see a link to download the transcript below the video."
+                description="Message for show by default checkbox"
+                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
+              />
+            </UNDEFINED>
+          }
+          placement="right"
+        >
+          <Icon
+            className="d-inline-block mx-3"
+          />
+        </Component>
+      </div>
+      <Form.Checkbox
+        checked={true}
+        className="mt-4.5 decorative-control-label"
+        onChange={[Function]}
+      >
+        <Form.Label
+          size="sm"
+        >
+          <FormattedMessage
+            defaultMessage="Show transcript in the video player by default"
+            description="Label for show by default checkbox"
+            id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
+          />
+        </Form.Label>
+      </Form.Checkbox>
+    </Form.Group>
+    <FileInput
+      acceptedFiles=".srt"
+      fileInput={
+        Object {
+          "addFile": [Function],
+          "click": [Function],
+          "ref": Object {
+            "current": undefined,
+          },
+        }
+      }
+    />
+    <Button
+      onClick={[Function]}
+      variant="link"
+    >
+      <FormattedMessage
+        defaultMessage="Upload Transcript"
+        description="Label for upload button"
+        id="authoring.videoeditor.transcripts.upload.label"
+      />
+    </Button>
+  </Stack>
+</injectIntl(ShimmedIntlComponent)>
+`;
+
+exports[`TranscriptWidget snapshots snapshots: renders as expected with transcripts 1`] = `
+<injectIntl(ShimmedIntlComponent)
+  isError={false}
+  subtitle="english"
+  title="Transcript"
+>
+  <ErrorAlert
+    dismissError={[Function]}
+    hideHeading={true}
+    isError={true}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to upload transcript. Please try again."
+      description="Message presented to user when transcript fails to upload"
+      id="authoring.videoeditor.transcript.error.uploadTranscriptError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={[Function]}
+    hideHeading={true}
+    isError={true}
+  >
+    <FormattedMessage
+      defaultMessage="Transcript file size exeeds the maximum. Please try again."
+      description="Message presented to user when transcript file size is too large"
+      id="authoring.videoeditor.transcript.error.fileSizeError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <Form.Group
+      className="mt-4.5"
+    >
+      <b>
+        Transcript widget:
+      </b>
+      <div
+        className="mb-1"
+      >
+        <Form.Checkbox
+          checked={false}
+          className="mt-4.5 decorative-control-label"
+          onChange={[Function]}
+        >
+          <Form.Label>
+            <FormattedMessage
+              defaultMessage="Allow transcript downloads"
+              description="Label for allow transcript downloads checkbox"
+              id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
+            />
+          </Form.Label>
+        </Form.Checkbox>
+        <Component
+          key="right"
+          overlay={
+            <UNDEFINED>
+              <FormattedMessage
+                defaultMessage="Learners will see a link to download the transcript below the video."
+                description="Message for show by default checkbox"
+                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
+              />
+            </UNDEFINED>
+          }
+          placement="right"
+        >
+          <Icon
+            className="d-inline-block mx-3"
+          />
+        </Component>
+      </div>
+      <Form.Checkbox
+        checked={false}
+        className="mt-4.5 decorative-control-label"
+        onChange={[Function]}
+      >
+        <Form.Label
+          size="sm"
+        >
+          <FormattedMessage
+            defaultMessage="Show transcript in the video player by default"
+            description="Label for show by default checkbox"
+            id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
+          />
+        </Form.Label>
+      </Form.Checkbox>
+    </Form.Group>
+    <FileInput
+      acceptedFiles=".srt"
+      fileInput={
+        Object {
+          "addFile": [Function],
+          "click": [Function],
+          "ref": Object {
+            "current": undefined,
+          },
+        }
+      }
+    />
+    <Button
+      onClick={[Function]}
+      variant="link"
+    >
+      <FormattedMessage
+        defaultMessage="Upload Transcript"
+        description="Label for upload button"
+        id="authoring.videoeditor.transcripts.upload.label"
+      />
+    </Button>
+  </Stack>
+</injectIntl(ShimmedIntlComponent)>
+`;

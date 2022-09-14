@@ -11,16 +11,17 @@ import {
 } from '@edx/frontend-platform/i18n';
 import { selectors } from '../../../../data/redux';
 import { RequestKeys } from '../../../../data/constants/requests';
+import { acceptedImgKeys } from './utils';
 
 import hooks from './hooks';
 import messages from './messages';
 import BaseModal from '../BaseModal';
 import SearchSort from './SearchSort';
 import Gallery from './Gallery';
-import FileInput from './FileInput';
-import FetchErrorAlert from '../ErrorAlerts/FetchErrorAlert';
-import UploadErrorAlert from '../ErrorAlerts/UploadErrorAlert';
-import ErrorAlert from '../ErrorAlerts/ErrorAlert';
+import FileInput from '../../../../sharedComponents/FileInput';
+import FetchErrorAlert from '../../../../sharedComponents/ErrorAlerts/FetchErrorAlert';
+import UploadErrorAlert from '../../../../sharedComponents/ErrorAlerts/UploadErrorAlert';
+import ErrorAlert from '../../../../sharedComponents/ErrorAlerts/ErrorAlert';
 
 export const SelectImageModal = ({
   isOpen,
@@ -59,8 +60,8 @@ export const SelectImageModal = ({
       title={intl.formatMessage(messages.titleLabel)}
     >
       {/* Error Alerts */}
-      <FetchErrorAlert />
-      <UploadErrorAlert />
+      <FetchErrorAlert message={messages.fetchImagesError} />
+      <UploadErrorAlert message={messages.uploadImageError} />
       <ErrorAlert
         dismissError={inputError.dismiss}
         hideHeading
@@ -86,7 +87,7 @@ export const SelectImageModal = ({
             screenReaderText={intl.formatMessage(messages.loading)}
           />
         )}
-        <FileInput fileInput={fileInput} />
+        <FileInput fileInput={fileInput} acceptedFiles={Object.values(acceptedImgKeys).join()} />
       </Stack>
     </BaseModal>
   );
