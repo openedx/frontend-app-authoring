@@ -336,7 +336,7 @@ const deriveTypeOptions = (blockTypes, intl) => {
  */
 const LibraryAuthoringPageHeaderBase = ({ intl, library, ...props }) => {
   const [inputIsActive, setIsActive] = useState(false);
-  const handleOnBlur = (event) => {
+  const handleSaveTitle = (event) => {
     const newTitle = event.target.value;
     if (newTitle && newTitle !== library.title) {
       props.updateLibrary({ data: { title: newTitle, libraryId: library.id } });
@@ -360,7 +360,10 @@ const LibraryAuthoringPageHeaderBase = ({ intl, library, ...props }) => {
               type="text"
               aria-label="Title input"
               defaultValue={library.title}
-              onBlur={handleOnBlur}
+              onBlur={handleSaveTitle}
+              onKeyDown={event => {
+                if (event.key === 'Enter') { handleSaveTitle(event) }
+              }}
             />
           )
           : (
