@@ -107,6 +107,7 @@ export class LibraryCreatePage extends React.Component {
     }), () => {
       const isFormFilled = Object.keys(this.state.data).some(i => this.state.data[i]);
       this.setState({ allowLeave: !isFormFilled });
+      this.validateInput(name, value, this.state.data);
     });
   }
 
@@ -277,7 +278,6 @@ export class LibraryCreatePage extends React.Component {
                         readOnly={false}
                         value={data.title}
                         controlClassName="has-value"
-                        handleBlur={this.handleOnBlur}
                         handleChange={this.onValueChange}
                         errorMessage={this.getFieldError('title')}
                         floatingLabel={intl.formatMessage(messages['library.form.title.label'])}
@@ -310,7 +310,6 @@ export class LibraryCreatePage extends React.Component {
                         readOnly={false}
                         value={data.slug}
                         controlClassName="has-value"
-                        handleBlur={this.handleOnBlur}
                         handleChange={this.onValueChange}
                         errorMessage={this.getFieldError('slug')}
                         floatingLabel={intl.formatMessage(messages['library.form.slug.label'])}

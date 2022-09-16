@@ -19,7 +19,7 @@ const messages = defineMessages({
   },
   'library.form.field.error.mismatch.org': {
     id: 'library.form.field.error.mismatch.org',
-    defaultMessage: 'The organization might be selected from the options list.',
+    defaultMessage: 'The organization must be selected from the options list.',
     description: 'Text to display when organization name not on the list.',
   },
   'library.form.field.error.invalid.slug': {
