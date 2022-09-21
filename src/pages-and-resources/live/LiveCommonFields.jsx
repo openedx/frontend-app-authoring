@@ -23,7 +23,7 @@ function LiveCommonFields({
         value={values.consumerSecret}
         floatingLabel={intl.formatMessage(messages.consumerSecret)}
         className="pb-1"
-        type="input"
+        type="password"
       />
       <FormikControl
         name="launchUrl"
