@@ -627,8 +627,12 @@ export const LibraryAuthoringPageContainerBase = ({
   }, [query, type, page]);
 
   const changeQuery = (newQuery) => {
-    setPage(1);
-    setQuery(newQuery);
+    // this gets fired when loading/switching paginated pages,
+    // so we need to check to make sure the query actually changed
+    if (newQuery !== query) {
+      setPage(1);
+      setQuery(newQuery);
+    }
   };
 
   const changeType = (newType) => {
