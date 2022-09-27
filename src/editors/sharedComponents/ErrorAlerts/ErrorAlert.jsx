@@ -21,7 +21,9 @@ export const hooks = {
       isDismissed,
       dismissAlert: () => {
         setIsDismissed(true);
-        dismissError();
+        if (dismissError) {
+          dismissError();
+        }
       },
     };
   },

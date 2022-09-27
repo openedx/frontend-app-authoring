@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LanguageSelect snapshot transcript option 1`] = `
+<Form.Group
+  className="mt-2 mx-2"
+  controlId="selectLanguage-form-tITle"
+>
+  <Form.Control
+    as="select"
+    defaultValue="kl"
+    floatingLabel="Languages"
+    onChange={[Function]}
+  >
+    <option
+      selected={true}
+      value="kl"
+    >
+      kLinGon
+    </option>
+    <option
+      value="el"
+    >
+      eLvIsh
+    </option>
+    <option
+      value="sl"
+    >
+      sImLisH
+    </option>
+  </Form.Control>
+</Form.Group>
+`;
+
+exports[`LanguageSelect snapshots -- no transcripts no Open Languages, all should be disabled 1`] = `
+<Form.Group
+  className="mt-2 mx-2"
+  controlId="selectLanguage-form-tITle"
+>
+  <Form.Control
+    as="select"
+    defaultValue="kl"
+    floatingLabel="Languages"
+    onChange={[Function]}
+  >
+    <option
+      selected={true}
+      value="kl"
+    >
+      kLinGon
+    </option>
+    <option
+      disabled={true}
+      value="el"
+    >
+      eLvIsh
+    </option>
+    <option
+      disabled={true}
+      value="sl"
+    >
+      sImLisH
+    </option>
+  </Form.Control>
+</Form.Group>
+`;

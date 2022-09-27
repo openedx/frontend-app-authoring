@@ -34,3 +34,11 @@ export const courseAssets = ({ studioEndpointUrl, learningContextId }) => (
 export const courseImages = ({ studioEndpointUrl, learningContextId }) => (
   `${courseAssets({ studioEndpointUrl, learningContextId })}?sort=uploadDate&direction=desc&asset_type=Images`
 );
+
+export const videoTranscripts = ({ studioEndpointUrl, blockId }) => (
+  `${block({ studioEndpointUrl, blockId })}/handler/studio_transcript/translation`
+);
+
+export const downloadVideoTranscriptURL = ({ studioEndpointUrl, blockId, language }) => (
+  `${videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`
+);

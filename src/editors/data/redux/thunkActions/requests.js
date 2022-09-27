@@ -135,6 +135,38 @@ export const fetchImages = ({ ...rest }) => (dispatch, getState) => {
   }));
 };
 
+export const deleteTranscript = ({ language, videoId, ...rest }) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.deleteTranscript,
+    promise: api.deleteTranscript({
+      blockId: selectors.app.blockId(getState()),
+      language,
+      videoId,
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+    }),
+    ...rest,
+  }));
+};
+
+export const uploadTranscript = ({
+  transcript,
+  videoId,
+  language,
+  ...rest
+}) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.uploadTranscript,
+    promise: api.uploadTranscript({
+      blockId: selectors.app.blockId(getState()),
+      transcript,
+      videoId,
+      language,
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+    }),
+    ...rest,
+  }));
+};
+
 export default StrictDict({
   fetchBlock,
   fetchImages,
@@ -142,4 +174,6 @@ export default StrictDict({
   fetchUnit,
   saveBlock,
   uploadImage,
+  deleteTranscript,
+  uploadTranscript,
 });

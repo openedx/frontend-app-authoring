@@ -1,0 +1,124 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TranscriptListItem Snapshots snapshots: renders as expected with default props: dont show confirm delete 1`] = `
+<div
+  className="mb-2"
+>
+  <Card>
+    <Card.Header
+      actions={
+        <Dropdown>
+          <Dropdown.Toggle
+            alt="Actions dropdown"
+            as="IconButton"
+            iconAs="Icon"
+            id="dropdown-toggle-with-iconbutton-video-transcript-widget"
+            variant="primary"
+          />
+          <Dropdown.Menu
+            className="video_transcript Action Menu"
+          >
+            <Dropdown.Item
+              onClick={[MockFunction mockInputClick]}
+            >
+              <FormattedMessage
+                defaultMessage="Replace"
+                description="Message Presented To user for action to replace transcript"
+                id="authoring.videoeditor.transcript.replaceTranscript"
+              />
+            </Dropdown.Item>
+            <Dropdown.Item>
+              <FormattedMessage
+                defaultMessage="Download"
+                description="Message Presented To user for action to download transcript"
+                id="authoring.videoeditor.transcript.downloadTranscript"
+              />
+            </Dropdown.Item>
+            <Dropdown.Item
+              onClick={[MockFunction launchDeleteConfirmation]}
+            >
+              <FormattedMessage
+                defaultMessage="Delete"
+                description="Message Presented To user for action to delete transcript"
+                id="authoring.videoeditor.transcript.deleteTranscript"
+              />
+            </Dropdown.Item>
+          </Dropdown.Menu>
+          <FileInput
+            acceptedFiles=".srt"
+            fileInput={
+              Object {
+                "click": [MockFunction mockInputClick],
+                "fileInput": Object {
+                  "onAddFile": Object {
+                    "replaceFileCallback": Object {
+                      "dispatch": [MockFunction mockUseDispatch],
+                      "language": "lAnG",
+                    },
+                  },
+                },
+              }
+            }
+          />
+        </Dropdown>
+      }
+      subtitle="sOmeTiTLE"
+    />
+    <injectIntl(ShimmedIntlComponent)
+      language="lAnG"
+      title="sOmeTiTLE"
+    />
+  </Card>
+</div>
+`;
+
+exports[`TranscriptListItem Snapshots snapshots: renders as expected with default props: show confirm delete 1`] = `
+<div
+  className="mb-2"
+>
+  <Card>
+    <Card.Header
+      title={
+        <FormattedMessage
+          defaultMessage="Delete This Transcript?"
+          description="Title for Warning which allows users to select next step in the process of deleting a transcript"
+          id="authoring.videoeditor.transcripts.deleteConfirmationTitle"
+        />
+      }
+    />
+    <Card.Body>
+      <Card.Section>
+        <FormattedMessage
+          defaultMessage="Are you sure you want to delete this transcript?"
+          description="Warning which allows users to select next step in the process of deleting a transcript"
+          id="authoring.videoeditor.transcripts.deleteConfirmationMessage"
+        />
+      </Card.Section>
+      <Card.Footer>
+        <Button
+          className="mb-2 mb-sm-0"
+          onClick={[MockFunction cancelDelete]}
+          variant="tertiary"
+        >
+          <FormattedMessage
+            defaultMessage="Cancel"
+            description="Label For Button, which allows users to stop the process of deleting a transcript"
+            id="authoring.videoeditor.transcripts.cancelDeleteLabel"
+          />
+        </Button>
+        <Button
+          className="mb-2 mb-sm-0"
+          onClick={[Function]}
+          variant="danger"
+        >
+          <FormattedMessage
+            defaultMessage="Delete"
+            description="Label For Button, which allows users to confirm the process of deleting a transcript"
+            id="authoring.videoeditor.transcripts.confirmDeleteLabel"
+          />
+        </Button>
+      </Card.Footer>
+    </Card.Body>
+  </Card>
+</div>
+`;

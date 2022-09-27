@@ -9,6 +9,10 @@ const testState = {
 };
 
 jest.mock('../app/selectors', () => ({
+  simpleSelectors: {
+    studioEndpointUrl: (state) => ({ studioEndpointUrl: state }),
+    blockId: (state) => ({ blockId: state }),
+  },
   studioEndpointUrl: (state) => ({ studioEndpointUrl: state }),
   blockId: (state) => ({ blockId: state }),
   blockType: (state) => ({ blockType: state }),
@@ -24,6 +28,8 @@ jest.mock('../../services/cms/api', () => ({
   fetchImages: ({ id, url }) => ({ id, url }),
   uploadImage: (args) => args,
   loadImages: jest.fn(),
+  uploadTranscript: jest.fn(),
+  deleteTranscript: jest.fn(),
 }));
 
 const apiKeys = keyStore(api);
@@ -239,7 +245,6 @@ describe('requests thunkActions module', () => {
         expect(loadImages).toHaveBeenCalledWith({ fetchImages: expectedArgs });
       });
     });
-
     describe('saveBlock', () => {
       const content = 'SoME HtMl CoNtent As String';
       testNetworkRequestAction({
@@ -260,7 +265,6 @@ describe('requests thunkActions module', () => {
         },
       });
     });
-
     describe('uploadImage', () => {
       const image = 'SoME iMage CoNtent As String';
       testNetworkRequestAction({
@@ -273,6 +277,51 @@ describe('requests thunkActions module', () => {
           promise: api.uploadImage({
             learningContextId: selectors.app.learningContextId(testState),
             image,
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          }),
+        },
+      });
+    });
+    describe('deleteTranscript', () => {
+      const language = 'SoME laNGUage CoNtent As String';
+      const videoId = 'SoME VidEOid CoNtent As String';
+      testNetworkRequestAction({
+        action: requests.deleteTranscript,
+        args: { language, videoId, ...fetchParams },
+        expectedString: 'with deleteTranscript promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.deleteTranscript,
+          promise: api.deleteTranscript({
+            blockId: selectors.app.blockId(testState),
+            language,
+            videoId,
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          }),
+        },
+      });
+    });
+    describe('uploadTranscript', () => {
+      const language = 'SoME laNGUage CoNtent As String';
+      const videoId = 'SoME VidEOid CoNtent As String';
+      const transcript = 'SoME tRANscRIPt CoNtent As String';
+      testNetworkRequestAction({
+        action: requests.uploadTranscript,
+        args: {
+          transcript,
+          language,
+          videoId,
+          ...fetchParams,
+        },
+        expectedString: 'with uploadTranscript promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.uploadTranscript,
+          promise: api.uploadTranscript({
+            blockId: selectors.app.blockId(testState),
+            transcript,
+            videoId,
+            language,
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
           }),
         },

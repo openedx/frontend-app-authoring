@@ -7,6 +7,8 @@ import {
   blockStudioView,
   courseAssets,
   courseImages,
+  downloadVideoTranscriptURL,
+  videoTranscripts,
 } from './urls';
 
 describe('cms url methods', () => {
@@ -15,6 +17,7 @@ describe('cms url methods', () => {
   const learningContextId = 'lEarnIngCOntextId123';
   const courseId = 'course-v1:courseId123';
   const libraryV1Id = 'library-v1:libaryId123';
+  const language = 'la';
   describe('return to learning context urls', () => {
     const unitUrl = {
       data: {
@@ -75,6 +78,18 @@ describe('cms url methods', () => {
     it('returns url with studioEndpointUrl, learningContextId and courseAssets query', () => {
       expect(courseImages({ studioEndpointUrl, learningContextId }))
         .toEqual(`${courseAssets({ studioEndpointUrl, learningContextId })}?sort=uploadDate&direction=desc&asset_type=Images`);
+    });
+  });
+  describe('videoTranscripts', () => {
+    it('returns url with studioEndpointUrl and blockId', () => {
+      expect(videoTranscripts({ studioEndpointUrl, blockId }))
+        .toEqual(`${block({ studioEndpointUrl, blockId })}/handler/studio_transcript/translation`);
+    });
+  });
+  describe('downloadVideoTranscriptURL', () => {
+    it('returns url with studioEndpointUrl, blockId and language query', () => {
+      expect(downloadVideoTranscriptURL({ studioEndpointUrl, blockId, language }))
+        .toEqual(`${videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`);
     });
   });
 });

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 
 export const videoDataProps = {
   videoSource: PropTypes.string,
+  videoId: PropTypes.string,
   fallbackVideos: PropTypes.arrayOf(PropTypes.string),
   allowVideoDownloads: PropTypes.bool,
   thumbnail: PropTypes.string,

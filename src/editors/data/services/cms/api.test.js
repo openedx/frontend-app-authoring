@@ -1,7 +1,7 @@
 import * as utils from '../../../utils';
 import * as api from './api';
 import * as urls from './urls';
-import { get, post } from './utils';
+import { get, post, deleteObject } from './utils';
 
 jest.mock('../../../utils', () => {
   const camelizeMap = (obj) => ({ ...obj, camelized: true });
@@ -18,11 +18,13 @@ jest.mock('./urls', () => ({
   blockStudioView: jest.fn().mockName('urls.StudioView'),
   courseImages: jest.fn().mockName('urls.courseImages'),
   courseAssets: jest.fn().mockName('urls.courseAssets'),
+  videoTranscripts: jest.fn().mockName('urls.videoTranscripts'),
 }));
 
 jest.mock('./utils', () => ({
   get: jest.fn().mockName('get'),
   post: jest.fn().mockName('post'),
+  deleteObject: jest.fn().mockName('deleteObject'),
 }));
 
 const { camelize } = utils;
@@ -122,7 +124,7 @@ describe('cms api', () => {
           image,
         });
         expect(post).toHaveBeenCalledWith(
-          urls.courseAssets({ studioEndpointUrl, learningContextId }),
+          urls.videoTranscripts({ studioEndpointUrl, learningContextId }),
           mockFormdata,
         );
       });
@@ -157,6 +159,46 @@ describe('cms api', () => {
         [ids[3]]: api.loadImage(camelize(testData[3])),
       });
       api.loadImage = oldLoadImage;
+    });
+  });
+  describe('videoTranscripts', () => {
+    const language = 'la';
+    const videoId = 'sOmeVIDeoiD';
+    describe('uploadTranscript', () => {
+      const transcript = { transcript: 'dAta' };
+      it('should call post with urls.videoTranscripts and transcript data', () => {
+        const mockFormdata = new FormData();
+        mockFormdata.append('file', transcript);
+        mockFormdata.append('edx_video_id', videoId);
+        mockFormdata.append('language_code', language);
+        mockFormdata.append('new_language_code', language);
+        apiMethods.uploadTranscript({
+          blockId,
+          studioEndpointUrl,
+          transcript,
+          videoId,
+          language,
+        });
+        expect(post).toHaveBeenCalledWith(
+          urls.videoTranscripts({ studioEndpointUrl, blockId }),
+          mockFormdata,
+        );
+      });
+    });
+    describe('transcript delete', () => {
+      it('should call deleteObject with urls.videoTranscripts and transcript data', () => {
+        const mockDeleteJSON = { data: { lang: language, edx_video_id: videoId } };
+        apiMethods.deleteTranscript({
+          blockId,
+          studioEndpointUrl,
+          videoId,
+          language,
+        });
+        expect(deleteObject).toHaveBeenCalledWith(
+          urls.videoTranscripts({ studioEndpointUrl, blockId }),
+          mockDeleteJSON,
+        );
+      });
     });
   });
 });

@@ -4,6 +4,7 @@ import { StrictDict } from '../../../utils';
 
 const initialState = {
   videoSource: '',
+  videoId: '',
   fallbackVideos: [
     '',
     '',
@@ -40,6 +41,23 @@ const video = createSlice({
     load: (state, { payload }) => ({
       ...payload,
     }),
+    addTranscript: (state, { payload }) => ({
+      transcripts: { [payload.language]: payload.filename, ...state.transcripts },
+      ...state,
+    }),
+    replaceTranscript: (state, { payload }) => ({
+      transcripts: { [payload.language]: payload.newFilename, ...state.transcripts },
+      ...state,
+    }),
+    deleteTranscript: (state, { payload }) => {
+      const lang = payload.language;
+      const { [lang]: removedProperty, ...trimmedTranscripts } = state.transcripts;
+      return {
+        transcripts: trimmedTranscripts,
+        ...state,
+      };
+    },
+
   },
 });
 
