@@ -15,6 +15,7 @@ import {
 
 import { getConfig } from '@edx/frontend-platform';
 import messages from './ProctoredExamSettings.messages';
+import ExamsApiService from '../data/services/ExamsApiService';
 import StudioApiService from '../data/services/StudioApiService';
 import Loading from '../generic/Loading';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
@@ -33,8 +34,10 @@ function ProctoredExamSettings({ courseId, intl }) {
   const [loadingPermissionError, setLoadingPermissionError] = useState(false);
   const [enableProctoredExams, setEnableProctoredExams] = useState(true);
   const [allowOptingOut, setAllowOptingOut] = useState(false);
+  const [allowLtiProviders, setAllowLtiProviders] = useState(false);
   const [proctoringProvider, setProctoringProvider] = useState('');
   const [availableProctoringProviders, setAvailableProctoringProviders] = useState([]);
+  const [availableLtiProctoringProviders, setAvailableLtiProctoringProviders] = useState([]);
   const [proctortrackEscalationEmail, setProctortrackEscalationEmail] = useState('');
   const [createZendeskTickets, setCreateZendeskTickets] = useState(false);
   const [courseStartDate, setCourseStartDate] = useState('');
@@ -90,23 +93,35 @@ function ProctoredExamSettings({ courseId, intl }) {
   }
 
   function postSettingsBackToServer() {
-    const dataToPostBack = {
+    const providerIsLti = availableLtiProctoringProviders.some(provider => provider.name === proctoringProvider);
+    const studioDataToPostBack = {
       proctored_exam_settings: {
         enable_proctored_exams: enableProctoredExams,
-        proctoring_provider: proctoringProvider,
+        proctoring_provider: providerIsLti ? 'lti_external' : proctoringProvider,
         create_zendesk_tickets: createZendeskTickets,
       },
     };
     if (isEdxStaff) {
-      dataToPostBack.proctored_exam_settings.allow_proctoring_opt_out = allowOptingOut;
+      studioDataToPostBack.proctored_exam_settings.allow_proctoring_opt_out = allowOptingOut;
     }
 
     if (proctoringProvider === 'proctortrack') {
-      dataToPostBack.proctored_exam_settings.proctoring_escalation_email = proctortrackEscalationEmail === '' ? null : proctortrackEscalationEmail;
+      studioDataToPostBack.proctored_exam_settings.proctoring_escalation_email = proctortrackEscalationEmail === '' ? null : proctortrackEscalationEmail;
     }
 
     setSubmissionInProgress(true);
-    StudioApiService.saveProctoredExamSettingsData(courseId, dataToPostBack).then(() => {
+
+    // only save back to exam service if necessary
+    const saveOperations = [StudioApiService.saveProctoredExamSettingsData(courseId, studioDataToPostBack)];
+    if (allowLtiProviders && ExamsApiService.isAvailable()) {
+      saveOperations.push(
+        ExamsApiService.saveCourseExamConfiguration(
+          courseId, { provider: providerIsLti ? proctoringProvider : null },
+        ),
+      );
+    }
+    Promise.all(saveOperations)
+    .then(() => {
       setSaveSuccess(true);
       setSaveError(false);
       setSubmissionInProgress(false);
@@ -175,12 +190,12 @@ function ProctoredExamSettings({ courseId, intl }) {
   function getProctoringProviderOptions(providers) {
     return providers.map(provider => (
       <option
-        key={provider}
-        value={provider}
-        disabled={isDisabledOption(provider)}
-        data-testid={provider}
+        key={provider.name}
+        value={provider.name}
+        disabled={isDisabledOption(provider.name)}
+        data-testid={provider.name}
       >
-        {provider}
+        {provider.verbose_name}
       </option>
     ));
   }
@@ -298,6 +313,7 @@ function ProctoredExamSettings({ courseId, intl }) {
             aria-describedby="proctoringProviderHelpText"
           >
             {getProctoringProviderOptions(availableProctoringProviders)}
+            {getProctoringProviderOptions(availableLtiProctoringProviders)}
           </Form.Control>
           <Form.Text id="proctoringProviderHelpText">
             {cannotEditProctoringProvider() ? intl.formatMessage(messages['authoring.examsettings.provider.help.aftercoursestart']) : intl.formatMessage(messages['authoring.examsettings.provider.help'])}
@@ -470,20 +486,42 @@ function ProctoredExamSettings({ courseId, intl }) {
   useEffect(
     () => {
       dispatch(fetchExamSettingsPending(courseId));
-      StudioApiService.getProctoredExamSettingsData(courseId)
+
+      Promise.all([
+        StudioApiService.getProctoredExamSettingsData(courseId),
+        ExamsApiService.isAvailable() ? ExamsApiService.getAvailableProviders() : Promise.resolve(),
+      ])
         .then(
-          response => {
-            const proctoredExamSettings = response.data.proctored_exam_settings;
+          ([settingsResponse, ltiProvidersResponse]) => {
+            const proctoredExamSettings = settingsResponse.data.proctored_exam_settings;
             setLoaded(true);
             setLoading(false);
             setSubmissionInProgress(false);
-            setCourseStartDate(response.data.course_start_date);
+            setCourseStartDate(settingsResponse.data.course_start_date);
             setEnableProctoredExams(proctoredExamSettings.enable_proctored_exams);
             setAllowOptingOut(proctoredExamSettings.allow_proctoring_opt_out);
             setProctoringProvider(proctoredExamSettings.proctoring_provider);
             const isProctortrack = proctoredExamSettings.proctoring_provider === 'proctortrack';
             setShowProctortrackEscalationEmail(isProctortrack);
-            setAvailableProctoringProviders(response.data.available_proctoring_providers);
+
+            // The list of providers returned by studio settings are the default behavior. If lti_external
+            // is available as an option display the list of LTI providers available on the exam service.
+            // 'lti_external' indicates an LTI provider configured outside of edx-platform. It is not directly
+            // selectable.
+            const proctoringProviders = settingsResponse.data.available_proctoring_providers;
+            const ltiAvailable = proctoringProviders.includes('lti_external');
+            setAllowLtiProviders(ltiAvailable);
+            if (ltiProvidersResponse?.data && allowLtiProviders) {
+              setAvailableLtiProctoringProviders(ltiProvidersResponse.data);
+            }
+            setAvailableProctoringProviders(
+              proctoringProviders
+              .filter(value => value !== 'lti_external')
+              .map(provider => ({
+                  name: provider,
+                  verbose_name: provider,
+                })),
+            );
 
             // The backend API may return null for the proctoringEscalationEmail value, which is the default.
             // In order to keep our email input component controlled, we use the empty string as the default
@@ -494,7 +532,8 @@ function ProctoredExamSettings({ courseId, intl }) {
             setCreateZendeskTickets(proctoredExamSettings.create_zendesk_tickets);
             dispatch(fetchExamSettingsSuccess(courseId));
           },
-        ).catch(
+        )
+        .catch(
           error => {
             if (error.response.status === 403) {
               setLoadingPermissionError(true);
