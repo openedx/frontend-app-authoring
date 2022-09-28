@@ -1,6 +1,9 @@
 {
   "extends": [
-    "config:base"
+    "config:base",
+    "schedule:daily",
+    ":rebaseStalePrs",
+    ":semanticCommits"
   ],
   "patch": {
     "automerge": true
