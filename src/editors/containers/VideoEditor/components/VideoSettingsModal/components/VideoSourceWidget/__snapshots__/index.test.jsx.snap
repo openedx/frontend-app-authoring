@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VideoSourceWidget snapshots snapshots: renders as expected with default props 1`] = `
+<injectIntl(ShimmedIntlComponent)
+  title="Video Source"
+>
+  <Form.Group>
+    <div
+      className="border-primary-100 border-bottom pb-4"
+    >
+      <Form.Control
+        floatingLabel="Video ID or URL"
+        onBlur={[MockFunction]}
+        onChange={[MockFunction]}
+        value=""
+      />
+    </div>
+    <Form.Label
+      className="mt-3"
+    >
+      <FormattedMessage
+        defaultMessage="Fallback Videos"
+        description="Title for the fallback videos section"
+        id="authoring.videoeditor.videoSource.fallbackVideo.title"
+      />
+    </Form.Label>
+    <Form.Text>
+      <FormattedMessage
+        defaultMessage="To be sure all learners can access the video, edX
+    recommends providing additional videos in both .mp4 and
+    .webm formats.  The first listed video compatible with the
+    learner's device will play."
+        description="Test explaining reason for fallback videos"
+        id="authoring.videoeditor.videoSource.fallbackVideo.message"
+      />
+    </Form.Text>
+    <Component
+      className="mt-4.5"
+    >
+      <Form.Control
+        floatingLabel="Video URL"
+      />
+      <OverLayTrigger
+        key="top"
+        overlay={
+          <ToolTip>
+            <FormattedMessage
+              defaultMessage="Delete"
+              description="Message Presented To user for action to delete fallback video"
+              id="authoring.videoeditor.videoSource.deleteFallbackVideo"
+            />
+          </ToolTip>
+        }
+        placement="top"
+      >
+        <IconButton
+          className="d-inline-block"
+          iconAs="Icon"
+          onClick={[Function]}
+        />
+      </OverLayTrigger>
+    </Component>
+    <Component
+      className="mt-4"
+    >
+      <Form.Checkbox
+        checked={false}
+        className="decorative-control-label"
+        onChange={[MockFunction]}
+      >
+        <Form.Label>
+          <FormattedMessage
+            defaultMessage="Allow video downloads"
+            description="Label for allow video downloads checkbox"
+            id="authoring.videoeditor.videoSource.allowDownloadCheckboxLabel"
+          />
+        </Form.Label>
+      </Form.Checkbox>
+      <OverLayTrigger
+        key="top"
+        overlay={
+          <ToolTip>
+            <FormattedMessage
+              defaultMessage="Allow learners to download versions of this video in
+    different formats if they cannot use the edX video player or do not have
+    access to YouTube."
+              description="Message for allow video downloads checkbox"
+              id="authoring.videoeditor.videoSource.fallbackVideo.allowDownloadTooltipMessage"
+            />
+          </ToolTip>
+        }
+        placement="top"
+      >
+        <Icon
+          className="d-inline-block mx-3"
+        />
+      </OverLayTrigger>
+    </Component>
+  </Form.Group>
+  <Button
+    onClick={[Function]}
+    variant="link"
+  >
+    <FormattedMessage
+      defaultMessage="Add a video URL"
+      description="Label for add a video URL button"
+      id="authoring.videoeditor.videoSource.fallbackVideo.allowDownloadTooltipMessage"
+    />
+  </Button>
+</injectIntl(ShimmedIntlComponent)>
+`;
