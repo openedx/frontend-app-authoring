@@ -46,8 +46,40 @@ export const getTranscriptDownloadUrl = createSelector(
   }),
 );
 
+export const videoSettings = createSelector(
+  Object.values(module.simpleSelectors),
+  (
+    videoSource,
+    fallbackVideos,
+    allowVideoDownloads,
+    thumbnail,
+    transcripts,
+    allowTranscriptDownloads,
+    duration,
+    showTranscriptByDefault,
+    handout,
+    licenseType,
+    licenseDetails,
+  ) => (
+    {
+      videoSource,
+      fallbackVideos,
+      allowVideoDownloads,
+      thumbnail,
+      transcripts,
+      allowTranscriptDownloads,
+      duration,
+      showTranscriptByDefault,
+      handout,
+      licenseType,
+      licenseDetails,
+    }
+  ),
+);
+
 export default {
   openLanguages,
   getTranscriptDownloadUrl,
   ...simpleSelectors,
+  videoSettings,
 };

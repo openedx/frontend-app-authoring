@@ -68,11 +68,41 @@ export const apiMethods = {
     if (blockType === 'html') {
       return {
         category: blockType,
-        couseKey: learningContextId,
+        courseKey: learningContextId,
         data: content,
         has_changes: true,
         id: blockId,
         metadata: { display_name: title },
+      };
+    }
+    if (blockType === 'video') {
+      const {
+        html5Sources,
+        edxVideoId,
+        youtubeId,
+      } = module.processVideoIds({
+        videoSource: content.videoSource,
+        fallbackVideos: content.fallbackVideos,
+      });
+      return {
+        category: blockType,
+        courseKey: learningContextId,
+        display_name: title,
+        id: blockId,
+        metadata: {
+          display_name: title,
+          download_video: content.allowVideoDownloads,
+          edx_video_id: edxVideoId,
+          html5_sources: html5Sources,
+          youtube_id_1_0: youtubeId,
+          download_track: content.allowTranscriptDownloads,
+          track: '', // TODO Downloadable Transcript URL. Backend expects a file name, for example: "something.srt"
+          show_captions: content.showTranscriptByDefault,
+          handout: content.handout,
+          start_time: content.duration.startTime,
+          end_time: content.duration.stopTime,
+          license: module.processLicense(content.licenseType, content.licenseDetails),
+        },
       };
     }
     throw new TypeError(`No Block in V2 Editors named /"${blockType}/", Cannot Save Content.`);
@@ -105,6 +135,56 @@ export const loadImages = (rawImages) => camelizeKeys(rawImages).reduce(
   (obj, image) => ({ ...obj, [image.id]: module.loadImage(image) }),
   {},
 );
+
+export const processVideoIds = ({ videoSource, fallbackVideos }) => {
+  let edxVideoId = '';
+  let youtubeId = '';
+  const html5Sources = [];
+
+  if (module.isEdxVideo(videoSource)) {
+    edxVideoId = videoSource;
+  } else if (module.parseYoutubeId(videoSource)) {
+    youtubeId = module.parseYoutubeId(videoSource);
+  } else {
+    html5Sources.push(videoSource);
+  }
+
+  fallbackVideos.forEach((src) => html5Sources.push(src));
+
+  return {
+    edxVideoId,
+    html5Sources,
+    youtubeId,
+  };
+};
+
+export const isEdxVideo = (src) => {
+  const uuid4Regex = new RegExp(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/);
+  if (src.match(uuid4Regex)) {
+    return true;
+  }
+  return false;
+};
+
+export const parseYoutubeId = (src) => {
+  const youtubeRegex = new RegExp(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/);
+  if (!src.match(youtubeRegex)) {
+    return null;
+  }
+  return src.match(youtubeRegex)[5];
+};
+
+export const processLicense = (licenseType, licenseDetails) => {
+  if (licenseType === 'all-rights-reserved') {
+    return 'all-rights-reserved';
+  }
+  return 'creative-commons: ver=4.0'.concat(
+    (licenseDetails.attribution ? ' BY' : ''),
+    (licenseDetails.noncommercial ? ' NC' : ''),
+    (licenseDetails.noDerivatives ? ' ND' : ''),
+    (licenseDetails.shareAlike ? ' SA' : ''),
+  );
+};
 
 export const checkMockApi = (key) => {
   if (process.env.REACT_APP_DEVGALLERY) {
