@@ -92,8 +92,12 @@ function ProctoredExamSettings({ courseId, intl }) {
     }
   }
 
+  function isLtiProvider(provider) {
+    return availableLtiProctoringProviders.some(p => p.name === provider);
+  }
+
   function postSettingsBackToServer() {
-    const providerIsLti = availableLtiProctoringProviders.some(provider => provider.name === proctoringProvider);
+    const providerIsLti = isLtiProvider(proctoringProvider);
     const studioDataToPostBack = {
       proctored_exam_settings: {
         enable_proctored_exams: enableProctoredExams,
@@ -354,7 +358,7 @@ function ProctoredExamSettings({ courseId, intl }) {
           </Form.Group>
         )}
         {/* CREATE ZENDESK TICKETS */}
-        { isEdxStaff && enableProctoredExams && (
+        { isEdxStaff && enableProctoredExams && !isLtiProvider(proctoringProvider) && (
           <fieldset aria-describedby="createZendeskTicketsText">
             <Form.Group controlId="formCreateZendeskTickets">
               <Form.Label as="legend">
@@ -511,7 +515,7 @@ function ProctoredExamSettings({ courseId, intl }) {
             const proctoringProviders = settingsResponse.data.available_proctoring_providers;
             const ltiAvailable = proctoringProviders.includes('lti_external');
             setAllowLtiProviders(ltiAvailable);
-            if (ltiProvidersResponse?.data && allowLtiProviders) {
+            if (ltiProvidersResponse?.data && ltiAvailable) {
               setAvailableLtiProctoringProviders(ltiProvidersResponse.data);
             }
             setAvailableProctoringProviders(
