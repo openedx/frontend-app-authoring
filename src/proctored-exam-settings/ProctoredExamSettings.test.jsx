@@ -467,7 +467,7 @@ describe('ProctoredExamSettings', () => {
       expect(screen.queryByTestId('lti_external')).toBeNull();
     });
 
-    it('Includes lti proctoring provider options', async () => {
+    it('Includes lti proctoring provider options when lti_external is allowed by studio', async () => {
       const courseData = mockGetFutureCourseData;
       courseData.available_proctoring_providers = ['lti_external', 'proctortrack', 'mockproc'];
       setupApp();
@@ -476,6 +476,17 @@ describe('ProctoredExamSettings', () => {
       const providerOption = screen.getByTestId('test_lti');
       // as as admin the provider should not be disabled
       expect(providerOption.hasAttribute('disabled')).toEqual(false);
+    });
+
+    it('Does not request lti provider options if there is no exam service url configuration', async () => {
+      mergeConfig({
+        EXAMS_BASE_URL: null,
+      }, 'CourseAuthoringConfig');
+
+      await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
+      // only outgoing request should be for studio settings
+      expect(axiosMock.history.get.length).toBe(1);
+      expect(axiosMock.history.get[0].url.includes('proctored_exam_settings')).toEqual(true);
     });
   });
 
@@ -637,7 +648,7 @@ describe('ProctoredExamSettings', () => {
       expect(document.activeElement).toEqual(errorAlert);
     });
 
-    it('Successfully updates exam configuration and sets studio provider to "lti_external" for lti providers', async () => {
+    it('Successfully updates exam configuration and studio provider is set to "lti_external" for lti providers', async () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       // Make a change to the provider to proctortrack and set the email
       const selectElement = screen.getByDisplayValue('mockproc');
@@ -648,14 +659,20 @@ describe('ProctoredExamSettings', () => {
       await act(async () => {
         fireEvent.click(submitButton);
       });
+
+      // update exam service config
       expect(axiosMock.history.patch.length).toBe(1);
+      expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
+        provider: 'test_lti',
+      });
+
+      // update studio settings
       expect(axiosMock.history.post.length).toBe(1);
       expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
         proctored_exam_settings: {
           enable_proctored_exams: true,
           allow_proctoring_opt_out: false,
           proctoring_provider: 'lti_external',
-          proctoring_escalation_email: 'test@example.com',
           create_zendesk_tickets: true,
         },
       });
@@ -667,7 +684,73 @@ describe('ProctoredExamSettings', () => {
       expect(document.activeElement).toEqual(errorAlert);
     });
 
-    it('Sets exam service provider to null if a studio provider is selected', async () => {
+    it('Sets exam service provider to null if a non-lti provider is selected', async () => {
+      await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
+      const submitButton = screen.getByTestId('submissionButton');
+      await act(async () => {
+        fireEvent.click(submitButton);
+      });
+      // update exam service config
+      expect(axiosMock.history.patch.length).toBe(1);
+      expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
+        provider: null,
+      });
+      expect(axiosMock.history.patch.length).toBe(1);
+      expect(axiosMock.history.post.length).toBe(1);
+      expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+        proctored_exam_settings: {
+          enable_proctored_exams: true,
+          allow_proctoring_opt_out: false,
+          proctoring_provider: 'mockproc',
+          create_zendesk_tickets: true,
+        },
+      });
+
+      const errorAlert = screen.getByTestId('saveSuccess');
+      expect(errorAlert.textContent).toEqual(
+        expect.stringContaining('Proctored exam settings saved successfully.'),
+      );
+      expect(document.activeElement).toEqual(errorAlert);
+    });
+
+    it('Does not update exam service if lti is not enabled in studio', async () => {
+      axiosMock.onGet(
+        StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
+      ).reply(200, {
+        proctored_exam_settings: {
+          enable_proctored_exams: true,
+          allow_proctoring_opt_out: false,
+          proctoring_provider: 'mockproc',
+          proctoring_escalation_email: 'test@example.com',
+          create_zendesk_tickets: true,
+        },
+        available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
+        course_start_date: '2070-01-01T00:00:00Z',
+      });
+
+      await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
+      const submitButton = screen.getByTestId('submissionButton');
+      await act(async () => {
+        fireEvent.click(submitButton);
+      });
+      // does not update exam service config
+      expect(axiosMock.history.patch.length).toBe(0);
+      // does update studio
+      expect(axiosMock.history.post.length).toBe(1);
+      expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+        proctored_exam_settings: {
+          enable_proctored_exams: true,
+          allow_proctoring_opt_out: false,
+          proctoring_provider: 'mockproc',
+          create_zendesk_tickets: true,
+        },
+      });
+
+      const errorAlert = screen.getByTestId('saveSuccess');
+      expect(errorAlert.textContent).toEqual(
+        expect.stringContaining('Proctored exam settings saved successfully.'),
+      );
+      expect(document.activeElement).toEqual(errorAlert);
     });
 
     it('Makes studio API call generated error', async () => {
