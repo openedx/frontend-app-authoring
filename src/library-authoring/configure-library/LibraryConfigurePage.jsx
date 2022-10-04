@@ -5,9 +5,7 @@ import {
   Button,
   Form,
   Icon,
-  Input,
   StatefulButton,
-  ValidationFormGroup,
 } from '@edx/paragon';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -173,7 +171,9 @@ class LibraryConfigurePage extends React.Component {
 
     const validTypes = Object.values(LIBRARY_TYPES).filter((type) => type !== LIBRARY_TYPES.LEGACY);
     const typeOptions = validTypes.map((value) => (
-      { value, label: intl.formatMessage(messages[`library.edit.type.label.${value}`]) }
+      <option value={value} key={`aoption-${value}`}>
+        {intl.formatMessage(messages[`library.edit.type.label.${value}`])}
+      </option>
     ));
 
     return (
@@ -202,68 +202,63 @@ class LibraryConfigurePage extends React.Component {
               <Form onSubmit={this.handleSubmit} className="form-create">
                 <fieldset>
                   <ol className="list-input">
-                    <li className="field">
-                      <ValidationFormGroup
-                        for="title"
-                        helpText={intl.formatMessage(messages['library.edit.title.help'])}
-                        invalid={this.hasFieldError('title')}
-                        invalidMessage={this.getFieldError('title')}
-                        className="mb-0 mr-2"
-                      >
-                        <label className="h6 d-block" htmlFor="title">
-                          {intl.formatMessage(messages['library.edit.title.label'])}
-                        </label>
-                        <Input
-                          name="title"
-                          id="title"
-                          type="text"
-                          placeholder={intl.formatMessage(messages['library.edit.title.placeholder'])}
-                          defaultValue={data.title}
-                          onChange={this.handleValueChange}
-                        />
-                      </ValidationFormGroup>
-                    </li>
-                    <li className="field">
-                      <ValidationFormGroup
-                        for="description"
-                        helpText={intl.formatMessage(messages['library.edit.description.help'])}
-                        invalid={this.hasFieldError('description')}
-                        invalidMessage={this.getFieldError('description')}
-                        className="mb-0 mr-2"
-                      >
-                        <label className="h6 d-block" htmlFor="description">
-                          {intl.formatMessage(messages['library.edit.description.label'])}
-                        </label>
-                        <Input
-                          name="description"
-                          id="description"
-                          type="textarea"
-                          placeholder={intl.formatMessage(messages['library.edit.description.placeholder'])}
-                          defaultValue={data.description}
-                          onChange={this.handleValueChange}
-                        />
-                      </ValidationFormGroup>
-                    </li>
+                    {['title', 'description'].map(name => (
+                      <li className="field" key={name}>
+                        <Form.Group
+                          controlId={name}
+                          isInvalid={this.hasFieldError(name)}
+                          className="mb-0 mr-2"
+                        >
+                          <Form.Label className="h6 d-block" htmlFor={name}>
+                            {intl.formatMessage(messages[`library.edit.${name}.label`])}
+                          </Form.Label>
+                          <Form.Control
+                            name={name}
+                            id={name}
+                            type="text"
+                            placeholder={intl.formatMessage(messages[`library.edit.${name}.placeholder`])}
+                            defaultValue={data[name]}
+                            onChange={this.handleValueChange}
+                          />
+                          <Form.Text className="form-text text-muted">
+                            {intl.formatMessage(messages[`library.edit.${name}.help`])}
+                          </Form.Text>
+                          {this.hasFieldError(name) && (
+                            <Form.Control.Feedback hasIcon={false} type="invalid">
+                              {this.getFieldError(name)}
+                            </Form.Control.Feedback>
+                          )}
+                        </Form.Group>
+                      </li>
+                    ))}
                     <li className="field">
                       {data.libraryId && (
-                        <ValidationFormGroup
+                        <Form.Group
                           for="type"
-                          helpText={intl.formatMessage(messages['library.edit.type.help'])}
-                          invalid={this.hasFieldError('type')}
-                          invalidMessage={this.getFieldError('type')}
+                          isInvalid={this.hasFieldError('type')}
                           className="mb-0 mr-2"
                         >
                           <label className="h6 d-block" htmlFor="type">
                             {intl.formatMessage(messages['library.edit.type.label'])}
                           </label>
-                          <Input
+                          <Form.Control
                             name="type"
-                            type="select"
+                            as="select"
                             options={typeOptions}
                             defaultValue={data.type}
                             onChange={this.handleValueChange}
-                          />
-                        </ValidationFormGroup>
+                          >
+                            {typeOptions}
+                          </Form.Control>
+                          <Form.Text className="form-text text-muted">
+                            {intl.formatMessage(messages['library.edit.type.help'])}
+                          </Form.Text>
+                          {this.hasFieldError('type') && (
+                            <Form.Control.Feedback hasIcon={false} type="invalid">
+                              {this.getFieldError('type')}
+                            </Form.Control.Feedback>
+                          )}
+                        </Form.Group>
                       ) }
                     </li>
                     <li className="field">

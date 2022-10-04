@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import {
-  Button, Form, Input, Pagination, Alert,
+  Button, Form, Pagination, Alert,
 } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { faSearch, faSync } from '@fortawesome/free-solid-svg-icons';
@@ -179,6 +179,19 @@ export const CourseImportListFilter = ({
     });
   };
 
+  const renderOption = option => {
+    if (option.group) {
+      return (
+        <optgroup label={option.label}>
+          {option.group.map(renderOption)}
+        </optgroup>
+      );
+    }
+    return (
+      <option value={option.value} key={option.value}>{option.label}</option>
+    );
+  };
+
   return (
     <>
       <div className="bit">
@@ -215,13 +228,14 @@ export const CourseImportListFilter = ({
               <Form.Label className="title title-3">
                 {intl.formatMessage(messages['library.course_import.course_filter.options.org.label'])}
               </Form.Label>
-              <Input
+              <Form.Control
                 name="org"
-                type="select"
-                options={orgOptions}
+                as="select"
                 defaultValue={filterParams ? filterParams.org : null}
                 onChange={handleOrgChange}
-              />
+              >
+                {orgOptions.map(renderOption)}
+              </Form.Control>
             </Form.Group>
           </Form.Row>
         </Form>

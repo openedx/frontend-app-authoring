@@ -2,7 +2,7 @@
 Form for adding a new Library user.
  */
 import {
-  Button, Card, Icon, Input, Row, StatefulButton, ValidationFormGroup,
+  Button, Card, Icon, Row, StatefulButton, Form,
 } from '@edx/paragon';
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -37,17 +37,15 @@ const LibraryAccessForm = (
               <fieldset>
                 <ol className="list-input">
                   <li className="field">
-                    <ValidationFormGroup
-                      for="title"
-                      helpText={intl.formatMessage(messages['library.access.form.email.help'])}
-                      invalid={hasFieldError('email')}
-                      invalidMessage={getFieldError('email')}
+                    <Form.Group
+                      controlId="email"
+                      isInvalid={hasFieldError('email')}
                       className="mb-0 mr-2"
                     >
-                      <label className="h6 d-block" htmlFor="email">
+                      <Form.Label className="h6 d-block" htmlFor="email">
                         {intl.formatMessage(messages['library.access.form.email.label'])}
-                      </label>
-                      <Input
+                      </Form.Label>
+                      <Form.Control
                         name="email"
                         id="email"
                         type="text"
@@ -55,7 +53,15 @@ const LibraryAccessForm = (
                         value={data.email}
                         onChange={onValueChange}
                       />
-                    </ValidationFormGroup>
+                      <Form.Text className="form-text text-muted">
+                        {intl.formatMessage(messages['library.access.form.email.help'])}
+                      </Form.Text>
+                      {hasFieldError('email') && (
+                        <Form.Control.Feedback hasIcon={false} type="invalid">
+                          {getFieldError('email')}
+                        </Form.Control.Feedback>
+                      )}
+                    </Form.Group>
                   </li>
                 </ol>
               </fieldset>

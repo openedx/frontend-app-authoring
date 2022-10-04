@@ -905,8 +905,6 @@ $yellow-u3: desaturate($yellow, 45%) !default;
       input[type="checkbox"] {
         display: inline-block;
         margin-right: ($baseline/4);
-        width: auto;
-        height: auto;
 
         & + label {
           display: inline-block;

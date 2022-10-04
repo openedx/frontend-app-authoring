@@ -10,7 +10,7 @@ import {
   Modal,
   Dropdown,
   SearchField,
-  Input,
+  Form,
   Pagination,
 } from '@edx/paragon';
 import { v4 as uuid4 } from 'uuid';
@@ -369,13 +369,18 @@ export const LibraryAuthoringPageBase = ({
                     />
                   </Col>
                   <Col xs={12} md={3} className="pb-2">
-                    <Input
-                      type="select"
+                    <Form.Control
+                      as="select"
                       data-testid="filter-dropdown"
                       value={type}
-                      options={typeOptions}
                       onChange={(event) => changeType(event.target.value)}
-                    />
+                    >
+                      {typeOptions.map(typeOption => (
+                        <option value={typeOption.value} key={typeOption.value}>
+                          {typeOption.label}
+                        </option>
+                      ))}
+                    </Form.Control>
                   </Col>
                 </>
               )}

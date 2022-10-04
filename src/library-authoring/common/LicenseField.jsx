@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Button,
   Col,
-  Input,
+  Form,
   Row,
 } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -60,8 +60,7 @@ export const LicenceFieldBase = (
         </div>
         <Row className="border-bottom py-2">
           <Col xs={1} className="text-center align-self-center">
-            <Input
-              type="checkbox"
+            <Form.Checkbox
               id="attribution"
               name="attribution"
               className="m-0 p-0 position-relative"
@@ -80,8 +79,7 @@ export const LicenceFieldBase = (
         </Row>
         <Row className="border-bottom py-2">
           <Col xs={1} className="text-center align-self-center">
-            <Input
-              type="checkbox"
+            <Form.Checkbox
               id="nonCommercial"
               name="nonCommercial"
               className="m-0 p-0 position-relative"
@@ -100,8 +98,7 @@ export const LicenceFieldBase = (
         </Row>
         <Row className="border-bottom py-2">
           <Col xs={1} className="text-center align-self-center">
-            <Input
-              type="checkbox"
+            <Form.Checkbox
               name="noDerivatives"
               id="noDerivatives"
               className="m-0 p-0 position-relative"
@@ -120,8 +117,7 @@ export const LicenceFieldBase = (
         </Row>
         <Row className="border-bottom py-2">
           <Col xs={1} className="text-center align-self-center">
-            <Input
-              type="checkbox"
+            <Form.Checkbox
               id="shareAlike"
               name="shareAlike"
               className="m-0 p-0 position-relative"
