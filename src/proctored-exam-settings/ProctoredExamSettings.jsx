@@ -101,6 +101,7 @@ function ProctoredExamSettings({ courseId, intl }) {
     const studioDataToPostBack = {
       proctored_exam_settings: {
         enable_proctored_exams: enableProctoredExams,
+        // lti providers are managed outside edx-platform, lti_external indicates this
         proctoring_provider: providerIsLti ? 'lti_external' : proctoringProvider,
         create_zendesk_tickets: createZendeskTickets,
       },
@@ -493,10 +494,11 @@ function ProctoredExamSettings({ courseId, intl }) {
 
       Promise.all([
         StudioApiService.getProctoredExamSettingsData(courseId),
+        ExamsApiService.isAvailable() ? ExamsApiService.getCourseExamConfiguration(courseId) : Promise.resolve(),
         ExamsApiService.isAvailable() ? ExamsApiService.getAvailableProviders() : Promise.resolve(),
       ])
         .then(
-          ([settingsResponse, ltiProvidersResponse]) => {
+          ([settingsResponse, examConfigResponse, ltiProvidersResponse]) => {
             const proctoredExamSettings = settingsResponse.data.proctored_exam_settings;
             setLoaded(true);
             setLoading(false);
@@ -504,7 +506,6 @@ function ProctoredExamSettings({ courseId, intl }) {
             setCourseStartDate(settingsResponse.data.course_start_date);
             setEnableProctoredExams(proctoredExamSettings.enable_proctored_exams);
             setAllowOptingOut(proctoredExamSettings.allow_proctoring_opt_out);
-            setProctoringProvider(proctoredExamSettings.proctoring_provider);
             const isProctortrack = proctoredExamSettings.proctoring_provider === 'proctortrack';
             setShowProctortrackEscalationEmail(isProctortrack);
 
@@ -526,6 +527,11 @@ function ProctoredExamSettings({ courseId, intl }) {
                   verbose_name: provider,
                 })),
             );
+            if (proctoredExamSettings.proctoring_provider === 'lti_external') {
+              setProctoringProvider(examConfigResponse.data.provider);
+            } else {
+              setProctoringProvider(proctoredExamSettings.proctoring_provider);
+            }
 
             // The backend API may return null for the proctoringEscalationEmail value, which is the default.
             // In order to keep our email input component controlled, we use the empty string as the default

@@ -55,6 +55,11 @@ describe('ProctoredExamSettings', () => {
           verbose_name: 'LTI Provider',
       },
     ]);
+    axiosMock.onGet(
+      `${ExamsApiService.getExamsBaseUrl()}/api/v1/configs/course_id/${defaultProps.courseId}`,
+    ).reply(200, {
+      provider: null,
+    });
 
     axiosMock.onGet(
       StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
@@ -488,6 +493,22 @@ describe('ProctoredExamSettings', () => {
       expect(axiosMock.history.get.length).toBe(1);
       expect(axiosMock.history.get[0].url.includes('proctored_exam_settings')).toEqual(true);
     });
+
+    it('Selected LTI proctoring provider is shown on page load', async () => {
+      const courseData = { ...mockGetFutureCourseData };
+      courseData.available_proctoring_providers = ['lti_external', 'proctortrack', 'mockproc'];
+      courseData.proctored_exam_settings.proctoring_provider = 'lti_external';
+      mockCourseData(courseData);
+      axiosMock.onGet(
+        `${ExamsApiService.getExamsBaseUrl()}/api/v1/configs/course_id/${defaultProps.courseId}`,
+      ).reply(200, {
+        provider: 'test_lti',
+      });
+      await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
+
+      // make sure test_lti is the selected provider
+      expect(screen.getByDisplayValue('LTI Provider')).toBeDefined();
+    });
   });
 
   describe('Toggles field visibility based on user permissions', () => {
@@ -579,8 +600,8 @@ describe('ProctoredExamSettings', () => {
       expect(submitSpinner).toBeDefined();
 
       await waitForElementToBeRemoved(submitSpinner);
-      // two requests, studio settings and exam service providers
-      expect(axiosMock.history.get.length).toBe(2);
+      // request studio settings, exam config, and exam service providers
+      expect(axiosMock.history.get.length).toBe(3);
       expect(axiosMock.history.post.length).toBe(1); // studio
       expect(axiosMock.history.patch.length).toBe(1); // edx-exams
       expect(screen.queryByTestId('saveInProgress')).toBeFalsy();
