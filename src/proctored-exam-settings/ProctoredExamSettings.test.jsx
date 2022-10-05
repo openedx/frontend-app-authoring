@@ -495,6 +495,7 @@ describe('ProctoredExamSettings', () => {
     });
 
     it('Selected LTI proctoring provider is shown on page load', async () => {
+      setupApp();
       const courseData = { ...mockGetFutureCourseData };
       courseData.available_proctoring_providers = ['lti_external', 'proctortrack', 'mockproc'];
       courseData.proctored_exam_settings.proctoring_provider = 'lti_external';
@@ -507,7 +508,7 @@ describe('ProctoredExamSettings', () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
 
       // make sure test_lti is the selected provider
-      expect(screen.getByDisplayValue('LTI Provider')).toBeDefined();
+      expect(screen.queryByDisplayValue('LTI Provider')).not.toBeNull();
     });
   });
 
