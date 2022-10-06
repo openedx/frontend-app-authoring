@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import {
-  Button, Pagination, Breadcrumb, ActionRow, Icon, Card,
+  Button, Pagination, ActionRow, Icon, Card,
 } from '@edx/paragon';
 import { Add } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { getConfig } from '@edx/frontend-platform';
 import { AppContext } from '@edx/frontend-platform/react';
 
 import { LoadingPage } from '../../generic';
@@ -109,30 +108,21 @@ export class LibraryListPage extends React.Component {
     };
 
     return (
-      <div className="library-list-wrapper">
+      <>
         <div className="wrapper-mast wrapper">
-          <Breadcrumb
-            links={[
-              { label: intl.formatMessage(commonMessages['library.common.breadcrumbs.studio']), url: getConfig().STUDIO_BASE_URL },
-            ]}
-            activeLabel={intl.formatMessage(messages['library.list.breadcrumbs.libraries'])}
-          />
           <header className="mast has-actions">
-            <h1 className="page-header">{intl.formatMessage(messages['library.list.page.heading'])}</h1>
-            <nav className="nav-actions">
-              <ul className="nav-list">
-                <li className="nav-item">
-                  {libraries.count !== 0 && (
-                  <Button
-                    variant="outline-primary"
-                    onClick={this.goToCreateLibraryPage}
-                  >
-                    {intl.formatMessage(messages['library.list.new.library'])}
-                  </Button>
-                  )}
-                </li>
-              </ul>
-            </nav>
+            <ActionRow>
+              <h1 className="page-header">{intl.formatMessage(messages['library.list.page.heading'])}</h1>
+              <ActionRow.Spacer />
+              {libraries.count !== 0 && (
+                <Button
+                  variant="outline-primary"
+                  onClick={this.goToCreateLibraryPage}
+                >
+                  {intl.formatMessage(messages['library.list.new.library'])}
+                </Button>
+              )}
+            </ActionRow>
           </header>
         </div>
         <div className="wrapper-content wrapper">
@@ -140,26 +130,19 @@ export class LibraryListPage extends React.Component {
             <article className="content-primary" role="main">
               {libraries.count > 0
                 ? (
-                  <ul className="library-list">
+                  <ul className="list-unstyled">
                     {libraries.data.map(library => (
                       <Card
                         isClickable
                         key={library.id}
-                        className="library-item"
+                        className="library-item mt-3"
                         onClick={() => this.goToLibraryItem(library)}
                       >
                         <Card.Header
                           className="library-title"
                           title={library.title}
+                          subtitle={`${library.org} • ${library.slug}`}
                         />
-                        <div className="library-metadata">
-                          <span className="library-org metadata-item">
-                            <span className="value">{library.org}</span>
-                          </span>
-                          <span className="library-slug metadata-item">
-                            <span className="value">{library.slug}</span>
-                          </span>
-                        </div>
                       </Card>
                     ))}
                   </ul>
@@ -194,7 +177,7 @@ export class LibraryListPage extends React.Component {
             </article>
           </section>
         </div>
-      </div>
+      </>
     );
   }
 

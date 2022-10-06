@@ -1,4 +1,4 @@
-// Vendor verrides
+// Vendor overrides
 
 // edx-pattern-library
 $pink: #e83e8c !default;
@@ -8,8 +8,35 @@ $font-family-sans-serif: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-s
 
 // Bootstrap
 .container-fluid {
-  padding-bottom: 30px;
-  max-width: 1376px;
-  padding-left: 0;
-  padding-right: 0;
+  max-width: 1280px;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}
+
+// todo: probably want to move this to the header component
+// but for now i'm just making changes here so the logos in
+// the header and the footer line up at every viewport width
+.site-header-desktop {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.library-authoring__root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.library-authoring__main-content {
+  margin-top: 30px;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  flex: 1 0 auto;
+  display: block;
 }

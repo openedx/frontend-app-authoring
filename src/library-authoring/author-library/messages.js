@@ -208,6 +208,31 @@ const messages = defineMessages({
       + 'of problems to be randomly selected and displayed to each student.',
     description: 'The first (and presently only) paragraph of instructional text about how to use library content.',
   },
+  'library.detail.breadcrumbs.libraries': {
+    id: 'library.detail.breadcrumbs.libraries',
+    defaultMessage: 'Libraries',
+    description: 'Label for the breadcrumbs parent link.',
+  },
+  'library.detail.settings.menu': {
+    id: 'library.detail.settings.menu',
+    defaultMessage: 'Settings',
+    description: 'Title text for the settings menu.',
+  },
+  'library.detail.settings.details': {
+    id: 'library.detail.settings.details',
+    defaultMessage: 'Details',
+    description: 'Text for the details item in the settings menu.',
+  },
+  'library.detail.settings.access': {
+    id: 'library.detail.settings.access',
+    defaultMessage: 'User Access',
+    description: 'Text for the user access permissions item in the settings menu.',
+  },
+  'library.detail.settings.import': {
+    id: 'library.detail.settings.import',
+    defaultMessage: 'Import',
+    description: 'Text for the import course in the settings menu.',
+  },
 });
 
 export default messageGuard(messages);

@@ -7,7 +7,11 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import {
-  Alert, Button, Col, Row,
+  ActionRow,
+  Alert,
+  Button,
+  Col,
+  Row,
 } from '@edx/paragon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -40,95 +44,74 @@ const LibraryAccessPage = ({
 }) => (
   <div className="library-access-wrapper">
     <div className="wrapper-mast wrapper">
-      <header className="mast has-actions has-navigation has-subtitle">
-        <div className="page-header">
-          <small className="subtitle">{intl.formatMessage(messages['library.access.page.parent_heading'])}</small>
-          <h1 className="page-header-title">{intl.formatMessage(messages['library.access.page.heading'])}</h1>
-        </div>
-        <nav className="nav-actions">
-          <ul>
-            {isAdmin && (
-              <li className="nav-item">
-                <Button
-                  variant="success"
-                  onClick={() => setShowAdd(true)}
-                >
-                  <FontAwesomeIcon icon={faPlus} className="pr-3 icon-inline" />
-                  {intl.formatMessage(messages['library.access.new.user'])}
-                </Button>
-              </li>
-            )}
-          </ul>
-        </nav>
+      <header className="mast has-actions">
+        <small className="card-subtitle">{intl.formatMessage(messages['library.access.page.parent_heading'])}</small>
+        <ActionRow>
+          <div className="page-header-section">
+            <h1 className="page-header">{intl.formatMessage(messages['library.access.page.heading'])}</h1>
+          </div>
+          <ActionRow.Spacer />
+          {isAdmin && (
+            <Button
+              variant="success"
+              onClick={() => setShowAdd(true)}
+            >
+              <FontAwesomeIcon icon={faPlus} className="pr-1 icon-inline" />
+              {intl.formatMessage(messages['library.access.new.user'])}
+            </Button>
+          )}
+        </ActionRow>
       </header>
     </div>
-    <div className="wrapper-content wrapper">
-      <section className="content">
-        <article className="content-primary" role="main">
-          {errorMessage
-          && (
-            <Alert
-              variant="danger"
-              onClose={() => handleDismissAlert()}
-              dismissible
-            >
-              {truncateMessage(errorMessage)}
-            </Alert>
-          )}
-          {showAdd
-          && (
-            <LibraryAccessFormContainer
-              setShowAdd={(value) => setShowAdd(value)}
-              library={library}
-            />
-          )}
-          <Row>
-            { ((users && users.map((user) => (
-              (
-                <UserAccessWidgetContainer
-                  intl={intl}
-                  user={user}
-                  key={user.username}
-                  multipleAdmins={multipleAdmins}
-                  library={library}
-                  isAdmin={isAdmin}
-                />
-              ))))
-              || (
-                <Col cols={12} className="text-center">
-                  <LoadingPage loadingMessage={intl.formatMessage(messages['library.access.loading.message'])} />
-                </Col>
-              )
+    <div className="wrapper-content wrapper mt-3">
+      <Row className="content">
+        <Col xs={12} md={8} xl={9}>
+          <article className="content-primary" role="main">
+            {errorMessage
+              && (
+                <Alert
+                  variant="danger"
+                  onClose={() => handleDismissAlert()}
+                  dismissible
+                >
+                  {truncateMessage(errorMessage)}
+                </Alert>
+              )}
+            {showAdd && (
+              <LibraryAccessFormContainer
+                setShowAdd={(value) => setShowAdd(value)}
+                library={library}
+              />
             )}
-          </Row>
-          {isAdmin && (
-            <div className="well mt-3">
-              <Row className="h-100">
-                <Col xs={12} md={8} className="my-auto">
-                  <h2 className="h2 font-weight-bold">{intl.formatMessage(messages['library.access.well.title'])}</h2>
-                  <p>{intl.formatMessage(messages['library.access.well.text'])}</p>
-                </Col>
-                <Col xs={12} md={4} lg={3} className="my-auto offset-lg-1 text-center text-md-right">
-                  <Button variant="success" size="lg" onClick={() => setShowAdd(true)}>
-                    <FontAwesomeIcon icon={faPlus} className="pr-1 icon-inline" />
-                    <strong>{intl.formatMessage(messages['library.access.well.button'])}</strong>
-                  </Button>
-                </Col>
-              </Row>
-            </div>
-          )}
-        </article>
-        <aside className="content-supplementary">
-          <div className="bit">
-            <h3 className="title title-3">{intl.formatMessage(messages['library.access.aside.title'])}</h3>
-            <p>{intl.formatMessage(messages['library.access.aside.text.first'])}</p>
-            <p>{intl.formatMessage(messages['library.access.aside.text.second'])}</p>
-            <p>{intl.formatMessage(messages['library.access.aside.text.third'])}</p>
-            <p>{intl.formatMessage(messages['library.access.aside.text.fourth'])}</p>
+            {((users && users.map((user) => ((
+              <UserAccessWidgetContainer
+                intl={intl}
+                user={user}
+                key={user.username}
+                multipleAdmins={multipleAdmins}
+                library={library}
+                isAdmin={isAdmin}
+              />
+            )))) || (
+              <Col cols={12} className="text-center">
+                <LoadingPage loadingMessage={intl.formatMessage(messages['library.access.loading.message'])} />
+              </Col>
+            ))}
+          </article>
+        </Col>
+        <Col xs={12} md={4} xl={3}>
+          <aside className="content-supplementary">
+            <div className="bit">
+              <h3 className="title title-3">{intl.formatMessage(messages['library.access.aside.title'])}</h3>
+              <p>{intl.formatMessage(messages['library.access.aside.text.first'])}</p>
+              <p>{intl.formatMessage(messages['library.access.aside.text.second'])}</p>
+              <p>{intl.formatMessage(messages['library.access.aside.text.third'])}</p>
+              <p>{intl.formatMessage(messages['library.access.aside.text.fourth'])}</p>
 
-          </div>
-        </aside>
-      </section>
+            </div>
+          </aside>
+        </Col>
+      </Row>
     </div>
   </div>
 );

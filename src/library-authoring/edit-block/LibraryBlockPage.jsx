@@ -4,13 +4,20 @@ import {
 } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Button, Spinner, Alert } from '@edx/paragon';
+import {
+  ActionRow,
+  Alert,
+  Button,
+  Card,
+  Col,
+  Container,
+  Row,
+  Spinner,
+} from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { logError } from '@edx/frontend-platform/logging';
 import { AppContext } from '@edx/frontend-platform/react';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import {
   BLOCK_TYPE_EDIT_DENYLIST,
   libraryBlockShape,
@@ -207,164 +214,156 @@ class LibraryBlockPage extends React.Component {
 
     return (
       <div className="library-block-wrapper">
-        <div className="wrapper-mast wrapper">
-          <header className="mast has-actions has-navigation has-subtitle">
-            <div className="page-header">
-              <Button href={ROUTES.Detail.HOME_SLUG(libraryId)} className="my-1">
-                <FontAwesomeIcon icon={faArrowLeft} className="pr-1" />
-                {intl.formatMessage(messages['library.block.page.back_to_library'])}
-              </Button>
-              <small className="subtitle">{intl.formatMessage(messages['library.block.page.heading'])}</small>
-              <h1 className="page-header-title">{metadata !== null && metadata.display_name}</h1>
-            </div>
-          </header>
-        </div>
-        <div className="wrapper-content wrapper">
-          <section className="content">
-            <article className="content-primary" role="main">
-              {errorMessage
-              && (
-              <Alert
-                variant="danger"
-                onClose={this.handleDismissAlert}
-                dismissible
-              >
-                {truncateMessage(errorMessage)}
-              </Alert>
-              )}
-              <div className="card">
-                <div className="card-header">
-                  <ul className="nav nav-tabs card-header-tabs">
-                    <li className="nav-item">
-                      <NavLink exact to={ROUTES.Block.HOME_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">View</NavLink>
-                    </li>
-                    <li className="nav-item">
-                      {this.isEditable
-                        ? <NavLink to={ROUTES.Block.EDIT_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">Edit</NavLink>
-                        : <span className="nav-link">Edit</span>}
-                    </li>
-                    <li className="nav-item">
-                      <NavLink to={ROUTES.Block.ASSETS_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">Assets</NavLink>
-                    </li>
-                    <li className="nav-item">
-                      <NavLink to={ROUTES.Block.SOURCE_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">Source</NavLink>
-                    </li>
-                    <li className="nav-item">
-                      <NavLink to={ROUTES.Block.LEARN_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">Learn</NavLink>
-                    </li>
-                  </ul>
-                </div>
-                <div className="card-body">
-                  { this.props.view.status === LOADING_STATUS.LOADING ? (
-                    <div
-                      className="d-flex justify-content-center align-items-center flex-column"
-                      style={{ height: '400px' }}
-                    >
-                      <Spinner animation="border" variant="primary" />
-                    </div>
-                  ) : (
-                    <Switch>
-                      <Route exact path={ROUTES.Block.HOME}>
-                        <LibraryBlock
-                          view={this.props.view}
-                          getHandlerUrl={this.getHandlerUrl}
-                        />
-                      </Route>
-                      <Route exact path={ROUTES.Block.EDIT}>
-                        <LibraryBlock
-                          view={this.props.view}
-                          getHandlerUrl={this.getHandlerUrl}
-                          onBlockNotification={this.handleBlockNotification}
-                        />
-                      </Route>
-                      <Route exact path={ROUTES.Block.ASSETS}>
-                        <LibraryBlockAssets
-                          assets={this.props.assets}
-                          onDropFiles={this.handleDropFiles}
-                          onDeleteFile={this.handleDeleteFile}
-                        />
-                      </Route>
-                      <Route exact path={ROUTES.Block.SOURCE}>
-                        <LibraryBlockOlx
-                          olx={this.props.olx}
-                          onSaveOlx={this.handleSaveOlx}
-                        />
-                      </Route>
-                      <Route exact path={ROUTES.Block.LEARN}>
-                        <p>
-                          This tab uses the LMS APIs so it shows the published version only and will save user state.
-                        </p>
-                        <LibraryBlock
-                          view={this.props.view}
-                          getHandlerUrl={this.getHandlerUrl}
-                        />
-                      </Route>
-                    </Switch>
-                  )}
-                </div>
-              </div>
-            </article>
-            <aside className="content-supplementary">
-              <div className="bit">
-                <h3 className="title title-3">{intl.formatMessage(messages['library.block.aside.title'])}</h3>
-                <p>{intl.formatMessage(messages['library.block.aside.text.1'])}</p>
-                <ul className="list-actions">
-                  <li className="action-item">
-                    <a
-                      href="http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/course_components/libraries.html"
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      {intl.formatMessage(messages['library.block.aside.help.link'])}
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div id="publish-unit" className="window">
-                <div className={`bit-publishing ${hasChanges && 'has-warnings'}`}>
-                  <h3 className="bar-mod-title pub-status">
-                    {intl.formatMessage(messages[`library.block.aside.${hasChanges ? 'draft' : 'published'}`])}
-                  </h3>
-                  <div className="wrapper-pub-actions bar-mod-actions">
-                    <ul className="action-list list-unstyled">
-                      <li className="action-item">
-                        <Button
-                          variant="primary"
-                          className="w-100 p-2 btn-lg"
-                          onClick={this.handleCommitLibrary}
-                          disabled={!hasChanges}
-                          aria-disabled={!hasChanges}
-                        >
-                          <strong>{intl.formatMessage(messages['library.block.aside.publish'])}</strong>
-                        </Button>
+        <Container className="wrapper-content wrapper">
+          <Row className="content">
+            <Col xs={12} md={8} xl={9}>
+              <article className="content-primary" role="main">
+                {errorMessage
+                && (
+                <Alert
+                  variant="danger"
+                  onClose={this.handleDismissAlert}
+                  dismissible
+                >
+                  {truncateMessage(errorMessage)}
+                </Alert>
+                )}
+                <Card>
+                  {/* todo: figure out if we want to use paragon tabs here (they don't utilize different urls) */}
+                  <div className="card-header">
+                    <ul className="nav nav-tabs card-header-tabs">
+                      <li className="nav-item">
+                        <NavLink exact to={ROUTES.Block.HOME_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">View</NavLink>
                       </li>
-                      <li className="action-item text-right">
-                        <Button
-                          variant="link"
-                          className="d-inline-block"
-                          onClick={this.handleRevertLibrary}
-                          disabled={!hasChanges}
-                          aria-disabled={!hasChanges}
-                        >
-                          {intl.formatMessage(messages['library.block.aside.discard'])}
-                        </Button>
+                      <li className="nav-item">
+                        {this.isEditable
+                          ? <NavLink to={ROUTES.Block.EDIT_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">Edit</NavLink>
+                          : <span className="nav-link">Edit</span>}
                       </li>
-                      <li className="action-item">
-                        <Button
-                          variant="danger"
-                          className="w-100 p-2 btn-lg"
-                          onClick={this.handleDeleteBlock}
-                        >
-                          <strong>{intl.formatMessage(messages['library.block.aside.delete'])}</strong>
-                        </Button>
+                      <li className="nav-item">
+                        <NavLink to={ROUTES.Block.ASSETS_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">Assets</NavLink>
+                      </li>
+                      <li className="nav-item">
+                        <NavLink to={ROUTES.Block.SOURCE_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">Source</NavLink>
+                      </li>
+                      <li className="nav-item">
+                        <NavLink to={ROUTES.Block.LEARN_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">Learn</NavLink>
                       </li>
                     </ul>
                   </div>
+                  <div className="card-body">
+                    { this.props.view.status === LOADING_STATUS.LOADING ? (
+                      <div
+                        className="d-flex justify-content-center align-items-center flex-column"
+                        style={{ height: '400px' }}
+                      >
+                        <Spinner animation="border" variant="primary" />
+                      </div>
+                    ) : (
+                      <Switch>
+                        <Route exact path={ROUTES.Block.HOME}>
+                          <LibraryBlock
+                            view={this.props.view}
+                            getHandlerUrl={this.getHandlerUrl}
+                          />
+                        </Route>
+                        <Route exact path={ROUTES.Block.EDIT}>
+                          <LibraryBlock
+                            view={this.props.view}
+                            getHandlerUrl={this.getHandlerUrl}
+                            onBlockNotification={this.handleBlockNotification}
+                          />
+                        </Route>
+                        <Route exact path={ROUTES.Block.ASSETS}>
+                          <LibraryBlockAssets
+                            assets={this.props.assets}
+                            onDropFiles={this.handleDropFiles}
+                            onDeleteFile={this.handleDeleteFile}
+                          />
+                        </Route>
+                        <Route exact path={ROUTES.Block.SOURCE}>
+                          <LibraryBlockOlx
+                            olx={this.props.olx}
+                            onSaveOlx={this.handleSaveOlx}
+                          />
+                        </Route>
+                        <Route exact path={ROUTES.Block.LEARN}>
+                          <p>
+                            This tab uses the LMS APIs so it shows the published version only and will save user state.
+                          </p>
+                          <LibraryBlock
+                            view={this.props.view}
+                            getHandlerUrl={this.getHandlerUrl}
+                          />
+                        </Route>
+                      </Switch>
+                    )}
+                  </div>
+                </Card>
+              </article>
+            </Col>
+            <Col xs={12} md={4} xl={3}>
+              <aside className="content-supplementary">
+                <div className="bit">
+                  <h3 className="title title-3">{intl.formatMessage(messages['library.block.aside.title'])}</h3>
+                  <p>{intl.formatMessage(messages['library.block.aside.text.1'])}</p>
+                  <ul className="list-actions">
+                    <li className="action-item">
+                      <a
+                        href="http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/course_components/libraries.html"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        {intl.formatMessage(messages['library.block.aside.help.link'])}
+                      </a>
+                    </li>
+                  </ul>
                 </div>
-              </div>
-            </aside>
-          </section>
-        </div>
+                <div id="publish-unit" className="window">
+                  <div className={`bit-publishing ${hasChanges && 'has-warnings'}`}>
+                    <h3 className="bar-mod-title pub-status">
+                      {intl.formatMessage(messages[`library.block.aside.${hasChanges ? 'draft' : 'published'}`])}
+                    </h3>
+                    <ActionRow isStacked>
+                      <Button
+                        variant="primary"
+                            // className="w-100 p-2 btn-lg"
+                        onClick={this.handleCommitLibrary}
+                        disabled={!hasChanges}
+                        aria-disabled={!hasChanges}
+                      >
+                        <strong>{intl.formatMessage(messages['library.block.aside.publish'])}</strong>
+                      </Button>
+                      <Button
+                        variant="link"
+                            // className="d-inline-block"
+                        onClick={this.handleRevertLibrary}
+                        disabled={!hasChanges}
+                        aria-disabled={!hasChanges}
+                      >
+                        {intl.formatMessage(messages['library.block.aside.discard'])}
+                      </Button>
+                      <Button
+                        variant="danger"
+                            // className="w-100 p-2 btn-lg"
+                        onClick={this.handleDeleteBlock}
+                      >
+                        <strong>{intl.formatMessage(messages['library.block.aside.delete'])}</strong>
+                      </Button>
+                    </ActionRow>
+                    <div className="wrapper-pub-actions bar-mod-actions">
+                      <ul className="action-list list-unstyled">
+                        <li className="action-item" />
+                        <li className="action-item text-right" />
+                        <li className="action-item" />
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </aside>
+            </Col>
+          </Row>
+        </Container>
       </div>
     );
   }

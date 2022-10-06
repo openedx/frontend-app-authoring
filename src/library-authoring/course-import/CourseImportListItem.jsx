@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Col, Row, StatefulButton } from '@edx/paragon';
+import { Card, ActionRow, StatefulButton } from '@edx/paragon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlus, faSync, faSpinner, faCheck,
@@ -40,31 +40,22 @@ const CourseImportListItem = ({
       error: <FontAwesomeIcon icon={faSync} className="icon-inline" />,
     },
     disabledStates: ['pending', 'complete'],
-    className: 'btn-lg',
     onClick: handleImport,
   };
 
   return (
-    <div className="library-link">
-      <Row className="h-100">
-        <Col xs={6} md={6} className="my-auto">
-          <h3 className="library-title">{course.title}</h3>
-        </Col>
-        <Col xs={6} md={6} className="my-auto text-center text-md-right">
-          <StatefulButton {...importButtonProps} />
-        </Col>
-      </Row>
-      <div className="library-metadata">
-        <span className="library-org metadata-item">
-          <span className="label">{intl.formatMessage(messages['library.course_import.list_item.organization'])}</span>
-          <span className="value">{course.org}</span>
-        </span>
-        <span className="library-slug metadata-item">
-          <span className="label">{intl.formatMessage(messages['library.course_import.list_item.id'])}</span>
-          <span className="value">{course.id}</span>
-        </span>
-      </div>
-    </div>
+    <Card className="mt-1 mb-3">
+      <Card.Header
+        className="library-authoring-course-import-block-card-header"
+        title={course.title}
+        subtitle={`${course.org} • ${course.id}`}
+        actions={(
+          <ActionRow>
+            <StatefulButton {...importButtonProps} />
+          </ActionRow>
+        )}
+      />
+    </Card>
   );
 };
 

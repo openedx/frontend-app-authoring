@@ -1,11 +1,10 @@
 import React from 'react';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Col, Row, Badge } from '@edx/paragon';
+import { injectIntl } from '@edx/frontend-platform/i18n';
+import { Card, Badge } from '@edx/paragon';
 
 import { importTaskShape } from './data';
-import messages from './messages';
 
-const CourseImportTaskListItem = ({ intl, task }) => {
+const CourseImportTaskListItem = ({ task }) => {
   let badgeVariant = '';
 
   switch (task.state.toLowerCase()) {
@@ -28,34 +27,25 @@ const CourseImportTaskListItem = ({ intl, task }) => {
   }
 
   return (
-    <div className="library-link">
-      <Row className="h-100">
-        <Col xs={12} className="my-auto">
-          <h3 className="library-title">Import of {task.course_id}</h3>
-        </Col>
-      </Row>
-      <div className="library-metadata">
-        <span className="library-state metadata-item">
-          <span className="label">{intl.formatMessage(messages['library.library.course_import.list_item.state'])}</span>
-          <span className="value">
+    <Card className="mt-1 mb-3">
+      <Card.Header
+        className="library-authoring-course-import-block-card-header"
+        title={`Import of ${task.course_id}`}
+        subtitle={(
+          <>
             <Badge variant={badgeVariant}>{task.state}</Badge>
-          </span>
-        </span>
-        <span className="library-org metadata-item">
-          <span className="label">{intl.formatMessage(messages['library.course_import.list_item.organization'])}</span>
-          <span className="value">{task.org}</span>
-        </span>
-        <span className="library-slug metadata-item">
-          <span className="label">{intl.formatMessage(messages['library.course_import.list_item.created_at'])}</span>
-          <span className="value">{new Date(task.created_at).toLocaleString()}</span>
-        </span>
-      </div>
-    </div>
+            <span> • </span>
+            <span>{task.org}</span>
+            <span> • </span>
+            <span>{new Date(task.created_at).toLocaleString()}</span>
+          </>
+        )}
+      />
+    </Card>
   );
 };
 
 CourseImportTaskListItem.propTypes = {
-  intl: intlShape.isRequired,
   task: importTaskShape.isRequired,
 };
 

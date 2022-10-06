@@ -1,42 +1,30 @@
-.library-block-wrapper {
-  margin: 0;
-  font-size: 1.4rem;
+.library-authoring-block-card-header {
+    .pgn__card-header-actions {
+        margin-top: 0.3rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .pgn__card-header-content {
+        margin-top: 0.6rem;
+    }
 }
 
-// The following to be removed when a proper interface for library authoring is fully specced out.
-// This should make error messages visible in the mean time.
-.library-detail-wrapper {
-  .invalid-feedback {
-    display: block;
-    background-color: $white;
-    font-size: 70%;
-    border-radius: 3px;
-  }
-  .add-xblock-component .new-component-type .add-xblock-component-button {
-    height: auto;
-  }
-}
-
-.cta-button {
-  padding: 1rem 2rem;
-  font-size: 120%;
+.library-authoring-sidebar {
+    font-size: 90%;
+    h3 {
+      font-size: 100%;
+      font-weight: bold;
+    }
 }
 
 .library-blocks-pagination {
-  display: block;
-  margin-top: 1.5em;
-
-  * {
-    font-size: 1.4rem;
-  }
-
-  .pagination {
-    .page-item {
-      .btn {
-        min-width: 2.5em;
-        min-height: 2.5em;
-        border: 1px solid $gray-l2;
-      }
+    ul.pagination {
+        justify-content: center;
     }
-  }
+}
+
+.library-authoring-block-add-new {
+    h2 {
+        font-size: 120%;
+    }
 }
