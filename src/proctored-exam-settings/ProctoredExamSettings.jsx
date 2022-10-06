@@ -313,7 +313,7 @@ function ProctoredExamSettings({ courseId, intl }) {
           </Form.Label>
           <Form.Control
             as="select"
-            value={proctoringProvider}
+            value={proctoringProvider.name}
             onChange={onProctoringProviderChange}
             aria-describedby="proctoringProviderHelpText"
           >
@@ -513,14 +513,15 @@ function ProctoredExamSettings({ courseId, intl }) {
             // is available as an option display the list of LTI providers available on the exam service.
             // 'lti_external' indicates an LTI provider configured outside of edx-platform. It is not directly
             // selectable.
-            const proctoringProviders = settingsResponse.data.available_proctoring_providers;
-            const ltiAvailable = proctoringProviders.includes('lti_external');
+            const proctoringProvidersStudio = settingsResponse.data.available_proctoring_providers;
+            const proctoringProvidersLti = ltiProvidersResponse?.data;
+            const ltiAvailable = proctoringProvidersStudio.includes('lti_external');
             setAllowLtiProviders(ltiAvailable);
-            if (ltiProvidersResponse?.data && ltiAvailable) {
-              setAvailableLtiProctoringProviders(ltiProvidersResponse.data);
+            if (proctoringProvidersLti && ltiAvailable) {
+              setAvailableLtiProctoringProviders(proctoringProvidersLti);
             }
             setAvailableProctoringProviders(
-              proctoringProviders
+              proctoringProvidersStudio
               .filter(value => value !== 'lti_external')
               .map(provider => ({
                   name: provider,
@@ -528,9 +529,13 @@ function ProctoredExamSettings({ courseId, intl }) {
                 })),
             );
             if (proctoredExamSettings.proctoring_provider === 'lti_external') {
-              setProctoringProvider(examConfigResponse.data.provider);
+              const selectedLtiProvder = examConfigResponse.data.provider;
+              setProctoringProvider(proctoringProvidersLti.find(provider => provider.name === selectedLtiProvder));
             } else {
-              setProctoringProvider(proctoredExamSettings.proctoring_provider);
+              setProctoringProvider({
+                name: proctoredExamSettings.proctoring_provider,
+                verbose_name: proctoredExamSettings.proctoring_provider,
+              });
             }
 
             // The backend API may return null for the proctoringEscalationEmail value, which is the default.

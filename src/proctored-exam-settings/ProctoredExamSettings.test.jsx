@@ -466,18 +466,22 @@ describe('ProctoredExamSettings', () => {
     it('Does not include lti_external as a selectable option', async () => {
       const courseData = mockGetFutureCourseData;
       courseData.available_proctoring_providers = ['lti_external', 'proctortrack', 'mockproc'];
-      setupApp();
       mockCourseData(courseData);
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
+      await waitFor(() => {
+        screen.getByDisplayValue('mockproc');
+      });
       expect(screen.queryByTestId('lti_external')).toBeNull();
     });
 
     it('Includes lti proctoring provider options when lti_external is allowed by studio', async () => {
       const courseData = mockGetFutureCourseData;
       courseData.available_proctoring_providers = ['lti_external', 'proctortrack', 'mockproc'];
-      setupApp();
       mockCourseData(courseData);
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
+      await waitFor(() => {
+        screen.getByDisplayValue('mockproc');
+      });
       const providerOption = screen.getByTestId('test_lti');
       // as as admin the provider should not be disabled
       expect(providerOption.hasAttribute('disabled')).toEqual(false);
@@ -489,13 +493,15 @@ describe('ProctoredExamSettings', () => {
       }, 'CourseAuthoringConfig');
 
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
+      await waitFor(() => {
+        screen.getByDisplayValue('mockproc');
+      });
       // only outgoing request should be for studio settings
       expect(axiosMock.history.get.length).toBe(1);
       expect(axiosMock.history.get[0].url.includes('proctored_exam_settings')).toEqual(true);
     });
 
     it('Selected LTI proctoring provider is shown on page load', async () => {
-      setupApp();
       const courseData = { ...mockGetFutureCourseData };
       courseData.available_proctoring_providers = ['lti_external', 'proctortrack', 'mockproc'];
       courseData.proctored_exam_settings.proctoring_provider = 'lti_external';
@@ -506,9 +512,12 @@ describe('ProctoredExamSettings', () => {
         provider: 'test_lti',
       });
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
+      await waitFor(() => {
+        screen.getByText('Proctoring Provider');
+      });
 
       // make sure test_lti is the selected provider
-      expect(screen.queryByDisplayValue('LTI Provider')).not.toBeNull();
+      expect(screen.getByDisplayValue('LTI Provider')).toBeInTheDocument();
     });
   });
 
@@ -852,6 +861,9 @@ describe('ProctoredExamSettings', () => {
 
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       // Make a change to the proctoring provider
+      await waitFor(() => {
+        screen.getByDisplayValue('mockproc');
+      });
       const selectElement = screen.getByDisplayValue('mockproc');
       await act(async () => {
         fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
