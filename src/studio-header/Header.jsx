@@ -13,6 +13,7 @@ import {
 
 import DesktopHeader from './DesktopHeader';
 import MobileHeader from './MobileHeader';
+import { StudioHeader } from '@edx/frontend-component-header';
 import messages from './Header.messages';
 
 import StudioLogoSVG from './assets/studio-logo.svg';
@@ -166,14 +167,15 @@ function Header({
     userMenu,
   };
   return (
-    <>
-      <Responsive maxWidth={768}>
-        <MobileHeader {...props} />
-      </Responsive>
-      <Responsive minWidth={769}>
-        <DesktopHeader {...props} />
-      </Responsive>
-    </>
+    // <>
+    //   <Responsive maxWidth={768}>
+    //     <MobileHeader {...props} />
+    //   </Responsive>
+    //   <Responsive minWidth={769}>
+    //     <DesktopHeader {...props} />
+    //   </Responsive>
+    // </>
+    <StudioHeader />
   );
 }
 

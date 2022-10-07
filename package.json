@@ -36,6 +36,7 @@
     "@edx/brand": "npm:@edx/brand-openedx@1.1.0",
     "@edx/frontend-build": "^11.0.0",
     "@edx/frontend-component-footer": "11.1.1",
+    "@edx/frontend-component-header": "github:brian-smith-tcril/frontend-component-header#studio-header-for-prs",
     "@edx/frontend-lib-content-components": "^1.43.0",
     "@edx/frontend-platform": "2.5.1",
     "@edx/paragon": "20.6.1",
