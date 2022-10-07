@@ -545,7 +545,7 @@ function ProctoredExamSettings({ courseId, intl }) {
         )
         .catch(
           error => {
-            if (error.response.status === 403) {
+            if (error.response?.status === 403) {
               setLoadingPermissionError(true);
             } else {
               setLoadingConnectionError(true);

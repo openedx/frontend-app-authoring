@@ -33,7 +33,7 @@ const intlWrapper = children => (
 describe('ProctoredExamSettings', () => {
   function setupApp(isAdmin = true) {
     mergeConfig({
-      EXAMS_BASE_URL: process.env.EXAMS_BASE_URL || null,
+      EXAMS_BASE_URL: 'http://exams.testing.co',
     }, 'CourseAuthoringConfig');
 
     initializeMockApp({
