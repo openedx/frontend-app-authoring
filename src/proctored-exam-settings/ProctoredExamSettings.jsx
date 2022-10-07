@@ -37,7 +37,7 @@ function ProctoredExamSettings({ courseId, intl }) {
   const [allowLtiProviders, setAllowLtiProviders] = useState(false);
   const [proctoringProvider, setProctoringProvider] = useState('');
   const [availableProctoringProviders, setAvailableProctoringProviders] = useState([]);
-  const [availableLtiProctoringProviders, setAvailableLtiProctoringProviders] = useState([]);
+  const [ltiProctoringProviders, setLtiProctoringProviders] = useState([]);
   const [proctortrackEscalationEmail, setProctortrackEscalationEmail] = useState('');
   const [createZendeskTickets, setCreateZendeskTickets] = useState(false);
   const [courseStartDate, setCourseStartDate] = useState('');
@@ -93,7 +93,7 @@ function ProctoredExamSettings({ courseId, intl }) {
   }
 
   function isLtiProvider(provider) {
-    return availableLtiProctoringProviders.some(p => p.name === provider);
+    return ltiProctoringProviders.some(p => p.name === provider);
   }
 
   function postSettingsBackToServer() {
@@ -192,15 +192,20 @@ function ProctoredExamSettings({ courseId, intl }) {
     return markDisabled;
   }
 
+  function getProviderDisplayLabel(provider) {
+    // if a display label exists for this provider return it
+    return ltiProctoringProviders.find(p => p.name === provider)?.verbose_name || provider;
+  }
+
   function getProctoringProviderOptions(providers) {
     return providers.map(provider => (
       <option
-        key={provider.name}
-        value={provider.name}
-        disabled={isDisabledOption(provider.name)}
-        data-testid={provider.name}
+        key={provider}
+        value={provider}
+        disabled={isDisabledOption(provider)}
+        data-testid={provider}
       >
-        {provider.verbose_name}
+        {getProviderDisplayLabel(provider)}
       </option>
     ));
   }
@@ -313,12 +318,11 @@ function ProctoredExamSettings({ courseId, intl }) {
           </Form.Label>
           <Form.Control
             as="select"
-            value={proctoringProvider.name}
+            value={proctoringProvider}
             onChange={onProctoringProviderChange}
             aria-describedby="proctoringProviderHelpText"
           >
             {getProctoringProviderOptions(availableProctoringProviders)}
-            {getProctoringProviderOptions(availableLtiProctoringProviders)}
           </Form.Control>
           <Form.Text id="proctoringProviderHelpText">
             {cannotEditProctoringProvider() ? intl.formatMessage(messages['authoring.examsettings.provider.help.aftercoursestart']) : intl.formatMessage(messages['authoring.examsettings.provider.help'])}
@@ -510,32 +514,23 @@ function ProctoredExamSettings({ courseId, intl }) {
             setShowProctortrackEscalationEmail(isProctortrack);
 
             // The list of providers returned by studio settings are the default behavior. If lti_external
-            // is available as an option display the list of LTI providers available on the exam service.
-            // 'lti_external' indicates an LTI provider configured outside of edx-platform. It is not directly
-            // selectable.
+            // is available as an option display the list of LTI providers returned by the exam service.
+            // Setting 'lti_external' in studio indicates an LTI provider configured outside of edx-platform.
+            // This option is not directly selectable.
             const proctoringProvidersStudio = settingsResponse.data.available_proctoring_providers;
-            const proctoringProvidersLti = ltiProvidersResponse?.data;
-            const ltiAvailable = proctoringProvidersStudio.includes('lti_external');
-            setAllowLtiProviders(ltiAvailable);
-            if (proctoringProvidersLti && ltiAvailable) {
-              setAvailableLtiProctoringProviders(proctoringProvidersLti);
-            }
+            const proctoringProvidersLti = ltiProvidersResponse?.data || [];
+            setAllowLtiProviders(proctoringProvidersStudio.includes('lti_external'));
+            setLtiProctoringProviders(proctoringProvidersLti);
+            // flatten provider objects and coalesce values to just the provider key
             setAvailableProctoringProviders(
-              proctoringProvidersStudio
-              .filter(value => value !== 'lti_external')
-              .map(provider => ({
-                  name: provider,
-                  verbose_name: provider,
-                })),
+              proctoringProvidersLti.reduce((res, p) => [...res, p.name], []).concat(
+                proctoringProvidersStudio.filter(value => value !== 'lti_external'),
+              ),
             );
             if (proctoredExamSettings.proctoring_provider === 'lti_external') {
-              const selectedLtiProvder = examConfigResponse.data.provider;
-              setProctoringProvider(proctoringProvidersLti.find(provider => provider.name === selectedLtiProvder));
+              setProctoringProvider(examConfigResponse.data.provider);
             } else {
-              setProctoringProvider({
-                name: proctoredExamSettings.proctoring_provider,
-                verbose_name: proctoredExamSettings.proctoring_provider,
-              });
+              setProctoringProvider(proctoredExamSettings.proctoring_provider);
             }
 
             // The backend API may return null for the proctoringEscalationEmail value, which is the default.
