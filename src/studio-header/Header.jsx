@@ -166,6 +166,13 @@ function Header({
     mainMenu,
     userMenu,
   };
+
+  const actionRowContent = (
+    <>
+      {courseLockUp}
+    </>
+  )
+
   return (
     // <>
     //   <Responsive maxWidth={768}>
@@ -175,7 +182,7 @@ function Header({
     //     <DesktopHeader {...props} />
     //   </Responsive>
     // </>
-    <StudioHeader />
+    <StudioHeader actionRowContent={actionRowContent}/>
   );
 }
 
