@@ -523,7 +523,7 @@ function ProctoredExamSettings({ courseId, intl }) {
             setLtiProctoringProviders(proctoringProvidersLti);
             // flatten provider objects and coalesce values to just the provider key
             setAvailableProctoringProviders(
-              proctoringProvidersLti.reduce((res, p) => [...res, p.name], []).concat(
+              proctoringProvidersLti.reduce((result, provider) => [...result, provider.name], []).concat(
                 proctoringProvidersStudio.filter(value => value !== 'lti_external'),
               ),
             );
