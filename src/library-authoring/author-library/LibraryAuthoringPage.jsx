@@ -8,11 +8,12 @@ import {
   IconButton,
   Card,
   Navbar,
-  Modal,
   Dropdown,
   SearchField,
   Form,
   Pagination,
+  ModalDialog,
+  ActionRow,
 } from '@edx/paragon';
 import { Edit } from '@edx/paragon/icons';
 import { v4 as uuid4 } from 'uuid';
@@ -85,7 +86,7 @@ export const BlockPreviewBase = ({
     <Navbar className="border">
       <Navbar.Brand>{block.display_name}</Navbar.Brand>
       <Navbar.Collapse className="justify-content-end">
-        { library.allow_lti && (
+        {library.allow_lti && (
           <>
             <Button disabled={isLtiUrlGenerating} size="lg" className="mr-1" onClick={() => { props.fetchBlockLtiUrl({ blockId: block.id }); }}>
               <FontAwesomeIcon icon={faClipboard} className="pr-1" />
@@ -109,25 +110,29 @@ export const BlockPreviewBase = ({
         </Button>
       </Navbar.Collapse>
     </Navbar>
-    <Modal
-      open={showDeleteModal}
-      title={intl.formatMessage(messages['library.detail.block.delete.modal.title'])}
+    <ModalDialog
+      isOpen={showDeleteModal}
       onClose={() => setShowDeleteModal(false)}
-      body={(
-        <div>
-          <p>
-            {intl.formatMessage(messages['library.detail.block.delete.modal.body'])}
-          </p>
-        </div>
-      )}
-      buttons={[
-        <Button
-          onClick={() => props.deleteLibraryBlock({ blockId: block.id })}
-        >
-          {intl.formatMessage(commonMessages['library.common.forms.button.yes'])}
-        </Button>,
-      ]}
-    />
+    >
+      <ModalDialog.Header>
+        <ModalDialog.Title>
+          {intl.formatMessage(messages['library.detail.block.delete.modal.title'])}
+        </ModalDialog.Title>
+      </ModalDialog.Header>
+      <ModalDialog.Body>
+        {intl.formatMessage(messages['library.detail.block.delete.modal.body'])}
+      </ModalDialog.Body>
+      <ModalDialog.Footer>
+        <ActionRow>
+          <ModalDialog.CloseButton variant="link">
+            Close
+          </ModalDialog.CloseButton>
+          <Button onClick={() => props.deleteLibraryBlock({ blockId: block.id })} variant="primary">
+            {intl.formatMessage(commonMessages['library.common.forms.button.yes'])}
+          </Button>
+        </ActionRow>
+      </ModalDialog.Footer>
+    </ModalDialog>
     {showPreviews && (
       <Card>
         <Card.Body>
@@ -280,7 +285,7 @@ const ButtonTogglesBase = ({
     </Button>
     <Button variant="primary" className="ml-1" onClick={() => setShowPreviews(!showPreviews)} size="lg">
       <FontAwesomeIcon icon={faSync} className="pr-1" />
-      { intl.formatMessage(showPreviews ? messages['library.detail.hide_previews'] : messages['library.detail.show_previews']) }
+      {intl.formatMessage(showPreviews ? messages['library.detail.hide_previews'] : messages['library.detail.show_previews'])}
     </Button>
   </>
 );
@@ -499,16 +504,16 @@ export const LibraryAuthoringPageBase = ({
                 : null}
               <Col xs={12} className="text-center py-3 add-buttons-container">
                 {library.type !== LIBRARY_TYPES.COMPLEX && (
-                <Button
-                  variant="success"
-                  size="lg"
-                  disabled={sending}
-                  onClick={() => addBlock(library.type)}
-                  className="cta-button"
-                >
-                  <FontAwesomeIcon icon={faPlus} className="pr-1" />
-                  {intl.formatMessage(messages[`library.detail.add_${library.type}`])}
-                </Button>
+                  <Button
+                    variant="success"
+                    size="lg"
+                    disabled={sending}
+                    onClick={() => addBlock(library.type)}
+                    className="cta-button"
+                  >
+                    <FontAwesomeIcon icon={faPlus} className="pr-1" />
+                    {intl.formatMessage(messages[`library.detail.add_${library.type}`])}
+                  </Button>
                 )}
                 {library.type === LIBRARY_TYPES.COMPLEX && (
                   <Row>
