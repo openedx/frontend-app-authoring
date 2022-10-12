@@ -35,6 +35,14 @@ export const courseImages = ({ studioEndpointUrl, learningContextId }) => (
   `${courseAssets({ studioEndpointUrl, learningContextId })}?sort=uploadDate&direction=desc&asset_type=Images`
 );
 
+export const allowThumbnailUpload = ({ studioEndpointUrl }) => (
+  `${studioEndpointUrl}/video_images_upload_enabled`
+);
+
+export const thumbnailUpload = ({ studioEndpointUrl, learningContextId, videoId }) => (
+  `${studioEndpointUrl}/video_images/${learningContextId}/${videoId}`
+);
+
 export const videoTranscripts = ({ studioEndpointUrl, blockId }) => (
   `${block({ studioEndpointUrl, blockId })}/handler/studio_transcript/translation`
 );

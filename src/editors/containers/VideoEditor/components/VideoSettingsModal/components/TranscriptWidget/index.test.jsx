@@ -20,7 +20,7 @@ jest.mock('../../../../../../data/redux', () => ({
   },
   thunkActions: {
     video: {
-      deleteTranscript: jest.fn().mockName('actions.video.deleteTranscript'),
+      deleteTranscript: jest.fn().mockName('thunkActions.video.deleteTranscript'),
     },
   },
 

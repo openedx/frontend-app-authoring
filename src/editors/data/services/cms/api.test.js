@@ -131,6 +131,7 @@ describe('cms api', () => {
             edx_video_id: edxVideoId,
             html5_sources: html5Sources,
             youtube_id_1_0: youtubeId,
+            thumbnail: content.thumbnail,
             download_track: content.allowTranscriptDownloads,
             track: '',
             show_captions: content.showTranscriptByDefault,

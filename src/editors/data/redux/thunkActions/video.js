@@ -7,6 +7,7 @@ export const loadVideoData = () => (dispatch, getState) => {
   const rawVideoData = state.app.blockValue.data.metadata ? state.app.blockValue.data.metadata : {};
   const {
     videoSource,
+    videoType,
     videoId,
     fallbackVideos,
   } = module.determineVideoSource({
@@ -14,12 +15,12 @@ export const loadVideoData = () => (dispatch, getState) => {
     youtubeId: rawVideoData.youtube_id_1_0,
     html5Sources: rawVideoData.html5_sources,
   });
-
   // we don't appear to want to parse license version
   const [licenseType, licenseOptions] = module.parseLicense(rawVideoData.license);
 
   dispatch(actions.video.load({
     videoSource,
+    videoType,
     videoId,
     fallbackVideos,
     allowVideoDownloads: rawVideoData.download_video,
@@ -39,6 +40,12 @@ export const loadVideoData = () => (dispatch, getState) => {
       noDerivatives: licenseOptions.nd,
       shareAlike: licenseOptions.sa,
     },
+    thumbnail: rawVideoData.thumbnail,
+  }));
+  dispatch(requests.allowThumbnailUpload({
+    onSuccess: (response) => dispatch(actions.video.updateField({
+      allowThumbnailUpload: response.data.allowThumbnailUpload,
+    })),
   }));
 };
 
@@ -52,25 +59,30 @@ export const determineVideoSource = ({
   const youtubeUrl = `https://youtu.be/${youtubeId}`;
   const videoId = edxVideoId || '';
   let videoSource = '';
+  let videoType = '';
   let fallbackVideos = [];
-  if (edxVideoId) {
-    [videoSource, fallbackVideos] = [edxVideoId, html5Sources];
-    // videoSource = edxVideoId;
-    // fallbackVideos = html5Sources;
-  } else if (youtubeId) {
-    [videoSource, fallbackVideos] = [youtubeUrl, html5Sources];
+  if (youtubeId) {
     // videoSource = youtubeUrl;
     // fallbackVideos = html5Sources;
+    [videoSource, fallbackVideos] = [youtubeUrl, html5Sources];
+    videoType = 'youtube';
+  } else if (edxVideoId) {
+    // videoSource = edxVideoId;
+    // fallbackVideos = html5Sources;
+    [videoSource, fallbackVideos] = [edxVideoId, html5Sources];
+    videoType = 'edxVideo';
   } else if (Array.isArray(html5Sources) && html5Sources[0]) {
-    [videoSource, fallbackVideos] = [html5Sources[0], html5Sources.slice(1)];
     // videoSource = html5Sources[0];
     // fallbackVideos = html5Sources.slice(1);
+    [videoSource, fallbackVideos] = [html5Sources[0], html5Sources.slice(1)];
+    videoType = 'html5source';
   }
   if (fallbackVideos.length === 0) {
     fallbackVideos = ['', ''];
   }
   return {
     videoSource,
+    videoType,
     videoId,
     fallbackVideos,
   };
@@ -144,9 +156,27 @@ export const parseLicense = (license) => {
   return [licenseType, options, version];
 };
 
-export const saveVideoData = () => () => {
+export const saveVideoData = () => (dispatch, getState) => {
   // dispatch(actions.app.setBlockContent)
   // dispatch(requests.saveBlock({ });
+  const state = getState();
+  return selectors.video.videoSettings(state);
+};
+
+export const uploadThumbnail = ({ thumbnail }) => (dispatch, getState) => {
+  const state = getState();
+  const { videoId } = state.video;
+  const { studioEndpointUrl } = state.app;
+  dispatch(requests.uploadThumbnail({
+    thumbnail,
+    videoId,
+    onSuccess: (response) => {
+      const thumbnailUrl = studioEndpointUrl + response.data.image_url;
+      dispatch(actions.video.updateField({
+        thumbnail: thumbnailUrl,
+      }));
+    },
+  }));
 };
 
 // Transcript Thunks:
@@ -221,6 +251,7 @@ export default {
   determineVideoSource,
   parseLicense,
   saveVideoData,
+  uploadThumbnail,
   uploadTranscript,
   deleteTranscript,
   replaceTranscript,

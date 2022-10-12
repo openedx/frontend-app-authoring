@@ -1,4 +1,5 @@
 import { useState, createContext } from 'react';
+import { thunkActions } from '../../data/redux';
 
 import { StrictDict } from '../../utils';
 import * as module from './hooks';
@@ -42,3 +43,6 @@ export const errorsHook = () => {
     },
   };
 };
+export const fetchVideoContent = () => ({ dispatch }) => (
+  dispatch(thunkActions.video.saveVideoData())
+);

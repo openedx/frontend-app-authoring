@@ -10,6 +10,11 @@ exports[`TextEditor snapshots ImageUploadModal is not rendered 1`] = `
             "value": "something",
           },
         },
+        "images": Object {
+          "sOmEuiMAge": Object {
+            "staTICUrl": "/assets/sOmEuiMAge",
+          },
+        },
         "isRaw": false,
       },
     }
@@ -77,6 +82,11 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
         "editorRef": Object {
           "current": Object {
             "value": "something",
+          },
+        },
+        "images": Object {
+          "sOmEuiMAge": Object {
+            "staTICUrl": "/assets/sOmEuiMAge",
           },
         },
         "isRaw": false,
@@ -169,6 +179,11 @@ exports[`TextEditor snapshots loaded, raw editor 1`] = `
             "value": "something",
           },
         },
+        "images": Object {
+          "sOmEuiMAge": Object {
+            "staTICUrl": "/assets/sOmEuiMAge",
+          },
+        },
         "isRaw": true,
       },
     }
@@ -250,6 +265,11 @@ exports[`TextEditor snapshots not yet loaded, Spinner appears 1`] = `
             "value": "something",
           },
         },
+        "images": Object {
+          "sOmEuiMAge": Object {
+            "staTICUrl": "/assets/sOmEuiMAge",
+          },
+        },
         "isRaw": false,
       },
     }
@@ -322,6 +342,11 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
         "editorRef": Object {
           "current": Object {
             "value": "something",
+          },
+        },
+        "images": Object {
+          "sOmEuiMAge": Object {
+            "staTICUrl": "/assets/sOmEuiMAge",
           },
         },
         "isRaw": false,

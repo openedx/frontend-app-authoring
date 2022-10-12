@@ -29,6 +29,24 @@ export const apiMethods = {
       data,
     );
   },
+  allowThumbnailUpload: ({
+    studioEndpointUrl,
+  }) => get(
+    urls.allowThumbnailUpload({ studioEndpointUrl }),
+  ),
+  uploadThumbnail: ({
+    studioEndpointUrl,
+    learningContextId,
+    videoId,
+    thumbnail,
+  }) => {
+    const data = new FormData();
+    data.append('file', thumbnail);
+    return post(
+      urls.thumbnailUpload({ studioEndpointUrl, learningContextId, videoId }),
+      data,
+    );
+  },
   deleteTranscript: ({
     studioEndpointUrl,
     language,
@@ -95,6 +113,7 @@ export const apiMethods = {
           edx_video_id: edxVideoId,
           html5_sources: html5Sources,
           youtube_id_1_0: youtubeId,
+          thumbnail: content.thumbnail,
           download_track: content.allowTranscriptDownloads,
           track: '', // TODO Downloadable Transcript URL. Backend expects a file name, for example: "something.srt"
           show_captions: content.showTranscriptByDefault,
@@ -149,7 +168,9 @@ export const processVideoIds = ({ videoSource, fallbackVideos }) => {
     html5Sources.push(videoSource);
   }
 
-  fallbackVideos.forEach((src) => (src ? html5Sources.push(src) : null));
+  if (fallbackVideos) {
+    fallbackVideos.forEach((src) => (src ? html5Sources.push(src) : null));
+  }
 
   return {
     edxVideoId,

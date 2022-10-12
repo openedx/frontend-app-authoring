@@ -23,17 +23,18 @@ export const videoDataProps = {
     noDerivatives: PropTypes.bool,
     shareAlike: PropTypes.bool,
   }),
+  originalThumbnail: PropTypes.string,
 };
 
 export const singleVideoData = {
   videoSource: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-  videoId: 'f36f06b5-92e5-47c7-bb26-bcf986799cb7',
+  videoId: '7c12381b-6503-4d52-82bd-6ad01b902220',
   fallbackVideos: [
     'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
   ],
   allowVideoDownloads: true,
-  thumbnail: 'my-thumbnail-file-url', // filename
+  thumbnail: 'someString', // filename
   transcripts: {
     en: { filename: 'my-transcript-url' },
   },
@@ -52,4 +53,5 @@ export const singleVideoData = {
     noDerivatives: false,
     shareAlike: false,
   },
+  originalThumbnail: 'someString',
 };

@@ -28,6 +28,8 @@ jest.mock('../../services/cms/api', () => ({
   fetchImages: ({ id, url }) => ({ id, url }),
   uploadImage: (args) => args,
   loadImages: jest.fn(),
+  allowThumbnailUpload: jest.fn(),
+  uploadThumbnail: jest.fn(),
   uploadTranscript: jest.fn(),
   deleteTranscript: jest.fn(),
 }));
@@ -277,6 +279,39 @@ describe('requests thunkActions module', () => {
           promise: api.uploadImage({
             learningContextId: selectors.app.learningContextId(testState),
             image,
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          }),
+        },
+      });
+    });
+    describe('allowThumbnailUpload', () => {
+      testNetworkRequestAction({
+        action: requests.allowThumbnailUpload,
+        args: { ...fetchParams },
+        expectedString: 'with allowThumbnailUpload promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.allowThumbnailUpload,
+          promise: api.allowThumbnailUpload({
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          }),
+        },
+      });
+    });
+    describe('uploadThumbnail', () => {
+      const thumbnail = 'SoME tHumbNAil CoNtent As String';
+      const videoId = 'SoME VidEOid CoNtent As String';
+      testNetworkRequestAction({
+        action: requests.uploadThumbnail,
+        args: { thumbnail, videoId, ...fetchParams },
+        expectedString: 'with uploadThumbnail promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.uploadThumbnail,
+          promise: api.uploadThumbnail({
+            learningContextId: selectors.app.learningContextId(testState),
+            thumbnail,
+            videoId,
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
           }),
         },

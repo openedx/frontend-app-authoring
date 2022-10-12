@@ -96,6 +96,18 @@ describe('TextEditor hooks', () => {
       });
     });
 
+    describe('setAssetToStaticUrl', () => {
+      it('returns content with updated img links', () => {
+        const editorValue = '<img src="/asset@asset-block/soMEImagEURl1"/> <img src="/asset@soMEImagEURl" />';
+        const images = [
+          { portableUrl: '/static/soMEImagEURl', displayName: 'soMEImagEURl' },
+          { portableUrl: '/static/soMEImagEURl1', displayName: 'soMEImagEURl1' },
+        ];
+        const content = module.setAssetToStaticUrl({ editorValue, images });
+        expect(content).toEqual('<img src="/static/soMEImagEURl1"/> <img src="/static/soMEImagEURl" />');
+      });
+    });
+
     describe('checkRelativeUrl', () => {
       test('it calls editor.on', () => {
         const editor = { on: jest.fn() };
@@ -249,9 +261,10 @@ describe('TextEditor hooks', () => {
           },
         },
       };
+      const images = {};
       test('returns correct ontent based on isRaw', () => {
-        expect(module.getContent({ editorRef, isRaw: false })()).toEqual(visualContent);
-        expect(module.getContent({ editorRef, isRaw: true })()).toEqual(rawContent);
+        expect(module.getContent({ editorRef, isRaw: false, images })()).toEqual(visualContent);
+        expect(module.getContent({ editorRef, isRaw: true, images })()).toEqual(rawContent);
       });
     });
 

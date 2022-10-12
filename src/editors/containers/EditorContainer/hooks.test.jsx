@@ -26,20 +26,6 @@ jest.mock('../../hooks', () => ({
 
 const dispatch = jest.fn();
 describe('EditorContainer hooks', () => {
-  describe('non-state hooks', () => {
-    describe('replaceStaticwithAsset', () => {
-      it('returns content with updated img links', () => {
-        const getContent = jest.fn(() => '<img src="/asset@asset-block/soMEImagEURl1"/> <img src="/asset@soMEImagEURl" />');
-        const images = [
-          { portableUrl: '/static/soMEImagEURl', displayName: 'soMEImagEURl' },
-          { portableUrl: '/static/soMEImagEURl1', displayName: 'soMEImagEURl1' },
-        ];
-        const content = hooks.setAssetToStaticUrl(images, getContent);
-        expect(getContent).toHaveBeenCalled();
-        expect(content).toEqual('<img src="/static/soMEImagEURl1"/> <img src="/static/soMEImagEURl" />');
-      });
-    });
-  });
   describe('forwarded hooks', () => {
     it('forwards navigateCallback from app hooks', () => {
       expect(hooks.navigateCallback).toEqual(appHooks.navigateCallback);

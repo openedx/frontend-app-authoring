@@ -173,11 +173,44 @@ export const prepareEditorRef = () => {
   return { editorRef, refReady, setEditorRef };
 };
 
-export const getContent = ({ editorRef, isRaw }) => () => {
-  if (isRaw && editorRef && editorRef.current) {
-    return editorRef.current.state.doc.toString();
-  }
-  return editorRef.current?.getContent();
+export const setAssetToStaticUrl = ({ editorValue, images }) => {
+  /* For assets to remain usable across course instances, we convert their url to be course-agnostic.
+   * For example, /assets/course/<asset hash>/filename gets converted to /static/filename. This is
+   * important for rerunning courses and importing/exporting course as the /static/ part of the url
+   * allows the asset to be mapped to the new course run.
+  */
+  let content = editorValue;
+  const imageUrls = [];
+  const imgsArray = Object.values(images);
+  imgsArray.forEach(image => {
+    imageUrls.push({ portableUrl: image.portableUrl, displayName: image.displayName });
+  });
+  const imageSrcs = typeof content === 'string' ? content.split('src="') : [];
+  imageSrcs.forEach(src => {
+    if (src.startsWith('/asset') && imageUrls.length > 0) {
+      const nameFromEditorSrc = src.substring(src.lastIndexOf('@') + 1, src.indexOf('"'));
+      const nameFromStudioSrc = nameFromEditorSrc.substring(nameFromEditorSrc.indexOf('/') + 1);
+      let portableUrl;
+      imageUrls.forEach((url) => {
+        if (url.displayName === nameFromEditorSrc || url.displayName === nameFromStudioSrc) {
+          portableUrl = url.portableUrl;
+        }
+      });
+      if (portableUrl) {
+        const currentSrc = src.substring(0, src.indexOf('"'));
+        const updatedContent = content.replace(currentSrc, portableUrl);
+        content = updatedContent;
+      }
+    }
+  });
+  return content;
+};
+
+export const getContent = ({ editorRef, isRaw, images }) => () => {
+  const content = (isRaw && editorRef && editorRef.current
+    ? editorRef.current.state.doc.toString()
+    : editorRef.current?.getContent());
+  return setAssetToStaticUrl({ editorValue: content, images });
 };
 
 export const fetchImageUrls = (images) => {

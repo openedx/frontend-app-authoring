@@ -134,7 +134,27 @@ export const fetchImages = ({ ...rest }) => (dispatch, getState) => {
     ...rest,
   }));
 };
-
+export const allowThumbnailUpload = ({ ...rest }) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.allowThumbnailUpload,
+    promise: api.allowThumbnailUpload({
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+    }),
+    ...rest,
+  }));
+};
+export const uploadThumbnail = ({ thumbnail, videoId, ...rest }) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.uploadThumbnail,
+    promise: api.uploadThumbnail({
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      learningContextId: selectors.app.learningContextId(getState()),
+      thumbnail,
+      videoId,
+    }),
+    ...rest,
+  }));
+};
 export const deleteTranscript = ({ language, videoId, ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
     requestKey: RequestKeys.deleteTranscript,
@@ -174,6 +194,8 @@ export default StrictDict({
   fetchUnit,
   saveBlock,
   uploadImage,
+  allowThumbnailUpload,
+  uploadThumbnail,
   deleteTranscript,
   uploadTranscript,
 });

@@ -1,9 +1,31 @@
+import { dispatch } from 'react-redux';
+import { thunkActions } from '../../data/redux';
 import { MockUseState } from '../../../testUtils';
 
 import * as module from './hooks';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
+  useRef: jest.fn(val => ({ current: val })),
+  useEffect: jest.fn(),
+  useCallback: (cb, prereqs) => ({ cb, prereqs }),
+}));
+
+jest.mock('react-redux', () => {
+  const dispatchFn = jest.fn();
+  return {
+    ...jest.requireActual('react-redux'),
+    dispatch: dispatchFn,
+    useDispatch: jest.fn(() => dispatchFn),
+  };
+});
+
+jest.mock('../../data/redux', () => ({
+  thunkActions: {
+    video: {
+      saveVideoData: jest.fn(),
+    },
+  },
 }));
 
 const state = new MockUseState(module);
@@ -71,6 +93,12 @@ describe('VideoEditorHooks', () => {
         hook = module.errorsHook();
         expect(hook.validateEntry()).toEqual(false);
       });
+    });
+  });
+  describe('fetchVideoContent', () => {
+    it('equals dispatch(thunkActions.video.saveVideoData())', () => {
+      hook = module.fetchVideoContent()({ dispatch });
+      expect(hook).toEqual(dispatch(thunkActions.video.saveVideoData()));
     });
   });
 });

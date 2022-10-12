@@ -88,7 +88,7 @@ export const TextEditor = ({
 
   return (
     <EditorContainer
-      getContent={hooks.getContent({ editorRef, isRaw })}
+      getContent={hooks.getContent({ editorRef, isRaw, images })}
       onClose={onClose}
     >
       <div className="editor-body h-75 overflow-auto">

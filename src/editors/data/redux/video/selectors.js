@@ -25,6 +25,8 @@ export const simpleSelectors = [
   stateKeys.handout,
   stateKeys.licenseType,
   stateKeys.licenseDetails,
+  stateKeys.allowThumbnailUpload,
+  stateKeys.videoType,
 ].reduce((obj, key) => ({ ...obj, [key]: state => state.video[key] }), {});
 
 export const openLanguages = createSelector(
@@ -52,6 +54,7 @@ export const getTranscriptDownloadUrl = createSelector(
 export const videoSettings = createSelector(
   [
     module.simpleSelectors.videoSource,
+    module.simpleSelectors.videoId,
     module.simpleSelectors.fallbackVideos,
     module.simpleSelectors.allowVideoDownloads,
     module.simpleSelectors.thumbnail,
@@ -65,6 +68,7 @@ export const videoSettings = createSelector(
   ],
   (
     videoSource,
+    videoId,
     fallbackVideos,
     allowVideoDownloads,
     thumbnail,
@@ -78,6 +82,7 @@ export const videoSettings = createSelector(
   ) => (
     {
       videoSource,
+      videoId,
       fallbackVideos,
       allowVideoDownloads,
       thumbnail,

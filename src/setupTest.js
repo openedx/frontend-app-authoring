@@ -102,6 +102,7 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
     Group: 'Form.Group',
     Label: 'Form.Label',
     Text: 'Form.Text',
+    Row: 'Form.Row',
   },
   FullscreenModal: 'FullscreenModal',
   Scrollable: 'Scrollable',
