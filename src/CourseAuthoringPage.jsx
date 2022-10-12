@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   useLocation,
 } from 'react-router-dom';
-import Header from './studio-header/Header';
+import HeaderWrapper from './studio-header-wrapper/HeaderWrapper';
 import { fetchCourseDetail } from './data/thunks';
 import { useModel } from './generic/model-store';
 import PermissionDeniedAlert from './generic/PermissionDeniedAlert';
@@ -36,7 +36,7 @@ export default function CourseAuthoringPage({ courseId, children }) {
   }
 
   const AppHeader = () => (
-    <Header
+    <HeaderWrapper
       courseNumber={courseNumber}
       courseOrg={courseOrg}
       courseTitle={courseTitle}

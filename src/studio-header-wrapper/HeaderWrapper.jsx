@@ -11,7 +11,7 @@ import {
 } from '@edx/frontend-platform/i18n';
 
 import { StudioHeader } from '@edx/frontend-component-header';
-import messages from './Header.messages';
+import messages from './HeaderWrapper.messages';
 
 
 ensureConfig([
@@ -20,7 +20,7 @@ ensureConfig([
   'LOGIN_URL',
 ], 'Header component');
 
-function Header({
+function HeaderWrapper({
   courseId, courseNumber, courseOrg, courseTitle, intl,
 }) {
   const { config } = useContext(AppContext);
@@ -98,7 +98,7 @@ function Header({
   );
 }
 
-Header.propTypes = {
+HeaderWrapper.propTypes = {
   courseId: PropTypes.string.isRequired,
   courseNumber: PropTypes.string,
   courseOrg: PropTypes.string,
@@ -106,9 +106,9 @@ Header.propTypes = {
   intl: intlShape.isRequired,
 };
 
-Header.defaultProps = {
+HeaderWrapper.defaultProps = {
   courseNumber: null,
   courseOrg: null,
 };
 
-export default injectIntl(Header);
+export default injectIntl(HeaderWrapper);
