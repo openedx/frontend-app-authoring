@@ -101,18 +101,6 @@ function Header({
     },
   ];
 
-  const studioHomeItem = {
-    type: 'item',
-    href: config.STUDIO_BASE_URL,
-    content: intl.formatMessage(messages['header.user.menu.studio']),
-  };
-
-  const logoutItem = {
-    type: 'item',
-    href: config.LOGOUT_URL,
-    content: intl.formatMessage(messages['header.user.menu.logout']),
-  };
-
   const courseLockUp = (
     <OverlayTrigger
       placement="bottom"
