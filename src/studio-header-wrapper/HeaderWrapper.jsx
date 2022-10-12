@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import { AppContext } from '@edx/frontend-platform/react';
 import { ensureConfig } from '@edx/frontend-platform';
-import { Dropdown, OverlayTrigger, Tooltip } from '@edx/paragon';
+import { ActionRow, Dropdown, OverlayTrigger, Tooltip } from '@edx/paragon';
 import {
   injectIntl,
   intlShape,
@@ -28,7 +28,7 @@ function HeaderWrapper({
   const mainMenu = (
     <>
       <Dropdown>
-        <Dropdown.Toggle variant="outline-primary" id="library-header-menu-dropdown">
+        <Dropdown.Toggle variant="primary" id="library-header-menu-dropdown">
           {intl.formatMessage(messages['header.links.content'])}
         </Dropdown.Toggle>
         <Dropdown.Menu>
@@ -89,7 +89,9 @@ function HeaderWrapper({
   const actionRowContent = (
     <>
       {courseLockUp}
+      <ActionRow.Spacer />
       {mainMenu}
+      <ActionRow.Spacer />
     </>
   )
 
