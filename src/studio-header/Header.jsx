@@ -113,27 +113,6 @@ function Header({
     content: intl.formatMessage(messages['header.user.menu.logout']),
   };
 
-  let userMenu = [];
-
-  if (authenticatedUser !== null) {
-    if (authenticatedUser.administrator) {
-      userMenu = [
-        studioHomeItem,
-        {
-          type: 'item',
-          href: `${config.STUDIO_BASE_URL}/maintenance`,
-          content: intl.formatMessage(messages['header.user.menu.maintenance']),
-        },
-        logoutItem,
-      ];
-    } else {
-      userMenu = [
-        studioHomeItem,
-        logoutItem,
-      ];
-    }
-  }
-
   const courseLockUp = (
     <OverlayTrigger
       placement="bottom"
@@ -154,18 +133,18 @@ function Header({
     </OverlayTrigger>
   );
 
-  const props = {
-    logo: StudioLogoSVG,
-    logoAltText: 'Studio edX',
-    siteName: 'edX',
-    logoDestination: config.STUDIO_BASE_URL,
-    courseLockUp,
-    courseId,
-    username: authenticatedUser !== null ? authenticatedUser.username : null,
-    avatar: authenticatedUser !== null ? authenticatedUser.avatar : null,
-    mainMenu,
-    userMenu,
-  };
+  // const props = {
+  //   logo: StudioLogoSVG,
+  //   logoAltText: 'Studio edX',
+  //   siteName: 'edX',
+  //   logoDestination: config.STUDIO_BASE_URL,
+  //   courseLockUp,
+  //   courseId,
+  //   username: authenticatedUser !== null ? authenticatedUser.username : null,
+  //   avatar: authenticatedUser !== null ? authenticatedUser.avatar : null,
+  //   mainMenu,
+  //   userMenu,
+  // };
 
   const actionRowContent = (
     <>
