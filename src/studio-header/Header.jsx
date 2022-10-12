@@ -5,7 +5,8 @@ import React, { useContext } from 'react';
 import Responsive from 'react-responsive';
 import { AppContext } from '@edx/frontend-platform/react';
 import { ensureConfig } from '@edx/frontend-platform';
-import { OverlayTrigger, Tooltip } from '@edx/paragon';
+import { Dropdown, OverlayTrigger, Tooltip } from '@edx/paragon';
+import { Link } from 'react-router-dom';
 import {
   injectIntl,
   intlShape,
@@ -29,77 +30,46 @@ function Header({
 }) {
   const { authenticatedUser, config } = useContext(AppContext);
 
-  const mainMenu = [
-    {
-      type: 'submenu',
-      content: intl.formatMessage(messages['header.links.content']),
-      submenuContent: (
-        <>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/course/${courseId}`}>{intl.formatMessage(messages['header.links.outline'])}</a>
-          </div>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/course_info/${courseId}`}>{intl.formatMessage(messages['header.links.updates'])}</a>
-          </div>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/tabs/${courseId}`}>{intl.formatMessage(messages['header.links.pages'])}</a>
-          </div>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/assets/${courseId}`}>{intl.formatMessage(messages['header.links.filesAndUploads'])}</a>
-          </div>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/textbooks/${courseId}`}>{intl.formatMessage(messages['header.links.textbooks'])}</a>
-          </div>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/videos/${courseId}`}>{intl.formatMessage(messages['header.links.videoUploads'])}</a>
-          </div>
-        </>
-      ),
-    },
-    {
-      type: 'submenu',
-      content: intl.formatMessage(messages['header.links.settings']),
-      submenuContent: (
-        <>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/settings/details/${courseId}`}>{intl.formatMessage(messages['header.links.scheduleAndDetails'])}</a>
-          </div>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/settings/grading/${courseId}`}>{intl.formatMessage(messages['header.links.grading'])}</a>
-          </div>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/course_team/${courseId}`}>{intl.formatMessage(messages['header.links.courseTeam'])}</a>
-          </div>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/group_configurations/${courseId}`}>{intl.formatMessage(messages['header.links.groupConfigurations'])}</a>
-          </div>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/settings/advanced/${courseId}`}>{intl.formatMessage(messages['header.links.advancedSettings'])}</a>
-          </div>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/certificates/${courseId}`}>{intl.formatMessage(messages['header.links.certificates'])}</a>
-          </div>
-        </>
-      ),
-    },
-    {
-      type: 'submenu',
-      content: intl.formatMessage(messages['header.links.tools']),
-      submenuContent: (
-        <>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/import/${courseId}`}>{intl.formatMessage(messages['header.links.import'])}</a>
-          </div>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/export/${courseId}`}>{intl.formatMessage(messages['header.links.export'])}</a>
-          </div>
-          <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/checklists/${courseId}`}>{intl.formatMessage(messages['header.links.checklists'])}</a>
-          </div>
-        </>
-      ),
-    },
-  ];
+  const mainMenu = (
+    <>
+      <Dropdown>
+        <Dropdown.Toggle variant="outline-primary" id="library-header-menu-dropdown">
+          {intl.formatMessage(messages['header.links.content'])}
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/course/${courseId}`}>{intl.formatMessage(messages['header.links.outline'])}</Dropdown.Item>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/course_info/${courseId}`}>{intl.formatMessage(messages['header.links.updates'])}</Dropdown.Item>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/tabs/${courseId}`}>{intl.formatMessage(messages['header.links.pages'])}</Dropdown.Item>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/assets/${courseId}`}>{intl.formatMessage(messages['header.links.filesAndUploads'])}</Dropdown.Item>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/textbooks/${courseId}`}>{intl.formatMessage(messages['header.links.textbooks'])}</Dropdown.Item>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/videos/${courseId}`}>{intl.formatMessage(messages['header.links.videoUploads'])}</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+      <Dropdown>
+        <Dropdown.Toggle variant="outline-primary" id="library-header-menu-dropdown">
+          {intl.formatMessage(messages['header.links.settings'])}
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/settings/details/${courseId}`}>{intl.formatMessage(messages['header.links.scheduleAndDetails'])}</Dropdown.Item>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/settings/grading/${courseId}`}>{intl.formatMessage(messages['header.links.grading'])}</Dropdown.Item>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/course_team/${courseId}`}>{intl.formatMessage(messages['header.links.courseTeam'])}</Dropdown.Item>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/group_configurations/${courseId}`}>{intl.formatMessage(messages['header.links.groupConfigurations'])}</Dropdown.Item>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/settings/advanced/${courseId}`}>{intl.formatMessage(messages['header.links.advancedSettings'])}</Dropdown.Item>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/certificates/${courseId}`}>{intl.formatMessage(messages['header.links.certificates'])}</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+      <Dropdown>
+        <Dropdown.Toggle variant="outline-primary" id="library-header-menu-dropdown">
+          {intl.formatMessage(messages['header.links.tools'])}
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/import/${courseId}`}>{intl.formatMessage(messages['header.links.import'])}</Dropdown.Item>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/export/${courseId}`}>{intl.formatMessage(messages['header.links.export'])}</Dropdown.Item>
+          <Dropdown.Item href={`${config.STUDIO_BASE_URL}/checklists/${courseId}`}>{intl.formatMessage(messages['header.links.checklists'])}</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    </>
+  );
 
   const courseLockUp = (
     <OverlayTrigger
@@ -137,6 +107,7 @@ function Header({
   const actionRowContent = (
     <>
       {courseLockUp}
+      {mainMenu}
     </>
   )
 
