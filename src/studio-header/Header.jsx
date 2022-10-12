@@ -144,12 +144,12 @@ function Header({
       )}
     >
       <a
-        className="course-title-lockup w-25"
+        className="content-title-block"
         href={`${config.STUDIO_BASE_URL}/course/${courseId}`}
         aria-label={intl.formatMessage(messages['header.label.courseOutline'])}
       >
-        <span className="d-block small m-0" data-testid="course-org-number">{courseOrg} {courseNumber}</span>
-        <span className="d-block m-0 font-weight-bold" data-testid="course-title">{courseTitle}</span>
+        <span className="d-block small m-0 w-100 pr-2" data-testid="course-org-number">{courseOrg} {courseNumber}</span>
+        <span className="d-block m-0 font-weight-bold w-100 pr-2" data-testid="course-title">{courseTitle}</span>
       </a>
     </OverlayTrigger>
   );
