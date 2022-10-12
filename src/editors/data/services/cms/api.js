@@ -145,11 +145,11 @@ export const processVideoIds = ({ videoSource, fallbackVideos }) => {
     edxVideoId = videoSource;
   } else if (module.parseYoutubeId(videoSource)) {
     youtubeId = module.parseYoutubeId(videoSource);
-  } else {
+  } else if (videoSource) {
     html5Sources.push(videoSource);
   }
 
-  fallbackVideos.forEach((src) => html5Sources.push(src));
+  fallbackVideos.forEach((src) => (src ? html5Sources.push(src) : null));
 
   return {
     edxVideoId,

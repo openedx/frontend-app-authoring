@@ -7,6 +7,11 @@ import { formatMessage } from '../../../../../../../testUtils';
 import { actions, selectors } from '../../../../../../data/redux';
 import { TranscriptWidget, mapStateToProps, mapDispatchToProps } from '.';
 
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useContext: jest.fn(() => ({ transcripts: ['error.transcripts', jest.fn().mockName('error.setTranscripts')] })),
+}));
+
 jest.mock('../../../../../../data/redux', () => ({
   actions: {
     video: {

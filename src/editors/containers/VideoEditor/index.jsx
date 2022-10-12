@@ -6,7 +6,7 @@ import { selectors } from '../../data/redux';
 
 import EditorContainer from '../EditorContainer';
 import VideoEditorModal from './components/VideoEditorModal';
-import { errorsHook } from './hooks';
+import { ErrorContext, errorsHook } from './hooks';
 
 export const VideoEditor = ({
   onClose,
@@ -19,15 +19,17 @@ export const VideoEditor = ({
   } = errorsHook();
 
   return (
-    <EditorContainer
-      getContent={() => videoSettings}
-      onClose={onClose}
-      validateEntry={validateEntry}
-    >
-      <div className="video-editor">
-        <VideoEditorModal {...{ error }} />
-      </div>
-    </EditorContainer>
+    <ErrorContext.Provider value={error}>
+      <EditorContainer
+        getContent={() => videoSettings}
+        onClose={onClose}
+        validateEntry={validateEntry}
+      >
+        <div className="video-editor">
+          <VideoEditorModal />
+        </div>
+      </EditorContainer>
+    </ErrorContext.Provider>
   );
 };
 

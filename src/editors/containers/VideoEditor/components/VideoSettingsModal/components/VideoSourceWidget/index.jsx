@@ -28,7 +28,6 @@ import CollapsibleFormWidget from '../CollapsibleFormWidget';
  * Collapsible Form widget controlling video source as well as fallback sources
  */
 export const VideoSourceWidget = ({
-  // error,
   // injected
   intl,
   // redux
@@ -128,10 +127,8 @@ export const VideoSourceWidget = ({
   );
 };
 VideoSourceWidget.defaultProps = {
-  // error: {},
 };
 VideoSourceWidget.propTypes = {
-  // error: PropTypes.node,
   // injected
   intl: intlShape.isRequired,
   // redux

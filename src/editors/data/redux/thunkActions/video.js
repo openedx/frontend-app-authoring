@@ -23,7 +23,7 @@ export const loadVideoData = () => (dispatch, getState) => {
     videoId,
     fallbackVideos,
     allowVideoDownloads: rawVideoData.download_video,
-    transcripts: rawVideoData.transcripts,
+    transcripts: rawVideoData.transcripts || {},
     allowTranscriptDownloads: rawVideoData.download_track,
     showTranscriptByDefault: rawVideoData.show_captions,
     duration: { // TODO duration is not always sent so they should be calculated.
@@ -47,14 +47,28 @@ export const determineVideoSource = ({
   youtubeId,
   html5Sources,
 }) => {
-  // videoSource should be the edx_video_id (if present), or the youtube url (if present), or the first fallback url.
-  // in that order.
-  // if we are falling back to the first fallback url, remove it from the list of fallback urls for display
-  const videoSource = edxVideoId || youtubeId || html5Sources[0] || '';
+  // videoSource should be the edx_video_id, the youtube url or the first fallback url in that order.
+  // If we are falling back to the first fallback url, remove it from the list of fallback urls for display.
+  const youtubeUrl = `https://youtu.be/${youtubeId}`;
   const videoId = edxVideoId || '';
-  const fallbackVideos = (!edxVideoId && !youtubeId)
-    ? html5Sources.slice(1)
-    : html5Sources;
+  let videoSource = '';
+  let fallbackVideos = [];
+  if (edxVideoId) {
+    [videoSource, fallbackVideos] = [edxVideoId, html5Sources];
+    // videoSource = edxVideoId;
+    // fallbackVideos = html5Sources;
+  } else if (youtubeId) {
+    [videoSource, fallbackVideos] = [youtubeUrl, html5Sources];
+    // videoSource = youtubeUrl;
+    // fallbackVideos = html5Sources;
+  } else if (Array.isArray(html5Sources) && html5Sources[0]) {
+    [videoSource, fallbackVideos] = [html5Sources[0], html5Sources.slice(1)];
+    // videoSource = html5Sources[0];
+    // fallbackVideos = html5Sources.slice(1);
+  }
+  if (fallbackVideos.length === 0) {
+    fallbackVideos = ['', ''];
+  }
   return {
     videoSource,
     videoId,

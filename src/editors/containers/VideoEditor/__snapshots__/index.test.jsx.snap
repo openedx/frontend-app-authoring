@@ -1,17 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`VideoEditor snapshots renders as expected with default behavior 1`] = `
-<EditorContainer
-  getContent={[Function]}
-  onClose={[MockFunction props.onClose]}
-  validateEntry={[MockFunction validateEntry]}
+<Component
+  value="hooks.errorsHook.error"
 >
-  <div
-    className="video-editor"
+  <EditorContainer
+    getContent={[Function]}
+    onClose={[MockFunction props.onClose]}
+    validateEntry={[MockFunction validateEntry]}
   >
-    <VideoEditorModal
-      error="errORsHooKErroR"
-    />
-  </div>
-</EditorContainer>
+    <div
+      className="video-editor"
+    >
+      <VideoEditorModal />
+    </div>
+  </EditorContainer>
+</Component>
 `;

@@ -107,6 +107,7 @@ describe('video thunkActions', () => {
   describe('determineVideoSource', () => {
     const edxVideoId = 'EDxviDEoiD';
     const youtubeId = 'yOuTuBEiD';
+    const youtubeUrl = `https://youtu.be/${youtubeId}`;
     const html5Sources = ['htmLOne', 'hTMlTwo', 'htMLthrEE'];
     describe('when there is an edx video id, youtube id and html5 sources', () => {
       it('returns the edx video id for video source and html5 sources for fallback videos', () => {
@@ -122,13 +123,13 @@ describe('video thunkActions', () => {
       });
     });
     describe('when there is no edx video id', () => {
-      it('returns the youtube id for video source and html5 sources for fallback videos', () => {
+      it('returns the youtube url for video source and html5 sources for fallback videos', () => {
         expect(thunkActions.determineVideoSource({
           edxVideoId: '',
           youtubeId,
           html5Sources,
         })).toEqual({
-          videoSource: youtubeId,
+          videoSource: youtubeUrl,
           videoId: '',
           fallbackVideos: html5Sources,
         });
@@ -146,7 +147,7 @@ describe('video thunkActions', () => {
           fallbackVideos: ['hTMlTwo', 'htMLthrEE'],
         });
       });
-      it('returns the html5 source for video source and an empty array for fallback videos', () => {
+      it('returns the html5 source for video source and an array with 2 empty values for fallback videos', () => {
         expect(thunkActions.determineVideoSource({
           edxVideoId: '',
           youtubeId: '',
@@ -154,12 +155,12 @@ describe('video thunkActions', () => {
         })).toEqual({
           videoSource: 'htmlOne',
           videoId: '',
-          fallbackVideos: [],
+          fallbackVideos: ['', ''],
         });
       });
     });
     describe('when there is no edx video id, no youtube id and no html5 sources', () => {
-      it('returns an empty string for video source and an empty array for fallback videos', () => {
+      it('returns an empty string for video source and an array with 2 empty values for fallback videos', () => {
         expect(thunkActions.determineVideoSource({
           edxVideoId: '',
           youtubeId: '',
@@ -167,7 +168,7 @@ describe('video thunkActions', () => {
         })).toEqual({
           videoSource: '',
           videoId: '',
-          fallbackVideos: [],
+          fallbackVideos: ['', ''],
         });
       });
     });

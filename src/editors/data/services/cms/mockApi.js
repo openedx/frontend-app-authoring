@@ -23,7 +23,7 @@ export const fetchBlockById = ({ blockId, studioEndpointUrl }) => mockPromise({
       sub: '',
       track: '',
       transcripts: {
-        en: 'my-transcript-url',
+        en: { filename: 'my-transcript-url' },
       },
       xml_attributes: {
         source: '',
@@ -54,7 +54,7 @@ export const fetchStudioView = ({ blockId, studioEndpointUrl }) => mockPromise({
       sub: '',
       track: '',
       transcripts: {
-        en: 'my-transcript-url',
+        en: { filename: 'my-transcript-url' },
       },
       xml_attributes: {
         source: '',

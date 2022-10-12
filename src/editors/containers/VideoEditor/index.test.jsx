@@ -2,13 +2,13 @@ import React from 'react';
 import { shallow } from 'enzyme';
 
 import { selectors } from '../../data/redux';
-import { errorsHook } from './hooks';
 import { VideoEditor, mapStateToProps, mapDispatchToProps } from '.';
 
 jest.mock('../EditorContainer', () => 'EditorContainer');
 jest.mock('./components/VideoEditorModal', () => 'VideoEditorModal');
 
 jest.mock('./hooks', () => ({
+  ErrorContext: jest.fn(),
   errorsHook: jest.fn(() => ({
     error: 'hooks.errorsHook.error',
     validateEntry: jest.fn().mockName('validateEntry'),
@@ -29,10 +29,6 @@ describe('VideoEditor', () => {
     // redux
     videoSettings: 'vIdEOsETtings',
   };
-  errorsHook.mockReturnValue({
-    error: 'errORsHooKErroR',
-    validateEntry: jest.fn().mockName('validateEntry'),
-  });
   describe('snapshots', () => {
     test('renders as expected with default behavior', () => {
       expect(shallow(<VideoEditor {...props} />)).toMatchSnapshot();

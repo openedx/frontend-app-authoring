@@ -30,6 +30,9 @@ export const simpleSelectors = [
 export const openLanguages = createSelector(
   [module.simpleSelectors.transcripts],
   (transcripts) => {
+    if (!transcripts) {
+      return videoTranscriptLanguages;
+    }
     const open = Object.entries(videoTranscriptLanguages).filter(
       ([lang]) => !Object.keys(transcripts).includes(lang),
     );
@@ -47,7 +50,19 @@ export const getTranscriptDownloadUrl = createSelector(
 );
 
 export const videoSettings = createSelector(
-  Object.values(module.simpleSelectors),
+  [
+    module.simpleSelectors.videoSource,
+    module.simpleSelectors.fallbackVideos,
+    module.simpleSelectors.allowVideoDownloads,
+    module.simpleSelectors.thumbnail,
+    module.simpleSelectors.transcripts,
+    module.simpleSelectors.allowTranscriptDownloads,
+    module.simpleSelectors.duration,
+    module.simpleSelectors.showTranscriptByDefault,
+    module.simpleSelectors.handout,
+    module.simpleSelectors.licenseType,
+    module.simpleSelectors.licenseDetails,
+  ],
   (
     videoSource,
     fallbackVideos,
@@ -78,8 +93,8 @@ export const videoSettings = createSelector(
 );
 
 export default {
+  ...simpleSelectors,
   openLanguages,
   getTranscriptDownloadUrl,
-  ...simpleSelectors,
   videoSettings,
 };

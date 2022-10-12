@@ -60,8 +60,6 @@ export const TitleHeader = ({
 TitleHeader.defaultProps = {};
 TitleHeader.propTypes = {
   isInitialized: PropTypes.bool.isRequired,
-  title: PropTypes.string.isRequired,
-  setTitle: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

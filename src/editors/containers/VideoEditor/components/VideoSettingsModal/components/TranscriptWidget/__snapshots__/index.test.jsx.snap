@@ -2,7 +2,7 @@
 
 exports[`TranscriptWidget snapshots snapshot: renders ErrorAlert with delete error message 1`] = `
 <injectIntl(ShimmedIntlComponent)
-  isError={false}
+  isError={true}
   subtitle="English"
   title="Transcript"
 >
@@ -115,7 +115,7 @@ exports[`TranscriptWidget snapshots snapshot: renders ErrorAlert with delete err
 
 exports[`TranscriptWidget snapshots snapshot: renders ErrorAlert with upload error message 1`] = `
 <injectIntl(ShimmedIntlComponent)
-  isError={false}
+  isError={true}
   subtitle="English"
   title="Transcript"
 >
@@ -228,7 +228,7 @@ exports[`TranscriptWidget snapshots snapshot: renders ErrorAlert with upload err
 
 exports[`TranscriptWidget snapshots snapshots: renders as expected with allowTranscriptDownloads true 1`] = `
 <injectIntl(ShimmedIntlComponent)
-  isError={false}
+  isError={true}
   subtitle="English"
   title="Transcript"
 >
@@ -341,7 +341,7 @@ exports[`TranscriptWidget snapshots snapshots: renders as expected with allowTra
 
 exports[`TranscriptWidget snapshots snapshots: renders as expected with default props 1`] = `
 <injectIntl(ShimmedIntlComponent)
-  isError={false}
+  isError={true}
   subtitle="None"
   title="Transcript"
 >
@@ -412,7 +412,7 @@ exports[`TranscriptWidget snapshots snapshots: renders as expected with default 
 
 exports[`TranscriptWidget snapshots snapshots: renders as expected with showTranscriptByDefault true 1`] = `
 <injectIntl(ShimmedIntlComponent)
-  isError={false}
+  isError={true}
   subtitle="English"
   title="Transcript"
 >
@@ -525,7 +525,7 @@ exports[`TranscriptWidget snapshots snapshots: renders as expected with showTran
 
 exports[`TranscriptWidget snapshots snapshots: renders as expected with transcripts 1`] = `
 <injectIntl(ShimmedIntlComponent)
-  isError={false}
+  isError={true}
   subtitle="English"
   title="Transcript"
 >
