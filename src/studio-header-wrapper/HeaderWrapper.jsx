@@ -28,7 +28,7 @@ function HeaderWrapper({
   const mainMenu = (
     <>
       <Dropdown>
-        <Dropdown.Toggle variant="primary" id="library-header-menu-dropdown">
+        <Dropdown.Toggle variant="outline-primary" id="library-header-menu-dropdown">
           {intl.formatMessage(messages['header.links.content'])}
         </Dropdown.Toggle>
         <Dropdown.Menu>
@@ -91,7 +91,6 @@ function HeaderWrapper({
       {courseLockUp}
       <ActionRow.Spacer />
       {mainMenu}
-      <ActionRow.Spacer />
     </>
   )
 
