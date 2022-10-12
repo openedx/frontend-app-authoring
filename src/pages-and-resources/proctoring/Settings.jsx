@@ -117,6 +117,7 @@ function ProctoringSettings({ intl, onClose }) {
     }
 
     // only save back to exam service if necessary
+    setSubmissionInProgress(true);
     const saveOperations = [StudioApiService.saveProctoredExamSettingsData(courseId, studioDataToPostBack)];
     if (allowLtiProviders && ExamsApiService.isAvailable()) {
       saveOperations.push(
@@ -125,7 +126,6 @@ function ProctoringSettings({ intl, onClose }) {
         ),
       );
     }
-    setSubmissionInProgress(true);
     Promise.all(saveOperations)
     .then(() => {
       setSaveSuccess(true);

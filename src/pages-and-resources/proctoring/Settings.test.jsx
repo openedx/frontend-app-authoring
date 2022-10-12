@@ -583,7 +583,7 @@ describe('ProctoredExamSettings', () => {
     });
   });
 
-  describe('Save settings', () => {
+  describe.only('Save settings', () => {
     beforeEach(async () => {
       axiosMock.onPost(
         StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
@@ -594,10 +594,6 @@ describe('ProctoredExamSettings', () => {
     });
 
     it('Disable button while submitting', async () => {
-      axiosMock.onPost(
-        StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
-      ).reply(200, 'success');
-
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       let submitButton = screen.getByTestId('submissionButton');
       expect(screen.queryByTestId('saveInProgress')).toBeFalsy();
@@ -610,10 +606,6 @@ describe('ProctoredExamSettings', () => {
     });
 
     it('Makes API call successfully with proctoring_escalation_email if proctortrack', async () => {
-      axiosMock.onPost(
-        StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
-      ).reply(200, 'success');
-
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       // Make a change to the provider to proctortrack and set the email
       const selectElement = screen.getByDisplayValue('mockproc');
@@ -649,10 +641,6 @@ describe('ProctoredExamSettings', () => {
     });
 
     it('Makes API call successfully without proctoring_escalation_email if not proctortrack', async () => {
-      axiosMock.onPost(
-        StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
-      ).reply(200, 'success');
-
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
 
       // make sure we have not selected proctortrack as the proctoring provider
@@ -820,7 +808,7 @@ describe('ProctoredExamSettings', () => {
       expect(document.activeElement).toEqual(errorAlert);
     });
 
-    it.only('Manages focus correctly after different save statuses', async () => {
+    it('Manages focus correctly after different save statuses', async () => {
       // first make a call that will cause a save error
       axiosMock.onPost(
         StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
