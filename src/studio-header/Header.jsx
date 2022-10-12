@@ -2,22 +2,17 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
-import Responsive from 'react-responsive';
 import { AppContext } from '@edx/frontend-platform/react';
 import { ensureConfig } from '@edx/frontend-platform';
 import { Dropdown, OverlayTrigger, Tooltip } from '@edx/paragon';
-import { Link } from 'react-router-dom';
 import {
   injectIntl,
   intlShape,
 } from '@edx/frontend-platform/i18n';
 
-import DesktopHeader from './DesktopHeader';
-import MobileHeader from './MobileHeader';
 import { StudioHeader } from '@edx/frontend-component-header';
 import messages from './Header.messages';
 
-import StudioLogoSVG from './assets/studio-logo.svg';
 
 ensureConfig([
   'STUDIO_BASE_URL',
@@ -28,7 +23,7 @@ ensureConfig([
 function Header({
   courseId, courseNumber, courseOrg, courseTitle, intl,
 }) {
-  const { authenticatedUser, config } = useContext(AppContext);
+  const { config } = useContext(AppContext);
 
   const mainMenu = (
     <>
@@ -91,19 +86,6 @@ function Header({
     </OverlayTrigger>
   );
 
-  // const props = {
-  //   logo: StudioLogoSVG,
-  //   logoAltText: 'Studio edX',
-  //   siteName: 'edX',
-  //   logoDestination: config.STUDIO_BASE_URL,
-  //   courseLockUp,
-  //   courseId,
-  //   username: authenticatedUser !== null ? authenticatedUser.username : null,
-  //   avatar: authenticatedUser !== null ? authenticatedUser.avatar : null,
-  //   mainMenu,
-  //   userMenu,
-  // };
-
   const actionRowContent = (
     <>
       {courseLockUp}
@@ -112,14 +94,6 @@ function Header({
   )
 
   return (
-    // <>
-    //   <Responsive maxWidth={768}>
-    //     <MobileHeader {...props} />
-    //   </Responsive>
-    //   <Responsive minWidth={769}>
-    //     <DesktopHeader {...props} />
-    //   </Responsive>
-    // </>
     <StudioHeader actionRowContent={actionRowContent}/>
   );
 }
