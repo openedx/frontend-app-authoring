@@ -62,6 +62,7 @@
     "@reduxjs/toolkit": "^1.8.1",
     "@tinymce/tinymce-react": "^3.14.0",
     "babel-polyfill": "6.26.0",
+    "canvas": "^2.10.1",
     "codemirror": "^6.0.0",
     "lodash-es": "^4.17.21",
     "react-redux": "^7.2.8",

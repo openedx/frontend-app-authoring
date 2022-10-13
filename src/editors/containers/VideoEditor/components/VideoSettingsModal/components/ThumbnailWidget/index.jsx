@@ -10,21 +10,21 @@ import {
   Image,
   Stack,
   Button,
-  OverlayTrigger,
   Icon,
-  IconButton,
-  Tooltip,
+  IconButtonWithTooltip,
   Alert,
 } from '@edx/paragon';
 import { Delete, FileUpload } from '@edx/paragon/icons';
 
 import { actions, selectors } from '../../../../../../data/redux';
-import { acceptedImgKeys } from './utils';
+import { acceptedImgKeys } from './constants';
 import * as hooks from './hooks';
 import messages from './messages';
 
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import FileInput from '../../../../../../sharedComponents/FileInput';
+import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
+import { ErrorContext } from '../../../../hooks';
 
 /**
  * Collapsible Form widget controlling video thumbnail
@@ -38,14 +38,30 @@ export const ThumbnailWidget = ({
   updateField,
   videoType,
 }) => {
+  const [error] = React.useContext(ErrorContext).thumbnail;
+  const imgRef = React.useRef();
   const [thumbnailSrc, setThumbnailSrc] = React.useState(thumbnail);
-  const fileInput = hooks.fileInput({ setThumbnailSrc });
+  const { fileSizeError } = hooks.fileSizeError();
+  const fileInput = hooks.fileInput({
+    setThumbnailSrc,
+    imgRef,
+    fileSizeError,
+  });
   const isEdxVideo = videoType === 'edxVideo';
+
   return (
     <CollapsibleFormWidget
+      isError={Object.keys(error).length !== 0}
       title={intl.formatMessage(messages.title)}
       subtitle={isEdxVideo ? null : intl.formatMessage(messages.unavailableSubtitle)}
     >
+      <ErrorAlert
+        dismissError={fileSizeError.dismiss}
+        hideHeading
+        isError={fileSizeError.show}
+      >
+        <FormattedMessage {...messages.fileSizeError} />
+      </ErrorAlert>
       {isEdxVideo ? null : (
         <Alert variant="info">
           <FormattedMessage {...messages.unavailableMessage} />
@@ -53,24 +69,23 @@ export const ThumbnailWidget = ({
       )}
       {thumbnail ? (
         <Stack direction="horizontal" gap={3}>
-          <Image src={thumbnailSrc || thumbnail} alt={intl.formatMessage(messages.thumbnailAltText)} />
+          <Image
+            thumbnail
+            fluid
+            className="w-75"
+            ref={imgRef}
+            src={thumbnailSrc || thumbnail}
+            alt={intl.formatMessage(messages.thumbnailAltText)}
+          />
           { (allowThumbnailUpload && isEdxVideo) ? (
-            <OverlayTrigger
-              key="top"
-              placement="top"
-              overlay={(
-                <Tooltip>
-                  <FormattedMessage {...messages.deleteThumbnail} />
-                </Tooltip>
-              )}
-            >
-              <IconButton
-                className="d-inline-block"
-                iconAs={Icon}
-                src={Delete}
-                onClick={() => updateField({ thumbnail: null })}
-              />
-            </OverlayTrigger>
+            <IconButtonWithTooltip
+              className="d-inline-block"
+              tooltipPlacement="top"
+              tooltipContent={intl.formatMessage(messages.deleteThumbnail)}
+              iconAs={Icon}
+              src={Delete}
+              onClick={() => updateField({ thumbnail: null })}
+            />
           ) : null }
         </Stack>
       ) : (

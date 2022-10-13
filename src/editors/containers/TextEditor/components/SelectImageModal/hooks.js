@@ -41,7 +41,7 @@ export const imgListHooks = ({ searchSortProps, setSelection, images }) => {
     showSelectImageError,
     setShowSelectImageError,
   ] = module.state.showSelectImageError(false);
-  const [showSizeError, setShowSizeError] = module.state.showSelectImageError(false);
+  const [showSizeError, setShowSizeError] = module.state.showSizeError(false);
   const list = module.displayList({ ...searchSortProps, images });
 
   return {
@@ -82,7 +82,7 @@ export const checkValidFileSize = ({
   onSizeFail,
 }) => {
   // Check if the file size is greater than 10 MB, upload size limit
-  if (selectedFile.size > 1000000) {
+  if (selectedFile.size > 10000000) {
     clearSelection();
     onSizeFail();
     return false;

@@ -5,6 +5,10 @@ import { formatMessage } from '../../../../../../../testUtils';
 import { actions, selectors } from '../../../../../../data/redux';
 import { ThumbnailWidget, mapStateToProps, mapDispatchToProps } from '.';
 
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useContext: jest.fn(() => ({ thumbnail: ['error.thumbnail', jest.fn().mockName('error.setThumbnail')] })),
+}));
 jest.mock('../../../../../../data/redux', () => ({
   actions: {
     video: {

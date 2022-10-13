@@ -176,6 +176,7 @@ export const uploadThumbnail = ({ thumbnail }) => (dispatch, getState) => {
         thumbnail: thumbnailUrl,
       }));
     },
+    onFailure: (e) => console.log({ UploadFailure: e }, 'Resampling thumbnail upload'),
   }));
 };
 
