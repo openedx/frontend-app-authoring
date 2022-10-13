@@ -4,13 +4,18 @@ exports[`EditableHeader snapshot snapshot 1`] = `
 <Form.Group>
   <Form.Control
     autoFocus={true}
-    onBlur={[MockFunction args.updateTitle]}
     onChange={[MockFunction args.handleChange]}
     onKeyDown={[MockFunction args.handleKeyDown]}
     placeholder="Title"
+    style={
+      Object {
+        "padding-inline-end": "calc(1rem + 84px)",
+      }
+    }
     trailingElement={
-      <Icon
-        src={[MockFunction icons.Edit]}
+      <injectIntl(ShimmedIntlComponent)
+        cancelEdit={[MockFunction args.cancelEdit]}
+        updateTitle={[MockFunction args.updateTitle]}
       />
     }
     value="test-title-text"

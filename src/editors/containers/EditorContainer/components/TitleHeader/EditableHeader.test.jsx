@@ -1,8 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { Icon, Form } from '@edx/paragon';
-import { Edit } from '@edx/paragon/icons';
+import { Form } from '@edx/paragon';
 import * as module from './EditableHeader';
+import EditConfirmationButtons from './EditConfirmationButtons';
 
 describe('EditableHeader', () => {
   const props = {
@@ -11,6 +11,7 @@ describe('EditableHeader', () => {
     handleKeyDown: jest.fn().mockName('args.handleKeyDown'),
     inputRef: jest.fn().mockName('args.inputRef'),
     localTitle: 'test-title-text',
+    cancelEdit: jest.fn().mockName('args.cancelEdit'),
   };
   let el;
   beforeEach(() => {
@@ -23,7 +24,9 @@ describe('EditableHeader', () => {
     });
     test('displays Edit Icon', () => {
       const formControl = el.find(Form.Control);
-      expect(formControl.props().trailingElement).toMatchObject(<Icon src={Edit} />);
+      expect(formControl.props().trailingElement).toMatchObject(
+        <EditConfirmationButtons updateTitle={props.updateTitle} cancelEdit={props.cancelEdit} />,
+      );
     });
   });
 });

@@ -30,6 +30,10 @@ export const hooks = {
         stopEditing();
       },
       handleChange: (e) => setLocalTitle(e.target.value),
+      cancelEdit: () => {
+        setLocalTitle(title);
+        stopEditing();
+      },
       localTitle,
     };
   },
@@ -37,7 +41,12 @@ export const hooks = {
 
 export const localTitleHooks = ({ dispatch }) => {
   const { isEditing, startEditing, stopEditing } = module.hooks.isEditing();
-  const { localTitle, handleChange, updateTitle } = module.hooks.localTitle({
+  const {
+    localTitle,
+    handleChange,
+    updateTitle,
+    cancelEdit,
+  } = module.hooks.localTitle({
     dispatch,
     stopEditing,
   });
@@ -45,7 +54,7 @@ export const localTitleHooks = ({ dispatch }) => {
     isEditing,
     startEditing,
     stopEditing,
-
+    cancelEdit,
     localTitle,
     updateTitle,
     handleChange,

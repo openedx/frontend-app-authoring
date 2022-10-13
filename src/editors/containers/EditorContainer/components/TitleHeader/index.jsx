@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { Icon, IconButton } from '@edx/paragon';
+import { Icon, IconButton, Truncate } from '@edx/paragon';
 import { Edit } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
@@ -25,6 +25,7 @@ export const TitleHeader = ({
     handleKeyDown,
     localTitle,
     startEditing,
+    cancelEdit,
     updateTitle,
   } = localTitleHooks({ dispatch });
 
@@ -37,15 +38,16 @@ export const TitleHeader = ({
           handleKeyDown,
           localTitle,
           updateTitle,
+          cancelEdit,
         }}
       />
     );
   }
   return (
     <div className="d-flex">
-      <div style={{ lineHeight: '1.5', paddingRight: '.25em' }}>
+      <Truncate>
         {localTitle}
-      </div>
+      </Truncate>
       <IconButton
         alt={intl.formatMessage(messages.editTitleLabel)}
         className="mr-2"

@@ -14,6 +14,16 @@ export const messages = {
     defaultMessage: 'Edit Title',
     description: 'Screen reader label title for icon button to edit the xblock title',
   },
+  cancelTitleEdit: {
+    id: 'authoring.texteditor.header.cancelTitleEdit',
+    defaultMessage: 'Cancel',
+    description: 'Screen reader label title for icon button to edit the xblock title',
+  },
+  saveTitleEdit: {
+    id: 'authoring.texteditor.header.saveTitleEdit',
+    defaultMessage: 'Save',
+    description: 'Screen reader label title for icon button to edit the xblock title',
+  },
 };
 
 export default messages;

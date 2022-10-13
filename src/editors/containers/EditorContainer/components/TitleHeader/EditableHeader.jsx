@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Icon, Form } from '@edx/paragon';
-import { Edit } from '@edx/paragon/icons';
+import { Form } from '@edx/paragon';
+import EditConfirmationButtons from './EditConfirmationButtons';
 
 export const EditableHeader = ({
   handleChange,
@@ -10,16 +10,17 @@ export const EditableHeader = ({
   handleKeyDown,
   inputRef,
   localTitle,
+  cancelEdit,
 }) => (
   <Form.Group>
     <Form.Control
+      style={{ 'padding-inline-end': 'calc(1rem + 84px)' }}
       autoFocus
-      onBlur={updateTitle}
+      trailingElement={<EditConfirmationButtons {...{ updateTitle, cancelEdit }} />}
       onChange={handleChange}
       onKeyDown={handleKeyDown}
       placeholder="Title"
       ref={inputRef}
-      trailingElement={<Icon src={Edit} />}
       value={localTitle}
     />
   </Form.Group>
@@ -36,6 +37,7 @@ EditableHeader.propTypes = {
   updateTitle: PropTypes.func.isRequired,
   handleKeyDown: PropTypes.func.isRequired,
   localTitle: PropTypes.string.isRequired,
+  cancelEdit: PropTypes.func.isRequired,
 };
 
 export default EditableHeader;

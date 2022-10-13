@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditConfirmationButtons snapshot snapshot 1`] = `
+<ButtonGroup>
+  <IconButtonWithTooltip
+    iconAs="Icon"
+    onClick={[MockFunction args.updateTitle]}
+    tooltipContent="Save"
+    tooltipPlacement="left"
+  />
+  <IconButtonWithTooltip
+    iconAs="Icon"
+    onClick={[MockFunction args.cancelEdit]}
+    src={[MockFunction icons.Close]}
+    tooltipContent="Cancel"
+    tooltipPlacement="right"
+  />
+</ButtonGroup>
+`;

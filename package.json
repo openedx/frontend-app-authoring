@@ -36,7 +36,7 @@
   "devDependencies": {
     "@edx/frontend-build": "^11.0.2",
     "@edx/frontend-platform": "2.4.0",
-    "@edx/paragon": "^20.0.0",
+    "@edx/paragon": "^20.13.0",
     "@testing-library/dom": "^8.13.0",
     "@testing-library/react": "12.1.1",
     "@testing-library/user-event": "^13.5.0",
@@ -57,12 +57,12 @@
   },
   "dependencies": {
     "@codemirror/lang-html": "^6.0.0",
-    "codemirror": "^6.0.0",
     "@codemirror/state": "^6.0.0",
     "@codemirror/view": "^6.0.0",
     "@reduxjs/toolkit": "^1.8.1",
     "@tinymce/tinymce-react": "^3.14.0",
     "babel-polyfill": "6.26.0",
+    "codemirror": "^6.0.0",
     "lodash-es": "^4.17.21",
     "react-redux": "^7.2.8",
     "react-responsive": "8.2.0",
