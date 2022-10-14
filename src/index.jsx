@@ -51,6 +51,7 @@ initialize({
         CALCULATOR_HELP_URL: process.env.CALCULATOR_HELP_URL || null,
         ENABLE_PROGRESS_GRAPH_SETTINGS: process.env.ENABLE_PROGRESS_GRAPH_SETTINGS || 'false',
         ENABLE_TEAM_TYPE_SETTING: process.env.ENABLE_TEAM_TYPE_SETTING === 'true',
+        BBB_LEARN_MORE_URL: process.env.BBB_LEARN_MORE_URL || '',
       }, 'CourseAuthoringConfig');
     },
   },
