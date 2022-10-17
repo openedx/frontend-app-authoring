@@ -353,7 +353,7 @@ const LibraryAuthoringPageHeaderBase = ({ intl, library, ...props }) => {
       <h1 className="page-header-title">
         { inputIsActive
           ? (
-            <Input
+            <Form.Control
               autoFocus
               name="title"
               id="title"
@@ -362,7 +362,7 @@ const LibraryAuthoringPageHeaderBase = ({ intl, library, ...props }) => {
               defaultValue={library.title}
               onBlur={handleSaveTitle}
               onKeyDown={event => {
-                if (event.key === 'Enter') { handleSaveTitle(event) }
+                if (event.key === 'Enter') { handleSaveTitle(event); }
               }}
             />
           )
