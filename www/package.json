@@ -11,10 +11,11 @@
   "license": "ISC",
   "dependencies": {
     "@edx/brand": "npm:@edx/brand-edx.org@^2.0.3",
+    "@edx/browserslist-config": "^1.1.1",
     "@edx/frontend-build": "^9.1.1",
-    "@edx/frontend-platform": "1.14.0",
     "@edx/frontend-lib-content-components": "file:..",
-    "@edx/paragon": "19.10.2",
+    "@edx/frontend-platform": "^3.0.1",
+    "@edx/paragon": "^20.13.0",
     "core-js": "^3.21.1",
     "dotenv": "^16.0.0",
     "prop-types": "^15.5.10",
