@@ -23,7 +23,7 @@ describe('UploadErrorAlert', () => {
     test('isUploadError from requests.isFinished', () => {
       expect(
         mapStateToProps(testState).isUploadError,
-      ).toEqual(selectors.requests.isFailed(testState, { requestKey: RequestKeys.uploadImage }));
+      ).toEqual(selectors.requests.isFailed(testState, { requestKey: RequestKeys.uploadAsset }));
     });
   });
 });

@@ -7,7 +7,7 @@ jest.mock('./requests', () => ({
   fetchUnit: (args) => ({ fetchUnit: args }),
   saveBlock: (args) => ({ saveBlock: args }),
   fetchImages: (args) => ({ fetchImages: args }),
-  uploadImage: (args) => ({ uploadImage: args }),
+  uploadAsset: (args) => ({ uploadAsset: args }),
   fetchStudioView: (args) => ({ fetchStudioView: args }),
 }));
 
@@ -143,14 +143,14 @@ describe('app thunkActions', () => {
       thunkActions.uploadImage({ file: testValue, setSelection })(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
     });
-    it('dispatches uploadImage action', () => {
-      expect(dispatchedAction.uploadImage).not.toBe(undefined);
+    it('dispatches uploadAsset action', () => {
+      expect(dispatchedAction.uploadAsset).not.toBe(undefined);
     });
     test('passes file as image prop', () => {
-      expect(dispatchedAction.uploadImage.image).toEqual(testValue);
+      expect(dispatchedAction.uploadAsset.asset).toEqual(testValue);
     });
     test('onSuccess: calls setSelection with camelized response.data.asset', () => {
-      dispatchedAction.uploadImage.onSuccess({ data: { asset: testValue } });
+      dispatchedAction.uploadAsset.onSuccess({ data: { asset: testValue } });
       expect(setSelection).toHaveBeenCalledWith(camelizeKeys(testValue));
     });
   });

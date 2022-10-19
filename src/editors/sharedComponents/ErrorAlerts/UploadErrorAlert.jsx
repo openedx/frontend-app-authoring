@@ -32,7 +32,7 @@ UploadErrorAlert.propTypes = {
   isUploadError: PropTypes.bool.isRequired,
 };
 export const mapStateToProps = (state) => ({
-  isUploadError: selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadImage }),
+  isUploadError: selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadAsset }),
 });
 export const mapDispatchToProps = {};
 export default connect(mapStateToProps, mapDispatchToProps)(UploadErrorAlert);

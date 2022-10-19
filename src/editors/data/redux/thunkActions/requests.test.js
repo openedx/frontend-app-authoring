@@ -26,7 +26,7 @@ jest.mock('../../services/cms/api', () => ({
   fetchByUnitId: ({ id, url }) => ({ id, url }),
   saveBlock: (args) => args,
   fetchImages: ({ id, url }) => ({ id, url }),
-  uploadImage: (args) => args,
+  uploadAsset: (args) => args,
   loadImages: jest.fn(),
   allowThumbnailUpload: jest.fn(),
   uploadThumbnail: jest.fn(),
@@ -267,18 +267,18 @@ describe('requests thunkActions module', () => {
         },
       });
     });
-    describe('uploadImage', () => {
-      const image = 'SoME iMage CoNtent As String';
+    describe('uploadAsset', () => {
+      const asset = 'SoME iMage CoNtent As String';
       testNetworkRequestAction({
-        action: requests.uploadImage,
-        args: { image, ...fetchParams },
-        expectedString: 'with uploadImage promise',
+        action: requests.uploadAsset,
+        args: { asset, ...fetchParams },
+        expectedString: 'with uploadAsset promise',
         expectedData: {
           ...fetchParams,
-          requestKey: RequestKeys.uploadImage,
-          promise: api.uploadImage({
+          requestKey: RequestKeys.uploadAsset,
+          promise: api.uploadAsset({
             learningContextId: selectors.app.learningContextId(testState),
-            image,
+            asset,
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
           }),
         },

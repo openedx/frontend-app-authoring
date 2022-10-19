@@ -160,13 +160,13 @@ export const saveBlock = ({
   }),
 });
 
-export const uploadImage = ({
+export const uploadAsset = ({
   learningContextId,
   studioEndpointUrl,
   // image,
 }) => mockPromise({
   url: urls.courseAssets({ studioEndpointUrl, learningContextId }),
-  image: {
+  asset: {
     asset: {
       display_name: 'journey_escape.jpg',
       content_type: 'image/jpeg',

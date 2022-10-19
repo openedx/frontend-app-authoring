@@ -6,7 +6,7 @@ import { videoTranscriptLanguages } from '../../constants/video';
 import { initialState } from './reducer';
 import * as module from './selectors';
 import * as AppSelectors from '../app/selectors';
-import { downloadVideoTranscriptURL } from '../../services/cms/urls';
+import { downloadVideoTranscriptURL, downloadVideoHandoutUrl } from '../../services/cms/urls';
 
 const stateKeys = keyStore(initialState);
 
@@ -48,6 +48,14 @@ export const getTranscriptDownloadUrl = createSelector(
     studioEndpointUrl,
     blockId,
     language,
+  }),
+);
+
+export const getHandoutDownloadUrl = createSelector(
+  [AppSelectors.simpleSelectors.studioEndpointUrl],
+  (studioEndpointUrl) => ({ handout }) => downloadVideoHandoutUrl({
+    studioEndpointUrl,
+    handout,
   }),
 );
 
@@ -101,5 +109,6 @@ export default {
   ...simpleSelectors,
   openLanguages,
   getTranscriptDownloadUrl,
+  getHandoutDownloadUrl,
   videoSettings,
 };

@@ -17,13 +17,13 @@ export const apiMethods = {
   fetchImages: ({ learningContextId, studioEndpointUrl }) => get(
     urls.courseImages({ studioEndpointUrl, learningContextId }),
   ),
-  uploadImage: ({
+  uploadAsset: ({
     learningContextId,
     studioEndpointUrl,
-    image,
+    asset,
   }) => {
     const data = new FormData();
-    data.append('file', image);
+    data.append('file', asset);
     return post(
       urls.courseAssets({ studioEndpointUrl, learningContextId }),
       data,

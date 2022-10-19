@@ -59,8 +59,8 @@ export const saveBlock = ({ content, returnToUnit }) => (dispatch) => {
 };
 
 export const uploadImage = ({ file, setSelection }) => (dispatch) => {
-  dispatch(requests.uploadImage({
-    image: file,
+  dispatch(requests.uploadAsset({
+    asset: file,
     onSuccess: (response) => setSelection(camelizeKeys(response.data.asset)),
   }));
 };

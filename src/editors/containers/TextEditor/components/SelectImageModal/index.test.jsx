@@ -95,9 +95,9 @@ describe('SelectImageModal', () => {
   });
   describe('mapStateToProps', () => {
     const testState = { some: 'testState' };
-    test('loads inputIsLoading from requests.isPending selector for uploadImage request', () => {
+    test('loads inputIsLoading from requests.isPending selector for uploadAsset request', () => {
       expect(mapStateToProps(testState).inputIsLoading).toEqual(
-        selectors.requests.isPending(testState, { requestKey: RequestKeys.uploadImage }),
+        selectors.requests.isPending(testState, { requestKey: RequestKeys.uploadAsset }),
       );
     });
   });

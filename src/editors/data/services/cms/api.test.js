@@ -173,15 +173,15 @@ describe('cms api', () => {
       });
     });
 
-    describe('uploadImage', () => {
-      const image = { photo: 'dAta' };
+    describe('uploadAsset', () => {
+      const asset = { photo: 'dAta' };
       it('should call post with urls.courseAssets and imgdata', () => {
         const mockFormdata = new FormData();
-        mockFormdata.append('file', image);
-        apiMethods.uploadImage({
+        mockFormdata.append('file', asset);
+        apiMethods.uploadAsset({
           learningContextId,
           studioEndpointUrl,
-          image,
+          asset,
         });
         expect(post).toHaveBeenCalledWith(
           urls.videoTranscripts({ studioEndpointUrl, learningContextId }),

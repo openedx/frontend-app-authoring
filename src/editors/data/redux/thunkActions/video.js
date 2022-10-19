@@ -180,6 +180,18 @@ export const uploadThumbnail = ({ thumbnail }) => (dispatch, getState) => {
   }));
 };
 
+// Handout Thunks:
+
+export const uploadHandout = ({ file }) => (dispatch) => {
+  dispatch(requests.uploadAsset({
+    asset: file,
+    onSuccess: (response) => {
+      const handout = response.data.asset.url;
+      dispatch(actions.video.updateField({ handout }));
+    },
+  }));
+};
+
 // Transcript Thunks:
 
 export const uploadTranscript = ({ language, filename, file }) => (dispatch, getState) => {
@@ -256,4 +268,5 @@ export default {
   uploadTranscript,
   deleteTranscript,
   replaceTranscript,
+  uploadHandout,
 };

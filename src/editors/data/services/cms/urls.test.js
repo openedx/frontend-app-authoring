@@ -9,6 +9,7 @@ import {
   courseImages,
   downloadVideoTranscriptURL,
   videoTranscripts,
+  downloadVideoHandoutUrl,
 } from './urls';
 
 describe('cms url methods', () => {
@@ -18,6 +19,7 @@ describe('cms url methods', () => {
   const courseId = 'course-v1:courseId123';
   const libraryV1Id = 'library-v1:libaryId123';
   const language = 'la';
+  const handout = '/aSSet@hANdoUt';
   describe('return to learning context urls', () => {
     const unitUrl = {
       data: {
@@ -90,6 +92,12 @@ describe('cms url methods', () => {
     it('returns url with studioEndpointUrl, blockId and language query', () => {
       expect(downloadVideoTranscriptURL({ studioEndpointUrl, blockId, language }))
         .toEqual(`${videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`);
+    });
+  });
+  describe('downloadVideoHandoutUrl', () => {
+    it('returns url with studioEndpointUrl and handout', () => {
+      expect(downloadVideoHandoutUrl({ studioEndpointUrl, handout }))
+        .toEqual(`${studioEndpointUrl}${handout}`);
     });
   });
 });

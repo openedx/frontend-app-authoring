@@ -50,3 +50,7 @@ export const videoTranscripts = ({ studioEndpointUrl, blockId }) => (
 export const downloadVideoTranscriptURL = ({ studioEndpointUrl, blockId, language }) => (
   `${videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`
 );
+
+export const downloadVideoHandoutUrl = ({ studioEndpointUrl, handout }) => (
+  `${studioEndpointUrl}${handout}`
+);

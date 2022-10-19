@@ -106,7 +106,7 @@ SelectImageModal.propTypes = {
 };
 
 export const mapStateToProps = (state) => ({
-  inputIsLoading: selectors.requests.isPending(state, { requestKey: RequestKeys.uploadImage }),
+  inputIsLoading: selectors.requests.isPending(state, { requestKey: RequestKeys.uploadAsset }),
 });
 
 export const mapDispatchToProps = {};

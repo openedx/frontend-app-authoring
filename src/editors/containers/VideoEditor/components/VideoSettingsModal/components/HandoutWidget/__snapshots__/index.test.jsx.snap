@@ -1,0 +1,149 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HandoutWidget snapshots snapshots: renders as expected with default props 1`] = `
+<injectIntl(ShimmedIntlComponent)
+  isError={true}
+  subtitle="None"
+  title="Handout"
+>
+  <ErrorAlert
+    dismissError={[Function]}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Handout files must be 20 MB or less. Please resize the file and try again."
+      description="Message presented to user when handout file size is larger than 20 MB"
+      id="authoring.videoeditor.handout.error.fileSizeError"
+    />
+  </ErrorAlert>
+  <UploadErrorAlert
+    message={
+      Object {
+        "defaultMessage": "Failed to upload handout. Please try again.",
+        "description": "Message presented to user when handout fails to upload",
+        "id": "authoring.videoeditor.handout.error.uploadHandoutError",
+      }
+    }
+  />
+  <FileInput
+    fileInput={
+      Object {
+        "addFile": [Function],
+        "click": [Function],
+        "ref": Object {
+          "current": undefined,
+        },
+      }
+    }
+  />
+  <Stack
+    gap={3}
+  >
+    <FormattedMessage
+      defaultMessage="Add a handout to accompany this video. Learners can download
+    this file by clicking \\"Download Handout\\" below the video."
+      description="Message displayed when uploading a handout"
+      id="authoring.videoeditor.handout.upload.addHandoutMessage"
+    />
+    <Button
+      onClick={[Function]}
+      variant="link"
+    >
+      <FormattedMessage
+        defaultMessage="Upload Handout"
+        description="Label for upload button"
+        id="authoring.videoeditor.handout.upload.label"
+      />
+    </Button>
+  </Stack>
+</injectIntl(ShimmedIntlComponent)>
+`;
+
+exports[`HandoutWidget snapshots snapshots: renders as expected with handout 1`] = `
+<injectIntl(ShimmedIntlComponent)
+  isError={true}
+  subtitle="sOMeUrl "
+  title="Handout"
+>
+  <ErrorAlert
+    dismissError={[Function]}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Handout files must be 20 MB or less. Please resize the file and try again."
+      description="Message presented to user when handout file size is larger than 20 MB"
+      id="authoring.videoeditor.handout.error.fileSizeError"
+    />
+  </ErrorAlert>
+  <UploadErrorAlert
+    message={
+      Object {
+        "defaultMessage": "Failed to upload handout. Please try again.",
+        "description": "Message presented to user when handout fails to upload",
+        "id": "authoring.videoeditor.handout.error.uploadHandoutError",
+      }
+    }
+  />
+  <FileInput
+    fileInput={
+      Object {
+        "addFile": [Function],
+        "click": [Function],
+        "ref": Object {
+          "current": undefined,
+        },
+      }
+    }
+  />
+  <Card>
+    <Card.Header
+      actions={
+        <Dropdown>
+          <Dropdown.Toggle
+            alt="Actions dropdown"
+            as="IconButton"
+            iconAs="Icon"
+            id="dropdown-toggle-with-iconbutton-video-transcript-widget"
+            variant="primary"
+          />
+          <Dropdown.Menu
+            className="video_handout Action Menu"
+          >
+            <Dropdown.Item
+              onClick={[Function]}
+            >
+              <FormattedMessage
+                defaultMessage="Replace"
+                description="Message Presented To user for action to replace handout"
+                id="authoring.videoeditor.handout.replaceHandout"
+              />
+            </Dropdown.Item>
+            <Dropdown.Item
+              target="_blank"
+            >
+              <FormattedMessage
+                defaultMessage="Download"
+                description="Message Presented To user for action to download handout"
+                id="authoring.videoeditor.handout.downloadHandout"
+              />
+            </Dropdown.Item>
+            <Dropdown.Item
+              onClick={[Function]}
+            >
+              <FormattedMessage
+                defaultMessage="Delete"
+                description="Message Presented To user for action to delete handout"
+                id="authoring.videoeditor.handout.deleteHandout"
+              />
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      }
+      className="mt-1"
+      subtitle="sOMeUrl "
+    />
+  </Card>
+</injectIntl(ShimmedIntlComponent)>
+`;
