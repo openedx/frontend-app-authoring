@@ -10,6 +10,9 @@ const durationMatcher = /^(\d+)?:?(\d+)?:?(\d+)?$/i;
  * @return {string} - duration in 'hh:mm:ss' format
  */
 export const durationFromValue = (value) => {
+  if (!value || typeof value !== 'number' || value <= 0) {
+    return '00:00:00';
+  }
   const seconds = Math.floor((value / 1000) % 60);
   const minutes = Math.floor((value / 60000) % 60);
   const hours = Math.floor((value / 3600000) % 24);
@@ -26,7 +29,7 @@ export const durationFromValue = (value) => {
 export const valueFromDuration = (duration) => {
   let matches = duration.trim().match(durationMatcher);
   if (!matches) {
-    return null;
+    return 0;
   }
   matches = matches.slice(1).filter(v => v !== undefined);
   if (matches.length < 3) {
@@ -68,14 +71,24 @@ export const updateDuration = ({
   setLocal,
 }) => useCallback(
   (index, durationString) => {
-    const newValue = module.valueFromDuration(durationString);
-    if (newValue !== null) {
-      setLocal({ ...local, [index]: durationString });
-      setFormValue({ ...formValue, [index]: newValue });
-    } else {
-      // If invalid duration string, reset to last valid value
-      setLocal({ ...local, [index]: module.durationFromValue(formValue[index]) });
+    let newDurationString = durationString;
+    let newValue = module.valueFromDuration(newDurationString);
+    // stopTime must be at least 1 second, if not zero
+    if (index === 'stopTime' && newValue > 0 && newValue < 1000) {
+      newValue = 1000;
     }
+    // stopTime must be at least 1 second after startTime, except 0 means no custom stopTime
+    if (index === 'stopTime' && newValue > 0 && newValue < (formValue.startTime + 1000)) {
+      newValue = formValue.startTime + 1000;
+    }
+    // startTime must be at least 1 second before stopTime, except when stopTime is less than a second
+    // (stopTime should only be less than a second if it's zero, but we're being paranoid)
+    if (index === 'startTime' && formValue.stopTime >= 1000 && newValue > (formValue.stopTime - 1000)) {
+      newValue = formValue.stopTime - 1000;
+    }
+    newDurationString = module.durationFromValue(newValue);
+    setLocal({ ...local, [index]: newDurationString });
+    setFormValue({ ...formValue, [index]: newValue });
   },
   [formValue, local, setLocal, setFormValue],
 );
