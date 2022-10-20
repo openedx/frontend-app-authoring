@@ -1,18 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Card } from '@edx/paragon';
 
 const EmptyPage = ({
   heading,
   body,
   children,
 }) => (
-  <div className="empty-sheet-wrapper">
-    <div className="empty-content">
-      <h3 className="h3">{heading}</h3>
-      <h4 className="h4">{body}</h4>
+  <Card orientation="horizontal">
+    <Card.Section>
+      <h2>{heading}</h2>
+      <p>{body}</p>
+    </Card.Section>
+    <Card.Footer className="justify-content-end">
       {children}
-    </div>
-  </div>
+    </Card.Footer>
+  </Card>
 );
 
 EmptyPage.propTypes = {

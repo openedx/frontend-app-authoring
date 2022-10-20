@@ -116,8 +116,8 @@ export class LibraryListPage extends React.Component {
               <ActionRow.Spacer />
               {libraries.count !== 0 && (
                 <Button
-                  variant="outline-primary"
-                  onClick={this.goToCreateLibraryPage}
+                variant="outline-primary"
+                onClick={this.goToCreateLibraryPage}
                 >
                   {intl.formatMessage(messages['library.list.new.library'])}
                 </Button>
@@ -151,16 +151,13 @@ export class LibraryListPage extends React.Component {
                     heading={intl.formatMessage(emptyPageMessages['library.list.empty.heading'])}
                     body={intl.formatMessage(emptyPageMessages['library.list.empty.body'])}
                   >
-                    <ActionRow>
-                      <Button
-                        variant="outline-primary"
-                        size="lg"
-                        onClick={this.goToCreateLibraryPage}
-                      >
-                        <Icon src={Add} />
-                        {intl.formatMessage(emptyPageMessages['library.list.empty.new.library'])}
-                      </Button>
-                    </ActionRow>
+                    <Button
+                      variant="outline-primary"
+                      onClick={this.goToCreateLibraryPage}
+                    >
+                      <Icon src={Add} />
+                      {intl.formatMessage(emptyPageMessages['library.list.empty.new.library'])}
+                    </Button>
                   </EmptyPage>
                 )}
               {paginationOptions.pageCount > 1

@@ -3,7 +3,7 @@
 
     .pgn__modal-title {
         @include font-size(22);
-        @include line-height(28);
+        line-height: 28px;
 
         font-weight: 700;
     }
@@ -18,7 +18,7 @@
 
     .pgn__modal-body-content {
         @include font-size(18);
-        @include line-height(28);
+        line-height: 28px;
 
         font-weight: 400;
     }
@@ -29,7 +29,7 @@
 
     .btn {
         @include font-size(18);
-        @include line-height(24);
+        line-height: 24px;
 
         font-weight: 500;
         padding: 1rem 1.5rem;

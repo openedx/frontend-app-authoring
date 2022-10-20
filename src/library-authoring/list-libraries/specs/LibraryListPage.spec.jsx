@@ -139,9 +139,8 @@ describe('list-libraries/LibraryListPage.jsx', () => {
     );
 
     expect(container.find('.library-list .library-item').length).toBe(0);
-    expect(container.find('.empty-sheet-wrapper').exists()).toBeTruthy();
 
-    const emptyHeadingText = container.find('.h3').text();
+    const emptyHeadingText = container.find('h2').text();
     expect(emptyHeadingText).toEqual('Add your first library to get started');
   });
 
@@ -154,10 +153,10 @@ describe('list-libraries/LibraryListPage.jsx', () => {
       </BrowserRouter>,
     );
 
-    const emptyPage = container.find('.empty-sheet-wrapper');
+    const emptyPage = container.find('.pgn__card.horizontal');
     expect(emptyPage).toBeTruthy();
 
-    const newLibraryButton = emptyPage.find('button.btn-outline-primary.btn-lg');
+    const newLibraryButton = emptyPage.find('button.btn-outline-primary');
     newLibraryButton.simulate('click');
 
     expect(historySpy).toHaveBeenCalledWith(ROUTES.List.CREATE);
