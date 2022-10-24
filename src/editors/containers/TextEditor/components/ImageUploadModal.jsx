@@ -1,6 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import { injectIntl } from '@edx/frontend-platform/i18n';
+
+import { selectors } from '../../../data/redux';
 import tinyMCEKeys from '../../../data/constants/tinyMCE';
 import ImageSettingsModal from './ImageSettingsModal';
 import SelectImageModal from './SelectImageModal';
@@ -10,12 +14,23 @@ export const propsString = (props) => (
   Object.keys(props).map((key) => `${key}="${props[key]}"`).join(' ')
 );
 
-export const imgProps = ({ settings, selection }) => ({
-  src: selection.url,
-  alt: settings.isDecorative ? '' : settings.altText,
-  width: settings.dimensions.width,
-  height: settings.dimensions.height,
-});
+export const imgProps = ({
+  settings,
+  selection,
+  lmsEndpointUrl,
+}) => {
+  let url = selection.externalUrl;
+  if (url.startsWith(lmsEndpointUrl)) {
+    const sourceEndIndex = lmsEndpointUrl.length;
+    url = url.substring(sourceEndIndex);
+  }
+  return {
+    src: url,
+    alt: settings.isDecorative ? '' : settings.altText,
+    width: settings.dimensions.width,
+    height: settings.dimensions.height,
+  };
+};
 
 export const hooks = {
   createSaveCallback: ({
@@ -23,13 +38,18 @@ export const hooks = {
     editorRef,
     setSelection,
     selection,
+    lmsEndpointUrl,
   }) => (
     settings,
   ) => {
     editorRef.current.execCommand(
       tinyMCEKeys.commands.insertContent,
       false,
-      module.hooks.imgTag({ settings, selection }),
+      module.hooks.imgTag({
+        settings,
+        selection,
+        lmsEndpointUrl,
+      }),
     );
     setSelection(null);
     close();
@@ -38,8 +58,8 @@ export const hooks = {
     clearSelection();
     close();
   },
-  imgTag: ({ settings, selection }) => {
-    const props = module.imgProps({ settings, selection });
+  imgTag: ({ settings, selection, lmsEndpointUrl }) => {
+    const props = module.imgProps({ settings, selection, lmsEndpointUrl });
     return `<img ${propsString(props)} />`;
   },
 };
@@ -53,6 +73,8 @@ export const ImageUploadModal = ({
   selection,
   setSelection,
   images,
+  // redux
+  lmsEndpointUrl,
 }) => {
   if (selection) {
     return (
@@ -66,6 +88,7 @@ export const ImageUploadModal = ({
             editorRef,
             selection,
             setSelection,
+            lmsEndpointUrl,
           }),
           returnToSelection: clearSelection,
         }}
@@ -104,5 +127,13 @@ ImageUploadModal.propTypes = {
   }),
   setSelection: PropTypes.func.isRequired,
   images: PropTypes.shape({}).isRequired,
+  lmsEndpointUrl: PropTypes.string.isRequired,
 };
-export default ImageUploadModal;
+
+export const mapStateToProps = (state) => ({
+  lmsEndpointUrl: selectors.app.lmsEndpointUrl(state),
+});
+
+export const mapDispatchToProps = {};
+
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ImageUploadModal));

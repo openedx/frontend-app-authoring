@@ -2,6 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 
 import { keyStore } from '../../../utils';
+import { selectors } from '../../../data/redux';
 import tinyMCEKeys from '../../../data/constants/tinyMCE';
 
 import * as module from './ImageUploadModal';
@@ -9,8 +10,15 @@ import * as module from './ImageUploadModal';
 jest.mock('./ImageSettingsModal', () => 'ImageSettingsModal');
 jest.mock('./SelectImageModal', () => 'SelectImageModal');
 
-const { ImageUploadModal } = module;
+const { ImageUploadModal, mapStateToProps, mapDispatchToProps } = module;
 
+jest.mock('../../../data/redux', () => ({
+  selectors: {
+    app: {
+      lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
+    },
+  },
+}));
 const hookKeys = keyStore(module.hooks);
 
 const settings = {
@@ -25,9 +33,10 @@ const settings = {
 describe('ImageUploadModal', () => {
   describe('hooks', () => {
     describe('imgTag', () => {
-      const selection = { url: 'sOmEuRl.cOm' };
+      const selection = { externalUrl: 'sOmEuRl.cOm' };
+      const url = 'uRl.cOm';
       const expected = {
-        src: selection.url,
+        src: url,
         alt: settings.altText,
         width: settings.dimensions.width,
         height: settings.dimensions.height,
@@ -36,6 +45,7 @@ describe('ImageUploadModal', () => {
         const output = module.hooks.imgTag({
           settings: args.settings,
           selection,
+          lmsEndpointUrl: 'sOmE',
         });
         expect(output).toEqual(`<img ${module.propsString(args.expected)} />`);
       };
@@ -55,10 +65,11 @@ describe('ImageUploadModal', () => {
       const editorRef = { current: { some: 'dATa', execCommand: execCommandMock } };
       const setSelection = jest.fn();
       const selection = jest.fn();
+      const lmsEndpointUrl = 'sOmE';
       let output;
       beforeEach(() => {
         output = module.hooks.createSaveCallback({
-          close, editorRef, setSelection, selection,
+          close, editorRef, setSelection, selection, lmsEndpointUrl,
         });
       });
       afterEach(() => {
@@ -66,7 +77,7 @@ describe('ImageUploadModal', () => {
       });
       test('It creates a callback, that when called, inserts to the editor, sets the selection to be null, and calls close', () => {
         jest.spyOn(module.hooks, hookKeys.imgTag)
-          .mockImplementationOnce((props) => ({ selection, settings: props.settings }));
+          .mockImplementationOnce((props) => ({ selection, settings: props.settings, lmsEndpointUrl }));
         expect(execCommandMock).not.toBeCalled();
         expect(setSelection).not.toBeCalled();
         expect(close).not.toBeCalled();
@@ -74,7 +85,7 @@ describe('ImageUploadModal', () => {
         expect(execCommandMock).toBeCalledWith(
           tinyMCEKeys.commands.insertContent,
           false,
-          { selection, settings },
+          { selection, settings, lmsEndpointUrl },
         );
         expect(setSelection).toBeCalledWith(null);
         expect(close).toBeCalled();
@@ -103,6 +114,7 @@ describe('ImageUploadModal', () => {
         clearSelection: jest.fn().mockName('props.clearSelection'),
         selection: { some: 'images' },
         setSelection: jest.fn().mockName('props.setSelection'),
+        lmsEndpointUrl: 'sOmE',
       };
       module.hooks = {
         createSaveCallback: jest.fn().mockName('hooks.createSaveCallback'),
@@ -117,6 +129,20 @@ describe('ImageUploadModal', () => {
     });
     test('snapshot: no selection (Select Image Modal)', () => {
       expect(shallow(<ImageUploadModal {...props} selection={null} />)).toMatchSnapshot();
+    });
+  });
+
+  describe('mapStateToProps', () => {
+    const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
+    test('lmsEndpointUrl from app.lmsEndpointUrl', () => {
+      expect(
+        mapStateToProps(testState).lmsEndpointUrl,
+      ).toEqual(selectors.app.lmsEndpointUrl(testState));
+    });
+  });
+  describe('mapDispatchToProps', () => {
+    it('equals an empty object', () => {
+      expect(mapDispatchToProps).toEqual({});
     });
   });
 });
