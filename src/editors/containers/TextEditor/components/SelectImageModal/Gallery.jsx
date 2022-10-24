@@ -80,7 +80,7 @@ Gallery.propTypes = {
   isLoaded: PropTypes.bool.isRequired,
 };
 
-const requestKey = RequestKeys.fetchImages;
+const requestKey = RequestKeys.fetchAssets;
 export const mapStateToProps = (state) => ({
   isLoaded: selectors.requests.isFinished(state, { requestKey }),
 });

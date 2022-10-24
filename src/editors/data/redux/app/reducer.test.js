@@ -47,7 +47,7 @@ describe('app reducer', () => {
       ['setBlockContent', 'blockContent'],
       ['setBlockTitle', 'blockTitle'],
       ['setSaveResponse', 'saveResponse'],
-      ['setImages', 'images'],
+      ['setAssets', 'assets'],
     ].map(args => setterTest(...args));
     describe('setBlockValue', () => {
       it('sets blockValue, as well as setting the blockTitle from data.display_name', () => {

@@ -42,9 +42,9 @@ describe('TextEditor Image Gallery component', () => {
   });
   describe('mapStateToProps', () => {
     const testState = { some: 'testState' };
-    test('loads isLoaded from requests.isFinished selector for fetchImages request', () => {
+    test('loads isLoaded from requests.isFinished selector for fetchAssets request', () => {
       expect(mapStateToProps(testState).isLoaded).toEqual(
-        selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchImages }),
+        selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchAssets }),
       );
     });
   });

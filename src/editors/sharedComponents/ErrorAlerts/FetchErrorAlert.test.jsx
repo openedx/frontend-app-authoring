@@ -23,7 +23,7 @@ describe('FetchErrorAlert', () => {
     test('isFetchError from requests.isFinished', () => {
       expect(
         mapStateToProps(testState).isFetchError,
-      ).toEqual(selectors.requests.isFailed(testState, { requestKey: RequestKeys.fetchImages }));
+      ).toEqual(selectors.requests.isFailed(testState, { requestKey: RequestKeys.fetchAssets }));
     });
   });
 });

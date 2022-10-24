@@ -47,6 +47,7 @@ jest.mock('./hooks', () => ({
     refReady: true,
     setEditorRef: jest.fn().mockName('hooks.prepareEditorRef.setEditorRef'),
   })),
+  filterAssets: jest.fn(() => [{ staTICUrl: '/assets/sOmEaSsET' }]),
 }));
 
 jest.mock('react', () => {
@@ -70,8 +71,8 @@ jest.mock('../../data/redux', () => ({
       lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
       studioEndpointUrl: jest.fn(state => ({ studioEndpointUrl: state })),
       isRaw: jest.fn(state => ({ isRaw: state })),
-      images: jest.fn(state => ({ images: state })),
       isLibrary: jest.fn(state => ({ isLibrary: state })),
+      assets: jest.fn(state => ({ assets: state })),
     },
     requests: {
       isFailed: jest.fn((state, params) => ({ isFailed: { state, params } })),
@@ -91,8 +92,8 @@ describe('TextEditor', () => {
     initializeEditor: jest.fn().mockName('args.intializeEditor'),
     isRaw: false,
     isLibrary: false,
-    imagesFinished: true,
-    images: { sOmEuiMAge: { staTICUrl: '/assets/sOmEuiMAge' } },
+    assetsFinished: true,
+    assets: { sOmEaSsET: { staTICUrl: '/assets/sOmEaSsET' } },
     // inject
     intl: { formatMessage },
   };
@@ -111,7 +112,7 @@ describe('TextEditor', () => {
       expect(shallow(<TextEditor {...props} />)).toMatchSnapshot();
     });
     test('not yet loaded, Spinner appears', () => {
-      expect(shallow(<TextEditor {...props} imagesFinished={false} />)).toMatchSnapshot();
+      expect(shallow(<TextEditor {...props} assetsFinished={false} />)).toMatchSnapshot();
     });
     test('loaded, raw editor', () => {
       expect(shallow(<TextEditor {...props} isRaw />)).toMatchSnapshot();
@@ -136,20 +137,20 @@ describe('TextEditor', () => {
         mapStateToProps(testState).lmsEndpointUrl,
       ).toEqual(selectors.app.lmsEndpointUrl(testState));
     });
-    test('images from app.images', () => {
+    test('assets from app.assets', () => {
       expect(
-        mapStateToProps(testState).images,
-      ).toEqual(selectors.app.images(testState));
+        mapStateToProps(testState).assets,
+      ).toEqual(selectors.app.assets(testState));
     });
     test('blockFailed from requests.isFailed', () => {
       expect(
         mapStateToProps(testState).blockFailed,
       ).toEqual(selectors.requests.isFailed(testState, { requestKey: RequestKeys.fetchBlock }));
     });
-    test('imagesFinished from requests.isFinished', () => {
+    test('assetssFinished from requests.isFinished', () => {
       expect(
-        mapStateToProps(testState).imagesFinished,
-      ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchImages }));
+        mapStateToProps(testState).assetsFinished,
+      ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchAssets }));
     });
   });
   describe('mapDispatchToProps', () => {

@@ -95,19 +95,17 @@ describe('TextEditor hooks', () => {
         expect(editor.setContent).toHaveBeenCalled();
       });
     });
-
     describe('setAssetToStaticUrl', () => {
       it('returns content with updated img links', () => {
-        const editorValue = '<img src="/asset@asset-block/soMEImagEURl1"/> <img src="/asset@soMEImagEURl" />';
-        const images = [
+        const editorValue = '<img src="/asset@asset-block/soME_ImagE_URl1"/> <a href="/asset@soMEImagEURl">testing link</a>';
+        const assets = [
           { portableUrl: '/static/soMEImagEURl', displayName: 'soMEImagEURl' },
-          { portableUrl: '/static/soMEImagEURl1', displayName: 'soMEImagEURl1' },
+          { portableUrl: '/static/soME_ImagE_URl1', displayName: 'soME ImagE URl1' },
         ];
-        const content = module.setAssetToStaticUrl({ editorValue, images });
-        expect(content).toEqual('<img src="/static/soMEImagEURl1"/> <img src="/static/soMEImagEURl" />');
+        const content = module.setAssetToStaticUrl({ editorValue, assets });
+        expect(content).toEqual('<img src="/static/soME_ImagE_URl1"/> <a href="/static/soMEImagEURl">testing link</a>');
       });
     });
-
     describe('checkRelativeUrl', () => {
       test('it calls editor.on', () => {
         const editor = { on: jest.fn() };
@@ -122,7 +120,7 @@ describe('TextEditor hooks', () => {
         blockValue: null,
         lmsEndpointUrl: 'sOmEuRl.cOm',
         studioEndpointUrl: 'sOmEoThEruRl.cOm',
-        images: { sOmEuiMAge: { staTICUrl: '/assets/sOmEuiMAge' } },
+        images: [{ staTICUrl: '/assets/sOmEuiMAge' }],
         isLibrary: false,
       };
       const evt = 'fakeEvent';
@@ -261,10 +259,10 @@ describe('TextEditor hooks', () => {
           },
         },
       };
-      const images = {};
-      test('returns correct ontent based on isRaw', () => {
-        expect(module.getContent({ editorRef, isRaw: false, images })()).toEqual(visualContent);
-        expect(module.getContent({ editorRef, isRaw: true, images })()).toEqual(rawContent);
+      const assets = [];
+      test('returns correct content based on isRaw', () => {
+        expect(module.getContent({ editorRef, isRaw: false, assets })()).toEqual(visualContent);
+        expect(module.getContent({ editorRef, isRaw: true, assets })()).toEqual(rawContent);
       });
     });
 

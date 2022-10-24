@@ -33,7 +33,7 @@ FetchErrorAlert.propTypes = {
 
 };
 export const mapStateToProps = (state) => ({
-  isFetchError: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchImages }),
+  isFetchError: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchAssets }),
 });
 export const mapDispatchToProps = {};
 export default connect(mapStateToProps, mapDispatchToProps)(FetchErrorAlert);

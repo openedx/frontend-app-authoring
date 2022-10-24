@@ -173,26 +173,36 @@ export const prepareEditorRef = () => {
   return { editorRef, refReady, setEditorRef };
 };
 
-export const setAssetToStaticUrl = ({ editorValue, images }) => {
+export const filterAssets = ({ assets }) => {
+  let images = [];
+  const assetsList = Object.values(assets);
+  if (assetsList.length > 0) {
+    images = assetsList.filter(asset => asset.contentType.startsWith('image/'));
+  }
+  return images;
+};
+
+export const setAssetToStaticUrl = ({ editorValue, assets }) => {
   /* For assets to remain usable across course instances, we convert their url to be course-agnostic.
    * For example, /assets/course/<asset hash>/filename gets converted to /static/filename. This is
    * important for rerunning courses and importing/exporting course as the /static/ part of the url
    * allows the asset to be mapped to the new course run.
   */
   let content = editorValue;
-  const imageUrls = [];
-  const imgsArray = Object.values(images);
-  imgsArray.forEach(image => {
-    imageUrls.push({ portableUrl: image.portableUrl, displayName: image.displayName });
+  const assetUrls = [];
+  assets.forEach(asset => {
+    assetUrls.push({ portableUrl: asset.portableUrl, displayName: asset.displayName });
   });
-  const imageSrcs = typeof content === 'string' ? content.split('src="') : [];
-  imageSrcs.forEach(src => {
-    if (src.startsWith('/asset') && imageUrls.length > 0) {
-      const nameFromEditorSrc = src.substring(src.lastIndexOf('@') + 1, src.indexOf('"'));
-      const nameFromStudioSrc = nameFromEditorSrc.substring(nameFromEditorSrc.indexOf('/') + 1);
+  const assetSrcs = typeof content === 'string' ? content.split(/(src="|href=")/g) : [];
+  assetSrcs.forEach(src => {
+    if (src.startsWith('/asset') && assetUrls.length > 0) {
+      const assetBlockName = src.substring(src.indexOf('@') + 1, src.indexOf('"'));
+      const nameFromEditorSrc = assetBlockName.substring(assetBlockName.indexOf('@') + 1);
+      const nameFromStudioSrc = assetBlockName.substring(assetBlockName.indexOf('/') + 1);
       let portableUrl;
-      imageUrls.forEach((url) => {
-        if (url.displayName === nameFromEditorSrc || url.displayName === nameFromStudioSrc) {
+      assetUrls.forEach((url) => {
+        const displayName = url.displayName.replace(/\s/g, '_');
+        if (displayName === nameFromEditorSrc || displayName === nameFromStudioSrc) {
           portableUrl = url.portableUrl;
         }
       });
@@ -206,17 +216,16 @@ export const setAssetToStaticUrl = ({ editorValue, images }) => {
   return content;
 };
 
-export const getContent = ({ editorRef, isRaw, images }) => () => {
+export const getContent = ({ editorRef, isRaw, assets }) => () => {
   const content = (isRaw && editorRef && editorRef.current
     ? editorRef.current.state.doc.toString()
     : editorRef.current?.getContent());
-  return setAssetToStaticUrl({ editorValue: content, images });
+  return setAssetToStaticUrl({ editorValue: content, assets });
 };
 
 export const fetchImageUrls = (images) => {
   const imageUrls = [];
-  const imgsArray = Object.values(images);
-  imgsArray.forEach(image => {
+  images.forEach(image => {
     imageUrls.push({ staticFullUrl: image.staticFullUrl, displayName: image.displayName });
   });
   return imageUrls;

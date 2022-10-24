@@ -101,7 +101,7 @@ describe('SelectImageModal hooks', () => {
     });
     describe('displayList', () => {
       const props = {
-        images: { p1: 'data1', p2: 'data2', p3: 'other distinct data' },
+        images: ['data1', 'data2', 'other distinct data'],
         sortBy: sortKeys.dateNewest,
         searchString: 'test search string',
 
@@ -136,12 +136,13 @@ describe('SelectImageModal hooks', () => {
       const props = {
         setSelection: jest.fn(),
         searchSortProps: { searchString: 'Es', sortBy: sortKeys.dateNewest },
-        images: {
-          sOmEuiMAgeURl: {
+        images: [
+          {
             displayName: 'sOmEuiMAge',
             staTICUrl: '/assets/sOmEuiMAge',
+            id: 'sOmEuiMAgeURl',
           },
-        },
+        ],
       };
       const displayList = (args) => ({ displayList: args });
       const load = () => {
@@ -154,7 +155,7 @@ describe('SelectImageModal hooks', () => {
       describe('selectBtnProps', () => {
         test('on click, if sets selection to the image with the same id', () => {
           const highlighted = 'sOmEuiMAgeURl';
-          const highlightedValue = { displayName: 'sOmEuiMAge', staTICUrl: '/assets/sOmEuiMAge' };
+          const highlightedValue = { displayName: 'sOmEuiMAge', staTICUrl: '/assets/sOmEuiMAge', id: 'sOmEuiMAgeURl' };
           state.mockVal(state.keys.highlighted, highlighted);
           load();
           expect(props.setSelection).not.toHaveBeenCalled();

@@ -98,7 +98,7 @@ SelectImageModal.propTypes = {
   close: PropTypes.func.isRequired,
   setSelection: PropTypes.func.isRequired,
   clearSelection: PropTypes.func.isRequired,
-  images: PropTypes.shape({}).isRequired,
+  images: PropTypes.arrayOf(PropTypes.string).isRequired,
   // injected
   intl: intlShape.isRequired,
   // redux

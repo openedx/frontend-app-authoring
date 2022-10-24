@@ -28,11 +28,7 @@ export const blockStudioView = ({ studioEndpointUrl, blockId }) => (
 );
 
 export const courseAssets = ({ studioEndpointUrl, learningContextId }) => (
-  `${studioEndpointUrl}/assets/${learningContextId}/`
-);
-
-export const courseImages = ({ studioEndpointUrl, learningContextId }) => (
-  `${courseAssets({ studioEndpointUrl, learningContextId })}?sort=uploadDate&direction=desc&asset_type=Images`
+  `${studioEndpointUrl}/assets/${learningContextId}/?page_size=500`
 );
 
 export const allowThumbnailUpload = ({ studioEndpointUrl }) => (

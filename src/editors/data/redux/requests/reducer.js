@@ -9,12 +9,13 @@ const initialState = {
   [RequestKeys.fetchBlock]: { status: RequestStates.inactive },
   [RequestKeys.fetchStudioView]: { status: RequestStates.inactive },
   [RequestKeys.saveBlock]: { status: RequestStates.inactive },
-  [RequestKeys.fetchImages]: { status: RequestStates.inactive },
   [RequestKeys.uploadAsset]: { status: RequestStates.inactive },
   [RequestKeys.allowThumbnailUpload]: { status: RequestStates.inactive },
   [RequestKeys.uploadThumbnail]: { status: RequestStates.inactive },
   [RequestKeys.uploadTranscript]: { status: RequestStates.inactive },
   [RequestKeys.deleteTranscript]: { status: RequestStates.inactive },
+  [RequestKeys.fetchAssets]: { status: RequestStates.inactive },
+
 };
 
 // eslint-disable-next-line no-unused-vars

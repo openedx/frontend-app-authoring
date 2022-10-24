@@ -122,11 +122,11 @@ export const uploadAsset = ({ asset, ...rest }) => (dispatch, getState) => {
   }));
 };
 
-export const fetchImages = ({ ...rest }) => (dispatch, getState) => {
+export const fetchAssets = ({ ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
-    requestKey: RequestKeys.fetchImages,
+    requestKey: RequestKeys.fetchAssets,
     promise: api
-      .fetchImages({
+      .fetchAssets({
         studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
         learningContextId: selectors.app.learningContextId(getState()),
       })
@@ -189,10 +189,10 @@ export const uploadTranscript = ({
 
 export default StrictDict({
   fetchBlock,
-  fetchImages,
   fetchStudioView,
   fetchUnit,
   saveBlock,
+  fetchAssets,
   uploadAsset,
   allowThumbnailUpload,
   uploadThumbnail,

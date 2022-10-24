@@ -32,7 +32,7 @@ export const filteredList = ({ searchString, imageList }) => (
 export const displayList = ({ sortBy, searchString, images }) => (
   module.filteredList({
     searchString,
-    imageList: Object.values(images),
+    imageList: images,
   }).sort(sortFunctions[sortBy in sortKeys ? sortKeys[sortBy] : sortKeys.dateNewest]));
 
 export const imgListHooks = ({ searchSortProps, setSelection, images }) => {
@@ -67,7 +67,8 @@ export const imgListHooks = ({ searchSortProps, setSelection, images }) => {
     selectBtnProps: {
       onClick: () => {
         if (highlighted) {
-          setSelection(images[highlighted]);
+          const highlightedImage = images.find(image => image.id === highlighted);
+          setSelection(highlightedImage);
         } else {
           setShowSelectImageError(true);
         }
