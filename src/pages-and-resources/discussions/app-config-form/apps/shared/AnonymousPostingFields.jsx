@@ -5,27 +5,25 @@ import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from '../../messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
 
-function AnonymousPostingFields({
+const AnonymousPostingFields = ({
   onBlur,
   onChange,
   intl,
   values,
-}) {
-  return (
-    <>
-      <h5 className="mt-4 text-gray-500">{intl.formatMessage(messages.anonymousPosting)}</h5>
-      <AppConfigFormDivider />
-      <FormSwitchGroup
-        onChange={onChange}
-        onBlur={onBlur}
-        id="allowAnonymousPostsPeers"
-        checked={values.allowAnonymousPostsPeers}
-        label={intl.formatMessage(messages.allowAnonymousPostsPeersLabel)}
-        helpText={intl.formatMessage(messages.allowAnonymousPostsPeersHelp)}
-      />
-    </>
+}) => (
+  <>
+    <h5 className="mt-4 text-gray-500">{intl.formatMessage(messages.anonymousPosting)}</h5>
+    <AppConfigFormDivider />
+    <FormSwitchGroup
+      onChange={onChange}
+      onBlur={onBlur}
+      id="allowAnonymousPostsPeers"
+      checked={values.allowAnonymousPostsPeers}
+      label={intl.formatMessage(messages.allowAnonymousPostsPeersLabel)}
+      helpText={intl.formatMessage(messages.allowAnonymousPostsPeersHelp)}
+    />
+  </>
   );
-}
 
 AnonymousPostingFields.propTypes = {
   onBlur: PropTypes.func.isRequired,

@@ -2,38 +2,36 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, TransitionReplace } from '@edx/paragon';
 
-function FieldFeedback({
+const FieldFeedback = ({
   feedbackClasses,
   transitionClasses,
   errorCondition,
   feedbackCondition,
   feedbackMessage,
   errorMessage,
-}) {
-  return (
-    <>
-      <TransitionReplace className={transitionClasses}>
-        {feedbackCondition ? (
-          <React.Fragment key="open1">
-            <Form.Control.Feedback type="default" hasIcon={false} key={`${feedbackMessage}-feedback`}>
-              <div className={`small ${feedbackClasses}`}>{feedbackMessage}</div>
-            </Form.Control.Feedback>
-          </React.Fragment>
+}) => (
+  <>
+    <TransitionReplace className={transitionClasses}>
+      {feedbackCondition ? (
+        <React.Fragment key="open1">
+          <Form.Control.Feedback type="default" hasIcon={false} key={`${feedbackMessage}-feedback`}>
+            <div className={`small ${feedbackClasses}`}>{feedbackMessage}</div>
+          </Form.Control.Feedback>
+        </React.Fragment>
         ) : <React.Fragment key="close1" />}
-      </TransitionReplace>
+    </TransitionReplace>
 
-      <TransitionReplace>
-        {errorCondition ? (
-          <React.Fragment key="open">
-            <Form.Control.Feedback type="invalid" hasIcon={false} key={`${errorMessage}-feedback`}>
-              <div className={`small ${feedbackClasses}`}>{errorMessage}</div>
-            </Form.Control.Feedback>
-          </React.Fragment>
+    <TransitionReplace>
+      {errorCondition ? (
+        <React.Fragment key="open">
+          <Form.Control.Feedback type="invalid" hasIcon={false} key={`${errorMessage}-feedback`}>
+            <div className={`small ${feedbackClasses}`}>{errorMessage}</div>
+          </Form.Control.Feedback>
+        </React.Fragment>
         ) : <React.Fragment key="close" />}
-      </TransitionReplace>
-    </>
+    </TransitionReplace>
+  </>
   );
-}
 
 FieldFeedback.propTypes = {
   errorCondition: PropTypes.bool.isRequired,

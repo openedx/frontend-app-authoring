@@ -17,7 +17,7 @@ import { getLoadingStatus } from './data/selectors';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 import { RequestStatus } from '../data/constants';
 
-function PagesAndResources({ courseId, intl }) {
+const PagesAndResources = ({ courseId, intl }) => {
   const { path, url } = useRouteMatch();
 
   const dispatch = useDispatch();
@@ -90,7 +90,7 @@ function PagesAndResources({ courseId, intl }) {
       </main>
     </PagesAndResourcesProvider>
   );
-}
+};
 
 PagesAndResources.propTypes = {
   courseId: PropTypes.string.isRequired,

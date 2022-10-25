@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 export const DiscussionsContext = React.createContext({});
 
-export default function DiscussionsProvider({ children, path }) {
+const DiscussionsProvider = ({ children, path }) => {
   const contextValue = useMemo(() => ({ path }), []);
   return (
     <DiscussionsContext.Provider
@@ -12,9 +12,11 @@ export default function DiscussionsProvider({ children, path }) {
       {children}
     </DiscussionsContext.Provider>
   );
-}
+};
 
 DiscussionsProvider.propTypes = {
   children: PropTypes.node.isRequired,
   path: PropTypes.string.isRequired,
 };
+
+export default DiscussionsProvider;

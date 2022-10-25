@@ -10,7 +10,7 @@ import TopicItem from './TopicItem';
 import { OpenedXConfigFormContext } from '../../openedx/OpenedXConfigFormProvider';
 import { filterItemFromObject } from '../../../utils';
 
-function DiscussionTopics({ intl }) {
+const DiscussionTopics = ({ intl }) => {
   const {
     values: appConfig,
     validateForm,
@@ -90,7 +90,7 @@ function DiscussionTopics({ intl }) {
       </div>
     </>
   );
-}
+};
 
 DiscussionTopics.propTypes = {
   intl: intlShape.isRequired,

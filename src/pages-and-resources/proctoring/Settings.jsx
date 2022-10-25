@@ -24,7 +24,7 @@ import { useIsMobile } from '../../utils';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import messages from './messages';
 
-function ProctoringSettings({ intl, onClose }) {
+const ProctoringSettings = ({ intl, onClose }) => {
   const initialFormValues = {
     enableProctoredExams: false,
     proctoringProvider: false,
@@ -92,7 +92,7 @@ function ProctoringSettings({ intl, onClose }) {
     return ltiProctoringProviders.some(p => p.name === provider);
   }
 
-  function setFocusToProctortrackEscalationEmailInput() {
+  const setFocusToProctortrackEscalationEmailInput = () => {
     if (proctoringEscalationEmailInputRef && proctoringEscalationEmailInputRef.current) {
       proctoringEscalationEmailInputRef.current.focus();
     }
@@ -122,8 +122,9 @@ function ProctoringSettings({ intl, onClose }) {
     if (allowLtiProviders && ExamsApiService.isAvailable()) {
       saveOperations.push(
         ExamsApiService.saveCourseExamConfiguration(
-          courseId, { provider: providerIsLti ? formValues.proctoringProvider : null },
-        ),
+          courseId,
+          { provider: providerIsLti ? formValues.proctoringProvider : null },
+          ),
       );
     }
     Promise.all(saveOperations)
@@ -152,7 +153,11 @@ function ProctoringSettings({ intl, onClose }) {
           isValid: false,
           errors: {
             formProctortrackEscalationEmail: {
-              dialogErrorMessage: (<Alert.Link onClick={setFocusToProctortrackEscalationEmailInput} href="#formProctortrackEscalationEmail" data-testid="proctorTrackEscalationEmailErrorLink">{errorMessage}</Alert.Link>),
+              dialogErrorMessage: (
+                <Alert.Link onClick={setFocusToProctortrackEscalationEmailInput} href="#formProctortrackEscalationEmail" data-testid="proctorTrackEscalationEmailErrorLink">
+                  {errorMessage}
+                </Alert.Link>
+                ),
               inputErrorMessage: errorMessage,
             },
           },
@@ -468,8 +473,7 @@ function ProctoringSettings({ intl, onClose }) {
     );
   }
 
-  useEffect(
-    () => {
+  useEffect(() => {
       Promise.all([
         StudioApiService.getProctoredExamSettingsData(courseId),
         ExamsApiService.isAvailable() ? ExamsApiService.getCourseExamConfiguration(courseId) : Promise.resolve(),
@@ -593,7 +597,7 @@ function ProctoringSettings({ intl, onClose }) {
       </Form>
     </ModalDialog>
   );
-}
+};
 
 ProctoringSettings.propTypes = {
   intl: intlShape.isRequired,

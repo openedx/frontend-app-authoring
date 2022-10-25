@@ -2,29 +2,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function Logo({ src, alt, ...attributes }) {
-  return (
-    <img src={src} alt={alt} {...attributes} />
+const Logo = ({ src, alt, ...attributes }) => (
+  <img src={src} alt={alt} {...attributes} />
   );
-}
 
 Logo.propTypes = {
   src: PropTypes.string.isRequired,
   alt: PropTypes.string.isRequired,
 };
 
-function LinkedLogo({
+const LinkedLogo = ({
   href,
   src,
   alt,
   ...attributes
-}) {
-  return (
-    <a href={href} {...attributes}>
-      <img className="d-block" src={src} alt={alt} />
-    </a>
+}) => (
+  <a href={href} {...attributes}>
+    <img className="d-block" src={src} alt={alt} />
+  </a>
   );
-}
 
 LinkedLogo.propTypes = {
   href: PropTypes.string.isRequired,

@@ -16,10 +16,10 @@ import messages from './messages';
 import ZoomSettings from './ZoomSettings';
 import BBBSettings from './BBBSettings';
 
-function LiveSettings({
+const LiveSettings = ({
   intl,
   onClose,
-}) {
+}) => {
   const dispatch = useDispatch();
   const courseId = useSelector(state => state.courseDetail.courseId);
   const availableProviders = useSelector((state) => state.live.appIds);
@@ -126,7 +126,7 @@ function LiveSettings({
           )}
     </AppSettingsModal>
   );
-}
+};
 
 LiveSettings.propTypes = {
   intl: intlShape.isRequired,

@@ -14,7 +14,7 @@ import FeaturesTable from './FeaturesTable';
 import AppListNextButton from './AppListNextButton';
 import Loading from '../../../generic/Loading';
 
-function AppList({ intl }) {
+const AppList = ({ intl }) => {
   const dispatch = useDispatch();
 
   const {
@@ -90,7 +90,7 @@ function AppList({ intl }) {
       </Responsive>
     </div>
   );
-}
+};
 
 AppList.propTypes = {
   intl: intlShape.isRequired,

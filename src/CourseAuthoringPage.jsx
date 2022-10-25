@@ -14,26 +14,22 @@ import { getCourseAppsApiStatus, getLoadingStatus } from './pages-and-resources/
 import { RequestStatus } from './data/constants';
 import Loading from './generic/Loading';
 
-function AppHeader(courseNumber, courseOrg, courseTitle, courseId) {
-  return (
-    <Header
-      courseNumber={courseNumber}
-      courseOrg={courseOrg}
-      courseTitle={courseTitle}
-      courseId={courseId}
-    />
+const AppHeader = (courseNumber, courseOrg, courseTitle, courseId) => (
+  <Header
+    courseNumber={courseNumber}
+    courseOrg={courseOrg}
+    courseTitle={courseTitle}
+    courseId={courseId}
+  />
   );
-}
 
-  function AppFooter() {
-  return (
+  const AppFooter = () => (
     <div className="mt-6">
       <Footer />
     </div>
   );
-}
 
-export default function CourseAuthoringPage({ courseId, children }) {
+const CourseAuthoringPage = ({ courseId, children }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -66,7 +62,7 @@ export default function CourseAuthoringPage({ courseId, children }) {
       {!inProgress && <AppFooter />}
     </div>
   );
-}
+};
 
 CourseAuthoringPage.propTypes = {
   children: PropTypes.node,
@@ -76,3 +72,5 @@ CourseAuthoringPage.propTypes = {
 CourseAuthoringPage.defaultProps = {
   children: null,
 };
+
+export default CourseAuthoringPage;

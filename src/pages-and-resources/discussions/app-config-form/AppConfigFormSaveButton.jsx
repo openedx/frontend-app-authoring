@@ -10,7 +10,7 @@ import { SAVING } from '../data/slice';
 import { AppConfigFormContext } from './AppConfigFormProvider';
 import { useModel } from '../../../generic/model-store';
 
-function AppConfigFormSaveButton({ intl, labelText }) {
+const AppConfigFormSaveButton = ({ intl, labelText }) => {
   const saveStatus = useSelector(state => state.discussions.saveStatus);
   const { selectedAppId } = useSelector((state) => state.discussions);
 
@@ -45,7 +45,7 @@ function AppConfigFormSaveButton({ intl, labelText }) {
       />
     )
   );
-}
+};
 
 AppConfigFormSaveButton.propTypes = {
   intl: intlShape.isRequired,

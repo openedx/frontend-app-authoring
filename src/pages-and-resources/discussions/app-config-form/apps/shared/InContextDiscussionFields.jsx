@@ -5,35 +5,33 @@ import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from '../../messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
 
-function InContextDiscussionFields({
+const InContextDiscussionFields = ({
   onBlur,
   onChange,
   intl,
   values,
-}) {
-  return (
-    <>
-      <h5 className="text-gray-500 mt-4">{intl.formatMessage(messages.visibilityInContext)}</h5>
-      <FormSwitchGroup
-        onChange={onChange}
-        onBlur={onBlur}
-        id="enableGradedUnits"
-        checked={values.enableGradedUnits}
-        label={intl.formatMessage(messages.gradedUnitPagesLabel)}
-        helpText={intl.formatMessage(messages.gradedUnitPagesHelp)}
-      />
-      <AppConfigFormDivider />
-      <FormSwitchGroup
-        onChange={onChange}
-        onBlur={onBlur}
-        id="groupAtSubsection"
-        checked={values.groupAtSubsection}
-        label={intl.formatMessage(messages.groupInContextSubsectionLabel)}
-        helpText={intl.formatMessage(messages.groupInContextSubsectionHelp)}
-      />
-    </>
+}) => (
+  <>
+    <h5 className="text-gray-500 mt-4">{intl.formatMessage(messages.visibilityInContext)}</h5>
+    <FormSwitchGroup
+      onChange={onChange}
+      onBlur={onBlur}
+      id="enableGradedUnits"
+      checked={values.enableGradedUnits}
+      label={intl.formatMessage(messages.gradedUnitPagesLabel)}
+      helpText={intl.formatMessage(messages.gradedUnitPagesHelp)}
+    />
+    <AppConfigFormDivider />
+    <FormSwitchGroup
+      onChange={onChange}
+      onBlur={onBlur}
+      id="groupAtSubsection"
+      checked={values.groupAtSubsection}
+      label={intl.formatMessage(messages.groupInContextSubsectionLabel)}
+      helpText={intl.formatMessage(messages.groupInContextSubsectionHelp)}
+    />
+  </>
   );
-}
 
 InContextDiscussionFields.propTypes = {
   onBlur: PropTypes.func.isRequired,

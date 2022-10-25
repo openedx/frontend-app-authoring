@@ -8,7 +8,7 @@ import messages from '../../messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
 import { OpenedXConfigFormContext } from '../openedx/OpenedXConfigFormProvider';
 
-function DivisionByGroupFields({ intl }) {
+const DivisionByGroupFields = ({ intl }) => {
   const { validDiscussionTopics } = useContext(OpenedXConfigFormContext);
   const {
     handleChange,
@@ -121,7 +121,7 @@ function DivisionByGroupFields({ intl }) {
       </TransitionReplace>
     </>
   );
-}
+};
 
 DivisionByGroupFields.propTypes = {
   intl: intlShape.isRequired,

@@ -21,9 +21,9 @@ import OpenedXConfigFormProvider from './OpenedXConfigFormProvider';
 
 setupYupExtensions();
 
-function OpenedXConfigForm({
+const OpenedXConfigForm = ({
   onSubmit, formRef, intl, legacy,
-}) {
+}) => {
   const {
     selectedAppId, enableGradedUnits, discussionTopicIds, divideDiscussionIds,
   } = useSelector(state => state.discussions);
@@ -147,7 +147,7 @@ function OpenedXConfigForm({
       }}
     </Formik>
   );
-}
+};
 
 OpenedXConfigForm.propTypes = {
   legacy: PropTypes.bool.isRequired,

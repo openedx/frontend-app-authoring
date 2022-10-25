@@ -18,7 +18,7 @@ import { useModel } from '../../../../../generic/model-store';
 
 ensureConfig(['SITE_NAME', 'SUPPORT_EMAIL'], 'LTI Config Form');
 
-function LtiConfigForm({ onSubmit, intl, formRef }) {
+const LtiConfigForm = ({ onSubmit, intl, formRef }) => {
   const dispatch = useDispatch();
 
   const { selectedAppId, piiConfig } = useSelector((state) => state.discussions);
@@ -177,7 +177,7 @@ function LtiConfigForm({ onSubmit, intl, formRef }) {
       />
     </Card>
   );
-}
+};
 
 LtiConfigForm.propTypes = {
   intl: intlShape.isRequired,

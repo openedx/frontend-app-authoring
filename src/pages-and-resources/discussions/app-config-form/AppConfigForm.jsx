@@ -28,9 +28,9 @@ import AppConfigFormProvider, { AppConfigFormContext } from './AppConfigFormProv
 import AppConfigFormSaveButton from './AppConfigFormSaveButton';
 import messages from './messages';
 
-function AppConfigForm({
+const AppConfigForm = ({
   courseId, intl,
-}) {
+}) => {
   const dispatch = useDispatch();
 
   const { formRef } = useContext(AppConfigFormContext);
@@ -141,7 +141,7 @@ function AppConfigForm({
       </ModalDialog>
     </Container>
   );
-}
+};
 
 AppConfigForm.propTypes = {
   courseId: PropTypes.string.isRequired,

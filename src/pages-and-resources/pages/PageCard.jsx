@@ -26,15 +26,15 @@ const CoursePageShape = PropTypes.shape({
 
 export { CoursePageShape };
 
-function PageCard({
+const PageCard = ({
   intl,
   page,
-}) {
+}) => {
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const isDesktop = useIsDesktop();
 
   // eslint-disable-next-line react/no-unstable-nested-components
-  function SettingsButton() {
+  const SettingsButton = () => {
     if (page.legacyLink) {
       return (
         <Hyperlink destination={page.legacyLink}>
@@ -56,7 +56,7 @@ function PageCard({
         onClick={() => history.push(`${pagesAndResourcesPath}/${page.id}/settings`)}
       />
     );
-  }
+  };
 
   return (
     <Card
@@ -82,7 +82,7 @@ function PageCard({
       </Card.Body>
     </Card>
   );
-}
+};
 
 PageCard.propTypes = {
   intl: intlShape.isRequired,

@@ -12,7 +12,7 @@ import { checkStatus } from '../../utils';
 import { denormalizeBlackoutDate } from '../../../data/api';
 import { blackoutDatesStatus as STATUS } from '../../../data/constants';
 
-function BlackoutDatesField({ intl }) {
+const BlackoutDatesField = ({ intl }) => {
   const {
     values: appConfig,
     setFieldValue,
@@ -86,7 +86,7 @@ function BlackoutDatesField({ intl }) {
       </div>
     </>
   );
-}
+};
 
 BlackoutDatesField.propTypes = {
   intl: intlShape.isRequired,

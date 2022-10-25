@@ -12,7 +12,7 @@ import CollapsableEditor from '../../../../../../generic/CollapsableEditor';
 import messages from '../../../messages';
 import FieldFeedback from '../../../../../../generic/FieldFeedback';
 
-function TopicItem({
+const TopicItem = ({
   intl,
   index,
   id,
@@ -20,7 +20,7 @@ function TopicItem({
   onDelete,
   hasError,
   onFocus,
-}) {
+}) => {
   const {
     handleChange, handleBlur, errors,
   } = useFormikContext();
@@ -132,7 +132,7 @@ function TopicItem({
         </Form.Group>
       </CollapsableEditor>
     );
-}
+};
 
 TopicItem.propTypes = {
   name: PropTypes.string.isRequired,

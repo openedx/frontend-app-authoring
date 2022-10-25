@@ -4,7 +4,7 @@ import { Form, SwitchControl } from '@edx/paragon';
 
 import './FormSwitchGroup.scss';
 
-export default function FormSwitchGroup({
+const FormSwitchGroup = ({
   id,
   name,
   label,
@@ -13,7 +13,7 @@ export default function FormSwitchGroup({
   onChange,
   onBlur,
   checked,
-}) {
+}) => {
   const helpTextId = `${id}HelpText`;
 
   // Note that we use controlId here _and_ set some IDs and aria-describedby attributes manually.
@@ -47,7 +47,7 @@ export default function FormSwitchGroup({
       </div>
     </Form.Group>
   );
-}
+};
 FormSwitchGroup.propTypes = {
   id: PropTypes.string.isRequired,
   label: PropTypes.node.isRequired,
@@ -63,3 +63,5 @@ FormSwitchGroup.defaultProps = {
   onBlur: null,
   name: null,
 };
+
+export default FormSwitchGroup;

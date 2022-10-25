@@ -6,30 +6,28 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import SupportedFeature from './SupportedFeature';
 import messages from './messages';
 
-function FeaturesList({ app, intl }) {
-  return (
-    <Collapsible
-      onClick={(event) => event.stopPropagation()}
-      title={(
-        <>
-          <Collapsible.Visible whenClosed>
-            {intl.formatMessage(messages['supportedFeatureList-mobile-show'])}
-          </Collapsible.Visible>
-          <Collapsible.Visible whenOpen>
-            {intl.formatMessage(messages['supportedFeatureList-mobile-hide'])}
-          </Collapsible.Visible>
-        </>
+const FeaturesList = ({ app, intl }) => (
+  <Collapsible
+    onClick={(event) => event.stopPropagation()}
+    title={(
+      <>
+        <Collapsible.Visible whenClosed>
+          {intl.formatMessage(messages['supportedFeatureList-mobile-show'])}
+        </Collapsible.Visible>
+        <Collapsible.Visible whenOpen>
+          {intl.formatMessage(messages['supportedFeatureList-mobile-hide'])}
+        </Collapsible.Visible>
+      </>
       )}
-      styling="basic"
-    >
-      {app.featureIds.map((id) => (
-        <div key={`collapsible-${app.id}&${id}`} className="d-flex mb-1">
-          <SupportedFeature name={intl.formatMessage(messages[`featureName-${id}`])} />
-        </div>
+    styling="basic"
+  >
+    {app.featureIds.map((id) => (
+      <div key={`collapsible-${app.id}&${id}`} className="d-flex mb-1">
+        <SupportedFeature name={intl.formatMessage(messages[`featureName-${id}`])} />
+      </div>
       ))}
-    </Collapsible>
+  </Collapsible>
   );
-}
 
 export default injectIntl(FeaturesList);
 

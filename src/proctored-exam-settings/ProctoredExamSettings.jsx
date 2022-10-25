@@ -26,7 +26,7 @@ import {
   fetchExamSettingsSuccess,
 } from './data/thunks';
 
-function ProctoredExamSettings({ courseId, intl }) {
+const ProctoredExamSettings = ({ courseId, intl }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [loaded, setLoaded] = useState(false);
@@ -120,9 +120,7 @@ function ProctoredExamSettings({ courseId, intl }) {
     const saveOperations = [StudioApiService.saveProctoredExamSettingsData(courseId, studioDataToPostBack)];
     if (allowLtiProviders && ExamsApiService.isAvailable()) {
       saveOperations.push(
-        ExamsApiService.saveCourseExamConfiguration(
-          courseId, { provider: providerIsLti ? proctoringProvider : null },
-        ),
+        ExamsApiService.saveCourseExamConfiguration(courseId, { provider: providerIsLti ? proctoringProvider : null }),
       );
     }
     Promise.all(saveOperations)
@@ -581,7 +579,7 @@ function ProctoredExamSettings({ courseId, intl }) {
       </div>
     </div>
   );
-}
+};
 
 ProctoredExamSettings.propTypes = {
   courseId: PropTypes.string.isRequired,

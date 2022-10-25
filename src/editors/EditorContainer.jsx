@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { useParams } from 'react-router';
 import { EditorPage } from '@edx/frontend-lib-content-components';
 
-function EditorContainer({
+const EditorContainer = ({
   courseId,
-}) {
+}) => {
   const { blockType, blockId } = useParams();
   return (
     <div className="editor-page">
@@ -18,7 +18,7 @@ function EditorContainer({
       />
     </div>
   );
-}
+};
 EditorContainer.propTypes = {
   courseId: PropTypes.string.isRequired,
 };
