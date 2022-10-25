@@ -8,7 +8,7 @@ import {
 } from '@edx/frontend-platform';
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import Footer, { messages as footerMessages } from '@edx/frontend-component-footer';
-
+import { messages as paragonMessages } from '@edx/paragon';
 import appMessages from './i18n';
 import store from './store';
 import { NotFoundPage } from './generic';
@@ -73,6 +73,7 @@ initialize({
   messages: [
     appMessages,
     footerMessages,
+    paragonMessages,
   ],
   requireAuthenticatedUser: true,
 });
