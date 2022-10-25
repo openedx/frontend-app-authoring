@@ -190,7 +190,8 @@ export const setAssetToStaticUrl = ({ editorValue, assets }) => {
   */
   let content = editorValue;
   const assetUrls = [];
-  assets.forEach(asset => {
+  const assetsList = Object.values(assets);
+  assetsList.forEach(asset => {
     assetUrls.push({ portableUrl: asset.portableUrl, displayName: asset.displayName });
   });
   const assetSrcs = typeof content === 'string' ? content.split(/(src="|href=")/g) : [];
