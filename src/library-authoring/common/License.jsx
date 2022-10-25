@@ -59,9 +59,7 @@ export const CreativeCommonsLicense = injectIntl(CreativeCommonsLicenseBase);
 /**
  * Displays an 'All Rights Reserved' tag.
  */
-export const AllRightsReservedBase = ({ intl }) => (
-  <strong>{intl.formatMessage(messages['library.common.license.none'])}</strong>
-);
+export const AllRightsReservedBase = ({ intl }) => <strong>{intl.formatMessage(messages['library.common.license.none'])}</strong>;
 
 AllRightsReservedBase.propTypes = {
   intl: intlShape.isRequired,

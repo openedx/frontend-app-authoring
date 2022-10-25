@@ -111,7 +111,7 @@ export const setUp = () => {
   fetchMock.enableMocks();
 };
 
-export const cleanUp = () => {
+export const CleanUp = () => {
   monitor.mockReset();
   fetchMock.resetMocks();
   window.localStorage.reset();
@@ -128,7 +128,7 @@ export const testSuite = (suiteName, suite) => {
       setUp();
     });
     afterEach(() => {
-      cleanUp();
+      CleanUp();
     });
     suite();
   });

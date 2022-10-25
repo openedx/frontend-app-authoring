@@ -11,9 +11,7 @@ describe('library-access/data/slice.js', () => {
   });
   it('Marks a failure state with errors', () => {
     const state = {};
-    reducers.libraryAccessFailed(
-      state, { payload: { errorMessage: 'It borked.', errorFields: { email: 'Phony email.' } } },
-    );
+    reducers.libraryAccessFailed(state, { payload: { errorMessage: 'It borked.', errorFields: { email: 'Phony email.' } } });
     expect(state.status).toBe(LOADING_STATUS.FAILED);
     expect(state.errorMessage).toBe('It borked.');
     expect(state.errorFields).toEqual({ email: 'Phony email.' });

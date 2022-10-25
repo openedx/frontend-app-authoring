@@ -81,7 +81,7 @@ class LibraryBlock extends React.Component {
         });
       }
     }
-  }
+  };
 
   processView() {
     const { view } = this.props;

@@ -19,27 +19,27 @@ class LibraryBlockOlx extends React.Component {
 
   saveOlx = () => {
     this.props.onSaveOlx(this.state.olx);
-  }
+  };
 
   showEditMode = () => {
     this.setState({
       isEditing: true,
       olx: this.props.olx.value,
     });
-  }
+  };
 
   cancelEditMode = () => {
     this.setState({
       isEditing: false,
       olx: this.props.olx.value,
     });
-  }
+  };
 
   updateOlx = (event) => {
     this.setState({
       olx: event.target.value,
     });
-  }
+  };
 
   render() {
     if (this.state.isEditing) {

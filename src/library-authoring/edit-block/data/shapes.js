@@ -8,7 +8,7 @@ export const blockMetadataShape = PropTypes.shape({
 
 export const blockViewShape = PropTypes.shape({
   content: PropTypes.string.isRequired,
-  resources: PropTypes.arrayOf(PropTypes.object).isRequired,
+  resources: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 });
 
 export const blockStateShape = PropTypes.shape({

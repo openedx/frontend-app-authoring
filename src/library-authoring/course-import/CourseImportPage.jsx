@@ -142,7 +142,7 @@ CourseImportList.propTypes = {
   courses: PropTypes.arrayOf(courseShape),
   courseCount: PropTypes.number.isRequired,
   importBlocksHandler: PropTypes.func.isRequired,
-  ongoingImports: PropTypes.objectOf(PropTypes.object),
+  ongoingImports: PropTypes.objectOf(PropTypes.shape({})),
   paginationParams: paginationParamsShape.isRequired,
   setPaginationParams: PropTypes.func.isRequired,
   taskPaginationParams: paginationParamsShape.isRequired,
@@ -342,6 +342,7 @@ export const CourseImportPage = ({
 
   useEffect(() => {
     props.fetchOrganizationList();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -352,6 +353,7 @@ export const CourseImportPage = ({
         authenticatedUser,
       },
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [libraryId, taskPaginationParams]);
 
   useEffect(() => {
@@ -362,6 +364,7 @@ export const CourseImportPage = ({
         authenticatedUser,
       },
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterParams, coursePaginationParams]);
 
   const loadingHandler = () => (
@@ -463,7 +466,7 @@ CourseImportPage.propTypes = {
   importTasks: PropTypes.arrayOf(importTaskShape),
   importTaskCount: PropTypes.number.isRequired,
   organizations: PropTypes.arrayOf(PropTypes.string),
-  ongoingImports: PropTypes.objectOf(PropTypes.object),
+  ongoingImports: PropTypes.objectOf(PropTypes.shape({})),
   organizationsLoadingStatus: PropTypes.oneOf(Object.values(LOADING_STATUS)).isRequired,
   coursesLoadingStatus: PropTypes.oneOf(Object.values(LOADING_STATUS)).isRequired,
   importBlocksLoadingStatus: PropTypes.oneOf(Object.values(LOADING_STATUS)).isRequired,

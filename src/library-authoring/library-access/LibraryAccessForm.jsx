@@ -19,81 +19,77 @@ import {
  * LibraryAccessForm:
  * Template component for the form used to add a new user to a library.
  */
-const LibraryAccessForm = (
-  {
-    intl, onSubmit, setShowAdd, hasFieldError, getFieldError, data,
-    onValueChange, submitButtonState,
-  },
-) => (
-  <>
-    <Row className="mb-2">
-      <form className="col-12" onSubmit={onSubmit}>
-        <Card>
-          <Card.Header
-            title={intl.formatMessage(messages['library.access.form.title'])}
+const LibraryAccessForm = ({
+  intl, onSubmit, setShowAdd, hasFieldError, getFieldError, data,
+  onValueChange, submitButtonState,
+}) => (
+  <Row className="mb-2">
+    <form className="col-12" onSubmit={onSubmit}>
+      <Card>
+        <Card.Header
+          title={intl.formatMessage(messages['library.access.form.title'])}
+        />
+        <Card.Section>
+          <div className="form-create">
+            <fieldset>
+              <ol className="list-input">
+                <li className="field">
+                  <Form.Group
+                    controlId="email"
+                    isInvalid={hasFieldError('email')}
+                    className="mb-0 mr-2"
+                  >
+                    <Form.Label className="h6 d-block" htmlFor="email">
+                      {intl.formatMessage(messages['library.access.form.email.label'])}
+                    </Form.Label>
+                    <Form.Control
+                      name="email"
+                      id="email"
+                      type="text"
+                      placeholder={intl.formatMessage(messages['library.access.form.email.placeholder'])}
+                      value={data.email}
+                      onChange={onValueChange}
+                    />
+                    <Form.Text className="form-text text-muted">
+                      {intl.formatMessage(messages['library.access.form.email.help'])}
+                    </Form.Text>
+                    {hasFieldError('email') && (
+                    <Form.Control.Feedback hasIcon={false} type="invalid">
+                      {getFieldError('email')}
+                    </Form.Control.Feedback>
+                    )}
+                  </Form.Group>
+                </li>
+              </ol>
+            </fieldset>
+          </div>
+        </Card.Section>
+      </Card>
+      <Card className="mb-5">
+        <Card.Section>
+          <StatefulButton
+            variant="primary"
+            type="submit"
+            size="lg"
+            state={submitButtonState}
+            labels={{
+              disabled: intl.formatMessage(commonMessages['library.common.forms.button.submit']),
+              enabled: intl.formatMessage(commonMessages['library.common.forms.button.submit']),
+              pending: intl.formatMessage(commonMessages['library.common.forms.button.submitting']),
+            }}
+            icons={{
+              pending: <Icon className="fa fa-spinner fa-spin" />,
+            }}
+            disabledStates={['disabled', 'pending']}
+            className="font-weight-bold text-uppercase"
           />
-          <Card.Section>
-            <div className="form-create">
-              <fieldset>
-                <ol className="list-input">
-                  <li className="field">
-                    <Form.Group
-                      controlId="email"
-                      isInvalid={hasFieldError('email')}
-                      className="mb-0 mr-2"
-                    >
-                      <Form.Label className="h6 d-block" htmlFor="email">
-                        {intl.formatMessage(messages['library.access.form.email.label'])}
-                      </Form.Label>
-                      <Form.Control
-                        name="email"
-                        id="email"
-                        type="text"
-                        placeholder={intl.formatMessage(messages['library.access.form.email.placeholder'])}
-                        value={data.email}
-                        onChange={onValueChange}
-                      />
-                      <Form.Text className="form-text text-muted">
-                        {intl.formatMessage(messages['library.access.form.email.help'])}
-                      </Form.Text>
-                      {hasFieldError('email') && (
-                        <Form.Control.Feedback hasIcon={false} type="invalid">
-                          {getFieldError('email')}
-                        </Form.Control.Feedback>
-                      )}
-                    </Form.Group>
-                  </li>
-                </ol>
-              </fieldset>
-            </div>
-          </Card.Section>
-        </Card>
-        <Card className="mb-5">
-          <Card.Section>
-            <StatefulButton
-              variant="primary"
-              type="submit"
-              size="lg"
-              state={submitButtonState}
-              labels={{
-                disabled: intl.formatMessage(commonMessages['library.common.forms.button.submit']),
-                enabled: intl.formatMessage(commonMessages['library.common.forms.button.submit']),
-                pending: intl.formatMessage(commonMessages['library.common.forms.button.submitting']),
-              }}
-              icons={{
-                pending: <Icon className="fa fa-spinner fa-spin" />,
-              }}
-              disabledStates={['disabled', 'pending']}
-              className="font-weight-bold text-uppercase"
-            />
-            <Button size="lg" variant="secondary" className="mx-3 font-weight-bold text-uppercase" onClick={() => setShowAdd(false)}>
-              {intl.formatMessage(commonMessages['library.common.forms.button.cancel'])}
-            </Button>
-          </Card.Section>
-        </Card>
-      </form>
-    </Row>
-  </>
+          <Button size="lg" variant="secondary" className="mx-3 font-weight-bold text-uppercase" onClick={() => setShowAdd(false)}>
+            {intl.formatMessage(commonMessages['library.common.forms.button.cancel'])}
+          </Button>
+        </Card.Section>
+      </Card>
+    </form>
+  </Row>
 );
 
 LibraryAccessForm.propTypes = {
@@ -120,9 +116,7 @@ const initialFormState = () => ({
  * and handles state for it, and manages the API call for adding a
  * new user to a library team.
  */
-const LibraryAccessFormContainer = (
-  props,
-) => {
+const LibraryAccessFormContainer = (props) => {
   const [data, setData] = useState({
     email: '',
     access_level: LIBRARY_ACCESS.READ,

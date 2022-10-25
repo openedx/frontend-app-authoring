@@ -47,7 +47,7 @@ export const uploadLibraryBlockAssets = annotateThunk(({ blockId, files }) => as
     files.forEach(file => api.addLibraryBlockAsset(blockId, file.name, file));
 
     /* This is hackish, but we have to wait for Studio/blockstore to process the files before refreshing them. */
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => { setTimeout(r, 1000); });
 
     const [metadata, assets] = await Promise.all(
       [api.getLibraryBlock(blockId), api.getLibraryBlockAssets(blockId)],

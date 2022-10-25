@@ -109,17 +109,17 @@ export class LibraryCreatePage extends React.Component {
       this.setState({ allowLeave: !isFormFilled });
       this.validateInput(name, value, this.state.data);
     });
-  }
+  };
 
   onCancel = () => {
     this.props.resetForm();
     this.props.history.push(ROUTES.List.HOME);
-  }
+  };
 
   onSubmit = (event) => {
     event.preventDefault();
     this.props.createLibrary({ data: { ...this.state.data, type: LIBRARY_TYPES.COMPLEX } });
-  }
+  };
 
   getFieldError = (fieldName) => (fieldName in this.state.errors ? this.state.errors[fieldName] : null);
 
@@ -127,14 +127,14 @@ export class LibraryCreatePage extends React.Component {
     const { name, value } = e.target;
 
     this.validateInput(name, value, this.state.data);
-  }
+  };
 
   handleOnChangeOrg = (value) => {
     this.setState(prevState => ({
       data: { ...prevState.data, org: value },
       errors: { ...prevState.errors, org: value ? '' : prevState.errors.org },
     }));
-  }
+  };
 
   getSubmitButtonState = () => {
     const { status } = this.props;
@@ -147,15 +147,15 @@ export class LibraryCreatePage extends React.Component {
     }
 
     return state;
-  }
+  };
 
   openModal = (location) => {
     this.setState({ isOpenModal: true, lastLocation: location });
-  }
+  };
 
   closeModal = () => {
     this.setState({ isOpenModal: false });
-  }
+  };
 
   handleClickBreadcrumbs = (event) => {
     if (!this.state.allowLeave) {
@@ -163,7 +163,7 @@ export class LibraryCreatePage extends React.Component {
       const pathname = event.target.getAttribute('href');
       this.openModal({ pathname });
     }
-  }
+  };
 
   handleBlockedNavigation = (nextLocation) => {
     const { confirmedNavigation, allowLeave } = this.state;
@@ -173,7 +173,7 @@ export class LibraryCreatePage extends React.Component {
     }
 
     return true;
-  }
+  };
 
   handleConfirmNavigationClick = () => {
     const { lastLocation } = this.state;
@@ -192,7 +192,7 @@ export class LibraryCreatePage extends React.Component {
         }
       });
     }
-  }
+  };
 
   validateInput(fieldName, value, data) {
     const { intl } = this.props;

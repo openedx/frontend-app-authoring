@@ -12,9 +12,9 @@ const LoadingPage = ({ loadingMessage }) => (
   >
     <div className="spinner-border text-primary text-center align-self-center" role="status">
       {loadingMessage && (
-      <span className="sr-only">
-        {loadingMessage}
-      </span>
+        <span className="sr-only">
+          {loadingMessage}
+        </span>
       )}
     </div>
   </Col>

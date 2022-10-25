@@ -196,6 +196,7 @@ export const LicenseFieldContainerBase = ({ value, updateValue, name }) => {
     const newSpec = specFromCommonsOptions(result);
     updateValue(newSpec);
     updateCache(newSpec);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [commonsOptions]);
 
   return (

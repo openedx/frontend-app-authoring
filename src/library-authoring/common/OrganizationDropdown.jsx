@@ -36,6 +36,7 @@ class OrganizationDropdown extends React.Component {
     return true;
   }
 
+  // eslint-disable-next-line react/sort-comp
   getItems(strToFind = '') {
     let { options } = this.props;
     if (strToFind.length > 0) {
@@ -98,7 +99,7 @@ class OrganizationDropdown extends React.Component {
     if (this.state.dropDownItems.length > 0) {
       this.setState({ dropDownItems: '', icon: this.expandMoreButton() });
     }
-  }
+  };
 
   handleOnChange = (e) => {
     const findstr = e.target.value;
@@ -111,8 +112,9 @@ class OrganizationDropdown extends React.Component {
     }
 
     this.setDisplayValue(e.target.value);
-  }
+  };
 
+  // eslint-disable-next-line react/no-unused-class-component-methods
   handleClickOutside = () => {
     if (this.state.dropDownItems.length > 0) {
       this.setState(() => ({
@@ -120,7 +122,7 @@ class OrganizationDropdown extends React.Component {
         dropDownItems: '',
       }));
     }
-  }
+  };
 
   handleExpandLess() {
     this.setState({ dropDownItems: '', icon: this.expandMoreButton() });

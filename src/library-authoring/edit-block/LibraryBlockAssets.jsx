@@ -9,6 +9,7 @@ import { LoadingPage } from '../../generic';
  * Display the static assets associated with an XBlock
  */
 const LibraryBlockAssets = (props) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onDrop = useCallback(props.onDropFiles, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   if (props.assets.value === null) {
