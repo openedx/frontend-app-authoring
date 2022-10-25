@@ -51,7 +51,7 @@ function LiveSettings({
     }),
     consumerSecret: Yup.string().when(['provider', 'tierType'], {
       is: (provider, tier) => provider === 'zoom' || (provider === 'big_blue_button' && tier === bbbPlanTypes.commercial),
-      then: Yup.string().required(intl.formatMessage(messages.consumerSecretRequired)),
+      then: Yup.string().notRequired(intl.formatMessage(messages.consumerSecretRequired)),
     }),
     launchUrl: Yup.string().when(['provider', 'tierType'], {
       is: (provider, tier) => provider === 'zoom' || (provider === 'big_blue_button' && tier === bbbPlanTypes.commercial),

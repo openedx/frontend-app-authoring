@@ -32,7 +32,7 @@ function normalizeLtiConfig(data) {
 }
 
 export function normalizeBlackoutDates(data) {
-  if (!data.length) {
+  if (!data || Object.keys(data).length < 1) {
     return [];
   }
 

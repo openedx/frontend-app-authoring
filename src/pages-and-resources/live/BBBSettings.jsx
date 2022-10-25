@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Form, Hyperlink } from '@edx/paragon';
 import PropTypes from 'prop-types';
@@ -19,7 +20,6 @@ function BbbSettings({
     setBbbPlan(values.tierType);
   }, [values.tierType]);
 
-  const appInfo = useModel('courseApps', 'live');
   const app = useModel('liveApps', 'big_blue_button');
   const isPiiDisabled = !values.piiSharingEnable;
   function getBbbPlanOptions() {
@@ -71,7 +71,7 @@ function BbbSettings({
       </Form.Group>
 
       <Hyperlink
-        destination={appInfo.documentationLinks.learnMoreConfiguration}
+        destination={getConfig().BBB_LEARN_MORE_URL}
         target="_blank"
         rel="noopener noreferrer"
         showLaunchIcon
