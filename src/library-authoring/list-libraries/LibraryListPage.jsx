@@ -109,22 +109,22 @@ export class LibraryListPage extends React.Component {
 
     return (
       <>
-        <div className="wrapper-mast wrapper">
-          <header className="mast has-actions">
-            <ActionRow>
-              <h1 className="page-header">{intl.formatMessage(messages['library.list.page.heading'])}</h1>
-              <ActionRow.Spacer />
-              {libraries.count !== 0 && (
+        {libraries.count !== 0 && (
+          <div className="wrapper-mast wrapper">
+            <header className="mast has-actions">
+              <ActionRow>
+                <h1 className="page-header">{intl.formatMessage(messages['library.list.page.heading'])}</h1>
+                <ActionRow.Spacer />
                 <Button
-                variant="outline-primary"
-                onClick={this.goToCreateLibraryPage}
+                  variant="outline-primary"
+                  onClick={this.goToCreateLibraryPage}
                 >
                   {intl.formatMessage(messages['library.list.new.library'])}
                 </Button>
-              )}
-            </ActionRow>
-          </header>
-        </div>
+              </ActionRow>
+            </header>
+          </div>
+        )}
         <div className="wrapper-content wrapper">
           <section className="content">
             <article className="content-primary" role="main">
