@@ -65,7 +65,7 @@ export const uploadImage = ({ file, setSelection }) => (dispatch) => {
 };
 
 export const fetchVideos = ({ onSuccess }) => (dispatch) => {
-  dispatch(requests.fetchImages({ onSuccess }));
+  dispatch(requests.fetchAssets({ onSuccess }));
   // onSuccess(mockData.mockVideoData);
 };
 
