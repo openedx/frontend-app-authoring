@@ -88,11 +88,19 @@ function BbbSettings({
         ) : (
           <>
             {bbbPlan === bbbPlanTypes.commercial && <LiveCommonFields values={values} />}
-            {bbbPlan === bbbPlanTypes.free
-              && (
-              <p data-testid="free-plan-message">
+            {bbbPlan === bbbPlanTypes.free && (
+              <span data-testid="free-plan-message">
                 {intl.formatMessage(messages.freePlanMessage)}
-              </p>
+                <Hyperlink
+                  destination="https://bigbluebutton.org/privacy-policy/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  showLaunchIcon
+                  className="text-gray-700 ml-1"
+                >
+                  {intl.formatMessage(messages.privacyPolicy)}
+                </Hyperlink>
+              </span>
             )}
           </>
         )}
