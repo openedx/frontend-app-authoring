@@ -165,7 +165,7 @@ const messages = defineMessages({
   },
   privacyPolicy: {
     id: 'authoring.live.privacyPolicy',
-    defaultMessage: 'Privacy Policy',
+    defaultMessage: 'Privacy Policy.',
     description: 'The text of privacy policy hyperlink for free plan',
   },
 });
