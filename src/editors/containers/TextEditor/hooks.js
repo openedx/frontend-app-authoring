@@ -177,7 +177,7 @@ export const filterAssets = ({ assets }) => {
   let images = [];
   const assetsList = Object.values(assets);
   if (assetsList.length > 0) {
-    images = assetsList.filter(asset => asset.contentType.startsWith('image/'));
+    images = assetsList.filter(asset => asset?.contentType?.startsWith('image/'));
   }
   return images;
 };
