@@ -92,6 +92,7 @@ function AppConfigForm({
       <OpenedXConfigForm
         formRef={formRef}
         onSubmit={handleSubmit}
+        courseId={courseId}
         legacy
       />
     );

@@ -50,6 +50,7 @@ const defaultAppConfig = (divideDiscussionIds = []) => ({
   enableReportedContentEmailNotifications: false,
   allowDivisionByUnit: false,
   blackoutDates: [],
+  cohortsEnabled: false,
 });
 describe('OpenedXConfigForm', () => {
   let axiosMock;
@@ -81,6 +82,7 @@ describe('OpenedXConfigForm', () => {
             onSubmit={onSubmit}
             formRef={formRef}
             legacy={legacy}
+            courseId={courseId}
           />
         </IntlProvider>
       </AppProvider>,
@@ -179,6 +181,7 @@ describe('OpenedXConfigForm', () => {
         reported_content_email_notifications_flag: true,
         always_divide_inline_discussions: true,
         divided_course_wide_discussions: [],
+        available_division_schemes: [],
       },
     });
     createComponent();
@@ -186,14 +189,10 @@ describe('OpenedXConfigForm', () => {
 
     // DivisionByGroupFields
     expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
-    expect(container.querySelector('#divideByCohorts')).toBeChecked();
+    expect(container.querySelector('#divideByCohorts')).not.toBeChecked();
     expect(
       container.querySelector('#divideCourseTopicsByCohorts'),
-    ).toBeInTheDocument();
-    expect(
-      container.querySelector('#divideCourseTopicsByCohorts'),
-    ).not.toBeChecked();
-
+    ).not.toBeInTheDocument();
     divideDiscussionIds.forEach(id => expect(
       container.querySelector(`#checkbox-${id}`),
     ).not.toBeInTheDocument());
@@ -229,13 +228,10 @@ describe('OpenedXConfigForm', () => {
 
       // DivisionByGroupFields
       expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
-      expect(container.querySelector('#divideByCohorts')).toBeChecked();
-      expect(container.querySelector('#divideCourseTopicsByCohorts')).toBeInTheDocument();
-      expect(container.querySelector('#divideCourseTopicsByCohorts')).toBeChecked();
-
+      expect(container.querySelector('#divideByCohorts')).not.toBeChecked();
+      expect(container.querySelector('#divideCourseTopicsByCohorts')).not.toBeInTheDocument();
       divideDiscussionIds.forEach(id => {
-        expect(container.querySelector(`#checkbox-${id}`)).toBeInTheDocument();
-        expect(container.querySelector(`#checkbox-${id}`)).toBeChecked();
+        expect(container.querySelector(`#checkbox-${id}`)).not.toBeInTheDocument();
       });
     });
 

@@ -124,7 +124,16 @@ const messages = defineMessages({
     defaultMessage: 'Questions for the TAs',
     description: 'Label for a checkbox allowing a user to divide the Questions for the TAs (TA stands for "teaching assistant") course wide topic by cohorts.',
   },
-
+    cohortsEnabled: {
+    id: 'authoring.discussions.builtIn.cohortsEnabled.label',
+    defaultMessage: 'To adjust these settings, enable cohorts on the ',
+    description: 'Label text informing the user to enable cohort',
+  },
+  instructorDashboard: {
+    id: 'authoring.discussions.builtIn.instructorDashboard.label',
+    defaultMessage: 'instructor dashboard',
+    description: 'Label text for instructor dashboard',
+  },
   // In-context discussion fields
   visibilityInContext: {
     id: 'authoring.discussions.builtIn.visibilityInContext',

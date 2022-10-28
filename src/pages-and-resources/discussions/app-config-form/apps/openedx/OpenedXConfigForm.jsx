@@ -22,7 +22,7 @@ import OpenedXConfigFormProvider from './OpenedXConfigFormProvider';
 setupYupExtensions();
 
 function OpenedXConfigForm({
-  onSubmit, formRef, intl, legacy,
+  onSubmit, formRef, courseId, intl, legacy,
 }) {
   const {
     selectedAppId, enableGradedUnits, discussionTopicIds, divideDiscussionIds,
@@ -134,7 +134,7 @@ function OpenedXConfigForm({
                 <AppConfigFormDivider thick />
                 <DiscussionTopics />
                 <AppConfigFormDivider thick />
-                <DivisionByGroupFields />
+                <DivisionByGroupFields courseId={courseId} />
                 <AppConfigFormDivider thick />
                 <ReportedContentEmailNotifications />
                 <BlackoutDatesField />
@@ -150,6 +150,7 @@ function OpenedXConfigForm({
 OpenedXConfigForm.propTypes = {
   legacy: PropTypes.bool.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  courseId: PropTypes.string.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
   intl: intlShape.isRequired,

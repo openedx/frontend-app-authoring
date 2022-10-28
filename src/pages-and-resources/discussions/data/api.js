@@ -56,6 +56,7 @@ function normalizePluginConfig(data) {
   if (!data || Object.keys(data).length < 1) {
     return {};
   }
+
   const enableDivideByCohorts = data.always_divide_inline_discussions && data.division_scheme === 'cohort';
   const enableDivideCourseTopicsByCohorts = enableDivideByCohorts && data.divided_course_wide_discussions.length > 0;
   return {
@@ -69,6 +70,7 @@ function normalizePluginConfig(data) {
     allowDivisionByUnit: false,
     divideByCohorts: enableDivideByCohorts,
     divideCourseTopicsByCohorts: enableDivideCourseTopicsByCohorts,
+    cohortsEnabled: data.available_division_schemes.includes('cohort'),
   };
 }
 
