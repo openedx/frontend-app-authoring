@@ -22,7 +22,7 @@ import OpenedXConfigFormProvider from './OpenedXConfigFormProvider';
 setupYupExtensions();
 
 function OpenedXConfigForm({
-  onSubmit, formRef, courseId, intl, legacy,
+  onSubmit, formRef, intl, legacy,
 }) {
   const {
     selectedAppId, enableGradedUnits, discussionTopicIds, divideDiscussionIds,
@@ -37,7 +37,7 @@ function OpenedXConfigForm({
     unitLevelVisibility: true,
     allowAnonymousPostsPeers: appConfigObj?.allowAnonymousPostsPeers || false,
     reportedContentEmailNotifications: appConfigObj?.reportedContentEmailNotifications || false,
-    enableReportedContentEmailNotifications: appConfigObj?.enableReportedContentEmailNotifications || false,
+    enableReportedContentEmailNotifications: Boolean(appConfigObj?.enableReportedContentEmailNotifications) || false,
     blackoutDates: appConfigObj?.blackoutDates || [],
     discussionTopics: discussionTopicsModel || [],
     divideByCohorts: appConfigObj?.divideByCohorts || false,
@@ -134,7 +134,7 @@ function OpenedXConfigForm({
                 <AppConfigFormDivider thick />
                 <DiscussionTopics />
                 <AppConfigFormDivider thick />
-                <DivisionByGroupFields courseId={courseId} />
+                <DivisionByGroupFields />
                 <AppConfigFormDivider thick />
                 <ReportedContentEmailNotifications />
                 <BlackoutDatesField />
@@ -150,7 +150,6 @@ function OpenedXConfigForm({
 OpenedXConfigForm.propTypes = {
   legacy: PropTypes.bool.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  courseId: PropTypes.string.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   formRef: PropTypes.object.isRequired,
   intl: intlShape.isRequired,

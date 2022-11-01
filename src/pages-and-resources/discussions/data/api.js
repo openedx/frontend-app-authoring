@@ -70,7 +70,7 @@ function normalizePluginConfig(data) {
     allowDivisionByUnit: false,
     divideByCohorts: enableDivideByCohorts,
     divideCourseTopicsByCohorts: enableDivideCourseTopicsByCohorts,
-    cohortsEnabled: data.available_division_schemes.includes('cohort'),
+    cohortsEnabled: data.available_division_schemes?.includes('cohort') || false,
   };
 }
 

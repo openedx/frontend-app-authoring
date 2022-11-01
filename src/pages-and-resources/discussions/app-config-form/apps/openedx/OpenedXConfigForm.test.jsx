@@ -82,7 +82,6 @@ describe('OpenedXConfigForm', () => {
             onSubmit={onSubmit}
             formRef={formRef}
             legacy={legacy}
-            courseId={courseId}
           />
         </IntlProvider>
       </AppProvider>,
@@ -143,14 +142,17 @@ describe('OpenedXConfigForm', () => {
         ...legacyApiResponse.plugin_configuration,
         reported_content_email_notifications_flag: true,
         divided_course_wide_discussions: [],
+         available_division_schemes: [],
       },
     });
     createComponent();
     const { divideDiscussionIds } = defaultAppConfig(['13f106c6-6735-4e84-b097-0456cff55960', 'course']);
 
     // DivisionByGroupFields
+
+    expect(container.querySelector('#alert')).toBeInTheDocument();
     expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
-    expect(container.querySelector('#divideByCohorts')).not.toBeChecked();
+    expect(container.querySelector('#divideByCohorts')).toBeDisabled();
     expect(container.querySelector('#divideCourseTopicsByCohorts')).not.toBeInTheDocument();
 
     divideDiscussionIds.forEach(id => expect(
@@ -181,7 +183,7 @@ describe('OpenedXConfigForm', () => {
         reported_content_email_notifications_flag: true,
         always_divide_inline_discussions: true,
         divided_course_wide_discussions: [],
-        available_division_schemes: [],
+        available_division_schemes: ['cohorts'],
       },
     });
     createComponent();

@@ -59,10 +59,11 @@ FormSwitchGroup.propTypes = {
   onChange: PropTypes.func.isRequired,
   onBlur: PropTypes.func,
   checked: PropTypes.bool.isRequired,
-  disabled: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool,
 };
 FormSwitchGroup.defaultProps = {
   className: null,
   onBlur: null,
   name: null,
+  disabled: false,
 };

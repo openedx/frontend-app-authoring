@@ -1,18 +1,18 @@
 import React, { useEffect, useContext } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import PropTypes from 'prop-types';
 import {
  Form, TransitionReplace, Hyperlink, Alert,
 } from '@edx/paragon';
 import { AppContext } from '@edx/frontend-platform/react';
 import { FieldArray, useFormikContext } from 'formik';
 import _ from 'lodash';
+import { useParams } from 'react-router-dom';
 import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from '../../messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
 import { OpenedXConfigFormContext } from '../openedx/OpenedXConfigFormProvider';
 
-const DivisionByGroupFields = ({ courseId, intl }) => {
+const DivisionByGroupFields = ({ intl }) => {
   const { validDiscussionTopics } = useContext(OpenedXConfigFormContext);
   const {
     handleChange,
@@ -26,9 +26,9 @@ const DivisionByGroupFields = ({ courseId, intl }) => {
     divideByCohorts,
     divideCourseTopicsByCohorts,
     cohortsEnabled,
-
   } = appConfig;
 
+  const { courseId } = useParams();
   const { config } = useContext(AppContext);
   const learningCourseURL = `${config.LMS_BASE_URL}/courses/${courseId}/instructor`;
 
@@ -70,7 +70,7 @@ const DivisionByGroupFields = ({ courseId, intl }) => {
       </h5>
       {!cohortsEnabled
       && (
-      <Alert className="bg-light-200 font-weight-normal h5">
+      <Alert className="bg-light-200 font-weight-normal h5" id="alert">
         {intl.formatMessage(messages.cohortsEnabled)}
         <Hyperlink destination={learningCourseURL} target="_blank">
           {intl.formatMessage(messages.instructorDashboard)}
@@ -143,7 +143,6 @@ const DivisionByGroupFields = ({ courseId, intl }) => {
 };
 
 DivisionByGroupFields.propTypes = {
-  courseId: PropTypes.string.isRequired,
   intl: intlShape.isRequired,
 };
 
