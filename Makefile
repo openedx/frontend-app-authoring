@@ -18,7 +18,7 @@ precommit:
 	npm audit
 
 requirements:
-	npm install
+	npm install --legacy-peer-deps
 
 i18n.extract:
 	# Pulling display strings from .jsx files into .json files...
