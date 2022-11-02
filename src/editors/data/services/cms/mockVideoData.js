@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import LicenseTypes from '../../constants/licenses';
+import { LicenseTypes } from '../../constants/licenses';
 
 export const videoDataProps = {
   videoSource: PropTypes.string,
@@ -48,7 +48,7 @@ export const singleVideoData = {
   handout: 'my-handout-url',
   licenseType: LicenseTypes.creativeCommons,
   licenseDetails: {
-    attribution: false,
+    attribution: true,
     noncommercial: false,
     noDerivatives: false,
     shareAlike: false,

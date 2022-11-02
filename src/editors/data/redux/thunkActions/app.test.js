@@ -9,6 +9,7 @@ jest.mock('./requests', () => ({
   uploadAsset: (args) => ({ uploadAsset: args }),
   fetchStudioView: (args) => ({ fetchStudioView: args }),
   fetchAssets: (args) => ({ fetchAssets: args }),
+  fetchCourseDetails: (args) => ({ fetchCourseDetails: args }),
 }));
 
 jest.mock('../../../utils', () => ({
@@ -78,6 +79,25 @@ describe('app thunkActions', () => {
       expect(dispatch).toHaveBeenCalledWith(actions.app.setUnitUrl(testValue));
     });
   });
+  describe('fetchCourseDetails', () => {
+    beforeEach(() => {
+      thunkActions.fetchCourseDetails()(dispatch);
+      [[dispatchedAction]] = dispatch.mock.calls;
+    });
+    it('dispatches fetchUnit action', () => {
+      expect(dispatchedAction.fetchCourseDetails).not.toEqual(undefined);
+    });
+    it('dispatches actions.app.setUnitUrl on success', () => {
+      dispatch.mockClear();
+      dispatchedAction.fetchCourseDetails.onSuccess(testValue);
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setCourseDetails(testValue));
+    });
+    it('dispatches actions.app.setUnitUrl on failure', () => {
+      dispatch.mockClear();
+      dispatchedAction.fetchCourseDetails.onFailure(testValue);
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setCourseDetails(testValue));
+    });
+  });
   describe('initialize', () => {
     it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
       const {
@@ -85,11 +105,13 @@ describe('app thunkActions', () => {
         fetchUnit,
         fetchStudioView,
         fetchAssets,
+        fetchCourseDetails,
       } = thunkActions;
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
       thunkActions.fetchStudioView = () => 'fetchStudioView';
       thunkActions.fetchAssets = () => 'fetchAssets';
+      thunkActions.fetchCourseDetails = () => 'fetchCourseDetails';
       thunkActions.initialize(testValue)(dispatch);
       expect(dispatch.mock.calls).toEqual([
         [actions.app.initialize(testValue)],
@@ -97,11 +119,13 @@ describe('app thunkActions', () => {
         [thunkActions.fetchUnit()],
         [thunkActions.fetchStudioView()],
         [thunkActions.fetchAssets()],
+        [thunkActions.fetchCourseDetails()],
       ]);
       thunkActions.fetchBlock = fetchBlock;
       thunkActions.fetchUnit = fetchUnit;
       thunkActions.fetchStudioView = fetchStudioView;
       thunkActions.fetchAssets = fetchAssets;
+      thunkActions.fetchCourseDetails = fetchCourseDetails;
     });
   });
   describe('saveBlock', () => {

@@ -134,6 +134,7 @@ export const fetchAssets = ({ ...rest }) => (dispatch, getState) => {
     ...rest,
   }));
 };
+
 export const allowThumbnailUpload = ({ ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
     requestKey: RequestKeys.allowThumbnailUpload,
@@ -143,6 +144,7 @@ export const allowThumbnailUpload = ({ ...rest }) => (dispatch, getState) => {
     ...rest,
   }));
 };
+
 export const uploadThumbnail = ({ thumbnail, videoId, ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
     requestKey: RequestKeys.uploadThumbnail,
@@ -155,6 +157,7 @@ export const uploadThumbnail = ({ thumbnail, videoId, ...rest }) => (dispatch, g
     ...rest,
   }));
 };
+
 export const deleteTranscript = ({ language, videoId, ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
     requestKey: RequestKeys.deleteTranscript,
@@ -187,6 +190,18 @@ export const uploadTranscript = ({
   }));
 };
 
+export const fetchCourseDetails = ({ ...rest }) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.fetchCourseDetails,
+    promise: api
+      .fetchCourseDetails({
+        studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+        learningContextId: selectors.app.learningContextId(getState()),
+      }),
+    ...rest,
+  }));
+};
+
 export default StrictDict({
   fetchBlock,
   fetchStudioView,
@@ -198,4 +213,5 @@ export default StrictDict({
   uploadThumbnail,
   deleteTranscript,
   uploadTranscript,
+  fetchCourseDetails,
 });

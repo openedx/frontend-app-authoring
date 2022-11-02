@@ -6,9 +6,12 @@ import {
   blockAncestor,
   blockStudioView,
   courseAssets,
+  allowThumbnailUpload,
+  thumbnailUpload,
   downloadVideoTranscriptURL,
   videoTranscripts,
   downloadVideoHandoutUrl,
+  courseDetailsUrl,
 } from './urls';
 
 describe('cms url methods', () => {
@@ -19,6 +22,7 @@ describe('cms url methods', () => {
   const libraryV1Id = 'library-v1:libaryId123';
   const language = 'la';
   const handout = '/aSSet@hANdoUt';
+  const videoId = '123-SOmeVidEOid-213';
   describe('return to learning context urls', () => {
     const unitUrl = {
       data: {
@@ -75,6 +79,18 @@ describe('cms url methods', () => {
         .toEqual(`${studioEndpointUrl}/assets/${learningContextId}/?page_size=500`);
     });
   });
+  describe('allowThumbnailUpload', () => {
+    it('returns url with studioEndpointUrl', () => {
+      expect(allowThumbnailUpload({ studioEndpointUrl }))
+        .toEqual(`${studioEndpointUrl}/video_images_upload_enabled`);
+    });
+  });
+  describe('thumbnailUpload', () => {
+    it('returns url with studioEndpointUrl, learningContextId, and videoId', () => {
+      expect(thumbnailUpload({ studioEndpointUrl, learningContextId, videoId }))
+        .toEqual(`${studioEndpointUrl}/video_images/${learningContextId}/${videoId}`);
+    });
+  });
   describe('videoTranscripts', () => {
     it('returns url with studioEndpointUrl and blockId', () => {
       expect(videoTranscripts({ studioEndpointUrl, blockId }))
@@ -91,6 +107,12 @@ describe('cms url methods', () => {
     it('returns url with studioEndpointUrl and handout', () => {
       expect(downloadVideoHandoutUrl({ studioEndpointUrl, handout }))
         .toEqual(`${studioEndpointUrl}${handout}`);
+    });
+  });
+  describe('courseDetailsUrl', () => {
+    it('returns url with studioEndpointUrl and courseKey', () => {
+      expect(courseDetailsUrl({ studioEndpointUrl, learningContextId }))
+        .toEqual(`${studioEndpointUrl}/settings/details/${learningContextId}`);
     });
   });
 });

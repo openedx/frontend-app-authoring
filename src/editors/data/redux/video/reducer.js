@@ -23,7 +23,14 @@ const initialState = {
   handout: null,
   licenseType: null,
   licenseDetails: {
-    attribution: false,
+    attribution: true,
+    noncommercial: false,
+    noDerivatives: false,
+    shareAlike: false,
+  },
+  courseLicenseType: null,
+  courseLicenseDetails: {
+    attribution: true,
     noncommercial: false,
     noDerivatives: false,
     shareAlike: false,

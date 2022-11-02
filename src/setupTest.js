@@ -88,6 +88,7 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
   ErrorContext: {
     Provider: 'ErrorContext.Provider',
   },
+  Hyperlink: 'Hyperlink',
   Icon: 'Icon',
   IconButton: 'IconButton',
   IconButtonWithTooltip: 'IconButtonWithTooltip',

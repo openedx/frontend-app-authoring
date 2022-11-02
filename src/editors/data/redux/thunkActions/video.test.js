@@ -10,6 +10,9 @@ jest.mock('..', () => ({
     },
   },
   selectors: {
+    app: {
+      courseDetails: (state) => ({ courseDetails: state }),
+    },
     video: {
       videoId: (state) => ({ videoId: state }),
       videoSettings: (state) => ({ videoSettings: state }),
@@ -44,6 +47,7 @@ const testMetadata = {
   show_captions: 'shOWcapTIONS',
   start_time: 'stARtTiME',
   transcripts: { la: 'test VALUE' },
+  thumbnail: 'thuMBNaIl',
 };
 const testState = {
   transcripts: { la: 'test VALUE' },
@@ -69,6 +73,8 @@ describe('video thunkActions', () => {
         blockId: 'soMEBloCk',
         blockValue: { data: { metadata: { ...testMetadata } } },
         studioEndpointUrl: 'soMEeNDPoiNT',
+        courseDetails: { data: { license: null } },
+        studioView: { data: { html: 'sOMeHTml' } },
       },
       video: testState,
     }));
@@ -76,28 +82,11 @@ describe('video thunkActions', () => {
   describe('loadVideoData', () => {
     let dispatchedLoad;
     beforeEach(() => {
-      thunkActions.loadVideoData()(dispatch, getState);
-      [[dispatchedLoad], [dispatchedAction]] = dispatch.mock.calls;
-    });
-    afterEach(() => {
-      jest.restoreAllMocks();
-    });
-    it('dispatches allowThumbnailUpload action', () => {
-      expect(dispatchedLoad).not.toEqual(undefined);
-      expect(dispatchedAction.allowThumbnailUpload).not.toEqual(undefined);
-    });
-    it('dispatches actions.video.updateField on success', () => {
-      dispatch.mockClear();
-      dispatchedAction.allowThumbnailUpload.onSuccess(mockAllowThumbnailUpload);
-      expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
-        allowThumbnailUpload: mockAllowThumbnailUpload.data.allowThumbnailUpload,
-      }));
-    });
-    it('dispatches actions.video.load', () => {
       jest.spyOn(thunkActions, thunkActionsKeys.determineVideoSource).mockReturnValue({
         videoSource: 'videOsOurce',
         videoId: 'videOiD',
         fallbackVideos: 'fALLbACKvIDeos',
+        videoType: 'viDEOtyPE',
       });
       jest.spyOn(thunkActions, thunkActionsKeys.parseLicense).mockReturnValue([
         'liCENSEtyPe',
@@ -109,10 +98,21 @@ describe('video thunkActions', () => {
         },
       ]);
       thunkActions.loadVideoData()(dispatch, getState);
-      expect(dispatch).toHaveBeenCalledWith(actions.video.load({
+      [[dispatchedLoad], [dispatchedAction]] = dispatch.mock.calls;
+    });
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+    it('dispatches allowThumbnailUpload action', () => {
+      expect(dispatchedLoad).not.toEqual(undefined);
+      expect(dispatchedAction.allowThumbnailUpload).not.toEqual(undefined);
+    });
+    it('dispatches actions.video.load', () => {
+      expect(dispatchedLoad.load).toEqual({
         videoSource: 'videOsOurce',
         videoId: 'videOiD',
         fallbackVideos: 'fALLbACKvIDeos',
+        videoType: 'viDEOtyPE',
         allowVideoDownloads: testMetadata.download_video,
         transcripts: testMetadata.transcripts,
         allowTranscriptDownloads: testMetadata.download_track,
@@ -130,6 +130,21 @@ describe('video thunkActions', () => {
           noDerivatives: true,
           shareAlike: false,
         },
+        courseLicenseType: 'liCENSEtyPe',
+        courseLicenseDetails: {
+          attribution: true,
+          noncommercial: true,
+          noDerivatives: true,
+          shareAlike: false,
+        },
+        thumbnail: testMetadata.thumbnail,
+      });
+    });
+    it('dispatches actions.video.updateField on success', () => {
+      dispatch.mockClear();
+      dispatchedAction.allowThumbnailUpload.onSuccess(mockAllowThumbnailUpload);
+      expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
+        allowThumbnailUpload: mockAllowThumbnailUpload.data.allowThumbnailUpload,
       }));
     });
   });
@@ -222,23 +237,42 @@ describe('video thunkActions', () => {
     });
   });
   describe('parseLicense', () => {
-    let license;
-    it('returns all-rights-reserved when there is no license', () => {
-      expect(thunkActions.parseLicense(license)).toEqual([
+    const emptyLicenseData = null;
+    const noLicense = 'sOMeHTml data-metadata &#34;license&#34; &#34;value&#34;= null, &#34;type&#34;';
+    it('returns expected values for a license with no course license', () => {
+      expect(thunkActions.parseLicense({
+        licenseData: emptyLicenseData,
+        level: 'sOMElevEL',
+      })).toEqual([
+        null,
+        {},
+      ]);
+    });
+    it('returns expected values for a license with no block license', () => {
+      expect(thunkActions.parseLicense({
+        licenseData: noLicense,
+        level: 'block',
+      })).toEqual([
+        null,
+        {},
+      ]);
+    });
+    it('returns expected values for a license with all rights reserved', () => {
+      const license = 'sOMeHTml data-metadata &#34;license&#34; &#34;value&#34;: &#34;all-rights-reserved&#34;, &#34;type&#34;';
+      expect(thunkActions.parseLicense({
+        licenseData: license,
+        level: 'block',
+      })).toEqual([
         'all-rights-reserved',
         {},
       ]);
     });
-    it('returns expected values for a license with no options', () => {
-      license = 'sOmeLIcense';
-      expect(thunkActions.parseLicense(license)).toEqual([
-        license,
-        {},
-      ]);
-    });
     it('returns expected type and options for creative commons', () => {
-      license = 'creative-commons: ver=4.0 BY NC ND';
-      expect(thunkActions.parseLicense(license)).toEqual([
+      const license = 'sOMeHTml data-metadata &#34;license&#34; &#34;value&#34;: &#34;creative-commons: ver=4.0 BY NC ND&#34;, &#34;type&#34;';
+      expect(thunkActions.parseLicense({
+        licenseData: license,
+        level: 'block',
+      })).toEqual([
         'creative-commons',
         {
           by: true,

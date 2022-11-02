@@ -25,6 +25,8 @@ export const simpleSelectors = [
   stateKeys.handout,
   stateKeys.licenseType,
   stateKeys.licenseDetails,
+  stateKeys.courseLicenseType,
+  stateKeys.courseLicenseDetails,
   stateKeys.allowThumbnailUpload,
   stateKeys.videoType,
 ].reduce((obj, key) => ({ ...obj, [key]: state => state.video[key] }), {});

@@ -19,4 +19,5 @@ export const RequestKeys = StrictDict({
   uploadThumbnail: 'uploadThumbnail',
   uploadTranscript: 'uploadTranscript',
   deleteTranscript: 'deleteTranscript',
+  fetchCourseDetails: 'fetchCourseDetails',
 });

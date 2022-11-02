@@ -8,6 +8,23 @@ exports[`VideoEditor snapshots renders as expected with default behavior 1`] = `
     onClose={[MockFunction props.onClose]}
     validateEntry={[MockFunction validateEntry]}
   >
+    <Spinner
+      animation="border"
+      className="m-3"
+      screenreadertext="loading"
+    />
+  </EditorContainer>
+</Component>
+`;
+
+exports[`VideoEditor snapshots renders as expected with default behavior 2`] = `
+<Component
+  value="hooks.errorsHook.error"
+>
+  <EditorContainer
+    onClose={[MockFunction props.onClose]}
+    validateEntry={[MockFunction validateEntry]}
+  >
     <div
       className="video-editor"
     >

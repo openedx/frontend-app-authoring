@@ -5,6 +5,8 @@ import * as module from './video';
 export const loadVideoData = () => (dispatch, getState) => {
   const state = getState();
   const rawVideoData = state.app.blockValue.data.metadata ? state.app.blockValue.data.metadata : {};
+  const courseLicenseData = state.app.courseDetails.data ? state.app.courseDetails.data : {};
+  const licenseData = state.app.studioView?.data?.html;
   const {
     videoSource,
     videoType,
@@ -15,9 +17,11 @@ export const loadVideoData = () => (dispatch, getState) => {
     youtubeId: rawVideoData.youtube_id_1_0,
     html5Sources: rawVideoData.html5_sources,
   });
-  // we don't appear to want to parse license version
-  const [licenseType, licenseOptions] = module.parseLicense(rawVideoData.license);
-
+  const [licenseType, licenseOptions] = module.parseLicense({ licenseData, level: 'block' });
+  const [courseLicenseType, courseLicenseDetails] = module.parseLicense({
+    licenseData: courseLicenseData.license,
+    level: 'course',
+  });
   dispatch(actions.video.load({
     videoSource,
     videoType,
@@ -39,6 +43,13 @@ export const loadVideoData = () => (dispatch, getState) => {
       noncommercial: licenseOptions.nc,
       noDerivatives: licenseOptions.nd,
       shareAlike: licenseOptions.sa,
+    },
+    courseLicenseType,
+    courseLicenseDetails: {
+      attribution: courseLicenseDetails.by,
+      noncommercial: courseLicenseDetails.nc,
+      noDerivatives: courseLicenseDetails.nd,
+      shareAlike: courseLicenseDetails.sa,
     },
     thumbnail: rawVideoData.thumbnail,
   }));
@@ -88,28 +99,35 @@ export const determineVideoSource = ({
   };
 };
 
-// copied from frontend-app-learning/src/courseware/course/course-license/CourseLicense.jsx
-// in the long run, should be shared (perhaps one day the learning MFE will depend on this repo)
-export const parseLicense = (license) => {
-  if (!license) {
-    // Default to All Rights Reserved if no license
-    // is detected
-    return ['all-rights-reserved', {}];
+// partially copied from frontend-app-learning/src/courseware/course/course-license/CourseLicense.jsx
+export const parseLicense = ({ licenseData, level }) => {
+  if (!licenseData) {
+    return [null, {}];
   }
-
-  // Search for a colon character denoting the end
-  // of the license type and start of the options
-  const colonIndex = license.indexOf(':');
-  if (colonIndex === -1) {
+  let license = licenseData;
+  if (level === 'block') {
+    const metadataArr = licenseData.split('data-metadata');
+    metadataArr.forEach(arr => {
+      const parsedStr = arr.replace(/&#34;/g, '"');
+      if (parsedStr.includes('license')) {
+        license = parsedStr.substring(parsedStr.indexOf('"value"'), parsedStr.indexOf(', "type"')).replace(/"value": |"/g, '');
+      }
+    });
+  }
+  if (!license || license.includes('null')) {
+    return [null, {}];
+  }
+  if (license === 'all-rights-reserved') {
     // no options, so the entire thing is the license type
     return [license, {}];
   }
-
+  // Search for a colon character denoting the end
+  // of the license type and start of the options
+  const colonIndex = license.lastIndexOf(':');
   // Split the license on the colon
   const licenseType = license.slice(0, colonIndex).trim();
   const optionStr = license.slice(colonIndex + 1).trim();
-
-  let options = {};
+  const options = {};
   let version = '';
 
   // Set the defaultVersion to 4.0
@@ -136,19 +154,6 @@ export const parseLicense = (license) => {
     }
   });
 
-  // No options
-  if (Object.keys(options).length === 0) {
-    // If no other options are set for the
-    // license, set version to 1.0
-    version = '1.0';
-
-    // Set the `zero` option so the link
-    // works correctly
-    options = {
-      zero: true,
-    };
-  }
-
   // Set the version to whatever was included,
   // using `defaultVersion` as a fallback if unset
   version = version || defaultVersion;
@@ -157,8 +162,6 @@ export const parseLicense = (license) => {
 };
 
 export const saveVideoData = () => (dispatch, getState) => {
-  // dispatch(actions.app.setBlockContent)
-  // dispatch(requests.saveBlock({ });
   const state = getState();
   return selectors.video.videoSettings(state);
 };

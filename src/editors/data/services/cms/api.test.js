@@ -433,6 +433,25 @@ describe('cms api', () => {
       expect(api.parseYoutubeId(badURL)).toEqual(null);
     });
   });
-  // TODO FOR LICENSE
-  describe('processLicense', () => {});
+  describe('processLicense', () => {
+    it('returns empty string when licenseType is empty or not a valid licnese type', () => {
+      expect(api.processLicense('', {})).toEqual('');
+      expect(api.processLicense('LiCeNsETYpe', {})).toEqual('');
+    });
+    it('returns empty string when licenseType equals creative commons', () => {
+      const licenseType = 'creative-commons';
+      const licenseDetails = {
+        attribution: true,
+        noncommercial: false,
+        noDerivatives: true,
+        shareAlike: false,
+      };
+      expect(api.processLicense(licenseType, licenseDetails)).toEqual('creative-commons: ver=4.0 BY ND');
+    });
+    it('returns empty string when licenseType equals creative commons', () => {
+      const licenseType = 'all-rights-reserved';
+      const licenseDetails = {};
+      expect(api.processLicense(licenseType, licenseDetails)).toEqual('all-rights-reserved');
+    });
+  });
 });

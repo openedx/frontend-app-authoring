@@ -24,6 +24,7 @@ jest.mock('../../services/cms/api', () => ({
   fetchBlockById: ({ id, url }) => ({ id, url }),
   fetchStudioView: ({ id, url }) => ({ id, url }),
   fetchByUnitId: ({ id, url }) => ({ id, url }),
+  fetchCourseDetails: (args) => args,
   saveBlock: (args) => args,
   fetchAssets: ({ id, url }) => ({ id, url }),
   uploadAsset: (args) => args,
@@ -211,6 +212,21 @@ describe('requests thunkActions module', () => {
           promise: api.fetchStudioView({
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
             blockId: selectors.app.blockId(testState),
+          }),
+        },
+      });
+    });
+    describe('fetchCourseDetails', () => {
+      testNetworkRequestAction({
+        action: requests.fetchCourseDetails,
+        args: fetchParams,
+        expectedString: 'with fetchCourseDetails promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.fetchCourseDetails,
+          promise: api.fetchCourseDetails({
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+            learningContextId: selectors.app.learningContextId(testState),
           }),
         },
       });

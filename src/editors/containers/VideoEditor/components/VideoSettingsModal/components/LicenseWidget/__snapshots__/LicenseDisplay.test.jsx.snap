@@ -1,0 +1,145 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LicenseDisplay snapshots snapshots: renders as expected with default props 1`] = `
+<Stack
+  className="border-primary-100 border-top"
+  gap={3}
+>
+  <FormattedMessage
+    defaultMessage="License Display"
+    description="Title for license display subsection"
+    id="authoring.videoeditor.license.displaySubsection.title"
+  />
+  <Card
+    className="mb-3"
+  >
+    <Card.Header
+      title={
+        <injectIntl(ShimmedIntlComponent)
+          details={Object {}}
+          license="all-rights-reserved"
+        />
+      }
+    />
+    <Card.Section>
+      FormattedMessage component with license description
+    </Card.Section>
+  </Card>
+</Stack>
+`;
+
+exports[`LicenseDisplay snapshots snapshots: renders as expected with level set to block 1`] = `
+<Stack
+  className="border-primary-100 border-top"
+  gap={3}
+>
+  <FormattedMessage
+    defaultMessage="License Display"
+    description="Title for license display subsection"
+    id="authoring.videoeditor.license.displaySubsection.title"
+  />
+  <Card
+    className="mb-3"
+  >
+    <Card.Header
+      title={
+        <injectIntl(ShimmedIntlComponent)
+          details={Object {}}
+          license="all-rights-reserved"
+        />
+      }
+    />
+    <Card.Section>
+      FormattedMessage component with license description
+    </Card.Section>
+  </Card>
+  <Hyperlink
+    destination="https://creativecommons.org/about"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="View license details"
+      description="Label for view license details button"
+      id="authoring.videoeditor.license.viewLicenseDetailsLabel.label"
+    />
+  </Hyperlink>
+</Stack>
+`;
+
+exports[`LicenseDisplay snapshots snapshots: renders as expected with level set to block and license set to Creative Commons 1`] = `
+<Stack
+  className="border-primary-100 border-top"
+  gap={3}
+>
+  <FormattedMessage
+    defaultMessage="License Display"
+    description="Title for license display subsection"
+    id="authoring.videoeditor.license.displaySubsection.title"
+  />
+  <Card
+    className="mb-3"
+  >
+    <Card.Header
+      title={
+        <injectIntl(ShimmedIntlComponent)
+          details={Object {}}
+          license="creative-commons"
+        />
+      }
+    />
+    <Card.Section>
+      FormattedMessage component with license description
+    </Card.Section>
+  </Card>
+  <Hyperlink
+    destination="https://creativecommons.org/about"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="View license details"
+      description="Label for view license details button"
+      id="authoring.videoeditor.license.viewLicenseDetailsLabel.label"
+    />
+  </Hyperlink>
+</Stack>
+`;
+
+exports[`LicenseDisplay snapshots snapshots: renders as expected with level set to block and license set to select 1`] = `""`;
+
+exports[`LicenseDisplay snapshots snapshots: renders as expected with level set to library 1`] = `
+<Stack
+  className="border-primary-100 border-top"
+  gap={3}
+>
+  <FormattedMessage
+    defaultMessage="License Display"
+    description="Title for license display subsection"
+    id="authoring.videoeditor.license.displaySubsection.title"
+  />
+  <Card
+    className="mb-3"
+  >
+    <Card.Header
+      title={
+        <injectIntl(ShimmedIntlComponent)
+          details={Object {}}
+          license="all-rights-reserved"
+        />
+      }
+    />
+    <Card.Section>
+      FormattedMessage component with license description
+    </Card.Section>
+  </Card>
+  <Hyperlink
+    destination="https://creativecommons.org/about"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="View license details"
+      description="Label for view license details button"
+      id="authoring.videoeditor.license.viewLicenseDetailsLabel.label"
+    />
+  </Hyperlink>
+</Stack>
+`;

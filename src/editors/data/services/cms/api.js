@@ -17,6 +17,9 @@ export const apiMethods = {
   fetchAssets: ({ learningContextId, studioEndpointUrl }) => get(
     urls.courseAssets({ studioEndpointUrl, learningContextId }),
   ),
+  fetchCourseDetails: ({ studioEndpointUrl, learningContextId }) => get(
+    urls.courseDetailsUrl({ studioEndpointUrl, learningContextId }),
+  ),
   uploadAsset: ({
     learningContextId,
     studioEndpointUrl,
@@ -196,15 +199,18 @@ export const parseYoutubeId = (src) => {
 };
 
 export const processLicense = (licenseType, licenseDetails) => {
+  if (licenseType === 'creative-commons') {
+    return 'creative-commons: ver=4.0'.concat(
+      (licenseDetails.attribution ? ' BY' : ''),
+      (licenseDetails.noncommercial ? ' NC' : ''),
+      (licenseDetails.noDerivatives ? ' ND' : ''),
+      (licenseDetails.shareAlike ? ' SA' : ''),
+    );
+  }
   if (licenseType === 'all-rights-reserved') {
     return 'all-rights-reserved';
   }
-  return 'creative-commons: ver=4.0'.concat(
-    (licenseDetails.attribution ? ' BY' : ''),
-    (licenseDetails.noncommercial ? ' NC' : ''),
-    (licenseDetails.noDerivatives ? ' ND' : ''),
-    (licenseDetails.shareAlike ? ' SA' : ''),
-  );
+  return '';
 };
 
 export const checkMockApi = (key) => {

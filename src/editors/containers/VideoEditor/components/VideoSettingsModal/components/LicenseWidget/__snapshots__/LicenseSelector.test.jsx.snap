@@ -1,0 +1,177 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LicenseSelector snapshots snapshots: renders as expected with block level 1`] = `
+<Form.Group
+  className="mt-2 mx-2"
+>
+  <Form.Row
+    className="mt-4.5"
+  >
+    <Form.Control
+      as="select"
+      defaultValue="all-rights-reserved"
+      disabled={false}
+      floatingLabel="License Type"
+      onChange={[Function]}
+    >
+      <option
+        hidden={true}
+      >
+        Select
+      </option>
+      <option
+        value="all-rights-reserved"
+      >
+        All Rights Reserved
+      </option>
+      <option
+        value="creative-commons"
+      >
+        Creative Commons
+      </option>
+    </Form.Control>
+    <IconButtonWithTooltip
+      iconAs="Icon"
+      onClick={[Function]}
+      tooltipContent={
+        <FormattedMessage
+          defaultMessage="Delete"
+          description="Message presented to user for action to delete license selection"
+          id="authoring.videoeditor.license.deleteLicenseSelection"
+        />
+      }
+      tooltipPlacement="top"
+    />
+  </Form.Row>
+  <Form.Text>
+    <FormattedMessage
+      defaultMessage="This license is set specifically for this video"
+      description="Helper text for license type when choosing for a spcific video"
+      id="authoring.videoeditor.license.defaultLevelDescription.helperText"
+    />
+  </Form.Text>
+</Form.Group>
+`;
+
+exports[`LicenseSelector snapshots snapshots: renders as expected with default props 1`] = `
+<Form.Group
+  className="mt-2 mx-2"
+>
+  <Form.Row
+    className="mt-4.5"
+  >
+    <Form.Control
+      as="select"
+      defaultValue="all-rights-reserved"
+      disabled={true}
+      floatingLabel="License Type"
+      onChange={[Function]}
+    >
+      <option
+        hidden={true}
+      >
+        Select
+      </option>
+      <option
+        value="all-rights-reserved"
+      >
+        All Rights Reserved
+      </option>
+      <option
+        value="creative-commons"
+      >
+        Creative Commons
+      </option>
+    </Form.Control>
+  </Form.Row>
+  <Form.Text>
+    <FormattedMessage
+      defaultMessage="This license currently set at the course level"
+      description="Helper text for license type when using course license"
+      id="authoring.videoeditor.license.courseLevelDescription.helperText"
+    />
+  </Form.Text>
+</Form.Group>
+`;
+
+exports[`LicenseSelector snapshots snapshots: renders as expected with library level 1`] = `
+<Form.Group
+  className="mt-2 mx-2"
+>
+  <Form.Row
+    className="mt-4.5"
+  >
+    <Form.Control
+      as="select"
+      defaultValue="all-rights-reserved"
+      disabled={true}
+      floatingLabel="License Type"
+      onChange={[Function]}
+    >
+      <option
+        hidden={true}
+      >
+        Select
+      </option>
+      <option
+        value="all-rights-reserved"
+      >
+        All Rights Reserved
+      </option>
+      <option
+        value="creative-commons"
+      >
+        Creative Commons
+      </option>
+    </Form.Control>
+  </Form.Row>
+  <Form.Text>
+    <FormattedMessage
+      defaultMessage="This license currently set at the library level"
+      description="Helper text for license type when using library license"
+      id="authoring.videoeditor.license.libraryLevelDescription.helperText"
+    />
+  </Form.Text>
+</Form.Group>
+`;
+
+exports[`LicenseSelector snapshots snapshots: renders as expected with no license 1`] = `
+<Form.Group
+  className="mt-2 mx-2"
+>
+  <Form.Row
+    className="mt-4.5"
+  >
+    <Form.Control
+      as="select"
+      defaultValue=""
+      disabled={true}
+      floatingLabel="License Type"
+      onChange={[Function]}
+    >
+      <option
+        hidden={true}
+      >
+        Select
+      </option>
+      <option
+        value="all-rights-reserved"
+      >
+        All Rights Reserved
+      </option>
+      <option
+        value="creative-commons"
+      >
+        Creative Commons
+      </option>
+    </Form.Control>
+  </Form.Row>
+  <Form.Text>
+    <FormattedMessage
+      defaultMessage="This license currently set at the course level"
+      description="Helper text for license type when using course license"
+      id="authoring.videoeditor.license.courseLevelDescription.helperText"
+    />
+  </Form.Text>
+</Form.Group>
+`;
