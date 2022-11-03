@@ -21,6 +21,9 @@ jest.mock('../../../../../../data/redux', () => ({
       getHandoutDownloadUrl: jest.fn(args => ({ getHandoutDownloadUrl: args })).mockName('selectors.video.getHandoutDownloadUrl'),
       handout: jest.fn(state => ({ handout: state })),
     },
+    app: {
+      isLibrary: jest.fn(args => ({ isLibrary: args })),
+    },
   },
 }));
 
@@ -29,6 +32,7 @@ describe('HandoutWidget', () => {
     subtitle: 'SuBTItle',
     title: 'tiTLE',
     intl: { formatMessage },
+    isLibrary: false,
     handout: '',
     getHandoutDownloadUrl: jest.fn().mockName('args.getHandoutDownloadUrl'),
     updateField: jest.fn().mockName('args.updateField'),
@@ -40,6 +44,11 @@ describe('HandoutWidget', () => {
         shallow(<HandoutWidget {...props} />),
       ).toMatchSnapshot();
     });
+    test('snapshots: renders as expected with isLibrary true', () => {
+      expect(
+        shallow(<HandoutWidget {...props} isLibrary />),
+      ).toMatchSnapshot();
+    });
     test('snapshots: renders as expected with handout', () => {
       expect(
         shallow(<HandoutWidget {...props} handout="sOMeUrl " />),
@@ -48,10 +57,10 @@ describe('HandoutWidget', () => {
   });
   describe('mapStateToProps', () => {
     const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
-    test('handout from video.handout', () => {
+    test('isLibrary from app.isLibrary', () => {
       expect(
-        mapStateToProps(testState).handout,
-      ).toEqual(selectors.video.handout(testState));
+        mapStateToProps(testState).isLibrary,
+      ).toEqual(selectors.app.isLibrary(testState));
     });
     test('getHandoutDownloadUrl from video.getHandoutDownloadUrl', () => {
       expect(

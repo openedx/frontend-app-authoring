@@ -34,6 +34,7 @@ export const HandoutWidget = ({
   // injected
   intl,
   // redux
+  isLibrary,
   handout,
   getHandoutDownloadUrl,
   updateField,
@@ -44,7 +45,7 @@ export const HandoutWidget = ({
   const handoutName = hooks.parseHandoutName({ handout });
   const downloadLink = getHandoutDownloadUrl({ handout });
 
-  return (
+  return (!isLibrary ? (
     <CollapsibleFormWidget
       isError={Object.keys(error).length !== 0}
       title={intl.formatMessage(messages.titleLabel)}
@@ -101,19 +102,21 @@ export const HandoutWidget = ({
         </Stack>
       )}
     </CollapsibleFormWidget>
-  );
+  ) : null);
 };
 
 HandoutWidget.propTypes = {
   // injected
   intl: intlShape.isRequired,
   // redux
+  isLibrary: PropTypes.bool.isRequired,
   handout: PropTypes.shape({}).isRequired,
   updateField: PropTypes.func.isRequired,
   isUploadError: PropTypes.bool.isRequired,
   getHandoutDownloadUrl: PropTypes.func.isRequired,
 };
 export const mapStateToProps = (state) => ({
+  isLibrary: selectors.app.isLibrary(state),
   handout: selectors.video.handout(state),
   getHandoutDownloadUrl: selectors.video.getHandoutDownloadUrl(state),
 });
