@@ -6,7 +6,7 @@ import { providerNames } from './constants';
 import LiveCommonFields from './LiveCommonFields';
 import FormikControl from '../../generic/FormikControl';
 
-function ZoomsSettings({
+function ZoomSettings({
  intl,
  values,
 }) {
@@ -37,7 +37,7 @@ function ZoomsSettings({
   );
 }
 
-ZoomsSettings.propTypes = {
+ZoomSettings.propTypes = {
   intl: intlShape.isRequired,
   values: PropTypes.shape({
     consumerKey: PropTypes.string,
@@ -51,4 +51,4 @@ ZoomsSettings.propTypes = {
   }).isRequired,
 };
 
-export default injectIntl(ZoomsSettings);
+export default injectIntl(ZoomSettings);
