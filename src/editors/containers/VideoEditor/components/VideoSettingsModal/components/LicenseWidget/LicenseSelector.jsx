@@ -37,7 +37,7 @@ export const LicenseSelector = ({
           as="select"
           ref={ref}
           defaultValue={license}
-          disabled={level !== LicenseLevel.block}
+          disabled={level === LicenseLevel.course}
           floatingLabel={intl.formatMessage(messages.licenseTypeLabel)}
           onChange={(e) => onLicenseChange(e.target.value)}
         >
@@ -47,7 +47,7 @@ export const LicenseSelector = ({
             return (<option value={LicenseTypes[key]}>{text}</option>);
           })}
         </Form.Control>
-        {level === LicenseLevel.block ? (
+        {level !== LicenseLevel.course ? (
           <IconButtonWithTooltip
             iconAs={Icon}
             src={Delete}

@@ -176,4 +176,20 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
 
 exports[`LicenseDetails snapshots snapshots: renders as expected with level set to block and license set to select 1`] = `""`;
 
-exports[`LicenseDetails snapshots snapshots: renders as expected with level set to library 1`] = `""`;
+exports[`LicenseDetails snapshots snapshots: renders as expected with level set to library 1`] = `
+<div
+  className="border-primary-100 border-top pb-3"
+>
+  <Form.Group>
+    <Form.Label
+      className="mt-3"
+    >
+      <FormattedMessage
+        defaultMessage="License Details"
+        description="Title for license detatils subsection"
+        id="authoring.videoeditor.license.detailsSubsection.title"
+      />
+    </Form.Label>
+  </Form.Group>
+</div>
+`;

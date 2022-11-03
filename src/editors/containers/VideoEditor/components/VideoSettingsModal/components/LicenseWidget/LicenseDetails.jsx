@@ -29,7 +29,7 @@ export const LicenseDetails = ({
   // redux
   updateField,
 }) => (
-  level === LicenseLevel.block && details && license !== 'select' ? (
+  level !== LicenseLevel.course && details && license !== 'select' ? (
     <div className="border-primary-100 border-top pb-3">
       <Form.Group>
         <Form.Label className="mt-3">
@@ -81,7 +81,7 @@ export const LicenseDetails = ({
                   actions={(
                     <Form.Checkbox
                       checked={details.noncommercial}
-                      disabled={level !== LicenseLevel.block}
+                      disabled={level === LicenseLevel.course}
                       onChange={(e) => updateField({
                         licenseDetails: {
                           ...details,
@@ -116,7 +116,7 @@ export const LicenseDetails = ({
                   actions={(
                     <Form.Checkbox
                       checked={details.noDerivatives}
-                      disabled={level !== LicenseLevel.block}
+                      disabled={level === LicenseLevel.course}
                       onChange={(e) => updateField({
                         licenseDetails: {
                           ...details,
@@ -152,7 +152,7 @@ export const LicenseDetails = ({
                   actions={(
                     <Form.Checkbox
                       checked={details.shareAlike}
-                      disabled={level !== LicenseLevel.block}
+                      disabled={level === LicenseLevel.course}
                       onChange={(e) => updateField({
                         licenseDetails: {
                           ...details,
