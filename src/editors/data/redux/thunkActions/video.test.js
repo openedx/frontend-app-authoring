@@ -40,12 +40,12 @@ const testMetadata = {
   download_track: 'dOWNlOAdTraCK',
   download_video: 'downLoaDViDEo',
   edx_video_id: 'soMEvIDEo',
-  end_time: 'StOpTIMe',
+  end_time: 0,
   handout: 'hANdoUT',
   html5_sources: [],
   license: 'liCENse',
   show_captions: 'shOWcapTIONS',
-  start_time: 'stARtTiME',
+  start_time: 0,
   transcripts: { la: 'test VALUE' },
   thumbnail: 'thuMBNaIl',
 };
@@ -120,7 +120,7 @@ describe('video thunkActions', () => {
         duration: {
           startTime: testMetadata.start_time,
           stopTime: testMetadata.end_time,
-          total: null,
+          total: 0,
         },
         handout: testMetadata.handout,
         licenseType: 'liCENSEtyPe',

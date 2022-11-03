@@ -1,6 +1,7 @@
 import { actions, selectors } from '..';
 import * as requests from './requests';
 import * as module from './video';
+import { valueFromDuration } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/duration';
 
 export const loadVideoData = () => (dispatch, getState) => {
   const state = getState();
@@ -32,9 +33,9 @@ export const loadVideoData = () => (dispatch, getState) => {
     allowTranscriptDownloads: rawVideoData.download_track,
     showTranscriptByDefault: rawVideoData.show_captions,
     duration: { // TODO duration is not always sent so they should be calculated.
-      startTime: rawVideoData.start_time,
-      stopTime: rawVideoData.end_time,
-      total: null, // TODO can we get total duration? if not, probably dropping from widget
+      startTime: valueFromDuration(rawVideoData.start_time || '00:00:00'),
+      stopTime: valueFromDuration(rawVideoData.end_time || '00:00:00'),
+      total: 0, // TODO can we get total duration? if not, probably dropping from widget
     },
     handout: rawVideoData.handout,
     licenseType,

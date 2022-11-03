@@ -97,8 +97,8 @@ describe('cms api', () => {
           transcripts: 'traNScRiPts',
           allowTranscriptDownloads: 'aLloWTRaNScriPtdoWnlOADS',
           duration: {
-            startTime: 'StArTTime',
-            stopTime: 'sToPTiME',
+            startTime: '00:00:00',
+            stopTime: '00:00:00',
           },
           showTranscriptByDefault: 'ShOWtrANscriPTBYDeFAulT',
           handout: 'HAnDOuT',
