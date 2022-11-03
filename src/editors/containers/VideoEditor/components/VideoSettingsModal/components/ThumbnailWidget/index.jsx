@@ -33,6 +33,7 @@ export const ThumbnailWidget = ({
   // injected
   intl,
   // redux
+  isLibrary,
   allowThumbnailUpload,
   thumbnail,
   updateField,
@@ -49,7 +50,7 @@ export const ThumbnailWidget = ({
   });
   const isEdxVideo = videoType === 'edxVideo';
 
-  return (
+  return (!isLibrary ? (
     <CollapsibleFormWidget
       isError={Object.keys(error).length !== 0}
       title={intl.formatMessage(messages.title)}
@@ -103,19 +104,21 @@ export const ThumbnailWidget = ({
         </Stack>
       )}
     </CollapsibleFormWidget>
-  );
+  ) : null);
 };
 
 ThumbnailWidget.propTypes = {
   // injected
   intl: intlShape.isRequired,
   // redux
+  isLibrary: PropTypes.bool.isRequired,
   allowThumbnailUpload: PropTypes.bool.isRequired,
   thumbnail: PropTypes.string.isRequired,
   updateField: PropTypes.func.isRequired,
   videoType: PropTypes.string.isRequired,
 };
 export const mapStateToProps = (state) => ({
+  isLibrary: selectors.app.isLibrary(state),
   allowThumbnailUpload: selectors.video.allowThumbnailUpload(state),
   thumbnail: selectors.video.thumbnail(state),
   videoType: selectors.video.videoType(state),

@@ -21,6 +21,9 @@ jest.mock('../../../../../../data/redux', () => ({
       thumbnail: jest.fn(state => ({ thumbnail: state })),
       videoType: jest.fn(state => ({ videoType: state })),
     },
+    app: {
+      isLibrary: jest.fn(state => ({ isLibrary: state })),
+    },
   },
 }));
 
@@ -29,6 +32,7 @@ describe('ThumbnailWidget', () => {
     error: {},
     title: 'tiTLE',
     intl: { formatMessage },
+    isLibrary: false,
     allowThumbnailUpload: false,
     thumbnail: null,
     videoType: '',
@@ -39,6 +43,11 @@ describe('ThumbnailWidget', () => {
     test('snapshots: renders as expected with default props', () => {
       expect(
         shallow(<ThumbnailWidget {...props} />),
+      ).toMatchSnapshot();
+    });
+    test('snapshots: renders as expected with isLibrary true', () => {
+      expect(
+        shallow(<ThumbnailWidget {...props} isLibrary />),
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with a thumbnail provided', () => {
@@ -59,6 +68,11 @@ describe('ThumbnailWidget', () => {
   });
   describe('mapStateToProps', () => {
     const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
+    test('isLibrary from app.isLibrary', () => {
+      expect(
+        mapStateToProps(testState).isLibrary,
+      ).toEqual(selectors.app.isLibrary(testState));
+    });
     test('allowThumbnailUpload from video.allowThumbnailUpload', () => {
       expect(
         mapStateToProps(testState).allowThumbnailUpload,

@@ -187,3 +187,5 @@ exports[`ThumbnailWidget snapshots snapshots: renders as expected with default p
   </Stack>
 </injectIntl(ShimmedIntlComponent)>
 `;
+
+exports[`ThumbnailWidget snapshots snapshots: renders as expected with isLibrary true 1`] = `""`;
