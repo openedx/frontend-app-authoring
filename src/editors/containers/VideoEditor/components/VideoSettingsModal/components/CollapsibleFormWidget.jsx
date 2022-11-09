@@ -23,7 +23,7 @@ export const CollapsibleFormWidget = ({
   intl,
 }) => (
   <Collapsible.Advanced
-    className="collapsible-card rounded mb-3 mr-4 px-3 py-2"
+    className="collapsible-card rounded m-4 px-3 py-2"
     defaultOpen
     open={isError || undefined}
   >

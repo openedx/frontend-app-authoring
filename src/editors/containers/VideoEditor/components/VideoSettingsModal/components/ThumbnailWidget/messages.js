@@ -9,6 +9,16 @@ export const messages = {
     defaultMessage: 'Unavailable',
     description: 'Subtitle for unavailable thumbnail widget',
   },
+  noneSubtitle: {
+    id: 'authoring.videoeditor.thumbnail.none.subtitle',
+    defaultMessage: 'None',
+    description: 'Subtitle for when no thumbnail has been uploaded to the widget',
+  },
+  yesSubtitle: {
+    id: 'authoring.videoeditor.thumbnail.yes.subtitle',
+    defaultMessage: 'Yes',
+    description: 'Subtitle for when thumbnail has been uploaded to the widget',
+  },
   unavailableMessage: {
     id: 'authoring.videoeditor.thumbnail.unavailable.message',
     defaultMessage: 'Select a video from your library to enable this feature',

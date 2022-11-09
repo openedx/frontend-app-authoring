@@ -49,12 +49,21 @@ export const ThumbnailWidget = ({
     fileSizeError,
   });
   const isEdxVideo = videoType === 'edxVideo';
+  const getSubtitle = () => {
+    if (isEdxVideo) {
+      if (thumbnail) {
+        return intl.formatMessage(messages.yesSubtitle);
+      }
+      return intl.formatMessage(messages.noneSubtitle);
+    }
+    return intl.formatMessage(messages.unavailableSubtitle);
+  };
 
   return (!isLibrary ? (
     <CollapsibleFormWidget
       isError={Object.keys(error).length !== 0}
       title={intl.formatMessage(messages.title)}
-      subtitle={isEdxVideo ? null : intl.formatMessage(messages.unavailableSubtitle)}
+      subtitle={getSubtitle()}
     >
       <ErrorAlert
         dismissError={fileSizeError.dismiss}

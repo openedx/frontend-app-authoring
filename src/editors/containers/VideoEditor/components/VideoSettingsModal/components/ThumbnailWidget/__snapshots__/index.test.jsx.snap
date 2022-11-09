@@ -44,7 +44,7 @@ exports[`ThumbnailWidget snapshots snapshots: renders as expected where thumbnai
 exports[`ThumbnailWidget snapshots snapshots: renders as expected where videoType equals edxVideo 1`] = `
 <injectIntl(ShimmedIntlComponent)
   isError={true}
-  subtitle={null}
+  subtitle="Yes"
   title="Thumbnail"
 >
   <ErrorAlert
@@ -80,10 +80,77 @@ exports[`ThumbnailWidget snapshots snapshots: renders as expected where videoTyp
 </injectIntl(ShimmedIntlComponent)>
 `;
 
+exports[`ThumbnailWidget snapshots snapshots: renders as expected where videoType equals edxVideo and no thumbnail 1`] = `
+<injectIntl(ShimmedIntlComponent)
+  isError={true}
+  subtitle="None"
+  title="Thumbnail"
+>
+  <ErrorAlert
+    dismissError={[Function]}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="The file size for thumbnails must be larger than 2 KB or less than 2 MB. Please resize image and try again."
+      description=" Message presented to user when file size of image is less than 2 KB or larger than 2 MB"
+      id="authoring.videoeditor.thumbnail.error.fileSizeError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <div>
+      <FormattedMessage
+        defaultMessage="Upload an image for learners to see before playing the video."
+        description="Message for adding thumbnail"
+        id="authoring.videoeditor.thumbnail.upload.message"
+      />
+    </div>
+    <div
+      style={
+        Object {
+          "color": "grey",
+        }
+      }
+    >
+      <FormattedMessage
+        defaultMessage="Images must have an aspect ratio of 16:9 (1280x720 px recommended)"
+        description="Message for thumbnail aspectRequirements"
+        id="authoring.videoeditor.thumbnail.upload.aspectRequirements"
+      />
+    </div>
+    <FileInput
+      acceptedFiles=".gif,.jpg,.jpeg,.png,.bmp,.bmp2"
+      fileInput={
+        Object {
+          "addFile": [Function],
+          "click": [Function],
+          "ref": Object {
+            "current": undefined,
+          },
+        }
+      }
+    />
+    <Button
+      disabled={false}
+      onClick={[Function]}
+      variant="link"
+    >
+      <FormattedMessage
+        defaultMessage="Upload Thumbnail"
+        description="Label for upload button"
+        id="authoring.videoeditor.thumbnail.upload.label"
+      />
+    </Button>
+  </Stack>
+</injectIntl(ShimmedIntlComponent)>
+`;
+
 exports[`ThumbnailWidget snapshots snapshots: renders as expected with a thumbnail provided 1`] = `
 <injectIntl(ShimmedIntlComponent)
   isError={true}
-  subtitle={null}
+  subtitle="Yes"
   title="Thumbnail"
 >
   <ErrorAlert

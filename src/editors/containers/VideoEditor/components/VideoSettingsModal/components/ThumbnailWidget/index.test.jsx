@@ -65,6 +65,11 @@ describe('ThumbnailWidget', () => {
         shallow(<ThumbnailWidget {...props} thumbnail="sOMeUrl" allowThumbnailUpload videoType="edxVideo" />),
       ).toMatchSnapshot();
     });
+    test('snapshots: renders as expected where videoType equals edxVideo and no thumbnail', () => {
+      expect(
+        shallow(<ThumbnailWidget {...props} allowThumbnailUpload videoType="edxVideo" />),
+      ).toMatchSnapshot();
+    });
   });
   describe('mapStateToProps', () => {
     const testState = { A: 'pple', B: 'anana', C: 'ucumber' };

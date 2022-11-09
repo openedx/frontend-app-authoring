@@ -11,18 +11,15 @@ import VideoSourceWidget from './components/VideoSourceWidget';
 import './index.scss';
 
 export const VideoSettingsModal = () => (
-  <div className="video-settings-modal row">
-    <div className="video-controls col mx-2">
-      <ErrorSummary />
-      <h3>Settings</h3>
-      <VideoSourceWidget />
-      <ThumbnailWidget />
-      <TranscriptWidget />
-      <DurationWidget />
-      <HandoutWidget />
-      <LicenseWidget />
-    </div>
-  </div>
+  <>
+    <ErrorSummary />
+    <VideoSourceWidget />
+    <ThumbnailWidget />
+    <TranscriptWidget />
+    <DurationWidget />
+    <HandoutWidget />
+    <LicenseWidget />
+  </>
 );
 
 export default VideoSettingsModal;

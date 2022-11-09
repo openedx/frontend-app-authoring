@@ -175,7 +175,14 @@ export const uploadThumbnail = ({ thumbnail }) => (dispatch, getState) => {
     thumbnail,
     videoId,
     onSuccess: (response) => {
-      const thumbnailUrl = studioEndpointUrl + response.data.image_url;
+      let thumbnailUrl;
+      if (response.data.image_url.startsWith('/')) {
+        // in local environments, image_url is a relative path
+        thumbnailUrl = studioEndpointUrl + response.data.image_url;
+      } else {
+        // in stage and production, image_url is an absolute path to the image
+        thumbnailUrl = response.data.image_url;
+      }
       dispatch(actions.video.updateField({
         thumbnail: thumbnailUrl,
       }));

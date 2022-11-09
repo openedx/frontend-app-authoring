@@ -7,8 +7,8 @@ import {
   Stack,
   Icon,
   IconButton,
-  Card,
   Dropdown,
+  ActionRow,
 } from '@edx/paragon';
 import { FileUpload, MoreHoriz } from '@edx/paragon/icons';
 import {
@@ -61,38 +61,37 @@ export const HandoutWidget = ({
       <UploadErrorAlert message={messages.uploadHandoutError} />
       <FileInput fileInput={fileInput} />
       {handout ? (
-        <Card>
-          <Card.Header
-            className="mt-1"
-            subtitle={handoutName}
-            actions={(
-              <Dropdown>
-                <Dropdown.Toggle
-                  id="dropdown-toggle-with-iconbutton-video-transcript-widget"
-                  as={IconButton}
-                  src={MoreHoriz}
-                  iconAs={Icon}
-                  variant="primary"
-                  alt="Actions dropdown"
-                />
-                <Dropdown.Menu className="video_handout Action Menu">
-                  <Dropdown.Item
-                    key="handout-actions-replace"
-                    onClick={fileInput.click}
-                  >
-                    <FormattedMessage {...messages.replaceHandout} />
-                  </Dropdown.Item>
-                  <Dropdown.Item key="handout-actions-download" target="_blank" href={downloadLink}>
-                    <FormattedMessage {...messages.downloadHandout} />
-                  </Dropdown.Item>
-                  <Dropdown.Item key="handout-actions-delete" onClick={() => updateField({ handout: null })}>
-                    <FormattedMessage {...messages.deleteHandout} />
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            )}
-          />
-        </Card>
+        <Stack gap={3}>
+          <ActionRow className="border border-gray-300 rounded px-3 py-2">
+            {handoutName}
+            <ActionRow.Spacer />
+            <Dropdown>
+              <Dropdown.Toggle
+                id="dropdown-toggle-with-iconbutton-video-transcript-widget"
+                as={IconButton}
+                src={MoreHoriz}
+                iconAs={Icon}
+                variant="primary"
+                alt="Actions dropdown"
+              />
+              <Dropdown.Menu className="video_handout Action Menu">
+                <Dropdown.Item
+                  key="handout-actions-replace"
+                  onClick={fileInput.click}
+                >
+                  <FormattedMessage {...messages.replaceHandout} />
+                </Dropdown.Item>
+                <Dropdown.Item key="handout-actions-download" target="_blank" href={downloadLink}>
+                  <FormattedMessage {...messages.downloadHandout} />
+                </Dropdown.Item>
+                <Dropdown.Item key="handout-actions-delete" onClick={() => updateField({ handout: null })}>
+                  <FormattedMessage {...messages.deleteHandout} />
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </ActionRow>
+          <FormattedMessage {...messages.handoutHelpMessage} />
+        </Stack>
       ) : (
         <Stack gap={3}>
           <FormattedMessage {...messages.addHandoutMessage} />
