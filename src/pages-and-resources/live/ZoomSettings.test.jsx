@@ -80,8 +80,8 @@ describe('Zoom Settings', () => {
     history.push(liveSettingsUrl);
   });
 
-  test('LTI fields are visible when pii sharing is enabled', async () => {
-    await mockStore({ piiSharingAllowed: true });
+  test('LTI fields are visible when pii sharing is enabled and email or username sharing required', async () => {
+    await mockStore({ emailSharing: true });
     renderComponent();
 
     const spinner = getByRole(container, 'status');
@@ -103,9 +103,9 @@ describe('Zoom Settings', () => {
   });
 
   test(
-    'Only connect to support message is visible when pii sharing is disabled',
+    'Only connect to support message is visible when pii sharing is disabled and email or username sharing is required',
     async () => {
-      await mockStore({ piiSharingAllowed: false });
+      await mockStore({ emailSharing: true, piiSharingAllowed: false });
       renderComponent();
 
       const spinner = getByRole(container, 'status');
@@ -129,7 +129,7 @@ describe('Zoom Settings', () => {
 
   test('Provider Configuration should be displayed correctly', async () => {
     const apiDefaultResponse = generateLiveConfigurationApiResponse(true, true);
-    await mockStore({ piiSharingAllowed: true });
+    await mockStore({ emailSharing: false, piiSharingAllowed: false });
     renderComponent();
 
     const spinner = getByRole(container, 'status');

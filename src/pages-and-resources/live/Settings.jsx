@@ -57,7 +57,10 @@ function LiveSettings({
       is: (provider, tier) => provider === 'zoom' || (provider === 'big_blue_button' && tier === bbbPlanTypes.commercial),
       then: Yup.string().required(intl.formatMessage(messages.launchUrlRequired)),
     }),
-    launchEmail: Yup.string(),
+    launchEmail: Yup.string().when('provider', {
+      is: 'zoom',
+      then: Yup.string().required(intl.formatMessage(messages.launchEmailRequired)),
+    }),
   };
 
   const handleProviderChange = (providerId, setFieldValue, values) => {
