@@ -1,7 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EditableHeader snapshot snapshot 1`] = `
-<Form.Group>
+<Form.Group
+  className="mw-100"
+  onBlur={[Function]}
+  style={
+    Object {
+      "min-width": "200px",
+      "width": "320px",
+    }
+  }
+>
   <Form.Control
     autoFocus={true}
     onChange={[MockFunction args.handleChange]}

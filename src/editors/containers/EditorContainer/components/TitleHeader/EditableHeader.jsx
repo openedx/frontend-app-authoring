@@ -11,20 +11,27 @@ export const EditableHeader = ({
   inputRef,
   localTitle,
   cancelEdit,
-}) => (
-  <Form.Group>
-    <Form.Control
-      style={{ 'padding-inline-end': 'calc(1rem + 84px)' }}
-      autoFocus
-      trailingElement={<EditConfirmationButtons {...{ updateTitle, cancelEdit }} />}
-      onChange={handleChange}
-      onKeyDown={handleKeyDown}
-      placeholder="Title"
-      ref={inputRef}
-      value={localTitle}
-    />
-  </Form.Group>
-);
+}) => {
+  const width = localTitle.length * 8 + 200;
+  return (
+    <Form.Group
+      style={{ 'min-width': '200px', width: `${width}px` }}
+      className="mw-100"
+      onBlur={(e) => updateTitle(e)}
+    >
+      <Form.Control
+        style={{ 'padding-inline-end': 'calc(1rem + 84px)' }}
+        autoFocus
+        trailingElement={<EditConfirmationButtons {...{ updateTitle, cancelEdit }} />}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        placeholder="Title"
+        ref={inputRef}
+        value={localTitle}
+      />
+    </Form.Group>
+  );
+};
 EditableHeader.defaultProps = {
   inputRef: null,
 };

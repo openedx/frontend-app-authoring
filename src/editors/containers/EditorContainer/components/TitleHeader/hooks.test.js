@@ -74,7 +74,9 @@ describe('TitleHeader hooks', () => {
       });
       describe('updateTitle hook', () => {
         it('calls setBlockTitle with localTitle, and stopEditing', () => {
-          output.updateTitle();
+          const div = document.createElement('div');
+          const mockEvent = { currentTarget: div };
+          output.updateTitle(mockEvent);
           expect(dispatch).toHaveBeenCalledWith(actions.app.setBlockTitle(output.localTitle));
           expect(stopEditing).toHaveBeenCalled();
         });
