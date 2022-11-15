@@ -1,11 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import {
-  Col,
-  Form,
-  Row,
-} from '@edx/paragon';
+import { Col, Form } from '@edx/paragon';
 
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { keyStore } from '../../../../../utils';
@@ -49,13 +45,14 @@ export const DurationWidget = ({
       subtitle={getTotalLabel(duration.formValue.startTime, duration.formValue.stopTime, true)}
     >
       <FormattedMessage {...messages.durationDescription} />
-      <Row className="mt-4">
+      <Form.Row className="mt-4">
         <Form.Group as={Col}>
           <Form.Control
             floatingLabel={intl.formatMessage(messages.startTimeLabel)}
-            value={duration.local.startTime}
             onBlur={duration.onBlur(timeKeys.startTime)}
             onChange={duration.onChange(timeKeys.startTime)}
+            onKeyDown={duration.onKeyDown(timeKeys.startTime)}
+            value={duration.local.startTime}
           />
           <Form.Control.Feedback>
             <FormattedMessage {...messages.durationHint} />
@@ -64,15 +61,16 @@ export const DurationWidget = ({
         <Form.Group as={Col}>
           <Form.Control
             floatingLabel={intl.formatMessage(messages.stopTimeLabel)}
-            value={duration.local.stopTime}
             onBlur={duration.onBlur(timeKeys.stopTime)}
             onChange={duration.onChange(timeKeys.stopTime)}
+            onKeyDown={duration.onKeyDown(timeKeys.stopTime)}
+            value={duration.local.stopTime}
           />
           <Form.Control.Feedback>
             <FormattedMessage {...messages.durationHint} />
           </Form.Control.Feedback>
         </Form.Group>
-      </Row>
+      </Form.Row>
       <div className="mt-4">
         {getTotalLabel(duration.formValue.startTime, duration.formValue.stopTime)}
       </div>

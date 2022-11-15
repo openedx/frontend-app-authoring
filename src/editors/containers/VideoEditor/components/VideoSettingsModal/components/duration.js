@@ -1,7 +1,64 @@
 import { useCallback } from 'react';
 import * as module from './duration';
 
-const durationMatcher = /^(\d+)?:?(\d+)?:?(\d+)?$/i;
+const durationMatcher = /^(\d{0,2}):?(\d{0,2})?:?(\d{0,2})?$/i;
+
+/**
+ * onDurationChange(duration)
+ * Returns a new duration value based on onChange event
+ * @param {object} duration - object containing startTime and stopTime millisecond values
+ * @param {string} index - 'startTime or 'stopTime'
+ * @param {string} val - duration in 'hh:mm:ss' format
+ * @return {object} duration - object containing startTime and stopTime millisecond values
+ */
+export const onDurationChange = (duration, index, val) => {
+  const match = val.trim().match(durationMatcher);
+  if (!match) {
+    return duration;
+  }
+
+  const caretPos = document.activeElement.selectionStart;
+  let newDuration = val;
+  if (caretPos === newDuration.length && (newDuration.length === 2 || newDuration.length === 5)) {
+    newDuration += ':';
+  }
+
+  return {
+    ...duration,
+    [index]: newDuration,
+  };
+};
+
+/**
+ * onDurationKeyDown(duration)
+ * Returns a new duration value based on onKeyDown event
+ * @param {object} duration - object containing startTime and stopTime millisecond values
+ * @param {string} index - 'startTime or 'stopTime'
+ * @param {Event} event - event from onKeyDown
+ * @return {object} duration - object containing startTime and stopTime millisecond values
+ */
+export const onDurationKeyDown = (duration, index, event) => {
+  const caretPos = document.activeElement.selectionStart;
+  let newDuration = duration[index];
+
+  switch (event.key) {
+    case 'Enter':
+      document.activeElement.blur();
+      break;
+    case 'Backspace':
+      if (caretPos === newDuration.length && newDuration.slice(-1) === ':') {
+        newDuration = newDuration.slice(0, -1);
+      }
+      break;
+    default:
+      break;
+  }
+
+  return {
+    ...duration,
+    [index]: newDuration,
+  };
+};
 
 /**
  * durationFromValue(value)
@@ -15,7 +72,7 @@ export const durationFromValue = (value) => {
   }
   const seconds = Math.floor((value / 1000) % 60);
   const minutes = Math.floor((value / 60000) % 60);
-  const hours = Math.floor((value / 3600000) % 24);
+  const hours = Math.floor((value / 3600000) % 60);
   const zeroPad = (num) => String(num).padStart(2, '0');
   return [hours, minutes, seconds].map(zeroPad).join(':');
 };
@@ -73,6 +130,10 @@ export const updateDuration = ({
   (index, durationString) => {
     let newDurationString = durationString;
     let newValue = module.valueFromDuration(newDurationString);
+    // maxTime is 23:59:59 or 86399 seconds
+    if (newValue > 86399000) {
+      newValue = 86399000;
+    }
     // stopTime must be at least 1 second, if not zero
     if (index === 'stopTime' && newValue > 0 && newValue < 1000) {
       newValue = 1000;

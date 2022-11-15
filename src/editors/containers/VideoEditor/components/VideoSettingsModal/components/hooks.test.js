@@ -18,6 +18,8 @@ jest.mock('react', () => ({
 }));
 
 jest.mock('./duration', () => ({
+  onDurationChange: jest.fn(value => ({ onDurationChange: value })),
+  onDurationKeyDown: jest.fn(value => ({ onDurationKeyDown: value })),
   updateDuration: jest.fn(value => ({ updateDuration: value })),
   durationValue: jest.fn(value => ({ durationValue: value })),
 }));
@@ -27,6 +29,7 @@ jest.mock('./handlers', () => ({
   handleIndexTransformEvent: jest.fn(args => ({ handleIndexTransformEvent: args })),
   onValue: jest.fn(cb => ({ onValue: cb })),
   onChecked: jest.fn(cb => ({ onChecked: cb })),
+  onEvent: jest.fn(cb => ({ onEvent: cb })),
 }));
 
 jest.mock('../../../../../data/redux', () => ({
@@ -344,7 +347,22 @@ describe('Video Settings modal hooks', () => {
               handlers.handleIndexTransformEvent({
                 handler: handlers.onValue,
                 setter: widgetValues.setLocal,
-                transform: hooks.updatedObject,
+                transform: duration.onDurationChange,
+                local: widgetValues.local,
+              }),
+            );
+          });
+        });
+        describe('onKeyDown', () => {
+          test('memoized callback based on local from widget', () => {
+            expect(out.onKeyDown.useCallback.prereqs).toEqual([widgetValues.local]);
+          });
+          test('calls handleIndexTransformEvent with setLocal', () => {
+            expect(out.onKeyDown.useCallback.cb).toEqual(
+              handlers.handleIndexTransformEvent({
+                handler: handlers.onEvent,
+                setter: widgetValues.setLocal,
+                transform: duration.onDurationKeyDown,
                 local: widgetValues.local,
               }),
             );

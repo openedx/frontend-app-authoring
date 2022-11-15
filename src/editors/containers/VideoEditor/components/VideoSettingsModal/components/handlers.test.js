@@ -47,4 +47,11 @@ describe('Video Settings Modal event handler methods', () => {
       });
     });
   });
+  describe('onEvent', () => {
+    describe('returned method', () => {
+      it('calls handler with event', () => {
+        expect(handlers.onEvent(handler)(val)).toEqual(handler(val));
+      });
+    });
+  });
 });

@@ -43,6 +43,15 @@ export const onValue = (handler) => (e) => handler(e.target.value);
  * returns an event handler that calls the given method with the event target value
  * Intended for checkbox input types.
  * @param {func} handler - callback to receive the event value
- * @return - event handler that calls passed handler with event.target.value
+ * @return - event handler that calls passed handler with event.target.checked
  */
 export const onChecked = (handler) => (e) => handler(e.target.checked);
+
+/**
+ * onEvent(handler)
+ * returns an event handler that calls the given method with the event
+ * Intended for most basic input types.
+ * @param {func} handler - callback to receive the event value
+ * @return - event handler that calls passed handler with event
+ */
+export const onEvent = (handler) => (e) => handler(e);

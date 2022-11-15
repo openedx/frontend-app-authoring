@@ -19,8 +19,8 @@ const durationPairs = [
 const trickyDurations = [
   ['10:00', 600000],
   ['23', 23000],
-  ['100:100:100', 100 * (m + s + h)],
-  ['23:42:781', 23 * h + 42 * m + 781 * s],
+  ['99:99:99', 99 * (m + s + h)],
+  ['23:42:81', 23 * h + 42 * m + 81 * s],
 ];
 let spies = {};
 let props;
@@ -41,6 +41,57 @@ describe('Video Settings Modal duration hooks', () => {
     });
   });
 
+  describe('onDurationChange', () => {
+    beforeEach(() => {
+      props = {
+        duration: { startTime: '00:00:00' },
+        index: 'startTime',
+        val: 'vAl',
+      };
+      hook = duration.onDurationChange;
+    });
+    it('returns duration with no change if duration[index] does not match HH:MM:SS format', () => {
+      const badChecks = [
+        'ab:cd:ef', // non-digit characters
+        '12:34:567', // characters past max length
+      ];
+      badChecks.forEach(val => expect(hook(props.duration, props.index, val)).toEqual(props.duration));
+    });
+    it('returns duration with an added \':\' after 2 characters when caret is at end', () => {
+      props.duration = { startTime: '0' };
+      props.val = '00';
+      document.activeElement.selectionStart = props.duration[props.index].length + 1;
+      expect(hook(props.duration, props.index, props.val)).toEqual({ startTime: '00:' });
+    });
+    it('returns duration with an added \':\' after 5 characters when caret is at end', () => {
+      props.duration = { startTime: '00:0' };
+      props.val = '00:00';
+      document.activeElement.selectionStart = props.duration[props.index].length + 1;
+      expect(hook(props.duration, props.index, props.val)).toEqual({ startTime: '00:00:' });
+    });
+  });
+  describe('onDurationKeyDown', () => {
+    beforeEach(() => {
+      props = {
+        duration: { startTime: '00:00:00' },
+        index: 'startTime',
+        event: 'eVeNt',
+      };
+      hook = duration.onDurationKeyDown;
+    });
+    it('enter event: calls blur()', () => {
+      props.event = { key: 'Enter' };
+      const blurSpy = jest.spyOn(document.activeElement, 'blur');
+      hook(props.duration, props.index, props.event);
+      expect(blurSpy).toHaveBeenCalled();
+    });
+    it('backspace event: returns duration with deleted end character when that character is \':\' and caret is at end', () => {
+      props.duration = { startTime: '00:' };
+      props.event = { key: 'Backspace' };
+      document.activeElement.selectionStart = props.duration[props.index].length;
+      expect(hook(props.duration, props.index, props.event)).toEqual({ startTime: '00' });
+    });
+  });
   describe('durationFromValue', () => {
     beforeEach(() => {
       hook = duration.durationFromValue;
