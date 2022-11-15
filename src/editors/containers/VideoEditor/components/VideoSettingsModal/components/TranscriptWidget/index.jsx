@@ -1,9 +1,10 @@
 import React from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   FormattedMessage,
   injectIntl,
+  intlShape,
 } from '@edx/frontend-platform/i18n';
 import {
   Form,
@@ -14,20 +15,61 @@ import {
   Tooltip,
   Alert,
 } from '@edx/paragon';
-import { FileUpload, Info } from '@edx/paragon/icons';
+import { Add, Info } from '@edx/paragon/icons';
 
 import { actions, selectors } from '../../../../../../data/redux';
-import * as hooks from './hooks';
 import messages from './messages';
 
 import { RequestKeys } from '../../../../../../data/constants/requests';
+import { in8lTranscriptLanguages } from '../../../../../../data/constants/video';
 
-import FileInput from '../../../../../../sharedComponents/FileInput';
 import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 
-import TranscriptListItem from './TranscriptListItem';
+import Transcript from './Transcript';
 import { ErrorContext } from '../../../../hooks';
+import * as module from './index';
+
+export const hooks = {
+  updateErrors: ({ isUploadError, isDeleteError }) => {
+    const [error, setError] = React.useContext(ErrorContext).transcripts;
+    if (isUploadError) {
+      setError({ ...error, uploadError: messages.uploadTranscriptError.defaultMessage });
+    }
+    if (isDeleteError) {
+      setError({ ...error, deleteError: messages.deleteTranscriptError.defaultMessage });
+    }
+  },
+  transcriptLanguages: (transcripts, intl) => {
+    const languages = [];
+    if (transcripts && transcripts.length > 0) {
+      const fullTextTranslatedStrings = in8lTranscriptLanguages(intl);
+      transcripts.forEach(transcript => {
+        if (!(transcript === '')) {
+          languages.push(fullTextTranslatedStrings[transcript]);
+        }
+      });
+
+      return languages.join(', ');
+    }
+    return 'None';
+  },
+  hasTranscripts: (transcripts) => {
+    if (transcripts && transcripts.length > 0) {
+      return true;
+    }
+    return false;
+  },
+  onAddNewTranscript: ({ transcripts, updateField }) => {
+    // keep blank lang code for now, will be updated once lang is selected.
+    if (!transcripts) {
+      updateField({ transcripts: [''] });
+      return;
+    }
+    const newTranscripts = [...transcripts, ''];
+    updateField({ transcripts: newTranscripts });
+  },
+};
 
 /**
  * Collapsible Form widget controlling video transcripts
@@ -40,15 +82,16 @@ export const TranscriptWidget = ({
   updateField,
   isUploadError,
   isDeleteError,
+  // intl
+  intl,
 }) => {
   const [error] = React.useContext(ErrorContext).transcripts;
-  const languagesArr = hooks.transcriptLanguages(transcripts);
-  const fileInput = hooks.fileInput({ onAddFile: hooks.addFileCallback({ dispatch: useDispatch() }) });
-  const hasTranscripts = hooks.hasTranscripts(transcripts);
+  const fullTextLanguages = module.hooks.transcriptLanguages(transcripts, intl);
+  const hasTranscripts = module.hooks.hasTranscripts(transcripts);
   return (
     <CollapsibleFormWidget
       isError={Object.keys(error).length !== 0}
-      subtitle={languagesArr}
+      subtitle={fullTextLanguages}
       title="Transcript"
     >
       <ErrorAlert
@@ -67,10 +110,10 @@ export const TranscriptWidget = ({
         {hasTranscripts ? (
 
           <Form.Group className="mt-4.5">
-            { Object.entries(transcripts).map(([language, value]) => (
-              <TranscriptListItem
+            { transcripts.map((language, index) => (
+              <Transcript
                 language={language}
-                title={value.filename}
+                index={index}
               />
             ))}
             <div className="mb-1">
@@ -113,10 +156,16 @@ export const TranscriptWidget = ({
             <FormattedMessage {...messages.addFirstTranscript} />
           </>
         )}
-        <FileInput fileInput={fileInput} acceptedFiles=".srt" />
-        <Button iconBefore={FileUpload} onClick={fileInput.click} variant="link">
-          <FormattedMessage {...messages.uploadButtonLabel} />
-        </Button>
+
+        <Stack gap={3} className="border-primary-100 border-top">
+          <Button
+            iconBefore={Add}
+            variant="link"
+            onClick={() => module.hooks.onAddNewTranscript({ transcripts, updateField })}
+          >
+            <FormattedMessage {...messages.uploadButtonLabel} />
+          </Button>
+        </Stack>
       </Stack>
     </CollapsibleFormWidget>
   );
@@ -126,12 +175,13 @@ TranscriptWidget.defaultProps = {
 };
 TranscriptWidget.propTypes = {
   // redux
-  transcripts: PropTypes.shape({}).isRequired,
+  transcripts: PropTypes.arrayOf(PropTypes.string).isRequired,
   allowTranscriptDownloads: PropTypes.bool.isRequired,
   showTranscriptByDefault: PropTypes.bool.isRequired,
   updateField: PropTypes.func.isRequired,
   isUploadError: PropTypes.bool.isRequired,
   isDeleteError: PropTypes.bool.isRequired,
+  intl: PropTypes.shape(intlShape).isRequired,
 };
 export const mapStateToProps = (state) => ({
   transcripts: selectors.video.transcripts(state),

@@ -50,8 +50,8 @@ export const TitleHeader = ({
       </Truncate>
       <IconButton
         alt={intl.formatMessage(messages.editTitleLabel)}
-        className="mr-2"
         iconAs={Icon}
+        className="mr-2"
         onClick={startEditing}
         size="sm"
         src={Edit}

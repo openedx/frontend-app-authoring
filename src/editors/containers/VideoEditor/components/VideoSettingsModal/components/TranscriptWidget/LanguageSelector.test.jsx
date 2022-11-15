@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { LanguageSelect } from './LanguageSelect';
+import { LanguageSelector } from './LanguageSelector';
 import { formatMessage } from '../../../../../../../testUtils';
 
 const lang1 = 'kLinGon';
@@ -18,7 +18,7 @@ jest.mock('../../../../../../data/constants/video', () => ({
   },
 }));
 
-describe('LanguageSelect', () => {
+describe('LanguageSelector', () => {
   const props = {
     intl: { formatMessage },
     onSelect: jest.fn().mockName('props.OnSelect'),
@@ -30,14 +30,14 @@ describe('LanguageSelect', () => {
   describe('snapshot', () => {
     test('transcript option', () => {
       expect(
-        shallow(<LanguageSelect {...props} />),
+        shallow(<LanguageSelector {...props} />),
       ).toMatchSnapshot();
     });
   });
   describe('snapshots -- no', () => {
     test('transcripts no Open Languages, all should be disabled', () => {
       expect(
-        shallow(<LanguageSelect {...props} openLanguages={[]} />),
+        shallow(<LanguageSelector {...props} openLanguages={[]} />),
       ).toMatchSnapshot();
     });
   });

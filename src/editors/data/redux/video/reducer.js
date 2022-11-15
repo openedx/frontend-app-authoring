@@ -12,7 +12,7 @@ const initialState = {
   ],
   allowVideoDownloads: false,
   thumbnail: null,
-  transcripts: {},
+  transcripts: [],
   allowTranscriptDownloads: false,
   duration: {
     startTime: '00:00:00',

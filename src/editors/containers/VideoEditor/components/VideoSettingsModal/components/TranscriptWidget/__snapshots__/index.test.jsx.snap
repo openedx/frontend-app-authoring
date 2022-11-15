@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`TranscriptWidget snapshots snapshot: renders ErrorAlert with delete error message 1`] = `
-<injectIntl(ShimmedIntlComponent)
+exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with delete error message 1`] = `
+<CollapsibleFormWidget
   isError={true}
   subtitle="English"
   title="Transcript"
@@ -34,7 +34,8 @@ exports[`TranscriptWidget snapshots snapshot: renders ErrorAlert with delete err
     <Form.Group
       className="mt-4.5"
     >
-      <injectIntl(ShimmedIntlComponent)
+      <Transcript
+        index={0}
         language="en"
       />
       <div
@@ -87,36 +88,29 @@ exports[`TranscriptWidget snapshots snapshot: renders ErrorAlert with delete err
         </Form.Label>
       </Form.Checkbox>
     </Form.Group>
-    <FileInput
-      acceptedFiles=".srt"
-      fileInput={
-        Object {
-          "addFile": [Function],
-          "click": [Function],
-          "ref": Object {
-            "current": undefined,
-          },
-        }
-      }
-    />
-    <Button
-      onClick={[Function]}
-      variant="link"
+    <Stack
+      className="border-primary-100 border-top"
+      gap={3}
     >
-      <FormattedMessage
-        defaultMessage="Upload Transcript"
-        description="Label for upload button"
-        id="authoring.videoeditor.transcripts.upload.label"
-      />
-    </Button>
+      <Button
+        onClick={[Function]}
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </Stack>
   </Stack>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
 
-exports[`TranscriptWidget snapshots snapshot: renders ErrorAlert with upload error message 1`] = `
-<injectIntl(ShimmedIntlComponent)
+exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with upload error message 1`] = `
+<CollapsibleFormWidget
   isError={true}
-  subtitle="English"
+  subtitle="English, French"
   title="Transcript"
 >
   <ErrorAlert
@@ -147,8 +141,13 @@ exports[`TranscriptWidget snapshots snapshot: renders ErrorAlert with upload err
     <Form.Group
       className="mt-4.5"
     >
-      <injectIntl(ShimmedIntlComponent)
+      <Transcript
+        index={0}
         language="en"
+      />
+      <Transcript
+        index={1}
+        language="fr"
       />
       <div
         className="mb-1"
@@ -200,34 +199,27 @@ exports[`TranscriptWidget snapshots snapshot: renders ErrorAlert with upload err
         </Form.Label>
       </Form.Checkbox>
     </Form.Group>
-    <FileInput
-      acceptedFiles=".srt"
-      fileInput={
-        Object {
-          "addFile": [Function],
-          "click": [Function],
-          "ref": Object {
-            "current": undefined,
-          },
-        }
-      }
-    />
-    <Button
-      onClick={[Function]}
-      variant="link"
+    <Stack
+      className="border-primary-100 border-top"
+      gap={3}
     >
-      <FormattedMessage
-        defaultMessage="Upload Transcript"
-        description="Label for upload button"
-        id="authoring.videoeditor.transcripts.upload.label"
-      />
-    </Button>
+      <Button
+        onClick={[Function]}
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </Stack>
   </Stack>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
 
-exports[`TranscriptWidget snapshots snapshots: renders as expected with allowTranscriptDownloads true 1`] = `
-<injectIntl(ShimmedIntlComponent)
+exports[`TranscriptWidget component snapshots snapshots: renders as expected with allowTranscriptDownloads true 1`] = `
+<CollapsibleFormWidget
   isError={true}
   subtitle="English"
   title="Transcript"
@@ -260,7 +252,8 @@ exports[`TranscriptWidget snapshots snapshots: renders as expected with allowTra
     <Form.Group
       className="mt-4.5"
     >
-      <injectIntl(ShimmedIntlComponent)
+      <Transcript
+        index={0}
         language="en"
       />
       <div
@@ -313,34 +306,27 @@ exports[`TranscriptWidget snapshots snapshots: renders as expected with allowTra
         </Form.Label>
       </Form.Checkbox>
     </Form.Group>
-    <FileInput
-      acceptedFiles=".srt"
-      fileInput={
-        Object {
-          "addFile": [Function],
-          "click": [Function],
-          "ref": Object {
-            "current": undefined,
-          },
-        }
-      }
-    />
-    <Button
-      onClick={[Function]}
-      variant="link"
+    <Stack
+      className="border-primary-100 border-top"
+      gap={3}
     >
-      <FormattedMessage
-        defaultMessage="Upload Transcript"
-        description="Label for upload button"
-        id="authoring.videoeditor.transcripts.upload.label"
-      />
-    </Button>
+      <Button
+        onClick={[Function]}
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </Stack>
   </Stack>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
 
-exports[`TranscriptWidget snapshots snapshots: renders as expected with default props 1`] = `
-<injectIntl(ShimmedIntlComponent)
+exports[`TranscriptWidget component snapshots snapshots: renders as expected with default props 1`] = `
+<CollapsibleFormWidget
   isError={true}
   subtitle="None"
   title="Transcript"
@@ -384,34 +370,27 @@ exports[`TranscriptWidget snapshots snapshots: renders as expected with default 
       description="Message for adding first transcript"
       id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
     />
-    <FileInput
-      acceptedFiles=".srt"
-      fileInput={
-        Object {
-          "addFile": [Function],
-          "click": [Function],
-          "ref": Object {
-            "current": undefined,
-          },
-        }
-      }
-    />
-    <Button
-      onClick={[Function]}
-      variant="link"
+    <Stack
+      className="border-primary-100 border-top"
+      gap={3}
     >
-      <FormattedMessage
-        defaultMessage="Upload Transcript"
-        description="Label for upload button"
-        id="authoring.videoeditor.transcripts.upload.label"
-      />
-    </Button>
+      <Button
+        onClick={[Function]}
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </Stack>
   </Stack>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
 
-exports[`TranscriptWidget snapshots snapshots: renders as expected with showTranscriptByDefault true 1`] = `
-<injectIntl(ShimmedIntlComponent)
+exports[`TranscriptWidget component snapshots snapshots: renders as expected with showTranscriptByDefault true 1`] = `
+<CollapsibleFormWidget
   isError={true}
   subtitle="English"
   title="Transcript"
@@ -444,7 +423,8 @@ exports[`TranscriptWidget snapshots snapshots: renders as expected with showTran
     <Form.Group
       className="mt-4.5"
     >
-      <injectIntl(ShimmedIntlComponent)
+      <Transcript
+        index={0}
         language="en"
       />
       <div
@@ -497,34 +477,27 @@ exports[`TranscriptWidget snapshots snapshots: renders as expected with showTran
         </Form.Label>
       </Form.Checkbox>
     </Form.Group>
-    <FileInput
-      acceptedFiles=".srt"
-      fileInput={
-        Object {
-          "addFile": [Function],
-          "click": [Function],
-          "ref": Object {
-            "current": undefined,
-          },
-        }
-      }
-    />
-    <Button
-      onClick={[Function]}
-      variant="link"
+    <Stack
+      className="border-primary-100 border-top"
+      gap={3}
     >
-      <FormattedMessage
-        defaultMessage="Upload Transcript"
-        description="Label for upload button"
-        id="authoring.videoeditor.transcripts.upload.label"
-      />
-    </Button>
+      <Button
+        onClick={[Function]}
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </Stack>
   </Stack>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;
 
-exports[`TranscriptWidget snapshots snapshots: renders as expected with transcripts 1`] = `
-<injectIntl(ShimmedIntlComponent)
+exports[`TranscriptWidget component snapshots snapshots: renders as expected with transcripts 1`] = `
+<CollapsibleFormWidget
   isError={true}
   subtitle="English"
   title="Transcript"
@@ -557,7 +530,8 @@ exports[`TranscriptWidget snapshots snapshots: renders as expected with transcri
     <Form.Group
       className="mt-4.5"
     >
-      <injectIntl(ShimmedIntlComponent)
+      <Transcript
+        index={0}
         language="en"
       />
       <div
@@ -610,28 +584,21 @@ exports[`TranscriptWidget snapshots snapshots: renders as expected with transcri
         </Form.Label>
       </Form.Checkbox>
     </Form.Group>
-    <FileInput
-      acceptedFiles=".srt"
-      fileInput={
-        Object {
-          "addFile": [Function],
-          "click": [Function],
-          "ref": Object {
-            "current": undefined,
-          },
-        }
-      }
-    />
-    <Button
-      onClick={[Function]}
-      variant="link"
+    <Stack
+      className="border-primary-100 border-top"
+      gap={3}
     >
-      <FormattedMessage
-        defaultMessage="Upload Transcript"
-        description="Label for upload button"
-        id="authoring.videoeditor.transcripts.upload.label"
-      />
-    </Button>
+      <Button
+        onClick={[Function]}
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </Stack>
   </Stack>
-</injectIntl(ShimmedIntlComponent)>
+</CollapsibleFormWidget>
 `;

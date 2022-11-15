@@ -33,6 +33,7 @@ jest.mock('../../services/cms/api', () => ({
   uploadThumbnail: jest.fn(),
   uploadTranscript: jest.fn(),
   deleteTranscript: jest.fn(),
+  getTranscript: jest.fn(),
 }));
 
 const apiKeys = keyStore(api);
@@ -351,6 +352,52 @@ describe('requests thunkActions module', () => {
         },
       });
     });
+    describe('getTranscriptFile', () => {
+      const language = 'SoME laNGUage CoNtent As String';
+      const videoId = 'SoME VidEOid CoNtent As String';
+      testNetworkRequestAction({
+        action: requests.getTranscriptFile,
+        args: { language, videoId, ...fetchParams },
+        expectedString: 'with getTranscriptFile promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.getTranscriptFile,
+          promise: api.getTranscript({
+            blockId: selectors.app.blockId(testState),
+            language,
+            videoId,
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          }),
+        },
+      });
+    });
+    describe('updateTranscriptLanguage', () => {
+      const languageBeforeChange = 'SoME laNGUage CoNtent As String';
+      const newLanguageCode = 'SoME NEW laNGUage CoNtent As String';
+      const videoId = 'SoME VidEOid CoNtent As String';
+      testNetworkRequestAction({
+        action: requests.updateTranscriptLanguage,
+        args: {
+          languageBeforeChange,
+          newLanguageCode,
+          videoId,
+          ...fetchParams,
+        },
+        expectedString: 'with uploadTranscript promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.updateTranscriptLanguage,
+          promise: api.uploadTranscript({
+            blockId: selectors.app.blockId(testState),
+            videoId,
+            language: languageBeforeChange,
+            newLanguage: newLanguageCode,
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          }),
+        },
+      });
+    });
+
     describe('uploadTranscript', () => {
       const language = 'SoME laNGUage CoNtent As String';
       const videoId = 'SoME VidEOid CoNtent As String';

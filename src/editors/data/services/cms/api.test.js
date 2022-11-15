@@ -287,6 +287,21 @@ describe('cms api', () => {
         );
       });
     });
+    describe('transcript get', () => {
+      it('should call get with urls.videoTranscripts and transcript data', () => {
+        const mockJSON = { data: { lang: language, edx_video_id: videoId } };
+        apiMethods.getTranscript({
+          blockId,
+          studioEndpointUrl,
+          videoId,
+          language,
+        });
+        expect(get).toHaveBeenCalledWith(
+          `${urls.videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`,
+          mockJSON,
+        );
+      });
+    });
   });
   describe('processVideoIds', () => {
     const edxVideoId = 'eDXviDEoid';
@@ -305,6 +320,7 @@ describe('cms api', () => {
       });
       it('returns edxVideoId when there are no fallbackVideos', () => {
         expect(api.processVideoIds({
+          edxVideoId,
           videoSource: edxVideoId,
           fallbackVideos: [],
         })).toEqual({
@@ -315,6 +331,7 @@ describe('cms api', () => {
       });
       it('returns edxVideoId and html5Sources when there are fallbackVideos', () => {
         expect(api.processVideoIds({
+          edxVideoId,
           videoSource: edxVideoId,
           fallbackVideos: html5Sources,
         })).toEqual({
@@ -331,20 +348,22 @@ describe('cms api', () => {
       });
       it('returns youtubeId when there are no fallbackVideos', () => {
         expect(api.processVideoIds({
+          edxVideoId,
           videoSource: edxVideoId,
           fallbackVideos: [],
         })).toEqual({
-          edxVideoId: '',
+          edxVideoId,
           html5Sources: [],
           youtubeId,
         });
       });
       it('returns youtubeId and html5Sources when there are fallbackVideos', () => {
         expect(api.processVideoIds({
+          edxVideoId,
           videoSource: edxVideoId,
           fallbackVideos: html5Sources,
         })).toEqual({
-          edxVideoId: '',
+          edxVideoId,
           html5Sources,
           youtubeId,
         });
@@ -357,20 +376,22 @@ describe('cms api', () => {
       });
       it('returns html5Sources when there are no fallbackVideos', () => {
         expect(api.processVideoIds({
+          edxVideoId,
           videoSource: html5Sources[0],
           fallbackVideos: [],
         })).toEqual({
-          edxVideoId: '',
+          edxVideoId,
           html5Sources: [html5Sources[0]],
           youtubeId: '',
         });
       });
       it('returns html5Sources when there are fallbackVideos', () => {
         expect(api.processVideoIds({
+          edxVideoId,
           videoSource: html5Sources[0],
           fallbackVideos: [html5Sources[1]],
         })).toEqual({
-          edxVideoId: '',
+          edxVideoId,
           html5Sources,
           youtubeId: '',
         });

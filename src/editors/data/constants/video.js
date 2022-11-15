@@ -189,6 +189,22 @@ export const videoTranscriptLanguages = StrictDict({
   zu: 'Zulu',
 });
 
+export const in8lTranscriptLanguages = (intl) => {
+  const messageLookup = {};
+  // for tests and non-internationlized setups, return en
+  if (!intl?.formatMessage) {
+    return videoTranscriptLanguages;
+  }
+  Object.keys(videoTranscriptLanguages).forEach((code) => {
+    messageLookup[code] = intl.formatMessage({
+      id: `authoring.videoeditor.transcripts.language.${code}`,
+      defaultMessage: videoTranscriptLanguages[code],
+      description: `Name of Language called in English ${videoTranscriptLanguages[code]}`,
+    });
+  });
+  return messageLookup;
+};
+
 export const timeKeys = StrictDict({
   startTime: 'startTime',
   stopTime: 'stopTime',

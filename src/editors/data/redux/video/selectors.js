@@ -37,8 +37,8 @@ export const openLanguages = createSelector(
     if (!transcripts) {
       return videoTranscriptLanguages;
     }
-    const open = Object.entries(videoTranscriptLanguages).filter(
-      ([lang]) => !Object.keys(transcripts).includes(lang),
+    const open = Object.keys(videoTranscriptLanguages).filter(
+      (lang) => !transcripts.includes(lang),
     );
     return open;
   },

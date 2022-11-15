@@ -1,12 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export const FileInput = ({ fileInput, acceptedFiles }) => (
+export const fileInput = ({ onAddFile }) => {
+  const ref = React.useRef();
+  const click = () => ref.current.click();
+  const addFile = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      onAddFile(file);
+    }
+  };
+  return {
+    click,
+    addFile,
+    ref,
+  };
+};
+
+export const FileInput = ({ fileInput: hook, acceptedFiles }) => (
   <input
     accept={acceptedFiles}
     className="upload d-none"
-    onChange={fileInput.addFile}
-    ref={fileInput.ref}
+    onChange={hook.addFile}
+    ref={hook.ref}
     type="file"
   />
 );

@@ -20,4 +20,6 @@ export const RequestKeys = StrictDict({
   uploadTranscript: 'uploadTranscript',
   deleteTranscript: 'deleteTranscript',
   fetchCourseDetails: 'fetchCourseDetails',
+  updateTranscriptLanguage: 'updateTranscriptLanguage',
+  getTranscriptFile: 'getTranscriptFile',
 });

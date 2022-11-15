@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LanguageSelector snapshot transcript option 1`] = `
+<div
+  className="col col-11"
+>
+  <Form.Group
+    className="mw-100"
+    controlId="selectLanguage-form-undefined"
+  >
+    <Form.Control
+      as="select"
+      defaultValue="kl"
+      floatingLabel="Languages"
+      onChange={[Function]}
+    >
+      <option
+        selected={true}
+        value="kl"
+      >
+        kLinGon
+      </option>
+      <option
+        value="el"
+      >
+        eLvIsh
+      </option>
+      <option
+        value="sl"
+      >
+        sImLisH
+      </option>
+    </Form.Control>
+  </Form.Group>
+  <FileInput
+    acceptedFiles=".srt"
+    fileInput={
+      Object {
+        "addFile": [Function],
+        "click": [Function],
+        "ref": Object {
+          "current": undefined,
+        },
+      }
+    }
+  />
+</div>
+`;
+
+exports[`LanguageSelector snapshots -- no transcripts no Open Languages, all should be disabled 1`] = `
+<div
+  className="col col-11"
+>
+  <Form.Group
+    className="mw-100"
+    controlId="selectLanguage-form-undefined"
+  >
+    <Form.Control
+      as="select"
+      defaultValue="kl"
+      floatingLabel="Languages"
+      onChange={[Function]}
+    >
+      <option
+        selected={true}
+        value="kl"
+      >
+        kLinGon
+      </option>
+      <option
+        disabled={true}
+        value="el"
+      >
+        eLvIsh
+      </option>
+      <option
+        disabled={true}
+        value="sl"
+      >
+        sImLisH
+      </option>
+    </Form.Control>
+  </Form.Group>
+  <FileInput
+    acceptedFiles=".srt"
+    fileInput={
+      Object {
+        "addFile": [Function],
+        "click": [Function],
+        "ref": Object {
+          "current": undefined,
+        },
+      }
+    }
+  />
+</div>
+`;

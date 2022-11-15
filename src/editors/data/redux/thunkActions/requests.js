@@ -190,14 +190,47 @@ export const uploadTranscript = ({
   }));
 };
 
+export const updateTranscriptLanguage = ({
+  file,
+  languageBeforeChange,
+  newLanguageCode,
+  videoId,
+  ...rest
+}) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.updateTranscriptLanguage,
+    promise: api.uploadTranscript({
+      blockId: selectors.app.blockId(getState()),
+      transcript: file,
+      videoId,
+      language: languageBeforeChange,
+      newLanguage: newLanguageCode,
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+    }),
+    ...rest,
+  }));
+};
+
+export const getTranscriptFile = ({ language, videoId, ...rest }) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.getTranscriptFile,
+    promise: api.getTranscript({
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      blockId: selectors.app.blockId(getState()),
+      videoId,
+      language,
+    }),
+    ...rest,
+  }));
+};
+
 export const fetchCourseDetails = ({ ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
     requestKey: RequestKeys.fetchCourseDetails,
-    promise: api
-      .fetchCourseDetails({
-        studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
-        learningContextId: selectors.app.learningContextId(getState()),
-      }),
+    promise: api.fetchCourseDetails({
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      learningContextId: selectors.app.learningContextId(getState()),
+    }),
     ...rest,
   }));
 };
@@ -213,5 +246,7 @@ export default StrictDict({
   uploadThumbnail,
   deleteTranscript,
   uploadTranscript,
+  updateTranscriptLanguage,
   fetchCourseDetails,
+  getTranscriptFile,
 });

@@ -1,7 +1,7 @@
 export const messages = {
   uploadButtonLabel: {
     id: 'authoring.videoeditor.transcripts.upload.label',
-    defaultMessage: 'Upload Transcript',
+    defaultMessage: 'Add a transcript',
     description: 'Label for upload button',
   },
   addFirstTranscript: {

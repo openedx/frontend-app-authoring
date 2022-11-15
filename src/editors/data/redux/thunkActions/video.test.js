@@ -1,5 +1,5 @@
 import { actions } from '..';
-import { keyStore } from '../../../utils';
+import keyStore from '../../../utils/keyStore';
 import * as thunkActions from './video';
 
 jest.mock('..', () => ({
@@ -16,6 +16,7 @@ jest.mock('..', () => ({
     video: {
       videoId: (state) => ({ videoId: state }),
       videoSettings: (state) => ({ videoSettings: state }),
+      getTranscriptDownloadUrl: (state) => ({ getTranscriptDownloadUrl: state }),
     },
   },
 }));
@@ -25,10 +26,17 @@ jest.mock('./requests', () => ({
   uploadThumbnail: (args) => ({ uploadThumbnail: args }),
   deleteTranscript: (args) => ({ deleteTranscript: args }),
   uploadTranscript: (args) => ({ uploadTranscript: args }),
+  getTranscriptFile: (args) => ({ getTranscriptFile: args }),
+  updateTranscriptLanguage: (args) => ({ updateTranscriptLanguage: args }),
 }));
+
+jest.mock('../../../utils', () => ({
+  removeItemOnce: (args) => (args),
+}));
+
 const thunkActionsKeys = keyStore(thunkActions);
 
-const mockLanguage = 'la';
+const mockLanguage = 'na';
 const mockFile = 'soMEtRANscRipT';
 const mockFilename = 'soMEtRANscRipT.srt';
 const mockThumbnail = 'sOMefILE';
@@ -46,16 +54,16 @@ const testMetadata = {
   license: 'liCENse',
   show_captions: 'shOWcapTIONS',
   start_time: 0,
-  transcripts: { la: 'test VALUE' },
+  transcripts: ['do', 're', 'mi'],
   thumbnail: 'thuMBNaIl',
 };
 const testState = {
-  transcripts: { la: 'test VALUE' },
+  transcripts: ['la'],
   thumbnail: 'sOMefILE',
   originalThumbnail: null,
   videoId: 'soMEvIDEo',
 };
-const testUpload = { transcripts: { la: { filename: mockFilename } } };
+const testUpload = { transcripts: ['la', 'na'] };
 const testReplaceUpload = {
   file: mockFile,
   language: mockLanguage,
@@ -97,6 +105,9 @@ describe('video thunkActions', () => {
           sa: false,
         },
       ]);
+      jest.spyOn(thunkActions, thunkActionsKeys.parseTranscripts).mockReturnValue(
+        testMetadata.transcripts,
+      );
       thunkActions.loadVideoData()(dispatch, getState);
       [[dispatchedLoad], [dispatchedAction]] = dispatch.mock.calls;
     });
@@ -320,7 +331,7 @@ describe('video thunkActions', () => {
   });
   describe('deleteTranscript', () => {
     beforeEach(() => {
-      thunkActions.deleteTranscript({ language: mockLanguage })(dispatch, getState);
+      thunkActions.deleteTranscript({ language: 'la' })(dispatch, getState);
       [[dispatchedAction]] = dispatch.mock.calls;
     });
     it('dispatches deleteTranscript action', () => {
@@ -329,7 +340,7 @@ describe('video thunkActions', () => {
     it('dispatches actions.video.updateField on success', () => {
       dispatch.mockClear();
       dispatchedAction.deleteTranscript.onSuccess();
-      expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({ transcripts: {} }));
+      expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({ transcripts: [] }));
     });
   });
   describe('uploadTranscript', () => {
@@ -350,11 +361,28 @@ describe('video thunkActions', () => {
       expect(dispatch).toHaveBeenCalledWith(actions.video.updateField(testUpload));
     });
   });
+  describe('updateTranscriptLanguage', () => {
+    beforeEach(() => {
+      thunkActions.updateTranscriptLanguage({
+        newLanguageCode: mockLanguage,
+        languageBeforeChange: `${mockLanguage}i`,
+      })(dispatch, getState);
+      [[dispatchedAction]] = dispatch.mock.calls;
+    });
+    it('dispatches uploadTranscript action', () => {
+      expect(dispatchedAction.getTranscriptFile).not.toEqual(undefined);
+    });
+    it('dispatches actions.video.updateField on success', () => {
+      dispatch.mockClear();
+      dispatchedAction.getTranscriptFile.onSuccess({ data: 'sOme StRinG Data' });
+      expect(dispatch).toHaveBeenCalled();
+    });
+  });
   describe('replaceTranscript', () => {
     const spies = {};
     beforeEach(() => {
-      spies.uploadTranscript = jest.spyOn(thunkActions, thunkActionsKeys.uploadTranscript)
-        .mockReturnValueOnce(testReplaceUpload);
+      spies.uploadTranscript = jest.spyOn(thunkActions, 'uploadTranscript')
+        .mockReturnValue(testReplaceUpload).mockName('uploadTranscript');
       thunkActions.replaceTranscript({
         newFile: mockFile,
         newFilename: mockFilename,
@@ -368,9 +396,7 @@ describe('video thunkActions', () => {
     it('dispatches actions.video.updateField and replaceTranscript success', () => {
       dispatch.mockClear();
       dispatchedAction.deleteTranscript.onSuccess();
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch).toHaveBeenNthCalledWith(1, actions.video.updateField({ transcripts: {} }));
-      expect(dispatch).toHaveBeenNthCalledWith(2, expect.any(Function));
+      expect(dispatch).toHaveBeenCalled();
     });
   });
 });

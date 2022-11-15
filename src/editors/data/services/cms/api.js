@@ -51,6 +51,19 @@ export const apiMethods = {
       data,
     );
   },
+  getTranscript: ({
+    studioEndpointUrl,
+    language,
+    blockId,
+    videoId,
+  }) => {
+    const getJSON = { data: { lang: language, edx_video_id: videoId } };
+    return get(
+      `${urls.videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`,
+      getJSON,
+    );
+  },
+
   deleteTranscript: ({
     studioEndpointUrl,
     language,
@@ -69,12 +82,13 @@ export const apiMethods = {
     transcript,
     videoId,
     language,
+    newLanguage = null,
   }) => {
     const data = new FormData();
     data.append('file', transcript);
     data.append('edx_video_id', videoId);
     data.append('language_code', language);
-    data.append('new_language_code', language);
+    data.append('new_language_code', newLanguage || language);
     return post(
       urls.videoTranscripts({ studioEndpointUrl, blockId }),
       data,
@@ -159,13 +173,14 @@ export const loadImages = (rawImages) => camelizeKeys(rawImages).reduce(
   {},
 );
 
-export const processVideoIds = ({ videoSource, fallbackVideos }) => {
-  let edxVideoId = '';
+export const processVideoIds = ({ videoSource, fallbackVideos, edxVideoId }) => {
+  let newEdxVideoId = edxVideoId;
   let youtubeId = '';
   const html5Sources = [];
 
+  // overwrite videoId if source is changed.
   if (module.isEdxVideo(videoSource)) {
-    edxVideoId = videoSource;
+    newEdxVideoId = videoSource;
   } else if (module.parseYoutubeId(videoSource)) {
     youtubeId = module.parseYoutubeId(videoSource);
   } else if (videoSource) {
@@ -177,7 +192,7 @@ export const processVideoIds = ({ videoSource, fallbackVideos }) => {
   }
 
   return {
-    edxVideoId,
+    edxVideoId: newEdxVideoId,
     html5Sources,
     youtubeId,
   };
