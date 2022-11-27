@@ -61,6 +61,8 @@
   "authoring.discussions.builtIn.divideCourseTopicsByCohorts.help": "اختر من بين مواضيع المناقشة العامة على مستوى مساقك، أي المواضيع تريد أن تقسّم.",
   "authoring.discussions.builtIn.divideGeneralTopic.label": "عام",
   "authoring.discussions.builtIn.divideQuestionsForTAsTopic.label": "أسئلة للأساتذة المساعدين",
+  "authoring.discussions.builtIn.cohortsEnabled.label": "To adjust these settings, enable cohorts on the ",
+  "authoring.discussions.builtIn.instructorDashboard.label": "instructor dashboard",
   "authoring.discussions.builtIn.visibilityInContext": "رؤية المناقشات ذات السياق.",
   "authoring.discussions.builtIn.gradedUnitPages.label": "تفعيل المناقشات على الوحدات المتواجدة في أقسام فرعية منقّطة",
   "authoring.discussions.builtIn.gradedUnitPages.help": "السماح للطلاب بالتفاعل مع المناقشات على جميع صفحات الوحدات باستثناء الامتحانات الموقوتة.",

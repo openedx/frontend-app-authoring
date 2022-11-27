@@ -61,6 +61,8 @@
   "authoring.discussions.builtIn.divideCourseTopicsByCohorts.help": "Escoge cuales de los temas de tus discusiones de todo el cursos te gustaría dividir.",
   "authoring.discussions.builtIn.divideGeneralTopic.label": "General",
   "authoring.discussions.builtIn.divideQuestionsForTAsTopic.label": "Preguntas para las herramientas asistidas",
+  "authoring.discussions.builtIn.cohortsEnabled.label": "To adjust these settings, enable cohorts on the ",
+  "authoring.discussions.builtIn.instructorDashboard.label": "instructor dashboard",
   "authoring.discussions.builtIn.visibilityInContext": "visualización de las discusioness en contexto",
   "authoring.discussions.builtIn.gradedUnitPages.label": "Habilitar discusiones en unidades de subsecciones calificables",
   "authoring.discussions.builtIn.gradedUnitPages.help": "Permítele a los estudiantes participar con discusiones en todas las unidades de página calificables con excepción de los exámenes cronometrados.",
