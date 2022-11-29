@@ -61,6 +61,8 @@
   "authoring.discussions.builtIn.divideCourseTopicsByCohorts.help": "Choisissez lequel des sujets de discussion à l'échelle du cours vous souhaitez diviser.",
   "authoring.discussions.builtIn.divideGeneralTopic.label": "Général",
   "authoring.discussions.builtIn.divideQuestionsForTAsTopic.label": "Questions pour les assistants d'enseignement",
+  "authoring.discussions.builtIn.cohortsEnabled.label": "To adjust these settings, enable cohorts on the ",
+  "authoring.discussions.builtIn.instructorDashboard.label": "instructor dashboard",
   "authoring.discussions.builtIn.visibilityInContext": "Visibilité des discussions en contexte",
   "authoring.discussions.builtIn.gradedUnitPages.label": "Enable discussions on units in graded subsections",
   "authoring.discussions.builtIn.gradedUnitPages.help": "Permettez aux apprenants de participer à la discussion sur toutes les pages d'unités notées, à l'exception des examens chronométrés.",

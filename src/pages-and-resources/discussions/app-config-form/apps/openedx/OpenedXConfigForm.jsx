@@ -37,7 +37,7 @@ function OpenedXConfigForm({
     unitLevelVisibility: true,
     allowAnonymousPostsPeers: appConfigObj?.allowAnonymousPostsPeers || false,
     reportedContentEmailNotifications: appConfigObj?.reportedContentEmailNotifications || false,
-    enableReportedContentEmailNotifications: appConfigObj?.enableReportedContentEmailNotifications || false,
+    enableReportedContentEmailNotifications: Boolean(appConfigObj?.enableReportedContentEmailNotifications) || false,
     blackoutDates: appConfigObj?.blackoutDates || [],
     discussionTopics: discussionTopicsModel || [],
     divideByCohorts: appConfigObj?.divideByCohorts || false,

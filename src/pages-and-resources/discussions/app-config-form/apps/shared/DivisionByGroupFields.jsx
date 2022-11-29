@@ -1,8 +1,12 @@
 import React, { useEffect, useContext } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Form, TransitionReplace } from '@edx/paragon';
+import {
+ Form, TransitionReplace, Hyperlink, Alert,
+} from '@edx/paragon';
+import { AppContext } from '@edx/frontend-platform/react';
 import { FieldArray, useFormikContext } from 'formik';
 import _ from 'lodash';
+import { useParams } from 'react-router-dom';
 import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from '../../messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
@@ -21,7 +25,12 @@ const DivisionByGroupFields = ({ intl }) => {
     discussionTopics,
     divideByCohorts,
     divideCourseTopicsByCohorts,
+    cohortsEnabled,
   } = appConfig;
+
+  const { courseId } = useParams();
+  const { config } = useContext(AppContext);
+  const learningCourseURL = `${config.LMS_BASE_URL}/courses/${courseId}/instructor`;
 
   useEffect(() => {
     if (divideByCohorts) {
@@ -56,20 +65,30 @@ const DivisionByGroupFields = ({ intl }) => {
 
   return (
     <>
-      <h5 className="text-gray-500 mb-2 mt-4">
+      <h5 className="text-gray-500 mb-4 mt-4">
         {intl.formatMessage(messages.divisionByGroup)}
       </h5>
+      {!cohortsEnabled
+      && (
+      <Alert className="bg-light-200 font-weight-normal h5" id="alert">
+        {intl.formatMessage(messages.cohortsEnabled)}
+        <Hyperlink destination={learningCourseURL} target="_blank">
+          {intl.formatMessage(messages.instructorDashboard)}
+        </Hyperlink>
+      </Alert>
+      )}
       <FormSwitchGroup
         onChange={handleChange}
         className="mt-2"
         onBlur={handleBlur}
         id="divideByCohorts"
-        checked={divideByCohorts}
+        checked={cohortsEnabled === false ? cohortsEnabled : divideByCohorts}
         label={intl.formatMessage(messages.divideByCohortsLabel)}
         helpText={intl.formatMessage(messages.divideByCohortsHelp)}
+        disabled={!cohortsEnabled}
       />
       <TransitionReplace>
-        {divideByCohorts ? (
+        {(divideByCohorts && cohortsEnabled) ? (
           <React.Fragment key="open">
             <AppConfigFormDivider />
             <FormSwitchGroup
