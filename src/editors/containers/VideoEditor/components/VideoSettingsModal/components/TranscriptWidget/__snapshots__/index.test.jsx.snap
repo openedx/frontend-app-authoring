@@ -38,12 +38,12 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
         index={0}
         language="en"
       />
-      <div
-        className="mb-1"
+      <ActionRow
+        className="mt-4 mb-1"
       >
         <Form.Checkbox
           checked={false}
-          className="mt-4.5 decorative-control-label"
+          className="decorative-control-label"
           onChange={[Function]}
         >
           <Form.Label>
@@ -54,24 +54,15 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
             />
           </Form.Label>
         </Form.Checkbox>
-        <OverLayTrigger
-          key="right"
-          overlay={
-            <ToolTip>
-              <FormattedMessage
-                defaultMessage="Learners will see a link to download the transcript below the video."
-                description="Message for show by default checkbox"
-                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
-              />
-            </ToolTip>
-          }
-          placement="right"
-        >
-          <Icon
-            className="d-inline-block mx-3"
-          />
-        </OverLayTrigger>
-      </div>
+        <IconButtonWithTooltip
+          alt="Learners will see a link to download the transcript below the video."
+          iconAs="Icon"
+          key="top"
+          tooltipContent="Learners will see a link to download the transcript below the video."
+          tooltipPlacement="top"
+        />
+        <ActionRow.Spacer />
+      </ActionRow>
       <Form.Checkbox
         checked={false}
         className="mt-4.5 decorative-control-label"
@@ -149,12 +140,12 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
         index={1}
         language="fr"
       />
-      <div
-        className="mb-1"
+      <ActionRow
+        className="mt-4 mb-1"
       >
         <Form.Checkbox
           checked={false}
-          className="mt-4.5 decorative-control-label"
+          className="decorative-control-label"
           onChange={[Function]}
         >
           <Form.Label>
@@ -165,24 +156,15 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
             />
           </Form.Label>
         </Form.Checkbox>
-        <OverLayTrigger
-          key="right"
-          overlay={
-            <ToolTip>
-              <FormattedMessage
-                defaultMessage="Learners will see a link to download the transcript below the video."
-                description="Message for show by default checkbox"
-                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
-              />
-            </ToolTip>
-          }
-          placement="right"
-        >
-          <Icon
-            className="d-inline-block mx-3"
-          />
-        </OverLayTrigger>
-      </div>
+        <IconButtonWithTooltip
+          alt="Learners will see a link to download the transcript below the video."
+          iconAs="Icon"
+          key="top"
+          tooltipContent="Learners will see a link to download the transcript below the video."
+          tooltipPlacement="top"
+        />
+        <ActionRow.Spacer />
+      </ActionRow>
       <Form.Checkbox
         checked={false}
         className="mt-4.5 decorative-control-label"
@@ -256,12 +238,12 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         index={0}
         language="en"
       />
-      <div
-        className="mb-1"
+      <ActionRow
+        className="mt-4 mb-1"
       >
         <Form.Checkbox
           checked={true}
-          className="mt-4.5 decorative-control-label"
+          className="decorative-control-label"
           onChange={[Function]}
         >
           <Form.Label>
@@ -272,24 +254,15 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
             />
           </Form.Label>
         </Form.Checkbox>
-        <OverLayTrigger
-          key="right"
-          overlay={
-            <ToolTip>
-              <FormattedMessage
-                defaultMessage="Learners will see a link to download the transcript below the video."
-                description="Message for show by default checkbox"
-                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
-              />
-            </ToolTip>
-          }
-          placement="right"
-        >
-          <Icon
-            className="d-inline-block mx-3"
-          />
-        </OverLayTrigger>
-      </div>
+        <IconButtonWithTooltip
+          alt="Learners will see a link to download the transcript below the video."
+          iconAs="Icon"
+          key="top"
+          tooltipContent="Learners will see a link to download the transcript below the video."
+          tooltipPlacement="top"
+        />
+        <ActionRow.Spacer />
+      </ActionRow>
       <Form.Checkbox
         checked={false}
         className="mt-4.5 decorative-control-label"
@@ -427,12 +400,12 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         index={0}
         language="en"
       />
-      <div
-        className="mb-1"
+      <ActionRow
+        className="mt-4 mb-1"
       >
         <Form.Checkbox
           checked={false}
-          className="mt-4.5 decorative-control-label"
+          className="decorative-control-label"
           onChange={[Function]}
         >
           <Form.Label>
@@ -443,24 +416,15 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
             />
           </Form.Label>
         </Form.Checkbox>
-        <OverLayTrigger
-          key="right"
-          overlay={
-            <ToolTip>
-              <FormattedMessage
-                defaultMessage="Learners will see a link to download the transcript below the video."
-                description="Message for show by default checkbox"
-                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
-              />
-            </ToolTip>
-          }
-          placement="right"
-        >
-          <Icon
-            className="d-inline-block mx-3"
-          />
-        </OverLayTrigger>
-      </div>
+        <IconButtonWithTooltip
+          alt="Learners will see a link to download the transcript below the video."
+          iconAs="Icon"
+          key="top"
+          tooltipContent="Learners will see a link to download the transcript below the video."
+          tooltipPlacement="top"
+        />
+        <ActionRow.Spacer />
+      </ActionRow>
       <Form.Checkbox
         checked={true}
         className="mt-4.5 decorative-control-label"
@@ -534,12 +498,12 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         index={0}
         language="en"
       />
-      <div
-        className="mb-1"
+      <ActionRow
+        className="mt-4 mb-1"
       >
         <Form.Checkbox
           checked={false}
-          className="mt-4.5 decorative-control-label"
+          className="decorative-control-label"
           onChange={[Function]}
         >
           <Form.Label>
@@ -550,24 +514,15 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
             />
           </Form.Label>
         </Form.Checkbox>
-        <OverLayTrigger
-          key="right"
-          overlay={
-            <ToolTip>
-              <FormattedMessage
-                defaultMessage="Learners will see a link to download the transcript below the video."
-                description="Message for show by default checkbox"
-                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
-              />
-            </ToolTip>
-          }
-          placement="right"
-        >
-          <Icon
-            className="d-inline-block mx-3"
-          />
-        </OverLayTrigger>
-      </div>
+        <IconButtonWithTooltip
+          alt="Learners will see a link to download the transcript below the video."
+          iconAs="Icon"
+          key="top"
+          tooltipContent="Learners will see a link to download the transcript below the video."
+          tooltipPlacement="top"
+        />
+        <ActionRow.Spacer />
+      </ActionRow>
       <Form.Checkbox
         checked={false}
         className="mt-4.5 decorative-control-label"

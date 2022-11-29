@@ -4,10 +4,9 @@ import PropTypes from 'prop-types';
 
 import {
   Form,
-  IconButton,
+  IconButtonWithTooltip,
+  ActionRow,
   Icon,
-  OverlayTrigger,
-  Tooltip,
   Button,
 } from '@edx/paragon';
 import { Delete, Info, Add } from '@edx/paragon/icons';
@@ -47,6 +46,7 @@ export const VideoSourceWidget = ({
     },
   });
   const deleteFallbackVideo = module.deleteFallbackVideo({ fallbackVideos: fallbackVideos.formValue, dispatch });
+  const updateVideoType = module.updateVideoType({ dispatch });
 
   return (
     <CollapsibleFormWidget
@@ -57,7 +57,7 @@ export const VideoSourceWidget = ({
           <Form.Control
             floatingLabel={intl.formatMessage(messages.videoIdOrUrlLabel)}
             onChange={source.onChange}
-            onBlur={source.onBlur}
+            onBlur={(e) => updateVideoType({ e, source })}
             value={source.local}
           />
         </div>
@@ -68,32 +68,25 @@ export const VideoSourceWidget = ({
           <FormattedMessage {...messages.fallbackVideoMessage} />
         </Form.Text>
         {fallbackVideos.formValue.map((videoUrl, index) => (
-          <Form.Row className="mt-4.5">
+          <Form.Row className="mt-4">
             <Form.Control
               floatingLabel={intl.formatMessage(messages.fallbackVideoLabel)}
               onChange={fallbackVideos.onChange(index)}
               value={fallbackVideos.local[index]}
               onBlur={fallbackVideos.onBlur(index)}
             />
-            <OverlayTrigger
-              key="top"
-              placement="top"
-              overlay={(
-                <Tooltip>
-                  <FormattedMessage {...messages.deleteFallbackVideo} />
-                </Tooltip>
-              )}
-            >
-              <IconButton
-                className="d-inline-block"
-                iconAs={Icon}
-                src={Delete}
-                onClick={() => deleteFallbackVideo(videoUrl)}
-              />
-            </OverlayTrigger>
+            <IconButtonWithTooltip
+              key={`top-delete-${videoUrl}`}
+              tooltipPlacement="top"
+              tooltipContent={intl.formatMessage(messages.deleteFallbackVideo)}
+              src={Delete}
+              iconAs={Icon}
+              alt={intl.formatMessage(messages.deleteFallbackVideo)}
+              onClick={() => deleteFallbackVideo(videoUrl)}
+            />
           </Form.Row>
         ))}
-        <Form.Row className="mt-4">
+        <ActionRow className="mt-4">
           <Form.Checkbox
             checked={allowDownload.local}
             className="decorative-control-label"
@@ -103,18 +96,16 @@ export const VideoSourceWidget = ({
               <FormattedMessage {...messages.allowDownloadCheckboxLabel} />
             </Form.Label>
           </Form.Checkbox>
-          <OverlayTrigger
+          <IconButtonWithTooltip
             key="top"
-            placement="top"
-            overlay={(
-              <Tooltip>
-                <FormattedMessage {...messages.tooltipMessage} />
-              </Tooltip>
-            )}
-          >
-            <Icon className="d-inline-block mx-3" src={Info} />
-          </OverlayTrigger>
-        </Form.Row>
+            tooltipPlacement="top"
+            tooltipContent={intl.formatMessage(messages.tooltipMessage)}
+            src={Info}
+            iconAs={Icon}
+            alt={intl.formatMessage(messages.tooltipMessage)}
+          />
+          <ActionRow.Spacer />
+        </ActionRow>
       </Form.Group>
       <Button
         iconBefore={Add}
@@ -125,8 +116,6 @@ export const VideoSourceWidget = ({
       </Button>
     </CollapsibleFormWidget>
   );
-};
-VideoSourceWidget.defaultProps = {
 };
 VideoSourceWidget.propTypes = {
   // injected

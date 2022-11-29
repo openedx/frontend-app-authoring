@@ -11,9 +11,9 @@ import {
   Button,
   Stack,
   Icon,
-  OverlayTrigger,
-  Tooltip,
   Alert,
+  IconButtonWithTooltip,
+  ActionRow,
 } from '@edx/paragon';
 import { Add, Info } from '@edx/paragon/icons';
 
@@ -116,28 +116,26 @@ export const TranscriptWidget = ({
                 index={index}
               />
             ))}
-            <div className="mb-1">
+            <ActionRow className="mt-4 mb-1">
               <Form.Checkbox
                 checked={allowTranscriptDownloads}
-                className="mt-4.5 decorative-control-label"
+                className="decorative-control-label"
                 onChange={(e) => updateField({ allowTranscriptDownloads: e.target.checked })}
               >
                 <Form.Label>
                   <FormattedMessage {...messages.allowDownloadCheckboxLabel} />
                 </Form.Label>
               </Form.Checkbox>
-              <OverlayTrigger
-                key="right"
-                placement="right"
-                overlay={(
-                  <Tooltip>
-                    <FormattedMessage {...messages.tooltipMessage} />
-                  </Tooltip>
-                )}
-              >
-                <Icon className="d-inline-block mx-3" src={Info} />
-              </OverlayTrigger>
-            </div>
+              <IconButtonWithTooltip
+                key="top"
+                tooltipPlacement="top"
+                tooltipContent={intl.formatMessage(messages.tooltipMessage)}
+                src={Info}
+                iconAs={Icon}
+                alt={intl.formatMessage(messages.tooltipMessage)}
+              />
+              <ActionRow.Spacer />
+            </ActionRow>
             <Form.Checkbox
               checked={showTranscriptByDefault}
               className="mt-4.5 decorative-control-label"
