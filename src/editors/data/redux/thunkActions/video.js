@@ -92,7 +92,7 @@ export const determineVideoSource = ({
     [videoSource, fallbackVideos] = [html5Sources[0], html5Sources.slice(1)];
     videoType = 'html5source';
   }
-  if (fallbackVideos.length === 0) {
+  if (!fallbackVideos || fallbackVideos.length === 0) {
     fallbackVideos = ['', ''];
   }
   return {
