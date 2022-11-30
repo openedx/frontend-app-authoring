@@ -2,7 +2,7 @@
 
 exports[`CollapsibleFormWidget render snapshots: renders as expected with default props 1`] = `
 <Advanced
-  className="collapsible-card rounded m-4 px-3 py-2"
+  className="collapsible-card rounded mx-4 my-3 px-3 py-2"
   defaultOpen={true}
 >
   <Trigger
@@ -67,7 +67,7 @@ exports[`CollapsibleFormWidget render snapshots: renders as expected with defaul
 
 exports[`CollapsibleFormWidget render snapshots: renders with open={true} when there is error 1`] = `
 <Advanced
-  className="collapsible-card rounded m-4 px-3 py-2"
+  className="collapsible-card rounded mx-4 my-3 px-3 py-2"
   defaultOpen={true}
   open={true}
 >
