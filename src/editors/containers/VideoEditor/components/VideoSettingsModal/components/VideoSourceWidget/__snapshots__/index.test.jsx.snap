@@ -15,7 +15,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
         value=""
       />
     </div>
-    <Form.Label
+    <div
       className="mt-3"
     >
       <FormattedMessage
@@ -23,8 +23,8 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
         description="Title for the fallback videos section"
         id="authoring.videoeditor.videoSource.fallbackVideo.title"
       />
-    </Form.Label>
-    <Form.Text>
+    </div>
+    <div>
       <FormattedMessage
         defaultMessage="To be sure all learners can access the video, edX
     recommends providing additional videos in both .mp4 and
@@ -33,7 +33,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
         description="Test explaining reason for fallback videos"
         id="authoring.videoeditor.videoSource.fallbackVideo.message"
       />
-    </Form.Text>
+    </div>
     <Form.Row
       className="mt-4"
     >
@@ -57,30 +57,49 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
         className="decorative-control-label"
         onChange={[MockFunction]}
       >
-        <Form.Label>
+        <div
+          className="small text-gray-700"
+        >
           <FormattedMessage
             defaultMessage="Allow video downloads"
             description="Label for allow video downloads checkbox"
             id="authoring.videoeditor.videoSource.allowDownloadCheckboxLabel"
           />
-        </Form.Label>
+        </div>
       </Form.Checkbox>
-      <IconButtonWithTooltip
-        alt="Allow learners to download versions of this video in
-    different formats if they cannot use the edX video player or do not have
-    access to YouTube."
-        iconAs="Icon"
+      <OverLayTrigger
         key="top"
-        tooltipContent="Allow learners to download versions of this video in
+        overlay={
+          <ToolTip
+            id="tooltip-top"
+          >
+            <FormattedMessage
+              defaultMessage="Allow learners to download versions of this video in
     different formats if they cannot use the edX video player or do not have
     access to YouTube."
-        tooltipPlacement="top"
-      />
+              description="Message for allow video downloads checkbox"
+              id="authoring.videoeditor.videoSource.fallbackVideo.allowDownloadTooltipMessage"
+            />
+          </ToolTip>
+        }
+        placement="top"
+      >
+        <Icon
+          style={
+            Object {
+              "height": "16px",
+              "width": "16px",
+            }
+          }
+        />
+      </OverLayTrigger>
       <ActionRow.Spacer />
     </ActionRow>
   </Form.Group>
   <Button
+    className="text-primary-500 font-weight-bold"
     onClick={[Function]}
+    size="sm"
     variant="link"
   >
     <FormattedMessage

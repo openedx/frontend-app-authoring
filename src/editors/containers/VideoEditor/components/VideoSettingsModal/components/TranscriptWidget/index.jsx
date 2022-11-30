@@ -12,7 +12,8 @@ import {
   Stack,
   Icon,
   Alert,
-  IconButtonWithTooltip,
+  OverlayTrigger,
+  Tooltip,
   ActionRow,
 } from '@edx/paragon';
 import { Add, Info } from '@edx/paragon/icons';
@@ -122,18 +123,21 @@ export const TranscriptWidget = ({
                 className="decorative-control-label"
                 onChange={(e) => updateField({ allowTranscriptDownloads: e.target.checked })}
               >
-                <Form.Label>
+                <div className="small text-gray-700">
                   <FormattedMessage {...messages.allowDownloadCheckboxLabel} />
-                </Form.Label>
+                </div>
               </Form.Checkbox>
-              <IconButtonWithTooltip
+              <OverlayTrigger
                 key="top"
-                tooltipPlacement="top"
-                tooltipContent={intl.formatMessage(messages.tooltipMessage)}
-                src={Info}
-                iconAs={Icon}
-                alt={intl.formatMessage(messages.tooltipMessage)}
-              />
+                placement="top"
+                overlay={(
+                  <Tooltip id="tooltip-top">
+                    <FormattedMessage {...messages.tooltipMessage} />
+                  </Tooltip>
+                )}
+              >
+                <Icon src={Info} style={{ height: '16px', width: '16px' }} />
+              </OverlayTrigger>
               <ActionRow.Spacer />
             </ActionRow>
             <Form.Checkbox
@@ -141,9 +145,9 @@ export const TranscriptWidget = ({
               className="mt-4.5 decorative-control-label"
               onChange={(e) => updateField({ showTranscriptByDefault: e.target.checked })}
             >
-              <Form.Label size="sm">
+              <div className="small text-gray-700">
                 <FormattedMessage {...messages.showByDefaultCheckboxLabel} />
-              </Form.Label>
+              </div>
             </Form.Checkbox>
           </Form.Group>
         ) : (
@@ -157,6 +161,8 @@ export const TranscriptWidget = ({
 
         <Stack gap={3} className="border-primary-100 border-top">
           <Button
+            className="text-primary-500 font-weight-bold"
+            size="sm"
             iconBefore={Add}
             variant="link"
             onClick={() => module.hooks.onAddNewTranscript({ transcripts, updateField })}

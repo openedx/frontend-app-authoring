@@ -7,13 +7,13 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
   <Icon />
   <Icon />
   <Icon />
-  <Form.Text>
+  <div>
     <FormattedMessage
       defaultMessage="Some Rights Reserved"
       description="Label for row of creative common icons"
       id="authoring.videoeditor.license.creativeCommonsIcons.label"
     />
-  </Form.Text>
+  </div>
 </div>
 `;
 
@@ -24,13 +24,13 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
   <Icon />
   <Icon />
   <Icon />
-  <Form.Text>
+  <div>
     <FormattedMessage
       defaultMessage="Some Rights Reserved"
       description="Label for row of creative common icons"
       id="authoring.videoeditor.license.creativeCommonsIcons.label"
     />
-  </Form.Text>
+  </div>
 </div>
 `;
 
@@ -41,13 +41,13 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
   <Icon />
   <Icon />
   <Icon />
-  <Form.Text>
+  <div>
     <FormattedMessage
       defaultMessage="Some Rights Reserved"
       description="Label for row of creative common icons"
       id="authoring.videoeditor.license.creativeCommonsIcons.label"
     />
-  </Form.Text>
+  </div>
 </div>
 `;
 
@@ -57,13 +57,13 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
 >
   <Icon />
   <Icon />
-  <Form.Text>
+  <div>
     <FormattedMessage
       defaultMessage="Some Rights Reserved"
       description="Label for row of creative common icons"
       id="authoring.videoeditor.license.creativeCommonsIcons.label"
     />
-  </Form.Text>
+  </div>
 </div>
 `;
 
@@ -72,13 +72,13 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected with default prop
   className="d-flex flex-row flex-row"
 >
   <Icon />
-  <Form.Text>
+  <div>
     <FormattedMessage
       defaultMessage="All Rights Reserved"
       description="Label for row of all rights reserved icons"
       id="authoring.videoeditor.license.allRightsReservedIcons.label"
     />
-  </Form.Text>
+  </div>
 </div>
 `;
 
@@ -87,12 +87,12 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected with license equa
   className="d-flex flex-row flex-row"
 >
   <Icon />
-  <Form.Text>
+  <div>
     <FormattedMessage
       defaultMessage="Some Rights Reserved"
       description="Label for row of creative common icons"
       id="authoring.videoeditor.license.creativeCommonsIcons.label"
     />
-  </Form.Text>
+  </div>
 </div>
 `;

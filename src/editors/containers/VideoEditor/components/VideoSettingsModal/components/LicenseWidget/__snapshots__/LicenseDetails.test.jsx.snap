@@ -7,7 +7,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
   className="border-primary-100 border-top pb-3"
 >
   <Form.Group>
-    <Form.Label
+    <div
       className="mt-3"
     >
       <FormattedMessage
@@ -15,7 +15,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
         description="Title for license detatils subsection"
         id="authoring.videoeditor.license.detailsSubsection.title"
       />
-    </Form.Label>
+    </div>
     <Stack
       gap={3}
     >
@@ -154,7 +154,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
   className="border-primary-100 border-top pb-3"
 >
   <Form.Group>
-    <Form.Label
+    <div
       className="mt-3"
     >
       <FormattedMessage
@@ -162,14 +162,14 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
         description="Title for license detatils subsection"
         id="authoring.videoeditor.license.detailsSubsection.title"
       />
-    </Form.Label>
-    <Form.Text>
+    </div>
+    <div>
       <FormattedMessage
         defaultMessage="You reserve all rights for your work."
         description="All Rights Reserved section message"
         id="authoring.videoeditor.license.allRightsReservedSectionMessage"
       />
-    </Form.Text>
+    </div>
   </Form.Group>
 </div>
 `;
@@ -181,7 +181,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
   className="border-primary-100 border-top pb-3"
 >
   <Form.Group>
-    <Form.Label
+    <div
       className="mt-3"
     >
       <FormattedMessage
@@ -189,7 +189,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
         description="Title for license detatils subsection"
         id="authoring.videoeditor.license.detailsSubsection.title"
       />
-    </Form.Label>
+    </div>
   </Form.Group>
 </div>
 `;

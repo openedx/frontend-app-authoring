@@ -4,7 +4,7 @@ import {
   FormattedMessage,
   injectIntl,
 } from '@edx/frontend-platform/i18n';
-import { Form, Icon } from '@edx/paragon';
+import { Icon } from '@edx/paragon';
 import {
   Attribution,
   Copyright,
@@ -29,10 +29,10 @@ export const LicenseBlurb = ({
     {details.noDerivatives ? <Icon src={Nd} /> : null}
     {details.shareAlike ? <Icon src={Sa} /> : null}
     {license === LicenseTypes.allRightsReserved
-      ? <Form.Text><FormattedMessage {...messages.allRightsReservedIconsLabel} /></Form.Text>
+      ? <div><FormattedMessage {...messages.allRightsReservedIconsLabel} /></div>
       : null}
     {license === LicenseTypes.creativeCommons
-      ? <Form.Text><FormattedMessage {...messages.creativeCommonsIconsLabel} /></Form.Text>
+      ? <div><FormattedMessage {...messages.creativeCommonsIconsLabel} /></div>
       : null}
   </div>
 );

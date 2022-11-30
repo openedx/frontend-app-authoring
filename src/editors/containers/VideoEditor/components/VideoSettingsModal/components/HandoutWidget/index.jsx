@@ -95,7 +95,13 @@ export const HandoutWidget = ({
       ) : (
         <Stack gap={3}>
           <FormattedMessage {...messages.addHandoutMessage} />
-          <Button iconBefore={FileUpload} onClick={fileInput.click} variant="link">
+          <Button
+            className="text-primary-500 font-weight-bold"
+            size="sm"
+            iconBefore={FileUpload}
+            onClick={fileInput.click}
+            variant="link"
+          >
             <FormattedMessage {...messages.uploadButtonLabel} />
           </Button>
         </Stack>

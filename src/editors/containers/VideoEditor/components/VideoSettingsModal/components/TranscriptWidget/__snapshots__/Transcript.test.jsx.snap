@@ -24,7 +24,6 @@ exports[`Transcript Component component component snapshots: renders as expected
       title="sOmenUmBer"
     />
     <IconButton
-      className="d-inline-block"
       iconAs="Icon"
       onClick={[Function]}
     />

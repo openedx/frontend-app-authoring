@@ -60,7 +60,7 @@ export const LicenseSelector = ({
           />
         ) : null }
       </Form.Row>
-      <Form.Text>{levelDescription}</Form.Text>
+      <div>{levelDescription}</div>
     </Form.Group>
   );
 };

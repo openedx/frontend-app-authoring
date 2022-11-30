@@ -89,7 +89,6 @@ export const ThumbnailWidget = ({
           />
           { (allowThumbnailUpload && isEdxVideo) ? (
             <IconButtonWithTooltip
-              className="d-inline-block"
               tooltipPlacement="top"
               tooltipContent={intl.formatMessage(messages.deleteThumbnail)}
               iconAs={Icon}
@@ -107,7 +106,14 @@ export const ThumbnailWidget = ({
             <FormattedMessage {...messages.aspectRequirements} />
           </div>
           <FileInput fileInput={fileInput} acceptedFiles={Object.values(acceptedImgKeys).join()} />
-          <Button iconBefore={FileUpload} onClick={fileInput.click} variant="link" disabled={!isEdxVideo}>
+          <Button
+            className="text-primary-500 font-weight-bold"
+            size="sm"
+            iconBefore={FileUpload}
+            onClick={fileInput.click}
+            variant="link"
+            disabled={!isEdxVideo}
+          >
             <FormattedMessage {...messages.uploadButtonLabel} />
           </Button>
         </Stack>

@@ -8,6 +8,8 @@ import {
   ActionRow,
   Icon,
   Button,
+  Tooltip,
+  OverlayTrigger,
 } from '@edx/paragon';
 import { Delete, Info, Add } from '@edx/paragon/icons';
 import {
@@ -61,12 +63,12 @@ export const VideoSourceWidget = ({
             value={source.local}
           />
         </div>
-        <Form.Label className="mt-3">
+        <div className="mt-3">
           <FormattedMessage {...messages.fallbackVideoTitle} />
-        </Form.Label>
-        <Form.Text>
+        </div>
+        <div>
           <FormattedMessage {...messages.fallbackVideoMessage} />
-        </Form.Text>
+        </div>
         {fallbackVideos.formValue.map((videoUrl, index) => (
           <Form.Row className="mt-4">
             <Form.Control
@@ -92,22 +94,27 @@ export const VideoSourceWidget = ({
             className="decorative-control-label"
             onChange={allowDownload.onCheckedChange}
           >
-            <Form.Label>
+            <div className="small text-gray-700">
               <FormattedMessage {...messages.allowDownloadCheckboxLabel} />
-            </Form.Label>
+            </div>
           </Form.Checkbox>
-          <IconButtonWithTooltip
+          <OverlayTrigger
             key="top"
-            tooltipPlacement="top"
-            tooltipContent={intl.formatMessage(messages.tooltipMessage)}
-            src={Info}
-            iconAs={Icon}
-            alt={intl.formatMessage(messages.tooltipMessage)}
-          />
+            placement="top"
+            overlay={(
+              <Tooltip id="tooltip-top">
+                <FormattedMessage {...messages.tooltipMessage} />
+              </Tooltip>
+            )}
+          >
+            <Icon src={Info} style={{ height: '16px', width: '16px' }} />
+          </OverlayTrigger>
           <ActionRow.Spacer />
         </ActionRow>
       </Form.Group>
       <Button
+        className="text-primary-500 font-weight-bold"
+        size="sm"
         iconBefore={Add}
         variant="link"
         onClick={() => updateField({ fallbackVideos: [...fallbackVideos.formValue, ''] })}

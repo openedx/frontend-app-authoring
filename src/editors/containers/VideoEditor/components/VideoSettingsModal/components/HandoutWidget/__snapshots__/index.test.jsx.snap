@@ -47,7 +47,9 @@ exports[`HandoutWidget snapshots snapshots: renders as expected with default pro
       id="authoring.videoeditor.handout.upload.addHandoutMessage"
     />
     <Button
+      className="text-primary-500 font-weight-bold"
       onClick={[Function]}
+      size="sm"
       variant="link"
     >
       <FormattedMessage

@@ -54,7 +54,9 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with level set 
     </Card.Section>
   </Card>
   <Hyperlink
+    className="text-primary-500"
     destination="https://creativecommons.org/about"
+    size="sm"
     target="_blank"
   >
     <FormattedMessage
@@ -92,7 +94,9 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with level set 
     </Card.Section>
   </Card>
   <Hyperlink
+    className="text-primary-500"
     destination="https://creativecommons.org/about"
+    size="sm"
     target="_blank"
   >
     <FormattedMessage
@@ -132,7 +136,9 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with level set 
     </Card.Section>
   </Card>
   <Hyperlink
+    className="text-primary-500"
     destination="https://creativecommons.org/about"
+    size="sm"
     target="_blank"
   >
     <FormattedMessage

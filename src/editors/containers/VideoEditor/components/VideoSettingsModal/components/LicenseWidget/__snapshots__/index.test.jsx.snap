@@ -8,13 +8,13 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with default pro
         details={Object {}}
         license="all-rights-reserved"
       />
-      <Form.Text>
+      <div>
         <FormattedMessage
           defaultMessage="This license currently set at the course level"
           description="Helper text for license type when using course license"
           id="authoring.videoeditor.license.courseLevelDescription.helperText"
         />
-      </Form.Text>
+      </div>
     </div>
   }
   title="License"
@@ -47,7 +47,9 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with default pro
       className="border-primary-100 border-bottom"
     />
     <Button
+      className="text-primary-500 font-weight-bold"
       onClick={[Function]}
+      size="sm"
       variant="link"
     >
       <FormattedMessage
@@ -68,13 +70,13 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with isLibrary t
         details={Object {}}
         license="all-rights-reserved"
       />
-      <Form.Text>
+      <div>
         <FormattedMessage
           defaultMessage="This license currently set at the library level"
           description="Helper text for license type when using library license"
           id="authoring.videoeditor.license.libraryLevelDescription.helperText"
         />
-      </Form.Text>
+      </div>
     </div>
   }
   title="License"
@@ -115,13 +117,13 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with licenseType
         details={Object {}}
         license="all-rights-reserved"
       />
-      <Form.Text>
+      <div>
         <FormattedMessage
           defaultMessage="This license is set specifically for this video"
           description="Helper text for license type when choosing for a spcific video"
           id="authoring.videoeditor.license.defaultLevelDescription.helperText"
         />
-      </Form.Text>
+      </div>
     </div>
   }
   title="License"

@@ -32,15 +32,15 @@ export const LicenseDetails = ({
   level !== LicenseLevel.course && details && license !== 'select' ? (
     <div className="border-primary-100 border-top pb-3">
       <Form.Group>
-        <Form.Label className="mt-3">
+        <div className="mt-3">
           <FormattedMessage {...messages.detailsSubsectionTitle} />
-        </Form.Label>
+        </div>
 
         {license === LicenseTypes.allRightsReserved
           ? (
-            <Form.Text>
+            <div>
               <FormattedMessage {...messages.allRightsReservedSectionMessage} />
-            </Form.Text>
+            </div>
           )
           : null}
 

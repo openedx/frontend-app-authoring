@@ -31,7 +31,12 @@ export const LicenseDisplay = ({
           <Card.Section>{licenseDescription}</Card.Section>
         </Card>
         {level !== LicenseLevel.course ? (
-          <Hyperlink destination="https://creativecommons.org/about" target="_blank">
+          <Hyperlink
+            className="text-primary-500"
+            size="sm"
+            destination="https://creativecommons.org/about"
+            target="_blank"
+          >
             <FormattedMessage {...messages.viewLicenseDetailsLabel} />
           </Hyperlink>
         ) : null }

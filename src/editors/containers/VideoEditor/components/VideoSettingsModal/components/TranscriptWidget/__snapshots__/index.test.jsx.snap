@@ -46,21 +46,40 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
           className="decorative-control-label"
           onChange={[Function]}
         >
-          <Form.Label>
+          <div
+            className="small text-gray-700"
+          >
             <FormattedMessage
               defaultMessage="Allow transcript downloads"
               description="Label for allow transcript downloads checkbox"
               id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
             />
-          </Form.Label>
+          </div>
         </Form.Checkbox>
-        <IconButtonWithTooltip
-          alt="Learners will see a link to download the transcript below the video."
-          iconAs="Icon"
+        <OverLayTrigger
           key="top"
-          tooltipContent="Learners will see a link to download the transcript below the video."
-          tooltipPlacement="top"
-        />
+          overlay={
+            <ToolTip
+              id="tooltip-top"
+            >
+              <FormattedMessage
+                defaultMessage="Learners will see a link to download the transcript below the video."
+                description="Message for show by default checkbox"
+                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
+              />
+            </ToolTip>
+          }
+          placement="top"
+        >
+          <Icon
+            style={
+              Object {
+                "height": "16px",
+                "width": "16px",
+              }
+            }
+          />
+        </OverLayTrigger>
         <ActionRow.Spacer />
       </ActionRow>
       <Form.Checkbox
@@ -68,15 +87,15 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
         className="mt-4.5 decorative-control-label"
         onChange={[Function]}
       >
-        <Form.Label
-          size="sm"
+        <div
+          className="small text-gray-700"
         >
           <FormattedMessage
             defaultMessage="Show transcript in the video player by default"
             description="Label for show by default checkbox"
             id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
           />
-        </Form.Label>
+        </div>
       </Form.Checkbox>
     </Form.Group>
     <Stack
@@ -84,7 +103,9 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
       gap={3}
     >
       <Button
+        className="text-primary-500 font-weight-bold"
         onClick={[Function]}
+        size="sm"
         variant="link"
       >
         <FormattedMessage
@@ -148,21 +169,40 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
           className="decorative-control-label"
           onChange={[Function]}
         >
-          <Form.Label>
+          <div
+            className="small text-gray-700"
+          >
             <FormattedMessage
               defaultMessage="Allow transcript downloads"
               description="Label for allow transcript downloads checkbox"
               id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
             />
-          </Form.Label>
+          </div>
         </Form.Checkbox>
-        <IconButtonWithTooltip
-          alt="Learners will see a link to download the transcript below the video."
-          iconAs="Icon"
+        <OverLayTrigger
           key="top"
-          tooltipContent="Learners will see a link to download the transcript below the video."
-          tooltipPlacement="top"
-        />
+          overlay={
+            <ToolTip
+              id="tooltip-top"
+            >
+              <FormattedMessage
+                defaultMessage="Learners will see a link to download the transcript below the video."
+                description="Message for show by default checkbox"
+                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
+              />
+            </ToolTip>
+          }
+          placement="top"
+        >
+          <Icon
+            style={
+              Object {
+                "height": "16px",
+                "width": "16px",
+              }
+            }
+          />
+        </OverLayTrigger>
         <ActionRow.Spacer />
       </ActionRow>
       <Form.Checkbox
@@ -170,15 +210,15 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
         className="mt-4.5 decorative-control-label"
         onChange={[Function]}
       >
-        <Form.Label
-          size="sm"
+        <div
+          className="small text-gray-700"
         >
           <FormattedMessage
             defaultMessage="Show transcript in the video player by default"
             description="Label for show by default checkbox"
             id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
           />
-        </Form.Label>
+        </div>
       </Form.Checkbox>
     </Form.Group>
     <Stack
@@ -186,7 +226,9 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
       gap={3}
     >
       <Button
+        className="text-primary-500 font-weight-bold"
         onClick={[Function]}
+        size="sm"
         variant="link"
       >
         <FormattedMessage
@@ -246,21 +288,40 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
           className="decorative-control-label"
           onChange={[Function]}
         >
-          <Form.Label>
+          <div
+            className="small text-gray-700"
+          >
             <FormattedMessage
               defaultMessage="Allow transcript downloads"
               description="Label for allow transcript downloads checkbox"
               id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
             />
-          </Form.Label>
+          </div>
         </Form.Checkbox>
-        <IconButtonWithTooltip
-          alt="Learners will see a link to download the transcript below the video."
-          iconAs="Icon"
+        <OverLayTrigger
           key="top"
-          tooltipContent="Learners will see a link to download the transcript below the video."
-          tooltipPlacement="top"
-        />
+          overlay={
+            <ToolTip
+              id="tooltip-top"
+            >
+              <FormattedMessage
+                defaultMessage="Learners will see a link to download the transcript below the video."
+                description="Message for show by default checkbox"
+                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
+              />
+            </ToolTip>
+          }
+          placement="top"
+        >
+          <Icon
+            style={
+              Object {
+                "height": "16px",
+                "width": "16px",
+              }
+            }
+          />
+        </OverLayTrigger>
         <ActionRow.Spacer />
       </ActionRow>
       <Form.Checkbox
@@ -268,15 +329,15 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         className="mt-4.5 decorative-control-label"
         onChange={[Function]}
       >
-        <Form.Label
-          size="sm"
+        <div
+          className="small text-gray-700"
         >
           <FormattedMessage
             defaultMessage="Show transcript in the video player by default"
             description="Label for show by default checkbox"
             id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
           />
-        </Form.Label>
+        </div>
       </Form.Checkbox>
     </Form.Group>
     <Stack
@@ -284,7 +345,9 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
       gap={3}
     >
       <Button
+        className="text-primary-500 font-weight-bold"
         onClick={[Function]}
+        size="sm"
         variant="link"
       >
         <FormattedMessage
@@ -348,7 +411,9 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
       gap={3}
     >
       <Button
+        className="text-primary-500 font-weight-bold"
         onClick={[Function]}
+        size="sm"
         variant="link"
       >
         <FormattedMessage
@@ -408,21 +473,40 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
           className="decorative-control-label"
           onChange={[Function]}
         >
-          <Form.Label>
+          <div
+            className="small text-gray-700"
+          >
             <FormattedMessage
               defaultMessage="Allow transcript downloads"
               description="Label for allow transcript downloads checkbox"
               id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
             />
-          </Form.Label>
+          </div>
         </Form.Checkbox>
-        <IconButtonWithTooltip
-          alt="Learners will see a link to download the transcript below the video."
-          iconAs="Icon"
+        <OverLayTrigger
           key="top"
-          tooltipContent="Learners will see a link to download the transcript below the video."
-          tooltipPlacement="top"
-        />
+          overlay={
+            <ToolTip
+              id="tooltip-top"
+            >
+              <FormattedMessage
+                defaultMessage="Learners will see a link to download the transcript below the video."
+                description="Message for show by default checkbox"
+                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
+              />
+            </ToolTip>
+          }
+          placement="top"
+        >
+          <Icon
+            style={
+              Object {
+                "height": "16px",
+                "width": "16px",
+              }
+            }
+          />
+        </OverLayTrigger>
         <ActionRow.Spacer />
       </ActionRow>
       <Form.Checkbox
@@ -430,15 +514,15 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         className="mt-4.5 decorative-control-label"
         onChange={[Function]}
       >
-        <Form.Label
-          size="sm"
+        <div
+          className="small text-gray-700"
         >
           <FormattedMessage
             defaultMessage="Show transcript in the video player by default"
             description="Label for show by default checkbox"
             id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
           />
-        </Form.Label>
+        </div>
       </Form.Checkbox>
     </Form.Group>
     <Stack
@@ -446,7 +530,9 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
       gap={3}
     >
       <Button
+        className="text-primary-500 font-weight-bold"
         onClick={[Function]}
+        size="sm"
         variant="link"
       >
         <FormattedMessage
@@ -506,21 +592,40 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
           className="decorative-control-label"
           onChange={[Function]}
         >
-          <Form.Label>
+          <div
+            className="small text-gray-700"
+          >
             <FormattedMessage
               defaultMessage="Allow transcript downloads"
               description="Label for allow transcript downloads checkbox"
               id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
             />
-          </Form.Label>
+          </div>
         </Form.Checkbox>
-        <IconButtonWithTooltip
-          alt="Learners will see a link to download the transcript below the video."
-          iconAs="Icon"
+        <OverLayTrigger
           key="top"
-          tooltipContent="Learners will see a link to download the transcript below the video."
-          tooltipPlacement="top"
-        />
+          overlay={
+            <ToolTip
+              id="tooltip-top"
+            >
+              <FormattedMessage
+                defaultMessage="Learners will see a link to download the transcript below the video."
+                description="Message for show by default checkbox"
+                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
+              />
+            </ToolTip>
+          }
+          placement="top"
+        >
+          <Icon
+            style={
+              Object {
+                "height": "16px",
+                "width": "16px",
+              }
+            }
+          />
+        </OverLayTrigger>
         <ActionRow.Spacer />
       </ActionRow>
       <Form.Checkbox
@@ -528,15 +633,15 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         className="mt-4.5 decorative-control-label"
         onChange={[Function]}
       >
-        <Form.Label
-          size="sm"
+        <div
+          className="small text-gray-700"
         >
           <FormattedMessage
             defaultMessage="Show transcript in the video player by default"
             description="Label for show by default checkbox"
             id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
           />
-        </Form.Label>
+        </div>
       </Form.Checkbox>
     </Form.Group>
     <Stack
@@ -544,7 +649,9 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
       gap={3}
     >
       <Button
+        className="text-primary-500 font-weight-bold"
         onClick={[Function]}
+        size="sm"
         variant="link"
       >
         <FormattedMessage

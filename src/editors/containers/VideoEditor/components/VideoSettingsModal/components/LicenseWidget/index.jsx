@@ -8,7 +8,6 @@ import {
 } from '@edx/frontend-platform/i18n';
 import {
   Button,
-  Form,
   Stack,
 } from '@edx/paragon';
 import { Add } from '@edx/paragon/icons';
@@ -49,7 +48,7 @@ export const LicenseWidget = ({
       subtitle={(
         <div>
           <LicenseBlurb license={license} details={details} />
-          <Form.Text>{levelDescription}</Form.Text>
+          <div>{levelDescription}</div>
         </div>
       )}
       title={intl.formatMessage(messages.title)}
@@ -72,6 +71,8 @@ export const LicenseWidget = ({
           <>
             <div className="border-primary-100 border-bottom" />
             <Button
+              className="text-primary-500 font-weight-bold"
+              size="sm"
               iconBefore={Add}
               variant="link"
               onClick={() => updateField({ licenseType: 'select', licenseDetails: {} })}
