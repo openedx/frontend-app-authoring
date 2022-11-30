@@ -40,7 +40,7 @@ exports[`Transcript Component component component snapshots: renders as expected
     <Card.Header
       title={
         <FormattedMessage
-          defaultMessage="Delete This Transcript?"
+          defaultMessage="Delete this transcript?"
           description="Title for Warning which allows users to select next step in the process of deleting a transcript"
           id="authoring.videoeditor.transcripts.deleteConfirmationTitle"
         />

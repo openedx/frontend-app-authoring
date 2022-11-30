@@ -16,7 +16,7 @@ exports[`EditorFooter render snapshot: default args (disableSave: false, saveFai
     <ActionRow>
       <ActionRow.Spacer />
       <Button
-        aria-label="Discard Changes and Return to Learning Context"
+        aria-label="Discard changes and return to learning context"
         onClick={[MockFunction args.onCancel]}
         variant="tertiary"
       >
@@ -27,7 +27,7 @@ exports[`EditorFooter render snapshot: default args (disableSave: false, saveFai
         />
       </Button>
       <Button
-        aria-label="Save Changes and Return to Learning Context"
+        aria-label="Save changes and return to learning context"
         disabled={false}
         onClick={[MockFunction args.onSave]}
       >
@@ -58,7 +58,7 @@ exports[`EditorFooter render snapshot: save disabled. Show button spinner 1`] = 
     <ActionRow>
       <ActionRow.Spacer />
       <Button
-        aria-label="Discard Changes and Return to Learning Context"
+        aria-label="Discard changes and return to learning context"
         onClick={[MockFunction args.onCancel]}
         variant="tertiary"
       >
@@ -69,7 +69,7 @@ exports[`EditorFooter render snapshot: save disabled. Show button spinner 1`] = 
         />
       </Button>
       <Button
-        aria-label="Save Changes and Return to Learning Context"
+        aria-label="Save changes and return to learning context"
         disabled={true}
         onClick={[MockFunction args.onSave]}
       >
@@ -109,7 +109,7 @@ exports[`EditorFooter render snapshot: save failed.  Show error message 1`] = `
     <ActionRow>
       <ActionRow.Spacer />
       <Button
-        aria-label="Discard Changes and Return to Learning Context"
+        aria-label="Discard changes and return to learning context"
         onClick={[MockFunction args.onCancel]}
         variant="tertiary"
       >
@@ -120,7 +120,7 @@ exports[`EditorFooter render snapshot: save failed.  Show error message 1`] = `
         />
       </Button>
       <Button
-        aria-label="Save Changes and Return to Learning Context"
+        aria-label="Save changes and return to learning context"
         disabled={false}
         onClick={[MockFunction args.onSave]}
       >

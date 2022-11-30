@@ -1,4 +1,9 @@
 export const messages = {
+  title: {
+    id: 'authoring.videoeditor.transcripts.title',
+    defaultMessage: 'Transcripts',
+    description: 'Title for transcripts widget',
+  },
   uploadButtonLabel: {
     id: 'authoring.videoeditor.transcripts.upload.label',
     defaultMessage: 'Add a transcript',
@@ -81,7 +86,7 @@ export const messages = {
   },
   deleteConfirmationHeader: {
     id: 'authoring.videoeditor.transcripts.deleteConfirmationTitle',
-    defaultMessage: 'Delete This Transcript?',
+    defaultMessage: 'Delete this transcript?',
     description: 'Title for Warning which allows users to select next step in the process of deleting a transcript',
   },
   fileTypeWarning: {
