@@ -51,7 +51,7 @@ export default function CourseAuthoringPage({ courseId, children }) {
   );
 
   return (
-    <div className="bg-light-200">
+    <div className={pathname.includes('/editor/') ? '' : 'bg-light-200'}>
       {/* While V2 Editors are tempoarily served from thier own pages
       using url pattern containing /editor/,
       we shouldn't have the header and footer on these pages.
