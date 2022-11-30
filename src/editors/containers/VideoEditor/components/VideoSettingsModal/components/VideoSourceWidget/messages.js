@@ -1,7 +1,7 @@
 export const messages = {
   titleLabel: {
     id: 'authoring.videoeditor.videoSource.title.label',
-    defaultMessage: 'Video Source',
+    defaultMessage: 'Video source',
     description: 'Title for the video source widget',
   },
   videoIdOrUrlLabel: {
@@ -17,7 +17,7 @@ export const messages = {
   },
   fallbackVideoTitle: {
     id: 'authoring.videoeditor.videoSource.fallbackVideo.title',
-    defaultMessage: 'Fallback Videos',
+    defaultMessage: 'Fallback videos',
     description: 'Title for the fallback videos section',
   },
   fallbackVideoMessage: {

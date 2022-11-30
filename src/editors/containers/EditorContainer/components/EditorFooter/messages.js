@@ -6,7 +6,7 @@ export const messages = {
   },
   cancelButtonAriaLabel: {
     id: 'authoring.editorfooter.cancelButton.ariaLabel',
-    defaultMessage: 'Discard Changes and Return to Learning Context',
+    defaultMessage: 'Discard changes and return to learning context',
     description: 'Screen reader label for cancel button',
   },
   cancelButtonLabel: {
@@ -16,7 +16,7 @@ export const messages = {
   },
   saveButtonAriaLabel: {
     id: 'authoring.editorfooter.savebutton.ariaLabel',
-    defaultMessage: 'Save Changes and Return to Learning Context',
+    defaultMessage: 'Save changes and return to learning context',
     description: 'Screen reader label for save button',
   },
   saveButtonLabel: {

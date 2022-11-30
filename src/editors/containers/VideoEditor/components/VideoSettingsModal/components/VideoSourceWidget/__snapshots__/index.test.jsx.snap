@@ -2,7 +2,7 @@
 
 exports[`VideoSourceWidget snapshots snapshots: renders as expected with default props 1`] = `
 <injectIntl(ShimmedIntlComponent)
-  title="Video Source"
+  title="Video source"
 >
   <Form.Group>
     <div
@@ -19,7 +19,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
       className="mt-3"
     >
       <FormattedMessage
-        defaultMessage="Fallback Videos"
+        defaultMessage="Fallback videos"
         description="Title for the fallback videos section"
         id="authoring.videoeditor.videoSource.fallbackVideo.title"
       />

@@ -26,7 +26,7 @@ export const messages = {
   },
   uploadButtonLabel: {
     id: 'authoring.videoeditor.thumbnail.upload.label',
-    defaultMessage: 'Upload Thumbnail',
+    defaultMessage: 'Upload thumbnail',
     description: 'Label for upload button',
   },
   addThumbnail: {
