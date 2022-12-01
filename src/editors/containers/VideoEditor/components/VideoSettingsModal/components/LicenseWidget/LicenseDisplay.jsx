@@ -6,7 +6,6 @@ import {
   injectIntl,
 } from '@edx/frontend-platform/i18n';
 import {
-  Card,
   Stack,
   Hyperlink,
 } from '@edx/paragon';
@@ -24,16 +23,15 @@ export const LicenseDisplay = ({
 }) => {
   if (license !== LicenseTypes.select) {
     return (
-      <Stack gap={3} className="border-primary-100 border-top">
-        <FormattedMessage {...messages.displaySubsectionTitle} />
-        <Card className="mb-3">
-          <Card.Header title={<LicenseBlurb license={license} details={details} />} />
-          <Card.Section>{licenseDescription}</Card.Section>
-        </Card>
+      <Stack gap={3}>
+        <div className="x-small"><FormattedMessage {...messages.displaySubsectionTitle} /></div>
+        <div className="small border border-gray-300 rounded pt-2 px-3 pb-3">
+          <LicenseBlurb license={license} details={details} />
+          <div className="x-small">{licenseDescription}</div>
+        </div>
         {level !== LicenseLevel.course ? (
           <Hyperlink
-            className="text-primary-500"
-            size="sm"
+            className="text-primary-500 x-small"
             destination="https://creativecommons.org/about"
             target="_blank"
           >

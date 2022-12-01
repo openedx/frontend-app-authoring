@@ -6,7 +6,8 @@ import {
   injectIntl,
 } from '@edx/frontend-platform/i18n';
 import {
-  Card,
+  ActionRow,
+  CheckboxControl,
   Form,
   Icon,
   Stack,
@@ -30,15 +31,15 @@ export const LicenseDetails = ({
   updateField,
 }) => (
   level !== LicenseLevel.course && details && license !== 'select' ? (
-    <div className="border-primary-100 border-top pb-3">
+    <div className="x-small border-primary-100 border-bottom m-0">
       <Form.Group>
-        <div className="mt-3">
+        <div>
           <FormattedMessage {...messages.detailsSubsectionTitle} />
         </div>
 
         {license === LicenseTypes.allRightsReserved
           ? (
-            <div>
+            <div className="mt-2">
               <FormattedMessage {...messages.allRightsReservedSectionMessage} />
             </div>
           )
@@ -47,39 +48,34 @@ export const LicenseDetails = ({
         {license === LicenseTypes.creativeCommons
           ? (
             <Stack gap={3}>
-              <Card>
-                <Card.Header
-                  title={(
-                    <div className="d-flex flex-row flex-nowrap">
-                      <Icon src={Attribution} />
+              <div className="border-primary-100 border-bottom py-3">
+                <Form.Group>
+                  <ActionRow>
+                    <Icon className="text-primary-500" src={Attribution} />
+                    <Form.Label className="my-0 text-primary-500">
                       <FormattedMessage {...messages.attributionCheckboxLabel} />
-                    </div>
-                  )}
-                  actions={<Form.Checkbox checked disabled />}
-                />
-                <Card.Section>
+                    </Form.Label>
+                    <ActionRow.Spacer />
+                    <CheckboxControl
+                      disabled
+                      checked
+                      aria-label="Checkbox"
+                    />
+                  </ActionRow>
+                </Form.Group>
+                <div>
                   <FormattedMessage {...messages.attributionSectionDescription} />
-                </Card.Section>
-              </Card>
-
-              <Card
-                isClickable
-                onClick={() => updateField({
-                  licenseDetails: {
-                    ...details,
-                    noncommercial: !details.noncommercial,
-                  },
-                })}
-              >
-                <Card.Header
-                  title={(
-                    <div className="d-flex flex-row flex-row">
-                      <Icon src={Nc} />
+                </div>
+              </div>
+              <div className="border-primary-100 border-bottom py-3">
+                <Form.Group>
+                  <ActionRow>
+                    <Icon src={Nc} />
+                    <Form.Label className="my-0 text-primary-500">
                       <FormattedMessage {...messages.noncommercialCheckboxLabel} />
-                    </div>
-                  )}
-                  actions={(
-                    <Form.Checkbox
+                    </Form.Label>
+                    <ActionRow.Spacer />
+                    <CheckboxControl
                       checked={details.noncommercial}
                       disabled={level === LicenseLevel.course}
                       onChange={(e) => updateField({
@@ -88,33 +84,23 @@ export const LicenseDetails = ({
                           noncommercial: e.target.checked,
                         },
                       })}
+                      aria-label="Checkbox"
                     />
-                  )}
-                />
-                <Card.Section>
+                  </ActionRow>
+                </Form.Group>
+                <div>
                   <FormattedMessage {...messages.noncommercialSectionDescription} />
-                </Card.Section>
-              </Card>
-
-              <Card
-                isClickable
-                onClick={() => updateField({
-                  licenseDetails: {
-                    ...details,
-                    noDerivatives: !details.noDerivatives,
-                    shareAlike: !details.noDerivatives ? false : details.shareAlike,
-                  },
-                })}
-              >
-                <Card.Header
-                  title={(
-                    <div className="d-flex flex-row flex-row">
-                      <Icon src={Nd} />
+                </div>
+              </div>
+              <div className="border-primary-100 border-bottom py-3">
+                <Form.Group>
+                  <ActionRow>
+                    <Icon src={Nd} />
+                    <Form.Label className="my-0 text-primary-500">
                       <FormattedMessage {...messages.noDerivativesCheckboxLabel} />
-                    </div>
-                  )}
-                  actions={(
-                    <Form.Checkbox
+                    </Form.Label>
+                    <ActionRow.Spacer />
+                    <CheckboxControl
                       checked={details.noDerivatives}
                       disabled={level === LicenseLevel.course}
                       onChange={(e) => updateField({
@@ -124,34 +110,24 @@ export const LicenseDetails = ({
                           shareAlike: e.target.checked ? false : details.shareAlike,
                         },
                       })}
+                      aria-label="Checkbox"
                     />
-                  )}
-                />
-                <Card.Section>
+                  </ActionRow>
+                </Form.Group>
+                <div>
                   <FormattedMessage {...messages.noDerivativesSectionDescription} />
-                </Card.Section>
-              </Card>
-
-              <Card
-                isClickable
-                onClick={() => updateField({
-                  licenseDetails: {
-                    ...details,
-                    shareAlike: !details.shareAlike,
-                    noDerivatives: !details.shareAlike ? false : details.noDerivatives,
-                  },
-                })}
-              >
-                <Card.Header
-                  title={(
-                    <div className="d-flex flex-row flex-row">
-                      <Icon src={Sa} />
+                </div>
+              </div>
+              <div>
+                <Form.Group>
+                  <ActionRow>
+                    <Icon src={Sa} />
+                    <Form.Label className="my-0 text-primary-500">
                       <FormattedMessage {...messages.shareAlikeCheckboxLabel} />
-                    </div>
-                  )}
-                  actions={(
-                    <Form.Checkbox
-                      checked={details.shareAlike}
+                    </Form.Label>
+                    <ActionRow.Spacer />
+                    <CheckboxControl
+                      cchecked={details.shareAlike}
                       disabled={level === LicenseLevel.course}
                       onChange={(e) => updateField({
                         licenseDetails: {
@@ -160,13 +136,14 @@ export const LicenseDetails = ({
                           noDerivatives: e.target.checked ? false : details.noDerivatives,
                         },
                       })}
+                      aria-label="Checkbox"
                     />
-                  )}
-                />
-                <Card.Section>
+                  </ActionRow>
+                </Form.Group>
+                <div>
                   <FormattedMessage {...messages.shareAlikeSectionDescription} />
-                </Card.Section>
-              </Card>
+                </div>
+              </div>
             </Stack>
           )
           : null}

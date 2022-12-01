@@ -2,7 +2,7 @@
 
 exports[`CollapsibleFormWidget render snapshots: renders as expected with default props 1`] = `
 <Advanced
-  className="collapsible-card rounded mx-4 my-3 px-3 py-2 text-primary-500 x-small"
+  className="collapsible-card rounded mx-4 my-3 px-3 py-2 text-primary-500"
   defaultOpen={true}
 >
   <Trigger
@@ -20,11 +20,15 @@ exports[`CollapsibleFormWidget render snapshots: renders as expected with defaul
         className="d-flex flex-column flex-grow-1"
       >
         <div
-          className="d-flex flex-grow-1 w-75"
+          className="d-flex flex-grow-1 w-75 x-small"
         >
           tiTLE
         </div>
-        SuBTItle
+        <div
+          className=""
+        >
+          SuBTItle
+        </div>
       </div>
       <div
         className="d-flex flex-row align-self-start"
@@ -40,7 +44,7 @@ exports[`CollapsibleFormWidget render snapshots: renders as expected with defaul
       whenOpen={true}
     >
       <div
-        className="d-flex flex-grow-1 w-75"
+        className="d-flex flex-grow-1 w-75 x-small"
       >
         tiTLE
       </div>
@@ -56,7 +60,7 @@ exports[`CollapsibleFormWidget render snapshots: renders as expected with defaul
     </Visible>
   </Trigger>
   <Body
-    className="collapsible-body rounded px-0"
+    className="collapsible-body rounded px-0 "
   >
     <p>
       Some test string
@@ -67,7 +71,7 @@ exports[`CollapsibleFormWidget render snapshots: renders as expected with defaul
 
 exports[`CollapsibleFormWidget render snapshots: renders with open={true} when there is error 1`] = `
 <Advanced
-  className="collapsible-card rounded mx-4 my-3 px-3 py-2 text-primary-500 x-small"
+  className="collapsible-card rounded mx-4 my-3 px-3 py-2 text-primary-500"
   defaultOpen={true}
   open={true}
 >
@@ -86,11 +90,15 @@ exports[`CollapsibleFormWidget render snapshots: renders with open={true} when t
         className="d-flex flex-column flex-grow-1"
       >
         <div
-          className="d-flex flex-grow-1 w-75"
+          className="d-flex flex-grow-1 w-75 x-small"
         >
           tiTLE
         </div>
-        SuBTItle
+        <div
+          className=""
+        >
+          SuBTItle
+        </div>
       </div>
       <div
         className="d-flex flex-row align-self-start"
@@ -109,7 +117,7 @@ exports[`CollapsibleFormWidget render snapshots: renders with open={true} when t
       whenOpen={true}
     >
       <div
-        className="d-flex flex-grow-1 w-75"
+        className="d-flex flex-grow-1 w-75 x-small"
       >
         tiTLE
       </div>
@@ -125,7 +133,7 @@ exports[`CollapsibleFormWidget render snapshots: renders with open={true} when t
     </Visible>
   </Trigger>
   <Body
-    className="collapsible-body rounded px-0"
+    className="collapsible-body rounded px-0 "
   >
     <p>
       Some test string

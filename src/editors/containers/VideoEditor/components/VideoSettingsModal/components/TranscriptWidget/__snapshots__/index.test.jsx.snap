@@ -2,6 +2,7 @@
 
 exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with delete error message 1`] = `
 <CollapsibleFormWidget
+  fontSize="x-small"
   isError={true}
   subtitle="English"
   title="Transcripts"
@@ -121,6 +122,7 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
 
 exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with upload error message 1`] = `
 <CollapsibleFormWidget
+  fontSize="x-small"
   isError={true}
   subtitle="English, French"
   title="Transcripts"
@@ -244,6 +246,7 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
 
 exports[`TranscriptWidget component snapshots snapshots: renders as expected with allowTranscriptDownloads true 1`] = `
 <CollapsibleFormWidget
+  fontSize="x-small"
   isError={true}
   subtitle="English"
   title="Transcripts"
@@ -363,6 +366,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
 
 exports[`TranscriptWidget component snapshots snapshots: renders as expected with default props 1`] = `
 <CollapsibleFormWidget
+  fontSize="x-small"
   isError={true}
   subtitle="None"
   title="Transcripts"
@@ -429,6 +433,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
 
 exports[`TranscriptWidget component snapshots snapshots: renders as expected with showTranscriptByDefault true 1`] = `
 <CollapsibleFormWidget
+  fontSize="x-small"
   isError={true}
   subtitle="English"
   title="Transcripts"
@@ -548,6 +553,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
 
 exports[`TranscriptWidget component snapshots snapshots: renders as expected with transcripts 1`] = `
 <CollapsibleFormWidget
+  fontSize="x-small"
   isError={true}
   subtitle="English"
   title="Transcripts"

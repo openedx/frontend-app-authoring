@@ -2,6 +2,7 @@
 
 exports[`DurationWidget render snapshots: renders as expected with default props 1`] = `
 <injectIntl(ShimmedIntlComponent)
+  fontSize="x-small"
   subtitle="Full video length"
   title="Duration"
 >

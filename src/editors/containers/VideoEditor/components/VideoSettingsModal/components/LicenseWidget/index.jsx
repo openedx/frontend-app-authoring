@@ -48,7 +48,7 @@ export const LicenseWidget = ({
       subtitle={(
         <div>
           <LicenseBlurb license={license} details={details} />
-          <div>{levelDescription}</div>
+          <div className="x-small mt-2">{levelDescription}</div>
         </div>
       )}
       title={intl.formatMessage(messages.title)}

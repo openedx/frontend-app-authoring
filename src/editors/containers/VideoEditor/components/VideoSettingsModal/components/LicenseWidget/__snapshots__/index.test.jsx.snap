@@ -8,7 +8,9 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with default pro
         details={Object {}}
         license="all-rights-reserved"
       />
-      <div>
+      <div
+        className="x-small mt-2"
+      >
         <FormattedMessage
           defaultMessage="This license currently set at the course level"
           description="Helper text for license type when using course license"
@@ -70,7 +72,9 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with isLibrary t
         details={Object {}}
         license="all-rights-reserved"
       />
-      <div>
+      <div
+        className="x-small mt-2"
+      >
         <FormattedMessage
           defaultMessage="This license currently set at the library level"
           description="Helper text for license type when using library license"
@@ -117,7 +121,9 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with licenseType
         details={Object {}}
         license="all-rights-reserved"
       />
-      <div>
+      <div
+        className="x-small mt-2"
+      >
         <FormattedMessage
           defaultMessage="This license is set specifically for this video"
           description="Helper text for license type when choosing for a spcific video"

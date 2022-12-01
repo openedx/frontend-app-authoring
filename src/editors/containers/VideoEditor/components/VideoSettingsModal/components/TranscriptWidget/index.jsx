@@ -91,6 +91,7 @@ export const TranscriptWidget = ({
   const hasTranscripts = module.hooks.hasTranscripts(transcripts);
   return (
     <CollapsibleFormWidget
+      fontSize="x-small"
       isError={Object.keys(error).length !== 0}
       subtitle={fullTextLanguages}
       title={intl.formatMessage(messages.title)}

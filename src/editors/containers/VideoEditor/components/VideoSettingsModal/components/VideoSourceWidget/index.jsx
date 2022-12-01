@@ -52,6 +52,7 @@ export const VideoSourceWidget = ({
 
   return (
     <CollapsibleFormWidget
+      fontSize="x-small"
       title={intl.formatMessage(messages.titleLabel)}
     >
       <Form.Group>

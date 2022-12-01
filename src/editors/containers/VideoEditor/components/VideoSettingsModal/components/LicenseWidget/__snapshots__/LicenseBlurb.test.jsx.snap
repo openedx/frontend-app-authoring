@@ -2,12 +2,38 @@
 
 exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attribution and details.noDerivatives equal true 1`] = `
 <div
-  className="d-flex flex-row flex-row"
+  className="d-flex flex-row align-items-center mt-2"
 >
-  <Icon />
-  <Icon />
-  <Icon />
-  <div>
+  <Icon
+    className="mr-1"
+    style={
+      Object {
+        "height": "18px",
+        "width": "18px",
+      }
+    }
+  />
+  <Icon
+    className="mr-1 text-primary-300"
+    style={
+      Object {
+        "height": "18px",
+        "width": "18px",
+      }
+    }
+  />
+  <Icon
+    className="mr-1"
+    style={
+      Object {
+        "height": "18px",
+        "width": "18px",
+      }
+    }
+  />
+  <div
+    className="small mx-1.5"
+  >
     <FormattedMessage
       defaultMessage="Some Rights Reserved"
       description="Label for row of creative common icons"
@@ -19,12 +45,38 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
 
 exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attribution and details.noncommercial equal true 1`] = `
 <div
-  className="d-flex flex-row flex-row"
+  className="d-flex flex-row align-items-center mt-2"
 >
-  <Icon />
-  <Icon />
-  <Icon />
-  <div>
+  <Icon
+    className="mr-1"
+    style={
+      Object {
+        "height": "18px",
+        "width": "18px",
+      }
+    }
+  />
+  <Icon
+    className="mr-1 text-primary-300"
+    style={
+      Object {
+        "height": "18px",
+        "width": "18px",
+      }
+    }
+  />
+  <Icon
+    className="mr-1"
+    style={
+      Object {
+        "height": "18px",
+        "width": "18px",
+      }
+    }
+  />
+  <div
+    className="small mx-1.5"
+  >
     <FormattedMessage
       defaultMessage="Some Rights Reserved"
       description="Label for row of creative common icons"
@@ -36,12 +88,38 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
 
 exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attribution and details.shareAlike equal true 1`] = `
 <div
-  className="d-flex flex-row flex-row"
+  className="d-flex flex-row align-items-center mt-2"
 >
-  <Icon />
-  <Icon />
-  <Icon />
-  <div>
+  <Icon
+    className="mr-1"
+    style={
+      Object {
+        "height": "18px",
+        "width": "18px",
+      }
+    }
+  />
+  <Icon
+    className="mr-1 text-primary-300"
+    style={
+      Object {
+        "height": "18px",
+        "width": "18px",
+      }
+    }
+  />
+  <Icon
+    className="mr-1"
+    style={
+      Object {
+        "height": "18px",
+        "width": "18px",
+      }
+    }
+  />
+  <div
+    className="small mx-1.5"
+  >
     <FormattedMessage
       defaultMessage="Some Rights Reserved"
       description="Label for row of creative common icons"
@@ -53,11 +131,29 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
 
 exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attribution equal true 1`] = `
 <div
-  className="d-flex flex-row flex-row"
+  className="d-flex flex-row align-items-center mt-2"
 >
-  <Icon />
-  <Icon />
-  <div>
+  <Icon
+    className="mr-1"
+    style={
+      Object {
+        "height": "18px",
+        "width": "18px",
+      }
+    }
+  />
+  <Icon
+    className="mr-1 text-primary-300"
+    style={
+      Object {
+        "height": "18px",
+        "width": "18px",
+      }
+    }
+  />
+  <div
+    className="small mx-1.5"
+  >
     <FormattedMessage
       defaultMessage="Some Rights Reserved"
       description="Label for row of creative common icons"
@@ -69,10 +165,20 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
 
 exports[`LicenseBlurb snapshots snapshots: renders as expected with default props 1`] = `
 <div
-  className="d-flex flex-row flex-row"
+  className="d-flex flex-row align-items-center mt-2"
 >
-  <Icon />
-  <div>
+  <Icon
+    className="mr-1"
+    style={
+      Object {
+        "height": "18px",
+        "width": "18px",
+      }
+    }
+  />
+  <div
+    className="small mx-1.5"
+  >
     <FormattedMessage
       defaultMessage="All Rights Reserved"
       description="Label for row of all rights reserved icons"
@@ -84,10 +190,20 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected with default prop
 
 exports[`LicenseBlurb snapshots snapshots: renders as expected with license equal to Creative Commons 1`] = `
 <div
-  className="d-flex flex-row flex-row"
+  className="d-flex flex-row align-items-center mt-2"
 >
-  <Icon />
-  <div>
+  <Icon
+    className="mr-1"
+    style={
+      Object {
+        "height": "18px",
+        "width": "18px",
+      }
+    }
+  />
+  <div
+    className="small mx-1.5"
+  >
     <FormattedMessage
       defaultMessage="Some Rights Reserved"
       description="Label for row of creative common icons"

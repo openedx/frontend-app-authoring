@@ -2,61 +2,62 @@
 
 exports[`LicenseDisplay snapshots snapshots: renders as expected with default props 1`] = `
 <Stack
-  className="border-primary-100 border-top"
   gap={3}
 >
-  <FormattedMessage
-    defaultMessage="License Display"
-    description="Title for license display subsection"
-    id="authoring.videoeditor.license.displaySubsection.title"
-  />
-  <Card
-    className="mb-3"
+  <div
+    className="x-small"
   >
-    <Card.Header
-      title={
-        <injectIntl(ShimmedIntlComponent)
-          details={Object {}}
-          license="all-rights-reserved"
-        />
-      }
+    <FormattedMessage
+      defaultMessage="License Display"
+      description="Title for license display subsection"
+      id="authoring.videoeditor.license.displaySubsection.title"
     />
-    <Card.Section>
+  </div>
+  <div
+    className="small border border-gray-300 rounded pt-2 px-3 pb-3"
+  >
+    <injectIntl(ShimmedIntlComponent)
+      details={Object {}}
+      license="all-rights-reserved"
+    />
+    <div
+      className="x-small"
+    >
       FormattedMessage component with license description
-    </Card.Section>
-  </Card>
+    </div>
+  </div>
 </Stack>
 `;
 
 exports[`LicenseDisplay snapshots snapshots: renders as expected with level set to block 1`] = `
 <Stack
-  className="border-primary-100 border-top"
   gap={3}
 >
-  <FormattedMessage
-    defaultMessage="License Display"
-    description="Title for license display subsection"
-    id="authoring.videoeditor.license.displaySubsection.title"
-  />
-  <Card
-    className="mb-3"
+  <div
+    className="x-small"
   >
-    <Card.Header
-      title={
-        <injectIntl(ShimmedIntlComponent)
-          details={Object {}}
-          license="all-rights-reserved"
-        />
-      }
+    <FormattedMessage
+      defaultMessage="License Display"
+      description="Title for license display subsection"
+      id="authoring.videoeditor.license.displaySubsection.title"
     />
-    <Card.Section>
+  </div>
+  <div
+    className="small border border-gray-300 rounded pt-2 px-3 pb-3"
+  >
+    <injectIntl(ShimmedIntlComponent)
+      details={Object {}}
+      license="all-rights-reserved"
+    />
+    <div
+      className="x-small"
+    >
       FormattedMessage component with license description
-    </Card.Section>
-  </Card>
+    </div>
+  </div>
   <Hyperlink
-    className="text-primary-500"
+    className="text-primary-500 x-small"
     destination="https://creativecommons.org/about"
-    size="sm"
     target="_blank"
   >
     <FormattedMessage
@@ -70,33 +71,33 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with level set 
 
 exports[`LicenseDisplay snapshots snapshots: renders as expected with level set to block and license set to Creative Commons 1`] = `
 <Stack
-  className="border-primary-100 border-top"
   gap={3}
 >
-  <FormattedMessage
-    defaultMessage="License Display"
-    description="Title for license display subsection"
-    id="authoring.videoeditor.license.displaySubsection.title"
-  />
-  <Card
-    className="mb-3"
+  <div
+    className="x-small"
   >
-    <Card.Header
-      title={
-        <injectIntl(ShimmedIntlComponent)
-          details={Object {}}
-          license="creative-commons"
-        />
-      }
+    <FormattedMessage
+      defaultMessage="License Display"
+      description="Title for license display subsection"
+      id="authoring.videoeditor.license.displaySubsection.title"
     />
-    <Card.Section>
+  </div>
+  <div
+    className="small border border-gray-300 rounded pt-2 px-3 pb-3"
+  >
+    <injectIntl(ShimmedIntlComponent)
+      details={Object {}}
+      license="creative-commons"
+    />
+    <div
+      className="x-small"
+    >
       FormattedMessage component with license description
-    </Card.Section>
-  </Card>
+    </div>
+  </div>
   <Hyperlink
-    className="text-primary-500"
+    className="text-primary-500 x-small"
     destination="https://creativecommons.org/about"
-    size="sm"
     target="_blank"
   >
     <FormattedMessage
@@ -112,33 +113,33 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with level set 
 
 exports[`LicenseDisplay snapshots snapshots: renders as expected with level set to library 1`] = `
 <Stack
-  className="border-primary-100 border-top"
   gap={3}
 >
-  <FormattedMessage
-    defaultMessage="License Display"
-    description="Title for license display subsection"
-    id="authoring.videoeditor.license.displaySubsection.title"
-  />
-  <Card
-    className="mb-3"
+  <div
+    className="x-small"
   >
-    <Card.Header
-      title={
-        <injectIntl(ShimmedIntlComponent)
-          details={Object {}}
-          license="all-rights-reserved"
-        />
-      }
+    <FormattedMessage
+      defaultMessage="License Display"
+      description="Title for license display subsection"
+      id="authoring.videoeditor.license.displaySubsection.title"
     />
-    <Card.Section>
+  </div>
+  <div
+    className="small border border-gray-300 rounded pt-2 px-3 pb-3"
+  >
+    <injectIntl(ShimmedIntlComponent)
+      details={Object {}}
+      license="all-rights-reserved"
+    />
+    <div
+      className="x-small"
+    >
       FormattedMessage component with license description
-    </Card.Section>
-  </Card>
+    </div>
+  </div>
   <Hyperlink
-    className="text-primary-500"
+    className="text-primary-500 x-small"
     destination="https://creativecommons.org/about"
-    size="sm"
     target="_blank"
   >
     <FormattedMessage

@@ -47,6 +47,7 @@ export const HandoutWidget = ({
 
   return (!isLibrary ? (
     <CollapsibleFormWidget
+      fontSize="x-small"
       isError={Object.keys(error).length !== 0}
       title={intl.formatMessage(messages.titleLabel)}
       subtitle={handoutName}

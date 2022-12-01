@@ -26,7 +26,7 @@ export const messages = {
   },
   deleteLicenseSelection: {
     id: 'authoring.videoeditor.license.deleteLicenseSelection',
-    defaultMessage: 'Delete',
+    defaultMessage: 'Clear and apply the course-level license',
     description: 'Message presented to user for action to delete license selection',
   },
   allRightsReservedIconsLabel: {

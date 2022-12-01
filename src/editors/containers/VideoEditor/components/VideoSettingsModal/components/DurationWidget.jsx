@@ -41,6 +41,7 @@ export const DurationWidget = ({
 
   return (
     <CollapsibleFormWidget
+      fontSize="x-small"
       title={intl.formatMessage(messages.durationTitle)}
       subtitle={getTotalLabel(duration.formValue.startTime, duration.formValue.stopTime, true)}
     >

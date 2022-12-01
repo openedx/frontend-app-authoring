@@ -2,6 +2,7 @@
 
 exports[`VideoSourceWidget snapshots snapshots: renders as expected with default props 1`] = `
 <injectIntl(ShimmedIntlComponent)
+  fontSize="x-small"
   title="Video source"
 >
   <Form.Group>

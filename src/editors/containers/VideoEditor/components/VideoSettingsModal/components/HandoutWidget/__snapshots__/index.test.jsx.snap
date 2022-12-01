@@ -2,6 +2,7 @@
 
 exports[`HandoutWidget snapshots snapshots: renders as expected with default props 1`] = `
 <injectIntl(ShimmedIntlComponent)
+  fontSize="x-small"
   isError={true}
   subtitle="None"
   title="Handout"
@@ -64,6 +65,7 @@ exports[`HandoutWidget snapshots snapshots: renders as expected with default pro
 
 exports[`HandoutWidget snapshots snapshots: renders as expected with handout 1`] = `
 <injectIntl(ShimmedIntlComponent)
+  fontSize="x-small"
   isError={true}
   subtitle="sOMeUrl "
   title="Handout"

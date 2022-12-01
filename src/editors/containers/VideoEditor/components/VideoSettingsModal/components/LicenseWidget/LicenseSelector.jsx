@@ -31,8 +31,8 @@ export const LicenseSelector = ({
   const onLicenseChange = hooks.onSelectLicense({ dispatch: useDispatch() });
   const ref = React.useRef();
   return (
-    <Form.Group className="mt-2 mx-2">
-      <Form.Row className="mt-4.5">
+    <Form.Group className="mx-2 my-0">
+      <Form.Row>
         <Form.Control
           as="select"
           ref={ref}
@@ -60,7 +60,8 @@ export const LicenseSelector = ({
           />
         ) : null }
       </Form.Row>
-      <div>{levelDescription}</div>
+      <div className="x-small mt-2">{levelDescription}</div>
+      {license === LicenseTypes.select ? null : <div className="border-primary-100 mt-3 border-bottom" />}
     </Form.Group>
   );
 };
