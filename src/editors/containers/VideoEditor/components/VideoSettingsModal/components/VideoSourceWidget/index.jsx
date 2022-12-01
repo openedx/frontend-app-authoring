@@ -113,7 +113,7 @@ export const VideoSourceWidget = ({
         </ActionRow>
       </Form.Group>
       <Button
-        className="text-primary-500 font-weight-bold"
+        className="text-primary-500 font-weight-bold pl-0"
         size="sm"
         iconBefore={Add}
         variant="link"

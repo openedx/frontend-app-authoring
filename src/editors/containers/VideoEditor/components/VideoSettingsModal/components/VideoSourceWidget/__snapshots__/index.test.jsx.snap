@@ -97,7 +97,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
     </ActionRow>
   </Form.Group>
   <Button
-    className="text-primary-500 font-weight-bold"
+    className="text-primary-500 font-weight-bold pl-0"
     onClick={[Function]}
     size="sm"
     variant="link"

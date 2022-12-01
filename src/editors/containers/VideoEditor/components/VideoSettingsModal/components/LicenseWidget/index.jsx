@@ -71,7 +71,7 @@ export const LicenseWidget = ({
           <>
             <div className="border-primary-100 border-bottom" />
             <Button
-              className="text-primary-500 font-weight-bold"
+              className="text-primary-500 font-weight-bold justify-content-start pl-0"
               size="sm"
               iconBefore={Add}
               variant="link"

@@ -103,7 +103,7 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
       gap={3}
     >
       <Button
-        className="text-primary-500 font-weight-bold"
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
         onClick={[Function]}
         size="sm"
         variant="link"
@@ -226,7 +226,7 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
       gap={3}
     >
       <Button
-        className="text-primary-500 font-weight-bold"
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
         onClick={[Function]}
         size="sm"
         variant="link"
@@ -345,7 +345,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
       gap={3}
     >
       <Button
-        className="text-primary-500 font-weight-bold"
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
         onClick={[Function]}
         size="sm"
         variant="link"
@@ -411,7 +411,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
       gap={3}
     >
       <Button
-        className="text-primary-500 font-weight-bold"
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
         onClick={[Function]}
         size="sm"
         variant="link"
@@ -530,7 +530,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
       gap={3}
     >
       <Button
-        className="text-primary-500 font-weight-bold"
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
         onClick={[Function]}
         size="sm"
         variant="link"
@@ -649,7 +649,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
       gap={3}
     >
       <Button
-        className="text-primary-500 font-weight-bold"
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
         onClick={[Function]}
         size="sm"
         variant="link"

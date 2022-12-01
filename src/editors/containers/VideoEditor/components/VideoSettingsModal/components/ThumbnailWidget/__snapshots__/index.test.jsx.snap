@@ -132,7 +132,7 @@ exports[`ThumbnailWidget snapshots snapshots: renders as expected where videoTyp
       }
     />
     <Button
-      className="text-primary-500 font-weight-bold"
+      className="text-primary-500 font-weight-bold justify-content-start pl-0"
       disabled={false}
       onClick={[Function]}
       size="sm"
@@ -242,7 +242,7 @@ exports[`ThumbnailWidget snapshots snapshots: renders as expected with default p
       }
     />
     <Button
-      className="text-primary-500 font-weight-bold"
+      className="text-primary-500 font-weight-bold justify-content-start pl-0"
       disabled={true}
       onClick={[Function]}
       size="sm"

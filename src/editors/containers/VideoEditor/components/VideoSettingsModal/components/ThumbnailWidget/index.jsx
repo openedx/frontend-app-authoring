@@ -107,7 +107,7 @@ export const ThumbnailWidget = ({
           </div>
           <FileInput fileInput={fileInput} acceptedFiles={Object.values(acceptedImgKeys).join()} />
           <Button
-            className="text-primary-500 font-weight-bold"
+            className="text-primary-500 font-weight-bold justify-content-start pl-0"
             size="sm"
             iconBefore={FileUpload}
             onClick={fileInput.click}
