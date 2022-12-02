@@ -329,6 +329,15 @@ describe('video thunkActions', () => {
       );
     });
   });
+  describe('uploadThumbnail - emptyCanvas', () => {
+    beforeEach(() => {
+      thunkActions.uploadThumbnail({ thumbnail: mockThumbnail, emptyCanvas: true })(dispatch, getState);
+      [[dispatchedAction]] = dispatch.mock.calls;
+    });
+    it('dispatches uploadThumbnail action', () => {
+      expect(dispatchedAction.uploadThumbnail).not.toEqual(undefined);
+    });
+  });
   describe('deleteTranscript', () => {
     beforeEach(() => {
       thunkActions.deleteTranscript({ language: 'la' })(dispatch, getState);

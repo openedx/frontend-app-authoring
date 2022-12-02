@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   FormattedMessage,
@@ -16,7 +16,7 @@ import {
 } from '@edx/paragon';
 import { Delete, FileUpload } from '@edx/paragon/icons';
 
-import { actions, selectors } from '../../../../../../data/redux';
+import { selectors } from '../../../../../../data/redux';
 import { acceptedImgKeys } from './constants';
 import * as hooks from './hooks';
 import messages from './messages';
@@ -36,9 +36,9 @@ export const ThumbnailWidget = ({
   isLibrary,
   allowThumbnailUpload,
   thumbnail,
-  updateField,
   videoType,
 }) => {
+  const dispatch = useDispatch();
   const [error] = React.useContext(ErrorContext).thumbnail;
   const imgRef = React.useRef();
   const [thumbnailSrc, setThumbnailSrc] = React.useState(thumbnail);
@@ -48,6 +48,7 @@ export const ThumbnailWidget = ({
     imgRef,
     fileSizeError,
   });
+  const deleteThumbnail = hooks.deleteThumbnail({ dispatch });
   const isEdxVideo = videoType === 'edxVideo';
   const getSubtitle = () => {
     if (isEdxVideo) {
@@ -58,7 +59,6 @@ export const ThumbnailWidget = ({
     }
     return intl.formatMessage(messages.unavailableSubtitle);
   };
-
   return (!isLibrary ? (
     <CollapsibleFormWidget
       fontSize="x-small"
@@ -74,7 +74,7 @@ export const ThumbnailWidget = ({
         <FormattedMessage {...messages.fileSizeError} />
       </ErrorAlert>
       {isEdxVideo ? null : (
-        <Alert variant="info">
+        <Alert variant="light">
           <FormattedMessage {...messages.unavailableMessage} />
         </Alert>
       )}
@@ -94,16 +94,16 @@ export const ThumbnailWidget = ({
               tooltipContent={intl.formatMessage(messages.deleteThumbnail)}
               iconAs={Icon}
               src={Delete}
-              onClick={() => updateField({ thumbnail: null })}
+              onClick={deleteThumbnail}
             />
           ) : null }
         </Stack>
       ) : (
         <Stack gap={3}>
-          <div>
+          <div className="text-center">
             <FormattedMessage {...messages.addThumbnail} />
           </div>
-          <div style={{ color: 'grey' }}>
+          <div className="text-center text-primary-300">
             <FormattedMessage {...messages.aspectRequirements} />
           </div>
           <FileInput fileInput={fileInput} acceptedFiles={Object.values(acceptedImgKeys).join()} />
@@ -130,7 +130,6 @@ ThumbnailWidget.propTypes = {
   isLibrary: PropTypes.bool.isRequired,
   allowThumbnailUpload: PropTypes.bool.isRequired,
   thumbnail: PropTypes.string.isRequired,
-  updateField: PropTypes.func.isRequired,
   videoType: PropTypes.string.isRequired,
 };
 export const mapStateToProps = (state) => ({
@@ -140,8 +139,6 @@ export const mapStateToProps = (state) => ({
   videoType: selectors.video.videoType(state),
 });
 
-export const mapDispatchToProps = (dispatch) => ({
-  updateField: (stateUpdate) => dispatch(actions.video.updateField(stateUpdate)),
-});
+export const mapDispatchToProps = {};
 
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ThumbnailWidget));

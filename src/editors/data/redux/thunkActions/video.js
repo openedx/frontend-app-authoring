@@ -180,7 +180,7 @@ export const saveVideoData = () => (dispatch, getState) => {
   return selectors.video.videoSettings(state);
 };
 
-export const uploadThumbnail = ({ thumbnail }) => (dispatch, getState) => {
+export const uploadThumbnail = ({ thumbnail, emptyCanvas }) => (dispatch, getState) => {
   const state = getState();
   const { videoId } = state.video;
   const { studioEndpointUrl } = state.app;
@@ -196,9 +196,11 @@ export const uploadThumbnail = ({ thumbnail }) => (dispatch, getState) => {
         // in stage and production, image_url is an absolute path to the image
         thumbnailUrl = response.data.image_url;
       }
-      dispatch(actions.video.updateField({
-        thumbnail: thumbnailUrl,
-      }));
+      if (!emptyCanvas) {
+        dispatch(actions.video.updateField({
+          thumbnail: thumbnailUrl,
+        }));
+      }
     },
     onFailure: (e) => console.log({ UploadFailure: e }, 'Resampling thumbnail upload'),
   }));

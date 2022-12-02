@@ -132,7 +132,20 @@ export const fileSizeError = () => {
   };
 };
 
+export const deleteThumbnail = ({ dispatch }) => () => {
+  dispatch(actions.video.updateField({ thumbnail: null }));
+  const emptyCanvas = document.createElement('canvas');
+  const ctx = emptyCanvas.getContext('2d');
+  emptyCanvas.width = constants.MAX_WIDTH;
+  emptyCanvas.height = constants.MAX_HEIGHT;
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, emptyCanvas.width, emptyCanvas.height);
+  const file = createResampledFile({ canvasUrl: emptyCanvas.toDataURL(), filename: 'blankThumbnail.png', mimeType: 'image/png' });
+  dispatch(thunkActions.video.uploadThumbnail({ thumbnail: file, emptyCanvas }));
+};
+
 export default {
   fileInput,
   fileSizeError,
+  deleteThumbnail,
 };

@@ -52,7 +52,7 @@ export const messages = {
   fileSizeError: {
     id: 'authoring.videoeditor.thumbnail.error.fileSizeError',
     defaultMessage:
-      'The file size for thumbnails must be larger than 2 KB or less than 2 MB. Please resize image and try again.',
+      'The file size for thumbnails must be larger than 2 KB or less than 2 MB. Please resize your image and try again.',
     description:
       ' Message presented to user when file size of image is less than 2 KB or larger than 2 MB',
   },

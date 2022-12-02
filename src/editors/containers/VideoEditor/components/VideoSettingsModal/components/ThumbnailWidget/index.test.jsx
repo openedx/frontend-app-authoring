@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 
 import { formatMessage } from '../../../../../../../testUtils';
-import { actions, selectors } from '../../../../../../data/redux';
+import { selectors } from '../../../../../../data/redux';
 import { ThumbnailWidget, mapStateToProps, mapDispatchToProps } from '.';
 
 jest.mock('react', () => ({
@@ -95,9 +95,8 @@ describe('ThumbnailWidget', () => {
     });
   });
   describe('mapDispatchToProps', () => {
-    const dispatch = jest.fn();
-    test('updateField from actions.video.updateField', () => {
-      expect(mapDispatchToProps.updateField).toEqual(dispatch(actions.video.updateField));
+    test('mapDispatchToProps to equal an empty object', () => {
+      expect(mapDispatchToProps).toEqual({});
     });
   });
 });
