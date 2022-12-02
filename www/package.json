@@ -15,7 +15,7 @@
     "@edx/frontend-build": "^9.1.1",
     "@edx/frontend-lib-content-components": "file:..",
     "@edx/frontend-platform": "^3.0.1",
-    "@edx/paragon": "^20.18.0",
+    "@edx/paragon": "^20.21.0",
     "core-js": "^3.21.1",
     "dotenv": "^16.0.0",
     "prop-types": "^15.5.10",

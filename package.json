@@ -36,7 +36,7 @@
   "devDependencies": {
     "@edx/frontend-build": "^11.0.2",
     "@edx/frontend-platform": "2.4.0",
-    "@edx/paragon": "^20.18.0",
+    "@edx/paragon": "^20.21.0",
     "@testing-library/dom": "^8.13.0",
     "@testing-library/react": "12.1.1",
     "@testing-library/user-event": "^13.5.0",
@@ -80,7 +80,7 @@
   },
   "peerDependencies": {
     "@edx/frontend-platform": ">1.15.0",
-    "@edx/paragon": "^20.0.0",
+    "@edx/paragon": "^20.21.0",
     "prop-types": "^15.5.10",
     "react": "^16.14.0",
     "react-dom": "^16.14.0"
