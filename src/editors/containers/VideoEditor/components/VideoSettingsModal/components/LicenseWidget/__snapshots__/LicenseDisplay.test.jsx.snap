@@ -26,6 +26,17 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with default pr
       FormattedMessage component with license description
     </div>
   </div>
+  <Hyperlink
+    className="text-primary-500 x-small"
+    destination="https://creativecommons.org/about"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="View license details"
+      description="Label for view license details button"
+      id="authoring.videoeditor.license.viewLicenseDetailsLabel.label"
+    />
+  </Hyperlink>
 </Stack>
 `;
 

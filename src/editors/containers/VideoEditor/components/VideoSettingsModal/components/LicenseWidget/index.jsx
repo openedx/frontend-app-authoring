@@ -63,7 +63,6 @@ export const LicenseWidget = ({
               license={license}
               details={details}
               licenseDescription={licenseDescription}
-              level={level}
             />
           </>
         ) : null }

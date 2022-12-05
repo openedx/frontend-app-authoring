@@ -10,7 +10,7 @@ import {
   Hyperlink,
 } from '@edx/paragon';
 
-import { LicenseLevel, LicenseTypes } from '../../../../../../data/constants/licenses';
+import { LicenseTypes } from '../../../../../../data/constants/licenses';
 
 import LicenseBlurb from './LicenseBlurb';
 import { messages } from './messages';
@@ -19,7 +19,6 @@ export const LicenseDisplay = ({
   license,
   details,
   licenseDescription,
-  level,
 }) => {
   if (license !== LicenseTypes.select) {
     return (
@@ -29,15 +28,13 @@ export const LicenseDisplay = ({
           <LicenseBlurb license={license} details={details} />
           <div className="x-small">{licenseDescription}</div>
         </div>
-        {level !== LicenseLevel.course ? (
-          <Hyperlink
-            className="text-primary-500 x-small"
-            destination="https://creativecommons.org/about"
-            target="_blank"
-          >
-            <FormattedMessage {...messages.viewLicenseDetailsLabel} />
-          </Hyperlink>
-        ) : null }
+        <Hyperlink
+          className="text-primary-500 x-small"
+          destination="https://creativecommons.org/about"
+          target="_blank"
+        >
+          <FormattedMessage {...messages.viewLicenseDetailsLabel} />
+        </Hyperlink>
       </Stack>
     );
   }

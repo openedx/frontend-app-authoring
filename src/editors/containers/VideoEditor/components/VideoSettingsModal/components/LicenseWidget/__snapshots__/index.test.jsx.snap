@@ -35,7 +35,6 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with default pro
     />
     <injectIntl(ShimmedIntlComponent)
       details={Object {}}
-      level="course"
       license="all-rights-reserved"
       licenseDescription={
         <FormattedMessage
@@ -99,7 +98,6 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with isLibrary t
     />
     <injectIntl(ShimmedIntlComponent)
       details={Object {}}
-      level="library"
       license="all-rights-reserved"
       licenseDescription={
         <FormattedMessage
@@ -148,7 +146,6 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with licenseType
     />
     <injectIntl(ShimmedIntlComponent)
       details={Object {}}
-      level="block"
       license="all-rights-reserved"
       licenseDescription={
         <FormattedMessage
