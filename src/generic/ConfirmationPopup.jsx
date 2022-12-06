@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card } from '@edx/paragon';
 
-const DeletePopup = ({
+const ConfirmationPopup = ({
   label,
   bodyText,
-  onDelete,
-  deleteLabel,
+  onConfirm,
+  confirmLabel,
   onCancel,
   cancelLabel,
 }) => (
@@ -22,21 +22,21 @@ const DeletePopup = ({
         <Button variant="tertiary" onClick={onCancel}>
           {cancelLabel}
         </Button>
-        <Button variant="outline-brand" className="ml-2" onClick={onDelete}>
-          {deleteLabel}
+        <Button variant="outline-brand" className="ml-2" onClick={onConfirm}>
+          {confirmLabel}
         </Button>
       </Card.Footer>
     </Card.Body>
   </Card>
 );
 
-DeletePopup.propTypes = {
+ConfirmationPopup.propTypes = {
   label: PropTypes.string.isRequired,
   bodyText: PropTypes.string.isRequired,
-  onDelete: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
-  deleteLabel: PropTypes.string.isRequired,
+  confirmLabel: PropTypes.string.isRequired,
   cancelLabel: PropTypes.string.isRequired,
 };
 
-export default DeletePopup;
+export default ConfirmationPopup;
