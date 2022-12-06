@@ -44,7 +44,7 @@ const messages = defineMessages({
     description: 'Asks the user whether he/she really wants to enable discussions on units in graded subsections.',
   },
   cancelEnableDiscussionsLabel: {
-    id: 'authoring.discussions.confirmEnableDiscussionsLabel',
+    id: 'authoring.discussions.cancelEnableDiscussionsLabel',
     defaultMessage: 'Disable discussions on units in graded subsections?',
     description: 'Asks the user whether he/she really wants to disable discussions on units in graded subsections.',
   },
@@ -54,7 +54,7 @@ const messages = defineMessages({
     description: 'Asks the user whether he/she really wants to enable discussions on units in graded subsections.',
   },
   cancelEnableDiscussions: {
-    id: 'authoring.discussions.confirmEnableDiscussions',
+    id: 'authoring.discussions.cancelEnableDiscussions',
     defaultMessage: 'Disabling this toggle will automatically disable discussion on all units in graded subsections. Discussion topics containing at least 1 thread will be listed and accessible under “Archived” in Topics tab on the Discussions page.',
     description: 'Asks the user whether he/she really wants to disable discussions on units in graded subsections.',
   },
