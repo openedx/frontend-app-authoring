@@ -71,7 +71,7 @@ export const VideoSourceWidget = ({
           <FormattedMessage {...messages.fallbackVideoMessage} />
         </div>
         {fallbackVideos.formValue.map((videoUrl, index) => (
-          <Form.Row className="mt-4">
+          <Form.Row className="mt-4 flex-nowrap">
             <Form.Control
               floatingLabel={intl.formatMessage(messages.fallbackVideoLabel)}
               onChange={fallbackVideos.onChange(index)}

@@ -32,7 +32,7 @@ export const LicenseSelector = ({
   const ref = React.useRef();
   return (
     <Form.Group className="mx-2 my-0">
-      <Form.Row>
+      <Form.Row className="flex-nowrap">
         <Form.Control
           as="select"
           ref={ref}

@@ -71,7 +71,7 @@ export const Transcript = ({
           </Card>
         )
         : (
-          <Row>
+          <Row className="flex-nowrap">
             <LanguageSelector
               title={index}
               language={language}

@@ -9,9 +9,9 @@ exports[`LanguageSelector snapshot transcript option 1`] = `
     controlId="selectLanguage-form-undefined"
   >
     <Form.Control
+      aria-label="Languages"
       as="select"
       defaultValue="kl"
-      floatingLabel="Languages"
       onChange={[Function]}
     >
       <option
@@ -56,9 +56,9 @@ exports[`LanguageSelector snapshots -- no transcripts no Open Languages, all sho
     controlId="selectLanguage-form-undefined"
   >
     <Form.Control
+      aria-label="Languages"
       as="select"
       defaultValue="kl"
-      floatingLabel="Languages"
       onChange={[Function]}
     >
       <option

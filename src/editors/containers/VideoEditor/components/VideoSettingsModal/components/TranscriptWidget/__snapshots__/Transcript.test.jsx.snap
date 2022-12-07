@@ -2,7 +2,9 @@
 
 exports[`Transcript Component component component snapshots: renders as expected with default props: dont show confirm delete 1`] = `
 <Fragment>
-  <Component>
+  <Component
+    className="flex-nowrap"
+  >
     <LanguageSelector
       language="lAnG"
       title="sOmenUmBer"
@@ -18,7 +20,9 @@ exports[`Transcript Component component component snapshots: renders as expected
 
 exports[`Transcript Component component component snapshots: renders as expected with default props: dont show confirm delete, language is blank so delete is shown instead of action menu 1`] = `
 <Fragment>
-  <Component>
+  <Component
+    className="flex-nowrap"
+  >
     <LanguageSelector
       language=""
       title="sOmenUmBer"

@@ -11,7 +11,7 @@ export const messages = {
   },
   addFirstTranscript: {
     id: 'authoring.videoeditor.transcripts.upload.firstTranscriptMessage',
-    defaultMessage: 'Add video transcripts for improved accessibility.',
+    defaultMessage: 'Add video transcripts (.srt files only) for improved accessibility.',
     description: 'Message for adding first transcript',
   },
   allowDownloadCheckboxLabel: {
@@ -68,6 +68,11 @@ export const messages = {
     id: 'authoring.videoeditor.transcripts.languageSelectLabel',
     defaultMessage: 'Languages',
     description: 'Label For Dropdown, which allows users to set the language associtated with a transcript',
+  },
+  languageSelectPlaceholder: {
+    id: 'authoring.videoeditor.transcripts.languageSelectPlaceholder',
+    defaultMessage: 'Select Language',
+    description: 'Placeholder For Dropdown, which allows users to set the language associtated with a transcript',
   },
   cancelDeleteLabel: {
     id: 'authoring.videoeditor.transcripts.cancelDeleteLabel',

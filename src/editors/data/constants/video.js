@@ -1,6 +1,7 @@
 import { StrictDict } from '../../utils';
 
 export const videoTranscriptLanguages = StrictDict({
+  placeholder: '',
   aa: 'Afar',
   ab: 'Abkhazian',
   af: 'Afrikaans',

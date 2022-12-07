@@ -54,13 +54,13 @@ export const LanguageSelector = ({
   const onLanguageChange = module.hooks.onSelectLanguage({
     dispatch: useDispatch(), languageBeforeChange: localLang, setLocalLang, triggerupload: input.click,
   });
-
   return (
     <div className="col col-11">
       <Form.Group controlId={`selectLanguage-form-${index}`} className="mw-100">
-        <Form.Control as="select" defaultValue={language} onChange={(e) => onLanguageChange(e)} floatingLabel={intl.formatMessage(messages.languageSelectLabel)}>
+        <Form.Control as="select" aria-label={intl.formatMessage(messages.languageSelectLabel)} defaultValue={language} onChange={(e) => onLanguageChange(e)}>
           {Object.entries(videoTranscriptLanguages).map(([lang, text]) => {
             if (language === lang) { return (<option value={lang} selected>{text}</option>); }
+            if (lang === 'placeholder') { return (<option hidden>{intl.formatMessage(messages.languageSelectPlaceholder)}</option>); }
             if (openLanguages.some(row => row.includes(lang))) {
               return (<option value={lang}>{text}</option>);
             }

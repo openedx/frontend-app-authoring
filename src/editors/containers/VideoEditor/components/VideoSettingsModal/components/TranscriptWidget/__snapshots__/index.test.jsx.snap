@@ -396,17 +396,8 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
   <Stack
     gap={3}
   >
-    <Alert
-      variant="danger"
-    >
-      <FormattedMessage
-        defaultMessage="Only SRT files can be uploaded. Please select a file ending in .srt to upload."
-        description="Message warning users to only upload .srt files"
-        id="authoring.videoeditor.transcripts.fileTypeWarning"
-      />
-    </Alert>
     <FormattedMessage
-      defaultMessage="Add video transcripts for improved accessibility."
+      defaultMessage="Add video transcripts (.srt files only) for improved accessibility."
       description="Message for adding first transcript"
       id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
     />

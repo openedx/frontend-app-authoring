@@ -11,7 +11,6 @@ import {
   Button,
   Stack,
   Icon,
-  Alert,
   OverlayTrigger,
   Tooltip,
   ActionRow,
@@ -153,9 +152,6 @@ export const TranscriptWidget = ({
           </Form.Group>
         ) : (
           <>
-            <Alert variant="danger">
-              <FormattedMessage {...messages.fileTypeWarning} />
-            </Alert>
             <FormattedMessage {...messages.addFirstTranscript} />
           </>
         )}
