@@ -22,7 +22,11 @@ export const EditorContainer = ({
     <div>
       <ModalDialog.Header>
         <ModalDialog.Title>
-          <TitleHeader isInitialized={isInitialized} />
+          <div
+            style={{ height: '44px', margin: 'auto' }}
+          >
+            <TitleHeader isInitialized={isInitialized} />
+          </div>
           <div className="pgn__modal-close-container">
             <IconButton
               src={Close}

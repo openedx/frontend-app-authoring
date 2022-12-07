@@ -4,9 +4,18 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
 <div>
   <ModalDialog.Header>
     <ModalDialog.Title>
-      <injectIntl(ShimmedIntlComponent)
-        isInitialized={true}
-      />
+      <div
+        style={
+          Object {
+            "height": "44px",
+            "margin": "auto",
+          }
+        }
+      >
+        <injectIntl(ShimmedIntlComponent)
+          isInitialized={true}
+        />
+      </div>
       <div
         className="pgn__modal-close-container"
       >
@@ -53,9 +62,18 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
 <div>
   <ModalDialog.Header>
     <ModalDialog.Title>
-      <injectIntl(ShimmedIntlComponent)
-        isInitialized={false}
-      />
+      <div
+        style={
+          Object {
+            "height": "44px",
+            "margin": "auto",
+          }
+        }
+      >
+        <injectIntl(ShimmedIntlComponent)
+          isInitialized={false}
+        />
+      </div>
       <div
         className="pgn__modal-close-container"
       >
