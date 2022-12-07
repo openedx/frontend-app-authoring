@@ -56,6 +56,7 @@ const pluginConfig = (isLibrary) => {
         menubar: false,
         min_height: 500,
         toolbar_sticky: true,
+        toolbar_sticky_offset: 76,
         relative_urls: true,
         convert_urls: false,
       },

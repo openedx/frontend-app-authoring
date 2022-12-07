@@ -2,7 +2,9 @@
 
 exports[`EditorContainer component render snapshot: initialized. enable save and pass to header 1`] = `
 <div>
-  <ModalDialog.Header>
+  <ModalDialog.Header
+    className="shadow-sm zindex-10"
+  >
     <ModalDialog.Title>
       <div
         style={
@@ -60,7 +62,9 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
 
 exports[`EditorContainer component render snapshot: not initialized. disable save and pass to header 1`] = `
 <div>
-  <ModalDialog.Header>
+  <ModalDialog.Header
+    className="shadow-sm zindex-10"
+  >
     <ModalDialog.Title>
       <div
         style={

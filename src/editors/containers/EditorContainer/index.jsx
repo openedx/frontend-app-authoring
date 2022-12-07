@@ -20,7 +20,7 @@ export const EditorContainer = ({
   const handleCancelClicked = hooks.handleCancelClicked({ onClose });
   return (
     <div>
-      <ModalDialog.Header>
+      <ModalDialog.Header className="shadow-sm zindex-10">
         <ModalDialog.Title>
           <div
             style={{ height: '44px', margin: 'auto' }}
