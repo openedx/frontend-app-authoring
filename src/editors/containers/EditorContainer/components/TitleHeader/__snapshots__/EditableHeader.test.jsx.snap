@@ -2,12 +2,10 @@
 
 exports[`EditableHeader snapshot snapshot 1`] = `
 <Form.Group
-  className="mw-100"
   onBlur={[Function]}
   style={
     Object {
-      "min-width": "200px",
-      "width": "320px",
+      "width": "90%",
     }
   }
 >
@@ -18,7 +16,7 @@ exports[`EditableHeader snapshot snapshot 1`] = `
     placeholder="Title"
     style={
       Object {
-        "padding-inline-end": "calc(1rem + 84px)",
+        "paddingInlineEnd": "calc(1rem + 84px)",
       }
     }
     trailingElement={
