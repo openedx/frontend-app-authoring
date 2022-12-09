@@ -17,21 +17,17 @@ function InContextDiscussionFields({
     setFieldValue,
   } = useFormikContext();
 
-  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleConfirmation = () => {
     setFieldValue('enableGradedUnits', !values.enableGradedUnits);
-    setShowDeletePopup(false);
-  };
-
-  const handleChange = () => {
-        setShowDeletePopup(true);
+    setShowPopup(false);
   };
 
   return (
     <>
       <h5 className="text-gray-500 mt-4">{intl.formatMessage(messages.visibilityInContext)}</h5>
-      {showDeletePopup
+      {showPopup
         ? (
           <ConfirmationPopup
             label={values.enableGradedUnits
@@ -42,13 +38,13 @@ function InContextDiscussionFields({
               : intl.formatMessage(messages.confirmEnableDiscussions)}
             onConfirm={handleConfirmation}
             confirmLabel={intl.formatMessage(messages.confirm)}
-            onCancel={() => setShowDeletePopup(false)}
+            onCancel={() => setShowPopup(false)}
             cancelLabel={intl.formatMessage(messages.cancelButton)}
           />
           )
         : (
           <FormSwitchGroup
-            onChange={handleChange}
+            onChange={() => setShowPopup(true)}
             onBlur={onBlur}
             id="enableGradedUnits"
             checked={values.enableGradedUnits}
