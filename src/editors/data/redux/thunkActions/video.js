@@ -107,10 +107,25 @@ export const parseTranscripts = ({ transcriptsData }) => {
   if (!transcriptsData) {
     return [];
   }
-  const startString = 'language.", "value": ';
   const cleanedStr = transcriptsData.replace(/&#34;/g, '"');
-  const metadataStr = cleanedStr.substring(cleanedStr.indexOf(startString) + startString.length, cleanedStr.indexOf(', "type": "VideoTranslations"'));
-  return Object.keys(JSON.parse(metadataStr));
+  const startString = '"transcripts": ';
+  const endString = ', "youtube_id_0_75": ';
+  const transcriptsJson = cleanedStr.substring(
+    cleanedStr.indexOf(startString) + startString.length,
+    cleanedStr.indexOf(endString),
+  );
+  // const transcriptsObj = JSON.parse(transcriptsJson);
+  try {
+    const transcriptsObj = JSON.parse(transcriptsJson);
+    return Object.keys(transcriptsObj.value);
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      console.error('Invalid JSON:', error.message);
+    } else {
+      throw error;
+    }
+    return [];
+  }
 };
 
 // partially copied from frontend-app-learning/src/courseware/course/course-license/CourseLicense.jsx
