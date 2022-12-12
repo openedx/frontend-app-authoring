@@ -42,7 +42,7 @@ exports[`ThumbnailWidget snapshots snapshots: renders as expected where thumbnai
 </injectIntl(ShimmedIntlComponent)>
 `;
 
-exports[`ThumbnailWidget snapshots snapshots: renders as expected where videoType equals edxVideo 1`] = `
+exports[`ThumbnailWidget snapshots snapshots: renders as expected where videoId is valid 1`] = `
 <injectIntl(ShimmedIntlComponent)
   fontSize="x-small"
   isError={true}
@@ -81,7 +81,7 @@ exports[`ThumbnailWidget snapshots snapshots: renders as expected where videoTyp
 </injectIntl(ShimmedIntlComponent)>
 `;
 
-exports[`ThumbnailWidget snapshots snapshots: renders as expected where videoType equals edxVideo and no thumbnail 1`] = `
+exports[`ThumbnailWidget snapshots snapshots: renders as expected where videoId is valid and no thumbnail 1`] = `
 <injectIntl(ShimmedIntlComponent)
   fontSize="x-small"
   isError={true}

@@ -19,12 +19,16 @@ jest.mock('../../../../../../data/redux', () => ({
     video: {
       allowThumbnailUpload: jest.fn(state => ({ allowThumbnailUpload: state })),
       thumbnail: jest.fn(state => ({ thumbnail: state })),
-      videoType: jest.fn(state => ({ videoType: state })),
+      videoId: jest.fn(state => ({ videoId: state })),
     },
     app: {
       isLibrary: jest.fn(state => ({ isLibrary: state })),
     },
   },
+}));
+
+jest.mock('../../../../../../data/services/cms/api', () => ({
+  isEdxVideo: (args) => (args),
 }));
 
 describe('ThumbnailWidget', () => {
@@ -35,10 +39,9 @@ describe('ThumbnailWidget', () => {
     isLibrary: false,
     allowThumbnailUpload: false,
     thumbnail: null,
-    videoType: '',
+    videoId: '',
     updateField: jest.fn().mockName('args.updateField'),
   };
-
   describe('snapshots', () => {
     test('snapshots: renders as expected with default props', () => {
       expect(
@@ -52,7 +55,7 @@ describe('ThumbnailWidget', () => {
     });
     test('snapshots: renders as expected with a thumbnail provided', () => {
       expect(
-        shallow(<ThumbnailWidget {...props} thumbnail="sOMeUrl" videoType="edxVideo" />),
+        shallow(<ThumbnailWidget {...props} thumbnail="sOMeUrl" videoId="sOMeViDEoID" />),
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected where thumbnail uploads are allowed', () => {
@@ -60,14 +63,14 @@ describe('ThumbnailWidget', () => {
         shallow(<ThumbnailWidget {...props} thumbnail="sOMeUrl" allowThumbnailUpload />),
       ).toMatchSnapshot();
     });
-    test('snapshots: renders as expected where videoType equals edxVideo', () => {
+    test('snapshots: renders as expected where videoId is valid', () => {
       expect(
-        shallow(<ThumbnailWidget {...props} thumbnail="sOMeUrl" allowThumbnailUpload videoType="edxVideo" />),
+        shallow(<ThumbnailWidget {...props} thumbnail="sOMeUrl" allowThumbnailUpload videoId="sOMeViDEoID" />),
       ).toMatchSnapshot();
     });
-    test('snapshots: renders as expected where videoType equals edxVideo and no thumbnail', () => {
+    test('snapshots: renders as expected where videoId is valid and no thumbnail', () => {
       expect(
-        shallow(<ThumbnailWidget {...props} allowThumbnailUpload videoType="edxVideo" />),
+        shallow(<ThumbnailWidget {...props} allowThumbnailUpload videoId="sOMeViDEoID" />),
       ).toMatchSnapshot();
     });
   });
@@ -88,10 +91,10 @@ describe('ThumbnailWidget', () => {
         mapStateToProps(testState).thumbnail,
       ).toEqual(selectors.video.thumbnail(testState));
     });
-    test('videoType from video.videoType', () => {
+    test('videoId from video.videoId', () => {
       expect(
-        mapStateToProps(testState).videoType,
-      ).toEqual(selectors.video.videoType(testState));
+        mapStateToProps(testState).videoId,
+      ).toEqual(selectors.video.videoId(testState));
     });
   });
   describe('mapDispatchToProps', () => {

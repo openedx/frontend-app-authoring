@@ -11,7 +11,6 @@ export const loadVideoData = () => (dispatch, getState) => {
   const studioView = state.app.studioView?.data?.html;
   const {
     videoSource,
-    videoType,
     videoId,
     fallbackVideos,
   } = module.determineVideoSource({
@@ -28,7 +27,6 @@ export const loadVideoData = () => (dispatch, getState) => {
 
   dispatch(actions.video.load({
     videoSource,
-    videoType,
     videoId,
     fallbackVideos,
     allowVideoDownloads: rawVideoData.download_video,
@@ -74,30 +72,21 @@ export const determineVideoSource = ({
   const youtubeUrl = `https://youtu.be/${youtubeId}`;
   const videoId = edxVideoId || '';
   let videoSource = '';
-  let videoType = '';
   let fallbackVideos = [];
   if (youtubeId) {
     // videoSource = youtubeUrl;
     // fallbackVideos = html5Sources;
     [videoSource, fallbackVideos] = [youtubeUrl, html5Sources];
-    videoType = 'youtube';
   } else if (edxVideoId) {
-    // videoSource = edxVideoId;
     // fallbackVideos = html5Sources;
-    [videoSource, fallbackVideos] = [edxVideoId, html5Sources];
-    videoType = 'edxVideo';
+    fallbackVideos = html5Sources;
   } else if (Array.isArray(html5Sources) && html5Sources[0]) {
     // videoSource = html5Sources[0];
     // fallbackVideos = html5Sources.slice(1);
     [videoSource, fallbackVideos] = [html5Sources[0], html5Sources.slice(1)];
-    videoType = 'html5source';
-  }
-  if (!fallbackVideos || fallbackVideos.length === 0) {
-    fallbackVideos = ['', ''];
   }
   return {
     videoSource,
-    videoType,
     videoId,
     fallbackVideos,
   };

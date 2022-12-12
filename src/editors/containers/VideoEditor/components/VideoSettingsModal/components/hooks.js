@@ -30,6 +30,7 @@ export const selectorKeys = keyStore(selectors.video);
 export const state = StrictDict(
   [
     selectorKeys.videoSource,
+    selectorKeys.videoId,
     selectorKeys.fallbackVideos,
     selectorKeys.allowVideoDownloads,
 

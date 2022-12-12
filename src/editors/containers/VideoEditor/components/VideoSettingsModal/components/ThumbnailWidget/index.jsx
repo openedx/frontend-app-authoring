@@ -17,6 +17,8 @@ import {
 import { Delete, FileUpload } from '@edx/paragon/icons';
 
 import { selectors } from '../../../../../../data/redux';
+import { isEdxVideo } from '../../../../../../data/services/cms/api';
+
 import { acceptedImgKeys } from './constants';
 import * as hooks from './hooks';
 import messages from './messages';
@@ -36,7 +38,7 @@ export const ThumbnailWidget = ({
   isLibrary,
   allowThumbnailUpload,
   thumbnail,
-  videoType,
+  videoId,
 }) => {
   const dispatch = useDispatch();
   const [error] = React.useContext(ErrorContext).thumbnail;
@@ -48,10 +50,10 @@ export const ThumbnailWidget = ({
     imgRef,
     fileSizeError,
   });
+  const edxVideo = isEdxVideo(videoId);
   const deleteThumbnail = hooks.deleteThumbnail({ dispatch });
-  const isEdxVideo = videoType === 'edxVideo';
   const getSubtitle = () => {
-    if (isEdxVideo) {
+    if (edxVideo) {
       if (thumbnail) {
         return intl.formatMessage(messages.yesSubtitle);
       }
@@ -73,7 +75,7 @@ export const ThumbnailWidget = ({
       >
         <FormattedMessage {...messages.fileSizeError} />
       </ErrorAlert>
-      {isEdxVideo ? null : (
+      {edxVideo ? null : (
         <Alert variant="light">
           <FormattedMessage {...messages.unavailableMessage} />
         </Alert>
@@ -88,7 +90,7 @@ export const ThumbnailWidget = ({
             src={thumbnailSrc || thumbnail}
             alt={intl.formatMessage(messages.thumbnailAltText)}
           />
-          { (allowThumbnailUpload && isEdxVideo) ? (
+          { (allowThumbnailUpload && edxVideo) ? (
             <IconButtonWithTooltip
               tooltipPlacement="top"
               tooltipContent={intl.formatMessage(messages.deleteThumbnail)}
@@ -113,7 +115,7 @@ export const ThumbnailWidget = ({
             iconBefore={FileUpload}
             onClick={fileInput.click}
             variant="link"
-            disabled={!isEdxVideo}
+            disabled={!edxVideo}
           >
             <FormattedMessage {...messages.uploadButtonLabel} />
           </Button>
@@ -130,13 +132,13 @@ ThumbnailWidget.propTypes = {
   isLibrary: PropTypes.bool.isRequired,
   allowThumbnailUpload: PropTypes.bool.isRequired,
   thumbnail: PropTypes.string.isRequired,
-  videoType: PropTypes.string.isRequired,
+  videoId: PropTypes.string.isRequired,
 };
 export const mapStateToProps = (state) => ({
   isLibrary: selectors.app.isLibrary(state),
   allowThumbnailUpload: selectors.video.allowThumbnailUpload(state),
   thumbnail: selectors.video.thumbnail(state),
-  videoType: selectors.video.videoType(state),
+  videoId: selectors.video.videoId(state),
 });
 
 export const mapDispatchToProps = {};

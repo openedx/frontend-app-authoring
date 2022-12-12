@@ -10,14 +10,39 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
       className="border-primary-100 border-bottom pb-4"
     >
       <Form.Control
-        floatingLabel="Video ID or URL"
+        floatingLabel="Video ID"
         onBlur={[Function]}
         onChange={[MockFunction]}
         value=""
       />
+      <Component
+        className="text-primary-300 mb-4"
+      >
+        <FormattedMessage
+          defaultMessage="If you were assigned a video ID by edX, enter the ID here."
+          description="Feedback for video ID field"
+          id="authoring.videoeditor.videoSource.videoId.feedback"
+        />
+      </Component>
+      <Form.Control
+        floatingLabel="Video URL"
+        onBlur={[Function]}
+        onChange={[MockFunction]}
+        value=""
+      />
+      <Component
+        className="text-primary-300"
+      >
+        <FormattedMessage
+          defaultMessage="The URL for your video. This can be a YouTube URL, or a link
+    to an .mp4, .ogg, or .webm video file hosted elsewhere on the internet."
+          description="Feedback for video URL field"
+          id="authoring.videoeditor.videoSource.videoUrl.feedback"
+        />
+      </Component>
     </div>
     <div
-      className="mt-3"
+      className="mt-4"
     >
       <FormattedMessage
         defaultMessage="Fallback videos"

@@ -14,6 +14,7 @@ jest.mock('../../../../../../data/redux', () => ({
   selectors: {
     video: {
       videoSource: jest.fn(state => ({ videoSource: state })),
+      videoId: jest.fn(state => ({ videoId: state })),
       fallbackVideos: jest.fn(state => ({ fallbackVideos: state })),
       allowVideoDownloads: jest.fn(state => ({ allowVideoDownloads: state })),
     },
@@ -23,6 +24,7 @@ jest.mock('../../../../../../data/redux', () => ({
 jest.mock('../hooks', () => ({
   selectorKeys: ['soMEkEy'],
   widgetValues: jest.fn().mockReturnValue({
+    videoId: { onChange: jest.fn(), onBlur: jest.fn(), local: '' },
     videoSource: { onChange: jest.fn(), onBlur: jest.fn(), local: '' },
     fallbackVideos: {
       formValue: ['somEUrL'],

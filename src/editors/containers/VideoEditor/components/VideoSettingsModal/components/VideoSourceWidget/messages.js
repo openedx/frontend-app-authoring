@@ -4,16 +4,26 @@ export const messages = {
     defaultMessage: 'Video source',
     description: 'Title for the video source widget',
   },
-  videoIdOrUrlLabel: {
-    id: 'authoring.videoeditor.videoSource.videoIdOrUrl.label',
-    defaultMessage: 'Video ID or URL',
-    description: 'Label for video ID or URL field',
+  videoIdLabel: {
+    id: 'authoring.videoeditor.videoSource.videoId.label',
+    defaultMessage: 'Video ID',
+    description: 'Label for video ID field',
   },
-  videoIdOrUrlFeedback: {
-    id: 'authoring.videoeditor.videoSource.videoIdOrUrl.feedback',
-    defaultMessage: `Your video ID, YouTube URL, or a link to an .mp4, .ogg, or
-    .webm video file hosted elsewhere on the Internet`,
-    description: 'Feedback for video ID or URL field',
+  videoIdFeedback: {
+    id: 'authoring.videoeditor.videoSource.videoId.feedback',
+    defaultMessage: 'If you were assigned a video ID by edX, enter the ID here.',
+    description: 'Feedback for video ID field',
+  },
+  videoUrlLabel: {
+    id: 'authoring.videoeditor.videoSource.videoUrl.label',
+    defaultMessage: 'Video URL',
+    description: 'Label for video URL field',
+  },
+  videoUrlFeedback: {
+    id: 'authoring.videoeditor.videoSource.videoUrl.feedback',
+    defaultMessage: `The URL for your video. This can be a YouTube URL, or a link
+    to an .mp4, .ogg, or .webm video file hosted elsewhere on the internet.`,
+    description: 'Feedback for video URL field',
   },
   fallbackVideoTitle: {
     id: 'authoring.videoeditor.videoSource.fallbackVideo.title',

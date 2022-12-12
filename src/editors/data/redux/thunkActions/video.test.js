@@ -94,7 +94,6 @@ describe('video thunkActions', () => {
         videoSource: 'videOsOurce',
         videoId: 'videOiD',
         fallbackVideos: 'fALLbACKvIDeos',
-        videoType: 'viDEOtyPE',
       });
       jest.spyOn(thunkActions, thunkActionsKeys.parseLicense).mockReturnValue([
         'liCENSEtyPe',
@@ -123,7 +122,6 @@ describe('video thunkActions', () => {
         videoSource: 'videOsOurce',
         videoId: 'videOiD',
         fallbackVideos: 'fALLbACKvIDeos',
-        videoType: 'viDEOtyPE',
         allowVideoDownloads: testMetadata.download_video,
         transcripts: testMetadata.transcripts,
         allowTranscriptDownloads: testMetadata.download_track,
@@ -173,7 +171,6 @@ describe('video thunkActions', () => {
         })).toEqual({
           videoSource: youtubeUrl,
           videoId: edxVideoId,
-          videoType: 'youtube',
           fallbackVideos: html5Sources,
         });
       });
@@ -185,10 +182,9 @@ describe('video thunkActions', () => {
           youtubeId: '',
           html5Sources: '',
         })).toEqual({
-          videoSource: edxVideoId,
+          videoSource: '',
           videoId: edxVideoId,
-          videoType: 'edxVideo',
-          fallbackVideos: ['', ''],
+          fallbackVideos: '',
         });
       });
     });
@@ -201,7 +197,6 @@ describe('video thunkActions', () => {
         })).toEqual({
           videoSource: youtubeUrl,
           videoId: '',
-          videoType: 'youtube',
           fallbackVideos: html5Sources,
         });
       });
@@ -215,7 +210,6 @@ describe('video thunkActions', () => {
         })).toEqual({
           videoSource: 'htmLOne',
           videoId: '',
-          videoType: 'html5source',
           fallbackVideos: ['hTMlTwo', 'htMLthrEE'],
         });
       });
@@ -227,8 +221,7 @@ describe('video thunkActions', () => {
         })).toEqual({
           videoSource: 'htmlOne',
           videoId: '',
-          fallbackVideos: ['', ''],
-          videoType: 'html5source',
+          fallbackVideos: [],
         });
       });
     });
@@ -241,8 +234,7 @@ describe('video thunkActions', () => {
         })).toEqual({
           videoSource: '',
           videoId: '',
-          fallbackVideos: ['', ''],
-          videoType: '',
+          fallbackVideos: [],
         });
       });
     });

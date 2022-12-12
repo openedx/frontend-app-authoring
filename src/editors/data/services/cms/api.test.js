@@ -321,8 +321,9 @@ describe('cms api', () => {
       it('returns edxVideoId when there are no fallbackVideos', () => {
         expect(api.processVideoIds({
           edxVideoId,
-          videoSource: edxVideoId,
+          videoSource: '',
           fallbackVideos: [],
+          videoId: edxVideoId,
         })).toEqual({
           edxVideoId,
           html5Sources: [],
@@ -332,8 +333,9 @@ describe('cms api', () => {
       it('returns edxVideoId and html5Sources when there are fallbackVideos', () => {
         expect(api.processVideoIds({
           edxVideoId,
-          videoSource: edxVideoId,
+          videoSource: 'edxVideoId',
           fallbackVideos: html5Sources,
+          videoId: edxVideoId,
         })).toEqual({
           edxVideoId,
           html5Sources,
@@ -351,6 +353,7 @@ describe('cms api', () => {
           edxVideoId,
           videoSource: edxVideoId,
           fallbackVideos: [],
+          videoId: '',
         })).toEqual({
           edxVideoId,
           html5Sources: [],
@@ -362,6 +365,7 @@ describe('cms api', () => {
           edxVideoId,
           videoSource: edxVideoId,
           fallbackVideos: html5Sources,
+          videoId: '',
         })).toEqual({
           edxVideoId,
           html5Sources,
@@ -379,6 +383,7 @@ describe('cms api', () => {
           edxVideoId,
           videoSource: html5Sources[0],
           fallbackVideos: [],
+          videoId: '',
         })).toEqual({
           edxVideoId,
           html5Sources: [html5Sources[0]],
@@ -390,6 +395,7 @@ describe('cms api', () => {
           edxVideoId,
           videoSource: html5Sources[0],
           fallbackVideos: [html5Sources[1]],
+          videoId: '',
         })).toEqual({
           edxVideoId,
           html5Sources,

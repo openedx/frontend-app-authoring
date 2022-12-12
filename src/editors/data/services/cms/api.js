@@ -117,6 +117,7 @@ export const apiMethods = {
         edxVideoId,
         youtubeId,
       } = module.processVideoIds({
+        videoId: content.videoId,
         videoSource: content.videoSource,
         fallbackVideos: content.fallbackVideos,
       });
@@ -173,14 +174,19 @@ export const loadImages = (rawImages) => camelizeKeys(rawImages).reduce(
   {},
 );
 
-export const processVideoIds = ({ videoSource, fallbackVideos, edxVideoId }) => {
+export const processVideoIds = ({
+  videoId,
+  videoSource,
+  fallbackVideos,
+  edxVideoId,
+}) => {
   let newEdxVideoId = edxVideoId;
   let youtubeId = '';
   const html5Sources = [];
 
   // overwrite videoId if source is changed.
-  if (module.isEdxVideo(videoSource)) {
-    newEdxVideoId = videoSource;
+  if (module.isEdxVideo(videoId)) {
+    newEdxVideoId = videoId;
   } else if (module.parseYoutubeId(videoSource)) {
     youtubeId = module.parseYoutubeId(videoSource);
   } else if (videoSource) {
@@ -200,7 +206,7 @@ export const processVideoIds = ({ videoSource, fallbackVideos, edxVideoId }) => 
 
 export const isEdxVideo = (src) => {
   const uuid4Regex = new RegExp(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/);
-  if (src.match(uuid4Regex)) {
+  if (src && src.match(uuid4Regex)) {
     return true;
   }
   return false;

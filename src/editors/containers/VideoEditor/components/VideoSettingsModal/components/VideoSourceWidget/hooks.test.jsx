@@ -20,10 +20,10 @@ jest.mock('../../../../../../data/redux', () => ({
 }));
 
 describe('VideoEditorHandout hooks', () => {
-  describe('updateVideoType', () => {
+  describe('updateVideoId', () => {
     const sourceEdxVideo = {
       onBlur: jest.fn(),
-      local: '06b1503a-7df4-4e72-b970-326e02dbcbe4',
+      local: '06b15030-7df0-4e70-b979-326e02dbcbe0',
     };
     const sourceYouTube = {
       onBlur: jest.fn(),
@@ -35,7 +35,7 @@ describe('VideoEditorHandout hooks', () => {
     };
     const mockState = {
       videoId: '',
-      videoType: '',
+      videoSource: '',
       allowVideoDownloads: false,
       thumbnail: null,
       transcripts: [],
@@ -49,36 +49,33 @@ describe('VideoEditorHandout hooks', () => {
       licenseType: null,
     };
     it('returns dispatches updateField action with default state and edxVideo Id', () => {
-      hooks.updateVideoType({ dispatch })({ e: { target: { value: sourceEdxVideo.local } }, source: sourceEdxVideo });
+      hooks.updateVideoId({ dispatch })({ e: { target: { value: sourceEdxVideo.local } }, source: sourceEdxVideo });
       expect(dispatch).toHaveBeenCalledWith(
         actions.video.updateField({
           ...mockState,
           videoId: sourceEdxVideo.local,
-          videoType: 'edxVideo',
         }),
       );
     });
     it('returns dispatches updateField action with default state and YouTube video', () => {
-      hooks.updateVideoType({ dispatch })({
+      hooks.updateVideoId({ dispatch })({
         e: { target: { value: sourceYouTube.local } },
         source: sourceYouTube,
       });
       expect(dispatch).toHaveBeenCalledWith(
         actions.video.updateField({
           ...mockState,
-          videoId: sourceYouTube.local,
         }),
       );
     });
     it('returns dispatches updateField action with default state and html5source video', () => {
-      hooks.updateVideoType({ dispatch })({
+      hooks.updateVideoId({ dispatch })({
         e: { target: { value: sourceHtml5Source.local } },
         source: sourceHtml5Source,
       });
       expect(dispatch).toHaveBeenCalledWith(
         actions.video.updateField({
           ...mockState,
-          videoId: sourceHtml5Source.local,
         }),
       );
     });

@@ -2,43 +2,45 @@ import { actions } from '../../../../../../data/redux';
 import { isEdxVideo } from '../../../../../../data/services/cms/api';
 
 /**
- * updateVideoType({ dispatch })({e, source})
- * updateVideoType takes the current onBlur event, the current object of the video
+ * updateVideoId({ dispatch })({e, source})
+ * updateVideoId takes the current onBlur event, the current object of the video
  * source, and dispatch  method, and updates the redux value for all the fields to
- * their default values except videoId, fallbackVideos, videoType, and handouts.
+ * their default values except videoId, fallbackVideos, and handouts.
  * @param {event} e - object for onBlur event
  * @param {func} dispatch - redux dispatch method
  * @param {object} source - object for the Video Source field functions and values
  */
-export const updateVideoType = ({ dispatch }) => ({ e, source }) => {
-  source.onBlur(e);
-  let videoType;
-  let videoId;
-  if (isEdxVideo(source.local)) {
-    videoType = 'edxVideo';
-    videoId = source.local;
-  } else if (source.local.includes('youtu.be')) {
-    videoType = 'youtube';
-    videoId = '';
-  } else {
-    videoType = 'html5source';
-    videoId = '';
+export const updateVideoId = ({ dispatch }) => ({ e, source }) => {
+  if (source.formValue !== e.target.value) {
+    source.onBlur(e);
+    let videoId;
+    let videoSource;
+    if (isEdxVideo(source.local)) {
+      videoId = source.local;
+      videoSource = '';
+    } else if (source.local.includes('youtu.be') || source.local.includes('youtube')) {
+      videoId = '';
+      videoSource = source.local;
+    } else {
+      videoId = '';
+      videoSource = source.local;
+    }
+    dispatch(actions.video.updateField({
+      videoId,
+      videoSource,
+      allowVideoDownloads: false,
+      thumbnail: null,
+      transcripts: [],
+      allowTranscriptDownloads: false,
+      showTranscriptByDefault: false,
+      duration: {
+        startTime: '00:00:00',
+        stopTime: '00:00:00',
+        total: '00:00:00',
+      },
+      licenseType: null,
+    }));
   }
-  dispatch(actions.video.updateField({
-    videoId,
-    videoType,
-    allowVideoDownloads: false,
-    thumbnail: null,
-    transcripts: [],
-    allowTranscriptDownloads: false,
-    showTranscriptByDefault: false,
-    duration: {
-      startTime: '00:00:00',
-      stopTime: '00:00:00',
-      total: '00:00:00',
-    },
-    licenseType: null,
-  }));
 };
 
 /**
