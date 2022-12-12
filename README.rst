@@ -154,17 +154,13 @@ Developing
 Installation and Startup
 ========================
 
-1. Clone the repo:
+1. Clone the repo as a sibling of your devstack folder.:
 
   ``git clone https://github.com/openedx/frontend-app-course-authoring.git``
 
-2. Install npm dependencies:
+2. Start the dev server, from your devstack directory:
 
-  ``cd frontend-app-course-authoring && npm install``
-
-3. Start the dev server:
-
-  ``npm start``
+  ``make dev.up.frontend-app-course-authoring``
 
 The dev server is running at `http://localhost:2001 <http://localhost:2001>`_.
 
