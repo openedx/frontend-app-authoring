@@ -2,7 +2,7 @@
 
 exports[`CollapsibleFormWidget render snapshots: renders as expected with default props 1`] = `
 <Advanced
-  className="collapsible-card rounded mx-4 my-3 px-3 py-2 text-primary-500"
+  className="collapsible-card rounded mx-4 my-3 p-4 text-primary-500"
   defaultOpen={true}
 >
   <Trigger
@@ -14,6 +14,7 @@ exports[`CollapsibleFormWidget render snapshots: renders as expected with defaul
     }
   >
     <Visible
+      className="p-0 pb-3"
       whenClosed={true}
     >
       <div
@@ -25,7 +26,7 @@ exports[`CollapsibleFormWidget render snapshots: renders as expected with defaul
           tiTLE
         </div>
         <div
-          className=""
+          className=" mt-3"
         >
           SuBTItle
         </div>
@@ -41,6 +42,7 @@ exports[`CollapsibleFormWidget render snapshots: renders as expected with defaul
       </div>
     </Visible>
     <Visible
+      className="p-0"
       whenOpen={true}
     >
       <div
@@ -71,7 +73,7 @@ exports[`CollapsibleFormWidget render snapshots: renders as expected with defaul
 
 exports[`CollapsibleFormWidget render snapshots: renders with open={true} when there is error 1`] = `
 <Advanced
-  className="collapsible-card rounded mx-4 my-3 px-3 py-2 text-primary-500"
+  className="collapsible-card rounded mx-4 my-3 p-4 text-primary-500"
   defaultOpen={true}
   open={true}
 >
@@ -84,6 +86,7 @@ exports[`CollapsibleFormWidget render snapshots: renders with open={true} when t
     }
   >
     <Visible
+      className="p-0 pb-3"
       whenClosed={true}
     >
       <div
@@ -95,7 +98,7 @@ exports[`CollapsibleFormWidget render snapshots: renders with open={true} when t
           tiTLE
         </div>
         <div
-          className=""
+          className=" mt-3"
         >
           SuBTItle
         </div>
@@ -114,6 +117,7 @@ exports[`CollapsibleFormWidget render snapshots: renders with open={true} when t
       </div>
     </Visible>
     <Visible
+      className="p-0"
       whenOpen={true}
     >
       <div

@@ -46,7 +46,7 @@ export const DurationWidget = ({
       subtitle={getTotalLabel(duration.formValue.startTime, duration.formValue.stopTime, true)}
     >
       <FormattedMessage {...messages.durationDescription} />
-      <Form.Row className="mt-4">
+      <Form.Row className="mt-4.5">
         <Form.Group as={Col}>
           <Form.Control
             floatingLabel={intl.formatMessage(messages.startTimeLabel)}

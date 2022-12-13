@@ -12,7 +12,7 @@ exports[`DurationWidget render snapshots: renders as expected with default props
     id="authoring.videoeditor.duration.description"
   />
   <Form.Row
-    className="mt-4"
+    className="mt-4.5"
   >
     <Form.Group>
       <Form.Control

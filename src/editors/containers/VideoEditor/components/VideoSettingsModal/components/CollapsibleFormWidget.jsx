@@ -24,7 +24,7 @@ export const CollapsibleFormWidget = ({
   intl,
 }) => (
   <Collapsible.Advanced
-    className="collapsible-card rounded mx-4 my-3 px-3 py-2 text-primary-500"
+    className="collapsible-card rounded mx-4 my-3 p-4 text-primary-500"
     defaultOpen
     open={isError || undefined}
   >
@@ -32,17 +32,17 @@ export const CollapsibleFormWidget = ({
       className="collapsible-trigger d-flex border-0 align-items-center"
       style={{ justifyContent: 'unset' }}
     >
-      <Collapsible.Visible whenClosed>
+      <Collapsible.Visible whenClosed className="p-0 pb-3">
         <div className="d-flex flex-column flex-grow-1">
           <div className="d-flex flex-grow-1 w-75 x-small">{title}</div>
-          <div className={`${fontSize}`}>{subtitle}</div>
+          {subtitle ? <div className={`${fontSize} mt-3`}>{subtitle}</div> : null}
         </div>
         <div className="d-flex flex-row align-self-start">
           {isError && <Icon className="alert-icon" src={Info} />}
           <IconButton alt={intl.formatMessage(messages.expandAltText)} src={ExpandMore} iconAs={Icon} variant="dark" />
         </div>
       </Collapsible.Visible>
-      <Collapsible.Visible whenOpen>
+      <Collapsible.Visible whenOpen className="p-0">
         <div className="d-flex flex-grow-1 w-75 x-small">{title}</div>
         <div className="align-self-start">
           <IconButton alt={intl.formatMessage(messages.collapseAltText)} src={ExpandLess} iconAs={Icon} variant="dark" />

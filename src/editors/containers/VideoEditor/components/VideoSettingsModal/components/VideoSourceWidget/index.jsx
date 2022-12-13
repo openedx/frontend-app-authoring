@@ -82,11 +82,11 @@ export const VideoSourceWidget = ({
         <div className="mt-4">
           <FormattedMessage {...messages.fallbackVideoTitle} />
         </div>
-        <div>
+        <div className="mt-3">
           <FormattedMessage {...messages.fallbackVideoMessage} />
         </div>
         {fallbackVideos.formValue.length > 0 ? fallbackVideos.formValue.map((videoUrl, index) => (
-          <Form.Row className="mt-4 flex-nowrap">
+          <Form.Row className="mt-3.5 flex-nowrap">
             <Form.Control
               floatingLabel={intl.formatMessage(messages.fallbackVideoLabel)}
               onChange={fallbackVideos.onChange(index)}
@@ -104,7 +104,7 @@ export const VideoSourceWidget = ({
             />
           </Form.Row>
         )) : null}
-        <ActionRow className="mt-4">
+        <ActionRow className="mt-4.5">
           <Form.Checkbox
             checked={allowDownload.local}
             className="decorative-control-label"
@@ -128,6 +128,7 @@ export const VideoSourceWidget = ({
           <ActionRow.Spacer />
         </ActionRow>
       </Form.Group>
+      <div className="my-4 border-primary-100 border-bottom" />
       <Button
         className="text-primary-500 font-weight-bold pl-0"
         size="sm"

@@ -53,8 +53,7 @@ export const LicenseWidget = ({
       )}
       title={intl.formatMessage(messages.title)}
     >
-      <Stack gap={3}>
-
+      <Stack gap={4}>
         {license ? (
           <>
             <LicenseSelector license={license} level={level} />
@@ -68,7 +67,7 @@ export const LicenseWidget = ({
         ) : null }
         {!licenseType ? (
           <>
-            <div className="border-primary-100 border-bottom" />
+            <div className="border-primary-100 border-bottom my-2" />
             <Button
               className="text-primary-500 font-weight-bold justify-content-start pl-0"
               size="sm"

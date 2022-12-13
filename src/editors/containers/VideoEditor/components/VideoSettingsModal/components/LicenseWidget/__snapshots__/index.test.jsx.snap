@@ -22,7 +22,7 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with default pro
   title="License"
 >
   <Stack
-    gap={3}
+    gap={4}
   >
     <injectIntl(ShimmedIntlComponent)
       level="course"
@@ -45,7 +45,7 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with default pro
       }
     />
     <div
-      className="border-primary-100 border-bottom"
+      className="border-primary-100 border-bottom my-2"
     />
     <Button
       className="text-primary-500 font-weight-bold justify-content-start pl-0"
@@ -85,7 +85,7 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with isLibrary t
   title="License"
 >
   <Stack
-    gap={3}
+    gap={4}
   >
     <injectIntl(ShimmedIntlComponent)
       level="library"
@@ -133,7 +133,7 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with licenseType
   title="License"
 >
   <Stack
-    gap={3}
+    gap={4}
   >
     <injectIntl(ShimmedIntlComponent)
       level="block"

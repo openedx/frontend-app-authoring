@@ -50,7 +50,9 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
         id="authoring.videoeditor.videoSource.fallbackVideo.title"
       />
     </div>
-    <div>
+    <div
+      className="mt-3"
+    >
       <FormattedMessage
         defaultMessage="To be sure all learners can access the video, edX
     recommends providing additional videos in both .mp4 and
@@ -61,7 +63,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
       />
     </div>
     <Form.Row
-      className="mt-4 flex-nowrap"
+      className="mt-3.5 flex-nowrap"
     >
       <Form.Control
         floatingLabel="Video URL"
@@ -76,7 +78,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
       />
     </Form.Row>
     <ActionRow
-      className="mt-4"
+      className="mt-4.5"
     >
       <Form.Checkbox
         checked={false}
@@ -122,6 +124,9 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
       <ActionRow.Spacer />
     </ActionRow>
   </Form.Group>
+  <div
+    className="my-4 border-primary-100 border-bottom"
+  />
   <Button
     className="text-primary-500 font-weight-bold pl-0"
     onClick={[Function]}

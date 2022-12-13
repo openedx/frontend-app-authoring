@@ -107,17 +107,16 @@ export const TranscriptWidget = ({
       >
         <FormattedMessage {...messages.deleteTranscriptError} />
       </ErrorAlert>
-      <Stack gap={3}>
+      <Stack gap={2.5}>
         {hasTranscripts ? (
-
-          <Form.Group className="mt-4.5">
+          <Form.Group>
             { transcripts.map((language, index) => (
               <Transcript
                 language={language}
                 index={index}
               />
             ))}
-            <ActionRow className="mt-4 mb-1">
+            <ActionRow className="mt-3.5">
               <Form.Checkbox
                 checked={allowTranscriptDownloads}
                 className="decorative-control-label"
@@ -142,7 +141,7 @@ export const TranscriptWidget = ({
             </ActionRow>
             <Form.Checkbox
               checked={showTranscriptByDefault}
-              className="mt-4.5 decorative-control-label"
+              className="mt-3 decorative-control-label"
               onChange={(e) => updateField({ showTranscriptByDefault: e.target.checked })}
             >
               <div className="small text-gray-700">
@@ -155,8 +154,7 @@ export const TranscriptWidget = ({
             <FormattedMessage {...messages.addFirstTranscript} />
           </>
         )}
-
-        <Stack gap={3} className="border-primary-100 border-top">
+        <div className="border-primary-100 border-top pt-4">
           <Button
             className="text-primary-500 font-weight-bold justify-content-start pl-0"
             size="sm"
@@ -166,7 +164,7 @@ export const TranscriptWidget = ({
           >
             <FormattedMessage {...messages.uploadButtonLabel} />
           </Button>
-        </Stack>
+        </div>
       </Stack>
     </CollapsibleFormWidget>
   );

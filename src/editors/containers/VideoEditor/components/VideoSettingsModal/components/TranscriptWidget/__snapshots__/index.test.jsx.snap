@@ -30,17 +30,15 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
     />
   </ErrorAlert>
   <Stack
-    gap={3}
+    gap={2.5}
   >
-    <Form.Group
-      className="mt-4.5"
-    >
+    <Form.Group>
       <Transcript
         index={0}
         language="en"
       />
       <ActionRow
-        className="mt-4 mb-1"
+        className="mt-3.5"
       >
         <Form.Checkbox
           checked={false}
@@ -85,7 +83,7 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
       </ActionRow>
       <Form.Checkbox
         checked={false}
-        className="mt-4.5 decorative-control-label"
+        className="mt-3 decorative-control-label"
         onChange={[Function]}
       >
         <div
@@ -99,9 +97,8 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
         </div>
       </Form.Checkbox>
     </Form.Group>
-    <Stack
-      className="border-primary-100 border-top"
-      gap={3}
+    <div
+      className="border-primary-100 border-top pt-4"
     >
       <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
@@ -115,7 +112,7 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
           id="authoring.videoeditor.transcripts.upload.label"
         />
       </Button>
-    </Stack>
+    </div>
   </Stack>
 </CollapsibleFormWidget>
 `;
@@ -150,11 +147,9 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
     />
   </ErrorAlert>
   <Stack
-    gap={3}
+    gap={2.5}
   >
-    <Form.Group
-      className="mt-4.5"
-    >
+    <Form.Group>
       <Transcript
         index={0}
         language="en"
@@ -164,7 +159,7 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
         language="fr"
       />
       <ActionRow
-        className="mt-4 mb-1"
+        className="mt-3.5"
       >
         <Form.Checkbox
           checked={false}
@@ -209,7 +204,7 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
       </ActionRow>
       <Form.Checkbox
         checked={false}
-        className="mt-4.5 decorative-control-label"
+        className="mt-3 decorative-control-label"
         onChange={[Function]}
       >
         <div
@@ -223,9 +218,8 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
         </div>
       </Form.Checkbox>
     </Form.Group>
-    <Stack
-      className="border-primary-100 border-top"
-      gap={3}
+    <div
+      className="border-primary-100 border-top pt-4"
     >
       <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
@@ -239,7 +233,7 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
           id="authoring.videoeditor.transcripts.upload.label"
         />
       </Button>
-    </Stack>
+    </div>
   </Stack>
 </CollapsibleFormWidget>
 `;
@@ -274,17 +268,15 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     />
   </ErrorAlert>
   <Stack
-    gap={3}
+    gap={2.5}
   >
-    <Form.Group
-      className="mt-4.5"
-    >
+    <Form.Group>
       <Transcript
         index={0}
         language="en"
       />
       <ActionRow
-        className="mt-4 mb-1"
+        className="mt-3.5"
       >
         <Form.Checkbox
           checked={true}
@@ -329,7 +321,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
       </ActionRow>
       <Form.Checkbox
         checked={false}
-        className="mt-4.5 decorative-control-label"
+        className="mt-3 decorative-control-label"
         onChange={[Function]}
       >
         <div
@@ -343,9 +335,8 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         </div>
       </Form.Checkbox>
     </Form.Group>
-    <Stack
-      className="border-primary-100 border-top"
-      gap={3}
+    <div
+      className="border-primary-100 border-top pt-4"
     >
       <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
@@ -359,7 +350,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
           id="authoring.videoeditor.transcripts.upload.label"
         />
       </Button>
-    </Stack>
+    </div>
   </Stack>
 </CollapsibleFormWidget>
 `;
@@ -394,16 +385,15 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     />
   </ErrorAlert>
   <Stack
-    gap={3}
+    gap={2.5}
   >
     <FormattedMessage
       defaultMessage="Add video transcripts (.srt files only) for improved accessibility."
       description="Message for adding first transcript"
       id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
     />
-    <Stack
-      className="border-primary-100 border-top"
-      gap={3}
+    <div
+      className="border-primary-100 border-top pt-4"
     >
       <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
@@ -417,7 +407,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
           id="authoring.videoeditor.transcripts.upload.label"
         />
       </Button>
-    </Stack>
+    </div>
   </Stack>
 </CollapsibleFormWidget>
 `;
@@ -452,17 +442,15 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     />
   </ErrorAlert>
   <Stack
-    gap={3}
+    gap={2.5}
   >
-    <Form.Group
-      className="mt-4.5"
-    >
+    <Form.Group>
       <Transcript
         index={0}
         language="en"
       />
       <ActionRow
-        className="mt-4 mb-1"
+        className="mt-3.5"
       >
         <Form.Checkbox
           checked={false}
@@ -507,7 +495,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
       </ActionRow>
       <Form.Checkbox
         checked={true}
-        className="mt-4.5 decorative-control-label"
+        className="mt-3 decorative-control-label"
         onChange={[Function]}
       >
         <div
@@ -521,9 +509,8 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         </div>
       </Form.Checkbox>
     </Form.Group>
-    <Stack
-      className="border-primary-100 border-top"
-      gap={3}
+    <div
+      className="border-primary-100 border-top pt-4"
     >
       <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
@@ -537,7 +524,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
           id="authoring.videoeditor.transcripts.upload.label"
         />
       </Button>
-    </Stack>
+    </div>
   </Stack>
 </CollapsibleFormWidget>
 `;
@@ -572,17 +559,15 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     />
   </ErrorAlert>
   <Stack
-    gap={3}
+    gap={2.5}
   >
-    <Form.Group
-      className="mt-4.5"
-    >
+    <Form.Group>
       <Transcript
         index={0}
         language="en"
       />
       <ActionRow
-        className="mt-4 mb-1"
+        className="mt-3.5"
       >
         <Form.Checkbox
           checked={false}
@@ -627,7 +612,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
       </ActionRow>
       <Form.Checkbox
         checked={false}
-        className="mt-4.5 decorative-control-label"
+        className="mt-3 decorative-control-label"
         onChange={[Function]}
       >
         <div
@@ -641,9 +626,8 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         </div>
       </Form.Checkbox>
     </Form.Group>
-    <Stack
-      className="border-primary-100 border-top"
-      gap={3}
+    <div
+      className="border-primary-100 border-top pt-4"
     >
       <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
@@ -657,7 +641,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
           id="authoring.videoeditor.transcripts.upload.label"
         />
       </Button>
-    </Stack>
+    </div>
   </Stack>
 </CollapsibleFormWidget>
 `;

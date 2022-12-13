@@ -14,14 +14,14 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with default pr
     />
   </div>
   <div
-    className="small border border-gray-300 rounded pt-2 px-3 pb-3"
+    className="small border border-gray-300 rounded p-4"
   >
     <injectIntl(ShimmedIntlComponent)
       details={Object {}}
       license="all-rights-reserved"
     />
     <div
-      className="x-small"
+      className="x-small mt-3"
     >
       FormattedMessage component with license description
     </div>
@@ -54,14 +54,14 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with level set 
     />
   </div>
   <div
-    className="small border border-gray-300 rounded pt-2 px-3 pb-3"
+    className="small border border-gray-300 rounded p-4"
   >
     <injectIntl(ShimmedIntlComponent)
       details={Object {}}
       license="all-rights-reserved"
     />
     <div
-      className="x-small"
+      className="x-small mt-3"
     >
       FormattedMessage component with license description
     </div>
@@ -94,14 +94,14 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with level set 
     />
   </div>
   <div
-    className="small border border-gray-300 rounded pt-2 px-3 pb-3"
+    className="small border border-gray-300 rounded p-4"
   >
     <injectIntl(ShimmedIntlComponent)
       details={Object {}}
       license="creative-commons"
     />
     <div
-      className="x-small"
+      className="x-small mt-3"
     >
       FormattedMessage component with license description
     </div>
@@ -136,14 +136,14 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with level set 
     />
   </div>
   <div
-    className="small border border-gray-300 rounded pt-2 px-3 pb-3"
+    className="small border border-gray-300 rounded p-4"
   >
     <injectIntl(ShimmedIntlComponent)
       details={Object {}}
       license="all-rights-reserved"
     />
     <div
-      className="x-small"
+      className="x-small mt-3"
     >
       FormattedMessage component with license description
     </div>

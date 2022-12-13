@@ -24,9 +24,9 @@ export const LicenseDisplay = ({
     return (
       <Stack gap={3}>
         <div className="x-small"><FormattedMessage {...messages.displaySubsectionTitle} /></div>
-        <div className="small border border-gray-300 rounded pt-2 px-3 pb-3">
+        <div className="small border border-gray-300 rounded p-4">
           <LicenseBlurb license={license} details={details} />
-          <div className="x-small">{licenseDescription}</div>
+          <div className="x-small mt-3">{licenseDescription}</div>
         </div>
         <Hyperlink
           className="text-primary-500 x-small"

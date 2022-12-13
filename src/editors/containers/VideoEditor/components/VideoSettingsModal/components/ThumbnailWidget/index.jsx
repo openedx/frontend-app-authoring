@@ -101,12 +101,12 @@ export const ThumbnailWidget = ({
           ) : null }
         </Stack>
       ) : (
-        <Stack gap={3}>
+        <Stack gap={4}>
           <div className="text-center">
             <FormattedMessage {...messages.addThumbnail} />
-          </div>
-          <div className="text-center text-primary-300">
-            <FormattedMessage {...messages.aspectRequirements} />
+            <div className="text-primary-300">
+              <FormattedMessage {...messages.aspectRequirements} />
+            </div>
           </div>
           <FileInput fileInput={fileInput} acceptedFiles={Object.values(acceptedImgKeys).join()} />
           <Button

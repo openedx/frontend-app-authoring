@@ -6,8 +6,12 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
 <div
   className="x-small border-primary-100 border-bottom m-0"
 >
-  <Form.Group>
-    <div>
+  <Form.Group
+    className="pb-2"
+  >
+    <div
+      className="mb-3"
+    >
       <FormattedMessage
         defaultMessage="License Details"
         description="Title for license detatils subsection"
@@ -15,10 +19,10 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
       />
     </div>
     <Stack
-      gap={3}
+      gap={4}
     >
       <div
-        className="border-primary-100 border-bottom py-3"
+        className="border-primary-100 border-bottom pb-4"
       >
         <Form.Group>
           <ActionRow>
@@ -51,7 +55,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
         </div>
       </div>
       <div
-        className="border-primary-100 border-bottom py-3"
+        className="border-primary-100 border-bottom pb-4"
       >
         <Form.Group>
           <ActionRow>
@@ -82,7 +86,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
         </div>
       </div>
       <div
-        className="border-primary-100 border-bottom py-3"
+        className="border-primary-100 border-bottom pb-4"
       >
         <Form.Group>
           <ActionRow>
@@ -150,23 +154,23 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
 <div
   className="x-small border-primary-100 border-bottom m-0"
 >
-  <Form.Group>
-    <div>
+  <Form.Group
+    className="pb-2"
+  >
+    <div
+      className="mb-3"
+    >
       <FormattedMessage
         defaultMessage="License Details"
         description="Title for license detatils subsection"
         id="authoring.videoeditor.license.detailsSubsection.title"
       />
     </div>
-    <div
-      className="mt-2"
-    >
-      <FormattedMessage
-        defaultMessage="You reserve all rights for your work."
-        description="All Rights Reserved section message"
-        id="authoring.videoeditor.license.allRightsReservedSectionMessage"
-      />
-    </div>
+    <FormattedMessage
+      defaultMessage="You reserve all rights for your work."
+      description="All Rights Reserved section message"
+      id="authoring.videoeditor.license.allRightsReservedSectionMessage"
+    />
   </Form.Group>
 </div>
 `;
@@ -177,8 +181,12 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
 <div
   className="x-small border-primary-100 border-bottom m-0"
 >
-  <Form.Group>
-    <div>
+  <Form.Group
+    className="pb-2"
+  >
+    <div
+      className="mb-3"
+    >
       <FormattedMessage
         defaultMessage="License Details"
         description="Title for license detatils subsection"

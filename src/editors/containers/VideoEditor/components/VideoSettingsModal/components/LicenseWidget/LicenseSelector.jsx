@@ -60,8 +60,8 @@ export const LicenseSelector = ({
           />
         ) : null }
       </Form.Row>
-      <div className="x-small mt-2">{levelDescription}</div>
-      {license === LicenseTypes.select ? null : <div className="border-primary-100 mt-3 border-bottom" />}
+      <div className="x-small mt-3">{levelDescription}</div>
+      {license === LicenseTypes.select ? null : <div className="border-primary-100 mt-4 border-bottom" />}
     </Form.Group>
   );
 };

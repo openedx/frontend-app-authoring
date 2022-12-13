@@ -44,7 +44,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with block lev
     />
   </Form.Row>
   <div
-    className="x-small mt-2"
+    className="x-small mt-3"
   >
     <FormattedMessage
       defaultMessage="This license is set specifically for this video"
@@ -53,7 +53,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with block lev
     />
   </div>
   <div
-    className="border-primary-100 mt-3 border-bottom"
+    className="border-primary-100 mt-4 border-bottom"
   />
 </Form.Group>
 `;
@@ -90,7 +90,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with default p
     </Form.Control>
   </Form.Row>
   <div
-    className="x-small mt-2"
+    className="x-small mt-3"
   >
     <FormattedMessage
       defaultMessage="This license currently set at the course level"
@@ -99,7 +99,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with default p
     />
   </div>
   <div
-    className="border-primary-100 mt-3 border-bottom"
+    className="border-primary-100 mt-4 border-bottom"
   />
 </Form.Group>
 `;
@@ -148,7 +148,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with library l
     />
   </Form.Row>
   <div
-    className="x-small mt-2"
+    className="x-small mt-3"
   >
     <FormattedMessage
       defaultMessage="This license currently set at the library level"
@@ -157,7 +157,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with library l
     />
   </div>
   <div
-    className="border-primary-100 mt-3 border-bottom"
+    className="border-primary-100 mt-4 border-bottom"
   />
 </Form.Group>
 `;
@@ -194,7 +194,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with no licens
     </Form.Control>
   </Form.Row>
   <div
-    className="x-small mt-2"
+    className="x-small mt-3"
   >
     <FormattedMessage
       defaultMessage="This license currently set at the course level"
@@ -203,7 +203,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with no licens
     />
   </div>
   <div
-    className="border-primary-100 mt-3 border-bottom"
+    className="border-primary-100 mt-4 border-bottom"
   />
 </Form.Group>
 `;
