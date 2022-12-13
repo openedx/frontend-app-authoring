@@ -161,8 +161,8 @@ Installation and Startup
 2. Start the dev server, from your devstack directory:
 
   ``make dev.up.frontend-app-course-authoring``
-
-The dev server is running at `http://localhost:2001 <http://localhost:2001>`_.
+  
+3. Wait a moment for it to build. The dev server will be running at `http://localhost:2001 <http://localhost:2001>`_.
 
 If your devstack includes the default Demo course, you can visit the following URLs to see content:
 
