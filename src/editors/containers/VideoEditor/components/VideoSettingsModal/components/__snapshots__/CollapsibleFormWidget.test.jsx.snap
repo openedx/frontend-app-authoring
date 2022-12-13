@@ -2,11 +2,11 @@
 
 exports[`CollapsibleFormWidget render snapshots: renders as expected with default props 1`] = `
 <Advanced
-  className="collapsible-card rounded mx-4 my-3 p-4 text-primary-500"
+  className="collapsible-card rounded mx-4 my-3 px-4 text-primary-500"
   defaultOpen={true}
 >
   <Trigger
-    className="collapsible-trigger d-flex border-0 align-items-center"
+    className="collapsible-trigger d-flex border-0 align-items-center pt-4 p-0"
     style={
       Object {
         "justifyContent": "unset",
@@ -26,7 +26,7 @@ exports[`CollapsibleFormWidget render snapshots: renders as expected with defaul
           tiTLE
         </div>
         <div
-          className=" mt-3"
+          className=" mb-4 mt-3"
         >
           SuBTItle
         </div>
@@ -42,7 +42,6 @@ exports[`CollapsibleFormWidget render snapshots: renders as expected with defaul
       </div>
     </Visible>
     <Visible
-      className="p-0"
       whenOpen={true}
     >
       <div
@@ -62,7 +61,7 @@ exports[`CollapsibleFormWidget render snapshots: renders as expected with defaul
     </Visible>
   </Trigger>
   <Body
-    className="collapsible-body rounded px-0 "
+    className="collapsible-body rounded px-0  pb-4"
   >
     <p>
       Some test string
@@ -73,12 +72,12 @@ exports[`CollapsibleFormWidget render snapshots: renders as expected with defaul
 
 exports[`CollapsibleFormWidget render snapshots: renders with open={true} when there is error 1`] = `
 <Advanced
-  className="collapsible-card rounded mx-4 my-3 p-4 text-primary-500"
+  className="collapsible-card rounded mx-4 my-3 px-4 text-primary-500"
   defaultOpen={true}
   open={true}
 >
   <Trigger
-    className="collapsible-trigger d-flex border-0 align-items-center"
+    className="collapsible-trigger d-flex border-0 align-items-center pt-4 p-0"
     style={
       Object {
         "justifyContent": "unset",
@@ -98,7 +97,7 @@ exports[`CollapsibleFormWidget render snapshots: renders with open={true} when t
           tiTLE
         </div>
         <div
-          className=" mt-3"
+          className=" mb-4 mt-3"
         >
           SuBTItle
         </div>
@@ -117,7 +116,6 @@ exports[`CollapsibleFormWidget render snapshots: renders with open={true} when t
       </div>
     </Visible>
     <Visible
-      className="p-0"
       whenOpen={true}
     >
       <div
@@ -137,7 +135,7 @@ exports[`CollapsibleFormWidget render snapshots: renders with open={true} when t
     </Visible>
   </Trigger>
   <Body
-    className="collapsible-body rounded px-0 "
+    className="collapsible-body rounded px-0  pb-4"
   >
     <p>
       Some test string

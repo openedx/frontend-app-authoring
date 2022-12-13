@@ -31,16 +31,16 @@ export const LicenseDetails = ({
   updateField,
 }) => (
   level !== LicenseLevel.course && details && license !== 'select' ? (
-    <div className="x-small border-primary-100 border-bottom m-0">
+    <div className="x-small border-primary-100 border-bottom m-0 pr-1">
       <Form.Group className="pb-2">
         <div className="mb-3">
           <FormattedMessage {...messages.detailsSubsectionTitle} />
         </div>
-
         {license === LicenseTypes.allRightsReserved ? (
-          <FormattedMessage {...messages.allRightsReservedSectionMessage} />
+          <div className="mt-2">
+            <FormattedMessage {...messages.allRightsReservedSectionMessage} />
+          </div>
         ) : null}
-
         {license === LicenseTypes.creativeCommons
           ? (
             <Stack gap={4}>

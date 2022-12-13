@@ -1,14 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`LicenseSelector snapshots snapshots: renders as expected with block level 1`] = `
-<Form.Group
-  className="mx-2 my-0"
->
-  <Form.Row
-    className="flex-nowrap"
-  >
+<Fragment>
+  <ActionRow>
     <Form.Control
       as="select"
+      className="w-100 m-0 p-0"
       defaultValue="all-rights-reserved"
       disabled={false}
       floatingLabel="License Type"
@@ -30,6 +27,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with block lev
         Creative Commons
       </option>
     </Form.Control>
+    <ActionRow.Spacer />
     <IconButtonWithTooltip
       iconAs="Icon"
       onClick={[Function]}
@@ -42,7 +40,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with block lev
       }
       tooltipPlacement="top"
     />
-  </Form.Row>
+  </ActionRow>
   <div
     className="x-small mt-3"
   >
@@ -53,20 +51,17 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with block lev
     />
   </div>
   <div
-    className="border-primary-100 mt-4 border-bottom"
+    className="border-primary-100 mt-3 border-bottom"
   />
-</Form.Group>
+</Fragment>
 `;
 
 exports[`LicenseSelector snapshots snapshots: renders as expected with default props 1`] = `
-<Form.Group
-  className="mx-2 my-0"
->
-  <Form.Row
-    className="flex-nowrap"
-  >
+<Fragment>
+  <ActionRow>
     <Form.Control
       as="select"
+      className="w-100 m-0 p-0"
       defaultValue="all-rights-reserved"
       disabled={true}
       floatingLabel="License Type"
@@ -88,7 +83,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with default p
         Creative Commons
       </option>
     </Form.Control>
-  </Form.Row>
+  </ActionRow>
   <div
     className="x-small mt-3"
   >
@@ -99,20 +94,17 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with default p
     />
   </div>
   <div
-    className="border-primary-100 mt-4 border-bottom"
+    className="border-primary-100 mt-3 border-bottom"
   />
-</Form.Group>
+</Fragment>
 `;
 
 exports[`LicenseSelector snapshots snapshots: renders as expected with library level 1`] = `
-<Form.Group
-  className="mx-2 my-0"
->
-  <Form.Row
-    className="flex-nowrap"
-  >
+<Fragment>
+  <ActionRow>
     <Form.Control
       as="select"
+      className="w-100 m-0 p-0"
       defaultValue="all-rights-reserved"
       disabled={false}
       floatingLabel="License Type"
@@ -134,6 +126,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with library l
         Creative Commons
       </option>
     </Form.Control>
+    <ActionRow.Spacer />
     <IconButtonWithTooltip
       iconAs="Icon"
       onClick={[Function]}
@@ -146,7 +139,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with library l
       }
       tooltipPlacement="top"
     />
-  </Form.Row>
+  </ActionRow>
   <div
     className="x-small mt-3"
   >
@@ -157,20 +150,17 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with library l
     />
   </div>
   <div
-    className="border-primary-100 mt-4 border-bottom"
+    className="border-primary-100 mt-3 border-bottom"
   />
-</Form.Group>
+</Fragment>
 `;
 
 exports[`LicenseSelector snapshots snapshots: renders as expected with no license 1`] = `
-<Form.Group
-  className="mx-2 my-0"
->
-  <Form.Row
-    className="flex-nowrap"
-  >
+<Fragment>
+  <ActionRow>
     <Form.Control
       as="select"
+      className="w-100 m-0 p-0"
       defaultValue=""
       disabled={true}
       floatingLabel="License Type"
@@ -192,7 +182,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with no licens
         Creative Commons
       </option>
     </Form.Control>
-  </Form.Row>
+  </ActionRow>
   <div
     className="x-small mt-3"
   >
@@ -203,7 +193,7 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with no licens
     />
   </div>
   <div
-    className="border-primary-100 mt-4 border-bottom"
+    className="border-primary-100 mt-3 border-bottom"
   />
-</Form.Group>
+</Fragment>
 `;

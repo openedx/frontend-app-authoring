@@ -4,7 +4,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with default pr
 
 exports[`LicenseDetails snapshots snapshots: renders as expected with level set to block and license set to Creative Commons 1`] = `
 <div
-  className="x-small border-primary-100 border-bottom m-0"
+  className="x-small border-primary-100 border-bottom m-0 pr-1"
 >
   <Form.Group
     className="pb-2"
@@ -152,7 +152,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
 
 exports[`LicenseDetails snapshots snapshots: renders as expected with level set to block and license set to all rights reserved 1`] = `
 <div
-  className="x-small border-primary-100 border-bottom m-0"
+  className="x-small border-primary-100 border-bottom m-0 pr-1"
 >
   <Form.Group
     className="pb-2"
@@ -166,11 +166,15 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
         id="authoring.videoeditor.license.detailsSubsection.title"
       />
     </div>
-    <FormattedMessage
-      defaultMessage="You reserve all rights for your work."
-      description="All Rights Reserved section message"
-      id="authoring.videoeditor.license.allRightsReservedSectionMessage"
-    />
+    <div
+      className="mt-2"
+    >
+      <FormattedMessage
+        defaultMessage="You reserve all rights for your work."
+        description="All Rights Reserved section message"
+        id="authoring.videoeditor.license.allRightsReservedSectionMessage"
+      />
+    </div>
   </Form.Group>
 </div>
 `;
@@ -179,7 +183,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
 
 exports[`LicenseDetails snapshots snapshots: renders as expected with level set to library 1`] = `
 <div
-  className="x-small border-primary-100 border-bottom m-0"
+  className="x-small border-primary-100 border-bottom m-0 pr-1"
 >
   <Form.Group
     className="pb-2"

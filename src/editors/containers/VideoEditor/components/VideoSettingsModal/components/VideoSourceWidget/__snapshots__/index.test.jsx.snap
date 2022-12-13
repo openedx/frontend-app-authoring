@@ -63,7 +63,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
       />
     </div>
     <Form.Row
-      className="mt-3.5 flex-nowrap"
+      className="mt-3.5 mx-0 flex-nowrap"
     >
       <Form.Control
         floatingLabel="Video URL"

@@ -55,9 +55,14 @@ export const LanguageSelector = ({
     dispatch: useDispatch(), languageBeforeChange: localLang, setLocalLang, triggerupload: input.click,
   });
   return (
-    <div className="col col-11">
-      <Form.Group controlId={`selectLanguage-form-${index}`} className="mw-100">
-        <Form.Control as="select" aria-label={intl.formatMessage(messages.languageSelectLabel)} defaultValue={language} onChange={(e) => onLanguageChange(e)}>
+    <div className="col col-11 p-0">
+      <Form.Group controlId={`selectLanguage-form-${index}`} className="mw-100  m-0">
+        <Form.Control
+          as="select"
+          aria-label={intl.formatMessage(messages.languageSelectLabel)}
+          defaultValue={language}
+          onChange={(e) => onLanguageChange(e)}
+        >
           {Object.entries(videoTranscriptLanguages).map(([lang, text]) => {
             if (language === lang) { return (<option value={lang} selected>{text}</option>); }
             if (lang === 'placeholder') { return (<option hidden>{intl.formatMessage(messages.languageSelectPlaceholder)}</option>); }

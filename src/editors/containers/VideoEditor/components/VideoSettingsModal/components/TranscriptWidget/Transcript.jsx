@@ -4,8 +4,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import {
-  Card, Button, IconButton, Row,
+  Card,
+  Button,
+  IconButton,
   Icon,
+  ActionRow,
 } from '@edx/paragon';
 import { Delete } from '@edx/paragon/icons';
 
@@ -71,11 +74,12 @@ export const Transcript = ({
           </Card>
         )
         : (
-          <Row className="flex-nowrap">
+          <ActionRow>
             <LanguageSelector
               title={index}
               language={language}
             />
+            <ActionRow.Spacer />
             { language === '' ? (
               <IconButton
                 iconAs={Icon}
@@ -89,8 +93,7 @@ export const Transcript = ({
                 launchDeleteConfirmation={launchDeleteConfirmation}
               />
             )}
-          </Row>
-
+          </ActionRow>
         )}
     </>
   );
