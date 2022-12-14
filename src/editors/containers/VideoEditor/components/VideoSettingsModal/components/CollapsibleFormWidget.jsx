@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Collapsible, Icon, IconButton } from '@edx/paragon';
-import { ExpandLess, ExpandMore, Info } from '@edx/paragon/icons';
+import { ExpandLess, ExpandMore, InfoOutline } from '@edx/paragon/icons';
 
 import messages from './messages';
 
@@ -38,7 +38,7 @@ export const CollapsibleFormWidget = ({
           {subtitle ? <div className={`${fontSize} mb-4 mt-3`}>{subtitle}</div> : <div className="mb-4" />}
         </div>
         <div className="d-flex flex-row align-self-start">
-          {isError && <Icon className="alert-icon" src={Info} />}
+          {isError && <Icon className="alert-icon" src={InfoOutline} />}
           <IconButton alt={intl.formatMessage(messages.expandAltText)} src={ExpandMore} iconAs={Icon} variant="dark" />
         </div>
       </Collapsible.Visible>

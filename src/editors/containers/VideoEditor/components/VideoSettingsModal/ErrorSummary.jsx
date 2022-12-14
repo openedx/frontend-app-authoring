@@ -2,7 +2,7 @@ import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { Alert } from '@edx/paragon';
-import { Info } from '@edx/paragon/icons';
+import { InfoOutline } from '@edx/paragon/icons';
 
 import messages from './components/messages';
 import { ErrorContext } from '../../hooks';
@@ -16,7 +16,7 @@ export const ErrorSummary = () => {
   const errors = React.useContext(ErrorContext);
   return (
     <Alert
-      icon={Info}
+      icon={InfoOutline}
       show={module.showAlert(errors)}
       variant="danger"
     >

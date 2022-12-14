@@ -36,7 +36,7 @@
   "devDependencies": {
     "@edx/frontend-build": "^11.0.2",
     "@edx/frontend-platform": "2.4.0",
-    "@edx/paragon": "^20.21.0",
+    "@edx/paragon": "^20.21.3",
     "@testing-library/dom": "^8.13.0",
     "@testing-library/react": "12.1.1",
     "@testing-library/user-event": "^13.5.0",

@@ -10,7 +10,7 @@ import {
   Icon,
   ActionRow,
 } from '@edx/paragon';
-import { Delete } from '@edx/paragon/icons';
+import { DeleteOutline } from '@edx/paragon/icons';
 
 import {
   FormattedMessage,
@@ -83,7 +83,7 @@ export const Transcript = ({
             { language === '' ? (
               <IconButton
                 iconAs={Icon}
-                src={Delete}
+                src={DeleteOutline}
                 onClick={() => launchDeleteConfirmation()}
               />
             ) : (

@@ -12,7 +12,7 @@ import {
   OverlayTrigger,
   FormControlFeedback,
 } from '@edx/paragon';
-import { Delete, Info, Add } from '@edx/paragon/icons';
+import { DeleteOutline, InfoOutline, Add } from '@edx/paragon/icons';
 import {
   FormattedMessage,
   injectIntl,
@@ -97,7 +97,7 @@ export const VideoSourceWidget = ({
               key={`top-delete-${videoUrl}`}
               tooltipPlacement="top"
               tooltipContent={intl.formatMessage(messages.deleteFallbackVideo)}
-              src={Delete}
+              src={DeleteOutline}
               iconAs={Icon}
               alt={intl.formatMessage(messages.deleteFallbackVideo)}
               onClick={() => deleteFallbackVideo(videoUrl)}
@@ -123,7 +123,7 @@ export const VideoSourceWidget = ({
               </Tooltip>
             )}
           >
-            <Icon src={Info} style={{ height: '16px', width: '16px' }} />
+            <Icon src={InfoOutline} style={{ height: '16px', width: '16px' }} />
           </OverlayTrigger>
           <ActionRow.Spacer />
         </ActionRow>

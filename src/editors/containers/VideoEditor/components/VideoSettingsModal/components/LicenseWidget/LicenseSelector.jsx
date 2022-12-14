@@ -12,7 +12,7 @@ import {
   Icon,
   IconButtonWithTooltip,
 } from '@edx/paragon';
-import { Delete } from '@edx/paragon/icons';
+import { DeleteOutline } from '@edx/paragon/icons';
 
 import { actions, selectors } from '../../../../../../data/redux';
 import hooks from './hooks';
@@ -54,7 +54,7 @@ export const LicenseSelector = ({
             <ActionRow.Spacer />
             <IconButtonWithTooltip
               iconAs={Icon}
-              src={Delete}
+              src={DeleteOutline}
               onClick={() => {
                 ref.current.value = courseLicenseType;
                 updateField({ licenseType: '', licenseDetails: {} });

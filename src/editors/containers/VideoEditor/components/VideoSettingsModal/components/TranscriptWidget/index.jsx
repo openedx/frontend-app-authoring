@@ -15,7 +15,7 @@ import {
   Tooltip,
   ActionRow,
 } from '@edx/paragon';
-import { Add, Info } from '@edx/paragon/icons';
+import { Add, InfoOutline } from '@edx/paragon/icons';
 
 import { actions, selectors } from '../../../../../../data/redux';
 import messages from './messages';
@@ -135,7 +135,7 @@ export const TranscriptWidget = ({
                   </Tooltip>
                 )}
               >
-                <Icon src={Info} style={{ height: '16px', width: '16px' }} />
+                <Icon src={InfoOutline} style={{ height: '16px', width: '16px' }} />
               </OverlayTrigger>
               <ActionRow.Spacer />
             </ActionRow>
