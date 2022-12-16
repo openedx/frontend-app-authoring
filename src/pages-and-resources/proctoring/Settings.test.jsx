@@ -463,8 +463,10 @@ describe('ProctoredExamSettings', () => {
     });
 
    it('Does not include lti_external as a selectable option', async () => {
-      const courseData = mockGetFutureCourseData;
-      courseData.available_proctoring_providers = ['lti_external', 'proctortrack', 'mockproc'];
+      const courseData = {
+        ...mockGetFutureCourseData,
+        available_proctoring_providers: ['lti_external', 'proctortrack', 'mockproc'],
+      };
       mockCourseData(courseData);
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       await waitFor(() => {
@@ -474,8 +476,10 @@ describe('ProctoredExamSettings', () => {
     });
 
     it('Includes lti proctoring provider options when lti_external is allowed by studio', async () => {
-      const courseData = mockGetFutureCourseData;
-      courseData.available_proctoring_providers = ['lti_external', 'proctortrack', 'mockproc'];
+      const courseData = {
+        ...mockGetFutureCourseData,
+        available_proctoring_providers: ['lti_external', 'proctortrack', 'mockproc'],
+      };
       mockCourseData(courseData);
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       await waitFor(() => {
