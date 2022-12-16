@@ -486,6 +486,19 @@ describe('ProctoredExamSettings', () => {
       expect(providerOption.hasAttribute('disabled')).toEqual(false);
     });
 
+    it('Does not include lti provider options when lti_external is not available in studio', async () => {
+      const isAdmin = true;
+      setupApp(isAdmin);
+      mockCourseData(mockGetFutureCourseData);
+      await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
+      await waitFor(() => {
+        screen.getByDisplayValue('mockproc');
+      });
+
+      const providerOption = screen.queryByTestId('test_lti');
+      expect(providerOption).not.toBeInTheDocument();
+    });
+
     it('Does not request lti provider options if there is no exam service url configuration', async () => {
       mergeConfig({
         EXAMS_BASE_URL: null,
@@ -583,7 +596,7 @@ describe('ProctoredExamSettings', () => {
     });
   });
 
-  describe.only('Save settings', () => {
+  describe('Save settings', () => {
     beforeEach(async () => {
       axiosMock.onPost(
         StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
