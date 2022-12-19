@@ -519,14 +519,18 @@ function ProctoredExamSettings({ courseId, intl }) {
             // This option is not directly selectable.
             const proctoringProvidersStudio = settingsResponse.data.available_proctoring_providers;
             const proctoringProvidersLti = ltiProvidersResponse?.data || [];
-            setAllowLtiProviders(proctoringProvidersStudio.includes('lti_external'));
+            const enableLtiProviders = proctoringProvidersStudio.includes('lti_external');
+            setAllowLtiProviders(enableLtiProviders);
             setLtiProctoringProviders(proctoringProvidersLti);
             // flatten provider objects and coalesce values to just the provider key
-            setAvailableProctoringProviders(
-              proctoringProvidersLti.reduce((result, provider) => [...result, provider.name], []).concat(
-                proctoringProvidersStudio.filter(value => value !== 'lti_external'),
-              ),
-            );
+            let availableProviders = proctoringProvidersStudio.filter(value => value !== 'lti_external');
+            if (enableLtiProviders) {
+              availableProviders = proctoringProvidersLti.reduce(
+                (result, provider) => [...result, provider.name], availableProviders,
+              );
+            }
+            setAvailableProctoringProviders(availableProviders);
+
             if (proctoredExamSettings.proctoring_provider === 'lti_external') {
               setProctoringProvider(examConfigResponse.data.provider);
             } else {
