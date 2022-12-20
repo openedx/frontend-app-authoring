@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TypeCard snapshot snapshot: renders type setting card 1`] = `
+<SettingsOption
+  summary="Text Input Problem"
+  title="Type"
+>
+  <TypeRow
+    key="stringresponse"
+    label="Text Input Problem"
+    lastRow={false}
+    selected={false}
+    typeKey="stringresponse"
+    updateField={[MockFunction args.updateField]}
+  />
+  <TypeRow
+    key="numericalresponse"
+    label="Numeric Response Problem"
+    lastRow={false}
+    selected={true}
+    typeKey="numericalresponse"
+    updateField={[MockFunction args.updateField]}
+  />
+  <TypeRow
+    key="optionresponse"
+    label="Dropdown Problem"
+    lastRow={false}
+    selected={true}
+    typeKey="optionresponse"
+    updateField={[MockFunction args.updateField]}
+  />
+  <TypeRow
+    key="choiceresponse"
+    label="Multi Select Problem"
+    lastRow={false}
+    selected={true}
+    typeKey="choiceresponse"
+    updateField={[MockFunction args.updateField]}
+  />
+  <TypeRow
+    key="multiplechoiceresponse"
+    label="Single Select Problem"
+    lastRow={true}
+    selected={true}
+    typeKey="multiplechoiceresponse"
+    updateField={[MockFunction args.updateField]}
+  />
+</SettingsOption>
+`;

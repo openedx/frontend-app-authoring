@@ -52,7 +52,7 @@ This guide presumes you have a functioning devstack.
 4. Open a terminal
     1. `cd ${DEVSTACK_WORKSPACE}/src/frontend-lib-content-components`
     1. run `$ npm install`
-    2. run `$ npm build` when you want to see your changes.
+    2. run `$ make build` when you want to see your changes.
 
 5. In devstack run `make studio-static` followed by `$ make dev.down.frontend-app-course-authoring` and `$ make dev.up.frontend-app-course-authoring`.
 

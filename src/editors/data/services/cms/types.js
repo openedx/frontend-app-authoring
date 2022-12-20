@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { ProblemTypes, ShowAnswerTypes } from '../../constants/problem';
 
 export const videoDataProps = {
   videoSource: PropTypes.string,
@@ -24,6 +25,46 @@ export const videoDataProps = {
   }),
 };
 
+export const answerOptionProps = PropTypes.shape({
+  id: PropTypes.string,
+  title: PropTypes.string,
+  correct: PropTypes.bool,
+  feedback: PropTypes.string,
+  selectedFeedback: PropTypes.string,
+  unselectedFeedback: PropTypes.string,
+});
+
+export const problemDataProps = {
+  rawOLX: PropTypes.string,
+  problemType: PropTypes.instanceOf(ProblemTypes),
+  question: PropTypes.string,
+  answers: PropTypes.arrayOf(
+    answerOptionProps,
+  ),
+  settings: PropTypes.shape({
+    scoring: PropTypes.shape({
+      advanced: PropTypes.bool,
+      scoring: PropTypes.shape({
+        weight: PropTypes.number,
+        attempts: PropTypes.shape({
+          unlimited: PropTypes.bool,
+          number: PropTypes.number,
+        }),
+      }),
+    }),
+    hints: PropTypes.arrayOf(PropTypes.string),
+    timeBetween: PropTypes.number,
+    matLabApiKey: PropTypes.string,
+    showAnswer: PropTypes.shape({
+      on: PropTypes.instanceOf(ShowAnswerTypes),
+      afterAtempts: PropTypes.number,
+    }),
+    showResetButton: PropTypes.bool,
+  }),
+};
+
 export default {
   videoDataProps,
+  problemDataProps,
+  answerOptionProps,
 };

@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HintRow snapshot snapshot: renders hints row 1`] = `
+<Container
+  fluid={true}
+>
+  <Row>
+    <Component
+      xs={10}
+    >
+      <Form.Group>
+        <Form.Control
+          floatingLabel="Hint"
+          onChange={[MockFunction]}
+          value="hint_1"
+        />
+      </Form.Group>
+    </Component>
+    <Component
+      xs={2}
+    >
+      <IconButton
+        alt="Delete answer"
+        iconAs="Icon"
+        onClick={[MockFunction]}
+        variant="secondary"
+      />
+    </Component>
+  </Row>
+</Container>
+`;

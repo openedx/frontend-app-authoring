@@ -6,6 +6,7 @@ import * as module from './app';
 export const fetchBlock = () => (dispatch) => {
   dispatch(requests.fetchBlock({
     onSuccess: (response) => dispatch(actions.app.setBlockValue(response)),
+    // eslint-disable-next-line
     onFailure: (e) => console.log({ fetchFailure: e }),
   }));
 };

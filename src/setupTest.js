@@ -80,6 +80,7 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
     Footer: 'Card.Footer',
     Body: 'Card.Body',
   },
+  Container: 'Container',
   Dropdown: {
     Item: 'Dropdown.Item',
     Menu: 'Dropdown.Menu',
@@ -93,6 +94,7 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
   IconButton: 'IconButton',
   IconButtonWithTooltip: 'IconButtonWithTooltip',
   Image: 'Image',
+  MailtoLink: 'MailtoLink',
   ModalDialog: {
     Footer: 'ModalDialog.Footer',
     Header: 'ModalDialog.Header',
@@ -111,6 +113,7 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
     Row: 'Form.Row',
   },
   FullscreenModal: 'FullscreenModal',
+  Row: 'Row',
   Scrollable: 'Scrollable',
   SelectableBox: {
     Set: 'SelectableBox.Set',

@@ -1,68 +1,72 @@
 /* istanbul ignore file */
-
 import * as urls from './urls';
 
 const mockPromise = (returnValue) => new Promise(resolve => resolve(returnValue));
 
 // TODO: update to return block data appropriate per block ID, which will equal block type
 // eslint-disable-next-line
-export const fetchBlockById = ({ blockId, studioEndpointUrl }) => mockPromise({
-  data: {
-    data: '<p>Test prompt content</p>',
-    display_name: 'My Text Prompt',
-    metadata: {
-      display_name: 'Welcome!',
-      download_track: true,
-      download_video: true,
-      edx_video_id: 'f36f06b5-92e5-47c7-bb26-bcf986799cb7',
-      html5_sources: [
-        'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-        'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      ],
-      show_captions: true,
-      sub: '',
-      track: '',
-      transcripts: {
-        en: { filename: 'my-transcript-url' },
+export const fetchBlockById = ({ blockId, studioEndpointUrl }) => {
+  let data = {};
+  if (blockId === 'html-block-id') {
+    data = {
+      data: '<p>Test prompt content</p>',
+      display_name: 'My Text Prompt',
+      metadata: {
+        display_name: 'Welcome!',
+        download_track: true,
+        download_video: true,
+        edx_video_id: 'f36f06b5-92e5-47c7-bb26-bcf986799cb7',
+        html5_sources: [
+          'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        ],
+        show_captions: true,
+        sub: '',
+        track: '',
+        transcripts: {
+          en: { filename: 'my-transcript-url' },
+        },
+        xml_attributes: {
+          source: '',
+        },
+        youtube_id_1_0: 'dQw4w9WgXcQ',
       },
-      xml_attributes: {
-        source: '',
+    };
+  } else if (blockId === 'problem-block-id') {
+    data = {
+      data: `<problem>
+      <optionresponse>
+          <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for dropdown problems. Edit this component to replace this template with your own assessment.</p>
+          <label>Add the question text, or prompt, here. This text is required.</label>
+          <description>You can add an optional tip or note related to the prompt like this. </description>
+          <optioninput>
+              <option correct="false">an incorrect answer</option>
+              <option correct="true">the correct answer</option>
+              <option correct="false">an incorrect answer</option>
+          </optioninput>
+      </optionresponse>
+  </problem>`,
+      display_name: 'Dropdown',
+      metadata: {
+        markdown: `You can use this template as a guide to the simple editor markdown and OLX markup to use for dropdown problems. Edit this component to replace this template with your own assessment.
+        >>Add the question text, or prompt, here. This text is required.||You can add an optional tip or note related to the prompt like this. <<
+        [[
+        an incorrect answer
+        (the correct answer)
+        an incorrect answer
+        ]]`,
+        attempts_before_showanswer_button: 7,
+        matlab_api_key: 'sample_matlab_api_key',
+        max_attempts: 5,
+        show_reset_button: true,
+        showanswer: 'after_attempts',
+        submission_wait_seconds: 15,
+        weight: 29,
       },
-      youtube_id_1_0: 'dQw4w9WgXcQ',
-    },
-  },
-});
-
-// TODO: update to return block data appropriate per block ID, which will equal block type
-// eslint-disable-next-line
-export const fetchStudioView = ({ blockId, studioEndpointUrl }) => mockPromise({
-  data: {
-    // The following is sent for 'raw' editors.
-    html: blockId.includes('mockRaw') ? 'data-editor="raw"' : '',
-    data: '<p>Test prompt content</p> <div data-metadata="license, "value": "all-rights-reserved", "type": " />',
-    display_name: 'My Text Prompt',
-    metadata: {
-      display_name: 'Welcome!',
-      download_track: true,
-      download_video: true,
-      edx_video_id: 'f36f06b5-92e5-47c7-bb26-bcf986799cb7',
-      html5_sources: [
-        'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-        'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      ],
-      show_captions: true,
-      sub: '',
-      track: '',
-      transcripts: {
-        en: { filename: 'my-transcript-url' },
-      },
-      xml_attributes: {
-        source: '',
-      },
-      youtube_id_1_0: 'dQw4w9WgXcQ',
-    },
-  },
-});
+    };
+  }
+  return mockPromise({ data: { ...data } });
+};
 
 // TODO: update to return block data appropriate per block ID, which will equal block type
 // eslint-disable-next-line
@@ -139,8 +143,9 @@ export const normalizeContent = ({
   learningContextId,
   title,
 }) => {
+  let response = {};
   if (blockType === 'html') {
-    return {
+    response = {
       category: blockType,
       couseKey: learningContextId,
       data: content,
@@ -148,8 +153,19 @@ export const normalizeContent = ({
       id: blockId,
       metadata: { display_name: title },
     };
+  } else if (blockType === 'problem') {
+    response = {
+      data: content.olx,
+      category: blockType,
+      couseKey: learningContextId,
+      has_changes: true,
+      id: blockId,
+      metadata: { display_name: title, ...content.settings },
+    };
+  } else {
+    throw new TypeError(`No Block in V2 Editors named /"${blockType}/", Cannot Save Content.`);
   }
-  throw new TypeError(`No Block in V2 Editors named /"${blockType}/", Cannot Save Content.`);
+  return { ...response };
 };
 
 export const saveBlock = ({
@@ -191,3 +207,76 @@ export const uploadAsset = ({
     msg: 'Upload completed',
   },
 });
+
+// TODO: update to return block data appropriate per block ID, which will equal block type
+// eslint-disable-next-line
+export const fetchStudioView = ({ blockId, studioEndpointUrl }) => {
+  let data = {};
+  if (blockId === 'html-block-id') {
+    data = {
+      data: '<p>Test prompt content</p>',
+      display_name: 'My Text Prompt',
+      metadata: {
+        display_name: 'Welcome!',
+        download_track: true,
+        download_video: true,
+        edx_video_id: 'f36f06b5-92e5-47c7-bb26-bcf986799cb7',
+        html5_sources: [
+          'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        ],
+        show_captions: true,
+        sub: '',
+        track: '',
+        transcripts: {
+          en: { filename: 'my-transcript-url' },
+        },
+        xml_attributes: {
+          source: '',
+        },
+        youtube_id_1_0: 'dQw4w9WgXcQ',
+      },
+    };
+  } else if (blockId === 'problem-block-id') {
+    data = {
+      data: `<problem>
+      <optionresponse>
+          <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for dropdown problems. Edit this component to replace this template with your own assessment.</p>
+          <label>Add the question text, or prompt, here. This text is required.</label>
+          <description>You can add an optional tip or note related to the prompt like this. </description>
+          <optioninput>
+              <option correct="False">an incorrect answer</option>
+              <option correct="True">the correct answer</option>
+              <option correct="False">an incorrect answer</option>
+          </optioninput>
+      </optionresponse>
+  </problem>`,
+      display_name: 'Dropdown',
+      metadata: {
+        markdown: `You can use this template as a guide to the simple editor markdown and OLX markup to use for dropdown problems. Edit this component to replace this template with your own assessment.
+        >>Add the question text, or prompt, here. This text is required.||You can add an optional tip or note related to the prompt like this. <<
+        [[
+        an incorrect answer
+        (the correct answer)
+        an incorrect answer
+        ]]`,
+        attempts_before_showanswer_button: 7,
+        matlab_api_key: 'numerical_input_matlab_api_key',
+        max_attempts: 5,
+        rerandomize: 'per_student',
+        show_reset_button: true,
+        showanswer: 'after_attempts',
+        submission_wait_seconds: 15,
+        weight: 29,
+      },
+    };
+  }
+
+  return mockPromise({
+    data: {
+      // The following is sent for 'raw' editors.
+      html: blockId.includes('mockRaw') ? 'data-editor="raw"' : '',
+      ...data,
+    },
+  });
+};

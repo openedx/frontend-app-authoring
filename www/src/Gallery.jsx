@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Form } from '@edx/paragon';
 // eslint-disable-next-line
@@ -7,6 +7,9 @@ import { EditorPage } from '@edx/frontend-lib-content-components';
 import { blockTypes } from '@edx/frontend-lib-content-components/editors/data/constants/app';
 // eslint-disable-next-line
 import { mockBlockIdByType } from '@edx/frontend-lib-content-components/editors/data/constants/mockData';
+import { useDispatch } from 'react-redux';
+// eslint-disable-next-line
+import { thunkActions } from '@edx/frontend-lib-content-components/editors/data/redux';
 
 export const EditorGallery = () => {
   const [blockType, setBlockType] = React.useState('html');
@@ -23,6 +26,15 @@ export const EditorGallery = () => {
   const handleBlockChange = (e) => setBlockType(e.target.value);
   const handleRawChange = (e) => setMockRaw(e.target.value === 'true');
 
+  const dispatch = useDispatch();
+  useEffect(() => {
+    thunkActions.app.initialize({
+      blockId: blockIds[blockType],
+      blockType,
+      lmsEndpointUrl,
+      studioEndpointUrl,
+    })(dispatch);
+  }, [dispatch, blockType]);
   return (
     <div className="gallery">
       <div style={{ display: 'flex' }}>

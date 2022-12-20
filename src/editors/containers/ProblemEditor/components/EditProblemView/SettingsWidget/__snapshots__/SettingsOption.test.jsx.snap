@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SettingsOption render snapshot: renders correct 1`] = `
+<Card>
+  <Card.Section
+    className="settingsCardTitleSection"
+  >
+    <Advanced
+      onToggle={[Function]}
+      open={false}
+    >
+      <Trigger
+        className="collapsible-trigger d-flex"
+      >
+        <span
+          className="flex-grow-1"
+        >
+          Settings Option Title
+        </span>
+        <Visible
+          whenClosed={true}
+        >
+          <Icon />
+        </Visible>
+        <Visible
+          whenOpen={true}
+        >
+          <Icon />
+        </Visible>
+      </Trigger>
+    </Advanced>
+  </Card.Section>
+  <Card.Section>
+    <Advanced
+      open={true}
+    >
+      <Body
+        className="collapsible-body"
+      >
+        <span>
+          Settings Option Summary
+        </span>
+      </Body>
+    </Advanced>
+    <Advanced
+      open={false}
+    >
+      <Body
+        className="collapsible-body"
+      >
+        <h1>
+          My test content
+        </h1>
+      </Body>
+    </Advanced>
+  </Card.Section>
+</Card>
+`;

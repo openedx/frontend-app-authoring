@@ -101,8 +101,9 @@ export const apiMethods = {
     learningContextId,
     title,
   }) => {
+    let response = {};
     if (blockType === 'html') {
-      return {
+      response = {
         category: blockType,
         courseKey: learningContextId,
         data: content,
@@ -110,8 +111,16 @@ export const apiMethods = {
         id: blockId,
         metadata: { display_name: title },
       };
-    }
-    if (blockType === 'video') {
+    } else if (blockType === 'problem') {
+      response = {
+        data: content.olx,
+        category: blockType,
+        couseKey: learningContextId,
+        has_changes: true,
+        id: blockId,
+        metadata: { display_name: title, ...content.settings },
+      };
+    } else if (blockType === 'video') {
       const {
         html5Sources,
         edxVideoId,
@@ -121,7 +130,7 @@ export const apiMethods = {
         videoSource: content.videoSource,
         fallbackVideos: content.fallbackVideos,
       });
-      return {
+      response = {
         category: blockType,
         courseKey: learningContextId,
         display_name: title,
@@ -142,8 +151,10 @@ export const apiMethods = {
           license: module.processLicense(content.licenseType, content.licenseDetails),
         },
       };
+    } else {
+      throw new TypeError(`No Block in V2 Editors named /"${blockType}/", Cannot Save Content.`);
     }
-    throw new TypeError(`No Block in V2 Editors named /"${blockType}/", Cannot Save Content.`);
+    return { ...response };
   },
   saveBlock: ({
     blockId,

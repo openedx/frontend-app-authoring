@@ -12,7 +12,7 @@ jest.mock('./hooks', () => ({
 
 jest.mock('./containers/TextEditor', () => 'TextEditor');
 jest.mock('./containers/VideoEditor', () => 'VideoEditor');
-jest.mock('./containers/ProblemEditor/ProblemEditor', () => 'ProblemEditor');
+jest.mock('./containers/ProblemEditor', () => 'ProblemEditor');
 
 const initData = {
   blockId: 'block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4',

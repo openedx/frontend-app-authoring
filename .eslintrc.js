@@ -8,6 +8,7 @@ const config = createConfig('eslint', {
     'spaced-comment': ['error', 'always', { 'block': { 'exceptions': ['*'] } }],
     'react-hooks/rules-of-hooks': 'off',
     'react-hooks/exhaustive-deps': 'off',
+    'radix': 'off',
   },
 });
 

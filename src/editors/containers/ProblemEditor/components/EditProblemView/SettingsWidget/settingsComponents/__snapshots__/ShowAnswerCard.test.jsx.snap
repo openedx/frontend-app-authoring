@@ -1,0 +1,114 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ShowAnswerCard snapshot snapshot: show answer setting card 1`] = `
+<SettingsOption
+  summary="After Some Number of Attempts"
+  title="Show answer"
+>
+  <div
+    className="halfSpacedMessage"
+  >
+    <span>
+      <FormattedMessage
+        defaultMessage="Define when learners can see the correct answer."
+        description="Show Answer settings card text"
+        id="authoring.problemeditor.settings.showAnswer.text"
+      />
+    </span>
+  </div>
+  <div
+    className="spacedMessage"
+  >
+    <Hyperlink
+      destination="#"
+      target="_blank"
+    >
+      <FormattedMessage
+        defaultMessage="Set a default value in advanced settings"
+        description="Advanced settings link text"
+        id="authoring.problemeditor.settings.advancedSettingLink.text"
+      />
+    </Hyperlink>
+  </div>
+  <Form.Group>
+    <Form.Control
+      as="select"
+      onChange={[MockFunction showAnswerCardHooks.handleShowAnswerChange]}
+      value="after_attempts"
+    >
+      <option
+        key="always"
+        value="always"
+      >
+        Always
+      </option>
+      <option
+        key="answered"
+        value="answered"
+      >
+        Answered
+      </option>
+      <option
+        key="attempted"
+        value="attempted"
+      >
+        Attempted or Past Due
+      </option>
+      <option
+        key="closed"
+        value="closed"
+      >
+        Closed
+      </option>
+      <option
+        key="finished"
+        value="finished"
+      >
+        Finished
+      </option>
+      <option
+        key="correct_or_past_due"
+        value="correct_or_past_due"
+      >
+        Correct or Past Due
+      </option>
+      <option
+        key="past_due"
+        value="past_due"
+      >
+        Past Due
+      </option>
+      <option
+        key="never"
+        value="never"
+      >
+        Never
+      </option>
+      <option
+        key="after_attempts"
+        value="after_attempts"
+      >
+        After Some Number of Attempts
+      </option>
+      <option
+        key="after_all_attempts"
+        value="after_all_attempts"
+      >
+        After All Attempts
+      </option>
+      <option
+        key="after_all_attempts_or_correct"
+        value="after_all_attempts_or_correct"
+      >
+        After All Attempts or Correct
+      </option>
+      <option
+        key="attempted_no_past_due"
+        value="attempted_no_past_due"
+      >
+        Attempted
+      </option>
+    </Form.Control>
+  </Form.Group>
+</SettingsOption>
+`;
