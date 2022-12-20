@@ -28,10 +28,35 @@ const messages = defineMessages({
     defaultMessage: 'Cancel',
     description: 'Button allowing the user to return to discussion provider configurations.',
   },
+  confirm: {
+    id: 'authoring.discussions.confirm',
+    defaultMessage: 'Confirm',
+    description: 'Button allowing the user to confirm Confirmation.',
+  },
   confirmConfigurationChange: {
     id: 'authoring.discussions.confirmConfigurationChange',
     defaultMessage: 'Are you sure you want to change the discussion settings?',
     description: 'Asks the user whether he/she really wants to change settings.',
+  },
+  confirmEnableDiscussionsLabel: {
+    id: 'authoring.discussions.confirmEnableDiscussionsLabel',
+    defaultMessage: 'Enable discussions on units in graded subsections?',
+    description: 'Asks the user whether he/she really wants to enable discussions on units in graded subsections.',
+  },
+  cancelEnableDiscussionsLabel: {
+    id: 'authoring.discussions.cancelEnableDiscussionsLabel',
+    defaultMessage: 'Disable discussions on units in graded subsections?',
+    description: 'Asks the user whether he/she really wants to disable discussions on units in graded subsections.',
+  },
+  confirmEnableDiscussions: {
+    id: 'authoring.discussions.confirmEnableDiscussions',
+    defaultMessage: 'Enabling this toggle will automatically enable discussion on all units in graded subsections, that are not timed exams.',
+    description: 'Asks the user whether he/she really wants to enable discussions on units in graded subsections.',
+  },
+  cancelEnableDiscussions: {
+    id: 'authoring.discussions.cancelEnableDiscussions',
+    defaultMessage: 'Disabling this toggle will automatically disable discussion on all units in graded subsections. Discussion topics containing at least 1 thread will be listed and accessible under “Archived” in Topics tab on the Discussions page.',
+    description: 'Asks the user whether he/she really wants to disable discussions on units in graded subsections.',
   },
   backButton: {
     id: 'authoring.discussions.backButton',
@@ -124,7 +149,16 @@ const messages = defineMessages({
     defaultMessage: 'Questions for the TAs',
     description: 'Label for a checkbox allowing a user to divide the Questions for the TAs (TA stands for "teaching assistant") course wide topic by cohorts.',
   },
-
+    cohortsEnabled: {
+    id: 'authoring.discussions.builtIn.cohortsEnabled.label',
+    defaultMessage: 'To adjust these settings, enable cohorts on the ',
+    description: 'Label text informing the user to enable cohort',
+  },
+  instructorDashboard: {
+    id: 'authoring.discussions.builtIn.instructorDashboard.label',
+    defaultMessage: 'instructor dashboard',
+    description: 'Label text for instructor dashboard',
+  },
   // In-context discussion fields
   visibilityInContext: {
     id: 'authoring.discussions.builtIn.visibilityInContext',

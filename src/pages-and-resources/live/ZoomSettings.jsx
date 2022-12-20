@@ -6,13 +6,13 @@ import { providerNames } from './constants';
 import LiveCommonFields from './LiveCommonFields';
 import FormikControl from '../../generic/FormikControl';
 
-function ZoomsSettings({
+function ZoomSettings({
  intl,
  values,
 }) {
   return (
     <>
-      {(!values.piiSharingEnable && (values.piiSharingEmail || values.piiSharingUsername)) ? (
+      {!values.piiSharingEnable ? (
         <p data-testid="request-pii-sharing">
           {intl.formatMessage(messages.requestPiiSharingEnable, { provider: providerNames[values.provider] })}
         </p>
@@ -37,7 +37,7 @@ function ZoomsSettings({
   );
 }
 
-ZoomsSettings.propTypes = {
+ZoomSettings.propTypes = {
   intl: intlShape.isRequired,
   values: PropTypes.shape({
     consumerKey: PropTypes.string,
@@ -51,4 +51,4 @@ ZoomsSettings.propTypes = {
   }).isRequired,
 };
 
-export default injectIntl(ZoomsSettings);
+export default injectIntl(ZoomSettings);

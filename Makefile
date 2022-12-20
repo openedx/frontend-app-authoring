@@ -1,6 +1,6 @@
 transifex_resource = frontend-app-course-authoring
 export TRANSIFEX_RESOURCE = ${transifex_resource}
-transifex_langs = "ar,fr,es_419,zh_CN"
+transifex_langs = "ar,fr,es_419,zh_CN,pt,it,de,uk,ru,hi,fr_CA"
 
 transifex_utils = ./node_modules/.bin/transifex-utils.js
 i18n = ./src/i18n
@@ -47,7 +47,7 @@ push_translations:
 
 # Pulls translations from Transifex.
 pull_translations:
-	tx pull -f --mode reviewed --languages=$(transifex_langs)
+	tx pull -t -f --mode reviewed --languages=$(transifex_langs)
 
 # This target is used by Travis.
 validate-no-uncommitted-package-lock-changes:

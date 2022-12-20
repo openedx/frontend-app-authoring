@@ -8,10 +8,9 @@ ensureConfig([
   'STUDIO_BASE_URL',
 ], 'Course Apps API service');
 
-const apiBaseUrl = getConfig().STUDIO_BASE_URL;
-
-const courseAppsApiUrl = `${apiBaseUrl}/api/course_apps/v1/apps`;
-const courseAdvancedSettingsApiUrl = `${apiBaseUrl}/api/contentstore/v0/advanced_settings`;
+const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
+const getCourseAppsApiUrl = () => `${getApiBaseUrl()}/api/course_apps/v1/apps`;
+const getCourseAdvancedSettingsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v0/advanced_settings`;
 
 /**
  * Fetches the course apps installed for provided course
@@ -20,7 +19,7 @@ const courseAdvancedSettingsApiUrl = `${apiBaseUrl}/api/contentstore/v0/advanced
  */
 export async function getCourseApps(courseId) {
   const { data } = await getAuthenticatedHttpClient()
-    .get(`${courseAppsApiUrl}/${courseId}`);
+    .get(`${getCourseAppsApiUrl()}/${courseId}`);
   return camelCaseObject(data);
 }
 
@@ -33,7 +32,7 @@ export async function getCourseApps(courseId) {
 export async function updateCourseApp(courseId, appId, state) {
   await getAuthenticatedHttpClient()
     .patch(
-      `${courseAppsApiUrl}/${courseId}`,
+      `${getCourseAppsApiUrl()}/${courseId}`,
       {
         id: appId,
         enabled: state,
@@ -49,7 +48,7 @@ export async function updateCourseApp(courseId, appId, state) {
  */
 export async function getCourseAdvancedSettings(courseId, settings) {
   const { data } = await getAuthenticatedHttpClient()
-    .get(`${courseAdvancedSettingsApiUrl}/${courseId}`, { filter_fields: settings.map(snakeCase).join(',') });
+    .get(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`, { filter_fields: settings.map(snakeCase).join(',') });
   return camelCaseObject(data);
 }
 
@@ -62,6 +61,6 @@ export async function getCourseAdvancedSettings(courseId, settings) {
  */
 export async function updateCourseAdvancedSettings(courseId, setting, value) {
   const { data } = await getAuthenticatedHttpClient()
-    .patch(`${courseAdvancedSettingsApiUrl}/${courseId}`, { [snakeCase(setting)]: { value } });
+    .patch(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`, { [snakeCase(setting)]: { value } });
   return camelCaseObject(data);
 }

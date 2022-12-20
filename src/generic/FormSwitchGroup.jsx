@@ -13,6 +13,7 @@ export default function FormSwitchGroup({
   onChange,
   onBlur,
   checked,
+  disabled,
 }) {
   const helpTextId = `${id}HelpText`;
 
@@ -36,6 +37,7 @@ export default function FormSwitchGroup({
             onChange={onChange}
             onBlur={onBlur}
             checked={checked}
+            disabled={disabled}
           />
         </div>
         <Form.Text
@@ -57,9 +59,11 @@ FormSwitchGroup.propTypes = {
   onChange: PropTypes.func.isRequired,
   onBlur: PropTypes.func,
   checked: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool,
 };
 FormSwitchGroup.defaultProps = {
   className: null,
   onBlur: null,
   name: null,
+  disabled: false,
 };

@@ -160,8 +160,13 @@ const messages = defineMessages({
 
   freePlanMessage: {
     id: 'authoring.live.freePlanMessage',
-    defaultMessage: 'The free plan is pre-configured, and no additional configurations are required.',
+    defaultMessage: 'The free plan is pre-configured, and no additional configurations are required. By selecting the free plan, you are agreeing to Blindside Networks',
     description: 'Tells user that free plans requires no additional configurations',
+  },
+  privacyPolicy: {
+    id: 'authoring.live.privacyPolicy',
+    defaultMessage: 'Privacy Policy.',
+    description: 'The text of privacy policy hyperlink for free plan',
   },
 });
 

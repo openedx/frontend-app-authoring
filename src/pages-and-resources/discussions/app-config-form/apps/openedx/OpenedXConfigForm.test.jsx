@@ -50,6 +50,7 @@ const defaultAppConfig = (divideDiscussionIds = []) => ({
   enableReportedContentEmailNotifications: false,
   allowDivisionByUnit: false,
   blackoutDates: [],
+  cohortsEnabled: false,
 });
 describe('OpenedXConfigForm', () => {
   let axiosMock;
@@ -141,14 +142,17 @@ describe('OpenedXConfigForm', () => {
         ...legacyApiResponse.plugin_configuration,
         reported_content_email_notifications_flag: true,
         divided_course_wide_discussions: [],
+         available_division_schemes: [],
       },
     });
     createComponent();
     const { divideDiscussionIds } = defaultAppConfig(['13f106c6-6735-4e84-b097-0456cff55960', 'course']);
 
     // DivisionByGroupFields
+
+    expect(container.querySelector('#alert')).toBeInTheDocument();
     expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
-    expect(container.querySelector('#divideByCohorts')).not.toBeChecked();
+    expect(container.querySelector('#divideByCohorts')).toBeDisabled();
     expect(container.querySelector('#divideCourseTopicsByCohorts')).not.toBeInTheDocument();
 
     divideDiscussionIds.forEach(id => expect(
@@ -179,6 +183,7 @@ describe('OpenedXConfigForm', () => {
         reported_content_email_notifications_flag: true,
         always_divide_inline_discussions: true,
         divided_course_wide_discussions: [],
+        available_division_schemes: ['cohorts'],
       },
     });
     createComponent();
@@ -186,14 +191,10 @@ describe('OpenedXConfigForm', () => {
 
     // DivisionByGroupFields
     expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
-    expect(container.querySelector('#divideByCohorts')).toBeChecked();
+    expect(container.querySelector('#divideByCohorts')).not.toBeChecked();
     expect(
       container.querySelector('#divideCourseTopicsByCohorts'),
-    ).toBeInTheDocument();
-    expect(
-      container.querySelector('#divideCourseTopicsByCohorts'),
-    ).not.toBeChecked();
-
+    ).not.toBeInTheDocument();
     divideDiscussionIds.forEach(id => expect(
       container.querySelector(`#checkbox-${id}`),
     ).not.toBeInTheDocument());
@@ -229,13 +230,10 @@ describe('OpenedXConfigForm', () => {
 
       // DivisionByGroupFields
       expect(container.querySelector('#divideByCohorts')).toBeInTheDocument();
-      expect(container.querySelector('#divideByCohorts')).toBeChecked();
-      expect(container.querySelector('#divideCourseTopicsByCohorts')).toBeInTheDocument();
-      expect(container.querySelector('#divideCourseTopicsByCohorts')).toBeChecked();
-
+      expect(container.querySelector('#divideByCohorts')).not.toBeChecked();
+      expect(container.querySelector('#divideCourseTopicsByCohorts')).not.toBeInTheDocument();
       divideDiscussionIds.forEach(id => {
-        expect(container.querySelector(`#checkbox-${id}`)).toBeInTheDocument();
-        expect(container.querySelector(`#checkbox-${id}`)).toBeChecked();
+        expect(container.querySelector(`#checkbox-${id}`)).not.toBeInTheDocument();
       });
     });
 
