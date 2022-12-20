@@ -1,4 +1,5 @@
 import * as reactRedux from 'react-redux';
+import { MockUseState } from '../../../testUtils';
 
 import { RequestKeys } from '../../data/constants/requests';
 import { selectors } from '../../data/redux';
@@ -6,6 +7,8 @@ import { selectors } from '../../data/redux';
 import * as appHooks from '../../hooks';
 import * as hooks from './hooks';
 import analyticsEvt from '../../data/constants/analyticsEvt';
+
+const hookState = new MockUseState(hooks);
 
 jest.mock('../../data/redux', () => ({
   selectors: {
@@ -67,9 +70,46 @@ describe('EditorContainer hooks', () => {
         });
       });
     });
-    describe('handleCancelClicked', () => {
+
+    describe('cancelConfirmModalToggle', () => {
+      const hookKey = hookState.keys.isCancelConfirmModalOpen;
+      beforeEach(() => {
+        jest.clearAllMocks();
+      });
+      describe('state hook', () => {
+        hookState.testGetter(hookKey);
+      });
+      describe('using state', () => {
+        beforeEach(() => {
+          hookState.mock();
+        });
+        afterEach(() => {
+          hookState.restore();
+        });
+
+        describe('cancelConfirmModalToggle', () => {
+          let hook;
+          beforeEach(() => {
+            hook = hooks.cancelConfirmModalToggle();
+          });
+          test('isCancelConfirmOpen: state value', () => {
+            expect(hook.isCancelConfirmOpen).toEqual(hookState.stateVals[hookKey]);
+          });
+          test('openCancelConfirmModal: calls setter with true', () => {
+            hook.openCancelConfirmModal();
+            expect(hookState.setState[hookKey]).toHaveBeenCalledWith(true);
+          });
+          test('closeCancelConfirmModal: calls setter with false', () => {
+            hook.closeCancelConfirmModal();
+            expect(hookState.setState[hookKey]).toHaveBeenCalledWith(false);
+          });
+        });
+      });
+    });
+
+    describe('handleCancel', () => {
       it('calls navigateCallback to returnUrl if onClose is not passed', () => {
-        expect(hooks.handleCancelClicked({})).toEqual(
+        expect(hooks.handleCancel({})).toEqual(
           appHooks.navigateCallback({
             destination: reactRedux.useSelector(selectors.app.returnUrl),
             analyticsEvent: analyticsEvt.editorCancelClick,
@@ -79,7 +119,7 @@ describe('EditorContainer hooks', () => {
       });
       it('calls onClose and not navigateCallback if onClose is passed', () => {
         const onClose = () => 'my close value';
-        expect(hooks.handleCancelClicked({ onClose })).toEqual(onClose);
+        expect(hooks.handleCancel({ onClose })).toEqual(onClose);
         expect(appHooks.navigateCallback).not.toHaveBeenCalled();
       });
     });
