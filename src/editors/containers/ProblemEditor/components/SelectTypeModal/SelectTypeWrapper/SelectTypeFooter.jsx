@@ -7,33 +7,38 @@ import {
   Button,
   ModalDialog,
 } from '@edx/paragon';
-import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import messages from './messages';
+import hooks from '../hooks';
 
 import { actions } from '../../../../../data/redux';
 
 export const SelectTypeFooter = ({
-  selected,
   onCancel,
-  // Redux
-  onSelect,
+  selected,
+  // redux
+  setProblemType,
+  updateField,
+  // injected,
+  intl,
 }) => (
-  <div className="editor-footer" style={{ position: 'sticky', bottom: 0 }}>
+  <div className="editor-footer position-sticky" style={{ bottom: 0 }}>
     <ModalDialog.Footer className="border-top-0">
       <ActionRow>
         <ActionRow.Spacer />
         <Button
-          aria-label="TODO: CANCEL"
+          aria-label={intl.formatMessage(messages.cancelButtonAriaLabel)}
           variant="tertiary"
           onClick={onCancel}
         >
-          <FormattedMessage {...'TODO-CANCEL'} />
+          <FormattedMessage {...messages.cancelButtonLabel} />
         </Button>
         <Button
-          aria-label="TODO: SELECT"
-          onClick={onSelect(selected)}
+          aria-label={intl.formatMessage(messages.selectButtonAriaLabel)}
+          onClick={hooks.onSelect(setProblemType, selected, updateField)}
           disabled={!selected}
         >
-          <FormattedMessage {...'TODO- SELECT'} />
+          <FormattedMessage {...messages.selectButtonLabel} />
         </Button>
       </ActionRow>
     </ModalDialog.Footer>
@@ -47,14 +52,18 @@ SelectTypeFooter.defaultProps = {
 SelectTypeFooter.propTypes = {
   onCancel: PropTypes.func.isRequired,
   selected: PropTypes.string,
-  onSelect: PropTypes.func.isRequired,
+  setProblemType: PropTypes.func.isRequired,
+  updateField: PropTypes.func.isRequired,
+  // injected
+  intl: intlShape.isRequired,
 };
 
 export const mapStateToProps = () => ({
 });
 
 export const mapDispatchToProps = {
-  initializeEditor: actions.problem.onSelect,
+  setProblemType: actions.problem.setProblemType,
+  updateField: actions.problem.updateField,
 };
 
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SelectTypeFooter));

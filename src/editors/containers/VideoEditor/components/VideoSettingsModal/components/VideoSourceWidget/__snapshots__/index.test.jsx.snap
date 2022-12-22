@@ -95,10 +95,10 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
           />
         </div>
       </Form.Checkbox>
-      <OverLayTrigger
+      <OverlayTrigger
         key="top"
         overlay={
-          <ToolTip
+          <Tooltip
             id="tooltip-top"
           >
             <FormattedMessage
@@ -108,7 +108,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
               description="Message for allow video downloads checkbox"
               id="authoring.videoeditor.videoSource.fallbackVideo.allowDownloadTooltipMessage"
             />
-          </ToolTip>
+          </Tooltip>
         }
         placement="top"
       >
@@ -120,7 +120,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
             }
           }
         />
-      </OverLayTrigger>
+      </OverlayTrigger>
       <ActionRow.Spacer />
     </ActionRow>
   </Form.Group>

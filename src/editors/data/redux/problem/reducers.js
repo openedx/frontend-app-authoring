@@ -7,7 +7,7 @@ import { ProblemTypeKeys, ShowAnswerTypesKeys } from '../../constants/problem';
 const nextAlphaId = (lastId) => String.fromCharCode(lastId.charCodeAt(0) + 1);
 const initialState = {
   rawOLX: '',
-  problemType: ProblemTypeKeys.SINGLESELECT,
+  problemType: null,
   question: '',
   answers: [],
   groupFeedbackList: [],
@@ -124,9 +124,13 @@ const problem = createSlice({
       },
       ...payload,
     }),
-    onSelect: (state, { payload }) => ({
+    setEnableTypeSelection: (state) => ({
       ...state,
-      ...payload,
+      problemType: null,
+    }),
+    setProblemType: (state, { payload: { selected } }) => ({
+      ...state,
+      problemType: selected,
     }),
   },
 });

@@ -111,7 +111,11 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
     Label: 'Form.Label',
     Text: 'Form.Text',
     Row: 'Form.Row',
+    Radio: 'Radio',
+    RadioSet: 'RadioSet',
   },
+  OverlayTrigger: 'OverlayTrigger',
+  Tooltip: 'Tooltip',
   FullscreenModal: 'FullscreenModal',
   Row: 'Row',
   Scrollable: 'Scrollable',
@@ -122,9 +126,7 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
   Spinner: 'Spinner',
   Stack: 'Stack',
   Toast: 'Toast',
-  Tooltip: 'ToolTip',
   Truncate: 'Truncate',
-  OverlayTrigger: 'OverLayTrigger',
 }));
 
 jest.mock('@edx/paragon/icons', () => ({

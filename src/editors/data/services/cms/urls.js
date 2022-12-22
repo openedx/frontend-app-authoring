@@ -54,3 +54,7 @@ export const downloadVideoHandoutUrl = ({ studioEndpointUrl, handout }) => (
 export const courseDetailsUrl = ({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/settings/details/${learningContextId}`
 );
+
+export const courseAdvanceSettings = ({ studioEndpointUrl, learningContextId }) => (
+  `${studioEndpointUrl}/api/contentstore/v0/advanced_settings/${learningContextId}`
+);

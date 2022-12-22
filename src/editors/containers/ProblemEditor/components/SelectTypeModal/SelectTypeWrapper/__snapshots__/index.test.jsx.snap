@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SelectTypeWrapper snapshot 1`] = `
+<div>
+  <ModalDialog.Header>
+    <ModalDialog.Title>
+      <p>
+        Select Problem type
+      </p>
+      <div
+        className="pgn__modal-close-container"
+      >
+        <IconButton
+          iconAs="Icon"
+          src={[MockFunction icons.Close]}
+        />
+      </div>
+    </ModalDialog.Title>
+  </ModalDialog.Header>
+  <ModalDialog.Body>
+    <h1>
+      test child
+    </h1>
+  </ModalDialog.Body>
+  <injectIntl(ShimmedIntlComponent)
+    selected="iMAsElecTedValUE"
+  />
+</div>
+`;

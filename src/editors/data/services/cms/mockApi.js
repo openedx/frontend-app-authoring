@@ -35,17 +35,7 @@ export const fetchBlockById = ({ blockId, studioEndpointUrl }) => {
   } else if (blockId === 'problem-block-id') {
     data = {
       data: `<problem>
-      <optionresponse>
-          <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for dropdown problems. Edit this component to replace this template with your own assessment.</p>
-          <label>Add the question text, or prompt, here. This text is required.</label>
-          <description>You can add an optional tip or note related to the prompt like this. </description>
-          <optioninput>
-              <option correct="false">an incorrect answer</option>
-              <option correct="true">the correct answer</option>
-              <option correct="false">an incorrect answer</option>
-          </optioninput>
-      </optionresponse>
-  </problem>`,
+        </problem>`,
       display_name: 'Dropdown',
       metadata: {
         markdown: `You can use this template as a guide to the simple editor markdown and OLX markup to use for dropdown problems. Edit this component to replace this template with your own assessment.
@@ -134,6 +124,10 @@ export const fetchCourseDetails = ({ studioEndpointUrl, learningContextId }) => 
 // eslint-disable-next-line
 export const allowThumbnailUpload = ({ studioEndpointUrl }) => mockPromise({
   data: true,
+});
+// eslint-disable-next-line
+export const fetchAdvanceSettings = ({ studioEndpointUrl, learningContextId }) => mockPromise({
+  data: { allow_unsupported_xblocks: { value: true } },
 });
 
 export const normalizeContent = ({

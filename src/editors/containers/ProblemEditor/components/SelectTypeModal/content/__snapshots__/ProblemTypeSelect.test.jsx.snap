@@ -1,0 +1,316 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
+<Fragment>
+  <SelectableBox.Set
+    columns={1}
+    onChange={[Function]}
+    type="radio"
+    value="optionresponse"
+  >
+    <SelectableBox
+      aria-label="checkbox"
+      id="multiplechoiceresponse"
+      type="radio"
+      value="multiplechoiceresponse"
+    >
+      Single Select Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="choiceresponse"
+      type="radio"
+      value="choiceresponse"
+    >
+      Multi Select Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="optionresponse"
+      type="radio"
+      value="optionresponse"
+    >
+      Dropdown Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="numericalresponse"
+      type="radio"
+      value="numericalresponse"
+    >
+      Numeric Response Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="stringresponse"
+      type="radio"
+      value="stringresponse"
+    >
+      Text Input Problem
+    </SelectableBox>
+  </SelectableBox.Set>
+  <Button
+    className="pl-0 mt-2"
+    onClick={[Function]}
+    variant="link"
+  >
+    <FormattedMessage
+      defaultMessage="Advance problem types"
+      description="Button label for advance problem types option"
+      id="authoring.problemEditor.problemSelect.advanceButton.label"
+    />
+  </Button>
+</Fragment>
+`;
+
+exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
+<Fragment>
+  <SelectableBox.Set
+    columns={1}
+    onChange={[Function]}
+    type="radio"
+    value="choiceresponse"
+  >
+    <SelectableBox
+      aria-label="checkbox"
+      id="multiplechoiceresponse"
+      type="radio"
+      value="multiplechoiceresponse"
+    >
+      Single Select Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="choiceresponse"
+      type="radio"
+      value="choiceresponse"
+    >
+      Multi Select Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="optionresponse"
+      type="radio"
+      value="optionresponse"
+    >
+      Dropdown Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="numericalresponse"
+      type="radio"
+      value="numericalresponse"
+    >
+      Numeric Response Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="stringresponse"
+      type="radio"
+      value="stringresponse"
+    >
+      Text Input Problem
+    </SelectableBox>
+  </SelectableBox.Set>
+  <Button
+    className="pl-0 mt-2"
+    onClick={[Function]}
+    variant="link"
+  >
+    <FormattedMessage
+      defaultMessage="Advance problem types"
+      description="Button label for advance problem types option"
+      id="authoring.problemEditor.problemSelect.advanceButton.label"
+    />
+  </Button>
+</Fragment>
+`;
+
+exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
+<Fragment>
+  <SelectableBox.Set
+    columns={1}
+    onChange={[Function]}
+    type="radio"
+    value="numericalresponse"
+  >
+    <SelectableBox
+      aria-label="checkbox"
+      id="multiplechoiceresponse"
+      type="radio"
+      value="multiplechoiceresponse"
+    >
+      Single Select Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="choiceresponse"
+      type="radio"
+      value="choiceresponse"
+    >
+      Multi Select Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="optionresponse"
+      type="radio"
+      value="optionresponse"
+    >
+      Dropdown Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="numericalresponse"
+      type="radio"
+      value="numericalresponse"
+    >
+      Numeric Response Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="stringresponse"
+      type="radio"
+      value="stringresponse"
+    >
+      Text Input Problem
+    </SelectableBox>
+  </SelectableBox.Set>
+  <Button
+    className="pl-0 mt-2"
+    onClick={[Function]}
+    variant="link"
+  >
+    <FormattedMessage
+      defaultMessage="Advance problem types"
+      description="Button label for advance problem types option"
+      id="authoring.problemEditor.problemSelect.advanceButton.label"
+    />
+  </Button>
+</Fragment>
+`;
+
+exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
+<Fragment>
+  <SelectableBox.Set
+    columns={1}
+    onChange={[Function]}
+    type="radio"
+    value="multiplechoiceresponse"
+  >
+    <SelectableBox
+      aria-label="checkbox"
+      id="multiplechoiceresponse"
+      type="radio"
+      value="multiplechoiceresponse"
+    >
+      Single Select Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="choiceresponse"
+      type="radio"
+      value="choiceresponse"
+    >
+      Multi Select Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="optionresponse"
+      type="radio"
+      value="optionresponse"
+    >
+      Dropdown Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="numericalresponse"
+      type="radio"
+      value="numericalresponse"
+    >
+      Numeric Response Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="stringresponse"
+      type="radio"
+      value="stringresponse"
+    >
+      Text Input Problem
+    </SelectableBox>
+  </SelectableBox.Set>
+  <Button
+    className="pl-0 mt-2"
+    onClick={[Function]}
+    variant="link"
+  >
+    <FormattedMessage
+      defaultMessage="Advance problem types"
+      description="Button label for advance problem types option"
+      id="authoring.problemEditor.problemSelect.advanceButton.label"
+    />
+  </Button>
+</Fragment>
+`;
+
+exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
+<Fragment>
+  <SelectableBox.Set
+    columns={1}
+    onChange={[Function]}
+    type="radio"
+    value="stringresponse"
+  >
+    <SelectableBox
+      aria-label="checkbox"
+      id="multiplechoiceresponse"
+      type="radio"
+      value="multiplechoiceresponse"
+    >
+      Single Select Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="choiceresponse"
+      type="radio"
+      value="choiceresponse"
+    >
+      Multi Select Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="optionresponse"
+      type="radio"
+      value="optionresponse"
+    >
+      Dropdown Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="numericalresponse"
+      type="radio"
+      value="numericalresponse"
+    >
+      Numeric Response Problem
+    </SelectableBox>
+    <SelectableBox
+      aria-label="checkbox"
+      id="stringresponse"
+      type="radio"
+      value="stringresponse"
+    >
+      Text Input Problem
+    </SelectableBox>
+  </SelectableBox.Set>
+  <Button
+    className="pl-0 mt-2"
+    onClick={[Function]}
+    variant="link"
+  >
+    <FormattedMessage
+      defaultMessage="Advance problem types"
+      description="Button label for advance problem types option"
+      id="authoring.problemEditor.problemSelect.advanceButton.label"
+    />
+  </Button>
+</Fragment>
+`;

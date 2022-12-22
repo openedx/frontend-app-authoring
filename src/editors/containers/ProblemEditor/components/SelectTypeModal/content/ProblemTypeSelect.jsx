@@ -1,31 +1,45 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form } from '@edx/paragon';
-import { ProblemTypes } from '../../../../../data/constants/problem';
+import { Button, SelectableBox } from '@edx/paragon';
+import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
+import { ProblemTypes, ProblemTypeKeys, AdvanceProblemKeys } from '../../../../../data/constants/problem';
+import messages from './messages';
 
-// TODO: problemtype
-const ProblemTypeSelect = ({
-  // redux
+export const ProblemTypeSelect = ({
+  selected,
   setSelected,
 }) => {
   const handleChange = e => setSelected(e.target.value);
+  const handleClick = () => setSelected(AdvanceProblemKeys.BLANK);
+  const settings = { 'aria-label': 'checkbox', type: 'radio' };
+
   return (
-    <Form.Group>
-      <Form.RadioSet
-        name="problemtype"
+    <>
+      <SelectableBox.Set
+        columns={1}
         onChange={handleChange}
+        type={settings.type}
+        value={selected}
       >
-        <Form.Radio value={ProblemTypes.SINGLESELECT}>{ProblemTypes.SINGLESELECT.title}</Form.Radio>
-        <Form.Radio value={ProblemTypes.MULTISELECT}>{ProblemTypes.MULTISELECT.title}</Form.Radio>
-        <Form.Radio value={ProblemTypes.DROPDOWN}>{ProblemTypes.DROPDOWN.title}</Form.Radio>
-        <Form.Radio value={ProblemTypes.NUMERIC}>{ProblemTypes.NUMERIC.title}</Form.Radio>
-        <Form.Radio value={ProblemTypes.TEXTINPUT}>{ProblemTypes.TEXTINPUT.title}</Form.Radio>
-      </Form.RadioSet>
-    </Form.Group>
+        {Object.values(ProblemTypeKeys).map((key) => (
+          key !== 'advanced'
+            ? (
+              <SelectableBox id={key} value={key} {...settings}>
+                {ProblemTypes[key].title}
+              </SelectableBox>
+            )
+            : null
+        ))}
+      </SelectableBox.Set>
+      <Button variant="link" className="pl-0 mt-2" onClick={handleClick}>
+        <FormattedMessage {...messages.advanceProblemButtonLabel} />
+      </Button>
+    </>
   );
 };
 ProblemTypeSelect.propTypes = {
+  selected: PropTypes.string.isRequired,
   setSelected: PropTypes.func.isRequired,
 };
 
-export default ProblemTypeSelect;
+export default injectIntl(ProblemTypeSelect);

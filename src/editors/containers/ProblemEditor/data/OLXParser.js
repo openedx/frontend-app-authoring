@@ -331,12 +331,12 @@ export class OLXParser {
   getProblemType() {
     const problemKeys = Object.keys(this.problem);
     const intersectedProblems = _.intersection(Object.values(ProblemTypeKeys), problemKeys);
+
+    if (intersectedProblems.length === 0) {
+      return null;
+    }
     if (intersectedProblems.length > 1) {
-      const errorMessage = {
-        code: 500,
-        message: 'More than one problem type is not supported!',
-      };
-      throw errorMessage;
+      return ProblemTypeKeys.ADVANCED;
     }
     const problemType = intersectedProblems[0];
     return problemType;
@@ -352,10 +352,6 @@ export class OLXParser {
     const problemType = this.getProblemType();
     const hints = this.getHints();
     const question = this.parseQuestions(problemType);
-    const errorMessage = {
-      code: 500,
-      message: 'The problem type is not supported!',
-    };
     switch (problemType) {
       case ProblemTypeKeys.DROPDOWN:
         answersObject = this.parseMultipleChoiceAnswers(ProblemTypeKeys.DROPDOWN, 'optioninput', 'option');
@@ -372,8 +368,11 @@ export class OLXParser {
       case ProblemTypeKeys.SINGLESELECT:
         answersObject = this.parseMultipleChoiceAnswers(ProblemTypeKeys.SINGLESELECT, 'choicegroup', 'choice');
         break;
+      case ProblemTypeKeys.ADVANCED:
+        break;
       default:
-        throw errorMessage;
+        // if problem is unset, return null
+        return {};
     }
 
     if (_.has(answersObject, 'additionalStringAttributes')) {

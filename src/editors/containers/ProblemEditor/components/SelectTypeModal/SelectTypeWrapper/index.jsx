@@ -8,9 +8,9 @@ import SelectTypeFooter from './SelectTypeFooter';
 import * as hooks from '../../../../EditorContainer/hooks';
 
 export const SelectTypeWrapper = ({
-  selected,
-  onClose,
   children,
+  onClose,
+  selected,
 }) => {
   const handleCancelClicked = hooks.handleCancelClicked({ onClose });
 
@@ -28,7 +28,9 @@ export const SelectTypeWrapper = ({
           </div>
         </ModalDialog.Title>
       </ModalDialog.Header>
-      {children}
+      <ModalDialog.Body>
+        {children}
+      </ModalDialog.Body>
       <SelectTypeFooter
         selected={selected}
         onCancel={handleCancelClicked}
@@ -41,7 +43,7 @@ SelectTypeWrapper.defaultProps = {
   onClose: null,
 };
 SelectTypeWrapper.propTypes = {
-  selected: PropTypes.func.isRequired,
+  selected: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
   onClose: PropTypes.func,
 };

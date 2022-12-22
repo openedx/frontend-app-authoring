@@ -1,23 +1,40 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
+import { Col, Row } from '@edx/paragon';
 import ProblemTypeSelect from './content/ProblemTypeSelect';
 import Preview from './content/Preview';
+import AdvanceTypeSelect from './content/AdvanceTypeSelect';
 import SelectTypeWrapper from './SelectTypeWrapper';
-import * as hooks from './hooks';
+import hooks from './hooks';
+import { AdvanceProblemKeys } from '../../../../data/constants/problem';
 
-export const SelectTypeModal = () => {
-  const { selected, setSelected } = hooks.state.selected(null);
+export const SelectTypeModal = ({
+  onClose,
+}) => {
+  const { selected, setSelected } = hooks.selectHooks();
+  hooks.useArrowNav(selected, setSelected);
 
   return (
-    <div>
-      <SelectTypeWrapper selected={selected}>
-        <ProblemTypeSelect setSelected={setSelected} />
-        <Preview
-          problemType={selected}
-        />
-      </SelectTypeWrapper>
-    </div>
+    <SelectTypeWrapper onClose={onClose} selected={selected}>
+      <Row className="justify-content-center align-items-center m-4">
+        {(!Object.values(AdvanceProblemKeys).includes(selected)) ? (
+          <>
+            <Col>
+              <ProblemTypeSelect selected={selected} setSelected={setSelected} />
+            </Col>
+            <Col>
+              <Preview problemType={selected} />
+            </Col>
+          </>
+        ) : <AdvanceTypeSelect selected={selected} setSelected={setSelected} />}
+      </Row>
+    </SelectTypeWrapper>
   );
+};
+
+SelectTypeModal.propTypes = {
+  onClose: PropTypes.func.isRequired,
 };
 
 export default SelectTypeModal;

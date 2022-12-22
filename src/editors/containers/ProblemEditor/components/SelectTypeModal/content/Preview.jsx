@@ -1,28 +1,43 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Hyperlink, Image } from '@edx/paragon';
+import {
+  FormattedMessage,
+  injectIntl,
+  intlShape,
+} from '@edx/frontend-platform/i18n';
+import messages from './messages';
 import { ProblemTypes } from '../../../../../data/constants/problem';
 
-const Preview = ({
+export const Preview = ({
   problemType,
+  // injected
+  intl,
 }) => {
   if (problemType === null) {
     return null;
   }
   const data = ProblemTypes[problemType];
   return (
-    <div>
-      <div>
-        <p>{data.title}</p>
+    <div className="bg-light-300 rounded p-4">
+      <div className="small">
+        {intl.formatMessage(messages.previewTitle, { previewTitle: data.title })}
       </div>
-      <div>
-        {data.preview}
+      <Image
+        fluid
+        className="my-3"
+        src={data.preview}
+        alt={intl.formatMessage(messages.previewAltText, { problemType })}
+      />
+      <div className="mb-3">
+        {intl.formatMessage(messages.previewDescription, { previewDescription: data.description })}
       </div>
-      <div>
-        <p>{data.description}</p>
-      </div>
-      <div>
-        <p>{data.helpLink}</p>
-      </div>
+      <Hyperlink
+        destination={data.helpLink}
+        target="_blank"
+      >
+        <FormattedMessage {...messages.learnMoreButtonLabel} />
+      </Hyperlink>
     </div>
   );
 };
@@ -30,8 +45,11 @@ const Preview = ({
 Preview.defaultProps = {
   problemType: null,
 };
+
 Preview.propTypes = {
   problemType: PropTypes.string,
+  // injected
+  intl: intlShape.isRequired,
 };
 
-export default Preview;
+export default injectIntl(Preview);
