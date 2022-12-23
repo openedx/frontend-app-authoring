@@ -16,7 +16,8 @@ const initialState = {
   [RequestKeys.deleteTranscript]: { status: RequestStates.inactive },
   [RequestKeys.fetchCourseDetails]: { status: RequestStates.inactive },
   [RequestKeys.fetchAssets]: { status: RequestStates.inactive },
-
+  [RequestKeys.checkTranscriptsForImport]: { status: RequestStates.inactive },
+  [RequestKeys.importTranscript]: { status: RequestStates.inactive },
 };
 
 // eslint-disable-next-line no-unused-vars

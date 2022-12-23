@@ -29,11 +29,13 @@ jest.mock('../../services/cms/api', () => ({
   fetchAssets: ({ id, url }) => ({ id, url }),
   uploadAsset: (args) => args,
   loadImages: jest.fn(),
-  allowThumbnailUpload: jest.fn(),
-  uploadThumbnail: jest.fn(),
-  uploadTranscript: jest.fn(),
-  deleteTranscript: jest.fn(),
-  getTranscript: jest.fn(),
+  allowThumbnailUpload: (args) => args,
+  uploadThumbnail: (args) => args,
+  uploadTranscript: (args) => args,
+  deleteTranscript: (args) => args,
+  getTranscript: (args) => args,
+  checkTranscriptsForImport: (args) => args,
+  importTranscript: (args) => args,
 }));
 
 const apiKeys = keyStore(api);
@@ -347,6 +349,42 @@ describe('requests thunkActions module', () => {
             blockId: selectors.app.blockId(testState),
             language,
             videoId,
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          }),
+        },
+      });
+    });
+    describe('checkTranscriptsForImport', () => {
+      const youTubeId = 'SoME yOUtUbEiD As String';
+      const videoId = 'SoME VidEOid As String';
+      testNetworkRequestAction({
+        action: requests.checkTranscriptsForImport,
+        args: { youTubeId, videoId, ...fetchParams },
+        expectedString: 'with checkTranscriptsForImport promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.checkTranscriptsForImport,
+          promise: api.checkTranscriptsForImport({
+            blockId: selectors.app.blockId(testState),
+            youTubeId,
+            videoId,
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          }),
+        },
+      });
+    });
+    describe('importTranscript', () => {
+      const youTubeId = 'SoME yOUtUbEiD As String';
+      testNetworkRequestAction({
+        action: requests.importTranscript,
+        args: { youTubeId, ...fetchParams },
+        expectedString: 'with importTranscript promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.importTranscript,
+          promise: api.importTranscript({
+            blockId: selectors.app.blockId(testState),
+            youTubeId,
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
           }),
         },

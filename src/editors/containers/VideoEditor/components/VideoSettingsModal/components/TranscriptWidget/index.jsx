@@ -26,6 +26,7 @@ import { in8lTranscriptLanguages } from '../../../../../../data/constants/video'
 import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 
+import ImportTranscriptCard from './ImportTranscriptCard';
 import Transcript from './Transcript';
 import { ErrorContext } from '../../../../hooks';
 import * as module from './index';
@@ -79,15 +80,18 @@ export const TranscriptWidget = ({
   transcripts,
   allowTranscriptDownloads,
   showTranscriptByDefault,
+  allowTranscriptImport,
   updateField,
   isUploadError,
   isDeleteError,
-  // intl
+  // injected
   intl,
 }) => {
   const [error] = React.useContext(ErrorContext).transcripts;
+  const [showImportCard, setShowImportCard] = React.useState(true);
   const fullTextLanguages = module.hooks.transcriptLanguages(transcripts, intl);
   const hasTranscripts = module.hooks.hasTranscripts(transcripts);
+
   return (
     <CollapsibleFormWidget
       fontSize="x-small"
@@ -107,10 +111,10 @@ export const TranscriptWidget = ({
       >
         <FormattedMessage {...messages.deleteTranscriptError} />
       </ErrorAlert>
-      <Stack gap={2.5}>
+      <Stack gap={3}>
         {hasTranscripts ? (
-          <Form.Group>
-            { transcripts.map((language, index) => (
+          <Form.Group className="border-primary-100 border-bottom">
+            {transcripts.map((language, index) => (
               <Transcript
                 language={language}
                 index={index}
@@ -152,9 +156,12 @@ export const TranscriptWidget = ({
         ) : (
           <>
             <FormattedMessage {...messages.addFirstTranscript} />
+            {showImportCard && allowTranscriptImport
+              ? <ImportTranscriptCard setOpen={setShowImportCard} />
+              : null}
           </>
         )}
-        <div className="border-primary-100 border-top pt-4">
+        <div className="mt-2">
           <Button
             className="text-primary-500 font-weight-bold justify-content-start pl-0"
             size="sm"
@@ -177,6 +184,7 @@ TranscriptWidget.propTypes = {
   transcripts: PropTypes.arrayOf(PropTypes.string).isRequired,
   allowTranscriptDownloads: PropTypes.bool.isRequired,
   showTranscriptByDefault: PropTypes.bool.isRequired,
+  allowTranscriptImport: PropTypes.bool.isRequired,
   updateField: PropTypes.func.isRequired,
   isUploadError: PropTypes.bool.isRequired,
   isDeleteError: PropTypes.bool.isRequired,
@@ -186,6 +194,7 @@ export const mapStateToProps = (state) => ({
   transcripts: selectors.video.transcripts(state),
   allowTranscriptDownloads: selectors.video.allowTranscriptDownloads(state),
   showTranscriptByDefault: selectors.video.showTranscriptByDefault(state),
+  allowTranscriptImport: selectors.video.allowTranscriptImport(state),
   isUploadError: selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadTranscript }),
   isDeleteError: selectors.requests.isFailed(state, { requestKey: RequestKeys.deleteTranscript }),
 });

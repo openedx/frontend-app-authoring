@@ -12,6 +12,8 @@ import {
   videoTranscripts,
   downloadVideoHandoutUrl,
   courseDetailsUrl,
+  checkTranscriptsForImport,
+  replaceTranscript,
 } from './urls';
 
 describe('cms url methods', () => {
@@ -23,6 +25,8 @@ describe('cms url methods', () => {
   const language = 'la';
   const handout = '/aSSet@hANdoUt';
   const videoId = '123-SOmeVidEOid-213';
+  const parameters = 'SomEParAMEterS';
+
   describe('return to learning context urls', () => {
     const unitUrl = {
       data: {
@@ -113,6 +117,18 @@ describe('cms url methods', () => {
     it('returns url with studioEndpointUrl and courseKey', () => {
       expect(courseDetailsUrl({ studioEndpointUrl, learningContextId }))
         .toEqual(`${studioEndpointUrl}/settings/details/${learningContextId}`);
+    });
+  });
+  describe('checkTranscriptsForImport', () => {
+    it('returns url with studioEndpointUrl and parameters', () => {
+      expect(checkTranscriptsForImport({ studioEndpointUrl, parameters }))
+        .toEqual(`${studioEndpointUrl}/transcripts/check?data=${parameters}`);
+    });
+  });
+  describe('replaceTranscript', () => {
+    it('returns url with studioEndpointUrl and parameters', () => {
+      expect(replaceTranscript({ studioEndpointUrl, parameters }))
+        .toEqual(`${studioEndpointUrl}/transcripts/replace?data=${parameters}`);
     });
   });
 });

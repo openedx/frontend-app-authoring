@@ -126,6 +126,18 @@ export const allowThumbnailUpload = ({ studioEndpointUrl }) => mockPromise({
   data: true,
 });
 // eslint-disable-next-line
+export const checkTranscripts = ({youTubeId, studioEndpointUrl, blockId, videoId}) => mockPromise({
+  data: {
+    command: 'import',
+  },
+});
+// eslint-disable-next-line
+export const importTranscript = ({youTubeId, studioEndpointUrl, blockId}) => mockPromise({
+  data: {
+    edx_video_id: 'f36f06b5-92e5-47c7-bb26-bcf986799cb7',
+  },
+});
+// eslint-disable-next-line
 export const fetchAdvanceSettings = ({ studioEndpointUrl, learningContextId }) => mockPromise({
   data: { allow_unsupported_xblocks: { value: true } },
 });

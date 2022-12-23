@@ -23,7 +23,6 @@ export const videoDataProps = {
     noDerivatives: PropTypes.bool,
     shareAlike: PropTypes.bool,
   }),
-  originalThumbnail: PropTypes.string,
 };
 
 export const singleVideoData = {
@@ -53,5 +52,4 @@ export const singleVideoData = {
     noDerivatives: false,
     shareAlike: false,
   },
-  originalThumbnail: 'someString',
 };

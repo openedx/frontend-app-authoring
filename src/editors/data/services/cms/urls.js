@@ -55,6 +55,14 @@ export const courseDetailsUrl = ({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/settings/details/${learningContextId}`
 );
 
+export const checkTranscriptsForImport = ({ studioEndpointUrl, parameters }) => (
+  `${studioEndpointUrl}/transcripts/check?data=${parameters}`
+);
+
+export const replaceTranscript = ({ studioEndpointUrl, parameters }) => (
+  `${studioEndpointUrl}/transcripts/replace?data=${parameters}`
+);
+
 export const courseAdvanceSettings = ({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/api/contentstore/v0/advanced_settings/${learningContextId}`
 );

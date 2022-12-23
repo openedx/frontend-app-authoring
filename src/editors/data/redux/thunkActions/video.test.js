@@ -28,21 +28,28 @@ jest.mock('./requests', () => ({
   uploadTranscript: (args) => ({ uploadTranscript: args }),
   getTranscriptFile: (args) => ({ getTranscriptFile: args }),
   updateTranscriptLanguage: (args) => ({ updateTranscriptLanguage: args }),
+  checkTranscriptsForImport: (args) => ({ checkTranscriptsForImport: args }),
+  importTranscript: (args) => ({ importTranscript: args }),
 }));
 
 jest.mock('../../../utils', () => ({
   removeItemOnce: (args) => (args),
 }));
 
+jest.mock('../../services/cms/api', () => ({
+  parseYoutubeId: (args) => (args),
+}));
+
 const thunkActionsKeys = keyStore(thunkActions);
 
-const mockLanguage = 'na';
+const mockLanguage = 'en';
 const mockFile = 'soMEtRANscRipT';
 const mockFilename = 'soMEtRANscRipT.srt';
 const mockThumbnail = 'sOMefILE';
 const mockThumbnailResponse = { data: { image_url: 'soMEimAGEUrL' } };
 const thumbnailUrl = 'soMEimAGEUrL';
 const mockAllowThumbnailUpload = { data: { allowThumbnailUpload: 'soMEbOolEAn' } };
+const mockAllowTranscriptImport = { data: { command: 'import' } };
 
 const testMetadata = {
   download_track: 'dOWNlOAdTraCK',
@@ -63,7 +70,7 @@ const testState = {
   originalThumbnail: null,
   videoId: 'soMEvIDEo',
 };
-const testUpload = { transcripts: ['la', 'na'] };
+const testUpload = { transcripts: ['la', 'en'] };
 const testReplaceUpload = {
   file: mockFile,
   language: mockLanguage,
@@ -89,6 +96,8 @@ describe('video thunkActions', () => {
   });
   describe('loadVideoData', () => {
     let dispatchedLoad;
+    let dispatchedAction1;
+    let dispatchedAction2;
     beforeEach(() => {
       jest.spyOn(thunkActions, thunkActionsKeys.determineVideoSource).mockReturnValue({
         videoSource: 'videOsOurce',
@@ -108,14 +117,18 @@ describe('video thunkActions', () => {
         testMetadata.transcripts,
       );
       thunkActions.loadVideoData()(dispatch, getState);
-      [[dispatchedLoad], [dispatchedAction]] = dispatch.mock.calls;
+      [[dispatchedLoad], [dispatchedAction1], [dispatchedAction2]] = dispatch.mock.calls;
     });
     afterEach(() => {
       jest.restoreAllMocks();
     });
     it('dispatches allowThumbnailUpload action', () => {
       expect(dispatchedLoad).not.toEqual(undefined);
-      expect(dispatchedAction.allowThumbnailUpload).not.toEqual(undefined);
+      expect(dispatchedAction1.allowThumbnailUpload).not.toEqual(undefined);
+    });
+    it('dispatches checkTranscriptsForImport action', () => {
+      expect(dispatchedLoad).not.toEqual(undefined);
+      expect(dispatchedAction2.checkTranscriptsForImport).not.toEqual(undefined);
     });
     it('dispatches actions.video.load', () => {
       expect(dispatchedLoad.load).toEqual({
@@ -151,9 +164,15 @@ describe('video thunkActions', () => {
     });
     it('dispatches actions.video.updateField on success', () => {
       dispatch.mockClear();
-      dispatchedAction.allowThumbnailUpload.onSuccess(mockAllowThumbnailUpload);
+      dispatchedAction1.allowThumbnailUpload.onSuccess(mockAllowThumbnailUpload);
       expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
         allowThumbnailUpload: mockAllowThumbnailUpload.data.allowThumbnailUpload,
+      }));
+      dispatch.mockClear();
+
+      dispatchedAction2.checkTranscriptsForImport.onSuccess(mockAllowTranscriptImport);
+      expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
+        allowTranscriptImport: true,
       }));
     });
   });
@@ -348,6 +367,20 @@ describe('video thunkActions', () => {
     });
     it('dispatches uploadThumbnail action', () => {
       expect(dispatchedAction.uploadThumbnail).not.toEqual(undefined);
+    });
+  });
+  describe('importTranscript', () => {
+    beforeEach(() => {
+      thunkActions.importTranscript()(dispatch, getState);
+      [[dispatchedAction]] = dispatch.mock.calls;
+    });
+    it('dispatches uploadTranscript action', () => {
+      expect(dispatchedAction.importTranscript).not.toEqual(undefined);
+    });
+    it('dispatches actions.video.updateField on success', () => {
+      dispatch.mockClear();
+      dispatchedAction.importTranscript.onSuccess();
+      expect(dispatch).toHaveBeenCalledWith(actions.video.updateField(testUpload));
     });
   });
   describe('deleteTranscript', () => {

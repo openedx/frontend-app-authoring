@@ -54,6 +54,33 @@ export const apiMethods = {
       data,
     );
   },
+  checkTranscriptsForImport: ({
+    studioEndpointUrl,
+    blockId,
+    youTubeId,
+    videoId,
+  }) => {
+    const getJSON = `{"locator":"${blockId}","videos":[{"mode":"youtube","video":"${youTubeId}","type":"youtube"},{"mode":"edx_video_id","type":"edx_video_id","video":"${videoId}"}]}`;
+    return get(
+      urls.checkTranscriptsForImport({
+        studioEndpointUrl,
+        parameters: encodeURIComponent(getJSON),
+      }),
+    );
+  },
+  importTranscript: ({
+    studioEndpointUrl,
+    blockId,
+    youTubeId,
+  }) => {
+    const getJSON = `{"locator":"${blockId}","videos":[{"mode":"youtube","video":"${youTubeId}","type":"youtube"}]}`;
+    return get(
+      urls.replaceTranscript({
+        studioEndpointUrl,
+        parameters: encodeURIComponent(getJSON),
+      }),
+    );
+  },
   getTranscript: ({
     studioEndpointUrl,
     language,

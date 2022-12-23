@@ -22,6 +22,8 @@ export const RequestKeys = StrictDict({
   fetchCourseDetails: 'fetchCourseDetails',
   updateTranscriptLanguage: 'updateTranscriptLanguage',
   getTranscriptFile: 'getTranscriptFile',
+  checkTranscriptsForImport: 'checkTranscriptsForImport',
+  importTranscript: 'importTranscript',
   uploadImage: 'uploadImage',
   fetchAdvanceSettings: 'fetchAdvanceSettings',
 });

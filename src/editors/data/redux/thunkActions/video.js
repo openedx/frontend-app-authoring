@@ -3,6 +3,7 @@ import { removeItemOnce } from '../../../utils';
 import * as requests from './requests';
 import * as module from './video';
 import { valueFromDuration } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/duration';
+import { parseYoutubeId } from '../../services/cms/api';
 
 export const loadVideoData = () => (dispatch, getState) => {
   const state = getState();
@@ -60,6 +61,20 @@ export const loadVideoData = () => (dispatch, getState) => {
       allowThumbnailUpload: response.data.allowThumbnailUpload,
     })),
   }));
+  const youTubeId = parseYoutubeId(videoSource);
+  if (youTubeId) {
+    dispatch(requests.checkTranscriptsForImport({
+      videoId,
+      youTubeId,
+      onSuccess: (response) => {
+        if (response.data.command === 'import') {
+          dispatch(actions.video.updateField({
+            allowTranscriptImport: true,
+          }));
+        }
+      },
+    }));
+  }
 };
 
 export const determineVideoSource = ({
@@ -224,6 +239,30 @@ export const uploadHandout = ({ file }) => (dispatch) => {
 
 // Transcript Thunks:
 
+export const importTranscript = () => (dispatch, getState) => {
+  const state = getState();
+  const { transcripts, videoSource } = state.video;
+  // Remove the placeholder '' from the unset language from the list of transcripts.
+  const transcriptsPlaceholderRemoved = (transcripts === []) ? transcripts : removeItemOnce(transcripts, '');
+
+  dispatch(requests.importTranscript({
+    youTubeId: parseYoutubeId(videoSource),
+    onSuccess: (response) => {
+      dispatch(actions.video.updateField({
+        transcripts: [
+          ...transcriptsPlaceholderRemoved,
+          'en'],
+      }));
+
+      if (selectors.video.videoId(state) === '') {
+        dispatch(actions.video.updateField({
+          videoId: response.data.edx_video_id,
+        }));
+      }
+    },
+  }));
+};
+
 export const uploadTranscript = ({ language, file }) => (dispatch, getState) => {
   const state = getState();
   const { transcripts, videoId } = state.video;
@@ -308,6 +347,7 @@ export default {
   parseLicense,
   saveVideoData,
   uploadThumbnail,
+  importTranscript,
   uploadTranscript,
   deleteTranscript,
   updateTranscriptLanguage,

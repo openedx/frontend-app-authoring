@@ -99,6 +99,21 @@ export const messages = {
     defaultMessage: 'Only SRT files can be uploaded. Please select a file ending in .srt to upload.',
     description: 'Message warning users to only upload .srt files',
   },
+  importButtonLabel: {
+    id: 'authoring.videoEditor.transcripts.importButton.label',
+    defaultMessage: 'Import Transcript',
+    description: 'Label for youTube import transcript button',
+  },
+  importHeader: {
+    id: 'authoring.videoEditor.transcripts.importCard.header',
+    defaultMessage: 'Import transcript from YouTube?',
+    description: 'Header for import transcript card',
+  },
+  importMessage: {
+    id: 'authoring.videoEditor.transcrtipts.importCard.message',
+    defaultMessage: 'We found transcript for this video on YouTube. Would you like to import it now?',
+    description: 'Message for import transcript card asking user if they want to import transcript',
+  },
 };
 
 export default messages;

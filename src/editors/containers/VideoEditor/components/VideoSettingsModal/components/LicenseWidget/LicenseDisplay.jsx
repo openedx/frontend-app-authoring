@@ -50,7 +50,7 @@ LicenseDisplay.propTypes = {
     shareAlike: PropTypes.bool.isRequired,
   }).isRequired,
   level: PropTypes.string.isRequired,
-  licenseDescription: PropTypes.func.isRequired,
+  licenseDescription: PropTypes.string.isRequired,
 };
 
 export default injectIntl(LicenseDisplay);
