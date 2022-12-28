@@ -14,7 +14,7 @@ import {
   badgeVariant,
 } from '../../../../data/constants';
 import CollapsableEditor from '../../../../../../generic/CollapsableEditor';
-import DeletePopup from '../../../../../../generic/DeletePopup';
+import ConfirmationPopup from '../../../../../../generic/ConfirmationPopup';
 import CollapseCardHeading from './CollapseCardHeading';
 
 const BlackoutDatesItem = ({
@@ -51,13 +51,13 @@ const BlackoutDatesItem = ({
 
   if (showDeletePopup) {
     return (
-      <DeletePopup
+      <ConfirmationPopup
         label={blackoutDate.status === constants.ACTIVE
           ? intl.formatMessage(messages.activeBlackoutDatesDeletionLabel)
           : intl.formatMessage(messages.blackoutDatesDeletionLabel)}
         bodyText={intl.formatMessage(deleteHelperText[blackoutDate.status])}
-        onDelete={onDelete}
-        deleteLabel={intl.formatMessage(messages.deleteButton)}
+        onConfirm={onDelete}
+        confirmLabel={intl.formatMessage(messages.deleteButton)}
         onCancel={() => setShowDeletePopup(false)}
         cancelLabel={intl.formatMessage(messages.cancelButton)}
       />

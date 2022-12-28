@@ -252,6 +252,7 @@ describe('Data layer integration tests', () => {
         alwaysDivideInlineDiscussions: false,
         allowDivisionByUnit: false,
         divideCourseTopicsByCohorts: false,
+        cohortsEnabled: false,
       });
     });
   });
@@ -455,6 +456,7 @@ describe('Data layer integration tests', () => {
           allowDivisionsByUnit: true,
           alwaysDivideInlineDiscussions: true,
           divideCourseTopicsByCohorts: true,
+          divisionScheme: DivisionSchemes.COHORT,
           divideDiscussionIds,
           discussionTopics: [
             { name: 'Edx', id: '13f106c6-6735-4e84-b097-0456cff55960' },
@@ -463,7 +465,6 @@ describe('Data layer integration tests', () => {
         },
         pagesAndResourcesPath,
       ), store.dispatch);
-
       expect(window.location.pathname).toEqual(pagesAndResourcesPath);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
@@ -490,6 +491,7 @@ describe('Data layer integration tests', () => {
         // happens, but NOT what we want to have happen!
         divideByCohorts: true,
         divisionScheme: DivisionSchemes.COHORT,
+        cohortsEnabled: false,
         allowDivisionByUnit: false,
         divideCourseTopicsByCohorts: true,
       });
