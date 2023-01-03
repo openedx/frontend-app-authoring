@@ -173,6 +173,14 @@ If your devstack includes the default Demo course, you can visit the following U
 - `Proctored Exam Settings <http://localhost:2001/course/course-v1:edX+DemoX+Demo_Course/proctored-exam-settings>`_
 - `Pages and Resources <http://localhost:2001/course/course-v1:edX+DemoX+Demo_Course/pages-and-resources>`_ (work in progress)
 
+Troubleshooting
+========================
+
+* ``npm ERR! gyp ERR! build error`` while running npm install on Macs with M1 processors: Probably due to a compatibility issue of node-canvas with M1.
+  
+  Run ``brew install pkg-config pixman cairo pango libpng jpeg giflib librsvg`` before ``npm install`` to get the correct versions of the dependencies.
+  If there is still an error, look for "no package [...] found" in the error message and install missing package via brew.
+  (https://github.com/Automattic/node-canvas/issues/1733)
 
 *********
 Deploying
