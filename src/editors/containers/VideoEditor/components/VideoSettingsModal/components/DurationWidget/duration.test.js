@@ -1,4 +1,4 @@
-import { keyStore } from '../../../../../utils';
+import { keyStore } from '../../../../../../utils';
 import * as duration from './duration';
 
 jest.mock('react', () => ({

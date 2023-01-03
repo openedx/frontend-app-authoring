@@ -1,8 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { formatMessage } from '../../../../../../testUtils';
-import { DurationWidget } from './DurationWidget';
+import { formatMessage } from '../../../../../../../testUtils';
+import { DurationWidget } from '.';
 
 describe('DurationWidget', () => {
   const props = {

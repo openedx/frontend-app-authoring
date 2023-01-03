@@ -3,7 +3,7 @@ import * as urls from './urls';
 import { get, post, deleteObject } from './utils';
 import * as module from './api';
 import * as mockApi from './mockApi';
-import { durationFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/duration';
+import { durationFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
 
 export const apiMethods = {
   fetchBlockById: ({ blockId, studioEndpointUrl }) => get(

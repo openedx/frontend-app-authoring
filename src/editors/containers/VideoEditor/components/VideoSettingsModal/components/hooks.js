@@ -290,6 +290,7 @@ export const durationWidget = ({ dispatch }) => {
     setFormField,
     setLocal,
   } = widget;
+  console.log('test', widget)
   return {
     ...widget,
     onBlur: useCallback(
