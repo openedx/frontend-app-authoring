@@ -71,6 +71,7 @@ function normalizePluginConfig(data) {
     divideByCohorts: enableDivideByCohorts,
     divideCourseTopicsByCohorts: enableDivideCourseTopicsByCohorts,
     cohortsEnabled: data.available_division_schemes?.includes('cohort') || false,
+    groupAtSubsection: data.group_at_subsection,
   };
 }
 
