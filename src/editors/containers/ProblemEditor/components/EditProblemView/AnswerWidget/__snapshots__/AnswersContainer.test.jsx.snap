@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AnswersContainer render snapshot: renders correct default 1`] = `
+<div>
+  <Button
+    className="my-3 ml-2"
+    onClick={[MockFunction]}
+    variant="tertiary"
+  >
+    <FormattedMessage
+      defaultMessage="Add answer"
+      description="Button text to add answer"
+      id="authoring.answerwidget.answer.addAnswerButton"
+    />
+  </Button>
+</div>
+`;
+
+exports[`AnswersContainer render snapshot: renders correctly with answers 1`] = `
+<div>
+  <Button
+    className="my-3 ml-2"
+    onClick={[MockFunction]}
+    variant="tertiary"
+  >
+    <FormattedMessage
+      defaultMessage="Add answer"
+      description="Button text to add answer"
+      id="authoring.answerwidget.answer.addAnswerButton"
+    />
+  </Button>
+</div>
+`;

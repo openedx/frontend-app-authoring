@@ -16,9 +16,9 @@ export const AnswersContainer = ({
   // Redux
   answers,
   addAnswer,
+  updateField,
 }) => {
-  const { hasSingleAnswer } = initializeAnswerContainer(problemType);
-
+  const { hasSingleAnswer } = initializeAnswerContainer({ answers, problemType, updateField });
   return (
     <div>
       {answers.map((answer) => (
@@ -44,6 +44,7 @@ AnswersContainer.propTypes = {
   problemType: PropTypes.string.isRequired,
   answers: PropTypes.arrayOf(answerOptionProps).isRequired,
   addAnswer: PropTypes.func.isRequired,
+  updateField: PropTypes.func.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
@@ -52,6 +53,7 @@ export const mapStateToProps = (state) => ({
 
 export const mapDispatchToProps = {
   addAnswer: actions.problem.addAnswer,
+  updateField: actions.problem.updateField,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AnswersContainer);

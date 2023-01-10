@@ -35,7 +35,14 @@ export const prepareEditorRef = () => {
   return { editorRef, refReady, setEditorRef };
 };
 
-export const initializeAnswerContainer = (problemType) => {
+export const initializeAnswerContainer = ({ answers, problemType, updateField }) => {
   const hasSingleAnswer = problemType === ProblemTypeKeys.DROPDOWN || problemType === ProblemTypeKeys.SINGLESELECT;
+  let answerCount = 0;
+  answers.forEach(answer => {
+    if (answer.correct) {
+      answerCount += 1;
+    }
+  });
+  updateField({ correctAnswerCount: answerCount });
   return { hasSingleAnswer };
 };

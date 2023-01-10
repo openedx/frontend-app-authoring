@@ -23,9 +23,12 @@ import './index.scss';
 export const SettingsWidget = ({
   problemType,
   // redux
+  answers,
+  correctAnswerCount,
   settings,
   updateSettings,
   updateField,
+  updateAnswer,
 }) => {
   const { isAdvancedCardsVisible, showAdvancedCards } = showAdvancedSettingsCards();
   return (
@@ -38,7 +41,13 @@ export const SettingsWidget = ({
           <Row>
             <Col>
               <Row className="my-2">
-                <TypeCard problemType={problemType} updateField={updateField} />
+                <TypeCard
+                  answers={answers}
+                  correctAnswerCount={correctAnswerCount}
+                  problemType={problemType}
+                  updateField={updateField}
+                  updateAnswer={updateAnswer}
+                />
               </Row>
               <Row className="my-2">
                 <ScoringCard scoring={settings.scoring} updateSettings={updateSettings} />
@@ -91,7 +100,16 @@ export const SettingsWidget = ({
 };
 
 SettingsWidget.propTypes = {
+  answers: PropTypes.arrayOf(PropTypes.shape({
+    correct: PropTypes.bool,
+    id: PropTypes.string,
+    selectedFeedback: PropTypes.string,
+    title: PropTypes.string,
+    unselectedFeedback: PropTypes.string,
+  })).isRequired,
+  correctAnswerCount: PropTypes.number.isRequired,
   problemType: PropTypes.string.isRequired,
+  updateAnswer: PropTypes.func.isRequired,
   updateField: PropTypes.func.isRequired,
   updateSettings: PropTypes.func.isRequired,
   // eslint-disable-next-line
@@ -100,11 +118,14 @@ SettingsWidget.propTypes = {
 
 const mapStateToProps = (state) => ({
   settings: selectors.problem.settings(state),
+  answers: selectors.problem.answers(state),
+  correctAnswerCount: selectors.problem.correctAnswerCount(state),
 });
 
 export const mapDispatchToProps = {
   updateSettings: actions.problem.updateSettings,
   updateField: actions.problem.updateField,
+  updateAnswer: actions.problem.updateAnswer,
 };
 
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SettingsWidget));
