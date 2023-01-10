@@ -77,6 +77,11 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page 1`] = `
               >
                 <injectIntl(ShimmedIntlComponent) />
               </Row>
+              <Row
+                className="my-2"
+              >
+                <injectIntl(ShimmedIntlComponent) />
+              </Row>
             </Body>
           </Advanced>
         </Component>
@@ -143,6 +148,11 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page advanced
             <Body
               className="collapsible-body"
             >
+              <Row
+                className="my-2"
+              >
+                <injectIntl(ShimmedIntlComponent) />
+              </Row>
               <Row
                 className="my-2"
               >

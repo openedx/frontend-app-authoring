@@ -13,6 +13,7 @@ import ResetCard from './settingsComponents/ResetCard';
 import MatlabCard from './settingsComponents/MatlabCard';
 import TimerCard from './settingsComponents/TimerCard';
 import TypeCard from './settingsComponents/TypeCard';
+import SwitchToAdvancedEditorCard from './settingsComponents/SwitchToAdvancedEditorCard';
 import messages from './messages';
 import { showAdvancedSettingsCards } from './hooks';
 
@@ -74,6 +75,9 @@ export const SettingsWidget = ({
                   </Row>
                   <Row className="my-2">
                     <MatlabCard matLabApiKey={settings.matLabApiKey} updateSettings={updateSettings} />
+                  </Row>
+                  <Row className="my-2">
+                    <SwitchToAdvancedEditorCard />
                   </Row>
                 </Collapsible.Body>
               </Collapsible.Advanced>

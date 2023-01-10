@@ -10,7 +10,7 @@ import { EditorContainer } from '../../../EditorContainer';
 import { selectors } from '../../../../data/redux';
 import ReactStateSettingsParser from '../../data/ReactStateSettingsParser';
 import ReactStateOLXParser from '../../data/ReactStateOLXParser';
-import { AdvanceProblemKeys } from '../../../../data/constants/problem';
+import { ProblemTypeKeys } from '../../../../data/constants/problem';
 
 export const EditProblemView = ({
   problemType,
@@ -24,8 +24,8 @@ export const EditProblemView = ({
       olx: reactOLXParser.buildOLX(),
     };
   };
-  if (Object.values(AdvanceProblemKeys).includes(problemType)) {
-    return `hello raw editor with ${problemType}`;
+  if (problemType === ProblemTypeKeys.ADVANCED) {
+    return 'hello raw editor';
   }
   return (
     <EditorContainer getContent={parseState(problemState)}>
