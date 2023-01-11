@@ -12,7 +12,7 @@ export const SelectTypeWrapper = ({
   onClose,
   selected,
 }) => {
-  const handleCancelClicked = hooks.handleCancelClicked({ onClose });
+  const handleCancel = hooks.handleCancel({ onClose });
 
   return (
     <div>
@@ -23,7 +23,7 @@ export const SelectTypeWrapper = ({
             <IconButton
               src={Close}
               iconAs={Icon}
-              onClick={handleCancelClicked}
+              onClick={handleCancel}
             />
           </div>
         </ModalDialog.Title>
@@ -33,7 +33,7 @@ export const SelectTypeWrapper = ({
       </ModalDialog.Body>
       <SelectTypeFooter
         selected={selected}
-        onCancel={handleCancelClicked}
+        onCancel={handleCancel}
       />
     </div>
   );

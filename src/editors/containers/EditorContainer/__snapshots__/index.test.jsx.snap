@@ -1,7 +1,40 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EditorContainer component render snapshot: initialized. enable save and pass to header 1`] = `
-<div>
+<div
+  className="position-relative zindex-0"
+>
+  <BaseModal
+    close={[MockFunction closeCancelConfirmModal]}
+    confirmAction={
+      <Button
+        onClick={
+          Object {
+            "handleCancel": Object {
+              "onClose": [MockFunction props.onClose],
+            },
+          }
+        }
+        variant="primary"
+      >
+        <FormattedMessage
+          defaultMessage="OK"
+          description="Label for OK button"
+          id="authoring.editorContainer.okButton.label"
+        />
+      </Button>
+    }
+    footerAction={null}
+    isOpen={false}
+    size="md"
+    title="Exit the editor?"
+  >
+    <FormattedMessage
+      defaultMessage="Are you sure you want to exit the editor? Any unsaved changes will be lost."
+      description="Description text for modal confirming cancellation"
+      id="authoring.editorContainer.cancelConfirm.description"
+    />
+  </BaseModal>
   <ModalDialog.Header
     className="shadow-sm zindex-10"
   >
@@ -23,13 +56,7 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
       >
         <IconButton
           iconAs="Icon"
-          onClick={
-            Object {
-              "handleCancelClicked": Object {
-                "onClose": [MockFunction props.onClose],
-              },
-            }
-          }
+          onClick={[MockFunction openCancelConfirmModal]}
           src={[MockFunction icons.Close]}
         />
       </div>
@@ -40,13 +67,7 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
   </h1>
   <injectIntl(ShimmedIntlComponent)
     disableSave={false}
-    onCancel={
-      Object {
-        "handleCancelClicked": Object {
-          "onClose": [MockFunction props.onClose],
-        },
-      }
-    }
+    onCancel={[MockFunction openCancelConfirmModal]}
     onSave={
       Object {
         "handleSaveClicked": Object {
@@ -61,7 +82,40 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
 `;
 
 exports[`EditorContainer component render snapshot: not initialized. disable save and pass to header 1`] = `
-<div>
+<div
+  className="position-relative zindex-0"
+>
+  <BaseModal
+    close={[MockFunction closeCancelConfirmModal]}
+    confirmAction={
+      <Button
+        onClick={
+          Object {
+            "handleCancel": Object {
+              "onClose": [MockFunction props.onClose],
+            },
+          }
+        }
+        variant="primary"
+      >
+        <FormattedMessage
+          defaultMessage="OK"
+          description="Label for OK button"
+          id="authoring.editorContainer.okButton.label"
+        />
+      </Button>
+    }
+    footerAction={null}
+    isOpen={false}
+    size="md"
+    title="Exit the editor?"
+  >
+    <FormattedMessage
+      defaultMessage="Are you sure you want to exit the editor? Any unsaved changes will be lost."
+      description="Description text for modal confirming cancellation"
+      id="authoring.editorContainer.cancelConfirm.description"
+    />
+  </BaseModal>
   <ModalDialog.Header
     className="shadow-sm zindex-10"
   >
@@ -83,13 +137,7 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
       >
         <IconButton
           iconAs="Icon"
-          onClick={
-            Object {
-              "handleCancelClicked": Object {
-                "onClose": [MockFunction props.onClose],
-              },
-            }
-          }
+          onClick={[MockFunction openCancelConfirmModal]}
           src={[MockFunction icons.Close]}
         />
       </div>
@@ -97,13 +145,7 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
   </ModalDialog.Header>
   <injectIntl(ShimmedIntlComponent)
     disableSave={true}
-    onCancel={
-      Object {
-        "handleCancelClicked": Object {
-          "onClose": [MockFunction props.onClose],
-        },
-      }
-    }
+    onCancel={[MockFunction openCancelConfirmModal]}
     onSave={
       Object {
         "handleSaveClicked": Object {
