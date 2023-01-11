@@ -221,7 +221,14 @@ describe('Problem settings hooks', () => {
       const typekey = 'multiplechoiceresponse';
       const updateField = jest.fn();
       const updateAnswer = jest.fn();
-      const answers = [{ correct: true, id: 'a' }, { correct: true, id: 'b' }];
+      const answers = [{
+        correct: true,
+        id: 'a',
+      },
+      {
+        correct: true,
+        id: 'b',
+      }];
       output = hooks.typeRowHooks({
         answers,
         correctAnswerCount: 2,
@@ -230,7 +237,8 @@ describe('Problem settings hooks', () => {
         updateAnswer,
       });
       output.onClick();
-      expect(updateAnswer).toHaveBeenCalledWith({ ...answers[1], correct: false });
+      expect(updateAnswer).toHaveBeenNthCalledWith(1, { ...answers[0], correct: false });
+      expect(updateAnswer).toHaveBeenNthCalledWith(2, { ...answers[1], correct: false });
       expect(updateField).toHaveBeenCalledWith({ problemType: typekey });
     });
   });

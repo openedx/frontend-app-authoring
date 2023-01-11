@@ -16,8 +16,8 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
         answer={
           Object {
             "correct": true,
-            "feedback": "some feedback",
             "id": "A",
+            "selectedFeedback": "some feedback",
             "title": "Answer 1",
           }
         }
@@ -137,7 +137,7 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
           className="bg-dark-100 p-4 mt-3"
         >
           <Form.Group
-            key="feedback-A"
+            key="selectedfeedback-A"
           >
             <Form.Label
               className="mb-3"
@@ -165,6 +165,39 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
             <Form.Control
               onChange={[Function]}
               placeholder="Feedback message"
+              value="selected feedback"
+            />
+          </Form.Group>
+          <Form.Group
+            key="unselectedfeedback-A"
+          >
+            <Form.Label
+              className="mb-3"
+            >
+              <FormattedMessage
+                defaultMessage="Show following feedback when {answerId} {boldunderline}:"
+                description="Label text for feedback if option is not selected"
+                id="authoring.answerwidget.feedback.unselected.label"
+                values={
+                  Object {
+                    "answerId": "A",
+                    "boldunderline": <b>
+                      <u>
+                        <FormattedMessage
+                          defaultMessage="is not selected"
+                          description="Bold & underlined text for feedback if option is not selected"
+                          id="authoring.answerwidget.feedback.unselected.label.boldunderline"
+                        />
+                      </u>
+                    </b>,
+                  }
+                }
+              />
+            </Form.Label>
+            <Form.Control
+              onChange={[Function]}
+              placeholder="Feedback message"
+              value="unselected feedback"
             />
           </Form.Group>
         </div>

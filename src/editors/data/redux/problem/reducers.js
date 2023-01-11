@@ -105,15 +105,12 @@ const problem = createSlice({
         title: '',
         selectedFeedback: undefined,
         unselectedFeedback: undefined,
-        feedback: undefined,
         correct: false,
       };
       if (state.problemType === ProblemTypeKeys.MULTISELECT) {
-        newOption.selectedFeedback = '';
         newOption.unselectedFeedback = '';
-      } else {
-        newOption.feedback = '';
       }
+      newOption.selectedFeedback = '';
       const answers = [
         ...currAnswers,
         newOption,

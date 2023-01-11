@@ -70,8 +70,8 @@ export const AnswerOption = ({
     if (problemType !== ProblemTypeKeys.MULTISELECT) {
       return FeedbackControl({
         key: `feedback-${answerObject.id}`,
-        feedback: answerObject.feedback,
-        onChange: (e) => setAnswer({ feedback: e.target.value }),
+        feedback: answerObject.selectedFeedback,
+        onChange: (e) => setAnswer({ selectedFeedback: e.target.value }),
         labelMessage: messages.selectedFeedbackLabel,
         labelMessageBoldUnderline: messages.selectedFeedbackLabelBoldUnderlineText,
         answer: answerObject,

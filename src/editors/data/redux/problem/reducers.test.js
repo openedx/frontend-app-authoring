@@ -31,23 +31,13 @@ describe('problem reducer', () => {
         const answer = {
           id: 'A',
           correct: false,
-          feedback: '',
-          selectedFeedback: undefined,
+          selectedFeedback: '',
           title: '',
           unselectedFeedback: undefined,
         };
         expect(reducer(testingState, actions.addAnswer(answer))).toEqual({
           ...testingState,
           answers: [answer],
-        });
-      });
-    });
-    describe('setProblemType', () => {
-      it('sets problemType', () => {
-        const payload = { selected: 'soMePRoblEMtYPe' };
-        expect(reducer(testingState, actions.setProblemType(payload))).toEqual({
-          ...testingState,
-          problemType: 'soMePRoblEMtYPe',
         });
       });
     });
@@ -85,13 +75,13 @@ describe('problem reducer', () => {
         const answer = {
           id: 'A',
           correct: false,
-          feedback: '',
-          selectedFeedback: undefined,
+          selectedFeedback: '',
           title: '',
-          unselectedFeedback: undefined,
+          unselectedFeedback: '',
         };
-        expect(reducer(testingState, actions.addAnswer(answer))).toEqual({
+        expect(reducer({ ...testingState, problemType: 'choiceresponse' }, actions.addAnswer())).toEqual({
           ...testingState,
+          problemType: 'choiceresponse',
           answers: [answer],
         });
       });
