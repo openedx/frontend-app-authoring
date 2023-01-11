@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditorProblemView component renders raw editor 1`] = `
+<EditorContainer
+  getContent={[Function]}
+  onClose={null}
+  validateEntry={null}
+>
+  <Container
+    fluid={true}
+  >
+    <Row>
+      <Component
+        xs={9}
+      >
+        <RawEditor
+          content={null}
+          editorRef={
+            Object {
+              "current": null,
+            }
+          }
+          lang="xml"
+        />
+      </Component>
+      <Component
+        xs={3}
+      >
+        <injectIntl(ShimmedIntlComponent)
+          problemType="advanced"
+        />
+      </Component>
+    </Row>
+  </Container>
+</EditorContainer>
+`;
+
+exports[`EditorProblemView component renders simple view 1`] = `
+<EditorContainer
+  getContent={[Function]}
+  onClose={null}
+  validateEntry={null}
+>
+  <Container
+    fluid={true}
+  >
+    <Row>
+      <Component
+        xs={9}
+      >
+        <injectIntl(ShimmedIntlComponent) />
+        <AnswerWidget
+          problemType="multiplechoiceresponse"
+        />
+      </Component>
+      <Component
+        xs={3}
+      >
+        <injectIntl(ShimmedIntlComponent)
+          problemType="multiplechoiceresponse"
+        />
+      </Component>
+    </Row>
+  </Container>
+</EditorContainer>
+`;
