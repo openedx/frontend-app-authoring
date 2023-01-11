@@ -4,6 +4,7 @@ import {
 } from '../../../../data/constants/problem';
 import { StrictDict } from '../../../../utils';
 import * as module from './hooks';
+import { getDataFromOlx } from '../../../../data/redux/thunkActions/problem';
 
 export const state = StrictDict({
   selected: (val) => useState(val),
@@ -17,12 +18,14 @@ export const selectHooks = () => {
   };
 };
 
-export const onSelect = (setProblemType, selected, updateField) => () => {
+export const onSelect = (selected, updateField) => () => {
   if (Object.values(AdvanceProblemKeys).includes(selected)) {
-    updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX: AdvanceProblems[selected].template });
-    return;
+    updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX: AdvanceProblems[selected] });
+  } else {
+    const newOLX = ProblemTypes[selected].template;
+    const { settings, ...newState } = getDataFromOlx({ rawOLX: newOLX, rawSettings: {} });
+    updateField({ ...newState });
   }
-  setProblemType({ selected });
 };
 
 export const useArrowNav = (selected, setSelected) => {

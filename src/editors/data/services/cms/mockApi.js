@@ -9,7 +9,8 @@ export const fetchBlockById = ({ blockId, studioEndpointUrl }) => {
   let data = {};
   if (blockId === 'html-block-id') {
     data = {
-      data: '<p>Test prompt content</p>',
+      data: `<problem>
+      </problem>`,
       display_name: 'My Text Prompt',
       metadata: {
         display_name: 'Welcome!',

@@ -144,10 +144,6 @@ const problem = createSlice({
       ...state,
       problemType: null,
     }),
-    setProblemType: (state, { payload: { selected } }) => ({
-      ...state,
-      problemType: selected,
-    }),
   },
 });
 

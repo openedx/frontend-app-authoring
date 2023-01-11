@@ -17,7 +17,6 @@ export const SelectTypeFooter = ({
   onCancel,
   selected,
   // redux
-  setProblemType,
   updateField,
   // injected,
   intl,
@@ -35,7 +34,7 @@ export const SelectTypeFooter = ({
         </Button>
         <Button
           aria-label={intl.formatMessage(messages.selectButtonAriaLabel)}
-          onClick={hooks.onSelect(setProblemType, selected, updateField)}
+          onClick={hooks.onSelect(selected, updateField)}
           disabled={!selected}
         >
           <FormattedMessage {...messages.selectButtonLabel} />
@@ -52,7 +51,6 @@ SelectTypeFooter.defaultProps = {
 SelectTypeFooter.propTypes = {
   onCancel: PropTypes.func.isRequired,
   selected: PropTypes.string,
-  setProblemType: PropTypes.func.isRequired,
   updateField: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
@@ -62,7 +60,6 @@ export const mapStateToProps = () => ({
 });
 
 export const mapDispatchToProps = {
-  setProblemType: actions.problem.setProblemType,
   updateField: actions.problem.updateField,
 };
 
