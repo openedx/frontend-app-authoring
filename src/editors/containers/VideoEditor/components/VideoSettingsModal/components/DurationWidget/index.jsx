@@ -7,7 +7,6 @@ import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/
 import { keyStore } from '../../../../../../utils';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import hooks from './hooks';
-import { durationFromValue } from '../duration';
 import messages from '../messages';
 
 /**
@@ -21,34 +20,25 @@ export const DurationWidget = ({
   const dispatch = useDispatch();
 
   const {
-    formValue,
-    local,
+    reduxStartStopTimes,
+    unsavedStartStopTimes,
     onBlur,
     onChange,
     onKeyDown,
+    getTotalLabel,
   } = hooks.durationWidget({ dispatch });
 
-  const timeKeys = keyStore(formValue);
-
-  const getTotalLabel = (startTime, stopTime, subtitle) => {
-    if (!stopTime) {
-      if (!startTime) {
-        return intl.formatMessage(messages.fullVideoLength);
-      }
-      if (subtitle) {
-        return intl.formatMessage(messages.startsAt, { startTime: durationFromValue(startTime) });
-      }
-      return null;
-    }
-    const total = stopTime - (startTime || 0);
-    return intl.formatMessage(messages.total, { total: durationFromValue(total) });
-  };
+  const timeKeys = keyStore(reduxStartStopTimes);
 
   return (
     <CollapsibleFormWidget
       fontSize="x-small"
       title={intl.formatMessage(messages.durationTitle)}
-      subtitle={getTotalLabel(formValue.startTime, formValue.stopTime, true)}
+      subtitle={getTotalLabel({
+        duration: reduxStartStopTimes,
+        subtitle: true,
+        intl,
+      })}
     >
       <FormattedMessage {...messages.durationDescription} />
       <Form.Row className="mt-4.5">
@@ -58,7 +48,7 @@ export const DurationWidget = ({
             onBlur={onBlur(timeKeys.startTime)}
             onChange={onChange(timeKeys.startTime)}
             onKeyDown={onKeyDown(timeKeys.startTime)}
-            value={local.startTime}
+            value={unsavedStartStopTimes.startTime}
           />
           <Form.Control.Feedback>
             <FormattedMessage {...messages.durationHint} />
@@ -70,7 +60,7 @@ export const DurationWidget = ({
             onBlur={onBlur(timeKeys.stopTime)}
             onChange={onChange(timeKeys.stopTime)}
             onKeyDown={onKeyDown(timeKeys.stopTime)}
-            value={local.stopTime}
+            value={unsavedStartStopTimes.stopTime}
           />
           <Form.Control.Feedback>
             <FormattedMessage {...messages.durationHint} />
@@ -78,7 +68,11 @@ export const DurationWidget = ({
         </Form.Group>
       </Form.Row>
       <div className="mt-4">
-        {getTotalLabel(formValue.startTime, formValue.stopTime)}
+        {getTotalLabel({
+          duration: reduxStartStopTimes,
+          subtitle: false,
+          intl,
+        })}
       </div>
     </CollapsibleFormWidget>
   );

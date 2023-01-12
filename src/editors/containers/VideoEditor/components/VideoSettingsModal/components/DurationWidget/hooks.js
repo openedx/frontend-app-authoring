@@ -2,63 +2,79 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { actions, selectors } from '../../../../../../data/redux';
+import messages from '../messages';
 
 import * as module from './hooks';
 
 const durationMatcher = /^(\d{0,2}):?(\d{0,2})?:?(\d{0,2})?$/i;
-const MAXTIME = 86399000;
-const MINTIME = 1000;
 
 export const durationWidget = ({ dispatch }) => {
-  const formValue = useSelector(selectors.video.duration);
-  const setFormValue = (val) => dispatch(actions.video.updateField({ duration: val }));
-  const initialState = durationValue(formValue);
-  const [local, setLocal] = useState(initialState);
+  const reduxStartStopTimes = useSelector(selectors.video.duration);
+  const setReduxStartStopTimes = (val) => dispatch(actions.video.updateField({ duration: val }));
+  const initialState = module.durationString(reduxStartStopTimes);
+  const [unsavedStartStopTimes, setUnsavedStartStopTimes] = useState(initialState);
 
   useEffect(() => {
-    setLocal(durationValue(formValue))
-  }, [formValue]);
+    setUnsavedStartStopTimes(module.durationString(reduxStartStopTimes));
+  }, [reduxStartStopTimes]);
 
   return {
-    formValue,
-    local,
+    reduxStartStopTimes,
+    unsavedStartStopTimes,
     onBlur: (index) => (
       (e) => module.updateDuration({
-        formValue,
-        setFormValue,
-        local,
-        setLocal,
+        reduxStartStopTimes,
+        setReduxStartStopTimes,
+        unsavedStartStopTimes,
+        setUnsavedStartStopTimes,
         index,
         durationString: e.target.value,
       })
     ),
     onChange: (index) => (
-      (e) => setLocal(module.onDurationChange(local, index, e.target.value))
+      (e) => setUnsavedStartStopTimes(module.onDurationChange(unsavedStartStopTimes, index, e.target.value))
     ),
     onKeyDown: (index) => (
-      (e) => setLocal(module.onDurationKeyDown(local, index, e))
+      (e) => setUnsavedStartStopTimes(module.onDurationKeyDown(unsavedStartStopTimes, index, e))
     ),
+    getTotalLabel: ({ duration, subtitle, intl }) => {
+      if (!duration.stopTime) {
+        if (!duration.startTime) {
+          return intl.formatMessage(messages.fullVideoLength);
+        }
+        if (subtitle) {
+          return intl.formatMessage(
+            messages.startsAt,
+            { startTime: module.durationStringFromValue(duration.startTime) },
+          );
+        }
+        return null;
+      }
+      const total = duration.stopTime - (duration.startTime || 0);
+      return intl.formatMessage(messages.total, { total: module.durationStringFromValue(total) });
+    },
   };
 };
 
 /**
- * durationValue(duration)
+ * durationString(duration)
  * Returns the display value for embedded start and stop times
  * @param {object} duration - object containing startTime and stopTime millisecond values
  * @return {object} - start and stop time from incoming object mapped to duration strings.
  */
-export const durationValue = (duration) => ({
-  startTime: module.durationFromValue(duration.startTime),
-  stopTime: module.durationFromValue(duration.stopTime),
+export const durationString = (duration) => ({
+  startTime: module.durationStringFromValue(duration.startTime),
+  stopTime: module.durationStringFromValue(duration.stopTime),
 });
 
 /**
- * durationFromValue(value)
+ * durationStringFromValue(value)
  * Returns a duration string in 'hh:mm:ss' format from the given ms value
  * @param {number} value - duration (in milliseconds)
  * @return {string} - duration in 'hh:mm:ss' format
  */
-export const durationFromValue = (value) => {
+export const durationStringFromValue = (value) => {
+  // return 'why';
   if (!value || typeof value !== 'number' || value <= 0) {
     return '00:00:00';
   }
@@ -70,48 +86,49 @@ export const durationFromValue = (value) => {
 };
 
 /**
- * updateDuration({ formValue, local, setLocal, setFormValue })
- * Returns a memoized callback based on inputs that updates local value and form value
- * if the new string is valid (formValue stores a number, local stores a string).
- * If the duration string is invalid, resets the local value to the latest good value.
- * @param {object} formValue - redux-stored durations in milliseconds
- * @param {object} local - hook-stored duration in 'hh:mm:ss' format
- * @param {func} setFormValue - set form value
- * @param {func} setLocal - set local object
- * @return {func} - callback to update duration locally and in redux
+ * updateDuration({ reduxStartStopTimes, unsavedStartStopTimes, setUnsavedStartStopTimes, setReduxStartStopTimes })
+ * Returns a memoized callback based on inputs that updates unsavedStartStopTimes value and form value
+ * if the new string is valid (reduxStartStopTimes stores a number, unsavedStartStopTimes stores a string).
+ * If the duration string is invalid, resets the unsavedStartStopTimes value to the latest good value.
+ * @param {object} reduxStartStopTimes - redux-stored durations in milliseconds
+ * @param {object} unsavedStartStopTimes - hook-stored duration in 'hh:mm:ss' format
+ * @param {func} setReduxStartStopTimes - set form value
+ * @param {func} setUnsavedStartStopTimes - set unsavedStartStopTimes object
+ * @param {string} index - startTime or stopTime
+ * @return {func} - callback to update duration unsavedStartStopTimesly and in redux
  *   updateDuration(args)(index, durationString)
  */
 export const updateDuration = ({
-  formValue,
-  local,
-  setFormValue,
-  setLocal,
+  reduxStartStopTimes,
+  unsavedStartStopTimes,
+  setReduxStartStopTimes,
+  setUnsavedStartStopTimes,
   index,
-  durationString,
+  inputString,
 }) => {
-    let newDurationString = durationString;
-    let newValue = module.valueFromDuration(newDurationString);
-    // maxTime is 23:59:59 or 86399 seconds
-    if (newValue > MAXTIME) {
-      newValue = MAXTIME;
-    }
-    // stopTime must be at least 1 second, if not zero
-    if (index === 'stopTime' && newValue > 0 && newValue < MINTIME) {
-      newValue = MINTIME;
-    }
-    // stopTime must be at least 1 second after startTime, except 0 means no custom stopTime
-    if (index === 'stopTime' && newValue > 0 && newValue < (formValue.startTime + MINTIME)) {
-      newValue = formValue.startTime + MINTIME;
-    }
-    // startTime must be at least 1 second before stopTime, except when stopTime is less than a second
-    // (stopTime should only be less than a second if it's zero, but we're being paranoid)
-    if (index === 'startTime' && formValue.stopTime >= MINTIME && newValue > (formValue.stopTime - MINTIME)) {
-      newValue = formValue.stopTime - MINTIME;
-    }
-    newDurationString = module.durationFromValue(newValue);
-    setLocal({ ...local, [index]: newDurationString });
-    setFormValue({ ...formValue, [index]: newValue });
-  };
+  let newDurationString = inputString;
+  let newValue = module.valueFromDuration(newDurationString);
+  // maxTime is 23:59:59 or 86399 seconds
+  if (newValue > 86399000) {
+    newValue = 86399000;
+  }
+  // stopTime must be at least 1 second, if not zero
+  if (index === 'stopTime' && newValue > 0 && newValue < 1000) {
+    newValue = 1000;
+  }
+  // stopTime must be at least 1 second after startTime, except 0 means no custom stopTime
+  if (index === 'stopTime' && newValue > 0 && newValue < (reduxStartStopTimes.startTime + 1000)) {
+    newValue = reduxStartStopTimes.startTime + 1000;
+  }
+  // startTime must be at least 1 second before stopTime, except when stopTime is less than a second
+  // (stopTime should only be less than a second if it's zero, but we're being paranoid)
+  if (index === 'startTime' && reduxStartStopTimes.stopTime >= 1000 && newValue > (reduxStartStopTimes.stopTime - 1000)) {
+    newValue = reduxStartStopTimes.stopTime - 1000;
+  }
+  newDurationString = module.durationStringFromValue(newValue);
+  setUnsavedStartStopTimes({ ...unsavedStartStopTimes, [index]: newDurationString });
+  setReduxStartStopTimes({ ...reduxStartStopTimes, [index]: newValue });
+};
 
 /**
  * onDurationChange(duration)
@@ -121,7 +138,7 @@ export const updateDuration = ({
  * @param {string} val - duration in 'hh:mm:ss' format
  * @return {object} duration - object containing startTime and stopTime millisecond values
  */
- export const onDurationChange = (duration, index, val) => {
+export const onDurationChange = (duration, index, val) => {
   const match = val.trim().match(durationMatcher);
   if (!match) {
     return duration;
@@ -193,8 +210,8 @@ export const valueFromDuration = (duration) => {
 
 export default {
   durationWidget,
-  durationValue,
-  durationFromValue,
+  durationString,
+  durationStringFromValue,
   updateDuration,
   onDurationChange,
   onDurationKeyDown,
