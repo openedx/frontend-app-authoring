@@ -113,13 +113,13 @@ export const resetCardHooks = (updateSettings) => {
 
 export const scoringCardHooks = (scoring, updateSettings) => {
   const handleMaxAttemptChange = (event) => {
-    let unlimitedAttempts = true;
+    let unlimitedAttempts = false;
     let attemptNumber = parseInt(event.target.value);
     if (_.isNaN(attemptNumber)) {
+      attemptNumber = null;
+      unlimitedAttempts = true;
+    } else if (attemptNumber < 0) {
       attemptNumber = 0;
-    }
-    if (attemptNumber > 0) {
-      unlimitedAttempts = false;
     }
     updateSettings({ scoring: { ...scoring, attempts: { number: attemptNumber, unlimited: unlimitedAttempts } } });
   };
