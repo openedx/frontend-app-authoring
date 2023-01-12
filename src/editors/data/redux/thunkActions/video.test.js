@@ -99,8 +99,8 @@ describe('video thunkActions', () => {
     let dispatchedAction1;
     let dispatchedAction2;
     beforeEach(() => {
-      jest.spyOn(thunkActions, thunkActionsKeys.determineVideoSource).mockReturnValue({
-        videoSource: 'videOsOurce',
+      jest.spyOn(thunkActions, thunkActionsKeys.determineVideoSources).mockReturnValue({
+        videoUrl: 'videOsOurce',
         videoId: 'videOiD',
         fallbackVideos: 'fALLbACKvIDeos',
       });
@@ -176,69 +176,69 @@ describe('video thunkActions', () => {
       }));
     });
   });
-  describe('determineVideoSource', () => {
+  describe('determineVideoSources', () => {
     const edxVideoId = 'EDxviDEoiD';
     const youtubeId = 'yOuTuBEiD';
     const youtubeUrl = `https://youtu.be/${youtubeId}`;
     const html5Sources = ['htmLOne', 'hTMlTwo', 'htMLthrEE'];
     describe('when there is an edx video id, youtube id and html5 sources', () => {
-      it('returns the youtube id for video source and html5 sources for fallback videos', () => {
-        expect(thunkActions.determineVideoSource({
+      it('returns all three with the youtube id wrapped in url', () => {
+        expect(thunkActions.determineVideoSources({
           edxVideoId,
           youtubeId,
           html5Sources,
         })).toEqual({
-          videoSource: youtubeUrl,
+          videoUrl: youtubeUrl,
           videoId: edxVideoId,
           fallbackVideos: html5Sources,
         });
       });
     });
-    describe('when there is an edx video id', () => {
+    describe('when there is only an edx video id', () => {
       it('returns the edx video id for video source', () => {
-        expect(thunkActions.determineVideoSource({
+        expect(thunkActions.determineVideoSources({
           edxVideoId,
           youtubeId: '',
           html5Sources: '',
         })).toEqual({
-          videoSource: '',
+          videoUrl: '',
           videoId: edxVideoId,
-          fallbackVideos: '',
+          fallbackVideos: [],
         });
       });
     });
     describe('when there is no edx video id', () => {
       it('returns the youtube url for video source and html5 sources for fallback videos', () => {
-        expect(thunkActions.determineVideoSource({
+        expect(thunkActions.determineVideoSources({
           edxVideoId: '',
           youtubeId,
           html5Sources,
         })).toEqual({
-          videoSource: youtubeUrl,
+          videoUrl: youtubeUrl,
           videoId: '',
           fallbackVideos: html5Sources,
         });
       });
     });
     describe('when there is no edx video id and no youtube id', () => {
-      it('returns the first html5 source for video source and the rest for fallback videos', () => {
-        expect(thunkActions.determineVideoSource({
+      it('returns the first html5 source for video url and the rest for fallback videos', () => {
+        expect(thunkActions.determineVideoSources({
           edxVideoId: '',
           youtubeId: '',
           html5Sources,
         })).toEqual({
-          videoSource: 'htmLOne',
+          videoUrl: 'htmLOne',
           videoId: '',
           fallbackVideos: ['hTMlTwo', 'htMLthrEE'],
         });
       });
       it('returns the html5 source for video source and an array with 2 empty values for fallback videos', () => {
-        expect(thunkActions.determineVideoSource({
+        expect(thunkActions.determineVideoSources({
           edxVideoId: '',
           youtubeId: '',
           html5Sources: ['htmlOne'],
         })).toEqual({
-          videoSource: 'htmlOne',
+          videoUrl: 'htmlOne',
           videoId: '',
           fallbackVideos: [],
         });
@@ -246,12 +246,12 @@ describe('video thunkActions', () => {
     });
     describe('when there is no edx video id, no youtube id and no html5 sources', () => {
       it('returns an empty string for video source and an array with 2 empty values for fallback videos', () => {
-        expect(thunkActions.determineVideoSource({
+        expect(thunkActions.determineVideoSources({
           edxVideoId: '',
           youtubeId: '',
           html5Sources: [],
         })).toEqual({
-          videoSource: '',
+          videoUrl: '',
           videoId: '',
           fallbackVideos: [],
         });
