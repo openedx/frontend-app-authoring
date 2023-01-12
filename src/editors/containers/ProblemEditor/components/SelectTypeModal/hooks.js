@@ -20,7 +20,7 @@ export const selectHooks = () => {
 
 export const onSelect = (selected, updateField) => () => {
   if (Object.values(AdvanceProblemKeys).includes(selected)) {
-    updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX: AdvanceProblems[selected] });
+    updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX: AdvanceProblems[selected].template });
   } else {
     const newOLX = ProblemTypes[selected].template;
     const { settings, ...newState } = getDataFromOlx({ rawOLX: newOLX, rawSettings: {} });

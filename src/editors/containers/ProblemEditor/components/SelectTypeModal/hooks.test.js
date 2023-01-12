@@ -48,7 +48,7 @@ describe('SelectTypeModal hooks', () => {
       module.onSelect(mockAdvancedSelected, mockUpdateField)();
       expect(mockUpdateField).toHaveBeenCalledWith({
         problemType: ProblemTypeKeys.ADVANCED,
-        rawOLX: AdvanceProblems[mockAdvancedSelected],
+        rawOLX: AdvanceProblems[mockAdvancedSelected].template,
       });
     });
     test('updateField is called with selected on visual propblems', () => {

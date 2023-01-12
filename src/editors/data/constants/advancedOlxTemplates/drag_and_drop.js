@@ -85,4 +85,4 @@ export const dragAndDrop = `<problem>
     </customresponse>
 </problem>`;
 
-export default { dragAndDrop };
+export default dragAndDrop;
