@@ -6,7 +6,7 @@ import { Col, Container, Row } from '@edx/paragon';
 import AnswerWidget from './AnswerWidget';
 import SettingsWidget from './SettingsWidget';
 import QuestionWidget from './QuestionWidget';
-import { EditorContainer } from '../../../EditorContainer';
+import EditorContainer from '../../../EditorContainer';
 import { selectors } from '../../../../data/redux';
 import RawEditor from '../../../../sharedComponents/RawEditor';
 import { ProblemTypeKeys } from '../../../../data/constants/problem';
