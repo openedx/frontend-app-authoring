@@ -2,6 +2,7 @@ import {
   useRef, useCallback, useState, useEffect,
 } from 'react';
 import { ProblemTypeKeys } from '../../data/constants/problem';
+import tinyMCEStyles from '../../data/constants/tinyMCEStyles';
 import { StrictDict } from '../../utils';
 import * as module from './hooks';
 
@@ -19,6 +20,13 @@ export const problemEditorConfig = ({
     setEditorRef(editor);
   },
   initialValue: question || '',
+  init: {
+    skin: false,
+    content_css: false,
+    content_style: tinyMCEStyles,
+    menubar: false,
+    branding: false,
+  },
   onFocusOut: () => {
     const content = editorRef.current.getContent();
     updateQuestion(content);
