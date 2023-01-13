@@ -17,7 +17,7 @@ export const SelectTypeModal = ({
 
   return (
     <SelectTypeWrapper onClose={onClose} selected={selected}>
-      <Row className="justify-content-center align-items-center m-4">
+      <Row className="justify-content-center align-items-stretch m-4">
         {(!Object.values(AdvanceProblemKeys).includes(selected)) ? (
           <>
             <Col>

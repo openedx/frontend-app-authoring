@@ -9,7 +9,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is ch
   <div
     className="small"
   >
-    Multi Select Problem
+    Multi-select problem
   </div>
   <Image
     alt="A preview illustration of a {problemType, select,
@@ -34,8 +34,8 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is ch
     target="_blank"
   >
     <FormattedMessage
-      defaultMessage="Learn More"
-      description="Label for Learn More button"
+      defaultMessage="Learn more"
+      description="Label for Learn more button"
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>
@@ -49,7 +49,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is mu
   <div
     className="small"
   >
-    Single Select Problem
+    Single select problem
   </div>
   <Image
     alt="A preview illustration of a {problemType, select,
@@ -74,8 +74,8 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is mu
     target="_blank"
   >
     <FormattedMessage
-      defaultMessage="Learn More"
-      description="Label for Learn More button"
+      defaultMessage="Learn more"
+      description="Label for Learn more button"
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>
@@ -89,7 +89,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is nu
   <div
     className="small"
   >
-    Numeric Response Problem
+    Numerical input problem
   </div>
   <Image
     alt="A preview illustration of a {problemType, select,
@@ -114,8 +114,8 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is nu
     target="_blank"
   >
     <FormattedMessage
-      defaultMessage="Learn More"
-      description="Label for Learn More button"
+      defaultMessage="Learn more"
+      description="Label for Learn more button"
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>
@@ -129,7 +129,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is op
   <div
     className="small"
   >
-    Dropdown Problem
+    Dropdown problem
   </div>
   <Image
     alt="A preview illustration of a {problemType, select,
@@ -154,8 +154,8 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is op
     target="_blank"
   >
     <FormattedMessage
-      defaultMessage="Learn More"
-      description="Label for Learn More button"
+      defaultMessage="Learn more"
+      description="Label for Learn more button"
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>
@@ -169,7 +169,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is st
   <div
     className="small"
   >
-    Text Input Problem
+    Text input problem
   </div>
   <Image
     alt="A preview illustration of a {problemType, select,
@@ -194,8 +194,8 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is st
     target="_blank"
   >
     <FormattedMessage
-      defaultMessage="Learn More"
-      description="Label for Learn More button"
+      defaultMessage="Learn more"
+      description="Label for Learn more button"
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>

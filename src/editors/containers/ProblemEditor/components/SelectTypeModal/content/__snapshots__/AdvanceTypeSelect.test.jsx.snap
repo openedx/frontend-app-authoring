@@ -1,11 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with default props 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -80,7 +82,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with default
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -133,7 +137,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with default
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
           </div>
         </OverlayTrigger>
@@ -175,7 +181,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with default
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -217,7 +225,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with default
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -270,22 +280,36 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with default
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is circuitschematic 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -360,7 +384,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -413,7 +439,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
           </div>
         </OverlayTrigger>
@@ -455,7 +483,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -497,7 +527,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -550,22 +582,36 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is customgrader 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -640,7 +686,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -693,7 +741,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
           </div>
         </OverlayTrigger>
@@ -735,7 +785,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -777,7 +829,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -830,22 +884,36 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is drag_and_drop 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -920,7 +988,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -973,7 +1043,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
           </div>
         </OverlayTrigger>
@@ -1015,7 +1087,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1057,7 +1131,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1110,22 +1186,36 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is formularesponse 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -1200,7 +1290,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1253,7 +1345,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
           </div>
         </OverlayTrigger>
@@ -1295,7 +1389,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1337,7 +1433,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1390,22 +1488,36 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is imageresponse 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -1480,7 +1592,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1533,7 +1647,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
           </div>
         </OverlayTrigger>
@@ -1575,7 +1691,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1617,7 +1735,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1670,22 +1790,36 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is jsinput_response 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -1760,7 +1894,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1813,7 +1949,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
           </div>
         </OverlayTrigger>
@@ -1855,7 +1993,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1897,7 +2037,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1950,22 +2092,36 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is problem_with_hint 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -2040,7 +2196,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -2093,7 +2251,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
           </div>
         </OverlayTrigger>
@@ -2135,7 +2295,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -2177,7 +2339,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -2230,12 +2394,24 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;

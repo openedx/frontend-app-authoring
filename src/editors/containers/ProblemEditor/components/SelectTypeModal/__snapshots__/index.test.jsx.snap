@@ -1,24 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SelectTypeModal snapshot 1`] = `
-<SelectTypeWrapper
+<injectIntl(ShimmedIntlComponent)
   onClose={[MockFunction]}
   selected="mOcKsELEcted"
 >
   <Row
-    className="justify-content-center align-items-center m-4"
+    className="justify-content-center align-items-stretch m-4"
   >
-    <Component>
+    <Col>
       <injectIntl(ShimmedIntlComponent)
         selected="mOcKsELEcted"
         setSelected={[MockFunction setSelected]}
       />
-    </Component>
-    <Component>
+    </Col>
+    <Col>
       <injectIntl(ShimmedIntlComponent)
         problemType="mOcKsELEcted"
       />
-    </Component>
+    </Col>
   </Row>
-</SelectTypeWrapper>
+</injectIntl(ShimmedIntlComponent)>
 `;

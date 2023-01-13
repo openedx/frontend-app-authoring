@@ -18,7 +18,7 @@ export const ProblemTypeKeys = StrictDict({
 
 export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.SINGLESELECT]: {
-    title: 'Single Select Problem',
+    title: 'Single select',
     preview: singleSelect,
     description: 'Specify one correct answer from a list of possible options',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/multiple_choice.html',
@@ -28,7 +28,7 @@ export const ProblemTypes = StrictDict({
 
   },
   [ProblemTypeKeys.MULTISELECT]: {
-    title: 'Multi Select Problem',
+    title: 'Multi-select',
     preview: multiSelect,
     description: 'Specify one or more correct answers from a list of possible options.',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/checkbox.html',
@@ -37,7 +37,7 @@ export const ProblemTypes = StrictDict({
     template: basicOlxTemplates.multiSelect,
   },
   [ProblemTypeKeys.DROPDOWN]: {
-    title: 'Dropdown Problem',
+    title: 'Dropdown',
     preview: dropdown,
     description: 'Specify one correct answer from a list of possible options, selected in a dropdown menu.',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/dropdown.html',
@@ -46,7 +46,7 @@ export const ProblemTypes = StrictDict({
     template: basicOlxTemplates.dropdown,
   },
   [ProblemTypeKeys.NUMERIC]: {
-    title: 'Numeric Response Problem',
+    title: 'Numerical input',
     preview: numericalInput,
     description: 'Specify one or more correct numeric answers, submitted in a response field.',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/numerical_input.html',
@@ -55,7 +55,7 @@ export const ProblemTypes = StrictDict({
     template: basicOlxTemplates.numeric,
   },
   [ProblemTypeKeys.TEXTINPUT]: {
-    title: 'Text Input Problem',
+    title: 'Text input',
     preview: textInput,
     description: 'Specify one or more correct text answers, including numbers and special characters, submitted in a response field.',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/text_input.html',

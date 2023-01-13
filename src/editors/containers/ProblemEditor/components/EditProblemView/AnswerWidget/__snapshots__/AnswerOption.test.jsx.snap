@@ -9,7 +9,7 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
   <Row
     className="my-2"
   >
-    <Component
+    <Col
       xs={1}
     >
       <Checker
@@ -24,8 +24,8 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
         hasSingleAnswer={false}
         setAnswer={[Function]}
       />
-    </Component>
-    <Component
+    </Col>
+    <Col
       xs={10}
     >
       <Form.Control
@@ -73,8 +73,8 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
           </Form.Group>
         </div>
       </Body>
-    </Component>
-    <Component
+    </Col>
+    <Col
       className="d-inline-flex mt-1"
       xs={1}
     >
@@ -91,7 +91,7 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
         onClick={[Function]}
         variant="primary"
       />
-    </Component>
+    </Col>
   </Row>
 </Advanced>
 `;
@@ -105,7 +105,7 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
   <Row
     className="my-2"
   >
-    <Component
+    <Col
       xs={1}
     >
       <Checker
@@ -121,8 +121,8 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
         hasSingleAnswer={false}
         setAnswer={[Function]}
       />
-    </Component>
-    <Component
+    </Col>
+    <Col
       xs={10}
     >
       <Form.Control
@@ -202,8 +202,8 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
           </Form.Group>
         </div>
       </Body>
-    </Component>
-    <Component
+    </Col>
+    <Col
       className="d-inline-flex mt-1"
       xs={1}
     >
@@ -220,7 +220,7 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
         onClick={[Function]}
         variant="primary"
       />
-    </Component>
+    </Col>
   </Row>
 </Advanced>
 `;

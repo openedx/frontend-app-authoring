@@ -12,7 +12,7 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page 1`] = `
     </h3>
     <Container>
       <Row>
-        <Component>
+        <Col>
           <Row
             className="my-2"
           >
@@ -84,7 +84,7 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page 1`] = `
               </Row>
             </Body>
           </Advanced>
-        </Component>
+        </Col>
       </Row>
     </Container>
   </div>
@@ -103,7 +103,7 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page advanced
     </h3>
     <Container>
       <Row>
-        <Component>
+        <Col>
           <Row
             className="my-2"
           >
@@ -175,7 +175,7 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page advanced
               </Row>
             </Body>
           </Advanced>
-        </Component>
+        </Col>
       </Row>
     </Container>
   </div>

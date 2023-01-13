@@ -8,7 +8,7 @@ exports[`EditorProblemView component renders raw editor 1`] = `
     fluid={true}
   >
     <Row>
-      <Component
+      <Col
         xs={9}
       >
         <RawEditor
@@ -20,14 +20,14 @@ exports[`EditorProblemView component renders raw editor 1`] = `
           }
           lang="xml"
         />
-      </Component>
-      <Component
+      </Col>
+      <Col
         xs={3}
       >
         <injectIntl(ShimmedIntlComponent)
           problemType="advanced"
         />
-      </Component>
+      </Col>
     </Row>
   </Container>
 </injectIntl(ShimmedIntlComponent)>
@@ -41,21 +41,21 @@ exports[`EditorProblemView component renders simple view 1`] = `
     fluid={true}
   >
     <Row>
-      <Component
+      <Col
         xs={9}
       >
         <injectIntl(ShimmedIntlComponent) />
         <AnswerWidget
           problemType="multiplechoiceresponse"
         />
-      </Component>
-      <Component
+      </Col>
+      <Col
         xs={3}
       >
         <injectIntl(ShimmedIntlComponent)
           problemType="multiplechoiceresponse"
         />
-      </Component>
+      </Col>
     </Row>
   </Container>
 </injectIntl(ShimmedIntlComponent)>

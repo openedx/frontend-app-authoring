@@ -10,43 +10,48 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
     >
-      Single Select Problem
+      Single select
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
     >
-      Multi Select Problem
+      Multi-select
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="optionresponse"
       type="radio"
       value="optionresponse"
     >
-      Dropdown Problem
+      Dropdown
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
     >
-      Numeric Response Problem
+      Numerical input
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="stringresponse"
       type="radio"
       value="stringresponse"
     >
-      Text Input Problem
+      Text input
     </SelectableBox>
   </SelectableBox.Set>
   <Button
@@ -55,7 +60,7 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
     variant="link"
   >
     <FormattedMessage
-      defaultMessage="Advance problem types"
+      defaultMessage="Advanced problem types"
       description="Button label for advance problem types option"
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
@@ -73,43 +78,48 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
     >
-      Single Select Problem
+      Single select
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
     >
-      Multi Select Problem
+      Multi-select
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="optionresponse"
       type="radio"
       value="optionresponse"
     >
-      Dropdown Problem
+      Dropdown
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
     >
-      Numeric Response Problem
+      Numerical input
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="stringresponse"
       type="radio"
       value="stringresponse"
     >
-      Text Input Problem
+      Text input
     </SelectableBox>
   </SelectableBox.Set>
   <Button
@@ -118,7 +128,7 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
     variant="link"
   >
     <FormattedMessage
-      defaultMessage="Advance problem types"
+      defaultMessage="Advanced problem types"
       description="Button label for advance problem types option"
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
@@ -136,43 +146,48 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
     >
-      Single Select Problem
+      Single select
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
     >
-      Multi Select Problem
+      Multi-select
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="optionresponse"
       type="radio"
       value="optionresponse"
     >
-      Dropdown Problem
+      Dropdown
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
     >
-      Numeric Response Problem
+      Numerical input
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="stringresponse"
       type="radio"
       value="stringresponse"
     >
-      Text Input Problem
+      Text input
     </SelectableBox>
   </SelectableBox.Set>
   <Button
@@ -181,7 +196,7 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
     variant="link"
   >
     <FormattedMessage
-      defaultMessage="Advance problem types"
+      defaultMessage="Advanced problem types"
       description="Button label for advance problem types option"
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
@@ -199,43 +214,48 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
     >
-      Single Select Problem
+      Single select
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
     >
-      Multi Select Problem
+      Multi-select
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="optionresponse"
       type="radio"
       value="optionresponse"
     >
-      Dropdown Problem
+      Dropdown
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
     >
-      Numeric Response Problem
+      Numerical input
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="stringresponse"
       type="radio"
       value="stringresponse"
     >
-      Text Input Problem
+      Text input
     </SelectableBox>
   </SelectableBox.Set>
   <Button
@@ -244,7 +264,7 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
     variant="link"
   >
     <FormattedMessage
-      defaultMessage="Advance problem types"
+      defaultMessage="Advanced problem types"
       description="Button label for advance problem types option"
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
@@ -262,43 +282,48 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
     >
-      Single Select Problem
+      Single select
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
     >
-      Multi Select Problem
+      Multi-select
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="optionresponse"
       type="radio"
       value="optionresponse"
     >
-      Dropdown Problem
+      Dropdown
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
     >
-      Numeric Response Problem
+      Numerical input
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
+      className="text-primary-500"
       id="stringresponse"
       type="radio"
       value="stringresponse"
     >
-      Text Input Problem
+      Text input
     </SelectableBox>
   </SelectableBox.Set>
   <Button
@@ -307,7 +332,7 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
     variant="link"
   >
     <FormattedMessage
-      defaultMessage="Advance problem types"
+      defaultMessage="Advanced problem types"
       description="Button label for advance problem types option"
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
