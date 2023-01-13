@@ -18,6 +18,7 @@ export const SelectTypeFooter = ({
   selected,
   // redux
   updateField,
+  setBlockTitle,
   // injected,
   intl,
 }) => (
@@ -34,7 +35,7 @@ export const SelectTypeFooter = ({
         </Button>
         <Button
           aria-label={intl.formatMessage(messages.selectButtonAriaLabel)}
-          onClick={hooks.onSelect(selected, updateField)}
+          onClick={hooks.onSelect({ selected, updateField, setBlockTitle })}
           disabled={!selected}
         >
           <FormattedMessage {...messages.selectButtonLabel} />
@@ -52,6 +53,7 @@ SelectTypeFooter.propTypes = {
   onCancel: PropTypes.func.isRequired,
   selected: PropTypes.string,
   updateField: PropTypes.func.isRequired,
+  setBlockTitle: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
 };
@@ -61,6 +63,7 @@ export const mapStateToProps = () => ({
 
 export const mapDispatchToProps = {
   updateField: actions.problem.updateField,
+  setBlockTitle: actions.app.setBlockTitle,
 };
 
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SelectTypeFooter));

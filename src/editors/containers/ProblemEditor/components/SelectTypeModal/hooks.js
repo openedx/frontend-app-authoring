@@ -18,13 +18,15 @@ export const selectHooks = () => {
   };
 };
 
-export const onSelect = (selected, updateField) => () => {
+export const onSelect = ({ selected, updateField, setBlockTitle }) => () => {
   if (Object.values(AdvanceProblemKeys).includes(selected)) {
     updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX: AdvanceProblems[selected].template });
+    setBlockTitle(AdvanceProblems[selected].title);
   } else {
     const newOLX = ProblemTypes[selected].template;
     const { settings, ...newState } = getDataFromOlx({ rawOLX: newOLX, rawSettings: {} });
     updateField({ ...newState });
+    setBlockTitle(ProblemTypes[selected].title);
   }
 };
 
