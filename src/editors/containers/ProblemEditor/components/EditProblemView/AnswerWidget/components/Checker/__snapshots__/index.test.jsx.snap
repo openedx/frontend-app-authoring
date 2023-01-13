@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Checker component with multiple answers 1`] = `
+<Form.Checkbox
+  checked={true}
+  className="pl-4"
+  onChange={[Function]}
+  value="A"
+>
+  A
+</Form.Checkbox>
+`;
+
+exports[`Checker component with single answer 1`] = `
+<Radio
+  checked={true}
+  className="pl-4"
+  onChange={[Function]}
+  value="A"
+>
+  A
+</Radio>
+`;
