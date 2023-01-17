@@ -1,9 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AnswersContainer render snapshot: renders correct default 1`] = `
-<div>
+<div
+  className="border rounded border-light-700 py-4 pl-4 pr-3"
+>
   <Button
-    className="my-3 ml-2"
+    className="pl-0 text-primary-500"
     onClick={[MockFunction]}
     variant="tertiary"
   >
@@ -17,9 +19,11 @@ exports[`AnswersContainer render snapshot: renders correct default 1`] = `
 `;
 
 exports[`AnswersContainer render snapshot: renders correctly with answers 1`] = `
-<div>
+<div
+  className="border rounded border-light-700 py-4 pl-4 pr-3"
+>
   <Button
-    className="my-3 ml-2"
+    className="pl-0 text-primary-500"
     onClick={[MockFunction]}
     variant="tertiary"
   >

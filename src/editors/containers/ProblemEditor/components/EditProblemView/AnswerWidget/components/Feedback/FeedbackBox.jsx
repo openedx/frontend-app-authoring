@@ -16,7 +16,7 @@ export const FeedbackBox = ({
   };
 
   return (
-    <div className="bg-light-300 p-4 mt-3">
+    <div className="bg-light-300 p-4 mt-3 rounded">
       <FeedbackControl
         key={`selectedfeedback-${answer.id}`}
         feedback={answer.selectedFeedback}

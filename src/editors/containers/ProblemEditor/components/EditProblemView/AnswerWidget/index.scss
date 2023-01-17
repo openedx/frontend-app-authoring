@@ -1,31 +1,6 @@
 @import '../../../../../../colors.scss';
 
-.problem-answer {
-  padding: 12px;
-
-  .problem-answer-title {
-    font-weight: bold;
-  }
-  
-  .problem-answer-description {
-    font-size: 0.9rem;
-  }
-}
-
 .answer-option {
-  // The paragon icon path is missing "fill: currentColor"
-  .feedback-icon-button {
-    &:hover {
-      &:not(:focus) {
-        svg {
-          path {
-            fill: $white;
-          }
-        }
-      }
-    }
-  }
-
   .answer-option-flex-item-1 {
     flex-basis: 8.33%;
   }

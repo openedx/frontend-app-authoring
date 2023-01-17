@@ -3,7 +3,7 @@
 exports[`Checker component with multiple answers 1`] = `
 <Form.Checkbox
   checked={true}
-  className="pl-4"
+  className="pt-2.5"
   onChange={[Function]}
   value="A"
 >
@@ -14,7 +14,7 @@ exports[`Checker component with multiple answers 1`] = `
 exports[`Checker component with single answer 1`] = `
 <Radio
   checked={true}
-  className="pl-4"
+  className="pt-2.5"
   onChange={[Function]}
   value="A"
 >

@@ -7,7 +7,7 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
   open={false}
 >
   <div
-    className="answer-option-flex-item-1 mr-1 d-flex align-items-center"
+    className="answer-option-flex-item-1 mr-1 d-flex"
   >
     <Checker
       answer={
@@ -60,7 +60,6 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
     <Trigger>
       <IconButton
         alt="Toggle feedback"
-        className="feedback-icon-button"
         iconAs="Icon"
         variant="primary"
       />
@@ -82,7 +81,7 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
   open={false}
 >
   <div
-    className="answer-option-flex-item-1 mr-1 d-flex align-items-center"
+    className="answer-option-flex-item-1 mr-1 d-flex"
   >
     <Checker
       answer={
@@ -137,7 +136,6 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
     <Trigger>
       <IconButton
         alt="Toggle feedback"
-        className="feedback-icon-button"
         iconAs="Icon"
         variant="primary"
       />

@@ -2,9 +2,12 @@ import React, { memo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
-  Collapsible, Icon, IconButton, Form,
+  Collapsible,
+  Icon,
+  IconButton,
+  Form,
 } from '@edx/paragon';
-import { Feedback, Delete } from '@edx/paragon/icons';
+import { FeedbackOutline, DeleteOutline } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
@@ -33,7 +36,7 @@ export const AnswerOption = ({
       onToggle={toggleFeedback}
       className="answer-option d-flex flex-row justify-content-between flex-nowrap pb-2 pt-2"
     >
-      <div className="answer-option-flex-item-1 mr-1 d-flex align-items-center">
+      <div className="answer-option-flex-item-1 mr-1 d-flex">
         <Checker
           hasSingleAnswer={hasSingleAnswer}
           answer={answer}
@@ -62,15 +65,14 @@ export const AnswerOption = ({
       <div className="answer-option-flex-item-3 d-flex flex-row flex-nowrap">
         <Collapsible.Trigger>
           <IconButton
-            src={Feedback}
-            className="feedback-icon-button"
+            src={FeedbackOutline}
             iconAs={Icon}
             alt={intl.formatMessage(messages.feedbackToggleIconAltText)}
             variant="primary"
           />
         </Collapsible.Trigger>
         <IconButton
-          src={Delete}
+          src={DeleteOutline}
           iconAs={Icon}
           alt={intl.formatMessage(messages.answerDeleteIconAltText)}
           onClick={removeAnswer}
