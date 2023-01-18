@@ -286,5 +286,3 @@ export const fetchStudioView = ({ blockId, studioEndpointUrl }) => {
     },
   });
 };
-
-export const checkTranscriptsForImport = () => mockPromise({});

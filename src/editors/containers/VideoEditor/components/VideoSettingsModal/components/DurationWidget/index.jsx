@@ -1,9 +1,11 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import { Col, Form } from '@edx/paragon';
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
 
+import { actions, selectors } from '../../../../../../data/redux';
 import { keyStore } from '../../../../../../utils';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import hooks from './hooks';
@@ -14,28 +16,28 @@ import messages from '../messages';
  * Also displays the total run time of the video.
  */
 export const DurationWidget = ({
+  // redux
+  duration,
+  updateField,
   // injected
   intl,
 }) => {
-  const dispatch = useDispatch();
-
   const {
-    reduxStartStopTimes,
-    unsavedStartStopTimes,
+    unsavedDuration,
     onBlur,
     onChange,
     onKeyDown,
     getTotalLabel,
-  } = hooks.durationWidget({ dispatch });
+  } = hooks.durationWidget({ duration, updateField });
 
-  const timeKeys = keyStore(reduxStartStopTimes);
+  const timeKeys = keyStore(duration);
 
   return (
     <CollapsibleFormWidget
       fontSize="x-small"
       title={intl.formatMessage(messages.durationTitle)}
       subtitle={getTotalLabel({
-        duration: reduxStartStopTimes,
+        duration: duration,
         subtitle: true,
         intl,
       })}
@@ -48,7 +50,7 @@ export const DurationWidget = ({
             onBlur={onBlur(timeKeys.startTime)}
             onChange={onChange(timeKeys.startTime)}
             onKeyDown={onKeyDown(timeKeys.startTime)}
-            value={unsavedStartStopTimes.startTime}
+            value={unsavedDuration.startTime}
           />
           <Form.Control.Feedback>
             <FormattedMessage {...messages.durationHint} />
@@ -60,7 +62,7 @@ export const DurationWidget = ({
             onBlur={onBlur(timeKeys.stopTime)}
             onChange={onChange(timeKeys.stopTime)}
             onKeyDown={onKeyDown(timeKeys.stopTime)}
-            value={unsavedStartStopTimes.stopTime}
+            value={unsavedDuration.stopTime}
           />
           <Form.Control.Feedback>
             <FormattedMessage {...messages.durationHint} />
@@ -69,7 +71,7 @@ export const DurationWidget = ({
       </Form.Row>
       <div className="mt-4">
         {getTotalLabel({
-          duration: reduxStartStopTimes,
+          duration: duration,
           subtitle: false,
           intl,
         })}
@@ -79,8 +81,19 @@ export const DurationWidget = ({
 };
 
 DurationWidget.propTypes = {
+  // redux
+  duration: PropTypes.objectOf(PropTypes.number).isRequired,
+  updateField: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(DurationWidget);
+export const mapStateToProps = (state) => ({
+  duration: selectors.video.duration(state),
+});
+
+export const mapDispatchToProps = {
+  updateField: actions.video.updateField,
+};
+
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(DurationWidget));

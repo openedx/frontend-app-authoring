@@ -1,41 +1,37 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 
-import { actions, selectors } from '../../../../../../data/redux';
 import messages from '../messages';
 
 import * as module from './hooks';
 
 const durationMatcher = /^(\d{0,2}):?(\d{0,2})?:?(\d{0,2})?$/i;
 
-export const durationWidget = ({ dispatch }) => {
-  const reduxStartStopTimes = useSelector(selectors.video.duration);
-  const setReduxStartStopTimes = (val) => dispatch(actions.video.updateField({ duration: val }));
-  const initialState = module.durationString(reduxStartStopTimes);
-  const [unsavedStartStopTimes, setUnsavedStartStopTimes] = useState(initialState);
+export const durationWidget = ({ duration, updateField }) => {
+  const setDuration = (val) => updateField({ duration: val });
+  const initialState = module.durationString(duration);
+  const [unsavedDuration, setUnsavedDuration] = useState(initialState);
 
   useEffect(() => {
-    setUnsavedStartStopTimes(module.durationString(reduxStartStopTimes));
-  }, [reduxStartStopTimes]);
+    setUnsavedDuration(module.durationString(duration));
+  }, [duration]);
 
   return {
-    reduxStartStopTimes,
-    unsavedStartStopTimes,
+    unsavedDuration,
     onBlur: (index) => (
       (e) => module.updateDuration({
-        reduxStartStopTimes,
-        setReduxStartStopTimes,
-        unsavedStartStopTimes,
-        setUnsavedStartStopTimes,
+        duration,
+        setDuration,
+        unsavedDuration,
+        setUnsavedDuration,
         index,
         durationString: e.target.value,
       })
     ),
     onChange: (index) => (
-      (e) => setUnsavedStartStopTimes(module.onDurationChange(unsavedStartStopTimes, index, e.target.value))
+      (e) => setUnsavedDuration(module.onDurationChange(unsavedDuration, index, e.target.value))
     ),
     onKeyDown: (index) => (
-      (e) => setUnsavedStartStopTimes(module.onDurationKeyDown(unsavedStartStopTimes, index, e))
+      (e) => setUnsavedDuration(module.onDurationKeyDown(unsavedDuration, index, e))
     ),
     getTotalLabel: ({ duration, subtitle, intl }) => {
       if (!duration.stopTime) {
@@ -86,23 +82,23 @@ export const durationStringFromValue = (value) => {
 };
 
 /**
- * updateDuration({ reduxStartStopTimes, unsavedStartStopTimes, setUnsavedStartStopTimes, setReduxStartStopTimes })
- * Returns a memoized callback based on inputs that updates unsavedStartStopTimes value and form value
- * if the new string is valid (reduxStartStopTimes stores a number, unsavedStartStopTimes stores a string).
- * If the duration string is invalid, resets the unsavedStartStopTimes value to the latest good value.
- * @param {object} reduxStartStopTimes - redux-stored durations in milliseconds
- * @param {object} unsavedStartStopTimes - hook-stored duration in 'hh:mm:ss' format
- * @param {func} setReduxStartStopTimes - set form value
- * @param {func} setUnsavedStartStopTimes - set unsavedStartStopTimes object
+ * updateDuration({ duration, unsavedDuration, setUnsavedDuration, setDuration })
+ * Returns a memoized callback based on inputs that updates unsavedDuration value and form value
+ * if the new string is valid (duration stores a number, unsavedDuration stores a string).
+ * If the duration string is invalid, resets the unsavedDuration value to the latest good value.
+ * @param {object} duration - redux-stored durations in milliseconds
+ * @param {object} unsavedDuration - hook-stored duration in 'hh:mm:ss' format
+ * @param {func} setDuration - set form value
+ * @param {func} setUnsavedDuration - set unsavedDuration object
  * @param {string} index - startTime or stopTime
- * @return {func} - callback to update duration unsavedStartStopTimesly and in redux
+ * @return {func} - callback to update duration unsavedDurationly and in redux
  *   updateDuration(args)(index, durationString)
  */
 export const updateDuration = ({
-  reduxStartStopTimes,
-  unsavedStartStopTimes,
-  setReduxStartStopTimes,
-  setUnsavedStartStopTimes,
+  duration,
+  unsavedDuration,
+  setDuration,
+  setUnsavedDuration,
   index,
   inputString,
 }) => {
@@ -117,17 +113,17 @@ export const updateDuration = ({
     newValue = 1000;
   }
   // stopTime must be at least 1 second after startTime, except 0 means no custom stopTime
-  if (index === 'stopTime' && newValue > 0 && newValue < (reduxStartStopTimes.startTime + 1000)) {
-    newValue = reduxStartStopTimes.startTime + 1000;
+  if (index === 'stopTime' && newValue > 0 && newValue < (duration.startTime + 1000)) {
+    newValue = duration.startTime + 1000;
   }
   // startTime must be at least 1 second before stopTime, except when stopTime is less than a second
   // (stopTime should only be less than a second if it's zero, but we're being paranoid)
-  if (index === 'startTime' && reduxStartStopTimes.stopTime >= 1000 && newValue > (reduxStartStopTimes.stopTime - 1000)) {
-    newValue = reduxStartStopTimes.stopTime - 1000;
+  if (index === 'startTime' && duration.stopTime >= 1000 && newValue > (duration.stopTime - 1000)) {
+    newValue = duration.stopTime - 1000;
   }
   newDurationString = module.durationStringFromValue(newValue);
-  setUnsavedStartStopTimes({ ...unsavedStartStopTimes, [index]: newDurationString });
-  setReduxStartStopTimes({ ...reduxStartStopTimes, [index]: newValue });
+  setUnsavedDuration({ ...unsavedDuration, [index]: newDurationString });
+  setDuration({ ...duration, [index]: newValue });
 };
 
 /**

@@ -1,14 +1,30 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
+import { actions, selectors } from '../../../../../../data/redux';
 import { formatMessage } from '../../../../../../../testUtils';
-import { DurationWidget } from '.';
+import { DurationWidget, mapStateToProps, mapDispatchToProps } from '.';
+
+jest.mock('../../../../../../data/redux', () => ({
+  actions: {
+    video: {
+      updateField: jest.fn().mockName('actions.video.updateField'),
+    },
+  },
+  selectors: {
+    video: {
+      duration: jest.fn(state => ({ duration: state })),
+    },
+  },
+}));
 
 describe('DurationWidget', () => {
   const props = {
-    isError: false,
-    subtitle: 'SuBTItle',
-    title: 'tiTLE',
+    duration: {
+      startTime: '00:00:00',
+      stopTime: '00:00:10',
+    },
+    updateField: jest.fn().mockName('updateField'),
     // inject
     intl: { formatMessage },
   };
@@ -17,6 +33,19 @@ describe('DurationWidget', () => {
       expect(
         shallow(<DurationWidget {...props} />),
       ).toMatchSnapshot();
+    });
+  });
+  describe('mapStateToProps', () => {
+    const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
+    test('duration from video.duration', () => {
+      expect(
+        mapStateToProps(testState).duration,
+      ).toEqual(selectors.video.duration(testState));
+    });
+  });
+  describe('mapDispatchToProps', () => {
+    test('updateField from actions.video.updateField', () => {
+      expect(mapDispatchToProps.updateField).toEqual(actions.video.updateField);
     });
   });
 });
