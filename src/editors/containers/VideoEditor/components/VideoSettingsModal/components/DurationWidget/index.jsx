@@ -37,7 +37,7 @@ export const DurationWidget = ({
       fontSize="x-small"
       title={intl.formatMessage(messages.durationTitle)}
       subtitle={getTotalLabel({
-        duration: duration,
+        durationString: duration,
         subtitle: true,
         intl,
       })}
@@ -71,7 +71,7 @@ export const DurationWidget = ({
       </Form.Row>
       <div className="mt-4">
         {getTotalLabel({
-          duration: duration,
+          durationString: duration,
           subtitle: false,
           intl,
         })}

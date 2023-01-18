@@ -33,20 +33,20 @@ export const durationWidget = ({ duration, updateField }) => {
     onKeyDown: (index) => (
       (e) => setUnsavedDuration(module.onDurationKeyDown(unsavedDuration, index, e))
     ),
-    getTotalLabel: ({ duration, subtitle, intl }) => {
-      if (!duration.stopTime) {
-        if (!duration.startTime) {
+    getTotalLabel: ({ durationString, subtitle, intl }) => {
+      if (!durationString.stopTime) {
+        if (!durationString.startTime) {
           return intl.formatMessage(messages.fullVideoLength);
         }
         if (subtitle) {
           return intl.formatMessage(
             messages.startsAt,
-            { startTime: module.durationStringFromValue(duration.startTime) },
+            { startTime: module.durationStringFromValue(durationString.startTime) },
           );
         }
         return null;
       }
-      const total = duration.stopTime - (duration.startTime || 0);
+      const total = durationString.stopTime - (durationString.startTime || 0);
       return intl.formatMessage(messages.total, { total: module.durationStringFromValue(total) });
     },
   };
