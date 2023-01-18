@@ -1,9 +1,7 @@
 /* eslint-disable */
 const textInput =`<problem>
 <stringresponse answer="the correct answer" type="ci">
-  <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input problems. Edit this component to replace this template with your own assessment.</p>
-<label>Add the question text, or prompt, here. This text is required.</label>
-<description>You can add an optional tip or note related to the prompt like this. </description>
+<p>Enter your question</p>
 <additional_answer answer="optional acceptable variant of the correct answer"/>
   <textline size="20"/>
 </stringresponse>
