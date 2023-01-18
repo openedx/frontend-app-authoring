@@ -20,7 +20,7 @@ exports[`HintsCard snapshot snapshot: renders hints setting card multiple hints 
     value=""
   />
   <Button
-    className="my-3 ml-2"
+    className="pl-0 text-primary-500"
     onClick={[MockFunction hintsCardHooks.handleAdd]}
     variant="tertiary"
   >
@@ -35,11 +35,11 @@ exports[`HintsCard snapshot snapshot: renders hints setting card multiple hints 
 
 exports[`HintsCard snapshot snapshot: renders hints setting card no hints 1`] = `
 <SettingsOption
-  summary="No Hints"
+  summary="None"
   title="Hints"
 >
   <Button
-    className="my-3 ml-2"
+    className="pl-0 text-primary-500"
     onClick={[MockFunction hintsCardHooks.handleAdd]}
     variant="tertiary"
   >
@@ -65,7 +65,7 @@ exports[`HintsCard snapshot snapshot: renders hints setting card one hint 1`] = 
     value="hint1"
   />
   <Button
-    className="my-3 ml-2"
+    className="pl-0 text-primary-500"
     onClick={[MockFunction hintsCardHooks.handleAdd]}
     variant="tertiary"
   >

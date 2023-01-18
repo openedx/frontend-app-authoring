@@ -15,7 +15,9 @@ export const TypeCard = ({
   // inject
   intl,
 }) => {
-  const problemTypeKeysArray = Object.values(ProblemTypeKeys);
+  const problemTypeKeysArray = Object.values(ProblemTypeKeys).filter(key => key !== ProblemTypeKeys.ADVANCED);
+
+  if (problemType === ProblemTypeKeys.ADVANCED) { return null; }
 
   return (
     <SettingsOption
