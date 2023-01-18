@@ -1,14 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`RawEditor renders as expected with default behavior 1`] = `
-<div
-  style={
-    Object {
-      "height": "600px",
-      "padding": "10px 30px",
-    }
-  }
->
+<div>
   <Alert
     variant="danger"
   >

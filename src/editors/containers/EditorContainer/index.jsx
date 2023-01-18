@@ -62,7 +62,9 @@ export const EditorContainer = ({
           </div>
         </ModalDialog.Title>
       </ModalDialog.Header>
-      {isInitialized && children}
+      <ModalDialog.Body className="pb-6">
+        {isInitialized && children}
+      </ModalDialog.Body>
       <EditorFooter
         onCancel={openCancelConfirmModal}
         onSave={hooks.handleSaveClicked({ dispatch, getContent, validateEntry })}

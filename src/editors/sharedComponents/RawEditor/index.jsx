@@ -18,7 +18,7 @@ export const RawEditor = ({
   const value = getValue(content);
 
   return (
-    <div style={{ padding: '10px 30px', height: '600px' }}>
+    <div>
       <Alert variant="danger">
         You are using the raw {lang} editor.
       </Alert>

@@ -62,9 +62,13 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
       </div>
     </ModalDialog.Title>
   </ModalDialog.Header>
-  <h1>
-    My test content
-  </h1>
+  <ModalDialog.Body
+    className="pb-6"
+  >
+    <h1>
+      My test content
+    </h1>
+  </ModalDialog.Body>
   <injectIntl(ShimmedIntlComponent)
     disableSave={false}
     onCancel={[MockFunction openCancelConfirmModal]}
@@ -143,6 +147,9 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
       </div>
     </ModalDialog.Title>
   </ModalDialog.Header>
+  <ModalDialog.Body
+    className="pb-6"
+  />
   <injectIntl(ShimmedIntlComponent)
     disableSave={true}
     onCancel={[MockFunction openCancelConfirmModal]}

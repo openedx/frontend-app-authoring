@@ -22,7 +22,7 @@ export const SelectTypeFooter = ({
   // injected,
   intl,
 }) => (
-  <div className="editor-footer position-sticky" style={{ bottom: 0 }}>
+  <div className="editor-footer fixed-bottom">
     <ModalDialog.Footer className="border-top-0">
       <ActionRow>
         <ActionRow.Spacer />
