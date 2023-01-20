@@ -76,7 +76,6 @@ export const AdvanceProblemKeys = StrictDict({
   CIRCUITSCHEMATIC: 'circuitschematic',
   JSINPUT: 'jsinputresponse',
   CUSTOMGRADER: 'customgrader',
-  DRAGANDDROP: 'draganddrop',
   IMAGE: 'imageresponse',
   FORMULA: 'formularesponse',
   PROBLEMWITHHINT: 'problemwithhint',
@@ -102,11 +101,6 @@ export const AdvanceProblems = StrictDict({
     title: 'Custom Python-evaluated input',
     status: 'Provisional',
     template: advancedOlxTemplates.customGrader,
-  },
-  [AdvanceProblemKeys.DRAGANDDROP]: {
-    title: 'Drag and drop (deprecated version)',
-    status: 'Not supported',
-    template: advancedOlxTemplates.dragAndDrop,
   },
   [AdvanceProblemKeys.IMAGE]: {
     title: 'Image mapped input',
