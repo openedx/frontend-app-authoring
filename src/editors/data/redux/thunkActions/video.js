@@ -27,7 +27,7 @@ export const loadVideoData = () => (dispatch, getState) => {
   });
 
   dispatch(actions.video.load({
-    videoSource: videoUrl,
+    videoSource: videoUrl || '',
     videoId,
     fallbackVideos,
     allowVideoDownloads: rawVideoData.download_video,
@@ -91,7 +91,7 @@ export const determineVideoSources = ({
     [videoUrl, fallbackVideos] = [html5Sources[0], html5Sources.slice(1)];
   }
   return {
-    videoId: edxVideoId,
+    videoId: edxVideoId || '',
     videoUrl: videoUrl || '',
     fallbackVideos: fallbackVideos || [],
   };

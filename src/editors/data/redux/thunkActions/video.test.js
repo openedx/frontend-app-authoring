@@ -181,6 +181,19 @@ describe('video thunkActions', () => {
     const youtubeId = 'yOuTuBEiD';
     const youtubeUrl = `https://youtu.be/${youtubeId}`;
     const html5Sources = ['htmLOne', 'hTMlTwo', 'htMLthrEE'];
+    describe('when edx id, youtube id and source values are null', () => {
+      it('returns empty strings for ids and an empty array for sources', () => {
+        expect(thunkActions.determineVideoSources({
+          edxVideoId: null,
+          youtubeId: null,
+          html5Sources: null,
+        })).toEqual({
+          videoUrl: '',
+          videoId: '',
+          fallbackVideos: [],
+        });
+      });
+    });
     describe('when there is an edx video id, youtube id and html5 sources', () => {
       it('returns all three with the youtube id wrapped in url', () => {
         expect(thunkActions.determineVideoSources({
