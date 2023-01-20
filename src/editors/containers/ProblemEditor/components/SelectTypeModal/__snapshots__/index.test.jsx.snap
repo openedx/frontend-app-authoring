@@ -6,19 +6,21 @@ exports[`SelectTypeModal snapshot 1`] = `
   selected="mOcKsELEcted"
 >
   <Row
-    className="justify-content-center align-items-stretch m-4"
+    className="justify-content-center"
   >
-    <Col>
+    <Stack
+      className="flex-wrap"
+      direction="horizontal"
+      gap={4}
+    >
       <injectIntl(ShimmedIntlComponent)
         selected="mOcKsELEcted"
         setSelected={[MockFunction setSelected]}
       />
-    </Col>
-    <Col>
       <injectIntl(ShimmedIntlComponent)
         problemType="mOcKsELEcted"
       />
-    </Col>
+    </Stack>
   </Row>
 </injectIntl(ShimmedIntlComponent)>
 `;

@@ -3,8 +3,14 @@
 exports[`Preview snapshots snapshots: renders as expected with default props 1`] = `""`;
 
 exports[`Preview snapshots snapshots: renders as expected with problemType is choiceresponse 1`] = `
-<div
+<Container
   className="bg-light-300 rounded p-4"
+  style={
+    Object {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
 >
   <div
     className="small"
@@ -39,12 +45,18 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is ch
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>
-</div>
+</Container>
 `;
 
 exports[`Preview snapshots snapshots: renders as expected with problemType is multiplechoiceresponse 1`] = `
-<div
+<Container
   className="bg-light-300 rounded p-4"
+  style={
+    Object {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
 >
   <div
     className="small"
@@ -79,12 +91,18 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is mu
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>
-</div>
+</Container>
 `;
 
 exports[`Preview snapshots snapshots: renders as expected with problemType is numericalresponse 1`] = `
-<div
+<Container
   className="bg-light-300 rounded p-4"
+  style={
+    Object {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
 >
   <div
     className="small"
@@ -119,12 +137,18 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is nu
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>
-</div>
+</Container>
 `;
 
 exports[`Preview snapshots snapshots: renders as expected with problemType is optionresponse 1`] = `
-<div
+<Container
   className="bg-light-300 rounded p-4"
+  style={
+    Object {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
 >
   <div
     className="small"
@@ -159,12 +183,18 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is op
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>
-</div>
+</Container>
 `;
 
 exports[`Preview snapshots snapshots: renders as expected with problemType is stringresponse 1`] = `
-<div
+<Container
   className="bg-light-300 rounded p-4"
+  style={
+    Object {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
 >
   <div
     className="small"
@@ -199,5 +229,5 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is st
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>
-</div>
+</Container>
 `;

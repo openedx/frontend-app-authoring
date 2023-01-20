@@ -83,7 +83,7 @@ export const AdvanceProblemKeys = StrictDict({
 
 export const AdvanceProblems = StrictDict({
   [AdvanceProblemKeys.BLANK]: {
-    title: 'Blank advance problem',
+    title: 'Blank advanced problem',
     status: '',
     template: '<problem></problem>',
   },

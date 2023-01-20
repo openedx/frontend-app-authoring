@@ -1,7 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
-<Fragment>
+<Container
+  style={
+    Object {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
   <SelectableBox.Set
     columns={1}
     onChange={[Function]}
@@ -10,7 +17,7 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
@@ -19,7 +26,7 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
@@ -28,7 +35,7 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       type="radio"
       value="optionresponse"
@@ -37,7 +44,7 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
@@ -46,7 +53,7 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       type="radio"
       value="stringresponse"
@@ -65,11 +72,18 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
   </Button>
-</Fragment>
+</Container>
 `;
 
 exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
-<Fragment>
+<Container
+  style={
+    Object {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
   <SelectableBox.Set
     columns={1}
     onChange={[Function]}
@@ -78,7 +92,7 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
@@ -87,7 +101,7 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
@@ -96,7 +110,7 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       type="radio"
       value="optionresponse"
@@ -105,7 +119,7 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
@@ -114,7 +128,7 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       type="radio"
       value="stringresponse"
@@ -133,11 +147,18 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
   </Button>
-</Fragment>
+</Container>
 `;
 
 exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
-<Fragment>
+<Container
+  style={
+    Object {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
   <SelectableBox.Set
     columns={1}
     onChange={[Function]}
@@ -146,7 +167,7 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
@@ -155,7 +176,7 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
@@ -164,7 +185,7 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       type="radio"
       value="optionresponse"
@@ -173,7 +194,7 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
@@ -182,7 +203,7 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       type="radio"
       value="stringresponse"
@@ -201,11 +222,18 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
   </Button>
-</Fragment>
+</Container>
 `;
 
 exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
-<Fragment>
+<Container
+  style={
+    Object {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
   <SelectableBox.Set
     columns={1}
     onChange={[Function]}
@@ -214,7 +242,7 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
@@ -223,7 +251,7 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
@@ -232,7 +260,7 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       type="radio"
       value="optionresponse"
@@ -241,7 +269,7 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
@@ -250,7 +278,7 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       type="radio"
       value="stringresponse"
@@ -269,11 +297,18 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
   </Button>
-</Fragment>
+</Container>
 `;
 
 exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
-<Fragment>
+<Container
+  style={
+    Object {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
   <SelectableBox.Set
     columns={1}
     onChange={[Function]}
@@ -282,7 +317,7 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
@@ -291,7 +326,7 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
@@ -300,7 +335,7 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       type="radio"
       value="optionresponse"
@@ -309,7 +344,7 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
@@ -318,7 +353,7 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="text-primary-500"
+      className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       type="radio"
       value="stringresponse"
@@ -337,5 +372,5 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
   </Button>
-</Fragment>
+</Container>
 `;
