@@ -1,7 +1,6 @@
 import {
   useRef, useCallback, useState, useEffect,
 } from 'react';
-import { ProblemTypeKeys } from '../../data/constants/problem';
 import tinyMCEStyles from '../../data/constants/tinyMCEStyles';
 import { StrictDict } from '../../utils';
 import * as module from './hooks';
@@ -41,16 +40,4 @@ export const prepareEditorRef = () => {
   const [refReady, setRefReady] = module.state.refReady(false);
   useEffect(() => setRefReady(true), [setRefReady]);
   return { editorRef, refReady, setEditorRef };
-};
-
-export const initializeAnswerContainer = ({ answers, problemType, updateField }) => {
-  const hasSingleAnswer = problemType === ProblemTypeKeys.DROPDOWN || problemType === ProblemTypeKeys.SINGLESELECT;
-  let answerCount = 0;
-  answers.forEach(answer => {
-    if (answer.correct) {
-      answerCount += 1;
-    }
-  });
-  updateField({ correctAnswerCount: answerCount });
-  return { hasSingleAnswer };
 };

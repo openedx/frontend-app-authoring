@@ -1,8 +1,21 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { shallow } from 'enzyme';
+import { act, render, waitFor } from '@testing-library/react';
+
 import { actions, selectors } from '../../../../../data/redux';
 
 import * as module from './AnswersContainer';
+
+import { AnswersContainer as AnswersContainerWithoutHOC } from './AnswersContainer';
+
+jest.mock('@edx/frontend-platform/i18n', () => ({
+  FormattedMessage: ({ defaultMessage }) => (<p>{defaultMessage}</p>),
+  injectIntl: (args) => args,
+  intlShape: {},
+}));
+
+jest.mock('./AnswerOption', () => () => <div>MockAnswerOption</div>);
 
 jest.mock('../../../../../data/redux', () => ({
   actions: {
@@ -25,10 +38,37 @@ describe('AnswersContainer', () => {
   };
   describe('render', () => {
     test('snapshot: renders correct default', () => {
-      expect(shallow(<module.AnswersContainer {...props} />)).toMatchSnapshot();
+      act(() => {
+        expect(shallow(<module.AnswersContainer {...props} />)).toMatchSnapshot();
+      });
     });
     test('snapshot: renders correctly with answers', () => {
-      expect(shallow(<module.AnswersContainer answers={[{ id: 'a', title: 'sOMetITlE', correct: true }, { id: 'b', title: 'sOMetITlE', correct: true }]} {...props} />)).toMatchSnapshot();
+      act(() => {
+        expect(shallow(
+          <module.AnswersContainer
+            {...props}
+            answers={[{ id: 'a', title: 'sOMetITlE', correct: true }, { id: 'b', title: 'sOMetITlE', correct: true }]}
+          />,
+        )).toMatchSnapshot();
+      });
+    });
+
+    test('with react-testing-library', async () => {
+      let container = null;
+      await act(async () => {
+        const wrapper = render(
+          <AnswersContainerWithoutHOC
+            {...props}
+            answers={[{ id: 'a', title: 'sOMetITlE', correct: true }, { id: 'b', title: 'sOMetITlE', correct: true }]}
+          />,
+        );
+        container = wrapper.container;
+      });
+
+      await waitFor(() => expect(container.querySelector('button')).toBeTruthy());
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      expect(props.updateField).toHaveBeenCalledWith(expect.objectContaining({ correctAnswerCount: 2 }));
     });
   });
   describe('mapStateToProps', () => {

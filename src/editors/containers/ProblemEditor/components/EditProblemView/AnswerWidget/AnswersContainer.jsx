@@ -6,7 +6,7 @@ import { Add } from '@edx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
-import { initializeAnswerContainer } from '../../../hooks';
+import { useAnswerContainer, isSingleAnswerProblem } from './hooks';
 import { actions, selectors } from '../../../../../data/redux';
 import { answerOptionProps } from '../../../../../data/services/cms/types';
 import AnswerOption from './AnswerOption';
@@ -18,9 +18,12 @@ export const AnswersContainer = ({
   addAnswer,
   updateField,
 }) => {
-  const { hasSingleAnswer } = initializeAnswerContainer({ answers, problemType, updateField });
+  const hasSingleAnswer = isSingleAnswerProblem(problemType);
+
+  useAnswerContainer({ answers, problemType, updateField });
+
   return (
-    <div className="border rounded border-light-700 py-4 pl-4 pr-3">
+    <div className="border border-light-700 rounded py-4 pl-4 pr-3">
       {answers.map((answer) => (
         <AnswerOption
           key={answer.id}

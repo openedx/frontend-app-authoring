@@ -33,68 +33,65 @@ export const SettingsWidget = ({
   const { isAdvancedCardsVisible, showAdvancedCards } = showAdvancedSettingsCards();
   return (
     <div>
-      <div>
-        <h3>
-          <FormattedMessage {...messages.settingsWidgetTitle} />
-        </h3>
-        <Container>
-          <Row>
-            <Col>
-              <Row className="my-2">
-                <TypeCard
-                  answers={answers}
-                  correctAnswerCount={correctAnswerCount}
-                  problemType={problemType}
-                  updateField={updateField}
-                  updateAnswer={updateAnswer}
-                />
-              </Row>
-              <Row className="my-2">
-                <ScoringCard scoring={settings.scoring} updateSettings={updateSettings} />
-              </Row>
-              <Row className="mt-2">
-                <HintsCard hints={settings.hints} updateSettings={updateSettings} />
-              </Row>
+      <div className="h4">
+        <FormattedMessage {...messages.settingsWidgetTitle} />
+      </div>
+      <Container>
+        <Row>
+          <Col>
+            <Row className="mb-2">
+              <TypeCard
+                answers={answers}
+                correctAnswerCount={correctAnswerCount}
+                problemType={problemType}
+                updateField={updateField}
+                updateAnswer={updateAnswer}
+              />
+            </Row>
+            <Row className="my-2">
+              <ScoringCard scoring={settings.scoring} updateSettings={updateSettings} />
+            </Row>
+            <Row className="mt-2">
+              <HintsCard hints={settings.hints} updateSettings={updateSettings} />
+            </Row>
 
-              <Row>
-                <Collapsible.Advanced open={!isAdvancedCardsVisible}>
-                  <Collapsible.Body className="collapsible-body">
-                    <Button
-                      className="my-3 ml-2"
-                      variant="link"
-                      size="inline"
-                      onClick={showAdvancedCards}
-                    >
-                      <FormattedMessage {...messages.showAdvanceSettingsButtonText} />
-                    </Button>
-                  </Collapsible.Body>
-                </Collapsible.Advanced>
-              </Row>
-
-              <Collapsible.Advanced open={isAdvancedCardsVisible}>
+            <Row>
+              <Collapsible.Advanced open={!isAdvancedCardsVisible}>
                 <Collapsible.Body className="collapsible-body">
-                  <Row className="my-2">
-                    <ShowAnswerCard showAnswer={settings.showAnswer} updateSettings={updateSettings} />
-                  </Row>
-                  <Row className="my-2">
-                    <ResetCard showResetButton={settings.showResetButton} updateSettings={updateSettings} />
-                  </Row>
-                  <Row className="my-2">
-                    <TimerCard timeBetween={settings.timeBetween} updateSettings={updateSettings} />
-                  </Row>
-                  <Row className="my-2">
-                    <MatlabCard matLabApiKey={settings.matLabApiKey} updateSettings={updateSettings} />
-                  </Row>
-                  <Row className="my-2">
-                    <SwitchToAdvancedEditorCard />
-                  </Row>
+                  <Button
+                    className="my-3 ml-2"
+                    variant="link"
+                    size="inline"
+                    onClick={showAdvancedCards}
+                  >
+                    <FormattedMessage {...messages.showAdvanceSettingsButtonText} />
+                  </Button>
                 </Collapsible.Body>
               </Collapsible.Advanced>
-            </Col>
-          </Row>
-        </Container>
-      </div>
+            </Row>
 
+            <Collapsible.Advanced open={isAdvancedCardsVisible}>
+              <Collapsible.Body className="collapsible-body">
+                <Row className="my-2">
+                  <ShowAnswerCard showAnswer={settings.showAnswer} updateSettings={updateSettings} />
+                </Row>
+                <Row className="my-2">
+                  <ResetCard showResetButton={settings.showResetButton} updateSettings={updateSettings} />
+                </Row>
+                <Row className="my-2">
+                  <TimerCard timeBetween={settings.timeBetween} updateSettings={updateSettings} />
+                </Row>
+                <Row className="my-2">
+                  <MatlabCard matLabApiKey={settings.matLabApiKey} updateSettings={updateSettings} />
+                </Row>
+                <Row className="my-2">
+                  <SwitchToAdvancedEditorCard />
+                </Row>
+              </Collapsible.Body>
+            </Collapsible.Advanced>
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 };

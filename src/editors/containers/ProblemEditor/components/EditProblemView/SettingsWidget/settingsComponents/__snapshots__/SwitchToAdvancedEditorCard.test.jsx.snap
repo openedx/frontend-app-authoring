@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCard 1`] = `
-<Card>
+<Card
+  className="border border-light-700 shadow-none"
+>
   <BaseModal
     close={[Function]}
     confirmAction={

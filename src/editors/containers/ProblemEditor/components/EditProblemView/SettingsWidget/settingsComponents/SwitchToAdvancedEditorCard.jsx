@@ -12,7 +12,7 @@ export const SwitchToAdvancedEditorCard = ({
 }) => {
   const [isConfirmOpen, setConfirmOpen] = React.useState(false);
   return (
-    <Card>
+    <Card className="border border-light-700 shadow-none">
       <BaseModal
         isOpen={isConfirmOpen}
         close={() => { setConfirmOpen(false); }}

@@ -2,7 +2,7 @@
 
 exports[`AnswersContainer render snapshot: renders correct default 1`] = `
 <div
-  className="border rounded border-light-700 py-4 pl-4 pr-3"
+  className="border border-light-700 rounded py-4 pl-4 pr-3"
 >
   <Button
     className="pl-0 text-primary-500"
@@ -20,8 +20,30 @@ exports[`AnswersContainer render snapshot: renders correct default 1`] = `
 
 exports[`AnswersContainer render snapshot: renders correctly with answers 1`] = `
 <div
-  className="border rounded border-light-700 py-4 pl-4 pr-3"
+  className="border border-light-700 rounded py-4 pl-4 pr-3"
 >
+  <Component
+    answer={
+      Object {
+        "correct": true,
+        "id": "a",
+        "title": "sOMetITlE",
+      }
+    }
+    hasSingleAnswer={false}
+    key="a"
+  />
+  <Component
+    answer={
+      Object {
+        "correct": true,
+        "id": "b",
+        "title": "sOMetITlE",
+      }
+    }
+    hasSingleAnswer={false}
+    key="b"
+  />
   <Button
     className="pl-0 text-primary-500"
     onClick={[MockFunction]}
