@@ -2,7 +2,7 @@ import { actions, selectors } from '..';
 import { removeItemOnce } from '../../../utils';
 import * as requests from './requests';
 import * as module from './video';
-import { valueFromDuration } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/duration';
+import { valueFromDuration } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
 import { parseYoutubeId } from '../../services/cms/api';
 
 export const loadVideoData = () => (dispatch, getState) => {

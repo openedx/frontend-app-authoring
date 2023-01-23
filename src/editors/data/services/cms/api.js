@@ -3,7 +3,7 @@ import * as urls from './urls';
 import { get, post, deleteObject } from './utils';
 import * as module from './api';
 import * as mockApi from './mockApi';
-import { durationFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/duration';
+import { durationStringFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
 
 export const apiMethods = {
   fetchBlockById: ({ blockId, studioEndpointUrl }) => get(
@@ -176,8 +176,8 @@ export const apiMethods = {
           track: '', // TODO Downloadable Transcript URL. Backend expects a file name, for example: "something.srt"
           show_captions: content.showTranscriptByDefault,
           handout: content.handout,
-          start_time: durationFromValue(content.duration.startTime),
-          end_time: durationFromValue(content.duration.stopTime),
+          start_time: durationStringFromValue(content.duration.startTime),
+          end_time: durationStringFromValue(content.duration.stopTime),
           license: module.processLicense(content.licenseType, content.licenseDetails),
         },
       };
