@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
 import { Form, Hyperlink } from '@edx/paragon';
 import SettingsOption from '../SettingsOption';
 import { ShowAnswerTypes, ShowAnswerTypesKeys } from '../../../../../../data/constants/problem';
-import { selectors } from '../../../../../../data/redux';
 import messages from '../messages';
 import { showAnswerCardHooks } from '../hooks';
 
@@ -14,9 +12,6 @@ export const ShowAnswerCard = ({
   updateSettings,
   // inject
   intl,
-  // redux
-  studioEndpointUrl,
-  learningContextId,
 }) => {
   const {
     handleShowAnswerChange,
@@ -34,7 +29,7 @@ export const ShowAnswerCard = ({
         </span>
       </div>
       <div className="spacedMessage">
-        <Hyperlink destination={`${studioEndpointUrl}/settings/advanced/${learningContextId}`} target="_blank">
+        <Hyperlink destination="#" target="_blank">
           <FormattedMessage {...messages.advancedSettingsLinkText} />
         </Hyperlink>
       </div>
@@ -54,7 +49,7 @@ export const ShowAnswerCard = ({
           ))}
         </Form.Control>
       </Form.Group>
-      {showAttempts
+      { showAttempts
         && (
         <Form.Group>
           <Form.Control
@@ -74,15 +69,6 @@ ShowAnswerCard.propTypes = {
   // eslint-disable-next-line
   showAnswer: PropTypes.any.isRequired,
   updateSettings: PropTypes.func.isRequired,
-  studioEndpointUrl: PropTypes.string.isRequired,
-  learningContextId: PropTypes.string.isRequired,
 };
 
-export const mapStateToProps = (state) => ({
-  studioEndpointUrl: selectors.app.studioEndpointUrl(state),
-  learningContextId: selectors.app.learningContextId(state),
-});
-
-export const mapDispatchToProps = {};
-
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ShowAnswerCard));
+export default injectIntl(ShowAnswerCard);

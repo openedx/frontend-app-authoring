@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { StrictDict } from '../../../../../utils';
 import * as module from './hooks';
 import { actions } from '../../../../../data/redux';
-import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 
 export const state = StrictDict({
   isFeedbackVisible: (val) => useState(val),
@@ -38,22 +37,6 @@ export const prepareFeedback = (answer) => {
   };
 };
 
-export const isSingleAnswerProblem = (problemType) => (
-  problemType === ProblemTypeKeys.DROPDOWN || problemType === ProblemTypeKeys.SINGLESELECT
-);
-
-export const useAnswerContainer = ({ answers, updateField }) => {
-  useEffect(() => {
-    let answerCount = 0;
-    answers.forEach(answer => {
-      if (answer.correct) {
-        answerCount += 1;
-      }
-    });
-    updateField({ correctAnswerCount: answerCount });
-  }, []);
-};
-
 export default {
-  state, removeAnswer, setAnswer, prepareFeedback, isSingleAnswerProblem, useAnswerContainer,
+  state, removeAnswer, setAnswer, prepareFeedback,
 };

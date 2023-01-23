@@ -1,19 +1,25 @@
 import React from 'react';
-import { dispatch } from 'react-redux';
 import { shallow } from 'enzyme';
 
 import { formatMessage } from '../../../../../../../testUtils';
-import { VideoSourceWidget } from '.';
-import * as hooks from './hooks';
+import { actions } from '../../../../../../data/redux';
+import { VideoSourceWidget, mapDispatchToProps } from '.';
 
-jest.mock('react-redux', () => {
-  const dispatchFn = jest.fn();
-  return {
-    ...jest.requireActual('react-redux'),
-    dispatch: dispatchFn,
-    useDispatch: jest.fn(() => dispatchFn),
-  };
-});
+jest.mock('../../../../../../data/redux', () => ({
+  actions: {
+    video: {
+      updateField: jest.fn().mockName('actions.video.updateField'),
+    },
+  },
+  selectors: {
+    video: {
+      videoSource: jest.fn(state => ({ videoSource: state })),
+      videoId: jest.fn(state => ({ videoId: state })),
+      fallbackVideos: jest.fn(state => ({ fallbackVideos: state })),
+      allowVideoDownloads: jest.fn(state => ({ allowVideoDownloads: state })),
+    },
+  },
+}));
 
 jest.mock('../hooks', () => ({
   selectorKeys: ['soMEkEy'],
@@ -30,21 +36,14 @@ jest.mock('../hooks', () => ({
   }),
 }));
 
-jest.mock('./hooks', () => ({
-  sourceHooks: jest.fn().mockReturnValue({
-    updateVideoId: (args) => ({ updateVideoId: args }),
-    updateVideoURL: (args) => ({ updateVideoURL: args }),
-  }),
-  fallbackHooks: jest.fn().mockReturnValue({
-    addFallbackVideo: jest.fn().mockName('addFallbackVideo'),
-    deleteFallbackVideo: jest.fn().mockName('deleteFallbackVideo'),
-  }),
-}));
-
 describe('VideoSourceWidget', () => {
   const props = {
+    error: {},
+    title: 'tiTLE',
     // inject
     intl: { formatMessage },
+    // redux
+    updateField: jest.fn().mockName('args.updateField'),
   };
 
   describe('snapshots', () => {
@@ -54,27 +53,10 @@ describe('VideoSourceWidget', () => {
       ).toMatchSnapshot();
     });
   });
-
-  describe('behavior inspection', () => {
-    let el;
-    let hook;
-    beforeEach(() => {
-      el = shallow(<VideoSourceWidget {...props} />);
-      hook = hooks.sourceHooks({ dispatch });
-    });
-    test('updateVideoId is tied to id field onBlur', () => {
-      const expected = hook.updateVideoId;
-      expect(el
-        // eslint-disable-next-line
-        .children().at(0).children().at(0).children().at(0)
-        .props().onBlur).toEqual(expected);
-    });
-    test('updateVideoURL is tied to url field onBlur', () => {
-      const expected = hook.updateVideoURL;
-      expect(el
-        // eslint-disable-next-line
-        .children().at(0).children().at(0).children().at(2)
-        .props().onBlur).toEqual(expected);
+  describe('mapDispatchToProps', () => {
+    const dispatch = jest.fn();
+    test('updateField from actions.video.updateField', () => {
+      expect(mapDispatchToProps.updateField).toEqual(dispatch(actions.video.updateField));
     });
   });
 });

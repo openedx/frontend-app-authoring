@@ -6,7 +6,7 @@ import { Add } from '@edx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
-import { useAnswerContainer, isSingleAnswerProblem } from './hooks';
+import { initializeAnswerContainer } from '../../../hooks';
 import { actions, selectors } from '../../../../../data/redux';
 import { answerOptionProps } from '../../../../../data/services/cms/types';
 import AnswerOption from './AnswerOption';
@@ -16,14 +16,11 @@ export const AnswersContainer = ({
   // Redux
   answers,
   addAnswer,
-  updateField,
 }) => {
-  const hasSingleAnswer = isSingleAnswerProblem(problemType);
-
-  useAnswerContainer({ answers, problemType, updateField });
+  const { hasSingleAnswer } = initializeAnswerContainer(problemType);
 
   return (
-    <div className="border border-light-700 rounded py-4 pl-4 pr-3">
+    <div>
       {answers.map((answer) => (
         <AnswerOption
           key={answer.id}
@@ -32,7 +29,7 @@ export const AnswersContainer = ({
         />
       ))}
       <Button
-        className="pl-0 text-primary-500"
+        className="my-3 ml-2"
         iconBefore={Add}
         variant="tertiary"
         onClick={addAnswer}
@@ -47,7 +44,6 @@ AnswersContainer.propTypes = {
   problemType: PropTypes.string.isRequired,
   answers: PropTypes.arrayOf(answerOptionProps).isRequired,
   addAnswer: PropTypes.func.isRequired,
-  updateField: PropTypes.func.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
@@ -56,7 +52,6 @@ export const mapStateToProps = (state) => ({
 
 export const mapDispatchToProps = {
   addAnswer: actions.problem.addAnswer,
-  updateField: actions.problem.updateField,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AnswersContainer);

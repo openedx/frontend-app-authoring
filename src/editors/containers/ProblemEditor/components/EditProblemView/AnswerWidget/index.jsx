@@ -15,11 +15,11 @@ const AnswerWidget = ({
   const problemStaticData = ProblemTypes[problemType];
   return (
     <div>
-      <div className="mt-4 mb-3 text-primary-500">
-        <div className="h4">
+      <div className="problem-answer">
+        <div className="problem-answer-title">
           <FormattedMessage {...messages.answerWidgetTitle} />
         </div>
-        <div className="small">
+        <div className="problem-answer-description">
           {problemStaticData.description}
         </div>
       </div>

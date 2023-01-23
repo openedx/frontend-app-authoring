@@ -11,10 +11,10 @@ export const loadVideoData = () => (dispatch, getState) => {
   const courseLicenseData = state.app.courseDetails.data ? state.app.courseDetails.data : {};
   const studioView = state.app.studioView?.data?.html;
   const {
+    videoSource,
     videoId,
-    videoUrl,
     fallbackVideos,
-  } = module.determineVideoSources({
+  } = module.determineVideoSource({
     edxVideoId: rawVideoData.edx_video_id,
     youtubeId: rawVideoData.youtube_id_1_0,
     html5Sources: rawVideoData.html5_sources,
@@ -27,7 +27,7 @@ export const loadVideoData = () => (dispatch, getState) => {
   });
 
   dispatch(actions.video.load({
-    videoSource: videoUrl || '',
+    videoSource,
     videoId,
     fallbackVideos,
     allowVideoDownloads: rawVideoData.download_video,
@@ -61,7 +61,7 @@ export const loadVideoData = () => (dispatch, getState) => {
       allowThumbnailUpload: response.data.allowThumbnailUpload,
     })),
   }));
-  const youTubeId = parseYoutubeId(videoUrl);
+  const youTubeId = parseYoutubeId(videoSource);
   if (youTubeId) {
     dispatch(requests.checkTranscriptsForImport({
       videoId,
@@ -77,23 +77,33 @@ export const loadVideoData = () => (dispatch, getState) => {
   }
 };
 
-export const determineVideoSources = ({
+export const determineVideoSource = ({
   edxVideoId,
   youtubeId,
   html5Sources,
 }) => {
+  // videoSource should be the edx_video_id, the youtube url or the first fallback url in that order.
+  // If we are falling back to the first fallback url, remove it from the list of fallback urls for display.
   const youtubeUrl = `https://youtu.be/${youtubeId}`;
-  let videoUrl;
-  let fallbackVideos;
+  const videoId = edxVideoId || '';
+  let videoSource = '';
+  let fallbackVideos = [];
   if (youtubeId) {
-    [videoUrl, fallbackVideos] = [youtubeUrl, html5Sources];
+    // videoSource = youtubeUrl;
+    // fallbackVideos = html5Sources;
+    [videoSource, fallbackVideos] = [youtubeUrl, html5Sources];
+  } else if (edxVideoId) {
+    // fallbackVideos = html5Sources;
+    fallbackVideos = html5Sources;
   } else if (Array.isArray(html5Sources) && html5Sources[0]) {
-    [videoUrl, fallbackVideos] = [html5Sources[0], html5Sources.slice(1)];
+    // videoSource = html5Sources[0];
+    // fallbackVideos = html5Sources.slice(1);
+    [videoSource, fallbackVideos] = [html5Sources[0], html5Sources.slice(1)];
   }
   return {
-    videoId: edxVideoId || '',
-    videoUrl: videoUrl || '',
-    fallbackVideos: fallbackVideos || [],
+    videoSource,
+    videoId,
+    fallbackVideos,
   };
 };
 
@@ -333,7 +343,7 @@ export const replaceTranscript = ({ newFile, newFilename, language }) => (dispat
 
 export default {
   loadVideoData,
-  determineVideoSources,
+  determineVideoSource,
   parseLicense,
   saveVideoData,
   uploadThumbnail,

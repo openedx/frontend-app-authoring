@@ -4,11 +4,9 @@ exports[`SelectTypeWrapper snapshot 1`] = `
 <div>
   <ModalDialog.Header>
     <ModalDialog.Title>
-      <FormattedMessage
-        defaultMessage="Select problem type"
-        description="Title for select problem type modal"
-        id="authoring.problemEditor.selectType.title"
-      />
+      <p>
+        Select Problem type
+      </p>
       <div
         className="pgn__modal-close-container"
       >

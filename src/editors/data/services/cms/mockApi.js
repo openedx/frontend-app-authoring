@@ -9,8 +9,7 @@ export const fetchBlockById = ({ blockId, studioEndpointUrl }) => {
   let data = {};
   if (blockId === 'html-block-id') {
     data = {
-      data: `<problem>
-      </problem>`,
+      data: '<p>Test prompt content</p>',
       display_name: 'My Text Prompt',
       metadata: {
         display_name: 'Welcome!',
@@ -287,7 +286,3 @@ export const fetchStudioView = ({ blockId, studioEndpointUrl }) => {
     },
   });
 };
-
-export const checkTranscriptsForImport = () => mockPromise({});
-
-export const uploadTranscript = () => mockPromise({});

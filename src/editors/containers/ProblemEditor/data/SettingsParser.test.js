@@ -4,7 +4,7 @@ import {
   dropdownWithFeedbackHints,
   numericWithHints,
   textInputWithHints,
-  singleSelectWithHints,
+  sigleSelectWithHints,
 } from './mockData/problemTestData';
 
 describe('Test Settings to State Parser', () => {
@@ -38,7 +38,7 @@ describe('Test Settings to State Parser', () => {
   });
 
   test('Test score settings missing', () => {
-    const settings = parseSettings(singleSelectWithHints.metadata);
+    const settings = parseSettings(sigleSelectWithHints.metadata);
     expect(settings.scoring).toBeUndefined();
   });
 

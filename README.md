@@ -10,7 +10,7 @@ This guide presumes you have a functioning devstack.
     2. In devstack + venv, run `$ make dev.provision.lms+studio+frontend-app-course-authoring` to make up the required services. Minimum services required are lms, studio and frontend-app-course-authoring.
     4. In [Studio Django Admin](http://localhost:18000/admin/waffle/flag/) turn on `new_core_editors.use_new_text_editor` flag for HTML editor, `new_core_editors.use_new_video_editor` flag for new video editor, and `new_core_editors.use_new_problem_editor` flag for problems. The list of supported flags is in [toggles.py. ](https://github.com/openedx/edx-platform/blob/master/cms/djangoapps/contentstore/toggles.py). you might have to add a flag for your xblock of choice.
 2. Clone this repo into the [`${DEVSTACK_WORKSPACE}/src` directory](https://edx.readthedocs.io/projects/open-edx-devstack/en/latest/readme.html?highlight=DEVSTACK_WORKSPACE#id9) the sibling repo of your edx devstack `/src`.
-3. In the course authoring app, follow the guide to use your [local verison of frontend-lib-content-components. ](https://github.com/openedx/frontend-build#local-module-configuration-for-webpack) The module.config.js in the frontend-app-course-authoring repo will be:
+3. In the course authoring app, follow the guide to use your [local verison of frontend-lib-content-components. ](https://github.com/openedx/frontend-build#local-module-configuration-for-webpack) The moduleconfig.js in the frontend-app-course-authoring repo will be:
 
 ```
     module.exports = {

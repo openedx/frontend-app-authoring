@@ -36,9 +36,9 @@
   "devDependencies": {
     "@edx/frontend-build": "^11.0.2",
     "@edx/frontend-platform": "2.4.0",
-    "@edx/paragon": "^20.27.0",
+    "@edx/paragon": "^20.21.3",
     "@testing-library/dom": "^8.13.0",
-    "@testing-library/react": "^12.1.1",
+    "@testing-library/react": "12.1.1",
     "@testing-library/user-event": "^13.5.0",
     "codecov": "3.8.3",
     "enzyme": "3.11.0",
@@ -58,7 +58,6 @@
   },
   "dependencies": {
     "@codemirror/lang-html": "^6.0.0",
-    "@codemirror/lang-xml": "^6.0.0",
     "@codemirror/state": "^6.0.0",
     "@codemirror/view": "^6.0.0",
     "@reduxjs/toolkit": "^1.8.1",

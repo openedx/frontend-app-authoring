@@ -1,5 +1,6 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import {
   Form,
@@ -19,8 +20,9 @@ import {
 } from '@edx/frontend-platform/i18n';
 
 import * as widgetHooks from '../hooks';
-import * as hooks from './hooks';
+import * as module from './hooks';
 import messages from './messages';
+import { actions } from '../../../../../../data/redux';
 
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 
@@ -30,6 +32,8 @@ import CollapsibleFormWidget from '../CollapsibleFormWidget';
 export const VideoSourceWidget = ({
   // injected
   intl,
+  // redux
+  updateField,
 }) => {
   const dispatch = useDispatch();
   const {
@@ -46,11 +50,8 @@ export const VideoSourceWidget = ({
       [widgetHooks.selectorKeys.allowVideoDownloads]: widgetHooks.genericWidget,
     },
   });
-  const { updateVideoId, updateVideoURL } = hooks.sourceHooks({ dispatch });
-  const {
-    addFallbackVideo,
-    deleteFallbackVideo,
-  } = hooks.fallbackHooks({ fallbackVideos: fallbackVideos.formValue, dispatch });
+  const deleteFallbackVideo = module.deleteFallbackVideo({ fallbackVideos: fallbackVideos.formValue, dispatch });
+  const updateVideoId = module.updateVideoId({ dispatch });
 
   return (
     <CollapsibleFormWidget
@@ -62,7 +63,7 @@ export const VideoSourceWidget = ({
           <Form.Control
             floatingLabel={intl.formatMessage(messages.videoIdLabel)}
             onChange={videoId.onChange}
-            onBlur={updateVideoId}
+            onBlur={(e) => updateVideoId({ e, source: videoId })}
             value={videoId.local}
           />
           <FormControlFeedback className="text-primary-300 mb-4">
@@ -71,7 +72,7 @@ export const VideoSourceWidget = ({
           <Form.Control
             floatingLabel={intl.formatMessage(messages.videoUrlLabel)}
             onChange={source.onChange}
-            onBlur={updateVideoURL}
+            onBlur={(e) => updateVideoId({ e, source })}
             value={source.local}
           />
           <FormControlFeedback className="text-primary-300">
@@ -133,7 +134,7 @@ export const VideoSourceWidget = ({
         size="sm"
         iconBefore={Add}
         variant="link"
-        onClick={() => addFallbackVideo()}
+        onClick={() => updateField({ fallbackVideos: [...fallbackVideos.formValue, ''] })}
       >
         <FormattedMessage {...messages.addButtonLabel} />
       </Button>
@@ -143,6 +144,12 @@ export const VideoSourceWidget = ({
 VideoSourceWidget.propTypes = {
   // injected
   intl: intlShape.isRequired,
+  // redux
+  updateField: PropTypes.func.isRequired,
 };
+export const mapStateToProps = () => ({});
 
-export default injectIntl(VideoSourceWidget);
+export const mapDispatchToProps = (dispatch) => ({
+  updateField: (stateUpdate) => dispatch(actions.video.updateField(stateUpdate)),
+});
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(VideoSourceWidget));

@@ -14,9 +14,7 @@ exports[`DurationWidget render snapshots: renders as expected with default props
   <Form.Row
     className="mt-4.5"
   >
-    <Form.Group
-      as="Col"
-    >
+    <Form.Group>
       <Form.Control
         floatingLabel="Start time"
         onBlur={[Function]}
@@ -32,9 +30,7 @@ exports[`DurationWidget render snapshots: renders as expected with default props
         />
       </Form.Control.Feedback>
     </Form.Group>
-    <Form.Group
-      as="Col"
-    >
+    <Form.Group>
       <Form.Control
         floatingLabel="Stop time"
         onBlur={[Function]}

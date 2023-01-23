@@ -30,7 +30,7 @@ export const Editor = ({
 
   const EditorComponent = supportedEditors[blockType];
   return (
-    <div className="d-flex flex-column">
+    <div className="d-flex flex-column vh-100">
       <div
         className="pgn__modal-fullscreen"
         role="dialog"

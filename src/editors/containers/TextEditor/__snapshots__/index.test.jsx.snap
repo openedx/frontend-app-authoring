@@ -236,13 +236,6 @@ exports[`TextEditor snapshots loaded, raw editor 1`] = `
       />
     </Toast>
     <RawEditor
-      content={
-        Object {
-          "data": Object {
-            "data": "eDiTablE Text",
-          },
-        }
-      }
       editorRef={
         Object {
           "current": Object {
@@ -250,7 +243,13 @@ exports[`TextEditor snapshots loaded, raw editor 1`] = `
           },
         }
       }
-      lang="html"
+      text={
+        Object {
+          "data": Object {
+            "data": "eDiTablE Text",
+          },
+        }
+      }
     />
   </div>
 </EditorContainer>

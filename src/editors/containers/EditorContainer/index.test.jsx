@@ -1,28 +1,21 @@
+import { IconButton } from '@edx/paragon';
 import { shallow } from 'enzyme';
 import { useDispatch } from 'react-redux';
 
 import { EditorContainer } from '.';
 import * as hooks from './hooks';
-import { formatMessage } from '../../../testUtils';
 
 const props = {
   getContent: jest.fn().mockName('props.getContent'),
   onClose: jest.fn().mockName('props.onClose'),
   validateEntry: jest.fn().mockName('props.validateEntry'),
-  // inject
-  intl: { formatMessage },
 };
 
 jest.mock('./hooks', () => ({
   isInitialized: jest.fn().mockReturnValue(true),
-  handleCancel: (args) => ({ handleCancel: args }),
+  handleCancelClicked: (args) => ({ handleCancelClicked: args }),
   handleSaveClicked: (args) => ({ handleSaveClicked: args }),
   saveFailed: jest.fn().mockName('hooks.saveFailed'),
-  cancelConfirmModalToggle: jest.fn(() => ({
-    isCancelConfirmOpen: false,
-    openCancelConfirmModal: jest.fn().mockName('openCancelConfirmModal'),
-    closeCancelConfirmModal: jest.fn().mockName('closeCancelConfirmModal'),
-  })),
 }));
 
 let el;
@@ -46,13 +39,23 @@ describe('EditorContainer component', () => {
         el = shallow(<EditorContainer {...props}>{testContent}</EditorContainer>);
       });
 
+      test('close behavior is linked to modal onClose', () => {
+        const expected = hooks.handleCancelClicked({ onClose: props.onClose });
+        expect(el.find(IconButton)
+          .props().onClick).toEqual(expected);
+      });
+      test('close behavior is linked to footer onCancel', () => {
+        const expected = hooks.handleCancelClicked({ onClose: props.onClose });
+        expect(el.children().at(2)
+          .props().onCancel).toEqual(expected);
+      });
       test('save behavior is linked to footer onSave', () => {
         const expected = hooks.handleSaveClicked({
           dispatch: useDispatch(),
           getContent: props.getContent,
           validateEntry: props.validateEntry,
         });
-        expect(el.children().at(3)
+        expect(el.children().at(2)
           .props().onSave).toEqual(expected);
       });
     });

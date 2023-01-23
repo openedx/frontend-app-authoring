@@ -5,7 +5,7 @@ exports[`HintRow snapshot snapshot: renders hints row 1`] = `
   fluid={true}
 >
   <Row>
-    <Col
+    <Component
       xs={10}
     >
       <Form.Group>
@@ -15,8 +15,8 @@ exports[`HintRow snapshot snapshot: renders hints row 1`] = `
           value="hint_1"
         />
       </Form.Group>
-    </Col>
-    <Col
+    </Component>
+    <Component
       xs={2}
     >
       <IconButton
@@ -25,7 +25,7 @@ exports[`HintRow snapshot snapshot: renders hints row 1`] = `
         onClick={[MockFunction]}
         variant="secondary"
       />
-    </Col>
+    </Component>
   </Row>
 </Container>
 `;

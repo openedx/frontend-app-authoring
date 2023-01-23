@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SettingsOption render snapshot: renders correct 1`] = `
-<Card
-  className="border border-light-700 shadow-none"
->
+<Card>
   <Card.Section
     className="settingsCardTitleSection"
   >

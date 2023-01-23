@@ -157,7 +157,7 @@ export const apiMethods = {
         youtubeId,
       } = module.processVideoIds({
         videoId: content.videoId,
-        videoUrl: content.videoSource,
+        videoSource: content.videoSource,
         fallbackVideos: content.fallbackVideos,
       });
       response = {
@@ -217,18 +217,21 @@ export const loadImages = (rawImages) => camelizeKeys(rawImages).reduce(
 
 export const processVideoIds = ({
   videoId,
-  videoUrl,
+  videoSource,
   fallbackVideos,
+  edxVideoId,
 }) => {
+  let newEdxVideoId = edxVideoId;
   let youtubeId = '';
   const html5Sources = [];
 
-  if (videoUrl) {
-    if (module.parseYoutubeId(videoUrl)) {
-      youtubeId = module.parseYoutubeId(videoUrl);
-    } else {
-      html5Sources.push(videoUrl);
-    }
+  // overwrite videoId if source is changed.
+  if (module.isEdxVideo(videoId)) {
+    newEdxVideoId = videoId;
+  } else if (module.parseYoutubeId(videoSource)) {
+    youtubeId = module.parseYoutubeId(videoSource);
+  } else if (videoSource) {
+    html5Sources.push(videoSource);
   }
 
   if (fallbackVideos) {
@@ -236,7 +239,7 @@ export const processVideoIds = ({
   }
 
   return {
-    edxVideoId: videoId,
+    edxVideoId: newEdxVideoId,
     html5Sources,
     youtubeId,
   };

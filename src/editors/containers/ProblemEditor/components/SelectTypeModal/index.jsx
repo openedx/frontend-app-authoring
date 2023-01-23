@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Row, Stack } from '@edx/paragon';
+import { Col, Row } from '@edx/paragon';
 import ProblemTypeSelect from './content/ProblemTypeSelect';
 import Preview from './content/Preview';
 import AdvanceTypeSelect from './content/AdvanceTypeSelect';
@@ -17,12 +17,16 @@ export const SelectTypeModal = ({
 
   return (
     <SelectTypeWrapper onClose={onClose} selected={selected}>
-      <Row className="justify-content-center">
+      <Row className="justify-content-center align-items-center m-4">
         {(!Object.values(AdvanceProblemKeys).includes(selected)) ? (
-          <Stack direction="horizontal" gap={4} className="flex-wrap">
-            <ProblemTypeSelect selected={selected} setSelected={setSelected} />
-            <Preview problemType={selected} />
-          </Stack>
+          <>
+            <Col>
+              <ProblemTypeSelect selected={selected} setSelected={setSelected} />
+            </Col>
+            <Col>
+              <Preview problemType={selected} />
+            </Col>
+          </>
         ) : <AdvanceTypeSelect selected={selected} setSelected={setSelected} />}
       </Row>
     </SelectTypeWrapper>

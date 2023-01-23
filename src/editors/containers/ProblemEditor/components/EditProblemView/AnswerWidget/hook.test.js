@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { MockUseState } from '../../../../../../testUtils';
-import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import * as module from './hooks';
 
 jest.mock('react', () => {
@@ -51,17 +50,6 @@ describe('Answer Options Hooks', () => {
       expect(prereqs[0]).toStrictEqual(answerWithOnlyFeedback);
       cb();
       expect(state.setState[key]).toHaveBeenCalledWith(true);
-    });
-  });
-  describe('isSingleAnswerProblem()', () => {
-    test('singleSelect', () => {
-      expect(module.isSingleAnswerProblem(ProblemTypeKeys.SINGLESELECT)).toBe(true);
-    });
-    test('multiSelect', () => {
-      expect(module.isSingleAnswerProblem(ProblemTypeKeys.MULTISELECT)).toBe(false);
-    });
-    test('dropdown', () => {
-      expect(module.isSingleAnswerProblem(ProblemTypeKeys.DROPDOWN)).toBe(true);
     });
   });
 });

@@ -217,7 +217,7 @@ export const numericWithHints = {
       scoring: {
         weight: 2.5,
         attempts: {
-          unlimited: false,
+          unlimited: true,
           number: 0,
         },
       },
@@ -288,7 +288,7 @@ export const textInputWithHints = {
       scoring: {
         weight: 2.5,
         attempts: {
-          unlimited: false,
+          unlimited: true,
           number: 0,
         },
       },
@@ -315,7 +315,7 @@ not=optional incorrect answer such as a frequent misconception {{You can specify
   },
 };
 
-export const singleSelectWithHints = {
+export const sigleSelectWithHints = {
   state: {
     rawOLX: '<problem>\n<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>\n\n<label>Add the question text, or prompt, here. This text is required.</label>\n<description>You can add an optional tip or note related to the prompt like this.</description>\n<multiplechoiceresponse>\n  <choicegroup type="MultipleChoice">\n    <choice correct="true">a correct answer <choicehint>selected: You can specify optional feedback that appears after the learner selects and submits this answer. }, { unselected: You can specify optional feedback that appears after the learner clears and submits this answer.</choicehint></choice>\n    <choice correct="false">an incorrect answer</choice>\n    <choice correct="false">an incorrect answer <choicehint>selected: You can specify optional feedback for none, all, or a subset of the answers. }, { unselected: You can specify optional feedback for selected answers, cleared answers, or both.</choicehint></choice>\n    <choice correct="false">an incorrect answer again</choice>\n  </choicegroup>\n</multiplechoiceresponse>\n<choiceresponse>\n  <checkboxgroup>\n    <compoundhint value="A B D">You can specify optional feedback for a combination of answers which appears after the specified set of answers is submitted.</compoundhint>\n    <compoundhint value="A B C D">You can specify optional feedback for one, several, or all answer combinations.</compoundhint>\n  </checkboxgroup>\n</choiceresponse>\n\n\n<demandhint>\n  <hint>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</hint>\n  <hint>If you add more than one hint, a different hint appears each time learners select the hint button.</hint>\n</demandhint>\n</problem>',
     problemType: 'SINGLESELECT',
@@ -362,7 +362,7 @@ export const singleSelectWithHints = {
         weight: 0,
         attempts: {
           unlimited: true,
-          number: null,
+          number: 0,
         },
       },
       timeBetween: 0,

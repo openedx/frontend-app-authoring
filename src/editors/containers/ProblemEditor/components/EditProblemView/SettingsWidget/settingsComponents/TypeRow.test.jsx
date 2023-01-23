@@ -10,14 +10,11 @@ jest.mock('../hooks', () => ({
 describe('TypeRow', () => {
   const typeKey = 'TEXTINPUT';
   const props = {
-    answers: [],
-    correctAnswerCount: 0,
     typeKey,
     label: 'Text Input Problem',
     selected: true,
     lastRow: false,
     updateField: jest.fn().mockName('args.updateField'),
-    updateAnswer: jest.fn().mockName('args.updateAnswer'),
   };
 
   const typeRowHooksProps = {
@@ -29,13 +26,7 @@ describe('TypeRow', () => {
   describe('behavior', () => {
     it(' calls typeRowHooks when initialized', () => {
       shallow(<TypeRow {...props} />);
-      expect(typeRowHooks).toHaveBeenCalledWith({
-        answers: props.answers,
-        correctAnswerCount: props.correctAnswerCount,
-        typeKey,
-        updateField: props.updateField,
-        updateAnswer: props.updateAnswer,
-      });
+      expect(typeRowHooks).toHaveBeenCalledWith(typeKey, props.updateField);
     });
   });
 

@@ -3,19 +3,13 @@
 exports[`Preview snapshots snapshots: renders as expected with default props 1`] = `""`;
 
 exports[`Preview snapshots snapshots: renders as expected with problemType is choiceresponse 1`] = `
-<Container
+<div
   className="bg-light-300 rounded p-4"
-  style={
-    Object {
-      "height": "400px",
-      "width": "494px",
-    }
-  }
 >
   <div
     className="small"
   >
-    Multi-select problem
+    Multi Select Problem
   </div>
   <Image
     alt="A preview illustration of a {problemType, select,
@@ -40,28 +34,22 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is ch
     target="_blank"
   >
     <FormattedMessage
-      defaultMessage="Learn more"
-      description="Label for Learn more button"
+      defaultMessage="Learn More"
+      description="Label for Learn More button"
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>
-</Container>
+</div>
 `;
 
 exports[`Preview snapshots snapshots: renders as expected with problemType is multiplechoiceresponse 1`] = `
-<Container
+<div
   className="bg-light-300 rounded p-4"
-  style={
-    Object {
-      "height": "400px",
-      "width": "494px",
-    }
-  }
 >
   <div
     className="small"
   >
-    Single select problem
+    Single Select Problem
   </div>
   <Image
     alt="A preview illustration of a {problemType, select,
@@ -86,28 +74,22 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is mu
     target="_blank"
   >
     <FormattedMessage
-      defaultMessage="Learn more"
-      description="Label for Learn more button"
+      defaultMessage="Learn More"
+      description="Label for Learn More button"
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>
-</Container>
+</div>
 `;
 
 exports[`Preview snapshots snapshots: renders as expected with problemType is numericalresponse 1`] = `
-<Container
+<div
   className="bg-light-300 rounded p-4"
-  style={
-    Object {
-      "height": "400px",
-      "width": "494px",
-    }
-  }
 >
   <div
     className="small"
   >
-    Numerical input problem
+    Numeric Response Problem
   </div>
   <Image
     alt="A preview illustration of a {problemType, select,
@@ -132,28 +114,22 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is nu
     target="_blank"
   >
     <FormattedMessage
-      defaultMessage="Learn more"
-      description="Label for Learn more button"
+      defaultMessage="Learn More"
+      description="Label for Learn More button"
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>
-</Container>
+</div>
 `;
 
 exports[`Preview snapshots snapshots: renders as expected with problemType is optionresponse 1`] = `
-<Container
+<div
   className="bg-light-300 rounded p-4"
-  style={
-    Object {
-      "height": "400px",
-      "width": "494px",
-    }
-  }
 >
   <div
     className="small"
   >
-    Dropdown problem
+    Dropdown Problem
   </div>
   <Image
     alt="A preview illustration of a {problemType, select,
@@ -178,28 +154,22 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is op
     target="_blank"
   >
     <FormattedMessage
-      defaultMessage="Learn more"
-      description="Label for Learn more button"
+      defaultMessage="Learn More"
+      description="Label for Learn More button"
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>
-</Container>
+</div>
 `;
 
 exports[`Preview snapshots snapshots: renders as expected with problemType is stringresponse 1`] = `
-<Container
+<div
   className="bg-light-300 rounded p-4"
-  style={
-    Object {
-      "height": "400px",
-      "width": "494px",
-    }
-  }
 >
   <div
     className="small"
   >
-    Text input problem
+    Text Input Problem
   </div>
   <Image
     alt="A preview illustration of a {problemType, select,
@@ -224,10 +194,10 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is st
     target="_blank"
   >
     <FormattedMessage
-      defaultMessage="Learn more"
-      description="Label for Learn more button"
+      defaultMessage="Learn More"
+      description="Label for Learn More button"
       id="authoring.problemEditor.learnMoreButtonLabel.label"
     />
   </Hyperlink>
-</Container>
+</div>
 `;

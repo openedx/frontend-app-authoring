@@ -1,30 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+
 import { Icon, ModalDialog, IconButton } from '@edx/paragon';
 import { Close } from '@edx/paragon/icons';
 import SelectTypeFooter from './SelectTypeFooter';
 
 import * as hooks from '../../../../EditorContainer/hooks';
-import messages from './messages';
 
 export const SelectTypeWrapper = ({
   children,
   onClose,
   selected,
 }) => {
-  const handleCancel = hooks.handleCancel({ onClose });
+  const handleCancelClicked = hooks.handleCancelClicked({ onClose });
 
   return (
     <div>
       <ModalDialog.Header>
         <ModalDialog.Title>
-          <FormattedMessage {...messages.selectTypeTitle} />
+          <p>Select Problem type</p>
           <div className="pgn__modal-close-container">
             <IconButton
               src={Close}
               iconAs={Icon}
-              onClick={handleCancel}
+              onClick={handleCancelClicked}
             />
           </div>
         </ModalDialog.Title>
@@ -34,7 +33,7 @@ export const SelectTypeWrapper = ({
       </ModalDialog.Body>
       <SelectTypeFooter
         selected={selected}
-        onCancel={handleCancel}
+        onCancel={handleCancelClicked}
       />
     </div>
   );
@@ -49,4 +48,4 @@ SelectTypeWrapper.propTypes = {
   onClose: PropTypes.func,
 };
 
-export default injectIntl(SelectTypeWrapper);
+export default SelectTypeWrapper;

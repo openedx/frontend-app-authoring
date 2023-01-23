@@ -32,7 +32,7 @@ import { RequestKeys } from '../../data/constants/requests';
 import EditorContainer from '../EditorContainer';
 import ImageUploadModal from './components/ImageUploadModal';
 import SourceCodeModal from './components/SourceCodeModal';
-import RawEditor from '../../sharedComponents/RawEditor';
+import RawEditor from './components/RawEditor';
 import * as hooks from './hooks';
 import messages from './messages';
 
@@ -64,7 +64,7 @@ export const TextEditor = ({
       return (
         <RawEditor
           editorRef={editorRef}
-          content={blockValue}
+          text={blockValue}
         />
       );
     }

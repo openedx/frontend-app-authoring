@@ -18,7 +18,6 @@ jest.mock('../../../../../data/redux', () => ({
     problem: {
       updateSettings: (args) => ({ updateSettings: args }),
       updateField: (args) => ({ updateField: args }),
-      updateAnswer: (args) => ({ updateAnswer: args }),
     },
   },
 }));
@@ -178,31 +177,7 @@ describe('Problem settings hooks', () => {
       const value = 0;
       output.handleMaxAttemptChange({ target: { value } });
       expect(updateSettings)
-        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: value, unlimited: false } } });
-    });
-    test('test handleMaxAttemptChange set attempts to null value', () => {
-      const value = null;
-      output.handleMaxAttemptChange({ target: { value } });
-      expect(updateSettings)
-        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: null, unlimited: true } } });
-    });
-    test('test handleMaxAttemptChange set attempts to empty string', () => {
-      const value = '';
-      output.handleMaxAttemptChange({ target: { value } });
-      expect(updateSettings)
-        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: null, unlimited: true } } });
-    });
-    test('test handleMaxAttemptChange set attempts to non-numeric value', () => {
-      const value = 'abc';
-      output.handleMaxAttemptChange({ target: { value } });
-      expect(updateSettings)
-        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: null, unlimited: true } } });
-    });
-    test('test handleMaxAttemptChange set attempts to negative value', () => {
-      const value = -1;
-      output.handleMaxAttemptChange({ target: { value } });
-      expect(updateSettings)
-        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: 0, unlimited: false } } });
+        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: value, unlimited: true } } });
     });
     test('test handleWeightChange', () => {
       const value = 2;
@@ -242,27 +217,10 @@ describe('Problem settings hooks', () => {
 
   describe('Type row hooks', () => {
     test('test onClick', () => {
-      const typekey = 'multiplechoiceresponse';
+      const typekey = 'TEXTINPUT';
       const updateField = jest.fn();
-      const updateAnswer = jest.fn();
-      const answers = [{
-        correct: true,
-        id: 'a',
-      },
-      {
-        correct: true,
-        id: 'b',
-      }];
-      output = hooks.typeRowHooks({
-        answers,
-        correctAnswerCount: 2,
-        typeKey: typekey,
-        updateField,
-        updateAnswer,
-      });
+      output = hooks.typeRowHooks(typekey, updateField);
       output.onClick();
-      expect(updateAnswer).toHaveBeenNthCalledWith(1, { ...answers[0], correct: false });
-      expect(updateAnswer).toHaveBeenNthCalledWith(2, { ...answers[1], correct: false });
       expect(updateField).toHaveBeenCalledWith({ problemType: typekey });
     });
   });

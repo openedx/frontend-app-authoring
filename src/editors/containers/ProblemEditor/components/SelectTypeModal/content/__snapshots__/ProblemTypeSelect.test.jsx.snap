@@ -1,14 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
-<Container
-  style={
-    Object {
-      "height": "400px",
-      "width": "494px",
-    }
-  }
->
+<Fragment>
   <SelectableBox.Set
     columns={1}
     onChange={[Function]}
@@ -17,48 +10,43 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
     >
-      Single select
+      Single Select Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
     >
-      Multi-select
+      Multi Select Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       type="radio"
       value="optionresponse"
     >
-      Dropdown
+      Dropdown Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
     >
-      Numerical input
+      Numeric Response Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       type="radio"
       value="stringresponse"
     >
-      Text input
+      Text Input Problem
     </SelectableBox>
   </SelectableBox.Set>
   <Button
@@ -67,23 +55,16 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
     variant="link"
   >
     <FormattedMessage
-      defaultMessage="Advanced problem types"
+      defaultMessage="Advance problem types"
       description="Button label for advance problem types option"
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
   </Button>
-</Container>
+</Fragment>
 `;
 
 exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
-<Container
-  style={
-    Object {
-      "height": "400px",
-      "width": "494px",
-    }
-  }
->
+<Fragment>
   <SelectableBox.Set
     columns={1}
     onChange={[Function]}
@@ -92,48 +73,43 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
     >
-      Single select
+      Single Select Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
     >
-      Multi-select
+      Multi Select Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       type="radio"
       value="optionresponse"
     >
-      Dropdown
+      Dropdown Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
     >
-      Numerical input
+      Numeric Response Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       type="radio"
       value="stringresponse"
     >
-      Text input
+      Text Input Problem
     </SelectableBox>
   </SelectableBox.Set>
   <Button
@@ -142,23 +118,16 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
     variant="link"
   >
     <FormattedMessage
-      defaultMessage="Advanced problem types"
+      defaultMessage="Advance problem types"
       description="Button label for advance problem types option"
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
   </Button>
-</Container>
+</Fragment>
 `;
 
 exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
-<Container
-  style={
-    Object {
-      "height": "400px",
-      "width": "494px",
-    }
-  }
->
+<Fragment>
   <SelectableBox.Set
     columns={1}
     onChange={[Function]}
@@ -167,48 +136,43 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
     >
-      Single select
+      Single Select Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
     >
-      Multi-select
+      Multi Select Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       type="radio"
       value="optionresponse"
     >
-      Dropdown
+      Dropdown Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
     >
-      Numerical input
+      Numeric Response Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       type="radio"
       value="stringresponse"
     >
-      Text input
+      Text Input Problem
     </SelectableBox>
   </SelectableBox.Set>
   <Button
@@ -217,23 +181,16 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
     variant="link"
   >
     <FormattedMessage
-      defaultMessage="Advanced problem types"
+      defaultMessage="Advance problem types"
       description="Button label for advance problem types option"
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
   </Button>
-</Container>
+</Fragment>
 `;
 
 exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
-<Container
-  style={
-    Object {
-      "height": "400px",
-      "width": "494px",
-    }
-  }
->
+<Fragment>
   <SelectableBox.Set
     columns={1}
     onChange={[Function]}
@@ -242,48 +199,43 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
     >
-      Single select
+      Single Select Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
     >
-      Multi-select
+      Multi Select Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       type="radio"
       value="optionresponse"
     >
-      Dropdown
+      Dropdown Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
     >
-      Numerical input
+      Numeric Response Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       type="radio"
       value="stringresponse"
     >
-      Text input
+      Text Input Problem
     </SelectableBox>
   </SelectableBox.Set>
   <Button
@@ -292,23 +244,16 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
     variant="link"
   >
     <FormattedMessage
-      defaultMessage="Advanced problem types"
+      defaultMessage="Advance problem types"
       description="Button label for advance problem types option"
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
   </Button>
-</Container>
+</Fragment>
 `;
 
 exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
-<Container
-  style={
-    Object {
-      "height": "400px",
-      "width": "494px",
-    }
-  }
->
+<Fragment>
   <SelectableBox.Set
     columns={1}
     onChange={[Function]}
@@ -317,48 +262,43 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
   >
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       type="radio"
       value="multiplechoiceresponse"
     >
-      Single select
+      Single Select Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       type="radio"
       value="choiceresponse"
     >
-      Multi-select
+      Multi Select Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       type="radio"
       value="optionresponse"
     >
-      Dropdown
+      Dropdown Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       type="radio"
       value="numericalresponse"
     >
-      Numerical input
+      Numeric Response Problem
     </SelectableBox>
     <SelectableBox
       aria-label="checkbox"
-      className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       type="radio"
       value="stringresponse"
     >
-      Text input
+      Text Input Problem
     </SelectableBox>
   </SelectableBox.Set>
   <Button
@@ -367,10 +307,10 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
     variant="link"
   >
     <FormattedMessage
-      defaultMessage="Advanced problem types"
+      defaultMessage="Advance problem types"
       description="Button label for advance problem types option"
       id="authoring.problemEditor.problemSelect.advanceButton.label"
     />
   </Button>
-</Container>
+</Fragment>
 `;

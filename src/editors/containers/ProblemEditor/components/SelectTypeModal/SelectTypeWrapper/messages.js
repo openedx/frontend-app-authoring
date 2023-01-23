@@ -1,9 +1,4 @@
 export const messages = {
-  selectTypeTitle: {
-    id: 'authoring.problemEditor.selectType.title',
-    defaultMessage: 'Select problem type',
-    description: 'Title for select problem type modal',
-  },
   cancelButtonLabel: {
     id: 'authoring.problemeditor.selecttype.cancelButton.label',
     defaultMessage: 'Cancel',

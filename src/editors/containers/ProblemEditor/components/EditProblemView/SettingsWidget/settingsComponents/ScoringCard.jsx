@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Form } from '@edx/paragon';
 import SettingsOption from '../SettingsOption';
 import messages from '../messages';
@@ -14,23 +14,12 @@ export const ScoringCard = ({
 }) => {
   const { handleMaxAttemptChange, handleWeightChange } = scoringCardHooks(scoring, updateSettings);
 
-  const getScoringSummary = (attempts, unlimited, weight) => {
-    let summary = unlimited
-      ? intl.formatMessage(messages.unlimitedAttemptsSummary)
-      : intl.formatMessage(messages.attemptsSummary, { attempts });
-    summary += ` ${String.fromCharCode(183)} `;
-    summary += intl.formatMessage(messages.weightSummary, { weight });
-    return summary;
-  };
-
   return (
     <SettingsOption
       title={intl.formatMessage(messages.scoringSettingsTitle)}
-      summary={getScoringSummary(scoring.attempts.number, scoring.attempts.unlimited, scoring.weight)}
+      summary={intl.formatMessage(messages.scoringSummary,
+        { attempts: scoring.attempts.number, weight: scoring.weight })}
     >
-      <Form.Label className="mb-4">
-        <FormattedMessage {...messages.scoringSettingsLabel} />
-      </Form.Label>
       <Form.Group>
         <Form.Control
           type="number"
@@ -38,9 +27,6 @@ export const ScoringCard = ({
           onChange={handleMaxAttemptChange}
           floatingLabel={intl.formatMessage(messages.scoringAttemptsInputLabel)}
         />
-        <Form.Control.Feedback>
-          <FormattedMessage {...messages.attemptsHint} />
-        </Form.Control.Feedback>
       </Form.Group>
       <Form.Group>
         <Form.Control
@@ -49,9 +35,6 @@ export const ScoringCard = ({
           onChange={handleWeightChange}
           floatingLabel={intl.formatMessage(messages.scoringWeightInputLabel)}
         />
-        <Form.Control.Feedback>
-          <FormattedMessage {...messages.weightHint} />
-        </Form.Control.Feedback>
       </Form.Group>
     </SettingsOption>
   );

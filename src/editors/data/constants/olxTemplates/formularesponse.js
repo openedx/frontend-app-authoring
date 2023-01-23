@@ -13,4 +13,4 @@ export const formulaResponse = `<problem>
         <formulaequationinput size="40"/>
     </formularesponse>
 </problem>`;
-export default formulaResponse;
+export default { formulaResponse };

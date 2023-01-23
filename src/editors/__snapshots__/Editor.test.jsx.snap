@@ -2,7 +2,7 @@
 
 exports[`Editor render presents error message if no relevant editor found and ref ready 1`] = `
 <div
-  className="d-flex flex-column"
+  className="d-flex flex-column vh-100"
 >
   <div
     aria-label="fAkEBlock"
@@ -20,7 +20,7 @@ exports[`Editor render presents error message if no relevant editor found and re
 
 exports[`Editor render snapshot: renders correct editor given blockType (html -> TextEditor) 1`] = `
 <div
-  className="d-flex flex-column"
+  className="d-flex flex-column vh-100"
 >
   <div
     aria-label="html"

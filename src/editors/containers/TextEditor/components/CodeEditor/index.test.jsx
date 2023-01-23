@@ -4,10 +4,9 @@ import { shallow } from 'enzyme';
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { html } from '@codemirror/lang-html';
-import { formatMessage, MockUseState } from '../../../testUtils';
+import { formatMessage, MockUseState } from '../../../../../testUtils';
 import alphanumericMap from './constants';
 import * as module from './index';
-import * as hooks from './hooks';
 
 jest.mock('@codemirror/view');
 
@@ -29,15 +28,11 @@ jest.mock('@codemirror/lang-html', () => ({
   html: jest.fn(),
 }));
 
-jest.mock('@codemirror/lang-xml', () => ({
-  xml: jest.fn(),
-}));
-
 jest.mock('codemirror', () => ({
   basicSetup: 'bAsiCSetUp',
 }));
 
-const state = new MockUseState(hooks);
+const state = new MockUseState(module.hooks);
 
 describe('CodeEditor', () => {
   describe('Hooks', () => {
@@ -50,7 +45,7 @@ describe('CodeEditor', () => {
         state.mock();
       });
       it('prepareShowBtnEscapeHTML', () => {
-        const hook = hooks.prepareShowBtnEscapeHTML();
+        const hook = module.hooks.prepareShowBtnEscapeHTML();
         expect(state.stateVals.showBtnEscapeHTML).toEqual(hook.showBtnEscapeHTML);
         hook.hideBtn();
         expect(state.setState.showBtnEscapeHTML).toHaveBeenCalledWith(false);
@@ -63,7 +58,7 @@ describe('CodeEditor', () => {
       const cleanText = `${Object.values(alphanumericMap).join(' , ')}`;
 
       it('escapes alphanumerics and sets them to be literals', () => {
-        expect(hooks.cleanHTML({ initialText: dirtyText })).toEqual(cleanText);
+        expect(module.hooks.cleanHTML({ initialText: dirtyText })).toEqual(cleanText);
       });
     });
 
@@ -84,7 +79,7 @@ describe('CodeEditor', () => {
       };
       const mockHideBtn = jest.fn();
       it('unescapes literals and sets them to be alphanumerics', () => {
-        hooks.escapeHTMLSpecialChars({ ref, hideBtn: mockHideBtn });
+        module.hooks.escapeHTMLSpecialChars({ ref, hideBtn: mockHideBtn });
         expect(mockDispatch).toHaveBeenCalled();
         expect(mockHideBtn).toHaveBeenCalled();
       });
@@ -95,14 +90,13 @@ describe('CodeEditor', () => {
         ref: {
           current: 'sOmEvAlUe',
         },
-        lang: 'html',
         initialText: 'sOmEhTmL',
         upstreamRef: {
           current: 'sOmEotHERvAlUe',
         },
       };
       beforeEach(() => {
-        hooks.createCodeMirrorDomNode(props);
+        module.hooks.createCodeMirrorDomNode(props);
       });
       it('calls useEffect and sets up codemirror objects', () => {
         const [cb, prereqs] = React.useEffect.mock.calls[0];
@@ -124,19 +118,18 @@ describe('CodeEditor', () => {
           innerRef: {
             current: 'sOmEvALUE',
           },
-          lang: 'html',
           value: 'mOcKhTmL',
         };
-        jest.spyOn(hooks, 'createCodeMirrorDomNode').mockImplementation(() => ({}));
+        jest.spyOn(module.hooks, 'createCodeMirrorDomNode').mockImplementation(() => ({}));
       });
       afterAll(() => {
         jest.clearAllMocks();
       });
       test('Renders and calls Hooks ', () => {
-        jest.spyOn(hooks, 'prepareShowBtnEscapeHTML').mockImplementation(() => ({ showBtnEscapeHTML: true, hideBtn: mockHideBtn }));
+        jest.spyOn(module.hooks, 'prepareShowBtnEscapeHTML').mockImplementation(() => ({ showBtnEscapeHTML: true, hideBtn: mockHideBtn }));
         // Note: ref won't show up as it is not acutaly a DOM attribute.
         expect(shallow(<module.CodeEditor {...props} />)).toMatchSnapshot();
-        expect(hooks.createCodeMirrorDomNode).toHaveBeenCalled();
+        expect(module.hooks.createCodeMirrorDomNode).toHaveBeenCalled();
       });
     });
   });

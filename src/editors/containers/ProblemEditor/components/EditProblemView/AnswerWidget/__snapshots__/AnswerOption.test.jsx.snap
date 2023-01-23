@@ -2,115 +2,113 @@
 
 exports[`AnswerOption render snapshot: renders correct option with feedback 1`] = `
 <Advanced
-  className="answer-option d-flex flex-row justify-content-between flex-nowrap pb-2 pt-2"
+  className="collapsible-card"
   onToggle={[Function]}
   open={false}
 >
-  <div
-    className="answer-option-flex-item-1 mr-1 d-flex"
+  <Row
+    className="my-2"
   >
-    <Checker
-      answer={
-        Object {
-          "correct": true,
-          "id": "A",
-          "selectedFeedback": "some feedback",
-          "title": "Answer 1",
-        }
-      }
-      hasSingleAnswer={false}
-      setAnswer={[Function]}
-    />
-  </div>
-  <div
-    className="answer-option-flex-item-2 ml-1"
-  >
-    <Form.Control
-      as="textarea"
-      autoResize={true}
-      className="answer-option-textarea text-gray-500 small"
-      onChange={[Function]}
-      placeholder="Enter an answer"
-      rows={1}
-      value="Answer 1"
-    />
-    <Body>
-      <injectIntl(ShimmedIntlComponent)
+    <Component
+      xs={1}
+    >
+      <Checker
         answer={
           Object {
             "correct": true,
+            "feedback": "some feedback",
             "id": "A",
-            "selectedFeedback": "some feedback",
             "title": "Answer 1",
           }
         }
-        intl={
-          Object {
-            "formatMessage": [Function],
-          }
-        }
-        problemType="multiplechoiceresponse"
+        hasSingleAnswer={false}
         setAnswer={[Function]}
       />
-    </Body>
-  </div>
-  <div
-    className="answer-option-flex-item-3 d-flex flex-row flex-nowrap"
-  >
-    <Trigger>
+    </Component>
+    <Component
+      xs={10}
+    >
+      <Form.Control
+        as="textarea"
+        onChange={[Function]}
+        placeholder="Enter an answer"
+        rows={1}
+        value="Answer 1"
+      />
+      <Body>
+        <div
+          className="bg-dark-100 p-4 mt-3"
+        >
+          <Form.Group
+            key="feedback-A"
+          >
+            <Form.Label
+              className="mb-3"
+            >
+              <FormattedMessage
+                defaultMessage="Show following feedback when {answerId} {boldunderline}:"
+                description="Label text for feedback if option is selected"
+                id="authoring.answerwidget.feedback.selected.label"
+                values={
+                  Object {
+                    "answerId": "A",
+                    "boldunderline": <b>
+                      <u>
+                        <FormattedMessage
+                          defaultMessage="is selected"
+                          description="Bold & underlined text for feedback if option is selected"
+                          id="authoring.answerwidget.feedback.selected.label.boldunderline"
+                        />
+                      </u>
+                    </b>,
+                  }
+                }
+              />
+            </Form.Label>
+            <Form.Control
+              onChange={[Function]}
+              placeholder="Feedback message"
+              value="some feedback"
+            />
+          </Form.Group>
+        </div>
+      </Body>
+    </Component>
+    <Component
+      className="d-inline-flex mt-1"
+      xs={1}
+    >
+      <Trigger>
+        <IconButton
+          alt="Toggle feedback"
+          iconAs="Icon"
+          variant="primary"
+        />
+      </Trigger>
       <IconButton
-        alt="Toggle feedback"
+        alt="Delete answer"
         iconAs="Icon"
+        onClick={[Function]}
         variant="primary"
       />
-    </Trigger>
-    <IconButton
-      alt="Delete answer"
-      iconAs="Icon"
-      onClick={[Function]}
-      variant="primary"
-    />
-  </div>
+    </Component>
+  </Row>
 </Advanced>
 `;
 
 exports[`AnswerOption render snapshot: renders correct option with selected unselected feedback 1`] = `
 <Advanced
-  className="answer-option d-flex flex-row justify-content-between flex-nowrap pb-2 pt-2"
+  className="collapsible-card"
   onToggle={[Function]}
   open={false}
 >
-  <div
-    className="answer-option-flex-item-1 mr-1 d-flex"
+  <Row
+    className="my-2"
   >
-    <Checker
-      answer={
-        Object {
-          "correct": true,
-          "id": "A",
-          "selectedFeedback": "selected feedback",
-          "title": "Answer 1",
-          "unselectedFeedback": "unselected feedback",
-        }
-      }
-      hasSingleAnswer={false}
-      setAnswer={[Function]}
-    />
-  </div>
-  <div
-    className="answer-option-flex-item-2 ml-1"
-  >
-    <Form.Control
-      as="textarea"
-      autoResize={true}
-      className="answer-option-textarea text-gray-500 small"
-      onChange={[Function]}
-      placeholder="Enter an answer"
-      rows={1}
-      value="Answer 1"
-    />
-    <Body>
-      <injectIntl(ShimmedIntlComponent)
+    <Component
+      xs={1}
+    >
+      <Checker
         answer={
           Object {
             "correct": true,
@@ -120,32 +118,76 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
             "unselectedFeedback": "unselected feedback",
           }
         }
-        intl={
-          Object {
-            "formatMessage": [Function],
-          }
-        }
-        problemType="choiceresponse"
+        hasSingleAnswer={false}
         setAnswer={[Function]}
       />
-    </Body>
-  </div>
-  <div
-    className="answer-option-flex-item-3 d-flex flex-row flex-nowrap"
-  >
-    <Trigger>
+    </Component>
+    <Component
+      xs={10}
+    >
+      <Form.Control
+        as="textarea"
+        onChange={[Function]}
+        placeholder="Enter an answer"
+        rows={1}
+        value="Answer 1"
+      />
+      <Body>
+        <div
+          className="bg-dark-100 p-4 mt-3"
+        >
+          <Form.Group
+            key="feedback-A"
+          >
+            <Form.Label
+              className="mb-3"
+            >
+              <FormattedMessage
+                defaultMessage="Show following feedback when {answerId} {boldunderline}:"
+                description="Label text for feedback if option is selected"
+                id="authoring.answerwidget.feedback.selected.label"
+                values={
+                  Object {
+                    "answerId": "A",
+                    "boldunderline": <b>
+                      <u>
+                        <FormattedMessage
+                          defaultMessage="is selected"
+                          description="Bold & underlined text for feedback if option is selected"
+                          id="authoring.answerwidget.feedback.selected.label.boldunderline"
+                        />
+                      </u>
+                    </b>,
+                  }
+                }
+              />
+            </Form.Label>
+            <Form.Control
+              onChange={[Function]}
+              placeholder="Feedback message"
+            />
+          </Form.Group>
+        </div>
+      </Body>
+    </Component>
+    <Component
+      className="d-inline-flex mt-1"
+      xs={1}
+    >
+      <Trigger>
+        <IconButton
+          alt="Toggle feedback"
+          iconAs="Icon"
+          variant="primary"
+        />
+      </Trigger>
       <IconButton
-        alt="Toggle feedback"
+        alt="Delete answer"
         iconAs="Icon"
+        onClick={[Function]}
         variant="primary"
       />
-    </Trigger>
-    <IconButton
-      alt="Delete answer"
-      iconAs="Icon"
-      onClick={[Function]}
-      variant="primary"
-    />
-  </div>
+    </Component>
+  </Row>
 </Advanced>
 `;

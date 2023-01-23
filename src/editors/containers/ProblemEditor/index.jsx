@@ -17,6 +17,8 @@ export const ProblemEditor = ({
   blockValue,
   initializeProblemEditor,
 }) => {
+  React.useEffect(() => initializeProblemEditor(blockValue), [blockValue]);
+  // TODO: INTL MSG, Add LOAD FAILED ERROR using BLOCKFAILED
   if (!blockFinished || !studioViewFinished) {
     return (
       <div className="text-center p-6">
@@ -29,8 +31,6 @@ export const ProblemEditor = ({
     );
   }
   // once data is loaded, init store
-  React.useEffect(() => initializeProblemEditor(blockValue), [blockValue]);
-  // TODO: INTL MSG, Add LOAD FAILED ERROR using BLOCKFAILED
 
   if (problemType === null) {
     return (<SelectTypeModal onClose={onClose} />);

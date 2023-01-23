@@ -21,7 +21,7 @@ export const EditorFooter = ({
   // injected
   intl,
 }) => (
-  <div className="editor-footer fixed-bottom">
+  <div className="editor-footer" style={{ position: 'sticky', bottom: 0 }}>
     {saveFailed && (
       <Toast show onClose={nullMethod}>
         <FormattedMessage {...messages.contentSaveFailed} />

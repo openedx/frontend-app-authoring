@@ -280,7 +280,7 @@ export class OLXParser {
       the parsed OLX.
     */
     const tagMap = {
-      label: 'strong',
+      label: 'bold',
       description: 'em',
     };
 
@@ -331,16 +331,10 @@ export class OLXParser {
   getProblemType() {
     const problemKeys = Object.keys(this.problem);
     const intersectedProblems = _.intersection(Object.values(ProblemTypeKeys), problemKeys);
+
     if (intersectedProblems.length === 0) {
-      // a blank problem is a problem which contains only `<problem></problem>` as it's olx.
-      // blank problems are not given types, so that a type may be selected.
-      if (problemKeys.length === 1 && problemKeys[0] === '#text' && this.problem[problemKeys[0]] === '') {
-        return null;
-      }
-      // if we have no matching problem type, the problem is advanced.
-      return ProblemTypeKeys.ADVANCED;
+      return null;
     }
-    // make sure compound problems are treated as advanced
     if (intersectedProblems.length > 1) {
       return ProblemTypeKeys.ADVANCED;
     }
@@ -375,10 +369,7 @@ export class OLXParser {
         answersObject = this.parseMultipleChoiceAnswers(ProblemTypeKeys.SINGLESELECT, 'choicegroup', 'choice');
         break;
       case ProblemTypeKeys.ADVANCED:
-        return {
-          problemType,
-          settings: {},
-        };
+        break;
       default:
         // if problem is unset, return null
         return {};

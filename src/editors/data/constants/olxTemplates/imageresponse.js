@@ -30,4 +30,4 @@ export const imageResponse = `<problem>
         </imageresponse>
     </problem>`;
 
-export default imageResponse;
+export default { imageResponse };

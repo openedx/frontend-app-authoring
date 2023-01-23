@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Hyperlink, Image, Container } from '@edx/paragon';
+import { Hyperlink, Image } from '@edx/paragon';
 import {
   FormattedMessage,
   injectIntl,
@@ -19,7 +19,7 @@ export const Preview = ({
   }
   const data = ProblemTypes[problemType];
   return (
-    <Container style={{ width: '494px', height: '400px' }} className="bg-light-300 rounded p-4">
+    <div className="bg-light-300 rounded p-4">
       <div className="small">
         {intl.formatMessage(messages.previewTitle, { previewTitle: data.title })}
       </div>
@@ -38,7 +38,7 @@ export const Preview = ({
       >
         <FormattedMessage {...messages.learnMoreButtonLabel} />
       </Hyperlink>
-    </Container>
+    </div>
   );
 };
 

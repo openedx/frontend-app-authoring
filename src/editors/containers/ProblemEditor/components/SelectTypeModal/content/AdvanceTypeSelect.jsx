@@ -8,8 +8,6 @@ import {
   Icon,
   OverlayTrigger,
   Tooltip,
-  Hyperlink,
-  Col,
 } from '@edx/paragon';
 import { ArrowBack } from '@edx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -24,8 +22,8 @@ export const AdvanceTypeSelect = ({
 }) => {
   const handleChange = e => { setSelected(e.target.value); };
   return (
-    <Col xs={12} md={8} className="justify-content-center">
-      <Form.Group className="border rounded text-primary-500 p-0">
+    <div className="col col-8 border rounded p-0 justify-content-center">
+      <Form.Group className="p-0">
         <ActionRow className="border-primary-100 border-bottom py-3 pl-2.5 pr-4">
           <IconButton src={ArrowBack} iconAs={Icon} onClick={() => setSelected(ProblemTypeKeys.SINGLESELECT)} />
           <ActionRow.Spacer />
@@ -58,7 +56,7 @@ export const AdvanceTypeSelect = ({
                       </Tooltip>
                     )}
                   >
-                    <div className="text-gray-500">
+                    <div>
                       {intl.formatMessage(messages.problemSupportStatus, { supportStatus: data.status })}
                     </div>
                   </OverlayTrigger>
@@ -76,13 +74,7 @@ export const AdvanceTypeSelect = ({
           })}
         </Form.RadioSet>
       </Form.Group>
-      <Hyperlink
-        destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
-        target="_blank"
-      >
-        <FormattedMessage {...messages.learnMoreAdvancedButtonLabel} />
-      </Hyperlink>
-    </Col>
+    </div>
   );
 };
 

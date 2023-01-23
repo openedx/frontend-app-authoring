@@ -43,4 +43,4 @@ export const problemWithHint = `<problem>
     </text>
 </problem>`;
 
-export default problemWithHint;
+export default { problemWithHint };
