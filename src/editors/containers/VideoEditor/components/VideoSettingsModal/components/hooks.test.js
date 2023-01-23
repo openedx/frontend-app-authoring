@@ -5,6 +5,7 @@ import { keyStore } from '../../../../../utils';
 import { actions, selectors } from '../../../../../data/redux';
 import { MockUseState } from '../../../../../../testUtils';
 
+import * as duration from './duration';
 import * as handlers from './handlers';
 import * as hooks from './hooks';
 
@@ -14,6 +15,13 @@ jest.mock('react', () => ({
   useEffect: jest.fn(),
   useCallback: jest.fn((cb, prereqs) => ({ useCallback: { cb, prereqs } })),
   useMemo: jest.fn((cb, prereqs) => ({ useMemo: { cb, prereqs } })),
+}));
+
+jest.mock('./duration', () => ({
+  onDurationChange: jest.fn(value => ({ onDurationChange: value })),
+  onDurationKeyDown: jest.fn(value => ({ onDurationKeyDown: value })),
+  updateDuration: jest.fn(value => ({ updateDuration: value })),
+  durationValue: jest.fn(value => ({ durationValue: value })),
 }));
 
 jest.mock('./handlers', () => ({
@@ -48,6 +56,8 @@ jest.mock('../../../../../data/redux', () => ({
 }));
 
 const keys = {
+  duration: keyStore(duration),
+  handlers: keyStore(handlers),
   hooks: keyStore(hooks),
   selectors: hooks.selectorKeys,
 };
@@ -116,6 +126,18 @@ describe('Video Settings modal hooks', () => {
         }));
       });
     });
+    describe('currentValue', () => {
+      it('returns duration display of form value if is duration key', () => {
+        expect(
+          hooks.currentValue({ key: keys.selectors.duration, formValue: testValue }),
+        ).toEqual(duration.durationValue(testValue));
+      });
+      it('returns the raw formValue by default', () => {
+        expect(
+          hooks.currentValue({ key: testKey, formValue: testValue }),
+        ).toEqual(testValue);
+      });
+    });
     describe('valueHooks', () => {
       let formValue;
       beforeEach(() => {
@@ -128,6 +150,13 @@ describe('Video Settings modal hooks', () => {
             expect(useEffect).toHaveBeenCalled();
             expect(useEffect.mock.calls[0][1]).toEqual([formValue]);
           });
+          test('calls setLocal with durationValue(formValue) if is duration', () => {
+            hooks.valueHooks({ dispatch, key: keys.selectors.duration });
+            useEffect.mock.calls[0][0]();
+            expect(state.setState[keys.selectors.duration]).toHaveBeenCalledWith(
+              duration.durationValue(useSelector(selectors.video.duration)),
+            );
+          });
           test('calls setLocal with formValue by default', () => {
             hooks.valueHooks({ dispatch, key: testKey });
             useEffect.mock.calls[0][0]();
@@ -136,10 +165,13 @@ describe('Video Settings modal hooks', () => {
         });
       });
       describe('returned object', () => {
+        const mockCurrentValue = (args) => ({ currentValue: args });
         const mockUpdateFormField = (args) => jest.fn(
           (val) => ({ updateFormField: { args, val } }),
         );
         beforeEach(() => {
+          jest.spyOn(hooks, keys.hooks.currentValue)
+            .mockImplementationOnce(mockCurrentValue);
           jest.spyOn(hooks, keys.hooks.updateFormField)
             .mockImplementationOnce(mockUpdateFormField);
           out = hooks.valueHooks({ dispatch, key: testKey });
@@ -148,9 +180,10 @@ describe('Video Settings modal hooks', () => {
           expect(out.formValue).toEqual(useSelector(selectors.video[testKey]));
         });
         describe('local and setLocal', () => {
-          test('keyed to state, initialized with formValue', () => {
+          test('keyed to state, initialized with memo of currentValue that never updates', () => {
             const { local, setLocal } = out;
-            expect(local).toEqual(formValue);
+            expect(local.useMemo.cb()).toEqual(mockCurrentValue({ key: testKey, formValue }));
+            expect(local.useMemo.prereqs).toEqual([]);
             setLocal(testValue);
             expect(state.setState[testKey]).toHaveBeenCalledWith(testValue);
           });
@@ -280,6 +313,60 @@ describe('Video Settings modal hooks', () => {
             transform: hooks.updatedObject,
             local: widgetValues.local,
           }));
+        });
+      });
+      describe('durationWidget', () => {
+        beforeEach(() => {
+          out = hooks.durationWidget({ dispatch });
+        });
+        it('forwards widget values', () => {
+          expect(out.formValue).toEqual(widgetValues.formValue);
+          expect(out.local).toEqual(widgetValues.local);
+        });
+        describe('onBlur', () => {
+          test('memoized callback based on formValue, local, and setFormValue from widget', () => {
+            expect(out.onBlur.useCallback.prereqs).toEqual(
+              [widgetValues.formValue, widgetValues.local, widgetValues.setFormField],
+            );
+          });
+          test('calls handleIndexEvent with updateDuration', () => {
+            expect(out.onBlur.useCallback.cb).toEqual(
+              handlers.handleIndexEvent({
+                handler: handlers.onValue,
+                transform: duration.updateDuration(widgetValues),
+              }),
+            );
+          });
+        });
+        describe('onChange', () => {
+          test('memoized callback based on local from widget', () => {
+            expect(out.onChange.useCallback.prereqs).toEqual([widgetValues.local]);
+          });
+          test('calls handleIndexTransformEvent with setLocal', () => {
+            expect(out.onChange.useCallback.cb).toEqual(
+              handlers.handleIndexTransformEvent({
+                handler: handlers.onValue,
+                setter: widgetValues.setLocal,
+                transform: duration.onDurationChange,
+                local: widgetValues.local,
+              }),
+            );
+          });
+        });
+        describe('onKeyDown', () => {
+          test('memoized callback based on local from widget', () => {
+            expect(out.onKeyDown.useCallback.prereqs).toEqual([widgetValues.local]);
+          });
+          test('calls handleIndexTransformEvent with setLocal', () => {
+            expect(out.onKeyDown.useCallback.cb).toEqual(
+              handlers.handleIndexTransformEvent({
+                handler: handlers.onEvent,
+                setter: widgetValues.setLocal,
+                transform: duration.onDurationKeyDown,
+                local: widgetValues.local,
+              }),
+            );
+          });
         });
       });
     });
