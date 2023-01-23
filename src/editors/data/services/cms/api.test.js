@@ -333,7 +333,8 @@ describe('cms api', () => {
   });
   describe('processVideoIds', () => {
     const edxVideoId = 'eDXviDEoid';
-    const youtubeId = 'yOuTuBeID';
+    const youtubeId = 'yOuTuBeUrL';
+    const youtubeUrl = `https://youtu.be/${youtubeId}`;
     const html5Sources = [
       'sOuRce1',
       'sourCE2',
@@ -341,15 +342,14 @@ describe('cms api', () => {
     afterEach(() => {
       jest.restoreAllMocks();
     });
-    describe('if the videoSource is an edx video id', () => {
+    describe('if there is a video id', () => {
       beforeEach(() => {
         jest.spyOn(api, 'isEdxVideo').mockReturnValue(true);
-        jest.spyOn(api, 'parseYoutubeId').mockReturnValue(null);
+        jest.spyOn(api, 'parseYoutubeId').mockReturnValue(youtubeId);
       });
       it('returns edxVideoId when there are no fallbackVideos', () => {
         expect(api.processVideoIds({
-          edxVideoId,
-          videoSource: '',
+          videoUrl: '',
           fallbackVideos: [],
           videoId: edxVideoId,
         })).toEqual({
@@ -360,42 +360,39 @@ describe('cms api', () => {
       });
       it('returns edxVideoId and html5Sources when there are fallbackVideos', () => {
         expect(api.processVideoIds({
-          edxVideoId,
-          videoSource: 'edxVideoId',
+          videoUrl: youtubeUrl,
           fallbackVideos: html5Sources,
           videoId: edxVideoId,
         })).toEqual({
           edxVideoId,
           html5Sources,
-          youtubeId: '',
+          youtubeId,
         });
       });
     });
-    describe('if the videoSource is a youtube url', () => {
+    describe('if there is a youtube url', () => {
       beforeEach(() => {
         jest.spyOn(api, 'isEdxVideo').mockReturnValue(false);
         jest.spyOn(api, 'parseYoutubeId').mockReturnValue(youtubeId);
       });
       it('returns youtubeId when there are no fallbackVideos', () => {
         expect(api.processVideoIds({
-          edxVideoId,
-          videoSource: edxVideoId,
+          videoUrl: youtubeUrl,
           fallbackVideos: [],
           videoId: '',
         })).toEqual({
-          edxVideoId,
+          edxVideoId: '',
           html5Sources: [],
           youtubeId,
         });
       });
       it('returns youtubeId and html5Sources when there are fallbackVideos', () => {
         expect(api.processVideoIds({
-          edxVideoId,
-          videoSource: edxVideoId,
+          videoUrl: youtubeUrl,
           fallbackVideos: html5Sources,
           videoId: '',
         })).toEqual({
-          edxVideoId,
+          edxVideoId: '',
           html5Sources,
           youtubeId,
         });
@@ -408,24 +405,22 @@ describe('cms api', () => {
       });
       it('returns html5Sources when there are no fallbackVideos', () => {
         expect(api.processVideoIds({
-          edxVideoId,
-          videoSource: html5Sources[0],
+          videoUrl: html5Sources[0],
           fallbackVideos: [],
           videoId: '',
         })).toEqual({
-          edxVideoId,
+          edxVideoId: '',
           html5Sources: [html5Sources[0]],
           youtubeId: '',
         });
       });
       it('returns html5Sources when there are fallbackVideos', () => {
         expect(api.processVideoIds({
-          edxVideoId,
-          videoSource: html5Sources[0],
+          videoUrl: html5Sources[0],
           fallbackVideos: [html5Sources[1]],
           videoId: '',
         })).toEqual({
-          edxVideoId,
+          edxVideoId: '',
           html5Sources,
           youtubeId: '',
         });

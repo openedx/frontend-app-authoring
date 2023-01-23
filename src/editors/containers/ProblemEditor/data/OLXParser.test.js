@@ -7,6 +7,8 @@ import {
   textInputWithFeedbackAndHintsOLX,
   mutlipleChoiceWithFeedbackAndHintsOLX,
   textInputWithFeedbackAndHintsOLXWithMultipleAnswers,
+  advancedProblemOlX,
+  blankProblemOLX,
 } from './mockData/olxTestData';
 import { ProblemTypeKeys } from '../../../data/constants/problem';
 
@@ -35,6 +37,16 @@ describe('Check OLXParser problem type', () => {
     const olxparser = new OLXParser(textInputWithFeedbackAndHintsOLX.rawOLX);
     const problemType = olxparser.getProblemType();
     expect(problemType).toBe(ProblemTypeKeys.TEXTINPUT);
+  });
+  test('Test Advanced Problem Type', () => {
+    const olxparser = new OLXParser(advancedProblemOlX.rawOLX);
+    const problemType = olxparser.getProblemType();
+    expect(problemType).toBe(ProblemTypeKeys.ADVANCED);
+  });
+  test('Test Blank Problem Type', () => {
+    const olxparser = new OLXParser(blankProblemOLX.rawOLX);
+    const problemType = olxparser.getProblemType();
+    expect(problemType).toBe(null);
   });
 });
 

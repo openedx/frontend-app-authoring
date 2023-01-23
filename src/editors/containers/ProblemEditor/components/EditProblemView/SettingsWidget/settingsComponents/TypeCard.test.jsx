@@ -6,8 +6,12 @@ import { ProblemTypeKeys } from '../../../../../../data/constants/problem';
 
 describe('TypeCard', () => {
   const props = {
+    answers: [],
+    correctAnswerCount: 0,
     problemType: ProblemTypeKeys.TEXTINPUT,
     updateField: jest.fn().mockName('args.updateField'),
+    updateAnswer: jest.fn().mockName('args.updateAnswer'),
+    // injected
     intl: { formatMessage },
   };
 

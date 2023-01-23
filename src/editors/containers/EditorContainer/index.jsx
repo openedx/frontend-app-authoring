@@ -2,24 +2,50 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { Icon, ModalDialog, IconButton } from '@edx/paragon';
+import {
+  Icon, ModalDialog, IconButton, Button,
+} from '@edx/paragon';
 import { Close } from '@edx/paragon/icons';
 
+import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
 import EditorFooter from './components/EditorFooter';
 import TitleHeader from './components/TitleHeader';
 import * as hooks from './hooks';
+import BaseModal from '../TextEditor/components/BaseModal';
+import messages from './messages';
 
 export const EditorContainer = ({
   children,
   getContent,
   onClose,
   validateEntry,
+  // injected
+  intl,
 }) => {
   const dispatch = useDispatch();
   const isInitialized = hooks.isInitialized();
-  const handleCancelClicked = hooks.handleCancelClicked({ onClose });
+  const { isCancelConfirmOpen, openCancelConfirmModal, closeCancelConfirmModal } = hooks.cancelConfirmModalToggle();
+  const handleCancel = hooks.handleCancel({ onClose });
   return (
-    <div>
+    <div
+      className="position-relative zindex-0"
+    >
+      <BaseModal
+        size="md"
+        confirmAction={(
+          <Button
+            variant="primary"
+            onClick={handleCancel}
+          >
+            <FormattedMessage {...messages.okButtonLabel} />
+          </Button>
+        )}
+        isOpen={isCancelConfirmOpen}
+        close={closeCancelConfirmModal}
+        title={intl.formatMessage(messages.cancelConfirmTitle)}
+      >
+        <FormattedMessage {...messages.cancelConfirmDescription} />
+      </BaseModal>
       <ModalDialog.Header className="shadow-sm zindex-10">
         <ModalDialog.Title>
           <div
@@ -31,14 +57,16 @@ export const EditorContainer = ({
             <IconButton
               src={Close}
               iconAs={Icon}
-              onClick={handleCancelClicked}
+              onClick={openCancelConfirmModal}
             />
           </div>
         </ModalDialog.Title>
       </ModalDialog.Header>
-      {isInitialized && children}
+      <ModalDialog.Body className="pb-6">
+        {isInitialized && children}
+      </ModalDialog.Body>
       <EditorFooter
-        onCancel={handleCancelClicked}
+        onCancel={openCancelConfirmModal}
         onSave={hooks.handleSaveClicked({ dispatch, getContent, validateEntry })}
         disableSave={!isInitialized}
         saveFailed={hooks.saveFailed()}
@@ -55,6 +83,8 @@ EditorContainer.propTypes = {
   getContent: PropTypes.func.isRequired,
   onClose: PropTypes.func,
   validateEntry: PropTypes.func,
+  // injected
+  intl: intlShape.isRequired,
 };
 
-export default EditorContainer;
+export default injectIntl(EditorContainer);

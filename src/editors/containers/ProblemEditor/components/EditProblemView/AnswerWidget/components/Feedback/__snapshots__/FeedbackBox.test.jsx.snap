@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FeedbackBox component renders 1`] = `
+<div
+  className="bg-light-300 p-4 mt-3 rounded"
+>
+  <FeedbackControl
+    answer={
+      Object {
+        "correct": true,
+        "id": "A",
+        "selectedFeedback": "some feedback",
+        "title": "Answer 1",
+        "unselectedFeedback": "unselectedFeedback",
+      }
+    }
+    feedback="some feedback"
+    intl={Object {}}
+    key="selectedfeedback-A"
+    labelMessage={
+      Object {
+        "defaultMessage": "Show following feedback when {answerId} {boldunderline}:",
+        "description": "Label text for feedback if option is selected",
+        "id": "authoring.answerwidget.feedback.selected.label",
+      }
+    }
+    labelMessageBoldUnderline={
+      Object {
+        "defaultMessage": "is selected",
+        "description": "Bold & underlined text for feedback if option is selected",
+        "id": "authoring.answerwidget.feedback.selected.label.boldunderline",
+      }
+    }
+    onChange={[Function]}
+  />
+  <FeedbackControl
+    answer={
+      Object {
+        "correct": true,
+        "id": "A",
+        "selectedFeedback": "some feedback",
+        "title": "Answer 1",
+        "unselectedFeedback": "unselectedFeedback",
+      }
+    }
+    feedback="unselectedFeedback"
+    intl={Object {}}
+    key="unselectedfeedback-A"
+    labelMessage={
+      Object {
+        "defaultMessage": "Show following feedback when {answerId} {boldunderline}:",
+        "description": "Label text for feedback if option is not selected",
+        "id": "authoring.answerwidget.feedback.unselected.label",
+      }
+    }
+    labelMessageBoldUnderline={
+      Object {
+        "defaultMessage": "is not selected",
+        "description": "Bold & underlined text for feedback if option is not selected",
+        "id": "authoring.answerwidget.feedback.unselected.label.boldunderline",
+      }
+    }
+    onChange={[Function]}
+  />
+</div>
+`;

@@ -10,6 +10,7 @@ const initialState = {
   problemType: null,
   question: '',
   answers: [],
+  correctAnswerCount: 0,
   groupFeedbackList: [],
   additionalAttributes: {},
   settings: {
@@ -17,7 +18,7 @@ const initialState = {
       weight: 0,
       attempts: {
         unlimited: true,
-        number: 0,
+        number: null,
       },
     },
     hints: [],
@@ -46,8 +47,17 @@ const problem = createSlice({
     }),
     updateAnswer: (state, { payload }) => {
       const { id, hasSingleAnswer, ...answer } = payload;
+      let { correctAnswerCount } = state;
       const answers = state.answers.map(obj => {
         if (obj.id === id) {
+          if (_.has(answer, 'correct') && payload.correct) {
+            correctAnswerCount += 1;
+            return { ...obj, ...answer };
+          }
+          if (_.has(answer, 'correct') && payload.correct === false) {
+            correctAnswerCount -= 1;
+            return { ...obj, ...answer };
+          }
           return { ...obj, ...answer };
         }
         // set other answers as incorrect if problem only has one answer correct
@@ -59,13 +69,18 @@ const problem = createSlice({
       });
       return {
         ...state,
+        correctAnswerCount,
         answers,
       };
     },
     deleteAnswer: (state, { payload }) => {
-      const { id } = payload;
+      const { id, correct } = payload;
       if (state.answers.length <= 1) {
         return state;
+      }
+      let { correctAnswerCount } = state;
+      if (correct) {
+        correctAnswerCount -= 1;
       }
       const answers = state.answers.filter(obj => obj.id !== id).map((answer, index) => {
         const newId = indexToLetterMap[index];
@@ -76,6 +91,7 @@ const problem = createSlice({
       });
       return {
         ...state,
+        correctAnswerCount,
         answers,
       };
     },
@@ -89,15 +105,12 @@ const problem = createSlice({
         title: '',
         selectedFeedback: undefined,
         unselectedFeedback: undefined,
-        feedback: undefined,
         correct: false,
       };
       if (state.problemType === ProblemTypeKeys.MULTISELECT) {
-        newOption.selectedFeedback = '';
         newOption.unselectedFeedback = '';
-      } else {
-        newOption.feedback = '';
       }
+      newOption.selectedFeedback = '';
       const answers = [
         ...currAnswers,
         newOption,
@@ -127,10 +140,6 @@ const problem = createSlice({
     setEnableTypeSelection: (state) => ({
       ...state,
       problemType: null,
-    }),
-    setProblemType: (state, { payload: { selected } }) => ({
-      ...state,
-      problemType: selected,
     }),
   },
 });

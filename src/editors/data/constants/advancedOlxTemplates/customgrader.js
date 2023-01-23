@@ -76,4 +76,4 @@ export const customGrader = `<problem>
     </customresponse>
 </problem>`;
 
-export default { customGrader };
+export default customGrader;

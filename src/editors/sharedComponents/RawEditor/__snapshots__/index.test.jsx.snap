@@ -1,18 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`RawEditor renders as expected with default behavior 1`] = `
-<div
-  style={
-    Object {
-      "height": "600px",
-      "padding": "10px 30px",
-    }
-  }
->
+<div>
   <Alert
     variant="danger"
   >
-    You are using the raw HTML editor.
+    You are using the raw 
+    html
+     editor.
   </Alert>
   <injectIntl(ShimmedIntlComponent)
     innerRef={
@@ -22,6 +17,7 @@ exports[`RawEditor renders as expected with default behavior 1`] = `
         },
       }
     }
+    lang="html"
     value="eDiTablE Text"
   />
 </div>

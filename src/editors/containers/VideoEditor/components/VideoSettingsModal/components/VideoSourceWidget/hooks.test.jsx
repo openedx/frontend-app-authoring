@@ -6,6 +6,7 @@ jest.mock('react-redux', () => {
   const dispatchFn = jest.fn();
   return {
     ...jest.requireActual('react-redux'),
+    useSelector: jest.fn(),
     dispatch: dispatchFn,
     useDispatch: jest.fn(() => dispatchFn),
   };
@@ -20,78 +21,61 @@ jest.mock('../../../../../../data/redux', () => ({
 }));
 
 describe('VideoEditorHandout hooks', () => {
-  describe('updateVideoId', () => {
-    const sourceEdxVideo = {
-      onBlur: jest.fn(),
-      local: '06b15030-7df0-4e70-b979-326e02dbcbe0',
-    };
-    const sourceYouTube = {
-      onBlur: jest.fn(),
-      local: 'youtu.be',
-    };
-    const sourceHtml5Source = {
-      onBlur: jest.fn(),
-      local: 'sOMEranDomfILe.mp4',
-    };
-    const mockState = {
-      videoId: '',
-      videoSource: '',
-      allowVideoDownloads: false,
-      thumbnail: null,
-      transcripts: [],
-      allowTranscriptDownloads: false,
-      showTranscriptByDefault: false,
-      duration: {
-        startTime: '00:00:00',
-        stopTime: '00:00:00',
-        total: '00:00:00',
-      },
-      licenseType: null,
-    };
-    it('returns dispatches updateField action with default state and edxVideo Id', () => {
-      hooks.updateVideoId({ dispatch })({ e: { target: { value: sourceEdxVideo.local } }, source: sourceEdxVideo });
-      expect(dispatch).toHaveBeenCalledWith(
-        actions.video.updateField({
-          ...mockState,
-          videoId: sourceEdxVideo.local,
-        }),
-      );
+  let hook;
+
+  describe('sourceHooks', () => {
+    const e = { target: { value: 'soMEvALuE' } };
+    beforeEach(() => {
+      hook = hooks.sourceHooks({ dispatch });
     });
-    it('returns dispatches updateField action with default state and YouTube video', () => {
-      hooks.updateVideoId({ dispatch })({
-        e: { target: { value: sourceYouTube.local } },
-        source: sourceYouTube,
+    describe('updateVideoURL', () => {
+      it('dispatches updateField action with new videoSource', () => {
+        hook.updateVideoURL(e);
+        expect(dispatch).toHaveBeenCalledWith(
+          actions.video.updateField({
+            videoSource: e.target.value,
+          }),
+        );
       });
-      expect(dispatch).toHaveBeenCalledWith(
-        actions.video.updateField({
-          ...mockState,
-        }),
-      );
     });
-    it('returns dispatches updateField action with default state and html5source video', () => {
-      hooks.updateVideoId({ dispatch })({
-        e: { target: { value: sourceHtml5Source.local } },
-        source: sourceHtml5Source,
+    describe('updateVideoId', () => {
+      it('dispatches updateField action with new videoId', () => {
+        hook.updateVideoId(e);
+        expect(dispatch).toHaveBeenCalledWith(
+          actions.video.updateField({
+            videoId: e.target.value,
+          }),
+        );
       });
-      expect(dispatch).toHaveBeenCalledWith(
-        actions.video.updateField({
-          ...mockState,
-        }),
-      );
     });
   });
 
-  describe('deleteFallbackVideo', () => {
+  describe('fallbackHooks', () => {
     const videoUrl = 'sOmERAndoMuRl1';
     const fallbackVideos = ['sOmERAndoMuRl1', 'sOmERAndoMuRl2', 'sOmERAndoMuRl1', ''];
-    const updatedFallbackVideos = ['sOmERAndoMuRl2', 'sOmERAndoMuRl1', ''];
-    it('returns dispatches updateField action with updatedFallbackVideos', () => {
-      hooks.deleteFallbackVideo({ fallbackVideos, dispatch })(videoUrl);
-      expect(dispatch).toHaveBeenCalledWith(
-        actions.video.updateField({
-          fallbackVideos: updatedFallbackVideos,
-        }),
-      );
+    beforeEach(() => {
+      hook = hooks.fallbackHooks({ fallbackVideos, dispatch });
+    });
+    describe('addFallbackVideo', () => {
+      it('dispatches updateField action with updated array appended by a new empty element', () => {
+        hook.addFallbackVideo();
+        expect(dispatch).toHaveBeenCalledWith(
+          actions.video.updateField({
+            fallbackVideos: [...fallbackVideos, ''],
+          }),
+        );
+      });
+    });
+    describe('deleteFallbackVideo', () => {
+      it('dispatches updateField action with updated array with videoUrl removed', () => {
+        const updatedFallbackVideos = ['sOmERAndoMuRl2', 'sOmERAndoMuRl1', ''];
+        hook.deleteFallbackVideo(videoUrl);
+        expect(dispatch).toHaveBeenCalledWith(
+          actions.video.updateField({
+            fallbackVideos: updatedFallbackVideos,
+          }),
+        );
+      });
     });
   });
 });

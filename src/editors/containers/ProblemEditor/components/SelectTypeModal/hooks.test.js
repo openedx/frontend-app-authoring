@@ -2,7 +2,8 @@
 import React from 'react';
 import { MockUseState } from '../../../../../testUtils';
 import * as module from './hooks';
-import { AdvanceProblems, ProblemTypeKeys } from '../../../../data/constants/problem';
+import { AdvanceProblems, ProblemTypeKeys, ProblemTypes } from '../../../../data/constants/problem';
+import { OLXParser } from '../../data/OLXParser';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
@@ -11,11 +12,11 @@ jest.mock('react', () => ({
 }));
 
 const state = new MockUseState(module);
-const mockSetProblemType = jest.fn().mockName('setProblemType');
 const mockUpdateField = jest.fn().mockName('updateField');
-const mockSelected = 'vAl';
-const mockAdvancedSelected = 'blankadvanced';
+const mockSelected = 'multiplechoiceresponse';
+const mockAdvancedSelected = 'circuitschematic';
 const mockSetSelected = jest.fn().mockName('setSelected');
+const mocksetBlockTitle = jest.fn().mockName('setBlockTitle');
 
 let hook;
 
@@ -45,14 +46,26 @@ describe('SelectTypeModal hooks', () => {
 
   describe('onSelect', () => {
     test('updateField is called with selected templated if selected is an Advanced Problem', () => {
-      module.onSelect(mockSetProblemType, mockAdvancedSelected, mockUpdateField)();
+      module.onSelect({
+        selected: mockAdvancedSelected,
+        updateField: mockUpdateField,
+        setBlockTitle: mocksetBlockTitle,
+      })();
       expect(mockUpdateField).toHaveBeenCalledWith({
+        problemType: ProblemTypeKeys.ADVANCED,
         rawOLX: AdvanceProblems[mockAdvancedSelected].template,
       });
+      expect(mocksetBlockTitle).toHaveBeenCalledWith(AdvanceProblems[mockAdvancedSelected].title);
     });
-    test('setProblemType is called with selected', () => {
-      module.onSelect(mockSetProblemType, mockSelected, mockUpdateField)();
-      expect(mockSetProblemType).toHaveBeenCalledWith({ selected: mockSelected });
+    test('updateField is called with selected on visual propblems', () => {
+      module.onSelect({ selected: mockSelected, updateField: mockUpdateField, setBlockTitle: mocksetBlockTitle })();
+      const testOlXParser = new OLXParser(ProblemTypes[mockSelected].template);
+      const { settings, ...testState } = testOlXParser.getParsedOLXData();
+      expect(mockUpdateField).toHaveBeenCalledWith({
+        ...testState,
+        rawOLX: ProblemTypes[mockSelected].template,
+      });
+      expect(mocksetBlockTitle).toHaveBeenCalledWith(ProblemTypes[mockSelected].title);
     });
   });
 

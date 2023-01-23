@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
@@ -6,34 +6,35 @@ import { Col, Container, Row } from '@edx/paragon';
 import AnswerWidget from './AnswerWidget';
 import SettingsWidget from './SettingsWidget';
 import QuestionWidget from './QuestionWidget';
-import { EditorContainer } from '../../../EditorContainer';
+import EditorContainer from '../../../EditorContainer';
 import { selectors } from '../../../../data/redux';
-import ReactStateSettingsParser from '../../data/ReactStateSettingsParser';
-import ReactStateOLXParser from '../../data/ReactStateOLXParser';
-import { AdvanceProblemKeys } from '../../../../data/constants/problem';
+import RawEditor from '../../../../sharedComponents/RawEditor';
+import { ProblemTypeKeys } from '../../../../data/constants/problem';
+
+import { parseState } from './hooks';
 
 export const EditProblemView = ({
   problemType,
   problemState,
 }) => {
-  const parseState = (problem) => () => {
-    const reactSettingsParser = new ReactStateSettingsParser(problem);
-    const reactOLXParser = new ReactStateOLXParser({ problem });
-    return {
-      settings: reactSettingsParser.getSettings(),
-      olx: reactOLXParser.buildOLX(),
-    };
-  };
-  if (Object.values(AdvanceProblemKeys).includes(problemType)) {
-    return `hello raw editor with ${problemType}`;
-  }
+  const editorRef = useRef(null);
+  const isAdvancedProblemType = problemType === ProblemTypeKeys.ADVANCED;
+
+  const getContent = parseState(problemState, isAdvancedProblemType, editorRef);
+
   return (
-    <EditorContainer getContent={parseState(problemState)}>
-      <Container fluid>
+    <EditorContainer getContent={getContent}>
+      <Container fluid className="mt-3 px-4">
         <Row>
           <Col xs={9}>
-            <QuestionWidget />
-            <AnswerWidget problemType={problemType} />
+            {isAdvancedProblemType ? (
+              <RawEditor editorRef={editorRef} lang="xml" content={problemState.rawOLX} />
+            ) : (
+              <>
+                <QuestionWidget />
+                <AnswerWidget problemType={problemType} />
+              </>
+            )}
           </Col>
           <Col xs={3}>
             <SettingsWidget problemType={problemType} />

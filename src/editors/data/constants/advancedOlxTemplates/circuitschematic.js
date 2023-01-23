@@ -89,4 +89,4 @@ export const circuitSchematic = `<problem>
     </schematicresponse>
 </problem>`;
 
-export default { circuitSchematic };
+export default circuitSchematic;

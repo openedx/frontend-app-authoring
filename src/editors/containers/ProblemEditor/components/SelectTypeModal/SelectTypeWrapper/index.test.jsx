@@ -2,10 +2,10 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { IconButton } from '@edx/paragon';
 import * as module from '.';
-import { handleCancelClicked } from '../../../../EditorContainer/hooks';
+import { handleCancel } from '../../../../EditorContainer/hooks';
 
 jest.mock('../../../../EditorContainer/hooks', () => ({
-  handleCancelClicked: jest.fn().mockName('handleCancelClicked'),
+  handleCancel: jest.fn().mockName('handleCancel'),
 }));
 
 describe('SelectTypeWrapper', () => {
@@ -25,7 +25,7 @@ describe('SelectTypeWrapper', () => {
       el = shallow(<module.SelectTypeWrapper {...props} />);
     });
     test('close behavior is linked to modal onClose', () => {
-      const expected = handleCancelClicked({ onClose: props.onClose });
+      const expected = handleCancel({ onClose: props.onClose });
       expect(el.find(IconButton).props().onClick)
         .toEqual(expected);
     });

@@ -4,13 +4,8 @@ import multiSelect from '../images/multiSelect.png';
 import dropdown from '../images/dropdown.png';
 import numericalInput from '../images/numericalInput.png';
 import textInput from '../images/textInput.png';
-import { circuitSchematic } from './olxTemplates/circuitschematic';
-import { customGrader } from './olxTemplates/customgrader';
-import { dragAndDrop } from './olxTemplates/drag_and_drop';
-import { formulaResponse } from './olxTemplates/formularesponse';
-import { imageResponse } from './olxTemplates/imageresponse';
-import { jsInputResponse } from './olxTemplates/jsinput_response';
-import { problemWithHint } from './olxTemplates/problem_with_hint';
+import advancedOlxTemplates from './advancedOlxTemplates';
+import basicOlxTemplates from './basicOlxTemplates';
 
 export const ProblemTypeKeys = StrictDict({
   SINGLESELECT: 'multiplechoiceresponse',
@@ -23,44 +18,50 @@ export const ProblemTypeKeys = StrictDict({
 
 export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.SINGLESELECT]: {
-    title: 'Single Select Problem',
+    title: 'Single select',
     preview: singleSelect,
     description: 'Specify one correct answer from a list of possible options',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/multiple_choice.html',
     prev: ProblemTypeKeys.TEXTINPUT,
     next: ProblemTypeKeys.MULTISELECT,
+    template: basicOlxTemplates.singleSelect,
+
   },
   [ProblemTypeKeys.MULTISELECT]: {
-    title: 'Multi Select Problem',
+    title: 'Multi-select',
     preview: multiSelect,
     description: 'Specify one or more correct answers from a list of possible options.',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/checkbox.html',
     next: ProblemTypeKeys.DROPDOWN,
     prev: ProblemTypeKeys.SINGLESELECT,
+    template: basicOlxTemplates.multiSelect,
   },
   [ProblemTypeKeys.DROPDOWN]: {
-    title: 'Dropdown Problem',
+    title: 'Dropdown',
     preview: dropdown,
     description: 'Specify one correct answer from a list of possible options, selected in a dropdown menu.',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/dropdown.html',
     next: ProblemTypeKeys.NUMERIC,
     prev: ProblemTypeKeys.MULTISELECT,
+    template: basicOlxTemplates.dropdown,
   },
   [ProblemTypeKeys.NUMERIC]: {
-    title: 'Numeric Response Problem',
+    title: 'Numerical input',
     preview: numericalInput,
     description: 'Specify one or more correct numeric answers, submitted in a response field.',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/numerical_input.html',
     next: ProblemTypeKeys.TEXTINPUT,
     prev: ProblemTypeKeys.DROPDOWN,
+    template: basicOlxTemplates.numeric,
   },
   [ProblemTypeKeys.TEXTINPUT]: {
-    title: 'Text Input Problem',
+    title: 'Text input',
     preview: textInput,
     description: 'Specify one or more correct text answers, including numbers and special characters, submitted in a response field.',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/text_input.html',
     prev: ProblemTypeKeys.NUMERIC,
     next: ProblemTypeKeys.SINGLESELECT,
+    template: basicOlxTemplates.textInput,
   },
   [ProblemTypeKeys.ADVANCED]: {
     title: 'Advanced Problem',
@@ -75,7 +76,6 @@ export const AdvanceProblemKeys = StrictDict({
   CIRCUITSCHEMATIC: 'circuitschematic',
   JSINPUT: 'jsinputresponse',
   CUSTOMGRADER: 'customgrader',
-  DRAGANDDROP: 'draganddrop',
   IMAGE: 'imageresponse',
   FORMULA: 'formularesponse',
   PROBLEMWITHHINT: 'problemwithhint',
@@ -83,44 +83,39 @@ export const AdvanceProblemKeys = StrictDict({
 
 export const AdvanceProblems = StrictDict({
   [AdvanceProblemKeys.BLANK]: {
-    title: 'Blank advance problem',
+    title: 'Blank advanced problem',
     status: '',
     template: '<problem></problem>',
   },
   [AdvanceProblemKeys.CIRCUITSCHEMATIC]: {
     title: 'Circuit schematic builder',
     status: 'Not supported',
-    template: circuitSchematic,
+    template: advancedOlxTemplates.circuitSchematic,
   },
   [AdvanceProblemKeys.JSINPUT]: {
     title: 'Custom JavaScript display and grading',
     status: '',
-    template: jsInputResponse,
+    template: advancedOlxTemplates.jsInputResponse,
   },
   [AdvanceProblemKeys.CUSTOMGRADER]: {
     title: 'Custom Python-evaluated input',
     status: 'Provisional',
-    template: customGrader,
-  },
-  [AdvanceProblemKeys.DRAGANDDROP]: {
-    title: 'Drag and drop (deprecated version)',
-    status: 'Not supported',
-    template: dragAndDrop,
+    template: advancedOlxTemplates.customGrader,
   },
   [AdvanceProblemKeys.IMAGE]: {
     title: 'Image mapped input',
     status: 'Not supported',
-    template: imageResponse,
+    template: advancedOlxTemplates.imageResponse,
   },
   [AdvanceProblemKeys.FORMULA]: {
     title: 'Math expression input',
     status: '',
-    template: formulaResponse,
+    template: advancedOlxTemplates.formulaResponse,
   },
   [AdvanceProblemKeys.PROBLEMWITHHINT]: {
     title: 'Problem with adaptive hint',
     status: 'Not supported',
-    template: problemWithHint,
+    template: advancedOlxTemplates.problemWithHint,
   },
 });
 

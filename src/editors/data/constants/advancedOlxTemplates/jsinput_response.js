@@ -78,4 +78,4 @@ export const jsInputResponse = `<problem>
     </customresponse>
 </problem>`;
 
-export default { jsInputResponse };
+export default jsInputResponse;

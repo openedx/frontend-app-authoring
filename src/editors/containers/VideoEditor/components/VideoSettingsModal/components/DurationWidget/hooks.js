@@ -91,7 +91,7 @@ export const durationStringFromValue = (value) => {
  * @param {func} setDuration - set form value
  * @param {func} setUnsavedDuration - set unsavedDuration object
  * @param {string} index - startTime or stopTime
- * @param {string} inputString - string value of the the time user has inputted in either the startTime or stopTime field
+ * @param {string} inputString - string value of user input for either the start or stop time field
  * @return {func} - callback to update duration unsavedDurationly and in redux
  *   updateDuration(args)(index, durationString)
  */
