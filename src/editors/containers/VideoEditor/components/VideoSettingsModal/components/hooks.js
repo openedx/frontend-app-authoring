@@ -2,6 +2,7 @@ import {
   useCallback,
   useState,
   useEffect,
+  useMemo,
 } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -9,9 +10,18 @@ import { StrictDict, keyStore } from '../../../../../utils';
 import { actions, selectors } from '../../../../../data/redux';
 
 import {
+  updateDuration,
+  durationValue,
+  onDurationChange,
+  onDurationKeyDown,
+} from './duration';
+
+import {
+  handleIndexEvent,
   handleIndexTransformEvent,
   onValue,
   onChecked,
+  onEvent,
 } from './handlers';
 import * as module from './hooks';
 
@@ -79,6 +89,21 @@ export const updateFormField = ({ dispatch, key }) => useCallback(
 );
 
 /**
+ * currentValue({ key, formValue })
+ * Returns the current display value based on the form value.
+ * If duration, uses durationValue to transform the formValue
+ * @param {string} key - redux video state key
+ * @param {any} formValue - current value in the redux
+ * @return {any} - to-local translation of formValue
+ */
+export const currentValue = ({ key, formValue }) => {
+  if (key === selectorKeys.duration) {
+    return durationValue(formValue);
+  }
+  return formValue;
+};
+
+/**
  * valueHooks({ dispatch, key })
  * returns local and redux state associated with the given data key, as well as methods
  * to update either or both of those.
@@ -93,11 +118,16 @@ export const updateFormField = ({ dispatch, key }) => useCallback(
  */
 export const valueHooks = ({ dispatch, key }) => {
   const formValue = useSelector(selectors.video[key]);
-  const [local, setLocal] = module.state[key](formValue);
+  const initialValue = useMemo(() => module.currentValue({ key, formValue }), []);
+  const [local, setLocal] = module.state[key](initialValue);
   const setFormValue = module.updateFormField({ dispatch, key });
 
   useEffect(() => {
-    setLocal(formValue);
+    if (key === selectorKeys.duration) {
+      setLocal(durationValue(formValue));
+    } else {
+      setLocal(formValue);
+    }
   }, [formValue]);
 
   const setAll = useCallback(
@@ -235,6 +265,62 @@ export const objectWidget = ({ dispatch, key }) => {
 };
 
 /**
+ * durationWidget({ dispatch, key })
+ * Returns the value-tied hooks for the video duration widget.
+ * Includes onChange, and onBlur.  blur changes local and redux state, on-change affects
+ * only local state.
+ * The creators from this widget will require an index to provide the final event-handler.
+ * @param {func} dispatch - redux dispatch method
+ * @param {string} key - redux video shape key
+ * @return {object} - state hooks
+ *   formValue - value state in redux
+ *   setFormValue - sets form field in redux
+ *   local - value state in hook
+ *   setLocal - sets form field in hook
+ *   setAll - sets form field in hook AND redux
+ *   onChange(index) - handle input change by updating local state
+ *   onBlur(index) - handle input blur by updating local and redux states
+ *   onClear(index) - handle clear event by setting value to empty string
+ */
+export const durationWidget = ({ dispatch }) => {
+  const widget = module.valueHooks({ dispatch, key: selectorKeys.duration });
+  const {
+    formValue,
+    local,
+    setFormField,
+    setLocal,
+  } = widget;
+  return {
+    ...widget,
+    onBlur: useCallback(
+      handleIndexEvent({
+        handler: onValue,
+        transform: updateDuration(widget),
+      }),
+      [formValue, local, setFormField],
+    ),
+    onChange: useCallback(
+      handleIndexTransformEvent({
+        handler: onValue,
+        setter: setLocal,
+        transform: onDurationChange,
+        local,
+      }),
+      [local],
+    ),
+    onKeyDown: useCallback(
+      handleIndexTransformEvent({
+        handler: onEvent,
+        setter: setLocal,
+        transform: onDurationKeyDown,
+        local,
+      }),
+      [local],
+    ),
+  };
+};
+
+/**
  * widgetValues({ fields, dispatch })
  * widget value populator, that takes a fields mapping (dataKey: widgetFn) and dispatch
  * method, and returns object of widget values.
@@ -252,6 +338,7 @@ export const widgetValues = ({ fields, dispatch }) => Object.keys(fields).reduce
 
 export default {
   arrayWidget,
+  durationWidget,
   genericWidget,
   objectWidget,
   selectorKeys,

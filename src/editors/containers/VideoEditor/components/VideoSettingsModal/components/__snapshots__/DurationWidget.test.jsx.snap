@@ -3,7 +3,7 @@
 exports[`DurationWidget render snapshots: renders as expected with default props 1`] = `
 <injectIntl(ShimmedIntlComponent)
   fontSize="x-small"
-  subtitle="Total: 00:00:00"
+  subtitle="Full video length"
   title="Duration"
 >
   <FormattedMessage
@@ -50,7 +50,7 @@ exports[`DurationWidget render snapshots: renders as expected with default props
   <div
     className="mt-4"
   >
-    Total: 00:00:00
+    Full video length
   </div>
 </injectIntl(ShimmedIntlComponent)>
 `;
