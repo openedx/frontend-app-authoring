@@ -54,20 +54,9 @@ exports[`TypeCard snapshot snapshot: renders type setting card 1`] = `
     correctAnswerCount={0}
     key="stringresponse"
     label="Text input"
-    lastRow={false}
+    lastRow={true}
     selected={false}
     typeKey="stringresponse"
-    updateAnswer={[MockFunction args.updateAnswer]}
-    updateField={[MockFunction args.updateField]}
-  />
-  <TypeRow
-    answers={Array []}
-    correctAnswerCount={0}
-    key="advanced"
-    label="Advanced Problem"
-    lastRow={true}
-    selected={true}
-    typeKey="advanced"
     updateAnswer={[MockFunction args.updateAnswer]}
     updateField={[MockFunction args.updateField]}
   />

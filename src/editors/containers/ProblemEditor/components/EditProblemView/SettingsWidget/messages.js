@@ -36,7 +36,7 @@ export const messages = {
   },
   noHintSummary: {
     id: 'authoring.problemeditor.settings.hint.noHintSummary',
-    defaultMessage: 'No Hints',
+    defaultMessage: 'None',
     description: 'Summary text for no hints',
   },
   hintSummary: {
@@ -104,10 +104,35 @@ export const messages = {
     defaultMessage: 'Points',
     description: 'Scoring weight input label',
   },
-  scoringSummary: {
-    id: 'authoring.problemeditor.settings.scoring.summary',
-    defaultMessage: '{attempts, plural, =0 {Unlimited} other {#}} attempts - {weight, plural, =0 {Ungraded} other {# points}}',
-    description: 'Summary text for scoring settings',
+  unlimitedAttemptsSummary: {
+    id: 'authoring.problemeditor.settings.scoring.unlimited',
+    defaultMessage: 'Unlimited attempts',
+    description: 'Summary text for unlimited attempts',
+  },
+  attemptsSummary: {
+    id: 'authoring.problemeditor.settings.scoring.attempts',
+    defaultMessage: '{attempts, plural, =1 {# attempt} other {# attempts}}',
+    description: 'Summary text for number of attempts',
+  },
+  weightSummary: {
+    id: 'authoring.problemeditor.settings.scoring.weight',
+    defaultMessage: '{weight, plural, =0 {Ungraded} other {# points}}',
+    description: 'Summary text for scoring weight',
+  },
+  scoringSettingsLabel: {
+    id: 'authoring.problemeditor.settings.scoring.label',
+    defaultMessage: 'Specify point weight and the number of answer attempts',
+    description: 'Descriptive text for scoring settings',
+  },
+  attemptsHint: {
+    id: 'authoring.problemeditor.settings.scoring.attempts.hint',
+    defaultMessage: 'If a value is not set, unlimited attempts are allowed',
+    description: 'Summary text for scoring weight',
+  },
+  weightHint: {
+    id: 'authoring.problemeditor.settings.scoring.weight.hint',
+    defaultMessage: 'If a value is not set, the problem is worth one point',
+    description: 'Summary text for scoring weight',
   },
   showAnswerSettingsTitle: {
     id: 'authoring.problemeditor.settings.showAnswer.title',

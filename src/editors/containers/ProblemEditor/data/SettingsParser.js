@@ -16,10 +16,7 @@ export const parseScoringSettings = (metadata) => {
 
   let attempts = popuplateItem({}, 'max_attempts', 'number', metadata);
   if (!_.isEmpty(attempts)) {
-    let unlimited = true;
-    if (attempts.number > 0) {
-      unlimited = false;
-    }
+    const unlimited = _.isNaN(attempts.number);
     attempts = { ...attempts, unlimited };
     scoring = { ...scoring, attempts };
   }
