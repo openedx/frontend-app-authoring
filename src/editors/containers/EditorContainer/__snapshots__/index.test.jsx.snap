@@ -38,29 +38,22 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
   <ModalDialog.Header
     className="shadow-sm zindex-10"
   >
-    <ModalDialog.Title>
-      <div
-        style={
-          Object {
-            "height": "44px",
-            "margin": "auto",
-          }
-        }
+    <div
+      className="d-flex flex-row justify-content-between"
+    >
+      <h2
+        className="h3 d-flex flex-row align-items-center"
       >
         <injectIntl(ShimmedIntlComponent)
           isInitialized={true}
         />
-      </div>
-      <div
-        className="pgn__modal-close-container"
-      >
-        <IconButton
-          iconAs="Icon"
-          onClick={[MockFunction openCancelConfirmModal]}
-          src={[MockFunction icons.Close]}
-        />
-      </div>
-    </ModalDialog.Title>
+      </h2>
+      <IconButton
+        iconAs="Icon"
+        onClick={[MockFunction openCancelConfirmModal]}
+        src={[MockFunction icons.Close]}
+      />
+    </div>
   </ModalDialog.Header>
   <ModalDialog.Body
     className="pb-6"
@@ -123,29 +116,22 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
   <ModalDialog.Header
     className="shadow-sm zindex-10"
   >
-    <ModalDialog.Title>
-      <div
-        style={
-          Object {
-            "height": "44px",
-            "margin": "auto",
-          }
-        }
+    <div
+      className="d-flex flex-row justify-content-between"
+    >
+      <h2
+        className="h3 d-flex flex-row align-items-center"
       >
         <injectIntl(ShimmedIntlComponent)
           isInitialized={false}
         />
-      </div>
-      <div
-        className="pgn__modal-close-container"
-      >
-        <IconButton
-          iconAs="Icon"
-          onClick={[MockFunction openCancelConfirmModal]}
-          src={[MockFunction icons.Close]}
-        />
-      </div>
-    </ModalDialog.Title>
+      </h2>
+      <IconButton
+        iconAs="Icon"
+        onClick={[MockFunction openCancelConfirmModal]}
+        src={[MockFunction icons.Close]}
+      />
+    </div>
   </ModalDialog.Header>
   <ModalDialog.Body
     className="pb-6"

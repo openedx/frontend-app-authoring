@@ -1,9 +1,9 @@
 import React from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
-  Col, Container, Form, Icon, IconButton, Row,
+  Form, Icon, IconButton,
 } from '@edx/paragon';
-import { Delete } from '@edx/paragon/icons';
+import { DeleteOutline } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
 import messages from '../messages';
 
@@ -14,29 +14,26 @@ export const HintRow = ({
   // inject
   intl,
 }) => (
-  <Container fluid>
-    <Row>
-      <Col xs={10}>
-        <Form.Group>
-          <Form.Control
-            value={value}
-            onChange={handleChange}
-            floatingLabel={intl.formatMessage(messages.hintInputLabel)}
-          />
-        </Form.Group>
-      </Col>
-
-      <Col xs={2}>
-        <IconButton
-          src={Delete}
-          iconAs={Icon}
-          alt={intl.formatMessage(messages.settingsDeleteIconAltText)}
-          onClick={handleDelete}
-          variant="secondary"
+  <div className="hintRow d-flex flex-row flex-nowrap justify-content-end">
+    <div className="flex-grow-1">
+      <Form.Group>
+        <Form.Control
+          value={value}
+          onChange={handleChange}
+          floatingLabel={intl.formatMessage(messages.hintInputLabel)}
         />
-      </Col>
-    </Row>
-  </Container>
+      </Form.Group>
+    </div>
+    <div>
+      <IconButton
+        src={DeleteOutline}
+        iconAs={Icon}
+        alt={intl.formatMessage(messages.settingsDeleteIconAltText)}
+        onClick={handleDelete}
+        variant="secondary"
+      />
+    </div>
+  </div>
 );
 
 HintRow.propTypes = {

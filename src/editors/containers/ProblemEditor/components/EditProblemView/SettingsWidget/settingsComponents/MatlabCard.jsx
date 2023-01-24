@@ -18,6 +18,7 @@ export const MatlabCard = ({
     <SettingsOption
       title={intl.formatMessage(messages.matlabSettingTitle)}
       summary={summary.intl ? intl.formatMessage(summary.message, { ...summary.values }) : summary.message}
+      none={!matLabApiKey}
     >
       <div className="halfSpacedMessage">
         <span>

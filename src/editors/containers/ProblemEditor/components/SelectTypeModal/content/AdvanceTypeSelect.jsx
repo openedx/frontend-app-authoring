@@ -52,7 +52,7 @@ export const AdvanceTypeSelect = ({
                     placement="right"
                     overlay={(
                       <Tooltip>
-                        <div className="text-gray-300 text-left">
+                        <div className="text-left">
                           {intl.formatMessage(messages.supportStatusTooltipMessage, { supportStatus: data.status.replace(' ', '_') })}
                         </div>
                       </Tooltip>

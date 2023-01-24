@@ -18,6 +18,7 @@ export const ResetCard = ({
       title={intl.formatMessage(messages.resetSettingsTitle)}
       summary={showResetButton
         ? intl.formatMessage(messages.resetSettingsTrue) : intl.formatMessage(messages.resetSettingsFalse)}
+      className="resetCard"
     >
       <div className="halfSpacedMessage">
         <span>
@@ -29,11 +30,11 @@ export const ResetCard = ({
           <FormattedMessage {...messages.advancedSettingsLinkText} />
         </Hyperlink>
       </div>
-      <ButtonGroup size="lg" className="mb-2">
-        <Button variant={showResetButton ? 'outline-primary' : 'primary'} onClick={setResetFalse}>
+      <ButtonGroup size="sm" className="resetSettingsButtons mb-2">
+        <Button variant={showResetButton ? 'outline-primary' : 'primary'} size="sm" onClick={setResetFalse}>
           <FormattedMessage {...messages.resetSettingsFalse} />
         </Button>
-        <Button variant={showResetButton ? 'primary' : 'outline-primary'} onClick={setResetTrue}>
+        <Button variant={showResetButton ? 'primary' : 'outline-primary'} size="sm" onClick={setResetTrue}>
           <FormattedMessage {...messages.resetSettingsTrue} />
         </Button>
       </ButtonGroup>

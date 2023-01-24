@@ -17,7 +17,7 @@ export const QuestionWidget = ({
   if (!refReady) { return null; }
   return (
     <div className="question-widget">
-      <div className="h4">
+      <div className="h4 mb-3">
         <FormattedMessage {...messages.questionWidgetTitle} />
       </div>
       <Editor {

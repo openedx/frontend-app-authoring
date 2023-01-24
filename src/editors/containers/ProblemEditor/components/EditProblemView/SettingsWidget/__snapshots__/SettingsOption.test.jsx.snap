@@ -2,7 +2,7 @@
 
 exports[`SettingsOption render snapshot: renders correct 1`] = `
 <Card
-  className="border border-light-700 shadow-none"
+  className=" settingsOption border border-light-700 shadow-none"
 >
   <Card.Section
     className="settingsCardTitleSection"
@@ -15,7 +15,7 @@ exports[`SettingsOption render snapshot: renders correct 1`] = `
         className="collapsible-trigger d-flex"
       >
         <span
-          className="flex-grow-1"
+          className="flex-grow-1 text-primary-500 x-small"
         >
           Settings Option Title
         </span>
@@ -32,14 +32,18 @@ exports[`SettingsOption render snapshot: renders correct 1`] = `
       </Trigger>
     </Advanced>
   </Card.Section>
-  <Card.Section>
+  <Card.Section
+    className="px-4 pb-4 pt-3"
+  >
     <Advanced
       open={true}
     >
       <Body
         className="collapsible-body"
       >
-        <span>
+        <span
+          className="small text-primary-500"
+        >
           Settings Option Summary
         </span>
       </Body>

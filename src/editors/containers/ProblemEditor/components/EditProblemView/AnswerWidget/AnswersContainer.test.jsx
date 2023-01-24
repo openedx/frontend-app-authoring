@@ -53,7 +53,7 @@ describe('AnswersContainer', () => {
       });
     });
 
-    test('with react-testing-library', async () => {
+    test('useAnswerContainer', async () => {
       let container = null;
       await act(async () => {
         const wrapper = render(

@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
-import { Col, Container, Row } from '@edx/paragon';
 import AnswerWidget from './AnswerWidget';
 import SettingsWidget from './SettingsWidget';
 import QuestionWidget from './QuestionWidget';
@@ -12,6 +11,7 @@ import RawEditor from '../../../../sharedComponents/RawEditor';
 import { ProblemTypeKeys } from '../../../../data/constants/problem';
 
 import { parseState } from './hooks';
+import './index.scss';
 
 export const EditProblemView = ({
   problemType,
@@ -24,23 +24,21 @@ export const EditProblemView = ({
 
   return (
     <EditorContainer getContent={getContent}>
-      <Container fluid className="mt-3 px-4">
-        <Row>
-          <Col xs={9}>
-            {isAdvancedProblemType ? (
-              <RawEditor editorRef={editorRef} lang="xml" content={problemState.rawOLX} />
-            ) : (
-              <>
-                <QuestionWidget />
-                <AnswerWidget problemType={problemType} />
-              </>
-            )}
-          </Col>
-          <Col xs={3}>
-            <SettingsWidget problemType={problemType} />
-          </Col>
-        </Row>
-      </Container>
+      <div className="editProblemView d-flex flex-row flex-nowrap justify-content-end">
+        <span className="flex-grow-1">
+          {isAdvancedProblemType ? (
+            <RawEditor editorRef={editorRef} lang="xml" content={problemState.rawOLX} />
+          ) : (
+            <>
+              <QuestionWidget />
+              <AnswerWidget problemType={problemType} />
+            </>
+          )}
+        </span>
+        <span className="editProblemView-settingsColumn">
+          <SettingsWidget problemType={problemType} />
+        </span>
+      </div>
     </EditorContainer>
   );
 };

@@ -12,18 +12,17 @@ exports[`TitleHeader snapshots editing 1`] = `
 
 exports[`TitleHeader snapshots initialized 1`] = `
 <div
-  className="d-flex"
+  className="d-flex flex-row align-items-center"
 >
   <Truncate>
     TeST LocALtitLE
   </Truncate>
   <IconButton
     alt="Edit Title"
-    className="mr-2"
+    className="mx-2"
     iconAs="Icon"
     onClick={[MockFunction localTitleHooks.startEditing]}
     size="sm"
-    src={[MockFunction icons.Edit]}
   />
 </div>
 `;

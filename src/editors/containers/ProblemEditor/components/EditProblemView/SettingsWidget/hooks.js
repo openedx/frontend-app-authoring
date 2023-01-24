@@ -172,7 +172,6 @@ export const showAnswerCardHooks = (showAnswer, updateSettings) => {
 };
 
 export const timerCardHooks = (updateSettings) => ({
-
   handleChange: (event) => {
     let time = parseInt(event.target.value);
     if (_.isNaN(time)) {

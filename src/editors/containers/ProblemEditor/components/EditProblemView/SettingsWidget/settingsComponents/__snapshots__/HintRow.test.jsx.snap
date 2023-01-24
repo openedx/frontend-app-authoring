@@ -1,31 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`HintRow snapshot snapshot: renders hints row 1`] = `
-<Container
-  fluid={true}
+<div
+  className="hintRow d-flex flex-row flex-nowrap justify-content-end"
 >
-  <Row>
-    <Col
-      xs={10}
-    >
-      <Form.Group>
-        <Form.Control
-          floatingLabel="Hint"
-          onChange={[MockFunction]}
-          value="hint_1"
-        />
-      </Form.Group>
-    </Col>
-    <Col
-      xs={2}
-    >
-      <IconButton
-        alt="Delete answer"
-        iconAs="Icon"
-        onClick={[MockFunction]}
-        variant="secondary"
+  <div
+    className="flex-grow-1"
+  >
+    <Form.Group>
+      <Form.Control
+        floatingLabel="Hint"
+        onChange={[MockFunction]}
+        value="hint_1"
       />
-    </Col>
-  </Row>
-</Container>
+    </Form.Group>
+  </div>
+  <div>
+    <IconButton
+      alt="Delete answer"
+      iconAs="Icon"
+      onClick={[MockFunction]}
+      variant="secondary"
+    />
+  </div>
+</div>
 `;

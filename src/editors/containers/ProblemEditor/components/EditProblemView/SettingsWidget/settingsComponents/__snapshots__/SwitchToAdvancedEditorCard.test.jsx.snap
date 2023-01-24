@@ -8,7 +8,10 @@ exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCar
     close={[Function]}
     confirmAction={
       <Button
+        className={null}
         onClick={[Function]}
+        text={null}
+        variant="default"
       >
         <FormattedMessage
           defaultMessage="Switch To Advanced Editor"
@@ -35,9 +38,10 @@ exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCar
     />
   </BaseModal>
   <Button
-    className="my-3 ml-2"
+    className="my-3 ml-2 py-0"
     onClick={[Function]}
-    size="inline"
+    size="sm"
+    text={null}
     variant="link"
   >
     <FormattedMessage

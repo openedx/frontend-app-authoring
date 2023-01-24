@@ -1,8 +1,10 @@
 import React from 'react';
-import { Container, Icon } from '@edx/paragon';
+import { Icon } from '@edx/paragon';
 import PropTypes from 'prop-types';
 import { Check } from '@edx/paragon/icons';
 import { typeRowHooks } from '../hooks';
+
+import Button from '../../../../../../sharedComponents/Button';
 
 export const TypeRow = ({
   answers,
@@ -24,10 +26,10 @@ export const TypeRow = ({
 
   return (
     <>
-      <Container size="xl" onClick={onClick} role="button" className="d-flex" fluid>
-        <span className="flex-grow-1">{label}</span>
+      <Button onClick={onClick} className="d-flex p-0 flex-row justify-content-between w-100">
+        <span className="small text-primary-500">{label}</span>
         <span hidden={selected}><Icon src={Check} className="text-success" /></span>
-      </Container>
+      </Button>
       <hr className={lastRow ? 'd-none' : 'd-block'} />
     </>
   );

@@ -7,7 +7,7 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
   open={false}
 >
   <div
-    className="answer-option-flex-item-1 mr-1 d-flex"
+    className="mr-1 d-flex"
   >
     <Checker
       answer={
@@ -23,7 +23,7 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
     />
   </div>
   <div
-    className="answer-option-flex-item-2 ml-1"
+    className="ml-1 flex-grow-1"
   >
     <Form.Control
       as="textarea"
@@ -55,7 +55,7 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
     </Body>
   </div>
   <div
-    className="answer-option-flex-item-3 d-flex flex-row flex-nowrap"
+    className="d-flex flex-row flex-nowrap"
   >
     <Trigger>
       <IconButton
@@ -81,7 +81,7 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
   open={false}
 >
   <div
-    className="answer-option-flex-item-1 mr-1 d-flex"
+    className="mr-1 d-flex"
   >
     <Checker
       answer={
@@ -98,7 +98,7 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
     />
   </div>
   <div
-    className="answer-option-flex-item-2 ml-1"
+    className="ml-1 flex-grow-1"
   >
     <Form.Control
       as="textarea"
@@ -131,7 +131,7 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
     </Body>
   </div>
   <div
-    className="answer-option-flex-item-3 d-flex flex-row flex-nowrap"
+    className="d-flex flex-row flex-nowrap"
   >
     <Trigger>
       <IconButton

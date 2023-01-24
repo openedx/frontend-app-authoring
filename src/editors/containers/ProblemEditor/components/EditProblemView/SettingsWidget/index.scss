@@ -9,3 +9,19 @@
 .spacedMessage {
     padding-bottom: 1.5rem;
 }
+
+.settingsWidget {
+    margin-top: 40px;
+}
+
+.resetCard {
+    .resetSettingsButtons {
+        width: 100%;
+    }
+}
+
+.hintRow {
+    .flex-grow-1 {
+        flex-grow: 1;
+    }
+}

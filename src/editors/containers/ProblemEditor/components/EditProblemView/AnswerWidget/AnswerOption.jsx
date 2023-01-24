@@ -36,14 +36,14 @@ export const AnswerOption = ({
       onToggle={toggleFeedback}
       className="answer-option d-flex flex-row justify-content-between flex-nowrap pb-2 pt-2"
     >
-      <div className="answer-option-flex-item-1 mr-1 d-flex">
+      <div className="mr-1 d-flex">
         <Checker
           hasSingleAnswer={hasSingleAnswer}
           answer={answer}
           setAnswer={setAnswer}
         />
       </div>
-      <div className="answer-option-flex-item-2 ml-1">
+      <div className="ml-1 flex-grow-1">
         <Form.Control
           as="textarea"
           className="answer-option-textarea text-gray-500 small"
@@ -62,7 +62,7 @@ export const AnswerOption = ({
           />
         </Collapsible.Body>
       </div>
-      <div className="answer-option-flex-item-3 d-flex flex-row flex-nowrap">
+      <div className="d-flex flex-row flex-nowrap">
         <Collapsible.Trigger>
           <IconButton
             src={FeedbackOutline}

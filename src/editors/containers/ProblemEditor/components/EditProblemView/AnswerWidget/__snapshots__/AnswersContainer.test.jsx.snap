@@ -2,12 +2,13 @@
 
 exports[`AnswersContainer render snapshot: renders correct default 1`] = `
 <div
-  className="border border-light-700 rounded py-4 pl-4 pr-3"
+  className="answers-container border border-light-700 rounded py-4 pl-4 pr-3"
 >
   <Button
-    className="pl-0 text-primary-500"
+    className={null}
     onClick={[MockFunction]}
-    variant="tertiary"
+    text={null}
+    variant="add"
   >
     <FormattedMessage
       defaultMessage="Add answer"
@@ -20,7 +21,7 @@ exports[`AnswersContainer render snapshot: renders correct default 1`] = `
 
 exports[`AnswersContainer render snapshot: renders correctly with answers 1`] = `
 <div
-  className="border border-light-700 rounded py-4 pl-4 pr-3"
+  className="answers-container border border-light-700 rounded py-4 pl-4 pr-3"
 >
   <Component
     answer={
@@ -45,9 +46,10 @@ exports[`AnswersContainer render snapshot: renders correctly with answers 1`] = 
     key="b"
   />
   <Button
-    className="pl-0 text-primary-500"
+    className={null}
     onClick={[MockFunction]}
-    variant="tertiary"
+    text={null}
+    variant="add"
   >
     <FormattedMessage
       defaultMessage="Add answer"

@@ -2,15 +2,14 @@
 
 exports[`TypeRow snapshot snapshot: renders type row setting card 1`] = `
 <Fragment>
-  <Container
-    className="d-flex"
-    fluid={true}
+  <Button
+    className="d-flex p-0 flex-row justify-content-between w-100"
     onClick={[MockFunction typeRowHooks.onClick]}
-    role="button"
-    size="xl"
+    text={null}
+    variant="default"
   >
     <span
-      className="flex-grow-1"
+      className="small text-primary-500"
     >
       Text Input Problem
     </span>
@@ -21,7 +20,7 @@ exports[`TypeRow snapshot snapshot: renders type row setting card 1`] = `
         className="text-success"
       />
     </span>
-  </Container>
+  </Button>
   <hr
     className="d-block"
   />
@@ -30,15 +29,14 @@ exports[`TypeRow snapshot snapshot: renders type row setting card 1`] = `
 
 exports[`TypeRow snapshot snapshot: renders type row setting card last row 1`] = `
 <Fragment>
-  <Container
-    className="d-flex"
-    fluid={true}
+  <Button
+    className="d-flex p-0 flex-row justify-content-between w-100"
     onClick={[MockFunction typeRowHooks.onClick]}
-    role="button"
-    size="xl"
+    text={null}
+    variant="default"
   >
     <span
-      className="flex-grow-1"
+      className="small text-primary-500"
     >
       Text Input Problem
     </span>
@@ -49,7 +47,7 @@ exports[`TypeRow snapshot snapshot: renders type row setting card last row 1`] =
         className="text-success"
       />
     </span>
-  </Container>
+  </Button>
   <hr
     className="d-none"
   />
@@ -58,15 +56,14 @@ exports[`TypeRow snapshot snapshot: renders type row setting card last row 1`] =
 
 exports[`TypeRow snapshot snapshot: renders type row setting card not selected 1`] = `
 <Fragment>
-  <Container
-    className="d-flex"
-    fluid={true}
+  <Button
+    className="d-flex p-0 flex-row justify-content-between w-100"
     onClick={[MockFunction typeRowHooks.onClick]}
-    role="button"
-    size="xl"
+    text={null}
+    variant="default"
   >
     <span
-      className="flex-grow-1"
+      className="small text-primary-500"
     >
       Text Input Problem
     </span>
@@ -77,7 +74,7 @@ exports[`TypeRow snapshot snapshot: renders type row setting card not selected 1
         className="text-success"
       />
     </span>
-  </Container>
+  </Button>
   <hr
     className="d-block"
   />
