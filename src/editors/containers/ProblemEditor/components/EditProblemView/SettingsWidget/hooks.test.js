@@ -94,10 +94,9 @@ describe('Problem settings hooks', () => {
       expect(updateSettings).toHaveBeenCalledWith({ hints: [hint1, hint2] });
     });
   });
-
   describe('Hint rows hooks', () => {
     const hint1 = { id: 1, value: 'hint1' };
-    const hint2 = { id: 2, value: 'hint2' };
+    const hint2 = { id: 2, value: '' };
     const value = 'modifiedHint';
     const modifiedHint = { id: 2, value };
     const hints = [hint1, hint2];
@@ -110,6 +109,10 @@ describe('Problem settings hooks', () => {
     });
     test('test handleDelete', () => {
       output.handleDelete();
+      expect(updateSettings).toHaveBeenCalledWith({ hints: [hint1] });
+    });
+    test('test handleEmptyHint', () => {
+      output.handleEmptyHint({ target: { value: '' } });
       expect(updateSettings).toHaveBeenCalledWith({ hints: [hint1] });
     });
   });

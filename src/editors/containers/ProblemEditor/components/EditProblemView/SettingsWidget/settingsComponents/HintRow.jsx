@@ -1,7 +1,7 @@
 import React from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
-  Form, Icon, IconButton,
+  ActionRow, Form, Icon, IconButton,
 } from '@edx/paragon';
 import { DeleteOutline } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
@@ -11,35 +11,33 @@ export const HintRow = ({
   value,
   handleChange,
   handleDelete,
-  // inject
+  handleEmptyHint,
+  // injected
   intl,
 }) => (
-  <div className="hintRow d-flex flex-row flex-nowrap justify-content-end">
-    <div className="flex-grow-1">
-      <Form.Group>
-        <Form.Control
-          value={value}
-          onChange={handleChange}
-          floatingLabel={intl.formatMessage(messages.hintInputLabel)}
-        />
-      </Form.Group>
-    </div>
-    <div>
-      <IconButton
-        src={DeleteOutline}
-        iconAs={Icon}
-        alt={intl.formatMessage(messages.settingsDeleteIconAltText)}
-        onClick={handleDelete}
-        variant="secondary"
-      />
-    </div>
-  </div>
+  <ActionRow className="mb-4">
+    <Form.Control
+      value={value}
+      onChange={handleChange}
+      onBlur={handleEmptyHint}
+      floatingLabel={intl.formatMessage(messages.hintInputLabel)}
+    />
+    <ActionRow.Spacer />
+    <IconButton
+      src={DeleteOutline}
+      iconAs={Icon}
+      alt={intl.formatMessage(messages.settingsDeleteIconAltText)}
+      onClick={handleDelete}
+    />
+  </ActionRow>
 );
 
 HintRow.propTypes = {
   value: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
+  handleEmptyHint: PropTypes.func.isRequired,
+  // injected
   intl: intlShape.isRequired,
 };
 
