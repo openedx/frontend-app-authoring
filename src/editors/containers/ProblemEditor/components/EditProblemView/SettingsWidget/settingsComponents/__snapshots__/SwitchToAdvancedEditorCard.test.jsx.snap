@@ -8,7 +8,7 @@ exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCar
     close={[Function]}
     confirmAction={
       <Button
-        onClick={[MockFunction switchToAdvancedEditor]}
+        onClick={[Function]}
       >
         <FormattedMessage
           defaultMessage="Switch To Advanced Editor"

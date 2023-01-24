@@ -203,3 +203,15 @@ export const typeRowHooks = ({
     onClick,
   };
 };
+
+export const confirmSwitchToAdvancedEditor = ({
+  switchToAdvancedEditor,
+  setConfirmOpen,
+}) => {
+  switchToAdvancedEditor();
+  setConfirmOpen(false);
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  });
+};

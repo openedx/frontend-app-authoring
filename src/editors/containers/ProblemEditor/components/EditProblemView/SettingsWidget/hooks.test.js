@@ -266,4 +266,18 @@ describe('Problem settings hooks', () => {
       expect(updateField).toHaveBeenCalledWith({ problemType: typekey });
     });
   });
+  describe('Type row hooks', () => {
+    test('test onClick', () => {
+      const switchToAdvancedEditor = jest.fn();
+      const setConfirmOpen = jest.fn();
+      window.scrollTo = jest.fn();
+      hooks.confirmSwitchToAdvancedEditor({
+        switchToAdvancedEditor,
+        setConfirmOpen,
+      });
+      expect(switchToAdvancedEditor).toHaveBeenCalled();
+      expect(setConfirmOpen).toHaveBeenCalledWith(false);
+      expect(window.scrollTo).toHaveBeenCalled();
+    });
+  });
 });
