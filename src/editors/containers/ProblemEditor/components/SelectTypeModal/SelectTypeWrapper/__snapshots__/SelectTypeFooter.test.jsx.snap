@@ -2,12 +2,7 @@
 
 exports[`SelectTypeFooter snapshot 1`] = `
 <div
-  className="editor-footer position-sticky"
-  style={
-    Object {
-      "bottom": 0,
-    }
-  }
+  className="editor-footer fixed-bottom"
 >
   <ModalDialog.Footer
     className="border-top-0"

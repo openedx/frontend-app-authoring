@@ -29,7 +29,7 @@ export const HintsCard = ({
         />
       ))}
       <Button
-        className="my-3 ml-2"
+        className="pl-0 text-primary-500"
         iconBefore={Add}
         variant="tertiary"
         onClick={handleAdd}

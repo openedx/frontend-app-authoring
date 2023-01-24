@@ -17,12 +17,12 @@ export const SelectTypeFooter = ({
   onCancel,
   selected,
   // redux
-  setProblemType,
   updateField,
+  setBlockTitle,
   // injected,
   intl,
 }) => (
-  <div className="editor-footer position-sticky" style={{ bottom: 0 }}>
+  <div className="editor-footer fixed-bottom">
     <ModalDialog.Footer className="border-top-0">
       <ActionRow>
         <ActionRow.Spacer />
@@ -35,7 +35,7 @@ export const SelectTypeFooter = ({
         </Button>
         <Button
           aria-label={intl.formatMessage(messages.selectButtonAriaLabel)}
-          onClick={hooks.onSelect(setProblemType, selected, updateField)}
+          onClick={hooks.onSelect({ selected, updateField, setBlockTitle })}
           disabled={!selected}
         >
           <FormattedMessage {...messages.selectButtonLabel} />
@@ -52,8 +52,8 @@ SelectTypeFooter.defaultProps = {
 SelectTypeFooter.propTypes = {
   onCancel: PropTypes.func.isRequired,
   selected: PropTypes.string,
-  setProblemType: PropTypes.func.isRequired,
   updateField: PropTypes.func.isRequired,
+  setBlockTitle: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
 };
@@ -62,8 +62,8 @@ export const mapStateToProps = () => ({
 });
 
 export const mapDispatchToProps = {
-  setProblemType: actions.problem.setProblemType,
   updateField: actions.problem.updateField,
+  setBlockTitle: actions.app.setBlockTitle,
 };
 
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SelectTypeFooter));

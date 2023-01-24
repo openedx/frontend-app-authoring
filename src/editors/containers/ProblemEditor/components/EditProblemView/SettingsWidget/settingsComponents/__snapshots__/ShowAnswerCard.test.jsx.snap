@@ -20,7 +20,7 @@ exports[`ShowAnswerCard snapshot snapshot: show answer setting card 1`] = `
     className="spacedMessage"
   >
     <Hyperlink
-      destination="#"
+      destination="SoMEeNDpOinT/settings/advanced/sOMEcouRseId"
       target="_blank"
     >
       <FormattedMessage

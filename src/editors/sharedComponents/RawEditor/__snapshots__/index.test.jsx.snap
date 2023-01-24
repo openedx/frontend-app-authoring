@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RawEditor renders as expected with default behavior 1`] = `
+<div>
+  <Alert
+    variant="danger"
+  >
+    You are using the raw 
+    html
+     editor.
+  </Alert>
+  <injectIntl(ShimmedIntlComponent)
+    innerRef={
+      Object {
+        "current": Object {
+          "value": "Ref Value",
+        },
+      }
+    }
+    lang="html"
+    value="eDiTablE Text"
+  />
+</div>
+`;

@@ -2,56 +2,20 @@ import React, { memo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
-  Col, Collapsible, Icon, IconButton, Form, Row,
+  Collapsible,
+  Icon,
+  IconButton,
+  Form,
 } from '@edx/paragon';
-import { AddComment, Delete } from '@edx/paragon/icons';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FeedbackOutline, DeleteOutline } from '@edx/paragon/icons';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 import { selectors } from '../../../../../data/redux';
 import { answerOptionProps } from '../../../../../data/services/cms/types';
-import { ProblemTypeKeys } from '../../../../../data/constants/problem';
+import Checker from './components/Checker';
+import { FeedbackBox } from './components/Feedback';
 import * as hooks from './hooks';
-
-const Checker = ({
-  hasSingleAnswer, answer, setAnswer,
-}) => {
-  let CheckerType = Form.Checkbox;
-  if (hasSingleAnswer) {
-    CheckerType = Form.Radio;
-  }
-  return (
-    <CheckerType
-      className="pl-4 mt-3"
-      value={answer.id}
-      onChange={(e) => setAnswer({ correct: e.target.checked })}
-      checked={answer.correct}
-    >
-      {answer.id}
-    </CheckerType>
-  );
-};
-
-const FeedbackControl = ({
-  feedback, onChange, labelMessage, labelMessageBoldUnderline, key, answer, intl,
-}) => (
-  <Form.Group key={key}>
-    <Form.Label className="mb-3">
-      <FormattedMessage
-        {...labelMessage}
-        values={{
-          answerId: answer.id,
-          boldunderline: <b><u><FormattedMessage {...labelMessageBoldUnderline} /></u></b>,
-        }}
-      />
-    </Form.Label>
-    <Form.Control
-      placeholder={intl.formatMessage(messages.feedbackPlaceholder)}
-      value={feedback}
-      onChange={onChange}
-    />
-  </Form.Group>
-);
 
 export const AnswerOption = ({
   answer,
@@ -66,91 +30,55 @@ export const AnswerOption = ({
   const setAnswer = hooks.setAnswer({ answer, hasSingleAnswer, dispatch });
   const { isFeedbackVisible, toggleFeedback } = hooks.prepareFeedback(answer);
 
-  const displayFeedbackControl = (answerObject) => {
-    if (problemType !== ProblemTypeKeys.MULTISELECT) {
-      return FeedbackControl({
-        key: `feedback-${answerObject.id}`,
-        feedback: answerObject.feedback,
-        onChange: (e) => setAnswer({ feedback: e.target.value }),
-        labelMessage: messages.selectedFeedbackLabel,
-        labelMessageBoldUnderline: messages.selectedFeedbackLabelBoldUnderlineText,
-        answer: answerObject,
-        intl,
-      });
-    }
-    return [
-      FeedbackControl({
-        key: `selectedfeedback-${answerObject.id}`,
-        feedback: answerObject.selectedFeedback,
-        onChange: (e) => setAnswer({ selectedFeedback: e.target.value }),
-        labelMessage: messages.selectedFeedbackLabel,
-        labelMessageBoldUnderline: messages.selectedFeedbackLabelBoldUnderlineText,
-        answer: answerObject,
-        intl,
-      }),
-      FeedbackControl({
-        key: `unselectedfeedback-${answerObject.id}`,
-        feedback: answerObject.unselectedFeedback,
-        onChange: (e) => setAnswer({ unselectedFeedback: e.target.value }),
-        labelMessage: messages.unSelectedFeedbackLabel,
-        labelMessageBoldUnderline: messages.unSelectedFeedbackLabelBoldUnderlineText,
-        answer: answerObject,
-        intl,
-      }),
-    ];
-  };
-
   return (
     <Collapsible.Advanced
       open={isFeedbackVisible}
       onToggle={toggleFeedback}
-      className="collapsible-card"
+      className="answer-option d-flex flex-row justify-content-between flex-nowrap pb-2 pt-2"
     >
-      <Row className="my-2">
-
-        <Col xs={1}>
-          <Checker
-            hasSingleAnswer={hasSingleAnswer}
+      <div className="answer-option-flex-item-1 mr-1 d-flex">
+        <Checker
+          hasSingleAnswer={hasSingleAnswer}
+          answer={answer}
+          setAnswer={setAnswer}
+        />
+      </div>
+      <div className="answer-option-flex-item-2 ml-1">
+        <Form.Control
+          as="textarea"
+          className="answer-option-textarea text-gray-500 small"
+          autoResize
+          rows={1}
+          value={answer.title}
+          onChange={(e) => { setAnswer({ title: e.target.value }); }}
+          placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
+        />
+        <Collapsible.Body>
+          <FeedbackBox
+            problemType={problemType}
             answer={answer}
             setAnswer={setAnswer}
+            intl={intl}
           />
-        </Col>
-
-        <Col xs={10}>
-          <Form.Control
-            as="textarea"
-            rows={1}
-            value={answer.title}
-            onChange={(e) => { setAnswer({ title: e.target.value }); }}
-            placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
-          />
-
-          <Collapsible.Body>
-            <div className="bg-dark-100 p-4 mt-3">
-              {displayFeedbackControl(answer)}
-            </div>
-          </Collapsible.Body>
-        </Col>
-
-        <Col xs={1} className="d-inline-flex mt-1">
-          <Collapsible.Trigger>
-            <IconButton
-              src={AddComment}
-              iconAs={Icon}
-              alt={intl.formatMessage(messages.feedbackToggleIconAltText)}
-              variant="primary"
-            />
-          </Collapsible.Trigger>
+        </Collapsible.Body>
+      </div>
+      <div className="answer-option-flex-item-3 d-flex flex-row flex-nowrap">
+        <Collapsible.Trigger>
           <IconButton
-            src={Delete}
+            src={FeedbackOutline}
             iconAs={Icon}
-            alt={intl.formatMessage(messages.answerDeleteIconAltText)}
-            onClick={removeAnswer}
+            alt={intl.formatMessage(messages.feedbackToggleIconAltText)}
             variant="primary"
           />
-        </Col>
-
-      </Row>
+        </Collapsible.Trigger>
+        <IconButton
+          src={DeleteOutline}
+          iconAs={Icon}
+          alt={intl.formatMessage(messages.answerDeleteIconAltText)}
+          onClick={removeAnswer}
+          variant="primary"
+        />
+      </div>
     </Collapsible.Advanced>
   );
 };
@@ -162,22 +90,6 @@ AnswerOption.propTypes = {
   intl: intlShape.isRequired,
   // redux
   problemType: PropTypes.string.isRequired,
-};
-
-FeedbackControl.propTypes = {
-  feedback: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  labelMessage: PropTypes.string.isRequired,
-  labelMessageBoldUnderline: PropTypes.string.isRequired,
-  key: PropTypes.string.isRequired,
-  answer: answerOptionProps.isRequired,
-  intl: intlShape.isRequired,
-};
-
-Checker.propTypes = {
-  hasSingleAnswer: PropTypes.bool.isRequired,
-  answer: answerOptionProps.isRequired,
-  setAnswer: PropTypes.func.isRequired,
 };
 
 export const mapStateToProps = (state) => ({

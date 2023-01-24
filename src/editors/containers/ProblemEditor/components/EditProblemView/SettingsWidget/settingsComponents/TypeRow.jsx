@@ -5,13 +5,22 @@ import { Check } from '@edx/paragon/icons';
 import { typeRowHooks } from '../hooks';
 
 export const TypeRow = ({
+  answers,
+  correctAnswerCount,
   typeKey,
   label,
   selected,
   lastRow,
   updateField,
+  updateAnswer,
 }) => {
-  const { onClick } = typeRowHooks(typeKey, updateField);
+  const { onClick } = typeRowHooks({
+    answers,
+    correctAnswerCount,
+    typeKey,
+    updateField,
+    updateAnswer,
+  });
 
   return (
     <>
@@ -25,10 +34,19 @@ export const TypeRow = ({
 };
 
 TypeRow.propTypes = {
+  answers: PropTypes.arrayOf(PropTypes.shape({
+    correct: PropTypes.bool,
+    id: PropTypes.string,
+    selectedFeedback: PropTypes.string,
+    title: PropTypes.string,
+    unselectedFeedback: PropTypes.string,
+  })).isRequired,
+  correctAnswerCount: PropTypes.number.isRequired,
   typeKey: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   selected: PropTypes.bool.isRequired,
   lastRow: PropTypes.bool.isRequired,
+  updateAnswer: PropTypes.func.isRequired,
   updateField: PropTypes.func.isRequired,
 };
 

@@ -12,7 +12,7 @@ export const SettingsOption = ({
   const { isCardCollapsed, toggleCardCollapse } = showFullCard();
 
   return (
-    <Card>
+    <Card className="border border-light-700 shadow-none">
       <Card.Section className="settingsCardTitleSection">
         <Collapsible.Advanced
           open={isCardCollapsed}

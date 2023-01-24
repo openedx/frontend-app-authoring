@@ -3,7 +3,7 @@ import * as urls from './urls';
 import { get, post, deleteObject } from './utils';
 import * as module from './api';
 import * as mockApi from './mockApi';
-import { durationFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/duration';
+import { durationStringFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
 
 export const apiMethods = {
   fetchBlockById: ({ blockId, studioEndpointUrl }) => get(
@@ -157,7 +157,7 @@ export const apiMethods = {
         youtubeId,
       } = module.processVideoIds({
         videoId: content.videoId,
-        videoSource: content.videoSource,
+        videoUrl: content.videoSource,
         fallbackVideos: content.fallbackVideos,
       });
       response = {
@@ -176,8 +176,8 @@ export const apiMethods = {
           track: '', // TODO Downloadable Transcript URL. Backend expects a file name, for example: "something.srt"
           show_captions: content.showTranscriptByDefault,
           handout: content.handout,
-          start_time: durationFromValue(content.duration.startTime),
-          end_time: durationFromValue(content.duration.stopTime),
+          start_time: durationStringFromValue(content.duration.startTime),
+          end_time: durationStringFromValue(content.duration.stopTime),
           license: module.processLicense(content.licenseType, content.licenseDetails),
         },
       };
@@ -217,21 +217,18 @@ export const loadImages = (rawImages) => camelizeKeys(rawImages).reduce(
 
 export const processVideoIds = ({
   videoId,
-  videoSource,
+  videoUrl,
   fallbackVideos,
-  edxVideoId,
 }) => {
-  let newEdxVideoId = edxVideoId;
   let youtubeId = '';
   const html5Sources = [];
 
-  // overwrite videoId if source is changed.
-  if (module.isEdxVideo(videoId)) {
-    newEdxVideoId = videoId;
-  } else if (module.parseYoutubeId(videoSource)) {
-    youtubeId = module.parseYoutubeId(videoSource);
-  } else if (videoSource) {
-    html5Sources.push(videoSource);
+  if (videoUrl) {
+    if (module.parseYoutubeId(videoUrl)) {
+      youtubeId = module.parseYoutubeId(videoUrl);
+    } else {
+      html5Sources.push(videoUrl);
+    }
   }
 
   if (fallbackVideos) {
@@ -239,7 +236,7 @@ export const processVideoIds = ({
   }
 
   return {
-    edxVideoId: newEdxVideoId,
+    edxVideoId: videoId,
     html5Sources,
     youtubeId,
   };

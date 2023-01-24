@@ -36,7 +36,7 @@ export const messages = {
   },
   noHintSummary: {
     id: 'authoring.problemeditor.settings.hint.noHintSummary',
-    defaultMessage: 'No Hints',
+    defaultMessage: 'None',
     description: 'Summary text for no hints',
   },
   hintSummary: {
@@ -104,10 +104,35 @@ export const messages = {
     defaultMessage: 'Points',
     description: 'Scoring weight input label',
   },
-  scoringSummary: {
-    id: 'authoring.problemeditor.settings.scoring.summary',
-    defaultMessage: '{attempts, plural, =0 {Unlimited} other {#}} attempts - {weight, plural, =0 {Ungraded} other {# points}}',
-    description: 'Summary text for scoring settings',
+  unlimitedAttemptsSummary: {
+    id: 'authoring.problemeditor.settings.scoring.unlimited',
+    defaultMessage: 'Unlimited attempts',
+    description: 'Summary text for unlimited attempts',
+  },
+  attemptsSummary: {
+    id: 'authoring.problemeditor.settings.scoring.attempts',
+    defaultMessage: '{attempts, plural, =1 {# attempt} other {# attempts}}',
+    description: 'Summary text for number of attempts',
+  },
+  weightSummary: {
+    id: 'authoring.problemeditor.settings.scoring.weight',
+    defaultMessage: '{weight, plural, =0 {Ungraded} other {# points}}',
+    description: 'Summary text for scoring weight',
+  },
+  scoringSettingsLabel: {
+    id: 'authoring.problemeditor.settings.scoring.label',
+    defaultMessage: 'Specify point weight and the number of answer attempts',
+    description: 'Descriptive text for scoring settings',
+  },
+  attemptsHint: {
+    id: 'authoring.problemeditor.settings.scoring.attempts.hint',
+    defaultMessage: 'If a value is not set, unlimited attempts are allowed',
+    description: 'Summary text for scoring weight',
+  },
+  weightHint: {
+    id: 'authoring.problemeditor.settings.scoring.weight.hint',
+    defaultMessage: 'If a value is not set, the problem is worth one point',
+    description: 'Summary text for scoring weight',
   },
   showAnswerSettingsTitle: {
     id: 'authoring.problemeditor.settings.showAnswer.title',
@@ -148,6 +173,26 @@ export const messages = {
     id: 'authoring.problemeditor.settings.type.title',
     defaultMessage: 'Type',
     description: 'Type settings card title',
+  },
+  SwitchButtonLabel: {
+    id: 'authoring.problemeditor.settings.switchtoadvancededitor.label',
+    defaultMessage: 'Switch To Advanced Editor',
+    description: 'button to switch to the advanced mode of the editor.',
+  },
+  ConfirmSwitchMessage: {
+    id: 'authoring.problemeditor.settings.switchtoadvancededitor.message',
+    defaultMessage: 'If you use the advanced editor, this problem will be converted to OLX and you will not be able to return to the simple editor.',
+    description: 'message to confirm that a user wants to use the advanced editor',
+  },
+  ConfirmSwitchMessageTitle: {
+    id: 'authoring.problemeditor.settings.switchtoadvancededitor.message',
+    defaultMessage: 'Convert to OLX?',
+    description: 'message to confirm that a user wants to use the advanced editor',
+  },
+  ConfirmSwitchButtonLabel: {
+    id: 'authoring.problemeditor.settings.switchtoadvancededitor.message',
+    defaultMessage: 'Switch To Advanced Editor',
+    description: 'message to confirm that a user wants to use the advanced editor',
   },
 };
 

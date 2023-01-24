@@ -1,11 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with default props 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -39,7 +41,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with default
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advance problem
+          Blank advanced problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -80,7 +82,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with default
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -133,50 +137,10 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with default
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
-          </div>
-        </OverlayTrigger>
-      </ActionRow>
-      <ActionRow
-        className="border-primary-100 border-bottom m-0 py-3 w-100"
-      >
-        <Radio
-          id="draganddrop"
-          value="draganddrop"
-        >
-          Drag and drop (deprecated version)
-        </Radio>
-        <ActionRow.Spacer />
-        <OverlayTrigger
-          overlay={
-            <Tooltip>
-              <div
-                className="text-gray-300 text-left"
-              >
-                {supportStatus,  select,
-      Provisional {Provisionally supported tools might lack the robustness of functionality
-        that your courses require. edX does not have control over the quality of the software,
-        or of the content that can be provided using these tools.
-        
- 
-
-        Test these tools thoroughly before using them in your course, especially in graded
-        sections. Complete documentstion might not be available for provisionally supported
-        tools, or documentation might be available from sources other than edX.}
-      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
-        in the future. They are not recommened for use in courses due to non-compliance with one
-        or more of the base requirements, such as testing, accessibility, internationalization,
-        and documentation.}
-      other { } 
-    }
-              </div>
-            </Tooltip>
-          }
-          placement="right"
-        >
-          <div>
-            Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
@@ -217,7 +181,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with default
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -270,22 +236,36 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with default
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is circuitschematic 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -319,7 +299,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advance problem
+          Blank advanced problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -360,7 +340,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -413,50 +395,10 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
-          </div>
-        </OverlayTrigger>
-      </ActionRow>
-      <ActionRow
-        className="border-primary-100 border-bottom m-0 py-3 w-100"
-      >
-        <Radio
-          id="draganddrop"
-          value="draganddrop"
-        >
-          Drag and drop (deprecated version)
-        </Radio>
-        <ActionRow.Spacer />
-        <OverlayTrigger
-          overlay={
-            <Tooltip>
-              <div
-                className="text-gray-300 text-left"
-              >
-                {supportStatus,  select,
-      Provisional {Provisionally supported tools might lack the robustness of functionality
-        that your courses require. edX does not have control over the quality of the software,
-        or of the content that can be provided using these tools.
-        
- 
-
-        Test these tools thoroughly before using them in your course, especially in graded
-        sections. Complete documentstion might not be available for provisionally supported
-        tools, or documentation might be available from sources other than edX.}
-      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
-        in the future. They are not recommened for use in courses due to non-compliance with one
-        or more of the base requirements, such as testing, accessibility, internationalization,
-        and documentation.}
-      other { } 
-    }
-              </div>
-            </Tooltip>
-          }
-          placement="right"
-        >
-          <div>
-            Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
@@ -497,7 +439,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -550,22 +494,36 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is customgrader 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -599,7 +557,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advance problem
+          Blank advanced problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -640,7 +598,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -693,50 +653,10 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
-          </div>
-        </OverlayTrigger>
-      </ActionRow>
-      <ActionRow
-        className="border-primary-100 border-bottom m-0 py-3 w-100"
-      >
-        <Radio
-          id="draganddrop"
-          value="draganddrop"
-        >
-          Drag and drop (deprecated version)
-        </Radio>
-        <ActionRow.Spacer />
-        <OverlayTrigger
-          overlay={
-            <Tooltip>
-              <div
-                className="text-gray-300 text-left"
-              >
-                {supportStatus,  select,
-      Provisional {Provisionally supported tools might lack the robustness of functionality
-        that your courses require. edX does not have control over the quality of the software,
-        or of the content that can be provided using these tools.
-        
- 
-
-        Test these tools thoroughly before using them in your course, especially in graded
-        sections. Complete documentstion might not be available for provisionally supported
-        tools, or documentation might be available from sources other than edX.}
-      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
-        in the future. They are not recommened for use in courses due to non-compliance with one
-        or more of the base requirements, such as testing, accessibility, internationalization,
-        and documentation.}
-      other { } 
-    }
-              </div>
-            </Tooltip>
-          }
-          placement="right"
-        >
-          <div>
-            Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
@@ -777,7 +697,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -830,22 +752,36 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is drag_and_drop 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -879,7 +815,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advance problem
+          Blank advanced problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -920,7 +856,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -973,50 +911,10 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
-          </div>
-        </OverlayTrigger>
-      </ActionRow>
-      <ActionRow
-        className="border-primary-100 border-bottom m-0 py-3 w-100"
-      >
-        <Radio
-          id="draganddrop"
-          value="draganddrop"
-        >
-          Drag and drop (deprecated version)
-        </Radio>
-        <ActionRow.Spacer />
-        <OverlayTrigger
-          overlay={
-            <Tooltip>
-              <div
-                className="text-gray-300 text-left"
-              >
-                {supportStatus,  select,
-      Provisional {Provisionally supported tools might lack the robustness of functionality
-        that your courses require. edX does not have control over the quality of the software,
-        or of the content that can be provided using these tools.
-        
- 
-
-        Test these tools thoroughly before using them in your course, especially in graded
-        sections. Complete documentstion might not be available for provisionally supported
-        tools, or documentation might be available from sources other than edX.}
-      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
-        in the future. They are not recommened for use in courses due to non-compliance with one
-        or more of the base requirements, such as testing, accessibility, internationalization,
-        and documentation.}
-      other { } 
-    }
-              </div>
-            </Tooltip>
-          }
-          placement="right"
-        >
-          <div>
-            Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
@@ -1057,7 +955,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1110,22 +1010,36 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is formularesponse 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -1159,7 +1073,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advance problem
+          Blank advanced problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -1200,7 +1114,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1253,50 +1169,10 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
-          </div>
-        </OverlayTrigger>
-      </ActionRow>
-      <ActionRow
-        className="border-primary-100 border-bottom m-0 py-3 w-100"
-      >
-        <Radio
-          id="draganddrop"
-          value="draganddrop"
-        >
-          Drag and drop (deprecated version)
-        </Radio>
-        <ActionRow.Spacer />
-        <OverlayTrigger
-          overlay={
-            <Tooltip>
-              <div
-                className="text-gray-300 text-left"
-              >
-                {supportStatus,  select,
-      Provisional {Provisionally supported tools might lack the robustness of functionality
-        that your courses require. edX does not have control over the quality of the software,
-        or of the content that can be provided using these tools.
-        
- 
-
-        Test these tools thoroughly before using them in your course, especially in graded
-        sections. Complete documentstion might not be available for provisionally supported
-        tools, or documentation might be available from sources other than edX.}
-      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
-        in the future. They are not recommened for use in courses due to non-compliance with one
-        or more of the base requirements, such as testing, accessibility, internationalization,
-        and documentation.}
-      other { } 
-    }
-              </div>
-            </Tooltip>
-          }
-          placement="right"
-        >
-          <div>
-            Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
@@ -1337,7 +1213,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1390,22 +1268,36 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is imageresponse 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -1439,7 +1331,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advance problem
+          Blank advanced problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -1480,7 +1372,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1533,50 +1427,10 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
-          </div>
-        </OverlayTrigger>
-      </ActionRow>
-      <ActionRow
-        className="border-primary-100 border-bottom m-0 py-3 w-100"
-      >
-        <Radio
-          id="draganddrop"
-          value="draganddrop"
-        >
-          Drag and drop (deprecated version)
-        </Radio>
-        <ActionRow.Spacer />
-        <OverlayTrigger
-          overlay={
-            <Tooltip>
-              <div
-                className="text-gray-300 text-left"
-              >
-                {supportStatus,  select,
-      Provisional {Provisionally supported tools might lack the robustness of functionality
-        that your courses require. edX does not have control over the quality of the software,
-        or of the content that can be provided using these tools.
-        
- 
-
-        Test these tools thoroughly before using them in your course, especially in graded
-        sections. Complete documentstion might not be available for provisionally supported
-        tools, or documentation might be available from sources other than edX.}
-      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
-        in the future. They are not recommened for use in courses due to non-compliance with one
-        or more of the base requirements, such as testing, accessibility, internationalization,
-        and documentation.}
-      other { } 
-    }
-              </div>
-            </Tooltip>
-          }
-          placement="right"
-        >
-          <div>
-            Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
@@ -1617,7 +1471,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1670,22 +1526,36 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is jsinput_response 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -1719,7 +1589,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advance problem
+          Blank advanced problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -1760,7 +1630,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1813,50 +1685,10 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
-          </div>
-        </OverlayTrigger>
-      </ActionRow>
-      <ActionRow
-        className="border-primary-100 border-bottom m-0 py-3 w-100"
-      >
-        <Radio
-          id="draganddrop"
-          value="draganddrop"
-        >
-          Drag and drop (deprecated version)
-        </Radio>
-        <ActionRow.Spacer />
-        <OverlayTrigger
-          overlay={
-            <Tooltip>
-              <div
-                className="text-gray-300 text-left"
-              >
-                {supportStatus,  select,
-      Provisional {Provisionally supported tools might lack the robustness of functionality
-        that your courses require. edX does not have control over the quality of the software,
-        or of the content that can be provided using these tools.
-        
- 
-
-        Test these tools thoroughly before using them in your course, especially in graded
-        sections. Complete documentstion might not be available for provisionally supported
-        tools, or documentation might be available from sources other than edX.}
-      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
-        in the future. They are not recommened for use in courses due to non-compliance with one
-        or more of the base requirements, such as testing, accessibility, internationalization,
-        and documentation.}
-      other { } 
-    }
-              </div>
-            </Tooltip>
-          }
-          placement="right"
-        >
-          <div>
-            Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
@@ -1897,7 +1729,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -1950,22 +1784,36 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;
 
 exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is problem_with_hint 1`] = `
-<div
-  className="col col-8 border rounded p-0 justify-content-center"
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
 >
   <Form.Group
-    className="p-0"
+    className="border rounded text-primary-500 p-0"
   >
     <ActionRow
       className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
@@ -1999,7 +1847,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advance problem
+          Blank advanced problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -2040,7 +1888,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -2093,50 +1943,10 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Provisional
-          </div>
-        </OverlayTrigger>
-      </ActionRow>
-      <ActionRow
-        className="border-primary-100 border-bottom m-0 py-3 w-100"
-      >
-        <Radio
-          id="draganddrop"
-          value="draganddrop"
-        >
-          Drag and drop (deprecated version)
-        </Radio>
-        <ActionRow.Spacer />
-        <OverlayTrigger
-          overlay={
-            <Tooltip>
-              <div
-                className="text-gray-300 text-left"
-              >
-                {supportStatus,  select,
-      Provisional {Provisionally supported tools might lack the robustness of functionality
-        that your courses require. edX does not have control over the quality of the software,
-        or of the content that can be provided using these tools.
-        
- 
-
-        Test these tools thoroughly before using them in your course, especially in graded
-        sections. Complete documentstion might not be available for provisionally supported
-        tools, or documentation might be available from sources other than edX.}
-      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
-        in the future. They are not recommened for use in courses due to non-compliance with one
-        or more of the base requirements, such as testing, accessibility, internationalization,
-        and documentation.}
-      other { } 
-    }
-              </div>
-            </Tooltip>
-          }
-          placement="right"
-        >
-          <div>
-            Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
@@ -2177,7 +1987,9 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
@@ -2230,12 +2042,24 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           }
           placement="right"
         >
-          <div>
+          <div
+            className="text-gray-500"
+          >
             Not supported
           </div>
         </OverlayTrigger>
       </ActionRow>
     </RadioSet>
   </Form.Group>
-</div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
 `;

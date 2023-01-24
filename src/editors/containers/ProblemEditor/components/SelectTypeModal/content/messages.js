@@ -1,7 +1,7 @@
 export const messages = {
   advanceProblemButtonLabel: {
     id: 'authoring.problemEditor.problemSelect.advanceButton.label',
-    defaultMessage: 'Advance problem types',
+    defaultMessage: 'Advanced problem types',
     description: 'Button label for advance problem types option',
   },
   advanceMenuTitle: {
@@ -39,7 +39,7 @@ export const messages = {
   },
   previewTitle: {
     id: 'authoring.problemEditor.preview.title',
-    defaultMessage: '{previewTitle}',
+    defaultMessage: '{previewTitle} problem',
     description: 'Title for the problem preview column',
   },
   previewAltText: {
@@ -61,8 +61,13 @@ export const messages = {
   },
   learnMoreButtonLabel: {
     id: 'authoring.problemEditor.learnMoreButtonLabel.label',
-    defaultMessage: 'Learn More',
-    description: 'Label for Learn More button',
+    defaultMessage: 'Learn more',
+    description: 'Label for Learn more button',
+  },
+  learnMoreAdvancedButtonLabel: {
+    id: 'authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label',
+    defaultMessage: 'Learn more about advanced problem types',
+    description: 'Label for Learn more about advanced problem types button',
   },
 };
 

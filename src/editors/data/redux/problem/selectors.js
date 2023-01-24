@@ -6,6 +6,7 @@ const mkSimpleSelector = (cb) => createSelector([module.problemState], cb);
 export const simpleSelectors = {
   problemType: mkSimpleSelector(problemData => problemData.problemType),
   answers: mkSimpleSelector(problemData => problemData.answers),
+  correctAnswerCount: mkSimpleSelector(problemData => problemData.correctAnswerCount),
   settings: mkSimpleSelector(problemData => problemData.settings),
   question: mkSimpleSelector(problemData => problemData.question),
   completeState: mkSimpleSelector(problemData => problemData),
