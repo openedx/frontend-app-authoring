@@ -18,10 +18,12 @@ export const RawEditor = ({
   const value = getValue(content);
 
   return (
-    <div>
-      <Alert variant="danger">
-        You are using the raw {lang} editor.
-      </Alert>
+    <>
+      {lang === 'xml' ? null : (
+        <Alert variant="danger">
+          You are using the raw {lang} editor.
+        </Alert>
+      )}
       { value ? (
         <CodeEditor
           innerRef={editorRef}
@@ -30,7 +32,7 @@ export const RawEditor = ({
         />
       ) : null}
 
-    </div>
+    </>
   );
 };
 RawEditor.defaultProps = {

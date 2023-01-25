@@ -71,7 +71,9 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page 1`] = `
       <div
         className="my-3"
       >
-        <injectIntl(ShimmedIntlComponent) />
+        <injectIntl(ShimmedIntlComponent)
+          problemType="stringresponse"
+        />
       </div>
     </Body>
   </Advanced>
@@ -149,7 +151,9 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page advanced
       <div
         className="my-3"
       >
-        <injectIntl(ShimmedIntlComponent) />
+        <injectIntl(ShimmedIntlComponent)
+          problemType="stringresponse"
+        />
       </div>
     </Body>
   </Advanced>

@@ -176,7 +176,7 @@ export const messages = {
   },
   SwitchButtonLabel: {
     id: 'authoring.problemeditor.settings.switchtoadvancededitor.label',
-    defaultMessage: 'Switch To Advanced Editor',
+    defaultMessage: 'Switch to advanced editor',
     description: 'button to switch to the advanced mode of the editor.',
   },
   ConfirmSwitchMessage: {

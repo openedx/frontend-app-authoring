@@ -1,7 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`RawEditor renders as expected with content equal to null 1`] = `
+<Fragment>
+  <Alert
+    variant="danger"
+  >
+    You are using the raw 
+    html
+     editor.
+  </Alert>
+</Fragment>
+`;
+
 exports[`RawEditor renders as expected with default behavior 1`] = `
-<div>
+<Fragment>
   <Alert
     variant="danger"
   >
@@ -20,5 +32,21 @@ exports[`RawEditor renders as expected with default behavior 1`] = `
     lang="html"
     value="eDiTablE Text"
   />
-</div>
+</Fragment>
+`;
+
+exports[`RawEditor renders as expected with lang equal to xml 1`] = `
+<Fragment>
+  <injectIntl(ShimmedIntlComponent)
+    innerRef={
+      Object {
+        "current": Object {
+          "value": "Ref Value",
+        },
+      }
+    }
+    lang="xml"
+    value="eDiTablE Text"
+  />
+</Fragment>
 `;

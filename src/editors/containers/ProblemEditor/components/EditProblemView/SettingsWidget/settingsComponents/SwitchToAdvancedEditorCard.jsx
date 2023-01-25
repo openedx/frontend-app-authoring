@@ -8,11 +8,15 @@ import { thunkActions } from '../../../../../../data/redux';
 import BaseModal from '../../../../../TextEditor/components/BaseModal';
 import Button from '../../../../../../sharedComponents/Button';
 import { confirmSwitchToAdvancedEditor } from '../hooks';
+import { ProblemTypeKeys } from '../../../../../../data/constants/problem';
 
 export const SwitchToAdvancedEditorCard = ({
+  problemType,
   switchToAdvancedEditor,
 }) => {
   const [isConfirmOpen, setConfirmOpen] = React.useState(false);
+
+  if (problemType === ProblemTypeKeys.ADVANCED) { return null; }
 
   return (
     <Card className="border border-light-700 shadow-none">
@@ -45,6 +49,7 @@ export const SwitchToAdvancedEditorCard = ({
 
 SwitchToAdvancedEditorCard.propTypes = {
   switchToAdvancedEditor: PropTypes.func.isRequired,
+  problemType: PropTypes.string.isRequired,
 };
 
 export const mapStateToProps = () => ({
