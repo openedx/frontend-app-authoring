@@ -4,6 +4,11 @@ export const messages = {
     defaultMessage: 'Answers',
     description: 'Main title for Answers widget',
   },
+  answerHelperText: {
+    id: 'authoring.problemEditor.answerWidget.answer.answerHelperText',
+    defaultMessage: '{helperText}',
+    description: 'Helper text describing how the user should input answers',
+  },
   addAnswerButtonText: {
     id: 'authoring.answerwidget.answer.addAnswerButton',
     defaultMessage: 'Add answer',

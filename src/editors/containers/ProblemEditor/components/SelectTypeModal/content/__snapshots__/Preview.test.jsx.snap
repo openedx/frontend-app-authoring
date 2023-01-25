@@ -33,7 +33,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is ch
   <div
     className="mb-3"
   >
-    Specify one or more correct answers from a list of possible options.
+    Enter your multi-select answers below and select which choices are correct
   </div>
   <Hyperlink
     destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/checkbox.html"
@@ -79,7 +79,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is mu
   <div
     className="mb-3"
   >
-    Specify one correct answer from a list of possible options
+    Enter your single select answers below and select which choice is correct
   </div>
   <Hyperlink
     destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/multiple_choice.html"
@@ -125,7 +125,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is nu
   <div
     className="mb-3"
   >
-    Specify one or more correct numeric answers, submitted in a response field.
+    Enter correct numerical input answers below
   </div>
   <Hyperlink
     destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/numerical_input.html"
@@ -171,7 +171,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is op
   <div
     className="mb-3"
   >
-    Specify one correct answer from a list of possible options, selected in a dropdown menu.
+    Enter your dropdown answers below and select which choice is correct
   </div>
   <Hyperlink
     destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/dropdown.html"
@@ -217,7 +217,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is st
   <div
     className="mb-3"
   >
-    Specify one or more correct text answers, including numbers and special characters, submitted in a response field.
+    Enter your text input answers below and select which choices are correct
   </div>
   <Hyperlink
     destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/text_input.html"

@@ -20,7 +20,7 @@ export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.SINGLESELECT]: {
     title: 'Single select',
     preview: singleSelect,
-    description: 'Specify one correct answer from a list of possible options',
+    description: 'Enter your single select answers below and select which choice is correct',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/multiple_choice.html',
     prev: ProblemTypeKeys.TEXTINPUT,
     next: ProblemTypeKeys.MULTISELECT,
@@ -30,7 +30,7 @@ export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.MULTISELECT]: {
     title: 'Multi-select',
     preview: multiSelect,
-    description: 'Specify one or more correct answers from a list of possible options.',
+    description: 'Enter your multi-select answers below and select which choices are correct',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/checkbox.html',
     next: ProblemTypeKeys.DROPDOWN,
     prev: ProblemTypeKeys.SINGLESELECT,
@@ -39,7 +39,7 @@ export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.DROPDOWN]: {
     title: 'Dropdown',
     preview: dropdown,
-    description: 'Specify one correct answer from a list of possible options, selected in a dropdown menu.',
+    description: 'Enter your dropdown answers below and select which choice is correct',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/dropdown.html',
     next: ProblemTypeKeys.NUMERIC,
     prev: ProblemTypeKeys.MULTISELECT,
@@ -48,7 +48,7 @@ export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.NUMERIC]: {
     title: 'Numerical input',
     preview: numericalInput,
-    description: 'Specify one or more correct numeric answers, submitted in a response field.',
+    description: 'Enter correct numerical input answers below',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/numerical_input.html',
     next: ProblemTypeKeys.TEXTINPUT,
     prev: ProblemTypeKeys.DROPDOWN,
@@ -57,7 +57,7 @@ export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.TEXTINPUT]: {
     title: 'Text input',
     preview: textInput,
-    description: 'Specify one or more correct text answers, including numbers and special characters, submitted in a response field.',
+    description: 'Enter your text input answers below and select which choices are correct',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/text_input.html',
     prev: ProblemTypeKeys.NUMERIC,
     next: ProblemTypeKeys.SINGLESELECT,
