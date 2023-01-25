@@ -64,7 +64,7 @@ const messages = defineMessages({
   },
   'appDescription-openedx': {
     id: 'authoring.discussions.appList.appDescription-openedx',
-    defaultMessage: 'Start conversations with other learners, ask questions, and interact with other learners in the course.',
+    defaultMessage: 'Enable participation in discussion topics alongside course content.',
     description: 'A description of the new edX Discussions app.',
   },
   // Piazza
