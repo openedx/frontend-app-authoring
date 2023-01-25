@@ -28,7 +28,7 @@ export const AnswerOption = ({
   const dispatch = useDispatch();
   const removeAnswer = hooks.removeAnswer({ answer, dispatch });
   const setAnswer = hooks.setAnswer({ answer, hasSingleAnswer, dispatch });
-  const { isFeedbackVisible, toggleFeedback } = hooks.prepareFeedback(answer);
+  const { isFeedbackVisible, toggleFeedback } = hooks.useFeedback(answer);
 
   return (
     <Collapsible.Advanced

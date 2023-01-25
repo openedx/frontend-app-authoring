@@ -1,8 +1,8 @@
 /* eslint-disable */
 const textInput =`<problem>
-<stringresponse answer="the correct answer" type="ci">
+<stringresponse type="ci">
 <p>Enter your question</p>
-<additional_answer answer="optional acceptable variant of the correct answer"/>
+<additional_answer />
   <textline size="20"/>
 </stringresponse>
 </problem>`

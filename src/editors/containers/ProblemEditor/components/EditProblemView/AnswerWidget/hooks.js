@@ -16,7 +16,7 @@ export const setAnswer = ({ answer, hasSingleAnswer, dispatch }) => (payload) =>
   dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, ...payload }));
 };
 
-export const prepareFeedback = (answer) => {
+export const useFeedback = (answer) => {
   const [isFeedbackVisible, setIsFeedbackVisible] = module.state.isFeedbackVisible(false);
   useEffect(() => {
     // Show feedback fields if feedback is present
@@ -55,5 +55,5 @@ export const useAnswerContainer = ({ answers, updateField }) => {
 };
 
 export default {
-  state, removeAnswer, setAnswer, prepareFeedback, isSingleAnswerProblem, useAnswerContainer,
+  state, removeAnswer, setAnswer, useFeedback, isSingleAnswerProblem, useAnswerContainer,
 };

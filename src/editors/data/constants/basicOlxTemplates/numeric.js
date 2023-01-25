@@ -1,6 +1,6 @@
 /* eslint-disable */
 export const numeric = `<problem>
-<numericalresponse answer="100">
+<numericalresponse>
 <p>Enter your question</p>
 <responseparam type="tolerance" default="5"/>
   <formulaequationinput/>

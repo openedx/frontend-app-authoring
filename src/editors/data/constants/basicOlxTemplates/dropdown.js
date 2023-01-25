@@ -3,9 +3,9 @@ export const dropdown = `<problem>
 <optionresponse>
   <p>Enter your question</p>
 <optioninput>
-    <option correct="False">an incorrect answer</option>
-    <option correct="True">the correct answer</option>
-    <option correct="False">an incorrect answer</option>
+    <option correct="True"></option>
+    <option correct="False"></option>
+    <option correct="False"></option>
   </optioninput>
 </optionresponse>
 </problem>`

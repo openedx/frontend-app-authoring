@@ -36,16 +36,16 @@ describe('Answer Options Hooks', () => {
   describe('state hooks', () => {
     state.testGetter(state.keys.isFeedbackVisible);
   });
-  describe('prepareFeedback hook', () => {
+  describe('useFeedback hook', () => {
     beforeEach(() => { state.mock(); });
     afterEach(() => { state.restore(); });
     test('test default state is false', () => {
-      output = module.prepareFeedback(answerWithOnlyFeedback);
+      output = module.useFeedback(answerWithOnlyFeedback);
       expect(output.isFeedbackVisible).toBeFalsy();
     });
     test('when useEffect triggers, isFeedbackVisible is set to true', () => {
       const key = state.keys.isFeedbackVisible;
-      output = module.prepareFeedback(answerWithOnlyFeedback);
+      output = module.useFeedback(answerWithOnlyFeedback);
       expect(state.setState[key]).not.toHaveBeenCalled();
       const [cb, prereqs] = useEffect.mock.calls[0];
       expect(prereqs[0]).toStrictEqual(answerWithOnlyFeedback);
