@@ -564,6 +564,16 @@ export const advancedProblemOlX = {
   </formularesponse>
 </problem>`,
 };
+export const multipleProblemOlX = {
+  rawOLX: `<problem>
+  <stringresponse answer="correct answer">
+    <textline size="20"/>
+  </stringresponse>
+  <stringresponse answer="other correct answer">
+    <textline size="20"/>
+  </stringresponse>
+</problem>`,
+};
 export const blankProblemOLX = {
   rawOLX: '<problem></problem>',
 };
