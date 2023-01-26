@@ -330,8 +330,8 @@ export class OLXParser {
 
   getProblemType() {
     const problemKeys = Object.keys(this.problem);
-    const intersectedProblems = _.intersection(Object.values(ProblemTypeKeys), problemKeys);
-    if (intersectedProblems.length === 0) {
+    const problemTypeKeys = problemKeys.filter(key => Object.values(ProblemTypeKeys).indexOf(key) !== -1);
+    if (problemTypeKeys.length === 0) {
       // a blank problem is a problem which contains only `<problem></problem>` as it's olx.
       // blank problems are not given types, so that a type may be selected.
       if (problemKeys.length === 1 && problemKeys[0] === '#text' && this.problem[problemKeys[0]] === '') {
@@ -341,10 +341,14 @@ export class OLXParser {
       return ProblemTypeKeys.ADVANCED;
     }
     // make sure compound problems are treated as advanced
-    if (intersectedProblems.length > 1) {
+    // TODO: Find a way to add answers using additional_answers v/s numericalresponse
+    if ((problemTypeKeys.length > 1)
+      || (problemTypeKeys[0] !== ProblemTypeKeys.NUMERIC // multiple numeric problems are really just multiple answers
+        && _.isArray(this.problem[problemTypeKeys[0]])
+        && this.problem[problemTypeKeys[0]].length > 1)) {
       return ProblemTypeKeys.ADVANCED;
     }
-    const problemType = intersectedProblems[0];
+    const problemType = problemTypeKeys[0];
     return problemType;
   }
 
