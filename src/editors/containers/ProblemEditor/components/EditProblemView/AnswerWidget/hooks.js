@@ -9,24 +9,40 @@ export const state = StrictDict({
 });
 
 export const removeAnswer = ({ answer, dispatch }) => () => {
-  dispatch(actions.problem.deleteAnswer({ id: answer.id }));
+  dispatch(actions.problem.deleteAnswer({ id: answer.id, correct: answer.correct }));
 };
 
 export const setAnswer = ({ answer, hasSingleAnswer, dispatch }) => (payload) => {
   dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, ...payload }));
 };
 
+export const setSelectedFeedback = ({ answer, hasSingleAnswer, dispatch }) => (e) => {
+  dispatch(actions.problem.updateAnswer({
+    id: answer.id,
+    hasSingleAnswer,
+    selectedFeedback: e.target.value,
+  }));
+};
+
+export const setUnselectedFeedback = ({ answer, hasSingleAnswer, dispatch }) => (e) => {
+  dispatch(actions.problem.updateAnswer({
+    id: answer.id,
+    hasSingleAnswer,
+    unselectedFeedback: e.target.value,
+  }));
+};
+
 export const useFeedback = (answer) => {
   const [isFeedbackVisible, setIsFeedbackVisible] = module.state.isFeedbackVisible(false);
   useEffect(() => {
     // Show feedback fields if feedback is present
-    const isVisible = !!answer.selectedFeedback || !!answer.unselectedFeedback || !!answer.feedback;
+    const isVisible = !!answer.selectedFeedback || !!answer.unselectedFeedback;
     setIsFeedbackVisible(isVisible);
   }, [answer]);
 
   const toggleFeedback = (open) => {
     // Do not allow to hide if feedback is added
-    if (!!answer.selectedFeedback || !!answer.unselectedFeedback || !!answer.feedback) {
+    if (!!answer.selectedFeedback || !!answer.unselectedFeedback) {
       setIsFeedbackVisible(true);
       return;
     }

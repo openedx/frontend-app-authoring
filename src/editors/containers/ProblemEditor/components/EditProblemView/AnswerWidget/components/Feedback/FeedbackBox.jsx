@@ -7,10 +7,12 @@ import FeedbackControl from './FeedbackControl';
 import { messages } from './messages';
 
 export const FeedbackBox = ({
-  answer, setAnswer, intl,
+  answer,
+  intl,
+  setSelectedFeedback,
+  setUnselectedFeedback,
 }) => {
   const props = {
-    onChange: (e) => setAnswer({ selectedFeedback: e.target.value }),
     answer,
     intl,
   };
@@ -22,6 +24,7 @@ export const FeedbackBox = ({
         feedback={answer.selectedFeedback}
         labelMessage={messages.selectedFeedbackLabel}
         labelMessageBoldUnderline={messages.selectedFeedbackLabelBoldUnderlineText}
+        onChange={setSelectedFeedback}
         {...props}
       />
       <FeedbackControl
@@ -29,6 +32,7 @@ export const FeedbackBox = ({
         feedback={answer.unselectedFeedback}
         labelMessage={messages.unSelectedFeedbackLabel}
         labelMessageBoldUnderline={messages.unSelectedFeedbackLabelBoldUnderlineText}
+        onChange={setUnselectedFeedback}
         {...props}
       />
     </div>
@@ -37,6 +41,8 @@ export const FeedbackBox = ({
 FeedbackBox.propTypes = {
   answer: answerOptionProps.isRequired,
   setAnswer: PropTypes.func.isRequired,
+  setSelectedFeedback: PropTypes.func.isRequired,
+  setUnselectedFeedback: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
 };
 

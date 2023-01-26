@@ -31,7 +31,6 @@ exports[`FeedbackBox component renders 1`] = `
         "id": "authoring.answerwidget.feedback.selected.label.boldunderline",
       }
     }
-    onChange={[Function]}
   />
   <FeedbackControl
     answer={
@@ -60,7 +59,6 @@ exports[`FeedbackBox component renders 1`] = `
         "id": "authoring.answerwidget.feedback.unselected.label.boldunderline",
       }
     }
-    onChange={[Function]}
   />
 </div>
 `;

@@ -2,7 +2,7 @@ import _ from 'lodash-es';
 import { createSlice } from '@reduxjs/toolkit';
 import { indexToLetterMap } from '../../../containers/ProblemEditor/data/OLXParser';
 import { StrictDict } from '../../../utils';
-import { ProblemTypeKeys, ShowAnswerTypesKeys } from '../../constants/problem';
+import { ShowAnswerTypesKeys } from '../../constants/problem';
 
 const nextAlphaId = (lastId) => String.fromCharCode(lastId.charCodeAt(0) + 1);
 const initialState = {
@@ -103,14 +103,11 @@ const problem = createSlice({
       const newOption = {
         id: currAnswers.length ? nextAlphaId(currAnswers[currAnswers.length - 1].id) : 'A',
         title: '',
-        selectedFeedback: undefined,
-        unselectedFeedback: undefined,
+        selectedFeedback: '',
+        unselectedFeedback: '',
         correct: false,
       };
-      if (state.problemType === ProblemTypeKeys.MULTISELECT) {
-        newOption.unselectedFeedback = '';
-      }
-      newOption.selectedFeedback = '';
+
       const answers = [
         ...currAnswers,
         newOption,

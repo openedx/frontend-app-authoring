@@ -12,7 +12,6 @@ const answerWithFeedback = {
 const props = {
   answer: answerWithFeedback,
   intl: {},
-  setAnswer: jest.fn(),
 };
 
 describe('FeedbackBox component', () => {

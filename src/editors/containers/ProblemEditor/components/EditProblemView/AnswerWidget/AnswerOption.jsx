@@ -28,6 +28,8 @@ export const AnswerOption = ({
   const dispatch = useDispatch();
   const removeAnswer = hooks.removeAnswer({ answer, dispatch });
   const setAnswer = hooks.setAnswer({ answer, hasSingleAnswer, dispatch });
+  const setSelectedFeedback = hooks.setSelectedFeedback({ answer, hasSingleAnswer, dispatch });
+  const setUnselectedFeedback = hooks.setUnselectedFeedback({ answer, hasSingleAnswer, dispatch });
   const { isFeedbackVisible, toggleFeedback } = hooks.useFeedback(answer);
 
   return (
@@ -57,7 +59,8 @@ export const AnswerOption = ({
           <FeedbackBox
             problemType={problemType}
             answer={answer}
-            setAnswer={setAnswer}
+            setSelectedFeedback={setSelectedFeedback}
+            setUnselectedFeedback={setUnselectedFeedback}
             intl={intl}
           />
         </Collapsible.Body>

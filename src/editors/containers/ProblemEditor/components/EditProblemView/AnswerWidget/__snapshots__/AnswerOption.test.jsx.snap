@@ -50,7 +50,8 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
           }
         }
         problemType="multiplechoiceresponse"
-        setAnswer={[Function]}
+        setSelectedFeedback={[Function]}
+        setUnselectedFeedback={[Function]}
       />
     </Body>
   </div>
@@ -126,7 +127,8 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
           }
         }
         problemType="choiceresponse"
-        setAnswer={[Function]}
+        setSelectedFeedback={[Function]}
+        setUnselectedFeedback={[Function]}
       />
     </Body>
   </div>

@@ -26,6 +26,14 @@ describe('problem reducer', () => {
     [
       ['updateQuestion', 'question'],
     ].map(args => setterTest(...args));
+    describe('setEnableTypeSelection', () => {
+      it('sets given problemType to null', () => {
+        expect(reducer(testingState, actions.setEnableTypeSelection())).toEqual({
+          ...testingState,
+          problemType: null,
+        });
+      });
+    });
     describe('load', () => {
       it('sets answers', () => {
         const answer = {
@@ -33,7 +41,7 @@ describe('problem reducer', () => {
           correct: false,
           selectedFeedback: '',
           title: '',
-          unselectedFeedback: undefined,
+          unselectedFeedback: '',
         };
         expect(reducer(testingState, actions.addAnswer(answer))).toEqual({
           ...testingState,
@@ -99,7 +107,7 @@ describe('problem reducer', () => {
     });
     describe('deleteAnswer', () => {
       it('sets answers, as well as setting the correctAnswerCount ', () => {
-        const answer = { id: 'A' };
+        const answer = { id: 'A', correct: false };
         expect(reducer(
           {
             ...testingState,
