@@ -212,7 +212,8 @@ describe('OpenedXConfigForm', () => {
     expect(container.querySelector('#reportedContentEmailNotifications')).toBeChecked();
   });
 
-  test('folded discussion topics are in the DOM when divideByCohorts and divideCourseWideTopics are enabled',
+  test(
+'folded discussion topics are in the DOM when divideByCohorts and divideCourseWideTopics are enabled',
     async () => {
       await mockStore({
         ...legacyApiResponse,
@@ -235,7 +236,8 @@ describe('OpenedXConfigForm', () => {
       divideDiscussionIds.forEach(id => {
         expect(container.querySelector(`#checkbox-${id}`)).not.toBeInTheDocument();
       });
-    });
+    },
+);
 
   const updateTopicName = async (topicId, topicName) => {
     const topicCard = queryByTestId(container, topicId);
@@ -263,7 +265,8 @@ describe('OpenedXConfigForm', () => {
     expect(store.getState().discussions.hasValidationError).toBe(expectExists);
   };
 
-  test('show required error on field when leaving empty topic name',
+  test(
+'show required error on field when leaving empty topic name',
     async () => {
       await mockStore(legacyApiResponse);
       createComponent();
@@ -272,7 +275,8 @@ describe('OpenedXConfigForm', () => {
       await waitForElementToBeRemoved(queryByText(topicCard, messages.addTopicHelpText.defaultMessage));
       assertTopicNameRequiredValidation(topicCard);
       assertHasErrorValidation();
-    });
+    },
+);
 
   test('check field is not collapsible in case of error', async () => {
     await mockStore(legacyApiResponse);

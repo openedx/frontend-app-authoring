@@ -1,22 +1,25 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 export const PagesAndResourcesContext = React.createContext({});
 
-export default function PagesAndResourcesProvider({ courseId, children }) {
+const PagesAndResourcesProvider = ({ courseId, children }) => {
+  const contextValue = useMemo(() => ({
+    courseId,
+    path: `/course/${courseId}/pages-and-resources`,
+  }), []);
   return (
     <PagesAndResourcesContext.Provider
-      value={{
-        courseId,
-        path: `/course/${courseId}/pages-and-resources`,
-      }}
+      value={contextValue}
     >
       {children}
     </PagesAndResourcesContext.Provider>
   );
-}
+};
 
 PagesAndResourcesProvider.propTypes = {
   courseId: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
 };
+
+export default PagesAndResourcesProvider;

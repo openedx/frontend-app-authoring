@@ -26,7 +26,7 @@ import {
   fetchExamSettingsSuccess,
 } from './data/thunks';
 
-function ProctoredExamSettings({ courseId, intl }) {
+const ProctoredExamSettings = ({ courseId, intl }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [loaded, setLoaded] = useState(false);
@@ -55,9 +55,9 @@ function ProctoredExamSettings({ courseId, intl }) {
   const saveStatusAlertRef = React.createRef();
   const proctoringEscalationEmailInputRef = useRef(null);
 
-  function onEnableProctoredExamsChange(event) {
+  const onEnableProctoredExamsChange = (event) => {
     setEnableProctoredExams(event.target.checked);
-  }
+  };
 
   function onAllowOptingOutChange(value) {
     setAllowOptingOut(value);
@@ -67,7 +67,7 @@ function ProctoredExamSettings({ courseId, intl }) {
     setCreateZendeskTickets(value);
   }
 
-  function onProctoringProviderChange(event) {
+  const onProctoringProviderChange = (event) => {
     const provider = event.target.value;
     setProctoringProvider(provider);
 
@@ -80,17 +80,17 @@ function ProctoredExamSettings({ courseId, intl }) {
       }
       setShowProctortrackEscalationEmail(false);
     }
-  }
+  };
 
-  function onProctortrackEscalationEmailChange(event) {
+  const onProctortrackEscalationEmailChange = (event) => {
     setProctortrackEscalationEmail(event.target.value);
-  }
+  };
 
-  function setFocusToProctortrackEscalationEmailInput() {
+  const setFocusToProctortrackEscalationEmailInput = () => {
     if (proctoringEscalationEmailInputRef && proctoringEscalationEmailInputRef.current) {
       proctoringEscalationEmailInputRef.current.focus();
     }
-  }
+  };
 
   function isLtiProvider(provider) {
     return ltiProctoringProviders.some(p => p.name === provider);
@@ -120,9 +120,7 @@ function ProctoredExamSettings({ courseId, intl }) {
     const saveOperations = [StudioApiService.saveProctoredExamSettingsData(courseId, studioDataToPostBack)];
     if (allowLtiProviders && ExamsApiService.isAvailable()) {
       saveOperations.push(
-        ExamsApiService.saveCourseExamConfiguration(
-          courseId, { provider: providerIsLti ? proctoringProvider : null },
-        ),
+        ExamsApiService.saveCourseExamConfiguration(courseId, { provider: providerIsLti ? proctoringProvider : null }),
       );
     }
     Promise.all(saveOperations)
@@ -137,7 +135,7 @@ function ProctoredExamSettings({ courseId, intl }) {
     });
   }
 
-  function handleSubmit(event) {
+  const handleSubmit = (event) => {
     event.preventDefault();
     if (proctoringProvider === 'proctortrack' && !EmailValidator.validate(proctortrackEscalationEmail) && !(proctortrackEscalationEmail === '' && !enableProctoredExams)) {
       if (proctortrackEscalationEmail === '') {
@@ -174,7 +172,7 @@ function ProctoredExamSettings({ courseId, intl }) {
         errors,
       });
     }
-  }
+  };
 
   function cannotEditProctoringProvider() {
     const currentDate = moment(moment()).format('YYYY-MM-DD[T]hh:mm:ss[Z]');
@@ -492,8 +490,7 @@ function ProctoredExamSettings({ courseId, intl }) {
     );
   }
 
-  useEffect(
-    () => {
+  useEffect(() => {
       dispatch(fetchExamSettingsPending(courseId));
 
       Promise.all([
@@ -526,7 +523,8 @@ function ProctoredExamSettings({ courseId, intl }) {
             let availableProviders = proctoringProvidersStudio.filter(value => value !== 'lti_external');
             if (enableLtiProviders) {
               availableProviders = proctoringProvidersLti.reduce(
-                (result, provider) => [...result, provider.name], availableProviders,
+                (result, provider) => [...result, provider.name],
+                availableProviders,
               );
             }
             setAvailableProctoringProviders(availableProviders);
@@ -560,8 +558,7 @@ function ProctoredExamSettings({ courseId, intl }) {
             dispatch(fetchExamSettingsFailure(courseId));
           },
         );
-    }, [],
-  );
+    }, []);
 
   useEffect(() => {
     if ((saveSuccess || saveError) && !!saveStatusAlertRef.current) {
@@ -587,7 +584,7 @@ function ProctoredExamSettings({ courseId, intl }) {
       </div>
     </div>
   );
-}
+};
 
 ProctoredExamSettings.propTypes = {
   courseId: PropTypes.string.isRequired,

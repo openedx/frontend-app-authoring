@@ -1,16 +1,17 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 import { Form } from '@edx/paragon';
 import { getIn, useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
 import React from 'react';
 import FormikErrorFeedback from './FormikErrorFeedback';
 
-function FormikControl({
+const FormikControl = ({
   name,
   label,
   help,
   className,
   ...params
-}) {
+}) => {
   const {
     touched, errors, handleChange, handleBlur, setFieldError,
   } = useFormikContext();
@@ -35,7 +36,7 @@ function FormikControl({
       </FormikErrorFeedback>
     </Form.Group>
   );
-}
+};
 
 FormikControl.propTypes = {
   name: PropTypes.element.isRequired,

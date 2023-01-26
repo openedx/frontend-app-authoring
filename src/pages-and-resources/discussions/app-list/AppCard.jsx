@@ -11,9 +11,9 @@ import messages from './messages';
 import appMessages from '../app-config-form/messages';
 import FeaturesList from './FeaturesList';
 
-function AppCard({
+const AppCard = ({
   app, onClick, intl, selected, features,
-}) {
+}) => {
   const { canChangeProviders } = useSelector(state => state.courseDetail);
   const supportText = app.hasFullSupport
     ? intl.formatMessage(messages.appFullSupport)
@@ -62,7 +62,7 @@ function AppCard({
       </Card.Body>
     </Card>
   );
-}
+};
 
 AppCard.propTypes = {
   app: PropTypes.shape({
@@ -73,7 +73,7 @@ AppCard.propTypes = {
   onClick: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
   intl: intlShape.isRequired,
-  features: PropTypes.arrayOf(PropTypes.object).isRequired,
+  features: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 
 export default injectIntl(AppCard);

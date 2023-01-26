@@ -5,7 +5,7 @@ import { updateValidationStatus } from '../../../data/slice';
 
 export const OpenedXConfigFormContext = createContext({});
 
-export default function OpenedXConfigFormProvider({ children, value }) {
+const OpenedXConfigFormProvider = ({ children, value }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function OpenedXConfigFormProvider({ children, value }) {
       {children}
     </OpenedXConfigFormContext.Provider>
   );
-}
+};
 
 OpenedXConfigFormProvider.propTypes = {
   children: PropTypes.node.isRequired,
@@ -33,3 +33,5 @@ OpenedXConfigFormProvider.propTypes = {
     isFormInvalid: PropTypes.bool,
   }).isRequired,
 };
+
+export default OpenedXConfigFormProvider;

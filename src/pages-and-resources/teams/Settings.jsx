@@ -16,10 +16,10 @@ import messages from './messages';
 
 setupYupExtensions();
 
-function TeamSettings({
+const TeamSettings = ({
   intl,
   onClose,
-}) {
+}) => {
   const [teamsConfiguration, saveSettings] = useAppSetting('teamsConfiguration');
   const blankNewGroup = {
     name: '',
@@ -161,7 +161,7 @@ function TeamSettings({
       }
     </AppSettingsModal>
   );
-}
+};
 
 TeamSettings.propTypes = {
   intl: intlShape.isRequired,

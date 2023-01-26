@@ -24,9 +24,9 @@ const TeamTypeNameMessage = {
   },
 };
 
-function GroupEditor({
+const GroupEditor = ({
   intl, group, onDelete, onChange, onBlur, fieldNameCommonBase, errors,
-}) {
+}) => {
   const [isDeleting, setDeleting] = useState(false);
   const [isOpen, setOpen] = useState(group.id === null);
   const initiateDeletion = () => setDeleting(true);
@@ -133,7 +133,7 @@ function GroupEditor({
         )}
     </TransitionReplace>
   );
-}
+};
 
 export const groupShape = PropTypes.shape({
   id: PropTypes.string,

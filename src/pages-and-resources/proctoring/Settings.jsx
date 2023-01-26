@@ -24,7 +24,7 @@ import { useIsMobile } from '../../utils';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import messages from './messages';
 
-function ProctoringSettings({ intl, onClose }) {
+const ProctoringSettings = ({ intl, onClose }) => {
   const initialFormValues = {
     enableProctoredExams: false,
     proctoringProvider: false,
@@ -60,7 +60,7 @@ function ProctoringSettings({ intl, onClose }) {
   const proctoringEscalationEmailInputRef = useRef(null);
   const submitButtonState = submissionInProgress ? 'pending' : 'default';
 
-  function handleChange(event) {
+  const handleChange = (event) => {
     const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const { name } = target;
@@ -86,17 +86,17 @@ function ProctoringSettings({ intl, onClose }) {
     } else {
       setFormValues({ ...formValues, [name]: value });
     }
-  }
+  };
 
   function isLtiProvider(provider) {
     return ltiProctoringProviders.some(p => p.name === provider);
   }
 
-  function setFocusToProctortrackEscalationEmailInput() {
+  const setFocusToProctortrackEscalationEmailInput = () => {
     if (proctoringEscalationEmailInputRef && proctoringEscalationEmailInputRef.current) {
       proctoringEscalationEmailInputRef.current.focus();
     }
-  }
+  };
 
   function postSettingsBackToServer() {
     const providerIsLti = isLtiProvider(formValues.proctoringProvider);
@@ -122,8 +122,9 @@ function ProctoringSettings({ intl, onClose }) {
     if (allowLtiProviders && ExamsApiService.isAvailable()) {
       saveOperations.push(
         ExamsApiService.saveCourseExamConfiguration(
-          courseId, { provider: providerIsLti ? formValues.proctoringProvider : null },
-        ),
+          courseId,
+          { provider: providerIsLti ? formValues.proctoringProvider : null },
+          ),
       );
     }
     Promise.all(saveOperations)
@@ -138,7 +139,7 @@ function ProctoringSettings({ intl, onClose }) {
     });
   }
 
-  function handleSubmit(event) {
+  const handleSubmit = (event) => {
     event.preventDefault();
     if (
       formValues.proctoringProvider === 'proctortrack'
@@ -152,7 +153,11 @@ function ProctoringSettings({ intl, onClose }) {
           isValid: false,
           errors: {
             formProctortrackEscalationEmail: {
-              dialogErrorMessage: (<Alert.Link onClick={setFocusToProctortrackEscalationEmailInput} href="#formProctortrackEscalationEmail" data-testid="proctorTrackEscalationEmailErrorLink">{errorMessage}</Alert.Link>),
+              dialogErrorMessage: (
+                <Alert.Link onClick={setFocusToProctortrackEscalationEmailInput} href="#formProctortrackEscalationEmail" data-testid="proctorTrackEscalationEmailErrorLink">
+                  {errorMessage}
+                </Alert.Link>
+                ),
               inputErrorMessage: errorMessage,
             },
           },
@@ -179,7 +184,7 @@ function ProctoringSettings({ intl, onClose }) {
         errors,
       });
     }
-  }
+  };
 
   function cannotEditProctoringProvider() {
     const currentDate = moment(moment()).format('YYYY-MM-DD[T]hh:mm:ss[Z]');
@@ -468,8 +473,7 @@ function ProctoringSettings({ intl, onClose }) {
     );
   }
 
-  useEffect(
-    () => {
+  useEffect(() => {
       Promise.all([
         StudioApiService.getProctoredExamSettingsData(courseId),
         ExamsApiService.isAvailable() ? ExamsApiService.getCourseExamConfiguration(courseId) : Promise.resolve(),
@@ -500,8 +504,9 @@ function ProctoringSettings({ intl, onClose }) {
             let availableProviders = proctoringProvidersStudio.filter(value => value !== 'lti_external');
             if (enableLtiProviders) {
               availableProviders = proctoringProvidersLti.reduce(
-                (result, provider) => [...result, provider.name], availableProviders,
-              );
+                (result, provider) => [...result, provider.name],
+                availableProviders,
+                );
             }
             setAvailableProctoringProviders(availableProviders);
 
@@ -535,8 +540,7 @@ function ProctoringSettings({ intl, onClose }) {
             setSubmissionInProgress(false);
           },
         );
-    }, [],
-  );
+    }, []);
 
   useEffect(() => {
     if ((saveSuccess || saveError) && !!saveStatusAlertRef.current) {
@@ -597,7 +601,7 @@ function ProctoringSettings({ intl, onClose }) {
       </Form>
     </ModalDialog>
   );
-}
+};
 
 ProctoringSettings.propTypes = {
   intl: intlShape.isRequired,

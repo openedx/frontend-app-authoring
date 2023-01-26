@@ -7,12 +7,12 @@ import messages from '../../messages';
 import AppConfigFormDivider from './AppConfigFormDivider';
 import ConfirmationPopup from '../../../../../generic/ConfirmationPopup';
 
-function InContextDiscussionFields({
+const InContextDiscussionFields = ({
   onBlur,
   onChange,
   intl,
   values,
-}) {
+}) => {
   const {
     setFieldValue,
   } = useFormikContext();
@@ -63,7 +63,7 @@ function InContextDiscussionFields({
       />
     </>
   );
-}
+};
 
 InContextDiscussionFields.propTypes = {
   onBlur: PropTypes.func.isRequired,

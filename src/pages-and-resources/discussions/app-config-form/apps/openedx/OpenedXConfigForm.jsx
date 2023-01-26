@@ -21,9 +21,9 @@ import OpenedXConfigFormProvider from './OpenedXConfigFormProvider';
 
 setupYupExtensions();
 
-function OpenedXConfigForm({
+const OpenedXConfigForm = ({
   onSubmit, formRef, intl, legacy,
-}) {
+}) => {
   const {
     selectedAppId, enableGradedUnits, discussionTopicIds, divideDiscussionIds,
   } = useSelector(state => state.discussions);
@@ -52,6 +52,7 @@ function OpenedXConfigForm({
     groupAtSubsection: Yup.bool().default(false),
   };
   const validationSchema = Yup.object().shape({
+    // eslint-disable-next-line react/forbid-prop-types
     blackoutDates: Yup.array(
       Yup.object().shape({
         startDate: Yup.string()
@@ -76,6 +77,7 @@ function OpenedXConfigForm({
           }),
       }),
     ),
+    // eslint-disable-next-line react/forbid-prop-types
     discussionTopics: Yup.array(
       Yup.object({
         name: Yup.string().required(intl.formatMessage(messages.discussionTopicRequired)),
@@ -145,7 +147,7 @@ function OpenedXConfigForm({
       }}
     </Formik>
   );
-}
+};
 
 OpenedXConfigForm.propTypes = {
   legacy: PropTypes.bool.isRequired,
