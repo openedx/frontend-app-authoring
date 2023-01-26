@@ -25,6 +25,7 @@ export const problemEditorConfig = ({
     content_style: tinyMCEStyles,
     menubar: false,
     branding: false,
+    min_height: 150,
   },
   onFocusOut: () => {
     const content = editorRef.current.getContent();
