@@ -1,12 +1,12 @@
 /* eslint-disable */
 export const singleSelect = `<problem>
-<multiplechoiceresponse>
-<p>Enter your question</p>
+  <multiplechoiceresponse>
     <choicegroup>
-        <choice correct="true"></choice>
-        <choice correct="false"></choice>
-        <choice correct="false"></choice>
+      <choice correct="true"></choice>
+      <choice correct="false"></choice>
+      <choice correct="false"></choice>
     </choicegroup>
-</multiplechoiceresponse>
+  </multiplechoiceresponse>
 </problem>`
+
 export default singleSelect;
