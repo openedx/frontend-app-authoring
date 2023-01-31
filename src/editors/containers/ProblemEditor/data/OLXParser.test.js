@@ -10,6 +10,7 @@ import {
   advancedProblemOlX,
   multipleProblemOlX,
   blankProblemOLX,
+  blankQuestionOLX,
 } from './mockData/olxTestData';
 import { ProblemTypeKeys } from '../../../data/constants/problem';
 
@@ -152,5 +153,11 @@ describe('Check OLXParser for question parsing', () => {
     const olxparser = new OLXParser(numericInputWithFeedbackAndHintsOLXException.rawOLX);
     const question = olxparser.parseQuestions('numericalresponse');
     expect(question).toEqual(numericInputWithFeedbackAndHintsOLXException.question);
+  });
+  test('Test OLX with no question content should have empty string for question', () => {
+    const olxparser = new OLXParser(blankQuestionOLX.rawOLX);
+    const problemType = olxparser.getProblemType();
+    const question = olxparser.parseQuestions(problemType);
+    expect(question).toBe(blankQuestionOLX.question);
   });
 });

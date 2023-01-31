@@ -26,6 +26,7 @@ export const problemEditorConfig = ({
     menubar: false,
     branding: false,
     min_height: 150,
+    placeholder: 'Enter your question',
   },
   onFocusOut: () => {
     const content = editorRef.current.getContent();

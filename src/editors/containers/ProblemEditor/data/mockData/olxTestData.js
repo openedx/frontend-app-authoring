@@ -577,3 +577,12 @@ export const multipleProblemOlX = {
 export const blankProblemOLX = {
   rawOLX: '<problem></problem>',
 };
+export const blankQuestionOLX = {
+  rawOLX: `<problem>
+  <stringresponse type="ci">
+    <additional_answer />
+    <textline size="20"/>
+  </stringresponse>
+</problem>`,
+  question: '',
+};

@@ -212,6 +212,20 @@ const getStyles = () => (
       background: none;
       color: #3c3c3c;
       padding: 0;
+  }
+  .mce-content-body[data-mce-placeholder] {
+    position: relative;
+  }
+  .mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
+    color: rgba(34, 47, 62, 0.7);
+    content: attr(data-mce-placeholder);
+    position: absolute;
+  }
+  .mce-content-body:not([dir=rtl])[data-mce-placeholder]:not(.mce-visualblocks)::before {
+    margin: 1em 0;
+  }
+  .mce-content-body[dir=rtl][data-mce-placeholder]:not(.mce-visualblocks)::before {
+    margin: 1em 0;
   }`
 );
 

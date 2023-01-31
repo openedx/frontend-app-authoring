@@ -21,6 +21,10 @@ export const nonQuestionKeys = [
   '@_type',
   'formulaequationinput',
   'numericalresponse',
+  'stringresponse',
+  'multiplechoiceresponse',
+  'choiceresponse',
+  'optionresponse',
   'demandhint',
 ];
 
