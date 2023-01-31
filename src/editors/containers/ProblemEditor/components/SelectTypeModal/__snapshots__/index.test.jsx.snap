@@ -9,7 +9,7 @@ exports[`SelectTypeModal snapshot 1`] = `
     className="justify-content-center"
   >
     <Stack
-      className="flex-wrap"
+      className="flex-wrap mb-6"
       direction="horizontal"
       gap={4}
     >

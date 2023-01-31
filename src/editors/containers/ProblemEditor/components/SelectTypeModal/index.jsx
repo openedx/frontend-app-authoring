@@ -19,7 +19,7 @@ export const SelectTypeModal = ({
     <SelectTypeWrapper onClose={onClose} selected={selected}>
       <Row className="justify-content-center">
         {(!Object.values(AdvanceProblemKeys).includes(selected)) ? (
-          <Stack direction="horizontal" gap={4} className="flex-wrap">
+          <Stack direction="horizontal" gap={4} className="flex-wrap mb-6">
             <ProblemTypeSelect selected={selected} setSelected={setSelected} />
             <Preview problemType={selected} />
           </Stack>

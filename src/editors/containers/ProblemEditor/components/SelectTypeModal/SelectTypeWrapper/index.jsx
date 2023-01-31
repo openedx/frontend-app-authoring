@@ -29,7 +29,7 @@ export const SelectTypeWrapper = ({
           </div>
         </ModalDialog.Title>
       </ModalDialog.Header>
-      <ModalDialog.Body>
+      <ModalDialog.Body classname="pb-6">
         {children}
       </ModalDialog.Body>
       <SelectTypeFooter
