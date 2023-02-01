@@ -1,38 +1,55 @@
-export const checkboxesOLXWithFeedbackAndHintsOLX = {
+export const getCheckboxesOLXWithFeedbackAndHintsOLX = ({ solution = 'simple' }) => ({
   rawOLX: `<problem>
-<choiceresponse>
-  <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
-<label>Add the question text, or prompt, here. This text is required.</label>
-<description>You can add an optional tip or note related to the prompt like this.</description>
-<checkboxgroup>
-    <choice correct="true">a correct answer
-      <choicehint selected="true">You can specify optional feedback that appears after the learner selects and submits this answer.</choicehint>
-      <choicehint selected="false">You can specify optional feedback that appears after the learner clears and submits this answer.</choicehint>
-</choice>
-    <choice correct="false">an incorrect answer</choice>
-    <choice correct="false">an incorrect answer
-      <choicehint selected="true">You can specify optional feedback for none, all, or a subset of the answers.</choicehint>
-      <choicehint selected="false">You can specify optional feedback for selected answers, cleared answers, or both.</choicehint>
-</choice>
-    <choice correct="true">a correct answer</choice>
-    <compoundhint value="A B D">You can specify optional feedback for a combination of answers which appears after the specified set of answers is submitted.</compoundhint>
-    <compoundhint value="A B C D">You can specify optional feedback for one, several, or all answer combinations.</compoundhint>
-  </checkboxgroup>
-</choiceresponse>
-<demandhint>
-  <hint>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</hint>
-  <hint>If you add more than one hint, a different hint appears each time learners select the hint button.</hint>
-</demandhint>
-</problem>`,
-  hints: [{
-    id: 0,
-    value: 'You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.',
-  },
-  {
-    id: 1,
-    value: 'If you add more than one hint, a different hint appears each time learners select the hint button.',
-  },
+  <choiceresponse>
+    <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
+  <label>Add the question text, or prompt, here. This text is required.</label>
+  <description>You can add an optional tip or note related to the prompt like this.</description>
+  <checkboxgroup>
+      <choice correct="true">a correct answer
+        <choicehint selected="true">You can specify optional feedback that appears after the learner selects and submits this answer.</choicehint>
+        <choicehint selected="false">You can specify optional feedback that appears after the learner clears and submits this answer.</choicehint>
+  </choice>
+      <choice correct="false">an incorrect answer</choice>
+      <choice correct="false">an incorrect answer
+        <choicehint selected="true">You can specify optional feedback for none, all, or a subset of the answers.</choicehint>
+        <choicehint selected="false">You can specify optional feedback for selected answers, cleared answers, or both.</choicehint>
+  </choice>
+      <choice correct="true">a correct answer</choice>
+      <compoundhint value="A B D">You can specify optional feedback for a combination of answers which appears after the specified set of answers is submitted.</compoundhint>
+      <compoundhint value="A B C D">You can specify optional feedback for one, several, or all answer combinations.</compoundhint>
+    </checkboxgroup>
+  </choiceresponse>
+  <demandhint>
+    <hint>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</hint>
+    <hint>If you add more than one hint, a different hint appears each time learners select the hint button.</hint>
+  </demandhint>
+  ${solution === 'simple' ? '<solution>This is a detailed explanation of the solution.</solution>' : (
+    `<solution>
+      <div class="detailed-solution">
+          <p>Explanation</p>
+          <p>
+              You can form a voltage divider that evenly divides the input
+              voltage with two identically valued resistors, with the sampled
+              voltage taken in between the two.
+          </p>
+          <p><img src="/static/images/voltage_divider.png" alt=""/></p>
+       </div>
+    </solution>`
+  )}
+  </problem>`,
+  hints: [
+    {
+      id: 0,
+      value: 'You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.',
+    },
+    {
+      id: 1,
+      value: 'If you add more than one hint, a different hint appears each time learners select the hint button.',
+    },
   ],
+  solutionExplanation: solution === 'simple' ? 'This is a detailed explanation of the solution.' : (
+    'Explanation\n You can form a voltage divider that evenly divides the input voltage with two identically valued resistors, with the sampled voltage taken in between the two.'
+  ),
   data: {
     answers: [
       {
@@ -107,9 +124,19 @@ an incorrect answer        <choicehint selected="true">You can specify optional 
     <hint>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</hint>
     <hint>If you add more than one hint, a different hint appears each time learners select the hint button.</hint>
   </demandhint>
+  ${solution === 'simple' ? '<solution>This is a detailed explanation of the solution.</solution>' : (
+    `<solution>
+        Explanation\n
+        You can form a voltage divider that evenly divides the input
+        voltage with two identically valued resistors, with the sampled
+        voltage taken in between the two.
+    </solution>`
+  )}
 </problem>
 `,
-};
+});
+
+export const checkboxesOLXWithFeedbackAndHintsOLX = getCheckboxesOLXWithFeedbackAndHintsOLX({});
 
 export const dropdownOLXWithFeedbackAndHintsOLX = {
   rawOLX: `<problem>
@@ -184,7 +211,7 @@ an incorrect answer        <optionhint>You can specify optional feedback for non
 `,
 };
 
-export const mutlipleChoiceWithFeedbackAndHintsOLX = {
+export const multipleChoiceWithFeedbackAndHintsOLX = {
   rawOLX: `<problem>
 <multiplechoiceresponse>
   <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>

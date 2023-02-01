@@ -3,10 +3,21 @@ import { shallow } from 'enzyme';
 import SettingsOption from './SettingsOption';
 
 describe('SettingsOption', () => {
-  describe('render', () => {
-    const testContent = (<h1>My test content</h1>);
+  describe('default with children', () => {
+    const children = (<h1>My test content</h1>);
     test('snapshot: renders correct', () => {
-      expect(shallow(<SettingsOption title="Settings Option Title" summary="Settings Option Summary">{testContent}</SettingsOption>)).toMatchSnapshot();
+      expect(shallow(<SettingsOption title="Settings Option Title" summary="Settings Option Summary">{children}</SettingsOption>)).toMatchSnapshot();
+    });
+  });
+  describe('with additional sections', () => {
+    const children = (<h1>First Section</h1>);
+    const sections = [<h1>Second Section</h1>, <h1>Third Section</h1>];
+    test('snapshot: renders correct', () => {
+      expect(shallow(
+        <SettingsOption title="Settings Option Title" summary="Settings Option Summary" extraSections={sections}>
+          {children}
+        </SettingsOption>,
+      )).toMatchSnapshot();
     });
   });
 });

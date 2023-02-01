@@ -194,6 +194,16 @@ export const messages = {
     defaultMessage: 'Switch To Advanced Editor',
     description: 'message to confirm that a user wants to use the advanced editor',
   },
+  explanationInputLabel: {
+    id: 'authoring.problemeditor.settings.showAnswer.explanation.inputLabel',
+    defaultMessage: 'Explanation',
+    description: 'answer explanation input label',
+  },
+  explanationSettingText: {
+    id: 'authoring.problemeditor.settings.showAnswer.explanation.text',
+    defaultMessage: 'Provide an explanation for the correct answer.',
+    description: 'Solution Explanation text',
+  },
 };
 
 export default messages;

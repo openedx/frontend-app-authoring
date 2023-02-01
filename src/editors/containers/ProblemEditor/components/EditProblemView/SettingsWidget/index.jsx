@@ -67,7 +67,11 @@ export const SettingsWidget = ({
       <Collapsible.Advanced open={isAdvancedCardsVisible}>
         <Collapsible.Body className="collapsible-body">
           <div className="my-3">
-            <ShowAnswerCard showAnswer={settings.showAnswer} updateSettings={updateSettings} />
+            <ShowAnswerCard
+              showAnswer={settings.showAnswer}
+              updateSettings={updateSettings}
+              solutionExplanation={settings.solutionExplanation}
+            />
           </div>
           <div className="my-3">
             <ResetCard showResetButton={settings.showResetButton} updateSettings={updateSettings} />

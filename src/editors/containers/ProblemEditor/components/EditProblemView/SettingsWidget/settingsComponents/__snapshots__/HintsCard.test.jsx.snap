@@ -3,6 +3,7 @@
 exports[`HintsCard snapshot snapshot: renders hints setting card multiple hints 1`] = `
 <SettingsOption
   className=""
+  extraSections={Array []}
   none={false}
   summary=" {count, plural, =0 {} other {(+# more)}}"
   title="Hints"
@@ -40,6 +41,7 @@ exports[`HintsCard snapshot snapshot: renders hints setting card multiple hints 
 exports[`HintsCard snapshot snapshot: renders hints setting card no hints 1`] = `
 <SettingsOption
   className=""
+  extraSections={Array []}
   none={true}
   summary="None"
   title="Hints"
@@ -63,6 +65,7 @@ exports[`HintsCard snapshot snapshot: renders hints setting card no hints 1`] = 
 exports[`HintsCard snapshot snapshot: renders hints setting card one hint 1`] = `
 <SettingsOption
   className=""
+  extraSections={Array []}
   none={false}
   summary="hint1 {count, plural, =0 {} other {(+# more)}}"
   title="Hints"

@@ -3,6 +3,7 @@
 exports[`MatlabCard snapshot snapshot: renders matlab setting card 1`] = `
 <SettingsOption
   className=""
+  extraSections={Array []}
   none={false}
   summary="matlab_api_key"
   title="MATLAB API Key"
@@ -48,6 +49,7 @@ exports[`MatlabCard snapshot snapshot: renders matlab setting card 1`] = `
 exports[`MatlabCard snapshot snapshot: renders matlab setting card no key 1`] = `
 <SettingsOption
   className=""
+  extraSections={Array []}
   none={true}
   summary="None"
   title="MATLAB API Key"

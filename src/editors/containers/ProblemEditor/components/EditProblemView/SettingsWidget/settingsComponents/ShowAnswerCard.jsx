@@ -7,10 +7,11 @@ import SettingsOption from '../SettingsOption';
 import { ShowAnswerTypes, ShowAnswerTypesKeys } from '../../../../../../data/constants/problem';
 import { selectors } from '../../../../../../data/redux';
 import messages from '../messages';
-import { showAnswerCardHooks } from '../hooks';
+import { useAnswerSettings } from '../hooks';
 
 export const ShowAnswerCard = ({
   showAnswer,
+  solutionExplanation,
   updateSettings,
   // inject
   intl,
@@ -21,24 +22,23 @@ export const ShowAnswerCard = ({
   const {
     handleShowAnswerChange,
     handleAttemptsChange,
+    handleExplanationChange,
     showAttempts,
-  } = showAnswerCardHooks(showAnswer, updateSettings);
-  return (
-    <SettingsOption
-      title={intl.formatMessage(messages.showAnswerSettingsTitle)}
-      summary={intl.formatMessage(ShowAnswerTypes[showAnswer.on])}
-    >
-      <div className="halfSpacedMessage">
+  } = useAnswerSettings(showAnswer, updateSettings);
+
+  const showAnswerSection = (
+    <>
+      <div className="pb-2">
         <span>
           <FormattedMessage {...messages.showAnswerSettingText} />
         </span>
       </div>
-      <div className="spacedMessage">
+      <div className="pb-4">
         <Hyperlink destination={`${studioEndpointUrl}/settings/advanced/${learningContextId}`} target="_blank">
           <FormattedMessage {...messages.advancedSettingsLinkText} />
         </Hyperlink>
       </div>
-      <Form.Group>
+      <Form.Group className="pb-0 mb-0">
         <Form.Control
           as="select"
           value={showAnswer.on}
@@ -56,7 +56,7 @@ export const ShowAnswerCard = ({
       </Form.Group>
       {showAttempts
         && (
-        <Form.Group>
+        <Form.Group className="pb-0 mb-0">
           <Form.Control
             type="number"
             value={showAnswer.afterAttempts}
@@ -65,6 +65,33 @@ export const ShowAnswerCard = ({
           />
         </Form.Group>
         )}
+    </>
+  );
+
+  const explanationSection = (
+    <>
+      <div className="pb-3">
+        <span>
+          <FormattedMessage {...messages.explanationSettingText} />
+        </span>
+      </div>
+      <Form.Group className="pb-0">
+        <Form.Control
+          value={solutionExplanation}
+          onChange={handleExplanationChange}
+          floatingLabel={intl.formatMessage(messages.explanationInputLabel)}
+        />
+      </Form.Group>
+    </>
+  );
+
+  return (
+    <SettingsOption
+      title={intl.formatMessage(messages.showAnswerSettingsTitle)}
+      summary={intl.formatMessage(ShowAnswerTypes[showAnswer.on])}
+      extraSections={[{ children: explanationSection }]}
+    >
+      {showAnswerSection}
     </SettingsOption>
   );
 };
@@ -73,9 +100,13 @@ ShowAnswerCard.propTypes = {
   intl: intlShape.isRequired,
   // eslint-disable-next-line
   showAnswer: PropTypes.any.isRequired,
+  solutionExplanation: PropTypes.string,
   updateSettings: PropTypes.func.isRequired,
   studioEndpointUrl: PropTypes.string.isRequired,
   learningContextId: PropTypes.string.isRequired,
+};
+ShowAnswerCard.defaultProps = {
+  solutionExplanation: '',
 };
 
 export const mapStateToProps = (state) => ({

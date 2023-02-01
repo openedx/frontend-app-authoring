@@ -5,7 +5,7 @@ import {
   numericInputWithFeedbackAndHintsOLX,
   numericInputWithFeedbackAndHintsOLXException,
   textInputWithFeedbackAndHintsOLX,
-  mutlipleChoiceWithFeedbackAndHintsOLX,
+  multipleChoiceWithFeedbackAndHintsOLX,
   textInputWithFeedbackAndHintsOLXWithMultipleAnswers,
 } from './mockData/olxTestData';
 import ReactStateOLXParser from './ReactStateOLXParser';
@@ -33,11 +33,11 @@ describe('Check React Sate OLXParser problem', () => {
     expect(buildOLX).toEqual(textInputWithFeedbackAndHintsOLX.buildOLX);
   });
   test('Test multiple choice with feedback and hints problem type', () => {
-    const olxparser = new OLXParser(mutlipleChoiceWithFeedbackAndHintsOLX.rawOLX);
+    const olxparser = new OLXParser(multipleChoiceWithFeedbackAndHintsOLX.rawOLX);
     const problem = olxparser.getParsedOLXData();
     const stateParser = new ReactStateOLXParser({ problem });
     const buildOLX = stateParser.buildOLX();
-    expect(buildOLX).toEqual(mutlipleChoiceWithFeedbackAndHintsOLX.buildOLX);
+    expect(buildOLX).toEqual(multipleChoiceWithFeedbackAndHintsOLX.buildOLX);
   });
   test('Test numerical response with feedback and hints problem type', () => {
     const olxparser = new OLXParser(numericInputWithFeedbackAndHintsOLX.rawOLX);

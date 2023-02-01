@@ -3,7 +3,7 @@
 exports[`TimerCard snapshot snapshot: renders reset true setting card 1`] = `
 <SettingsOption
   className=""
-  none={false}
+  extraSections={Array []}
   summary="5 seconds"
   title="Time between attempts"
 >

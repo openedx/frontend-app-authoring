@@ -21,10 +21,10 @@ export const showAdvancedSettingsCards = () => {
 };
 
 export const showFullCard = () => {
-  const [isCardCollapsed, setIsCardCollapsed] = module.state.cardCollapsed(false);
+  const [isCardCollapsibleOpen, setIsCardCollapsibleOpen] = module.state.cardCollapsed(false);
   return {
-    isCardCollapsed,
-    toggleCardCollapse: () => setIsCardCollapsed(!isCardCollapsed),
+    isCardCollapsibleOpen,
+    toggleCardCollapse: () => setIsCardCollapsibleOpen(!isCardCollapsibleOpen),
   };
 };
 
@@ -147,8 +147,9 @@ export const scoringCardHooks = (scoring, updateSettings) => {
   };
 };
 
-export const showAnswerCardHooks = (showAnswer, updateSettings) => {
+export const useAnswerSettings = (showAnswer, updateSettings) => {
   const [showAttempts, setShowAttempts] = module.state.showAttempts(false);
+
   const numberOfAttemptsChoice = [
     ShowAnswerTypesKeys.AFTER_SOME_NUMBER_OF_ATTEMPTS,
     ShowAnswerTypesKeys.AFTER_ALL_ATTEMPTS,
@@ -173,9 +174,14 @@ export const showAnswerCardHooks = (showAnswer, updateSettings) => {
     updateSettings({ showAnswer: { ...showAnswer, afterAttempts: attempts } });
   };
 
+  const handleExplanationChange = (event) => {
+    updateSettings({ solutionExplanation: event.target.value });
+  };
+
   return {
     handleShowAnswerChange,
     handleAttemptsChange,
+    handleExplanationChange,
     showAttempts,
   };
 };

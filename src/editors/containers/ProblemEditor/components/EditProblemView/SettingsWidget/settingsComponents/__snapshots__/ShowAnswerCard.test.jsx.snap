@@ -3,12 +3,38 @@
 exports[`ShowAnswerCard snapshot snapshot: show answer setting card 1`] = `
 <SettingsOption
   className=""
-  none={false}
+  extraSections={
+    Array [
+      Object {
+        "children": <React.Fragment>
+          <div
+            className="pb-3"
+          >
+            <span>
+              <FormattedMessage
+                defaultMessage="Provide an explanation for the correct answer."
+                description="Solution Explanation text"
+                id="authoring.problemeditor.settings.showAnswer.explanation.text"
+              />
+            </span>
+          </div>
+          <Form.Group
+            className="pb-0"
+          >
+            <Form.Control
+              floatingLabel="Explanation"
+              value=""
+            />
+          </Form.Group>
+        </React.Fragment>,
+      },
+    ]
+  }
   summary="After Some Number of Attempts"
   title="Show answer"
 >
   <div
-    className="halfSpacedMessage"
+    className="pb-2"
   >
     <span>
       <FormattedMessage
@@ -19,7 +45,7 @@ exports[`ShowAnswerCard snapshot snapshot: show answer setting card 1`] = `
     </span>
   </div>
   <div
-    className="spacedMessage"
+    className="pb-4"
   >
     <Hyperlink
       destination="SoMEeNDpOinT/settings/advanced/sOMEcouRseId"
@@ -32,10 +58,12 @@ exports[`ShowAnswerCard snapshot snapshot: show answer setting card 1`] = `
       />
     </Hyperlink>
   </div>
-  <Form.Group>
+  <Form.Group
+    className="pb-0 mb-0"
+  >
     <Form.Control
       as="select"
-      onChange={[MockFunction showAnswerCardHooks.handleShowAnswerChange]}
+      onChange={[MockFunction useAnswerSettings.handleShowAnswerChange]}
       value="after_attempts"
     >
       <option

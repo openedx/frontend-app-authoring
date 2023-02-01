@@ -3,7 +3,7 @@
 exports[`TypeCard snapshot snapshot: renders type setting card 1`] = `
 <SettingsOption
   className=""
-  none={false}
+  extraSections={Array []}
   summary="Text input"
   title="Type"
 >

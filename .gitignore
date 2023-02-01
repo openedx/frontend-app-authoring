@@ -110,3 +110,6 @@ dist
 
 ### local overrides ###
 module.config.js
+
+### Code editors ###
+.vscode

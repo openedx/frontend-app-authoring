@@ -53,7 +53,7 @@ describe('Problem settings hooks', () => {
       output = hooks.showFullCard();
     });
     test('test default state is false', () => {
-      expect(output.isCardCollapsed).toBeFalsy();
+      expect(output.isCardCollapsibleOpen).toBeFalsy();
     });
     test('test toggleCardCollapse to true', () => {
       output.toggleCardCollapse();
@@ -220,7 +220,7 @@ describe('Problem settings hooks', () => {
       afterAttempts: 5,
     };
     beforeEach(() => {
-      output = hooks.showAnswerCardHooks(showAnswer, updateSettings);
+      output = hooks.useAnswerSettings(showAnswer, updateSettings);
     });
     test('test handleShowAnswerChange', () => {
       const value = 'always';
@@ -231,6 +231,11 @@ describe('Problem settings hooks', () => {
       const value = 3;
       output.handleAttemptsChange({ target: { value } });
       expect(updateSettings).toHaveBeenCalledWith({ showAnswer: { ...showAnswer, afterAttempts: parseInt(value) } });
+    });
+    test('handleExplanationChange should update settings', () => {
+      const value = 'explanation';
+      output.handleExplanationChange({ target: { value } });
+      expect(updateSettings).toHaveBeenCalledWith({ solutionExplanation: value });
     });
   });
 

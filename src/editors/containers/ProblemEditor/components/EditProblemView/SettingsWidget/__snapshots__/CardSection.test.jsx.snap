@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CardSection closed 1`] = `""`;
+
+exports[`CardSection open 1`] = `
+<Card.Section
+  className="px-4 pb-4 pt-3"
+>
+  <Advanced
+    open={false}
+  >
+    <Body
+      className="collapsible-body"
+    >
+      <span
+        className="small text-primary-500"
+      >
+        summary
+      </span>
+    </Body>
+  </Advanced>
+  <Advanced
+    open={true}
+  >
+    <Body
+      className="collapsible-body"
+    >
+      <h1>
+        Section Text
+      </h1>
+    </Body>
+  </Advanced>
+</Card.Section>
+`;

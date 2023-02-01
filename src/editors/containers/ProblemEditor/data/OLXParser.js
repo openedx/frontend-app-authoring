@@ -8,24 +8,24 @@ import { ProblemTypeKeys } from '../../../data/constants/problem';
 export const indexToLetterMap = [...Array(26)].map((val, i) => String.fromCharCode(i + 65));
 
 export const nonQuestionKeys = [
-  'responseparam',
-  'formulaequationinput',
-  'correcthint',
   '@_answer',
-  'optioninput',
+  '@_type',
+  'additional_answer',
   'checkboxgroup',
   'choicegroup',
-  'additional_answer',
-  'stringequalhint',
-  'textline',
-  '@_type',
-  'formulaequationinput',
-  'numericalresponse',
-  'stringresponse',
-  'multiplechoiceresponse',
   'choiceresponse',
-  'optionresponse',
+  'correcthint',
   'demandhint',
+  'formulaequationinput',
+  'multiplechoiceresponse',
+  'numericalresponse',
+  'optioninput',
+  'optionresponse',
+  'responseparam',
+  'solution',
+  'stringequalhint',
+  'stringresponse',
+  'textline',
 ];
 
 export class OLXParser {
@@ -327,6 +327,38 @@ export class OLXParser {
     return hintsObject;
   }
 
+  #extractTextAndChildren(node) {
+    const children = [];
+    let text = null;
+
+    if (_.isArray(node)) {
+      children.push(...node);
+    } else if (_.isPlainObject(node)) {
+      text = _.get(node, '#text');
+      const nodeWithoutText = _.omit(node, '#text');
+      children.push(...Object.values(nodeWithoutText));
+    }
+
+    return { text, children };
+  }
+
+  getSolutionExplanation() {
+    if (!_.has(this.problem, 'solution')) { return null; }
+
+    const stack = [this.problem.solution];
+    const texts = [];
+    let currentNode;
+
+    while (stack.length) {
+      currentNode = stack.pop();
+      const { text, children } = this.#extractTextAndChildren(currentNode);
+      if (text) { texts.push(text); }
+      stack.push(...children);
+    }
+
+    return texts.reverse().join('\n ');
+  }
+
   getFeedback(xmlElement) {
     return _.has(xmlElement, 'correcthint') ? _.get(xmlElement, 'correcthint.#text') : '';
   }
@@ -365,6 +397,8 @@ export class OLXParser {
     const problemType = this.getProblemType();
     const hints = this.getHints();
     const question = this.parseQuestions(problemType);
+    const solutionExplanation = this.getSolutionExplanation();
+
     switch (problemType) {
       case ProblemTypeKeys.DROPDOWN:
         answersObject = this.parseMultipleChoiceAnswers(ProblemTypeKeys.DROPDOWN, 'optioninput', 'option');
@@ -400,6 +434,8 @@ export class OLXParser {
     }
     const { answers } = answersObject;
     const settings = { hints };
+    if (solutionExplanation) { settings.solutionExplanation = solutionExplanation; }
+
     return {
       question,
       settings,
