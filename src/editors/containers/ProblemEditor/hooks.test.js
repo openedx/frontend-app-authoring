@@ -58,10 +58,18 @@ describe('Problem editor hooks', () => {
     });
 
     describe('parseContentForLabels', () => {
-      test('it calls getContent and setContent', () => {
+      test('it calls getContent and updateQuestion for some content', () => {
         const editor = { getContent: jest.fn(() => '<p><label>Some question label</label></p><p>some content <label>around a label</label> followed by more text</p><img src="/static/soMEImagEURl1.jpeg"/>') };
         const updateQuestion = jest.fn();
         const content = '<p><label>Some question label</label></p><p>some content </p><p><label>around a label</label></p><p> followed by more text</p><img src="/static/soMEImagEURl1.jpeg"/>';
+        module.parseContentForLabels({ editor, updateQuestion });
+        expect(editor.getContent).toHaveBeenCalled();
+        expect(updateQuestion).toHaveBeenCalledWith(content);
+      });
+      test('it calls getContent and updateQuestion for empty content', () => {
+        const editor = { getContent: jest.fn(() => '') };
+        const updateQuestion = jest.fn();
+        const content = '';
         module.parseContentForLabels({ editor, updateQuestion });
         expect(editor.getContent).toHaveBeenCalled();
         expect(updateQuestion).toHaveBeenCalledWith(content);

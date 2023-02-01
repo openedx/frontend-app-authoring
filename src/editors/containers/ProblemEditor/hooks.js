@@ -12,30 +12,32 @@ export const state = StrictDict({
 
 export const parseContentForLabels = ({ editor, updateQuestion }) => {
   let content = editor.getContent();
-  const parsedLabels = content.split(/<label>|<\/label>/gm);
-  let updatedContent;
-  parsedLabels.forEach((label, i) => {
-    let updatedLabel = label;
-    if (!label.startsWith('<') && !label.endsWith('>')) {
-      let previousLabel = parsedLabels[i - 1];
-      let nextLabel = parsedLabels[i + 1];
-      if (!previousLabel.endsWith('<p>')) {
-        previousLabel = `${previousLabel}</p><p>`;
-        updatedContent = content.replace(parsedLabels[i - 1], previousLabel);
-        content = updatedContent;
+  if (content && content?.length > 0) {
+    const parsedLabels = content.split(/<label>|<\/label>/gm);
+    let updatedContent;
+    parsedLabels.forEach((label, i) => {
+      let updatedLabel = label;
+      if (!label.startsWith('<') && !label.endsWith('>')) {
+        let previousLabel = parsedLabels[i - 1];
+        let nextLabel = parsedLabels[i + 1];
+        if (!previousLabel.endsWith('<p>')) {
+          previousLabel = `${previousLabel}</p><p>`;
+          updatedContent = content.replace(parsedLabels[i - 1], previousLabel);
+          content = updatedContent;
+        }
+        if (previousLabel.endsWith('</p>') && !label.startWith('<p>')) {
+          updatedLabel = `<p>${label}`;
+          updatedContent = content.replace(label, updatedLabel);
+          content = updatedContent;
+        }
+        if (!nextLabel.startsWith('</p>')) {
+          nextLabel = `</p><p>${nextLabel}`;
+          updatedContent = content.replace(parsedLabels[i + 1], nextLabel);
+          content = updatedContent;
+        }
       }
-      if (previousLabel.endsWith('</p>') && !label.startWith('<p>')) {
-        updatedLabel = `<p>${label}`;
-        updatedContent = content.replace(label, updatedLabel);
-        content = updatedContent;
-      }
-      if (!nextLabel.startsWith('</p>')) {
-        nextLabel = `</p><p>${nextLabel}`;
-        updatedContent = content.replace(parsedLabels[i + 1], nextLabel);
-        content = updatedContent;
-      }
-    }
-  });
+    });
+  }
   updateQuestion(content);
 };
 
