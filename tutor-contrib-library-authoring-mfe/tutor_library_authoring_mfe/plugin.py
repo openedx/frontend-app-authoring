@@ -47,8 +47,6 @@ hooks.Filters.CONFIG_DEFAULTS.add_item(("LIBRARY_AUTHORING_MFE_APP", {
 # development, so we have to restore it here manually.
 # https://github.com/openedx/frontend-app-library-authoring/blob/b95c198b/webpack.dev.config.js
 hooks.Filters.ENV_PATCHES.add_item(("mfe-webpack-dev-config","""
-const fs = require('fs');
-
 // If this is the Library Authoring MFE, apply this fix:
 if (fs.existsSync("src/library-authoring/edit-block/LibraryBlock/xblock-bootstrap.html")) {
     const path = require('path');
