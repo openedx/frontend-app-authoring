@@ -1,8 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SelectTypeWrapper snapshot 1`] = `
-<div>
-  <ModalDialog.Header>
+<div
+  className="position-relative zindex-0"
+>
+  <ModalDialog.Header
+    className="shadow-sm zindex-10"
+  >
     <ModalDialog.Title>
       <FormattedMessage
         defaultMessage="Select problem type"

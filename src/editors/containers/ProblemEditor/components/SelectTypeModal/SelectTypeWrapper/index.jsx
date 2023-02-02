@@ -16,8 +16,10 @@ export const SelectTypeWrapper = ({
   const handleCancel = hooks.handleCancel({ onClose });
 
   return (
-    <div>
-      <ModalDialog.Header>
+    <div
+      className="position-relative zindex-0"
+    >
+      <ModalDialog.Header className="shadow-sm zindex-10">
         <ModalDialog.Title>
           <FormattedMessage {...messages.selectTypeTitle} />
           <div className="pgn__modal-close-container">
