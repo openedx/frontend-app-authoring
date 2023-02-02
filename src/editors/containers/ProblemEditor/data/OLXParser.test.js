@@ -12,6 +12,7 @@ import {
   multipleProblemOlX,
   blankProblemOLX,
   blankQuestionOLX,
+  styledQuestionOLX,
 } from './mockData/olxTestData';
 import { ProblemTypeKeys } from '../../../data/constants/problem';
 
@@ -160,6 +161,12 @@ describe('Check OLXParser for question parsing', () => {
     const problemType = olxparser.getProblemType();
     const question = olxparser.parseQuestions(problemType);
     expect(question).toBe(blankQuestionOLX.question);
+  });
+  test('Test OLX question content with styling should parse/build with correct styling', () => {
+    const olxparser = new OLXParser(styledQuestionOLX.rawOLX);
+    const problemType = olxparser.getProblemType();
+    const question = olxparser.parseQuestions(problemType);
+    expect(question).toBe(styledQuestionOLX.question);
   });
 });
 
