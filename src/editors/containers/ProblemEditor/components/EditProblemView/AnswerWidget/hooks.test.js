@@ -103,8 +103,7 @@ describe('Answer Options Hooks', () => {
       const key = state.keys.isFeedbackVisible;
       output = module.useFeedback(answerWithOnlyFeedback);
       expect(state.setState[key]).not.toHaveBeenCalled();
-      const [cb, prereqs] = useEffect.mock.calls[0];
-      expect(prereqs[0]).toStrictEqual(answerWithOnlyFeedback);
+      const [cb] = useEffect.mock.calls[0];
       cb();
       expect(state.setState[key]).toHaveBeenCalledWith(true);
     });

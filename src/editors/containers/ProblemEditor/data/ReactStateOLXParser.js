@@ -175,7 +175,7 @@ class ReactStateOLXParser {
         } else if (!answer.correct) {
           wrongAnswers.push({
             '@_answer': answer.title,
-            '#text': answer.feedback,
+            '#text': answer.selectedFeedback,
           });
         }
       }
@@ -257,7 +257,7 @@ class ReactStateOLXParser {
   }
 
   getAnswerHints(elementObject) {
-    const feedback = elementObject?.feedback;
+    const feedback = elementObject?.selectedFeedback;
     let correcthint = {};
     if (feedback !== undefined && feedback !== '') {
       correcthint = {
