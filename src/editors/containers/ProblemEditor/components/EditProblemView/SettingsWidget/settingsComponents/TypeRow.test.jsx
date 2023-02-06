@@ -11,11 +11,14 @@ describe('TypeRow', () => {
   const typeKey = 'TEXTINPUT';
   const props = {
     answers: [],
+    blockTitle: 'bLoCkTiTLE',
     correctAnswerCount: 0,
     typeKey,
     label: 'Text Input Problem',
     selected: true,
     lastRow: false,
+    problemType: 'prOBlEMtyPE',
+    setBlockTitle: jest.fn().mockName('args.setBlockTitle'),
     updateField: jest.fn().mockName('args.updateField'),
     updateAnswer: jest.fn().mockName('args.updateAnswer'),
   };
@@ -31,8 +34,11 @@ describe('TypeRow', () => {
       shallow(<TypeRow {...props} />);
       expect(typeRowHooks).toHaveBeenCalledWith({
         answers: props.answers,
+        blockTitle: props.blockTitle,
         correctAnswerCount: props.correctAnswerCount,
+        problemType: props.problemType,
         typeKey,
+        setBlockTitle: props.setBlockTitle,
         updateField: props.updateField,
         updateAnswer: props.updateAnswer,
       });

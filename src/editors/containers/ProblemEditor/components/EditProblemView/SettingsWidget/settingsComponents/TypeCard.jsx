@@ -8,8 +8,10 @@ import TypeRow from './TypeRow';
 
 export const TypeCard = ({
   answers,
+  blockTitle,
   correctAnswerCount,
   problemType,
+  setBlockTitle,
   updateField,
   updateAnswer,
   // inject
@@ -27,12 +29,15 @@ export const TypeCard = ({
       {problemTypeKeysArray.map((typeKey, i) => (
         <TypeRow
           answers={answers}
+          blockTitle={blockTitle}
           correctAnswerCount={correctAnswerCount}
           key={typeKey}
           typeKey={typeKey}
           label={ProblemTypes[typeKey].title}
           selected={typeKey !== problemType}
+          problemType={problemType}
           lastRow={(i + 1) === problemTypeKeysArray.length}
+          setBlockTitle={setBlockTitle}
           updateField={updateField}
           updateAnswer={updateAnswer}
         />
@@ -49,8 +54,10 @@ TypeCard.propTypes = {
     title: PropTypes.string,
     unselectedFeedback: PropTypes.string,
   })).isRequired,
+  blockTitle: PropTypes.string.isRequired,
   correctAnswerCount: PropTypes.number.isRequired,
   problemType: PropTypes.string.isRequired,
+  setBlockTitle: PropTypes.func.isRequired,
   updateField: PropTypes.func.isRequired,
   updateAnswer: PropTypes.func.isRequired,
   // injected

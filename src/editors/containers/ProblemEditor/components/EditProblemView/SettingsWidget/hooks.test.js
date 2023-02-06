@@ -251,6 +251,9 @@ describe('Problem settings hooks', () => {
   describe('Type row hooks', () => {
     test('test onClick', () => {
       const typekey = 'multiplechoiceresponse';
+      const problemType = 'choiceresponse';
+      const blockTitle = 'Multi-select';
+      const setBlockTitle = jest.fn();
       const updateField = jest.fn();
       const updateAnswer = jest.fn();
       const answers = [{
@@ -263,12 +266,16 @@ describe('Problem settings hooks', () => {
       }];
       output = hooks.typeRowHooks({
         answers,
+        blockTitle,
         correctAnswerCount: 2,
+        problemType,
+        setBlockTitle,
         typeKey: typekey,
         updateField,
         updateAnswer,
       });
       output.onClick();
+      expect(setBlockTitle).toHaveBeenCalledWith('Single select');
       expect(updateAnswer).toHaveBeenNthCalledWith(1, { ...answers[0], correct: false });
       expect(updateAnswer).toHaveBeenNthCalledWith(2, { ...answers[1], correct: false });
       expect(updateField).toHaveBeenCalledWith({ problemType: typekey });

@@ -8,17 +8,23 @@ import Button from '../../../../../../sharedComponents/Button';
 
 export const TypeRow = ({
   answers,
+  blockTitle,
   correctAnswerCount,
   typeKey,
   label,
   selected,
+  problemType,
   lastRow,
+  setBlockTitle,
   updateField,
   updateAnswer,
 }) => {
   const { onClick } = typeRowHooks({
     answers,
+    blockTitle,
     correctAnswerCount,
+    problemType,
+    setBlockTitle,
     typeKey,
     updateField,
     updateAnswer,
@@ -43,11 +49,14 @@ TypeRow.propTypes = {
     title: PropTypes.string,
     unselectedFeedback: PropTypes.string,
   })).isRequired,
+  blockTitle: PropTypes.string.isRequired,
   correctAnswerCount: PropTypes.number.isRequired,
   typeKey: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   selected: PropTypes.bool.isRequired,
   lastRow: PropTypes.bool.isRequired,
+  problemType: PropTypes.string.isRequired,
+  setBlockTitle: PropTypes.func.isRequired,
   updateAnswer: PropTypes.func.isRequired,
   updateField: PropTypes.func.isRequired,
 };

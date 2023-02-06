@@ -24,8 +24,10 @@ export const SettingsWidget = ({
   problemType,
   // redux
   answers,
+  blockTitle,
   correctAnswerCount,
   settings,
+  setBlockTitle,
   updateSettings,
   updateField,
   updateAnswer,
@@ -36,8 +38,10 @@ export const SettingsWidget = ({
       <div className="mb-3 settingsCardTopdiv">
         <TypeCard
           answers={answers}
+          blockTitle={blockTitle}
           correctAnswerCount={correctAnswerCount}
           problemType={problemType}
+          setBlockTitle={setBlockTitle}
           updateField={updateField}
           updateAnswer={updateAnswer}
         />
@@ -99,8 +103,10 @@ SettingsWidget.propTypes = {
     title: PropTypes.string,
     unselectedFeedback: PropTypes.string,
   })).isRequired,
+  blockTitle: PropTypes.string.isRequired,
   correctAnswerCount: PropTypes.number.isRequired,
   problemType: PropTypes.string.isRequired,
+  setBlockTitle: PropTypes.func.isRequired,
   updateAnswer: PropTypes.func.isRequired,
   updateField: PropTypes.func.isRequired,
   updateSettings: PropTypes.func.isRequired,
@@ -111,10 +117,12 @@ SettingsWidget.propTypes = {
 const mapStateToProps = (state) => ({
   settings: selectors.problem.settings(state),
   answers: selectors.problem.answers(state),
+  blockTitle: selectors.app.blockTitle(state),
   correctAnswerCount: selectors.problem.correctAnswerCount(state),
 });
 
 export const mapDispatchToProps = {
+  setBlockTitle: actions.app.setBlockTitle,
   updateSettings: actions.problem.updateSettings,
   updateField: actions.problem.updateField,
   updateAnswer: actions.problem.updateAnswer,

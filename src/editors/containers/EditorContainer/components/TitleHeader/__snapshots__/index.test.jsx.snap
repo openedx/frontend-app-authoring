@@ -15,7 +15,7 @@ exports[`TitleHeader snapshots initialized 1`] = `
   className="d-flex flex-row align-items-center"
 >
   <Truncate>
-    TeST LocALtitLE
+    <Component />
   </Truncate>
   <IconButton
     alt="Edit Title"

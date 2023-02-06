@@ -1,11 +1,12 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { Icon, IconButton, Truncate } from '@edx/paragon';
 import { EditOutline } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
+import { selectors } from '../../../../data/redux';
 import { localTitleHooks } from './hooks';
 import messages from './messages';
 import EditableHeader from './EditableHeader';
@@ -17,6 +18,7 @@ export const TitleHeader = ({
 }) => {
   if (!isInitialized) { return intl.formatMessage(messages.loading); }
   const dispatch = useDispatch();
+  const title = useSelector(selectors.app.displayTitle);
 
   const {
     inputRef,
@@ -46,7 +48,7 @@ export const TitleHeader = ({
   return (
     <div className="d-flex flex-row align-items-center">
       <Truncate>
-        {localTitle}
+        {title}
       </Truncate>
       <IconButton
         alt={intl.formatMessage(messages.editTitleLabel)}

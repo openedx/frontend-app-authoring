@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import _ from 'lodash-es';
 import * as module from './hooks';
 import messages from './messages';
-import { ProblemTypeKeys, ShowAnswerTypesKeys } from '../../../../../data/constants/problem';
+import { ProblemTypeKeys, ProblemTypes, ShowAnswerTypesKeys } from '../../../../../data/constants/problem';
 
 export const state = {
   showAdvanced: (val) => useState(val),
@@ -198,7 +198,10 @@ export const timerCardHooks = (updateSettings) => ({
 
 export const typeRowHooks = ({
   answers,
+  blockTitle,
   correctAnswerCount,
+  problemType,
+  setBlockTitle,
   typeKey,
   updateField,
   updateAnswer,
@@ -210,6 +213,9 @@ export const typeRowHooks = ({
           updateAnswer({ ...answer, correct: false });
         });
       }
+    }
+    if (blockTitle === ProblemTypes[problemType].title) {
+      setBlockTitle(ProblemTypes[typeKey].title);
     }
     updateField({ problemType: typeKey });
   };

@@ -7,8 +7,10 @@ import { ProblemTypeKeys } from '../../../../../../data/constants/problem';
 describe('TypeCard', () => {
   const props = {
     answers: [],
+    blockTitle: 'BLocktiTLE',
     correctAnswerCount: 0,
     problemType: ProblemTypeKeys.TEXTINPUT,
+    setBlockTitle: jest.fn().mockName('args.setBlockTitle'),
     updateField: jest.fn().mockName('args.updateField'),
     updateAnswer: jest.fn().mockName('args.updateAnswer'),
     // injected
