@@ -56,7 +56,7 @@ const CollapsableEditor = ({
     </Collapsible.Trigger>
     <Collapsible.Body className="collapsible-body rounded px-0">{children}</Collapsible.Body>
   </Collapsible.Advanced>
-  );
+);
 
 CollapsableEditor.propTypes = {
   open: PropTypes.bool,

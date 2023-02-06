@@ -6,16 +6,16 @@ import { providerNames } from './constants';
 import LiveCommonFields from './LiveCommonFields';
 import FormikControl from '../../generic/FormikControl';
 
-const ZoomSettings = ({
+function ZoomSettings({
  intl,
  values,
-}) => (
-  // eslint-disable-next-line react/jsx-no-useless-fragment
-  <>
-    {!values.piiSharingEnable ? (
-      <p data-testid="request-pii-sharing">
-        {intl.formatMessage(messages.requestPiiSharingEnable, { provider: providerNames[values.provider] })}
-      </p>
+}) {
+  return (
+    <>
+      {!values.piiSharingEnable ? (
+        <p data-testid="request-pii-sharing">
+          {intl.formatMessage(messages.requestPiiSharingEnable, { provider: providerNames[values.provider] })}
+        </p>
       ) : (
         <>
           {(values.piiSharingEmail || values.piiSharingUsername)
@@ -33,8 +33,9 @@ const ZoomSettings = ({
           />
         </>
       )}
-  </>
+    </>
   );
+}
 
 ZoomSettings.propTypes = {
   intl: intlShape.isRequired,

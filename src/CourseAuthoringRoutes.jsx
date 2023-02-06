@@ -23,7 +23,7 @@ import EditorContainer from './editors/EditorContainer';
  * can move the Header/Footer rendering to this component and likely pull the course detail loading
  * in as well, and it'd feel a bit better-factored and the roles would feel more clear.
  */
-const CourseAuthoringRoutes = ({ courseId }) => {
+export default function CourseAuthoringRoutes({ courseId }) {
   const { path } = useRouteMatch();
   return (
     <CourseAuthoringPage courseId={courseId}>
@@ -45,10 +45,8 @@ const CourseAuthoringRoutes = ({ courseId }) => {
       </Switch>
     </CourseAuthoringPage>
   );
-};
+}
 
 CourseAuthoringRoutes.propTypes = {
   courseId: PropTypes.string.isRequired,
 };
-
-export default CourseAuthoringRoutes;

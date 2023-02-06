@@ -9,11 +9,11 @@ import AppConfigFormDivider from '../discussions/app-config-form/apps/shared/App
 import LiveCommonFields from './LiveCommonFields';
 import { useModel } from '../../generic/model-store';
 
-const BbbSettings = ({
+function BbbSettings({
   intl,
   values,
   setFieldValue,
-}) => {
+}) {
   const [bbbPlan, setBbbPlan] = useState(values.tierType);
 
   useEffect(() => {
@@ -108,7 +108,7 @@ const BbbSettings = ({
     </>
 
   );
-};
+}
 
 BbbSettings.propTypes = {
   intl: intlShape.isRequired,

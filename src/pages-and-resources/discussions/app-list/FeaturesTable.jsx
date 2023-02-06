@@ -10,7 +10,7 @@ import appMessages from '../app-config-form/messages';
 import { FEATURE_TYPES } from '../data/constants';
 import './FeaturesTable.scss';
 
-const FeaturesTable = ({ apps, features, intl }) => {
+function FeaturesTable({ apps, features, intl }) {
   const {
     basic, partial, full, common,
   } = _.groupBy(features, (feature) => feature.featureSupportType);
@@ -87,12 +87,12 @@ const FeaturesTable = ({ apps, features, intl }) => {
       <DataTable.Table />
     </DataTable>
   );
-};
+}
 
 export default injectIntl(FeaturesTable);
 
 FeaturesTable.propTypes = {
-  apps: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  features: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  apps: PropTypes.arrayOf(PropTypes.object).isRequired,
+  features: PropTypes.arrayOf(PropTypes.object).isRequired,
   intl: intlShape.isRequired,
 };

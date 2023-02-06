@@ -8,7 +8,7 @@ import { DiscussionsContext } from '../DiscussionsProvider';
 
 import messages from './messages';
 
-const AppListNextButton = ({ intl }) => {
+function AppListNextButton({ intl }) {
   const { selectedAppId } = useSelector(state => state.discussions);
   const { path: discussionsPath } = useContext(DiscussionsContext);
 
@@ -24,7 +24,7 @@ const AppListNextButton = ({ intl }) => {
       {intl.formatMessage(messages.nextButton)}
     </Button>
   );
-};
+}
 
 AppListNextButton.propTypes = {
   intl: intlShape.isRequired,

@@ -8,7 +8,7 @@ import { useAppSetting } from '../../utils';
 import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
 import messages from './messages';
 
-const WikiSettings = ({ intl, onClose }) => {
+function WikiSettings({ intl, onClose }) {
   const [enablePublicWiki, saveSetting] = useAppSetting('allowPublicWikiAccess');
   const handleSettingsSave = (values) => saveSetting(values.enablePublicWiki);
 
@@ -39,7 +39,7 @@ const WikiSettings = ({ intl, onClose }) => {
       }
     </AppSettingsModal>
   );
-};
+}
 
 WikiSettings.propTypes = {
   intl: intlShape.isRequired,

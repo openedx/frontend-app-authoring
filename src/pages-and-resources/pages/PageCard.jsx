@@ -17,7 +17,6 @@ const CoursePageShape = PropTypes.shape({
   name: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   enabled: PropTypes.bool.isRequired,
-  legacyLink: PropTypes.string,
   allowedOperations: PropTypes.shape({
     enable: PropTypes.bool.isRequired,
     configure: PropTypes.bool.isRequired,
@@ -26,14 +25,13 @@ const CoursePageShape = PropTypes.shape({
 
 export { CoursePageShape };
 
-const PageCard = ({
+function PageCard({
   intl,
   page,
-}) => {
+}) {
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const isDesktop = useIsDesktop();
 
-  // eslint-disable-next-line react/no-unstable-nested-components
   const SettingsButton = () => {
     if (page.legacyLink) {
       return (
@@ -82,7 +80,7 @@ const PageCard = ({
       </Card.Body>
     </Card>
   );
-};
+}
 
 PageCard.propTypes = {
   intl: intlShape.isRequired,

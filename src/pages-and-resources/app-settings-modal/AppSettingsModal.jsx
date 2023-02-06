@@ -33,19 +33,21 @@ import AppConfigFormDivider from '../discussions/app-config-form/apps/shared/App
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import messages from './messages';
 
-const AppSettingsForm = ({
+function AppSettingsForm({
   formikProps, children, showForm,
-}) => children && (
-<TransitionReplace>
-  {showForm ? (
-    <React.Fragment key="app-enabled">
-      {children(formikProps)}
-    </React.Fragment>
+}) {
+  return children && (
+    <TransitionReplace>
+      {showForm ? (
+        <React.Fragment key="app-enabled">
+          {children(formikProps)}
+        </React.Fragment>
       ) : (
         <React.Fragment key="app-disabled" />
       )}
-</TransitionReplace>
+    </TransitionReplace>
   );
+}
 
 AppSettingsForm.propTypes = {
   // Ignore the warning here since we're just passing along the props as-is and the child component should validate
@@ -59,36 +61,38 @@ AppSettingsForm.defaultProps = {
   children: null,
 };
 
-const AppSettingsModalBase = ({
+function AppSettingsModalBase({
   intl, title, onClose, variant, isMobile, children, footer,
-}) => (
-  <ModalDialog
-    title={title}
-    isOpen
-    onClose={onClose}
-    size="lg"
-    variant={variant}
-    hasCloseButton={isMobile}
-    isFullscreenOnMobile
-  >
-    <ModalDialog.Header>
-      <ModalDialog.Title data-testid="modal-title">
-        {title}
-      </ModalDialog.Title>
-    </ModalDialog.Header>
-    <ModalDialog.Body>
-      {children}
-    </ModalDialog.Body>
-    <ModalDialog.Footer className="p-4">
-      <ActionRow>
-        <ModalDialog.CloseButton variant="tertiary">
-          {intl.formatMessage(messages.cancel)}
-        </ModalDialog.CloseButton>
-        {footer}
-      </ActionRow>
-    </ModalDialog.Footer>
-  </ModalDialog>
+}) {
+  return (
+    <ModalDialog
+      title={title}
+      isOpen
+      onClose={onClose}
+      size="lg"
+      variant={variant}
+      hasCloseButton={isMobile}
+      isFullscreenOnMobile
+    >
+      <ModalDialog.Header>
+        <ModalDialog.Title data-testid="modal-title">
+          {title}
+        </ModalDialog.Title>
+      </ModalDialog.Header>
+      <ModalDialog.Body>
+        {children}
+      </ModalDialog.Body>
+      <ModalDialog.Footer className="p-4">
+        <ActionRow>
+          <ModalDialog.CloseButton variant="tertiary">
+            {intl.formatMessage(messages.cancel)}
+          </ModalDialog.CloseButton>
+          {footer}
+        </ActionRow>
+      </ModalDialog.Footer>
+    </ModalDialog>
   );
+}
 
 AppSettingsModalBase.propTypes = {
   intl: intlShape.isRequired,
@@ -104,7 +108,7 @@ AppSettingsModalBase.defaultProps = {
   footer: null,
 };
 
-const AppSettingsModal = ({
+function AppSettingsModal({
   intl,
   appId,
   title,
@@ -118,7 +122,7 @@ const AppSettingsModal = ({
   enableAppHelp,
   learnMoreText,
   enableReinitialize,
-}) => {
+}) {
   const { courseId } = useContext(PagesAndResourcesContext);
   const loadingStatus = useSelector(getLoadingStatus);
   const updateSettingsRequestStatus = useSelector(getSavingStatus);
@@ -267,7 +271,7 @@ const AppSettingsModal = ({
       {loadingStatus === RequestStatus.DENIED && <PermissionDeniedAlert />}
     </AppSettingsModalBase>
   );
-};
+}
 
 AppSettingsModal.propTypes = {
   intl: intlShape.isRequired,
@@ -275,8 +279,8 @@ AppSettingsModal.propTypes = {
   appId: PropTypes.string.isRequired,
   children: PropTypes.func,
   onSettingsSave: PropTypes.func,
-  initialValues: PropTypes.shape({}),
-  validationSchema: PropTypes.shape({}),
+  initialValues: PropTypes.objectOf(PropTypes.any),
+  validationSchema: PropTypes.objectOf(PropTypes.any),
   onClose: PropTypes.func.isRequired,
   enableAppLabel: PropTypes.string.isRequired,
   enableAppHelp: PropTypes.string.isRequired,

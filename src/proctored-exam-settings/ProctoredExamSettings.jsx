@@ -26,7 +26,7 @@ import {
   fetchExamSettingsSuccess,
 } from './data/thunks';
 
-const ProctoredExamSettings = ({ courseId, intl }) => {
+function ProctoredExamSettings({ courseId, intl }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [loaded, setLoaded] = useState(false);
@@ -55,9 +55,9 @@ const ProctoredExamSettings = ({ courseId, intl }) => {
   const saveStatusAlertRef = React.createRef();
   const proctoringEscalationEmailInputRef = useRef(null);
 
-  const onEnableProctoredExamsChange = (event) => {
+  function onEnableProctoredExamsChange(event) {
     setEnableProctoredExams(event.target.checked);
-  };
+  }
 
   function onAllowOptingOutChange(value) {
     setAllowOptingOut(value);
@@ -67,7 +67,7 @@ const ProctoredExamSettings = ({ courseId, intl }) => {
     setCreateZendeskTickets(value);
   }
 
-  const onProctoringProviderChange = (event) => {
+  function onProctoringProviderChange(event) {
     const provider = event.target.value;
     setProctoringProvider(provider);
 
@@ -80,17 +80,17 @@ const ProctoredExamSettings = ({ courseId, intl }) => {
       }
       setShowProctortrackEscalationEmail(false);
     }
-  };
+  }
 
-  const onProctortrackEscalationEmailChange = (event) => {
+  function onProctortrackEscalationEmailChange(event) {
     setProctortrackEscalationEmail(event.target.value);
-  };
+  }
 
-  const setFocusToProctortrackEscalationEmailInput = () => {
+  function setFocusToProctortrackEscalationEmailInput() {
     if (proctoringEscalationEmailInputRef && proctoringEscalationEmailInputRef.current) {
       proctoringEscalationEmailInputRef.current.focus();
     }
-  };
+  }
 
   function isLtiProvider(provider) {
     return ltiProctoringProviders.some(p => p.name === provider);
@@ -120,7 +120,9 @@ const ProctoredExamSettings = ({ courseId, intl }) => {
     const saveOperations = [StudioApiService.saveProctoredExamSettingsData(courseId, studioDataToPostBack)];
     if (allowLtiProviders && ExamsApiService.isAvailable()) {
       saveOperations.push(
-        ExamsApiService.saveCourseExamConfiguration(courseId, { provider: providerIsLti ? proctoringProvider : null }),
+        ExamsApiService.saveCourseExamConfiguration(
+          courseId, { provider: providerIsLti ? proctoringProvider : null },
+        ),
       );
     }
     Promise.all(saveOperations)
@@ -135,7 +137,7 @@ const ProctoredExamSettings = ({ courseId, intl }) => {
     });
   }
 
-  const handleSubmit = (event) => {
+  function handleSubmit(event) {
     event.preventDefault();
     if (proctoringProvider === 'proctortrack' && !EmailValidator.validate(proctortrackEscalationEmail) && !(proctortrackEscalationEmail === '' && !enableProctoredExams)) {
       if (proctortrackEscalationEmail === '') {
@@ -172,7 +174,7 @@ const ProctoredExamSettings = ({ courseId, intl }) => {
         errors,
       });
     }
-  };
+  }
 
   function cannotEditProctoringProvider() {
     const currentDate = moment(moment()).format('YYYY-MM-DD[T]hh:mm:ss[Z]');
@@ -490,7 +492,8 @@ const ProctoredExamSettings = ({ courseId, intl }) => {
     );
   }
 
-  useEffect(() => {
+  useEffect(
+    () => {
       dispatch(fetchExamSettingsPending(courseId));
 
       Promise.all([
@@ -523,8 +526,7 @@ const ProctoredExamSettings = ({ courseId, intl }) => {
             let availableProviders = proctoringProvidersStudio.filter(value => value !== 'lti_external');
             if (enableLtiProviders) {
               availableProviders = proctoringProvidersLti.reduce(
-                (result, provider) => [...result, provider.name],
-                availableProviders,
+                (result, provider) => [...result, provider.name], availableProviders,
               );
             }
             setAvailableProctoringProviders(availableProviders);
@@ -558,7 +560,8 @@ const ProctoredExamSettings = ({ courseId, intl }) => {
             dispatch(fetchExamSettingsFailure(courseId));
           },
         );
-    }, []);
+    }, [],
+  );
 
   useEffect(() => {
     if ((saveSuccess || saveError) && !!saveStatusAlertRef.current) {
@@ -584,7 +587,7 @@ const ProctoredExamSettings = ({ courseId, intl }) => {
       </div>
     </div>
   );
-};
+}
 
 ProctoredExamSettings.propTypes = {
   courseId: PropTypes.string.isRequired,

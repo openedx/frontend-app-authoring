@@ -3,7 +3,7 @@ import { getIn, useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const FormikErrorFeedback = ({ name, children }) => {
+function FormikErrorFeedback({ name, children }) {
   const { touched, errors } = useFormikContext();
   const fieldTouched = getIn(touched, name);
   const fieldError = getIn(errors, name);
@@ -23,7 +23,7 @@ const FormikErrorFeedback = ({ name, children }) => {
         )}
     </TransitionReplace>
   );
-};
+}
 
 FormikErrorFeedback.propTypes = {
   name: PropTypes.string.isRequired,

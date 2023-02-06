@@ -36,11 +36,11 @@ export const initialState = {
 export const configurationProviders = (
   emailSharing,
   usernameSharing,
-  activeProvider,
+  activeProvider = 'zoom',
   hasFreeTier,
 ) => ({
   providers: {
-    active: activeProvider || 'zoom',
+    active: activeProvider,
     available: {
       zoom: {
         features: [],
@@ -65,7 +65,7 @@ export const generateLiveConfigurationApiResponse = (
   enabled,
   piiSharingAllowed,
   providerType = 'zoom',
-  isFreeTier = undefined,
+  isFreeTier,
 ) => ({
   course_key: courseId,
   enabled,

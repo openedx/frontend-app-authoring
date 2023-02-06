@@ -23,9 +23,9 @@ ensureConfig([
   'LOGIN_URL',
 ], 'Header component');
 
-const Header = ({
+function Header({
   courseId, courseNumber, courseOrg, courseTitle, intl,
-}) => {
+}) {
   const { authenticatedUser, config } = useContext(AppContext);
 
   const mainMenu = [
@@ -175,7 +175,7 @@ const Header = ({
       </Responsive>
     </>
   );
-};
+}
 
 Header.propTypes = {
   courseId: PropTypes.string.isRequired,

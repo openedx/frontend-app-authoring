@@ -5,7 +5,7 @@ import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import AppConfigFormDivider from './AppConfigFormDivider';
 import messages from '../../messages';
 
-const ReportedContentEmailNotifications = ({ intl }) => {
+function ReportedContentEmailNotifications({ intl }) {
   const {
     handleChange,
     handleBlur,
@@ -13,7 +13,6 @@ const ReportedContentEmailNotifications = ({ intl }) => {
   } = useFormikContext();
 
   return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {values.enableReportedContentEmailNotifications && (
         <div>
@@ -32,7 +31,7 @@ const ReportedContentEmailNotifications = ({ intl }) => {
       )}
     </>
   );
-};
+}
 
 ReportedContentEmailNotifications.propTypes = {
   intl: intlShape.isRequired,

@@ -9,13 +9,13 @@ import AppConfigFormDivider from './AppConfigFormDivider';
 
 import messages from '../lti/messages';
 
-const AppExternalLinks = ({
+function AppExternalLinks({
   externalLinks,
   intl,
   providerName,
   showLaunchIcon,
   customClasses,
-}) => {
+}) {
   const { contactEmail, ...links } = externalLinks;
   const linkTypes = Object.keys(links).filter(key => links[key]);
   return (
@@ -60,7 +60,7 @@ const AppExternalLinks = ({
       )}
     </div>
   );
-};
+}
 
 AppExternalLinks.propTypes = {
   externalLinks: PropTypes.shape({

@@ -16,10 +16,10 @@ import messages from './messages';
 import ZoomSettings from './ZoomSettings';
 import BBBSettings from './BBBSettings';
 
-const LiveSettings = ({
+function LiveSettings({
   intl,
   onClose,
-}) => {
+}) {
   const dispatch = useDispatch();
   const courseId = useSelector(state => state.courseDetail.courseId);
   const availableProviders = useSelector((state) => state.live.appIds);
@@ -75,55 +75,59 @@ const LiveSettings = ({
   }, [courseId]);
 
   return (
-    <AppSettingsModal
-      appId="live"
-      title={intl.formatMessage(messages.heading)}
-      enableAppHelp={intl.formatMessage(messages.enableLiveHelp)}
-      enableAppLabel={intl.formatMessage(messages.enableLiveLabel)}
-      learnMoreText={intl.formatMessage(messages.enableLiveLink)}
-      onClose={onClose}
-      initialValues={liveConfiguration}
-      validationSchema={validationSchema}
-      onSettingsSave={handleSettingsSave}
-      configureBeforeEnable
-      enableReinitialize
-    >
-      {({ values, setFieldValue }) => (
-        (status === RequestStatus.IN_PROGRESS) ? (
-          <Loading />
-            ) : (
-              <>
-                <h4 className="my-3">{intl.formatMessage(messages.selectProvider)}</h4>
-                <SelectableBox.Set
-                  type="checkbox"
-                  value={values.provider}
-                  onChange={(event) => handleProviderChange(event.target.value, setFieldValue, values)}
-                  name="provider"
-                  columns={3}
-                  className="mb-3"
-                >
-                  {availableProviders.map((provider) => (
-                    <SelectableBox value={provider} type="checkbox" key={provider}>
-                      <div className="d-flex flex-column align-items-center">
-                        <Icon src={iconsSrc[`${camelCase(provider)}`]} alt={provider} />
-                        <span>{intl.formatMessage(messages[`appName-${camelCase(provider)}`])}</span>
-                      </div>
-                    </SelectableBox>
-                  ))}
-                </SelectableBox.Set>
-                {values.provider === 'zoom' ? <ZoomSettings values={values} />
-                  : (
-                    <BBBSettings
-                      values={values}
-                      setFieldValue={setFieldValue}
-                    />
-                  )}
-              </>
-            )
+    <>
+      <AppSettingsModal
+        appId="live"
+        title={intl.formatMessage(messages.heading)}
+        enableAppHelp={intl.formatMessage(messages.enableLiveHelp)}
+        enableAppLabel={intl.formatMessage(messages.enableLiveLabel)}
+        learnMoreText={intl.formatMessage(messages.enableLiveLink)}
+        onClose={onClose}
+        initialValues={liveConfiguration}
+        validationSchema={validationSchema}
+        onSettingsSave={handleSettingsSave}
+        configureBeforeEnable
+        enableReinitialize
+      >
+        {({ values, setFieldValue }) => (
+          <>
+            {(status === RequestStatus.IN_PROGRESS) ? (
+              <Loading />
+              ) : (
+                <>
+                  <h4 className="my-3">{intl.formatMessage(messages.selectProvider)}</h4>
+                  <SelectableBox.Set
+                    type="checkbox"
+                    value={values.provider}
+                    onChange={(event) => handleProviderChange(event.target.value, setFieldValue, values)}
+                    name="provider"
+                    columns={3}
+                    className="mb-3"
+                  >
+                    {availableProviders.map((provider) => (
+                      <SelectableBox value={provider} type="checkbox" key={provider}>
+                        <div className="d-flex flex-column align-items-center">
+                          <Icon src={iconsSrc[`${camelCase(provider)}`]} alt={provider} />
+                          <span>{intl.formatMessage(messages[`appName-${camelCase(provider)}`])}</span>
+                        </div>
+                      </SelectableBox>
+                    ))}
+                  </SelectableBox.Set>
+                  {values.provider === 'zoom' ? <ZoomSettings values={values} />
+                    : (
+                      <BBBSettings
+                        values={values}
+                        setFieldValue={setFieldValue}
+                      />
+                    )}
+                </>
+              )}
+          </>
           )}
-    </AppSettingsModal>
+      </AppSettingsModal>
+    </>
   );
-};
+}
 
 LiveSettings.propTypes = {
   intl: intlShape.isRequired,

@@ -17,7 +17,7 @@ import { getLoadingStatus } from './data/selectors';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 import { RequestStatus } from '../data/constants';
 
-const PagesAndResources = ({ courseId, intl }) => {
+function PagesAndResources({ courseId, intl }) {
   const { path, url } = useRouteMatch();
 
   const dispatch = useDispatch();
@@ -34,7 +34,6 @@ const PagesAndResources = ({ courseId, intl }) => {
   // Each page here is driven by a course app
   const pages = useModels('courseApps', courseAppIds);
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
-    // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
 
@@ -90,7 +89,7 @@ const PagesAndResources = ({ courseId, intl }) => {
       </main>
     </PagesAndResourcesProvider>
   );
-};
+}
 
 PagesAndResources.propTypes = {
   courseId: PropTypes.string.isRequired,

@@ -28,7 +28,7 @@ import Loading from '../../generic/Loading';
 const SELECTION_STEP = 'selection';
 const SETTINGS_STEP = 'settings';
 
-const DiscussionsSettings = ({ courseId, intl }) => {
+function DiscussionsSettings({ courseId, intl }) {
   const dispatch = useDispatch();
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const { status, hasValidationError } = useSelector(state => state.discussions);
@@ -145,7 +145,7 @@ const DiscussionsSettings = ({ courseId, intl }) => {
       </AppConfigForm.Provider>
     </DiscussionsProvider>
   );
-};
+}
 
 DiscussionsSettings.propTypes = {
   courseId: PropTypes.string.isRequired,

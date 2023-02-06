@@ -8,7 +8,7 @@ import { useAppSetting } from '../../utils';
 import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
 import messages from './messages';
 
-const ProgressSettings = ({ intl, onClose }) => {
+function ProgressSettings({ intl, onClose }) {
   const [disableProgressGraph, saveSetting] = useAppSetting('disableProgressGraph');
   const showProgressGraphSetting = getConfig().ENABLE_PROGRESS_GRAPH_SETTINGS.toLowerCase() === 'true';
 
@@ -45,7 +45,7 @@ const ProgressSettings = ({ intl, onClose }) => {
       }
     </AppSettingsModal>
   );
-};
+}
 
 ProgressSettings.propTypes = {
   intl: intlShape.isRequired,
