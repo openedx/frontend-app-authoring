@@ -274,7 +274,10 @@ export class OLXParser {
   }
 
   parseQuestions(problemType) {
-    const builder = new XMLBuilder();
+    const options = {
+      ignoreAttributes: false,
+    };
+    const builder = new XMLBuilder(options);
     const problemObject = _.get(this.problem, problemType);
     let questionObject = {};
     /* TODO: How do we uniquely identify the label and description?

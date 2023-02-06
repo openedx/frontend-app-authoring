@@ -613,3 +613,19 @@ export const blankQuestionOLX = {
 </problem>`,
   question: '',
 };
+export const styledQuestionOLX = {
+  rawOLX: `<problem>
+  <p>
+    <strong>
+      <span style="background-color: #e03e2d;">
+        test
+      </span>
+    </strong>
+  </p>
+  <stringresponse type="ci">
+    <additional_answer />
+    <textline size="20"/>
+  </stringresponse>
+</problem>`,
+  question: '<p><strong><span style="background-color: #e03e2d;">test</span></strong></p>',
+};
