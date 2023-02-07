@@ -31,15 +31,26 @@ export const nonQuestionKeys = [
 export class OLXParser {
   constructor(olxString) {
     this.problem = {};
+    this.questionData = {};
+    const questionOptions = {
+      ignoreAttributes: false,
+      alwaysCreateTextNode: true,
+      preserveOrder: true,
+    };
     const options = {
       ignoreAttributes: false,
       alwaysCreateTextNode: true,
-      // preserveOrder: true
     };
+    // There are two versions of the parsed XLM because the question requires the order of the
+    // parsed data to be preserved. However, all the other widgets need the data grouped by
+    // the wrapping tag.
+    const questionParser = new XMLParser(questionOptions);
     const parser = new XMLParser(options);
     this.parsedOLX = parser.parse(olxString);
+    this.parsedQuestionOLX = questionParser.parse(olxString);
     if (_.has(this.parsedOLX, 'problem')) {
       this.problem = this.parsedOLX.problem;
+      this.questionData = this.parsedQuestionOLX[0].problem;
     }
   }
 
@@ -276,37 +287,25 @@ export class OLXParser {
   parseQuestions(problemType) {
     const options = {
       ignoreAttributes: false,
+      preserveOrder: true,
     };
     const builder = new XMLBuilder(options);
-    const problemObject = _.get(this.problem, problemType);
-    let questionObject = {};
-    /* TODO: How do we uniquely identify the label and description?
-      In order to parse label and description, there should be two states
+    const problemArray = _.get(this.questionData[0], problemType) || this.questionData;
+    /* TODO: How do we uniquely identify the description?
+      In order to parse description, there should be two states
       and settings should be introduced to edit the label and description.
       In turn editing the settings update the state and then it can be added to
       the parsed OLX.
     */
-    const tagMap = {
-      description: 'em',
-    };
-
-    /* Only numerical response has different ways to generate OLX, test with
-      numericInputWithFeedbackAndHintsOLXException and numericInputWithFeedbackAndHintsOLX
-      shows the different ways the olx can be generated.
-    */
-    if (_.isArray(problemObject)) {
-      questionObject = _.omitBy(problemObject[0], (value, key) => _.includes(nonQuestionKeys, key));
-    } else {
-      questionObject = _.omitBy(problemObject, (value, key) => _.includes(nonQuestionKeys, key));
-    }
-    // Check if problem tag itself will have question and descriptions.
-    if (_.isEmpty(questionObject)) {
-      questionObject = _.omitBy(this.problem, (value, key) => _.includes(nonQuestionKeys, key));
-    }
-    const serializedQuestion = _.mapKeys(questionObject, (value, key) => _.get(tagMap, key, key));
-
-    const questionString = builder.build(serializedQuestion);
-    return questionString;
+    const questionArray = [];
+    problemArray.forEach(tag => {
+      const tagName = Object.keys(tag)[0];
+      if (!nonQuestionKeys.includes(tagName)) {
+        questionArray.push(tag);
+      }
+    });
+    const questionString = builder.build(questionArray);
+    return questionString.replace(/<description>/gm, '<em>').replace(/<\/description>/gm, '</em>');
   }
 
   getHints() {

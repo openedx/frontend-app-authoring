@@ -24,7 +24,7 @@ exports[`SelectTypeWrapper snapshot 1`] = `
     </ModalDialog.Title>
   </ModalDialog.Header>
   <ModalDialog.Body
-    classname="pb-6"
+    className="pb-6"
   >
     <h1>
       test child

@@ -26,8 +26,8 @@ export const getDataFromOlx = ({ rawOLX, rawSettings }) => {
   try {
     olxParser = new OLXParser(rawOLX);
     parsedProblem = olxParser.getParsedOLXData();
-  } catch {
-    console.error('The Problem Could Not Be Parsed from OLX. redirecting to Advanced editor.');
+  } catch (error) {
+    console.error('The Problem Could Not Be Parsed from OLX. redirecting to Advanced editor.', error);
     return { problemType: ProblemTypeKeys.ADVANCED, rawOLX, settings: parseSettings(rawSettings) };
   }
   if (parsedProblem?.problemType === ProblemTypeKeys.ADVANCED) {

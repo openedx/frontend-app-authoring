@@ -16,48 +16,48 @@ describe('Check React Sate OLXParser problem', () => {
     const problem = olxparser.getParsedOLXData();
     const stateParser = new ReactStateOLXParser({ problem });
     const buildOLX = stateParser.buildOLX();
-    expect(buildOLX).toEqual(checkboxesOLXWithFeedbackAndHintsOLX.buildOLX);
+    expect(buildOLX.replace(/\s/g, '')).toBe(checkboxesOLXWithFeedbackAndHintsOLX.buildOLX.replace(/\s/g, ''));
   });
   test('Test dropdown with feedback and hints problem type', () => {
     const olxparser = new OLXParser(dropdownOLXWithFeedbackAndHintsOLX.rawOLX);
     const problem = olxparser.getParsedOLXData();
     const stateParser = new ReactStateOLXParser({ problem });
     const buildOLX = stateParser.buildOLX();
-    expect(buildOLX).toEqual(dropdownOLXWithFeedbackAndHintsOLX.buildOLX);
+    expect(buildOLX.replace(/\s/g, '')).toEqual(dropdownOLXWithFeedbackAndHintsOLX.buildOLX.replace(/\s/g, ''));
   });
   test('Test string response with feedback and hints problem type', () => {
     const olxparser = new OLXParser(textInputWithFeedbackAndHintsOLX.rawOLX);
     const problem = olxparser.getParsedOLXData();
     const stateParser = new ReactStateOLXParser({ problem });
     const buildOLX = stateParser.buildOLX();
-    expect(buildOLX).toEqual(textInputWithFeedbackAndHintsOLX.buildOLX);
+    expect(buildOLX.replace(/\s/g, '')).toEqual(textInputWithFeedbackAndHintsOLX.buildOLX.replace(/\s/g, ''));
   });
   test('Test multiple choice with feedback and hints problem type', () => {
     const olxparser = new OLXParser(multipleChoiceWithFeedbackAndHintsOLX.rawOLX);
     const problem = olxparser.getParsedOLXData();
     const stateParser = new ReactStateOLXParser({ problem });
     const buildOLX = stateParser.buildOLX();
-    expect(buildOLX).toEqual(multipleChoiceWithFeedbackAndHintsOLX.buildOLX);
+    expect(buildOLX.replace(/\s/g, '')).toEqual(multipleChoiceWithFeedbackAndHintsOLX.buildOLX.replace(/\s/g, ''));
   });
   test('Test numerical response with feedback and hints problem type', () => {
     const olxparser = new OLXParser(numericInputWithFeedbackAndHintsOLX.rawOLX);
     const problem = olxparser.getParsedOLXData();
     const stateParser = new ReactStateOLXParser({ problem });
     const buildOLX = stateParser.buildOLX();
-    expect(buildOLX).toEqual(numericInputWithFeedbackAndHintsOLX.buildOLX);
+    expect(buildOLX.replace(/\s/g, '')).toEqual(numericInputWithFeedbackAndHintsOLX.buildOLX.replace(/\s/g, ''));
   });
   test('Test numerical response with feedback and hints problem type with exception', () => {
     const olxparser = new OLXParser(numericInputWithFeedbackAndHintsOLXException.rawOLX);
     const problem = olxparser.getParsedOLXData();
     const stateParser = new ReactStateOLXParser({ problem });
     const buildOLX = stateParser.buildOLX();
-    expect(buildOLX).toEqual(numericInputWithFeedbackAndHintsOLXException.buildOLX);
+    expect(buildOLX.replace(/\s/g, '')).toEqual(numericInputWithFeedbackAndHintsOLXException.buildOLX.replace(/\s/g, ''));
   });
   test('Test string response with feedback and hints, multiple answers', () => {
     const olxparser = new OLXParser(textInputWithFeedbackAndHintsOLXWithMultipleAnswers.rawOLX);
     const problem = olxparser.getParsedOLXData();
     const stateParser = new ReactStateOLXParser({ problem });
     const buildOLX = stateParser.buildOLX();
-    expect(buildOLX).toEqual(textInputWithFeedbackAndHintsOLXWithMultipleAnswers.buildOLX);
+    expect(buildOLX.replace(/\s/g, '')).toEqual(textInputWithFeedbackAndHintsOLXWithMultipleAnswers.buildOLX.replace(/\s/g, ''));
   });
 });

@@ -4,10 +4,21 @@ import { ProblemTypeKeys } from '../../../data/constants/problem';
 
 class ReactStateOLXParser {
   constructor(problemState) {
-    const parserOptions = {
+    // const parserOptions = {
+    //   ignoreAttributes: false,
+    //   alwaysCreateTextNode: true,
+    // };
+    const questionParserOptions = {
       ignoreAttributes: false,
       alwaysCreateTextNode: true,
-      // preserveOrder: true
+      preserveOrder: true,
+    };
+    const questionBuilderOptions = {
+      ignoreAttributes: false,
+      attributeNamePrefix: '@_',
+      suppressBooleanAttributes: false,
+      format: true,
+      preserveOrder: true,
     };
     const builderOptions = {
       ignoreAttributes: false,
@@ -15,8 +26,10 @@ class ReactStateOLXParser {
       suppressBooleanAttributes: false,
       format: true,
     };
-    this.parser = new XMLParser(parserOptions);
+    this.questionParser = new XMLParser(questionParserOptions);
+    // this.parser = new XMLParser(parserOptions);
     this.builder = new XMLBuilder(builderOptions);
+    this.questionBuilder = new XMLBuilder(questionBuilderOptions);
     this.problemState = problemState.problem;
   }
 
@@ -110,7 +123,7 @@ class ReactStateOLXParser {
 
   addQuestion() {
     const { question } = this.problemState;
-    const questionObject = this.parser.parse(question);
+    const questionObject = this.questionParser.parse(question);
     return questionObject;
   }
 
@@ -123,14 +136,33 @@ class ReactStateOLXParser {
     const problemObject = {
       problem: {
         [problemType]: {
-          ...question,
           [widget]: widgetObject,
         },
         ...demandhint,
         ...solution,
       },
     };
-    return this.builder.build(problemObject);
+
+    const problem = this.builder.build(problemObject);
+    const questionString = this.questionBuilder.build(question);
+    let problemTypeTag;
+    switch (problemType) {
+      case ProblemTypeKeys.MULTISELECT:
+        [problemTypeTag] = problem.match(/<choiceresponse>|<choiceresponse.[^>]+>/);
+        break;
+      case ProblemTypeKeys.DROPDOWN:
+        [problemTypeTag] = problem.match(/<optionresponse>|<optionresponse.[^>]+>/);
+        break;
+      case ProblemTypeKeys.SINGLESELECT:
+        [problemTypeTag] = problem.match(/<multiplechoiceresponse>|<multiplechoiceresponse.[^>]+>/);
+        break;
+      default:
+        break;
+    }
+    const updatedString = `${problemTypeTag}\n${questionString}`;
+    const problemString = problem.replace(problemTypeTag, updatedString);
+
+    return problemString;
   }
 
   buildTextInput() {
@@ -142,14 +174,20 @@ class ReactStateOLXParser {
     const problemObject = {
       problem: {
         [ProblemTypeKeys.TEXTINPUT]: {
-          ...question,
           ...answerObject,
         },
         ...demandhint,
         ...solution,
       },
     };
-    return this.builder.build(problemObject);
+
+    const problem = this.builder.build(problemObject);
+    const questionString = this.questionBuilder.build(question);
+    const [problemTypeTag] = problem.match(/<stringresponse>|<stringresponse.[^>]+>/);
+    const updatedString = `${problemTypeTag}\n${questionString}`;
+    const problemString = problem.replace(problemTypeTag, updatedString);
+
+    return problemString;
   }
 
   buildTextInputAnswersFeedback() {
@@ -200,13 +238,19 @@ class ReactStateOLXParser {
 
     const problemObject = {
       problem: {
-        ...question,
         [ProblemTypeKeys.NUMERIC]: answerObject,
         ...demandhint,
         ...solution,
       },
     };
-    return this.builder.build(problemObject);
+
+    const problem = this.builder.build(problemObject);
+    const questionString = this.questionBuilder.build(question);
+    const [problemTypeTag] = problem.match(/<numericalresponse>|<numericalresponse.[^>]+>/);
+    const updatedString = `${questionString}\n${problemTypeTag}`;
+    const problemString = problem.replace(problemTypeTag, updatedString);
+
+    return problemString;
   }
 
   buildNumericalResponse() {
