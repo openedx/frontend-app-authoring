@@ -57,7 +57,7 @@ const CourseAuthoringPage = ({ courseId, children }) => {
       we shouldn't have the header and footer on these pages.
       This functionality will be removed in TNL-9591 */}
       {inProgress ? !pathname.includes('/editor/') && <Loading />
-        : <AppHeader courseNumber={courseNumber} courseOrg={courseOrg} courseTitle={courseTitle} courseId={courseId} />}
+        : AppHeader(courseNumber, courseOrg, courseTitle, courseId)}
       {children}
       {!inProgress && <AppFooter />}
     </div>
