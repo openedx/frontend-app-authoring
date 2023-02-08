@@ -3,3 +3,18 @@
     flex-basis: 320px;
   }
 }
+
+// overrides paragon in order to make checked radio and checkboxes green
+$checked-color: '%230D7D4D';
+
+.pgn__form-radio-input {
+  &:checked {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$checked-color}'/></svg>")
+  }
+}
+
+.pgn__form-checkbox-input {
+  &:checked {
+    background-image: url("data:image/svg+xml,<svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M21 3H3V21H21V3ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z' fill='#{$checked-color}'/></svg>");
+  }
+}

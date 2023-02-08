@@ -15,6 +15,7 @@ const Checker = ({
       value={answer.id}
       onChange={(e) => setAnswer({ correct: e.target.checked })}
       checked={answer.correct}
+      isValid={answer.correct}
     >
       {answer.id}
     </CheckerType>
