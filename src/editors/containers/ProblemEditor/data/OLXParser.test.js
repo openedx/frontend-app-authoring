@@ -6,6 +6,7 @@ import {
   numericInputWithFeedbackAndHintsOLX,
   numericInputWithFeedbackAndHintsOLXException,
   textInputWithFeedbackAndHintsOLX,
+  multipleChoiceWithoutAnswers,
   multipleChoiceWithFeedbackAndHintsOLX,
   textInputWithFeedbackAndHintsOLXWithMultipleAnswers,
   advancedProblemOlX,
@@ -88,6 +89,11 @@ describe('Check OLXParser hints', () => {
 });
 
 describe('Check OLXParser for answer parsing', () => {
+  test('Test check single select with empty answers', () => {
+    const olxparser = new OLXParser(multipleChoiceWithoutAnswers.rawOLX);
+    const answer = olxparser.parseMultipleChoiceAnswers('multiplechoiceresponse', 'choicegroup', 'choice');
+    expect(answer).toEqual(multipleChoiceWithoutAnswers.data);
+  });
   test('Test checkbox answer', () => {
     const olxparser = new OLXParser(checkboxesOLXWithFeedbackAndHintsOLX.rawOLX);
     const answer = olxparser.parseMultipleChoiceAnswers('choiceresponse', 'checkboxgroup', 'choice');

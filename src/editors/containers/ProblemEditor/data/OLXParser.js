@@ -59,7 +59,15 @@ export class OLXParser {
     let data = {};
     const widget = _.get(this.problem, `${problemType}.${widgetName}`);
     const choice = _.get(widget, option);
-    if (_.isArray(choice)) {
+    if (_.isEmpty(choice)) {
+      answers.push(
+        {
+          id: indexToLetterMap[answers.length],
+          title: '',
+          correct: true,
+        },
+      );
+    } else if (_.isArray(choice)) {
       choice.forEach((element, index) => {
         const title = element['#text'];
         const correct = eval(element['@_correct'].toLowerCase());

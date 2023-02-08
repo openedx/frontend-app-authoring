@@ -138,6 +138,26 @@ an incorrect answer        <choicehint selected="true">You can specify optional 
 
 export const checkboxesOLXWithFeedbackAndHintsOLX = getCheckboxesOLXWithFeedbackAndHintsOLX({});
 
+export const multipleChoiceWithoutAnswers = {
+  rawOLX: `<problem>
+  <multiplechoiceresponse>
+    <choicegroup>
+  </choicegroup>
+  </multiplechoiceresponse>
+  <demandhint></demandhint>
+  <solution></solution>
+  </problem>`,
+  data: {
+    answers: [
+      {
+        id: 'A',
+        title: '',
+        correct: true,
+      },
+    ],
+  },
+};
+
 export const dropdownOLXWithFeedbackAndHintsOLX = {
   rawOLX: `<problem>
 <optionresponse>
