@@ -4,13 +4,14 @@ import {
   getCheckboxesOLXWithFeedbackAndHintsOLX,
   dropdownOLXWithFeedbackAndHintsOLX,
   numericInputWithFeedbackAndHintsOLX,
-  numericInputWithFeedbackAndHintsOLXException,
   textInputWithFeedbackAndHintsOLX,
   multipleChoiceWithoutAnswers,
   multipleChoiceWithFeedbackAndHintsOLX,
   textInputWithFeedbackAndHintsOLXWithMultipleAnswers,
   advancedProblemOlX,
   multipleProblemOlX,
+  multipleProblemTwoOlX,
+  multipleProblemThreeOlX,
   blankProblemOLX,
   blankQuestionOLX,
   styledQuestionOLX,
@@ -50,6 +51,16 @@ describe('Check OLXParser problem type', () => {
   });
   test('Test Advanced Problem Type by multiples', () => {
     const olxparser = new OLXParser(multipleProblemOlX.rawOLX);
+    const problemType = olxparser.getProblemType();
+    expect(problemType).toBe(ProblemTypeKeys.ADVANCED);
+  });
+  test('Test Advanced Problem Type by multiples, second example', () => {
+    const olxparser = new OLXParser(multipleProblemTwoOlX.rawOLX);
+    const problemType = olxparser.getProblemType();
+    expect(problemType).toBe(ProblemTypeKeys.ADVANCED);
+  });
+  test('Test Advanced Problem Type by multiples, third example', () => {
+    const olxparser = new OLXParser(multipleProblemThreeOlX.rawOLX);
     const problemType = olxparser.getProblemType();
     expect(problemType).toBe(ProblemTypeKeys.ADVANCED);
   });
@@ -124,11 +135,6 @@ describe('Check OLXParser for answer parsing', () => {
     const answer = olxparser.parseNumericResponse();
     expect(answer).toEqual(numericInputWithFeedbackAndHintsOLX.data);
   });
-  test('Test numerical response answers exception', () => {
-    const olxparser = new OLXParser(numericInputWithFeedbackAndHintsOLXException.rawOLX);
-    const answer = olxparser.parseNumericResponse();
-    expect(answer).toEqual(numericInputWithFeedbackAndHintsOLXException.data);
-  });
 });
 
 describe('Check OLXParser for question parsing', () => {
@@ -156,11 +162,6 @@ describe('Check OLXParser for question parsing', () => {
     const olxparser = new OLXParser(numericInputWithFeedbackAndHintsOLX.rawOLX);
     const question = olxparser.parseQuestions('numericalresponse');
     expect(question).toEqual(numericInputWithFeedbackAndHintsOLX.question);
-  });
-  test('Test numerical response question exception', () => {
-    const olxparser = new OLXParser(numericInputWithFeedbackAndHintsOLXException.rawOLX);
-    const question = olxparser.parseQuestions('numericalresponse');
-    expect(question).toEqual(numericInputWithFeedbackAndHintsOLXException.question);
   });
   test('Test OLX with no question content should have empty string for question', () => {
     const olxparser = new OLXParser(blankQuestionOLX.rawOLX);

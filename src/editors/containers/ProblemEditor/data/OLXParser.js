@@ -226,28 +226,6 @@ export class OLXParser {
 
   parseNumericResponse() {
     const { numericalresponse } = this.problem;
-    let answers = [];
-    let subAnswers = [];
-    let data = {};
-    // TODO: Find a way to add answers using additional_answers v/s numericalresponse
-    if (_.isArray(numericalresponse)) {
-      numericalresponse.forEach((numericalAnswer) => {
-        subAnswers = this.parseNumericResponseObject(numericalAnswer, answers.length);
-        answers = _.concat(answers, subAnswers);
-      });
-    } else {
-      subAnswers = this.parseNumericResponseObject(numericalresponse, answers.length);
-      answers = _.concat(answers, subAnswers);
-    }
-
-    data = {
-      answers,
-    };
-
-    return data;
-  }
-
-  parseNumericResponseObject(numericalresponse, answerOffset) {
     let answerFeedback = '';
     const answers = [];
     let responseParam = {};
@@ -261,7 +239,7 @@ export class OLXParser {
       };
     }
     answers.push({
-      id: indexToLetterMap[answers.length + answerOffset],
+      id: indexToLetterMap[answers.length],
       title: numericalresponse['@_answer'],
       correct: true,
       selectedFeedback: feedback,
@@ -274,7 +252,7 @@ export class OLXParser {
       additionalAnswer.forEach((newAnswer) => {
         answerFeedback = this.getFeedback(newAnswer);
         answers.push({
-          id: indexToLetterMap[answers.length + answerOffset],
+          id: indexToLetterMap[answers.length],
           title: newAnswer['@_answer'],
           correct: true,
           selectedFeedback: answerFeedback,
@@ -283,13 +261,13 @@ export class OLXParser {
     } else {
       answerFeedback = this.getFeedback(additionalAnswer);
       answers.push({
-        id: indexToLetterMap[answers.length + answerOffset],
+        id: indexToLetterMap[answers.length],
         title: additionalAnswer['@_answer'],
         correct: true,
         selectedFeedback: answerFeedback,
       });
     }
-    return answers;
+    return { answers };
   }
 
   parseQuestions(problemType) {
@@ -386,10 +364,8 @@ export class OLXParser {
       return ProblemTypeKeys.ADVANCED;
     }
     // make sure compound problems are treated as advanced
-    // TODO: Find a way to add answers using additional_answers v/s numericalresponse
     if ((problemTypeKeys.length > 1)
-      || (problemTypeKeys[0] !== ProblemTypeKeys.NUMERIC // multiple numeric problems are really just multiple answers
-        && _.isArray(this.problem[problemTypeKeys[0]])
+      || (_.isArray(this.problem[problemTypeKeys[0]])
         && this.problem[problemTypeKeys[0]].length > 1)) {
       return ProblemTypeKeys.ADVANCED;
     }
