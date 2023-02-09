@@ -125,7 +125,7 @@ export const scoringCardHooks = (scoring, updateSettings) => {
     let unlimitedAttempts = false;
     let attemptNumber = parseInt(event.target.value);
     if (_.isNaN(attemptNumber)) {
-      attemptNumber = null;
+      attemptNumber = '';
       unlimitedAttempts = true;
     } else if (attemptNumber < 0) {
       attemptNumber = 0;
