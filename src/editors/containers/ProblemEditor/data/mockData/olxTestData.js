@@ -523,83 +523,6 @@ export const textInputWithFeedbackAndHintsOLXWithMultipleAnswers = {
 `,
 };
 
-export const numericInputWithFeedbackAndHintsOLXException = {
-  rawOLX: `<problem>
-  <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for numerical input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
-
-  <label>Add the question text, or prompt, here. This text is required.</label>
-  <description>You can add an optional tip or note related to the prompt like this. </description>
-  <numericalresponse answer="300">
-    <formulaequationinput />
-  </numericalresponse>
-  <numericalresponse answer="100">
-    <responseparam type="tolerance" default="5" />
-    <formulaequationinput />
-    <correcthint>You can specify optional feedback like this, which appears after this answer is submitted.</correcthint>
-  </numericalresponse>
-  <numericalresponse answer="200">
-    <responseparam type="tolerance" default="4" />
-    <additional_answer answer="500"><correcthint>This is one feedback!</correcthint></additional_answer>
-    <formulaequationinput />
-  </numericalresponse>
-
-  <demandhint>
-    <hint>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</hint>
-    <hint>If you add more than one hint, a different hint appears each time learners select the hint button.</hint>
-  </demandhint>
-  </problem>`,
-  data: {
-    answers: [
-      {
-        id: 'A',
-        title: '300',
-        correct: true,
-        selectedFeedback: '',
-      },
-      {
-        id: 'B',
-        title: '100',
-        correct: true,
-        selectedFeedback: 'You can specify optional feedback like this, which appears after this answer is submitted.',
-        tolerance: '5',
-      },
-      {
-        id: 'C',
-        title: '200',
-        correct: true,
-        selectedFeedback: '',
-        tolerance: '4',
-      },
-      {
-        id: 'D',
-        title: '500',
-        correct: true,
-        selectedFeedback: 'This is one feedback!',
-      },
-    ],
-  },
-  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for numerical input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
-  buildOLX: `<problem>
-  <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for numerical input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
-  <label>Add the question text, or prompt, here. This text is required.</label>
-  <em>You can add an optional tip or note related to the prompt like this.</em>
-  <numericalresponse answer="300">
-    <additional_answer answer="100">
-      <correcthint>You can specify optional feedback like this, which appears after this answer is submitted.</correcthint>
-    </additional_answer>
-    <additional_answer answer="200"></additional_answer>
-    <additional_answer answer="500">
-      <correcthint>This is one feedback!</correcthint>
-    </additional_answer>
-    <formulaequationinput></formulaequationinput>
-  </numericalresponse>
-  <demandhint>
-    <hint>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</hint>
-    <hint>If you add more than one hint, a different hint appears each time learners select the hint button.</hint>
-  </demandhint>
-</problem>
-`,
-};
 export const advancedProblemOlX = {
   rawOLX: `<problem>
   <formularesponse type="ci" samples="R_1,R_2,R_3@1,2,3:3,4,5#10" answer="R_1*R_2/R_3">
@@ -619,6 +542,26 @@ export const multipleProblemOlX = {
   <stringresponse answer="other correct answer">
     <textline size="20"/>
   </stringresponse>
+</problem>`,
+};
+export const multipleProblemTwoOlX = {
+  rawOLX: `<problem>
+  <numericalresponse answer="100">
+    <formulaequationinput></formulaequationinput>
+  </numericalresponse>
+  <numericalresponse answer="200">
+    <formulaequationinput></formulaequationinput>
+  </numericalresponse>
+</problem>`,
+};
+export const multipleProblemThreeOlX = {
+  rawOLX: `<problem>
+  <stringresponse answer="correct answer">
+    <textline size="20"/>
+  </stringresponse>
+  <numericalresponse answer="200">
+    <formulaequationinput></formulaequationinput>
+  </numericalresponse>
 </problem>`,
 };
 export const blankProblemOLX = {

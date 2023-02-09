@@ -258,11 +258,6 @@ class ReactStateOLXParser {
     let answerObject = {};
     const additionalAnswers = [];
     let firstCorrectAnswerParsed = false;
-    /*
-    TODO: Need to figure out how to add multiple numericalresponse,
-    the parser right now converts all the other right answers into
-    additional answers.
-    */
     answers.forEach((answer) => {
       const correcthint = this.getAnswerHints(answer);
       if (this.hasAttributeWithValue(answer, 'title')) {

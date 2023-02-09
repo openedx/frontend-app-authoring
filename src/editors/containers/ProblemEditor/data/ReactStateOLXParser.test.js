@@ -3,7 +3,6 @@ import {
   checkboxesOLXWithFeedbackAndHintsOLX,
   dropdownOLXWithFeedbackAndHintsOLX,
   numericInputWithFeedbackAndHintsOLX,
-  numericInputWithFeedbackAndHintsOLXException,
   textInputWithFeedbackAndHintsOLX,
   multipleChoiceWithFeedbackAndHintsOLX,
   textInputWithFeedbackAndHintsOLXWithMultipleAnswers,
@@ -45,13 +44,6 @@ describe('Check React Sate OLXParser problem', () => {
     const stateParser = new ReactStateOLXParser({ problem });
     const buildOLX = stateParser.buildOLX();
     expect(buildOLX.replace(/\s/g, '')).toEqual(numericInputWithFeedbackAndHintsOLX.buildOLX.replace(/\s/g, ''));
-  });
-  test('Test numerical response with feedback and hints problem type with exception', () => {
-    const olxparser = new OLXParser(numericInputWithFeedbackAndHintsOLXException.rawOLX);
-    const problem = olxparser.getParsedOLXData();
-    const stateParser = new ReactStateOLXParser({ problem });
-    const buildOLX = stateParser.buildOLX();
-    expect(buildOLX.replace(/\s/g, '')).toEqual(numericInputWithFeedbackAndHintsOLXException.buildOLX.replace(/\s/g, ''));
   });
   test('Test string response with feedback and hints, multiple answers', () => {
     const olxparser = new OLXParser(textInputWithFeedbackAndHintsOLXWithMultipleAnswers.rawOLX);
