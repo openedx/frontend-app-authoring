@@ -14,20 +14,34 @@ import { getCourseAppsApiStatus, getLoadingStatus } from './pages-and-resources/
 import { RequestStatus } from './data/constants';
 import Loading from './generic/Loading';
 
-const AppHeader = (courseNumber, courseOrg, courseTitle, courseId) => (
+const AppHeader = ({
+  courseNumber, courseOrg, courseTitle, courseId,
+}) => (
   <Header
     courseNumber={courseNumber}
     courseOrg={courseOrg}
     courseTitle={courseTitle}
     courseId={courseId}
   />
-  );
+);
 
-  const AppFooter = () => (
-    <div className="mt-6">
-      <Footer />
-    </div>
-  );
+AppHeader.propTypes = {
+  courseId: PropTypes.string.isRequired,
+  courseNumber: PropTypes.string,
+  courseOrg: PropTypes.string,
+  courseTitle: PropTypes.string.isRequired,
+};
+
+AppHeader.defaultProps = {
+  courseNumber: null,
+  courseOrg: null,
+};
+
+const AppFooter = () => (
+  <div className="mt-6">
+    <Footer />
+  </div>
+);
 
 const CourseAuthoringPage = ({ courseId, children }) => {
   const dispatch = useDispatch();
@@ -57,7 +71,14 @@ const CourseAuthoringPage = ({ courseId, children }) => {
       we shouldn't have the header and footer on these pages.
       This functionality will be removed in TNL-9591 */}
       {inProgress ? !pathname.includes('/editor/') && <Loading />
-        : AppHeader(courseNumber, courseOrg, courseTitle, courseId)}
+        : (
+          <AppHeader
+            courseNumber={courseNumber}
+            courseOrg={courseOrg}
+            courseTitle={courseTitle}
+            courseId={courseId}
+          />
+    )}
       {children}
       {!inProgress && <AppFooter />}
     </div>
