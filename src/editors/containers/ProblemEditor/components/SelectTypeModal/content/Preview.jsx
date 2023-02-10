@@ -30,7 +30,7 @@ export const Preview = ({
         alt={intl.formatMessage(messages.previewAltText, { problemType })}
       />
       <div className="mb-3">
-        {intl.formatMessage(messages.previewDescription, { previewDescription: data.description })}
+        {intl.formatMessage(messages.previewDescription, { previewDescription: data.previewDescription })}
       </div>
       <Hyperlink
         destination={data.helpLink}

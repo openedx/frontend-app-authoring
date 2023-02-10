@@ -20,6 +20,7 @@ export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.SINGLESELECT]: {
     title: 'Single select',
     preview: singleSelect,
+    previewDescription: 'Learners must select the correct answer from a list of possible options.',
     description: 'Enter your single select answers below and select which choice is correct',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/multiple_choice.html',
     prev: ProblemTypeKeys.TEXTINPUT,
@@ -30,6 +31,7 @@ export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.MULTISELECT]: {
     title: 'Multi-select',
     preview: multiSelect,
+    previewDescription: 'Learners must select all correct answers from a list of possible options.',
     description: 'Enter your multi-select answers below and select which choices are correct',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/checkbox.html',
     next: ProblemTypeKeys.DROPDOWN,
@@ -39,6 +41,7 @@ export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.DROPDOWN]: {
     title: 'Dropdown',
     preview: dropdown,
+    previewDescription: 'Learners must select the correct answer from a list of possible options',
     description: 'Enter your dropdown answers below and select which choice is correct',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/dropdown.html',
     next: ProblemTypeKeys.NUMERIC,
@@ -48,6 +51,7 @@ export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.NUMERIC]: {
     title: 'Numerical input',
     preview: numericalInput,
+    previewDescription: 'Specify one or more correct numeric answers, submitted in a response field.',
     description: 'Enter correct numerical input answers below',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/numerical_input.html',
     next: ProblemTypeKeys.TEXTINPUT,
@@ -57,6 +61,7 @@ export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.TEXTINPUT]: {
     title: 'Text input',
     preview: textInput,
+    previewDescription: 'Specify one or more correct text answers, including numbers and special characters, submitted in a response field.',
     description: 'Enter your text input answers below and select which choices are correct',
     helpLink: 'https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/text_input.html',
     prev: ProblemTypeKeys.NUMERIC,
