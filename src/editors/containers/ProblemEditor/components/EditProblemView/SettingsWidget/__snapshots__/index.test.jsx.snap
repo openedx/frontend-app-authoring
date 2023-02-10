@@ -7,19 +7,24 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page 1`] = `
   <div
     className="mb-3 settingsCardTopdiv"
   >
-    <injectIntl(ShimmedIntlComponent)
+    <TypeCard
       problemType="stringresponse"
     />
   </div>
   <div
     className="my-3"
   >
-    <injectIntl(ShimmedIntlComponent) />
+    <ScoringCard />
   </div>
   <div
     className="mt-3"
   >
-    <injectIntl(ShimmedIntlComponent) />
+    <HintsCard />
+  </div>
+  <div
+    className="mt-3"
+  >
+    <GroupFeedback />
   </div>
   <div>
     <Advanced
@@ -51,27 +56,27 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page 1`] = `
       <div
         className="my-3"
       >
-        <injectIntl(ShimmedIntlComponent) />
+        <ShowAnswerCard />
       </div>
       <div
         className="my-3"
       >
-        <injectIntl(ShimmedIntlComponent) />
+        <ResetCard />
       </div>
       <div
         className="my-3"
       >
-        <injectIntl(ShimmedIntlComponent) />
+        <TimerCard />
       </div>
       <div
         className="my-3"
       >
-        <injectIntl(ShimmedIntlComponent) />
+        <MatlabCard />
       </div>
       <div
         className="my-3"
       >
-        <injectIntl(ShimmedIntlComponent)
+        <SwitchToAdvancedEditorCard
           problemType="stringresponse"
         />
       </div>
@@ -87,19 +92,24 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page advanced
   <div
     className="mb-3 settingsCardTopdiv"
   >
-    <injectIntl(ShimmedIntlComponent)
+    <TypeCard
       problemType="stringresponse"
     />
   </div>
   <div
     className="my-3"
   >
-    <injectIntl(ShimmedIntlComponent) />
+    <ScoringCard />
   </div>
   <div
     className="mt-3"
   >
-    <injectIntl(ShimmedIntlComponent) />
+    <HintsCard />
+  </div>
+  <div
+    className="mt-3"
+  >
+    <GroupFeedback />
   </div>
   <div>
     <Advanced
@@ -131,27 +141,27 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page advanced
       <div
         className="my-3"
       >
-        <injectIntl(ShimmedIntlComponent) />
+        <ShowAnswerCard />
       </div>
       <div
         className="my-3"
       >
-        <injectIntl(ShimmedIntlComponent) />
+        <ResetCard />
       </div>
       <div
         className="my-3"
       >
-        <injectIntl(ShimmedIntlComponent) />
+        <TimerCard />
       </div>
       <div
         className="my-3"
       >
-        <injectIntl(ShimmedIntlComponent) />
+        <MatlabCard />
       </div>
       <div
         className="my-3"
       >
-        <injectIntl(ShimmedIntlComponent)
+        <SwitchToAdvancedEditorCard
           problemType="stringresponse"
         />
       </div>

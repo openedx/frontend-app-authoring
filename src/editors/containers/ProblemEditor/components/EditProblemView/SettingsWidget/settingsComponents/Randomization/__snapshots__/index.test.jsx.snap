@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RandomizationCard snapshot snapshot: renders reset true setting card 1`] = `
+<SettingsOption
+  className=""
+  extraSections={Array []}
+  none={false}
+  summary="sUmmary"
+  title="Randomization"
+>
+  <div
+    className="halfSpacedMessage"
+  >
+    <span>
+      <FormattedMessage
+        defaultMessage="Defines when to randomize the variables specified in the associated Python script. For problems that do not randomize values, specify \\"Never\\"."
+        description="Description of Possibilities for value in Randomization widget"
+        id="authoring.problemeditor.settings.randomization.SettingText"
+      />
+    </span>
+  </div>
+  <Form.Group>
+    <Form.Control
+      as="select"
+      onChange={[MockFunction randomizationCardHooks.handleChange]}
+      value="sOmE_vAlUE"
+    >
+      <option
+        key="always"
+        value="always"
+      >
+        Always
+      </option>
+      <option
+        key="never"
+        value="never"
+      >
+        Never
+      </option>
+      <option
+        key="on_reset"
+        value="on_reset"
+      >
+        On Reset
+      </option>
+      <option
+        key="per_student"
+        value="per_student"
+      >
+        Per Student
+      </option>
+    </Form.Control>
+  </Form.Group>
+</SettingsOption>
+`;

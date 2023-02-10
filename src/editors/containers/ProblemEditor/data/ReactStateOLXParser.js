@@ -65,7 +65,21 @@ class ReactStateOLXParser {
     const choice = [];
     let compoundhint = [];
     let widget = {};
-    const { answers } = this.problemState;
+    // eslint-disable-next-line prefer-const
+    let { answers, generalFeedback } = this.problemState;
+    // general feedback replaces selected feedback if all incorrect selected feedback is the same.
+    if (generalFeedback !== ''
+    && answers.every(
+      answer => (
+        answer.correct
+          ? true
+          : answer?.selectedFeedback === answers.find(a => a.correct === false).selectedFeedback
+      ),
+    )) {
+      answers = answers.map(answer => (!answer?.correct
+        ? { ...answer, selectedFeedback: generalFeedback }
+        : answer));
+    }
     answers.forEach((answer) => {
       const feedback = [];
       let singleAnswer = {};

@@ -13,17 +13,23 @@ import ResetCard from './settingsComponents/ResetCard';
 import MatlabCard from './settingsComponents/MatlabCard';
 import TimerCard from './settingsComponents/TimerCard';
 import TypeCard from './settingsComponents/TypeCard';
+import GeneralFeedbackCard from './settingsComponents/GeneralFeedback/index';
+import GroupFeedbackCard from './settingsComponents/GroupFeedback/index';
 import SwitchToAdvancedEditorCard from './settingsComponents/SwitchToAdvancedEditorCard';
 import messages from './messages';
 import { showAdvancedSettingsCards } from './hooks';
 
 import './index.scss';
+import { ProblemTypeKeys } from '../../../../../data/constants/problem';
+import Randomization from './settingsComponents/Randomization';
 
 // This widget should be connected, grab all settings from store, update them as needed.
 export const SettingsWidget = ({
   problemType,
   // redux
   answers,
+  generalFeedback,
+  groupFeedbackList,
   blockTitle,
   correctAnswerCount,
   settings,
@@ -33,6 +39,30 @@ export const SettingsWidget = ({
   updateAnswer,
 }) => {
   const { isAdvancedCardsVisible, showAdvancedCards } = showAdvancedSettingsCards();
+
+  const feedbackCard = () => {
+    if (problemType === ProblemTypeKeys.ADVANCED) {
+      return (<></>);
+    }
+    if ([ProblemTypeKeys.MULTISELECT, ProblemTypeKeys.TEXTINPUT, ProblemTypeKeys.NUMERIC].includes(problemType)) {
+      return (
+        <div className="mt-3"><GroupFeedbackCard
+          groupFeedbacks={groupFeedbackList}
+          updateSettings={updateField}
+          answers={answers}
+        />
+        </div>
+      );
+    }
+    return (
+      <div className="mt-3"><GeneralFeedbackCard
+        generalFeedback={generalFeedback}
+        updateSettings={updateField}
+      />
+      </div>
+    );
+  };
+
   return (
     <div className="settingsWidget ml-4">
       <div className="mb-3 settingsCardTopdiv">
@@ -52,7 +82,7 @@ export const SettingsWidget = ({
       <div className="mt-3">
         <HintsCard hints={settings.hints} updateSettings={updateSettings} />
       </div>
-
+      {feedbackCard()}
       <div>
         <Collapsible.Advanced open={!isAdvancedCardsVisible}>
           <Collapsible.Body className="collapsible-body small">
@@ -80,6 +110,13 @@ export const SettingsWidget = ({
           <div className="my-3">
             <ResetCard showResetButton={settings.showResetButton} updateSettings={updateSettings} />
           </div>
+          {
+            problemType === ProblemTypeKeys.ADVANCED && (
+            <div className="my-3">
+              <Randomization randomization={settings.randomization} updateSettings={updateSettings} />
+            </div>
+            )
+          }
           <div className="my-3">
             <TimerCard timeBetween={settings.timeBetween} updateSettings={updateSettings} />
           </div>
@@ -103,6 +140,16 @@ SettingsWidget.propTypes = {
     title: PropTypes.string,
     unselectedFeedback: PropTypes.string,
   })).isRequired,
+  generalFeedback: PropTypes.string.isRequired,
+  groupFeedbackList: PropTypes.arrayOf(
+    PropTypes.shape(
+      {
+        id: PropTypes.number,
+        feedback: PropTypes.string,
+        answers: PropTypes.arrayOf(PropTypes.string),
+      },
+    ),
+  ).isRequired,
   blockTitle: PropTypes.string.isRequired,
   correctAnswerCount: PropTypes.number.isRequired,
   problemType: PropTypes.string.isRequired,
@@ -115,6 +162,8 @@ SettingsWidget.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
+  generalFeedback: selectors.problem.generalFeedback(state),
+  groupFeedbackList: selectors.problem.groupFeedbackList(state),
   settings: selectors.problem.settings(state),
   answers: selectors.problem.answers(state),
   blockTitle: selectors.app.blockTitle(state),

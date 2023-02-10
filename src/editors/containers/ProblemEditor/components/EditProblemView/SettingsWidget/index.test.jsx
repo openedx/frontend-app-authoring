@@ -9,6 +9,18 @@ jest.mock('./hooks', () => ({
   showAdvancedSettingsCards: jest.fn(),
 }));
 
+jest.mock('./settingsComponents/GeneralFeedback', () => 'GeneralFeedback');
+jest.mock('./settingsComponents/GroupFeedback', () => 'GroupFeedback');
+jest.mock('./settingsComponents/Randomization', () => 'Randomization');
+jest.mock('./settingsComponents/HintsCard', () => 'HintsCard');
+jest.mock('./settingsComponents/MatlabCard', () => 'MatlabCard');
+jest.mock('./settingsComponents/ResetCard', () => 'ResetCard');
+jest.mock('./settingsComponents/ScoringCard', () => 'ScoringCard');
+jest.mock('./settingsComponents/ShowAnswerCard', () => 'ShowAnswerCard');
+jest.mock('./settingsComponents/SwitchToAdvancedEditorCard', () => 'SwitchToAdvancedEditorCard');
+jest.mock('./settingsComponents/TimerCard', () => 'TimerCard');
+jest.mock('./settingsComponents/TypeCard', () => 'TypeCard');
+
 describe('SettingsWidget', () => {
   const props = {
     problemType: ProblemTypeKeys.TEXTINPUT,

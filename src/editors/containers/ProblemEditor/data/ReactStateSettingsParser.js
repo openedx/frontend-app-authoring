@@ -16,6 +16,7 @@ class ReactStateSettingsParser {
     settings = popuplateItem(settings, 'afterAttempts', 'attempts_before_showanswer_button', stateSettings.showAnswer);
     settings = popuplateItem(settings, 'showResetButton', 'show_reset_button', stateSettings);
     settings = popuplateItem(settings, 'timeBetween', 'submission_wait_seconds', stateSettings);
+    settings = popuplateItem(settings, 'randomization', 'rerandomize', stateSettings);
 
     return settings;
   }

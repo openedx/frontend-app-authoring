@@ -12,8 +12,10 @@ const initialState = {
   answers: [],
   correctAnswerCount: 0,
   groupFeedbackList: [],
+  generalFeedback: '',
   additionalAttributes: {},
   settings: {
+    randomization: null,
     scoring: {
       weight: 0,
       attempts: {

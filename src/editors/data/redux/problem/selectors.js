@@ -5,6 +5,8 @@ export const problemState = (state) => state.problem;
 const mkSimpleSelector = (cb) => createSelector([module.problemState], cb);
 export const simpleSelectors = {
   problemType: mkSimpleSelector(problemData => problemData.problemType),
+  generalFeedback: mkSimpleSelector(problemData => problemData.generalFeedback),
+  groupFeedbackList: mkSimpleSelector(problemData => problemData.groupFeedbackList),
   answers: mkSimpleSelector(problemData => problemData.answers),
   correctAnswerCount: mkSimpleSelector(problemData => problemData.correctAnswerCount),
   settings: mkSimpleSelector(problemData => problemData.settings),
