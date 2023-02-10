@@ -379,7 +379,7 @@ export class OLXParser {
     2. All the problem's incorrect, if Selected answers are equivalent strings, and there is no other feedback.
     */
     if (problemType === ProblemTypeKeys.SINGLESELECT || problemType === ProblemTypeKeys.DROPDOWN) {
-      const firstIncorrectAnswerText = answers.find(answer => answer.correct === false).selectedFeedback;
+      const firstIncorrectAnswerText = answers.find(answer => answer.correct === false)?.selectedFeedback;
       const isAllIncorrectSelectedFeedbackTheSame = answers.every(answer => (answer.correct
         ? true
         : answer?.selectedFeedback === firstIncorrectAnswerText
