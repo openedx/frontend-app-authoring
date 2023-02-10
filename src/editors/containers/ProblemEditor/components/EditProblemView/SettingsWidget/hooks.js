@@ -207,7 +207,7 @@ export const typeRowHooks = ({
   updateAnswer,
 }) => {
   const onClick = () => {
-    if (typeKey === ProblemTypeKeys.SINGLESELECT || typeKey === ProblemTypeKeys.DROPDOWN) {
+    if (typeKey === ProblemTypeKeys.DROPDOWN) {
       if (correctAnswerCount > 1) {
         answers.forEach(answer => {
           updateAnswer({ ...answer, correct: false });

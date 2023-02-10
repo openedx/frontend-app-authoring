@@ -55,7 +55,7 @@ export const useFeedback = (answer) => {
 };
 
 export const isSingleAnswerProblem = (problemType) => (
-  problemType === ProblemTypeKeys.DROPDOWN || problemType === ProblemTypeKeys.SINGLESELECT
+  problemType === ProblemTypeKeys.DROPDOWN
 );
 
 export const useAnswerContainer = ({ answers, updateField }) => {
