@@ -359,10 +359,9 @@ export const singleSelectWithHints = {
         },
       ],
       scoring: {
-        weight: 0,
         attempts: {
           unlimited: true,
-          number: null,
+          number: '',
         },
       },
       timeBetween: 0,
@@ -385,5 +384,40 @@ export const singleSelectWithHints = {
 ||You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.||
 ||If you add more than one hint, a different hint appears each time learners select the hint button.||
 `,
+  },
+};
+
+export const negativeAttempts = {
+  state: {
+    rawOLX: '<problem>\n    <numericalresponse answer="100">\n        <responseparam type="tolerance" default="5"/>\n        <formulaequationinput/>\n    </numericalresponse>\n</problem>\n',
+    problemType: 'TEXTINPUT',
+    question: '',
+    answers: [
+      {
+        id: 'A',
+        title: '100 +-5',
+        correct: true,
+      },
+    ],
+    groupFeedbackList: [],
+    settings: {
+      scoring: {
+        weight: 2.5,
+        attempts: {
+          unlimited: false,
+          number: 0,
+        },
+      },
+    },
+  },
+  metadata: {
+    markdown: `
+=100 +-5 {{You can specify optional feedback like this, which appears after this answer is submitted.}}
+`,
+    weight: 2.5,
+    max_attempts: -1,
+    rerandomize: 'invalid_input',
+    showanswer: 'invalid_input',
+    attempts_before_showanswer_button: 2,
   },
 };

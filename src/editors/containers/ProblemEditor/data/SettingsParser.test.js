@@ -4,7 +4,7 @@ import {
   dropdownWithFeedbackHints,
   numericWithHints,
   textInputWithHints,
-  singleSelectWithHints,
+  singleSelectWithHints, negativeAttempts,
 } from './mockData/problemTestData';
 
 describe('Test Settings to State Parser', () => {
@@ -33,13 +33,18 @@ describe('Test Settings to State Parser', () => {
   });
 
   test('Test score settings attempts missing', () => {
-    const scoreSettings = parseScoringSettings(textInputWithHints.metadata);
-    expect(scoreSettings.attempts).toBeUndefined();
+    const scoreSettings = parseScoringSettings(singleSelectWithHints.metadata);
+    expect(scoreSettings.attempts).toStrictEqual(singleSelectWithHints.state.settings.scoring.attempts);
+  });
+
+  test('Test negative attempts in score', () => {
+    const scoreSettings = parseScoringSettings(negativeAttempts.metadata);
+    expect(scoreSettings.attempts).toStrictEqual(negativeAttempts.state.settings.scoring.attempts);
   });
 
   test('Test score settings missing', () => {
     const settings = parseSettings(singleSelectWithHints.metadata);
-    expect(settings.scoring).toBeUndefined();
+    expect(settings.scoring).toStrictEqual(singleSelectWithHints.state.settings.scoring);
   });
 
   test('Test invalid randomization', () => {

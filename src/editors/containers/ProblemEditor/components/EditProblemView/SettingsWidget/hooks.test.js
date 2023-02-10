@@ -187,19 +187,19 @@ describe('Problem settings hooks', () => {
       const value = null;
       output.handleMaxAttemptChange({ target: { value } });
       expect(updateSettings)
-        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: null, unlimited: true } } });
+        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: '', unlimited: true } } });
     });
     test('test handleMaxAttemptChange set attempts to empty string', () => {
       const value = '';
       output.handleMaxAttemptChange({ target: { value } });
       expect(updateSettings)
-        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: null, unlimited: true } } });
+        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: '', unlimited: true } } });
     });
     test('test handleMaxAttemptChange set attempts to non-numeric value', () => {
       const value = 'abc';
       output.handleMaxAttemptChange({ target: { value } });
       expect(updateSettings)
-        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: null, unlimited: true } } });
+        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: '', unlimited: true } } });
     });
     test('test handleMaxAttemptChange set attempts to negative value', () => {
       const value = -1;
