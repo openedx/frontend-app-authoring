@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 
 import store from './data/store';
 import Editor from './Editor';
+import ErrorBoundary from './sharedComponents/ErrorBoundary';
 
 export const EditorPage = ({
   courseId,
@@ -13,18 +14,20 @@ export const EditorPage = ({
   studioEndpointUrl,
   onClose,
 }) => (
-  <Provider store={store}>
-    <Editor
-      {...{
-        onClose,
-        learningContextId: courseId,
-        blockType,
-        blockId,
-        lmsEndpointUrl,
-        studioEndpointUrl,
-      }}
-    />
-  </Provider>
+  <ErrorBoundary>
+    <Provider store={store}>
+      <Editor
+        {...{
+          onClose,
+          learningContextId: courseId,
+          blockType,
+          blockId,
+          lmsEndpointUrl,
+          studioEndpointUrl,
+        }}
+      />
+    </Provider>
+  </ErrorBoundary>
 );
 EditorPage.defaultProps = {
   blockId: null,
