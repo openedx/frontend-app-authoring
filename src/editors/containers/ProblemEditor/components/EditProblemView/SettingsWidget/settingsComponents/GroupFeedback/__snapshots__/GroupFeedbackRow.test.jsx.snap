@@ -37,22 +37,22 @@ exports[`GroupFeedbackRow snapshot snapshot: renders hints row 1`] = `
       <Form.Checkbox
         checked={-1}
         className="mr-4 mt-1"
-        isValid={-1}
+        isValid={false}
       />
       <Form.Checkbox
         checked={-1}
         className="mr-4 mt-1"
-        isValid={-1}
+        isValid={false}
       />
       <Form.Checkbox
         checked={-1}
         className="mr-4 mt-1"
-        isValid={-1}
+        isValid={false}
       />
       <Form.Checkbox
         checked={-1}
         className="mr-4 mt-1"
-        isValid={-1}
+        isValid={false}
       />
     </Row>
   </Component>

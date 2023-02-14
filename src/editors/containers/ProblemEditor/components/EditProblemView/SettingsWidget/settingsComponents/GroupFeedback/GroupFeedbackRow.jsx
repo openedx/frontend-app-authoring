@@ -43,7 +43,7 @@ export const GroupFeedbackRow = ({
             className="mr-4 mt-1"
             value={letter.id}
             checked={value.answers.indexOf(letter.id)}
-            isValid={value.answers.indexOf(letter.id)}
+            isValid={value.answers.indexOf(letter.id) >= 0}
           >{letter.id}
           </Form.Checkbox>
         ))}
