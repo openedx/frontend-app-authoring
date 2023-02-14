@@ -1,11 +1,16 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
+import { useSelector } from 'react-redux';
 import { formatMessage } from '../../../../../testUtils';
 import { EditorFooter } from '.';
 
 jest.mock('../../hooks', () => ({
   nullMethod: jest.fn().mockName('hooks.nullMethod'),
+}));
+
+jest.mock('react-redux', () => ({
+  useSelector: jest.fn(),
 }));
 
 describe('EditorFooter', () => {
@@ -25,6 +30,15 @@ describe('EditorFooter', () => {
     });
     test('snapshot: save failed.  Show error message', () => {
       expect(shallow(<EditorFooter {...props} saveFailed />)).toMatchSnapshot();
+    });
+
+    test('snapshot: show feedback link', () => {
+      useSelector.mockReturnValueOnce('problem');
+      expect(shallow(<EditorFooter {...props} />)).toMatchSnapshot();
+    });
+    test('snapshot: dont show feedback link', () => {
+      useSelector.mockReturnValueOnce('not a Problem');
+      expect(shallow(<EditorFooter {...props} />)).toMatchSnapshot();
     });
   });
 });
