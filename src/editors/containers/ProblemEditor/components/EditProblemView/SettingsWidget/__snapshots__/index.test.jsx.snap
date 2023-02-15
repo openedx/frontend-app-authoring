@@ -19,7 +19,9 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page 1`] = `
   <div
     className="mt-3"
   >
-    <HintsCard />
+    <HintsCard
+      problemType="stringresponse"
+    />
   </div>
   <div
     className="mt-3"
@@ -104,7 +106,9 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page advanced
   <div
     className="mt-3"
   >
-    <HintsCard />
+    <HintsCard
+      problemType="stringresponse"
+    />
   </div>
   <div
     className="mt-3"

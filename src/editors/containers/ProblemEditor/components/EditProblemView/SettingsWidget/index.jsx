@@ -80,7 +80,7 @@ export const SettingsWidget = ({
         <ScoringCard scoring={settings.scoring} updateSettings={updateSettings} />
       </div>
       <div className="mt-3">
-        <HintsCard hints={settings.hints} updateSettings={updateSettings} />
+        <HintsCard problemType={problemType} hints={settings.hints} updateSettings={updateSettings} />
       </div>
       {feedbackCard()}
       <div>
