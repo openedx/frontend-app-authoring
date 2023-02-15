@@ -151,9 +151,9 @@ class ReactStateOLXParser {
       problem: {
         [problemType]: {
           [widget]: widgetObject,
+          ...solution,
         },
         ...demandhint,
-        ...solution,
       },
     };
 
@@ -189,9 +189,9 @@ class ReactStateOLXParser {
       problem: {
         [ProblemTypeKeys.TEXTINPUT]: {
           ...answerObject,
+          ...solution,
         },
         ...demandhint,
-        ...solution,
       },
     };
 
@@ -252,9 +252,11 @@ class ReactStateOLXParser {
 
     const problemObject = {
       problem: {
-        [ProblemTypeKeys.NUMERIC]: answerObject,
+        [ProblemTypeKeys.NUMERIC]: {
+          ...answerObject,
+          ...solution,
+        },
         ...demandhint,
-        ...solution,
       },
     };
 
