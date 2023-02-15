@@ -14,7 +14,7 @@ exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCar
         variant="default"
       >
         <FormattedMessage
-          defaultMessage="Switch To Advanced Editor"
+          defaultMessage="Switch to advanced editor"
           description="message to confirm that a user wants to use the advanced editor"
           id="authoring.problemeditor.settings.switchtoadvancededitor.message"
         />

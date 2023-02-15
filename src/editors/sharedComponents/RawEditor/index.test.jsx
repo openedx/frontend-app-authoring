@@ -30,6 +30,7 @@ describe('RawEditor', () => {
     },
     content: null,
     lang: 'html',
+    width: { width: '80%' },
   };
 
   test('renders as expected with default behavior', () => {

@@ -7,8 +7,9 @@ exports[`EditorProblemView component renders raw editor 1`] = `
   <div
     className="editProblemView d-flex flex-row flex-nowrap justify-content-end"
   >
-    <span
-      className="flex-grow-1"
+    <Container
+      className="advancedEditorTopMargin p-0"
+      fluid={true}
     >
       <RawEditor
         content={null}
@@ -19,7 +20,7 @@ exports[`EditorProblemView component renders raw editor 1`] = `
         }
         lang="xml"
       />
-    </span>
+    </Container>
     <span
       className="editProblemView-settingsColumn"
     >

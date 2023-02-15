@@ -191,7 +191,7 @@ export const messages = {
   },
   ConfirmSwitchButtonLabel: {
     id: 'authoring.problemeditor.settings.switchtoadvancededitor.message',
-    defaultMessage: 'Switch To Advanced Editor',
+    defaultMessage: 'Switch to advanced editor',
     description: 'message to confirm that a user wants to use the advanced editor',
   },
   explanationInputLabel: {

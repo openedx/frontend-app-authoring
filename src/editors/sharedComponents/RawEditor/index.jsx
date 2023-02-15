@@ -18,7 +18,7 @@ export const RawEditor = ({
   const value = getValue(content);
 
   return (
-    <>
+    <div>
       {lang === 'xml' ? null : (
         <Alert variant="danger">
           You are using the raw {lang} editor.
@@ -32,7 +32,7 @@ export const RawEditor = ({
         />
       ) : null}
 
-    </>
+    </div>
   );
 };
 RawEditor.defaultProps = {

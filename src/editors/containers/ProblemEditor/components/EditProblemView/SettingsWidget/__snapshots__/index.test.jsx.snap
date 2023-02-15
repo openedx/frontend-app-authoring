@@ -5,7 +5,7 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page 1`] = `
   className="settingsWidget ml-4"
 >
   <div
-    className="mb-3 settingsCardTopdiv"
+    className="mb-3"
   >
     <TypeCard
       problemType="stringresponse"
@@ -92,7 +92,7 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page advanced
   className="settingsWidget ml-4"
 >
   <div
-    className="mb-3 settingsCardTopdiv"
+    className="mb-3"
   >
     <TypeCard
       problemType="stringresponse"

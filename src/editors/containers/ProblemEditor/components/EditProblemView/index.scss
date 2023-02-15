@@ -1,6 +1,11 @@
 .editProblemView {
   .editProblemView-settingsColumn {
-    flex-basis: 320px;
+    width: 320px;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+  .advancedEditorTopMargin {
+    margin-top: 40px;
   }
 }
 
