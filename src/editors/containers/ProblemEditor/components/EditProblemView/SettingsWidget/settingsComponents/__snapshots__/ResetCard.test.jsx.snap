@@ -22,7 +22,7 @@ exports[`ResetCard snapshot snapshot: renders reset true setting card 1`] = `
     className="spacedMessage"
   >
     <Hyperlink
-      destination="#"
+      destination="sTuDioEndpOintUrl/settings/advanced/leArningCoNteXtId"
       target="_blank"
     >
       <FormattedMessage
@@ -84,7 +84,7 @@ exports[`ResetCard snapshot snapshot: renders reset true setting card 2`] = `
     className="spacedMessage"
   >
     <Hyperlink
-      destination="#"
+      destination="sTuDioEndpOintUrl/settings/advanced/leArningCoNteXtId"
       target="_blank"
     >
       <FormattedMessage

@@ -8,6 +8,19 @@ jest.mock('../hooks', () => ({
   resetCardHooks: jest.fn(),
 }));
 
+jest.mock('../../../../../../data/redux', () => ({
+  selectors: {
+    app: {
+      studioEndpointUrl: 'sTuDioEndpOintUrl',
+      learningContextId: 'leArningCoNteXtId',
+    },
+  },
+}));
+
+jest.mock('react-redux', () => ({
+  useSelector: jest.fn().mockImplementation((args) => args),
+}));
+
 describe('ResetCard', () => {
   const props = {
     showResetButton: false,

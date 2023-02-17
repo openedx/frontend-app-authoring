@@ -2,9 +2,11 @@ import React from 'react';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Button, ButtonGroup, Hyperlink } from '@edx/paragon';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import SettingsOption from '../SettingsOption';
 import messages from '../messages';
 import { resetCardHooks } from '../hooks';
+import { selectors } from '../../../../../../data/redux';
 
 export const ResetCard = ({
   showResetButton,
@@ -13,6 +15,7 @@ export const ResetCard = ({
   intl,
 }) => {
   const { setResetTrue, setResetFalse } = resetCardHooks(updateSettings);
+  const advancedSettingsLink = `${useSelector(selectors.app.studioEndpointUrl)}/settings/advanced/${useSelector(selectors.app.learningContextId)}`;
   return (
     <SettingsOption
       title={intl.formatMessage(messages.resetSettingsTitle)}
@@ -26,7 +29,7 @@ export const ResetCard = ({
         </span>
       </div>
       <div className="spacedMessage">
-        <Hyperlink destination="#" target="_blank">
+        <Hyperlink destination={advancedSettingsLink} target="_blank">
           <FormattedMessage {...messages.advancedSettingsLinkText} />
         </Hyperlink>
       </div>
