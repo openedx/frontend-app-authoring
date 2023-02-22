@@ -26,19 +26,21 @@ export const circuitSchematic = `<problem>
         <p>Make a voltage divider that splits the provided voltage evenly.</p>
         <center>
             <schematic height="500" width="600" parts="g,r" analyses="dc"
-            initial_value="[[&quot;v&quot;,[168,144,0],{&quot;value&quot;:&quot;dc(1)&quot;,&quot;_json_&quot;:0},[&quot;1&quot;,&quot;0&quot;]],[&quot;r&quot;,[296,120,0],{&quot;r&quot;:&quot;1&quot;,&quot;_json_&quot;:1},[&quot;1&quot;,&quot;output&quot;]],[&quot;L&quot;,[296,168,3],{&quot;label&quot;:&quot;output&quot;,&quot;_json_&quot;:2},[&quot;output&quot;]],[&quot;w&quot;,[296,216,168,216]],[&quot;w&quot;,[168,216,168,192]],[&quot;w&quot;,[168,144,168,120]],[&quot;w&quot;,[168,120,296,120]],[&quot;g&quot;,[168,216,0],{&quot;_json_&quot;:7},[&quot;0&quot;]],[&quot;view&quot;,-67.49999999999994,-78.49999999999994,1.6000000000000003,&quot;50&quot;,&quot;10&quot;,&quot;1G&quot;,null,&quot;100&quot;,&quot;1&quot;,&quot;1000&quot;]]"/>
+            initial_value='[["v",[168,144,0],{"value":"dc(1)","_json_":0},["1","0"]],["r",[296,120,0],{"r":"1","_json_":1},["1","output"]],["L",[296,168,3],{"label":"output","_json_":2},["output"]],["w",[296,216,168,216]],["w",[168,216,168,192]],["w",[168,144,168,120]],["w",[168,120,296,120]],["g",[168,216,0],{"_json_":7},["0"]],["view",-67.49999999999994,-78.49999999999994,1.6000000000000003,"50","10","1G",null,"100","1","1000"]]'/>
         </center>
         <answer type="loncapa/python">
-            dc_value = "dc analysis not found"
-            for response in submission[0]:
-            if response[0] == 'dc':
-                for node in response[1:]:
-                    dc_value = node['output']
 
-            if dc_value == .5:
-            correct = ['correct']
-            else:
-            correct = ['incorrect']
+dc_value = "dc analysis not found"
+for response in submission[0]:
+    if response[0] == 'dc':
+        for node in response[1:]:
+            dc_value = node['output']
+
+if dc_value == .5:
+    correct = ['correct']
+else:
+    correct = ['incorrect']
+
         </answer>
         <solution>
             <div class="detailed-solution">
@@ -57,22 +59,23 @@ export const circuitSchematic = `<problem>
         <p>Make a high-pass filter.</p>
         <center>
             <schematic height="500" width="600" parts="g,r,s,c" analyses="ac"
-            submit_analyses="{&quot;ac&quot;:[[&quot;NodeA&quot;,1,9]]}"
-            initial_value="[[&quot;v&quot;,[160,152,0],{&quot;name&quot;:&quot;v1&quot;,&quot;value&quot;:&quot;sin(0,1,1,0,0)&quot;,&quot;_json_&quot;:0},[&quot;1&quot;,&quot;0&quot;]],[&quot;w&quot;,[160,200,240,200]],[&quot;g&quot;,[160,200,0],{&quot;_json_&quot;:2},[&quot;0&quot;]],[&quot;L&quot;,[240,152,3],{&quot;label&quot;:&quot;NodeA&quot;,&quot;_json_&quot;:3},[&quot;NodeA&quot;]],[&quot;s&quot;,[240,152,0],{&quot;color&quot;:&quot;cyan&quot;,&quot;offset&quot;:&quot;0&quot;,&quot;_json_&quot;:4},[&quot;NodeA&quot;]],[&quot;view&quot;,64.55878906250004,54.114697265625054,2.5000000000000004,&quot;50&quot;,&quot;10&quot;,&quot;1G&quot;,null,&quot;100&quot;,&quot;1&quot;,&quot;1000&quot;]]"/>
-        </center>
+            submit_analyses='{"ac":[["NodeA",1,9]]}'
+            initial_value='[["v",[160,152,0],{"name":"v1","value":"sin(0,1,1,0,0)","_json_":0},["1","0"]],["w",[160,200,240,200]],["g",[160,200,0],{"_json_":2},["0"]],["L",[240,152,3],{"label":"NodeA","_json_":3},["NodeA"]],["s",[240,152,0],{"color":"cyan","offset":"0","_json_":4},["NodeA"]],["view",64.55878906250004,54.114697265625054,2.5000000000000004,"50","10","1G",null,"100","1","1000"]]'/>        </center>
         <answer type="loncapa/python">
-        ac_values = None
-        for response in submission[0]:
-        if response[0] == 'ac':
-            for node in response[1:]:
-                ac_values = node['NodeA']
-        print "the ac analysis value:", ac_values
-        if ac_values == None:
-        correct = ['incorrect']
-        elif ac_values[0][1] &lt; ac_values[1][1]:
-        correct = ['correct']
-        else:
-        correct = ['incorrect']
+
+ac_values = None
+for response in submission[0]:
+    if response[0] == 'ac':
+        for node in response[1:]:
+            ac_values = node['NodeA']
+print "the ac analysis value:", ac_values
+if ac_values == None:
+    correct = ['incorrect']
+elif ac_values[0][1] &lt; ac_values[1][1]:
+    correct = ['correct']
+else:
+    correct = ['incorrect']
+
         </answer>
         <solution>
             <div class="detailed-solution">

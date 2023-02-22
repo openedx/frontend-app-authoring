@@ -33,11 +33,13 @@ export const customGrader = `<problem>
     </p>
     <p>You can use the following example problem as a model.</p>
     <hr/>
+
     <customresponse cfn="test_add_to_ten">
         <script type="loncapa/python">
 
-            def test_add_to_ten(expect, ans):
-                return test_add(10, ans)
+def test_add_to_ten(expect, ans):
+    return test_add(10, ans)
+
         </script>
         <label>Enter two integers that sum to 10.</label>
         <textline size="40" correct_answer="3" label="Enter first number" /><br/>
@@ -51,13 +53,15 @@ export const customGrader = `<problem>
     </customresponse>
     <customresponse cfn="test_add" expect="20">
         <script type="loncapa/python">
-            def test_add(expect, ans):
-                try:
-                    a1=int(ans[0])
-                    a2=int(ans[1])
-                    return (a1+a2) == int(expect)
-                except ValueError:
-                    return False
+
+def test_add(expect, ans):
+    try:
+        a1=int(ans[0])
+        a2=int(ans[1])
+        return (a1+a2) == int(expect)
+    except ValueError:
+        return False
+
         </script>
         <label>Enter two integers that sum to 20.</label>
         <textline size="40" correct_answer="11" label="Enter first number" /><br/>

@@ -41,27 +41,29 @@ export const jsInputResponse = `<problem>
 
     <customresponse cfn="check_function">
         <script type="loncapa/python">
-            <![CDATA[
-            import json
-            def check_function(e, ans):
-            """
-            "response" is a dictionary that contains two keys, "answer" and "state".
-            The value of "answer" is the JSON string that "getGrade" returns.
-            The value of "state" is the JSON string that "getState" returns.
-            Clicking either "Submit" or "Save" registers the current state.
-            """
-            response = json.loads(ans)
 
-            # You can use the value of the answer key to grade:
-            answer = json.loads(response["answer"])
-            return answer == "correct"
+<![CDATA[
+import json
+def check_function(e, ans):
+    """
+    "response" is a dictionary that contains two keys, "answer" and "state".
+    The value of "answer" is the JSON string that "getGrade" returns.
+    The value of "state" is the JSON string that "getState" returns.
+    Clicking either "Submit" or "Save" registers the current state.
+    """
+    response = json.loads(ans)
 
-            # Or you can use the value of the state key to grade:
-            """
-            state = json.loads(response["state"])
-            return state["selectedChoice"] == "correct"
-            """
-            ]]>
+    # You can use the value of the answer key to grade:
+    answer = json.loads(response["answer"])
+    return answer == "correct"
+
+    # Or you can use the value of the state key to grade:
+    """
+    state = json.loads(response["state"])
+    return state["selectedChoice"] == "correct"
+    """
+]]>
+
         </script>
         <p>This is paragraph text displayed before the IFrame.</p>
         <jsinput
