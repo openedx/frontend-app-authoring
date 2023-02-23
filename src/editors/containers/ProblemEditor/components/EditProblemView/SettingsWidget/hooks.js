@@ -206,12 +206,19 @@ export const typeRowHooks = ({
   updateField,
   updateAnswer,
 }) => {
+  const clearPreviouslySelectedAnswers = () => {
+    answers.forEach(answer => {
+      if (answer.correct) {
+        updateAnswer({ ...answer, correct: false });
+      }
+    });
+  };
   const onClick = () => {
+    // Dropdown problems can only have one correct answer. When there is more than one correct answer
+    // from a previous problem type, the correct attribute for selected answers need to be set to false.
     if (typeKey === ProblemTypeKeys.DROPDOWN) {
       if (correctAnswerCount > 1) {
-        answers.forEach(answer => {
-          updateAnswer({ ...answer, correct: false });
-        });
+        clearPreviouslySelectedAnswers();
       }
     }
     if (blockTitle === ProblemTypes[problemType].title) {
