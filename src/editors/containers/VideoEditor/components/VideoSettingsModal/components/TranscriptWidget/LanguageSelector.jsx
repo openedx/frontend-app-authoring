@@ -2,8 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
-  Form,
+  ActionRow,
+  Dropdown,
+  Button,
+  Icon,
 } from '@edx/paragon';
+
+import { Check } from '@edx/paragon/icons';
 import { connect, useDispatch } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { thunkActions, selectors } from '../../../../../../data/redux';
@@ -15,9 +20,9 @@ import * as module from './LanguageSelector';
 export const hooks = {
   onSelectLanguage: ({
     dispatch, languageBeforeChange, triggerupload, setLocalLang,
-  }) => (event) => {
+  }) => ({ newLang }) => {
     // IF Language is unset, set language and begin upload prompt.
-    setLocalLang(event.target.value);
+    setLocalLang(newLang);
     if (languageBeforeChange === '') {
       triggerupload();
       return;
@@ -25,7 +30,7 @@ export const hooks = {
     // Else: update language
     dispatch(
       thunkActions.video.updateTranscriptLanguage({
-        newLanguageCode: event.target.value, languageBeforeChange,
+        newLanguageCode: newLang, languageBeforeChange,
       }),
     );
   },
@@ -54,27 +59,57 @@ export const LanguageSelector = ({
   const onLanguageChange = module.hooks.onSelectLanguage({
     dispatch: useDispatch(), languageBeforeChange: localLang, setLocalLang, triggerupload: input.click,
   });
+  console.log({ localLang, language, openLanguages });
+
+  const getTitle = () => {
+    if (Object.prototype.hasOwnProperty.call(videoTranscriptLanguages, language)) {
+      return (
+        <ActionRow>
+          {videoTranscriptLanguages[language]}
+          <ActionRow.Spacer />
+          <Icon className="text-primary-500" src={Check} />
+        </ActionRow>
+
+      );
+    }
+    return (
+      <ActionRow>
+        {intl.formatMessage(messages.languageSelectPlaceholder)}
+        <ActionRow.Spacer />
+      </ActionRow>
+    );
+  };
+
   return (
-    <div className="col col-11 p-0">
-      <Form.Group controlId={`selectLanguage-form-${index}`} className="mw-100  m-0">
-        <Form.Control
-          as="select"
+    <>
+
+      <Dropdown
+        className="w-100 mb-2"
+      >
+        <Dropdown.Toggle
+          iconAs={Button}
           aria-label={intl.formatMessage(messages.languageSelectLabel)}
-          defaultValue={language}
-          onChange={(e) => onLanguageChange(e)}
+          block
+          id={`selectLanguage-form-${index}`}
+          className="w-100"
+          variant="outline-primary"
         >
+          {getTitle()}
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
           {Object.entries(videoTranscriptLanguages).map(([lang, text]) => {
-            if (language === lang) { return (<option value={lang} selected>{text}</option>); }
-            if (lang === 'placeholder') { return (<option hidden>{intl.formatMessage(messages.languageSelectPlaceholder)}</option>); }
-            if (openLanguages.some(row => row.includes(lang))) {
-              return (<option value={lang}>{text}</option>);
+            if (language === lang) {
+              return (<Dropdown.Item>{text}<Icon className="text-primary-500" src={Check} /></Dropdown.Item>);
             }
-            return (<option value={lang} disabled>{text}</option>);
+            if (openLanguages.some(row => row.includes(lang))) {
+              return (<Dropdown.Item onClick={() => onLanguageChange({ newLang: lang })}>{text}</Dropdown.Item>);
+            }
+            return (<Dropdown.Item className="disabled">{text}</Dropdown.Item>);
           })}
-        </Form.Control>
-      </Form.Group>
+        </Dropdown.Menu>
+      </Dropdown>
       <FileInput fileInput={input} acceptedFiles=".srt" />
-    </div>
+    </>
   );
 };
 

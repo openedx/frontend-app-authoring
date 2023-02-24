@@ -1,37 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`LanguageSelector snapshot transcript option 1`] = `
-<div
-  className="col col-11 p-0"
->
-  <Form.Group
-    className="mw-100  m-0"
-    controlId="selectLanguage-form-undefined"
+<Fragment>
+  <Dropdown
+    className="w-100 mb-2"
   >
-    <Form.Control
+    <Dropdown.Toggle
       aria-label="Languages"
-      as="select"
-      defaultValue="kl"
-      onChange={[Function]}
+      block={true}
+      className="w-100"
+      iconAs="Button"
+      id="selectLanguage-form-undefined"
+      variant="outline-primary"
     >
-      <option
-        selected={true}
-        value="kl"
-      >
+      <ActionRow>
         kLinGon
-      </option>
-      <option
-        value="el"
+        <ActionRow.Spacer />
+        <Icon
+          className="text-primary-500"
+        />
+      </ActionRow>
+    </Dropdown.Toggle>
+    <Dropdown.Menu>
+      <Dropdown.Item>
+        kLinGon
+        <Icon
+          className="text-primary-500"
+        />
+      </Dropdown.Item>
+      <Dropdown.Item
+        onClick={[Function]}
       >
         eLvIsh
-      </option>
-      <option
-        value="sl"
+      </Dropdown.Item>
+      <Dropdown.Item
+        onClick={[Function]}
       >
         sImLisH
-      </option>
-    </Form.Control>
-  </Form.Group>
+      </Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
   <FileInput
     acceptedFiles=".srt"
     fileInput={
@@ -44,43 +52,49 @@ exports[`LanguageSelector snapshot transcript option 1`] = `
       }
     }
   />
-</div>
+</Fragment>
 `;
 
 exports[`LanguageSelector snapshots -- no transcripts no Open Languages, all should be disabled 1`] = `
-<div
-  className="col col-11 p-0"
->
-  <Form.Group
-    className="mw-100  m-0"
-    controlId="selectLanguage-form-undefined"
+<Fragment>
+  <Dropdown
+    className="w-100 mb-2"
   >
-    <Form.Control
+    <Dropdown.Toggle
       aria-label="Languages"
-      as="select"
-      defaultValue="kl"
-      onChange={[Function]}
+      block={true}
+      className="w-100"
+      iconAs="Button"
+      id="selectLanguage-form-undefined"
+      variant="outline-primary"
     >
-      <option
-        selected={true}
-        value="kl"
-      >
+      <ActionRow>
         kLinGon
-      </option>
-      <option
-        disabled={true}
-        value="el"
+        <ActionRow.Spacer />
+        <Icon
+          className="text-primary-500"
+        />
+      </ActionRow>
+    </Dropdown.Toggle>
+    <Dropdown.Menu>
+      <Dropdown.Item>
+        kLinGon
+        <Icon
+          className="text-primary-500"
+        />
+      </Dropdown.Item>
+      <Dropdown.Item
+        className="disabled"
       >
         eLvIsh
-      </option>
-      <option
-        disabled={true}
-        value="sl"
+      </Dropdown.Item>
+      <Dropdown.Item
+        className="disabled"
       >
         sImLisH
-      </option>
-    </Form.Control>
-  </Form.Group>
+      </Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
   <FileInput
     acceptedFiles=".srt"
     fileInput={
@@ -93,5 +107,5 @@ exports[`LanguageSelector snapshots -- no transcripts no Open Languages, all sho
       }
     }
   />
-</div>
+</Fragment>
 `;
