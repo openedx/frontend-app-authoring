@@ -1,9 +1,10 @@
 import { StrictDict } from '../../utils';
-import { buttons, plugins } from '../../data/constants/tinyMCE';
+import { buttons, plugins } from './tinyMCE';
+import tinyMCEStyles from './tinyMCEStyles';
 
 const mapToolbars = toolbars => toolbars.map(toolbar => toolbar.join(' ')).join(' | ');
 
-const pluginConfig = (isLibrary) => {
+const tinyMCEConfig = (isLibrary) => {
   const image = isLibrary ? '' : plugins.image;
   const imageTools = isLibrary ? '' : plugins.imagetools;
   const imageUploadButton = isLibrary ? '' : buttons.imageUploadButton;
@@ -51,17 +52,30 @@ const pluginConfig = (isLibrary) => {
         [editImageSettings],
       ]),
       config: {
-        branding: false,
-        height: '100%',
-        menubar: false,
-        min_height: 500,
-        toolbar_sticky: true,
-        toolbar_sticky_offset: 76,
-        relative_urls: true,
-        convert_urls: false,
+        shared: {
+          branding: false,
+          content_css: false,
+          content_style: tinyMCEStyles,
+          menubar: false,
+          skin: false,
+          valid_children: '+body[style]',
+          valid_elements: '*[*]',
+        },
+        textEditor: {
+          height: '100%',
+          min_height: 500,
+          toolbar_sticky: true,
+          toolbar_sticky_offset: 76,
+          relative_urls: true,
+          convert_urls: false,
+        },
+        problemEditor: {
+          min_height: 150,
+          placeholder: 'Enter your question',
+        },
       },
     })
   );
 };
 
-export default pluginConfig;
+export default tinyMCEConfig;

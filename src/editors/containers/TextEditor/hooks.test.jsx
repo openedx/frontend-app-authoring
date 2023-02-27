@@ -4,7 +4,7 @@ import { MockUseState } from '../../../testUtils';
 import tinyMCE from '../../data/constants/tinyMCE';
 import { keyStore } from '../../utils';
 import * as appHooks from '../../hooks';
-import pluginConfig from './pluginConfig';
+import tinyMCEConfig from '../../data/constants/tinyMCEConfig';
 import * as module from './hooks';
 
 jest.mock('react', () => ({
@@ -150,11 +150,14 @@ describe('TextEditor hooks', () => {
         expect(output.initialValue).toBe(htmltext);
       });
       test('It configures plugins and toolbars correctly', () => {
-        expect(output.init.plugins).toEqual(pluginConfig(props.isLibrary).plugins);
-        expect(output.init.imagetools_toolbar).toEqual(pluginConfig(props.isLibrary).imageToolbar);
-        expect(output.init.toolbar).toEqual(pluginConfig(props.isLibrary).toolbar);
-        Object.keys(pluginConfig(props.isLibrary).config).forEach(key => {
-          expect(output.init[key]).toEqual(pluginConfig(props.isLibrary).config[key]);
+        expect(output.init.plugins).toEqual(tinyMCEConfig(props.isLibrary).plugins);
+        expect(output.init.imagetools_toolbar).toEqual(tinyMCEConfig(props.isLibrary).imageToolbar);
+        expect(output.init.toolbar).toEqual(tinyMCEConfig(props.isLibrary).toolbar);
+        Object.keys(tinyMCEConfig(props.isLibrary).config.shared).forEach(key => {
+          expect(output.init[key]).toEqual(tinyMCEConfig(props.isLibrary).config.shared[key]);
+        });
+        Object.keys(tinyMCEConfig(props.isLibrary).config.textEditor).forEach(key => {
+          expect(output.init[key]).toEqual(tinyMCEConfig(props.isLibrary).config.textEditor[key]);
         });
         // Commented out as we investigate whether this is only needed for image proxy
         // expect(output.init.imagetools_cors_hosts).toMatchObject([props.lmsEndpointUrl]);

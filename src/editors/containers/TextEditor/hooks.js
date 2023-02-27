@@ -4,8 +4,7 @@ import {
 
 import { StrictDict } from '../../utils';
 import tinyMCE from '../../data/constants/tinyMCE';
-import tinyMCEStyles from '../../data/constants/tinyMCEStyles';
-import pluginConfig from './pluginConfig';
+import tinyMCEConfig from '../../data/constants/tinyMCEConfig';
 import * as appHooks from '../../hooks';
 import * as module from './hooks';
 
@@ -110,24 +109,20 @@ export const editorConfig = ({
   },
   initialValue: blockValue ? blockValue.data.data : '',
   init: {
-    ...pluginConfig(isLibrary).config,
-    skin: false,
-    content_css: false,
-    content_style: tinyMCEStyles,
+    ...tinyMCEConfig(isLibrary).config.shared,
+    ...tinyMCEConfig(isLibrary).config.textEditor,
     contextmenu: 'link table',
     document_base_url: lmsEndpointUrl,
     init_instance_callback: module.checkRelativeUrl(module.fetchImageUrls(images)),
     imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
-    imagetools_toolbar: pluginConfig(isLibrary).imageToolbar,
-    plugins: pluginConfig(isLibrary).plugins,
+    imagetools_toolbar: tinyMCEConfig(isLibrary).imageToolbar,
+    plugins: tinyMCEConfig(isLibrary).plugins,
     setup: module.setupCustomBehavior({
       openImgModal,
       openSourceCodeModal,
       setImage: setSelection,
     }),
-    toolbar: pluginConfig(isLibrary).toolbar,
-    valid_children: '+body[style]',
-    valid_elements: '*[*]',
+    toolbar: tinyMCEConfig(isLibrary).toolbar,
   },
 });
 

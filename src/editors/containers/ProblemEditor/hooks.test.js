@@ -3,7 +3,7 @@ import { MockUseState } from '../../../testUtils';
 
 // import tinyMCE from '../../data/constants/tinyMCE';
 import { keyStore } from '../../utils';
-import pluginConfig from '../TextEditor/pluginConfig';
+import tinyMCEConfig from '../../data/constants/tinyMCEConfig';
 import * as module from './hooks';
 
 jest.mock('react', () => ({
@@ -104,7 +104,13 @@ describe('Problem editor hooks', () => {
       });
       test('It configures plugins and toolbars correctly', () => {
         expect(output.init.plugins).toEqual('autoresize');
-        expect(output.init.toolbar).toEqual(`${pluginConfig().toolbar} | customLabelButton`);
+        expect(output.init.toolbar).toEqual(`${tinyMCEConfig().toolbar} | customLabelButton`);
+        Object.keys(tinyMCEConfig(props.isLibrary).config.shared).forEach(key => {
+          expect(output.init[key]).toEqual(tinyMCEConfig(props.isLibrary).config.shared[key]);
+        });
+        Object.keys(tinyMCEConfig(props.isLibrary).config.problemEditor).forEach(key => {
+          expect(output.init[key]).toEqual(tinyMCEConfig(props.isLibrary).config.problemEditor[key]);
+        });
       });
 
       it('calls setupCustomBehavior on setup', () => {

@@ -16,6 +16,7 @@ exports[`QuestionWidget render snapshot: renders correct default 1`] = `
   <Editor
     problemEditorConfig={
       Object {
+        "isLibrary": false,
         "question": "This is my question",
         "setEditorRef": [MockFunction hooks.prepareEditorRef.setEditorRef],
         "updateQuestion": [MockFunction],

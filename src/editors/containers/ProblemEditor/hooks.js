@@ -1,9 +1,8 @@
 import {
   useRef, useCallback, useState, useEffect,
 } from 'react';
-import tinyMCEStyles from '../../data/constants/tinyMCEStyles';
 import { StrictDict } from '../../utils';
-import pluginConfig from '../TextEditor/pluginConfig';
+import tinyMCEConfig from '../../data/constants/tinyMCEConfig';
 import * as module from './hooks';
 
 export const state = StrictDict({
@@ -63,6 +62,7 @@ export const setupCustomBehavior = ({ updateQuestion }) => (editor) => {
 };
 
 export const problemEditorConfig = ({
+  isLibrary,
   setEditorRef,
   question,
   updateQuestion,
@@ -72,17 +72,12 @@ export const problemEditorConfig = ({
   },
   initialValue: question || '',
   init: {
-    skin: false,
-    content_css: false,
-    content_style: tinyMCEStyles,
-    menubar: false,
-    branding: false,
-    min_height: 150,
-    placeholder: 'Enter your question',
+    ...tinyMCEConfig(isLibrary).config.shared,
+    ...tinyMCEConfig(isLibrary).config.problemEditor,
     formats: { label: { inline: 'label' } },
-    setup: module.setupCustomBehavior({ updateQuestion }),
-    toolbar: `${pluginConfig().toolbar} | customLabelButton`,
     plugins: 'autoresize',
+    setup: module.setupCustomBehavior({ updateQuestion }),
+    toolbar: `${tinyMCEConfig().toolbar} | customLabelButton`,
   },
 });
 

@@ -25,8 +25,9 @@ import 'tinymce/plugins/autoresize';
 import 'tinymce/plugins/image';
 import 'tinymce/plugins/imagetools';
 
-// This widget should be connected, grab all questions from store, update them as needed.
 export const QuestionWidget = ({
+  // redux
+  isLibrary,
   question,
   updateQuestion,
 }) => {
@@ -39,6 +40,7 @@ export const QuestionWidget = ({
       </div>
       <Editor {
           ...hooks.problemEditorConfig({
+            isLibrary,
             setEditorRef,
             question,
             updateQuestion,
@@ -49,12 +51,18 @@ export const QuestionWidget = ({
   );
 };
 
+QuestionWidget.defaultProps = {
+  isLibrary: null,
+};
 QuestionWidget.propTypes = {
+  // redux
+  isLibrary: PropTypes.bool,
   question: PropTypes.string.isRequired,
   updateQuestion: PropTypes.func.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
+  isLibrary: selectors.app.isLibrary(state),
   question: selectors.problem.question(state),
 });
 
