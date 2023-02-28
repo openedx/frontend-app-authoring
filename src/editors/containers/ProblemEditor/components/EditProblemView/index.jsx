@@ -16,6 +16,7 @@ import { parseState } from './hooks';
 import './index.scss';
 
 export const EditProblemView = ({
+  // redux
   problemType,
   problemState,
 }) => {

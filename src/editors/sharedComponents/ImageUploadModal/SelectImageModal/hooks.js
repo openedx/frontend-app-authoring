@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { thunkActions } from '../../../../data/redux';
+import { thunkActions } from '../../../data/redux';
 import * as module from './hooks';
 import { sortFunctions, sortKeys } from './utils';
 

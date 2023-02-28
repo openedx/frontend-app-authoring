@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { StrictDict } from '../../../../utils';
+import { StrictDict } from '../../../utils';
 import * as module from './hooks';
 
 // Simple wrappers for useState to allow easy mocking for tests.

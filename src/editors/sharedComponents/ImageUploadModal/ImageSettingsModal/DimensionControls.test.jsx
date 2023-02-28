@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { formatMessage } from '../../../../../testUtils';
+import { formatMessage } from '../../../../testUtils';
 import { DimensionControls } from './DimensionControls';
 
 jest.mock('./hooks', () => ({

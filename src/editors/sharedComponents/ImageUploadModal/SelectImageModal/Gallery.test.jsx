@@ -1,12 +1,12 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { formatMessage } from '../../../../../testUtils';
-import { RequestKeys } from '../../../../data/constants/requests';
-import { selectors } from '../../../../data/redux';
+import { formatMessage } from '../../../../testUtils';
+import { RequestKeys } from '../../../data/constants/requests';
+import { selectors } from '../../../data/redux';
 import { Gallery, mapStateToProps, mapDispatchToProps } from './Gallery';
 
-jest.mock('../../../../data/redux', () => ({
+jest.mock('../../../data/redux', () => ({
   selectors: {
     requests: {
       isFinished: (state, { requestKey }) => ({ isFinished: { state, requestKey } }),

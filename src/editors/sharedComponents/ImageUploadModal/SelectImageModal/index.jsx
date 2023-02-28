@@ -9,19 +9,19 @@ import {
   injectIntl,
   intlShape,
 } from '@edx/frontend-platform/i18n';
-import { selectors } from '../../../../data/redux';
-import { RequestKeys } from '../../../../data/constants/requests';
+import { selectors } from '../../../data/redux';
+import { RequestKeys } from '../../../data/constants/requests';
 import { acceptedImgKeys } from './utils';
 
 import hooks from './hooks';
 import messages from './messages';
-import BaseModal from '../BaseModal';
+import BaseModal from '../../BaseModal';
 import SearchSort from './SearchSort';
 import Gallery from './Gallery';
-import FileInput from '../../../../sharedComponents/FileInput';
-import FetchErrorAlert from '../../../../sharedComponents/ErrorAlerts/FetchErrorAlert';
-import UploadErrorAlert from '../../../../sharedComponents/ErrorAlerts/UploadErrorAlert';
-import ErrorAlert from '../../../../sharedComponents/ErrorAlerts/ErrorAlert';
+import FileInput from '../../FileInput';
+import FetchErrorAlert from '../../ErrorAlerts/FetchErrorAlert';
+import UploadErrorAlert from '../../ErrorAlerts/UploadErrorAlert';
+import ErrorAlert from '../../ErrorAlerts/ErrorAlert';
 
 export const SelectImageModal = ({
   isOpen,

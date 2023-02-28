@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import hooks from './hooks';
-import { formatMessage } from '../../../../../testUtils';
+import { formatMessage } from '../../../testUtils';
 
 import { SourceCodeModal } from '.';
 

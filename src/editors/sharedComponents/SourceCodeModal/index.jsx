@@ -12,7 +12,7 @@ import messages from './messages';
 import hooks from './hooks';
 import BaseModal from '../BaseModal';
 
-import CodeEditor from '../../../../sharedComponents/CodeEditor';
+import CodeEditor from '../CodeEditor';
 
 export const SourceCodeModal = ({
   isOpen,

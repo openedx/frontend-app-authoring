@@ -16,8 +16,9 @@ export const ProblemEditor = ({
   studioViewFinished,
   blockValue,
   initializeProblemEditor,
+  assetsFinished,
 }) => {
-  if (!blockFinished || !studioViewFinished) {
+  if (!blockFinished || !studioViewFinished || !assetsFinished) {
     return (
       <div className="text-center p-6">
         <Spinner
@@ -29,7 +30,7 @@ export const ProblemEditor = ({
     );
   }
   // once data is loaded, init store
-  React.useEffect(() => initializeProblemEditor(blockValue), [blockValue]);
+  React.useEffect(() => initializeProblemEditor(blockValue), []);
   // TODO: INTL MSG, Add LOAD FAILED ERROR using BLOCKFAILED
 
   if (problemType === null) {
@@ -38,9 +39,13 @@ export const ProblemEditor = ({
   return (<EditProblemView onClose={onClose} />);
 };
 
+ProblemEditor.defaultProps = {
+  assetsFinished: null,
+};
 ProblemEditor.propTypes = {
   onClose: PropTypes.func.isRequired,
   // redux
+  assetsFinished: PropTypes.bool,
   blockFinished: PropTypes.bool.isRequired,
   studioViewFinished: PropTypes.bool.isRequired,
   problemType: PropTypes.string.isRequired,
@@ -53,6 +58,7 @@ export const mapStateToProps = (state) => ({
   studioViewFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchStudioView }),
   problemType: selectors.problem.problemType(state),
   blockValue: selectors.app.blockValue(state),
+  assetsFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchAssets }),
 });
 
 export const mapDispatchToProps = {

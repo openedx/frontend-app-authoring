@@ -11,7 +11,7 @@ exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCar
         className={null}
         onClick={[Function]}
         text={null}
-        variant="default"
+        variant="primary"
       >
         <FormattedMessage
           defaultMessage="Switch to advanced editor"

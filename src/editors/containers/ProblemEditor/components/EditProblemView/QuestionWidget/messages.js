@@ -4,6 +4,11 @@ export const messages = {
     defaultMessage: 'Question',
     description: 'Question Title',
   },
+  placeholder: {
+    id: 'authoring.problemEditor.questionwidget.placeholder',
+    defaultMessage: 'Enter your question',
+    description: 'Placeholder text for tinyMCE editor',
+  },
 };
 
 export default messages;

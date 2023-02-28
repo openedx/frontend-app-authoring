@@ -1,18 +1,18 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { keyStore } from '../../../utils';
-import { selectors } from '../../../data/redux';
-import tinyMCEKeys from '../../../data/constants/tinyMCE';
+import { keyStore } from '../../utils';
+import { selectors } from '../../data/redux';
+import tinyMCEKeys from '../../data/constants/tinyMCE';
 
-import * as module from './ImageUploadModal';
+import * as module from '.';
 
 jest.mock('./ImageSettingsModal', () => 'ImageSettingsModal');
 jest.mock('./SelectImageModal', () => 'SelectImageModal');
 
 const { ImageUploadModal, mapStateToProps, mapDispatchToProps } = module;
 
-jest.mock('../../../data/redux', () => ({
+jest.mock('../../data/redux', () => ({
   selectors: {
     app: {
       lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),

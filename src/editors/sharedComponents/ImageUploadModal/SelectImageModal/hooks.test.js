@@ -1,9 +1,9 @@
 import React from 'react';
 import { dispatch } from 'react-redux';
 
-import { MockUseState } from '../../../../../testUtils';
-import { keyStore } from '../../../../utils';
-import { thunkActions } from '../../../../data/redux';
+import { MockUseState } from '../../../../testUtils';
+import { keyStore } from '../../../utils';
+import { thunkActions } from '../../../data/redux';
 
 import * as hooks from './hooks';
 import { sortFunctions, sortKeys } from './utils';
@@ -24,7 +24,7 @@ jest.mock('react-redux', () => {
   };
 });
 
-jest.mock('../../../../data/redux', () => ({
+jest.mock('../../../data/redux', () => ({
   thunkActions: {
     app: {
       uploadImage: jest.fn(),

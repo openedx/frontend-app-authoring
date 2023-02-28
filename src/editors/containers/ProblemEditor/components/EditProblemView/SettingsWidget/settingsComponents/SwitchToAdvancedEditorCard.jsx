@@ -5,7 +5,7 @@ import { Card } from '@edx/paragon';
 import PropTypes from 'prop-types';
 import messages from '../messages';
 import { thunkActions } from '../../../../../../data/redux';
-import BaseModal from '../../../../../TextEditor/components/BaseModal';
+import BaseModal from '../../../../../../sharedComponents/BaseModal';
 import Button from '../../../../../../sharedComponents/Button';
 import { confirmSwitchToAdvancedEditor } from '../hooks';
 import { ProblemTypeKeys } from '../../../../../../data/constants/problem';
@@ -27,6 +27,7 @@ export const SwitchToAdvancedEditorCard = ({
         confirmAction={(
           <Button
             onClick={() => confirmSwitchToAdvancedEditor({ switchToAdvancedEditor, setConfirmOpen })}
+            variant="primary"
           >
             <FormattedMessage {...messages.ConfirmSwitchButtonLabel} />
           </Button>

@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { shallow } from 'enzyme';
+import { formatMessage } from '../../../../../../testUtils';
 import { actions, selectors } from '../../../../../data/redux';
 import { QuestionWidget, mapStateToProps, mapDispatchToProps } from '.';
 
@@ -13,23 +14,15 @@ jest.mock('../../../../../data/redux', () => ({
   selectors: {
     app: {
       isLibrary: jest.fn(state => ({ isLibrary: state })),
+      lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
+      studioEndpointUrl: jest.fn(state => ({ studioEndpointUrl: state })),
+      assets: jest.fn(state => ({ assets: state })),
     },
     problem: {
       question: jest.fn(state => ({ question: state })),
     },
   },
 }));
-
-// Per https://github.com/tinymce/tinymce-react/issues/91 React unit testing in JSDOM is not supported by tinymce.
-// Consequently, mock the Editor out.
-jest.mock('@tinymce/tinymce-react', () => {
-  const originalModule = jest.requireActual('@tinymce/tinymce-react');
-  return {
-    __esModule: true,
-    ...originalModule,
-    Editor: () => 'TiNYmCE EDitOR',
-  };
-});
 
 jest.mock('../../../hooks', () => ({
   prepareEditorRef: jest.fn(() => ({
@@ -44,6 +37,11 @@ describe('QuestionWidget', () => {
     isLibrary: false,
     question: 'This is my question',
     updateQuestion: jest.fn(),
+    lmsEndpointUrl: 'sOmEvaLue.cOm',
+    studioEndpointUrl: 'sOmEoThERvaLue.cOm',
+    assets: {},
+    // injected
+    intl: { formatMessage },
   };
   describe('render', () => {
     test('snapshot: renders correct default', () => {
@@ -55,8 +53,23 @@ describe('QuestionWidget', () => {
     test('isLibrary from app.isLibrary', () => {
       expect(mapStateToProps(testState).isLibrary).toEqual(selectors.app.isLibrary(testState));
     });
+    test('assets from app.assets', () => {
+      expect(
+        mapStateToProps(testState).assets,
+      ).toEqual(selectors.app.assets(testState));
+    });
     test('question from problem.question', () => {
       expect(mapStateToProps(testState).question).toEqual(selectors.problem.question(testState));
+    });
+    test('lmsEndpointUrl from app.lmsEndpointUrl', () => {
+      expect(
+        mapStateToProps(testState).lmsEndpointUrl,
+      ).toEqual(selectors.app.lmsEndpointUrl(testState));
+    });
+    test('studioEndpointUrl from app.studioEndpointUrl', () => {
+      expect(
+        mapStateToProps(testState).studioEndpointUrl,
+      ).toEqual(selectors.app.studioEndpointUrl(testState));
     });
   });
   describe('mapDispatchToProps', () => {

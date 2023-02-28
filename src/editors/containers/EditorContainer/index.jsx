@@ -11,7 +11,7 @@ import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/
 import EditorFooter from './components/EditorFooter';
 import TitleHeader from './components/TitleHeader';
 import * as hooks from './hooks';
-import BaseModal from '../TextEditor/components/BaseModal';
+import BaseModal from '../../sharedComponents/BaseModal';
 import messages from './messages';
 
 export const EditorContainer = ({

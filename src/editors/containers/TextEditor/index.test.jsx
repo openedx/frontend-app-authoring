@@ -4,7 +4,6 @@ import { shallow } from 'enzyme';
 import { formatMessage } from '../../../testUtils';
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
-import { imgModalToggle, sourceCodeModalToggle } from './hooks';
 import { TextEditor, mapStateToProps, mapDispatchToProps } from '.';
 
 // Per https://github.com/tinymce/tinymce-react/issues/91 React unit testing in JSDOM is not supported by tinymce.
@@ -20,34 +19,15 @@ jest.mock('@tinymce/tinymce-react', () => {
 
 jest.mock('../EditorContainer', () => 'EditorContainer');
 
-jest.mock('./components/ImageUploadModal', () => 'ImageUploadModal');
-jest.mock('./components/SourceCodeModal', () => 'SourceCodeModal');
-
 jest.mock('./hooks', () => ({
   editorConfig: jest.fn(args => ({ editorConfig: args })),
   getContent: jest.fn(args => ({ getContent: args })),
-  imgModalToggle: jest.fn(() => ({
-    isImgOpen: true,
-    openImgModal: jest.fn().mockName('openModal'),
-    closeImgModal: jest.fn().mockName('closeModal'),
-  })),
-  sourceCodeModalToggle: jest.fn(() => ({
-    isSourceCodeOpen: true,
-    openSourceCodeModal: jest.fn().mockName('openModal'),
-    closeSourceCodeModal: jest.fn().mockName('closeModal'),
-  })),
-  selectedImage: jest.fn(() => ({
-    selection: 'hooks.selectedImage.selection',
-    setSelection: jest.fn().mockName('hooks.selectedImage.setSelection'),
-    clearSelection: jest.fn().mockName('hooks.selectedImage.clearSelection'),
-  })),
   nullMethod: jest.fn().mockName('hooks.nullMethod'),
   prepareEditorRef: jest.fn(() => ({
     editorRef: { current: { value: 'something' } },
     refReady: true,
     setEditorRef: jest.fn().mockName('hooks.prepareEditorRef.setEditorRef'),
   })),
-  filterAssets: jest.fn(() => [{ staTICUrl: '/assets/sOmEaSsET' }]),
 }));
 
 jest.mock('react', () => {
@@ -98,16 +78,6 @@ describe('TextEditor', () => {
     intl: { formatMessage },
   };
   describe('snapshots', () => {
-    imgModalToggle.mockReturnValue({
-      isImgOpen: false,
-      openImgModal: jest.fn().mockName('modal.openModal'),
-      closeImgModal: jest.fn().mockName('modal.closeModal'),
-    });
-    sourceCodeModalToggle.mockReturnValue({
-      isSourceCodeOpen: false,
-      openSourceCodeModal: jest.fn().mockName('modal.openModal'),
-      closeSourceCodeModal: jest.fn().mockName('modal.closeModal'),
-    });
     test('renders as expected with default behavior', () => {
       expect(shallow(<TextEditor {...props} />)).toMatchSnapshot();
     });
@@ -119,9 +89,6 @@ describe('TextEditor', () => {
     });
     test('block failed to load, Toast is shown', () => {
       expect(shallow(<TextEditor {...props} blockFailed />)).toMatchSnapshot();
-    });
-    test('ImageUploadModal is not rendered', () => {
-      expect(shallow(<TextEditor {...props} isLibrary />)).toMatchSnapshot();
     });
   });
 
@@ -136,6 +103,11 @@ describe('TextEditor', () => {
       expect(
         mapStateToProps(testState).lmsEndpointUrl,
       ).toEqual(selectors.app.lmsEndpointUrl(testState));
+    });
+    test('studioEndpointUrl from app.studioEndpointUrl', () => {
+      expect(
+        mapStateToProps(testState).studioEndpointUrl,
+      ).toEqual(selectors.app.studioEndpointUrl(testState));
     });
     test('assets from app.assets', () => {
       expect(

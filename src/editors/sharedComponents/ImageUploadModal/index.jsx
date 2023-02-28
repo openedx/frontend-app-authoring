@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 
 import { injectIntl } from '@edx/frontend-platform/i18n';
 
-import { selectors } from '../../../data/redux';
-import tinyMCEKeys from '../../../data/constants/tinyMCE';
+import { selectors } from '../../data/redux';
+import tinyMCEKeys from '../../data/constants/tinyMCE';
 import ImageSettingsModal from './ImageSettingsModal';
 import SelectImageModal from './SelectImageModal';
-import * as module from './ImageUploadModal';
+import * as module from '.';
 
 export const propsString = (props) => (
   Object.keys(props).map((key) => `${key}="${props[key]}"`).join(' ')

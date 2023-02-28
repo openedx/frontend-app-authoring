@@ -1,6 +1,6 @@
 import React from 'react';
-import { StrictDict } from '../../../../utils';
-import { MockUseState } from '../../../../../testUtils';
+import { StrictDict } from '../../../utils';
+import { MockUseState } from '../../../../testUtils';
 import * as hooks from './hooks';
 
 jest.mock('react', () => ({

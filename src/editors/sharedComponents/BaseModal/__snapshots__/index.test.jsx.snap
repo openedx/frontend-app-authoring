@@ -29,7 +29,7 @@ exports[`BaseModal ImageUploadModal template component snapshot 1`] = `
         <FormattedMessage
           defaultMessage="Cancel"
           description="Label for cancel button."
-          id="authoring.texteditor.baseModal.cancelButtonLabel"
+          id="authoring.baseModal.cancelButtonLabel"
         />
       </ModalDialog.CloseButton>
       props.confirmAction node

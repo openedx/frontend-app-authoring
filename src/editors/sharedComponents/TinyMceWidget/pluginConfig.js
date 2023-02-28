@@ -1,14 +1,16 @@
 import { StrictDict } from '../../utils';
-import { buttons, plugins } from './tinyMCE';
-import tinyMCEStyles from './tinyMCEStyles';
+import { buttons, plugins } from '../../data/constants/tinyMCE';
 
 const mapToolbars = toolbars => toolbars.map(toolbar => toolbar.join(' ')).join(' | ');
 
-const tinyMCEConfig = (isLibrary) => {
+const pluginConfig = ({ isLibrary, placeholder, editorType }) => {
   const image = isLibrary ? '' : plugins.image;
   const imageTools = isLibrary ? '' : plugins.imagetools;
   const imageUploadButton = isLibrary ? '' : buttons.imageUploadButton;
   const editImageSettings = isLibrary ? '' : buttons.editImageSettings;
+  const codePlugin = editorType === 'problem' ? '' : plugins.code;
+  const codeButton = editorType === 'problem' ? '' : buttons.code;
+  const labelButton = editorType === 'problem' ? buttons.customLabelButton : '';
 
   return (
     StrictDict({
@@ -20,7 +22,7 @@ const tinyMCEConfig = (isLibrary) => {
         plugins.table,
         plugins.hr,
         plugins.charmap,
-        plugins.code,
+        codePlugin,
         plugins.autoresize,
         image,
         imageTools,
@@ -29,6 +31,7 @@ const tinyMCEConfig = (isLibrary) => {
       toolbar: mapToolbars([
         [buttons.undo, buttons.redo],
         [buttons.formatSelect],
+        [labelButton],
         [buttons.bold, buttons.italic, buttons.underline, buttons.foreColor, buttons.backColor],
         [
           buttons.align.left,
@@ -44,7 +47,7 @@ const tinyMCEConfig = (isLibrary) => {
         ],
         [imageUploadButton, buttons.link, buttons.unlink, buttons.blockQuote, buttons.codeBlock],
         [buttons.table, buttons.emoticons, buttons.charmap, buttons.hr],
-        [buttons.removeFormat, buttons.code],
+        [buttons.removeFormat, codeButton],
       ]),
       imageToolbar: mapToolbars([
         // [buttons.rotate.left, buttons.rotate.right],
@@ -52,30 +55,17 @@ const tinyMCEConfig = (isLibrary) => {
         [editImageSettings],
       ]),
       config: {
-        shared: {
-          branding: false,
-          content_css: false,
-          content_style: tinyMCEStyles,
-          menubar: false,
-          skin: false,
-          valid_children: '+body[style]',
-          valid_elements: '*[*]',
-        },
-        textEditor: {
-          height: '100%',
-          min_height: 500,
-          toolbar_sticky: true,
-          toolbar_sticky_offset: 76,
-          relative_urls: true,
-          convert_urls: false,
-        },
-        problemEditor: {
-          min_height: 150,
-          placeholder: 'Enter your question',
-        },
+        branding: false,
+        height: '100%',
+        menubar: false,
+        toolbar_sticky: true,
+        toolbar_sticky_offset: 76,
+        relative_urls: true,
+        convert_urls: false,
+        placeholder,
       },
     })
   );
 };
 
-export default tinyMCEConfig;
+export default pluginConfig;

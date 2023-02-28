@@ -8,10 +8,10 @@ import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/
 import './index.scss';
 import hooks from './hooks';
 import messages from './messages';
-import BaseModal from '../BaseModal';
+import BaseModal from '../../BaseModal';
 import AltTextControls from './AltTextControls';
 import DimensionControls from './DimensionControls';
-import ErrorAlert from '../../../../sharedComponents/ErrorAlerts/ErrorAlert';
+import ErrorAlert from '../../ErrorAlerts/ErrorAlert';
 
 /**
  * Modal display wrapping the dimension and alt-text controls for image tags

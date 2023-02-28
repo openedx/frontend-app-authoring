@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { BaseModal } from './BaseModal';
+import BaseModal from '.';
 
 describe('BaseModal ImageUploadModal template component', () => {
   test('snapshot', () => {

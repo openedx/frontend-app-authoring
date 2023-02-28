@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import { Dropdown } from '@edx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
-import { formatMessage } from '../../../../../testUtils';
+import { formatMessage } from '../../../../testUtils';
 
 import { sortKeys, sortMessages } from './utils';
 import { SearchSort } from './SearchSort';

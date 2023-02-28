@@ -45,22 +45,32 @@ describe('ProblemEditor', () => {
     blockFinished: false,
     studioViewFinished: false,
     initializeProblemEditor: jest.fn().mockName('args.intializeProblemEditor'),
+    assetsFinished: false,
   };
   describe('snapshots', () => {
     test('renders as expected with default behavior', () => {
       expect(shallow(<ProblemEditor {...props} />)).toMatchSnapshot();
     });
-    test('block not yet loaded, Spinner appears', () => {
+    test('block loaded, studio view and assets not yet loaded, Spinner appears', () => {
       expect(shallow(<ProblemEditor {...props} blockFinished />)).toMatchSnapshot();
     });
-    test('studio view not yet loaded, Spinner appears', () => {
+    test('studio view loaded, block and assets not yet loaded, Spinner appears', () => {
       expect(shallow(<ProblemEditor {...props} studioViewFinished />)).toMatchSnapshot();
     });
+    test('assets loaded, block and studio view not yet loaded, Spinner appears', () => {
+      expect(shallow(<ProblemEditor {...props} assetsFinished />)).toMatchSnapshot();
+    });
     test('renders SelectTypeModal', () => {
-      expect(shallow(<ProblemEditor {...props} blockFinished studioViewFinished />)).toMatchSnapshot();
+      expect(shallow(<ProblemEditor {...props} blockFinished studioViewFinished assetsFinished />)).toMatchSnapshot();
     });
     test('renders EditProblemView', () => {
-      expect(shallow(<ProblemEditor {...props} problemType="multiplechoiceresponse" blockFinished studioViewFinished />)).toMatchSnapshot();
+      expect(shallow(<ProblemEditor
+        {...props}
+        problemType="multiplechoiceresponse"
+        blockFinished
+        studioViewFinished
+        assetsFinished
+      />)).toMatchSnapshot();
     });
   });
 
@@ -85,6 +95,11 @@ describe('ProblemEditor', () => {
       expect(
         mapStateToProps(testState).studioViewFinished,
       ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchStudioView }));
+    });
+    test('assetsFinished from requests.isFinished', () => {
+      expect(
+        mapStateToProps(testState).assetsFinished,
+      ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchAssets }));
     });
   });
   describe('mapDispatchToProps', () => {

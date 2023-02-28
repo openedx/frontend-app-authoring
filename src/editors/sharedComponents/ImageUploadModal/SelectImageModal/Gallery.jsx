@@ -8,8 +8,8 @@ import {
 
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
-import { selectors } from '../../../../data/redux';
-import { RequestKeys } from '../../../../data/constants/requests';
+import { selectors } from '../../../data/redux';
+import { RequestKeys } from '../../../data/constants/requests';
 
 import messages from './messages';
 import GalleryCard from './GalleryCard';
