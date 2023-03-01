@@ -3,7 +3,7 @@
 exports[`DurationWidget render snapshots: renders as expected with default props 1`] = `
 <injectIntl(ShimmedIntlComponent)
   fontSize="x-small"
-  subtitle="Total: 00:00:00"
+  subtitle="Custom: 00:00:00"
   title="Duration"
 >
   <FormattedMessage
@@ -52,9 +52,13 @@ exports[`DurationWidget render snapshots: renders as expected with default props
     </Form.Group>
   </Form.Row>
   <div
-    className="mt-4"
+    className="mt-4 mx-2 text-right"
   >
-    Total: 00:00:00
+    <span
+      className="p-2 total-label rounded"
+    >
+      Total: 00:00:00
+    </span>
   </div>
 </injectIntl(ShimmedIntlComponent)>
 `;

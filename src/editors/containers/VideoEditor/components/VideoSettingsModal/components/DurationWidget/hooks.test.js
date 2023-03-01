@@ -120,9 +120,19 @@ describe('Video Settings DurationWidget hooks', () => {
               startTime: '00:00:00',
               stopTime: '00:00:10',
             },
-            subtitle: true,
+            subtitle: false,
             intl,
           })).toEqual(messages.total);
+        });
+        describe('returns custom message when at least stopTime is set and subtitle is true', () => {
+          expect(testMethod.getTotalLabel({
+            durationString: {
+              startTime: '00:00:00',
+              stopTime: '00:00:10',
+            },
+            subtitle: true,
+            intl,
+          })).toEqual(messages.custom);
         });
       });
     });
