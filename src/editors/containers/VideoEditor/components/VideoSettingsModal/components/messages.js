@@ -57,6 +57,11 @@ export const messages = {
     defaultMessage: 'Total: {total}',
     description: 'Text describing a video with custom start time and custom stop time, or just a custom stop time',
   },
+  custom: {
+    id: 'authoring.videoeditor.duration.custom',
+    defaultMessage: 'Custom: {total}',
+    description: 'Text describing a video with custom start time and custom stop time, or just a custom stop time for a collapsed widget',
+  },
 };
 
 export default messages;

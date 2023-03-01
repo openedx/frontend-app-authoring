@@ -47,7 +47,10 @@ export const durationWidget = ({ duration, updateField }) => {
         return null;
       }
       const total = durationString.stopTime - (durationString.startTime || 0);
-      return intl.formatMessage(messages.total, { total: module.durationStringFromValue(total) });
+      return intl.formatMessage(
+        subtitle ? messages.custom : messages.total,
+        { total: module.durationStringFromValue(total) },
+      );
     },
   };
 };
