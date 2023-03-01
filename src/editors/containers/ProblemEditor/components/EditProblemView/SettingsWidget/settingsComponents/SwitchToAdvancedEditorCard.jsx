@@ -34,7 +34,8 @@ export const SwitchToAdvancedEditorCard = ({
         )}
         size="md"
       >
-        <FormattedMessage {...messages.ConfirmSwitchMessage} />
+        <p><FormattedMessage {...messages.ConfirmSwitchMessageOne} /></p>
+        <p><FormattedMessage {...messages.ConfirmSwitchMessageTwo} /></p>
       </BaseModal>
       <Button
         className="my-3 ml-2 py-0"

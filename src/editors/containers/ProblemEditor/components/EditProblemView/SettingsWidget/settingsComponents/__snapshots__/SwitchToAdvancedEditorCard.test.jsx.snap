@@ -31,11 +31,21 @@ exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCar
       />
     }
   >
-    <FormattedMessage
-      defaultMessage="If you use the advanced editor, this problem will be converted to OLX and you will not be able to return to the simple editor."
-      description="message to confirm that a user wants to use the advanced editor"
-      id="authoring.problemeditor.settings.switchtoadvancededitor.message"
-    />
+    <p>
+      <FormattedMessage
+        defaultMessage="If you use the advanced editor, 
+ this problem will be converted to OLX and you will not be able to return to the simple editor."
+        description="message to confirm that a user wants to use the advanced editor part 1"
+        id="authoring.problemeditor.settings.switchtoadvancededitor.message.one"
+      />
+    </p>
+    <p>
+      <FormattedMessage
+        defaultMessage="Any changes made after the last Save action will be lost when converting to OLX."
+        description="message to confirm that a user wants to use the advanced editor part 2"
+        id="authoring.problemeditor.settings.switchtoadvancededitor.message.two"
+      />
+    </p>
   </BaseModal>
   <Button
     className="my-3 ml-2 py-0"
