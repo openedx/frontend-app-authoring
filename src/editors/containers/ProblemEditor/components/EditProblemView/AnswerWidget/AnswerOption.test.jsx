@@ -42,6 +42,9 @@ describe('AnswerOption', () => {
     test('snapshot: renders correct option with selected unselected feedback', () => {
       expect(shallow(<AnswerOption {...props} problemType="choiceresponse" answer={answerWithSelectedUnselectedFeedback} />)).toMatchSnapshot();
     });
+    test('snapshot: renders correct option with numeric input problem', () => {
+      expect(shallow(<AnswerOption {...props} problemType="numericalresponse" />)).toMatchSnapshot();
+    });
   });
   describe('mapStateToProps', () => {
     const testState = { A: 'pple', B: 'anana', C: 'ucumber' };

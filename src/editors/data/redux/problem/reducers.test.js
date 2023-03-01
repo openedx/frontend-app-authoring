@@ -1,4 +1,5 @@
 import { initialState, actions, reducer } from './reducers';
+import { ProblemTypeKeys } from '../../constants/problem';
 
 const testingState = {
   ...initialState,
@@ -71,18 +72,33 @@ describe('problem reducer', () => {
       });
     });
     describe('addAnswer', () => {
+      const answer = {
+        id: 'A',
+        correct: false,
+        selectedFeedback: '',
+        title: '',
+        unselectedFeedback: '',
+      };
       it('sets answers', () => {
-        const answer = {
-          id: 'A',
-          correct: false,
-          selectedFeedback: '',
-          title: '',
-          unselectedFeedback: '',
-        };
         expect(reducer({ ...testingState, problemType: 'choiceresponse' }, actions.addAnswer())).toEqual({
           ...testingState,
           problemType: 'choiceresponse',
           answers: [answer],
+        });
+      });
+      it('sets answers for numeric input', () => {
+        const numericTestState = {
+          ...testingState,
+          problemType: ProblemTypeKeys.NUMERIC,
+          correctAnswerCount: 0,
+        };
+        expect(reducer(numericTestState, actions.addAnswer())).toEqual({
+          ...numericTestState,
+          correctAnswerCount: 1,
+          answers: [{
+            ...answer,
+            correct: true,
+          }],
         });
       });
     });

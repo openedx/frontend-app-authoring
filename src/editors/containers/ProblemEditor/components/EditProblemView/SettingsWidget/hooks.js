@@ -213,6 +213,11 @@ export const typeRowHooks = ({
       }
     });
   };
+  const updateAnswersToCorrect = () => {
+    answers.forEach(answer => {
+      updateAnswer({ ...answer, correct: true });
+    });
+  };
   const onClick = () => {
     // Dropdown problems can only have one correct answer. When there is more than one correct answer
     // from a previous problem type, the correct attribute for selected answers need to be set to false.
@@ -220,6 +225,11 @@ export const typeRowHooks = ({
       if (correctAnswerCount > 1) {
         clearPreviouslySelectedAnswers();
       }
+    }
+    // Numeric input problems can only have correct answers. Switch all answers to correct when switching
+    // to numeric input.
+    if (typeKey === ProblemTypeKeys.NUMERIC) {
+      updateAnswersToCorrect();
     }
     if (blockTitle === ProblemTypes[problemType].title) {
       setBlockTitle(ProblemTypes[typeKey].title);

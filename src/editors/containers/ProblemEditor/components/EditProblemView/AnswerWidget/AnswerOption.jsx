@@ -16,6 +16,7 @@ import { answerOptionProps } from '../../../../../data/services/cms/types';
 import Checker from './components/Checker';
 import { FeedbackBox } from './components/Feedback';
 import * as hooks from './hooks';
+import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 
 export const AnswerOption = ({
   answer,
@@ -43,6 +44,7 @@ export const AnswerOption = ({
           hasSingleAnswer={hasSingleAnswer}
           answer={answer}
           setAnswer={setAnswer}
+          disabled={problemType === ProblemTypeKeys.NUMERIC}
         />
       </div>
       <div className="ml-1 flex-grow-1">

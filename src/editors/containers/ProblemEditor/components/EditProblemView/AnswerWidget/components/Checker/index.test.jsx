@@ -19,4 +19,8 @@ describe('Checker component', () => {
   test('with multiple answers', () => {
     expect(shallow(<Checker {...props} hasSingleAnswer={false} />)).toMatchSnapshot();
   });
+
+  test('with disabled', () => {
+    expect(shallow(<Checker {...props} disabled />)).toMatchSnapshot();
+  });
 });

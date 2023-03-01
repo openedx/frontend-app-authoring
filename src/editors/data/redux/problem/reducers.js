@@ -2,7 +2,7 @@ import _ from 'lodash-es';
 import { createSlice } from '@reduxjs/toolkit';
 import { indexToLetterMap } from '../../../containers/ProblemEditor/data/OLXParser';
 import { StrictDict } from '../../../utils';
-import { ShowAnswerTypesKeys } from '../../constants/problem';
+import { ProblemTypeKeys, ShowAnswerTypesKeys } from '../../constants/problem';
 
 const nextAlphaId = (lastId) => String.fromCharCode(lastId.charCodeAt(0) + 1);
 const initialState = {
@@ -108,8 +108,12 @@ const problem = createSlice({
         title: '',
         selectedFeedback: '',
         unselectedFeedback: '',
-        correct: false,
+        correct: state.problemType === ProblemTypeKeys.NUMERIC,
       };
+      let { correctAnswerCount } = state;
+      if (state.problemType === ProblemTypeKeys.NUMERIC) {
+        correctAnswerCount += 1;
+      }
 
       const answers = [
         ...currAnswers,
@@ -117,6 +121,7 @@ const problem = createSlice({
       ];
       return {
         ...state,
+        correctAnswerCount,
         answers,
       };
     },

@@ -3,6 +3,7 @@ import { MockUseState } from '../../../../../../testUtils';
 import messages from './messages';
 
 import * as hooks from './hooks';
+import { ProblemTypeKeys, ProblemTypes } from '../../../../../data/constants/problem';
 
 jest.mock('react', () => {
   const updateState = jest.fn();
@@ -249,55 +250,55 @@ describe('Problem settings hooks', () => {
   });
 
   describe('Type row hooks', () => {
-    test('test onClick', () => {
-      const typekey = 'optionresponse';
-      const problemType = 'choiceresponse';
-      const blockTitle = 'Multi-select';
-      const setBlockTitle = jest.fn();
-      const updateField = jest.fn();
-      const updateAnswer = jest.fn();
-      const answers = [{
-        correct: true,
-        id: 'a',
-      },
-      {
-        correct: true,
-        id: 'b',
-      },
-      {
-        correct: false,
-        id: 'c',
-      }];
+    const typeRowProps = {
+      problemType: ProblemTypeKeys.MULTISELECT,
+      typeKey: ProblemTypeKeys.DROPDOWN,
+      blockTitle: ProblemTypes[ProblemTypeKeys.MULTISELECT].title,
+      setBlockTitle: jest.fn(),
+      updateField: jest.fn(),
+      updateAnswer: jest.fn(),
+      correctAnswerCount: 2,
+      answers: [
+        { correct: true, id: 'a' },
+        { correct: true, id: 'b' },
+        { correct: false, id: 'c' },
+      ],
+    };
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+    test('test onClick Multi-select to Dropdown', () => {
+      output = hooks.typeRowHooks(typeRowProps);
+      output.onClick();
+      expect(typeRowProps.setBlockTitle).toHaveBeenCalledWith(ProblemTypes[ProblemTypeKeys.DROPDOWN].title);
+      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(1, { ...typeRowProps.answers[0], correct: false });
+      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(2, { ...typeRowProps.answers[1], correct: false });
+      expect(typeRowProps.updateAnswer).not.toHaveBeenNthCalledWith(3, { ...typeRowProps.answers[2], correct: false });
+      expect(typeRowProps.updateField).toHaveBeenCalledWith({ problemType: ProblemTypeKeys.DROPDOWN });
+    });
+    test('test onClick Multi-select to Numeric', () => {
       output = hooks.typeRowHooks({
-        answers,
-        blockTitle,
-        correctAnswerCount: 2,
-        problemType,
-        setBlockTitle,
-        typeKey: typekey,
-        updateField,
-        updateAnswer,
+        ...typeRowProps,
+        typeKey: ProblemTypeKeys.NUMERIC,
       });
       output.onClick();
-      expect(setBlockTitle).toHaveBeenCalledWith('Dropdown');
-      expect(updateAnswer).toHaveBeenNthCalledWith(1, { ...answers[0], correct: false });
-      expect(updateAnswer).toHaveBeenNthCalledWith(2, { ...answers[1], correct: false });
-      expect(updateAnswer).not.toHaveBeenNthCalledWith(3, { ...answers[2], correct: false });
-      expect(updateField).toHaveBeenCalledWith({ problemType: typekey });
+      expect(typeRowProps.setBlockTitle).toHaveBeenCalledWith(ProblemTypes[ProblemTypeKeys.NUMERIC].title);
+      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(1, { ...typeRowProps.answers[0], correct: true });
+      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(2, { ...typeRowProps.answers[1], correct: true });
+      expect(typeRowProps.updateAnswer).toHaveBeenNthCalledWith(3, { ...typeRowProps.answers[2], correct: true });
+      expect(typeRowProps.updateField).toHaveBeenCalledWith({ problemType: ProblemTypeKeys.NUMERIC });
     });
   });
-  describe('Type row hooks', () => {
-    test('test onClick', () => {
-      const switchToAdvancedEditor = jest.fn();
-      const setConfirmOpen = jest.fn();
-      window.scrollTo = jest.fn();
-      hooks.confirmSwitchToAdvancedEditor({
-        switchToAdvancedEditor,
-        setConfirmOpen,
-      });
-      expect(switchToAdvancedEditor).toHaveBeenCalled();
-      expect(setConfirmOpen).toHaveBeenCalledWith(false);
-      expect(window.scrollTo).toHaveBeenCalled();
+  test('test confirmSwitchToAdvancedEditor hook', () => {
+    const switchToAdvancedEditor = jest.fn();
+    const setConfirmOpen = jest.fn();
+    window.scrollTo = jest.fn();
+    hooks.confirmSwitchToAdvancedEditor({
+      switchToAdvancedEditor,
+      setConfirmOpen,
     });
+    expect(switchToAdvancedEditor).toHaveBeenCalled();
+    expect(setConfirmOpen).toHaveBeenCalledWith(false);
+    expect(window.scrollTo).toHaveBeenCalled();
   });
 });
