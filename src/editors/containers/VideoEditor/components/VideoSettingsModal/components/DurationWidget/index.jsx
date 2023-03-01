@@ -11,6 +11,8 @@ import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import hooks from './hooks';
 import messages from '../messages';
 
+import './index.scss';
+
 /**
  * Collapsible Form widget controlling video start and end times
  * Also displays the total run time of the video.
@@ -69,12 +71,14 @@ export const DurationWidget = ({
           </Form.Control.Feedback>
         </Form.Group>
       </Form.Row>
-      <div className="mt-4">
-        {getTotalLabel({
-          durationString: duration,
-          subtitle: false,
-          intl,
-        })}
+      <div className="mt-4 mx-2 text-right">
+        <span className="p-2 total-label rounded">
+          {getTotalLabel({
+            durationString: duration,
+            subtitle: false,
+            intl,
+          })}
+        </span>
       </div>
     </CollapsibleFormWidget>
   );
