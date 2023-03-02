@@ -166,7 +166,7 @@ export const messages = {
   },
   timerInputLabel: {
     id: 'authoring.problemeditor.settings.timer.inputLabel',
-    defaultMessage: 'Attempts',
+    defaultMessage: 'Seconds',
     description: 'Timer text input label',
   },
   typeSettingTitle: {
