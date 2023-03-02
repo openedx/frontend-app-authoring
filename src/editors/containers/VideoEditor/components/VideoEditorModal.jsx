@@ -31,14 +31,12 @@ const VideoEditorModal = ({
   const dispatch = useDispatch();
   const searchParams = new URLSearchParams(document.location.search);
   const selectedVideoId = searchParams.get('selectedVideoId');
-  const showReturn = selectedVideoId != null;
   const onReturn = module.hooks.returnToGallery();
   module.hooks.initialize(dispatch, selectedVideoId);
   return (
     <VideoSettingsModal {...{
       close,
       isOpen,
-      showReturn,
       onReturn,
     }}
     />

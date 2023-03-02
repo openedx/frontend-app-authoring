@@ -132,7 +132,6 @@ SelectionModal.propTypes = {
   }).isRequired,
   fileInput: PropTypes.shape({
     click: PropTypes.func.isRequired,
-    addFile: PropTypes.func.isRequired,
   }).isRequired,
   galleryProps: PropTypes.shape({}).isRequired,
   searchSortProps: PropTypes.shape({}).isRequired,

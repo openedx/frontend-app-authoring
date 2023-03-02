@@ -20,21 +20,18 @@ import SocialShareWidget from './components/SocialShareWidget';
 import messages from '../../messages';
 
 export const VideoSettingsModal = ({
-  showReturn,
   onReturn,
 }) => (
   <>
-    { showReturn && (
-      <Button
-        variant="tertiary"
-        iconBefore={ArrowBackIos}
-        className="mb-2 mb-sm-0"
-        size="sm"
-        onClick={onReturn}
-      >
-        <FormattedMessage {...messages.replaceVideoButtonLabel} />
-      </Button>
-    )}
+    <Button
+      variant="tertiary"
+      iconBefore={ArrowBackIos}
+      className="mb-2 mb-sm-0"
+      size="sm"
+      onClick={onReturn}
+    >
+      <FormattedMessage {...messages.replaceVideoButtonLabel} />
+    </Button>
     <ErrorSummary />
     <VideoPreviewWidget />
     <VideoSourceWidget />

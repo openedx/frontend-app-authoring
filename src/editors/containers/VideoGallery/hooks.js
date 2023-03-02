@@ -139,15 +139,16 @@ export const videoListProps = ({ searchSortProps, videos }) => {
 };
 
 export const fileInputProps = () => {
-  // TODO [Update video] Implement this
-  const ref = React.useRef();
-  const click = () => ref.current.click();
-
+  const click = module.handleVideoUpload();
   return {
     click,
-    addFile: () => {},
-    ref,
   };
+};
+
+export const handleVideoUpload = () => {
+  const learningContextId = useSelector(selectors.app.learningContextId);
+  const blockId = useSelector(selectors.app.blockId);
+  return () => navigateTo(`/course/${learningContextId}/editor/video_upload/${blockId}`);
 };
 
 export const handleCancel = () => (
@@ -215,4 +216,5 @@ export default {
   videoProps,
   buildVideos,
   handleCancel,
+  handleVideoUpload,
 };

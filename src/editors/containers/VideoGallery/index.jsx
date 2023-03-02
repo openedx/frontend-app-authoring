@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { selectors } from '../../data/redux';
@@ -16,6 +16,14 @@ export const VideoGallery = ({
   isUploadError,
 }) => {
   const videos = hooks.buildVideos({ rawVideos });
+  const handleVideoUpload = hooks.handleVideoUpload();
+
+  useEffect(() => {
+    // If no videos exists redirects to the video upload screen
+    if (isLoaded && videos.length === 0) {
+      handleVideoUpload();
+    }
+  }, [isLoaded]);
   const {
     galleryError,
     inputError,

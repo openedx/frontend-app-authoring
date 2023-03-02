@@ -230,11 +230,14 @@ describe('video thunkActions', () => {
         allowVideoDownloads: undefined,
         transcripts: testMetadata.transcripts,
         allowTranscriptDownloads: undefined,
-        allowVideoSharing: undefined,
+        allowVideoSharing: {
+          level: 'course',
+          value: true,
+        },
         showTranscriptByDefault: undefined,
         duration: {
           startTime: testMetadata.start_time,
-          stopTime: testVideosState.duration * 1000,
+          stopTime: 0,
           total: testVideosState.duration,
         },
         handout: undefined,
@@ -245,6 +248,8 @@ describe('video thunkActions', () => {
           noDerivatives: true,
           shareAlike: false,
         },
+        videoSharingEnabledForCourse: undefined,
+        videoSharingLearnMoreLink: undefined,
         courseLicenseType: 'liCENSEtyPe',
         courseLicenseDetails: {
           attribution: true,

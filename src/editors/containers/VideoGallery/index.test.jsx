@@ -40,6 +40,7 @@ jest.mock('./hooks', () => ({
     selectBtnProps: { select: 'btnProps' },
   })),
   handleCancel: jest.fn(),
+  handleVideoUpload: jest.fn(),
 }));
 
 jest.mock('../../data/redux', () => ({

@@ -1,6 +1,6 @@
 /* eslint-disable import/no-cycle */
 import { actions, selectors } from '..';
-import { formatDuration, removeItemOnce } from '../../../utils';
+import { removeItemOnce } from '../../../utils';
 import * as requests from './requests';
 import * as module from './video';
 import { valueFromDuration } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
@@ -9,16 +9,15 @@ import { parseYoutubeId } from '../../services/cms/api';
 export const loadVideoData = (selectedVideoId) => (dispatch, getState) => {
   const state = getState();
   const blockValueData = state.app.blockValue.data;
-  const rawVideoData = blockValueData.metadata ? blockValueData.metadata : {};
+  let rawVideoData = blockValueData.metadata ? blockValueData.metadata : {};
   const courseData = state.app.courseDetails.data ? state.app.courseDetails.data : {};
-  if (Object.keys(rawVideoData).length === 0 && selectedVideoId !== null) {
+  if (selectedVideoId != null) {
     const rawVideos = Object.values(selectors.app.videos(state));
     const selectedVideo = rawVideos.find(video => video.edx_video_id === selectedVideoId);
-    // TODO it's missing laod the transcripts
+    // TODO it's missing load the transcripts
     rawVideoData = {
       edx_video_id: selectedVideo.edx_video_id,
       thumbnail: selectedVideo.course_video_image_url,
-      end_time: formatDuration(selectedVideo.duration),
       duration: selectedVideo.duration,
     };
   }
