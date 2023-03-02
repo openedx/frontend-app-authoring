@@ -16,10 +16,12 @@ import appMessages from './i18n';
 import initializeStore from './store';
 import './index.scss';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
+import Head from './head/Head';
 
 subscribe(APP_READY, () => {
   ReactDOM.render(
     <AppProvider store={initializeStore()}>
+      <Head />
       <Switch>
         <Route
           path="/course/:courseId"
