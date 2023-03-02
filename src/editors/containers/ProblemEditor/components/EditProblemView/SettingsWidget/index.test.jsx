@@ -56,6 +56,14 @@ describe('SettingsWidget', () => {
       showAdvancedSettingsCards.mockReturnValue(showAdvancedSettingsCardsProps);
       expect(shallow(<SettingsWidget {...props} />)).toMatchSnapshot();
     });
+    test('snapshot: renders Settings widget for Advanced Problem with correct widgets', () => {
+      const showAdvancedSettingsCardsProps = {
+        isAdvancedCardsVisible: true,
+        setResetTrue: jest.fn().mockName('showAdvancedSettingsCards.setResetTrue'),
+      };
+      showAdvancedSettingsCards.mockReturnValue(showAdvancedSettingsCardsProps);
+      expect(shallow(<SettingsWidget problemType={ProblemTypeKeys.ADVANCED} {...props} />)).toMatchSnapshot();
+    });
   });
 
   describe('mapDispatchToProps', () => {
