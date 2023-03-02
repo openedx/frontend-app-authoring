@@ -73,6 +73,7 @@ export const setupCustomBehavior = ({
   openSourceCodeModal,
   setImage,
   editorType,
+  imageUrls,
 }) => (editor) => {
   // image upload button
   editor.ui.registry.addButton(tinyMCE.buttons.imageUploadButton, {
@@ -129,12 +130,13 @@ export const setupCustomBehavior = ({
       });
     }
   });
-};
-
-export const checkRelativeUrl = (imageUrls) => (editor) => {
   editor.on('ExecCommand', (e) => {
     if (e.command === 'mceFocus') {
       module.replaceStaticwithAsset(editor, imageUrls);
+    }
+    if (e.command === 'RemoveFormat') {
+      editor.formatter.remove('blockquote');
+      editor.formatter.remove('label');
     }
   });
 };
@@ -180,7 +182,6 @@ export const editorConfig = ({
       min_height: minHeight,
       contextmenu: 'link table',
       document_base_url: lmsEndpointUrl,
-      init_instance_callback: module.checkRelativeUrl(module.fetchImageUrls(images)),
       imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
       imagetools_toolbar: imageToolbar,
       formats: { label: { inline: 'label' } },
@@ -190,6 +191,7 @@ export const editorConfig = ({
         openImgModal,
         openSourceCodeModal,
         setImage: setSelection,
+        imageUrls: module.fetchImageUrls(images),
       }),
       toolbar,
       plugins,

@@ -15,11 +15,21 @@ describe('EditProblemView hooks parseState', () => {
   const refMock = { current: { state: { doc: { toString: toStringMock } } } };
 
   test('default problem', () => {
-    const res = hooks.parseState('problem', false, refMock)();
+    const res = hooks.parseState({
+      problem: 'problem',
+      isAdvanced: false,
+      ref: refMock,
+      assets: {},
+    })();
     expect(res.olx).toBe(mockBuiltOLX);
   });
   test('advanced problem', () => {
-    const res = hooks.parseState('problem', true, refMock)();
+    const res = hooks.parseState({
+      problem: 'problem',
+      isAdvanced: true,
+      ref: refMock,
+      assets: {},
+    })();
     expect(res.olx).toBe(mockRawOLX);
   });
 });

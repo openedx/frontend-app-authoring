@@ -63,18 +63,6 @@ describe('TextEditor hooks', () => {
       });
     });
 
-    describe('setAssetToStaticUrl', () => {
-      it('returns content with updated img links', () => {
-        const editorValue = '<img src="/asset@asset-block/soME_ImagE_URl1"/> <a href="/asset@soMEImagEURl">testing link</a>';
-        const assets = [
-          { portableUrl: '/static/soMEImagEURl', displayName: 'soMEImagEURl' },
-          { portableUrl: '/static/soME_ImagE_URl1', displayName: 'soME ImagE URl1' },
-        ];
-        const content = module.setAssetToStaticUrl({ editorValue, assets });
-        expect(content).toEqual('<img src="/static/soME_ImagE_URl1"/> <a href="/static/soMEImagEURl">testing link</a>');
-      });
-    });
-
     describe('getContent', () => {
       const visualContent = 'sOmEViSualContent';
       const rawContent = 'soMeRawContent';

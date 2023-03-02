@@ -19,11 +19,17 @@ export const EditProblemView = ({
   // redux
   problemType,
   problemState,
+  assets,
 }) => {
   const editorRef = useRef(null);
   const isAdvancedProblemType = problemType === ProblemTypeKeys.ADVANCED;
 
-  const getContent = parseState(problemState, isAdvancedProblemType, editorRef);
+  const getContent = parseState({
+    problem: problemState,
+    isAdvanced: isAdvancedProblemType,
+    ref: editorRef,
+    assets,
+  });
 
   return (
     <EditorContainer getContent={getContent}>
@@ -34,7 +40,7 @@ export const EditProblemView = ({
           </Container>
         ) : (
           <span className="flex-grow-1">
-            <QuestionWidget />
+            <QuestionWidget assets={assets} />
             <AnswerWidget problemType={problemType} />
           </span>
         )}
@@ -46,13 +52,19 @@ export const EditProblemView = ({
   );
 };
 
+EditProblemView.defaultProps = {
+  assets: null,
+};
+
 EditProblemView.propTypes = {
   problemType: PropTypes.string.isRequired,
   // eslint-disable-next-line
   problemState: PropTypes.any.isRequired,
+  assets: PropTypes.shape({}),
 };
 
 export const mapStateToProps = (state) => ({
+  assets: selectors.app.assets(state),
   problemType: selectors.problem.problemType(state),
   problemState: selectors.problem.completeState(state),
 });

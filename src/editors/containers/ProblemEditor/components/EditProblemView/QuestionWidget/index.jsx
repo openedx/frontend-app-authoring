@@ -10,11 +10,11 @@ import './index.scss';
 import TinyMceWidget from '../../../../../sharedComponents/TinyMceWidget';
 
 export const QuestionWidget = ({
+  assets,
   // redux
   isLibrary,
   question,
   updateQuestion,
-  assets,
   lmsEndpointUrl,
   studioEndpointUrl,
   // injected
@@ -46,21 +46,20 @@ export const QuestionWidget = ({
 
 QuestionWidget.defaultProps = {
   isLibrary: null,
-  assets: null,
 };
+
 QuestionWidget.propTypes = {
+  assets: PropTypes.shape({}).isRequired,
   // redux
   isLibrary: PropTypes.bool,
   lmsEndpointUrl: PropTypes.string.isRequired,
   studioEndpointUrl: PropTypes.string.isRequired,
-  assets: PropTypes.shape({}),
   question: PropTypes.string.isRequired,
   updateQuestion: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
 };
 export const mapStateToProps = (state) => ({
-  assets: selectors.app.assets(state),
   isLibrary: selectors.app.isLibrary(state),
   question: selectors.problem.question(state),
   lmsEndpointUrl: selectors.app.lmsEndpointUrl(state),

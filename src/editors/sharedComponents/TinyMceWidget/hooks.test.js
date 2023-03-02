@@ -120,14 +120,6 @@ describe('TinyMceEditor hooks', () => {
         expect(content).toEqual('<img src="/static/soME_ImagE_URl1"/> <a href="/static/soMEImagEURl">testing link</a>');
       });
     });
-    describe('checkRelativeUrl', () => {
-      test('it calls editor.on', () => {
-        const editor = { on: jest.fn() };
-        const imageUrls = ['soMEImagEURl1'];
-        module.checkRelativeUrl(imageUrls)(editor);
-        expect(editor.on).toHaveBeenCalled();
-      });
-    });
 
     describe('editorConfig', () => {
       const props = {
@@ -211,10 +203,6 @@ describe('TinyMceEditor hooks', () => {
         expect(output.initialValue).toBe(textValue);
       });
 
-      // test('It configures plugins and toolbars correctly', () => {
-      //   expect(output.init.plugins).toEqual('autoresize');
-      //   expect(output.init.toolbar).toEqual(`${pluginConfig().toolbar} | customLabelButton`);
-      // });
       it('calls setupCustomBehavior on setup', () => {
         expect(output.init.setup).toEqual(
           setupCustomBehavior({
@@ -223,6 +211,7 @@ describe('TinyMceEditor hooks', () => {
             openImgModal: props.openImgModal,
             openSourceCodeModal: props.openSourceCodeModal,
             setImage: props.setSelection,
+            imageUrls: module.fetchImageUrls(props.images),
           }),
         );
       });
