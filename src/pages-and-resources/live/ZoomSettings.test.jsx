@@ -5,6 +5,7 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 
+import ReactDOM from 'react-dom';
 import { Switch } from 'react-router-dom';
 import { initializeMockApp, history } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
@@ -31,6 +32,9 @@ let axiosMock;
 let container;
 let store;
 const liveSettingsUrl = `/course/${courseId}/pages-and-resources/live/settings`;
+
+// Modal creates a portal. Overriding ReactDOM.createPortal allows portals to be tested in jest.
+ReactDOM.createPortal = jest.fn(node => node);
 
 const renderComponent = () => {
   const wrapper = render(
