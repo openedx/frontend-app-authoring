@@ -330,10 +330,12 @@ export class OLXParser {
     return { text, children };
   }
 
-  getSolutionExplanation() {
-    if (!_.has(this.problem, 'solution')) { return null; }
+  getSolutionExplanation(problemType) {
+    if (!_.has(this.problem, `${problemType}.solution`)) { return null; }
 
-    const stack = [this.problem.solution];
+    const solution = _.get(this.problem, `${problemType}.solution`);
+
+    const stack = [solution];
     const texts = [];
     let currentNode;
 
@@ -401,7 +403,7 @@ export class OLXParser {
     const problemType = this.getProblemType();
     const hints = this.getHints();
     const question = this.parseQuestions(problemType);
-    const solutionExplanation = this.getSolutionExplanation();
+    const solutionExplanation = this.getSolutionExplanation(problemType);
 
     switch (problemType) {
       case ProblemTypeKeys.DROPDOWN:
