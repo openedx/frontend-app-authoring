@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { actions, selectors } from '..';
 import { removeItemOnce } from '../../../utils';
 import * as requests from './requests';

@@ -208,6 +208,14 @@ export const apiMethods = {
   }) => get(
     urls.videoFeatures({ studioEndpointUrl, learningContextId }),
   ),
+  uploadVideo: ({
+    data,
+    studioEndpointUrl,
+    learningContextId,
+  }) => post(
+    urls.courseVideos({ studioEndpointUrl, learningContextId }),
+    data,
+  ),
 };
 
 export const loadImage = (imageData) => ({

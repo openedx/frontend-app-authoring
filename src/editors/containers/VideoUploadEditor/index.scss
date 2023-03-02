@@ -1,0 +1,47 @@
+.dropzone-middle {
+  border: 2px dashed #ccc;
+
+  &.active {
+    border: 2px solid #262626; /* change color when active */
+  }
+
+  .file-upload {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+.video-id-prompt {
+  position: absolute;
+  top: 68%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 1rem;
+  border: 1px solid #707070;
+  width: 308px;
+
+  input {
+    border: none !important;
+    width: 90%;
+  }
+
+  input::placeholder {
+    color: #454545;
+  }
+
+  button {
+    border: none !important;
+    background-color: #FFFFFF;
+  }
+}
+
+.error-message {
+  color: #AB0D02;
+  margin-top: 20rem;
+}
+
+.close-button-container {
+  position: absolute;
+  top: 25px;
+  right: 30px;
+}

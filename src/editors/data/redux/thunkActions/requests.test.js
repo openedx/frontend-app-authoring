@@ -37,6 +37,7 @@ jest.mock('../../services/cms/api', () => ({
   checkTranscriptsForImport: (args) => args,
   importTranscript: (args) => args,
   fetchVideoFeatures: (args) => args,
+  uploadVideo: (args) => args,
 }));
 
 const apiKeys = keyStore(api);
@@ -486,6 +487,23 @@ describe('requests thunkActions module', () => {
           promise: api.fetchVideoFeatures({
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
             learningContextId: selectors.app.learningContextId(testState),
+          }),
+        },
+      });
+    });
+    describe('uploadVideo', () => {
+      const data = { files: [{ file_name: 'video.mp4', content_type: 'mp4' }] };
+      testNetworkRequestAction({
+        action: requests.uploadVideo,
+        args: { ...fetchParams, data },
+        expectedString: 'with uploadVideo promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.uploadVideo,
+          promise: api.uploadVideo({
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+            learningContextId: selectors.app.learningContextId(testState),
+            data,
           }),
         },
       });
