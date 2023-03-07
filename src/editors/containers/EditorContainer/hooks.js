@@ -1,14 +1,15 @@
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { useState } from 'react';
+import analyticsEvt from '../../data/constants/analyticsEvt';
 import { RequestKeys } from '../../data/constants/requests';
 import { selectors } from '../../data/redux';
+import { StrictDict } from '../../utils';
 import * as appHooks from '../../hooks';
 import * as module from './hooks';
-import analyticsEvt from '../../data/constants/analyticsEvt';
-import { StrictDict } from '../../utils';
 
 export const {
+  clearSaveError,
   navigateCallback,
   nullMethod,
   saveBlock,
@@ -30,6 +31,7 @@ export const handleSaveClicked = ({ dispatch, getContent, validateEntry }) => {
     validateEntry,
   });
 };
+
 export const cancelConfirmModalToggle = () => {
   const [isCancelConfirmOpen, setIsOpen] = module.state.isCancelConfirmModalOpen(false);
   return {
@@ -49,7 +51,9 @@ export const handleCancel = ({ onClose }) => {
     analytics: useSelector(selectors.app.analytics),
   });
 };
+
 export const isInitialized = () => useSelector(selectors.app.isInitialized);
+
 export const saveFailed = () => useSelector((rootState) => (
   selectors.requests.isFailed(rootState, { requestKey: RequestKeys.saveBlock })
 ));

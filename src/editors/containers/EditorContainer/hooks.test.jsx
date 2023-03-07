@@ -30,6 +30,9 @@ jest.mock('../../hooks', () => ({
 const dispatch = jest.fn();
 describe('EditorContainer hooks', () => {
   describe('forwarded hooks', () => {
+    it('forwards clearSaveError from app hooks', () => {
+      expect(hooks.clearSaveError).toEqual(appHooks.clearSaveError);
+    });
     it('forwards navigateCallback from app hooks', () => {
       expect(hooks.navigateCallback).toEqual(appHooks.navigateCallback);
     });

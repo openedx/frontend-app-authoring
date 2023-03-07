@@ -112,7 +112,6 @@ exports[`EditorFooter render snapshot: save failed.  Show error message 1`] = `
   className="editor-footer fixed-bottom"
 >
   <Toast
-    onClose={[MockFunction hooks.nullMethod]}
     show={true}
   >
     <FormattedMessage

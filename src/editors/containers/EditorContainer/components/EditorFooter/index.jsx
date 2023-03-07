@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import {
@@ -10,14 +11,13 @@ import {
   Hyperlink,
 } from '@edx/paragon';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { useSelector } from 'react-redux';
 import { selectors } from '../../../../data/redux';
 import { blockTypes } from '../../../../data/constants/app';
 
-import { nullMethod } from '../../hooks';
 import messages from './messages';
 
 export const EditorFooter = ({
+  clearSaveFailed,
   disableSave,
   onCancel,
   onSave,
@@ -30,9 +30,9 @@ export const EditorFooter = ({
   return (
     <div className="editor-footer fixed-bottom">
       {saveFailed && (
-      <Toast show onClose={nullMethod}>
-        <FormattedMessage {...messages.contentSaveFailed} />
-      </Toast>
+        <Toast show onClose={clearSaveFailed}>
+          <FormattedMessage {...messages.contentSaveFailed} />
+        </Toast>
       )}
 
       <ModalDialog.Footer className="shadow-sm">
@@ -69,6 +69,7 @@ export const EditorFooter = ({
   );
 };
 EditorFooter.propTypes = {
+  clearSaveFailed: PropTypes.func.isRequired,
   disableSave: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,

@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
-import analyticsEvt from './data/constants/analyticsEvt';
 
+import analyticsEvt from './data/constants/analyticsEvt';
+import { RequestKeys } from './data/constants/requests';
+import { actions, thunkActions } from './data/redux';
 import { keyStore } from './utils';
-import { thunkActions } from './data/redux';
 import * as hooks from './hooks';
 
 jest.mock('react', () => ({
@@ -15,15 +16,15 @@ jest.mock('react', () => ({
 }));
 
 jest.mock('./data/redux', () => ({
+  actions: {
+    requests: {
+      clearRequest: (args) => ({ clearRequest: args }),
+    },
+  },
   thunkActions: {
     app: {
       initialize: (args) => ({ initializeApp: args }),
       saveBlock: (args) => ({ saveBlock: args }),
-    },
-  },
-  selectors: {
-    app: {
-      returnUrl: jest.fn(),
     },
   },
 }));
@@ -128,6 +129,16 @@ describe('hooks', () => {
           analytics,
         }),
         content,
+      }));
+    });
+  });
+
+  describe('clearSaveError', () => {
+    it('dispatches actions.requests.clearRequest with saveBlock requestKey', () => {
+      const dispatch = jest.fn();
+      hooks.clearSaveError({ dispatch })();
+      expect(dispatch).toHaveBeenCalledWith(actions.requests.clearRequest({
+        requestKey: RequestKeys.saveBlock,
       }));
     });
   });

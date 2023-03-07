@@ -3,8 +3,9 @@ import { useEffect } from 'react';
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
 import analyticsEvt from './data/constants/analyticsEvt';
 
-import { thunkActions } from './data/redux';
+import { actions, thunkActions } from './data/redux';
 import * as module from './hooks';
+import { RequestKeys } from './data/constants/requests';
 
 export const initializeApp = ({ dispatch, data }) => useEffect(
   () => dispatch(thunkActions.app.initialize(data)),
@@ -54,3 +55,7 @@ export const saveBlock = ({
     }));
   }
 };
+
+export const clearSaveError = ({
+  dispatch,
+}) => () => dispatch(actions.requests.clearRequest({ requestKey: RequestKeys.saveBlock }));

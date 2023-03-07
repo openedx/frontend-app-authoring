@@ -6,12 +6,12 @@ import {
   Icon, ModalDialog, IconButton, Button,
 } from '@edx/paragon';
 import { Close } from '@edx/paragon/icons';
-
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
+
+import BaseModal from '../../sharedComponents/BaseModal';
 import EditorFooter from './components/EditorFooter';
 import TitleHeader from './components/TitleHeader';
 import * as hooks from './hooks';
-import BaseModal from '../../sharedComponents/BaseModal';
 import messages from './messages';
 
 export const EditorContainer = ({
@@ -65,9 +65,10 @@ export const EditorContainer = ({
         {isInitialized && children}
       </ModalDialog.Body>
       <EditorFooter
+        clearSaveFailed={hooks.clearSaveError({ dispatch })}
+        disableSave={!isInitialized}
         onCancel={openCancelConfirmModal}
         onSave={hooks.handleSaveClicked({ dispatch, getContent, validateEntry })}
-        disableSave={!isInitialized}
         saveFailed={hooks.saveFailed()}
       />
     </div>

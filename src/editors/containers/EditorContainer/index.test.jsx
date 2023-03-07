@@ -14,6 +14,7 @@ const props = {
 };
 
 jest.mock('./hooks', () => ({
+  clearSaveError: jest.fn().mockName('hooks.clearSaveError'),
   isInitialized: jest.fn().mockReturnValue(true),
   handleCancel: (args) => ({ handleCancel: args }),
   handleSaveClicked: (args) => ({ handleSaveClicked: args }),
@@ -45,7 +46,6 @@ describe('EditorContainer component', () => {
       beforeEach(() => {
         el = shallow(<EditorContainer {...props}>{testContent}</EditorContainer>);
       });
-
       test('save behavior is linked to footer onSave', () => {
         const expected = hooks.handleSaveClicked({
           dispatch: useDispatch(),
@@ -54,6 +54,11 @@ describe('EditorContainer component', () => {
         });
         expect(el.children().at(3)
           .props().onSave).toEqual(expected);
+      });
+      test('behavior is linked to clearSaveError', () => {
+        const expected = hooks.clearSaveError({ dispatch: useDispatch() });
+        expect(el.children().at(3)
+          .props().clearSaveFailed).toEqual(expected);
       });
     });
   });
