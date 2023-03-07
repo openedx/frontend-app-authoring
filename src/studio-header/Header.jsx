@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable jsx-a11y/anchor-has-content */
+/* eslint-disable jsx-quotes */
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import Responsive from 'react-responsive';
@@ -21,6 +22,7 @@ ensureConfig([
   'STUDIO_BASE_URL',
   'LOGOUT_URL',
   'LOGIN_URL',
+  'BASE_URL',
 ], 'Header component');
 
 function Header({

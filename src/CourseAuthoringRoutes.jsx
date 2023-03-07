@@ -5,7 +5,8 @@ import { PageRoute } from '@edx/frontend-platform/react';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';
 import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettings';
-import EditorContainer from './editors/EditorContainer';
+import EditorProvider from './editors/EditorProvider';
+import KeyTermsDashboard from './key-terms-dashboard/KeyTermsDashboard';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -41,6 +42,9 @@ export default function CourseAuthoringRoutes({ courseId }) {
               courseId={courseId}
             />
             )}
+        </PageRoute>
+        <PageRoute path={`${path}/key-terms-dashboard`}>
+          <KeyTermsDashboard courseId={courseId} />
         </PageRoute>
       </Switch>
     </CourseAuthoringPage>

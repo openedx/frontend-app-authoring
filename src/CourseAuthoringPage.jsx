@@ -12,7 +12,7 @@ import { useModel } from './generic/model-store';
 import PermissionDeniedAlert from './generic/PermissionDeniedAlert';
 import { getCourseAppsApiStatus, getLoadingStatus } from './pages-and-resources/data/selectors';
 import { RequestStatus } from './data/constants';
-import Loading from './generic/Loading';
+// import Loading from './generic/Loading';
 
 export default function CourseAuthoringPage({ courseId, children }) {
   const dispatch = useDispatch();
