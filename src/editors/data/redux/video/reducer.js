@@ -10,6 +10,7 @@ const initialState = {
     '',
   ],
   allowVideoDownloads: false,
+  allowVideoSharing: false,
   thumbnail: null,
   transcripts: [],
   allowTranscriptDownloads: false,

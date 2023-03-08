@@ -6,6 +6,7 @@ export const videoDataProps = {
   videoId: PropTypes.string,
   fallbackVideos: PropTypes.arrayOf(PropTypes.string),
   allowVideoDownloads: PropTypes.bool,
+  allowVideoSharing: PropTypes.bool,
   thumbnail: PropTypes.string,
   transcripts: PropTypes.objectOf(PropTypes.string),
   allowTranscriptDownloads: PropTypes.bool,
@@ -33,6 +34,7 @@ export const singleVideoData = {
     'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
   ],
   allowVideoDownloads: true,
+  allowVideoSharing: true,
   thumbnail: 'someString', // filename
   transcripts: {
     en: { filename: 'my-transcript-url' },

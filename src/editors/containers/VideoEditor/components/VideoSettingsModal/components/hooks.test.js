@@ -35,6 +35,7 @@ jest.mock('../../../../../data/redux', () => ({
       videoSource: (state) => ({ videoSource: state }),
       fallbackVideos: (state) => ({ fallbackVideos: state }),
       allowVideoDownloads: (state) => ({ allowVideoDownloads: state }),
+      allowVideoSharing: (state) => ({ allowVideoSharing: state }),
       thumbnail: (state) => ({ thumbnail: state }),
       transcripts: (state) => ({ transcripts: state }),
       allowTranscriptDownloads: (state) => ({ allowTranscriptDownloads: state }),

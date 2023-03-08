@@ -27,6 +27,7 @@ jest.mock('../hooks', () => ({
       local: '',
     },
     allowVideoDownloads: { local: false, onCheckedChange: jest.fn() },
+    allowVideoSharing: { local: false, onCheckedChange: jest.fn() },
   }),
 }));
 

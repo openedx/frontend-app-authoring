@@ -23,6 +23,7 @@ export const state = StrictDict(
     selectorKeys.videoId,
     selectorKeys.fallbackVideos,
     selectorKeys.allowVideoDownloads,
+    selectorKeys.allowVideoSharing,
 
     selectorKeys.thumbnail,
 
