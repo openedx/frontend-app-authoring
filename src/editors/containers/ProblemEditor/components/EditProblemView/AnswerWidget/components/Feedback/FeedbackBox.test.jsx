@@ -22,7 +22,7 @@ describe('FeedbackBox component', () => {
   test('renders as expected with a numeric input problem', () => {
     expect(shallow(<FeedbackBox {...props} problemType="numericalresponse" />)).toMatchSnapshot();
   });
-  test('renders as expected with a text input problem', () => {
-    expect(shallow(<FeedbackBox {...props} problemType="stringresponse" />)).toMatchSnapshot();
+  test('renders as expected with a multi select problem', () => {
+    expect(shallow(<FeedbackBox {...props} problemType="choiceresponse" />)).toMatchSnapshot();
   });
 });

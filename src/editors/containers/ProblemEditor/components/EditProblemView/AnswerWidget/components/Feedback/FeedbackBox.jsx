@@ -20,18 +20,7 @@ export const FeedbackBox = ({
     intl,
   };
 
-  return ((problemType === ProblemTypeKeys.NUMERIC || problemType === ProblemTypeKeys.TEXTINPUT) ? (
-    <div className="bg-light-300 p-4 mt-3 rounded text-primary-500">
-      <FeedbackControl
-        key={`selectedfeedback-${answer.id}`}
-        feedback={answer.selectedFeedback}
-        labelMessage={messages.selectedFeedbackLabel}
-        labelMessageBoldUnderline={messages.selectedFeedbackLabelBoldUnderlineText}
-        onChange={setSelectedFeedback}
-        {...props}
-      />
-    </div>
-  ) : (
+  return ((problemType === ProblemTypeKeys.MULTISELECT) ? (
     <div className="bg-light-300 p-4 mt-3 rounded text-primary-500">
       <FeedbackControl
         key={`selectedfeedback-${answer.id}`}
@@ -47,6 +36,17 @@ export const FeedbackBox = ({
         labelMessage={messages.unSelectedFeedbackLabel}
         labelMessageBoldUnderline={messages.unSelectedFeedbackLabelBoldUnderlineText}
         onChange={setUnselectedFeedback}
+        {...props}
+      />
+    </div>
+  ) : (
+    <div className="bg-light-300 p-4 mt-3 rounded text-primary-500">
+      <FeedbackControl
+        key={`selectedfeedback-${answer.id}`}
+        feedback={answer.selectedFeedback}
+        labelMessage={messages.selectedFeedbackLabel}
+        labelMessageBoldUnderline={messages.selectedFeedbackLabelBoldUnderlineText}
+        onChange={setSelectedFeedback}
         {...props}
       />
     </div>
