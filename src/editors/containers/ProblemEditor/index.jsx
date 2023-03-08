@@ -2,22 +2,30 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Spinner } from '@edx/paragon';
-import { injectIntl } from '@edx/frontend-platform/i18n';
+import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import SelectTypeModal from './components/SelectTypeModal';
 import EditProblemView from './components/EditProblemView';
 import { selectors, thunkActions } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
+import messages from './messages';
 
 export const ProblemEditor = ({
   onClose,
   // Redux
   problemType,
   blockFinished,
+  blockFailed,
   studioViewFinished,
   blockValue,
   initializeProblemEditor,
   assetsFinished,
 }) => {
+  React.useEffect(() => {
+    if (blockFinished && studioViewFinished && assetsFinished && !blockFailed) {
+      initializeProblemEditor(blockValue);
+    }
+  }, [blockFinished, studioViewFinished, assetsFinished, blockFailed]);
+
   if (!blockFinished || !studioViewFinished || !assetsFinished) {
     return (
       <div className="text-center p-6">
@@ -29,9 +37,14 @@ export const ProblemEditor = ({
       </div>
     );
   }
-  // once data is loaded, init store
-  React.useEffect(() => initializeProblemEditor(blockValue), []);
-  // TODO: INTL MSG, Add LOAD FAILED ERROR using BLOCKFAILED
+
+  if (blockFailed) {
+    return (
+      <div className="text-center p-6">
+        <FormattedMessage {...messages.blockFailed} />
+      </div>
+    );
+  }
 
   if (problemType === null) {
     return (<SelectTypeModal onClose={onClose} />);
@@ -47,6 +60,7 @@ ProblemEditor.propTypes = {
   // redux
   assetsFinished: PropTypes.bool,
   blockFinished: PropTypes.bool.isRequired,
+  blockFailed: PropTypes.bool.isRequired,
   studioViewFinished: PropTypes.bool.isRequired,
   problemType: PropTypes.string.isRequired,
   initializeProblemEditor: PropTypes.func.isRequired,
@@ -55,6 +69,7 @@ ProblemEditor.propTypes = {
 
 export const mapStateToProps = (state) => ({
   blockFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
+  blockFailed: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
   studioViewFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchStudioView }),
   problemType: selectors.problem.problemType(state),
   blockValue: selectors.app.blockValue(state),
