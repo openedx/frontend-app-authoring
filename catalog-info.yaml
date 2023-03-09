@@ -1,0 +1,18 @@
+# This file records information about this repo. Its use is described in OEP-55:
+# https://open-edx-proposals.readthedocs.io/en/latest/processes/oep-0055-proc-project-maintainers.html
+
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: 'frontend-lib-content-components'
+  description: "The frontend library for Open edX Content Authoring Editors"
+  links:
+    - url: "https://github.com/openedx/frontend-lib-content-components"
+      title: "Frontend lib content components"
+      icon: "Library"
+  annotations:
+    openedx.org/arch-interest-groups: ""
+spec:
+  owner: group:teaching-and-learning
+  type: 'website'
+  lifecycle: 'production'
