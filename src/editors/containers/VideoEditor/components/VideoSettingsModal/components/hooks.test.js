@@ -69,6 +69,7 @@ describe('Video Settings modal hooks', () => {
     state.testGetter(state.keys.videoSource);
     state.testGetter(state.keys.fallbackVideos);
     state.testGetter(state.keys.allowVideoDownloads);
+    state.testGetter(state.keys.allowVideoSharing);
 
     state.testGetter(state.keys.thumbnail);
 
