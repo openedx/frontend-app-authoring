@@ -2,7 +2,6 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
-import ReactDOM from 'react-dom';
 
 /* eslint-disable import/no-extraneous-dependencies */
 import Enzyme from 'enzyme';
@@ -28,9 +27,6 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 });
-
-// Modal creates a portal.  Overriding ReactDOM.createPortal allows portals to be tested in jest.
-ReactDOM.createPortal = node => node;
 
 // Mock Intersection Observer which is unavailable in the context of a test.
 global.IntersectionObserver = jest.fn(function mockIntersectionObserver() {

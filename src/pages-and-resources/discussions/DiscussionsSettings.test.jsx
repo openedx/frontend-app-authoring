@@ -1,3 +1,4 @@
+import ReactDOM from 'react-dom';
 import {
   getConfig, history, initializeMockApp, setConfig,
 } from '@edx/frontend-platform';
@@ -41,6 +42,9 @@ const courseId = 'course-v1:edX+TestX+Test_Course';
 let axiosMock;
 let store;
 let container;
+
+// Modal creates a portal. Overriding ReactDOM.createPortal allows portals to be tested in jest.
+ReactDOM.createPortal = jest.fn(node => node);
 
 function renderComponent() {
   const wrapper = render(
