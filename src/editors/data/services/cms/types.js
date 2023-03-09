@@ -6,6 +6,7 @@ export const videoDataProps = {
   videoId: PropTypes.string,
   fallbackVideos: PropTypes.arrayOf(PropTypes.string),
   allowVideoDownloads: PropTypes.bool,
+  allowVideoSharing: PropTypes.bool,
   thumbnail: PropTypes.string,
   transcripts: PropTypes.objectOf(PropTypes.string),
   allowTranscriptDownloads: PropTypes.bool,

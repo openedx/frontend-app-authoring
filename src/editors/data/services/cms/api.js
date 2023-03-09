@@ -168,6 +168,7 @@ export const apiMethods = {
         metadata: {
           display_name: title,
           download_video: content.allowVideoDownloads,
+          public_access: content.allowVideoSharing,
           edx_video_id: edxVideoId,
           html5_sources: html5Sources,
           youtube_id_1_0: youtubeId,

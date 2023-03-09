@@ -37,6 +37,7 @@ export const VideoSourceWidget = ({
     videoSource: source,
     fallbackVideos,
     allowVideoDownloads: allowDownload,
+    allowVideoSharing: allowSharing,
   } = widgetHooks.widgetValues({
     dispatch,
     fields: {
@@ -44,6 +45,7 @@ export const VideoSourceWidget = ({
       [widgetHooks.selectorKeys.videoId]: widgetHooks.genericWidget,
       [widgetHooks.selectorKeys.fallbackVideos]: widgetHooks.arrayWidget,
       [widgetHooks.selectorKeys.allowVideoDownloads]: widgetHooks.genericWidget,
+      [widgetHooks.selectorKeys.allowVideoSharing]: widgetHooks.genericWidget,
     },
   });
   const { updateVideoId, updateVideoURL } = hooks.sourceHooks({ dispatch });
@@ -118,13 +120,33 @@ export const VideoSourceWidget = ({
             placement="top"
             overlay={(
               <Tooltip id="tooltip-top">
-                <FormattedMessage {...messages.tooltipMessage} />
+                <FormattedMessage {...messages.allowDownloadTooltipMessage} />
               </Tooltip>
             )}
           >
             <Icon src={InfoOutline} style={{ height: '16px', width: '16px' }} />
           </OverlayTrigger>
           <ActionRow.Spacer />
+          <Form.Checkbox
+            checked={allowSharing.local}
+            className="decorative-control-label"
+            onChange={allowSharing.onCheckedChange}
+          >
+            <div className="small text-gray-700">
+              <FormattedMessage {...messages.allowVideoSharingCheckboxLabel} />
+            </div>
+          </Form.Checkbox>
+          <OverlayTrigger
+            key="top-allow-sharing"
+            placement="top"
+            overlay={(
+              <Tooltip id="tooltip-top-allow-sharing">
+                <FormattedMessage {...messages.allowVideoSharingTooltipMessage} />
+              </Tooltip>
+            )}
+          >
+            <Icon src={InfoOutline} style={{ height: '16px', width: '16px' }} />
+          </OverlayTrigger>
         </ActionRow>
       </Form.Group>
       <div className="my-4 border-primary-100 border-bottom" />

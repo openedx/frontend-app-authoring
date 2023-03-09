@@ -35,6 +35,7 @@ jest.mock('../../../../../data/redux', () => ({
       videoSource: (state) => ({ videoSource: state }),
       fallbackVideos: (state) => ({ fallbackVideos: state }),
       allowVideoDownloads: (state) => ({ allowVideoDownloads: state }),
+      allowVideoSharing: (state) => ({ allowVideoSharing: state }),
       thumbnail: (state) => ({ thumbnail: state }),
       transcripts: (state) => ({ transcripts: state }),
       allowTranscriptDownloads: (state) => ({ allowTranscriptDownloads: state }),
@@ -68,6 +69,7 @@ describe('Video Settings modal hooks', () => {
     state.testGetter(state.keys.videoSource);
     state.testGetter(state.keys.fallbackVideos);
     state.testGetter(state.keys.allowVideoDownloads);
+    state.testGetter(state.keys.allowVideoSharing);
 
     state.testGetter(state.keys.thumbnail);
 

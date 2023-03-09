@@ -31,6 +31,7 @@ export const loadVideoData = () => (dispatch, getState) => {
     videoId,
     fallbackVideos,
     allowVideoDownloads: rawVideoData.download_video,
+    allowVideoSharing: rawVideoData.public_access,
     transcripts,
     allowTranscriptDownloads: rawVideoData.download_track,
     showTranscriptByDefault: rawVideoData.show_captions,

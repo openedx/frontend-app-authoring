@@ -106,7 +106,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
     different formats if they cannot use the edX video player or do not have
     access to YouTube."
               description="Message for allow video downloads checkbox"
-              id="authoring.videoeditor.videoSource.fallbackVideo.allowDownloadTooltipMessage"
+              id="authoring.videoeditor.videoSource.allowDownloadTooltipMessage"
             />
           </Tooltip>
         }
@@ -122,6 +122,48 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
         />
       </OverlayTrigger>
       <ActionRow.Spacer />
+      <Form.Checkbox
+        checked={false}
+        className="decorative-control-label"
+        onChange={[MockFunction]}
+      >
+        <div
+          className="small text-gray-700"
+        >
+          <FormattedMessage
+            defaultMessage="Allow this video to be shared on social media."
+            description="Label for allow shareable video checkbox"
+            id="authoring.videoeditor.videoSource.allowVideoSharingCheckboxLabel"
+          />
+        </div>
+      </Form.Checkbox>
+      <OverlayTrigger
+        key="top-allow-sharing"
+        overlay={
+          <Tooltip
+            id="tooltip-top-allow-sharing"
+          >
+            <FormattedMessage
+              defaultMessage="Allow learners to share this video publicly on social media.
+    The video will be viewable by anyone, they will not need to enroll in the course
+    or even have an edX account. Links to the course about page and to enroll in the 
+    course will appear alongside the video."
+              description="Message for allow shareable video checkbox"
+              id="authoring.videoeditor.videoSource.allowVideoSharingTooltipMessage"
+            />
+          </Tooltip>
+        }
+        placement="top"
+      >
+        <Icon
+          style={
+            Object {
+              "height": "16px",
+              "width": "16px",
+            }
+          }
+        />
+      </OverlayTrigger>
     </ActionRow>
   </Form.Group>
   <div
@@ -136,7 +178,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
     <FormattedMessage
       defaultMessage="Add a video URL"
       description="Label for add a video URL button"
-      id="authoring.videoeditor.videoSource.fallbackVideo.allowDownloadTooltipMessage"
+      id="authoring.videoeditor.videoSource.fallbackVideo.addButtonLabel"
     />
   </Button>
 </injectIntl(ShimmedIntlComponent)>
