@@ -31,7 +31,8 @@ jest.mock('../../data/redux', () => ({
       problemType: jest.fn(state => ({ problemType: state })),
     },
     requests: {
-      isFinished: jest.fn((state, params) => ({ isFailed: { state, params } })),
+      isFinished: jest.fn((state, params) => ({ isFinished: { state, params } })),
+      isFailed: jest.fn((state, params) => ({ isFailed: { state, params } })),
     },
   },
 }));
@@ -43,6 +44,7 @@ describe('ProblemEditor', () => {
     problemType: null,
     blockValue: { data: { data: 'eDiTablE Text' } },
     blockFinished: false,
+    blockFailed: false,
     studioViewFinished: false,
     initializeProblemEditor: jest.fn().mockName('args.intializeProblemEditor'),
     assetsFinished: false,
@@ -60,6 +62,15 @@ describe('ProblemEditor', () => {
     test('assets loaded, block and studio view not yet loaded, Spinner appears', () => {
       expect(shallow(<ProblemEditor {...props} assetsFinished />)).toMatchSnapshot();
     });
+    test('block failed, message appears', () => {
+      expect(shallow(<ProblemEditor
+        {...props}
+        blockFinished
+        studioViewFinished
+        assetsFinished
+        blockFailed
+      />)).toMatchSnapshot();
+    });
     test('renders SelectTypeModal', () => {
       expect(shallow(<ProblemEditor {...props} blockFinished studioViewFinished assetsFinished />)).toMatchSnapshot();
     });
@@ -68,6 +79,7 @@ describe('ProblemEditor', () => {
         {...props}
         problemType="multiplechoiceresponse"
         blockFinished
+        blockFailed
         studioViewFinished
         assetsFinished
       />)).toMatchSnapshot();

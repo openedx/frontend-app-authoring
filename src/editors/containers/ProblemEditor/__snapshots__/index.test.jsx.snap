@@ -12,6 +12,18 @@ exports[`ProblemEditor snapshots assets loaded, block and studio view not yet lo
 </div>
 `;
 
+exports[`ProblemEditor snapshots block failed, message appears 1`] = `
+<div
+  className="text-center p-6"
+>
+  <FormattedMessage
+    defaultMessage="Problem failed to load"
+    description="Error message for problem block failing to load"
+    id="authoring.problemEditor.blockFailed"
+  />
+</div>
+`;
+
 exports[`ProblemEditor snapshots block loaded, studio view and assets not yet loaded, Spinner appears 1`] = `
 <div
   className="text-center p-6"
@@ -25,9 +37,15 @@ exports[`ProblemEditor snapshots block loaded, studio view and assets not yet lo
 `;
 
 exports[`ProblemEditor snapshots renders EditProblemView 1`] = `
-<EditProblemView
-  onClose={[MockFunction props.onClose]}
-/>
+<div
+  className="text-center p-6"
+>
+  <FormattedMessage
+    defaultMessage="Problem failed to load"
+    description="Error message for problem block failing to load"
+    id="authoring.problemEditor.blockFailed"
+  />
+</div>
 `;
 
 exports[`ProblemEditor snapshots renders SelectTypeModal 1`] = `
