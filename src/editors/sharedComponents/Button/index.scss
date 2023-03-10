@@ -3,10 +3,6 @@
     &:not(.disabled) {
       &:hover, &:active, &:focus {
         background-color: transparent;
-
-        &:before {
-          display: none;
-        }
       }
     }
   }
