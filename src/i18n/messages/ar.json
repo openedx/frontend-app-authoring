@@ -3,6 +3,7 @@
   "authoring.loading": "التحميل جارٍ...",
   "authoring.alert.error.permission": "لست مخوّلا بمشاهدة هذه الصفحة. إن كنت ترى أن لديك حقًا في ذلك، فيرجى التواصل مع مدير فريق مساقك ليمنحك حق الوصول.",
   "authoring.alert.save.error.connection": "واجهنا خطأ تقنيًا أثناء تطبيق التغييرات. قد تكون هذه مشكلة عارضة، لذا يرجى المحاولة مجددًا خلال بضع دقائق. إن استمرت المشكلة فيرجى الذهاب إلى {support_link} للحصول على المساعدة.",
+  "course-authoring.page.title": "Course Authoring | {siteName}",
   "authoring.alert.support.text": "صفحة الدعم",
   "course-authoring.pages-resources.app-settings-modal.button.cancel": "إلغاء",
   "course-authoring.pages-resources.app-settings-modal.button.save": "حفظ",

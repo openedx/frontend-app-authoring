@@ -3,6 +3,7 @@
   "authoring.loading": "Chargement...",
   "authoring.alert.error.permission": "Vous n'êtes pas autorisé à afficher cette page. Si vous croyez que vous devriez avoir accès à cette page, veuillez contacter l'équipe administrative du cours pour obtenir la permission.",
   "authoring.alert.save.error.connection": "Nous avons rencontré une erreur technique lors de l'application des modifications. Cela peut être un problème temporaire, veuillez donc réessayer dans quelques minutes. Si le problème persiste, accédez à {support_link} pour obtenir de l'aide.",
+  "course-authoring.page.title": "Création de cours | {siteName}",
   "authoring.alert.support.text": "Page de support",
   "course-authoring.pages-resources.app-settings-modal.button.cancel": "Annuler",
   "course-authoring.pages-resources.app-settings-modal.button.save": "Sauvegarder",

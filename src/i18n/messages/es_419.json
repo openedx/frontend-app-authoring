@@ -3,6 +3,7 @@
   "authoring.loading": "Cargando...",
   "authoring.alert.error.permission": "No te encuentras autorizado para ingresar a esta página. Si crees que deberías tener acceso, por favor contacta al equipo administrativo del curso para solicitar acceso.",
   "authoring.alert.save.error.connection": "Hemos detectado un error técnico al cargar esta página. Esto puede ser un problema temporal, así que por favor intente nuevamente en unos minutos. Si el problema persiste, por favor solicite ayuda en el siguiente enlace {supportLink}",
+  "course-authoring.page.title": "Course Authoring | {siteName}",
   "authoring.alert.support.text": "Página de soporte",
   "course-authoring.pages-resources.app-settings-modal.button.cancel": "Cancelar",
   "course-authoring.pages-resources.app-settings-modal.button.save": "Guardar",

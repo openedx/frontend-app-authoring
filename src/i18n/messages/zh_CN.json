@@ -3,6 +3,7 @@
   "authoring.loading": "Loading...",
   "authoring.alert.error.permission": "You are not authorized to view this page. If you feel you should have access, please reach out to your course team admin to be given access.",
   "authoring.alert.save.error.connection": "We encountered a technical error when applying changes. This might be a temporary issue, so please try again in a few minutes. If the problem persists, please go to the {supportLink} for help.",
+  "course-authoring.page.title": "Course Authoring | {siteName}",
   "authoring.alert.support.text": "Support Page",
   "course-authoring.pages-resources.app-settings-modal.button.cancel": "Cancel",
   "course-authoring.pages-resources.app-settings-modal.button.save": "Save",
