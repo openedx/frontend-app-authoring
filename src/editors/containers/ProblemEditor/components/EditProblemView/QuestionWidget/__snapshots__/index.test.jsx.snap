@@ -13,18 +13,13 @@ exports[`QuestionWidget render snapshot: renders correct default 1`] = `
       id="authoring.questionwidget.question.questionWidgetTitle"
     />
   </div>
-  <TinyMceWidget
-    assets={Object {}}
-    editorRef={null}
-    editorType="problem"
-    isLibrary={false}
-    lmsEndpointUrl="sOmEvaLue.cOm"
+  <[object Object]
+    editorType="question"
+    id="question"
     minHeight={150}
     placeholder="Enter your question"
-    setEditorRef={[MockFunction hooks.prepareEditorRef.setEditorRef]}
-    studioEndpointUrl="sOmEoThERvaLue.cOm"
+    setEditorRef={[MockFunction prepareEditorRef.setEditorRef]}
     textValue="This is my question"
-    updateQuestion={[MockFunction]}
   />
 </div>
 `;

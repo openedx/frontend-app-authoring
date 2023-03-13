@@ -1,9 +1,7 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
 import { Container } from '@edx/paragon';
-
 import AnswerWidget from './AnswerWidget';
 import SettingsWidget from './SettingsWidget';
 import QuestionWidget from './QuestionWidget';
@@ -20,6 +18,7 @@ export const EditProblemView = ({
   problemType,
   problemState,
   assets,
+  lmsEndpointUrl,
 }) => {
   const editorRef = useRef(null);
   const isAdvancedProblemType = problemType === ProblemTypeKeys.ADVANCED;
@@ -29,6 +28,7 @@ export const EditProblemView = ({
     isAdvanced: isAdvancedProblemType,
     ref: editorRef,
     assets,
+    lmsEndpointUrl,
   });
 
   return (
@@ -40,7 +40,7 @@ export const EditProblemView = ({
           </Container>
         ) : (
           <span className="flex-grow-1">
-            <QuestionWidget assets={assets} />
+            <QuestionWidget />
             <AnswerWidget problemType={problemType} />
           </span>
         )}
@@ -54,6 +54,7 @@ export const EditProblemView = ({
 
 EditProblemView.defaultProps = {
   assets: null,
+  lmsEndpointUrl: null,
 };
 
 EditProblemView.propTypes = {
@@ -61,10 +62,12 @@ EditProblemView.propTypes = {
   // eslint-disable-next-line
   problemState: PropTypes.any.isRequired,
   assets: PropTypes.shape({}),
+  lmsEndpointUrl: PropTypes.string,
 };
 
 export const mapStateToProps = (state) => ({
   assets: selectors.app.assets(state),
+  lmsEndpointUrl: selectors.app.lmsEndpointUrl(state),
   problemType: selectors.problem.problemType(state),
   problemState: selectors.problem.completeState(state),
 });

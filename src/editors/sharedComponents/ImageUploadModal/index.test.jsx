@@ -2,7 +2,6 @@ import React from 'react';
 import { shallow } from 'enzyme';
 
 import { keyStore } from '../../utils';
-import { selectors } from '../../data/redux';
 import tinyMCEKeys from '../../data/constants/tinyMCE';
 
 import * as module from '.';
@@ -10,15 +9,7 @@ import * as module from '.';
 jest.mock('./ImageSettingsModal', () => 'ImageSettingsModal');
 jest.mock('./SelectImageModal', () => 'SelectImageModal');
 
-const { ImageUploadModal, mapStateToProps, mapDispatchToProps } = module;
-
-jest.mock('../../data/redux', () => ({
-  selectors: {
-    app: {
-      lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
-    },
-  },
-}));
+const { ImageUploadModal } = module;
 const hookKeys = keyStore(module.hooks);
 
 const settings = {
@@ -129,20 +120,6 @@ describe('ImageUploadModal', () => {
     });
     test('snapshot: no selection (Select Image Modal)', () => {
       expect(shallow(<ImageUploadModal {...props} selection={null} />)).toMatchSnapshot();
-    });
-  });
-
-  describe('mapStateToProps', () => {
-    const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
-    test('lmsEndpointUrl from app.lmsEndpointUrl', () => {
-      expect(
-        mapStateToProps(testState).lmsEndpointUrl,
-      ).toEqual(selectors.app.lmsEndpointUrl(testState));
-    });
-  });
-  describe('mapDispatchToProps', () => {
-    it('equals an empty object', () => {
-      expect(mapDispatchToProps).toEqual({});
     });
   });
 });

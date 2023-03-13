@@ -4,10 +4,6 @@ import { ProblemTypeKeys } from '../../../data/constants/problem';
 
 class ReactStateOLXParser {
   constructor(problemState) {
-    // const parserOptions = {
-    //   ignoreAttributes: false,
-    //   alwaysCreateTextNode: true,
-    // };
     const questionParserOptions = {
       ignoreAttributes: false,
       alwaysCreateTextNode: true,
@@ -27,9 +23,9 @@ class ReactStateOLXParser {
       format: true,
     };
     this.questionParser = new XMLParser(questionParserOptions);
-    // this.parser = new XMLParser(parserOptions);
     this.builder = new XMLBuilder(builderOptions);
     this.questionBuilder = new XMLBuilder(questionBuilderOptions);
+    this.editorObject = problemState.editorObject;
     this.problemState = problemState.problem;
   }
 
@@ -67,6 +63,7 @@ class ReactStateOLXParser {
     let widget = {};
     // eslint-disable-next-line prefer-const
     let { answers, generalFeedback } = this.problemState;
+    const answerTitles = this.editorObject?.answers;
     // general feedback replaces selected feedback if all incorrect selected feedback is the same.
     if (generalFeedback !== ''
     && answers.every(
@@ -83,6 +80,7 @@ class ReactStateOLXParser {
     answers.forEach((answer) => {
       const feedback = [];
       let singleAnswer = {};
+      const title = answerTitles ? answerTitles[answer.id] : answer.title;
       if (this.hasAttributeWithValue(answer, 'title')) {
         if (this.hasAttributeWithValue(answer, 'selectedFeedback')) {
           feedback.push({
@@ -105,7 +103,7 @@ class ReactStateOLXParser {
           singleAnswer[`${option}hint`] = feedback;
         }
         singleAnswer = {
-          '#text': answer.title,
+          '#text': title,
           '@_correct': answer.correct,
           ...singleAnswer,
         };
@@ -136,7 +134,7 @@ class ReactStateOLXParser {
   }
 
   addQuestion() {
-    const { question } = this.problemState;
+    const { question } = this.editorObject || this.problemState;
     const questionObject = this.questionParser.parse(question);
     return questionObject;
   }
@@ -206,6 +204,7 @@ class ReactStateOLXParser {
 
   buildTextInputAnswersFeedback() {
     const { answers } = this.problemState;
+    const answerTitles = this.editorObject?.answers;
     let answerObject = {};
     const additionAnswers = [];
     const wrongAnswers = [];
@@ -213,20 +212,21 @@ class ReactStateOLXParser {
     answers.forEach((answer) => {
       const correcthint = this.getAnswerHints(answer);
       if (this.hasAttributeWithValue(answer, 'title')) {
+        const title = answerTitles ? answerTitles[answer.id] : answer.title;
         if (answer.correct && firstCorrectAnswerParsed) {
           additionAnswers.push({
-            '@_answer': answer.title,
+            '@_answer': title,
             ...correcthint,
           });
         } else if (answer.correct && !firstCorrectAnswerParsed) {
           firstCorrectAnswerParsed = true;
           answerObject = {
-            '@_answer': answer.title,
+            '@_answer': title,
             ...correcthint,
           };
         } else if (!answer.correct) {
           wrongAnswers.push({
-            '@_answer': answer.title,
+            '@_answer': title,
             '#text': answer.selectedFeedback,
           });
         }
@@ -271,12 +271,14 @@ class ReactStateOLXParser {
 
   buildNumericalResponse() {
     const { answers } = this.problemState;
+    const answerTitles = this.editorObject?.answers;
     let answerObject = {};
     const additionalAnswers = [];
     let firstCorrectAnswerParsed = false;
     answers.forEach((answer) => {
       const correcthint = this.getAnswerHints(answer);
       if (this.hasAttributeWithValue(answer, 'title')) {
+        const title = answerTitles ? answerTitles[answer.id] : answer.title;
         if (answer.correct && !firstCorrectAnswerParsed) {
           firstCorrectAnswerParsed = true;
           let responseParam = {};
@@ -289,13 +291,13 @@ class ReactStateOLXParser {
             };
           }
           answerObject = {
-            '@_answer': answer.title,
+            '@_answer': title,
             ...responseParam,
             ...correcthint,
           };
         } else if (answer.correct && firstCorrectAnswerParsed) {
           additionalAnswers.push({
-            '@_answer': answer.title,
+            '@_answer': title,
             ...correcthint,
           });
         }

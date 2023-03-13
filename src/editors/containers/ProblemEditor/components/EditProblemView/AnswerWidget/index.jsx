@@ -5,7 +5,6 @@ import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/
 import messages from './messages';
 import { ProblemTypes } from '../../../../../data/constants/problem';
 import AnswersContainer from './AnswersContainer';
-import './index.scss';
 
 // This widget should be connected, grab all answers from store, update them as needed.
 const AnswerWidget = ({

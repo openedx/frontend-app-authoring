@@ -23,22 +23,18 @@ jest.mock('../../../../../data/redux', () => ({
   },
 }));
 
-jest.mock('../../../hooks', () => ({
+jest.mock('../../../../../sharedComponents/TinyMceWidget/hooks', () => ({
   prepareEditorRef: jest.fn(() => ({
     refReady: true,
-    setEditorRef: jest.fn().mockName('hooks.prepareEditorRef.setEditorRef'),
+    setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),
   })),
-  problemEditorConfig: jest.fn(args => ({ problemEditorConfig: args })),
+  // problemEditorConfig: jest.fn(args => ({ problemEditorConfig: args })),
 }));
 
 describe('QuestionWidget', () => {
   const props = {
-    isLibrary: false,
     question: 'This is my question',
     updateQuestion: jest.fn(),
-    lmsEndpointUrl: 'sOmEvaLue.cOm',
-    studioEndpointUrl: 'sOmEoThERvaLue.cOm',
-    assets: {},
     // injected
     intl: { formatMessage },
   };
@@ -49,21 +45,8 @@ describe('QuestionWidget', () => {
   });
   describe('mapStateToProps', () => {
     const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
-    test('isLibrary from app.isLibrary', () => {
-      expect(mapStateToProps(testState).isLibrary).toEqual(selectors.app.isLibrary(testState));
-    });
     test('question from problem.question', () => {
       expect(mapStateToProps(testState).question).toEqual(selectors.problem.question(testState));
-    });
-    test('lmsEndpointUrl from app.lmsEndpointUrl', () => {
-      expect(
-        mapStateToProps(testState).lmsEndpointUrl,
-      ).toEqual(selectors.app.lmsEndpointUrl(testState));
-    });
-    test('studioEndpointUrl from app.studioEndpointUrl', () => {
-      expect(
-        mapStateToProps(testState).studioEndpointUrl,
-      ).toEqual(selectors.app.studioEndpointUrl(testState));
     });
   });
   describe('mapDispatchToProps', () => {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Editor } from '@tinymce/tinymce-react';
 
@@ -18,7 +19,9 @@ import 'tinymce/plugins/code';
 import 'tinymce/plugins/autoresize';
 import 'tinymce/plugins/image';
 import 'tinymce/plugins/imagetools';
+import 'tinymce/plugins/quickbars';
 
+import { selectors } from '../../data/redux';
 import ImageUploadModal from '../ImageUploadModal';
 import SourceCodeModal from '../SourceCodeModal';
 import * as hooks from './hooks';
@@ -26,8 +29,13 @@ import * as hooks from './hooks';
 export const TinyMceWidget = ({
   editorType,
   editorRef,
+  disabled,
+  id,
+  // redux
   assets,
   isLibrary,
+  lmsEndpointUrl,
+  studioEndpointUrl,
   ...props
 }) => {
   const { isImgOpen, openImgModal, closeImgModal } = hooks.imgModalToggle();
@@ -42,6 +50,9 @@ export const TinyMceWidget = ({
           close={closeImgModal}
           editorRef={editorRef}
           images={images}
+          editorType={editorType}
+          lmsEndpointUrl={lmsEndpointUrl}
+          // bookmark={editorRef.current.selection.getBookmark()}
           {...imageSelection}
         />
       )}
@@ -53,6 +64,8 @@ export const TinyMceWidget = ({
         />
       ) : null}
       <Editor
+        id={id}
+        disabled={disabled}
         {
           ...hooks.editorConfig({
             openImgModal,
@@ -60,6 +73,8 @@ export const TinyMceWidget = ({
             editorType,
             editorRef,
             isLibrary,
+            lmsEndpointUrl,
+            studioEndpointUrl,
             images,
             setSelection: imageSelection.setSelection,
             clearSelection: imageSelection.clearSelection,
@@ -72,15 +87,31 @@ export const TinyMceWidget = ({
 };
 TinyMceWidget.defaultProps = {
   isLibrary: null,
-  assets: null,
   editorType: null,
   editorRef: null,
+  lmsEndpointUrl: null,
+  studioEndpointUrl: null,
+  assets: null,
+  id: null,
+  disabled: false,
 };
 TinyMceWidget.propTypes = {
   editorType: PropTypes.string,
   isLibrary: PropTypes.bool,
   assets: PropTypes.shape({}),
   editorRef: PropTypes.shape({}),
+  lmsEndpointUrl: PropTypes.string,
+  studioEndpointUrl: PropTypes.string,
+  id: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
-export default TinyMceWidget;
+// should we call these items for
+export const mapStateToProps = (state) => ({
+  assets: selectors.app.assets(state),
+  lmsEndpointUrl: selectors.app.lmsEndpointUrl(state),
+  studioEndpointUrl: selectors.app.studioEndpointUrl(state),
+  isLibrary: selectors.app.isLibrary(state),
+});
+
+export default (connect(mapStateToProps)(TinyMceWidget));

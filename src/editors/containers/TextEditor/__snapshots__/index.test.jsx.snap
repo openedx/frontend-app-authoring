@@ -34,14 +34,7 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
         id="authoring.texteditor.load.error"
       />
     </Toast>
-    <TinyMceWidget
-      assets={
-        Object {
-          "sOmEaSsET": Object {
-            "staTICUrl": "/assets/sOmEaSsET",
-          },
-        }
-      }
+    <[object Object]
       editorRef={
         Object {
           "current": Object {
@@ -52,11 +45,8 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
       editorType="text"
       height="100%"
       initializeEditor={[MockFunction args.intializeEditor]}
-      isLibrary={false}
-      lmsEndpointUrl="sOmEvaLue.cOm"
       minHeight={500}
       setEditorRef={[MockFunction hooks.prepareEditorRef.setEditorRef]}
-      studioEndpointUrl="sOmEoThERvaLue.cOm"
       textValue="eDiTablE Text"
     />
   </div>
@@ -199,14 +189,7 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
         id="authoring.texteditor.load.error"
       />
     </Toast>
-    <TinyMceWidget
-      assets={
-        Object {
-          "sOmEaSsET": Object {
-            "staTICUrl": "/assets/sOmEaSsET",
-          },
-        }
-      }
+    <[object Object]
       editorRef={
         Object {
           "current": Object {
@@ -217,11 +200,8 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
       editorType="text"
       height="100%"
       initializeEditor={[MockFunction args.intializeEditor]}
-      isLibrary={false}
-      lmsEndpointUrl="sOmEvaLue.cOm"
       minHeight={500}
       setEditorRef={[MockFunction hooks.prepareEditorRef.setEditorRef]}
-      studioEndpointUrl="sOmEoThERvaLue.cOm"
       textValue="eDiTablE Text"
     />
   </div>

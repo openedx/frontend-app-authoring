@@ -1,27 +1,13 @@
-import { useEffect } from 'react';
-import { MockUseState } from '../../../testUtils';
-
+import { keyStore } from '../../utils';
 import * as appHooks from '../../hooks';
 import * as module from './hooks';
+import * as tinyMceHooks from '../../sharedComponents/TinyMceWidget/hooks';
 
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  createRef: jest.fn(val => ({ ref: val })),
-  useRef: jest.fn(val => ({ current: val })),
-  useEffect: jest.fn(),
-  useCallback: (cb, prereqs) => ({ cb, prereqs }),
-}));
-
-const state = new MockUseState(module);
-
-let hook;
+const tinyMceHookKeys = keyStore(tinyMceHooks);
 
 describe('TextEditor hooks', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-  describe('state hooks', () => {
-    state.testGetter(state.keys.refReady);
   });
 
   describe('appHooks', () => {
@@ -37,32 +23,6 @@ describe('TextEditor hooks', () => {
   });
 
   describe('non-state hooks', () => {
-    beforeEach(() => { state.mock(); });
-    afterEach(() => { state.restore(); });
-    describe('prepareEditorRef', () => {
-      beforeEach(() => {
-        hook = module.prepareEditorRef();
-      });
-      const key = state.keys.refReady;
-      test('sets refReady to false by default, ref is null', () => {
-        expect(state.stateVals[key]).toEqual(false);
-        expect(hook.editorRef.current).toBe(null);
-      });
-      test('when useEffect triggers, refReady is set to true', () => {
-        expect(state.setState[key]).not.toHaveBeenCalled();
-        const [cb, prereqs] = useEffect.mock.calls[0];
-        expect(prereqs).toStrictEqual([]);
-        cb();
-        expect(state.setState[key]).toHaveBeenCalledWith(true);
-      });
-      test('calling setEditorRef sets the ref value', () => {
-        const fakeEditor = { editor: 'faKe Editor' };
-        expect(hook.editorRef.current).not.toBe(fakeEditor);
-        hook.setEditorRef.cb(fakeEditor);
-        expect(hook.editorRef.current).toBe(fakeEditor);
-      });
-    });
-
     describe('getContent', () => {
       const visualContent = 'sOmEViSualContent';
       const rawContent = 'soMeRawContent';
@@ -74,10 +34,28 @@ describe('TextEditor hooks', () => {
           },
         },
       };
+      const spies = {};
+      spies.visualHtml = jest.spyOn(
+        tinyMceHooks,
+        tinyMceHookKeys.setAssetToStaticUrl,
+      ).mockReturnValueOnce(visualContent);
+      spies.rawHtml = jest.spyOn(
+        tinyMceHooks,
+        tinyMceHookKeys.setAssetToStaticUrl,
+      ).mockReturnValueOnce(rawContent);
       const assets = [];
-      test('returns correct content based on isRaw', () => {
-        expect(module.getContent({ editorRef, isRaw: false, assets })()).toEqual(visualContent);
-        expect(module.getContent({ editorRef, isRaw: true, assets })()).toEqual(rawContent);
+      test('returns correct content based on isRaw equals false', () => {
+        const getContent = module.getContent({ editorRef, isRaw: false, assets })();
+        expect(spies.visualHtml.mock.calls.length).toEqual(1);
+        expect(spies.visualHtml).toHaveBeenCalledWith({ editorValue: visualContent, assets });
+        expect(getContent).toEqual(visualContent);
+      });
+      test('returns correct content based on isRaw equals true', () => {
+        jest.clearAllMocks();
+        const getContent = module.getContent({ editorRef, isRaw: true, assets })();
+        expect(spies.rawHtml.mock.calls.length).toEqual(1);
+        expect(spies.rawHtml).toHaveBeenCalledWith({ editorValue: rawContent, assets });
+        expect(getContent).toEqual(rawContent);
       });
     });
   });

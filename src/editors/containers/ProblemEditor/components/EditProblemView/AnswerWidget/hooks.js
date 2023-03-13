@@ -16,6 +16,10 @@ export const setAnswer = ({ answer, hasSingleAnswer, dispatch }) => (payload) =>
   dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, ...payload }));
 };
 
+export const setAnswerTitle = ({ answer, hasSingleAnswer, dispatch }) => (updatedTitle) => {
+  dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, title: updatedTitle }));
+};
+
 export const setSelectedFeedback = ({ answer, hasSingleAnswer, dispatch }) => (e) => {
   dispatch(actions.problem.updateAnswer({
     id: answer.id,
@@ -71,5 +75,5 @@ export const useAnswerContainer = ({ answers, updateField }) => {
 };
 
 export default {
-  state, removeAnswer, setAnswer, useFeedback, isSingleAnswerProblem, useAnswerContainer,
+  state, removeAnswer, setAnswer, setAnswerTitle, useFeedback, isSingleAnswerProblem, useAnswerContainer,
 };

@@ -1,9 +1,10 @@
 import React from 'react';
 import { shallow } from 'enzyme';
+import { selectors } from '../../data/redux';
 import SourceCodeModal from '../SourceCodeModal';
 import ImageUploadModal from '../ImageUploadModal';
 import { imgModalToggle, sourceCodeModalToggle } from './hooks';
-import TinyMceEditor from '.';
+import { TinyMceWidget, mapStateToProps } from '.';
 
 // Per https://github.com/tinymce/tinymce-react/issues/91 React unit testing in JSDOM is not supported by tinymce.
 // Consequently, mock the Editor out.
@@ -18,6 +19,17 @@ jest.mock('@tinymce/tinymce-react', () => {
 
 jest.mock('../ImageUploadModal', () => 'ImageUploadModal');
 jest.mock('../SourceCodeModal', () => 'SourceCodeModal');
+
+jest.mock('../../data/redux', () => ({
+  selectors: {
+    app: {
+      lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
+      studioEndpointUrl: jest.fn(state => ({ studioEndpointUrl: state })),
+      isLibrary: jest.fn(state => ({ isLibrary: state })),
+      assets: jest.fn(state => ({ assets: state })),
+    },
+  },
+}));
 
 jest.mock('./hooks', () => ({
   editorConfig: jest.fn(args => ({ editorConfig: args })),
@@ -39,7 +51,7 @@ jest.mock('./hooks', () => ({
   filterAssets: jest.fn(() => [{ staTICUrl: '/assets/sOmEaSsET' }]),
 }));
 
-describe('TinyMceEditor', () => {
+describe('TinyMceWidget', () => {
   const props = {
     editorType: 'text',
     editorRef: { current: { value: 'something' } },
@@ -47,6 +59,8 @@ describe('TinyMceEditor', () => {
     assets: { sOmEaSsET: { staTICUrl: '/assets/sOmEaSsET' } },
     lmsEndpointUrl: 'sOmEvaLue.cOm',
     studioEndpointUrl: 'sOmEoThERvaLue.cOm',
+    disabled: false,
+    id: 'sOMeiD',
   };
   describe('snapshots', () => {
     imgModalToggle.mockReturnValue({
@@ -60,17 +74,40 @@ describe('TinyMceEditor', () => {
       closeSourceCodeModal: jest.fn().mockName('modal.closeModal'),
     });
     test('renders as expected with default behavior', () => {
-      expect(shallow(<TinyMceEditor {...props} />)).toMatchSnapshot();
+      expect(shallow(<TinyMceWidget {...props} />)).toMatchSnapshot();
     });
     test('SourcecodeModal is not rendered', () => {
-      const wrapper = shallow(<TinyMceEditor {...props} editorType="problem" />);
+      const wrapper = shallow(<TinyMceWidget {...props} editorType="problem" />);
       expect(wrapper).toMatchSnapshot();
       expect(wrapper.find(SourceCodeModal).length).toBe(0);
     });
     test('ImageUploadModal is not rendered', () => {
-      const wrapper = shallow(<TinyMceEditor {...props} isLibrary />);
+      const wrapper = shallow(<TinyMceWidget {...props} isLibrary />);
       expect(wrapper).toMatchSnapshot();
       expect(wrapper.find(ImageUploadModal).length).toBe(0);
+    });
+  });
+  describe('mapStateToProps', () => {
+    const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
+    test('lmsEndpointUrl from app.lmsEndpointUrl', () => {
+      expect(
+        mapStateToProps(testState).lmsEndpointUrl,
+      ).toEqual(selectors.app.lmsEndpointUrl(testState));
+    });
+    test('studioEndpointUrl from app.studioEndpointUrl', () => {
+      expect(
+        mapStateToProps(testState).studioEndpointUrl,
+      ).toEqual(selectors.app.studioEndpointUrl(testState));
+    });
+    test('assets from app.assets', () => {
+      expect(
+        mapStateToProps(testState).assets,
+      ).toEqual(selectors.app.assets(testState));
+    });
+    test('isLibrary from app.isLibrary', () => {
+      expect(
+        mapStateToProps(testState).isLibrary,
+      ).toEqual(selectors.app.isLibrary(testState));
     });
   });
 });

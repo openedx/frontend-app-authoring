@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`TinyMceEditor snapshots ImageUploadModal is not rendered 1`] = `
+exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
 <Fragment>
   <SourceCodeModal
     close={[MockFunction modal.closeModal]}
@@ -14,6 +14,7 @@ exports[`TinyMceEditor snapshots ImageUploadModal is not rendered 1`] = `
     isOpen={false}
   />
   <Editor
+    disabled={false}
     editorConfig={
       Object {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
@@ -36,11 +37,12 @@ exports[`TinyMceEditor snapshots ImageUploadModal is not rendered 1`] = `
         "studioEndpointUrl": "sOmEoThERvaLue.cOm",
       }
     }
+    id="sOMeiD"
   />
 </Fragment>
 `;
 
-exports[`TinyMceEditor snapshots SourcecodeModal is not rendered 1`] = `
+exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
 <Fragment>
   <ImageUploadModal
     clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
@@ -52,6 +54,7 @@ exports[`TinyMceEditor snapshots SourcecodeModal is not rendered 1`] = `
         },
       }
     }
+    editorType="problem"
     images={
       Array [
         Object {
@@ -60,10 +63,12 @@ exports[`TinyMceEditor snapshots SourcecodeModal is not rendered 1`] = `
       ]
     }
     isOpen={false}
+    lmsEndpointUrl="sOmEvaLue.cOm"
     selection="hooks.selectedImage.selection"
     setSelection={[MockFunction hooks.selectedImage.setSelection]}
   />
   <Editor
+    disabled={false}
     editorConfig={
       Object {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
@@ -86,11 +91,12 @@ exports[`TinyMceEditor snapshots SourcecodeModal is not rendered 1`] = `
         "studioEndpointUrl": "sOmEoThERvaLue.cOm",
       }
     }
+    id="sOMeiD"
   />
 </Fragment>
 `;
 
-exports[`TinyMceEditor snapshots renders as expected with default behavior 1`] = `
+exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] = `
 <Fragment>
   <ImageUploadModal
     clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
@@ -102,6 +108,7 @@ exports[`TinyMceEditor snapshots renders as expected with default behavior 1`] =
         },
       }
     }
+    editorType="text"
     images={
       Array [
         Object {
@@ -110,6 +117,7 @@ exports[`TinyMceEditor snapshots renders as expected with default behavior 1`] =
       ]
     }
     isOpen={false}
+    lmsEndpointUrl="sOmEvaLue.cOm"
     selection="hooks.selectedImage.selection"
     setSelection={[MockFunction hooks.selectedImage.setSelection]}
   />
@@ -125,6 +133,7 @@ exports[`TinyMceEditor snapshots renders as expected with default behavior 1`] =
     isOpen={false}
   />
   <Editor
+    disabled={false}
     editorConfig={
       Object {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
@@ -147,6 +156,7 @@ exports[`TinyMceEditor snapshots renders as expected with default behavior 1`] =
         "studioEndpointUrl": "sOmEoThERvaLue.cOm",
       }
     }
+    id="sOMeiD"
   />
 </Fragment>
 `;

@@ -64,6 +64,20 @@ describe('Answer Options Hooks', () => {
       }));
     });
   });
+  describe('setAnswerTitle', () => {
+    test('it dispatches actions.problem.updateAnswer', () => {
+      const answer = { id: 'A' };
+      const hasSingleAnswer = false;
+      const dispatch = useDispatch();
+      const updatedTitle = 'string';
+      module.setAnswerTitle({ answer, hasSingleAnswer, dispatch })(updatedTitle);
+      expect(dispatch).toHaveBeenCalledWith(actions.problem.updateAnswer({
+        id: answer.id,
+        hasSingleAnswer,
+        title: updatedTitle,
+      }));
+    });
+  });
   describe('setSelectedFeedback', () => {
     test('it dispatches actions.problem.updateAnswer', () => {
       const answer = { id: 'A' };

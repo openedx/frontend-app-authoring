@@ -20,9 +20,11 @@ jest.mock('@tinymce/tinymce-react', () => {
 jest.mock('../EditorContainer', () => 'EditorContainer');
 
 jest.mock('./hooks', () => ({
-  editorConfig: jest.fn(args => ({ editorConfig: args })),
   getContent: jest.fn(args => ({ getContent: args })),
   nullMethod: jest.fn().mockName('hooks.nullMethod'),
+}));
+
+jest.mock('../../sharedComponents/TinyMceWidget/hooks', () => ({
   prepareEditorRef: jest.fn(() => ({
     editorRef: { current: { value: 'something' } },
     refReady: true,
@@ -66,12 +68,9 @@ describe('TextEditor', () => {
     onClose: jest.fn().mockName('props.onClose'),
     // redux
     blockValue: { data: { data: 'eDiTablE Text' } },
-    lmsEndpointUrl: 'sOmEvaLue.cOm',
-    studioEndpointUrl: 'sOmEoThERvaLue.cOm',
     blockFailed: false,
     initializeEditor: jest.fn().mockName('args.intializeEditor'),
     isRaw: false,
-    isLibrary: false,
     assetsFinished: true,
     assets: { sOmEaSsET: { staTICUrl: '/assets/sOmEaSsET' } },
     // inject
@@ -99,16 +98,6 @@ describe('TextEditor', () => {
         mapStateToProps(testState).blockValue,
       ).toEqual(selectors.app.blockValue(testState));
     });
-    test('lmsEndpointUrl from app.lmsEndpointUrl', () => {
-      expect(
-        mapStateToProps(testState).lmsEndpointUrl,
-      ).toEqual(selectors.app.lmsEndpointUrl(testState));
-    });
-    test('studioEndpointUrl from app.studioEndpointUrl', () => {
-      expect(
-        mapStateToProps(testState).studioEndpointUrl,
-      ).toEqual(selectors.app.studioEndpointUrl(testState));
-    });
     test('assets from app.assets', () => {
       expect(
         mapStateToProps(testState).assets,
@@ -125,6 +114,7 @@ describe('TextEditor', () => {
       ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchAssets }));
     });
   });
+
   describe('mapDispatchToProps', () => {
     test('initializeEditor from actions.app.initializeEditor', () => {
       expect(mapDispatchToProps.initializeEditor).toEqual(actions.app.initializeEditor);

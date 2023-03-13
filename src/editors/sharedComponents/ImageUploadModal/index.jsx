@@ -1,10 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { injectIntl } from '@edx/frontend-platform/i18n';
-
-import { selectors } from '../../data/redux';
 import tinyMCEKeys from '../../data/constants/tinyMCE';
 import ImageSettingsModal from './ImageSettingsModal';
 import SelectImageModal from './SelectImageModal';
@@ -18,9 +15,10 @@ export const imgProps = ({
   settings,
   selection,
   lmsEndpointUrl,
+  editorType,
 }) => {
   let url = selection.externalUrl;
-  if (url.startsWith(lmsEndpointUrl)) {
+  if (url.startsWith(lmsEndpointUrl) && editorType !== 'expandable') {
     const sourceEndIndex = lmsEndpointUrl.length;
     url = url.substring(sourceEndIndex);
   }
@@ -36,6 +34,7 @@ export const hooks = {
   createSaveCallback: ({
     close,
     editorRef,
+    editorType,
     setSelection,
     selection,
     lmsEndpointUrl,
@@ -49,6 +48,7 @@ export const hooks = {
         settings,
         selection,
         lmsEndpointUrl,
+        editorType,
       }),
     );
     setSelection(null);
@@ -58,8 +58,18 @@ export const hooks = {
     clearSelection();
     close();
   },
-  imgTag: ({ settings, selection, lmsEndpointUrl }) => {
-    const props = module.imgProps({ settings, selection, lmsEndpointUrl });
+  imgTag: ({
+    settings,
+    selection,
+    lmsEndpointUrl,
+    editorType,
+  }) => {
+    const props = module.imgProps({
+      settings,
+      selection,
+      lmsEndpointUrl,
+      editorType,
+    });
     return `<img ${propsString(props)} />`;
   },
 };
@@ -73,7 +83,7 @@ export const ImageUploadModal = ({
   selection,
   setSelection,
   images,
-  // redux
+  editorType,
   lmsEndpointUrl,
 }) => {
   if (selection) {
@@ -86,6 +96,7 @@ export const ImageUploadModal = ({
           saveToEditor: module.hooks.createSaveCallback({
             close,
             editorRef,
+            editorType,
             selection,
             setSelection,
             lmsEndpointUrl,
@@ -110,6 +121,7 @@ export const ImageUploadModal = ({
 
 ImageUploadModal.defaultProps = {
   editorRef: null,
+  editorType: null,
   selection: null,
 };
 ImageUploadModal.propTypes = {
@@ -128,12 +140,7 @@ ImageUploadModal.propTypes = {
   setSelection: PropTypes.func.isRequired,
   images: PropTypes.shape({}).isRequired,
   lmsEndpointUrl: PropTypes.string.isRequired,
+  editorType: PropTypes.string,
 };
 
-export const mapStateToProps = (state) => ({
-  lmsEndpointUrl: selectors.app.lmsEndpointUrl(state),
-});
-
-export const mapDispatchToProps = {};
-
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ImageUploadModal));
+export default injectIntl(ImageUploadModal);

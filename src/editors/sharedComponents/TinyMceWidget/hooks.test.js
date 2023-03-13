@@ -5,6 +5,14 @@ import { keyStore } from '../../utils';
 import pluginConfig from './pluginConfig';
 import * as module from './hooks';
 
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  createRef: jest.fn(val => ({ ref: val })),
+  useRef: jest.fn(val => ({ current: val })),
+  useEffect: jest.fn(),
+  useCallback: (cb, prereqs) => ({ cb, prereqs }),
+}));
+
 const state = new MockUseState(module);
 const moduleKeys = keyStore(module);
 
@@ -40,8 +48,9 @@ describe('TinyMceEditor hooks', () => {
         const openImgModal = jest.fn();
         const openSourceCodeModal = jest.fn();
         const setImage = jest.fn();
-        const updateQuestion = jest.fn();
+        const updateContent = jest.fn();
         const editorType = 'SOmeEDitor';
+        const lmsEndpointUrl = 'sOmEvaLue.cOm';
         const editor = {
           ui: { registry: { addButton, addToggleButton, addIcon } },
           on: jest.fn(),
@@ -55,10 +64,11 @@ describe('TinyMceEditor hooks', () => {
           .mockImplementationOnce(mockOpenModalWithImage);
         output = module.setupCustomBehavior({
           editorType,
-          updateQuestion,
+          updateContent,
           openImgModal,
           openSourceCodeModal,
           setImage,
+          lmsEndpointUrl,
         })(editor);
         expect(addIcon.mock.calls).toEqual([['textToSpeech', tinyMCE.textToSpeechIcon]]);
         expect(addButton.mock.calls).toEqual([
@@ -84,29 +94,46 @@ describe('TinyMceEditor hooks', () => {
     describe('parseContentForLabels', () => {
       test('it calls getContent and updateQuestion for some content', () => {
         const editor = { getContent: jest.fn(() => '<p><label>Some question label</label></p><p>some content <label>around a label</label> followed by more text</p><img src="/static/soMEImagEURl1.jpeg"/>') };
-        const updateQuestion = jest.fn();
+        const updateContent = jest.fn();
         const content = '<p><label>Some question label</label></p><p>some content </p><p><label>around a label</label></p><p> followed by more text</p><img src="/static/soMEImagEURl1.jpeg"/>';
-        module.parseContentForLabels({ editor, updateQuestion });
+        module.parseContentForLabels({ editor, updateContent });
         expect(editor.getContent).toHaveBeenCalled();
-        expect(updateQuestion).toHaveBeenCalledWith(content);
+        expect(updateContent).toHaveBeenCalledWith(content);
       });
       test('it calls getContent and updateQuestion for empty content', () => {
         const editor = { getContent: jest.fn(() => '') };
-        const updateQuestion = jest.fn();
+        const updateContent = jest.fn();
         const content = '';
-        module.parseContentForLabels({ editor, updateQuestion });
+        module.parseContentForLabels({ editor, updateContent });
         expect(editor.getContent).toHaveBeenCalled();
-        expect(updateQuestion).toHaveBeenCalledWith(content);
+        expect(updateContent).toHaveBeenCalledWith(content);
       });
     });
 
     describe('replaceStaticwithAsset', () => {
-      test('it calls getContent and setContent', () => {
+      test('it calls getContent and setContent for text editor', () => {
         const editor = { getContent: jest.fn(() => '<img src="/static/soMEImagEURl1.jpeg"/>'), setContent: jest.fn() };
         const imageUrls = [{ staticFullUrl: '/assets/soMEImagEURl1.jpeg', displayName: 'soMEImagEURl1.jpeg' }];
-        module.replaceStaticwithAsset(editor, imageUrls);
+        const lmsEndpointUrl = 'sOmEvaLue.cOm';
+        module.replaceStaticwithAsset({ editor, imageUrls, lmsEndpointUrl });
         expect(editor.getContent).toHaveBeenCalled();
         expect(editor.setContent).toHaveBeenCalled();
+      });
+      test('it calls getContent and updateContent for expandable editor', () => {
+        const editor = { getContent: jest.fn(() => '<img src="/static/soMEImagEURl1.jpeg"/>') };
+        const imageUrls = [{ staticFullUrl: '/assets/soMEImagEURl1.jpeg', displayName: 'soMEImagEURl1.jpeg' }];
+        const lmsEndpointUrl = 'sOmEvaLue.cOm';
+        const editorType = 'expandable';
+        const updateContent = jest.fn();
+        module.replaceStaticwithAsset({
+          editor,
+          imageUrls,
+          editorType,
+          lmsEndpointUrl,
+          updateContent,
+        });
+        expect(editor.getContent).toHaveBeenCalled();
+        expect(updateContent).toHaveBeenCalled();
       });
     });
     describe('setAssetToStaticUrl', () => {
@@ -116,7 +143,8 @@ describe('TinyMceEditor hooks', () => {
           { portableUrl: '/static/soMEImagEURl', displayName: 'soMEImagEURl' },
           { portableUrl: '/static/soME_ImagE_URl1', displayName: 'soME ImagE URl1' },
         ];
-        const content = module.setAssetToStaticUrl({ editorValue, assets });
+        const lmsEndpointUrl = 'sOmEvaLue.cOm';
+        const content = module.setAssetToStaticUrl({ editorValue, assets, lmsEndpointUrl });
         expect(content).toEqual('<img src="/static/soME_ImagE_URl1"/> <a href="/static/soMEImagEURl">testing link</a>');
       });
     });
@@ -138,18 +166,22 @@ describe('TinyMceEditor hooks', () => {
         props.openImgModal = jest.fn();
         props.openSourceCodeModal = jest.fn();
         props.initializeEditor = jest.fn();
-        props.updateQuestion = jest.fn();
+        props.updateContent = jest.fn();
         jest.spyOn(module, moduleKeys.setupCustomBehavior)
           .mockImplementationOnce(setupCustomBehavior);
         output = module.editorConfig(props);
       });
       describe('text editor plugins and toolbar', () => {
         test('It configures plugins and toolbars correctly', () => {
-          expect(output.init.plugins).toEqual(pluginConfig({ isLibrary: props.isLibrary }).plugins);
-          expect(output.init.imagetools_toolbar).toEqual(pluginConfig({ isLibrary: props.isLibrary }).imageToolbar);
-          expect(output.init.toolbar).toEqual(pluginConfig({ isLibrary: props.isLibrary }).toolbar);
-          Object.keys(pluginConfig({ isLibrary: props.isLibrary }).config).forEach(key => {
-            expect(output.init[key]).toEqual(pluginConfig({ isLibrary: props.isLibrary }).config[key]);
+          const pluginProps = {
+            isLibrary: props.isLibrary,
+            editorType: props.editorType,
+          };
+          expect(output.init.plugins).toEqual(pluginConfig(pluginProps).plugins);
+          expect(output.init.imagetools_toolbar).toEqual(pluginConfig(pluginProps).imageToolbar);
+          expect(output.init.toolbar).toEqual(pluginConfig(pluginProps).toolbar);
+          Object.keys(pluginConfig(pluginProps).config).forEach(key => {
+            expect(output.init[key]).toEqual(pluginConfig(pluginProps).config[key]);
           });
           // Commented out as we investigate whether this is only needed for image proxy
           // expect(output.init.imagetools_cors_hosts).toMatchObject([props.lmsEndpointUrl]);
@@ -159,31 +191,59 @@ describe('TinyMceEditor hooks', () => {
         test('It configures plugins and toolbars correctly', () => {
           const pluginProps = {
             isLibrary: true,
+            editorType: props.editorType,
           };
           output = module.editorConfig({ ...props, isLibrary: true });
           expect(output.init.plugins).toEqual(pluginConfig(pluginProps).plugins);
           expect(output.init.imagetools_toolbar).toEqual(pluginConfig(pluginProps).imageToolbar);
           expect(output.init.toolbar).toEqual(pluginConfig(pluginProps).toolbar);
+          expect(output.init.quickbars_insert_toolbar).toEqual(pluginConfig(pluginProps).quickbarsInsertToolbar);
+          expect(output.init.quickbars_selection_toolbar).toEqual(pluginConfig(pluginProps).quickbarsSelectionToolbar);
           Object.keys(pluginConfig(pluginProps).config).forEach(key => {
             expect(output.init[key]).toEqual(pluginConfig(pluginProps).config[key]);
           });
         });
       });
-      describe('problem editor plugins and toolbar', () => {
+      describe('problem editor question plugins and toolbar', () => {
         test('It configures plugins and toolbars correctly', () => {
           const pluginProps = {
             isLibrary: props.isLibrary,
-            editorType: 'problem',
+            editorType: 'question',
             placeholder: 'soMEtExT',
           };
           output = module.editorConfig({
             ...props,
-            editorType: 'problem',
+            editorType: 'question',
             placeholder: 'soMEtExT',
           });
           expect(output.init.plugins).toEqual(pluginConfig(pluginProps).plugins);
           expect(output.init.imagetools_toolbar).toEqual(pluginConfig(pluginProps).imageToolbar);
           expect(output.init.toolbar).toEqual(pluginConfig(pluginProps).toolbar);
+          expect(output.init.quickbars_insert_toolbar).toEqual(pluginConfig(pluginProps).quickbarsInsertToolbar);
+          expect(output.init.quickbars_selection_toolbar).toEqual(pluginConfig(pluginProps).quickbarsSelectionToolbar);
+          Object.keys(pluginConfig(pluginProps).config).forEach(key => {
+            expect(output.init[key]).toEqual(pluginConfig(pluginProps).config[key]);
+          });
+        });
+      });
+
+      describe('expandable text area plugins and toolbar', () => {
+        test('It configures plugins, toolbars, and quick toolbars correctly', () => {
+          const pluginProps = {
+            isLibrary: props.isLibrary,
+            editorType: 'expandable',
+            placeholder: 'soMEtExT',
+          };
+          output = module.editorConfig({
+            ...props,
+            editorType: 'expandable',
+            placeholder: 'soMEtExT',
+          });
+          expect(output.init.plugins).toEqual(pluginConfig(pluginProps).plugins);
+          expect(output.init.imagetools_toolbar).toEqual(pluginConfig(pluginProps).imageToolbar);
+          expect(output.init.toolbar).toEqual(pluginConfig(pluginProps).toolbar);
+          expect(output.init.quickbars_insert_toolbar).toEqual(pluginConfig(pluginProps).quickbarsInsertToolbar);
+          expect(output.init.quickbars_selection_toolbar).toEqual(pluginConfig(pluginProps).quickbarsSelectionToolbar);
           Object.keys(pluginConfig(pluginProps).config).forEach(key => {
             expect(output.init[key]).toEqual(pluginConfig(pluginProps).config[key]);
           });
@@ -207,13 +267,27 @@ describe('TinyMceEditor hooks', () => {
         expect(output.init.setup).toEqual(
           setupCustomBehavior({
             editorType: props.editorType,
-            updateQuestion: props.updateQuestion,
+            updateContent: props.updateContent,
             openImgModal: props.openImgModal,
             openSourceCodeModal: props.openSourceCodeModal,
             setImage: props.setSelection,
             imageUrls: module.fetchImageUrls(props.images),
+            lmsEndpointUrl: props.lmsEndpointUrl,
           }),
         );
+      });
+    });
+
+    describe('filterAssets', () => {
+      const emptyAssets = {};
+      const assets = { sOmEaSsET: { contentType: 'image/' } };
+      test('returns an empty array', () => {
+        const emptyFilterAssets = module.filterAssets({ assets: emptyAssets });
+        expect(emptyFilterAssets).toEqual([]);
+      });
+      test('returns filtered array of images', () => {
+        const FilteredAssets = module.filterAssets({ assets });
+        expect(FilteredAssets).toEqual([{ contentType: 'image/' }]);
       });
     });
 
