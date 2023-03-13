@@ -13,7 +13,6 @@ import ResetCard from './settingsComponents/ResetCard';
 import MatlabCard from './settingsComponents/MatlabCard';
 import TimerCard from './settingsComponents/TimerCard';
 import TypeCard from './settingsComponents/TypeCard';
-import GeneralFeedbackCard from './settingsComponents/GeneralFeedback/index';
 import GroupFeedbackCard from './settingsComponents/GroupFeedback/index';
 import SwitchToAdvancedEditorCard from './settingsComponents/SwitchToAdvancedEditorCard';
 import messages from './messages';
@@ -28,7 +27,6 @@ export const SettingsWidget = ({
   problemType,
   // redux
   answers,
-  generalFeedback,
   groupFeedbackList,
   blockTitle,
   correctAnswerCount,
@@ -41,10 +39,7 @@ export const SettingsWidget = ({
   const { isAdvancedCardsVisible, showAdvancedCards } = showAdvancedSettingsCards();
 
   const feedbackCard = () => {
-    if (problemType === ProblemTypeKeys.ADVANCED) {
-      return (<></>);
-    }
-    if ([ProblemTypeKeys.MULTISELECT, ProblemTypeKeys.TEXTINPUT, ProblemTypeKeys.NUMERIC].includes(problemType)) {
+    if ([ProblemTypeKeys.MULTISELECT].includes(problemType)) {
       return (
         <div className="mt-3"><GroupFeedbackCard
           groupFeedbacks={groupFeedbackList}
@@ -54,13 +49,7 @@ export const SettingsWidget = ({
         </div>
       );
     }
-    return (
-      <div className="mt-3"><GeneralFeedbackCard
-        generalFeedback={generalFeedback}
-        updateSettings={updateField}
-      />
-      </div>
-    );
+    return (<></>);
   };
 
   return (
@@ -144,7 +133,6 @@ SettingsWidget.propTypes = {
     title: PropTypes.string,
     unselectedFeedback: PropTypes.string,
   })).isRequired,
-  generalFeedback: PropTypes.string.isRequired,
   groupFeedbackList: PropTypes.arrayOf(
     PropTypes.shape(
       {
@@ -166,7 +154,6 @@ SettingsWidget.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  generalFeedback: selectors.problem.generalFeedback(state),
   groupFeedbackList: selectors.problem.groupFeedbackList(state),
   settings: selectors.problem.settings(state),
   answers: selectors.problem.answers(state),

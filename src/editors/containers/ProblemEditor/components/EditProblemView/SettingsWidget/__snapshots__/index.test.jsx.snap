@@ -23,11 +23,6 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget for Advanced 
       problemType="stringresponse"
     />
   </div>
-  <div
-    className="mt-3"
-  >
-    <GroupFeedback />
-  </div>
   <div>
     <Advanced
       open={false}
@@ -110,11 +105,6 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page 1`] = `
       problemType="stringresponse"
     />
   </div>
-  <div
-    className="mt-3"
-  >
-    <GroupFeedback />
-  </div>
   <div>
     <Advanced
       open={true}
@@ -196,11 +186,6 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page advanced
     <HintsCard
       problemType="stringresponse"
     />
-  </div>
-  <div
-    className="mt-3"
-  >
-    <GroupFeedback />
   </div>
   <div>
     <Advanced
