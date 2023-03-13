@@ -70,6 +70,7 @@
   "devDependencies": {
     "@edx/browserslist-config": "1.0.2",
     "@edx/frontend-build": "^12.3.0",
+    "@edx/reactifex": "^2.1.1",
     "@sheerun/mutationobserver-shim": "0.3.3",
     "@testing-library/dom": "8.11.3",
     "@testing-library/react": "12.1.4",
@@ -80,7 +81,6 @@
     "jest": "27.5.1",
     "jest-fetch-mock": "3.0.3",
     "mock-xmlhttprequest": "7.0.4",
-    "reactifex": "1.1.1",
     "redux-mock-store": "1.5.4",
     "rosie": "2.0.1",
     "webpack-merge": "5.8.0"
