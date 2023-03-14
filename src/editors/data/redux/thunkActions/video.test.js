@@ -22,6 +22,7 @@ jest.mock('..', () => ({
 }));
 jest.mock('./requests', () => ({
   uploadAsset: (args) => ({ uploadAsset: args }),
+  videoSharingEnabledForCourse: (args) => ({ videoSharingEnabledForCourse: args }),
   allowThumbnailUpload: (args) => ({ allowThumbnailUpload: args }),
   uploadThumbnail: (args) => ({ uploadThumbnail: args }),
   deleteTranscript: (args) => ({ deleteTranscript: args }),
@@ -50,6 +51,7 @@ const mockThumbnailResponse = { data: { image_url: 'soMEimAGEUrL' } };
 const thumbnailUrl = 'soMEimAGEUrL';
 const mockAllowThumbnailUpload = { data: { allowThumbnailUpload: 'soMEbOolEAn' } };
 const mockAllowTranscriptImport = { data: { command: 'import' } };
+const mockVideoSharingEnabledForCourse = { data: { videoSharingEnabled: 'someBOoOoOlean' } };
 
 const testMetadata = {
   download_track: 'dOWNlOAdTraCK',
@@ -98,6 +100,7 @@ describe('video thunkActions', () => {
     let dispatchedLoad;
     let dispatchedAction1;
     let dispatchedAction2;
+    let dispatchedAction3;
     beforeEach(() => {
       jest.spyOn(thunkActions, thunkActionsKeys.determineVideoSources).mockReturnValue({
         videoUrl: 'videOsOurce',
@@ -117,7 +120,12 @@ describe('video thunkActions', () => {
         testMetadata.transcripts,
       );
       thunkActions.loadVideoData()(dispatch, getState);
-      [[dispatchedLoad], [dispatchedAction1], [dispatchedAction2]] = dispatch.mock.calls;
+      [
+        [dispatchedLoad],
+        [dispatchedAction1],
+        [dispatchedAction2],
+        [dispatchedAction3],
+      ] = dispatch.mock.calls;
     });
     afterEach(() => {
       jest.restoreAllMocks();
@@ -126,9 +134,13 @@ describe('video thunkActions', () => {
       expect(dispatchedLoad).not.toEqual(undefined);
       expect(dispatchedAction1.allowThumbnailUpload).not.toEqual(undefined);
     });
+    it('dispatches videoSharingEnabledForCourse action', () => {
+      expect(dispatchedLoad).not.toEqual(undefined);
+      expect(dispatchedAction2.videoSharingEnabledForCourse).not.toEqual(undefined);
+    });
     it('dispatches checkTranscriptsForImport action', () => {
       expect(dispatchedLoad).not.toEqual(undefined);
-      expect(dispatchedAction2.checkTranscriptsForImport).not.toEqual(undefined);
+      expect(dispatchedAction3.checkTranscriptsForImport).not.toEqual(undefined);
     });
     it('dispatches actions.video.load', () => {
       expect(dispatchedLoad.load).toEqual({
@@ -170,7 +182,12 @@ describe('video thunkActions', () => {
       }));
       dispatch.mockClear();
 
-      dispatchedAction2.checkTranscriptsForImport.onSuccess(mockAllowTranscriptImport);
+      dispatchedAction2.videoSharingEnabledForCourse.onSuccess(mockVideoSharingEnabledForCourse);
+      expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
+        videoSharingEnabledForCourse: mockVideoSharingEnabledForCourse.data.videoSharingEnabled,
+      }));
+
+      dispatchedAction3.checkTranscriptsForImport.onSuccess(mockAllowTranscriptImport);
       expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
         allowTranscriptImport: true,
       }));

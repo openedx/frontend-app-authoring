@@ -36,6 +36,12 @@ export const apiMethods = {
       data,
     );
   },
+  videoSharingEnabledForCourse: ({
+    studioEndpointUrl,
+    learningContextId,
+  }) => get(
+    urls.videoSharingEnabledForCourse({ studioEndpointUrl, learningContextId }),
+  ),
   allowThumbnailUpload: ({
     studioEndpointUrl,
   }) => get(

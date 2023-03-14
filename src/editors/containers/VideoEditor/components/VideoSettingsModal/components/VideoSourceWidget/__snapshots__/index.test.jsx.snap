@@ -122,6 +122,152 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
         />
       </OverlayTrigger>
       <ActionRow.Spacer />
+    </ActionRow>
+  </Form.Group>
+  <div
+    className="my-4 border-primary-100 border-bottom"
+  />
+  <Button
+    className="text-primary-500 font-weight-bold pl-0"
+    onClick={[Function]}
+    size="sm"
+    variant="link"
+  >
+    <FormattedMessage
+      defaultMessage="Add a video URL"
+      description="Label for add a video URL button"
+      id="authoring.videoeditor.videoSource.fallbackVideo.addButtonLabel"
+    />
+  </Button>
+</injectIntl(ShimmedIntlComponent)>
+`;
+
+exports[`VideoSourceWidget snapshots snapshots: renders as expected with videoSharingEnabledForCourse=true 1`] = `
+<injectIntl(ShimmedIntlComponent)
+  fontSize="x-small"
+  title="Video source"
+>
+  <Form.Group>
+    <div
+      className="border-primary-100 border-bottom pb-4"
+    >
+      <Form.Control
+        floatingLabel="Video ID"
+        onBlur={[Function]}
+        onChange={[MockFunction]}
+        value=""
+      />
+      <Component
+        className="text-primary-300 mb-4"
+      >
+        <FormattedMessage
+          defaultMessage="If you were assigned a video ID by edX, enter the ID here."
+          description="Feedback for video ID field"
+          id="authoring.videoeditor.videoSource.videoId.feedback"
+        />
+      </Component>
+      <Form.Control
+        floatingLabel="Video URL"
+        onBlur={[Function]}
+        onChange={[MockFunction]}
+        value=""
+      />
+      <Component
+        className="text-primary-300"
+      >
+        <FormattedMessage
+          defaultMessage="The URL for your video. This can be a YouTube URL, or a link
+    to an .mp4, .ogg, or .webm video file hosted elsewhere on the internet."
+          description="Feedback for video URL field"
+          id="authoring.videoeditor.videoSource.videoUrl.feedback"
+        />
+      </Component>
+    </div>
+    <div
+      className="mt-4"
+    >
+      <FormattedMessage
+        defaultMessage="Fallback videos"
+        description="Title for the fallback videos section"
+        id="authoring.videoeditor.videoSource.fallbackVideo.title"
+      />
+    </div>
+    <div
+      className="mt-3"
+    >
+      <FormattedMessage
+        defaultMessage="To be sure all learners can access the video, edX
+    recommends providing additional videos in both .mp4 and
+    .webm formats.  The first listed video compatible with the
+    learner's device will play."
+        description="Test explaining reason for fallback videos"
+        id="authoring.videoeditor.videoSource.fallbackVideo.message"
+      />
+    </div>
+    <Form.Row
+      className="mt-3.5 mx-0 flex-nowrap"
+    >
+      <Form.Control
+        floatingLabel="Video URL"
+      />
+      <IconButtonWithTooltip
+        alt="Delete"
+        iconAs="Icon"
+        key="top-delete-somEUrL"
+        onClick={[Function]}
+        tooltipContent="Delete"
+        tooltipPlacement="top"
+      />
+    </Form.Row>
+    <ActionRow
+      className="mt-4.5"
+    >
+      <Form.Checkbox
+        checked={false}
+        className="decorative-control-label"
+        onChange={[MockFunction]}
+      >
+        <div
+          className="small text-gray-700"
+        >
+          <FormattedMessage
+            defaultMessage="Allow video downloads"
+            description="Label for allow video downloads checkbox"
+            id="authoring.videoeditor.videoSource.allowDownloadCheckboxLabel"
+          />
+        </div>
+      </Form.Checkbox>
+      <OverlayTrigger
+        key="top"
+        overlay={
+          <Tooltip
+            id="tooltip-top"
+          >
+            <FormattedMessage
+              defaultMessage="Allow learners to download versions of this video in
+    different formats if they cannot use the edX video player or do not have
+    access to YouTube."
+              description="Message for allow video downloads checkbox"
+              id="authoring.videoeditor.videoSource.allowDownloadTooltipMessage"
+            />
+          </Tooltip>
+        }
+        placement="top"
+      >
+        <Icon
+          style={
+            Object {
+              "height": "16px",
+              "width": "16px",
+            }
+          }
+        />
+      </OverlayTrigger>
+      <ActionRow.Spacer />
+    </ActionRow>
+    <ActionRow
+      className="mt-4.5"
+    >
       <Form.Checkbox
         checked={false}
         className="decorative-control-label"
@@ -164,6 +310,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
           }
         />
       </OverlayTrigger>
+      <ActionRow.Spacer />
     </ActionRow>
   </Form.Group>
   <div

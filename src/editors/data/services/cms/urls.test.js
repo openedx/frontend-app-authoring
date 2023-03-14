@@ -6,6 +6,7 @@ import {
   blockAncestor,
   blockStudioView,
   courseAssets,
+  videoSharingEnabledForCourse,
   allowThumbnailUpload,
   thumbnailUpload,
   downloadVideoTranscriptURL,
@@ -87,6 +88,12 @@ describe('cms url methods', () => {
     it('returns url with studioEndpointUrl', () => {
       expect(allowThumbnailUpload({ studioEndpointUrl }))
         .toEqual(`${studioEndpointUrl}/video_images_upload_enabled`);
+    });
+  });
+  describe('videoSharingEnabledForCourse', () => {
+    it('returns url with studioEndpointUrl and learningContextId', () => {
+      expect(videoSharingEnabledForCourse({ studioEndpointUrl, learningContextId }))
+        .toEqual(`${studioEndpointUrl}/video_sharing_enabled/${learningContextId}`);
     });
   });
   describe('thumbnailUpload', () => {

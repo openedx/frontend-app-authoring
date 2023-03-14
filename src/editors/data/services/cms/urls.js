@@ -35,6 +35,10 @@ export const allowThumbnailUpload = ({ studioEndpointUrl }) => (
   `${studioEndpointUrl}/video_images_upload_enabled`
 );
 
+export const videoSharingEnabledForCourse = ({ studioEndpointUrl, learningContextId }) => (
+  `${studioEndpointUrl}/video_sharing_enabled/${learningContextId}`
+);
+
 export const thumbnailUpload = ({ studioEndpointUrl, learningContextId, videoId }) => (
   `${studioEndpointUrl}/video_images/${learningContextId}/${videoId}`
 );

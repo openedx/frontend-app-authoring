@@ -11,6 +11,7 @@ const initialState = {
   [RequestKeys.saveBlock]: { status: RequestStates.inactive },
   [RequestKeys.uploadAsset]: { status: RequestStates.inactive },
   [RequestKeys.allowThumbnailUpload]: { status: RequestStates.inactive },
+  [RequestKeys.videoSharingEnabledForCourse]: { status: RequestStates.inactive },
   [RequestKeys.uploadThumbnail]: { status: RequestStates.inactive },
   [RequestKeys.uploadTranscript]: { status: RequestStates.inactive },
   [RequestKeys.deleteTranscript]: { status: RequestStates.inactive },

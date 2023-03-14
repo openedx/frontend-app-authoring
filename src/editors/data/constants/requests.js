@@ -16,6 +16,7 @@ export const RequestKeys = StrictDict({
   saveBlock: 'saveBlock',
   uploadAsset: 'uploadAsset',
   allowThumbnailUpload: 'allowThumbnailUpload',
+  videoSharingEnabledForCourse: 'videoSharingEnabledForCourse',
   uploadThumbnail: 'uploadThumbnail',
   uploadTranscript: 'uploadTranscript',
   deleteTranscript: 'deleteTranscript',

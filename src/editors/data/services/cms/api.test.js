@@ -22,6 +22,7 @@ jest.mock('./urls', () => ({
   thumbnailUpload: jest.fn().mockName('urls.thumbnailUpload'),
   checkTranscriptsForImport: jest.fn().mockName('urls.checkTranscriptsForImport'),
   replaceTranscript: jest.fn().mockName('urls.replaceTranscript'),
+  videoSharingEnabledForCourse: jest.fn().mockName('urls.videoSharingEnabledForCourse'),
 }));
 
 jest.mock('./utils', () => ({
@@ -249,6 +250,15 @@ describe('cms api', () => {
       it('should call get with url.allowThumbnailUpload', () => {
         apiMethods.allowThumbnailUpload({ studioEndpointUrl });
         expect(get).toHaveBeenCalledWith(urls.allowThumbnailUpload({ studioEndpointUrl }));
+      });
+    });
+  });
+  describe('videoSharing', () => {
+    describe('videoSharingEnabledForCourse', () => {
+      it('should call get with url.videoSharingEnabledForCourse', () => {
+        const args = { studioEndpointUrl, learningContextId };
+        apiMethods.videoSharingEnabledForCourse({ ...args });
+        expect(get).toHaveBeenCalledWith(urls.videoSharingEnabledForCourse({ ...args }));
       });
     });
   });

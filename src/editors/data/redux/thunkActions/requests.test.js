@@ -29,6 +29,7 @@ jest.mock('../../services/cms/api', () => ({
   fetchAssets: ({ id, url }) => ({ id, url }),
   uploadAsset: (args) => args,
   loadImages: jest.fn(),
+  videoSharingEnabledForCourse: (args) => args,
   allowThumbnailUpload: (args) => args,
   uploadThumbnail: (args) => args,
   uploadTranscript: (args) => args,
@@ -298,6 +299,21 @@ describe('requests thunkActions module', () => {
             learningContextId: selectors.app.learningContextId(testState),
             asset,
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          }),
+        },
+      });
+    });
+    describe('videoSharingEnabledForCourse', () => {
+      testNetworkRequestAction({
+        action: requests.videoSharingEnabledForCourse,
+        args: { ...fetchParams },
+        expectedString: 'with videoSharingEnabledForCourse promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.videoSharingEnabledForCourse,
+          promise: api.videoSharingEnabledForCourse({
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+            learningContextId: selectors.app.learningContextId(testState),
           }),
         },
       });

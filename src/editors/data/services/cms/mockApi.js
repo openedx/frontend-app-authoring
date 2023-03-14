@@ -123,6 +123,10 @@ export const fetchCourseDetails = ({ studioEndpointUrl, learningContextId }) => 
   },
 });
 // eslint-disable-next-line
+export const videoSharingEnabledForCourse = ({ studioEndpointUrl, learningContextId }) => mockPromise({
+  data: true,
+});
+// eslint-disable-next-line
 export const allowThumbnailUpload = ({ studioEndpointUrl }) => mockPromise({
   data: true,
 });

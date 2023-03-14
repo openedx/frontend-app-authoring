@@ -136,6 +136,17 @@ export const fetchAssets = ({ ...rest }) => (dispatch, getState) => {
   }));
 };
 
+export const videoSharingEnabledForCourse = ({ ...rest }) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.videoSharingEnabledForCourse,
+    promise: api.videoSharingEnabledForCourse({
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      learningContextId: selectors.app.learningContextId(getState()),
+    }),
+    ...rest,
+  }));
+};
+
 export const allowThumbnailUpload = ({ ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
     requestKey: RequestKeys.allowThumbnailUpload,
@@ -279,6 +290,7 @@ export default StrictDict({
   saveBlock,
   fetchAssets,
   uploadAsset,
+  videoSharingEnabledForCourse,
   allowThumbnailUpload,
   uploadThumbnail,
   deleteTranscript,
