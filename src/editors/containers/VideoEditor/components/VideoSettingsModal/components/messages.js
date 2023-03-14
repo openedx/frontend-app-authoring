@@ -61,6 +61,20 @@ export const messages = {
     id: 'authoring.videoeditor.duration.custom',
     defaultMessage: 'Custom: {total}',
     description: 'Text describing a video with custom start time and custom stop time, or just a custom stop time for a collapsed widget',
+  noTranscriptsAdded: {
+    id: 'authoring.videoeditor.transcripts.empty',
+    defaultMessage: 'No transcripts added',
+    description: 'Message shown when the user has not selected any transcripts for the video.',
+  },
+  videoTypeYoutube: {
+    id: 'authoring.videoeditor.videotype.youtube',
+    defaultMessage: 'Youtube video',
+    description: 'Shown on the preview card if the video is from youtube.com.',
+  },
+  videoTypeOther: {
+    id: 'authoring.videoeditor.videotype.other',
+    defaultMessage: 'Other video',
+    description: 'Shown on the preview card if the video source could not be identified.',
   },
 };
 

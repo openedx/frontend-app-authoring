@@ -105,9 +105,11 @@ export const fileInput = ({ setThumbnailSrc, imgRef, fileSizeError }) => {
             const [resampledUrl, resampledFile] = module.resampleImage({ image, filename: file.name });
             setThumbnailSrc(resampledUrl);
             dispatch(thunkActions.video.uploadThumbnail({ thumbnail: resampledFile }));
+            dispatch(actions.video.updateField({ thumbnail: resampledUrl }));
             return;
           }
           dispatch(thunkActions.video.uploadThumbnail({ thumbnail: file }));
+          dispatch(actions.video.updateField({ thumbnail: reader.result }));
         };
       };
       dispatch(actions.video.updateField({ thumbnail: ' ' }));
