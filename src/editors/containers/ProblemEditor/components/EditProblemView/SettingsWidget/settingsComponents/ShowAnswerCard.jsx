@@ -56,7 +56,7 @@ export const ShowAnswerCard = ({
       </Form.Group>
       {showAttempts
         && (
-        <Form.Group className="pb-0 mb-0">
+        <Form.Group className="pb-0 mb-0 mt-4">
           <Form.Control
             type="number"
             value={showAnswer.afterAttempts}
