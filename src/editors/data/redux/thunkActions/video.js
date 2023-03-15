@@ -57,13 +57,9 @@ export const loadVideoData = () => (dispatch, getState) => {
     },
     thumbnail: rawVideoData.thumbnail,
   }));
-  dispatch(requests.allowThumbnailUpload({
+  dispatch(requests.fetchVideoFeatures({
     onSuccess: (response) => dispatch(actions.video.updateField({
       allowThumbnailUpload: response.data.allowThumbnailUpload,
-    })),
-  }));
-  dispatch(requests.videoSharingEnabledForCourse({
-    onSuccess: (response) => dispatch(actions.video.updateField({
       videoSharingEnabledForCourse: response.data.videoSharingEnabled,
     })),
   }));

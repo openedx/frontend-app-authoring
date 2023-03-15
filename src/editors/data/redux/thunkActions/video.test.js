@@ -22,7 +22,6 @@ jest.mock('..', () => ({
 }));
 jest.mock('./requests', () => ({
   uploadAsset: (args) => ({ uploadAsset: args }),
-  videoSharingEnabledForCourse: (args) => ({ videoSharingEnabledForCourse: args }),
   allowThumbnailUpload: (args) => ({ allowThumbnailUpload: args }),
   uploadThumbnail: (args) => ({ uploadThumbnail: args }),
   deleteTranscript: (args) => ({ deleteTranscript: args }),
@@ -31,6 +30,7 @@ jest.mock('./requests', () => ({
   updateTranscriptLanguage: (args) => ({ updateTranscriptLanguage: args }),
   checkTranscriptsForImport: (args) => ({ checkTranscriptsForImport: args }),
   importTranscript: (args) => ({ importTranscript: args }),
+  fetchVideoFeatures: (args) => ({ fetchVideoFeatures: args }),
 }));
 
 jest.mock('../../../utils', () => ({
@@ -49,9 +49,13 @@ const mockFilename = 'soMEtRANscRipT.srt';
 const mockThumbnail = 'sOMefILE';
 const mockThumbnailResponse = { data: { image_url: 'soMEimAGEUrL' } };
 const thumbnailUrl = 'soMEimAGEUrL';
-const mockAllowThumbnailUpload = { data: { allowThumbnailUpload: 'soMEbOolEAn' } };
 const mockAllowTranscriptImport = { data: { command: 'import' } };
-const mockVideoSharingEnabledForCourse = { data: { videoSharingEnabled: 'someBOoOoOlean' } };
+const mockVideoFeatures = {
+  data: {
+    allowThumbnailUpload: 'soMEbOolEAn',
+    videoSharingEnabled: 'someBOoOoOlean',
+  },
+};
 
 const testMetadata = {
   download_track: 'dOWNlOAdTraCK',
@@ -100,7 +104,6 @@ describe('video thunkActions', () => {
     let dispatchedLoad;
     let dispatchedAction1;
     let dispatchedAction2;
-    let dispatchedAction3;
     beforeEach(() => {
       jest.spyOn(thunkActions, thunkActionsKeys.determineVideoSources).mockReturnValue({
         videoUrl: 'videOsOurce',
@@ -124,23 +127,18 @@ describe('video thunkActions', () => {
         [dispatchedLoad],
         [dispatchedAction1],
         [dispatchedAction2],
-        [dispatchedAction3],
       ] = dispatch.mock.calls;
     });
     afterEach(() => {
       jest.restoreAllMocks();
     });
-    it('dispatches allowThumbnailUpload action', () => {
+    it('dispatches fetchVideoFeatures action', () => {
       expect(dispatchedLoad).not.toEqual(undefined);
-      expect(dispatchedAction1.allowThumbnailUpload).not.toEqual(undefined);
-    });
-    it('dispatches videoSharingEnabledForCourse action', () => {
-      expect(dispatchedLoad).not.toEqual(undefined);
-      expect(dispatchedAction2.videoSharingEnabledForCourse).not.toEqual(undefined);
+      expect(dispatchedAction1.fetchVideoFeatures).not.toEqual(undefined);
     });
     it('dispatches checkTranscriptsForImport action', () => {
       expect(dispatchedLoad).not.toEqual(undefined);
-      expect(dispatchedAction3.checkTranscriptsForImport).not.toEqual(undefined);
+      expect(dispatchedAction2.checkTranscriptsForImport).not.toEqual(undefined);
     });
     it('dispatches actions.video.load', () => {
       expect(dispatchedLoad.load).toEqual({
@@ -176,18 +174,14 @@ describe('video thunkActions', () => {
     });
     it('dispatches actions.video.updateField on success', () => {
       dispatch.mockClear();
-      dispatchedAction1.allowThumbnailUpload.onSuccess(mockAllowThumbnailUpload);
+      dispatchedAction1.fetchVideoFeatures.onSuccess(mockVideoFeatures);
       expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
-        allowThumbnailUpload: mockAllowThumbnailUpload.data.allowThumbnailUpload,
+        allowThumbnailUpload: mockVideoFeatures.data.allowThumbnailUpload,
+        videoSharingEnabledForCourse: mockVideoFeatures.data.videoSharingEnabled,
       }));
       dispatch.mockClear();
 
-      dispatchedAction2.videoSharingEnabledForCourse.onSuccess(mockVideoSharingEnabledForCourse);
-      expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
-        videoSharingEnabledForCourse: mockVideoSharingEnabledForCourse.data.videoSharingEnabled,
-      }));
-
-      dispatchedAction3.checkTranscriptsForImport.onSuccess(mockAllowTranscriptImport);
+      dispatchedAction2.checkTranscriptsForImport.onSuccess(mockAllowTranscriptImport);
       expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
         allowTranscriptImport: true,
       }));

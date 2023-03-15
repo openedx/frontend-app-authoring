@@ -22,7 +22,7 @@ jest.mock('./urls', () => ({
   thumbnailUpload: jest.fn().mockName('urls.thumbnailUpload'),
   checkTranscriptsForImport: jest.fn().mockName('urls.checkTranscriptsForImport'),
   replaceTranscript: jest.fn().mockName('urls.replaceTranscript'),
-  videoSharingEnabledForCourse: jest.fn().mockName('urls.videoSharingEnabledForCourse'),
+  videoFeatures: jest.fn().mockName('urls.videoFeatures'),
 }));
 
 jest.mock('./utils', () => ({
@@ -244,21 +244,6 @@ describe('cms api', () => {
           urls.thumbnailUpload({ studioEndpointUrl, learningContextId, videoId }),
           mockFormdata,
         );
-      });
-    });
-    describe('allowThumbnailUpload', () => {
-      it('should call get with url.allowThumbnailUpload', () => {
-        apiMethods.allowThumbnailUpload({ studioEndpointUrl });
-        expect(get).toHaveBeenCalledWith(urls.allowThumbnailUpload({ studioEndpointUrl }));
-      });
-    });
-  });
-  describe('videoSharing', () => {
-    describe('videoSharingEnabledForCourse', () => {
-      it('should call get with url.videoSharingEnabledForCourse', () => {
-        const args = { studioEndpointUrl, learningContextId };
-        apiMethods.videoSharingEnabledForCourse({ ...args });
-        expect(get).toHaveBeenCalledWith(urls.videoSharingEnabledForCourse({ ...args }));
       });
     });
   });
@@ -514,6 +499,13 @@ describe('cms api', () => {
       const licenseType = 'all-rights-reserved';
       const licenseDetails = {};
       expect(api.processLicense(licenseType, licenseDetails)).toEqual('all-rights-reserved');
+    });
+  });
+  describe('fetchVideoFeatures', () => {
+    it('should call get with url.videoFeatures', () => {
+      const args = { studioEndpointUrl, learningContextId };
+      apiMethods.fetchVideoFeatures({ ...args });
+      expect(get).toHaveBeenCalledWith(urls.videoFeatures({ ...args }));
     });
   });
 });

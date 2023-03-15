@@ -36,17 +36,6 @@ export const apiMethods = {
       data,
     );
   },
-  videoSharingEnabledForCourse: ({
-    studioEndpointUrl,
-    learningContextId,
-  }) => get(
-    urls.videoSharingEnabledForCourse({ studioEndpointUrl, learningContextId }),
-  ),
-  allowThumbnailUpload: ({
-    studioEndpointUrl,
-  }) => get(
-    urls.allowThumbnailUpload({ studioEndpointUrl }),
-  ),
   uploadThumbnail: ({
     studioEndpointUrl,
     learningContextId,
@@ -210,6 +199,12 @@ export const apiMethods = {
       learningContextId,
       title,
     }),
+  ),
+  fetchVideoFeatures: ({
+    studioEndpointUrl,
+    learningContextId,
+  }) => get(
+    urls.videoFeatures({ studioEndpointUrl, learningContextId }),
   ),
 };
 

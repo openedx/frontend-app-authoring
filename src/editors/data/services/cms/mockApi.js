@@ -123,14 +123,6 @@ export const fetchCourseDetails = ({ studioEndpointUrl, learningContextId }) => 
   },
 });
 // eslint-disable-next-line
-export const videoSharingEnabledForCourse = ({ studioEndpointUrl, learningContextId }) => mockPromise({
-  data: true,
-});
-// eslint-disable-next-line
-export const allowThumbnailUpload = ({ studioEndpointUrl }) => mockPromise({
-  data: true,
-});
-// eslint-disable-next-line
 export const checkTranscripts = ({youTubeId, studioEndpointUrl, blockId, videoId}) => mockPromise({
   data: {
     command: 'import',
@@ -145,6 +137,13 @@ export const importTranscript = ({youTubeId, studioEndpointUrl, blockId}) => moc
 // eslint-disable-next-line
 export const fetchAdvanceSettings = ({ studioEndpointUrl, learningContextId }) => mockPromise({
   data: { allow_unsupported_xblocks: { value: true } },
+});
+// eslint-disable-next-line
+export const fetchVideoFeatures = ({ studioEndpointUrl, learningContextId }) => mockPromise({
+  data: {
+    allowThumbnailUpload: true,
+    videoSharingEnabledForCourse: true,
+  },
 });
 
 export const normalizeContent = ({

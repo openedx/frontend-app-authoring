@@ -31,14 +31,6 @@ export const courseAssets = ({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/assets/${learningContextId}/?page_size=500`
 );
 
-export const allowThumbnailUpload = ({ studioEndpointUrl }) => (
-  `${studioEndpointUrl}/video_images_upload_enabled`
-);
-
-export const videoSharingEnabledForCourse = ({ studioEndpointUrl, learningContextId }) => (
-  `${studioEndpointUrl}/video_sharing_enabled/${learningContextId}`
-);
-
 export const thumbnailUpload = ({ studioEndpointUrl, learningContextId, videoId }) => (
   `${studioEndpointUrl}/video_images/${learningContextId}/${videoId}`
 );
@@ -69,4 +61,8 @@ export const replaceTranscript = ({ studioEndpointUrl, parameters }) => (
 
 export const courseAdvanceSettings = ({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/api/contentstore/v0/advanced_settings/${learningContextId}`
+);
+
+export const videoFeatures = ({ studioEndpointUrl, learningContextId }) => (
+  `${studioEndpointUrl}/video_features/${learningContextId}`
 );

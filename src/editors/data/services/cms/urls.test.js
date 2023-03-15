@@ -6,8 +6,6 @@ import {
   blockAncestor,
   blockStudioView,
   courseAssets,
-  videoSharingEnabledForCourse,
-  allowThumbnailUpload,
   thumbnailUpload,
   downloadVideoTranscriptURL,
   videoTranscripts,
@@ -15,6 +13,7 @@ import {
   courseDetailsUrl,
   checkTranscriptsForImport,
   replaceTranscript,
+  videoFeatures,
 } from './urls';
 
 describe('cms url methods', () => {
@@ -84,18 +83,6 @@ describe('cms url methods', () => {
         .toEqual(`${studioEndpointUrl}/assets/${learningContextId}/?page_size=500`);
     });
   });
-  describe('allowThumbnailUpload', () => {
-    it('returns url with studioEndpointUrl', () => {
-      expect(allowThumbnailUpload({ studioEndpointUrl }))
-        .toEqual(`${studioEndpointUrl}/video_images_upload_enabled`);
-    });
-  });
-  describe('videoSharingEnabledForCourse', () => {
-    it('returns url with studioEndpointUrl and learningContextId', () => {
-      expect(videoSharingEnabledForCourse({ studioEndpointUrl, learningContextId }))
-        .toEqual(`${studioEndpointUrl}/video_sharing_enabled/${learningContextId}`);
-    });
-  });
   describe('thumbnailUpload', () => {
     it('returns url with studioEndpointUrl, learningContextId, and videoId', () => {
       expect(thumbnailUpload({ studioEndpointUrl, learningContextId, videoId }))
@@ -136,6 +123,12 @@ describe('cms url methods', () => {
     it('returns url with studioEndpointUrl and parameters', () => {
       expect(replaceTranscript({ studioEndpointUrl, parameters }))
         .toEqual(`${studioEndpointUrl}/transcripts/replace?data=${parameters}`);
+    });
+  });
+  describe('videoFeatures', () => {
+    it('returns url with studioEndpointUrl and learningContextId', () => {
+      expect(videoFeatures({ studioEndpointUrl, learningContextId }))
+        .toEqual(`${studioEndpointUrl}/video_features/${learningContextId}`);
     });
   });
 });
