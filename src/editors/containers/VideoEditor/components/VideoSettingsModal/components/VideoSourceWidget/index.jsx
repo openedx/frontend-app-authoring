@@ -1,5 +1,6 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import {
   Form,
@@ -21,6 +22,7 @@ import {
 import * as widgetHooks from '../hooks';
 import * as hooks from './hooks';
 import messages from './messages';
+import { selectors } from '../../../../../../data/redux';
 
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 
@@ -30,6 +32,8 @@ import CollapsibleFormWidget from '../CollapsibleFormWidget';
 export const VideoSourceWidget = ({
   // injected
   intl,
+  // redux
+  videoSharingEnabledForCourse,
 }) => {
   const dispatch = useDispatch();
   const {
@@ -127,27 +131,32 @@ export const VideoSourceWidget = ({
             <Icon src={InfoOutline} style={{ height: '16px', width: '16px' }} />
           </OverlayTrigger>
           <ActionRow.Spacer />
-          <Form.Checkbox
-            checked={allowSharing.local}
-            className="decorative-control-label"
-            onChange={allowSharing.onCheckedChange}
-          >
-            <div className="small text-gray-700">
-              <FormattedMessage {...messages.allowVideoSharingCheckboxLabel} />
-            </div>
-          </Form.Checkbox>
-          <OverlayTrigger
-            key="top-allow-sharing"
-            placement="top"
-            overlay={(
-              <Tooltip id="tooltip-top-allow-sharing">
-                <FormattedMessage {...messages.allowVideoSharingTooltipMessage} />
-              </Tooltip>
-            )}
-          >
-            <Icon src={InfoOutline} style={{ height: '16px', width: '16px' }} />
-          </OverlayTrigger>
         </ActionRow>
+        {videoSharingEnabledForCourse && (
+          <ActionRow className="mt-4.5">
+            <Form.Checkbox
+              checked={allowSharing.local}
+              className="decorative-control-label"
+              onChange={allowSharing.onCheckedChange}
+            >
+              <div className="small text-gray-700">
+                <FormattedMessage {...messages.allowVideoSharingCheckboxLabel} />
+              </div>
+            </Form.Checkbox>
+            <OverlayTrigger
+              key="top-allow-sharing"
+              placement="top"
+              overlay={(
+                <Tooltip id="tooltip-top-allow-sharing">
+                  <FormattedMessage {...messages.allowVideoSharingTooltipMessage} />
+                </Tooltip>
+              )}
+            >
+              <Icon src={InfoOutline} style={{ height: '16px', width: '16px' }} />
+            </OverlayTrigger>
+            <ActionRow.Spacer />
+          </ActionRow>
+        )}
       </Form.Group>
       <div className="my-4 border-primary-100 border-bottom" />
       <Button
@@ -165,6 +174,12 @@ export const VideoSourceWidget = ({
 VideoSourceWidget.propTypes = {
   // injected
   intl: intlShape.isRequired,
+  // redux
+  videoSharingEnabledForCourse: PropTypes.bool.isRequired,
 };
 
-export default injectIntl(VideoSourceWidget);
+export const mapStateToProps = (state) => ({
+  videoSharingEnabledForCourse: selectors.video.videoSharingEnabledForCourse(state),
+});
+
+export default injectIntl(connect(mapStateToProps, {})(VideoSourceWidget));

@@ -30,6 +30,7 @@ jest.mock('./requests', () => ({
   updateTranscriptLanguage: (args) => ({ updateTranscriptLanguage: args }),
   checkTranscriptsForImport: (args) => ({ checkTranscriptsForImport: args }),
   importTranscript: (args) => ({ importTranscript: args }),
+  fetchVideoFeatures: (args) => ({ fetchVideoFeatures: args }),
 }));
 
 jest.mock('../../../utils', () => ({
@@ -48,8 +49,13 @@ const mockFilename = 'soMEtRANscRipT.srt';
 const mockThumbnail = 'sOMefILE';
 const mockThumbnailResponse = { data: { image_url: 'soMEimAGEUrL' } };
 const thumbnailUrl = 'soMEimAGEUrL';
-const mockAllowThumbnailUpload = { data: { allowThumbnailUpload: 'soMEbOolEAn' } };
 const mockAllowTranscriptImport = { data: { command: 'import' } };
+const mockVideoFeatures = {
+  data: {
+    allowThumbnailUpload: 'soMEbOolEAn',
+    videoSharingEnabled: 'someBOoOoOlean',
+  },
+};
 
 const testMetadata = {
   download_track: 'dOWNlOAdTraCK',
@@ -117,14 +123,18 @@ describe('video thunkActions', () => {
         testMetadata.transcripts,
       );
       thunkActions.loadVideoData()(dispatch, getState);
-      [[dispatchedLoad], [dispatchedAction1], [dispatchedAction2]] = dispatch.mock.calls;
+      [
+        [dispatchedLoad],
+        [dispatchedAction1],
+        [dispatchedAction2],
+      ] = dispatch.mock.calls;
     });
     afterEach(() => {
       jest.restoreAllMocks();
     });
-    it('dispatches allowThumbnailUpload action', () => {
+    it('dispatches fetchVideoFeatures action', () => {
       expect(dispatchedLoad).not.toEqual(undefined);
-      expect(dispatchedAction1.allowThumbnailUpload).not.toEqual(undefined);
+      expect(dispatchedAction1.fetchVideoFeatures).not.toEqual(undefined);
     });
     it('dispatches checkTranscriptsForImport action', () => {
       expect(dispatchedLoad).not.toEqual(undefined);
@@ -164,9 +174,10 @@ describe('video thunkActions', () => {
     });
     it('dispatches actions.video.updateField on success', () => {
       dispatch.mockClear();
-      dispatchedAction1.allowThumbnailUpload.onSuccess(mockAllowThumbnailUpload);
+      dispatchedAction1.fetchVideoFeatures.onSuccess(mockVideoFeatures);
       expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
-        allowThumbnailUpload: mockAllowThumbnailUpload.data.allowThumbnailUpload,
+        allowThumbnailUpload: mockVideoFeatures.data.allowThumbnailUpload,
+        videoSharingEnabledForCourse: mockVideoFeatures.data.videoSharingEnabled,
       }));
       dispatch.mockClear();
 

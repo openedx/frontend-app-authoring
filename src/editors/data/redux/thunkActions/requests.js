@@ -272,6 +272,17 @@ export const fetchAdvanceSettings = ({ ...rest }) => (dispatch, getState) => {
   }));
 };
 
+export const fetchVideoFeatures = ({ ...rest }) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.fetchVideoFeatures,
+    promise: api.fetchVideoFeatures({
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      learningContextId: selectors.app.learningContextId(getState()),
+    }),
+    ...rest,
+  }));
+};
+
 export default StrictDict({
   fetchBlock,
   fetchStudioView,
@@ -289,4 +300,5 @@ export default StrictDict({
   checkTranscriptsForImport,
   importTranscript,
   fetchAdvanceSettings,
+  fetchVideoFeatures,
 });

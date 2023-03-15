@@ -57,9 +57,10 @@ export const loadVideoData = () => (dispatch, getState) => {
     },
     thumbnail: rawVideoData.thumbnail,
   }));
-  dispatch(requests.allowThumbnailUpload({
+  dispatch(requests.fetchVideoFeatures({
     onSuccess: (response) => dispatch(actions.video.updateField({
       allowThumbnailUpload: response.data.allowThumbnailUpload,
+      videoSharingEnabledForCourse: response.data.videoSharingEnabled,
     })),
   }));
   const youTubeId = parseYoutubeId(videoUrl);

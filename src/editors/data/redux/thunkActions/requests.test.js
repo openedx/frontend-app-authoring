@@ -29,13 +29,13 @@ jest.mock('../../services/cms/api', () => ({
   fetchAssets: ({ id, url }) => ({ id, url }),
   uploadAsset: (args) => args,
   loadImages: jest.fn(),
-  allowThumbnailUpload: (args) => args,
   uploadThumbnail: (args) => args,
   uploadTranscript: (args) => args,
   deleteTranscript: (args) => args,
   getTranscript: (args) => args,
   checkTranscriptsForImport: (args) => args,
   importTranscript: (args) => args,
+  fetchVideoFeatures: (args) => args,
 }));
 
 const apiKeys = keyStore(api);
@@ -302,20 +302,6 @@ describe('requests thunkActions module', () => {
         },
       });
     });
-    describe('allowThumbnailUpload', () => {
-      testNetworkRequestAction({
-        action: requests.allowThumbnailUpload,
-        args: { ...fetchParams },
-        expectedString: 'with allowThumbnailUpload promise',
-        expectedData: {
-          ...fetchParams,
-          requestKey: RequestKeys.allowThumbnailUpload,
-          promise: api.allowThumbnailUpload({
-            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
-          }),
-        },
-      });
-    });
     describe('uploadThumbnail', () => {
       const thumbnail = 'SoME tHumbNAil CoNtent As String';
       const videoId = 'SoME VidEOid CoNtent As String';
@@ -458,6 +444,21 @@ describe('requests thunkActions module', () => {
             videoId,
             language,
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          }),
+        },
+      });
+    });
+    describe('fetchVideoFeatures', () => {
+      testNetworkRequestAction({
+        action: requests.fetchVideoFeatures,
+        args: { ...fetchParams },
+        expectedString: 'with fetchVideoFeatures promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.fetchVideoFeatures,
+          promise: api.fetchVideoFeatures({
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+            learningContextId: selectors.app.learningContextId(testState),
           }),
         },
       });

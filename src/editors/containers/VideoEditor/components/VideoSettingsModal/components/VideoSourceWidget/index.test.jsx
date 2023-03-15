@@ -42,17 +42,38 @@ jest.mock('./hooks', () => ({
   }),
 }));
 
+jest.mock('../../../../../../data/redux', () => ({
+  selectors: {
+    video: {
+      allow: jest.fn(state => ({ allowTranscriptImport: state })),
+    },
+    requests: {
+      isFailed: jest.fn(state => ({ isFailed: state })),
+    },
+  },
+}));
+
 describe('VideoSourceWidget', () => {
   const props = {
     // inject
     intl: { formatMessage },
+    // redux
+    videoSharingEnabledForCourse: false,
   };
 
   describe('snapshots', () => {
-    test('snapshots: renders as expected with default props', () => {
-      expect(
-        shallow(<VideoSourceWidget {...props} />),
-      ).toMatchSnapshot();
+    describe('snapshots: renders as expected with', () => {
+      it('default props', () => {
+        expect(
+          shallow(<VideoSourceWidget {...props} />),
+        ).toMatchSnapshot();
+      });
+      it('videoSharingEnabledForCourse=true', () => {
+        const newProps = { ...props, videoSharingEnabledForCourse: true };
+        expect(
+          shallow(<VideoSourceWidget {...newProps} />),
+        ).toMatchSnapshot();
+      });
     });
   });
 

@@ -36,11 +36,6 @@ export const apiMethods = {
       data,
     );
   },
-  allowThumbnailUpload: ({
-    studioEndpointUrl,
-  }) => get(
-    urls.allowThumbnailUpload({ studioEndpointUrl }),
-  ),
   uploadThumbnail: ({
     studioEndpointUrl,
     learningContextId,
@@ -204,6 +199,12 @@ export const apiMethods = {
       learningContextId,
       title,
     }),
+  ),
+  fetchVideoFeatures: ({
+    studioEndpointUrl,
+    learningContextId,
+  }) => get(
+    urls.videoFeatures({ studioEndpointUrl, learningContextId }),
   ),
 };
 

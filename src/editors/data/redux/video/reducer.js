@@ -11,6 +11,7 @@ const initialState = {
   ],
   allowVideoDownloads: false,
   allowVideoSharing: false,
+  videoSharingEnabledForCourse: false,
   thumbnail: null,
   transcripts: [],
   allowTranscriptDownloads: false,
