@@ -21,6 +21,7 @@ exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCar
       </Button>
     }
     footerAction={null}
+    isFullscreenScroll={true}
     isOpen={false}
     size="md"
     title={

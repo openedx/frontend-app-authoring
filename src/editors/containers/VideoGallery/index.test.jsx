@@ -1,15 +1,15 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { formatMessage } from '../../../../testUtils';
-import SelectionModal from '../../SelectionModal';
+import SelectionModal from '../../sharedComponents/SelectionModal';
 import hooks from './hooks';
-import { SelectImageModal } from '.';
+import * as module from '.';
 
-jest.mock('../../SelectionModal', () => 'SelectionModal');
+jest.mock('../../sharedComponents/SelectionModal', () => 'SelectionModal');
 
 jest.mock('./hooks', () => ({
-  imgHooks: jest.fn(() => ({
+  filterAssets: jest.fn(() => []),
+  videoHooks: jest.fn(() => ({
     galleryError: {
       show: 'ShoWERror gAlLery',
       set: jest.fn(),
@@ -31,9 +31,9 @@ jest.mock('./hooks', () => ({
       },
     },
     fileInput: {
-      addFile: 'imgHooks.fileInput.addFile',
-      click: 'imgHooks.fileInput.click',
-      ref: 'imgHooks.fileInput.ref',
+      addFile: 'videoHooks.fileInput.addFile',
+      click: 'videoHooks.fileInput.click',
+      ref: 'videoHooks.fileInput.ref',
     },
     galleryProps: { gallery: 'props' },
     searchSortProps: { search: 'sortProps' },
@@ -41,7 +41,7 @@ jest.mock('./hooks', () => ({
   })),
 }));
 
-jest.mock('../../../data/redux', () => ({
+jest.mock('../../data/redux', () => ({
   selectors: {
     requests: {
       isPending: (state, { requestKey }) => ({ isPending: { state, requestKey } }),
@@ -49,41 +49,37 @@ jest.mock('../../../data/redux', () => ({
   },
 }));
 
-describe('SelectImageModal', () => {
+describe('VideoGallery', () => {
   describe('component', () => {
     const props = {
-      isOpen: true,
-      close: jest.fn().mockName('props.close'),
-      setSelection: jest.fn().mockName('props.setSelection'),
-      clearSelection: jest.fn().mockName('props.clearSelection'),
-      intl: { formatMessage },
+      assets: { sOmEaSsET: { staTICUrl: '/assets/sOmEaSsET' } },
     };
     let el;
-    const imgHooks = hooks.imgHooks();
+    const videoHooks = hooks.videoHooks();
     beforeEach(() => {
-      el = shallow(<SelectImageModal {...props} />);
+      el = shallow(<module.VideoGallery {...props} />);
     });
     test('snapshot', () => {
       expect(el).toMatchSnapshot();
     });
     it('provides confirm action, forwarding selectBtnProps from imgHooks', () => {
       expect(el.find(SelectionModal).props().selectBtnProps).toEqual(
-        expect.objectContaining({ ...hooks.imgHooks().selectBtnProps }),
+        expect.objectContaining({ ...hooks.videoHooks().selectBtnProps }),
       );
     });
     it('provides file upload button linked to fileInput.click', () => {
       expect(el.find(SelectionModal).props().fileInput.click).toEqual(
-        imgHooks.fileInput.click,
+        videoHooks.fileInput.click,
       );
     });
     it('provides a SearchSort component with searchSortProps from imgHooks', () => {
-      expect(el.find(SelectionModal).props().searchSortProps).toEqual(imgHooks.searchSortProps);
+      expect(el.find(SelectionModal).props().searchSortProps).toEqual(videoHooks.searchSortProps);
     });
     it('provides a Gallery component with galleryProps from imgHooks', () => {
-      expect(el.find(SelectionModal).props().galleryProps).toEqual(imgHooks.galleryProps);
+      expect(el.find(SelectionModal).props().galleryProps).toEqual(videoHooks.galleryProps);
     });
     it('provides a FileInput component with fileInput props from imgHooks', () => {
-      expect(el.find(SelectionModal).props().fileInput).toMatchObject(imgHooks.fileInput);
+      expect(el.find(SelectionModal).props().fileInput).toMatchObject(videoHooks.fileInput);
     });
   });
 });

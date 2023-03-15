@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Selection Modal snapshots rendering correctly with expected Input 1`] = `
+<ContextConsumer>
+  <Component />
+</ContextConsumer>
+`;
+
+exports[`Selection Modal snapshots rendering with props to null 1`] = `
+<ContextConsumer>
+  <Component />
+</ContextConsumer>
+`;

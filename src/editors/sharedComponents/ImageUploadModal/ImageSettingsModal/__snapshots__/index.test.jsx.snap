@@ -35,6 +35,7 @@ exports[`ImageSettingsModal render snapshot 1`] = `
     </Button>
   }
   footerAction={null}
+  isFullscreenScroll={true}
   isOpen={false}
   size="lg"
   title="Image Settings"

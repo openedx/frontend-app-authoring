@@ -12,7 +12,7 @@ describe('GalleryCard component', () => {
   };
   let el;
   beforeEach(() => {
-    el = shallow(<GalleryCard img={img} />);
+    el = shallow(<GalleryCard asset={img} />);
   });
   test(`snapshot: dateAdded=${img.dateAdded}`, () => {
     expect(el).toMatchSnapshot();

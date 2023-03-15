@@ -17,6 +17,7 @@ export const BaseModal = ({
   confirmAction,
   footerAction,
   size,
+  isFullscreenScroll,
 }) => (
   <ModalDialog
     isOpen={isOpen}
@@ -25,7 +26,7 @@ export const BaseModal = ({
     variant="default"
     hasCloseButton
     isFullscreenOnMobile
-    isFullscreenScroll
+    isFullscreenScroll={isFullscreenScroll}
   >
     <ModalDialog.Header>
       <ModalDialog.Title>
@@ -51,6 +52,7 @@ export const BaseModal = ({
 BaseModal.defaultProps = {
   footerAction: null,
   size: 'lg',
+  isFullscreenScroll: true,
 };
 
 BaseModal.propTypes = {
@@ -61,6 +63,7 @@ BaseModal.propTypes = {
   confirmAction: PropTypes.node.isRequired,
   footerAction: PropTypes.node,
   size: PropTypes.string,
+  isFullscreenScroll: PropTypes.bool,
 };
 
 export default BaseModal;

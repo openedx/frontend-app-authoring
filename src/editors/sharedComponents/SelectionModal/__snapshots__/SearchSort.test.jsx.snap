@@ -29,7 +29,7 @@ exports[`SearchSort component snapshots with search string (close button) 1`] = 
   <ActionRow.Spacer />
   <Dropdown>
     <Dropdown.Toggle
-      id="img-sort-button"
+      id="gallery-sort-button"
       variant="tertiary"
     >
       <FormattedMessage
@@ -100,7 +100,7 @@ exports[`SearchSort component snapshots without search string (search icon) 1`] 
   <ActionRow.Spacer />
   <Dropdown>
     <Dropdown.Toggle
-      id="img-sort-button"
+      id="gallery-sort-button"
       variant="tertiary"
     >
       <FormattedMessage

@@ -6,10 +6,15 @@ import {
   Scrollable, SelectableBox, Spinner,
 } from '@edx/paragon';
 
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import {
+  FormattedMessage,
+  injectIntl,
+  intlShape,
+  MessageDescriptor,
+} from '@edx/frontend-platform/i18n';
 
-import { selectors } from '../../../data/redux';
-import { RequestKeys } from '../../../data/constants/requests';
+import { selectors } from '../../data/redux';
+import { RequestKeys } from '../../data/constants/requests';
 
 import messages from './messages';
 import GalleryCard from './GalleryCard';
@@ -20,6 +25,9 @@ export const Gallery = ({
   displayList,
   highlighted,
   onHighlightChange,
+  emptyGalleryLabel,
+  showIdsOnCards,
+  height,
   // injected
   intl,
   // redux
@@ -36,20 +44,20 @@ export const Gallery = ({
   }
   if (galleryIsEmpty) {
     return (
-      <div className="gallery p-4 bg-gray-100" style={{ height: '375px' }}>
-        <FormattedMessage {...messages.emptyGalleryLabel} />
+      <div className="gallery p-4 bg-gray-100" style={{ height }}>
+        <FormattedMessage {...emptyGalleryLabel} />
       </div>
     );
   }
   if (searchIsEmpty) {
     return (
-      <div className="gallery p-4 bg-gray-100" style={{ height: '375px' }}>
+      <div className="gallery p-4 bg-gray-100" style={{ height }}>
         <FormattedMessage {...messages.emptySearchLabel} />
       </div>
     );
   }
   return (
-    <Scrollable className="gallery bg-gray-100" style={{ height: '375px' }}>
+    <Scrollable className="gallery bg-gray-100" style={{ height }}>
       <div className="p-4">
         <SelectableBox.Set
           columns={1}
@@ -58,7 +66,7 @@ export const Gallery = ({
           type="radio"
           value={highlighted}
         >
-          {displayList.map(img => <GalleryCard key={img.id} img={img} />)}
+          { displayList.map(asset => <GalleryCard key={asset.id} asset={asset} showId={showIdsOnCards} />) }
         </SelectableBox.Set>
       </div>
     </Scrollable>
@@ -67,6 +75,9 @@ export const Gallery = ({
 
 Gallery.defaultProps = {
   highlighted: '',
+  showIdsOnCards: false,
+  height: '375px',
+  emptyGalleryLabel: null,
 };
 Gallery.propTypes = {
   galleryIsEmpty: PropTypes.bool.isRequired,
@@ -74,6 +85,9 @@ Gallery.propTypes = {
   displayList: PropTypes.arrayOf(PropTypes.object).isRequired,
   highlighted: PropTypes.string,
   onHighlightChange: PropTypes.func.isRequired,
+  emptyGalleryLabel: MessageDescriptor,
+  showIdsOnCards: PropTypes.bool,
+  height: PropTypes.string,
   // injected
   intl: intlShape.isRequired,
   // redux

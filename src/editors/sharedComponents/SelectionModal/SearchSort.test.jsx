@@ -3,9 +3,9 @@ import { shallow } from 'enzyme';
 import { Dropdown } from '@edx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
-import { formatMessage } from '../../../../testUtils';
+import { formatMessage } from '../../../testUtils';
 
-import { sortKeys, sortMessages } from './utils';
+import { sortKeys, sortMessages } from '../ImageUploadModal/SelectImageModal/utils';
 import { SearchSort } from './SearchSort';
 
 describe('SearchSort component', () => {
@@ -14,6 +14,8 @@ describe('SearchSort component', () => {
     onSearchChange: jest.fn().mockName('props.onSearchChange'),
     clearSearchString: jest.fn().mockName('props.clearSearchString'),
     sortBy: sortKeys.dateOldest,
+    sortKeys,
+    sortMessages,
     onSortClick: jest.fn().mockName('props.onSortClick'),
     intl: { formatMessage },
   };

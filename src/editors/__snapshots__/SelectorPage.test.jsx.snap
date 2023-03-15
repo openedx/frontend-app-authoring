@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Selector Page snapshots rendering correctly with expected Input 1`] = `
+<ErrorBoundary>
+  <Provider
+    store={
+      Object {
+        "dispatch": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+        Symbol(Symbol.observable): [Function],
+      }
+    }
+  >
+    <Component
+      learningContextId="course-v1:edX+DemoX+Demo_Course"
+      lmsEndpointUrl="evenfakerurl.com"
+      studioEndpointUrl="fakeurl.com"
+    />
+  </Provider>
+</ErrorBoundary>
+`;
+
+exports[`Selector Page snapshots rendering with props to null 1`] = `
+<ErrorBoundary>
+  <Provider
+    store={
+      Object {
+        "dispatch": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+        Symbol(Symbol.observable): [Function],
+      }
+    }
+  >
+    <Component
+      learningContextId={null}
+      lmsEndpointUrl={null}
+      studioEndpointUrl={null}
+    />
+  </Provider>
+</ErrorBoundary>
+`;

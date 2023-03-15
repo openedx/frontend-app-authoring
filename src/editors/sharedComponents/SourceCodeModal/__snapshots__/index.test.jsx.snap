@@ -24,6 +24,7 @@ exports[`SourceCodeModal renders as expected with default behavior 1`] = `
     </Button>
   }
   footerAction={null}
+  isFullscreenScroll={true}
   isOpen={false}
   size="xl"
   title="Edit Source Code"

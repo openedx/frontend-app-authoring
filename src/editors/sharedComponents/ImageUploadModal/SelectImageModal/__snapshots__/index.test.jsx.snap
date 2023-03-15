@@ -1,189 +1,94 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SelectImageModal component snapshot 1`] = `
-<BaseModal
-  close={[MockFunction props.close]}
-  confirmAction={
-    <Button
-      select="btnProps"
-      variant="primary"
-    >
-      <FormattedMessage
-        defaultMessage="Next"
-        description="Label for Next button"
-        id="authoring.texteditor.selectimagemodal.next.label"
-      />
-    </Button>
+<SelectionModal
+  acceptedFiles={
+    Object {
+      "gif": ".gif",
+      "ico": ".ico",
+      "jpeg": ".jpeg",
+      "jpg": ".jpg",
+      "png": ".png",
+      "tif": ".tif",
+      "tiff": ".tiff",
+    }
   }
-  footerAction={
-    <Button
-      onClick="imgHooks.fileInput.click"
-      variant="link"
-    >
-      <FormattedMessage
-        defaultMessage="Upload a new image (10 MB max)"
-        description="Label for upload button"
-        id="authoring.texteditor.selectimagemodal.upload.label"
-      />
-    </Button>
+  close={[MockFunction props.close]}
+  fileInput={
+    Object {
+      "addFile": "imgHooks.fileInput.addFile",
+      "click": "imgHooks.fileInput.click",
+      "ref": "imgHooks.fileInput.ref",
+    }
+  }
+  galleryError={
+    Object {
+      "dismiss": [MockFunction],
+      "message": Object {
+        "defaultMessage": "Gallery error",
+        "description": "Gallery error",
+        "id": "Gallery error id",
+      },
+      "set": [MockFunction],
+      "show": "ShoWERror gAlLery",
+    }
+  }
+  galleryProps={
+    Object {
+      "gallery": "props",
+    }
+  }
+  inputError={
+    Object {
+      "dismiss": [MockFunction],
+      "message": Object {
+        "defaultMessage": "Input error",
+        "description": "Input error",
+        "id": "Input error id",
+      },
+      "set": [MockFunction],
+      "show": "ShoWERror inPUT",
+    }
   }
   isOpen={true}
-  title="Add an image"
->
-  <FetchErrorAlert
-    message={
-      Object {
+  modalMessages={
+    Object {
+      "confirmMsg": Object {
+        "defaultMessage": "Next",
+        "description": "Label for Next button",
+        "id": "authoring.texteditor.selectimagemodal.next.label",
+      },
+      "fetchError": Object {
         "defaultMessage": "Failed to obtain course images. Please try again.",
         "description": "Message presented to user when images are not found",
         "id": "authoring.texteditor.selectimagemodal.error.fetchImagesError",
-      }
-    }
-  />
-  <UploadErrorAlert
-    message={
-      Object {
+      },
+      "titleMsg": Object {
+        "defaultMessage": "Add an image",
+        "description": "Title for the select image modal",
+        "id": "authoring.texteditor.selectimagemodal.title.label",
+      },
+      "uploadButtonMsg": Object {
+        "defaultMessage": "Upload a new image (10 MB max)",
+        "description": "Label for upload button",
+        "id": "authoring.texteditor.selectimagemodal.upload.label",
+      },
+      "uploadError": Object {
         "defaultMessage": "Failed to upload image. Please try again.",
         "description": "Message presented to user when image fails to upload",
         "id": "authoring.texteditor.selectimagemodal.error.uploadImageError",
-      }
+      },
     }
-  />
-  <ErrorAlert
-    dismissError={[MockFunction]}
-    hideHeading={true}
-    isError="ShoWERror inPUT"
-  >
-    <FormattedMessage
-      defaultMessage="Images must be 10 MB or less. Please resize image and try again."
-      description=" Message presented to user when file size of image is larger than 10 MB"
-      id="authoring.texteditor.selectimagemodal.error.fileSizeError"
-    />
-  </ErrorAlert>
-  <ErrorAlert
-    dismissError={[MockFunction]}
-    hideHeading={true}
-    isError="ShoWERror gAlLery"
-  >
-    <FormattedMessage
-      defaultMessage="Select an image to continue."
-      description="Message presented to user when clicking Next without selecting an image"
-      id="authoring.texteditor.selectimagemodal.error.selectImageError"
-    />
-  </ErrorAlert>
-  <Stack
-    gap={3}
-  >
-    <SearchSort
-      search="sortProps"
-    />
-    <Gallery
-      gallery="props"
-    />
-    <FileInput
-      acceptedFiles=".gif,.jpg,.jpeg,.png,.tif,.tiff,.ico"
-      fileInput={
-        Object {
-          "addFile": "imgHooks.fileInput.addFile",
-          "click": "imgHooks.fileInput.click",
-          "ref": "imgHooks.fileInput.ref",
-        }
-      }
-    />
-  </Stack>
-</BaseModal>
-`;
-
-exports[`SelectImageModal component snapshot: uploaded image not loaded, show spinner 1`] = `
-<BaseModal
-  close={[MockFunction props.close]}
-  confirmAction={
-    <Button
-      select="btnProps"
-      variant="primary"
-    >
-      <FormattedMessage
-        defaultMessage="Next"
-        description="Label for Next button"
-        id="authoring.texteditor.selectimagemodal.next.label"
-      />
-    </Button>
   }
-  footerAction={
-    <Button
-      onClick="imgHooks.fileInput.click"
-      variant="link"
-    >
-      <FormattedMessage
-        defaultMessage="Upload a new image (10 MB max)"
-        description="Label for upload button"
-        id="authoring.texteditor.selectimagemodal.upload.label"
-      />
-    </Button>
+  searchSortProps={
+    Object {
+      "search": "sortProps",
+    }
   }
-  isOpen={true}
-  title="Add an image"
->
-  <FetchErrorAlert
-    message={
-      Object {
-        "defaultMessage": "Failed to obtain course images. Please try again.",
-        "description": "Message presented to user when images are not found",
-        "id": "authoring.texteditor.selectimagemodal.error.fetchImagesError",
-      }
+  selectBtnProps={
+    Object {
+      "select": "btnProps",
     }
-  />
-  <UploadErrorAlert
-    message={
-      Object {
-        "defaultMessage": "Failed to upload image. Please try again.",
-        "description": "Message presented to user when image fails to upload",
-        "id": "authoring.texteditor.selectimagemodal.error.uploadImageError",
-      }
-    }
-  />
-  <ErrorAlert
-    dismissError={[MockFunction]}
-    hideHeading={true}
-    isError="ShoWERror inPUT"
-  >
-    <FormattedMessage
-      defaultMessage="Images must be 10 MB or less. Please resize image and try again."
-      description=" Message presented to user when file size of image is larger than 10 MB"
-      id="authoring.texteditor.selectimagemodal.error.fileSizeError"
-    />
-  </ErrorAlert>
-  <ErrorAlert
-    dismissError={[MockFunction]}
-    hideHeading={true}
-    isError="ShoWERror gAlLery"
-  >
-    <FormattedMessage
-      defaultMessage="Select an image to continue."
-      description="Message presented to user when clicking Next without selecting an image"
-      id="authoring.texteditor.selectimagemodal.error.selectImageError"
-    />
-  </ErrorAlert>
-  <Stack
-    gap={3}
-  >
-    <SearchSort
-      search="sortProps"
-    />
-    <Spinner
-      animation="border"
-      className="mie-3"
-      screenReaderText="loading..."
-    />
-    <FileInput
-      acceptedFiles=".gif,.jpg,.jpeg,.png,.tif,.tiff,.ico"
-      fileInput={
-        Object {
-          "addFile": "imgHooks.fileInput.addFile",
-          "click": "imgHooks.fileInput.click",
-          "ref": "imgHooks.fileInput.ref",
-        }
-      }
-    />
-  </Stack>
-</BaseModal>
+  }
+/>
 `;
