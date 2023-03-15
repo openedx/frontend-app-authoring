@@ -68,7 +68,7 @@ export const messages = {
   },
   videoTypeYoutube: {
     id: 'authoring.videoeditor.videotype.youtube',
-    defaultMessage: 'Youtube video',
+    defaultMessage: 'YouTube video',
     description: 'Shown on the preview card if the video is from youtube.com.',
   },
   videoTypeOther: {
