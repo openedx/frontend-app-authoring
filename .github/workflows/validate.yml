@@ -9,14 +9,14 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [16]
+
     steps:
     - uses: actions/checkout@v2
+      name: Setup Nodejs Env
+      run: echo "NODE_VER=`cat .nvmrc`" >> $GITHUB_ENV
     - uses: actions/setup-node@v2
       with:
-        node-version: ${{ matrix.node }}
+        node-version: ${{ env.NODE_VER }}
     - run: make validate.ci
     - name: Upload coverage
       uses: codecov/codecov-action@v3
