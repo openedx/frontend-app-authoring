@@ -4,6 +4,7 @@ exports[`TypeCard snapshot snapshot: renders type setting card 1`] = `
 <SettingsOption
   className=""
   extraSections={Array []}
+  hasExpandableTextArea={false}
   summary="Text input"
   title="Type"
 >

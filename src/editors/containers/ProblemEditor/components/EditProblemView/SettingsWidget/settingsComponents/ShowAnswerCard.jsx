@@ -8,6 +8,7 @@ import { ShowAnswerTypes, ShowAnswerTypesKeys } from '../../../../../../data/con
 import { selectors } from '../../../../../../data/redux';
 import messages from '../messages';
 import { useAnswerSettings } from '../hooks';
+import ExpandableTextArea from '../../../../../../sharedComponents/ExpandableTextArea';
 
 export const ShowAnswerCard = ({
   showAnswer,
@@ -75,13 +76,12 @@ export const ShowAnswerCard = ({
           <FormattedMessage {...messages.explanationSettingText} />
         </span>
       </div>
-      <Form.Group className="pb-0">
-        <Form.Control
-          value={solutionExplanation}
-          onChange={handleExplanationChange}
-          floatingLabel={intl.formatMessage(messages.explanationInputLabel)}
-        />
-      </Form.Group>
+      <ExpandableTextArea
+        value={solutionExplanation}
+        setContent={handleExplanationChange}
+        id="solution"
+        placeholder={intl.formatMessage(messages.explanationInputLabel)}
+      />
     </>
   );
 
@@ -90,6 +90,7 @@ export const ShowAnswerCard = ({
       title={intl.formatMessage(messages.showAnswerSettingsTitle)}
       summary={intl.formatMessage(ShowAnswerTypes[showAnswer.on])}
       extraSections={[{ children: explanationSection }]}
+      hasExpandableTextArea
     >
       {showAnswerSection}
     </SettingsOption>

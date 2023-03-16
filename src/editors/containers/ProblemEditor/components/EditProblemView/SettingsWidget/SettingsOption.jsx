@@ -2,15 +2,19 @@ import React from 'react';
 import { Collapsible, Icon, Card } from '@edx/paragon';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@edx/paragon/icons';
 import {
-  arrayOf, shape, string, node,
+  arrayOf,
+  shape,
+  string,
+  node,
+  bool,
 } from 'prop-types';
 import { showFullCard } from './hooks';
 import CardSection from './CardSection';
 
 export const SettingsOption = ({
-  title, className, extraSections, children, summary, ...passThroughProps
+  title, className, extraSections, children, summary, hasExpandableTextArea, ...passThroughProps
 }) => {
-  const { isCardCollapsibleOpen, toggleCardCollapse } = showFullCard();
+  const { isCardCollapsibleOpen, toggleCardCollapse } = showFullCard(hasExpandableTextArea);
 
   return (
     <Card className={`${className} settingsOption border border-light-700 shadow-none`}>
@@ -53,10 +57,12 @@ SettingsOption.propTypes = {
   extraSections: arrayOf(shape({
     children: node,
   })),
+  hasExpandableTextArea: bool,
 };
 SettingsOption.defaultProps = {
   className: '',
   extraSections: [],
+  hasExpandableTextArea: false,
 };
 
 export default SettingsOption;

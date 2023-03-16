@@ -65,12 +65,36 @@ describe('Answer Options Hooks', () => {
     });
   });
   describe('setAnswerTitle', () => {
-    test('it dispatches actions.problem.updateAnswer', () => {
+    test('it dispatches actions.problem.updateAnswer for numeric problem', () => {
+      const answer = { id: 'A' };
+      const hasSingleAnswer = false;
+      const dispatch = useDispatch();
+      const updatedTitle = { target: { value: 'string' } };
+      const problemType = 'numericalresponse';
+      module.setAnswerTitle({
+        answer,
+        hasSingleAnswer,
+        dispatch,
+        problemType,
+      })(updatedTitle);
+      expect(dispatch).toHaveBeenCalledWith(actions.problem.updateAnswer({
+        id: answer.id,
+        hasSingleAnswer,
+        title: updatedTitle.target.value,
+      }));
+    });
+    test('it dispatches actions.problem.updateAnswer for single select problem', () => {
       const answer = { id: 'A' };
       const hasSingleAnswer = false;
       const dispatch = useDispatch();
       const updatedTitle = 'string';
-      module.setAnswerTitle({ answer, hasSingleAnswer, dispatch })(updatedTitle);
+      const problemType = 'multiplechoiceresponse';
+      module.setAnswerTitle({
+        answer,
+        hasSingleAnswer,
+        dispatch,
+        problemType,
+      })(updatedTitle);
       expect(dispatch).toHaveBeenCalledWith(actions.problem.updateAnswer({
         id: answer.id,
         hasSingleAnswer,
@@ -120,6 +144,27 @@ describe('Answer Options Hooks', () => {
       const [cb] = useEffect.mock.calls[0];
       cb();
       expect(state.setState[key]).toHaveBeenCalledWith(true);
+    });
+    test('test toggleFeedback with selected feedback', () => {
+      const key = state.keys.isFeedbackVisible;
+      output = module.useFeedback(answerWithOnlyFeedback);
+      window.tinymce.editors = { 'selectedFeedback-A': { getContent: () => 'string' } };
+      output.toggleFeedback(false);
+      expect(state.setState[key]).toHaveBeenCalledWith(true);
+    });
+    test('test toggleFeedback with unselected feedback', () => {
+      const key = state.keys.isFeedbackVisible;
+      output = module.useFeedback(answerWithOnlyFeedback);
+      window.tinymce.editors = { 'unselectedFeedback-A': { getContent: () => 'string' } };
+      output.toggleFeedback(false);
+      expect(state.setState[key]).toHaveBeenCalledWith(true);
+    });
+    test('test toggleFeedback with unselected feedback', () => {
+      const key = state.keys.isFeedbackVisible;
+      output = module.useFeedback(answerWithOnlyFeedback);
+      window.tinymce.editors = { 'answer-A': { getContent: () => 'string' } };
+      output.toggleFeedback(false);
+      expect(state.setState[key]).toHaveBeenCalledWith(false);
     });
   });
   describe('isSingleAnswerProblem()', () => {

@@ -3,6 +3,7 @@ import { StrictDict } from '../../../../../utils';
 import * as module from './hooks';
 import { actions } from '../../../../../data/redux';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
+import { fetchEditorContent } from '../hooks';
 
 export const state = StrictDict({
   isFeedbackVisible: (val) => useState(val),
@@ -16,8 +17,17 @@ export const setAnswer = ({ answer, hasSingleAnswer, dispatch }) => (payload) =>
   dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, ...payload }));
 };
 
-export const setAnswerTitle = ({ answer, hasSingleAnswer, dispatch }) => (updatedTitle) => {
-  dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, title: updatedTitle }));
+export const setAnswerTitle = ({
+  answer,
+  hasSingleAnswer,
+  dispatch,
+  problemType,
+}) => (updatedTitle) => {
+  let title = updatedTitle;
+  if ([ProblemTypeKeys.TEXTINPUT, ProblemTypeKeys.NUMERIC, ProblemTypeKeys.DROPDOWN].includes(problemType)) {
+    title = updatedTitle.target.value;
+  }
+  dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, title }));
 };
 
 export const setSelectedFeedback = ({ answer, hasSingleAnswer, dispatch }) => (e) => {
@@ -46,7 +56,9 @@ export const useFeedback = (answer) => {
 
   const toggleFeedback = (open) => {
     // Do not allow to hide if feedback is added
-    if (!!answer.selectedFeedback || !!answer.unselectedFeedback) {
+    const { selectedFeedback, unselectedFeedback } = fetchEditorContent({ format: '' });
+
+    if (!!selectedFeedback?.[answer.id] || !!unselectedFeedback?.[answer.id]) {
       setIsFeedbackVisible(true);
       return;
     }

@@ -18,18 +18,18 @@ exports[`ShowAnswerCard snapshot snapshot: show answer setting card 1`] = `
               />
             </span>
           </div>
-          <Form.Group
-            className="pb-0"
-          >
-            <Form.Control
-              floatingLabel="Explanation"
-              value=""
-            />
-          </Form.Group>
+          <ExpandableTextArea
+            error={false}
+            errorMessage={null}
+            id="solution"
+            placeholder="Explanation"
+            value=""
+          />
         </React.Fragment>,
       },
     ]
   }
+  hasExpandableTextArea={true}
   summary="After Some Number of Attempts"
   title="Show answer"
 >

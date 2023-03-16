@@ -28,6 +28,7 @@ export const FeedbackBox = ({
         labelMessage={messages.selectedFeedbackLabel}
         labelMessageBoldUnderline={messages.selectedFeedbackLabelBoldUnderlineText}
         onChange={setSelectedFeedback}
+        type="selected"
         {...props}
       />
       <FeedbackControl
@@ -36,6 +37,7 @@ export const FeedbackBox = ({
         labelMessage={messages.unSelectedFeedbackLabel}
         labelMessageBoldUnderline={messages.unSelectedFeedbackLabelBoldUnderlineText}
         onChange={setUnselectedFeedback}
+        type="unselected"
         {...props}
       />
     </div>
@@ -47,6 +49,7 @@ export const FeedbackBox = ({
         labelMessage={messages.selectedFeedbackLabel}
         labelMessageBoldUnderline={messages.selectedFeedbackLabelBoldUnderlineText}
         onChange={setSelectedFeedback}
+        type="selected"
         {...props}
       />
     </div>

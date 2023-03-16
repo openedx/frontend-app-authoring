@@ -24,6 +24,7 @@ export const HintsCard = ({
       title={intl.formatMessage(messages.hintSettingTitle)}
       summary={intl.formatMessage(summary.message, { ...summary.values })}
       none={!hints.length}
+      hasExpandableTextArea
     >
       {hints.map((hint) => (
         <HintRow

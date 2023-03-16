@@ -8,6 +8,7 @@ describe('HintRow', () => {
     value: 'hint_1',
     handleChange: jest.fn(),
     handleDelete: jest.fn(),
+    id: '0',
     intl: { formatMessage },
   };
 

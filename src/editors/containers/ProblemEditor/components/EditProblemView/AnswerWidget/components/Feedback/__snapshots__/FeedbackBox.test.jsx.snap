@@ -32,6 +32,7 @@ exports[`FeedbackBox component renders as expected with a multi select problem 1
         "id": "authoring.answerwidget.feedback.selected.label.boldunderline",
       }
     }
+    type="selected"
   />
   <FeedbackControl
     answer={
@@ -61,6 +62,7 @@ exports[`FeedbackBox component renders as expected with a multi select problem 1
         "id": "authoring.answerwidget.feedback.unselected.label.boldunderline",
       }
     }
+    type="unselected"
   />
 </div>
 `;
@@ -97,6 +99,7 @@ exports[`FeedbackBox component renders as expected with a numeric input problem 
         "id": "authoring.answerwidget.feedback.selected.label.boldunderline",
       }
     }
+    type="selected"
   />
 </div>
 `;
@@ -133,6 +136,7 @@ exports[`FeedbackBox component renders as expected with default props 1`] = `
         "id": "authoring.answerwidget.feedback.selected.label.boldunderline",
       }
     }
+    type="selected"
   />
 </div>
 `;

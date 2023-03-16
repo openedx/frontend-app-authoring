@@ -20,6 +20,7 @@ export const GroupFeedbackCard = ({
       title={intl.formatMessage(messages.groupFeedbackSettingTitle)}
       summary={intl.formatMessage(summary.message, { ...summary.values })}
       none={!groupFeedbacks.length}
+      hasExpandableTextArea
     >
       <div className="py-3">
         <FormattedMessage {...messages.groupFeedbackInputLabel} />

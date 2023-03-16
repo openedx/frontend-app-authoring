@@ -179,18 +179,12 @@ describe('Check OLXParser for question parsing', () => {
 
 describe('OLXParser for problem with solution tag', () => {
   describe('for checkbox questions', () => {
-    test('should parse simple text', () => {
-      const olxparser = new OLXParser(checkboxesOLXWithFeedbackAndHintsOLX.rawOLX);
-      const problemType = olxparser.getProblemType();
-      const explanation = olxparser.getSolutionExplanation(problemType);
-      expect(explanation).toEqual(checkboxesOLXWithFeedbackAndHintsOLX.solutionExplanation);
-    });
     test('should parse text in p tags', () => {
-      const { rawOLX } = getCheckboxesOLXWithFeedbackAndHintsOLX({ solution: 'html' });
+      const { rawOLX } = getCheckboxesOLXWithFeedbackAndHintsOLX();
       const olxparser = new OLXParser(rawOLX);
       const problemType = olxparser.getProblemType();
       const explanation = olxparser.getSolutionExplanation(problemType);
-      const expected = getCheckboxesOLXWithFeedbackAndHintsOLX({ solution: 'html' }).solutionExplanation;
+      const expected = getCheckboxesOLXWithFeedbackAndHintsOLX().solutionExplanation;
       expect(explanation.replace(/\s/g, '')).toBe(expected.replace(/\s/g, ''));
     });
   });

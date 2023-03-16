@@ -7,20 +7,25 @@ exports[`GroupFeedbackRow snapshot snapshot: renders hints row 1`] = `
   <ActionRow
     className="mb-2"
   >
-    <Form.Control
-      onChange={[MockFunction handleFeedbackChange]}
-      value="sOmE FeEDBACK"
-    />
-    <div
-      className="d-flex flex-row flex-nowrap"
+    <Container
+      className="p-0"
+      fluid={true}
     >
-      <IconButton
-        alt="Delete answer"
-        iconAs="Icon"
-        onClick={[MockFunction handleDelete]}
-        variant="primary"
+      <ExpandableTextArea
+        error={false}
+        errorMessage={null}
+        id="groupFeedback-0"
+        onChange={[MockFunction handleFeedbackChange]}
+        placeholder={null}
+        value="sOmE FeEDBACK"
       />
-    </div>
+    </Container>
+    <IconButton
+      alt="Delete answer"
+      iconAs="Icon"
+      onClick={[MockFunction handleDelete]}
+      variant="primary"
+    />
   </ActionRow>
   <Component
     onChange={[MockFunction handleAnswersSelectedChange]}

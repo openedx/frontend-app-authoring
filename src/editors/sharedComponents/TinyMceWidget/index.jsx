@@ -52,7 +52,6 @@ export const TinyMceWidget = ({
           images={images}
           editorType={editorType}
           lmsEndpointUrl={lmsEndpointUrl}
-          // bookmark={editorRef.current.selection.getBookmark()}
           {...imageSelection}
         />
       )}
@@ -106,7 +105,6 @@ TinyMceWidget.propTypes = {
   disabled: PropTypes.bool,
 };
 
-// should we call these items for
 export const mapStateToProps = (state) => ({
   assets: selectors.app.assets(state),
   lmsEndpointUrl: selectors.app.lmsEndpointUrl(state),

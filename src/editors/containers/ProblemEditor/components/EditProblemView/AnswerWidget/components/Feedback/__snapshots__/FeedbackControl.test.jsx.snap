@@ -25,8 +25,12 @@ exports[`FeedbackControl component renders 1`] = `
       }
     />
   </Form.Label>
-  <Form.Control
-    onChange={[MockFunction]}
+  <ExpandableTextArea
+    error={false}
+    errorMessage={null}
+    id="undefinedFeedback-A"
+    placeholder={null}
+    setContent={[MockFunction]}
     value="feedback"
   />
 </Form.Group>

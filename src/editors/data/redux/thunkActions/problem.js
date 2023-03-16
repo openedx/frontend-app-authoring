@@ -5,12 +5,14 @@ import { parseSettings } from '../../../containers/ProblemEditor/data/SettingsPa
 import { ProblemTypeKeys } from '../../constants/problem';
 import ReactStateOLXParser from '../../../containers/ProblemEditor/data/ReactStateOLXParser';
 import { blankProblemOLX } from '../../../containers/ProblemEditor/data/mockData/olxTestData';
+import { fetchEditorContent } from '../../../containers/ProblemEditor/components/EditProblemView/hooks';
 
 export const switchToAdvancedEditor = () => (dispatch, getState) => {
   const state = getState();
-  const reactOLXParser = new ReactStateOLXParser({ problem: state.problem });
-  const rawOlx = reactOLXParser.buildOLX();
-  dispatch(actions.problem.updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOlx }));
+  const editorObject = fetchEditorContent({ format: '' });
+  const reactOLXParser = new ReactStateOLXParser({ problem: state.problem, editorObject });
+  const rawOLX = reactOLXParser.buildOLX();
+  dispatch(actions.problem.updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX }));
 };
 
 export const isBlankProblem = ({ rawOLX }) => {

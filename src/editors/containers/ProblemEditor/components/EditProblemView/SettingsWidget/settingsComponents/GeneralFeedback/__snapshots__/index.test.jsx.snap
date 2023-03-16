@@ -4,6 +4,7 @@ exports[`RandomizationCard snapshot snapshot: renders general feedback setting c
 <SettingsOption
   className=""
   extraSections={Array []}
+  hasExpandableTextArea={false}
   none={false}
   summary={
     Object {

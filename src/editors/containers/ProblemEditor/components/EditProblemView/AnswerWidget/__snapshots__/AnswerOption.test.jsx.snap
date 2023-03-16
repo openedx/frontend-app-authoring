@@ -101,12 +101,13 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
   <div
     className="ml-1 flex-grow-1"
   >
-    <ExpandableTextArea
-      error={false}
-      errorMessage={null}
-      id="answer-A"
+    <Form.Control
+      as="textarea"
+      autoResize={true}
+      className="answer-option-textarea text-gray-500 small"
+      onChange={[Function]}
       placeholder="Enter an answer"
-      setContent={[Function]}
+      rows={1}
       value="Answer 1"
     />
     <Body>
