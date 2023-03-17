@@ -37,6 +37,27 @@ export const filterMessages = StrictDict({
   failed: messages[messageKeys.filterByVideoStatusFailed],
 });
 
+export const sortFunctions = StrictDict({
+  dateNewest: (a, b) => b.dateAdded - a.dateAdded,
+  dateOldest: (a, b) => a.dateAdded - b.dateAdded,
+  nameAscending: (a, b) => {
+    const nameA = a.displayName.toLowerCase();
+    const nameB = b.displayName.toLowerCase();
+    if (nameA < nameB) { return -1; }
+    if (nameB < nameA) { return 1; }
+    return b.dateAdded - a.dateAdded;
+  },
+  nameDescending: (a, b) => {
+    const nameA = a.displayName.toLowerCase();
+    const nameB = b.displayName.toLowerCase();
+    if (nameA < nameB) { return 1; }
+    if (nameB < nameA) { return -1; }
+    return b.dateAdded - a.dateAdded;
+  },
+  durationShortest: (a, b) => a.duration - b.duration,
+  durationLongest: (a, b) => b.duration - a.duration,
+});
+
 export const acceptedImgKeys = StrictDict({
   mp4: '.mp4',
 });

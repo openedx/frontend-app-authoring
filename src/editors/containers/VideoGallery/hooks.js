@@ -6,6 +6,7 @@ import {
   filterMessages,
   sortKeys,
   sortMessages,
+  sortFunctions,
 } from './utils';
 
 export const state = {
@@ -43,7 +44,43 @@ export const searchAndSortHooks = () => {
   };
 };
 
-export const videoListHooks = ({ videos }) => {
+export const filterListBySearch = ({ searchString, videoList }) => (
+  videoList.filter(({ displayName }) => displayName.toLowerCase().includes(searchString.toLowerCase()))
+);
+
+export const filterListByStatus = ({ statusFilter, videoList }) => {
+  if (statusFilter === filterKeys.videoStatus) {
+    return videoList;
+  }
+  return videoList.filter(({ status }) => status === statusFilter);
+};
+
+export const filterListByHideSelectedCourse = ({ videoList }) => (
+  // TODO Missing to implement this
+  videoList
+);
+
+export const filterList = ({
+  sortBy,
+  filterBy,
+  searchString,
+  videos,
+}) => {
+  let filteredList = module.filterListBySearch({
+    searchString,
+    videoList: videos,
+  });
+  filteredList = module.filterListByStatus({
+    statusFilter: filterBy,
+    videoList: filteredList,
+  });
+  filteredList = module.filterListByHideSelectedCourse({
+    videoList: filteredList,
+  });
+  return filteredList.sort(sortFunctions[sortBy in sortKeys ? sortKeys[sortBy] : sortKeys.dateNewest]);
+};
+
+export const videoListHooks = ({ searchSortProps, videos }) => {
   const [highlighted, setHighlighted] = module.state.highlighted(null);
   const [
     showSelectVideoError,
@@ -53,7 +90,7 @@ export const videoListHooks = ({ videos }) => {
     showSizeError,
     setShowSizeError,
   ] = module.state.showSizeError(false);
-  const filteredList = videos; // TODO missing filters and sort
+  const filteredList = module.filterList({ ...searchSortProps, videos });
   return {
     galleryError: {
       show: showSelectVideoError,
@@ -118,7 +155,7 @@ export const buildVideos = ({ rawVideos }) => {
 
 export const videoHooks = ({ videos }) => {
   const searchSortProps = module.searchAndSortHooks();
-  const videoList = module.videoListHooks({ videos });
+  const videoList = module.videoListHooks({ searchSortProps, videos });
   const {
     galleryError,
     galleryProps,
