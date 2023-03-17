@@ -60,6 +60,8 @@ GalleryCard.propTypes = {
     portableUrl: PropTypes.string,
     thumbnail: PropTypes.string,
     url: PropTypes.string,
+    duration: PropTypes.number,
+    status: PropTypes.string,
   }).isRequired,
   showId: PropTypes.bool,
 };

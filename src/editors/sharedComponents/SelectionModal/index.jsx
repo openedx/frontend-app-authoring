@@ -31,6 +31,9 @@ export const SelectionModal = ({
   selectBtnProps,
   acceptedFiles,
   modalMessages,
+  isLoaded,
+  isFetchError,
+  isUploadError,
   // injected
   intl,
 }) => {
@@ -41,6 +44,10 @@ export const SelectionModal = ({
     fetchError,
     uploadError,
   } = modalMessages;
+  const galleryPropsValues = {
+    isLoaded,
+    ...galleryProps,
+  };
   return (
     <BaseModal
       close={close}
@@ -60,8 +67,8 @@ export const SelectionModal = ({
       title={intl.formatMessage(titleMsg)}
     >
       {/* Error Alerts */}
-      <FetchErrorAlert message={fetchError} />
-      <UploadErrorAlert message={uploadError} />
+      <FetchErrorAlert isFetchError={isFetchError} message={fetchError} />
+      <UploadErrorAlert isUploadError={isUploadError} message={uploadError} />
       <ErrorAlert
         dismissError={inputError.dismiss}
         hideHeading
@@ -80,7 +87,7 @@ export const SelectionModal = ({
       </ErrorAlert>
       <Stack gap={3}>
         <SearchSort {...searchSortProps} />
-        <Gallery {...galleryProps} />
+        <Gallery {...galleryPropsValues} />
         <FileInput fileInput={fileInput} acceptedFiles={Object.values(acceptedFiles).join()} />
       </Stack>
     </BaseModal>
@@ -124,6 +131,9 @@ SelectionModal.propTypes = {
     fetchError: MessageDescriptor,
     uploadError: MessageDescriptor,
   }).isRequired,
+  isLoaded: PropTypes.bool.isRequired,
+  isFetchError: PropTypes.bool.isRequired,
+  isUploadError: PropTypes.bool.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

@@ -26,6 +26,7 @@ import { ErrorAlert } from '../../../../../../sharedComponents/ErrorAlerts/Error
 import { UploadErrorAlert } from '../../../../../../sharedComponents/ErrorAlerts/UploadErrorAlert';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import { ErrorContext } from '../../../../hooks';
+import { RequestKeys } from '../../../../../../data/constants/requests';
 
 /**
  * Collapsible Form widget controlling video handouts
@@ -38,6 +39,7 @@ export const HandoutWidget = ({
   handout,
   getHandoutDownloadUrl,
   updateField,
+  isUploadError,
 }) => {
   const [error] = React.useContext(ErrorContext).handout;
   const { fileSizeError } = hooks.fileSizeError();
@@ -59,7 +61,7 @@ export const HandoutWidget = ({
       >
         <FormattedMessage {...messages.fileSizeError} />
       </ErrorAlert>
-      <UploadErrorAlert message={messages.uploadHandoutError} />
+      <UploadErrorAlert isUploadError={isUploadError} message={messages.uploadHandoutError} />
       <FileInput fileInput={fileInput} />
       {handout ? (
         <Stack gap={3}>
@@ -125,6 +127,7 @@ export const mapStateToProps = (state) => ({
   isLibrary: selectors.app.isLibrary(state),
   handout: selectors.video.handout(state),
   getHandoutDownloadUrl: selectors.video.getHandoutDownloadUrl(state),
+  isUploadError: selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadAsset }),
 });
 
 export const mapDispatchToProps = (dispatch) => ({

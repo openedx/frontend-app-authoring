@@ -6,12 +6,16 @@ import hooks from './hooks';
 import SelectionModal from '../../sharedComponents/SelectionModal';
 import { acceptedImgKeys } from './utils';
 import messages from './messages';
+import { RequestKeys } from '../../data/constants/requests';
 
 export const VideoGallery = ({
   // redux
-  assets,
+  rawVideos,
+  isLoaded,
+  isFetchError,
+  isUploadError,
 }) => {
-  const videos = hooks.filterAssets({ assets });
+  const videos = hooks.buildVideos({ rawVideos });
   const {
     galleryError,
     inputError,
@@ -45,6 +49,9 @@ export const VideoGallery = ({
           selectBtnProps,
           acceptedFiles: acceptedImgKeys,
           modalMessages,
+          isLoaded,
+          isUploadError,
+          isFetchError,
         }}
       />
     </div>
@@ -52,11 +59,17 @@ export const VideoGallery = ({
 };
 
 VideoGallery.propTypes = {
-  assets: PropTypes.shape({}).isRequired,
+  rawVideos: PropTypes.shape({}).isRequired,
+  isLoaded: PropTypes.bool.isRequired,
+  isFetchError: PropTypes.bool.isRequired,
+  isUploadError: PropTypes.bool.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
-  assets: selectors.app.assets(state),
+  rawVideos: selectors.app.videos(state),
+  isLoaded: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchVideos }),
+  isFetchError: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchVideos }),
+  isUploadError: selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadVideo }),
 });
 
 export const mapDispatchToProps = {};

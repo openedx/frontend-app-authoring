@@ -8,7 +8,7 @@ import * as module from '.';
 jest.mock('../../sharedComponents/SelectionModal', () => 'SelectionModal');
 
 jest.mock('./hooks', () => ({
-  filterAssets: jest.fn(() => []),
+  buildVideos: jest.fn(() => []),
   videoHooks: jest.fn(() => ({
     galleryError: {
       show: 'ShoWERror gAlLery',
@@ -44,7 +44,9 @@ jest.mock('./hooks', () => ({
 jest.mock('../../data/redux', () => ({
   selectors: {
     requests: {
-      isPending: (state, { requestKey }) => ({ isPending: { state, requestKey } }),
+      isLoaded: (state, { requestKey }) => ({ isLoaded: { state, requestKey } }),
+      isFetchError: (state, { requestKey }) => ({ isFetchError: { state, requestKey } }),
+      isUploadError: (state, { requestKey }) => ({ isUploadError: { state, requestKey } }),
     },
   },
 }));
@@ -52,7 +54,10 @@ jest.mock('../../data/redux', () => ({
 describe('VideoGallery', () => {
   describe('component', () => {
     const props = {
-      assets: { sOmEaSsET: { staTICUrl: '/assets/sOmEaSsET' } },
+      rawVideos: { sOmEaSsET: { staTICUrl: '/video/sOmEaSsET' } },
+      isLoaded: false,
+      isFetchError: false,
+      isUploadError: false,
     };
     let el;
     const videoHooks = hooks.videoHooks();

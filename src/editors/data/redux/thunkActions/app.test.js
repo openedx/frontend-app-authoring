@@ -9,6 +9,7 @@ jest.mock('./requests', () => ({
   uploadAsset: (args) => ({ uploadAsset: args }),
   fetchStudioView: (args) => ({ fetchStudioView: args }),
   fetchAssets: (args) => ({ fetchAssets: args }),
+  fetchVideos: (args) => ({ fetchVideos: args }),
   fetchCourseDetails: (args) => ({ fetchCourseDetails: args }),
 }));
 
@@ -105,12 +106,14 @@ describe('app thunkActions', () => {
         fetchUnit,
         fetchStudioView,
         fetchAssets,
+        fetchVideos,
         fetchCourseDetails,
       } = thunkActions;
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
       thunkActions.fetchStudioView = () => 'fetchStudioView';
       thunkActions.fetchAssets = () => 'fetchAssets';
+      thunkActions.fetchVideos = () => 'fetchVideos';
       thunkActions.fetchCourseDetails = () => 'fetchCourseDetails';
       thunkActions.initialize(testValue)(dispatch);
       expect(dispatch.mock.calls).toEqual([
@@ -119,12 +122,14 @@ describe('app thunkActions', () => {
         [thunkActions.fetchUnit()],
         [thunkActions.fetchStudioView()],
         [thunkActions.fetchAssets()],
+        [thunkActions.fetchVideos()],
         [thunkActions.fetchCourseDetails()],
       ]);
       thunkActions.fetchBlock = fetchBlock;
       thunkActions.fetchUnit = fetchUnit;
       thunkActions.fetchStudioView = fetchStudioView;
       thunkActions.fetchAssets = fetchAssets;
+      thunkActions.fetchVideos = fetchVideos;
       thunkActions.fetchCourseDetails = fetchCourseDetails;
     });
   });

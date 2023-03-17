@@ -22,6 +22,7 @@ export const simpleSelectors = {
   unitUrl: mkSimpleSelector(app => app.unitUrl),
   blockTitle: mkSimpleSelector(app => app.blockTitle),
   assets: mkSimpleSelector(app => app.assets),
+  videos: mkSimpleSelector(app => app.videos),
 };
 
 export const returnUrl = createSelector(

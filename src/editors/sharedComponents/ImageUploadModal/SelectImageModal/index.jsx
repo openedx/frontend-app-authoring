@@ -1,8 +1,11 @@
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import hooks from './hooks';
 import { acceptedImgKeys } from './utils';
 import SelectionModal from '../../SelectionModal';
 import messages from './messages';
+import { RequestKeys } from '../../../data/constants/requests';
+import { selectors } from '../../../data/redux';
 
 export const SelectImageModal = ({
   isOpen,
@@ -10,6 +13,10 @@ export const SelectImageModal = ({
   setSelection,
   clearSelection,
   images,
+  // redux
+  isLoaded,
+  isFetchError,
+  isUploadError,
 }) => {
   const {
     galleryError,
@@ -41,6 +48,9 @@ export const SelectImageModal = ({
         selectBtnProps,
         acceptedFiles: acceptedImgKeys,
         modalMessages,
+        isLoaded,
+        isFetchError,
+        isUploadError,
       }}
     />
   );
@@ -52,6 +62,18 @@ SelectImageModal.propTypes = {
   setSelection: PropTypes.func.isRequired,
   clearSelection: PropTypes.func.isRequired,
   images: PropTypes.arrayOf(PropTypes.string).isRequired,
+  // redux
+  isLoaded: PropTypes.bool.isRequired,
+  isFetchError: PropTypes.bool.isRequired,
+  isUploadError: PropTypes.bool.isRequired,
 };
 
-export default SelectImageModal;
+export const mapStateToProps = (state) => ({
+  isLoaded: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchAssets }),
+  isFetchError: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchAssets }),
+  isUploadError: selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadAsset }),
+});
+
+export const mapDispatchToProps = {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SelectImageModal);

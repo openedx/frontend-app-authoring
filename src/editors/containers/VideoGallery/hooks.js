@@ -98,11 +98,20 @@ export const fileInputHooks = () => {
   };
 };
 
-export const filterAssets = ({ assets }) => {
+export const buildVideos = ({ rawVideos }) => {
   let videos = [];
-  const assetsList = Object.values(assets);
-  if (assetsList.length > 0) {
-    videos = assetsList.filter(asset => asset?.contentType?.startsWith('video/'));
+  const videoList = Object.values(rawVideos);
+  if (videoList.length > 0) {
+    videos = videoList.map(asset => ({
+      id: asset.edx_video_id,
+      displayName: asset.client_video_id,
+      externalUrl: asset.course_video_image_url,
+      dateAdded: asset.created,
+      locked: false,
+      thumbnail: asset.course_video_image_url,
+      status: asset.status,
+      duration: asset.duration,
+    }));
   }
   return videos;
 };
@@ -130,5 +139,5 @@ export const videoHooks = ({ videos }) => {
 
 export default {
   videoHooks,
-  filterAssets,
+  buildVideos,
 };

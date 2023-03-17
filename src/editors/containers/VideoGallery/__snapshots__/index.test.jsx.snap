@@ -45,8 +45,11 @@ exports[`VideoGallery component snapshot 1`] = `
         "show": "ShoWERror inPUT",
       }
     }
+    isFetchError={false}
     isFullscreenScroll={false}
+    isLoaded={false}
     isOpen={true}
+    isUploadError={false}
     modalMessages={
       Object {
         "confirmMsg": Object {

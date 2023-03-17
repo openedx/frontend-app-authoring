@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import {
@@ -13,9 +12,6 @@ import {
   MessageDescriptor,
 } from '@edx/frontend-platform/i18n';
 
-import { selectors } from '../../data/redux';
-import { RequestKeys } from '../../data/constants/requests';
-
 import messages from './messages';
 import GalleryCard from './GalleryCard';
 
@@ -28,10 +24,9 @@ export const Gallery = ({
   emptyGalleryLabel,
   showIdsOnCards,
   height,
+  isLoaded,
   // injected
   intl,
-  // redux
-  isLoaded,
 }) => {
   if (!isLoaded) {
     return (
@@ -80,6 +75,7 @@ Gallery.defaultProps = {
   emptyGalleryLabel: null,
 };
 Gallery.propTypes = {
+  isLoaded: PropTypes.bool.isRequired,
   galleryIsEmpty: PropTypes.bool.isRequired,
   searchIsEmpty: PropTypes.bool.isRequired,
   displayList: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -90,15 +86,6 @@ Gallery.propTypes = {
   height: PropTypes.string,
   // injected
   intl: intlShape.isRequired,
-  // redux
-  isLoaded: PropTypes.bool.isRequired,
 };
 
-const requestKey = RequestKeys.fetchAssets;
-export const mapStateToProps = (state) => ({
-  isLoaded: selectors.requests.isFinished(state, { requestKey }),
-});
-
-export const mapDispatchToProps = {};
-
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(Gallery));
+export default injectIntl(Gallery);

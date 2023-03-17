@@ -24,6 +24,9 @@ jest.mock('../../../../../../data/redux', () => ({
     app: {
       isLibrary: jest.fn(args => ({ isLibrary: args })),
     },
+    requests: {
+      isFailed: jest.fn(args => ({ isFailed: args })),
+    },
   },
 }));
 
