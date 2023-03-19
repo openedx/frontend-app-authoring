@@ -8,7 +8,6 @@ import { Close, Search } from '@edx/paragon/icons';
 import {
   FormattedMessage,
   injectIntl,
-  MessageDescriptor,
   intlShape,
 } from '@edx/frontend-platform/i18n';
 
@@ -109,7 +108,6 @@ SearchSort.defaultProps = {
   filterKeys: null,
   filterMessages: null,
   showSwitch: false,
-  switchMessage: null,
   onSwitchClick: null,
 };
 
@@ -126,7 +124,7 @@ SearchSort.propTypes = {
   filterKeys: PropTypes.shape({}),
   filterMessages: PropTypes.shape({}),
   showSwitch: PropTypes.bool,
-  switchMessage: MessageDescriptor,
+  switchMessage: PropTypes.shape({}).isRequired,
   onSwitchClick: PropTypes.func,
   // injected
   intl: intlShape.isRequired,

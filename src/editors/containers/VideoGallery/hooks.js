@@ -139,18 +139,32 @@ export const buildVideos = ({ rawVideos }) => {
   let videos = [];
   const videoList = Object.values(rawVideos);
   if (videoList.length > 0) {
-    videos = videoList.map(asset => ({
-      id: asset.edx_video_id,
-      displayName: asset.client_video_id,
-      externalUrl: asset.course_video_image_url,
-      dateAdded: asset.created,
+    videos = videoList.map(video => ({
+      id: video.edx_video_id,
+      displayName: video.client_video_id,
+      externalUrl: video.course_video_image_url,
+      dateAdded: video.created,
       locked: false,
-      thumbnail: asset.course_video_image_url,
-      status: asset.status,
-      duration: asset.duration,
+      thumbnail: video.course_video_image_url,
+      status: video.status,
+      statusBadgeVariant: module.getstatusBadgeVariant({ status: video.status }),
+      duration: video.duration,
+      transcripts: video.transcripts,
     }));
   }
   return videos;
+};
+
+export const getstatusBadgeVariant = ({ status }) => {
+  switch (status) {
+    case filterKeys.failed:
+      return 'danger';
+    case filterKeys.uploading:
+    case filterKeys.processing:
+      return 'light';
+    default:
+      return null;
+  }
 };
 
 export const videoHooks = ({ videos }) => {

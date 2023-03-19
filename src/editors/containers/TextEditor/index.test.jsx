@@ -61,6 +61,11 @@ jest.mock('../../data/redux', () => ({
       isFinished: jest.fn((state, params) => ({ isFailed: { state, params } })),
     },
   },
+  thunkActions: {
+    video: {
+      importTranscript: jest.fn(),
+    },
+  },
 }));
 
 describe('TextEditor', () => {

@@ -6,7 +6,6 @@ import { Add } from '@edx/paragon/icons';
 import {
   FormattedMessage,
   injectIntl,
-  MessageDescriptor,
   intlShape,
 } from '@edx/frontend-platform/i18n';
 
@@ -65,6 +64,12 @@ export const SelectionModal = ({
         </Button>
       )}
       title={intl.formatMessage(titleMsg)}
+      bodyStyle={{ background: '#EBEBEB' }}
+      headerComponent={(
+        <div style={{ zIndex: 10000, margin: '18px 0' }}>
+          <SearchSort {...searchSortProps} />
+        </div>
+      )}
     >
       {/* Error Alerts */}
       <FetchErrorAlert isFetchError={isFetchError} message={fetchError} />
@@ -85,8 +90,7 @@ export const SelectionModal = ({
       >
         <FormattedMessage {...galleryError.message} />
       </ErrorAlert>
-      <Stack gap={3}>
-        <SearchSort {...searchSortProps} />
+      <Stack gap={2}>
         <Gallery {...galleryPropsValues} />
         <FileInput fileInput={fileInput} acceptedFiles={Object.values(acceptedFiles).join()} />
       </Stack>
@@ -108,13 +112,13 @@ SelectionModal.propTypes = {
     dismiss: PropTypes.func.isRequired,
     show: PropTypes.bool.isRequired,
     set: PropTypes.func.isRequired,
-    message: MessageDescriptor,
+    message: PropTypes.shape({}).isRequired,
   }).isRequired,
   inputError: PropTypes.shape({
     dismiss: PropTypes.func.isRequired,
     show: PropTypes.bool.isRequired,
     set: PropTypes.func.isRequired,
-    message: MessageDescriptor,
+    message: PropTypes.shape({}).isRequired,
   }).isRequired,
   fileInput: PropTypes.shape({
     click: PropTypes.func.isRequired,
@@ -125,11 +129,11 @@ SelectionModal.propTypes = {
   selectBtnProps: PropTypes.shape({}).isRequired,
   acceptedFiles: PropTypes.shape({}).isRequired,
   modalMessages: PropTypes.shape({
-    confirmMsg: MessageDescriptor,
-    uploadButtonMsg: MessageDescriptor,
-    titleMsg: MessageDescriptor,
-    fetchError: MessageDescriptor,
-    uploadError: MessageDescriptor,
+    confirmMsg: PropTypes.shape({}).isRequired,
+    uploadButtonMsg: PropTypes.shape({}).isRequired,
+    titleMsg: PropTypes.shape({}).isRequired,
+    fetchError: PropTypes.shape({}).isRequired,
+    uploadError: PropTypes.shape({}).isRequired,
   }).isRequired,
   isLoaded: PropTypes.bool.isRequired,
   isFetchError: PropTypes.bool.isRequired,

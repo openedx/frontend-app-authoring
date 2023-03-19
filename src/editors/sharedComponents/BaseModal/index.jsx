@@ -14,10 +14,12 @@ export const BaseModal = ({
   close,
   title,
   children,
+  headerComponent,
   confirmAction,
   footerAction,
   size,
   isFullscreenScroll,
+  bodyStyle,
 }) => (
   <ModalDialog
     isOpen={isOpen}
@@ -28,12 +30,13 @@ export const BaseModal = ({
     isFullscreenOnMobile
     isFullscreenScroll={isFullscreenScroll}
   >
-    <ModalDialog.Header>
+    <ModalDialog.Header style={{ zIndex: 10000 }}>
       <ModalDialog.Title>
         {title}
       </ModalDialog.Title>
+      {headerComponent}
     </ModalDialog.Header>
-    <ModalDialog.Body>
+    <ModalDialog.Body style={bodyStyle}>
       {children}
     </ModalDialog.Body>
     <ModalDialog.Footer>
@@ -51,8 +54,10 @@ export const BaseModal = ({
 
 BaseModal.defaultProps = {
   footerAction: null,
+  headerComponent: null,
   size: 'lg',
   isFullscreenScroll: true,
+  bodyStyle: null,
 };
 
 BaseModal.propTypes = {
@@ -62,8 +67,10 @@ BaseModal.propTypes = {
   children: PropTypes.node.isRequired,
   confirmAction: PropTypes.node.isRequired,
   footerAction: PropTypes.node,
+  headerComponent: PropTypes.node,
   size: PropTypes.string,
   isFullscreenScroll: PropTypes.bool,
+  bodyStyle: PropTypes.shape({}),
 };
 
 export default BaseModal;

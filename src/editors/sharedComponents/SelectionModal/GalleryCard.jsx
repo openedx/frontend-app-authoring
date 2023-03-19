@@ -2,36 +2,53 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
-  Button,
-  Icon,
+  Badge,
   Image,
   SelectableBox,
 } from '@edx/paragon';
 import { FormattedMessage, FormattedDate, FormattedTime } from '@edx/frontend-platform/i18n';
-import { Link } from '@edx/paragon/icons';
 
 import messages from './messages';
+import { formatDuration } from '../../utils';
+import LanguageNamesWidget from '../../containers/VideoEditor/components/VideoSettingsModal/components/VideoPreviewWidget/LanguageNamesWidget';
 
 export const GalleryCard = ({
   asset,
-  showId,
 }) => (
-  <SelectableBox className="card bg-white" key={asset.externalUrl} type="radio" value={asset.id}>
+  <SelectableBox className="card bg-white" key={asset.externalUrl} type="radio" value={asset.id} style={{ padding: '10px 20px' }}>
     <div className="card-div d-flex flex-row flex-nowrap">
-      <Image
-        style={{ width: '100px', height: '100px' }}
-        src={asset.externalUrl}
-      />
-      <div className="img-text p-3">
-        <h3>{asset.displayName}</h3>
-        { showId && (
-          <p>
-            <Button variant="link" size="inline" onClick={() => { /* TODO */ }}>
-              <Icon src={Link} /> {asset.id}
-            </Button>
-          </p>
+      <div style={{
+        position: 'relative',
+        width: '200px',
+        height: '100px',
+        margin: '16px 0 0 0',
+      }}
+      >
+        <Image
+          style={{ width: '200px', height: '100px' }}
+          src={asset.externalUrl}
+        />
+        { asset.status && asset.statusBadgeVariant && (
+          <Badge variant={asset.statusBadgeVariant} style={{ position: 'absolute', left: '6px', top: '6px' }}>
+            {asset.status}
+          </Badge>
         )}
-        <p>
+        { asset.duration >= 0 && (
+          <Badge variant="dark" style={{ position: 'absolute', right: '6px', bottom: '6px' }}>
+            {formatDuration(asset.duration)}
+          </Badge>
+        )}
+      </div>
+      <div className="card-text p-3">
+        <h3>{asset.displayName}</h3>
+        { asset.transcripts && (
+          <div style={{ margin: '0 0 5px 0' }}>
+            <LanguageNamesWidget
+              transcripts={asset.transcripts}
+            />
+          </div>
+        )}
+        <p style={{ fontSize: '11px' }}>
           <FormattedMessage
             {...messages.addedDate}
             values={{
@@ -44,10 +61,6 @@ export const GalleryCard = ({
     </div>
   </SelectableBox>
 );
-
-GalleryCard.defaultProps = {
-  showId: false,
-};
 
 GalleryCard.propTypes = {
   asset: PropTypes.shape({
@@ -62,8 +75,9 @@ GalleryCard.propTypes = {
     url: PropTypes.string,
     duration: PropTypes.number,
     status: PropTypes.string,
+    statusBadgeVariant: PropTypes.string,
+    transcripts: PropTypes.array,
   }).isRequired,
-  showId: PropTypes.bool,
 };
 
 export default GalleryCard;

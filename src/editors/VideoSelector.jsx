@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import VideoGallery from './containers/VideoGallery';
 import * as hooks from './hooks';
 
-export const Selector = ({
+export const VideoSelector = ({
   learningContextId,
   lmsEndpointUrl,
   studioEndpointUrl,
@@ -25,10 +25,10 @@ export const Selector = ({
   );
 };
 
-Selector.propTypes = {
+VideoSelector.propTypes = {
   learningContextId: PropTypes.string.isRequired,
   lmsEndpointUrl: PropTypes.string.isRequired,
   studioEndpointUrl: PropTypes.string.isRequired,
 };
 
-export default Selector;
+export default VideoSelector;

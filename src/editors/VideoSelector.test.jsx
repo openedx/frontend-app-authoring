@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { shallow } from 'enzyme';
 import * as hooks from './hooks';
-import Selector from './Selector';
+import VideoSelector from './VideoSelector';
 
 jest.mock('./hooks', () => ({
   initializeApp: jest.fn(),
@@ -22,15 +22,15 @@ const initData = {
   ...props,
 };
 
-describe('Editor', () => {
+describe('Video Selector', () => {
   describe('render', () => {
     test('rendering correctly with expected Input', () => {
-      expect(shallow(<Selector {...props} />)).toMatchSnapshot();
+      expect(shallow(<VideoSelector {...props} />)).toMatchSnapshot();
     });
   });
   describe('behavior', () => {
     it('calls initializeApp hook with dispatch, and passed data', () => {
-      shallow(<Selector {...props} />);
+      shallow(<VideoSelector {...props} />);
       expect(hooks.initializeApp).toHaveBeenCalledWith({
         dispatch: useDispatch(),
         data: initData,

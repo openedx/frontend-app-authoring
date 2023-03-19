@@ -6,6 +6,7 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but no im
   style={
     Object {
       "height": "375px",
+      "margin": "0 -1.5rem",
     }
   }
 >
@@ -19,6 +20,7 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but searc
   style={
     Object {
       "height": "375px",
+      "margin": "0 -1.5rem",
     }
   }
 >
@@ -36,6 +38,7 @@ exports[`TextEditor Image Gallery component component snapshot: loaded, show gal
   style={
     Object {
       "height": "375px",
+      "margin": "0 -1.5rem",
     }
   }
 >

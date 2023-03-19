@@ -9,7 +9,6 @@ import {
   FormattedMessage,
   injectIntl,
   intlShape,
-  MessageDescriptor,
 } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
@@ -39,20 +38,20 @@ export const Gallery = ({
   }
   if (galleryIsEmpty) {
     return (
-      <div className="gallery p-4 bg-gray-100" style={{ height }}>
+      <div className="gallery p-4 bg-gray-100" style={{ height, margin: '0 -1.5rem' }}>
         <FormattedMessage {...emptyGalleryLabel} />
       </div>
     );
   }
   if (searchIsEmpty) {
     return (
-      <div className="gallery p-4 bg-gray-100" style={{ height }}>
+      <div className="gallery p-4 bg-gray-100" style={{ height, margin: '0 -1.5rem' }}>
         <FormattedMessage {...messages.emptySearchLabel} />
       </div>
     );
   }
   return (
-    <Scrollable className="gallery bg-gray-100" style={{ height }}>
+    <Scrollable className="gallery bg-gray-100" style={{ height, margin: '0 -1.5rem' }}>
       <div className="p-4">
         <SelectableBox.Set
           columns={1}
@@ -72,7 +71,6 @@ Gallery.defaultProps = {
   highlighted: '',
   showIdsOnCards: false,
   height: '375px',
-  emptyGalleryLabel: null,
 };
 Gallery.propTypes = {
   isLoaded: PropTypes.bool.isRequired,
@@ -81,7 +79,7 @@ Gallery.propTypes = {
   displayList: PropTypes.arrayOf(PropTypes.object).isRequired,
   highlighted: PropTypes.string,
   onHighlightChange: PropTypes.func.isRequired,
-  emptyGalleryLabel: MessageDescriptor,
+  emptyGalleryLabel: PropTypes.shape({}).isRequired,
   showIdsOnCards: PropTypes.bool,
   height: PropTypes.string,
   // injected

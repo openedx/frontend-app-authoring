@@ -10,6 +10,9 @@ jest.mock('../../../../../data/redux', () => ({
       problemType: jest.fn(state => ({ problemType: state })),
     },
   },
+  thunkActions: {
+    video: jest.fn(),
+  },
 }));
 
 describe('AnswerOption', () => {

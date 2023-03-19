@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Editor render rendering correctly with expected Input 1`] = `<VideoGallery />`;

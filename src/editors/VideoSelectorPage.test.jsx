@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import SelectorPage from './SelectorPage';
+import VideoSelectorPage from './VideoSelectorPage';
 
 const props = {
   courseId: 'course-v1:edX+DemoX+Demo_Course',
@@ -11,15 +11,15 @@ const props = {
 jest.mock('react-redux', () => ({
   Provider: 'Provider',
 }));
-jest.mock('./Selector', () => 'Selector');
+jest.mock('./VideoSelector', () => 'VideoSelector');
 
-describe('Selector Page', () => {
+describe('Video Selector Page', () => {
   describe('snapshots', () => {
     test('rendering correctly with expected Input', () => {
-      expect(shallow(<SelectorPage {...props} />)).toMatchSnapshot();
+      expect(shallow(<VideoSelectorPage {...props} />)).toMatchSnapshot();
     });
     test('rendering with props to null', () => {
-      expect(shallow(<SelectorPage />)).toMatchSnapshot();
+      expect(shallow(<VideoSelectorPage />)).toMatchSnapshot();
     });
   });
 });

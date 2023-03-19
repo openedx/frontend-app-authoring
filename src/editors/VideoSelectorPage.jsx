@@ -2,17 +2,17 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import PropTypes from 'prop-types';
 import ErrorBoundary from './sharedComponents/ErrorBoundary';
-import { Selector } from './Selector';
+import { VideoSelector } from './VideoSelector';
 import store from './data/store';
 
-const SelectorPage = ({
+const VideoSelectorPage = ({
   courseId,
   lmsEndpointUrl,
   studioEndpointUrl,
 }) => (
   <ErrorBoundary>
     <Provider store={store}>
-      <Selector
+      <VideoSelector
         {...{
           learningContextId: courseId,
           lmsEndpointUrl,
@@ -23,16 +23,16 @@ const SelectorPage = ({
   </ErrorBoundary>
 );
 
-SelectorPage.defaultProps = {
+VideoSelectorPage.defaultProps = {
   courseId: null,
   lmsEndpointUrl: null,
   studioEndpointUrl: null,
 };
 
-SelectorPage.propTypes = {
+VideoSelectorPage.propTypes = {
   courseId: PropTypes.string,
   lmsEndpointUrl: PropTypes.string,
   studioEndpointUrl: PropTypes.string,
 };
 
-export default SelectorPage;
+export default VideoSelectorPage;
