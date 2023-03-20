@@ -77,7 +77,7 @@ export const VideoSourceWidget = ({
           <Form.Control
             floatingLabel={intl.formatMessage(messages.videoUrlLabel)}
             onChange={source.onChange}
-            onBlur={updateVideoURL}
+            onBlur={(e) => updateVideoURL(e, videoId.local)}
             value={source.local}
           />
           <FormControlFeedback className="text-primary-300">
