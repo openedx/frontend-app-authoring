@@ -350,7 +350,20 @@ export class OLXParser {
   getSolutionExplanation(problemType) {
     if (!_.has(this.problem, `${problemType}.solution`)) { return null; }
 
-    const solution = _.get(this.problem, `${problemType}.solution`);
+    let solution = _.get(this.problem, `${problemType}.solution`);
+    const wrapper = Object.keys(solution)[0];
+    if (Object.keys(solution).length === 1 && wrapper === 'div') {
+      const parsedSolution = {};
+      Object.entries(solution.div).forEach(([key, value]) => {
+        if (key !== '@_class') {
+          if (key === 'p') {
+            value.shift();
+          }
+          parsedSolution[key] = value;
+        }
+      });
+      solution = parsedSolution;
+    }
     const solutionString = this.builder.build(solution);
     return solutionString;
   }

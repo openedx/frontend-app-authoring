@@ -93,7 +93,6 @@ export const SettingsWidget = ({
             <ShowAnswerCard
               showAnswer={settings.showAnswer}
               updateSettings={updateSettings}
-              solutionExplanation={settings.solutionExplanation}
             />
           </div>
           {

@@ -236,11 +236,6 @@ describe('Problem settings hooks', () => {
       output.handleAttemptsChange({ target: { value } });
       expect(updateSettings).toHaveBeenCalledWith({ showAnswer: { ...showAnswer, afterAttempts: parseInt(value) } });
     });
-    test('handleExplanationChange should update settings', () => {
-      const value = 'explanation';
-      output.handleExplanationChange(value);
-      expect(updateSettings).toHaveBeenCalledWith({ solutionExplanation: value });
-    });
   });
 
   describe('Timer card hooks', () => {

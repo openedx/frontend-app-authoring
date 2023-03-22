@@ -1,13 +1,12 @@
 export const checkboxesWithFeedbackAndHints = {
-  solution: `<div class="detailed-solution">
-    <p>Explanation</p>
+  solution: `
     <p>
         You can form a voltage divider that evenly divides the input
         voltage with two identically valued resistors, with the sampled
         voltage taken in between the two.
     </p>
     <p><img src="/static/images/voltage_divider.png" alt=""></img></p>
-  </div>`,
+  `,
   question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
   answers: {
     A: '<p>a correct answer</p>',
@@ -52,7 +51,7 @@ export const dropdownWithFeedbackAndHints = {
 };
 
 export const multipleChoiceWithFeedbackAndHints = {
-  solution: '',
+  solution: '<p>You can add a solution</p>',
   question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
   answers: {
     A: '<p>an incorrect answer</p>',

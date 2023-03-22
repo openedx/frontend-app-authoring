@@ -56,10 +56,16 @@ class ReactStateOLXParser {
   addSolution() {
     const { solution } = this.editorObject;
     if (!solution || solution.length <= 0) { return {}; }
+    const solutionTitle = { '#text': 'Explanation' };
     const parsedSolution = this.parser.parse(solution);
+    const paragraphs = parsedSolution.p;
+    const withWrapper = _.isArray(paragraphs) ? [solutionTitle, ...paragraphs] : [solutionTitle, paragraphs];
     const solutionObject = {
       solution: {
-        ...parsedSolution,
+        div: {
+          '@_class': 'detailed-solution',
+          p: withWrapper,
+        },
       },
     };
     return solutionObject;

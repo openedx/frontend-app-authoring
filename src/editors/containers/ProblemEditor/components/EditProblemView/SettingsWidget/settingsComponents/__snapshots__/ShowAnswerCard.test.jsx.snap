@@ -3,33 +3,8 @@
 exports[`ShowAnswerCard snapshot snapshot: show answer setting card 1`] = `
 <SettingsOption
   className=""
-  extraSections={
-    Array [
-      Object {
-        "children": <React.Fragment>
-          <div
-            className="pb-3"
-          >
-            <span>
-              <FormattedMessage
-                defaultMessage="Provide an explanation for the correct answer."
-                description="Solution Explanation text"
-                id="authoring.problemeditor.settings.showAnswer.explanation.text"
-              />
-            </span>
-          </div>
-          <ExpandableTextArea
-            error={false}
-            errorMessage={null}
-            id="solution"
-            placeholder="Explanation"
-            value=""
-          />
-        </React.Fragment>,
-      },
-    ]
-  }
-  hasExpandableTextArea={true}
+  extraSections={Array []}
+  hasExpandableTextArea={false}
   summary="After Some Number of Attempts"
   title="Show answer"
 >

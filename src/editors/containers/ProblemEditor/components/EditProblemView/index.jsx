@@ -12,6 +12,7 @@ import { ProblemTypeKeys } from '../../../../data/constants/problem';
 
 import { parseState } from './hooks';
 import './index.scss';
+import ExplanationWidget from './ExplanationWidget';
 
 export const EditProblemView = ({
   // redux
@@ -41,6 +42,7 @@ export const EditProblemView = ({
         ) : (
           <span className="flex-grow-1">
             <QuestionWidget />
+            <ExplanationWidget />
             <AnswerWidget problemType={problemType} />
           </span>
         )}

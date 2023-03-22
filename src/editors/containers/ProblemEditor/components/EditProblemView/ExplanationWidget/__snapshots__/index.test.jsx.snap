@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SolutionWidget render snapshot: renders correct default 1`] = `
+<div
+  className="tinyMceWidget mt-4 text-primary-500"
+>
+  <div
+    className="h4 mb-3"
+  >
+    <FormattedMessage
+      defaultMessage="Explanation"
+      description="Explanation Title"
+      id="authoring.problemEditor.explanationwidget.explanationWidgetTitle"
+    />
+  </div>
+  <div
+    className="small mb-3"
+  >
+    <FormattedMessage
+      defaultMessage="Provide an explantion for the correct answer"
+      description="Description of the solution widget"
+      id="authoring.problemEditor.solutionwidget.solutionDescriptionText"
+    />
+  </div>
+  <[object Object]
+    editorType="solution"
+    id="solution"
+    minHeight={150}
+    placeholder="Enter your explanation"
+    setEditorRef={[MockFunction prepareEditorRef.setEditorRef]}
+    textValue="This is my question"
+  />
+</div>
+`;

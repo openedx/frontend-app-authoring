@@ -45,15 +45,13 @@ export const getCheckboxesOLXWithFeedbackAndHintsOLX = () => ({
       value: '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
     },
   ],
-  solutionExplanation: `<div class="detailed-solution">
-  <p>Explanation</p>
+  solutionExplanation: `
   <p>
       You can form a voltage divider that evenly divides the input
       voltage with two identically valued resistors, with the sampled
       voltage taken in between the two.
   </p>
-  <p><img src="/static/images/voltage_divider.png" alt=""></img></p>
-</div>`,
+  <p><img src="/static/images/voltage_divider.png" alt=""></img></p>`,
   data: {
     answers: [
       {
@@ -251,6 +249,9 @@ export const multipleChoiceWithFeedbackAndHintsOLX = {
     <choice correct="false"><p>an incorrect answer</p><choicehint><p>You can specify optional feedback for none, a subset, or all of the answers.</></choicehint>
 </choice>
   </choicegroup>
+  <solution>
+    <p>You can add a solution</p>
+  </solution>
 </multiplechoiceresponse>
 <demandhint>
   <hint><p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p></hint>
@@ -266,6 +267,7 @@ export const multipleChoiceWithFeedbackAndHintsOLX = {
     value: '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
   },
   ],
+  solutionExplanation: '<p>You can add a solution</p>',
   data: {
     answers: [
       {
@@ -302,6 +304,12 @@ export const multipleChoiceWithFeedbackAndHintsOLX = {
 <p>an incorrect answer </p>       <choicehint><p>You can specify optional feedback for none, a subset, or all of the answers.</p></choicehint>
       </choice>
     </choicegroup>
+    <solution>
+    <div class="detailed-solution">
+  <p>Explanation</p>
+  <p>You can add a solution</p>
+</div>
+</solution>
   </multiplechoiceresponse>
   <demandhint>
     <hint><p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p></hint>

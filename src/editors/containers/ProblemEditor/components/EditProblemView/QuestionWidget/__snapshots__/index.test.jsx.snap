@@ -2,7 +2,7 @@
 
 exports[`QuestionWidget render snapshot: renders correct default 1`] = `
 <div
-  className="question-widget"
+  className="tinyMceWidget"
 >
   <div
     className="h4 mb-3"

@@ -43,6 +43,7 @@ exports[`EditorProblemView component renders simple view 1`] = `
       className="flex-grow-1"
     >
       <injectIntl(ShimmedIntlComponent) />
+      <injectIntl(ShimmedIntlComponent) />
       <injectIntl(ShimmedIntlComponent)
         problemType="multiplechoiceresponse"
       />

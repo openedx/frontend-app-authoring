@@ -8,11 +8,9 @@ import { ShowAnswerTypes, ShowAnswerTypesKeys } from '../../../../../../data/con
 import { selectors } from '../../../../../../data/redux';
 import messages from '../messages';
 import { useAnswerSettings } from '../hooks';
-import ExpandableTextArea from '../../../../../../sharedComponents/ExpandableTextArea';
 
 export const ShowAnswerCard = ({
   showAnswer,
-  solutionExplanation,
   updateSettings,
   // inject
   intl,
@@ -23,7 +21,6 @@ export const ShowAnswerCard = ({
   const {
     handleShowAnswerChange,
     handleAttemptsChange,
-    handleExplanationChange,
     showAttempts,
   } = useAnswerSettings(showAnswer, updateSettings);
 
@@ -69,28 +66,10 @@ export const ShowAnswerCard = ({
     </>
   );
 
-  const explanationSection = (
-    <>
-      <div className="pb-3">
-        <span>
-          <FormattedMessage {...messages.explanationSettingText} />
-        </span>
-      </div>
-      <ExpandableTextArea
-        value={solutionExplanation}
-        setContent={handleExplanationChange}
-        id="solution"
-        placeholder={intl.formatMessage(messages.explanationInputLabel)}
-      />
-    </>
-  );
-
   return (
     <SettingsOption
       title={intl.formatMessage(messages.showAnswerSettingsTitle)}
       summary={intl.formatMessage(ShowAnswerTypes[showAnswer.on])}
-      extraSections={[{ children: explanationSection }]}
-      hasExpandableTextArea
     >
       {showAnswerSection}
     </SettingsOption>
