@@ -462,6 +462,16 @@ export class OLXParser {
     }
     const { answers } = answersObject;
     const settings = { hints };
+    if (ProblemTypeKeys.NUMERIC === problemType && _.has(answers[0], 'tolerance')) {
+      const toleranceValue = answers[0].tolerance;
+      if (!toleranceValue || toleranceValue.length === 0) {
+        settings.tolerance = { value: null, type: 'None' };
+      } else if (toleranceValue.includes('%')) {
+        settings.tolerance = { value: parseInt(toleranceValue.slice(0, -1)), type: 'Percent' };
+      } else {
+        settings.tolerance = { value: parseInt(toleranceValue), type: 'Number' };
+      }
+    }
     if (solutionExplanation) { settings.solutionExplanation = solutionExplanation; }
 
     return {

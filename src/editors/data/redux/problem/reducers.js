@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { indexToLetterMap } from '../../../containers/ProblemEditor/data/OLXParser';
 import { StrictDict } from '../../../utils';
 import { ProblemTypeKeys, ShowAnswerTypesKeys } from '../../constants/problem';
+import { ToleranceTypes } from '../../../containers/ProblemEditor/components/EditProblemView/SettingsWidget/settingsComponents/Tolerance/constants';
 
 const nextAlphaId = (lastId) => String.fromCharCode(lastId.charCodeAt(0) + 1);
 const initialState = {
@@ -32,6 +33,10 @@ const initialState = {
     },
     showResetButton: false,
     solutionExplanation: '',
+    tolerance: {
+      value: null,
+      type: ToleranceTypes.none.type,
+    },
   },
 };
 

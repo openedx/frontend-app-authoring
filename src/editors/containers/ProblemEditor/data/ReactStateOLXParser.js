@@ -1,6 +1,7 @@
 import _ from 'lodash-es';
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import { ProblemTypeKeys } from '../../../data/constants/problem';
+import { ToleranceTypes } from '../components/EditProblemView/SettingsWidget/settingsComponents/Tolerance/constants';
 
 class ReactStateOLXParser {
   constructor(problemState) {
@@ -306,6 +307,7 @@ class ReactStateOLXParser {
 
   buildNumericalResponse() {
     const { answers } = this.problemState;
+    const { tolerance } = this.problemState.settings;
     const { selectedFeedback } = this.editorObject;
     let answerObject = {};
     const additionalAnswers = [];
@@ -316,11 +318,11 @@ class ReactStateOLXParser {
         if (answer.correct && !firstCorrectAnswerParsed) {
           firstCorrectAnswerParsed = true;
           let responseParam = {};
-          if (_.has(answer, 'tolerance')) {
+          if (tolerance?.value) {
             responseParam = {
               responseparam: {
                 '@_type': 'tolerance',
-                '@_default': _.get(answer, 'tolerance', 0),
+                '@_default': `${tolerance.value}${tolerance.type === ToleranceTypes.number.type ? '' : '%'}`,
               },
             };
           }
