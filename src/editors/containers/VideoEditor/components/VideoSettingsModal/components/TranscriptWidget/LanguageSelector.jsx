@@ -59,7 +59,6 @@ export const LanguageSelector = ({
   const onLanguageChange = module.hooks.onSelectLanguage({
     dispatch: useDispatch(), languageBeforeChange: localLang, setLocalLang, triggerupload: input.click,
   });
-  console.log({ localLang, language, openLanguages });
 
   const getTitle = () => {
     if (Object.prototype.hasOwnProperty.call(videoTranscriptLanguages, language)) {
