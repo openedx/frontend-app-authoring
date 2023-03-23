@@ -25,6 +25,11 @@ describe('SettingsWidget', () => {
   const props = {
     problemType: ProblemTypeKeys.TEXTINPUT,
     settings: {},
+    defaultSettings: {
+      maxAttempts: 2,
+      showanswer: 'finished',
+      showResetButton: false,
+    },
   };
 
   describe('behavior', () => {

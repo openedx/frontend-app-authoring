@@ -261,10 +261,10 @@ export const fetchCourseDetails = ({ ...rest }) => (dispatch, getState) => {
   }));
 };
 
-export const fetchAdvanceSettings = ({ ...rest }) => (dispatch, getState) => {
+export const fetchAdvancedSettings = ({ ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
-    requestKey: RequestKeys.fetchAdvanceSettings,
-    promise: api.fetchAdvanceSettings({
+    requestKey: RequestKeys.fetchAdvancedSettings,
+    promise: api.fetchAdvancedSettings({
       studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
       learningContextId: selectors.app.learningContextId(getState()),
     }),
@@ -299,6 +299,6 @@ export default StrictDict({
   getTranscriptFile,
   checkTranscriptsForImport,
   importTranscript,
-  fetchAdvanceSettings,
+  fetchAdvancedSettings,
   fetchVideoFeatures,
 });

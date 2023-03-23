@@ -11,6 +11,7 @@ export const state = {
   cardCollapsed: (val) => useState(val),
   summary: (val) => useState(val),
   showAttempts: (val) => useState(val),
+  attemptDisplayValue: (val) => useState(val),
 };
 
 export const showAdvancedSettingsCards = () => {
@@ -117,17 +118,50 @@ export const resetCardHooks = (updateSettings) => {
   };
 };
 
-export const scoringCardHooks = (scoring, updateSettings) => {
+export const scoringCardHooks = (scoring, updateSettings, defaultValue) => {
+  const loadedAttemptsNumber = scoring.attempts.number === defaultValue ? `${scoring.attempts.number} (Default)` : scoring.attempts.number;
+  const [attemptDisplayValue, setAttemptDisplayValue] = module.state.attemptDisplayValue(loadedAttemptsNumber);
+  const handleUnlimitedChange = (event) => {
+    const isUnlimited = event.target.checked;
+    if (isUnlimited) {
+      setAttemptDisplayValue('');
+      updateSettings({ scoring: { ...scoring, attempts: { number: '', unlimited: true } } });
+    } else {
+      setAttemptDisplayValue(`${defaultValue} (Default)`);
+      updateSettings({ scoring: { ...scoring, attempts: { number: defaultValue, unlimited: false } } });
+    }
+  };
   const handleMaxAttemptChange = (event) => {
     let unlimitedAttempts = false;
     let attemptNumber = parseInt(event.target.value);
+    const { value } = event.target;
     if (_.isNaN(attemptNumber)) {
-      attemptNumber = '';
-      unlimitedAttempts = true;
-    } else if (attemptNumber < 0) {
+      if (value === '') {
+        attemptNumber = defaultValue;
+        setAttemptDisplayValue(`${defaultValue} (Default)`);
+      } else {
+        attemptNumber = '';
+        unlimitedAttempts = true;
+      }
+    } else if (attemptNumber <= 0) {
       attemptNumber = 0;
+    } else if (attemptNumber === defaultValue) {
+      const attemptNumberStr = value.replace(' (Default)');
+      attemptNumber = parseInt(attemptNumberStr);
     }
     updateSettings({ scoring: { ...scoring, attempts: { number: attemptNumber, unlimited: unlimitedAttempts } } });
+  };
+
+  const handleOnChange = (event) => {
+    let newMaxAttempt = parseInt(event.target.value);
+    if (newMaxAttempt === defaultValue) {
+      newMaxAttempt = `${defaultValue} (Default)`;
+    } else if (_.isNaN(newMaxAttempt)) {
+      newMaxAttempt = '';
+    } else if (newMaxAttempt < 0) {
+      newMaxAttempt = 0;
+    }
+    setAttemptDisplayValue(newMaxAttempt);
   };
 
   const handleWeightChange = (event) => {
@@ -139,7 +173,10 @@ export const scoringCardHooks = (scoring, updateSettings) => {
   };
 
   return {
+    attemptDisplayValue,
+    handleUnlimitedChange,
     handleMaxAttemptChange,
+    handleOnChange,
     handleWeightChange,
   };
 };

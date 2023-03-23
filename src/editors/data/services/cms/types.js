@@ -61,6 +61,11 @@ export const problemDataProps = {
       afterAtempts: PropTypes.number,
     }),
     showResetButton: PropTypes.bool,
+    defaultSettings: PropTypes.shape({
+      max_attempts: PropTypes.number,
+      showanswer: PropTypes.string,
+      show_reset_button: PropTypes.bool,
+    }),
   }),
 };
 

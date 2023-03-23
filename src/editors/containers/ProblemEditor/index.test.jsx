@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-
+import { Spinner } from '@edx/paragon';
 import { thunkActions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 import { ProblemEditor, mapStateToProps, mapDispatchToProps } from '.';
@@ -48,41 +48,59 @@ describe('ProblemEditor', () => {
     studioViewFinished: false,
     initializeProblemEditor: jest.fn().mockName('args.intializeProblemEditor'),
     assetsFinished: false,
+    advancedSettingsFinished: false,
   };
   describe('snapshots', () => {
     test('renders as expected with default behavior', () => {
       expect(shallow(<ProblemEditor {...props} />)).toMatchSnapshot();
     });
     test('block loaded, studio view and assets not yet loaded, Spinner appears', () => {
-      expect(shallow(<ProblemEditor {...props} blockFinished />)).toMatchSnapshot();
+      const wrapper = shallow(<ProblemEditor {...props} blockFinished />);
+      expect(wrapper.containsMatchingElement(<Spinner />)).toEqual(true);
     });
     test('studio view loaded, block and assets not yet loaded, Spinner appears', () => {
-      expect(shallow(<ProblemEditor {...props} studioViewFinished />)).toMatchSnapshot();
+      const wrapper = shallow(<ProblemEditor {...props} studioViewFinished />);
+      expect(wrapper.containsMatchingElement(<Spinner />)).toEqual(true);
     });
     test('assets loaded, block and studio view not yet loaded, Spinner appears', () => {
-      expect(shallow(<ProblemEditor {...props} assetsFinished />)).toMatchSnapshot();
+      const wrapper = shallow(<ProblemEditor {...props} assetsFinished />);
+      expect(wrapper.containsMatchingElement(<Spinner />)).toEqual(true);
+    });
+    test('advanceSettings loaded, block and studio view not yet loaded, Spinner appears', () => {
+      const wrapper = shallow(<ProblemEditor {...props} advancedSettingsFinished />);
+      expect(wrapper.containsMatchingElement(<Spinner />)).toEqual(true);
     });
     test('block failed, message appears', () => {
-      expect(shallow(<ProblemEditor
+      const wrapper = shallow(<ProblemEditor
         {...props}
         blockFinished
         studioViewFinished
         assetsFinished
+        advancedSettingsFinished
         blockFailed
-      />)).toMatchSnapshot();
+      />);
+      expect(wrapper).toMatchSnapshot();
     });
     test('renders SelectTypeModal', () => {
-      expect(shallow(<ProblemEditor {...props} blockFinished studioViewFinished assetsFinished />)).toMatchSnapshot();
+      const wrapper = shallow(<ProblemEditor
+        {...props}
+        blockFinished
+        studioViewFinished
+        assetsFinished
+        advancedSettingsFinished
+      />);
+      expect(wrapper.find('SelectTypeModal')).toHaveLength(1);
     });
     test('renders EditProblemView', () => {
-      expect(shallow(<ProblemEditor
+      const wrapper = shallow(<ProblemEditor
         {...props}
         problemType="multiplechoiceresponse"
         blockFinished
-        blockFailed
         studioViewFinished
         assetsFinished
-      />)).toMatchSnapshot();
+        advancedSettingsFinished
+      />);
+      expect(wrapper.find('EditProblemView')).toHaveLength(1);
     });
   });
 
@@ -112,6 +130,11 @@ describe('ProblemEditor', () => {
       expect(
         mapStateToProps(testState).assetsFinished,
       ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchAssets }));
+    });
+    test('advancedSettingsFinished from requests.isFinished', () => {
+      expect(
+        mapStateToProps(testState).advancedSettingsFinished,
+      ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchAdvancedSettings }));
     });
   });
   describe('mapDispatchToProps', () => {

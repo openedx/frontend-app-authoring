@@ -16,6 +16,7 @@ describe('ScoringCard', () => {
       number: 5,
     },
     updateSettings: jest.fn().mockName('args.updateSettings'),
+    defaultValue: 1,
     intl: { formatMessage },
   };
 
@@ -27,6 +28,8 @@ describe('ScoringCard', () => {
   const scoringCardHooksProps = {
     handleMaxAttemptChange: jest.fn().mockName('scoringCardHooks.handleMaxAttemptChange'),
     handleWeightChange: jest.fn().mockName('scoringCardHooks.handleWeightChange'),
+    handleOnChange: jest.fn().mockName('scoringCardHooks.handleOnChange'),
+    local: 5,
   };
 
   scoringCardHooks.mockReturnValue(scoringCardHooksProps);
@@ -34,7 +37,7 @@ describe('ScoringCard', () => {
   describe('behavior', () => {
     it(' calls scoringCardHooks when initialized', () => {
       shallow(<ScoringCard {...props} />);
-      expect(scoringCardHooks).toHaveBeenCalledWith(scoring, props.updateSettings);
+      expect(scoringCardHooks).toHaveBeenCalledWith(scoring, props.updateSettings, props.defaultValue);
     });
   });
 

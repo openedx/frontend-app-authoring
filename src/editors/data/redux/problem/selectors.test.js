@@ -35,6 +35,7 @@ describe('problem selectors unit tests', () => {
         simpleKeys.correctAnswerCount,
         simpleKeys.settings,
         simpleKeys.question,
+        simpleKeys.defaultSettings,
       ].map(testSimpleSelector);
     });
     test('simple selector completeState equals the entire state', () => {

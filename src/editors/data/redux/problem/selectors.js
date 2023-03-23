@@ -11,6 +11,7 @@ export const simpleSelectors = {
   correctAnswerCount: mkSimpleSelector(problemData => problemData.correctAnswerCount),
   settings: mkSimpleSelector(problemData => problemData.settings),
   question: mkSimpleSelector(problemData => problemData.question),
+  defaultSettings: mkSimpleSelector(problemData => problemData.defaultSettings),
   completeState: mkSimpleSelector(problemData => problemData),
 };
 

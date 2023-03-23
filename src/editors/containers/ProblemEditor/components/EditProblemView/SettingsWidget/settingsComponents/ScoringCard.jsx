@@ -1,47 +1,49 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Form } from '@edx/paragon';
+import { Form, Hyperlink } from '@edx/paragon';
+import { selectors } from '../../../../../../data/redux';
 import SettingsOption from '../SettingsOption';
 import messages from '../messages';
 import { scoringCardHooks } from '../hooks';
 
 export const ScoringCard = ({
   scoring,
+  defaultValue,
   updateSettings,
   // inject
   intl,
+  // redux
+  studioEndpointUrl,
+  learningContextId,
 }) => {
-  const { handleMaxAttemptChange, handleWeightChange } = scoringCardHooks(scoring, updateSettings);
+  const {
+    handleUnlimitedChange,
+    handleMaxAttemptChange,
+    handleWeightChange,
+    handleOnChange,
+    attemptDisplayValue,
+  } = scoringCardHooks(scoring, updateSettings, defaultValue);
 
-  const getScoringSummary = (attempts, unlimited, weight) => {
-    let summary = unlimited
+  const getScoringSummary = (weight, attempts, unlimited) => {
+    let summary = intl.formatMessage(messages.weightSummary, { weight });
+    summary += ` ${String.fromCharCode(183)} `;
+    summary += unlimited
       ? intl.formatMessage(messages.unlimitedAttemptsSummary)
       : intl.formatMessage(messages.attemptsSummary, { attempts });
-    summary += ` ${String.fromCharCode(183)} `;
-    summary += intl.formatMessage(messages.weightSummary, { weight });
     return summary;
   };
 
   return (
     <SettingsOption
       title={intl.formatMessage(messages.scoringSettingsTitle)}
-      summary={getScoringSummary(scoring.attempts.number, scoring.attempts.unlimited, scoring.weight)}
+      summary={getScoringSummary(scoring.weight, scoring.attempts.number, scoring.attempts.unlimited)}
+      className="scoringCard"
     >
       <Form.Label className="mb-4">
         <FormattedMessage {...messages.scoringSettingsLabel} />
       </Form.Label>
-      <Form.Group>
-        <Form.Control
-          type="number"
-          value={scoring.attempts.number}
-          onChange={handleMaxAttemptChange}
-          floatingLabel={intl.formatMessage(messages.scoringAttemptsInputLabel)}
-        />
-        <Form.Control.Feedback>
-          <FormattedMessage {...messages.attemptsHint} />
-        </Form.Control.Feedback>
-      </Form.Group>
       <Form.Group>
         <Form.Control
           type="number"
@@ -53,6 +55,30 @@ export const ScoringCard = ({
           <FormattedMessage {...messages.weightHint} />
         </Form.Control.Feedback>
       </Form.Group>
+      <Form.Group>
+        <Form.Control
+          value={attemptDisplayValue}
+          onChange={handleOnChange}
+          onBlur={handleMaxAttemptChange}
+          floatingLabel={intl.formatMessage(messages.scoringAttemptsInputLabel)}
+          disabled={scoring.attempts.unlimited}
+        />
+        <Form.Control.Feedback>
+          <FormattedMessage {...messages.attemptsHint} />
+        </Form.Control.Feedback>
+        <Form.Checkbox
+          className="mt-3 decoration-control-label"
+          checked={scoring.attempts.unlimited}
+          onChange={handleUnlimitedChange}
+        >
+          <div className="small">
+            <FormattedMessage {...messages.unlimitedAttemptsCheckboxLabel} />
+          </div>
+        </Form.Checkbox>
+      </Form.Group>
+      <Hyperlink destination={`${studioEndpointUrl}/settings/advanced/${learningContextId}#max_attempts`} target="_blank">
+        <FormattedMessage {...messages.advancedSettingsLinkText} />
+      </Hyperlink>
     </SettingsOption>
   );
 };
@@ -62,6 +88,17 @@ ScoringCard.propTypes = {
   // eslint-disable-next-line
   scoring: PropTypes.any.isRequired,
   updateSettings: PropTypes.func.isRequired,
+  defaultValue: PropTypes.number.isRequired,
+  // redux
+  studioEndpointUrl: PropTypes.string.isRequired,
+  learningContextId: PropTypes.string.isRequired,
 };
 
-export default injectIntl(ScoringCard);
+export const mapStateToProps = (state) => ({
+  studioEndpointUrl: selectors.app.studioEndpointUrl(state),
+  learningContextId: selectors.app.learningContextId(state),
+});
+
+export const mapDispatchToProps = {};
+
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ScoringCard));

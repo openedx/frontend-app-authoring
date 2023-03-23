@@ -15,7 +15,7 @@ export const ResetCard = ({
   intl,
 }) => {
   const { setResetTrue, setResetFalse } = resetCardHooks(updateSettings);
-  const advancedSettingsLink = `${useSelector(selectors.app.studioEndpointUrl)}/settings/advanced/${useSelector(selectors.app.learningContextId)}`;
+  const advancedSettingsLink = `${useSelector(selectors.app.studioEndpointUrl)}/settings/advanced/${useSelector(selectors.app.learningContextId)}#show_reset_button`;
   return (
     <SettingsOption
       title={intl.formatMessage(messages.resetSettingsTitle)}

@@ -36,6 +36,7 @@ export const SettingsWidget = ({
   updateSettings,
   updateField,
   updateAnswer,
+  defaultSettings,
 }) => {
   const { isAdvancedCardsVisible, showAdvancedCards } = showAdvancedSettingsCards();
 
@@ -77,7 +78,11 @@ export const SettingsWidget = ({
           </div>
           )}
       <div className="my-3">
-        <ScoringCard scoring={settings.scoring} updateSettings={updateSettings} />
+        <ScoringCard
+          scoring={settings.scoring}
+          defaultValue={defaultSettings.maxAttempts}
+          updateSettings={updateSettings}
+        />
       </div>
       <div className="mt-3">
         <HintsCard problemType={problemType} hints={settings.hints} updateSettings={updateSettings} />
@@ -103,6 +108,7 @@ export const SettingsWidget = ({
           <div className="my-3">
             <ShowAnswerCard
               showAnswer={settings.showAnswer}
+              defaultValue={defaultSettings.showanswer}
               updateSettings={updateSettings}
             />
           </div>
@@ -159,6 +165,11 @@ SettingsWidget.propTypes = {
   updateAnswer: PropTypes.func.isRequired,
   updateField: PropTypes.func.isRequired,
   updateSettings: PropTypes.func.isRequired,
+  defaultSettings: PropTypes.shape({
+    maxAttempts: PropTypes.number,
+    showanswer: PropTypes.string,
+    showReseButton: PropTypes.bool,
+  }).isRequired,
   // eslint-disable-next-line
   settings: PropTypes.any.isRequired,
 };
@@ -169,6 +180,7 @@ const mapStateToProps = (state) => ({
   answers: selectors.problem.answers(state),
   blockTitle: selectors.app.blockTitle(state),
   correctAnswerCount: selectors.problem.correctAnswerCount(state),
+  defaultSettings: selectors.problem.defaultSettings(state),
 });
 
 export const mapDispatchToProps = {

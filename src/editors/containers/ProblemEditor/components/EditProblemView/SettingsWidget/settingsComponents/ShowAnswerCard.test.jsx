@@ -27,6 +27,7 @@ describe('ShowAnswerCard', () => {
   };
   const props = {
     showAnswer,
+    defaultValue: 'finished',
     // injected
     intl: { formatMessage },
     // redux

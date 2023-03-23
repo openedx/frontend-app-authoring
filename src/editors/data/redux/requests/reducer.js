@@ -19,6 +19,7 @@ const initialState = {
   [RequestKeys.checkTranscriptsForImport]: { status: RequestStates.inactive },
   [RequestKeys.importTranscript]: { status: RequestStates.inactive },
   [RequestKeys.fetchVideoFeatures]: { status: RequestStates.inactive },
+  [RequestKeys.fetchAdvancedSettings]: { status: RequestStates.inactive },
 };
 
 // eslint-disable-next-line no-unused-vars

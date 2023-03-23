@@ -15,6 +15,7 @@ const initialState = {
   groupFeedbackList: [],
   generalFeedback: '',
   additionalAttributes: {},
+  defaultSettings: {},
   settings: {
     randomization: null,
     scoring: {
@@ -147,10 +148,23 @@ const problem = createSlice({
       },
       ...payload,
     }),
-    setEnableTypeSelection: (state) => ({
-      ...state,
-      problemType: null,
-    }),
+    setEnableTypeSelection: (state, { payload }) => {
+      const { maxAttempts, showanswer, showResetButton } = payload;
+      const attempts = { number: maxAttempts, unlimited: false };
+      if (!maxAttempts) {
+        attempts.unlimited = true;
+      }
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          scoring: { ...state.settings.scoring, attempts },
+          showAnswer: { ...state.settings.showAnswer, on: showanswer },
+          ...showResetButton,
+        },
+        problemType: null,
+      };
+    },
   },
 });
 

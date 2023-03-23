@@ -29,8 +29,22 @@ describe('problem reducer', () => {
     ].map(args => setterTest(...args));
     describe('setEnableTypeSelection', () => {
       it('sets given problemType to null', () => {
-        expect(reducer(testingState, actions.setEnableTypeSelection())).toEqual({
+        const payload = {
+          maxAttempts: 1,
+          showanswer: 'finished',
+          showResetButton: false,
+        };
+        expect(reducer(testingState, actions.setEnableTypeSelection(payload))).toEqual({
           ...testingState,
+          settings: {
+            ...testingState.settings,
+            scoring: {
+              ...testingState.settings.scoring,
+              attempts: { number: 1, unlimited: false },
+            },
+            showAnswer: { ...testingState.settings.showAnswer, on: payload.showanswer },
+            ...payload.showResetButton,
+          },
           problemType: null,
         });
       });

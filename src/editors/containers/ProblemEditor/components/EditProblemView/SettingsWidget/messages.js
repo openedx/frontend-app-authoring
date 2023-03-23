@@ -114,6 +114,11 @@ export const messages = {
     defaultMessage: '{attempts, plural, =1 {# attempt} other {# attempts}}',
     description: 'Summary text for number of attempts',
   },
+  unlimitedAttemptsCheckboxLabel: {
+    id: 'authoring.problemeditor.settings.scoring.attempts.unlimitedCheckbox',
+    defaultMessage: 'Unlimited attempts',
+    description: 'Label for unlimited attempts checkbox',
+  },
   weightSummary: {
     id: 'authoring.problemeditor.settings.scoring.weight',
     defaultMessage: '{weight, plural, =0 {Ungraded} other {# points}}',

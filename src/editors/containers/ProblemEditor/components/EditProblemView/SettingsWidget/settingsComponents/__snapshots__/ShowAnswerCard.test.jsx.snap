@@ -23,7 +23,7 @@ exports[`ShowAnswerCard snapshot snapshot: show answer setting card 1`] = `
     className="pb-4"
   >
     <Hyperlink
-      destination="SoMEeNDpOinT/settings/advanced/sOMEcouRseId"
+      destination="SoMEeNDpOinT/settings/advanced/sOMEcouRseId#showanswer"
       target="_blank"
     >
       <FormattedMessage
@@ -69,7 +69,7 @@ exports[`ShowAnswerCard snapshot snapshot: show answer setting card 1`] = `
         key="finished"
         value="finished"
       >
-        Finished
+        Finished (Default)
       </option>
       <option
         key="correct_or_past_due"
