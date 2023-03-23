@@ -1,8 +1,7 @@
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
-  Collapsible, Icon, Image, Stack,
+  Collapsible, Image, Stack, Hyperlink,
 } from '@edx/paragon';
-import { Launch } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -46,18 +45,14 @@ export const VideoPreviewWidget = ({
             <h4 className="text-primary mb-0">{blockTitle}</h4>
             <LanguageNamesWidget transcripts={transcripts} />
             {videoType && (
-              <a
+              <Hyperlink
                 className="text-primary x-small"
-                href={videoSource}
+                destination={videoSource}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 {videoType}
-                <Icon
-                  className="d-inline-block align-text-bottom pgn__icon__sm"
-                  src={Launch}
-                />
-              </a>
+              </Hyperlink>
             )}
           </Stack>
         </div>
