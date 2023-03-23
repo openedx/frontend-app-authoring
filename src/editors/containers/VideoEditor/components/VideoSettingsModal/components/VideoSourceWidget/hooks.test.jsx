@@ -1,5 +1,6 @@
 import { dispatch } from 'react-redux';
 import { actions } from '../../../../../../data/redux';
+import * as requests from '../../../../../../data/redux/thunkActions/requests';
 import * as hooks from './hooks';
 
 jest.mock('react-redux', () => {
@@ -20,6 +21,13 @@ jest.mock('../../../../../../data/redux', () => ({
   },
 }));
 
+jest.mock('../../../../../../data/redux/thunkActions/requests', () => ({
+  checkTranscriptsForImport: jest.fn(),
+}));
+
+const youtubeId = 'yOuTuBEiD';
+const youtubeUrl = `https://youtu.be/${youtubeId}`;
+
 describe('VideoEditorHandout hooks', () => {
   let hook;
 
@@ -27,6 +35,9 @@ describe('VideoEditorHandout hooks', () => {
     const e = { target: { value: 'soMEvALuE' } };
     beforeEach(() => {
       hook = hooks.sourceHooks({ dispatch });
+    });
+    afterEach(() => {
+      jest.clearAllMocks();
     });
     describe('updateVideoURL', () => {
       it('dispatches updateField action with new videoSource', () => {
@@ -36,6 +47,37 @@ describe('VideoEditorHandout hooks', () => {
             videoSource: e.target.value,
           }),
         );
+      });
+      it('dispatches checkTranscriptsForImport request with new YouTube videoSource', () => {
+        e.target.value = youtubeUrl;
+        hook.updateVideoURL(e, 'video-id');
+        expect(requests.checkTranscriptsForImport).toHaveBeenCalledWith({
+          videoId: 'video-id',
+          youTubeId: youtubeId,
+          onSuccess: expect.anything(),
+        });
+      });
+      it('dispatches updateField video action when checkTranscriptsForImport onSuccess command is import', () => {
+        e.target.value = youtubeUrl;
+        hook.updateVideoURL(e, 'video-id');
+
+        const { onSuccess } = requests.checkTranscriptsForImport.mock.calls[0][0];
+        onSuccess({ data: { command: 'import' } });
+
+        expect(actions.video.updateField).toHaveBeenCalledWith({
+          allowTranscriptImport: true,
+        });
+      });
+      it('does not dispatch updateField video action when checkTranscriptsForImport onSuccess command is not import', () => {
+        e.target.value = youtubeUrl;
+        hook.updateVideoURL(e, 'video-id');
+
+        const { onSuccess } = requests.checkTranscriptsForImport.mock.calls[0][0];
+        onSuccess({ data: { command: 'anything else' } });
+
+        expect(actions.video.updateField).not.toHaveBeenCalledWith({
+          allowTranscriptImport: true,
+        });
       });
     });
     describe('updateVideoId', () => {
