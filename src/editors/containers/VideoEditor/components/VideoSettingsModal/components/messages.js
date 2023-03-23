@@ -61,6 +61,7 @@ export const messages = {
     id: 'authoring.videoeditor.duration.custom',
     defaultMessage: 'Custom: {total}',
     description: 'Text describing a video with custom start time and custom stop time, or just a custom stop time for a collapsed widget',
+  },
   noTranscriptsAdded: {
     id: 'authoring.videoeditor.transcripts.empty',
     defaultMessage: 'No transcripts added',
