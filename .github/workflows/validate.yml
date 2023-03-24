@@ -12,7 +12,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
     - name: Setup Nodejs Env
       run: echo "NODE_VER=`cat .nvmrc`" >> $GITHUB_ENV
     - uses: actions/setup-node@v3
