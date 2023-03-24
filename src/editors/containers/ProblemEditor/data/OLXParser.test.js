@@ -15,6 +15,7 @@ import {
   blankProblemOLX,
   blankQuestionOLX,
   styledQuestionOLX,
+  shuffleProblemOLX,
 } from './mockData/olxTestData';
 import { ProblemTypeKeys } from '../../../data/constants/problem';
 
@@ -110,6 +111,23 @@ describe('Check OLXParser for answer parsing', () => {
     const answer = olxparser.parseMultipleChoiceAnswers('choiceresponse', 'checkboxgroup', 'choice');
     expect(answer).toEqual(checkboxesOLXWithFeedbackAndHintsOLX.data);
   });
+
+  test('Test checkbox answer', () => {
+    const olxparser = new OLXParser(checkboxesOLXWithFeedbackAndHintsOLX.rawOLX);
+    const answer = olxparser.parseMultipleChoiceAnswers('choiceresponse', 'checkboxgroup', 'choice');
+    expect(answer).toEqual(checkboxesOLXWithFeedbackAndHintsOLX.data);
+  });
+
+  test('Test checkboxs with extraneous tags error out', () => {
+    const olxparser = new OLXParser(shuffleProblemOLX.rawOLX);
+    try {
+      olxparser.parseMultipleChoiceAnswers('choiceresponse', 'checkboxgroup', 'choice');
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error);
+      expect(e.message).toBe('Misc Tags, reverting to Advanced Editor');
+    }
+  });
+
   test('Test dropdown answer', () => {
     const olxparser = new OLXParser(dropdownOLXWithFeedbackAndHintsOLX.rawOLX);
     const answer = olxparser.parseMultipleChoiceAnswers('optionresponse', 'optioninput', 'option');

@@ -72,6 +72,10 @@ export class OLXParser {
     const answers = [];
     let data = {};
     const widget = _.get(this.problem, `${problemType}.${widgetName}`);
+    const permissableTags = ['choice', '@_type', 'compoundhint', 'option', '#text'];
+    if (_.keys(widget).some((tag) => !permissableTags.includes(tag))) {
+      throw new Error('Misc Tags, reverting to Advanced Editor');
+    }
     const choice = _.get(widget, option);
     const isComplexAnswer = [ProblemTypeKeys.SINGLESELECT, ProblemTypeKeys.MULTISELECT].includes(problemType);
     if (_.isEmpty(choice)) {

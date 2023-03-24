@@ -607,3 +607,17 @@ export const styledQuestionOLX = {
 </problem>`,
   question: '<p><strong><span style="background-color: #e03e2d;">test</span></strong></p>',
 };
+
+export const shuffleProblemOLX = {
+  rawOLX: `<problem>
+  <multiplechoiceresponse>
+    <label>What Apple device competed with the portable CD player?</label>
+    <choicegroup type="MultipleChoice" shuffle="true">
+      <choice correct="false">The iPad</choice>
+      <choice correct="false">Napster</choice>
+      <choice correct="true">The iPod</choice>
+      <choice correct="false">The vegetable peeler</choice>
+    </choicegroup>
+  </multiplechoiceresponse>
+</problem>`,
+};
