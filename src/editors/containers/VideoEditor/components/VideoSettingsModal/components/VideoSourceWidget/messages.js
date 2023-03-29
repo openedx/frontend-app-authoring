@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   titleLabel: {
     id: 'authoring.videoeditor.videoSource.title.label',
     defaultMessage: 'Video source',
@@ -78,6 +81,6 @@ export const messages = {
     defaultMessage: 'Add a video URL',
     description: 'Label for add a video URL button',
   },
-};
+});
 
 export default messages;

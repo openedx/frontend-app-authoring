@@ -12,6 +12,10 @@ jest.mock('react', () => {
   };
 });
 
+jest.mock('@edx/frontend-platform/i18n', () => ({
+  defineMessages: m => m,
+}));
+
 const state = new MockUseState(hooks);
 
 describe('groupFeedbackCardHooks', () => {

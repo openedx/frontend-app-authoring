@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
 import { selectors } from '../../../../../data/redux';
-import { messages } from './messages';
+import messages from './messages';
 
 import TinyMceWidget from '../../../../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef } from '../../../../../sharedComponents/TinyMceWidget/hooks';

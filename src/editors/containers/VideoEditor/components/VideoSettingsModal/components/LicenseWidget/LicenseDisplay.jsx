@@ -13,7 +13,7 @@ import {
 import { LicenseTypes } from '../../../../../../data/constants/licenses';
 
 import LicenseBlurb from './LicenseBlurb';
-import { messages } from './messages';
+import messages from './messages';
 
 export const LicenseDisplay = ({
   license,

@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   // index
   titleLabel: {
     id: 'authoring.texteditor.imagesettingsmodal.titleLabel',
@@ -86,6 +89,6 @@ export const messages = {
     defaultMessage: 'Enter a value less than or equal to 100.',
     description: 'Message feedback for user below the dimension fields.',
   },
-};
+});
 
 export default messages;

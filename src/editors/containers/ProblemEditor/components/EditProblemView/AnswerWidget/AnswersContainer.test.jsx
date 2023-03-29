@@ -11,8 +11,10 @@ import { AnswersContainer as AnswersContainerWithoutHOC } from './AnswersContain
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
   FormattedMessage: ({ defaultMessage }) => (<p>{defaultMessage}</p>),
+  defineMessages: m => m,
   injectIntl: (args) => args,
   intlShape: {},
+  getLocale: jest.fn(),
 }));
 
 jest.mock('./AnswerOption', () => () => <div>MockAnswerOption</div>);

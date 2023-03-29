@@ -1,4 +1,6 @@
-const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
   toleranceSettingTitle: {
     id: 'problemEditor.settings.tolerance.title',
     defaultMessage: 'Tolerance',
@@ -42,5 +44,6 @@ const messages = {
     description: 'A possible value type for a tolerance',
   },
 
-};
+});
+
 export default messages;

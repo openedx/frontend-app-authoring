@@ -16,7 +16,7 @@ exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCar
         <FormattedMessage
           defaultMessage="Switch to advanced editor"
           description="message to confirm that a user wants to use the advanced editor"
-          id="authoring.problemeditor.settings.switchtoadvancededitor.message"
+          id="authoring.problemeditor.settings.switchtoadvancededitor.ConfirmSwitchButtonLabel"
         />
       </Button>
     }
@@ -27,14 +27,14 @@ exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCar
       <FormattedMessage
         defaultMessage="Convert to OLX?"
         description="message to confirm that a user wants to use the advanced editor"
-        id="authoring.problemeditor.settings.switchtoadvancededitor.message"
+        id="authoring.problemeditor.settings.switchtoadvancededitor.ConfirmSwitchMessageTitle"
       />
     }
   >
     <FormattedMessage
       defaultMessage="If you use the advanced editor, this problem will be converted to OLX and you will not be able to return to the simple editor."
       description="message to confirm that a user wants to use the advanced editor"
-      id="authoring.problemeditor.settings.switchtoadvancededitor.message"
+      id="authoring.problemeditor.settings.switchtoadvancededitor.ConfirmSwitchMessage"
     />
   </BaseModal>
   <Button

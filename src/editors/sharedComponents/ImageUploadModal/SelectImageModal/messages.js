@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   nextButtonLabel: {
     id: 'authoring.texteditor.selectimagemodal.next.label',
     defaultMessage: 'Next',
@@ -89,6 +92,6 @@ export const messages = {
     description:
       'Message presented to user when clicking Next without selecting an image',
   },
-};
+});
 
 export default messages;

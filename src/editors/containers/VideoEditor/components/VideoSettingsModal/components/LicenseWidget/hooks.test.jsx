@@ -2,7 +2,7 @@ import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { actions } from '../../../../../../data/redux';
 import { LicenseTypes } from '../../../../../../data/constants/licenses';
 import * as module from './hooks';
-import { messages } from './messages';
+import messages from './messages';
 
 jest.mock('../../../../../../data/redux', () => ({
   actions: {

@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   solutionWidgetTitle: {
     id: 'authoring.problemEditor.explanationwidget.explanationWidgetTitle',
     defaultMessage: 'Explanation',
@@ -14,6 +17,6 @@ export const messages = {
     defaultMessage: 'Enter your explanation',
     description: 'Placeholder text for tinyMCE editor',
   },
-};
+});
 
 export default messages;

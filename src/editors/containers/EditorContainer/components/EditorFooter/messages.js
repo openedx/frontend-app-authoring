@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   contentSaveFailed: {
     id: 'authoring.editorfooter.save.error',
     defaultMessage: 'Error: Content save failed. Try again later.',
@@ -24,6 +27,6 @@ export const messages = {
     defaultMessage: 'Save',
     description: 'Label for Save button',
   },
-};
+});
 
 export default messages;

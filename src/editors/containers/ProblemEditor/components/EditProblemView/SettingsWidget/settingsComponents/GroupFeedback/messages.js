@@ -1,6 +1,9 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   noGroupFeedbackSummary: {
-    id: 'authoring.problemeditor.settings.GroupFeedbackSummary.message',
+    id: 'authoring.problemeditor.settings.GroupFeedbackSummary.nonMessage',
     defaultMessage: 'None',
     description: 'message to confirm that a user wants to use the advanced editor',
   },
@@ -24,5 +27,6 @@ export const messages = {
     defaultMessage: 'Group Feedback',
     description: 'label for group feedback setting',
   },
-};
+});
+
 export default messages;

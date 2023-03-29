@@ -21,7 +21,7 @@ import {
 
 import { actions } from '../../../../../../data/redux';
 import { LicenseLevel, LicenseTypes } from '../../../../../../data/constants/licenses';
-import { messages } from './messages';
+import messages from './messages';
 
 export const LicenseDetails = ({
   license,

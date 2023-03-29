@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   generalFeebackSettingTitle: {
     id: 'authoring.problemeditor.settings.generalFeebackSettingTitle',
     defaultMessage: 'General Feedback',
@@ -19,5 +22,5 @@ export const messages = {
     defaultMessage: 'None',
     description: 'message which informs use there is no general feedback set.',
   },
-};
+});
 export default messages;

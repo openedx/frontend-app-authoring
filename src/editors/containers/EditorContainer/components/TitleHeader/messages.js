@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   loading: {
     id: 'authoring.texteditor.title.loading',
     defaultMessage: 'Loading...',
@@ -24,6 +27,6 @@ export const messages = {
     defaultMessage: 'Save',
     description: 'Screen reader label title for icon button to edit the xblock title',
   },
-};
+});
 
 export default messages;

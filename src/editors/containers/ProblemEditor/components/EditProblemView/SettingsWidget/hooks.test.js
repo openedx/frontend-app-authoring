@@ -15,6 +15,10 @@ jest.mock('react', () => {
   };
 });
 
+jest.mock('@edx/frontend-platform/i18n', () => ({
+  defineMessages: m => m,
+}));
+
 jest.mock('../../../../../data/redux', () => ({
   actions: {
     problem: {

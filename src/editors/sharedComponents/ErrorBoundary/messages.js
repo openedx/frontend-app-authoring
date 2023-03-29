@@ -1,4 +1,6 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
   unexpectedError: {
     id: 'unexpected.error.message.text',
     defaultMessage: 'An unexpected error occurred. Please click the button below to refresh the page.',
@@ -9,5 +11,6 @@ export const messages = {
     defaultMessage: 'Try again',
     description: 'text for button that tries to reload the app by refreshing the page',
   },
-};
+});
+
 export default messages;

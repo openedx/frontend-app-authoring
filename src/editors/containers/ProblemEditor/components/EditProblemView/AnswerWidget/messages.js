@@ -1,4 +1,6 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
   answerWidgetTitle: {
     id: 'authoring.answerwidget.answer.answerWidgetTitle',
     defaultMessage: 'Answers',
@@ -54,6 +56,5 @@ export const messages = {
     defaultMessage: 'is not selected',
     description: 'Bold & underlined text for feedback if option is not selected',
   },
-};
-
+});
 export default messages;

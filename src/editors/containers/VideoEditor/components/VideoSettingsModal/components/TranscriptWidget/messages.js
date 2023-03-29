@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   title: {
     id: 'authoring.videoeditor.transcripts.title',
     defaultMessage: 'Transcripts',
@@ -114,6 +117,6 @@ export const messages = {
     defaultMessage: 'We found transcript for this video on YouTube. Would you like to import it now?',
     description: 'Message for import transcript card asking user if they want to import transcript',
   },
-};
+});
 
 export default messages;

@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   randomizationSettingTitle: {
     id: 'authoring.problemeditor.settings.randomization.SettingTitle',
     defaultMessage: 'Randomization',
@@ -14,5 +17,6 @@ export const messages = {
     defaultMessage: 'No Python based randomization is present in this problem.',
     description: 'text shown when no randomization option is given',
   },
-};
+});
+
 export default messages;

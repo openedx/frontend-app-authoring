@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   expandAltText: {
     id: 'authoring.videoeditor.expand',
     defaultMessage: 'Expand',
@@ -77,6 +80,6 @@ export const messages = {
     defaultMessage: 'Other video',
     description: 'Shown on the preview card if the video source could not be identified.',
   },
-};
+});
 
 export default messages;

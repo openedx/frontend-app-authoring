@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   cancelConfirmTitle: {
     id: 'authoring.editorContainer.cancelConfirm.title',
     defaultMessage: 'Exit the editor?',
@@ -14,6 +17,6 @@ export const messages = {
     defaultMessage: 'OK',
     description: 'Label for OK button',
   },
-};
+});
 
 export default messages;

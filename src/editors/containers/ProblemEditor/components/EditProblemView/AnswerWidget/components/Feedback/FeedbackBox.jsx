@@ -4,7 +4,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { answerOptionProps } from '../../../../../../../data/services/cms/types';
 import FeedbackControl from './FeedbackControl';
-import { messages } from './messages';
+import messages from './messages';
 import { ProblemTypeKeys } from '../../../../../../../data/constants/problem';
 
 export const FeedbackBox = ({

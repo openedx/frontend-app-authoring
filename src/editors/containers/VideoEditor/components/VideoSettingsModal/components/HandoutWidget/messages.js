@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   titleLabel: {
     id: 'authoring.videoeditor.handout.title.label',
     defaultMessage: 'Handout',
@@ -45,6 +48,6 @@ export const messages = {
     defaultMessage: 'Download',
     description: 'Message Presented To user for action to download handout',
   },
-};
+});
 
 export default messages;

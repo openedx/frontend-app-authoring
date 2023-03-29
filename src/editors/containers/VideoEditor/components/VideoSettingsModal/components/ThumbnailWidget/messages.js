@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   title: {
     id: 'authoring.videoeditor.thumbnail.title',
     defaultMessage: 'Thumbnail',
@@ -56,6 +59,6 @@ export const messages = {
     description:
       ' Message presented to user when file size of image is less than 2 KB or larger than 2 MB',
   },
-};
+});
 
 export default messages;

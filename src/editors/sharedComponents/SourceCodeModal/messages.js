@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   saveButtonLabel: {
     id: 'authoring.texteditor.sourcecodemodal.next.label',
     defaultMessage: 'Save',
@@ -9,5 +12,6 @@ export const messages = {
     defaultMessage: 'Edit Source Code',
     description: 'Title for the source code editor',
   },
-};
+});
+
 export default messages;

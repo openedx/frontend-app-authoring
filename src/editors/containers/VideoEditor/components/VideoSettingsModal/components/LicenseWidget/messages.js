@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   title: {
     id: 'authoring.videoeditor.license.title',
     defaultMessage: 'License',
@@ -119,6 +122,6 @@ export const messages = {
     defaultMessage: 'You reserve all rights for your work.',
     description: 'All Rights Reserved section message',
   },
-};
+});
 
 export default messages;

@@ -1,4 +1,7 @@
-export const messages = {
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+
   advanceProblemButtonLabel: {
     id: 'authoring.problemEditor.problemSelect.advanceButton.label',
     defaultMessage: 'Advanced problem types',
@@ -69,6 +72,6 @@ export const messages = {
     defaultMessage: 'Learn more about advanced problem types',
     description: 'Label for Learn more about advanced problem types button',
   },
-};
+});
 
 export default messages;

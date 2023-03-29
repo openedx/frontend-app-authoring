@@ -13,7 +13,7 @@ import { RequestKeys } from '../../data/constants/requests';
 import EditorContainer from '../EditorContainer';
 import VideoEditorModal from './components/VideoEditorModal';
 import { ErrorContext, errorsHook, fetchVideoContent } from './hooks';
-import { messages } from './messages';
+import messages from './messages';
 
 export const VideoEditor = ({
   onClose,

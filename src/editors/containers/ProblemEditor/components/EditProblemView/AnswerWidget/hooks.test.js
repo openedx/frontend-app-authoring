@@ -9,11 +9,14 @@ import * as module from './hooks';
 jest.mock('react', () => {
   const updateState = jest.fn();
   return {
-    updateState,
     useEffect: jest.fn(),
     useState: jest.fn(val => ([{ state: val }, (newVal) => updateState({ val, newVal })])),
   };
 });
+
+jest.mock('@edx/frontend-platform/i18n', () => ({
+  defineMessages: m => m,
+}));
 
 jest.mock('../../../../../data/redux', () => ({
   actions: {
