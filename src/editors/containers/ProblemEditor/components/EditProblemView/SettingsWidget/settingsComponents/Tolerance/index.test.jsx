@@ -2,6 +2,7 @@ import {
   render, screen, fireEvent,
 } from '@testing-library/react';
 import React from 'react';
+import messages from './messages';
 import { ToleranceTypes } from './constants';
 import { ToleranceCard } from './index';
 import { formatMessage } from '../../../../../../../../testUtils';
@@ -23,10 +24,10 @@ jest.mock('@edx/paragon', () => ({
     <div className="PGN-Alert">{children}</div>)),
   Form: {
     Control: jest.fn(({
-      children, onChange, as, value,
+      children, onChange, as, value, disabled,
     }) => {
       if (as === 'select') {
-        return (<select className="PGN-Form-Control" data-testid="select" onChange={onChange}>{children}</select>);
+        return (<select className="PGN-Form-Control" data-testid="select" onChange={onChange} disabled={disabled}>{children}</select>);
       }
       return (<input type="number" data-testid="input" onChange={onChange} value={value} />);
     }),
@@ -49,7 +50,15 @@ describe('ToleranceCard', () => {
   };
 
   const props = {
-    answers: [], // TODO: for TNL 10258
+    answers: [{
+      id: 'A',
+      correct: true,
+      selectedFeedback: '',
+      title: 'An Answer',
+      isAnswerRange: false,
+      unselectedFeedback: '',
+    },
+    ],
     updateSettings: jest.fn(),
     intl: {
       formatMessage,
@@ -73,6 +82,32 @@ describe('ToleranceCard', () => {
       render(<ToleranceCard tolerance={mockToleranceNumber} {...props} />);
       const NumberText = screen.getByText(`± ${mockToleranceNumber.value}`);
       expect(NumberText).toBeDefined();
+    });
+
+    it('If there is an answer range, show message and disable dropdown.', () => {
+      const rangeprops = {
+        answers: [{
+          id: 'A',
+          correct: true,
+          selectedFeedback: '',
+          title: 'An Answer',
+          isAnswerRange: true,
+          unselectedFeedback: '',
+        },
+        ],
+        updateSettings: jest.fn(),
+        intl: {
+          formatMessage,
+        },
+      };
+
+      render(<ToleranceCard
+        tolerance={mockToleranceNumber}
+        {...rangeprops}
+      />);
+      const NumberText = screen.getByText(messages.toleranceAnswerRangeWarning.defaultMessage);
+      expect(NumberText).toBeDefined();
+      expect(screen.getByTestId('select').getAttributeNames().includes('disabled')).toBeTruthy();
     });
   });
   describe('Type Select', () => {

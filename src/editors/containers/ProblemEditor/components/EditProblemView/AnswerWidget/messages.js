@@ -56,5 +56,22 @@ const messages = defineMessages({
     defaultMessage: 'is not selected',
     description: 'Bold & underlined text for feedback if option is not selected',
   },
+
+  addAnswerRangeButtonText: {
+    id: 'authoring.answerwidget.answer.addAnswerRangeButton',
+    defaultMessage: 'Add answer range',
+    description: 'Button text to add a range of answers',
+  },
+  answerRangeTextboxPlaceholder: {
+    id: 'authoring.answerwidget.answer.answerRangeTextboxPlaceholder',
+    defaultMessage: 'Enter an answer range',
+    description: 'Text to prompt the user to add an answer range to the textbox.',
+  },
+  answerRangeHelperText: {
+    id: 'authoring.answerwidget.answer.answerRangeHelperText',
+    defaultMessage: 'Enter min and max values separated by a comma. Use a bracket to include the number next to it in the range, or a parenthesis to exclude the number. For example, to identify the correct answers as 5, 6, or 7, but not 8, specify [5,8).',
+    description: 'Helper text describing usage of answer ranges',
+  },
 });
+
 export default messages;

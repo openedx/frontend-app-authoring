@@ -56,6 +56,7 @@ describe('problem reducer', () => {
           correct: false,
           selectedFeedback: '',
           title: '',
+          isAnswerRange: false,
           unselectedFeedback: '',
         };
         expect(reducer(testingState, actions.addAnswer(answer))).toEqual({
@@ -91,6 +92,7 @@ describe('problem reducer', () => {
         correct: false,
         selectedFeedback: '',
         title: '',
+        isAnswerRange: false,
         unselectedFeedback: '',
       };
       it('sets answers', () => {
@@ -116,6 +118,26 @@ describe('problem reducer', () => {
         });
       });
     });
+
+    describe('addAnswerRange', () => {
+      const answerRange = {
+        id: 'A',
+        correct: true,
+        selectedFeedback: '',
+        title: '',
+        isAnswerRange: true,
+        unselectedFeedback: '',
+      };
+      it('sets answerRange', () => {
+        expect(reducer({ ...testingState, problemType: ProblemTypeKeys.NUMERIC }, actions.addAnswerRange())).toEqual({
+          ...testingState,
+          correctAnswerCount: 1,
+          problemType: ProblemTypeKeys.NUMERIC,
+          answers: [answerRange],
+        });
+      });
+    });
+
     describe('updateAnswer', () => {
       it('sets answers, as well as setting the correctAnswerCount ', () => {
         const answer = { id: 'A', correct: true };
@@ -160,6 +182,39 @@ describe('problem reducer', () => {
               id: 'A',
               correct: true,
             }],
+        });
+      });
+      it('if you delete an answer range, it will be replaced with a blank answer', () => {
+        const answer = {
+          id: 'A',
+          correct: true,
+          selectedFeedback: '',
+          title: '',
+          isAnswerRange: false,
+          unselectedFeedback: '',
+        };
+        const answerRange = {
+          id: 'A',
+          correct: false,
+          selectedFeedback: '',
+          title: '',
+          isAnswerRange: true,
+          unselectedFeedback: '',
+        };
+
+        expect(reducer(
+          {
+            ...testingState,
+            problemType: ProblemTypeKeys.NUMERIC,
+            correctAnswerCount: 1,
+            answers: [{ ...answerRange }],
+          },
+          actions.deleteAnswer(answer),
+        )).toEqual({
+          ...testingState,
+          problemType: ProblemTypeKeys.NUMERIC,
+          correctAnswerCount: 1,
+          answers: [{ ...answer }],
         });
       });
     });

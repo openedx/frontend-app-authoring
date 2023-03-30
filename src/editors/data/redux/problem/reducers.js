@@ -85,8 +85,24 @@ const problem = createSlice({
     deleteAnswer: (state, { payload }) => {
       const { id, correct } = payload;
       if (state.answers.length <= 1) {
+        if (state.answers.length > 0 && state.answers[0].isAnswerRange) {
+          return {
+            ...state,
+            correctAnswerCount: 1,
+            answers: [{
+              id: 'A',
+              title: '',
+              selectedFeedback: '',
+              unselectedFeedback: '',
+              correct: state.problemType === ProblemTypeKeys.NUMERIC,
+              isAnswerRange: false,
+            },
+            ],
+          };
+        }
         return state;
       }
+
       let { correctAnswerCount } = state;
       if (correct) {
         correctAnswerCount -= 1;
@@ -115,6 +131,7 @@ const problem = createSlice({
         selectedFeedback: '',
         unselectedFeedback: '',
         correct: state.problemType === ProblemTypeKeys.NUMERIC,
+        isAnswerRange: false,
       };
       let { correctAnswerCount } = state;
       if (state.problemType === ProblemTypeKeys.NUMERIC) {
@@ -131,6 +148,24 @@ const problem = createSlice({
         answers,
       };
     },
+    addAnswerRange: (state) => {
+      // As you may only have one answer range at a time, overwrite the answer object.
+      const newOption = {
+        id: 'A',
+        title: '',
+        selectedFeedback: '',
+        unselectedFeedback: '',
+        correct: state.problemType === ProblemTypeKeys.NUMERIC,
+        isAnswerRange: true,
+      };
+      const correctAnswerCount = 1;
+      return {
+        ...state,
+        correctAnswerCount,
+        answers: [newOption],
+      };
+    },
+
     updateSettings: (state, { payload }) => ({
       ...state,
       settings: {

@@ -40,7 +40,7 @@ export const EditProblemView = ({
             <RawEditor editorRef={editorRef} lang="xml" content={problemState.rawOLX} />
           </Container>
         ) : (
-          <span className="flex-grow-1">
+          <span className="flex-grow-1 mb-5">
             <QuestionWidget />
             <ExplanationWidget />
             <AnswerWidget problemType={problemType} />

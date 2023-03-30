@@ -7,13 +7,10 @@ import messages from './messages';
 import { ToleranceTypes } from './constants';
 
 // eslint-disable-next-line no-unused-vars
-export const isAnswerRangeSet = ({ answers }) =>
-  // TODO: for TNL 10258
-  // eslint-disable-next-line implicit-arrow-linebreak
-  false;
+export const isAnswerRangeSet = ({ answers }) => !!answers[0].isAnswerRange;
 
 export const handleToleranceTypeChange = ({ updateSettings, tolerance, answers }) => (event) => {
-  if (!isAnswerRangeSet(answers)) {
+  if (!isAnswerRangeSet({ answers })) {
     let value;
     if (event.target.value === ToleranceTypes.none.type) {
       value = null;
@@ -26,7 +23,7 @@ export const handleToleranceTypeChange = ({ updateSettings, tolerance, answers }
 };
 
 export const handleToleranceValueChange = ({ updateSettings, tolerance, answers }) => (event) => {
-  if (!isAnswerRangeSet(answers)) {
+  if (!isAnswerRangeSet({ answers })) {
     const newTolerance = { value: event.target.value, type: tolerance.type };
     updateSettings({ tolerance: newTolerance });
   }
@@ -52,7 +49,7 @@ export const ToleranceCard = ({
   // inject
   intl,
 }) => {
-  const canEdit = isAnswerRangeSet({ answers });
+  const isAnswerRange = isAnswerRangeSet({ answers });
   let summary = getSummary({ tolerance, intl });
   useEffect(() => { summary = getSummary({ tolerance, intl }); }, [tolerance]);
   return (
@@ -61,7 +58,7 @@ export const ToleranceCard = ({
       summary={summary}
       none={tolerance.type === ToleranceTypes.none.type}
     >
-      { canEdit
+      { isAnswerRange
        && (
        <Alert
          varaint="info"
@@ -78,7 +75,7 @@ export const ToleranceCard = ({
         <Form.Control
           as="select"
           onChange={handleToleranceTypeChange({ updateSettings, tolerance, answers })}
-          disabled={canEdit}
+          disabled={isAnswerRange}
           value={tolerance.type}
         >
           {Object.keys(ToleranceTypes).map((toleranceType) => (
@@ -90,7 +87,7 @@ export const ToleranceCard = ({
             </option>
           ))}
         </Form.Control>
-        { tolerance?.type !== ToleranceTypes.none.type && !canEdit
+        { tolerance?.type !== ToleranceTypes.none.type && !isAnswerRange
           && (
           <Form.Control
             className="mt-4"

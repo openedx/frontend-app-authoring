@@ -263,7 +263,6 @@ export class OLXParser {
     let answerFeedback = '';
     const answers = [];
     let responseParam = {};
-    // TODO: UI needs to be added to support adding tolerence in numeric response.
     const feedback = this.getFeedback(numericalresponse);
     if (_.has(numericalresponse, 'responseparam')) {
       const type = _.get(numericalresponse, 'responseparam.@_type');
@@ -272,11 +271,13 @@ export class OLXParser {
         [type]: defaultValue,
       };
     }
+    const isAnswerRange = /[([]\d*,\d*[)\]]/gm.test(numericalresponse['@_answer']);
     answers.push({
       id: indexToLetterMap[answers.length],
       title: numericalresponse['@_answer'],
       correct: true,
       selectedFeedback: feedback,
+      isAnswerRange,
       ...responseParam,
     });
 
@@ -299,6 +300,7 @@ export class OLXParser {
         title: additionalAnswer['@_answer'],
         correct: true,
         selectedFeedback: answerFeedback,
+        isAnswerRange: false,
       });
     }
     return { answers };

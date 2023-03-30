@@ -40,7 +40,7 @@ exports[`EditorProblemView component renders simple view 1`] = `
     className="editProblemView d-flex flex-row flex-nowrap justify-content-end"
   >
     <span
-      className="flex-grow-1"
+      className="flex-grow-1 mb-5"
     >
       <injectIntl(ShimmedIntlComponent) />
       <injectIntl(ShimmedIntlComponent) />
