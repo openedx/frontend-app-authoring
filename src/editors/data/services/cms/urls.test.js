@@ -13,7 +13,9 @@ import {
   courseDetailsUrl,
   checkTranscriptsForImport,
   replaceTranscript,
+  courseAdvanceSettings,
   videoFeatures,
+  courseVideos,
 } from './urls';
 
 describe('cms url methods', () => {
@@ -125,10 +127,22 @@ describe('cms url methods', () => {
         .toEqual(`${studioEndpointUrl}/transcripts/replace?data=${parameters}`);
     });
   });
+  describe('courseAdvanceSettings', () => {
+    it('returns url with studioEndpointUrl and learningContextId', () => {
+      expect(courseAdvanceSettings({ studioEndpointUrl, learningContextId }))
+        .toEqual(`${studioEndpointUrl}/api/contentstore/v0/advanced_settings/${learningContextId}`);
+    });
+  });
   describe('videoFeatures', () => {
     it('returns url with studioEndpointUrl and learningContextId', () => {
       expect(videoFeatures({ studioEndpointUrl, learningContextId }))
         .toEqual(`${studioEndpointUrl}/video_features/${learningContextId}`);
+    });
+  });
+  describe('courseVideos', () => {
+    it('returns url with studioEndpointUrl and learningContextId', () => {
+      expect(courseVideos({ studioEndpointUrl, learningContextId }))
+        .toEqual(`${studioEndpointUrl}/videos/${learningContextId}`);
     });
   });
 });

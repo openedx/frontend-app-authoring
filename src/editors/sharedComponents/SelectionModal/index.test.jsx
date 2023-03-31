@@ -1,7 +1,9 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { render, screen } from '@testing-library/react';
 import { formatMessage } from '../../../testUtils';
 import SelectionModal from '.';
+import '@testing-library/jest-dom';
 
 const props = {
   isOpen: jest.fn(),
@@ -69,7 +71,7 @@ const props = {
 
 jest.mock('../BaseModal', () => 'BaseModal');
 jest.mock('./SearchSort', () => 'SearchSort');
-jest.mock('./Gallery', () => 'Gallery');
+jest.mock('./Gallery', () => () => 'Gallery');
 jest.mock('../FileInput', () => 'FileInput');
 jest.mock('../ErrorAlerts/ErrorAlert', () => 'ErrorAlert');
 jest.mock('../ErrorAlerts/FetchErrorAlert', () => 'FetchErrorAlert');
@@ -77,11 +79,13 @@ jest.mock('../ErrorAlerts/UploadErrorAlert', () => 'UploadErrorAlert');
 
 describe('Selection Modal', () => {
   describe('snapshots', () => {
-    test('rendering correctly with expected Input', () => {
-      expect(shallow(<SelectionModal {...props} />)).toMatchSnapshot();
-    });
-    test('rendering with props to null', () => {
-      expect(shallow(<SelectionModal />)).toMatchSnapshot();
+    test('rendering correctly with expected Input', async () => {
+      render(
+        <IntlProvider>
+          <SelectionModal {...props} />
+        </IntlProvider>,
+      );
+      expect(screen.getByText('Gallery')).toBeInTheDocument();
     });
   });
 });

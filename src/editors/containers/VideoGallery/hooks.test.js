@@ -28,6 +28,15 @@ describe('VideoGallery hooks', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+  describe('state hooks', () => {
+    state.testGetter(state.keys.highlighted);
+    state.testGetter(state.keys.searchString);
+    state.testGetter(state.keys.showSelectVideoError);
+    state.testGetter(state.keys.showSizeError);
+    state.testGetter(state.keys.sortBy);
+    state.testGetter(state.keys.filertBy);
+    state.testGetter(state.keys.hideSelectedVideos);
+  });
   describe('using state', () => {
     beforeEach(() => { state.mock(); });
     afterEach(() => { state.restore(); });
@@ -77,9 +86,79 @@ describe('VideoGallery hooks', () => {
         notMatching.forEach(val => expect(filterCb({ displayName: val })).toEqual(false));
       });
     });
-    describe('imgListHooks outputs', () => {
+    describe('buildVideos', () => {
+      const rawVideos = [
+        {
+          edx_video_id: 'id_1',
+          client_video_id: 'client_id_1',
+          course_video_image_url: 'course_video_image_url_1',
+          created: 'created_1',
+          status: 'status_1',
+          duration: 1,
+          transcripts: [],
+        },
+        {
+          edx_video_id: 'id_2',
+          client_video_id: 'client_id_2',
+          course_video_image_url: 'course_video_image_url_2',
+          created: 'created_2',
+          status: 'status_2',
+          duration: 2,
+          transcripts: [],
+        },
+      ];
+      const expectedValues = [
+        {
+          id: 'id_1',
+          displayName: 'client_id_1',
+          externalUrl: 'course_video_image_url_1',
+          dateAdded: 'created_1',
+          locked: false,
+          thumbnail: 'course_video_image_url_1',
+          status: 'status_1',
+          statusBadgeVariant: null,
+          duration: 1,
+          transcripts: [],
+        },
+        {
+          id: 'id_2',
+          displayName: 'client_id_2',
+          externalUrl: 'course_video_image_url_2',
+          dateAdded: 'created_2',
+          locked: false,
+          thumbnail: 'course_video_image_url_2',
+          status: 'status_2',
+          statusBadgeVariant: null,
+          duration: 2,
+          transcripts: [],
+        },
+      ];
+      test('return the expected values', () => {
+        const values = hooks.buildVideos({ rawVideos });
+        expect(values).toEqual(expectedValues);
+      });
+    });
+    describe('getstatusBadgeVariant', () => {
+      test('return the expected values', () => {
+        let value = hooks.getstatusBadgeVariant({ status: filterKeys.failed });
+        expect(value).toEqual('danger');
+        value = hooks.getstatusBadgeVariant({ status: filterKeys.uploading });
+        expect(value).toEqual('light');
+        value = hooks.getstatusBadgeVariant({ status: filterKeys.processing });
+        expect(value).toEqual('light');
+        value = hooks.getstatusBadgeVariant({ status: filterKeys.videoStatus });
+        expect(value).toBeNull();
+        value = hooks.getstatusBadgeVariant({ status: filterKeys.ready });
+        expect(value).toBeNull();
+      });
+    });
+    describe('videoListHooks outputs', () => {
       const props = {
-        searchSortProps: { searchString: 'Es', sortBy: sortKeys.dateNewest, filterBy: filterKeys.videoStatus },
+        searchSortProps: {
+          searchString: 'Es',
+          sortBy: sortKeys.dateNewest,
+          filterBy: filterKeys.videoStatus,
+        },
         videos: [
           {
             displayName: 'sOmEuiMAge',
@@ -129,6 +208,46 @@ describe('VideoGallery hooks', () => {
           expect(state.setState.showSelectVideoError).toHaveBeenCalledWith(false);
         });
       });
+    });
+  });
+  describe('videoHooks', () => {
+    const videoListHooks = {
+      galleryProps: 'some gallery props',
+      selectBtnProps: 'some select btn props',
+    };
+    const searchAndSortHooks = { search: 'props' };
+    const fileInputHooks = { file: 'input hooks' };
+    const videos = { video: { staTICUrl: '/assets/sOmEuiMAge' } };
+    const spies = {};
+    beforeEach(() => {
+      spies.videoList = jest.spyOn(hooks, hookKeys.videoListHooks)
+        .mockReturnValueOnce(videoListHooks);
+      spies.search = jest.spyOn(hooks, hookKeys.searchAndSortHooks)
+        .mockReturnValueOnce(searchAndSortHooks);
+      spies.file = jest.spyOn(hooks, hookKeys.fileInputHooks)
+        .mockReturnValueOnce(fileInputHooks);
+      hook = hooks.videoHooks({ videos });
+    });
+    it('forwards fileInputHooks as fileInput', () => {
+      expect(hook.fileInput).toEqual(fileInputHooks);
+      expect(spies.file.mock.calls.length).toEqual(1);
+      expect(spies.file).toHaveBeenCalled();
+    });
+    it('initializes videoListHooks', () => {
+      expect(spies.videoList.mock.calls.length).toEqual(1);
+      expect(spies.videoList).toHaveBeenCalledWith({
+        searchSortProps: searchAndSortHooks,
+        videos,
+      });
+    });
+    it('forwards searchAndSortHooks as searchSortProps', () => {
+      expect(hook.searchSortProps).toEqual(searchAndSortHooks);
+      expect(spies.search.mock.calls.length).toEqual(1);
+      expect(spies.search).toHaveBeenCalled();
+    });
+    it('forwards galleryProps and selectBtnProps from the video list hooks', () => {
+      expect(hook.galleryProps).toEqual(videoListHooks.galleryProps);
+      expect(hook.selectBtnProps).toEqual(videoListHooks.selectBtnProps);
     });
   });
 });

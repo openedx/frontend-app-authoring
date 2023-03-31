@@ -37,5 +37,9 @@ describe('TextEditor Image Gallery component', () => {
     test('snapshot: loaded, show gallery', () => {
       expect(shallow(<Gallery {...props} />)).toMatchSnapshot();
     });
+    test('snapshot: not shot gallery', () => {
+      const wrapper = shallow(<Gallery {...props} show={false} />);
+      expect(wrapper.type()).toBeNull();
+    });
   });
 });

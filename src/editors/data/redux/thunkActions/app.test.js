@@ -166,6 +166,15 @@ describe('app thunkActions', () => {
       expect(dispatch).toHaveBeenCalledWith(actions.app.setAssets(response));
     });
   });
+  describe('fetchVideos', () => {
+    it('dispatches fetchVideos action with setVideos for onSuccess param', () => {
+      const response = { data: { videos: 'testRESPONSE' } };
+      thunkActions.fetchVideos()(dispatch);
+      const [[dispatchCall]] = dispatch.mock.calls;
+      dispatchCall.fetchVideos.onSuccess(response);
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setVideos(response.data.videos));
+    });
+  });
   describe('uploadImage', () => {
     const setSelection = jest.fn();
     beforeEach(() => {

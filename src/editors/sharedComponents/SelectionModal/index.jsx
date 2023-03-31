@@ -43,8 +43,18 @@ export const SelectionModal = ({
     fetchError,
     uploadError,
   } = modalMessages;
+
+  let background = '#FFFFFF';
+  let showGallery = true;
+  if (isLoaded && !isFetchError && !isUploadError && !inputError.show) {
+    background = '#EBEBEB';
+  } else if (isLoaded) {
+    showGallery = false;
+  }
+
   const galleryPropsValues = {
     isLoaded,
+    show: showGallery,
     ...galleryProps,
   };
   return (
@@ -64,7 +74,7 @@ export const SelectionModal = ({
         </Button>
       )}
       title={intl.formatMessage(titleMsg)}
-      bodyStyle={{ background: '#EBEBEB' }}
+      bodyStyle={{ background, padding: '24px' }}
       headerComponent={(
         <div style={{ zIndex: 10000, margin: '18px 0' }}>
           <SearchSort {...searchSortProps} />

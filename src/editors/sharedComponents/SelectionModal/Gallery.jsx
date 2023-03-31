@@ -15,6 +15,7 @@ import messages from './messages';
 import GalleryCard from './GalleryCard';
 
 export const Gallery = ({
+  show,
   galleryIsEmpty,
   searchIsEmpty,
   displayList,
@@ -27,13 +28,24 @@ export const Gallery = ({
   // injected
   intl,
 }) => {
+  if (!show) {
+    return null;
+  }
   if (!isLoaded) {
     return (
-      <Spinner
-        animation="border"
-        className="mie-3"
-        screenReaderText={intl.formatMessage(messages.loading)}
-      />
+      <div style={{
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+      }}
+      >
+        <Spinner
+          animation="border"
+          className="mie-3"
+          screenReaderText={intl.formatMessage(messages.loading)}
+        />
+      </div>
     );
   }
   if (galleryIsEmpty) {
@@ -71,8 +83,10 @@ Gallery.defaultProps = {
   highlighted: '',
   showIdsOnCards: false,
   height: '375px',
+  show: true,
 };
 Gallery.propTypes = {
+  show: PropTypes.bool,
   isLoaded: PropTypes.bool.isRequired,
   galleryIsEmpty: PropTypes.bool.isRequired,
   searchIsEmpty: PropTypes.bool.isRequired,

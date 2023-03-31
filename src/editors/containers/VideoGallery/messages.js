@@ -3,7 +3,7 @@ export const messages = {
   emptyGalleryLabel: {
     id: 'authoring.selectvideomodal.emptyGalleryLabel',
     defaultMessage:
-      'No videos found in your gallery. Please upload a video using the button below.',
+      'No results found.',
     description: 'Label for when video gallery is empty.',
   },
   selectVideoButtonlabel: {
