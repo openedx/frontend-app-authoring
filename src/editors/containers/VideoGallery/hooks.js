@@ -19,7 +19,7 @@ export const state = {
   hideSelectedVideos: (val) => React.useState(val),
 };
 
-export const searchAndSortHooks = () => {
+export const searchAndSortProps = () => {
   const [searchString, setSearchString] = module.state.searchString('');
   const [sortBy, setSortBy] = module.state.sortBy(sortKeys.dateNewest);
   const [filterBy, setFilterBy] = module.state.filertBy(filterKeys.videoStatus);
@@ -80,7 +80,7 @@ export const filterList = ({
   return filteredList.sort(sortFunctions[sortBy in sortKeys ? sortKeys[sortBy] : sortKeys.dateNewest]);
 };
 
-export const videoListHooks = ({ searchSortProps, videos }) => {
+export const videoListProps = ({ searchSortProps, videos }) => {
   const [highlighted, setHighlighted] = module.state.highlighted(null);
   const [
     showSelectVideoError,
@@ -123,7 +123,7 @@ export const videoListHooks = ({ searchSortProps, videos }) => {
   };
 };
 
-export const fileInputHooks = () => {
+export const fileInputProps = () => {
   // TODO [Update video] Implement this
   const ref = React.useRef();
   const click = () => ref.current.click();
@@ -137,9 +137,9 @@ export const fileInputHooks = () => {
 
 export const buildVideos = ({ rawVideos }) => {
   let videos = [];
-  const videoList = Object.values(rawVideos);
-  if (videoList.length > 0) {
-    videos = videoList.map(video => ({
+  const rawVideoList = Object.values(rawVideos);
+  if (rawVideoList.length > 0) {
+    videos = rawVideoList.map(video => ({
       id: video.edx_video_id,
       displayName: video.client_video_id,
       externalUrl: video.course_video_image_url,
@@ -167,16 +167,16 @@ export const getstatusBadgeVariant = ({ status }) => {
   }
 };
 
-export const videoHooks = ({ videos }) => {
-  const searchSortProps = module.searchAndSortHooks();
-  const videoList = module.videoListHooks({ searchSortProps, videos });
+export const videoProps = ({ videos }) => {
+  const searchSortProps = module.searchAndSortProps();
+  const videoList = module.videoListProps({ searchSortProps, videos });
   const {
     galleryError,
     galleryProps,
     inputError,
     selectBtnProps,
   } = videoList;
-  const fileInput = module.fileInputHooks();
+  const fileInput = module.fileInputProps();
 
   return {
     galleryError,
@@ -189,6 +189,6 @@ export const videoHooks = ({ videos }) => {
 };
 
 export default {
-  videoHooks,
+  videoProps,
   buildVideos,
 };

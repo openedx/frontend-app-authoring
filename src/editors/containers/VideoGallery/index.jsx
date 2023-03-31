@@ -23,7 +23,7 @@ export const VideoGallery = ({
     galleryProps,
     searchSortProps,
     selectBtnProps,
-  } = hooks.videoHooks({ videos });
+  } = hooks.videoProps({ videos });
 
   const modalMessages = {
     confirmMsg: messages.selectVideoButtonlabel,

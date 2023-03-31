@@ -41,9 +41,9 @@ describe('VideoGallery hooks', () => {
     beforeEach(() => { state.mock(); });
     afterEach(() => { state.restore(); });
 
-    describe('searchAndSortHooks', () => {
+    describe('searchAndSortProps', () => {
       beforeEach(() => {
-        hook = hooks.searchAndSortHooks();
+        hook = hooks.searchAndSortProps();
       });
       it('returns searchString value, initialized to an empty string', () => {
         expect(state.stateVals.searchString).toEqual(hook.searchString);
@@ -152,7 +152,7 @@ describe('VideoGallery hooks', () => {
         expect(value).toBeNull();
       });
     });
-    describe('videoListHooks outputs', () => {
+    describe('videoListProps outputs', () => {
       const props = {
         searchSortProps: {
           searchString: 'Es',
@@ -170,7 +170,7 @@ describe('VideoGallery hooks', () => {
       const filterList = (args) => ({ filterList: args });
       const load = () => {
         jest.spyOn(hooks, hookKeys.filterList).mockImplementationOnce(filterList);
-        hook = hooks.videoListHooks(props);
+        hook = hooks.videoListProps(props);
       };
       beforeEach(() => {
         load();
@@ -196,7 +196,7 @@ describe('VideoGallery hooks', () => {
           const show = 'sHOWSelectiRROr';
           expect(hook.galleryError.show).toEqual(false);
           state.mockVal(state.keys.showSelectVideoError, show);
-          hook = hooks.videoListHooks(props);
+          hook = hooks.videoListProps(props);
           expect(hook.galleryError.show).toEqual(show);
         });
         test('set sets showSelectVideoError to true', () => {
@@ -210,44 +210,44 @@ describe('VideoGallery hooks', () => {
       });
     });
   });
-  describe('videoHooks', () => {
-    const videoListHooks = {
+  describe('videoProps', () => {
+    const videoList = {
       galleryProps: 'some gallery props',
       selectBtnProps: 'some select btn props',
     };
-    const searchAndSortHooks = { search: 'props' };
-    const fileInputHooks = { file: 'input hooks' };
+    const searchAndSortProps = { search: 'props' };
+    const fileInput = { file: 'input hooks' };
     const videos = { video: { staTICUrl: '/assets/sOmEuiMAge' } };
     const spies = {};
     beforeEach(() => {
-      spies.videoList = jest.spyOn(hooks, hookKeys.videoListHooks)
-        .mockReturnValueOnce(videoListHooks);
-      spies.search = jest.spyOn(hooks, hookKeys.searchAndSortHooks)
-        .mockReturnValueOnce(searchAndSortHooks);
-      spies.file = jest.spyOn(hooks, hookKeys.fileInputHooks)
-        .mockReturnValueOnce(fileInputHooks);
-      hook = hooks.videoHooks({ videos });
+      spies.videoList = jest.spyOn(hooks, hookKeys.videoListProps)
+        .mockReturnValueOnce(videoList);
+      spies.search = jest.spyOn(hooks, hookKeys.searchAndSortProps)
+        .mockReturnValueOnce(searchAndSortProps);
+      spies.file = jest.spyOn(hooks, hookKeys.fileInputProps)
+        .mockReturnValueOnce(fileInput);
+      hook = hooks.videoProps({ videos });
     });
-    it('forwards fileInputHooks as fileInput', () => {
-      expect(hook.fileInput).toEqual(fileInputHooks);
+    it('forwards fileInput as fileInput', () => {
+      expect(hook.fileInput).toEqual(fileInput);
       expect(spies.file.mock.calls.length).toEqual(1);
       expect(spies.file).toHaveBeenCalled();
     });
-    it('initializes videoListHooks', () => {
+    it('initializes videoList', () => {
       expect(spies.videoList.mock.calls.length).toEqual(1);
       expect(spies.videoList).toHaveBeenCalledWith({
-        searchSortProps: searchAndSortHooks,
+        searchSortProps: searchAndSortProps,
         videos,
       });
     });
     it('forwards searchAndSortHooks as searchSortProps', () => {
-      expect(hook.searchSortProps).toEqual(searchAndSortHooks);
+      expect(hook.searchSortProps).toEqual(searchAndSortProps);
       expect(spies.search.mock.calls.length).toEqual(1);
       expect(spies.search).toHaveBeenCalled();
     });
     it('forwards galleryProps and selectBtnProps from the video list hooks', () => {
-      expect(hook.galleryProps).toEqual(videoListHooks.galleryProps);
-      expect(hook.selectBtnProps).toEqual(videoListHooks.selectBtnProps);
+      expect(hook.galleryProps).toEqual(videoList.galleryProps);
+      expect(hook.selectBtnProps).toEqual(videoList.selectBtnProps);
     });
   });
 });

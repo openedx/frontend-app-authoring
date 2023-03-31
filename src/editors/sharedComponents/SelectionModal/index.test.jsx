@@ -11,7 +11,7 @@ const props = {
   size: 'fullscreen',
   isFullscreenScroll: false,
   galleryError: {
-    show: 'ShoWERror gAlLery',
+    show: false,
     set: jest.fn(),
     dismiss: jest.fn(),
     message: {
@@ -21,7 +21,7 @@ const props = {
     },
   },
   inputError: {
-    show: 'ShoWERror inPUT',
+    show: false,
     set: jest.fn(),
     dismiss: jest.fn(),
     message: {
@@ -66,26 +66,120 @@ const props = {
       description: 'uploadError',
     },
   },
+  isLoaded: true,
+  isFetchError: false,
+  isUploadError: false,
   intl: { formatMessage },
 };
 
+const mockGalleryFn = jest.fn();
+const mockFileInputFn = jest.fn();
+const mockFetchErrorAlertFn = jest.fn();
+const mockUploadErrorAlertFn = jest.fn();
+
 jest.mock('../BaseModal', () => 'BaseModal');
 jest.mock('./SearchSort', () => 'SearchSort');
-jest.mock('./Gallery', () => () => 'Gallery');
-jest.mock('../FileInput', () => 'FileInput');
-jest.mock('../ErrorAlerts/ErrorAlert', () => 'ErrorAlert');
-jest.mock('../ErrorAlerts/FetchErrorAlert', () => 'FetchErrorAlert');
-jest.mock('../ErrorAlerts/UploadErrorAlert', () => 'UploadErrorAlert');
+jest.mock('./Gallery', () => (componentProps) => {
+  mockGalleryFn(componentProps);
+  return (<div>Gallery</div>);
+});
+jest.mock('../FileInput', () => (componentProps) => {
+  mockFileInputFn(componentProps);
+  return (<div>FileInput</div>);
+});
+jest.mock('../ErrorAlerts/ErrorAlert', () => () => (<div>ErrorAlert</div>));
+jest.mock('../ErrorAlerts/FetchErrorAlert', () => (componentProps) => {
+  mockFetchErrorAlertFn(componentProps);
+  return (<div>FetchErrorAlert</div>);
+});
+jest.mock('../ErrorAlerts/UploadErrorAlert', () => (componentProps) => {
+  mockUploadErrorAlertFn(componentProps);
+  return (<div>UploadErrorAlert</div>);
+});
 
 describe('Selection Modal', () => {
-  describe('snapshots', () => {
-    test('rendering correctly with expected Input', async () => {
-      render(
-        <IntlProvider>
-          <SelectionModal {...props} />
-        </IntlProvider>,
-      );
-      expect(screen.getByText('Gallery')).toBeInTheDocument();
-    });
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  test('rendering correctly with expected Input', async () => {
+    render(
+      <IntlProvider>
+        <SelectionModal {...props} />
+      </IntlProvider>,
+    );
+    expect(screen.getByText('Gallery')).toBeInTheDocument();
+    expect(screen.getByText('FileInput')).toBeInTheDocument();
+    expect(screen.getByText('FetchErrorAlert')).toBeInTheDocument();
+    expect(screen.getByText('UploadErrorAlert')).toBeInTheDocument();
+
+    expect(mockGalleryFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ...props.galleryProps,
+        isLoaded: props.isLoaded,
+        show: true,
+      }),
+    );
+    expect(mockFetchErrorAlertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isFetchError: props.isFetchError,
+        message: props.modalMessages.fetchError,
+      }),
+    );
+    expect(mockUploadErrorAlertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isUploadError: props.isUploadError,
+        message: props.modalMessages.uploadError,
+      }),
+    );
+    expect(mockFileInputFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        acceptedFiles: '.png',
+        fileInput: props.fileInput,
+      }),
+    );
+  });
+  test('rendering correctly with errors', () => {
+    render(
+      <IntlProvider>
+        <SelectionModal {...props} isFetchError />
+      </IntlProvider>,
+    );
+    expect(screen.getByText('Gallery')).toBeInTheDocument();
+    expect(screen.getByText('FileInput')).toBeInTheDocument();
+    expect(screen.getByText('FetchErrorAlert')).toBeInTheDocument();
+    expect(screen.getByText('UploadErrorAlert')).toBeInTheDocument();
+
+    expect(mockFetchErrorAlertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isFetchError: true,
+        message: props.modalMessages.fetchError,
+      }),
+    );
+    expect(mockGalleryFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ...props.galleryProps,
+        isLoaded: props.isLoaded,
+        show: false,
+      }),
+    );
+  });
+  test('rendering correctly with loading', () => {
+    render(
+      <IntlProvider>
+        <SelectionModal {...props} isLoaded={false} />
+      </IntlProvider>,
+    );
+    expect(screen.getByText('Gallery')).toBeInTheDocument();
+    expect(screen.getByText('FileInput')).toBeInTheDocument();
+    expect(screen.getByText('FetchErrorAlert')).toBeInTheDocument();
+    expect(screen.getByText('UploadErrorAlert')).toBeInTheDocument();
+
+    expect(mockGalleryFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ...props.galleryProps,
+        isLoaded: false,
+        show: true,
+      }),
+    );
   });
 });

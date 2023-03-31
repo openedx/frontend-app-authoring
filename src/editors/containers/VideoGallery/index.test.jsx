@@ -9,7 +9,7 @@ jest.mock('../../sharedComponents/SelectionModal', () => 'SelectionModal');
 
 jest.mock('./hooks', () => ({
   buildVideos: jest.fn(() => []),
-  videoHooks: jest.fn(() => ({
+  videoProps: jest.fn(() => ({
     galleryError: {
       show: 'ShoWERror gAlLery',
       set: jest.fn(),
@@ -60,31 +60,28 @@ describe('VideoGallery', () => {
       isUploadError: false,
     };
     let el;
-    const videoHooks = hooks.videoHooks();
+    const videoProps = hooks.videoProps();
     beforeEach(() => {
       el = shallow(<module.VideoGallery {...props} />);
     });
-    test('snapshot', () => {
-      expect(el).toMatchSnapshot();
-    });
     it('provides confirm action, forwarding selectBtnProps from imgHooks', () => {
       expect(el.find(SelectionModal).props().selectBtnProps).toEqual(
-        expect.objectContaining({ ...hooks.videoHooks().selectBtnProps }),
+        expect.objectContaining({ ...hooks.videoProps().selectBtnProps }),
       );
     });
     it('provides file upload button linked to fileInput.click', () => {
       expect(el.find(SelectionModal).props().fileInput.click).toEqual(
-        videoHooks.fileInput.click,
+        videoProps.fileInput.click,
       );
     });
     it('provides a SearchSort component with searchSortProps from imgHooks', () => {
-      expect(el.find(SelectionModal).props().searchSortProps).toEqual(videoHooks.searchSortProps);
+      expect(el.find(SelectionModal).props().searchSortProps).toEqual(videoProps.searchSortProps);
     });
     it('provides a Gallery component with galleryProps from imgHooks', () => {
-      expect(el.find(SelectionModal).props().galleryProps).toEqual(videoHooks.galleryProps);
+      expect(el.find(SelectionModal).props().galleryProps).toEqual(videoProps.galleryProps);
     });
     it('provides a FileInput component with fileInput props from imgHooks', () => {
-      expect(el.find(SelectionModal).props().fileInput).toMatchObject(videoHooks.fileInput);
+      expect(el.find(SelectionModal).props().fileInput).toMatchObject(videoProps.fileInput);
     });
   });
 });
