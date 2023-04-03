@@ -16,6 +16,7 @@ import {
   blankQuestionOLX,
   styledQuestionOLX,
   shuffleProblemOLX,
+  scriptProblemOlX,
 } from './mockData/olxTestData';
 import { ProblemTypeKeys } from '../../../data/constants/problem';
 
@@ -180,6 +181,10 @@ describe('Check OLXParser for question parsing', () => {
     const olxparser = new OLXParser(numericInputWithFeedbackAndHintsOLX.rawOLX);
     const question = olxparser.parseQuestions('numericalresponse');
     expect(question).toEqual(numericInputWithFeedbackAndHintsOLX.question);
+  });
+  test('Test Advanced Problem Type by script tag', () => {
+    const olxparser = new OLXParser(scriptProblemOlX.rawOLX);
+    expect(() => olxparser.parseQuestions('numericalresponse')).toThrow(new Error('Script Tag, reverting to Advanced Editor'));
   });
   test('Test OLX with no question content should have empty string for question', () => {
     const olxparser = new OLXParser(blankQuestionOLX.rawOLX);

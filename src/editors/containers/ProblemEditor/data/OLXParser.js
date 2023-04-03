@@ -323,6 +323,9 @@ export class OLXParser {
     problemArray.forEach(tag => {
       const tagName = Object.keys(tag)[0];
       if (!nonQuestionKeys.includes(tagName)) {
+        if (tagName === 'script') {
+          throw new Error('Script Tag, reverting to Advanced Editor');
+        }
         questionArray.push(tag);
       }
     });
