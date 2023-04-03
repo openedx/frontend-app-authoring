@@ -43,7 +43,7 @@ const CourseAuthoringRoutes = ({ courseId }) => {
             />
             )}
         </PageRoute>
-        <PageRoute path={`${path}/videos`}>
+        <PageRoute path={`${path}/editor/videos`}>
           {process.env.ENABLE_NEW_EDITOR_PAGES === 'true'
             && (
             <VideoSelectorContainer
