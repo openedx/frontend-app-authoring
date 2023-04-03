@@ -17,7 +17,7 @@ exports[`SolutionWidget render snapshot: renders correct default 1`] = `
     className="small mb-3"
   >
     <FormattedMessage
-      defaultMessage="Provide an explantion for the correct answer"
+      defaultMessage="Provide an explanation for the correct answer"
       description="Description of the solution widget"
       id="authoring.problemEditor.solutionwidget.solutionDescriptionText"
     />

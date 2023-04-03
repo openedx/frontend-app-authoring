@@ -9,7 +9,7 @@ const messages = defineMessages({
   },
   solutionDescriptionText: {
     id: 'authoring.problemEditor.solutionwidget.solutionDescriptionText',
-    defaultMessage: 'Provide an explantion for the correct answer',
+    defaultMessage: 'Provide an explanation for the correct answer',
     description: 'Description of the solution widget',
   },
   placeholder: {
