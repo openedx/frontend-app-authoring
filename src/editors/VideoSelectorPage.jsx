@@ -6,6 +6,7 @@ import VideoSelector from './VideoSelector';
 import store from './data/store';
 
 const VideoSelectorPage = ({
+  blockId,
   courseId,
   lmsEndpointUrl,
   studioEndpointUrl,
@@ -19,6 +20,7 @@ const VideoSelectorPage = ({
     >
       <VideoSelector
         {...{
+          blockId,
           learningContextId: courseId,
           lmsEndpointUrl,
           studioEndpointUrl,
@@ -29,12 +31,14 @@ const VideoSelectorPage = ({
 );
 
 VideoSelectorPage.defaultProps = {
+  blockId: null,
   courseId: null,
   lmsEndpointUrl: null,
   studioEndpointUrl: null,
 };
 
 VideoSelectorPage.propTypes = {
+  blockId: PropTypes.string,
   courseId: PropTypes.string,
   lmsEndpointUrl: PropTypes.string,
   studioEndpointUrl: PropTypes.string,

@@ -24,6 +24,7 @@ export const VideoGallery = ({
     searchSortProps,
     selectBtnProps,
   } = hooks.videoProps({ videos });
+  const handleCancel = hooks.handleCancel();
 
   const modalMessages = {
     confirmMsg: messages.selectVideoButtonlabel,
@@ -38,7 +39,7 @@ export const VideoGallery = ({
       <SelectionModal
         {...{
           isOpen: true,
-          close: () => { /* TODO */ },
+          close: handleCancel,
           size: 'fullscreen',
           isFullscreenScroll: false,
           galleryError,

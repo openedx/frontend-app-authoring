@@ -5,6 +5,7 @@ import VideoGallery from './containers/VideoGallery';
 import * as hooks from './hooks';
 
 export const VideoSelector = ({
+  blockId,
   learningContextId,
   lmsEndpointUrl,
   studioEndpointUrl,
@@ -13,7 +14,7 @@ export const VideoSelector = ({
   hooks.initializeApp({
     dispatch,
     data: {
-      blockId: '',
+      blockId,
       blockType: 'video',
       learningContextId,
       lmsEndpointUrl,
@@ -26,6 +27,7 @@ export const VideoSelector = ({
 };
 
 VideoSelector.propTypes = {
+  blockId: PropTypes.string.isRequired,
   learningContextId: PropTypes.string.isRequired,
   lmsEndpointUrl: PropTypes.string.isRequired,
   studioEndpointUrl: PropTypes.string.isRequired,

@@ -1,7 +1,11 @@
+import * as reactRedux from 'react-redux';
 import * as hooks from './hooks';
 import { filterKeys, sortKeys } from './utils';
 import { MockUseState } from '../../../testUtils';
 import { keyStore } from '../../utils';
+import * as appHooks from '../../hooks';
+import { selectors } from '../../data/redux';
+import analyticsEvt from '../../data/constants/analyticsEvt';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
@@ -16,8 +20,23 @@ jest.mock('react-redux', () => {
     ...jest.requireActual('react-redux'),
     dispatch: dispatchFn,
     useDispatch: jest.fn(() => dispatchFn),
+    useSelector: jest.fn(),
   };
 });
+
+jest.mock('../../data/redux', () => ({
+  selectors: {
+    app: {
+      returnUrl: 'returnUrl',
+      analytics: 'analytics',
+    },
+  },
+}));
+
+jest.mock('../../hooks', () => ({
+  ...jest.requireActual('../../hooks'),
+  navigateCallback: jest.fn((args) => ({ navigateCallback: args })),
+}));
 
 const state = new MockUseState(hooks);
 const hookKeys = keyStore(hooks);
@@ -248,6 +267,17 @@ describe('VideoGallery hooks', () => {
     it('forwards galleryProps and selectBtnProps from the video list hooks', () => {
       expect(hook.galleryProps).toEqual(videoList.galleryProps);
       expect(hook.selectBtnProps).toEqual(videoList.selectBtnProps);
+    });
+  });
+  describe('handleCancel', () => {
+    it('calls navigateCallback', () => {
+      expect(hooks.handleCancel()).toEqual(
+        appHooks.navigateCallback({
+          destination: reactRedux.useSelector(selectors.app.returnUrl),
+          analyticsEvent: analyticsEvt.videoGalleryCancelClick,
+          analytics: reactRedux.useSelector(selectors.app.analytics),
+        }),
+      );
     });
   });
 });

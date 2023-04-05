@@ -39,6 +39,7 @@ jest.mock('./hooks', () => ({
     searchSortProps: { search: 'sortProps' },
     selectBtnProps: { select: 'btnProps' },
   })),
+  handleCancel: jest.fn(),
 }));
 
 jest.mock('../../data/redux', () => ({
@@ -49,6 +50,11 @@ jest.mock('../../data/redux', () => ({
       isUploadError: (state, { requestKey }) => ({ isUploadError: { state, requestKey } }),
     },
   },
+}));
+
+jest.mock('../../hooks', () => ({
+  ...jest.requireActual('../../hooks'),
+  navigateCallback: jest.fn((args) => ({ navigateCallback: args })),
 }));
 
 describe('VideoGallery', () => {

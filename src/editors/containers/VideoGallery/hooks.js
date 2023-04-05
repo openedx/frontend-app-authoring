@@ -1,6 +1,10 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import * as module from './hooks';
 import messages from './messages';
+import * as appHooks from '../../hooks';
+import { selectors } from '../../data/redux';
+import analyticsEvt from '../../data/constants/analyticsEvt';
 import {
   filterKeys,
   filterMessages,
@@ -8,6 +12,11 @@ import {
   sortMessages,
   sortFunctions,
 } from './utils';
+
+export const {
+  navigateCallback,
+  navigateTo,
+} = appHooks;
 
 export const state = {
   highlighted: (val) => React.useState(val),
@@ -91,6 +100,8 @@ export const videoListProps = ({ searchSortProps, videos }) => {
     setShowSizeError,
   ] = module.state.showSizeError(false);
   const filteredList = module.filterList({ ...searchSortProps, videos });
+  const learningContextId = useSelector(selectors.app.learningContextId);
+  const blockId = useSelector(selectors.app.blockId);
   return {
     galleryError: {
       show: showSelectVideoError,
@@ -116,8 +127,10 @@ export const videoListProps = ({ searchSortProps, videos }) => {
       height: '100%',
     },
     selectBtnProps: {
-      onclick: () => {
-        // TODO Update this when implementing the selection feature
+      onClick: () => {
+        // TODO save the metadata of the video on the block to fill it into the cideo editor
+
+        navigateTo(`/course/${learningContextId}/editor/video/${blockId}`);
       },
     },
   };
@@ -134,6 +147,14 @@ export const fileInputProps = () => {
     ref,
   };
 };
+
+export const handleCancel = () => (
+  navigateCallback({
+    destination: useSelector(selectors.app.returnUrl),
+    analytics: useSelector(selectors.app.analytics),
+    analyticsEvent: analyticsEvt.videoGalleryCancelClick,
+  })
+);
 
 export const buildVideos = ({ rawVideos }) => {
   let videos = [];
@@ -191,4 +212,5 @@ export const videoProps = ({ videos }) => {
 export default {
   videoProps,
   buildVideos,
+  handleCancel,
 };
