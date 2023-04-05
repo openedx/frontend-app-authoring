@@ -19,7 +19,7 @@ const initialState = {
   settings: {
     randomization: null,
     scoring: {
-      weight: 0,
+      weight: 1,
       attempts: {
         unlimited: true,
         number: '',
