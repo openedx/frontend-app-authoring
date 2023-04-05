@@ -128,9 +128,12 @@ export const videoListProps = ({ searchSortProps, videos }) => {
     },
     selectBtnProps: {
       onClick: () => {
-        // TODO save the metadata of the video on the block to fill it into the cideo editor
-
-        navigateTo(`/course/${learningContextId}/editor/video/${blockId}`);
+        if (highlighted) {
+          // TODO save the metadata of the video on the block to fill it into the cideo editor
+          navigateTo(`/course/${learningContextId}/editor/video/${blockId}?return=true`);
+        } else {
+          setShowSelectVideoError(true);
+        }
       },
     },
   };
