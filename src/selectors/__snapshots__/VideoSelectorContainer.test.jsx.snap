@@ -5,6 +5,7 @@ exports[`Video Selector Container snapshots rendering correctly with expected In
   className="selector-page"
 >
   <VideoSelectorPage
+    blockId="company-id1"
     courseId="cOuRsEId"
     lmsEndpointUrl="http://localhost:18000"
     studioEndpointUrl="http://localhost:18010"
