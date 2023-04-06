@@ -28,6 +28,11 @@ const messages = defineMessages({
     to an .mp4, .ogg, or .webm video file hosted elsewhere on the internet.`,
     description: 'Feedback for video URL field',
   },
+  videoIdChangeAlert: {
+    id: 'authoring.videoeditor.videoIdChangeAlert.message',
+    defaultMessage: 'The Video ID field has changed, please check the Video URL and fallback URL values and update them if necessary.',
+    description: 'Body message for the alert that appears when the video id has been changed.',
+  },
   fallbackVideoTitle: {
     id: 'authoring.videoeditor.videoSource.fallbackVideo.title',
     defaultMessage: 'Fallback videos',

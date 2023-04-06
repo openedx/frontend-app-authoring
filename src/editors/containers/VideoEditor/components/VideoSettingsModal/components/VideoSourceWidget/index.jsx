@@ -10,7 +10,6 @@ import {
   Button,
   Tooltip,
   OverlayTrigger,
-  FormControlFeedback,
 } from '@edx/paragon';
 import { DeleteOutline, InfoOutline, Add } from '@edx/paragon/icons';
 import {
@@ -24,6 +23,7 @@ import * as hooks from './hooks';
 import messages from './messages';
 import { selectors } from '../../../../../../data/redux';
 
+import { ErrorAlert } from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 
 /**
@@ -52,7 +52,12 @@ export const VideoSourceWidget = ({
       [widgetHooks.selectorKeys.allowVideoSharing]: widgetHooks.genericWidget,
     },
   });
-  const { updateVideoId, updateVideoURL } = hooks.sourceHooks({ dispatch });
+  const { videoIdChangeAlert } = hooks.videoIdChangeAlert();
+  const { updateVideoId, updateVideoURL } = hooks.sourceHooks({
+    dispatch,
+    previousVideoId: videoId.formValue,
+    setAlert: videoIdChangeAlert.set,
+  });
   const {
     addFallbackVideo,
     deleteFallbackVideo,
@@ -63,6 +68,13 @@ export const VideoSourceWidget = ({
       fontSize="x-small"
       title={intl.formatMessage(messages.titleLabel)}
     >
+      <ErrorAlert
+        dismissError={videoIdChangeAlert.dismiss}
+        hideHeading
+        isError={videoIdChangeAlert.show}
+      >
+        <FormattedMessage {...messages.videoIdChangeAlert} />
+      </ErrorAlert>
       <Form.Group>
         <div className="border-primary-100 border-bottom pb-4">
           <Form.Control
@@ -71,18 +83,18 @@ export const VideoSourceWidget = ({
             onBlur={updateVideoId}
             value={videoId.local}
           />
-          <FormControlFeedback className="text-primary-300 mb-4">
+          <Form.Control.Feedback className="text-primary-300 mb-4">
             <FormattedMessage {...messages.videoIdFeedback} />
-          </FormControlFeedback>
+          </Form.Control.Feedback>
           <Form.Control
             floatingLabel={intl.formatMessage(messages.videoUrlLabel)}
             onChange={source.onChange}
             onBlur={(e) => updateVideoURL(e, videoId.local)}
             value={source.local}
           />
-          <FormControlFeedback className="text-primary-300">
+          <Form.Control.Feedback className="text-primary-300">
             <FormattedMessage {...messages.videoUrlFeedback} />
-          </FormControlFeedback>
+          </Form.Control.Feedback>
         </div>
         <div className="mt-4">
           <FormattedMessage {...messages.fallbackVideoTitle} />

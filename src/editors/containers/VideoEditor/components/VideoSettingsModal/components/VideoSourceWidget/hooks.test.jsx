@@ -1,7 +1,15 @@
 import { dispatch } from 'react-redux';
 import { actions } from '../../../../../../data/redux';
+import { MockUseState } from '../../../../../../../testUtils';
 import * as requests from '../../../../../../data/redux/thunkActions/requests';
 import * as hooks from './hooks';
+
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useRef: jest.fn(val => ({ current: val })),
+  useEffect: jest.fn(),
+  useCallback: (cb, prereqs) => ({ cb, prereqs }),
+}));
 
 jest.mock('react-redux', () => {
   const dispatchFn = jest.fn();
@@ -25,16 +33,24 @@ jest.mock('../../../../../../data/redux/thunkActions/requests', () => ({
   checkTranscriptsForImport: jest.fn(),
 }));
 
+const state = new MockUseState(hooks);
+
 const youtubeId = 'yOuTuBEiD';
 const youtubeUrl = `https://youtu.be/${youtubeId}`;
 
 describe('VideoEditorHandout hooks', () => {
   let hook;
-
+  describe('state hooks', () => {
+    state.testGetter(state.keys.showVideoIdChangeAlert);
+  });
   describe('sourceHooks', () => {
     const e = { target: { value: 'soMEvALuE' } };
     beforeEach(() => {
-      hook = hooks.sourceHooks({ dispatch });
+      hook = hooks.sourceHooks({
+        dispatch,
+        previousVideoId: 'soMEvALuE',
+        setAlert: jest.fn(),
+      });
     });
     afterEach(() => {
       jest.clearAllMocks();
@@ -82,7 +98,23 @@ describe('VideoEditorHandout hooks', () => {
     });
     describe('updateVideoId', () => {
       it('dispatches updateField action with new videoId', () => {
-        hook.updateVideoId(e);
+        hook.updateVideoId({ target: { value: 'newVideoId' } });
+        expect(dispatch).toHaveBeenCalledWith(
+          actions.video.updateField({
+            videoId: e.target.value,
+          }),
+        );
+      });
+      it('dispatches updateField action with empty string', () => {
+        hook.updateVideoId({ target: { value: '' } });
+        expect(dispatch).toHaveBeenCalledWith(
+          actions.video.updateField({
+            videoId: e.target.value,
+          }),
+        );
+      });
+      it('dispatches updateField action with previousVideoId', () => {
+        hook.updateVideoId({ target: { value: 'soMEvALuE' } });
         expect(dispatch).toHaveBeenCalledWith(
           actions.video.updateField({
             videoId: e.target.value,
@@ -118,6 +150,25 @@ describe('VideoEditorHandout hooks', () => {
           }),
         );
       });
+    });
+  });
+  describe('videoIdChangeAlert', () => {
+    beforeEach(() => {
+      state.mock();
+    });
+    afterEach(() => {
+      state.restore();
+    });
+    test('showVideoIdChangeAlert: state values', () => {
+      expect(hooks.videoIdChangeAlert().videoIdChangeAlert.show).toEqual(false);
+    });
+    test('showVideoIdChangeAlert setters: set', () => {
+      hooks.videoIdChangeAlert().videoIdChangeAlert.set();
+      expect(state.setState[state.keys.showVideoIdChangeAlert]).toHaveBeenCalledWith(true);
+    });
+    test('showVideoIdChangeAlert setters: dismiss', () => {
+      hooks.videoIdChangeAlert().videoIdChangeAlert.dismiss();
+      expect(state.setState[state.keys.showVideoIdChangeAlert]).toHaveBeenCalledWith(false);
     });
   });
 });

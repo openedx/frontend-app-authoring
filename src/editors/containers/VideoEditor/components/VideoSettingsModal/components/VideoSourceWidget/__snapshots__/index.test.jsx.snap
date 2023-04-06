@@ -5,6 +5,17 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
   fontSize="x-small"
   title="Video source"
 >
+  <ErrorAlert
+    dismissError={[Function]}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="The Video ID field has changed, please check the Video URL and fallback URL values and update them if necessary."
+      description="Body message for the alert that appears when the video id has been changed."
+      id="authoring.videoeditor.videoIdChangeAlert.message"
+    />
+  </ErrorAlert>
   <Form.Group>
     <div
       className="border-primary-100 border-bottom pb-4"
@@ -15,7 +26,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
         onChange={[MockFunction]}
         value=""
       />
-      <Component
+      <Form.Control.Feedback
         className="text-primary-300 mb-4"
       >
         <FormattedMessage
@@ -23,14 +34,14 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
           description="Feedback for video ID field"
           id="authoring.videoeditor.videoSource.videoId.feedback"
         />
-      </Component>
+      </Form.Control.Feedback>
       <Form.Control
         floatingLabel="Video URL"
         onBlur={[Function]}
         onChange={[MockFunction]}
         value=""
       />
-      <Component
+      <Form.Control.Feedback
         className="text-primary-300"
       >
         <FormattedMessage
@@ -39,7 +50,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
           description="Feedback for video URL field"
           id="authoring.videoeditor.videoSource.videoUrl.feedback"
         />
-      </Component>
+      </Form.Control.Feedback>
     </div>
     <div
       className="mt-4"
@@ -147,6 +158,17 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with videoSh
   fontSize="x-small"
   title="Video source"
 >
+  <ErrorAlert
+    dismissError={[Function]}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="The Video ID field has changed, please check the Video URL and fallback URL values and update them if necessary."
+      description="Body message for the alert that appears when the video id has been changed."
+      id="authoring.videoeditor.videoIdChangeAlert.message"
+    />
+  </ErrorAlert>
   <Form.Group>
     <div
       className="border-primary-100 border-bottom pb-4"
@@ -157,7 +179,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with videoSh
         onChange={[MockFunction]}
         value=""
       />
-      <Component
+      <Form.Control.Feedback
         className="text-primary-300 mb-4"
       >
         <FormattedMessage
@@ -165,14 +187,14 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with videoSh
           description="Feedback for video ID field"
           id="authoring.videoeditor.videoSource.videoId.feedback"
         />
-      </Component>
+      </Form.Control.Feedback>
       <Form.Control
         floatingLabel="Video URL"
         onBlur={[Function]}
         onChange={[MockFunction]}
         value=""
       />
-      <Component
+      <Form.Control.Feedback
         className="text-primary-300"
       >
         <FormattedMessage
@@ -181,7 +203,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with videoSh
           description="Feedback for video URL field"
           id="authoring.videoeditor.videoSource.videoUrl.feedback"
         />
-      </Component>
+      </Form.Control.Feedback>
     </div>
     <div
       className="mt-4"
