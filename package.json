@@ -71,7 +71,7 @@
     "@testing-library/jest-dom": "5.16.4",
     "@testing-library/react": "12.1.1",
     "@testing-library/user-event": "^13.2.1",
-    "axios-mock-adapter": "^1.18.2",
+    "axios-mock-adapter": "1.20.0",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.6",
     "enzyme-to-json": "^3.6.2",
