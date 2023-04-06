@@ -294,3 +294,5 @@ export const fetchStudioView = ({ blockId, studioEndpointUrl }) => {
 export const checkTranscriptsForImport = () => mockPromise({});
 
 export const uploadTranscript = () => mockPromise({});
+
+export const fetchAdvancedSettings = () => mockPromise({});

@@ -10,7 +10,6 @@ describe('GroupFeedbackRow', () => {
     handleAnswersSelectedChange: jest.fn().mockName('handleAnswersSelectedChange'),
     handleFeedbackChange: jest.fn().mockName('handleFeedbackChange'),
     handleDelete: jest.fn().mockName('handleDelete'),
-    id: '0',
     intl: { formatMessage },
   };
 

@@ -157,12 +157,9 @@ class ReactStateOLXParser {
   addGroupFeedbackList() {
     const compoundhint = [];
     const { groupFeedbackList } = this.problemState;
-    const { groupFeedback } = this.editorObject;
     groupFeedbackList.forEach((element) => {
-      const feedbackString = groupFeedback?.[element.id];
-      const parsedFeedback = this.parser.parse(feedbackString);
       compoundhint.push({
-        ...parsedFeedback,
+        '#text': element.feedback,
         '@_value': element.answers.join(' '),
       });
     });
