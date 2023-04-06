@@ -1,16 +1,27 @@
 /* eslint-disable import/no-cycle */
 import { actions, selectors } from '..';
-import { removeItemOnce } from '../../../utils';
+import { formatDuration, removeItemOnce } from '../../../utils';
 import * as requests from './requests';
 import * as module from './video';
 import { valueFromDuration } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
 import { parseYoutubeId } from '../../services/cms/api';
 
-export const loadVideoData = () => (dispatch, getState) => {
+export const loadVideoData = (selectedVideoId) => (dispatch, getState) => {
   const state = getState();
   const blockValueData = state.app.blockValue.data;
   const rawVideoData = blockValueData.metadata ? blockValueData.metadata : {};
   const courseData = state.app.courseDetails.data ? state.app.courseDetails.data : {};
+  if (Object.keys(rawVideoData).length === 0 && selectedVideoId !== null) {
+    const rawVideos = Object.values(selectors.app.videos(state));
+    const selectedVideo = rawVideos.find(video => video.edx_video_id === selectedVideoId);
+    // TODO it's missing laod the transcripts
+    rawVideoData = {
+      edx_video_id: selectedVideo.edx_video_id,
+      thumbnail: selectedVideo.course_video_image_url,
+      end_time: formatDuration(selectedVideo.duration),
+      duration: selectedVideo.duration,
+    };
+  }
   const studioView = state.app.studioView?.data?.html;
   const {
     videoId,
@@ -45,7 +56,7 @@ export const loadVideoData = () => (dispatch, getState) => {
     duration: { // TODO duration is not always sent so they should be calculated.
       startTime: valueFromDuration(rawVideoData.start_time || '00:00:00'),
       stopTime: valueFromDuration(rawVideoData.end_time || '00:00:00'),
-      total: 0, // TODO can we get total duration? if not, probably dropping from widget
+      total: rawVideoData.duration || 0, // TODO can we get total duration? if not, probably dropping from widget
     },
     handout: rawVideoData.handout,
     licenseType,
