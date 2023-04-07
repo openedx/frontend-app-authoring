@@ -36,7 +36,6 @@ export const AnswersContainer = ({
       ))}
 
       {problemType !== ProblemTypeKeys.NUMERIC ? (
-
         <Button
           variant="add"
           onClick={addAnswer}
@@ -49,6 +48,7 @@ export const AnswersContainer = ({
           <Dropdown.Toggle
             id="Add-Answer-Or-Answer-Range"
             variant="tertiary"
+            className="pl-0"
           >
             <Icon
               src={Add}

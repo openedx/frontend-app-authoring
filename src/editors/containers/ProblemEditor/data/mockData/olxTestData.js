@@ -384,6 +384,38 @@ export const numericInputWithFeedbackAndHintsOLX = {
 `,
 };
 
+export const numericInputWithAnswerRangeOLX = {
+  rawOLX: `<problem>
+<numericalresponse answer="[3/2,-1.3)">
+  <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for numerical input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
+<label>Add the question text, or prompt, here. This text is required.</label>
+<description>You can add an optional tip or note related to the prompt like this. </description>
+  <formulaequationinput/>\
+</numericalresponse>
+</problem>`,
+  data: {
+    answers: [
+      {
+        id: 'A',
+        title: '[32,-1.3)',
+        correct: true,
+        selectedFeedback: '<p>You can specify optional feedback like this, which appears after this answer is submitted.</p>',
+        isAnswerRange: true,
+      },
+    ],
+  },
+  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for numerical input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
+  buildOLX: `<problem>
+  <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for numerical input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
+  <label>Add the question text, or prompt, here. This text is required.</label>
+  <em>You can add an optional tip or note related to the prompt like this.</em>
+  <numericalresponse answer="(-1.3,3/2]">
+    <formulaequationinput></formulaequationinput>
+  </numericalresponse>
+</problem>
+`,
+};
+
 export const textInputWithFeedbackAndHintsOLX = {
   rawOLX: `<problem>
 <stringresponse answer="the correct answer" type="ci">

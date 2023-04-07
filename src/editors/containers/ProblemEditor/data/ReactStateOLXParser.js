@@ -38,6 +38,9 @@ class ReactStateOLXParser {
   addHints() {
     const hintsArray = [];
     const { hints } = this.editorObject;
+    if (hints.length < 1) {
+      return {};
+    }
     hints.forEach(hint => {
       if (hint.length > 0) {
         const parsedHint = this.parser.parse(hint);
@@ -312,6 +315,44 @@ class ReactStateOLXParser {
     answers.forEach((answer) => {
       const correcthint = this.getAnswerHints(selectedFeedback?.[answer.id]);
       if (this.hasAttributeWithValue(answer, 'title')) {
+        let { title } = answer;
+        if (title.startsWith('(') || title.startsWith('[')) {
+          const parsedRange = title.split(',');
+          const [rawLowerBound, rawUpperBound] = parsedRange;
+          let lowerBoundInt;
+          let lowerBoundFraction;
+          let upperBoundInt;
+          let upperBoundFraction;
+          if (rawLowerBound.includes('/')) {
+            lowerBoundFraction = rawLowerBound.replace(/[^0-9-/]/gm, '');
+            const [numerator, denominator] = lowerBoundFraction.split('/');
+            const lowerBoundFloat = Number(numerator) / Number(denominator);
+            lowerBoundInt = lowerBoundFloat;
+          } else {
+            // these regex replaces remove everything that is not a decimal or positive/negative numer
+            lowerBoundInt = Number(rawLowerBound.replace(/[^0-9-.]/gm, ''));
+          }
+          if (rawUpperBound.includes('/')) {
+            upperBoundFraction = rawUpperBound.replace(/[^0-9-/]/gm, '');
+            const [numerator, denominator] = upperBoundFraction.split('/');
+            const upperBoundFloat = Number(numerator) / Number(denominator);
+            upperBoundInt = upperBoundFloat;
+          } else {
+            // these regex replaces remove everything that is not a decimal or positive/negative numer
+            upperBoundInt = Number(rawUpperBound.replace(/[^0-9-.]/gm, ''));
+          }
+          if (lowerBoundInt > upperBoundInt) {
+            const lowerBoundChar = rawUpperBound[rawUpperBound.length - 1] === ']' ? '[' : '(';
+            const upperBoundChar = rawLowerBound[0] === '[' ? ']' : ')';
+            if (lowerBoundFraction) {
+              lowerBoundInt = lowerBoundFraction;
+            }
+            if (upperBoundFraction) {
+              upperBoundInt = upperBoundFraction;
+            }
+            title = `${lowerBoundChar}${upperBoundInt},${lowerBoundInt}${upperBoundChar}`;
+          }
+        }
         if (answer.correct && !firstCorrectAnswerParsed) {
           firstCorrectAnswerParsed = true;
           let responseParam = {};
@@ -324,13 +365,13 @@ class ReactStateOLXParser {
             };
           }
           answerObject = {
-            '@_answer': answer.title,
+            '@_answer': title,
             ...responseParam,
             ...correcthint,
           };
         } else if (answer.correct && firstCorrectAnswerParsed) {
           additionalAnswers.push({
-            '@_answer': answer.title,
+            '@_answer': title,
             ...correcthint,
           });
         }

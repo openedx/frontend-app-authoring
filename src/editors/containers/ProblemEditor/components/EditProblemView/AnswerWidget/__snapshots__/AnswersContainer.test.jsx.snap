@@ -20,6 +20,7 @@ exports[`AnswersContainer render snapshot: numeric problems: answer range/answer
   />
   <Dropdown>
     <Dropdown.Toggle
+      className="pl-0"
       id="Add-Answer-Or-Answer-Range"
       variant="tertiary"
     >
@@ -64,6 +65,7 @@ exports[`AnswersContainer render snapshot: numeric problems: answer range/answer
 >
   <Dropdown>
     <Dropdown.Toggle
+      className="pl-0"
       id="Add-Answer-Or-Answer-Range"
       variant="tertiary"
     >
@@ -136,6 +138,7 @@ exports[`AnswersContainer render snapshot: numeric problems: answer range/answer
   />
   <Dropdown>
     <Dropdown.Toggle
+      className="pl-0"
       id="Add-Answer-Or-Answer-Range"
       variant="tertiary"
     >

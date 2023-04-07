@@ -75,11 +75,9 @@ export const AnswerOption = ({
           onChange={setAnswerTitle}
           placeholder={intl.formatMessage(messages.answerRangeTextboxPlaceholder)}
         />
-        <hr className="d-block" />
         <div className="pgn__form-switch-helper-text">
           <FormattedMessage {...messages.answerRangeHelperText} />
         </div>
-
       </div>
 
     );

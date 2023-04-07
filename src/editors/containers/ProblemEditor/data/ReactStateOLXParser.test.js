@@ -3,6 +3,7 @@ import {
   checkboxesOLXWithFeedbackAndHintsOLX,
   dropdownOLXWithFeedbackAndHintsOLX,
   numericInputWithFeedbackAndHintsOLX,
+  numericInputWithAnswerRangeOLX,
   textInputWithFeedbackAndHintsOLX,
   multipleChoiceWithFeedbackAndHintsOLX,
   textInputWithFeedbackAndHintsOLXWithMultipleAnswers,
@@ -13,6 +14,7 @@ import {
   textInputWithFeedbackAndHints,
   multipleChoiceWithFeedbackAndHints,
   numericInputWithFeedbackAndHints,
+  numericInputWithAnswerRange,
   textInputWithFeedbackAndHintsWithMultipleAnswers,
 } from './mockData/editorTestData';
 import ReactStateOLXParser from './ReactStateOLXParser';
@@ -67,6 +69,17 @@ describe('Check React Sate OLXParser problem', () => {
     });
     const buildOLX = stateParser.buildOLX();
     expect(buildOLX.replace(/\s/g, '')).toEqual(numericInputWithFeedbackAndHintsOLX.buildOLX.replace(/\s/g, ''));
+  });
+
+  test('Test numerical response with isAnswerRange true', () => {
+    const olxparser = new OLXParser(numericInputWithAnswerRangeOLX.rawOLX);
+    const problem = olxparser.getParsedOLXData();
+    const stateParser = new ReactStateOLXParser({
+      problem,
+      editorObject: numericInputWithAnswerRange,
+    });
+    const buildOLX = stateParser.buildOLX();
+    expect(buildOLX.replace(/\s/g, '')).toEqual(numericInputWithAnswerRangeOLX.buildOLX.replace(/\s/g, ''));
   });
   test('Test string response with feedback and hints, multiple answers', () => {
     const olxparser = new OLXParser(textInputWithFeedbackAndHintsOLXWithMultipleAnswers.rawOLX);

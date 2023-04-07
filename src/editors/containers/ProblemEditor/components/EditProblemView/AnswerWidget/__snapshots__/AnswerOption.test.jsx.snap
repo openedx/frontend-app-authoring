@@ -189,9 +189,6 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
         rows={1}
         value="Answer 1"
       />
-      <hr
-        className="d-block"
-      />
       <div
         className="pgn__form-switch-helper-text"
       >
