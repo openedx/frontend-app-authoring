@@ -384,18 +384,22 @@ export class OLXParser {
   }
 
   getSolutionExplanation(problemType) {
-    if (!_.has(this.problem, `${problemType}.solution`)) { return null; }
-
-    let solution = _.get(this.problem, `${problemType}.solution`);
+    if (!_.has(this.problem, `${problemType}.solution`) && !_.has(this.problem, 'solution')) { return null; }
+    let solution = _.get(this.problem, `${problemType}.solution`, null) || _.get(this.problem, 'solution', null);
     const wrapper = Object.keys(solution)[0];
     if (Object.keys(solution).length === 1 && wrapper === 'div') {
       const parsedSolution = {};
       Object.entries(solution.div).forEach(([key, value]) => {
-        if (key !== '@_class') {
-          if (key === 'p') {
-            value.shift();
+        if (key.indexOf('@_' === -1)) {
+          // The redundant "explanation" title should be removed.
+          if ((key === 'p' || key === 'h2') && (value['#text'] === 'Explanation' || value[0]['#text'] === 'Explanation')) {
+            if (_.isArray(value)) {
+              value.shift();
+              parsedSolution[key] = value;
+            }
+          } else {
+            parsedSolution[key] = value;
           }
-          parsedSolution[key] = value;
         }
       });
       solution = parsedSolution;
