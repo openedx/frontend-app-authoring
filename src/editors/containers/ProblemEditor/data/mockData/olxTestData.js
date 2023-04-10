@@ -671,3 +671,26 @@ export const shuffleProblemOLX = {
   </multiplechoiceresponse>
 </problem>`,
 };
+
+export const labelDescriptionQuestionOLX = {
+  rawOLX:
+`<problem display_name="Eggs b) - Choosing a System" markdown="null" max_attempts="3" weight="0.5">
+  <p style="text-align: center;"><img height="274" width="" src="/static/boiling_eggs_water_system.png" alt="boiling eggs: water system"/></p>
+  <multiplechoiceresponse>
+  <label>Taking the system as just the <b>water</b>, as indicated by the red dashed line, what would be the correct expression for the first law of thermodynamics applied to this system?</label>
+  <description>Watch out, boiling water is hot</description>
+  <choicegroup type="MultipleChoice">
+    <choice correct="true">( Delta E_text{water} = Q )</choice>
+    <choice correct="false">( Delta E_text{water} = - W )</choice>
+    <choice correct="false">( Delta E_text{water} = 0 )</choice>
+  </choicegroup>
+  </multiplechoiceresponse>
+  <solution>
+    <div class="detailed-solution">
+      <h2>Explanation</h2>
+    </div>
+  </solution>
+</problem>`,
+
+  question: '<p style="text-align: center;"><img height="274" width="" src="/static/boiling_eggs_water_system.png" alt="boiling eggs: water system"></img></p><label>Taking the system as just the<b>water</b>, as indicated by the red dashed line, what would be the correct expression for the first law of thermodynamics applied to this system?</label><em>Watch out, boiling water is hot</em>',
+};
