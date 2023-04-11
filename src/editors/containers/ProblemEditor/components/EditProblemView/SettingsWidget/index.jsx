@@ -112,13 +112,9 @@ export const SettingsWidget = ({
               updateSettings={updateSettings}
             />
           </div>
-          {
-            problemType !== ProblemTypeKeys.ADVANCED && (
-            <div className="my-3">
-              <ResetCard showResetButton={settings.showResetButton} updateSettings={updateSettings} />
-            </div>
-            )
-          }
+          <div className="my-3">
+            <ResetCard showResetButton={settings.showResetButton} updateSettings={updateSettings} />
+          </div>
           {
             problemType === ProblemTypeKeys.ADVANCED && (
             <div className="my-3">
