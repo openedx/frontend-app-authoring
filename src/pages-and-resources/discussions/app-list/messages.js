@@ -59,7 +59,7 @@ const messages = defineMessages({
   // New provider
   'appName-openedx': {
     id: 'authoring.discussions.appList.appName-openedx',
-    defaultMessage: 'edX',
+    defaultMessage: 'edX (new)',
     description: 'The name of the new edX Discussions app.',
   },
   'appDescription-openedx': {

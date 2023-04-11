@@ -139,7 +139,7 @@
   "authoring.discussions.selectApp": "Select {appName}",
   "authoring.discussions.appList.appName-legacy": "edX",
   "authoring.discussions.appList.appDescription-legacy": "Start conversations with other learners, ask questions, and interact with other learners in the course.",
-  "authoring.discussions.appList.appName-openedx": "edX",
+  "authoring.discussions.appList.appName-openedx": "edX (new)",
   "authoring.discussions.appList.appDescription-openedx": "Start conversations with other learners, ask questions, and interact with other learners in the course.",
   "authoring.discussions.appList.appName-piazza": "Piazza",
   "authoring.discussions.appList.appDescription-piazza": "Piazza is designed to connect students, TAs, and professors so every student can get the help they need when they need it.",

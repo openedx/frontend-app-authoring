@@ -139,7 +139,7 @@
   "authoring.discussions.selectApp": "اختيار {اسم تطبيق}",
   "authoring.discussions.appList.appName-legacy": "edX",
   "authoring.discussions.appList.appDescription-legacy": "ابدأ مناقشات مع متعلمين آخرين، اطرح أسئلة، و تفاعل مع المتعلمين في المساق.",
-  "authoring.discussions.appList.appName-openedx": "edX",
+  "authoring.discussions.appList.appName-openedx": "edX (new)",
   "authoring.discussions.appList.appDescription-openedx": "ابدأ مناقشات مع متعلمين آخرين، اطرح أسئلة، و تفاعل مع المتعلمين في المساق.",
   "authoring.discussions.appList.appName-piazza": "Piazza",
   "authoring.discussions.appList.appDescription-piazza": "Piazza مصمم لربط الطلبة، الأساتذة، و الأساتذة المساعدين بما يمكن كل طالب من الحصول على المساعدة التي يحتاجها في حينها.",
