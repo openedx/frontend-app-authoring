@@ -392,7 +392,12 @@ export class OLXParser {
       Object.entries(solution.div).forEach(([key, value]) => {
         if (key.indexOf('@_' === -1)) {
           // The redundant "explanation" title should be removed.
-          if ((key === 'p' || key === 'h2') && (value['#text'] === 'Explanation' || value[0]['#text'] === 'Explanation')) {
+          // If the key is a paragraph or h2, and the text of either the first or only item is "Explanation."
+          if (
+            (key === 'p' || key === 'h2')
+            && (_.get(value, '#text', null) === 'Explanation'
+            || (_.isArray(value) && _.get(value[0], '#text', null) === 'Explanation'))
+          ) {
             if (_.isArray(value)) {
               value.shift();
               parsedSolution[key] = value;
