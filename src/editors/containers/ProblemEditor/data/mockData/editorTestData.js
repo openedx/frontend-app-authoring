@@ -116,3 +116,15 @@ export const textInputWithFeedbackAndHintsWithMultipleAnswers = {
   ],
   question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
 };
+
+export const numberParseTest = {
+  solution: '',
+  answers: {
+    A: `<span style="font-family: 'courier new', courier;"><strong>0x10</strong></span>`, // eslint-disable-line
+    B: `<span style="font-family: 'courier new', courier;"><strong>0x0f</strong></span>`, // eslint-disable-line
+    C: `<span style="font-family: 'courier new', courier;"><strong>0x07</strong></span>`, // eslint-disable-line
+    D: `<span style="font-family: 'courier new', courier;"><strong>0009</strong></span>`, // eslint-disable-line
+  },
+  hints: [],
+  question: '<p>What is the content of the register x2 after executing the following three lines of instructions?</p>',
+};

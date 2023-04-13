@@ -8,10 +8,18 @@ class ReactStateOLXParser {
     const parserOptions = {
       ignoreAttributes: false,
       alwaysCreateTextNode: true,
+      numberParseOptions: {
+        leadingZeros: false,
+        hex: false,
+      },
     };
     const questionParserOptions = {
       ignoreAttributes: false,
       alwaysCreateTextNode: true,
+      numberParseOptions: {
+        leadingZeros: false,
+        hex: false,
+      },
       preserveOrder: true,
     };
     const questionBuilderOptions = {
@@ -19,6 +27,10 @@ class ReactStateOLXParser {
       attributeNamePrefix: '@_',
       suppressBooleanAttributes: false,
       format: true,
+      numberParseOptions: {
+        leadingZeros: false,
+        hex: false,
+      },
       preserveOrder: true,
     };
     const builderOptions = {
@@ -26,6 +38,10 @@ class ReactStateOLXParser {
       attributeNamePrefix: '@_',
       suppressBooleanAttributes: false,
       format: true,
+      numberParseOptions: {
+        leadingZeros: false,
+        hex: false,
+      },
     };
     this.questionParser = new XMLParser(questionParserOptions);
     this.parser = new XMLParser(parserOptions);
