@@ -3,6 +3,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { CardGrid, Container, breakpoints } from '@edx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 import Responsive from 'react-responsive';
+import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useModels } from '../../../generic/model-store';
 import {
   selectApp, LOADED, LOADING,
@@ -22,6 +23,22 @@ const AppList = ({ intl }) => {
   } = useSelector(state => state.discussions);
   const apps = useModels('apps', appIds);
   const features = useModels('features', featureIds);
+  const isGlobalStaff = getAuthenticatedUser().administrator;
+
+  const inContextEnabled = apps.find(app => app.id === 'openedx');
+
+  const showOneEdxProvider = () => {
+    if (inContextEnabled) {
+      if (activeAppId === 'openedx') {
+        return apps.filter(app => app.id !== 'legacy');
+      }
+      if (activeAppId === 'legacy') {
+        return apps.filter(app => app.id !== 'openedx');
+      }
+    }
+    // Edge case: If selected provided is other than legacy/openedx, return both edx providers.
+    return apps;
+  };
 
   // This could be a bit confusing.  activeAppId is the ID of the app that is currently configured
   // according to the server.  selectedAppId is the ID of the app that we _want_ to configure here
@@ -54,6 +71,16 @@ const AppList = ({ intl }) => {
     );
   }
 
+  const showAppCard = (filteredApps) => filteredApps.map(app => (
+    <AppCard
+      key={app.id}
+      app={app}
+      selected={app.id === selectedAppId}
+      onClick={handleSelectApp}
+      features={features}
+    />
+  ));
+
   return (
     <div className="my-sm-5 m-1" data-testid="appList">
       <h3 className="my-sm-5 my-4">
@@ -67,15 +94,7 @@ const AppList = ({ intl }) => {
           xl: 4,
         }}
       >
-        {apps.map(app => (
-          <AppCard
-            key={app.id}
-            app={app}
-            selected={app.id === selectedAppId}
-            onClick={handleSelectApp}
-            features={features}
-          />
-        ))}
+        {isGlobalStaff ? showAppCard(apps) : showAppCard(showOneEdxProvider())}
       </CardGrid>
       <Responsive minWidth={breakpoints.small.minWidth}>
         <h3 className="my-sm-5 my-4">
