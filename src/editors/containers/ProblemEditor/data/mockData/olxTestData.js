@@ -694,3 +694,57 @@ export const labelDescriptionQuestionOLX = {
 
   question: '<p style="text-align: center;"><img height="274" width="" src="/static/boiling_eggs_water_system.png" alt="boiling eggs: water system"></img></p><label>Taking the system as just the<b>water</b>, as indicated by the red dashed line, what would be the correct expression for the first law of thermodynamics applied to this system?</label><em>Watch out, boiling water is hot</em>',
 };
+
+export const encodingTestOLX = {
+  rawOLX:
+  `<problem>
+  <multiplechoiceresponse>
+  <p>What is the content of the register x2 after executing the following three lines of instructions?</p>
+  <p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions <br />0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1<br />0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4<br />0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1</strong></span></p>
+  <choicegroup type="MultipleChoice">
+      <choice correct="false"><span style="font-family: 'courier new', courier;"><strong>0x10</strong></span></choice>
+      <choice correct="true"><span style="font-family: 'courier new', courier;"><strong>0x0f</strong></span></choice>
+      <choice correct="false"><span style="font-family: 'courier new', courier;"><strong>0x07</strong></span></choice>
+      <choice correct="false"><span style="font-family: 'courier new', courier;"><strong>0009</strong></span></choice>
+    </choicegroup>
+  <solution>
+  <div class="detailed-solution">
+   <p>Explanation</p>
+    <p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions&#160;&#160;&#160;&#160;comment<br />0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x1 = 0x1<br />0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x2 = x1 &lt;&lt; 4 = 0x10<br />0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x1 = x2 - x1 = 0x10 - 0x01 = 0xf</strong></span></p>
+    </div>
+    </solution>
+  </multiplechoiceresponse>
+  </problem>`,
+  data: {
+    answers: [
+      {
+        id: 'A',
+        // eslint-disable-next-line
+        title: `<span style="font-family: 'courier new', courier;"><strong>0x10</strong></span>`,
+        correct: false,
+      },
+      {
+        id: 'B',
+        // eslint-disable-next-line
+        title: `<span style="font-family: 'courier new', courier;"><strong>0x0f</strong></span>`,
+        correct: true,
+      },
+      {
+        id: 'C',
+        // eslint-disable-next-line
+        title: `<span style="font-family: 'courier new', courier;"><strong>0x07</strong></span>`,
+        correct: false,
+      },
+      {
+        id: 'D',
+        // eslint-disable-next-line
+        title: `<span style="font-family: 'courier new', courier;"><strong>0009</strong></span>`,
+        correct: false,
+      },
+    ],
+  },
+  // eslint-disable-next-line
+  question: `<p>What is the content of the register x2 after executing the following three lines of instructions?</p><p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions<br></br>0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1<br></br>0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4<br></br>0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1</strong></span></p>`,
+  // eslint-disable-next-line
+  solutionExplanation: `<p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions&#160;&#160;&#160;&#160;comment<br></br>0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x1 = 0x1<br></br>0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x2 = x1 &lt;&lt; 4 = 0x10<br></br>0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x1 = x2 - x1 = 0x10 - 0x01 = 0xf</strong></span></p>`,
+};

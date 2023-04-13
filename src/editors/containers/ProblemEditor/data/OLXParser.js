@@ -67,14 +67,29 @@ export class OLXParser {
     const questionOptions = {
       ignoreAttributes: false,
       alwaysCreateTextNode: true,
+      numberParseOptions: {
+        leadingZeros: false,
+        hex: false,
+      },
       preserveOrder: true,
+      processEntities: false,
     };
     const parserOptions = {
       ignoreAttributes: false,
       alwaysCreateTextNode: true,
+      numberParseOptions: {
+        leadingZeros: false,
+        hex: false,
+      },
+      processEntities: false,
     };
     const builderOptions = {
       ignoreAttributes: false,
+      numberParseOptions: {
+        leadingZeros: false,
+        hex: false,
+      },
+      processEntities: false,
     };
     // There are two versions of the parsed XLM because the question requires the order of the
     // parsed data to be preserved. However, all the other widgets need the data grouped by
@@ -331,7 +346,12 @@ export class OLXParser {
   parseQuestions(problemType) {
     const options = {
       ignoreAttributes: false,
+      numberParseOptions: {
+        leadingZeros: false,
+        hex: false,
+      },
       preserveOrder: true,
+      processEntities: false,
     };
     const builder = new XMLBuilder(options);
     const problemArray = _.get(this.questionData[0], problemType) || this.questionData;
