@@ -123,6 +123,13 @@ describe('CodeEditor', () => {
         expect(diagnostics).toEqual([]);
       });
     });
+    describe('textArr is undefined', () => {
+      it('returns empty array', () => {
+        let textArr;
+        const diagnostics = hooks.syntaxChecker({ textArr, lang: 'html' });
+        expect(diagnostics).toEqual([]);
+      });
+    });
     describe('lang equals xml', () => {
       it('returns empty array', () => {
         const textArr = ['<problem>', '<p>', 'this is some text', '</p>', '</problem>'];

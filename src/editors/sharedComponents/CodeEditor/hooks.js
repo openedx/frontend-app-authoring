@@ -30,7 +30,7 @@ export const cleanHTML = ({ initialText }) => {
 
 export const syntaxChecker = ({ textArr, lang }) => {
   const diagnostics = [];
-  if (lang === 'xml') {
+  if (lang === 'xml' && textArr) {
     const docString = textArr.join('\n');
     const xmlDoc = `<?xml version="1.0" encoding="UTF-8"?> ${docString}`;
 
@@ -70,7 +70,7 @@ export const createCodeMirrorDomNode = ({
         languageExtension,
         EditorView.lineWrapping,
         linter((view) => {
-          const textArr = view.docView.view.viewState.state.doc.text;
+          const textArr = view.state.doc.text;
           return syntaxChecker({ textArr, lang });
         }),
       ],
