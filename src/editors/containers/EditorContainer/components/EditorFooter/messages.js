@@ -4,7 +4,7 @@ const messages = defineMessages({
 
   contentSaveFailed: {
     id: 'authoring.editorfooter.save.error',
-    defaultMessage: 'Error: Content save failed. Try again later.',
+    defaultMessage: 'Error: Content save failed. Please check recent changes and try again later.',
     description: 'Error message displayed when content fails to save.',
   },
   cancelButtonAriaLabel: {

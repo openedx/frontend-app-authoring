@@ -114,6 +114,35 @@ describe('CodeEditor', () => {
       });
     });
   });
+
+  describe('xmlSyntaxChecker', () => {
+    describe('lang equals html', () => {
+      it('returns empty array', () => {
+        const textArr = ['<problem>', '<p>', 'this is some text', '</p>', '</problem>'];
+        const diagnostics = hooks.syntaxChecker({ textArr, lang: 'html' });
+        expect(diagnostics).toEqual([]);
+      });
+    });
+    describe('lang equals xml', () => {
+      it('returns empty array', () => {
+        const textArr = ['<problem>', '<p>', 'this is some text', '</p>', '</problem>'];
+        const diagnostics = hooks.syntaxChecker({ textArr, lang: 'xml' });
+        expect(diagnostics).toEqual([]);
+      });
+      it('returns an array with error object', () => {
+        const textArr = ['<problem>', '<p>', '<p>', 'this is some text', '</p>', '</problem>'];
+        const expectedDiagnostics = hooks.syntaxChecker({ textArr, lang: 'xml' });
+        const diagnostics = [{
+          from: 9,
+          to: 12,
+          severity: 'error',
+          message: 'SyntaxError: Expected that start and end tag must be identical but "<" found.',
+        }];
+        expect(expectedDiagnostics).toEqual(diagnostics);
+      });
+    });
+  });
+
   describe('Component', () => {
     describe('Snapshots', () => {
       const mockHideBtn = jest.fn().mockName('mockHidebtn');

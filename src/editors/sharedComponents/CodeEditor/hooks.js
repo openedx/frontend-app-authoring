@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
+import xmlChecker from 'xmlchecker';
 
 import { basicSetup } from 'codemirror';
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { html } from '@codemirror/lang-html';
 import { xml } from '@codemirror/lang-xml';
-
+import { linter } from '@codemirror/lint';
 import alphanumericMap from './constants';
 import './index.scss';
 
@@ -27,6 +28,32 @@ export const cleanHTML = ({ initialText }) => {
   return initialText.replace(translateRegex, translator);
 };
 
+export const syntaxChecker = ({ textArr, lang }) => {
+  const diagnostics = [];
+  if (lang === 'xml') {
+    const docString = textArr.join('\n');
+    const xmlDoc = `<?xml version="1.0" encoding="UTF-8"?> ${docString}`;
+
+    try {
+      xmlChecker.check(xmlDoc);
+    } catch (error) {
+      let errorStart = 0;
+      for (let i = 0; i < error.line - 1; i++) {
+        errorStart += textArr[i].length;
+      }
+      const errorLine = error.line;
+      const errorEnd = errorStart + textArr[errorLine - 1].length;
+      diagnostics.push({
+        from: errorStart,
+        to: errorEnd,
+        severity: 'error',
+        message: `${error.name}: ${error.message}`,
+      });
+    }
+  }
+  return diagnostics;
+};
+
 export const createCodeMirrorDomNode = ({
   ref,
   initialText,
@@ -38,7 +65,15 @@ export const createCodeMirrorDomNode = ({
     const cleanText = cleanHTML({ initialText });
     const newState = EditorState.create({
       doc: cleanText,
-      extensions: [basicSetup, languageExtension, EditorView.lineWrapping],
+      extensions: [
+        basicSetup,
+        languageExtension,
+        EditorView.lineWrapping,
+        linter((view) => {
+          const textArr = view.docView.view.viewState.state.doc.text;
+          return syntaxChecker({ textArr, lang });
+        }),
+      ],
     });
     const view = new EditorView({ state: newState, parent: ref.current });
     // eslint-disable-next-line no-param-reassign

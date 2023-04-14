@@ -115,7 +115,7 @@ exports[`EditorFooter render snapshot: save failed.  Show error message 1`] = `
     show={true}
   >
     <FormattedMessage
-      defaultMessage="Error: Content save failed. Try again later."
+      defaultMessage="Error: Content save failed. Please check recent changes and try again later."
       description="Error message displayed when content fails to save."
       id="authoring.editorfooter.save.error"
     />

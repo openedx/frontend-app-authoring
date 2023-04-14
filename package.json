@@ -59,6 +59,7 @@
   "dependencies": {
     "@codemirror/lang-html": "^6.0.0",
     "@codemirror/lang-xml": "^6.0.0",
+    "@codemirror/lint": "^6.2.1",
     "@codemirror/state": "^6.0.0",
     "@codemirror/view": "^6.0.0",
     "@reduxjs/toolkit": "^1.8.1",
@@ -79,7 +80,8 @@
     "reselect": "^4.1.5",
     "tinymce": "^5.10.4",
     "video-react": "^0.15.0",
-    "video.js": "^7.18.1"
+    "video.js": "^7.18.1",
+    "xmlchecker": "^0.1.0"
   },
   "peerDependencies": {
     "@edx/frontend-platform": ">1.15.0",
