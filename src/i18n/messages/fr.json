@@ -59,7 +59,7 @@
   "authoring.discussions.appConfigForm.appName-discourse": "Discourse",
   "authoring.discussions.appConfigForm.appName-ed-discuss": "Ed Discussion",
   "authoring.discussions.appConfigForm.appName-legacy": "edX",
-  "authoring.discussions.appConfigForm.appName-openedx": "edX",
+  "authoring.discussions.appConfigForm.appName-openedx": "edX (new)",
   "authoring.discussions.builtIn.divisionByGroup": "Cohortes",
   "authoring.discussions.builtIn.divideByCohorts.label": "Divisez les discussions par cohortes",
   "authoring.discussions.builtIn.divideByCohorts.help": "Les apprenants ne pourront voir et répondre qu'aux discussions publiées par les membres de leur cohorte.",
