@@ -161,7 +161,7 @@ describe('Data layer integration tests', () => {
       await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
 
       expect(store.getState().discussions).toEqual(expect.objectContaining({
-        appIds: ['legacy', 'piazza', 'discourse'],
+        appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
         featureIds,
         activeAppId: 'piazza',
         selectedAppId: null,
@@ -197,7 +197,7 @@ describe('Data layer integration tests', () => {
       await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
 
       expect(store.getState().discussions).toEqual(expect.objectContaining({
-        appIds: ['legacy', 'piazza', 'discourse'],
+        appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
         featureIds,
         activeAppId: 'piazza',
         selectedAppId: null,
@@ -225,7 +225,7 @@ describe('Data layer integration tests', () => {
       await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
 
       expect(store.getState().discussions).toEqual(expect.objectContaining({
-        appIds: ['legacy', 'piazza', 'discourse'],
+        appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
         featureIds,
         activeAppId: 'legacy',
         selectedAppId: null,
@@ -292,7 +292,7 @@ describe('Data layer integration tests', () => {
       expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
-          appIds: ['legacy', 'piazza', 'discourse'],
+          appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
           featureIds,
           activeAppId: 'piazza',
           selectedAppId: 'piazza',
@@ -319,7 +319,7 @@ describe('Data layer integration tests', () => {
       expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
-          appIds: ['legacy', 'piazza', 'discourse'],
+          appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
           featureIds,
           activeAppId: 'piazza',
           selectedAppId: 'piazza',
@@ -374,7 +374,7 @@ describe('Data layer integration tests', () => {
       expect(window.location.pathname).toEqual(pagesAndResourcesPath);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
-          appIds: ['legacy', 'piazza', 'discourse'],
+          appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
           featureIds,
           activeAppId: 'piazza',
           selectedAppId: 'piazza',
@@ -468,7 +468,7 @@ describe('Data layer integration tests', () => {
       expect(window.location.pathname).toEqual(pagesAndResourcesPath);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
-          appIds: ['legacy', 'piazza', 'discourse'],
+          appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
           featureIds,
           activeAppId: 'legacy',
           selectedAppId: 'legacy',

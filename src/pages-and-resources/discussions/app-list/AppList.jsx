@@ -24,7 +24,6 @@ const AppList = ({ intl }) => {
   const apps = useModels('apps', appIds);
   const features = useModels('features', featureIds);
   const isGlobalStaff = getAuthenticatedUser().administrator;
-
   const inContextEnabled = apps.find(app => app.id === 'openedx');
 
   const showOneEdxProvider = () => {
