@@ -36,9 +36,9 @@
   },
   "dependencies": {
     "@edx/brand": "npm:@edx/brand-openedx@1.1.0",
-    "@edx/frontend-component-footer": "10.2.1",
-    "@edx/frontend-component-header": "^3.3.0",
-    "@edx/frontend-platform": "^3.0.1",
+    "@edx/frontend-component-footer": "^11.7.2",
+    "@edx/frontend-component-header": "^3.7.2",
+    "@edx/frontend-platform": "^4.1.0",
     "@edx/paragon": "^20.17.0",
     "@fortawesome/fontawesome-svg-core": "1.2.36",
     "@fortawesome/free-brands-svg-icons": "5.15.4",
@@ -67,7 +67,7 @@
     "uuid": "8.3.2"
   },
   "devDependencies": {
-    "@edx/browserslist-config": "1.0.2",
+    "@edx/browserslist-config": "^1.2.0",
     "@edx/frontend-build": "^12.7.0",
     "@edx/reactifex": "^2.1.1",
     "@sheerun/mutationobserver-shim": "0.3.3",
