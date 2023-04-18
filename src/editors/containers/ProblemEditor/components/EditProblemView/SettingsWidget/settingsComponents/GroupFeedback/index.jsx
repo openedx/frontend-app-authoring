@@ -22,7 +22,7 @@ export const GroupFeedbackCard = ({
       none={!groupFeedbacks.length}
       hasExpandableTextArea
     >
-      <div className="py-3">
+      <div className="pb-3">
         <FormattedMessage {...messages.groupFeedbackInputLabel} />
       </div>
       {groupFeedbacks.map((groupFeedback) => (

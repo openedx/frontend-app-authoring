@@ -44,7 +44,10 @@ export const GroupFeedbackRow = ({
             value={letter.id}
             checked={value.answers.indexOf(letter.id)}
             isValid={value.answers.indexOf(letter.id) >= 0}
-          >{letter.id}
+          >
+            <div className="x-small">
+              {letter.id}
+            </div>
           </Form.Checkbox>
         ))}
       </Row>

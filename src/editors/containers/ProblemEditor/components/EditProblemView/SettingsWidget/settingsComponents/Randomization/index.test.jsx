@@ -32,8 +32,11 @@ describe('RandomizationCard', () => {
   });
 
   describe('snapshot', () => {
-    test('snapshot: renders reset true setting card', () => {
+    test('snapshot: renders randonmization setting card with randomization defined', () => {
       expect(shallow(<RandomizationCard {...props} />)).toMatchSnapshot();
+    });
+    test('snapshot: renders randonmization setting card with randomization null', () => {
+      expect(shallow(<RandomizationCard {...props} randomization={null} />)).toMatchSnapshot();
     });
   });
 });

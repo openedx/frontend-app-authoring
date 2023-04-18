@@ -1,5 +1,5 @@
 import React from 'react';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Form } from '@edx/paragon';
 import PropTypes from 'prop-types';
 import SettingsOption from '../../SettingsOption';
@@ -20,10 +20,8 @@ export const RandomizationCard = ({
       summary={intl.formatMessage(summary.message)}
       none={!randomization}
     >
-      <div className="halfSpacedMessage">
-        <span>
-          <FormattedMessage {...messages.randomizationSettingText} />
-        </span>
+      <div className="mb-3">
+        {intl.formatMessage(messages.randomizationSettingText, { randomization })}
       </div>
 
       <Form.Group>
@@ -32,14 +30,23 @@ export const RandomizationCard = ({
           value={randomization}
           onChange={handleChange}
         >
-          {Object.values(RandomizationTypesKeys).map((randomizationType) => (
+          {randomization ? (
+            Object.values(RandomizationTypesKeys).map((randomizationType) => (
+              <option
+                key={randomizationType}
+                value={randomizationType}
+              >
+                {intl.formatMessage(RandomizationTypes[randomizationType])}
+              </option>
+            ))
+          ) : (
             <option
-              key={randomizationType}
-              value={randomizationType}
+              key="notApplicable"
+              value={randomization}
             >
-              {intl.formatMessage(RandomizationTypes[randomizationType])}
+              {intl.formatMessage(messages.noRandomizationSummary)}
             </option>
-          ))}
+          )}
         </Form.Control>
       </Form.Group>
 

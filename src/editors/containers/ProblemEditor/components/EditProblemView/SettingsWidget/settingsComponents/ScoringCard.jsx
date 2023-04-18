@@ -41,9 +41,9 @@ export const ScoringCard = ({
       summary={getScoringSummary(scoring.weight, scoring.attempts.number, scoring.attempts.unlimited)}
       className="scoringCard"
     >
-      <Form.Label className="mb-4">
+      <div className="mb-4">
         <FormattedMessage {...messages.scoringSettingsLabel} />
-      </Form.Label>
+      </div>
       <Form.Group>
         <Form.Control
           type="number"
@@ -71,7 +71,7 @@ export const ScoringCard = ({
           checked={scoring.attempts.unlimited}
           onChange={handleUnlimitedChange}
         >
-          <div className="small">
+          <div className="x-small">
             <FormattedMessage {...messages.unlimitedAttemptsCheckboxLabel} />
           </div>
         </Form.Checkbox>

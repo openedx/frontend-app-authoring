@@ -8,7 +8,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card 1`] = `
   summary="{weight, plural, =0 {Ungraded} other {# points}} · {attempts, plural, =1 {# attempt} other {# attempts}}"
   title="Scoring"
 >
-  <Form.Label
+  <div
     className="mb-4"
   >
     <FormattedMessage
@@ -16,7 +16,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card 1`] = `
       description="Descriptive text for scoring settings"
       id="authoring.problemeditor.settings.scoring.label"
     />
-  </Form.Label>
+  </div>
   <Form.Group>
     <Form.Control
       floatingLabel="Points"
@@ -51,7 +51,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card 1`] = `
       className="mt-3 decoration-control-label"
     >
       <div
-        className="small"
+        className="x-small"
       >
         <FormattedMessage
           defaultMessage="Unlimited attempts"
@@ -82,7 +82,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card max attempts 1`] = 
   summary="{weight, plural, =0 {Ungraded} other {# points}} · Unlimited attempts"
   title="Scoring"
 >
-  <Form.Label
+  <div
     className="mb-4"
   >
     <FormattedMessage
@@ -90,7 +90,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card max attempts 1`] = 
       description="Descriptive text for scoring settings"
       id="authoring.problemeditor.settings.scoring.label"
     />
-  </Form.Label>
+  </div>
   <Form.Group>
     <Form.Control
       floatingLabel="Points"
@@ -125,7 +125,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card max attempts 1`] = 
       className="mt-3 decoration-control-label"
     >
       <div
-        className="small"
+        className="x-small"
       >
         <FormattedMessage
           defaultMessage="Unlimited attempts"
@@ -156,7 +156,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card zero zero weight 1`
   summary="{weight, plural, =0 {Ungraded} other {# points}} · {attempts, plural, =1 {# attempt} other {# attempts}}"
   title="Scoring"
 >
-  <Form.Label
+  <div
     className="mb-4"
   >
     <FormattedMessage
@@ -164,7 +164,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card zero zero weight 1`
       description="Descriptive text for scoring settings"
       id="authoring.problemeditor.settings.scoring.label"
     />
-  </Form.Label>
+  </div>
   <Form.Group>
     <Form.Control
       floatingLabel="Points"
@@ -199,7 +199,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card zero zero weight 1`
       className="mt-3 decoration-control-label"
     >
       <div
-        className="small"
+        className="x-small"
       >
         <FormattedMessage
           defaultMessage="Unlimited attempts"

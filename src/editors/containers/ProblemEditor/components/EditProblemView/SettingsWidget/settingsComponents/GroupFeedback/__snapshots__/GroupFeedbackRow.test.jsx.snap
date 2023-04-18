@@ -38,22 +38,38 @@ exports[`GroupFeedbackRow snapshot snapshot: renders hints row 1`] = `
         checked={-1}
         className="mr-4 mt-1"
         isValid={false}
-      />
+      >
+        <div
+          className="x-small"
+        />
+      </Form.Checkbox>
       <Form.Checkbox
         checked={-1}
         className="mr-4 mt-1"
         isValid={false}
-      />
+      >
+        <div
+          className="x-small"
+        />
+      </Form.Checkbox>
       <Form.Checkbox
         checked={-1}
         className="mr-4 mt-1"
         isValid={false}
-      />
+      >
+        <div
+          className="x-small"
+        />
+      </Form.Checkbox>
       <Form.Checkbox
         checked={-1}
         className="mr-4 mt-1"
         isValid={false}
-      />
+      >
+        <div
+          className="x-small"
+        />
+      </Form.Checkbox>
     </Row>
   </Component>
 </div>

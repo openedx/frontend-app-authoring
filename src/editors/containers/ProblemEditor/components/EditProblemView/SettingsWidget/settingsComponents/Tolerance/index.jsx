@@ -66,7 +66,7 @@ export const ToleranceCard = ({
          <FormattedMessage {...messages.toleranceAnswerRangeWarning} />
        </Alert>
        )}
-      <div className="halfSpacedMessage">
+      <div className="mb-3">
         <span>
           <FormattedMessage {...messages.toleranceSettingText} />
         </span>

@@ -3,9 +3,7 @@
 exports[`CardSection closed 1`] = `""`;
 
 exports[`CardSection open 1`] = `
-<Card.Section
-  className="px-4 pb-4 pt-3"
->
+<Card.Section>
   <Advanced
     open={false}
   >
@@ -23,7 +21,7 @@ exports[`CardSection open 1`] = `
     open={true}
   >
     <Body
-      className="collapsible-body"
+      className="collapsible-body text-primary-500 x-small"
     >
       <h1>
         Section Text

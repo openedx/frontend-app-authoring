@@ -10,7 +10,7 @@ exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card multip
   title="Group Feedback"
 >
   <div
-    className="py-3"
+    className="pb-3"
   >
     <FormattedMessage
       defaultMessage="Group feedback will appear when a student selects a specific set of answers."
@@ -89,7 +89,7 @@ exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card no gro
   title="Group Feedback"
 >
   <div
-    className="py-3"
+    className="pb-3"
   >
     <FormattedMessage
       defaultMessage="Group feedback will appear when a student selects a specific set of answers."
@@ -123,7 +123,7 @@ exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card one gr
   title="Group Feedback"
 >
   <div
-    className="py-3"
+    className="pb-3"
   >
     <FormattedMessage
       defaultMessage="Group feedback will appear when a student selects a specific set of answers."
