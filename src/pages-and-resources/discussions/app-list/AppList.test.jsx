@@ -41,7 +41,7 @@ function renderComponent(screenWidth = breakpoints.extraLarge.minWidth) {
   const wrapper = render(
     <AppProvider store={store}>
       <ResponsiveContext.Provider value={{ width: screenWidth }}>
-        <IntlProvider locale="en" messages={{}}>
+        <IntlProvider locale="en">
           <AppList />
         </IntlProvider>
       </ResponsiveContext.Provider>
