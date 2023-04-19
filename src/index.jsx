@@ -5,12 +5,14 @@ import {
   APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig,
 } from '@edx/frontend-platform';
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Route, Switch } from 'react-router-dom';
 
 import { messages as footerMessages } from '@edx/frontend-component-footer';
 
+import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
+import { logError } from '@edx/frontend-platform/logging';
 import appMessages from './i18n';
 
 import initializeStore from './store';
@@ -18,8 +20,22 @@ import './index.scss';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
 
-subscribe(APP_READY, () => {
-  ReactDOM.render(
+const App = () => {
+  useEffect(() => {
+    if (process.env.HOTJAR_APP_ID) {
+      try {
+        initializeHotjar({
+          hotjarId: process.env.HOTJAR_APP_ID,
+          hotjarVersion: process.env.HOTJAR_VERSION,
+          hotjarDebug: !!process.env.HOTJAR_DEBUG,
+        });
+      } catch (error) {
+        logError(error);
+      }
+    }
+  }, []);
+
+  return (
     <AppProvider store={initializeStore()}>
       <Head />
       <Switch>
@@ -33,7 +49,13 @@ subscribe(APP_READY, () => {
           }}
         />
       </Switch>
-    </AppProvider>,
+    </AppProvider>
+  );
+};
+
+subscribe(APP_READY, () => {
+  ReactDOM.render(
+    (<App />),
     document.getElementById('root'),
   );
 });
