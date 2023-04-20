@@ -109,13 +109,27 @@ describe('hooks', () => {
   });
 
   describe('saveBlock', () => {
-    it('dispatches thunkActions.app.saveBlock with navigateCallback, and passed content', () => {
-      const navigateCallback = (args) => ({ navigateCallback: args });
-      const dispatch = jest.fn();
-      const destination = 'uRLwhENsAved';
-      const analytics = 'dATAonEveNT';
-      const content = 'myContent';
+    const navigateCallback = (args) => ({ navigateCallback: args });
+    const dispatch = jest.fn();
+    const destination = 'uRLwhENsAved';
+    const analytics = 'dATAonEveNT';
+
+    beforeEach(() => {
+      jest.clearAllMocks();
       jest.spyOn(hooks, hookKeys.navigateCallback).mockImplementationOnce(navigateCallback);
+    });
+    it('returns null when content is null', () => {
+      const content = null;
+      const expected = hooks.saveBlock({
+        content,
+        destination,
+        analytics,
+        dispatch,
+      });
+      expect(expected).toEqual(undefined);
+    });
+    it('dispatches thunkActions.app.saveBlock with navigateCallback, and passed content', () => {
+      const content = 'myContent';
       hooks.saveBlock({
         content,
         destination,

@@ -1,7 +1,23 @@
+import { useState } from 'react';
 import 'tinymce';
+import { StrictDict } from '../../../../utils';
 import ReactStateSettingsParser from '../../data/ReactStateSettingsParser';
 import ReactStateOLXParser from '../../data/ReactStateOLXParser';
 import { setAssetToStaticUrl } from '../../../../sharedComponents/TinyMceWidget/hooks';
+import { ProblemTypeKeys } from '../../../../data/constants/problem';
+
+export const state = StrictDict({
+  isNoAnswerModalOpen: (val) => useState(val),
+});
+
+export const noAnswerModalToggle = () => {
+  const [isNoAnswerModalOpen, setIsOpen] = state.isNoAnswerModalOpen(false);
+  return {
+    isNoAnswerModalOpen,
+    openNoAnswerModal: () => setIsOpen(true),
+    closeNoAnswerModal: () => setIsOpen(false),
+  };
+};
 
 export const fetchEditorContent = ({ format }) => {
   const editorObject = { hints: [] };
@@ -51,4 +67,78 @@ export const parseState = ({
     settings: reactSettingsParser.getSettings(),
     olx: isAdvanced ? rawOLX : reactBuiltOlx,
   };
+};
+
+export const checkForNoAnswers = ({ openNoAnswerModal, problem }) => {
+  const simpleTextAreaProblems = [ProblemTypeKeys.DROPDOWN, ProblemTypeKeys.NUMERIC, ProblemTypeKeys.TEXTINPUT];
+  const editorObject = fetchEditorContent({ format: '' });
+  const { problemType } = problem;
+  const { answers } = problem;
+  const answerTitles = simpleTextAreaProblems.includes(problemType) ? {} : editorObject.answers;
+
+  const hasTitle = () => {
+    const titles = [];
+    answers.forEach(answer => {
+      const title = simpleTextAreaProblems.includes(problemType) ? answer.title : answerTitles[answer.id];
+      if (title.length > 0) {
+        titles.push(title);
+      }
+    });
+    if (titles.length > 0) {
+      return true;
+    }
+    return false;
+  };
+
+  const hasNoCorrectAnswer = () => {
+    let correctAnswer;
+    answers.forEach(answer => {
+      if (answer.correct) {
+        const title = simpleTextAreaProblems.includes(problemType) ? answer.title : answerTitles[answer.id];
+        if (title.length > 0) {
+          correctAnswer = true;
+        }
+      }
+    });
+    if (correctAnswer) {
+      return true;
+    }
+    return false;
+  };
+
+  if (problemType === ProblemTypeKeys.NUMERIC && !hasTitle()) {
+    openNoAnswerModal();
+    return true;
+  }
+  if (!hasNoCorrectAnswer()) {
+    openNoAnswerModal();
+    return true;
+  }
+  return false;
+};
+
+export const getContent = ({
+  problemState,
+  openNoAnswerModal,
+  isAdvancedProblemType,
+  editorRef,
+  assets,
+  lmsEndpointUrl,
+}) => {
+  const problem = problemState;
+  const hasNoAnswers = checkForNoAnswers({
+    problem,
+    openNoAnswerModal,
+  });
+  if (!hasNoAnswers) {
+    const data = parseState({
+      isAdvanced: isAdvancedProblemType,
+      ref: editorRef,
+      problem,
+      assets,
+      lmsEndpointUrl,
+    })();
+    return data;
+  }
+  return null;
 };

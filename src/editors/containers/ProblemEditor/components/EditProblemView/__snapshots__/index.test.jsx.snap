@@ -4,6 +4,49 @@ exports[`EditorProblemView component renders raw editor 1`] = `
 <injectIntl(ShimmedIntlComponent)
   getContent={[Function]}
 >
+  <Component
+    footerNode={
+      <ActionRow>
+        <Button
+          onClick={[Function]}
+          variant="tertiary"
+        >
+          <FormattedMessage
+            defaultMessage="Cancel"
+            description="Label for cancel button in the no answer modal"
+            id="authoring.problemEditor.editProblemView.noAnswerModal.cancelButton.label"
+          />
+        </Button>
+        <Button
+          onClick={[Function]}
+        >
+          <FormattedMessage
+            defaultMessage="Ok"
+            description="Label for save button in the no answer modal"
+            id="authoring.problemEditor.editProblemView.noAnswerModal.saveButton.label"
+          />
+        </Button>
+      </ActionRow>
+    }
+    isOpen={false}
+    onClose={[Function]}
+    title="No answer specified"
+  >
+    <div>
+      <FormattedMessage
+        defaultMessage="Are you sure you want to exit the editor?"
+        description="Question in body of no answer modal"
+        id="authoring.problemEditor.editProblemView.noAnswerModal.body.question"
+      />
+    </div>
+    <div>
+      <FormattedMessage
+        defaultMessage="No correct answer has been specified."
+        description="Explanation in body of no answer modal"
+        id="authoring.problemEditor.editProblemView.noAnswerModal.body.explanation"
+      />
+    </div>
+  </Component>
   <div
     className="editProblemView d-flex flex-row flex-nowrap justify-content-end"
   >
@@ -36,6 +79,49 @@ exports[`EditorProblemView component renders simple view 1`] = `
 <injectIntl(ShimmedIntlComponent)
   getContent={[Function]}
 >
+  <Component
+    footerNode={
+      <ActionRow>
+        <Button
+          onClick={[Function]}
+          variant="tertiary"
+        >
+          <FormattedMessage
+            defaultMessage="Cancel"
+            description="Label for cancel button in the no answer modal"
+            id="authoring.problemEditor.editProblemView.noAnswerModal.cancelButton.label"
+          />
+        </Button>
+        <Button
+          onClick={[Function]}
+        >
+          <FormattedMessage
+            defaultMessage="Ok"
+            description="Label for save button in the no answer modal"
+            id="authoring.problemEditor.editProblemView.noAnswerModal.saveButton.label"
+          />
+        </Button>
+      </ActionRow>
+    }
+    isOpen={false}
+    onClose={[Function]}
+    title="No answer specified"
+  >
+    <div>
+      <FormattedMessage
+        defaultMessage="Are you sure you want to exit the editor?"
+        description="Question in body of no answer modal"
+        id="authoring.problemEditor.editProblemView.noAnswerModal.body.question"
+      />
+    </div>
+    <div>
+      <FormattedMessage
+        defaultMessage="No correct answer has been specified."
+        description="Explanation in body of no answer modal"
+        id="authoring.problemEditor.editProblemView.noAnswerModal.body.explanation"
+      />
+    </div>
+  </Component>
   <div
     className="editProblemView d-flex flex-row flex-nowrap justify-content-end"
   >

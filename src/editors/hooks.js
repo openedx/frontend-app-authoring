@@ -36,6 +36,9 @@ export const saveBlock = ({
   dispatch,
   validateEntry,
 }) => {
+  if (!content) {
+    return;
+  }
   let attemptSave = false;
   if (validateEntry) {
     if (validateEntry()) {

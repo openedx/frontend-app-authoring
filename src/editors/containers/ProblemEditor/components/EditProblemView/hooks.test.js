@@ -1,7 +1,12 @@
+import { ProblemTypeKeys } from '../../../../data/constants/problem';
 import * as hooks from './hooks';
+import { MockUseState } from '../../../../../testUtils';
 
 const mockRawOLX = 'rawOLX';
 const mockBuiltOLX = 'builtOLX';
+
+const toStringMock = () => mockRawOLX;
+const refMock = { current: { state: { doc: { toString: toStringMock } } } };
 
 jest.mock('../../data/ReactStateOLXParser', () => (
   jest.fn().mockImplementation(() => ({
@@ -9,6 +14,44 @@ jest.mock('../../data/ReactStateOLXParser', () => (
   }))
 ));
 jest.mock('../../data/ReactStateSettingsParser');
+
+const hookState = new MockUseState(hooks);
+
+describe('noAnswerModalToggle', () => {
+  const hookKey = hookState.keys.isNoAnswerModalOpen;
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  describe('state hook', () => {
+    hookState.testGetter(hookKey);
+  });
+  describe('using state', () => {
+    beforeEach(() => {
+      hookState.mock();
+    });
+    afterEach(() => {
+      hookState.restore();
+    });
+
+    describe('noAnswerModalToggle', () => {
+      let hook;
+      beforeEach(() => {
+        hook = hooks.noAnswerModalToggle();
+      });
+      test('isNoAnswerModalOpen: state value', () => {
+        expect(hook.isNoAnswerModalOpen).toEqual(hookState.stateVals[hookKey]);
+      });
+      test('openCancelConfirmModal: calls setter with true', () => {
+        hook.openNoAnswerModal();
+        expect(hookState.setState[hookKey]).toHaveBeenCalledWith(true);
+      });
+      test('closeCancelConfirmModal: calls setter with false', () => {
+        hook.closeNoAnswerModal();
+        expect(hookState.setState[hookKey]).toHaveBeenCalledWith(false);
+      });
+    });
+  });
+});
 
 describe('EditProblemView hooks parseState', () => {
   describe('fetchEditorContent', () => {
@@ -50,9 +93,6 @@ describe('EditProblemView hooks parseState', () => {
     });
   });
   describe('parseState', () => {
-    const toStringMock = () => mockRawOLX;
-    const refMock = { current: { state: { doc: { toString: toStringMock } } } };
-
     test('default problem', () => {
       const res = hooks.parseState({
         problem: 'problem',
@@ -70,6 +110,119 @@ describe('EditProblemView hooks parseState', () => {
         assets: {},
       })();
       expect(res.olx).toBe(mockRawOLX);
+    });
+  });
+  describe('checkNoAnswers', () => {
+    const openNoAnswerModal = jest.fn();
+    describe('hasNoTitle', () => {
+      const problem = {
+        problemType: ProblemTypeKeys.NUMERIC,
+      };
+      beforeEach(() => {
+        jest.clearAllMocks();
+      });
+      it('returns true for numerical problem with empty title', () => {
+        const expected = hooks.checkForNoAnswers({
+          openNoAnswerModal,
+          problem: {
+            ...problem,
+            answers: [{ id: 'A', title: '', correct: true }],
+          },
+        });
+        expect(openNoAnswerModal).toHaveBeenCalled();
+        expect(expected).toEqual(true);
+      });
+      it('returns false for numerical problem with title', () => {
+        const expected = hooks.checkForNoAnswers({
+          openNoAnswerModal,
+          problem: {
+            ...problem,
+            answers: [{ id: 'A', title: 'sOmevALUe', correct: true }],
+          },
+        });
+        expect(openNoAnswerModal).not.toHaveBeenCalled();
+        expect(expected).toEqual(false);
+      });
+    });
+    describe('hasNoCorrectAnswer', () => {
+      const problem = {
+        problemType: ProblemTypeKeys.SINGLESELECT,
+      };
+      beforeEach(() => {
+        jest.clearAllMocks();
+      });
+      it('returns true for single select problem with empty title', () => {
+        window.tinymce.editors = { 'answer-A': { getContent: () => '' }, 'answer-B': { getContent: () => 'sOmevALUe' } };
+        const expected = hooks.checkForNoAnswers({
+          openNoAnswerModal,
+          problem: {
+            ...problem,
+            answers: [{ id: 'A', title: '', correct: true }, { id: 'B', title: 'sOmevALUe', correct: false }],
+          },
+        });
+        expect(openNoAnswerModal).toHaveBeenCalled();
+        expect(expected).toEqual(true);
+      });
+      it('returns true for single select with title but no correct answer', () => {
+        window.tinymce.editors = { 'answer-A': { getContent: () => 'sOmevALUe' } };
+        const expected = hooks.checkForNoAnswers({
+          openNoAnswerModal,
+          problem: {
+            ...problem,
+            answers: [{ id: 'A', title: 'sOmevALUe', correct: false }, { id: 'B', title: '', correct: false }],
+          },
+        });
+        expect(openNoAnswerModal).toHaveBeenCalled();
+        expect(expected).toEqual(true);
+      });
+      it('returns true for single select with title and correct answer', () => {
+        window.tinymce.editors = { 'answer-A': { getContent: () => 'sOmevALUe' } };
+        const expected = hooks.checkForNoAnswers({
+          openNoAnswerModal,
+          problem: {
+            ...problem,
+            answers: [{ id: 'A', title: 'sOmevALUe', correct: true }],
+          },
+        });
+        expect(openNoAnswerModal).not.toHaveBeenCalled();
+        expect(expected).toEqual(false);
+      });
+    });
+  });
+  describe('getContent', () => {
+    const problemState = { problemType: ProblemTypeKeys.NUMERIC, answers: [{ id: 'A', title: 'problem', correct: true }] };
+    const isAdvancedProblem = false;
+    const assets = {};
+    const lmsEndpointUrl = 'someUrl';
+    const editorRef = refMock;
+    const openNoAnswerModal = jest.fn();
+
+    test('default save and returns parseState data', () => {
+      const content = hooks.getContent({
+        problemState,
+        isAdvancedProblem,
+        editorRef,
+        assets,
+        lmsEndpointUrl,
+        openNoAnswerModal,
+      });
+      expect(content).toEqual({
+        olx: 'builtOLX',
+        settings: undefined,
+      });
+    });
+    test('returns null', () => {
+      const problem = { ...problemState, answers: [{ id: 'A', title: '', correct: true }] };
+      const content = hooks.getContent({
+        problemState: problem,
+        isAdvancedProblem,
+        editorRef,
+        assets,
+        lmsEndpointUrl,
+        openNoAnswerModal,
+      });
+      expect(openNoAnswerModal).toHaveBeenCalled();
+      expect(content).toEqual(null);
     });
   });
 });
