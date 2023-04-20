@@ -7,9 +7,8 @@ import {
   APP_INIT_ERROR, APP_READY, initialize, mergeConfig, subscribe,
 } from '@edx/frontend-platform';
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
-import Footer, { messages as footerMessages } from '@edx/frontend-component-footer';
-import { messages as paragonMessages } from '@edx/paragon';
-import appMessages from './i18n';
+import Footer from '@edx/frontend-component-footer';
+import messages from './i18n';
 import store from './store';
 import { NotFoundPage } from './generic';
 import {
@@ -70,10 +69,6 @@ subscribe(APP_INIT_ERROR, (error) => {
 });
 
 initialize({
-  messages: [
-    appMessages,
-    footerMessages,
-    paragonMessages,
-  ],
+  messages,
   requireAuthenticatedUser: true,
 });

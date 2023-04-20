@@ -1,6 +1,7 @@
 export TRANSIFEX_RESOURCE = frontend-app-library-authoring
 transifex_langs = "ar,fr,es_419,zh_CN"
 
+intl_imports = ./node_modules/.bin/intl-imports.js
 transifex_utils = ./node_modules/.bin/transifex-utils.js
 i18n = ./src/i18n
 transifex_input = $(i18n)/transifex_input.json
@@ -45,9 +46,23 @@ push_translations:
 	# Pushing comments to Transifex...
 	./node_modules/@edx/reactifex/bash_scripts/put_comments_v3.sh
 
+ifeq ($(OPENEDX_ATLAS_PULL),)
 # Pulls translations from Transifex.
 pull_translations:
 	tx pull -t -f --mode reviewed --languages=$(transifex_langs)
+else
+# Experimental: OEP-58 Pulls translations using atlas
+pull_translations:
+	rm -rf src/i18n/messages
+	mkdir src/i18n/messages
+	cd src/i18n/messages \
+      && atlas pull --filter=$(transifex_langs) \
+               translations/frontend-component-footer/src/i18n/messages:frontend-component-footer \
+               translations/paragon/src/i18n/messages:paragon \
+               translations/frontend-app-library-authoring/src/i18n/messages:frontend-app-library-authoring
+
+	$(intl_imports) frontend-component-footer paragon frontend-app-library-authoring
+endif
 
 # This target is used by CI.
 validate-no-uncommitted-package-lock-changes:
