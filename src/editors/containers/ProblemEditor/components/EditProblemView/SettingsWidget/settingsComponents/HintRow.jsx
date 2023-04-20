@@ -28,12 +28,15 @@ export const HintRow = ({
         id={`hint-${id}`}
       />
     </Container>
-    <IconButton
-      src={DeleteOutline}
-      iconAs={Icon}
-      alt={intl.formatMessage(messages.settingsDeleteIconAltText)}
-      onClick={handleDelete}
-    />
+    <div className="d-flex flex-row flex-nowrap">
+      <IconButton
+        src={DeleteOutline}
+        iconAs={Icon}
+        alt={intl.formatMessage(messages.settingsDeleteIconAltText)}
+        onClick={handleDelete}
+        variant="primary"
+      />
+    </div>
   </ActionRow>
 );
 

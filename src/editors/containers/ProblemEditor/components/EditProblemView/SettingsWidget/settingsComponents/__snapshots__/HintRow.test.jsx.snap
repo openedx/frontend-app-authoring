@@ -17,10 +17,15 @@ exports[`HintRow snapshot snapshot: renders hints row 1`] = `
       value="hint_1"
     />
   </Container>
-  <IconButton
-    alt="Delete answer"
-    iconAs="Icon"
-    onClick={[MockFunction]}
-  />
+  <div
+    className="d-flex flex-row flex-nowrap"
+  >
+    <IconButton
+      alt="Delete answer"
+      iconAs="Icon"
+      onClick={[MockFunction]}
+      variant="primary"
+    />
+  </div>
 </ActionRow>
 `;
