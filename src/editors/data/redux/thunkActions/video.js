@@ -14,11 +14,12 @@ export const loadVideoData = (selectedVideoId) => (dispatch, getState) => {
   if (selectedVideoId != null) {
     const rawVideos = Object.values(selectors.app.videos(state));
     const selectedVideo = rawVideos.find(video => video.edx_video_id === selectedVideoId);
-    // TODO it's missing load the transcripts
     rawVideoData = {
       edx_video_id: selectedVideo.edx_video_id,
       thumbnail: selectedVideo.course_video_image_url,
       duration: selectedVideo.duration,
+      transcripts: selectedVideo.transcripts,
+      selectedVideoTranscriptUrls: selectedVideo.transcript_urls,
     };
   }
   const studioView = state.app.studioView?.data?.html;
@@ -32,7 +33,10 @@ export const loadVideoData = (selectedVideoId) => (dispatch, getState) => {
     html5Sources: rawVideoData.html5_sources,
   });
   const [licenseType, licenseOptions] = module.parseLicense({ licenseData: studioView, level: 'block' });
-  const transcripts = module.parseTranscripts({ transcriptsData: studioView });
+
+  const transcripts = rawVideoData.transcripts ? rawVideoData.transcripts
+    : module.parseTranscripts({ transcriptsData: studioView });
+
   const [courseLicenseType, courseLicenseDetails] = module.parseLicense({
     licenseData: courseData.license,
     level: 'course',
@@ -50,6 +54,7 @@ export const loadVideoData = (selectedVideoId) => (dispatch, getState) => {
     videoSharingLearnMoreLink: blockValueData?.video_sharing_doc_url,
     videoSharingEnabledForCourse: blockValueData?.video_sharing_enabled,
     transcripts,
+    selectedVideoTranscriptUrls: rawVideoData.selectedVideoTranscriptUrls,
     allowTranscriptDownloads: rawVideoData.download_track,
     showTranscriptByDefault: rawVideoData.show_captions,
     duration: { // TODO duration is not always sent so they should be calculated.

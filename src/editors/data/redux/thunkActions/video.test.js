@@ -87,6 +87,8 @@ const testVideosState = {
   edx_video_id: mockSelectedVideoId,
   thumbnail: 'thumbnail',
   duration: 60,
+  transcripts: ['es'],
+  transcript_urls: { es: 'url' },
 };
 const testUpload = { transcripts: ['la', 'en'] };
 const testReplaceUpload = {
@@ -228,7 +230,8 @@ describe('video thunkActions', () => {
         videoId: 'videOiD',
         fallbackVideos: 'fALLbACKvIDeos',
         allowVideoDownloads: undefined,
-        transcripts: testMetadata.transcripts,
+        transcripts: testVideosState.transcripts,
+        selectedVideoTranscriptUrls: testVideosState.transcript_urls,
         allowTranscriptDownloads: undefined,
         allowVideoSharing: {
           level: 'course',

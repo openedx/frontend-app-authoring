@@ -19,6 +19,7 @@ const initialState = {
   videoSharingLearnMoreLink: '',
   thumbnail: null,
   transcripts: [],
+  selectedVideoTranscriptUrls: {},
   allowTranscriptDownloads: false,
   duration: {
     startTime: '00:00:00',

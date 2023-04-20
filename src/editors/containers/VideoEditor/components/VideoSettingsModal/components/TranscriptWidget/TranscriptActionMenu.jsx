@@ -25,13 +25,14 @@ export const hooks = {
 export const TranscriptActionMenu = ({
   index,
   language,
+  transcriptUrl,
   launchDeleteConfirmation,
   // redux
   getTranscriptDownloadUrl,
-
+  buildTranscriptUrl,
 }) => {
   const input = fileInput({ onAddFile: module.hooks.replaceFileCallback({ language, dispatch: useDispatch() }) });
-  const downloadLink = getTranscriptDownloadUrl({ language });
+  const downloadLink = transcriptUrl ? buildTranscriptUrl({ transcriptUrl }) : getTranscriptDownloadUrl({ language });
   return (
     <Dropdown>
       <Dropdown.Toggle
@@ -61,16 +62,23 @@ export const TranscriptActionMenu = ({
   );
 };
 
+TranscriptActionMenu.defaultProps = {
+  transcriptUrl: undefined,
+};
+
 TranscriptActionMenu.propTypes = {
   index: PropTypes.number.isRequired,
   language: PropTypes.string.isRequired,
+  transcriptUrl: PropTypes.string,
   launchDeleteConfirmation: PropTypes.func.isRequired,
   // redux
   getTranscriptDownloadUrl: PropTypes.func.isRequired,
+  buildTranscriptUrl: PropTypes.func.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
   getTranscriptDownloadUrl: selectors.video.getTranscriptDownloadUrl(state),
+  buildTranscriptUrl: selectors.video.buildTranscriptUrl(state),
 });
 
 export const mapDispatchToProps = {

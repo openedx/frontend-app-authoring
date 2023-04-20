@@ -26,8 +26,7 @@ jest.mock('./urls', () => ({
   courseAdvanceSettings: jest.fn().mockName('urls.courseAdvanceSettings'),
   replaceTranscript: jest.fn().mockName('urls.replaceTranscript'),
   videoFeatures: jest.fn().mockName('urls.videoFeatures'),
-  courseVideos: jest.fn().mockName('urls.courseVideos'),
-  videoUpload: jest.fn()
+  courseVideos: jest.fn()
     .mockName('urls.courseVideos')
     .mockImplementation(
       ({ studioEndpointUrl, learningContextId }) => `${studioEndpointUrl}/some_video_upload_url/${learningContextId}`,

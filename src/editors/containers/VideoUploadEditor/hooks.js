@@ -23,8 +23,8 @@ export const uploadVideo = async ({ dispatch, supportedFiles }) => {
       const { files } = response.data;
       await Promise.all(Object.values(files).map(async (fileObj) => {
         const fileName = fileObj.file_name;
-        const uploadUrl = fileObj.upload_url;
         const edxVideoId = fileObj.edx_video_id;
+        const uploadUrl = fileObj.upload_url;
         const uploadFile = supportedFiles.find((file) => file.name === fileName);
 
         // TODO I added this temporally to test the redirecton without
