@@ -58,11 +58,12 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
   <div
     className="d-flex flex-row flex-nowrap"
   >
-    <Trigger>
-      <IconButton
+    <Trigger
+      aria-label="Toggle feedback"
+      className="btn-icon btn-icon-primary btn-icon-md align-items-center"
+    >
+      <Icon
         alt="Toggle feedback"
-        iconAs="Icon"
-        variant="primary"
       />
     </Trigger>
     <IconButton
@@ -134,11 +135,12 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
   <div
     className="d-flex flex-row flex-nowrap"
   >
-    <Trigger>
-      <IconButton
+    <Trigger
+      aria-label="Toggle feedback"
+      className="btn-icon btn-icon-primary btn-icon-md align-items-center"
+    >
+      <Icon
         alt="Toggle feedback"
-        iconAs="Icon"
-        variant="primary"
       />
     </Trigger>
     <IconButton
@@ -225,11 +227,12 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
   <div
     className="d-flex flex-row flex-nowrap"
   >
-    <Trigger>
-      <IconButton
+    <Trigger
+      aria-label="Toggle feedback"
+      className="btn-icon btn-icon-primary btn-icon-md align-items-center"
+    >
+      <Icon
         alt="Toggle feedback"
-        iconAs="Icon"
-        variant="primary"
       />
     </Trigger>
     <IconButton
@@ -302,11 +305,12 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
   <div
     className="d-flex flex-row flex-nowrap"
   >
-    <Trigger>
-      <IconButton
+    <Trigger
+      aria-label="Toggle feedback"
+      className="btn-icon btn-icon-primary btn-icon-md align-items-center"
+    >
+      <Icon
         alt="Toggle feedback"
-        iconAs="Icon"
-        variant="primary"
       />
     </Trigger>
     <IconButton
