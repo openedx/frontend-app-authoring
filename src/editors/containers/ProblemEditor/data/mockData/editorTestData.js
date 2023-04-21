@@ -52,7 +52,9 @@ export const dropdownWithFeedbackAndHints = {
 
 export const multipleChoiceWithFeedbackAndHints = {
   solution: '<p>You can add a solution</p>',
-  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
+  question: `<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
+    <p><label>Add the question text, or prompt, here. This text is required.</label></p>
+    <em>You can add an optional tip or note related to the prompt like this.</em>`,
   answers: {
     A: '<p>an incorrect answer</p>',
     B: '<p>the correct answer</p>',
