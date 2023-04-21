@@ -126,7 +126,7 @@ export const getContent = ({
   lmsEndpointUrl,
 }) => {
   const problem = problemState;
-  const hasNoAnswers = checkForNoAnswers({
+  const hasNoAnswers = isAdvancedProblemType ? false : checkForNoAnswers({
     problem,
     openNoAnswerModal,
   });

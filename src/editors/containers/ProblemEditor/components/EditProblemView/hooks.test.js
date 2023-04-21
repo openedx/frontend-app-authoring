@@ -190,17 +190,16 @@ describe('EditProblemView hooks parseState', () => {
     });
   });
   describe('getContent', () => {
-    const problemState = { problemType: ProblemTypeKeys.NUMERIC, answers: [{ id: 'A', title: 'problem', correct: true }] };
-    const isAdvancedProblem = false;
     const assets = {};
     const lmsEndpointUrl = 'someUrl';
     const editorRef = refMock;
     const openNoAnswerModal = jest.fn();
 
-    test('default save and returns parseState data', () => {
+    test('default visual save and returns parseState data', () => {
+      const problemState = { problemType: ProblemTypeKeys.NUMERIC, answers: [{ id: 'A', title: 'problem', correct: true }] };
       const content = hooks.getContent({
+        isAdvancedProblemType: false,
         problemState,
-        isAdvancedProblem,
         editorRef,
         assets,
         lmsEndpointUrl,
@@ -211,11 +210,26 @@ describe('EditProblemView hooks parseState', () => {
         settings: undefined,
       });
     });
-    test('returns null', () => {
-      const problem = { ...problemState, answers: [{ id: 'A', title: '', correct: true }] };
+    test('default advanced save and returns parseState data', () => {
+      const problemState = { problemType: ProblemTypeKeys.ADVANCED };
       const content = hooks.getContent({
-        problemState: problem,
-        isAdvancedProblem,
+        isAdvancedProblemType: true,
+        problemState,
+        editorRef,
+        assets,
+        lmsEndpointUrl,
+        openNoAnswerModal,
+      });
+      expect(content).toEqual({
+        olx: 'rawOLX',
+        settings: undefined,
+      });
+    });
+    test('returns null', () => {
+      const problemState = { problemType: ProblemTypeKeys.NUMERIC, answers: [{ id: 'A', title: '', correct: true }] };
+      const content = hooks.getContent({
+        isAdvancedProblemType: false,
+        problemState,
         editorRef,
         assets,
         lmsEndpointUrl,
