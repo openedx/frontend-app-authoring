@@ -3,7 +3,9 @@
 exports[`CardSection closed 1`] = `""`;
 
 exports[`CardSection open 1`] = `
-<Card.Section>
+<Card.Section
+  className="pt-0"
+>
   <Advanced
     open={false}
   >

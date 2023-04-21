@@ -11,7 +11,7 @@ const CardSection = ({
   if (!show) { return null; }
 
   return (
-    <Card.Section>
+    <Card.Section className="pt-0">
       <Collapsible.Advanced
         open={!isCardCollapsibleOpen}
       >
