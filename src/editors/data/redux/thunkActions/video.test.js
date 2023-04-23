@@ -59,6 +59,7 @@ const mockVideoFeatures = {
   },
 };
 const mockSelectedVideoId = 'ThisIsAVideoId';
+const mockSelectedVideoUrl = 'ThisIsAYoutubeUrl';
 
 const testMetadata = {
   download_track: 'dOWNlOAdTraCK',
@@ -219,7 +220,7 @@ describe('video thunkActions', () => {
           videos: testVideosState,
         },
       }));
-      thunkActions.loadVideoData(mockSelectedVideoId)(dispatch, getState);
+      thunkActions.loadVideoData(mockSelectedVideoId, null)(dispatch, getState);
       [
         [dispatchedLoad],
         [dispatchedAction1],
@@ -261,6 +262,44 @@ describe('video thunkActions', () => {
           shareAlike: false,
         },
         thumbnail: undefined,
+      });
+    });
+    it('dispatches actions.video.load with selectedVideoUrl', () => {
+      thunkActions.loadVideoData(null, mockSelectedVideoUrl)(dispatch, getState);
+      [
+        [dispatchedLoad],
+        [dispatchedAction1],
+        [dispatchedAction2],
+      ] = dispatch.mock.calls;
+      expect(dispatchedLoad.load).toEqual({
+        videoSource: mockSelectedVideoUrl,
+        videoId: 'videOiD',
+        fallbackVideos: 'fALLbACKvIDeos',
+        allowVideoDownloads: testMetadata.download_video,
+        transcripts: testMetadata.transcripts,
+        allowTranscriptDownloads: testMetadata.download_track,
+        showTranscriptByDefault: testMetadata.show_captions,
+        duration: {
+          startTime: testMetadata.start_time,
+          stopTime: testMetadata.end_time,
+          total: 0,
+        },
+        handout: testMetadata.handout,
+        licenseType: 'liCENSEtyPe',
+        licenseDetails: {
+          attribution: true,
+          noncommercial: true,
+          noDerivatives: true,
+          shareAlike: false,
+        },
+        courseLicenseType: 'liCENSEtyPe',
+        courseLicenseDetails: {
+          attribution: true,
+          noncommercial: true,
+          noDerivatives: true,
+          shareAlike: false,
+        },
+        thumbnail: testMetadata.thumbnail,
       });
     });
     it('dispatches actions.video.updateField on success', () => {

@@ -12,9 +12,9 @@ export const {
 } = appHooks;
 
 export const hooks = {
-  initialize: (dispatch, selectedVideoId) => {
+  initialize: (dispatch, selectedVideoId, selectedVideoUrl) => {
     React.useEffect(() => {
-      dispatch(thunkActions.video.loadVideoData(selectedVideoId));
+      dispatch(thunkActions.video.loadVideoData(selectedVideoId, selectedVideoUrl));
     }, []);
   },
   returnToGallery: () => {
@@ -31,8 +31,9 @@ const VideoEditorModal = ({
   const dispatch = useDispatch();
   const searchParams = new URLSearchParams(document.location.search);
   const selectedVideoId = searchParams.get('selectedVideoId');
+  const selectedVideoUrl = searchParams.get('selectedVideoUrl');
   const onReturn = module.hooks.returnToGallery();
-  module.hooks.initialize(dispatch, selectedVideoId);
+  module.hooks.initialize(dispatch, selectedVideoId, selectedVideoUrl);
   return (
     <VideoSettingsModal {...{
       close,

@@ -6,7 +6,7 @@ import * as module from './video';
 import { valueFromDuration } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
 import { parseYoutubeId } from '../../services/cms/api';
 
-export const loadVideoData = (selectedVideoId) => (dispatch, getState) => {
+export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, getState) => {
   const state = getState();
   const blockValueData = state.app.blockValue.data;
   let rawVideoData = blockValueData.metadata ? blockValueData.metadata : {};
@@ -32,8 +32,10 @@ export const loadVideoData = (selectedVideoId) => (dispatch, getState) => {
     youtubeId: rawVideoData.youtube_id_1_0,
     html5Sources: rawVideoData.html5_sources,
   });
-  const [licenseType, licenseOptions] = module.parseLicense({ licenseData: studioView, level: 'block' });
 
+  // Use the selected video url first
+  const videoSourceUrl = selectedVideoUrl != null ? selectedVideoUrl : videoUrl;
+  const [licenseType, licenseOptions] = module.parseLicense({ licenseData: studioView, level: 'block' });
   const transcripts = rawVideoData.transcripts ? rawVideoData.transcripts
     : module.parseTranscripts({ transcriptsData: studioView });
 
@@ -46,7 +48,7 @@ export const loadVideoData = (selectedVideoId) => (dispatch, getState) => {
     blockSetting: rawVideoData.public_access,
   });
   dispatch(actions.video.load({
-    videoSource: videoUrl || '',
+    videoSource: videoSourceUrl || '',
     videoId,
     fallbackVideos,
     allowVideoDownloads: rawVideoData.download_video,
@@ -85,7 +87,7 @@ export const loadVideoData = (selectedVideoId) => (dispatch, getState) => {
       videoSharingEnabledForAll: response.data.videoSharingEnabled,
     })),
   }));
-  const youTubeId = parseYoutubeId(videoUrl);
+  const youTubeId = parseYoutubeId(videoSourceUrl);
   if (youTubeId) {
     dispatch(requests.checkTranscriptsForImport({
       videoId,

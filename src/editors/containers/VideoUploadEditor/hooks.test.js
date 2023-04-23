@@ -40,7 +40,6 @@ describe('uploadVideo', () => {
         { file_name: 'file2.mov', upload_url: 'http://example.com/put_video2' },
       ],
     };
-    const spyConsoleLog = jest.spyOn(console, 'log');
     const mockRequestResponse = { data: response };
     requests.uploadVideo.mockImplementation(async ({ onSuccess }) => {
       await onSuccess(mockRequestResponse);
@@ -66,7 +65,6 @@ describe('uploadVideo', () => {
         { file_name: 'file2.mov', upload_url: 'http://example.com/put_video2' },
       ],
     };
-    const spyConsoleError = jest.spyOn(console, 'error');
     const mockRequestResponse = { data: response };
     requests.uploadVideo.mockImplementation(async ({ onSuccess }) => {
       await onSuccess(mockRequestResponse);

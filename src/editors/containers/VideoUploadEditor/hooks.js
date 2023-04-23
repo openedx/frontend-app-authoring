@@ -60,6 +60,13 @@ export const onFileUploaded = () => {
   return (edxVideoId) => navigateTo(`/course/${learningContextId}/editor/video/${blockId}?selectedVideoId=${edxVideoId}`);
 };
 
+export const onUrlUploaded = () => {
+  const state = store.getState();
+  const learningContextId = selectors.app.learningContextId(state);
+  const blockId = selectors.app.blockId(state);
+  return (videoUrl) => navigateTo(`/course/${learningContextId}/editor/video/${blockId}?selectedVideoUrl=${videoUrl}`);
+};
+
 export default {
   uploadVideo,
 };

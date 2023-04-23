@@ -13,6 +13,7 @@ import * as editorHooks from '../EditorContainer/hooks';
 export const VideoUploader = ({ onUpload, errorMessage }) => {
   const [, setUploadedFile] = useState();
   const [textInputValue, setTextInputValue] = useState('');
+  const onUrlUpdatedHook = hooks.onUrlUploaded();
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: 'video/*',
@@ -31,8 +32,7 @@ export const VideoUploader = ({ onUpload, errorMessage }) => {
   };
 
   const handleSaveButtonClick = () => {
-    // do something with the textInputValue, e.g. save to state or send to server
-    console.log(`Saving input value: ${textInputValue}`);
+    onUrlUpdatedHook(textInputValue);
   };
 
   if (errorMessage) {
