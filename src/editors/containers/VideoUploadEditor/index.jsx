@@ -60,18 +60,20 @@ export const VideoUploader = ({ onUpload, errorMessage }) => {
         </div>
         <input {...getInputProps()} data-testid="fileInput" />
       </div>
-      <div className="d-flex video-id-prompt">
-        <input
-          type="text"
-          placeholder="Paste your video ID or URL"
-          value={textInputValue}
-          onChange={handleInputChange}
-          onKeyDown={(e) => e.key === 'Enter' && handleSaveButtonClick()}
-          onClick={(event) => event.preventDefault()}
-        />
-        <button className="border-start-0" type="button" onClick={handleSaveButtonClick}>
-          <Icon src={ArrowForward} className="rounded-circle text-dark" />
-        </button>
+      <div className="d-flex video-id-container">
+        <div className="d-flex video-id-prompt">
+          <input
+            type="text"
+            placeholder="Paste your video ID or URL"
+            value={textInputValue}
+            onChange={handleInputChange}
+            onKeyDown={(e) => e.key === 'Enter' && handleSaveButtonClick()}
+            onClick={(event) => event.preventDefault()}
+          />
+          <button className="border-start-0" type="button" onClick={handleSaveButtonClick}>
+            <Icon src={ArrowForward} className="rounded-circle text-dark" />
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -28,6 +28,7 @@ exports[`SearchSort component snapshots with filterKeys with search string (clos
   </Form.Group>
   <Dropdown>
     <Dropdown.Toggle
+      className="text-gray-700"
       id="gallery-sort-button"
       variant="tertiary"
     >
@@ -78,6 +79,7 @@ exports[`SearchSort component snapshots with filterKeys with search string (clos
   </Dropdown>
   <Dropdown>
     <Dropdown.Toggle
+      className="text-gray-700"
       id="gallery-filter-button"
       variant="tertiary"
     >
@@ -138,6 +140,7 @@ exports[`SearchSort component snapshots with filterKeys with search string (clos
     onChange={null}
   >
     <Component
+      className="text-gray-700"
       floatLabelLeft={true}
       value="switch-value"
     >
@@ -166,6 +169,7 @@ exports[`SearchSort component snapshots with filterKeys without search string (s
   </Form.Group>
   <Dropdown>
     <Dropdown.Toggle
+      className="text-gray-700"
       id="gallery-sort-button"
       variant="tertiary"
     >
@@ -216,6 +220,7 @@ exports[`SearchSort component snapshots with filterKeys without search string (s
   </Dropdown>
   <Dropdown>
     <Dropdown.Toggle
+      className="text-gray-700"
       id="gallery-filter-button"
       variant="tertiary"
     >
@@ -276,6 +281,7 @@ exports[`SearchSort component snapshots with filterKeys without search string (s
     onChange={null}
   >
     <Component
+      className="text-gray-700"
       floatLabelLeft={true}
       value="switch-value"
     >
@@ -314,6 +320,7 @@ exports[`SearchSort component snapshots without filterKeys with search string (c
   <ActionRow.Spacer />
   <Dropdown>
     <Dropdown.Toggle
+      className="text-gray-700"
       id="gallery-sort-button"
       variant="tertiary"
     >
@@ -385,6 +392,7 @@ exports[`SearchSort component snapshots without filterKeys without search string
   <ActionRow.Spacer />
   <Dropdown>
     <Dropdown.Toggle
+      className="text-gray-700"
       id="gallery-sort-button"
       variant="tertiary"
     >

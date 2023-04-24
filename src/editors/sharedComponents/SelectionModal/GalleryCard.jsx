@@ -15,17 +15,27 @@ import LanguageNamesWidget from '../../containers/VideoEditor/components/VideoSe
 export const GalleryCard = ({
   asset,
 }) => (
-  <SelectableBox className="card bg-white" key={asset.externalUrl} type="radio" value={asset.id} style={{ padding: '10px 20px' }}>
+  <SelectableBox
+    className="card bg-white"
+    key={asset.externalUrl}
+    type="radio"
+    value={asset.id}
+    style={{
+      padding: '10px 20px',
+      border: 'none',
+      boxShadow: 'none',
+    }}
+  >
     <div className="card-div d-flex flex-row flex-nowrap">
       <div style={{
         position: 'relative',
         width: '200px',
         height: '100px',
-        margin: '16px 0 0 0',
+        margin: '18px 0 0 0',
       }}
       >
         <Image
-          style={{ width: '200px', height: '100px' }}
+          style={{ border: 'none', width: '200px', height: '100px' }}
           src={asset.externalUrl}
         />
         { asset.status && asset.statusBadgeVariant && (
@@ -34,13 +44,21 @@ export const GalleryCard = ({
           </Badge>
         )}
         { asset.duration >= 0 && (
-          <Badge variant="dark" style={{ position: 'absolute', right: '6px', bottom: '6px' }}>
+          <Badge
+            variant="dark"
+            style={{
+              position: 'absolute',
+              right: '6px',
+              bottom: '6px',
+              backgroundColor: 'black',
+            }}
+          >
             {formatDuration(asset.duration)}
           </Badge>
         )}
       </div>
-      <div className="card-text p-3">
-        <h3>{asset.displayName}</h3>
+      <div className="card-text p-3" style={{ marginTop: '10px' }}>
+        <h3 className="text-primary-500">{asset.displayName}</h3>
         { asset.transcripts && (
           <div style={{ margin: '0 0 5px 0' }}>
             <LanguageNamesWidget
@@ -48,7 +66,7 @@ export const GalleryCard = ({
             />
           </div>
         )}
-        <p style={{ fontSize: '11px' }}>
+        <p className="text-gray-500" style={{ fontSize: '11px' }}>
           <FormattedMessage
             {...messages.addedDate}
             values={{

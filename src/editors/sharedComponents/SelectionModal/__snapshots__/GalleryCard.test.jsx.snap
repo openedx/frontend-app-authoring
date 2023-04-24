@@ -6,6 +6,8 @@ exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
   key="props.img.externalUrl"
   style={
     Object {
+      "border": "none",
+      "boxShadow": "none",
       "padding": "10px 20px",
     }
   }
@@ -18,7 +20,7 @@ exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
       style={
         Object {
           "height": "100px",
-          "margin": "16px 0 0 0",
+          "margin": "18px 0 0 0",
           "position": "relative",
           "width": "200px",
         }
@@ -28,6 +30,7 @@ exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
         src="props.img.externalUrl"
         style={
           Object {
+            "border": "none",
             "height": "100px",
             "width": "200px",
           }
@@ -36,11 +39,19 @@ exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
     </div>
     <div
       className="card-text p-3"
+      style={
+        Object {
+          "marginTop": "10px",
+        }
+      }
     >
-      <h3>
+      <h3
+        className="text-primary-500"
+      >
         props.img.displayName
       </h3>
       <p
+        className="text-gray-500"
         style={
           Object {
             "fontSize": "11px",

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@edx/paragon';
+import { Button, Icon } from '@edx/paragon';
 import { ArrowBackIos } from '@edx/paragon/icons';
 import {
   FormattedMessage,
@@ -24,12 +24,16 @@ export const VideoSettingsModal = ({
 }) => (
   <>
     <Button
-      variant="tertiary"
-      iconBefore={ArrowBackIos}
-      className="mb-2 mb-sm-0"
+      variant="link"
+      className="text-primary-500"
       size="sm"
       onClick={onReturn}
+      style={{
+        textDecoration: 'none',
+        marginLeft: '3px',
+      }}
     >
+      <Icon src={ArrowBackIos} style={{ height: '13px' }} />
       <FormattedMessage {...messages.replaceVideoButtonLabel} />
     </Button>
     <ErrorSummary />

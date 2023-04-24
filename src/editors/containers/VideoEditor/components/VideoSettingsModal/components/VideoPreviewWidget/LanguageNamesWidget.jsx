@@ -10,18 +10,16 @@ export const LanguageNamesWidget = ({ transcripts, intl }) => {
   let icon = ClosedCaptionOff;
   const hasTranscripts = transcriptHooks.hasTranscripts(transcripts);
   let message = intl.formatMessage(messages.noTranscriptsAdded);
-  let fontClass = 'text-gray';
 
   if (hasTranscripts) {
     message = transcriptHooks.transcriptLanguages(transcripts, intl);
-    fontClass = 'text-primary';
     icon = ClosedCaption;
   }
 
   return (
     <div className="d-flex flex-row align-items-center x-small">
-      <Icon className="mr-1" src={icon} />
-      <span className={fontClass}>{message}</span>
+      <Icon className="mr-1 text-primary-500" src={icon} />
+      <span className="text-gray-700">{message}</span>
     </div>
   );
 };

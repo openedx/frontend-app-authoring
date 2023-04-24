@@ -284,6 +284,10 @@ describe('video thunkActions', () => {
           stopTime: testMetadata.end_time,
           total: 0,
         },
+        allowVideoSharing: {
+          level: 'course',
+          value: true,
+        },
         handout: testMetadata.handout,
         licenseType: 'liCENSEtyPe',
         licenseDetails: {
@@ -292,6 +296,9 @@ describe('video thunkActions', () => {
           noDerivatives: true,
           shareAlike: false,
         },
+        selectedVideoTranscriptUrls: undefined,
+        videoSharingEnabledForCourse: undefined,
+        videoSharingLearnMoreLink: 'SomEUrL.Com',
         courseLicenseType: 'liCENSEtyPe',
         courseLicenseDetails: {
           attribution: true,

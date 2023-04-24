@@ -57,7 +57,7 @@ export const SearchSort = ({
 
     { !showSwitch && <ActionRow.Spacer /> }
     <Dropdown>
-      <Dropdown.Toggle id="gallery-sort-button" variant="tertiary">
+      <Dropdown.Toggle className="text-gray-700" id="gallery-sort-button" variant="tertiary">
         <FormattedMessage {...sortMessages[sortBy]} />
       </Dropdown.Toggle>
       <Dropdown.Menu>
@@ -71,7 +71,7 @@ export const SearchSort = ({
 
     { filterKeys && filterMessages && (
       <Dropdown>
-        <Dropdown.Toggle id="gallery-filter-button" variant="tertiary">
+        <Dropdown.Toggle className="text-gray-700" id="gallery-filter-button" variant="tertiary">
           <FormattedMessage {...filterMessages[filterBy]} />
         </Dropdown.Toggle>
         <Dropdown.Menu>
@@ -92,7 +92,7 @@ export const SearchSort = ({
           onChange={onSwitchClick}
           isInline
         >
-          <Form.Switch value="switch-value" floatLabelLeft>
+          <Form.Switch className="text-gray-700" value="switch-value" floatLabelLeft>
             <FormattedMessage {...switchMessage} />
           </Form.Switch>
         </Form.SwitchSet>
