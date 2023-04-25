@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { CardGrid, Container, breakpoints } from '@edx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 import Responsive from 'react-responsive';
+import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useModels } from '../../../generic/model-store';
 import {
   selectApp, LOADED, LOADING,
@@ -16,12 +17,17 @@ import Loading from '../../../generic/Loading';
 
 const AppList = ({ intl }) => {
   const dispatch = useDispatch();
-
   const {
     appIds, featureIds, status, activeAppId, selectedAppId,
   } = useSelector(state => state.discussions);
   const apps = useModels('apps', appIds);
   const features = useModels('features', featureIds);
+  const isGlobalStaff = getAuthenticatedUser().administrator;
+  const ltiProvider = !['openedx', 'legacy'].includes(activeAppId);
+
+  const showOneEdxProvider = useMemo(() => apps.filter(app => (
+      activeAppId === 'openedx' ? app.id !== 'legacy' : app.id !== 'openedx'
+    )), [activeAppId]);
 
   // This could be a bit confusing.  activeAppId is the ID of the app that is currently configured
   // according to the server.  selectedAppId is the ID of the app that we _want_ to configure here
@@ -54,6 +60,16 @@ const AppList = ({ intl }) => {
     );
   }
 
+  const showAppCard = (filteredApps) => filteredApps.map(app => (
+    <AppCard
+      key={app.id}
+      app={app}
+      selected={app.id === selectedAppId}
+      onClick={handleSelectApp}
+      features={features}
+    />
+  ));
+
   return (
     <div className="my-sm-5 m-1" data-testid="appList">
       <h3 className="my-sm-5 my-4">
@@ -67,15 +83,7 @@ const AppList = ({ intl }) => {
           xl: 4,
         }}
       >
-        {apps.map(app => (
-          <AppCard
-            key={app.id}
-            app={app}
-            selected={app.id === selectedAppId}
-            onClick={handleSelectApp}
-            features={features}
-          />
-        ))}
+        {(isGlobalStaff || ltiProvider) ? showAppCard(apps) : showAppCard(showOneEdxProvider)}
       </CardGrid>
       <Responsive minWidth={breakpoints.small.minWidth}>
         <h3 className="my-sm-5 my-4">
