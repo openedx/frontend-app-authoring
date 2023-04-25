@@ -34,7 +34,7 @@ const CourseAuthoringRoutes = ({ courseId }) => {
         <PageRoute path={`${path}/proctored-exam-settings`}>
           <ProctoredExamSettings courseId={courseId} />
         </PageRoute>
-        <PageRoute path={`${path}/editor/:blockType/:blockId`}>
+        <PageRoute path={`${path}/editor/:blockType/:blockId?`}>
           {process.env.ENABLE_NEW_EDITOR_PAGES === 'true'
             && (
             <EditorContainer
