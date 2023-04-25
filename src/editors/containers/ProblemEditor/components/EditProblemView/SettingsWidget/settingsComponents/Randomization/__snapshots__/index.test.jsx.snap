@@ -24,16 +24,16 @@ exports[`RandomizationCard snapshot snapshot: renders randonmization setting car
       value="sOmE_vAlUE"
     >
       <option
-        key="always"
-        value="always"
-      >
-        Always
-      </option>
-      <option
         key="never"
         value="never"
       >
         Never
+      </option>
+      <option
+        key="always"
+        value="always"
+      >
+        Always
       </option>
       <option
         key="on_reset"
@@ -76,10 +76,28 @@ exports[`RandomizationCard snapshot snapshot: renders randonmization setting car
       value={null}
     >
       <option
-        key="notApplicable"
-        value={null}
+        key="never"
+        value="never"
       >
-        Not Applicable
+        Never
+      </option>
+      <option
+        key="always"
+        value="always"
+      >
+        Always
+      </option>
+      <option
+        key="on_reset"
+        value="on_reset"
+      >
+        On Reset
+      </option>
+      <option
+        key="per_student"
+        value="per_student"
+      >
+        Per Student
       </option>
     </Form.Control>
   </Form.Group>

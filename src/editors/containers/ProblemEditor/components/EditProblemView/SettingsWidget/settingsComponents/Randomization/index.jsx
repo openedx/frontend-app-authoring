@@ -30,7 +30,7 @@ export const RandomizationCard = ({
           value={randomization}
           onChange={handleChange}
         >
-          {randomization ? (
+          {
             Object.values(RandomizationTypesKeys).map((randomizationType) => (
               <option
                 key={randomizationType}
@@ -39,14 +39,7 @@ export const RandomizationCard = ({
                 {intl.formatMessage(RandomizationTypes[randomizationType])}
               </option>
             ))
-          ) : (
-            <option
-              key="notApplicable"
-              value={randomization}
-            >
-              {intl.formatMessage(messages.noRandomizationSummary)}
-            </option>
-          )}
+          }
         </Form.Control>
       </Form.Group>
 

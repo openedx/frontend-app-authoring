@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import messages from './messages';
-import { RandomizationTypes } from '../../../../../../../data/constants/problem';
+import { RandomizationTypes, RandomizationTypesKeys } from '../../../../../../../data/constants/problem';
 import * as module from './hooks';
 
 export const state = {
@@ -8,10 +7,13 @@ export const state = {
 };
 
 export const useRandomizationSettingStatus = ({ randomization, updateSettings }) => {
-  const [summary, setSummary] = module.state.summary({ message: messages.noRandomizationSummary, values: {} });
+  const [summary, setSummary] = module.state.summary({
+    message: RandomizationTypes[RandomizationTypesKeys.NEVER],
+    values: {},
+  });
   useEffect(() => {
     setSummary({
-      message: randomization ? RandomizationTypes[randomization] : messages.noRandomizationSummary,
+      message: randomization ? RandomizationTypes[randomization] : RandomizationTypes[RandomizationTypesKeys.NEVER],
     });
   }, [randomization]);
 

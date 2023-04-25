@@ -15,11 +15,6 @@ const messages = defineMessages({
     }`,
     description: 'Description of Possibilities for value in Randomization widget',
   },
-  noRandomizationSummary: {
-    id: 'authoring.problemeditor.settings.randomization.noRandomizationSummary',
-    defaultMessage: 'Not Applicable',
-    description: 'text shown when no randomization option is given',
-  },
 });
 
 export default messages;
