@@ -16,6 +16,9 @@ jest.mock('../../../../../../data/redux', () => ({
       learningContextId: jest.fn(state => ({ learningContextId: state })),
     },
   },
+  thunkActions: {
+    video: jest.fn(),
+  },
 }));
 
 describe('ShowAnswerCard', () => {

@@ -136,6 +136,18 @@ export const fetchAssets = ({ ...rest }) => (dispatch, getState) => {
   }));
 };
 
+export const fetchVideos = ({ ...rest }) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.fetchVideos,
+    promise: api
+      .fetchVideos({
+        studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+        learningContextId: selectors.app.learningContextId(getState()),
+      }),
+    ...rest,
+  }));
+};
+
 export const allowThumbnailUpload = ({ ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
     requestKey: RequestKeys.allowThumbnailUpload,
@@ -289,6 +301,7 @@ export default StrictDict({
   fetchUnit,
   saveBlock,
   fetchAssets,
+  fetchVideos,
   uploadAsset,
   allowThumbnailUpload,
   uploadThumbnail,

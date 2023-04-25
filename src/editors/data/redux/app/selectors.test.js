@@ -48,6 +48,7 @@ describe('app selectors unit tests', () => {
         simpleKeys.blockTitle,
         simpleKeys.studioView,
         simpleKeys.assets,
+        simpleKeys.videos,
       ].map(testSimpleSelector);
     });
   });

@@ -3,7 +3,8 @@ import { useDispatch } from 'react-redux';
 
 import { thunkActions } from '../../../data/redux';
 import * as module from './hooks';
-import { sortFunctions, sortKeys } from './utils';
+import { sortFunctions, sortKeys, sortMessages } from './utils';
+import messages from './messages';
 
 export const state = {
   highlighted: (val) => React.useState(val),
@@ -22,6 +23,8 @@ export const searchAndSortHooks = () => {
     clearSearchString: () => setSearchString(''),
     sortBy,
     onSortClick: (key) => () => setSortBy(key),
+    sortKeys,
+    sortMessages,
   };
 };
 
@@ -49,11 +52,13 @@ export const imgListHooks = ({ searchSortProps, setSelection, images }) => {
       show: showSelectImageError,
       set: () => setShowSelectImageError(true),
       dismiss: () => setShowSelectImageError(false),
+      message: messages.selectImageError,
     },
     inputError: {
       show: showSizeError,
       set: () => setShowSizeError(true),
       dismiss: () => setShowSizeError(false),
+      message: messages.fileSizeError,
     },
     images,
     galleryProps: {
@@ -62,6 +67,7 @@ export const imgListHooks = ({ searchSortProps, setSelection, images }) => {
       displayList: list,
       highlighted,
       onHighlightChange: (e) => setHighlighted(e.target.value),
+      emptyGalleryLabel: messages.emptyGalleryLabel,
     },
     // highlight by id
     selectBtnProps: {

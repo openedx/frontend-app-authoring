@@ -1,12 +1,10 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { formatMessage } from '../../../../testUtils';
-import { RequestKeys } from '../../../data/constants/requests';
-import { selectors } from '../../../data/redux';
-import { Gallery, mapStateToProps, mapDispatchToProps } from './Gallery';
+import { formatMessage } from '../../../testUtils';
+import { Gallery } from './Gallery';
 
-jest.mock('../../../data/redux', () => ({
+jest.mock('../../data/redux', () => ({
   selectors: {
     requests: {
       isFinished: (state, { requestKey }) => ({ isFinished: { state, requestKey } }),
@@ -39,18 +37,9 @@ describe('TextEditor Image Gallery component', () => {
     test('snapshot: loaded, show gallery', () => {
       expect(shallow(<Gallery {...props} />)).toMatchSnapshot();
     });
-  });
-  describe('mapStateToProps', () => {
-    const testState = { some: 'testState' };
-    test('loads isLoaded from requests.isFinished selector for fetchAssets request', () => {
-      expect(mapStateToProps(testState).isLoaded).toEqual(
-        selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchAssets }),
-      );
-    });
-  });
-  describe('mapDispatchToProps', () => {
-    test('is empty', () => {
-      expect(mapDispatchToProps).toEqual({});
+    test('snapshot: not shot gallery', () => {
+      const wrapper = shallow(<Gallery {...props} show={false} />);
+      expect(wrapper.type()).toBeNull();
     });
   });
 });

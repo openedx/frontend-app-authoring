@@ -1,27 +1,11 @@
-import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
-import { Button, Stack, Spinner } from '@edx/paragon';
-import { Add } from '@edx/paragon/icons';
-import {
-  FormattedMessage,
-  injectIntl,
-  intlShape,
-} from '@edx/frontend-platform/i18n';
-import { selectors } from '../../../data/redux';
-import { RequestKeys } from '../../../data/constants/requests';
-import { acceptedImgKeys } from './utils';
-
+import { connect } from 'react-redux';
 import hooks from './hooks';
+import { acceptedImgKeys } from './utils';
+import SelectionModal from '../../SelectionModal';
 import messages from './messages';
-import BaseModal from '../../BaseModal';
-import SearchSort from './SearchSort';
-import Gallery from './Gallery';
-import FileInput from '../../FileInput';
-import FetchErrorAlert from '../../ErrorAlerts/FetchErrorAlert';
-import UploadErrorAlert from '../../ErrorAlerts/UploadErrorAlert';
-import ErrorAlert from '../../ErrorAlerts/ErrorAlert';
+import { RequestKeys } from '../../../data/constants/requests';
+import { selectors } from '../../../data/redux';
 
 export const SelectImageModal = ({
   isOpen,
@@ -29,10 +13,10 @@ export const SelectImageModal = ({
   setSelection,
   clearSelection,
   images,
-  // injected
-  intl,
   // redux
-  inputIsLoading,
+  isLoaded,
+  isFetchError,
+  isUploadError,
 }) => {
   const {
     galleryError,
@@ -43,53 +27,32 @@ export const SelectImageModal = ({
     selectBtnProps,
   } = hooks.imgHooks({ setSelection, clearSelection, images });
 
-  return (
-    <BaseModal
-      close={close}
-      confirmAction={(
-        <Button {...selectBtnProps} variant="primary">
-          <FormattedMessage {...messages.nextButtonLabel} />
-        </Button>
-      )}
-      isOpen={isOpen}
-      footerAction={(
-        <Button iconBefore={Add} onClick={fileInput.click} variant="link">
-          <FormattedMessage {...messages.uploadButtonLabel} />
-        </Button>
-      )}
-      title={intl.formatMessage(messages.titleLabel)}
-    >
-      {/* Error Alerts */}
-      <FetchErrorAlert message={messages.fetchImagesError} />
-      <UploadErrorAlert message={messages.uploadImageError} />
-      <ErrorAlert
-        dismissError={inputError.dismiss}
-        hideHeading
-        isError={inputError.show}
-      >
-        <FormattedMessage {...messages.fileSizeError} />
-      </ErrorAlert>
+  const modalMessages = {
+    confirmMsg: messages.nextButtonLabel,
+    titleMsg: messages.titleLabel,
+    uploadButtonMsg: messages.uploadButtonLabel,
+    fetchError: messages.fetchImagesError,
+    uploadError: messages.uploadImageError,
+  };
 
-      {/* User Feedback Alerts */}
-      <ErrorAlert
-        dismissError={galleryError.dismiss}
-        hideHeading
-        isError={galleryError.show}
-      >
-        <FormattedMessage {...messages.selectImageError} />
-      </ErrorAlert>
-      <Stack gap={3}>
-        <SearchSort {...searchSortProps} />
-        {!inputIsLoading ? <Gallery {...galleryProps} /> : (
-          <Spinner
-            animation="border"
-            className="mie-3"
-            screenReaderText={intl.formatMessage(messages.loading)}
-          />
-        )}
-        <FileInput fileInput={fileInput} acceptedFiles={Object.values(acceptedImgKeys).join()} />
-      </Stack>
-    </BaseModal>
+  return (
+    <SelectionModal
+      {...{
+        isOpen,
+        close,
+        galleryError,
+        inputError,
+        fileInput,
+        galleryProps,
+        searchSortProps,
+        selectBtnProps,
+        acceptedFiles: acceptedImgKeys,
+        modalMessages,
+        isLoaded,
+        isFetchError,
+        isUploadError,
+      }}
+    />
   );
 };
 
@@ -99,16 +62,18 @@ SelectImageModal.propTypes = {
   setSelection: PropTypes.func.isRequired,
   clearSelection: PropTypes.func.isRequired,
   images: PropTypes.arrayOf(PropTypes.string).isRequired,
-  // injected
-  intl: intlShape.isRequired,
   // redux
-  inputIsLoading: PropTypes.bool.isRequired,
+  isLoaded: PropTypes.bool.isRequired,
+  isFetchError: PropTypes.bool.isRequired,
+  isUploadError: PropTypes.bool.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
-  inputIsLoading: selectors.requests.isPending(state, { requestKey: RequestKeys.uploadAsset }),
+  isLoaded: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchAssets }),
+  isFetchError: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchAssets }),
+  isUploadError: selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadAsset }),
 });
 
 export const mapDispatchToProps = {};
 
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SelectImageModal));
+export default connect(mapStateToProps, mapDispatchToProps)(SelectImageModal);

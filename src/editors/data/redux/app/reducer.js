@@ -16,6 +16,7 @@ const initialState = {
   studioEndpointUrl: null,
   lmsEndpointUrl: null,
   assets: {},
+  videos: {},
   courseDetails: {},
 };
 
@@ -45,6 +46,7 @@ const app = createSlice({
     setSaveResponse: (state, { payload }) => ({ ...state, saveResponse: payload }),
     initializeEditor: (state) => ({ ...state, editorInitialized: true }),
     setAssets: (state, { payload }) => ({ ...state, assets: payload }),
+    setVideos: (state, { payload }) => ({ ...state, videos: payload }),
     setCourseDetails: (state, { payload }) => ({ ...state, courseDetails: payload }),
   },
 });

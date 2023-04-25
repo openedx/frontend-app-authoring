@@ -2,6 +2,7 @@
 
 exports[`SourceCodeModal renders as expected with default behavior 1`] = `
 <BaseModal
+  bodyStyle={null}
   close={[MockFunction]}
   confirmAction={
     <Button
@@ -24,6 +25,8 @@ exports[`SourceCodeModal renders as expected with default behavior 1`] = `
     </Button>
   }
   footerAction={null}
+  headerComponent={null}
+  isFullscreenScroll={true}
   isOpen={false}
   size="xl"
   title="Edit Source Code"

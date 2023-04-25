@@ -10,12 +10,20 @@ exports[`BaseModal ImageUploadModal template component snapshot 1`] = `
   size="lg"
   variant="default"
 >
-  <ModalDialog.Header>
+  <ModalDialog.Header
+    style={
+      Object {
+        "zIndex": 10000,
+      }
+    }
+  >
     <ModalDialog.Title>
       props.title node
     </ModalDialog.Title>
   </ModalDialog.Header>
-  <ModalDialog.Body>
+  <ModalDialog.Body
+    style={null}
+  >
     props.children node
   </ModalDialog.Body>
   <ModalDialog.Footer>

@@ -27,6 +27,7 @@ jest.mock('../../services/cms/api', () => ({
   fetchCourseDetails: (args) => args,
   saveBlock: (args) => args,
   fetchAssets: ({ id, url }) => ({ id, url }),
+  fetchVideos: ({ id, url }) => ({ id, url }),
   uploadAsset: (args) => args,
   loadImages: jest.fn(),
   uploadThumbnail: (args) => args,
@@ -263,6 +264,32 @@ describe('requests thunkActions module', () => {
       });
       test('promise is chained with api.loadImages', () => {
         expect(loadImages).toHaveBeenCalledWith({ fetchAssets: expectedArgs });
+      });
+    });
+    describe('fetchVideos', () => {
+      const expectedArgs = {
+        studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+        learningContextId: selectors.app.learningContextId(testState),
+      };
+      let fetchVideos;
+      let dispatchedAction;
+      beforeEach(() => {
+        fetchVideos = jest.fn((args) => new Promise((resolve) => {
+          resolve({ data: { videos: { fetchVideos: args } } });
+        }));
+        jest.spyOn(api, apiKeys.fetchVideos).mockImplementationOnce(fetchVideos);
+        requests.fetchVideos({ ...fetchParams, onSuccess, onFailure })(dispatch, () => testState);
+        [[dispatchedAction]] = dispatch.mock.calls;
+      });
+      it('dispatches networkRequest', () => {
+        expect(dispatchedAction.networkRequest).not.toEqual(undefined);
+      });
+      test('forwards onSuccess and onFailure', () => {
+        expect(dispatchedAction.networkRequest.onSuccess).toEqual(onSuccess);
+        expect(dispatchedAction.networkRequest.onFailure).toEqual(onFailure);
+      });
+      test('api.fetchVideos promise called with studioEndpointUrl and learningContextId', () => {
+        expect(fetchVideos).toHaveBeenCalledWith(expectedArgs);
       });
     });
     describe('saveBlock', () => {

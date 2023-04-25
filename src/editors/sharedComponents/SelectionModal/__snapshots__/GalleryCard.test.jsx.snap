@@ -4,31 +4,53 @@ exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
 <SelectableBox
   className="card bg-white"
   key="props.img.externalUrl"
+  style={
+    Object {
+      "padding": "10px 20px",
+    }
+  }
   type="radio"
 >
   <div
     className="card-div d-flex flex-row flex-nowrap"
   >
-    <Image
-      src="props.img.externalUrl"
+    <div
       style={
         Object {
           "height": "100px",
-          "width": "100px",
+          "margin": "16px 0 0 0",
+          "position": "relative",
+          "width": "200px",
         }
       }
-    />
+    >
+      <Image
+        src="props.img.externalUrl"
+        style={
+          Object {
+            "height": "100px",
+            "width": "200px",
+          }
+        }
+      />
+    </div>
     <div
-      className="img-text p-3"
+      className="card-text p-3"
     >
       <h3>
         props.img.displayName
       </h3>
-      <p>
+      <p
+        style={
+          Object {
+            "fontSize": "11px",
+          }
+        }
+      >
         <FormattedMessage
           defaultMessage="Added {date} at {time}"
           description="File date-added string"
-          id="authoring.texteditor.selectimagemodal.addedDate.label"
+          id="authoring.selectionmodal.addedDate.label"
           values={
             Object {
               "date": <FormattedDate

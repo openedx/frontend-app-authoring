@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Video Selector render rendering correctly with expected Input 1`] = `<VideoGallery />`;

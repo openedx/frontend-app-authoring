@@ -21,8 +21,11 @@ jest.mock('./urls', () => ({
   allowThumbnailUpload: jest.fn().mockName('urls.allowThumbnailUpload'),
   thumbnailUpload: jest.fn().mockName('urls.thumbnailUpload'),
   checkTranscriptsForImport: jest.fn().mockName('urls.checkTranscriptsForImport'),
+  courseDetailsUrl: jest.fn().mockName('urls.courseDetailsUrl'),
+  courseAdvanceSettings: jest.fn().mockName('urls.courseAdvanceSettings'),
   replaceTranscript: jest.fn().mockName('urls.replaceTranscript'),
   videoFeatures: jest.fn().mockName('urls.videoFeatures'),
+  courseVideos: jest.fn().mockName('urls.courseVideos'),
 }));
 
 jest.mock('./utils', () => ({
@@ -70,6 +73,27 @@ describe('cms api', () => {
       it('should call get with url.courseAssets', () => {
         apiMethods.fetchAssets({ learningContextId, studioEndpointUrl });
         expect(get).toHaveBeenCalledWith(urls.courseAssets({ studioEndpointUrl, learningContextId }));
+      });
+    });
+
+    describe('fetchCourseDetails', () => {
+      it('should call get with url.courseDetailsUrl', () => {
+        apiMethods.fetchCourseDetails({ learningContextId, studioEndpointUrl });
+        expect(get).toHaveBeenCalledWith(urls.courseDetailsUrl({ studioEndpointUrl, learningContextId }));
+      });
+    });
+
+    describe('fetchVideos', () => {
+      it('should call get with url.courseVideos', () => {
+        apiMethods.fetchVideos({ learningContextId, studioEndpointUrl });
+        expect(get).toHaveBeenCalledWith(urls.courseVideos({ studioEndpointUrl, learningContextId }));
+      });
+    });
+
+    describe('fetchAdvancedSettings', () => {
+      it('should call get with url.courseAdvanceSettings', () => {
+        apiMethods.fetchAdvancedSettings({ learningContextId, studioEndpointUrl });
+        expect(get).toHaveBeenCalledWith(urls.courseAdvanceSettings({ studioEndpointUrl, learningContextId }));
       });
     });
 

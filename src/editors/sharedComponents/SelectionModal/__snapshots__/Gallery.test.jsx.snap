@@ -6,14 +6,11 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but no im
   style={
     Object {
       "height": "375px",
+      "margin": "0 -1.5rem",
     }
   }
 >
-  <FormattedMessage
-    defaultMessage="No images found in your gallery. Please upload an image using the button below."
-    description="Label for when image gallery is empty."
-    id="authoring.texteditor.selectimagemodal.emptyGalleryLabel"
-  />
+  <FormattedMessage />
 </div>
 `;
 
@@ -23,13 +20,14 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but searc
   style={
     Object {
       "height": "375px",
+      "margin": "0 -1.5rem",
     }
   }
 >
   <FormattedMessage
     defaultMessage="No search results."
     description="Label for when search returns nothing."
-    id="authoring.texteditor.selectimagemodal.emptySearchLabel"
+    id="authoring.selectionmodal.emptySearchLabel"
   />
 </div>
 `;
@@ -40,6 +38,7 @@ exports[`TextEditor Image Gallery component component snapshot: loaded, show gal
   style={
     Object {
       "height": "375px",
+      "margin": "0 -1.5rem",
     }
   }
 >
@@ -54,28 +53,31 @@ exports[`TextEditor Image Gallery component component snapshot: loaded, show gal
       value="props.highlighted"
     >
       <GalleryCard
-        img={
+        asset={
           Object {
             "id": 1,
           }
         }
         key="1"
+        showId={false}
       />
       <GalleryCard
-        img={
+        asset={
           Object {
             "id": 2,
           }
         }
         key="2"
+        showId={false}
       />
       <GalleryCard
-        img={
+        asset={
           Object {
             "id": 3,
           }
         }
         key="3"
+        showId={false}
       />
     </SelectableBox.Set>
   </div>
@@ -83,9 +85,20 @@ exports[`TextEditor Image Gallery component component snapshot: loaded, show gal
 `;
 
 exports[`TextEditor Image Gallery component component snapshot: not loaded, show spinner 1`] = `
-<Spinner
-  animation="border"
-  className="mie-3"
-  screenReaderText="loading..."
-/>
+<div
+  style={
+    Object {
+      "left": "50%",
+      "position": "absolute",
+      "top": "50%",
+      "transform": "translate(-50%, -50%)",
+    }
+  }
+>
+  <Spinner
+    animation="border"
+    className="mie-3"
+    screenReaderText="loading..."
+  />
+</div>
 `;

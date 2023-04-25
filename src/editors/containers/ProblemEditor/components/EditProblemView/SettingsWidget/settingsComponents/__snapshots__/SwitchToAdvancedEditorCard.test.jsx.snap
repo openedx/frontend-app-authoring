@@ -5,6 +5,7 @@ exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCar
   className="border border-light-700 shadow-none"
 >
   <BaseModal
+    bodyStyle={null}
     close={[Function]}
     confirmAction={
       <Button
@@ -21,6 +22,8 @@ exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCar
       </Button>
     }
     footerAction={null}
+    headerComponent={null}
+    isFullscreenScroll={true}
     isOpen={false}
     size="md"
     title={

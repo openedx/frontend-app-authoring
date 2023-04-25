@@ -66,3 +66,7 @@ export const courseAdvanceSettings = ({ studioEndpointUrl, learningContextId }) 
 export const videoFeatures = ({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/video_features/${learningContextId}`
 );
+
+export const courseVideos = ({ studioEndpointUrl, learningContextId }) => (
+  `${studioEndpointUrl}/videos/${learningContextId}`
+);

@@ -11,6 +11,11 @@ jest.mock('../../../../../data/redux', () => ({
       settings: jest.fn(state => ({ question: state })),
     },
   },
+  thunkActions: {
+    video: {
+      importTranscript: jest.fn(),
+    },
+  },
 }));
 
 jest.mock('../../../../../sharedComponents/TinyMceWidget/hooks', () => ({
