@@ -36,7 +36,7 @@
   "devDependencies": {
     "@edx/frontend-build": "^11.0.2",
     "@edx/frontend-platform": "2.4.0",
-    "@edx/paragon": "^20.28.0",
+    "@edx/paragon": "^20.32.0",
     "@edx/reactifex": "^2.1.1",
     "@testing-library/dom": "^8.13.0",
     "@testing-library/jest-dom": "^5.16.5",
