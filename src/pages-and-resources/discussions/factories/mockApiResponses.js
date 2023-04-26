@@ -42,6 +42,24 @@ export const generateProvidersApiResponse = (piazzaAdminOnlyConfig = false, acti
       has_full_support: true,
       admin_only_config: false,
     },
+    openedx: {
+      features: [
+        'basic-configuration',
+        'discussion-page',
+        'embedded-course-sections',
+        'wcag-2.1',
+      ],
+      external_links: {
+        learn_more: '',
+        configuration: '',
+        general: '',
+        accessibility: '',
+        contact_email: '',
+      },
+      messages: [],
+      has_full_support: true,
+      admin_only_config: false,
+    },
     piazza: {
       features: [
         // We give piazza all features just so we can test our "full support" text.

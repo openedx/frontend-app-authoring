@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Video Selector Container snapshots rendering correctly with expected Input 1`] = `
+<div
+  className="selector-page"
+>
+  <VideoSelectorPage
+    courseId="cOuRsEId"
+    lmsEndpointUrl="http://localhost:18000"
+    studioEndpointUrl="http://localhost:18010"
+  />
+</div>
+`;

@@ -6,6 +6,7 @@ import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';
 import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettings';
 import EditorContainer from './editors/EditorContainer';
+import VideoSelectorContainer from './selectors/VideoSelectorContainer';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -34,10 +35,18 @@ const CourseAuthoringRoutes = ({ courseId }) => {
         <PageRoute path={`${path}/proctored-exam-settings`}>
           <ProctoredExamSettings courseId={courseId} />
         </PageRoute>
-        <PageRoute path={`${path}/editor/:blockType/:blockId`}>
+        <PageRoute path={`${path}/editor/:blockType/:blockId?`}>
           {process.env.ENABLE_NEW_EDITOR_PAGES === 'true'
             && (
             <EditorContainer
+              courseId={courseId}
+            />
+            )}
+        </PageRoute>
+        <PageRoute path={`${path}/videos`}>
+          {process.env.ENABLE_NEW_EDITOR_PAGES === 'true'
+            && (
+            <VideoSelectorContainer
               courseId={courseId}
             />
             )}

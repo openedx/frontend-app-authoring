@@ -5,17 +5,8 @@ import {
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider, PageRoute } from '@edx/frontend-platform/react';
 import {
-  act,
-  findByRole,
-  getByRole,
-  queryByLabelText,
-  queryByRole,
-  queryByTestId,
-  queryByText,
-  render,
-  screen,
-  waitFor,
-  waitForElementToBeRemoved,
+  act, findByRole, getByRole, queryByLabelText, queryByRole, queryByTestId, queryByText, render,
+  screen, waitFor, waitForElementToBeRemoved,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
