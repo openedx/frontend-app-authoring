@@ -12,10 +12,7 @@ export const EditableHeader = ({
   localTitle,
   cancelEdit,
 }) => (
-  <Form.Group
-    style={{ width: '90%' }}
-    onBlur={(e) => updateTitle(e)}
-  >
+  <Form.Group onBlur={(e) => updateTitle(e)}>
     <Form.Control
       style={{ paddingInlineEnd: 'calc(1rem + 84px)' }}
       autoFocus

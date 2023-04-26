@@ -3,11 +3,6 @@
 exports[`EditableHeader snapshot snapshot 1`] = `
 <Form.Group
   onBlur={[Function]}
-  style={
-    Object {
-      "width": "90%",
-    }
-  }
 >
   <Form.Control
     autoFocus={true}

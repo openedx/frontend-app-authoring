@@ -48,12 +48,9 @@ export const EditorContainer = ({
       </BaseModal>
       <ModalDialog.Header className="shadow-sm zindex-10">
         <div className="d-flex flex-row justify-content-between">
-          <h2
-            className="h3 d-flex flex-row align-items-center"
-          >
+          <h2 className="h3 col pl-0">
             <TitleHeader isInitialized={isInitialized} />
           </h2>
-
           <IconButton
             src={Close}
             iconAs={Icon}

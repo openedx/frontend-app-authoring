@@ -12,7 +12,7 @@ exports[`TitleHeader snapshots editing 1`] = `
 
 exports[`TitleHeader snapshots initialized 1`] = `
 <div
-  className="d-flex flex-row align-items-center"
+  className="d-flex flex-row align-items-center mt-1"
 >
   <Truncate>
     <Component />

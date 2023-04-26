@@ -45,7 +45,7 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
       className="d-flex flex-row justify-content-between"
     >
       <h2
-        className="h3 d-flex flex-row align-items-center"
+        className="h3 col pl-0"
       >
         <injectIntl(ShimmedIntlComponent)
           isInitialized={true}
@@ -126,7 +126,7 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
       className="d-flex flex-row justify-content-between"
     >
       <h2
-        className="h3 d-flex flex-row align-items-center"
+        className="h3 col pl-0"
       >
         <injectIntl(ShimmedIntlComponent)
           isInitialized={false}
