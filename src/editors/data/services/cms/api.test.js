@@ -26,6 +26,11 @@ jest.mock('./urls', () => ({
   replaceTranscript: jest.fn().mockName('urls.replaceTranscript'),
   videoFeatures: jest.fn().mockName('urls.videoFeatures'),
   courseVideos: jest.fn().mockName('urls.courseVideos'),
+  videoUpload: jest.fn()
+    .mockName('urls.courseVideos')
+    .mockImplementation(
+      ({ studioEndpointUrl, learningContextId }) => `${studioEndpointUrl}/some_video_upload_url/${learningContextId}`,
+    ),
 }));
 
 jest.mock('./utils', () => ({
@@ -216,6 +221,20 @@ describe('cms api', () => {
         expect(post).toHaveBeenCalledWith(
           urls.courseAssets({ studioEndpointUrl, learningContextId }),
           mockFormdata,
+        );
+      });
+    });
+
+    describe('uploadVideo', () => {
+      it('should call post with urls.courseVideos and data', () => {
+        const data = { files: [{ file_name: 'video.mp4', content_type: 'mp4' }] };
+
+        apiMethods.uploadVideo({ data, studioEndpointUrl, learningContextId });
+
+        expect(urls.courseVideos).toHaveBeenCalledWith({ studioEndpointUrl, learningContextId });
+        expect(post).toHaveBeenCalledWith(
+          urls.courseVideos({ studioEndpointUrl, learningContextId }),
+          data,
         );
       });
     });

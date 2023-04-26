@@ -1,4 +1,5 @@
 import { StrictDict, camelizeKeys } from '../../../utils';
+/* eslint-disable import/no-cycle */
 import { actions } from '..';
 import * as requests from './requests';
 import * as module from './app';

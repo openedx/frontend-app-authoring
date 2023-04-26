@@ -1,0 +1,156 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VideoUploadEditor renders without errors 1`] = `
+<div>
+  <div
+    class="marked-area"
+  >
+    <div
+      class="d-flex justify-content-end close-button-container"
+    >
+      <iconbutton
+        iconas="Icon"
+      />
+    </div>
+    <div>
+      <div
+        class="d-flex flex-column justify-content-center align-items-center p-4 w-100 min-vh-100"
+        role="presentation"
+        tabindex="0"
+      >
+        <div
+          class="d-flex flex-column justify-content-center align-items-center gap-2 text-center min-vh-100 w-100
+         dropzone-middle "
+        >
+          <div
+            class="d-flex justify-content-center align-items-center bg-light rounded-circle file-upload"
+          >
+            <icon
+              class="text-muted"
+            />
+          </div>
+          <div
+            class="d-flex align-items-center justify-content-center gap-1 flex-wrap flex-column pt-5"
+          >
+            <span
+              style="font-size: 20px;"
+            >
+              FormattedMessage
+            </span>
+            <span
+              style="font-size: 12px;"
+            >
+              FormattedMessage
+            </span>
+          </div>
+          <div
+            class="d-flex align-items-center mt-3"
+          >
+            <span
+              class="mx-2 text-dark"
+            >
+              OR
+            </span>
+          </div>
+        </div>
+        <input
+          accept=""
+          data-testid="fileInput"
+          style="display: none;"
+          tabindex="-1"
+          type="file"
+        />
+      </div>
+      <div
+        class="d-flex video-id-prompt"
+      >
+        <input
+          placeholder="Paste your video ID or URL"
+          type="text"
+          value=""
+        />
+        <button
+          class="border-start-0"
+          type="button"
+        >
+          <icon
+            class="rounded-circle text-dark"
+          />
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`VideoUploader renders without errors 1`] = `
+<div>
+  <div>
+    <div
+      class="d-flex flex-column justify-content-center align-items-center p-4 w-100 min-vh-100"
+      role="presentation"
+      tabindex="0"
+    >
+      <div
+        class="d-flex flex-column justify-content-center align-items-center gap-2 text-center min-vh-100 w-100
+         dropzone-middle "
+      >
+        <div
+          class="d-flex justify-content-center align-items-center bg-light rounded-circle file-upload"
+        >
+          <icon
+            class="text-muted"
+          />
+        </div>
+        <div
+          class="d-flex align-items-center justify-content-center gap-1 flex-wrap flex-column pt-5"
+        >
+          <span
+            style="font-size: 20px;"
+          >
+            FormattedMessage
+          </span>
+          <span
+            style="font-size: 12px;"
+          >
+            FormattedMessage
+          </span>
+        </div>
+        <div
+          class="d-flex align-items-center mt-3"
+        >
+          <span
+            class="mx-2 text-dark"
+          >
+            OR
+          </span>
+        </div>
+      </div>
+      <input
+        accept=""
+        data-testid="fileInput"
+        style="display: none;"
+        tabindex="-1"
+        type="file"
+      />
+    </div>
+    <div
+      class="d-flex video-id-prompt"
+    >
+      <input
+        placeholder="Paste your video ID or URL"
+        type="text"
+        value=""
+      />
+      <button
+        class="border-start-0"
+        type="button"
+      >
+        <icon
+          class="rounded-circle text-dark"
+        />
+      </button>
+    </div>
+  </div>
+</div>
+`;

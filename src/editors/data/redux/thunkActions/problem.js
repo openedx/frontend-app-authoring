@@ -1,4 +1,5 @@
 import _ from 'lodash-es';
+/* eslint-disable import/no-cycle */
 import { actions } from '..';
 import * as requests from './requests';
 import { OLXParser } from '../../../containers/ProblemEditor/data/OLXParser';
