@@ -3,7 +3,7 @@ export const libraryV1 = ({ studioEndpointUrl, learningContextId }) => (
 );
 
 export const unit = ({ studioEndpointUrl, unitUrl }) => (
-  `${studioEndpointUrl}/container/${unitUrl.data.ancestors[0].id}`
+  `${studioEndpointUrl}/container/${unitUrl.data.ancestors[0]?.id}`
 );
 
 export const returnUrl = ({ studioEndpointUrl, unitUrl, learningContextId }) => {
