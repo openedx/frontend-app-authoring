@@ -9,6 +9,8 @@ const ConfirmationPopup = ({
   confirmLabel,
   onCancel,
   cancelLabel,
+  confirmVariant,
+  confirmButtonClass,
 }) => (
   <Card className="rounded mb-3 px-1">
     <Card.Header
@@ -22,7 +24,7 @@ const ConfirmationPopup = ({
         <Button variant="tertiary" onClick={onCancel}>
           {cancelLabel}
         </Button>
-        <Button variant="outline-brand" className="ml-2" onClick={onConfirm}>
+        <Button variant={confirmVariant} className={`ml-2 ${confirmButtonClass}`} onClick={onConfirm}>
           {confirmLabel}
         </Button>
       </Card.Footer>
@@ -37,6 +39,12 @@ ConfirmationPopup.propTypes = {
   onCancel: PropTypes.func.isRequired,
   confirmLabel: PropTypes.string.isRequired,
   cancelLabel: PropTypes.string.isRequired,
+  confirmButtonClass: PropTypes.string,
+  confirmVariant: PropTypes.string,
+};
+ConfirmationPopup.defaultProps = {
+  confirmVariant: 'outline-brand',
+  confirmButtonClass: '',
 };
 
 export default ConfirmationPopup;

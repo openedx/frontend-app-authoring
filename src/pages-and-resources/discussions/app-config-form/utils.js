@@ -1,7 +1,7 @@
 import moment from 'moment';
 import _ from 'lodash';
 import { getIn } from 'formik';
-import { blackoutDatesStatus as constants } from '../data/constants';
+import { restrictedDatesStatus as constants } from '../data/constants';
 
 export const filterItemFromObject = (array, key, value) => (
   array.filter(item => item[key] !== value)
@@ -47,7 +47,7 @@ export const decodeDateTime = (date, time) => {
   return moment(mergeDateTime(nDate, nTime));
 };
 
-export const sortBlackoutDatesByStatus = (data, status, order) => (
+export const sortRestrictedDatesByStatus = (data, status, order) => (
   _.orderBy(
 data.filter(date => date.status === status),
     [(obj) => decodeDateTime(obj.startDate, startOfDayTime(obj.startTime))],
@@ -55,7 +55,7 @@ data.filter(date => date.status === status),
 )
 );
 
-export const formatBlackoutDates = ({
+export const formatRestrictedDates = ({
   startDate, startTime, endDate, endTime,
 }) => {
   let formattedDate;

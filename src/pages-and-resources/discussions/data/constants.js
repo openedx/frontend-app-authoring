@@ -2,7 +2,7 @@ import moment from 'moment';
 
 import messages from '../app-config-form/messages';
 
-export const blackoutDatesStatus = {
+export const restrictedDatesStatus = {
   UPCOMING: 'UPCOMING',
   COMPLETE: 'COMPLETE',
   ACTIVE: 'ACTIVE',
@@ -14,11 +14,17 @@ export const badgeVariant = {
   ACTIVE: 'success',
 };
 
-export const deleteHelperText = {
-  UPCOMING: messages.blackoutDatesDeletionHelp,
-  COMPLETE: messages.completeBlackoutDatesDeletionHelp,
-  ACTIVE: messages.activeBlackoutDatesDeletionHelp,
+export const deleteRestrictedDatesHelperText = {
+  UPCOMING: messages.restrictedDatesDeletionHelp,
+  COMPLETE: messages.completeRestrictedDatesDeletionHelp,
+  ACTIVE: messages.activeRestrictedDatesDeletionHelp,
 };
+
+export const discussionRestrictionOptions = [
+  messages.discussionRestrictionOffLabel,
+  messages.discussionRestrictionOnLabel,
+  messages.discussionRestrictionScheduledLabel,
+];
 
 export const today = moment();
 export const active = [today.format('YYYY-MM-DDTHH:mm'), today.add(5, 'hours').format('YYYY-MM-DDTHH:mm')];

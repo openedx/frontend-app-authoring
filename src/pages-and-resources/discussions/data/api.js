@@ -10,10 +10,10 @@ import {
   mergeDateTime,
   normalizeDate,
   normalizeTime,
-  sortBlackoutDatesByStatus,
+  sortRestrictedDatesByStatus,
   startOfDayTime,
 } from '../app-config-form/utils';
-import { blackoutDatesStatus as constants } from './constants';
+import { restrictedDatesStatus as constants } from './constants';
 
 ensureConfig([
   'STUDIO_BASE_URL',
@@ -31,7 +31,7 @@ function normalizeLtiConfig(data) {
   };
 }
 
-export function normalizeBlackoutDates(data) {
+export function normalizeRestrictedDates(data) {
   if (!data || Object.keys(data).length < 1) {
     return [];
   }
@@ -46,9 +46,9 @@ export function normalizeBlackoutDates(data) {
   }));
 
   return [
-    ...sortBlackoutDatesByStatus(normalizeData, constants.ACTIVE, 'desc'),
-    ...sortBlackoutDatesByStatus(normalizeData, constants.UPCOMING, 'asc'),
-    ...sortBlackoutDatesByStatus(normalizeData, constants.COMPLETE, 'desc'),
+    ...sortRestrictedDatesByStatus(normalizeData, constants.ACTIVE, 'desc'),
+    ...sortRestrictedDatesByStatus(normalizeData, constants.UPCOMING, 'asc'),
+    ...sortRestrictedDatesByStatus(normalizeData, constants.COMPLETE, 'desc'),
   ];
 }
 
@@ -66,7 +66,7 @@ function normalizePluginConfig(data) {
     enableReportedContentEmailNotifications: data.reported_content_email_notifications_flag,
     divisionScheme: data.division_scheme,
     alwaysDivideInlineDiscussions: data.always_divide_inline_discussions,
-    blackoutDates: normalizeBlackoutDates(data.discussion_blackouts),
+    restrictedDates: normalizeRestrictedDates(data.discussion_restrictions),
     allowDivisionByUnit: false,
     divideByCohorts: enableDivideByCohorts,
     divideCourseTopicsByCohorts: enableDivideCourseTopicsByCohorts,
@@ -155,15 +155,15 @@ function normalizeSettings(data) {
   };
 }
 
-export function denormalizeBlackoutDate(blackoutPeriod) {
+export function denormalizeRestrictedDate(restrictedPeriod) {
   return [
     mergeDateTime(
-      normalizeDate(blackoutPeriod.startDate),
-      normalizeTime(startOfDayTime(blackoutPeriod.startTime)),
+      normalizeDate(restrictedPeriod.startDate),
+      normalizeTime(startOfDayTime(restrictedPeriod.startTime)),
     ),
     mergeDateTime(
-      normalizeDate(blackoutPeriod.endDate),
-      normalizeTime(endOfDayTime(blackoutPeriod.endTime)),
+      normalizeDate(restrictedPeriod.endDate),
+      normalizeTime(endOfDayTime(restrictedPeriod.endTime)),
     ),
   ];
 }
@@ -187,12 +187,12 @@ function denormalizeData(courseId, appId, data) {
   if ('groupAtSubsection' in data) {
     pluginConfiguration.group_at_subsection = data.groupAtSubsection;
   }
-  if (data.blackoutDates?.length) {
-    pluginConfiguration.discussion_blackouts = data.blackoutDates.map((blackoutDates) => (
-      denormalizeBlackoutDate(blackoutDates)
+  if (data.restrictedDates?.length) {
+    pluginConfiguration.discussion_restrictions = data.restrictedDates.map((restrictedDates) => (
+      denormalizeRestrictedDate(restrictedDates)
     ));
-  } else if (data.blackoutDates?.length === 0) {
-    pluginConfiguration.discussion_blackouts = [];
+  } else if (data.restrictedDates?.length === 0) {
+    pluginConfiguration.discussion_restrictions = [];
   }
   if (data.discussionTopics?.length) {
     pluginConfiguration.discussion_topics = data.discussionTopics.reduce((topics, currentTopic) => {

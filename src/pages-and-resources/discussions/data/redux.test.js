@@ -244,7 +244,7 @@ describe('Data layer integration tests', () => {
         allowAnonymousPostsPeers: false,
         reportedContentEmailNotifications: false,
         enableReportedContentEmailNotifications: false,
-        blackoutDates: [],
+        restrictedDates: [],
         // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
         // but we add it in during normalization.
         divisionScheme: DivisionSchemes.COHORT,
@@ -405,7 +405,7 @@ describe('Data layer integration tests', () => {
           allow_anonymous_to_peers: true,
           reported_content_email_notifications: true,
           always_divide_inline_discussions: true,
-          discussion_blackouts: [],
+          discussion_restrictions: [],
           division_scheme: DivisionSchemes.COHORT,
           discussion_topics: {
             Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
@@ -425,7 +425,7 @@ describe('Data layer integration tests', () => {
           allow_anonymous_to_peers: true,
           reported_content_email_notifications: true,
           always_divide_inline_discussions: true,
-          discussion_blackouts: [],
+          discussion_restrictions: [],
           division_scheme: DivisionSchemes.COHORT,
           discussion_topics: {
             Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
@@ -449,7 +449,7 @@ describe('Data layer integration tests', () => {
           allowAnonymousPosts: true,
           allowAnonymousPostsPeers: true,
           reportedContentEmailNotifications: true,
-          blackoutDates: [],
+          restrictedDates: [],
           // TODO: Note!  As of this writing, all the data below this line is NOT returned in the API
           // but we technically send it to the thunk, so here it is.
           divideByCohorts: true,
@@ -486,7 +486,7 @@ describe('Data layer integration tests', () => {
         allowAnonymousPostsPeers: true,
         reportedContentEmailNotifications: true,
         alwaysDivideInlineDiscussions: true,
-        blackoutDates: [],
+        restrictedDates: [],
         // TODO: Note!  The values we tried to save were ignored, this test reflects what currently
         // happens, but NOT what we want to have happen!
         divideByCohorts: true,

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import FieldFeedback from '../../../../../../generic/FieldFeedback';
 
-const BlackoutDatesInput = ({
+const RestictDatesInput = ({
   value,
   type,
   label,
@@ -58,7 +58,7 @@ const BlackoutDatesInput = ({
   );
 };
 
-BlackoutDatesInput.propTypes = {
+RestictDatesInput.propTypes = {
   value: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
@@ -70,11 +70,11 @@ BlackoutDatesInput.propTypes = {
   fieldNameCommonBase: PropTypes.string.isRequired,
 };
 
-BlackoutDatesInput.defaultProps = {
+RestictDatesInput.defaultProps = {
   fieldClasses: '',
   helpText: '',
   feedbackClasses: '',
   formGroupClasses: '',
 };
 
-export default BlackoutDatesInput;
+export default RestictDatesInput;

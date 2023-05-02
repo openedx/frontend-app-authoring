@@ -102,7 +102,7 @@ export const generateLegacyApiResponse = () => ({
     division_scheme: DivisionSchemes.COHORT,
     // Note, this gets stringified when normalized into the app, but the API returns it as an
     // actual array.  Argh.
-    discussion_blackouts: [],
+    discussion_restrictions: [],
   },
   providers: {
     active: 'legacy',

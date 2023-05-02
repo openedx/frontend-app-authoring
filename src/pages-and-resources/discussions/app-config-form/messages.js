@@ -287,128 +287,137 @@ const messages = defineMessages({
     defaultMessage: 'Choose a unique name for your topic',
     description: 'Help text for input field in adding a discussion topic',
   },
-  // Blackout dates
-  blackoutDates: {
-    id: 'authoring.discussions.blackoutDates',
-    defaultMessage: 'Discussion blackout dates',
-
-  },
-  blackoutDatesLabel: {
-    id: 'authoring.discussions.builtIn.blackoutDates.label',
-    defaultMessage: 'Blackout dates',
-  },
-  blackoutDatesHelp: {
-    id: 'authoring.discussions.builtIn.blackoutDates.help',
-    defaultMessage: 'If added, learners will not be able to post in discussions between these dates.',
-  },
-  addBlackoutDatesButton: {
-    id: 'authoring.discussions.addBlackoutDatesButton',
-    defaultMessage: 'Add blackout date range',
-    description: 'Button label when Add a new blackout date.',
-  },
-  configureBlackoutDates: {
-    id: 'authoring.discussions.builtIn.configureBlackoutDates.label',
-    defaultMessage: 'Configure blackout date range',
-    description: 'Label for blockout dates allowing user to configure blackout dates',
-  },
-  blackoutStartDateHelp: {
-    id: 'authoring.discussions.blackoutStartDate.help',
+  // Restricted dates
+  restrictedStartDateHelp: {
+    id: 'authoring.discussions.restrictedStartDate.help',
     defaultMessage: 'Enter a start date, e.g. 12/10/2023',
   },
-  blackoutEndDateHelp: {
-    id: 'authoring.discussions.blackoutEndDate.help',
+  restrictedEndDateHelp: {
+    id: 'authoring.discussions.restrictedEndDate.help',
     defaultMessage: 'Enter an end date, e.g. 12/17/2023',
   },
-  blackoutStartTimeHelp: {
-    id: 'authoring.discussions.blackoutStartTime.help',
+  restrictedStartTimeHelp: {
+    id: 'authoring.discussions.restrictedStartTime.help',
     defaultMessage: 'Enter a start time, e.g. 09:00 AM',
   },
-  blackoutEndTimeHelp: {
-    id: 'authoring.discussions.blackoutEndTime.help',
+  restrictedEndTimeHelp: {
+    id: 'authoring.discussions.restrictedEndTime.help',
     defaultMessage: 'Enter an end time, e.g. 05:00 PM',
   },
-  activeBlackoutDatesDeletionHelp: {
-    id: 'authoring.discussions.activeBlackoutDatesDeletion.help',
-    defaultMessage: 'These blackout dates are currently active. If deleted, learners will be able to post in discussions during these dates. Are you sure you want to proceed?',
-    description: 'Help text for delete a active blackout dates from blackout dates section.',
-  },
-  blackoutDatesDeletionHelp: {
-    id: 'authoring.discussions.blackoutDatesDeletion.help',
-    defaultMessage: 'If deleted, learners will be able to post in discussions during these dates.',
-    description: 'Help text for delete a upcoming blackout dates from blackout dates section.',
-  },
-  completeBlackoutDatesDeletionHelp: {
-    id: 'authoring.discussions.completeBlackoutDatesDeletion.help',
-    defaultMessage: 'Are you sure you want to delete these blackout dates?',
-    description: 'Help text for delete a complete blackout dates from blackout dates section.',
-  },
-  activeBlackoutDatesDeletionLabel: {
-    id: 'authoring.discussions.activeBlackoutDatesDeletion.label',
-    defaultMessage: 'Delete active blackout dates?',
-    description: 'Label for active blackout dates delete popup allowing a user to delete a blackout date range.',
-  },
-  blackoutDatesDeletionLabel: {
-    id: 'authoring.discussions.blackoutDatesDeletion.label',
-    defaultMessage: 'Delete blackout dates?',
-    description: 'Label for blackout dates delete popup allowing a user to delete a blackout date range.',
-  },
-  deleteBlackoutDatesAltText: {
-    id: 'authoring.blackoutDates.delete',
-    defaultMessage: 'Delete Blackout Dates',
-  },
-  blackoutDatesStatus: {
-    id: 'authoring.blackoutDates.status',
+  restrictedDatesStatus: {
+    id: 'authoring.restrictedDates.status',
     defaultMessage: '{status}',
   },
-  blackoutStartDateRequired: {
-    id: 'authoring.blackoutDates.startDate.required',
+  restrictedStartDateRequired: {
+    id: 'authoring.restrictedDates.startDate.required',
     defaultMessage: 'Start date is a required field',
-    description: 'Tells the user that the blackout dates must have start date and it is required.',
+    description: 'Tells the user that the restricted dates must have start date and it is required.',
   },
-  blackoutEndDateRequired: {
-    id: 'authoring.blackoutDates.endDate.required',
+  restrictedEndDateRequired: {
+    id: 'authoring.restrictedDates.endDate.required',
     defaultMessage: 'End date is a required field',
-    description: 'Tells the user that the blackout dates must have end date and it is required.',
+    description: 'Tells the user that the restricted dates must have end date and it is required.',
   },
-  blackoutStartDateInPast: {
-    id: 'authoring.blackoutDates.startDate.inPast',
+  restrictedStartDateInPast: {
+    id: 'authoring.restrictedDates.startDate.inPast',
     defaultMessage: 'Start date cannot be after end date',
-    description: 'Tells the user that the blackout start date cannot be in past and cannot be after end date',
+    description: 'Tells the user that the restricted start date cannot be in past and cannot be after end date',
   },
-  blackoutEndDateInPast: {
-    id: 'authoring.blackoutDates.endDate.inPast',
+  restrictedEndDateInPast: {
+    id: 'authoring.restrictedDates.endDate.inPast',
     defaultMessage: 'End date cannot be before start date',
-    description: 'Tells the user that the blackout end date cannot be in past and cannot be before start date',
+    description: 'Tells the user that the restricted end date cannot be in past and cannot be before start date',
   },
-  blackoutStartTimeInPast: {
-    id: 'authoring.blackoutDates.startTime.inPast',
+  restrictedStartTimeInPast: {
+    id: 'authoring.restrictedDates.startTime.inPast',
     defaultMessage: 'Start time cannot be after end time',
-    description: 'Tells the user that the blackout start time cannot be in past and cannot be after end time',
+    description: 'Tells the user that the restricted start time cannot be in past and cannot be after end time',
   },
-  blackoutEndTimeInPast: {
-    id: 'authoring.blackoutDates.endTime.inPast',
+  restrictedEndTimeInPast: {
+    id: 'authoring.restrictedDates.endTime.inPast',
     defaultMessage: 'End time cannot be before start time',
-    description: 'Tells the user that the blackout end time cannot be in past and cannot be before start time',
+    description: 'Tells the user that the restricted end time cannot be in past and cannot be before start time',
   },
-  blackoutStartTimeInValidFormat: {
-    id: 'authoring.blackoutDates.startTime.inValidFormat',
+  restrictedStartTimeInValidFormat: {
+    id: 'authoring.restrictedDates.startTime.inValidFormat',
     defaultMessage: 'Enter a valid start time',
-    description: 'Tells the user that the blackout start time format is in valid',
+    description: 'Tells the user that the restricted start time format is in valid',
   },
-  blackoutEndTimeInValidFormat: {
-    id: 'authoring.blackoutDates.endTime.inValidFormat',
+  restrictedEndTimeInValidFormat: {
+    id: 'authoring.restrictedDates.endTime.inValidFormat',
     defaultMessage: 'Enter a valid end time',
-    description: 'Tells the user that the blackout end time format is in valid',
+    description: 'Tells the user that the restricted end time format is in valid',
   },
-  blackoutStartDateInValidFormat: {
-    id: 'authoring.blackoutDates.startDate.inValidFormat',
+  restrictedStartDateInValidFormat: {
+    id: 'authoring.restrictedDates.startDate.inValidFormat',
     defaultMessage: 'Enter a valid start Date',
-    description: 'Tells the user that the blackout start date format is in valid',
+    description: 'Tells the user that the restricted start date format is in valid',
   },
-  blackoutEndDateInValidFormat: {
-    id: 'authoring.blackoutDates.endDate.inValidFormat',
+  restrictedEndDateInValidFormat: {
+    id: 'authoring.restrictedDates.endDate.inValidFormat',
     defaultMessage: 'Enter a valid end date',
-    description: 'Tells the user that the blackout end date format is in valid',
+    description: 'Tells the user that the restricted end date format is in valid',
+  },
+  discussionRestrictionLabel: {
+    id: 'authoring.discussions.builtIn.discussionRestriction.label',
+    defaultMessage: 'Discussion restrictions',
+  },
+  discussionRestrictionHelp: {
+    id: 'authoring.discussions.discussionRestriction.help',
+    defaultMessage: 'If added, learners will not be able to post in discussions between these dates.',
+  },
+  addRestrictedDatesButton: {
+    id: 'authoring.discussions.addRestrictedDatesButton',
+    defaultMessage: 'Add restricted dates',
+  },
+  configureRestrictedDates: {
+    id: 'authoring.discussions.builtIn.configureRestrictedDates.label',
+    defaultMessage: 'Configure restricted date range',
+  },
+  activeRestrictedDatesDeletionLabel: {
+    id: 'authoring.discussions.activeRestrictedDatesDeletion.label',
+    defaultMessage: 'Delete active restricted dates?',
+    description: 'Label for active restricted dates delete popup allowing a user to delete a restricted date range.',
+  },
+  activeRestrictedDatesDeletionHelp: {
+    id: 'authoring.discussions.activeRestrictedDatesDeletion.help',
+    defaultMessage: 'These restricted dates are currently active. If deleted, learners will be able to post in discussions during these dates. Are you sure you want to proceed?',
+    description: 'Help text for delete a active restricted dates from restricted dates section.',
+  },
+  completeRestrictedDatesDeletionHelp: {
+    id: 'authoring.discussions.completeRestrictedDatesDeletion.help',
+    defaultMessage: 'Are you sure you want to delete these restricted dates?',
+    description: 'Help text for delete a complete restricted dates from restricted dates section.',
+  },
+  restrictedDatesDeletionLabel: {
+    id: 'authoring.discussions.restrictedDatesDeletion.label',
+    defaultMessage: 'Delete restricted dates?',
+    description: 'Label for restricted dates delete popup allowing a user to delete a restricted date range.',
+  },
+  restrictedDatesDeletionHelp: {
+    id: 'authoring.discussions.restrictedDatesDeletion.help',
+    defaultMessage: 'If deleted, learners will be able to post in discussions during these dates.',
+    description: 'Help text for delete a upcoming restricted dates from restricted dates section.',
+  },
+  discussionRestrictionOffLabel: {
+    id: 'authoring.discussions.discussionRestrictionOff.label',
+    defaultMessage: 'Off',
+  },
+  discussionRestrictionOnLabel: {
+    id: 'authoring.discussions.discussionRestrictionOn.label',
+    defaultMessage: 'On',
+  },
+  discussionRestrictionScheduledLabel: {
+    id: 'authoring.discussions.discussionRestrictionScheduled.label',
+    defaultMessage: 'Scheduled',
+  },
+  enableRestrictedDatesConfirmationLabel: {
+    id: 'authoring.discussions.enableRestrictedDatesConfirmation.label',
+    defaultMessage: 'Enable restricted dates?',
+  },
+  enableRestrictedDatesConfirmationHelp: {
+    id: 'authoring.discussions.enableRestrictedDatesConfirmation.help',
+    defaultMessage: 'Learners will not be able to post in discussions.',
   },
   deleteAltText: {
     id: 'authoring.topics.delete',
@@ -423,23 +432,23 @@ const messages = defineMessages({
     defaultMessage: 'Collapse',
   },
   startDateLabel: {
-    id: 'authoring.blackoutDates.start.date',
+    id: 'authoring.restrictedDates.start.date',
     defaultMessage: 'Start date',
     description: 'Label for start date field',
   },
   startTimeLabel: {
-    id: 'authoring.blackoutDates.start.time',
-    defaultMessage: 'Start time (optional) ({zone})',
+    id: 'authoring.restrictedDates.start.time',
+    defaultMessage: 'Start time (optional)',
     description: 'label for start time field',
   },
   endDateLabel: {
-    id: 'authoring.blackoutDates.end.date',
+    id: 'authoring.restrictedDates.end.date',
     defaultMessage: 'End date',
     description: 'label for end date field',
   },
   endTimeLabel: {
-    id: 'authoring.blackoutDates.end.time',
-    defaultMessage: 'End time (optional) ({zone})',
+    id: 'authoring.restrictedDates.end.time',
+    defaultMessage: 'End time (optional)',
     description: 'label for end time field',
   },
 });

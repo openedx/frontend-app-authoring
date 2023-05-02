@@ -12,7 +12,7 @@ import messages from '../../messages';
 import { checkFieldErrors } from '../../utils';
 import AnonymousPostingFields from '../shared/AnonymousPostingFields';
 import AppConfigFormDivider from '../shared/AppConfigFormDivider';
-import BlackoutDatesField from '../shared/BlackoutDatesField';
+import DiscussionRestriction from '../shared/DiscussionRestriction';
 import DiscussionTopics from '../shared/discussion-topics/DiscussionTopics';
 import DivisionByGroupFields from '../shared/DivisionByGroupFields';
 import ReportedContentEmailNotifications from '../shared/ReportedContentEmailNotifications';
@@ -39,6 +39,7 @@ const OpenedXConfigForm = ({
     reportedContentEmailNotifications: appConfigObj?.reportedContentEmailNotifications || false,
     enableReportedContentEmailNotifications: Boolean(appConfigObj?.enableReportedContentEmailNotifications) || false,
     blackoutDates: appConfigObj?.blackoutDates || [],
+    restrictedDates: appConfigObj?.restrictedDates || [],
     discussionTopics: discussionTopicsModel || [],
     divideByCohorts: appConfigObj?.divideByCohorts || false,
     divideCourseTopicsByCohorts: appConfigObj?.divideCourseTopicsByCohorts || false,
@@ -53,27 +54,27 @@ const OpenedXConfigForm = ({
   };
   const validationSchema = Yup.object().shape({
     // eslint-disable-next-line react/forbid-prop-types
-    blackoutDates: Yup.array(
+    restrictedDates: Yup.array(
       Yup.object().shape({
         startDate: Yup.string()
-          .checkFormat(intl.formatMessage(messages.blackoutStartDateInValidFormat), 'date')
-          .required(intl.formatMessage(messages.blackoutStartDateRequired)),
+          .checkFormat(intl.formatMessage(messages.restrictedStartDateInValidFormat), 'date')
+          .required(intl.formatMessage(messages.restrictedStartDateRequired)),
         endDate: Yup.string()
-          .checkFormat(intl.formatMessage(messages.blackoutEndDateInValidFormat), 'date')
-          .required(intl.formatMessage(messages.blackoutEndDateRequired))
+          .checkFormat(intl.formatMessage(messages.restrictedEndDateInValidFormat), 'date')
+          .required(intl.formatMessage(messages.restrictedEndDateRequired))
           .when('startDate', {
             is: (startDate) => startDate,
-            then: Yup.string().compare(intl.formatMessage(messages.blackoutEndDateInPast), 'date'),
+            then: Yup.string().compare(intl.formatMessage(messages.restrictedEndDateInPast), 'date'),
           }),
         startTime: Yup.string().checkFormat(
-          intl.formatMessage(messages.blackoutStartTimeInValidFormat),
+          intl.formatMessage(messages.restrictedStartTimeInValidFormat),
           'time',
         ),
         endTime: Yup.string()
-          .checkFormat(intl.formatMessage(messages.blackoutEndTimeInValidFormat), 'time')
+          .checkFormat(intl.formatMessage(messages.restrictedEndTimeInValidFormat), 'time')
           .when('startTime', {
             is: (startTime) => startTime,
-            then: Yup.string().compare(intl.formatMessage(messages.blackoutEndTimeInPast), 'time'),
+            then: Yup.string().compare(intl.formatMessage(messages.restrictedEndTimeInPast), 'time'),
           }),
       }),
     ),
@@ -96,23 +97,23 @@ const OpenedXConfigForm = ({
       {({
         handleSubmit, handleChange, handleBlur, values, errors, touched,
       }) => {
-        const { discussionTopics, blackoutDates } = values;
+        const { discussionTopics, restrictedDates } = values;
         const discussionTopicErrors = discussionTopics.map((value, index) => checkFieldErrors(touched, errors, `discussionTopics.${index}`, 'name'));
-        const blackoutDatesErrors = blackoutDates.map(
-          (value, index) => checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'startDate')
-            || checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'endDate')
-            || checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'startTime')
-            || checkFieldErrors(touched, errors, `blackoutDates.${index}`, 'endTime'),
+        const restrictedDatesErrors = restrictedDates.map(
+          (value, index) => checkFieldErrors(touched, errors, `restrictedDates.${index}`, 'startDate')
+            || checkFieldErrors(touched, errors, `restrictedDates.${index}`, 'endDate')
+            || checkFieldErrors(touched, errors, `restrictedDates.${index}`, 'startTime')
+            || checkFieldErrors(touched, errors, `restrictedDates.${index}`, 'endTime'),
         );
 
         const contextValue = {
           validDiscussionTopics,
           setValidDiscussionTopics,
           discussionTopicErrors,
-          blackoutDatesErrors,
+          restrictedDatesErrors,
           isFormInvalid:
             discussionTopicErrors.some((error) => error)
-            || blackoutDatesErrors.some((error) => error),
+            || restrictedDatesErrors.some((error) => error),
         };
 
         return (
@@ -139,7 +140,7 @@ const OpenedXConfigForm = ({
                 <DivisionByGroupFields />
                 <AppConfigFormDivider thick />
                 <ReportedContentEmailNotifications />
-                <BlackoutDatesField />
+                <DiscussionRestriction />
               </Form>
             </Card>
           </OpenedXConfigFormProvider>
