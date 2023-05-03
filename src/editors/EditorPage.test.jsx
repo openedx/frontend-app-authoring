@@ -12,6 +12,11 @@ const props = {
 };
 jest.mock('react-redux', () => ({
   Provider: 'Provider',
+  connect: (mapStateToProps, mapDispatchToProps) => (component) => ({
+    mapStateToProps,
+    mapDispatchToProps,
+    component,
+  }),
 }));
 jest.mock('./Editor', () => 'Editor');
 

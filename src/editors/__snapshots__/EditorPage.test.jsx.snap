@@ -1,17 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Editor Page snapshots props besides blockType default to null 1`] = `
-<ErrorBoundary>
-  <Provider
-    store={
-      Object {
-        "dispatch": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-        Symbol(Symbol.observable): [Function],
-      }
+<Provider
+  store={
+    Object {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(Symbol.observable): [Function],
     }
+  }
+>
+  <ErrorBoundary
+    learningContextId={null}
+    studioEndpointUrl={null}
   >
     <Editor
       blockId={null}
@@ -21,22 +24,25 @@ exports[`Editor Page snapshots props besides blockType default to null 1`] = `
       onClose={null}
       studioEndpointUrl={null}
     />
-  </Provider>
-</ErrorBoundary>
+  </ErrorBoundary>
+</Provider>
 `;
 
 exports[`Editor Page snapshots rendering correctly with expected Input 1`] = `
-<ErrorBoundary>
-  <Provider
-    store={
-      Object {
-        "dispatch": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-        Symbol(Symbol.observable): [Function],
-      }
+<Provider
+  store={
+    Object {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(Symbol.observable): [Function],
     }
+  }
+>
+  <ErrorBoundary
+    learningContextId="course-v1:edX+DemoX+Demo_Course"
+    studioEndpointUrl="fakeurl.com"
   >
     <Editor
       blockId="block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4"
@@ -46,6 +52,6 @@ exports[`Editor Page snapshots rendering correctly with expected Input 1`] = `
       onClose={[MockFunction props.onClose]}
       studioEndpointUrl="fakeurl.com"
     />
-  </Provider>
-</ErrorBoundary>
+  </ErrorBoundary>
+</Provider>
 `;
