@@ -10,12 +10,14 @@ import TranscriptWidget from './components/TranscriptWidget';
 import VideoSourceWidget from './components/VideoSourceWidget';
 import VideoPreviewWidget from './components/VideoPreviewWidget';
 import './index.scss';
+import SocialShareWidget from './components/SocialShareWidget';
 
 export const VideoSettingsModal = () => (
   <>
     <ErrorSummary />
     <VideoPreviewWidget />
     <VideoSourceWidget />
+    <SocialShareWidget />
     <ThumbnailWidget />
     <TranscriptWidget />
     <DurationWidget />

@@ -8,8 +8,9 @@ import { parseYoutubeId } from '../../services/cms/api';
 
 export const loadVideoData = () => (dispatch, getState) => {
   const state = getState();
-  const rawVideoData = state.app.blockValue.data.metadata ? state.app.blockValue.data.metadata : {};
-  const courseLicenseData = state.app.courseDetails.data ? state.app.courseDetails.data : {};
+  const blockValueData = state.app.blockValue.data;
+  const rawVideoData = blockValueData.metadata ? blockValueData.metadata : {};
+  const courseData = state.app.courseDetails.data ? state.app.courseDetails.data : {};
   const studioView = state.app.studioView?.data?.html;
   const {
     videoId,
@@ -23,16 +24,21 @@ export const loadVideoData = () => (dispatch, getState) => {
   const [licenseType, licenseOptions] = module.parseLicense({ licenseData: studioView, level: 'block' });
   const transcripts = module.parseTranscripts({ transcriptsData: studioView });
   const [courseLicenseType, courseLicenseDetails] = module.parseLicense({
-    licenseData: courseLicenseData.license,
+    licenseData: courseData.license,
     level: 'course',
   });
-
+  const allowVideoSharing = module.parseVideoSharingSetting({
+    courseSetting: blockValueData?.video_sharing_options,
+    blockSetting: rawVideoData.public_access,
+  });
   dispatch(actions.video.load({
     videoSource: videoUrl || '',
     videoId,
     fallbackVideos,
     allowVideoDownloads: rawVideoData.download_video,
-    allowVideoSharing: rawVideoData.public_access,
+    allowVideoSharing,
+    videoSharingLearnMoreLink: blockValueData?.video_sharing_doc_url,
+    videoSharingEnabledForCourse: blockValueData?.video_sharing_enabled,
     transcripts,
     allowTranscriptDownloads: rawVideoData.download_track,
     showTranscriptByDefault: rawVideoData.show_captions,
@@ -61,7 +67,6 @@ export const loadVideoData = () => (dispatch, getState) => {
   dispatch(requests.fetchVideoFeatures({
     onSuccess: (response) => dispatch(actions.video.updateField({
       allowThumbnailUpload: response.data.allowThumbnailUpload,
-      videoSharingEnabledForCourse: response.data.videoSharingEnabled,
     })),
   }));
   const youTubeId = parseYoutubeId(videoUrl);
@@ -98,6 +103,19 @@ export const determineVideoSources = ({
     videoUrl: videoUrl || '',
     fallbackVideos: fallbackVideos || [],
   };
+};
+
+export const parseVideoSharingSetting = ({ courseSetting, blockSetting }) => {
+  switch (courseSetting) {
+    case 'all-on':
+      return { level: 'course', value: true };
+    case 'all-off':
+      return { level: 'course', value: false };
+    case 'per-video':
+      return { level: 'block', value: blockSetting };
+    default:
+      return { level: 'block', value: blockSetting };
+  }
 };
 
 export const parseTranscripts = ({ transcriptsData }) => {

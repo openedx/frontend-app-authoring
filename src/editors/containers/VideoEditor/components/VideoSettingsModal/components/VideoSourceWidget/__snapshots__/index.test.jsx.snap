@@ -287,53 +287,6 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with videoSh
       </OverlayTrigger>
       <ActionRow.Spacer />
     </ActionRow>
-    <ActionRow
-      className="mt-4.5"
-    >
-      <Form.Checkbox
-        checked={false}
-        className="decorative-control-label"
-        onChange={[MockFunction]}
-      >
-        <div
-          className="small text-gray-700"
-        >
-          <FormattedMessage
-            defaultMessage="Allow this video to be shared on social media."
-            description="Label for allow shareable video checkbox"
-            id="authoring.videoeditor.videoSource.allowVideoSharingCheckboxLabel"
-          />
-        </div>
-      </Form.Checkbox>
-      <OverlayTrigger
-        key="top-allow-sharing"
-        overlay={
-          <Tooltip
-            id="tooltip-top-allow-sharing"
-          >
-            <FormattedMessage
-              defaultMessage="Allow learners to share this video publicly on social media.
-    The video will be viewable by anyone, they will not need to enroll in the course
-    or even have an edX account. Links to the course about page and to enroll in the 
-    course will appear alongside the video."
-              description="Message for allow shareable video checkbox"
-              id="authoring.videoeditor.videoSource.allowVideoSharingTooltipMessage"
-            />
-          </Tooltip>
-        }
-        placement="top"
-      >
-        <Icon
-          style={
-            Object {
-              "height": "16px",
-              "width": "16px",
-            }
-          }
-        />
-      </OverlayTrigger>
-      <ActionRow.Spacer />
-    </ActionRow>
   </Form.Group>
   <div
     className="my-4 border-primary-100 border-bottom"
