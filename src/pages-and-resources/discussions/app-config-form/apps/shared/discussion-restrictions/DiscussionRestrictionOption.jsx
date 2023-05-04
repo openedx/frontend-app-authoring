@@ -22,7 +22,8 @@ const DiscussionRestrictionOption = ({
   >
     <Button
       variant="plain"
-      className={`w-100 border border-light-400 rounded-0 ${selectedOption === intl.formatMessage(name) && 'text-white bg-primary-500'}`}
+      className={`w-100 border border-light-400 rounded-0 font-14 height-36
+      ${selectedOption === intl.formatMessage(name) ? 'text-white btn-active' : 'btn-tertiary'}`}
       onClick={() => onClick(intl.formatMessage(name))}
     >
       {intl.formatMessage(name)}

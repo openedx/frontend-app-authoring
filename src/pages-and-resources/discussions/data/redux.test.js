@@ -405,7 +405,7 @@ describe('Data layer integration tests', () => {
           allow_anonymous_to_peers: true,
           reported_content_email_notifications: true,
           always_divide_inline_discussions: true,
-          discussion_restrictions: [],
+          discussion_blackouts: [],
           division_scheme: DivisionSchemes.COHORT,
           discussion_topics: {
             Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },
@@ -425,7 +425,7 @@ describe('Data layer integration tests', () => {
           allow_anonymous_to_peers: true,
           reported_content_email_notifications: true,
           always_divide_inline_discussions: true,
-          discussion_restrictions: [],
+          discussion_blackouts: [],
           division_scheme: DivisionSchemes.COHORT,
           discussion_topics: {
             Edx: { id: '13f106c6-6735-4e84-b097-0456cff55960' },

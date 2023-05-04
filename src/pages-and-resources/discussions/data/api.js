@@ -66,7 +66,7 @@ function normalizePluginConfig(data) {
     enableReportedContentEmailNotifications: data.reported_content_email_notifications_flag,
     divisionScheme: data.division_scheme,
     alwaysDivideInlineDiscussions: data.always_divide_inline_discussions,
-    restrictedDates: normalizeRestrictedDates(data.discussion_restrictions),
+    restrictedDates: normalizeRestrictedDates(data.discussion_blackouts),
     allowDivisionByUnit: false,
     divideByCohorts: enableDivideByCohorts,
     divideCourseTopicsByCohorts: enableDivideCourseTopicsByCohorts,
@@ -188,11 +188,11 @@ function denormalizeData(courseId, appId, data) {
     pluginConfiguration.group_at_subsection = data.groupAtSubsection;
   }
   if (data.restrictedDates?.length) {
-    pluginConfiguration.discussion_restrictions = data.restrictedDates.map((restrictedDates) => (
+    pluginConfiguration.discussion_blackouts = data.restrictedDates.map((restrictedDates) => (
       denormalizeRestrictedDate(restrictedDates)
     ));
   } else if (data.restrictedDates?.length === 0) {
-    pluginConfiguration.discussion_restrictions = [];
+    pluginConfiguration.discussion_blackouts = [];
   }
   if (data.discussionTopics?.length) {
     pluginConfiguration.discussion_topics = data.discussionTopics.reduce((topics, currentTopic) => {

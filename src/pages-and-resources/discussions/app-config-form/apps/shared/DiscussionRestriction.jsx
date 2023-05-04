@@ -49,11 +49,11 @@ const DiscussionRestriction = ({ intl }) => {
     validateForm();
   };
   return (
-    <>
-      <h5 className="text-gray-500 mt-4 mb-2">
+    <div className="discussion-restriction">
+      <h5 className="text-gray-500 mt-4 mb-3 font-14 height-20">
         {intl.formatMessage(messages.discussionRestrictionLabel)}
       </h5>
-      <Row className="no-gutters py-3">
+      <Row className="no-gutters mb-3">
         {discussionRestrictionOptions.map((restrictionOpt) => (
           <DiscussionRestrictionOption
             name={restrictionOpt}
@@ -64,7 +64,10 @@ const DiscussionRestriction = ({ intl }) => {
           />
         ))}
       </Row>
-      <div className="small mb-4 text-muted">
+      <div className={`small mb-3 text-muted font-14 height-24
+      ${selectedOption === messages.discussionRestrictionScheduledLabel.defaultMessage
+        || selectedOption === messages.discussionRestrictionOnLabel.defaultMessage ? 'mb-3' : 'mb-4'}`}
+      >
         {intl.formatMessage(messages.discussionRestrictionHelp)}
       </div>
       {selectedOption === messages.discussionRestrictionScheduledLabel.defaultMessage && (
@@ -84,12 +87,12 @@ const DiscussionRestriction = ({ intl }) => {
                   hasError={Boolean(errors?.restrictedDates?.[index])}
                 />
               ))}
-              <div className="mb-4">
+              <div className="mb-4 height-36">
                 <Button
                   onClick={() => onAddNewItem(push)}
                   variant="link"
                   iconBefore={Add}
-                  className="text-primary-500 p-0"
+                  className="text-primary-500 p-0 height-28"
                 >
                   {intl.formatMessage(messages.addRestrictedDatesButton)}
                 </Button>
@@ -109,10 +112,11 @@ const DiscussionRestriction = ({ intl }) => {
         onCancel={() => setSelectedOption('')}
         cancelLabel={intl.formatMessage(messages.cancelButton)}
         confirmVariant="plain"
-        confirmButtonClass="bg-primary-500 text-white rounded-0"
+        confirmButtonClass="btn-active text-white rounded-0"
+        cancelButtonClass="rounded-0"
       />
     )}
-    </>
+    </div>
   );
 };
 
