@@ -1,5 +1,6 @@
 import * as utils from '../../../utils';
 import * as api from './api';
+import * as mockApi from './mockApi';
 import * as urls from './urls';
 import { get, post, deleteObject } from './utils';
 
@@ -545,6 +546,31 @@ describe('cms api', () => {
       const licenseType = 'all-rights-reserved';
       const licenseDetails = {};
       expect(api.processLicense(licenseType, licenseDetails)).toEqual('all-rights-reserved');
+    });
+  });
+  describe('checkMockApi', () => {
+    const envTemp = process.env;
+    beforeEach(() => {
+      jest.resetModules();
+      process.env = { ...envTemp };
+    });
+    afterEach(() => {
+      process.env = envTemp;
+    });
+    describe('if REACT_APP_DEVGALLERY is true', () => {
+      it('should return the mockApi version of a call when it exists', () => {
+        process.env.REACT_APP_DEVGALLERY = true;
+        expect(api.checkMockApi('fetchBlockById')).toEqual(mockApi.fetchBlockById);
+      });
+      it('should return an empty mock when the call does not exist', () => {
+        process.env.REACT_APP_DEVGALLERY = true;
+        expect(api.checkMockApi('someRAnDomThINg')).toEqual(mockApi.emptyMock);
+      });
+    });
+    describe('if REACT_APP_DEVGALLERY is not true', () => {
+      it('should return the appropriate call', () => {
+        expect(api.checkMockApi('fetchBlockById')).toEqual(apiMethods.fetchBlockById);
+      });
     });
   });
   describe('fetchVideoFeatures', () => {
