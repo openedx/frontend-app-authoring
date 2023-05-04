@@ -19,6 +19,7 @@ export const simpleSelectors = [
   stateKeys.allowVideoDownloads,
   stateKeys.videoSharingEnabledForCourse,
   stateKeys.videoSharingLearnMoreLink,
+  stateKeys.videoSharingEnabledForAll,
   stateKeys.allowVideoSharing,
   stateKeys.thumbnail,
   stateKeys.transcripts,

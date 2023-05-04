@@ -14,6 +14,7 @@ const initialState = {
     level: 'block',
     value: false,
   },
+  videoSharingEnabledForAll: false,
   videoSharingEnabledForCourse: false,
   videoSharingLearnMoreLink: '',
   thumbnail: null,

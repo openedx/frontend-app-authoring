@@ -23,11 +23,15 @@ export const SocialShareWidget = ({
   intl,
   // redux
   allowVideoSharing,
+  isLibrary,
+  videoSharingEnabledForAll,
   videoSharingEnabledForCourse,
   videoSharingLearnMoreLink,
   updateField,
 }) => {
   const isSetByCourse = allowVideoSharing.level === 'course';
+  const videoSharingEnabled = isLibrary ? videoSharingEnabledForAll : videoSharingEnabledForCourse;
+  const learnMoreLink = videoSharingLearnMoreLink || 'http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/social_sharing.html';
   const getSubtitle = () => {
     if (allowVideoSharing.value) {
       return intl.formatMessage(messages.enabledSubtitle);
@@ -35,7 +39,7 @@ export const SocialShareWidget = ({
     return intl.formatMessage(messages.disabledSubtitle);
   };
 
-  return (videoSharingEnabledForCourse ? (
+  return (videoSharingEnabled ? (
     <CollapsibleFormWidget
       fontSize="x-small"
       title={intl.formatMessage(messages.title)}
@@ -59,16 +63,18 @@ export const SocialShareWidget = ({
           {intl.formatMessage(messages.socialSharingCheckboxLabel)}
         </div>
       </Form.Checkbox>
-      <div>
-        <FormattedMessage {...messages.overrideSocialSharingNote} />
-      </div>
+      {!isLibrary && (
+        <div>
+          <FormattedMessage {...messages.overrideSocialSharingNote} />
+        </div>
+      )}
       {isSetByCourse && (
         <div>
           <FormattedMessage {...messages.disclaimerSettingLocation} />
         </div>
       )}
       <div className="mt-3">
-        <Hyperlink className="text-primary-500" destination={videoSharingLearnMoreLink} target="_blank">
+        <Hyperlink className="text-primary-500" destination={learnMoreLink} target="_blank">
           {intl.formatMessage(messages.learnMoreLinkLabel)}
         </Hyperlink>
       </div>
@@ -82,6 +88,7 @@ SocialShareWidget.defaultProps = {
     value: false,
   },
   videoSharingEnabledForCourse: false,
+  videoSharingEnabledForAll: false,
 };
 
 SocialShareWidget.propTypes = {
@@ -92,6 +99,8 @@ SocialShareWidget.propTypes = {
     level: PropTypes.string.isRequired,
     value: PropTypes.bool.isRequired,
   }),
+  isLibrary: PropTypes.bool.isRequired,
+  videoSharingEnabledForAll: PropTypes.bool,
   videoSharingEnabledForCourse: PropTypes.bool,
   videoSharingLearnMoreLink: PropTypes.string.isRequired,
   updateField: PropTypes.func.isRequired,
@@ -99,7 +108,9 @@ SocialShareWidget.propTypes = {
 
 export const mapStateToProps = (state) => ({
   allowVideoSharing: selectors.video.allowVideoSharing(state),
+  isLibrary: selectors.app.isLibrary(state),
   videoSharingLearnMoreLink: selectors.video.videoSharingLearnMoreLink(state),
+  videoSharingEnabledForAll: selectors.video.videoSharingEnabledForAll(state),
   videoSharingEnabledForCourse: selectors.video.videoSharingEnabledForCourse(state),
 });
 

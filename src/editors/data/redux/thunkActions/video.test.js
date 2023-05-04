@@ -53,6 +53,7 @@ const mockAllowTranscriptImport = { data: { command: 'import' } };
 const mockVideoFeatures = {
   data: {
     allowThumbnailUpload: 'soMEbOolEAn',
+    videoSharingEnabled: 'soMEbOolEAn',
   },
 };
 
@@ -190,6 +191,7 @@ describe('video thunkActions', () => {
       dispatchedAction1.fetchVideoFeatures.onSuccess(mockVideoFeatures);
       expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({
         allowThumbnailUpload: mockVideoFeatures.data.allowThumbnailUpload,
+        videoSharingEnabledForAll: mockVideoFeatures.data.videoSharingEnabled,
       }));
       dispatch.mockClear();
       dispatchedAction2.checkTranscriptsForImport.onSuccess(mockAllowTranscriptImport);
