@@ -4,12 +4,17 @@ import { render, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import VideoUploadEditor, { VideoUploader } from '.';
 import * as hooks from './hooks';
+import * as appHooks from '../../hooks';
 
 const mockDispatch = jest.fn();
 const mockOnUpload = jest.fn();
 
 jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
+}));
+jest.mock('../../hooks', () => ({
+  ...jest.requireActual('../../hooks'),
+  navigateTo: jest.fn((args) => ({ navigateTo: args })),
 }));
 
 const defaultEditorProps = {
@@ -50,6 +55,16 @@ describe('VideoUploadEditor', () => {
 
     fireEvent.change(input, { target: { value: 'test value' } });
     expect(input.value).toBe('test value');
+  });
+
+  it('click on the save button', () => {
+    const { getByPlaceholderText, getByTestId } = renderEditorComponent();
+    const testValue = 'test vale';
+    const input = getByPlaceholderText('Paste your video ID or URL');
+    fireEvent.change(input, { target: { value: testValue } });
+    const button = getByTestId('inputSaveButton');
+    fireEvent.click(button);
+    expect(appHooks.navigateTo).toHaveBeenCalled();
   });
 
   it('shows error message with unsupported files', async () => {

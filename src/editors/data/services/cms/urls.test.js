@@ -14,6 +14,7 @@ import {
   checkTranscriptsForImport,
   replaceTranscript,
   courseAdvanceSettings,
+  mediaTranscriptURL,
   videoFeatures,
   courseVideos,
 } from './urls';
@@ -143,6 +144,13 @@ describe('cms url methods', () => {
     it('returns url with studioEndpointUrl and learningContextId', () => {
       expect(courseVideos({ studioEndpointUrl, learningContextId }))
         .toEqual(`${studioEndpointUrl}/videos/${learningContextId}`);
+    });
+  });
+  describe('mediaTranscriptURL', () => {
+    it('returns url with studioEndpointUrl', () => {
+      const transcriptUrl = 'this-is-a-transcript';
+      expect(mediaTranscriptURL({ studioEndpointUrl, transcriptUrl }))
+        .toEqual(`${studioEndpointUrl}${transcriptUrl}`);
     });
   });
 });

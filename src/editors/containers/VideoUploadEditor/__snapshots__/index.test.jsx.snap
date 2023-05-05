@@ -74,6 +74,7 @@ exports[`VideoUploadEditor renders without errors 1`] = `
           />
           <button
             class="border-start-0"
+            data-testid="inputSaveButton"
             type="button"
           >
             <icon
@@ -151,6 +152,7 @@ exports[`VideoUploader renders without errors 1`] = `
         />
         <button
           class="border-start-0"
+          data-testid="inputSaveButton"
           type="button"
         >
           <icon

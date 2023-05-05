@@ -36,6 +36,7 @@ jest.mock('../../data/redux', () => ({
 jest.mock('../../hooks', () => ({
   ...jest.requireActual('../../hooks'),
   navigateCallback: jest.fn((args) => ({ navigateCallback: args })),
+  navigateTo: jest.fn((args) => ({ navigateTo: args })),
 }));
 
 const state = new MockUseState(hooks);
@@ -194,6 +195,23 @@ describe('VideoGallery hooks', () => {
       beforeEach(() => {
         load();
       });
+      describe('selectBtnProps', () => {
+        test('on click, if sets selection', () => {
+          const highlighted = 'videoId';
+          state.mockVal(state.keys.highlighted, highlighted);
+          load();
+          expect(appHooks.navigateTo).not.toHaveBeenCalled();
+          hook.selectBtnProps.onClick();
+          expect(appHooks.navigateTo).toHaveBeenCalled();
+        });
+        test('on click, sets showSelectVideoError to true if nothing is highlighted', () => {
+          state.mockVal(state.keys.highlighted, null);
+          load();
+          hook.selectBtnProps.onClick();
+          expect(appHooks.navigateTo).not.toHaveBeenCalled();
+          expect(state.setState.showSelectVideoError).toHaveBeenCalledWith(true);
+        });
+      });
       describe('galleryProps', () => {
         it('returns highlighted value, initialized to null', () => {
           expect(hook.galleryProps.highlighted).toEqual(state.stateVals.highlighted);
@@ -227,6 +245,17 @@ describe('VideoGallery hooks', () => {
           expect(state.setState.showSelectVideoError).toHaveBeenCalledWith(false);
         });
       });
+    });
+  });
+  describe('fileInputHooks', () => {
+    test('click calls current.click on the ref', () => {
+      jest.spyOn(hooks, hookKeys.handleVideoUpload).mockImplementationOnce();
+      expect(hooks.handleVideoUpload).not.toHaveBeenCalled();
+      hook = hooks.fileInputProps();
+      expect(hooks.handleVideoUpload).toHaveBeenCalled();
+      expect(appHooks.navigateTo).not.toHaveBeenCalled();
+      hook.click();
+      expect(appHooks.navigateTo).toHaveBeenCalled();
     });
   });
   describe('videoProps', () => {

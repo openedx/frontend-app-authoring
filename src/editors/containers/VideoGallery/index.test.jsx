@@ -1,11 +1,13 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 
 import SelectionModal from '../../sharedComponents/SelectionModal';
 import hooks from './hooks';
 import * as module from '.';
 
 jest.mock('../../sharedComponents/SelectionModal', () => 'SelectionModal');
+
+const mockHandleVideoUploadHook = jest.fn();
 
 jest.mock('./hooks', () => ({
   buildVideos: jest.fn(() => []),
@@ -40,7 +42,7 @@ jest.mock('./hooks', () => ({
     selectBtnProps: { select: 'btnProps' },
   })),
   handleCancel: jest.fn(),
-  handleVideoUpload: jest.fn(),
+  handleVideoUpload: () => mockHandleVideoUploadHook,
 }));
 
 jest.mock('../../data/redux', () => ({
@@ -70,6 +72,7 @@ describe('VideoGallery', () => {
     const videoProps = hooks.videoProps();
     beforeEach(() => {
       el = shallow(<module.VideoGallery {...props} />);
+      mockHandleVideoUploadHook.mockReset();
     });
     it('provides confirm action, forwarding selectBtnProps from imgHooks', () => {
       expect(el.find(SelectionModal).props().selectBtnProps).toEqual(
@@ -89,6 +92,13 @@ describe('VideoGallery', () => {
     });
     it('provides a FileInput component with fileInput props from imgHooks', () => {
       expect(el.find(SelectionModal).props().fileInput).toMatchObject(videoProps.fileInput);
+    });
+    it('handleVideoUpload called if there are no videos', () => {
+      el = mount(<module.VideoGallery {...props} />);
+      expect(mockHandleVideoUploadHook).not.toHaveBeenCalled();
+      el.setProps({ rawVideos: {}, isLoaded: true });
+      el.mount();
+      expect(mockHandleVideoUploadHook).toHaveBeenCalled();
     });
   });
 });

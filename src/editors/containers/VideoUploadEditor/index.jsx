@@ -70,7 +70,7 @@ export const VideoUploader = ({ onUpload, errorMessage }) => {
             onKeyDown={(e) => e.key === 'Enter' && handleSaveButtonClick()}
             onClick={(event) => event.preventDefault()}
           />
-          <button className="border-start-0" type="button" onClick={handleSaveButtonClick}>
+          <button className="border-start-0" type="button" onClick={handleSaveButtonClick} data-testid="inputSaveButton">
             <Icon src={ArrowForward} className="rounded-circle text-dark" />
           </button>
         </div>

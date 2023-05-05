@@ -18,7 +18,7 @@ export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, g
       edx_video_id: selectedVideo.edx_video_id,
       thumbnail: selectedVideo.course_video_image_url,
       duration: selectedVideo.duration,
-      transcripts: selectedVideo.transcripts,
+      transcriptsFromSelected: selectedVideo.transcripts,
       selectedVideoTranscriptUrls: selectedVideo.transcript_urls,
     };
   }
@@ -36,7 +36,7 @@ export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, g
   // Use the selected video url first
   const videoSourceUrl = selectedVideoUrl != null ? selectedVideoUrl : videoUrl;
   const [licenseType, licenseOptions] = module.parseLicense({ licenseData: studioView, level: 'block' });
-  const transcripts = rawVideoData.transcripts ? rawVideoData.transcripts
+  const transcripts = rawVideoData.transcriptsFromSelected ? rawVideoData.transcriptsFromSelected
     : module.parseTranscripts({ transcriptsData: studioView });
 
   const [courseLicenseType, courseLicenseDetails] = module.parseLicense({
