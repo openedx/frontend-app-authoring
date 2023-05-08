@@ -20,12 +20,6 @@ export const deleteRestrictedDatesHelperText = {
   ACTIVE: messages.activeRestrictedDatesDeletionHelp,
 };
 
-export const discussionRestrictionOptions = [
-  messages.discussionRestrictionOffLabel,
-  messages.discussionRestrictionOnLabel,
-  messages.discussionRestrictionScheduledLabel,
-];
-
 export const today = moment();
 export const active = [today.format('YYYY-MM-DDTHH:mm'), today.add(5, 'hours').format('YYYY-MM-DDTHH:mm')];
 export const upcoming = [today.add(2, 'days').format('YYYY-MM-DD'), today.add(5, 'days').format('YYYY-MM-DD')];

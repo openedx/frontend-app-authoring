@@ -364,6 +364,10 @@ const messages = defineMessages({
   },
   discussionRestrictionHelp: {
     id: 'authoring.discussions.discussionRestriction.help',
+    defaultMessage: 'If enabled, learners will not be able to post in discussions.',
+  },
+  discussionRestrictionDatesHelp: {
+    id: 'authoring.discussions.discussionRestrictionDates.help',
     defaultMessage: 'If added, learners will not be able to post in discussions between these dates.',
   },
   addRestrictedDatesButton: {

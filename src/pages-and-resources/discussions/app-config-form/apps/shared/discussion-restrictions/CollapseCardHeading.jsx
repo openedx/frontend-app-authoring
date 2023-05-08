@@ -14,9 +14,9 @@ const CollapseCardHeading = ({
   }
 
   return (
-    <div className="py-2">
+    <div className="py-2" style={{ height: 72 }}>
       {badgeStatus && <Badge variant={badgeVariant}>{badgeStatus}</Badge>}
-      <div className="mt-2">{collapseHeadingText}</div>
+      <div className="mt-2 font-14" style={{ lineHeight: '24px' }}>{collapseHeadingText}</div>
     </div>
   );
 };
