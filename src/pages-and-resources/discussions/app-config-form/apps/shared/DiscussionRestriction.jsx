@@ -56,13 +56,13 @@ const DiscussionRestriction = ({ intl }) => {
         variant="button-group"
         className="mb-3 w-100 d-flex flex-row height-36"
       >
-        <Tab eventKey="off" title="Off" tabClassName="flex-grow-1 text-center rounded-0 font-14 line-height-20">
-          <div className="small text-muted font-14 height-24 mb-4">
+        <Tab eventKey="off" title="Off" tabClassName="flex-grow-1 text-center rounded-0 font-size-14 line-height-20">
+          <div className="small text-muted font-size-14 height-24 mb-4">
             {intl.formatMessage(messages.discussionRestrictionHelp)}
           </div>
         </Tab>
-        <Tab eventKey="on" title="On" tabClassName="flex-grow-1 text-center font-14 line-height-20">
-          <div className="small mb-4 text-muted font-14 height-24">
+        <Tab eventKey="on" title="On" tabClassName="flex-grow-1 text-center font-size-14 line-height-20">
+          <div className="small mb-4 text-muted font-size-14 height-24">
             {intl.formatMessage(messages.discussionRestrictionHelp)}
           </div>
           <ConfirmationPopup
@@ -72,12 +72,13 @@ const DiscussionRestriction = ({ intl }) => {
             confirmLabel={intl.formatMessage(messages.ok)}
             cancelLabel={intl.formatMessage(messages.cancelButton)}
             confirmVariant="plain"
-            confirmButtonClass="bg-primary-500 text-white rounded-0"
-            cancelButtonClass="rounded-0"
+            confirmButtonClass="bg-primary-500 text-white rounded-0 action-btn"
+            cancelButtonClass="rounded-0 action-btn"
+            confirmBodyClass="card-body-section"
           />
         </Tab>
-        <Tab eventKey="scheduled" title="Scheduled" tabClassName="flex-grow-1 text-center font-14 line-height-20">
-          <div className="small mb-3 text-muted font-14 height-24">
+        <Tab eventKey="scheduled" title="Scheduled" tabClassName="flex-grow-1 text-center font-size-14 line-height-20">
+          <div className="small mb-3 text-muted font-size-14 height-24">
             {intl.formatMessage(messages.discussionRestrictionDatesHelp)}
           </div>
           <div>

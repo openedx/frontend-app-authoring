@@ -32,7 +32,7 @@
 .line-height-20{
   line-height: 1.25rem !important;
 }
-.font-14{
+.font-size-14{
   font-size: 14px !important;
 }
 
@@ -41,6 +41,18 @@
     &:hover{
       background-color: #0A3055 !important;
     }
+  }
+  .action-btn{
+    padding: 10px 16px;
+    width: 92px;
+    height: 44px;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 24px;
+  }
+  .card-body-section{
+    padding-top: 12px !important;
+    padding-bottom: 20px !important;
   }
   .form-control{
     border-radius: 0px !important;
