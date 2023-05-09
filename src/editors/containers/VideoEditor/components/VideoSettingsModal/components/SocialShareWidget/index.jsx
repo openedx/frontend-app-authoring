@@ -63,15 +63,15 @@ export const SocialShareWidget = ({
           {intl.formatMessage(messages.socialSharingCheckboxLabel)}
         </div>
       </Form.Checkbox>
-      {!isLibrary && (
-        <div>
-          <FormattedMessage {...messages.overrideSocialSharingNote} />
-        </div>
-      )}
       {isSetByCourse && (
-        <div>
-          <FormattedMessage {...messages.disclaimerSettingLocation} />
-        </div>
+        <>
+          <div className="mt-2">
+            <FormattedMessage {...messages.overrideSocialSharingNote} />
+          </div>
+          <div>
+            <FormattedMessage {...messages.disclaimerSettingLocation} />
+          </div>
+        </>
       )}
       <div className="mt-3">
         <Hyperlink className="text-primary-500" destination={learnMoreLink} target="_blank">

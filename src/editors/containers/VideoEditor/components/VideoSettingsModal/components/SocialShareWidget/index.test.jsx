@@ -101,9 +101,13 @@ describe('SocialShareWidget', () => {
         />);
         it('should not have setting location message', () => {
           const formattedMessages = wrapper.find('FormattedMessage');
-          expect(formattedMessages.length).toEqual(2);
+          expect(formattedMessages.length).toEqual(1);
           expect(formattedMessages.at(0)).not.toEqual(messages.disclaimerSettingLocation.defaultMessage);
-          expect(formattedMessages.at(1)).not.toEqual(messages.disclaimerSettingLocation.defaultMessage);
+        });
+        it('should not have override note', () => {
+          const formattedMessages = wrapper.find('FormattedMessage');
+          expect(formattedMessages.length).toEqual(1);
+          expect(formattedMessages.at(0)).not.toEqual(messages.overrideSocialSharingNote.defaultMessage);
         });
         it('should have checkbox disabled prop equal false', () => {
           const disabledCheckbox = wrapper.children().at(1).prop('disabled');
@@ -179,9 +183,13 @@ describe('SocialShareWidget', () => {
         />);
         it('should not have setting location message', () => {
           const formattedMessages = wrapper.find('FormattedMessage');
-          expect(formattedMessages.length).toEqual(2);
+          expect(formattedMessages.length).toEqual(1);
           expect(formattedMessages.at(0)).not.toEqual(messages.disclaimerSettingLocation.defaultMessage);
-          expect(formattedMessages.at(1)).not.toEqual(messages.disclaimerSettingLocation.defaultMessage);
+        });
+        it('should not have override note', () => {
+          const formattedMessages = wrapper.find('FormattedMessage');
+          expect(formattedMessages.length).toEqual(1);
+          expect(formattedMessages.at(0)).not.toEqual(messages.overrideSocialSharingNote.defaultMessage);
         });
         it('should have checkbox disabled prop equal false', () => {
           const disabledCheckbox = wrapper.children().at(1).prop('disabled');

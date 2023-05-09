@@ -31,13 +31,6 @@ exports[`SocialShareWidget rendered with videoSharingEnabled true and allowVideo
       This video is shareable to social media
     </div>
   </Form.Checkbox>
-  <div>
-    <FormattedMessage
-      defaultMessage="Note: This setting is overridden by the course outline page."
-      description="Message that the setting can be overriden in the course outline"
-      id="authoring.videoeditor.socialShare.overrideNote"
-    />
-  </div>
   <div
     className="mt-3"
   >
@@ -77,13 +70,6 @@ exports[`SocialShareWidget rendered with videoSharingEnabled true and allowVideo
       This video is shareable to social media
     </div>
   </Form.Checkbox>
-  <div>
-    <FormattedMessage
-      defaultMessage="Note: This setting is overridden by the course outline page."
-      description="Message that the setting can be overriden in the course outline"
-      id="authoring.videoeditor.socialShare.overrideNote"
-    />
-  </div>
   <div
     className="mt-3"
   >
