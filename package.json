@@ -45,7 +45,7 @@
     "@fortawesome/free-regular-svg-icons": "5.15.4",
     "@fortawesome/free-solid-svg-icons": "5.15.4",
     "@fortawesome/react-fontawesome": "0.1.17",
-    "@popperjs/core": "2.11.2",
+    "@popperjs/core": "2.11.7",
     "@reduxjs/toolkit": "1.8.0",
     "core-js": "3.21.1",
     "eslint-plugin-jsx-a11y": "^6.6.1",
