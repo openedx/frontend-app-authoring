@@ -58,7 +58,7 @@
     "react-dom": "17.0.2",
     "react-dropzone": "12.0.4",
     "react-onclickoutside": "^6.12.1",
-    "react-redux": "7.2.6",
+    "react-redux": "7.2.9",
     "react-router": "5.2.1",
     "react-router-dom": "5.3.0",
     "redux": "4.1.2",
