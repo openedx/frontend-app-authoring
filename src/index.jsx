@@ -9,11 +9,9 @@ import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Route, Switch } from 'react-router-dom';
 
-import { messages as footerMessages } from '@edx/frontend-component-footer';
-
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
-import appMessages from './i18n';
+import messages from './i18n';
 
 import initializeStore from './store';
 import './index.scss';
@@ -79,9 +77,6 @@ initialize({
       }, 'CourseAuthoringConfig');
     },
   },
-  messages: [
-    appMessages,
-    footerMessages,
-  ],
+  messages,
   requireAuthenticatedUser: true,
 });
