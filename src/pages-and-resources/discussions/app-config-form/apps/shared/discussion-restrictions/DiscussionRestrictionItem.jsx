@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@edx/paragon';
 import { useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
@@ -18,7 +18,6 @@ import ConfirmationPopup from '../../../../../../generic/ConfirmationPopup';
 import CollapseCardHeading from './CollapseCardHeading';
 
 const DiscussionRestrictionItem = ({
-  intl,
   restrictedDate,
   onDelete,
   hasError,
@@ -29,6 +28,7 @@ const DiscussionRestrictionItem = ({
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [collapseIsOpen, setCollapseOpen] = useState(restrictedDateError);
   const { setFieldTouched } = useFormikContext();
+  const intl = useIntl();
 
   const handleToggle = (isOpen) => {
     if (!isOpen && hasError) {
@@ -139,7 +139,6 @@ const DiscussionRestrictionItem = ({
 };
 
 DiscussionRestrictionItem.propTypes = {
-  intl: intlShape.isRequired,
   onDelete: PropTypes.func.isRequired,
   hasError: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
@@ -154,4 +153,4 @@ DiscussionRestrictionItem.propTypes = {
   }).isRequired,
 };
 
-export default injectIntl(DiscussionRestrictionItem);
+export default React.memo(DiscussionRestrictionItem);

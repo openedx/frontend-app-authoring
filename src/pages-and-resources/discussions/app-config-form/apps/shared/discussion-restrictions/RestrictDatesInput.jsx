@@ -77,4 +77,4 @@ RestictDatesInput.defaultProps = {
   formGroupClasses: '',
 };
 
-export default RestictDatesInput;
+export default React.memo(RestictDatesInput);

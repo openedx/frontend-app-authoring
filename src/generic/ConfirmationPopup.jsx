@@ -37,7 +37,7 @@ const ConfirmationPopup = ({
 ConfirmationPopup.propTypes = {
   label: PropTypes.string.isRequired,
   bodyText: PropTypes.string.isRequired,
-  onConfirm: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func,
   onCancel: PropTypes.func.isRequired,
   confirmLabel: PropTypes.string.isRequired,
   cancelLabel: PropTypes.string.isRequired,
@@ -51,6 +51,7 @@ ConfirmationPopup.defaultProps = {
   confirmButtonClass: '',
   cancelButtonClass: '',
   confirmBodyClass: '',
+  onConfirm: () => {},
 };
 
 export default ConfirmationPopup;

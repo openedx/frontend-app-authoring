@@ -14,9 +14,9 @@ const CollapseCardHeading = ({
   }
 
   return (
-    <div className="py-2" style={{ height: 72 }}>
-      {badgeStatus && <Badge variant={badgeVariant}>{badgeStatus}</Badge>}
-      <div className="mt-2 font-14" style={{ lineHeight: '24px' }}>{collapseHeadingText}</div>
+    <div style={{ height: 72 }}>
+      {badgeStatus && <Badge variant={badgeVariant} style={{ padding: '2px 8px' }}>{badgeStatus}</Badge>}
+      <div className="mt-2 font-size-14" style={{ lineHeight: '24px' }}>{collapseHeadingText}</div>
     </div>
   );
 };
@@ -34,4 +34,4 @@ CollapseCardHeading.defaultProps = {
   badgeStatus: '',
 };
 
-export default CollapseCardHeading;
+export default React.memo(CollapseCardHeading);

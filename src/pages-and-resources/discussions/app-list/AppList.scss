@@ -37,18 +37,21 @@
 }
 
 .discussion-restriction{
-  .bg-primary-500 {
-    &:hover{
-      background-color: #0A3055 !important;
+  .unselected-button{
+     &:hover{
+     background: #e9e6e4 !important;
     }
   }
   .action-btn{
     padding: 10px 16px;
-    width: 92px;
+    width: 80px;
     height: 44px;
     font-weight: 500;
     font-size: 18px;
     line-height: 24px;
+  }
+  .w-92{
+    width: 92px;
   }
   .card-body-section{
     padding-top: 12px !important;
@@ -61,7 +64,7 @@
     line-height: 24px;
   }
   .collapsible-card{
-    padding: 14px 14px 0px 24px !important;
+    padding: 14px 14px 14px 24px !important;
     min-height:100px;
     .collapsible-trigger{
       padding: 0px !important;
