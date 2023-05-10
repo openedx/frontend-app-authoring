@@ -47,31 +47,6 @@ const messages = defineMessages({
     defaultMessage: '{hint} {count, plural, =0 {} other {(+# more)}}',
     description: 'Summary text for hint settings',
   },
-  matlabSettingTitle: {
-    id: 'authoring.problemeditor.settings.matlab.title',
-    defaultMessage: 'MATLAB API Key',
-    description: 'Matlab settings card title',
-  },
-  matlabSettingText1: {
-    id: 'authoring.problemeditor.settings.matlab.text.one',
-    defaultMessage: 'Enter the API key provided by MathWorks for accessing the MATLAB Hosted Service. This key is granted for exclusive use by this course for the specified duration.',
-    description: 'Matlab settings card text 1',
-  },
-  matlabSettingText2: {
-    id: 'authoring.problemeditor.settings.matlab.text.two',
-    defaultMessage: 'Please do not share the API key with other courses and notify MathWorks immediately if you believe the key is exposed or compromised. To obtain a key for your course, or to report an issue please contact',
-    description: 'Matlab settings card text 2',
-  },
-  matlabInputLabel: {
-    id: 'authoring.problemeditor.settings.matlab.inputLabel',
-    defaultMessage: 'API Key',
-    description: 'Matlab text input label',
-  },
-  matlabNoKeySummary: {
-    id: 'authoring.problemeditor.settings.matlab.noKeySummary',
-    defaultMessage: 'None',
-    description: 'Matlab no key summary',
-  },
   resetSettingsTitle: {
     id: 'authoring.problemeditor.settings.reset.title',
     defaultMessage: 'Show reset option',

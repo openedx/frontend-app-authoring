@@ -125,35 +125,6 @@ describe('Problem settings hooks', () => {
     });
   });
 
-  describe('Matlab card hooks', () => {
-    test('test useEffect triggers set summary', () => {
-      const apiKey = 'matlab_api_key';
-      hooks.matlabCardHooks(apiKey, updateSettings);
-      expect(state.setState[state.keys.summary]).not.toHaveBeenCalled();
-      const [cb, prereqs] = useEffect.mock.calls[0];
-      expect(prereqs).toStrictEqual([apiKey]);
-      cb();
-      expect(state.setState[state.keys.summary])
-        .toHaveBeenCalledWith({ message: apiKey, values: {}, intl: false });
-    });
-    test('test useEffect triggers set summary no key', () => {
-      hooks.matlabCardHooks('', updateSettings);
-      expect(state.setState[state.keys.summary]).not.toHaveBeenCalled();
-      const [cb, prereqs] = useEffect.mock.calls[0];
-      expect(prereqs).toStrictEqual(['']);
-      cb();
-      expect(state.setState[state.keys.summary])
-        .toHaveBeenCalledWith({ message: messages.matlabNoKeySummary, values: {}, intl: true });
-    });
-    test('test handleChange', () => {
-      const apiKey = 'matlab_api_key';
-      const value = 'new_matlab_api_key';
-      output = hooks.matlabCardHooks(apiKey, updateSettings);
-      output.handleChange({ target: { value } });
-      expect(updateSettings).toHaveBeenCalledWith({ matLabApiKey: value });
-    });
-  });
-
   describe('Reset card hooks', () => {
     beforeEach(() => {
       output = hooks.resetCardHooks(updateSettings);

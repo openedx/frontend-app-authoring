@@ -86,27 +86,6 @@ export const hintsRowHooks = (id, hints, updateSettings) => {
   };
 };
 
-export const matlabCardHooks = (matLabApiKey, updateSettings) => {
-  const [summary, setSummary] = module.state.summary({ message: '', values: {}, intl: false });
-
-  useEffect(() => {
-    if (_.isEmpty(matLabApiKey)) {
-      setSummary({ message: messages.matlabNoKeySummary, values: {}, intl: true });
-    } else {
-      setSummary({ message: matLabApiKey, values: {}, intl: false });
-    }
-  }, [matLabApiKey]);
-
-  const handleChange = (event) => {
-    updateSettings({ matLabApiKey: event.target.value });
-  };
-
-  return {
-    summary,
-    handleChange,
-  };
-};
-
 export const resetCardHooks = (updateSettings) => {
   const setReset = (value) => {
     updateSettings({ showResetButton: value });

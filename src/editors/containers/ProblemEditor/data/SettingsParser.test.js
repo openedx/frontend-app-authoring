@@ -1,10 +1,10 @@
 import { parseScoringSettings, parseSettings, parseShowAnswer } from './SettingsParser';
 import {
   checklistWithFeebackHints,
-  dropdownWithFeedbackHints,
   numericWithHints,
   textInputWithHints,
-  singleSelectWithHints, negativeAttempts,
+  singleSelectWithHints,
+  negativeAttempts,
 } from './mockData/problemTestData';
 
 describe('Test Settings to State Parser', () => {
@@ -12,14 +12,6 @@ describe('Test Settings to State Parser', () => {
     const settings = parseSettings(checklistWithFeebackHints.metadata);
     const { hints, ...settingsPayload } = checklistWithFeebackHints.state.settings;
     expect(settings).toStrictEqual(settingsPayload);
-  });
-
-  test('Test partial fields populated', () => {
-    const settings = parseSettings(dropdownWithFeedbackHints.metadata);
-    const { hints, ...settingsPayload } = dropdownWithFeedbackHints.state.settings;
-    expect(settings).not.toStrictEqual(settingsPayload);
-    const { randomization, matLabApiKey, ...settingsPayloadPartial } = settingsPayload;
-    expect(settings).toStrictEqual(settingsPayloadPartial);
   });
 
   test('Test score settings', () => {

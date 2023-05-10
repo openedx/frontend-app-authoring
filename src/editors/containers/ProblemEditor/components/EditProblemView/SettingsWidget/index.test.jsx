@@ -13,7 +13,6 @@ jest.mock('./settingsComponents/GeneralFeedback', () => 'GeneralFeedback');
 jest.mock('./settingsComponents/GroupFeedback', () => 'GroupFeedback');
 jest.mock('./settingsComponents/Randomization', () => 'Randomization');
 jest.mock('./settingsComponents/HintsCard', () => 'HintsCard');
-jest.mock('./settingsComponents/MatlabCard', () => 'MatlabCard');
 jest.mock('./settingsComponents/ResetCard', () => 'ResetCard');
 jest.mock('./settingsComponents/ScoringCard', () => 'ScoringCard');
 jest.mock('./settingsComponents/ShowAnswerCard', () => 'ShowAnswerCard');

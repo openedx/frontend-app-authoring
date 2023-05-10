@@ -73,7 +73,6 @@ export const checklistWithFeebackHints = {
         },
       },
       timeBetween: 3,
-      matLabApiKey: 'sample_matlab_api_key',
       showAnswer: {
         on: 'after_attempts',
         afterAttempts: 2,
@@ -94,7 +93,6 @@ export const checklistWithFeebackHints = {
 {{ (( A B D )) You can specify optional feedback for a combination of answers which appears after the specified set of answers is submitted. }}
 {{ (( A B C D )) You can specify optional feedback for one, several, or all answer combinations. }}
 `,
-    matlab_api_key: 'sample_matlab_api_key',
     max_attempts: 5,
     show_reset_button: true,
     showanswer: 'after_attempts',
@@ -149,7 +147,6 @@ export const dropdownWithFeedbackHints = {
         },
       },
       timeBetween: 3,
-      matLabApiKey: '',
       showAnswer: {
         on: 'after_attempts',
         afterAttempts: 2,
@@ -222,7 +219,6 @@ export const numericWithHints = {
         },
       },
       timeBetween: 0,
-      matLabApiKey: '',
       showAnswer: {
         on: 'after_attempts',
         afterAttempts: 1,
@@ -293,7 +289,6 @@ export const textInputWithHints = {
         },
       },
       timeBetween: 0,
-      matLabApiKey: '',
       showAnswer: {
         on: '',
         afterAttempts: 1,
@@ -365,7 +360,6 @@ export const singleSelectWithHints = {
         },
       },
       timeBetween: 0,
-      matLabApiKey: '',
       showAnswer: {
         on: '',
         afterAttempts: 1,

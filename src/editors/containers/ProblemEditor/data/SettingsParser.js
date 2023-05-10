@@ -50,8 +50,6 @@ export const parseSettings = (metadata) => {
     return settings;
   }
 
-  settings = popuplateItem(settings, 'matlab_api_key', 'matLabApiKey', metadata);
-
   const scoring = parseScoringSettings(metadata);
   if (!_.isEmpty(scoring)) {
     settings = { ...settings, scoring };

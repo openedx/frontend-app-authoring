@@ -27,7 +27,6 @@ const initialState = {
     },
     hints: [],
     timeBetween: 0,
-    matLabApiKey: '',
     showAnswer: {
       on: ShowAnswerTypesKeys.FINISHED,
       afterAttempts: 0,
