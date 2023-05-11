@@ -599,7 +599,7 @@ export const scriptProblemOlX = {
 </numericalresponse>
 </problem>`,
 };
-export const multipleProblemOlX = {
+export const multipleTextInputProblemOlX = {
   rawOLX: `<problem>
   <stringresponse answer="correct answer">
     <textline size="20"/>
@@ -609,7 +609,7 @@ export const multipleProblemOlX = {
   </stringresponse>
 </problem>`,
 };
-export const multipleProblemTwoOlX = {
+export const multipleNumericProblemOlX = {
   rawOLX: `<problem>
   <numericalresponse answer="100">
     <formulaequationinput></formulaequationinput>
@@ -619,7 +619,7 @@ export const multipleProblemTwoOlX = {
   </numericalresponse>
 </problem>`,
 };
-export const multipleProblemThreeOlX = {
+export const NumericAndTextInputProblemOlX = {
   rawOLX: `<problem>
   <stringresponse answer="correct answer">
     <textline size="20"/>

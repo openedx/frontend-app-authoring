@@ -51,6 +51,12 @@ class ReactStateOLXParser {
     this.problemState = problemState.problem;
   }
 
+  /** addHints()
+   * The editorObject saved to the class constuctor is parsed for the attribute hints. No hints returns an empty object.
+   * The hints are parsed and appended to the hintsArray as object representations of the hint. The hints array is saved
+   * to the hint key in the demandHint object and returned.
+   * @return {object} demandhint object with atrribut hint with array of objects
+   */
   addHints() {
     const hintsArray = [];
     const { hints } = this.editorObject;
@@ -73,6 +79,13 @@ class ReactStateOLXParser {
     return demandhint;
   }
 
+  /** addSolution()
+   * The editorObject saved to the class constuctor is parsed for the attribute solution. If the soltuion is empty, it
+   * returns an empty object. The solution is parsed and checked if paragraph key's value is a string or array. Studio
+   * requires a div wrapper with a heading (Explanation). The heading is prepended to the parsed solution object. The
+   * solution object is returned with the updated div wrapper.
+   * @return {object} object representation of solution
+   */
   addSolution() {
     const { solution } = this.editorObject;
     if (!solution || solution.length <= 0) { return {}; }
@@ -91,6 +104,19 @@ class ReactStateOLXParser {
     return solutionObject;
   }
 
+  /** addMultiSelectAnswers(option)
+   * addMultiSelectAnswers takes option. Option is used to assign an answers to the
+   * correct OLX tag. This function is used for multiple choice, checkbox, and
+   * dropdown problems. The editorObject saved to the class constuctor is parsed for
+   * answers (titles only), selectFeedback, and unselectedFeedback. The problemState
+   * saved to the class constructor is parsed for the problemType and answers (full
+   * object). The answers are looped through to  pair feedback with its respective
+   * OLX tags. While matching feedback tags, answers are also mapped to their
+   * respective OLX tags. he object representation of the answers is returned with
+   * the correct wrapping tags. For checkbox problems, compound hints are also returned.
+   * @param {string} option - string of answer tag name
+   * @return {object} object representation of answers
+   */
   addMultiSelectAnswers(option) {
     const choice = [];
     let compoundhint = [];
@@ -173,6 +199,12 @@ class ReactStateOLXParser {
     return widget;
   }
 
+  /** addGroupFeedbackList()
+   * The problemState saved to the class constuctor is parsed for the attribute groupFeedbackList.
+   * No group feedback returns an empty array. Each groupFeedback in the groupFeedback list is
+   * mapped to a new object and appended to the compoundhint array.
+   * @return {object} object representation of compoundhints
+   */
   addGroupFeedbackList() {
     const compoundhint = [];
     const { groupFeedbackList } = this.problemState;
@@ -185,6 +217,11 @@ class ReactStateOLXParser {
     return compoundhint;
   }
 
+  /** addQuestion()
+   * The editorObject saved to the class constuctor is parsed for the attribute question. The question is parsed and
+   * checked for label tags. After the question is fully updated, the questionObject is returned.
+   * @return {object} object representaion of question
+   */
   addQuestion() {
     const { question } = this.editorObject;
     const questionObject = this.questionParser.parse(question);
@@ -207,6 +244,16 @@ class ReactStateOLXParser {
     return questionObject;
   }
 
+  /** buildMultiSelectProblem()
+   * OLX builder for multiple choice, checkbox, and dropdown problems. The question
+   * builder has a different format than the other parts (demand hint, answers, and
+   * solution) of the problem so it has to be inserted into the OLX after the rest
+   * of the problem is built.
+   * @param {string} problemType - string of problem type tag
+   * @param {string} widget - string of answer tag name
+   * @param {string} option - string of feedback tag name
+   * @return {string} string of OLX
+   */
   buildMultiSelectProblem(problemType, widget, option) {
     const question = this.addQuestion();
     const widgetObject = this.addMultiSelectAnswers(option);
@@ -245,6 +292,12 @@ class ReactStateOLXParser {
     return problemString;
   }
 
+  /** buildTextInput()
+   * String response OLX builder. The question builder has a different format than the
+   * other parts (demand hint, answers, and solution) of the problem so it has to be
+   * inserted into the OLX after the rest of the problem is built.
+   * @return {string} string of string response OLX
+   */
   buildTextInput() {
     const question = this.addQuestion();
     const demandhint = this.addHints();
@@ -270,6 +323,20 @@ class ReactStateOLXParser {
     return problemString;
   }
 
+  /** buildTextInputAnswersFeedback()
+   * The editorObject saved to the class constuctor is parsed for the attribute
+   * selectedFeedback. String response problems have two types of feedback tags,
+   * correcthint and stringequalhint. Correcthint is for feedback associated with
+   * correct answers and stringequalhint is for feedback associated with wrong
+   * answers. The answers are fetched from the problemState and looped through to
+   * pair feedback with its respective OLX tags. While matching feedback tags,
+   * answers are also mapped to their respective OLX tags. The first correct
+   * answer is wrapped in stringreponse tag. All other correct answers are wrapped
+   * in additonal_answer tags. Incorrect answers are wrapped in stringequalhint
+   * tags. The object representation of the answers is returned with the correct
+   * wrapping tags.
+   * @return {object} object representation of answers
+   */
   buildTextInputAnswersFeedback() {
     const { answers } = this.problemState;
     const { selectedFeedback } = this.editorObject;
@@ -312,6 +379,12 @@ class ReactStateOLXParser {
     return answerObject;
   }
 
+  /** buildNumericInput()
+   * Numeric response OLX builder. The question builder has a different format than the
+   * other parts (demand hint, answers, and solution) of the problem so it has to be
+   * inserted into the OLX after the rest of the problem is built.
+   * @return {string} string of numeric response OLX
+   */
   buildNumericInput() {
     const question = this.addQuestion();
     const demandhint = this.addHints();
@@ -337,6 +410,18 @@ class ReactStateOLXParser {
     return problemString;
   }
 
+  /** buildNumericalResponse()
+   * The editorObject saved to the class constuctor is parsed for the attribute
+   * selectedFeedback. The tolerance is fetched from the problemState settings.
+   * The answers are fetched from the problemState and looped through to
+   * pair feedback with its respective OLX tags. While matching feedback tags,
+   * answers are also mapped to their respective OLX tags. For each answer, if
+   * it is an answer range, it is santized to be less than to great than. The
+   * first answer is wrapped in numericresponse tag. All other answers are
+   * wrapped in additonal_answer tags. The object representation of the answers
+   * is returned with the correct  wrapping tags.
+   * @return {object} object representation of answers
+   */
   buildNumericalResponse() {
     const { answers } = this.problemState;
     const { tolerance } = this.problemState.settings;
@@ -419,6 +504,14 @@ class ReactStateOLXParser {
     return answerObject;
   }
 
+  /** getAnswerHints(feedback)
+   * getAnswerHints takes feedback. The feedback is checked for definition. If feedback is
+   * undefined or an empty string, it returns an empty object. The defined feedback is
+   * parsed and saved to the key correcthint. Correcthint is the tag name for
+   * numeric response and string response feedback.
+   * @param {string} feedback - string of feedback
+   * @return {object} object representaion of feedback
+   */
   getAnswerHints(feedback) {
     let correcthint = {};
     if (feedback !== undefined && feedback !== '') {
@@ -432,6 +525,13 @@ class ReactStateOLXParser {
     return correcthint;
   }
 
+  /** hasAttributeWithValue(obj, attr)
+   * hasAttributeWithValue takes obj and atrr. The obj is checked for the attribute defined by attr.
+   * Returns true if atrribute is present, otherwise false.
+   * @param {object} obj - defined object
+   * @param {string} attr - string of desired attribute
+   * @return {bool}
+   */
   hasAttributeWithValue(obj, attr) {
     return _.has(obj, attr) && _.get(obj, attr, '').toString().trim() !== '';
   }

@@ -9,9 +9,9 @@ import {
   multipleChoiceWithFeedbackAndHintsOLX,
   textInputWithFeedbackAndHintsOLXWithMultipleAnswers,
   advancedProblemOlX,
-  multipleProblemOlX,
-  multipleProblemTwoOlX,
-  multipleProblemThreeOlX,
+  multipleTextInputProblemOlX,
+  multipleNumericProblemOlX,
+  NumericAndTextInputProblemOlX,
   blankProblemOLX,
   blankQuestionOLX,
   styledQuestionOLX,
@@ -23,227 +23,275 @@ import {
 } from './mockData/olxTestData';
 import { ProblemTypeKeys } from '../../../data/constants/problem';
 
-describe('Check OLXParser problem type', () => {
-  test('Test checkbox with feedback and hints problem type', () => {
-    const olxparser = new OLXParser(checkboxesOLXWithFeedbackAndHintsOLX.rawOLX);
-    const problemType = olxparser.getProblemType();
-    expect(problemType).toBe(ProblemTypeKeys.MULTISELECT);
-  });
-  test('Test numeric problem type', () => {
-    const olxparser = new OLXParser(numericInputWithFeedbackAndHintsOLX.rawOLX);
-    const problemType = olxparser.getProblemType();
-    expect(problemType).toBe(ProblemTypeKeys.NUMERIC);
-  });
-  test('Test dropdown with feedback and hints problem type', () => {
-    const olxparser = new OLXParser(dropdownOLXWithFeedbackAndHintsOLX.rawOLX);
-    const problemType = olxparser.getProblemType();
-    expect(problemType).toBe(ProblemTypeKeys.DROPDOWN);
-  });
-  test('Test multiple choice with feedback and hints problem type', () => {
-    const olxparser = new OLXParser(multipleChoiceWithFeedbackAndHintsOLX.rawOLX);
-    const problemType = olxparser.getProblemType();
-    expect(problemType).toBe(ProblemTypeKeys.SINGLESELECT);
-  });
-  test('Test textual problem type', () => {
-    const olxparser = new OLXParser(textInputWithFeedbackAndHintsOLX.rawOLX);
-    const problemType = olxparser.getProblemType();
-    expect(problemType).toBe(ProblemTypeKeys.TEXTINPUT);
-  });
-  test('Test Advanced Problem Type', () => {
-    const olxparser = new OLXParser(advancedProblemOlX.rawOLX);
-    const problemType = olxparser.getProblemType();
-    expect(problemType).toBe(ProblemTypeKeys.ADVANCED);
-  });
-  test('Test Advanced Problem Type by multiples', () => {
-    const olxparser = new OLXParser(multipleProblemOlX.rawOLX);
-    const problemType = olxparser.getProblemType();
-    expect(problemType).toBe(ProblemTypeKeys.ADVANCED);
-  });
-  test('Test Advanced Problem Type by multiples, second example', () => {
-    const olxparser = new OLXParser(multipleProblemTwoOlX.rawOLX);
-    const problemType = olxparser.getProblemType();
-    expect(problemType).toBe(ProblemTypeKeys.ADVANCED);
-  });
-  test('Test Advanced Problem Type by multiples, third example', () => {
-    const olxparser = new OLXParser(multipleProblemThreeOlX.rawOLX);
-    const problemType = olxparser.getProblemType();
-    expect(problemType).toBe(ProblemTypeKeys.ADVANCED);
-  });
-  test('Test Blank Problem Type', () => {
-    const olxparser = new OLXParser(blankProblemOLX.rawOLX);
-    const problemType = olxparser.getProblemType();
-    expect(problemType).toBe(null);
-  });
-});
+const blankOlxParser = new OLXParser(blankProblemOLX.rawOLX);
+const checkboxOlxParser = new OLXParser(checkboxesOLXWithFeedbackAndHintsOLX.rawOLX);
+const numericOlxParser = new OLXParser(numericInputWithFeedbackAndHintsOLX.rawOLX);
+const dropdownOlxParser = new OLXParser(dropdownOLXWithFeedbackAndHintsOLX.rawOLX);
+const multipleChoiceOlxParser = new OLXParser(multipleChoiceWithFeedbackAndHintsOLX.rawOLX);
+const multipleChoiceWithoutAnswersOlxParser = new OLXParser(multipleChoiceWithoutAnswers.rawOLX);
+const textInputOlxParser = new OLXParser(textInputWithFeedbackAndHintsOLX.rawOLX);
+const textInputMultipleAnswersOlxParser = new OLXParser(textInputWithFeedbackAndHintsOLXWithMultipleAnswers.rawOLX);
+const advancedOlxParser = new OLXParser(advancedProblemOlX.rawOLX);
+const multipleTextInputOlxParser = new OLXParser(multipleTextInputProblemOlX.rawOLX);
+const multipleNumericOlxParser = new OLXParser(multipleNumericProblemOlX.rawOLX);
+const numericAndTextInputOlxParser = new OLXParser(NumericAndTextInputProblemOlX.rawOLX);
+const labelDescriptionQuestionOlxParser = new OLXParser(labelDescriptionQuestionOLX.rawOLX);
+const shuffleOlxParser = new OLXParser(shuffleProblemOLX.rawOLX);
 
-describe('OLX Parser settings attributes on problem tags', () => {
-  test('OLX with attributes on the problem tags should error out', () => {
-    const olxparser = new OLXParser(labelDescriptionQuestionOLX.rawOLX);
-    try {
-      olxparser.getParsedOLXData();
-    } catch (e) {
-      expect(e).toBeInstanceOf(Error);
-      expect(e.message).toBe('Misc Attributes asscoiated with problem, opening in advanced editor');
-    }
-  });
-});
-
-describe('Check OLXParser hints', () => {
-  test('Test checkbox hints', () => {
-    const olxparser = new OLXParser(checkboxesOLXWithFeedbackAndHintsOLX.rawOLX);
-    const hints = olxparser.getHints();
-    expect(hints).toEqual(checkboxesOLXWithFeedbackAndHintsOLX.hints);
-  });
-  test('Test numeric hints', () => {
-    const olxparser = new OLXParser(numericInputWithFeedbackAndHintsOLX.rawOLX);
-    const hints = olxparser.getHints();
-    expect(hints).toEqual(numericInputWithFeedbackAndHintsOLX.hints);
-  });
-  test('Test dropdown with feedback and hints problem type', () => {
-    const olxparser = new OLXParser(dropdownOLXWithFeedbackAndHintsOLX.rawOLX);
-    const hints = olxparser.getHints();
-    expect(hints).toEqual(dropdownOLXWithFeedbackAndHintsOLX.hints);
-  });
-  test('Test multiple choice with feedback and hints problem type', () => {
-    const olxparser = new OLXParser(multipleChoiceWithFeedbackAndHintsOLX.rawOLX);
-    const hints = olxparser.getHints();
-    expect(hints).toEqual(multipleChoiceWithFeedbackAndHintsOLX.hints);
-  });
-  test('Test textual problem type', () => {
-    const olxparser = new OLXParser(textInputWithFeedbackAndHintsOLX.rawOLX);
-    const hints = olxparser.getHints();
-    expect(hints).toEqual(textInputWithFeedbackAndHintsOLX.hints);
-  });
-});
-
-describe('Check OLXParser for answer parsing', () => {
-  test('Test check single select with empty answers', () => {
-    const olxparser = new OLXParser(multipleChoiceWithoutAnswers.rawOLX);
-    const answer = olxparser.parseMultipleChoiceAnswers('multiplechoiceresponse', 'choicegroup', 'choice');
-    expect(answer).toEqual(multipleChoiceWithoutAnswers.data);
-  });
-  test('Test checkbox answer', () => {
-    const olxparser = new OLXParser(checkboxesOLXWithFeedbackAndHintsOLX.rawOLX);
-    const answer = olxparser.parseMultipleChoiceAnswers('choiceresponse', 'checkboxgroup', 'choice');
-    expect(answer).toEqual(checkboxesOLXWithFeedbackAndHintsOLX.data);
-  });
-
-  test('Test checkbox answer', () => {
-    const olxparser = new OLXParser(checkboxesOLXWithFeedbackAndHintsOLX.rawOLX);
-    const answer = olxparser.parseMultipleChoiceAnswers('choiceresponse', 'checkboxgroup', 'choice');
-    expect(answer).toEqual(checkboxesOLXWithFeedbackAndHintsOLX.data);
-  });
-
-  test('Test checkboxs with extraneous tags error out', () => {
-    const olxparser = new OLXParser(shuffleProblemOLX.rawOLX);
-    try {
-      olxparser.parseMultipleChoiceAnswers('choiceresponse', 'checkboxgroup', 'choice');
-    } catch (e) {
-      expect(e).toBeInstanceOf(Error);
-      expect(e.message).toBe('Misc Tags, reverting to Advanced Editor');
-    }
-  });
-
-  test('Test dropdown answer', () => {
-    const olxparser = new OLXParser(dropdownOLXWithFeedbackAndHintsOLX.rawOLX);
-    const answer = olxparser.parseMultipleChoiceAnswers('optionresponse', 'optioninput', 'option');
-    expect(answer).toEqual(dropdownOLXWithFeedbackAndHintsOLX.data);
-  });
-  test('Test multiple choice single select', () => {
-    const olxparser = new OLXParser(multipleChoiceWithFeedbackAndHintsOLX.rawOLX);
-    const answer = olxparser.parseMultipleChoiceAnswers('multiplechoiceresponse', 'choicegroup', 'choice');
-    expect(answer).toEqual(multipleChoiceWithFeedbackAndHintsOLX.data);
-  });
-  test('Test string response answers', () => {
-    const olxparser = new OLXParser(textInputWithFeedbackAndHintsOLX.rawOLX);
-    const answer = olxparser.parseStringResponse();
-    expect(answer).toEqual(textInputWithFeedbackAndHintsOLX.data);
-  });
-  test('Test string response answers with multiple answers', () => {
-    const olxparser = new OLXParser(textInputWithFeedbackAndHintsOLXWithMultipleAnswers.rawOLX);
-    const answer = olxparser.parseStringResponse();
-    expect(answer).toEqual(textInputWithFeedbackAndHintsOLXWithMultipleAnswers.data);
-  });
-  test('Test numerical response answers', () => {
-    const olxparser = new OLXParser(numericInputWithFeedbackAndHintsOLX.rawOLX);
-    const answer = olxparser.parseNumericResponse();
-    expect(answer).toEqual(numericInputWithFeedbackAndHintsOLX.data);
-  });
-});
-
-describe('Check OLXParser for question parsing', () => {
-  test('Test checkbox question', () => {
-    const olxparser = new OLXParser(checkboxesOLXWithFeedbackAndHintsOLX.rawOLX);
-    const question = olxparser.parseQuestions('choiceresponse');
-    expect(question).toEqual(checkboxesOLXWithFeedbackAndHintsOLX.question);
-  });
-  test('Test dropdown question', () => {
-    const olxparser = new OLXParser(dropdownOLXWithFeedbackAndHintsOLX.rawOLX);
-    const question = olxparser.parseQuestions('optionresponse');
-    expect(question).toEqual(dropdownOLXWithFeedbackAndHintsOLX.question);
-  });
-  test('Test multiple choice single select question', () => {
-    const olxparser = new OLXParser(multipleChoiceWithFeedbackAndHintsOLX.rawOLX);
-    const question = olxparser.parseQuestions('multiplechoiceresponse');
-    expect(question).toEqual(multipleChoiceWithFeedbackAndHintsOLX.question);
-  });
-  test('Test string response question', () => {
-    const olxparser = new OLXParser(textInputWithFeedbackAndHintsOLX.rawOLX);
-    const question = olxparser.parseQuestions('stringresponse');
-    expect(question).toEqual(textInputWithFeedbackAndHintsOLX.question);
-  });
-  test('Test numerical response question', () => {
-    const olxparser = new OLXParser(numericInputWithFeedbackAndHintsOLX.rawOLX);
-    const question = olxparser.parseQuestions('numericalresponse');
-    expect(question).toEqual(numericInputWithFeedbackAndHintsOLX.question);
-  });
-  test('Test Advanced Problem Type by script tag', () => {
-    const olxparser = new OLXParser(scriptProblemOlX.rawOLX);
-    expect(() => olxparser.parseQuestions('numericalresponse')).toThrow(new Error('Script Tag, reverting to Advanced Editor'));
-  });
-  test('Test OLX with no question content should have empty string for question', () => {
-    const olxparser = new OLXParser(blankQuestionOLX.rawOLX);
-    const problemType = olxparser.getProblemType();
-    const question = olxparser.parseQuestions(problemType);
-    expect(question).toBe(blankQuestionOLX.question);
-  });
-  test('Test OLX question content with styling should parse/build with correct styling', () => {
-    const olxparser = new OLXParser(styledQuestionOLX.rawOLX);
-    const problemType = olxparser.getProblemType();
-    const question = olxparser.parseQuestions(problemType);
-    expect(question).toBe(styledQuestionOLX.question);
-  });
-  test('Test OLX content with labels and descriptions inside reponse tag should parse correctly, appending the label/description to the question', () => {
-    const olxparser = new OLXParser(labelDescriptionQuestionOLX.rawOLX);
-    const problemType = olxparser.getProblemType();
-    const question = olxparser.parseQuestions(problemType);
-    expect(question).toBe(labelDescriptionQuestionOLX.question);
-  });
-});
-
-describe('OLXParser for problem with solution tag', () => {
-  describe('for checkbox questions', () => {
-    test('should parse text in p tags', () => {
-      const { rawOLX } = getCheckboxesOLXWithFeedbackAndHintsOLX();
-      const olxparser = new OLXParser(rawOLX);
-      const problemType = olxparser.getProblemType();
-      const explanation = olxparser.getSolutionExplanation(problemType);
-      const expected = getCheckboxesOLXWithFeedbackAndHintsOLX().solutionExplanation;
-      expect(explanation.replace(/\s/g, '')).toBe(expected.replace(/\s/g, ''));
+describe('OLXParser', () => {
+  describe('throws error and redirects to advanced editor', () => {
+    describe('when settings attributes are on problem tags', () => {
+      it('should throw error and contain message regarding opening advanced editor', () => {
+        try {
+          labelDescriptionQuestionOlxParser.getParsedOLXData();
+        } catch (e) {
+          expect(e).toBeInstanceOf(Error);
+          expect(e.message).toBe('Misc Attributes asscoiated with problem, opening in advanced editor');
+        }
+      });
+    });
+    describe('when settings attributes are on problem tags', () => {
+      it('should throw error and contain message regarding opening advanced editor', () => {
+        try {
+          shuffleOlxParser.getParsedOLXData();
+        } catch (e) {
+          expect(e).toBeInstanceOf(Error);
+          expect(e.message).toBe('Misc Tags, reverting to Advanced Editor');
+        }
+      });
+    });
+    describe('when question parser finds script tags', () => {
+      it('should throw error and contain message regarding opening advanced editor', () => {
+        const olxparser = new OLXParser(scriptProblemOlX.rawOLX);
+        expect(() => olxparser.parseQuestions('numericalresponse')).toThrow(new Error('Script Tag, reverting to Advanced Editor'));
+      });
     });
   });
-});
-
-describe('Check OLXParser for proper encoding', () => {
-  it('should not encode html entities', () => {
-    const olxparser = new OLXParser(htmlEntityTestOLX.rawOLX);
-    const problemType = olxparser.getProblemType();
-    const question = olxparser.parseQuestions(problemType);
-    expect(question).toBe(htmlEntityTestOLX.question);
+  describe('getProblemType()', () => {
+    describe('given a blank problem', () => {
+      const problemType = blankOlxParser.getProblemType();
+      it('should equal ProblemTypeKeys.MULTISELECT', () => {
+        expect(problemType).toEqual(null);
+      });
+    });
+    describe('given checkbox olx with feedback and hints', () => {
+      const problemType = checkboxOlxParser.getProblemType();
+      it('should equal ProblemTypeKeys.MULTISELECT', () => {
+        expect(problemType).toEqual(ProblemTypeKeys.MULTISELECT);
+      });
+    });
+    describe('given numeric olx with feedback and hints', () => {
+      const problemType = numericOlxParser.getProblemType();
+      it('should equal ProblemTypeKeys.NUMERIC', () => {
+        expect(problemType).toEqual(ProblemTypeKeys.NUMERIC);
+      });
+    });
+    describe('given dropdown olx with feedback and hints', () => {
+      const problemType = dropdownOlxParser.getProblemType();
+      it('should equal ProblemTypeKeys.DROPDOWN', () => {
+        expect(problemType).toEqual(ProblemTypeKeys.DROPDOWN);
+      });
+    });
+    describe('given multiple choice olx with feedback and hints', () => {
+      const problemType = multipleChoiceOlxParser.getProblemType();
+      it('should equal ProblemTypeKeys.SINGLESELECT', () => {
+        expect(problemType).toEqual(ProblemTypeKeys.SINGLESELECT);
+      });
+    });
+    describe('given text input olx with feedback and hints', () => {
+      const problemType = textInputOlxParser.getProblemType();
+      it('should equal ProblemTypeKeys.TEXTINPUT', () => {
+        expect(problemType).toEqual(ProblemTypeKeys.TEXTINPUT);
+      });
+    });
+    describe('given an advanced problem', () => {
+      const problemType = advancedOlxParser.getProblemType();
+      it('should equal ProblemTypeKeys.ADVANCED', () => {
+        expect(problemType).toEqual(ProblemTypeKeys.ADVANCED);
+      });
+    });
+    describe('given a problem with multiple text inputs', () => {
+      const problemType = multipleTextInputOlxParser.getProblemType();
+      it('should equal ProblemTypeKeys.ADVANCED', () => {
+        expect(problemType).toEqual(ProblemTypeKeys.ADVANCED);
+      });
+    });
+    describe('given a problem with multiple numeric inputs', () => {
+      const problemType = multipleNumericOlxParser.getProblemType();
+      it('should equal ProblemTypeKeys.ADVANCED', () => {
+        expect(problemType).toEqual(ProblemTypeKeys.ADVANCED);
+      });
+    });
+    describe('given a problem with both a text and numeric input', () => {
+      const problemType = numericAndTextInputOlxParser.getProblemType();
+      it('should equal ProblemTypeKeys.ADVANCED', () => {
+        expect(problemType).toEqual(ProblemTypeKeys.ADVANCED);
+      });
+    });
   });
-  it('should not parse hex numbers and leading zeros', () => {
-    const olxparser = new OLXParser(numberParseTestOLX.rawOLX);
-    const answer = olxparser.parseMultipleChoiceAnswers('multiplechoiceresponse', 'choicegroup', 'choice');
-    expect(answer).toEqual(numberParseTestOLX.data);
+  describe('getHints()', () => {
+    describe('given a problem with no hints', () => {
+      const hints = labelDescriptionQuestionOlxParser.getHints();
+      it('should return an empty array', () => {
+        expect(hints).toEqual([]);
+      });
+    });
+    describe('given checkbox olx with feedback and hints', () => {
+      const hints = checkboxOlxParser.getHints();
+      it('should equal an array of hints', () => {
+        expect(hints).toEqual(checkboxesOLXWithFeedbackAndHintsOLX.hints);
+      });
+    });
+    describe('given numeric olx with feedback and hints', () => {
+      const hints = numericOlxParser.getHints();
+      it('should equal an array of hints', () => {
+        expect(hints).toEqual(numericInputWithFeedbackAndHintsOLX.hints);
+      });
+    });
+    describe('given dropdown olx with feedback and hints', () => {
+      const hints = dropdownOlxParser.getHints();
+      it('should equal an array of hints', () => {
+        expect(hints).toEqual(dropdownOLXWithFeedbackAndHintsOLX.hints);
+      });
+    });
+    describe('given multiple choice olx with feedback and hints', () => {
+      const hints = multipleChoiceOlxParser.getHints();
+      it('should equal an array of hints', () => {
+        expect(hints).toEqual(multipleChoiceWithFeedbackAndHintsOLX.hints);
+      });
+    });
+    describe('given text input olx with feedback and hints', () => {
+      const hints = textInputOlxParser.getHints();
+      it('should equal an array of hints', () => {
+        expect(hints).toEqual(textInputWithFeedbackAndHintsOLX.hints);
+      });
+    });
+  });
+  describe('parseMultipleChoiceAnswers()', () => {
+    describe('given a problem with no answers', () => {
+      const { answers } = multipleChoiceWithoutAnswersOlxParser.parseMultipleChoiceAnswers(
+        'multiplechoiceresponse',
+        'choicegroup',
+        'choice',
+      );
+      it('should return a default answer', () => {
+        expect(answers).toEqual(multipleChoiceWithoutAnswers.data.answers);
+        expect(answers).toHaveLength(1);
+      });
+    });
+    describe('given multiple choice olx with hex numbers and leading zeros', () => {
+      const olxparser = new OLXParser(numberParseTestOLX.rawOLX);
+      const { answers } = olxparser.parseMultipleChoiceAnswers('multiplechoiceresponse', 'choicegroup', 'choice');
+      it('should not parse hex numbers and leading zeros', () => {
+        expect(answers).toEqual(numberParseTestOLX.data.answers);
+      });
+      it('should equal an array of objects with length four', () => {
+        expect(answers).toHaveLength(4);
+      });
+    });
+    describe('given checkbox olx with feedback and hints', () => {
+      const { answers } = checkboxOlxParser.parseMultipleChoiceAnswers('choiceresponse', 'checkboxgroup', 'choice');
+      it('should equal an array of objects with length four', () => {
+        expect(answers).toEqual(checkboxesOLXWithFeedbackAndHintsOLX.data.answers);
+        expect(answers).toHaveLength(4);
+      });
+    });
+    describe('given dropdown olx with feedback and hints', () => {
+      const { answers } = dropdownOlxParser.parseMultipleChoiceAnswers('optionresponse', 'optioninput', 'option');
+      it('should equal an array of objects with length three', () => {
+        expect(answers).toEqual(dropdownOLXWithFeedbackAndHintsOLX.data.answers);
+        expect(answers).toHaveLength(3);
+      });
+    });
+    describe('given multiple choice olx with feedback and hints', () => {
+      const { answers } = multipleChoiceOlxParser.parseMultipleChoiceAnswers('multiplechoiceresponse', 'choicegroup', 'choice');
+      it('should equal an array of objects with length three', () => {
+        expect(answers).toEqual(multipleChoiceWithFeedbackAndHintsOLX.data.answers);
+        expect(answers).toHaveLength(3);
+      });
+    });
+  });
+  describe('parseStringResponse()', () => {
+    // describe('given a problem with no answers', () => {
+    //   // TODO
+    // });
+    describe('given text input olx with feedback and hints', () => {
+      const { answers } = textInputOlxParser.parseStringResponse();
+      it('should equal an array of objects with length three', () => {
+        expect(answers).toEqual(textInputWithFeedbackAndHintsOLX.data.answers);
+        expect(answers).toHaveLength(3);
+      });
+    });
+    describe('given text input olx with feedback and hints with multiple answers', () => {
+      const { answers } = textInputMultipleAnswersOlxParser.parseStringResponse();
+      it('should equal an array of objects with length four', () => {
+        expect(answers).toEqual(textInputWithFeedbackAndHintsOLXWithMultipleAnswers.data.answers);
+        expect(answers).toHaveLength(4);
+      });
+    });
+  });
+  describe('parseNumericResponse()', () => {
+    // describe('given a problem with no answers', () => {
+    //   // TODDO
+    // });
+    describe('given numeric olx with feedback and hints', () => {
+      const { answers } = numericOlxParser.parseNumericResponse();
+      it('should equal an array of objects with length two', () => {
+        expect(answers).toEqual(numericInputWithFeedbackAndHintsOLX.data.answers);
+        expect(answers).toHaveLength(2);
+      });
+    });
+  });
+  describe('parseQuestions()', () => {
+    describe('given olx with no question content', () => {
+      const olxparser = new OLXParser(blankQuestionOLX.rawOLX);
+      const problemType = olxparser.getProblemType();
+      const question = olxparser.parseQuestions(problemType);
+      it('should return an empty string for question', () => {
+        expect(question).toBe(blankQuestionOLX.question);
+      });
+    });
+    describe('given a simple problem olx', () => {
+      const question = textInputOlxParser.parseQuestions('stringresponse');
+      it('should return a string of HTML', () => {
+        expect(question).toEqual(textInputWithFeedbackAndHintsOLX.question);
+      });
+    });
+    describe('given olx with html entities', () => {
+      const olxparser = new OLXParser(htmlEntityTestOLX.rawOLX);
+      const problemType = olxparser.getProblemType();
+      const question = olxparser.parseQuestions(problemType);
+      it('should not encode html entities', () => {
+        expect(question).toEqual(htmlEntityTestOLX.question);
+      });
+    });
+    describe('given olx with styled content', () => {
+      const olxparser = new OLXParser(styledQuestionOLX.rawOLX);
+      const problemType = olxparser.getProblemType();
+      const question = olxparser.parseQuestions(problemType);
+      it('should pase/build correct styling', () => {
+        expect(question).toBe(styledQuestionOLX.question);
+      });
+    });
+    describe('given olx with label and description tags inside response tag', () => {
+      const olxparser = new OLXParser(labelDescriptionQuestionOLX.rawOLX);
+      const problemType = olxparser.getProblemType();
+      const question = olxparser.parseQuestions(problemType);
+      it('should append the label/description to the question', () => {
+        expect(question).toBe(labelDescriptionQuestionOLX.question);
+      });
+    });
+  });
+  describe('getSolutionExplanation()', () => {
+    describe('for checkbox questions', () => {
+      test('should parse text in p tags', () => {
+        const { rawOLX } = getCheckboxesOLXWithFeedbackAndHintsOLX();
+        const olxparser = new OLXParser(rawOLX);
+        const problemType = olxparser.getProblemType();
+        const explanation = olxparser.getSolutionExplanation(problemType);
+        const expected = getCheckboxesOLXWithFeedbackAndHintsOLX().solutionExplanation;
+        expect(explanation.replace(/\s/g, '')).toBe(expected.replace(/\s/g, ''));
+      });
+    });
   });
 });

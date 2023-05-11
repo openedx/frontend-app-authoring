@@ -105,6 +105,19 @@ export class OLXParser {
     }
   }
 
+  /** parseMultipleChoiceAnswers(problemType, widgetName, option)
+   * parseMultipleChoiceAnswers takes a problemType, widgetName, and a valid option. The
+   * olx for the given problem type and widget is parsed. Depending on the problem
+   * type, the title for an answer will be parsed differently because of single select and multiselect
+   * problems are rich text while dropdown answers are plain text. The rich text is parsed into an object
+   * and is converted back into a string before being added to the answer object. The parsing returns a
+   * data object with an array of answer objects. If the olx has grouped feedback, this will also be
+   * included in the data object.
+   * @param {string} problemType - string of the olx problem type
+   * @param {string} widgetName - string of the wrapping tag name (optioninput, choicegroup, checkboxgroup)
+   * @param {string} option - string of the type of answers (choice or option)
+   * @return {object} object containing an array of answer objects and possibly an array of grouped feedback
+   */
   parseMultipleChoiceAnswers(problemType, widgetName, option) {
     const answers = [];
     let data = {};
@@ -167,6 +180,14 @@ export class OLXParser {
     return data;
   }
 
+  /** getAnswerFeedback(choice, hintKey)
+   * getAnswerFeedback takes a choice and a valid option. The choice object is checked for
+   * selected and unselected feedback. The respective values are added to the feedback object.
+   * The feedback object is returned.
+   * @param {object} choice - object of an answer choice
+   * @param {string} hintKey - string of the wrapping tag name (optionhint or choicehint)
+   * @return {object} object containing selected and unselected feedback
+   */
   getAnswerFeedback(choice, hintKey) {
     let feedback = {};
     let feedbackKeys = 'selectedFeedback';
@@ -194,6 +215,12 @@ export class OLXParser {
     return feedback;
   }
 
+  /** getGroupedFeedback(choices)
+   * getGroupedFeedback takes choices. The choices with the attribute compoundhint are parsed for
+   * the text value and the answers associated with the feedback. The groupFeedback array is returned.
+   * @param {object} choices - object of problem's subtags
+   * @return {array} array containing objects of feedback and associated answer ids
+   */
   getGroupedFeedback(choices) {
     const groupFeedback = [];
     if (_.has(choices, 'compoundhint')) {
@@ -219,6 +246,15 @@ export class OLXParser {
     return groupFeedback;
   }
 
+  /** parseStringResponse()
+   * The OLX saved to the class constuctor is parsed for text input answers. There are two
+   * types of tags with the answer attribute, stringresponse (the problem wrapper) and
+   * additional_answer. Looping through each tag, the associated title and feedback are added
+   * to the answers object and appended to the answers array. The array returned in an object
+   * with the key "answers". The object also conatins additional attributes that belong to the
+   * string response tag.
+   * @return {object} object containing an array of answer objects and object of additionalStringAttributes
+   */
   parseStringResponse() {
     const { stringresponse } = this.problem;
     const answers = [];
@@ -295,6 +331,14 @@ export class OLXParser {
     return data;
   }
 
+  /** parseNumericResponse()
+   * The OLX saved to the class constuctor is parsed for numeric answers. There are two
+   * types of tags for numeric answers, responseparam and additional_answer. Looping through
+   * each tag, the associated title and feedback and if the answer is an answer range are
+   * added to the answers object and appended to the answers array. The array returned in
+   * an object with the key "answers".
+   * @return {object} object containing an array of answer objects
+   */
   parseNumericResponse() {
     const { numericalresponse } = this.problem;
     let answerFeedback = '';
@@ -343,6 +387,15 @@ export class OLXParser {
     return { answers };
   }
 
+  /** parseQuestions(problemType)
+   * parseQuestions takes a problemType. The problem type is used to determine where the
+   * text for the question lies (sibling or child to warpping problem type tags).
+   * Using the XMLBuilder, the question is built with its proper children (including label
+   * and description). The string version of the OLX is return, replacing the description
+   * tags with italicized tags for styling purposes.
+   * @param {string} problemType - string of the olx problem type
+   * @return {string} string of OLX
+   */
   parseQuestions(problemType) {
     const options = {
       ignoreAttributes: false,
@@ -380,6 +433,12 @@ export class OLXParser {
     return questionString.replace(/<description>/gm, '<em>').replace(/<\/description>/gm, '</em>');
   }
 
+  /** getHints()
+   * The OLX saved to the class constuctor is parsed for demand hint tags with hint subtags. An empty array is returned
+   * if there are no hints in the OLX. Otherwise the hint tag is parsed and appended to the hintsObject arrary. After
+   * going through all the hints the hintsObject array is returned.
+   * @return {array} array of hint objects
+   */
   getHints() {
     const hintsObject = [];
     if (_.has(this.problem, 'demandhint.hint')) {
@@ -403,6 +462,14 @@ export class OLXParser {
     return hintsObject;
   }
 
+  /** parseQuestions(problemType)
+   * parseQuestions takes a problemType. The problem type is used to determine where the
+   * text for the solution lies (sibling or child to warpping problem type tags).
+   * Using the XMLBuilder, the solution is built removing the redundant "explanation" that is
+   * appended for Studio styling purposes. The string version of the OLX is return.
+   * @param {string} problemType - string of the olx problem type
+   * @return {string} string of OLX
+   */
   getSolutionExplanation(problemType) {
     if (!_.has(this.problem, `${problemType}.solution`) && !_.has(this.problem, 'solution')) { return null; }
     let solution = _.get(this.problem, `${problemType}.solution`, null) || _.get(this.problem, 'solution', null);
@@ -433,6 +500,13 @@ export class OLXParser {
     return solutionString;
   }
 
+  /** getFeedback(xmlElement)
+   * getFeedback takes xmlElement. The xmlElement is searched for the attribute correcthint.
+   * An empty string is returned if the parameter is not present. Otherwise a string of the feedback
+   * is returned.
+   * @param {object} xmlElement - object of answer attributes
+   * @return {string} string of feedback
+   */
   getFeedback(xmlElement) {
     if (!_.has(xmlElement, 'correcthint')) { return ''; }
     const feedback = _.get(xmlElement, 'correcthint');
@@ -440,6 +514,13 @@ export class OLXParser {
     return feedbackString;
   }
 
+  /** getProblemType()
+   * The OLX saved to the class constuctor is parsed for a valid problem type (referencing problemKeys).
+   * For blank problems, it returns null. For OLX problems tags not defined in problemKeys or OLX with
+   * multiple problem tags, it returns advanced. For defined, single problem tag, it returns the
+   * associated problem type.
+   * @return {string} problem type
+   */
   getProblemType() {
     const problemKeys = Object.keys(this.problem);
     const problemTypeKeys = problemKeys.filter(key => Object.values(ProblemTypeKeys).indexOf(key) !== -1);
@@ -462,6 +543,14 @@ export class OLXParser {
     return problemType;
   }
 
+  /** getGeneralFeedback({ answers, problemType })
+   * getGeneralFeedback takes answers and problemType. The problem type determines if the problem should be checked
+   * for general feedback. The incorrect answers are checked to seee if all of their feedback is the same and
+   * returns the first incorrect answer's feedback if true. When conditions are unmet, it returns and empty string.
+   * @param {array} answers - array of answer objects
+   * @param {string} problemType - string of string of the olx problem type
+   * @return {string} text for incorrect feedback
+   */
   getGeneralFeedback({ answers, problemType }) {
     /* Feedback is Generalized for a Problem IFF:
     1. The problem is of Types: Single Select or Dropdown.
