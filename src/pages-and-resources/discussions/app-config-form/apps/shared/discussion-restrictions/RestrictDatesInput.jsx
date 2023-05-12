@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Form } from '@edx/paragon';
 import { useFormikContext, getIn } from 'formik';
 import PropTypes from 'prop-types';
@@ -25,10 +25,10 @@ const RestictDatesInput = ({
   const fieldTouched = getIn(touched, `${fieldNameCommonBase}.${fieldName}`);
   const isInvalidInput = Boolean(!inFocus && fieldError && fieldTouched);
 
-  const handleFocusOut = (event) => {
+  const handleFocusOut = useCallback((event) => {
     handleBlur(event);
     setInFocus(false);
-  };
+  }, []);
 
   return (
     <Form.Group

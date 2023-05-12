@@ -54,4 +54,4 @@ ConfirmationPopup.defaultProps = {
   onConfirm: () => {},
 };
 
-export default ConfirmationPopup;
+export default React.memo(ConfirmationPopup);

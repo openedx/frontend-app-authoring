@@ -1,6 +1,5 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import React, { useCallback, useState } from 'react';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { injectIntl, useIntl } from '@edx/frontend-platform/i18n';
 import { Button, ButtonGroup } from '@edx/paragon';
 import { Add } from '@edx/paragon/icons';
 
@@ -15,13 +14,15 @@ import { denormalizeRestrictedDate } from '../../../data/api';
 import { restrictedDatesStatus as STATUS, discussionRestrictionOptions } from '../../../data/constants';
 import DiscussionRestrictionOption from './discussion-restrictions/DiscussionRestrictionOption';
 
-const DiscussionRestriction = ({ intl }) => {
+const DiscussionRestriction = () => {
   const {
     values: appConfig,
     setFieldValue,
     errors,
     validateForm,
   } = useFormikContext();
+
+  const intl = useIntl();
   const { restrictedDates } = appConfig;
   const [selectedOption, setSelectedOption] = useState('');
 
@@ -43,10 +44,11 @@ const DiscussionRestriction = ({ intl }) => {
     status: STATUS.UPCOMING,
   };
 
-  const onAddNewItem = async (push) => {
+  const onAddNewItem = useCallback(async (push) => {
     await push(newRestrictedDateItem);
     validateForm();
-  };
+  }, []);
+
   return (
     <div className="discussion-restriction">
       <h5 className="text-gray-500 mt-4 mb-3 line-height-20">
@@ -125,8 +127,4 @@ const DiscussionRestriction = ({ intl }) => {
   );
 };
 
-DiscussionRestriction.propTypes = {
-  intl: intlShape.isRequired,
-};
-
-export default injectIntl(DiscussionRestriction);
+export default injectIntl(React.memo(DiscussionRestriction));

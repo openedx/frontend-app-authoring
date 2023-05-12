@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@edx/paragon';
 import { useFormikContext } from 'formik';
@@ -30,14 +30,23 @@ const DiscussionRestrictionItem = ({
   const { setFieldTouched } = useFormikContext();
   const intl = useIntl();
 
-  const handleToggle = (isOpen) => {
+  const handleToggle = useCallback((isOpen) => {
     if (!isOpen && hasError) {
       return setCollapseOpen(true);
     }
     return setCollapseOpen(isOpen);
-  };
+  }, []);
 
-  const getHeading = (isOpen) => (
+   const handleOnClose = useCallback(() => {
+    ['startDate', 'startTime', 'endDate', 'endTime'].forEach(field => (
+      setFieldTouched(`${fieldNameCommonBase}.${field}`, true)
+    ));
+    if (!hasError) {
+      onClose();
+    }
+  }, []);
+
+  const getHeading = useCallback((isOpen) => (
     <CollapseCardHeading
       isOpen={isOpen}
       expandHeadingText={intl.formatMessage(messages.configureRestrictedDates)}
@@ -47,7 +56,7 @@ const DiscussionRestrictionItem = ({
         status: _.startCase(_.toLower(restrictedDate.status)),
       })}
     />
-  );
+  ), []);
 
   if (showDeletePopup) {
     return (
@@ -65,15 +74,6 @@ const DiscussionRestrictionItem = ({
       />
     );
   }
-
-  const handleOnClose = () => {
-    ['startDate', 'startTime', 'endDate', 'endTime'].forEach(field => (
-      setFieldTouched(`${fieldNameCommonBase}.${field}`, true)
-    ));
-    if (!hasError) {
-      onClose();
-    }
-  };
 
   return (
     <CollapsableEditor

@@ -79,4 +79,4 @@ CollapsableEditor.defaultProps = {
   },
 };
 
-export default CollapsableEditor;
+export default React.memo(CollapsableEditor);

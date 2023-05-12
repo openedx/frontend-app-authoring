@@ -50,4 +50,4 @@ FieldFeedback.defaultProps = {
   errorMessage: '',
 };
 
-export default FieldFeedback;
+export default React.memo(FieldFeedback);
