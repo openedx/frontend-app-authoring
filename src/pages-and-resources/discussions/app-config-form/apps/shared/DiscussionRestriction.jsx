@@ -49,6 +49,14 @@ const DiscussionRestriction = () => {
     validateForm();
   }, []);
 
+  const handleClick = useCallback((value) => {
+    setSelectedOption(value);
+  }, []);
+
+  const handleCancel = useCallback(() => {
+    setSelectedOption('');
+  }, []);
+
   return (
     <div className="discussion-restriction">
       <h5 className="text-gray-500 mt-4 mb-3 line-height-20">
@@ -60,17 +68,13 @@ const DiscussionRestriction = () => {
             label={option.label}
             value={option.value}
             selectedOption={selectedOption}
-            onClick={(value) => setSelectedOption(value)}
+            onClick={handleClick}
           >{option.label}
           </DiscussionRestrictionOption>
 
         ))}
       </ButtonGroup>
-      {selectedOption === 'scheduled' ? (
-        <div className="small mb-3 text-muted font-size-14 height-24">
-          {intl.formatMessage(messages.discussionRestrictionDatesHelp)}
-        </div>
-      ) : (
+      {(selectedOption === 'on' || selectedOption === 'off') && (
         <div className="small text-muted font-size-14 height-24 mb-4">
           {intl.formatMessage(messages.discussionRestrictionHelp)}
         </div>
@@ -80,18 +84,21 @@ const DiscussionRestriction = () => {
       <ConfirmationPopup
         label={intl.formatMessage(messages.enableRestrictedDatesConfirmationLabel)}
         bodyText={intl.formatMessage(messages.enableRestrictedDatesConfirmationHelp)}
-        onCancel={() => setSelectedOption('')}
+        onCancel={handleCancel}
         confirmLabel={intl.formatMessage(messages.ok)}
         cancelLabel={intl.formatMessage(messages.cancelButton)}
         confirmVariant="plain"
         confirmButtonClass="bg-primary-500 text-white rounded-0 action-btn"
         cancelButtonClass="rounded-0 action-btn w-92"
-        confirmBodyClass="card-body-section"
+        sectionClasses="card-body-section"
       />
       )}
 
       {selectedOption === 'scheduled' && (
       <div>
+        <div className="small mb-3 text-muted font-size-14 height-24">
+          {intl.formatMessage(messages.discussionRestrictionDatesHelp)}
+        </div>
         <FieldArray
           name="restrictedDates"
           render={({ push, remove }) => (

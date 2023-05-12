@@ -33,21 +33,21 @@ export const discussionRestrictionLabel = {
 };
 
 export const discussionRestrictionOptions = [
-{
-value: discussionRestriction.OFF,
-description: messages.discussionRestrictionOffLabel,
-label: discussionRestrictionLabel[discussionRestriction.OFF],
-},
-{
-value: discussionRestriction.ON,
-description: messages.discussionRestrictionOnLabel,
-label: discussionRestrictionLabel[discussionRestriction.ON],
-},
-{
-value: discussionRestriction.SCHEDULED,
-description: messages.discussionRestrictionScheduledLabel,
-label: discussionRestrictionLabel[discussionRestriction.SCHEDULED],
-},
+  {
+    value: discussionRestriction.OFF,
+    description: messages.discussionRestrictionOffLabel,
+    label: discussionRestrictionLabel[discussionRestriction.OFF],
+  },
+  {
+    value: discussionRestriction.ON,
+    description: messages.discussionRestrictionOnLabel,
+    label: discussionRestrictionLabel[discussionRestriction.ON],
+  },
+  {
+    value: discussionRestriction.SCHEDULED,
+    description: messages.discussionRestrictionScheduledLabel,
+    label: discussionRestrictionLabel[discussionRestriction.SCHEDULED],
+  },
 ];
 
 export const today = moment();

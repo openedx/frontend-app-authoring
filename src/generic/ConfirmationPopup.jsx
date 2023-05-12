@@ -12,7 +12,7 @@ const ConfirmationPopup = ({
   confirmVariant,
   confirmButtonClass,
   cancelButtonClass,
-  confirmBodyClass,
+  sectionClasses,
 }) => (
   <Card className="rounded mb-3 px-1">
     <Card.Header
@@ -21,7 +21,7 @@ const ConfirmationPopup = ({
       size="sm"
     />
     <Card.Body>
-      <Card.Section className={`text-justify text-muted pt-2 pb-3 ${confirmBodyClass}`}>{bodyText}</Card.Section>
+      <Card.Section className={`text-justify text-muted pt-2 pb-3 ${sectionClasses}`}>{bodyText}</Card.Section>
       <Card.Footer>
         <Button variant="tertiary" className={cancelButtonClass} onClick={onCancel}>
           {cancelLabel}
@@ -37,21 +37,20 @@ const ConfirmationPopup = ({
 ConfirmationPopup.propTypes = {
   label: PropTypes.string.isRequired,
   bodyText: PropTypes.string.isRequired,
-  onConfirm: PropTypes.func,
+  onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   confirmLabel: PropTypes.string.isRequired,
   cancelLabel: PropTypes.string.isRequired,
   confirmButtonClass: PropTypes.string,
   cancelButtonClass: PropTypes.string,
   confirmVariant: PropTypes.string,
-  confirmBodyClass: PropTypes.string,
+  sectionClasses: PropTypes.string,
 };
 ConfirmationPopup.defaultProps = {
   confirmVariant: 'outline-brand',
   confirmButtonClass: '',
   cancelButtonClass: '',
-  confirmBodyClass: '',
-  onConfirm: () => {},
+  sectionClasses: '',
 };
 
 export default React.memo(ConfirmationPopup);

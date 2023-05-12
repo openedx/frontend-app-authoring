@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@edx/paragon';
 import { useFormikContext } from 'formik';
@@ -35,7 +35,7 @@ const DiscussionRestrictionItem = ({
       return setCollapseOpen(true);
     }
     return setCollapseOpen(isOpen);
-  }, []);
+  }, [hasError]);
 
    const handleOnClose = useCallback(() => {
     ['startDate', 'startTime', 'endDate', 'endTime'].forEach(field => (
@@ -44,7 +44,7 @@ const DiscussionRestrictionItem = ({
     if (!hasError) {
       onClose();
     }
-  }, []);
+  }, [hasError, onClose]);
 
   const getHeading = useCallback((isOpen) => (
     <CollapseCardHeading
@@ -56,36 +56,49 @@ const DiscussionRestrictionItem = ({
         status: _.startCase(_.toLower(restrictedDate.status)),
       })}
     />
-  ), []);
+  ), [restrictedDate]);
 
-  if (showDeletePopup) {
-    return (
-      <ConfirmationPopup
-        label={restrictedDate.status === constants.ACTIVE
-          ? intl.formatMessage(messages.activeRestrictedDatesDeletionLabel)
-          : intl.formatMessage(messages.restrictedDatesDeletionLabel)}
-        bodyText={intl.formatMessage(deleteRestrictedDatesHelperText[restrictedDate.status])}
-        onConfirm={onDelete}
-        confirmLabel={intl.formatMessage(messages.deleteButton)}
-        onCancel={() => setShowDeletePopup(false)}
-        cancelLabel={intl.formatMessage(messages.cancelButton)}
-        confirmVariant="plain"
-        confirmButtonClass="text-danger-500 border-gray-300 rounded-0"
-      />
-    );
-  }
+  const handleShowDeletePopup = useCallback(() => {
+    setShowDeletePopup(true);
+  }, []);
+
+  const handleCancelDeletePopup = useCallback(() => {
+    setShowDeletePopup(false);
+  }, []);
+
+  const ConfirmationPopupComp = useMemo(() => {
+    if (showDeletePopup) {
+      return (
+        <ConfirmationPopup
+          label={restrictedDate.status === constants.ACTIVE
+            ? intl.formatMessage(messages.activeRestrictedDatesDeletionLabel)
+            : intl.formatMessage(messages.restrictedDatesDeletionLabel)}
+          bodyText={intl.formatMessage(deleteRestrictedDatesHelperText[restrictedDate.status])}
+          onConfirm={onDelete}
+          confirmLabel={intl.formatMessage(messages.deleteButton)}
+          onCancel={handleCancelDeletePopup}
+          cancelLabel={intl.formatMessage(messages.cancelButton)}
+          confirmVariant="plain"
+          confirmButtonClass="text-danger-500 border-gray-300 rounded-0"
+        />
+      );
+    }
+    return null;
+  }, [showDeletePopup, restrictedDate.status, onDelete]);
+
+if (ConfirmationPopupComp) { return ConfirmationPopupComp; }
 
   return (
     <CollapsableEditor
       open={collapseIsOpen}
       onToggle={handleToggle}
       title={getHeading(collapseIsOpen)}
-      onDelete={() => setShowDeletePopup(true)}
+      onDelete={handleShowDeletePopup}
       expandAlt={intl.formatMessage(messages.expandAltText)}
       collapseAlt={intl.formatMessage(messages.collapseAltText)}
       deleteAlt={intl.formatMessage(messages.deleteAltText)}
       data-testid={restrictedDate.id}
-      onClose={() => handleOnClose()}
+      onClose={handleOnClose}
     >
       <Form.Row className="mx-2 pt-3">
         <RestrictDatesInput

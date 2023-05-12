@@ -28,7 +28,11 @@ const RestictDatesInput = ({
   const handleFocusOut = useCallback((event) => {
     handleBlur(event);
     setInFocus(false);
-  }, []);
+  }, [handleBlur]);
+
+  const handleSetFocus = useCallback(() => {
+    setInFocus(true);
+  }, [handleBlur]);
 
   return (
     <Form.Group
@@ -43,8 +47,8 @@ const RestictDatesInput = ({
         onChange={handleChange}
         floatingLabel={label}
         className={fieldClasses}
-        onBlur={(event) => handleFocusOut(event)}
-        onFocus={() => setInFocus(true)}
+        onBlur={handleFocusOut}
+        onFocus={handleSetFocus}
       />
       <FieldFeedback
         feedbackCondition={inFocus}

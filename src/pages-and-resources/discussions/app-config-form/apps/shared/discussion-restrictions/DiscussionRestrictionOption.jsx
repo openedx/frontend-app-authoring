@@ -14,7 +14,8 @@ const DiscussionRestrictionOption = ({
      ${selectedOption === value ? 'text-white bg-primary-500' : 'unselected-button'}`}
     onClick={() => onClick(value)}
     style={{ padding: '8px 12px', fontWeight: 500 }}
-  >{label}
+  >
+    {label}
   </Button>
   );
 
