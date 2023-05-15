@@ -19,7 +19,7 @@ export const switchToAdvancedEditor = () => (dispatch, getState) => {
 };
 
 export const isBlankProblem = ({ rawOLX }) => {
-  if (rawOLX === blankProblemOLX.rawOLX) {
+  if (rawOLX.replace(/\s/g, '') === blankProblemOLX.rawOLX) {
     return true;
   }
   return false;
@@ -43,7 +43,7 @@ export const getDataFromOlx = ({ rawOLX, rawSettings }) => {
   if (!_.isEmpty(rawOLX) && !_.isEmpty(data)) {
     return { ...data, rawOLX, settings: parsedSettings };
   }
-  return {};
+  return { settings: parsedSettings };
 };
 
 export const loadProblem = ({ rawOLX, rawSettings, defaultSettings }) => (dispatch) => {

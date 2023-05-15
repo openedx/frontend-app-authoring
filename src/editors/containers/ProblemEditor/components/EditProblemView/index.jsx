@@ -17,7 +17,7 @@ import { selectors } from '../../../../data/redux';
 import RawEditor from '../../../../sharedComponents/RawEditor';
 import { ProblemTypeKeys } from '../../../../data/constants/problem';
 
-import { parseState, noAnswerModalToggle, getContent } from './hooks';
+import { parseState, saveWarningModalToggle, getContent } from './hooks';
 import './index.scss';
 import messages from './messages';
 
@@ -35,16 +35,16 @@ export const EditProblemView = ({
   // injected
   intl,
 }) => {
+  const dispatch = useDispatch();
   const editorRef = useRef(null);
   const isAdvancedProblemType = problemType === ProblemTypeKeys.ADVANCED;
-  const { isNoAnswerModalOpen, openNoAnswerModal, closeNoAnswerModal } = noAnswerModalToggle();
-  const dispatch = useDispatch();
+  const { isSaveWarningModalOpen, openSaveWarningModal, closeSaveWarningModal } = saveWarningModalToggle();
 
   return (
     <EditorContainer
       getContent={() => getContent({
         problemState,
-        openNoAnswerModal,
+        openSaveWarningModal,
         isAdvancedProblemType,
         editorRef,
         assets,
@@ -52,13 +52,15 @@ export const EditProblemView = ({
       })}
     >
       <AlertModal
-        title={intl.formatMessage(messages.noAnswerModalTitle)}
-        isOpen={isNoAnswerModalOpen}
-        onClose={closeNoAnswerModal}
+        title={isAdvancedProblemType ? (
+          intl.formatMessage(messages.olxSettingDiscrepancyTitle)
+        ) : intl.formatMessage(messages.noAnswerTitle)}
+        isOpen={isSaveWarningModalOpen}
+        onClose={closeSaveWarningModal}
         footerNode={(
           <ActionRow>
-            <Button variant="tertiary" onClick={closeNoAnswerModal}>
-              <FormattedMessage {...messages.noAnswerCancelButtonLabel} />
+            <Button variant="tertiary" onClick={closeSaveWarningModal}>
+              <FormattedMessage {...messages.saveWarningModalCancelButtonLabel} />
             </Button>
             <Button
               onClick={() => saveBlock({
@@ -74,17 +76,23 @@ export const EditProblemView = ({
                 analytics,
               })}
             >
-              <FormattedMessage {...messages.noAnswerSaveButtonLabel} />
+              <FormattedMessage {...messages.saveWarningModalSaveButtonLabel} />
             </Button>
           </ActionRow>
         )}
       >
-        <div>
-          <FormattedMessage {...messages.noAnswerModalBodyQuestion} />
-        </div>
-        <div>
-          <FormattedMessage {...messages.noAnswerModalBodyExplanation} />
-        </div>
+        {isAdvancedProblemType ? (
+          <FormattedMessage {...messages.olxSettingDiscrepancyBodyExplanation} />
+        ) : (
+          <>
+            <div>
+              <FormattedMessage {...messages.saveWarningModalBodyQuestion} />
+            </div>
+            <div>
+              <FormattedMessage {...messages.noAnswerBodyExplanation} />
+            </div>
+          </>
+        )}
       </AlertModal>
       <div className="editProblemView d-flex flex-row flex-nowrap justify-content-end">
         {isAdvancedProblemType ? (

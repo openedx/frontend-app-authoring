@@ -13,8 +13,8 @@ exports[`EditorProblemView component renders raw editor 1`] = `
         >
           <FormattedMessage
             defaultMessage="Cancel"
-            description="Label for cancel button in the no answer modal"
-            id="authoring.problemEditor.editProblemView.noAnswerModal.cancelButton.label"
+            description="Label for cancel button in the save warning modal"
+            id="authoring.problemEditor.editProblemView.saveWarningModal.cancelButton.label"
           />
         </Button>
         <Button
@@ -22,30 +22,23 @@ exports[`EditorProblemView component renders raw editor 1`] = `
         >
           <FormattedMessage
             defaultMessage="Ok"
-            description="Label for save button in the no answer modal"
-            id="authoring.problemEditor.editProblemView.noAnswerModal.saveButton.label"
+            description="Label for save button in the save warning modal"
+            id="authoring.problemEditor.editProblemView.saveWarningModal.saveButton.label"
           />
         </Button>
       </ActionRow>
     }
     isOpen={false}
     onClose={[Function]}
-    title="No answer specified"
+    title="OLX settings discrepancy"
   >
-    <div>
-      <FormattedMessage
-        defaultMessage="Are you sure you want to exit the editor?"
-        description="Question in body of no answer modal"
-        id="authoring.problemEditor.editProblemView.noAnswerModal.body.question"
-      />
-    </div>
-    <div>
-      <FormattedMessage
-        defaultMessage="No correct answer has been specified."
-        description="Explanation in body of no answer modal"
-        id="authoring.problemEditor.editProblemView.noAnswerModal.body.explanation"
-      />
-    </div>
+    <FormattedMessage
+      defaultMessage="A discrepancy was found between the settings defined in the OLX's problem tag and the
+      settings selected in the sidebar. The settings defined in the OLX's problem tag will be saved and
+      corresponding values in the sidebar will be discarded."
+      description="Explanation in body of mismatched settings modal"
+      id="authoring.problemEditor.editProblemView.saveWarningModal.olxSettingDiscrepancy.body.explanation"
+    />
   </Component>
   <div
     className="editProblemView d-flex flex-row flex-nowrap justify-content-end"
@@ -88,8 +81,8 @@ exports[`EditorProblemView component renders simple view 1`] = `
         >
           <FormattedMessage
             defaultMessage="Cancel"
-            description="Label for cancel button in the no answer modal"
-            id="authoring.problemEditor.editProblemView.noAnswerModal.cancelButton.label"
+            description="Label for cancel button in the save warning modal"
+            id="authoring.problemEditor.editProblemView.saveWarningModal.cancelButton.label"
           />
         </Button>
         <Button
@@ -97,8 +90,8 @@ exports[`EditorProblemView component renders simple view 1`] = `
         >
           <FormattedMessage
             defaultMessage="Ok"
-            description="Label for save button in the no answer modal"
-            id="authoring.problemEditor.editProblemView.noAnswerModal.saveButton.label"
+            description="Label for save button in the save warning modal"
+            id="authoring.problemEditor.editProblemView.saveWarningModal.saveButton.label"
           />
         </Button>
       </ActionRow>
@@ -110,15 +103,15 @@ exports[`EditorProblemView component renders simple view 1`] = `
     <div>
       <FormattedMessage
         defaultMessage="Are you sure you want to exit the editor?"
-        description="Question in body of no answer modal"
-        id="authoring.problemEditor.editProblemView.noAnswerModal.body.question"
+        description="Question in body of save warning modal"
+        id="authoring.problemEditor.editProblemView.saveWarningModal.body.question"
       />
     </div>
     <div>
       <FormattedMessage
         defaultMessage="No correct answer has been specified."
         description="Explanation in body of no answer modal"
-        id="authoring.problemEditor.editProblemView.noAnswerModal.body.explanation"
+        id="authoring.problemEditor.editProblemView.saveWarningModal.noAnswer.body.explanation"
       />
     </div>
   </Component>
