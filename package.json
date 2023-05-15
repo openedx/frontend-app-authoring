@@ -81,7 +81,7 @@
     "jest-fetch-mock": "3.0.3",
     "mock-xmlhttprequest": "7.0.4",
     "redux-mock-store": "1.5.4",
-    "rosie": "2.0.1",
+    "rosie": "2.1.0",
     "webpack-merge": "5.8.0"
   }
 }
