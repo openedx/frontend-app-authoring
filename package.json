@@ -73,7 +73,7 @@
     "@sheerun/mutationobserver-shim": "0.3.3",
     "@testing-library/dom": "8.20.0",
     "@testing-library/react": "12.1.5",
-    "@wojtekmaj/enzyme-adapter-react-17": "0.6.6",
+    "@wojtekmaj/enzyme-adapter-react-17": "0.8.0",
     "copy-webpack-plugin": "^6.4.1",
     "enzyme": "3.11.0",
     "husky": "7.0.4",
