@@ -196,17 +196,16 @@ export const RandomizationTypesKeys = StrictDict({
   ONRESET: 'on_reset',
   PERSTUDENT: 'per_student',
 });
+
 export const RandomizationTypes = StrictDict({
-  [RandomizationTypesKeys.ALWAYS]:
-        {
-          id: 'authoring.problemeditor.settings.RandomizationTypes.always',
-          defaultMessage: 'Always',
-        },
-  [RandomizationTypesKeys.NEVER]:
-    {
-      id: 'authoring.problemeditor.settings.RandomizationTypes.never',
-      defaultMessage: 'Never',
-    },
+  [RandomizationTypesKeys.ALWAYS]: {
+    id: 'authoring.problemeditor.settings.RandomizationTypes.always',
+    defaultMessage: 'Always',
+  },
+  [RandomizationTypesKeys.NEVER]: {
+    id: 'authoring.problemeditor.settings.RandomizationTypes.never',
+    defaultMessage: 'Never',
+  },
   [RandomizationTypesKeys.ONRESET]: {
     id: 'authoring.problemeditor.settings.RandomizationTypes.onreset',
     defaultMessage: 'On Reset',
@@ -216,3 +215,5 @@ export const RandomizationTypes = StrictDict({
     defaultMessage: 'Per Student',
   },
 });
+
+export const RichTextProblems = [ProblemTypeKeys.SINGLESELECT, ProblemTypeKeys.MULTISELECT];

@@ -9,8 +9,15 @@ export const state = StrictDict({
   isFeedbackVisible: (val) => useState(val),
 });
 
-export const removeAnswer = ({ answer, dispatch }) => () => {
-  dispatch(actions.problem.deleteAnswer({ id: answer.id, correct: answer.correct }));
+export const removeAnswer = ({
+  answer,
+  dispatch,
+}) => () => {
+  dispatch(actions.problem.deleteAnswer({
+    id: answer.id,
+    correct: answer.correct,
+    editorState: fetchEditorContent({ format: '' }),
+  }));
 };
 
 export const setAnswer = ({ answer, hasSingleAnswer, dispatch }) => (payload) => {
@@ -52,7 +59,7 @@ export const useFeedback = (answer) => {
     // Show feedback fields if feedback is present
     const isVisible = !!answer.selectedFeedback || !!answer.unselectedFeedback;
     setIsFeedbackVisible(isVisible);
-  }, []);
+  }, [answer]);
 
   const toggleFeedback = (open) => {
     // Do not allow to hide if feedback is added

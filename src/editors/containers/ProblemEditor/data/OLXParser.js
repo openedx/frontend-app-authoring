@@ -630,6 +630,8 @@ export class OLXParser {
       } else {
         settings.tolerance = { value: parseInt(toleranceValue), type: 'Number' };
       }
+    } else {
+      settings.tolerance = { value: null, type: 'None' };
     }
     if (solutionExplanation) { settings.solutionExplanation = solutionExplanation; }
 

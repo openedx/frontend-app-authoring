@@ -3,7 +3,12 @@ import { useState, useEffect } from 'react';
 import _ from 'lodash-es';
 import * as module from './hooks';
 import messages from './messages';
-import { ProblemTypeKeys, ProblemTypes, ShowAnswerTypesKeys } from '../../../../../data/constants/problem';
+import {
+  ProblemTypeKeys,
+  ProblemTypes,
+  RichTextProblems,
+  ShowAnswerTypesKeys,
+} from '../../../../../data/constants/problem';
 import { fetchEditorContent } from '../hooks';
 
 export const state = {
@@ -214,11 +219,9 @@ export const typeRowHooks = ({
   updateField,
   updateAnswer,
 }) => {
-  const richTextProblems = [ProblemTypeKeys.SINGLESELECT, ProblemTypeKeys.MULTISELECT];
-
   const clearPreviouslySelectedAnswers = () => {
     let currentAnswerTitles;
-    if (richTextProblems.includes(problemType)) {
+    if (RichTextProblems.includes(problemType)) {
       currentAnswerTitles = fetchEditorContent({ format: 'text' }).answers;
     }
     answers.forEach(answer => {
@@ -233,7 +236,7 @@ export const typeRowHooks = ({
 
   const updateAnswersToCorrect = () => {
     let currentAnswerTitles;
-    if (richTextProblems.includes(problemType)) {
+    if (RichTextProblems.includes(problemType)) {
       currentAnswerTitles = fetchEditorContent({ format: 'text' }).answers;
     }
     answers.forEach(answer => {
@@ -252,7 +255,7 @@ export const typeRowHooks = ({
   const onClick = () => {
     // Numeric, text, and dropdowns cannot render HTML as answer values, so if switching from a single select
     // or multi-select problem the rich text needs to covert to plain text
-    if (typeKey === ProblemTypeKeys.TEXTINPUT && richTextProblems.includes(problemType)) {
+    if (typeKey === ProblemTypeKeys.TEXTINPUT && RichTextProblems.includes(problemType)) {
       convertToPlainText();
     }
     // Dropdown problems can only have one correct answer. When there is more than one correct answer
@@ -260,7 +263,7 @@ export const typeRowHooks = ({
     if (typeKey === ProblemTypeKeys.DROPDOWN) {
       if (correctAnswerCount > 1) {
         clearPreviouslySelectedAnswers();
-      } else if (richTextProblems.includes(problemType)) {
+      } else if (RichTextProblems.includes(problemType)) {
         convertToPlainText();
       }
     }

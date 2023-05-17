@@ -7,6 +7,7 @@ import { AnswerOption, mapStateToProps } from './AnswerOption';
 jest.mock('../../../../../data/redux', () => ({
   selectors: {
     problem: {
+      answers: jest.fn(state => ({ answers: state })),
       problemType: jest.fn(state => ({ problemType: state })),
     },
   },

@@ -2,7 +2,7 @@ import _ from 'lodash-es';
 import { createSlice } from '@reduxjs/toolkit';
 import { indexToLetterMap } from '../../../containers/ProblemEditor/data/OLXParser';
 import { StrictDict } from '../../../utils';
-import { ProblemTypeKeys, ShowAnswerTypesKeys } from '../../constants/problem';
+import { ProblemTypeKeys, RichTextProblems, ShowAnswerTypesKeys } from '../../constants/problem';
 import { ToleranceTypes } from '../../../containers/ProblemEditor/components/EditProblemView/SettingsWidget/settingsComponents/Tolerance/constants';
 
 const nextAlphaId = (lastId) => String.fromCharCode(lastId.charCodeAt(0) + 1);
@@ -82,41 +82,66 @@ const problem = createSlice({
       };
     },
     deleteAnswer: (state, { payload }) => {
-      const { id, correct } = payload;
-      if (state.answers.length <= 1) {
-        if (state.answers.length > 0 && state.answers[0].isAnswerRange) {
-          return {
-            ...state,
-            correctAnswerCount: 1,
-            answers: [{
-              id: 'A',
-              title: '',
-              selectedFeedback: '',
-              unselectedFeedback: '',
-              correct: state.problemType === ProblemTypeKeys.NUMERIC,
-              isAnswerRange: false,
-            },
-            ],
-          };
-        }
-        return state;
-      }
-
-      let { correctAnswerCount } = state;
-      if (correct) {
-        correctAnswerCount -= 1;
+      const { id, correct, editorState } = payload;
+      const EditorsArray = window.tinymce.editors;
+      if (state.answers.length === 1) {
+        return {
+          ...state,
+          correctAnswerCount: state.problemType === ProblemTypeKeys.NUMERIC ? 1 : 0,
+          answers: [{
+            id: 'A',
+            title: '',
+            selectedFeedback: '',
+            unselectedFeedback: '',
+            correct: state.problemType === ProblemTypeKeys.NUMERIC,
+            isAnswerRange: false,
+          }],
+        };
       }
       const answers = state.answers.filter(obj => obj.id !== id).map((answer, index) => {
         const newId = indexToLetterMap[index];
         if (answer.id === newId) {
           return answer;
         }
-        return { ...answer, id: newId };
+        let newAnswer = {
+          ...answer,
+          id: newId,
+          selectedFeedback: editorState.selectedFeedback ? editorState.selectedFeedback[answer.id] : '',
+          unselectedFeedback: editorState.unselectedFeedback ? editorState.unselectedFeedback[answer.id] : '',
+        };
+        if (RichTextProblems.includes(state.problemType)) {
+          newAnswer = {
+            ...newAnswer,
+            title: editorState.answers[answer.id],
+          };
+          if (EditorsArray[`answer-${newId}`]) {
+            EditorsArray[`answer-${newId}`].setContent(newAnswer.title ?? '');
+          }
+        }
+        // Note: The following assumes selectedFeedback and unselectedFeedback is using ExpandedTextArea
+        //   Content only needs to be set here when the 'next' feedback fields are shown.
+        if (EditorsArray[`selectedFeedback-${newId}`]) {
+          EditorsArray[`selectedFeedback-${newId}`].setContent(newAnswer.selectedFeedback ?? '');
+        }
+        if (EditorsArray[`unselectedFeedback-${newId}`]) {
+          EditorsArray[`unselectedFeedback-${newId}`].setContent(newAnswer.unselectedFeedback ?? '');
+        }
+        return newAnswer;
+      });
+      const groupFeedbackList = state.groupFeedbackList.map(feedback => {
+        const newAnswers = feedback.answers.filter(obj => obj !== id).map(letter => {
+          if (letter.charCodeAt(0) > id.charCodeAt(0)) {
+            return String.fromCharCode(letter.charCodeAt(0) - 1);
+          }
+          return letter;
+        });
+        return { ...feedback, answers: newAnswers };
       });
       return {
         ...state,
-        correctAnswerCount,
         answers,
+        correctAnswerCount: correct ? state.correctAnswerCount - 1 : state.correctAnswerCount,
+        groupFeedbackList,
       };
     },
     addAnswer: (state) => {

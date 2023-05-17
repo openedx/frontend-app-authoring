@@ -152,8 +152,6 @@ export const setupCustomBehavior = ({
         updateContent,
       });
     });
-    // TODO: consider using tinyMCE onblur for all react state updates
-    editor.on('blur', () => updateContent(editor.getContent()));
   }
   editor.on('ExecCommand', (e) => {
     if (editorType === 'text' && e.command === 'mceFocus') {
