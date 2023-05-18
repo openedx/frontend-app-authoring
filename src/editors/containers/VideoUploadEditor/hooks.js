@@ -27,12 +27,6 @@ export const uploadVideo = async ({ dispatch, supportedFiles }) => {
         const uploadUrl = fileObj.upload_url;
         const uploadFile = supportedFiles.find((file) => file.name === fileName);
 
-        // TODO I added this temporally to test the redirecton without
-        // make the post to the upload URL. I added this also after the success post
-        // To test this I overwriten my own response with an existing edx_video_id on
-        // the edx-platform view: https://github.com/openedx/edx-platform/blob/master/cms/djangoapps/contentstore/views/videos.py#L224
-        onFileUploadedHook(edxVideoId);
-
         if (!uploadFile) {
           console.error(`Could not find file object with name "${fileName}" in supportedFiles array.`);
           return;
