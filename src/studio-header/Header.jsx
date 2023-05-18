@@ -27,6 +27,13 @@ const Header = ({
 }) => {
   const { authenticatedUser, config } = useContext(AppContext);
 
+  const getPagePath = (isMfePageEnabled, urlParameter) => {
+    if (urlParameter === 'tabs') {
+      return isMfePageEnabled ? `${config.STUDIO_BASE_URL}/${urlParameter}/${courseId}` : `/course/${courseId}/pages-and-resources`;
+    }
+    return isMfePageEnabled ? `${config.STUDIO_BASE_URL}/${urlParameter}/${courseId}` : `/course/${courseId}/${urlParameter}`;
+  };
+
   const mainMenu = [
     {
       type: 'submenu',
@@ -34,22 +41,22 @@ const Header = ({
       submenuContent: (
         <>
           <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/course/${courseId}`}>{intl.formatMessage(messages['header.links.outline'])}</a>
+            <a rel="noopener" href={getPagePath(process.env.ENABLE_NEW_COURSE_OUTLINE_PAGE, 'course')}>{intl.formatMessage(messages['header.links.outline'])}</a>
           </div>
           <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/course_info/${courseId}`}>{intl.formatMessage(messages['header.links.updates'])}</a>
+            <a rel="noopener" href={getPagePath(process.env.ENABLE_NEW_UPDATES_PAGE, 'course_info')}>{intl.formatMessage(messages['header.links.updates'])}</a>
           </div>
           <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/tabs/${courseId}`}>{intl.formatMessage(messages['header.links.pages'])}</a>
+            <a rel="noopener" href={getPagePath(process.env.ENABLE_NEW_CUSTOM_PAGES, 'tabs')}>{intl.formatMessage(messages['header.links.pages'])}</a>
           </div>
           <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/assets/${courseId}`}>{intl.formatMessage(messages['header.links.filesAndUploads'])}</a>
+            <a rel="noopener" href={getPagePath(process.env.ENABLE_NEW_FILES_UPLOADS_PAGE, 'assets')}>{intl.formatMessage(messages['header.links.filesAndUploads'])}</a>
           </div>
           <div className="mb-1 small">
             <a rel="noopener" href={`${config.STUDIO_BASE_URL}/textbooks/${courseId}`}>{intl.formatMessage(messages['header.links.textbooks'])}</a>
           </div>
           <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/videos/${courseId}`}>{intl.formatMessage(messages['header.links.videoUploads'])}</a>
+            <a rel="noopener" href={getPagePath(process.env.ENABLE_NEW_VIDEO_UPLOAD_PAGE, 'videos')}>{intl.formatMessage(messages['header.links.videoUploads'])}</a>
           </div>
         </>
       ),
@@ -60,19 +67,19 @@ const Header = ({
       submenuContent: (
         <>
           <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/settings/details/${courseId}`}>{intl.formatMessage(messages['header.links.scheduleAndDetails'])}</a>
+            <a rel="noopener" href={getPagePath(process.env.ENABLE_NEW_SCHEDULE_DETAILS_PAGE, 'settings/details')}>{intl.formatMessage(messages['header.links.scheduleAndDetails'])}</a>
           </div>
           <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/settings/grading/${courseId}`}>{intl.formatMessage(messages['header.links.grading'])}</a>
+            <a rel="noopener" href={getPagePath(process.env.ENABLE_NEW_GRADING_PAGE, 'settings/grading')}>{intl.formatMessage(messages['header.links.grading'])}</a>
           </div>
           <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/course_team/${courseId}`}>{intl.formatMessage(messages['header.links.courseTeam'])}</a>
+            <a rel="noopener" href={getPagePath(process.env.ENABLE_NEW_COURSE_TEAM_PAGE, 'course_team')}>{intl.formatMessage(messages['header.links.courseTeam'])}</a>
           </div>
           <div className="mb-1 small">
             <a rel="noopener" href={`${config.STUDIO_BASE_URL}/group_configurations/${courseId}`}>{intl.formatMessage(messages['header.links.groupConfigurations'])}</a>
           </div>
           <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/settings/advanced/${courseId}`}>{intl.formatMessage(messages['header.links.advancedSettings'])}</a>
+            <a rel="noopener" href={getPagePath(process.env.ENABLE_NEW_ADVANCED_SETTINGS_PAGE, 'settings/advanced')}>{intl.formatMessage(messages['header.links.advancedSettings'])}</a>
           </div>
           <div className="mb-1 small">
             <a rel="noopener" href={`${config.STUDIO_BASE_URL}/certificates/${courseId}`}>{intl.formatMessage(messages['header.links.certificates'])}</a>
@@ -86,10 +93,10 @@ const Header = ({
       submenuContent: (
         <>
           <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/import/${courseId}`}>{intl.formatMessage(messages['header.links.import'])}</a>
+            <a rel="noopener" href={getPagePath(process.env.ENABLE_NEW_IMPORT_PAGE, 'import')}>{intl.formatMessage(messages['header.links.import'])}</a>
           </div>
           <div className="mb-1 small">
-            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/export/${courseId}`}>{intl.formatMessage(messages['header.links.export'])}</a>
+            <a rel="noopener" href={getPagePath(process.env.ENABLE_NEW_EXPORT_PAGE, 'export')}>{intl.formatMessage(messages['header.links.export'])}</a>
           </div>
           <div className="mb-1 small">
             <a rel="noopener" href={`${config.STUDIO_BASE_URL}/checklists/${courseId}`}>{intl.formatMessage(messages['header.links.checklists'])}</a>

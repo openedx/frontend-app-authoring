@@ -11,6 +11,7 @@ import { Route, Switch } from 'react-router-dom';
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
+import Placeholder from '@edx/frontend-lib-content-components';
 import messages from './i18n';
 
 import initializeStore from './store';
@@ -37,6 +38,12 @@ const App = () => {
     <AppProvider store={initializeStore()}>
       <Head />
       <Switch>
+        <Route path="/home">
+          {process.env.ENABLE_NEW_HOME_PAGE === 'true'
+              && (
+              <Placeholder />
+              )}
+        </Route>
         <Route
           path="/course/:courseId"
           render={({ match }) => {
