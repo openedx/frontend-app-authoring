@@ -38,11 +38,19 @@ export const VideoEditor = ({
             <VideoEditorModal />
           </div>
         ) : (
-          <Spinner
-            animation="border"
-            className="m-3"
-            screenreadertext={intl.formatMessage(messages.spinnerScreenReaderText)}
-          />
+          <div style={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
+          >
+            <Spinner
+              animation="border"
+              className="m-3"
+              screenreadertext={intl.formatMessage(messages.spinnerScreenReaderText)}
+            />
+          </div>
         )}
       </EditorContainer>
     </ErrorContext.Provider>

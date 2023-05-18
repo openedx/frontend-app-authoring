@@ -83,3 +83,21 @@ exports[`Transcript Component component component snapshots: renders as expected
   </Card>
 </Fragment>
 `;
+
+exports[`Transcript Component component component snapshots: renders as expected with transcriptUrl 1`] = `
+<Fragment>
+  <ActionRow>
+    <LanguageSelector
+      language="lAnG"
+      title="sOmenUmBer"
+    />
+    <ActionRow.Spacer />
+    <TranscriptActionMenu
+      index="sOmenUmBer"
+      language="lAnG"
+      launchDeleteConfirmation={[MockFunction launchDeleteConfirmation]}
+      transcriptUrl="url"
+    />
+  </ActionRow>
+</Fragment>
+`;

@@ -40,6 +40,7 @@ export const hooks = {
 export const Transcript = ({
   index,
   language,
+  transcriptUrl,
   // redux
   deleteTranscript,
 }) => {
@@ -90,6 +91,7 @@ export const Transcript = ({
               <TranscriptActionMenu
                 index={index}
                 language={language}
+                transcriptUrl={transcriptUrl}
                 launchDeleteConfirmation={launchDeleteConfirmation}
               />
             )}
@@ -99,9 +101,14 @@ export const Transcript = ({
   );
 };
 
+Transcript.defaultProps = {
+  transcriptUrl: undefined,
+};
+
 Transcript.propTypes = {
   index: PropTypes.number.isRequired,
   language: PropTypes.string.isRequired,
+  transcriptUrl: PropTypes.string,
   deleteTranscript: PropTypes.func.isRequired,
 };
 

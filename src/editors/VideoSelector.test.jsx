@@ -11,13 +11,13 @@ jest.mock('./hooks', () => ({
 jest.mock('./containers/VideoGallery', () => 'VideoGallery');
 
 const props = {
+  blockId: 'block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4',
   learningContextId: 'course-v1:edX+DemoX+Demo_Course',
   lmsEndpointUrl: 'evenfakerurl.com',
   studioEndpointUrl: 'fakeurl.com',
 };
 
 const initData = {
-  blockId: '',
   blockType: 'video',
   ...props,
 };

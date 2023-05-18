@@ -80,6 +80,16 @@ describe('Transcript Component', () => {
           shallow(<module.Transcript {...props} />),
         ).toMatchSnapshot();
       });
+      test('snapshots: renders as expected with transcriptUrl', () => {
+        jest.spyOn(module.hooks, 'setUpDeleteConfirmation').mockImplementationOnce(() => ({
+          inDeleteConfirmation: false,
+          launchDeleteConfirmation: jest.fn().mockName('launchDeleteConfirmation'),
+          cancelDelete: jest.fn().mockName('cancelDelete'),
+        }));
+        expect(
+          shallow(<module.Transcript {...props} transcriptUrl="url" />),
+        ).toMatchSnapshot();
+      });
     });
   });
 });

@@ -1,7 +1,11 @@
+import * as reactRedux from 'react-redux';
 import * as hooks from './hooks';
 import { filterKeys, sortKeys } from './utils';
 import { MockUseState } from '../../../testUtils';
 import { keyStore } from '../../utils';
+import * as appHooks from '../../hooks';
+import { selectors } from '../../data/redux';
+import analyticsEvt from '../../data/constants/analyticsEvt';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
@@ -16,8 +20,24 @@ jest.mock('react-redux', () => {
     ...jest.requireActual('react-redux'),
     dispatch: dispatchFn,
     useDispatch: jest.fn(() => dispatchFn),
+    useSelector: jest.fn(),
   };
 });
+
+jest.mock('../../data/redux', () => ({
+  selectors: {
+    app: {
+      returnUrl: 'returnUrl',
+      analytics: 'analytics',
+    },
+  },
+}));
+
+jest.mock('../../hooks', () => ({
+  ...jest.requireActual('../../hooks'),
+  navigateCallback: jest.fn((args) => ({ navigateCallback: args })),
+  navigateTo: jest.fn((args) => ({ navigateTo: args })),
+}));
 
 const state = new MockUseState(hooks);
 const hookKeys = keyStore(hooks);
@@ -175,6 +195,23 @@ describe('VideoGallery hooks', () => {
       beforeEach(() => {
         load();
       });
+      describe('selectBtnProps', () => {
+        test('on click, if sets selection', () => {
+          const highlighted = 'videoId';
+          state.mockVal(state.keys.highlighted, highlighted);
+          load();
+          expect(appHooks.navigateTo).not.toHaveBeenCalled();
+          hook.selectBtnProps.onClick();
+          expect(appHooks.navigateTo).toHaveBeenCalled();
+        });
+        test('on click, sets showSelectVideoError to true if nothing is highlighted', () => {
+          state.mockVal(state.keys.highlighted, null);
+          load();
+          hook.selectBtnProps.onClick();
+          expect(appHooks.navigateTo).not.toHaveBeenCalled();
+          expect(state.setState.showSelectVideoError).toHaveBeenCalledWith(true);
+        });
+      });
       describe('galleryProps', () => {
         it('returns highlighted value, initialized to null', () => {
           expect(hook.galleryProps.highlighted).toEqual(state.stateVals.highlighted);
@@ -208,6 +245,17 @@ describe('VideoGallery hooks', () => {
           expect(state.setState.showSelectVideoError).toHaveBeenCalledWith(false);
         });
       });
+    });
+  });
+  describe('fileInputHooks', () => {
+    test('click calls current.click on the ref', () => {
+      jest.spyOn(hooks, hookKeys.handleVideoUpload).mockImplementationOnce();
+      expect(hooks.handleVideoUpload).not.toHaveBeenCalled();
+      hook = hooks.fileInputProps();
+      expect(hooks.handleVideoUpload).toHaveBeenCalled();
+      expect(appHooks.navigateTo).not.toHaveBeenCalled();
+      hook.click();
+      expect(appHooks.navigateTo).toHaveBeenCalled();
     });
   });
   describe('videoProps', () => {
@@ -248,6 +296,17 @@ describe('VideoGallery hooks', () => {
     it('forwards galleryProps and selectBtnProps from the video list hooks', () => {
       expect(hook.galleryProps).toEqual(videoList.galleryProps);
       expect(hook.selectBtnProps).toEqual(videoList.selectBtnProps);
+    });
+  });
+  describe('handleCancel', () => {
+    it('calls navigateCallback', () => {
+      expect(hooks.handleCancel()).toEqual(
+        appHooks.navigateCallback({
+          destination: reactRedux.useSelector(selectors.app.returnUrl),
+          analyticsEvent: analyticsEvt.videoGalleryCancelClick,
+          analytics: reactRedux.useSelector(selectors.app.analytics),
+        }),
+      );
     });
   });
 });

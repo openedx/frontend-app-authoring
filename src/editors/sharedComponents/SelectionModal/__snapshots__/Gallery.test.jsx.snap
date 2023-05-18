@@ -2,7 +2,7 @@
 
 exports[`TextEditor Image Gallery component component snapshot: loaded but no images, show empty gallery 1`] = `
 <div
-  className="gallery p-4 bg-gray-100"
+  className="gallery p-4 bg-light-400"
   style={
     Object {
       "height": "375px",
@@ -16,7 +16,7 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but no im
 
 exports[`TextEditor Image Gallery component component snapshot: loaded but search returns no images, show 0 search result gallery 1`] = `
 <div
-  className="gallery p-4 bg-gray-100"
+  className="gallery p-4 bg-light-400"
   style={
     Object {
       "height": "375px",
@@ -34,7 +34,7 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but searc
 
 exports[`TextEditor Image Gallery component component snapshot: loaded, show gallery 1`] = `
 <Scrollable
-  className="gallery bg-gray-100"
+  className="gallery bg-light-400"
   style={
     Object {
       "height": "375px",

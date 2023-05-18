@@ -13,7 +13,8 @@ exports[`BaseModal ImageUploadModal template component snapshot 1`] = `
   <ModalDialog.Header
     style={
       Object {
-        "zIndex": 10000,
+        "boxShadow": "2px 2px 5px rgba(0, 0, 0, 0.3)",
+        "zIndex": 1,
       }
     }
   >

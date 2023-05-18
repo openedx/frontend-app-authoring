@@ -1,11 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
+exports[`GalleryCard component snapshot with duration badge 1`] = `
 <SelectableBox
   className="card bg-white"
   key="props.img.externalUrl"
   style={
     Object {
+      "border": "none",
+      "boxShadow": "none",
       "padding": "10px 20px",
     }
   }
@@ -18,7 +20,7 @@ exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
       style={
         Object {
           "height": "100px",
-          "margin": "16px 0 0 0",
+          "margin": "18px 0 0 0",
           "position": "relative",
           "width": "200px",
         }
@@ -28,6 +30,99 @@ exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
         src="props.img.externalUrl"
         style={
           Object {
+            "border": "none",
+            "height": "100px",
+            "width": "200px",
+          }
+        }
+      />
+      <Component
+        style={
+          Object {
+            "backgroundColor": "black",
+            "bottom": "6px",
+            "position": "absolute",
+            "right": "6px",
+          }
+        }
+        variant="dark"
+      >
+        01:00
+      </Component>
+    </div>
+    <div
+      className="card-text p-3"
+      style={
+        Object {
+          "marginTop": "10px",
+        }
+      }
+    >
+      <h3
+        className="text-primary-500"
+      >
+        props.img.displayName
+      </h3>
+      <p
+        className="text-gray-500"
+        style={
+          Object {
+            "fontSize": "11px",
+          }
+        }
+      >
+        <FormattedMessage
+          defaultMessage="Added {date} at {time}"
+          description="File date-added string"
+          id="authoring.selectionmodal.addedDate.label"
+          values={
+            Object {
+              "date": <FormattedDate
+                value={12345}
+              />,
+              "time": <FormattedTime
+                value={12345}
+              />,
+            }
+          }
+        />
+      </p>
+    </div>
+  </div>
+</SelectableBox>
+`;
+
+exports[`GalleryCard component snapshot with duration transcripts 1`] = `
+<SelectableBox
+  className="card bg-white"
+  key="props.img.externalUrl"
+  style={
+    Object {
+      "border": "none",
+      "boxShadow": "none",
+      "padding": "10px 20px",
+    }
+  }
+  type="radio"
+>
+  <div
+    className="card-div d-flex flex-row flex-nowrap"
+  >
+    <div
+      style={
+        Object {
+          "height": "100px",
+          "margin": "18px 0 0 0",
+          "position": "relative",
+          "width": "200px",
+        }
+      }
+    >
+      <Image
+        src="props.img.externalUrl"
+        style={
+          Object {
+            "border": "none",
             "height": "100px",
             "width": "200px",
           }
@@ -36,11 +131,204 @@ exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
     </div>
     <div
       className="card-text p-3"
+      style={
+        Object {
+          "marginTop": "10px",
+        }
+      }
     >
-      <h3>
+      <h3
+        className="text-primary-500"
+      >
+        props.img.displayName
+      </h3>
+      <div
+        style={
+          Object {
+            "margin": "0 0 5px 0",
+          }
+        }
+      >
+        <injectIntl(ShimmedIntlComponent)
+          transcripts={
+            Array [
+              "es",
+            ]
+          }
+        />
+      </div>
+      <p
+        className="text-gray-500"
+        style={
+          Object {
+            "fontSize": "11px",
+          }
+        }
+      >
+        <FormattedMessage
+          defaultMessage="Added {date} at {time}"
+          description="File date-added string"
+          id="authoring.selectionmodal.addedDate.label"
+          values={
+            Object {
+              "date": <FormattedDate
+                value={12345}
+              />,
+              "time": <FormattedTime
+                value={12345}
+              />,
+            }
+          }
+        />
+      </p>
+    </div>
+  </div>
+</SelectableBox>
+`;
+
+exports[`GalleryCard component snapshot with status badge 1`] = `
+<SelectableBox
+  className="card bg-white"
+  key="props.img.externalUrl"
+  style={
+    Object {
+      "border": "none",
+      "boxShadow": "none",
+      "padding": "10px 20px",
+    }
+  }
+  type="radio"
+>
+  <div
+    className="card-div d-flex flex-row flex-nowrap"
+  >
+    <div
+      style={
+        Object {
+          "height": "100px",
+          "margin": "18px 0 0 0",
+          "position": "relative",
+          "width": "200px",
+        }
+      }
+    >
+      <Image
+        src="props.img.externalUrl"
+        style={
+          Object {
+            "border": "none",
+            "height": "100px",
+            "width": "200px",
+          }
+        }
+      />
+      <Component
+        style={
+          Object {
+            "left": "6px",
+            "position": "absolute",
+            "top": "6px",
+          }
+        }
+        variant="danger"
+      >
+        failed
+      </Component>
+    </div>
+    <div
+      className="card-text p-3"
+      style={
+        Object {
+          "marginTop": "10px",
+        }
+      }
+    >
+      <h3
+        className="text-primary-500"
+      >
         props.img.displayName
       </h3>
       <p
+        className="text-gray-500"
+        style={
+          Object {
+            "fontSize": "11px",
+          }
+        }
+      >
+        <FormattedMessage
+          defaultMessage="Added {date} at {time}"
+          description="File date-added string"
+          id="authoring.selectionmodal.addedDate.label"
+          values={
+            Object {
+              "date": <FormattedDate
+                value={12345}
+              />,
+              "time": <FormattedTime
+                value={12345}
+              />,
+            }
+          }
+        />
+      </p>
+    </div>
+  </div>
+</SelectableBox>
+`;
+
+exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
+<SelectableBox
+  className="card bg-white"
+  key="props.img.externalUrl"
+  style={
+    Object {
+      "border": "none",
+      "boxShadow": "none",
+      "padding": "10px 20px",
+    }
+  }
+  type="radio"
+>
+  <div
+    className="card-div d-flex flex-row flex-nowrap"
+  >
+    <div
+      style={
+        Object {
+          "height": "100px",
+          "margin": "18px 0 0 0",
+          "position": "relative",
+          "width": "200px",
+        }
+      }
+    >
+      <Image
+        src="props.img.externalUrl"
+        style={
+          Object {
+            "border": "none",
+            "height": "100px",
+            "width": "200px",
+          }
+        }
+      />
+    </div>
+    <div
+      className="card-text p-3"
+      style={
+        Object {
+          "marginTop": "10px",
+        }
+      }
+    >
+      <h3
+        className="text-primary-500"
+      >
+        props.img.displayName
+      </h3>
+      <p
+        className="text-gray-500"
         style={
           Object {
             "fontSize": "11px",

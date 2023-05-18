@@ -47,7 +47,7 @@ export const SelectionModal = ({
   let background = '#FFFFFF';
   let showGallery = true;
   if (isLoaded && !isFetchError && !isUploadError && !inputError.show) {
-    background = '#EBEBEB';
+    background = '#E9E6E4';
   } else if (isLoaded) {
     showGallery = false;
   }
@@ -69,14 +69,22 @@ export const SelectionModal = ({
       size={size}
       isFullscreenScroll={isFullscreenScroll}
       footerAction={(
-        <Button iconBefore={Add} onClick={fileInput.click} variant="link">
+        <Button
+          className="text-primary-500"
+          iconBefore={Add}
+          onClick={fileInput.click}
+          variant="link"
+          style={{
+            textDecoration: 'none',
+          }}
+        >
           <FormattedMessage {...uploadButtonMsg} />
         </Button>
       )}
       title={intl.formatMessage(titleMsg)}
-      bodyStyle={{ background, padding: '9px 24px' }}
+      bodyStyle={{ background, padding: '3px 24px' }}
       headerComponent={(
-        <div style={{ zIndex: 10000, margin: '18px 0' }}>
+        <div style={{ margin: '18px 0' }}>
           <SearchSort {...searchSortProps} />
         </div>
       )}
@@ -132,7 +140,6 @@ SelectionModal.propTypes = {
   }).isRequired,
   fileInput: PropTypes.shape({
     click: PropTypes.func.isRequired,
-    addFile: PropTypes.func.isRequired,
   }).isRequired,
   galleryProps: PropTypes.shape({}).isRequired,
   searchSortProps: PropTypes.shape({}).isRequired,

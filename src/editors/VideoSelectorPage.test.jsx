@@ -3,6 +3,7 @@ import { shallow } from 'enzyme';
 import VideoSelectorPage from './VideoSelectorPage';
 
 const props = {
+  blockId: 'block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4',
   courseId: 'course-v1:edX+DemoX+Demo_Course',
   lmsEndpointUrl: 'evenfakerurl.com',
   studioEndpointUrl: 'fakeurl.com',

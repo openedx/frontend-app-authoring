@@ -1,17 +1,26 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-
-import { thunkActions } from '../../../data/redux';
+import * as appHooks from '../../../hooks';
+import { thunkActions, selectors } from '../../../data/redux';
 import VideoSettingsModal from './VideoSettingsModal';
 // import SelectVideoModal from './SelectVideoModal';
 import * as module from './VideoEditorModal';
 
+export const {
+  navigateTo,
+} = appHooks;
+
 export const hooks = {
-  initialize: (dispatch) => {
+  initialize: (dispatch, selectedVideoId, selectedVideoUrl) => {
     React.useEffect(() => {
-      dispatch(thunkActions.video.loadVideoData());
+      dispatch(thunkActions.video.loadVideoData(selectedVideoId, selectedVideoUrl));
     }, []);
+  },
+  returnToGallery: () => {
+    const learningContextId = useSelector(selectors.app.learningContextId);
+    const blockId = useSelector(selectors.app.blockId);
+    return () => (navigateTo(`/course/${learningContextId}/editor/course-videos/${blockId}`));
   },
 };
 
@@ -20,9 +29,18 @@ const VideoEditorModal = ({
   isOpen,
 }) => {
   const dispatch = useDispatch();
-  module.hooks.initialize(dispatch);
+  const searchParams = new URLSearchParams(document.location.search);
+  const selectedVideoId = searchParams.get('selectedVideoId');
+  const selectedVideoUrl = searchParams.get('selectedVideoUrl');
+  const onReturn = module.hooks.returnToGallery();
+  module.hooks.initialize(dispatch, selectedVideoId, selectedVideoUrl);
   return (
-    <VideoSettingsModal {...{ close, isOpen }} />
+    <VideoSettingsModal {...{
+      close,
+      isOpen,
+      onReturn,
+    }}
+    />
   );
   // TODO: add logic to show SelectVideoModal if no selection
 };

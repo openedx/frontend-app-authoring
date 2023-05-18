@@ -25,6 +25,7 @@ jest.mock('../../../../../../data/redux', () => ({
   selectors: {
     video: {
       getTranscriptDownloadUrl: jest.fn(args => ({ getTranscriptDownloadUrl: args })).mockName('selectors.video.getTranscriptDownloadUrl'),
+      buildTranscriptUrl: jest.fn(args => ({ buildTranscriptUrl: args })).mockName('selectors.video.buildTranscriptUrl'),
     },
   },
 }));
@@ -62,6 +63,7 @@ describe('TranscriptActionMenu', () => {
       launchDeleteConfirmation: jest.fn().mockName('launchDeleteConfirmation'),
       // redux
       getTranscriptDownloadUrl: jest.fn().mockName('selectors.video.getTranscriptDownloadUrl'),
+      buildTranscriptUrl: jest.fn().mockName('selectors.video.buildTranscriptUrl'),
     };
     afterAll(() => {
       jest.clearAllMocks();
@@ -70,6 +72,12 @@ describe('TranscriptActionMenu', () => {
       jest.spyOn(module.hooks, 'replaceFileCallback').mockImplementationOnce(() => jest.fn().mockName('module.hooks.replaceFileCallback'));
       expect(
         shallow(<module.TranscriptActionMenu {...props} />),
+      ).toMatchSnapshot();
+    });
+    test('snapshots: renders as expected with transcriptUrl props: dont show confirm delete', () => {
+      jest.spyOn(module.hooks, 'replaceFileCallback').mockImplementationOnce(() => jest.fn().mockName('module.hooks.replaceFileCallback'));
+      expect(
+        shallow(<module.TranscriptActionMenu {...props} transcriptUrl="url" />),
       ).toMatchSnapshot();
     });
   });

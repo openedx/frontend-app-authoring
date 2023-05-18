@@ -13,6 +13,7 @@ import * as editorHooks from '../EditorContainer/hooks';
 export const VideoUploader = ({ onUpload, errorMessage }) => {
   const [, setUploadedFile] = useState();
   const [textInputValue, setTextInputValue] = useState('');
+  const onUrlUpdatedHook = hooks.onUrlUploaded();
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: 'video/*',
@@ -31,8 +32,7 @@ export const VideoUploader = ({ onUpload, errorMessage }) => {
   };
 
   const handleSaveButtonClick = () => {
-    // do something with the textInputValue, e.g. save to state or send to server
-    console.log(`Saving input value: ${textInputValue}`);
+    onUrlUpdatedHook(textInputValue);
   };
 
   if (errorMessage) {
@@ -60,18 +60,20 @@ export const VideoUploader = ({ onUpload, errorMessage }) => {
         </div>
         <input {...getInputProps()} data-testid="fileInput" />
       </div>
-      <div className="d-flex video-id-prompt">
-        <input
-          type="text"
-          placeholder="Paste your video ID or URL"
-          value={textInputValue}
-          onChange={handleInputChange}
-          onKeyDown={(e) => e.key === 'Enter' && handleSaveButtonClick()}
-          onClick={(event) => event.preventDefault()}
-        />
-        <button className="border-start-0" type="button" onClick={handleSaveButtonClick}>
-          <Icon src={ArrowForward} className="rounded-circle text-dark" />
-        </button>
+      <div className="d-flex video-id-container">
+        <div className="d-flex video-id-prompt">
+          <input
+            type="text"
+            placeholder="Paste your video ID or URL"
+            value={textInputValue}
+            onChange={handleInputChange}
+            onKeyDown={(e) => e.key === 'Enter' && handleSaveButtonClick()}
+            onClick={(event) => event.preventDefault()}
+          />
+          <button className="border-start-0" type="button" onClick={handleSaveButtonClick} data-testid="inputSaveButton">
+            <Icon src={ArrowForward} className="rounded-circle text-dark" />
+          </button>
+        </div>
       </div>
     </div>
   );

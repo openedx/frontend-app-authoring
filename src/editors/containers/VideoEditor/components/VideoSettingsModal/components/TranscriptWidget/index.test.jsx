@@ -27,6 +27,7 @@ jest.mock('../../../../../../data/redux', () => ({
   selectors: {
     video: {
       transcripts: jest.fn(state => ({ transcripts: state })),
+      selectedVideoTranscriptUrls: jest.fn(state => ({ selectedVideoTranscriptUrls: state })),
       allowTranscriptDownloads: jest.fn(state => ({ allowTranscriptDownloads: state })),
       showTranscriptByDefault: jest.fn(state => ({ showTranscriptByDefault: state })),
       allowTranscriptImport: jest.fn(state => ({ allowTranscriptImport: state })),
@@ -88,6 +89,7 @@ describe('TranscriptWidget', () => {
       title: 'tiTLE',
       intl: { formatMessage },
       transcripts: [],
+      selectedVideoTranscriptUrls: {},
       allowTranscriptDownloads: false,
       showTranscriptByDefault: false,
       allowTranscriptImport: false,
@@ -110,6 +112,16 @@ describe('TranscriptWidget', () => {
       test('snapshots: renders as expected with transcripts', () => {
         expect(
           shallow(<module.TranscriptWidget {...props} transcripts={['en']} />),
+        ).toMatchSnapshot();
+      });
+      test('snapshots: renders as expected with transcript urls', () => {
+        expect(
+          shallow(<module.TranscriptWidget {...props} selectedVideoTranscriptUrls={{ en: 'url' }} />),
+        ).toMatchSnapshot();
+      });
+      test('snapshots: renders as expected with transcripts and urls', () => {
+        expect(
+          shallow(<module.TranscriptWidget {...props} transcripts={['es']} selectedVideoTranscriptUrls={{ en: 'url' }} />),
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with allowTranscriptDownloads true', () => {

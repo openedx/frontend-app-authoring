@@ -12,6 +12,7 @@ jest.mock('..', () => ({
   selectors: {
     app: {
       courseDetails: (state) => ({ courseDetails: state }),
+      videos: (state) => ({ videos: state.app.videos }),
     },
     video: {
       videoId: (state) => ({ videoId: state }),
@@ -34,6 +35,7 @@ jest.mock('./requests', () => ({
 }));
 
 jest.mock('../../../utils', () => ({
+  ...jest.requireActual('../../../utils'),
   removeItemOnce: (args) => (args),
 }));
 
@@ -56,6 +58,8 @@ const mockVideoFeatures = {
     videoSharingEnabled: 'soMEbOolEAn',
   },
 };
+const mockSelectedVideoId = 'ThisIsAVideoId';
+const mockSelectedVideoUrl = 'ThisIsAYoutubeUrl';
 
 const testMetadata = {
   download_track: 'dOWNlOAdTraCK',
@@ -79,6 +83,13 @@ const testState = {
   thumbnail: 'sOMefILE',
   originalThumbnail: null,
   videoId: 'soMEvIDEo',
+};
+const testVideosState = {
+  edx_video_id: mockSelectedVideoId,
+  thumbnail: 'thumbnail',
+  duration: 60,
+  transcripts: ['es'],
+  transcript_urls: { es: 'url' },
 };
 const testUpload = { transcripts: ['la', 'en'] };
 const testReplaceUpload = {
@@ -130,25 +141,37 @@ describe('video thunkActions', () => {
       jest.spyOn(thunkActions, thunkActionsKeys.parseTranscripts).mockReturnValue(
         testMetadata.transcripts,
       );
+    });
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+    it('dispatches fetchVideoFeatures action', () => {
       thunkActions.loadVideoData()(dispatch, getState);
       [
         [dispatchedLoad],
         [dispatchedAction1],
         [dispatchedAction2],
       ] = dispatch.mock.calls;
-    });
-    afterEach(() => {
-      jest.restoreAllMocks();
-    });
-    it('dispatches fetchVideoFeatures action', () => {
       expect(dispatchedLoad).not.toEqual(undefined);
       expect(dispatchedAction1.fetchVideoFeatures).not.toEqual(undefined);
     });
     it('dispatches checkTranscriptsForImport action', () => {
+      thunkActions.loadVideoData()(dispatch, getState);
+      [
+        [dispatchedLoad],
+        [dispatchedAction1],
+        [dispatchedAction2],
+      ] = dispatch.mock.calls;
       expect(dispatchedLoad).not.toEqual(undefined);
       expect(dispatchedAction2.checkTranscriptsForImport).not.toEqual(undefined);
     });
     it('dispatches actions.video.load', () => {
+      thunkActions.loadVideoData()(dispatch, getState);
+      [
+        [dispatchedLoad],
+        [dispatchedAction1],
+        [dispatchedAction2],
+      ] = dispatch.mock.calls;
       expect(dispatchedLoad.load).toEqual({
         videoSource: 'videOsOurce',
         videoId: 'videOiD',
@@ -186,7 +209,113 @@ describe('video thunkActions', () => {
         thumbnail: testMetadata.thumbnail,
       });
     });
+    it('dispatches actions.video.load with selectedVideoId', () => {
+      getState = jest.fn(() => ({
+        app: {
+          blockId: 'soMEBloCk',
+          studioEndpointUrl: 'soMEeNDPoiNT',
+          blockValue: { data: { metadata: {} } },
+          courseDetails: { data: { license: null } },
+          studioView: { data: { html: 'sOMeHTml' } },
+          videos: testVideosState,
+        },
+      }));
+      thunkActions.loadVideoData(mockSelectedVideoId, null)(dispatch, getState);
+      [
+        [dispatchedLoad],
+        [dispatchedAction1],
+        [dispatchedAction2],
+      ] = dispatch.mock.calls;
+      expect(dispatchedLoad.load).toEqual({
+        videoSource: 'videOsOurce',
+        videoId: 'videOiD',
+        fallbackVideos: 'fALLbACKvIDeos',
+        allowVideoDownloads: undefined,
+        transcripts: testVideosState.transcripts,
+        selectedVideoTranscriptUrls: testVideosState.transcript_urls,
+        allowTranscriptDownloads: undefined,
+        allowVideoSharing: {
+          level: 'course',
+          value: true,
+        },
+        showTranscriptByDefault: undefined,
+        duration: {
+          startTime: testMetadata.start_time,
+          stopTime: 0,
+          total: testVideosState.duration,
+        },
+        handout: undefined,
+        licenseType: 'liCENSEtyPe',
+        licenseDetails: {
+          attribution: true,
+          noncommercial: true,
+          noDerivatives: true,
+          shareAlike: false,
+        },
+        videoSharingEnabledForCourse: undefined,
+        videoSharingLearnMoreLink: undefined,
+        courseLicenseType: 'liCENSEtyPe',
+        courseLicenseDetails: {
+          attribution: true,
+          noncommercial: true,
+          noDerivatives: true,
+          shareAlike: false,
+        },
+        thumbnail: undefined,
+      });
+    });
+    it('dispatches actions.video.load with selectedVideoUrl', () => {
+      thunkActions.loadVideoData(null, mockSelectedVideoUrl)(dispatch, getState);
+      [
+        [dispatchedLoad],
+        [dispatchedAction1],
+        [dispatchedAction2],
+      ] = dispatch.mock.calls;
+      expect(dispatchedLoad.load).toEqual({
+        videoSource: mockSelectedVideoUrl,
+        videoId: 'videOiD',
+        fallbackVideos: 'fALLbACKvIDeos',
+        allowVideoDownloads: testMetadata.download_video,
+        transcripts: testMetadata.transcripts,
+        allowTranscriptDownloads: testMetadata.download_track,
+        showTranscriptByDefault: testMetadata.show_captions,
+        duration: {
+          startTime: testMetadata.start_time,
+          stopTime: testMetadata.end_time,
+          total: 0,
+        },
+        allowVideoSharing: {
+          level: 'course',
+          value: true,
+        },
+        handout: testMetadata.handout,
+        licenseType: 'liCENSEtyPe',
+        licenseDetails: {
+          attribution: true,
+          noncommercial: true,
+          noDerivatives: true,
+          shareAlike: false,
+        },
+        selectedVideoTranscriptUrls: undefined,
+        videoSharingEnabledForCourse: undefined,
+        videoSharingLearnMoreLink: 'SomEUrL.Com',
+        courseLicenseType: 'liCENSEtyPe',
+        courseLicenseDetails: {
+          attribution: true,
+          noncommercial: true,
+          noDerivatives: true,
+          shareAlike: false,
+        },
+        thumbnail: testMetadata.thumbnail,
+      });
+    });
     it('dispatches actions.video.updateField on success', () => {
+      thunkActions.loadVideoData()(dispatch, getState);
+      [
+        [dispatchedLoad],
+        [dispatchedAction1],
+        [dispatchedAction2],
+      ] = dispatch.mock.calls;
       dispatch.mockClear();
       dispatchedAction1.fetchVideoFeatures.onSuccess(mockVideoFeatures);
       expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({

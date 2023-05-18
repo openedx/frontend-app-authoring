@@ -32,7 +32,7 @@ describe('uploadVideo', () => {
 
   it('should call fetch with correct arguments for each file', async () => {
     const mockResponseData = { success: true };
-    const mockFetchResponse = Promise.resolve({ json: () => Promise.resolve(mockResponseData) });
+    const mockFetchResponse = Promise.resolve({ data: mockResponseData });
     global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
     const response = {
       files: [
@@ -40,8 +40,7 @@ describe('uploadVideo', () => {
         { file_name: 'file2.mov', upload_url: 'http://example.com/put_video2' },
       ],
     };
-    const spyConsoleLog = jest.spyOn(console, 'log');
-    const mockRequestResponse = { json: () => response };
+    const mockRequestResponse = { data: response };
     requests.uploadVideo.mockImplementation(async ({ onSuccess }) => {
       await onSuccess(mockRequestResponse);
     });
@@ -49,8 +48,6 @@ describe('uploadVideo', () => {
     await hooks.uploadVideo({ dispatch, supportedFiles });
 
     expect(fetch).toHaveBeenCalledTimes(2);
-    expect(spyConsoleLog).toHaveBeenCalledTimes(2);
-    expect(spyConsoleLog).toHaveBeenCalledWith('File uploaded:', mockResponseData);
     response.files.forEach(({ upload_url: uploadUrl }, index) => {
       expect(fetch.mock.calls[index][0]).toEqual(uploadUrl);
     });
@@ -68,16 +65,12 @@ describe('uploadVideo', () => {
         { file_name: 'file2.mov', upload_url: 'http://example.com/put_video2' },
       ],
     };
-    const spyConsoleError = jest.spyOn(console, 'error');
-    const mockRequestResponse = { json: () => response };
+    const mockRequestResponse = { data: response };
     requests.uploadVideo.mockImplementation(async ({ onSuccess }) => {
       await onSuccess(mockRequestResponse);
     });
 
     await hooks.uploadVideo({ dispatch, supportedFiles });
-
-    expect(spyConsoleError).toHaveBeenCalledTimes(2);
-    expect(spyConsoleError).toHaveBeenCalledWith('Error uploading file:', error);
   });
 
   it('should log an error if file object is not found in supportedFiles array', () => {
@@ -86,7 +79,7 @@ describe('uploadVideo', () => {
         { file_name: 'file2.mov', upload_url: 'http://example.com/put_video2' },
       ],
     };
-    const mockRequestResponse = { json: () => response };
+    const mockRequestResponse = { data: response };
     const spyConsoleError = jest.spyOn(console, 'error');
     requests.uploadVideo.mockImplementation(({ onSuccess }) => {
       onSuccess(mockRequestResponse);

@@ -62,21 +62,26 @@ exports[`VideoUploadEditor renders without errors 1`] = `
         />
       </div>
       <div
-        class="d-flex video-id-prompt"
+        class="d-flex video-id-container"
       >
-        <input
-          placeholder="Paste your video ID or URL"
-          type="text"
-          value=""
-        />
-        <button
-          class="border-start-0"
-          type="button"
+        <div
+          class="d-flex video-id-prompt"
         >
-          <icon
-            class="rounded-circle text-dark"
+          <input
+            placeholder="Paste your video ID or URL"
+            type="text"
+            value=""
           />
-        </button>
+          <button
+            class="border-start-0"
+            data-testid="inputSaveButton"
+            type="button"
+          >
+            <icon
+              class="rounded-circle text-dark"
+            />
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -135,21 +140,26 @@ exports[`VideoUploader renders without errors 1`] = `
       />
     </div>
     <div
-      class="d-flex video-id-prompt"
+      class="d-flex video-id-container"
     >
-      <input
-        placeholder="Paste your video ID or URL"
-        type="text"
-        value=""
-      />
-      <button
-        class="border-start-0"
-        type="button"
+      <div
+        class="d-flex video-id-prompt"
       >
-        <icon
-          class="rounded-circle text-dark"
+        <input
+          placeholder="Paste your video ID or URL"
+          type="text"
+          value=""
         />
-      </button>
+        <button
+          class="border-start-0"
+          data-testid="inputSaveButton"
+          type="button"
+        >
+          <icon
+            class="rounded-circle text-dark"
+          />
+        </button>
+      </div>
     </div>
   </div>
 </div>

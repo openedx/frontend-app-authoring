@@ -6,7 +6,7 @@ import { videoTranscriptLanguages } from '../../constants/video';
 import { initialState } from './reducer';
 import * as module from './selectors';
 import * as AppSelectors from '../app/selectors';
-import { downloadVideoTranscriptURL, downloadVideoHandoutUrl } from '../../services/cms/urls';
+import { downloadVideoTranscriptURL, downloadVideoHandoutUrl, mediaTranscriptURL } from '../../services/cms/urls';
 
 const stateKeys = keyStore(initialState);
 
@@ -23,6 +23,7 @@ export const simpleSelectors = [
   stateKeys.allowVideoSharing,
   stateKeys.thumbnail,
   stateKeys.transcripts,
+  stateKeys.selectedVideoTranscriptUrls,
   stateKeys.allowTranscriptDownloads,
   stateKeys.duration,
   stateKeys.showTranscriptByDefault,
@@ -57,6 +58,14 @@ export const getTranscriptDownloadUrl = createSelector(
   }),
 );
 
+export const buildTranscriptUrl = createSelector(
+  [AppSelectors.simpleSelectors.studioEndpointUrl],
+  (studioEndpointUrl) => ({ transcriptUrl }) => mediaTranscriptURL({
+    studioEndpointUrl,
+    transcriptUrl,
+  }),
+);
+
 export const getHandoutDownloadUrl = createSelector(
   [AppSelectors.simpleSelectors.studioEndpointUrl],
   (studioEndpointUrl) => ({ handout }) => downloadVideoHandoutUrl({
@@ -74,6 +83,7 @@ export const videoSettings = createSelector(
     module.simpleSelectors.allowVideoSharing,
     module.simpleSelectors.thumbnail,
     module.simpleSelectors.transcripts,
+    module.simpleSelectors.selectedVideoTranscriptUrls,
     module.simpleSelectors.allowTranscriptDownloads,
     module.simpleSelectors.duration,
     module.simpleSelectors.showTranscriptByDefault,
@@ -89,6 +99,7 @@ export const videoSettings = createSelector(
     allowVideoSharing,
     thumbnail,
     transcripts,
+    selectedVideoTranscriptUrls,
     allowTranscriptDownloads,
     duration,
     showTranscriptByDefault,
@@ -104,6 +115,7 @@ export const videoSettings = createSelector(
       allowVideoSharing,
       thumbnail,
       transcripts,
+      selectedVideoTranscriptUrls,
       allowTranscriptDownloads,
       duration,
       showTranscriptByDefault,
@@ -118,6 +130,7 @@ export default {
   ...simpleSelectors,
   openLanguages,
   getTranscriptDownloadUrl,
+  buildTranscriptUrl,
   getHandoutDownloadUrl,
   videoSettings,
 };
