@@ -35,18 +35,18 @@ const CourseAuthoringRoutes = ({ courseId }) => {
         <PageRoute path={`${path}/proctored-exam-settings`}>
           <ProctoredExamSettings courseId={courseId} />
         </PageRoute>
-        <PageRoute path={`${path}/editor/:blockType/:blockId?`}>
+        <PageRoute path={`${path}/editor/course-videos/:blockId`}>
           {process.env.ENABLE_NEW_EDITOR_PAGES === 'true'
             && (
-            <EditorContainer
+            <VideoSelectorContainer
               courseId={courseId}
             />
             )}
         </PageRoute>
-        <PageRoute path={`${path}/videos`}>
+        <PageRoute path={`${path}/editor/:blockType/:blockId?`}>
           {process.env.ENABLE_NEW_EDITOR_PAGES === 'true'
             && (
-            <VideoSelectorContainer
+            <EditorContainer
               courseId={courseId}
             />
             )}
