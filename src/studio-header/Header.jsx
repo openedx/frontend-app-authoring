@@ -28,10 +28,13 @@ const Header = ({
   const { authenticatedUser, config } = useContext(AppContext);
 
   const getPagePath = (isMfePageEnabled, urlParameter) => {
-    if (urlParameter === 'tabs') {
-      return isMfePageEnabled ? `${config.STUDIO_BASE_URL}/${urlParameter}/${courseId}` : `/course/${courseId}/pages-and-resources`;
+    if (isMfePageEnabled === 'true') {
+      if (urlParameter === 'tabs') {
+        return `/course/${courseId}/pages-and-resources`;
+      }
+      return `/course/${courseId}/${urlParameter}`;
     }
-    return isMfePageEnabled ? `${config.STUDIO_BASE_URL}/${urlParameter}/${courseId}` : `/course/${courseId}/${urlParameter}`;
+    return `${config.STUDIO_BASE_URL}/${urlParameter}/${courseId}`;
   };
 
   const mainMenu = [
@@ -150,7 +153,7 @@ const Header = ({
     >
       <a
         className="course-title-lockup w-25"
-        href={`${config.STUDIO_BASE_URL}/course/${courseId}`}
+        href={getPagePath(process.env.ENABLE_NEW_COURSE_OUTLINE_PAGE, 'course')}
         aria-label={intl.formatMessage(messages['header.label.courseOutline'])}
       >
         <span className="d-block small m-0" data-testid="course-org-number">{courseOrg} {courseNumber}</span>
@@ -163,7 +166,7 @@ const Header = ({
     logo: config.LOGO_URL,
     logoAltText: 'Studio edX',
     siteName: 'edX',
-    logoDestination: config.STUDIO_BASE_URL,
+    logoDestination: process.env.ENABLE_NEW_HOME_PAGE === 'true' ? '/home' : config.STUDIO_BASE_URL,
     courseLockUp,
     courseId,
     username: authenticatedUser !== null ? authenticatedUser.username : null,
