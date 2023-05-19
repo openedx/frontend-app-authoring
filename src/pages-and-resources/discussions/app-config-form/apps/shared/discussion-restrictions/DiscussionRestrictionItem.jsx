@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@edx/paragon';
 import { useFormikContext } from 'formik';
@@ -66,27 +66,22 @@ const DiscussionRestrictionItem = ({
     setShowDeletePopup(false);
   }, []);
 
-  const ConfirmationPopupComp = useMemo(() => {
-    if (showDeletePopup) {
-      return (
-        <ConfirmationPopup
-          label={restrictedDate.status === constants.ACTIVE
+  if (showDeletePopup) {
+    return (
+      <ConfirmationPopup
+        label={restrictedDate.status === constants.ACTIVE
             ? intl.formatMessage(messages.activeRestrictedDatesDeletionLabel)
             : intl.formatMessage(messages.restrictedDatesDeletionLabel)}
-          bodyText={intl.formatMessage(deleteRestrictedDatesHelperText[restrictedDate.status])}
-          onConfirm={onDelete}
-          confirmLabel={intl.formatMessage(messages.deleteButton)}
-          onCancel={handleCancelDeletePopup}
-          cancelLabel={intl.formatMessage(messages.cancelButton)}
-          confirmVariant="plain"
-          confirmButtonClass="text-danger-500 border-gray-300 rounded-0"
-        />
-      );
+        bodyText={intl.formatMessage(deleteRestrictedDatesHelperText[restrictedDate.status])}
+        onConfirm={onDelete}
+        confirmLabel={intl.formatMessage(messages.deleteButton)}
+        onCancel={handleCancelDeletePopup}
+        cancelLabel={intl.formatMessage(messages.cancelButton)}
+        confirmVariant="plain"
+        confirmButtonClass="text-danger-500 border-gray-300 rounded-0"
+      />
+        );
     }
-    return null;
-  }, [showDeletePopup, restrictedDate.status, onDelete]);
-
-if (ConfirmationPopupComp) { return ConfirmationPopupComp; }
 
   return (
     <CollapsableEditor

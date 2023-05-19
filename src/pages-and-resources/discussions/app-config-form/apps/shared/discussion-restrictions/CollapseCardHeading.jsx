@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Badge } from '@edx/paragon';
 
@@ -9,15 +9,8 @@ const CollapseCardHeading = ({
   badgeVariant,
   badgeStatus,
 }) => {
-  const ExpandHeadingTextComp = useMemo(() => {
-    if (isOpen) {
-      return <span className="h4 py-2 mr-auto">{expandHeadingText}</span>;
-    }
-    return null;
-  }, [isOpen, expandHeadingText]);
-
-  if (ExpandHeadingTextComp) {
-    return ExpandHeadingTextComp;
+  if (isOpen) {
+    return <span className="h4 py-2 mr-auto">{expandHeadingText}</span>;
   }
 
   return (

@@ -28,11 +28,11 @@ const RestictDatesInput = ({
   const handleFocusOut = useCallback((event) => {
     handleBlur(event);
     setInFocus(false);
-  }, [handleBlur]);
+  }, [handleBlur, setInFocus]);
 
   const handleSetFocus = useCallback(() => {
     setInFocus(true);
-  }, [handleBlur]);
+  }, [setInFocus]);
 
   return (
     <Form.Group
