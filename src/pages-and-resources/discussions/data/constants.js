@@ -2,7 +2,7 @@ import moment from 'moment';
 
 import messages from '../app-config-form/messages';
 
-export const blackoutDatesStatus = {
+export const restrictedDatesStatus = {
   UPCOMING: 'UPCOMING',
   COMPLETE: 'COMPLETE',
   ACTIVE: 'ACTIVE',
@@ -14,11 +14,41 @@ export const badgeVariant = {
   ACTIVE: 'success',
 };
 
-export const deleteHelperText = {
-  UPCOMING: messages.blackoutDatesDeletionHelp,
-  COMPLETE: messages.completeBlackoutDatesDeletionHelp,
-  ACTIVE: messages.activeBlackoutDatesDeletionHelp,
+export const deleteRestrictedDatesHelperText = {
+  UPCOMING: messages.restrictedDatesDeletionHelp,
+  COMPLETE: messages.completeRestrictedDatesDeletionHelp,
+  ACTIVE: messages.activeRestrictedDatesDeletionHelp,
 };
+
+export const discussionRestriction = {
+  OFF: 'off',
+  ON: 'on',
+  SCHEDULED: 'scheduled',
+};
+
+export const discussionRestrictionLabel = {
+  [discussionRestriction.OFF]: 'Off',
+  [discussionRestriction.ON]: 'On',
+  [discussionRestriction.SCHEDULED]: 'Scheduled',
+};
+
+export const discussionRestrictionOptions = [
+  {
+    value: discussionRestriction.OFF,
+    description: messages.discussionRestrictionOffLabel,
+    label: discussionRestrictionLabel[discussionRestriction.OFF],
+  },
+  {
+    value: discussionRestriction.ON,
+    description: messages.discussionRestrictionOnLabel,
+    label: discussionRestrictionLabel[discussionRestriction.ON],
+  },
+  {
+    value: discussionRestriction.SCHEDULED,
+    description: messages.discussionRestrictionScheduledLabel,
+    label: discussionRestrictionLabel[discussionRestriction.SCHEDULED],
+  },
+];
 
 export const today = moment();
 export const active = [today.format('YYYY-MM-DDTHH:mm'), today.add(5, 'hours').format('YYYY-MM-DDTHH:mm')];
