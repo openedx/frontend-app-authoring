@@ -56,7 +56,7 @@
     "querystring": "0.2.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-dropzone": "12.0.4",
+    "react-dropzone": "14.2.3",
     "react-onclickoutside": "^6.12.1",
     "react-redux": "7.2.9",
     "react-router": "5.3.4",
