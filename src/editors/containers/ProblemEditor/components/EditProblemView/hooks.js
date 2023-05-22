@@ -32,17 +32,17 @@ export const fetchEditorContent = ({ format }) => {
         const { selectedFeedback, unselectedFeedback, groupFeedback } = editorObject;
         const feedbackId = id.substring(id.indexOf('-') + 1);
         if (id.startsWith('selected')) {
-          editorObject.selectedFeedback = { ...selectedFeedback, [feedbackId]: editor.getContent({ format }) };
+          editorObject.selectedFeedback = { ...selectedFeedback, [feedbackId]: editor.getContent() };
         }
         if (id.startsWith('unselected')) {
-          editorObject.unselectedFeedback = { ...unselectedFeedback, [feedbackId]: editor.getContent({ format }) };
+          editorObject.unselectedFeedback = { ...unselectedFeedback, [feedbackId]: editor.getContent() };
         }
         if (id.startsWith('group')) {
-          editorObject.groupFeedback = { ...groupFeedback, [feedbackId]: editor.getContent({ format }) };
+          editorObject.groupFeedback = { ...groupFeedback, [feedbackId]: editor.getContent() };
         }
       } else if (id.startsWith('hint')) {
         const { hints } = editorObject;
-        hints.push(editor.getContent({ format }));
+        hints.push(editor.getContent());
       } else {
         editorObject[id] = editor.getContent();
       }

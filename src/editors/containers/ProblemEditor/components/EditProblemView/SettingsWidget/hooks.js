@@ -221,34 +221,59 @@ export const typeRowHooks = ({
 }) => {
   const clearPreviouslySelectedAnswers = () => {
     let currentAnswerTitles;
+    const { selectedFeedback, unselectedFeedback, ...editorContent } = fetchEditorContent({ format: 'text' });
     if (RichTextProblems.includes(problemType)) {
-      currentAnswerTitles = fetchEditorContent({ format: 'text' }).answers;
+      currentAnswerTitles = editorContent.answers;
     }
     answers.forEach(answer => {
       const title = currentAnswerTitles?.[answer.id] || answer.title;
       if (answer.correct) {
-        updateAnswer({ ...answer, title, correct: false });
+        updateAnswer({
+          ...answer,
+          title,
+          selectedFeedback,
+          unselectedFeedback,
+          correct: false,
+        });
       } else {
-        updateAnswer({ ...answer, title });
+        updateAnswer({
+          ...answer,
+          selectedFeedback,
+          unselectedFeedback,
+          title,
+        });
       }
     });
   };
 
   const updateAnswersToCorrect = () => {
     let currentAnswerTitles;
+    const { selectedFeedback, unselectedFeedback, ...editorContent } = fetchEditorContent({ format: 'text' });
     if (RichTextProblems.includes(problemType)) {
-      currentAnswerTitles = fetchEditorContent({ format: 'text' }).answers;
+      currentAnswerTitles = editorContent.answers;
     }
     answers.forEach(answer => {
       const title = currentAnswerTitles ? currentAnswerTitles[answer.id] : answer.title;
-      updateAnswer({ ...answer, title, correct: true });
+      updateAnswer({
+        ...answer,
+        title,
+        selectedFeedback,
+        unselectedFeedback,
+        correct: true,
+      });
     });
   };
 
   const convertToPlainText = () => {
-    const currentAnswerTitles = fetchEditorContent({ format: 'text' }).answers;
+    const { selectedFeedback, unselectedFeedback, ...editorContent } = fetchEditorContent({ format: 'text' });
+    const currentAnswerTitles = editorContent.answers;
     answers.forEach(answer => {
-      updateAnswer({ ...answer, title: currentAnswerTitles[answer.id] });
+      updateAnswer({
+        ...answer,
+        selectedFeedback,
+        unselectedFeedback,
+        title: currentAnswerTitles[answer.id],
+      });
     });
   };
 
