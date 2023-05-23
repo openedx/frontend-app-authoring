@@ -106,7 +106,7 @@ describe('<CourseAuthoringRoutes>', () => {
   it('renders the VideoSelectorContainer component when the course videos route is active', () => {
     render(
       <AppProvider store={store}>
-        <MemoryRouter initialEntries={[`/course/${courseId}/videos`]}>
+        <MemoryRouter initialEntries={[`/course/${courseId}/editor/course-videos/block-id`]}>
           <CourseAuthoringRoutes courseId={courseId} />
         </MemoryRouter>
       </AppProvider>,

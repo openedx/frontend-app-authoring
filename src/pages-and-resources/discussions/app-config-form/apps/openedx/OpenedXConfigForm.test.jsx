@@ -49,7 +49,7 @@ const defaultAppConfig = (divideDiscussionIds = []) => ({
   reportedContentEmailNotifications: false,
   enableReportedContentEmailNotifications: false,
   allowDivisionByUnit: false,
-  blackoutDates: [],
+  restrictedDates: [],
   cohortsEnabled: false,
 });
 describe('OpenedXConfigForm', () => {
@@ -169,8 +169,8 @@ describe('OpenedXConfigForm', () => {
     expect(container.querySelector('#reportedContentEmailNotifications')).toBeInTheDocument();
     expect(container.querySelector('#reportedContentEmailNotifications')).not.toBeChecked();
 
-    // BlackoutDatesField
-    expect(queryByText(container, messages.blackoutDatesLabel.defaultMessage)).toBeInTheDocument();
+    // Discussion Restriction Field
+    expect(queryByText(container, messages.discussionRestrictionLabel.defaultMessage)).toBeInTheDocument();
   });
 
   test('folded sub-fields are in the DOM when parents are enabled', async () => {

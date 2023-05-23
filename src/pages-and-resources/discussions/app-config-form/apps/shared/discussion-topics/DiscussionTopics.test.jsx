@@ -35,7 +35,7 @@ const appConfig = {
   reportedContentEmailNotifications: false,
   enableReportedContentEmailNotifications: false,
   allowDivisionByUnit: false,
-  blackoutDates: [],
+  restrictedDates: [],
 };
 
 const contextValue = {

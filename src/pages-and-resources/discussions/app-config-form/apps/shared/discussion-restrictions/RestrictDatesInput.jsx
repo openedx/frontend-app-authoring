@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Form } from '@edx/paragon';
 import { useFormikContext, getIn } from 'formik';
 import PropTypes from 'prop-types';
 
 import FieldFeedback from '../../../../../../generic/FieldFeedback';
 
-const BlackoutDatesInput = ({
+const RestictDatesInput = ({
   value,
   type,
   label,
@@ -25,10 +25,14 @@ const BlackoutDatesInput = ({
   const fieldTouched = getIn(touched, `${fieldNameCommonBase}.${fieldName}`);
   const isInvalidInput = Boolean(!inFocus && fieldError && fieldTouched);
 
-  const handleFocusOut = (event) => {
+  const handleFocusOut = useCallback((event) => {
     handleBlur(event);
     setInFocus(false);
-  };
+  }, [handleBlur, setInFocus]);
+
+  const handleSetFocus = useCallback(() => {
+    setInFocus(true);
+  }, [setInFocus]);
 
   return (
     <Form.Group
@@ -43,8 +47,8 @@ const BlackoutDatesInput = ({
         onChange={handleChange}
         floatingLabel={label}
         className={fieldClasses}
-        onBlur={(event) => handleFocusOut(event)}
-        onFocus={() => setInFocus(true)}
+        onBlur={handleFocusOut}
+        onFocus={handleSetFocus}
       />
       <FieldFeedback
         feedbackCondition={inFocus}
@@ -58,7 +62,7 @@ const BlackoutDatesInput = ({
   );
 };
 
-BlackoutDatesInput.propTypes = {
+RestictDatesInput.propTypes = {
   value: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
@@ -70,11 +74,11 @@ BlackoutDatesInput.propTypes = {
   fieldNameCommonBase: PropTypes.string.isRequired,
 };
 
-BlackoutDatesInput.defaultProps = {
+RestictDatesInput.defaultProps = {
   fieldClasses: '',
   helpText: '',
   feedbackClasses: '',
   formGroupClasses: '',
 };
 
-export default BlackoutDatesInput;
+export default React.memo(RestictDatesInput);
