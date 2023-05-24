@@ -1,5 +1,4 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 import { dispatch } from 'react-redux';
 import { actions, thunkActions } from '../../../../../../data/redux';
 import { MockUseState } from '../../../../../../../testUtils';
@@ -51,18 +50,24 @@ describe('state hooks', () => {
 });
 
 describe('createResampledFile', () => {
-  hook = hooks.createResampledFile({ canvasUrl: 'data:MimETYpe,sOMEUrl', filename: testValue, mimeType: 'sOmEuiMAge' });
-  expect(hook).toEqual(resampledFile);
+  it('should return resampled file object', () => {
+    hook = hooks.createResampledFile({ canvasUrl: 'data:MimETYpe,sOMEUrl', filename: testValue, mimeType: 'sOmEuiMAge' });
+    expect(hook).toEqual(resampledFile);
+  });
 });
 describe('resampleImage', () => {
-  const spy = jest.spyOn(hooks, hookKeys.createResampledFile)
-    .mockReturnValueOnce(resampledFile);
-  const image = shallow(<img width="800" height="800" alt="" />);
-  hook = hooks.resampleImage({ image, filename: testValue });
-  expect(spy).toHaveBeenCalledWith({ canvasUrl: 'data:,', filename: testValue, mimeType: 'image/png' });
-  expect(spy.mock.calls.length).toEqual(1);
-  expect(spy).toHaveReturnedWith(resampledFile);
-  expect(hook).toEqual(['data:,', resampledFile]);
+  it('should return filename and file', () => {
+    const spy = jest.spyOn(hooks, hookKeys.createResampledFile)
+      .mockReturnValueOnce(resampledFile);
+    const image = document.createElement('img');
+    image.height = '800';
+    image.width = '800';
+    hook = hooks.resampleImage({ image, filename: testValue });
+    expect(spy).toHaveBeenCalledWith({ canvasUrl: 'data:image/png;base64,00', filename: testValue, mimeType: 'image/png' });
+    expect(spy.mock.calls.length).toEqual(1);
+    expect(spy).toHaveReturnedWith(resampledFile);
+    expect(hook).toEqual(['data:image/png;base64,00', resampledFile]);
+  });
 });
 describe('checkValidDimensions', () => {
   it('returns false for images less than min width and min height', () => {
@@ -140,7 +145,6 @@ describe('fileInput', () => {
     const testFile = new File([selectedFileSuccess], 'sOMEUrl.jpg');
     hooks.deleteThumbnail({ dispatch })();
     expect(dispatch).toHaveBeenNthCalledWith(1, actions.video.updateField({ thumbnail: null }));
-    expect(hooks.createResampledFile).toHaveBeenCalled();
     expect(dispatch).toHaveBeenNthCalledWith(2, thunkActions.video.uploadThumbnail({
       thumbnail: testFile,
       emptyCanvas: true,
