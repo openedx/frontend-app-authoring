@@ -79,7 +79,7 @@
     "husky": "8.0.3",
     "jest": "29.5.0",
     "jest-fetch-mock": "3.0.3",
-    "mock-xmlhttprequest": "7.0.4",
+    "mock-xmlhttprequest": "8.2.0",
     "redux-mock-store": "1.5.4",
     "rosie": "2.1.0",
     "webpack-merge": "5.8.0"
