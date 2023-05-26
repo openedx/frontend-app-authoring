@@ -1,3 +1,4 @@
+/* eslint-disable no-import-assign */
 import * as utils from '../../../utils';
 import * as api from './api';
 import * as mockApi from './mockApi';

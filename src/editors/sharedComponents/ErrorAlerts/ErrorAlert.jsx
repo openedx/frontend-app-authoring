@@ -13,10 +13,12 @@ export const hooks = {
   },
   dismissalHooks: ({ dismissError, isError }) => {
     const [isDismissed, setIsDismissed] = hooks.state.isDismissed(false);
-    React.useEffect(() => {
-      setIsDismissed(isDismissed && !isError);
-    },
-    [isError]);
+    React.useEffect(
+      () => {
+        setIsDismissed(isDismissed && !isError);
+      },
+      [isError],
+    );
     return {
       isDismissed,
       dismissAlert: () => {

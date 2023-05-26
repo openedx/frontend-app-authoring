@@ -66,7 +66,7 @@ ProblemEditor.propTypes = {
   studioViewFinished: PropTypes.bool.isRequired,
   problemType: PropTypes.string.isRequired,
   initializeProblemEditor: PropTypes.func.isRequired,
-  blockValue: PropTypes.objectOf(PropTypes.object).isRequired,
+  blockValue: PropTypes.objectOf(PropTypes.shape({})).isRequired,
 };
 
 export const mapStateToProps = (state) => ({

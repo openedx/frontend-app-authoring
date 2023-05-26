@@ -45,6 +45,7 @@ export const CodeEditor = ({
 CodeEditor.propTypes = {
   innerRef: PropTypes.oneOfType([
     PropTypes.func,
+    // eslint-disable-next-line react/forbid-prop-types
     PropTypes.shape({ current: PropTypes.any }),
   ]).isRequired,
   value: PropTypes.string.isRequired,

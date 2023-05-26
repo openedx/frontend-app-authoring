@@ -1,3 +1,4 @@
+/* eslint-disable no-import-assign */
 import React from 'react';
 import { shallow } from 'enzyme';
 

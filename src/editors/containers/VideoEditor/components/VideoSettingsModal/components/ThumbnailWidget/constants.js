@@ -14,6 +14,7 @@ export const MAX_WIDTH = 1280;
 export const MAX_HEIGHT = 720;
 export const MIN_WIDTH = 640;
 export const MIN_HEIGHT = 360;
+// eslint-disable-next-line no-loss-of-precision
 export const ASPECT_RATIO = 1.7777777777777777777;
 export const ASPECT_RATIO_ERROR_MARGIN = 0.1;
 export default {

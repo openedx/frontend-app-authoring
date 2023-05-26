@@ -94,7 +94,7 @@ GalleryCard.propTypes = {
     duration: PropTypes.number,
     status: PropTypes.string,
     statusBadgeVariant: PropTypes.string,
-    transcripts: PropTypes.array,
+    transcripts: PropTypes.shape([]),
   }).isRequired,
 };
 

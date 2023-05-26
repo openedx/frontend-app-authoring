@@ -12,9 +12,9 @@
   "dependencies": {
     "@edx/brand": "npm:@edx/brand-edx.org@^2.0.3",
     "@edx/browserslist-config": "1.0.0",
-    "@edx/frontend-build": "^11.0.0",
+    "@edx/frontend-build": "12.8.27",
     "@edx/frontend-lib-content-components": "file:..",
-    "@edx/frontend-platform": "2.5.1",
+    "@edx/frontend-platform": "4.2.0",
     "@edx/paragon": "^20.32.0",
     "core-js": "^3.21.1",
     "dotenv": "^16.0.0",

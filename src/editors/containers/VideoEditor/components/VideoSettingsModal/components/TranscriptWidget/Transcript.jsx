@@ -46,6 +46,7 @@ export const Transcript = ({
 }) => {
   const { inDeleteConfirmation, launchDeleteConfirmation, cancelDelete } = module.hooks.setUpDeleteConfirmation();
   return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {inDeleteConfirmation
         ? (

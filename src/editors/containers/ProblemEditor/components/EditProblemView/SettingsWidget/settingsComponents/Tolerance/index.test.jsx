@@ -15,9 +15,10 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   )),
 }));
 
-jest.mock('../../SettingsOption', () => ({ children, summary }) => (
-  <div className="SettingsOption" data-testid="Settings-Option">{summary}{children}</div>
-));
+// eslint-disable-next-line react/prop-types
+jest.mock('../../SettingsOption', () => function ({ children, summary }) {
+  return <div className="SettingsOption" data-testid="Settings-Option">{summary}{children}</div>;
+});
 
 jest.mock('@edx/paragon', () => ({
   Alert: jest.fn(({ children }) => (

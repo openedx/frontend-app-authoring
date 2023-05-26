@@ -1,3 +1,4 @@
+/* eslint-disable no-import-assign */
 import { actions } from '..';
 import { camelizeKeys } from '../../../utils';
 import * as thunkActions from './app';

@@ -38,8 +38,8 @@
   "homepage": "https://github.com/edx/frontend-lib-content-components#readme",
   "devDependencies": {
     "@edx/browserslist-config": "^1.1.1",
-    "@edx/frontend-build": "^11.0.2",
-    "@edx/frontend-platform": "2.4.0",
+    "@edx/frontend-build": "12.8.27",
+    "@edx/frontend-platform": "4.2.0",
     "@edx/paragon": "^20.32.0",
     "@edx/reactifex": "^2.1.1",
     "@testing-library/dom": "^8.13.0",
@@ -67,6 +67,7 @@
     "@codemirror/lint": "^6.2.1",
     "@codemirror/state": "^6.0.0",
     "@codemirror/view": "^6.0.0",
+    "@edx/browserslist-config": "^1.1.1",
     "@reduxjs/toolkit": "^1.8.1",
     "@tinymce/tinymce-react": "^3.14.0",
     "babel-polyfill": "6.26.0",
@@ -91,7 +92,7 @@
     "xmlchecker": "^0.1.0"
   },
   "peerDependencies": {
-    "@edx/frontend-platform": ">1.15.0",
+    "@edx/frontend-platform": "^4.0.0",
     "@edx/paragon": "^20.27.0",
     "prop-types": "^15.5.10",
     "react": "^16.14.0",

@@ -25,9 +25,7 @@ describe('RandomizationCard', () => {
   describe('behavior', () => {
     it(' calls generalFeedbackHooks with props when initialized', () => {
       shallow(<GeneralFeedbackCard {...props} />);
-      expect(generalFeedbackHooks).toHaveBeenCalledWith(
-        props.generalFeedback, props.updateSettings,
-      );
+      expect(generalFeedbackHooks).toHaveBeenCalledWith(props.generalFeedback, props.updateSettings);
     });
   });
 
