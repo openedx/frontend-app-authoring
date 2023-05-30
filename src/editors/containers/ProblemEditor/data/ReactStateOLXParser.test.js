@@ -22,7 +22,7 @@ import {
 import ReactStateOLXParser from './ReactStateOLXParser';
 
 describe('Check React State OLXParser problem', () => {
-  test('Test checkbox with feedback and hints problem type', () => {
+  test('for checkbox with feedback and hints problem type', () => {
     const olxparser = new OLXParser(checkboxesOLXWithFeedbackAndHintsOLX.rawOLX);
     const problem = olxparser.getParsedOLXData();
     const stateParser = new ReactStateOLXParser({
