@@ -143,6 +143,7 @@ function normalizeSettings(data) {
     enableInContext: data.enable_in_context,
     enableGradedUnits: data.enable_graded_units,
     unitLevelVisibility: data.unit_level_visibility,
+    postingRestrictions: data.posting_restrictions,
     appConfig: normalizeAppConfig(data),
     piiConfig: normalizePiiSharing(data.lti_configuration),
     discussionTopicIds: data.plugin_configuration.discussion_topics
@@ -246,6 +247,9 @@ function denormalizeData(courseId, appId, data) {
   if ('unitLevelVisibility' in data) {
     apiData.unit_level_visibility = data.unitLevelVisibility;
   }
+  if ('postingRestrictions' in data) {
+    apiData.posting_restrictions = data.postingRestrictions;
+  }
   return apiData;
 }
 
@@ -272,7 +276,6 @@ export async function getDiscussionsSettings(courseId, providerId = null) {
   const url = getDiscussionsSettingsUrl(courseId);
   const { data } = await getAuthenticatedHttpClient()
     .get(url, params);
-
   return normalizeSettings(data);
 }
 

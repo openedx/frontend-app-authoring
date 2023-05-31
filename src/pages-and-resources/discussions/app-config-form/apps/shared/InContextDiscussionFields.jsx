@@ -18,7 +18,6 @@ const InContextDiscussionFields = ({
   } = useFormikContext();
 
   const [showPopup, setShowPopup] = useState(false);
-
   const handleConfirmation = () => {
     setFieldValue('enableGradedUnits', !values.enableGradedUnits);
     setShowPopup(false);

@@ -21,32 +21,32 @@ export const deleteRestrictedDatesHelperText = {
 };
 
 export const discussionRestriction = {
-  OFF: 'off',
-  ON: 'on',
+  DISABLED: 'disabled',
+  ENABLED: 'enabled',
   SCHEDULED: 'scheduled',
 };
 
-export const discussionRestrictionLabel = {
-  [discussionRestriction.OFF]: 'Off',
-  [discussionRestriction.ON]: 'On',
-  [discussionRestriction.SCHEDULED]: 'Scheduled',
+export const discussionRestrictionValues = {
+  OFF: 'Off',
+  ON: 'On',
+  SCHEDULED: 'Scheduled',
 };
 
 export const discussionRestrictionOptions = [
   {
-    value: discussionRestriction.OFF,
+    value: discussionRestriction.DISABLED,
     description: messages.discussionRestrictionOffLabel,
-    label: discussionRestrictionLabel[discussionRestriction.OFF],
+    label: discussionRestrictionValues.OFF,
   },
   {
-    value: discussionRestriction.ON,
+    value: discussionRestriction.ENABLED,
     description: messages.discussionRestrictionOnLabel,
-    label: discussionRestrictionLabel[discussionRestriction.ON],
+    label: discussionRestrictionValues.ON,
   },
   {
     value: discussionRestriction.SCHEDULED,
     description: messages.discussionRestrictionScheduledLabel,
-    label: discussionRestrictionLabel[discussionRestriction.SCHEDULED],
+    label: discussionRestrictionValues.SCHEDULED,
   },
 ];
 
