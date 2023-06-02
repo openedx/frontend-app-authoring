@@ -6,6 +6,7 @@ import {
   numericInputWithFeedbackAndHintsOLX,
   textInputWithFeedbackAndHintsOLX,
   multipleChoiceWithoutAnswers,
+  multipleChoiceSingleAnswer,
   multipleChoiceWithFeedbackAndHintsOLX,
   textInputWithFeedbackAndHintsOLXWithMultipleAnswers,
   advancedProblemOlX,
@@ -29,6 +30,7 @@ const numericOlxParser = new OLXParser(numericInputWithFeedbackAndHintsOLX.rawOL
 const dropdownOlxParser = new OLXParser(dropdownOLXWithFeedbackAndHintsOLX.rawOLX);
 const multipleChoiceOlxParser = new OLXParser(multipleChoiceWithFeedbackAndHintsOLX.rawOLX);
 const multipleChoiceWithoutAnswersOlxParser = new OLXParser(multipleChoiceWithoutAnswers.rawOLX);
+const multipleChoiceSingleAnswerOlxParser = new OLXParser(multipleChoiceSingleAnswer.rawOLX);
 const textInputOlxParser = new OLXParser(textInputWithFeedbackAndHintsOLX.rawOLX);
 const textInputMultipleAnswersOlxParser = new OLXParser(textInputWithFeedbackAndHintsOLXWithMultipleAnswers.rawOLX);
 const advancedOlxParser = new OLXParser(advancedProblemOlX.rawOLX);
@@ -176,6 +178,17 @@ describe('OLXParser', () => {
       );
       it('should return a default answer', () => {
         expect(answers).toEqual(multipleChoiceWithoutAnswers.data.answers);
+        expect(answers).toHaveLength(1);
+      });
+    });
+    describe('given a problem with one answer', () => {
+      const { answers } = multipleChoiceSingleAnswerOlxParser.parseMultipleChoiceAnswers(
+        'multiplechoiceresponse',
+        'choicegroup',
+        'choice',
+      );
+      it('should return a single answer', () => {
+        expect(answers).toEqual(multipleChoiceSingleAnswer.data.answers);
         expect(answers).toHaveLength(1);
       });
     });

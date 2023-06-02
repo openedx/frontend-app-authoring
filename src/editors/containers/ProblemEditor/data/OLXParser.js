@@ -198,10 +198,12 @@ export class OLXParser {
       );
     } else if (_.isArray(choice)) {
       choice.forEach((element, index) => {
-        const [preservedAnswer, ...preservedFeedback] = preservedAnswers[index];
+        const preservedAnswer = preservedAnswers[index].filter(answer => !Object.keys(answer).includes(`${option}hint`));
+        const preservedFeedback = preservedAnswers[index].filter(answer => Object.keys(answer).includes(`${option}hint`));
         let title = element['#text'];
+
         if (isComplexAnswer && preservedAnswer) {
-          title = this.richTextBuilder.build([preservedAnswer]);
+          title = this.richTextBuilder.build(preservedAnswer);
         }
         const correct = eval(element['@_correct'].toLowerCase());
         const id = indexToLetterMap[index];
@@ -216,10 +218,12 @@ export class OLXParser {
         );
       });
     } else {
-      const [preservedAnswer, ...preservedFeedback] = preservedAnswers[0];
+      const preservedAnswer = preservedAnswers[0].filter(answer => !Object.keys(answer).includes(`${option}hint`));
+      const preservedFeedback = preservedAnswers[0].filter(answer => Object.keys(answer).includes(`${option}hint`));
       let title = choice['#text'];
+
       if (isComplexAnswer && preservedAnswer) {
-        title = this.richTextBuilder.build([preservedAnswer]);
+        title = this.richTextBuilder.build(preservedAnswer);
       }
       const feedback = this.getAnswerFeedback(preservedFeedback, `${option}hint`);
       answers.push({
