@@ -41,9 +41,7 @@ describe('ErrorBoundary', () => {
     const wrapper = mount(component);
     const element = wrapper.find('p');
     expect(logError).toHaveBeenCalledTimes(1);
-    expect(logError).toHaveBeenCalledWith(new Error('booyah'), {
-      stack: expect.stringContaining('ExplodingComponent'),
-    });
+    expect(logError).toHaveBeenCalledWith(new Error('booyah'), { stack: '\n    in ExplodingComponent\n    in ErrorBoundary (created by WrapperComponent)\n    in WrapperComponent' });
     expect(element.text()).toEqual('Error Page');
   });
 });
