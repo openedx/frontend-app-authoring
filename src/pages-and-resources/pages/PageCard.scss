@@ -9,14 +9,14 @@
 }
 
 .shadow {
-  -webkit-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3) !important;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 .125rem .25rem rgb(0 0 0 / .3) !important;
 }
 
-[dir=rtl] {
-  .desktop-card, .mobile-card {
+[dir="rtl"] {
+  .desktop-card,
+  .mobile-card {
     .pgn__card-header-actions .pgn__hyperlink .btn-icon {
-      transform: scaleX(-1)
+      transform: scaleX(-1);
     }
   }
 }
