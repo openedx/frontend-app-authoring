@@ -29,19 +29,30 @@
 .height-36{
   height: 2.25rem !important;
 }
+
 .line-height-20{
   line-height: 1.25rem !important;
 }
+
 .font-size-14{
   font-size: 14px !important;
+}
+
+.font-weight-500 {
+  font-weight: 500 !important;
+}
+
+.py-7px{
+  padding: 0 7px 0 7px ;
 }
 
 .discussion-restriction{
   .unselected-button{
      &:hover{
-     background: #e9e6e4 !important;
+     background: #e9e6e4 ;
     }
   }
+
   .action-btn{
     padding: 10px 16px;
     width: 80px;
@@ -50,19 +61,23 @@
     font-size: 18px;
     line-height: 24px;
   }
+
   .w-92{
     width: 92px;
   }
+
   .card-body-section{
     padding-top: 12px !important;
     padding-bottom: 20px !important;
   }
+
   .form-control{
     border-radius: 0px !important;
     font-weight: 400;
     font-size: 14px;
     line-height: 24px;
   }
+
   .collapsible-card{
     padding: 14px 14px 14px 24px !important;
     min-height:100px;

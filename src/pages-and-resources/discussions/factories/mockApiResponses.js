@@ -103,6 +103,7 @@ export const generateProvidersApiResponse = (piazzaAdminOnlyConfig = false, acti
 export const generateLegacyApiResponse = () => ({
   context_key: 'course-v1:edX+DemoX+Demo_Course',
   enabled: true,
+  posting_restrictions: 'scheduled',
   provider_type: 'legacy',
   lti_configuration: {},
   plugin_configuration: {
