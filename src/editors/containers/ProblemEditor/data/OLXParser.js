@@ -121,12 +121,12 @@ export class OLXParser {
    * getPreservedAnswersAndFeedback takes a problemType, widgetName, and a valid option. The
    * olx for the given problem type and widget is parsed. Do to the structure of xml that is
    * parsed with the prsereved attribute, the function has to loop through arrays of objects.
-   * The  first for-loop checks for feedback tags and answer choices and appended to the
+   * The first for-loop checks for feedback tags and answer choices and appended to the
    * preservedAnswers. The nested for loop checks for feedback and answer values inside the
    * option (answer) tags.
    * @param {string} problemType - string of the olx problem type
    * @param {string} widgetName - string of the wrapping tag name
-   *                              (optioninput, choicegroup, checkboxgroup, addition_answer)
+   *                              (optioninput, choicegroup, checkboxgroup, additional_answer)
    * @param {string} option - string of the type of answers (choice, option, correcthint, stringequalhint)
    * @return {array} array containing answer objects and possibly an array of grouped feedback
    */
@@ -248,7 +248,7 @@ export class OLXParser {
    * getAnswerFeedback takes preservedFeedback and a valid option. The preservedFeedback object
    * is checked for selected and unselected feedback. The respective values are added to the
    * feedback object. The feedback object is returned.
-   * @param {object} choice - object of an answer choice
+   * @param {array} preservedFeedback - array of feedback objects
    * @param {string} hintKey - string of the wrapping tag name (optionhint or choicehint)
    * @return {object} object containing selected and unselected feedback
    */
