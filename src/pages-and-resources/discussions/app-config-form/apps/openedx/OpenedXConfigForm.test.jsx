@@ -40,6 +40,7 @@ const defaultAppConfig = (divideDiscussionIds = []) => ({
     { name: 'General', id: 'course' },
   ],
   divideDiscussionIds,
+  postingRestrictions: 'scheduled',
   enableGradedUnits: undefined,
   enableInContext: true,
   groupAtSubsection: false,
