@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo } from 'react';
-import { injectIntl, useIntl } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, ButtonGroup } from '@edx/paragon';
 import classNames from 'classnames';
 
@@ -9,22 +9,18 @@ import ConfirmationPopup from '../../../../../generic/ConfirmationPopup';
 import messages from '../../messages';
 import { discussionRestrictionOptions, discussionRestriction } from '../../../data/constants';
 import RestrictionSchedules from './discussion-restrictions/RestrictionSchedules';
-// import DiscussionRestrictionOption from './discussion-restrictions/DiscussionRestrictionOption';
 
 const DiscussionRestriction = () => {
+  const intl = useIntl();
   const {
     values: appConfig,
     setFieldValue,
   } = useFormikContext();
 
-  const intl = useIntl();
-
   const { postingRestrictions } = appConfig;
   const [selectedRestrictionOption, setSelectedRestrictionOption] = useState(postingRestrictions);
-  const [showPopup, setShowPopup] = useState(false);
 
   const handleClick = useCallback((value) => {
-    setShowPopup(value === discussionRestriction.ENABLED);
     setSelectedRestrictionOption(value);
 
     if (value !== discussionRestriction.ENABLED) {
@@ -33,13 +29,11 @@ const DiscussionRestriction = () => {
   }, []);
 
   const handleConfirmation = () => {
-    setShowPopup(false);
     setSelectedRestrictionOption(discussionRestriction.ENABLED);
     setFieldValue('postingRestrictions', discussionRestriction.ENABLED);
   };
 
   const handleCancel = () => {
-    setShowPopup(false);
     setSelectedRestrictionOption(postingRestrictions);
   };
 
@@ -54,7 +48,7 @@ const DiscussionRestriction = () => {
     >
       {restriction.label}
     </Button>
-    )), [selectedRestrictionOption]);
+  )), [selectedRestrictionOption]);
 
   return (
     <div className="discussion-restriction">
@@ -66,30 +60,30 @@ const DiscussionRestriction = () => {
       </ButtonGroup>
 
       <div className="small text-muted font-size-14 height-24">
-        {(selectedRestrictionOption === discussionRestriction.DISABLED
-          || selectedRestrictionOption === discussionRestriction.ENABLED)
-          ? intl.formatMessage(messages.discussionRestrictionHelp)
-          : intl.formatMessage(messages.discussionRestrictionDatesHelp)}
+        {intl.formatMessage(
+          discussionRestrictionOptions.find(option => option.value === selectedRestrictionOption).message,
+          )}
       </div>
 
-      {showPopup && (
-      <ConfirmationPopup
-        label={intl.formatMessage(messages.enableRestrictedDatesConfirmationLabel)}
-        bodyText={intl.formatMessage(messages.enableRestrictedDatesConfirmationHelp)}
-        onCancel={handleCancel}
-        onConfirm={handleConfirmation}
-        confirmLabel={intl.formatMessage(messages.ok)}
-        cancelLabel={intl.formatMessage(messages.cancelButton)}
-        confirmVariant="plain"
-        confirmButtonClass="bg-primary-500 text-white rounded-0 action-btn"
-        cancelButtonClass="rounded-0 action-btn w-92"
-        sectionClasses="card-body-section"
-      />
-      )}
+      {(postingRestrictions !== discussionRestriction.ENABLED
+        && selectedRestrictionOption === discussionRestriction.ENABLED) && (
+          <ConfirmationPopup
+            label={intl.formatMessage(messages.enableRestrictedDatesConfirmationLabel)}
+            bodyText={intl.formatMessage(messages.enableRestrictedDatesConfirmationHelp)}
+            onCancel={handleCancel}
+            onConfirm={handleConfirmation}
+            confirmLabel={intl.formatMessage(messages.ok)}
+            cancelLabel={intl.formatMessage(messages.cancelButton)}
+            confirmVariant="plain"
+            confirmButtonClass="bg-primary-500 text-white rounded-0 action-btn"
+            cancelButtonClass="rounded-0 action-btn w-92"
+            sectionClasses="card-body-section"
+          />
+        )}
 
       {selectedRestrictionOption === discussionRestriction.SCHEDULED && <RestrictionSchedules />}
     </div>
   );
 };
 
-export default injectIntl(React.memo(DiscussionRestriction));
+export default React.memo(DiscussionRestriction);

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { injectIntl, useIntl } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button } from '@edx/paragon';
 import { Add } from '@edx/paragon/icons';
 
@@ -11,17 +11,15 @@ import DiscussionRestrictionItem from './DiscussionRestrictionItem';
 import { checkStatus } from '../../../utils';
 import { denormalizeRestrictedDate } from '../../../../data/api';
 import { restrictedDatesStatus as STATUS } from '../../../../data/constants';
-// import DiscussionRestrictionOption from './discussion-restrictions/DiscussionRestrictionOption';
 
 const RestrictionSchedules = () => {
+  const intl = useIntl();
   const {
     values: appConfig,
     setFieldValue,
     errors,
     validateForm,
   } = useFormikContext();
-
-  const intl = useIntl();
 
   const { restrictedDates } = appConfig;
 
@@ -83,4 +81,4 @@ const RestrictionSchedules = () => {
   );
 };
 
-export default injectIntl(React.memo(RestrictionSchedules));
+export default React.memo(RestrictionSchedules);

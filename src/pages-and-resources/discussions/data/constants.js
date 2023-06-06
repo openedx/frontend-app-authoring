@@ -26,7 +26,7 @@ export const discussionRestriction = {
   SCHEDULED: 'scheduled',
 };
 
-export const discussionRestrictionValues = {
+export const discussionRestrictionLabels = {
   OFF: 'Off',
   ON: 'On',
   SCHEDULED: 'Scheduled',
@@ -35,18 +35,18 @@ export const discussionRestrictionValues = {
 export const discussionRestrictionOptions = [
   {
     value: discussionRestriction.DISABLED,
-    description: messages.discussionRestrictionOffLabel,
-    label: discussionRestrictionValues.OFF,
+    message: messages.discussionRestrictionOffLabelHelpText,
+    label: discussionRestrictionLabels.OFF,
   },
   {
     value: discussionRestriction.ENABLED,
-    description: messages.discussionRestrictionOnLabel,
-    label: discussionRestrictionValues.ON,
+    message: messages.discussionRestrictionOnLabelHelpText,
+    label: discussionRestrictionLabels.ON,
   },
   {
     value: discussionRestriction.SCHEDULED,
-    description: messages.discussionRestrictionScheduledLabel,
-    label: discussionRestrictionValues.SCHEDULED,
+    message: messages.discussionRestrictionScheduledLabelHelpText,
+    label: discussionRestrictionLabels.SCHEDULED,
   },
 ];
 
