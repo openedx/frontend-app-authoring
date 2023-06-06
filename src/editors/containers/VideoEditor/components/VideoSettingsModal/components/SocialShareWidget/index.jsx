@@ -14,6 +14,7 @@ import {
 import { selectors, actions } from '../../../../../../data/redux';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import messages from './messages';
+import * as hooks from './hooks'
 
 /**
  * Collapsible Form widget controlling video thumbnail
@@ -32,6 +33,8 @@ export const SocialShareWidget = ({
   const isSetByCourse = allowVideoSharing.level === 'course';
   const videoSharingEnabled = isLibrary ? videoSharingEnabledForAll : videoSharingEnabledForCourse;
   const learnMoreLink = videoSharingLearnMoreLink || 'http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/social_sharing.html';
+  const onSocialSharingCheckboxChange = hooks.handleSocialSharingCheckboxChange({ updateField });
+
   const getSubtitle = () => {
     if (allowVideoSharing.value) {
       return intl.formatMessage(messages.enabledSubtitle);
@@ -52,12 +55,7 @@ export const SocialShareWidget = ({
         className="mt-3"
         checked={allowVideoSharing.value}
         disabled={isSetByCourse}
-        onChange={(e) => updateField({
-          allowVideoSharing: {
-            ...allowVideoSharing,
-            value: e.target.checked,
-          },
-        })}
+        onChange={onSocialSharingCheckboxChange}
       >
         <div className="small text-gray-700">
           {intl.formatMessage(messages.socialSharingCheckboxLabel)}
