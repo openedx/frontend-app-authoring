@@ -32,10 +32,21 @@ const PageCard = ({
 }) => {
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const isDesktop = useIsDesktop();
-
   // eslint-disable-next-line react/no-unstable-nested-components
   const SettingsButton = () => {
     if (page.legacyLink) {
+      if (process.env.ENABLE_NEW_CUSTOM_PAGES) {
+        return (
+          <Hyperlink destination="custom-pages">
+            <IconButton
+              src={ArrowForward}
+              iconAs={Icon}
+              size="inline"
+              alt={intl.formatMessage(messages.settings)}
+            />
+          </Hyperlink>
+        );
+      }
       return (
         <Hyperlink destination={page.legacyLink}>
           <IconButton
