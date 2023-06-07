@@ -5,6 +5,7 @@ import { AppContext } from '@edx/frontend-platform/react';
 import { Context as ResponsiveContext } from 'react-responsive';
 import {
   cleanup,
+  fireEvent,
   render,
   screen,
 } from '@testing-library/react';
@@ -93,6 +94,46 @@ describe('<Header />', () => {
 
     render(component);
     expect(screen.getByTestId('edx-header-logo'));
+  });
+
+  it('renders Video Uploads link', () => {
+    process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN = 'true';
+
+    const component = createComponent(
+      1280, (
+        <Header
+          courseId="course-v1:edX+DemoX+Demo_Course"
+          courseNumber="DemoX"
+          courseOrg="edX"
+          courseTitle="Demonstration Course"
+        />
+      ),
+    );
+
+    render(component);
+    fireEvent.click(screen.getByText('Content'));
+
+    expect(screen.getByText('Video Uploads')).toBeInTheDocument();
+  });
+
+  it('does not render Video Uploads link', () => {
+    process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN = 'false';
+
+    const component = createComponent(
+      1280, (
+        <Header
+          courseId="course-v1:edX+DemoX+Demo_Course"
+          courseNumber="DemoX"
+          courseOrg="edX"
+          courseTitle="Demonstration Course"
+        />
+      ),
+    );
+
+    render(component);
+    fireEvent.click(screen.getByText('Content'));
+
+    expect(screen.queryByText('Video Uploads')).toBeNull();
   });
 
   afterEach(() => {
