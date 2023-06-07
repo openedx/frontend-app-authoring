@@ -403,17 +403,17 @@ const messages = defineMessages({
     defaultMessage: 'If deleted, learners will be able to post in discussions during these dates.',
     description: 'Help text for delete a upcoming restricted dates from restricted dates section.',
   },
-  discussionRestrictionOffLabel: {
+  discussionRestrictionOffLabelHelpText: {
     id: 'authoring.discussions.discussionRestrictionOff.label',
-    defaultMessage: 'Off',
+    defaultMessage: 'If enabled, learners will be able to post in discussions',
   },
-  discussionRestrictionOnLabel: {
+  discussionRestrictionOnLabelHelpText: {
     id: 'authoring.discussions.discussionRestrictionOn.label',
-    defaultMessage: 'On',
+    defaultMessage: 'If enabled, learners will not be able to post in discussions',
   },
-  discussionRestrictionScheduledLabel: {
+  discussionRestrictionScheduledLabelHelpText: {
     id: 'authoring.discussions.discussionRestrictionScheduled.label',
-    defaultMessage: 'Scheduled',
+    defaultMessage: 'If added, learners will not be able to post in discussions between these dates.',
   },
   enableRestrictedDatesConfirmationLabel: {
     id: 'authoring.discussions.enableRestrictedDatesConfirmation.label',

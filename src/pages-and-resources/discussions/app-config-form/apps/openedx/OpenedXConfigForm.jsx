@@ -25,7 +25,7 @@ const OpenedXConfigForm = ({
   onSubmit, formRef, intl, legacy,
 }) => {
   const {
-    selectedAppId, enableGradedUnits, discussionTopicIds, divideDiscussionIds,
+    selectedAppId, enableGradedUnits, discussionTopicIds, divideDiscussionIds, postingRestrictions,
   } = useSelector(state => state.discussions);
   const appConfigObj = useModel('appConfigs', selectedAppId);
   const discussionTopicsModel = useModels('discussionTopics', discussionTopicIds);
@@ -34,6 +34,7 @@ const OpenedXConfigForm = ({
     divideDiscussionIds,
     enableInContext: true,
     enableGradedUnits,
+    postingRestrictions,
     unitLevelVisibility: true,
     allowAnonymousPostsPeers: appConfigObj?.allowAnonymousPostsPeers || false,
     reportedContentEmailNotifications: appConfigObj?.reportedContentEmailNotifications || false,
@@ -109,6 +110,7 @@ const OpenedXConfigForm = ({
           validDiscussionTopics,
           setValidDiscussionTopics,
           discussionTopicErrors,
+          postingRestrictions,
           restrictedDatesErrors,
           isFormInvalid:
             discussionTopicErrors.some((error) => error)
@@ -117,7 +119,7 @@ const OpenedXConfigForm = ({
 
         return (
           <OpenedXConfigFormProvider value={contextValue}>
-            <Card className="mb-5 px-4 px-sm-5 pb-5" data-testid="legacyConfigForm">
+            <Card className="mb-5 px-4 px-sm-5 pb-4" data-testid="legacyConfigForm">
               <Form ref={formRef} onSubmit={handleSubmit}>
                 <h3 className="text-primary-500 my-3">{intl.formatMessage(messages[`appName-${selectedAppId}`])}</h3>
                 <AppConfigFormDivider thick />

@@ -14,7 +14,7 @@ const ConfirmationPopup = ({
   cancelButtonClass,
   sectionClasses,
 }) => (
-  <Card className="rounded mb-3 px-1">
+  <Card className="rounded px-1 mt-4">
     <Card.Header
       className="text-primary-500"
       title={label}
