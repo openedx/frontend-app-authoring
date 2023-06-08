@@ -58,9 +58,11 @@ const Header = ({
           <div className="mb-1 small">
             <a rel="noopener" href={`${config.STUDIO_BASE_URL}/textbooks/${courseId}`}>{intl.formatMessage(messages['header.links.textbooks'])}</a>
           </div>
-          <div className="mb-1 small">
-            <a rel="noopener" href={getPagePath(process.env.ENABLE_NEW_VIDEO_UPLOAD_PAGE, 'videos')}>{intl.formatMessage(messages['header.links.videoUploads'])}</a>
-          </div>
+          {process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' && (
+            <div className="mb-1 small">
+              <a rel="noopener" href={getPagePath(process.env.ENABLE_NEW_VIDEO_UPLOAD_PAGE, 'videos')}>{intl.formatMessage(messages['header.links.videoUploads'])}</a>
+            </div>
+          )}
         </>
       ),
     },
