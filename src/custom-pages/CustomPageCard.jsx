@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { history } from '@edx/frontend-platform';
 import { intlShape, injectIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -21,7 +20,7 @@ const CustomPageCard = ({
   page,
   dispatch,
   deletePageStatus,
-  editorPath,
+  courseId,
   // injected
   intl,
 }) => {
@@ -58,10 +57,7 @@ const CustomPageCard = ({
             src={EditOutline}
             iconAs={Icon}
             alt={intl.formatMessage(messages.editTooltipContent)}
-            onClick={() => {
-              openEditModal();
-              history.push(editorPath);
-            }}
+            onClick={openEditModal}
             className="mr-2"
           />
           <IconButtonWithTooltip
@@ -91,7 +87,7 @@ const CustomPageCard = ({
       >
         {intl.formatMessage(messages.deleteConfirmationMessage)}
       </AlertModal>
-      <EditModal isOpen={isEditModalOpen} page={page} handleClose={closeEditModal} />
+      <EditModal isOpen={isEditModalOpen} page={page} courseId={courseId} onClose={closeEditModal} />
     </>
   );
 };
@@ -101,6 +97,7 @@ CustomPageCard.propTypes = {
     name: PropTypes.string,
     id: PropTypes.string.isRequired,
   }).isRequired,
+  courseId: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
   deletePageStatus: PropTypes.string.isRequired,
   editorPath: PropTypes.string.isRequired,

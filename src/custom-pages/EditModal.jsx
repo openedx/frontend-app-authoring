@@ -2,22 +2,31 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
 
-import { FullscreenModal } from '@edx/paragon';
+import { ModalDialog } from '@edx/paragon';
 import { EditorPage } from '@edx/frontend-lib-content-components';
 
-const EditModal = ({ isOpen, page, handleClose }) => (
-  <FullscreenModal
+const EditModal = ({
+  isOpen,
+  page,
+  courseId,
+  onClose,
+}) => (
+  <ModalDialog
     isOpen={isOpen}
-    onClose={handleClose}
+    hasCloseButton={false}
+    size="fullscreen"
   >
-    <EditorPage
-      courseId="course-v1:krisEdx+ka101+2023-01"
-      blockType="html"
-      blockId={page.id}
-      studioEndpointUrl={getConfig().STUDIO_BASE_URL}
-      lmsEndpointUrl={getConfig().LMS_BASE_URL}
-    />
-  </FullscreenModal>
+    <ModalDialog.Body className="p-0">
+      <EditorPage
+        courseId={courseId}
+        blockType="html"
+        blockId={page.id}
+        studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+        lmsEndpointUrl={getConfig().LMS_BASE_URL}
+        returnFunction={onClose}
+      />
+    </ModalDialog.Body>
+  </ModalDialog>
 );
 
 EditModal.propTypes = {
@@ -25,7 +34,8 @@ EditModal.propTypes = {
   page: PropTypes.shape({
     id: PropTypes.string.isRequired,
   }).isRequired,
-  handleClose: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  courseId: PropTypes.string.isRequired,
 };
 
 export default EditModal;

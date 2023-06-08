@@ -112,7 +112,7 @@ const CustomPages = ({ courseId, intl }) => {
                 page={page}
                 dispatch={dispatch}
                 deletePageStatus={deletePageStatus}
-                editorPath={`/course/${courseId}/editor/html/${page.id}`}
+                courseId={courseId}
                 key={page.id}
               />
 
