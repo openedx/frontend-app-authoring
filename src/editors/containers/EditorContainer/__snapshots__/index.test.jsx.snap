@@ -13,6 +13,7 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
           Object {
             "handleCancel": Object {
               "onClose": [MockFunction props.onClose],
+              "returnFunction": [MockFunction props.returnFunction],
             },
           }
         }
@@ -73,6 +74,7 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
         "handleSaveClicked": Object {
           "dispatch": [MockFunction react-redux.dispatch],
           "getContent": [MockFunction props.getContent],
+          "returnFunction": [MockFunction props.returnFunction],
           "validateEntry": [MockFunction props.validateEntry],
         },
       }
@@ -94,6 +96,7 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
           Object {
             "handleCancel": Object {
               "onClose": [MockFunction props.onClose],
+              "returnFunction": [MockFunction props.returnFunction],
             },
           }
         }
@@ -150,6 +153,7 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
         "handleSaveClicked": Object {
           "dispatch": [MockFunction react-redux.dispatch],
           "getContent": [MockFunction props.getContent],
+          "returnFunction": [MockFunction props.returnFunction],
           "validateEntry": [MockFunction props.validateEntry],
         },
       }

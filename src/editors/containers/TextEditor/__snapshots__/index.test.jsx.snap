@@ -20,6 +20,7 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
     }
   }
   onClose={[MockFunction props.onClose]}
+  returnFunction={null}
 >
   <div
     className="editor-body h-75 overflow-auto"
@@ -73,6 +74,7 @@ exports[`TextEditor snapshots loaded, raw editor 1`] = `
     }
   }
   onClose={[MockFunction props.onClose]}
+  returnFunction={null}
 >
   <div
     className="editor-body h-75 overflow-auto"
@@ -128,6 +130,7 @@ exports[`TextEditor snapshots not yet loaded, Spinner appears 1`] = `
     }
   }
   onClose={[MockFunction props.onClose]}
+  returnFunction={null}
 >
   <div
     className="editor-body h-75 overflow-auto"
@@ -175,6 +178,7 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
     }
   }
   onClose={[MockFunction props.onClose]}
+  returnFunction={null}
 >
   <div
     className="editor-body h-75 overflow-auto"

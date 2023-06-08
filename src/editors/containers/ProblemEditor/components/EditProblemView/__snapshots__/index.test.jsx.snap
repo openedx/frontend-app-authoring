@@ -3,6 +3,7 @@
 exports[`EditorProblemView component renders raw editor 1`] = `
 <injectIntl(ShimmedIntlComponent)
   getContent={[Function]}
+  returnFunction={null}
 >
   <Component
     footerNode={
@@ -71,6 +72,7 @@ exports[`EditorProblemView component renders raw editor 1`] = `
 exports[`EditorProblemView component renders simple view 1`] = `
 <injectIntl(ShimmedIntlComponent)
   getContent={[Function]}
+  returnFunction={null}
 >
   <Component
     footerNode={

@@ -29,6 +29,7 @@ exports[`Editor render snapshot: renders correct editor given blockType (html ->
   >
     <TextEditor
       onClose={[MockFunction props.onClose]}
+      returnFunction={null}
     />
   </div>
 </div>

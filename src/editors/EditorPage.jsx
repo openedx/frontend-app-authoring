@@ -13,6 +13,7 @@ export const EditorPage = ({
   lmsEndpointUrl,
   studioEndpointUrl,
   onClose,
+  returnFunction,
 }) => (
   <Provider store={store}>
     <ErrorBoundary
@@ -29,6 +30,7 @@ export const EditorPage = ({
           blockId,
           lmsEndpointUrl,
           studioEndpointUrl,
+          returnFunction,
         }}
       />
     </ErrorBoundary>
@@ -39,6 +41,7 @@ EditorPage.defaultProps = {
   courseId: null,
   lmsEndpointUrl: null,
   onClose: null,
+  returnFunction: null,
   studioEndpointUrl: null,
 };
 
@@ -48,6 +51,7 @@ EditorPage.propTypes = {
   courseId: PropTypes.string,
   lmsEndpointUrl: PropTypes.string,
   onClose: PropTypes.func,
+  returnFunction: PropTypes.func,
   studioEndpointUrl: PropTypes.string,
 };
 

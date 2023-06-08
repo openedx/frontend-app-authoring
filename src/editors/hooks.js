@@ -17,12 +17,17 @@ export const navigateTo = (destination) => {
 };
 
 export const navigateCallback = ({
+  returnFunction,
   destination,
   analyticsEvent,
   analytics,
 }) => () => {
   if (process.env.NODE_ENV !== 'development' && analyticsEvent && analytics) {
     sendTrackEvent(analyticsEvent, analytics);
+  }
+  if (returnFunction) {
+    returnFunction();
+    return;
   }
   module.navigateTo(destination);
 };
@@ -34,6 +39,7 @@ export const saveBlock = ({
   content,
   destination,
   dispatch,
+  returnFunction,
   validateEntry,
 }) => {
   if (!content) {
@@ -53,6 +59,7 @@ export const saveBlock = ({
         destination,
         analyticsEvent: analyticsEvt.editorSaveClick,
         analytics,
+        returnFunction,
       }),
       content,
     }));
