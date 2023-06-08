@@ -486,7 +486,6 @@ describe('requests thunkActions module', () => {
           requestKey: RequestKeys.fetchVideoFeatures,
           promise: api.fetchVideoFeatures({
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
-            learningContextId: selectors.app.learningContextId(testState),
           }),
         },
       });

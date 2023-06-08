@@ -204,9 +204,8 @@ export const apiMethods = {
   ),
   fetchVideoFeatures: ({
     studioEndpointUrl,
-    learningContextId,
   }) => get(
-    urls.videoFeatures({ studioEndpointUrl, learningContextId }),
+    urls.videoFeatures({ studioEndpointUrl }),
   ),
   uploadVideo: ({
     data,
