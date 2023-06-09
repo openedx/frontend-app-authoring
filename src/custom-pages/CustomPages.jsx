@@ -65,7 +65,7 @@ const CustomPages = ({ courseId, intl }) => {
 
   return (
     <CustomPagesProvider courseId={courseId}>
-      <main className="container container-mw-lg px-3">
+      <main className="container container-mw-xl p-4 pt-6">
         <Breadcrumb
           ariaLabel="Breadcrumb basic"
           className="small gray-700"
@@ -99,12 +99,12 @@ const CustomPages = ({ courseId, intl }) => {
           md={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
           sm={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
           xs={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
-          xl={[{ span: 9 }, { span: 3 }]}
+          xl={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
         >
           <Layout.Element>
-            {deletePageStatus === RequestStatus.FAILED && <Alert variant="danger" icon={Info} isDismissable>Unable to delete page. Please try again.</Alert>}
-            {addPageStatus === RequestStatus.FAILED && <Alert variant="danger" icon={Info} isDismissable>Unable to add page. Please try again.</Alert>}
-            <div className="small gray-700 mb-3">
+            {deletePageStatus === RequestStatus.FAILED && <Alert variant="danger" icon={Info} dismissable>Unable to delete page. Please try again.</Alert>}
+            {addPageStatus === RequestStatus.FAILED && <Alert variant="danger" icon={Info} dismissable>Unable to add page. Please try again.</Alert>}
+            <div className="small gray-700 mb-4">
               <FormattedMessage {...messages.note} />
             </div>
             {pages.map((page) => (
@@ -115,7 +115,6 @@ const CustomPages = ({ courseId, intl }) => {
                 courseId={courseId}
                 key={page.id}
               />
-
             ))}
             <StatefulButton onClick={handleAddPage} state={addPageStatus} {...addPageStateProps} />
           </Layout.Element>

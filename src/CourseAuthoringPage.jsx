@@ -10,7 +10,7 @@ import Header from './studio-header/Header';
 import { fetchCourseDetail } from './data/thunks';
 import { useModel } from './generic/model-store';
 import PermissionDeniedAlert from './generic/PermissionDeniedAlert';
-import { getCourseAppsApiStatus, getLoadingStatus } from './pages-and-resources/data/selectors';
+import { getCourseAppsApiStatus } from './pages-and-resources/data/selectors';
 import { RequestStatus } from './data/constants';
 import Loading from './generic/Loading';
 
@@ -56,31 +56,33 @@ const CourseAuthoringPage = ({ courseId, children }) => {
   const courseOrg = courseDetail ? courseDetail.org : null;
   const courseTitle = courseDetail ? courseDetail.name : courseId;
   const courseAppsApiStatus = useSelector(getCourseAppsApiStatus);
-  const inProgress = useSelector(getLoadingStatus) === RequestStatus.IN_PROGRESS;
+  const inProgress = useSelector(state => state.courseDetail.status) === RequestStatus.IN_PROGRESS;
   const { pathname } = useLocation();
+  const showHeader = !pathname.includes('/editor/');
+
   if (courseAppsApiStatus === RequestStatus.DENIED) {
     return (
       <PermissionDeniedAlert />
     );
   }
-
   return (
     <div className={pathname.includes('/editor/') ? '' : 'bg-light-200'}>
       {/* While V2 Editors are tempoarily served from thier own pages
       using url pattern containing /editor/,
       we shouldn't have the header and footer on these pages.
       This functionality will be removed in TNL-9591 */}
-      {inProgress ? !pathname.includes('/editor/') && <Loading />
-        : (
+      {inProgress ? showHeader && <Loading />
+        : (showHeader && (
           <AppHeader
             courseNumber={courseNumber}
             courseOrg={courseOrg}
             courseTitle={courseTitle}
             courseId={courseId}
           />
-    )}
+        )
+      )}
       {children}
-      {!inProgress && <AppFooter />}
+      {!inProgress && showHeader && <AppFooter />}
     </div>
   );
 };

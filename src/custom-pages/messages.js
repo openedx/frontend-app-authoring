@@ -65,6 +65,10 @@ const messages = defineMessages({
     id: 'course-authoring.custom-pages.deleteTooltip.content',
     defaultMessage: 'Delete',
   },
+  visibilityTooltipContent: {
+    id: 'course-authoring.custom-pages.visibilityTooltip.content',
+    defaultMessage: 'Hide/show page from learners',
+  },
   addPageBodyLabel: {
     id: 'course-authoring.custom-pages.body.addPage.label',
     defaultMessage: 'Add a new page',

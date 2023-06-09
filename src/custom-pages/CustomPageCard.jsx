@@ -11,8 +11,14 @@ import {
   StatefulButton,
   useToggle,
 } from '@edx/paragon';
-import { DeleteOutline, EditOutline, SpinnerSimple } from '@edx/paragon/icons';
-import { deleteSingleCustomPage } from './data/thunks';
+import {
+  DeleteOutline,
+  EditOutline,
+  SpinnerSimple,
+  Visibility,
+  VisibilityOff,
+} from '@edx/paragon/icons';
+import { deleteSingleCustomPage, updateSingleCustomPage } from './data/thunks';
 import EditModal from './EditModal';
 import messages from './messages';
 
@@ -33,6 +39,13 @@ const CustomPageCard = ({
     }));
   };
 
+  const toggleVisibilty = () => {
+    dispatch(updateSingleCustomPage({
+      blockId: page.id,
+      metadata: { course_staff_only: !page.courseStaffOnly },
+    }));
+  };
+
   const deletePageStateProps = {
     labels: {
       default: intl.formatMessage(messages.deletePageLabel),
@@ -46,9 +59,9 @@ const CustomPageCard = ({
 
   return (
     <>
-      <Card className="p-3 mb-3">
+      <Card className="p-3 mb-4">
         <ActionRow>
-          {page?.name}
+          {page?.name || 'Empty'}
           <ActionRow.Spacer />
           <IconButtonWithTooltip
             key={intl.formatMessage(messages.editTooltipContent)}
@@ -58,7 +71,15 @@ const CustomPageCard = ({
             iconAs={Icon}
             alt={intl.formatMessage(messages.editTooltipContent)}
             onClick={openEditModal}
-            className="mr-2"
+          />
+          <IconButtonWithTooltip
+            key={intl.formatMessage(messages.visibilityTooltipContent)}
+            tooltipPlacement="top"
+            tooltipContent={intl.formatMessage(messages.visibilityTooltipContent)}
+            src={page.courseStaffOnly ? VisibilityOff : Visibility}
+            iconAs={Icon}
+            alt={intl.formatMessage(messages.visibilityTooltipContent)}
+            onClick={toggleVisibilty}
           />
           <IconButtonWithTooltip
             key={intl.formatMessage(messages.deleteTooltipContent)}
@@ -68,7 +89,6 @@ const CustomPageCard = ({
             iconAs={Icon}
             alt={intl.formatMessage(messages.deleteTooltipContent)}
             onClick={openDeleteConfirmation}
-            className="mr-2"
           />
         </ActionRow>
       </Card>
@@ -96,6 +116,7 @@ CustomPageCard.propTypes = {
   page: PropTypes.shape({
     name: PropTypes.string,
     id: PropTypes.string.isRequired,
+    courseStaffOnly: PropTypes.bool.isRequired,
   }).isRequired,
   courseId: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,

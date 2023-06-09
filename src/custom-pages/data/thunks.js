@@ -3,18 +3,20 @@ import {
   addModel,
   addModels,
   removeModel,
-  // updateModel,
+  updateModel,
  } from '../../generic/model-store';
 import {
   getCustomPages,
   deleteCustomPage,
   addCustomPage,
+  updateCustomPage,
   updateCustomPageOrder,
 } from './api';
 import {
   fetchCustomPagesSuccess,
   updateCustomPagesApiStatus,
   updateLoadingStatus,
+  updateSavingStatus,
   updateAddingStatus,
   updateDeletingStatus,
   deleteCustomPageSuccess,
@@ -90,7 +92,7 @@ export function updatePageOrder(courseId, pages) {
     const tabs = [];
     pages.forEach(page => {
       const currentTab = {};
-      currentTab.tab_id = `${page.type}_${page.urlSlug}`;
+      currentTab.tab_id = page.tabId;
       currentTab.tab_locator = page.id;
       tabs.push(currentTab);
     });
@@ -105,18 +107,25 @@ export function updatePageOrder(courseId, pages) {
     }
   };
 }
-// export function updateSingleCustomPage(blockId, data, metadata) {
-//   return async (dispatch) => {
-//     dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
 
-//     try {
-//       await updateCourseApp(courseId, appId, state);
-//       dispatch(updateModel({ modelType: 'courseApps', model: { id: blockId, data, ...metadata } }));
-//       // dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-//       return true;
-//     } catch (error) {
-//       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-//       return false;
-//     }
-//   };
-// }
+export function updateSingleCustomPage({ blockId, htmlString, metadata }) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      const pageData = await updateCustomPage({ blockId, htmlString, metadata });
+      dispatch(updateModel({
+        modelType: 'customPages',
+        model: {
+          id: blockId,
+          courseStaffOnly: pageData.metadata.courseStaffOnly,
+        },
+      }));
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+      return true;
+    } catch (error) {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+      return false;
+    }
+  };
+}

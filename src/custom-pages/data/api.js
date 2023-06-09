@@ -36,7 +36,7 @@ export async function deleteCustomPage(blockId) {
 
  */
 export async function addCustomPage(courseId) {
-  const v1CourseId = courseId.subString(8);
+  const v1CourseId = courseId.substring(7);
   const courseBlockId = `block-${v1CourseId}+type@course+block@course`;
   const { data } = await getAuthenticatedHttpClient()
     .put(`${getApiBaseUrl()}/xblock/`, {
@@ -51,11 +51,12 @@ export async function addCustomPage(courseId) {
  * @param {blockId} courseId Course ID for the course to operate on
 
  */
-export async function updateCustomPage(blockId, htmlString, metadata) {
+export async function updateCustomPage({ blockId, htmlString, metadata }) {
   const { data } = await getAuthenticatedHttpClient()
     .put(`${getApiBaseUrl()}/xblock/${blockId}`, {
+      id: blockId,
       data: htmlString,
-      ...metadata,
+      metadata,
     });
   return camelCaseObject(data);
 }
