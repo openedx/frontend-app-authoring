@@ -2,7 +2,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import Enzyme from 'enzyme';
-import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+import Adapter from 'enzyme-adapter-react-16';
 import MutationObserver from '@sheerun/mutationobserver-shim';
 import { mergeConfig } from '@edx/frontend-platform';
 
