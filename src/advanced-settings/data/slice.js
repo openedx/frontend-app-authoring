@@ -10,6 +10,7 @@ const slice = createSlice({
     savingStatus: '',
     courseAppSettings: {},
     proctoringErrors: {},
+    sendRequestErrors: {},
   },
   reducers: {
     updateLoadingStatus: (state, { payload }) => {
@@ -24,6 +25,9 @@ const slice = createSlice({
     updateCourseAppsSettingsSuccess: (state, { payload }) => {
       Object.assign(state.courseAppSettings, payload);
     },
+    getDataSendErrors: (state, { payload }) => {
+      Object.assign(state.sendRequestErrors, payload);
+    },
     fetchProctoringExamErrorsSuccess: (state, { payload }) => {
       Object.assign(state.proctoringErrors, payload);
     },
@@ -33,7 +37,7 @@ const slice = createSlice({
 export const {
   updateLoadingStatus,
   updateSavingStatus,
-  updateCourseAppsApiStatus,
+  getDataSendErrors,
   fetchCourseAppsSettingsSuccess,
   updateCourseAppsSettingsSuccess,
   fetchProctoringExamErrorsSuccess,

@@ -2,28 +2,28 @@
 
 exports[`SettingsSidebar should match the snapshot 1`] = `
 <aside
-  className="setting-sidebar__supplementary"
+  className="setting-sidebar-supplementary"
 >
   <div
-    className="setting-sidebar__supplementary-about"
+    className="setting-sidebar-supplementary-about"
   >
     <h4
-      className="setting-sidebar__supplementary-about--title"
+      className="setting-sidebar-supplementary-about-title"
     >
       What do advanced settings do?
     </h4>
     <p
-      className="setting-sidebar__supplementary-about--descriptions"
+      className="setting-sidebar-supplementary-about-descriptions"
     >
       Advanced settings control specific course functionality. On this page, you can edit manual policies, which are JSON-based key and value pairs that control specific course settings.
     </p>
     <p
-      className="setting-sidebar__supplementary-about--descriptions"
+      className="setting-sidebar-supplementary-about-descriptions"
     >
       Any policies you modify here override all other information you’ve defined elsewhere in Studio. Do not edit policies unless you are familiar with both their purpose and syntax.
     </p>
     <p
-      className="setting-sidebar__supplementary-about--descriptions"
+      className="setting-sidebar-supplementary-about-descriptions"
     >
       <strong>
         Note:
@@ -33,22 +33,22 @@ exports[`SettingsSidebar should match the snapshot 1`] = `
   </div>
   <hr />
   <div
-    className="setting-sidebar__supplementary-other"
+    className="setting-sidebar-supplementary-other"
   >
     <h4
-      className="setting-sidebar__supplementary-other-title"
+      className="setting-sidebar-supplementary-other-title"
     >
       Other Course Settings
     </h4>
     <nav
       aria-label="Other Course Settings"
-      className="setting-sidebar__supplementary-other-links"
+      className="setting-sidebar-supplementary-other-links"
     >
       <ul
         className="p-0 mb-0"
       >
         <li
-          className="setting-sidebar__supplementary-other-link"
+          className="setting-sidebar-supplementary-other-link"
         >
           <a
             className="pgn__hyperlink default-link standalone-link"
@@ -61,7 +61,7 @@ exports[`SettingsSidebar should match the snapshot 1`] = `
           </a>
         </li>
         <li
-          className="setting-sidebar__supplementary-other-link"
+          className="setting-sidebar-supplementary-other-link"
         >
           <a
             className="pgn__hyperlink default-link standalone-link"
@@ -74,7 +74,7 @@ exports[`SettingsSidebar should match the snapshot 1`] = `
           </a>
         </li>
         <li
-          className="setting-sidebar__supplementary-other-link"
+          className="setting-sidebar-supplementary-other-link"
         >
           <a
             className="pgn__hyperlink default-link standalone-link"
@@ -87,7 +87,7 @@ exports[`SettingsSidebar should match the snapshot 1`] = `
           </a>
         </li>
         <li
-          className="setting-sidebar__supplementary-other-link"
+          className="setting-sidebar-supplementary-other-link"
         >
           <a
             className="pgn__hyperlink default-link standalone-link"

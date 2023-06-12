@@ -5,7 +5,7 @@ exports[`SettingCard matches the snapshot 1`] = `
   class="field-group course-advanced-policy-list-item"
 >
   <div
-    class="flex-column mb-2 setting__card pgn__card pgn__card-light card"
+    class="flex-column setting-card pgn__card pgn__card-light card"
     tabindex="-1"
   >
     <div

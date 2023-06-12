@@ -16,22 +16,22 @@ const AlertProctoringError = ({ proctoringErrorsData, ...props }) => (
 );
 
 AlertProctoringError.propTypes = {
-    variant: PropTypes.string,
-    proctoringErrorsData: PropTypes.arrayOf(PropTypes.shape({
-        key: PropTypes.string,
-        message: PropTypes.string,
-        model: PropTypes.shape({
-            deprecated: PropTypes.bool,
-            displayName: PropTypes.string,
-            help: PropTypes.string,
-            hideOnEnabledPublisher: PropTypes.bool,
-        }),
-        value: PropTypes.string,
-    })).isRequired,
+  variant: PropTypes.string,
+  proctoringErrorsData: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string,
+    message: PropTypes.string,
+    model: PropTypes.shape({
+      deprecated: PropTypes.bool,
+      displayName: PropTypes.string,
+      help: PropTypes.string,
+      hideOnEnabledPublisher: PropTypes.bool,
+    }),
+    value: PropTypes.string,
+  })).isRequired,
 };
 
 AlertProctoringError.defaultProps = {
-    variant: 'danger',
+  variant: 'danger',
 };
 
 export default AlertProctoringError;

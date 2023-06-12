@@ -128,3 +128,19 @@
     margin-bottom: 1.25rem;
   }
 }
+
+.modal-error-item {
+  list-style: none;
+
+  .pgn__icon {
+    display: inline-block;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    color: $danger;
+  }
+
+  .modal-error-item-title {
+    display: flex;
+    align-items: center;
+  }
+}

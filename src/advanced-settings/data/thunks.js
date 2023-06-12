@@ -10,6 +10,7 @@ import {
   updateLoadingStatus,
   updateSavingStatus,
   fetchProctoringExamErrorsSuccess,
+  getDataSendErrors,
 } from './slice';
 
 export function fetchCourseAppSettings(courseId, settings) {
@@ -36,6 +37,10 @@ export function updateCourseAppSetting(courseId, settings) {
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
+      const { customAttributes: { httpErrorResponseData } } = error;
+      const errorData = JSON.parse(httpErrorResponseData);
+
+      dispatch(getDataSendErrors(errorData));
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }

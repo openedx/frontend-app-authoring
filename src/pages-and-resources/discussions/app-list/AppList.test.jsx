@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
 import React from 'react';
 import {
- render, screen, within, queryAllByRole,
+  render, screen, within, queryAllByRole,
 } from '@testing-library/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';

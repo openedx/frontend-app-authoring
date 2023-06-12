@@ -9,7 +9,7 @@ const SupportedFeature = ({ name }) => (
     </span>
     {name}
   </>
-  );
+);
 
 SupportedFeature.propTypes = {
   name: PropTypes.string.isRequired,

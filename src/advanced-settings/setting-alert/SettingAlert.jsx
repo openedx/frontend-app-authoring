@@ -9,7 +9,7 @@ const SettingAlert = ({
     <Alert.Heading>{title}</Alert.Heading>
     <p>{description}</p>
   </Alert>
-  );
+);
 
 SettingAlert.propTypes = {
   title: PropTypes.string,

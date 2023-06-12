@@ -1,0 +1,2336 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ModalError should match the snapshot 1`] = `
+<IntlProvider
+  defaultFormats={Object {}}
+  defaultLocale="en"
+  fallbackOnEmptyString={true}
+  formats={Object {}}
+  locale="en"
+  messages={Object {}}
+  onError={[Function]}
+  onWarn={[Function]}
+  textComponent={Symbol(react.fragment)}
+>
+  <injectIntl(ShimmedIntlComponent)
+    errorList={
+      Array [
+        Object {
+          "key": "advancedModules",
+          "message": "Incorrectly formatted JSON",
+        },
+        Object {
+          "key": "courseSettings",
+          "message": "Invalid value",
+        },
+      ]
+    }
+    handleUndoChanges={[MockFunction]}
+    intl={
+      Object {
+        "formatMessage": [MockFunction],
+      }
+    }
+    isError={true}
+    settingsData={
+      Object {
+        "advancedModules": Object {
+          "displayName": "Advanced Modules",
+        },
+        "courseSettings": Object {
+          "displayName": "Course Settings",
+        },
+      }
+    }
+    showErrorModal={[MockFunction]}
+  >
+    <ShimmedIntlComponent
+      errorList={
+        Array [
+          Object {
+            "key": "advancedModules",
+            "message": "Incorrectly formatted JSON",
+          },
+          Object {
+            "key": "courseSettings",
+            "message": "Invalid value",
+          },
+        ]
+      }
+      handleUndoChanges={[MockFunction]}
+      intl={
+        Object {
+          "$t": [Function],
+          "defaultFormats": Object {},
+          "defaultLocale": "en",
+          "defaultRichTextElements": undefined,
+          "fallbackOnEmptyString": true,
+          "formatDate": [Function],
+          "formatDateTimeRange": [Function],
+          "formatDateToParts": [Function],
+          "formatDisplayName": [Function],
+          "formatList": [Function],
+          "formatListToParts": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatNumberToParts": [Function],
+          "formatPlural": [Function],
+          "formatRelativeTime": [Function],
+          "formatTime": [Function],
+          "formatTimeToParts": [Function],
+          "formats": Object {},
+          "formatters": Object {
+            "getDateTimeFormat": [Function],
+            "getDisplayNames": [Function],
+            "getListFormat": [Function],
+            "getMessageFormat": [Function],
+            "getNumberFormat": [Function],
+            "getPluralRules": [Function],
+            "getRelativeTimeFormat": [Function],
+          },
+          "locale": "en",
+          "messages": Object {},
+          "onError": [Function],
+          "onWarn": [Function],
+          "textComponent": Symbol(react.fragment),
+          "timeZone": undefined,
+          "wrapRichTextChunksInFragment": undefined,
+        }
+      }
+      isError={true}
+      settingsData={
+        Object {
+          "advancedModules": Object {
+            "displayName": "Advanced Modules",
+          },
+          "courseSettings": Object {
+            "displayName": "Course Settings",
+          },
+        }
+      }
+      showErrorModal={[MockFunction]}
+    >
+      <ModalError
+        errorList={
+          Array [
+            Object {
+              "key": "advancedModules",
+              "message": "Incorrectly formatted JSON",
+            },
+            Object {
+              "key": "courseSettings",
+              "message": "Invalid value",
+            },
+          ]
+        }
+        handleUndoChanges={[MockFunction]}
+        intl={Object {}}
+        isError={true}
+        settingsData={
+          Object {
+            "advancedModules": Object {
+              "displayName": "Advanced Modules",
+            },
+            "courseSettings": Object {
+              "displayName": "Course Settings",
+            },
+          }
+        }
+        showErrorModal={[MockFunction]}
+      >
+        <AlertModal
+          closeLabel="Close"
+          footerNode={
+            <ActionRow
+              as="div"
+              isStacked={false}
+            >
+              <ForwardRef
+                active={false}
+                disabled={false}
+                onClick={[MockFunction]}
+                variant="primary"
+              >
+                Undo Changes
+              </ForwardRef>
+              <ForwardRef
+                active={false}
+                disabled={false}
+                onClick={[Function]}
+                variant="tertiary"
+              >
+                Change Manually
+              </ForwardRef>
+            </ActionRow>
+          }
+          hasCloseButton={false}
+          isBlocking={false}
+          isFullscreenScroll={false}
+          isOpen={true}
+          onClose={[Function]}
+          size="md"
+          title="Validation Error While Saving"
+          variant="danger"
+        >
+          <ModalDialog
+            className="pgn__alert-modal"
+            closeLabel="Close"
+            hasCloseButton={false}
+            isBlocking={false}
+            isFullscreenOnMobile={false}
+            isFullscreenScroll={false}
+            isOpen={true}
+            onClose={[Function]}
+            size="md"
+            title="Validation Error While Saving"
+            variant="danger"
+          >
+            <ModalLayer
+              isBlocking={false}
+              isOpen={true}
+              onClose={[Function]}
+            >
+              <ModalContextProvider
+                isBlocking={false}
+                isOpen={true}
+                onClose={[Function]}
+              >
+                <Portal>
+                  <Portal
+                    containerInfo={
+                      <div
+                        id="paragon-portal-root"
+                      >
+                        <div
+                          aria-hidden="true"
+                          data-focus-guard="true"
+                          data-focus-on-hidden="true"
+                          style="width: 1px; height: 0px; padding: 0px; overflow: hidden; position: fixed; top: 1px; left: 1px;"
+                          tabindex="0"
+                        />
+                        <div
+                          class="pgn__modal-layer"
+                          data-focus-lock-disabled="false"
+                        >
+                          <div
+                            class="pgn__modal-content-container"
+                          >
+                            <div
+                              class="pgn__modal-backdrop"
+                            />
+                            <div
+                              aria-label="Validation Error While Saving"
+                              class="pgn__modal pgn__modal-md pgn__modal-danger pgn__alert-modal"
+                              role="dialog"
+                            >
+                              <div
+                                class="pgn__modal-header"
+                              >
+                                <h2
+                                  class="pgn__modal-title"
+                                >
+                                  Validation Error While Saving
+                                </h2>
+                              </div>
+                              <div
+                                class="pgn__modal-body pgn__modal-body-scroll-top pgn__modal-body-scroll-bottom"
+                              >
+                                <div />
+                                <div
+                                  class="pgn__modal-body-content"
+                                >
+                                  <p>
+                                    There was 
+                                    <strong>
+                                      2
+                                       validation error 
+                                    </strong>
+                                     while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:
+                                  </p>
+                                  <hr />
+                                  <ul
+                                    class="p-0"
+                                  >
+                                    <li
+                                      class="modal-error-item"
+                                    >
+                                      <div
+                                        class="fade alert-content alert alert-danger show"
+                                        role="alert"
+                                      >
+                                        <div
+                                          class="pgn__alert-message-wrapper"
+                                        >
+                                          <div
+                                            class="alert-message-content"
+                                          >
+                                            <h4
+                                              class="modal-error-item-title"
+                                            >
+                                              <span
+                                                class="pgn__icon"
+                                              >
+                                                <svg
+                                                  aria-hidden="true"
+                                                  fill="none"
+                                                  focusable="false"
+                                                  height="24"
+                                                  role="img"
+                                                  viewBox="0 0 24 24"
+                                                  width="24"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                  <path
+                                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                    fill="currentColor"
+                                                  />
+                                                </svg>
+                                              </span>
+                                              Advanced Modules
+                                              :
+                                            </h4>
+                                            <p
+                                              class="m-0"
+                                            >
+                                              Incorrectly formatted JSON
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </li>
+                                    <li
+                                      class="modal-error-item"
+                                    >
+                                      <div
+                                        class="fade alert-content alert alert-danger show"
+                                        role="alert"
+                                      >
+                                        <div
+                                          class="pgn__alert-message-wrapper"
+                                        >
+                                          <div
+                                            class="alert-message-content"
+                                          >
+                                            <h4
+                                              class="modal-error-item-title"
+                                            >
+                                              <span
+                                                class="pgn__icon"
+                                              >
+                                                <svg
+                                                  aria-hidden="true"
+                                                  fill="none"
+                                                  focusable="false"
+                                                  height="24"
+                                                  role="img"
+                                                  viewBox="0 0 24 24"
+                                                  width="24"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                  <path
+                                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                    fill="currentColor"
+                                                  />
+                                                </svg>
+                                              </span>
+                                              Course Settings
+                                              :
+                                            </h4>
+                                            <p
+                                              class="m-0"
+                                            >
+                                              Invalid value
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </li>
+                                  </ul>
+                                </div>
+                                <div />
+                              </div>
+                              <div
+                                class="pgn__modal-footer"
+                              >
+                                <div
+                                  class="pgn__action-row"
+                                >
+                                  <button
+                                    class="btn btn-primary"
+                                    type="button"
+                                  >
+                                    Undo Changes
+                                  </button>
+                                  <button
+                                    class="btn btn-tertiary"
+                                    type="button"
+                                  >
+                                    Change Manually
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          aria-hidden="true"
+                          data-focus-guard="true"
+                          data-focus-on-hidden="true"
+                          style="width: 1px; height: 0px; padding: 0px; overflow: hidden; position: fixed; top: 1px; left: 1px;"
+                          tabindex="0"
+                        />
+                      </div>
+                    }
+                  >
+                    <ForwardRef
+                      allowPinchZoom={true}
+                      className="pgn__modal-layer"
+                      enabled={true}
+                      onClickOutside={[Function]}
+                      onEscapeKey={[Function]}
+                      scrollLock={true}
+                    >
+                      <ForwardRef
+                        allowPinchZoom={true}
+                        className="pgn__modal-layer"
+                        enabled={true}
+                        onClickOutside={[Function]}
+                        onEscapeKey={[Function]}
+                        scrollLock={true}
+                        sideCar={[Function]}
+                      >
+                        <ForwardRef(FocusLockUI)
+                          as={
+                            Object {
+                              "$$typeof": Symbol(react.forward_ref),
+                              "classNames": Object {
+                                "fullWidth": "width-before-scroll-bar",
+                                "zeroRight": "right-scroll-bar-position",
+                              },
+                              "defaultProps": Object {
+                                "enabled": true,
+                                "inert": false,
+                                "removeScrollBar": true,
+                              },
+                              "render": [Function],
+                            }
+                          }
+                          autoFocus={true}
+                          className="pgn__modal-layer"
+                          crossFrame={true}
+                          disabled={false}
+                          lockProps={
+                            Object {
+                              "allowPinchZoom": true,
+                              "as": undefined,
+                              "enabled": true,
+                              "inert": undefined,
+                              "onMouseDown": [Function],
+                              "onTouchStart": [Function],
+                              "shards": undefined,
+                              "sideCar": [Function],
+                              "style": undefined,
+                            }
+                          }
+                          noFocusGuards={false}
+                          onActivation={[Function]}
+                          onDeactivation={[Function]}
+                          persistentFocus={false}
+                          returnFocus={true}
+                          sideCar={[Function]}
+                        >
+                          <div
+                            data-focus-guard={true}
+                            key="guard-first"
+                            style={
+                              Object {
+                                "height": "0px",
+                                "left": "1px",
+                                "overflow": "hidden",
+                                "padding": 0,
+                                "position": "fixed",
+                                "top": "1px",
+                                "width": "1px",
+                              }
+                            }
+                            tabIndex={0}
+                          />
+                          <RequireSideCar
+                            autoFocus={true}
+                            crossFrame={true}
+                            disabled={false}
+                            id={Object {}}
+                            observed={
+                              <div
+                                class="pgn__modal-layer"
+                                data-focus-lock-disabled="false"
+                              >
+                                <div
+                                  class="pgn__modal-content-container"
+                                >
+                                  <div
+                                    class="pgn__modal-backdrop"
+                                  />
+                                  <div
+                                    aria-label="Validation Error While Saving"
+                                    class="pgn__modal pgn__modal-md pgn__modal-danger pgn__alert-modal"
+                                    role="dialog"
+                                  >
+                                    <div
+                                      class="pgn__modal-header"
+                                    >
+                                      <h2
+                                        class="pgn__modal-title"
+                                      >
+                                        Validation Error While Saving
+                                      </h2>
+                                    </div>
+                                    <div
+                                      class="pgn__modal-body pgn__modal-body-scroll-top pgn__modal-body-scroll-bottom"
+                                    >
+                                      <div />
+                                      <div
+                                        class="pgn__modal-body-content"
+                                      >
+                                        <p>
+                                          There was 
+                                          <strong>
+                                            2
+                                             validation error 
+                                          </strong>
+                                           while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:
+                                        </p>
+                                        <hr />
+                                        <ul
+                                          class="p-0"
+                                        >
+                                          <li
+                                            class="modal-error-item"
+                                          >
+                                            <div
+                                              class="fade alert-content alert alert-danger show"
+                                              role="alert"
+                                            >
+                                              <div
+                                                class="pgn__alert-message-wrapper"
+                                              >
+                                                <div
+                                                  class="alert-message-content"
+                                                >
+                                                  <h4
+                                                    class="modal-error-item-title"
+                                                  >
+                                                    <span
+                                                      class="pgn__icon"
+                                                    >
+                                                      <svg
+                                                        aria-hidden="true"
+                                                        fill="none"
+                                                        focusable="false"
+                                                        height="24"
+                                                        role="img"
+                                                        viewBox="0 0 24 24"
+                                                        width="24"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                      >
+                                                        <path
+                                                          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                          fill="currentColor"
+                                                        />
+                                                      </svg>
+                                                    </span>
+                                                    Advanced Modules
+                                                    :
+                                                  </h4>
+                                                  <p
+                                                    class="m-0"
+                                                  >
+                                                    Incorrectly formatted JSON
+                                                  </p>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </li>
+                                          <li
+                                            class="modal-error-item"
+                                          >
+                                            <div
+                                              class="fade alert-content alert alert-danger show"
+                                              role="alert"
+                                            >
+                                              <div
+                                                class="pgn__alert-message-wrapper"
+                                              >
+                                                <div
+                                                  class="alert-message-content"
+                                                >
+                                                  <h4
+                                                    class="modal-error-item-title"
+                                                  >
+                                                    <span
+                                                      class="pgn__icon"
+                                                    >
+                                                      <svg
+                                                        aria-hidden="true"
+                                                        fill="none"
+                                                        focusable="false"
+                                                        height="24"
+                                                        role="img"
+                                                        viewBox="0 0 24 24"
+                                                        width="24"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                      >
+                                                        <path
+                                                          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                          fill="currentColor"
+                                                        />
+                                                      </svg>
+                                                    </span>
+                                                    Course Settings
+                                                    :
+                                                  </h4>
+                                                  <p
+                                                    class="m-0"
+                                                  >
+                                                    Invalid value
+                                                  </p>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </li>
+                                        </ul>
+                                      </div>
+                                      <div />
+                                    </div>
+                                    <div
+                                      class="pgn__modal-footer"
+                                    >
+                                      <div
+                                        class="pgn__action-row"
+                                      >
+                                        <button
+                                          class="btn btn-primary"
+                                          type="button"
+                                        >
+                                          Undo Changes
+                                        </button>
+                                        <button
+                                          class="btn btn-tertiary"
+                                          type="button"
+                                        >
+                                          Change Manually
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            }
+                            onActivation={[Function]}
+                            onDeactivation={[Function]}
+                            persistentFocus={false}
+                            returnFocus={[Function]}
+                            shards={Array []}
+                            sideCar={
+                              Object {
+                                "assignMedium": [Function],
+                                "assignSyncMedium": [Function],
+                                "options": Object {
+                                  "async": true,
+                                  "ssr": false,
+                                },
+                                "read": [Function],
+                                "useMedium": [Function],
+                              }
+                            }
+                          >
+                            <SideCar
+                              autoFocus={true}
+                              crossFrame={true}
+                              disabled={false}
+                              id={Object {}}
+                              observed={
+                                <div
+                                  class="pgn__modal-layer"
+                                  data-focus-lock-disabled="false"
+                                >
+                                  <div
+                                    class="pgn__modal-content-container"
+                                  >
+                                    <div
+                                      class="pgn__modal-backdrop"
+                                    />
+                                    <div
+                                      aria-label="Validation Error While Saving"
+                                      class="pgn__modal pgn__modal-md pgn__modal-danger pgn__alert-modal"
+                                      role="dialog"
+                                    >
+                                      <div
+                                        class="pgn__modal-header"
+                                      >
+                                        <h2
+                                          class="pgn__modal-title"
+                                        >
+                                          Validation Error While Saving
+                                        </h2>
+                                      </div>
+                                      <div
+                                        class="pgn__modal-body pgn__modal-body-scroll-top pgn__modal-body-scroll-bottom"
+                                      >
+                                        <div />
+                                        <div
+                                          class="pgn__modal-body-content"
+                                        >
+                                          <p>
+                                            There was 
+                                            <strong>
+                                              2
+                                               validation error 
+                                            </strong>
+                                             while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:
+                                          </p>
+                                          <hr />
+                                          <ul
+                                            class="p-0"
+                                          >
+                                            <li
+                                              class="modal-error-item"
+                                            >
+                                              <div
+                                                class="fade alert-content alert alert-danger show"
+                                                role="alert"
+                                              >
+                                                <div
+                                                  class="pgn__alert-message-wrapper"
+                                                >
+                                                  <div
+                                                    class="alert-message-content"
+                                                  >
+                                                    <h4
+                                                      class="modal-error-item-title"
+                                                    >
+                                                      <span
+                                                        class="pgn__icon"
+                                                      >
+                                                        <svg
+                                                          aria-hidden="true"
+                                                          fill="none"
+                                                          focusable="false"
+                                                          height="24"
+                                                          role="img"
+                                                          viewBox="0 0 24 24"
+                                                          width="24"
+                                                          xmlns="http://www.w3.org/2000/svg"
+                                                        >
+                                                          <path
+                                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                            fill="currentColor"
+                                                          />
+                                                        </svg>
+                                                      </span>
+                                                      Advanced Modules
+                                                      :
+                                                    </h4>
+                                                    <p
+                                                      class="m-0"
+                                                    >
+                                                      Incorrectly formatted JSON
+                                                    </p>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </li>
+                                            <li
+                                              class="modal-error-item"
+                                            >
+                                              <div
+                                                class="fade alert-content alert alert-danger show"
+                                                role="alert"
+                                              >
+                                                <div
+                                                  class="pgn__alert-message-wrapper"
+                                                >
+                                                  <div
+                                                    class="alert-message-content"
+                                                  >
+                                                    <h4
+                                                      class="modal-error-item-title"
+                                                    >
+                                                      <span
+                                                        class="pgn__icon"
+                                                      >
+                                                        <svg
+                                                          aria-hidden="true"
+                                                          fill="none"
+                                                          focusable="false"
+                                                          height="24"
+                                                          role="img"
+                                                          viewBox="0 0 24 24"
+                                                          width="24"
+                                                          xmlns="http://www.w3.org/2000/svg"
+                                                        >
+                                                          <path
+                                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                            fill="currentColor"
+                                                          />
+                                                        </svg>
+                                                      </span>
+                                                      Course Settings
+                                                      :
+                                                    </h4>
+                                                    <p
+                                                      class="m-0"
+                                                    >
+                                                      Invalid value
+                                                    </p>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </li>
+                                          </ul>
+                                        </div>
+                                        <div />
+                                      </div>
+                                      <div
+                                        class="pgn__modal-footer"
+                                      >
+                                        <div
+                                          class="pgn__action-row"
+                                        >
+                                          <button
+                                            class="btn btn-primary"
+                                            type="button"
+                                          >
+                                            Undo Changes
+                                          </button>
+                                          <button
+                                            class="btn btn-tertiary"
+                                            type="button"
+                                          >
+                                            Change Manually
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              }
+                              onActivation={[Function]}
+                              onDeactivation={[Function]}
+                              persistentFocus={false}
+                              returnFocus={[Function]}
+                              shards={Array []}
+                              sideCar={
+                                Object {
+                                  "assignMedium": [Function],
+                                  "assignSyncMedium": [Function],
+                                  "options": Object {
+                                    "async": true,
+                                    "ssr": false,
+                                  },
+                                  "read": [Function],
+                                  "useMedium": [Function],
+                                }
+                              }
+                            >
+                              <SideEffect(FocusWatcher)
+                                autoFocus={true}
+                                crossFrame={true}
+                                disabled={false}
+                                id={Object {}}
+                                observed={
+                                  <div
+                                    class="pgn__modal-layer"
+                                    data-focus-lock-disabled="false"
+                                  >
+                                    <div
+                                      class="pgn__modal-content-container"
+                                    >
+                                      <div
+                                        class="pgn__modal-backdrop"
+                                      />
+                                      <div
+                                        aria-label="Validation Error While Saving"
+                                        class="pgn__modal pgn__modal-md pgn__modal-danger pgn__alert-modal"
+                                        role="dialog"
+                                      >
+                                        <div
+                                          class="pgn__modal-header"
+                                        >
+                                          <h2
+                                            class="pgn__modal-title"
+                                          >
+                                            Validation Error While Saving
+                                          </h2>
+                                        </div>
+                                        <div
+                                          class="pgn__modal-body pgn__modal-body-scroll-top pgn__modal-body-scroll-bottom"
+                                        >
+                                          <div />
+                                          <div
+                                            class="pgn__modal-body-content"
+                                          >
+                                            <p>
+                                              There was 
+                                              <strong>
+                                                2
+                                                 validation error 
+                                              </strong>
+                                               while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:
+                                            </p>
+                                            <hr />
+                                            <ul
+                                              class="p-0"
+                                            >
+                                              <li
+                                                class="modal-error-item"
+                                              >
+                                                <div
+                                                  class="fade alert-content alert alert-danger show"
+                                                  role="alert"
+                                                >
+                                                  <div
+                                                    class="pgn__alert-message-wrapper"
+                                                  >
+                                                    <div
+                                                      class="alert-message-content"
+                                                    >
+                                                      <h4
+                                                        class="modal-error-item-title"
+                                                      >
+                                                        <span
+                                                          class="pgn__icon"
+                                                        >
+                                                          <svg
+                                                            aria-hidden="true"
+                                                            fill="none"
+                                                            focusable="false"
+                                                            height="24"
+                                                            role="img"
+                                                            viewBox="0 0 24 24"
+                                                            width="24"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                          >
+                                                            <path
+                                                              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                              fill="currentColor"
+                                                            />
+                                                          </svg>
+                                                        </span>
+                                                        Advanced Modules
+                                                        :
+                                                      </h4>
+                                                      <p
+                                                        class="m-0"
+                                                      >
+                                                        Incorrectly formatted JSON
+                                                      </p>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </li>
+                                              <li
+                                                class="modal-error-item"
+                                              >
+                                                <div
+                                                  class="fade alert-content alert alert-danger show"
+                                                  role="alert"
+                                                >
+                                                  <div
+                                                    class="pgn__alert-message-wrapper"
+                                                  >
+                                                    <div
+                                                      class="alert-message-content"
+                                                    >
+                                                      <h4
+                                                        class="modal-error-item-title"
+                                                      >
+                                                        <span
+                                                          class="pgn__icon"
+                                                        >
+                                                          <svg
+                                                            aria-hidden="true"
+                                                            fill="none"
+                                                            focusable="false"
+                                                            height="24"
+                                                            role="img"
+                                                            viewBox="0 0 24 24"
+                                                            width="24"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                          >
+                                                            <path
+                                                              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                              fill="currentColor"
+                                                            />
+                                                          </svg>
+                                                        </span>
+                                                        Course Settings
+                                                        :
+                                                      </h4>
+                                                      <p
+                                                        class="m-0"
+                                                      >
+                                                        Invalid value
+                                                      </p>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </li>
+                                            </ul>
+                                          </div>
+                                          <div />
+                                        </div>
+                                        <div
+                                          class="pgn__modal-footer"
+                                        >
+                                          <div
+                                            class="pgn__action-row"
+                                          >
+                                            <button
+                                              class="btn btn-primary"
+                                              type="button"
+                                            >
+                                              Undo Changes
+                                            </button>
+                                            <button
+                                              class="btn btn-tertiary"
+                                              type="button"
+                                            >
+                                              Change Manually
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                }
+                                onActivation={[Function]}
+                                onDeactivation={[Function]}
+                                persistentFocus={false}
+                                returnFocus={[Function]}
+                                shards={Array []}
+                              >
+                                <FocusWatcher
+                                  autoFocus={true}
+                                  crossFrame={true}
+                                  disabled={false}
+                                  id={Object {}}
+                                  observed={
+                                    <div
+                                      class="pgn__modal-layer"
+                                      data-focus-lock-disabled="false"
+                                    >
+                                      <div
+                                        class="pgn__modal-content-container"
+                                      >
+                                        <div
+                                          class="pgn__modal-backdrop"
+                                        />
+                                        <div
+                                          aria-label="Validation Error While Saving"
+                                          class="pgn__modal pgn__modal-md pgn__modal-danger pgn__alert-modal"
+                                          role="dialog"
+                                        >
+                                          <div
+                                            class="pgn__modal-header"
+                                          >
+                                            <h2
+                                              class="pgn__modal-title"
+                                            >
+                                              Validation Error While Saving
+                                            </h2>
+                                          </div>
+                                          <div
+                                            class="pgn__modal-body pgn__modal-body-scroll-top pgn__modal-body-scroll-bottom"
+                                          >
+                                            <div />
+                                            <div
+                                              class="pgn__modal-body-content"
+                                            >
+                                              <p>
+                                                There was 
+                                                <strong>
+                                                  2
+                                                   validation error 
+                                                </strong>
+                                                 while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:
+                                              </p>
+                                              <hr />
+                                              <ul
+                                                class="p-0"
+                                              >
+                                                <li
+                                                  class="modal-error-item"
+                                                >
+                                                  <div
+                                                    class="fade alert-content alert alert-danger show"
+                                                    role="alert"
+                                                  >
+                                                    <div
+                                                      class="pgn__alert-message-wrapper"
+                                                    >
+                                                      <div
+                                                        class="alert-message-content"
+                                                      >
+                                                        <h4
+                                                          class="modal-error-item-title"
+                                                        >
+                                                          <span
+                                                            class="pgn__icon"
+                                                          >
+                                                            <svg
+                                                              aria-hidden="true"
+                                                              fill="none"
+                                                              focusable="false"
+                                                              height="24"
+                                                              role="img"
+                                                              viewBox="0 0 24 24"
+                                                              width="24"
+                                                              xmlns="http://www.w3.org/2000/svg"
+                                                            >
+                                                              <path
+                                                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                                fill="currentColor"
+                                                              />
+                                                            </svg>
+                                                          </span>
+                                                          Advanced Modules
+                                                          :
+                                                        </h4>
+                                                        <p
+                                                          class="m-0"
+                                                        >
+                                                          Incorrectly formatted JSON
+                                                        </p>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </li>
+                                                <li
+                                                  class="modal-error-item"
+                                                >
+                                                  <div
+                                                    class="fade alert-content alert alert-danger show"
+                                                    role="alert"
+                                                  >
+                                                    <div
+                                                      class="pgn__alert-message-wrapper"
+                                                    >
+                                                      <div
+                                                        class="alert-message-content"
+                                                      >
+                                                        <h4
+                                                          class="modal-error-item-title"
+                                                        >
+                                                          <span
+                                                            class="pgn__icon"
+                                                          >
+                                                            <svg
+                                                              aria-hidden="true"
+                                                              fill="none"
+                                                              focusable="false"
+                                                              height="24"
+                                                              role="img"
+                                                              viewBox="0 0 24 24"
+                                                              width="24"
+                                                              xmlns="http://www.w3.org/2000/svg"
+                                                            >
+                                                              <path
+                                                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                                fill="currentColor"
+                                                              />
+                                                            </svg>
+                                                          </span>
+                                                          Course Settings
+                                                          :
+                                                        </h4>
+                                                        <p
+                                                          class="m-0"
+                                                        >
+                                                          Invalid value
+                                                        </p>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </li>
+                                              </ul>
+                                            </div>
+                                            <div />
+                                          </div>
+                                          <div
+                                            class="pgn__modal-footer"
+                                          >
+                                            <div
+                                              class="pgn__action-row"
+                                            >
+                                              <button
+                                                class="btn btn-primary"
+                                                type="button"
+                                              >
+                                                Undo Changes
+                                              </button>
+                                              <button
+                                                class="btn btn-tertiary"
+                                                type="button"
+                                              >
+                                                Change Manually
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  }
+                                  onActivation={[Function]}
+                                  onDeactivation={[Function]}
+                                  persistentFocus={false}
+                                  returnFocus={[Function]}
+                                  shards={Array []}
+                                />
+                              </SideEffect(FocusWatcher)>
+                            </SideCar>
+                          </RequireSideCar>
+                          <ForwardRef
+                            allowPinchZoom={true}
+                            className="pgn__modal-layer"
+                            data-focus-lock-disabled={false}
+                            enabled={true}
+                            inert={false}
+                            onBlur={[Function]}
+                            onFocus={[Function]}
+                            onMouseDown={[Function]}
+                            onTouchStart={[Function]}
+                            removeScrollBar={true}
+                            sideCar={[Function]}
+                          >
+                            <RequireSideCar
+                              allowPinchZoom={true}
+                              inert={false}
+                              lockRef={
+                                Object {
+                                  "current": <div
+                                    class="pgn__modal-layer"
+                                    data-focus-lock-disabled="false"
+                                  >
+                                    <div
+                                      class="pgn__modal-content-container"
+                                    >
+                                      <div
+                                        class="pgn__modal-backdrop"
+                                      />
+                                      <div
+                                        aria-label="Validation Error While Saving"
+                                        class="pgn__modal pgn__modal-md pgn__modal-danger pgn__alert-modal"
+                                        role="dialog"
+                                      >
+                                        <div
+                                          class="pgn__modal-header"
+                                        >
+                                          <h2
+                                            class="pgn__modal-title"
+                                          >
+                                            Validation Error While Saving
+                                          </h2>
+                                        </div>
+                                        <div
+                                          class="pgn__modal-body pgn__modal-body-scroll-top pgn__modal-body-scroll-bottom"
+                                        >
+                                          <div />
+                                          <div
+                                            class="pgn__modal-body-content"
+                                          >
+                                            <p>
+                                              There was 
+                                              <strong>
+                                                2
+                                                 validation error 
+                                              </strong>
+                                               while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:
+                                            </p>
+                                            <hr />
+                                            <ul
+                                              class="p-0"
+                                            >
+                                              <li
+                                                class="modal-error-item"
+                                              >
+                                                <div
+                                                  class="fade alert-content alert alert-danger show"
+                                                  role="alert"
+                                                >
+                                                  <div
+                                                    class="pgn__alert-message-wrapper"
+                                                  >
+                                                    <div
+                                                      class="alert-message-content"
+                                                    >
+                                                      <h4
+                                                        class="modal-error-item-title"
+                                                      >
+                                                        <span
+                                                          class="pgn__icon"
+                                                        >
+                                                          <svg
+                                                            aria-hidden="true"
+                                                            fill="none"
+                                                            focusable="false"
+                                                            height="24"
+                                                            role="img"
+                                                            viewBox="0 0 24 24"
+                                                            width="24"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                          >
+                                                            <path
+                                                              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                              fill="currentColor"
+                                                            />
+                                                          </svg>
+                                                        </span>
+                                                        Advanced Modules
+                                                        :
+                                                      </h4>
+                                                      <p
+                                                        class="m-0"
+                                                      >
+                                                        Incorrectly formatted JSON
+                                                      </p>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </li>
+                                              <li
+                                                class="modal-error-item"
+                                              >
+                                                <div
+                                                  class="fade alert-content alert alert-danger show"
+                                                  role="alert"
+                                                >
+                                                  <div
+                                                    class="pgn__alert-message-wrapper"
+                                                  >
+                                                    <div
+                                                      class="alert-message-content"
+                                                    >
+                                                      <h4
+                                                        class="modal-error-item-title"
+                                                      >
+                                                        <span
+                                                          class="pgn__icon"
+                                                        >
+                                                          <svg
+                                                            aria-hidden="true"
+                                                            fill="none"
+                                                            focusable="false"
+                                                            height="24"
+                                                            role="img"
+                                                            viewBox="0 0 24 24"
+                                                            width="24"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                          >
+                                                            <path
+                                                              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                              fill="currentColor"
+                                                            />
+                                                          </svg>
+                                                        </span>
+                                                        Course Settings
+                                                        :
+                                                      </h4>
+                                                      <p
+                                                        class="m-0"
+                                                      >
+                                                        Invalid value
+                                                      </p>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </li>
+                                            </ul>
+                                          </div>
+                                          <div />
+                                        </div>
+                                        <div
+                                          class="pgn__modal-footer"
+                                        >
+                                          <div
+                                            class="pgn__action-row"
+                                          >
+                                            <button
+                                              class="btn btn-primary"
+                                              type="button"
+                                            >
+                                              Undo Changes
+                                            </button>
+                                            <button
+                                              class="btn btn-tertiary"
+                                              type="button"
+                                            >
+                                              Change Manually
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>,
+                                }
+                              }
+                              removeScrollBar={true}
+                              setCallbacks={[Function]}
+                              sideCar={
+                                Object {
+                                  "assignMedium": [Function],
+                                  "assignSyncMedium": [Function],
+                                  "options": Object {
+                                    "async": true,
+                                    "ssr": false,
+                                  },
+                                  "read": [Function],
+                                  "useMedium": [Function],
+                                }
+                              }
+                            >
+                              <SideCar
+                                allowPinchZoom={true}
+                                inert={false}
+                                lockRef={
+                                  Object {
+                                    "current": <div
+                                      class="pgn__modal-layer"
+                                      data-focus-lock-disabled="false"
+                                    >
+                                      <div
+                                        class="pgn__modal-content-container"
+                                      >
+                                        <div
+                                          class="pgn__modal-backdrop"
+                                        />
+                                        <div
+                                          aria-label="Validation Error While Saving"
+                                          class="pgn__modal pgn__modal-md pgn__modal-danger pgn__alert-modal"
+                                          role="dialog"
+                                        >
+                                          <div
+                                            class="pgn__modal-header"
+                                          >
+                                            <h2
+                                              class="pgn__modal-title"
+                                            >
+                                              Validation Error While Saving
+                                            </h2>
+                                          </div>
+                                          <div
+                                            class="pgn__modal-body pgn__modal-body-scroll-top pgn__modal-body-scroll-bottom"
+                                          >
+                                            <div />
+                                            <div
+                                              class="pgn__modal-body-content"
+                                            >
+                                              <p>
+                                                There was 
+                                                <strong>
+                                                  2
+                                                   validation error 
+                                                </strong>
+                                                 while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:
+                                              </p>
+                                              <hr />
+                                              <ul
+                                                class="p-0"
+                                              >
+                                                <li
+                                                  class="modal-error-item"
+                                                >
+                                                  <div
+                                                    class="fade alert-content alert alert-danger show"
+                                                    role="alert"
+                                                  >
+                                                    <div
+                                                      class="pgn__alert-message-wrapper"
+                                                    >
+                                                      <div
+                                                        class="alert-message-content"
+                                                      >
+                                                        <h4
+                                                          class="modal-error-item-title"
+                                                        >
+                                                          <span
+                                                            class="pgn__icon"
+                                                          >
+                                                            <svg
+                                                              aria-hidden="true"
+                                                              fill="none"
+                                                              focusable="false"
+                                                              height="24"
+                                                              role="img"
+                                                              viewBox="0 0 24 24"
+                                                              width="24"
+                                                              xmlns="http://www.w3.org/2000/svg"
+                                                            >
+                                                              <path
+                                                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                                fill="currentColor"
+                                                              />
+                                                            </svg>
+                                                          </span>
+                                                          Advanced Modules
+                                                          :
+                                                        </h4>
+                                                        <p
+                                                          class="m-0"
+                                                        >
+                                                          Incorrectly formatted JSON
+                                                        </p>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </li>
+                                                <li
+                                                  class="modal-error-item"
+                                                >
+                                                  <div
+                                                    class="fade alert-content alert alert-danger show"
+                                                    role="alert"
+                                                  >
+                                                    <div
+                                                      class="pgn__alert-message-wrapper"
+                                                    >
+                                                      <div
+                                                        class="alert-message-content"
+                                                      >
+                                                        <h4
+                                                          class="modal-error-item-title"
+                                                        >
+                                                          <span
+                                                            class="pgn__icon"
+                                                          >
+                                                            <svg
+                                                              aria-hidden="true"
+                                                              fill="none"
+                                                              focusable="false"
+                                                              height="24"
+                                                              role="img"
+                                                              viewBox="0 0 24 24"
+                                                              width="24"
+                                                              xmlns="http://www.w3.org/2000/svg"
+                                                            >
+                                                              <path
+                                                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                                fill="currentColor"
+                                                              />
+                                                            </svg>
+                                                          </span>
+                                                          Course Settings
+                                                          :
+                                                        </h4>
+                                                        <p
+                                                          class="m-0"
+                                                        >
+                                                          Invalid value
+                                                        </p>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </li>
+                                              </ul>
+                                            </div>
+                                            <div />
+                                          </div>
+                                          <div
+                                            class="pgn__modal-footer"
+                                          >
+                                            <div
+                                              class="pgn__action-row"
+                                            >
+                                              <button
+                                                class="btn btn-primary"
+                                                type="button"
+                                              >
+                                                Undo Changes
+                                              </button>
+                                              <button
+                                                class="btn btn-tertiary"
+                                                type="button"
+                                              >
+                                                Change Manually
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>,
+                                  }
+                                }
+                                removeScrollBar={true}
+                                setCallbacks={[Function]}
+                                sideCar={
+                                  Object {
+                                    "assignMedium": [Function],
+                                    "assignSyncMedium": [Function],
+                                    "options": Object {
+                                      "async": true,
+                                      "ssr": false,
+                                    },
+                                    "read": [Function],
+                                    "useMedium": [Function],
+                                  }
+                                }
+                              >
+                                <RemoveScrollSideCar
+                                  allowPinchZoom={true}
+                                  inert={false}
+                                  lockRef={
+                                    Object {
+                                      "current": <div
+                                        class="pgn__modal-layer"
+                                        data-focus-lock-disabled="false"
+                                      >
+                                        <div
+                                          class="pgn__modal-content-container"
+                                        >
+                                          <div
+                                            class="pgn__modal-backdrop"
+                                          />
+                                          <div
+                                            aria-label="Validation Error While Saving"
+                                            class="pgn__modal pgn__modal-md pgn__modal-danger pgn__alert-modal"
+                                            role="dialog"
+                                          >
+                                            <div
+                                              class="pgn__modal-header"
+                                            >
+                                              <h2
+                                                class="pgn__modal-title"
+                                              >
+                                                Validation Error While Saving
+                                              </h2>
+                                            </div>
+                                            <div
+                                              class="pgn__modal-body pgn__modal-body-scroll-top pgn__modal-body-scroll-bottom"
+                                            >
+                                              <div />
+                                              <div
+                                                class="pgn__modal-body-content"
+                                              >
+                                                <p>
+                                                  There was 
+                                                  <strong>
+                                                    2
+                                                     validation error 
+                                                  </strong>
+                                                   while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:
+                                                </p>
+                                                <hr />
+                                                <ul
+                                                  class="p-0"
+                                                >
+                                                  <li
+                                                    class="modal-error-item"
+                                                  >
+                                                    <div
+                                                      class="fade alert-content alert alert-danger show"
+                                                      role="alert"
+                                                    >
+                                                      <div
+                                                        class="pgn__alert-message-wrapper"
+                                                      >
+                                                        <div
+                                                          class="alert-message-content"
+                                                        >
+                                                          <h4
+                                                            class="modal-error-item-title"
+                                                          >
+                                                            <span
+                                                              class="pgn__icon"
+                                                            >
+                                                              <svg
+                                                                aria-hidden="true"
+                                                                fill="none"
+                                                                focusable="false"
+                                                                height="24"
+                                                                role="img"
+                                                                viewBox="0 0 24 24"
+                                                                width="24"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                              >
+                                                                <path
+                                                                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                                  fill="currentColor"
+                                                                />
+                                                              </svg>
+                                                            </span>
+                                                            Advanced Modules
+                                                            :
+                                                          </h4>
+                                                          <p
+                                                            class="m-0"
+                                                          >
+                                                            Incorrectly formatted JSON
+                                                          </p>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </li>
+                                                  <li
+                                                    class="modal-error-item"
+                                                  >
+                                                    <div
+                                                      class="fade alert-content alert alert-danger show"
+                                                      role="alert"
+                                                    >
+                                                      <div
+                                                        class="pgn__alert-message-wrapper"
+                                                      >
+                                                        <div
+                                                          class="alert-message-content"
+                                                        >
+                                                          <h4
+                                                            class="modal-error-item-title"
+                                                          >
+                                                            <span
+                                                              class="pgn__icon"
+                                                            >
+                                                              <svg
+                                                                aria-hidden="true"
+                                                                fill="none"
+                                                                focusable="false"
+                                                                height="24"
+                                                                role="img"
+                                                                viewBox="0 0 24 24"
+                                                                width="24"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                              >
+                                                                <path
+                                                                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                                  fill="currentColor"
+                                                                />
+                                                              </svg>
+                                                            </span>
+                                                            Course Settings
+                                                            :
+                                                          </h4>
+                                                          <p
+                                                            class="m-0"
+                                                          >
+                                                            Invalid value
+                                                          </p>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </li>
+                                                </ul>
+                                              </div>
+                                              <div />
+                                            </div>
+                                            <div
+                                              class="pgn__modal-footer"
+                                            >
+                                              <div
+                                                class="pgn__action-row"
+                                              >
+                                                <button
+                                                  class="btn btn-primary"
+                                                  type="button"
+                                                >
+                                                  Undo Changes
+                                                </button>
+                                                <button
+                                                  class="btn btn-tertiary"
+                                                  type="button"
+                                                >
+                                                  Change Manually
+                                                </button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>,
+                                    }
+                                  }
+                                  removeScrollBar={true}
+                                  setCallbacks={[Function]}
+                                >
+                                  <RemoveScrollBar
+                                    gapMode="margin"
+                                  >
+                                    <Sheet
+                                      styles="
+  .with-scroll-bars-hidden {
+   overflow: hidden !important;
+   padding-right: 1024px !important;
+  }
+  body {
+    overflow: hidden !important;
+    overscroll-behavior: contain;
+    position: relative !important;
+    padding-left: 0px;
+    padding-top: 0px;
+    padding-right: 0px;
+    margin-left:0;
+    margin-top:0;
+    margin-right: 1024px !important;
+    
+  }
+  
+  .right-scroll-bar-position {
+    right: 1024px !important;
+  }
+  
+  .width-before-scroll-bar {
+    margin-right: 1024px !important;
+  }
+  
+  .right-scroll-bar-position .right-scroll-bar-position {
+    right: 0 !important;
+  }
+  
+  .width-before-scroll-bar .width-before-scroll-bar {
+    margin-right: 0 !important;
+  }
+  
+  body {
+    --removed-body-scroll-bar-size: 1024px;
+  }
+"
+                                    />
+                                  </RemoveScrollBar>
+                                </RemoveScrollSideCar>
+                              </SideCar>
+                            </RequireSideCar>
+                            <div
+                              className="pgn__modal-layer"
+                              data-focus-lock-disabled={false}
+                              onBlur={[Function]}
+                              onFocus={[Function]}
+                              onMouseDown={[Function]}
+                              onScrollCapture={[Function]}
+                              onTouchMoveCapture={[Function]}
+                              onTouchStart={[Function]}
+                              onWheelCapture={[Function]}
+                            >
+                              <ModalContentContainer>
+                                <div
+                                  className="pgn__modal-content-container"
+                                >
+                                  <ModalBackdrop
+                                    onClick={[Function]}
+                                  >
+                                    <div
+                                      className="pgn__modal-backdrop"
+                                      onClick={[Function]}
+                                      onKeyDown={[Function]}
+                                    />
+                                  </ModalBackdrop>
+                                  <div
+                                    aria-label="Validation Error While Saving"
+                                    className="pgn__modal pgn__modal-md pgn__modal-danger pgn__alert-modal"
+                                    role="dialog"
+                                  >
+                                    <ModalDialogHeader
+                                      as="div"
+                                    >
+                                      <div
+                                        className="pgn__modal-header"
+                                      >
+                                        <ModalDialogTitle
+                                          as="h2"
+                                        >
+                                          <h2
+                                            className="pgn__modal-title"
+                                          >
+                                            Validation Error While Saving
+                                          </h2>
+                                        </ModalDialogTitle>
+                                      </div>
+                                    </ModalDialogHeader>
+                                    <ModalDialogBody
+                                      as="div"
+                                    >
+                                      <div
+                                        className="pgn__modal-body pgn__modal-body-scroll-top pgn__modal-body-scroll-bottom"
+                                      >
+                                        <div />
+                                        <div
+                                          className="pgn__modal-body-content"
+                                        >
+                                          <p>
+                                            <FormattedMessage
+                                              defaultMessage="There was {errorCounter} while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:"
+                                              id="course-authoring.advanced-settings.modal.error.description"
+                                              values={
+                                                Object {
+                                                  "errorCounter": <strong>
+                                                    2
+                                                     validation error 
+                                                  </strong>,
+                                                }
+                                              }
+                                            >
+                                              There was 
+                                              <strong
+                                                key=".$.1"
+                                              >
+                                                2
+                                                 validation error 
+                                              </strong>
+                                               while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:
+                                            </FormattedMessage>
+                                          </p>
+                                          <hr />
+                                          <ul
+                                            className="p-0"
+                                          >
+                                            <ModalErrorListItem
+                                              key="advancedModules"
+                                              settingName={
+                                                Object {
+                                                  "key": "advancedModules",
+                                                  "message": "Incorrectly formatted JSON",
+                                                }
+                                              }
+                                              settingsData={
+                                                Object {
+                                                  "advancedModules": Object {
+                                                    "displayName": "Advanced Modules",
+                                                  },
+                                                  "courseSettings": Object {
+                                                    "displayName": "Course Settings",
+                                                  },
+                                                }
+                                              }
+                                            >
+                                              <li
+                                                className="modal-error-item"
+                                              >
+                                                <ForwardRef
+                                                  dismissible={false}
+                                                  onClose={[Function]}
+                                                  show={true}
+                                                  stacked={false}
+                                                  transition={
+                                                    Object {
+                                                      "$$typeof": Symbol(react.forward_ref),
+                                                      "defaultProps": Object {
+                                                        "appear": false,
+                                                        "in": false,
+                                                        "mountOnEnter": false,
+                                                        "timeout": 300,
+                                                        "unmountOnExit": false,
+                                                      },
+                                                      "displayName": "Fade",
+                                                      "render": [Function],
+                                                    }
+                                                  }
+                                                  variant="danger"
+                                                >
+                                                  <Alert
+                                                    className="alert-content"
+                                                    closeLabel="Close alert"
+                                                    show={true}
+                                                    transition={
+                                                      Object {
+                                                        "$$typeof": Symbol(react.forward_ref),
+                                                        "defaultProps": Object {
+                                                          "appear": false,
+                                                          "in": false,
+                                                          "mountOnEnter": false,
+                                                          "timeout": 300,
+                                                          "unmountOnExit": false,
+                                                        },
+                                                        "displayName": "Fade",
+                                                        "render": [Function],
+                                                      }
+                                                    }
+                                                    variant="danger"
+                                                  >
+                                                    <Fade
+                                                      appear={false}
+                                                      in={true}
+                                                      mountOnEnter={false}
+                                                      timeout={300}
+                                                      unmountOnExit={true}
+                                                    >
+                                                      <Transition
+                                                        addEndListener={[Function]}
+                                                        appear={false}
+                                                        enter={true}
+                                                        exit={true}
+                                                        in={true}
+                                                        mountOnEnter={false}
+                                                        onEnter={[Function]}
+                                                        onEntered={[Function]}
+                                                        onEntering={[Function]}
+                                                        onExit={[Function]}
+                                                        onExited={[Function]}
+                                                        onExiting={[Function]}
+                                                        timeout={300}
+                                                        unmountOnExit={true}
+                                                      >
+                                                        <div
+                                                          className="fade alert-content alert alert-danger show"
+                                                          role="alert"
+                                                        >
+                                                          <div
+                                                            className="pgn__alert-message-wrapper"
+                                                          >
+                                                            <div
+                                                              className="alert-message-content"
+                                                            >
+                                                              <h4
+                                                                className="modal-error-item-title"
+                                                              >
+                                                                <withDeprecatedProps(Icon)
+                                                                  src={[Function]}
+                                                                >
+                                                                  <Icon
+                                                                    hidden={true}
+                                                                    src={[Function]}
+                                                                    svgAttrs={Object {}}
+                                                                  >
+                                                                    <span
+                                                                      className="pgn__icon"
+                                                                    >
+                                                                      <SvgError
+                                                                        aria-hidden={true}
+                                                                        focusable={false}
+                                                                        role="img"
+                                                                      >
+                                                                        <svg
+                                                                          aria-hidden={true}
+                                                                          fill="none"
+                                                                          focusable={false}
+                                                                          height={24}
+                                                                          role="img"
+                                                                          viewBox="0 0 24 24"
+                                                                          width={24}
+                                                                          xmlns="http://www.w3.org/2000/svg"
+                                                                        >
+                                                                          <path
+                                                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                                            fill="currentColor"
+                                                                          />
+                                                                        </svg>
+                                                                      </SvgError>
+                                                                    </span>
+                                                                  </Icon>
+                                                                </withDeprecatedProps(Icon)>
+                                                                Advanced Modules
+                                                                :
+                                                              </h4>
+                                                              <p
+                                                                className="m-0"
+                                                              >
+                                                                Incorrectly formatted JSON
+                                                              </p>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                      </Transition>
+                                                    </Fade>
+                                                  </Alert>
+                                                </ForwardRef>
+                                              </li>
+                                            </ModalErrorListItem>
+                                            <ModalErrorListItem
+                                              key="courseSettings"
+                                              settingName={
+                                                Object {
+                                                  "key": "courseSettings",
+                                                  "message": "Invalid value",
+                                                }
+                                              }
+                                              settingsData={
+                                                Object {
+                                                  "advancedModules": Object {
+                                                    "displayName": "Advanced Modules",
+                                                  },
+                                                  "courseSettings": Object {
+                                                    "displayName": "Course Settings",
+                                                  },
+                                                }
+                                              }
+                                            >
+                                              <li
+                                                className="modal-error-item"
+                                              >
+                                                <ForwardRef
+                                                  dismissible={false}
+                                                  onClose={[Function]}
+                                                  show={true}
+                                                  stacked={false}
+                                                  transition={
+                                                    Object {
+                                                      "$$typeof": Symbol(react.forward_ref),
+                                                      "defaultProps": Object {
+                                                        "appear": false,
+                                                        "in": false,
+                                                        "mountOnEnter": false,
+                                                        "timeout": 300,
+                                                        "unmountOnExit": false,
+                                                      },
+                                                      "displayName": "Fade",
+                                                      "render": [Function],
+                                                    }
+                                                  }
+                                                  variant="danger"
+                                                >
+                                                  <Alert
+                                                    className="alert-content"
+                                                    closeLabel="Close alert"
+                                                    show={true}
+                                                    transition={
+                                                      Object {
+                                                        "$$typeof": Symbol(react.forward_ref),
+                                                        "defaultProps": Object {
+                                                          "appear": false,
+                                                          "in": false,
+                                                          "mountOnEnter": false,
+                                                          "timeout": 300,
+                                                          "unmountOnExit": false,
+                                                        },
+                                                        "displayName": "Fade",
+                                                        "render": [Function],
+                                                      }
+                                                    }
+                                                    variant="danger"
+                                                  >
+                                                    <Fade
+                                                      appear={false}
+                                                      in={true}
+                                                      mountOnEnter={false}
+                                                      timeout={300}
+                                                      unmountOnExit={true}
+                                                    >
+                                                      <Transition
+                                                        addEndListener={[Function]}
+                                                        appear={false}
+                                                        enter={true}
+                                                        exit={true}
+                                                        in={true}
+                                                        mountOnEnter={false}
+                                                        onEnter={[Function]}
+                                                        onEntered={[Function]}
+                                                        onEntering={[Function]}
+                                                        onExit={[Function]}
+                                                        onExited={[Function]}
+                                                        onExiting={[Function]}
+                                                        timeout={300}
+                                                        unmountOnExit={true}
+                                                      >
+                                                        <div
+                                                          className="fade alert-content alert alert-danger show"
+                                                          role="alert"
+                                                        >
+                                                          <div
+                                                            className="pgn__alert-message-wrapper"
+                                                          >
+                                                            <div
+                                                              className="alert-message-content"
+                                                            >
+                                                              <h4
+                                                                className="modal-error-item-title"
+                                                              >
+                                                                <withDeprecatedProps(Icon)
+                                                                  src={[Function]}
+                                                                >
+                                                                  <Icon
+                                                                    hidden={true}
+                                                                    src={[Function]}
+                                                                    svgAttrs={Object {}}
+                                                                  >
+                                                                    <span
+                                                                      className="pgn__icon"
+                                                                    >
+                                                                      <SvgError
+                                                                        aria-hidden={true}
+                                                                        focusable={false}
+                                                                        role="img"
+                                                                      >
+                                                                        <svg
+                                                                          aria-hidden={true}
+                                                                          fill="none"
+                                                                          focusable={false}
+                                                                          height={24}
+                                                                          role="img"
+                                                                          viewBox="0 0 24 24"
+                                                                          width={24}
+                                                                          xmlns="http://www.w3.org/2000/svg"
+                                                                        >
+                                                                          <path
+                                                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                                                                            fill="currentColor"
+                                                                          />
+                                                                        </svg>
+                                                                      </SvgError>
+                                                                    </span>
+                                                                  </Icon>
+                                                                </withDeprecatedProps(Icon)>
+                                                                Course Settings
+                                                                :
+                                                              </h4>
+                                                              <p
+                                                                className="m-0"
+                                                              >
+                                                                Invalid value
+                                                              </p>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                      </Transition>
+                                                    </Fade>
+                                                  </Alert>
+                                                </ForwardRef>
+                                              </li>
+                                            </ModalErrorListItem>
+                                          </ul>
+                                        </div>
+                                        <div />
+                                      </div>
+                                    </ModalDialogBody>
+                                    <ModalDialogFooter
+                                      as="div"
+                                    >
+                                      <div
+                                        className="pgn__modal-footer"
+                                      >
+                                        <ActionRow
+                                          as="div"
+                                          isStacked={false}
+                                        >
+                                          <div
+                                            className="pgn__action-row"
+                                          >
+                                            <ForwardRef
+                                              active={false}
+                                              disabled={false}
+                                              onClick={[MockFunction]}
+                                              variant="primary"
+                                            >
+                                              <Button
+                                                active={false}
+                                                className=""
+                                                disabled={false}
+                                                onClick={[MockFunction]}
+                                                variant="primary"
+                                              >
+                                                <button
+                                                  className="btn btn-primary"
+                                                  disabled={false}
+                                                  onClick={[MockFunction]}
+                                                  type="button"
+                                                >
+                                                  Undo Changes
+                                                </button>
+                                              </Button>
+                                            </ForwardRef>
+                                            <ForwardRef
+                                              active={false}
+                                              disabled={false}
+                                              onClick={[Function]}
+                                              variant="tertiary"
+                                            >
+                                              <Button
+                                                active={false}
+                                                className=""
+                                                disabled={false}
+                                                onClick={[Function]}
+                                                variant="tertiary"
+                                              >
+                                                <button
+                                                  className="btn btn-tertiary"
+                                                  disabled={false}
+                                                  onClick={[Function]}
+                                                  type="button"
+                                                >
+                                                  Change Manually
+                                                </button>
+                                              </Button>
+                                            </ForwardRef>
+                                          </div>
+                                        </ActionRow>
+                                      </div>
+                                    </ModalDialogFooter>
+                                  </div>
+                                </div>
+                              </ModalContentContainer>
+                            </div>
+                          </ForwardRef>
+                          <div
+                            data-focus-guard={true}
+                            style={
+                              Object {
+                                "height": "0px",
+                                "left": "1px",
+                                "overflow": "hidden",
+                                "padding": 0,
+                                "position": "fixed",
+                                "top": "1px",
+                                "width": "1px",
+                              }
+                            }
+                            tabIndex={0}
+                          />
+                        </ForwardRef(FocusLockUI)>
+                        <RequireSideCar
+                          onClickOutside={[Function]}
+                          onEscapeKey={[Function]}
+                          setLockProps={[Function]}
+                          sideCar={
+                            Object {
+                              "assignMedium": [Function],
+                              "assignSyncMedium": [Function],
+                              "options": Object {
+                                "async": true,
+                                "ssr": false,
+                              },
+                              "read": [Function],
+                              "useMedium": [Function],
+                            }
+                          }
+                        >
+                          <SideCar
+                            onClickOutside={[Function]}
+                            onEscapeKey={[Function]}
+                            setLockProps={[Function]}
+                            sideCar={
+                              Object {
+                                "assignMedium": [Function],
+                                "assignSyncMedium": [Function],
+                                "options": Object {
+                                  "async": true,
+                                  "ssr": false,
+                                },
+                                "read": [Function],
+                                "useMedium": [Function],
+                              }
+                            }
+                          >
+                            <Effect
+                              onClickOutside={[Function]}
+                              onEscapeKey={[Function]}
+                              setLockProps={[Function]}
+                            >
+                              <Component>
+                                <Sheet
+                                  styles="
+ [data-focus-on-hidden] {
+   pointer-events: none !important;
+ }
+"
+                                />
+                              </Component>
+                            </Effect>
+                          </SideCar>
+                        </RequireSideCar>
+                      </ForwardRef>
+                    </ForwardRef>
+                  </Portal>
+                </Portal>
+              </ModalContextProvider>
+            </ModalLayer>
+          </ModalDialog>
+        </AlertModal>
+      </ModalError>
+    </ShimmedIntlComponent>
+  </injectIntl(ShimmedIntlComponent)>
+</IntlProvider>
+`;
