@@ -42,7 +42,7 @@ const App = () => {
         <Route path="/home">
           {process.env.ENABLE_NEW_HOME_PAGE === 'true'
               && (
-              <Placeholder />
+                <Placeholder />
               )}
         </Route>
         <Route

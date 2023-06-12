@@ -5,49 +5,76 @@ import { Container, Button, Layout } from '@edx/paragon';
 import { CheckCircle, Info, WarningFilled } from '@edx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { fetchCourseAppSettings, updateCourseAppSetting, fetchProctoringExamErrors } from './data/thunks';
-import { getCourseAppSettings, getSavingStatus, getProctoringExamErrors } from './data/selectors';
+import {
+  getCourseAppSettings, getSavingStatus, getProctoringExamErrors, getSendRequestErrors,
+} from './data/selectors';
 import SettingCard from './setting-card/SettingCard';
 import SettingAlert from './setting-alert/SettingAlert';
 import SettingsSidebar from './settings-sidebar/SettingsSidebar';
 import { RequestStatus } from '../data/constants';
-import { parseArrayOrObjectValues } from '../utils';
+import { parseArrayOrObjectValues, removeExtraQuotes } from '../utils';
+import validateAdvancedSettingsData from './utils';
 import messages from './messages';
 import AlertProctoringError from '../generic/AlertProctoringError';
+import ModalError from './modal-error/ModalError';
 
 const AdvancedSettings = ({ intl, courseId }) => {
   const advancedSettingsData = useSelector(getCourseAppSettings);
   const savingStatus = useSelector(getSavingStatus);
   const proctoringExamErrors = useSelector(getProctoringExamErrors);
+  const settingsWithSendErrors = useSelector(getSendRequestErrors) || {};
   const dispatch = useDispatch();
   const [saveSettingsPrompt, showSaveSettingsPrompt] = useState(false);
   const [showDeprecated, setShowDeprecated] = useState(false);
+  const [errorModal, showErrorModal] = useState(false);
   const [editedSettings, setEditedSettings] = useState({});
+  const [errorFields, setErrorFields] = useState([]);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
   useEffect(() => {
     dispatch(fetchCourseAppSettings(courseId));
     dispatch(fetchProctoringExamErrors(courseId));
   }, [courseId]);
 
+  useEffect(() => {
+    if (savingStatus === RequestStatus.SUCCESSFUL) {
+      setShowSuccessAlert(true);
+    } else if (savingStatus === RequestStatus.FAILED) {
+      setErrorFields(settingsWithSendErrors);
+      showErrorModal(true);
+    }
+  }, [savingStatus]);
+
   const handleSettingChange = (e, settingName) => {
     const { value } = e.target;
+    const emptyValue = '\u0000';
     if (!saveSettingsPrompt) {
       showSaveSettingsPrompt(true);
     }
     setEditedSettings((prevEditedSettings) => ({
       ...prevEditedSettings,
-      [settingName]: value || ' ',
+      // An empty value is needed to prevent the display of the default value,
+      // after manually deleting the textarea value.
+      [settingName]: removeExtraQuotes(value) || emptyValue,
     }));
   };
 
   const handleResetSettingsValues = () => {
+    showErrorModal(false);
     setEditedSettings({});
     showSaveSettingsPrompt(false);
   };
 
   const handleUpdateAdvancedSettingsData = () => {
-    dispatch(updateCourseAppSetting(courseId, parseArrayOrObjectValues(editedSettings)));
-    showSaveSettingsPrompt(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const isValid = validateAdvancedSettingsData(editedSettings, setErrorFields);
+    if (isValid) {
+      dispatch(updateCourseAppSetting(courseId, parseArrayOrObjectValues(editedSettings)));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      showSaveSettingsPrompt(!saveSettingsPrompt);
+    } else {
+      showSaveSettingsPrompt(false);
+      showErrorModal(!errorModal);
+    }
   };
 
   return (
@@ -62,18 +89,17 @@ const AdvancedSettings = ({ intl, courseId }) => {
               aria-labelledby={intl.formatMessage(messages.alertProctoringAriaLabelledby)}
               aria-describedby={intl.formatMessage(messages.alertProctoringDescribedby)}
             />
-        )}
-          {(savingStatus === RequestStatus.SUCCESSFUL) && (
-            <SettingAlert
-              variant="success"
-              icon={CheckCircle}
-              title={intl.formatMessage(messages.alertSuccess)}
-              description={intl.formatMessage(messages.alertSuccessDescriptions)}
-              aria-hidden="true"
-              aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
-              aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
-            />
           )}
+          <SettingAlert
+            show={showSuccessAlert}
+            variant="success"
+            icon={CheckCircle}
+            title={intl.formatMessage(messages.alertSuccess)}
+            description={intl.formatMessage(messages.alertSuccessDescriptions)}
+            aria-hidden="true"
+            aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
+            aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
+          />
           <header className="setting-header-inner">
             <h1 className="setting-header-title">
               <small className="setting-header-title-subtitle">{intl.formatMessage(messages.headingSubtitle)}</small>
@@ -131,8 +157,8 @@ const AdvancedSettings = ({ intl, courseId }) => {
                             name={settingName}
                             value={editedSettings[settingName] || settingData.value}
                           />
-                          );
-                        })}
+                        );
+                      })}
                     </ul>
                   </section>
                 </div>
@@ -165,6 +191,13 @@ const AdvancedSettings = ({ intl, courseId }) => {
           description={intl.formatMessage(messages.alertWarningDescriptions)}
         />
       </div>
+      <ModalError
+        isError={errorModal}
+        showErrorModal={showErrorModal}
+        handleUndoChanges={handleResetSettingsValues}
+        settingsData={advancedSettingsData}
+        errorList={errorFields}
+      />
     </>
   );
 };

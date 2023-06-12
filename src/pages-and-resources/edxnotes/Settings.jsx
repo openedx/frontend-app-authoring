@@ -15,7 +15,7 @@ const NotesSettings = ({ intl, onClose }) => (
     learnMoreText={intl.formatMessage(messages.enableNotesLink)}
     onClose={onClose}
   />
-  );
+);
 
 NotesSettings.propTypes = {
   intl: intlShape.isRequired,

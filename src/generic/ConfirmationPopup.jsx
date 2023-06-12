@@ -32,7 +32,7 @@ const ConfirmationPopup = ({
       </Card.Footer>
     </Card.Body>
   </Card>
-  );
+);
 
 ConfirmationPopup.propTypes = {
   label: PropTypes.string.isRequired,

@@ -13,7 +13,7 @@ export const MenuIcon = (props) => (
     <rect fill="currentColor" x="2" y="11" width="20" height="2" />
     <rect fill="currentColor" x="2" y="17" width="20" height="2" />
   </svg>
-  );
+);
 
 export const AvatarIcon = (props) => (
   <svg
@@ -28,7 +28,7 @@ export const AvatarIcon = (props) => (
       fill="currentColor"
     />
   </svg>
-  );
+);
 
 export const CaretIcon = (props) => (
   <svg
@@ -44,4 +44,4 @@ export const CaretIcon = (props) => (
       transform="translate(8.000000, 7.000000) rotate(-45.000000) translate(-8.000000, -7.000000) "
     />
   </svg>
-  );
+);

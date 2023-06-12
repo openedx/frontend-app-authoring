@@ -15,7 +15,7 @@ const getProctoringErrorsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v1/
 export async function getCourseAdvancedSettings(courseId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(`${getCourseAdvancedSettingsApiUrl()}${courseId}?fetch_all=0`);
-    return camelCaseObject(data);
+  return camelCaseObject(data);
 }
 
 /**

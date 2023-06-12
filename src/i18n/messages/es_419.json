@@ -381,5 +381,11 @@
   "course-authoring.advanced-settings.sidebar.links.grading": "Grading",
   "course-authoring.advanced-settings.sidebar.links.course-team": "Course Team",
   "course-authoring.advanced-settings.sidebar.links.group-configurations": "Group Configurations",
-  "course-authoring.advanced-settings.button.deprecated": "Deprecated"
+  "course-authoring.advanced-settings.button.deprecated": "Deprecated",
+  "course-authoring.advanced-settings.modal.error.title": "Validation Error While Saving",
+  "course-authoring.advanced-settings.modal.error.btn.change-manually": "Change Manually",
+  "course-authoring.advanced-settings.modal.error.btn.undo-changes": "Undo Changes",
+  "course-authoring.advanced-settings.modal.error.description": "There was {errorCounter} while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:",
+  "course-authoring.advanced-settings.policies.description": "{notice} Do not modify these policies unless you are familiar with their purpose.",
+  "course-authoring.advanced-settings.deprecated.button.text": "{visibility} Deprecated Settings"
 }
