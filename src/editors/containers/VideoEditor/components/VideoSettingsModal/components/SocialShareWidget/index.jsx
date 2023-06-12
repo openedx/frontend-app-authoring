@@ -14,7 +14,7 @@ import {
 import { selectors, actions } from '../../../../../../data/redux';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import messages from './messages';
-import * as hooks from './hooks'
+import * as hooks from './hooks';
 
 /**
  * Collapsible Form widget controlling video thumbnail

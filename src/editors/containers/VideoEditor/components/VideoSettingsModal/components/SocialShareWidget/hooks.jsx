@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
-import analyticsEvents from './constants';
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
 import { selectors } from '../../../../../../data/redux';
+import analyticsEvents from './constants';
 
 export const handleSocialSharingCheckboxChange = ({ updateField }) => {
   const analytics = useSelector(selectors.app.analytics);
@@ -12,7 +12,7 @@ export const handleSocialSharingCheckboxChange = ({ updateField }) => {
       {
         ...analytics,
         value: event.target.checked,
-      }
+      },
     );
     updateField({
       allowVideoSharing: {
@@ -22,3 +22,5 @@ export const handleSocialSharingCheckboxChange = ({ updateField }) => {
     });
   };
 };
+
+export default handleSocialSharingCheckboxChange;

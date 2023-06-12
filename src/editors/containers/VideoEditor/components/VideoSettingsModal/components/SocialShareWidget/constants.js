@@ -1,5 +1,5 @@
 export const analyticsEvents = {
-    socialSharingSettingChanged: 'edx.social.video_sharing_setting.changed'
-}
+  socialSharingSettingChanged: 'edx.social.video_sharing_setting.changed',
+};
 
-export default analyticsEvents
+export default analyticsEvents;
