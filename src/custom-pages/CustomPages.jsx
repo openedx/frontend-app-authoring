@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppContext } from '@edx/frontend-platform/react';
@@ -17,11 +17,12 @@ import {
   Alert,
 } from '@edx/paragon';
 import { Add, Info, SpinnerSimple } from '@edx/paragon/icons';
+import { DraggableList, SortableItem } from '@edx/frontend-lib-content-components';
 
 import { RequestStatus } from '../data/constants';
 import { useModels } from '../generic/model-store';
 import { getLoadingStatus } from './data/selectors';
-import { addSingleCustomPage, fetchCustomPages } from './data/thunks';
+import { addSingleCustomPage, fetchCustomPages, updatePageOrder } from './data/thunks';
 
 import previewLmsStaticPages from './data/images/previewLmsStaticPages.png';
 import CustomPageCard from './CustomPageCard';
@@ -44,7 +45,11 @@ const CustomPages = ({ courseId, intl }) => {
   const loadingStatus = useSelector(getLoadingStatus);
 
   const pages = useModels('customPages', customPagesIds);
+  const [orderedPages, setOrderedPages] = useState(pages);
   const handleAddPage = () => { dispatch(addSingleCustomPage(courseId)); };
+  const handleReorder = () => (newPageOrder) => {
+    dispatch(updatePageOrder(courseId, newPageOrder));
+  };
 
   const addPageStateProps = {
     labels: {
@@ -107,15 +112,18 @@ const CustomPages = ({ courseId, intl }) => {
             <div className="small gray-700 mb-4">
               <FormattedMessage {...messages.note} />
             </div>
-            {pages.map((page) => (
-              <CustomPageCard
-                page={page}
-                dispatch={dispatch}
-                deletePageStatus={deletePageStatus}
-                courseId={courseId}
-                key={page.id}
-              />
-            ))}
+            <DraggableList itemList={orderedPages} setState={setOrderedPages} updateOrder={handleReorder}>
+              {orderedPages.map((page) => (
+                <SortableItem id={page.id} key={page.id}>
+                  <CustomPageCard
+                    page={page}
+                    dispatch={dispatch}
+                    deletePageStatus={deletePageStatus}
+                    courseId={courseId}
+                  />
+                </SortableItem>
+              ))}
+            </DraggableList>
             <StatefulButton onClick={handleAddPage} state={addPageStatus} {...addPageStateProps} />
           </Layout.Element>
           <Layout.Element>

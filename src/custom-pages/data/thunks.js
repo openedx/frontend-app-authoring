@@ -4,6 +4,7 @@ import {
   addModels,
   removeModel,
   updateModel,
+  updateModels,
  } from '../../generic/model-store';
 import {
   getCustomPages,
@@ -87,23 +88,23 @@ export function addSingleCustomPage(courseId) {
 }
 
 export function updatePageOrder(courseId, pages) {
+  const tabs = [];
+  pages.forEach(page => {
+    const currentTab = {};
+    currentTab.tab_locator = page.id;
+    tabs.push(currentTab);
+  });
   return async (dispatch) => {
-    // dispatch(updateAddingStatus({ status: RequestStatus.PENDING }));
-    const tabs = [];
-    pages.forEach(page => {
-      const currentTab = {};
-      currentTab.tab_id = page.tabId;
-      currentTab.tab_locator = page.id;
-      tabs.push(currentTab);
-    });
     try {
       await updateCustomPageOrder(courseId, tabs);
-      // dispatch(updateModels({ modelType: 'customPages', model: {id: pageData.locator, ...pageData} }));
+      dispatch(updateModels({ modelType: 'customPages', models: pages }));
+      return true;
     } catch (error) {
       if (error.response && error.response.status === 403) {
         dispatch(updateCustomPagesApiStatus({ status: RequestStatus.DENIED }));
       }
       dispatch(updateLoadingStatus({ status: RequestStatus.FAILED }));
+      return false;
     }
   };
 }

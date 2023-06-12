@@ -68,5 +68,5 @@ export async function updateCustomPage({ blockId, htmlString, metadata }) {
  */
 export async function updateCustomPageOrder(courseId, tabs) {
   await getAuthenticatedHttpClient()
-    .post(`${getTabHandlerUrl(courseId)}`, { tabs });
+    .post(`${getTabHandlerUrl(courseId)}/reorder`, tabs);
 }
