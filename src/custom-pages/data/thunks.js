@@ -109,12 +109,12 @@ export function updatePageOrder(courseId, pages) {
   };
 }
 
-export function updateSingleCustomPage({ blockId, htmlString, metadata }) {
+export function updateCustomPageVisibility({ blockId, metadata }) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
 
     try {
-      const pageData = await updateCustomPage({ blockId, htmlString, metadata });
+      const pageData = await updateCustomPage({ blockId, metadata });
       dispatch(updateModel({
         modelType: 'customPages',
         model: {
@@ -130,3 +130,21 @@ export function updateSingleCustomPage({ blockId, htmlString, metadata }) {
     }
   };
 }
+
+export const updateSingleCustomPage = ({ blockId, metadata, onClose }) => (dispatch) => {
+  dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
+
+  try {
+    dispatch(updateModel({
+      modelType: 'customPages',
+      model: {
+        id: blockId,
+        name: metadata.displayName,
+      },
+    }));
+    dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+    onClose();
+  } catch (error) {
+    dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+  }
+};

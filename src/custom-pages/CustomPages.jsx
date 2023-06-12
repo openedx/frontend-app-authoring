@@ -48,7 +48,7 @@ const CustomPages = ({ courseId, intl }) => {
   const [orderedPages, setOrderedPages] = useState(pages);
   const handleAddPage = () => { dispatch(addSingleCustomPage(courseId)); };
   const handleReorder = () => (newPageOrder) => {
-    dispatch(updatePageOrder(courseId, newPageOrder));
+    dispatch(updatePageOrder(courseId, newPageOrder, orderedPages));
   };
 
   const addPageStateProps = {
@@ -67,18 +67,18 @@ const CustomPages = ({ courseId, intl }) => {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return null;
   }
-
   return (
     <CustomPagesProvider courseId={courseId}>
-      <main className="container container-mw-xl p-4 pt-6">
-        <Breadcrumb
-          ariaLabel="Breadcrumb basic"
-          className="small gray-700"
-          links={[
-            { label: 'Content', href: `${config.STUDIO_BASE_URL}/course/${courseId}` },
-            { label: 'Pages and Resources', href: `/course/${courseId}/pages-and-resources` },
-          ]}
-        />
+      <main className="container container-mw-xl p-4 pt-5">
+        <div className="small gray-700">
+          <Breadcrumb
+            ariaLabel="Breadcrumb basic"
+            links={[
+              { label: 'Content', href: `${config.STUDIO_BASE_URL}/course/${courseId}` },
+              { label: 'Pages and Resources', href: `/course/${courseId}/pages-and-resources` },
+            ]}
+          />
+        </div>
         <ActionRow>
           <div className="h2">
             <FormattedMessage {...messages.heading} />
@@ -112,9 +112,19 @@ const CustomPages = ({ courseId, intl }) => {
             <div className="small gray-700 mb-4">
               <FormattedMessage {...messages.note} />
             </div>
-            <DraggableList itemList={orderedPages} setState={setOrderedPages} updateOrder={handleReorder}>
-              {orderedPages.map((page) => (
-                <SortableItem id={page.id} key={page.id}>
+            <DraggableList itemList={pages} setState={setOrderedPages} updateOrder={handleReorder}>
+              {pages.map((page) => (
+                <SortableItem
+                  id={page.id}
+                  key={page.id}
+                  componentStyle={{
+                    background: 'white',
+                    borderRadius: '6px',
+                    padding: '24px',
+                    marginBottom: '24px',
+                    boxShadow: '0px 1px 5px #ADADAD',
+                  }}
+                >
                   <CustomPageCard
                     page={page}
                     dispatch={dispatch}
