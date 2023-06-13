@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Card, Form, Icon, OverlayTrigger, Tooltip,
+  Card, Form, Icon, IconButton, OverlayTrigger, Popover,
 } from '@edx/paragon';
 import { Info, Warning } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
@@ -20,8 +20,25 @@ const SettingCard = ({
           <Card.Header
             title={displayName}
             subtitle={(
-              <OverlayTrigger placement="bottom" overlay={<Tooltip id="setting-description">{help}</Tooltip>}>
-                <Icon src={Info} />
+              <OverlayTrigger
+                trigger="click"
+                rootClose
+                placement="bottom"
+                overlay={(
+                  <Popover id="popover-positioned">
+                    <Popover.Content>
+                      {/* eslint-disable-next-line react/no-danger */}
+                      <div dangerouslySetInnerHTML={{ __html: help }} />
+                    </Popover.Content>
+                  </Popover>
+                )}
+              >
+                <IconButton
+                  src={Info}
+                  iconAs={Icon}
+                  alt={intl.formatMessage(messages.helpButtonText)}
+                  variant="light"
+                />
               </OverlayTrigger>
             )}
           />

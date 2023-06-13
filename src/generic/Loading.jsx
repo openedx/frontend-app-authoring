@@ -6,7 +6,7 @@ const Loading = () => (
   <div
     className="d-flex justify-content-center align-items-center flex-column"
     style={{
-      height: '50vh',
+      height: '100vh',
     }}
   >
     <Spinner
