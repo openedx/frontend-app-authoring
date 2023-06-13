@@ -25,25 +25,35 @@ exports[`SettingCard matches the snapshot 1`] = `
           <div
             class="pgn__card-header-subtitle-md"
           >
-            <span
-              class="pgn__icon"
+            <button
+              aria-label="Show help text"
+              class="btn-icon btn-icon-light btn-icon-md"
+              type="button"
             >
-              <svg
-                aria-hidden="true"
-                fill="none"
-                focusable="false"
-                height="24"
-                role="img"
-                viewBox="0 0 24 24"
-                width="24"
-                xmlns="http://www.w3.org/2000/svg"
+              <span
+                class="btn-icon__icon-container"
               >
-                <path
-                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
-                  fill="currentColor"
-                />
-              </svg>
-            </span>
+                <span
+                  class="pgn__icon btn-icon__icon"
+                >
+                  <svg
+                    aria-hidden="true"
+                    fill="none"
+                    focusable="false"
+                    height="24"
+                    role="img"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+              </span>
+            </button>
           </div>
         </div>
       </div>
