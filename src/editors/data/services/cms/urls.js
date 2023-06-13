@@ -16,7 +16,9 @@ export const returnUrl = ({ studioEndpointUrl, unitUrl, learningContextId }) => 
 };
 
 export const block = ({ studioEndpointUrl, blockId }) => (
-  `${studioEndpointUrl}/xblock/${blockId}`
+  blockId.includes('block-v1')
+    ? `${studioEndpointUrl}/xblock/${blockId}`
+    : `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}`
 );
 
 export const blockAncestor = ({ studioEndpointUrl, blockId }) => (
