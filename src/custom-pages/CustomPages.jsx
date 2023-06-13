@@ -21,7 +21,7 @@ import { DraggableList, SortableItem } from '@edx/frontend-lib-content-component
 
 import { RequestStatus } from '../data/constants';
 import { useModels } from '../generic/model-store';
-import { getLoadingStatus } from './data/selectors';
+import { getLoadingStatus, getSavingStatus } from './data/selectors';
 import { addSingleCustomPage, fetchCustomPages, updatePageOrder } from './data/thunks';
 
 import previewLmsStaticPages from './data/images/previewLmsStaticPages.png';
@@ -31,6 +31,7 @@ import CustomPagesProvider from './CustomPagesProvider';
 
 const CustomPages = ({ courseId, intl }) => {
   const dispatch = useDispatch();
+  const [orderedPages, setOrderedPages] = useState([]);
   useEffect(() => {
     dispatch(fetchCustomPages(courseId));
   }, [courseId]);
@@ -42,10 +43,10 @@ const CustomPages = ({ courseId, intl }) => {
   const customPagesIds = useSelector(state => state.customPages.customPagesIds);
   const addPageStatus = useSelector(state => state.customPages.addingStatus);
   const deletePageStatus = useSelector(state => state.customPages.deletingStatus);
+  const savingStatus = useSelector(getSavingStatus);
   const loadingStatus = useSelector(getLoadingStatus);
 
   const pages = useModels('customPages', customPagesIds);
-  const [orderedPages, setOrderedPages] = useState(pages);
   const handleAddPage = () => { dispatch(addSingleCustomPage(courseId)); };
   const handleReorder = () => (newPageOrder) => {
     dispatch(updatePageOrder(courseId, newPageOrder, orderedPages));
@@ -109,6 +110,7 @@ const CustomPages = ({ courseId, intl }) => {
           <Layout.Element>
             {deletePageStatus === RequestStatus.FAILED && <Alert variant="danger" icon={Info} dismissable>Unable to delete page. Please try again.</Alert>}
             {addPageStatus === RequestStatus.FAILED && <Alert variant="danger" icon={Info} dismissable>Unable to add page. Please try again.</Alert>}
+            {savingStatus === RequestStatus.FAILED && <Alert variant="danger" icon={Info} dismissable>Unable to update page. Please try again.</Alert>}
             <div className="small gray-700 mb-4">
               <FormattedMessage {...messages.note} />
             </div>
