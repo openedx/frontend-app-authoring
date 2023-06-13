@@ -10,7 +10,7 @@ import messages from './messages';
 
 const ProgressSettings = ({ intl, onClose }) => {
   const [disableProgressGraph, saveSetting] = useAppSetting('disableProgressGraph');
-  const showProgressGraphSetting = getConfig().ENABLE_PROGRESS_GRAPH_SETTINGS.toLowerCase() === 'true';
+  const showProgressGraphSetting = getConfig().ENABLE_PROGRESS_GRAPH_SETTINGS.toString().toLowerCase() === 'true';
 
   const handleSettingsSave = (values) => {
     if (showProgressGraphSetting) { saveSetting(!values.enableProgressGraph); }
