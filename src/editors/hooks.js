@@ -21,12 +21,12 @@ export const navigateCallback = ({
   destination,
   analyticsEvent,
   analytics,
-}) => () => {
+}) => (response) => {
   if (process.env.NODE_ENV !== 'development' && analyticsEvent && analytics) {
     sendTrackEvent(analyticsEvent, analytics);
   }
   if (returnFunction) {
-    returnFunction();
+    returnFunction()(response);
     return;
   }
   module.navigateTo(destination);

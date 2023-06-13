@@ -138,7 +138,7 @@ describe('app thunkActions', () => {
     let returnToUnit;
     let calls;
     beforeEach(() => {
-      returnToUnit = jest.fn();
+      returnToUnit = jest.fn((response) => () => response);
       thunkActions.saveBlock({ content: testValue, returnToUnit })(dispatch);
       calls = dispatch.mock.calls;
     });

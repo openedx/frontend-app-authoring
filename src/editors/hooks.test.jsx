@@ -74,7 +74,6 @@ describe('hooks', () => {
     let output;
     const SAVED_ENV = process.env;
     const destination = 'hOmE';
-    const returnFunction = jest.fn();
     beforeEach(() => {
       jest.resetModules();
       process.env = { ...SAVED_ENV };
@@ -102,6 +101,7 @@ describe('hooks', () => {
       expect(spy).toHaveBeenCalledWith(destination);
     });
     it('should call returnFunction and return null', () => {
+      const returnFunction = jest.fn(() => (response) => response);
       output = hooks.navigateCallback({
         destination,
         returnFunction,
