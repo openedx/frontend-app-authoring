@@ -49,7 +49,7 @@ const CustomPages = ({ courseId, intl }) => {
   const pages = useModels('customPages', customPagesIds);
   const handleAddPage = () => { dispatch(addSingleCustomPage(courseId)); };
   const handleReorder = () => (newPageOrder) => {
-    dispatch(updatePageOrder(courseId, newPageOrder, orderedPages));
+    dispatch(updatePageOrder(courseId, newPageOrder));
   };
 
   const addPageStateProps = {
@@ -64,10 +64,13 @@ const CustomPages = ({ courseId, intl }) => {
     disabledStates: ['pending'],
   };
 
+  useEffect(() => { setOrderedPages(pages); }, [customPagesIds]);
+
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return null;
   }
+
   return (
     <CustomPagesProvider courseId={courseId}>
       <main className="container container-mw-xl p-4 pt-5">
@@ -114,8 +117,8 @@ const CustomPages = ({ courseId, intl }) => {
             <div className="small gray-700 mb-4">
               <FormattedMessage {...messages.note} />
             </div>
-            <DraggableList itemList={pages} setState={setOrderedPages} updateOrder={handleReorder}>
-              {pages.map((page) => (
+            <DraggableList itemList={orderedPages} setState={setOrderedPages} updateOrder={handleReorder}>
+              {orderedPages.map((page) => (
                 <SortableItem
                   id={page.id}
                   key={page.id}
