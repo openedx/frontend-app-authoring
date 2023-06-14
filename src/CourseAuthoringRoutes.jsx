@@ -67,7 +67,7 @@ const CourseAuthoringRoutes = ({ courseId }) => {
             <CustomPages courseId={courseId} />
             )}
         </PageRoute>
-        <PageRoute path={`${path}/:blockType/:blockId?`}>
+        <PageRoute path={`${path}/container/:blockId`}>
           {process.env.ENABLE_UNIT_PAGE === 'true'
             && (
             <Placeholder />
