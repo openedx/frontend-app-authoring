@@ -1,4 +1,7 @@
-export const getCheckboxesOLXWithFeedbackAndHintsOLX = () => ({
+/* eslint-disable */
+// lint is disabled for this file due to strict spacing
+
+export const checkboxesOLXWithFeedbackAndHintsOLX = {
   rawOLX: `<problem>
   <choiceresponse>
     <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
@@ -8,12 +11,12 @@ export const getCheckboxesOLXWithFeedbackAndHintsOLX = () => ({
       <choice correct="true"><p>a correct answer</p>
         <choicehint selected="true"><p>You can specify optional feedback that appears after the learner selects and submits this answer.</p></choicehint>
         <choicehint selected="false"><p>You can specify optional feedback that appears after the learner clears and submits this answer.</p></choicehint>
-  </choice>
+      </choice>
       <choice correct="false"><p>an incorrect answer</p></choice>
       <choice correct="false"><p>an incorrect answer</p>
         <choicehint selected="true"><p>You can specify optional feedback for none, all, or a subset of the answers.</p></choicehint>
         <choicehint selected="false"><p>You can specify optional feedback for selected answers, cleared answers, or both.</p></choicehint>
-  </choice>
+      </choice>
       <choice correct="true"><p>a correct answer</p></choice>
       <compoundhint value="A B D">You can specify optional feedback for a combination of answers which appears after the specified set of answers is submitted.</compoundhint>
       <compoundhint value="A B C D">You can specify optional feedback for one, several, or all answer combinations.</compoundhint>
@@ -56,7 +59,7 @@ export const getCheckboxesOLXWithFeedbackAndHintsOLX = () => ({
     answers: [
       {
         id: 'A',
-        title: '<p>a correct answer</p>',
+        title: `<p>a correct answer</p>\n        \n        \n      `,
         correct: true,
         selectedFeedback: '<p>You can specify optional feedback that appears after the learner selects and submits this answer.</p>',
         unselectedFeedback: '<p>You can specify optional feedback that appears after the learner clears and submits this answer.</p>',
@@ -68,7 +71,7 @@ export const getCheckboxesOLXWithFeedbackAndHintsOLX = () => ({
       },
       {
         id: 'C',
-        title: '<p>an incorrect answer</p>',
+        title: `<p>an incorrect answer</p>\n        \n        \n      `,
         correct: false,
         selectedFeedback: '<p>You can specify optional feedback for none, all, or a subset of the answers.</p>',
         unselectedFeedback: '<p>You can specify optional feedback for selected answers, cleared answers, or both.</p>',
@@ -103,45 +106,43 @@ export const getCheckboxesOLXWithFeedbackAndHintsOLX = () => ({
   },
   question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
   buildOLX: `<problem>
-  <choiceresponse>
-    <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
-    <label>Add the question text, or prompt, here. This text is required.</label>
-    <em>You can add an optional tip or note related to the prompt like this.</em>
-    <checkboxgroup>
-      <choice correct="true">
-<p>a correct answer </p>       <choicehint selected="true"><p>You can specify optional feedback that appears after the learner selects and submits this answer.</p></choicehint>
-        <choicehint selected="false"><p>You can specify optional feedback that appears after the learner clears and submits this answer.</p></choicehint>
-      </choice>
-      <choice correct="false"><p>an incorrect answer</p></choice>
-      <choice correct="false">
-<p>an incorrect answer</p>        <choicehint selected="true"><p>You can specify optional feedback for none, all, or a subset of the answers.</p></choicehint>
-        <choicehint selected="false"><p>You can specify optional feedback for selected answers, cleared answers, or both.</p></choicehint>
-      </choice>
-      <choice correct="true"><p>a correct answer</p></choice>
-      <compoundhint value="A B D">You can specify optional feedback for a combination of answers which appears after the specified set of answers is submitted.</compoundhint>
-      <compoundhint value="A B C D">You can specify optional feedback for one, several, or all answer combinations.</compoundhint>
-    </checkboxgroup>
-      <solution>
-      <div class="detailed-solution">
-      <p>Explanation</p>
-      <p>
+    <choiceresponse>
+      <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
+      <label>Add the question text, or prompt, here. This text is required.</label>
+      <em>You can add an optional tip or note related to the prompt like this.</em>
+      <checkboxgroup>
+        <choice correct="true">
+          <p>a correct answer </p>       <choicehint selected="true"><p>You can specify optional feedback that appears after the learner selects and submits this answer.</p></choicehint>
+          <choicehint selected="false"><p>You can specify optional feedback that appears after the learner clears and submits this answer.</p></choicehint>
+        </choice>
+        <choice correct="false"><p>an incorrect answer</p></choice>
+        <choice correct="false">
+          <p>an incorrect answer</p>        <choicehint selected="true"><p>You can specify optional feedback for none, all, or a subset of the answers.</p></choicehint>
+          <choicehint selected="false"><p>You can specify optional feedback for selected answers, cleared answers, or both.</p></choicehint>
+        </choice>
+        <choice correct="true"><p>a correct answer</p></choice>
+        <compoundhint value="A B D">You can specify optional feedback for a combination of answers which appears after the specified set of answers is submitted.</compoundhint>
+        <compoundhint value="A B C D">You can specify optional feedback for one, several, or all answer combinations.</compoundhint>
+      </checkboxgroup>
+        <solution>
+        <div class="detailed-solution">
+        <p>Explanation</p>
+        <p>
           You can form a voltage divider that evenly divides the input
           voltage with two identically valued resistors, with the sampled
           voltage taken in between the two.
-      </p>
-      <p><img src="/static/images/voltage_divider.png" alt=""></img></p>
-    </div>
-      </solution>
-  </choiceresponse>
-  <demandhint>
-    <hint><p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p></hint>
-    <hint><p>If you add more than one hint, a different hint appears each time learners select the hint button.</p></hint>
-  </demandhint>
-</problem>
-`,
-});
-
-export const checkboxesOLXWithFeedbackAndHintsOLX = getCheckboxesOLXWithFeedbackAndHintsOLX({});
+        </p>
+        <p><img src="/static/images/voltage_divider.png" alt=""></img></p>
+      </div>
+        </solution>
+    </choiceresponse>
+    <demandhint>
+      <hint><p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p></hint>
+      <hint><p>If you add more than one hint, a different hint appears each time learners select the hint button.</p></hint>
+    </demandhint>
+  </problem>
+  `,
+};
 
 export const multipleChoiceWithoutAnswers = {
   rawOLX: `<problem>
@@ -199,7 +200,7 @@ export const multipleChoiceSingleAnswer = {
     answers: [
       {
         id: 'A',
-        title: '<p>a correct answer</p><div><img src="#"></img>image with<strong>caption</strong>.</div>',
+        title: `<p>a correct answer</p><div><img src="#"></img>image with <strong>caption</strong>.</div>\n        \n        \n      `,
         correct: true,
         selectedFeedback: '<p>You can specify optional feedback that appears after the learner selects and submits this answer.</p>',
         unselectedFeedback: '<p>You can specify optional feedback that appears after the learner clears and submits this answer.</p>',
@@ -314,11 +315,9 @@ export const multipleChoiceWithFeedbackAndHintsOLX = {
 <label>Add the question text, or prompt, here. This text is required.</label>
 <description>You can add an optional tip or note related to the prompt like this. </description>
 <choicegroup type="MultipleChoice">
-    <choice correct="false"><p>an incorrect answer</p><choicehint><p>You can specify optional feedback like this, which appears after this answer is submitted.</p></choicehint>
-</choice>
+    <choice correct="false"><p>an incorrect answer</p><choicehint><p>You can specify optional feedback like this, which appears after this answer is submitted.</p></choicehint></choice>
     <choice correct="true"><p>the correct answer</p></choice>
-    <choice correct="false"><p>an incorrect answer</p><choicehint><p>You can specify optional feedback for none, a subset, or all of the answers.</></choicehint>
-</choice>
+    <choice correct="false"><p>an incorrect answer</p><choicehint><p>You can specify optional feedback for none, a subset, or all of the answers.</></choicehint></choice>
   </choicegroup>
   <solution>
     <p>You can add a solution</p>
@@ -540,7 +539,7 @@ export const textInputWithFeedbackAndHintsOLX = {
       },
     },
   },
-  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
+  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this. </em>',
   buildOLX: `<problem>
   <stringresponse answer="the correct answer" type="ci">
     <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
@@ -726,7 +725,13 @@ export const styledQuestionOLX = {
     <textline size="20"/>
   </stringresponse>
 </problem>`,
-  question: '<p><strong><span style="background-color: #e03e2d;">test</span></strong></p>',
+  question: `<p>
+    <strong>
+      <span style="background-color: #e03e2d;">
+        test
+      </span>
+    </strong>
+  </p>`,
 };
 
 export const shuffleProblemOLX = {
@@ -763,7 +768,8 @@ export const labelDescriptionQuestionOLX = {
   </solution>
 </problem>`,
 
-  question: '<p style="text-align: center;"><img height="274" width="" src="/static/boiling_eggs_water_system.png" alt="boiling eggs: water system"></img></p><label>Taking the system as just the<b>water</b>, as indicated by the red dashed line, what would be the correct expression for the first law of thermodynamics applied to this system?</label><em>Watch out, boiling water is hot</em>',
+  question: `<p style="text-align: center;"><img height="274" width="" src="/static/boiling_eggs_water_system.png" alt="boiling eggs: water system"></img></p>
+  <label>Taking the system as just the <b>water</b>, as indicated by the red dashed line, what would be the correct expression for the first law of thermodynamics applied to this system?</label><em>Watch out, boiling water is hot</em>`,
 };
 
 export const htmlEntityTestOLX = {
@@ -798,9 +804,7 @@ export const htmlEntityTestOLX = {
       },
     ],
   },
-  // eslint-disable-next-line
-  question: `<p>What is the content of the register x2 after executing the following three lines of instructions?</p><p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions<br></br>0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1<br></br>0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4<br></br>0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1</strong></span></p>`,
-  // eslint-disable-next-line
+  question: `<p>What is the content of the register x2 after executing the following three lines of instructions?</p><p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions <br></br>0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1<br></br>0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4<br></br>0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1</strong></span></p>`,
   solutionExplanation: `<p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions&#160;&#160;&#160;&#160;comment<br></br>0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x1 = 0x1<br></br>0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x2 = x1 &lt;&lt; 4 = 0x10<br></br>0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x1 = x2 - x1 = 0x10 - 0x01 = 0xf</strong></span></p>`,
 };
 
@@ -820,22 +824,22 @@ export const numberParseTestOLX = {
     answers: [
       {
         id: 'A',
-        title: `<span style="font-family: 'courier new', courier;"><strong>0x10</strong></span>`, // eslint-disable-line
+        title: `<span style="font-family: 'courier new', courier;"><strong>0x10</strong></span>`,
         correct: false,
       },
       {
         id: 'B',
-        title: `<span style="font-family: 'courier new', courier;"><strong>0x0f</strong></span>`, // eslint-disable-line
+        title: `<span style="font-family: 'courier new', courier;"><strong>0x0f</strong></span>`,
         correct: true,
       },
       {
         id: 'C',
-        title: `<span style="font-family: 'courier new', courier;"><strong>0x07</strong></span>`, // eslint-disable-line
+        title: `<span style="font-family: 'courier new', courier;"><strong>0x07</strong></span>`,
         correct: false,
       },
       {
         id: 'D',
-        title: `<span style="font-family: 'courier new', courier;"><strong>0009</strong></span>`, // eslint-disable-line
+        title: `<span style="font-family: 'courier new', courier;"><strong>0009</strong></span>`,
         correct: false,
       },
     ],
@@ -852,4 +856,27 @@ export const numberParseTestOLX = {
     </choicegroup>
   </multiplechoiceresponse>
   </problem>`,
+};
+
+export const solutionExplanationTest = {
+  rawOLX: `<problem>
+      How <code class="lang-matlab">99</code> long is the array <code class="lang-matlab">q</code> after the following loop runs?
+      <pre><code class="lang-matlab">for i = 1:99
+      q(2*i - 1) = i;
+      end</code></pre>
+      <numericalresponse answer="197">
+        <label/>
+        <description>Enter your answer below. Type "e" if this code would produce an error</description>
+        <formulaequationinput/>
+        <responseparam default="2%" type="tolerance"/>
+        <solution>
+          <div class="detailed-solution">
+            <p>Explanation</p>
+            This loop will iterate <code class="lang-matlab">99</code> times, but the length of <code class="lang-matlab">q</code> will not be <code class="lang-matlab">99</code> due to indexing with the value <code class="lang-matlab">2*i -1</code>. On the last iteration, <code class="lang-matlab">i = 99</code>, so <code class="lang-matlab">2*i - 1 = 2*78 - 1 = 197</code>. This will be the last position filled in <code class="lang-matlab">q</code>, so the answer is <code class="lang-matlab">197</code>.
+          </div>
+        </solution>
+      </numericalresponse>
+    </problem>`,
+  solutionExplanation: `\n            
+            This loop will iterate <code class="lang-matlab">99</code> times, but the length of <code class="lang-matlab">q</code> will not be <code class="lang-matlab">99</code> due to indexing with the value <code class="lang-matlab">2*i -1</code>. On the last iteration, <code class="lang-matlab">i = 99</code>, so <code class="lang-matlab">2*i - 1 = 2*78 - 1 = 197</code>. This will be the last position filled in <code class="lang-matlab">q</code>, so the answer is <code class="lang-matlab">197</code>.\n          `,
 };

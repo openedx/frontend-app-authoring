@@ -1,7 +1,6 @@
 import { OLXParser } from './OLXParser';
 import {
   checkboxesOLXWithFeedbackAndHintsOLX,
-  getCheckboxesOLXWithFeedbackAndHintsOLX,
   dropdownOLXWithFeedbackAndHintsOLX,
   numericInputWithFeedbackAndHintsOLX,
   textInputWithFeedbackAndHintsOLX,
@@ -21,6 +20,7 @@ import {
   labelDescriptionQuestionOLX,
   htmlEntityTestOLX,
   numberParseTestOLX,
+  solutionExplanationTest,
 } from './mockData/olxTestData';
 import { ProblemTypeKeys } from '../../../data/constants/problem';
 
@@ -261,13 +261,13 @@ describe('OLXParser', () => {
       const problemType = olxparser.getProblemType();
       const question = olxparser.parseQuestions(problemType);
       it('should return an empty string for question', () => {
-        expect(question).toBe(blankQuestionOLX.question);
+        expect(question.trim()).toBe(blankQuestionOLX.question);
       });
     });
     describe('given a simple problem olx', () => {
       const question = textInputOlxParser.parseQuestions('stringresponse');
       it('should return a string of HTML', () => {
-        expect(question).toEqual(textInputWithFeedbackAndHintsOLX.question);
+        expect(question.trim()).toEqual(textInputWithFeedbackAndHintsOLX.question);
       });
     });
     describe('given olx with html entities', () => {
@@ -275,7 +275,7 @@ describe('OLXParser', () => {
       const problemType = olxparser.getProblemType();
       const question = olxparser.parseQuestions(problemType);
       it('should not encode html entities', () => {
-        expect(question).toEqual(htmlEntityTestOLX.question);
+        expect(question.trim()).toEqual(htmlEntityTestOLX.question);
       });
     });
     describe('given olx with styled content', () => {
@@ -283,7 +283,7 @@ describe('OLXParser', () => {
       const problemType = olxparser.getProblemType();
       const question = olxparser.parseQuestions(problemType);
       it('should pase/build correct styling', () => {
-        expect(question).toBe(styledQuestionOLX.question);
+        expect(question.trim()).toBe(styledQuestionOLX.question);
       });
     });
     describe('given olx with label and description tags inside response tag', () => {
@@ -291,20 +291,25 @@ describe('OLXParser', () => {
       const problemType = olxparser.getProblemType();
       const question = olxparser.parseQuestions(problemType);
       it('should append the label/description to the question', () => {
-        expect(question).toBe(labelDescriptionQuestionOLX.question);
+        expect(question.trim()).toBe(labelDescriptionQuestionOLX.question);
       });
     });
   });
   describe('getSolutionExplanation()', () => {
     describe('for checkbox questions', () => {
       test('should parse text in p tags', () => {
-        const { rawOLX } = getCheckboxesOLXWithFeedbackAndHintsOLX();
-        const olxparser = new OLXParser(rawOLX);
+        const olxparser = new OLXParser(checkboxesOLXWithFeedbackAndHintsOLX.rawOLX);
         const problemType = olxparser.getProblemType();
         const explanation = olxparser.getSolutionExplanation(problemType);
-        const expected = getCheckboxesOLXWithFeedbackAndHintsOLX().solutionExplanation;
+        const expected = checkboxesOLXWithFeedbackAndHintsOLX.solutionExplanation;
         expect(explanation.replace(/\s/g, '')).toBe(expected.replace(/\s/g, ''));
       });
+    });
+    it('should parse text with proper spacing', () => {
+      const olxparser = new OLXParser(solutionExplanationTest.rawOLX);
+      const problemType = olxparser.getProblemType();
+      const explanation = olxparser.getSolutionExplanation(problemType);
+      expect(explanation).toBe(solutionExplanationTest.solutionExplanation);
     });
   });
 });
