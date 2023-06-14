@@ -31,6 +31,14 @@ jest.mock('./data/selectors', () => ({
   getProctoringExamErrors: jest.fn(),
 }));
 
+const mockPathname = '/foo-bar';
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: mockPathname,
+  }),
+}));
+
 describe('AdvancedSettings', () => {
   const courseId = '123';
   const mockDispatch = jest.fn();
@@ -70,14 +78,14 @@ describe('AdvancedSettings', () => {
     const textarea = settingCard.find('textarea');
     textarea.simulate('change', { target: { value: 'new value' } });
     expect(textarea.text()).toBe('new value');
-    const settingAlert = wrapper.find('SettingAlert');
+    const settingAlert = wrapper.find('AlertMessage');
     expect(settingAlert.find('AlertHeading').at(0).text()).toBe('You`ve made some changes');
   });
   it('show warning alert and after click on Cancel button reset textarea value', () => {
     const settingCard = wrapper.find('SettingCard').at(0);
     const textarea = settingCard.find('textarea');
     textarea.simulate('change', { target: { value: 'new value' } });
-    const settingAlert = wrapper.find('SettingAlert');
+    const settingAlert = wrapper.find('AlertMessage');
     const resetBtn = settingAlert.find('Button').at(1);
     resetBtn.simulate('click');
     expect(textarea.text()).toBe('value1');

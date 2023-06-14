@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`SettingAlert successfully renders 1`] = `
+exports[`AlertMessage successfully renders 1`] = `
 <div
   className="fade alert-content alert show"
   role="alert"

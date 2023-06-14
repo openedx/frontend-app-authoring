@@ -4,6 +4,14 @@ import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { AppContext } from '@edx/frontend-platform/react';
 import SettingsSidebar from './SettingsSidebar';
 
+const mockPathname = '/foo-bar';
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: mockPathname,
+  }),
+}));
+
 describe('SettingsSidebar', () => {
   const config = { STUDIO_BASE_URL: 'https://example.com' };
   const courseId = 'course123';

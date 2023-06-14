@@ -13,7 +13,7 @@ import {
   getCourseAppSettings, getSavingStatus, getProctoringExamErrors, getSendRequestErrors,
 } from './data/selectors';
 import SettingCard from './setting-card/SettingCard';
-import SettingAlert from './setting-alert/SettingAlert';
+import AlertMessage from '../generic/alert-message';
 import SettingsSidebar from './settings-sidebar/SettingsSidebar';
 import validateAdvancedSettingsData from './utils';
 import messages from './messages';
@@ -91,7 +91,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
               aria-describedby={intl.formatMessage(messages.alertProctoringDescribedby)}
             />
           )}
-          <SettingAlert
+          <AlertMessage
             show={showSuccessAlert}
             variant="success"
             icon={CheckCircle}
@@ -172,7 +172,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
         </section>
       </Container>
       <div className="alert-toast">
-        <SettingAlert
+        <AlertMessage
           show={saveSettingsPrompt}
           aria-hidden={saveSettingsPrompt}
           aria-labelledby={intl.formatMessage(messages.alertWarningAriaLabelledby)}

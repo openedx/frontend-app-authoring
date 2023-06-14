@@ -4,6 +4,9 @@
 @import "~@edx/brand/paragon/overrides";
 @import "studio-header/header";
 @import "~@edx/frontend-component-footer/dist/footer";
+@import "assets/scss/variables";
 @import "proctored-exam-settings/proctoredExamSettings";
 @import "pages-and-resources/discussions/app-list/AppList";
-@import "advanced-settings/scss/AdvencedSettings";
+@import "advanced-settings/scss/AdvancedSettings";
+@import "schedule-and-details/ScheduleAndDetails";
+@import "generic/scss/HelpSidebar";

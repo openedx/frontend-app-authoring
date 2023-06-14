@@ -1,0 +1,11 @@
+.pacing-section {
+  input.pgn__form-radio-input {
+    padding: .5rem;
+    height: $spacer;
+    width: $spacer;
+  }
+
+  .pgn__form-control-set {
+    padding: $spacer 0 0 $spacer;
+  }
+}

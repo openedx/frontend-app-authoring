@@ -97,40 +97,6 @@
   }
 }
 
-.setting-sidebar-supplementary {
-  margin-top: 1.875rem;
-
-  .setting-sidebar-supplementary-about {
-    .setting-sidebar-supplementary-about-title {
-      font: normal $font-weight-bold 1.125rem/1.5rem $font-family-base;
-      color: $headings-color;
-      margin-bottom: 1.25rem;
-    }
-
-    .setting-sidebar-supplementary-about-descriptions {
-      font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
-      color: $text-color-base;
-    }
-  }
-
-  .setting-sidebar-supplementary-other-links ul {
-    list-style: none;
-
-    .setting-sidebar-supplementary-other-link {
-      font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
-      line-height: 1.5rem;
-      color: $info-500;
-      margin-bottom: .5rem;
-    }
-  }
-
-  .setting-sidebar-supplementary-other-title {
-    font: normal $font-weight-bold 1.125rem/1.5rem $font-family-base;
-    color: $headings-color;
-    margin-bottom: 1.25rem;
-  }
-}
-
 .modal-error-item {
   list-style: none;
 
