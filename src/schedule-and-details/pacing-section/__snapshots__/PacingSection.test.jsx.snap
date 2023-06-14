@@ -1,0 +1,96 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<PacingSection /> matches the snapshots 1`] = `
+<section
+  className="section-container pacing-section"
+>
+  <header
+    className="section-header"
+  >
+    <span
+      className="lead"
+    >
+      Course Pacing
+    </span>
+    <span
+      className="x-small text-gray-700"
+    >
+      Set the pacing for this course
+    </span>
+  </header>
+  <div
+    className="pgn__form-group"
+  >
+    <label
+      className="pgn__form-label"
+      htmlFor="form-field1"
+    >
+      Course pacing cannot be changed once a course has started
+    </label>
+    <div
+      className="pgn__form-control-set"
+      id="form-field1"
+      role="radiogroup"
+    >
+      <div
+        className="pgn__form-radio pgn__form-control-disabled"
+      >
+        <input
+          checked={true}
+          className="pgn__form-radio-input"
+          disabled={true}
+          id="form-field2"
+          name="selfPaced"
+          onChange={[Function]}
+          type="radio"
+          value="false"
+        />
+        <div>
+          <label
+            className="pgn__form-label"
+            htmlFor="form-field2"
+          >
+            Instructor-Paced
+          </label>
+          <div
+            className="pgn__form-control-description pgn__form-text pgn__form-text-default"
+          >
+            <div>
+              Instructor-paced courses progress at the pace that the course author sets. You can configure release dates for course content and due dates for assignments.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="pgn__form-radio pgn__form-control-disabled"
+      >
+        <input
+          checked={false}
+          className="pgn__form-radio-input"
+          disabled={true}
+          id="form-field3"
+          name="selfPaced"
+          onChange={[Function]}
+          type="radio"
+          value="true"
+        />
+        <div>
+          <label
+            className="pgn__form-label"
+            htmlFor="form-field3"
+          >
+            Self-Paced
+          </label>
+          <div
+            className="pgn__form-control-description pgn__form-text pgn__form-text-default"
+          >
+            <div>
+              Self-paced courses offer suggested due dates for assignments or exams based on the learner’s enrollment date and the expected course duration. These courses offer learners flexibility to modify the assignment dates as needed.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+`;

@@ -10,6 +10,7 @@ import EditorContainer from './editors/EditorContainer';
 import VideoSelectorContainer from './selectors/VideoSelectorContainer';
 import CustomPages from './custom-pages';
 import { AdvancedSettings } from './advanced-settings';
+import ScheduleAndDetails from './schedule-and-details';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -90,7 +91,7 @@ const CourseAuthoringRoutes = ({ courseId }) => {
         <PageRoute path={`${path}/settings/details`}>
           {process.env.ENABLE_NEW_SCHEDULE_DETAILS_PAGE === 'true'
             && (
-              <Placeholder />
+              <ScheduleAndDetails courseId={courseId} />
             )}
         </PageRoute>
         <PageRoute path={`${path}/settings/grading`}>

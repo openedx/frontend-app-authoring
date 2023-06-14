@@ -27,12 +27,13 @@ export function useIsDesktop() {
   return useMediaQuery({ query: '(min-width: 992px)' });
 }
 
-export function convertObjectToSnakeCase(obj) {
+export function convertObjectToSnakeCase(obj, unpacked = false) {
   return Object.keys(obj).reduce((snakeCaseObj, key) => {
     const snakeCaseKey = snakeCase(key);
+    const value = unpacked ? obj[key] : { value: obj[key] };
     return {
       ...snakeCaseObj,
-      [snakeCaseKey]: { value: obj[key] },
+      [snakeCaseKey]: value,
     };
   }, {});
 }
