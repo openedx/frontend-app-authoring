@@ -4,6 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Container, Button, Layout } from '@edx/paragon';
 import { CheckCircle, Info, WarningFilled } from '@edx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+
+import AlertProctoringError from '../generic/AlertProctoringError';
+import { parseArrayOrObjectValues } from '../utils';
+import { RequestStatus } from '../data/constants';
 import { fetchCourseAppSettings, updateCourseAppSetting, fetchProctoringExamErrors } from './data/thunks';
 import {
   getCourseAppSettings, getSavingStatus, getProctoringExamErrors, getSendRequestErrors,
@@ -11,11 +15,8 @@ import {
 import SettingCard from './setting-card/SettingCard';
 import SettingAlert from './setting-alert/SettingAlert';
 import SettingsSidebar from './settings-sidebar/SettingsSidebar';
-import { RequestStatus } from '../data/constants';
-import { parseArrayOrObjectValues, removeExtraQuotes } from '../utils';
 import validateAdvancedSettingsData from './utils';
 import messages from './messages';
-import AlertProctoringError from '../generic/AlertProctoringError';
 import ModalError from './modal-error/ModalError';
 
 const AdvancedSettings = ({ intl, courseId }) => {
@@ -55,7 +56,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
       ...prevEditedSettings,
       // An empty value is needed to prevent the display of the default value,
       // after manually deleting the textarea value.
-      [settingName]: removeExtraQuotes(value) || emptyValue,
+      [settingName]: value || emptyValue,
     }));
   };
 

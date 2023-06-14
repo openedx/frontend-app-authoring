@@ -65,17 +65,15 @@ const CourseAuthoringPage = ({ courseId, children }) => {
       This functionality will be removed in TNL-9591 */}
       {!isCourseLoaded ? !pathname.includes('/editor/') && <Loading />
         : (
-          <>
-            <AppHeader
-              courseNumber={courseNumber}
-              courseOrg={courseOrg}
-              courseTitle={courseTitle}
-              courseId={courseId}
-            />
-            {children}
-            <AppFooter />
-          </>
+          <AppHeader
+            courseNumber={courseNumber}
+            courseOrg={courseOrg}
+            courseTitle={courseTitle}
+            courseId={courseId}
+          />
         )}
+      {children}
+      {isCourseLoaded && <AppFooter />}
     </div>
   );
 };

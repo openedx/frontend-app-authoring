@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert, Icon } from '@edx/paragon';
 import { Error } from '@edx/paragon/icons';
+
 import { transformKeysToCamelCase } from '../../utils';
 
 const ModalErrorListItem = ({ settingName, settingsData }) => {

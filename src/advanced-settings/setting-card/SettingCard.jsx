@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import TextareaAutosize from 'react-textarea-autosize';
+
 import messages from './messages';
 
 const SettingCard = ({
