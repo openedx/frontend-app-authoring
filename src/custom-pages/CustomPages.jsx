@@ -29,16 +29,21 @@ import CustomPageCard from './CustomPageCard';
 import messages from './messages';
 import CustomPagesProvider from './CustomPagesProvider';
 
-const CustomPages = ({ courseId, intl }) => {
+const CustomPages = ({
+  courseId,
+  // injected
+  intl,
+}) => {
   const dispatch = useDispatch();
   const [orderedPages, setOrderedPages] = useState([]);
+  const [isOpen, open, close] = useToggle(false);
+
+  const { config } = useContext(AppContext);
+  const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
+
   useEffect(() => {
     dispatch(fetchCustomPages(courseId));
   }, [courseId]);
-
-  const { config } = useContext(AppContext);
-  const [isOpen, open, close] = useToggle(false);
-  const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
 
   const customPagesIds = useSelector(state => state.customPages.customPagesIds);
   const addPageStatus = useSelector(state => state.customPages.addingStatus);
@@ -47,6 +52,8 @@ const CustomPages = ({ courseId, intl }) => {
   const loadingStatus = useSelector(getLoadingStatus);
 
   const pages = useModels('customPages', customPagesIds);
+  useEffect(() => { setOrderedPages(pages); }, [customPagesIds, savingStatus]);
+
   const handleAddPage = () => { dispatch(addSingleCustomPage(courseId)); };
   const handleReorder = () => (newPageOrder) => {
     dispatch(updatePageOrder(courseId, newPageOrder));
@@ -64,11 +71,9 @@ const CustomPages = ({ courseId, intl }) => {
     disabledStates: ['pending'],
   };
 
-  useEffect(() => { setOrderedPages(pages); }, [customPagesIds]);
-
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
-    return null;
+    return (<></>);
   }
 
   return (
@@ -76,7 +81,7 @@ const CustomPages = ({ courseId, intl }) => {
       <main className="container container-mw-xl p-4 pt-5">
         <div className="small gray-700">
           <Breadcrumb
-            ariaLabel="Breadcrumb basic"
+            ariaLabel="Custom Page breadcrumbs"
             links={[
               { label: 'Content', href: `${config.STUDIO_BASE_URL}/course/${courseId}` },
               { label: 'Pages and Resources', href: `/course/${courseId}/pages-and-resources` },
@@ -88,7 +93,11 @@ const CustomPages = ({ courseId, intl }) => {
             <FormattedMessage {...messages.heading} />
           </div>
           <ActionRow.Spacer />
-          <Button iconBefore={Add} onClick={handleAddPage}>
+          <Button
+            iconBefore={Add}
+            onClick={handleAddPage}
+            data-testid="header-add-button"
+          >
             <FormattedMessage {...messages.addPageHeaderLabel} />
           </Button>
           <Hyperlink
@@ -96,6 +105,7 @@ const CustomPages = ({ courseId, intl }) => {
             target="_blank"
             rel="noopener noreferrer"
             showLaunchIcon={false}
+            data-testid="header-view-live-button"
           >
             <Button>
               <FormattedMessage {...messages.viewLiveLabel} />
@@ -139,7 +149,12 @@ const CustomPages = ({ courseId, intl }) => {
                 </SortableItem>
               ))}
             </DraggableList>
-            <StatefulButton onClick={handleAddPage} state={addPageStatus} {...addPageStateProps} />
+            <StatefulButton
+              data-testid="body-add-button"
+              onClick={handleAddPage}
+              state={addPageStatus}
+              {...addPageStateProps}
+            />
           </Layout.Element>
           <Layout.Element>
             <div className="h4">
@@ -162,7 +177,13 @@ const CustomPages = ({ courseId, intl }) => {
             <div className="small gray-700">
               <FormattedMessage {...messages.studentViewExplanationBody} />
             </div>
-            <Button variant="link" size="sm" onClick={open} className="pl-0">
+            <Button
+              data-testid="student-view-example-button"
+              variant="link"
+              size="sm"
+              onClick={open}
+              className="pl-0"
+            >
               <FormattedMessage {...messages.studentViewExampleButton} />
             </Button>
           </Layout.Element>
