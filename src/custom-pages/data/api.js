@@ -6,8 +6,8 @@ ensureConfig([
   'STUDIO_BASE_URL',
 ], 'Course Apps API service');
 
-const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-const getTabHandlerUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v0/tabs/${courseId}`;
+export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
+export const getTabHandlerUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v0/tabs/${courseId}`;
 
 /**
  * Fetches the course custom pages for provided course

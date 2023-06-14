@@ -71,7 +71,7 @@ const CustomPageCard = ({
   return (
     <>
       <ActionRow>
-        <div className="h4">
+        <div className="h4" data-testid="card-title">
           {page?.name || 'Empty'}
         </div>
         <ActionRow.Spacer />
@@ -83,6 +83,7 @@ const CustomPageCard = ({
           iconAs={Icon}
           alt={intl.formatMessage(messages.editTooltipContent)}
           onClick={openEditModal}
+          data-testid="edit-modal-icon"
         />
         <IconButtonWithTooltip
           key={intl.formatMessage(messages.visibilityTooltipContent)}
@@ -92,6 +93,7 @@ const CustomPageCard = ({
           iconAs={Icon}
           alt={intl.formatMessage(messages.visibilityTooltipContent)}
           onClick={toggleVisibilty}
+          data-testid="visibility-toggle-icon"
         />
         <IconButtonWithTooltip
           key={intl.formatMessage(messages.deleteTooltipContent)}
@@ -101,6 +103,7 @@ const CustomPageCard = ({
           iconAs={Icon}
           alt={intl.formatMessage(messages.deleteTooltipContent)}
           onClick={openDeleteConfirmation}
+          data-testid="delete-modal-icon"
         />
       </ActionRow>
       <AlertModal
@@ -118,7 +121,12 @@ const CustomPageCard = ({
       >
         {intl.formatMessage(messages.deleteConfirmationMessage)}
       </AlertModal>
-      <EditModal isOpen={isEditModalOpen} page={page} courseId={courseId} onClose={handleEditClose} />
+      <EditModal
+        isOpen={isEditModalOpen}
+        page={page}
+        courseId={courseId}
+        onClose={handleEditClose}
+      />
     </>
   );
 };
@@ -132,7 +140,6 @@ CustomPageCard.propTypes = {
   courseId: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
   deletePageStatus: PropTypes.string.isRequired,
-  editorPath: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

@@ -15,6 +15,7 @@ const EditModal = ({
     isOpen={isOpen}
     hasCloseButton={false}
     size="fullscreen"
+    title="Edit Custom Page Modal"
   >
     <ModalDialog.Body className="p-0">
       <EditorPage

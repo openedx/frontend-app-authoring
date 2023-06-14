@@ -57,13 +57,13 @@ export function deleteSingleCustomPage({ blockId, closeConfirmation }) {
         customPageId: blockId,
       }));
       dispatch(updateDeletingStatus({ status: RequestStatus.SUCCESSFUL }));
-      closeConfirmation();
     } catch (error) {
       if (error.response && error.response.status === 403) {
         dispatch(updateDeletingStatus({ status: RequestStatus.DENIED }));
       }
       dispatch(updateDeletingStatus({ status: RequestStatus.FAILED }));
     }
+    closeConfirmation();
   };
 }
 
