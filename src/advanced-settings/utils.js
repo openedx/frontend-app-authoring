@@ -14,7 +14,19 @@ export default function validateAdvancedSettingsData(settingObj, setErrorFields)
     fieldsWithErrors.push({ key: settingName, message: 'Incorrectly formatted JSON' });
   };
 
-  const bracketsValidation = (value) => (/[{[\]}]/.test(value));
+  const bracketsValidation = (value) => /[{[\]}]/.test(value);
+
+  function quotesValidation(value) {
+    const doubleAndSingleQuotes = /"(.*?)"|'(.*?)'/g;
+    const hasMatchingQuotes = doubleAndSingleQuotes.test(value);
+
+    const doubleQuotes = value.includes('""');
+    const singleQuotes = value.includes("''");
+    const hasUnmatchedDoubleQuotes = value.includes('"') && !hasMatchingQuotes;
+    const hasUnmatchedSingleQuotes = value.includes("'") && !hasMatchingQuotes;
+
+    return doubleQuotes || singleQuotes || hasUnmatchedDoubleQuotes || hasUnmatchedSingleQuotes;
+  }
 
   Object.entries(settingObj).forEach(([settingName, settingValue]) => {
     const isArrayOrObject = (settingValue.startsWith('[') && settingValue.endsWith(']'))
@@ -27,13 +39,13 @@ export default function validateAdvancedSettingsData(settingObj, setErrorFields)
         } catch (err) {
           pushDataToErrorArray(settingName);
         }
-      } else if (bracketsValidation(settingValue)) {
+      } else if (bracketsValidation(settingValue) || quotesValidation(settingValue)) {
         pushDataToErrorArray(settingName);
       }
     }
   });
 
-  setErrorFields(prevState => {
+  setErrorFields((prevState) => {
     if (JSON.stringify(prevState) !== JSON.stringify(fieldsWithErrors)) {
       return fieldsWithErrors;
     }

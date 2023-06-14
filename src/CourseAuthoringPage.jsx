@@ -89,7 +89,7 @@ const CourseAuthoringPage = ({ courseId, children }) => {
             courseId={courseId}
           />
         )
-      )}
+        )}
       {children}
       {!inProgress && showHeader && <AppFooter />}
     </div>
