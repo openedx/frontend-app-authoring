@@ -54,6 +54,7 @@
   bottom: 0;
   width: 100%;
   padding: 0 .625rem;
+  z-index: $zindex-modal;
 }
 
 .alert-proctoring-error {
