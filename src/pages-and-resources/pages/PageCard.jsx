@@ -1,4 +1,3 @@
-import { history } from '@edx/frontend-platform';
 import classNames from 'classnames';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
@@ -7,6 +6,7 @@ import {
 import { ArrowForward, Settings } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import messages from '../messages';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import { useIsDesktop } from '../../utils';
@@ -32,6 +32,7 @@ const PageCard = ({
 }) => {
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const isDesktop = useIsDesktop();
+  const navigate = useNavigate();
 
   // eslint-disable-next-line react/no-unstable-nested-components
   const SettingsButton = () => {
@@ -53,7 +54,7 @@ const PageCard = ({
         iconAs={Icon}
         size="inline"
         alt={intl.formatMessage(messages.settings)}
-        onClick={() => history.push(`${pagesAndResourcesPath}/${page.id}/settings`)}
+        onClick={() => navigate(`${pagesAndResourcesPath}/${page.id}/settings`)}
       />
     );
   };

@@ -7,7 +7,7 @@ import {
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
@@ -37,23 +37,10 @@ const App = () => {
   return (
     <AppProvider store={initializeStore()}>
       <Head />
-      <Switch>
-        <Route path="/home">
-          {process.env.ENABLE_NEW_HOME_PAGE === 'true'
-              && (
-              <Placeholder />
-              )}
-        </Route>
-        <Route
-          path="/course/:courseId"
-          render={({ match }) => {
-            const { params: { courseId } } = match;
-            return (
-              <CourseAuthoringRoutes courseId={courseId} />
-            );
-          }}
-        />
-      </Switch>
+      <Routes>
+        <Route path="/home" element={process.env.ENABLE_NEW_HOME_PAGE === 'true' ? <Placeholder /> : null} />
+        <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
+      </Routes>
     </AppProvider>
   );
 };

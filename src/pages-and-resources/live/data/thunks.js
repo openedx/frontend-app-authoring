@@ -1,4 +1,3 @@
-import { history } from '@edx/frontend-platform';
 import { addModel, addModels, updateModel } from '../../../generic/model-store';
 import {
  getLiveConfiguration,
@@ -56,7 +55,7 @@ export function fetchLiveData(courseId) {
   };
 }
 
-export function saveLiveConfiguration(courseId, config) {
+export function saveLiveConfiguration(courseId, config, navigate) {
   return async (dispatch) => {
     dispatch(updateSaveStatus({ status: RequestStatus.IN_PROGRESS }));
     try {
@@ -64,7 +63,7 @@ export function saveLiveConfiguration(courseId, config) {
       dispatch(updateLiveSettingsState(apps));
 
       dispatch(updateSaveStatus({ status: RequestStatus.SUCCESSFUL }));
-      history.push(`/course/${courseId}/pages-and-resources/`);
+      navigate(`/course/${courseId}/pages-and-resources/`);
     } catch (error) {
       if (error.response && error.response.status === 403) {
         dispatch(updateSaveStatus({ status: RequestStatus.DENIED }));

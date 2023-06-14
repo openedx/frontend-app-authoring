@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { VideoSelectorPage } from '@edx/frontend-lib-content-components';
 import { getConfig } from '@edx/frontend-platform';
 

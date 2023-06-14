@@ -1,4 +1,3 @@
-import { history } from '@edx/frontend-platform';
 import { addModel, addModels } from '../../../generic/model-store';
 import { getDiscussionsProviders, getDiscussionsSettings, postDiscussionsSettings } from './api';
 import {
@@ -68,7 +67,7 @@ export function fetchDiscussionSettings(courseId, providerId = null) {
   };
 }
 
-export function saveProviderConfig(courseId, appId, drafts, successPath) {
+export function saveProviderConfig(courseId, appId, drafts, successPath, navigate) {
   return async (dispatch) => {
     dispatch(updateSaveStatus({ status: SAVING }));
 
@@ -78,7 +77,7 @@ export function saveProviderConfig(courseId, appId, drafts, successPath) {
 
       dispatch(updateSaveStatus({ status: SAVED }));
       // Note that we redirect here to avoid having to work with the promise over in AppConfigForm.
-      history.push(successPath);
+      navigate(successPath);
     } catch (error) {
       if (error.response && error.response.status === 403) {
         dispatch(updateSaveStatus({ status: DENIED }));
