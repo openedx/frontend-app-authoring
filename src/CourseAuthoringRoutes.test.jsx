@@ -13,10 +13,10 @@ const editorContainerMockText = 'Editor Container';
 const videoSelectorContainerMockText = 'Video Selector Container';
 let store;
 const mockComponentFn = jest.fn();
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useRouteMatch: () => ({
-    path: `/course/${courseId}`,
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: () => ({
+    courseId,
   }),
 }));
 jest.mock('./pages-and-resources/PagesAndResources', () => (props) => {
@@ -51,9 +51,9 @@ describe('<CourseAuthoringRoutes>', () => {
 
   it('renders the PagesAndResources component when the pages and resources route is active', () => {
     render(
-      <AppProvider store={store}>
-        <MemoryRouter initialEntries={[`/course/${courseId}/pages-and-resources`]}>
-          <CourseAuthoringRoutes courseId={courseId} />
+      <AppProvider store={store} wrapWithRouter={false}>
+        <MemoryRouter initialEntries={['/pages-and-resources']}>
+          <CourseAuthoringRoutes />
         </MemoryRouter>
       </AppProvider>,
     );
@@ -69,9 +69,9 @@ describe('<CourseAuthoringRoutes>', () => {
 
   it('renders the ProctoredExamSettings component when the proctored exam settings route is active', () => {
     render(
-      <AppProvider store={store}>
-        <MemoryRouter initialEntries={[`/course/${courseId}/proctored-exam-settings`]}>
-          <CourseAuthoringRoutes courseId={courseId} />
+      <AppProvider store={store} wrapWithRouter={false}>
+        <MemoryRouter initialEntries={['/proctored-exam-settings']}>
+          <CourseAuthoringRoutes />
         </MemoryRouter>
       </AppProvider>,
     );
@@ -87,9 +87,9 @@ describe('<CourseAuthoringRoutes>', () => {
 
   it('renders the EditorContainer component when the course editor route is active', () => {
     render(
-      <AppProvider store={store}>
-        <MemoryRouter initialEntries={[`/course/${courseId}/editor/video/block-id`]}>
-          <CourseAuthoringRoutes courseId={courseId} />
+      <AppProvider store={store} wrapWithRouter={false}>
+        <MemoryRouter initialEntries={['/editor/video/block-id']}>
+          <CourseAuthoringRoutes />
         </MemoryRouter>
       </AppProvider>,
     );
@@ -105,9 +105,9 @@ describe('<CourseAuthoringRoutes>', () => {
 
   it('renders the VideoSelectorContainer component when the course videos route is active', () => {
     render(
-      <AppProvider store={store}>
-        <MemoryRouter initialEntries={[`/course/${courseId}/editor/course-videos/block-id`]}>
-          <CourseAuthoringRoutes courseId={courseId} />
+      <AppProvider store={store} wrapWithRouter={false}>
+        <MemoryRouter initialEntries={['/editor/course-videos/block-id']}>
+          <CourseAuthoringRoutes />
         </MemoryRouter>
       </AppProvider>,
     );

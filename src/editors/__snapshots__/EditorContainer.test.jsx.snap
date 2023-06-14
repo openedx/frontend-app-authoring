@@ -5,8 +5,6 @@ exports[`Editor Container snapshots rendering correctly with expected Input 1`] 
   className="editor-page"
 >
   <EditorPage
-    blockId="company-id1"
-    blockType="html"
     courseId="cOuRsEId"
     lmsEndpointUrl="http://localhost:18000"
     studioEndpointUrl="http://localhost:18010"

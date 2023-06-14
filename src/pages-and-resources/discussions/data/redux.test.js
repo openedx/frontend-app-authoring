@@ -15,6 +15,7 @@ import { fetchDiscussionSettings, fetchProviders, saveProviderConfig } from './t
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const pagesAndResourcesPath = `/course/${courseId}/pages-and-resources`;
+const mockedNavigator = jest.fn();
 
 const featuresState = {
   'discussion-page': {
@@ -114,6 +115,7 @@ describe('Data layer integration tests', () => {
 
   afterEach(() => {
     axiosMock.reset();
+    jest.clearAllMocks();
   });
 
   describe('fetchProviders', () => {
@@ -286,7 +288,7 @@ describe('Data layer integration tests', () => {
       await executeThunk(fetchProviders(courseId), store.dispatch);
       await executeThunk(fetchDiscussionSettings(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'piazza' }));
-      await executeThunk(saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath), store.dispatch);
+      await executeThunk(saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath, mockedNavigator), store.dispatch);
 
       // Assert we're still on the form.
       expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
@@ -313,7 +315,7 @@ describe('Data layer integration tests', () => {
       // We call fetchProviders and selectApp here too just to get us into a real state.
       await executeThunk(fetchProviders(courseId), store.dispatch);
       store.dispatch(selectApp({ appId: 'piazza' }));
-      await executeThunk(saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath), store.dispatch);
+      await executeThunk(saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath, mockedNavigator), store.dispatch);
 
       // Assert we're still on the form.
       expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
@@ -369,9 +371,10 @@ describe('Data layer integration tests', () => {
           launchUrl: 'http://localhost/new_launch_url',
         },
         pagesAndResourcesPath,
+        mockedNavigator,
       ), store.dispatch);
 
-      expect(window.location.pathname).toEqual(pagesAndResourcesPath);
+      expect(mockedNavigator).toHaveBeenCalledWith(pagesAndResourcesPath);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
           appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
@@ -464,8 +467,9 @@ describe('Data layer integration tests', () => {
           ],
         },
         pagesAndResourcesPath,
+        mockedNavigator,
       ), store.dispatch);
-      expect(window.location.pathname).toEqual(pagesAndResourcesPath);
+      expect(mockedNavigator).toHaveBeenCalledWith(pagesAndResourcesPath);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
           appIds: ['legacy', 'openedx', 'piazza', 'discourse'],

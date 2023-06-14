@@ -7,11 +7,11 @@ import {
 } from '@testing-library/react';
 
 import ReactDOM from 'react-dom';
-import { Switch } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { initializeMockApp, history } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { AppProvider, PageRoute } from '@edx/frontend-platform/react';
+import { AppProvider, PageWrap } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import userEvent from '@testing-library/user-event';
@@ -43,11 +43,9 @@ const renderComponent = () => {
     <IntlProvider locale="en">
       <AppProvider store={store}>
         <PagesAndResourcesProvider courseId={courseId}>
-          <Switch>
-            <PageRoute path={liveSettingsUrl}>
-              <LiveSettings onClose={() => {}} />
-            </PageRoute>
-          </Switch>
+          <Routes>
+            <Route path={liveSettingsUrl} element={<PageWrap><LiveSettings onClose={() => {}} /></PageWrap>} />
+          </Routes>
         </PagesAndResourcesProvider>
       </AppProvider>
     </IntlProvider>,

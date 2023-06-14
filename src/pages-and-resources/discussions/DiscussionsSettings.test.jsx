@@ -3,7 +3,7 @@ import {
   getConfig, history, initializeMockApp, setConfig,
 } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { AppProvider, PageRoute } from '@edx/frontend-platform/react';
+import { AppProvider, PageWrap } from '@edx/frontend-platform/react';
 import {
   act, findByRole, getByRole, queryByLabelText, queryByRole, queryByTestId, queryByText, render,
   screen, waitFor, waitForElementToBeRemoved,
@@ -11,7 +11,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 import React from 'react';
-import { Switch } from 'react-router';
+import { Routes, Route } from 'react-router-dom';
 import { fetchCourseDetail } from '../../data/thunks';
 import initializeStore from '../../store';
 import { executeThunk } from '../../utils';
@@ -41,16 +41,16 @@ function renderComponent() {
   const wrapper = render(
     <AppProvider store={store}>
       <PagesAndResourcesProvider courseId={courseId}>
-        <Switch>
-          <PageRoute
-            path={[
-              `/course/${courseId}/pages-and-resources/discussion/configure/:appId`,
-              `/course/${courseId}/pages-and-resources/discussion`,
-            ]}
-          >
-            <DiscussionsSettings courseId={courseId} />
-          </PageRoute>
-        </Switch>
+        <Routes>
+          <Route
+            path={`/course/${courseId}/pages-and-resources/discussion/configure/:appId`}
+            element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>}
+          />
+          <Route
+            path={`/course/${courseId}/pages-and-resources/discussion`}
+            element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>}
+          />
+        </Routes>
       </PagesAndResourcesProvider>
     </AppProvider>,
   );
@@ -80,7 +80,7 @@ describe('DiscussionsSettings', () => {
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
     // Leave the DiscussionsSettings route after the test.
-    history.push(`/course/${courseId}/pages-and-resources`);
+   history.push(`/course/${courseId}/pages-and-resources`);
   });
 
   describe('with successful network connections', () => {
@@ -89,12 +89,12 @@ describe('DiscussionsSettings', () => {
         .reply(200, generateProvidersApiResponse(false));
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
         .reply(200, generatePiazzaApiResponse(true));
-      renderComponent();
     });
 
     test('sets selection step from routes', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
+      renderComponent();
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
@@ -106,6 +106,7 @@ describe('DiscussionsSettings', () => {
     test('sets settings step from routes', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussion/configure/piazza`);
 
+      renderComponent();
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
@@ -117,6 +118,7 @@ describe('DiscussionsSettings', () => {
     test('successfully advances to settings step for lti', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
+      renderComponent();
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
@@ -135,9 +137,9 @@ describe('DiscussionsSettings', () => {
     test('successfully advances to settings step for legacy', async () => {
       axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse(false, 'legacy'));
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, legacyApiResponse);
-      renderComponent();
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
+      renderComponent();
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
@@ -156,6 +158,7 @@ describe('DiscussionsSettings', () => {
     test('successfully goes back to first step', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussion/configure/piazza`);
 
+      renderComponent();
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
@@ -171,6 +174,7 @@ describe('DiscussionsSettings', () => {
     test('successfully closes the modal', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
+      renderComponent();
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
@@ -188,6 +192,7 @@ describe('DiscussionsSettings', () => {
     test('successfully submit the modal', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
+      renderComponent();
       axiosMock.onPost(getDiscussionsSettingsUrl(courseId)).reply(200, generatePiazzaApiResponse(true));
 
       // This is an important line that ensures the spinner has been removed - and thus our main
@@ -213,6 +218,7 @@ describe('DiscussionsSettings', () => {
       await executeThunk(fetchCourseDetail(courseId), store.dispatch);
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
+      renderComponent();
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
@@ -234,6 +240,7 @@ describe('DiscussionsSettings', () => {
       await executeThunk(fetchCourseDetail(courseId), store.dispatch);
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
+      renderComponent();
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
@@ -269,12 +276,12 @@ describe('DiscussionsSettings', () => {
 
       axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).networkError();
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).networkError();
-      renderComponent();
     });
 
     test('shows connection error alert', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
+      renderComponent();
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
@@ -299,12 +306,12 @@ describe('DiscussionsSettings', () => {
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
         .reply(200, piazzaApiResponse);
       axiosMock.onPost(getDiscussionsSettingsUrl(courseId)).networkError();
-      renderComponent();
     });
 
     test('shows connection error alert at top of form', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussion/configure/piazza`);
 
+      renderComponent();
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
@@ -328,13 +335,12 @@ describe('DiscussionsSettings', () => {
     beforeEach(() => {
       axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(403);
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(403);
-
-      renderComponent();
     });
 
     test('shows permission denied alert', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
+      renderComponent();
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
@@ -351,13 +357,12 @@ describe('DiscussionsSettings', () => {
         .reply(200, generateProvidersApiResponse());
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
       axiosMock.onPost(getDiscussionsSettingsUrl(courseId)).reply(403);
-
-      renderComponent();
     });
 
     test('shows permission denied alert at top of form', async () => {
       history.push(`/course/${courseId}/pages-and-resources/discussion/configure/piazza`);
 
+      renderComponent();
       // This is an important line that ensures the spinner has been removed - and thus our main
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
@@ -410,13 +415,13 @@ describe.each([
       .reply(200, generateProvidersApiResponse(isAdminOnlyConfig));
     axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
       .reply(200, generatePiazzaApiResponse(true));
-    renderComponent();
   });
 
   test(`successfully advances to settings step for lti when adminOnlyConfig=${isAdminOnlyConfig} and user ${isAdmin ? 'is' : 'is not'} admin `, async () => {
     const showLTIConfig = isAdmin;
     history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
+    renderComponent();
     // This is an important line that ensures the spinner has been removed - and thus our main
     // content has been loaded - prior to proceeding with our expectations.
     await waitForElementToBeRemoved(screen.getByRole('status'));
@@ -461,18 +466,18 @@ describe.each([
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
     // Leave the DiscussionsSettings route after the test.
-    history.push(`/course/${courseId}/pages-and-resources`);
+    // history.push(`/course/${courseId}/pages-and-resources`);
     axiosMock.onGet(getDiscussionsProvidersUrl(courseId))
       .reply(200, generateProvidersApiResponse(false));
     axiosMock.onGet(getDiscussionsSettingsUrl(courseId))
       .reply(200, generatePiazzaApiResponse(piiSharingAllowed));
-    renderComponent();
   });
 
   test(`${piiSharingAllowed ? 'shows PII share username/email field when piiSharingAllowed is true'
     : 'hides PII share username/email field when piiSharingAllowed is false'}`, async () => {
     history.push(`/course/${courseId}/pages-and-resources/discussion`);
 
+    renderComponent();
     // This is an important line that ensures the spinner has been removed - and thus our main
     // content has been loaded - prior to proceeding with our expectations.
     await waitForElementToBeRemoved(screen.getByRole('status'));
