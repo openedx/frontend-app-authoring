@@ -7,41 +7,33 @@
  * @param {function} setErrorFields - The function to set error fields.
  * @returns {boolean} - `true` if the data is valid, otherwise `false`.
  */
-export default function validateAdvancedSettingsData(settingObj, setErrorFields) {
+export default function validateAdvancedSettingsData(settingObj, setErrorFields, setEditedSettings) {
   const fieldsWithErrors = [];
 
   const pushDataToErrorArray = (settingName) => {
     fieldsWithErrors.push({ key: settingName, message: 'Incorrectly formatted JSON' });
   };
 
-  const bracketsValidation = (value) => /[{[\]}]/.test(value);
-
-  function quotesValidation(value) {
-    const doubleAndSingleQuotes = /"(.*?)"|'(.*?)'/g;
-    const hasMatchingQuotes = doubleAndSingleQuotes.test(value);
-
-    const doubleQuotes = value.includes('""');
-    const singleQuotes = value.includes("''");
-    const hasUnmatchedDoubleQuotes = value.includes('"') && !hasMatchingQuotes;
-    const hasUnmatchedSingleQuotes = value.includes("'") && !hasMatchingQuotes;
-
-    return doubleQuotes || singleQuotes || hasUnmatchedDoubleQuotes || hasUnmatchedSingleQuotes;
-  }
-
   Object.entries(settingObj).forEach(([settingName, settingValue]) => {
-    const isArrayOrObject = (settingValue.startsWith('[') && settingValue.endsWith(']'))
-        || (settingValue.startsWith('{') && settingValue.endsWith('}'));
+    try {
+      JSON.parse(settingValue);
+    } catch (e) {
+      let targetSettingValue = settingValue;
+      const firstNonWhite = settingValue.substring(0, 1);
+      const isValid = !['{', '[', "'"].includes(firstNonWhite);
 
-    if (typeof settingValue === 'string') {
-      if (isArrayOrObject) {
+      if (isValid) {
         try {
-          JSON.parse(settingValue);
-        } catch (err) {
-          pushDataToErrorArray(settingName);
-        }
-      } else if (bracketsValidation(settingValue) || quotesValidation(settingValue)) {
-        pushDataToErrorArray(settingName);
+          targetSettingValue = `"${ targetSettingValue.trim() }"`;
+          JSON.parse(targetSettingValue);
+          setEditedSettings((prevEditedSettings) => ({
+            ...prevEditedSettings,
+            [settingName]: targetSettingValue,
+          }));
+        } catch (quotedE) { /* empty */ }
       }
+
+      pushDataToErrorArray(settingName);
     }
   });
 

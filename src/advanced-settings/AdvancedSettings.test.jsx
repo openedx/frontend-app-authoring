@@ -2,6 +2,8 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { useDispatch, useSelector } from 'react-redux';
+import renderer from 'react-test-renderer';
+
 import AdvancedSettings from './AdvancedSettings';
 import { fetchCourseAppSettings, fetchProctoringExamErrors, updateCourseAppSetting } from './data/thunks';
 
@@ -61,6 +63,10 @@ describe('AdvancedSettings', () => {
 
   afterEach(() => jest.clearAllMocks());
 
+  it('should match the snapshot', () => {
+    const tree = renderer.create(wrapper).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
   it('should render without errors', () => {
     shallow(<AdvancedSettings intl={injectIntl} courseId={courseId} />);
   });
@@ -71,7 +77,7 @@ describe('AdvancedSettings', () => {
   });
   it('should render setting card with correct value', () => {
     const settingCard = wrapper.find('SettingCard').at(0);
-    expect(settingCard.props().value).toBe('value1');
+    expect(settingCard.props().value).toBe('"value1"');
   });
   it('updating textarea value and show warning alert', () => {
     const settingCard = wrapper.find('SettingCard').at(0);
@@ -88,12 +94,23 @@ describe('AdvancedSettings', () => {
     const settingAlert = wrapper.find('AlertMessage');
     const resetBtn = settingAlert.find('Button').at(1);
     resetBtn.simulate('click');
-    expect(textarea.text()).toBe('value1');
+    expect(textarea.text()).toBe('"value1"');
   });
   it('should handle setting change', () => {
     const dispatch = useDispatch();
     wrapper.find('textarea').at(0).simulate('change', { target: { value: 'new value' } });
     wrapper.find('Button').at(0).simulate('click');
     expect(dispatch).toHaveBeenCalledWith(updateCourseAppSetting(courseId, 'new value'));
+  });
+  it('should reset textarea value and display success alert on button click', () => {
+    const settingCard = wrapper.find('SettingCard').at(0);
+    const textarea = settingCard.find('textarea');
+    textarea.simulate('change', { target: { value: 'new value' } });
+    const settingAlert = wrapper.find('SettingAlert');
+    const resetBtn = settingAlert.find('Button').at(0);
+    resetBtn.simulate('click');
+    expect(textarea.text()).toBe('"new value"');
+    const successAlert = wrapper.find('SettingAlert').filterWhere(alert => alert.prop('variant') === 'success');
+    expect(successAlert).toHaveLength(1);
   });
 });

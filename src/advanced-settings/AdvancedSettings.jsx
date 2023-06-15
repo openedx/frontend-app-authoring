@@ -40,6 +40,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       setShowSuccessAlert(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (savingStatus === RequestStatus.FAILED) {
       setErrorFields(settingsWithSendErrors);
       showErrorModal(true);
@@ -48,15 +49,13 @@ const AdvancedSettings = ({ intl, courseId }) => {
 
   const handleSettingChange = (e, settingName) => {
     const { value } = e.target;
-    const emptyValue = '\u0000';
     if (!saveSettingsPrompt) {
       showSaveSettingsPrompt(true);
     }
+    setShowSuccessAlert(false);
     setEditedSettings((prevEditedSettings) => ({
       ...prevEditedSettings,
-      // An empty value is needed to prevent the display of the default value,
-      // after manually deleting the textarea value.
-      [settingName]: value || emptyValue,
+      [settingName]: value,
     }));
   };
 
@@ -66,11 +65,14 @@ const AdvancedSettings = ({ intl, courseId }) => {
     showSaveSettingsPrompt(false);
   };
 
+  const handleSettingBlur = () => {
+    validateAdvancedSettingsData(editedSettings, setErrorFields, setEditedSettings);
+  };
+
   const handleUpdateAdvancedSettingsData = () => {
-    const isValid = validateAdvancedSettingsData(editedSettings, setErrorFields);
+    const isValid = validateAdvancedSettingsData(editedSettings, setErrorFields, setEditedSettings);
     if (isValid) {
       dispatch(updateCourseAppSetting(courseId, parseArrayOrObjectValues(editedSettings)));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
       showSaveSettingsPrompt(!saveSettingsPrompt);
     } else {
       showSaveSettingsPrompt(false);
@@ -149,6 +151,9 @@ const AdvancedSettings = ({ intl, courseId }) => {
                     <ul className="setting-items-list p-0">
                       {Object.keys(advancedSettingsData).sort().map((settingName) => {
                         const settingData = advancedSettingsData[settingName];
+                        const editedValue = editedSettings[settingName] !== undefined
+                          ? editedSettings[settingName] : JSON.stringify(settingData.value, null, 4);
+
                         return (
                           <SettingCard
                             key={settingName}
@@ -156,7 +161,8 @@ const AdvancedSettings = ({ intl, courseId }) => {
                             onChange={(e) => handleSettingChange(e, settingName)}
                             showDeprecated={showDeprecated}
                             name={settingName}
-                            value={editedSettings[settingName] || settingData.value}
+                            value={editedValue}
+                            handleBlur={handleSettingBlur}
                           />
                         );
                       })}
