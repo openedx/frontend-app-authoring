@@ -110,9 +110,9 @@ describe('CustomPages', () => {
     expect(draggableButton).toBeVisible();
     await act(async () => {
       fireEvent.click(draggableButton);
-      fireEvent.keyDown(draggableButton, { key: 'Space' });
-      fireEvent.keyDown(draggableButton, { key: 'Down' });
-      fireEvent.keyDown(draggableButton, { key: 'Space' });
+      fireEvent.keyDown(draggableButton, { key: '' });
+      fireEvent.keyDown(draggableButton, { key: 'ArrowDown' });
+      fireEvent.keyDown(draggableButton, { key: '' });
     });
     const saveStatus = store.getState().customPages.savingStatus;
     expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
