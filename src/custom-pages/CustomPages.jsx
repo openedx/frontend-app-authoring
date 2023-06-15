@@ -14,10 +14,13 @@ import {
   useToggle,
   Image,
   ModalDialog,
-  Alert,
 } from '@edx/paragon';
-import { Add, Info, SpinnerSimple } from '@edx/paragon/icons';
-import { DraggableList, SortableItem } from '@edx/frontend-lib-content-components';
+import { Add, SpinnerSimple } from '@edx/paragon/icons';
+import {
+  DraggableList,
+  SortableItem,
+  ErrorAlert,
+} from '@edx/frontend-lib-content-components';
 
 import { RequestStatus } from '../data/constants';
 import { useModels } from '../generic/model-store';
@@ -121,9 +124,15 @@ const CustomPages = ({
           xl={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
         >
           <Layout.Element>
-            {deletePageStatus === RequestStatus.FAILED && <Alert variant="danger" icon={Info} dismissable>Unable to delete page. Please try again.</Alert>}
-            {addPageStatus === RequestStatus.FAILED && <Alert variant="danger" icon={Info} dismissable>Unable to add page. Please try again.</Alert>}
-            {savingStatus === RequestStatus.FAILED && <Alert variant="danger" icon={Info} dismissable>Unable to update page. Please try again.</Alert>}
+            <ErrorAlert hideHeading isError={deletePageStatus === RequestStatus.FAILED}>
+              {intl.formatMessage(messages.errorAlertMessage, { actionName: 'delete' })}
+            </ErrorAlert>
+            <ErrorAlert hideHeading isError={addPageStatus === RequestStatus.FAILED}>
+              {intl.formatMessage(messages.errorAlertMessage, { actionName: 'add' })}
+            </ErrorAlert>
+            <ErrorAlert hideHeading isError={savingStatus === RequestStatus.FAILED}>
+              {intl.formatMessage(messages.errorAlertMessage, { actionName: 'save' })}
+            </ErrorAlert>
             <div className="small gray-700 mb-4">
               <FormattedMessage {...messages.note} />
             </div>

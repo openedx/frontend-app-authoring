@@ -102,7 +102,7 @@ describe('CustomPages', () => {
     fireEvent.click(viewButton);
     expect(screen.getByText(messages.studentViewModalTitle.defaultMessage)).toBeVisible();
   });
-  fit('should update page order on drag', async () => {
+  it('should update page order on drag', async () => {
     renderComponent();
     await mockStore();
     const buttons = await screen.queryAllByRole('button');

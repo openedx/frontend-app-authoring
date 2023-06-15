@@ -5,6 +5,10 @@ const messages = defineMessages({
     id: 'course-authoring.custom-pages.heading',
     defaultMessage: 'Custom Pages',
   },
+  errorAlertMessage: {
+    id: 'course-authoring.custom-pages.errorAlert.message',
+    defaultMessage: 'Unable to {actionName} page. Please try again.',
+  },
   note: {
     id: 'course-authoring.custom-pages.note',
     defaultMessage: `Note: Pages are publicly visible. If users know the URL
