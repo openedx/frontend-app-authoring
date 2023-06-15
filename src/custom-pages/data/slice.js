@@ -29,9 +29,6 @@ const slice = createSlice({
     updateDeletingStatus: (state, { payload }) => {
       state.deletingStatus = payload.status;
     },
-    updateCustomPagesApiStatus: (state, { payload }) => {
-      state.customPagesApiStatus = payload.status;
-    },
     deleteCustomPageSuccess: (state, { payload }) => {
       state.customPagesIds = state.customPagesIds.filter(id => id !== payload.customPageId);
     },
