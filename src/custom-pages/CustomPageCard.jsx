@@ -72,7 +72,7 @@ const CustomPageCard = ({
     <>
       <ActionRow>
         <div className="h4" data-testid="card-title">
-          {page?.name || 'Empty'}
+          {page?.name || intl.formatMessage(messages.newPageTitle)}
         </div>
         <ActionRow.Spacer />
         <IconButtonWithTooltip

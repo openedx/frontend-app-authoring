@@ -57,6 +57,10 @@ const messages = defineMessages({
     id: 'course-authoring.custom-pages.studentViewModal.Body',
     defaultMessage: "Pages appear in your course's top navigation bar. The default pages (Home, Course, Discussion, Wiki, and Progress) are followed by textbooks and custom pages.",
   },
+  newPageTitle: {
+    id: 'course-authoring.custom-pages.page.newPage.title',
+    defaultMessage: 'Empty',
+  },
   editTooltipContent: {
     id: 'course-authoring.custom-pages.editTooltip.content',
     defaultMessage: 'Edit',

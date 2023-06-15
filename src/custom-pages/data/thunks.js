@@ -73,7 +73,14 @@ export function addSingleCustomPage(courseId) {
 
     try {
       const pageData = await addCustomPage(courseId);
-      dispatch(addModel({ modelType: 'customPages', model: { id: pageData.locator, ...pageData } }));
+      dispatch(addModel({
+        modelType: 'customPages',
+        model: {
+          id: pageData.locator,
+          courseStaffOnly: false,
+          ...pageData,
+        },
+      }));
       dispatch(addCustomPageSuccess({
         customPageId: pageData.locator,
       }));
@@ -98,13 +105,12 @@ export function updatePageOrder(courseId, pages) {
     try {
       await updateCustomPageOrder(courseId, tabs);
       dispatch(updateModels({ modelType: 'customPages', models: pages }));
-      return true;
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       if (error.response && error.response.status === 403) {
         dispatch(updateCustomPagesApiStatus({ status: RequestStatus.DENIED }));
       }
-      dispatch(updateLoadingStatus({ status: RequestStatus.FAILED }));
-      return false;
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   };
 }
