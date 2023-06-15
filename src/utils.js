@@ -37,10 +37,6 @@ export function convertObjectToSnakeCase(obj) {
   }, {});
 }
 
-export function removeExtraQuotes(value) {
-  return value.replace(/^["'](.+(?=["']$))["']$/, '$1').trim();
-}
-
 export function transformKeysToCamelCase(obj) {
   return obj.key.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
 }
@@ -56,9 +52,7 @@ export function parseArrayOrObjectValues(obj) {
         result[key] = JSON.parse(value);
       }
     } catch (e) {
-      // eslint-disable-next-line no-control-regex
-      const modifiedString = value.replace(/['"]/g, '').replace(/\x00/g, '');
-      result[key] = modifiedString;
+      result[key] = value;
     }
   });
 

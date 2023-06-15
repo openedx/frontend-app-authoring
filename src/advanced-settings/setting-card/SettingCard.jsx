@@ -11,7 +11,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import messages from './messages';
 
 const SettingCard = ({
-  intl, showDeprecated, name, onChange, value, settingData,
+  intl, showDeprecated, name, onChange, value, settingData, handleBlur,
 }) => {
   const { deprecated, help, displayName } = settingData;
   return (
@@ -47,10 +47,11 @@ const SettingCard = ({
             <Form.Group className="m-0">
               <Form.Control
                 as={TextareaAutosize}
-                value={typeof value === 'object' ? JSON.stringify(value, null, 4) : value.toString()}
+                value={value}
                 name={name}
                 onChange={onChange}
                 aria-label={displayName}
+                onBlur={handleBlur}
               />
             </Form.Group>
           </Card.Section>
@@ -82,6 +83,7 @@ SettingCard.propTypes = {
   onChange: PropTypes.func.isRequired,
   showDeprecated: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
+  handleBlur: PropTypes.func.isRequired,
 };
 
 SettingCard.defaultProps = {

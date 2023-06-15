@@ -1,0 +1,340 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AdvancedSettings should match the snapshot 1`] = `
+Array [
+  <div
+    className="container-mw-xl container-fluid"
+  >
+    <div
+      className="setting-header mt-5"
+    >
+      <header
+        className="setting-header-inner"
+      >
+        <h1
+          className="setting-header-title"
+        >
+          <small
+            className="setting-header-title-subtitle"
+          >
+            Settings
+          </small>
+          Advanced settings
+        </h1>
+      </header>
+    </div>
+    <section
+      className="setting-items mb-4"
+    >
+      <div
+        className="row"
+      >
+        <div
+          className="col-xl-9 col-lg-9 col-md-9 col-sm-9 col-9 offset-xl-0 offset-lg-0 offset-md-0 offset-sm-0 offset-0"
+        >
+          <article>
+            <div>
+              <section
+                className="setting-items-policies"
+              >
+                <header>
+                  <h2
+                    className="setting-items-policies-title"
+                  >
+                    Manual Policy Definition
+                  </h2>
+                </header>
+                <p
+                  className="setting-items-policies-instructions mb-4"
+                >
+                  <strong>
+                    Warning: 
+                  </strong>
+                   Do not modify these policies unless you are familiar with their purpose.
+                </p>
+                <div
+                  className="setting-items-deprecated-setting"
+                >
+                  <button
+                    className="btn btn-tertiary"
+                    disabled={false}
+                    onClick={[Function]}
+                    type="button"
+                  >
+                    Show Deprecated Settings
+                  </button>
+                </div>
+                <ul
+                  className="setting-items-list p-0"
+                >
+                  <li
+                    className="field-group course-advanced-policy-list-item"
+                  >
+                    <div
+                      className="flex-column setting-card pgn__card pgn__card-light card"
+                      tabIndex={-1}
+                    >
+                      <div
+                        className="pgn__card-body d-flex justify-content-between"
+                      >
+                        <div
+                          className="pgn__card-header"
+                        >
+                          <div
+                            className="pgn__card-header-content"
+                          >
+                            <div
+                              className="pgn__card-header-subtitle-md"
+                            >
+                              <button
+                                aria-label="Show help text"
+                                className="btn-icon btn-icon-light btn-icon-md"
+                                onClick={[Function]}
+                                type="button"
+                              >
+                                <span
+                                  className="btn-icon__icon-container"
+                                >
+                                  <span
+                                    className="pgn__icon btn-icon__icon"
+                                  >
+                                    <svg
+                                      aria-hidden={true}
+                                      fill="none"
+                                      focusable={false}
+                                      height={24}
+                                      role="img"
+                                      viewBox="0 0 24 24"
+                                      width={24}
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+                                        fill="currentColor"
+                                      />
+                                    </svg>
+                                  </span>
+                                </span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          className="pgn__card-section"
+                        >
+                          <div
+                            className="pgn__form-group m-0"
+                          >
+                            <div
+                              className="pgn__form-control-decorator-group"
+                            >
+                              <textarea
+                                className="has-value form-control"
+                                id="form-field3"
+                                name="setting1"
+                                onBlur={[Function]}
+                                onChange={[Function]}
+                                onFocus={[Function]}
+                                value="\\"value1\\""
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li
+                    className="field-group course-advanced-policy-list-item"
+                  >
+                    <div
+                      className="flex-column setting-card pgn__card pgn__card-light card"
+                      tabIndex={-1}
+                    >
+                      <div
+                        className="pgn__card-body d-flex justify-content-between"
+                      >
+                        <div
+                          className="pgn__card-header"
+                        >
+                          <div
+                            className="pgn__card-header-content"
+                          >
+                            <div
+                              className="pgn__card-header-subtitle-md"
+                            >
+                              <button
+                                aria-label="Show help text"
+                                className="btn-icon btn-icon-light btn-icon-md"
+                                onClick={[Function]}
+                                type="button"
+                              >
+                                <span
+                                  className="btn-icon__icon-container"
+                                >
+                                  <span
+                                    className="pgn__icon btn-icon__icon"
+                                  >
+                                    <svg
+                                      aria-hidden={true}
+                                      fill="none"
+                                      focusable={false}
+                                      height={24}
+                                      role="img"
+                                      viewBox="0 0 24 24"
+                                      width={24}
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+                                        fill="currentColor"
+                                      />
+                                    </svg>
+                                  </span>
+                                </span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          className="pgn__card-section"
+                        >
+                          <div
+                            className="pgn__form-group m-0"
+                          >
+                            <div
+                              className="pgn__form-control-decorator-group"
+                            >
+                              <textarea
+                                className="has-value form-control"
+                                id="form-field4"
+                                name="setting2"
+                                onBlur={[Function]}
+                                onChange={[Function]}
+                                onFocus={[Function]}
+                                value="\\"value2\\""
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </section>
+            </div>
+          </article>
+        </div>
+        <div
+          className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 offset-xl-0 offset-lg-0 offset-md-0 offset-sm-0 offset-0"
+        >
+          <aside
+            className="setting-sidebar-supplementary"
+          >
+            <div
+              className="setting-sidebar-supplementary-about"
+            >
+              <h4
+                className="setting-sidebar-supplementary-about-title"
+              >
+                What do advanced settings do?
+              </h4>
+              <p
+                className="setting-sidebar-supplementary-about-descriptions"
+              >
+                Advanced settings control specific course functionality. On this page, you can edit manual policies, which are JSON-based key and value pairs that control specific course settings.
+              </p>
+              <p
+                className="setting-sidebar-supplementary-about-descriptions"
+              >
+                Any policies you modify here override all other information you’ve defined elsewhere in Studio. Do not edit policies unless you are familiar with both their purpose and syntax.
+              </p>
+              <p
+                className="setting-sidebar-supplementary-about-descriptions"
+              >
+                <strong>
+                  Note:
+                </strong>
+                 When you enter strings as policy values, ensure that you use double quotation marks (“) around the string. Do not use single quotation marks (‘).
+              </p>
+            </div>
+            <hr />
+            <div
+              className="setting-sidebar-supplementary-other"
+            >
+              <h4
+                className="setting-sidebar-supplementary-other-title"
+              >
+                Other Course Settings
+              </h4>
+              <nav
+                aria-label="Other Course Settings"
+                className="setting-sidebar-supplementary-other-links"
+              >
+                <ul
+                  className="p-0 mb-0"
+                >
+                  <li
+                    className="setting-sidebar-supplementary-other-link"
+                  >
+                    <a
+                      className="pgn__hyperlink default-link standalone-link"
+                      href="/course/123/settings/details"
+                      onClick={[Function]}
+                      rel="noopener"
+                      target="_self"
+                    >
+                      Schedule & Details
+                    </a>
+                  </li>
+                  <li
+                    className="setting-sidebar-supplementary-other-link"
+                  >
+                    <a
+                      className="pgn__hyperlink default-link standalone-link"
+                      href="/course/123/settings/grading"
+                      onClick={[Function]}
+                      rel="noopener"
+                      target="_self"
+                    >
+                      Grading
+                    </a>
+                  </li>
+                  <li
+                    className="setting-sidebar-supplementary-other-link"
+                  >
+                    <a
+                      className="pgn__hyperlink default-link standalone-link"
+                      href="/course/123/course_team"
+                      onClick={[Function]}
+                      rel="noopener"
+                      target="_self"
+                    >
+                      Course Team
+                    </a>
+                  </li>
+                  <li
+                    className="setting-sidebar-supplementary-other-link"
+                  >
+                    <a
+                      className="pgn__hyperlink default-link standalone-link"
+                      href="undefined/group_configurations/123"
+                      onClick={[Function]}
+                      rel="noopener"
+                      target="_self"
+                    >
+                      Group Configurations
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </div>,
+  <div
+    className="alert-toast"
+  />,
+]
+`;
