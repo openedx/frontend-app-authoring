@@ -69,9 +69,9 @@ export function parseArrayOrObjectValues(obj) {
 export function getPagePath(courseId, isMfePageEnabled, urlParameter) {
   if (isMfePageEnabled === 'true') {
     if (urlParameter === 'tabs') {
-      return `/course/${courseId}/pages-and-resources`;
+      return `${getConfig().BASE_URL}/course/${courseId}/pages-and-resources`;
     }
-    return `/course/${courseId}/${urlParameter}`;
+    return `${getConfig().BASE_URL}/course/${courseId}/${urlParameter}`;
   }
   return `${getConfig().STUDIO_BASE_URL}/${urlParameter}/${courseId}`;
 }
