@@ -25,7 +25,7 @@ import {
   generateXblockData,
 } from './factories/mockApiResponses';
 
-import { deleteSingleCustomPage } from './data/thunks';
+import { deleteSingleCustomPage, updateCustomPageVisibility } from './data/thunks';
 import { getApiBaseUrl } from './data/api';
 import messages from './messages';
 import CustomPagesProvider from './CustomPagesProvider';
@@ -33,7 +33,7 @@ import CustomPagesProvider from './CustomPagesProvider';
 const defaultProps = {
   courseId,
   page: {
-    id: 'mockId1',
+    id: 'mOckID1',
     name: 'test',
     courseStaffOnly: false,
   },
@@ -44,12 +44,12 @@ const defaultProps = {
 let axiosMock;
 let store;
 
-const renderComponent = () => {
+const renderComponent = (courseStaffOnly) => {
   render(
     <IntlProvider locale="en">
       <AppProvider store={store}>
         <CustomPagesProvider courseId={courseId}>
-          <CustomPageCard {...defaultProps} />
+          <CustomPageCard {...defaultProps} page={{ ...defaultProps.page, courseStaffOnly }} />
         </CustomPagesProvider>
       </AppProvider>
     </IntlProvider>,
@@ -60,15 +60,19 @@ const mockStore = async ({
   blockId,
   visibility,
 }) => {
-   const xblockEditUrl = `${getApiBaseUrl()}/xblock/${blockId}`;
+  const xblockEditUrl = `${getApiBaseUrl()}/xblock/${blockId}`;
 
-   axiosMock.onDelete(xblockEditUrl).reply(204);
-   axiosMock.onPut(xblockEditUrl).reply(200, generateUpdateVisiblityApiResponse(blockId, visibility));
-   axiosMock.onGet(xblockEditUrl).reply(200, generateXblockData(blockId));
+  axiosMock.onDelete(xblockEditUrl).reply(204);
+  axiosMock.onPut(xblockEditUrl).reply(200, generateUpdateVisiblityApiResponse(blockId, visibility));
+  axiosMock.onGet(xblockEditUrl).reply(200, generateXblockData(blockId));
 
-   await executeThunk(deleteSingleCustomPage({
+  await executeThunk(deleteSingleCustomPage({
     blockId,
     closeConfirmation: jest.fn(),
+  }), store.dispatch);
+  await executeThunk(updateCustomPageVisibility({
+    blockId,
+    metadata: { courseStaffOnly: visibility },
   }), store.dispatch);
  };
 
@@ -123,5 +127,21 @@ describe('CustomPageCard', () => {
     await mockStore({ blockId: 'mOckID1' });
     await act(async () => { fireEvent.click(editButton); });
     expect(screen.getByLabelText('Edit Custom Page Modal')).toBeVisible();
+  });
+  it('should open update courseStaffOnly to true', async () => {
+    renderComponent(false);
+    const visibilityButton = screen.getByTestId('visibility-toggle-icon');
+    await mockStore({ blockId: 'mOckID1', visibility: true });
+    await act(async () => { fireEvent.click(visibilityButton); });
+    const { courseStaffOnly } = store.getState().models.customPages[defaultProps.page.id];
+    expect(courseStaffOnly).toBeTruthy();
+  });
+  it('should open update courseStaffOnly to false', async () => {
+    renderComponent(true);
+    const visibilityButton = screen.getByTestId('visibility-toggle-icon');
+    await mockStore({ blockId: 'mOckID1', visibility: false });
+    await act(async () => { fireEvent.click(visibilityButton); });
+    const { courseStaffOnly } = store.getState().models.customPages[defaultProps.page.id];
+    expect(courseStaffOnly).toBeFalsy();
   });
 });
