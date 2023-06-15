@@ -52,7 +52,7 @@ exports[`SettingsSidebar should match the snapshot 1`] = `
         >
           <a
             className="pgn__hyperlink default-link standalone-link"
-            href="/course/course123/settings/details"
+            href="http://localhost:2001/course/course123/settings/details"
             onClick={[Function]}
             rel="noopener"
             target="_self"
@@ -65,7 +65,7 @@ exports[`SettingsSidebar should match the snapshot 1`] = `
         >
           <a
             className="pgn__hyperlink default-link standalone-link"
-            href="/course/course123/settings/grading"
+            href="http://localhost:2001/course/course123/settings/grading"
             onClick={[Function]}
             rel="noopener"
             target="_self"
@@ -78,7 +78,7 @@ exports[`SettingsSidebar should match the snapshot 1`] = `
         >
           <a
             className="pgn__hyperlink default-link standalone-link"
-            href="/course/course123/course_team"
+            href="http://localhost:2001/course/course123/course_team"
             onClick={[Function]}
             rel="noopener"
             target="_self"
