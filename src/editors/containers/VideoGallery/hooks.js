@@ -46,7 +46,7 @@ export const searchAndSortProps = () => {
     onFilterClick: (key) => () => setFilterBy(key),
     filterKeys,
     filterMessages,
-    showSwitch: true,
+    showSwitch: false,
     hideSelectedVideos,
     switchMessage: messages.hideSelectedCourseVideosSwitchLabel,
     onSwitchClick: () => setHideSelectedVideos(!hideSelectedVideos),
