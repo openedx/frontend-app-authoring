@@ -370,6 +370,46 @@ export const replaceTranscript = ({ newFile, newFilename, language }) => (dispat
   }));
 };
 
+export const uploadVideo = ({ supportedFiles, setLoadSpinner, postUploadRedirect }) => (dispatch) => {
+  const data = { files: [] };
+  setLoadSpinner(true);
+  supportedFiles.forEach((file) => {
+    data.files.push({
+      file_name: file.name,
+      content_type: file.type,
+    });
+  });
+  dispatch(requests.uploadVideo({
+    data,
+    onSuccess: async (response) => {
+      const { files } = response.data;
+      await Promise.all(Object.values(files).map(async (fileObj) => {
+        const fileName = fileObj.file_name;
+        const edxVideoId = fileObj.edx_video_id;
+        const uploadUrl = fileObj.upload_url;
+        const uploadFile = supportedFiles.find((file) => file.name === fileName);
+
+        if (!uploadFile) {
+          console.error(`Could not find file object with name "${fileName}" in supportedFiles array.`);
+          return;
+        }
+        const formData = new FormData();
+        formData.append('uploaded-file', uploadFile);
+        await fetch(uploadUrl, {
+          method: 'PUT',
+          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+          .then(() => postUploadRedirect(edxVideoId))
+          .catch((error) => console.error('Error uploading file:', error));
+      }));
+      setLoadSpinner(false);
+    },
+  }));
+};
+
 export default {
   loadVideoData,
   determineVideoSources,
@@ -382,4 +422,5 @@ export default {
   updateTranscriptLanguage,
   replaceTranscript,
   uploadHandout,
+  uploadVideo,
 };

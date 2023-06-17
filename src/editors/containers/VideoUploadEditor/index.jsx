@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useDropzone } from 'react-dropzone';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Icon, IconButton } from '@edx/paragon';
-import './index.scss';
-import { useDispatch } from 'react-redux';
+import { Icon, IconButton, Spinner } from '@edx/paragon';
 import { ArrowForward, Close, FileUpload } from '@edx/paragon/icons';
+import { connect } from 'react-redux';
+import { thunkActions } from '../../data/redux';
+import './index.scss';
 import * as hooks from './hooks';
-import messages from '../../messages';
+import messages from './messages';
 import * as editorHooks from '../EditorContainer/hooks';
 
 export const VideoUploader = ({ onUpload, errorMessage }) => {
-  const [, setUploadedFile] = useState();
-  const [textInputValue, setTextInputValue] = useState('');
-  const onUrlUpdatedHook = hooks.onUrlUploaded();
+  const { textInputValue, setTextInputValue } = hooks.uploader();
+  const onURLUpload = hooks.onVideoUpload();
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: 'video/*',
@@ -21,7 +21,6 @@ export const VideoUploader = ({ onUpload, errorMessage }) => {
     onDrop: (acceptedFiles) => {
       if (acceptedFiles.length > 0) {
         const uploadfile = acceptedFiles[0];
-        setUploadedFile(uploadfile);
         onUpload(uploadfile);
       }
     },
@@ -32,7 +31,7 @@ export const VideoUploader = ({ onUpload, errorMessage }) => {
   };
 
   const handleSaveButtonClick = () => {
-    onUrlUpdatedHook(textInputValue);
+    onURLUpload(textInputValue);
   };
 
   if (errorMessage) {
@@ -85,12 +84,21 @@ VideoUploader.propTypes = {
   intl: intlShape.isRequired,
 };
 
-const VideoUploadEditor = ({ intl, onClose }) => {
-  const dispatch = useDispatch();
-  const [errorMessage, setErrorMessage] = useState(null);
-  const handleCancel = () => {
-    editorHooks.handleCancel({ onClose });
-  };
+const VideoUploadEditor = (
+  {
+    intl,
+    onClose,
+    // Redux states
+    uploadVideo,
+  },
+) => {
+  const {
+    loading,
+    setLoading,
+    errorMessage,
+    setErrorMessage,
+  } = hooks.uploadEditor();
+  const handleCancel = editorHooks.handleCancel({ onClose });
 
   const handleDrop = (file) => {
     if (!file) {
@@ -113,24 +121,39 @@ const VideoUploadEditor = ({ intl, onClose }) => {
     const newFile = new File([file], file.name, { type });
 
     if (supportedFormats.includes(ext)) {
-      hooks.uploadVideo({ dispatch, supportedFiles: [newFile] });
+      uploadVideo({
+        supportedFiles: [newFile],
+        setLoadSpinner: setLoading,
+        postUploadRedirect: hooks.onVideoUpload(),
+      });
     } else {
       const errorMsg = 'Video must be an MP4 or MOV file';
-      console.log(errorMsg);
       setErrorMessage(errorMsg);
     }
   };
 
   return (
-    <div className="marked-area">
-      <div className="d-flex justify-content-end close-button-container">
-        <IconButton
-          src={Close}
-          iconAs={Icon}
-          onClick={handleCancel}
-        />
-      </div>
-      <VideoUploader onUpload={handleDrop} errorMessage={errorMessage} intl={intl} />
+    <div>
+      {(!loading) ? (
+        <div className="marked-area">
+          <div className="d-flex justify-content-end close-button-container">
+            <IconButton
+              src={Close}
+              iconAs={Icon}
+              onClick={handleCancel}
+            />
+          </div>
+          <VideoUploader onUpload={handleDrop} errorMessage={errorMessage} intl={intl} />
+        </div>
+      ) : (
+        <div className="text-center p-6">
+          <Spinner
+            animation="border"
+            className="m-3"
+            screenreadertext={intl.formatMessage(messages.spinnerScreenReaderText)}
+          />
+        </div>
+      )}
     </div>
   );
 };
@@ -138,6 +161,13 @@ const VideoUploadEditor = ({ intl, onClose }) => {
 VideoUploadEditor.propTypes = {
   intl: intlShape.isRequired,
   onClose: PropTypes.func.isRequired,
+  uploadVideo: PropTypes.func.isRequired,
 };
 
-export default injectIntl(VideoUploadEditor);
+export const mapStateToProps = () => ({});
+
+export const mapDispatchToProps = {
+  uploadVideo: thunkActions.video.uploadVideo,
+};
+
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(VideoUploadEditor));
