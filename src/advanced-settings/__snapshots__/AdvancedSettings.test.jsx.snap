@@ -278,7 +278,7 @@ Array [
                   >
                     <a
                       className="pgn__hyperlink default-link standalone-link"
-                      href="/course/123/settings/details"
+                      href="http://localhost:2001/course/123/settings/details"
                       onClick={[Function]}
                       rel="noopener"
                       target="_self"
@@ -291,7 +291,7 @@ Array [
                   >
                     <a
                       className="pgn__hyperlink default-link standalone-link"
-                      href="/course/123/settings/grading"
+                      href="http://localhost:2001/course/123/settings/grading"
                       onClick={[Function]}
                       rel="noopener"
                       target="_self"
@@ -304,7 +304,7 @@ Array [
                   >
                     <a
                       className="pgn__hyperlink default-link standalone-link"
-                      href="/course/123/course_team"
+                      href="http://localhost:2001/course/123/course_team"
                       onClick={[Function]}
                       rel="noopener"
                       target="_self"
