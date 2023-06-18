@@ -76,7 +76,7 @@ const CourseAuthoringPage = ({ courseId, children }) => {
   }
   return (
     <div className={pathname.includes('/editor/') ? '' : 'bg-light-200'}>
-      {/* While V2 Editors are tempoarily served from thier own pages
+      {/* While V2 Editors are temporarily served from their own pages
       using url pattern containing /editor/,
       we shouldn't have the header and footer on these pages.
       This functionality will be removed in TNL-9591 */}

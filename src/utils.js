@@ -3,7 +3,9 @@ import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery } from 'react-responsive';
 import * as Yup from 'yup';
+import { snakeCase } from 'lodash/string';
 
+import { getConfig } from '@edx/frontend-platform';
 import { RequestStatus } from './data/constants';
 import { getCourseAppSettingValue, getLoadingStatus } from './pages-and-resources/data/selectors';
 import { fetchCourseAppSettings, updateCourseAppSetting } from './pages-and-resources/data/thunks';
@@ -23,6 +25,45 @@ export function useIsMobile() {
 
 export function useIsDesktop() {
   return useMediaQuery({ query: '(min-width: 992px)' });
+}
+
+export function convertObjectToSnakeCase(obj) {
+  return Object.keys(obj).reduce((snakeCaseObj, key) => {
+    const snakeCaseKey = snakeCase(key);
+    return {
+      ...snakeCaseObj,
+      [snakeCaseKey]: { value: obj[key] },
+    };
+  }, {});
+}
+
+export function parseArrayOrObjectValues(obj) {
+  const result = { ...obj };
+  Object.entries(obj).forEach(([key, value]) => {
+    if (typeof value === 'string') {
+      try {
+        const parsedValue = JSON.parse(value);
+        if (Array.isArray(parsedValue) || typeof parsedValue === 'object') {
+          result[key] = parsedValue;
+        }
+      } catch (error) {
+        // Error parsing JSON, leave the value unchanged
+      }
+    } else if (typeof value === 'object') {
+      result[key] = parseArrayOrObjectValues(value);
+    }
+  });
+  return result;
+}
+
+export function getPagePath(courseId, isMfePageEnabled, urlParameter) {
+  if (isMfePageEnabled === 'true') {
+    if (urlParameter === 'tabs') {
+      return `/course/${courseId}/pages-and-resources`;
+    }
+    return `/course/${courseId}/${urlParameter}`;
+  }
+  return `${getConfig().STUDIO_BASE_URL}/${urlParameter}/${courseId}`;
 }
 
 export function useAppSetting(settingName) {
