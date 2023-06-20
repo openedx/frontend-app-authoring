@@ -1,7 +1,9 @@
 import React, { useEffect, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
+import { Switch, useRouteMatch } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppContext } from '@edx/frontend-platform/react';
+import { history } from '@edx/frontend-platform';
+import { AppContext, PageRoute } from '@edx/frontend-platform/react';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -25,12 +27,18 @@ import {
 import { RequestStatus } from '../data/constants';
 import { useModels } from '../generic/model-store';
 import { getLoadingStatus, getSavingStatus } from './data/selectors';
-import { addSingleCustomPage, fetchCustomPages, updatePageOrder } from './data/thunks';
+import {
+  addSingleCustomPage,
+  fetchCustomPages,
+  updatePageOrder,
+  updateSingleCustomPage,
+} from './data/thunks';
 
 import previewLmsStaticPages from './data/images/previewLmsStaticPages.png';
 import CustomPageCard from './CustomPageCard';
 import messages from './messages';
 import CustomPagesProvider from './CustomPagesProvider';
+import EditModal from './EditModal';
 
 const CustomPages = ({
   courseId,
@@ -39,9 +47,12 @@ const CustomPages = ({
 }) => {
   const dispatch = useDispatch();
   const [orderedPages, setOrderedPages] = useState([]);
+  const [currentPage, setCurrentPage] = useState();
   const [isOpen, open, close] = useToggle(false);
+  const [isEditModalOpen, openEditModal, closeEditModal] = useToggle(false);
 
   const { config } = useContext(AppContext);
+  const { path, url } = useRouteMatch();
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
 
   useEffect(() => {
@@ -55,11 +66,23 @@ const CustomPages = ({
   const loadingStatus = useSelector(getLoadingStatus);
 
   const pages = useModels('customPages', customPagesIds);
-  useEffect(() => { setOrderedPages(pages); }, [customPagesIds, savingStatus]);
 
   const handleAddPage = () => { dispatch(addSingleCustomPage(courseId)); };
   const handleReorder = () => (newPageOrder) => {
     dispatch(updatePageOrder(courseId, newPageOrder));
+  };
+  const handleEditClose = () => (content) => {
+    history.push(url);
+    if (!content?.metadata) {
+      closeEditModal();
+      return;
+    }
+    dispatch(updateSingleCustomPage({
+      blockId: currentPage,
+      metadata: { displayName: content.metadata.display_name },
+      onClose: closeEditModal,
+      setCurrentPage,
+    }));
   };
 
   const addPageStateProps = {
@@ -74,6 +97,7 @@ const CustomPages = ({
     disabledStates: ['pending'],
   };
 
+  useEffect(() => { setOrderedPages(pages); }, [customPagesIds, savingStatus]);
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return (<></>);
@@ -145,15 +169,19 @@ const CustomPages = ({
                     background: 'white',
                     borderRadius: '6px',
                     padding: '24px',
-                    marginBottom: '24px',
+                    marginBottom: '16px',
                     boxShadow: '0px 1px 5px #ADADAD',
                   }}
                 >
                   <CustomPageCard
-                    page={page}
-                    dispatch={dispatch}
-                    deletePageStatus={deletePageStatus}
-                    courseId={courseId}
+                    {...{
+                      page,
+                      dispatch,
+                      deletePageStatus,
+                      courseId,
+                      setCurrentPage,
+                      openEditModal,
+                    }}
                   />
                 </SortableItem>
               ))}
@@ -215,6 +243,13 @@ const CustomPages = ({
             </div>
           </ModalDialog.Body>
         </ModalDialog>
+        <Switch>
+          <PageRoute path={`${path}/editor`}>
+            {currentPage && (
+              <EditModal courseId={courseId} isOpen={isEditModalOpen} pageId={currentPage} onClose={handleEditClose} />
+            )}
+          </PageRoute>
+        </Switch>
       </main>
     </CustomPagesProvider>
   );

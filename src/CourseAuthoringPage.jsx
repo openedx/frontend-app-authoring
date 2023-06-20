@@ -58,7 +58,7 @@ const CourseAuthoringPage = ({ courseId, children }) => {
   const courseAppsApiStatus = useSelector(getCourseAppsApiStatus);
   const inProgress = useSelector(state => state.courseDetail.status) === RequestStatus.IN_PROGRESS;
   const { pathname } = useLocation();
-  const showHeader = !pathname.includes('/editor/');
+  const showHeader = !pathname.includes('/editor');
 
   if (courseAppsApiStatus === RequestStatus.DENIED) {
     return (

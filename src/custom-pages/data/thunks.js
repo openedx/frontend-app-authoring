@@ -14,7 +14,7 @@ import {
   updateCustomPageOrder,
 } from './api';
 import {
-  fetchCustomPagesSuccess,
+  setPageIds,
   updateCustomPagesApiStatus,
   updateLoadingStatus,
   updateSavingStatus,
@@ -33,7 +33,7 @@ export function fetchCustomPages(courseId) {
       const customPages = await getCustomPages(courseId);
 
       dispatch(addModels({ modelType: 'customPages', models: customPages }));
-      dispatch(fetchCustomPagesSuccess({
+      dispatch(setPageIds({
         customPagesIds: customPages.map(page => page.id),
       }));
       dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
@@ -105,6 +105,9 @@ export function updatePageOrder(courseId, pages) {
     try {
       await updateCustomPageOrder(courseId, tabs);
       dispatch(updateModels({ modelType: 'customPages', models: pages }));
+      dispatch(setPageIds({
+        customPagesIds: pages.map(page => page.id),
+      }));
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       if (error.response && error.response.status === 403) {
@@ -129,17 +132,19 @@ export function updateCustomPageVisibility({ blockId, metadata }) {
         },
       }));
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-      return true;
     } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-      return false;
     }
   };
 }
 
-export const updateSingleCustomPage = ({ blockId, metadata, onClose }) => (dispatch) => {
+export const updateSingleCustomPage = ({
+  blockId,
+  metadata,
+  onClose,
+  setCurrentPage,
+}) => (dispatch) => {
   dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
-
   try {
     dispatch(updateModel({
       modelType: 'customPages',
@@ -148,6 +153,7 @@ export const updateSingleCustomPage = ({ blockId, metadata, onClose }) => (dispa
         name: metadata.displayName,
       },
     }));
+    setCurrentPage(null);
     dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     onClose();
   } catch (error) {

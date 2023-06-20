@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
+import { history } from '@edx/frontend-platform';
 import { intlShape, injectIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -17,20 +18,21 @@ import {
   Visibility,
   VisibilityOff,
 } from '@edx/paragon/icons';
-import { deleteSingleCustomPage, updateCustomPageVisibility, updateSingleCustomPage } from './data/thunks';
-import EditModal from './EditModal';
+import { deleteSingleCustomPage, updateCustomPageVisibility } from './data/thunks';
 import messages from './messages';
+import { CustomPagesContext } from './CustomPagesProvider';
 
 const CustomPageCard = ({
   page,
   dispatch,
   deletePageStatus,
-  courseId,
+  setCurrentPage,
+  openEditModal,
   // injected
   intl,
 }) => {
-  const [isEditModalOpen, openEditModal, closeEditModal] = useToggle(false);
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
+  const { path: customPagesPath } = useContext(CustomPagesContext);
   const handleDelete = () => {
     dispatch(deleteSingleCustomPage({
       blockId: page.id,
@@ -44,17 +46,10 @@ const CustomPageCard = ({
       metadata: { course_staff_only: !page.courseStaffOnly },
     }));
   };
-
-  const handleEditClose = () => (content) => {
-    if (!content?.metadata) {
-      closeEditModal();
-      return;
-    }
-    dispatch(updateSingleCustomPage({
-      blockId: page.id,
-      metadata: { displayName: content.metadata.display_name },
-      onClose: closeEditModal,
-    }));
+  const handleEditOpen = () => {
+    setCurrentPage(page.id);
+    openEditModal();
+    history.push(`${customPagesPath}/editor`);
   };
 
   const deletePageStateProps = {
@@ -82,7 +77,7 @@ const CustomPageCard = ({
           src={EditOutline}
           iconAs={Icon}
           alt={intl.formatMessage(messages.editTooltipContent)}
-          onClick={openEditModal}
+          onClick={handleEditOpen}
           data-testid="edit-modal-icon"
         />
         <IconButtonWithTooltip
@@ -121,12 +116,6 @@ const CustomPageCard = ({
       >
         {intl.formatMessage(messages.deleteConfirmationMessage)}
       </AlertModal>
-      <EditModal
-        isOpen={isEditModalOpen}
-        page={page}
-        courseId={courseId}
-        onClose={handleEditClose}
-      />
     </>
   );
 };
@@ -137,9 +126,10 @@ CustomPageCard.propTypes = {
     id: PropTypes.string.isRequired,
     courseStaffOnly: PropTypes.bool.isRequired,
   }).isRequired,
-  courseId: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
   deletePageStatus: PropTypes.string.isRequired,
+  setCurrentPage: PropTypes.func.isRequired,
+  openEditModal: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

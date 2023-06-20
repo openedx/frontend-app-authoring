@@ -39,6 +39,8 @@ const defaultProps = {
   },
   dispatch: jest.fn(),
   deletePageStatus: '',
+  setCurrentPage: jest.fn(),
+  openEditModal: jest.fn(),
 };
 
 let axiosMock;
@@ -126,7 +128,8 @@ describe('CustomPageCard', () => {
     const editButton = screen.getByTestId('edit-modal-icon');
     await mockStore({ blockId: 'mOckID1' });
     await act(async () => { fireEvent.click(editButton); });
-    expect(screen.getByLabelText('Edit Custom Page Modal')).toBeVisible();
+    expect(defaultProps.openEditModal).toHaveBeenCalled();
+    expect(defaultProps.setCurrentPage).toHaveBeenCalled();
   });
   it('should open update courseStaffOnly to true', async () => {
     renderComponent(false);

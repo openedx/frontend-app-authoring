@@ -14,7 +14,7 @@ const slice = createSlice({
     customPagesApiStatus: {},
   },
   reducers: {
-    fetchCustomPagesSuccess: (state, { payload }) => {
+    setPageIds: (state, { payload }) => {
       state.customPagesIds = payload.customPagesIds;
     },
     updateLoadingStatus: (state, { payload }) => {
@@ -39,7 +39,7 @@ const slice = createSlice({
 });
 
 export const {
-  fetchCustomPagesSuccess,
+  setPageIds,
   updateLoadingStatus,
   updateSavingStatus,
   updateCustomPagesApiStatus,
