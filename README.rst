@@ -22,11 +22,12 @@ powered by the new `blockstore <https://github.com/openedx/blockstore>`_ storage
    in a content library can be integrated into a course, used as a problem bank for randomized exams, and/or shown to
    learners directly for à la carte learning.
 
-Tutor Devstack Installation
----------------------------
+Tutor Installation
+------------------
 
-See `the included Tutor plugin's README <./tutor-contrib-library-authoring-mfe/README.rst>`_ for the simple steps to use
-this with a Tutor devstack.
+Refer to the `tutor-contrib-library-authoring-mfe`_ plugin for instructions on how to deploy this using Tutor.
+
+.. _tutor-contrib-library-authoring-mfe: https://github.com/openedx/frontend-app-library-authoring/tree/master/tutor-contrib-library-authoring-mfe
 
 Devstack Installation
 ---------------------
