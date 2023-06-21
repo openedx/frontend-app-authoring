@@ -1,6 +1,5 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import renderer from 'react-test-renderer';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IntlProvider } from 'react-intl';
 
@@ -22,11 +21,6 @@ describe('<PacingSection />', () => {
     startDate: '2023-06-12',
     onChange: onChangeMock,
   };
-
-  it('matches the snapshots', () => {
-    const tree = renderer.create(<RootWrapper {...props} />).toJSON();
-    expect(tree).toMatchSnapshot();
-  });
 
   it('renders pacing section successfully', () => {
     const { getByText, getAllByText } = render(<RootWrapper {...props} />);

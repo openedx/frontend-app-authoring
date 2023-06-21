@@ -18,6 +18,7 @@ import initializeStore from './store';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
 
+import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
 
 const App = () => {

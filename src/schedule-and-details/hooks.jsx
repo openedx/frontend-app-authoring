@@ -1,27 +1,35 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { validateScheduleAndDetails } from './utils';
+
 const useSaveValuesPrompt = (
+  intl,
   courseId,
   updateDataQuery,
   initialEditedData = {},
 ) => {
   const [editedValues, setEditedValues] = useState(initialEditedData);
   const [saveValuesPrompt, showSaveValuesPrompt] = useState(false);
+  const [errorFields, setErrorFields] = useState({});
   const dispatch = useDispatch();
 
   useEffect(() => {
     setEditedValues(initialEditedData);
   }, [initialEditedData]);
 
-  const handleValuesChange = (e, settingName) => {
-    const { value } = e.target;
+  useEffect(() => {
+    const errors = validateScheduleAndDetails(editedValues, intl);
+    setErrorFields(errors);
+  }, [editedValues]);
+
+  const handleValuesChange = (value, fieldName) => {
     if (!saveValuesPrompt) {
       showSaveValuesPrompt(true);
     }
-    setEditedValues((prevEditedSettings) => ({
-      ...prevEditedSettings,
-      [settingName]: value || ' ',
+    setEditedValues((prevEditedValues) => ({
+      ...prevEditedValues,
+      [fieldName]: value || '',
     }));
   };
 
@@ -37,9 +45,11 @@ const useSaveValuesPrompt = (
   };
 
   return {
+    errorFields,
     editedValues,
     saveValuesPrompt,
     dispatch,
+    setErrorFields,
     handleValuesChange,
     handleUpdateValues,
     handleResetValues,

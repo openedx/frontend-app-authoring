@@ -1,6 +1,9 @@
 @import "./basic-section/BasicSection";
 @import "./credit-section/CreditSection";
 @import "./pacing-section/PacingSection";
+@import "./schedule-section/ScheduleSection";
+@import "./schedule-section/datepicker-control/DatepickerControl";
+@import "./schedule-section/certificate-display-row/CertificateDisplayRow";
 
 .section-container {
   &:not(:last-child) {

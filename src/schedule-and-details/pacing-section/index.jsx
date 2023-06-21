@@ -28,7 +28,7 @@ const PacingSection = ({
         )}
         <Form.RadioSet
           name="selfPaced"
-          onChange={(e) => onChange(e, e.target.name)}
+          onChange={(e) => onChange(e.target.value, e.target.name)}
           value={selfPaced.toString()}
         >
           <Form.Radio

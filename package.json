@@ -54,6 +54,7 @@
     "moment": "2.29.2",
     "prop-types": "15.7.2",
     "react": "16.14.0",
+    "react-datepicker": "^4.13.0",
     "react-dom": "16.14.0",
     "react-helmet": "^6.1.0",
     "react-redux": "7.1.3",

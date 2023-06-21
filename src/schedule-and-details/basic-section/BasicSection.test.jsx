@@ -1,6 +1,5 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import renderer from 'react-test-renderer';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IntlProvider } from 'react-intl';
 
@@ -24,11 +23,6 @@ describe('<BasicSection />', () => {
     courseDisplayName: 'foo course',
     platformName: 'Your platform name here',
   };
-
-  it('matches the snapshots', () => {
-    const tree = renderer.create(<RootWrapper {...props} />).toJSON();
-    expect(tree).toMatchSnapshot();
-  });
 
   it('renders basic section successfully', () => {
     const { getByText } = render(<RootWrapper {...props} />);

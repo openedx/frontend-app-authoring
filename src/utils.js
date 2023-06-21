@@ -88,6 +88,11 @@ export function useAppSetting(settingName) {
   return [settingValue, saveSetting];
 }
 
+export const getLabelById = (options, id) => {
+  const foundOption = options.find((option) => option.id === id);
+  return foundOption ? foundOption.label : '';
+};
+
 /**
  * Adds additional validation methods to Yup.
  */

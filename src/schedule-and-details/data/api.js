@@ -4,8 +4,8 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { convertObjectToSnakeCase } from '../../utils';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-const getCourseDetailsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v1/course_details/`;
-const getCourseSettingsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v1/course_settings/`;
+export const getCourseDetailsApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/course_details/${courseId}`;
+export const getCourseSettingsApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/course_settings/${courseId}`;
 
 /**
  * Get course details.
@@ -13,8 +13,9 @@ const getCourseSettingsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v1/co
  * @returns {Promise<Object>}
  */
 export async function getCourseDetails(courseId) {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(`${getCourseDetailsApiUrl()}${courseId}`);
+  const { data } = await getAuthenticatedHttpClient().get(
+    `${getCourseDetailsApiUrl(courseId)}`,
+  );
   return camelCaseObject(data);
 }
 
@@ -25,8 +26,10 @@ export async function getCourseDetails(courseId) {
  * @returns {Promise<Object>}
  */
 export async function updateCourseDetails(courseId, details) {
-  const { data } = await getAuthenticatedHttpClient()
-    .put(`${getCourseDetailsApiUrl()}${courseId}`, convertObjectToSnakeCase(details, true));
+  const { data } = await getAuthenticatedHttpClient().put(
+    `${getCourseDetailsApiUrl(courseId)}`,
+    convertObjectToSnakeCase(details, true),
+  );
   return camelCaseObject(data);
 }
 
@@ -36,6 +39,8 @@ export async function updateCourseDetails(courseId, details) {
  * @returns {Promise<Object>}
  */
 export async function getCourseSettings(courseId) {
-  const { data } = await getAuthenticatedHttpClient().get(`${getCourseSettingsApiUrl()}${courseId}`);
+  const { data } = await getAuthenticatedHttpClient().get(
+    `${getCourseSettingsApiUrl(courseId)}`,
+  );
   return camelCaseObject(data);
 }

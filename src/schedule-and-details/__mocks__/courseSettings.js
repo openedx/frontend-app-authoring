@@ -57,4 +57,5 @@ module.exports = {
   sidebarHtmlEnabled: true,
   upgradeDeadline: '2023-07-02T23:59:59+00:00',
   useV2CertDisplaySettings: false,
+  platformName: 'edX',
 };
