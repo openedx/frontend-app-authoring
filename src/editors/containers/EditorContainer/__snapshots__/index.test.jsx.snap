@@ -9,14 +9,7 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
     close={[MockFunction closeCancelConfirmModal]}
     confirmAction={
       <Button
-        onClick={
-          Object {
-            "handleCancel": Object {
-              "onClose": [MockFunction props.onClose],
-              "returnFunction": [MockFunction props.returnFunction],
-            },
-          }
-        }
+        onClick={[Function]}
         variant="primary"
       >
         <FormattedMessage
@@ -92,14 +85,7 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
     close={[MockFunction closeCancelConfirmModal]}
     confirmAction={
       <Button
-        onClick={
-          Object {
-            "handleCancel": Object {
-              "onClose": [MockFunction props.onClose],
-              "returnFunction": [MockFunction props.returnFunction],
-            },
-          }
-        }
+        onClick={[Function]}
         variant="primary"
       >
         <FormattedMessage

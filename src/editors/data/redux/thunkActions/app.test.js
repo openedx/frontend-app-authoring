@@ -138,8 +138,8 @@ describe('app thunkActions', () => {
     let returnToUnit;
     let calls;
     beforeEach(() => {
-      returnToUnit = jest.fn((response) => () => response);
-      thunkActions.saveBlock({ content: testValue, returnToUnit })(dispatch);
+      returnToUnit = jest.fn();
+      thunkActions.saveBlock(testValue, returnToUnit)(dispatch);
       calls = dispatch.mock.calls;
     });
     it('dispatches actions.app.setBlockContent with content, before dispatching saveBlock', () => {
