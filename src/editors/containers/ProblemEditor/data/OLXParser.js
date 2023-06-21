@@ -28,6 +28,18 @@ export const nonQuestionKeys = [
   'textline',
 ];
 
+export const richTextFormats = [
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'div',
+  'p',
+  'pre',
+];
+
 export const responseKeys = [
   'multiplechoiceresponse',
   'numericalresponse',
@@ -62,57 +74,52 @@ export const stripNonTextTags = ({ input, tag }) => {
 
 export class OLXParser {
   constructor(olxString) {
-    this.problem = {};
-    this.questionData = {};
-    this.richTextProblem = {};
-    const richTextOptions = {
+    // There are two versions of the parsed XLM because the fields using tinymce require the order
+    // of the parsed data and spacing values to be preserved. However, all the other widgets need
+    // the data grouped by the wrapping tag. Examples of the parsed format can be found here:
+    // https://github.com/NaturalIntelligence/fast-xml-parser/blob/master/docs/v4/2.XMLparseOptions.md
+    const baseParserOptions = {
       ignoreAttributes: false,
-      alwaysCreateTextNode: true,
       numberParseOptions: {
         leadingZeros: false,
         hex: false,
       },
-      preserveOrder: true,
       processEntities: false,
     };
+
+    // Base Parser
+    this.problem = {};
     const parserOptions = {
-      ignoreAttributes: false,
+      ...baseParserOptions,
       alwaysCreateTextNode: true,
-      numberParseOptions: {
-        leadingZeros: false,
-        hex: false,
-      },
-      processEntities: false,
     };
     const builderOptions = {
-      ignoreAttributes: false,
-      numberParseOptions: {
-        leadingZeros: false,
-        hex: false,
-      },
-      processEntities: false,
+      ...baseParserOptions,
     };
-    const richTextBuilderOptions = {
-      ignoreAttributes: false,
-      numberParseOptions: {
-        leadingZeros: false,
-        hex: false,
-      },
-      preserveOrder: true,
-      processEntities: false,
-    };
-    // There are two versions of the parsed XLM because the fields using tinymce require the order
-    // of the parsed data to be preserved. However, all the other widgets need the data grouped by
-    // the wrapping tag.
-    const richTextParser = new XMLParser(richTextOptions);
     const parser = new XMLParser(parserOptions);
     this.builder = new XMLBuilder(builderOptions);
-    this.richTextBuilder = new XMLBuilder(richTextBuilderOptions);
     this.parsedOLX = parser.parse(olxString);
-    this.richTextOLX = richTextParser.parse(olxString);
     if (_.has(this.parsedOLX, 'problem')) {
       this.problem = this.parsedOLX.problem;
-      this.questionData = this.richTextOLX[0].problem;
+    }
+
+    // Parser with `preservedOrder: true` and `trimValues: false`
+    this.richTextProblem = [];
+    const richTextOptions = {
+      ...baseParserOptions,
+      alwaysCreateTextNode: true,
+      preserveOrder: true,
+      trimValues: false,
+    };
+    const richTextBuilderOptions = {
+      ...baseParserOptions,
+      preserveOrder: true,
+      trimValues: false,
+    };
+    const richTextParser = new XMLParser(richTextOptions);
+    this.richTextBuilder = new XMLBuilder(richTextBuilderOptions);
+    this.richTextOLX = richTextParser.parse(olxString);
+    if (_.has(this.parsedOLX, 'problem')) {
       this.richTextProblem = this.richTextOLX[0].problem;
     }
   }
@@ -462,7 +469,7 @@ export class OLXParser {
    * @return {string} string of OLX
    */
   parseQuestions(problemType) {
-    const problemArray = _.get(this.questionData[0], problemType) || this.questionData;
+    const problemArray = _.get(this.richTextProblem[0], problemType) || this.richTextProblem;
 
     const questionArray = [];
     problemArray.forEach(tag => {
@@ -478,7 +485,7 @@ export class OLXParser {
         */
         tag[tagName].forEach(subTag => {
           const subTagName = Object.keys(subTag)[0];
-          if (subTagName === 'label' || subTagName === 'description') {
+          if (subTagName === 'label' || subTagName === 'description' || richTextFormats.includes(subTagName)) {
             questionArray.push(subTag);
           }
         });
@@ -503,11 +510,13 @@ export class OLXParser {
         if (objKeys.includes('demandhint')) {
           const currentDemandHint = obj.demandhint;
           currentDemandHint.forEach(hint => {
-            const hintValue = this.richTextBuilder.build(hint.hint);
-            hintsObject.push({
-              id: hintsObject.length,
-              value: hintValue,
-            });
+            if (Object.keys(hint).includes('hint')) {
+              const hintValue = this.richTextBuilder.build(hint.hint);
+              hintsObject.push({
+                id: hintsObject.length,
+                value: hintValue,
+              });
+            }
           });
         }
       });
@@ -526,21 +535,17 @@ export class OLXParser {
   getSolutionExplanation(problemType) {
     if (!_.has(this.problem, `${problemType}.solution`) && !_.has(this.problem, 'solution')) { return null; }
     const [problemBody] = this.richTextProblem.filter(section => Object.keys(section).includes(problemType));
-    let { solution } = problemBody[problemType].pop();
-    const { div } = solution[0];
-    if (solution.length === 1 && div) {
-      div.forEach((block) => {
-        const [key] = Object.keys(block);
-        const [value] = block[key];
-        if ((key === 'p' || key === 'h2')
-          && (_.get(value, '#text', null) === 'Explanation')
-        ) {
-          div.shift();
+    const [solutionBody] = problemBody[problemType].filter(section => Object.keys(section).includes('solution'));
+    const [divBody] = solutionBody.solution.filter(section => Object.keys(section).includes('div'));
+    const solutionArray = [];
+    if (divBody && divBody.div) {
+      divBody.div.forEach(tag => {
+        if (_.get(Object.values(tag)[0][0], '#text', null) !== 'Explanation') {
+          solutionArray.push(tag);
         }
       });
-      solution = div;
     }
-    const solutionString = this.richTextBuilder.build(solution);
+    const solutionString = this.richTextBuilder.build(solutionArray);
     return solutionString;
   }
 

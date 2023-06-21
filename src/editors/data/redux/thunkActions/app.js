@@ -70,7 +70,7 @@ export const saveBlock = ({ content, returnToUnit }) => (dispatch) => {
     content,
     onSuccess: (response) => {
       dispatch(actions.app.setSaveResponse(response));
-      returnToUnit();
+      returnToUnit(response.data)();
     },
   }));
 };
