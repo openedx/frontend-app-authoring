@@ -32,6 +32,7 @@ jest.mock('./requests', () => ({
   checkTranscriptsForImport: (args) => ({ checkTranscriptsForImport: args }),
   importTranscript: (args) => ({ importTranscript: args }),
   fetchVideoFeatures: (args) => ({ fetchVideoFeatures: args }),
+  uploadVideo: (args) => ({ uploadVideo: args }),
 }));
 
 jest.mock('../../../utils', () => ({
@@ -667,5 +668,81 @@ describe('video thunkActions', () => {
       dispatchedAction.deleteTranscript.onSuccess();
       expect(dispatch).toHaveBeenCalled();
     });
+  });
+});
+
+describe('uploadVideo', () => {
+  let dispatch;
+  let setLoadSpinner;
+  let postUploadRedirect;
+  let dispatchedAction;
+  const supportedFiles = [
+    new File(['content1'], 'file1.mp4', { type: 'video/mp4' }),
+    new File(['content2'], 'file2.mov', { type: 'video/quicktime' }),
+  ];
+
+  beforeEach(() => {
+    dispatch = jest.fn((action) => ({ dispatch: action }));
+    setLoadSpinner = jest.fn();
+    postUploadRedirect = jest.fn();
+    jest.resetAllMocks();
+    jest.restoreAllMocks();
+  });
+
+  it('dispatch uploadVideo action with right data', async () => {
+    const data = {
+      files: [
+        { file_name: 'file1.mp4', content_type: 'video/mp4' },
+        { file_name: 'file2.mov', content_type: 'video/quicktime' },
+      ],
+    };
+
+    thunkActions.uploadVideo({ supportedFiles, setLoadSpinner, postUploadRedirect })(dispatch);
+    [[dispatchedAction]] = dispatch.mock.calls;
+    expect(dispatchedAction.uploadVideo).not.toEqual(undefined);
+    expect(setLoadSpinner).toHaveBeenCalled();
+    expect(dispatchedAction.uploadVideo.data).toEqual(data);
+  });
+
+  it('should call fetch with correct arguments for each file', async () => {
+    const mockResponseData = { success: true };
+    const mockFetchResponse = Promise.resolve({ data: mockResponseData });
+    global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
+    const response = {
+      files: [
+        { file_name: 'file1.mp4', upload_url: 'http://example.com/put_video1' },
+        { file_name: 'file2.mov', upload_url: 'http://example.com/put_video2' },
+      ],
+    };
+    const mockRequestResponse = { data: response };
+    thunkActions.uploadVideo({ supportedFiles, setLoadSpinner, postUploadRedirect })(dispatch);
+    [[dispatchedAction]] = dispatch.mock.calls;
+
+    dispatchedAction.uploadVideo.onSuccess(mockRequestResponse);
+
+    expect(fetch).toHaveBeenCalledTimes(2);
+    response.files.forEach(({ upload_url: uploadUrl }, index) => {
+      expect(fetch.mock.calls[index][0]).toEqual(uploadUrl);
+    });
+    supportedFiles.forEach((file, index) => {
+      expect(fetch.mock.calls[index][1].body.get('uploaded-file')).toBe(file);
+    });
+  });
+
+  it('should log an error if file object is not found in supportedFiles array', () => {
+    const mockResponseData = { success: true };
+    const mockFetchResponse = Promise.resolve({ data: mockResponseData });
+    global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
+    const response = {
+      files: [
+        { file_name: 'file2.gif', upload_url: 'http://example.com/put_video2' },
+      ],
+    };
+    const mockRequestResponse = { data: response };
+    const spyConsoleError = jest.spyOn(console, 'error');
+
+    thunkActions.uploadVideo({ supportedFiles: [supportedFiles[0]], setLoadSpinner, postUploadRedirect })(dispatch);
+    dispatchedAction.uploadVideo.onSuccess(mockRequestResponse);
+    expect(spyConsoleError).toHaveBeenCalledWith('Could not find file object with name "file2.gif" in supportedFiles array.');
   });
 });

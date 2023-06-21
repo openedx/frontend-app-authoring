@@ -388,7 +388,6 @@ export const uploadVideo = ({ supportedFiles, setLoadSpinner, postUploadRedirect
         const edxVideoId = fileObj.edx_video_id;
         const uploadUrl = fileObj.upload_url;
         const uploadFile = supportedFiles.find((file) => file.name === fileName);
-
         if (!uploadFile) {
           console.error(`Could not find file object with name "${fileName}" in supportedFiles array.`);
           return;

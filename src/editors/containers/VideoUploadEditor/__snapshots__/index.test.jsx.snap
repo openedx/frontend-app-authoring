@@ -1,166 +1,227 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`VideoUploadEditor renders without errors 1`] = `
+exports[`VideoUploader snapshots renders as expected with default behavior 1`] = `
 <div>
   <div
-    class="marked-area"
+    className="d-flex flex-column justify-content-center align-items-center p-4 w-100 min-vh-100"
+    onBlur={[Function]}
+    onClick={[Function]}
+    onDragEnter={[Function]}
+    onDragLeave={[Function]}
+    onDragOver={[Function]}
+    onDrop={[Function]}
+    onFocus={[Function]}
+    onKeyDown={[Function]}
+    role="presentation"
+    tabIndex={0}
   >
     <div
-      class="d-flex justify-content-end close-button-container"
-    >
-      <iconbutton
-        iconas="Icon"
-      />
-    </div>
-    <div>
-      <div
-        class="d-flex flex-column justify-content-center align-items-center p-4 w-100 min-vh-100"
-        role="presentation"
-        tabindex="0"
-      >
-        <div
-          class="d-flex flex-column justify-content-center align-items-center gap-2 text-center min-vh-100 w-100
+      className="d-flex flex-column justify-content-center align-items-center gap-2 text-center min-vh-100 w-100
          dropzone-middle "
-        >
-          <div
-            class="d-flex justify-content-center align-items-center bg-light rounded-circle file-upload"
-          >
-            <icon
-              class="text-muted"
-            />
-          </div>
-          <div
-            class="d-flex align-items-center justify-content-center gap-1 flex-wrap flex-column pt-5"
-          >
-            <span
-              style="font-size: 20px;"
-            >
-              FormattedMessage
-            </span>
-            <span
-              style="font-size: 12px;"
-            >
-              FormattedMessage
-            </span>
-          </div>
-          <div
-            class="d-flex align-items-center mt-3"
-          >
-            <span
-              class="mx-2 text-dark"
-            >
-              OR
-            </span>
-          </div>
-        </div>
-        <input
-          accept=""
-          data-testid="fileInput"
-          style="display: none;"
-          tabindex="-1"
-          type="file"
+    >
+      <div
+        className="d-flex justify-content-center align-items-center bg-light rounded-circle file-upload"
+      >
+        <Icon
+          className="text-muted"
         />
       </div>
       <div
-        class="d-flex video-id-container"
+        className="d-flex align-items-center justify-content-center gap-1 flex-wrap flex-column pt-5"
       >
-        <div
-          class="d-flex video-id-prompt"
+        <span
+          style={
+            Object {
+              "fontSize": "20px",
+            }
+          }
         >
-          <input
-            placeholder="Paste your video ID or URL"
-            type="text"
-            value=""
+          <FormattedMessage
+            defaultMessage="Drag and drop video here or click to upload"
+            description="Display message for Drag and Drop zone"
+            id="VideoUploadEditor.dropVideoFileHere"
           />
-          <button
-            class="border-start-0"
-            data-testid="inputSaveButton"
-            type="button"
-          >
-            <icon
-              class="rounded-circle text-dark"
-            />
-          </button>
-        </div>
+        </span>
+        <span
+          style={
+            Object {
+              "fontSize": "12px",
+            }
+          }
+        >
+          <FormattedMessage
+            defaultMessage="Upload MP4 or MOV files (5 GB max)"
+            description="Info message for supported formats"
+            id="VideoUploadEditor.uploadInfo"
+          />
+        </span>
       </div>
+      <div
+        className="d-flex align-items-center mt-3"
+      >
+        <span
+          className="mx-2 text-dark"
+        >
+          OR
+        </span>
+      </div>
+    </div>
+    <input
+      accept=""
+      data-testid="fileInput"
+      multiple={false}
+      onChange={[Function]}
+      onClick={[Function]}
+      style={
+        Object {
+          "display": "none",
+        }
+      }
+      tabIndex={-1}
+      type="file"
+    />
+  </div>
+  <div
+    className="d-flex video-id-container"
+  >
+    <div
+      className="d-flex video-id-prompt"
+    >
+      <input
+        onChange={[Function]}
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        placeholder="Paste your video ID or URL"
+        type="text"
+        value=""
+      />
+      <button
+        className="border-start-0"
+        data-testid="inputSaveButton"
+        onClick={[Function]}
+        type="button"
+      >
+        <Icon
+          className="rounded-circle text-dark"
+        />
+      </button>
     </div>
   </div>
 </div>
 `;
 
-exports[`VideoUploader renders without errors 1`] = `
+exports[`VideoUploader snapshots renders as expected with error message 1`] = `
 <div>
-  <div>
+  <div
+    className="d-flex flex-column justify-content-center align-items-center p-4 w-100 min-vh-100"
+    onBlur={[Function]}
+    onClick={[Function]}
+    onDragEnter={[Function]}
+    onDragLeave={[Function]}
+    onDragOver={[Function]}
+    onDrop={[Function]}
+    onFocus={[Function]}
+    onKeyDown={[Function]}
+    role="presentation"
+    tabIndex={0}
+  >
     <div
-      class="d-flex flex-column justify-content-center align-items-center p-4 w-100 min-vh-100"
-      role="presentation"
-      tabindex="0"
-    >
-      <div
-        class="d-flex flex-column justify-content-center align-items-center gap-2 text-center min-vh-100 w-100
+      className="d-flex flex-column justify-content-center align-items-center gap-2 text-center min-vh-100 w-100
          dropzone-middle "
-      >
-        <div
-          class="d-flex justify-content-center align-items-center bg-light rounded-circle file-upload"
-        >
-          <icon
-            class="text-muted"
-          />
-        </div>
-        <div
-          class="d-flex align-items-center justify-content-center gap-1 flex-wrap flex-column pt-5"
-        >
-          <span
-            style="font-size: 20px;"
-          >
-            FormattedMessage
-          </span>
-          <span
-            style="font-size: 12px;"
-          >
-            FormattedMessage
-          </span>
-        </div>
-        <div
-          class="d-flex align-items-center mt-3"
-        >
-          <span
-            class="mx-2 text-dark"
-          >
-            OR
-          </span>
-        </div>
-      </div>
-      <input
-        accept=""
-        data-testid="fileInput"
-        style="display: none;"
-        tabindex="-1"
-        type="file"
-      />
-    </div>
-    <div
-      class="d-flex video-id-container"
     >
       <div
-        class="d-flex video-id-prompt"
+        className="d-flex justify-content-center align-items-center bg-light rounded-circle file-upload"
       >
-        <input
-          placeholder="Paste your video ID or URL"
-          type="text"
-          value=""
+        <Icon
+          className="text-muted"
         />
-        <button
-          class="border-start-0"
-          data-testid="inputSaveButton"
-          type="button"
-        >
-          <icon
-            class="rounded-circle text-dark"
-          />
-        </button>
       </div>
+      <div
+        className="d-flex align-items-center justify-content-center gap-1 flex-wrap flex-column pt-5"
+      >
+        <span
+          style={
+            Object {
+              "fontSize": "20px",
+            }
+          }
+        >
+          <FormattedMessage
+            defaultMessage="Drag and drop video here or click to upload"
+            description="Display message for Drag and Drop zone"
+            id="VideoUploadEditor.dropVideoFileHere"
+          />
+        </span>
+        <span
+          style={
+            Object {
+              "fontSize": "12px",
+            }
+          }
+        >
+          <FormattedMessage
+            defaultMessage="Upload MP4 or MOV files (5 GB max)"
+            description="Info message for supported formats"
+            id="VideoUploadEditor.uploadInfo"
+          />
+        </span>
+      </div>
+      <div
+        className="d-flex align-items-center mt-3"
+      >
+        <span
+          className="mx-2 text-dark"
+        >
+          OR
+        </span>
+      </div>
+    </div>
+    <input
+      accept=""
+      data-testid="fileInput"
+      multiple={false}
+      onChange={[Function]}
+      onClick={[Function]}
+      style={
+        Object {
+          "display": "none",
+        }
+      }
+      tabIndex={-1}
+      type="file"
+    />
+  </div>
+  <div
+    className="d-flex video-id-container"
+  >
+    <div
+      className="d-flex video-id-prompt"
+    >
+      <input
+        onChange={[Function]}
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        placeholder="Paste your video ID or URL"
+        type="text"
+        value=""
+      />
+      <button
+        className="border-start-0"
+        data-testid="inputSaveButton"
+        onClick={[Function]}
+        type="button"
+      >
+        <Icon
+          className="rounded-circle text-dark"
+        />
+      </button>
     </div>
   </div>
 </div>
+`;
+
+exports[`VideoUploaderEdirtor snapshots renders as expected with default behavior 1`] = `
+<ContextConsumer>
+  <Component />
+</ContextConsumer>
 `;
