@@ -26,6 +26,7 @@ import {
 import BasicSection from './basic-section';
 import CreditSection from './credit-section';
 import PacingSection from './pacing-section';
+import ScheduleSection from './schedule-section';
 import ScheduleSidebar from './schedule-sidebar';
 import messages from './messages';
 import { useSaveValuesPrompt } from './hooks';
@@ -41,12 +42,13 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
 
   const {
     editedValues,
+    errorFields,
     saveValuesPrompt,
     dispatch,
     handleResetValues,
     handleValuesChange,
     handleUpdateValues,
-  } = useSaveValuesPrompt(courseId, updateCourseDetailsQuery, courseDetails);
+  } = useSaveValuesPrompt(intl, courseId, updateCourseDetailsQuery, courseDetails);
 
   const {
     creditEligibilityEnabled,
@@ -56,6 +58,8 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     courseDisplayName,
     mfeProctoredExamSettingsUrl,
     platformName,
+    upgradeDeadline,
+    enrollmentEndEditable,
   } = courseSettings;
 
   const {
@@ -63,10 +67,13 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     courseId: courseNumber,
     run,
     startDate,
+    endDate,
     selfPaced,
+    enrollmentEnd,
+    enrollmentStart,
+    certificateAvailableDate,
+    certificatesDisplayBehavior,
   } = editedValues;
-
-  const showCreditSection = creditEligibilityEnabled && isCreditCourse;
 
   useEffect(() => {
     dispatch(fetchCourseSettingsQuery(courseId));
@@ -76,6 +83,16 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
   if (isLoading) {
     return <Loading />;
   }
+
+  const showCreditSection = creditEligibilityEnabled && isCreditCourse;
+  const hasErrors = !!Object.keys(errorFields).length;
+  const alertWhileSavingTitle = hasErrors
+    ? intl.formatMessage(messages.alertWarningOnSaveWithError)
+    : intl.formatMessage(messages.alertWarning);
+
+  const alertWhileSavingDescription = hasErrors
+    ? intl.formatMessage(messages.alertWarningDescriptionsOnSaveWithError)
+    : intl.formatMessage(messages.alertWarningDescriptions);
 
   return (
     <>
@@ -134,6 +151,19 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
                     startDate={startDate}
                     onChange={handleValuesChange}
                   />
+                  <ScheduleSection
+                    endDate={endDate}
+                    startDate={startDate}
+                    errorFields={errorFields}
+                    platformName={platformName}
+                    enrollmentEnd={enrollmentEnd}
+                    enrollmentStart={enrollmentStart}
+                    upgradeDeadline={upgradeDeadline}
+                    enrollmentEndEditable={enrollmentEndEditable}
+                    certificateAvailableDate={certificateAvailableDate}
+                    certificatesDisplayBehavior={certificatesDisplayBehavior}
+                    onChange={handleValuesChange}
+                  />
                 </div>
               </article>
             </Layout.Element>
@@ -158,7 +188,10 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
           )}
           role="dialog"
           actions={[
-            <Button onClick={handleUpdateValues}>
+            <Button
+              onClick={handleUpdateValues}
+              disabled={hasErrors}
+            >
               {intl.formatMessage(messages.buttonSaveText)}
             </Button>,
             <Button variant="tertiary" onClick={handleResetValues}>
@@ -167,8 +200,8 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
           ]}
           variant="warning"
           icon={WarningFilledIcon}
-          title={intl.formatMessage(messages.alertWarning)}
-          description={intl.formatMessage(messages.alertWarningDescriptions)}
+          title={alertWhileSavingTitle}
+          description={alertWhileSavingDescription}
         />
       </div>
     </>

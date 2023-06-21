@@ -1,35 +1,27 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { initializeMockApp } from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
-import { useDispatch, useSelector } from 'react-redux';
-
-import { courseDetails, courseSettings } from './__mocks__';
+import { AppProvider } from '@edx/frontend-platform/react';
 import {
-  fetchCourseDetailsQuery,
-  fetchCourseSettingsQuery,
-} from './data/thunks';
+  act,
+  render,
+  fireEvent,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
+import MockAdapter from 'axios-mock-adapter';
+
+import initializeStore from '../store';
+import { courseDetails, courseSettings } from './__mocks__';
+import { getCourseDetailsApiUrl, getCourseSettingsApiUrl } from './data/api';
+import { DATE_FORMAT } from './schedule-section/datepicker-control/constants';
 import ScheduleAndDetails from '.';
 
-jest.mock('react-redux', () => ({
-  useSelector: jest.fn(),
-  useDispatch: jest.fn(),
-}));
-
-jest.mock('./data/thunks', () => ({
-  fetchCourseDetailsQuery: jest.fn(),
-  fetchCourseSettingsQuery: jest.fn(),
-  updateCourseDetailsQuery: jest.fn(),
-}));
-
-jest.mock('./data/selectors', () => ({
-  getCourseSettings: jest.fn(),
-  getSavingStatus: jest.fn(),
-  getCourseDetails: jest.fn(),
-  getLoadingDetailsStatus: jest.fn(),
-  getLoadingSettingsStatus: jest.fn(),
-}));
-
+let axiosMock;
+let store;
 const mockPathname = '/foo-bar';
+const courseId = '123';
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: () => ({
@@ -37,41 +29,73 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+const RootWrapper = () => (
+  <AppProvider store={store}>
+    <IntlProvider locale="en" messages={{}}>
+      <ScheduleAndDetails intl={injectIntl} courseId={courseId} />
+    </IntlProvider>
+  </AppProvider>
+);
+
 describe('<ScheduleAndDetails />', () => {
-  const courseId = '123';
-  const mockDispatch = jest.fn();
-  let wrapper;
-  useDispatch.mockReturnValue(mockDispatch);
-
   beforeEach(() => {
-    useSelector
-      .mockReturnValueOnce(courseSettings)
-      .mockReturnValueOnce(courseDetails);
-    wrapper = mount(
-      <IntlProvider locale="en">
-        <ScheduleAndDetails intl={injectIntl} courseId={courseId} />
-      </IntlProvider>,
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+
+    store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock.onGet(getCourseDetailsApiUrl(courseId)).reply(200, courseDetails);
+    axiosMock
+      .onGet(getCourseSettingsApiUrl(courseId))
+      .reply(200, courseSettings);
+  });
+
+  it('should render without errors', async () => {
+    const { getAllByText, getByText, getByRole } = render(<RootWrapper />);
+    await waitForElementToBeRemoved(getByRole('status'));
+    const scheduleAndDetails = getAllByText(/Schedule & details/i);
+    const coursePacing = getAllByText(/Course Pacing/i);
+
+    expect(scheduleAndDetails.length).toBe(2);
+    expect(scheduleAndDetails.length).toBe(2);
+    expect(getByText(/Basic information/i));
+    expect(getByText(/Course Credit Requirements/i));
+    expect(coursePacing.length).toBe(2);
+    expect(getByText(/Course schedule/i));
+    expect(getByRole('navigation', { name: /Other Course Settings/i }));
+  });
+
+  it('should hide section with condition', async () => {
+    const updatedResponse = {
+      ...courseSettings,
+      creditEligibilityEnabled: false,
+      isCreditCourse: false,
+    };
+    axiosMock
+      .onGet(getCourseSettingsApiUrl(courseId))
+      .reply(200, updatedResponse);
+
+    const { queryAllByText, getByRole } = render(<RootWrapper />);
+    await waitForElementToBeRemoved(getByRole('status'));
+    expect(queryAllByText('Course Credit Requirements').length).toBe(0);
+  });
+
+  it('should show save alert onChange ', async () => {
+    const { getAllByPlaceholderText, getByRole, getByText } = render(
+      <RootWrapper />,
     );
-  });
+    await waitForElementToBeRemoved(getByRole('status'));
+    const inputs = getAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
+    act(() => {
+      fireEvent.change(inputs[0], { target: { value: '06/16/2023' } });
+    });
 
-  afterEach(() => jest.clearAllMocks());
-
-  it('should render without errors', () => {
-    shallow(<ScheduleAndDetails intl={injectIntl} courseId={courseId} />);
-  });
-
-  it('should fetch course setting and details on mount', () => {
-    expect(mockDispatch).toHaveBeenCalledTimes(2);
-    expect(fetchCourseDetailsQuery).toHaveBeenCalledWith(courseId);
-    expect(fetchCourseSettingsQuery).toHaveBeenCalledWith(courseId);
-  });
-
-  it('should render available sections', () => {
-    const basicSection = wrapper.find('BasicSection');
-    const creditSection = wrapper.find('CreditSection');
-    const pacingSection = wrapper.find('PacingSection');
-    expect(basicSection.exists()).toBe(true);
-    expect(creditSection.exists()).toBe(true);
-    expect(pacingSection.exists()).toBe(true);
+    expect(getByText(/You`ve made some changes/i)).toBeInTheDocument();
   });
 });

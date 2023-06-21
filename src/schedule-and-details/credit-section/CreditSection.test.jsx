@@ -1,6 +1,5 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import renderer from 'react-test-renderer';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IntlProvider } from 'react-intl';
 
@@ -26,11 +25,6 @@ describe('<CreditSection />', () => {
       ],
     },
   };
-
-  it('matches the snapshots', () => {
-    const tree = renderer.create(<RootWrapper {...props} />).toJSON();
-    expect(tree).toMatchSnapshot();
-  });
 
   it('renders credit section successfully', () => {
     const { getByText } = render(<RootWrapper {...props} />);

@@ -228,28 +228,28 @@ Array [
           className="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 offset-xl-0 offset-lg-0 offset-md-0 offset-sm-0 offset-0"
         >
           <aside
-            className="setting-sidebar-supplementary"
+            className="help-sidebar"
           >
             <div
-              className="setting-sidebar-supplementary-about"
+              className="help-sidebar-about"
             >
               <h4
-                className="setting-sidebar-supplementary-about-title"
+                className="help-sidebar-about-title"
               >
                 What do advanced settings do?
               </h4>
               <p
-                className="setting-sidebar-supplementary-about-descriptions"
+                className="help-sidebar-about-descriptions"
               >
                 Advanced settings control specific course functionality. On this page, you can edit manual policies, which are JSON-based key and value pairs that control specific course settings.
               </p>
               <p
-                className="setting-sidebar-supplementary-about-descriptions"
+                className="help-sidebar-about-descriptions"
               >
                 Any policies you modify here override all other information you’ve defined elsewhere in Studio. Do not edit policies unless you are familiar with both their purpose and syntax.
               </p>
               <p
-                className="setting-sidebar-supplementary-about-descriptions"
+                className="help-sidebar-about-descriptions"
               >
                 <strong>
                   Note:
@@ -259,26 +259,26 @@ Array [
             </div>
             <hr />
             <div
-              className="setting-sidebar-supplementary-other"
+              className="help-sidebar-other"
             >
               <h4
-                className="setting-sidebar-supplementary-other-title"
+                className="help-sidebar-other-title"
               >
                 Other Course Settings
               </h4>
               <nav
                 aria-label="Other Course Settings"
-                className="setting-sidebar-supplementary-other-links"
+                className="help-sidebar-other-links"
               >
                 <ul
                   className="p-0 mb-0"
                 >
                   <li
-                    className="setting-sidebar-supplementary-other-link"
+                    className="help-sidebar-other-link"
                   >
                     <a
                       className="pgn__hyperlink default-link standalone-link"
-                      href="/course/123/settings/details"
+                      href="http://localhost:2001/course/123/settings/details"
                       onClick={[Function]}
                       rel="noopener"
                       target="_self"
@@ -287,11 +287,11 @@ Array [
                     </a>
                   </li>
                   <li
-                    className="setting-sidebar-supplementary-other-link"
+                    className="help-sidebar-other-link"
                   >
                     <a
                       className="pgn__hyperlink default-link standalone-link"
-                      href="/course/123/settings/grading"
+                      href="http://localhost:2001/course/123/settings/grading"
                       onClick={[Function]}
                       rel="noopener"
                       target="_self"
@@ -300,11 +300,11 @@ Array [
                     </a>
                   </li>
                   <li
-                    className="setting-sidebar-supplementary-other-link"
+                    className="help-sidebar-other-link"
                   >
                     <a
                       className="pgn__hyperlink default-link standalone-link"
-                      href="/course/123/course_team"
+                      href="http://localhost:2001/course/123/course_team"
                       onClick={[Function]}
                       rel="noopener"
                       target="_self"
@@ -312,8 +312,9 @@ Array [
                       Course Team
                     </a>
                   </li>
+                  
                   <li
-                    className="setting-sidebar-supplementary-other-link"
+                    className="help-sidebar-other-link"
                   >
                     <a
                       className="pgn__hyperlink default-link standalone-link"
@@ -323,6 +324,19 @@ Array [
                       target="_self"
                     >
                       Group Configurations
+                    </a>
+                  </li>
+                  <li
+                    className="help-sidebar-other-link"
+                  >
+                    <a
+                      className="pgn__hyperlink default-link standalone-link"
+                      href="http://localhost:2001/course/123/settings/advanced"
+                      onClick={[Function]}
+                      rel="noopener"
+                      target="_self"
+                    >
+                      Advanced Settings
                     </a>
                   </li>
                 </ul>
