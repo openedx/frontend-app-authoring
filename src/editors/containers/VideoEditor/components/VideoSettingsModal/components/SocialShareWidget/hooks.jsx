@@ -3,7 +3,7 @@ import { sendTrackEvent } from '@edx/frontend-platform/analytics';
 import { selectors } from '../../../../../../data/redux';
 import analyticsEvents from './constants';
 
-export const handleSocialSharingCheckboxChange = ({ updateField }) => {
+export const useTrackSocialSharingChange = ({ updateField }) => {
   const analytics = useSelector(selectors.app.analytics);
   const allowVideoSharing = useSelector(selectors.video.allowVideoSharing);
   return (event) => {
@@ -23,4 +23,4 @@ export const handleSocialSharingCheckboxChange = ({ updateField }) => {
   };
 };
 
-export default handleSocialSharingCheckboxChange;
+export default useTrackSocialSharingChange;

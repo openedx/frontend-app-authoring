@@ -18,14 +18,14 @@ jest.mock('@edx/frontend-platform/analytics', () => ({
 }));
 
 describe('SocialShareWidget hooks', () => {
-  describe('handleSocialSharingCheckboxChange when', () => {
+  describe('useTrackSocialSharingChange when', () => {
     let onClick;
     let updateField;
     describe.each([true, false])('box is toggled', (checked) => {
       beforeAll(() => {
         jest.resetAllMocks();
         updateField = jest.fn();
-        onClick = hooks.handleSocialSharingCheckboxChange({ updateField });
+        onClick = hooks.useTrackSocialSharingChange({ updateField });
         expect(typeof onClick).toBe('function');
         onClick({ target: { checked } });
       });
