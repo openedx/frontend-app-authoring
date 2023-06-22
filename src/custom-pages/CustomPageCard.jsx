@@ -27,7 +27,6 @@ const CustomPageCard = ({
   dispatch,
   deletePageStatus,
   setCurrentPage,
-  openEditModal,
   // injected
   intl,
 }) => {
@@ -48,7 +47,6 @@ const CustomPageCard = ({
   };
   const handleEditOpen = () => {
     setCurrentPage(page.id);
-    openEditModal();
     history.push(`${customPagesPath}/editor`);
   };
 
@@ -129,7 +127,6 @@ CustomPageCard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   deletePageStatus: PropTypes.string.isRequired,
   setCurrentPage: PropTypes.func.isRequired,
-  openEditModal: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

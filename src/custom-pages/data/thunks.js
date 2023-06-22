@@ -141,7 +141,6 @@ export function updateCustomPageVisibility({ blockId, metadata }) {
 export const updateSingleCustomPage = ({
   blockId,
   metadata,
-  onClose,
   setCurrentPage,
 }) => (dispatch) => {
   dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
@@ -155,7 +154,6 @@ export const updateSingleCustomPage = ({
     }));
     setCurrentPage(null);
     dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-    onClose();
   } catch (error) {
     dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
   }

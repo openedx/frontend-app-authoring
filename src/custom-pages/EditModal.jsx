@@ -5,7 +5,6 @@ import { getConfig } from '@edx/frontend-platform';
 import { EditorPage } from '@edx/frontend-lib-content-components';
 
 const EditModal = ({
-  isOpen,
   pageId,
   courseId,
   onClose,
@@ -21,7 +20,6 @@ const EditModal = ({
       bottom: 0,
       'background-color': 'white',
       'z-index': 100,
-      display: isOpen ? 'block' : 'none',
     }}
   >
     <EditorPage
@@ -30,14 +28,12 @@ const EditModal = ({
       blockId={pageId}
       studioEndpointUrl={getConfig().STUDIO_BASE_URL}
       lmsEndpointUrl={getConfig().LMS_BASE_URL}
-      inModal
       returnFunction={onClose}
     />
   </div>
 );
 
 EditModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
   pageId: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   courseId: PropTypes.string.isRequired,
