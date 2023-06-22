@@ -141,8 +141,8 @@ describe('cms url methods', () => {
   });
   describe('videoFeatures', () => {
     it('returns url with studioEndpointUrl and learningContextId', () => {
-      expect(videoFeatures({ studioEndpointUrl, learningContextId }))
-        .toEqual(`${studioEndpointUrl}/video_features/${learningContextId}`);
+      expect(videoFeatures({ studioEndpointUrl }))
+        .toEqual(`${studioEndpointUrl}/video_features/`);
     });
   });
   describe('courseVideos', () => {

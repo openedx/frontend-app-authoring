@@ -152,7 +152,7 @@ export const fetchAdvanceSettings = ({ studioEndpointUrl, learningContextId }) =
   data: { allow_unsupported_xblocks: { value: true } },
 });
 // eslint-disable-next-line
-export const fetchVideoFeatures = ({ studioEndpointUrl, learningContextId }) => mockPromise({
+export const fetchVideoFeatures = ({ studioEndpointUrl }) => mockPromise({
   data: {
     allowThumbnailUpload: true,
     videoSharingEnabledForCourse: true,

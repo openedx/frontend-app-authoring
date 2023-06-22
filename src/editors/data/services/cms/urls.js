@@ -69,8 +69,8 @@ export const courseAdvanceSettings = ({ studioEndpointUrl, learningContextId }) 
   `${studioEndpointUrl}/api/contentstore/v0/advanced_settings/${learningContextId}`
 );
 
-export const videoFeatures = ({ studioEndpointUrl, learningContextId }) => (
-  `${studioEndpointUrl}/video_features/${learningContextId}`
+export const videoFeatures = ({ studioEndpointUrl }) => (
+  `${studioEndpointUrl}/video_features/`
 );
 
 export const courseVideos = ({ studioEndpointUrl, learningContextId }) => (
