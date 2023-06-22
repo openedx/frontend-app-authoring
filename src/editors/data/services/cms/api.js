@@ -143,7 +143,7 @@ export const apiMethods = {
       response = {
         data: content.olx,
         category: blockType,
-        couseKey: learningContextId,
+        courseKey: learningContextId,
         has_changes: true,
         id: blockId,
         metadata: { display_name: title, ...content.settings },

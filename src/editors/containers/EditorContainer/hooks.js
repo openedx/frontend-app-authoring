@@ -27,7 +27,7 @@ export const handleSaveClicked = ({
   returnFunction,
 }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const destination = useSelector(selectors.app.returnUrl);
+  const destination = returnFunction ? '' : useSelector(selectors.app.returnUrl);
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const analytics = useSelector(selectors.app.analytics);
 
@@ -57,7 +57,7 @@ export const handleCancel = ({ onClose, returnFunction }) => {
   return navigateCallback({
     returnFunction,
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    destination: useSelector(selectors.app.returnUrl),
+    destination: returnFunction ? '' : useSelector(selectors.app.returnUrl),
     analyticsEvent: analyticsEvt.editorCancelClick,
     // eslint-disable-next-line react-hooks/rules-of-hooks
     analytics: useSelector(selectors.app.analytics),
