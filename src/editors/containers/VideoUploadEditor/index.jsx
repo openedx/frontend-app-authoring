@@ -105,31 +105,8 @@ const VideoUploadEditor = (
       console.log('No file selected.');
       return;
     }
-
-    const extToMime = {
-      mp4: 'video/mp4',
-      mov: 'video/quicktime',
-    };
-    const supportedFormats = Object.keys(extToMime);
-
-    function getFileExtension(filename) {
-      return filename.slice(Math.abs(filename.lastIndexOf('.') - 1) + 2);
-    }
-
-    const ext = getFileExtension(file.name);
-    const type = extToMime[ext] || '';
-    const newFile = new File([file], file.name, { type });
-
-    if (supportedFormats.includes(ext)) {
-      uploadVideo({
-        supportedFiles: [newFile],
-        setLoadSpinner: setLoading,
-        postUploadRedirect: hooks.onVideoUpload(),
-      });
-    } else {
-      const errorMsg = 'Video must be an MP4 or MOV file';
-      setErrorMessage(errorMsg);
-    }
+    const validator = hooks.fileValidator(setLoading, setErrorMessage, uploadVideo);
+    validator(file);
   };
 
   return (

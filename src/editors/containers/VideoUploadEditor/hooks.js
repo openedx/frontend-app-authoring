@@ -4,6 +4,11 @@ import { selectors } from '../../data/redux';
 import store from '../../data/store';
 import * as appHooks from '../../hooks';
 
+const extToMime = {
+  mp4: 'video/mp4',
+  mov: 'video/quicktime',
+};
+
 export const {
   navigateTo,
 } = appHooks;
@@ -44,9 +49,30 @@ export const onVideoUpload = () => {
   return module.postUploadRedirect(storeState);
 };
 
+const getFileExtension = (filename) => filename.slice(Math.abs(filename.lastIndexOf('.') - 1) + 2);
+
+export const fileValidator = (setLoading, setErrorMessage, uploadVideo) => (file) => {
+  const supportedFormats = Object.keys(extToMime);
+  const ext = getFileExtension(file.name);
+  const type = extToMime[ext] || '';
+  const newFile = new File([file], file.name, { type });
+
+  if (supportedFormats.includes(ext)) {
+    uploadVideo({
+      supportedFiles: [newFile],
+      setLoadSpinner: setLoading,
+      postUploadRedirect: onVideoUpload(),
+    });
+  } else {
+    const errorMsg = 'Video must be an MP4 or MOV file';
+    setErrorMessage(errorMsg);
+  }
+};
+
 export default {
   postUploadRedirect,
   uploadEditor,
   uploader,
   onVideoUpload,
+  fileValidator,
 };
