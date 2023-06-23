@@ -3,7 +3,7 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   pacingTitle: {
     id: 'course-authoring.schedule.pacing.title',
-    defaultMessage: 'Course Pacing',
+    defaultMessage: 'Course pacing',
   },
   pacingDescription: {
     id: 'course-authoring.schedule.pacing.description',
@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   pacingTypeInstructorLabel: {
     id: 'course-authoring.schedule.pacing.radio.instructor.label',
-    defaultMessage: 'Instructor-Paced',
+    defaultMessage: 'Instructor-paced',
   },
   pacingTypeInstructorDescription: {
     id: 'course-authoring.schedule.pacing.radio.instructor.description',
@@ -24,7 +24,7 @@ const messages = defineMessages({
   },
   pacingTypeSelfLabel: {
     id: 'course-authoring.schedule.pacing.radio.self-paced.label',
-    defaultMessage: 'Self-Paced',
+    defaultMessage: 'Self-paced',
   },
   pacingTypeSelfDescription: {
     id: 'course-authoring.schedule.pacing.radio.self-paced.description',

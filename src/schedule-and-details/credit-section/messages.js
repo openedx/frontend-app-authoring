@@ -3,7 +3,7 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   creditTitle: {
     id: 'course-authoring.schedule.credit.title',
-    defaultMessage: 'Course Credit Requirements',
+    defaultMessage: 'Course credit requirements',
   },
   creditDescription: {
     id: 'course-authoring.schedule.credit.description',
@@ -16,11 +16,11 @@ const messages = defineMessages({
   },
   creditMinimumGrade: {
     id: 'course-authoring.schedule.credit.minimum-grade',
-    defaultMessage: 'Minimum Grade',
+    defaultMessage: 'Minimum grade',
   },
   creditProctoredExam: {
     id: 'course-authoring.schedule.credit.proctored-exam',
-    defaultMessage: 'Successful Proctored Exam',
+    defaultMessage: 'Successful proctored exam',
   },
   creditVerification: {
     id: 'course-authoring.schedule.credit.verification',

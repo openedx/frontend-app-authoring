@@ -1,9 +1,9 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { IntlProvider } from 'react-intl';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { INVITE_STUDENTS_LINK_ID } from './constants';
+import messages from './messages';
 import BasicSection from '.';
 
 describe('<BasicSection />', () => {
@@ -26,25 +26,29 @@ describe('<BasicSection />', () => {
 
   it('renders basic section successfully', () => {
     const { getByText } = render(<RootWrapper {...props} />);
-    expect(getByText(/Basic information/i)).toBeInTheDocument();
-    expect(getByText(/The nuts and bolts of this course/i)).toBeInTheDocument();
-    expect(getByText(/Organization/i)).toBeInTheDocument();
+    expect(getByText(messages.basicTitle.defaultMessage)).toBeInTheDocument();
+    expect(
+      getByText(messages.basicDescription.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      getByText(messages.courseOrganization.defaultMessage),
+    ).toBeInTheDocument();
     expect(getByText(props.org)).toBeInTheDocument();
-    expect(getByText(/Course number/i)).toBeInTheDocument();
+    expect(getByText(messages.courseNumber.defaultMessage)).toBeInTheDocument();
     expect(getByText(props.courseNumber)).toBeInTheDocument();
-    expect(getByText(/Course run/i)).toBeInTheDocument();
+    expect(getByText(messages.courseRun.defaultMessage)).toBeInTheDocument();
     expect(getByText(props.run)).toBeInTheDocument();
   });
 
   it('shows the page banner if the marketingEnabled is true', () => {
     const { getByText, queryAllByText } = render(<RootWrapper {...props} />);
-    expect(getByText(/Promoting your course with edX/i)).toBeInTheDocument();
     expect(
-      getByText(
-        /Your course summary page will not be viewable until your course has been announced. To provide content for the page and preview it, follow the instructions provided by your Program Manager. Please note that changes here may take up to a business day to appear on your course summary page./i,
-      ),
+      getByText(messages.basicBannerTitle.defaultMessage),
     ).toBeInTheDocument();
-    expect(queryAllByText('Course Summary Page').length).toBe(0);
+    expect(
+      getByText(messages.basicBannerText.defaultMessage),
+    ).toBeInTheDocument();
+    expect(queryAllByText('Course summary page').length).toBe(0);
   });
 
   it('shows the course promotion if the marketingEnabled is false', () => {
@@ -52,7 +56,9 @@ describe('<BasicSection />', () => {
     const { getByText, getByRole, queryAllByText } = render(
       <RootWrapper {...initialProps} />,
     );
-    const inviteButton = getByRole('button', { name: 'Invite your students' });
+    const inviteButton = getByRole('button', {
+      name: messages.basicPromotionButton.defaultMessage,
+    });
 
     expect(getByText(/Course Summary Page/i)).toBeInTheDocument();
     expect(
@@ -60,7 +66,7 @@ describe('<BasicSection />', () => {
     ).toBeInTheDocument();
     expect(getByText(props.lmsLinkForAboutPage)).toBeInTheDocument();
     expect(inviteButton).toBeInTheDocument();
-    expect(queryAllByText('Promoting your course with edX').length).toBe(0);
+    expect(queryAllByText(messages.basicBannerTitle.defaultMessage).length).toBe(0);
   });
 
   it('checks link link to invite', () => {

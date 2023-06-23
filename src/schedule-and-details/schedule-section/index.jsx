@@ -69,7 +69,7 @@ const ScheduleSection = ({
       ],
       value: enrollmentStart,
       rowType: SCHEDULE_ROW_TYPES.datetime,
-      helpText: intl.formatMessage(messages.scheduleEnrollmentStartDateLabel),
+      helpText: intl.formatMessage(messages.scheduleEnrollmentStartDateHelpText),
       controlName: 'enrollmentStart',
       errorFeedback: errorFields?.enrollmentStart,
     },

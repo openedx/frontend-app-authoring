@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { IntlProvider } from 'react-intl';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
+import { courseDetailsMock } from '../../__mocks__';
+import messages from './messages';
 import { CERTIFICATE_DISPLAY_BEHAVIOR, CertificateDisplayRow } from '.';
-import { courseDetails } from '../../__mocks__';
 
 describe('<CertificateDisplayRow />', () => {
   const onChangeMock = jest.fn();
@@ -16,9 +16,9 @@ describe('<CertificateDisplayRow />', () => {
 
   const props = {
     intl: {},
-    certificateAvailableDate: courseDetails.certificateAvailableDate,
+    certificateAvailableDate: courseDetailsMock.certificateAvailableDate,
     availableDateErrorFeedback: '',
-    certificatesDisplayBehavior: courseDetails.certificatesDisplayBehavior,
+    certificatesDisplayBehavior: courseDetailsMock.certificatesDisplayBehavior,
     displayBehaviorErrorFeedback: '',
     onChange: onChangeMock,
   };
@@ -28,36 +28,57 @@ describe('<CertificateDisplayRow />', () => {
       <RootWrapper {...props} />,
     );
     const buttonReadMore = getByRole('button', {
-      name: 'Read more about this setting',
+      name: messages.certificateDisplayBehaviorToggleTitle.defaultMessage,
     });
-    expect(getByText(/Certificate display behavior/i)).toBeInTheDocument();
     expect(
-      getByText(/Certificates are awarded at the end of a course run/i),
+      getByText(messages.certificateBehaviorLabel.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      getByText(messages.certificateBehaviorHelpText.defaultMessage),
     ).toBeInTheDocument();
     expect(buttonReadMore).toBeInTheDocument();
-    expect(queryAllByText('Certificate Available Date').length).toBe(0);
+    expect(
+      queryAllByText(messages.certificateAvailableDateLabel.defaultMessage)
+        .length,
+    ).toBe(0);
   });
 
   it('shows more text on click button', () => {
     const { getByText, getByRole } = render(<RootWrapper {...props} />);
     const buttonReadMore = getByRole('button', {
-      name: 'Read more about this setting',
+      name: messages.certificateDisplayBehaviorToggleTitle.defaultMessage,
     });
     fireEvent.click(buttonReadMore);
-    expect(getByText(/Immediately upon passing/i)).toBeInTheDocument();
-    expect(getByText(/On course end date/i)).toBeInTheDocument();
-    expect(getByText(/A date after the course end date/i)).toBeInTheDocument();
+    expect(
+      getByText(
+        messages.certificateDisplayBehaviorToggleHeading1.defaultMessage,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      getByText(
+        messages.certificateDisplayBehaviorToggleHeading2.defaultMessage,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      getByText(
+        messages.certificateDisplayBehaviorToggleHeading3.defaultMessage,
+      ),
+    ).toBeInTheDocument();
   });
 
   it('toggles different option', () => {
     const { getByText, getByRole } = render(<RootWrapper {...props} />);
-    const button = getByRole('button', { name: 'End date of course' });
+    const button = getByRole('button', {
+      name: messages.certificateBehaviorDropdownOption2.defaultMessage,
+    });
     fireEvent.click(button);
-    const option = getByText(/A date after the course end date/i);
+    const option = getByText(
+      messages.certificateBehaviorDropdownOption3.defaultMessage,
+    );
     expect(option).toBeInTheDocument();
     fireEvent.click(option);
     const updatedButtonReadMore = screen.getByRole('button', {
-      name: 'A date after the course end date',
+      name: messages.certificateBehaviorDropdownOption3.defaultMessage,
     });
     expect(updatedButtonReadMore).toBeInTheDocument();
   });
@@ -68,6 +89,8 @@ describe('<CertificateDisplayRow />', () => {
       certificatesDisplayBehavior: CERTIFICATE_DISPLAY_BEHAVIOR.endWithDate,
     };
     const { getByText } = render(<RootWrapper {...initialProps} />);
-    expect(getByText(/Certificate Available Date/i)).toBeInTheDocument();
+    expect(
+      getByText(messages.certificateAvailableDateLabel.defaultMessage),
+    ).toBeInTheDocument();
   });
 });

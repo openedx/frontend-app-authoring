@@ -1,9 +1,8 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { IntlProvider } from 'react-intl';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-import { courseDetails } from '../../__mocks__';
+import { courseDetailsMock } from '../../__mocks__';
 import { ScheduleRow } from '.';
 
 describe('<ScheduleRow />', () => {
@@ -15,7 +14,7 @@ describe('<ScheduleRow />', () => {
   );
 
   const props = {
-    value: courseDetails.startDate,
+    value: courseDetailsMock.startDate,
     labels: ['fooLabelDate', 'fooLabelTime'],
     helpText: 'barHelpText',
     readonly: false,

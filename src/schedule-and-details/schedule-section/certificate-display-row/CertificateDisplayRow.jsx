@@ -121,23 +121,17 @@ const CertificateDisplayRow = ({
   return (
     <li className="schedule-date-item">
       <div className="schedule-date-item-container">
-        <Form.Group className="dropdown-certificate">
-          <Form.Label className="dropdown-certificate-label">
+        <Form.Group className="dropdown-custom">
+          <Form.Label>
             {intl.formatMessage(messages.certificateBehaviorLabel)}
           </Form.Label>
-          <Dropdown className="dropdown-certificate-control">
-            <Dropdown.Toggle
-              id="certificate-behavior-dropdown"
-              className="dropdown-certificate-control-toggle"
-            >
+          <Dropdown>
+            <Dropdown.Toggle id="certificate-behavior-dropdown">
               {certificateDisplayValue}
             </Dropdown.Toggle>
             <Dropdown.Menu>
               {dropdownOptions.map(({ id, label }) => (
-                <Dropdown.Item
-                  key={id}
-                  onClick={() => handleOnChange(id)}
-                >
+                <Dropdown.Item key={id} onClick={() => handleOnChange(id)}>
                   {label}
                 </Dropdown.Item>
               ))}

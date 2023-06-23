@@ -1,5 +1,5 @@
 module.exports = {
-  aboutPageEditable: false,
+  aboutPageEditable: true,
   canShowCertificateAvailableDateField: false,
   courseDisplayName: 'Differential Equations',
   courseDisplayNameWithDefault: 'Differential Equations',

@@ -1,9 +1,10 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { IntlProvider } from 'react-intl';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-import { courseDetails, courseSettings } from '../__mocks__';
+import { courseDetailsMock, courseSettingsMock } from '../__mocks__';
+import messages from './messages';
+import certificateMessages from './certificate-display-row/messages';
 import ScheduleSection from '.';
 
 describe('<ScheduleSection />', () => {
@@ -14,7 +15,7 @@ describe('<ScheduleSection />', () => {
     </IntlProvider>
   );
 
-  const { platformName, upgradeDeadline, enrollmentEndEditable } = courseSettings;
+  const { platformName, upgradeDeadline, enrollmentEndEditable } = courseSettingsMock;
 
   const {
     endDate,
@@ -23,7 +24,7 @@ describe('<ScheduleSection />', () => {
     enrollmentStart,
     certificateAvailableDate,
     certificatesDisplayBehavior,
-  } = courseDetails;
+  } = courseDetailsMock;
 
   const props = {
     intl: {},
@@ -42,21 +43,19 @@ describe('<ScheduleSection />', () => {
 
   it('renders schedule section successfully', () => {
     const { getByText, queryAllByText } = render(<RootWrapper {...props} />);
-    expect(getByText(/Course schedule/i));
-    expect(
-      getByText(/Dates that control when your course can be viewed/i),
-    ).toBeInTheDocument();
-    expect(getByText(/Course start date/i)).toBeInTheDocument();
-    expect(getByText(/Course start time/i)).toBeInTheDocument();
-    expect(getByText(/Course end date/i)).toBeInTheDocument();
-    expect(getByText(/Course end time/i)).toBeInTheDocument();
-    expect(getByText(/Certificate display behavior/i)).toBeInTheDocument();
-    expect(queryAllByText('Certificate Available Date').length).toBe(0);
-    expect(queryAllByText(/Enrollment start date/i).length).toBe(2);
-    expect(getByText(/Enrollment start time/i)).toBeInTheDocument();
-    expect(getByText(/Enrollment end date/i)).toBeInTheDocument();
-    expect(getByText(/Enrollment end time/i)).toBeInTheDocument();
-    expect(getByText(/Upgrade deadline date/i)).toBeInTheDocument();
-    expect(getByText(/Upgrade deadline time/i)).toBeInTheDocument();
+    expect(getByText(messages.scheduleTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.scheduleDescription.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.scheduleCourseStartDateLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.scheduleCourseStartTimeLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.scheduleCourseEndDateLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.scheduleCourseEndTimeLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(certificateMessages.certificateBehaviorLabel.defaultMessage)).toBeInTheDocument();
+    expect(queryAllByText(certificateMessages.certificateAvailableDateLabel.defaultMessage).length).toBe(0);
+    expect(getByText(messages.scheduleEnrollmentStartDateLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.scheduleEnrollmentStartTimeLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.scheduleEnrollmentEndDateLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.scheduleEnrollmentEndTimeLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.scheduleUpgradeDeadlineDateLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.scheduleUpgradeDeadlineTimeLabel.defaultMessage)).toBeInTheDocument();
   });
 });
