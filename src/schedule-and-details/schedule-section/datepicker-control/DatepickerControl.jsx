@@ -34,7 +34,7 @@ const DatepickerControl = ({
   };
 
   return (
-    <Form.Group className="datepicker-custom">
+    <Form.Group className="form-group-custom datepicker-custom">
       <Form.Label className="d-flex justify-content-between mb-0">
         <span className="datepicker-custom-control-label">{label}</span>
         {showUTC && (

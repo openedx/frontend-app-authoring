@@ -11,7 +11,7 @@ const messages = defineMessages({
   },
   buttonSaveText: {
     id: 'course-authoring.schedule.alert.button.save',
-    defaultMessage: 'Save Changes',
+    defaultMessage: 'Save changes',
   },
   buttonCancelText: {
     id: 'course-authoring.schedule.alert.button.cancel',

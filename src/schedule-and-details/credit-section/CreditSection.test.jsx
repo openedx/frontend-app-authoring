@@ -1,8 +1,8 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { IntlProvider } from 'react-intl';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
+import messages from './messages';
 import CreditSection from '.';
 
 describe('<CreditSection />', () => {
@@ -28,28 +28,22 @@ describe('<CreditSection />', () => {
 
   it('renders credit section successfully', () => {
     const { getByText } = render(<RootWrapper {...props} />);
-    expect(getByText(/Course Credit Requirements/i)).toBeInTheDocument();
-    expect(
-      getByText(/Steps required to earn course credit/i),
-    ).toBeInTheDocument();
-    expect(
-      getByText(
-        /A requirement appears in this list when you publish the unit that contains the requirement./i,
-      ),
-    ).toBeInTheDocument();
+    expect(getByText(messages.creditTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.creditDescription.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.creditHelp.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders empty requirements', () => {
     const initialProps = { ...props, creditRequirements: {} };
     const { getByText } = render(<RootWrapper {...initialProps} />);
-    expect(getByText(/No credit requirements found./i)).toBeInTheDocument();
+    expect(getByText(messages.creditNotFound.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders requirements successfully', () => {
     const { getByText, queryAllByText } = render(<RootWrapper {...props} />);
-    expect(getByText(/Minimum Grade/)).toBeInTheDocument();
-    expect(getByText(/80%/i)).toBeInTheDocument();
-    expect(queryAllByText('Successful Proctored Exam').length).toBe(0);
-    expect(queryAllByText('ID Verification').length).toBe(0);
+    expect(getByText(messages.creditMinimumGrade.defaultMessage)).toBeInTheDocument();
+    expect(getByText('80%')).toBeInTheDocument();
+    expect(queryAllByText(messages.creditProctoredExam.defaultMessage).length).toBe(0);
+    expect(queryAllByText(messages.creditVerification.defaultMessage).length).toBe(0);
   });
 });

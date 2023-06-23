@@ -1,8 +1,8 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { IntlProvider } from 'react-intl';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
+import messages from './messages';
 import PacingSection from '.';
 
 jest.useFakeTimers('modern').setSystemTime(new Date('2023-09-14'));
@@ -23,29 +23,16 @@ describe('<PacingSection />', () => {
   };
 
   it('renders pacing section successfully', () => {
-    const { getByText, getAllByText } = render(<RootWrapper {...props} />);
-    expect(getByText(/Set the pacing for this course/i)).toBeInTheDocument();
+    const { getByText } = render(<RootWrapper {...props} />);
+    expect(getByText(messages.pacingTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.pacingDescription.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.pacingRestriction.defaultMessage)).toBeInTheDocument();
 
-    const coursePacingLabels = getAllByText(/Course Pacing/i);
-    expect(coursePacingLabels.length).toBe(2);
-    expect(coursePacingLabels[0]).toHaveTextContent('Course Pacing');
-    expect(coursePacingLabels[1]).toHaveTextContent(
-      'Course pacing cannot be changed once a course has started',
-    );
+    expect(getByText(messages.pacingTypeInstructorLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.pacingTypeInstructorDescription.defaultMessage)).toBeInTheDocument();
 
-    const instructorPacedLabels = getAllByText(/Instructor-Paced/i);
-    expect(instructorPacedLabels.length).toBe(2);
-    expect(instructorPacedLabels[0]).toHaveTextContent('Instructor-Paced');
-    expect(instructorPacedLabels[1]).toHaveTextContent(
-      'Instructor-paced courses progress at the pace that the course author sets. You can configure release dates for course content and due dates for assignments.',
-    );
-
-    const selfPacedLabels = getAllByText(/Self-Paced/i);
-    expect(selfPacedLabels.length).toBe(2);
-    expect(selfPacedLabels[0]).toHaveTextContent('Self-Paced');
-    expect(selfPacedLabels[1]).toHaveTextContent(
-      'Self-paced courses offer suggested due dates for assignments or exams based on the learner’s enrollment date and the expected course duration. These courses offer learners flexibility to modify the assignment dates as needed.',
-    );
+    expect(getByText(messages.pacingTypeSelfLabel.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.pacingTypeSelfDescription.defaultMessage)).toBeInTheDocument();
   });
 
   it('shows radio inputs correctly', () => {
@@ -68,11 +55,7 @@ describe('<PacingSection />', () => {
     expect(radioList[0].disabled).toBeFalsy();
     expect(radioList[1].checked).toBeFalsy();
     expect(radioList[1].disabled).toBeFalsy();
-    expect(
-      queryAllByText(
-        /Course pacing cannot be changed once a course has started/i,
-      ).length,
-    ).toBe(0);
+    expect(queryAllByText(messages.pacingRestriction.defaultMessage).length).toBe(0);
   });
 
   it('should call onChange radio input', () => {

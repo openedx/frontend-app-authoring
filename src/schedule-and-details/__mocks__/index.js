@@ -1,2 +1,2 @@
-export { default as courseDetails } from './courseDetails';
-export { default as courseSettings } from './courseSettings';
+export { default as courseDetailsMock } from './courseDetails';
+export { default as courseSettingsMock } from './courseSettings';

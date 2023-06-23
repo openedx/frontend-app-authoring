@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { IntlProvider } from 'react-intl';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { convertToStringFromDate } from '../../utils';
 import { DatepickerControl, DATEPICKER_TYPES } from '.';
+import messages from './messages';
 import { DATE_FORMAT } from './constants';
 
 describe('<DatepickerControl />', () => {
@@ -34,7 +34,7 @@ describe('<DatepickerControl />', () => {
     );
     expect(getByText(props.label)).toBeInTheDocument();
     expect(getByText(props.helpText)).toBeInTheDocument();
-    expect(queryAllByText('UTC').length).toBe(0);
+    expect(queryAllByText(messages.datepickerUTC.defaultMessage).length).toBe(0);
     expect(
       getByPlaceholderText(DATE_FORMAT.toLocaleUpperCase()),
     ).toBeInTheDocument();

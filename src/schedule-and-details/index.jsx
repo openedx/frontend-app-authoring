@@ -25,6 +25,8 @@ import {
 } from './data/selectors';
 import BasicSection from './basic-section';
 import CreditSection from './credit-section';
+import DetailsSection from './details-section';
+import IntroducingSection from './introducing-section';
 import PacingSection from './pacing-section';
 import ScheduleSection from './schedule-section';
 import ScheduleSidebar from './schedule-sidebar';
@@ -48,29 +50,44 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     handleResetValues,
     handleValuesChange,
     handleUpdateValues,
-  } = useSaveValuesPrompt(intl, courseId, updateCourseDetailsQuery, courseDetails);
+  } = useSaveValuesPrompt(
+    intl,
+    courseId,
+    updateCourseDetailsQuery,
+    courseDetails,
+  );
 
   const {
-    creditEligibilityEnabled,
-    isCreditCourse,
-    lmsLinkForAboutPage,
-    marketingEnabled,
-    courseDisplayName,
-    mfeProctoredExamSettingsUrl,
     platformName,
+    isCreditCourse,
     upgradeDeadline,
+    languageOptions,
+    marketingEnabled,
+    aboutPageEditable,
+    courseDisplayName,
+    sidebarHtmlEnabled,
+    lmsLinkForAboutPage,
     enrollmentEndEditable,
+    creditEligibilityEnabled,
+    shortDescriptionEditable,
+    mfeProctoredExamSettingsUrl,
   } = courseSettings;
 
   const {
     org,
     courseId: courseNumber,
     run,
-    startDate,
     endDate,
+    language,
+    overview,
     selfPaced,
+    startDate,
+    introVideo,
     enrollmentEnd,
     enrollmentStart,
+    shortDescription,
+    aboutSidebarHtml,
+    courseImageAssetPath,
     certificateAvailableDate,
     certificatesDisplayBehavior,
   } = editedValues;
@@ -162,6 +179,24 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
                     enrollmentEndEditable={enrollmentEndEditable}
                     certificateAvailableDate={certificateAvailableDate}
                     certificatesDisplayBehavior={certificatesDisplayBehavior}
+                    onChange={handleValuesChange}
+                  />
+                  <DetailsSection
+                    language={language}
+                    languageOptions={languageOptions}
+                    onChange={handleValuesChange}
+                  />
+                  <IntroducingSection
+                    courseId={courseId}
+                    overview={overview}
+                    introVideo={introVideo}
+                    aboutSidebarHtml={aboutSidebarHtml}
+                    shortDescription={shortDescription}
+                    aboutPageEditable={aboutPageEditable}
+                    sidebarHtmlEnabled={sidebarHtmlEnabled}
+                    lmsLinkForAboutPage={lmsLinkForAboutPage}
+                    courseImageAssetPath={courseImageAssetPath}
+                    shortDescriptionEditable={shortDescriptionEditable}
                     onChange={handleValuesChange}
                   />
                 </div>

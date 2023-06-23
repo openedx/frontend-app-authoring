@@ -12,9 +12,15 @@ import {
 import MockAdapter from 'axios-mock-adapter';
 
 import initializeStore from '../store';
-import { courseDetails, courseSettings } from './__mocks__';
+import { courseDetailsMock, courseSettingsMock } from './__mocks__';
 import { getCourseDetailsApiUrl, getCourseSettingsApiUrl } from './data/api';
 import { DATE_FORMAT } from './schedule-section/datepicker-control/constants';
+import creditMessages from './credit-section/messages';
+import pacingMessages from './pacing-section/messages';
+import basicMessages from './basic-section/messages';
+import scheduleMessages from './schedule-section/messages';
+import genericMessages from '../generic/messages';
+import messages from './messages';
 import ScheduleAndDetails from '.';
 
 let axiosMock;
@@ -50,30 +56,39 @@ describe('<ScheduleAndDetails />', () => {
 
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock.onGet(getCourseDetailsApiUrl(courseId)).reply(200, courseDetails);
+    axiosMock
+      .onGet(getCourseDetailsApiUrl(courseId))
+      .reply(200, courseDetailsMock);
     axiosMock
       .onGet(getCourseSettingsApiUrl(courseId))
-      .reply(200, courseSettings);
+      .reply(200, courseSettingsMock);
   });
 
   it('should render without errors', async () => {
-    const { getAllByText, getByText, getByRole } = render(<RootWrapper />);
+    const { getByText, getByRole } = render(<RootWrapper />);
     await waitForElementToBeRemoved(getByRole('status'));
-    const scheduleAndDetails = getAllByText(/Schedule & details/i);
-    const coursePacing = getAllByText(/Course Pacing/i);
 
-    expect(scheduleAndDetails.length).toBe(2);
-    expect(scheduleAndDetails.length).toBe(2);
-    expect(getByText(/Basic information/i));
-    expect(getByText(/Course Credit Requirements/i));
-    expect(coursePacing.length).toBe(2);
-    expect(getByText(/Course schedule/i));
-    expect(getByRole('navigation', { name: /Other Course Settings/i }));
+    expect(
+      getByText(pacingMessages.pacingTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
+    expect(
+      getByText(basicMessages.basicTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      getByText(creditMessages.creditTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      getByText(scheduleMessages.scheduleTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      getByRole('navigation', { name: genericMessages.sidebarTitleOther.defaultMessage }),
+    ).toBeInTheDocument();
   });
 
   it('should hide section with condition', async () => {
     const updatedResponse = {
-      ...courseSettings,
+      ...courseSettingsMock,
       creditEligibilityEnabled: false,
       isCreditCourse: false,
     };
@@ -83,7 +98,9 @@ describe('<ScheduleAndDetails />', () => {
 
     const { queryAllByText, getByRole } = render(<RootWrapper />);
     await waitForElementToBeRemoved(getByRole('status'));
-    expect(queryAllByText('Course Credit Requirements').length).toBe(0);
+    expect(
+      queryAllByText(creditMessages.creditTitle.defaultMessage).length,
+    ).toBe(0);
   });
 
   it('should show save alert onChange ', async () => {
@@ -96,6 +113,6 @@ describe('<ScheduleAndDetails />', () => {
       fireEvent.change(inputs[0], { target: { value: '06/16/2023' } });
     });
 
-    expect(getByText(/You`ve made some changes/i)).toBeInTheDocument();
+    expect(getByText(messages.alertWarning.defaultMessage)).toBeInTheDocument();
   });
 });

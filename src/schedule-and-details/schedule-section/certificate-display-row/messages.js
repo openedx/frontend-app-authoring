@@ -11,7 +11,7 @@ const messages = defineMessages({
   },
   certificateAvailableDateLabel: {
     id: 'course-authoring.schedule.schedule-section.certificate-available-date.label',
-    defaultMessage: 'Certificate Available Date',
+    defaultMessage: 'Certificate available date',
   },
   certificateDisplayBehaviorToggleTitle: {
     id: 'course-authoring.schedule.schedule-section.certificate-behavior.toggle.title',

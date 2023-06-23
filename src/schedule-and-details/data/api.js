@@ -6,6 +6,7 @@ import { convertObjectToSnakeCase } from '../../utils';
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getCourseDetailsApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/course_details/${courseId}`;
 export const getCourseSettingsApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/course_settings/${courseId}`;
+export const getUploadAssetsUrl = (courseId) => `${getApiBaseUrl()}/assets/${courseId}/`;
 
 /**
  * Get course details.
@@ -41,6 +42,20 @@ export async function updateCourseDetails(courseId, details) {
 export async function getCourseSettings(courseId) {
   const { data } = await getAuthenticatedHttpClient().get(
     `${getCourseSettingsApiUrl(courseId)}`,
+  );
+  return camelCaseObject(data);
+}
+
+/**
+ * Upload assets.
+ * @param {string} courseId
+ * @param {binary} formData
+ * @returns {Promise<Object>}
+ */
+export async function uploadAssets(courseId, fileData) {
+  const { data } = await getAuthenticatedHttpClient().post(
+    `${getUploadAssetsUrl(courseId)}`,
+    fileData,
   );
   return camelCaseObject(data);
 }
