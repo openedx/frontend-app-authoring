@@ -15,12 +15,12 @@ const messages = defineMessages({
   },
   other: {
     id: 'course-authoring.advanced-settings.sidebar.other.title',
-    defaultMessage: 'Other Course Settings',
+    defaultMessage: 'Other course settings',
   },
   otherCourseSettingsLinkToScheduleAndDetails: {
     id: 'course-authoring.advanced-settings.sidebar.links.schedule-and-details',
-    defaultMessage: 'Schedule & Details',
-    description: 'Link to Studio Schedule & Details page',
+    defaultMessage: 'Details & schedule',
+    description: 'Link to Studio Details & schedule page',
   },
   otherCourseSettingsLinkToGrading: {
     id: 'course-authoring.advanced-settings.sidebar.links.grading',
@@ -29,13 +29,18 @@ const messages = defineMessages({
   },
   otherCourseSettingsLinkToCourseTeam: {
     id: 'course-authoring.advanced-settings.sidebar.links.course-team',
-    defaultMessage: 'Course Team',
-    description: 'Link to Studio Course Team page',
+    defaultMessage: 'Course team',
+    description: 'Link to Studio Course team page',
   },
   otherCourseSettingsLinkToGroupConfigurations: {
     id: 'course-authoring.advanced-settings.sidebar.links.group-configurations',
-    defaultMessage: 'Group Configurations',
-    description: 'Link to Studio Group Configurations page',
+    defaultMessage: 'Group configurations',
+    description: 'Link to Studio Group configurations page',
+  },
+  otherCourseSettingsLinkToProctoredExamSettings: {
+    id: 'course-authoring.advanced-settings.sidebar.links.proctored-exam-settings',
+    defaultMessage: 'Proctored exam settings',
+    description: 'Link to Proctored exam settings page',
   },
 });
 

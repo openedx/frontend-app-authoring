@@ -13,12 +13,12 @@ import {
   getDataSendErrors,
 } from './slice';
 
-export function fetchCourseAppSettings(courseId, settings) {
+export function fetchCourseAppSettings(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
 
     try {
-      const settingValues = await getCourseAdvancedSettings(courseId, settings);
+      const settingValues = await getCourseAdvancedSettings(courseId);
       dispatch(fetchCourseAppsSettingsSuccess(settingValues));
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {

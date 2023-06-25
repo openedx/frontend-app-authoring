@@ -1,11 +1,21 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { initializeMockApp } from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
-import { useDispatch, useSelector } from 'react-redux';
-import renderer from 'react-test-renderer';
+import { AppProvider } from '@edx/frontend-platform/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
+import MockAdapter from 'axios-mock-adapter';
 
+import initializeStore from '../store';
+import { advancedSettingsMock } from './__mocks__';
+import { getCourseAdvancedSettingsApiUrl } from './data/api';
 import AdvancedSettings from './AdvancedSettings';
-import { fetchCourseAppSettings, fetchProctoringExamErrors, updateCourseAppSetting } from './data/thunks';
+import messages from './messages';
+
+let axiosMock;
+let store;
+const mockPathname = '/foo-bar';
+const courseId = '123';
 
 // Mock the TextareaAutosize component
 jest.mock('react-textarea-autosize', () => jest.fn((props) => (
@@ -16,93 +26,97 @@ jest.mock('react-textarea-autosize', () => jest.fn((props) => (
   />
 )));
 
-jest.mock('react-redux', () => ({
-  useSelector: jest.fn(),
-  useDispatch: jest.fn(),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: mockPathname,
+  }),
 }));
 
-jest.mock('./data/thunks', () => ({
-  fetchCourseAppSettings: jest.fn(),
-  fetchProctoringExamErrors: jest.fn(),
-  updateCourseAppSetting: jest.fn(),
-}));
+const RootWrapper = () => (
+  <AppProvider store={store}>
+    <IntlProvider locale="en" messages={{}}>
+      <AdvancedSettings intl={injectIntl} courseId={courseId} />
+    </IntlProvider>
+  </AppProvider>
+);
 
-jest.mock('./data/selectors', () => ({
-  getCourseAppSettings: jest.fn(),
-  getSavingStatus: jest.fn(),
-  getProctoringExamErrors: jest.fn(),
-}));
-
-describe('AdvancedSettings', () => {
-  const courseId = '123';
-  const mockDispatch = jest.fn();
-  let wrapper;
-  useDispatch.mockReturnValue(mockDispatch);
-
+describe('<AdvancedSettings />', () => {
   beforeEach(() => {
-    const mockAdvancedSettingsData = {
-      setting1: { value: 'value1' },
-      setting2: { value: 'value2' },
-    };
-    useSelector.mockReturnValueOnce(mockAdvancedSettingsData);
-    useSelector.mockReturnValue(mockAdvancedSettingsData);
-    wrapper = mount(
-      <IntlProvider locale="en">
-        <AdvancedSettings intl={injectIntl} courseId={courseId} />
-      </IntlProvider>,
-    );
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+    store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock
+      .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
+      .reply(200, advancedSettingsMock);
   });
-
-  afterEach(() => jest.clearAllMocks());
-
-  it('should match the snapshot', () => {
-    const tree = renderer.create(wrapper).toJSON();
-    expect(tree).toMatchSnapshot();
+  it('should render without errors', async () => {
+    const { getByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.policy.defaultMessage)).toBeInTheDocument();
+      expect(getByText(/Do not modify these policies unless you are familiar with their purpose./i)).toBeInTheDocument();
+    });
   });
-  it('should render without errors', () => {
-    shallow(<AdvancedSettings intl={injectIntl} courseId={courseId} />);
+  it('should render setting element', async () => {
+    const { getByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      const advancedModuleListTitle = getByText(/Advanced Module List/i);
+      expect(advancedModuleListTitle).toBeInTheDocument();
+    });
   });
-  it('should fetch course app settings and proctoring exam errors on mount', () => {
-    expect(mockDispatch).toHaveBeenCalledTimes(2);
-    expect(fetchCourseAppSettings).toHaveBeenCalledWith(courseId);
-    expect(fetchProctoringExamErrors).toHaveBeenCalledWith(courseId);
+  it('should change to onСhange', async () => {
+    const { getByLabelText } = render(<RootWrapper />);
+    await waitFor(() => {
+      const textarea = getByLabelText(/Advanced Module List/i);
+      expect(textarea).toBeInTheDocument();
+      fireEvent.change(textarea, { target: { value: '[1, 2, 3]' } });
+      expect(textarea.value).toBe('[1, 2, 3]');
+    });
   });
-  it('should render setting card with correct value', () => {
-    const settingCard = wrapper.find('SettingCard').at(0);
-    expect(settingCard.props().value).toBe('"value1"');
+  it('should display a warning alert', async () => {
+    const { getByLabelText, getByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      const textarea = getByLabelText(/Advanced Module List/i);
+      fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
+      expect(getByText(messages.buttonCancelText.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.buttonSaveText.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.alertWarning.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.alertWarningDescriptions.defaultMessage)).toBeInTheDocument();
+    });
   });
-  it('updating textarea value and show warning alert', () => {
-    const settingCard = wrapper.find('SettingCard').at(0);
-    const textarea = settingCard.find('textarea');
-    textarea.simulate('change', { target: { value: 'new value' } });
-    expect(textarea.text()).toBe('new value');
-    const settingAlert = wrapper.find('SettingAlert');
-    expect(settingAlert.find('AlertHeading').at(0).text()).toBe('You`ve made some changes');
+  it('should display a tooltip on clicking on the icon', async () => {
+    const { getByLabelText, getByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      const button = getByLabelText(/Show help text/i);
+      fireEvent.click(button);
+      expect(getByText(/Enter the names of the advanced modules to use in your course./i)).toBeInTheDocument();
+    });
   });
-  it('show warning alert and after click on Cancel button reset textarea value', () => {
-    const settingCard = wrapper.find('SettingCard').at(0);
-    const textarea = settingCard.find('textarea');
-    textarea.simulate('change', { target: { value: 'new value' } });
-    const settingAlert = wrapper.find('SettingAlert');
-    const resetBtn = settingAlert.find('Button').at(1);
-    resetBtn.simulate('click');
-    expect(textarea.text()).toBe('"value1"');
+  it('should change deprecated button text ', async () => {
+    const { getByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      const showDeprecatedItemsBtn = getByText(/Show Deprecated Settings/i);
+      expect(showDeprecatedItemsBtn).toBeInTheDocument();
+      fireEvent.click(showDeprecatedItemsBtn);
+      expect(getByText(/Hide Deprecated Settings/i)).toBeInTheDocument();
+    });
   });
-  it('should handle setting change', () => {
-    const dispatch = useDispatch();
-    wrapper.find('textarea').at(0).simulate('change', { target: { value: 'new value' } });
-    wrapper.find('Button').at(0).simulate('click');
-    expect(dispatch).toHaveBeenCalledWith(updateCourseAppSetting(courseId, 'new value'));
-  });
-  it('should reset textarea value and display success alert on button click', () => {
-    const settingCard = wrapper.find('SettingCard').at(0);
-    const textarea = settingCard.find('textarea');
-    textarea.simulate('change', { target: { value: 'new value' } });
-    const settingAlert = wrapper.find('SettingAlert');
-    const resetBtn = settingAlert.find('Button').at(0);
-    resetBtn.simulate('click');
-    expect(textarea.text()).toBe('"new value"');
-    const successAlert = wrapper.find('SettingAlert').filterWhere(alert => alert.prop('variant') === 'success');
-    expect(successAlert).toHaveLength(1);
+  it('should reset to default value on click on Cancel button', async () => {
+    const { getByLabelText, getByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      const textarea = getByLabelText(/Advanced Module List/i);
+      fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
+      fireEvent.click(getByText(messages.buttonCancelText.defaultMessage));
+      expect(textarea.value).toBe('[]');
+    });
   });
 });

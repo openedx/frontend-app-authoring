@@ -64,6 +64,14 @@ const SettingsSidebar = ({ intl, courseId }) => {
                 {intl.formatMessage(messages.otherCourseSettingsLinkToGroupConfigurations)}
               </Hyperlink>
             </li>
+            <li className="setting-sidebar-supplementary-other-link">
+              <Hyperlink
+                rel="noopener"
+                destination={`${config.BASE_URL}/course/${courseId}/proctored-exam-settings`}
+              >
+                {intl.formatMessage(messages.otherCourseSettingsLinkToProctoredExamSettings)}
+              </Hyperlink>
+            </li>
           </ul>
         </nav>
       </div>

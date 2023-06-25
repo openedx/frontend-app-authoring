@@ -1,10 +1,18 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { IntlProvider } from 'react-intl';
-import SettingCard from './SettingCard';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-// Mock the TextareaAutosize component
+import SettingCard from './SettingCard';
+import messages from './messages';
+
+const handleChange = jest.fn();
+
+const settingData = {
+  deprecated: false,
+  help: 'This is a help message',
+  displayName: 'Setting Name',
+};
+
 jest.mock('react-textarea-autosize', () => jest.fn((props) => (
   <textarea
     {...props}
@@ -13,44 +21,25 @@ jest.mock('react-textarea-autosize', () => jest.fn((props) => (
   />
 )));
 
-describe('SettingCard', () => {
-  const settingData = {
-    deprecated: false,
-    help: 'This is a help message',
-    displayName: 'Setting Name',
-  };
-  const handleChange = jest.fn();
+const RootWrapper = () => (
+  <IntlProvider locale="en">
+    <SettingCard
+      intl={{}}
+      isOn
+      name="settingName"
+      onChange={handleChange}
+      value="Setting Value"
+      settingData={settingData}
+    />
+  </IntlProvider>
+);
+
+describe('<SettingCard />', () => {
   afterEach(() => jest.clearAllMocks());
-  it('matches the snapshot', () => {
-    const { container } = render(
-      <IntlProvider locale="en">
-        <SettingCard
-          intl={{}}
-          isOn
-          name="settingName"
-          onChange={() => {}}
-          value="Setting Value"
-          settingData={settingData}
-        />
-      </IntlProvider>,
-    );
-    expect(container.firstChild).toMatchSnapshot();
-  });
   it('renders the setting card with the provided data', () => {
-    const { getByText, getByLabelText } = render(
-      <IntlProvider locale="en">
-        <SettingCard
-          intl={{}}
-          isOn
-          name="settingName"
-          onChange={handleChange}
-          value="Setting Value"
-          settingData={settingData}
-        />
-      </IntlProvider>,
-    );
-    const cardTitle = getByText('Setting Name');
-    const input = getByLabelText('Setting Name');
+    const { getByText, getByLabelText } = render(<RootWrapper />);
+    const cardTitle = getByText(/Setting Name/i);
+    const input = getByLabelText(/Setting Name/i);
     expect(cardTitle).toBeInTheDocument();
     expect(input).toBeInTheDocument();
     expect(input.value).toBe('Setting Value');
@@ -69,23 +58,11 @@ describe('SettingCard', () => {
         />
       </IntlProvider>,
     );
-    const deprecatedStatus = getByText('Deprecated');
+    const deprecatedStatus = getByText(messages.deprecated.defaultMessage);
     expect(deprecatedStatus).toBeInTheDocument();
   });
   it('does not display the deprecated status when the setting is not deprecated', () => {
-    const { queryByText } = render(
-      <IntlProvider locale="en">
-        <SettingCard
-          intl={{}}
-          isOn
-          name="settingName"
-          onChange={handleChange}
-          value="Setting Value"
-          settingData={settingData}
-        />
-      </IntlProvider>,
-    );
-    const deprecatedStatus = queryByText('This setting is deprecated');
-    expect(deprecatedStatus).toBeNull();
+    const { queryByText } = render(<RootWrapper />);
+    expect(queryByText(messages.deprecated.defaultMessage)).toBeNull();
   });
 });

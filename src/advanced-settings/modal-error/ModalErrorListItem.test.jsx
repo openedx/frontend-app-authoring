@@ -1,32 +1,34 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
+import { render } from '@testing-library/react';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
+
 import ModalErrorListItem from './ModalErrorListItem';
 
-describe('ModalErrorListItem', () => {
-  const settingsData = {
-    advancedModules: {
-      displayName: 'Advanced Modules',
-    },
-    courseSettings: {
-      displayName: 'Course Settings',
-    },
-  };
+const settingName = {
+  key: 'exampleKey',
+  message: 'Error message',
+};
 
-  const settingName = {
-    key: 'advancedModules',
-    message: 'Incorrectly formatted JSON',
-  };
+const settingsData = {
+  exampleKey: {
+    displayName: 'Error field',
+  },
+};
 
-  it('renders correctly', () => {
-    const tree = renderer
-      .create(
-        <ModalErrorListItem
-          settingName={settingName}
-          settingsData={settingsData}
-        />,
-      )
-      .toJSON();
+const RootWrapper = () => (
+  <IntlProvider locale="en">
+    <ModalErrorListItem settingName={settingName} settingsData={settingsData} />
+  </IntlProvider>
+);
 
-    expect(tree).toMatchSnapshot();
+describe('<ModalErrorListItem />', () => {
+  it('renders the display name and error message', () => {
+    const { getByText } = render(<RootWrapper />);
+    expect(getByText('Error field:')).toBeInTheDocument();
+    expect(getByText('Error message')).toBeInTheDocument();
+  });
+  it('renders the alert with variant "danger"', () => {
+    const { getByRole } = render(<RootWrapper />);
+    expect(getByRole('alert')).toHaveClass('alert-danger');
   });
 });

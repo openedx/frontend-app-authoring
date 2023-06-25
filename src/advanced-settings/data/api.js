@@ -4,7 +4,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { convertObjectToSnakeCase } from '../../utils';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-const getCourseAdvancedSettingsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v0/advanced_settings/`;
+export const getCourseAdvancedSettingsApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v0/advanced_settings/${courseId}`;
 const getProctoringErrorsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v1/proctoring_errors/`;
 
 /**
@@ -14,7 +14,7 @@ const getProctoringErrorsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v1/
  */
 export async function getCourseAdvancedSettings(courseId) {
   const { data } = await getAuthenticatedHttpClient()
-    .get(`${getCourseAdvancedSettingsApiUrl()}${courseId}?fetch_all=0`);
+    .get(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`);
   return camelCaseObject(data);
 }
 
@@ -26,7 +26,7 @@ export async function getCourseAdvancedSettings(courseId) {
  */
 export async function updateCourseAdvancedSettings(courseId, settings) {
   const { data } = await getAuthenticatedHttpClient()
-    .patch(`${getCourseAdvancedSettingsApiUrl()}${courseId}`, convertObjectToSnakeCase(settings));
+    .patch(`${getCourseAdvancedSettingsApiUrl(courseId)}`, convertObjectToSnakeCase(settings));
   return camelCaseObject(data);
 }
 
