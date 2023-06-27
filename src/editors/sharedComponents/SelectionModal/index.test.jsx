@@ -79,22 +79,22 @@ const mockUploadErrorAlertFn = jest.fn();
 
 jest.mock('../BaseModal', () => 'BaseModal');
 jest.mock('./SearchSort', () => 'SearchSort');
-jest.mock('./Gallery', () => function (componentProps) {
+jest.mock('./Gallery', () => function mockGallery(componentProps) {
   mockGalleryFn(componentProps);
   return (<div>Gallery</div>);
 });
-jest.mock('../FileInput', () => function (componentProps) {
+jest.mock('../FileInput', () => function mockFileInput(componentProps) {
   mockFileInputFn(componentProps);
   return (<div>FileInput</div>);
 });
-jest.mock('../ErrorAlerts/ErrorAlert', () => function () {
+jest.mock('../ErrorAlerts/ErrorAlert', () => function mockErrorAlert() {
   return <div>ErrorAlert</div>;
 });
-jest.mock('../ErrorAlerts/FetchErrorAlert', () => function (componentProps) {
+jest.mock('../ErrorAlerts/FetchErrorAlert', () => function mockFetchErrorAlert(componentProps) {
   mockFetchErrorAlertFn(componentProps);
   return (<div>FetchErrorAlert</div>);
 });
-jest.mock('../ErrorAlerts/UploadErrorAlert', () => function (componentProps) {
+jest.mock('../ErrorAlerts/UploadErrorAlert', () => function mockUploadErrorAlert(componentProps) {
   mockUploadErrorAlertFn(componentProps);
   return (<div>UploadErrorAlert</div>);
 });

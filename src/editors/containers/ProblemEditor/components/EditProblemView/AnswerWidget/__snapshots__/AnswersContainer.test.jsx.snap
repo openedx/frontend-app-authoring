@@ -4,7 +4,7 @@ exports[`AnswersContainer render snapshot: numeric problems: answer range/answer
 <div
   className="answers-container border border-light-700 rounded py-4 pl-4 pr-3"
 >
-  <Component
+  <mockAnswerOption
     answer={
       Object {
         "correct": true,
@@ -108,7 +108,7 @@ exports[`AnswersContainer render snapshot: numeric problems: answer range/answer
 <div
   className="answers-container border border-light-700 rounded py-4 pl-4 pr-3"
 >
-  <Component
+  <mockAnswerOption
     answer={
       Object {
         "correct": true,
@@ -122,7 +122,7 @@ exports[`AnswersContainer render snapshot: numeric problems: answer range/answer
     hasSingleAnswer={false}
     key="A"
   />
-  <Component
+  <mockAnswerOption
     answer={
       Object {
         "correct": true,
@@ -200,7 +200,7 @@ exports[`AnswersContainer render snapshot: renders correctly with answers 1`] = 
 <div
   className="answers-container border border-light-700 rounded py-4 pl-4 pr-3"
 >
-  <Component
+  <mockAnswerOption
     answer={
       Object {
         "correct": true,
@@ -211,7 +211,7 @@ exports[`AnswersContainer render snapshot: renders correctly with answers 1`] = 
     hasSingleAnswer={false}
     key="a"
   />
-  <Component
+  <mockAnswerOption
     answer={
       Object {
         "correct": true,
