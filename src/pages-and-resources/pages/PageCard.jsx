@@ -35,7 +35,7 @@ const PageCard = ({
   // eslint-disable-next-line react/no-unstable-nested-components
   const SettingsButton = () => {
     if (page.legacyLink) {
-      if (process.env.ENABLE_NEW_CUSTOM_PAGES && page.name === 'Custom pages') {
+      if (process.env.ENABLE_NEW_CUSTOM_PAGES === 'true' && page.name === 'Custom pages') {
         return (
           <Hyperlink destination="custom-pages">
             <IconButton
