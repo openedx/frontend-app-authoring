@@ -1090,3 +1090,25 @@ export const tablesInRichTextTest = {
         In which of the following observations does the C-value paradox apply? Select all that apply.
       </p>`,
 };
+
+export const parseOutExplanationTests = {
+  rawOLX: `<problem>
+    <multiplechoiceresponse>
+      <choicegroup>
+      </choicegroup>
+      <solution>
+        <p>Explanation</p>
+        <p>
+          Explanation
+        </p>
+        <p>solution meat</p>
+      </solution>
+    </multiplechoiceresponse>
+    <demandhint></demandhint>
+  </problem>`,
+  solutionExplanation: `
+        
+        
+        <p>solution meat</p>
+      `
+};

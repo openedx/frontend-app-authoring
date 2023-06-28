@@ -23,6 +23,7 @@ import {
   solutionExplanationTest,
   solutionExplanationWithoutDivTest,
   tablesInRichTextTest,
+  parseOutExplanationTests,
 } from './mockData/olxTestData';
 import { ProblemTypeKeys } from '../../../data/constants/problem';
 
@@ -326,6 +327,12 @@ describe('OLXParser', () => {
       const problemType = olxparser.getProblemType();
       const explanation = olxparser.getSolutionExplanation(problemType);
       expect(explanation).toBe(solutionExplanationWithoutDivTest.solutionExplanation);
+    });
+    it('should parse out <p>Explanation</p>', () => {
+      const olxparser = new OLXParser(parseOutExplanationTests.rawOLX);
+      const problemType = olxparser.getProblemType();
+      const explanation = olxparser.getSolutionExplanation(problemType);
+      expect(explanation).toBe(parseOutExplanationTests.solutionExplanation);
     });
   });
 });

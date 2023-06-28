@@ -529,13 +529,15 @@ export class OLXParser {
     const solutionArray = [];
     if (divBody && divBody.div) {
       divBody.div.forEach(tag => {
-        if (_.get(Object.values(tag)[0][0], '#text', null) !== 'Explanation') {
+        const tagText = _.get(Object.values(tag)[0][0], '#text', '');
+        if (tagText.toString().trim() !== 'Explanation') {
           solutionArray.push(tag);
         }
       });
     } else {
       solutionBody.solution.forEach(tag => {
-        if (_.get(Object.values(tag)[0][0], '#text', null) !== 'Explanation') {
+        const tagText = _.get(Object.values(tag)[0][0], '#text', '');
+        if (tagText.toString().trim() !== 'Explanation') {
           solutionArray.push(tag);
         }
       });
