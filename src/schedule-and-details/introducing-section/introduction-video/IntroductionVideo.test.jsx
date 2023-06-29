@@ -46,7 +46,7 @@ describe('<IntroductionVideo />', () => {
     const input = getByPlaceholderText(
       messages.courseIntroductionVideoPlaceholder.defaultMessage,
     );
-    await act(() => {
+    act(() => {
       fireEvent.change(input, { target: { value: '/assets' } });
     });
     expect(onChangeMock).toHaveBeenCalledWith(

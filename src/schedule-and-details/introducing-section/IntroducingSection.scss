@@ -1,2 +1,7 @@
 @import "./introduction-video/IntroductionVideo";
-@import "./course-card-image/CourseCardImage";
+
+.introducing-section {
+  .form-group-custom:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+}

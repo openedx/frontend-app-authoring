@@ -45,17 +45,3 @@ export async function getCourseSettings(courseId) {
   );
   return camelCaseObject(data);
 }
-
-/**
- * Upload assets.
- * @param {string} courseId
- * @param {binary} formData
- * @returns {Promise<Object>}
- */
-export async function uploadAssets(courseId, fileData) {
-  const { data } = await getAuthenticatedHttpClient().post(
-    `${getUploadAssetsUrl(courseId)}`,
-    fileData,
-  );
-  return camelCaseObject(data);
-}

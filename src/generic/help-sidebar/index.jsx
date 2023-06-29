@@ -1,12 +1,12 @@
-import React, { useContext } from 'react';
-import { useLocation } from 'react-router-dom';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { AppContext } from '@edx/frontend-platform/react';
-import classNames from 'classnames';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { useLocation } from 'react-router-dom';
+import classNames from 'classnames';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 import { Hyperlink } from '@edx/paragon';
 
-import { getPagePath } from '../utils';
+import { getPagePath } from '../../utils';
 import messages from './messages';
 
 const HelpSidebar = ({
@@ -17,7 +17,6 @@ const HelpSidebar = ({
   children,
   className,
 }) => {
-  const { config } = useContext(AppContext);
   const { pathname } = useLocation();
   const scheduleAndDetailsDestination = getPagePath(
     courseId,
@@ -39,7 +38,10 @@ const HelpSidebar = ({
     process.env.ENABLE_NEW_ADVANCED_SETTINGS_PAGE,
     'settings/advanced',
   );
-  const groupConfigurationsDestination = `${config.STUDIO_BASE_URL}/group_configurations/${courseId}`;
+  const groupConfigurationsDestination = new URL(
+    `/group_configurations/${courseId}`,
+    getConfig().STUDIO_BASE_URL,
+  );
 
   return (
     <aside className={classNames('help-sidebar', className)}>
@@ -55,26 +57,23 @@ const HelpSidebar = ({
             aria-label={intl.formatMessage(messages.sidebarTitleOther)}
           >
             <ul className="p-0 mb-0">
-              {pathname !== scheduleAndDetailsDestination && (
+              {!scheduleAndDetailsDestination.includes(pathname) && (
                 <li className="help-sidebar-other-link">
-                  <Hyperlink
-                    rel="noopener"
-                    destination={scheduleAndDetailsDestination}
-                  >
+                  <Hyperlink destination={scheduleAndDetailsDestination}>
                     {intl.formatMessage(
                       messages.sidebarLinkToScheduleAndDetails,
                     )}
                   </Hyperlink>
                 </li>
               )}
-              {pathname !== gradingDestination && (
+              {!gradingDestination.includes(pathname) && (
                 <li className="help-sidebar-other-link">
                   <Hyperlink rel="noopener" destination={gradingDestination}>
                     {intl.formatMessage(messages.sidebarLinkToGrading)}
                   </Hyperlink>
                 </li>
               )}
-              {pathname !== courseTeamDestination && (
+              {!courseTeamDestination.includes(pathname) && (
                 <li className="help-sidebar-other-link">
                   <Hyperlink rel="noopener" destination={courseTeamDestination}>
                     {intl.formatMessage(messages.sidebarLinkToCourseTeam)}
@@ -82,7 +81,7 @@ const HelpSidebar = ({
                 </li>
               )}
               {proctoredExamSettingsUrl
-                && pathname !== proctoredExamSettingsUrl && (
+                && !proctoredExamSettingsUrl.includes(pathname) && (
                 <li className="help-sidebar-other-link">
                   <Hyperlink
                     rel="noopener"
@@ -94,11 +93,11 @@ const HelpSidebar = ({
                   </Hyperlink>
                 </li>
               )}
-              {pathname !== groupConfigurationsDestination && (
+              {!groupConfigurationsDestination.href.includes(pathname) && (
                 <li className="help-sidebar-other-link">
                   <Hyperlink
                     rel="noopener"
-                    destination={groupConfigurationsDestination}
+                    destination={groupConfigurationsDestination.href}
                   >
                     {intl.formatMessage(
                       messages.sidebarLinkToGroupConfigurations,
@@ -106,7 +105,7 @@ const HelpSidebar = ({
                   </Hyperlink>
                 </li>
               )}
-              {pathname !== advancedSettingsDestination && (
+              {!advancedSettingsDestination.includes(pathname) && (
                 <li className="help-sidebar-other-link">
                   <Hyperlink
                     rel="noopener"

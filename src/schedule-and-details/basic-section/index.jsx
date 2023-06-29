@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  injectIntl,
-  intlShape,
-  FormattedMessage,
-} from '@edx/frontend-platform/i18n';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   PageBanner, Button, Card, MailtoLink, Hyperlink,
 } from '@edx/paragon';
 import { Email as EmailIcon } from '@edx/paragon/icons';
 
+import ScheduleSubHeader from '../schedule-sub-header';
 import { INVITE_STUDENTS_LINK_ID } from './constants';
 import messages from './messages';
 
 const BasicSection = ({
-  intl,
   org,
   courseNumber,
   run,
@@ -23,6 +19,7 @@ const BasicSection = ({
   courseDisplayName,
   platformName,
 }) => {
+  const intl = useIntl();
   const [showPageBanner, setShowPageBanner] = useState(true);
   const emailSubject = intl.formatMessage(
     {
@@ -74,9 +71,9 @@ const BasicSection = ({
   ];
 
   const renderBasicInfo = (info) => (
-    <li className="d-grid" key={info.prefix}>
-      <h4 className="text-gray-700">{info.label}</h4>
-      <span className="small">{info.value}</span>
+    <li key={info.prefix}>
+      <h4 className="mb-0 text-black">{info.label}</h4>
+      <span className="small text-black">{info.value}</span>
     </li>
   );
 
@@ -87,7 +84,7 @@ const BasicSection = ({
       onDismiss={() => setShowPageBanner(false)}
       className="align-items-start"
     >
-      <h4 className="mb-2">{intl.formatMessage(messages.basicBannerTitle)}</h4>
+      <h4 className="text-black">{intl.formatMessage(messages.basicBannerTitle)}</h4>
       <span className="text text-gray-700 text-left">
         {intl.formatMessage(messages.basicBannerText)}
       </span>
@@ -96,7 +93,11 @@ const BasicSection = ({
 
   const renderCoursePromotion = () => (
     <Card>
-      <Card.Header className="h4 px-3 text-gray-500" title={promotionTitle} size="sm" />
+      <Card.Header
+        className="h4 px-3 text-gray-500"
+        title={promotionTitle}
+        size="sm"
+      />
       <Card.Section className="px-3 py-1">
         <Hyperlink
           destination={lmsLinkForAboutPage}
@@ -125,14 +126,10 @@ const BasicSection = ({
 
   return (
     <section className="section-container basic-section">
-      <header className="section-header">
-        <span className="lead">
-          {intl.formatMessage(messages.basicTitle)}
-        </span>
-        <span className="x-small text-gray-700">
-          {intl.formatMessage(messages.basicDescription)}
-        </span>
-      </header>
+      <ScheduleSubHeader
+        title={intl.formatMessage(messages.basicTitle)}
+        description={intl.formatMessage(messages.basicDescription)}
+      />
       <ul className="basic-info-list">
         {courseBasicInfo.map(renderBasicInfo)}
       </ul>
@@ -142,7 +139,6 @@ const BasicSection = ({
 };
 
 BasicSection.propTypes = {
-  intl: intlShape.isRequired,
   org: PropTypes.string.isRequired,
   courseNumber: PropTypes.string.isRequired,
   run: PropTypes.string.isRequired,
@@ -152,4 +148,4 @@ BasicSection.propTypes = {
   platformName: PropTypes.string.isRequired,
 };
 
-export default injectIntl(BasicSection);
+export default BasicSection;

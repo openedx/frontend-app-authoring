@@ -15,7 +15,6 @@ describe('<DetailsSection />', () => {
   );
 
   const props = {
-    intl: {},
     language: courseSettingsMock.languageOptions[1][0],
     languageOptions: courseSettingsMock.languageOptions,
     onChange: onChangeMock,

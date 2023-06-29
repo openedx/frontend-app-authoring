@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Dropdown, Form, Collapsible, Icon,
 } from '@edx/paragon';
@@ -17,13 +17,13 @@ export const CERTIFICATE_DISPLAY_BEHAVIOR = {
 };
 
 const CertificateDisplayRow = ({
-  intl,
   certificateAvailableDate,
   availableDateErrorFeedback,
   certificatesDisplayBehavior,
   displayBehaviorErrorFeedback,
   onChange,
 }) => {
+  const intl = useIntl();
   const dropdownOptions = [
     {
       id: CERTIFICATE_DISPLAY_BEHAVIOR.earlyNoInfo,
@@ -121,7 +121,7 @@ const CertificateDisplayRow = ({
   return (
     <li className="schedule-date-item">
       <div className="schedule-date-item-container">
-        <Form.Group className="dropdown-custom">
+        <Form.Group className="form-group-custom">
           <Form.Label>
             {intl.formatMessage(messages.certificateBehaviorLabel)}
           </Form.Label>
@@ -175,7 +175,6 @@ CertificateDisplayRow.defaultProps = {
 };
 
 CertificateDisplayRow.propTypes = {
-  intl: intlShape.isRequired,
   certificateAvailableDate: PropTypes.string,
   availableDateErrorFeedback: PropTypes.string,
   certificatesDisplayBehavior: PropTypes.string,
@@ -183,4 +182,4 @@ CertificateDisplayRow.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-export default injectIntl(CertificateDisplayRow);
+export default CertificateDisplayRow;

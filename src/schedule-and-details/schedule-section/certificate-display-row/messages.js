@@ -19,7 +19,7 @@ const messages = defineMessages({
   },
   certificateDisplayBehaviorToggleParagraph: {
     id: 'course-authoring.schedule.schedule-section.certificate-behavior.toggle.paragraph',
-    defaultMessage: 'In all configurations of this setting, certificates are generated for learners as soon as they achieve the passing threshold in the course (which can occur before a final assignment based on course design',
+    defaultMessage: 'In all configurations of this setting, certificates are generated for learners as soon as they achieve the passing threshold in the course (which can occur before a final assignment based on course design).',
   },
   certificateDisplayBehaviorToggleHeading1: {
     id: 'course-authoring.schedule.schedule-section.certificate-behavior.toggle.heading-1',

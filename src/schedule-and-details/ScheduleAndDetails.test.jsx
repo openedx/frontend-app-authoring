@@ -4,10 +4,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import {
-  act,
-  render,
-  fireEvent,
-  waitForElementToBeRemoved,
+  act, render, waitFor, fireEvent,
 } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 
@@ -19,7 +16,7 @@ import creditMessages from './credit-section/messages';
 import pacingMessages from './pacing-section/messages';
 import basicMessages from './basic-section/messages';
 import scheduleMessages from './schedule-section/messages';
-import genericMessages from '../generic/messages';
+import genericMessages from '../generic/help-sidebar/messages';
 import messages from './messages';
 import ScheduleAndDetails from '.';
 
@@ -27,6 +24,11 @@ let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
+
+// Mock the TextareaAutosize component
+jest.mock('react-textarea-autosize', () => jest.fn((props) => (
+  <textarea {...props} onFocus={() => {}} onBlur={() => {}} />
+)));
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -66,27 +68,31 @@ describe('<ScheduleAndDetails />', () => {
 
   it('should render without errors', async () => {
     const { getByText, getByRole } = render(<RootWrapper />);
-    await waitForElementToBeRemoved(getByRole('status'));
-
-    expect(
-      getByText(pacingMessages.pacingTitle.defaultMessage),
-    ).toBeInTheDocument();
-    expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
-    expect(
-      getByText(basicMessages.basicTitle.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByText(creditMessages.creditTitle.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByText(scheduleMessages.scheduleTitle.defaultMessage),
-    ).toBeInTheDocument();
-    expect(
-      getByRole('navigation', { name: genericMessages.sidebarTitleOther.defaultMessage }),
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        getByText(pacingMessages.pacingTitle.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        getByText(messages.headingTitle.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        getByText(basicMessages.basicTitle.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        getByText(creditMessages.creditTitle.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        getByText(scheduleMessages.scheduleTitle.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        getByRole('navigation', {
+          name: genericMessages.sidebarTitleOther.defaultMessage,
+        }),
+      ).toBeInTheDocument();
+    });
   });
 
-  it('should hide section with condition', async () => {
+  it('should hide credit section with condition', async () => {
     const updatedResponse = {
       ...courseSettingsMock,
       creditEligibilityEnabled: false,
@@ -96,23 +102,27 @@ describe('<ScheduleAndDetails />', () => {
       .onGet(getCourseSettingsApiUrl(courseId))
       .reply(200, updatedResponse);
 
-    const { queryAllByText, getByRole } = render(<RootWrapper />);
-    await waitForElementToBeRemoved(getByRole('status'));
-    expect(
-      queryAllByText(creditMessages.creditTitle.defaultMessage).length,
-    ).toBe(0);
+    const { queryAllByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      expect(
+        queryAllByText(creditMessages.creditTitle.defaultMessage).length,
+      ).toBe(0);
+    });
   });
 
   it('should show save alert onChange ', async () => {
-    const { getAllByPlaceholderText, getByRole, getByText } = render(
+    const { getAllByPlaceholderText, getByText } = render(
       <RootWrapper />,
     );
-    await waitForElementToBeRemoved(getByRole('status'));
-    const inputs = getAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
-    act(() => {
-      fireEvent.change(inputs[0], { target: { value: '06/16/2023' } });
-    });
+    await waitFor(() => {
+      const inputs = getAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
+      act(() => {
+        fireEvent.change(inputs[0], { target: { value: '06/16/2023' } });
+      });
 
-    expect(getByText(messages.alertWarning.defaultMessage)).toBeInTheDocument();
+      expect(
+        getByText(messages.alertWarning.defaultMessage),
+      ).toBeInTheDocument();
+    });
   });
 });

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Form, Icon } from '@edx/paragon';
 import { Calendar } from '@edx/paragon/icons';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { convertToDateFromString, convertToStringFromDate } from '../../utils';
 import { DATE_FORMAT, TIME_FORMAT } from './constants';
@@ -16,7 +16,6 @@ export const DATEPICKER_TYPES = {
 };
 
 const DatepickerControl = ({
-  intl,
   type,
   label,
   value,
@@ -27,6 +26,7 @@ const DatepickerControl = ({
   controlName,
   onChange,
 }) => {
+  const intl = useIntl();
   const formattedDate = convertToDateFromString(value);
   const inputFormat = {
     [DATEPICKER_TYPES.date]: DATE_FORMAT,
@@ -35,10 +35,10 @@ const DatepickerControl = ({
 
   return (
     <Form.Group className="form-group-custom datepicker-custom">
-      <Form.Label className="d-flex justify-content-between mb-0">
-        <span className="datepicker-custom-control-label">{label}</span>
+      <Form.Label className="d-flex justify-content-between">
+        {label}
         {showUTC && (
-          <span className="h6 font-weight-normal text-gray-500">
+          <span className="h6 font-weight-normal text-gray-500 mb-0">
             ({intl.formatMessage(messages.datepickerUTC)})
           </span>
         )}
@@ -84,7 +84,6 @@ DatepickerControl.defaultProps = {
 };
 
 DatepickerControl.propTypes = {
-  intl: intlShape.isRequired,
   type: PropTypes.oneOf(Object.values(DATEPICKER_TYPES)).isRequired,
   value: PropTypes.string,
   label: PropTypes.string.isRequired,
@@ -96,4 +95,4 @@ DatepickerControl.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-export default injectIntl(DatepickerControl);
+export default DatepickerControl;
