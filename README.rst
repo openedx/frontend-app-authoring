@@ -1,17 +1,16 @@
 frontend-app-course-authoring
 #############################
 
-|license-badge| |status-badge| |ci-badge| |codecov-badge|
+|license-badge| |status-badge| |codecov-badge|
 
 
 Purpose
 *******
 
-This repository is a template for Open edX micro-frontend applications. It is
-flagged as a Template Repository, meaning it can be used as a basis for new
-GitHub repositories by clicking the green "Use this template" button above.
-The rest of this document describes how to work with your new micro-frontend
-**after you've created a new repository from the template.**
+This is the Course Authoring micro-frontend, currently under development by `2U <https://2u.com>`_.
+
+Its purpose is to provide both a framework and UI for new or replacement React-based authoring features outside ``edx-platform``.  You can find the current set described below.
+
 
 ************
 Getting Started
@@ -309,23 +308,19 @@ The assigned maintainers for this component and other project details may be
 found in `Backstage`_. Backstage pulls this data from the ``catalog-info.yaml``
 file in this repo.
 
-.. _Backstage: https://open-edx-backstage.herokuapp.com/catalog/default/component/frontend-template-application
+.. _Backstage: https://open-edx-backstage.herokuapp.com/catalog/default/component/frontend-app-course-authoring
 
 Reporting Security Issues
 *************************
 
 Please do not report security issues in public, and email security@openedx.org instead.
 
-.. |license-badge| image:: https://img.shields.io/github/license/openedx/frontend-template-application.svg
-    :target: https://github.com/openedx/frontend-template-application/blob/main/LICENSE
+.. |license-badge| image:: https://img.shields.io/github/license/openedx/frontend-app-course-authoring.svg
+    :target: https://github.com/openedx/frontend-app-course-authoring/blob/master/LICENSE
     :alt: License
 
 .. |status-badge| image:: https://img.shields.io/badge/Status-Maintained-brightgreen
 
-.. |ci-badge| image:: https://github.com/openedx/frontend-template-application/actions/workflows/ci.yml/badge.svg
-    :target: https://github.com/openedx/frontend-template-application/actions/workflows/ci.yml
-    :alt: Continuous Integration
-
-.. |codecov-badge| image:: https://codecov.io/github/openedx/frontend-template-application/coverage.svg?branch=main
-    :target: https://codecov.io/github/openedx/frontend-template-application?branch=main
+.. |codecov-badge| image:: https://codecov.io/github/openedx/frontend-app-course-authoring/coverage.svg?branch=master
+    :target: https://codecov.io/github/openedx/frontend-app-course-authoring?branch=master
     :alt: Codecov
