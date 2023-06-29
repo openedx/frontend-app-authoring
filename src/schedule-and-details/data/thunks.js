@@ -3,7 +3,6 @@ import {
   getCourseDetails,
   updateCourseDetails,
   getCourseSettings,
-  uploadAssets,
 } from './api';
 import {
   updateSavingStatus,
@@ -12,7 +11,6 @@ import {
   fetchCourseDetailsSuccess,
   updateCourseDetailsSuccess,
   fetchCourseSettingsSuccess,
-  updateUploadAssetsDataSuccess,
 } from './slice';
 
 export function fetchCourseDetailsQuery(courseId) {
@@ -52,22 +50,6 @@ export function fetchCourseSettingsQuery(courseId) {
     try {
       const settingsValues = await getCourseSettings(courseId);
       dispatch(fetchCourseSettingsSuccess(settingsValues));
-      dispatch(updateLoadingSettingsStatus({ status: RequestStatus.SUCCESSFUL }));
-      return true;
-    } catch (error) {
-      dispatch(updateLoadingSettingsStatus({ status: RequestStatus.FAILED }));
-      return false;
-    }
-  };
-}
-
-export function updateAssetsQuery(courseId, fileData) {
-  return async (dispatch) => {
-    dispatch(updateLoadingSettingsStatus({ status: RequestStatus.IN_PROGRESS }));
-
-    try {
-      const uploadState = await uploadAssets(courseId, fileData);
-      dispatch(updateUploadAssetsDataSuccess(uploadState));
       dispatch(updateLoadingSettingsStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {

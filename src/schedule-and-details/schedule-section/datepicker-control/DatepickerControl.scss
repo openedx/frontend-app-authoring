@@ -40,12 +40,6 @@
     border-color: $form-feedback-invalid-color;
   }
 
-  .datepicker-custom-control-label {
-    font: normal $font-weight-bold .75rem/1.25rem $font-family-base;
-    color: $gray-500;
-    margin-bottom: .5rem;
-  }
-
   .datepicker-custom-control-icon {
     position: absolute;
     z-index: 2;

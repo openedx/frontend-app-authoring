@@ -2,11 +2,10 @@
   .schedule-date-list {
     display: flex;
     flex-direction: column;
-    padding: 0;
+    padding-top: $spacer;
     margin: 0;
     padding-inline-start: 0;
     list-style-type: none;
-    width: 90%;
 
     .pgn__form-group {
       flex-basis: 48%;
@@ -15,7 +14,7 @@
 
   .schedule-date-item {
     &:not(:last-child) {
-      margin-bottom: 1rem;
+      margin-bottom: 1.19rem;
     }
   }
 
@@ -27,6 +26,7 @@
     border-bottom: .063rem solid rgba(0 0 0 / .1);
     padding-bottom: .625rem;
     margin-bottom: .375rem;
+    padding-right: 10%;
   }
 
   .schedule-date-item-error {

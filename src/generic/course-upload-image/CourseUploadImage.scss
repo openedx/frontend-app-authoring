@@ -1,4 +1,4 @@
-.card-image-preview {
+.image-preview {
   @include pgn-box-shadow(1, "down");
 
   display: block;
@@ -17,11 +17,10 @@
   }
 }
 
-.card-image-body {
+.image-body {
   text-align: center;
 
   .pgn__dropzone {
-    height: 14.5rem;
     background: $white;
   }
 }

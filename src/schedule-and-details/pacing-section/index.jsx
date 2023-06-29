@@ -1,28 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@edx/paragon';
 
+import ScheduleSubHeader from '../schedule-sub-header';
 import messages from './messages';
 
 const PacingSection = ({
-  intl, selfPaced, startDate, onChange,
+  selfPaced, startDate, onChange,
 }) => {
+  const intl = useIntl();
   const canTogglePace = new Date() <= new Date(startDate);
 
   return (
     <section className="section-container pacing-section">
-      <header className="section-header">
-        <span className="lead">
-          {intl.formatMessage(messages.pacingTitle)}
-        </span>
-        <span className="x-small text-gray-700">
-          {intl.formatMessage(messages.pacingDescription)}
-        </span>
-      </header>
+      <ScheduleSubHeader
+        title={intl.formatMessage(messages.pacingTitle)}
+        description={intl.formatMessage(messages.pacingDescription)}
+      />
       <Form.Group>
         {!canTogglePace && (
-          <Form.Label>
+          <Form.Label className="text pt-3">
             {intl.formatMessage(messages.pacingRestriction)}
           </Form.Label>
         )}
@@ -57,10 +55,9 @@ PacingSection.defaultProps = {
 };
 
 PacingSection.propTypes = {
-  intl: intlShape.isRequired,
   startDate: PropTypes.string,
   selfPaced: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   onChange: PropTypes.func.isRequired,
 };
 
-export default injectIntl(PacingSection);
+export default PacingSection;

@@ -1,0 +1,10 @@
+.learning-outcomes-section {
+  .learning-outcomes-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-inline-start: 0;
+    list-style-type: none;
+    padding-top: $spacer;
+  }
+}

@@ -3,4 +3,3 @@ export const getLoadingSettingsStatus = (state) => state.scheduleAndDetails.load
 export const getSavingStatus = (state) => state.scheduleAndDetails.savingStatus;
 export const getCourseDetails = state => state.scheduleAndDetails.courseDetails;
 export const getCourseSettings = (state) => state.scheduleAndDetails.courseSettings;
-export const getUploadedAssets = (state) => state.scheduleAndDetails.uploadAssetsData;

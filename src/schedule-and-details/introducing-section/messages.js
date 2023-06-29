@@ -41,6 +41,30 @@ const messages = defineMessages({
     id: 'course-authoring.schedule-section.introducing.course-about-sidebar.help-text',
     defaultMessage: 'Custom sidebar content for {hyperlink} (formatted in HTML)',
   },
+  courseCardImageLabel: {
+    id: 'course-authoring.schedule-section.introducing.course-card-image.label',
+    defaultMessage: 'Course card image',
+  },
+  courseCardImageIdentifierText: {
+    id: 'course-authoring.schedule-section.introducing.course-card-image.identifier-text',
+    defaultMessage: 'course image',
+  },
+  courseBannerImageLabel: {
+    id: 'course-authoring.schedule-section.introducing.course-banner-image.label',
+    defaultMessage: 'Course banner image',
+  },
+  courseBannerImageInsertText: {
+    id: 'course-authoring.schedule-section.introducing.course-banner-image.insert-banner',
+    defaultMessage: 'banner image',
+  },
+  courseVideoThumbnailLabel: {
+    id: 'course-authoring.schedule-section.introducing.video-thumbnail-image.label',
+    defaultMessage: 'Course Video Thumbnail Image',
+  },
+  courseVideoThumbnailInsertText: {
+    id: 'course-authoring.schedule-section.introducing.video-thumbnail-image.insert-card',
+    defaultMessage: 'video thumbnail image',
+  },
 });
 
 export default messages;

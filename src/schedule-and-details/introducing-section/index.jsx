@@ -7,23 +7,31 @@ import {
 } from '@edx/frontend-platform/i18n';
 import { Form, Hyperlink } from '@edx/paragon';
 
+import CourseUploadImage from '../../generic/course-upload-image';
+import ScheduleSubHeader from '../schedule-sub-header';
 import IntroductionVideo from './introduction-video';
 import CourseCodeEditor from './course-code-editor';
-import CourseCardImage from './course-card-image';
+import ExtendedCourseDetails from './extended-course-details';
 import messages from './messages';
 
 const IntroducingSection = ({
   intl,
-  courseId,
+  title,
+  subtitle,
+  duration,
   overview,
   introVideo,
+  description,
   aboutSidebarHtml,
   shortDescription,
   aboutPageEditable,
   sidebarHtmlEnabled,
   lmsLinkForAboutPage,
   courseImageAssetPath,
+  bannerImageAssetPath,
   shortDescriptionEditable,
+  enableExtendedCourseDetails,
+  videoThumbnailImageAssetPath,
   onChange,
 }) => {
   const overviewHelpText = (
@@ -35,7 +43,6 @@ const IntroducingSection = ({
           <Hyperlink
             destination={lmsLinkForAboutPage}
             target="_blank"
-            rel="noopener noreferrer"
             showLaunchIcon={false}
           >
             {intl.formatMessage(messages.courseAboutHyperlink)}
@@ -54,7 +61,6 @@ const IntroducingSection = ({
           <Hyperlink
             destination={lmsLinkForAboutPage}
             target="_blank"
-            rel="noopener noreferrer"
             showLaunchIcon={false}
           >
             {intl.formatMessage(messages.courseAboutHyperlink)}
@@ -65,16 +71,21 @@ const IntroducingSection = ({
   );
 
   return (
-    <section className="section-container details-section">
+    <section className="section-container introducing-section">
       {aboutPageEditable && (
-        <header className="section-header">
-          <span className="lead">
-            {intl.formatMessage(messages.introducingTitle)}
-          </span>
-          <span className="x-small text-gray-700">
-            {intl.formatMessage(messages.introducingDescription)}
-          </span>
-        </header>
+        <ScheduleSubHeader
+          title={intl.formatMessage(messages.introducingTitle)}
+          description={intl.formatMessage(messages.introducingDescription)}
+        />
+      )}
+      {enableExtendedCourseDetails && (
+        <ExtendedCourseDetails
+          title={title}
+          subtitle={subtitle}
+          duration={duration}
+          description={description}
+          onChange={onChange}
+        />
       )}
       {shortDescriptionEditable && (
         <Form.Group className="form-group-custom">
@@ -89,6 +100,7 @@ const IntroducingSection = ({
             aria-label={intl.formatMessage(
               messages.courseShortDescriptionAriaLabel,
             )}
+            maxLength={150}
           />
           <Form.Control.Feedback>
             {intl.formatMessage(messages.courseShortDescriptionHelpText)}
@@ -113,30 +125,63 @@ const IntroducingSection = ({
               onChange={onChange}
             />
           )}
-          <CourseCardImage
-            courseId={courseId}
-            courseImageAssetPath={courseImageAssetPath}
+          <CourseUploadImage
+            label={intl.formatMessage(messages.courseCardImageLabel)}
+            identifierFieldText={intl.formatMessage(messages.courseCardImageIdentifierText)}
+            assetImagePath={courseImageAssetPath}
+            assetImageField="courseImageAssetPath"
+            imageNameField="courseImageName"
+            showImageBodyText
             onChange={onChange}
           />
         </>
       )}
+      {enableExtendedCourseDetails && (
+        <CourseUploadImage
+          label={intl.formatMessage(messages.courseBannerImageLabel)}
+          identifierFieldText={intl.formatMessage(messages.courseBannerImageInsertText)}
+          assetImagePath={bannerImageAssetPath}
+          assetImageField="bannerImageAssetPath"
+          imageNameField="bannerImageName"
+          showImageBodyText
+          onChange={onChange}
+        />
+      )}
+      <CourseUploadImage
+        label={intl.formatMessage(messages.courseVideoThumbnailLabel)}
+        identifierFieldText={intl.formatMessage(messages.courseVideoThumbnailInsertText)}
+        assetImagePath={videoThumbnailImageAssetPath}
+        assetImageField="videoThumbnailImageAssetPath"
+        imageNameField="videoThumbnailImageName"
+        showImageBodyText
+        onChange={onChange}
+      />
       <IntroductionVideo introVideo={introVideo} onChange={onChange} />
     </section>
   );
 };
 
 IntroducingSection.defaultProps = {
+  title: '',
+  subtitle: '',
+  duration: '',
+  description: '',
   introVideo: '',
   shortDescription: '',
   aboutSidebarHtml: '',
   courseImageAssetPath: '',
+  bannerImageAssetPath: '',
+  videoThumbnailImageAssetPath: '',
   overview: '',
 };
 
 IntroducingSection.propTypes = {
   intl: intlShape.isRequired,
+  title: PropTypes.string,
+  subtitle: PropTypes.string,
+  duration: PropTypes.string,
+  description: PropTypes.string,
   overview: PropTypes.string,
-  courseId: PropTypes.string.isRequired,
   introVideo: PropTypes.string,
   aboutSidebarHtml: PropTypes.string,
   shortDescription: PropTypes.string,
@@ -144,7 +189,10 @@ IntroducingSection.propTypes = {
   sidebarHtmlEnabled: PropTypes.bool.isRequired,
   lmsLinkForAboutPage: PropTypes.string.isRequired,
   courseImageAssetPath: PropTypes.string,
+  bannerImageAssetPath: PropTypes.string,
   shortDescriptionEditable: PropTypes.bool.isRequired,
+  enableExtendedCourseDetails: PropTypes.bool.isRequired,
+  videoThumbnailImageAssetPath: PropTypes.string,
   onChange: PropTypes.func.isRequired,
 };
 

@@ -10,7 +10,6 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { RequestStatus } from '../data/constants';
 import AlertMessage from '../generic/alert-message';
-import Loading from '../generic/Loading';
 import {
   fetchCourseSettingsQuery,
   fetchCourseDetailsQuery,
@@ -29,6 +28,8 @@ import DetailsSection from './details-section';
 import IntroducingSection from './introducing-section';
 import PacingSection from './pacing-section';
 import ScheduleSection from './schedule-section';
+import LearningOutcomesSection from './learning-outcomes-section';
+import InstructorsSection from './instructors-section';
 import ScheduleSidebar from './schedule-sidebar';
 import messages from './messages';
 import { useSaveValuesPrompt } from './hooks';
@@ -70,6 +71,7 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     enrollmentEndEditable,
     creditEligibilityEnabled,
     shortDescriptionEditable,
+    enableExtendedCourseDetails,
     mfeProctoredExamSettingsUrl,
   } = courseSettings;
 
@@ -77,19 +79,27 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     org,
     courseId: courseNumber,
     run,
+    title,
     endDate,
     language,
+    subtitle,
     overview,
+    duration,
     selfPaced,
     startDate,
     introVideo,
+    description,
+    learningInfo,
     enrollmentEnd,
+    instructorInfo,
     enrollmentStart,
     shortDescription,
     aboutSidebarHtml,
     courseImageAssetPath,
+    bannerImageAssetPath,
     certificateAvailableDate,
     certificatesDisplayBehavior,
+    videoThumbnailImageAssetPath,
   } = editedValues;
 
   useEffect(() => {
@@ -98,10 +108,12 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
   }, [courseId]);
 
   if (isLoading) {
-    return <Loading />;
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <></>;
   }
 
   const showCreditSection = creditEligibilityEnabled && isCreditCourse;
+  const showMessageSave = savingStatus === RequestStatus.SUCCESSFUL && !saveValuesPrompt;
   const hasErrors = !!Object.keys(errorFields).length;
   const alertWhileSavingTitle = hasErrors
     ? intl.formatMessage(messages.alertWarningOnSaveWithError)
@@ -113,9 +125,9 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
 
   return (
     <>
-      <Container size="xl">
+      <Container size="xl" className="m-4">
         <div className="mt-5">
-          {savingStatus === RequestStatus.SUCCESSFUL && (
+          {showMessageSave && (
             <AlertMessage
               variant="success"
               icon={CheckCircleIcon}
@@ -187,16 +199,30 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
                     onChange={handleValuesChange}
                   />
                   <IntroducingSection
-                    courseId={courseId}
+                    title={title}
                     overview={overview}
+                    duration={duration}
+                    subtitle={subtitle}
                     introVideo={introVideo}
+                    description={description}
                     aboutSidebarHtml={aboutSidebarHtml}
                     shortDescription={shortDescription}
                     aboutPageEditable={aboutPageEditable}
                     sidebarHtmlEnabled={sidebarHtmlEnabled}
                     lmsLinkForAboutPage={lmsLinkForAboutPage}
                     courseImageAssetPath={courseImageAssetPath}
+                    bannerImageAssetPath={bannerImageAssetPath}
                     shortDescriptionEditable={shortDescriptionEditable}
+                    enableExtendedCourseDetails={enableExtendedCourseDetails}
+                    videoThumbnailImageAssetPath={videoThumbnailImageAssetPath}
+                    onChange={handleValuesChange}
+                  />
+                  <LearningOutcomesSection
+                    learningInfo={learningInfo}
+                    onChange={handleValuesChange}
+                  />
+                  <InstructorsSection
+                    instructors={instructorInfo?.instructors}
                     onChange={handleValuesChange}
                   />
                 </div>
@@ -223,14 +249,11 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
           )}
           role="dialog"
           actions={[
-            <Button
-              onClick={handleUpdateValues}
-              disabled={hasErrors}
-            >
-              {intl.formatMessage(messages.buttonSaveText)}
-            </Button>,
             <Button variant="tertiary" onClick={handleResetValues}>
               {intl.formatMessage(messages.buttonCancelText)}
+            </Button>,
+            <Button onClick={handleUpdateValues} disabled={hasErrors}>
+              {intl.formatMessage(messages.buttonSaveText)}
             </Button>,
           ]}
           variant="warning"

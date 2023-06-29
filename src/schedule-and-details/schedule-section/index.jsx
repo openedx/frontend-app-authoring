@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
+import ScheduleSubHeader from '../schedule-sub-header';
 import { ScheduleRow, SCHEDULE_ROW_TYPES } from './schedule-row';
 import { CertificateDisplayRow } from './certificate-display-row';
 import messages from './messages';
 
 const ScheduleSection = ({
-  intl,
   endDate,
   startDate,
   errorFields,
@@ -20,6 +20,7 @@ const ScheduleSection = ({
   certificatesDisplayBehavior,
   onChange,
 }) => {
+  const intl = useIntl();
   const enrollmentEndHelpText = intl.formatMessage(
     messages.scheduleEnrollmentEndDateHelpText,
   );
@@ -28,7 +29,7 @@ const ScheduleSection = ({
     { platformName },
   );
   const computedEnrollmentEndHelpText = `${enrollmentEndHelpText} ${
-    enrollmentEndEditable ? enrollmentEndHelpTexRestricted : ''
+    !enrollmentEndEditable ? enrollmentEndHelpTexRestricted : ''
   }`;
 
   const propsForScheduleFields = [
@@ -107,14 +108,10 @@ const ScheduleSection = ({
 
   return (
     <section className="section-container schedule-section">
-      <header className="section-header">
-        <span className="lead">
-          {intl.formatMessage(messages.scheduleTitle)}
-        </span>
-        <span className="x-small text-gray-700">
-          {intl.formatMessage(messages.scheduleDescription)}
-        </span>
-      </header>
+      <ScheduleSubHeader
+        title={intl.formatMessage(messages.scheduleTitle)}
+        description={intl.formatMessage(messages.scheduleDescription)}
+      />
       <ul className="schedule-date-list">
         {propsForScheduleFields
           .filter((field) => !field.skip)
@@ -154,7 +151,6 @@ ScheduleSection.defaultProps = {
 };
 
 ScheduleSection.propTypes = {
-  intl: intlShape.isRequired,
   endDate: PropTypes.string,
   startDate: PropTypes.string,
   errorFields: PropTypes.objectOf(PropTypes.string),
@@ -168,4 +164,4 @@ ScheduleSection.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-export default injectIntl(ScheduleSection);
+export default ScheduleSection;

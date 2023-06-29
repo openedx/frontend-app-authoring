@@ -1,10 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
+import ScheduleSubHeader from '../schedule-sub-header';
 import messages from './messages';
 
-const CreditSection = ({ intl, creditRequirements }) => {
+const CreditSection = ({ creditRequirements }) => {
+  const intl = useIntl();
+
   const CREDIT_REQUIREMENTS_TYPES = {
     grade: intl.formatMessage(messages.creditMinimumGrade),
     proctoredExam: intl.formatMessage(messages.creditProctoredExam),
@@ -16,7 +19,7 @@ const CreditSection = ({ intl, creditRequirements }) => {
       ? `${(parseFloat(requirementValue.criteria.minGrade) || 0) * 100}%`
       : requirementValue.displayName;
     return (
-      <span className="small" key={requirementValue.name}>
+      <span className="small text-black" key={requirementValue.name}>
         {displayValue}
       </span>
     );
@@ -29,8 +32,8 @@ const CreditSection = ({ intl, creditRequirements }) => {
       return (
         <ul className="credit-info-list">
           {creditRequirementsKeys.map((key) => (
-            <li className="d-grid" key={key}>
-              <h4 className="text-gray-700">
+            <li key={key}>
+              <h4 className="mb-0 text-black">
                 {CREDIT_REQUIREMENTS_TYPES[key]}
               </h4>
               <div className="d-flex flex-column">
@@ -46,13 +49,11 @@ const CreditSection = ({ intl, creditRequirements }) => {
 
   return (
     <section className="section-container credit-section">
-      <header className="section-header">
-        <span className="lead">{intl.formatMessage(messages.creditTitle)}</span>
-        <span className="x-small text-gray-700">
-          {intl.formatMessage(messages.creditDescription)}
-        </span>
-      </header>
-      <span>{intl.formatMessage(messages.creditHelp)}</span>
+      <ScheduleSubHeader
+        title={intl.formatMessage(messages.creditTitle)}
+        description={intl.formatMessage(messages.creditDescription)}
+      />
+      <p className="credit-help-text">{intl.formatMessage(messages.creditHelp)}</p>
       {renderCreditRequirements(creditRequirements)}
     </section>
   );
@@ -77,8 +78,7 @@ CreditSection.defaultProps = {
 };
 
 CreditSection.propTypes = {
-  intl: intlShape.isRequired,
   creditRequirements: creditRequirementsPropTypes,
 };
 
-export default injectIntl(CreditSection);
+export default CreditSection;

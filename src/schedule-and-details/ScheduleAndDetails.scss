@@ -6,6 +6,8 @@
 @import "./schedule-section/ScheduleSection";
 @import "./schedule-section/datepicker-control/DatepickerControl";
 @import "./schedule-section/certificate-display-row/CertificateDisplayRow";
+@import "./learning-outcomes-section/LearningOutcomes";
+@import "./instructors-section/InstructorsSection";
 
 .section-container {
   &:not(:last-child) {
@@ -16,8 +18,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: .25rem;
     margin-bottom: .75rem;
     border-bottom: $border-width solid $light-400;
+
+    h2 {
+      color: $black;
+      margin-bottom: .75rem;
+    }
   }
 }
