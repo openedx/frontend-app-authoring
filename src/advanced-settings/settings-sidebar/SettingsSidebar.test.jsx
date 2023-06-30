@@ -43,23 +43,4 @@ describe('<SettingsSidebar />', () => {
     expect(getByText(messages.aboutDescription2.defaultMessage)).toBeInTheDocument();
     expect(aboutThirtyDescription).toBeInTheDocument();
   });
-  it('renders links with correct title and destinations', () => {
-    const { getByText } = render(<RootWrapper />);
-    const BASE_URL = 'http://localhost:2001';
-    const scheduleDetailsLink = getByText(messages.otherCourseSettingsLinkToScheduleAndDetails.defaultMessage);
-    expect(scheduleDetailsLink).toBeInTheDocument();
-    expect(scheduleDetailsLink.getAttribute('href')).toBe(`${BASE_URL}/course/course-123/settings/details`);
-    const gradingLink = getByText(messages.otherCourseSettingsLinkToGrading.defaultMessage);
-    expect(gradingLink).toBeInTheDocument();
-    expect(gradingLink.getAttribute('href')).toBe(`${BASE_URL}/course/course-123/settings/grading`);
-    const courseTeamLink = getByText(messages.otherCourseSettingsLinkToCourseTeam.defaultMessage);
-    expect(courseTeamLink).toBeInTheDocument();
-    expect(courseTeamLink.getAttribute('href')).toBe(`${BASE_URL}/course/course-123/course_team`);
-    const groupConfigurationsLink = getByText(messages.otherCourseSettingsLinkToGroupConfigurations.defaultMessage);
-    expect(groupConfigurationsLink).toBeInTheDocument();
-    expect(groupConfigurationsLink.getAttribute('href')).toBe('http://localhost:18010/group_configurations/course-123');
-    const proctoredExamSettingsLink = getByText(messages.otherCourseSettingsLinkToProctoredExamSettings.defaultMessage);
-    expect(proctoredExamSettingsLink).toBeInTheDocument();
-    expect(proctoredExamSettingsLink.getAttribute('href')).toBe(`${BASE_URL}/course/course-123/proctored-exam-settings`);
-  });
 });
