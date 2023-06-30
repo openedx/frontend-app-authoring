@@ -1,29 +1,46 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
-import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
-import { AppContext } from '@edx/frontend-platform/react';
+import { render } from '@testing-library/react';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { initializeMockApp } from '@edx/frontend-platform';
+import { AppProvider } from '@edx/frontend-platform/react';
+
+import initializeStore from '../../store';
 import SettingsSidebar from './SettingsSidebar';
+import messages from './messages';
 
-const mockPathname = '/foo-bar';
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: () => ({
-    pathname: mockPathname,
-  }),
-}));
+const courseId = 'course-123';
+let store;
 
-describe('SettingsSidebar', () => {
-  const config = { STUDIO_BASE_URL: 'https://example.com' };
-  const courseId = 'course123';
-  it('should match the snapshot', () => {
-    const tree = renderer.create(
-      // eslint-disable-next-line react/jsx-no-constructed-context-values
-      <AppContext.Provider value={{ config }}>
-        <IntlProvider locale="en">
-          <SettingsSidebar intl={injectIntl} courseId={courseId} />
-        </IntlProvider>
-      </AppContext.Provider>,
-    ).toJSON();
-    expect(tree).toMatchSnapshot();
+const RootWrapper = () => (
+  <AppProvider store={store}>
+    <IntlProvider locale="en" messages={{}}>
+      <SettingsSidebar intl={{ formatMessage: jest.fn() }} courseId={courseId} />
+    </IntlProvider>
+  </AppProvider>
+);
+
+describe('<SettingsSidebar />', () => {
+  beforeEach(() => {
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+    store = initializeStore();
+  });
+  it('renders about and other sidebar titles correctly', () => {
+    const { getByText } = render(<RootWrapper />);
+    expect(getByText(messages.about.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.other.defaultMessage)).toBeInTheDocument();
+  });
+  it('renders about descriptions correctly', () => {
+    const { getByText } = render(<RootWrapper />);
+    const aboutThirtyDescription = getByText('When you enter strings as policy values, ensure that you use double quotation marks (“) around the string. Do not use single quotation marks (‘).');
+    expect(getByText(messages.aboutDescription1.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.aboutDescription2.defaultMessage)).toBeInTheDocument();
+    expect(aboutThirtyDescription).toBeInTheDocument();
   });
 });

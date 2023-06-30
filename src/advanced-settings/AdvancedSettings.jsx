@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Button, Layout } from '@edx/paragon';
-import { CheckCircle, Info, WarningFilled } from '@edx/paragon/icons';
+import { CheckCircle, Info, Warning } from '@edx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import AlertProctoringError from '../generic/AlertProctoringError';
@@ -10,7 +10,7 @@ import { parseArrayOrObjectValues } from '../utils';
 import { RequestStatus } from '../data/constants';
 import { fetchCourseAppSettings, updateCourseAppSetting, fetchProctoringExamErrors } from './data/thunks';
 import {
-  getCourseAppSettings, getSavingStatus, getProctoringExamErrors, getSendRequestErrors,
+  getCourseAppSettings, getSavingStatus, getProctoringExamErrors, getSendRequestErrors, getLoadingStatus,
 } from './data/selectors';
 import SettingCard from './setting-card/SettingCard';
 import AlertMessage from '../generic/alert-message';
@@ -31,6 +31,8 @@ const AdvancedSettings = ({ intl, courseId }) => {
   const [editedSettings, setEditedSettings] = useState({});
   const [errorFields, setErrorFields] = useState([]);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const loadingSettingsStatus = useSelector(getLoadingStatus);
+  const isLoading = loadingSettingsStatus === RequestStatus.IN_PROGRESS;
 
   useEffect(() => {
     dispatch(fetchCourseAppSettings(courseId));
@@ -46,6 +48,11 @@ const AdvancedSettings = ({ intl, courseId }) => {
       showErrorModal(true);
     }
   }, [savingStatus]);
+
+  if (isLoading) {
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <></>;
+  }
 
   const handleSettingChange = (e, settingName) => {
     const { value } = e.target;
@@ -82,7 +89,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
 
   return (
     <>
-      <Container size="xl">
+      <Container size="xl" className="m-4">
         <div className="setting-header mt-5">
           {(proctoringExamErrors?.length > 0) && (
             <AlertProctoringError
@@ -104,10 +111,10 @@ const AdvancedSettings = ({ intl, courseId }) => {
             aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
           />
           <header className="setting-header-inner">
-            <h1 className="setting-header-title">
+            <h2 className="setting-header-title">
               <small className="setting-header-title-subtitle">{intl.formatMessage(messages.headingSubtitle)}</small>
               {intl.formatMessage(messages.headingTitle)}
-            </h1>
+            </h2>
           </header>
         </div>
         <section className="setting-items mb-4">
@@ -136,6 +143,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
                       <Button
                         variant={showDeprecated ? 'outline-brand' : 'tertiary'}
                         onClick={() => setShowDeprecated(!showDeprecated)}
+                        size="sm"
                       >
                         <FormattedMessage
                           id="course-authoring.advanced-settings.deprecated.button.text"
@@ -185,15 +193,15 @@ const AdvancedSettings = ({ intl, courseId }) => {
           aria-describedby={intl.formatMessage(messages.alertWarningAriaDescribedby)}
           role="dialog"
           actions={[
-            <Button onClick={handleUpdateAdvancedSettingsData}>
-              {intl.formatMessage(messages.buttonSaveText)}
-            </Button>,
             <Button variant="tertiary" onClick={handleResetSettingsValues}>
               {intl.formatMessage(messages.buttonCancelText)}
             </Button>,
+            <Button onClick={handleUpdateAdvancedSettingsData}>
+              {intl.formatMessage(messages.buttonSaveText)}
+            </Button>,
           ]}
           variant="warning"
-          icon={WarningFilled}
+          icon={Warning}
           title={intl.formatMessage(messages.alertWarning)}
           description={intl.formatMessage(messages.alertWarningDescriptions)}
         />
@@ -203,7 +211,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
         showErrorModal={showErrorModal}
         handleUndoChanges={handleResetSettingsValues}
         settingsData={advancedSettingsData}
-        errorList={errorFields}
+        errorList={errorFields.length > 0 ? errorFields : []}
       />
     </>
   );

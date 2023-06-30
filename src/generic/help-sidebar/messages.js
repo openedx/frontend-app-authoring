@@ -3,7 +3,7 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   sidebarTitleOther: {
     id: 'course-authoring.help-sidebar.other.title',
-    defaultMessage: 'Other Course Settings',
+    defaultMessage: 'Other course settings',
   },
   sidebarLinkToScheduleAndDetails: {
     id: 'course-authoring.help-sidebar.links.schedule-and-details',

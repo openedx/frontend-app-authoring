@@ -7,11 +7,11 @@ const messages = defineMessages({
   },
   modalErrorButtonChangeManually: {
     id: 'course-authoring.advanced-settings.modal.error.btn.change-manually',
-    defaultMessage: 'Change Manually',
+    defaultMessage: 'Change manually',
   },
   modalErrorButtonUndoChanges: {
     id: 'course-authoring.advanced-settings.modal.error.btn.undo-changes',
-    defaultMessage: 'Undo Changes',
+    defaultMessage: 'Undo changes',
   },
 });
 

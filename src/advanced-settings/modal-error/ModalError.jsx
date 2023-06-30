@@ -15,14 +15,14 @@ const ModalError = ({
     variant="danger"
     footerNode={(
       <ActionRow>
-        <Button onClick={handleUndoChanges}>
-          {intl.formatMessage(messages.modalErrorButtonUndoChanges)}
-        </Button>
         <Button
           variant="tertiary"
           onClick={() => showErrorModal(!isError)}
         >
           {intl.formatMessage(messages.modalErrorButtonChangeManually)}
+        </Button>
+        <Button onClick={handleUndoChanges}>
+          {intl.formatMessage(messages.modalErrorButtonUndoChanges)}
         </Button>
       </ActionRow>
     )}

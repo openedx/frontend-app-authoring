@@ -11,7 +11,7 @@ const messages = defineMessages({
   },
   policy: {
     id: 'course-authoring.advanced-settings.policies.title',
-    defaultMessage: 'Manual Policy Definition',
+    defaultMessage: 'Manual policy definition',
   },
   alertWarning: {
     id: 'course-authoring.advanced-settings.alert.warning',
@@ -39,7 +39,7 @@ const messages = defineMessages({
   },
   buttonSaveText: {
     id: 'course-authoring.advanced-settings.alert.button.save',
-    defaultMessage: 'Save Changes',
+    defaultMessage: 'Save changes',
   },
   buttonCancelText: {
     id: 'course-authoring.advanced-settings.alert.button.cancel',
