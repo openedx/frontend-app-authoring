@@ -11,6 +11,7 @@ const pagesAndResourcesMockText = 'Pages And Resources';
 const proctoredExamSeetingsMockText = 'Proctored Exam Settings';
 const editorContainerMockText = 'Editor Container';
 const videoSelectorContainerMockText = 'Video Selector Container';
+const customPagesMockText = 'Custom Pages';
 let store;
 const mockComponentFn = jest.fn();
 jest.mock('react-router', () => ({
@@ -34,6 +35,10 @@ jest.mock('./editors/EditorContainer', () => (props) => {
 jest.mock('./selectors/VideoSelectorContainer', () => (props) => {
   mockComponentFn(props);
   return videoSelectorContainerMockText;
+});
+jest.mock('./custom-pages/CustomPages', () => (props) => {
+  mockComponentFn(props);
+  return customPagesMockText;
 });
 
 describe('<CourseAuthoringRoutes>', () => {
