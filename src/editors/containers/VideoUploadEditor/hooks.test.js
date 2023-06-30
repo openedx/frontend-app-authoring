@@ -1,92 +1,50 @@
-import hooks from './hooks';
-import * as requests from '../../data/redux/thunkActions/requests';
+import * as hooks from './hooks';
+import { MockUseState } from '../../../testUtils';
 
-jest.mock('../../data/redux/thunkActions/requests');
+const state = new MockUseState(hooks);
+const setLoading = jest.fn();
+const setErrorMessage = jest.fn();
+const uploadVideo = jest.fn();
 
-describe('uploadVideo', () => {
-  const dispatch = jest.fn();
-  const supportedFiles = [
-    new File(['content1'], 'file1.mp4', { type: 'video/mp4' }),
-    new File(['content2'], 'file2.mov', { type: 'video/quicktime' }),
-  ];
-
+describe('Video Upload Editor hooks', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
-
-  it('should dispatch uploadVideo action with correct data and onSuccess callback', async () => {
-    requests.uploadVideo.mockImplementation(() => 'requests.uploadVideo');
-    const data = {
-      files: [
-        { file_name: 'file1.mp4', content_type: 'video/mp4' },
-        { file_name: 'file2.mov', content_type: 'video/quicktime' },
-      ],
-    };
-
-    await hooks.uploadVideo({ dispatch, supportedFiles });
-
-    expect(requests.uploadVideo).toHaveBeenCalledWith({ data, onSuccess: expect.any(Function) });
-    expect(dispatch).toHaveBeenCalledWith('requests.uploadVideo');
+  describe('state hooks', () => {
+    state.testGetter(state.keys.loading);
+    state.testGetter(state.keys.errorMessage);
+    state.testGetter(state.keys.textInputValue);
   });
+  describe('using state', () => {
+    beforeEach(() => { state.mock(); });
+    afterEach(() => { state.restore(); });
 
-  it('should call fetch with correct arguments for each file', async () => {
-    const mockResponseData = { success: true };
-    const mockFetchResponse = Promise.resolve({ data: mockResponseData });
-    global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
-    const response = {
-      files: [
-        { file_name: 'file1.mp4', upload_url: 'http://example.com/put_video1' },
-        { file_name: 'file2.mov', upload_url: 'http://example.com/put_video2' },
-      ],
-    };
-    const mockRequestResponse = { data: response };
-    requests.uploadVideo.mockImplementation(async ({ onSuccess }) => {
-      await onSuccess(mockRequestResponse);
-    });
-
-    await hooks.uploadVideo({ dispatch, supportedFiles });
-
-    expect(fetch).toHaveBeenCalledTimes(2);
-    response.files.forEach(({ upload_url: uploadUrl }, index) => {
-      expect(fetch.mock.calls[index][0]).toEqual(uploadUrl);
-    });
-    supportedFiles.forEach((file, index) => {
-      expect(fetch.mock.calls[index][1].body.get('uploaded-file')).toBe(file);
+    describe('Hooks for Video Upload', () => {
+      beforeEach(() => {
+        hooks.uploadEditor();
+        hooks.uploader();
+      });
+      it('initialize state with correct values', () => {
+        expect(state.stateVals.loading).toEqual(false);
+        expect(state.stateVals.errorMessage).toEqual(null);
+        expect(state.stateVals.textInputValue).toEqual('');
+      });
     });
   });
-
-  it('should log an error if fetch failed to upload a file', async () => {
-    const error = new Error('Uh-oh!');
-    global.fetch = jest.fn().mockRejectedValue(error);
-    const response = {
-      files: [
-        { file_name: 'file1.mp4', upload_url: 'http://example.com/put_video1' },
-        { file_name: 'file2.mov', upload_url: 'http://example.com/put_video2' },
-      ],
-    };
-    const mockRequestResponse = { data: response };
-    requests.uploadVideo.mockImplementation(async ({ onSuccess }) => {
-      await onSuccess(mockRequestResponse);
+  describe('File Validation', () => {
+    it('Checks with valid MIME type', () => {
+      const file = new File(['(⌐□_□)'], 'video.mp4', { type: 'video/mp4' });
+      const validator = hooks.fileValidator(setLoading, setErrorMessage, uploadVideo);
+      validator(file);
+      expect(uploadVideo).toHaveBeenCalled();
+      expect(setErrorMessage).not.toHaveBeenCalled();
     });
-
-    await hooks.uploadVideo({ dispatch, supportedFiles });
-  });
-
-  it('should log an error if file object is not found in supportedFiles array', () => {
-    const response = {
-      files: [
-        { file_name: 'file2.mov', upload_url: 'http://example.com/put_video2' },
-      ],
-    };
-    const mockRequestResponse = { data: response };
-    const spyConsoleError = jest.spyOn(console, 'error');
-    requests.uploadVideo.mockImplementation(({ onSuccess }) => {
-      onSuccess(mockRequestResponse);
+    it('Checks with invalid MIME type', () => {
+      const file = new File(['(⌐□_□)'], 'video.gif', { type: 'video/mp4' });
+      const validator = hooks.fileValidator(setLoading, setErrorMessage, uploadVideo);
+      validator(file);
+      expect(uploadVideo).not.toHaveBeenCalled();
+      expect(setErrorMessage).toHaveBeenCalled();
     });
-
-    hooks.uploadVideo({ dispatch, supportedFiles: [supportedFiles[0]] });
-
-    expect(spyConsoleError).toHaveBeenCalledWith('Could not find file object with name "file2.mov" in supportedFiles array.');
   });
 });
