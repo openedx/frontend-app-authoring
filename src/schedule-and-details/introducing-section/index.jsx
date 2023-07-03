@@ -137,26 +137,30 @@ const IntroducingSection = ({
         </>
       )}
       {enableExtendedCourseDetails && (
-        <CourseUploadImage
-          label={intl.formatMessage(messages.courseBannerImageLabel)}
-          identifierFieldText={intl.formatMessage(messages.courseBannerImageInsertText)}
-          assetImagePath={bannerImageAssetPath}
-          assetImageField="bannerImageAssetPath"
-          imageNameField="bannerImageName"
-          showImageBodyText
-          onChange={onChange}
-        />
+        <>
+          <CourseUploadImage
+            label={intl.formatMessage(messages.courseBannerImageLabel)}
+            identifierFieldText={intl.formatMessage(messages.courseBannerImageInsertText)}
+            assetImagePath={bannerImageAssetPath}
+            assetImageField="bannerImageAssetPath"
+            imageNameField="bannerImageName"
+            showImageBodyText
+            onChange={onChange}
+          />
+          <CourseUploadImage
+            label={intl.formatMessage(messages.courseVideoThumbnailLabel)}
+            identifierFieldText={intl.formatMessage(messages.courseVideoThumbnailInsertText)}
+            assetImagePath={videoThumbnailImageAssetPath}
+            assetImageField="videoThumbnailImageAssetPath"
+            imageNameField="videoThumbnailImageName"
+            showImageBodyText
+            onChange={onChange}
+          />
+        </>
       )}
-      <CourseUploadImage
-        label={intl.formatMessage(messages.courseVideoThumbnailLabel)}
-        identifierFieldText={intl.formatMessage(messages.courseVideoThumbnailInsertText)}
-        assetImagePath={videoThumbnailImageAssetPath}
-        assetImageField="videoThumbnailImageAssetPath"
-        imageNameField="videoThumbnailImageName"
-        showImageBodyText
-        onChange={onChange}
-      />
-      <IntroductionVideo introVideo={introVideo} onChange={onChange} />
+      {aboutPageEditable && (
+        <IntroductionVideo introVideo={introVideo} onChange={onChange} />
+      )}
     </section>
   );
 };
