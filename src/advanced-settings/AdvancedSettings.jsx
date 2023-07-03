@@ -98,6 +98,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
     if (isValid) {
       setIsQueryPending(true);
     } else {
+      setIsQueryPending(false);
       showSaveSettingsPrompt(false);
       showErrorModal(!errorModal);
     }
