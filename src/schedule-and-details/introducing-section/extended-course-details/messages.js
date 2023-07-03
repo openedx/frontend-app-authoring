@@ -3,7 +3,7 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   extendedTitleLabel: {
     id: 'course-authoring.schedule-section.introducing.title.label',
-    defaultMessage: 'Course Title',
+    defaultMessage: 'Course title',
   },
   extendedTitleHelpText: {
     id: 'course-authoring.schedule-section.introducing.title.help-text',
@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   extendedSubtitleLabel: {
     id: 'course-authoring.schedule-section.introducing.subtitle.label',
-    defaultMessage: 'Course Subtitle',
+    defaultMessage: 'Course subtitle',
   },
   extendedSubtitleHelpText: {
     id: 'course-authoring.schedule-section.introducing.subtitle.help-text',
@@ -27,7 +27,7 @@ const messages = defineMessages({
   },
   extendedDurationLabel: {
     id: 'course-authoring.schedule-section.introducing.duration.label',
-    defaultMessage: 'Course Duration',
+    defaultMessage: 'Course duration',
   },
   extendedDurationHelpText: {
     id: 'course-authoring.schedule-section.introducing.duration.help-text',
@@ -39,7 +39,7 @@ const messages = defineMessages({
   },
   extendedDescriptionLabel: {
     id: 'course-authoring.schedule-section.introducing.description.label',
-    defaultMessage: 'Course Description',
+    defaultMessage: 'Course description',
   },
   extendedDescriptionHelpText: {
     id: 'course-authoring.schedule-section.introducing.description.help-text',

@@ -10,6 +10,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { RequestStatus } from '../data/constants';
 import AlertMessage from '../generic/alert-message';
+import InternetConnectionAlert from '../generic/internet-connection-alert';
 import {
   fetchCourseSettingsQuery,
   fetchCourseDetailsQuery,
@@ -17,7 +18,6 @@ import {
 } from './data/thunks';
 import {
   getCourseSettings,
-  getSavingStatus,
   getCourseDetails,
   getLoadingDetailsStatus,
   getLoadingSettingsStatus,
@@ -37,26 +37,25 @@ import { useSaveValuesPrompt } from './hooks';
 const ScheduleAndDetails = ({ intl, courseId }) => {
   const courseSettings = useSelector(getCourseSettings);
   const courseDetails = useSelector(getCourseDetails);
-  const savingStatus = useSelector(getSavingStatus);
   const loadingDetailsStatus = useSelector(getLoadingDetailsStatus);
   const loadingSettingsStatus = useSelector(getLoadingSettingsStatus);
   const isLoading = loadingDetailsStatus === RequestStatus.IN_PROGRESS
     || loadingSettingsStatus === RequestStatus.IN_PROGRESS;
 
   const {
-    editedValues,
     errorFields,
-    saveValuesPrompt,
+    editedValues,
+    isQueryPending,
+    showModifiedAlert,
+    showSuccessfulAlert,
+    showOverrideInternetConnectionAlert,
     dispatch,
     handleResetValues,
     handleValuesChange,
     handleUpdateValues,
-  } = useSaveValuesPrompt(
-    intl,
-    courseId,
-    updateCourseDetailsQuery,
-    courseDetails,
-  );
+    handleDispatchMethodCall,
+    handleInternetConnectionFailed,
+  } = useSaveValuesPrompt(intl, courseDetails);
 
   const {
     platformName,
@@ -113,7 +112,6 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
   }
 
   const showCreditSection = creditEligibilityEnabled && isCreditCourse;
-  const showMessageSave = savingStatus === RequestStatus.SUCCESSFUL && !saveValuesPrompt;
   const hasErrors = !!Object.keys(errorFields).length;
   const alertWhileSavingTitle = hasErrors
     ? intl.formatMessage(messages.alertWarningOnSaveWithError)
@@ -127,20 +125,19 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     <>
       <Container size="xl" className="m-4">
         <div className="mt-5">
-          {showMessageSave && (
-            <AlertMessage
-              variant="success"
-              icon={CheckCircleIcon}
-              title={intl.formatMessage(messages.alertSuccess)}
-              aria-hidden="true"
-              aria-labelledby={intl.formatMessage(
-                messages.alertSuccessAriaLabelledby,
-              )}
-              aria-describedby={intl.formatMessage(
-                messages.alertSuccessAriaDescribedby,
-              )}
-            />
-          )}
+          <AlertMessage
+            show={showSuccessfulAlert}
+            variant="success"
+            icon={CheckCircleIcon}
+            title={intl.formatMessage(messages.alertSuccess)}
+            aria-hidden="true"
+            aria-labelledby={intl.formatMessage(
+              messages.alertSuccessAriaLabelledby,
+            )}
+            aria-describedby={intl.formatMessage(
+              messages.alertSuccessAriaDescribedby,
+            )}
+          />
           <header>
             <span className="small text-gray-700">
               {intl.formatMessage(messages.headingSubtitle)}
@@ -193,11 +190,13 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
                     certificatesDisplayBehavior={certificatesDisplayBehavior}
                     onChange={handleValuesChange}
                   />
-                  <DetailsSection
-                    language={language}
-                    languageOptions={languageOptions}
-                    onChange={handleValuesChange}
-                  />
+                  {aboutPageEditable && (
+                    <DetailsSection
+                      language={language}
+                      languageOptions={languageOptions}
+                      onChange={handleValuesChange}
+                    />
+                  )}
                   <IntroducingSection
                     title={title}
                     overview={overview}
@@ -217,14 +216,18 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
                     videoThumbnailImageAssetPath={videoThumbnailImageAssetPath}
                     onChange={handleValuesChange}
                   />
-                  <LearningOutcomesSection
-                    learningInfo={learningInfo}
-                    onChange={handleValuesChange}
-                  />
-                  <InstructorsSection
-                    instructors={instructorInfo?.instructors}
-                    onChange={handleValuesChange}
-                  />
+                  {enableExtendedCourseDetails && (
+                    <>
+                      <LearningOutcomesSection
+                        learningInfo={learningInfo}
+                        onChange={handleValuesChange}
+                      />
+                      <InstructorsSection
+                        instructors={instructorInfo?.instructors}
+                        onChange={handleValuesChange}
+                      />
+                    </>
+                  )}
                 </div>
               </article>
             </Layout.Element>
@@ -238,9 +241,17 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
         </section>
       </Container>
       <div className="alert-toast">
+        {showOverrideInternetConnectionAlert && (
+          <InternetConnectionAlert
+            isQueryPending={isQueryPending}
+            dispatchMethod={updateCourseDetailsQuery(courseId, editedValues)}
+            onInternetConnectionFailed={handleInternetConnectionFailed}
+            onDispatchMethodCall={handleDispatchMethodCall}
+          />
+        )}
         <AlertMessage
-          show={saveValuesPrompt}
-          aria-hidden={saveValuesPrompt}
+          show={showModifiedAlert}
+          aria-hidden={showModifiedAlert}
           aria-labelledby={intl.formatMessage(
             messages.alertWarningAriaLabelledby,
           )}

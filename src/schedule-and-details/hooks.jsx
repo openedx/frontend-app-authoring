@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { RequestStatus } from '../data/constants';
+import { getSavingStatus } from './data/selectors';
 import { validateScheduleAndDetails } from './utils';
 
 const useSaveValuesPrompt = (
   intl,
-  courseId,
-  updateDataQuery,
   initialEditedData = {},
 ) => {
+  const savingStatus = useSelector(getSavingStatus);
   const [editedValues, setEditedValues] = useState(initialEditedData);
-  const [saveValuesPrompt, showSaveValuesPrompt] = useState(false);
+  const [showSuccessfulAlert, setShowSuccessfulAlert] = useState(false);
+  const [showModifiedAlert, setShowModifiedAlert] = useState(false);
+  const [showOverrideInternetConnectionAlert, setOverrideInternetConnectionAlert] = useState(false);
+  const [isQueryPending, setIsQueryPending] = useState(false);
   const [errorFields, setErrorFields] = useState({});
   const dispatch = useDispatch();
 
@@ -24,9 +28,13 @@ const useSaveValuesPrompt = (
   }, [editedValues]);
 
   const handleValuesChange = (value, fieldName) => {
-    if (!saveValuesPrompt) {
-      showSaveValuesPrompt(true);
+    setShowSuccessfulAlert(false);
+    setOverrideInternetConnectionAlert(false);
+
+    if (!showModifiedAlert) {
+      setShowModifiedAlert(true);
     }
+
     setEditedValues((prevEditedValues) => ({
       ...prevEditedValues,
       [fieldName]: value || '',
@@ -35,24 +43,51 @@ const useSaveValuesPrompt = (
 
   const handleResetValues = () => {
     setEditedValues(initialEditedData || {});
-    showSaveValuesPrompt(false);
+    setShowModifiedAlert(false);
+    setShowSuccessfulAlert(false);
+    setOverrideInternetConnectionAlert(false);
   };
 
   const handleUpdateValues = () => {
-    dispatch(updateDataQuery(courseId, editedValues));
-    showSaveValuesPrompt(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsQueryPending(true);
+    setOverrideInternetConnectionAlert(true);
   };
+
+  const handleInternetConnectionFailed = () => {
+    setShowModifiedAlert(false);
+    setShowSuccessfulAlert(false);
+    setIsQueryPending(false);
+    setOverrideInternetConnectionAlert(true);
+  };
+
+  const handleDispatchMethodCall = () => {
+    setIsQueryPending(false);
+    setShowModifiedAlert(false);
+    setOverrideInternetConnectionAlert(false);
+  };
+
+  useEffect(() => {
+    if (savingStatus === RequestStatus.SUCCESSFUL) {
+      setShowModifiedAlert(false);
+      setShowSuccessfulAlert(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [savingStatus]);
 
   return {
     errorFields,
     editedValues,
-    saveValuesPrompt,
+    isQueryPending,
+    showModifiedAlert,
+    showSuccessfulAlert,
+    showOverrideInternetConnectionAlert,
     dispatch,
     setErrorFields,
+    handleResetValues,
     handleValuesChange,
     handleUpdateValues,
-    handleResetValues,
+    handleDispatchMethodCall,
+    handleInternetConnectionFailed,
   };
 };
 
