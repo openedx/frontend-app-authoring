@@ -59,7 +59,7 @@ const messages = defineMessages({
   },
   courseVideoThumbnailLabel: {
     id: 'course-authoring.schedule-section.introducing.video-thumbnail-image.label',
-    defaultMessage: 'Course Video Thumbnail Image',
+    defaultMessage: 'Course video thumbnail image',
   },
   courseVideoThumbnailInsertText: {
     id: 'course-authoring.schedule-section.introducing.video-thumbnail-image.insert-card',
