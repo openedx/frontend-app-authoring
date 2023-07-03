@@ -6,6 +6,7 @@ import { CheckCircle, Info, Warning } from '@edx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import AlertProctoringError from '../generic/AlertProctoringError';
+import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { parseArrayOrObjectValues } from '../utils';
 import { RequestStatus } from '../data/constants';
 import { fetchCourseAppSettings, updateCourseAppSetting, fetchProctoringExamErrors } from './data/thunks';
@@ -32,6 +33,8 @@ const AdvancedSettings = ({ intl, courseId }) => {
   const [errorFields, setErrorFields] = useState([]);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const loadingSettingsStatus = useSelector(getLoadingStatus);
+  const [isQueryPending, setIsQueryPending] = useState(false);
+  const [showOverrideInternetConnectionAlert, setOverrideInternetConnectionAlert] = useState(false);
   const isLoading = loadingSettingsStatus === RequestStatus.IN_PROGRESS;
 
   useEffect(() => {
@@ -59,6 +62,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
     if (!saveSettingsPrompt) {
       showSaveSettingsPrompt(true);
     }
+    setOverrideInternetConnectionAlert(false);
     setShowSuccessAlert(false);
     setEditedSettings((prevEditedSettings) => ({
       ...prevEditedSettings,
@@ -70,6 +74,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
     showErrorModal(false);
     setEditedSettings({});
     showSaveSettingsPrompt(false);
+    setOverrideInternetConnectionAlert(false);
   };
 
   const handleSettingBlur = () => {
@@ -79,12 +84,27 @@ const AdvancedSettings = ({ intl, courseId }) => {
   const handleUpdateAdvancedSettingsData = () => {
     const isValid = validateAdvancedSettingsData(editedSettings, setErrorFields, setEditedSettings);
     if (isValid) {
-      dispatch(updateCourseAppSetting(courseId, parseArrayOrObjectValues(editedSettings)));
+      setIsQueryPending(true);
+      setOverrideInternetConnectionAlert(true);
       showSaveSettingsPrompt(!saveSettingsPrompt);
     } else {
+      setIsQueryPending(false);
       showSaveSettingsPrompt(false);
       showErrorModal(!errorModal);
     }
+  };
+
+  const handleInternetConnectionFailed = () => {
+    showSaveSettingsPrompt(false);
+    setShowSuccessAlert(false);
+    setIsQueryPending(false);
+    setOverrideInternetConnectionAlert(true);
+  };
+
+  const handleDispatchMethodCall = () => {
+    setIsQueryPending(false);
+    showSaveSettingsPrompt(false);
+    setOverrideInternetConnectionAlert(false);
   };
 
   return (
@@ -186,6 +206,14 @@ const AdvancedSettings = ({ intl, courseId }) => {
         </section>
       </Container>
       <div className="alert-toast">
+        {showOverrideInternetConnectionAlert && (
+          <InternetConnectionAlert
+            isQueryPending={isQueryPending}
+            dispatchMethod={updateCourseAppSetting(courseId, parseArrayOrObjectValues(editedSettings))}
+            onInternetConnectionFailed={handleInternetConnectionFailed}
+            onDispatchMethodCall={handleDispatchMethodCall}
+          />
+        )}
         <SettingAlert
           show={saveSettingsPrompt}
           aria-hidden={saveSettingsPrompt}
