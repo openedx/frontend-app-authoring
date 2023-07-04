@@ -9,12 +9,13 @@ import AlertProctoringError from '../generic/AlertProctoringError';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { parseArrayOrObjectValues } from '../utils';
 import { RequestStatus } from '../data/constants';
+import SubHeader from '../generic/sub-header/SubHeader';
+import AlertMessage from '../generic/alert-message';
 import { fetchCourseAppSettings, updateCourseAppSetting, fetchProctoringExamErrors } from './data/thunks';
 import {
   getCourseAppSettings, getSavingStatus, getProctoringExamErrors, getSendRequestErrors, getLoadingStatus,
 } from './data/selectors';
 import SettingCard from './setting-card/SettingCard';
-import AlertMessage from '../generic/alert-message';
 import SettingsSidebar from './settings-sidebar/SettingsSidebar';
 import validateAdvancedSettingsData from './utils';
 import messages from './messages';
@@ -130,12 +131,6 @@ const AdvancedSettings = ({ intl, courseId }) => {
             aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
             aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
           />
-          <header className="setting-header-inner">
-            <h2 className="setting-header-title">
-              <small className="setting-header-title-subtitle">{intl.formatMessage(messages.headingSubtitle)}</small>
-              {intl.formatMessage(messages.headingTitle)}
-            </h2>
-          </header>
         </div>
         <section className="setting-items mb-4">
           <Layout
@@ -149,16 +144,18 @@ const AdvancedSettings = ({ intl, courseId }) => {
               <article>
                 <div>
                   <section className="setting-items-policies">
-                    <header>
-                      <h2 className="setting-items-policies-title">{intl.formatMessage(messages.policy)}</h2>
-                    </header>
-                    <p className="setting-items-policies-instructions mb-4">
-                      <FormattedMessage
-                        id="course-authoring.advanced-settings.policies.description"
-                        defaultMessage="{notice} Do not modify these policies unless you are familiar with their purpose."
-                        values={{ notice: <strong>Warning: </strong> }}
-                      />
-                    </p>
+                    <SubHeader
+                      subtitle={intl.formatMessage(messages.headingSubtitle)}
+                      title={intl.formatMessage(messages.headingTitle)}
+                      contentTitle={intl.formatMessage(messages.policy)}
+                      instruction={(
+                        <FormattedMessage
+                          id="course-authoring.advanced-settings.policies.description"
+                          defaultMessage="{notice} Do not modify these policies unless you are familiar with their purpose."
+                          values={{ notice: <strong>Warning: </strong> }}
+                        />
+                      )}
+                    />
                     <div className="setting-items-deprecated-setting">
                       <Button
                         variant={showDeprecated ? 'outline-brand' : 'tertiary'}
@@ -167,7 +164,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
                       >
                         <FormattedMessage
                           id="course-authoring.advanced-settings.deprecated.button.text"
-                          defaultMessage="{visibility} Deprecated Settings"
+                          defaultMessage="{visibility} deprecated settings"
                           values={{
                             visibility:
                               showDeprecated ? intl.formatMessage(messages.deprecatedButtonHideText)

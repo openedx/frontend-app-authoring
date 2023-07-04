@@ -9,6 +9,14 @@ const messages = defineMessages({
     id: 'course-authoring.schedule.heading.subtitle',
     defaultMessage: 'Settings',
   },
+  basicTitle: {
+    id: 'course-authoring.schedule.basic.title',
+    defaultMessage: 'Basic information',
+  },
+  basicDescription: {
+    id: 'course-authoring.schedule.basic.description',
+    defaultMessage: 'The nuts and bolts of this course',
+  },
   buttonSaveText: {
     id: 'course-authoring.schedule.alert.button.save',
     defaultMessage: 'Save changes',

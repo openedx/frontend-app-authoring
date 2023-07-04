@@ -1,0 +1,31 @@
+.sub-header-title {
+  font: normal $font-weight-bold 2rem/2.25rem $font-family-base;
+  margin-bottom: 1.75rem;
+  color: $black;
+
+  .sub-header-title-subtitle {
+    font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
+    display: block;
+    color: $text-color-base;
+  }
+}
+
+.sub-header-content-title {
+  font: normal $font-weight-normal 1.375rem/1.5 $font-family-base;
+  margin-bottom: 0;
+  color: $black;
+}
+
+.sub-header-instructions {
+  font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
+  color: $text-color-base;
+}
+
+.sub-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: $border-width solid $light-400;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}

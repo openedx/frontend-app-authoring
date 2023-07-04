@@ -1,14 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-  basicTitle: {
-    id: 'course-authoring.schedule.basic.title',
-    defaultMessage: 'Basic information',
-  },
-  basicDescription: {
-    id: 'course-authoring.schedule.basic.description',
-    defaultMessage: 'The nuts and bolts of this course',
-  },
   basicEmailIcon: {
     id: 'course-authoring.schedule.basic.email-icon',
     defaultMessage: 'Invite your students email icon',

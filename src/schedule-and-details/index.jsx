@@ -11,6 +11,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { RequestStatus } from '../data/constants';
 import AlertMessage from '../generic/alert-message';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
+import SubHeader from '../generic/sub-header/SubHeader';
 import {
   fetchCourseSettingsQuery,
   fetchCourseDetailsQuery,
@@ -138,14 +139,6 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
               messages.alertSuccessAriaDescribedby,
             )}
           />
-          <header>
-            <span className="small text-gray-700">
-              {intl.formatMessage(messages.headingSubtitle)}
-            </span>
-            <h2 className="mb-4 pb-1">
-              {intl.formatMessage(messages.headingTitle)}
-            </h2>
-          </header>
         </div>
         <section className="setting-items mb-4">
           <Layout
@@ -158,6 +151,12 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
             <Layout.Element>
               <article>
                 <div>
+                  <SubHeader
+                    title={intl.formatMessage(messages.headingTitle)}
+                    subtitle={intl.formatMessage(messages.headingSubtitle)}
+                    contentTitle={intl.formatMessage(messages.basicTitle)}
+                    description={intl.formatMessage(messages.basicDescription)}
+                  />
                   <BasicSection
                     org={org}
                     courseNumber={courseNumber}

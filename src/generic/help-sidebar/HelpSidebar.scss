@@ -1,9 +1,9 @@
 .help-sidebar {
-  margin-top: 1.875rem;
+  margin-top: 8.563rem;
 
   .help-sidebar-about {
     .help-sidebar-about-title {
-      color: $headings-color;
+      color: $black;
       margin-bottom: 1.25rem;
     }
 
@@ -26,7 +26,7 @@
 
   .help-sidebar-other-title {
     font: normal $font-weight-bold 1.125rem/1.5rem $font-family-base;
-    color: $headings-color;
+    color: $black;
     margin-bottom: 1.25rem;
   }
 }
