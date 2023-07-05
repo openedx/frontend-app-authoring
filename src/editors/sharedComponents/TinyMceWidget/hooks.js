@@ -11,9 +11,13 @@ import * as module from './hooks';
 import tinyMCE from '../../data/constants/tinyMCE';
 
 export const state = StrictDict({
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   isImageModalOpen: (val) => useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   isSourceCodeModalOpen: (val) => useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   imageSelection: (val) => useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   refReady: (val) => useState(val),
 });
 
@@ -232,11 +236,14 @@ export const editorConfig = ({
 };
 
 export const prepareEditorRef = () => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const editorRef = useRef(null);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const setEditorRef = useCallback((ref) => {
     editorRef.current = ref;
   }, []);
   const [refReady, setRefReady] = module.state.refReady(false);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => setRefReady(true), []);
   return { editorRef, refReady, setEditorRef };
 };

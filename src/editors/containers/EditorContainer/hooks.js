@@ -16,6 +16,7 @@ export const {
 } = appHooks;
 
 export const state = StrictDict({
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   isCancelConfirmModalOpen: (val) => useState(val),
 });
 
@@ -25,7 +26,9 @@ export const handleSaveClicked = ({
   validateEntry,
   returnFunction,
 }) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const destination = useSelector(selectors.app.returnUrl);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const analytics = useSelector(selectors.app.analytics);
 
   return () => saveBlock({
@@ -53,14 +56,18 @@ export const handleCancel = ({ onClose, returnFunction }) => {
   }
   return navigateCallback({
     returnFunction,
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     destination: useSelector(selectors.app.returnUrl),
     analyticsEvent: analyticsEvt.editorCancelClick,
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     analytics: useSelector(selectors.app.analytics),
   });
 };
 
+// eslint-disable-next-line react-hooks/rules-of-hooks
 export const isInitialized = () => useSelector(selectors.app.isInitialized);
 
+// eslint-disable-next-line react-hooks/rules-of-hooks
 export const saveFailed = () => useSelector((rootState) => (
   selectors.requests.isFailed(rootState, { requestKey: RequestKeys.saveBlock })
 ));

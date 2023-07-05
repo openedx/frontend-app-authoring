@@ -30,6 +30,7 @@ const testVal = 'MY test VALUE';
 
 describe('state values', () => {
   const testStateMethod = (key) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
     expect(hooks.state[key](testVal)).toEqual(React.useState(testVal));
   };
   test('provides altText state value', () => testStateMethod(state.keys.altText));

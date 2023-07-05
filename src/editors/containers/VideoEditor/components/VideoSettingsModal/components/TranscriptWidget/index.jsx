@@ -33,6 +33,7 @@ import * as module from './index';
 
 export const hooks = {
   updateErrors: ({ isUploadError, isDeleteError }) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
     const [error, setError] = React.useContext(ErrorContext).transcripts;
     if (isUploadError) {
       setError({ ...error, uploadError: messages.uploadTranscriptError.defaultMessage });

@@ -8,11 +8,13 @@ import * as module from './hooks';
 export const { navigateCallback } = textEditorHooks;
 
 export const state = {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   localTitle: (args) => React.useState(args),
 };
 
 export const hooks = {
   isEditing: () => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
     const [isEditing, setIsEditing] = React.useState(false);
     return {
       isEditing,
@@ -22,6 +24,7 @@ export const hooks = {
   },
 
   localTitle: ({ dispatch, stopEditing }) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
     const title = useSelector(selectors.app.displayTitle);
     const [localTitle, setLocalTitle] = module.state.localTitle(title);
     return {

@@ -5,14 +5,23 @@ import * as module from './hooks';
 
 // Simple wrappers for useState to allow easy mocking for tests.
 export const state = {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   altText: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   dimensions: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   showAltTextDismissibleError: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   showAltTextSubmissionError: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   isDecorative: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   isLocked: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   local: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   lockDims: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   lockInitialized: (val) => React.useState(val),
 };
 

@@ -7,6 +7,7 @@ import * as module from './hooks';
 import { getDataFromOlx } from '../../../../data/redux/thunkActions/problem';
 
 export const state = StrictDict({
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   selected: (val) => useState(val),
 });
 

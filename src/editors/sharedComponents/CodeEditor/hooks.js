@@ -13,6 +13,7 @@ import './index.scss';
 const CODEMIRROR_LANGUAGES = { HTML: 'html', XML: 'xml' };
 
 export const state = {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   showBtnEscapeHTML: (val) => React.useState(val),
 };
 
@@ -60,6 +61,7 @@ export const createCodeMirrorDomNode = ({
   upstreamRef,
   lang,
 }) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     const languageExtension = lang === CODEMIRROR_LANGUAGES.HTML ? html() : xml();
     const cleanText = cleanHTML({ initialText });

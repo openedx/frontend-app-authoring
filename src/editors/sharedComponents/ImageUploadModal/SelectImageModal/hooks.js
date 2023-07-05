@@ -7,10 +7,15 @@ import { sortFunctions, sortKeys, sortMessages } from './utils';
 import messages from './messages';
 
 export const state = {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   highlighted: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   showSelectImageError: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   searchString: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   sortBy: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   showSizeError: (val) => React.useState(val),
 };
 
@@ -98,7 +103,9 @@ export const checkValidFileSize = ({
 };
 
 export const fileInputHooks = ({ setSelection, clearSelection, imgList }) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const dispatch = useDispatch();
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const ref = React.useRef();
   const click = () => ref.current.click();
   const addFile = (e) => {

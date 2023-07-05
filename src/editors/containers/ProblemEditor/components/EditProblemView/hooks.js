@@ -7,6 +7,7 @@ import { setAssetToStaticUrl } from '../../../../sharedComponents/TinyMceWidget/
 import { ProblemTypeKeys } from '../../../../data/constants/problem';
 
 export const state = StrictDict({
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   isSaveWarningModalOpen: (val) => useState(val),
 });
 

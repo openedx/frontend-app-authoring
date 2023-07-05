@@ -6,6 +6,7 @@ import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import { fetchEditorContent } from '../hooks';
 
 export const state = StrictDict({
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   isFeedbackVisible: (val) => useState(val),
 });
 

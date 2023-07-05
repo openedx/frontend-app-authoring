@@ -4,6 +4,7 @@ import { parseYoutubeId } from '../../../../../../data/services/cms/api';
 import * as requests from '../../../../../../data/redux/thunkActions/requests';
 
 export const state = {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   showVideoIdChangeAlert: (args) => React.useState(args),
 };
 

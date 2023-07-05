@@ -7,12 +7,14 @@ import * as module from './hooks';
 export const ErrorContext = createContext();
 
 export const state = StrictDict({
+  /* eslint-disable react-hooks/rules-of-hooks */
   durationErrors: (val) => useState(val),
   handoutErrors: (val) => useState(val),
   licenseErrors: (val) => useState(val),
   thumbnailErrors: (val) => useState(val),
   transcriptsErrors: (val) => useState(val),
   videoSourceErrors: (val) => useState(val),
+  /* eslint-enable react-hooks/rules-of-hooks */
 });
 
 export const errorsHook = () => {

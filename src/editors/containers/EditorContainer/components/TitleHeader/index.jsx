@@ -17,7 +17,9 @@ export const TitleHeader = ({
   intl,
 }) => {
   if (!isInitialized) { return intl.formatMessage(messages.loading); }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const dispatch = useDispatch();
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const title = useSelector(selectors.app.displayTitle);
 
   const {

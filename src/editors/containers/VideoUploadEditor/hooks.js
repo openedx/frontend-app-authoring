@@ -14,8 +14,11 @@ export const {
 } = appHooks;
 
 export const state = {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   loading: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   errorMessage: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   textInputValue: (val) => React.useState(val),
 };
 
