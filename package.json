@@ -39,7 +39,7 @@
   "devDependencies": {
     "@edx/browserslist-config": "^1.1.1",
     "@edx/frontend-build": "12.8.27",
-    "@edx/frontend-platform": "4.2.0",
+    "@edx/frontend-platform": "^4.6.0",
     "@edx/paragon": "^20.44.0",
     "@edx/reactifex": "^2.1.1",
     "@testing-library/dom": "^8.13.0",
@@ -98,7 +98,7 @@
     "@edx/frontend-platform": "^4.0.0",
     "@edx/paragon": "^20.27.0",
     "prop-types": "^15.5.10",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^16.14.0 || ^17.0.0", 
+    "react-dom": "^16.14.0 || ^17.0.0"
   }
 }
