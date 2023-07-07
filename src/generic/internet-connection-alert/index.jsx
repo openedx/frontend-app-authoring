@@ -8,7 +8,7 @@ import AlertMessage from '../alert-message';
 import messages from './messages';
 
 const InternetConnectionAlert = ({
-  isQueryPending, dispatchMethod, onInternetConnectionFailed, onDispatchMethodCall,
+  isFailed, isQueryPending, dispatchMethod, onInternetConnectionFailed,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -28,18 +28,22 @@ const InternetConnectionAlert = ({
         window.removeEventListener(event, handleOnlineStatus);
       });
     };
-  }, []);
+  }, [isOnline]);
 
   useEffect(() => {
-    if (isQueryPending && !isOnline) {
+    if (!isOnline) {
       setShowAlert(true);
       onInternetConnectionFailed();
-    } else if (isQueryPending && isOnline) {
-      dispatch(dispatchMethod);
-      onDispatchMethodCall();
-      setShowAlert(false);
+      return;
     }
-  }, [isOnline, isQueryPending]);
+
+    if (isQueryPending) {
+      dispatch(dispatchMethod);
+      setShowAlert(false);
+    } else if (isFailed && !isOnline) {
+      setShowAlert(true);
+    }
+  }, [isOnline, isQueryPending, isFailed]);
 
   return (
     <AlertMessage
@@ -61,12 +65,13 @@ const InternetConnectionAlert = ({
 
 InternetConnectionAlert.defaultProps = {
   isQueryPending: false,
+
 };
 
 InternetConnectionAlert.propTypes = {
+  isFailed: PropTypes.bool.isRequired,
   isQueryPending: PropTypes.bool,
   dispatchMethod: PropTypes.func.isRequired,
-  onDispatchMethodCall: PropTypes.func.isRequired,
   onInternetConnectionFailed: PropTypes.func.isRequired,
 };
 
