@@ -13,6 +13,10 @@ const messages = defineMessages({
     id: 'course-authoring.schedule.alert.button.save',
     defaultMessage: 'Save changes',
   },
+  buttonSavingText: {
+    id: 'course-authoring.schedule.alert.button.saving',
+    defaultMessage: 'Saving',
+  },
   buttonCancelText: {
     id: 'course-authoring.schedule.alert.button.cancel',
     defaultMessage: 'Cancel',
@@ -80,6 +84,10 @@ const messages = defineMessages({
   errorMessage7: {
     id: 'course-authoring.schedule.schedule-section.error-message-7',
     defaultMessage: 'The course must have an assigned start date.',
+  },
+  errorMessage8: {
+    id: 'course-authoring.schedule.schedule-section.error-message-8',
+    defaultMessage: 'Please enter an integer between %(min)s and %(max)s.',
   },
 });
 

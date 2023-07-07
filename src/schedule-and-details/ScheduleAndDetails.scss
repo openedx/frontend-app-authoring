@@ -8,6 +8,8 @@
 @import "./schedule-section/certificate-display-row/CertificateDisplayRow";
 @import "./learning-outcomes-section/LearningOutcomes";
 @import "./instructors-section/InstructorsSection";
+@import "./requirements-section/RequirementsSection";
+@import "./license-section/LicenseSection";
 
 .section-container {
   &:not(:last-child) {

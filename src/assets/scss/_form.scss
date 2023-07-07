@@ -16,4 +16,14 @@
     width: 100%;
     justify-content: space-between;
   }
+
+  .form-group-custom_isInvalid {
+    input {
+      border-color: $form-feedback-invalid-color;
+    }
+  }
+
+  .feedback-error {
+    color: $form-feedback-invalid-color;
+  }
 }

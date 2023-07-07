@@ -15,11 +15,14 @@ const useSaveValuesPrompt = (
   const [showModifiedAlert, setShowModifiedAlert] = useState(false);
   const [showOverrideInternetConnectionAlert, setOverrideInternetConnectionAlert] = useState(false);
   const [isQueryPending, setIsQueryPending] = useState(false);
+  const [isEditableState, setIsEditableState] = useState(false);
   const [errorFields, setErrorFields] = useState({});
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setEditedValues(initialEditedData);
+    if (!isQueryPending) {
+      setEditedValues(initialEditedData);
+    }
   }, [initialEditedData]);
 
   useEffect(() => {
@@ -28,20 +31,24 @@ const useSaveValuesPrompt = (
   }, [editedValues]);
 
   const handleValuesChange = (value, fieldName) => {
+    setIsEditableState(true);
     setShowSuccessfulAlert(false);
     setOverrideInternetConnectionAlert(false);
 
-    if (!showModifiedAlert) {
-      setShowModifiedAlert(true);
-    }
+    if (editedValues[fieldName] !== value) {
+      setEditedValues((prevEditedValues) => ({
+        ...prevEditedValues,
+        [fieldName]: value || '',
+      }));
 
-    setEditedValues((prevEditedValues) => ({
-      ...prevEditedValues,
-      [fieldName]: value || '',
-    }));
+      if (!showModifiedAlert) {
+        setShowModifiedAlert(true);
+      }
+    }
   };
 
   const handleResetValues = () => {
+    setIsEditableState(false);
     setEditedValues(initialEditedData || {});
     setShowModifiedAlert(false);
     setShowSuccessfulAlert(false);
@@ -50,6 +57,7 @@ const useSaveValuesPrompt = (
 
   const handleUpdateValues = () => {
     setIsQueryPending(true);
+    setIsEditableState(false);
     setOverrideInternetConnectionAlert(true);
   };
 
@@ -61,16 +69,18 @@ const useSaveValuesPrompt = (
   };
 
   const handleDispatchMethodCall = () => {
-    setIsQueryPending(false);
-    setShowModifiedAlert(false);
     setOverrideInternetConnectionAlert(false);
   };
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
-      setShowModifiedAlert(false);
-      setShowSuccessfulAlert(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setIsQueryPending(false);
+
+      if (!isEditableState) {
+        setShowModifiedAlert(false);
+        setShowSuccessfulAlert(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   }, [savingStatus]);
 

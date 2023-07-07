@@ -96,6 +96,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
   const handleUpdateAdvancedSettingsData = () => {
     const isValid = validateAdvancedSettingsData(editedSettings, setErrorFields, setEditedSettings);
     if (isValid) {
+      setIsEditableState(false);
       setIsQueryPending(true);
     } else {
       setIsQueryPending(false);

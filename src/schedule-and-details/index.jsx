@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import { Container, Button, Layout } from '@edx/paragon';
+import {
+  Container, Button, Layout, StatefulButton,
+} from '@edx/paragon';
 import {
   CheckCircle as CheckCircleIcon,
   WarningFilled as WarningFilledIcon,
@@ -30,6 +32,8 @@ import PacingSection from './pacing-section';
 import ScheduleSection from './schedule-section';
 import LearningOutcomesSection from './learning-outcomes-section';
 import InstructorsSection from './instructors-section';
+import RequirementsSection from './requirements-section';
+import LicenseSection from './license-section';
 import ScheduleSidebar from './schedule-sidebar';
 import messages from './messages';
 import { useSaveValuesPrompt } from './hooks';
@@ -63,15 +67,19 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     upgradeDeadline,
     languageOptions,
     marketingEnabled,
+    licensingEnabled,
     aboutPageEditable,
     courseDisplayName,
     sidebarHtmlEnabled,
     lmsLinkForAboutPage,
     enrollmentEndEditable,
+    isEntranceExamsEnabled,
     creditEligibilityEnabled,
     shortDescriptionEditable,
     enableExtendedCourseDetails,
+    isPrerequisiteCoursesEnabled,
     mfeProctoredExamSettingsUrl,
+    possiblePreRequisiteCourses,
   } = courseSettings;
 
   const {
@@ -79,7 +87,9 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     courseId: courseNumber,
     run,
     title,
+    effort,
     endDate,
+    license,
     language,
     subtitle,
     overview,
@@ -94,9 +104,12 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     enrollmentStart,
     shortDescription,
     aboutSidebarHtml,
+    preRequisiteCourses,
+    entranceExamEnabled,
     courseImageAssetPath,
     bannerImageAssetPath,
     certificateAvailableDate,
+    entranceExamMinimumScorePct,
     certificatesDisplayBehavior,
     videoThumbnailImageAssetPath,
   } = editedValues;
@@ -112,7 +125,15 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
   }
 
   const showCreditSection = creditEligibilityEnabled && isCreditCourse;
+  const showRequirementsSection = aboutPageEditable || isPrerequisiteCoursesEnabled || isEntranceExamsEnabled;
   const hasErrors = !!Object.keys(errorFields).length;
+  const updateValuesButtonState = {
+    labels: {
+      default: intl.formatMessage(messages.buttonSaveText),
+      pending: intl.formatMessage(messages.buttonSavingText),
+    },
+    disabledStates: ['pending'],
+  };
   const alertWhileSavingTitle = hasErrors
     ? intl.formatMessage(messages.alertWarningOnSaveWithError)
     : intl.formatMessage(messages.alertWarning);
@@ -228,6 +249,26 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
                       />
                     </>
                   )}
+                  {showRequirementsSection && (
+                    <RequirementsSection
+                      effort={effort}
+                      errorFields={errorFields}
+                      aboutPageEditable={aboutPageEditable}
+                      entranceExamEnabled={entranceExamEnabled}
+                      preRequisiteCourses={preRequisiteCourses}
+                      isEntranceExamsEnabled={isEntranceExamsEnabled}
+                      possiblePreRequisiteCourses={possiblePreRequisiteCourses}
+                      entranceExamMinimumScorePct={entranceExamMinimumScorePct}
+                      isPrerequisiteCoursesEnabled={isPrerequisiteCoursesEnabled}
+                      onChange={handleValuesChange}
+                    />
+                  )}
+                  {licensingEnabled && (
+                    <LicenseSection
+                      license={license}
+                      onChange={handleValuesChange}
+                    />
+                  )}
                 </div>
               </article>
             </Layout.Element>
@@ -263,9 +304,11 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
             <Button variant="tertiary" onClick={handleResetValues}>
               {intl.formatMessage(messages.buttonCancelText)}
             </Button>,
-            <Button onClick={handleUpdateValues} disabled={hasErrors}>
-              {intl.formatMessage(messages.buttonSaveText)}
-            </Button>,
+            <StatefulButton
+              onClick={handleUpdateValues}
+              state={isQueryPending && 'pending'}
+              {...updateValuesButtonState}
+            />,
           ]}
           variant="warning"
           icon={WarningFilledIcon}
