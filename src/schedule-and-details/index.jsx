@@ -49,16 +49,16 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
 
   const {
     errorFields,
+    savingStatus,
     editedValues,
     isQueryPending,
+    isEditableState,
     showModifiedAlert,
     showSuccessfulAlert,
-    showOverrideInternetConnectionAlert,
     dispatch,
     handleResetValues,
     handleValuesChange,
     handleUpdateValues,
-    handleDispatchMethodCall,
     handleInternetConnectionFailed,
   } = useSaveValuesPrompt(intl, courseDetails);
 
@@ -281,12 +281,12 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
         </section>
       </Container>
       <div className="alert-toast">
-        {showOverrideInternetConnectionAlert && (
+        {!isEditableState && !showSuccessfulAlert && (
           <InternetConnectionAlert
+            isFailed={savingStatus === RequestStatus.FAILED}
             isQueryPending={isQueryPending}
             dispatchMethod={updateCourseDetailsQuery(courseId, editedValues)}
             onInternetConnectionFailed={handleInternetConnectionFailed}
-            onDispatchMethodCall={handleDispatchMethodCall}
           />
         )}
         <AlertMessage

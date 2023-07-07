@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { LICENSE_TYPE, LICENSE_COMMONS_OPTIONS } from './constants';
+import { LICENSE_TYPE, LICENSE_COMMONS_OPTIONS, creativeCommonsVersion } from './constants';
 import { generateLicenseURL } from './utils';
 
 const useLicenseDetails = (license, onChange) => {
@@ -31,7 +31,7 @@ const useLicenseDetails = (license, onChange) => {
 
       const updatedString = `${
         LICENSE_TYPE.creativeCommons
-      }: ver=4.0 ${orderedDetails.join(' ')}`;
+      }: ver=${creativeCommonsVersion} ${orderedDetails.join(' ')}`;
       onChange(updatedString, 'license');
     }
   };

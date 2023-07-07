@@ -10,7 +10,7 @@ import {
   Hyperlink,
 } from '@edx/paragon';
 
-import { LICENSE_TYPE, creativeCommonsURL } from '../constants';
+import { LICENSE_TYPE, creativeCommonsAboutURL } from '../constants';
 import messages from './messages';
 
 const LicenseSelector = ({ licenseType, onChangeLicenseType }) => {
@@ -45,7 +45,7 @@ const LicenseSelector = ({ licenseType, onChangeLicenseType }) => {
         </OverlayTrigger>
         {type === LICENSE_TYPE.creativeCommons && (
           <Hyperlink
-            destination={creativeCommonsURL}
+            destination={creativeCommonsAboutURL}
             target="_blank"
             showLaunchIcon={false}
           >

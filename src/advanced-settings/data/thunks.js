@@ -37,8 +37,13 @@ export function updateCourseAppSetting(courseId, settings) {
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
-      const { customAttributes: { httpErrorResponseData } } = error;
-      const errorData = JSON.parse(httpErrorResponseData);
+      let errorData;
+      try {
+        const { customAttributes: { httpErrorResponseData } } = error;
+        errorData = JSON.parse(httpErrorResponseData);
+      } catch (err) {
+        errorData = {};
+      }
 
       dispatch(getDataSendErrors(errorData));
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
