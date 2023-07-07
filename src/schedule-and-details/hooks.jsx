@@ -13,7 +13,6 @@ const useSaveValuesPrompt = (
   const [editedValues, setEditedValues] = useState(initialEditedData);
   const [showSuccessfulAlert, setShowSuccessfulAlert] = useState(false);
   const [showModifiedAlert, setShowModifiedAlert] = useState(false);
-  const [showOverrideInternetConnectionAlert, setOverrideInternetConnectionAlert] = useState(false);
   const [isQueryPending, setIsQueryPending] = useState(false);
   const [isEditableState, setIsEditableState] = useState(false);
   const [errorFields, setErrorFields] = useState({});
@@ -33,7 +32,6 @@ const useSaveValuesPrompt = (
   const handleValuesChange = (value, fieldName) => {
     setIsEditableState(true);
     setShowSuccessfulAlert(false);
-    setOverrideInternetConnectionAlert(false);
 
     if (editedValues[fieldName] !== value) {
       setEditedValues((prevEditedValues) => ({
@@ -52,24 +50,17 @@ const useSaveValuesPrompt = (
     setEditedValues(initialEditedData || {});
     setShowModifiedAlert(false);
     setShowSuccessfulAlert(false);
-    setOverrideInternetConnectionAlert(false);
   };
 
   const handleUpdateValues = () => {
     setIsQueryPending(true);
     setIsEditableState(false);
-    setOverrideInternetConnectionAlert(true);
   };
 
   const handleInternetConnectionFailed = () => {
     setShowModifiedAlert(false);
     setShowSuccessfulAlert(false);
     setIsQueryPending(false);
-    setOverrideInternetConnectionAlert(true);
-  };
-
-  const handleDispatchMethodCall = () => {
-    setOverrideInternetConnectionAlert(false);
   };
 
   useEffect(() => {
@@ -86,17 +77,17 @@ const useSaveValuesPrompt = (
 
   return {
     errorFields,
+    savingStatus,
     editedValues,
     isQueryPending,
+    isEditableState,
     showModifiedAlert,
     showSuccessfulAlert,
-    showOverrideInternetConnectionAlert,
     dispatch,
     setErrorFields,
     handleResetValues,
     handleValuesChange,
     handleUpdateValues,
-    handleDispatchMethodCall,
     handleInternetConnectionFailed,
   };
 };
