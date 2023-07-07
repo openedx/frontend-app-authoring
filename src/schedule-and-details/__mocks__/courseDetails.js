@@ -10,11 +10,11 @@ module.exports = {
   courseImageName: '',
   description: 'description',
   duration: '10h',
-  effort: null,
+  effort: '10h',
   endDate: null,
   enrollmentEnd: null,
   enrollmentStart: null,
-  entranceExamEnabled: '',
+  entranceExamEnabled: 'true',
   entranceExamId: '',
   entranceExamMinimumScorePct: '50',
   instructorInfo: {

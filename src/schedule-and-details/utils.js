@@ -45,6 +45,7 @@ const validateScheduleAndDetails = (courseDetails, intl) => {
     enrollmentEnd,
     enrollmentStart,
     certificateAvailableDate,
+    entranceExamMinimumScorePct,
     certificatesDisplayBehavior,
   } = courseDetails;
 
@@ -77,6 +78,13 @@ const validateScheduleAndDetails = (courseDetails, intl) => {
     && !certificateAvailableDate
   ) {
     errors.certificateAvailableDate = intl.formatMessage(messages.errorMessage1);
+  }
+
+  if (entranceExamMinimumScorePct) {
+    const number = Number(entranceExamMinimumScorePct);
+    if (Number.isNaN(number) || number < 1 || number > 100) {
+      errors.entranceExamMinimumScorePct = intl.formatMessage(messages.errorMessage8);
+    }
   }
 
   return errors;

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { Container, Button, Layout } from '@edx/paragon';
+import {
+  Container, Button, Layout, StatefulButton,
+} from '@edx/paragon';
 import { CheckCircle, Info, Warning } from '@edx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
@@ -35,8 +37,16 @@ const AdvancedSettings = ({ intl, courseId }) => {
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const loadingSettingsStatus = useSelector(getLoadingStatus);
   const [isQueryPending, setIsQueryPending] = useState(false);
+  const [isEditableState, setIsEditableState] = useState(false);
   const [showOverrideInternetConnectionAlert, setOverrideInternetConnectionAlert] = useState(false);
   const isLoading = loadingSettingsStatus === RequestStatus.IN_PROGRESS;
+  const updateSettingsButtonState = {
+    labels: {
+      default: intl.formatMessage(messages.buttonSaveText),
+      pending: intl.formatMessage(messages.buttonSavingText),
+    },
+    disabledStates: ['pending'],
+  };
 
   useEffect(() => {
     dispatch(fetchCourseAppSettings(courseId));
@@ -45,8 +55,13 @@ const AdvancedSettings = ({ intl, courseId }) => {
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
-      setShowSuccessAlert(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setIsQueryPending(false);
+
+      if (!isEditableState) {
+        showSaveSettingsPrompt(false);
+        setShowSuccessAlert(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     } else if (savingStatus === RequestStatus.FAILED) {
       setErrorFields(settingsWithSendErrors);
       showErrorModal(true);
@@ -63,6 +78,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
     if (!saveSettingsPrompt) {
       showSaveSettingsPrompt(true);
     }
+    setIsEditableState(true);
     setOverrideInternetConnectionAlert(false);
     setShowSuccessAlert(false);
     setEditedSettings((prevEditedSettings) => ({
@@ -72,6 +88,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
   };
 
   const handleResetSettingsValues = () => {
+    setIsEditableState(false);
     showErrorModal(false);
     setEditedSettings({});
     showSaveSettingsPrompt(false);
@@ -85,9 +102,9 @@ const AdvancedSettings = ({ intl, courseId }) => {
   const handleUpdateAdvancedSettingsData = () => {
     const isValid = validateAdvancedSettingsData(editedSettings, setErrorFields, setEditedSettings);
     if (isValid) {
+      setIsEditableState(false);
       setIsQueryPending(true);
       setOverrideInternetConnectionAlert(true);
-      showSaveSettingsPrompt(!saveSettingsPrompt);
     } else {
       setIsQueryPending(false);
       showSaveSettingsPrompt(false);
@@ -103,8 +120,6 @@ const AdvancedSettings = ({ intl, courseId }) => {
   };
 
   const handleDispatchMethodCall = () => {
-    setIsQueryPending(false);
-    showSaveSettingsPrompt(false);
     setOverrideInternetConnectionAlert(false);
   };
 
@@ -221,9 +236,11 @@ const AdvancedSettings = ({ intl, courseId }) => {
             <Button variant="tertiary" onClick={handleResetSettingsValues}>
               {intl.formatMessage(messages.buttonCancelText)}
             </Button>,
-            <Button onClick={handleUpdateAdvancedSettingsData}>
-              {intl.formatMessage(messages.buttonSaveText)}
-            </Button>,
+            <StatefulButton
+              onClick={handleUpdateAdvancedSettingsData}
+              state={isQueryPending && 'pending'}
+              {...updateSettingsButtonState}
+            />,
           ]}
           variant="warning"
           icon={Warning}
