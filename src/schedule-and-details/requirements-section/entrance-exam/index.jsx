@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
@@ -15,13 +15,8 @@ const EntranceExam = ({
   onChange,
 }) => {
   const { courseId } = useParams();
-  const initialEntranceExam = isCheckedString === 'true';
-  const [showEntranceExam, setShowEntranceExam] = useState(initialEntranceExam);
-
-  const toggleEntranceExam = () => {
-    onChange(showEntranceExam ? 'true' : 'false', 'entranceExamEnabled');
-    setShowEntranceExam(!showEntranceExam);
-  };
+  const showEntranceExam = isCheckedString === 'true';
+  const toggleEntranceExam = () => onChange((!showEntranceExam).toString(), 'entranceExamEnabled');
   const courseOutlineDestination = getPagePath(
     courseId,
     process.env.ENABLE_NEW_COURSE_OUTLINE_PAGE,

@@ -1,26 +1,28 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { RequestStatus } from '../data/constants';
 import { getSavingStatus } from './data/selectors';
-import { validateScheduleAndDetails } from './utils';
+import { validateScheduleAndDetails, updateWithDefaultValues } from './utils';
 
 const useSaveValuesPrompt = (
-  intl,
+  courseId,
+  updateDataQuery,
   initialEditedData = {},
 ) => {
+  const intl = useIntl();
+  const dispatch = useDispatch();
   const savingStatus = useSelector(getSavingStatus);
   const [editedValues, setEditedValues] = useState(initialEditedData);
   const [showSuccessfulAlert, setShowSuccessfulAlert] = useState(false);
   const [showModifiedAlert, setShowModifiedAlert] = useState(false);
-  const [showOverrideInternetConnectionAlert, setOverrideInternetConnectionAlert] = useState(false);
   const [isQueryPending, setIsQueryPending] = useState(false);
   const [isEditableState, setIsEditableState] = useState(false);
   const [errorFields, setErrorFields] = useState({});
-  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isQueryPending) {
+    if (!isQueryPending && !isEditableState) {
       setEditedValues(initialEditedData);
     }
   }, [initialEditedData]);
@@ -33,7 +35,6 @@ const useSaveValuesPrompt = (
   const handleValuesChange = (value, fieldName) => {
     setIsEditableState(true);
     setShowSuccessfulAlert(false);
-    setOverrideInternetConnectionAlert(false);
 
     if (editedValues[fieldName] !== value) {
       setEditedValues((prevEditedValues) => ({
@@ -52,51 +53,50 @@ const useSaveValuesPrompt = (
     setEditedValues(initialEditedData || {});
     setShowModifiedAlert(false);
     setShowSuccessfulAlert(false);
-    setOverrideInternetConnectionAlert(false);
   };
 
   const handleUpdateValues = () => {
     setIsQueryPending(true);
     setIsEditableState(false);
-    setOverrideInternetConnectionAlert(true);
   };
 
   const handleInternetConnectionFailed = () => {
     setShowModifiedAlert(false);
     setShowSuccessfulAlert(false);
     setIsQueryPending(false);
-    setOverrideInternetConnectionAlert(true);
   };
 
-  const handleDispatchMethodCall = () => {
-    setOverrideInternetConnectionAlert(false);
+  const handleQueryProcessing = () => {
+    setShowSuccessfulAlert(false);
+    dispatch(updateDataQuery(courseId, updateWithDefaultValues(editedValues)));
   };
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       setIsQueryPending(false);
+      setShowSuccessfulAlert(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
       if (!isEditableState) {
         setShowModifiedAlert(false);
-        setShowSuccessfulAlert(true);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
   }, [savingStatus]);
 
   return {
     errorFields,
+    savingStatus,
     editedValues,
     isQueryPending,
+    isEditableState,
     showModifiedAlert,
     showSuccessfulAlert,
-    showOverrideInternetConnectionAlert,
     dispatch,
     setErrorFields,
     handleResetValues,
     handleValuesChange,
     handleUpdateValues,
-    handleDispatchMethodCall,
+    handleQueryProcessing,
     handleInternetConnectionFailed,
   };
 };

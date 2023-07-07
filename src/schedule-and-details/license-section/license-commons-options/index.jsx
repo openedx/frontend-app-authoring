@@ -2,9 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow, Form, Stack,
-} from '@edx/paragon';
+import { ActionRow, Form, Stack } from '@edx/paragon';
 
 import { LICENSE_COMMONS_OPTIONS } from '../constants';
 import messages from './messages';
@@ -59,21 +57,20 @@ const LicenseCommonsOptions = ({ licenseDetails, onToggleCheckbox }) => {
         {optionDetails.map((option) => (
           <Form.Group
             key={option.id}
-            className={classNames('license-option', { 'license-option_clickable': !option.disabled })}
+            className={classNames('license-option', {
+              'license-option_clickable': !option.disabled,
+            })}
+            onClick={() => handleCheckboxClick(option)}
           >
-            <ActionRow
-              onClick={() => handleCheckboxClick(option)}
-            >
+            <ActionRow>
               <Form.Checkbox
                 checked={option.checked}
                 disabled={option.disabled}
-                onChange={() => handleCheckboxClick(option)}
-                className="p-1 col-2"
-              >
-                <p className="text-nowrap text-gray-700">
-                  <FormattedMessage {...option.label} />
-                </p>
-              </Form.Checkbox>
+                className="p-1"
+              />
+              <p className="col-2 text-gray-700 pl-0 ml-0">
+                <FormattedMessage {...option.label} />
+              </p>
               <ActionRow.Spacer />
               <p className="small mt-1 text-gray-700">
                 <FormattedMessage {...option.description} />

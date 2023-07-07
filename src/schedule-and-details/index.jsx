@@ -48,18 +48,19 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
 
   const {
     errorFields,
+    savingStatus,
     editedValues,
     isQueryPending,
+    isEditableState,
     showModifiedAlert,
     showSuccessfulAlert,
-    showOverrideInternetConnectionAlert,
     dispatch,
     handleResetValues,
     handleValuesChange,
     handleUpdateValues,
-    handleDispatchMethodCall,
+    handleQueryProcessing,
     handleInternetConnectionFailed,
-  } = useSaveValuesPrompt(intl, courseDetails);
+  } = useSaveValuesPrompt(courseId, updateCourseDetailsQuery, courseDetails);
 
   const {
     platformName,
@@ -282,12 +283,12 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
         </section>
       </Container>
       <div className="alert-toast">
-        {showOverrideInternetConnectionAlert && (
+        {!isEditableState && (
           <InternetConnectionAlert
+            isFailed={savingStatus === RequestStatus.FAILED}
             isQueryPending={isQueryPending}
-            dispatchMethod={updateCourseDetailsQuery(courseId, editedValues)}
+            onQueryProcessing={handleQueryProcessing}
             onInternetConnectionFailed={handleInternetConnectionFailed}
-            onDispatchMethodCall={handleDispatchMethodCall}
           />
         )}
         <AlertMessage
@@ -301,15 +302,17 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
           )}
           role="dialog"
           actions={[
-            <Button variant="tertiary" onClick={handleResetValues}>
-              {intl.formatMessage(messages.buttonCancelText)}
-            </Button>,
+            !isQueryPending && (
+              <Button variant="tertiary" onClick={handleResetValues}>
+                {intl.formatMessage(messages.buttonCancelText)}
+              </Button>
+            ),
             <StatefulButton
               onClick={handleUpdateValues}
               state={isQueryPending && 'pending'}
               {...updateValuesButtonState}
             />,
-          ]}
+          ].filter(Boolean)}
           variant="warning"
           icon={WarningFilledIcon}
           title={alertWhileSavingTitle}

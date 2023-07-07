@@ -1,4 +1,6 @@
-const creativeCommonsURL = 'https://creativecommons.org/about';
+const creativeCommonsAboutURL = 'https://creativecommons.org/about';
+const creativeCommonsLicensesURL = 'https://creativecommons.org/licenses';
+const creativeCommonsVersion = '4.0';
 
 const LICENSE_TYPE = {
   allRightsReserved: 'all-rights-reserved',
@@ -12,4 +14,6 @@ const LICENSE_COMMONS_OPTIONS = {
   shareAlike: 'SA',
 };
 
-export { creativeCommonsURL, LICENSE_TYPE, LICENSE_COMMONS_OPTIONS };
+export {
+  creativeCommonsAboutURL, LICENSE_TYPE, LICENSE_COMMONS_OPTIONS, creativeCommonsLicensesURL, creativeCommonsVersion,
+};
