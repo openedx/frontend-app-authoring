@@ -38,7 +38,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
   const loadingSettingsStatus = useSelector(getLoadingStatus);
   const [isQueryPending, setIsQueryPending] = useState(false);
   const [isEditableState, setIsEditableState] = useState(false);
-  const [showOverrideInternetConnectionAlert, setOverrideInternetConnectionAlert] = useState(false);
+  const [hasInternetConnectionError, setInternetConnectionError] = useState(false);
   const isLoading = loadingSettingsStatus === RequestStatus.IN_PROGRESS;
   const updateSettingsButtonState = {
     labels: {
@@ -62,7 +62,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
         setShowSuccessAlert(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    } else if (savingStatus === RequestStatus.FAILED) {
+    } else if (savingStatus === RequestStatus.FAILED && !hasInternetConnectionError) {
       setErrorFields(settingsWithSendErrors);
       showErrorModal(true);
     }
@@ -79,7 +79,6 @@ const AdvancedSettings = ({ intl, courseId }) => {
       showSaveSettingsPrompt(true);
     }
     setIsEditableState(true);
-    setOverrideInternetConnectionAlert(false);
     setShowSuccessAlert(false);
     setEditedSettings((prevEditedSettings) => ({
       ...prevEditedSettings,
@@ -92,7 +91,8 @@ const AdvancedSettings = ({ intl, courseId }) => {
     showErrorModal(false);
     setEditedSettings({});
     showSaveSettingsPrompt(false);
-    setOverrideInternetConnectionAlert(false);
+    setInternetConnectionError(false);
+    setIsQueryPending(false);
   };
 
   const handleSettingBlur = () => {
@@ -104,7 +104,6 @@ const AdvancedSettings = ({ intl, courseId }) => {
     if (isValid) {
       setIsEditableState(false);
       setIsQueryPending(true);
-      setOverrideInternetConnectionAlert(true);
     } else {
       setIsQueryPending(false);
       showSaveSettingsPrompt(false);
@@ -116,11 +115,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
     showSaveSettingsPrompt(false);
     setShowSuccessAlert(false);
     setIsQueryPending(false);
-    setOverrideInternetConnectionAlert(true);
-  };
-
-  const handleDispatchMethodCall = () => {
-    setOverrideInternetConnectionAlert(false);
+    setInternetConnectionError(true);
   };
 
   return (
@@ -218,12 +213,12 @@ const AdvancedSettings = ({ intl, courseId }) => {
         </section>
       </Container>
       <div className="alert-toast">
-        {showOverrideInternetConnectionAlert && (
+        {!isEditableState && !showSuccessAlert && (
           <InternetConnectionAlert
+            isFailed={savingStatus === RequestStatus.FAILED}
             isQueryPending={isQueryPending}
             dispatchMethod={updateCourseAppSetting(courseId, parseArrayOrObjectValues(editedSettings))}
             onInternetConnectionFailed={handleInternetConnectionFailed}
-            onDispatchMethodCall={handleDispatchMethodCall}
           />
         )}
         <AlertMessage
