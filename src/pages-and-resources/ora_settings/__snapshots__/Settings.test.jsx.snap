@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ORASettings should render 1`] = `
+<AppSettingsModal
+  appId="ora_settings"
+  hideAppToggle={true}
+  initialValues={
+    Object {
+      "enableFlexiblePeerGrade": "abitrary value",
+    }
+  }
+  onClose={[MockFunction onClose]}
+  onSettingsSave={[Function]}
+  title={
+    <div>
+      <p>
+        Configure open response assessment
+      </p>
+      <div
+        className="pt-3"
+      >
+        <withDeprecatedProps(Hyperlink)
+          className="text-primary-500 small"
+          destination="https://learnmore.test"
+          rel="noreferrer noopener"
+          target="_blank"
+        >
+          Learn more about open response assessment settings
+        </withDeprecatedProps(Hyperlink)>
+      </div>
+    </div>
+  }
+  validationSchema={
+    Object {
+      "enableFlexiblePeerGrade": "Yub.boolean",
+    }
+  }
+>
+  <Component />
+</AppSettingsModal>
+`;
