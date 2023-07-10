@@ -16,12 +16,6 @@ Its purpose is to provide both a framework and UI for new or replacement React-b
 Getting Started
 ************
 
-After copying the template repository, you'll want to do a find-and-replace to
-replace all instances of ``frontend-template-application`` with the name of
-your new repository.  Also edit index.html to replace "Application Template"
-with a friendly name for this application that users will see in their browser
-tab.
-
 Prerequisites
 =============
 
@@ -263,14 +257,14 @@ channel`_.
 For anything non-trivial, the best path is to open an issue in this repository
 with as many details about the issue you are facing as you can provide.
 
-https://github.com/openedx/frontend-template-application/issues
+https://github.com/openedx/frontend-app-learning/issues
 
 For more information about these options, see the `Getting Help`_ page.
 
 .. _Slack invitation: https://openedx.org/slack
 .. _community Slack workspace: https://openedx.slack.com/
 .. _#wg-frontend channel: https://openedx.slack.com/archives/C04BM6YC7A6
-.. _Getting Help: https://openedx.org/getting-help
+.. _Getting Help: https://openedx.org/community/connect
 
 License
 *******
