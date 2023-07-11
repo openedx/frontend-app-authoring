@@ -53,7 +53,7 @@ const Footer = ({
             {platformName === 'edX' ? (
               <Button
                 as="a"
-                href="https://partner.edx.org/"
+                href="https://partners.edx.org/"
                 size="sm"
                 data-testid="edXPortalButton"
               >
