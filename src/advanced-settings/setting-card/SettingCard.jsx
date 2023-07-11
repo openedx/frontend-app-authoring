@@ -5,6 +5,7 @@ import {
 import { Info, Warning } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { capitalize } from 'lodash';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import TextareaAutosize from 'react-textarea-autosize';
 
@@ -19,7 +20,7 @@ const SettingCard = ({
       <Card className="flex-column setting-card">
         <Card.Body className="d-flex justify-content-between">
           <Card.Header
-            title={displayName}
+            title={capitalize(displayName)}
             subtitle={(
               <OverlayTrigger
                 trigger="click"
