@@ -120,6 +120,7 @@ const getStyles = () => (
       font-size: 2em;
       line-height: 1.4em;
       margin: 0 0 1.41575em 0;
+      text-transform: initial;
   }
   .mce-content-body h2,
   .mce-content-body .hd-2 {
@@ -129,7 +130,7 @@ const getStyles = () => (
       font-weight: 300;
       font-size: 1.2em;
       line-height: 1.2em;
-      text-transform: uppercase;
+      text-transform: initial;
   }
   .mce-content-body h3,
   .mce-content-body .hd-3 {
