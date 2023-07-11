@@ -382,7 +382,7 @@
   "course-authoring.advanced-settings.sidebar.links.course-team": "Course team",
   "course-authoring.advanced-settings.sidebar.links.group-configurations": "Group configurations",
   "course-authoring.advanced-settings.button.deprecated": "Deprecated",
-  "course-authoring.advanced-settings.modal.error.title": "Validation Error While Saving",
+  "course-authoring.advanced-settings.modal.error.title": "Validation error while saving",
   "course-authoring.advanced-settings.modal.error.btn.change-manually": "Change manually",
   "course-authoring.advanced-settings.modal.error.btn.undo-changes": "Undo changes",
   "course-authoring.advanced-settings.modal.error.description": "There was {errorCounter} while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:",

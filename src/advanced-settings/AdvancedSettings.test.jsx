@@ -61,7 +61,10 @@ describe('<AdvancedSettings />', () => {
     const { getByText } = render(<RootWrapper />);
     await waitFor(() => {
       expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
-      expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
+      const advancedSettingsElement = getByText(messages.headingTitle.defaultMessage, {
+        selector: 'h2.sub-header-title',
+      });
+      expect(advancedSettingsElement).toBeInTheDocument();
       expect(getByText(messages.policy.defaultMessage)).toBeInTheDocument();
       expect(getByText(/Do not modify these policies unless you are familiar with their purpose./i)).toBeInTheDocument();
     });

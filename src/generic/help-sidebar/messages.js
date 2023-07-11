@@ -7,7 +7,7 @@ const messages = defineMessages({
   },
   sidebarLinkToScheduleAndDetails: {
     id: 'course-authoring.help-sidebar.links.schedule-and-details',
-    defaultMessage: 'Schedule & Details',
+    defaultMessage: 'Details & schedule',
     description: 'Link to Studio Schedule & Details page',
   },
   sidebarLinkToGrading: {
@@ -17,12 +17,12 @@ const messages = defineMessages({
   },
   sidebarLinkToCourseTeam: {
     id: 'course-authoring.help-sidebar.links.course-team',
-    defaultMessage: 'Course Team',
+    defaultMessage: 'Course team',
     description: 'Link to Studio Course Team page',
   },
   sidebarLinkToGroupConfigurations: {
     id: 'course-authoring.help-sidebar.links.group-configurations',
-    defaultMessage: 'Group Configurations',
+    defaultMessage: 'Group configurations',
     description: 'Link to Studio Group Configurations page',
   },
   sidebarLinkToProctoredExamSettings: {
@@ -32,7 +32,7 @@ const messages = defineMessages({
   },
   sidebarLinkToAdvancedSettings: {
     id: 'course-authoring.help-sidebar.links.advanced-settings',
-    defaultMessage: 'Advanced Settings',
+    defaultMessage: 'Advanced settings',
     description: 'Link to Advanced Settings',
   },
 });

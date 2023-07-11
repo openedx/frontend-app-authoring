@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert, Icon } from '@edx/paragon';
 import { Error } from '@edx/paragon/icons';
+import { capitalize } from 'lodash';
 
 import { transformKeysToCamelCase } from '../../utils';
 
@@ -11,7 +12,7 @@ const ModalErrorListItem = ({ settingName, settingsData }) => {
     <li className="modal-error-item">
       <Alert variant="danger">
         <h4 className="modal-error-item-title">
-          <Icon src={Error} />{displayName}:
+          <Icon src={Error} />{capitalize(displayName)}:
         </h4>
         <p className="m-0">{settingName.message}</p>
       </Alert>
