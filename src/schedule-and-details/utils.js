@@ -1,6 +1,7 @@
 import moment from 'moment';
 
 import { CERTIFICATE_DISPLAY_BEHAVIOR } from './schedule-section/certificate-display-row';
+import { defaultEntranceExamMinimumScorePct } from './constants';
 import messages from './messages';
 
 const DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ss\\Z';
@@ -90,8 +91,21 @@ const validateScheduleAndDetails = (courseDetails, intl) => {
   return errors;
 };
 
+const updateWithDefaultValues = (values) => {
+  const { entranceExamMinimumScorePct } = values;
+  if (entranceExamMinimumScorePct === '') {
+    return {
+      ...values,
+      entranceExamMinimumScorePct: defaultEntranceExamMinimumScorePct,
+    };
+  }
+
+  return values;
+};
+
 export {
-  validateScheduleAndDetails,
+  updateWithDefaultValues,
   convertToDateFromString,
   convertToStringFromDate,
+  validateScheduleAndDetails,
 };

@@ -39,7 +39,7 @@ const messages = defineMessages({
   },
   licenseCreativeOptionSADescription: {
     id: 'course-authoring.schedule-section.license.creative-commons.option.SA.description',
-    defaultMessage: 'Allow others to distribute derivative works only under a license identical to the license that governs your work. This option is incompatible with "No Derivatives"',
+    defaultMessage: 'Allow others to distribute derivative works only under a license identical to the license that governs your work. This option is incompatible with "No Derivatives".',
   },
 });
 
