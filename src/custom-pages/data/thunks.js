@@ -5,7 +5,7 @@ import {
   removeModel,
   updateModel,
   updateModels,
- } from '../../generic/model-store';
+} from '../../generic/model-store';
 import {
   getCustomPages,
   deleteCustomPage,

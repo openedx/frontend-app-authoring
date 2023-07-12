@@ -28,18 +28,18 @@ export const initialState = {
 };
 
 export const generateFetchPageApiResponse = () => ([{
-    type: 'static_tab',
-    title: null,
-    is_hideable: false,
-    is_hidden: false,
-    is_movable: true,
-    course_staff_only: false,
-    name: 'test',
-    tab_id: 'static_tab_1',
-    settings: {
-        url_slug: '1',
-    },
-    id: 'mOckID1',
+  type: 'static_tab',
+  title: null,
+  is_hideable: false,
+  is_hidden: false,
+  is_movable: true,
+  course_staff_only: false,
+  name: 'test',
+  tab_id: 'static_tab_1',
+  settings: {
+    url_slug: '1',
+  },
+  id: 'mOckID1',
 }]);
 
 export const generateXblockData = (

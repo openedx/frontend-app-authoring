@@ -56,11 +56,11 @@ const AdvancedSettings = ({ intl, courseId }) => {
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       setIsQueryPending(false);
+      setShowSuccessAlert(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
       if (!isEditableState) {
         showSaveSettingsPrompt(false);
-        setShowSuccessAlert(true);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } else if (savingStatus === RequestStatus.FAILED && !hasInternetConnectionError) {
       setErrorFields(settingsWithSendErrors);
@@ -102,8 +102,8 @@ const AdvancedSettings = ({ intl, courseId }) => {
   const handleUpdateAdvancedSettingsData = () => {
     const isValid = validateAdvancedSettingsData(editedSettings, setErrorFields, setEditedSettings);
     if (isValid) {
-      setIsEditableState(false);
       setIsQueryPending(true);
+      setIsEditableState(false);
     } else {
       setIsQueryPending(false);
       showSaveSettingsPrompt(false);
@@ -112,10 +112,22 @@ const AdvancedSettings = ({ intl, courseId }) => {
   };
 
   const handleInternetConnectionFailed = () => {
+    setInternetConnectionError(true);
     showSaveSettingsPrompt(false);
     setShowSuccessAlert(false);
     setIsQueryPending(false);
-    setInternetConnectionError(true);
+  };
+
+  const handleQueryProcessing = () => {
+    setShowSuccessAlert(false);
+    dispatch(updateCourseAppSetting(courseId, parseArrayOrObjectValues(editedSettings)));
+  };
+
+  const handleManuallyChangeClick = (setToState) => {
+    setIsEditableState(true);
+    showErrorModal(setToState);
+    showSaveSettingsPrompt(true);
+    setIsQueryPending(false);
   };
 
   return (
@@ -213,11 +225,11 @@ const AdvancedSettings = ({ intl, courseId }) => {
         </section>
       </Container>
       <div className="alert-toast">
-        {!isEditableState && !showSuccessAlert && (
+        {!isEditableState && (
           <InternetConnectionAlert
             isFailed={savingStatus === RequestStatus.FAILED}
             isQueryPending={isQueryPending}
-            dispatchMethod={updateCourseAppSetting(courseId, parseArrayOrObjectValues(editedSettings))}
+            onQueryProcessing={handleQueryProcessing}
             onInternetConnectionFailed={handleInternetConnectionFailed}
           />
         )}
@@ -228,15 +240,17 @@ const AdvancedSettings = ({ intl, courseId }) => {
           aria-describedby={intl.formatMessage(messages.alertWarningAriaDescribedby)}
           role="dialog"
           actions={[
-            <Button variant="tertiary" onClick={handleResetSettingsValues}>
-              {intl.formatMessage(messages.buttonCancelText)}
-            </Button>,
+            !isQueryPending && (
+              <Button variant="tertiary" onClick={handleResetSettingsValues}>
+                {intl.formatMessage(messages.buttonCancelText)}
+              </Button>
+            ),
             <StatefulButton
               onClick={handleUpdateAdvancedSettingsData}
               state={isQueryPending && 'pending'}
               {...updateSettingsButtonState}
             />,
-          ]}
+          ].filter(Boolean)}
           variant="warning"
           icon={Warning}
           title={intl.formatMessage(messages.alertWarning)}
@@ -245,7 +259,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
       </div>
       <ModalError
         isError={errorModal}
-        showErrorModal={showErrorModal}
+        showErrorModal={(setToState) => handleManuallyChangeClick(setToState)}
         handleUndoChanges={handleResetSettingsValues}
         settingsData={advancedSettingsData}
         errorList={errorFields.length > 0 ? errorFields : []}
