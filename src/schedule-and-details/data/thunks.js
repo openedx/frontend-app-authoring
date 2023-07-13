@@ -33,8 +33,8 @@ export function updateCourseDetailsQuery(courseId, details) {
 
     try {
       const detailsValues = await updateCourseDetails(courseId, details);
-      dispatch(updateCourseDetailsSuccess(detailsValues));
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+      dispatch(updateCourseDetailsSuccess(detailsValues));
       return true;
     } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));

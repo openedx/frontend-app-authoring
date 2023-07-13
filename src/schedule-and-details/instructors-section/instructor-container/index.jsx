@@ -92,7 +92,7 @@ const InstructorContainer = ({
       </Card.Body>
       <Card.Divider />
       <Card.Footer className="p-0 mt-2.5">
-        <Button variant="danger" onClick={() => onDelete(idx)}>
+        <Button variant="outline-danger" onClick={() => onDelete(idx)}>
           {intl.formatMessage(messages.instructorDelete)}
         </Button>
       </Card.Footer>

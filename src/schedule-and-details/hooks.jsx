@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { RequestStatus } from '../data/constants';
 import { getSavingStatus } from './data/selectors';
-import { validateScheduleAndDetails } from './utils';
+import { validateScheduleAndDetails, updateWithDefaultValues } from './utils';
 
 const useSaveValuesPrompt = (
-  intl,
+  courseId,
+  updateDataQuery,
   initialEditedData = {},
 ) => {
+  const intl = useIntl();
+  const dispatch = useDispatch();
   const savingStatus = useSelector(getSavingStatus);
   const [editedValues, setEditedValues] = useState(initialEditedData);
   const [showSuccessfulAlert, setShowSuccessfulAlert] = useState(false);
@@ -16,10 +20,9 @@ const useSaveValuesPrompt = (
   const [isQueryPending, setIsQueryPending] = useState(false);
   const [isEditableState, setIsEditableState] = useState(false);
   const [errorFields, setErrorFields] = useState({});
-  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isQueryPending) {
+    if (!isQueryPending && !isEditableState) {
       setEditedValues(initialEditedData);
     }
   }, [initialEditedData]);
@@ -63,14 +66,19 @@ const useSaveValuesPrompt = (
     setIsQueryPending(false);
   };
 
+  const handleQueryProcessing = () => {
+    setShowSuccessfulAlert(false);
+    dispatch(updateDataQuery(courseId, updateWithDefaultValues(editedValues)));
+  };
+
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       setIsQueryPending(false);
+      setShowSuccessfulAlert(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
       if (!isEditableState) {
         setShowModifiedAlert(false);
-        setShowSuccessfulAlert(true);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
   }, [savingStatus]);
@@ -88,6 +96,7 @@ const useSaveValuesPrompt = (
     handleResetValues,
     handleValuesChange,
     handleUpdateValues,
+    handleQueryProcessing,
     handleInternetConnectionFailed,
   };
 };
