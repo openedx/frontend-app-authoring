@@ -149,7 +149,7 @@ In Studio, a new item ("Proctored Exam Settings") is added to "Other Course Sett
 Developing
 **********
 
-`Devstack <https://edx.readthedocs.io/projects/edx-installing-configuring-and-running/en/latest/installation/index.html>`_.  If you start Devstack with ``make dev.up.studio`` that should give you everything you need as a companion to this frontend.
+`Devstack <https://edx.readthedocs.io/projects/edx-installing-configuring-and-running/en/latest/installation/index.html>`_.  If you start Devstack with ``make dev.up.cms`` that should give you everything you need as a companion to this frontend.
 
 Installation and Startup
 ========================
