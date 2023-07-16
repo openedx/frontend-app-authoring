@@ -9,8 +9,26 @@ import { courseSettingsMock, courseDetailsMock } from '../__mocks__';
 import messages from './messages';
 import IntroducingSection from '.';
 
-let store;
+// Mock the tinymce lib
+jest.mock('@tinymce/tinymce-react', () => {
+  const originalModule = jest.requireActual('@tinymce/tinymce-react');
+  return {
+    __esModule: true,
+    ...originalModule,
+    Editor: () => 'foo bar',
+  };
+});
 
+// Mock the TinyMceWidget from frontend-lib-content-components
+jest.mock('@edx/frontend-lib-content-components', () => ({
+  TinyMceWidget: () => <div>Widget</div>,
+  prepareEditorRef: jest.fn(() => ({
+    refReady: true,
+    setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),
+  })),
+}));
+
+let store;
 const onChangeMock = jest.fn();
 const RootWrapper = (props) => (
   <IntlProvider locale="en">

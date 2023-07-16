@@ -8,9 +8,9 @@ import {
 import { Form, Hyperlink } from '@edx/paragon';
 
 import CourseUploadImage from '../../generic/course-upload-image';
+import { Wysiwyg } from '../../generic/Wysiwyg';
 import ScheduleSubHeader from '../schedule-sub-header';
 import IntroductionVideo from './introduction-video';
-import CourseCodeEditor from './course-code-editor';
 import ExtendedCourseDetails from './extended-course-details';
 import messages from './messages';
 
@@ -109,21 +109,23 @@ const IntroducingSection = ({
       )}
       {aboutPageEditable && (
         <>
-          <CourseCodeEditor
-            code={overview}
-            field="overview"
-            label={intl.formatMessage(messages.courseOverviewLabel)}
-            helpText={overviewHelpText}
-            onChange={onChange}
-          />
-          {sidebarHtmlEnabled && (
-            <CourseCodeEditor
-              code={aboutSidebarHtml}
-              field="aboutSidebarHtml"
-              label={intl.formatMessage(messages.courseAboutSidebarLabel)}
-              helpText={aboutSidebarHelpText}
-              onChange={onChange}
+          <Form.Group className="form-group-custom">
+            <Form.Label>{intl.formatMessage(messages.courseOverviewLabel)}</Form.Label>
+            <Wysiwyg
+              initialValue={overview}
+              onChange={(value) => onChange(value, 'overview')}
             />
+            <Form.Control.Feedback>{overviewHelpText}</Form.Control.Feedback>
+          </Form.Group>
+          {sidebarHtmlEnabled && (
+            <Form.Group className="form-group-custom">
+              <Form.Label>{intl.formatMessage(messages.courseAboutSidebarLabel)}</Form.Label>
+              <Wysiwyg
+                initialValue={aboutSidebarHtml}
+                onChange={(value) => onChange(value, 'aboutSidebarHtml')}
+              />
+              <Form.Control.Feedback>{aboutSidebarHelpText}</Form.Control.Feedback>
+            </Form.Group>
           )}
           <CourseUploadImage
             label={intl.formatMessage(messages.courseCardImageLabel)}
