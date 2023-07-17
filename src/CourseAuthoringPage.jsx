@@ -40,7 +40,7 @@ AppHeader.defaultProps = {
 const AppFooter = () => (
   <div className="mt-6">
     <Footer
-      marketingBaseUrl={process.env.MARKETING_BASE_URL}
+      marketingBaseUrl={process.env.MARKETING_SITE_BASE_URL}
       termsOfServiceUrl={process.env.TERMS_OF_SERVICE_URL}
       privacyPolicyUrl={process.env.PRIVACY_POLICY_URL}
       supportEmail={process.env.SUPPORT_EMAIL}
