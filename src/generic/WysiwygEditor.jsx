@@ -25,7 +25,7 @@ const mapStateToProps = () => ({
 
 const Editor = connect(mapStateToProps)(TinyMceWidget);
 
-export const Wysiwyg = ({ initialValue, editorType, onChange }) => {
+export const WysiwygEditor = ({ initialValue, editorType, onChange }) => {
   const defaultEmptyTextValue = '<p>&nbsp;</p>';
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
 
@@ -39,7 +39,7 @@ export const Wysiwyg = ({ initialValue, editorType, onChange }) => {
     && (initialValue !== defaultEmptyTextValue || value !== '');
 
   const handleUpdate = (value, editor) => {
-    // With bookmarks we keep the current cursor position at the end of the line
+    // With bookmarks keep the current cursor position at the end of the line
     // and it inserts new content only at the end of the line.
     const bm = editor.selection.getBookmark();
     const existingContent = editor.getContent({ format: 'raw' });
@@ -68,12 +68,12 @@ export const Wysiwyg = ({ initialValue, editorType, onChange }) => {
   );
 };
 
-Wysiwyg.defaultProps = {
+WysiwygEditor.defaultProps = {
   initialValue: '',
   editorType: SUPPORTED_TEXT_EDITORS.text,
 };
 
-Wysiwyg.propTypes = {
+WysiwygEditor.propTypes = {
   initialValue: PropTypes.string,
   editorType: PropTypes.oneOf(Object.values(SUPPORTED_TEXT_EDITORS)),
   onChange: PropTypes.func.isRequired,

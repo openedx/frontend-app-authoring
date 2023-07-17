@@ -8,7 +8,7 @@ import {
 import { Form, Hyperlink } from '@edx/paragon';
 
 import CourseUploadImage from '../../generic/course-upload-image';
-import { Wysiwyg } from '../../generic/Wysiwyg';
+import { WysiwygEditor } from '../../generic/WysiwygEditor';
 import ScheduleSubHeader from '../schedule-sub-header';
 import IntroductionVideo from './introduction-video';
 import ExtendedCourseDetails from './extended-course-details';
@@ -111,7 +111,7 @@ const IntroducingSection = ({
         <>
           <Form.Group className="form-group-custom">
             <Form.Label>{intl.formatMessage(messages.courseOverviewLabel)}</Form.Label>
-            <Wysiwyg
+            <WysiwygEditor
               initialValue={overview}
               onChange={(value) => onChange(value, 'overview')}
             />
@@ -120,7 +120,7 @@ const IntroducingSection = ({
           {sidebarHtmlEnabled && (
             <Form.Group className="form-group-custom">
               <Form.Label>{intl.formatMessage(messages.courseAboutSidebarLabel)}</Form.Label>
-              <Wysiwyg
+              <WysiwygEditor
                 initialValue={aboutSidebarHtml}
                 onChange={(value) => onChange(value, 'aboutSidebarHtml')}
               />
