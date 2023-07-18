@@ -388,5 +388,6 @@
   "course-authoring.advanced-settings.modal.error.description": "There was {errorCounter} while trying to save the course settings in the database. Please check the following validation feedbacks and reflect them in your course settings:",
   "course-authoring.advanced-settings.policies.description": "{notice} Do not modify these policies unless you are familiar with their purpose.",
   "course-authoring.advanced-settings.deprecated.button.text": "{visibility} Deprecated Settings",
-  "course-authoring.advanced-settings.button.help": "Show help text"
+  "course-authoring.advanced-settings.button.help": "Show help text",
+  "course-authoring.advanced-settings.alert.button.saving": "Saving"
 }
