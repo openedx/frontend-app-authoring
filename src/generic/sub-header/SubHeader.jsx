@@ -23,14 +23,18 @@ const SubHeader = ({
 
 SubHeader.defaultProps = {
   instruction: '',
+  description: '',
 };
 
 SubHeader.propTypes = {
   title: PropTypes.string.isRequired,
   subtitle: PropTypes.string.isRequired,
   contentTitle: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  instruction: PropTypes.string,
+  description: PropTypes.string,
+  instruction: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.string,
+  ]),
 };
 
 export default SubHeader;
