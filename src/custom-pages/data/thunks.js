@@ -24,7 +24,6 @@ import {
   addCustomPageSuccess,
 } from './slice';
 
-/* eslint-disable import/prefer-default-export */
 export function fetchCustomPages(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
