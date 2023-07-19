@@ -11,7 +11,7 @@ import MockAdapter from 'axios-mock-adapter';
 import initializeStore from '../store';
 import { courseDetailsMock, courseSettingsMock } from './__mocks__';
 import { getCourseDetailsApiUrl, getCourseSettingsApiUrl } from './data/api';
-import { DATE_FORMAT } from './schedule-section/datepicker-control/constants';
+import { DATE_FORMAT } from '../constants';
 import creditMessages from './credit-section/messages';
 import pacingMessages from './pacing-section/messages';
 import basicMessages from './basic-section/messages';
