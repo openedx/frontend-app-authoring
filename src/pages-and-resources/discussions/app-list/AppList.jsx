@@ -26,8 +26,8 @@ const AppList = ({ intl }) => {
   const ltiProvider = !['openedx', 'legacy'].includes(activeAppId);
 
   const showOneEdxProvider = useMemo(() => apps.filter(app => (
-      activeAppId === 'openedx' ? app.id !== 'legacy' : app.id !== 'openedx'
-    )), [activeAppId]);
+    activeAppId === 'openedx' ? app.id !== 'legacy' : app.id !== 'openedx'
+  )), [activeAppId]);
 
   // This could be a bit confusing.  activeAppId is the ID of the app that is currently configured
   // according to the server.  selectedAppId is the ID of the app that we _want_ to configure here

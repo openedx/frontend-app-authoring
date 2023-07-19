@@ -5,8 +5,8 @@ import messages from './messages';
 import FormikControl from '../../generic/FormikControl';
 
 const LiveCommonFields = ({
- intl,
- values,
+  intl,
+  values,
 }) => (
   <>
     <p className="pb-2">{intl.formatMessage(messages.formInstructions)}</p>
@@ -32,7 +32,7 @@ const LiveCommonFields = ({
       type="input"
     />
   </>
-  );
+);
 
 LiveCommonFields.propTypes = {
   intl: intlShape.isRequired,

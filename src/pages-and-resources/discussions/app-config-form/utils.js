@@ -49,10 +49,10 @@ export const decodeDateTime = (date, time) => {
 
 export const sortRestrictedDatesByStatus = (data, status, order) => (
   _.orderBy(
-data.filter(date => date.status === status),
+    data.filter(date => date.status === status),
     [(obj) => decodeDateTime(obj.startDate, startOfDayTime(obj.startTime))],
-[order],
-)
+    [order],
+  )
 );
 
 export const formatRestrictedDates = ({

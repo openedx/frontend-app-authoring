@@ -2,7 +2,7 @@
 const { createConfig } = require('@edx/frontend-build');
 
 module.exports = createConfig(
-'eslint',
+  'eslint',
   {
     rules: {
       'jsx-a11y/label-has-associated-control': [2, {
@@ -10,7 +10,7 @@ module.exports = createConfig(
       }],
       'template-curly-spacing': 'off',
       'react-hooks/exhaustive-deps': 'off',
-      indent: 'off',
+      indent: ['error', 2],
       'no-restricted-exports': 'off',
     },
   },

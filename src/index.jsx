@@ -15,9 +15,10 @@ import Placeholder from '@edx/frontend-lib-content-components';
 import messages from './i18n';
 
 import initializeStore from './store';
-import './index.scss';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
+
+import './index.scss';
 
 const App = () => {
   useEffect(() => {
@@ -41,7 +42,7 @@ const App = () => {
         <Route path="/home">
           {process.env.ENABLE_NEW_HOME_PAGE === 'true'
               && (
-              <Placeholder />
+                <Placeholder />
               )}
         </Route>
         <Route

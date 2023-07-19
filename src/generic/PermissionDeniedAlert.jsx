@@ -9,6 +9,6 @@ const PermissionDeniedAlert = () => (
       defaultMessage="You are not authorized to view this page. If you feel you should have access, please reach out to your course team admin to be given access."
     />
   </Alert>
-  );
+);
 
 export default PermissionDeniedAlert;

@@ -57,7 +57,7 @@ const mockStore = async () => {
   await executeThunk(fetchCustomPages(courseId), store.dispatch);
   await executeThunk(addSingleCustomPage(courseId), store.dispatch);
   await executeThunk(updatePageOrder(courseId, [{ id: 'mOckID2' }, { id: 'mOckID1' }]), store.dispatch);
- };
+};
 
 describe('CustomPages', () => {
   beforeEach(async () => {

@@ -3,7 +3,9 @@ import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery } from 'react-responsive';
 import * as Yup from 'yup';
+import { snakeCase } from 'lodash/string';
 
+import { getConfig } from '@edx/frontend-platform';
 import { RequestStatus } from './data/constants';
 import { getCourseAppSettingValue, getLoadingStatus } from './pages-and-resources/data/selectors';
 import { fetchCourseAppSettings, updateCourseAppSetting } from './pages-and-resources/data/thunks';
@@ -23,6 +25,48 @@ export function useIsMobile() {
 
 export function useIsDesktop() {
   return useMediaQuery({ query: '(min-width: 992px)' });
+}
+
+export function convertObjectToSnakeCase(obj) {
+  return Object.keys(obj).reduce((snakeCaseObj, key) => {
+    const snakeCaseKey = snakeCase(key);
+    return {
+      ...snakeCaseObj,
+      [snakeCaseKey]: { value: obj[key] },
+    };
+  }, {});
+}
+
+export function transformKeysToCamelCase(obj) {
+  return obj.key.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
+}
+
+export function parseArrayOrObjectValues(obj) {
+  const result = {};
+
+  Object.entries(obj).forEach(([key, value]) => {
+    try {
+      if (!Number.isNaN(Number(value))) {
+        result[key] = value;
+      } else {
+        result[key] = JSON.parse(value);
+      }
+    } catch (e) {
+      result[key] = value;
+    }
+  });
+
+  return result;
+}
+
+export function getPagePath(courseId, isMfePageEnabled, urlParameter) {
+  if (isMfePageEnabled === 'true') {
+    if (urlParameter === 'tabs') {
+      return `${getConfig().BASE_URL}/course/${courseId}/pages-and-resources`;
+    }
+    return `${getConfig().BASE_URL}/course/${courseId}/${urlParameter}`;
+  }
+  return `${getConfig().STUDIO_BASE_URL}/${urlParameter}/${courseId}`;
 }
 
 export function useAppSetting(settingName) {

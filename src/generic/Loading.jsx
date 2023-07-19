@@ -6,8 +6,8 @@ const Loading = () => (
   <div
     className="d-flex justify-content-center align-items-center flex-column"
     style={{
-        height: '50vh',
-      }}
+      height: '100vh',
+    }}
   >
     <Spinner
       animation="border"
@@ -21,9 +21,9 @@ const Loading = () => (
             description="Screen-reader message for when a page is loading."
           />
         </span>
-        )}
+      )}
     />
   </div>
-  );
+);
 
 export default Loading;

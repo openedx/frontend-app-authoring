@@ -75,7 +75,7 @@ const mockStore = async ({
     blockId,
     metadata: { courseStaffOnly: visibility },
   }), store.dispatch);
- };
+};
 
 describe('CustomPageCard', () => {
   beforeEach(async () => {

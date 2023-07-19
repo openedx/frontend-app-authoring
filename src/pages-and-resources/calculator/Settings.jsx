@@ -15,7 +15,7 @@ const CalculatorSettings = ({ intl, onClose }) => (
     learnMoreText={intl.formatMessage(messages.enableCalculatorLink)}
     onClose={onClose}
   />
-  );
+);
 
 CalculatorSettings.propTypes = {
   intl: intlShape.isRequired,

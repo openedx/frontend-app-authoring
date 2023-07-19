@@ -11,15 +11,15 @@ const ConnectionErrorAlert = ({ intl }) => (
       id="authoring.alert.error.connection"
       defaultMessage="We encountered a technical error when loading this page. This might be a temporary issue, so please try again in a few minutes. If the problem persists, please go to the {supportLink} for help."
       values={{
-          supportLink: (
-            <Alert.Link href={getConfig().SUPPORT_URL}>
-              {intl.formatMessage(messages.supportText)}
-            </Alert.Link>
-          ),
-        }}
+        supportLink: (
+          <Alert.Link href={getConfig().SUPPORT_URL}>
+            {intl.formatMessage(messages.supportText)}
+          </Alert.Link>
+        ),
+      }}
     />
   </Alert>
-  );
+);
 
 ConnectionErrorAlert.propTypes = {
   intl: intlShape.isRequired,

@@ -1,5 +1,5 @@
 import {
- GoogleMeet, MicrosoftTeams, Zoom, Bbb,
+  GoogleMeet, MicrosoftTeams, Zoom, Bbb,
 } from '@edx/paragon/icons';
 
 export const iconsSrc = {
