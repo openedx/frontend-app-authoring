@@ -27,3 +27,53 @@
     color: $form-feedback-invalid-color;
   }
 }
+
+.datepicker-custom {
+  margin: 0;
+
+  .datepicker-custom-control {
+    display: block;
+    width: 100%;
+    font-size: $input-font-size;
+    font-weight: $input-font-weight;
+    line-height: $input-line-height;
+    background: $input-bg;
+    border: $input-border-width solid $input-border-color $input-box-shadow;
+    border-radius: $input-border-radius;
+    color: $input-color;
+    padding: $input-padding-y $input-padding-x;
+    height: $input-height;
+    resize: none;
+
+    &:focus,
+    :focus-visible {
+      color: $input-focus-color;
+      background-color: $input-bg;
+      border-color: $input-focus-border-color;
+      box-shadow: $input-focus-box-shadow;
+      outline: 0;
+    }
+
+    &::placeholder {
+      color: $input-placeholder-color;
+    }
+  }
+
+  .datepicker-custom-control_readonly {
+    border-color: transparent;
+    background: $input-disabled-bg;
+  }
+
+  .datepicker-custom-control_isInvalid {
+    border-color: $form-feedback-invalid-color;
+  }
+
+  .datepicker-custom-control-icon {
+    position: absolute;
+    z-index: 2;
+    right: 1.188rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $black;
+  }
+}

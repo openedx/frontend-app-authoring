@@ -1,18 +1,6 @@
-import moment from 'moment';
-
 import { CERTIFICATE_DISPLAY_BEHAVIOR } from './schedule-section/certificate-display-row';
 import { defaultEntranceExamMinimumScorePct } from './constants';
 import messages from './messages';
-
-const DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ss\\Z';
-
-const convertToDateFromString = (dateStr) => {
-  if (!dateStr) {
-    return '';
-  }
-
-  return moment(dateStr).utc().toDate();
-};
 
 const isDateBeforeOrEqual = (
   dateFormer,
@@ -28,14 +16,6 @@ const isDateBeforeOrEqual = (
   }
 
   return new Date(dateFormer) <= new Date(dateLatter);
-};
-
-const convertToStringFromDate = (date) => {
-  if (!date) {
-    return '';
-  }
-
-  return moment(date).utc().format(DATE_TIME_FORMAT);
 };
 
 const validateScheduleAndDetails = (courseDetails, intl) => {
@@ -103,9 +83,4 @@ const updateWithDefaultValues = (values) => {
   return values;
 };
 
-export {
-  updateWithDefaultValues,
-  convertToDateFromString,
-  convertToStringFromDate,
-  validateScheduleAndDetails,
-};
+export { updateWithDefaultValues, validateScheduleAndDetails };

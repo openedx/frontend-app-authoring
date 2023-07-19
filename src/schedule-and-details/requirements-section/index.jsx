@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form, Dropdown } from '@edx/paragon';
 
-import { TIME_FORMAT } from '../schedule-section/datepicker-control/constants';
+import { TIME_FORMAT } from '../../constants';
 import ScheduleSubHeader from '../schedule-sub-header';
 import EntranceExam from './entrance-exam';
 import messages from './messages';
