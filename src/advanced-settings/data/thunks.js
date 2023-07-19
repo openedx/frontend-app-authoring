@@ -22,7 +22,11 @@ export function fetchCourseAppSettings(courseId) {
       dispatch(fetchCourseAppsSettingsSuccess(settingValues));
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateLoadingStatus({ status: RequestStatus.FAILED }));
+      if (error.response && error.response.status === 403) {
+        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.DENIED }));
+      } else {
+        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
+      }
     }
   };
 }

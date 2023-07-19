@@ -38,9 +38,10 @@ export function fetchCustomPages(courseId) {
       dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       if (error.response && error.response.status === 403) {
-        dispatch(updateCustomPagesApiStatus({ status: RequestStatus.DENIED }));
+        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.DENIED }));
+      } else {
+        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
       }
-      dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
     }
   };
 }

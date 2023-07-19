@@ -18,7 +18,7 @@ import {
   ModalDialog,
 } from '@edx/paragon';
 import { Add, SpinnerSimple } from '@edx/paragon/icons';
-import {
+import Placeholder, {
   DraggableList,
   SortableItem,
   ErrorAlert,
@@ -96,13 +96,18 @@ const CustomPages = ({
     },
     disabledStates: ['pending'],
   };
-
   useEffect(() => { setOrderedPages(pages); }, [customPagesIds, savingStatus]);
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return (<></>);
   }
-
+  if (loadingStatus === RequestStatus.DENIED) {
+    return (
+      <div className="row justify-contnt-center m-6">
+        <Placeholder />
+      </div>
+    );
+  }
   return (
     <CustomPagesProvider courseId={courseId}>
       <main className="container container-mw-xl p-4 pt-5">
