@@ -9,6 +9,7 @@ import { selectors } from '../../../../../../data/redux';
 import thumbnailMessages from '../ThumbnailWidget/messages';
 import hooks from './hooks';
 import LanguageNamesWidget from './LanguageNamesWidget';
+import videoThumbnail from '../../../../../../data/images/videoThumbnail.svg';
 
 export const VideoPreviewWidget = ({
   thumbnail,
@@ -19,6 +20,7 @@ export const VideoPreviewWidget = ({
 }) => {
   const imgRef = React.useRef();
   const videoType = intl.formatMessage(hooks.getVideoType(videoSource));
+  const thumbnailImage = thumbnail || videoThumbnail;
 
   return (
     <Collapsible.Advanced
@@ -30,9 +32,9 @@ export const VideoPreviewWidget = ({
         <div className="d-flex flex-row">
           <Image
             thumbnail
-            className="mr-3"
+            className="mr-3 p-4"
             ref={imgRef}
-            src={thumbnail}
+            src={thumbnailImage}
             alt={intl.formatMessage(thumbnailMessages.thumbnailAltText)}
             style={{
               maxWidth: '200px',

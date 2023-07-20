@@ -676,10 +676,9 @@ describe('uploadVideo', () => {
   let setLoadSpinner;
   let postUploadRedirect;
   let dispatchedAction;
-  const supportedFiles = [
-    new File(['content1'], 'file1.mp4', { type: 'video/mp4' }),
-    new File(['content2'], 'file2.mov', { type: 'video/quicktime' }),
-  ];
+  const fileData = new FormData();
+  fileData.append('file', new File(['content1'], 'file1.mp4', { type: 'video/mp4' }));
+  const supportedFiles = [fileData];
 
   beforeEach(() => {
     dispatch = jest.fn((action) => ({ dispatch: action }));
@@ -693,7 +692,6 @@ describe('uploadVideo', () => {
     const data = {
       files: [
         { file_name: 'file1.mp4', content_type: 'video/mp4' },
-        { file_name: 'file2.mov', content_type: 'video/quicktime' },
       ],
     };
 
@@ -711,7 +709,6 @@ describe('uploadVideo', () => {
     const response = {
       files: [
         { file_name: 'file1.mp4', upload_url: 'http://example.com/put_video1' },
-        { file_name: 'file2.mov', upload_url: 'http://example.com/put_video2' },
       ],
     };
     const mockRequestResponse = { data: response };
@@ -720,12 +717,13 @@ describe('uploadVideo', () => {
 
     dispatchedAction.uploadVideo.onSuccess(mockRequestResponse);
 
-    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch).toHaveBeenCalledTimes(1);
     response.files.forEach(({ upload_url: uploadUrl }, index) => {
       expect(fetch.mock.calls[index][0]).toEqual(uploadUrl);
     });
     supportedFiles.forEach((file, index) => {
-      expect(fetch.mock.calls[index][1].body.get('uploaded-file')).toBe(file);
+      const fileDataTest = file.get('file');
+      expect(fetch.mock.calls[index][1].body.get('uploaded-file')).toBe(fileDataTest);
     });
   });
 
@@ -741,7 +739,7 @@ describe('uploadVideo', () => {
     const mockRequestResponse = { data: response };
     const spyConsoleError = jest.spyOn(console, 'error');
 
-    thunkActions.uploadVideo({ supportedFiles: [supportedFiles[0]], setLoadSpinner, postUploadRedirect })(dispatch);
+    thunkActions.uploadVideo({ supportedFiles, setLoadSpinner, postUploadRedirect })(dispatch);
     dispatchedAction.uploadVideo.onSuccess(mockRequestResponse);
     expect(spyConsoleError).toHaveBeenCalledWith('Could not find file object with name "file2.gif" in supportedFiles array.');
   });

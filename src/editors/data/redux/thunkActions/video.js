@@ -1,4 +1,5 @@
 /* eslint-disable import/no-cycle */
+import _ from 'lodash-es';
 import { actions, selectors } from '..';
 import { removeItemOnce } from '../../../utils';
 import * as requests from './requests';
@@ -377,9 +378,10 @@ export const uploadVideo = ({ supportedFiles, setLoadSpinner, postUploadRedirect
   const data = { files: [] };
   setLoadSpinner(true);
   supportedFiles.forEach((file) => {
+    const fileData = file.get('file');
     data.files.push({
-      file_name: file.name,
-      content_type: file.type,
+      file_name: fileData.name,
+      content_type: fileData.type,
     });
   });
   dispatch(requests.uploadVideo({
@@ -390,13 +392,13 @@ export const uploadVideo = ({ supportedFiles, setLoadSpinner, postUploadRedirect
         const fileName = fileObj.file_name;
         const edxVideoId = fileObj.edx_video_id;
         const uploadUrl = fileObj.upload_url;
-        const uploadFile = supportedFiles.find((file) => file.name === fileName);
+        const uploadFile = supportedFiles.find((file) => file.get('file').name === fileName);
         if (!uploadFile) {
           console.error(`Could not find file object with name "${fileName}" in supportedFiles array.`);
           return;
         }
         const formData = new FormData();
-        formData.append('uploaded-file', uploadFile);
+        formData.append('uploaded-file', uploadFile.get('file'));
         await fetch(uploadUrl, {
           method: 'PUT',
           body: formData,
