@@ -10,6 +10,7 @@ const config = createConfig('eslint', {
     'react-hooks/rules-of-hooks': 2,
     'react-hooks/exhaustive-deps': 'off',
     'no-promise-executor-return': 'off',
+    'no-param-reassign': ['error', { props: false }],
     radix: 'off',
   },
 });

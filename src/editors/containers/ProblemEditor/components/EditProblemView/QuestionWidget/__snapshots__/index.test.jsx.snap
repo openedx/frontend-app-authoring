@@ -14,12 +14,12 @@ exports[`QuestionWidget render snapshot: renders correct default 1`] = `
     />
   </div>
   <[object Object]
+    editorContentHtml="This is my question"
     editorType="question"
     id="question"
     minHeight={150}
     placeholder="Enter your question"
     setEditorRef={[MockFunction prepareEditorRef.setEditorRef]}
-    textValue="This is my question"
   />
 </div>
 `;

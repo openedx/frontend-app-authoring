@@ -6,6 +6,7 @@ exports[`ExpandableTextArea snapshots renders as expected with default behavior 
     className="expandable-mce error"
   >
     <TinyMceWidget
+      editorContentHtml="text"
       editorRef={
         Object {
           "current": null,
@@ -14,7 +15,6 @@ exports[`ExpandableTextArea snapshots renders as expected with default behavior 
       editorType="expandable"
       placeholder={null}
       setEditorRef={[Function]}
-      textValue="text"
       updateContent={[MockFunction]}
     />
   </div>
@@ -27,6 +27,7 @@ exports[`ExpandableTextArea snapshots renders error message 1`] = `
     className="expandable-mce error"
   >
     <TinyMceWidget
+      editorContentHtml="text"
       editorRef={
         Object {
           "current": null,
@@ -35,7 +36,6 @@ exports[`ExpandableTextArea snapshots renders error message 1`] = `
       editorType="expandable"
       placeholder={null}
       setEditorRef={[Function]}
-      textValue="text"
       updateContent={[MockFunction]}
     />
   </div>

@@ -36,6 +36,7 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
       />
     </Toast>
     <[object Object]
+      editorContentHtml="eDiTablE Text"
       editorRef={
         Object {
           "current": Object {
@@ -48,7 +49,6 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
       initializeEditor={[MockFunction args.intializeEditor]}
       minHeight={500}
       setEditorRef={[MockFunction hooks.prepareEditorRef.setEditorRef]}
-      textValue="eDiTablE Text"
     />
   </div>
 </EditorContainer>
@@ -194,6 +194,7 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
       />
     </Toast>
     <[object Object]
+      editorContentHtml="eDiTablE Text"
       editorRef={
         Object {
           "current": Object {
@@ -206,7 +207,6 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
       initializeEditor={[MockFunction args.intializeEditor]}
       minHeight={500}
       setEditorRef={[MockFunction hooks.prepareEditorRef.setEditorRef]}
-      textValue="eDiTablE Text"
     />
   </div>
 </EditorContainer>

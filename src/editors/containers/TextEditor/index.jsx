@@ -48,7 +48,7 @@ export const TextEditor = ({
       <TinyMceWidget
         editorType="text"
         editorRef={editorRef}
-        textValue={blockValue ? blockValue.data.data : ''}
+        editorContentHtml={blockValue ? blockValue.data.data : ''}
         setEditorRef={setEditorRef}
         minHeight={500}
         height="100%"

@@ -124,7 +124,7 @@ export const checkForSettingDiscrepancy = ({ problem, ref, openSaveWarningModal 
   const problemSettings = reactSettingsParser.getSettings();
   const rawOlxSettings = reactSettingsParser.parseRawOlxSettings();
   let isMismatched = false;
-  // console.log(rawOlxSettings);
+
   Object.entries(rawOlxSettings).forEach(([key, value]) => {
     if (value !== problemSettings[key]) {
       isMismatched = true;
