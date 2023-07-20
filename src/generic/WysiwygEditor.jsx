@@ -19,13 +19,14 @@ const mapStateToProps = () => ({
   assets: {},
   lmsEndpointUrl: getConfig().LMS_BASE_URL,
   studioEndpointUrl: getConfig().STUDIO_BASE_URL,
-  isLibrary: {},
+  isLibrary: true,
   onEditorChange: () => ({}),
 });
 
 const Editor = connect(mapStateToProps)(TinyMceWidget);
 
 export const WysiwygEditor = ({ initialValue, editorType, onChange }) => {
+  // default initial string returned onEditorChange if empty input
   const defaultEmptyTextValue = '<p>&nbsp;</p>';
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
 
