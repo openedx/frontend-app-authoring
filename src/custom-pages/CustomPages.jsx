@@ -103,7 +103,7 @@ const CustomPages = ({
   }
   if (loadingStatus === RequestStatus.DENIED) {
     return (
-      <div className="row justify-contnt-center m-6">
+      <div data-testid="under-construction-placeholder" className="row justify-contnt-center m-6">
         <Placeholder />
       </div>
     );
