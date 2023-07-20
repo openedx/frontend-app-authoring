@@ -54,6 +54,11 @@ export const fetchBlockById = ({ blockId, studioEndpointUrl }) => {
         weight: 29,
       },
     };
+  } else if (blockId === 'game-block-id') {
+    data = {
+      display_name: 'Game Block',
+      // TODO: insert mock data from backend here
+    };
   }
   return mockPromise({ data: { ...data } });
 };
