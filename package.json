@@ -40,7 +40,7 @@
     "@edx/frontend-component-header": "^4.0.3",
     "@edx/frontend-lib-content-components": "1.165.0",
     "@edx/frontend-platform": "4.6.0",
-    "@edx/paragon": "20.45.4",
+    "@edx/paragon": "20.45.5",
     "@fortawesome/fontawesome-svg-core": "6.4.0",
     "@fortawesome/free-brands-svg-icons": "6.4.0",
     "@fortawesome/free-regular-svg-icons": "6.4.0",
