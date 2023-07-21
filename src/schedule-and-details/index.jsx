@@ -309,6 +309,7 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
             <StatefulButton
               onClick={handleUpdateValues}
               state={isQueryPending && 'pending'}
+              disabled={hasErrors}
               {...updateValuesButtonState}
             />,
           ].filter(Boolean)}

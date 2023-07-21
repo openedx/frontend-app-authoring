@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { DatepickerControl, DATEPICKER_TYPES } from '../datepicker-control';
+import { DatepickerControl, DATEPICKER_TYPES } from '../../../generic/datepicker-control';
 
 export const SCHEDULE_ROW_TYPES = {
   datetime: 'datetime',

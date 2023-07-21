@@ -5,7 +5,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { convertToStringFromDate } from '../../utils';
 import { DatepickerControl, DATEPICKER_TYPES } from '.';
 import messages from './messages';
-import { DATE_FORMAT } from './constants';
+import { DATE_FORMAT } from '../../constants';
 
 describe('<DatepickerControl />', () => {
   const onChangeMock = jest.fn();
