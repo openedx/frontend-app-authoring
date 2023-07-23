@@ -55,10 +55,11 @@ pull_translations:
 	mkdir src/i18n/messages
 	cd src/i18n/messages \
 	   && atlas pull --filter=$(transifex_langs) \
+	            translations/paragon/src/i18n/messages:paragon \
 	            translations/frontend-component-footer/src/i18n/messages:frontend-component-footer \
 	            translations/frontend-app-course-authoring/src/i18n/messages:frontend-app-course-authoring
 
-	$(intl_imports) frontend-component-footer frontend-app-course-authoring
+	$(intl_imports) paragon frontend-component-footer frontend-app-course-authoring
 endif
 
 # This target is used by Travis.
