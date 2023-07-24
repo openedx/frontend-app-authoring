@@ -46,10 +46,39 @@
   padding: 0 7px;
 }
 
+.line-height-24 {
+  line-height: 24px !important;
+}
+
+.hide-discussion-modal {
+  .pgn__modal-header {
+    padding-top: 24px;
+
+    h2 {
+      color: $primary-500;
+      line-height: 28px;
+      font-size: 22px;
+    }
+  }
+
+  .bg-black {
+    color: #000000;
+  }
+
+  .pgn__modal-footer {
+    padding-top: 8px;
+    padding-bottom: 24px;
+  }
+
+  button {
+    font-weight: 500;
+  }
+}
+
 .discussion-restriction {
   .unselected-button {
     &:hover {
-      background: #E9E6E4 !important;
+      background: #E9E6E4;
     }
   }
 
