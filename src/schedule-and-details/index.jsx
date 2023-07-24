@@ -14,6 +14,7 @@ import { RequestStatus } from '../data/constants';
 import AlertMessage from '../generic/alert-message';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import SubHeader from '../generic/sub-header/SubHeader';
+
 import {
   fetchCourseSettingsQuery,
   fetchCourseDetailsQuery,

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import ScheduleSubHeader from '../schedule-sub-header';
+import SectionSubHeader from '../../generic/section-sub-header';
 import LicenseDisplay from './license-display';
 import LicenseSelector from './license-selector';
 import LicenseCommonsOptions from './license-commons-options';
@@ -22,7 +22,7 @@ const LicenseSection = ({ license, onChange }) => {
 
   return (
     <section className="section-container license-section">
-      <ScheduleSubHeader
+      <SectionSubHeader
         title={intl.formatMessage(messages.licenseTitle)}
         description={intl.formatMessage(messages.licenseDescription)}
       />

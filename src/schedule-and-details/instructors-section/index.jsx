@@ -6,7 +6,7 @@ import { Button } from '@edx/paragon';
 import { Add as AddIcon } from '@edx/paragon/icons';
 
 import InstructorContainer from './instructor-container';
-import ScheduleSubHeader from '../schedule-sub-header';
+import SectionSubHeader from '../../generic/section-sub-header';
 import messages from './messages';
 
 const InstructorsSection = ({ instructors, onChange }) => {
@@ -54,7 +54,7 @@ const InstructorsSection = ({ instructors, onChange }) => {
 
   return (
     <section className="section-container instructors-section">
-      <ScheduleSubHeader
+      <SectionSubHeader
         title={intl.formatMessage(messages.instructorsTitle)}
         description={intl.formatMessage(messages.instructorsDescription)}
       />

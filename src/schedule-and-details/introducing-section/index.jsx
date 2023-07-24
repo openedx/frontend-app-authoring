@@ -9,7 +9,7 @@ import { Form, Hyperlink } from '@edx/paragon';
 
 import CourseUploadImage from '../../generic/course-upload-image';
 import { WysiwygEditor } from '../../generic/WysiwygEditor';
-import ScheduleSubHeader from '../schedule-sub-header';
+import SectionSubHeader from '../../generic/section-sub-header';
 import IntroductionVideo from './introduction-video';
 import ExtendedCourseDetails from './extended-course-details';
 import messages from './messages';
@@ -73,7 +73,7 @@ const IntroducingSection = ({
   return (
     <section className="section-container introducing-section">
       {aboutPageEditable && (
-        <ScheduleSubHeader
+        <SectionSubHeader
           title={intl.formatMessage(messages.introducingTitle)}
           description={intl.formatMessage(messages.introducingDescription)}
         />
