@@ -41,7 +41,7 @@ module.exports = {
       d: 0.71,
       c: 0.31,
     },
-    gracePeriod: null,
+    gracePeriod: { hours: 7, minutes: 6 },
     minimumGradeCredit: 0.8,
   },
   showCreditEligibility: false,

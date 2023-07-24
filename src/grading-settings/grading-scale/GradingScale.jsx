@@ -21,10 +21,13 @@ const GradingScale = ({
   gradeLetters,
   sortedGrades,
   setOverrideInternetConnectionAlert,
+  setEligibleGrade,
 }) => {
   const [gradingSegments, setGradingSegments] = useState(sortedGrades);
   const [letters, setLetters] = useState(gradeLetters);
   const [convertedResult, setConvertedResult] = useState({});
+  const gradingSegmentsValues = Object.values(gradingSegments);
+  const eligibleValue = gradingSegmentsValues[gradingSegmentsValues.length - 1];
 
   useEffect(() => {
     if (resetDataRef.current) {
@@ -37,6 +40,7 @@ const GradingScale = ({
 
   useEffect(() => {
     setGradingData(prevData => ({ ...prevData, gradeCutoffs: convertedResult }));
+    setEligibleGrade(eligibleValue?.current);
   }, [JSON.stringify(convertedResult)]);
 
   useEffect(() => {
@@ -231,6 +235,7 @@ GradingScale.propTypes = {
       previous: PropTypes.number.isRequired,
     }),
   ).isRequired,
+  setEligibleGrade: PropTypes.func.isRequired,
 };
 
 export default injectIntl(GradingScale);

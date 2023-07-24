@@ -28,6 +28,7 @@ const RootWrapper = () => (
       setShowSuccessAlert={jest.fn()}
       setGradingData={jest.fn()}
       setOverrideInternetConnectionAlert={jest.fn()}
+      setEligibleGrade={jest.fn()}
     />
   </IntlProvider>
 );
@@ -111,6 +112,7 @@ describe('<GradingScale />', () => {
           setShowSuccessAlert={jest.fn()}
           setGradingData={jest.fn()}
           setOverrideInternetConnectionAlert={jest.fn()}
+          setEligibleGrade={jest.fn()}
         />
       </IntlProvider>,
     );

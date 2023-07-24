@@ -74,4 +74,16 @@ describe('<GradingSettings />', () => {
       expect(segmentInput).toHaveValue('A');
     });
   });
+  it('should save segment input changes and display saving message', async () => {
+    const { getByText, getAllByTestId } = render(<RootWrapper />);
+    await waitFor(() => {
+      const segmentInputs = getAllByTestId('grading-scale-segment-input');
+      const segmentInput = segmentInputs[1];
+      fireEvent.change(segmentInput, { target: { value: 'Test' } });
+      const saveBtn = getByText(messages.buttonSaveText.defaultMessage);
+      expect(saveBtn).toBeInTheDocument();
+      fireEvent.click(saveBtn);
+      expect(getByText(messages.buttonSavingText.defaultMessage)).toBeInTheDocument();
+    });
+  });
 });

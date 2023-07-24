@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@edx/paragon';
 
-import ScheduleSubHeader from '../schedule-sub-header';
+import SectionSubHeader from '../../generic/section-sub-header';
 import messages from './messages';
 
 const PacingSection = ({
@@ -14,7 +14,7 @@ const PacingSection = ({
 
   return (
     <section className="section-container pacing-section">
-      <ScheduleSubHeader
+      <SectionSubHeader
         title={intl.formatMessage(messages.pacingTitle)}
         description={intl.formatMessage(messages.pacingDescription)}
       />
