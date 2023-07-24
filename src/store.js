@@ -10,6 +10,7 @@ import { reducer as gradingSettingsReducer } from './grading-settings/data/slice
 import { reducer as scheduleAndDetailsReducer } from './schedule-and-details/data/slice';
 import { reducer as liveReducer } from './pages-and-resources/live/data/slice';
 import { reducer as filesReducer } from './files-and-uploads/data/slice';
+import { reducer as courseTeamReducer } from './course-team/data/slice';
 
 export default function initializeStore(preloadedState = undefined) {
   return configureStore({
@@ -24,6 +25,7 @@ export default function initializeStore(preloadedState = undefined) {
       gradingSettings: gradingSettingsReducer,
       models: modelsReducer,
       live: liveReducer,
+      courseTeam: courseTeamReducer,
     },
     preloadedState,
   });

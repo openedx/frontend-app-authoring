@@ -1,0 +1,63 @@
+.course-team-container {
+  margin-top: 3rem;
+}
+
+.course-team-member {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 1.563rem 1.875rem 1.25rem;
+  background-color: $white;
+  border: .0625rem solid $gray-200;
+  border-radius: .375rem;
+  box-shadow: 0 1px 1px $gray-200;
+
+  &:not(:last-child) {
+    margin-bottom: 1.25rem;
+  }
+
+  .member-info {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    .badge {
+      position: absolute;
+      top: -2.25rem;
+      left: -.25rem;
+    }
+
+    .badge-current-user {
+      color: $gray-100;
+      margin-left: .25rem;
+    }
+
+    .member-info-name {
+      font-size: 1.5rem;
+      margin-bottom: .25rem;
+    }
+  }
+
+  .member-hint {
+    width: 45%;
+    margin-right: 3.875rem;
+    color: $gray-300;
+    font-size: $font-size-sm;
+  }
+
+  .member-actions {
+    display: flex;
+    gap: $spacer;
+
+    .delete-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      & > span {
+        margin: 0;
+      }
+    }
+  }
+}

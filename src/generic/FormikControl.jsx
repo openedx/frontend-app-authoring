@@ -10,6 +10,7 @@ const FormikControl = ({
   label,
   help,
   className,
+  withErrorText = true,
   ...params
 }) => {
   const {
@@ -31,15 +32,17 @@ const FormikControl = ({
         onFocus={handleFocus}
         isInvalid={fieldTouched && fieldError}
       />
-      <FormikErrorFeedback name={name}>
-        <Form.Text>{help}</Form.Text>
-      </FormikErrorFeedback>
+      {withErrorText && (
+        <FormikErrorFeedback name={name}>
+          <Form.Text>{help}</Form.Text>
+        </FormikErrorFeedback>
+      )}
     </Form.Group>
   );
 };
 
 FormikControl.propTypes = {
-  name: PropTypes.element.isRequired,
+  name: PropTypes.string.isRequired,
   label: PropTypes.element,
   help: PropTypes.element,
   className: PropTypes.string,
@@ -47,12 +50,14 @@ FormikControl.propTypes = {
     PropTypes.string,
     PropTypes.number,
   ]).isRequired,
+  withErrorText: PropTypes.bool,
 };
 
 FormikControl.defaultProps = {
   help: <></>,
   label: <></>,
   className: '',
+  withErrorText: true,
 };
 
 export default FormikControl;
