@@ -1,3 +1,12 @@
+.sub-header {
+  display: flex;
+
+  .sub-header-actions {
+    margin-bottom: 1.75rem;
+    align-self: flex-end;
+  }
+}
+
 .sub-header-title {
   font: normal $font-weight-bold 2rem/2.25rem $font-family-base;
   margin-bottom: 1.75rem;
