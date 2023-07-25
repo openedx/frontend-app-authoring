@@ -11,7 +11,6 @@ const slice = createSlice({
     savingStatus: '',
     addingStatus: 'default',
     deletingStatus: '',
-    customPagesApiStatus: {},
   },
   reducers: {
     setPageIds: (state, { payload }) => {

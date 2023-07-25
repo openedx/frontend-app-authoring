@@ -1,3 +1,5 @@
+import { RequestStatus } from '../../data/constants';
+
 export const courseId = 'course-v1:edX+DemoX+Demo_Course';
 
 export const initialState = {
@@ -62,3 +64,12 @@ export const generateNewPageApiResponse = () => ({
   locator: 'mOckID2',
   courseKey: courseId,
 });
+
+export const getStatusValue = (status) => {
+  switch (status) {
+  case RequestStatus.DENIED:
+    return 403;
+  default:
+    return 200;
+  }
+};
