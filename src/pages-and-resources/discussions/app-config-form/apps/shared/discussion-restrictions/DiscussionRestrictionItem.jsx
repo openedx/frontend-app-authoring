@@ -37,7 +37,7 @@ const DiscussionRestrictionItem = ({
     return setCollapseOpen(isOpen);
   }, [hasError]);
 
-   const handleOnClose = useCallback(() => {
+  const handleOnClose = useCallback(() => {
     ['startDate', 'startTime', 'endDate', 'endTime'].forEach(field => (
       setFieldTouched(`${fieldNameCommonBase}.${field}`, true)
     ));
@@ -70,8 +70,8 @@ const DiscussionRestrictionItem = ({
     return (
       <ConfirmationPopup
         label={restrictedDate.status === constants.ACTIVE
-            ? intl.formatMessage(messages.activeRestrictedDatesDeletionLabel)
-            : intl.formatMessage(messages.restrictedDatesDeletionLabel)}
+          ? intl.formatMessage(messages.activeRestrictedDatesDeletionLabel)
+          : intl.formatMessage(messages.restrictedDatesDeletionLabel)}
         bodyText={intl.formatMessage(deleteRestrictedDatesHelperText[restrictedDate.status])}
         onConfirm={onDelete}
         confirmLabel={intl.formatMessage(messages.deleteButton)}
@@ -80,8 +80,8 @@ const DiscussionRestrictionItem = ({
         confirmVariant="plain"
         confirmButtonClass="text-danger-500 border-gray-300 rounded-0"
       />
-        );
-    }
+    );
+  }
 
   return (
     <CollapsableEditor

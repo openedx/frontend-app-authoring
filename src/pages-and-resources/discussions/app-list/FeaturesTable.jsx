@@ -32,10 +32,10 @@ const FeaturesTable = ({ apps, features, intl }) => {
             data-testid={`${app.id}-${feature.id.replaceAll('.', '-')}`}
           >
             {
-                app.featureIds.includes(feature.id)
-                  ? <Check id="check-icon" className="text-success-500" />
-                  : <Remove id="remove-icon" className="text-light-700" />
-              }
+              app.featureIds.includes(feature.id)
+                ? <Check id="check-icon" className="text-success-500" />
+                : <Remove id="remove-icon" className="text-light-700" />
+            }
           </div>
         );
       }

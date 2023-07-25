@@ -56,11 +56,11 @@ const renderComponent = () => {
 };
 
 const mockStore = async ({
- usernameSharing = false,
- emailSharing = false,
- enabled = true,
- piiSharingAllowed = true,
- isFreeTier = false,
+  usernameSharing = false,
+  emailSharing = false,
+  enabled = true,
+  piiSharingAllowed = true,
+  isFreeTier = false,
 }) => {
   const fetchProviderConfigUrl = `${providersApiUrl}/${courseId}/`;
   const fetchLiveConfigUrl = `${providerConfigurationApiUrl}/${courseId}/`;
@@ -108,7 +108,7 @@ describe('BBB Settings', () => {
   });
 
   test(
-'Connect to support and PII sharing message is visible and plans selection is disabled, When pii sharing is disabled, ',
+    'Connect to support and PII sharing message is visible and plans selection is disabled, When pii sharing is disabled, ',
     async () => {
       await mockStore({ piiSharingAllowed: false });
       renderComponent();
@@ -122,7 +122,7 @@ describe('BBB Settings', () => {
       expect(helpRequestPiiText).toHaveTextContent(messages.piiSharingEnableHelpTextBbb.defaultMessage);
       expect(container.querySelector('select[name="tierType"]')).toBeDisabled();
     },
-);
+  );
 
   test('free plans message is visible when free plan is selected', async () => {
     await mockStore({ emailSharing: true, isFreeTier: true });
@@ -132,7 +132,7 @@ describe('BBB Settings', () => {
     const dropDown = container.querySelector('select[name="tierType"]');
     userEvent.selectOptions(
       dropDown,
-     getByRole(dropDown, 'option', { name: 'Free' }),
+      getByRole(dropDown, 'option', { name: 'Free' }),
     );
     expect(queryByTestId(container, 'free-plan-message')).toBeInTheDocument();
     expect(queryByTestId(container, 'free-plan-message')).toHaveTextContent(messages.freePlanMessage.defaultMessage);

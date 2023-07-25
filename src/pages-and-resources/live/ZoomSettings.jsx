@@ -7,8 +7,8 @@ import LiveCommonFields from './LiveCommonFields';
 import FormikControl from '../../generic/FormikControl';
 
 const ZoomSettings = ({
- intl,
- values,
+  intl,
+  values,
 }) => (
   // eslint-disable-next-line react/jsx-no-useless-fragment
   <>
@@ -16,25 +16,25 @@ const ZoomSettings = ({
       <p data-testid="request-pii-sharing">
         {intl.formatMessage(messages.requestPiiSharingEnable, { provider: providerNames[values.provider] })}
       </p>
-      ) : (
-        <>
-          {(values.piiSharingEmail || values.piiSharingUsername)
+    ) : (
+      <>
+        {(values.piiSharingEmail || values.piiSharingUsername)
           && (
             <p data-testid="helper-text">
               {intl.formatMessage(messages.providerHelperText, { providerName: providerNames[values.provider] })}
             </p>
           )}
-          <LiveCommonFields values={values} />
-          <FormikControl
-            name="launchEmail"
-            value={values.launchEmail}
-            floatingLabel={intl.formatMessage(messages.launchEmail)}
-            type="input"
-          />
-        </>
-      )}
+        <LiveCommonFields values={values} />
+        <FormikControl
+          name="launchEmail"
+          value={values.launchEmail}
+          floatingLabel={intl.formatMessage(messages.launchEmail)}
+          type="input"
+        />
+      </>
+    )}
   </>
-  );
+);
 
 ZoomSettings.propTypes = {
   intl: intlShape.isRequired,

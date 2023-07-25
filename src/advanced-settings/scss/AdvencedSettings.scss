@@ -1,0 +1,125 @@
+@import "variables";
+
+.setting-items-policies {
+  .setting-items-deprecated-setting {
+    float: right;
+    margin-bottom: 1.75rem;
+  }
+
+  .instructions,
+  strong {
+    font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
+    color: $text-color-base;
+  }
+}
+
+.setting-card {
+  margin-bottom: 1.75rem;
+
+  .pgn__card-header .pgn__card-header-title-md {
+    font-size: 1.125rem;
+    padding-top: .625rem;
+  }
+
+  .pgn__icon {
+    color: $headings-color;
+  }
+}
+
+.alert-toast {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 0 .625rem;
+  z-index: $zindex-modal;
+}
+
+.alert-proctoring-error {
+  list-style: none;
+}
+
+.setting-items-list {
+  li {
+    list-style: none;
+  }
+
+  .form-control {
+    resize: none;
+    min-height: 2.75rem;
+    width: $setting-form-control-width;
+  }
+
+  .pgn__card-section {
+    max-width: $setting-form-control-width;
+  }
+
+  .pgn__card-header {
+    padding: 0 1.5rem;
+  }
+
+  .pgn__card-status {
+    padding: .625rem;
+  }
+
+  .pgn__card-header-content {
+    margin-top: 1.438rem;
+    margin-bottom: 1.438rem;
+    display: flex;
+    flex-direction: revert;
+
+    .pgn__card-header-subtitle-md {
+      margin-left: .375rem;
+      margin-top: .125rem;
+    }
+  }
+}
+
+.setting-sidebar-supplementary {
+  margin-top: 1.875rem;
+
+  .setting-sidebar-supplementary-about {
+    .setting-sidebar-supplementary-about-title {
+      font: normal $font-weight-bold 1.125rem/1.5rem $font-family-base;
+      color: $headings-color;
+      margin-bottom: 1.25rem;
+    }
+
+    .setting-sidebar-supplementary-about-descriptions {
+      font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
+      color: $text-color-base;
+    }
+  }
+
+  .setting-sidebar-supplementary-other-links ul {
+    list-style: none;
+
+    .setting-sidebar-supplementary-other-link {
+      font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
+      line-height: 1.5rem;
+      color: $info-500;
+      margin-bottom: .5rem;
+    }
+  }
+
+  .setting-sidebar-supplementary-other-title {
+    font: normal $font-weight-bold 1.125rem/1.5rem $font-family-base;
+    color: $headings-color;
+    margin-bottom: 1.25rem;
+  }
+}
+
+.modal-error-item {
+  list-style: none;
+
+  .pgn__icon {
+    display: inline-block;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    color: $danger;
+  }
+
+  .modal-error-item-title {
+    display: flex;
+    align-items: center;
+  }
+}

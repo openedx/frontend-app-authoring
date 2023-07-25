@@ -12,8 +12,9 @@
   "scripts": {
     "build": "fedx-scripts webpack",
     "i18n_extract": "BABEL_ENV=i18n fedx-scripts babel src --quiet > /dev/null",
-    "lint": "fedx-scripts eslint --ext .js --ext .jsx .",
-    "lint:fix": "fedx-scripts eslint --ext .js --ext .jsx . --fix",
+    "stylelint": "stylelint \"src/**/*.scss\" \"scss/**/*.scss\" --config .stylelintrc.json",
+    "lint": "npm run stylelint && fedx-scripts eslint --ext .js --ext .jsx .",
+    "lint:fix": "npm run stylelint && fedx-scripts eslint --ext .js --ext .jsx . --fix",
     "snapshot": "fedx-scripts jest --updateSnapshot",
     "start": "fedx-scripts webpack-dev-server --progress",
     "test": "fedx-scripts jest --coverage --passWithNoTests"
@@ -60,6 +61,7 @@
     "react-responsive": "8.1.0",
     "react-router": "5.2.0",
     "react-router-dom": "5.2.0",
+    "react-textarea-autosize": "^8.4.1",
     "react-transition-group": "4.4.1",
     "redux": "4.0.5",
     "regenerator-runtime": "0.13.7",
@@ -70,6 +72,7 @@
     "@edx/browserslist-config": "1.0.0",
     "@edx/frontend-build": "12.8.6",
     "@edx/reactifex": "^1.0.3",
+    "@edx/stylelint-config-edx": "^2.3.0",
     "@testing-library/jest-dom": "5.16.4",
     "@testing-library/react": "12.1.1",
     "@testing-library/user-event": "^13.2.1",

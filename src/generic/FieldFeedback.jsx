@@ -18,7 +18,7 @@ const FieldFeedback = ({
             <div className={`small ${feedbackClasses}`}>{feedbackMessage}</div>
           </Form.Control.Feedback>
         </React.Fragment>
-        ) : <React.Fragment key="close1" />}
+      ) : <React.Fragment key="close1" />}
     </TransitionReplace>
 
     <TransitionReplace>
@@ -28,10 +28,10 @@ const FieldFeedback = ({
             <div className={`small ${feedbackClasses}`}>{errorMessage}</div>
           </Form.Control.Feedback>
         </React.Fragment>
-        ) : <React.Fragment key="close" />}
+      ) : <React.Fragment key="close" />}
     </TransitionReplace>
   </>
-  );
+);
 
 FieldFeedback.propTypes = {
   errorCondition: PropTypes.bool.isRequired,

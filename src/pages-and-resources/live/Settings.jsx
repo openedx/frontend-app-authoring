@@ -91,36 +91,36 @@ const LiveSettings = ({
       {({ values, setFieldValue }) => (
         (status === RequestStatus.IN_PROGRESS) ? (
           <Loading />
-            ) : (
-              <>
-                <h4 className="my-3">{intl.formatMessage(messages.selectProvider)}</h4>
-                <SelectableBox.Set
-                  type="checkbox"
-                  value={values.provider}
-                  onChange={(event) => handleProviderChange(event.target.value, setFieldValue, values)}
-                  name="provider"
-                  columns={3}
-                  className="mb-3"
-                >
-                  {availableProviders.map((provider) => (
-                    <SelectableBox value={provider} type="checkbox" key={provider}>
-                      <div className="d-flex flex-column align-items-center">
-                        <Icon src={iconsSrc[`${camelCase(provider)}`]} alt={provider} />
-                        <span>{intl.formatMessage(messages[`appName-${camelCase(provider)}`])}</span>
-                      </div>
-                    </SelectableBox>
-                  ))}
-                </SelectableBox.Set>
-                {values.provider === 'zoom' ? <ZoomSettings values={values} />
-                  : (
-                    <BBBSettings
-                      values={values}
-                      setFieldValue={setFieldValue}
-                    />
-                  )}
-              </>
-            )
-          )}
+        ) : (
+          <>
+            <h4 className="my-3">{intl.formatMessage(messages.selectProvider)}</h4>
+            <SelectableBox.Set
+              type="checkbox"
+              value={values.provider}
+              onChange={(event) => handleProviderChange(event.target.value, setFieldValue, values)}
+              name="provider"
+              columns={3}
+              className="mb-3"
+            >
+              {availableProviders.map((provider) => (
+                <SelectableBox value={provider} type="checkbox" key={provider}>
+                  <div className="d-flex flex-column align-items-center">
+                    <Icon src={iconsSrc[`${camelCase(provider)}`]} alt={provider} />
+                    <span>{intl.formatMessage(messages[`appName-${camelCase(provider)}`])}</span>
+                  </div>
+                </SelectableBox>
+              ))}
+            </SelectableBox.Set>
+            {values.provider === 'zoom' ? <ZoomSettings values={values} />
+              : (
+                <BBBSettings
+                  values={values}
+                  setFieldValue={setFieldValue}
+                />
+              )}
+          </>
+        )
+      )}
     </AppSettingsModal>
   );
 };
