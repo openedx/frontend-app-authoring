@@ -17,6 +17,10 @@ const messages = defineMessages({
     id: 'course-authoring.badge.enabled',
     defaultMessage: 'Enabled',
   },
+  contentPermissions: {
+    id: 'course-authoring.pages-resources.content-permissions.heading',
+    defaultMessage: 'Content permissions',
+  },
 });
 
 export default messages;

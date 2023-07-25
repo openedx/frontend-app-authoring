@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Hyperlink } from '@edx/paragon';
 import messages from './messages';
 import DiscussionsSettings from './discussions';
+import { XpertUnitSummarySettings, appInfo } from './xpert-unit-summary';
 
 import PageGrid from './pages/PageGrid';
 import { fetchCourseApps } from './data/thunks';
@@ -17,6 +18,7 @@ import { getLoadingStatus } from './data/selectors';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 import { RequestStatus } from '../data/constants';
 
+const permissonPages = [appInfo];
 const PagesAndResources = ({ courseId, intl }) => {
   const { path, url } = useRouteMatch();
 
@@ -54,6 +56,12 @@ const PagesAndResources = ({ courseId, intl }) => {
         </div>
 
         <PageGrid pages={pages} />
+
+        <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
+          <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
+        </div>
+        <PageGrid pages={permissonPages} />
+
         <Switch>
           <PageRoute
             path={[
@@ -63,6 +71,15 @@ const PagesAndResources = ({ courseId, intl }) => {
           >
             <DiscussionsSettings courseId={courseId} />
           </PageRoute>
+
+          <PageRoute
+            path={[
+              `${path}/xpert-unit-summary/settings`,
+            ]}
+          >
+            <XpertUnitSummarySettings courseId={courseId} />
+          </PageRoute>
+
           <PageRoute path={`${path}/:appId/settings`}>
             {
               ({ match, history }) => {
