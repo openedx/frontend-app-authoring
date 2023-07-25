@@ -11,8 +11,7 @@ const messages = defineMessages({
   },
   enableXpertUnitSummaryHelp: {
     id: 'course-authoring.pages-resources.xpert-unit-summary.enable-xpert-unit-summary.help',
-    defaultMessage: `Enable concise summaries of text and video content. Control the availability of summaries in the settings dialog for each unit.
-    `,
+    defaultMessage: 'Enable concise summaries of text and video content.',
   },
   enableXpertUnitSummaryLink: {
     id: 'course-authoring.pages-resources.xpert-unit-summary.enable-xpert-unit-summary.link',
