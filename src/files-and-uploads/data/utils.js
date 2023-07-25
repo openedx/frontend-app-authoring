@@ -25,21 +25,21 @@ export const createZipFile = ({ selectedFlatRows }) => {
       contentType,
     } = row.original;
     switch (wrapperType) {
-      case 'document':
-        doc.file(displayName, urlToPromise(externalUrl, displayName, contentType), { binary: true });
-        break;
-      case 'code':
-        code.file(displayName, urlToPromise(externalUrl), { binary: true });
-        break;
-      case 'image':
-        img.file(displayName, urlToPromise(externalUrl), { binary: true });
-        break;
-      case 'audio':
-        audio.file(displayName, urlToPromise(externalUrl), { binary: true });
-        break;
-      default:
-        zip.file(displayName, urlToPromise(externalUrl), { binary: true });
-        break;
+    case 'document':
+      doc.file(displayName, urlToPromise(externalUrl, displayName, contentType), { binary: true });
+      break;
+    case 'code':
+      code.file(displayName, urlToPromise(externalUrl), { binary: true });
+      break;
+    case 'image':
+      img.file(displayName, urlToPromise(externalUrl), { binary: true });
+      break;
+    case 'audio':
+      audio.file(displayName, urlToPromise(externalUrl), { binary: true });
+      break;
+    default:
+      zip.file(displayName, urlToPromise(externalUrl), { binary: true });
+      break;
     }
   });
   console.log('writtings');

@@ -48,7 +48,7 @@ const CourseAuthoringRoutes = ({ courseId }) => {
         <PageRoute path={`${path}/assets`}>
           {process.env.ENABLE_NEW_FILES_UPLOADS_PAGE === 'true'
             && (
-                <FilesAndUploads courseId={courseId} />
+              <FilesAndUploads courseId={courseId} />
             )}
         </PageRoute>
         <PageRoute path={`${path}/videos`}>

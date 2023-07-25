@@ -5,7 +5,7 @@ import {
   removeModel,
   removeModels,
   updateModel,
- } from '../../generic/model-store';
+} from '../../generic/model-store';
 import {
   getAssets,
   addAsset,
@@ -26,7 +26,6 @@ import {
 
 import { getWrapperType } from './utils';
 
-/* eslint-disable import/prefer-default-export */
 export function fetchAssets(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
@@ -54,11 +53,9 @@ export function deleteAssetFile(courseId, id, totalCount) {
     dispatch(updateDeletingStatus({ status: RequestStatus.IN_PROGRESS }));
 
     try {
-      // assetIds.forEach(async (id) => {
-        await deleteAsset(courseId, id);
-        dispatch(deleteAssetSuccess({ assetId: id }));
-        dispatch(removeModel({ modelType: 'assets', id }));
-      // });
+      await deleteAsset(courseId, id);
+      dispatch(deleteAssetSuccess({ assetId: id }));
+      dispatch(removeModel({ modelType: 'assets', id }));
       dispatch(setTotalCount({ totalCount: totalCount - 1 }));
       dispatch(updateDeletingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {

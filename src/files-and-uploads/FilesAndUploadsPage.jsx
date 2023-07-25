@@ -88,7 +88,7 @@ const FilesAndUploads = ({
     // if (selectedFlatRows.length === 1) {
     // } else {
     //   console.log('getting zip file');
-      // createZipFile({ selectedFlatRows });
+    // createZipFile({ selectedFlatRows });
     // }
   };
 
