@@ -2,21 +2,21 @@ import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 function getXpertSettingsUrl(courseId) {
-    return `${getConfig().LMS_BASE_URL}/ai_aside/v1/${courseId}`;
+  return `${getConfig().LMS_BASE_URL}/ai_aside/v1/${courseId}`;
 }
 
 export async function getXpertSettings(courseId) {
-    const { data } = await getAuthenticatedHttpClient()
-        .get(getXpertSettingsUrl(courseId));
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getXpertSettingsUrl(courseId));
 
-    return data;
+  return data;
 }
 
 export async function postXpertSettings(courseId, state) {
-    const { data } = await getAuthenticatedHttpClient()
-        .post(getXpertSettingsUrl(courseId), {
-            enabled: state.enabled,
-        });
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getXpertSettingsUrl(courseId), {
+      enabled: state.enabled,
+    });
 
-    return data;
+  return data;
 }
