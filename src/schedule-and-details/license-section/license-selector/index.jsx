@@ -71,8 +71,12 @@ const LicenseSelector = ({ licenseType, onChangeLicenseType }) => {
   );
 };
 
+LicenseSelector.defaultProps = {
+  licenseType: null,
+};
+
 LicenseSelector.propTypes = {
-  licenseType: PropTypes.oneOf([...Object.values(LICENSE_TYPE), '']).isRequired,
+  licenseType: PropTypes.oneOf(Object.values(LICENSE_TYPE)),
   onChangeLicenseType: PropTypes.func.isRequired,
 };
 

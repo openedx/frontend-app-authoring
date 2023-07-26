@@ -15,19 +15,10 @@ const customPagesMockText = 'Custom Pages';
 let store;
 const mockComponentFn = jest.fn();
 
-// Mock the tinymce lib
-jest.mock('@tinymce/tinymce-react', () => {
-  const originalModule = jest.requireActual('@tinymce/tinymce-react');
-  return {
-    __esModule: true,
-    ...originalModule,
-    Editor: () => 'foo bar',
-  };
-});
-
 // Mock the TinyMceWidget from frontend-lib-content-components
 jest.mock('@edx/frontend-lib-content-components', () => ({
   TinyMceWidget: () => <div>Widget</div>,
+  Footer: () => <div>Footer</div>,
   prepareEditorRef: jest.fn(() => ({
     refReady: true,
     setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),

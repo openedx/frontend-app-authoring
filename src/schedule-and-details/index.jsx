@@ -6,13 +6,15 @@ import {
 } from '@edx/paragon';
 import {
   CheckCircle as CheckCircleIcon,
-  WarningFilled as WarningFilledIcon,
+  Warning as WarningIcon,
 } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import Placeholder from '@edx/frontend-lib-content-components';
 
 import { RequestStatus } from '../data/constants';
 import AlertMessage from '../generic/alert-message';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
+import { STATEFUL_BUTTON_STATES } from '../constants';
 import {
   fetchCourseSettingsQuery,
   fetchCourseDetailsQuery,
@@ -125,6 +127,14 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     return <></>;
   }
 
+  if (loadingDetailsStatus === RequestStatus.DENIED || loadingSettingsStatus === RequestStatus.DENIED) {
+    return (
+      <div className="row justify-content-center m-6">
+        <Placeholder />
+      </div>
+    );
+  }
+
   const showCreditSection = creditEligibilityEnabled && isCreditCourse;
   const showRequirementsSection = aboutPageEditable || isPrerequisiteCoursesEnabled || isEntranceExamsEnabled;
   const hasErrors = !!Object.keys(errorFields).length;
@@ -133,7 +143,7 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
       default: intl.formatMessage(messages.buttonSaveText),
       pending: intl.formatMessage(messages.buttonSavingText),
     },
-    disabledStates: ['pending'],
+    disabledStates: [STATEFUL_BUTTON_STATES.pending],
   };
   const alertWhileSavingTitle = hasErrors
     ? intl.formatMessage(messages.alertWarningOnSaveWithError)
@@ -260,7 +270,9 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
                       isEntranceExamsEnabled={isEntranceExamsEnabled}
                       possiblePreRequisiteCourses={possiblePreRequisiteCourses}
                       entranceExamMinimumScorePct={entranceExamMinimumScorePct}
-                      isPrerequisiteCoursesEnabled={isPrerequisiteCoursesEnabled}
+                      isPrerequisiteCoursesEnabled={
+                        isPrerequisiteCoursesEnabled
+                      }
                       onChange={handleValuesChange}
                     />
                   )}
@@ -303,19 +315,28 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
           role="dialog"
           actions={[
             !isQueryPending && (
-              <Button variant="tertiary" onClick={handleResetValues}>
+              <Button
+                key="cancel-button"
+                variant="tertiary"
+                onClick={handleResetValues}
+              >
                 {intl.formatMessage(messages.buttonCancelText)}
               </Button>
             ),
             <StatefulButton
+              key="save-button"
               onClick={handleUpdateValues}
-              state={isQueryPending && 'pending'}
               disabled={hasErrors}
+              state={
+                isQueryPending
+                  ? STATEFUL_BUTTON_STATES.pending
+                  : STATEFUL_BUTTON_STATES.default
+              }
               {...updateValuesButtonState}
             />,
           ].filter(Boolean)}
           variant="warning"
-          icon={WarningFilledIcon}
+          icon={WarningIcon}
           title={alertWhileSavingTitle}
           description={alertWhileSavingDescription}
         />

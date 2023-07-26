@@ -89,10 +89,7 @@ const CourseAuthoringRoutes = ({ courseId }) => {
             )}
         </PageRoute>
         <PageRoute path={`${path}/settings/details`}>
-          {process.env.ENABLE_NEW_SCHEDULE_DETAILS_PAGE === 'true'
-            && (
-              <ScheduleAndDetails courseId={courseId} />
-            )}
+          <ScheduleAndDetails courseId={courseId} />
         </PageRoute>
         <PageRoute path={`${path}/settings/grading`}>
           {process.env.ENABLE_NEW_GRADING_PAGE === 'true'

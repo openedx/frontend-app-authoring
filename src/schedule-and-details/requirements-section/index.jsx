@@ -21,7 +21,7 @@ const RequirementsSection = ({
   onChange,
 }) => {
   const intl = useIntl();
-  const selectedItem = possiblePreRequisiteCourses.find(
+  const selectedItem = possiblePreRequisiteCourses?.find(
     (course) => course.courseKey === preRequisiteCourses[0],
   );
   const formattedSelectedItem = selectedItem?.displayName || intl.formatMessage(messages.dropdownEmptyText);
@@ -71,7 +71,7 @@ const RequirementsSection = ({
             {intl.formatMessage(messages.timepickerLabel)}
           </Form.Label>
           <Form.Control
-            value={effort}
+            value={effort || ''}
             placeholder={TIME_FORMAT.toUpperCase()}
             onChange={(e) => onChange(e.target.value, 'effort')}
           />

@@ -8,6 +8,8 @@ import {
   TinyMceWidget,
 } from '@edx/frontend-lib-content-components';
 
+import { DEFAULT_EMPTY_WYSIWYG_VALUE } from '../constants';
+
 const store = createStore(() => ({}));
 
 export const SUPPORTED_TEXT_EDITORS = {
@@ -25,10 +27,16 @@ const mapStateToProps = () => ({
 
 const Editor = connect(mapStateToProps)(TinyMceWidget);
 
-export const WysiwygEditor = ({ initialValue, editorType, onChange }) => {
-  // default initial string returned onEditorChange if empty input
-  const defaultEmptyTextValue = '<p>&nbsp;</p>';
+export const WysiwygEditor = ({
+  initialValue, editorType, onChange, minHeight,
+}) => {
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
+
+  const isEquivalentCodeExtraSpaces = (first, second) => {
+    // Utils allows to compare code extra spaces
+    const removeWhitespace = (str) => str.replace(/\s/g, '');
+    return removeWhitespace(first) === removeWhitespace(second);
+  };
 
   const isEquivalentCodeQuotes = (first, second) => {
     // Utils allows to compare code with single quotes and double quotes
@@ -36,8 +44,10 @@ export const WysiwygEditor = ({ initialValue, editorType, onChange }) => {
     return normalizeQuotes(first) === normalizeQuotes(second);
   };
 
+  // default initial string returned onEditorChange if empty input
   const needToChange = (value) => !isEquivalentCodeQuotes(initialValue, value)
-    && (initialValue !== defaultEmptyTextValue || value !== '');
+    && !isEquivalentCodeExtraSpaces(initialValue, value)
+    && (initialValue !== DEFAULT_EMPTY_WYSIWYG_VALUE || value !== '');
 
   const handleUpdate = (value, editor) => {
     // With bookmarks keep the current cursor position at the end of the line
@@ -60,7 +70,7 @@ export const WysiwygEditor = ({ initialValue, editorType, onChange }) => {
         editorRef={editorRef}
         editorType={editorType}
         initialValue={initialValue}
-        minHeight={200}
+        minHeight={minHeight}
         setEditorRef={setEditorRef}
         updateContent={handleUpdate}
         initializeEditor={() => ({})}
@@ -72,10 +82,12 @@ export const WysiwygEditor = ({ initialValue, editorType, onChange }) => {
 WysiwygEditor.defaultProps = {
   initialValue: '',
   editorType: SUPPORTED_TEXT_EDITORS.text,
+  minHeight: 200,
 };
 
 WysiwygEditor.propTypes = {
   initialValue: PropTypes.string,
   editorType: PropTypes.oneOf(Object.values(SUPPORTED_TEXT_EDITORS)),
   onChange: PropTypes.func.isRequired,
+  minHeight: PropTypes.number,
 };

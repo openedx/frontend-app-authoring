@@ -22,7 +22,11 @@ export function fetchCourseDetailsQuery(courseId) {
       dispatch(fetchCourseDetailsSuccess(detailsValues));
       dispatch(updateLoadingDetailsStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateLoadingDetailsStatus({ status: RequestStatus.FAILED }));
+      if (error.response && error.response.status === 403) {
+        dispatch(updateLoadingDetailsStatus({ courseId, status: RequestStatus.DENIED }));
+      } else {
+        dispatch(updateLoadingDetailsStatus({ status: RequestStatus.FAILED }));
+      }
     }
   };
 }
@@ -53,7 +57,11 @@ export function fetchCourseSettingsQuery(courseId) {
       dispatch(updateLoadingSettingsStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
-      dispatch(updateLoadingSettingsStatus({ status: RequestStatus.FAILED }));
+      if (error.response && error.response.status === 403) {
+        dispatch(updateLoadingSettingsStatus({ courseId, status: RequestStatus.DENIED }));
+      } else {
+        dispatch(updateLoadingSettingsStatus({ status: RequestStatus.FAILED }));
+      }
       return false;
     }
   };

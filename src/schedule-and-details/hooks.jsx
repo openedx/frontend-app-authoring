@@ -75,6 +75,7 @@ const useSaveValuesPrompt = (
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       setIsQueryPending(false);
       setShowSuccessfulAlert(true);
+      setTimeout(() => setShowSuccessfulAlert(false), 15000);
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       if (!isEditableState) {

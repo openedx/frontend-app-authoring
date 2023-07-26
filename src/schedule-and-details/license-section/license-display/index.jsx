@@ -25,11 +25,12 @@ const LicenseDisplay = ({ licenseType, licenseDetails, licenseURL }) => (
 
 LicenseDisplay.defaultProps = {
   licenseURL: '',
+  licenseType: null,
   licenseDetails: {},
 };
 
 LicenseDisplay.propTypes = {
-  licenseType: PropTypes.oneOf([...Object.values(LICENSE_TYPE), '']).isRequired,
+  licenseType: PropTypes.oneOf(Object.values(LICENSE_TYPE)),
   licenseDetails: PropTypes.shape({
     attribution: PropTypes.bool,
     nonCommercial: PropTypes.bool,

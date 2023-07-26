@@ -63,7 +63,7 @@ const Header = ({
       submenuContent: (
         <>
           <div className="mb-1 small">
-            <a rel="noopener" href={getPagePath(courseId, process.env.ENABLE_NEW_SCHEDULE_DETAILS_PAGE, 'settings/details')}>{intl.formatMessage(messages['header.links.scheduleAndDetails'])}</a>
+            <a rel="noopener" href={`${config.STUDIO_BASE_URL}/settings/details/${courseId}`}>{intl.formatMessage(messages['header.links.scheduleAndDetails'])}</a>
           </div>
           <div className="mb-1 small">
             <a rel="noopener" href={getPagePath(courseId, process.env.ENABLE_NEW_GRADING_PAGE, 'settings/grading')}>{intl.formatMessage(messages['header.links.grading'])}</a>

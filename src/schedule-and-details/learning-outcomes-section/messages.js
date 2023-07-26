@@ -14,7 +14,7 @@ const messages = defineMessages({
     defaultMessage: 'Delete',
   },
   outcomesAdd: {
-    id: 'course-authoring.schedule.learning-outcomes-section.delete',
+    id: 'course-authoring.schedule.learning-outcomes-section.add',
     defaultMessage: 'Add learning outcome',
   },
   outcomesInputPlaceholder: {

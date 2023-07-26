@@ -62,7 +62,7 @@ const messages = defineMessages({
     defaultMessage: 'Enrollment end time',
   },
   scheduleUpgradeDeadlineDateLabel: {
-    id: 'course-authoring.schedule.schedule-section.enrollment-end.date.label',
+    id: 'course-authoring.schedule.schedule-section.upgrade-deadline.date.label',
     defaultMessage: 'Upgrade deadline date',
   },
   scheduleUpgradeDeadlineDateHelpText: {
@@ -70,7 +70,7 @@ const messages = defineMessages({
     defaultMessage: 'Last day students can upgrade to a verified enrollment. Contact your {platformName} partner manager to update these settings.',
   },
   scheduleUpgradeDeadlineTimeLabel: {
-    id: 'course-authoring.schedule.schedule-section.enrollment-end.time.label',
+    id: 'course-authoring.schedule.schedule-section.upgrade-deadline.time.label',
     defaultMessage: 'Upgrade deadline time',
   },
 });
