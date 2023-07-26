@@ -9,6 +9,7 @@ import {
   CheckboxFilter,
   Dropzone,
   CardView,
+  useToggle,
 } from '@edx/paragon';
 import Placeholder, { ErrorAlert } from '@edx/frontend-lib-content-components';
 
@@ -22,7 +23,6 @@ import {
   updatePageView,
 } from './data/thunks';
 import { updateAddingStatus } from '../custom-pages/data/slice';
-// import {createZipFile} from './data/utils';
 import messages from './messages';
 
 import FileInput, { fileInput } from './FileInput';
@@ -45,20 +45,23 @@ const FilesAndUploads = ({
   const columnSizes = { xs: 12, sm: 6, lg: 3 };
   const [currentView, setCurrentView] = useState(defaultVal);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
+  const [isAddOpen, setAddOpen, setAddClose] = useToggle(false);
+  const [selectedRowCount, setSelectedRowCount] = useState(0);
 
   useEffect(() => {
     dispatch(fetchAssets(courseId));
   }, [courseId]);
-  // const courseLoadingStatus = useSelector(state => state.courseDetail.loadingStatus);
   const assetIds = useSelector(state => state.assets.assetIds);
   const totalCount = useSelector(state => state.assets.totalCount);
   const addAssetStatus = useSelector(state => state.assets.addingStatus);
   const deleteAssetStatus = useSelector(state => state.assets.deletingStatus);
-  // const savingStatus = useSelector(getSavingStatus);
   const loadingStatus = useSelector(state => state.assets.loadingStatus);
   const fileInputControl = fileInput({
     onAddFile: (file) => dispatch(addAssetFile(courseId, file, totalCount)),
     onError: () => dispatch(updateAddingStatus({ status: RequestStatus.FAILED })),
+    setSelectedRowCount,
+    setAddOpen,
   });
   const assets = useModels('assets', assetIds);
 
@@ -72,6 +75,8 @@ const FilesAndUploads = ({
   };
 
   const handleBulkDelete = (selectedFlatRows) => {
+    setSelectedRowCount(selectedFlatRows.length);
+    setDeleteOpen();
     const assetIdsToDelete = selectedFlatRows.map(row => row.original.id);
     assetIdsToDelete.forEach(id => dispatch(deleteAssetFile(courseId, id, totalCount)));
   };
@@ -85,11 +90,9 @@ const FilesAndUploads = ({
       link.href = externalUrl;
       link.click();
     });
-    // if (selectedFlatRows.length === 1) {
-    // } else {
-    //   console.log('getting zip file');
-    // createZipFile({ selectedFlatRows });
-    // }
+    /* ********** TODO ***********
+     * implement a zip file function when there are multiple files
+    */
   };
 
   const handleLockedAsset = (assetId, locked) => {
@@ -143,9 +146,12 @@ const FilesAndUploads = ({
       />
     );
   };
-
   if (loadingStatus === RequestStatus.DENIED) {
-    return <Placeholder />;
+    return (
+      <div data-testid="under-construction-placeholder" className="row justify-contnt-center m-6">
+        <Placeholder />
+      </div>
+    );
   }
 
   return (
@@ -219,6 +225,7 @@ const FilesAndUploads = ({
         >
           {_.isEmpty(assets) && loadingStatus !== RequestStatus.IN_PROGRESS ? (
             <Dropzone
+              data-testid="files-dropzone"
               onProcessUpload={handleDropzoneAsset}
               maxSize={20 * 1048576}
               errorMessages={{
@@ -227,7 +234,7 @@ const FilesAndUploads = ({
               }}
             />
           ) : (
-            <>
+            <div data-testid="files-data-table">
               <DataTable.TableControlBar />
               { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" /> }
               { currentView === 'list' && <CardView CardComponent={fileCard} columnSizes={{ xs: 12 }} selectionPlacement="left" /> }
@@ -237,12 +244,20 @@ const FilesAndUploads = ({
               <ApiStatusToast
                 actionType="deleted"
                 apiStatus={deleteAssetStatus}
+                selectedRowCount={selectedRowCount}
+                isOpen={isDeleteOpen}
+                setClose={setDeleteClose}
+                setSelectedRowCount={setSelectedRowCount}
               />
               <ApiStatusToast
                 actionType="added"
                 apiStatus={addAssetStatus}
+                selectedRowCount={selectedRowCount}
+                isOpen={isAddOpen}
+                setClose={setAddClose}
+                setSelectedRowCount={setSelectedRowCount}
               />
-            </>
+            </div>
           )}
         </DataTable>
         <FileInput fileInput={fileInputControl} />
