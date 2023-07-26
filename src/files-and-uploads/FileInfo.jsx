@@ -10,7 +10,7 @@ import {
   Icon,
   Truncate,
   IconButtonWithTooltip,
-  Form,
+  CheckboxControl,
 } from '@edx/paragon';
 import { ContentCopy, InfoOutline } from '@edx/paragon/icons';
 import AssetThumbnail from './FileThumbnail';
@@ -77,6 +77,7 @@ const FileInfo = ({
               <IconButton
                 src={ContentCopy}
                 iconAs={Icon}
+                alt={messages.copyStudioUrlTitle.defaultMessage}
                 onClick={() => navigator.clipboard.writeText(asset.portableUrl)}
               />
             </ActionRow>
@@ -91,6 +92,7 @@ const FileInfo = ({
               <IconButton
                 src={ContentCopy}
                 iconAs={Icon}
+                alt={messages.copyWebUrlTitle.defaultMessage}
                 onClick={() => navigator.clipboard.writeText(asset.externalUrl)}
               />
             </ActionRow>
@@ -109,9 +111,9 @@ const FileInfo = ({
                 size="inline"
               />
               <ActionRow.Spacer />
-              <Form.Checkbox
+              <CheckboxControl
                 checked={lockedState}
-                onClick={handleLock}
+                onChange={handleLock}
                 aria-label="Checkbox"
               />
             </ActionRow>
@@ -137,7 +139,7 @@ FileInfo.propTypes = {
     dateAdded: PropTypes.string.isRequired,
   }).isRequired,
   onClose: PropTypes.func.isRequired,
-  isOpen: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
   handleLockedAsset: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,

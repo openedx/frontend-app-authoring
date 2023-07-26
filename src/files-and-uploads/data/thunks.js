@@ -61,8 +61,9 @@ export function deleteAssetFile(courseId, id, totalCount) {
     } catch (error) {
       if (error.response && error.response.status === 403) {
         dispatch(updateDeletingStatus({ status: RequestStatus.DENIED }));
+      } else {
+        dispatch(updateDeletingStatus({ status: RequestStatus.FAILED }));
       }
-      dispatch(updateDeletingStatus({ status: RequestStatus.FAILED }));
     }
   };
 }
@@ -86,8 +87,9 @@ export function addAssetFile(courseId, file, totalCount) {
     } catch (error) {
       if (error.response && error.response.status === 403) {
         dispatch(updateAddingStatus({ status: RequestStatus.DENIED }));
+      } else {
+        dispatch(updateAddingStatus({ status: RequestStatus.FAILED }));
       }
-      dispatch(updateAddingStatus({ status: RequestStatus.FAILED }));
     }
   };
 }

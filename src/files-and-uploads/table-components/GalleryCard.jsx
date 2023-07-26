@@ -47,10 +47,9 @@ const GalleryCard = ({
       return InsertDriveFile;
     }
   };
-
   return (
     <>
-      <Card className={className}>
+      <Card className={className} data-testid={`grid-card-${original.id}`}>
         <Card.Header
           actions={(
             <ActionRow>
@@ -62,6 +61,7 @@ const GalleryCard = ({
                 openAssetInfo={openAssetInfo}
                 portableUrl={original.portableUrl}
                 iconSrc={MoreVert}
+                id={original.id}
               />
             </ActionRow>
           )}
@@ -92,8 +92,11 @@ const GalleryCard = ({
   );
 };
 
+GalleryCard.defaultProps = {
+  className: null,
+};
 GalleryCard.propTypes = {
-  className: PropTypes.string.isRequired,
+  className: PropTypes.string,
   original: PropTypes.shape({
     displayName: PropTypes.string.isRequired,
     wrapperType: PropTypes.string.isRequired,

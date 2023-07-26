@@ -14,8 +14,12 @@ const TableActions = ({
 }) => (
   <>
     <Dropdown>
-      <Dropdown.Toggle variant="outline-primary">
-        <FormattedMessage {...messages.addFilesButtonLabel} />
+      <Dropdown.Toggle
+        id="actions-menu-toggle"
+        alt="actions-menu-toggle"
+        variant="outline-primary"
+      >
+        <FormattedMessage {...messages.actionsButtonLabel} />
       </Dropdown.Toggle>
       <Dropdown.Menu>
         <Dropdown.Item

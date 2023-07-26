@@ -1,12 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export const fileInput = ({ onAddFile, onError }) => {
+export const fileInput = ({
+  onAddFile,
+  onError,
+  setSelectedRowCount,
+  setAddOpen,
+}) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const ref = React.useRef();
   const click = () => ref.current.click();
   const addFile = (e) => {
     const { files } = e.target;
+    setSelectedRowCount(files.length);
+    setAddOpen();
     files.forEach(file => {
       if (file && file.size < 20 * 1048576) {
         onAddFile(file);

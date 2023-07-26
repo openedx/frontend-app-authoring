@@ -50,7 +50,11 @@ const ListCard = ({
 
   return (
     <>
-      <Card className={className} orientation="horizontal">
+      <Card
+        className={className}
+        orientation="horizontal"
+        data-testid={`list-card-${original.id}`}
+      >
         <div className="p-3">
           {original.thumbnail ? (
             <Card.ImageCap src={original.externalUrl} />
@@ -78,6 +82,7 @@ const ListCard = ({
               openAssetInfo={openAssetInfo}
               portableUrl={original.portableUrl}
               iconSrc={MoreVert}
+              id={original.id}
             />
           </ActionRow>
         </Card.Footer>
@@ -92,8 +97,11 @@ const ListCard = ({
   );
 };
 
+ListCard.defaultProps = {
+  className: null,
+};
 ListCard.propTypes = {
-  className: PropTypes.string.isRequired,
+  className: PropTypes.string,
   original: PropTypes.shape({
     displayName: PropTypes.string.isRequired,
     wrapperType: PropTypes.string.isRequired,

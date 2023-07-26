@@ -1,35 +1,36 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl } from '@edx/frontend-platform/i18n';
-import { DataTableContext, Toast } from '@edx/paragon';
-import { RequestStatus } from '../data/constants';
+import { Toast } from '@edx/paragon';
 
 const ApiStatusToast = ({
   actionType,
-  apiStatus,
+  selectedRowCount,
+  isOpen,
+  setClose,
+  setSelectedRowCount,
 }) => {
-  const { selectedFlatRows } = useContext(DataTableContext);
-  const name = selectedFlatRows[0]?.row?.original?.displayName;
-  const fileCount = selectedFlatRows?.length;
-  console.log(apiStatus);
-  console.log(apiStatus === RequestStatus.IN_PROGRESS);
-  console.log(fileCount, selectedFlatRows);
+  const handleClose = () => {
+    setSelectedRowCount(0);
+    setClose();
+  };
+
   return (
     <Toast
-      show={apiStatus === RequestStatus.IN_PROGRESS}
+      show={isOpen}
+      onClose={handleClose}
     >
-      {fileCount > 1 ? (
-        `You have ${actionType} ${fileCount} files`
-      ) : (
-        `You have ${actionType} "${name}"`
-      )}
+      {`You have ${actionType} ${selectedRowCount} files`}
     </Toast>
   );
 };
 
 ApiStatusToast.propTypes = {
   actionType: PropTypes.string.isRequired,
-  apiStatus: PropTypes.string.isRequired,
+  selectedRowCount: PropTypes.number.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  setClose: PropTypes.func.isRequired,
+  setSelectedRowCount: PropTypes.func.isRequired,
 };
 
 export default injectIntl(ApiStatusToast);

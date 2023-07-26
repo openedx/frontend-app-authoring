@@ -17,7 +17,6 @@ const AssetThumbnail = ({
   externalUrl,
   displayName,
 }) => (
-  // make all images a fixed size center flooded
   <div className="row justify-content-center">
     {thumbnail ? (
       <Image fluid thumbnail src={externalUrl} alt={`Thumbnail of ${displayName}`} />
@@ -32,8 +31,11 @@ const AssetThumbnail = ({
   </div>
 );
 
+AssetThumbnail.defaultProps = {
+  thumbnail: null,
+};
 AssetThumbnail.propTypes = {
-  thumbnail: PropTypes.string.isRequired,
+  thumbnail: PropTypes.string,
   wrapperType: PropTypes.string.isRequired,
   externalUrl: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,

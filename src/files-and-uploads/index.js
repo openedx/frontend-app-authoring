@@ -1,1 +1,1 @@
-export { default } from './FilesAndUploadsPage';
+export { default } from './FilesAndUploads';

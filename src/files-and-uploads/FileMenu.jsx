@@ -16,16 +16,18 @@ const FileMenu = ({
   openAssetInfo,
   portableUrl,
   iconSrc,
+  id,
   // injected
   intl,
 }) => (
-  <Dropdown>
+  <Dropdown data-testid={`file-menu-dropdown-${id}`}>
     <Dropdown.Toggle
-      id="dropdown-toggle-with-iconbutton"
+      id={`file-menu-dropdown-${id}`}
       as={IconButton}
       src={iconSrc}
       iconAs={Icon}
       variant="primary"
+      alt="asset-menu-toggle"
     />
     <Dropdown.Menu>
       <Dropdown.Item
@@ -42,7 +44,7 @@ const FileMenu = ({
         {intl.formatMessage(messages.downloadTitle)}
       </Dropdown.Item>
       <Dropdown.Item onClick={handleLock}>
-        {locked ? intl.formatMessage(messages.lockMenuTitle) : intl.formatMessage(messages.unlockMenuTitle) }
+        {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
       </Dropdown.Item>
       <Dropdown.Item onClick={openAssetInfo}>
         {intl.formatMessage(messages.infoTitle)}
@@ -62,7 +64,8 @@ FileMenu.propTypes = {
   locked: PropTypes.bool.isRequired,
   openAssetInfo: PropTypes.func.isRequired,
   portableUrl: PropTypes.string.isRequired,
-  iconSrc: PropTypes.node.isRequired,
+  iconSrc: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

@@ -10,9 +10,11 @@ const TablePagination = ({
   <ActionRow>
     <DataTable.RowStatus />
     <ActionRow.Spacer />
-    <Pagination.Reduced
+    <Pagination
+      variant="reduced"
+      paginationLabel="select content pagination"
       currentPage={currentPage}
-      handlePageSelect={(pageNum) => handlePageChange(pageNum)}
+      onPageSelect={(pageNum) => handlePageChange(pageNum)}
       pageCount={Math.ceil(totalCount / 50)}
     />
     <ActionRow.Spacer />
