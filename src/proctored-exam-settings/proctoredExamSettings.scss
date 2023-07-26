@@ -1,11 +1,10 @@
 // legend styling should match label styling
 legend {
-    font-size: 1.0rem;
-    font-weight: 700;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 // override conflicting browser styles
 select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
+  appearance: none;
 }

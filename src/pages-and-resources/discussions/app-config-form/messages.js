@@ -149,7 +149,7 @@ const messages = defineMessages({
     defaultMessage: 'Questions for the TAs',
     description: 'Label for a checkbox allowing a user to divide the Questions for the TAs (TA stands for "teaching assistant") course wide topic by cohorts.',
   },
-    cohortsEnabled: {
+  cohortsEnabled: {
     id: 'authoring.discussions.builtIn.cohortsEnabled.label',
     defaultMessage: 'To adjust these settings, enable cohorts on the ',
     description: 'Label text informing the user to enable cohort',

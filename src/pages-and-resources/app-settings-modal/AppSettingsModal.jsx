@@ -36,16 +36,16 @@ import messages from './messages';
 const AppSettingsForm = ({
   formikProps, children, showForm,
 }) => children && (
-<TransitionReplace>
-  {showForm ? (
-    <React.Fragment key="app-enabled">
-      {children(formikProps)}
-    </React.Fragment>
-      ) : (
-        <React.Fragment key="app-disabled" />
-      )}
-</TransitionReplace>
-  );
+  <TransitionReplace>
+    {showForm ? (
+      <React.Fragment key="app-enabled">
+        {children(formikProps)}
+      </React.Fragment>
+    ) : (
+      <React.Fragment key="app-disabled" />
+    )}
+  </TransitionReplace>
+);
 
 AppSettingsForm.propTypes = {
   // Ignore the warning here since we're just passing along the props as-is and the child component should validate
@@ -88,7 +88,7 @@ const AppSettingsModalBase = ({
       </ActionRow>
     </ModalDialog.Footer>
   </ModalDialog>
-  );
+);
 
 AppSettingsModalBase.propTypes = {
   intl: intlShape.isRequired,
@@ -118,6 +118,7 @@ const AppSettingsModal = ({
   enableAppHelp,
   learnMoreText,
   enableReinitialize,
+  hideAppToggle,
 }) => {
   const { courseId } = useContext(PagesAndResourcesContext);
   const loadingStatus = useSelector(getLoadingStatus);
@@ -217,29 +218,31 @@ const AppSettingsModal = ({
                   {formikProps.errors.enabled?.message || intl.formatMessage(messages.errorSavingMessage)}
                 </Alert>
               )}
-              <FormSwitchGroup
-                id={`enable-${appId}-toggle`}
-                name="enabled"
-                onChange={(event) => formikProps.handleChange(event)}
-                onBlur={formikProps.handleBlur}
-                checked={formikProps.values.enabled}
-                label={(
-                  <div className="d-flex align-items-center">
-                    {enableAppLabel}
-                    {formikProps.values.enabled && (
-                      <Badge className="ml-2" variant="success" data-testid="enable-badge">
-                        {intl.formatMessage(messages.enabled)}
-                      </Badge>
-                    )}
-                  </div>
-                )}
-                helpText={(
-                  <div>
-                    <p>{enableAppHelp}</p>
-                    <span className="py-3">{learnMoreLink}</span>
-                  </div>
-                )}
-              />
+              {!hideAppToggle && (
+                <FormSwitchGroup
+                  id={`enable-${appId}-toggle`}
+                  name="enabled"
+                  onChange={(event) => formikProps.handleChange(event)}
+                  onBlur={formikProps.handleBlur}
+                  checked={formikProps.values.enabled}
+                  label={(
+                    <div className="d-flex align-items-center">
+                      {enableAppLabel}
+                      {formikProps.values.enabled && (
+                        <Badge className="ml-2" variant="success" data-testid="enable-badge">
+                          {intl.formatMessage(messages.enabled)}
+                        </Badge>
+                      )}
+                    </div>
+                  )}
+                  helpText={(
+                    <div>
+                      <p>{enableAppHelp}</p>
+                      <span className="py-3">{learnMoreLink}</span>
+                    </div>
+                  )}
+                />
+              )}
               {(formikProps.values.enabled || configureBeforeEnable) && children
                 && <AppConfigFormDivider marginAdj={{ default: 0, sm: 0 }} />}
               <AppSettingsForm formikProps={formikProps} showForm={formikProps.values.enabled || configureBeforeEnable}>
@@ -283,6 +286,7 @@ AppSettingsModal.propTypes = {
   learnMoreText: PropTypes.string.isRequired,
   configureBeforeEnable: PropTypes.bool,
   enableReinitialize: PropTypes.bool,
+  hideAppToggle: PropTypes.bool,
 };
 
 AppSettingsModal.defaultProps = {
@@ -292,6 +296,7 @@ AppSettingsModal.defaultProps = {
   validationSchema: {},
   configureBeforeEnable: false,
   enableReinitialize: false,
+  hideAppToggle: false,
 };
 
 export default injectIntl(AppSettingsModal);

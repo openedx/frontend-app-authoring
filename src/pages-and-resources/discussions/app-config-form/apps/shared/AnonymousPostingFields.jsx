@@ -23,7 +23,7 @@ const AnonymousPostingFields = ({
       helpText={intl.formatMessage(messages.allowAnonymousPostsPeersHelp)}
     />
   </>
-  );
+);
 
 AnonymousPostingFields.propTypes = {
   onBlur: PropTypes.func.isRequired,

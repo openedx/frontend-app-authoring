@@ -24,6 +24,7 @@ const COURSE_APPS_ORDER = [
   'live',
   'textbooks',
   'custom_pages',
+  'ora_settings',
 ];
 
 /* eslint-disable import/prefer-default-export */

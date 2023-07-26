@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 const Logo = ({ src, alt, ...attributes }) => (
   <img src={src} alt={alt} {...attributes} />
-  );
+);
 
 Logo.propTypes = {
   src: PropTypes.string.isRequired,
@@ -20,7 +20,7 @@ const LinkedLogo = ({
   <a href={href} {...attributes}>
     <img className="d-block" src={src} alt={alt} />
   </a>
-  );
+);
 
 LinkedLogo.propTypes = {
   href: PropTypes.string.isRequired,

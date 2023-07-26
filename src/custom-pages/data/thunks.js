@@ -5,7 +5,7 @@ import {
   removeModel,
   updateModel,
   updateModels,
- } from '../../generic/model-store';
+} from '../../generic/model-store';
 import {
   getCustomPages,
   deleteCustomPage,
@@ -24,7 +24,6 @@ import {
   addCustomPageSuccess,
 } from './slice';
 
-/* eslint-disable import/prefer-default-export */
 export function fetchCustomPages(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
@@ -39,9 +38,10 @@ export function fetchCustomPages(courseId) {
       dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       if (error.response && error.response.status === 403) {
-        dispatch(updateCustomPagesApiStatus({ status: RequestStatus.DENIED }));
+        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.DENIED }));
+      } else {
+        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
       }
-      dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
     }
   };
 }

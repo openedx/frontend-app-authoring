@@ -1,6 +1,10 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, {
+  useCallback, useEffect, useMemo, useState, useContext,
+} from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { CardGrid, Container, breakpoints } from '@edx/paragon';
+import {
+  CardGrid, Container, breakpoints, Form, ActionRow, AlertModal, Button,
+} from '@edx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 import Responsive from 'react-responsive';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
@@ -14,20 +18,27 @@ import messages from './messages';
 import FeaturesTable from './FeaturesTable';
 import AppListNextButton from './AppListNextButton';
 import Loading from '../../../generic/Loading';
+import useIsOnSmallScreen from '../data/hook';
+import { saveProviderConfig, fetchDiscussionSettings } from '../data/thunks';
+import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
+import { discussionRestriction } from '../data/constants';
 
 const AppList = ({ intl }) => {
   const dispatch = useDispatch();
+  const { courseId } = useContext(PagesAndResourcesContext);
   const {
-    appIds, featureIds, status, activeAppId, selectedAppId,
+    appIds, featureIds, status, activeAppId, selectedAppId, enabled, postingRestrictions,
   } = useSelector(state => state.discussions);
+  const [discussionEnabled, setDiscussionEnabled] = useState(enabled);
   const apps = useModels('apps', appIds);
   const features = useModels('features', featureIds);
   const isGlobalStaff = getAuthenticatedUser().administrator;
   const ltiProvider = !['openedx', 'legacy'].includes(activeAppId);
+  const isOnSmallcreen = useIsOnSmallScreen();
 
   const showOneEdxProvider = useMemo(() => apps.filter(app => (
-      activeAppId === 'openedx' ? app.id !== 'legacy' : app.id !== 'openedx'
-    )), [activeAppId]);
+    activeAppId === 'openedx' ? app.id !== 'legacy' : app.id !== 'openedx'
+  )), [activeAppId]);
 
   // This could be a bit confusing.  activeAppId is the ID of the app that is currently configured
   // according to the server.  selectedAppId is the ID of the app that we _want_ to configure here
@@ -42,9 +53,48 @@ const AppList = ({ intl }) => {
     dispatch(updateValidationStatus({ hasError: false }));
   }, [selectedAppId, activeAppId]);
 
+  useEffect(() => {
+    setDiscussionEnabled(enabled);
+  }, [enabled]);
+
+  useEffect(() => {
+    if (!postingRestrictions) {
+      dispatch(fetchDiscussionSettings(courseId, selectedAppId));
+    }
+  }, [courseId]);
+
   const handleSelectApp = useCallback((appId) => {
     dispatch(selectApp({ appId }));
-  }, [selectedAppId]);
+  }, []);
+
+  const updateSettings = useCallback((enabledDiscussion) => {
+    dispatch(saveProviderConfig(
+      courseId,
+      selectedAppId,
+      {
+        enabled: enabledDiscussion,
+        postingRestrictions:
+        enabledDiscussion ? postingRestrictions : discussionRestriction.ENABLED,
+      },
+    ));
+  }, [courseId, selectedAppId, postingRestrictions]);
+
+  const handleClose = useCallback(() => {
+    setDiscussionEnabled(enabled);
+  }, [enabled]);
+
+  const handleOk = useCallback(() => {
+    setDiscussionEnabled(false);
+    updateSettings(false);
+  }, [updateSettings]);
+
+  const handleChange = useCallback((e) => {
+    const toggleVal = e.target.checked;
+    setDiscussionEnabled(!toggleVal);
+    if (!toggleVal) {
+      updateSettings(!toggleVal);
+    }
+  }, [updateSettings]);
 
   if (!selectedAppId || status === LOADING) {
     return (
@@ -71,10 +121,21 @@ const AppList = ({ intl }) => {
   ));
 
   return (
-    <div className="my-sm-5 m-1" data-testid="appList">
-      <h3 className="my-sm-5 my-4">
-        {intl.formatMessage(messages.heading)}
-      </h3>
+    <div className="my-sm-4" data-testid="appList">
+      <div className={!isOnSmallcreen ? 'd-flex flex-row justify-content-between align-items-center' : 'mb-4'}>
+        <h3 className={isOnSmallcreen ? 'mb-3' : 'm-0'}>
+          {intl.formatMessage(messages.heading)}
+        </h3>
+        <Form.Switch
+          floatLabelLeft
+          className="text-primary-500 align-items-center"
+          labelClassName="line-height-24"
+          onChange={handleChange}
+          checked={!discussionEnabled}
+        >
+          Hide discussion tab
+        </Form.Switch>
+      </div>
       <CardGrid
         columnSizes={{
           xs: 12,
@@ -82,6 +143,7 @@ const AppList = ({ intl }) => {
           lg: 4,
           xl: 4,
         }}
+        className={!isOnSmallcreen && 'mt-5'}
       >
         {(isGlobalStaff || ltiProvider) ? showAppCard(apps) : showAppCard(showOneEdxProvider)}
       </CardGrid>
@@ -96,6 +158,23 @@ const AppList = ({ intl }) => {
           />
         </div>
       </Responsive>
+      <AlertModal
+        title={intl.formatMessage(messages.hideDiscussionTabTitle)}
+        isOpen={enabled && !discussionEnabled}
+        onClose={handleClose}
+        isBlocking
+        className="hide-discussion-modal"
+        footerNode={(
+          <ActionRow>
+            <Button variant="link" className="text-decoration-none bg-black" onClick={handleClose}>Cancel</Button>
+            <Button variant="primary" className="bg-primary-500 ml-1 rounded-0" onClick={handleOk}>OK</Button>
+          </ActionRow>
+        )}
+      >
+        <p className="bg-black">
+          {intl.formatMessage(messages.hideDiscussionTabMessage)}
+        </p>
+      </AlertModal>
     </div>
   );
 };

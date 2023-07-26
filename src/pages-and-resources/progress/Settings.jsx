@@ -31,15 +31,15 @@ const ProgressSettings = ({ intl, onClose }) => {
       {
         ({ handleChange, handleBlur, values }) => (
           showProgressGraphSetting && (
-          <FormSwitchGroup
-            id="enable-progress-graph"
-            name="enableProgressGraph"
-            label={intl.formatMessage(messages.enableGraphLabel)}
-            helpText={intl.formatMessage(messages.enableGraphHelp)}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            checked={values.enableProgressGraph}
-          />
+            <FormSwitchGroup
+              id="enable-progress-graph"
+              name="enableProgressGraph"
+              label={intl.formatMessage(messages.enableGraphLabel)}
+              helpText={intl.formatMessage(messages.enableGraphHelp)}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              checked={values.enableProgressGraph}
+            />
           )
         )
       }

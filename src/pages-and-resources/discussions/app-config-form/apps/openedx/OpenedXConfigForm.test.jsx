@@ -143,7 +143,7 @@ describe('OpenedXConfigForm', () => {
         ...legacyApiResponse.plugin_configuration,
         reported_content_email_notifications_flag: true,
         divided_course_wide_discussions: [],
-         available_division_schemes: [],
+        available_division_schemes: [],
       },
     });
     createComponent();
@@ -214,7 +214,7 @@ describe('OpenedXConfigForm', () => {
   });
 
   test(
-'folded discussion topics are in the DOM when divideByCohorts and divideCourseWideTopics are enabled',
+    'folded discussion topics are in the DOM when divideByCohorts and divideCourseWideTopics are enabled',
     async () => {
       await mockStore({
         ...legacyApiResponse,
@@ -238,7 +238,7 @@ describe('OpenedXConfigForm', () => {
         expect(container.querySelector(`#checkbox-${id}`)).not.toBeInTheDocument();
       });
     },
-);
+  );
 
   const updateTopicName = async (topicId, topicName) => {
     const topicCard = queryByTestId(container, topicId);
@@ -267,7 +267,7 @@ describe('OpenedXConfigForm', () => {
   };
 
   test(
-'show required error on field when leaving empty topic name',
+    'show required error on field when leaving empty topic name',
     async () => {
       await mockStore(legacyApiResponse);
       createComponent();
@@ -277,7 +277,7 @@ describe('OpenedXConfigForm', () => {
       assertTopicNameRequiredValidation(topicCard);
       assertHasErrorValidation();
     },
-);
+  );
 
   test('check field is not collapsible in case of error', async () => {
     await mockStore(legacyApiResponse);
