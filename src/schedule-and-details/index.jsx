@@ -39,6 +39,7 @@ import LicenseSection from './license-section';
 import ScheduleSidebar from './schedule-sidebar';
 import messages from './messages';
 import { useSaveValuesPrompt } from './hooks';
+import { STATEFUL_BUTTON_STATES } from '../constants';
 
 const ScheduleAndDetails = ({ intl, courseId }) => {
   const courseSettings = useSelector(getCourseSettings);
@@ -260,7 +261,9 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
                       isEntranceExamsEnabled={isEntranceExamsEnabled}
                       possiblePreRequisiteCourses={possiblePreRequisiteCourses}
                       entranceExamMinimumScorePct={entranceExamMinimumScorePct}
-                      isPrerequisiteCoursesEnabled={isPrerequisiteCoursesEnabled}
+                      isPrerequisiteCoursesEnabled={
+                        isPrerequisiteCoursesEnabled
+                      }
                       onChange={handleValuesChange}
                     />
                   )}
@@ -303,14 +306,23 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
           role="dialog"
           actions={[
             !isQueryPending && (
-              <Button variant="tertiary" onClick={handleResetValues}>
+              <Button
+                key="cancel-button"
+                variant="tertiary"
+                onClick={handleResetValues}
+              >
                 {intl.formatMessage(messages.buttonCancelText)}
               </Button>
             ),
             <StatefulButton
+              key="save-button"
               onClick={handleUpdateValues}
-              state={isQueryPending && 'pending'}
               disabled={hasErrors}
+              state={
+                isQueryPending
+                  ? STATEFUL_BUTTON_STATES.pending
+                  : STATEFUL_BUTTON_STATES.default
+              }
               {...updateValuesButtonState}
             />,
           ].filter(Boolean)}

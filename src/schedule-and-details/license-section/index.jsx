@@ -45,8 +45,12 @@ const LicenseSection = ({ license, onChange }) => {
   );
 };
 
+LicenseSection.defaultProps = {
+  license: null,
+};
+
 LicenseSection.propTypes = {
-  license: PropTypes.string.isRequired,
+  license: PropTypes.string,
   onChange: PropTypes.func.isRequired,
 };
 

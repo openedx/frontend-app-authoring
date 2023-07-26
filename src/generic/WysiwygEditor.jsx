@@ -30,6 +30,12 @@ export const WysiwygEditor = ({ initialValue, editorType, onChange }) => {
   const defaultEmptyTextValue = '<p>&nbsp;</p>';
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
 
+  const isEquivalentCodeExtraSpaces = (first, second) => {
+    // Utils allows to compare code extra spaces
+    const removeWhitespace = (str) => str.replace(/\s/g, '');
+    return removeWhitespace(first) === removeWhitespace(second);
+  };
+
   const isEquivalentCodeQuotes = (first, second) => {
     // Utils allows to compare code with single quotes and double quotes
     const normalizeQuotes = (section) => section.replace(/'/g, '"');
@@ -37,6 +43,7 @@ export const WysiwygEditor = ({ initialValue, editorType, onChange }) => {
   };
 
   const needToChange = (value) => !isEquivalentCodeQuotes(initialValue, value)
+    && !isEquivalentCodeExtraSpaces(initialValue, value)
     && (initialValue !== defaultEmptyTextValue || value !== '');
 
   const handleUpdate = (value, editor) => {

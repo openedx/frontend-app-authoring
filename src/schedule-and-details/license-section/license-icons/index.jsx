@@ -84,10 +84,11 @@ const LicenseIcons = ({ licenseType, licenseDetails, licenseURL }) => (
 
 LicenseIcons.defaultProps = {
   licenseURL: '',
+  licenseType: null,
 };
 
 LicenseIcons.propTypes = {
-  licenseType: PropTypes.oneOf([...Object.values(LICENSE_TYPE), '']).isRequired,
+  licenseType: PropTypes.oneOf(Object.values(LICENSE_TYPE)),
   licenseDetails: PropTypes.shape({
     attribution: PropTypes.bool,
     nonCommercial: PropTypes.bool,

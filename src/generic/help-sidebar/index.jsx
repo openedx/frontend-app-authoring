@@ -41,11 +41,11 @@ const HelpSidebar = ({
   const groupConfigurationsDestination = new URL(
     `/group_configurations/${courseId}`,
     getConfig().STUDIO_BASE_URL,
-  );
+  ).href;
   const proctoredExamSettingsDestination = new URL(
     `/course/${courseId}/proctored-exam-settings`,
     getConfig().BASE_URL,
-  );
+  ).href;
 
   return (
     <aside className={classNames('help-sidebar', className)}>
@@ -97,11 +97,11 @@ const HelpSidebar = ({
                   </Hyperlink>
                 </li>
               )}
-              {!groupConfigurationsDestination.href.includes(pathname) && (
+              {!groupConfigurationsDestination.includes(pathname) && (
                 <li className="help-sidebar-other-link">
                   <Hyperlink
                     rel="noopener"
-                    destination={groupConfigurationsDestination.href}
+                    destination={groupConfigurationsDestination}
                   >
                     {intl.formatMessage(
                       messages.sidebarLinkToGroupConfigurations,
@@ -119,7 +119,7 @@ const HelpSidebar = ({
                   </Hyperlink>
                 </li>
               )}
-              {!proctoredExamSettingsDestination.href.includes(pathname) && !gradingDestination.includes(pathname) && (
+              {!proctoredExamSettingsDestination.includes(pathname) && !gradingDestination.includes(pathname) && (
                 <li className="help-sidebar-other-link">
                   <Hyperlink
                     rel="noopener"

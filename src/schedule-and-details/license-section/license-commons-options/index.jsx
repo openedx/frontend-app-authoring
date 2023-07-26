@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { ActionRow, Form, Stack } from '@edx/paragon';
+import {
+  ActionRow, Form, Stack, CheckboxControl,
+} from '@edx/paragon';
 
 import { LICENSE_COMMONS_OPTIONS } from '../constants';
 import messages from './messages';
@@ -63,10 +65,11 @@ const LicenseCommonsOptions = ({ licenseDetails, onToggleCheckbox }) => {
             onClick={() => handleCheckboxClick(option)}
           >
             <ActionRow>
-              <Form.Checkbox
+              <CheckboxControl
                 checked={option.checked}
                 disabled={option.disabled}
                 className="p-1"
+                readOnly
               />
               <p className="col-2 text-gray-700 pl-0 ml-0">
                 <FormattedMessage {...option.label} />
