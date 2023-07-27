@@ -1,0 +1,18 @@
+.outline-sidebar {
+  margin-top: $spacer;
+
+  .help-sidebar {
+    margin-top: 0;
+
+    hr {
+      margin-top: 2.25rem;
+      margin-bottom: 2.25rem;
+    }
+
+    .help-sidebar-link {
+      font-size: 0.875rem;
+      font-weight: 400;
+      line-height: 1.5rem;
+    }
+  }
+}

@@ -10,6 +10,7 @@ import EditorContainer from './editors/EditorContainer';
 import VideoSelectorContainer from './selectors/VideoSelectorContainer';
 import CustomPages from './custom-pages';
 import { AdvancedSettings } from './advanced-settings';
+import { CourseOutline } from './course-outline';
 import ScheduleAndDetails from './schedule-and-details';
 import { GradingSettings } from './grading-settings';
 import CourseTeam from './course-team/CourseTeam';
@@ -38,7 +39,7 @@ const CourseAuthoringRoutes = ({ courseId }) => {
         <PageRoute path={`${path}/outline`}>
           {process.env.ENABLE_NEW_COURSE_OUTLINE_PAGE === 'true'
             && (
-              <Placeholder />
+              <CourseOutline courseId />
             )}
         </PageRoute>
         <PageRoute path={`${path}/course_info`}>
