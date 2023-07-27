@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  Card, Form, Icon, IconButton, OverlayTrigger, Popover,
+  ActionRow,
+  Card,
+  Form,
+  Icon,
+  IconButton,
+  ModalPopup,
+  useToggle,
 } from '@edx/paragon';
-import { Info, Warning } from '@edx/paragon/icons';
+import { InfoOutline, Warning } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { capitalize } from 'lodash';
@@ -15,33 +21,40 @@ const SettingCard = ({
   intl, showDeprecated, name, onChange, value, settingData, handleBlur,
 }) => {
   const { deprecated, help, displayName } = settingData;
+  const [isOpen, open, close] = useToggle(false);
+  const [target, setTarget] = useState(null);
   return (
     <li className={classNames('field-group course-advanced-policy-list-item', { 'd-none': deprecated && !showDeprecated })}>
       <Card className="flex-column setting-card">
-        <Card.Body className="d-flex justify-content-between">
+        <Card.Body className="d-flex">
           <Card.Header
-            title={capitalize(displayName)}
-            subtitle={(
-              <OverlayTrigger
-                trigger="click"
-                rootClose
-                placement="bottom"
-                overlay={(
-                  <Popover id="popover-positioned">
-                    <Popover.Content>
-                      {/* eslint-disable-next-line react/no-danger */}
-                      <div dangerouslySetInnerHTML={{ __html: help }} />
-                    </Popover.Content>
-                  </Popover>
-                )}
-              >
+            title={(
+              <ActionRow>
+                {capitalize(displayName)}
                 <IconButton
-                  src={Info}
+                  ref={setTarget}
+                  onClick={open}
+                  src={InfoOutline}
                   iconAs={Icon}
                   alt={intl.formatMessage(messages.helpButtonText)}
-                  variant="light"
+                  variant="primary"
+                  className=" ml-1 mr-2"
                 />
-              </OverlayTrigger>
+                <ModalPopup
+                  hasArrow
+                  placement="right"
+                  positionRef={target}
+                  isOpen={isOpen}
+                  onClose={close}
+                  className="pgn__modal-popup__arrow"
+                >
+                  <div
+                    className="p-2 x-small rounded modal-popup-content"
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: help }}
+                  />
+                </ModalPopup>
+              </ActionRow>
             )}
           />
           <Card.Section>

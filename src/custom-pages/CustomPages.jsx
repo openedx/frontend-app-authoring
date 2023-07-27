@@ -16,6 +16,7 @@ import {
   useToggle,
   Image,
   ModalDialog,
+  Container,
 } from '@edx/paragon';
 import { Add, SpinnerSimple } from '@edx/paragon/icons';
 import Placeholder, {
@@ -110,7 +111,7 @@ const CustomPages = ({
   }
   return (
     <CustomPagesProvider courseId={courseId}>
-      <main className="container container-mw-xl p-4 pt-5">
+      <Container size="xl" className="p-4 pt-5">
         <div className="small gray-700">
           <Breadcrumb
             ariaLabel="Custom Page breadcrumbs"
@@ -255,7 +256,7 @@ const CustomPages = ({
             )}
           </PageRoute>
         </Switch>
-      </main>
+      </Container>
     </CustomPagesProvider>
   );
 };

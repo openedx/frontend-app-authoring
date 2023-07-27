@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Container, Button, Layout, StatefulButton,
+  Container, Button, Layout, StatefulButton, TransitionReplace,
 } from '@edx/paragon';
 import { CheckCircle, Info, Warning } from '@edx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -58,6 +58,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       setIsQueryPending(false);
       setShowSuccessAlert(true);
+      setTimeout(() => setShowSuccessAlert(false), 15000);
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       if (!isEditableState) {
@@ -140,7 +141,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
 
   return (
     <>
-      <Container size="xl" className="m-4">
+      <Container size="xl" className="px-4">
         <div className="setting-header mt-5">
           {(proctoringExamErrors?.length > 0) && (
             <AlertProctoringError
@@ -151,17 +152,27 @@ const AdvancedSettings = ({ intl, courseId }) => {
               aria-describedby={intl.formatMessage(messages.alertProctoringDescribedby)}
             />
           )}
-          <AlertMessage
-            show={showSuccessAlert}
-            variant="success"
-            icon={CheckCircle}
-            title={intl.formatMessage(messages.alertSuccess)}
-            description={intl.formatMessage(messages.alertSuccessDescriptions)}
-            aria-hidden="true"
-            aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
-            aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
-          />
+          <TransitionReplace>
+            {showSuccessAlert ? (
+              <AlertMessage
+                key={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
+                show={showSuccessAlert}
+                variant="success"
+                icon={CheckCircle}
+                title={intl.formatMessage(messages.alertSuccess)}
+                description={intl.formatMessage(messages.alertSuccessDescriptions)}
+                aria-hidden="true"
+                aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
+                aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
+              />
+            ) : null}
+          </TransitionReplace>
         </div>
+        <SubHeader
+          subtitle={intl.formatMessage(messages.headingSubtitle)}
+          title={intl.formatMessage(messages.headingTitle)}
+          contentTitle={intl.formatMessage(messages.policy)}
+        />
         <section className="setting-items mb-4">
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
@@ -174,18 +185,13 @@ const AdvancedSettings = ({ intl, courseId }) => {
               <article>
                 <div>
                   <section className="setting-items-policies">
-                    <SubHeader
-                      subtitle={intl.formatMessage(messages.headingSubtitle)}
-                      title={intl.formatMessage(messages.headingTitle)}
-                      contentTitle={intl.formatMessage(messages.policy)}
-                      instruction={(
-                        <FormattedMessage
-                          id="course-authoring.advanced-settings.policies.description"
-                          defaultMessage="{notice} Do not modify these policies unless you are familiar with their purpose."
-                          values={{ notice: <strong>Warning: </strong> }}
-                        />
-                      )}
-                    />
+                    <div className="small">
+                      <FormattedMessage
+                        id="course-authoring.advanced-settings.policies.description"
+                        defaultMessage="{notice} Do not modify these policies unless you are familiar with their purpose."
+                        values={{ notice: <strong>Warning:  </strong> }}
+                      />
+                    </div>
                     <div className="setting-items-deprecated-setting">
                       <Button
                         variant={showDeprecated ? 'outline-brand' : 'tertiary'}
@@ -204,7 +210,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
                       </Button>
                     </div>
                     <ul className="setting-items-list p-0">
-                      {Object.keys(advancedSettingsData).sort().map((settingName) => {
+                      {Object.keys(advancedSettingsData).map((settingName) => {
                         const settingData = advancedSettingsData[settingName];
                         const editedValue = editedSettings[settingName] !== undefined
                           ? editedSettings[settingName] : JSON.stringify(settingData.value, null, 4);
