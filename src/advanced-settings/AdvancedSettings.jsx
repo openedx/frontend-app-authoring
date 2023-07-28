@@ -60,12 +60,10 @@ const AdvancedSettings = ({ intl, courseId }) => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       setIsQueryPending(false);
       setShowSuccessAlert(true);
+      setIsEditableState(false);
       setTimeout(() => setShowSuccessAlert(false), 15000);
       window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      if (!isEditableState) {
-        showSaveSettingsPrompt(false);
-      }
+      showSaveSettingsPrompt(false);
     } else if (savingStatus === RequestStatus.FAILED && !hasInternetConnectionError) {
       setErrorFields(settingsWithSendErrors);
       showErrorModal(true);
