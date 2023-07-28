@@ -10,7 +10,6 @@ import {
 } from '@edx/paragon';
 import { InfoOutline, Warning } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { capitalize } from 'lodash';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -18,13 +17,46 @@ import TextareaAutosize from 'react-textarea-autosize';
 import messages from './messages';
 
 const SettingCard = ({
-  intl, showDeprecated, name, onChange, value, settingData, handleBlur,
+  name,
+  settingData,
+  handleBlur,
+  setEdited,
+  showSaveSettingsPrompt,
+  saveSettingsPrompt,
+  isEditableState,
+  setIsEditableState,
+  // injected
+  intl,
 }) => {
   const { deprecated, help, displayName } = settingData;
+  const initialValue = JSON.stringify(settingData.value, null, 4);
   const [isOpen, open, close] = useToggle(false);
   const [target, setTarget] = useState(null);
+  const [newValue, setNewValue] = useState(initialValue);
+
+  const handleSettingChange = (e) => {
+    const { value } = e.target;
+    setNewValue(e.target.value);
+    if (value !== initialValue) {
+      if (!saveSettingsPrompt) {
+        showSaveSettingsPrompt(true);
+      }
+      if (!isEditableState) {
+        setIsEditableState(true);
+      }
+    }
+  };
+
+  const handleCardBlur = () => {
+    setEdited((prevEditedSettings) => ({
+      ...prevEditedSettings,
+      [name]: newValue,
+    }));
+    handleBlur();
+  };
+
   return (
-    <li className={classNames('field-group course-advanced-policy-list-item', { 'd-none': deprecated && !showDeprecated })}>
+    <li className="field-group course-advanced-policy-list-item">
       <Card className="flex-column setting-card">
         <Card.Body className="d-flex">
           <Card.Header
@@ -61,11 +93,11 @@ const SettingCard = ({
             <Form.Group className="m-0">
               <Form.Control
                 as={TextareaAutosize}
-                value={value}
+                value={isEditableState ? newValue : initialValue}
                 name={name}
-                onChange={onChange}
+                onChange={handleSettingChange}
                 aria-label={displayName}
-                onBlur={handleBlur}
+                onBlur={handleCardBlur}
               />
             </Form.Group>
           </Card.Section>
@@ -86,22 +118,21 @@ SettingCard.propTypes = {
     deprecated: PropTypes.bool,
     help: PropTypes.string,
     displayName: PropTypes.string,
+    value: PropTypes.PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.bool,
+      PropTypes.number,
+      PropTypes.object,
+      PropTypes.array,
+    ]),
   }).isRequired,
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool,
-    PropTypes.number,
-    PropTypes.object,
-    PropTypes.array,
-  ]),
-  onChange: PropTypes.func.isRequired,
-  showDeprecated: PropTypes.bool.isRequired,
+  setEdited: PropTypes.func.isRequired,
+  showSaveSettingsPrompt: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   handleBlur: PropTypes.func.isRequired,
-};
-
-SettingCard.defaultProps = {
-  value: undefined,
+  saveSettingsPrompt: PropTypes.bool.isRequired,
+  isEditableState: PropTypes.bool.isRequired,
+  setIsEditableState: PropTypes.func.isRequired,
 };
 
 export default injectIntl(SettingCard);

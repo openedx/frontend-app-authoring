@@ -25,10 +25,6 @@ import messages from './messages';
 import ModalError from './modal-error/ModalError';
 
 const AdvancedSettings = ({ intl, courseId }) => {
-  const advancedSettingsData = useSelector(getCourseAppSettings);
-  const savingStatus = useSelector(getSavingStatus);
-  const proctoringExamErrors = useSelector(getProctoringExamErrors);
-  const settingsWithSendErrors = useSelector(getSendRequestErrors) || {};
   const dispatch = useDispatch();
   const [saveSettingsPrompt, showSaveSettingsPrompt] = useState(false);
   const [showDeprecated, setShowDeprecated] = useState(false);
@@ -36,10 +32,21 @@ const AdvancedSettings = ({ intl, courseId }) => {
   const [editedSettings, setEditedSettings] = useState({});
   const [errorFields, setErrorFields] = useState([]);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-  const loadingSettingsStatus = useSelector(getLoadingStatus);
   const [isQueryPending, setIsQueryPending] = useState(false);
   const [isEditableState, setIsEditableState] = useState(false);
   const [hasInternetConnectionError, setInternetConnectionError] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchCourseAppSettings(courseId));
+    dispatch(fetchProctoringExamErrors(courseId));
+  }, [courseId]);
+
+  const advancedSettingsData = useSelector(getCourseAppSettings);
+  const savingStatus = useSelector(getSavingStatus);
+  const proctoringExamErrors = useSelector(getProctoringExamErrors);
+  const settingsWithSendErrors = useSelector(getSendRequestErrors) || {};
+  const loadingSettingsStatus = useSelector(getLoadingStatus);
+
   const isLoading = loadingSettingsStatus === RequestStatus.IN_PROGRESS;
   const updateSettingsButtonState = {
     labels: {
@@ -48,11 +55,6 @@ const AdvancedSettings = ({ intl, courseId }) => {
     },
     disabledStates: ['pending'],
   };
-
-  useEffect(() => {
-    dispatch(fetchCourseAppSettings(courseId));
-    dispatch(fetchProctoringExamErrors(courseId));
-  }, [courseId]);
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
@@ -82,19 +84,6 @@ const AdvancedSettings = ({ intl, courseId }) => {
     );
   }
 
-  const handleSettingChange = (e, settingName) => {
-    const { value } = e.target;
-    if (!saveSettingsPrompt) {
-      showSaveSettingsPrompt(true);
-    }
-    setIsEditableState(true);
-    setShowSuccessAlert(false);
-    setEditedSettings((prevEditedSettings) => ({
-      ...prevEditedSettings,
-      [settingName]: value,
-    }));
-  };
-
   const handleResetSettingsValues = () => {
     setIsEditableState(false);
     showErrorModal(false);
@@ -112,7 +101,6 @@ const AdvancedSettings = ({ intl, courseId }) => {
     const isValid = validateAdvancedSettingsData(editedSettings, setErrorFields, setEditedSettings);
     if (isValid) {
       setIsQueryPending(true);
-      setIsEditableState(false);
     } else {
       setIsQueryPending(false);
       showSaveSettingsPrompt(false);
@@ -212,18 +200,20 @@ const AdvancedSettings = ({ intl, courseId }) => {
                     <ul className="setting-items-list p-0">
                       {Object.keys(advancedSettingsData).map((settingName) => {
                         const settingData = advancedSettingsData[settingName];
-                        const editedValue = editedSettings[settingName] !== undefined
-                          ? editedSettings[settingName] : JSON.stringify(settingData.value, null, 4);
-
+                        if (settingData.deprecated && !showDeprecated) {
+                          return null;
+                        }
                         return (
                           <SettingCard
                             key={settingName}
                             settingData={settingData}
-                            onChange={(e) => handleSettingChange(e, settingName)}
-                            showDeprecated={showDeprecated}
                             name={settingName}
-                            value={editedValue}
+                            showSaveSettingsPrompt={showSaveSettingsPrompt}
+                            saveSettingsPrompt={saveSettingsPrompt}
+                            setEdited={setEditedSettings}
                             handleBlur={handleSettingBlur}
+                            isEditableState={isEditableState}
+                            setIsEditableState={setIsEditableState}
                           />
                         );
                       })}
@@ -239,14 +229,12 @@ const AdvancedSettings = ({ intl, courseId }) => {
         </section>
       </Container>
       <div className="alert-toast">
-        {!isEditableState && (
-          <InternetConnectionAlert
-            isFailed={savingStatus === RequestStatus.FAILED}
-            isQueryPending={isQueryPending}
-            onQueryProcessing={handleQueryProcessing}
-            onInternetConnectionFailed={handleInternetConnectionFailed}
-          />
-        )}
+        <InternetConnectionAlert
+          isFailed={savingStatus === RequestStatus.FAILED}
+          isQueryPending={isQueryPending}
+          onQueryProcessing={handleQueryProcessing}
+          onInternetConnectionFailed={handleInternetConnectionFailed}
+        />
         <AlertMessage
           show={saveSettingsPrompt}
           aria-hidden={saveSettingsPrompt}

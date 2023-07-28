@@ -5,12 +5,15 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import SettingCard from './SettingCard';
 import messages from './messages';
 
-const handleChange = jest.fn();
+const setEdited = jest.fn();
+const showSaveSettingsPrompt = jest.fn();
+const setIsEditableState = jest.fn();
 
 const settingData = {
   deprecated: false,
   help: 'This is a help message',
   displayName: 'Setting Name',
+  value: 'Setting Value',
 };
 
 jest.mock('react-textarea-autosize', () => jest.fn((props) => (
@@ -27,9 +30,13 @@ const RootWrapper = () => (
       intl={{}}
       isOn
       name="settingName"
-      onChange={handleChange}
-      value="Setting Value"
+      setEdited={setEdited}
+      setIsEditableState={setIsEditableState}
+      showSaveSettingsPrompt={showSaveSettingsPrompt}
       settingData={settingData}
+      onBlur={jest.fn()}
+      isEditableState
+      saveSettingsPrompt
     />
   </IntlProvider>
 );
@@ -42,7 +49,7 @@ describe('<SettingCard />', () => {
     const input = getByLabelText(/Setting Name/i);
     expect(cardTitle).toBeInTheDocument();
     expect(input).toBeInTheDocument();
-    expect(input.value).toBe('Setting Value');
+    expect(input.value).toBe(JSON.stringify(settingData.value, null, 4));
   });
   it('displays the deprecated status when the setting is deprecated', () => {
     const deprecatedSettingData = { ...settingData, deprecated: true };
@@ -52,9 +59,12 @@ describe('<SettingCard />', () => {
           intl={{}}
           isOn
           name="settingName"
-          onChange={handleChange}
-          value="Setting Value"
+          setEdited={setEdited}
+          setIsEditableState={setIsEditableState}
+          showSaveSettingsPrompt={showSaveSettingsPrompt}
           settingData={deprecatedSettingData}
+          isEditable
+          saveSettingsPrompt
         />
       </IntlProvider>,
     );

@@ -122,13 +122,11 @@ describe('<AdvancedSettings />', () => {
       expect(textarea.value).toBe('[]');
     });
   });
-  it('should update the textarea value and display the updated value after clicking "Change manually"', async () => {
-    const { getByLabelText, getByText } = render(<RootWrapper />);
+  it('should update the textarea value and display the updated value', async () => {
+    const { getByLabelText } = render(<RootWrapper />);
     await waitFor(() => {
       const textarea = getByLabelText(/Advanced Module List/i);
       fireEvent.change(textarea, { target: { value: '[3, 2, 1' } });
-      fireEvent.click(getByText(messages.buttonSaveText.defaultMessage));
-      fireEvent.click(getByText(/Change manually/i));
       expect(textarea.value).toBe('[3, 2, 1');
     });
   });
