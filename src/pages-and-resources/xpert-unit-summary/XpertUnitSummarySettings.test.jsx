@@ -14,6 +14,8 @@ import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 import { XpertUnitSummarySettings } from './index';
 import initializeStore from '../../store';
 import * as API from './data/api';
+import * as Thunks from './data/thunks';
+import { executeThunk } from '../../utils';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 let axiosMock;
@@ -95,7 +97,7 @@ describe('XpertUnitSummarySettings', () => {
     });
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
-    // Leave the DiscussionsSettings route after the test.
+    // Go back to settings route
     history.push('/xpert-unit-summary/settings');
   });
 
@@ -146,25 +148,42 @@ describe('XpertUnitSummarySettings', () => {
       expect(queryByTestId(container, 'enable-badge')).not.toBeTruthy();
     });
   });
-});
 
-describe('saving configuration changes', () => {
-  beforeEach(() => {
-    axiosMock.onPost(API.getXpertSettingsUrl(courseId))
-      .reply(200, generateCourseLevelAPIRepsonse({
-        success: true,
-        enabled: true,
-      }));
+  describe('saving configuration changes', () => {
+    beforeEach(() => {
+      axiosMock.onPost(API.getXpertSettingsUrl(courseId))
+        .reply(200, generateCourseLevelAPIRepsonse({
+          success: true,
+          enabled: true,
+        }));
 
-    renderComponent();
+      renderComponent();
+    });
+
+    test('Saving configuration changes', async () => {
+      jest.spyOn(API, 'postXpertSettings');
+
+      await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
+      fireEvent.click(getByText(container, 'Save'));
+      await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).not.toBeTruthy());
+      expect(API.postXpertSettings).toBeCalled();
+    });
   });
 
-  test('Saving configuration changes', async () => {
-    jest.spyOn(API, 'postXpertSettings');
+  describe('testing configurable gating', () => {
+    beforeEach(async () => {
+      axiosMock.onGet(API.getXpertConfigurationStatusUrl(courseId))
+        .reply(200, generateCourseLevelAPIRepsonse({
+          success: true,
+          enabled: true,
+        }));
+      jest.spyOn(API, 'getXpertPluginConfigurable');
+      await executeThunk(Thunks.fetchXpertPluginConfigurable(courseId), store.dispatch);
+      renderComponent();
+    });
 
-    await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
-    fireEvent.click(getByText(container, 'Save'));
-    await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).not.toBeTruthy());
-    expect(API.postXpertSettings).toBeCalled();
+    test('getting Xpert Plugin configurable status', () => {
+      expect(API.getXpertPluginConfigurable).toBeCalled();
+    });
   });
 });

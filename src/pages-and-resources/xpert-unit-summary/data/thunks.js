@@ -31,7 +31,6 @@ export function fetchXpertPluginConfigurable(courseId) {
     dispatch(updateLoadingStatus({ status: RequestStatus.PENDING }));
     try {
       const { response } = await getXpertPluginConfigurable(courseId);
-
       enabled = response?.enabled;
     } catch (e) {
       enabled = false;
