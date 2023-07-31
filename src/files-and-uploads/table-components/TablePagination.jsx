@@ -6,27 +6,31 @@ const TablePagination = ({
   totalCount,
   currentPage,
   handlePageChange,
-}) => (
-  <ActionRow>
-    <DataTable.RowStatus />
-    <ActionRow.Spacer />
-    <Pagination
-      variant="reduced"
-      paginationLabel="select content pagination"
-      currentPage={currentPage}
-      onPageSelect={(pageNum) => handlePageChange(pageNum)}
-      pageCount={Math.ceil(totalCount / 50)}
-    />
-    <ActionRow.Spacer />
-    <Pagination
-      variant="minimal"
-      currentPage={currentPage}
-      pageCount={Math.ceil(totalCount / 50)}
-      paginationLabel="select content pagination"
-      onPageSelect={(pageNum) => handlePageChange(pageNum)}
-    />
-  </ActionRow>
-);
+}) => {
+  const pageCount = totalCount ? Math.ceil(totalCount / 50) : 1;
+
+  return (
+    <ActionRow>
+      <DataTable.RowStatus />
+      <ActionRow.Spacer />
+      <Pagination
+        variant="reduced"
+        paginationLabel="select content pagination"
+        currentPage={currentPage}
+        onPageSelect={(pageNum) => handlePageChange(pageNum)}
+        pageCount={pageCount}
+      />
+      <ActionRow.Spacer />
+      <Pagination
+        variant="minimal"
+        currentPage={currentPage}
+        pageCount={pageCount}
+        paginationLabel="select content pagination"
+        onPageSelect={(pageNum) => handlePageChange(pageNum)}
+      />
+    </ActionRow>
+  );
+};
 
 TablePagination.propTypes = {
   totalCount: PropTypes.number.isRequired,
