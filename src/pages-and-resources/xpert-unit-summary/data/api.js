@@ -2,11 +2,11 @@ import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 export function getXpertSettingsUrl(courseId) {
-  return `${getConfig().LMS_BASE_URL}/ai_aside/v1/${courseId}`;
+  return `${getConfig().STUDIO_BASE_URL}/ai_aside/v1/${courseId}`;
 }
 
 export function getXpertConfigurationStatusUrl(courseId) {
-  return `${getConfig().LMS_BASE_URL}/ai_aside/v1/${courseId}/configurable`;
+  return `${getConfig().STUDIO_BASE_URL}/ai_aside/v1/${courseId}/configurable`;
 }
 
 export async function getXpertSettings(courseId) {
