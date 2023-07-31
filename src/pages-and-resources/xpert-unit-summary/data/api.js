@@ -1,7 +1,7 @@
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-function getXpertSettingsUrl(courseId) {
+export function getXpertSettingsUrl(courseId) {
   return `${getConfig().LMS_BASE_URL}/ai_aside/v1/${courseId}`;
 }
 
