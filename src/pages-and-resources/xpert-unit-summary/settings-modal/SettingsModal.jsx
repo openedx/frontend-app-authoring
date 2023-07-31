@@ -143,7 +143,7 @@ const SettingsModal = ({
     if (onSettingsSave) {
       success = success && await onSettingsSave(values);
     }
-    await setSaveError(!success);
+    setSaveError(!success);
     !success && alertRef?.current.scrollIntoView(); // eslint-disable-line no-unused-expressions
   };
 
@@ -151,7 +151,7 @@ const SettingsModal = ({
     // If submitting the form with errors, show the alert and scroll to it.
     await handleSubmit(event);
     if (Object.keys(errors).length > 0) {
-      await setSaveError(true);
+      setSaveError(true);
       alertRef?.current.scrollIntoView?.(); // eslint-disable-line no-unused-expressions
     }
   };
