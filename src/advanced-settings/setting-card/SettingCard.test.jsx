@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -78,13 +78,19 @@ describe('<SettingCard />', () => {
     const { queryByText } = render(<RootWrapper />);
     expect(queryByText(messages.deprecated.defaultMessage)).toBeNull();
   });
-  it('calls setEdited on blur', () => {
+  it('calls setEdited on blur', async () => {
     const { getByLabelText } = render(<RootWrapper />);
     const inputBox = getByLabelText(/Setting Name/i);
     fireEvent.focus(inputBox);
     userEvent.clear(inputBox);
     userEvent.type(inputBox, '3, 2, 1');
+    await waitFor(() => {
+      expect(inputBox).toHaveValue('3, 2, 1');
+    });
+    await (async () => {
+      expect(setEdited).toHaveBeenCalled();
+      expect(handleBlur).toHaveBeenCalled();
+    });
     fireEvent.focusOut(inputBox);
-    expect(inputBox).toHaveValue('3, 2, 1');
   });
 });
