@@ -246,8 +246,9 @@ const AdvancedSettings = ({ intl, courseId }) => {
               </Button>
             ),
             <StatefulButton
+              key="statefulBtn"
               onClick={handleUpdateAdvancedSettingsData}
-              state={isQueryPending && 'pending'}
+              state={isQueryPending ? RequestStatus.PENDING : 'default'}
               {...updateSettingsButtonState}
             />,
           ].filter(Boolean)}
