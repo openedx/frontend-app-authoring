@@ -6,4 +6,11 @@ module.exports = {
     hideOnEnabledPublisher: false,
     value: [],
   },
+  certHtmlViewEnabled: {
+    deprecated: true,
+    display_name: 'Certificate web/html view enabled',
+    help: 'If true, certificate Web/HTML views are enabled for the course.',
+    hide_on_enabled_publisher: false,
+    value: true,
+  },
 };

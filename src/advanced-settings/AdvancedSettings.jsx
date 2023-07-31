@@ -87,8 +87,6 @@ const AdvancedSettings = ({ intl, courseId }) => {
     showErrorModal(false);
     setEditedSettings({});
     showSaveSettingsPrompt(false);
-    setInternetConnectionError(false);
-    setIsQueryPending(false);
   };
 
   const handleSettingBlur = () => {
@@ -100,7 +98,6 @@ const AdvancedSettings = ({ intl, courseId }) => {
     if (isValid) {
       setIsQueryPending(true);
     } else {
-      setIsQueryPending(false);
       showSaveSettingsPrompt(false);
       showErrorModal(!errorModal);
     }
@@ -110,7 +107,6 @@ const AdvancedSettings = ({ intl, courseId }) => {
     setInternetConnectionError(true);
     showSaveSettingsPrompt(false);
     setShowSuccessAlert(false);
-    setIsQueryPending(false);
   };
 
   const handleQueryProcessing = () => {
@@ -119,10 +115,8 @@ const AdvancedSettings = ({ intl, courseId }) => {
   };
 
   const handleManuallyChangeClick = (setToState) => {
-    setIsEditableState(true);
     showErrorModal(setToState);
     showSaveSettingsPrompt(true);
-    setIsQueryPending(false);
   };
 
   return (
@@ -227,12 +221,14 @@ const AdvancedSettings = ({ intl, courseId }) => {
         </section>
       </Container>
       <div className="alert-toast">
-        <InternetConnectionAlert
-          isFailed={savingStatus === RequestStatus.FAILED}
-          isQueryPending={isQueryPending}
-          onQueryProcessing={handleQueryProcessing}
-          onInternetConnectionFailed={handleInternetConnectionFailed}
-        />
+        {isQueryPending && (
+          <InternetConnectionAlert
+            isFailed={savingStatus === RequestStatus.FAILED}
+            isQueryPending={isQueryPending}
+            onQueryProcessing={handleQueryProcessing}
+            onInternetConnectionFailed={handleInternetConnectionFailed}
+          />
+        )}
         <AlertMessage
           show={saveSettingsPrompt}
           aria-hidden={saveSettingsPrompt}
