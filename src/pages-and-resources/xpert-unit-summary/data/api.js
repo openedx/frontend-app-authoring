@@ -27,7 +27,7 @@ export async function postXpertSettings(courseId, state) {
 
 export async function getXpertPluginConfigurable(courseId) {
   const { data } = await getAuthenticatedHttpClient()
-  .get(getXpertConfigurationStatusUrl(courseId));
+    .get(getXpertConfigurationStatusUrl(courseId));
 
   return data;
 }
