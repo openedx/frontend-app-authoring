@@ -32,6 +32,7 @@ const app = createSlice({
       blockId: payload.blockId,
       learningContextId: payload.learningContextId,
       blockType: payload.blockType,
+      blockValue: null,
     }),
     setUnitUrl: (state, { payload }) => ({ ...state, unitUrl: payload }),
     setBlockValue: (state, { payload }) => ({

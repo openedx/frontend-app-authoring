@@ -575,7 +575,7 @@ describe('cms api', () => {
   });
   describe('fetchVideoFeatures', () => {
     it('should call get with url.videoFeatures', () => {
-      const args = { studioEndpointUrl, learningContextId };
+      const args = { studioEndpointUrl };
       apiMethods.fetchVideoFeatures({ ...args });
       expect(get).toHaveBeenCalledWith(urls.videoFeatures({ ...args }));
     });

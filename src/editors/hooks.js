@@ -7,6 +7,7 @@ import { actions, thunkActions } from './data/redux';
 import * as module from './hooks';
 import { RequestKeys } from './data/constants/requests';
 
+// eslint-disable-next-line react-hooks/rules-of-hooks
 export const initializeApp = ({ dispatch, data }) => useEffect(
   () => dispatch(thunkActions.app.initialize(data)),
   [data],
@@ -54,15 +55,15 @@ export const saveBlock = ({
     attemptSave = true;
   }
   if (attemptSave) {
-    dispatch(thunkActions.app.saveBlock({
-      returnToUnit: module.navigateCallback({
+    dispatch(thunkActions.app.saveBlock(
+      content,
+      module.navigateCallback({
         destination,
         analyticsEvent: analyticsEvt.editorSaveClick,
         analytics,
         returnFunction,
       }),
-      content,
-    }));
+    ));
   }
 };
 

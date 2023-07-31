@@ -10,7 +10,9 @@ import * as module from './SelectVideoModal';
 
 export const hooks = {
   videoList: ({ fetchVideos }) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
     const [videos, setVideos] = React.useState(null);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     React.useEffect(() => {
       fetchVideos({ onSuccess: setVideos });
     }, []);

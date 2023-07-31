@@ -36,21 +36,7 @@ export const fetchBlockById = ({ blockId, studioEndpointUrl }) => {
   } else if (blockId === 'problem-block-id') {
     data = {
       data: `<problem>
-      <multiplechoiceresponse>
-      <p>What is the content of the register x2 after executing the following three lines of instructions?</p>
-      <p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions <br />0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1<br />0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4<br />0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1</strong></span></p>
-      <choicegroup type="MultipleChoice">
-          <choice correct="false">answerA</choice>
-          <choice correct="true">answerB</choice>
-        </choicegroup>
-      <solution>
-      <div class="detailed-solution">
-       <p>Explanation</p>
-        <p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions&#160;&#160;&#160;&#160;comment<br />0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x1 = 0x1<br />0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x2 = x1 &lt;&lt; 4 = 0x10<br />0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x1 = x2 - x1 = 0x10 - 0x01 = 0xf</strong></span></p>
-        </div>
-        </solution>
-      </multiplechoiceresponse>
-      </problem>`,
+    </problem>`,
       display_name: 'Dropdown',
       metadata: {
         markdown: `You can use this template as a guide to the simple editor markdown and OLX markup to use for dropdown problems. Edit this component to replace this template with your own assessment.
@@ -67,6 +53,11 @@ export const fetchBlockById = ({ blockId, studioEndpointUrl }) => {
         submission_wait_seconds: 15,
         weight: 29,
       },
+    };
+  } else if (blockId === 'game-block-id') {
+    data = {
+      display_name: 'Game Block',
+      // TODO: insert mock data from backend here
     };
   }
   return mockPromise({ data: { ...data } });
@@ -152,7 +143,7 @@ export const fetchAdvanceSettings = ({ studioEndpointUrl, learningContextId }) =
   data: { allow_unsupported_xblocks: { value: true } },
 });
 // eslint-disable-next-line
-export const fetchVideoFeatures = ({ studioEndpointUrl, learningContextId }) => mockPromise({
+export const fetchVideoFeatures = ({ studioEndpointUrl }) => mockPromise({
   data: {
     allowThumbnailUpload: true,
     videoSharingEnabledForCourse: true,

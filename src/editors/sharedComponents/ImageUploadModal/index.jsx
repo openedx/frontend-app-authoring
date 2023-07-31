@@ -6,6 +6,7 @@ import tinyMCEKeys from '../../data/constants/tinyMCE';
 import ImageSettingsModal from './ImageSettingsModal';
 import SelectImageModal from './SelectImageModal';
 import * as module from '.';
+import { updateImageDimensions } from '../TinyMceWidget/hooks';
 
 export const propsString = (props) => (
   Object.keys(props).map((key) => `${key}="${props[key]}"`).join(' ')
@@ -17,8 +18,8 @@ export const imgProps = ({
   lmsEndpointUrl,
   editorType,
 }) => {
-  let url = selection.externalUrl;
-  if (url.startsWith(lmsEndpointUrl) && editorType !== 'expandable') {
+  let url = selection?.externalUrl;
+  if (url?.startsWith(lmsEndpointUrl) && editorType !== 'expandable') {
     const sourceEndIndex = lmsEndpointUrl.length;
     url = url.substring(sourceEndIndex);
   }
@@ -30,28 +31,61 @@ export const imgProps = ({
   };
 };
 
+export const saveToEditor = ({
+  settings, selection, lmsEndpointUrl, editorType, editorRef,
+}) => {
+  const newImgTag = module.hooks.imgTag({
+    settings,
+    selection,
+    lmsEndpointUrl,
+    editorType,
+  });
+
+  editorRef.current.execCommand(
+    tinyMCEKeys.commands.insertContent,
+    false,
+    newImgTag,
+  );
+};
+
+export const updateImagesRef = ({
+  images, selection, height, width, newImage,
+}) => {
+  const { result: mappedImages, foundMatch: imageAlreadyExists } = updateImageDimensions({
+    images: images.current, url: selection.externalUrl, height, width,
+  });
+
+  images.current = imageAlreadyExists ? mappedImages : [...images.current, newImage];
+};
+
+export const updateReactState = ({
+  settings, selection, setSelection, images,
+}) => {
+  const { height, width } = settings.dimensions;
+  const newImage = {
+    externalUrl: selection.externalUrl,
+    altText: settings.altText,
+    width,
+    height,
+  };
+
+  updateImagesRef({
+    images, selection, height, width, newImage,
+  });
+
+  setSelection(newImage);
+};
+
 export const hooks = {
   createSaveCallback: ({
     close,
-    editorRef,
-    editorType,
-    setSelection,
-    selection,
-    lmsEndpointUrl,
+    ...args
   }) => (
     settings,
   ) => {
-    editorRef.current.execCommand(
-      tinyMCEKeys.commands.insertContent,
-      false,
-      module.hooks.imgTag({
-        settings,
-        selection,
-        lmsEndpointUrl,
-        editorType,
-      }),
-    );
-    setSelection(null);
+    saveToEditor({ settings, ...args });
+    updateReactState({ settings, ...args });
+
     close();
   },
   onClose: ({ clearSelection, close }) => () => {
@@ -72,6 +106,11 @@ export const hooks = {
     });
     return `<img ${propsString(props)} />`;
   },
+  updateReactState,
+  updateImagesRef,
+  saveToEditor,
+  imgProps,
+  propsString,
 };
 
 export const ImageUploadModal = ({
@@ -86,15 +125,17 @@ export const ImageUploadModal = ({
   editorType,
   lmsEndpointUrl,
 }) => {
-  if (selection) {
+  if (selection && selection.externalUrl) {
     return (
       <ImageSettingsModal
         {...{
           isOpen,
-          close: module.hooks.onClose({ clearSelection, close }),
+          close: module.hooks.onClose({ editorRef, clearSelection, close }),
           selection,
+          images,
           saveToEditor: module.hooks.createSaveCallback({
             close,
+            images,
             editorRef,
             editorType,
             selection,

@@ -12,6 +12,7 @@ export const getSaveBtnProps = ({ editorRef, ref, close }) => ({
 });
 
 export const prepareSourceCodeModal = ({ editorRef, close }) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const ref = useRef();
   const saveBtnProps = module.getSaveBtnProps({ editorRef, ref, close });
 

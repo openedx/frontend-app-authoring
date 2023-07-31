@@ -36,7 +36,12 @@ export const EditorContainer = ({
         confirmAction={(
           <Button
             variant="primary"
-            onClick={handleCancel}
+            onClick={() => {
+              handleCancel();
+              if (returnFunction) {
+                closeCancelConfirmModal();
+              }
+            }}
           >
             <FormattedMessage {...messages.okButtonLabel} />
           </Button>

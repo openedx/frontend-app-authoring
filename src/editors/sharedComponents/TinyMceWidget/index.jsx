@@ -31,6 +31,7 @@ export const TinyMceWidget = ({
   editorRef,
   disabled,
   id,
+  editorContentHtml, // editorContent in html form
   // redux
   assets,
   isLibrary,
@@ -40,8 +41,10 @@ export const TinyMceWidget = ({
 }) => {
   const { isImgOpen, openImgModal, closeImgModal } = hooks.imgModalToggle();
   const { isSourceCodeOpen, openSourceCodeModal, closeSourceCodeModal } = hooks.sourceCodeModalToggle(editorRef);
-  const images = hooks.filterAssets({ assets });
+  const { imagesRef } = hooks.useImages({ assets, editorContentHtml });
+
   const imageSelection = hooks.selectedImage(null);
+
   return (
     <>
       {isLibrary ? null : (
@@ -49,7 +52,7 @@ export const TinyMceWidget = ({
           isOpen={isImgOpen}
           close={closeImgModal}
           editorRef={editorRef}
-          images={images}
+          images={imagesRef}
           editorType={editorType}
           lmsEndpointUrl={lmsEndpointUrl}
           {...imageSelection}
@@ -74,9 +77,9 @@ export const TinyMceWidget = ({
             isLibrary,
             lmsEndpointUrl,
             studioEndpointUrl,
-            images,
-            setSelection: imageSelection.setSelection,
-            clearSelection: imageSelection.clearSelection,
+            images: imagesRef,
+            editorContentHtml,
+            ...imageSelection,
             ...props,
           })
         }
@@ -93,6 +96,7 @@ TinyMceWidget.defaultProps = {
   assets: null,
   id: null,
   disabled: false,
+  editorContentHtml: undefined,
 };
 TinyMceWidget.propTypes = {
   editorType: PropTypes.string,
@@ -103,6 +107,7 @@ TinyMceWidget.propTypes = {
   studioEndpointUrl: PropTypes.string,
   id: PropTypes.string,
   disabled: PropTypes.bool,
+  editorContentHtml: PropTypes.string,
 };
 
 export const mapStateToProps = (state) => ({

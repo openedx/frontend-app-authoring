@@ -539,7 +539,9 @@ export const textInputWithFeedbackAndHintsOLX = {
       },
     },
   },
-  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this. </em>',
+  question: `<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
+<label>Add the question text, or prompt, here. This text is required.</label>
+<em>You can add an optional tip or note related to the prompt like this. </em>`,
   buildOLX: `<problem>
   <stringresponse answer="the correct answer" type="ci">
     <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
@@ -769,7 +771,9 @@ export const labelDescriptionQuestionOLX = {
 </problem>`,
 
   question: `<p style="text-align: center;"><img height="274" width="" src="/static/boiling_eggs_water_system.png" alt="boiling eggs: water system"></img></p>
-  <label>Taking the system as just the <b>water</b>, as indicated by the red dashed line, what would be the correct expression for the first law of thermodynamics applied to this system?</label><em>Watch out, boiling water is hot</em>`,
+  
+  <label>Taking the system as just the <b>water</b>, as indicated by the red dashed line, what would be the correct expression for the first law of thermodynamics applied to this system?</label>
+  <em>Watch out, boiling water is hot</em>`,
 };
 
 export const htmlEntityTestOLX = {
@@ -804,7 +808,8 @@ export const htmlEntityTestOLX = {
       },
     ],
   },
-  question: `<p>What is the content of the register x2 after executing the following three lines of instructions?</p><p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions <br></br>0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1<br></br>0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4<br></br>0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1</strong></span></p>`,
+  question: `<p>What is the content of the register x2 after executing the following three lines of instructions?</p>
+  <p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions <br></br>0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1<br></br>0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4<br></br>0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1</strong></span></p>`,
   solutionExplanation: `<p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions&#160;&#160;&#160;&#160;comment<br></br>0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x1 = 0x1<br></br>0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x2 = x1 &lt;&lt; 4 = 0x10<br></br>0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x1 = x2 - x1 = 0x10 - 0x01 = 0xf</strong></span></p>`,
 };
 
@@ -879,4 +884,231 @@ export const solutionExplanationTest = {
     </problem>`,
   solutionExplanation: `\n            
             This loop will iterate <code class="lang-matlab">99</code> times, but the length of <code class="lang-matlab">q</code> will not be <code class="lang-matlab">99</code> due to indexing with the value <code class="lang-matlab">2*i -1</code>. On the last iteration, <code class="lang-matlab">i = 99</code>, so <code class="lang-matlab">2*i - 1 = 2*78 - 1 = 197</code>. This will be the last position filled in <code class="lang-matlab">q</code>, so the answer is <code class="lang-matlab">197</code>.\n          `,
+};
+
+export const solutionExplanationWithoutDivTest = {
+  rawOLX: `<problem display_name="For loop" markdown="null" max_attempts="3" showanswer="answered" weight="0.0">
+      <multiplechoiceresponse>
+        <p>Considering a list z=[8,12,2,9,7] and the following for loop:</p>
+        <b>
+          <p>for i in z: </p>
+          <p>     y=i+1 </p>
+          <p>     print(y)</p>
+        </b>
+        <label>What would be the result of running this code?</label>
+        <description>Select the correct answer </description>
+        <choicegroup type="MultipleChoice">
+          <choice correct="false">8 </choice>
+          <choice correct="false">[9,13,3,10,8] </choice>
+          <choice correct="true">9<br>
+          13</br>
+        3
+          <br>10</br>
+      8 </choice>
+        </choicegroup>
+        <solution>
+          <p/>
+          <img src="https://courses.edx.org/asset-v1:MITx+CTL.SC0x+1T2023+type@asset+block@Screenshot_2022-12-19_205625.png"/>
+          <p>How would you adjust your code to get the other results? We encourage you to try different for loops and share them in the discussion forum.</p>
+        </solution>
+      </multiplechoiceresponse>
+    </problem>`,
+  solutionExplanation: `
+          <p></p>
+          <img src="https://courses.edx.org/asset-v1:MITx+CTL.SC0x+1T2023+type@asset+block@Screenshot_2022-12-19_205625.png"></img>
+          <p>How would you adjust your code to get the other results? We encourage you to try different for loops and share them in the discussion forum.</p>
+        `,
+};
+
+export const tablesInRichTextTest = {
+  rawOLX: `<problem>
+    <choiceresponse>
+      <p>
+        The table shows the number of protein-coding genes, chromosomes, and bases in a range of eukaryotic species.
+      </p>
+      <table class="chart" summary="A list of eukaryotic organisms and their genome contents." label="Four columns. The first column lists the species, the second column lists the number of protein-coding genes, the third column lists the number of chromosomes, and the fourth column lists the genome size in bases." width="100%">
+        <caption>Eukaryotic Genomes Comparison</caption>
+        <tbody>
+          <tr>
+            <th scope="col" style="text-align: center; border: 1px solid black;">
+              <b>Species</b>
+            </th>
+            <th scope="col" style="text-align: center; border: 1px solid black;">
+              <b>Protein-coding genes</b>
+            </th>
+            <th scope="col" style="text-align: center; border: 1px solid black;">
+              <b>Chromosomes</b>
+            </th>
+            <th scope="col" style="text-align: center; border: 1px solid black;">
+              <b>Bases</b>
+            </th>
+          </tr>
+          <tr>
+            <td style="text-align: center; border: 1px solid black;">Yeast (<i>S. cerevisiae</i>)</td>
+            <td style="text-align: center; border: 1px solid black;">~5,800</td>
+            <td style="text-align: center; border: 1px solid black;">16</td>
+            <td style="text-align: center; border: 1px solid black;">~12 Mb</td>
+          </tr>
+          <tr>
+            <td style="text-align: center; border: 1px solid black;">Arabidopsis (<i>A. thaliana</i>)</td>
+            <td style="text-align: center; border: 1px solid black;">~27,000</td>
+            <td style="text-align: center; border: 1px solid black;">5</td>
+            <td style="text-align: center; border: 1px solid black;">~115 Mb</td>
+          </tr>
+          <tr>
+            <td style="text-align: center; border: 1px solid black;">Rice (<i>O. sativa</i>)</td>
+            <td style="text-align: center; border: 1px solid black;">~41,000</td>
+            <td style="text-align: center; border: 1px solid black;">12</td>
+            <td style="text-align: center; border: 1px solid black;">~390 Mb</td>
+          </tr>
+          <tr>
+            <td style="text-align: center; border: 1px solid black;">Worm (<i>C. elegans</i>)</td>
+            <td style="text-align: center; border: 1px solid black;">~19,000</td>
+            <td style="text-align: center; border: 1px solid black;">6</td>
+            <td style="text-align: center; border: 1px solid black;">~100 Mb</td>
+          </tr>
+          <tr>
+            <td style="text-align: center; border: 1px solid black;">Fly (<i>D. melanogaster</i>)</td>
+            <td style="text-align: center; border: 1px solid black;">~14,000</td>
+            <td style="text-align: center; border: 1px solid black;">4</td>
+            <td style="text-align: center; border: 1px solid black;">~165 Mb</td>
+          </tr>
+          <tr>
+            <td style="text-align: center; border: 1px solid black;">Mouse (<i>M. musculus</i>)</td>
+            <td style="text-align: center; border: 1px solid black;">~23,000</td>
+            <td style="text-align: center; border: 1px solid black;">20</td>
+            <td style="text-align: center; border: 1px solid black;">~3 Gb</td>
+          </tr>
+          <tr>
+            <td style="text-align: center; border: 1px solid black;">Human (<i>H. sapiens</i>)</td>
+            <td style="text-align: center; border: 1px solid black;">~21,000</td>
+            <td style="text-align: center; border: 1px solid black;">23</td>
+            <td style="text-align: center; border: 1px solid black;">~3 Gb</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        In which of the following observations does the C-value paradox apply? Select all that apply.
+      </p>
+      <checkboxgroup>
+        <choice correct="false">
+          <div>
+            Rice has a larger genome and more genes than <i>Arabidopsis</i>.
+          </div>
+        </choice>
+        <choice correct="true">
+          <div>
+            Humans have a larger genome but fewer genes than <i>Arabidopsis</i>.
+          </div>
+        </choice>
+        <choice correct="true">
+          <div>
+            Worms have a smaller genome but more genes than flies.
+          </div>
+        </choice>
+      </checkboxgroup>
+      <solution>
+        <div class="detailed-solution">
+          <p>
+            Explanation
+          </p>
+          <p>
+            Explanation
+          </p>
+          <p dir="ltr" id="docs-internal-guid-8b7482ab-7fff-27bd-79c5-a433e43a95ea">
+            The C-value paradox states that there is no relation between size of genome and number of genes. In the comparison between rice and <i>Arabidopsis</i>, the size of the rice genome is both larger and contains a greater number of genes than <i>Arabidopsis</i>, so the C-value paradox does not apply here. In the remaining options, the larger genomes have fewer genes.
+          </p>
+        </div>
+      </solution>
+    </choiceresponse>
+  </problem>`,
+  question: `<p>
+        The table shows the number of protein-coding genes, chromosomes, and bases in a range of eukaryotic species.
+      </p>
+      <table class="chart" summary="A list of eukaryotic organisms and their genome contents." label="Four columns. The first column lists the species, the second column lists the number of protein-coding genes, the third column lists the number of chromosomes, and the fourth column lists the genome size in bases." width="100%">
+        <caption>Eukaryotic Genomes Comparison</caption>
+        <tbody>
+          <tr>
+            <th scope="col" style="text-align: center; border: 1px solid black;">
+              <b>Species</b>
+            </th>
+            <th scope="col" style="text-align: center; border: 1px solid black;">
+              <b>Protein-coding genes</b>
+            </th>
+            <th scope="col" style="text-align: center; border: 1px solid black;">
+              <b>Chromosomes</b>
+            </th>
+            <th scope="col" style="text-align: center; border: 1px solid black;">
+              <b>Bases</b>
+            </th>
+          </tr>
+          <tr>
+            <td style="text-align: center; border: 1px solid black;">Yeast (<i>S. cerevisiae</i>)</td>
+            <td style="text-align: center; border: 1px solid black;">~5,800</td>
+            <td style="text-align: center; border: 1px solid black;">16</td>
+            <td style="text-align: center; border: 1px solid black;">~12 Mb</td>
+          </tr>
+          <tr>
+            <td style="text-align: center; border: 1px solid black;">Arabidopsis (<i>A. thaliana</i>)</td>
+            <td style="text-align: center; border: 1px solid black;">~27,000</td>
+            <td style="text-align: center; border: 1px solid black;">5</td>
+            <td style="text-align: center; border: 1px solid black;">~115 Mb</td>
+          </tr>
+          <tr>
+            <td style="text-align: center; border: 1px solid black;">Rice (<i>O. sativa</i>)</td>
+            <td style="text-align: center; border: 1px solid black;">~41,000</td>
+            <td style="text-align: center; border: 1px solid black;">12</td>
+            <td style="text-align: center; border: 1px solid black;">~390 Mb</td>
+          </tr>
+          <tr>
+            <td style="text-align: center; border: 1px solid black;">Worm (<i>C. elegans</i>)</td>
+            <td style="text-align: center; border: 1px solid black;">~19,000</td>
+            <td style="text-align: center; border: 1px solid black;">6</td>
+            <td style="text-align: center; border: 1px solid black;">~100 Mb</td>
+          </tr>
+          <tr>
+            <td style="text-align: center; border: 1px solid black;">Fly (<i>D. melanogaster</i>)</td>
+            <td style="text-align: center; border: 1px solid black;">~14,000</td>
+            <td style="text-align: center; border: 1px solid black;">4</td>
+            <td style="text-align: center; border: 1px solid black;">~165 Mb</td>
+          </tr>
+          <tr>
+            <td style="text-align: center; border: 1px solid black;">Mouse (<i>M. musculus</i>)</td>
+            <td style="text-align: center; border: 1px solid black;">~23,000</td>
+            <td style="text-align: center; border: 1px solid black;">20</td>
+            <td style="text-align: center; border: 1px solid black;">~3 Gb</td>
+          </tr>
+          <tr>
+            <td style="text-align: center; border: 1px solid black;">Human (<i>H. sapiens</i>)</td>
+            <td style="text-align: center; border: 1px solid black;">~21,000</td>
+            <td style="text-align: center; border: 1px solid black;">23</td>
+            <td style="text-align: center; border: 1px solid black;">~3 Gb</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        In which of the following observations does the C-value paradox apply? Select all that apply.
+      </p>`,
+};
+
+export const parseOutExplanationTests = {
+  rawOLX: `<problem>
+    <multiplechoiceresponse>
+      <choicegroup>
+      </choicegroup>
+      <solution>
+        <p>Explanation</p>
+        <p>
+          Explanation
+        </p>
+        <p>solution meat</p>
+      </solution>
+    </multiplechoiceresponse>
+    <demandhint></demandhint>
+  </problem>`,
+  solutionExplanation: `
+        
+        
+        <p>solution meat</p>
+      `
 };

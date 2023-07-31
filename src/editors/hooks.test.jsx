@@ -146,14 +146,14 @@ describe('hooks', () => {
         analytics,
         dispatch,
       });
-      expect(dispatch).toHaveBeenCalledWith(thunkActions.app.saveBlock({
-        returnToUnit: navigateCallback({
+      expect(dispatch).toHaveBeenCalledWith(thunkActions.app.saveBlock(
+        content,
+        navigateCallback({
           destination,
           analyticsEvent: analyticsEvt.editorSaveClick,
           analytics,
         }),
-        content,
-      }));
+      ));
     });
   });
 

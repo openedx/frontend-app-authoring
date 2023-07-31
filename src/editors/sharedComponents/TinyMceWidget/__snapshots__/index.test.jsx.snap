@@ -18,21 +18,25 @@ exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
     editorConfig={
       Object {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
+        "editorContentHtml": undefined,
         "editorRef": Object {
           "current": Object {
             "value": "something",
           },
         },
         "editorType": "text",
-        "images": Array [
-          Object {
-            "staTICUrl": "/assets/sOmEaSsET",
-          },
-        ],
+        "images": Object {
+          "current": Array [
+            Object {
+              "externalUrl": "/assets/sOmEaSsET",
+            },
+          ],
+        },
         "isLibrary": true,
         "lmsEndpointUrl": "sOmEvaLue.cOm",
         "openImgModal": [MockFunction modal.openModal],
         "openSourceCodeModal": [MockFunction modal.openModal],
+        "selection": "hooks.selectedImage.selection",
         "setSelection": [MockFunction hooks.selectedImage.setSelection],
         "studioEndpointUrl": "sOmEoThERvaLue.cOm",
       }
@@ -56,11 +60,13 @@ exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
     }
     editorType="problem"
     images={
-      Array [
-        Object {
-          "staTICUrl": "/assets/sOmEaSsET",
-        },
-      ]
+      Object {
+        "current": Array [
+          Object {
+            "externalUrl": "/assets/sOmEaSsET",
+          },
+        ],
+      }
     }
     isOpen={false}
     lmsEndpointUrl="sOmEvaLue.cOm"
@@ -72,21 +78,25 @@ exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
     editorConfig={
       Object {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
+        "editorContentHtml": undefined,
         "editorRef": Object {
           "current": Object {
             "value": "something",
           },
         },
         "editorType": "problem",
-        "images": Array [
-          Object {
-            "staTICUrl": "/assets/sOmEaSsET",
-          },
-        ],
+        "images": Object {
+          "current": Array [
+            Object {
+              "externalUrl": "/assets/sOmEaSsET",
+            },
+          ],
+        },
         "isLibrary": false,
         "lmsEndpointUrl": "sOmEvaLue.cOm",
         "openImgModal": [MockFunction modal.openModal],
         "openSourceCodeModal": [MockFunction modal.openModal],
+        "selection": "hooks.selectedImage.selection",
         "setSelection": [MockFunction hooks.selectedImage.setSelection],
         "studioEndpointUrl": "sOmEoThERvaLue.cOm",
       }
@@ -110,11 +120,13 @@ exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] =
     }
     editorType="text"
     images={
-      Array [
-        Object {
-          "staTICUrl": "/assets/sOmEaSsET",
-        },
-      ]
+      Object {
+        "current": Array [
+          Object {
+            "externalUrl": "/assets/sOmEaSsET",
+          },
+        ],
+      }
     }
     isOpen={false}
     lmsEndpointUrl="sOmEvaLue.cOm"
@@ -137,21 +149,25 @@ exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] =
     editorConfig={
       Object {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
+        "editorContentHtml": undefined,
         "editorRef": Object {
           "current": Object {
             "value": "something",
           },
         },
         "editorType": "text",
-        "images": Array [
-          Object {
-            "staTICUrl": "/assets/sOmEaSsET",
-          },
-        ],
+        "images": Object {
+          "current": Array [
+            Object {
+              "externalUrl": "/assets/sOmEaSsET",
+            },
+          ],
+        },
         "isLibrary": false,
         "lmsEndpointUrl": "sOmEvaLue.cOm",
         "openImgModal": [MockFunction modal.openModal],
         "openSourceCodeModal": [MockFunction modal.openModal],
+        "selection": "hooks.selectedImage.selection",
         "setSelection": [MockFunction hooks.selectedImage.setSelection],
         "studioEndpointUrl": "sOmEoThERvaLue.cOm",
       }

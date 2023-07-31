@@ -21,6 +21,9 @@ import {
   htmlEntityTestOLX,
   numberParseTestOLX,
   solutionExplanationTest,
+  solutionExplanationWithoutDivTest,
+  tablesInRichTextTest,
+  parseOutExplanationTests,
 } from './mockData/olxTestData';
 import { ProblemTypeKeys } from '../../../data/constants/problem';
 
@@ -294,6 +297,14 @@ describe('OLXParser', () => {
         expect(question.trim()).toBe(labelDescriptionQuestionOLX.question);
       });
     });
+    describe('given olx with table tags', () => {
+      const olxparser = new OLXParser(tablesInRichTextTest.rawOLX);
+      const problemType = olxparser.getProblemType();
+      const question = olxparser.parseQuestions(problemType);
+      it('should append the table to the question', () => {
+        expect(question.trim()).toBe(tablesInRichTextTest.question);
+      });
+    });
   });
   describe('getSolutionExplanation()', () => {
     describe('for checkbox questions', () => {
@@ -310,6 +321,18 @@ describe('OLXParser', () => {
       const problemType = olxparser.getProblemType();
       const explanation = olxparser.getSolutionExplanation(problemType);
       expect(explanation).toBe(solutionExplanationTest.solutionExplanation);
+    });
+    it('should parse solution fields without div', () => {
+      const olxparser = new OLXParser(solutionExplanationWithoutDivTest.rawOLX);
+      const problemType = olxparser.getProblemType();
+      const explanation = olxparser.getSolutionExplanation(problemType);
+      expect(explanation).toBe(solutionExplanationWithoutDivTest.solutionExplanation);
+    });
+    it('should parse out <p>Explanation</p>', () => {
+      const olxparser = new OLXParser(parseOutExplanationTests.rawOLX);
+      const problemType = olxparser.getProblemType();
+      const explanation = olxparser.getSolutionExplanation(problemType);
+      expect(explanation).toBe(parseOutExplanationTests.solutionExplanation);
     });
   });
 });

@@ -12,7 +12,7 @@ exports[`ImageSettingsModal render snapshot 1`] = `
             "altText": Object {
               "error": Object {
                 "dismiss": [MockFunction],
-                "show": "sHoW",
+                "show": true,
               },
               "isDecorative": false,
               "value": "alternative Taxes",
@@ -45,7 +45,7 @@ exports[`ImageSettingsModal render snapshot 1`] = `
   <ErrorAlert
     dismissError={[MockFunction]}
     hideHeading={true}
-    isError="sHoW"
+    isError={true}
   >
     <FormattedMessage
       defaultMessage="Enter alt text or specify that the image is decorative only."
@@ -162,7 +162,7 @@ exports[`ImageSettingsModal render snapshot 1`] = `
         error={
           Object {
             "dismiss": [MockFunction],
-            "show": "sHoW",
+            "show": true,
           }
         }
         isDecorative={false}

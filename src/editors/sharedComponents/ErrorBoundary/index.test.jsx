@@ -11,7 +11,7 @@ jest.mock('@edx/frontend-platform/logging', () => ({
 }));
 
 // stubbing this to avoid needing to inject a stubbed intl into an internal component
-jest.mock('./ErrorPage', () => function () {
+jest.mock('./ErrorPage', () => function mockErrorPage() {
   return <p>Error Page</p>;
 });
 

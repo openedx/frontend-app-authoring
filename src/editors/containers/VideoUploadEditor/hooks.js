@@ -1,66 +1,81 @@
-import * as requests from '../../data/redux/thunkActions/requests';
+import React from 'react';
 import * as module from './hooks';
 import { selectors } from '../../data/redux';
 import store from '../../data/store';
 import * as appHooks from '../../hooks';
 
+const extToMime = {
+  mp4: 'video/mp4',
+  mov: 'video/quicktime',
+};
+
 export const {
   navigateTo,
 } = appHooks;
 
-export const uploadVideo = async ({ dispatch, supportedFiles }) => {
-  const data = { files: [] };
-  supportedFiles.forEach((file) => {
-    data.files.push({
-      file_name: file.name,
-      content_type: file.type,
-    });
-  });
-  const onFileUploadedHook = module.onFileUploaded();
-  dispatch(await requests.uploadVideo({
-    data,
-    onSuccess: async (response) => {
-      const { files } = response.data;
-      await Promise.all(Object.values(files).map(async (fileObj) => {
-        const fileName = fileObj.file_name;
-        const edxVideoId = fileObj.edx_video_id;
-        const uploadUrl = fileObj.upload_url;
-        const uploadFile = supportedFiles.find((file) => file.name === fileName);
-
-        if (!uploadFile) {
-          console.error(`Could not find file object with name "${fileName}" in supportedFiles array.`);
-          return;
-        }
-        const formData = new FormData();
-        formData.append('uploaded-file', uploadFile);
-        await fetch(uploadUrl, {
-          method: 'PUT',
-          body: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-          .then(() => onFileUploadedHook(edxVideoId))
-          .catch((error) => console.error('Error uploading file:', error));
-      }));
-    },
-  }));
+export const state = {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  loading: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  errorMessage: (val) => React.useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  textInputValue: (val) => React.useState(val),
 };
 
-export const onFileUploaded = () => {
-  const state = store.getState();
-  const learningContextId = selectors.app.learningContextId(state);
-  const blockId = selectors.app.blockId(state);
-  return (edxVideoId) => navigateTo(`/course/${learningContextId}/editor/video/${blockId}?selectedVideoId=${edxVideoId}`);
+export const uploadEditor = () => {
+  const [loading, setLoading] = module.state.loading(false);
+  const [errorMessage, setErrorMessage] = module.state.errorMessage(null);
+  return {
+    loading,
+    setLoading,
+    errorMessage,
+    setErrorMessage,
+  };
 };
 
-export const onUrlUploaded = () => {
-  const state = store.getState();
-  const learningContextId = selectors.app.learningContextId(state);
-  const blockId = selectors.app.blockId(state);
+export const uploader = () => {
+  const [textInputValue, settextInputValue] = module.state.textInputValue('');
+  return {
+    textInputValue,
+    settextInputValue,
+  };
+};
+
+export const postUploadRedirect = (storeState) => {
+  const learningContextId = selectors.app.learningContextId(storeState);
+  const blockId = selectors.app.blockId(storeState);
   return (videoUrl) => navigateTo(`/course/${learningContextId}/editor/video/${blockId}?selectedVideoUrl=${videoUrl}`);
 };
 
+export const onVideoUpload = () => {
+  const storeState = store.getState();
+  return module.postUploadRedirect(storeState);
+};
+
+const getFileExtension = (filename) => filename.slice(Math.abs(filename.lastIndexOf('.') - 1) + 2);
+
+export const fileValidator = (setLoading, setErrorMessage, uploadVideo) => (file) => {
+  const supportedFormats = Object.keys(extToMime);
+  const ext = getFileExtension(file.name);
+  const type = extToMime[ext] || '';
+  const newFile = new File([file], file.name, { type });
+
+  if (supportedFormats.includes(ext)) {
+    uploadVideo({
+      supportedFiles: [newFile],
+      setLoadSpinner: setLoading,
+      postUploadRedirect: onVideoUpload(),
+    });
+  } else {
+    const errorMsg = 'Video must be an MP4 or MOV file';
+    setErrorMessage(errorMsg);
+  }
+};
+
 export default {
-  uploadVideo,
+  postUploadRedirect,
+  uploadEditor,
+  uploader,
+  onVideoUpload,
+  fileValidator,
 };

@@ -11,11 +11,34 @@ import * as module from './hooks';
 import tinyMCE from '../../data/constants/tinyMCE';
 
 export const state = StrictDict({
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   isImageModalOpen: (val) => useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   isSourceCodeModalOpen: (val) => useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   imageSelection: (val) => useState(val),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   refReady: (val) => useState(val),
 });
+
+export const addImagesAndDimensionsToRef = ({ imagesRef, assets, editorContentHtml }) => {
+  const imagesWithDimensions = module.filterAssets({ assets }).map((image) => {
+    const imageFragment = module.getImageFromHtmlString(editorContentHtml, image.url);
+    return { ...image, width: imageFragment?.width, height: imageFragment?.height };
+  });
+
+  imagesRef.current = imagesWithDimensions;
+};
+
+export const useImages = ({ assets, editorContentHtml }) => {
+  const imagesRef = useRef([]);
+
+  useEffect(() => {
+    module.addImagesAndDimensionsToRef({ imagesRef, assets, editorContentHtml });
+  }, []);
+
+  return { imagesRef };
+};
 
 export const parseContentForLabels = ({ editor, updateContent }) => {
   let content = editor.getContent();
@@ -86,13 +109,31 @@ export const replaceStaticwithAsset = ({
   });
 };
 
+export const getImageResizeHandler = ({ editor, imagesRef, setImage }) => () => {
+  const {
+    src, alt, width, height,
+  } = editor.selection.getNode();
+
+  imagesRef.current = module.updateImageDimensions({
+    images: imagesRef.current, url: src, width, height,
+  }).result;
+
+  setImage({
+    externalUrl: src,
+    altText: alt,
+    width,
+    height,
+  });
+};
+
 export const setupCustomBehavior = ({
   updateContent,
   openImgModal,
   openSourceCodeModal,
-  setImage,
   editorType,
   imageUrls,
+  images,
+  setImage,
   lmsEndpointUrl,
 }) => (editor) => {
   // image upload button
@@ -105,7 +146,9 @@ export const setupCustomBehavior = ({
   editor.ui.registry.addButton(tinyMCE.buttons.editImageSettings, {
     icon: 'image',
     tooltip: 'Edit Image Settings',
-    onAction: module.openModalWithSelectedImage({ editor, setImage, openImgModal }),
+    onAction: module.openModalWithSelectedImage({
+      editor, images, setImage, openImgModal,
+    }),
   });
   // overriding the code plugin's icon with 'HTML' text
   editor.ui.registry.addButton(tinyMCE.buttons.code, {
@@ -162,6 +205,8 @@ export const setupCustomBehavior = ({
       editor.formatter.remove('label');
     }
   });
+  // after resizing an image in the editor, synchronize React state and ref
+  editor.on('ObjectResized', getImageResizeHandler({ editor, imagesRef: images, setImage }));
 };
 
 // imagetools_cors_hosts needs a protocol-sanatized url
@@ -170,7 +215,7 @@ export const removeProtocolFromUrl = (url) => url.replace(/^https?:\/\//, '');
 export const editorConfig = ({
   editorType,
   setEditorRef,
-  textValue,
+  editorContentHtml,
   images,
   lmsEndpointUrl,
   studioEndpointUrl,
@@ -181,6 +226,7 @@ export const editorConfig = ({
   openSourceCodeModal,
   setSelection,
   updateContent,
+  content,
   minHeight,
 }) => {
   const {
@@ -191,6 +237,7 @@ export const editorConfig = ({
     quickbarsInsertToolbar,
     quickbarsSelectionToolbar,
   } = pluginConfig({ isLibrary, placeholder, editorType });
+
   return {
     onInit: (evt, editor) => {
       setEditorRef(editor);
@@ -198,7 +245,7 @@ export const editorConfig = ({
         initializeEditor();
       }
     },
-    initialValue: textValue || '',
+    initialValue: editorContentHtml || '',
     init: {
       ...config,
       skin: false,
@@ -217,6 +264,8 @@ export const editorConfig = ({
         openSourceCodeModal,
         lmsEndpointUrl,
         setImage: setSelection,
+        content,
+        images,
         imageUrls: module.fetchImageUrls(images),
       }),
       quickbars_insert_toolbar: quickbarsInsertToolbar,
@@ -232,11 +281,14 @@ export const editorConfig = ({
 };
 
 export const prepareEditorRef = () => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const editorRef = useRef(null);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const setEditorRef = useCallback((ref) => {
     editorRef.current = ref;
   }, []);
   const [refReady, setRefReady] = module.state.refReady(false);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => setRefReady(true), []);
   return { editorRef, refReady, setEditorRef };
 };
@@ -262,14 +314,68 @@ export const sourceCodeModalToggle = (editorRef) => {
   };
 };
 
-export const openModalWithSelectedImage = ({ editor, setImage, openImgModal }) => () => {
-  const imgHTML = editor.selection.getNode();
+/**
+ * const imageMatchRegex
+ *
+ * Image urls and ids used in the TinyMceEditor vary wildly, with different base urls,
+ * different lengths and constituent parts, and replacement of some "/" with "@".
+ * Common are the keys "asset-v1", "type", and "block", each holding a value after some separator.
+ * This regex captures only the values for these keys using capture groups, which can be used for matching.
+ */
+export const imageMatchRegex = /asset-v1.(.*).type.(.*).block.(.*)/;
+
+/**
+ * function matchImageStringsByIdentifiers
+ *
+ * matches two strings by comparing their regex capture groups using the `imageMatchRegex`
+ */
+export const matchImageStringsByIdentifiers = (a, b) => {
+  if (!a || !b || !(typeof a === 'string') || !(typeof b === 'string')) { return null; }
+  const matchA = JSON.stringify(a.match(imageMatchRegex)?.slice?.(1));
+  const matchB = JSON.stringify(b.match(imageMatchRegex)?.slice?.(1));
+  return matchA && matchA === matchB;
+};
+
+export const stringToFragment = (htmlString) => document.createRange().createContextualFragment(htmlString);
+
+export const getImageFromHtmlString = (htmlString, imageSrc) => {
+  const images = stringToFragment(htmlString)?.querySelectorAll('img') || [];
+
+  return Array.from(images).find((img) => matchImageStringsByIdentifiers(img.src || '', imageSrc));
+};
+
+export const detectImageMatchingError = ({ matchingImages, tinyMceHTML }) => {
+  if (!matchingImages.length) { return true; }
+  if (matchingImages.length > 1) { return true; }
+
+  if (!matchImageStringsByIdentifiers(matchingImages[0].id, tinyMceHTML.src)) { return true; }
+  if (!matchingImages[0].width || !matchingImages[0].height) { return true; }
+  if (matchingImages[0].width !== tinyMceHTML.width) { return true; }
+  if (matchingImages[0].height !== tinyMceHTML.height) { return true; }
+
+  return false;
+};
+
+export const openModalWithSelectedImage = ({
+  editor, images, setImage, openImgModal,
+}) => () => {
+  const tinyMceHTML = editor.selection.getNode();
+  const { src: mceSrc } = tinyMceHTML;
+
+  const matchingImages = images.current.filter(image => matchImageStringsByIdentifiers(image.id, mceSrc));
+
+  const imageMatchingErrorDetected = detectImageMatchingError({ tinyMceHTML, matchingImages });
+
+  const width = imageMatchingErrorDetected ? null : matchingImages[0]?.width;
+  const height = imageMatchingErrorDetected ? null : matchingImages[0]?.height;
+
   setImage({
-    externalUrl: imgHTML.src,
-    altText: imgHTML.alt,
-    width: imgHTML.width,
-    height: imgHTML.height,
+    externalUrl: tinyMceHTML.src,
+    altText: tinyMceHTML.alt,
+    width,
+    height,
   });
+
   openImgModal();
 };
 
@@ -324,7 +430,7 @@ export const setAssetToStaticUrl = ({ editorValue, assets, lmsEndpointUrl }) => 
 
 export const fetchImageUrls = (images) => {
   const imageUrls = [];
-  images.forEach(image => {
+  images.current.forEach(image => {
     imageUrls.push({ staticFullUrl: image.staticFullUrl, displayName: image.displayName });
   });
   return imageUrls;
@@ -337,4 +443,35 @@ export const selectedImage = (val) => {
     selection,
     setSelection,
   };
+};
+
+/**
+ * function updateImageDimensions
+ *
+ * Updates one images' dimensions in an array by identifying one image via a url string match
+ * that includes asset-v1, type, and block. Returns a new array.
+ *
+ * @param {Object[]} images - [{ id, ...other }]
+ * @param {string} url
+ * @param {number} width
+ * @param {number} height
+ *
+ * @returns {Object} { result, foundMatch }
+ */
+export const updateImageDimensions = ({
+  images, url, width, height,
+}) => {
+  let foundMatch = false;
+
+  const result = images.map((image) => {
+    const imageIdentifier = image.id || image.url || image.src || image.externalUrl;
+    const isMatch = matchImageStringsByIdentifiers(imageIdentifier, url);
+    if (isMatch) {
+      foundMatch = true;
+      return { ...image, width, height };
+    }
+    return image;
+  });
+
+  return { result, foundMatch };
 };

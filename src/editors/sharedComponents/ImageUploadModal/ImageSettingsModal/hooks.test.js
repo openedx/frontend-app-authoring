@@ -30,6 +30,7 @@ const testVal = 'MY test VALUE';
 
 describe('state values', () => {
   const testStateMethod = (key) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
     expect(hooks.state[key](testVal)).toEqual(React.useState(testVal));
   };
   test('provides altText state value', () => testStateMethod(state.keys.altText));
@@ -39,8 +40,7 @@ describe('state values', () => {
   test('provides isDecorative state value', () => testStateMethod(state.keys.isDecorative));
   test('provides isLocked state value', () => testStateMethod(state.keys.isLocked));
   test('provides local state value', () => testStateMethod(state.keys.local));
-  test('provides lockDims state value', () => testStateMethod(state.keys.lockDims));
-  test('provides lockInitialized state value', () => testStateMethod(state.keys.lockInitialized));
+  test('provides lockAspectRatio state value', () => testStateMethod(state.keys.lockAspectRatio));
 });
 
 describe('ImageSettingsModal hooks', () => {
@@ -54,7 +54,7 @@ describe('ImageSettingsModal hooks', () => {
           dimensions: simpleDims,
           local: reducedDims,
           isLocked: false,
-          lockDims: simpleDims,
+          lockAspectRatio: simpleDims,
         })).toEqual(reducedDims);
       });
       it('returns local dimensions if the same as stored', () => {
@@ -62,63 +62,47 @@ describe('ImageSettingsModal hooks', () => {
           dimensions: simpleDims,
           local: simpleDims,
           isLocked: true,
-          lockDims: reducedDims,
+          lockAspectRatio: reducedDims,
         })).toEqual(simpleDims);
       });
-      describe('decreasing change when at minimum valid increment', () => {
-        it('returns current dimensions', () => {
-          const dimensions = { ...reducedDims };
-          const lockDims = { ...dimensions };
-          let local = { ...dimensions, width: dimensions.width - 1 };
-          expect(
-            hooks.getValidDimensions({
-              dimensions,
-              isLocked: true,
-              local,
-              lockDims,
-            }),
-          ).toEqual(dimensions);
-          local = { ...dimensions, height: dimensions.height - 1 };
-          expect(
-            hooks.getValidDimensions({
-              dimensions,
-              isLocked: true,
-              local,
-              lockDims,
-            }),
-          ).toEqual(dimensions);
-        });
-      });
-      describe('valid change', () => {
-        it(
-          'returns the nearest valid pair of dimensions in the change direction',
+      describe('valid change when aspect ratio is locked', () => {
+        describe(
+          'keeps changed dimension and keeps the other dimension proportional but rounded',
           () => {
             const [w, h] = [7, 13];
-            const values = [
-              // bumps up if direction is up but nearest is current
-              [[w + 1, h], [w * 2, h * 2]],
-              [[w + 1, h], [w * 2, h * 2]],
-              // bumps up if just below next
-              [[w, 2 * h - 1], [w * 2, h * 2]],
-              [[w, 2 * h - 1], [w * 2, h * 2]],
-              // rounds down to next if that is closest
-              [[w, 2 * h + 1], [w * 2, h * 2]],
-              [[w, 2 * h + 1], [w * 2, h * 2]],
-              // ensure is not locked to second iteration, by getting close to 3rd
-              [[w, 3 * h - 1], [w * 3, h * 3]],
-              [[w, 3 * h - 1], [w * 3, h * 3]],
-            ];
-            values.forEach(([local, expected]) => {
+
+            const testDimensions = (newDimensions, expected) => {
               const dimensions = { width: w, height: h };
               expect(hooks.getValidDimensions({
                 dimensions,
-                local: { width: local[0], height: local[1] },
-                lockDims: { ...dimensions },
+                local: { width: newDimensions[0], height: newDimensions[1] },
+                lockAspectRatio: { ...dimensions },
                 isLocked: true,
               })).toEqual({ width: expected[0], height: expected[1] });
+            };
+
+            it('if width is increased, increases and rounds height to stay proportional', () => {
+              testDimensions([8, h], [8, 15]);
+            });
+            it('if height is increased, increases and rounds width to stay proportional', () => {
+              testDimensions([w, 25], [13, 25]);
+            });
+            it('if width is decreased, decreases and rounds height to stay proportional', () => {
+              testDimensions([6, h], [6, 11]);
+            });
+            it('if height is decreased, decreases and rounds width to stay proportional', () => {
+              testDimensions([7, 10], [5, 10]);
             });
           },
         );
+      });
+      it('calculates new dimensions proportionally and correctly when lock is active', () => {
+        expect(hooks.getValidDimensions({
+          dimensions: { width: 1517, height: 803 },
+          local: { width: 758, height: 803 },
+          isLocked: true,
+          lockAspectRatio: { width: 1517, height: 803 },
+        })).toEqual({ width: 758, height: 401 });
       });
     });
     describe('dimensionLockHooks', () => {
@@ -129,21 +113,21 @@ describe('ImageSettingsModal hooks', () => {
       afterEach(() => {
         state.restore();
       });
-      test('lockDims defaults to null', () => {
-        expect(hook.lockDims).toEqual(null);
+      test('lockAspectRatio defaults to null', () => {
+        expect(hook.lockAspectRatio).toEqual(null);
       });
       test('isLocked defaults to true', () => {
         expect(hook.isLocked).toEqual(true);
       });
       describe('initializeLock', () => {
-        it('calls setLockDims with the passed dimensions divided by their gcd', () => {
+        it('calls setLockAspectRatio with the passed dimensions divided by their gcd', () => {
           hook.initializeLock(multiDims);
-          expect(state.setState.lockDims).toHaveBeenCalledWith(reducedDims);
+          expect(state.setState.lockAspectRatio).toHaveBeenCalledWith(reducedDims);
         });
         it('returns the values themselves if they have no gcd', () => {
-          jest.spyOn(hooks, hookKeys.findGcd).mockReturnValueOnce(2);
+          jest.spyOn(hooks, hookKeys.findGcd).mockReturnValueOnce(1);
           hook.initializeLock(simpleDims);
-          expect(state.setState.lockDims).toHaveBeenCalledWith(simpleDims);
+          expect(state.setState.lockAspectRatio).toHaveBeenCalledWith(simpleDims);
         });
       });
       test('lock sets isLocked to true', () => {
@@ -224,14 +208,14 @@ describe('ImageSettingsModal hooks', () => {
           const getValidDimensions = (args) => ({ ...testDims(args), junk: 'data' });
           state.mockVal(state.keys.isLocked, true);
           state.mockVal(state.keys.dimensions, simpleDims);
-          state.mockVal(state.keys.lockDims, reducedDims);
+          state.mockVal(state.keys.lockAspectRatio, reducedDims);
           state.mockVal(state.keys.local, multiDims);
           jest.spyOn(hooks, hookKeys.getValidDimensions).mockImplementationOnce(getValidDimensions);
           hook = hooks.dimensionHooks();
           hook.updateDimensions();
           const expected = testDims({
             dimensions: simpleDims,
-            lockDims: reducedDims,
+            lockAspectRatio: reducedDims,
             local: multiDims,
             isLocked: true,
           });
@@ -244,8 +228,8 @@ describe('ImageSettingsModal hooks', () => {
   describe('altTextHooks', () => {
     const value = 'myVAL';
     const isDecorative = true;
-    const showAltTextDismissibleError = 'dismiSSiBLE';
-    const showAltTextSubmissionError = 'subMISsion';
+    const showAltTextDismissibleError = true;
+    const showAltTextSubmissionError = true;
     beforeEach(() => {
       state.mock();
       hook = hooks.altTextHooks();
@@ -386,6 +370,18 @@ describe('ImageSettingsModal hooks', () => {
       jest.spyOn(hooks, hookKeys.checkFormValidation).mockReturnValueOnce(false);
       hooks.onSaveClick({ ...props })();
       expect(props.saveToEditor).not.toHaveBeenCalled();
+    });
+  });
+  describe('findGcd', () => {
+    it('should return correct gcd', () => {
+      expect(hooks.findGcd(9, 12)).toBe(3);
+      expect(hooks.findGcd(3, 4)).toBe(1);
+    });
+  });
+  describe('reduceDimensions', () => {
+    it('should return correct gcd', () => {
+      expect(hooks.reduceDimensions(9, 12)).toEqual([3, 4]);
+      expect(hooks.reduceDimensions(7, 8)).toEqual([7, 8]);
     });
   });
 });

@@ -4,12 +4,14 @@ import messages from './messages';
 import * as module from './hooks';
 
 export const state = {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   summary: (val) => useState(val),
 };
 
 export const groupFeedbackCardHooks = (groupFeedbacks, updateSettings, answerslist) => {
   const [summary, setSummary] = module.state.summary({ message: messages.noGroupFeedbackSummary, values: {} });
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     if (groupFeedbacks.length === 0) {
       setSummary({ message: messages.noGroupFeedbackSummary, values: {} });

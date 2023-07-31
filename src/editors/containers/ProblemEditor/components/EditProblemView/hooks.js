@@ -7,6 +7,7 @@ import { setAssetToStaticUrl } from '../../../../sharedComponents/TinyMceWidget/
 import { ProblemTypeKeys } from '../../../../data/constants/problem';
 
 export const state = StrictDict({
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   isSaveWarningModalOpen: (val) => useState(val),
 });
 
@@ -123,7 +124,7 @@ export const checkForSettingDiscrepancy = ({ problem, ref, openSaveWarningModal 
   const problemSettings = reactSettingsParser.getSettings();
   const rawOlxSettings = reactSettingsParser.parseRawOlxSettings();
   let isMismatched = false;
-  // console.log(rawOlxSettings);
+
   Object.entries(rawOlxSettings).forEach(([key, value]) => {
     if (value !== problemSettings[key]) {
       isMismatched = true;

@@ -25,6 +25,7 @@ import messages from './messages';
 
 export const hooks = {
   state: {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
     inDeleteConfirmation: (args) => React.useState(args),
   },
   setUpDeleteConfirmation: () => {

@@ -9,8 +9,10 @@ const durationMatcher = /^(\d{0,2}):?(\d{0,2})?:?(\d{0,2})?$/i;
 export const durationWidget = ({ duration, updateField }) => {
   const setDuration = (val) => updateField({ duration: val });
   const initialState = module.durationString(duration);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [unsavedDuration, setUnsavedDuration] = useState(initialState);
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     setUnsavedDuration(module.durationString(duration));
   }, [duration]);

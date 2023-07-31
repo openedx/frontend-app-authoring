@@ -4,6 +4,7 @@ import messages from './messages';
 import * as module from './hooks';
 
 export const state = {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   summary: (val) => useState(val),
 };
 
@@ -12,6 +13,7 @@ export const generalFeedbackHooks = (generalFeedback, updateSettings) => {
     message: messages.noGeneralFeedbackSummary, values: {}, intl: true,
   });
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     if (_.isEmpty(generalFeedback)) {
       setSummary({ message: messages.noGeneralFeedbackSummary, values: {}, intl: true });
