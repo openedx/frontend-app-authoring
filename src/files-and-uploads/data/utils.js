@@ -42,7 +42,7 @@ export const createZipFile = ({ selectedFlatRows }) => {
       break;
     }
   });
-  console.log('writtings');
+  // console.log('writtings');
 };
 
 export const getWrapperType = (assets) => {
