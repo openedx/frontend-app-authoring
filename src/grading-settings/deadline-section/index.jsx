@@ -21,7 +21,7 @@ const DeadlineSection = ({
       ...prevData,
       gracePeriod: {
         hours: Number(hoursAndMinutes[0]),
-        minutes: parseInt(hoursAndMinutes[1], 10),
+        minutes: parseInt(hoursAndMinutes[1] ?? 0, 10),
       },
     }));
     setShowSuccessAlert(false);
@@ -45,6 +45,10 @@ const DeadlineSection = ({
   );
 };
 
+DeadlineSection.defaultProps = {
+  gracePeriod: null,
+};
+
 DeadlineSection.propTypes = {
   intl: intlShape.isRequired,
   setShowSavePrompt: PropTypes.func.isRequired,
@@ -53,7 +57,7 @@ DeadlineSection.propTypes = {
   gracePeriod: PropTypes.shape({
     hours: PropTypes.number,
     minutes: PropTypes.number,
-  }).isRequired,
+  }),
 };
 
 export default injectIntl(DeadlineSection);
