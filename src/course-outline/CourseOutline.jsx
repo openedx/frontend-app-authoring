@@ -4,7 +4,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Container, Layout } from '@edx/paragon';
 
 import SubHeader from '../generic/sub-header/SubHeader';
-import HeaderActions from './header-actions/HeaderActions';
+import HeaderNavigations from './header-navigations/HeaderNavigations';
 import messages from './messages';
 import { useCourseOutline } from './hooks';
 import OutlineSideBar from './outline-sidebar/OutlineSidebar';
@@ -13,26 +13,24 @@ const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
 
   const {
-    handleReindex,
-    handleViewLive,
-    handleExpandAll,
-    handleNewSection,
-  } = useCourseOutline();
+    isReIndexShow,
+    isSectionsExpanded,
+    headerNavigationsActions,
+  } = useCourseOutline({ courseId });
 
   return (
     <Container size="xl" className="m-4">
-      <section className="course-outline-container mb-4">
+      <section className="course-outline-container mb-4 mt-5">
         <SubHeader
           className="mt-5"
           title={intl.formatMessage(messages.headingTitle)}
           subtitle={intl.formatMessage(messages.headingSubtitle)}
           withSubHeaderContent={false}
           headerActions={(
-            <HeaderActions
-              onNewSections={handleNewSection}
-              onReindex={handleReindex}
-              onExpandAll={handleExpandAll}
-              onViewLive={handleViewLive}
+            <HeaderNavigations
+              isReIndexShow={isReIndexShow}
+              isSectionsExpanded={isSectionsExpanded}
+              headerNavigationsActions={headerNavigationsActions}
             />
           )}
         />
@@ -47,7 +45,10 @@ const CourseOutline = ({ courseId }) => {
             <article>
               <div>
                 <section className="course-outline-section">
-                  <h3>Section</h3>
+                  {/* TODO add status bar */}
+                  <h3>Status bar</h3>
+                  {/* TODO add list of outlines */}
+                  <h3>Outlines list</h3>
                 </section>
               </div>
             </article>

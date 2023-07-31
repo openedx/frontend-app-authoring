@@ -10,6 +10,7 @@ import { reducer as scheduleAndDetailsReducer } from './schedule-and-details/dat
 import { reducer as customPagesReducer } from './custom-pages/data/slice';
 import { reducer as liveReducer } from './pages-and-resources/live/data/slice';
 import { reducer as courseTeamReducer } from './course-team/data/slice';
+import { reducer as courseOutlineReducer } from './course-outline/data/slice';
 
 export default function initializeStore(preloadedState = undefined) {
   return configureStore({
@@ -24,6 +25,7 @@ export default function initializeStore(preloadedState = undefined) {
       models: modelsReducer,
       live: liveReducer,
       courseTeam: courseTeamReducer,
+      courseOutline: courseOutlineReducer,
     },
     preloadedState,
   });

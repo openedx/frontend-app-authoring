@@ -1,82 +1,42 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Hyperlink } from '@edx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useSelector } from 'react-redux';
 
 import HelpSidebar from '../../generic/help-sidebar';
-import messages from './messages';
+import { getFormattedSidebarMessages } from './utils';
+import { getOutlineDocsLinks } from '../data/selectors';
 
 const OutlineSideBar = ({ courseId }) => {
   const intl = useIntl();
+  const docksLinks = useSelector(getOutlineDocsLinks);
+  const sidebarMessages = getFormattedSidebarMessages(docksLinks, intl);
 
   return (
-    <div className="outline-sidebar" data-testid="outline-sidebar">
-      <HelpSidebar
-        intl={intl}
-        courseId={courseId}
-        showOtherSettings={false}
-      >
-        <h4 className="help-sidebar-about-title">
-          {intl.formatMessage(messages.section_1_title)}
-        </h4>
-        <p className="help-sidebar-about-descriptions">
-          {intl.formatMessage(messages.section_1_about_1)}
-        </p>
-        <p className="help-sidebar-about-descriptions">
-          {intl.formatMessage(messages.section_1_about_2)}
-        </p>
-      </HelpSidebar>
-      <HelpSidebar
-        intl={intl}
-        courseId={courseId}
-        showOtherSettings={false}
-      >
-        <h4 className="help-sidebar-about-title">
-          {intl.formatMessage(messages.section_2_title)}
-        </h4>
-        <p className="help-sidebar-about-descriptions">
-          {intl.formatMessage(messages.section_2_about_1)}
-        </p>
-        <a className="help-sidebar-link" href="some_href">
-          {intl.formatMessage(messages.section_2_link)}
-        </a>
-      </HelpSidebar>
-      <HelpSidebar
-        intl={intl}
-        courseId={courseId}
-        showOtherSettings={false}
-      >
-        <h4 className="help-sidebar-about-title">
-          {intl.formatMessage(messages.section_3_title)}
-        </h4>
-        <p className="help-sidebar-about-descriptions">
-          {intl.formatMessage(messages.section_3_about_1)}
-        </p>
-        <a className="help-sidebar-link" href="some_href">
-          {intl.formatMessage(messages.section_3_link)}
-        </a>
-      </HelpSidebar>
-      <HelpSidebar
-        intl={intl}
-        courseId={courseId}
-        showOtherSettings={false}
-      >
-        <h4 className="help-sidebar-about-title">
-          {intl.formatMessage(messages.section_4_title)}
-        </h4>
-        <p className="help-sidebar-about-descriptions">
-          {intl.formatMessage(messages.section_4_about_1)}
-        </p>
-        <p className="help-sidebar-about-descriptions">
-          {intl.formatMessage(messages.section_4_about_2)}
-        </p>
-        <p className="help-sidebar-about-descriptions">
-          {intl.formatMessage(messages.section_4_about_3)}
-        </p>
-        <a className="help-sidebar-link" href="some_href">
-          {intl.formatMessage(messages.section_4_link)}
-        </a>
-      </HelpSidebar>
-    </div>
+    <HelpSidebar
+      intl={intl}
+      courseId={courseId}
+      showOtherSettings={false}
+      className="outline-sidebar mt-4"
+    >
+      {sidebarMessages.map(({ title, descriptions, link }, index) => (
+        <div className="outline-sidebar-section">
+          <h4 className="help-sidebar-about-title">{title}</h4>
+          {descriptions.map((description) => (
+            <p className="help-sidebar-about-descriptions">{description}</p>
+          ))}
+          {Boolean(link) && (
+            <Hyperlink className="help-sidebar-about-link" destination={link.href}>
+              {link.text}
+            </Hyperlink>
+          )}
+          {index !== sidebarMessages.length - 1 && (
+            <hr className="my-3.5" />
+          )}
+        </div>
+      ))}
+    </HelpSidebar>
   );
 };
 
