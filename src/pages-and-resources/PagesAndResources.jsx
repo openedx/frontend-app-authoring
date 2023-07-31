@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Hyperlink } from '@edx/paragon';
 import messages from './messages';
 import DiscussionsSettings from './discussions';
-import { XpertUnitSummarySettings, appInfo } from './xpert-unit-summary';
+import { XpertUnitSummarySettings, fetchXpertPluginConfigurable, appInfo } from './xpert-unit-summary';
 
 import PageGrid from './pages/PageGrid';
 import { fetchCourseApps } from './data/thunks';
@@ -17,7 +17,6 @@ import { useModels, useModel } from '../generic/model-store';
 import { getLoadingStatus } from './data/selectors';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 import { RequestStatus } from '../data/constants';
-import { fetchXpertPluginConfigurable } from './xpert-unit-summary/data/thunks';
 
 const permissonPages = [appInfo];
 const PagesAndResources = ({ courseId, intl }) => {
