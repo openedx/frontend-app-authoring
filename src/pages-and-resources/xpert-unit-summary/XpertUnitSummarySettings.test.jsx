@@ -7,13 +7,13 @@ import {
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider, PageRoute } from '@edx/frontend-platform/react';
 import {
-  queryByTestId, render, waitFor,
+  queryByTestId, render, waitFor, getByText, fireEvent,
 } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 import { XpertUnitSummarySettings } from './index';
 import initializeStore from '../../store';
-import { getXpertSettingsUrl } from './data/api';
+import * as API from './data/api';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 let axiosMock;
@@ -101,7 +101,7 @@ describe('XpertUnitSummarySettings', () => {
 
   describe('with successful network connections', () => {
     beforeEach(() => {
-      axiosMock.onGet(getXpertSettingsUrl(courseId))
+      axiosMock.onGet(API.getXpertSettingsUrl(courseId))
         .reply(200, generateCourseLevelAPIRepsonse({
           success: true,
           enabled: true,
@@ -114,11 +114,24 @@ describe('XpertUnitSummarySettings', () => {
       expect(container.querySelector('#enable-xpert-unit-summary-toggle').checked).toBeTruthy();
       expect(queryByTestId(container, 'enable-badge')).toBeTruthy();
     });
+
+    test('Does not show enabled if disabled from backend', async () => {
+      axiosMock.onGet(API.getXpertSettingsUrl(courseId))
+        .reply(200, generateCourseLevelAPIRepsonse({
+          success: true,
+          enabled: false,
+        }));
+
+      renderComponent();
+      await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
+      expect(container.querySelector('#enable-xpert-unit-summary-toggle').checked).not.toBeTruthy();
+      expect(queryByTestId(container, 'enable-badge')).not.toBeTruthy();
+    });
   });
 
   describe('first time course configuration', () => {
     beforeEach(() => {
-      axiosMock.onGet(getXpertSettingsUrl(courseId))
+      axiosMock.onGet(API.getXpertSettingsUrl(courseId))
         .reply(400, generateCourseLevelAPIRepsonse({
           success: false,
           enabled: false,
@@ -127,10 +140,31 @@ describe('XpertUnitSummarySettings', () => {
       renderComponent();
     });
 
-    test('Does not show as enabled if first time', async () => {
+    test('Does not show as enabled if configuation does not exist', async () => {
       await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
       expect(container.querySelector('#enable-xpert-unit-summary-toggle').checked).not.toBeTruthy();
       expect(queryByTestId(container, 'enable-badge')).not.toBeTruthy();
     });
+  });
+});
+
+describe('saving configuration changes', () => {
+  beforeEach(() => {
+    axiosMock.onPost(API.getXpertSettingsUrl(courseId))
+      .reply(200, generateCourseLevelAPIRepsonse({
+        success: true,
+        enabled: true,
+      }));
+
+    renderComponent();
+  });
+
+  test('Saving configuration changes', async () => {
+    jest.spyOn(API, 'postXpertSettings');
+
+    await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
+    fireEvent.click(getByText(container, 'Save'));
+    await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).not.toBeTruthy());
+    expect(API.postXpertSettings).toBeCalled();
   });
 });
