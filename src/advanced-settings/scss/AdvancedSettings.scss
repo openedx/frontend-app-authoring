@@ -8,8 +8,8 @@
 
   .instructions,
   strong {
-    font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
     color: $text-color-base;
+    font-weight: 400;
   }
 }
 
@@ -18,11 +18,6 @@
 
   .pgn__card-header .pgn__card-header-title-md {
     font-size: 1.125rem;
-    padding-top: .625rem;
-  }
-
-  .pgn__icon {
-    color: $headings-color;
   }
 }
 
@@ -44,7 +39,6 @@
   }
 
   .form-control {
-    resize: none;
     min-height: 2.75rem;
     width: $setting-form-control-width;
   }
@@ -54,7 +48,8 @@
   }
 
   .pgn__card-header {
-    padding: 0 1.5rem;
+    padding: 0 0 0 1.5rem;
+    flex-grow: 1;
   }
 
   .pgn__card-status {
@@ -66,17 +61,10 @@
     margin-bottom: 1.438rem;
     display: flex;
     flex-direction: revert;
-
-    .pgn__card-header-subtitle-md {
-      margin-left: .375rem;
-      margin-top: .125rem;
-    }
   }
 }
 
 .setting-sidebar-supplementary {
-  margin-top: 1.875rem;
-
   .setting-sidebar-supplementary-about {
     .setting-sidebar-supplementary-about-title {
       font: normal $font-weight-bold 1.125rem/1.5rem $font-family-base;
@@ -122,4 +110,16 @@
     display: flex;
     align-items: center;
   }
+}
+
+.modal-popup-content {
+  max-width: 200px;
+  color: $white;
+  background-color: $black;
+  filter: drop-shadow(0 2px 4px rgba(0 0 0 / .15));
+  font-weight: 400;
+}
+
+.pgn__modal-popup__arrow::after {
+  border-top-color: $black;
 }

@@ -19,7 +19,20 @@ export function fetchCourseAppSettings(courseId) {
 
     try {
       const settingValues = await getCourseAdvancedSettings(courseId);
-      dispatch(fetchCourseAppsSettingsSuccess(settingValues));
+      const sortedDisplayName = [];
+      Object.values(settingValues).forEach(value => {
+        const { displayName } = value;
+        sortedDisplayName.push(displayName);
+      });
+      const sortedSettingValues = {};
+      sortedDisplayName.sort().forEach((displayName => {
+        Object.entries(settingValues).forEach(([key, value]) => {
+          if (value.displayName === displayName) {
+            sortedSettingValues[key] = value;
+          }
+        });
+      }));
+      dispatch(fetchCourseAppsSettingsSuccess(sortedSettingValues));
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       if (error.response && error.response.status === 403) {

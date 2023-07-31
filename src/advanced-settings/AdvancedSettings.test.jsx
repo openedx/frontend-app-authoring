@@ -7,8 +7,10 @@ import { render, fireEvent, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 
 import initializeStore from '../store';
+import { executeThunk } from '../utils';
 import { advancedSettingsMock } from './__mocks__';
 import { getCourseAdvancedSettingsApiUrl } from './data/api';
+import { updateCourseAppSetting } from './data/thunks';
 import AdvancedSettings from './AdvancedSettings';
 import messages from './messages';
 
@@ -70,10 +72,11 @@ describe('<AdvancedSettings />', () => {
     });
   });
   it('should render setting element', async () => {
-    const { getByText } = render(<RootWrapper />);
+    const { getByText, queryByText } = render(<RootWrapper />);
     await waitFor(() => {
       const advancedModuleListTitle = getByText(/Advanced Module List/i);
       expect(advancedModuleListTitle).toBeInTheDocument();
+      expect(queryByText('Certificate web/html view enabled')).toBeNull();
     });
   });
   it('should change to onСhange', async () => {
@@ -112,24 +115,50 @@ describe('<AdvancedSettings />', () => {
       fireEvent.click(showDeprecatedItemsBtn);
       expect(getByText(/Hide Deprecated Settings/i)).toBeInTheDocument();
     });
+    expect(getByText('Certificate web/html view enabled')).toBeInTheDocument();
   });
   it('should reset to default value on click on Cancel button', async () => {
     const { getByLabelText, getByText } = render(<RootWrapper />);
+    let textarea;
     await waitFor(() => {
-      const textarea = getByLabelText(/Advanced Module List/i);
-      fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
-      fireEvent.click(getByText(messages.buttonCancelText.defaultMessage));
-      expect(textarea.value).toBe('[]');
+      textarea = getByLabelText(/Advanced Module List/i);
     });
+    fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
+    expect(textarea.value).toBe('[3, 2, 1]');
+    fireEvent.click(getByText(messages.buttonCancelText.defaultMessage));
+    expect(textarea.value).toBe('[]');
   });
   it('should update the textarea value and display the updated value after clicking "Change manually"', async () => {
     const { getByLabelText, getByText } = render(<RootWrapper />);
+    let textarea;
     await waitFor(() => {
-      const textarea = getByLabelText(/Advanced Module List/i);
-      fireEvent.change(textarea, { target: { value: '[3, 2, 1' } });
-      fireEvent.click(getByText(messages.buttonSaveText.defaultMessage));
-      fireEvent.click(getByText(/Change manually/i));
-      expect(textarea.value).toBe('[3, 2, 1');
+      textarea = getByLabelText(/Advanced Module List/i);
     });
+    fireEvent.change(textarea, { target: { value: '[3, 2, 1,' } });
+    expect(textarea.value).toBe('[3, 2, 1,');
+    fireEvent.click(getByText('Save changes'));
+    fireEvent.click(getByText('Change manually'));
+    expect(textarea.value).toBe('[3, 2, 1,');
+  });
+  it('should show success alert after save', async () => {
+    const { getByLabelText, getByText } = render(<RootWrapper />);
+    let textarea;
+    await waitFor(() => {
+      textarea = getByLabelText(/Advanced Module List/i);
+    });
+    fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
+    expect(textarea.value).toBe('[3, 2, 1]');
+    axiosMock
+      .onPatch(`${getCourseAdvancedSettingsApiUrl(courseId)}`)
+      .reply(200, {
+        ...advancedSettingsMock,
+        advancedModules: {
+          ...advancedSettingsMock.advancedModules,
+          value: [3, 2, 1],
+        },
+      });
+    fireEvent.click(getByText('Save changes'));
+    await executeThunk(updateCourseAppSetting(courseId, [3, 2, 1]), store.dispatch);
+    expect(getByText('Your policy changes have been saved.')).toBeInTheDocument();
   });
 });
