@@ -42,8 +42,9 @@ export function fetchAssets(courseId) {
     } catch (error) {
       if (error.response && error.response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
+      } else {
+        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
       }
-      dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
     }
   };
 }

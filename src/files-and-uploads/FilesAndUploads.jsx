@@ -146,6 +146,7 @@ const FilesAndUploads = ({
       />
     );
   };
+
   if (loadingStatus === RequestStatus.DENIED) {
     return (
       <div data-testid="under-construction-placeholder" className="row justify-contnt-center m-6">
