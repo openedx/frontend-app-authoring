@@ -1,4 +1,4 @@
-import { getXpertSettings, postXpertSettings } from './api';
+import { getXpertSettings, postXpertSettings, getXpertPluginConfigurable } from './api';
 
 import { updateSavingStatus, updateLoadingStatus } from '../../data/slice';
 import { RequestStatus } from '../../../data/constants';
@@ -23,6 +23,28 @@ export function updateXpertSettings(courseId, state) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }
+  };
+}
+
+export function fetchXpertPluginConfigurable(courseId) {
+  return async (dispatch) => {
+    let enabled = false;
+    dispatch(updateLoadingStatus({ status: RequestStatus.PENDING }));
+    try {
+      const { response } = await getXpertPluginConfigurable(courseId);
+
+      enabled = response?.enabled;
+    } catch (e) {
+      enabled = false;
+    }
+
+    dispatch(addModel({
+      modelType: 'XpertSettings.enabled',
+      model: {
+        id: 'xpert-unit-summary',
+        enabled,
+      },
+    }));
   };
 }
 

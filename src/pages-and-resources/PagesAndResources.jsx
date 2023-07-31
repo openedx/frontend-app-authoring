@@ -13,10 +13,11 @@ import { XpertUnitSummarySettings, appInfo } from './xpert-unit-summary';
 
 import PageGrid from './pages/PageGrid';
 import { fetchCourseApps } from './data/thunks';
-import { useModels } from '../generic/model-store';
+import { useModels, useModel } from '../generic/model-store';
 import { getLoadingStatus } from './data/selectors';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 import { RequestStatus } from '../data/constants';
+import { fetchXpertPluginConfigurable } from './xpert-unit-summary/data/thunks';
 
 const permissonPages = [appInfo];
 const PagesAndResources = ({ courseId, intl }) => {
@@ -25,6 +26,7 @@ const PagesAndResources = ({ courseId, intl }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchCourseApps(courseId));
+    dispatch(fetchXpertPluginConfigurable(courseId));
   }, [courseId]);
 
   const courseAppIds = useSelector(state => state.pagesAndResources.courseAppIds);
@@ -35,6 +37,8 @@ const PagesAndResources = ({ courseId, intl }) => {
 
   // Each page here is driven by a course app
   const pages = useModels('courseApps', courseAppIds);
+  const xpertPluginConfigurable = useModel('XpertSettings.enabled', 'xpert-unit-summary');
+
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
@@ -57,10 +61,16 @@ const PagesAndResources = ({ courseId, intl }) => {
 
         <PageGrid pages={pages} />
 
-        <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
-          <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
-        </div>
-        <PageGrid pages={permissonPages} />
+        {
+          xpertPluginConfigurable?.enabled ? (
+            <>
+              <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
+                <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
+              </div>
+              <PageGrid pages={permissonPages} />
+            </>
+          ) : ''
+        }
 
         <Switch>
           <PageRoute
