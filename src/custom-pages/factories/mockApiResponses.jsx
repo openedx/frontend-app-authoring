@@ -1,3 +1,5 @@
+import { RequestStatus } from '../../data/constants';
+
 export const courseId = 'course-v1:edX+DemoX+Demo_Course';
 
 export const initialState = {
@@ -28,18 +30,18 @@ export const initialState = {
 };
 
 export const generateFetchPageApiResponse = () => ([{
-    type: 'static_tab',
-    title: null,
-    is_hideable: false,
-    is_hidden: false,
-    is_movable: true,
-    course_staff_only: false,
-    name: 'test',
-    tab_id: 'static_tab_1',
-    settings: {
-        url_slug: '1',
-    },
-    id: 'mOckID1',
+  type: 'static_tab',
+  title: null,
+  is_hideable: false,
+  is_hidden: false,
+  is_movable: true,
+  course_staff_only: false,
+  name: 'test',
+  tab_id: 'static_tab_1',
+  settings: {
+    url_slug: '1',
+  },
+  id: 'mOckID1',
 }]);
 
 export const generateXblockData = (
@@ -62,3 +64,12 @@ export const generateNewPageApiResponse = () => ({
   locator: 'mOckID2',
   courseKey: courseId,
 });
+
+export const getStatusValue = (status) => {
+  switch (status) {
+  case RequestStatus.DENIED:
+    return 403;
+  default:
+    return 200;
+  }
+};

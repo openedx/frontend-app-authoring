@@ -18,16 +18,16 @@ const FeaturesList = ({ app, intl }) => (
           {intl.formatMessage(messages['supportedFeatureList-mobile-hide'])}
         </Collapsible.Visible>
       </>
-      )}
+    )}
     styling="basic"
   >
     {app.featureIds.map((id) => (
       <div key={`collapsible-${app.id}&${id}`} className="d-flex mb-1">
         <SupportedFeature name={intl.formatMessage(messages[`featureName-${id}`])} />
       </div>
-      ))}
+    ))}
   </Collapsible>
-  );
+);
 
 export default injectIntl(FeaturesList);
 

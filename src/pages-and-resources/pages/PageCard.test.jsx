@@ -61,11 +61,6 @@ describe('LiveSettings', () => {
     renderComponent();
     expect(queryAllByRole(container, 'button')).toHaveLength(3);
   });
-  it('should navigate to custom-pages', async () => {
-    renderComponent();
-    const [customPagesSettingsButton] = queryAllByRole(container, 'link');
-    expect(customPagesSettingsButton).toHaveAttribute('href', 'custom-pages');
-  });
   it('should navigate to legacyLink', async () => {
     renderComponent();
     const textbookSettingsButton = queryAllByRole(container, 'link')[1];

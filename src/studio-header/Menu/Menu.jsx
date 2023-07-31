@@ -4,9 +4,9 @@ import { CSSTransition } from 'react-transition-group';
 import PropTypes from 'prop-types';
 
 const MenuTrigger = ({ tag, className, ...attributes }) => React.createElement(tag, {
-    className: `menu-trigger ${className}`,
-    ...attributes,
-  });
+  className: `menu-trigger ${className}`,
+  ...attributes,
+});
 MenuTrigger.propTypes = {
   tag: PropTypes.string,
   className: PropTypes.string,
@@ -18,9 +18,9 @@ MenuTrigger.defaultProps = {
 const MenuTriggerType = <MenuTrigger />.type;
 
 const MenuContent = ({ tag, className, ...attributes }) => React.createElement(tag, {
-    className: ['menu-content', className].join(' '),
-    ...attributes,
-  });
+  className: ['menu-content', className].join(' '),
+  ...attributes,
+});
 MenuContent.propTypes = {
   tag: PropTypes.string,
   className: PropTypes.string,
@@ -93,42 +93,42 @@ class Menu extends React.Component {
       return;
     }
     switch (e.key) {
-      case 'Escape': {
+    case 'Escape': {
+      e.preventDefault();
+      e.stopPropagation();
+      this.getFocusableElements()[0].focus();
+      this.close();
+      break;
+    }
+    case 'Enter': {
+      // Using focusable elements instead of a ref to the trigger
+      // because Hyperlink and Button can handle refs as functional components
+      if (document.activeElement === this.getFocusableElements()[0]) {
         e.preventDefault();
-        e.stopPropagation();
-        this.getFocusableElements()[0].focus();
-        this.close();
-        break;
+        this.toggle();
       }
-      case 'Enter': {
-        // Using focusable elements instead of a ref to the trigger
-        // because Hyperlink and Button can handle refs as functional components
-        if (document.activeElement === this.getFocusableElements()[0]) {
-          e.preventDefault();
-          this.toggle();
-        }
-        break;
-      }
-      case 'Tab': {
-        e.preventDefault();
-        if (e.shiftKey) {
-          this.focusPrevious();
-        } else {
-          this.focusNext();
-        }
-        break;
-      }
-      case 'ArrowDown': {
-        e.preventDefault();
-        this.focusNext();
-        break;
-      }
-      case 'ArrowUp': {
-        e.preventDefault();
+      break;
+    }
+    case 'Tab': {
+      e.preventDefault();
+      if (e.shiftKey) {
         this.focusPrevious();
-        break;
+      } else {
+        this.focusNext();
       }
-      default:
+      break;
+    }
+    case 'ArrowDown': {
+      e.preventDefault();
+      this.focusNext();
+      break;
+    }
+    case 'ArrowUp': {
+      e.preventDefault();
+      this.focusPrevious();
+      break;
+    }
+    default:
     }
   }
 

@@ -54,10 +54,10 @@ const renderComponent = () => {
 };
 
 const mockStore = async ({
- usernameSharing = false,
- emailSharing = false,
- enabled = true,
- piiSharingAllowed = true,
+  usernameSharing = false,
+  emailSharing = false,
+  enabled = true,
+  piiSharingAllowed = true,
 }) => {
   const fetchProviderConfigUrl = `${providersApiUrl}/${courseId}/`;
   const fetchLiveConfigUrl = `${providerConfigurationApiUrl}/${courseId}/`;

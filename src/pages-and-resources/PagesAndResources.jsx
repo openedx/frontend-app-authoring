@@ -14,9 +14,10 @@ import { XpertUnitSummarySettings, fetchXpertPluginConfigurable, appInfo } from 
 import PageGrid from './pages/PageGrid';
 import { fetchCourseApps } from './data/thunks';
 import { useModels, useModel } from '../generic/model-store';
-import { getLoadingStatus } from './data/selectors';
+import { getCourseAppsApiStatus, getLoadingStatus } from './data/selectors';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 import { RequestStatus } from '../data/constants';
+import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 
 const permissonPages = [appInfo];
 const PagesAndResources = ({ courseId, intl }) => {
@@ -30,6 +31,7 @@ const PagesAndResources = ({ courseId, intl }) => {
 
   const courseAppIds = useSelector(state => state.pagesAndResources.courseAppIds);
   const loadingStatus = useSelector(getLoadingStatus);
+  const courseAppsApiStatus = useSelector(getCourseAppsApiStatus);
 
   const { config } = useContext(AppContext);
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
@@ -41,6 +43,12 @@ const PagesAndResources = ({ courseId, intl }) => {
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
+  }
+
+  if (courseAppsApiStatus === RequestStatus.DENIED) {
+    return (
+      <PermissionDeniedAlert />
+    );
   }
 
   return (

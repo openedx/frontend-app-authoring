@@ -9,7 +9,8 @@
         background-color: $white;
         text-align: center;
 
-        .d-flex, span {
+        .d-flex,
+        span {
           display: block !important;
         }
       }
@@ -20,21 +21,20 @@
         .pgn__data-table-cell-wrap {
           max-width: unset;
         }
-
       }
     }
   }
 }
 
-.height-36{
+.height-36 {
   height: 2.25rem !important;
 }
 
-.line-height-20{
+.line-height-20 {
   line-height: 1.25rem !important;
 }
 
-.font-size-14{
+.font-size-14 {
   font-size: 14px !important;
 }
 
@@ -42,18 +42,47 @@
   font-weight: 500 !important;
 }
 
-.py-7px{
-  padding: 0 7px 0 7px ;
+.py-7px {
+  padding: 0 7px;
 }
 
-.discussion-restriction{
-  .unselected-button{
-     &:hover{
-     background: #e9e6e4 ;
+.line-height-24 {
+  line-height: 24px !important;
+}
+
+.hide-discussion-modal {
+  .pgn__modal-header {
+    padding-top: 24px;
+
+    h2 {
+      color: $primary-500;
+      line-height: 28px;
+      font-size: 22px;
     }
   }
 
-  .action-btn{
+  .bg-black {
+    color: #000000;
+  }
+
+  .pgn__modal-footer {
+    padding-top: 8px;
+    padding-bottom: 24px;
+  }
+
+  button {
+    font-weight: 500;
+  }
+}
+
+.discussion-restriction {
+  .unselected-button {
+    &:hover {
+      background: #E9E6E4;
+    }
+  }
+
+  .action-btn {
     padding: 10px 16px;
     width: 80px;
     height: 44px;
@@ -62,28 +91,30 @@
     line-height: 24px;
   }
 
-  .w-92{
+  .w-92 {
     width: 92px;
   }
 
-  .card-body-section{
+  .card-body-section {
     padding-top: 12px !important;
     padding-bottom: 20px !important;
   }
 
-  .form-control{
-    border-radius: 0px !important;
+  .form-control {
+    border-radius: 0 !important;
     font-weight: 400;
     font-size: 14px;
     line-height: 24px;
   }
 
-  .collapsible-card{
+  .collapsible-card {
     padding: 14px 14px 14px 24px !important;
-    min-height:100px;
-    .collapsible-trigger{
-      padding: 0px !important;
-      .badge{
+    min-height: 100px;
+
+    .collapsible-trigger {
+      padding: 0 !important;
+
+      .badge {
         font-size: 12px;
         line-height: 20px;
       }

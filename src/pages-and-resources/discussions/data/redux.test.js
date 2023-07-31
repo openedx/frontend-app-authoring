@@ -2,6 +2,7 @@ import { history } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { initializeMockApp } from '@edx/frontend-platform/testing';
 import MockAdapter from 'axios-mock-adapter';
+import { waitFor } from '@testing-library/react';
 import { DivisionSchemes } from '../../../data/constants';
 import { LOADED } from '../../../data/slice';
 import initializeStore from '../../../store';
@@ -371,23 +372,25 @@ describe('Data layer integration tests', () => {
         pagesAndResourcesPath,
       ), store.dispatch);
 
-      expect(window.location.pathname).toEqual(pagesAndResourcesPath);
-      expect(store.getState().discussions).toEqual(
-        expect.objectContaining({
-          appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
-          featureIds,
-          activeAppId: 'piazza',
-          selectedAppId: 'piazza',
-          status: LOADED,
-          saveStatus: SAVED,
-          hasValidationError: false,
-        }),
-      );
-      expect(store.getState().models.appConfigs.piazza).toEqual({
-        id: 'piazza',
-        consumerKey: 'new_consumer_key',
-        consumerSecret: 'new_consumer_secret',
-        launchUrl: 'https://localhost/new_launch_url',
+      waitFor(() => {
+        expect(window.location.pathname).toEqual(pagesAndResourcesPath);
+        expect(store.getState().discussions).toEqual(
+          expect.objectContaining({
+            appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
+            featureIds,
+            activeAppId: 'piazza',
+            selectedAppId: 'piazza',
+            status: LOADED,
+            saveStatus: SAVED,
+            hasValidationError: false,
+          }),
+        );
+        expect(store.getState().models.appConfigs.piazza).toEqual({
+          id: 'piazza',
+          consumerKey: 'new_consumer_key',
+          consumerSecret: 'new_consumer_secret',
+          launchUrl: 'https://localhost/new_launch_url',
+        });
       });
     });
 
@@ -465,35 +468,37 @@ describe('Data layer integration tests', () => {
         },
         pagesAndResourcesPath,
       ), store.dispatch);
-      expect(window.location.pathname).toEqual(pagesAndResourcesPath);
-      expect(store.getState().discussions).toEqual(
-        expect.objectContaining({
-          appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
-          featureIds,
-          activeAppId: 'legacy',
-          selectedAppId: 'legacy',
-          status: LOADED,
-          saveStatus: SAVED,
-          hasValidationError: false,
-          divideDiscussionIds,
-          discussionTopicIds,
-        }),
-      );
-      expect(store.getState().models.appConfigs.legacy).toEqual({
-        id: 'legacy',
-        // These three fields should be updated.
-        allowAnonymousPosts: true,
-        allowAnonymousPostsPeers: true,
-        reportedContentEmailNotifications: true,
-        alwaysDivideInlineDiscussions: true,
-        restrictedDates: [],
-        // TODO: Note!  The values we tried to save were ignored, this test reflects what currently
-        // happens, but NOT what we want to have happen!
-        divideByCohorts: true,
-        divisionScheme: DivisionSchemes.COHORT,
-        cohortsEnabled: false,
-        allowDivisionByUnit: false,
-        divideCourseTopicsByCohorts: true,
+      waitFor(() => {
+        expect(window.location.pathname).toEqual(pagesAndResourcesPath);
+        expect(store.getState().discussions).toEqual(
+          expect.objectContaining({
+            appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
+            featureIds,
+            activeAppId: 'legacy',
+            selectedAppId: 'legacy',
+            status: LOADED,
+            saveStatus: SAVED,
+            hasValidationError: false,
+            divideDiscussionIds,
+            discussionTopicIds,
+          }),
+        );
+        expect(store.getState().models.appConfigs.legacy).toEqual({
+          id: 'legacy',
+          // These three fields should be updated.
+          allowAnonymousPosts: true,
+          allowAnonymousPostsPeers: true,
+          reportedContentEmailNotifications: true,
+          alwaysDivideInlineDiscussions: true,
+          restrictedDates: [],
+          // TODO: Note!  The values we tried to save were ignored, this test reflects what currently
+          // happens, but NOT what we want to have happen!
+          divideByCohorts: true,
+          divisionScheme: DivisionSchemes.COHORT,
+          cohortsEnabled: false,
+          allowDivisionByUnit: false,
+          divideCourseTopicsByCohorts: true,
+        });
       });
     });
   });

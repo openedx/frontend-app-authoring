@@ -19,6 +19,7 @@ import CustomPages from './CustomPages';
 import {
   generateFetchPageApiResponse,
   generateNewPageApiResponse,
+  getStatusValue,
   courseId,
   initialState,
 } from './factories/mockApiResponses';
@@ -45,19 +46,19 @@ const renderComponent = () => {
   );
 };
 
-const mockStore = async () => {
+const mockStore = async (status) => {
   const xblockAddUrl = `${getApiBaseUrl()}/xblock/`;
   const reorderUrl = `${getTabHandlerUrl(courseId)}/reorder`;
   const fetchPagesUrl = `${getTabHandlerUrl(courseId)}`;
 
-  axiosMock.onGet(fetchPagesUrl).reply(200, generateFetchPageApiResponse());
+  axiosMock.onGet(fetchPagesUrl).reply(getStatusValue(status), generateFetchPageApiResponse());
   axiosMock.onPost(reorderUrl).reply(204);
   axiosMock.onPut(xblockAddUrl).reply(200, generateNewPageApiResponse());
 
   await executeThunk(fetchCustomPages(courseId), store.dispatch);
   await executeThunk(addSingleCustomPage(courseId), store.dispatch);
   await executeThunk(updatePageOrder(courseId, [{ id: 'mOckID2' }, { id: 'mOckID1' }]), store.dispatch);
- };
+};
 
 describe('CustomPages', () => {
   beforeEach(async () => {
@@ -72,21 +73,26 @@ describe('CustomPages', () => {
     store = initializeStore(initialState);
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
+  it('should ', async () => {
+    renderComponent();
+    await mockStore(RequestStatus.DENIED);
+    expect(screen.getByTestId('under-construction-placeholder')).toBeVisible();
+  });
   it('should have breadecrumbs', async () => {
     renderComponent();
-    await mockStore();
+    await mockStore(RequestStatus.SUCCESSFUL);
     expect(screen.getByLabelText('Custom Page breadcrumbs')).toBeVisible();
   });
   it('should contain header row with title, add button and view live button', async () => {
     renderComponent();
-    await mockStore();
+    await mockStore(RequestStatus.SUCCESSFUL);
     expect(screen.getByText(messages.heading.defaultMessage)).toBeVisible();
     expect(screen.getByTestId('header-add-button')).toBeVisible();
     expect(screen.getByTestId('header-view-live-button')).toBeVisible();
   });
   it('should add new page when "add a new page button" is clicked', async () => {
     renderComponent();
-    await mockStore();
+    await mockStore(RequestStatus.SUCCESSFUL);
     const addButton = screen.getByTestId('body-add-button');
     expect(addButton).toBeVisible();
     await act(async () => { fireEvent.click(addButton); });
@@ -95,7 +101,7 @@ describe('CustomPages', () => {
   });
   it('should open student view modal when "add a new page button" is clicked', async () => {
     renderComponent();
-    await mockStore();
+    await mockStore(RequestStatus.SUCCESSFUL);
     const viewButton = screen.getByTestId('student-view-example-button');
     expect(viewButton).toBeVisible();
     expect(screen.queryByLabelText(messages.studentViewModalTitle.defaultMessage)).toBeNull();
@@ -104,7 +110,7 @@ describe('CustomPages', () => {
   });
   it('should update page order on drag', async () => {
     renderComponent();
-    await mockStore();
+    await mockStore(RequestStatus.SUCCESSFUL);
     const buttons = await screen.queryAllByRole('button');
     const draggableButton = buttons[9];
     expect(draggableButton).toBeVisible();

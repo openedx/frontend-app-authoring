@@ -233,7 +233,7 @@ function denormalizeData(courseId, appId, data) {
 
   const apiData = {
     context_key: courseId,
-    enabled: true,
+    enabled: data.enabled,
     lti_configuration: ltiConfiguration,
     plugin_configuration: pluginConfiguration,
     provider_type: appId,

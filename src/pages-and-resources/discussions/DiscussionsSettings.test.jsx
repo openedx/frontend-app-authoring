@@ -162,10 +162,12 @@ describe('DiscussionsSettings', () => {
 
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
 
-      userEvent.click(queryByText(container, appMessages.backButton.defaultMessage));
+      await act(() => userEvent.click(queryByText(container, appMessages.backButton.defaultMessage)));
 
-      expect(queryByTestId(container, 'appList')).toBeInTheDocument();
-      expect(queryByTestId(container, 'appConfigForm')).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(queryByTestId(container, 'appList')).toBeInTheDocument();
+        expect(queryByTestId(container, 'appConfigForm')).not.toBeInTheDocument();
+      });
     });
 
     test('successfully closes the modal', async () => {

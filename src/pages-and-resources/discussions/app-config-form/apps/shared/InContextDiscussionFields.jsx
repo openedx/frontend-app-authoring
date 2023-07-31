@@ -40,7 +40,7 @@ const InContextDiscussionFields = ({
             onCancel={() => setShowPopup(false)}
             cancelLabel={intl.formatMessage(messages.cancelButton)}
           />
-          )
+        )
         : (
           <FormSwitchGroup
             onChange={() => setShowPopup(true)}
@@ -50,7 +50,7 @@ const InContextDiscussionFields = ({
             label={intl.formatMessage(messages.gradedUnitPagesLabel)}
             helpText={intl.formatMessage(messages.gradedUnitPagesHelp)}
           />
-          )}
+        )}
       <AppConfigFormDivider />
       <FormSwitchGroup
         onChange={onChange}
