@@ -21,7 +21,7 @@ const RequirementsSection = ({
   onChange,
 }) => {
   const intl = useIntl();
-  const selectedItem = possiblePreRequisiteCourses.find(
+  const selectedItem = possiblePreRequisiteCourses?.find(
     (course) => course.courseKey === preRequisiteCourses[0],
   );
   const formattedSelectedItem = selectedItem?.displayName || intl.formatMessage(messages.dropdownEmptyText);
