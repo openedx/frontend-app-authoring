@@ -9,21 +9,24 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Hyperlink } from '@edx/paragon';
 import messages from './messages';
 import DiscussionsSettings from './discussions';
+import { XpertUnitSummarySettings, fetchXpertPluginConfigurable, appInfo } from './xpert-unit-summary';
 
 import PageGrid from './pages/PageGrid';
 import { fetchCourseApps } from './data/thunks';
-import { useModels } from '../generic/model-store';
+import { useModels, useModel } from '../generic/model-store';
 import { getCourseAppsApiStatus, getLoadingStatus } from './data/selectors';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 import { RequestStatus } from '../data/constants';
 import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 
+const permissonPages = [appInfo];
 const PagesAndResources = ({ courseId, intl }) => {
   const { path, url } = useRouteMatch();
 
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchCourseApps(courseId));
+    dispatch(fetchXpertPluginConfigurable(courseId));
   }, [courseId]);
 
   const courseAppIds = useSelector(state => state.pagesAndResources.courseAppIds);
@@ -35,6 +38,8 @@ const PagesAndResources = ({ courseId, intl }) => {
 
   // Each page here is driven by a course app
   const pages = useModels('courseApps', courseAppIds);
+  const xpertPluginConfigurable = useModel('XpertSettings.enabled', 'xpert-unit-summary');
+
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
@@ -62,6 +67,18 @@ const PagesAndResources = ({ courseId, intl }) => {
         </div>
 
         <PageGrid pages={pages} />
+
+        {
+          xpertPluginConfigurable?.enabled ? (
+            <>
+              <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
+                <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
+              </div>
+              <PageGrid pages={permissonPages} />
+            </>
+          ) : ''
+        }
+
         <Switch>
           <PageRoute
             path={[
@@ -71,6 +88,15 @@ const PagesAndResources = ({ courseId, intl }) => {
           >
             <DiscussionsSettings courseId={courseId} />
           </PageRoute>
+
+          <PageRoute
+            path={[
+              `${path}/xpert-unit-summary/settings`,
+            ]}
+          >
+            <XpertUnitSummarySettings courseId={courseId} />
+          </PageRoute>
+
           <PageRoute path={`${path}/:appId/settings`}>
             {
               ({ match, history }) => {
