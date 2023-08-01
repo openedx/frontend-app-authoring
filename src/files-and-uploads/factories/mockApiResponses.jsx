@@ -13,7 +13,6 @@ export const initialState = {
     savingStatus: '',
     deletingStatus: '',
     addingStatus: '',
-    customPagesApiStatus: {},
   },
   models: {
     assets: {
@@ -23,8 +22,8 @@ export const initialState = {
         locked: false,
         externalUrl: 'static_tab_1',
         portableUrl: '',
-        contentType: '',
-        wrapperType: '',
+        contentType: 'image/png',
+        wrapperType: 'image',
         dateAdded: '',
       },
     },
@@ -32,32 +31,65 @@ export const initialState = {
 };
 
 export const generateFetchAssetApiResponse = () => ([{
-  assets: [{
-    id: 'mOckID1',
-    displayName: 'test',
-    locked: false,
-    externalUrl: 'static_tab_1',
-    portableUrl: '',
-    contentType: '',
-    wrapperType: '',
-    dateAdded: '',
-    thumbnail: '',
-  }],
-  totalCount: 1,
+  assets: [
+    {
+      id: 'mOckID1',
+      displayName: 'test',
+      locked: false,
+      externalUrl: 'static_tab_1',
+      portableUrl: '',
+      contentType: 'image/png',
+      dateAdded: '',
+      thumbnail: '/asset',
+    },
+    {
+      id: 'mOckID3',
+      displayName: 'test',
+      locked: false,
+      externalUrl: 'static_tab_1',
+      portableUrl: '',
+      contentType: 'application/pdf',
+      dateAdded: '',
+      thumbnail: null,
+    },
+    {
+      id: 'mOckID3',
+      displayName: 'test',
+      locked: false,
+      externalUrl: 'static_tab_1',
+      portableUrl: '',
+      contentType: 'audio/mp3',
+      dateAdded: '',
+      thumbnail: null,
+    },
+    {
+      id: 'mOckID4',
+      displayName: 'test',
+      locked: false,
+      externalUrl: 'static_tab_1',
+      portableUrl: '',
+      contentType: 'application/json',
+      dateAdded: '',
+      thumbnail: null,
+    },
+    {
+      id: 'mOckID5',
+      displayName: 'test',
+      locked: false,
+      externalUrl: 'static_tab_1',
+      portableUrl: '',
+      contentType: 'application/octet-stream',
+      dateAdded: '',
+      thumbnail: null,
+    },
+  ],
+  totalCount: 50,
 }]);
 
 export const generateEmptyApiResponse = () => ([{
   assets: [],
   totalCount: 0,
 }]);
-
-export const generateXblockData = (
-  blockId,
-) => ({
-  id: blockId,
-  display_name: 'test',
-  data: '<p>test</p>',
-});
 
 export const generateUpdateVisiblityApiResponse = (
   blockId,

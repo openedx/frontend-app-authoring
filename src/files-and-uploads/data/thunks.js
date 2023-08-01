@@ -3,14 +3,12 @@ import {
   addModel,
   addModels,
   removeModel,
-  removeModels,
   updateModel,
 } from '../../generic/model-store';
 import {
   getAssets,
   addAsset,
   deleteAsset,
-  getNextPageAssets,
   updateLockStatus,
 } from './api';
 import {
@@ -31,7 +29,8 @@ export function fetchAssets(courseId) {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
 
     try {
-      const { assets, totalCount } = await getAssets(courseId);
+      const { totalCount } = await getAssets(courseId);
+      const { assets } = await getAssets(courseId, totalCount);
       const assetsWithWraperType = getWrapperType(assets);
       dispatch(addModels({ modelType: 'assets', models: assetsWithWraperType }));
       dispatch(setAssetIds({
@@ -111,30 +110,6 @@ export function updateAssetLock({ assetId, courseId, locked }) {
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  };
-}
-
-export function updatePageView(courseId, pageNumber, assetIds) {
-  return async (dispatch) => {
-    dispatch(updateLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
-    try {
-      const { assets, totalCount } = await getNextPageAssets(courseId, pageNumber);
-      const previousIds = assetIds;
-      const assetsWithWraperType = getWrapperType(assets);
-
-      dispatch(addModels({ modelType: 'assets', models: assetsWithWraperType }));
-      dispatch(setAssetIds({
-        assetIds: assets.map(asset => asset.id),
-      }));
-      dispatch(removeModels({
-        modelType: 'assets',
-        ids: previousIds,
-      }));
-      dispatch(setTotalCount({ totalCount }));
-      dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
-      dispatch(updateLoadingStatus({ status: RequestStatus.FAILED }));
     }
   };
 }

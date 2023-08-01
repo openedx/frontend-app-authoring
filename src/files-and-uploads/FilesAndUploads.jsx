@@ -20,7 +20,6 @@ import {
   deleteAssetFile,
   fetchAssets,
   updateAssetLock,
-  updatePageView,
 } from './data/thunks';
 import { updateAddingStatus } from '../custom-pages/data/slice';
 import messages from './messages';
@@ -28,7 +27,6 @@ import messages from './messages';
 import FileInput, { fileInput } from './FileInput';
 import FilesAndUploadsProvider from './FilesAndUploadsProvider';
 import {
-  TablePagination,
   GalleryCard,
   ListCard,
   TableActions,
@@ -44,15 +42,14 @@ const FilesAndUploads = ({
   const defaultVal = 'card';
   const columnSizes = { xs: 12, sm: 6, lg: 3 };
   const [currentView, setCurrentView] = useState(defaultVal);
-  const [currentPage, setCurrentPage] = useState(1);
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
   const [isAddOpen, setAddOpen, setAddClose] = useToggle(false);
   const [selectedRowCount, setSelectedRowCount] = useState(0);
+  const assetIds = useSelector(state => state.assets.assetIds);
 
   useEffect(() => {
     dispatch(fetchAssets(courseId));
   }, [courseId]);
-  const assetIds = useSelector(state => state.assets.assetIds);
   const totalCount = useSelector(state => state.assets.totalCount);
   const addAssetStatus = useSelector(state => state.assets.addingStatus);
   const deleteAssetStatus = useSelector(state => state.assets.deletingStatus);
@@ -97,13 +94,6 @@ const FilesAndUploads = ({
 
   const handleLockedAsset = (assetId, locked) => {
     dispatch(updateAssetLock({ courseId, assetId, locked }));
-  };
-
-  const handlePageChange = (pageNum) => {
-    if (pageNum !== currentPage) {
-      dispatch(updatePageView(courseId, pageNum - 1, assetIds));
-      setCurrentPage(pageNum);
-    }
   };
 
   const headerActions = ({ selectedFlatRows }) => {
@@ -176,7 +166,6 @@ const FilesAndUploads = ({
           isSortable
           isSelectable
           isPaginated
-          manualPagination
           defaultColumnValues={{ Filter: TextFilter }}
           dataViewToggleOptions={{
             isDataViewToggleEnabled: true,
@@ -185,8 +174,7 @@ const FilesAndUploads = ({
             togglePlacement: 'left',
           }}
           initialState={{
-            pageSize: 4,
-            pageIndex: 0,
+            pageSize: 50,
           }}
           tableActions={headerActions}
           bulkActions={headerActions}
@@ -237,11 +225,10 @@ const FilesAndUploads = ({
           ) : (
             <div data-testid="files-data-table">
               <DataTable.TableControlBar />
-              { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" /> }
-              { currentView === 'list' && <CardView CardComponent={fileCard} columnSizes={{ xs: 12 }} selectionPlacement="left" /> }
-              <DataTable.TableFooter>
-                <TablePagination {...{ totalCount, currentPage, handlePageChange }} />
-              </DataTable.TableFooter>
+              { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={4} /> }
+              { currentView === 'list' && <CardView CardComponent={fileCard} columnSizes={{ xs: 12 }} selectionPlacement="left" skeletonCardCount={4} /> }
+              <DataTable.EmptyTable content="No results found" />
+              <DataTable.TableFooter />
               <ApiStatusToast
                 actionType="deleted"
                 apiStatus={deleteAssetStatus}

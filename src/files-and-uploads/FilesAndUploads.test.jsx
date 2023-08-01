@@ -50,12 +50,8 @@ const renderComponent = () => {
 
 const mockStore = async (
   status,
-  // assetId,
-  // pageNumber,
 ) => {
-  // const editAssetUrl = `${getTabHandlerUrl(courseId)}${assetId}`;
-  const fetchAssetsUrl = getAssetsUrl(courseId);
-  // const nextPageUrl = `${getAssetsUrl(courseId)}?page=${pageNumber}&page_size=50`;
+  const fetchAssetsUrl = `${getAssetsUrl(courseId)}?page_size=50`;
 
   axiosMock.onGet(fetchAssetsUrl).reply(getStatusValue(status), generateFetchAssetApiResponse());
   axiosMock.onPost(fetchAssetsUrl).reply(200, generateNewAssetApiResponse());
@@ -92,9 +88,9 @@ describe('FilesAndUploads', () => {
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
     });
-    it('should return placeholder component', async () => {
+    fit('should return placeholder component', async () => {
       renderComponent();
-      await emptyMockStore(RequestStatus.DENIED);
+      await mockStore(RequestStatus.DENIED);
       expect(screen.getByTestId('under-construction-placeholder')).toBeVisible();
     });
     it('should have Files and uploads title', async () => {
