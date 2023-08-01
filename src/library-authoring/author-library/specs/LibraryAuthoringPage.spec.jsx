@@ -31,6 +31,22 @@ import {
   updateLibrary,
 } from '../../configure-library/data';
 
+// mock imiplementation of EditorPage, for popup test
+jest.mock('@edx/frontend-lib-content-components', () => {
+  const PropTypes = jest.requireActual('prop-types');
+
+  const EditorPage = ({ returnFunction }) => (
+    <button type="button" onClick={returnFunction()}>Close Editor Page Mockup</button>
+  );
+
+  // Add prop validation inside the Jest mock block
+  EditorPage.propTypes = {
+    returnFunction: PropTypes.func.isRequired,
+  };
+
+  return { EditorPage };
+});
+
 // Reducing function which is used to take an array of blocks and creates an object with keys that are their ids and
 // values which are state for interacting with that block.
 const toBlockInfo = (current, value) => ({ ...current, [value.id]: blockStateFactory(value) });
@@ -309,6 +325,23 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
       libraryId: library.id,
       paginationParams,
     });
+  });
+
+  it('Opens (and closes) an editor popup for a block', async () => {
+    const library = libraryFactory();
+    const block = blockFactory(undefined, { library });
+    await render(library, genState(library, [block]));
+    const edit = screen.getByLabelText('Edit');
+    act(() => {
+      edit.click();
+    });
+    // close the editor
+    const testButton = await screen.findByText('Close Editor Page Mockup');
+    act(() => {
+      testButton.click();
+    });
+    const testMissingButton = await screen.queryByText('Close Editor Page Mockup');
+    expect(testMissingButton).toBeNull();
   });
 
   it('Deletes a block', async () => {

@@ -16,6 +16,7 @@ import {
   ModalDialog,
 } from '@edx/paragon';
 import { Edit } from '@edx/paragon/icons';
+import { EditorPage } from '@edx/frontend-lib-content-components';
 import { v4 as uuid4 } from 'uuid';
 import { faPlus, faSync } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -23,7 +24,6 @@ import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { connect } from 'react-redux';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Link } from 'react-router-dom';
 import { LibraryBlock } from '../edit-block/LibraryBlock';
 import {
   clearLibrary,
@@ -79,7 +79,7 @@ const getHandlerUrl = async (blockId) => getXBlockHandlerUrl(blockId, XBLOCK_VIE
  */
 export const BlockPreviewBase = ({
   intl, block, view, canEdit, showPreviews, showDeleteModal,
-  setShowDeleteModal, library, previewKey, editView, isLtiUrlGenerating,
+  setShowDeleteModal, showEditorModal, setShowEditorModal, library, previewKey, editView, isLtiUrlGenerating,
   ...props
 }) => (
   <Card className="w-auto m-2">
@@ -89,9 +89,8 @@ export const BlockPreviewBase = ({
       actions={(
         <ActionRow>
           <Button
-            as={Link}
-            to={editView}
-            variant="tertiary"
+            aria-label={intl.formatMessage(messages['library.detail.block.edit'])}
+            onClick={() => setShowEditorModal(true)}
           >
             <FontAwesomeIcon icon={faEdit} className="pr-1" />
             {intl.formatMessage(messages['library.detail.block.edit'])}
@@ -106,6 +105,19 @@ export const BlockPreviewBase = ({
         </ActionRow>
       )}
     />
+    <ModalDialog
+      isOpen={showEditorModal}
+      hasCloseButton={false}
+      size="fullscreen"
+    >
+      <EditorPage
+        blockType={block.block_type}
+        blockId={block.id}
+        studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+        lmsEndpointUrl={getConfig().LMS_BASE_URL}
+        returnFunction={() => () => setShowEditorModal(false)}
+      />
+    </ModalDialog>
     <ModalDialog
       isOpen={showDeleteModal}
       onClose={() => setShowDeleteModal(false)}
@@ -149,6 +161,8 @@ BlockPreviewBase.propTypes = {
   showPreviews: PropTypes.bool.isRequired,
   showDeleteModal: PropTypes.bool.isRequired,
   setShowDeleteModal: PropTypes.func.isRequired,
+  showEditorModal: PropTypes.bool.isRequired,
+  setShowEditorModal: PropTypes.func.isRequired,
   deleteLibraryBlock: PropTypes.func.isRequired,
   previewKey: PropTypes.string.isRequired,
   fetchBlockLtiUrl: PropTypes.func.isRequired,
@@ -199,6 +213,7 @@ const BlockPreviewContainerBase = ({
   }, [blockStates[block.id], showPreviews]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditorModal, setShowEditorModal] = useState(false);
   // Need to force the iframe to be different if navigating away. Otherwise landing on the edit page
   // will show the student view, and navigating back will show the edit view in the block list. React is smart enough
   // to guess these iframes are the same between routes and will try to preserve rather than rerender, but that works
@@ -242,6 +257,8 @@ const BlockPreviewContainerBase = ({
       showPreviews={showPreviews}
       showDeleteModal={showDeleteModal}
       setShowDeleteModal={setShowDeleteModal}
+      showEditorModal={showEditorModal}
+      setShowEditorModal={setShowEditorModal}
       deleteLibraryBlock={props.deleteLibraryBlock}
       library={library}
       previewKey={previewKey}
