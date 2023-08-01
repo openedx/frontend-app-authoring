@@ -5,8 +5,8 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
 
 import HelpSidebar from '../../generic/help-sidebar';
-import { getFormattedSidebarMessages } from './utils';
 import { getOutlineDocsLinks } from '../data/selectors';
+import { getFormattedSidebarMessages } from './utils';
 
 const OutlineSideBar = ({ courseId }) => {
   const intl = useIntl();
@@ -19,15 +19,21 @@ const OutlineSideBar = ({ courseId }) => {
       courseId={courseId}
       showOtherSettings={false}
       className="outline-sidebar mt-4"
+      data-testid="outline-sidebar"
     >
       {sidebarMessages.map(({ title, descriptions, link }, index) => (
-        <div className="outline-sidebar-section">
+        <div className="outline-sidebar-section" key={title}>
           <h4 className="help-sidebar-about-title">{title}</h4>
           {descriptions.map((description) => (
-            <p className="help-sidebar-about-descriptions">{description}</p>
+            <p className="help-sidebar-about-descriptions" key={description}>{description}</p>
           ))}
           {Boolean(link) && (
-            <Hyperlink className="help-sidebar-about-link" destination={link.href}>
+            <Hyperlink
+              className="help-sidebar-about-link"
+              destination={link.href}
+              target="_blank"
+              showLaunchIcon={false}
+            >
               {link.text}
             </Hyperlink>
           )}

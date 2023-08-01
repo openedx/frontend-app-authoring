@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { fetchCourseOutlineIndexQuery } from './data/thunk';
 import { getOutlineReIndexLink } from './data/selectors';
 
@@ -11,18 +12,15 @@ const useCourseOutline = ({ courseId }) => {
   const headerNavigationsActions = {
     handleNewSection: () => {
       // TODO add handler
-      console.log('onNewSections');
     },
     handleReIndex: () => {
       // TODO add handler
-      console.log('onReindex');
     },
     handleExpandAll: () => {
       setSectionsExpanded((prevState) => !prevState);
     },
     handleViewLive: () => {
       // TODO add handler
-      console.log('onViewLive');
     },
   };
 

@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   reindexButtonTooltip: {
     id: 'course-authoring.course-outline.header-navigations.button.reindex.tooltip',
-    defaultMessage: 'Reindex tooltip',
+    defaultMessage: 'Reindex current course',
   },
   expandAllButton: {
     id: 'course-authoring.course-outline.header-navigations.button.new-section',

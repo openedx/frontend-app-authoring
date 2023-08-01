@@ -5,9 +5,9 @@ import { Container, Layout } from '@edx/paragon';
 
 import SubHeader from '../generic/sub-header/SubHeader';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
+import OutlineSideBar from './outline-sidebar/OutlineSidebar';
 import messages from './messages';
 import { useCourseOutline } from './hooks';
-import OutlineSideBar from './outline-sidebar/OutlineSidebar';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -45,10 +45,7 @@ const CourseOutline = ({ courseId }) => {
             <article>
               <div>
                 <section className="course-outline-section">
-                  {/* TODO add status bar */}
-                  <h3>Status bar</h3>
-                  {/* TODO add list of outlines */}
-                  <h3>Outlines list</h3>
+                  {/* TODO add status bar and list of outlines */}
                 </section>
               </div>
             </article>

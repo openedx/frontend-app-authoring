@@ -35,7 +35,7 @@ const Header = ({
       submenuContent: (
         <>
           <div className="mb-1 small">
-            <a rel="noopener" href={getPagePath(courseId, process.env.ENABLE_NEW_COURSE_OUTLINE_PAGE, 'course')}>{intl.formatMessage(messages['header.links.outline'])}</a>
+            <a rel="noopener" href={getPagePath(courseId, process.env.ENABLE_NEW_COURSE_OUTLINE_PAGE, 'outline')}>{intl.formatMessage(messages['header.links.outline'])}</a>
           </div>
           <div className="mb-1 small">
             <a rel="noopener" href={getPagePath(courseId, process.env.ENABLE_NEW_UPDATES_PAGE, 'course_info')}>{intl.formatMessage(messages['header.links.updates'])}</a>

@@ -4,22 +4,22 @@ import { createSlice } from '@reduxjs/toolkit';
 const slice = createSlice({
   name: 'courseOutline',
   initialState: {
-    reindex_link: '',
-    lms_link: '',
+    reindexLink: '',
+    lmsLink: '',
     docsLinks: {
-      outline: '',
-      grading: '',
-      visibility: '',
+      learnMoreOutlineUrl: '',
+      learnMoreGradingUrl: '',
+      learnMoreVisibilityUrl: '',
     },
   },
   reducers: {
     fetchOutlineIndexSuccess: (state, { payload }) => {
-      state.reindex_link = payload.reindex_link;
-      state.lms_link = payload.lms_link;
+      state.reindexLink = payload.reindexLink;
+      state.lmsLink = payload.lmsLink;
       state.docsLinks = {
-        outline: payload.learn_more_outline_url,
-        grading: payload.learn_more_grading_url,
-        visibility: payload.learn_more_visibility_url,
+        learnMoreOutlineUrl: payload.learnMoreOutlineUrl,
+        learnMoreGradingUrl: payload.learnMoreGradingUrl,
+        learnMoreVisibilityUrl: payload.learnMoreVisibilityUrl,
       };
     },
   },
