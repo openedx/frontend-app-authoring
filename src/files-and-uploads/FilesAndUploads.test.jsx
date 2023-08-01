@@ -52,9 +52,10 @@ const mockStore = async (
   status,
 ) => {
   const fetchAssetsUrl = `${getAssetsUrl(courseId)}?page_size=50`;
+  const addAssetUrl = getAssetsUrl(courseId);
 
   axiosMock.onGet(fetchAssetsUrl).reply(getStatusValue(status), generateFetchAssetApiResponse());
-  axiosMock.onPost(fetchAssetsUrl).reply(200, generateNewAssetApiResponse());
+  axiosMock.onPost(addAssetUrl).reply(200, generateNewAssetApiResponse());
 
   await executeThunk(fetchAssets(courseId), store.dispatch);
   await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
@@ -88,7 +89,7 @@ describe('FilesAndUploads', () => {
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
     });
-    fit('should return placeholder component', async () => {
+    it('should return placeholder component', async () => {
       renderComponent();
       await mockStore(RequestStatus.DENIED);
       expect(screen.getByTestId('under-construction-placeholder')).toBeVisible();
@@ -133,62 +134,66 @@ describe('FilesAndUploads', () => {
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
     });
-    it('should render table with gallery card', async () => {
-      renderComponent();
-      await mockStore(RequestStatus.SUCCESSFUL);
-      expect(screen.getByTestId('files-data-table')).toBeVisible();
-      expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
-    });
-    it('should switch table to list view', async () => {
-      renderComponent();
-      await mockStore(RequestStatus.SUCCESSFUL);
-      expect(screen.getByTestId('files-data-table')).toBeVisible();
-      expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
-      expect(screen.queryByTestId('list-card-mOckID1')).toBeNull();
-      const listButton = screen.getByLabelText('List');
-      await act(async () => {
-        fireEvent.click(listButton);
+    describe('table view', () => {
+      it('should render table with gallery card', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        expect(screen.getByTestId('files-data-table')).toBeVisible();
+        expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
       });
-      expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
-      expect(screen.getByTestId('list-card-mOckID1')).toBeVisible();
-    });
-    it('should upload a single file', async () => {
-      renderComponent();
-      await mockStore(RequestStatus.SUCCESSFUL);
-      const addFilesButton = screen.getByText(messages.addFilesButtonLabel.defaultMessage);
-      await act(async () => {
-        fireEvent.change(addFilesButton, {
-          target: { files: [file] },
+      it('should switch table to list view', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        expect(screen.getByTestId('files-data-table')).toBeVisible();
+        expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
+        expect(screen.queryByTestId('list-card-mOckID1')).toBeNull();
+        const listButton = screen.getByLabelText('List');
+        await act(async () => {
+          fireEvent.click(listButton);
         });
+        expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
+        expect(screen.getByTestId('list-card-mOckID1')).toBeVisible();
       });
-      const addStatus = store.getState().assets.addingStatus;
-      expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
     });
-    it('should have disabled action buttons', async () => {
-      renderComponent();
-      await mockStore(RequestStatus.SUCCESSFUL);
-      const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
-      expect(actionsButton).toBeVisible();
-      await waitFor(() => {
-        fireEvent.click(actionsButton);
+    describe('table actions', () => {
+      it('should upload a single file', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        const addFilesButton = screen.getByText(messages.addFilesButtonLabel.defaultMessage);
+        await act(async () => {
+          fireEvent.change(addFilesButton, {
+            target: { files: [file] },
+          });
+        });
+        const addStatus = store.getState().assets.addingStatus;
+        expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
       });
-      expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).toHaveClass('disabled');
-      expect(screen.getByText(messages.deleteTitle.defaultMessage).closest('a')).toHaveClass('disabled');
-    });
-    it('should have enabled action buttons', async () => {
-      renderComponent();
-      await mockStore(RequestStatus.SUCCESSFUL);
-      const selectCardButton = screen.getAllByTestId('datatable-select-column-checkbox-cell')[0];
-      fireEvent.click(selectCardButton);
-      const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
-      expect(actionsButton).toBeVisible();
-      await waitFor(() => {
-        fireEvent.click(actionsButton);
+      it('should have disabled action buttons', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
+        expect(actionsButton).toBeVisible();
+        await waitFor(() => {
+          fireEvent.click(actionsButton);
+        });
+        expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).toHaveClass('disabled');
+        expect(screen.getByText(messages.deleteTitle.defaultMessage).closest('a')).toHaveClass('disabled');
       });
-      expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).toBeVisible();
-      expect(screen.getByText(messages.deleteTitle.defaultMessage).closest('a')).toBeVisible();
-      expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).not.toHaveClass('disabled');
-      expect(screen.getByText(messages.deleteTitle.defaultMessage).closest('a')).not.toHaveClass('disabled');
+      it('should have enabled action buttons', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        const selectCardButton = screen.getAllByTestId('datatable-select-column-checkbox-cell')[0];
+        fireEvent.click(selectCardButton);
+        const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
+        expect(actionsButton).toBeVisible();
+        await waitFor(() => {
+          fireEvent.click(actionsButton);
+        });
+        expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).toBeVisible();
+        expect(screen.getByText(messages.deleteTitle.defaultMessage).closest('a')).toBeVisible();
+        expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).not.toHaveClass('disabled');
+        expect(screen.getByText(messages.deleteTitle.defaultMessage).closest('a')).not.toHaveClass('disabled');
+      });
     });
     // it('should open asset info', async () => {
     //   renderComponent();
