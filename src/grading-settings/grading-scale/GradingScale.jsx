@@ -39,6 +39,11 @@ const GradingScale = ({
   }, [gradeCutoffs]);
 
   useEffect(() => {
+    setGradingSegments(sortedGrades);
+    setLetters(gradeLetters);
+  }, [sortedGrades.length]);
+
+  useEffect(() => {
     setGradingData(prevData => ({ ...prevData, gradeCutoffs: convertedResult }));
     setEligibleGrade(eligibleValue?.current);
   }, [JSON.stringify(convertedResult)]);

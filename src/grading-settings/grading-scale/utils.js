@@ -80,6 +80,10 @@ export const getLettersOnShortScale = (idx, letters, intl) => {
 export const convertGradeData = (letters, gradingSegments, setConvertedResult) => {
   const convertedData = {};
 
+  if (!gradingSegments.length) {
+    return;
+  }
+
   letters.forEach((letter, idx) => {
     convertedData[letter] = gradingSegments[idx].previous / MAXIMUM_SCALE_LENGTH;
   });

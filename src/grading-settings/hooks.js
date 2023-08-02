@@ -27,7 +27,7 @@ const useUpdateGradingData = (gradingSettingsData, setOverrideInternetConnection
   } = gradingData;
 
   useEffect(() => {
-    if (gradingSettingsData) {
+    if (gradingSettingsData !== undefined) {
       setGradingData(gradingSettingsData);
     }
   }, [gradingSettingsData]);
