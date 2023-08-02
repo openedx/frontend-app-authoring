@@ -31,7 +31,7 @@ export const initialState = {
   },
 };
 
-export const generateFetchAssetApiResponse = () => ([{
+export const generateFetchAssetApiResponse = () => ({
   assets: [
     {
       id: 'mOckID1',
@@ -85,7 +85,7 @@ export const generateFetchAssetApiResponse = () => ([{
     },
   ],
   totalCount: 50,
-}]);
+});
 
 export const generateEmptyApiResponse = () => ([{
   assets: [],

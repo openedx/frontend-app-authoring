@@ -59,11 +59,7 @@ export function deleteAssetFile(courseId, id, totalCount) {
       dispatch(setTotalCount({ totalCount: totalCount - 1 }));
       dispatch(updateDeletingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      if (error.response && error.response.status === 403) {
-        dispatch(updateDeletingStatus({ status: RequestStatus.DENIED }));
-      } else {
-        dispatch(updateDeletingStatus({ status: RequestStatus.FAILED }));
-      }
+      dispatch(updateDeletingStatus({ status: RequestStatus.FAILED }));
     }
   };
 }
