@@ -18,8 +18,8 @@ export const initialState = {
     assets: {
       mOckID1: {
         id: 'mOckID1',
-        displayName: 'test',
-        locked: false,
+        displayName: 'mOckID1',
+        locked: true,
         externalUrl: 'static_tab_1',
         portableUrl: '',
         contentType: 'image/png',
@@ -34,7 +34,7 @@ export const generateFetchAssetApiResponse = () => ([{
   assets: [
     {
       id: 'mOckID1',
-      displayName: 'test',
+      displayName: 'mOckID1',
       locked: false,
       externalUrl: 'static_tab_1',
       portableUrl: '',
@@ -44,7 +44,7 @@ export const generateFetchAssetApiResponse = () => ([{
     },
     {
       id: 'mOckID3',
-      displayName: 'test',
+      displayName: 'mOckID3',
       locked: false,
       externalUrl: 'static_tab_1',
       portableUrl: '',
@@ -53,8 +53,8 @@ export const generateFetchAssetApiResponse = () => ([{
       thumbnail: null,
     },
     {
-      id: 'mOckID3',
-      displayName: 'test',
+      id: 'mOckID4',
+      displayName: 'mOckID4',
       locked: false,
       externalUrl: 'static_tab_1',
       portableUrl: '',
@@ -63,8 +63,8 @@ export const generateFetchAssetApiResponse = () => ([{
       thumbnail: null,
     },
     {
-      id: 'mOckID4',
-      displayName: 'test',
+      id: 'mOckID5',
+      displayName: 'mOckID5',
       locked: false,
       externalUrl: 'static_tab_1',
       portableUrl: '',
@@ -73,8 +73,8 @@ export const generateFetchAssetApiResponse = () => ([{
       thumbnail: null,
     },
     {
-      id: 'mOckID5',
-      displayName: 'test',
+      id: 'mOckID6',
+      displayName: 'mOckID6',
       locked: false,
       externalUrl: 'static_tab_1',
       portableUrl: '',
@@ -90,14 +90,6 @@ export const generateEmptyApiResponse = () => ([{
   assets: [],
   totalCount: 0,
 }]);
-
-export const generateUpdateVisiblityApiResponse = (
-  blockId,
-  visibility,
-) => ({
-  id: blockId,
-  metadata: { display_name: 'test', course_staff_only: visibility },
-});
 
 export const generateNewAssetApiResponse = () => ({
   asset: {

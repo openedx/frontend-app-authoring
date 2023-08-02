@@ -4,6 +4,7 @@ import {
   fireEvent,
   screen,
   waitFor,
+  within,
 } from '@testing-library/react';
 import ReactDOM from 'react-dom';
 
@@ -29,6 +30,8 @@ import {
 import {
   fetchAssets,
   addAssetFile,
+  deleteAssetFile,
+  updateAssetLock,
 } from './data/thunks';
 import { getAssetsUrl } from './data/api';
 import messages from './messages';
@@ -179,7 +182,7 @@ describe('FilesAndUploads', () => {
         expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).toHaveClass('disabled');
         expect(screen.getByText(messages.deleteTitle.defaultMessage).closest('a')).toHaveClass('disabled');
       });
-      it('should have enabled action buttons', async () => {
+      it('delete button should be enabled and delete selected file', async () => {
         renderComponent();
         await mockStore(RequestStatus.SUCCESSFUL);
         const selectCardButton = screen.getAllByTestId('datatable-select-column-checkbox-cell')[0];
@@ -189,25 +192,106 @@ describe('FilesAndUploads', () => {
         await waitFor(() => {
           fireEvent.click(actionsButton);
         });
-        expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).toBeVisible();
-        expect(screen.getByText(messages.deleteTitle.defaultMessage).closest('a')).toBeVisible();
-        expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).not.toHaveClass('disabled');
-        expect(screen.getByText(messages.deleteTitle.defaultMessage).closest('a')).not.toHaveClass('disabled');
+        const deleteButton = screen.getByText(messages.deleteTitle.defaultMessage).closest('a');
+        expect(deleteButton).not.toHaveClass('disabled');
+        await act(async () => {
+          axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID2`).reply(204);
+          fireEvent.click(deleteButton);
+          await executeThunk(deleteAssetFile(courseId, 'mOckID2', 5), store.dispatch);
+        });
+        const deleteStatus = store.getState().assets.deletingStatus;
+        expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
+        expect(screen.queryByTestId('grid-card-mOckID2')).toBeNull();
       });
     });
-    // it('should open asset info', async () => {
-    //   renderComponent();
-    //   await mockStore(RequestStatus.SUCCESSFUL);
-    //   expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
-    //   const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
-    //   expect(assetMenuButton).toBeVisible();
-    //   await waitFor(() => {
-    //     fireEvent.click(assetMenuButton);
-    //   });
-    //   expect(screen.getByText(messages.infoTitle.defaultMessage).closest('a')).toBeVisible();
-    //   console.log('after wait for');
-    //   fireEvent.click(screen.getByText('Info'));
-    //   expect(screen.queryByText('test')).toBeVisible();
-    // });
+    describe('card menu actions', () => {
+      it('should open asset info', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
+        const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
+        expect(assetMenuButton).toBeVisible();
+        await waitFor(() => {
+          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(screen.getByText('Info'));
+          expect(screen.getAllByLabelText('mOckID1')[0]).toBeVisible();
+        });
+      });
+      it('should open asset info and handle lock checkbox', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
+        const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
+        expect(assetMenuButton).toBeVisible();
+        axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID1`).reply(201, { locked: false });
+        await waitFor(() => {
+          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(screen.getByText('Info'));
+          expect(screen.getAllByLabelText('mOckID1')[0]).toBeVisible();
+          fireEvent.click(screen.getByLabelText('Checkbox'));
+          executeThunk(updateAssetLock({
+            courseId,
+            assetId: 'mOckID1',
+            locked: false,
+          }), store.dispatch);
+        });
+        const saveStatus = store.getState().assets.savingStatus;
+        expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
+      });
+      it('should unlock asset', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
+        const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
+        expect(assetMenuButton).toBeVisible();
+        await waitFor(() => {
+          axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID1`).reply(201, { locked: false });
+          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(screen.getByText('Unlock'));
+          executeThunk(updateAssetLock({
+            courseId,
+            assetId: 'mOckID1',
+            locked: false,
+          }), store.dispatch);
+        });
+        const saveStatus = store.getState().assets.savingStatus;
+        expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
+      });
+      it('should lock asset', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        expect(screen.getByTestId('grid-card-mOckID2')).toBeVisible();
+        const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID2');
+        expect(assetMenuButton).toBeVisible();
+        await waitFor(() => {
+          axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID2`).reply(201, { locked: true });
+          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(screen.getByText('Lock'));
+          executeThunk(updateAssetLock({
+            courseId,
+            assetId: 'mOckID2',
+            locked: false,
+          }), store.dispatch);
+        });
+        const saveStatus = store.getState().assets.savingStatus;
+        expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
+      });
+      it('delete button should delete file', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
+        const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
+        expect(assetMenuButton).toBeVisible();
+        await waitFor(() => {
+          axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
+          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(screen.getByText('Delete'));
+          executeThunk(deleteAssetFile(courseId, 'mOckID1', 5), store.dispatch);
+        });
+        const deleteStatus = store.getState().assets.deletingStatus;
+        expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
+        expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
+      });
+    });
   });
 });
