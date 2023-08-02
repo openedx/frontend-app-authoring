@@ -7,6 +7,7 @@ import {
   ModalDialog,
   StatefulButton,
   TransitionReplace,
+  Hyperlink,
 } from '@edx/paragon';
 import { Info } from '@edx/paragon/icons';
 
@@ -31,6 +32,7 @@ import { updateXpertSettings } from '../data/thunks';
 import AppConfigFormDivider from '../../discussions/app-config-form/apps/shared/AppConfigFormDivider';
 import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
 import messages from './messages';
+import appInfo from '../appInfo';
 
 const AppSettingsForm = ({
   formikProps, children, showForm,
@@ -115,6 +117,7 @@ const SettingsModal = ({
   onSettingsSave,
   enableAppLabel,
   enableAppHelp,
+  learnMoreText,
   enableReinitialize,
 }) => {
   const { courseId } = useContext(PagesAndResourcesContext);
@@ -155,6 +158,17 @@ const SettingsModal = ({
       alertRef?.current.scrollIntoView?.(); // eslint-disable-line no-unused-expressions
     }
   };
+
+  const learnMoreLink = appInfo.documentationLinks?.learnMoreConfiguration && (
+    <Hyperlink
+      className="text-primary-500"
+      destination={appInfo.documentationLinks.learnMoreConfiguration}
+      target="_blank"
+      rel="noreferrer noopener"
+    >
+      {learnMoreText}
+    </Hyperlink>
+  );
 
   if (loadingStatus === RequestStatus.SUCCESSFUL) {
     return (
@@ -222,6 +236,7 @@ const SettingsModal = ({
                 helpText={(
                   <div>
                     <p>{enableAppHelp}</p>
+                    <span className="py-3">{learnMoreLink}</span>
                   </div>
                 )}
               />
@@ -265,6 +280,7 @@ SettingsModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   enableAppLabel: PropTypes.string.isRequired,
   enableAppHelp: PropTypes.string.isRequired,
+  learnMoreText: PropTypes.string.isRequired,
   configureBeforeEnable: PropTypes.bool,
   enableReinitialize: PropTypes.bool,
 };

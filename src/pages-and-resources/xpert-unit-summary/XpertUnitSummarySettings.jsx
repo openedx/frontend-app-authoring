@@ -26,7 +26,17 @@ const XpertUnitSummarySettings = ({ intl }) => {
     <SettingsModal
       appId="xpert-unit-summary"
       title={intl.formatMessage(messages.heading)}
-      enableAppHelp={intl.formatMessage(messages.enableXpertUnitSummaryHelp)}
+      enableAppHelp={
+        (
+          <>
+            {intl.formatMessage(messages.enableXpertUnitSummaryHelp)}
+            {' '}
+            <a href="https://openai.com/api-data-privacy">
+              {intl.formatMessage(messages.enableXpertUnitSummaryHelpPrivacyLink)}
+            </a>
+          </>
+        )
+      }
       enableAppLabel={intl.formatMessage(messages.enableXpertUnitSummaryLabel)}
       learnMoreText={intl.formatMessage(messages.enableXpertUnitSummaryLink)}
       onClose={handleClose}
