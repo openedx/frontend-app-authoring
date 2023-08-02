@@ -10,13 +10,10 @@ import {
 } from '@edx/paragon';
 import {
   MoreVert,
-  AudioFile,
-  Terminal,
-  // FolderZip,
-  InsertDriveFile,
 } from '@edx/paragon/icons';
 import FileMenu from '../FileMenu';
 import FileInfo from '../FileInfo';
+import { getIcon } from '../data/utils';
 
 const GalleryCard = ({
   className,
@@ -32,21 +29,12 @@ const GalleryCard = ({
     const { locked } = original;
     handleLockedAsset(original.id, !locked);
   };
-  const getIcon = () => {
-    if (original.thumbnail) {
-      return original.externalUrl;
-    }
-    switch (original.wrapperType) {
-    case 'document':
-      return InsertDriveFile;
-    case 'code':
-      return Terminal;
-    case 'audio':
-      return AudioFile;
-    default:
-      return InsertDriveFile;
-    }
-  };
+  const icon = getIcon({
+    thumbnail: original.thumbnail,
+    externalUrl: original.externalUrl,
+    wrapperType: original.wrapperType,
+  });
+
   return (
     <>
       <Card className={className} data-testid={`grid-card-${original.id}`}>
@@ -70,7 +58,7 @@ const GalleryCard = ({
           {original.thumbnail ? (
             <Card.ImageCap src={original.externalUrl} />
           ) : (
-            <Icon src={getIcon()} style={{ height: '48px', width: '48px' }} />
+            <Icon src={icon} style={{ height: '48px', width: '48px' }} />
           )}
           <Truncate lines={1} className="font-weight-bold small mt-3">
             {original.displayName}

@@ -1,49 +1,5 @@
-import JSZip from 'jszip';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-
+import { InsertDriveFile, Terminal, AudioFile } from '@edx/paragon/icons';
 import FILES_AND_UPLOAD_TYPE_FILTERS from './constant';
-
-const urlToPromise = async (url, filename, contentType) => {
-  const response = await getAuthenticatedHttpClient()
-    .get(url);
-  const data = await response.blob();
-  const file = new File(data, filename, { type: contentType });
-  return file;
-};
-
-export const createZipFile = ({ selectedFlatRows }) => {
-  const zip = new JSZip();
-  const img = zip.folder('images');
-  const doc = zip.folder('documents');
-  const code = zip.folder('code');
-  const audio = zip.folder('audio');
-  selectedFlatRows.forEach(row => {
-    const {
-      wrapperType,
-      displayName,
-      externalUrl,
-      contentType,
-    } = row.original;
-    switch (wrapperType) {
-    case 'document':
-      doc.file(displayName, urlToPromise(externalUrl, displayName, contentType), { binary: true });
-      break;
-    case 'code':
-      code.file(displayName, urlToPromise(externalUrl), { binary: true });
-      break;
-    case 'image':
-      img.file(displayName, urlToPromise(externalUrl), { binary: true });
-      break;
-    case 'audio':
-      audio.file(displayName, urlToPromise(externalUrl), { binary: true });
-      break;
-    default:
-      zip.file(displayName, urlToPromise(externalUrl), { binary: true });
-      break;
-    }
-  });
-  // console.log('writtings');
-};
 
 export const getWrapperType = (assets) => {
   const assetsWithWraperType = [];
@@ -61,4 +17,20 @@ export const getWrapperType = (assets) => {
     }
   });
   return assetsWithWraperType;
+};
+
+export const getIcon = ({ thumbnail, wrapperType, externalUrl }) => {
+  if (thumbnail) {
+    return externalUrl;
+  }
+  switch (wrapperType) {
+  case 'document':
+    return InsertDriveFile;
+  case 'code':
+    return Terminal;
+  case 'audio':
+    return AudioFile;
+  default:
+    return InsertDriveFile;
+  }
 };
