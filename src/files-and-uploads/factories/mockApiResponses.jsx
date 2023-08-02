@@ -17,8 +17,8 @@ export const initialState = {
   models: {
     assets: {
       mOckID1: {
-        id: 'mOckID1',
-        displayName: 'mOckID1',
+        id: 'mOckID0',
+        displayName: 'mOckID0',
         locked: true,
         externalUrl: 'static_tab_1',
         portableUrl: '',
@@ -36,7 +36,7 @@ export const generateFetchAssetApiResponse = () => ({
     {
       id: 'mOckID1',
       displayName: 'mOckID1',
-      locked: false,
+      locked: true,
       externalUrl: 'static_tab_1',
       portableUrl: '',
       contentType: 'image/png',
