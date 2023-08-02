@@ -148,7 +148,7 @@ const GradingSettings = ({ intl, courseId }) => {
                       setEligibleGrade={setEligibleGrade}
                     />
                   </section>
-                  {process.env.ENABLE_CREDIT_ELIGIBILITY === 'true' && courseSettingsData.isCreditCourse && (
+                  {courseSettingsData.creditEligibilityEnabled && courseSettingsData.isCreditCourse && (
                     <section>
                       <SectionSubHeader
                         title={intl.formatMessage(messages.creditEligibilitySectionTitle)}
