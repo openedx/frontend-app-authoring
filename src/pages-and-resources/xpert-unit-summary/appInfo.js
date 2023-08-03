@@ -8,6 +8,6 @@ export default {
     configure: true,
   },
   documentationLinks: {
-    learnMoreConfiguration: 'http://www.google.com',
+    learnMoreConfiguration: 'https://openai.com/api-data-privacy',
   },
 };
