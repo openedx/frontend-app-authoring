@@ -9,9 +9,25 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-uploads.subheading',
     defaultMessage: 'Content',
   },
+  apiStatusToastMessage: {
+    id: 'course-authoring.files-and-upload.apiStatus.message',
+    defaultMessage: '{actionType} {selectedRowCount} file(s)',
+  },
+  apiStatusAddingAction: {
+    id: 'course-authoring.files-and-upload.apiStatus.addingAction.message',
+    defaultMessage: 'Adding',
+  },
+  apiStatusDeletingAction: {
+    id: 'course-authoring.files-and-upload.apiStatus.deletingAction.message',
+    defaultMessage: 'Deleting',
+  },
   fileSizeError: {
     id: 'course-authoring.files-and-upload.addFiles.error.fileSize',
-    defaultMessage: 'Files must be 20 MB or less. Please resize file(s) and try again.',
+    defaultMessage: 'Uploaded file(s) must be 20 MB or less. Please resize file(s) and try again.',
+  },
+  noResultsFoundMessage: {
+    id: 'course-authoring.files-and-upload.table.noResultsFound.message',
+    defaultMessage: 'No results found',
   },
   addFilesButtonLabel: {
     id: 'course-authoring.files-and-upload.addFiles.button.label',
@@ -22,8 +38,8 @@ const messages = defineMessages({
     defaultMessage: 'Actions',
   },
   errorAlertMessage: {
-    id: 'course-authoring.custom-pages.errorAlert.message',
-    defaultMessage: 'Unable to {actionName} page. Please try again.',
+    id: 'course-authoring.files-and-upload.errorAlert.message',
+    defaultMessage: '{message}',
   },
   dateAddedTitle: {
     id: 'course-authoring.files-and-uploads.dateAdded.title',

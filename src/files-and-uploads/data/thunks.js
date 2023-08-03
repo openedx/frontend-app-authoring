@@ -20,6 +20,7 @@ import {
   updateDeletingStatus,
   addAssetSuccess,
   updateAddingStatus,
+  updateErrors,
 } from './slice';
 
 import { getWrapperType } from './utils';
@@ -53,12 +54,15 @@ export function deleteAssetFile(courseId, id, totalCount) {
     dispatch(updateDeletingStatus({ status: RequestStatus.IN_PROGRESS }));
 
     try {
+      console.log(id);
       await deleteAsset(courseId, id);
       dispatch(deleteAssetSuccess({ assetId: id }));
       dispatch(removeModel({ modelType: 'assets', id }));
       dispatch(setTotalCount({ totalCount: totalCount - 1 }));
       dispatch(updateDeletingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
+      console.log(error.response.status, error.response.data);
+      dispatch(updateErrors({ error: 'delete', message: `Failed to delete file id ${id}.` }));
       dispatch(updateDeletingStatus({ status: RequestStatus.FAILED }));
     }
   };
@@ -81,11 +85,13 @@ export function addAssetFile(courseId, file, totalCount) {
       dispatch(setTotalCount({ totalCount: totalCount + 1 }));
       dispatch(updateAddingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      if (error.response && error.response.status === 403) {
-        dispatch(updateAddingStatus({ status: RequestStatus.DENIED }));
+      if (error.response && error.response.status === 413) {
+        const message = error.response.data.error;
+        dispatch(updateErrors({ error: 'upload', message }));
       } else {
-        dispatch(updateAddingStatus({ status: RequestStatus.FAILED }));
+        dispatch(updateErrors({ error: 'upload', message: `Failed to add ${file.name}.` }));
       }
+      dispatch(updateAddingStatus({ status: RequestStatus.FAILED }));
     }
   };
 }
@@ -105,6 +111,8 @@ export function updateAssetLock({ assetId, courseId, locked }) {
       }));
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
+      const lockStatus = locked ? 'lock' : 'unlock';
+      dispatch(updateErrors({ error: 'lock', message: `Failed to ${lockStatus} file id ${assetId}.` }));
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   };

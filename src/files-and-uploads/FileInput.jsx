@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 export const fileInput = ({
   onAddFile,
-  onError,
   setSelectedRowCount,
   setAddOpen,
 }) => {
@@ -13,13 +12,9 @@ export const fileInput = ({
   const addFile = (e) => {
     const { files } = e.target;
     setSelectedRowCount(files.length);
-    setAddOpen();
-    files.forEach(file => {
-      if (file && file.size < 20 * 1048576) {
-        onAddFile(file);
-      } else {
-        onError();
-      }
+    Object.values(files).forEach(file => {
+      onAddFile(file);
+      setAddOpen();
     });
   };
   return {
@@ -31,6 +26,7 @@ export const fileInput = ({
 
 const FileInput = ({ fileInput: hook }) => (
   <input
+    aria-label="file-input"
     className="upload d-none"
     onChange={hook.addFile}
     ref={hook.ref}

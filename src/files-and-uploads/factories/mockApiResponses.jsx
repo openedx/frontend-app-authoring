@@ -13,6 +13,11 @@ export const initialState = {
     savingStatus: '',
     deletingStatus: '',
     addingStatus: '',
+    errors: {
+      upload: [],
+      delete: [],
+      lock: [],
+    },
   },
   models: {
     assets: {

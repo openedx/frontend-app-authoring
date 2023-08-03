@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl } from '@edx/frontend-platform/i18n';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Toast } from '@edx/paragon';
+import messages from './messages';
 
 const ApiStatusToast = ({
   actionType,
@@ -9,6 +10,8 @@ const ApiStatusToast = ({
   isOpen,
   setClose,
   setSelectedRowCount,
+  // injected
+  intl,
 }) => {
   const handleClose = () => {
     setSelectedRowCount(0);
@@ -20,7 +23,7 @@ const ApiStatusToast = ({
       show={isOpen}
       onClose={handleClose}
     >
-      {`You have ${actionType} ${selectedRowCount} files`}
+      {intl.formatMessage(messages.apiStatusToastMessage, { actionType, selectedRowCount })}
     </Toast>
   );
 };
@@ -31,6 +34,8 @@ ApiStatusToast.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   setClose: PropTypes.func.isRequired,
   setSelectedRowCount: PropTypes.func.isRequired,
+  // injected
+  intl: intlShape.isRequired,
 };
 
 export default injectIntl(ApiStatusToast);

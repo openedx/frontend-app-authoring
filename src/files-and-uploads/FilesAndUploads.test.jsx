@@ -6,6 +6,7 @@ import {
   waitFor,
   within,
 } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import ReactDOM from 'react-dom';
 
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -55,13 +56,8 @@ const mockStore = async (
   status,
 ) => {
   const fetchAssetsUrl = `${getAssetsUrl(courseId)}?page_size=50`;
-  const addAssetUrl = getAssetsUrl(courseId);
-
   axiosMock.onGet(fetchAssetsUrl).reply(getStatusValue(status), generateFetchAssetApiResponse());
-  axiosMock.onPost(addAssetUrl).reply(200, generateNewAssetApiResponse());
-
   await executeThunk(fetchAssets(courseId), store.dispatch);
-  await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
 };
 
 const emptyMockStore = async (status) => {
@@ -114,13 +110,16 @@ describe('FilesAndUploads', () => {
       const dropzone = screen.getByTestId('files-dropzone');
       await act(async () => {
         axiosMock.onPost(getAssetsUrl(courseId)).reply(204, generateNewAssetApiResponse());
-        fireEvent.change(dropzone, {
-          target: { files: [file] },
+        Object.defineProperty(dropzone, 'files', {
+          value: [file],
         });
+        fireEvent.drop(dropzone);
         await executeThunk(addAssetFile(courseId, file, 0), store.dispatch);
       });
       const addStatus = store.getState().assets.addingStatus;
       expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
+      expect(screen.queryByTestId('files-dropzone')).toBeNull();
+      expect(screen.getByTestId('files-data-table')).toBeVisible();
     });
   });
   describe('valid assets', () => {
@@ -162,11 +161,11 @@ describe('FilesAndUploads', () => {
       it('should upload a single file', async () => {
         renderComponent();
         await mockStore(RequestStatus.SUCCESSFUL);
-        const addFilesButton = screen.getByText(messages.addFilesButtonLabel.defaultMessage);
+        axiosMock.onPost(getAssetsUrl(courseId)).reply(200, generateNewAssetApiResponse());
+        const addFilesButton = screen.getByLabelText('file-input');
         await act(async () => {
-          fireEvent.change(addFilesButton, {
-            target: { files: [file] },
-          });
+          userEvent.upload(addFilesButton, file);
+          await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
         });
         const addStatus = store.getState().assets.addingStatus;
         expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
@@ -194,14 +193,14 @@ describe('FilesAndUploads', () => {
         });
         const deleteButton = screen.getByText(messages.deleteTitle.defaultMessage).closest('a');
         expect(deleteButton).not.toHaveClass('disabled');
+        axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
         await act(async () => {
-          axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID2`).reply(204);
           fireEvent.click(deleteButton);
-          await executeThunk(deleteAssetFile(courseId, 'mOckID2', 5), store.dispatch);
+          await executeThunk(deleteAssetFile(courseId, 'mOckID1', 5), store.dispatch);
         });
         const deleteStatus = store.getState().assets.deletingStatus;
         expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
-        expect(screen.queryByTestId('grid-card-mOckID2')).toBeNull();
+        expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
       });
     });
     describe('card menu actions', () => {
@@ -260,17 +259,17 @@ describe('FilesAndUploads', () => {
       it('should lock asset', async () => {
         renderComponent();
         await mockStore(RequestStatus.SUCCESSFUL);
-        expect(screen.getByTestId('grid-card-mOckID2')).toBeVisible();
-        const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID2');
+        expect(screen.getByTestId('grid-card-mOckID3')).toBeVisible();
+        const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID3');
         expect(assetMenuButton).toBeVisible();
         await waitFor(() => {
-          axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID2`).reply(201, { locked: true });
+          axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID3`).reply(201, { locked: true });
           fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
           fireEvent.click(screen.getByText('Lock'));
           executeThunk(updateAssetLock({
             courseId,
-            assetId: 'mOckID2',
-            locked: false,
+            assetId: 'mOckID3',
+            locked: true,
           }), store.dispatch);
         });
         const saveStatus = store.getState().assets.savingStatus;
@@ -291,6 +290,73 @@ describe('FilesAndUploads', () => {
         const deleteStatus = store.getState().assets.deletingStatus;
         expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
         expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
+      });
+    });
+    describe('api errors', () => {
+      it('invalid file size should show error', async () => {
+        const errorMessage = 'File download.png exceeds maximum size of 20 MB.';
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        axiosMock.onPost(getAssetsUrl(courseId)).reply(413, { error: errorMessage });
+        const addFilesButton = screen.getByLabelText('file-input');
+        await act(async () => {
+          userEvent.upload(addFilesButton, file);
+          await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
+        });
+        const addStatus = store.getState().assets.addingStatus;
+        expect(addStatus).toEqual(RequestStatus.FAILED);
+        expect(screen.getByText('Error')).toBeVisible();
+      });
+      it('404 upload should show error', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        axiosMock.onPost(getAssetsUrl(courseId)).reply(404);
+        const addFilesButton = screen.getByLabelText('file-input');
+        await act(async () => {
+          userEvent.upload(addFilesButton, file);
+          await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
+        });
+        const addStatus = store.getState().assets.addingStatus;
+        expect(addStatus).toEqual(RequestStatus.FAILED);
+        expect(screen.getByText('Error')).toBeVisible();
+      });
+      it('404 delete should show error', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+
+        expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
+        const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
+        expect(assetMenuButton).toBeVisible();
+        await waitFor(() => {
+          axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(404);
+          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(screen.getByText('Delete'));
+          executeThunk(deleteAssetFile(courseId, 'mOckID1', 5), store.dispatch);
+        });
+        const deleteStatus = store.getState().assets.deletingStatus;
+        expect(deleteStatus).toEqual(RequestStatus.FAILED);
+        expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
+        expect(screen.getByText('Error')).toBeVisible();
+      });
+      it('404 lock update should show error', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        expect(screen.getByTestId('grid-card-mOckID3')).toBeVisible();
+        const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID3');
+        expect(assetMenuButton).toBeVisible();
+        await waitFor(() => {
+          axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID3`).reply(404);
+          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(screen.getByText('Lock'));
+          executeThunk(updateAssetLock({
+            courseId,
+            assetId: 'mOckID3',
+            locked: true,
+          }), store.dispatch);
+        });
+        const saveStatus = store.getState().assets.savingStatus;
+        expect(saveStatus).toEqual(RequestStatus.FAILED);
+        expect(screen.getByText('Error')).toBeVisible();
       });
     });
   });

@@ -11,7 +11,11 @@ const slice = createSlice({
     savingStatus: '',
     addingStatus: '',
     deletingStatus: '',
-    assetsApiStatus: {},
+    errors: {
+      upload: [],
+      delete: [],
+      lock: [],
+    },
     totalCount: 0,
   },
   reducers: {
@@ -39,6 +43,11 @@ const slice = createSlice({
     addAssetSuccess: (state, { payload }) => {
       state.assetIds = [payload.assetId, ...state.assetIds];
     },
+    updateErrors: (state, { payload }) => {
+      const { error, message } = payload;
+      const currentErrorState = state.errors[error];
+      state.errors[error] = [...currentErrorState, message];
+    },
   },
 });
 
@@ -51,6 +60,7 @@ export const {
   updateDeletingStatus,
   addAssetSuccess,
   updateAddingStatus,
+  updateErrors,
 } = slice.actions;
 
 export const {

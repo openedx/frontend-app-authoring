@@ -21,7 +21,6 @@ import {
   fetchAssets,
   updateAssetLock,
 } from './data/thunks';
-import { updateAddingStatus } from '../custom-pages/data/slice';
 import messages from './messages';
 
 import FileInput, { fileInput } from './FileInput';
@@ -53,10 +52,11 @@ const FilesAndUploads = ({
   const totalCount = useSelector(state => state.assets.totalCount);
   const addAssetStatus = useSelector(state => state.assets.addingStatus);
   const deleteAssetStatus = useSelector(state => state.assets.deletingStatus);
+  const saveAssetStatus = useSelector(state => state.assets.savingStatus);
   const loadingStatus = useSelector(state => state.assets.loadingStatus);
+  const errorMessages = useSelector(state => state.assets.errors);
   const fileInputControl = fileInput({
     onAddFile: (file) => dispatch(addAssetFile(courseId, file, totalCount)),
-    onError: () => dispatch(updateAddingStatus({ status: RequestStatus.FAILED })),
     setSelectedRowCount,
     setAddOpen,
   });
@@ -149,10 +149,22 @@ const FilesAndUploads = ({
     <FilesAndUploadsProvider courseId={courseId}>
       <main className="container p-4 pt-5">
         <ErrorAlert
-          hideHeading
+          hideHeading={false}
           isError={addAssetStatus === RequestStatus.FAILED}
         >
-          <FormattedMessage {...messages.fileSizeError} />
+          {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.upload })}
+        </ErrorAlert>
+        <ErrorAlert
+          hideHeading={false}
+          isError={deleteAssetStatus === RequestStatus.FAILED}
+        >
+          {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.delete })}
+        </ErrorAlert>
+        <ErrorAlert
+          hideHeading={false}
+          isError={saveAssetStatus === RequestStatus.FAILED}
+        >
+          {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.lock })}
         </ErrorAlert>
         <div className="small gray-700">
           {intl.formatMessage(messages.subheading)}
@@ -218,8 +230,8 @@ const FilesAndUploads = ({
               onProcessUpload={handleDropzoneAsset}
               maxSize={20 * 1048576}
               errorMessages={{
-                invalidSize: 'The file size must be less than 20MB.',
-                multipleDragged: 'Cannot upload more than one file.',
+                invalidSize: intl.formatMessage(messages.fileSizeError),
+                multipleDragged: 'Dropzone can only upload a single file.',
               }}
             />
           ) : (
@@ -227,19 +239,17 @@ const FilesAndUploads = ({
               <DataTable.TableControlBar />
               { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={4} /> }
               { currentView === 'list' && <CardView CardComponent={fileCard} columnSizes={{ xs: 12 }} selectionPlacement="left" skeletonCardCount={4} /> }
-              <DataTable.EmptyTable content="No results found" />
+              <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
               <DataTable.TableFooter />
               <ApiStatusToast
-                actionType="deleted"
-                apiStatus={deleteAssetStatus}
+                actionType={intl.formatMessage(messages.apiStatusDeletingAction)}
                 selectedRowCount={selectedRowCount}
                 isOpen={isDeleteOpen}
                 setClose={setDeleteClose}
                 setSelectedRowCount={setSelectedRowCount}
               />
               <ApiStatusToast
-                actionType="added"
-                apiStatus={addAssetStatus}
+                actionType={intl.formatMessage(messages.apiStatusAddingAction)}
                 selectedRowCount={selectedRowCount}
                 isOpen={isAddOpen}
                 setClose={setAddClose}
