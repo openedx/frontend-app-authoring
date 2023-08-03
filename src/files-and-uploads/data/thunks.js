@@ -54,14 +54,12 @@ export function deleteAssetFile(courseId, id, totalCount) {
     dispatch(updateDeletingStatus({ status: RequestStatus.IN_PROGRESS }));
 
     try {
-      console.log(id);
       await deleteAsset(courseId, id);
       dispatch(deleteAssetSuccess({ assetId: id }));
       dispatch(removeModel({ modelType: 'assets', id }));
       dispatch(setTotalCount({ totalCount: totalCount - 1 }));
       dispatch(updateDeletingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      console.log(error.response.status, error.response.data);
       dispatch(updateErrors({ error: 'delete', message: `Failed to delete file id ${id}.` }));
       dispatch(updateDeletingStatus({ status: RequestStatus.FAILED }));
     }
