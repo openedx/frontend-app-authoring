@@ -6,6 +6,8 @@ import { selectors } from '../../../../../data/redux';
 import { QuestionWidget, mapStateToProps } from '.';
 
 jest.mock('../../../../../data/redux', () => ({
+  __esModule: true,
+  default: jest.fn(),
   actions: {
     problem: {
       updateQuestion: jest.fn().mockName('actions.problem.updateQuestion'),

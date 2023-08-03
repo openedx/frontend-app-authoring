@@ -23,6 +23,8 @@ jest.mock('../ImageUploadModal', () => 'ImageUploadModal');
 jest.mock('../SourceCodeModal', () => 'SourceCodeModal');
 
 jest.mock('../../data/redux', () => ({
+  __esModule: true,
+  default: jest.fn(),
   selectors: {
     app: {
       lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
@@ -64,6 +66,7 @@ describe('TinyMceWidget', () => {
     studioEndpointUrl: 'sOmEoThERvaLue.cOm',
     disabled: false,
     id: 'sOMeiD',
+    updateContent: () => ({}),
   };
   describe('snapshots', () => {
     imgModalToggle.mockReturnValue({

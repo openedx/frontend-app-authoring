@@ -42,6 +42,8 @@ jest.mock('react', () => {
 });
 
 jest.mock('../../data/redux', () => ({
+  __esModule: true,
+  default: jest.fn(),
   actions: {
     app: {
       initializeEditor: jest.fn().mockName('actions.app.initializeEditor'),

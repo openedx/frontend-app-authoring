@@ -1,7 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
-<Fragment>
+<Component
+  store={
+    Object {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(Symbol.observable): [Function],
+    }
+  }
+>
   <SourceCodeModal
     close={[MockFunction modal.closeModal]}
     editorRef={
@@ -42,12 +52,23 @@ exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
       }
     }
     id="sOMeiD"
+    onEditorChange={[Function]}
   />
-</Fragment>
+</Component>
 `;
 
 exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
-<Fragment>
+<Component
+  store={
+    Object {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(Symbol.observable): [Function],
+    }
+  }
+>
   <ImageUploadModal
     clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
     close={[MockFunction modal.closeModal]}
@@ -102,12 +123,23 @@ exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
       }
     }
     id="sOMeiD"
+    onEditorChange={[Function]}
   />
-</Fragment>
+</Component>
 `;
 
 exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] = `
-<Fragment>
+<Component
+  store={
+    Object {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(Symbol.observable): [Function],
+    }
+  }
+>
   <ImageUploadModal
     clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
     close={[MockFunction modal.closeModal]}
@@ -173,6 +205,7 @@ exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] =
       }
     }
     id="sOMeiD"
+    onEditorChange={[Function]}
   />
-</Fragment>
+</Component>
 `;
