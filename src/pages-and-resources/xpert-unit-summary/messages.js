@@ -11,7 +11,7 @@ const messages = defineMessages({
   },
   enableXpertUnitSummaryHelp: {
     id: 'course-authoring.pages-resources.xpert-unit-summary.enable-xpert-unit-summary.help',
-    defaultMessage: 'Reinforce learning concepts by sharing text-based course content with OpenAI (via API) to generate unit summaries on-demand for learners. Learners can leave feedback about the quality of the AI-generated summaries for use by edX to improve the performance of the tool.',
+    defaultMessage: 'Reinforce learning concepts by sharing text-based course content with OpenAI (via API) to display unit summaries on-demand for learners. Learners can leave feedback about the quality of the AI-generated summaries for use by edX to improve the performance of the tool.',
   },
   enableXpertUnitSummaryHelpPrivacyLink: {
     id: 'course-authoring.pages-resources.xpert-unit-summary.enable-xpert-unit-summary.help.privacylink',
