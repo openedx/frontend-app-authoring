@@ -1,0 +1,10 @@
+.header-navigations {
+  display: flex;
+  gap: .75rem;
+
+  .expand-button-active {
+    .pgn__icon {
+      transform: rotate(180deg);
+    }
+  }
+}
