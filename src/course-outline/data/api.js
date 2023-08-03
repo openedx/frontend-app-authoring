@@ -24,6 +24,9 @@ export const getEnableHighlightsEmailsApiUrl = (courseId) => {
 };
 
 export const getCourseReindexApiUrl = (reindexLink) => `${getApiBaseUrl()}${reindexLink}`;
+export const getUpdateCourseSectionApiUrl = (sectionId) => `${getApiBaseUrl()}/xblock/${sectionId}`;
+export const getCourseSectionApiUrl = (sectionId) => `${getApiBaseUrl()}/xblock/outline/${sectionId}`;
+export const getCourseSectionDuplicateApiUrl = () => `${getApiBaseUrl()}/xblock/`;
 
 /**
  * Get course outline index.
@@ -104,4 +107,92 @@ export async function restartIndexingOnCourse(reindexLink) {
     .get(getCourseReindexApiUrl(reindexLink));
 
   return camelCaseObject(data);
+}
+
+/**
+ * Get course section
+ * @param {string} sectionId
+ * @returns {Promise<Object>}
+ */
+export async function getCourseSection(sectionId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getCourseSectionApiUrl(sectionId));
+  return camelCaseObject(data);
+}
+
+/**
+ * Update course section highlights
+ * @param {string} sectionId
+ * @param {Array<string>} highlights
+ * @returns {Promise<Object>}
+ */
+export async function updateCourseSectionHighlights(sectionId, highlights) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getUpdateCourseSectionApiUrl(sectionId), {
+      publish: 'republish',
+      metadata: {
+        highlights,
+      },
+    });
+
+  return data;
+}
+
+/**
+ * Publish course section
+ * @param {string} sectionId
+ * @returns {Promise<Object>}
+ */
+export async function publishCourseSection(sectionId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getUpdateCourseSectionApiUrl(sectionId), {
+      publish: 'make_public',
+    });
+
+  return data;
+}
+
+/**
+ * Edit course section
+ * @param {string} sectionId
+ * @param {string} displayName
+ * @returns {Promise<Object>}
+ */
+export async function editCourseSection(sectionId, displayName) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getUpdateCourseSectionApiUrl(sectionId), {
+      metadata: {
+        display_name: displayName,
+      },
+    });
+
+  return data;
+}
+
+/**
+ * Delete course section
+ * @param {string} sectionId
+ * @returns {Promise<Object>}
+ */
+export async function deleteCourseSection(sectionId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .delete(getUpdateCourseSectionApiUrl(sectionId));
+
+  return data;
+}
+
+/**
+ * Duplicate course section
+ * @param {string} sectionId
+ * @param {string} courseBlockId
+ * @returns {Promise<Object>}
+ */
+export async function duplicateCourseSection(sectionId, courseBlockId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getCourseSectionDuplicateApiUrl(), {
+      duplicate_source_locator: sectionId,
+      parent_locator: courseBlockId,
+    });
+
+  return data;
 }

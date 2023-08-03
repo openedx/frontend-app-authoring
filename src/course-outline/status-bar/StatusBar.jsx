@@ -4,6 +4,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Hyperlink, Stack } from '@edx/paragon';
 import { AppContext } from '@edx/frontend-platform/react';
 
+import { useHelpUrls } from '../../help-urls/hooks';
 import messages from './messages';
 
 const StatusBar = ({
@@ -18,7 +19,6 @@ const StatusBar = ({
   const {
     courseReleaseDate,
     highlightsEnabledForMessaging,
-    highlightsDocUrl,
     checklist,
     isSelfPaced,
   } = statusBarData;
@@ -32,7 +32,11 @@ const StatusBar = ({
 
   const checkListTitle = `${completedCourseLaunchChecks + completedCourseBestPracticesChecks}/${totalCourseLaunchChecks + totalCourseBestPracticesChecks}`;
   const checklistDestination = new URL(`checklists/${courseId}`, config.STUDIO_BASE_URL).href;
-  const scheduleDestination = new URL(`course/${courseId}/settings/details#schedule`, config.BASE_URL).href;
+  const scheduleDestination = new URL(`settings/details/${courseId}#schedule`, config.STUDIO_BASE_URL).href;
+
+  const {
+    contentHighlights: contentHighlightsUrl,
+  } = useHelpUrls(['contentHighlights']);
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -83,7 +87,7 @@ const StatusBar = ({
           )}
           <Hyperlink
             className="small ml-2"
-            destination={highlightsDocUrl}
+            destination={contentHighlightsUrl}
             target="_blank"
             showLaunchIcon={false}
           >
@@ -109,7 +113,6 @@ StatusBar.propTypes = {
       completedCourseBestPracticesChecks: PropTypes.number.isRequired,
     }),
     highlightsEnabledForMessaging: PropTypes.bool.isRequired,
-    highlightsDocUrl: PropTypes.string.isRequired,
   }).isRequired,
 };
 

@@ -1,3 +1,14 @@
+export const SECTION_BADGE_STATUTES = {
+  live: 'live',
+  publishedNotLive: 'published_not_live',
+  staffOnly: 'staff_only',
+  draft: 'draft',
+};
+
+export const STAFF_ONLY = 'staff_only';
+
+export const HIGHLIGHTS_FIELD_MAX_LENGTH = 250;
+
 export const CHECKLIST_FILTERS = {
   ALL: 'ALL',
   SELF_PACED: 'SELF_PACED',
