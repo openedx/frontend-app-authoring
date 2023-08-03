@@ -10,24 +10,35 @@ import {
   CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
 } from '@edx/paragon/icons';
+import { useSelector } from 'react-redux';
 
-import SubHeader from '../generic/sub-header/SubHeader';
+import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import { RequestStatus } from '../data/constants';
+import SubHeader from '../generic/sub-header/SubHeader';
+import ProcessingNotification from '../generic/processing-notification';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import AlertMessage from '../generic/alert-message';
+import getPageHeadTitle from '../generic/utils';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
 import OutlineSideBar from './outline-sidebar/OutlineSidebar';
-import messages from './messages';
-import { useCourseOutline } from './hooks';
 import StatusBar from './status-bar/StatusBar';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
+import SectionCard from './section-card/SectionCard';
+import HighlightsModal from './highlights-modal/HighlightsModal';
+import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
+import PublishModal from './publish-modal/PublishModal';
+import DeleteModal from './delete-modal/DeleteModal';
+import { useCourseOutline } from './hooks';
+import messages from './messages';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
 
   const {
+    courseName,
     savingStatus,
     statusBarData,
+    sectionsList,
     isLoading,
     isReIndexShow,
     showErrorAlert,
@@ -36,12 +47,33 @@ const CourseOutline = ({ courseId }) => {
     isEnableHighlightsModalOpen,
     isInternetConnectionAlertFailed,
     isDisabledReindexButton,
+    isHighlightsModalOpen,
+    isPublishModalOpen,
+    isDeleteModalOpen,
+    closeHighlightsModal,
+    closePublishModal,
+    closeDeleteModal,
+    openPublishModal,
+    openDeleteModal,
     headerNavigationsActions,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
     handleEnableHighlightsSubmit,
     handleInternetConnectionFailed,
+    handleOpenHighlightsModal,
+    handleHighlightsFormSubmit,
+    handlePublishSectionSubmit,
+    handleEditSectionSubmit,
+    handleDeleteSectionSubmit,
+    handleDuplicateSectionSubmit,
   } = useCourseOutline({ courseId });
+
+  document.title = getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle));
+
+  const {
+    isShow: isShowProcessingNotification,
+    title: processingNotificationTitle,
+  } = useSelector(getProcessingNotification);
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -77,6 +109,7 @@ const CourseOutline = ({ courseId }) => {
                 isSectionsExpanded={isSectionsExpanded}
                 headerNavigationsActions={headerNavigationsActions}
                 isDisabledReindexButton={isDisabledReindexButton}
+                hasSections={Boolean(sectionsList.length)}
               />
             )}
           />
@@ -97,6 +130,23 @@ const CourseOutline = ({ courseId }) => {
                       statusBarData={statusBarData}
                       openEnableHighlightsModal={openEnableHighlightsModal}
                     />
+                    <div className="pt-4">
+                      {/* TODO add create new section handler in EmptyPlaceholder */}
+                      {sectionsList.length ? sectionsList.map((section) => (
+                        <SectionCard
+                          section={section}
+                          savingStatus={savingStatus}
+                          onOpenHighlightsModal={handleOpenHighlightsModal}
+                          onOpenPublishModal={openPublishModal}
+                          onOpenDeleteModal={openDeleteModal}
+                          onEditSectionSubmit={handleEditSectionSubmit}
+                          onDuplicateSubmit={handleDuplicateSectionSubmit}
+                          isSectionsExpanded={isSectionsExpanded}
+                        />
+                      )) : (
+                        <EmptyPlaceholder onCreateNewSection={() => ({})} />
+                      )}
+                    </div>
                   </section>
                 </div>
               </article>
@@ -109,11 +159,29 @@ const CourseOutline = ({ courseId }) => {
             isOpen={isEnableHighlightsModalOpen}
             close={closeEnableHighlightsModal}
             onEnableHighlightsSubmit={handleEnableHighlightsSubmit}
-            highlightsDocUrl={statusBarData.highlightsDocUrl}
           />
         </section>
+        <HighlightsModal
+          isOpen={isHighlightsModalOpen}
+          onClose={closeHighlightsModal}
+          onSubmit={handleHighlightsFormSubmit}
+        />
+        <PublishModal
+          isOpen={isPublishModalOpen}
+          onClose={closePublishModal}
+          onPublishSubmit={handlePublishSectionSubmit}
+        />
+        <DeleteModal
+          isOpen={isDeleteModalOpen}
+          close={closeDeleteModal}
+          onDeleteSubmit={handleDeleteSectionSubmit}
+        />
       </Container>
       <div className="alert-toast">
+        <ProcessingNotification
+          isShow={isShowProcessingNotification}
+          title={processingNotificationTitle}
+        />
         <InternetConnectionAlert
           isFailed={isInternetConnectionAlertFailed}
           isQueryPending={savingStatus === RequestStatus.PENDING}

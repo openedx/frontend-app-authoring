@@ -9,13 +9,13 @@ const slice = createSlice({
     loadingStatus: {
       outlineIndexLoadingStatus: RequestStatus.IN_PROGRESS,
       reIndexLoadingStatus: RequestStatus.IN_PROGRESS,
+      fetchSectionLoadingStatus: RequestStatus.IN_PROGRESS,
     },
     outlineIndexData: {},
     savingStatus: '',
     statusBarData: {
       courseReleaseDate: '',
       highlightsEnabledForMessaging: false,
-      highlightsDocUrl: '',
       isSelfPaced: false,
       checklist: {
         totalCourseLaunchChecks: 0,
@@ -24,10 +24,13 @@ const slice = createSlice({
         completedCourseBestPracticesChecks: 0,
       },
     },
+    sectionsList: [],
+    currentSection: {},
   },
   reducers: {
     fetchOutlineIndexSuccess: (state, { payload }) => {
       state.outlineIndexData = payload;
+      state.sectionsList = payload.courseStructure?.childInfo?.children || [];
     },
     updateOutlineIndexLoadingStatus: (state, { payload }) => {
       state.loadingStatus = {
@@ -39,6 +42,12 @@ const slice = createSlice({
       state.loadingStatus = {
         ...state.loadingStatus,
         reIndexLoadingStatus: payload.status,
+      };
+    },
+    updateFetchSectionLoadingStatus: (state, { payload }) => {
+      state.loadingStatus = {
+        ...state.loadingStatus,
+        fetchSectionLoadingStatus: payload.status,
       };
     },
     updateStatusBar: (state, { payload }) => {
@@ -59,6 +68,23 @@ const slice = createSlice({
     updateSavingStatus: (state, { payload }) => {
       state.savingStatus = payload.status;
     },
+    updateSectionList: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.map((section) => (section.id === payload.id ? payload : section));
+    },
+    setCurrentSection: (state, { payload }) => {
+      state.currentSection = payload;
+    },
+    deleteSection: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.filter(({ id }) => id !== payload);
+    },
+    duplicateSection: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.reduce((result, currentValue) => {
+        if (currentValue.id === payload.id) {
+          return [...result, currentValue, payload.duplicatedSection];
+        }
+        return [...result, currentValue];
+      }, []);
+    },
   },
 });
 
@@ -69,7 +95,12 @@ export const {
   updateStatusBar,
   fetchStatusBarChecklistSuccess,
   fetchStatusBarSelPacedSuccess,
+  updateFetchSectionLoadingStatus,
   updateSavingStatus,
+  updateSectionList,
+  setCurrentSection,
+  deleteSection,
+  duplicateSection,
 } = slice.actions;
 
 export const {
