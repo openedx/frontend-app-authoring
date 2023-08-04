@@ -53,7 +53,7 @@ const FilesAndUploads = ({
   const addAssetStatus = useSelector(state => state.assets.addingStatus);
   const deleteAssetStatus = useSelector(state => state.assets.deletingStatus);
   const saveAssetStatus = useSelector(state => state.assets.savingStatus);
-  const loadingStatus = useSelector(state => state.assets.loadingStatus);
+  const {totalCount , addAssetStatus: addingStatus, deleteAssetStatus: deleteingStatus, ... } = useSelector(state=> state.assets)
   const errorMessages = useSelector(state => state.assets.errors);
   const fileInputControl = fileInput({
     onAddFile: (file) => dispatch(addAssetFile(courseId, file, totalCount)),
