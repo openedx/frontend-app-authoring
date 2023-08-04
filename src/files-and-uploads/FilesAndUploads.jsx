@@ -53,7 +53,7 @@ const FilesAndUploads = ({
     assetIds,
     loadingStatus,
     addingStatus: addAssetStatus,
-    deleteingStatus: deleteAssetStatus,
+    deletingStatus: deleteAssetStatus,
     savingStatus: saveAssetStatus,
   } = useSelector(state => state.assets);
   const errorMessages = useSelector(state => state.assets.errors);
@@ -98,21 +98,16 @@ const FilesAndUploads = ({
     dispatch(updateAssetLock({ courseId, assetId, locked }));
   };
 
-  const headerActions = ({ selectedFlatRows }) => {
-    if (_.isEmpty(assets)) {
-      return [];
-    }
-    return (
-      <TableActions
-        {...{
-          selectedFlatRows,
-          fileInputControl,
-          handleBulkDelete,
-          handleBulkDownload,
-        }}
-      />
-    );
-  };
+  const headerActions = ({ selectedFlatRows }) => (
+    <TableActions
+      {...{
+        selectedFlatRows,
+        fileInputControl,
+        handleBulkDelete,
+        handleBulkDownload,
+      }}
+    />
+  );
 
   const fileCard = ({ className, original }) => {
     if (currentView === defaultVal) {
