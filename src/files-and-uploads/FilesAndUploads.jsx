@@ -44,16 +44,18 @@ const FilesAndUploads = ({
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
   const [isAddOpen, setAddOpen, setAddClose] = useToggle(false);
   const [selectedRowCount, setSelectedRowCount] = useState(0);
-  const assetIds = useSelector(state => state.assets.assetIds);
 
   useEffect(() => {
     dispatch(fetchAssets(courseId));
   }, [courseId]);
-  const totalCount = useSelector(state => state.assets.totalCount);
-  const addAssetStatus = useSelector(state => state.assets.addingStatus);
-  const deleteAssetStatus = useSelector(state => state.assets.deletingStatus);
-  const saveAssetStatus = useSelector(state => state.assets.savingStatus);
-  const {totalCount , addAssetStatus: addingStatus, deleteAssetStatus: deleteingStatus, ... } = useSelector(state=> state.assets)
+  const {
+    totalCount,
+    assetIds,
+    loadingStatus,
+    addingStatus: addAssetStatus,
+    deleteingStatus: deleteAssetStatus,
+    savingStatus: saveAssetStatus,
+  } = useSelector(state => state.assets);
   const errorMessages = useSelector(state => state.assets.errors);
   const fileInputControl = fileInput({
     onAddFile: (file) => dispatch(addAssetFile(courseId, file, totalCount)),
