@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useEffect } from 'react';
 import { history } from '@edx/frontend-platform';
+import { Hyperlink } from '@edx/paragon';
 import { useDispatch } from 'react-redux';
 
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -31,9 +32,13 @@ const XpertUnitSummarySettings = ({ intl }) => {
           <>
             {intl.formatMessage(messages.enableXpertUnitSummaryHelp)}
             {' '}
-            <a href="https://openai.com/api-data-privacy">
+            <Hyperlink
+              destination="https://openai.com/api-data-privacy"
+              target="_blank"
+              showLaunchIcon={false}
+            >
               {intl.formatMessage(messages.enableXpertUnitSummaryHelpPrivacyLink)}
-            </a>
+            </Hyperlink>
           </>
         )
       }
