@@ -1,10 +1,11 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
 import React from 'react';
 import {
-  render, screen, within, queryAllByRole, waitFor,
+  render, screen, within, queryAllByRole, waitFor, fireEvent,
 } from '@testing-library/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { act } from 'react-dom/test-utils';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { breakpoints } from '@edx/paragon';
@@ -65,6 +66,45 @@ describe('AppList', () => {
       store = await initializeStore();
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       await mockStore(piazzaApiResponse);
+    });
+
+    test('Successfully shows the disable toggle state of the hide discussion tab by default.', async () => {
+      renderComponent();
+
+      await waitFor(async () => {
+        const hideDiscussionTab = screen.getByTestId('hide-discussion');
+
+        expect(hideDiscussionTab).not.toBeChecked();
+      });
+    });
+
+    test.each([
+      { title: 'OK', description: 'Enable the toggle state by clicking on OK button' },
+      { title: 'Cancel', description: 'Disable the toggle state by clicking on Cancel button' },
+    ])('%s of the hide discussion tab', async ({ title }) => {
+      renderComponent();
+
+      await waitFor(async () => {
+        let hideDiscussionTab = screen.getByTestId('hide-discussion');
+
+        await act(async () => {
+          fireEvent.click(hideDiscussionTab);
+        });
+
+        const actionButton = screen.queryByText(title);
+
+        await act(async () => {
+          fireEvent.click(actionButton);
+        });
+
+        hideDiscussionTab = screen.getByTestId('hide-discussion');
+
+        if (title === 'OK') {
+          expect(hideDiscussionTab).toBeChecked();
+        } else {
+          expect(hideDiscussionTab).not.toBeChecked();
+        }
+      });
     });
 
     test('display a card for each available app', async () => {

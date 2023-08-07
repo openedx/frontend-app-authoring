@@ -132,6 +132,7 @@ const AppList = ({ intl }) => {
           labelClassName="line-height-24"
           onChange={handleChange}
           checked={!discussionEnabled}
+          data-testId="hide-discussion"
         >
           Hide discussion tab
         </Form.Switch>
