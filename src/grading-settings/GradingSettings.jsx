@@ -63,6 +63,7 @@ const GradingSettings = ({ intl, courseId }) => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       setShowSuccessAlert(!showSuccessAlert);
       setShowSavePrompt(!showSavePrompt);
+      setTimeout(() => setShowSuccessAlert(false), 15000);
       setIsQueryPending(!isQueryPending);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }

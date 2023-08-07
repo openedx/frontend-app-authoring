@@ -1,7 +1,8 @@
 .course-grading-assignment-wrapper {
-  background-color: $gray-100;
+  background-color: $white;
   padding: map-get($spacers, 4);
   text-align: right;
+  border: 1px solid $light-700;
 
   .course-grading-assignment-items {
     list-style: none;
