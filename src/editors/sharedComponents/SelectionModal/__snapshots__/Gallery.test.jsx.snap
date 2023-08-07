@@ -1,104 +1,297 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TextEditor Image Gallery component component snapshot: loaded but no images, show empty gallery 1`] = `
-<div
-  className="gallery p-4 bg-light-400"
-  style={
+<ContextProvider
+  value={
     Object {
-      "height": "375px",
-      "margin": "0 -1.5rem",
+      "$t": [Function],
+      "defaultFormats": Object {},
+      "defaultLocale": "en",
+      "defaultRichTextElements": undefined,
+      "fallbackOnEmptyString": true,
+      "formatDate": [Function],
+      "formatDateTimeRange": [Function],
+      "formatDateToParts": [Function],
+      "formatDisplayName": [Function],
+      "formatList": [Function],
+      "formatListToParts": [Function],
+      "formatMessage": [Function],
+      "formatNumber": [Function],
+      "formatNumberToParts": [Function],
+      "formatPlural": [Function],
+      "formatRelativeTime": [Function],
+      "formatTime": [Function],
+      "formatTimeToParts": [Function],
+      "formats": Object {},
+      "formatters": Object {
+        "getDateTimeFormat": [Function],
+        "getDisplayNames": [Function],
+        "getListFormat": [Function],
+        "getMessageFormat": [Function],
+        "getNumberFormat": [Function],
+        "getPluralRules": [Function],
+        "getRelativeTimeFormat": [Function],
+      },
+      "locale": "en",
+      "messages": Object {},
+      "onError": [Function],
+      "onWarn": [Function],
+      "textComponent": Symbol(react.fragment),
+      "timeZone": undefined,
+      "wrapRichTextChunksInFragment": undefined,
     }
   }
 >
-  <FormattedMessage />
-</div>
+  <Gallery
+    displayList={
+      Array [
+        Object {
+          "id": 1,
+        },
+        Object {
+          "id": 2,
+        },
+        Object {
+          "id": 3,
+        },
+      ]
+    }
+    emptyGalleryLabel={
+      Object {
+        "defaultMessage": "Empty Gallery",
+        "id": "emptyGalleryMsg",
+      }
+    }
+    galleryIsEmpty={true}
+    height="375px"
+    highlighted="props.highlighted"
+    isLoaded={true}
+    onHighlightChange={[MockFunction props.onHighlightChange]}
+    searchIsEmpty={false}
+    show={true}
+    showIdsOnCards={false}
+  />
+</ContextProvider>
 `;
 
 exports[`TextEditor Image Gallery component component snapshot: loaded but search returns no images, show 0 search result gallery 1`] = `
-<div
-  className="gallery p-4 bg-light-400"
-  style={
+<ContextProvider
+  value={
     Object {
-      "height": "375px",
-      "margin": "0 -1.5rem",
+      "$t": [Function],
+      "defaultFormats": Object {},
+      "defaultLocale": "en",
+      "defaultRichTextElements": undefined,
+      "fallbackOnEmptyString": true,
+      "formatDate": [Function],
+      "formatDateTimeRange": [Function],
+      "formatDateToParts": [Function],
+      "formatDisplayName": [Function],
+      "formatList": [Function],
+      "formatListToParts": [Function],
+      "formatMessage": [Function],
+      "formatNumber": [Function],
+      "formatNumberToParts": [Function],
+      "formatPlural": [Function],
+      "formatRelativeTime": [Function],
+      "formatTime": [Function],
+      "formatTimeToParts": [Function],
+      "formats": Object {},
+      "formatters": Object {
+        "getDateTimeFormat": [Function],
+        "getDisplayNames": [Function],
+        "getListFormat": [Function],
+        "getMessageFormat": [Function],
+        "getNumberFormat": [Function],
+        "getPluralRules": [Function],
+        "getRelativeTimeFormat": [Function],
+      },
+      "locale": "en",
+      "messages": Object {},
+      "onError": [Function],
+      "onWarn": [Function],
+      "textComponent": Symbol(react.fragment),
+      "timeZone": undefined,
+      "wrapRichTextChunksInFragment": undefined,
     }
   }
 >
-  <FormattedMessage
-    defaultMessage="No search results."
-    description="Label for when search returns nothing."
-    id="authoring.selectionmodal.emptySearchLabel"
+  <Gallery
+    displayList={
+      Array [
+        Object {
+          "id": 1,
+        },
+        Object {
+          "id": 2,
+        },
+        Object {
+          "id": 3,
+        },
+      ]
+    }
+    emptyGalleryLabel={
+      Object {
+        "defaultMessage": "Empty Gallery",
+        "id": "emptyGalleryMsg",
+      }
+    }
+    galleryIsEmpty={false}
+    height="375px"
+    highlighted="props.highlighted"
+    isLoaded={true}
+    onHighlightChange={[MockFunction props.onHighlightChange]}
+    searchIsEmpty={true}
+    show={true}
+    showIdsOnCards={false}
   />
-</div>
+</ContextProvider>
 `;
 
 exports[`TextEditor Image Gallery component component snapshot: loaded, show gallery 1`] = `
-<Scrollable
-  className="gallery bg-light-400"
-  style={
+<ContextProvider
+  value={
     Object {
-      "height": "375px",
-      "margin": "0 -1.5rem",
+      "$t": [Function],
+      "defaultFormats": Object {},
+      "defaultLocale": "en",
+      "defaultRichTextElements": undefined,
+      "fallbackOnEmptyString": true,
+      "formatDate": [Function],
+      "formatDateTimeRange": [Function],
+      "formatDateToParts": [Function],
+      "formatDisplayName": [Function],
+      "formatList": [Function],
+      "formatListToParts": [Function],
+      "formatMessage": [Function],
+      "formatNumber": [Function],
+      "formatNumberToParts": [Function],
+      "formatPlural": [Function],
+      "formatRelativeTime": [Function],
+      "formatTime": [Function],
+      "formatTimeToParts": [Function],
+      "formats": Object {},
+      "formatters": Object {
+        "getDateTimeFormat": [Function],
+        "getDisplayNames": [Function],
+        "getListFormat": [Function],
+        "getMessageFormat": [Function],
+        "getNumberFormat": [Function],
+        "getPluralRules": [Function],
+        "getRelativeTimeFormat": [Function],
+      },
+      "locale": "en",
+      "messages": Object {},
+      "onError": [Function],
+      "onWarn": [Function],
+      "textComponent": Symbol(react.fragment),
+      "timeZone": undefined,
+      "wrapRichTextChunksInFragment": undefined,
     }
   }
 >
-  <div
-    className="p-4"
-  >
-    <SelectableBox.Set
-      columns={1}
-      name="images"
-      onChange={[MockFunction props.onHighlightChange]}
-      type="radio"
-      value="props.highlighted"
-    >
-      <GalleryCard
-        asset={
-          Object {
-            "id": 1,
-          }
-        }
-        key="1"
-        showId={false}
-      />
-      <GalleryCard
-        asset={
-          Object {
-            "id": 2,
-          }
-        }
-        key="2"
-        showId={false}
-      />
-      <GalleryCard
-        asset={
-          Object {
-            "id": 3,
-          }
-        }
-        key="3"
-        showId={false}
-      />
-    </SelectableBox.Set>
-  </div>
-</Scrollable>
+  <Gallery
+    displayList={
+      Array [
+        Object {
+          "id": 1,
+        },
+        Object {
+          "id": 2,
+        },
+        Object {
+          "id": 3,
+        },
+      ]
+    }
+    emptyGalleryLabel={
+      Object {
+        "defaultMessage": "Empty Gallery",
+        "id": "emptyGalleryMsg",
+      }
+    }
+    galleryIsEmpty={false}
+    height="375px"
+    highlighted="props.highlighted"
+    isLoaded={true}
+    onHighlightChange={[MockFunction props.onHighlightChange]}
+    searchIsEmpty={false}
+    show={true}
+    showIdsOnCards={false}
+  />
+</ContextProvider>
 `;
 
 exports[`TextEditor Image Gallery component component snapshot: not loaded, show spinner 1`] = `
-<div
-  style={
+<ContextProvider
+  value={
     Object {
-      "left": "50%",
-      "position": "absolute",
-      "top": "50%",
-      "transform": "translate(-50%, -50%)",
+      "$t": [Function],
+      "defaultFormats": Object {},
+      "defaultLocale": "en",
+      "defaultRichTextElements": undefined,
+      "fallbackOnEmptyString": true,
+      "formatDate": [Function],
+      "formatDateTimeRange": [Function],
+      "formatDateToParts": [Function],
+      "formatDisplayName": [Function],
+      "formatList": [Function],
+      "formatListToParts": [Function],
+      "formatMessage": [Function],
+      "formatNumber": [Function],
+      "formatNumberToParts": [Function],
+      "formatPlural": [Function],
+      "formatRelativeTime": [Function],
+      "formatTime": [Function],
+      "formatTimeToParts": [Function],
+      "formats": Object {},
+      "formatters": Object {
+        "getDateTimeFormat": [Function],
+        "getDisplayNames": [Function],
+        "getListFormat": [Function],
+        "getMessageFormat": [Function],
+        "getNumberFormat": [Function],
+        "getPluralRules": [Function],
+        "getRelativeTimeFormat": [Function],
+      },
+      "locale": "en",
+      "messages": Object {},
+      "onError": [Function],
+      "onWarn": [Function],
+      "textComponent": Symbol(react.fragment),
+      "timeZone": undefined,
+      "wrapRichTextChunksInFragment": undefined,
     }
   }
 >
-  <Spinner
-    animation="border"
-    className="mie-3"
-    screenReaderText="loading..."
+  <Gallery
+    displayList={
+      Array [
+        Object {
+          "id": 1,
+        },
+        Object {
+          "id": 2,
+        },
+        Object {
+          "id": 3,
+        },
+      ]
+    }
+    emptyGalleryLabel={
+      Object {
+        "defaultMessage": "Empty Gallery",
+        "id": "emptyGalleryMsg",
+      }
+    }
+    galleryIsEmpty={false}
+    height="375px"
+    highlighted="props.highlighted"
+    isLoaded={false}
+    onHighlightChange={[MockFunction props.onHighlightChange]}
+    searchIsEmpty={false}
+    show={true}
+    showIdsOnCards={false}
   />
-</div>
+</ContextProvider>
 `;

@@ -29,6 +29,7 @@ export const BaseModal = ({
     hasCloseButton
     isFullscreenOnMobile
     isFullscreenScroll={isFullscreenScroll}
+    title={title}
   >
     <ModalDialog.Header style={{ zIndex: 1, boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.3)' }}>
       <ModalDialog.Title>

@@ -1,104 +1,192 @@
+import { initializeMockApp } from '@edx/frontend-platform';
+import { AppProvider } from '@edx/frontend-platform/react';
+import { configureStore } from '@reduxjs/toolkit';
+import '@testing-library/jest-dom/extend-expect';
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import {
+  act, fireEvent, render, screen,
+} from '@testing-library/react';
 
-import SelectionModal from '../../sharedComponents/SelectionModal';
-import hooks from './hooks';
-import * as module from '.';
+import { VideoGallery } from './index';
 
-jest.mock('../../sharedComponents/SelectionModal', () => 'SelectionModal');
+jest.unmock('react-redux');
+jest.unmock('@edx/frontend-platform/i18n');
+jest.unmock('@edx/paragon');
+jest.unmock('@edx/paragon/icons');
 
-const mockHandleVideoUploadHook = jest.fn();
-
-jest.mock('./hooks', () => ({
-  buildVideos: jest.fn(() => []),
-  videoProps: jest.fn(() => ({
-    galleryError: {
-      show: 'ShoWERror gAlLery',
-      set: jest.fn(),
-      dismiss: jest.fn(),
-      message: {
-        id: 'Gallery error id',
-        defaultMessage: 'Gallery error',
-        description: 'Gallery error',
-      },
-    },
-    inputError: {
-      show: 'ShoWERror inPUT',
-      set: jest.fn(),
-      dismiss: jest.fn(),
-      message: {
-        id: 'Input error id',
-        defaultMessage: 'Input error',
-        description: 'Input error',
-      },
-    },
-    fileInput: {
-      addFile: 'videoHooks.fileInput.addFile',
-      click: 'videoHooks.fileInput.click',
-      ref: 'videoHooks.fileInput.ref',
-    },
-    galleryProps: { gallery: 'props' },
-    searchSortProps: { search: 'sortProps' },
-    selectBtnProps: { select: 'btnProps' },
-  })),
-  handleCancel: jest.fn(),
-  handleVideoUpload: () => mockHandleVideoUploadHook,
-}));
-
-jest.mock('../../data/redux', () => ({
-  selectors: {
-    requests: {
-      isLoaded: (state, { requestKey }) => ({ isLoaded: { state, requestKey } }),
-      isFetchError: (state, { requestKey }) => ({ isFetchError: { state, requestKey } }),
-      isUploadError: (state, { requestKey }) => ({ isUploadError: { state, requestKey } }),
-    },
+let store;
+const initialVideos = [
+  {
+    edx_video_id: 'id_1',
+    client_video_id: 'client_id_1',
+    course_video_image_url: 'course_video_image_url_1',
+    created: '2022-09-07T04:56:58.726Z',
+    status: 'Uploading',
+    duration: 3,
+    transcripts: [],
   },
-}));
+  {
+    edx_video_id: 'id_2',
+    client_video_id: 'client_id_2',
+    course_video_image_url: 'course_video_image_url_2',
+    created: '2022-11-07T04:56:58.726Z',
+    status: 'In Progress',
+    duration: 2,
+    transcripts: [],
+  }, {
+    edx_video_id: 'id_3',
+    client_video_id: 'client_id_3',
+    course_video_image_url: 'course_video_image_url_3',
+    created: '2022-01-07T04:56:58.726Z',
+    status: 'Ready',
+    duration: 4,
+    transcripts: [],
+  },
+];
 
-jest.mock('../../hooks', () => ({
-  ...jest.requireActual('../../hooks'),
-  navigateCallback: jest.fn((args) => ({ navigateCallback: args })),
-}));
+// We are not using any style-based assertions and this function is very slow with jest-dom
+window.getComputedStyle = () => ({
+  getPropertyValue: () => undefined,
+});
 
 describe('VideoGallery', () => {
   describe('component', () => {
-    const props = {
-      rawVideos: { sOmEaSsET: { staTICUrl: '/video/sOmEaSsET' } },
-      isLoaded: false,
-      isFetchError: false,
-      isUploadError: false,
-    };
-    let el;
-    const videoProps = hooks.videoProps();
-    beforeEach(() => {
-      el = shallow(<module.VideoGallery {...props} />);
-      mockHandleVideoUploadHook.mockReset();
+    let oldLocation;
+    beforeEach(async () => {
+      store = configureStore({
+        reducer: (state, action) => ((action && action.newState) ? action.newState : state),
+        preloadedState: {
+          app: {
+            videos: initialVideos,
+            learningContextId: 'course-v1:test+test+test',
+            blockId: 'some-block-id',
+          },
+          requests: {
+            fetchVideos: { status: 'completed' },
+            uploadVideo: { status: 'inactive' },
+          },
+        },
+      });
+
+      initializeMockApp({
+        authenticatedUser: {
+          userId: 3,
+          username: 'test-user',
+          administrator: true,
+          roles: [],
+        },
+      });
     });
-    it('provides confirm action, forwarding selectBtnProps from imgHooks', () => {
-      expect(el.find(SelectionModal).props().selectBtnProps).toEqual(
-        expect.objectContaining({ ...hooks.videoProps().selectBtnProps }),
+    beforeAll(() => {
+      oldLocation = window.location;
+      delete window.location;
+      window.location = { assign: jest.fn() };
+    });
+    afterAll(() => {
+      window.location = oldLocation;
+    });
+
+    function updateState({ videos = initialVideos, fetchVideos = 'completed', uploadVideos = 'inactive' }) {
+      store.dispatch({
+        type: '',
+        newState: {
+          app: {
+            videos,
+            learningContextId: 'course-v1:test+test+test',
+            blockId: 'some-block-id',
+          },
+          requests: {
+            fetchVideos: { status: fetchVideos },
+            uploadVideo: { status: uploadVideos },
+          },
+        },
+      });
+    }
+
+    async function renderComponent() {
+      return render(
+        <AppProvider store={store}>
+          <VideoGallery />
+        </AppProvider>,
       );
+    }
+
+    it('displays a list of videos', async () => {
+      await renderComponent();
+      initialVideos.forEach(video => (
+        expect(screen.getByText(video.client_video_id)).toBeInTheDocument()
+      ));
     });
-    it('provides file upload button linked to fileInput.click', () => {
-      expect(el.find(SelectionModal).props().fileInput.click).toEqual(
-        videoProps.fileInput.click,
-      );
+    it('navigates to video upload page when there are no videos', async () => {
+      expect(window.location.assign).not.toHaveBeenCalled();
+      updateState({ videos: [] });
+      await renderComponent();
+      expect(window.location.assign).toHaveBeenCalled();
     });
-    it('provides a SearchSort component with searchSortProps from imgHooks', () => {
-      expect(el.find(SelectionModal).props().searchSortProps).toEqual(videoProps.searchSortProps);
+    it.each([
+      [/by date added \(newest\)/i, [2, 1, 3]],
+      [/by date added \(oldest\)/i, [3, 1, 2]],
+      [/by name \(ascending\)/i, [1, 2, 3]],
+      [/by name \(descending\)/i, [3, 2, 1]],
+      [/by duration \(longest\)/i, [3, 1, 2]],
+      [/by duration \(shortest\)/i, [2, 1, 3]],
+    ])('videos can be sorted %s', async (sortBy, order) => {
+      await renderComponent();
+
+      fireEvent.click(screen.getByRole('button', {
+        name: /by date added \(newest\)/i,
+      }));
+      fireEvent.click(screen.getByRole('link', {
+        name: sortBy,
+      }));
+      const videoElements = screen.getAllByRole('button', { name: /client_id/ });
+      order.forEach((clientIdSuffix, idx) => {
+        expect(videoElements[idx]).toHaveTextContent(`client_id_${clientIdSuffix}`);
+      });
     });
-    it('provides a Gallery component with galleryProps from imgHooks', () => {
-      expect(el.find(SelectionModal).props().galleryProps).toEqual(videoProps.galleryProps);
+    it.each([
+      ['Uploading', 1, [1]],
+      ['Processing', 1, [2]],
+      ['Ready', 1, [3]],
+      ['Failed', 1, [4]],
+    ])('videos can be filtered by status %s', async (filterBy, length, items) => {
+      await renderComponent();
+      updateState({
+        videos: [...initialVideos, {
+          edx_video_id: 'id_4',
+          client_video_id: 'client_id_4',
+          course_video_image_url: 'course_video_image_url_4',
+          created: '2022-01-07T04:56:58.726Z',
+          status: 'Failed',
+          duration: 4,
+          transcripts: [],
+        }],
+      });
+
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', {
+          name: 'Video status',
+        }));
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByRole('checkbox', {
+          name: filterBy,
+        }));
+      });
+
+      const videoElements = await screen.findAllByRole('button', { name: /client_id/ });
+      expect(videoElements).toHaveLength(length);
+      items.forEach(clientIdx => (
+        expect(screen.getByText(`client_id_${clientIdx}`)).toBeInTheDocument()
+      ));
     });
-    it('provides a FileInput component with fileInput props from imgHooks', () => {
-      expect(el.find(SelectionModal).props().fileInput).toMatchObject(videoProps.fileInput);
-    });
-    it('handleVideoUpload called if there are no videos', () => {
-      el = mount(<module.VideoGallery {...props} />);
-      expect(mockHandleVideoUploadHook).not.toHaveBeenCalled();
-      el.setProps({ rawVideos: {}, isLoaded: true });
-      el.mount();
-      expect(mockHandleVideoUploadHook).toHaveBeenCalled();
+
+    it('filters videos by search string', async () => {
+      await renderComponent();
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: 'CLIENT_ID_2' } });
+      expect(screen.queryByText('client_id_2')).toBeInTheDocument();
+      expect(screen.queryByText('client_id_1')).not.toBeInTheDocument();
+      expect(screen.queryByText('client_id_3')).not.toBeInTheDocument();
     });
   });
 });

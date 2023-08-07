@@ -2,26 +2,18 @@
 
 exports[`GalleryCard component snapshot with duration badge 1`] = `
 <SelectableBox
-  className="card bg-white"
+  className="card bg-white shadow-none border-0 py-0"
   key="props.img.externalUrl"
-  style={
-    Object {
-      "border": "none",
-      "boxShadow": "none",
-      "padding": "10px 20px",
-    }
-  }
   type="radio"
 >
   <div
-    className="card-div d-flex flex-row flex-nowrap"
+    className="card-div d-flex flex-row flex-nowrap align-items-center"
   >
     <div
+      className="position-relative"
       style={
         Object {
           "height": "100px",
-          "margin": "18px 0 0 0",
-          "position": "relative",
           "width": "200px",
         }
       }
@@ -51,7 +43,7 @@ exports[`GalleryCard component snapshot with duration badge 1`] = `
       </Component>
     </div>
     <div
-      className="card-text p-3"
+      className="card-text px-3 py-2"
       style={
         Object {
           "marginTop": "10px",
@@ -94,26 +86,18 @@ exports[`GalleryCard component snapshot with duration badge 1`] = `
 
 exports[`GalleryCard component snapshot with duration transcripts 1`] = `
 <SelectableBox
-  className="card bg-white"
+  className="card bg-white shadow-none border-0 py-0"
   key="props.img.externalUrl"
-  style={
-    Object {
-      "border": "none",
-      "boxShadow": "none",
-      "padding": "10px 20px",
-    }
-  }
   type="radio"
 >
   <div
-    className="card-div d-flex flex-row flex-nowrap"
+    className="card-div d-flex flex-row flex-nowrap align-items-center"
   >
     <div
+      className="position-relative"
       style={
         Object {
           "height": "100px",
-          "margin": "18px 0 0 0",
-          "position": "relative",
           "width": "200px",
         }
       }
@@ -130,7 +114,7 @@ exports[`GalleryCard component snapshot with duration transcripts 1`] = `
       />
     </div>
     <div
-      className="card-text p-3"
+      className="card-text px-3 py-2"
       style={
         Object {
           "marginTop": "10px",
@@ -188,26 +172,18 @@ exports[`GalleryCard component snapshot with duration transcripts 1`] = `
 
 exports[`GalleryCard component snapshot with status badge 1`] = `
 <SelectableBox
-  className="card bg-white"
+  className="card bg-white shadow-none border-0 py-0"
   key="props.img.externalUrl"
-  style={
-    Object {
-      "border": "none",
-      "boxShadow": "none",
-      "padding": "10px 20px",
-    }
-  }
   type="radio"
 >
   <div
-    className="card-div d-flex flex-row flex-nowrap"
+    className="card-div d-flex flex-row flex-nowrap align-items-center"
   >
     <div
+      className="position-relative"
       style={
         Object {
           "height": "100px",
-          "margin": "18px 0 0 0",
-          "position": "relative",
           "width": "200px",
         }
       }
@@ -236,7 +212,7 @@ exports[`GalleryCard component snapshot with status badge 1`] = `
       </Component>
     </div>
     <div
-      className="card-text p-3"
+      className="card-text px-3 py-2"
       style={
         Object {
           "marginTop": "10px",
@@ -279,26 +255,18 @@ exports[`GalleryCard component snapshot with status badge 1`] = `
 
 exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
 <SelectableBox
-  className="card bg-white"
+  className="card bg-white shadow-none border-0 py-0"
   key="props.img.externalUrl"
-  style={
-    Object {
-      "border": "none",
-      "boxShadow": "none",
-      "padding": "10px 20px",
-    }
-  }
   type="radio"
 >
   <div
-    className="card-div d-flex flex-row flex-nowrap"
+    className="card-div d-flex flex-row flex-nowrap align-items-center"
   >
     <div
+      className="position-relative"
       style={
         Object {
           "height": "100px",
-          "margin": "18px 0 0 0",
-          "position": "relative",
           "width": "200px",
         }
       }
@@ -315,7 +283,7 @@ exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
       />
     </div>
     <div
-      className="card-text p-3"
+      className="card-text px-3 py-2"
       style={
         Object {
           "marginTop": "10px",
