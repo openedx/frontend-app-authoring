@@ -69,7 +69,7 @@ const InstructorsSection = ({ instructors, onChange }) => {
           />
         ))}
       </ul>
-      <Button iconBefore={AddIcon} variant="outline-success" onClick={handleAdd}>
+      <Button iconBefore={AddIcon} variant="primary" onClick={handleAdd}>
         {intl.formatMessage(messages.instructorAdd)}
       </Button>
     </section>

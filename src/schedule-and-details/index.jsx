@@ -83,6 +83,7 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     isPrerequisiteCoursesEnabled,
     mfeProctoredExamSettingsUrl,
     possiblePreRequisiteCourses,
+    canShowCertificateAvailableDateField,
   } = courseSettings;
 
   const {
@@ -220,6 +221,7 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
                     enrollmentEndEditable={enrollmentEndEditable}
                     certificateAvailableDate={certificateAvailableDate}
                     certificatesDisplayBehavior={certificatesDisplayBehavior}
+                    canShowCertificateAvailableDateField={canShowCertificateAvailableDateField}
                     onChange={handleValuesChange}
                   />
                   {aboutPageEditable && (

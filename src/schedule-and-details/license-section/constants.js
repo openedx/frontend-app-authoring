@@ -1,4 +1,3 @@
-const creativeCommonsAboutURL = 'https://creativecommons.org/about';
 const creativeCommonsLicensesURL = 'https://creativecommons.org/licenses';
 const creativeCommonsVersion = '4.0';
 
@@ -15,5 +14,5 @@ const LICENSE_COMMONS_OPTIONS = {
 };
 
 export {
-  creativeCommonsAboutURL, LICENSE_TYPE, LICENSE_COMMONS_OPTIONS, creativeCommonsLicensesURL, creativeCommonsVersion,
+  LICENSE_TYPE, LICENSE_COMMONS_OPTIONS, creativeCommonsLicensesURL, creativeCommonsVersion,
 };

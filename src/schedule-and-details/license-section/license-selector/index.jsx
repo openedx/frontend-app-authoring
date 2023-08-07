@@ -7,10 +7,9 @@ import {
   Button,
   OverlayTrigger,
   Tooltip,
-  Hyperlink,
 } from '@edx/paragon';
 
-import { LICENSE_TYPE, creativeCommonsAboutURL } from '../constants';
+import { LICENSE_TYPE } from '../constants';
 import messages from './messages';
 
 const LicenseSelector = ({ licenseType, onChangeLicenseType }) => {
@@ -29,32 +28,19 @@ const LicenseSelector = ({ licenseType, onChangeLicenseType }) => {
     const isActive = licenseType === type;
 
     return (
-      <div key={type}>
-        <OverlayTrigger
-          key={type}
-          overlay={
-            <Tooltip id={`tooltip-${type}`}>{LICENSE_BUTTON_GROUP_LABELS[type].tooltip}</Tooltip>
-          }
+      <OverlayTrigger
+        key={type}
+        overlay={
+          <Tooltip id={`tooltip-${type}`}>{LICENSE_BUTTON_GROUP_LABELS[type].tooltip}</Tooltip>
+        }
+      >
+        <Button
+          variant={isActive ? 'primary' : 'outline-primary'}
+          onClick={() => onChangeLicenseType(type, 'license')}
         >
-          <Button
-            variant={isActive ? 'primary' : 'outline-primary'}
-            onClick={() => onChangeLicenseType(type, 'license')}
-          >
-            {LICENSE_BUTTON_GROUP_LABELS[type].label}
-          </Button>
-        </OverlayTrigger>
-        {type === LICENSE_TYPE.creativeCommons && (
-          <Hyperlink
-            destination={creativeCommonsAboutURL}
-            target="_blank"
-            showLaunchIcon={false}
-          >
-            <p className="x-small mb-0">
-              <FormattedMessage {...messages.creativeCommonsURLParagraph} />
-            </p>
-          </Hyperlink>
-        )}
-      </div>
+          {LICENSE_BUTTON_GROUP_LABELS[type].label}
+        </Button>
+      </OverlayTrigger>
     );
   };
 

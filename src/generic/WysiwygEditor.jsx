@@ -71,6 +71,7 @@ export const WysiwygEditor = ({
         editorType={editorType}
         initialValue={initialValue}
         minHeight={minHeight}
+        editorContentHtml={initialValue}
         setEditorRef={setEditorRef}
         updateContent={handleUpdate}
         initializeEditor={() => ({})}

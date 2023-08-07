@@ -18,6 +18,7 @@ const ScheduleSection = ({
   enrollmentEndEditable,
   certificateAvailableDate,
   certificatesDisplayBehavior,
+  canShowCertificateAvailableDateField,
   onChange,
 }) => {
   const intl = useIntl();
@@ -56,6 +57,7 @@ const ScheduleSection = ({
       errorFeedback: errorFields?.endDate,
     },
     {
+      skip: !canShowCertificateAvailableDateField,
       key: 'certificate-display-row',
       rowType: SCHEDULE_ROW_TYPES.dropdown,
       certificateAvailableDate,
@@ -161,6 +163,7 @@ ScheduleSection.propTypes = {
   enrollmentEndEditable: PropTypes.bool.isRequired,
   certificateAvailableDate: PropTypes.string,
   certificatesDisplayBehavior: PropTypes.string.isRequired,
+  canShowCertificateAvailableDateField: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
 };
 

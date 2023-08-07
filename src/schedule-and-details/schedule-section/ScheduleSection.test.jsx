@@ -15,7 +15,12 @@ describe('<ScheduleSection />', () => {
     </IntlProvider>
   );
 
-  const { platformName, upgradeDeadline, enrollmentEndEditable } = courseSettingsMock;
+  const {
+    platformName,
+    upgradeDeadline,
+    enrollmentEndEditable,
+    canShowCertificateAvailableDateField,
+  } = courseSettingsMock;
 
   const {
     endDate,
@@ -38,6 +43,7 @@ describe('<ScheduleSection />', () => {
     enrollmentEndEditable,
     certificateAvailableDate,
     certificatesDisplayBehavior,
+    canShowCertificateAvailableDateField,
     onChange: onChangeMock,
   };
 
@@ -49,7 +55,7 @@ describe('<ScheduleSection />', () => {
     expect(getByText(messages.scheduleCourseStartTimeLabel.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.scheduleCourseEndDateLabel.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.scheduleCourseEndTimeLabel.defaultMessage)).toBeInTheDocument();
-    expect(getByText(certificateMessages.certificateBehaviorLabel.defaultMessage)).toBeInTheDocument();
+    expect(queryAllByText(certificateMessages.certificateBehaviorLabel.defaultMessage).length).toBe(0);
     expect(queryAllByText(certificateMessages.certificateAvailableDateLabel.defaultMessage).length).toBe(0);
     expect(getByText(messages.scheduleEnrollmentStartDateLabel.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.scheduleEnrollmentStartTimeLabel.defaultMessage)).toBeInTheDocument();
@@ -57,5 +63,12 @@ describe('<ScheduleSection />', () => {
     expect(getByText(messages.scheduleEnrollmentEndTimeLabel.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.scheduleUpgradeDeadlineDateLabel.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.scheduleUpgradeDeadlineTimeLabel.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('renders certificate behavior with condition', () => {
+    const initialProps = { ...props, canShowCertificateAvailableDateField: true };
+    const { getByText, queryAllByText } = render(<RootWrapper {...initialProps} />);
+    expect(getByText(certificateMessages.certificateBehaviorLabel.defaultMessage)).toBeInTheDocument();
+    expect(queryAllByText(certificateMessages.certificateAvailableDateLabel.defaultMessage).length).toBe(0);
   });
 });

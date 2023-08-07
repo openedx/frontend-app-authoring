@@ -41,7 +41,7 @@ const LearningOutcomesSection = ({ learningInfo, onChange }) => {
         onChange={(e) => handleInputChange(e.target.value, idx)}
       />
       <Button
-        variant="outline-danger"
+        variant="outline-primary"
         onClick={() => handleDelete(idx)}
       >
         {intl.formatMessage(messages.outcomesDelete)}
@@ -58,7 +58,7 @@ const LearningOutcomesSection = ({ learningInfo, onChange }) => {
       <ul className="learning-outcomes-list">
         {learningInfo.map(renderLearningOutcomeItem)}
       </ul>
-      <Button iconBefore={AddIcon} variant="outline-success" onClick={handleAdd}>
+      <Button iconBefore={AddIcon} variant="primary" onClick={handleAdd}>
         {intl.formatMessage(messages.outcomesAdd)}
       </Button>
     </section>

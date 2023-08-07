@@ -35,16 +35,16 @@ describe('<GradeRequirements />', () => {
     const { getByDisplayValue } = render(<RootWrapper {...props} />);
     const input = getByDisplayValue(props.entranceExamMinimumScorePct);
     act(() => {
-      fireEvent.change(input, { target: { value: 'abc' } });
+      fireEvent.change(input, { target: { valueAsNumber: '31' } });
     });
-    expect(props.onChange).toHaveBeenCalledWith('abc', 'entranceExamMinimumScorePct');
+    expect(props.onChange).toHaveBeenCalledWith('31', 'entranceExamMinimumScorePct');
   });
 
   it('should show feedback error', () => {
     const { getByDisplayValue, getByText } = render(<RootWrapper {...props} />);
     const input = getByDisplayValue(props.entranceExamMinimumScorePct);
     act(() => {
-      fireEvent.change(input, { target: { value: '123' } });
+      fireEvent.change(input, { target: { valueAsNumber: '123' } });
     });
     waitFor(() => {
       expect(getByText(scheduleMessage.errorMessage8.defaultMessage)).toBeInTheDocument();

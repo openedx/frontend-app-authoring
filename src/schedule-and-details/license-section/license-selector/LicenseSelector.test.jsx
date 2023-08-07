@@ -24,7 +24,6 @@ describe('<LicenseSelector />', () => {
   it('renders successfully', () => {
     const { getByText, getByRole } = render(<RootWrapper {...props} />);
     expect(getByText(messages.licenseType.defaultMessage)).toBeInTheDocument();
-    expect(getByText(messages.creativeCommonsURLParagraph.defaultMessage)).toBeInTheDocument();
     expect(getByRole('button', { name: messages.licenseChoice1.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.licenseChoice2.defaultMessage })).toBeInTheDocument();
   });

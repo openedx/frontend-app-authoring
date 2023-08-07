@@ -68,10 +68,9 @@ const DatepickerControl = ({
           placeholderText={inputFormat[type].toLocaleUpperCase()}
           showPopperArrow={false}
           onChange={(date) => {
-            if (!isValidDate(date)) {
-              return;
+            if (isValidDate(date)) {
+              onChange(convertToStringFromDate(date));
             }
-            onChange(convertToStringFromDate(date));
           }}
         />
       </div>
