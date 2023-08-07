@@ -22,9 +22,6 @@ jobs:
       with:
         node-version: ${{ env.NODE_VER }}
 
-    - name: Setup npm
-      run: npm install -g npm@${{ matrix.npm }}
-
     - name: Install dependencies
       run: npm ci
 
