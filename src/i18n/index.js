@@ -1,6 +1,7 @@
 import { messages as footerMessages } from '@edx/frontend-component-footer';
 import { messages as paragonMessages } from '@edx/paragon';
 import arMessages from './messages/ar.json';
+import faIRMessages from './messages/fa_IR.json';
 import frMessages from './messages/fr.json';
 import es419Messages from './messages/es_419.json';
 import zhcnMessages from './messages/zh_CN.json';
@@ -19,6 +20,7 @@ import ptptMessages from './messages/pt_PT.json';
 const appMessages = {
   ar: arMessages,
   'es-419': es419Messages,
+  'fa-ir': faIRMessages,
   fr: frMessages,
   'zh-cn': zhcnMessages,
   pt: ptMessages,
