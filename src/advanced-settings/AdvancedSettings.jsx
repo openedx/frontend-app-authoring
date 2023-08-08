@@ -55,6 +55,10 @@ const AdvancedSettings = ({ intl, courseId }) => {
     },
     disabledStates: ['pending'],
   };
+  const {
+    proctoringErrors,
+    mfeProctoredExamSettingsUrl,
+  } = proctoringExamErrors;
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
@@ -123,10 +127,10 @@ const AdvancedSettings = ({ intl, courseId }) => {
     <>
       <Container size="xl" className="px-4">
         <div className="setting-header mt-5">
-          {(proctoringExamErrors?.length > 0) && (
+          {(proctoringErrors?.length > 0) && (
             <AlertProctoringError
               icon={Info}
-              proctoringErrorsData={proctoringExamErrors}
+              proctoringErrorsData={proctoringErrors}
               aria-hidden="true"
               aria-labelledby={intl.formatMessage(messages.alertProctoringAriaLabelledby)}
               aria-describedby={intl.formatMessage(messages.alertProctoringDescribedby)}
@@ -215,7 +219,10 @@ const AdvancedSettings = ({ intl, courseId }) => {
               </article>
             </Layout.Element>
             <Layout.Element>
-              <SettingsSidebar courseId={courseId} />
+              <SettingsSidebar
+                courseId={courseId}
+                proctoredExamSettingsUrl={mfeProctoredExamSettingsUrl}
+              />
             </Layout.Element>
           </Layout>
         </section>

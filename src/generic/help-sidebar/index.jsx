@@ -4,9 +4,9 @@ import { useLocation } from 'react-router-dom';
 import classNames from 'classnames';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
-import { Hyperlink } from '@edx/paragon';
 
-import { getPagePath } from '../../utils';
+import HelpSidebarLink from './HelpSidebarLink';
+import { otherLinkURLParams } from './constants';
 import messages from './messages';
 
 const HelpSidebar = ({
@@ -18,34 +18,25 @@ const HelpSidebar = ({
   className,
 }) => {
   const { pathname } = useLocation();
-  const scheduleAndDetailsDestination = getPagePath(
-    courseId,
-    process.env.ENABLE_NEW_SCHEDULE_DETAILS_PAGE,
-    'settings/details',
-  );
-  const gradingDestination = getPagePath(
-    courseId,
-    process.env.ENABLE_NEW_GRADING_PAGE,
-    'settings/grading',
-  );
-  const courseTeamDestination = getPagePath(
-    courseId,
-    process.env.ENABLE_NEW_COURSE_TEAM_PAGE,
-    'course_team',
-  );
-  const advancedSettingsDestination = getPagePath(
-    courseId,
-    process.env.ENABLE_NEW_ADVANCED_SETTINGS_PAGE,
-    'settings/advanced',
-  );
-  const groupConfigurationsDestination = new URL(
-    `/group_configurations/${courseId}`,
-    getConfig().STUDIO_BASE_URL,
-  );
-  const proctoredExamSettingsDestination = new URL(
-    `/course/${courseId}/proctored-exam-settings`,
-    getConfig().BASE_URL,
-  );
+  const {
+    grading,
+    courseTeam,
+    advancedSettings,
+    scheduleAndDetails,
+    groupConfigurations,
+  } = otherLinkURLParams;
+
+  const showOtherLink = (params) => !pathname.includes(params);
+  const generateLegacyURL = (urlParameter) => {
+    const referObj = new URL(`${urlParameter}/${courseId}`, getConfig().STUDIO_BASE_URL);
+    return referObj.href;
+  };
+
+  const scheduleAndDetailsDestination = generateLegacyURL(scheduleAndDetails);
+  const gradingDestination = generateLegacyURL(grading);
+  const courseTeamDestination = generateLegacyURL(courseTeam);
+  const advancedSettingsDestination = generateLegacyURL(advancedSettings);
+  const groupConfigurationsDestination = generateLegacyURL(groupConfigurations);
 
   return (
     <aside className={classNames('help-sidebar', className)}>
@@ -61,73 +52,47 @@ const HelpSidebar = ({
             aria-label={intl.formatMessage(messages.sidebarTitleOther)}
           >
             <ul className="p-0 mb-0">
-              {!scheduleAndDetailsDestination.includes(pathname) && (
-                <li className="help-sidebar-other-link">
-                  <Hyperlink destination={scheduleAndDetailsDestination}>
-                    {intl.formatMessage(
-                      messages.sidebarLinkToScheduleAndDetails,
-                    )}
-                  </Hyperlink>
-                </li>
+              {showOtherLink(scheduleAndDetails) && (
+                <HelpSidebarLink
+                  pathToPage={scheduleAndDetailsDestination}
+                  title={intl.formatMessage(
+                    messages.sidebarLinkToScheduleAndDetails,
+                  )}
+                />
               )}
-              {!gradingDestination.includes(pathname) && (
-                <li className="help-sidebar-other-link">
-                  <Hyperlink rel="noopener" destination={gradingDestination}>
-                    {intl.formatMessage(messages.sidebarLinkToGrading)}
-                  </Hyperlink>
-                </li>
+              {showOtherLink(grading) && (
+                <HelpSidebarLink
+                  pathToPage={gradingDestination}
+                  title={intl.formatMessage(messages.sidebarLinkToGrading)}
+                />
               )}
-              {!courseTeamDestination.includes(pathname) && (
-                <li className="help-sidebar-other-link">
-                  <Hyperlink rel="noopener" destination={courseTeamDestination}>
-                    {intl.formatMessage(messages.sidebarLinkToCourseTeam)}
-                  </Hyperlink>
-                </li>
+              {showOtherLink(courseTeam) && (
+                <HelpSidebarLink
+                  pathToPage={courseTeamDestination}
+                  title={intl.formatMessage(messages.sidebarLinkToCourseTeam)}
+                />
               )}
-              {proctoredExamSettingsUrl
-                && !proctoredExamSettingsUrl.includes(pathname) && (
-                <li className="help-sidebar-other-link">
-                  <Hyperlink
-                    rel="noopener"
-                    destination={proctoredExamSettingsUrl}
-                  >
-                    {intl.formatMessage(
-                      messages.sidebarLinkToProctoredExamSettings,
-                    )}
-                  </Hyperlink>
-                </li>
+              {showOtherLink(groupConfigurations) && (
+                <HelpSidebarLink
+                  pathToPage={groupConfigurationsDestination}
+                  title={intl.formatMessage(
+                    messages.sidebarLinkToGroupConfigurations,
+                  )}
+                />
               )}
-              {!groupConfigurationsDestination.href.includes(pathname) && (
-                <li className="help-sidebar-other-link">
-                  <Hyperlink
-                    rel="noopener"
-                    destination={groupConfigurationsDestination.href}
-                  >
-                    {intl.formatMessage(
-                      messages.sidebarLinkToGroupConfigurations,
-                    )}
-                  </Hyperlink>
-                </li>
+              {showOtherLink(advancedSettings) && (
+                <HelpSidebarLink
+                  pathToPage={advancedSettingsDestination}
+                  title={intl.formatMessage(messages.sidebarLinkToAdvancedSettings)}
+                />
               )}
-              {!advancedSettingsDestination.includes(pathname) && (
-                <li className="help-sidebar-other-link">
-                  <Hyperlink
-                    rel="noopener"
-                    destination={advancedSettingsDestination}
-                  >
-                    {intl.formatMessage(messages.sidebarLinkToAdvancedSettings)}
-                  </Hyperlink>
-                </li>
-              )}
-              {!proctoredExamSettingsDestination.href.includes(pathname) && !gradingDestination.includes(pathname) && (
-                <li className="help-sidebar-other-link">
-                  <Hyperlink
-                    rel="noopener"
-                    destination={proctoredExamSettingsDestination}
-                  >
-                    {intl.formatMessage(messages.sidebarLinkToProctoredExamSettings)}
-                  </Hyperlink>
-                </li>
+              {proctoredExamSettingsUrl && (
+                <HelpSidebarLink
+                  pathToPage={proctoredExamSettingsUrl}
+                  title={intl.formatMessage(
+                    messages.sidebarLinkToProctoredExamSettings,
+                  )}
+                />
               )}
             </ul>
           </nav>

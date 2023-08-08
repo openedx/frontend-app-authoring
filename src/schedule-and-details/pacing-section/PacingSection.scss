@@ -1,0 +1,27 @@
+.pacing-section {
+  .pgn__form-group {
+    p.pgn__form-label {
+      font: normal .875rem/1.5rem $font-family-base;
+    }
+
+    label.pgn__form-label {
+      font: normal $font-weight-bold .75rem/1.25rem $font-family-base;
+      color: $text-color-weak;
+    }
+
+    .pgn__form-control-description {
+      font: normal .75rem/1.5rem $font-family-base;
+      color: $black;
+    }
+  }
+
+  input.pgn__form-radio-input {
+    padding: .5rem;
+    height: $spacer;
+    width: $spacer;
+  }
+
+  .pgn__form-control-set {
+    padding: $spacer 0 0 2.5rem;
+  }
+}

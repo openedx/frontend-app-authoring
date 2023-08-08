@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-import SettingAlert from '.';
+import AlertMessage from '.';
 
 const alertTitle = 'Test Title';
 const alertDescription = 'Test Description';
@@ -10,7 +10,7 @@ const alertClassName = 'custom-class';
 
 const RootWrapper = () => (
   <IntlProvider locale="en">
-    <SettingAlert
+    <AlertMessage
       title={alertTitle}
       description={alertDescription}
       className={alertClassName}
@@ -18,7 +18,7 @@ const RootWrapper = () => (
   </IntlProvider>
 );
 
-describe('<SettingAlert />', () => {
+describe('<AlertMessage />', () => {
   it('renders the title and description correctly', () => {
     const { getByText } = render(<RootWrapper />);
     const titleElement = getByText(alertTitle);

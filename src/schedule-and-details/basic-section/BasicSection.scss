@@ -1,0 +1,31 @@
+.basic-section {
+  .basic-info-list {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.75rem;
+    padding-inline-start: 0;
+    list-style-type: none;
+  }
+
+  .pgn__pageBanner-component {
+    @include pgn-box-shadow(1, "down");
+
+    background-color: $white;
+    border-radius: .375rem;
+  }
+
+  .pgn__pageBanner-content {
+    align-items: flex-start;
+    padding: 1.5rem;
+    flex-direction: column;
+  }
+
+  .pgn__pageBanner-dismissButtonContainer {
+    margin: 1.5rem 1.5rem 0 0;
+    align-self: baseline;
+  }
+
+  .pgn__card-header-content {
+    margin-top: .75rem;
+  }
+}

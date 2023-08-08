@@ -1,0 +1,15 @@
+.credit-section {
+  .credit-help-text {
+    padding-top: $spacer;
+    margin-bottom: .5rem;
+    font: normal .875rem/1.5rem $font-family-base;
+  }
+
+  .credit-info-list {
+    display: flex;
+    justify-content: space-between;
+    margin: 1.25rem 0 1.75rem;
+    padding-inline-start: 0;
+    list-style-type: none;
+  }
+}

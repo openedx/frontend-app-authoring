@@ -1,0 +1,30 @@
+@import "./basic-section/BasicSection";
+@import "./credit-section/CreditSection";
+@import "./pacing-section/PacingSection";
+@import "./details-section/DetailsSection";
+@import "./introducing-section/IntroducingSection";
+@import "./schedule-section/ScheduleSection";
+@import "./schedule-section/certificate-display-row/CertificateDisplayRow";
+@import "./learning-outcomes-section/LearningOutcomes";
+@import "./instructors-section/InstructorsSection";
+@import "./requirements-section/RequirementsSection";
+@import "./license-section/LicenseSection";
+
+.section-container {
+  &:not(:last-child) {
+    margin-bottom: 1.75rem;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .75rem;
+    border-bottom: $border-width solid $light-400;
+
+    h2 {
+      color: $black;
+      margin-bottom: .75rem;
+    }
+  }
+}
