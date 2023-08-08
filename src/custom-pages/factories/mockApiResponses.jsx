@@ -52,7 +52,7 @@ export const generateXblockData = (
   data: '<p>test</p>',
 });
 
-export const generateUpdateVisiblityApiResponse = (
+export const generateUpdateVisibilityApiResponse = (
   blockId,
   visibility,
 ) => ({
