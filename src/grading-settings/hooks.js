@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+
 import { getGradingValues, getSortedGrades } from './grading-scale/utils';
 
 const useConvertGradeCutoffs = (
@@ -16,6 +18,7 @@ const useConvertGradeCutoffs = (
 };
 
 const useUpdateGradingData = (gradingSettingsData, setOverrideInternetConnectionAlert, setShowSuccessAlert) => {
+  const uniqueId = uuidv4();
   const [gradingData, setGradingData] = useState({});
   const [showSavePrompt, setShowSavePrompt] = useState(false);
   const resetDataRef = useRef(false);
@@ -44,7 +47,7 @@ const useUpdateGradingData = (gradingSettingsData, setOverrideInternetConnection
     setGradingData(prevState => ({
       ...prevState,
       graders: [...prevState.graders, {
-        id: graders.length,
+        id: uniqueId,
         dropCount: 0,
         minCount: 1,
         shortLabel: '',

@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   alertWarning: {
     id: 'course-authoring.advanced-settings.alert.warning',
-    defaultMessage: 'You`ve made some changes',
+    defaultMessage: "You've made some changes",
   },
   alertWarningDescriptions: {
     id: 'course-authoring.advanced-settings.alert.warning.descriptions',

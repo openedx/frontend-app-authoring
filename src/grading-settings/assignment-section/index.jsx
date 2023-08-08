@@ -65,7 +65,7 @@ const AssignmentSection = ({
 
   return (
     <div className="assignment-items">
-      {graders?.map((gradeField, idx) => {
+      {graders?.map((gradeField) => {
         const courseAssignmentUsage = courseAssignmentLists[gradeField.type.toLowerCase()];
         const showDefinedCaseAlert = gradeField.minCount !== courseAssignmentUsage?.length
             && Boolean(courseAssignmentUsage?.length);
@@ -76,8 +76,8 @@ const AssignmentSection = ({
             <ol className="course-grading-assignment-items p-0 mb-4">
               <AssignmentTypeName
                 value={gradeField.type}
-                errorEffort={errorList[`${type}-${idx}`]}
-                onChange={(e) => handleAssignmentChange(e, idx)}
+                errorEffort={errorList[`${type}-${gradeField.id}`]}
+                onChange={(e) => handleAssignmentChange(e, gradeField.id)}
               />
               <AssignmentItem
                 className="course-grading-assignment-abbreviation"
@@ -86,7 +86,7 @@ const AssignmentSection = ({
                 type="text"
                 name="shortLabel"
                 value={gradeField.shortLabel}
-                onChange={(e) => handleAssignmentChange(e, idx)}
+                onChange={(e) => handleAssignmentChange(e, gradeField.id)}
               />
               <AssignmentItem
                 className="course-grading-assignment-total-grade"
@@ -98,8 +98,8 @@ const AssignmentSection = ({
                 errorMsg={intl.formatMessage(messages.weightOfTotalGradeErrorMessage)}
                 name={weight}
                 value={gradeField.weight}
-                onChange={(e) => handleAssignmentChange(e, idx)}
-                errorEffort={errorList[`${weight}-${idx}`]}
+                onChange={(e) => handleAssignmentChange(e, gradeField.id)}
+                errorEffort={errorList[`${weight}-${gradeField.id}`]}
               />
               <AssignmentItem
                 className="course-grading-assignment-total-number"
@@ -110,8 +110,8 @@ const AssignmentSection = ({
                 errorMsg={intl.formatMessage(messages.totalNumberErrorMessage)}
                 name={minCount}
                 value={gradeField.minCount}
-                onChange={(e) => handleAssignmentChange(e, idx)}
-                errorEffort={errorList[`${minCount}-${idx}`]}
+                onChange={(e) => handleAssignmentChange(e, gradeField.id)}
+                errorEffort={errorList[`${minCount}-${gradeField.id}`]}
               />
               <AssignmentItem
                 className="course-grading-assignment-number-droppable"
@@ -123,11 +123,11 @@ const AssignmentSection = ({
                 name={dropCount}
                 gradeField={gradeField}
                 value={gradeField.dropCount}
-                onChange={(e) => handleAssignmentChange(e, idx)}
+                onChange={(e) => handleAssignmentChange(e, gradeField.id)}
                 secondErrorMsg={intl.formatMessage(messages.numberOfDroppableSecondErrorMessage, {
                   type: gradeField.type,
                 })}
-                errorEffort={errorList[`${dropCount}-${idx}`]}
+                errorEffort={errorList[`${dropCount}-${gradeField.id}`]}
               />
             </ol>
             {showDefinedCaseAlert && (
@@ -178,7 +178,7 @@ const AssignmentSection = ({
               className="course-grading-assignment-delete-btn"
               variant="tertiary"
               size="sm"
-              onClick={() => handleRemoveAssignment(idx)}
+              onClick={() => handleRemoveAssignment(gradeField.id)}
             >
               {intl.formatMessage(messages.assignmentDeleteButton)}
             </Button>
