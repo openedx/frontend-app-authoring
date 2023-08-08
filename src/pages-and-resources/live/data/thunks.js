@@ -1,6 +1,7 @@
 import { history } from '@edx/frontend-platform';
 import { addModel, addModels, updateModel } from '../../../generic/model-store';
 import {
+  configureZoomGlobalSettingsIfExists,
   getLiveConfiguration,
   getLiveProviders,
   postLiveConfiguration,
@@ -73,6 +74,12 @@ export function saveLiveConfiguration(courseId, config) {
         dispatch(updateSaveStatus({ status: RequestStatus.FAILED }));
       }
     }
+  };
+}
+
+export function configureZoomGlobalSettings(courseId) {
+  return async () => {
+    await configureZoomGlobalSettingsIfExists(courseId);
   };
 }
 

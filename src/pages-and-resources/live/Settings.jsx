@@ -5,7 +5,7 @@ import { SelectableBox, Icon } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import { fetchLiveData, saveLiveConfiguration, saveLiveConfigurationAsDraft } from './data/thunks';
+import { configureZoomGlobalSettings, fetchLiveData, saveLiveConfiguration, saveLiveConfigurationAsDraft } from './data/thunks';
 import { selectApp } from './data/slice';
 import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
 import { useModel } from '../../generic/model-store';
@@ -71,6 +71,7 @@ const LiveSettings = ({
   };
 
   useEffect(() => {
+    dispatch(configureZoomGlobalSettings(courseId))
     dispatch(fetchLiveData(courseId));
   }, [courseId]);
 
