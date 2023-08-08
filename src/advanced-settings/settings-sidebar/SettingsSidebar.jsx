@@ -9,8 +9,12 @@ import PropTypes from 'prop-types';
 import HelpSidebar from '../../generic/help-sidebar';
 import messages from './messages';
 
-const SettingsSidebar = ({ intl, courseId }) => (
-  <HelpSidebar courseId={courseId} showOtherSettings>
+const SettingsSidebar = ({ intl, courseId, proctoredExamSettingsUrl }) => (
+  <HelpSidebar
+    courseId={courseId}
+    proctoredExamSettingsUrl={proctoredExamSettingsUrl}
+    showOtherSettings
+  >
     <h4 className="help-sidebar-about-title">
       {intl.formatMessage(messages.about)}
     </h4>
@@ -30,9 +34,14 @@ const SettingsSidebar = ({ intl, courseId }) => (
   </HelpSidebar>
 );
 
+SettingsSidebar.defaultProps = {
+  proctoredExamSettingsUrl: '',
+};
+
 SettingsSidebar.propTypes = {
   intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
+  proctoredExamSettingsUrl: PropTypes.string,
 };
 
 export default injectIntl(SettingsSidebar);
