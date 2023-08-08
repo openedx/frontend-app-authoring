@@ -19,7 +19,7 @@ export const returnUrl = ({ studioEndpointUrl, unitUrl, learningContextId }) => 
   if (unitUrl) {
     return unit({ studioEndpointUrl, unitUrl });
   }
-  throw new Error('No unit url for return url');
+  return '';
 };
 
 export const block = ({ studioEndpointUrl, blockId }) => (

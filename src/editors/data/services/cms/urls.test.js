@@ -55,8 +55,8 @@ describe('cms url methods', () => {
         .toEqual(`${studioEndpointUrl}/container/${unitUrl.data.ancestors[0].id}`);
     });
     it('throws error if no unit url', () => {
-      expect(() => { returnUrl({ studioEndpointUrl, unitUrl: null, learningContextId: courseId }); })
-        .toThrow('No unit url for return url');
+      expect(returnUrl({ studioEndpointUrl, unitUrl: null, learningContextId: courseId }))
+        .toEqual('');
     });
     it('returns the library page when given the library', () => {
       expect(libraryV1({ studioEndpointUrl, learningContextId: libraryV1Id }))
