@@ -39,7 +39,12 @@ const FilesAndUploads = ({
 }) => {
   const dispatch = useDispatch();
   const defaultVal = 'card';
-  const columnSizes = { xs: 12, sm: 6, lg: 3 };
+  const columnSizes = {
+    xs: 12,
+    sm: 6,
+    md: 4,
+    lg: 2,
+  };
   const [currentView, setCurrentView] = useState(defaultVal);
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
   const [isAddOpen, setAddOpen, setAddClose] = useToggle(false);
@@ -144,30 +149,29 @@ const FilesAndUploads = ({
 
   return (
     <FilesAndUploadsProvider courseId={courseId}>
-      <main className="container p-4 pt-5">
-        <ErrorAlert
-          hideHeading={false}
-          isError={addAssetStatus === RequestStatus.FAILED}
-        >
-          {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.upload })}
-        </ErrorAlert>
-        <ErrorAlert
-          hideHeading={false}
-          isError={deleteAssetStatus === RequestStatus.FAILED}
-        >
-          {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.delete })}
-        </ErrorAlert>
-        <ErrorAlert
-          hideHeading={false}
-          isError={saveAssetStatus === RequestStatus.FAILED}
-        >
-          {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.lock })}
-        </ErrorAlert>
-        <div className="small gray-700">
-          {intl.formatMessage(messages.subheading)}
-        </div>
-        <div className="h2">
-          <FormattedMessage {...messages.heading} />
+      <main className="containerpt-5">
+        <div className="p-4">
+          <ErrorAlert
+            hideHeading={false}
+            isError={addAssetStatus === RequestStatus.FAILED}
+          >
+            {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.upload })}
+          </ErrorAlert>
+          <ErrorAlert
+            hideHeading={false}
+            isError={deleteAssetStatus === RequestStatus.FAILED}
+          >
+            {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.delete })}
+          </ErrorAlert>
+          <ErrorAlert
+            hideHeading={false}
+            isError={saveAssetStatus === RequestStatus.FAILED}
+          >
+            {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.lock })}
+          </ErrorAlert>
+          <div className="h2">
+            <FormattedMessage {...messages.heading} />
+          </div>
         </div>
         <DataTable
           isFilterable
@@ -234,7 +238,7 @@ const FilesAndUploads = ({
           ) : (
             <div data-testid="files-data-table">
               <DataTable.TableControlBar />
-              { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={4} /> }
+              { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={6} /> }
               { currentView === 'list' && <CardView CardComponent={fileCard} columnSizes={{ xs: 12 }} selectionPlacement="left" skeletonCardCount={4} /> }
               <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
               <DataTable.TableFooter />

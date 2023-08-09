@@ -1,5 +1,10 @@
 import { InsertDriveFile, Terminal, AudioFile } from '@edx/paragon/icons';
+import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import FILES_AND_UPLOAD_TYPE_FILTERS from './constant';
+
+ensureConfig([
+  'STUDIO_BASE_URL',
+], 'Course Apps API service');
 
 export const getWrapperType = (assets) => {
   const assetsWithWraperType = [];
@@ -19,9 +24,9 @@ export const getWrapperType = (assets) => {
   return assetsWithWraperType;
 };
 
-export const getIcon = ({ thumbnail, wrapperType, externalUrl }) => {
+export const getSrc = ({ thumbnail, wrapperType, externalUrl }) => {
   if (thumbnail) {
-    return externalUrl;
+    return externalUrl || `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
   }
   switch (wrapperType) {
   case 'document':
