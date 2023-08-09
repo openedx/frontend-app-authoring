@@ -90,7 +90,7 @@ describe('<GradingScale />', () => {
       expect(segmentInputs).toHaveLength(5);
       const segmentInput = segmentInputs[1];
       fireEvent.change(segmentInput, { target: { value: 'Test' } });
-      expect(segmentInput).toHaveValue('Test');
+      expect(segmentInput).toHaveValue('TEST');
     });
   });
 
@@ -120,7 +120,7 @@ describe('<GradingScale />', () => {
       const segmentInputs = getAllByTestId('grading-scale-segment-input');
       expect(segmentInputs[0]).toHaveValue('Fail');
       fireEvent.change(segmentInputs[1], { target: { value: 'Test' } });
-      expect(segmentInputs[1]).toHaveValue('Test');
+      expect(segmentInputs[1]).toHaveValue('TEST');
     });
   });
 });

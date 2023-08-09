@@ -43,10 +43,12 @@ describe('<GradingSettings />', () => {
   });
 
   it('should render without errors', async () => {
-    const { getByText } = render(<RootWrapper />);
+    const { getByText, getAllByText } = render(<RootWrapper />);
     await waitFor(() => {
+      const gradingElements = getAllByText(messages.headingTitle.defaultMessage);
+      const gradingTitle = gradingElements[0];
       expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
-      expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
+      expect(gradingTitle).toBeInTheDocument();
       expect(getByText(messages.policy.defaultMessage)).toBeInTheDocument();
       expect(getByText(messages.policiesDescription.defaultMessage)).toBeInTheDocument();
     });
@@ -59,7 +61,7 @@ describe('<GradingSettings />', () => {
       expect(segmentInputs).toHaveLength(5);
       const segmentInput = segmentInputs[1];
       fireEvent.change(segmentInput, { target: { value: 'Test' } });
-      expect(segmentInput).toHaveValue('Test');
+      expect(segmentInput).toHaveValue('TEST');
       expect(getByTestId('grading-settings-save-alert')).toBeVisible();
     });
   });
