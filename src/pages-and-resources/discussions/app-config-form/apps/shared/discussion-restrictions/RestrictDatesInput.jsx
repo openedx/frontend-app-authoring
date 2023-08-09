@@ -15,6 +15,7 @@ const RestictDatesInput = ({
   feedbackClasses,
   formGroupClasses,
   fieldNameCommonBase,
+  dataTestId,
 }) => {
   const {
     handleChange, handleBlur, errors, touched,
@@ -49,6 +50,7 @@ const RestictDatesInput = ({
         className={fieldClasses}
         onBlur={handleFocusOut}
         onFocus={handleSetFocus}
+        data-testId={dataTestId}
       />
       <FieldFeedback
         feedbackCondition={inFocus}
@@ -72,6 +74,7 @@ RestictDatesInput.propTypes = {
   fieldClasses: PropTypes.string,
   formGroupClasses: PropTypes.string,
   fieldNameCommonBase: PropTypes.string.isRequired,
+  dataTestId: PropTypes.string,
 };
 
 RestictDatesInput.defaultProps = {
@@ -79,6 +82,7 @@ RestictDatesInput.defaultProps = {
   helpText: '',
   feedbackClasses: '',
   formGroupClasses: '',
+  dataTestId: '',
 };
 
 export default React.memo(RestictDatesInput);
