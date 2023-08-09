@@ -35,11 +35,8 @@ to the `relevant tutor-mfe documentation`_ to get started using it.
 Cloning and Startup
 ===================
 
-In the following steps, replace "[PLACEHOLDER]" with the name of the repo you
-created when copying this template above.
 
-
-1. Clone your new repo:
+1. Clone the repo:
 
   ``git clone https://github.com/openedx/frontend-app-course-authoring.git``
 
@@ -48,18 +45,14 @@ created when copying this template above.
    The current version of the micro-frontend build scripts support node 18.
    Using other major versions of node *may* work, but this is unsupported.  For
    convenience, this repository includes an .nvmrc file to help in setting the
-   correct node version via `nvm <https://github.com/nvm-sh/nvm>`_.
+   correct node version via `nvm use`_.
 
 3. Install npm dependencies:
 
   ``cd frontend-app-course-authoring && npm install``
 
-4. Update the application port to use for local development:
 
-   Default port is 2001. If this does not work for you, update the line
-   `PORT=2001` to your port in all .env.* files
-
-5. Start the dev server:
+4. Start the dev server:
 
   ``npm start``
 
@@ -257,7 +250,7 @@ channel`_.
 For anything non-trivial, the best path is to open an issue in this repository
 with as many details about the issue you are facing as you can provide.
 
-https://github.com/openedx/frontend-app-learning/issues
+https://github.com/openedx/frontend-app-course-authoring/issues
 
 For more information about these options, see the `Getting Help`_ page.
 
