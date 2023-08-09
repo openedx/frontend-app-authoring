@@ -23,13 +23,13 @@ export const returnUrl = ({ studioEndpointUrl, unitUrl, learningContextId }) => 
 };
 
 export const block = ({ studioEndpointUrl, blockId }) => (
-  blockId.startsWith('block-v1')
+  blockId.includes('block-v1')
     ? `${studioEndpointUrl}/xblock/${blockId}`
     : `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/fields/`
 );
 
 export const blockAncestor = ({ studioEndpointUrl, blockId }) => {
-  if (blockId.startsWith('block-v1')) {
+  if (blockId.includes('block-v1')) {
     return `${block({ studioEndpointUrl, blockId })}?fields=ancestorInfo`;
   }
   // this url only need to get info to build the return url, which isn't used by V2 blocks
@@ -37,7 +37,7 @@ export const blockAncestor = ({ studioEndpointUrl, blockId }) => {
 };
 
 export const blockStudioView = ({ studioEndpointUrl, blockId }) => (
-  blockId.startsWith('block-v1')
+  blockId.includes('block-v1')
     ? `${block({ studioEndpointUrl, blockId })}/studio_view`
     : `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/view/studio_view/`
 );

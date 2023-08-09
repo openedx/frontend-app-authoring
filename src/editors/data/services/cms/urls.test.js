@@ -24,8 +24,9 @@ describe('cms url methods', () => {
   const blockId = 'block-v1-blOckIDTeST123';
   const v2BlockId = 'blOckIDTeST123';
   const learningContextId = 'lEarnIngCOntextId123';
+  const libraryLearningContextId = 'library-v1:libaryId123';
   const courseId = 'course-v1:courseId123';
-  const libraryV1Id = 'library-v1:libaryId123';
+  const libraryV1Id = 'lib-block-v1:libaryId123';
   const libraryV2Id = 'lib:libaryId123';
   const language = 'la';
   const handout = '/aSSet@hANdoUt';
@@ -43,8 +44,8 @@ describe('cms url methods', () => {
       },
     };
     it('returns the library page when given the v1 library', () => {
-      expect(returnUrl({ studioEndpointUrl, unitUrl, learningContextId: libraryV1Id }))
-        .toEqual(`${studioEndpointUrl}/library/${libraryV1Id}`);
+      expect(returnUrl({ studioEndpointUrl, unitUrl, learningContextId: libraryLearningContextId }))
+        .toEqual(`${studioEndpointUrl}/library/${libraryLearningContextId}`);
     });
     it('throws error when given the v2 library', () => {
       expect(() => { returnUrl({ studioEndpointUrl, unitUrl, learningContextId: libraryV2Id }); })
