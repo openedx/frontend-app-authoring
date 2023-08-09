@@ -14,7 +14,11 @@ import SubHeader from '../generic/sub-header/SubHeader';
 import SectionSubHeader from '../generic/section-sub-header';
 import { STATEFUL_BUTTON_STATES } from '../constants';
 import {
-  getGradingSettings, getCourseAssignmentLists, getSavingStatus, getLoadingStatus, getCourseSettings,
+  getGradingSettings,
+  getCourseAssignmentLists,
+  getSavingStatus,
+  getLoadingStatus,
+  getCourseSettings,
 } from './data/selectors';
 import { fetchGradingSettings, sendGradingSetting, fetchCourseSettingsQuery } from './data/thunks';
 import GradingScale from './grading-scale/GradingScale';
@@ -200,7 +204,11 @@ const GradingSettings = ({ intl, courseId }) => {
                 </article>
               </Layout.Element>
               <Layout.Element>
-                <GradingSidebar courseId={courseId} intl={intl} />
+                <GradingSidebar
+                  courseId={courseId}
+                  intl={intl}
+                  proctoredExamSettingsUrl={courseSettingsData.mfeProctoredExamSettingsUrl}
+                />
               </Layout.Element>
             </Layout>
           </section>
