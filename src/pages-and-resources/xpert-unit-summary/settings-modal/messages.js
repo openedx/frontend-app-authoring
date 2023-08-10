@@ -33,9 +33,13 @@ const messages = defineMessages({
     id: 'course-authoring.pages-resources.app-settings-modal.reset-all-units',
     defaultMessage: 'Reset all units',
   },
-  resetAllUnitsTooltip: {
-    id: 'course-authoring.pages-resources.app-settings-modal.reset-all-units-tooltip',
-    defaultMessage: 'Immediately reset any unit-level changes and {state} "Enable summaries" on all units.',
+  resetAllUnitsTooltipChecked: {
+    id: 'course-authoring.pages-resources.app-settings-modal.reset-all-units-tooltip.checked',
+    defaultMessage: 'Immediately reset any unit-level changes and checked "Enable summaries" on all units.',
+  },
+  resetAllUnitsTooltipUnchecked: {
+    id: 'course-authoring.pages-resources.app-settings-modal.reset-all-units-tooltip.unchecked',
+    defaultMessage: 'Immediately reset any unit-level changes and unchecked "Enable summaries" on all units.',
   },
   reset: {
     id: 'course-authoring.pages-resources.app-settings-modal.reset',

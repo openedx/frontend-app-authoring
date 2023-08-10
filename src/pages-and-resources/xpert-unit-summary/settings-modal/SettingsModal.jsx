@@ -144,12 +144,14 @@ const ResetUnitsButton = ({
 
   if (!visible) { return null; }
 
+  const messageKey = checked === 'true' ? 'resetAllUnitsTooltipChecked' : 'resetAllUnitsTooltipUnchecked';
+
   return (
     <OverlayTrigger
       placement="right"
       overlay={(
         <Tooltip id={`tooltip-reset-${checked}`}>
-          {intl.formatMessage(messages.resetAllUnitsTooltip, { state: checked === 'true' ? 'checked' : 'unchecked' })}
+          {intl.formatMessage(messages[messageKey])}
         </Tooltip>
       )}
     >
