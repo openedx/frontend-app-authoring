@@ -3,45 +3,65 @@ import { StrictDict, camelizeKeys } from '../../../utils';
 import { actions } from '..';
 import * as requests from './requests';
 import * as module from './app';
+import { RequestKeys } from '../../constants/requests';
 
 export const fetchBlock = () => (dispatch) => {
   dispatch(requests.fetchBlock({
     onSuccess: (response) => dispatch(actions.app.setBlockValue(response)),
-    // eslint-disable-next-line
-    onFailure: (e) => console.log({ fetchFailure: e }),
+    onFailure: (error) => dispatch(actions.requests.failRequest({
+      requestKey: RequestKeys.fetchBlock,
+      error,
+    })),
   }));
 };
 
 export const fetchStudioView = () => (dispatch) => {
   dispatch(requests.fetchStudioView({
     onSuccess: (response) => dispatch(actions.app.setStudioView(response)),
-    onFailure: (e) => dispatch(actions.app.setStudioView(e)),
+    onFailure: (error) => dispatch(actions.requests.failRequest({
+      requestKey: RequestKeys.fetchStudioView,
+      error,
+    })),
   }));
 };
 
 export const fetchUnit = () => (dispatch) => {
   dispatch(requests.fetchUnit({
     onSuccess: (response) => dispatch(actions.app.setUnitUrl(response)),
-    onFailure: (e) => dispatch(actions.app.setUnitUrl(e)),
+    onFailure: (error) => dispatch(actions.requests.failRequest({
+      requestKey: RequestKeys.fetchUnit,
+      error,
+    })),
   }));
 };
 
 export const fetchAssets = () => (dispatch) => {
   dispatch(requests.fetchAssets({
     onSuccess: (response) => dispatch(actions.app.setAssets(response)),
+    onFailure: (error) => dispatch(actions.requests.failRequest({
+      requestKey: RequestKeys.fetchAssets,
+      error,
+    })),
   }));
 };
 
 export const fetchVideos = () => (dispatch) => {
   dispatch(requests.fetchVideos({
     onSuccess: (response) => dispatch(actions.app.setVideos(response.data.videos)),
+    onFailure: (error) => dispatch(actions.requests.failRequest({
+      requestKey: RequestKeys.fetchVideos,
+      error,
+    })),
   }));
 };
 
 export const fetchCourseDetails = () => (dispatch) => {
   dispatch(requests.fetchCourseDetails({
     onSuccess: (response) => dispatch(actions.app.setCourseDetails(response)),
-    onFailure: (e) => dispatch(actions.app.setCourseDetails(e)),
+    onFailure: (error) => dispatch(actions.requests.failRequest({
+      requestKey: RequestKeys.fetchCourseDetails,
+      error,
+    })),
   }));
 };
 
