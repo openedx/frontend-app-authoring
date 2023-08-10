@@ -112,12 +112,12 @@ describe('XpertUnitSummarySettings', () => {
       renderComponent();
     });
 
-    test('Shows enabled if enabled from backend', async () => {
+    test('Shows switch on if enabled from backend', async () => {
       expect(container.querySelector('#enable-xpert-unit-summary-toggle').checked).toBeTruthy();
       expect(queryByTestId(container, 'enable-badge')).toBeTruthy();
     });
 
-    test('Does not show enabled if disabled from backend', async () => {
+    test('Shows switch on if disabled from backend', async () => {
       axiosMock.onGet(API.getXpertSettingsUrl(courseId))
         .reply(200, generateCourseLevelAPIRepsonse({
           success: true,
@@ -126,8 +126,25 @@ describe('XpertUnitSummarySettings', () => {
 
       renderComponent();
       await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
-      expect(container.querySelector('#enable-xpert-unit-summary-toggle').checked).not.toBeTruthy();
-      expect(queryByTestId(container, 'enable-badge')).not.toBeTruthy();
+      expect(container.querySelector('#enable-xpert-unit-summary-toggle').checked).toBeTruthy();
+      expect(queryByTestId(container, 'enable-badge')).toBeTruthy();
+    });
+
+    test('Shows enable radio selected if enabled from backend', async () => {
+      await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
+      expect(queryByTestId(container, 'enable-radio').checked).toBeTruthy();
+    });
+
+    test('Shows disable radio selected if enabled from backend', async () => {
+      axiosMock.onGet(API.getXpertSettingsUrl(courseId))
+        .reply(200, generateCourseLevelAPIRepsonse({
+          success: true,
+          enabled: false,
+        }));
+
+      renderComponent();
+      await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
+      expect(queryByTestId(container, 'disable-radio').checked).toBeTruthy();
     });
   });
 
@@ -136,7 +153,7 @@ describe('XpertUnitSummarySettings', () => {
       axiosMock.onGet(API.getXpertSettingsUrl(courseId))
         .reply(400, generateCourseLevelAPIRepsonse({
           success: false,
-          enabled: false,
+          enabled: undefined,
         }));
 
       renderComponent();
@@ -151,6 +168,12 @@ describe('XpertUnitSummarySettings', () => {
 
   describe('saving configuration changes', () => {
     beforeEach(() => {
+      axiosMock.onGet(API.getXpertSettingsUrl(courseId))
+        .reply(200, generateCourseLevelAPIRepsonse({
+          success: true,
+          enabled: false,
+        }));
+
       axiosMock.onPost(API.getXpertSettingsUrl(courseId))
         .reply(200, generateCourseLevelAPIRepsonse({
           success: true,
@@ -164,8 +187,10 @@ describe('XpertUnitSummarySettings', () => {
       jest.spyOn(API, 'postXpertSettings');
 
       await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
+      expect(queryByTestId(container, 'disable-radio').checked).toBeTruthy();
+      fireEvent.click(queryByTestId(container, 'enable-radio'));
       fireEvent.click(getByText(container, 'Save'));
-      await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).not.toBeTruthy());
+      await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
       expect(API.postXpertSettings).toBeCalled();
     });
   });
@@ -184,6 +209,80 @@ describe('XpertUnitSummarySettings', () => {
 
     test('getting Xpert Plugin configurable status', () => {
       expect(API.getXpertPluginConfigurable).toBeCalled();
+    });
+  });
+
+  describe('removing course configuration', () => {
+    beforeEach(() => {
+      axiosMock.onGet(API.getXpertSettingsUrl(courseId))
+        .reply(200, generateCourseLevelAPIRepsonse({
+          success: true,
+          enabled: true,
+        }));
+
+      axiosMock.onDelete(API.getXpertSettingsUrl(courseId))
+        .reply(200, generateCourseLevelAPIRepsonse({
+          success: true,
+          enabled: undefined,
+        }));
+
+      renderComponent();
+    });
+
+    test('Deleting course configuration', async () => {
+      jest.spyOn(API, 'deleteXpertSettings');
+
+      await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
+      fireEvent.click(container.querySelector('#enable-xpert-unit-summary-toggle'));
+      fireEvent.click(getByText(container, 'Save'));
+      await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
+      expect(API.deleteXpertSettings).toBeCalled();
+    });
+  });
+
+  describe('resetting course units', () => {
+    test('reset all units to be enabled', async () => {
+      axiosMock.onGet(API.getXpertSettingsUrl(courseId))
+        .reply(200, generateCourseLevelAPIRepsonse({
+          success: true,
+          enabled: true,
+        }));
+
+      axiosMock.onPost(API.getXpertSettingsUrl(courseId))
+        .reply(200, generateCourseLevelAPIRepsonse({
+          success: true,
+          enabled: true,
+        }));
+
+      renderComponent();
+
+      jest.spyOn(API, 'postXpertSettings');
+
+      await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
+      fireEvent.click(queryByTestId(container, 'reset-units'));
+      expect(API.postXpertSettings).toBeCalledWith(courseId, { reset: true, enabled: true });
+    });
+
+    test('reset all units to be disabled', async () => {
+      axiosMock.onGet(API.getXpertSettingsUrl(courseId))
+        .reply(200, generateCourseLevelAPIRepsonse({
+          success: true,
+          enabled: false,
+        }));
+
+      axiosMock.onPost(API.getXpertSettingsUrl(courseId))
+        .reply(200, generateCourseLevelAPIRepsonse({
+          success: true,
+          enabled: false,
+        }));
+
+      renderComponent();
+
+      jest.spyOn(API, 'postXpertSettings');
+
+      await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
+      fireEvent.click(queryByTestId(container, 'reset-units'));
+      expect(API.postXpertSettings).toBeCalledWith(courseId, { reset: true, enabled: false });
     });
   });
 });

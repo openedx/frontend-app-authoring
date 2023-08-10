@@ -4,12 +4,17 @@ import {
   Alert,
   Badge,
   Form,
+  Icon,
   ModalDialog,
+  OverlayTrigger,
   StatefulButton,
+  Tooltip,
   TransitionReplace,
   Hyperlink,
 } from '@edx/paragon';
-import { Info } from '@edx/paragon/icons';
+import {
+  Info, CheckCircleOutline, RotateLeft, SpinnerSimple,
+} from '@edx/paragon/icons';
 
 import { Formik } from 'formik';
 import PropTypes from 'prop-types';
@@ -26,9 +31,9 @@ import Loading from '../../../generic/Loading';
 import { useModel } from '../../../generic/model-store';
 import PermissionDeniedAlert from '../../../generic/PermissionDeniedAlert';
 import { useIsMobile } from '../../../utils';
-import { getLoadingStatus, getSavingStatus } from '../../data/selectors';
-import { updateSavingStatus } from '../../data/slice';
-import { updateXpertSettings } from '../data/thunks';
+import { getLoadingStatus, getSavingStatus, getResetStatus } from '../../data/selectors';
+import { updateSavingStatus, updateResetStatus } from '../../data/slice';
+import { updateXpertSettings, resetXpertSettings, removeXpertSettings } from '../data/thunks';
 import AppConfigFormDivider from '../../discussions/app-config-form/apps/shared/AppConfigFormDivider';
 import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
 import messages from './messages';
@@ -105,6 +110,82 @@ SettingsModalBase.defaultProps = {
   footer: null,
 };
 
+const ResetUnitsButton = ({
+  intl,
+  courseId,
+  checked,
+  visible,
+}) => {
+  const resetStatusRequestStatus = useSelector(getResetStatus);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (resetStatusRequestStatus === RequestStatus.SUCCESSFUL) {
+      setTimeout(() => {
+        dispatch(updateResetStatus({ status: '' }));
+      }, 2000);
+    }
+  }, [resetStatusRequestStatus]);
+
+  const handleResetUnits = () => {
+    dispatch(resetXpertSettings(courseId, { enabled: checked === 'true', reset: true }));
+  };
+
+  const getResetButtonState = () => {
+    switch (resetStatusRequestStatus) {
+    case RequestStatus.PENDING:
+      return 'pending';
+    case RequestStatus.SUCCESSFUL:
+      return 'finish';
+    default:
+      return 'default';
+    }
+  };
+
+  if (!visible) { return null; }
+
+  return (
+    <OverlayTrigger
+      placement="right"
+      overlay={(
+        <Tooltip id={`tooltip-reset-${checked}`}>
+          {intl.formatMessage(messages.resetAllUnitsTooltip, { state: checked === 'true' ? 'checked' : 'unchecked' })}
+        </Tooltip>
+      )}
+    >
+      <StatefulButton
+        className="reset-units-button"
+        labels={{
+          default: intl.formatMessage(messages.resetAllUnits),
+          pending: '',
+          finish: intl.formatMessage(messages.reset),
+        }}
+        icons={{
+          default: <Icon src={RotateLeft} />,
+          pending: <Icon src={SpinnerSimple} className="icon-spin" />,
+          finish: <Icon src={CheckCircleOutline} />,
+        }}
+        state={getResetButtonState()}
+        onClick={handleResetUnits}
+        disabledStates={['pending', 'finish']}
+        variant="outline"
+        data-testid="reset-units"
+      />
+    </OverlayTrigger>
+  );
+};
+
+ResetUnitsButton.propTypes = {
+  intl: intlShape.isRequired,
+  courseId: PropTypes.string.isRequired,
+  checked: PropTypes.oneOf(['true', 'false']).isRequired,
+  visible: PropTypes.bool,
+};
+
+ResetUnitsButton.defaultProps = {
+  visible: false,
+};
+
 const SettingsModal = ({
   intl,
   appId,
@@ -119,6 +200,8 @@ const SettingsModal = ({
   enableAppHelp,
   learnMoreText,
   enableReinitialize,
+  allUnitsEnabledText,
+  noUnitsEnabledText,
 }) => {
   const { courseId } = useContext(PagesAndResourcesContext);
   const loadingStatus = useSelector(getLoadingStatus);
@@ -139,9 +222,15 @@ const SettingsModal = ({
     }
   }, [updateSettingsRequestStatus]);
 
-  const handleFormSubmit = async (values) => {
-    let success = true;
-    success = await dispatch(updateXpertSettings(courseId, values));
+  const handleFormSubmit = async ({ enabled, checked, ...rest }) => {
+    let success;
+    const values = { ...rest, enabled: enabled ? checked === 'true' : undefined };
+
+    if (enabled) {
+      success = await dispatch(updateXpertSettings(courseId, values));
+    } else {
+      success = await dispatch(removeXpertSettings(courseId));
+    }
 
     if (onSettingsSave) {
       success = success && await onSettingsSave(values);
@@ -174,13 +263,15 @@ const SettingsModal = ({
     return (
       <Formik
         initialValues={{
-          enabled: !!xpertSettings?.enabled,
+          enabled: xpertSettings?.enabled !== undefined,
+          checked: xpertSettings?.enabled?.toString() || 'true',
           ...initialValues,
         }}
         validationSchema={
           Yup.object()
             .shape({
               enabled: Yup.boolean(),
+              checked: Yup.string().oneOf(['true', 'false']),
               ...validationSchema,
             })
         }
@@ -206,6 +297,7 @@ const SettingsModal = ({
                   }}
                   state={submitButtonState}
                   onClick={handleFormikSubmit(formikProps)}
+                  disabled={!formikProps.dirty}
                 />
               )}
             >
@@ -220,7 +312,7 @@ const SettingsModal = ({
               <FormSwitchGroup
                 id={`enable-${appId}-toggle`}
                 name="enabled"
-                onChange={(event) => formikProps.handleChange(event)}
+                onChange={formikProps.handleChange}
                 onBlur={formikProps.handleBlur}
                 checked={formikProps.values.enabled}
                 label={(
@@ -240,6 +332,41 @@ const SettingsModal = ({
                   </div>
                 )}
               />
+              {(formikProps.values.enabled || configureBeforeEnable) && (
+                <Form.RadioSet
+                  name="checked"
+                  onChange={formikProps.handleChange}
+                  onBlur={formikProps.handleBlur}
+                  value={formikProps.values.checked}
+                >
+                  <Form.Radio
+                    className="summary-radio m-2 px-3"
+                    data-testid="enable-radio"
+                    value="true"
+                  >
+                    {allUnitsEnabledText}
+                    <ResetUnitsButton
+                      intl={intl}
+                      courseId={courseId}
+                      checked={formikProps.values.checked}
+                      visible={formikProps.values.checked === 'true'}
+                    />
+                  </Form.Radio>
+                  <Form.Radio
+                    className="summary-radio m-2 px-3"
+                    data-testid="disable-radio"
+                    value="false"
+                  >
+                    {noUnitsEnabledText}
+                    <ResetUnitsButton
+                      intl={intl}
+                      courseId={courseId}
+                      checked={formikProps.values.checked}
+                      visible={formikProps.values.checked === 'false'}
+                    />
+                  </Form.Radio>
+                </Form.RadioSet>
+              )}
               {(formikProps.values.enabled || configureBeforeEnable) && children
                 && <AppConfigFormDivider marginAdj={{ default: 0, sm: 0 }} />}
               <AppSettingsForm formikProps={formikProps} showForm={formikProps.values.enabled || configureBeforeEnable}>
@@ -281,6 +408,8 @@ SettingsModal.propTypes = {
   enableAppLabel: PropTypes.string.isRequired,
   enableAppHelp: PropTypes.string.isRequired,
   learnMoreText: PropTypes.string.isRequired,
+  allUnitsEnabledText: PropTypes.string.isRequired,
+  noUnitsEnabledText: PropTypes.string.isRequired,
   configureBeforeEnable: PropTypes.bool,
   enableReinitialize: PropTypes.bool,
 };

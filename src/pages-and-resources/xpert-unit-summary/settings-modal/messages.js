@@ -29,6 +29,18 @@ const messages = defineMessages({
     id: 'course-authoring.pages-resources.app-settings-modal.badge.disabled',
     defaultMessage: 'Disabled',
   },
+  resetAllUnits: {
+    id: 'course-authoring.pages-resources.app-settings-modal.reset-all-units',
+    defaultMessage: 'Reset all units',
+  },
+  resetAllUnitsTooltip: {
+    id: 'course-authoring.pages-resources.app-settings-modal.reset-all-units-tooltip',
+    defaultMessage: 'Immediately reset any unit-level changes and {state} "Enable summaries" on all units.',
+  },
+  reset: {
+    id: 'course-authoring.pages-resources.app-settings-modal.reset',
+    defaultMessage: 'Reset',
+  },
   errorSavingTitle: {
     id: 'course-authoring.pages-resources.app-settings-modal.save-error.title',
     defaultMessage: 'We couldn\'t apply your changes.',
