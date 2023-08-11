@@ -10,18 +10,21 @@ export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, g
   const state = getState();
   const blockValueData = state.app.blockValue.data;
   let rawVideoData = blockValueData.metadata ? blockValueData.metadata : {};
-  const courseData = state.app.courseDetails.data ? state.app.courseDetails.data : {};
   if (selectedVideoId != null) {
     const rawVideos = Object.values(selectors.app.videos(state));
     const selectedVideo = rawVideos.find(video => video.edx_video_id === selectedVideoId);
-    rawVideoData = {
-      edx_video_id: selectedVideo.edx_video_id,
-      thumbnail: selectedVideo.course_video_image_url,
-      duration: selectedVideo.duration,
-      transcriptsFromSelected: selectedVideo.transcripts,
-      selectedVideoTranscriptUrls: selectedVideo.transcript_urls,
-    };
+    if (selectedVideo) {
+      rawVideoData = {
+        edx_video_id: selectedVideo.edx_video_id,
+        thumbnail: selectedVideo.course_video_image_url,
+        duration: selectedVideo.duration,
+        transcriptsFromSelected: selectedVideo.transcripts,
+        selectedVideoTranscriptUrls: selectedVideo.transcript_urls,
+      };
+    }
   }
+
+  const courseData = state.app.courseDetails.data ? state.app.courseDetails.data : {};
   const studioView = state.app.studioView?.data?.html;
   const {
     videoId,
