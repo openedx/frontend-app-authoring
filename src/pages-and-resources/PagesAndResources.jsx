@@ -9,7 +9,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Hyperlink } from '@edx/paragon';
 import messages from './messages';
 import DiscussionsSettings from './discussions';
-import { XpertUnitSummarySettings, fetchXpertPluginConfigurable, appInfo } from './xpert-unit-summary';
+import {
+  XpertUnitSummarySettings,
+  fetchXpertPluginConfigurable,
+  fetchXpertSettings,
+  appInfo as XpertAppInfo,
+} from './xpert-unit-summary';
 
 import PageGrid from './pages/PageGrid';
 import { fetchCourseApps } from './data/thunks';
@@ -19,7 +24,6 @@ import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 import { RequestStatus } from '../data/constants';
 import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 
-const permissonPages = [appInfo];
 const PagesAndResources = ({ courseId, intl }) => {
   const { path, url } = useRouteMatch();
 
@@ -27,6 +31,7 @@ const PagesAndResources = ({ courseId, intl }) => {
   useEffect(() => {
     dispatch(fetchCourseApps(courseId));
     dispatch(fetchXpertPluginConfigurable(courseId));
+    dispatch(fetchXpertSettings(courseId));
   }, [courseId]);
 
   const courseAppIds = useSelector(state => state.pagesAndResources.courseAppIds);
@@ -39,6 +44,11 @@ const PagesAndResources = ({ courseId, intl }) => {
   // Each page here is driven by a course app
   const pages = useModels('courseApps', courseAppIds);
   const xpertPluginConfigurable = useModel('XpertSettings.enabled', 'xpert-unit-summary');
+  const xpertSettings = useModel('XpertSettings', 'xpert-unit-summary');
+  const permissonPages = [{
+    ...XpertAppInfo,
+    enabled: xpertSettings?.enabled,
+  }];
 
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
