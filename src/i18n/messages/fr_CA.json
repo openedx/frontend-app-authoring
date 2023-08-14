@@ -740,5 +740,21 @@
   "course-authoring.course-outline.sidebar.section-4.descriptions-2.hide": "Hide",
   "course-authoring.course-outline.sidebar.section-4.descriptions-3": "To hide the content of a subsection from learners after the subsection due date has passed, select the Configure icon for a subsection, then select {hide}. Grades for the subsection remain included in grade calculations.",
   "course-authoring.course-outline.sidebar.section-4.descriptions-3.hide": "Hide content after due date",
-  "course-authoring.course-outline.sidebar.section-4.link": "Learn more about content visibility settings"
+  "course-authoring.course-outline.sidebar.section-4.link": "Learn more about content visibility settings",
+  "course-authoring.course-outline.status-bar.start-date": "Start date",
+  "course-authoring.course-outline.status-bar.pacing-type": "Pacing type",
+  "course-authoring.course-outline.status-bar.pacing-type.self-paced": "Self paced",
+  "course-authoring.course-outline.status-bar.pacing-type.instructor-Paced": "Instructor-Paced",
+  "course-authoring.course-outline.status-bar.checklists": "Checklists",
+  "course-authoring.course-outline.status-bar.checklists.completed": "completed",
+  "course-authoring.course-outline.status-bar.highlight-emails": "Course highlight emails",
+  "course-authoring.course-outline.status-bar.highlight-emails.button": "Enable now",
+  "course-authoring.course-outline.status-bar.highlight-emails.enabled": "Enabled",
+  "course-authoring.course-outline.status-bar.highlight-emails.link": "Learn more",
+  "course-authoring.course-outline.status-bar.modal.title": "Enable course highlight emails",
+  "course-authoring.course-outline.status-bar.modal.description-1": "When you enable course highlight emails, learners automatically receive email messages for each section that has highlights. You cannot disable highlights after you start sending them.",
+  "course-authoring.course-outline.status-bar.modal.description-2": "Are you sure you want to enable course highlight emails?",
+  "course-authoring.course-outline.status-bar.modal.link": "Learn more",
+  "course-authoring.course-outline.status-bar.modal.cancelButton": "Not yet",
+  "course-authoring.course-outline.status-bar.modal.submitButton": "Enable"
 }
