@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import ScheduleSubHeader from '../schedule-sub-header';
+import SectionSubHeader from '../../generic/section-sub-header';
 import { ScheduleRow, SCHEDULE_ROW_TYPES } from './schedule-row';
 import { CertificateDisplayRow } from './certificate-display-row';
 import messages from './messages';
@@ -110,7 +110,7 @@ const ScheduleSection = ({
 
   return (
     <section className="section-container schedule-section">
-      <ScheduleSubHeader
+      <SectionSubHeader
         title={intl.formatMessage(messages.scheduleTitle)}
         description={intl.formatMessage(messages.scheduleDescription)}
       />

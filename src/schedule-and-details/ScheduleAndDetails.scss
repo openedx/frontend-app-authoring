@@ -14,17 +14,4 @@
   &:not(:last-child) {
     margin-bottom: 1.75rem;
   }
-
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: .75rem;
-    border-bottom: $border-width solid $light-400;
-
-    h2 {
-      color: $black;
-      margin-bottom: .75rem;
-    }
-  }
 }

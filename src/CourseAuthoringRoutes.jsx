@@ -12,6 +12,7 @@ import CustomPages from './custom-pages';
 import FilesAndUploads from './files-and-uploads';
 import { AdvancedSettings } from './advanced-settings';
 import ScheduleAndDetails from './schedule-and-details';
+import { GradingSettings } from './grading-settings';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -90,10 +91,7 @@ const CourseAuthoringRoutes = ({ courseId }) => {
           <ScheduleAndDetails courseId={courseId} />
         </PageRoute>
         <PageRoute path={`${path}/settings/grading`}>
-          {process.env.ENABLE_NEW_GRADING_PAGE === 'true'
-            && (
-              <Placeholder />
-            )}
+          <GradingSettings courseId={courseId} />
         </PageRoute>
         <PageRoute path={`${path}/course_team`}>
           {process.env.ENABLE_NEW_COURSE_TEAM_PAGE === 'true'

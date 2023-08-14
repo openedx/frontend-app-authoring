@@ -1,0 +1,116 @@
+.grading-scale {
+  display: flex;
+  margin-top: 1.5rem;
+  align-items: center;
+  margin-bottom: map-get($spacers, 6);
+
+  .grading-scale-segments-and-ticks {
+    display: inline-block;
+    height: 3.125rem;
+    width: 100%;
+    border: 1px solid $black;
+
+    .grading-scale-tick {
+      .grading-scale-tick-number {
+        position: absolute;
+        font-size: .6rem;
+        color: $black;
+        top: 100%;
+        transform: translate(-50%, 1.2rem);
+        white-space: nowrap;
+      }
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        background-color: $gray-400;
+        height: .3125rem;
+        width: .125rem;
+        transform: translate(-50%, .7rem);
+      }
+    }
+
+    .grading-scale-segment-btn-resize {
+      border: none;
+      outline: none;
+      background-color: transparent;
+      appearance: none;
+      height: 100%;
+      padding: 0 .4375rem;
+      width: .625rem;
+      z-index: $zindex-dropdown !important;
+
+      &:disabled {
+        color: $black;
+      }
+    }
+
+    .grading-scale-segment {
+      height: 100%;
+
+      &:last-child {
+        border-right: none;
+      }
+
+      .segment--1 {
+        display: none;
+      }
+
+      @each $key, $color in $grading-scale-segment-colors {
+        &.segment-#{$key} {
+          background-color: $color;
+          z-index: #{$key};
+        }
+      }
+
+      &:hover .grading-scale-segment-btn-remove {
+        display: block;
+      }
+
+      .grading-scale-segment-btn-remove {
+        font: normal $font-weight-normal .6875rem/1 $font-family-base;
+        display: none;
+        position: absolute;
+        top: -1.5625rem;
+        right: -.375rem;
+        padding: .375rem;
+        text-decoration: none;
+      }
+
+      .grading-scale-segment-content {
+        display: flex;
+        flex-direction: column;
+        margin-right: 1.25rem;
+        margin-top: .375rem;
+        font-size: .7rem;
+        white-space: nowrap;
+        text-align: right;
+        align-items: flex-end;
+      }
+
+      .grading-scale-segment-content-title {
+        font: normal $font-weight-semi-bold 1rem/1 $font-family-base;
+        border: none;
+        outline: none;
+        background-color: transparent;
+        appearance: none;
+        cursor: text;
+        text-align: end;
+
+        &:disabled {
+          color: $black;
+        }
+      }
+
+      .grading-scale-segment-content-number {
+        font: normal $font-weight-normal .75rem/1 $font-family-base;
+        color: $black;
+
+        &:disabled {
+          color: $black;
+        }
+      }
+    }
+  }
+}

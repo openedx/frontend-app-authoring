@@ -6,7 +6,7 @@ import {
 } from '@edx/paragon';
 import { Email as EmailIcon } from '@edx/paragon/icons';
 
-import ScheduleSubHeader from '../schedule-sub-header';
+import SectionSubHeader from '../../generic/section-sub-header';
 import { INVITE_STUDENTS_LINK_ID } from './constants';
 import messages from './messages';
 
@@ -126,7 +126,7 @@ const BasicSection = ({
 
   return (
     <section className="section-container basic-section">
-      <ScheduleSubHeader
+      <SectionSubHeader
         title={intl.formatMessage(messages.basicTitle)}
         description={intl.formatMessage(messages.basicDescription)}
       />
