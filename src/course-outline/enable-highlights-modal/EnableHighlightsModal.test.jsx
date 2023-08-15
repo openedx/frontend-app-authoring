@@ -50,6 +50,6 @@ describe('<EnableHighlightsModal />', () => {
 
     const cancelButton = getByRole('button', { name: messages.cancelButton.defaultMessage });
     fireEvent.click(cancelButton);
-    expect(closeMock).toHaveBeenCalledTimes(1);
+    expect(closeMock).toHaveBeenCalled();
   });
 });

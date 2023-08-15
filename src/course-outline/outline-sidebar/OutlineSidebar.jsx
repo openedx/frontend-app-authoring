@@ -2,19 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Hyperlink } from '@edx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useSelector } from 'react-redux';
 
 import HelpSidebar from '../../generic/help-sidebar';
-import { getOutlineIndexData } from '../data/selectors';
+import { useHelpUrls } from '../../help-urls/hooks';
 import { getFormattedSidebarMessages } from './utils';
 
 const OutlineSideBar = ({ courseId }) => {
   const intl = useIntl();
   const {
-    learnMoreGradingUrl,
-    learnMoreOutlineUrl,
-    learnMoreVisibilityUrl,
-  } = useSelector(getOutlineIndexData);
+    visibility: learnMoreVisibilityUrl,
+    grading: learnMoreGradingUrl,
+    outline: learnMoreOutlineUrl,
+  } = useHelpUrls(['visibility', 'grading', 'outline']);
+
   const sidebarMessages = getFormattedSidebarMessages(
     {
       learnMoreGradingUrl,
