@@ -42,7 +42,7 @@ describe('<EnableHighlightsModal />', () => {
 
     const submitButton = getByRole('button', { name: messages.submitButton.defaultMessage });
     fireEvent.click(submitButton);
-    expect(onEnableHighlightsSubmitMock).toHaveBeenCalledTimes();
+    expect(onEnableHighlightsSubmitMock).toHaveBeenCalled();
   });
 
   it('calls the close function when the "Cancel" button is clicked', () => {

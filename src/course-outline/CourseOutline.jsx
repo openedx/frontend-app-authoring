@@ -1,11 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Container, Layout } from '@edx/paragon';
+import {
+  Container,
+  Layout,
+  TransitionReplace,
+} from '@edx/paragon';
+import {
+  CheckCircle as CheckCircleIcon,
+  Warning as WarningIcon,
+} from '@edx/paragon/icons';
 
 import SubHeader from '../generic/sub-header/SubHeader';
 import { RequestStatus } from '../data/constants';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
+import AlertMessage from '../generic/alert-message';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
 import OutlineSideBar from './outline-sidebar/OutlineSidebar';
 import messages from './messages';
@@ -21,9 +30,12 @@ const CourseOutline = ({ courseId }) => {
     statusBarData,
     isLoading,
     isReIndexShow,
+    showErrorAlert,
+    showSuccessAlert,
     isSectionsExpanded,
     isEnableHighlightsModalOpen,
     isInternetConnectionAlertFailed,
+    isDisabledReindexButton,
     headerNavigationsActions,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
@@ -40,6 +52,21 @@ const CourseOutline = ({ courseId }) => {
     <>
       <Container size="xl" className="m-4">
         <section className="course-outline-container mb-4 mt-5">
+          <TransitionReplace>
+            {showSuccessAlert ? (
+              <AlertMessage
+                key={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
+                show={showSuccessAlert}
+                variant="success"
+                icon={CheckCircleIcon}
+                title={intl.formatMessage(messages.alertSuccessTitle)}
+                description={intl.formatMessage(messages.alertSuccessDescription)}
+                aria-hidden="true"
+                aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
+                aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
+              />
+            ) : null}
+          </TransitionReplace>
           <SubHeader
             className="mt-5"
             title={intl.formatMessage(messages.headingTitle)}
@@ -50,6 +77,7 @@ const CourseOutline = ({ courseId }) => {
                 isReIndexShow={isReIndexShow}
                 isSectionsExpanded={isSectionsExpanded}
                 headerNavigationsActions={headerNavigationsActions}
+                isDisabledReindexButton={isDisabledReindexButton}
               />
             )}
           />
@@ -92,6 +120,16 @@ const CourseOutline = ({ courseId }) => {
           isQueryPending={savingStatus === RequestStatus.PENDING}
           onInternetConnectionFailed={handleInternetConnectionFailed}
         />
+        {showErrorAlert && (
+          <AlertMessage
+            key={intl.formatMessage(messages.alertErrorTitle)}
+            show={showErrorAlert}
+            variant="danger"
+            icon={WarningIcon}
+            title={intl.formatMessage(messages.alertErrorTitle)}
+            aria-hidden="true"
+          />
+        )}
       </div>
     </>
   );

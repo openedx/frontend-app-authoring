@@ -8,10 +8,12 @@ import {
   getCourseBestPractices,
   getCourseLaunch,
   getCourseOutlineIndex,
+  restartIndexingOnCourse,
 } from './api';
 import {
   fetchOutlineIndexSuccess,
-  updateLoadingOutlineIndexStatus,
+  updateOutlineIndexLoadingStatus,
+  updateReindexLoadingStatus,
   updateStatusBar,
   fetchStatusBarChecklistSuccess,
   fetchStatusBarSelPacedSuccess,
@@ -20,7 +22,7 @@ import {
 
 export function fetchCourseOutlineIndexQuery(courseId) {
   return async (dispatch) => {
-    dispatch(updateLoadingOutlineIndexStatus({ status: RequestStatus.IN_PROGRESS }));
+    dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
 
     try {
       const outlineIndex = await getCourseOutlineIndex(courseId);
@@ -28,10 +30,10 @@ export function fetchCourseOutlineIndexQuery(courseId) {
       dispatch(fetchOutlineIndexSuccess(outlineIndex));
       dispatch(updateStatusBar({ courseReleaseDate, highlightsEnabledForMessaging, highlightsDocUrl }));
 
-      dispatch(updateLoadingOutlineIndexStatus({ status: RequestStatus.SUCCESSFUL }));
+      dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
-      dispatch(updateLoadingOutlineIndexStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.FAILED }));
       return false;
     }
   };
@@ -87,6 +89,23 @@ export function enableCourseHighlightsEmailsQuery(courseId) {
       return true;
     } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+      return false;
+    }
+  };
+}
+
+export function fetchCourseReindexQuery(courseId, reindexLink) {
+  return async (dispatch) => {
+    dispatch(updateReindexLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      await restartIndexingOnCourse(reindexLink);
+      dispatch(updateReindexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
+      // dispatch(fetchCourseOutlineIndexQuery(courseId));
+
+      return true;
+    } catch (error) {
+      dispatch(updateReindexLoadingStatus({ status: RequestStatus.FAILED }));
       return false;
     }
   };

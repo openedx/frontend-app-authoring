@@ -18,6 +18,7 @@ const getEnableHighlightsEmailsApiUrl = (courseId) => {
   const formattedCourseId = courseId.split('course-v1:')[1];
   return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@course+block@course`;
 };
+export const getCourseReindexApiUrl = (reindexLink) => `${getApiBaseUrl()}${reindexLink}`;
 
 /**
  * Get course outline index.
@@ -86,4 +87,16 @@ export async function enableCourseHighlightsEmails(courseId) {
     });
 
   return data;
+}
+
+/**
+ * Restart reindex course
+ * @param {string} reindexLink
+ * @returns {Promise<Object>}
+ */
+export async function restartIndexingOnCourse(reindexLink) {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getCourseReindexApiUrl(reindexLink));
+
+  return camelCaseObject(data);
 }

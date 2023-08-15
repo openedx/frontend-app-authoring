@@ -6,7 +6,10 @@ import { RequestStatus } from '../../data/constants';
 const slice = createSlice({
   name: 'courseOutline',
   initialState: {
-    loadingOutlineIndexStatus: RequestStatus.IN_PROGRESS,
+    loadingStatus: {
+      outlineIndexLoadingStatus: RequestStatus.IN_PROGRESS,
+      reIndexLoadingStatus: RequestStatus.IN_PROGRESS,
+    },
     outlineIndexData: {},
     savingStatus: '',
     statusBarData: {
@@ -26,8 +29,17 @@ const slice = createSlice({
     fetchOutlineIndexSuccess: (state, { payload }) => {
       state.outlineIndexData = payload;
     },
-    updateLoadingOutlineIndexStatus: (state, { payload }) => {
-      state.loadingOutlineIndexStatus = payload.status;
+    updateOutlineIndexLoadingStatus: (state, { payload }) => {
+      state.loadingStatus = {
+        ...state.loadingStatus,
+        outlineIndexLoadingStatus: payload.status,
+      };
+    },
+    updateReindexLoadingStatus: (state, { payload }) => {
+      state.loadingStatus = {
+        ...state.loadingStatus,
+        reIndexLoadingStatus: payload.status,
+      };
     },
     updateStatusBar: (state, { payload }) => {
       state.statusBarData = {
@@ -52,7 +64,8 @@ const slice = createSlice({
 
 export const {
   fetchOutlineIndexSuccess,
-  updateLoadingOutlineIndexStatus,
+  updateOutlineIndexLoadingStatus,
+  updateReindexLoadingStatus,
   updateStatusBar,
   fetchStatusBarChecklistSuccess,
   fetchStatusBarSelPacedSuccess,
