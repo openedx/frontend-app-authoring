@@ -9,7 +9,12 @@ import {
 
 import messages from './messages';
 
-const HeaderNavigations = ({ headerNavigationsActions, isReIndexShow, isSectionsExpanded }) => {
+const HeaderNavigations = ({
+  headerNavigationsActions,
+  isReIndexShow,
+  isSectionsExpanded,
+  isDisabledReindexButton,
+}) => {
   const intl = useIntl();
   const {
     handleNewSection, handleReIndex, handleExpandAll, handleViewLive,
@@ -35,15 +40,16 @@ const HeaderNavigations = ({ headerNavigationsActions, isReIndexShow, isSections
       {isReIndexShow && (
         <OverlayTrigger
           placement="bottom"
-          overlay={(
+          overlay={!isDisabledReindexButton ? (
             <Tooltip id={intl.formatMessage(messages.reindexButtonTooltip)}>
               {intl.formatMessage(messages.reindexButtonTooltip)}
             </Tooltip>
-          )}
+          ) : <React.Fragment key="reindex close" />}
         >
           <Button
             onClick={handleReIndex}
             variant="outline-primary"
+            disabled={isDisabledReindexButton}
           >
             {intl.formatMessage(messages.reindexButton)}
           </Button>
@@ -81,6 +87,7 @@ const HeaderNavigations = ({ headerNavigationsActions, isReIndexShow, isSections
 HeaderNavigations.propTypes = {
   isReIndexShow: PropTypes.bool.isRequired,
   isSectionsExpanded: PropTypes.bool.isRequired,
+  isDisabledReindexButton: PropTypes.bool.isRequired,
   headerNavigationsActions: PropTypes.shape({
     handleNewSection: PropTypes.func.isRequired,
     handleReIndex: PropTypes.func.isRequired,

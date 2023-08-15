@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useToggle } from '@edx/paragon';
 
 import { RequestStatus } from '../data/constants';
+import { updateSavingStatus } from './data/slice';
 import {
-  getLoadingOutlineIndexStatus,
+  getLoadingStatus,
   getOutlineIndexData,
   getSavingStatus,
   getStatusBarData,
@@ -14,25 +15,35 @@ import {
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery,
+  fetchCourseReindexQuery,
 } from './data/thunk';
-import { updateSavingStatus } from './data/slice';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
+
   const { reindexLink } = useSelector(getOutlineIndexData);
-  const { outlineIndexLoadingStatus } = useSelector(getLoadingOutlineIndexStatus);
+  const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
   const [isSectionsExpanded, setSectionsExpanded] = useState(false);
+  const [isDisabledReindexButton, setDisableReindexButton] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
 
   const headerNavigationsActions = {
     handleNewSection: () => {
       // TODO add handler
     },
     handleReIndex: () => {
-      // TODO add handler
+      setDisableReindexButton(true);
+      setShowSuccessAlert(false);
+      setShowErrorAlert(false);
+
+      dispatch(fetchCourseReindexQuery(courseId, reindexLink)).then(() => {
+        setDisableReindexButton(false);
+      });
     },
     handleExpandAll: () => {
       setSectionsExpanded((prevState) => !prevState);
@@ -58,10 +69,23 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(fetchCourseLaunchQuery({ courseId }));
   }, [courseId]);
 
+  useEffect(() => {
+    if (reIndexLoadingStatus === RequestStatus.FAILED) {
+      setShowErrorAlert(true);
+    }
+
+    if (reIndexLoadingStatus === RequestStatus.SUCCESSFUL) {
+      setShowSuccessAlert(true);
+    }
+  }, [reIndexLoadingStatus]);
+
   return {
     savingStatus,
     isLoading: outlineIndexLoadingStatus === RequestStatus.IN_PROGRESS,
     isReIndexShow: Boolean(reindexLink),
+    showSuccessAlert,
+    showErrorAlert,
+    isDisabledReindexButton,
     isSectionsExpanded,
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
