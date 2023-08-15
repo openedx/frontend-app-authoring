@@ -42,7 +42,7 @@ describe('Discussion Restriction', () => {
     axiosMock.reset();
   });
 
-  const createComponent = (onSubmit = jest.fn(), formRef = createRef(), legacy = true) => {
+  const renderComponent = (onSubmit = jest.fn(), formRef = createRef(), legacy = true) => {
     const wrapper = render(
       <AppProvider store={store}>
         <IntlProvider locale="en">
@@ -73,7 +73,7 @@ describe('Discussion Restriction', () => {
       mockData.posting_restrictions = 'disabled';
 
       await mockStore(mockData);
-      createComponent();
+      renderComponent();
 
       expect(screen.queryByTestId('disabled')).toBeInTheDocument();
       expect(screen.queryByTestId('enabled')).toBeInTheDocument();
@@ -87,7 +87,7 @@ describe('Discussion Restriction', () => {
     { eventType: 'Cancel', description: 'OFF option, when user clicks on cancel button', selectedOption: 'disabled' },
   ])('Successfully selected %s of the popup displays under ON option.', async ({ eventType, selectedOption }) => {
     await mockStore(legacyApiResponse);
-    createComponent();
+    renderComponent();
 
     const onButton = screen.queryByTestId('enabled');
 
@@ -107,7 +107,7 @@ describe('Discussion Restriction', () => {
     { eventType: 'Delete', description: 'removed the added restricted dates by clicking on confirm button' },
   ])('Successfully added new restricted dates and %s', async ({ eventType }) => {
     await mockStore(legacyApiResponse);
-    createComponent();
+    renderComponent();
 
     const scheduledButton = screen.queryByTestId('scheduled');
 
@@ -159,7 +159,7 @@ describe('Discussion Restriction', () => {
     mockData.posting_restrictions = 'scheduled';
 
     await mockStore(mockData);
-    createComponent();
+    renderComponent();
 
     const restrictionSchedules = screen.queryByTestId('restriction-schedules');
     const scheduledBadge = restrictionSchedules.querySelector('.badge');
@@ -173,7 +173,7 @@ describe('Discussion Restriction', () => {
     mockData.posting_restrictions = 'scheduled';
 
     await mockStore(mockData);
-    createComponent();
+    renderComponent();
 
     const restrictionSchedules = screen.queryByTestId('restriction-schedules');
     const expandBtn = within(restrictionSchedules).getByRole('button', { name: 'Expand' });

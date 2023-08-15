@@ -82,7 +82,7 @@ RestictDatesInput.defaultProps = {
   helpText: '',
   feedbackClasses: '',
   formGroupClasses: '',
-  dataTestId: '',
+  dataTestId: null,
 };
 
 export default React.memo(RestictDatesInput);
