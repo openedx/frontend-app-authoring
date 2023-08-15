@@ -10,9 +10,9 @@ export function updateXpertSettings(courseId, state) {
     dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
     try {
       const { response } = await postXpertSettings(courseId, state);
-      const { success, enabled } = response;
+      const { success } = response;
       if (success) {
-        dispatch(updateModel({ modelType: 'XpertSettings', model: { id: 'xpert-unit-summary', enabled } }));
+        dispatch(updateModel({ modelType: 'XpertSettings', model: { id: 'xpert-unit-summary', enabled: state.enabled } }));
         dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         return true;
       }
