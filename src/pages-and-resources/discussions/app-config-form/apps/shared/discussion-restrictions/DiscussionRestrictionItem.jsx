@@ -104,6 +104,7 @@ const DiscussionRestrictionItem = ({
           fieldName="startDate"
           formGroupClasses="pl-md-0"
           fieldClasses="pr-md-2"
+          dataTestId="startDate"
           fieldNameCommonBase={fieldNameCommonBase}
         />
         <RestrictDatesInput
@@ -115,6 +116,7 @@ const DiscussionRestrictionItem = ({
           formGroupClasses="pr-md-0"
           fieldClasses="ml-md-2"
           feedbackClasses="ml-md-2"
+          dataTestId="startTime"
           fieldNameCommonBase={fieldNameCommonBase}
         />
       </Form.Row>
@@ -128,6 +130,7 @@ const DiscussionRestrictionItem = ({
           fieldName="endDate"
           formGroupClasses="pl-md-0"
           fieldClasses="pr-md-2"
+          dataTestId="endDate"
           fieldNameCommonBase={fieldNameCommonBase}
         />
         <RestrictDatesInput
@@ -139,6 +142,7 @@ const DiscussionRestrictionItem = ({
           formGroupClasses="pr-md-0"
           fieldClasses="ml-md-2"
           feedbackClasses="ml-md-2"
+          dataTestId="endTime"
           fieldNameCommonBase={fieldNameCommonBase}
         />
       </Form.Row>
