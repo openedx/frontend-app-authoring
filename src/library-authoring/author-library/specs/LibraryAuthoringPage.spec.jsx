@@ -370,7 +370,7 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
     editButton.click();
     const input = await screen.getByRole('textbox', { name: /title input/i });
     fireEvent.change(input, { target: { value: 'New title' } });
-    fireEvent.blur(input);
+    fireEvent.focusOut(input);
     await waitFor(
       () => expect(updateLibrary.fn).toHaveBeenCalledWith({ data: { title: 'New title', libraryId: library.id } }),
     );
