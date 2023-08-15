@@ -39,10 +39,7 @@ const CourseAuthoringRoutes = ({ courseId }) => {
     <CourseAuthoringPage courseId={courseId}>
       <Switch>
         <PageRoute path={`${path}/outline`}>
-          {process.env.ENABLE_NEW_COURSE_OUTLINE_PAGE === 'true'
-            && (
-              <CourseOutline courseId={courseId} />
-            )}
+          <CourseOutline courseId={courseId} />
         </PageRoute>
         <PageRoute path={`${path}/course_info`}>
           <CourseUpdates courseId={courseId} />

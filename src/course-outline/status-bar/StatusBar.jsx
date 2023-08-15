@@ -4,7 +4,6 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Hyperlink, Stack } from '@edx/paragon';
 import { AppContext } from '@edx/frontend-platform/react';
 
-import { getPagePath } from '../../utils';
 import messages from './messages';
 
 const StatusBar = ({
@@ -33,6 +32,7 @@ const StatusBar = ({
 
   const checkListTitle = `${completedCourseLaunchChecks + completedCourseBestPracticesChecks}/${totalCourseLaunchChecks + totalCourseBestPracticesChecks}`;
   const checklistDestination = new URL(`checklists/${courseId}`, config.STUDIO_BASE_URL).href;
+  const scheduleDestination = new URL(`course/${courseId}/settings/details#schedule`, config.BASE_URL).href;
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -45,7 +45,7 @@ const StatusBar = ({
         <h5 className="h5">{intl.formatMessage(messages.startDateTitle)}</h5>
         <Hyperlink
           className="small"
-          destination={getPagePath(courseId, process.env.ENABLE_NEW_SCHEDULE_DETAILS_PAGE, 'settings/details#schedule')}
+          destination={scheduleDestination}
           showLaunchIcon={false}
         >
           {courseReleaseDate}

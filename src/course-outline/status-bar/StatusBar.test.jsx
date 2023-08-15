@@ -1,13 +1,25 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { AppProvider } from '@edx/frontend-platform/react';
+import { initializeMockApp } from '@edx/frontend-platform';
 
 import StatusBar from './StatusBar';
 import messages from './messages';
+import initializeStore from '../../store';
 
-const courseId = 'course123';
+let store;
+const mockPathname = '/foo-bar';
+const courseId = '123';
 const isLoading = false;
 const openEnableHighlightsModalMock = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: mockPathname,
+  }),
+}));
 
 const statusBarData = {
   courseReleaseDate: 'Feb 05, 2013 at 05:00 UTC',
@@ -23,18 +35,32 @@ const statusBarData = {
 };
 
 const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <StatusBar
-      courseId={courseId}
-      isLoading={isLoading}
-      openEnableHighlightsModal={openEnableHighlightsModalMock}
-      statusBarData={statusBarData}
-      {...props}
-    />
-  </IntlProvider>,
+  <AppProvider store={store} messages={{}}>
+    <IntlProvider locale="en">
+      <StatusBar
+        courseId={courseId}
+        isLoading={isLoading}
+        openEnableHighlightsModal={openEnableHighlightsModalMock}
+        statusBarData={statusBarData}
+        {...props}
+      />
+    </IntlProvider>
+  </AppProvider>,
 );
 
 describe('<StatusBar />', () => {
+  beforeEach(() => {
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+    store = initializeStore();
+  });
+
   it('renders StatusBar component correctly', () => {
     const { getByText } = renderComponent();
 
