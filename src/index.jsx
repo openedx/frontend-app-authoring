@@ -12,7 +12,6 @@ import messages from './i18n';
 import store from './store';
 import { NotFoundPage } from './generic';
 import {
-  AboutLibrariesHyperlink,
   ROUTES,
   CourseImportPage,
   LibraryBlockPage,
@@ -24,7 +23,6 @@ import {
   StudioHeaderWrapper,
 } from './library-authoring';
 import './index.scss';
-import './assets/favicon.ico';
 
 mergeConfig({
   LIB_AUTHORING_BASE_URL: process.env.BASE_URL,
@@ -57,7 +55,6 @@ subscribe(APP_READY, () => {
           <Route path="*" component={NotFoundPage} />
         </Switch>
       </main>
-      <AboutLibrariesHyperlink />
       <Footer />
     </AppProvider>,
     document.getElementById('root'),

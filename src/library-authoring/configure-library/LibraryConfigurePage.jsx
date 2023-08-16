@@ -21,7 +21,7 @@ import {
   SUBMISSION_STATUS,
   libraryShape,
   truncateMessage,
-  LIBRARY_TYPES,
+  // LIBRARY_TYPES,
 } from '../common';
 import {
   fetchLibraryDetail,
@@ -84,9 +84,9 @@ class LibraryConfigurePage extends React.Component {
         libraryId: library.id,
         title: library.title,
         description: library.description,
-        type: library.type,
-        allow_public_learning: library.allow_public_learning,
-        allow_public_read: library.allow_public_read,
+        // type: library.type,
+        // allow_public_learning: library.allow_public_learning,
+        // allow_public_read: library.allow_public_read,
         license: library.license,
       },
     });
@@ -172,12 +172,12 @@ class LibraryConfigurePage extends React.Component {
     const { errorMessage, intl, library } = this.props;
     const { data } = this.state;
 
-    const validTypes = Object.values(LIBRARY_TYPES).filter((type) => type !== LIBRARY_TYPES.LEGACY);
-    const typeOptions = validTypes.map((value) => (
-      <option value={value} key={`aoption-${value}`}>
-        {intl.formatMessage(messages[`library.edit.type.label.${value}`])}
-      </option>
-    ));
+    // const validTypes = Object.values(LIBRARY_TYPES).filter((type) => type !== LIBRARY_TYPES.LEGACY);
+    // const typeOptions = validTypes.map((value) => (
+    //   <option value={value} key={`aoption-${value}`}>
+    //     {intl.formatMessage(messages[`library.edit.type.label.${value}`])}
+    //   </option>
+    // ));
 
     return (
       <div className="library-edit-wrapper">
@@ -235,7 +235,7 @@ class LibraryConfigurePage extends React.Component {
                           </Form.Group>
                         </Card.Section>
                       ))}
-                      {data.libraryId && (
+                      {/* {data.libraryId && (
                         <Card.Section>
                           <Form.Group
                             for="type"
@@ -264,8 +264,8 @@ class LibraryConfigurePage extends React.Component {
                             )}
                           </Form.Group>
                         </Card.Section>
-                      ) }
-                      <Card.Section>
+                      ) } */}
+                      {/* <Card.Section>
                         <Form.Group>
                           <Form.Check
                             type="switch"
@@ -285,7 +285,7 @@ class LibraryConfigurePage extends React.Component {
                             onChange={this.handleValueChange}
                           />
                         </Form.Group>
-                      </Card.Section>
+                      </Card.Section> */}
                       { /* Checking null here since we cache the initial value. */ }
                       {(data.license !== null) && (
                         <Card.Section>

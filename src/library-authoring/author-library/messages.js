@@ -127,6 +127,11 @@ const messages = defineMessages({
     defaultMessage: 'Deleting this component is permanent and cannot be undone.',
     description: 'Body for the block deletion modal.',
   },
+  'library.detail.block.delete.modal.confirmation.button': {
+    id: 'library.detail.block.delete.modal.confirmation.button',
+    defaultMessage: 'Delete',
+    description: 'Message for delete confirmation button',
+  },
   'library.detail.block.copy': {
     id: 'library.detail.block.copy',
     defaultMessage: 'Copy',

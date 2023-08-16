@@ -9,7 +9,7 @@ import {
   Button,
   IconButton,
   Card,
-  Dropdown,
+  // Dropdown,
   SearchField,
   Form,
   Pagination,
@@ -136,7 +136,7 @@ export const BlockPreviewBase = ({
             Close
           </ModalDialog.CloseButton>
           <Button onClick={() => props.deleteLibraryBlock({ blockId: block.id })} variant="primary">
-            {intl.formatMessage(commonMessages['library.common.forms.button.yes'])}
+            {intl.formatMessage(messages['library.detail.block.delete.modal.confirmation.button'])}
           </Button>
         </ActionRow>
       </ModalDialog.Footer>
@@ -528,9 +528,14 @@ export const LibraryAuthoringPageBase = ({
                     <h2>{intl.formatMessage(messages['library.detail.add_component_heading'])}</h2>
                   </Col>
                   <Col xs={12} className="text-center">
-                    <div className="d-inline-block">
+                    {/* <div className="d-inline-block">
                       <Dropdown>
-                        <Dropdown.Toggle variant="success" disabled={sending} className="cta-button mr-2" id="library-detail-add-component-dropdown">
+                        <Dropdown.Toggle
+                          variant="success"
+                          disabled={sending}
+                          className="cta-button mr-2"
+                          id="library-detail-add-component-dropdown"
+                        >
                           Advanced
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
@@ -544,9 +549,9 @@ export const LibraryAuthoringPageBase = ({
                           ))}
                         </Dropdown.Menu>
                       </Dropdown>
-                    </div>
+                    </div> */}
                     <Button variant="success" disabled={sending} onClick={() => addBlock('html')} className="cta-button">
-                      HTML
+                      Text
                     </Button>
                     <Button variant="success" disabled={sending} onClick={() => addBlock('problem')} className="cta-button mx-2">
                       Problem

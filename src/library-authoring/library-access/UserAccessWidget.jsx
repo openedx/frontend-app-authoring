@@ -17,12 +17,11 @@ import {
   libraryUserShape, removeUserAccess, selectLibraryAccess, setUserAccess,
 } from './data';
 import { LIBRARY_ACCESS, libraryShape } from '../common/data';
-import commonMessages from '../common/messages';
 import messages from './messages';
 
 export const UserAccessWidget = ({
   intl, library, user, multipleAdmins, setAccessLevel, isUser, showRemoveModal, setShowRemoveModal,
-  showDeprivModal, setShowDeprivModal, isAdmin, adminLocked,
+  isAdmin, adminLocked,
 }) => (
   <Card className="mb-4 p-3">
     <Badge className={`position-absolute ml-1 permy ${user.access_level}`}>
@@ -43,39 +42,9 @@ export const UserAccessWidget = ({
         <small>{intl.formatMessage(messages['library.access.info.admin_unlock'])}</small>
         )}
         {user.access_level === LIBRARY_ACCESS.ADMIN && multipleAdmins && (
-        <>
-          <Button variant="secondary" onClick={() => setShowDeprivModal(true)}>
-            {intl.formatMessage(messages['library.access.remove_admin'])}
-          </Button>
-          <ModalDialog
-            isOpen={showDeprivModal}
-            onClose={() => setShowDeprivModal(false)}
-          >
-            <ModalDialog.Header>
-              <ModalDialog.Title>
-                {intl.formatMessage(messages['library.access.modal.remove_admin.title'])}
-              </ModalDialog.Title>
-            </ModalDialog.Header>
-            <ModalDialog.Body>
-              {intl.formatMessage(
-                messages['library.access.modal.remove_admin.body'],
-                { library: library.title, email: user.email },
-              )}
-            </ModalDialog.Body>
-            <ModalDialog.Footer>
-              <ActionRow>
-                <ModalDialog.CloseButton variant="link">
-                  Close
-                </ModalDialog.CloseButton>
-                <Button
-                  onClick={() => setAccessLevel(LIBRARY_ACCESS.AUTHOR).then(setShowDeprivModal(false))}
-                >
-                  {intl.formatMessage(commonMessages['library.common.forms.button.yes'])}
-                </Button>
-              </ActionRow>
-            </ModalDialog.Footer>
-          </ModalDialog>
-        </>
+        <Button variant="secondary" onClick={() => setAccessLevel(LIBRARY_ACCESS.AUTHOR)}>
+          {intl.formatMessage(messages['library.access.remove_admin'])}
+        </Button>
         )}
         {user.access_level === LIBRARY_ACCESS.READ && (
         <Button variant="primary" onClick={() => setAccessLevel(LIBRARY_ACCESS.AUTHOR)}>
@@ -140,7 +109,6 @@ export const UserAccessWidgetContainerBase = ({
   const { authenticatedUser } = useContext(AppContext);
   const isUser = authenticatedUser.username === user.username;
   const [showRemoveModal, setShowRemoveModal] = useState(false);
-  const [showDeprivModal, setShowDeprivModal] = useState(false);
   const adminLocked = user.access_level === LIBRARY_ACCESS.ADMIN && !props.multipleAdmins;
 
   const setAccessLevel = (level) => props.setUserAccess({ libraryId: props.library.id, user, level });
@@ -151,8 +119,6 @@ export const UserAccessWidgetContainerBase = ({
     ...props,
     showRemoveModal,
     setShowRemoveModal,
-    showDeprivModal,
-    setShowDeprivModal,
     isUser,
     user,
     adminLocked,
@@ -176,8 +142,6 @@ UserAccessWidget.propTypes = {
   isUser: PropTypes.bool.isRequired,
   showRemoveModal: PropTypes.bool.isRequired,
   setShowRemoveModal: PropTypes.func.isRequired,
-  showDeprivModal: PropTypes.bool.isRequired,
-  setShowDeprivModal: PropTypes.func.isRequired,
 };
 
 const UserAccessWidgetContainer = connect(

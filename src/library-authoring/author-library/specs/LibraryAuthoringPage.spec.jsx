@@ -214,34 +214,36 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
     });
   });
 
-  it('Adds a custom block type', async () => {
-    const library = libraryFactory({
-      blockTypes: [{ display_name: 'Test Type', block_type: 'test' }],
-      type: LIBRARY_TYPES.COMPLEX,
-    });
-    await render(library, genState(library));
-    screen.getByText('Advanced').click();
-    const typeOption = await screen.findByText('Test Type', { ignore: 'option' });
-    act(() => {
-      typeOption.click();
-    });
-    await waitFor(() => expect(createBlock.fn).toHaveBeenCalledWith({
-      libraryId: library.id,
-      data: {
-        block_type: 'test',
-        definition_id: expect.any(String),
-      },
-      query: '',
-      types: [],
-      paginationParams,
-    }));
-  });
+  // it('Adds a custom block type', async () => {
+  //   const library = libraryFactory({
+  //     blockTypes: [{ display_name: 'Test Type', block_type: 'test' }],
+  //     type: LIBRARY_TYPES.COMPLEX,
+  //   });
+  //   await render(library, genState(library));
+  //   screen.getByText('Advanced').click();
+  //   const typeOption = await screen.findByText('Test Type', { ignore: 'option' });
+  //   act(() => {
+  //     typeOption.click();
+  //   });
+  //   await waitFor(() => expect(createBlock.fn).toHaveBeenCalledWith({
+  //     libraryId: library.id,
+  //     data: {
+  //       block_type: 'test',
+  //       definition_id: expect.any(String),
+  //     },
+  //     query: '',
+  //     types: [],
+  //     paginationParams,
+  //   }));
+  // });
 
   [VIDEO_TYPE, PROBLEM_TYPE, HTML_TYPE].forEach((blockDef) => {
     it(`Adds a ${blockDef.display_name} block to a library`, async () => {
-      const library = libraryFactory({ type: LIBRARY_TYPES.COMPLEX });
+      const library = libraryFactory();
       await render(library, genState(library));
-      screen.getByText('Advanced').click();
+      screen.getByRole('button', {
+        name: blockDef.display_name,
+      }).click();
       const typeOption = await screen.findByText(blockDef.display_name, { ignore: 'option' });
       act(() => {
         typeOption.click();
@@ -352,7 +354,7 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
     act(() => {
       del.click();
     });
-    const yes = await screen.findByText('Yes.');
+    const yes = await screen.findByText('Delete');
     act(() => {
       yes.click();
     });

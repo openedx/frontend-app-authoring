@@ -10,7 +10,7 @@ export const PROBLEM_TYPE = {
 
 export const HTML_TYPE = {
   block_type: 'html',
-  display_name: 'HTML',
+  display_name: 'Text',
 };
 
 export const POLL_TYPE = {
