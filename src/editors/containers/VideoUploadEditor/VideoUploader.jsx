@@ -26,10 +26,11 @@ const URLUploader = () => {
   );
 };
 
-export const VideoUploader = ({ onUpload, setLoading }) => {
-  const [textInputValue, settextInputValue] = React.useState('');
+export const VideoUploader = ({ setLoading }) => {
+  const [textInputValue, setTextInputValue] = React.useState('');
   const onURLUpload = hooks.onVideoUpload();
   const intl = useIntl();
+  const dispatch = useDispatch();
 
   const handleProcessUpload = ({ fileData }) => {
     dispatch(thunkActions.video.uploadVideo({
@@ -53,7 +54,7 @@ export const VideoUploader = ({ onUpload, setLoading }) => {
             aria-label={intl.formatMessage(messages.pasteURL)}
             aria-describedby="basic-addon2"
             borderless
-            onChange={(event) => { settextInputValue(event.target.value); }}
+            onChange={(event) => { setTextInputValue(event.target.value); }}
           />
           <div className="justify-content-center align-self-center bg-light rounded-circle p-0 x-small url-submit-button">
             <IconButton
@@ -71,7 +72,6 @@ export const VideoUploader = ({ onUpload, setLoading }) => {
 };
 
 VideoUploader.propTypes = {
-  onUpload: PropTypes.func.isRequired,
   setLoading: PropTypes.func.isRequired,
 };
 

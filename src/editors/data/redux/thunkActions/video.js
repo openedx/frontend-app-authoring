@@ -11,10 +11,16 @@ export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, g
   const state = getState();
   const blockValueData = state.app.blockValue.data;
   let rawVideoData = blockValueData.metadata ? blockValueData.metadata : {};
-  if (selectedVideoId != null) {
-    const rawVideos = Object.values(selectors.app.videos(state));
-    const selectedVideo = rawVideos.find(video => video.edx_video_id === selectedVideoId);
-    if (selectedVideo) {
+  const rawVideos = Object.values(selectors.app.videos(state));
+  if (selectedVideoId !== undefined && selectedVideoId !== null) {
+    const selectedVideo = _.find(rawVideos, video => {
+      if (_.has(video, 'edx_video_id')) {
+        return video.edx_video_id === selectedVideoId;
+      }
+      return false;
+    });
+
+    if (selectedVideo !== undefined && selectedVideo !== null) {
       rawVideoData = {
         edx_video_id: selectedVideo.edx_video_id,
         thumbnail: selectedVideo.course_video_image_url,

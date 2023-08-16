@@ -1,5 +1,9 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { initializeMockApp } from '@edx/frontend-platform';
+import { AppProvider } from '@edx/frontend-platform/react';
+import { configureStore } from '@reduxjs/toolkit';
+import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import VideoUploadEditor from '.';
 

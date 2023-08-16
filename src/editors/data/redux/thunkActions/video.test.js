@@ -88,6 +88,7 @@ const testState = {
 const testVideosState = {
   edx_video_id: mockSelectedVideoId,
   thumbnail: 'thumbnail',
+  course_video_image_url: 'course_video_image_url',
   duration: 60,
   transcripts: ['es'],
   transcript_urls: { es: 'url' },
@@ -244,6 +245,61 @@ describe('video thunkActions', () => {
           startTime: testMetadata.start_time,
           stopTime: 0,
           total: testVideosState.duration,
+        },
+        handout: undefined,
+        licenseType: 'liCENSEtyPe',
+        licenseDetails: {
+          attribution: true,
+          noncommercial: true,
+          noDerivatives: true,
+          shareAlike: false,
+        },
+        videoSharingEnabledForCourse: undefined,
+        videoSharingLearnMoreLink: undefined,
+        courseLicenseType: 'liCENSEtyPe',
+        courseLicenseDetails: {
+          attribution: true,
+          noncommercial: true,
+          noDerivatives: true,
+          shareAlike: false,
+        },
+        thumbnail: testVideosState.course_video_image_url,
+      });
+    });
+    it('dispatches actions.video.load with different selectedVideoId', () => {
+      getState = jest.fn(() => ({
+        app: {
+          blockId: 'soMEBloCk',
+          studioEndpointUrl: 'soMEeNDPoiNT',
+          blockValue: { data: { metadata: {} } },
+          courseDetails: { data: { license: null } },
+          studioView: { data: { html: 'sOMeHTml' } },
+          videos: testVideosState,
+        },
+      }));
+      thunkActions.loadVideoData('ThisIsAVideoId2', null)(dispatch, getState);
+      [
+        [dispatchedLoad],
+        [dispatchedAction1],
+        [dispatchedAction2],
+      ] = dispatch.mock.calls;
+      expect(dispatchedLoad.load).toEqual({
+        videoSource: 'videOsOurce',
+        videoId: 'videOiD',
+        fallbackVideos: 'fALLbACKvIDeos',
+        allowVideoDownloads: undefined,
+        transcripts: testMetadata.transcripts,
+        selectedVideoTranscriptUrls: testMetadata.transcript_urls,
+        allowTranscriptDownloads: undefined,
+        allowVideoSharing: {
+          level: 'course',
+          value: true,
+        },
+        showTranscriptByDefault: undefined,
+        duration: {
+          startTime: testMetadata.start_time,
+          stopTime: 0,
+          total: 0,
         },
         handout: undefined,
         licenseType: 'liCENSEtyPe',
