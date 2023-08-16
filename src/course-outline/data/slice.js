@@ -24,10 +24,12 @@ const slice = createSlice({
         completedCourseBestPracticesChecks: 0,
       },
     },
+    sectionsList: [],
   },
   reducers: {
     fetchOutlineIndexSuccess: (state, { payload }) => {
       state.outlineIndexData = payload;
+      state.sectionsList = payload.courseStructure?.childInfo?.children || [];
     },
     updateOutlineIndexLoadingStatus: (state, { payload }) => {
       state.loadingStatus = {

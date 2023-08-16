@@ -9,6 +9,7 @@ import {
   getOutlineIndexData,
   getSavingStatus,
   getStatusBarData,
+  getSectionsList,
 } from './data/selectors';
 import {
   enableCourseHighlightsEmailsQuery,
@@ -25,6 +26,7 @@ const useCourseOutline = ({ courseId }) => {
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
+  const sectionsList = useSelector(getSectionsList);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
   const [isSectionsExpanded, setSectionsExpanded] = useState(false);
@@ -95,6 +97,7 @@ const useCourseOutline = ({ courseId }) => {
     closeEnableHighlightsModal,
     isInternetConnectionAlertFailed: savingStatus === RequestStatus.FAILED,
     handleInternetConnectionFailed,
+    sectionsList,
   };
 };
 

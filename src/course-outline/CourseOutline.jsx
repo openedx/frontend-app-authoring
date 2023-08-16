@@ -17,10 +17,11 @@ import InternetConnectionAlert from '../generic/internet-connection-alert';
 import AlertMessage from '../generic/alert-message';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
 import OutlineSideBar from './outline-sidebar/OutlineSidebar';
-import messages from './messages';
 import { useCourseOutline } from './hooks';
 import StatusBar from './status-bar/StatusBar';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
+import SectionCard from './section-card/SectionCard';
+import messages from './messages';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -28,6 +29,7 @@ const CourseOutline = ({ courseId }) => {
   const {
     savingStatus,
     statusBarData,
+    sectionsList,
     isLoading,
     isReIndexShow,
     showErrorAlert,
@@ -98,6 +100,11 @@ const CourseOutline = ({ courseId }) => {
                       statusBarData={statusBarData}
                       openEnableHighlightsModal={openEnableHighlightsModal}
                     />
+                    <div className="pt-4">
+                      {sectionsList.length ? sectionsList.map((section) => (
+                        <SectionCard section={section} />
+                      )) : null}
+                    </div>
                   </section>
                 </div>
               </article>
