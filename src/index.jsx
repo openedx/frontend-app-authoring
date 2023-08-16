@@ -7,6 +7,7 @@ import ErrorAlert from './editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import Footer from './footer';
 import { TinyMceWidget } from './editors/sharedComponents/TinyMceWidget';
 import { prepareEditorRef } from './editors/sharedComponents/TinyMceWidget/hooks';
+import TypeaheadDropdown from './editors/sharedComponents/TypeaheadDropdown';
 
 export {
   messages,
@@ -18,5 +19,6 @@ export {
   Footer,
   TinyMceWidget,
   prepareEditorRef,
+  TypeaheadDropdown,
 };
 export default Placeholder;
