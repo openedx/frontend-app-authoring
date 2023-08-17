@@ -181,7 +181,7 @@ describe('FilesAndUploads', () => {
         expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).toHaveClass('disabled');
         expect(screen.getByText(messages.deleteTitle.defaultMessage).closest('a')).toHaveClass('disabled');
       });
-      fit('delete button should be enabled and delete selected file', async () => {
+      it('delete button should be enabled and delete selected file', async () => {
         renderComponent();
         await mockStore(RequestStatus.SUCCESSFUL);
         const selectCardButton = screen.getAllByTestId('datatable-select-column-checkbox-cell')[0];
