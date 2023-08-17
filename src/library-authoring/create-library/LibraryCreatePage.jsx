@@ -15,6 +15,7 @@ import {
 import { Info } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { AppContext } from '@edx/frontend-platform/react';
+import { TypeaheadDropdown } from '@edx/frontend-lib-content-components';
 
 import {
   ROUTES,
@@ -23,7 +24,6 @@ import {
   libraryShape,
   truncateMessage,
   FormGroup,
-  OrganizationDropdown,
   VALID_SLUG_ID_REGEX,
 } from '../common';
 import {
@@ -286,11 +286,9 @@ export class LibraryCreatePage extends React.Component {
                       />
                     </li>
                     <li className="field">
-                      <OrganizationDropdown
-                        disabled
+                      <TypeaheadDropdown
                         type="text"
                         name="org"
-                        intl={intl}
                         readOnly={false}
                         value={data.org}
                         options={orgs}
@@ -301,6 +299,7 @@ export class LibraryCreatePage extends React.Component {
                         placeholder={intl.formatMessage(messages['library.form.org.placeholder'])}
                         errorMessage={this.getFieldError('org')}
                         helpMessage={intl.formatMessage(messages['library.form.org.help'])}
+                        noOptionsMessage={intl.formatMessage(messages['library.organizations.list.empty'])}
                       />
                     </li>
                     <li className="field">

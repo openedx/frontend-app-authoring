@@ -109,6 +109,11 @@ const messages = defineMessages({
     defaultMessage: 'Are you sure you want to leave this page? Changes you made will be lost if you proceed.',
     description: 'Text to display as a message on alert modal.',
   },
+  'library.organizations.list.empty': {
+    id: 'library.organizations.list.empty',
+    defaultMessage: 'No options',
+    description: 'Text for empty organizations options list.',
+  },
 });
 
 export default messageGuard(messages);
