@@ -9,9 +9,12 @@ export const apiMethods = {
   fetchBlockById: ({ blockId, studioEndpointUrl }) => get(
     urls.block({ blockId, studioEndpointUrl }),
   ),
-  fetchByUnitId: ({ blockId, studioEndpointUrl }) => get(
-    urls.blockAncestor({ studioEndpointUrl, blockId }),
-  ),
+  fetchByUnitId: ({ blockId, studioEndpointUrl }) => {
+    if (blockId.includes('block-v1')) {
+      return get(urls.blockAncestor({ studioEndpointUrl, blockId }));
+    }
+    return '';
+  },
   fetchStudioView: ({ blockId, studioEndpointUrl }) => get(
     urls.blockStudioView({ studioEndpointUrl, blockId }),
   ),

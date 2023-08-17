@@ -44,7 +44,8 @@ const { camelize } = utils;
 
 const { apiMethods } = api;
 
-const blockId = 'coursev1:2uX@4345432';
+const blockId = 'block-v1-coursev1:2uX@4345432';
+const v2BlockId = '???-coursev2:2uX@4345432';
 const learningContextId = 'demo2uX';
 const studioEndpointUrl = 'hortus.coa';
 const title = 'remember this needs to go into metadata to save';
@@ -65,6 +66,10 @@ describe('cms api', () => {
       it('should call get with url.blockAncestor', () => {
         apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
         expect(get).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }));
+      });
+      it('should not call get with url.blockAncestor for v2', () => {
+        apiMethods.fetchByUnitId({ blockId: v2BlockId, studioEndpointUrl });
+        expect(get).not.toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId: v2BlockId }));
       });
     });
 
