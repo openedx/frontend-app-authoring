@@ -10,6 +10,9 @@ import {
   Dropzone,
   CardView,
   useToggle,
+  AlertModal,
+  ActionRow,
+  Button,
 } from '@edx/paragon';
 import Placeholder, { ErrorAlert } from '@edx/frontend-lib-content-components';
 
@@ -48,7 +51,8 @@ const FilesAndUploads = ({
   const [currentView, setCurrentView] = useState(defaultVal);
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
   const [isAddOpen, setAddOpen, setAddClose] = useToggle(false);
-  const [selectedRowCount, setSelectedRowCount] = useState(0);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
 
   useEffect(() => {
     dispatch(fetchAssets(courseId));
@@ -64,7 +68,7 @@ const FilesAndUploads = ({
   const errorMessages = useSelector(state => state.assets.errors);
   const fileInputControl = fileInput({
     onAddFile: (file) => dispatch(addAssetFile(courseId, file, totalCount)),
-    setSelectedRowCount,
+    setSelectedRows,
     setAddOpen,
   });
   const assets = useModels('assets', assetIds);
@@ -78,10 +82,10 @@ const FilesAndUploads = ({
     }
   };
 
-  const handleBulkDelete = (selectedFlatRows) => {
-    setSelectedRowCount(selectedFlatRows.length);
+  const handleBulkDelete = () => {
+    closeDeleteConfirmation();
     setDeleteOpen();
-    const assetIdsToDelete = selectedFlatRows.map(row => row.original.id);
+    const assetIdsToDelete = selectedRows.map(row => row.original.id);
     assetIdsToDelete.forEach(id => dispatch(deleteAssetFile(courseId, id, totalCount)));
   };
 
@@ -103,6 +107,11 @@ const FilesAndUploads = ({
     dispatch(updateAssetLock({ courseId, assetId, locked }));
   };
 
+  const handleOpenDeleteConfirmation = (selectedFlatRows) => {
+    setSelectedRows(selectedFlatRows);
+    openDeleteConfirmation();
+  };
+
   const headerActions = ({ selectedFlatRows }) => (
     <TableActions
       {...{
@@ -110,6 +119,7 @@ const FilesAndUploads = ({
         fileInputControl,
         handleBulkDelete,
         handleBulkDownload,
+        handleOpenDeleteConfirmation,
       }}
     />
   );
@@ -119,8 +129,9 @@ const FilesAndUploads = ({
       return (
         <GalleryCard
           {...{
-            handleBulkDelete,
+            // handleBulkDelete,
             handleLockedAsset,
+            handleOpenDeleteConfirmation,
             className,
             original,
           }}
@@ -130,8 +141,9 @@ const FilesAndUploads = ({
     return (
       <ListCard
         {...{
-          handleBulkDelete,
+          // handleBulkDelete,
           handleLockedAsset,
+          handleOpenDeleteConfirmation,
           className,
           original,
         }}
@@ -244,22 +256,40 @@ const FilesAndUploads = ({
               <DataTable.TableFooter />
               <ApiStatusToast
                 actionType={intl.formatMessage(messages.apiStatusDeletingAction)}
-                selectedRowCount={selectedRowCount}
+                selectedRowCount={selectedRows.length}
                 isOpen={isDeleteOpen}
                 setClose={setDeleteClose}
-                setSelectedRowCount={setSelectedRowCount}
+                setSelectedRows={setSelectedRows}
               />
               <ApiStatusToast
                 actionType={intl.formatMessage(messages.apiStatusAddingAction)}
-                selectedRowCount={selectedRowCount}
+                selectedRowCount={selectedRows.length}
                 isOpen={isAddOpen}
                 setClose={setAddClose}
-                setSelectedRowCount={setSelectedRowCount}
+                setSelectedRows={setSelectedRows}
               />
             </div>
           )}
         </DataTable>
         <FileInput fileInput={fileInputControl} />
+
+        <AlertModal
+          title={intl.formatMessage(messages.deleteConfirmationTitle)}
+          isOpen={isDeleteConfirmationOpen}
+          onClose={closeDeleteConfirmation}
+          footerNode={(
+            <ActionRow>
+              <Button variant="tertiary" onClick={closeDeleteConfirmation}>
+                {intl.formatMessage(messages.cancelButtonLabel)}
+              </Button>
+              <Button onClick={handleBulkDelete}>
+                {intl.formatMessage(messages.deleteFileButtonLabel)}
+              </Button>
+            </ActionRow>
+          )}
+        >
+          {intl.formatMessage(messages.deleteConfirmationMessage, { fileNumber: selectedRows.length })}
+        </AlertModal>
       </main>
     </FilesAndUploadsProvider>
   );
