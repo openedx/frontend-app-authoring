@@ -51,7 +51,7 @@ const CourseTeamMember = ({
               size="sm"
               data-testid="delete-button"
               iconBefore={DeleteOutlineIcon}
-              onClick={onDelete}
+              onClick={() => onDelete(email)}
             />
           </div>
         ) : (

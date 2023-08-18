@@ -90,6 +90,10 @@ const useCourseTeam = ({ courseId }) => {
     setIsQueryPending(false);
   };
 
+  const handleOpenDeleteModal = (email) => {
+    handleOpenInfoModal(MODAL_TYPES.delete, email);
+  };
+
   useEffect(() => {
     dispatch(fetchCourseTeamQuery(courseId));
   }, [courseId]);
@@ -124,6 +128,7 @@ const useCourseTeam = ({ courseId }) => {
     closeInfoModal,
     handleAddUserSubmit,
     handleOpenInfoModal,
+    handleOpenDeleteModal,
     handleDeleteUserSubmit,
     handleChangeRoleUserSubmit,
     handleInternetConnectionFailed,

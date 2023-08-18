@@ -5,11 +5,14 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import HelpSidebar from '../../generic/help-sidebar';
 import messages from './messages';
 
-const CourseTeamSideBar = ({ courseId, isOwnershipHint }) => {
+const CourseTeamSideBar = ({ courseId, isOwnershipHint, isShowInitialSidebar }) => {
   const intl = useIntl();
 
   return (
-    <div className="course-team-sidebar" data-testid="course-team-sidebar">
+    <div
+      className="course-team-sidebar"
+      data-testid={isShowInitialSidebar ? 'course-team-sidebar__initial' : 'course-team-sidebar'}
+    >
       <HelpSidebar
         intl={intl}
         courseId={courseId}
@@ -52,9 +55,14 @@ const CourseTeamSideBar = ({ courseId, isOwnershipHint }) => {
   );
 };
 
+CourseTeamSideBar.defaultProps = {
+  isShowInitialSidebar: false,
+};
+
 CourseTeamSideBar.propTypes = {
   courseId: PropTypes.string.isRequired,
   isOwnershipHint: PropTypes.bool.isRequired,
+  isShowInitialSidebar: PropTypes.bool,
 };
 
 export default CourseTeamSideBar;

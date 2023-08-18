@@ -18,7 +18,6 @@ import AddTeamMember from './add-team-member/AddTeamMember';
 import CourseTeamMember from './course-team-member/CourseTeamMember';
 import InfoModal from './info-modal/InfoModal';
 import { useCourseTeam } from './hooks';
-import { MODAL_TYPES } from './constants';
 
 const CourseTeam = ({ courseId }) => {
   const intl = useIntl();
@@ -45,7 +44,7 @@ const CourseTeam = ({ courseId }) => {
     hideForm,
     closeInfoModal,
     handleAddUserSubmit,
-    handleOpenInfoModal,
+    handleOpenDeleteModal,
     handleDeleteUserSubmit,
     handleChangeRoleUserSubmit,
     handleInternetConnectionFailed,
@@ -103,7 +102,7 @@ const CourseTeam = ({ courseId }) => {
                           isAllowActions={isAllowActions}
                           isHideActions={role === USER_ROLES.admin && isSingleAdmin}
                           onChangeRole={handleChangeRoleUserSubmit}
-                          onDelete={() => handleOpenInfoModal(MODAL_TYPES.delete, email)}
+                          onDelete={handleOpenDeleteModal}
                         />
                       )) : null}
                       {isShowAddTeamMember && (
@@ -118,6 +117,7 @@ const CourseTeam = ({ courseId }) => {
                         <CourseTeamSideBar
                           courseId={courseId}
                           isOwnershipHint={isOwnershipHint}
+                          isShowInitialSidebar={isShowInitialSidebar}
                         />
                       </div>
                     )}

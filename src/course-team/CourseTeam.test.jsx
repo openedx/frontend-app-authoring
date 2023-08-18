@@ -12,7 +12,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import initializeStore from '../store';
-import { courseTeamMock, courseTeamWithOneUser } from './__mocks__';
+import { courseTeamMock, courseTeamWithOneUser, courseTeamWithoutUsers } from './__mocks__';
 import { getCourseTeamApiUrl } from './data/api';
 import CourseTeam from './CourseTeam';
 import messages from './messages';
@@ -86,6 +86,53 @@ describe('<CourseTeam />', () => {
       expect(getByRole('button', { name: messages.addNewMemberButton.defaultMessage })).toBeInTheDocument();
       expect(getByTestId('course-team-sidebar')).toBeInTheDocument();
       expect(getAllByTestId('course-team-member')).toHaveLength(1);
+    });
+  });
+
+  it('render CourseTeam component without team member correctly', async () => {
+    cleanup();
+    axiosMock
+      .onGet(getCourseTeamApiUrl(courseId))
+      .reply(200, courseTeamWithoutUsers);
+
+    const {
+      getByText, getByRole, getByTestId, queryAllByTestId,
+    } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+      expect(getByRole('button', { name: messages.addNewMemberButton.defaultMessage })).toBeInTheDocument();
+      expect(getByTestId('course-team-sidebar__initial')).toBeInTheDocument();
+      expect(queryAllByTestId('course-team-member')).toHaveLength(0);
+    });
+  });
+
+  it('render CourseTeam component with initial sidebar correctly', async () => {
+    cleanup();
+    axiosMock
+      .onGet(getCourseTeamApiUrl(courseId))
+      .reply(200, courseTeamWithoutUsers);
+
+    const { getByTestId, queryByTestId } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      expect(getByTestId('course-team-sidebar__initial')).toBeInTheDocument();
+      expect(queryByTestId('course-team-sidebar')).not.toBeInTheDocument();
+    });
+  });
+
+  it('render CourseTeam component without initial sidebar correctly', async () => {
+    cleanup();
+    axiosMock
+      .onGet(getCourseTeamApiUrl(courseId))
+      .reply(200, courseTeamMock);
+
+    const { getByTestId, queryByTestId } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      expect(queryByTestId('course-team-sidebar__initial')).not.toBeInTheDocument();
+      expect(getByTestId('course-team-sidebar')).toBeInTheDocument();
     });
   });
 
