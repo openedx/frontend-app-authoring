@@ -13,7 +13,10 @@ export const returnUrl = ({ studioEndpointUrl, unitUrl, learningContextId }) => 
   }
   if (learningContextId && learningContextId.startsWith('lib')) {
     // when it's a v2 library, there will be no return url (instead a closed popup)
-    throw new Error('Return url not available (or needed) for V2 libraries');
+    // (temporary) don't throw error, just return empty url. it will fail it's network connection but otherwise
+    // the app will run
+    // throw new Error('Return url not available (or needed) for V2 libraries');
+    return '';
   }
   // when the learning context is a course, return to the unit page
   if (unitUrl) {
@@ -33,7 +36,10 @@ export const blockAncestor = ({ studioEndpointUrl, blockId }) => {
     return `${block({ studioEndpointUrl, blockId })}?fields=ancestorInfo`;
   }
   // this url only need to get info to build the return url, which isn't used by V2 blocks
-  throw new Error('Block ancestor not available (and not needed) for V2 blocks');
+  // (temporary) don't throw error, just return empty url. it will fail it's network connection but otherwise
+  // the app will run
+  // throw new Error('Block ancestor not available (and not needed) for V2 blocks');
+  return '';
 };
 
 export const blockStudioView = ({ studioEndpointUrl, blockId }) => (

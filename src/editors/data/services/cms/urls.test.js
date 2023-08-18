@@ -47,9 +47,13 @@ describe('cms url methods', () => {
       expect(returnUrl({ studioEndpointUrl, unitUrl, learningContextId: libraryLearningContextId }))
         .toEqual(`${studioEndpointUrl}/library/${libraryLearningContextId}`);
     });
-    it('throws error when given the v2 library', () => {
-      expect(() => { returnUrl({ studioEndpointUrl, unitUrl, learningContextId: libraryV2Id }); })
-        .toThrow('Return url not available (or needed) for V2 libraries');
+    // it('throws error when given the v2 library', () => {
+    //   expect(() => { returnUrl({ studioEndpointUrl, unitUrl, learningContextId: libraryV2Id }); })
+    //     .toThrow('Return url not available (or needed) for V2 libraries');
+    // });
+    it('returns empty url when given the v2 library', () => {
+      expect(returnUrl({ studioEndpointUrl, unitUrl, learningContextId: libraryV2Id }))
+        .toEqual('');
     });
     it('returns url with studioEndpointUrl and unitUrl', () => {
       expect(returnUrl({ studioEndpointUrl, unitUrl, learningContextId: courseId }))
@@ -83,9 +87,14 @@ describe('cms url methods', () => {
       expect(blockAncestor({ studioEndpointUrl, blockId }))
         .toEqual(`${block({ studioEndpointUrl, blockId })}?fields=ancestorInfo`);
     });
-    it('throws error with studioEndpointUrl, v2 blockId and ancestor query', () => {
-      expect(() => { blockAncestor({ studioEndpointUrl, blockId: v2BlockId }); })
-        .toThrow('Block ancestor not available (and not needed) for V2 blocks');
+    // This test will probably be used in the future
+    // it('throws error with studioEndpointUrl, v2 blockId and ancestor query', () => {
+    //   expect(() => { blockAncestor({ studioEndpointUrl, blockId: v2BlockId }); })
+    //     .toThrow('Block ancestor not available (and not needed) for V2 blocks');
+    // });
+    it('returns blank url with studioEndpointUrl, v2 blockId and ancestor query', () => {
+      expect(blockAncestor({ studioEndpointUrl, blockId: v2BlockId }))
+        .toEqual('');
     });
   });
   describe('blockStudioView', () => {
