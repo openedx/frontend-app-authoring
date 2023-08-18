@@ -14,7 +14,7 @@ import {
 } from '@edx/paragon';
 import { ContentCopy, InfoOutline } from '@edx/paragon/icons';
 import AssetThumbnail from './FileThumbnail';
-
+import { getFileSizeToClosestByte } from './data/utils';
 import messages from './messages';
 
 const FileInfo = ({
@@ -31,6 +31,7 @@ const FileInfo = ({
     setLockedState(locked);
     handleLockedAsset(asset.id, locked);
   };
+  const fileSize = getFileSizeToClosestByte(asset.fileSize);
 
   return (
     <ModalDialog
@@ -64,7 +65,7 @@ const FileInfo = ({
             <div className="font-weight-bold mt-3">
               <FormattedMessage {...messages.fileSizeTitle} />
             </div>
-            {/* {asset.fileSize} */}
+            {fileSize}
             <hr />
             <div className="font-weight-bold mt-3">
               <FormattedMessage {...messages.studioUrlTitle} />
@@ -137,6 +138,7 @@ FileInfo.propTypes = {
     id: PropTypes.string.isRequired,
     portableUrl: PropTypes.string.isRequired,
     dateAdded: PropTypes.string.isRequired,
+    fileSize: PropTypes.number.isRequired,
   }).isRequired,
   onClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
