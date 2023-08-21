@@ -58,6 +58,7 @@ describe('app selectors unit tests', () => {
         simpleSelectors.unitUrl,
         simpleSelectors.studioEndpointUrl,
         simpleSelectors.learningContextId,
+        simpleSelectors.blockId,
       ]);
     });
     it('returns urls.returnUrl with the returnUrl', () => {
@@ -65,10 +66,13 @@ describe('app selectors unit tests', () => {
       const studioEndpointUrl = 'baseURL';
       const unitUrl = 'some unit url';
       const learningContextId = 'some learning context';
+      const blockId = 'block-v1 some v1 block id';
       expect(
-        cb(unitUrl, studioEndpointUrl, learningContextId),
+        cb(unitUrl, studioEndpointUrl, learningContextId, blockId),
       ).toEqual(
-        urls.returnUrl({ unitUrl, studioEndpointUrl, learningContextId }),
+        urls.returnUrl({
+          unitUrl, studioEndpointUrl, learningContextId, blockId,
+        }),
       );
     });
   });

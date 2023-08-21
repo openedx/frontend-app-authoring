@@ -6,7 +6,9 @@ export const unit = ({ studioEndpointUrl, unitUrl }) => (
   `${studioEndpointUrl}/container/${unitUrl.data.ancestors[0]?.id}`
 );
 
-export const returnUrl = ({ studioEndpointUrl, unitUrl, learningContextId }) => {
+export const returnUrl = ({
+  studioEndpointUrl, unitUrl, learningContextId, blockId,
+}) => {
   if (learningContextId && learningContextId.startsWith('library-v1')) {
     // when the learning context is a v1 library, return to the library page
     return libraryV1({ studioEndpointUrl, learningContextId });
@@ -19,7 +21,8 @@ export const returnUrl = ({ studioEndpointUrl, unitUrl, learningContextId }) => 
     return '';
   }
   // when the learning context is a course, return to the unit page
-  if (unitUrl) {
+  // only do this for v1 blocks
+  if (unitUrl && blockId.includes('block-v1')) {
     return unit({ studioEndpointUrl, unitUrl });
   }
   return '';

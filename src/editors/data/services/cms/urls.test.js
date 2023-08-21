@@ -56,8 +56,16 @@ describe('cms url methods', () => {
         .toEqual('');
     });
     it('returns url with studioEndpointUrl and unitUrl', () => {
-      expect(returnUrl({ studioEndpointUrl, unitUrl, learningContextId: courseId }))
+      expect(returnUrl({
+        studioEndpointUrl, unitUrl, learningContextId: courseId, blockId,
+      }))
         .toEqual(`${studioEndpointUrl}/container/${unitUrl.data.ancestors[0].id}`);
+    });
+    it('returns blank url for v2 block', () => {
+      expect(returnUrl({
+        studioEndpointUrl, unitUrl, learningContextId: courseId, blockId: v2BlockId,
+      }))
+        .toEqual('');
     });
     it('throws error if no unit url', () => {
       expect(returnUrl({ studioEndpointUrl, unitUrl: null, learningContextId: courseId }))

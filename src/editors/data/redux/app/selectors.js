@@ -26,9 +26,12 @@ export const simpleSelectors = {
 };
 
 export const returnUrl = createSelector(
-  [module.simpleSelectors.unitUrl, module.simpleSelectors.studioEndpointUrl, module.simpleSelectors.learningContextId],
-  (unitUrl, studioEndpointUrl, learningContextId) => (
-    urls.returnUrl({ studioEndpointUrl, unitUrl, learningContextId })
+  [module.simpleSelectors.unitUrl, module.simpleSelectors.studioEndpointUrl, module.simpleSelectors.learningContextId,
+    module.simpleSelectors.blockId],
+  (unitUrl, studioEndpointUrl, learningContextId, blockId) => (
+    urls.returnUrl({
+      studioEndpointUrl, unitUrl, learningContextId, blockId,
+    })
   ),
 );
 
