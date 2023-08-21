@@ -64,9 +64,11 @@ const GalleryCard = ({
               </div>
             )}
           </div>
-          <Truncate lines={1} className="font-weight-bold small mt-3">
-            {original.displayName}
-          </Truncate>
+          <div style={{ wordBreak: 'break-word' }}>
+            <Truncate lines={1} className="font-weight-bold small mt-3">
+              {original.displayName}
+            </Truncate>
+          </div>
         </Card.Section>
         <Card.Footer>
           <Chip>

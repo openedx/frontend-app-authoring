@@ -53,9 +53,11 @@ const ListCard = ({
         </div>
         <Card.Body>
           <Card.Section>
-            <Truncate lines={1} className="font-weight-bold small mt-3">
-              {original.displayName}
-            </Truncate>
+            <div style={{ wordBreak: 'break-word' }}>
+              <Truncate lines={1} className="font-weight-bold small mt-3">
+                {original.displayName}
+              </Truncate>
+            </div>
             <Chip className="mt-3">
               {original.wrapperType}
             </Chip>

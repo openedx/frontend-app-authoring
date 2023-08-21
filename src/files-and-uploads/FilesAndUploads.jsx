@@ -236,7 +236,7 @@ const FilesAndUploads = ({
               }}
             />
           ) : (
-            <div data-testid="files-data-table">
+            <div data-testid="files-data-table" className="mr-4 ml-3">
               <DataTable.TableControlBar />
               { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={6} /> }
               { currentView === 'list' && <CardView CardComponent={fileCard} columnSizes={{ xs: 12 }} selectionPlacement="left" skeletonCardCount={4} /> }

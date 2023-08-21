@@ -42,7 +42,11 @@ const FileInfo = ({
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
-          {asset.displayName}
+          <div style={{ wordBreak: 'break-word' }}>
+            <Truncate lines={2} className="font-weight-bold small mt-3">
+              {asset.displayName}
+            </Truncate>
+          </div>
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body className="pt-0 x-small">
@@ -70,9 +74,11 @@ const FileInfo = ({
               <FormattedMessage {...messages.studioUrlTitle} />
             </div>
             <ActionRow>
-              <Truncate lines={1}>
-                {asset.portableUrl}
-              </Truncate>
+              <div style={{ wordBreak: 'break-word' }}>
+                <Truncate lines={1}>
+                  {asset.portableUrl}
+                </Truncate>
+              </div>
               <ActionRow.Spacer />
               <IconButton
                 src={ContentCopy}
@@ -85,9 +91,11 @@ const FileInfo = ({
               <FormattedMessage {...messages.webUrlTitle} />
             </div>
             <ActionRow>
-              <Truncate lines={1}>
-                {asset.externalUrl}
-              </Truncate>
+              <div style={{ wordBreak: 'break-word' }}>
+                <Truncate lines={1}>
+                  {asset.externalUrl}
+                </Truncate>
+              </div>
               <ActionRow.Spacer />
               <IconButton
                 src={ContentCopy}
