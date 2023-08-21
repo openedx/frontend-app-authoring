@@ -31,7 +31,7 @@ const FileInfo = ({
     setLockedState(locked);
     handleLockedAsset(asset.id, locked);
   };
-  const fileSize = getFileSizeToClosestByte(asset.fileSize);
+  const fileSize = getFileSizeToClosestByte(asset?.fileSize);
 
   return (
     <ModalDialog
