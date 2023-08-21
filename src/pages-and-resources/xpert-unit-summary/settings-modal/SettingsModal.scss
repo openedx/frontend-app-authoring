@@ -1,0 +1,31 @@
+.summary-radio {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-width: $border-width;
+  border-color: $border-color;
+  border-radius: $border-radius;
+  border-style: solid;
+
+  &:has(input:checked) {
+    border-width: 3px;
+    border-color: theme-color("primary");
+  }
+
+  > div {
+    flex: 1;
+
+    > label {
+      height: 80px;
+    }
+  }
+}
+
+.reset-units-button {
+  color: $link-color;
+  border-width: $border-width;
+  border-color: $border-color;
+  border-radius: $border-radius;
+  border-style: solid;
+  margin-left: auto;
+}

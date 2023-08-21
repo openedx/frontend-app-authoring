@@ -20,6 +20,7 @@ export async function postXpertSettings(courseId, state) {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXpertSettingsUrl(courseId), {
       enabled: state.enabled,
+      reset: state.reset,
     });
 
   return data;
@@ -28,6 +29,13 @@ export async function postXpertSettings(courseId, state) {
 export async function getXpertPluginConfigurable(courseId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(getXpertConfigurationStatusUrl(courseId));
+
+  return data;
+}
+
+export async function deleteXpertSettings(courseId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .delete(getXpertSettingsUrl(courseId));
 
   return data;
 }
