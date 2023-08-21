@@ -32,7 +32,6 @@ const AddUserForm = ({ onSubmit, onCancel }) => {
               <FormikControl
                 name="email"
                 value={values.email}
-                withErrorText={false}
                 placeholder={intl.formatMessage(messages.formPlaceholder, { email: EXAMPLE_USER_EMAIL })}
               />
               <Form.Control.Feedback className="form-helper-text">
