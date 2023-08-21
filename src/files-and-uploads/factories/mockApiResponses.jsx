@@ -31,7 +31,7 @@ export const initialState = {
         wrapperType: 'document',
         dateAdded: '',
         thumbnail: null,
-        fileSize: 123456,
+        fileSize: 1234567,
       },
     },
   },
