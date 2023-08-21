@@ -713,5 +713,4 @@
   "course-authoring.grading-settings.assignment.alert.warning.title": "Warning: The number of {type} assignments defined here does not match the current number of {type} assignments in the course:",
   "course-authoring.grading-settings.assignment.alert.success.title": "The number of {type} assignments in the course matches the number defined here.",
   "course-authoring.grading-settings.assignment.type-name.error.message-2": "For grading to work, you must change all {initialAssignmentName} subsections to {value}"
-  "course-authoring.grading-settings.assignment.type-name.error.message-2": "For grading to work, you must change all {initialAssignmentName} subsections to {value}"
 }
