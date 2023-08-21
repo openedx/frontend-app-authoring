@@ -117,7 +117,6 @@ const FilesAndUploads = ({
       {...{
         selectedFlatRows,
         fileInputControl,
-        handleBulkDelete,
         handleBulkDownload,
         handleOpenDeleteConfirmation,
       }}
@@ -129,7 +128,6 @@ const FilesAndUploads = ({
       return (
         <GalleryCard
           {...{
-            // handleBulkDelete,
             handleLockedAsset,
             handleOpenDeleteConfirmation,
             className,
@@ -141,7 +139,6 @@ const FilesAndUploads = ({
     return (
       <ListCard
         {...{
-          // handleBulkDelete,
           handleLockedAsset,
           handleOpenDeleteConfirmation,
           className,
