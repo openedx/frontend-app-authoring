@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
-
+import {
+  injectIntl,
+  FormattedMessage,
+  FormattedDate,
+  intlShape,
+} from '@edx/frontend-platform/i18n';
 import {
   ModalDialog,
   Stack,
@@ -13,6 +17,7 @@ import {
   CheckboxControl,
 } from '@edx/paragon';
 import { ContentCopy, InfoOutline } from '@edx/paragon/icons';
+import { getUtcDateTime } from './data/utils';
 import AssetThumbnail from './FileThumbnail';
 
 import messages from './messages';
@@ -31,6 +36,7 @@ const FileInfo = ({
     setLockedState(locked);
     handleLockedAsset(asset.id, locked);
   };
+  const dateAdded = getUtcDateTime(asset.dateAdded);
 
   return (
     <ModalDialog
@@ -48,7 +54,7 @@ const FileInfo = ({
       <ModalDialog.Body className="pt-0 x-small">
         <hr />
         <div className="row flex-nowrap m-0 mt-4">
-          <div className="col-7 mr-3">
+          <div className="col-8 mr-3">
             <AssetThumbnail
               thumbnail={asset.thumbnail}
               externalUrl={asset.externalUrl}
@@ -60,7 +66,14 @@ const FileInfo = ({
             <div className="font-weight-bold">
               <FormattedMessage {...messages.dateAddedTitle} />
             </div>
-            {asset.dateAdded}
+            <FormattedDate
+              value={dateAdded}
+              year="numeric"
+              month="short"
+              day="2-digit"
+              hour="numeric"
+              minute="numeric"
+            />
             <div className="font-weight-bold mt-3">
               <FormattedMessage {...messages.fileSizeTitle} />
             </div>

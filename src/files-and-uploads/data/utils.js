@@ -39,3 +39,9 @@ export const getSrc = ({ thumbnail, wrapperType, externalUrl }) => {
     return InsertDriveFile;
   }
 };
+
+export const getUtcDateTime = (date) => {
+  const utcDateString = date.replace(/\bat\b/g, '');
+  const utcDateTime = new Date(utcDateString);
+  return utcDateTime;
+};

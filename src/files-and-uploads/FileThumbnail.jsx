@@ -19,11 +19,19 @@ const AssetThumbnail = ({
   });
 
   return (
-    <div className="row justify-content-center">
+    <div className="row justify-content-center align-itmes-center">
       {thumbnail ? (
-        <Image fluid thumbnail src={src} alt={`Thumbnail of ${displayName}`} />
+        <Image
+          style={{ width: '503px', height: '281px' }}
+          className="border rounded p-1"
+          src={src}
+          alt={`Thumbnail of ${displayName}`}
+        />
       ) : (
-        <div className="border rounded p-1">
+        <div
+          className="row border justify-content-center align-items-center rounded m-0"
+          style={{ width: '503px', height: '281px' }}
+        >
           <Icon src={src} style={{ height: '48px', width: '48px' }} />
         </div>
       )}
