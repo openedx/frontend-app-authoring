@@ -19,13 +19,10 @@ import { getSrc } from '../data/utils';
 const GalleryCard = ({
   className,
   original,
-  handleBulkDelete,
   handleLockedAsset,
+  handleOpenDeleteConfirmation,
 }) => {
   const [isAssetInfoOpen, openAssetInfo, closeAssetinfo] = useToggle(false);
-  const deleteAsset = () => {
-    handleBulkDelete([{ original }]);
-  };
   const lockAsset = () => {
     const { locked } = original;
     handleLockedAsset(original.id, !locked);
@@ -43,13 +40,13 @@ const GalleryCard = ({
             <ActionRow>
               <FileMenu
                 externalUrl={original.externalUrl}
-                handleDelete={deleteAsset}
                 handleLock={lockAsset}
                 locked={original.locked}
                 openAssetInfo={openAssetInfo}
                 portableUrl={original.portableUrl}
                 iconSrc={MoreVert}
                 id={original.id}
+                openDeleteConfirmation={() => handleOpenDeleteConfirmation([{ original }])}
               />
             </ActionRow>
           )}
@@ -99,7 +96,7 @@ GalleryCard.propTypes = {
     portableUrl: PropTypes.string.isRequired,
   }).isRequired,
   handleLockedAsset: PropTypes.func.isRequired,
-  handleBulkDelete: PropTypes.func.isRequired,
+  handleOpenDeleteConfirmation: PropTypes.func.isRequired,
 };
 
 export default GalleryCard;

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 export const fileInput = ({
   onAddFile,
-  setSelectedRowCount,
+  setSelectedRows,
   setAddOpen,
 }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -11,7 +11,7 @@ export const fileInput = ({
   const click = () => ref.current.click();
   const addFile = (e) => {
     const { files } = e.target;
-    setSelectedRowCount(files.length);
+    setSelectedRows(files);
     Object.values(files).forEach(file => {
       onAddFile(file);
       setAddOpen();

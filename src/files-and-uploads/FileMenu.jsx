@@ -10,10 +10,10 @@ import messages from './messages';
 
 const FileMenu = ({
   externalUrl,
-  handleDelete,
   handleLock,
   locked,
   openAssetInfo,
+  openDeleteConfirmation,
   portableUrl,
   iconSrc,
   id,
@@ -50,7 +50,10 @@ const FileMenu = ({
         {intl.formatMessage(messages.infoTitle)}
       </Dropdown.Item>
       <Dropdown.Divider />
-      <Dropdown.Item onClick={handleDelete}>
+      <Dropdown.Item
+        data-testid="open-delete-confirmation-button"
+        onClick={openDeleteConfirmation}
+      >
         {intl.formatMessage(messages.deleteTitle)}
       </Dropdown.Item>
     </Dropdown.Menu>
@@ -59,10 +62,10 @@ const FileMenu = ({
 
 FileMenu.propTypes = {
   externalUrl: PropTypes.string.isRequired,
-  handleDelete: PropTypes.func.isRequired,
   handleLock: PropTypes.func.isRequired,
   locked: PropTypes.bool.isRequired,
   openAssetInfo: PropTypes.func.isRequired,
+  openDeleteConfirmation: PropTypes.func.isRequired,
   portableUrl: PropTypes.string.isRequired,
   iconSrc: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired,
