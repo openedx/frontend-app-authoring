@@ -27,6 +27,26 @@ import ImageUploadModal from '../ImageUploadModal';
 import SourceCodeModal from '../SourceCodeModal';
 import * as hooks from './hooks';
 
+const editorConfigDefaultProps = {
+  setEditorRef: undefined,
+  placeholder: undefined,
+  initializeEditor: undefined,
+  setSelection: undefined,
+  updateContent: undefined,
+  content: undefined,
+  minHeight: undefined,
+};
+
+const editorConfigPropTypes = {
+  setEditorRef: PropTypes.func,
+  placeholder: PropTypes.any,
+  initializeEditor: PropTypes.func,
+  setSelection: PropTypes.func,
+  updateContent: PropTypes.func,
+  content: PropTypes.any,
+  minHeight: PropTypes.any,
+};
+
 export const TinyMceWidget = ({
   editorType,
   editorRef,
@@ -38,8 +58,8 @@ export const TinyMceWidget = ({
   isLibrary,
   lmsEndpointUrl,
   studioEndpointUrl,
-  updateContent,
-  ...props
+  onChange,
+  ...editorConfig
 }) => {
   const { isImgOpen, openImgModal, closeImgModal } = hooks.imgModalToggle();
   const { isSourceCodeOpen, openSourceCodeModal, closeSourceCodeModal } = hooks.sourceCodeModalToggle(editorRef);
@@ -70,7 +90,7 @@ export const TinyMceWidget = ({
       <Editor
         id={id}
         disabled={disabled}
-        onEditorChange={updateContent}
+        onEditorChange={onChange}
         {
           ...hooks.editorConfig({
             openImgModal,
@@ -83,7 +103,7 @@ export const TinyMceWidget = ({
             images: imagesRef,
             editorContentHtml,
             ...imageSelection,
-            ...props,
+            ...editorConfig,
           })
         }
       />
@@ -100,7 +120,9 @@ TinyMceWidget.defaultProps = {
   id: null,
   disabled: false,
   editorContentHtml: undefined,
-  updateContent: () => ({}),
+  updateContent: undefined,
+  onChange: () => ({}),
+  ...editorConfigDefaultProps,
 };
 TinyMceWidget.propTypes = {
   editorType: PropTypes.string,
@@ -113,6 +135,8 @@ TinyMceWidget.propTypes = {
   disabled: PropTypes.bool,
   editorContentHtml: PropTypes.string,
   updateContent: PropTypes.func,
+  onChange: PropTypes.func,
+  ...editorConfigPropTypes,
 };
 
 export const mapStateToProps = (state) => ({

@@ -28,6 +28,7 @@ exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
     editorConfig={
       Object {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
+        "content": undefined,
         "editorContentHtml": undefined,
         "editorRef": Object {
           "current": Object {
@@ -42,13 +43,18 @@ exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
             },
           ],
         },
+        "initializeEditor": undefined,
         "isLibrary": true,
         "lmsEndpointUrl": "sOmEvaLue.cOm",
+        "minHeight": undefined,
         "openImgModal": [MockFunction modal.openModal],
         "openSourceCodeModal": [MockFunction modal.openModal],
+        "placeholder": undefined,
         "selection": "hooks.selectedImage.selection",
-        "setSelection": [MockFunction hooks.selectedImage.setSelection],
+        "setEditorRef": undefined,
+        "setSelection": undefined,
         "studioEndpointUrl": "sOmEoThERvaLue.cOm",
+        "updateContent": [Function],
       }
     }
     id="sOMeiD"
@@ -99,6 +105,7 @@ exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
     editorConfig={
       Object {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
+        "content": undefined,
         "editorContentHtml": undefined,
         "editorRef": Object {
           "current": Object {
@@ -113,13 +120,18 @@ exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
             },
           ],
         },
+        "initializeEditor": undefined,
         "isLibrary": false,
         "lmsEndpointUrl": "sOmEvaLue.cOm",
+        "minHeight": undefined,
         "openImgModal": [MockFunction modal.openModal],
         "openSourceCodeModal": [MockFunction modal.openModal],
+        "placeholder": undefined,
         "selection": "hooks.selectedImage.selection",
-        "setSelection": [MockFunction hooks.selectedImage.setSelection],
+        "setEditorRef": undefined,
+        "setSelection": undefined,
         "studioEndpointUrl": "sOmEoThERvaLue.cOm",
+        "updateContent": [Function],
       }
     }
     id="sOMeiD"
@@ -181,6 +193,7 @@ exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] =
     editorConfig={
       Object {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
+        "content": undefined,
         "editorContentHtml": undefined,
         "editorRef": Object {
           "current": Object {
@@ -195,13 +208,18 @@ exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] =
             },
           ],
         },
+        "initializeEditor": undefined,
         "isLibrary": false,
         "lmsEndpointUrl": "sOmEvaLue.cOm",
+        "minHeight": undefined,
         "openImgModal": [MockFunction modal.openModal],
         "openSourceCodeModal": [MockFunction modal.openModal],
+        "placeholder": undefined,
         "selection": "hooks.selectedImage.selection",
-        "setSelection": [MockFunction hooks.selectedImage.setSelection],
+        "setEditorRef": undefined,
+        "setSelection": undefined,
         "studioEndpointUrl": "sOmEoThERvaLue.cOm",
+        "updateContent": [Function],
       }
     }
     id="sOMeiD"
