@@ -101,6 +101,22 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-uploads.cardMenu.deleteTitle',
     defaultMessage: 'Delete',
   },
+  deleteConfirmationTitle: {
+    id: 'course-authoring.files-and-uploads..deleteConfirmation.title',
+    defaultMessage: 'Delete File(s) Confirmation',
+  },
+  deleteConfirmationMessage: {
+    id: 'course-authoring.files-and-uploads..deleteConfirmation.message',
+    defaultMessage: 'Are you sure you want to delete {fileNumber} file(s)? This action cannot be undone.',
+  },
+  deleteFileButtonLabel: {
+    id: 'course-authoring.files-and-uploads.deleteConfirmation.deleteFile.label',
+    defaultMessage: 'Delete',
+  },
+  cancelButtonLabel: {
+    id: 'course-authoring.files-and-uploads.deleteConfirmation.cancelButton.label',
+    defaultMessage: 'Cancel',
+  },
 });
 
 export default messages;

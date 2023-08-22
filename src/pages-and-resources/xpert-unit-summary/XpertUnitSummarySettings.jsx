@@ -44,6 +44,8 @@ const XpertUnitSummarySettings = ({ intl }) => {
       }
       enableAppLabel={intl.formatMessage(messages.enableXpertUnitSummaryLabel)}
       learnMoreText={intl.formatMessage(messages.enableXpertUnitSummaryLink)}
+      allUnitsEnabledText={intl.formatMessage(messages.allUnitsEnabledByDefault)}
+      noUnitsEnabledText={intl.formatMessage(messages.noUnitsEnabledByDefault)}
       onClose={handleClose}
     />
   );

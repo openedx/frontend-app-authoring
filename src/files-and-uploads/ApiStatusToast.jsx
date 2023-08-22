@@ -9,12 +9,12 @@ const ApiStatusToast = ({
   selectedRowCount,
   isOpen,
   setClose,
-  setSelectedRowCount,
+  setSelectedRows,
   // injected
   intl,
 }) => {
   const handleClose = () => {
-    setSelectedRowCount(0);
+    setSelectedRows([]);
     setClose();
   };
 
@@ -33,7 +33,7 @@ ApiStatusToast.propTypes = {
   selectedRowCount: PropTypes.number.isRequired,
   isOpen: PropTypes.bool.isRequired,
   setClose: PropTypes.func.isRequired,
-  setSelectedRowCount: PropTypes.func.isRequired,
+  setSelectedRows: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

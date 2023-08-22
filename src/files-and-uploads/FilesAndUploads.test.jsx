@@ -194,9 +194,12 @@ describe('FilesAndUploads', () => {
         const deleteButton = screen.getByText(messages.deleteTitle.defaultMessage).closest('a');
         expect(deleteButton).not.toHaveClass('disabled');
         axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
-        await act(async () => {
+        await waitFor(() => {
           fireEvent.click(deleteButton);
-          await executeThunk(deleteAssetFile(courseId, 'mOckID1', 5), store.dispatch);
+          expect(screen.getByText(messages.deleteConfirmationTitle.defaultMessage)).toBeVisible();
+          fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
+          expect(screen.queryByText(messages.deleteConfirmationTitle.defaultMessage)).toBeNull();
+          executeThunk(deleteAssetFile(courseId, 'mOckID1', 5), store.dispatch);
         });
         const deleteStatus = store.getState().assets.deletingStatus;
         expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
@@ -284,7 +287,10 @@ describe('FilesAndUploads', () => {
         await waitFor(() => {
           axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
           fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
-          fireEvent.click(screen.getByText('Delete'));
+          fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
+          expect(screen.getByText(messages.deleteConfirmationTitle.defaultMessage)).toBeVisible();
+          fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
+          expect(screen.queryByText(messages.deleteConfirmationTitle.defaultMessage)).toBeNull();
           executeThunk(deleteAssetFile(courseId, 'mOckID1', 5), store.dispatch);
         });
         const deleteStatus = store.getState().assets.deletingStatus;
@@ -330,7 +336,10 @@ describe('FilesAndUploads', () => {
         await waitFor(() => {
           axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(404);
           fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
-          fireEvent.click(screen.getByText('Delete'));
+          fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
+          expect(screen.getByText(messages.deleteConfirmationTitle.defaultMessage)).toBeVisible();
+          fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
+          expect(screen.queryByText(messages.deleteConfirmationTitle.defaultMessage)).toBeNull();
           executeThunk(deleteAssetFile(courseId, 'mOckID1', 5), store.dispatch);
         });
         const deleteStatus = store.getState().assets.deletingStatus;
