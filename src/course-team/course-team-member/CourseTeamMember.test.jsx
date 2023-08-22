@@ -2,9 +2,9 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
+import { USER_ROLES } from '../../constants';
 import CourseTeamMember from './CourseTeamMember';
 import messages from './messages';
-import { USER_ROLES } from '../../constants';
 
 const userNameMock = 'User';
 const emailMock = 'user@example.com';

@@ -13,9 +13,12 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import initializeStore from '../store';
 import { courseTeamMock, courseTeamWithOneUser, courseTeamWithoutUsers } from './__mocks__';
-import { getCourseTeamApiUrl } from './data/api';
+import { getCourseTeamApiUrl, updateCourseTeamUserApiUrl } from './data/api';
 import CourseTeam from './CourseTeam';
 import messages from './messages';
+import { USER_ROLES } from '../constants';
+import { executeThunk } from '../utils';
+import { changeRoleTeamUserQuery, deleteCourseTeamQuery } from './data/thunk';
 
 let axiosMock;
 let store;
@@ -183,5 +186,37 @@ describe('<CourseTeam />', () => {
       expect(queryByRole('button', { name: messages.addNewMemberButton.defaultMessage })).not.toBeInTheDocument();
       expect(queryByTestId('add-team-member')).not.toBeInTheDocument();
     });
+  });
+
+  it('should delete user', async () => {
+    cleanup();
+    axiosMock
+      .onGet(getCourseTeamApiUrl(courseId))
+      .reply(200, courseTeamMock);
+
+    const { queryByText } = render(<RootWrapper />);
+
+    axiosMock
+      .onDelete(updateCourseTeamUserApiUrl(courseId, 'staff@example.com'))
+      .reply(200);
+
+    await executeThunk(deleteCourseTeamQuery(courseId, 'staff@example.com'), store.dispatch);
+    expect(queryByText('staff@example.com')).not.toBeInTheDocument();
+  });
+
+  it('should change role user', async () => {
+    cleanup();
+    axiosMock
+      .onGet(getCourseTeamApiUrl(courseId))
+      .reply(200, courseTeamMock);
+
+    const { getAllByText } = render(<RootWrapper />);
+
+    axiosMock
+      .onPut(updateCourseTeamUserApiUrl(courseId, 'staff@example.com', { role: USER_ROLES.admin }))
+      .reply(200, { role: USER_ROLES.admin });
+
+    await executeThunk(changeRoleTeamUserQuery(courseId, 'staff@example.com', { role: USER_ROLES.admin }), store.dispatch);
+    expect(getAllByText('Admin')).toHaveLength(1);
   });
 });

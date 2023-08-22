@@ -6,24 +6,61 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { AppProvider } from '@edx/frontend-platform/react';
+import { initializeMockApp } from '@edx/frontend-platform';
+import MockAdapter from 'axios-mock-adapter';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
+import { EXAMPLE_USER_EMAIL } from '../constants';
+import initializeStore from '../../store';
+import { USER_ROLES } from '../../constants';
+import { updateCourseTeamUserApiUrl } from '../data/api';
+import { createCourseTeamQuery } from '../data/thunk';
+import { executeThunk } from '../../utils';
 import AddUserForm from './AddUserForm';
 import messages from './messages';
-import { EXAMPLE_USER_EMAIL } from '../constants';
+
+let axiosMock;
+let store;
+const mockPathname = '/foo-bar';
+const courseId = '123';
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: mockPathname,
+  }),
+}));
 
 const onSubmitMock = jest.fn();
 const onCancelMock = jest.fn();
 
 const RootWrapper = () => (
-  <IntlProvider locale="en">
-    <AddUserForm
-      onSubmit={onSubmitMock}
-      onCancel={onCancelMock}
-    />
-  </IntlProvider>
+  <AppProvider store={store}>
+    <IntlProvider locale="en">
+      <AddUserForm
+        onSubmit={onSubmitMock}
+        onCancel={onCancelMock}
+      />
+    </IntlProvider>
+  </AppProvider>
 );
 
 describe('<AddUserForm />', () => {
+  beforeEach(() => {
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+
+    store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+  });
+
   it('render AddUserForm component correctly', () => {
     const { getByText, getByPlaceholderText } = render(<RootWrapper />);
 
@@ -47,7 +84,6 @@ describe('<AddUserForm />', () => {
       fireEvent.click(addUserButton);
     });
 
-    // Wait for the form submission to complete
     await waitFor(() => {
       expect(onSubmitMock).toHaveBeenCalledTimes(1);
       expect(onSubmitMock).toHaveBeenCalledWith(
@@ -55,6 +91,12 @@ describe('<AddUserForm />', () => {
         expect.objectContaining({ submitForm: expect.any(Function) }),
       );
     });
+
+    axiosMock
+      .onPost(updateCourseTeamUserApiUrl(courseId, EXAMPLE_USER_EMAIL), { role: USER_ROLES.staff })
+      .reply(200, { role: USER_ROLES.staff });
+
+    await executeThunk(createCourseTeamQuery(courseId, EXAMPLE_USER_EMAIL), store.dispatch);
   });
 
   it('calls onCancel when the "Cancel" button is clicked', () => {
