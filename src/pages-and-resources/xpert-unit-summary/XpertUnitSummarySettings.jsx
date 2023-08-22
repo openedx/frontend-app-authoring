@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect } from 'react';
 import { history } from '@edx/frontend-platform';
-import { Hyperlink } from '@edx/paragon';
 import { useDispatch } from 'react-redux';
 
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -27,21 +26,8 @@ const XpertUnitSummarySettings = ({ intl }) => {
     <SettingsModal
       appId="xpert-unit-summary"
       title={intl.formatMessage(messages.heading)}
-      enableAppHelp={
-        (
-          <>
-            {intl.formatMessage(messages.enableXpertUnitSummaryHelp)}
-            {' '}
-            <Hyperlink
-              destination="https://openai.com/api-data-privacy"
-              target="_blank"
-              showLaunchIcon={false}
-            >
-              {intl.formatMessage(messages.enableXpertUnitSummaryHelpPrivacyLink)}
-            </Hyperlink>
-          </>
-        )
-      }
+      enableAppHelp={intl.formatMessage(messages.enableXpertUnitSummaryHelp)}
+      helpPrivacyText={intl.formatMessage(messages.enableXpertUnitSummaryHelpPrivacyLink)}
       enableAppLabel={intl.formatMessage(messages.enableXpertUnitSummaryLabel)}
       learnMoreText={intl.formatMessage(messages.enableXpertUnitSummaryLink)}
       allUnitsEnabledText={intl.formatMessage(messages.allUnitsEnabledByDefault)}

@@ -13,7 +13,7 @@ import {
   Hyperlink,
 } from '@edx/paragon';
 import {
-  Info, CheckCircleOutline, RotateLeft, SpinnerSimple,
+  Info, CheckCircleOutline, SpinnerSimple,
 } from '@edx/paragon/icons';
 
 import { Formik } from 'formik';
@@ -38,6 +38,7 @@ import AppConfigFormDivider from '../../discussions/app-config-form/apps/shared/
 import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
 import messages from './messages';
 import appInfo from '../appInfo';
+import ResetIcon from './ResetIcon';
 
 const AppSettingsForm = ({
   formikProps, children, showForm,
@@ -150,7 +151,10 @@ const ResetUnitsButton = ({
     <OverlayTrigger
       placement="right"
       overlay={(
-        <Tooltip id={`tooltip-reset-${checked}`}>
+        <Tooltip
+          id={`tooltip-reset-${checked}`}
+          className="reset-tooltip"
+        >
           {intl.formatMessage(messages[messageKey])}
         </Tooltip>
       )}
@@ -163,7 +167,7 @@ const ResetUnitsButton = ({
           finish: intl.formatMessage(messages.reset),
         }}
         icons={{
-          default: <Icon src={RotateLeft} />,
+          default: <Icon src={ResetIcon} />,
           pending: <Icon src={SpinnerSimple} className="icon-spin" />,
           finish: <Icon src={CheckCircleOutline} />,
         }}
@@ -201,6 +205,7 @@ const SettingsModal = ({
   enableAppLabel,
   enableAppHelp,
   learnMoreText,
+  helpPrivacyText,
   enableReinitialize,
   allUnitsEnabledText,
   noUnitsEnabledText,
@@ -251,14 +256,29 @@ const SettingsModal = ({
   };
 
   const learnMoreLink = appInfo.documentationLinks?.learnMoreConfiguration && (
-    <Hyperlink
-      className="text-primary-500"
-      destination={appInfo.documentationLinks.learnMoreConfiguration}
-      target="_blank"
-      rel="noreferrer noopener"
-    >
-      {learnMoreText}
-    </Hyperlink>
+    <div className="py-1">
+      <Hyperlink
+        className="text-primary-500"
+        destination={appInfo.documentationLinks.learnMoreConfiguration}
+        target="_blank"
+        rel="noreferrer noopener"
+      >
+        {learnMoreText}
+      </Hyperlink>
+    </div>
+  );
+
+  const helpPrivacyLink = (
+    <div className="py-1">
+      <Hyperlink
+        className="text-primary-500"
+        destination="https://openai.com/api-data-privacy"
+        target="_blank"
+        rel="noreferrer noopener"
+      >
+        {helpPrivacyText}
+      </Hyperlink>
+    </div>
   );
 
   if (loadingStatus === RequestStatus.SUCCESSFUL) {
@@ -330,7 +350,8 @@ const SettingsModal = ({
                 helpText={(
                   <div>
                     <p>{enableAppHelp}</p>
-                    <span className="py-3">{learnMoreLink}</span>
+                    {helpPrivacyLink}
+                    {learnMoreLink}
                   </div>
                 )}
               />
@@ -410,6 +431,7 @@ SettingsModal.propTypes = {
   enableAppLabel: PropTypes.string.isRequired,
   enableAppHelp: PropTypes.string.isRequired,
   learnMoreText: PropTypes.string.isRequired,
+  helpPrivacyText: PropTypes.string.isRequired,
   allUnitsEnabledText: PropTypes.string.isRequired,
   noUnitsEnabledText: PropTypes.string.isRequired,
   configureBeforeEnable: PropTypes.bool,

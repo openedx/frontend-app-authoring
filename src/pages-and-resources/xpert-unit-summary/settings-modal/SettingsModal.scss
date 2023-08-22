@@ -16,7 +16,9 @@
     flex: 1;
 
     > label {
-      height: 80px;
+      min-height: 80px;
+      flex-wrap: wrap;
+      justify-content: space-between;
     }
   }
 }
@@ -27,5 +29,14 @@
   border-color: $border-color;
   border-radius: $border-radius;
   border-style: solid;
-  margin-left: auto;
+}
+
+.reset-tooltip {
+  .arrow::before {
+    border-right-color: #00262B;
+  }
+
+  .tooltip-inner {
+    background-color: #00262B;
+  }
 }
