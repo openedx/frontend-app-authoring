@@ -16,23 +16,18 @@ export const GalleryCard = ({
   asset,
 }) => (
   <SelectableBox
-    className="card bg-white"
+    className="card bg-white shadow-none border-0 py-0"
     key={asset.externalUrl}
     type="radio"
     value={asset.id}
-    style={{
-      padding: '10px 20px',
-      border: 'none',
-      boxShadow: 'none',
-    }}
   >
-    <div className="card-div d-flex flex-row flex-nowrap">
-      <div style={{
-        position: 'relative',
-        width: '200px',
-        height: '100px',
-        margin: '18px 0 0 0',
-      }}
+    <div className="card-div d-flex flex-row flex-nowrap align-items-center">
+      <div
+        className="position-relative"
+        style={{
+          width: '200px',
+          height: '100px',
+        }}
       >
         <Image
           style={{ border: 'none', width: '200px', height: '100px' }}
@@ -57,7 +52,7 @@ export const GalleryCard = ({
           </Badge>
         )}
       </div>
-      <div className="card-text p-3" style={{ marginTop: '10px' }}>
+      <div className="card-text px-3 py-2" style={{ marginTop: '10px' }}>
         <h3 className="text-primary-500">{asset.displayName}</h3>
         { asset.transcripts && (
           <div style={{ margin: '0 0 5px 0' }}>
@@ -86,7 +81,7 @@ GalleryCard.propTypes = {
     displayName: PropTypes.string,
     externalUrl: PropTypes.string,
     id: PropTypes.string,
-    dateAdded: PropTypes.number,
+    dateAdded: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]),
     locked: PropTypes.bool,
     portableUrl: PropTypes.string,
     thumbnail: PropTypes.string,
@@ -94,7 +89,7 @@ GalleryCard.propTypes = {
     duration: PropTypes.number,
     status: PropTypes.string,
     statusBadgeVariant: PropTypes.string,
-    transcripts: PropTypes.shape([]),
+    transcripts: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
 };
 

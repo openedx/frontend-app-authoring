@@ -1,13 +1,14 @@
 import React from 'react';
+
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { render, screen } from '@testing-library/react';
-import { formatMessage } from '../../../testUtils';
+
 import SelectionModal from '.';
 import '@testing-library/jest-dom';
 
 const props = {
-  isOpen: jest.fn(),
-  isClose: jest.fn(),
+  isOpen: true,
+  close: jest.fn(),
   size: 'fullscreen',
   isFullscreenScroll: false,
   galleryError: {
@@ -35,7 +36,13 @@ const props = {
     click: 'imgHooks.fileInput.click',
     ref: 'imgHooks.fileInput.ref',
   },
-  galleryProps: { gallery: 'props' },
+  galleryProps: {
+    gallery: 'props',
+    emptyGalleryLabel: {
+      id: 'emptyGalleryMsg',
+      defaultMessage: 'Empty Gallery',
+    },
+  },
   searchSortProps: { search: 'sortProps' },
   selectBtnProps: { select: 'btnProps' },
   acceptedFiles: { png: '.png' },
@@ -69,7 +76,6 @@ const props = {
   isLoaded: true,
   isFetchError: false,
   isUploadError: false,
-  intl: { formatMessage },
 };
 
 const mockGalleryFn = jest.fn();
@@ -105,7 +111,7 @@ describe('Selection Modal', () => {
   });
   test('rendering correctly with expected Input', async () => {
     render(
-      <IntlProvider>
+      <IntlProvider locale="en">
         <SelectionModal {...props} />
       </IntlProvider>,
     );
@@ -118,7 +124,6 @@ describe('Selection Modal', () => {
       expect.objectContaining({
         ...props.galleryProps,
         isLoaded: props.isLoaded,
-        show: true,
       }),
     );
     expect(mockFetchErrorAlertFn).toHaveBeenCalledWith(
@@ -142,11 +147,11 @@ describe('Selection Modal', () => {
   });
   test('rendering correctly with errors', () => {
     render(
-      <IntlProvider>
+      <IntlProvider locale="en">
         <SelectionModal {...props} isFetchError />
       </IntlProvider>,
     );
-    expect(screen.getByText('Gallery')).toBeInTheDocument();
+    expect(screen.queryByText('Gallery')).not.toBeInTheDocument();
     expect(screen.getByText('FileInput')).toBeInTheDocument();
     expect(screen.getByText('FetchErrorAlert')).toBeInTheDocument();
     expect(screen.getByText('UploadErrorAlert')).toBeInTheDocument();
@@ -157,17 +162,10 @@ describe('Selection Modal', () => {
         message: props.modalMessages.fetchError,
       }),
     );
-    expect(mockGalleryFn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        ...props.galleryProps,
-        isLoaded: props.isLoaded,
-        show: false,
-      }),
-    );
   });
   test('rendering correctly with loading', () => {
     render(
-      <IntlProvider>
+      <IntlProvider locale="en">
         <SelectionModal {...props} isLoaded={false} />
       </IntlProvider>,
     );
@@ -180,7 +178,6 @@ describe('Selection Modal', () => {
       expect.objectContaining({
         ...props.galleryProps,
         isLoaded: false,
-        show: true,
       }),
     );
   });

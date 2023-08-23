@@ -4,6 +4,11 @@ export const messages = {
     defaultMessage: 'Search',
     description: 'Placeholder text for search bar',
   },
+  clearSearch: {
+    id: 'authoring.selectionmodal.search.clearSearchButton',
+    defaultMessage: 'Clear search query',
+    description: 'Button to clear search query',
+  },
   emptySearchLabel: {
     id: 'authoring.selectionmodal.emptySearchLabel',
     defaultMessage: 'No search results.',

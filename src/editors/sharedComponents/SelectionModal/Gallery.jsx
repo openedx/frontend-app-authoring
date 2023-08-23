@@ -7,15 +7,13 @@ import {
 
 import {
   FormattedMessage,
-  injectIntl,
-  intlShape,
+  useIntl,
 } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 import GalleryCard from './GalleryCard';
 
 export const Gallery = ({
-  show,
   galleryIsEmpty,
   searchIsEmpty,
   displayList,
@@ -25,12 +23,8 @@ export const Gallery = ({
   showIdsOnCards,
   height,
   isLoaded,
-  // injected
-  intl,
 }) => {
-  if (!show) {
-    return null;
-  }
+  const intl = useIntl();
   if (!isLoaded) {
     return (
       <div style={{
@@ -96,8 +90,6 @@ Gallery.propTypes = {
   emptyGalleryLabel: PropTypes.shape({}).isRequired,
   showIdsOnCards: PropTypes.bool,
   height: PropTypes.string,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(Gallery);
+export default Gallery;

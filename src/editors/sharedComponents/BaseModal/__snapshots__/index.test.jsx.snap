@@ -8,6 +8,7 @@ exports[`BaseModal ImageUploadModal template component snapshot 1`] = `
   isOpen={true}
   onClose={[MockFunction props.close]}
   size="lg"
+  title="props.title node"
   variant="default"
 >
   <ModalDialog.Header
