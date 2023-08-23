@@ -52,13 +52,8 @@ export function fetchAssets(courseId) {
 export function updateAssetOrder(courseId, assetIds) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
-
-    try {
-      dispatch(setAssetIds({ assetIds }));
-      dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
-      dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
-    }
+    dispatch(setAssetIds({ assetIds }));
+    dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
   };
 }
 
