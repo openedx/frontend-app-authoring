@@ -23,7 +23,7 @@ const TableActions = ({
   intl,
 }) => {
   const [isSortOpen, openSort, closeSort] = useToggle(false);
-  const [sortBy, setSortBy] = useState('displayName,asc');
+  const [sortBy, setSortBy] = useState('dateAdded,desc');
   const handleChange = (e) => {
     setSortBy(e.target.value);
   };
@@ -115,7 +115,7 @@ const TableActions = ({
             </SelectableBox>
             <SelectableBox
               className="text-center"
-              value="dateAdde,asc"
+              value="dateAdded,asc"
               type="radio"
               aria-label="date added ascending radio"
             >
