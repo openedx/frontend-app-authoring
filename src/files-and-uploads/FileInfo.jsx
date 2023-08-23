@@ -17,7 +17,6 @@ import {
   CheckboxControl,
 } from '@edx/paragon';
 import { ContentCopy, InfoOutline } from '@edx/paragon/icons';
-import { getUtcDateTime } from './data/utils';
 import AssetThumbnail from './FileThumbnail';
 
 import messages from './messages';
@@ -36,8 +35,6 @@ const FileInfo = ({
     setLockedState(locked);
     handleLockedAsset(asset.id, locked);
   };
-  const dateAdded = getUtcDateTime(asset.dateAdded);
-
   return (
     <ModalDialog
       title={asset.displayName}
@@ -67,7 +64,7 @@ const FileInfo = ({
               <FormattedMessage {...messages.dateAddedTitle} />
             </div>
             <FormattedDate
-              value={dateAdded}
+              value={asset.dateAdded}
               year="numeric"
               month="short"
               day="2-digit"
