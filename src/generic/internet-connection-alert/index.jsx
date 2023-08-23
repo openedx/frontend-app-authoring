@@ -30,7 +30,10 @@ const InternetConnectionAlert = ({
 
   useEffect(() => {
     if (isQueryPending) {
-      onQueryProcessing();
+      if (onQueryProcessing) {
+        onQueryProcessing();
+      }
+
       setShowAlert(!isOnline);
 
       if (!isOnline) {
@@ -63,13 +66,13 @@ const InternetConnectionAlert = ({
 
 InternetConnectionAlert.defaultProps = {
   isQueryPending: false,
-
+  onQueryProcessing: null,
 };
 
 InternetConnectionAlert.propTypes = {
   isFailed: PropTypes.bool.isRequired,
   isQueryPending: PropTypes.bool,
-  onQueryProcessing: PropTypes.func.isRequired,
+  onQueryProcessing: PropTypes.func,
   onInternetConnectionFailed: PropTypes.func.isRequired,
 };
 
