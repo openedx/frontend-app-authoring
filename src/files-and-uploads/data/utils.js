@@ -56,3 +56,9 @@ export const getFileSizeToClosestByte = (fileSize, numberOfDivides = 0) => {
     return `${fileSizeFixedDecimal} B`;
   }
 };
+
+export const getUtcDateTime = (date) => {
+  const utcDateString = date.replace(/\bat\b/g, '');
+  const utcDateTime = new Date(utcDateString);
+  return utcDateTime;
+};

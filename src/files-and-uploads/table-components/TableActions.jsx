@@ -9,8 +9,8 @@ import messages from '../messages';
 const TableActions = ({
   selectedFlatRows,
   fileInputControl,
-  handleBulkDelete,
   handleBulkDownload,
+  handleOpenDeleteConfirmation,
 }) => (
   <>
     <Dropdown>
@@ -30,7 +30,8 @@ const TableActions = ({
         </Dropdown.Item>
         <Dropdown.Divider />
         <Dropdown.Item
-          onClick={() => handleBulkDelete(selectedFlatRows)}
+          data-testid="open-delete-confirmation-button"
+          onClick={() => handleOpenDeleteConfirmation(selectedFlatRows)}
           disabled={_.isEmpty(selectedFlatRows)}
         >
           <FormattedMessage {...messages.deleteTitle} />
@@ -63,7 +64,7 @@ TableActions.propTypes = {
   fileInputControl: PropTypes.shape({
     click: PropTypes.func.isRequired,
   }).isRequired,
-  handleBulkDelete: PropTypes.func.isRequired,
+  handleOpenDeleteConfirmation: PropTypes.func.isRequired,
   handleBulkDownload: PropTypes.func.isRequired,
 };
 

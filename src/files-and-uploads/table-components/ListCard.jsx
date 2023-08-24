@@ -19,13 +19,10 @@ import { getSrc } from '../data/utils';
 const ListCard = ({
   className,
   original,
-  handleBulkDelete,
   handleLockedAsset,
+  handleOpenDeleteConfirmation,
 }) => {
   const [isAssetInfoOpen, openAssetInfo, closeAssetinfo] = useToggle(false);
-  const deleteAsset = () => {
-    handleBulkDelete([{ original }]);
-  };
   const lockAsset = () => {
     const { locked } = original;
     handleLockedAsset(original.id, !locked);
@@ -53,9 +50,11 @@ const ListCard = ({
         </div>
         <Card.Body>
           <Card.Section>
-            <Truncate lines={1} className="font-weight-bold small mt-3">
-              {original.displayName}
-            </Truncate>
+            <div style={{ wordBreak: 'break-word' }}>
+              <Truncate lines={1} className="font-weight-bold small mt-3">
+                {original.displayName}
+              </Truncate>
+            </div>
             <Chip className="mt-3">
               {original.wrapperType}
             </Chip>
@@ -65,13 +64,13 @@ const ListCard = ({
           <ActionRow>
             <FileMenu
               externalUrl={original.externalUrl}
-              handleDelete={deleteAsset}
               handleLock={lockAsset}
               locked={original.locked}
               openAssetInfo={openAssetInfo}
               portableUrl={original.portableUrl}
               iconSrc={MoreVert}
               id={original.id}
+              openDeleteConfirmation={() => handleOpenDeleteConfirmation([{ original }])}
             />
           </ActionRow>
         </Card.Footer>
@@ -101,7 +100,7 @@ ListCard.propTypes = {
     portableUrl: PropTypes.string.isRequired,
   }).isRequired,
   handleLockedAsset: PropTypes.func.isRequired,
-  handleBulkDelete: PropTypes.func.isRequired,
+  handleOpenDeleteConfirmation: PropTypes.func.isRequired,
 };
 
 export default ListCard;

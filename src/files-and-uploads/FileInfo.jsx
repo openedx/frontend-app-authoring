@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
-
+import {
+  injectIntl,
+  FormattedMessage,
+  FormattedDate,
+  intlShape,
+} from '@edx/frontend-platform/i18n';
 import {
   ModalDialog,
   Stack,
@@ -13,8 +17,8 @@ import {
   CheckboxControl,
 } from '@edx/paragon';
 import { ContentCopy, InfoOutline } from '@edx/paragon/icons';
+import { getUtcDateTime, getFileSizeToClosestByte } from './data/utils';
 import AssetThumbnail from './FileThumbnail';
-import { getFileSizeToClosestByte } from './data/utils';
 import messages from './messages';
 
 const FileInfo = ({
@@ -32,6 +36,7 @@ const FileInfo = ({
     handleLockedAsset(asset.id, locked);
   };
   const fileSize = getFileSizeToClosestByte(asset?.fileSize);
+  const dateAdded = getUtcDateTime(asset.dateAdded);
 
   return (
     <ModalDialog
@@ -43,13 +48,17 @@ const FileInfo = ({
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
-          {asset.displayName}
+          <div style={{ wordBreak: 'break-word' }}>
+            <Truncate lines={2} className="font-weight-bold small mt-3">
+              {asset.displayName}
+            </Truncate>
+          </div>
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body className="pt-0 x-small">
         <hr />
         <div className="row flex-nowrap m-0 mt-4">
-          <div className="col-7 mr-3">
+          <div className="col-8 mr-3">
             <AssetThumbnail
               thumbnail={asset.thumbnail}
               externalUrl={asset.externalUrl}
@@ -61,7 +70,14 @@ const FileInfo = ({
             <div className="font-weight-bold">
               <FormattedMessage {...messages.dateAddedTitle} />
             </div>
-            {asset.dateAdded}
+            <FormattedDate
+              value={dateAdded}
+              year="numeric"
+              month="short"
+              day="2-digit"
+              hour="numeric"
+              minute="numeric"
+            />
             <div className="font-weight-bold mt-3">
               <FormattedMessage {...messages.fileSizeTitle} />
             </div>
@@ -71,9 +87,11 @@ const FileInfo = ({
               <FormattedMessage {...messages.studioUrlTitle} />
             </div>
             <ActionRow>
-              <Truncate lines={1}>
-                {asset.portableUrl}
-              </Truncate>
+              <div style={{ wordBreak: 'break-word' }}>
+                <Truncate lines={1}>
+                  {asset.portableUrl}
+                </Truncate>
+              </div>
               <ActionRow.Spacer />
               <IconButton
                 src={ContentCopy}
@@ -86,9 +104,11 @@ const FileInfo = ({
               <FormattedMessage {...messages.webUrlTitle} />
             </div>
             <ActionRow>
-              <Truncate lines={1}>
-                {asset.externalUrl}
-              </Truncate>
+              <div style={{ wordBreak: 'break-word' }}>
+                <Truncate lines={1}>
+                  {asset.externalUrl}
+                </Truncate>
+              </div>
               <ActionRow.Spacer />
               <IconButton
                 src={ContentCopy}

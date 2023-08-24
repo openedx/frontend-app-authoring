@@ -47,7 +47,7 @@ const PagesAndResources = ({ courseId, intl }) => {
   const xpertSettings = useModel('XpertSettings', 'xpert-unit-summary');
   const permissonPages = [{
     ...XpertAppInfo,
-    enabled: xpertSettings?.enabled,
+    enabled: xpertSettings?.enabled !== undefined,
   }];
 
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
