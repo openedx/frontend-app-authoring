@@ -123,11 +123,8 @@ export function getUsagePaths({ asset, courseId, setSelectedRows }) {
 
     try {
       const { usageLocations } = await getAssetUsagePaths({ assetId: asset.id, courseId });
-      console.log(usageLocations);
       setSelectedRows([{ original: { ...asset, usageLocations } }]);
-      console.log(setSelectedRows);
       dispatch(updateUpdatingStatus({ status: RequestStatus.SUCCESSFUL }));
-      console.log('update success');
     } catch (error) {
       console.log('usage fail');
       dispatch(updateErrors({ error: 'lock', message: `Failed to get usage metrics for ${asset.displayName}.` }));
