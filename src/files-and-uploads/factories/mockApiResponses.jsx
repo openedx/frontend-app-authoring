@@ -10,7 +10,7 @@ export const initialState = {
   assets: {
     assetIds: ['mOckID1'],
     loadingStatus: 'successful',
-    savingStatus: '',
+    updatingStatus: '',
     deletingStatus: '',
     addingStatus: '',
     errors: {

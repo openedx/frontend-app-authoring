@@ -22,10 +22,12 @@ import {
   addAssetFile,
   deleteAssetFile,
   fetchAssets,
+  getUsagePaths,
   updateAssetLock,
 } from './data/thunks';
 import messages from './messages';
 
+import FileInfo from './FileInfo';
 import FileInput, { fileInput } from './FileInput';
 import FilesAndUploadsProvider from './FilesAndUploadsProvider';
 import {
@@ -50,6 +52,7 @@ const FilesAndUploads = ({
   };
   const [currentView, setCurrentView] = useState(defaultVal);
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
+  const [isAssetInfoOpen, openAssetInfo, closeAssetinfo] = useToggle(false);
   const [isAddOpen, setAddOpen, setAddClose] = useToggle(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
@@ -63,7 +66,7 @@ const FilesAndUploads = ({
     loadingStatus,
     addingStatus: addAssetStatus,
     deletingStatus: deleteAssetStatus,
-    savingStatus: saveAssetStatus,
+    updatingStatus: updateAssetStatus,
   } = useSelector(state => state.assets);
   const errorMessages = useSelector(state => state.assets.errors);
   const fileInputControl = fileInput({
@@ -112,6 +115,12 @@ const FilesAndUploads = ({
     openDeleteConfirmation();
   };
 
+  const handleOpenAssetInfo = (original) => {
+    setSelectedRows([{ original }]);
+    dispatch(getUsagePaths({ asset: original, courseId, setSelectedRows }));
+    openAssetInfo();
+  };
+
   const headerActions = ({ selectedFlatRows }) => (
     <TableActions
       {...{
@@ -130,6 +139,7 @@ const FilesAndUploads = ({
           {...{
             handleLockedAsset,
             handleOpenDeleteConfirmation,
+            handleOpenAssetInfo,
             className,
             original,
           }}
@@ -141,6 +151,7 @@ const FilesAndUploads = ({
         {...{
           handleLockedAsset,
           handleOpenDeleteConfirmation,
+          handleOpenAssetInfo,
           className,
           original,
         }}
@@ -155,7 +166,6 @@ const FilesAndUploads = ({
       </div>
     );
   }
-
   return (
     <FilesAndUploadsProvider courseId={courseId}>
       <main className="containerpt-5">
@@ -164,19 +174,38 @@ const FilesAndUploads = ({
             hideHeading={false}
             isError={addAssetStatus === RequestStatus.FAILED}
           >
-            {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.upload })}
+            <ul className="p-0">
+              {errorMessages.upload.map(message => (
+                <li style={{ listStyle: 'none' }}>
+                  { intl.formatMessage(messages.errorAlertMessage, { message })}
+                </li>
+              ))}
+            </ul>
           </ErrorAlert>
           <ErrorAlert
             hideHeading={false}
             isError={deleteAssetStatus === RequestStatus.FAILED}
           >
-            {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.delete })}
+            <ul className="p-0">
+              {errorMessages.delete.map(message => (
+                <li style={{ listStyle: 'none' }}>
+                  { intl.formatMessage(messages.errorAlertMessage, { message })}
+                </li>
+              ))}
+            </ul>
           </ErrorAlert>
           <ErrorAlert
             hideHeading={false}
-            isError={saveAssetStatus === RequestStatus.FAILED}
+            isError={updateAssetStatus === RequestStatus.FAILED}
           >
-            {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.lock })}
+            <ul className="p-0">
+              {errorMessages.lock.map(message => (
+                <li style={{ listStyle: 'none' }}>
+                  { intl.formatMessage(messages.errorAlertMessage, { message })}
+                </li>
+              ))}
+            </ul>
+
           </ErrorAlert>
           <div className="h2">
             <FormattedMessage {...messages.heading} />
@@ -269,7 +298,15 @@ const FilesAndUploads = ({
           )}
         </DataTable>
         <FileInput fileInput={fileInputControl} />
-
+        {!_.isEmpty(selectedRows) && (
+          <FileInfo
+            asset={selectedRows[0].original}
+            onClose={closeAssetinfo}
+            isOpen={isAssetInfoOpen}
+            handleLockedAsset={handleLockedAsset}
+            usagePathStatus={updateAssetStatus}
+          />
+        )}
         <AlertModal
           title={intl.formatMessage(messages.deleteConfirmationTitle)}
           isOpen={isDeleteConfirmationOpen}

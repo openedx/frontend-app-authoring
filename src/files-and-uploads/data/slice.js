@@ -8,7 +8,7 @@ const slice = createSlice({
   initialState: {
     assetIds: [],
     loadingStatus: RequestStatus.IN_PROGRESS,
-    savingStatus: '',
+    updatingStatus: '',
     addingStatus: '',
     deletingStatus: '',
     errors: {
@@ -28,8 +28,8 @@ const slice = createSlice({
     updateLoadingStatus: (state, { payload }) => {
       state.loadingStatus = payload.status;
     },
-    updateSavingStatus: (state, { payload }) => {
-      state.savingStatus = payload.status;
+    updateUpdatingStatus: (state, { payload }) => {
+      state.updatingStatus = payload.status;
     },
     updateAddingStatus: (state, { payload }) => {
       state.addingStatus = payload.status;
@@ -55,7 +55,7 @@ export const {
   setAssetIds,
   setTotalCount,
   updateLoadingStatus,
-  updateSavingStatus,
+  updateUpdatingStatus,
   deleteAssetSuccess,
   updateDeletingStatus,
   addAssetSuccess,
