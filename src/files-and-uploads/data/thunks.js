@@ -126,7 +126,6 @@ export function getUsagePaths({ asset, courseId, setSelectedRows }) {
       setSelectedRows([{ original: { ...asset, usageLocations } }]);
       dispatch(updateUpdatingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      console.log('usage fail');
       dispatch(updateErrors({ error: 'lock', message: `Failed to get usage metrics for ${asset.displayName}.` }));
       dispatch(updateUpdatingStatus({ status: RequestStatus.FAILED }));
     }
