@@ -22,11 +22,15 @@ const CardHeader = ({
   title,
   sectionStatus,
   isExpanded,
-  handleExpand,
+  onExpand,
+  onClickPublish,
+  onClickMenuButton,
 }) => {
   const intl = useIntl();
 
   const { badgeTitle, badgeIcon } = getSectionStatusBadgeContent(sectionStatus, messages, intl);
+  const isDisabledPublish = sectionStatus === SECTION_BADGE_STATUTES.live
+    || sectionStatus === SECTION_BADGE_STATUTES.publishedNotLive;
 
   return (
     <div className="section-card-header" data-testid="section-card-header">
@@ -48,7 +52,7 @@ const CardHeader = ({
           className={classNames('section-card-header__expanded-btn', {
             collapsed: !isExpanded,
           })}
-          onClick={() => handleExpand((prevState) => !prevState)}
+          onClick={() => onExpand((prevState) => !prevState)}
         >
           <Truncate lines={1} className="h3 mb-0">{title}</Truncate>
           {badgeTitle && (
@@ -65,10 +69,15 @@ const CardHeader = ({
           )}
         </Button>
       </OverlayTrigger>
-      <Dropdown data-testid="section-card-header__menu" className="ml-auto">
+      <Dropdown
+        data-testid="section-card-header__menu"
+        className="ml-auto"
+        onClick={onClickMenuButton}
+      >
         <Dropdown.Toggle
           className="section-card-header__menu"
           id="section-card-header__menu"
+          data-testid="section-card-header__menu-button"
           as={IconButton}
           src={MoveVertIcon}
           alt="section-card-header__menu"
@@ -76,7 +85,12 @@ const CardHeader = ({
         />
         <Dropdown.Menu>
           <Dropdown.Item>{intl.formatMessage(messages.menuEdit)}</Dropdown.Item>
-          <Dropdown.Item>{intl.formatMessage(messages.menuPublish)}</Dropdown.Item>
+          <Dropdown.Item
+            disabled={isDisabledPublish}
+            onClick={onClickPublish}
+          >
+            {intl.formatMessage(messages.menuPublish)}
+          </Dropdown.Item>
           <Dropdown.Item>{intl.formatMessage(messages.menuConfigure)}</Dropdown.Item>
           <Dropdown.Item>{intl.formatMessage(messages.menuDuplicate)}</Dropdown.Item>
           <Dropdown.Item>{intl.formatMessage(messages.menuDelete)}</Dropdown.Item>
@@ -90,7 +104,9 @@ CardHeader.propTypes = {
   title: PropTypes.string.isRequired,
   sectionStatus: PropTypes.string.isRequired,
   isExpanded: PropTypes.bool.isRequired,
-  handleExpand: PropTypes.func.isRequired,
+  onExpand: PropTypes.func.isRequired,
+  onClickPublish: PropTypes.func.isRequired,
+  onClickMenuButton: PropTypes.func.isRequired,
 };
 
 export default CardHeader;

@@ -33,6 +33,7 @@ const useCourseOutline = ({ courseId }) => {
   const [isDisabledReindexButton, setDisableReindexButton] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
 
   const headerNavigationsActions = {
     handleNewSection: () => {
@@ -65,6 +66,10 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
   };
 
+  const handleSubmitPublishSection = () => {
+    closePublishModal();
+  };
+
   useEffect(() => {
     dispatch(fetchCourseOutlineIndexQuery(courseId));
     dispatch(fetchCourseBestPracticesQuery({ courseId }));
@@ -89,8 +94,12 @@ const useCourseOutline = ({ courseId }) => {
     showErrorAlert,
     isDisabledReindexButton,
     isSectionsExpanded,
+    isPublishModalOpen,
+    openPublishModal,
+    closePublishModal,
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
+    handleSubmitPublishSection,
     statusBarData,
     isEnableHighlightsModalOpen,
     openEnableHighlightsModal,

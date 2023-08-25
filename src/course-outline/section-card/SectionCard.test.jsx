@@ -1,8 +1,17 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { AppProvider } from '@edx/frontend-platform/react';
+import { initializeMockApp } from '@edx/frontend-platform';
+import MockAdapter from 'axios-mock-adapter';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
+import initializeStore from '../../store';
 import SectionCard from './SectionCard';
+
+// eslint-disable-next-line no-unused-vars
+let axiosMock;
+let store;
 
 const section = {
   displayName: 'Section Name',
@@ -11,15 +20,39 @@ const section = {
   visibleToStaffOnly: false,
   visibilityState: 'visible',
   staffOnlyMessage: false,
+  highlights: ['highlight 1', 'highlight 2'],
 };
 
 const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <SectionCard section={section} {...props} />
-  </IntlProvider>,
+  <AppProvider store={store}>
+    <IntlProvider locale="en">
+      <SectionCard
+        section={section}
+        onOpenPublishModal={jest.fn()}
+        onOpenHighlightsModal={jest.fn()}
+        {...props}
+      >
+        <span>children</span>
+      </SectionCard>
+    </IntlProvider>,
+  </AppProvider>,
 );
 
 describe('<SectionCard />', () => {
+  beforeEach(() => {
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+
+    store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+  });
+
   it('render SectionCard component correctly', () => {
     const { getByTestId } = renderComponent();
 
@@ -32,9 +65,9 @@ describe('<SectionCard />', () => {
 
     const expandButton = getByTestId('section-card-header__expanded-btn');
     fireEvent.click(expandButton);
-    expect(queryByTestId('section-card__content')).not.toBeInTheDocument();
+    expect(queryByTestId('section-card__subsections')).not.toBeInTheDocument();
 
     fireEvent.click(expandButton);
-    expect(queryByTestId('section-card__content')).toBeInTheDocument();
+    expect(queryByTestId('section-card__subsections')).toBeInTheDocument();
   });
 });

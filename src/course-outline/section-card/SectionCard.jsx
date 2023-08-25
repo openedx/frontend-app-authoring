@@ -4,7 +4,11 @@ import PropTypes from 'prop-types';
 import CardHeader from '../card-header/CardHeader';
 import { getSectionStatus } from '../utils';
 
-const SectionCard = ({ section, children }) => {
+const SectionCard = ({
+  section,
+  children,
+  onOpenPublishModal,
+}) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   const {
@@ -28,13 +32,18 @@ const SectionCard = ({ section, children }) => {
     setIsExpanded((prevState) => !prevState);
   };
 
+  const handleClickMenuButton = () => {
+  };
+
   return (
     <div className="section-card">
       <CardHeader
         title={displayName}
         sectionStatus={sectionStatus}
         isExpanded={isExpanded}
-        handleExpand={handleExpandContent}
+        onExpand={handleExpandContent}
+        onClickMenuButton={handleClickMenuButton}
+        onClickPublish={onOpenPublishModal}
       />
       <div className="section-card__content" data-testid="section-card__content">
         <div className="outline-section__status">
@@ -43,7 +52,7 @@ const SectionCard = ({ section, children }) => {
         </div>
       </div>
       {isExpanded && children && (
-        <div className="section-card__subsections">
+        <div className="section-card__subsections" data-testid="section-card__subsections">
           {children}
           <h4>children</h4>
         </div>
@@ -66,6 +75,7 @@ SectionCard.propTypes = {
     staffOnlyMessage: PropTypes.bool.isRequired,
   }).isRequired,
   children: PropTypes.node,
+  onOpenPublishModal: PropTypes.func.isRequired,
 };
 
 export default SectionCard;

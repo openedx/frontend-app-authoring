@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { RequestStatus } from '../../data/constants';
 import {
   getCourseBestPracticesChecklist,
@@ -8,6 +9,7 @@ import {
   getCourseBestPractices,
   getCourseLaunch,
   getCourseOutlineIndex,
+  publishCourseSection,
   restartIndexingOnCourse,
 } from './api';
 import {
@@ -106,6 +108,25 @@ export function fetchCourseReindexQuery(courseId, reindexLink) {
       return true;
     } catch (error) {
       dispatch(updateReindexLoadingStatus({ status: RequestStatus.FAILED }));
+      return false;
+    }
+  };
+}
+
+export function publishCourseSectionQuery(sectionId) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+
+    try {
+      await publishCourseSection(sectionId).then(async (result) => {
+        if (result) {
+          await dispatch(fetchCourseSectionQuery(sectionId));
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+        }
+      });
+      return true;
+    } catch (error) {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }
   };

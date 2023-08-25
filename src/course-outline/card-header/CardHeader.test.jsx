@@ -6,13 +6,17 @@ import { SECTION_BADGE_STATUTES } from '../constants';
 import CardHeader from './CardHeader';
 import messages from './messages';
 
-const handleExpandMock = jest.fn();
+const onExpandMock = jest.fn();
+const onClickMenuButtonMock = jest.fn();
+const onClickPublishMock = jest.fn();
 
 const cardHeaderProps = {
   title: 'Some title',
   sectionStatus: SECTION_BADGE_STATUTES.live,
   isExpanded: true,
-  handleExpand: handleExpandMock,
+  onExpand: onExpandMock,
+  onClickMenuButton: onClickMenuButtonMock,
+  onClickPublish: onClickPublishMock,
 };
 
 const renderComponent = (props) => render(
@@ -66,11 +70,44 @@ describe('<CardHeader />', () => {
     expect(getByText(messages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();
   });
 
+  it('check publish menu item is disabled when section status is live or published not live', async () => {
+    const { getByText, getByTestId } = renderComponent({
+      ...cardHeaderProps,
+      sectionStatus: SECTION_BADGE_STATUTES.publishedNotLive,
+    });
+
+    const menuButton = getByTestId('section-card-header__menu-button');
+    fireEvent.click(menuButton);
+    expect(getByText(messages.menuPublish.defaultMessage)).toHaveAttribute('aria-disabled', 'true');
+  });
+
   it('calls handleExpanded when button is clicked', () => {
     const { getByTestId } = renderComponent();
 
     const expandButton = getByTestId('section-card-header__expanded-btn');
     fireEvent.click(expandButton);
-    expect(handleExpandMock).toHaveBeenCalled();
+    expect(onExpandMock).toHaveBeenCalled();
+  });
+
+  it('calls onMenuButtonClick when menu is clicked', () => {
+    const { getByTestId } = renderComponent();
+
+    const menuButton = getByTestId('section-card-header__menu-button');
+    fireEvent.click(menuButton);
+    expect(onClickMenuButtonMock).toHaveBeenCalled();
+  });
+
+  it('calls onClickPublish when item is clicked', () => {
+    const { getByText, getByTestId } = renderComponent({
+      ...cardHeaderProps,
+      sectionStatus: SECTION_BADGE_STATUTES.draft,
+    });
+
+    const menuButton = getByTestId('section-card-header__menu-button');
+    fireEvent.click(menuButton);
+
+    const publishMenuItem = getByText(messages.menuPublish.defaultMessage);
+    fireEvent.click(publishMenuItem);
+    expect(onClickPublishMock).toHaveBeenCalled();
   });
 });

@@ -23,6 +23,7 @@ import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsMod
 import SectionCard from './section-card/SectionCard';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import messages from './messages';
+import PublishModal from './publish-modal/PublishModal';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -39,11 +40,16 @@ const CourseOutline = ({ courseId }) => {
     isEnableHighlightsModalOpen,
     isInternetConnectionAlertFailed,
     isDisabledReindexButton,
+    isPublishModalOpen,
+    closePublishModal,
+    openPublishModal,
     headerNavigationsActions,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
     handleEnableHighlightsSubmit,
     handleInternetConnectionFailed,
+    handleOpenHighlightsModal,
+    handleSubmitPublishSection,
   } = useCourseOutline({ courseId });
 
   if (isLoading) {
@@ -104,7 +110,11 @@ const CourseOutline = ({ courseId }) => {
                     <div className="pt-4">
                       {/* TODO add create new section handler in EmptyPlaceholder */}
                       {sectionsList.length ? sectionsList.map((section) => (
-                        <SectionCard section={section} />
+                        <SectionCard
+                          section={section}
+                          onOpenHighlightsModal={handleOpenHighlightsModal}
+                          onOpenPublishModal={openPublishModal}
+                        />
                       )) : (
                         <EmptyPlaceholder onCreateNewSection={() => ({})} />
                       )}
@@ -124,6 +134,11 @@ const CourseOutline = ({ courseId }) => {
             highlightsDocUrl={statusBarData.highlightsDocUrl}
           />
         </section>
+        <PublishModal
+          isOpen={isPublishModalOpen}
+          onClose={closePublishModal}
+          onPublishSubmit={handleSubmitPublishSection}
+        />
       </Container>
       <div className="alert-toast">
         <InternetConnectionAlert

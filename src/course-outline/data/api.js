@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
@@ -99,4 +100,17 @@ export async function restartIndexingOnCourse(reindexLink) {
     .get(getCourseReindexApiUrl(reindexLink));
 
   return camelCaseObject(data);
+}
+/**
+ * Update publish course section
+ * @param {string} sectionId
+ * @returns {Promise<Object>}
+ */
+export async function publishCourseSection(sectionId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getUpdateCourseSectionApiUrl(sectionId), {
+      publish: 'make_public',
+    });
+
+  return data;
 }
