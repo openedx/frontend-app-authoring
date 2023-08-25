@@ -206,6 +206,34 @@ describe('FilesAndUploads', () => {
         expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
         expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
       });
+      it('sort button should be enabled and sort files by name', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        const sortsButton = screen.getByText(messages.sortButtonLabel.defaultMessage);
+        expect(sortsButton).toBeVisible();
+        await waitFor(() => {
+          fireEvent.click(sortsButton);
+          expect(screen.getByText(messages.sortModalTitleLabel.defaultMessage)).toBeVisible();
+        });
+        const sortNameAscendingButton = screen.getByText(messages.sortByNameAscending.defaultMessage);
+        fireEvent.click(sortNameAscendingButton);
+        fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+        expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
+      });
+      it('sort button should be enabled and sort files by file size', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        const sortsButton = screen.getByText(messages.sortButtonLabel.defaultMessage);
+        expect(sortsButton).toBeVisible();
+        await waitFor(() => {
+          fireEvent.click(sortsButton);
+          expect(screen.getByText(messages.sortModalTitleLabel.defaultMessage)).toBeVisible();
+        });
+        const sortBySizeDescendingButton = screen.getByText(messages.sortBySizeDescending.defaultMessage);
+        fireEvent.click(sortBySizeDescendingButton);
+        fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+        expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
+      });
     });
     describe('card menu actions', () => {
       it('should open asset info', async () => {

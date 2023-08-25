@@ -21,7 +21,7 @@ import {
 } from '@edx/paragon';
 import { ContentCopy, InfoOutline } from '@edx/paragon/icons';
 
-import { getUtcDateTime, getFileSizeToClosestByte } from './data/utils';
+import { getFileSizeToClosestByte } from './data/utils';
 import { RequestStatus } from '../data/constants';
 import AssetThumbnail from './FileThumbnail';
 import messages from './messages';
@@ -43,7 +43,6 @@ const FileInfo = ({
     onClose();
   };
   const fileSize = getFileSizeToClosestByte(asset?.fileSize);
-  const dateAdded = asset?.dateAdded ? getUtcDateTime(asset?.dateAdded) : new Date();
 
   let usageMessage;
   if (usagePathStatus === RequestStatus.SUCCESSFUL) {
@@ -102,7 +101,7 @@ const FileInfo = ({
               <FormattedMessage {...messages.dateAddedTitle} />
             </div>
             <FormattedDate
-              value={dateAdded}
+              value={asset.dateAdded}
               year="numeric"
               month="short"
               day="2-digit"

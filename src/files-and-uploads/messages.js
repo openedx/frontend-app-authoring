@@ -122,8 +122,44 @@ const messages = defineMessages({
     defaultMessage: 'Delete',
   },
   cancelButtonLabel: {
-    id: 'course-authoring.files-and-uploads.deleteConfirmation.cancelButton.label',
+    id: 'course-authoring.files-and-uploads.cancelButton.label',
     defaultMessage: 'Cancel',
+  },
+  sortButtonLabel: {
+    id: 'course-authoring.files-and-uploads.sortButton.label',
+    defaultMessage: 'Sort',
+  },
+  sortModalTitleLabel: {
+    id: 'course-authoring.files-and-uploads.sortModal.title',
+    defaultMessage: 'Sort by',
+  },
+  sortByNameAscending: {
+    id: 'course-authoring.files-and-uploads.sortByNameAscendingButton.label',
+    defaultMessage: 'Name (A-Z)',
+  },
+  sortByNewest: {
+    id: 'course-authoring.files-and-uploads.sortByNewestButton.label',
+    defaultMessage: 'Newest',
+  },
+  sortBySizeDescending: {
+    id: 'course-authoring.files-and-uploads.sortBySizeDescendingButton.label',
+    defaultMessage: 'File size (High to low)',
+  },
+  sortByNameDescending: {
+    id: 'course-authoring.files-and-uploads.sortByNameDescendingButton.label',
+    defaultMessage: 'Name (Z-A)',
+  },
+  sortByOldest: {
+    id: 'course-authoring.files-and-uploads.sortByOldestButton.label',
+    defaultMessage: 'Oldest',
+  },
+  sortBySizeAscending: {
+    id: 'course-authoring.files-and-uploads.sortBySizeAscendingButton.label',
+    defaultMessage: 'File size(Low to high)',
+  },
+  applySortButton: {
+    id: 'course-authoring.files-and-uploads.applyySortButton.label',
+    defaultMessage: 'Apply',
   },
 });
 

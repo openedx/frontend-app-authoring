@@ -24,7 +24,7 @@ import {
   updateErrors,
 } from './slice';
 
-import { getWrapperType } from './utils';
+import { updateFileValues } from './utils';
 
 export function fetchAssets(courseId) {
   return async (dispatch) => {
@@ -33,8 +33,8 @@ export function fetchAssets(courseId) {
     try {
       const { totalCount } = await getAssets(courseId);
       const { assets } = await getAssets(courseId, totalCount);
-      const assetsWithWraperType = getWrapperType(assets);
-      dispatch(addModels({ modelType: 'assets', models: assetsWithWraperType }));
+      const parsedAssests = updateFileValues(assets);
+      dispatch(addModels({ modelType: 'assets', models: parsedAssests }));
       dispatch(setAssetIds({
         assetIds: assets.map(asset => asset.id),
       }));
@@ -47,6 +47,14 @@ export function fetchAssets(courseId) {
         dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
       }
     }
+  };
+}
+
+export function updateAssetOrder(courseId, assetIds) {
+  return async (dispatch) => {
+    dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
+    dispatch(setAssetIds({ assetIds }));
+    dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
   };
 }
 
@@ -73,10 +81,10 @@ export function addAssetFile(courseId, file, totalCount) {
 
     try {
       const { asset } = await addAsset(courseId, file);
-      const [assetsWithWraperType] = getWrapperType([asset]);
+      const [parsedAssest] = updateFileValues([asset]);
       dispatch(addModel({
         modelType: 'assets',
-        model: { ...assetsWithWraperType },
+        model: { ...parsedAssest },
       }));
       dispatch(addAssetSuccess({
         assetId: asset.id,
