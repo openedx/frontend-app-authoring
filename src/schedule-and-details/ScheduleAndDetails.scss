@@ -10,8 +10,27 @@
 @import "./requirements-section/RequirementsSection";
 @import "./license-section/LicenseSection";
 
-.section-container {
-  &:not(:last-child) {
-    margin-bottom: 1.75rem;
+.schedule-and-details {
+  .help-sidebar {
+    margin-top: 3.438rem;
+  }
+
+  .section-container {
+    &:not(:last-child) {
+      margin-bottom: 1.75rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: .75rem;
+      border-bottom: $border-width solid $light-400;
+
+      h2 {
+        color: $black;
+        margin-bottom: .75rem;
+      }
+    }
   }
 }

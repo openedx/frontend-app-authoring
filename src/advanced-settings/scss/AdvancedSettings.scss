@@ -1,23 +1,29 @@
 @import "variables";
 
-.setting-items-policies {
-  .setting-items-deprecated-setting {
-    float: right;
+.advanced-settings {
+  .help-sidebar {
+    margin-top: 8.75rem;
+  }
+
+  .setting-items-policies {
+    .setting-items-deprecated-setting {
+      float: right;
+      margin-bottom: 1.75rem;
+    }
+
+    .instructions,
+    strong {
+      color: $text-color-base;
+      font-weight: 400;
+    }
+  }
+
+  .setting-card {
     margin-bottom: 1.75rem;
-  }
 
-  .instructions,
-  strong {
-    color: $text-color-base;
-    font-weight: 400;
-  }
-}
-
-.setting-card {
-  margin-bottom: 1.75rem;
-
-  .pgn__card-header .pgn__card-header-title-md {
-    font-size: 1.125rem;
+    .pgn__card-header .pgn__card-header-title-md {
+      font-size: 1.125rem;
+    }
   }
 }
 
