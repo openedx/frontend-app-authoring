@@ -46,7 +46,7 @@ const FileInfo = ({
 
   let usageMessage;
   if (usagePathStatus === RequestStatus.SUCCESSFUL) {
-    const locations = asset.usageLocations;
+    const locations = asset?.usageLocations;
     usageMessage = _.isEmpty(locations) ? (
       <FormattedMessage {...messages.usageNotInUseMessage} />
     ) : (
@@ -101,7 +101,7 @@ const FileInfo = ({
               <FormattedMessage {...messages.dateAddedTitle} />
             </div>
             <FormattedDate
-              value={asset.dateAdded}
+              value={asset?.dateAdded}
               year="numeric"
               month="short"
               day="2-digit"

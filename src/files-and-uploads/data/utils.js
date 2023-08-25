@@ -24,7 +24,12 @@ export const updateFileValues = (files) => {
     const utcDateString = dateAdded.replace(/\bat\b/g, '');
     const utcDateTime = new Date(utcDateString).toString();
 
-    updatedFiles.push({ ...file, wrapperType, dateAdded: utcDateTime });
+    updatedFiles.push({
+      ...file,
+      wrapperType,
+      dateAdded: utcDateTime,
+      usageLocations: [],
+    });
   });
 
   return updatedFiles;
