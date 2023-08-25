@@ -814,5 +814,20 @@
   "course-authoring.course-outline.reindex.alert.success.aria.labelledby": "alert-confirmation-title",
   "course-authoring.course-outline.reindex.alert.success.aria.describedby": "alert-confirmation-description",
   "course-authoring.course-outline.reindex.alert.error.title": "There were errors reindexing course.",
-  "course-authoring.course-outline.reindex.alert.error.labelledby": "alert-error-title"
+  "course-authoring.course-outline.reindex.alert.error.labelledby": "alert-error-title",
+  "course-authoring.course-outline.highlights-modal.title": "Highlights for {title}",
+  "course-authoring.course-outline.highlights-modal.description": "Enter 3-5 highlights to include in the email message that learners receive for this section (250 character limit). For more information and an example of the email template, read our documentation.",
+  "course-authoring.course-outline.highlights-modal.documentation-link": "documentation",
+  "course-authoring.course-outline.highlights-modal.highlight": "Highlight {index}",
+  "course-authoring.course-outline.highlights-modal.button.cancel": "Cancel",
+  "course-authoring.course-outline.highlights-modal.button.save": "Save highlights",
+  "course-authoring.create-or-rerun-course.org.no-options": "No options",
+  "course-authoring.studio-home.organization.input.placeholder": "For example, MITx",
+  "course-authoring.studio-home.organization.input.no-options": "No options",
+  "course-authoring.course-outline.empty-placeholder.title": "You haven't added any content to this course yet.",
+  "course-authoring.course-outline.empty-placeholder.button.new-section": "New section",
+  "course-authoring.course-outline.empty-placeholder.button.tooltip": "Click to add a new section",
+  "course-authoring.course-outline.empty-placeholder.title": "You haven't added any content to this course yet.",
+  "course-authoring.course-outline.empty-placeholder.button.new-section": "New section",
+  "course-authoring.course-outline.empty-placeholder.button.tooltip": "Click to add a new section"
 }

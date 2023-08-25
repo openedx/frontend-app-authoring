@@ -1,2 +1,2 @@
-// eslint-disable-next-line import/prefer-default-export
-export { default as courseOutlineIndexMock } from './courseOutlineIndex';
+export { default as courseOutlineIndexMock } from './courseOutlineIndexWithoutSections';
+export { default as courseOutlineIndexWithoutSections } from './courseOutlineIndexWithoutSections';

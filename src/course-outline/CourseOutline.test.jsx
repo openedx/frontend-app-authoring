@@ -7,7 +7,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import initializeStore from '../store';
-import { courseOutlineIndexMock } from './__mocks__';
+import { courseOutlineIndexMock, courseOutlineIndexWithoutSections } from './__mocks__';
 import { getCourseOutlineIndexApiUrl } from './data/api';
 import CourseOutline from './CourseOutline';
 import messages from './messages';
@@ -57,6 +57,18 @@ describe('<CourseOutline />', () => {
     await waitFor(() => {
       expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
       expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+    });
+  });
+
+  it('render CourseOutline component without sections correctly', async () => {
+    axiosMock
+      .onGet(getCourseOutlineIndexApiUrl(courseId))
+      .reply(200, courseOutlineIndexWithoutSections);
+
+    const { getByTestId } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      expect(getByTestId('empty-placeholder')).toBeInTheDocument();
     });
   });
 });
