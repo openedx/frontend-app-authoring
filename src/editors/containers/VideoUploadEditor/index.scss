@@ -4,11 +4,11 @@
   &.active {
     border: 2px solid #262626; /* change color when active */
   }
+}
 
-  .file-upload {
-    width: 56px;
-    height: 56px;
-  }
+.pgn__dropzone {
+  height: 100vh;
+  width: 100%;
 }
 
 .video-id-container {
@@ -16,33 +16,33 @@
   justify-content: center;
 }
 
+.url-submit-button {
+  position: absolute;
+  left: 85%;
+}
+
 .video-id-prompt {
   position: absolute;
-  top: 68%;
+  top: 65%;
   left: 50%;
   transform: translateX(-50%);
-  margin-top: 1rem;
-  border: 1px solid #707070;
-  width: 308px;
-
-  input {
-    border: none !important;
-    width: 90%;
-  }
 
   input::placeholder {
     color: #454545;
+    // color: #5E35B1;
+    font-family: 'Inter';
+    font-weight: 500;
+    word-wrap: break-word;
   }
 
   button {
     border: none !important;
     background-color: #FFFFFF;
   }
-}
 
-.error-message {
-  color: #AB0D02;
-  margin-top: 20rem;
+  .prompt-button {
+    background: rgba(239, 234, 247, 0.70);
+  }
 }
 
 .close-button-container {

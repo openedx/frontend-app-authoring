@@ -1,0 +1,302 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VideoUploader renders as expected with default behavior 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div>
+        <div
+          class="pgn__dropzone"
+          data-testid="dropzone-container"
+          role="presentation"
+          tabindex="0"
+        >
+          <input
+            accept="video/*,.mp4,.mov"
+            style="display: none;"
+            tabindex="-1"
+            type="file"
+          />
+          <div
+            class="d-flex flex-column justify-content-around align-items-center w-100"
+          >
+            <div
+              class="d-flex flex-column flex-wrap"
+            >
+              <div
+                class="justify-content-center align-self-center bg-light rounded-circle p-4"
+              >
+                <span
+                  class="pgn__icon text-muted"
+                >
+                  <svg
+                    aria-hidden="true"
+                    fill="none"
+                    focusable="false"
+                    height="24"
+                    role="img"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M5 10h4v6h6v-6h4l-7-7-7 7zm0 8v2h14v-2H5z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+              </div>
+              <div
+                class="d-flex align-self-center justify-content-center flex-wrap flex-column pt-5"
+              >
+                <span
+                  style="font-size: 1.35rem;"
+                >
+                  Drag and drop video here or click to upload
+                </span>
+                <span
+                  class="align-self-center"
+                  style="font-size: 0.8rem;"
+                >
+                  Upload MP4 or MOV files (5 GB max)
+                </span>
+              </div>
+              <div
+                class="align-self-center justify-content-center mx-2 text-dark"
+              >
+                OR
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="d-flex video-id-prompt"
+        >
+          <div
+            class="input-group"
+          >
+            <div
+              class="pgn__form-control-decorator-group"
+            >
+              <input
+                aria-describedby="basic-addon2"
+                aria-label="Paste your video ID or URL"
+                class="form-control"
+                placeholder="Paste your video ID or URL"
+                value=""
+              />
+            </div>
+            <div
+              class="justify-content-center align-self-center bg-light rounded-circle p-0 x-small url-submit-button"
+            >
+              <button
+                aria-label="Submit"
+                class="btn-icon btn-icon-primary btn-icon-inline"
+                type="button"
+              >
+                <span
+                  class="btn-icon__icon-container"
+                >
+                  <span
+                    class="pgn__icon btn-icon__icon"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      fill="none"
+                      focusable="false"
+                      height="24"
+                      role="img"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      ,
+    </div>
+  </body>,
+  "container": <div>
+    <div>
+      <div
+        class="pgn__dropzone"
+        data-testid="dropzone-container"
+        role="presentation"
+        tabindex="0"
+      >
+        <input
+          accept="video/*,.mp4,.mov"
+          style="display: none;"
+          tabindex="-1"
+          type="file"
+        />
+        <div
+          class="d-flex flex-column justify-content-around align-items-center w-100"
+        >
+          <div
+            class="d-flex flex-column flex-wrap"
+          >
+            <div
+              class="justify-content-center align-self-center bg-light rounded-circle p-4"
+            >
+              <span
+                class="pgn__icon text-muted"
+              >
+                <svg
+                  aria-hidden="true"
+                  fill="none"
+                  focusable="false"
+                  height="24"
+                  role="img"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 10h4v6h6v-6h4l-7-7-7 7zm0 8v2h14v-2H5z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </span>
+            </div>
+            <div
+              class="d-flex align-self-center justify-content-center flex-wrap flex-column pt-5"
+            >
+              <span
+                style="font-size: 1.35rem;"
+              >
+                Drag and drop video here or click to upload
+              </span>
+              <span
+                class="align-self-center"
+                style="font-size: 0.8rem;"
+              >
+                Upload MP4 or MOV files (5 GB max)
+              </span>
+            </div>
+            <div
+              class="align-self-center justify-content-center mx-2 text-dark"
+            >
+              OR
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="d-flex video-id-prompt"
+      >
+        <div
+          class="input-group"
+        >
+          <div
+            class="pgn__form-control-decorator-group"
+          >
+            <input
+              aria-describedby="basic-addon2"
+              aria-label="Paste your video ID or URL"
+              class="form-control"
+              placeholder="Paste your video ID or URL"
+              value=""
+            />
+          </div>
+          <div
+            class="justify-content-center align-self-center bg-light rounded-circle p-0 x-small url-submit-button"
+          >
+            <button
+              aria-label="Submit"
+              class="btn-icon btn-icon-primary btn-icon-inline"
+              type="button"
+            >
+              <span
+                class="btn-icon__icon-container"
+              >
+                <span
+                  class="pgn__icon btn-icon__icon"
+                >
+                  <svg
+                    aria-hidden="true"
+                    fill="none"
+                    focusable="false"
+                    height="24"
+                    role="img"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    ,
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

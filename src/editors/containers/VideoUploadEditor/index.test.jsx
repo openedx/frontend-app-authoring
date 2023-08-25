@@ -1,37 +1,58 @@
 import React from 'react';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { initializeMockApp } from '@edx/frontend-platform';
+import { AppProvider } from '@edx/frontend-platform/react';
+import { configureStore } from '@reduxjs/toolkit';
+import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { shallow } from 'enzyme';
-import VideoUploadEditor, { VideoUploader } from '.';
-import { formatMessage } from '../../../testUtils';
+import VideoUploadEditor from '.';
 
-const defaultEditorProps = {
-  onClose: jest.fn().mockName('props.onClose'),
-  intl: { formatMessage },
-  uploadVideo: jest.fn(),
-};
+jest.unmock('react-redux');
+jest.unmock('@edx/frontend-platform/i18n');
+jest.unmock('@edx/paragon');
+jest.unmock('@edx/paragon/icons');
 
-const defaultUploaderProps = {
-  onUpload: jest.fn(),
-  errorMessage: null,
-  intl: { formatMessage },
-};
+describe('VideoUploadEditor', () => {
+  const onCloseMock = jest.fn();
+  let store;
 
-describe('VideoUploader', () => {
-  describe('snapshots', () => {
-    test('renders as expected with default behavior', () => {
-      expect(shallow(<VideoUploader {...defaultUploaderProps} />)).toMatchSnapshot();
+  const renderComponent = async (storeParam, onCloseMockParam) => render(
+    <AppProvider store={storeParam}>
+      <IntlProvider locale="en">
+        <VideoUploadEditor onClose={onCloseMockParam} />
+      </IntlProvider>,
+    </AppProvider>,
+  );
+
+  beforeEach(async () => {
+    store = configureStore({
+      reducer: (state, action) => ((action && action.newState) ? action.newState : state),
+      preloadedState: {},
     });
-    test('renders as expected with error message', () => {
-      const defaultUploaderPropsWithError = { ...defaultUploaderProps, errorMessages: 'Some Error' };
-      expect(shallow(<VideoUploader {...defaultUploaderPropsWithError} />)).toMatchSnapshot();
+
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'test-user',
+        administrator: true,
+        roles: [],
+      },
     });
   });
-});
 
-describe('VideoUploaderEdirtor', () => {
-  describe('snapshots', () => {
-    test('renders as expected with default behavior', () => {
-      expect(shallow(<VideoUploadEditor {...defaultEditorProps} />)).toMatchSnapshot();
-    });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders as expected with default behavior', async () => {
+    expect(await renderComponent(store, onCloseMock)).toMatchSnapshot();
+  });
+
+  it('calls onClose when close button is clicked', async () => {
+    const container = await renderComponent(store, onCloseMock);
+    const closeButton = container.getAllByRole('button', { name: /close/i });
+    expect(closeButton).toHaveLength(1);
+    closeButton.forEach((button) => fireEvent.click(button));
+    expect(onCloseMock).toHaveBeenCalled();
   });
 });

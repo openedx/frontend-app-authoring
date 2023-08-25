@@ -88,6 +88,7 @@ const testState = {
 const testVideosState = {
   edx_video_id: mockSelectedVideoId,
   thumbnail: 'thumbnail',
+  course_video_image_url: 'course_video_image_url',
   duration: 60,
   transcripts: ['es'],
   transcript_urls: { es: 'url' },
@@ -244,6 +245,61 @@ describe('video thunkActions', () => {
           startTime: testMetadata.start_time,
           stopTime: 0,
           total: testVideosState.duration,
+        },
+        handout: undefined,
+        licenseType: 'liCENSEtyPe',
+        licenseDetails: {
+          attribution: true,
+          noncommercial: true,
+          noDerivatives: true,
+          shareAlike: false,
+        },
+        videoSharingEnabledForCourse: undefined,
+        videoSharingLearnMoreLink: undefined,
+        courseLicenseType: 'liCENSEtyPe',
+        courseLicenseDetails: {
+          attribution: true,
+          noncommercial: true,
+          noDerivatives: true,
+          shareAlike: false,
+        },
+        thumbnail: testVideosState.course_video_image_url,
+      });
+    });
+    it('dispatches actions.video.load with different selectedVideoId', () => {
+      getState = jest.fn(() => ({
+        app: {
+          blockId: 'soMEBloCk',
+          studioEndpointUrl: 'soMEeNDPoiNT',
+          blockValue: { data: { metadata: {} } },
+          courseDetails: { data: { license: null } },
+          studioView: { data: { html: 'sOMeHTml' } },
+          videos: testVideosState,
+        },
+      }));
+      thunkActions.loadVideoData('ThisIsAVideoId2', null)(dispatch, getState);
+      [
+        [dispatchedLoad],
+        [dispatchedAction1],
+        [dispatchedAction2],
+      ] = dispatch.mock.calls;
+      expect(dispatchedLoad.load).toEqual({
+        videoSource: 'videOsOurce',
+        videoId: 'videOiD',
+        fallbackVideos: 'fALLbACKvIDeos',
+        allowVideoDownloads: undefined,
+        transcripts: testMetadata.transcripts,
+        selectedVideoTranscriptUrls: testMetadata.transcript_urls,
+        allowTranscriptDownloads: undefined,
+        allowVideoSharing: {
+          level: 'course',
+          value: true,
+        },
+        showTranscriptByDefault: undefined,
+        duration: {
+          startTime: testMetadata.start_time,
+          stopTime: 0,
+          total: 0,
         },
         handout: undefined,
         licenseType: 'liCENSEtyPe',
@@ -676,10 +732,9 @@ describe('uploadVideo', () => {
   let setLoadSpinner;
   let postUploadRedirect;
   let dispatchedAction;
-  const supportedFiles = [
-    new File(['content1'], 'file1.mp4', { type: 'video/mp4' }),
-    new File(['content2'], 'file2.mov', { type: 'video/quicktime' }),
-  ];
+  const fileData = new FormData();
+  fileData.append('file', new File(['content1'], 'file1.mp4', { type: 'video/mp4' }));
+  const supportedFiles = [fileData];
 
   beforeEach(() => {
     dispatch = jest.fn((action) => ({ dispatch: action }));
@@ -693,7 +748,6 @@ describe('uploadVideo', () => {
     const data = {
       files: [
         { file_name: 'file1.mp4', content_type: 'video/mp4' },
-        { file_name: 'file2.mov', content_type: 'video/quicktime' },
       ],
     };
 
@@ -711,7 +765,6 @@ describe('uploadVideo', () => {
     const response = {
       files: [
         { file_name: 'file1.mp4', upload_url: 'http://example.com/put_video1' },
-        { file_name: 'file2.mov', upload_url: 'http://example.com/put_video2' },
       ],
     };
     const mockRequestResponse = { data: response };
@@ -720,12 +773,13 @@ describe('uploadVideo', () => {
 
     dispatchedAction.uploadVideo.onSuccess(mockRequestResponse);
 
-    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch).toHaveBeenCalledTimes(1);
     response.files.forEach(({ upload_url: uploadUrl }, index) => {
       expect(fetch.mock.calls[index][0]).toEqual(uploadUrl);
     });
     supportedFiles.forEach((file, index) => {
-      expect(fetch.mock.calls[index][1].body.get('uploaded-file')).toBe(file);
+      const fileDataTest = file.get('file');
+      expect(fetch.mock.calls[index][1].body.get('uploaded-file')).toBe(fileDataTest);
     });
   });
 
@@ -741,7 +795,7 @@ describe('uploadVideo', () => {
     const mockRequestResponse = { data: response };
     const spyConsoleError = jest.spyOn(console, 'error');
 
-    thunkActions.uploadVideo({ supportedFiles: [supportedFiles[0]], setLoadSpinner, postUploadRedirect })(dispatch);
+    thunkActions.uploadVideo({ supportedFiles, setLoadSpinner, postUploadRedirect })(dispatch);
     dispatchedAction.uploadVideo.onSuccess(mockRequestResponse);
     expect(spyConsoleError).toHaveBeenCalledWith('Could not find file object with name "file2.gif" in supportedFiles array.');
   });
