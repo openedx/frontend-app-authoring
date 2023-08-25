@@ -23,7 +23,9 @@ import {
   deleteAssetFile,
   fetchAssets,
   updateAssetLock,
+  updateAssetOrder,
 } from './data/thunks';
+import { sortFiles } from './data/utils';
 import messages from './messages';
 
 import FileInput, { fileInput } from './FileInput';
@@ -72,7 +74,6 @@ const FilesAndUploads = ({
     setAddOpen,
   });
   const assets = useModels('assets', assetIds);
-
   const handleDropzoneAsset = ({ fileData, handleError }) => {
     try {
       const file = fileData.get('file');
@@ -80,6 +81,11 @@ const FilesAndUploads = ({
     } catch (error) {
       handleError(error);
     }
+  };
+
+  const handleSort = (sortType) => {
+    const newAssetIdOrder = sortFiles(assets, sortType);
+    dispatch(updateAssetOrder(courseId, newAssetIdOrder, sortType));
   };
 
   const handleBulkDelete = () => {
@@ -117,6 +123,7 @@ const FilesAndUploads = ({
       {...{
         selectedFlatRows,
         fileInputControl,
+        handleSort,
         handleBulkDownload,
         handleOpenDeleteConfirmation,
       }}
@@ -228,6 +235,22 @@ const FilesAndUploads = ({
                   value: 'audio',
                 },
               ],
+            },
+            {
+              Header: 'Locked',
+              accessor: 'locked',
+              // Filter: CheckboxFilter,
+              // filter: 'exactText',
+              // filterChoices: [
+              //   {
+              //     name: 'Locked',
+              //     value: true,
+              //   },
+              //   {
+              //     name: 'Unlocked',
+              //     value: false,
+              //   },
+              // ],
             },
           ]}
           itemCount={totalCount}
