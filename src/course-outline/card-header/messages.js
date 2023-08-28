@@ -21,8 +21,8 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.section.status-badge.draft',
     defaultMessage: 'Draft',
   },
-  menuEdit: {
-    id: 'course-authoring.course-outline.section.menu.edit',
+  altButtonEdit: {
+    id: 'course-authoring.course-outline.section.button.edit.alt',
     defaultMessage: 'Edit',
   },
   menuPublish: {

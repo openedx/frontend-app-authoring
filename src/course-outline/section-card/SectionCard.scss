@@ -1,11 +1,11 @@
 .section-card {
   @include pgn-box-shadow(1, "centered");
 
-  padding: 1.5rem;
+  padding: $spacer 1.5rem 1.5rem;
   cursor: move;
   margin-bottom: 1.5rem;
 
   .section-card__content {
-    margin-top: 1.75rem;
+    margin-top: $spacer;
   }
 }

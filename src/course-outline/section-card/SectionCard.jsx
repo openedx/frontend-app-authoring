@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Button } from '@edx/paragon';
+import { Add as IconAdd } from '@edx/paragon/icons';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import CardHeader from '../card-header/CardHeader';
 import { getSectionStatus } from '../utils';
+import messages from './messages';
 
 const SectionCard = ({
   section,
   children,
   onOpenPublishModal,
+  onClickNewSubsection,
 }) => {
+  const intl = useIntl();
   const [isExpanded, setIsExpanded] = useState(true);
 
   const {
@@ -44,6 +50,7 @@ const SectionCard = ({
         onExpand={handleExpandContent}
         onClickMenuButton={handleClickMenuButton}
         onClickPublish={onOpenPublishModal}
+        onClickEdit={() => ({})}
       />
       <div className="section-card__content" data-testid="section-card__content">
         <div className="outline-section__status">
@@ -54,8 +61,19 @@ const SectionCard = ({
       {isExpanded && children && (
         <div className="section-card__subsections" data-testid="section-card__subsections">
           {children}
-          <h4>children</h4>
         </div>
+      )}
+      {isExpanded && (
+        <Button
+          data-testid="new-subsection-button"
+          className="mt-4"
+          variant="outline-primary"
+          iconBefore={IconAdd}
+          onClick={onClickNewSubsection}
+          block
+        >
+          {intl.formatMessage(messages.newSubsectionButton)}
+        </Button>
       )}
     </div>
   );
@@ -76,6 +94,7 @@ SectionCard.propTypes = {
   }).isRequired,
   children: PropTypes.node,
   onOpenPublishModal: PropTypes.func.isRequired,
+  onClickNewSubsection: PropTypes.func.isRequired,
 };
 
 export default SectionCard;

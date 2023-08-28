@@ -9,6 +9,7 @@ import messages from './messages';
 const onExpandMock = jest.fn();
 const onClickMenuButtonMock = jest.fn();
 const onClickPublishMock = jest.fn();
+const onClickEditMock = jest.fn();
 
 const cardHeaderProps = {
   title: 'Some title',
@@ -17,6 +18,7 @@ const cardHeaderProps = {
   onExpand: onExpandMock,
   onClickMenuButton: onClickMenuButtonMock,
   onClickPublish: onClickPublishMock,
+  onClickEdit: onClickEditMock,
 };
 
 const renderComponent = (props) => render(
@@ -89,7 +91,7 @@ describe('<CardHeader />', () => {
     expect(onExpandMock).toHaveBeenCalled();
   });
 
-  it('calls onMenuButtonClick when menu is clicked', () => {
+  it('calls onClickMenuButton when menu is clicked', () => {
     const { getByTestId } = renderComponent();
 
     const menuButton = getByTestId('section-card-header__menu-button');
@@ -109,5 +111,13 @@ describe('<CardHeader />', () => {
     const publishMenuItem = getByText(messages.menuPublish.defaultMessage);
     fireEvent.click(publishMenuItem);
     expect(onClickPublishMock).toHaveBeenCalled();
+  });
+
+  it('calls onClickEdit when the button is clicked', () => {
+    const { getByTestId } = renderComponent();
+
+    const editButton = getByTestId('edit-button');
+    fireEvent.click(editButton);
+    expect(onClickEditMock).toHaveBeenCalled();
   });
 });

@@ -8,6 +8,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import initializeStore from '../../store';
 import SectionCard from './SectionCard';
+import messages from './messages';
 
 // eslint-disable-next-line no-unused-vars
 let axiosMock;
@@ -23,6 +24,8 @@ const section = {
   highlights: ['highlight 1', 'highlight 2'],
 };
 
+const onClickNewSubsectionMock = jest.fn();
+
 const renderComponent = (props) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
@@ -30,6 +33,8 @@ const renderComponent = (props) => render(
         section={section}
         onOpenPublishModal={jest.fn()}
         onOpenHighlightsModal={jest.fn()}
+        onClickNewSubsection={onClickNewSubsectionMock}
+        onEditClick={jest.fn()}
         {...props}
       >
         <span>children</span>
@@ -66,8 +71,18 @@ describe('<SectionCard />', () => {
     const expandButton = getByTestId('section-card-header__expanded-btn');
     fireEvent.click(expandButton);
     expect(queryByTestId('section-card__subsections')).not.toBeInTheDocument();
+    expect(queryByTestId('new-subsection-button')).not.toBeInTheDocument();
 
     fireEvent.click(expandButton);
     expect(queryByTestId('section-card__subsections')).toBeInTheDocument();
+    expect(queryByTestId('new-subsection-button')).toBeInTheDocument();
+  });
+
+  it('calls the onClickNewSubsection function when the button is clicked', () => {
+    const { getByRole } = renderComponent();
+
+    const newSubsectionButton = getByRole('button', { name: messages.newSubsectionButton.defaultMessage });
+    fireEvent.click(newSubsectionButton);
+    expect(onClickNewSubsectionMock).toHaveBeenCalledTimes(1);
   });
 });
