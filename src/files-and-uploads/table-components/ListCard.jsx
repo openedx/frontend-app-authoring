@@ -19,6 +19,7 @@ import { getSrc } from '../data/utils';
 const ListCard = ({
   className,
   original,
+  handleBulkDownload,
   handleLockedAsset,
   handleOpenDeleteConfirmation,
 }) => {
@@ -63,6 +64,7 @@ const ListCard = ({
         <Card.Footer>
           <ActionRow>
             <FileMenu
+              displayName={original.displayName}
               externalUrl={original.externalUrl}
               handleLock={lockAsset}
               locked={original.locked}
@@ -70,6 +72,9 @@ const ListCard = ({
               portableUrl={original.portableUrl}
               iconSrc={MoreVert}
               id={original.id}
+              onDownload={() => handleBulkDownload(
+                [{ original: { id: original.id, displayName: original.displayName } }],
+              )}
               openDeleteConfirmation={() => handleOpenDeleteConfirmation([{ original }])}
             />
           </ActionRow>
@@ -99,6 +104,7 @@ ListCard.propTypes = {
     id: PropTypes.string.isRequired,
     portableUrl: PropTypes.string.isRequired,
   }).isRequired,
+  handleBulkDownload: PropTypes.func.isRequired,
   handleLockedAsset: PropTypes.func.isRequired,
   handleOpenDeleteConfirmation: PropTypes.func.isRequired,
 };

@@ -15,6 +15,7 @@ const slice = createSlice({
       upload: [],
       delete: [],
       lock: [],
+      download: [],
     },
     totalCount: 0,
   },
@@ -28,14 +29,21 @@ const slice = createSlice({
     updateLoadingStatus: (state, { payload }) => {
       state.loadingStatus = payload.status;
     },
-    updateSavingStatus: (state, { payload }) => {
-      state.savingStatus = payload.status;
-    },
-    updateAddingStatus: (state, { payload }) => {
-      state.addingStatus = payload.status;
-    },
-    updateDeletingStatus: (state, { payload }) => {
-      state.deletingStatus = payload.status;
+    updateEditStatus: (state, { payload }) => {
+      const { editType, status } = payload;
+      switch (editType) {
+      case 'delete':
+        state.deletingStatus = status;
+        break;
+      case 'add':
+        state.addingStatus = status;
+        break;
+      case 'update':
+        state.savingStatus = status;
+        break;
+      default:
+        break;
+      }
     },
     deleteAssetSuccess: (state, { payload }) => {
       state.assetIds = state.assetIds.filter(id => id !== payload.assetId);
@@ -48,6 +56,10 @@ const slice = createSlice({
       const currentErrorState = state.errors[error];
       state.errors[error] = [...currentErrorState, message];
     },
+    clearErrors: (state, { payload }) => {
+      const { error } = payload;
+      state.errors[error] = [];
+    },
   },
 });
 
@@ -55,12 +67,11 @@ export const {
   setAssetIds,
   setTotalCount,
   updateLoadingStatus,
-  updateSavingStatus,
   deleteAssetSuccess,
-  updateDeletingStatus,
   addAssetSuccess,
-  updateAddingStatus,
   updateErrors,
+  clearErrors,
+  updateEditStatus,
 } = slice.actions;
 
 export const {

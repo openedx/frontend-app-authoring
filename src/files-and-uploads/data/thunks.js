@@ -15,12 +15,11 @@ import {
   setAssetIds,
   setTotalCount,
   updateLoadingStatus,
-  updateSavingStatus,
   deleteAssetSuccess,
-  updateDeletingStatus,
   addAssetSuccess,
-  updateAddingStatus,
   updateErrors,
+  clearErrors,
+  updateEditStatus,
 } from './slice';
 
 import { updateFileValues } from './utils';
@@ -59,24 +58,24 @@ export function updateAssetOrder(courseId, assetIds) {
 
 export function deleteAssetFile(courseId, id, totalCount) {
   return async (dispatch) => {
-    dispatch(updateDeletingStatus({ status: RequestStatus.IN_PROGRESS }));
+    dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.IN_PROGRESS }));
 
     try {
       await deleteAsset(courseId, id);
       dispatch(deleteAssetSuccess({ assetId: id }));
       dispatch(removeModel({ modelType: 'assets', id }));
       dispatch(setTotalCount({ totalCount: totalCount - 1 }));
-      dispatch(updateDeletingStatus({ status: RequestStatus.SUCCESSFUL }));
+      dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       dispatch(updateErrors({ error: 'delete', message: `Failed to delete file id ${id}.` }));
-      dispatch(updateDeletingStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.FAILED }));
     }
   };
 }
 
 export function addAssetFile(courseId, file, totalCount) {
   return async (dispatch) => {
-    dispatch(updateAddingStatus({ status: RequestStatus.IN_PROGRESS }));
+    dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
 
     try {
       const { asset } = await addAsset(courseId, file);
@@ -89,7 +88,7 @@ export function addAssetFile(courseId, file, totalCount) {
         assetId: asset.id,
       }));
       dispatch(setTotalCount({ totalCount: totalCount + 1 }));
-      dispatch(updateAddingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
+      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       if (error.response && error.response.status === 413) {
         const message = error.response.data.error;
@@ -97,14 +96,14 @@ export function addAssetFile(courseId, file, totalCount) {
       } else {
         dispatch(updateErrors({ error: 'upload', message: `Failed to add ${file.name}.` }));
       }
-      dispatch(updateAddingStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
     }
   };
 }
 
 export function updateAssetLock({ assetId, courseId, locked }) {
   return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
+    dispatch(updateEditStatus({ editType: 'update', status: RequestStatus.IN_PROGRESS }));
 
     try {
       await updateLockStatus({ assetId, courseId, locked });
@@ -115,11 +114,23 @@ export function updateAssetLock({ assetId, courseId, locked }) {
           locked,
         },
       }));
-      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+      dispatch(updateEditStatus({ editType: 'update', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       const lockStatus = locked ? 'lock' : 'unlock';
       dispatch(updateErrors({ error: 'lock', message: `Failed to ${lockStatus} file id ${assetId}.` }));
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateEditStatus({ editType: 'update', status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function setErrors({ errorType, errorMessage, apiFetchStatus }) {
+  return (dispatch) => {
+    if (apiFetchStatus === RequestStatus.PENDING) {
+      dispatch(clearErrors({ error: errorType }));
+      dispatch(updateEditStatus({ editType: errorType, status: RequestStatus.IN_PROGRESS }));
+    } else {
+      dispatch(updateErrors({ error: errorType, message: errorMessage }));
+      dispatch(updateEditStatus({ editType: errorType, status: RequestStatus.FAILED }));
     }
   };
 }

@@ -1,10 +1,54 @@
 import { InsertDriveFile, Terminal, AudioFile } from '@edx/paragon/icons';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
+import JSZip from 'jszip';
+import saveAs from 'file-saver';
+import _ from 'lodash';
 import FILES_AND_UPLOAD_TYPE_FILTERS from './constant';
 
 ensureConfig([
   'STUDIO_BASE_URL',
 ], 'Course Apps API service');
+
+export const getDownloadZipFolder = async (selectedRows, courseId, onError) => {
+  if (selectedRows.length > 1) {
+    const zip = new JSZip();
+    const date = new Date().toString();
+    const folder = zip.folder(`${courseId}-assets-${date}`);
+    const assetNames = [];
+    const assetFetcher = await Promise.all(
+      selectedRows.map(async (row) => {
+        const asset = row.original;
+        assetNames.push(asset.displayName);
+        try {
+          const res = await fetch(`${getConfig().STUDIO_BASE_URL}/${asset.id}`);
+          if (!res.ok) {
+            throw new Error();
+          }
+          return res.blob();
+        } catch (error) {
+          onError({ message: `Failed to download ${asset.displayName}` });
+          return null;
+        }
+      }),
+    );
+    const definedAssets = assetFetcher.filter(asset => !_.isEmpty(asset));
+    if (definedAssets.length > 0) {
+      assetFetcher.forEach((assetBlob, index) => {
+        folder.file(assetNames[index], assetBlob, { blob: true });
+      });
+      zip.generateAsync({ type: 'blob' }).then(content => {
+        saveAs(content, `${courseId}-assets-${date}.zip`);
+      });
+    }
+  } else {
+    const asset = selectedRows[0].original;
+    try {
+      saveAs(`${getConfig().STUDIO_BASE_URL}/${asset.id}`, asset.displayName);
+    } catch (error) {
+      onError({ message: `Failed to download ${asset.displayName}` });
+    }
+  }
+};
 
 export const updateFileValues = (files) => {
   const updatedFiles = [];

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
@@ -22,10 +22,11 @@ import {
   addAssetFile,
   deleteAssetFile,
   fetchAssets,
+  setErrors,
   updateAssetLock,
   updateAssetOrder,
 } from './data/thunks';
-import { sortFiles } from './data/utils';
+import { getDownloadZipFolder, sortFiles } from './data/utils';
 import messages from './messages';
 
 import FileInput, { fileInput } from './FileInput';
@@ -91,23 +92,16 @@ const FilesAndUploads = ({
   const handleBulkDelete = () => {
     closeDeleteConfirmation();
     setDeleteOpen();
+    dispatch(setErrors({ errorType: 'delete', apiFetchStatus: RequestStatus.PENDING }));
     const assetIdsToDelete = selectedRows.map(row => row.original.id);
     assetIdsToDelete.forEach(id => dispatch(deleteAssetFile(courseId, id, totalCount)));
   };
 
-  const handleBulkDownload = (selectedFlatRows) => {
-    selectedFlatRows.forEach(row => {
-      const { externalUrl } = row.original;
-      const link = document.createElement('a');
-      link.target = '_blank';
-      link.download = true;
-      link.href = externalUrl;
-      link.click();
-    });
-    /* ********** TODO ***********
-     * implement a zip file function when there are multiple files
-    */
-  };
+  const handleBulkDownload = useCallback(async (selectedFlatRows) => {
+    dispatch(setErrors({ errorType: 'download', apiFetchStatus: RequestStatus.PENDING }));
+    const onError = ({ message }) => dispatch(setErrors({ errorType: 'download', errorMessage: message }));
+    getDownloadZipFolder(selectedFlatRows, courseId, onError);
+  }, []);
 
   const handleLockedAsset = (assetId, locked) => {
     dispatch(updateAssetLock({ courseId, assetId, locked }));
@@ -136,6 +130,7 @@ const FilesAndUploads = ({
         <GalleryCard
           {...{
             handleLockedAsset,
+            handleBulkDownload,
             handleOpenDeleteConfirmation,
             className,
             original,
@@ -147,6 +142,7 @@ const FilesAndUploads = ({
       <ListCard
         {...{
           handleLockedAsset,
+          handleBulkDownload,
           handleOpenDeleteConfirmation,
           className,
           original,
@@ -184,6 +180,7 @@ const FilesAndUploads = ({
             isError={saveAssetStatus === RequestStatus.FAILED}
           >
             {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.lock })}
+            {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.download })}
           </ErrorAlert>
           <div className="h2">
             <FormattedMessage {...messages.heading} />
