@@ -84,3 +84,15 @@ It will also configure the editor to be viewable in the gallery view. Adding the
 5. Activate the flag.
 6. Follow steps 4 to 6 from [above](#how-to-set-up-development-workflow-of-v2-content-editors-in-studio-and-course-authoring-mfe)
 
+# Installing into a project
+
+- `npm install @edx/frontend-lib-content-components`
+- For the Jest tests to work, a few config options are necessary. In jest.config.js, include:
+```js
+  moduleNameMapper: {
+    '^lodash-es$': 'lodash',
+  },
+```
+- Some mocks for test setup are also necessary, specifically replacing `window.matchMedia`.
+- To make this easier, we provide example files for `jest.config.js` and `setupTest.js` that are known to work.
+You can find them in the example/ folder.
