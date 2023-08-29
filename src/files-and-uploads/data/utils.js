@@ -20,11 +20,11 @@ export const getDownloadZipFolder = async (selectedRows, courseId, onError) => {
         const asset = row.original;
         assetNames.push(asset.displayName);
         try {
-          const res = await fetch(`${getConfig().STUDIO_BASE_URL}/${asset.id}`);
-          if (!res.ok) {
+          const { blob, ok } = await fetch(`${getConfig().STUDIO_BASE_URL}/${asset.id}`);
+          if (!ok) {
             throw new Error();
           }
-          return res.blob();
+          return blob();
         } catch (error) {
           onError({ message: `Failed to download ${asset.displayName}` });
           return null;

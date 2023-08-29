@@ -14,9 +14,10 @@ export const initialState = {
     deletingStatus: '',
     addingStatus: '',
     errors: {
-      upload: [],
+      add: [],
       delete: [],
       lock: [],
+      download: [],
     },
   },
   models: {

@@ -92,9 +92,9 @@ export function addAssetFile(courseId, file, totalCount) {
     } catch (error) {
       if (error.response && error.response.status === 413) {
         const message = error.response.data.error;
-        dispatch(updateErrors({ error: 'upload', message }));
+        dispatch(updateErrors({ error: 'add', message }));
       } else {
-        dispatch(updateErrors({ error: 'upload', message: `Failed to add ${file.name}.` }));
+        dispatch(updateErrors({ error: 'add', message: `Failed to add ${file.name}.` }));
       }
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
     }
@@ -103,7 +103,7 @@ export function addAssetFile(courseId, file, totalCount) {
 
 export function updateAssetLock({ assetId, courseId, locked }) {
   return async (dispatch) => {
-    dispatch(updateEditStatus({ editType: 'update', status: RequestStatus.IN_PROGRESS }));
+    dispatch(updateEditStatus({ editType: 'lock', status: RequestStatus.IN_PROGRESS }));
 
     try {
       await updateLockStatus({ assetId, courseId, locked });
@@ -114,11 +114,11 @@ export function updateAssetLock({ assetId, courseId, locked }) {
           locked,
         },
       }));
-      dispatch(updateEditStatus({ editType: 'update', status: RequestStatus.SUCCESSFUL }));
+      dispatch(updateEditStatus({ editType: 'lock', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       const lockStatus = locked ? 'lock' : 'unlock';
       dispatch(updateErrors({ error: 'lock', message: `Failed to ${lockStatus} file id ${assetId}.` }));
-      dispatch(updateEditStatus({ editType: 'update', status: RequestStatus.FAILED }));
+      dispatch(updateEditStatus({ editType: 'lock', status: RequestStatus.FAILED }));
     }
   };
 }

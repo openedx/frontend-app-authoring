@@ -8,6 +8,7 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ReactDOM from 'react-dom';
+import { saveAs } from 'file-saver';
 
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
@@ -33,6 +34,7 @@ import {
   addAssetFile,
   deleteAssetFile,
   updateAssetLock,
+  setErrors,
 } from './data/thunks';
 import { getAssetsUrl } from './data/api';
 import messages from './messages';
@@ -41,6 +43,7 @@ let axiosMock;
 let store;
 let file;
 ReactDOM.createPortal = jest.fn(node => node);
+jest.mock('file-saver');
 
 const renderComponent = () => {
   render(
@@ -87,6 +90,9 @@ describe('FilesAndUploads', () => {
       });
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
+    });
+    afterEach(() => {
+      saveAs.mockClear();
     });
     it('should return placeholder component', async () => {
       renderComponent();
@@ -205,6 +211,40 @@ describe('FilesAndUploads', () => {
         expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
         expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
       });
+      it('download button should be enabled and download single selected file', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        const selectCardButton = screen.getAllByTestId('datatable-select-column-checkbox-cell')[0];
+        fireEvent.click(selectCardButton);
+        const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
+        expect(actionsButton).toBeVisible();
+        await waitFor(() => {
+          fireEvent.click(actionsButton);
+        });
+        const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
+        expect(downloadButton).not.toHaveClass('disabled');
+        fireEvent.click(downloadButton);
+        expect(saveAs).toHaveBeenCalled();
+      });
+      it('download button should be enabled and download multiple selected files', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        const selectCardButtons = screen.getAllByTestId('datatable-select-column-checkbox-cell');
+        fireEvent.click(selectCardButtons[0]);
+        fireEvent.click(selectCardButtons[1]);
+        const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
+        expect(actionsButton).toBeVisible();
+        await waitFor(() => {
+          fireEvent.click(actionsButton);
+        });
+        const mockResponseData = { ok: true, blob: () => 'Data' };
+        const mockFetchResponse = Promise.resolve(mockResponseData);
+        const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
+        expect(downloadButton).not.toHaveClass('disabled');
+        global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
+        fireEvent.click(downloadButton);
+        expect(fetch).toHaveBeenCalledTimes(2);
+      });
       it('sort button should be enabled and sort files by name', async () => {
         renderComponent();
         await mockStore(RequestStatus.SUCCESSFUL);
@@ -306,6 +346,18 @@ describe('FilesAndUploads', () => {
         const saveStatus = store.getState().assets.savingStatus;
         expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
       });
+      it('download button should download file', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
+        const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
+        expect(assetMenuButton).toBeVisible();
+        await waitFor(() => {
+          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(screen.getByText('Download'));
+        });
+        expect(saveAs).toHaveBeenCalled();
+      });
       it('delete button should delete file', async () => {
         renderComponent();
         await mockStore(RequestStatus.SUCCESSFUL);
@@ -395,6 +447,55 @@ describe('FilesAndUploads', () => {
         expect(saveStatus).toEqual(RequestStatus.FAILED);
         expect(screen.getByText('Error')).toBeVisible();
       });
+      it('multiple asset file fetch failure should show error', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        const selectCardButtons = screen.getAllByTestId('datatable-select-column-checkbox-cell');
+        fireEvent.click(selectCardButtons[0]);
+        fireEvent.click(selectCardButtons[1]);
+        const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
+        expect(actionsButton).toBeVisible();
+        await waitFor(() => {
+          fireEvent.click(actionsButton);
+        });
+        const mockResponseData = { ok: false };
+        const mockFetchResponse = Promise.resolve(mockResponseData);
+        const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
+        expect(downloadButton).not.toHaveClass('disabled');
+        global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
+        fireEvent.click(downloadButton);
+        expect(fetch).toHaveBeenCalledTimes(2);
+        await executeThunk(setErrors({
+          errorType: 'download',
+          errorMessage: 'failed to download mOckID1',
+        }), store.dispatch);
+        const saveStatus = store.getState().assets.savingStatus;
+        expect(saveStatus).toEqual(RequestStatus.FAILED);
+        expect(screen.getByText('Error')).toBeVisible();
+      });
+      // fit('download button should be enabled and download single selected file', async () => {
+      //   renderComponent();
+      //   await mockStore(RequestStatus.SUCCESSFUL);
+      //   const selectCardButton = screen.getAllByTestId('datatable-select-column-checkbox-cell')[0];
+      //   fireEvent.click(selectCardButton);
+      //   const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
+      //   expect(actionsButton).toBeVisible();
+      //   await waitFor(() => {
+      //     fireEvent.click(actionsButton);
+      //   });
+      //   const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
+      //   expect(downloadButton).not.toHaveClass('disabled');
+      //   axiosMock.onGet(`${getApiBaseUrl(courseId)}/mOckID1`).reply(404);
+      //   fireEvent.click(downloadButton);
+      //   expect(saveAs).not.toBeCalled();
+      //   await executeThunk(setErrors({
+      //     errorType: 'download',
+      //     errorMessage: 'failed to download mOckID1',
+      //   }), store.dispatch);
+      //   const saveStatus = store.getState().assets.savingStatus;
+      //   expect(saveStatus).toEqual(RequestStatus.FAILED);
+      //   expect(screen.getByText('Error')).toBeVisible();
+      // });
     });
   });
 });

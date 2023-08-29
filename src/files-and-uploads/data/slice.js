@@ -12,7 +12,7 @@ const slice = createSlice({
     addingStatus: '',
     deletingStatus: '',
     errors: {
-      upload: [],
+      add: [],
       delete: [],
       lock: [],
       download: [],
@@ -38,7 +38,10 @@ const slice = createSlice({
       case 'add':
         state.addingStatus = status;
         break;
-      case 'update':
+      case 'lock':
+        state.savingStatus = status;
+        break;
+      case 'download':
         state.savingStatus = status;
         break;
       default:
