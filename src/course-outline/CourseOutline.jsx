@@ -11,8 +11,8 @@ import {
   Warning as WarningIcon,
 } from '@edx/paragon/icons';
 
-import SubHeader from '../generic/sub-header/SubHeader';
 import { RequestStatus } from '../data/constants';
+import SubHeader from '../generic/sub-header/SubHeader';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import AlertMessage from '../generic/alert-message';
 import HeaderNavigations from './header-navigations/HeaderNavigations';

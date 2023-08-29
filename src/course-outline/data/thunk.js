@@ -1,5 +1,10 @@
 /* eslint-disable no-undef */
 import { RequestStatus } from '../../data/constants';
+import { NOTIFICATION_MESSAGES } from '../../constants';
+import {
+  hideProcessingNotification,
+  showProcessingNotification,
+} from '../../generic/processing-notification/data/slice';
 import {
   getCourseBestPracticesChecklist,
   getCourseLaunchChecklist,
@@ -82,14 +87,17 @@ export function fetchCourseBestPracticesQuery({
 export function enableCourseHighlightsEmailsQuery(courseId) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
       await enableCourseHighlightsEmails(courseId);
       dispatch(fetchCourseOutlineIndexQuery(courseId));
 
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+      dispatch(hideProcessingNotification());
       return true;
     } catch (error) {
+      dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }
@@ -108,6 +116,46 @@ export function fetchCourseReindexQuery(courseId, reindexLink) {
       return true;
     } catch (error) {
       dispatch(updateReindexLoadingStatus({ status: RequestStatus.FAILED }));
+      return false;
+    }
+  };
+}
+
+export function fetchCourseSectionQuery(sectionId) {
+  return async (dispatch) => {
+    dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      const data = await getCourseSection(sectionId);
+      dispatch(updateSectionList(data));
+      dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
+
+      return true;
+    } catch (error) {
+      dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.FAILED }));
+
+      return false;
+    }
+  };
+}
+
+export function updateCourseSectionHighlightsQuery(sectionId, highlights) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await updateCourseSectionHighlights(sectionId, highlights).then(async (result) => {
+        if (result) {
+          await dispatch(fetchCourseSectionQuery(sectionId));
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          dispatch(hideProcessingNotification());
+        }
+      });
+      return true;
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }
   };
