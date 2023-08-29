@@ -44,10 +44,7 @@ const CourseAuthoringRoutes = ({ courseId }) => {
             )}
         </PageRoute>
         <PageRoute path={`${path}/course_info`}>
-          {process.env.ENABLE_NEW_UPDATES_PAGE === 'true'
-            && (
-              <CourseUpdates courseId={courseId} />
-            )}
+          <CourseUpdates courseId={courseId} />
         </PageRoute>
         <PageRoute path={`${path}/assets`}>
           <FilesAndUploads courseId={courseId} />

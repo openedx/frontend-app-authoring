@@ -125,4 +125,15 @@ describe('<UpdateForm />', () => {
       );
     });
   });
+
+  it('render error message when date is inValid', async () => {
+    const { getByDisplayValue, getByText } = renderComponent({ requestType: REQUEST_TYPES.edit_update });
+    const datePicker = getByDisplayValue(formattedDateMock);
+
+    fireEvent.change(datePicker, { target: { value: '' } });
+
+    await waitFor(() => {
+      expect(getByText(messages.updateFormInValid.defaultMessage)).toBeInTheDocument();
+    });
+  });
 });

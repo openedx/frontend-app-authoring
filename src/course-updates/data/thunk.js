@@ -27,10 +27,8 @@ export function fetchCourseUpdatesQuery(courseId) {
       const courseUpdates = await getCourseUpdates(courseId);
       dispatch(fetchCourseUpdatesSuccess(courseUpdates));
       dispatch(updateLoadingStatuses({ fetchCourseHandoutsQuery: RequestStatus.SUCCESSFUL }));
-      return true;
     } catch (error) {
       dispatch(updateLoadingStatuses({ fetchCourseHandoutsQuery: RequestStatus.FAILED }));
-      return false;
     }
   };
 }
@@ -44,11 +42,9 @@ export function createCourseUpdateQuery(courseId, data) {
       dispatch(createCourseUpdate(courseUpdate));
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.SUCCESSFUL }));
-      return true;
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.FAILED }));
-      return false;
     }
   };
 }
@@ -62,11 +58,9 @@ export function editCourseUpdateQuery(courseId, data) {
       dispatch(editCourseUpdate(courseUpdate));
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.SUCCESSFUL }));
-      return true;
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.FAILED }));
-      return false;
     }
   };
 }
@@ -80,11 +74,9 @@ export function deleteCourseUpdateQuery(courseId, updateId) {
       dispatch(deleteCourseUpdate(courseUpdates));
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.SUCCESSFUL }));
-      return true;
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.FAILED }));
-      return false;
     }
   };
 }
@@ -96,10 +88,8 @@ export function fetchCourseHandoutsQuery(courseId) {
       const courseHandouts = await getCourseHandouts(courseId);
       dispatch(fetchCourseHandoutsSuccess(courseHandouts));
       dispatch(updateLoadingStatuses({ fetchCourseHandoutsQuery: RequestStatus.SUCCESSFUL }));
-      return true;
     } catch (error) {
       dispatch(updateLoadingStatuses({ fetchCourseHandoutsQuery: RequestStatus.FAILED }));
-      return false;
     }
   };
 }
@@ -113,11 +103,9 @@ export function editCourseHandoutsQuery(courseId, data) {
       dispatch(editCourseHandouts(courseHandouts));
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.SUCCESSFUL }));
-      return true;
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.FAILED }));
-      return false;
     }
   };
 }

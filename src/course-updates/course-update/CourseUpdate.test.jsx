@@ -28,7 +28,6 @@ describe('<CourseUpdate />', () => {
     const { getByText, getByRole } = renderComponent();
 
     expect(getByText(dateForUpdateMock)).toBeInTheDocument();
-    expect(getByText(dateForUpdateMock)).toBeInTheDocument();
     expect(getByRole('button', { name: messages.editButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.deleteButton.defaultMessage })).toBeInTheDocument();
   });
@@ -40,6 +39,12 @@ describe('<CourseUpdate />', () => {
     expect(queryByTestId('course-update-content')).not.toBeInTheDocument();
     expect(getByRole('button', { name: messages.editButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.deleteButton.defaultMessage })).toBeInTheDocument();
+  });
+
+  it('render error message when dateForUpdate is inValid', () => {
+    const { getByText } = renderComponent({ dateForUpdate: 'Welcome' });
+
+    expect(getByText(messages.errorMessage.defaultMessage)).toBeInTheDocument();
   });
 
   it('calls the onEdit function when the "Edit" button is clicked', () => {

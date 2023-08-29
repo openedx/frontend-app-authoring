@@ -27,7 +27,13 @@ const CourseUpdate = ({
           </div>
         )}
         <div className="course-update-header__action">
-          <Button variant="outline-primary" size="sm" onClick={onEdit} disabled={isDisabledButtons}>
+          <Button
+            variant="outline-primary"
+            size="sm"
+            onClick={onEdit}
+            disabled={isDisabledButtons}
+            data-testid="course-update-edit-button"
+          >
             {intl.formatMessage(messages.editButton)}
           </Button>
           <Button variant="outline-primary" size="sm" onClick={onDelete} disabled={isDisabledButtons}>
