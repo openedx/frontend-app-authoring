@@ -11,6 +11,8 @@ import { reducer as scheduleAndDetailsReducer } from './schedule-and-details/dat
 import { reducer as liveReducer } from './pages-and-resources/live/data/slice';
 import { reducer as filesReducer } from './files-and-uploads/data/slice';
 import { reducer as courseTeamReducer } from './course-team/data/slice';
+import { reducer as CourseUpdatesReducer } from './course-updates/data/slice';
+import { reducer as processingNotificationReducer } from './generic/processing-notification/data/slice';
 
 export default function initializeStore(preloadedState = undefined) {
   return configureStore({
@@ -26,6 +28,8 @@ export default function initializeStore(preloadedState = undefined) {
       models: modelsReducer,
       live: liveReducer,
       courseTeam: courseTeamReducer,
+      courseUpdates: CourseUpdatesReducer,
+      processingNotification: processingNotificationReducer,
     },
     preloadedState,
   });
