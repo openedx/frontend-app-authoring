@@ -61,11 +61,11 @@ const CourseUpdates = ({ courseId }) => {
       <Container size="xl" className="m-4">
         <section className="setting-items mb-4 mt-5">
           <Layout
-            lg={[{ span: 9 }, { span: 3 }]}
-            md={[{ span: 9 }, { span: 3 }]}
-            sm={[{ span: 9 }, { span: 3 }]}
-            xs={[{ span: 9 }, { span: 3 }]}
-            xl={[{ span: 9 }, { span: 3 }]}
+            lg={[{ span: 12 }]}
+            md={[{ span: 12 }]}
+            sm={[{ span: 12 }]}
+            xs={[{ span: 12 }]}
+            xl={[{ span: 12 }]}
           >
             <Layout.Element>
               <article>
