@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useRanger } from 'react-ranger';
 import { Icon, IconButtonWithTooltip } from '@edx/paragon';
 import { Add as IconAdd } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
+import { useRanger } from './react-ranger';
 import messages from './messages';
 import { convertGradeData, MAXIMUM_SCALE_LENGTH } from './utils';
 import { GradingScaleTicks, GradingScaleHandle, GradingScaleSegment } from './components';
