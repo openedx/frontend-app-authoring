@@ -265,22 +265,6 @@ const FilesAndUploads = ({
                 },
               ],
             },
-            {
-              Header: 'Locked',
-              accessor: 'locked',
-              // Filter: CheckboxFilter,
-              // filter: 'exactText',
-              // filterChoices: [
-              //   {
-              //     name: 'Locked',
-              //     value: true,
-              //   },
-              //   {
-              //     name: 'Unlocked',
-              //     value: false,
-              //   },
-              // ],
-            },
           ]}
           itemCount={totalCount}
           pageCount={Math.ceil(totalCount / 50)}
