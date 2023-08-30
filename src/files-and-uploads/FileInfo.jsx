@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 
 import {
   injectIntl,
@@ -17,14 +16,13 @@ import {
   Truncate,
   IconButtonWithTooltip,
   CheckboxControl,
-  Spinner,
 } from '@edx/paragon';
 import { ContentCopy, InfoOutline } from '@edx/paragon/icons';
 
 import { getFileSizeToClosestByte } from './data/utils';
-import { RequestStatus } from '../data/constants';
 import AssetThumbnail from './FileThumbnail';
 import messages from './messages';
+import UsageMetricsMessages from './UsageMetricsMessages';
 
 const FileInfo = ({
   asset,
@@ -43,30 +41,6 @@ const FileInfo = ({
     onClose();
   };
   const fileSize = getFileSizeToClosestByte(asset?.fileSize);
-
-  let usageMessage;
-  if (usagePathStatus === RequestStatus.SUCCESSFUL) {
-    const locations = asset?.usageLocations;
-    usageMessage = _.isEmpty(locations) ? (
-      <FormattedMessage {...messages.usageNotInUseMessage} />
-    ) : (
-      <ul className="p-0">
-        {locations.map((location) => (<li style={{ listStyle: 'none' }}>{location}</li>))}
-      </ul>
-    );
-  } else {
-    usageMessage = (
-      <>
-        <Spinner
-          animation="border"
-          size="sm"
-          className="mie-3"
-          screenReaderText={intl.formatMessage(messages.usageLoadingMessage)}
-        />
-        <FormattedMessage {...messages.usageLoadingMessage} />
-      </>
-    );
-  }
 
   return (
     <ModalDialog
@@ -171,7 +145,7 @@ const FileInfo = ({
         <div className="row m-0 pt-3 font-weight-bold">
           <FormattedMessage {...messages.usageTitle} />
         </div>
-        {usageMessage}
+        <UsageMetricsMessages {...{ usageLocations: asset?.usageLocations, usagePathStatus }} />
       </ModalDialog.Body>
     </ModalDialog>
   );

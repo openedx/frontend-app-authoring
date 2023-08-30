@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
 import {
   DataTable,
@@ -286,7 +286,7 @@ const FilesAndUploads = ({
           pageCount={Math.ceil(totalCount / 50)}
           data={assets}
         >
-          {_.isEmpty(assets) && loadingStatus !== RequestStatus.IN_PROGRESS ? (
+          {isEmpty(assets) && loadingStatus !== RequestStatus.IN_PROGRESS ? (
             <Dropzone
               data-testid="files-dropzone"
               onProcessUpload={handleDropzoneAsset}
@@ -321,7 +321,7 @@ const FilesAndUploads = ({
           )}
         </DataTable>
         <FileInput fileInput={fileInputControl} />
-        {!_.isEmpty(selectedRows) && (
+        {!isEmpty(selectedRows) && (
           <FileInfo
             asset={selectedRows[0].original}
             onClose={closeAssetinfo}
