@@ -59,9 +59,6 @@ const slice = createSlice({
     addAssetSuccess: (state, { payload }) => {
       state.assetIds = [payload.assetId, ...state.assetIds];
     },
-    updateUsageStatus: (state, { payload }) => {
-      state.usageStatus = payload.status;
-    },
     updateErrors: (state, { payload }) => {
       const { error, message } = payload;
       const currentErrorState = state.errors[error];
