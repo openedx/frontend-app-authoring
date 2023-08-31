@@ -253,8 +253,8 @@ describe('FilesAndUploads', () => {
           }), store.dispatch);
           expect(screen.getAllByLabelText('mOckID1')[0]).toBeVisible();
         });
-        const updateStatus = store.getState().assets.updatingStatus;
-        expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
+        const { usageStatus } = store.getState().assets;
+        expect(usageStatus).toEqual(RequestStatus.SUCCESSFUL);
         expect(screen.getByText('subsection - unit / block')).toBeVisible();
       });
       it('should open asset info and handle lock checkbox', async () => {
@@ -281,6 +281,7 @@ describe('FilesAndUploads', () => {
             locked: false,
           }), store.dispatch);
         });
+        expect(screen.getByText(messages.usageNotInUseMessage.defaultMessage)).toBeVisible();
         const updateStatus = store.getState().assets.updatingStatus;
         expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
       });
@@ -407,9 +408,8 @@ describe('FilesAndUploads', () => {
             setSelectedRows: jest.fn(),
           }), store.dispatch);
         });
-        const updateStatus = store.getState().assets.updatingStatus;
-        expect(updateStatus).toEqual(RequestStatus.FAILED);
-        expect(screen.getByText('Error')).toBeVisible();
+        const { usageStatus } = store.getState().assets;
+        expect(usageStatus).toEqual(RequestStatus.FAILED);
       });
       it('404 lock update should show error', async () => {
         renderComponent();

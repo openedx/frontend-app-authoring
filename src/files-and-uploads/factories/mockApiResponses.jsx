@@ -13,10 +13,12 @@ export const initialState = {
     updatingStatus: '',
     deletingStatus: '',
     addingStatus: '',
+    usageStatus: '',
     errors: {
       upload: [],
       delete: [],
       lock: [],
+      usageMetrics: [],
     },
   },
   models: {

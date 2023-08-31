@@ -69,8 +69,9 @@ const FilesAndUploads = ({
     addingStatus: addAssetStatus,
     deletingStatus: deleteAssetStatus,
     updatingStatus: updateAssetStatus,
+    usageStatus: usagePathStatus,
+    errors: errorMessages,
   } = useSelector(state => state.assets);
-  const errorMessages = useSelector(state => state.assets.errors);
   const fileInputControl = fileInput({
     onAddFile: (file) => dispatch(addAssetFile(courseId, file, totalCount)),
     setSelectedRows,
@@ -184,7 +185,7 @@ const FilesAndUploads = ({
             <ul className="p-0">
               {errorMessages.upload.map(message => (
                 <li style={{ listStyle: 'none' }}>
-                  { intl.formatMessage(messages.errorAlertMessage, { message })}
+                  {intl.formatMessage(messages.errorAlertMessage, { message })}
                 </li>
               ))}
             </ul>
@@ -196,7 +197,7 @@ const FilesAndUploads = ({
             <ul className="p-0">
               {errorMessages.delete.map(message => (
                 <li style={{ listStyle: 'none' }}>
-                  { intl.formatMessage(messages.errorAlertMessage, { message })}
+                  {intl.formatMessage(messages.errorAlertMessage, { message })}
                 </li>
               ))}
             </ul>
@@ -208,7 +209,7 @@ const FilesAndUploads = ({
             <ul className="p-0">
               {errorMessages.lock.map(message => (
                 <li style={{ listStyle: 'none' }}>
-                  { intl.formatMessage(messages.errorAlertMessage, { message })}
+                  {intl.formatMessage(messages.errorAlertMessage, { message })}
                 </li>
               ))}
             </ul>
@@ -311,7 +312,8 @@ const FilesAndUploads = ({
             onClose={closeAssetinfo}
             isOpen={isAssetInfoOpen}
             handleLockedAsset={handleLockedAsset}
-            usagePathStatus={updateAssetStatus}
+            usagePathStatus={usagePathStatus}
+            error={errorMessages.usageMetrics}
           />
         )}
         <AlertModal

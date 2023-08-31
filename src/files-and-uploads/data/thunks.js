@@ -22,6 +22,7 @@ import {
   addAssetSuccess,
   updateAddingStatus,
   updateErrors,
+  updateUsageStatus,
 } from './slice';
 
 import { updateFileValues } from './utils';
@@ -127,15 +128,15 @@ export function updateAssetLock({ assetId, courseId, locked }) {
 
 export function getUsagePaths({ asset, courseId, setSelectedRows }) {
   return async (dispatch) => {
-    dispatch(updateUpdatingStatus({ status: RequestStatus.IN_PROGRESS }));
+    dispatch(updateUsageStatus({ status: RequestStatus.IN_PROGRESS }));
 
     try {
       const { usageLocations } = await getAssetUsagePaths({ assetId: asset.id, courseId });
       setSelectedRows([{ original: { ...asset, usageLocations } }]);
-      dispatch(updateUpdatingStatus({ status: RequestStatus.SUCCESSFUL }));
+      dispatch(updateUsageStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateErrors({ error: 'lock', message: `Failed to get usage metrics for ${asset.displayName}.` }));
-      dispatch(updateUpdatingStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateErrors({ error: 'usageMetrics', message: `Failed to get usage metrics for ${asset.displayName}.` }));
+      dispatch(updateUsageStatus({ status: RequestStatus.FAILED }));
     }
   };
 }

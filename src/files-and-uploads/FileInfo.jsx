@@ -22,7 +22,7 @@ import { ContentCopy, InfoOutline } from '@edx/paragon/icons';
 import { getFileSizeToClosestByte } from './data/utils';
 import AssetThumbnail from './FileThumbnail';
 import messages from './messages';
-import UsageMetricsMessages from './UsageMetricsMessages';
+import UsageMetricsMessages from './UsageMetricsMessage';
 
 const FileInfo = ({
   asset,
@@ -30,6 +30,7 @@ const FileInfo = ({
   onClose,
   handleLockedAsset,
   usagePathStatus,
+  error,
   // injected
   intl,
 }) => {
@@ -38,7 +39,6 @@ const FileInfo = ({
     const locked = e.target.checked;
     setLockedState(locked);
     handleLockedAsset(asset?.id, locked);
-    onClose();
   };
   const fileSize = getFileSizeToClosestByte(asset?.fileSize);
 
@@ -49,6 +49,7 @@ const FileInfo = ({
       onClose={onClose}
       size="lg"
       hasCloseButton
+      data-testid="file-info-modal"
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
@@ -145,7 +146,7 @@ const FileInfo = ({
         <div className="row m-0 pt-3 font-weight-bold">
           <FormattedMessage {...messages.usageTitle} />
         </div>
-        <UsageMetricsMessages {...{ usageLocations: asset?.usageLocations, usagePathStatus }} />
+        <UsageMetricsMessages {...{ usageLocations: asset?.usageLocations, usagePathStatus, error }} />
       </ModalDialog.Body>
     </ModalDialog>
   );
@@ -167,6 +168,7 @@ FileInfo.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   handleLockedAsset: PropTypes.func.isRequired,
   usagePathStatus: PropTypes.string.isRequired,
+  error: PropTypes.arrayOf(PropTypes.string).isRequired,
   // injected
   intl: intlShape.isRequired,
 };

@@ -1,6 +1,7 @@
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
-import { Spinner } from '@edx/paragon';
+import { Icon, Row, Spinner } from '@edx/paragon';
+import { ErrorOutline } from '@edx/paragon/icons';
 import isEmpty from 'lodash/isEmpty';
 import { RequestStatus } from '../data/constants';
 import messages from './messages';
@@ -8,6 +9,7 @@ import messages from './messages';
 const UsageMetricsMessage = ({
   usagePathStatus,
   usageLocations,
+  error,
   // injected
   intl,
 }) => {
@@ -19,6 +21,17 @@ const UsageMetricsMessage = ({
       <ul className="p-0">
         {usageLocations.map((location) => (<li style={{ listStyle: 'none' }}>{location}</li>))}
       </ul>
+    );
+  } else if (usagePathStatus === RequestStatus.FAILED) {
+    usageMessage = (
+      <Row className="m-0 pt-1">
+        <Icon
+          className="mr-1 text-danger-500"
+          size="sm"
+          src={ErrorOutline}
+        />
+        {intl.formatMessage(messages.errorAlertMessage, { message: error })}
+      </Row>
     );
   } else {
     usageMessage = (
@@ -39,6 +52,7 @@ const UsageMetricsMessage = ({
 UsageMetricsMessage.propTypes = {
   usagePathStatus: PropTypes.string.isRequired,
   usageLocations: PropTypes.arrayOf(PropTypes.string).isRequired,
+  error: PropTypes.arrayOf(PropTypes.string).isRequired,
   // injected
   intl: intlShape.isRequired,
 };
