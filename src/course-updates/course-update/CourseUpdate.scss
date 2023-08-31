@@ -1,0 +1,36 @@
+.course-update {
+  &:not(:first-child) {
+    padding-top: 1.875rem;
+    margin-top: 1.875rem;
+    border-top: 1px solid $light-400;
+  }
+
+  .course-update-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.125rem;
+    gap: .5rem;
+
+    .course-update-header__date {
+      line-height: 1.875rem;
+      letter-spacing: 1px;
+    }
+
+    .course-update-header__error {
+      display: flex;
+      align-items: center;
+      gap: .25rem;
+
+      svg {
+        color: $warning-300;
+      }
+    }
+
+    .course-update-header__action {
+      display: flex;
+      width: auto;
+      margin-left: auto;
+      gap: .5rem;
+    }
+  }
+}
