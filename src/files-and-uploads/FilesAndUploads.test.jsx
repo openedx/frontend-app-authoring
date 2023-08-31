@@ -360,8 +360,8 @@ describe('FilesAndUploads', () => {
             locked: true,
           }), store.dispatch);
         });
-        const saveStatus = store.getState().assets.savingStatus;
-        expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
+        const updateStatus = store.getState().assets.updatingStatus;
+        expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
       });
       it('download button should download file', async () => {
         renderComponent();
@@ -479,8 +479,8 @@ describe('FilesAndUploads', () => {
             locked: true,
           }), store.dispatch);
         });
-        const saveStatus = store.getState().assets.savingStatus;
-        expect(saveStatus).toEqual(RequestStatus.FAILED);
+        const updateStatus = store.getState().assets.updatingStatus;
+        expect(updateStatus).toEqual(RequestStatus.FAILED);
         expect(screen.getByText('Error')).toBeVisible();
       });
       it('multiple asset file fetch failure should show error', async () => {
@@ -505,8 +505,8 @@ describe('FilesAndUploads', () => {
           errorType: 'download',
           errorMessage: 'failed to download mOckID1',
         }), store.dispatch);
-        const saveStatus = store.getState().assets.savingStatus;
-        expect(saveStatus).toEqual(RequestStatus.FAILED);
+        const updateStatus = store.getState().assets.updatingStatus;
+        expect(updateStatus).toEqual(RequestStatus.FAILED);
         expect(screen.getByText('Error')).toBeVisible();
       });
     });
