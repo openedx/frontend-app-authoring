@@ -10,13 +10,15 @@ export const initialState = {
   assets: {
     assetIds: ['mOckID1'],
     loadingStatus: 'successful',
-    savingStatus: '',
+    updatingStatus: '',
     deletingStatus: '',
     addingStatus: '',
+    usageStatus: '',
     errors: {
       upload: [],
       delete: [],
       lock: [],
+      usageMetrics: [],
     },
   },
   models: {
@@ -31,6 +33,7 @@ export const initialState = {
         wrapperType: 'document',
         dateAdded: '',
         thumbnail: null,
+        fileSize: 1234567,
       },
     },
   },
@@ -47,6 +50,7 @@ export const generateFetchAssetApiResponse = () => ({
       contentType: 'image/png',
       dateAdded: '',
       thumbnail: '/asset',
+      fileSize: 123,
     },
     {
       id: 'mOckID5',
@@ -67,6 +71,7 @@ export const generateFetchAssetApiResponse = () => ({
       contentType: 'application/pdf',
       dateAdded: 'Aug 17, 2023 at 22:08 UTC',
       thumbnail: null,
+      fileSize: 1234,
     },
     {
       id: 'mOckID4',
@@ -87,6 +92,7 @@ export const generateFetchAssetApiResponse = () => ({
       contentType: 'application/octet-stream',
       dateAdded: '',
       thumbnail: null,
+      fileSize: 0,
     },
     {
       id: 'mOckID6-2',
@@ -118,6 +124,7 @@ export const generateNewAssetApiResponse = () => ({
     thumbnail: '/download.png',
     locked: false,
     id: 'mOckID2',
+    fileSize: 1234,
   },
 });
 

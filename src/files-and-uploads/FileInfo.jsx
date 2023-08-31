@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+
 import {
   injectIntl,
   FormattedMessage,
@@ -17,37 +18,44 @@ import {
   CheckboxControl,
 } from '@edx/paragon';
 import { ContentCopy, InfoOutline } from '@edx/paragon/icons';
-import AssetThumbnail from './FileThumbnail';
 
+import { getFileSizeToClosestByte } from './data/utils';
+import AssetThumbnail from './FileThumbnail';
 import messages from './messages';
+import UsageMetricsMessages from './UsageMetricsMessage';
 
 const FileInfo = ({
   asset,
   isOpen,
   onClose,
   handleLockedAsset,
+  usagePathStatus,
+  error,
   // injected
   intl,
 }) => {
-  const [lockedState, setLockedState] = useState(asset.locked);
+  const [lockedState, setLockedState] = useState(asset?.locked);
   const handleLock = (e) => {
     const locked = e.target.checked;
     setLockedState(locked);
-    handleLockedAsset(asset.id, locked);
+    handleLockedAsset(asset?.id, locked);
   };
+  const fileSize = getFileSizeToClosestByte(asset?.fileSize);
+
   return (
     <ModalDialog
-      title={asset.displayName}
+      title={asset?.displayName}
       isOpen={isOpen}
       onClose={onClose}
       size="lg"
       hasCloseButton
+      data-testid="file-info-modal"
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
           <div style={{ wordBreak: 'break-word' }}>
             <Truncate lines={2} className="font-weight-bold small mt-3">
-              {asset.displayName}
+              {asset?.displayName}
             </Truncate>
           </div>
         </ModalDialog.Title>
@@ -57,10 +65,10 @@ const FileInfo = ({
         <div className="row flex-nowrap m-0 mt-4">
           <div className="col-8 mr-3">
             <AssetThumbnail
-              thumbnail={asset.thumbnail}
-              externalUrl={asset.externalUrl}
-              displayName={asset.displayName}
-              wrapperType={asset.wrapperType}
+              thumbnail={asset?.thumbnail}
+              externalUrl={asset?.externalUrl}
+              displayName={asset?.displayName}
+              wrapperType={asset?.wrapperType}
             />
           </div>
           <Stack>
@@ -68,7 +76,7 @@ const FileInfo = ({
               <FormattedMessage {...messages.dateAddedTitle} />
             </div>
             <FormattedDate
-              value={asset.dateAdded}
+              value={asset?.dateAdded}
               year="numeric"
               month="short"
               day="2-digit"
@@ -78,15 +86,14 @@ const FileInfo = ({
             <div className="font-weight-bold mt-3">
               <FormattedMessage {...messages.fileSizeTitle} />
             </div>
-            {/* {asset.fileSize} */}
-            <hr />
-            <div className="font-weight-bold mt-3">
+            {fileSize}
+            <div className="font-weight-bold border-top mt-3 pt-3">
               <FormattedMessage {...messages.studioUrlTitle} />
             </div>
             <ActionRow>
               <div style={{ wordBreak: 'break-word' }}>
                 <Truncate lines={1}>
-                  {asset.portableUrl}
+                  {asset?.portableUrl}
                 </Truncate>
               </div>
               <ActionRow.Spacer />
@@ -94,7 +101,7 @@ const FileInfo = ({
                 src={ContentCopy}
                 iconAs={Icon}
                 alt={messages.copyStudioUrlTitle.defaultMessage}
-                onClick={() => navigator.clipboard.writeText(asset.portableUrl)}
+                onClick={() => navigator.clipboard.writeText(asset?.portableUrl)}
               />
             </ActionRow>
             <div className="font-weight-bold mt-3">
@@ -103,7 +110,7 @@ const FileInfo = ({
             <ActionRow>
               <div style={{ wordBreak: 'break-word' }}>
                 <Truncate lines={1}>
-                  {asset.externalUrl}
+                  {asset?.externalUrl}
                 </Truncate>
               </div>
               <ActionRow.Spacer />
@@ -111,11 +118,10 @@ const FileInfo = ({
                 src={ContentCopy}
                 iconAs={Icon}
                 alt={messages.copyWebUrlTitle.defaultMessage}
-                onClick={() => navigator.clipboard.writeText(asset.externalUrl)}
+                onClick={() => navigator.clipboard.writeText(asset?.externalUrl)}
               />
             </ActionRow>
-            <hr />
-            <ActionRow>
+            <ActionRow className=" border-top mt-3 pt-3">
               <div className="font-weight-bold">
                 <FormattedMessage {...messages.lockFileTitle} />
               </div>
@@ -140,11 +146,11 @@ const FileInfo = ({
         <div className="row m-0 pt-3 font-weight-bold">
           <FormattedMessage {...messages.usageTitle} />
         </div>
+        <UsageMetricsMessages {...{ usageLocations: asset?.usageLocations, usagePathStatus, error }} />
       </ModalDialog.Body>
     </ModalDialog>
   );
 };
-
 FileInfo.propTypes = {
   asset: PropTypes.shape({
     displayName: PropTypes.string.isRequired,
@@ -155,10 +161,14 @@ FileInfo.propTypes = {
     id: PropTypes.string.isRequired,
     portableUrl: PropTypes.string.isRequired,
     dateAdded: PropTypes.string.isRequired,
+    fileSize: PropTypes.number.isRequired,
+    usageLocations: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   onClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   handleLockedAsset: PropTypes.func.isRequired,
+  usagePathStatus: PropTypes.string.isRequired,
+  error: PropTypes.arrayOf(PropTypes.string).isRequired,
   // injected
   intl: intlShape.isRequired,
 };

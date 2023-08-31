@@ -20,6 +20,11 @@ export async function getAssets(courseId, totalCount) {
     .get(`${getAssetsUrl(courseId)}?page_size=${pageCount}`);
   return camelCaseObject(data);
 }
+export async function getAssetUsagePaths({ courseId, assetId }) {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(`${getAssetsUrl(courseId)}${assetId}/usage`);
+  return camelCaseObject(data);
+}
 
 /**
  * Delete custom page for provided block.

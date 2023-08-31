@@ -7,6 +7,7 @@ import {
 } from '../../generic/model-store';
 import {
   getAssets,
+  getAssetUsagePaths,
   addAsset,
   deleteAsset,
   updateLockStatus,
@@ -15,12 +16,13 @@ import {
   setAssetIds,
   setTotalCount,
   updateLoadingStatus,
-  updateSavingStatus,
+  updateUpdatingStatus,
   deleteAssetSuccess,
   updateDeletingStatus,
   addAssetSuccess,
   updateAddingStatus,
   updateErrors,
+  updateUsageStatus,
 } from './slice';
 
 import { updateFileValues } from './utils';
@@ -104,7 +106,7 @@ export function addAssetFile(courseId, file, totalCount) {
 
 export function updateAssetLock({ assetId, courseId, locked }) {
   return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
+    dispatch(updateUpdatingStatus({ status: RequestStatus.IN_PROGRESS }));
 
     try {
       await updateLockStatus({ assetId, courseId, locked });
@@ -115,11 +117,26 @@ export function updateAssetLock({ assetId, courseId, locked }) {
           locked,
         },
       }));
-      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+      dispatch(updateUpdatingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       const lockStatus = locked ? 'lock' : 'unlock';
       dispatch(updateErrors({ error: 'lock', message: `Failed to ${lockStatus} file id ${assetId}.` }));
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateUpdatingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function getUsagePaths({ asset, courseId, setSelectedRows }) {
+  return async (dispatch) => {
+    dispatch(updateUsageStatus({ status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      const { usageLocations } = await getAssetUsagePaths({ assetId: asset.id, courseId });
+      setSelectedRows([{ original: { ...asset, usageLocations } }]);
+      dispatch(updateUsageStatus({ status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateErrors({ error: 'usageMetrics', message: `Failed to get usage metrics for ${asset.displayName}.` }));
+      dispatch(updateUsageStatus({ status: RequestStatus.FAILED }));
     }
   };
 }

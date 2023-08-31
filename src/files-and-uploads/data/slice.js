@@ -8,13 +8,15 @@ const slice = createSlice({
   initialState: {
     assetIds: [],
     loadingStatus: RequestStatus.IN_PROGRESS,
-    savingStatus: '',
+    updatingStatus: '',
     addingStatus: '',
     deletingStatus: '',
+    usageStatus: '',
     errors: {
       upload: [],
       delete: [],
       lock: [],
+      usageMetrics: [],
     },
     totalCount: 0,
   },
@@ -28,8 +30,8 @@ const slice = createSlice({
     updateLoadingStatus: (state, { payload }) => {
       state.loadingStatus = payload.status;
     },
-    updateSavingStatus: (state, { payload }) => {
-      state.savingStatus = payload.status;
+    updateUpdatingStatus: (state, { payload }) => {
+      state.updatingStatus = payload.status;
     },
     updateAddingStatus: (state, { payload }) => {
       state.addingStatus = payload.status;
@@ -43,6 +45,9 @@ const slice = createSlice({
     addAssetSuccess: (state, { payload }) => {
       state.assetIds = [payload.assetId, ...state.assetIds];
     },
+    updateUsageStatus: (state, { payload }) => {
+      state.usageStatus = payload.status;
+    },
     updateErrors: (state, { payload }) => {
       const { error, message } = payload;
       const currentErrorState = state.errors[error];
@@ -55,11 +60,12 @@ export const {
   setAssetIds,
   setTotalCount,
   updateLoadingStatus,
-  updateSavingStatus,
+  updateUpdatingStatus,
   deleteAssetSuccess,
   updateDeletingStatus,
   addAssetSuccess,
   updateAddingStatus,
+  updateUsageStatus,
   updateErrors,
 } = slice.actions;
 
