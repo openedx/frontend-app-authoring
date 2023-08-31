@@ -26,12 +26,13 @@ import {
   getUsagePaths,
   updateAssetLock,
   updateAssetOrder,
+  fetchAssetDownload,
 } from './data/thunks';
-import { getDownloadZipFolder, sortFiles } from './data/utils';
+import { sortFiles } from './data/utils';
 import messages from './messages';
 
 import FileInfo from './FileInfo';
-import FileInput, { fileInput } from './FileInput';
+import FileInput, { useFileInput } from './FileInput';
 import FilesAndUploadsProvider from './FilesAndUploadsProvider';
 import {
   GalleryCard,
@@ -73,7 +74,7 @@ const FilesAndUploads = ({
     usageStatus: usagePathStatus,
     errors: errorMessages,
   } = useSelector(state => state.assets);
-  const fileInputControl = fileInput({
+  const fileInputControl = useFileInput({
     onAddFile: (file) => dispatch(addAssetFile(courseId, file, totalCount)),
     setSelectedRows,
     setAddOpen,
@@ -96,15 +97,14 @@ const FilesAndUploads = ({
   const handleBulkDelete = () => {
     closeDeleteConfirmation();
     setDeleteOpen();
-    dispatch(setErrors({ errorType: 'delete', apiFetchStatus: RequestStatus.PENDING }));
+    dispatch(setErrors({ errorType: 'delete', errorAction: RequestStatus.CLEAR }));
     const assetIdsToDelete = selectedRows.map(row => row.original.id);
     assetIdsToDelete.forEach(id => dispatch(deleteAssetFile(courseId, id, totalCount)));
   };
 
   const handleBulkDownload = useCallback(async (selectedFlatRows) => {
-    dispatch(setErrors({ errorType: 'download', apiFetchStatus: RequestStatus.PENDING }));
-    const onError = ({ message }) => dispatch(setErrors({ errorType: 'download', errorMessage: message }));
-    getDownloadZipFolder(selectedFlatRows, courseId, onError);
+    dispatch(setErrors({ errorType: 'download', errorAction: RequestStatus.CLEAR }));
+    dispatch(fetchAssetDownload({ selectedRows: selectedFlatRows, courseId }));
   }, []);
 
   const handleLockedAsset = (assetId, locked) => {
@@ -117,6 +117,7 @@ const FilesAndUploads = ({
   };
 
   const handleOpenAssetInfo = (original) => {
+    dispatch(setErrors({ errorType: 'usageMetrics', errorAction: RequestStatus.CLEAR }));
     setSelectedRows([{ original }]);
     dispatch(getUsagePaths({ asset: original, courseId, setSelectedRows }));
     openAssetInfo();

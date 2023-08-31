@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import { RequestStatus } from '../../data/constants';
 import {
   addModel,
@@ -11,6 +12,7 @@ import {
   addAsset,
   deleteAsset,
   updateLockStatus,
+  getDownload,
 } from './api';
 import {
   setAssetIds,
@@ -124,11 +126,10 @@ export function updateAssetLock({ assetId, courseId, locked }) {
   };
 }
 
-export function setErrors({ errorType, errorMessage, apiFetchStatus }) {
+export function setErrors({ errorType, errorMessage, errorAction }) {
   return (dispatch) => {
-    if (apiFetchStatus === RequestStatus.PENDING) {
+    if (errorAction === RequestStatus.CLEAR) {
       dispatch(clearErrors({ error: errorType }));
-      dispatch(updateEditStatus({ editType: errorType, status: RequestStatus.IN_PROGRESS }));
     } else {
       dispatch(updateErrors({ error: errorType, message: errorMessage }));
       dispatch(updateEditStatus({ editType: errorType, status: RequestStatus.FAILED }));
@@ -147,6 +148,21 @@ export function getUsagePaths({ asset, courseId, setSelectedRows }) {
     } catch (error) {
       dispatch(updateErrors({ error: 'usageMetrics', message: `Failed to get usage metrics for ${asset.displayName}.` }));
       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function fetchAssetDownload({ selectedRows, courseId }) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.IN_PROGRESS }));
+    const errors = await getDownload(selectedRows, courseId);
+    if (isEmpty(errors)) {
+      dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.SUCCESSFUL }));
+    } else {
+      errors.forEach(async error => {
+        await dispatch(updateErrors({ error: 'download', message: error }));
+      });
+      dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.FAILED }));
     }
   };
 }
