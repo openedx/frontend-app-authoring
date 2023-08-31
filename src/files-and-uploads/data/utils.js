@@ -2,7 +2,6 @@ import { InsertDriveFile, Terminal, AudioFile } from '@edx/paragon/icons';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import JSZip from 'jszip';
 import saveAs from 'file-saver';
-import _ from 'lodash';
 import FILES_AND_UPLOAD_TYPE_FILTERS from './constant';
 
 ensureConfig([
@@ -20,18 +19,18 @@ export const getDownloadZipFolder = async (selectedRows, courseId, onError) => {
         const asset = row.original;
         assetNames.push(asset.displayName);
         try {
-          const { blob, ok } = await fetch(`${getConfig().STUDIO_BASE_URL}/${asset.id}`);
-          if (!ok) {
+          const res = await fetch(`${getConfig().STUDIO_BASE_URL}/${asset.id}`);
+          if (!res.ok) {
             throw new Error();
           }
-          return blob();
+          return res.blob();
         } catch (error) {
           onError({ message: `Failed to download ${asset.displayName}` });
           return null;
         }
       }),
     );
-    const definedAssets = assetFetcher.filter(asset => !_.isEmpty(asset));
+    const definedAssets = assetFetcher.filter(asset => asset !== null);
     if (definedAssets.length > 0) {
       assetFetcher.forEach((assetBlob, index) => {
         folder.file(assetNames[index], assetBlob, { blob: true });
