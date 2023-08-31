@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
 import {
   DataTable,
@@ -23,12 +23,14 @@ import {
   deleteAssetFile,
   fetchAssets,
   setErrors,
+  getUsagePaths,
   updateAssetLock,
   updateAssetOrder,
 } from './data/thunks';
 import { getDownloadZipFolder, sortFiles } from './data/utils';
 import messages from './messages';
 
+import FileInfo from './FileInfo';
 import FileInput, { fileInput } from './FileInput';
 import FilesAndUploadsProvider from './FilesAndUploadsProvider';
 import {
@@ -53,6 +55,7 @@ const FilesAndUploads = ({
   };
   const [currentView, setCurrentView] = useState(defaultVal);
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
+  const [isAssetInfoOpen, openAssetInfo, closeAssetinfo] = useToggle(false);
   const [isAddOpen, setAddOpen, setAddClose] = useToggle(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
@@ -66,9 +69,10 @@ const FilesAndUploads = ({
     loadingStatus,
     addingStatus: addAssetStatus,
     deletingStatus: deleteAssetStatus,
-    savingStatus: saveAssetStatus,
+    updatingStatus: updateAssetStatus,
+    usageStatus: usagePathStatus,
+    errors: errorMessages,
   } = useSelector(state => state.assets);
-  const errorMessages = useSelector(state => state.assets.errors);
   const fileInputControl = fileInput({
     onAddFile: (file) => dispatch(addAssetFile(courseId, file, totalCount)),
     setSelectedRows,
@@ -112,6 +116,12 @@ const FilesAndUploads = ({
     openDeleteConfirmation();
   };
 
+  const handleOpenAssetInfo = (original) => {
+    setSelectedRows([{ original }]);
+    dispatch(getUsagePaths({ asset: original, courseId, setSelectedRows }));
+    openAssetInfo();
+  };
+
   const headerActions = ({ selectedFlatRows }) => (
     <TableActions
       {...{
@@ -132,6 +142,7 @@ const FilesAndUploads = ({
             handleLockedAsset,
             handleBulkDownload,
             handleOpenDeleteConfirmation,
+            handleOpenAssetInfo,
             className,
             original,
           }}
@@ -144,6 +155,7 @@ const FilesAndUploads = ({
           handleLockedAsset,
           handleBulkDownload,
           handleOpenDeleteConfirmation,
+          handleOpenAssetInfo,
           className,
           original,
         }}
@@ -158,7 +170,6 @@ const FilesAndUploads = ({
       </div>
     );
   }
-
   return (
     <FilesAndUploadsProvider courseId={courseId}>
       <main className="containerpt-5">
@@ -167,20 +178,42 @@ const FilesAndUploads = ({
             hideHeading={false}
             isError={addAssetStatus === RequestStatus.FAILED}
           >
-            {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.upload })}
+            <ul className="p-0">
+              {errorMessages.add.map(message => (
+                <li style={{ listStyle: 'none' }}>
+                  {intl.formatMessage(messages.errorAlertMessage, { message })}
+                </li>
+              ))}
+            </ul>
           </ErrorAlert>
           <ErrorAlert
             hideHeading={false}
             isError={deleteAssetStatus === RequestStatus.FAILED}
           >
-            {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.delete })}
+            <ul className="p-0">
+              {errorMessages.delete.map(message => (
+                <li style={{ listStyle: 'none' }}>
+                  {intl.formatMessage(messages.errorAlertMessage, { message })}
+                </li>
+              ))}
+            </ul>
           </ErrorAlert>
           <ErrorAlert
             hideHeading={false}
-            isError={saveAssetStatus === RequestStatus.FAILED}
+            isError={updateAssetStatus === RequestStatus.FAILED}
           >
-            {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.lock })}
-            {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.download })}
+            <ul className="p-0">
+              {errorMessages.lock.map(message => (
+                <li style={{ listStyle: 'none' }}>
+                  {intl.formatMessage(messages.errorAlertMessage, { message })}
+                </li>
+              ))}
+              {errorMessages.download.map(message => (
+                <li style={{ listStyle: 'none' }}>
+                  {intl.formatMessage(messages.errorAlertMessage, { message })}
+                </li>
+              ))}
+            </ul>
           </ErrorAlert>
           <div className="h2">
             <FormattedMessage {...messages.heading} />
@@ -233,28 +266,12 @@ const FilesAndUploads = ({
                 },
               ],
             },
-            {
-              Header: 'Locked',
-              accessor: 'locked',
-              // Filter: CheckboxFilter,
-              // filter: 'exactText',
-              // filterChoices: [
-              //   {
-              //     name: 'Locked',
-              //     value: true,
-              //   },
-              //   {
-              //     name: 'Unlocked',
-              //     value: false,
-              //   },
-              // ],
-            },
           ]}
           itemCount={totalCount}
           pageCount={Math.ceil(totalCount / 50)}
           data={assets}
         >
-          {_.isEmpty(assets) && loadingStatus !== RequestStatus.IN_PROGRESS ? (
+          {isEmpty(assets) && loadingStatus !== RequestStatus.IN_PROGRESS ? (
             <Dropzone
               data-testid="files-dropzone"
               onProcessUpload={handleDropzoneAsset}
@@ -289,7 +306,16 @@ const FilesAndUploads = ({
           )}
         </DataTable>
         <FileInput fileInput={fileInputControl} />
-
+        {!isEmpty(selectedRows) && (
+          <FileInfo
+            asset={selectedRows[0].original}
+            onClose={closeAssetinfo}
+            isOpen={isAssetInfoOpen}
+            handleLockedAsset={handleLockedAsset}
+            usagePathStatus={usagePathStatus}
+            error={errorMessages.usageMetrics}
+          />
+        )}
         <AlertModal
           title={intl.formatMessage(messages.deleteConfirmationTitle)}
           isOpen={isDeleteConfirmationOpen}

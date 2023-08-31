@@ -1,0 +1,20 @@
+@import "./course-handouts/CourseHandouts";
+@import "./course-update/CourseUpdate";
+@import "./update-form/UpdateForm";
+
+.updates-container {
+  @include pgn-box-shadow(1, "centered");
+
+  display: grid;
+  grid-template-columns: 65% 35%;
+  border: .0625rem solid $gray-200;
+  border-radius: .375rem;
+  background: $white;
+  overflow: hidden;
+}
+
+.updates-handouts-container {
+  border-left: .0625rem solid $gray-200;
+  padding: 1.875rem;
+  background: $white;
+}

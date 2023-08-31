@@ -7,6 +7,7 @@ import {
 } from '../../generic/model-store';
 import {
   getAssets,
+  getAssetUsagePaths,
   addAsset,
   deleteAsset,
   updateLockStatus,
@@ -131,6 +132,21 @@ export function setErrors({ errorType, errorMessage, apiFetchStatus }) {
     } else {
       dispatch(updateErrors({ error: errorType, message: errorMessage }));
       dispatch(updateEditStatus({ editType: errorType, status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function getUsagePaths({ asset, courseId, setSelectedRows }) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      const { usageLocations } = await getAssetUsagePaths({ assetId: asset.id, courseId });
+      setSelectedRows([{ original: { ...asset, usageLocations } }]);
+      dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateErrors({ error: 'usageMetrics', message: `Failed to get usage metrics for ${asset.displayName}.` }));
+      dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.FAILED }));
     }
   };
 }

@@ -35,6 +35,7 @@ import {
   deleteAssetFile,
   updateAssetLock,
   setErrors,
+  getUsagePaths,
 } from './data/thunks';
 import { getAssetsUrl } from './data/api';
 import messages from './messages';
@@ -281,11 +282,20 @@ describe('FilesAndUploads', () => {
         expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
         const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
         expect(assetMenuButton).toBeVisible();
+        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, { usageLocations: ['subsection - unit / block'] });
         await waitFor(() => {
           fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
           fireEvent.click(screen.getByText('Info'));
+          executeThunk(getUsagePaths({
+            courseId,
+            asset: { id: 'mOckID1', displayName: 'mOckID1' },
+            setSelectedRows: jest.fn(),
+          }), store.dispatch);
           expect(screen.getAllByLabelText('mOckID1')[0]).toBeVisible();
         });
+        const { usageStatus } = store.getState().assets;
+        expect(usageStatus).toEqual(RequestStatus.SUCCESSFUL);
+        expect(screen.getByText('subsection - unit / block')).toBeVisible();
       });
       it('should open asset info and handle lock checkbox', async () => {
         renderComponent();
@@ -294,9 +304,15 @@ describe('FilesAndUploads', () => {
         const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
         expect(assetMenuButton).toBeVisible();
         axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID1`).reply(201, { locked: false });
+        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, { usageLocations: [] });
         await waitFor(() => {
           fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
           fireEvent.click(screen.getByText('Info'));
+          executeThunk(getUsagePaths({
+            courseId,
+            asset: { id: 'mOckID1', displayName: 'mOckID1' },
+            setSelectedRows: jest.fn(),
+          }), store.dispatch);
           expect(screen.getAllByLabelText('mOckID1')[0]).toBeVisible();
           fireEvent.click(screen.getByLabelText('Checkbox'));
           executeThunk(updateAssetLock({
@@ -305,8 +321,9 @@ describe('FilesAndUploads', () => {
             locked: false,
           }), store.dispatch);
         });
-        const saveStatus = store.getState().assets.savingStatus;
-        expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
+        expect(screen.getByText(messages.usageNotInUseMessage.defaultMessage)).toBeVisible();
+        const updateStatus = store.getState().assets.updatingStatus;
+        expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
       });
       it('should unlock asset', async () => {
         renderComponent();
@@ -324,8 +341,8 @@ describe('FilesAndUploads', () => {
             locked: false,
           }), store.dispatch);
         });
-        const saveStatus = store.getState().assets.savingStatus;
-        expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
+        const updateStatus = store.getState().assets.updatingStatus;
+        expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
       });
       it('should lock asset', async () => {
         renderComponent();
@@ -427,6 +444,25 @@ describe('FilesAndUploads', () => {
         expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
         expect(screen.getByText('Error')).toBeVisible();
       });
+      it('404 usage path fetch should show error', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        expect(screen.getByTestId('grid-card-mOckID3')).toBeVisible();
+        const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID3');
+        expect(assetMenuButton).toBeVisible();
+        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID3/usage`).reply(404);
+        await waitFor(() => {
+          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(screen.getByText('Info'));
+          executeThunk(getUsagePaths({
+            courseId,
+            asset: { id: 'mOckID3', displayName: 'mOckID3' },
+            setSelectedRows: jest.fn(),
+          }), store.dispatch);
+        });
+        const { usageStatus } = store.getState().assets;
+        expect(usageStatus).toEqual(RequestStatus.FAILED);
+      });
       it('404 lock update should show error', async () => {
         renderComponent();
         await mockStore(RequestStatus.SUCCESSFUL);
@@ -473,29 +509,6 @@ describe('FilesAndUploads', () => {
         expect(saveStatus).toEqual(RequestStatus.FAILED);
         expect(screen.getByText('Error')).toBeVisible();
       });
-      // fit('download button should be enabled and download single selected file', async () => {
-      //   renderComponent();
-      //   await mockStore(RequestStatus.SUCCESSFUL);
-      //   const selectCardButton = screen.getAllByTestId('datatable-select-column-checkbox-cell')[0];
-      //   fireEvent.click(selectCardButton);
-      //   const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
-      //   expect(actionsButton).toBeVisible();
-      //   await waitFor(() => {
-      //     fireEvent.click(actionsButton);
-      //   });
-      //   const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
-      //   expect(downloadButton).not.toHaveClass('disabled');
-      //   axiosMock.onGet(`${getApiBaseUrl(courseId)}/mOckID1`).reply(404);
-      //   fireEvent.click(downloadButton);
-      //   expect(saveAs).not.toBeCalled();
-      //   await executeThunk(setErrors({
-      //     errorType: 'download',
-      //     errorMessage: 'failed to download mOckID1',
-      //   }), store.dispatch);
-      //   const saveStatus = store.getState().assets.savingStatus;
-      //   expect(saveStatus).toEqual(RequestStatus.FAILED);
-      //   expect(screen.getByText('Error')).toBeVisible();
-      // });
     });
   });
 });

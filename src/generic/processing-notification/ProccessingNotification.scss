@@ -1,0 +1,25 @@
+.processing-notification {
+  display: flex;
+  position: fixed;
+  bottom: -13rem;
+  transition: bottom 1s;
+  right: 1.25rem;
+  padding: .625rem 1.25rem;
+  z-index: $zindex-popover;
+
+  &.is-show {
+    bottom: .625rem;
+  }
+
+  .processing-notification-icon {
+    margin-right: .625rem;
+    animation: rotate 1s linear infinite;
+  }
+
+  .processing-notification-title {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    color: $white;
+    margin-bottom: 0;
+  }
+}

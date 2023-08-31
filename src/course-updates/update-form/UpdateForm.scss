@@ -1,0 +1,63 @@
+.update-form {
+  @include pgn-box-shadow(1, "centered");
+
+  border: .0625rem solid $gray-200;
+  border-radius: .375rem;
+  background: $white;
+  margin-bottom: map-get($spacers, 4);
+  padding: $spacer 1.875rem;
+
+  .update-form-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: $spacer;
+  }
+
+  .datepicker-field {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    position: relative;
+
+    .datepicker-float-labels {
+      position: absolute;
+      padding: 0 .1875rem;
+      top: -.625rem;
+      left: .3125rem;
+      z-index: 9;
+      background-color: $white;
+    }
+
+    .datepicker-field-error {
+      display: flex;
+      align-items: center;
+      gap: .25rem;
+
+      svg {
+        color: $warning-300;
+      }
+    }
+
+    .react-datepicker-popper {
+      z-index: $zindex-dropdown;
+    }
+  }
+}
+
+.update-form__inner {
+  margin-bottom: 0;
+  margin-top: 1.875rem;
+  padding: map-get($spacers, 4) 0 0;
+  border-top: .0625rem solid $light-400;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.update-form__inner-first {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}

@@ -4,7 +4,6 @@ import {
   ActionRow,
   Icon,
   Card,
-  useToggle,
   Chip,
   Truncate,
   Image,
@@ -13,7 +12,6 @@ import {
   MoreVert,
 } from '@edx/paragon/icons';
 import FileMenu from '../FileMenu';
-import FileInfo from '../FileInfo';
 import { getSrc } from '../data/utils';
 
 const GalleryCard = ({
@@ -22,8 +20,8 @@ const GalleryCard = ({
   handleBulkDownload,
   handleLockedAsset,
   handleOpenDeleteConfirmation,
+  handleOpenAssetInfo,
 }) => {
-  const [isAssetInfoOpen, openAssetInfo, closeAssetinfo] = useToggle(false);
   const lockAsset = () => {
     const { locked } = original;
     handleLockedAsset(original.id, !locked);
@@ -34,56 +32,48 @@ const GalleryCard = ({
   });
 
   return (
-    <>
-      <Card className={className} data-testid={`grid-card-${original.id}`}>
-        <Card.Header
-          actions={(
-            <ActionRow>
-              <FileMenu
-                externalUrl={original.externalUrl}
-                handleLock={lockAsset}
-                locked={original.locked}
-                openAssetInfo={openAssetInfo}
-                portableUrl={original.portableUrl}
-                iconSrc={MoreVert}
-                id={original.id}
-                onDownload={() => handleBulkDownload(
-                  [{ original: { id: original.id, displayName: original.displayName } }],
-                )}
-                openDeleteConfirmation={() => handleOpenDeleteConfirmation([{ original }])}
-              />
-            </ActionRow>
-          )}
-        />
-        <Card.Section>
-          <div className="row align-items-center justify-content-center m-0">
-            {original.thumbnail ? (
-              <Image src={src} style={{ height: '76px', width: '135.71px' }} className="border rounded p-1" />
-            ) : (
-              <div className="row border justify-content-center align-items-center rounded m-0" style={{ height: '76px', width: '135.71px' }}>
-                <Icon src={src} style={{ height: '48px', width: '48px' }} />
-              </div>
-            )}
-          </div>
-          <div style={{ wordBreak: 'break-word' }}>
-            <Truncate lines={1} className="font-weight-bold small mt-3">
-              {original.displayName}
-            </Truncate>
-          </div>
-        </Card.Section>
-        <Card.Footer>
-          <Chip>
-            {original.wrapperType}
-          </Chip>
-        </Card.Footer>
-      </Card>
-      <FileInfo
-        asset={original}
-        onClose={closeAssetinfo}
-        isOpen={isAssetInfoOpen}
-        handleLockedAsset={handleLockedAsset}
+    <Card className={className} data-testid={`grid-card-${original.id}`}>
+      <Card.Header
+        actions={(
+          <ActionRow>
+            <FileMenu
+              externalUrl={original.externalUrl}
+              handleLock={lockAsset}
+              locked={original.locked}
+              openAssetInfo={() => handleOpenAssetInfo(original)}
+              portableUrl={original.portableUrl}
+              iconSrc={MoreVert}
+              id={original.id}
+              onDownload={() => handleBulkDownload(
+                [{ original: { id: original.id, displayName: original.displayName } }],
+              )}
+              openDeleteConfirmation={() => handleOpenDeleteConfirmation([{ original }])}
+            />
+          </ActionRow>
+        )}
       />
-    </>
+      <Card.Section>
+        <div className="row align-items-center justify-content-center m-0">
+          {original.thumbnail ? (
+            <Image src={src} style={{ height: '76px', width: '135.71px' }} className="border rounded p-1" />
+          ) : (
+            <div className="row border justify-content-center align-items-center rounded m-0" style={{ height: '76px', width: '135.71px' }}>
+              <Icon src={src} style={{ height: '48px', width: '48px' }} />
+            </div>
+          )}
+        </div>
+        <div style={{ wordBreak: 'break-word' }}>
+          <Truncate lines={1} className="font-weight-bold small mt-3">
+            {original.displayName}
+          </Truncate>
+        </div>
+      </Card.Section>
+      <Card.Footer>
+        <Chip>
+          {original.wrapperType}
+        </Chip>
+      </Card.Footer>
+    </Card>
   );
 };
 
@@ -104,6 +94,7 @@ GalleryCard.propTypes = {
   handleBulkDownload: PropTypes.func.isRequired,
   handleLockedAsset: PropTypes.func.isRequired,
   handleOpenDeleteConfirmation: PropTypes.func.isRequired,
+  handleOpenAssetInfo: PropTypes.func.isRequired,
 };
 
 export default GalleryCard;

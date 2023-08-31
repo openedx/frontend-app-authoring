@@ -14,6 +14,7 @@ import { AdvancedSettings } from './advanced-settings';
 import ScheduleAndDetails from './schedule-and-details';
 import { GradingSettings } from './grading-settings';
 import CourseTeam from './course-team/CourseTeam';
+import { CourseUpdates } from './course-updates';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -43,10 +44,7 @@ const CourseAuthoringRoutes = ({ courseId }) => {
             )}
         </PageRoute>
         <PageRoute path={`${path}/course_info`}>
-          {process.env.ENABLE_NEW_UPDATES_PAGE === 'true'
-            && (
-              <Placeholder />
-            )}
+          <CourseUpdates courseId={courseId} />
         </PageRoute>
         <PageRoute path={`${path}/assets`}>
           <FilesAndUploads courseId={courseId} />

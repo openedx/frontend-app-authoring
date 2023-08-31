@@ -67,7 +67,12 @@ export const updateFileValues = (files) => {
     const utcDateString = dateAdded.replace(/\bat\b/g, '');
     const utcDateTime = new Date(utcDateString).toString();
 
-    updatedFiles.push({ ...file, wrapperType, dateAdded: utcDateTime });
+    updatedFiles.push({
+      ...file,
+      wrapperType,
+      dateAdded: utcDateTime,
+      usageLocations: [],
+    });
   });
 
   return updatedFiles;
@@ -86,6 +91,23 @@ export const getSrc = ({ thumbnail, wrapperType, externalUrl }) => {
     return AudioFile;
   default:
     return InsertDriveFile;
+  }
+};
+
+export const getFileSizeToClosestByte = (fileSize, numberOfDivides = 0) => {
+  if (fileSize > 1000) {
+    const updatedSize = fileSize / 1000;
+    const incrementNumberOfDivides = numberOfDivides + 1;
+    return getFileSizeToClosestByte(updatedSize, incrementNumberOfDivides);
+  }
+  const fileSizeFixedDecimal = Number.parseFloat(fileSize).toFixed(2);
+  switch (numberOfDivides) {
+  case 1:
+    return `${fileSizeFixedDecimal} KB`;
+  case 2:
+    return `${fileSizeFixedDecimal} MB`;
+  default:
+    return `${fileSizeFixedDecimal} B`;
   }
 };
 
