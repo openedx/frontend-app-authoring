@@ -101,7 +101,7 @@ const BasicSection = ({
       <Card.Section className="px-3 py-1">
         <Hyperlink
           destination={lmsLinkForAboutPage}
-          className="lead info-500 text-decoration-none"
+          className="lead info-500 small text-decoration-none"
           target="_blank"
           showLaunchIcon={false}
         >
