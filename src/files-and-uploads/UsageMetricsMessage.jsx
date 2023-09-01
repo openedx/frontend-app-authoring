@@ -19,7 +19,11 @@ const UsageMetricsMessage = ({
       <FormattedMessage {...messages.usageNotInUseMessage} />
     ) : (
       <ul className="p-0">
-        {usageLocations.map((location) => (<li style={{ listStyle: 'none' }}>{location}</li>))}
+        {usageLocations.map(location => (
+          <li key={`usage-location-${location}`} style={{ listStyle: 'none' }}>
+            {location}
+          </li>
+        ))}
       </ul>
     );
   } else if (usagePathStatus === RequestStatus.FAILED) {

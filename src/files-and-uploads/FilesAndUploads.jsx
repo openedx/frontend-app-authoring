@@ -22,7 +22,7 @@ import {
   addAssetFile,
   deleteAssetFile,
   fetchAssets,
-  setErrors,
+  resetErrors,
   getUsagePaths,
   updateAssetLock,
   updateAssetOrder,
@@ -40,6 +40,7 @@ import {
   TableActions,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
+import { clearErrors } from './data/slice';
 
 const FilesAndUploads = ({
   courseId,
@@ -97,17 +98,18 @@ const FilesAndUploads = ({
   const handleBulkDelete = () => {
     closeDeleteConfirmation();
     setDeleteOpen();
-    dispatch(setErrors({ errorType: 'delete', errorAction: RequestStatus.CLEAR }));
+    dispatch(resetErrors({ errorType: 'delete' }));
     const assetIdsToDelete = selectedRows.map(row => row.original.id);
     assetIdsToDelete.forEach(id => dispatch(deleteAssetFile(courseId, id, totalCount)));
   };
 
   const handleBulkDownload = useCallback(async (selectedFlatRows) => {
-    dispatch(setErrors({ errorType: 'download', errorAction: RequestStatus.CLEAR }));
+    dispatch(resetErrors({ errorType: 'download' }));
     dispatch(fetchAssetDownload({ selectedRows: selectedFlatRows, courseId }));
   }, []);
 
   const handleLockedAsset = (assetId, locked) => {
+    dispatch(clearErrors({ errorType: 'lock' }));
     dispatch(updateAssetLock({ courseId, assetId, locked }));
   };
 
@@ -117,7 +119,7 @@ const FilesAndUploads = ({
   };
 
   const handleOpenAssetInfo = (original) => {
-    dispatch(setErrors({ errorType: 'usageMetrics', errorAction: RequestStatus.CLEAR }));
+    dispatch(resetErrors({ errorType: 'usageMetrics' }));
     setSelectedRows([{ original }]);
     dispatch(getUsagePaths({ asset: original, courseId, setSelectedRows }));
     openAssetInfo();
@@ -181,7 +183,7 @@ const FilesAndUploads = ({
           >
             <ul className="p-0">
               {errorMessages.add.map(message => (
-                <li style={{ listStyle: 'none' }}>
+                <li key={`add-error-${message}`} style={{ listStyle: 'none' }}>
                   {intl.formatMessage(messages.errorAlertMessage, { message })}
                 </li>
               ))}
@@ -193,7 +195,7 @@ const FilesAndUploads = ({
           >
             <ul className="p-0">
               {errorMessages.delete.map(message => (
-                <li style={{ listStyle: 'none' }}>
+                <li key={`delete-error-${message}`} style={{ listStyle: 'none' }}>
                   {intl.formatMessage(messages.errorAlertMessage, { message })}
                 </li>
               ))}
@@ -205,12 +207,12 @@ const FilesAndUploads = ({
           >
             <ul className="p-0">
               {errorMessages.lock.map(message => (
-                <li style={{ listStyle: 'none' }}>
+                <li key={`lock-error-${message}`} style={{ listStyle: 'none' }}>
                   {intl.formatMessage(messages.errorAlertMessage, { message })}
                 </li>
               ))}
               {errorMessages.download.map(message => (
-                <li style={{ listStyle: 'none' }}>
+                <li key={`download-error-${message}`} style={{ listStyle: 'none' }}>
                   {intl.formatMessage(messages.errorAlertMessage, { message })}
                 </li>
               ))}

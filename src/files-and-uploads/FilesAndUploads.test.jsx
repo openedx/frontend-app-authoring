@@ -34,7 +34,6 @@ import {
   addAssetFile,
   deleteAssetFile,
   updateAssetLock,
-  setErrors,
   getUsagePaths,
 } from './data/thunks';
 import { getAssetsUrl } from './data/api';
@@ -580,13 +579,11 @@ describe('FilesAndUploads', () => {
         expect(downloadButton).not.toHaveClass('disabled');
 
         global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
-        fireEvent.click(downloadButton);
-        expect(fetch).toHaveBeenCalledTimes(2);
+        await waitFor(() => {
+          fireEvent.click(downloadButton);
+          expect(fetch).toHaveBeenCalledTimes(2);
+        });
 
-        await executeThunk(setErrors({
-          errorType: 'download',
-          errorMessage: 'failed to download mOckID1',
-        }), store.dispatch);
         const updateStatus = store.getState().assets.updatingStatus;
         expect(updateStatus).toEqual(RequestStatus.FAILED);
 

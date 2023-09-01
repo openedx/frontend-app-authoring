@@ -126,15 +126,8 @@ export function updateAssetLock({ assetId, courseId, locked }) {
   };
 }
 
-export function setErrors({ errorType, errorMessage, errorAction }) {
-  return (dispatch) => {
-    if (errorAction === RequestStatus.CLEAR) {
-      dispatch(clearErrors({ error: errorType }));
-    } else {
-      dispatch(updateErrors({ error: errorType, message: errorMessage }));
-      dispatch(updateEditStatus({ editType: errorType, status: RequestStatus.FAILED }));
-    }
-  };
+export function resetErrors({ errorType }) {
+  return (dispatch) => { dispatch(clearErrors({ error: errorType })); };
 }
 
 export function getUsagePaths({ asset, courseId, setSelectedRows }) {
@@ -159,8 +152,8 @@ export function fetchAssetDownload({ selectedRows, courseId }) {
     if (isEmpty(errors)) {
       dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.SUCCESSFUL }));
     } else {
-      errors.forEach(async error => {
-        await dispatch(updateErrors({ error: 'download', message: error }));
+      errors.forEach(error => {
+        dispatch(updateErrors({ error: 'download', message: error }));
       });
       dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.FAILED }));
     }
