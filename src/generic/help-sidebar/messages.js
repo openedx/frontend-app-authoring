@@ -7,7 +7,7 @@ const messages = defineMessages({
   },
   sidebarLinkToScheduleAndDetails: {
     id: 'course-authoring.help-sidebar.links.schedule-and-details',
-    defaultMessage: 'Details & schedule',
+    defaultMessage: 'Schedule & details',
     description: 'Link to Studio Schedule & Details page',
   },
   sidebarLinkToGrading: {
