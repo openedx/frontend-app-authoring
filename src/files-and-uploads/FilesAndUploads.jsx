@@ -17,7 +17,7 @@ import {
 import Placeholder, { ErrorAlert } from '@edx/frontend-lib-content-components';
 
 import { RequestStatus } from '../data/constants';
-import { useModels } from '../generic/model-store';
+import { useModels, useModel } from '../generic/model-store';
 import {
   addAssetFile,
   deleteAssetFile,
@@ -38,6 +38,7 @@ import {
   TableActions,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
+import getPageHeadTitle from '../generic/utils';
 
 const FilesAndUploads = ({
   courseId,
@@ -58,6 +59,9 @@ const FilesAndUploads = ({
   const [isAddOpen, setAddOpen, setAddClose] = useToggle(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
+
+  const courseDetails = useModel('courseDetails', courseId);
+  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
 
   useEffect(() => {
     dispatch(fetchAssets(courseId));

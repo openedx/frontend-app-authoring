@@ -9,6 +9,7 @@ import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/
 import Placeholder from '@edx/frontend-lib-content-components';
 
 import AlertProctoringError from '../generic/AlertProctoringError';
+import { useModel } from '../generic/model-store';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { parseArrayOrObjectValues } from '../utils';
 import { RequestStatus } from '../data/constants';
@@ -23,6 +24,7 @@ import SettingsSidebar from './settings-sidebar/SettingsSidebar';
 import validateAdvancedSettingsData from './utils';
 import messages from './messages';
 import ModalError from './modal-error/ModalError';
+import getPageHeadTitle from '../generic/utils';
 
 const AdvancedSettings = ({ intl, courseId }) => {
   const dispatch = useDispatch();
@@ -35,6 +37,9 @@ const AdvancedSettings = ({ intl, courseId }) => {
   const [isQueryPending, setIsQueryPending] = useState(false);
   const [isEditableState, setIsEditableState] = useState(false);
   const [hasInternetConnectionError, setInternetConnectionError] = useState(false);
+
+  const courseDetails = useModel('courseDetails', courseId);
+  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
 
   useEffect(() => {
     dispatch(fetchCourseAppSettings(courseId));
