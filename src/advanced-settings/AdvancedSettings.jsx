@@ -23,9 +23,11 @@ import SettingsSidebar from './settings-sidebar/SettingsSidebar';
 import validateAdvancedSettingsData from './utils';
 import messages from './messages';
 import ModalError from './modal-error/ModalError';
+import { useAdvancedSettings } from './hooks';
 
 const AdvancedSettings = ({ intl, courseId }) => {
   const dispatch = useDispatch();
+
   const [saveSettingsPrompt, showSaveSettingsPrompt] = useState(false);
   const [showDeprecated, setShowDeprecated] = useState(false);
   const [errorModal, showErrorModal] = useState(false);
@@ -36,43 +38,26 @@ const AdvancedSettings = ({ intl, courseId }) => {
   const [isEditableState, setIsEditableState] = useState(false);
   const [hasInternetConnectionError, setInternetConnectionError] = useState(false);
 
-  useEffect(() => {
-    dispatch(fetchCourseAppSettings(courseId));
-    dispatch(fetchProctoringExamErrors(courseId));
-  }, [courseId]);
-
-  const advancedSettingsData = useSelector(getCourseAppSettings);
-  const savingStatus = useSelector(getSavingStatus);
-  const proctoringExamErrors = useSelector(getProctoringExamErrors);
-  const settingsWithSendErrors = useSelector(getSendRequestErrors) || {};
-  const loadingSettingsStatus = useSelector(getLoadingStatus);
-
-  const isLoading = loadingSettingsStatus === RequestStatus.IN_PROGRESS;
-  const updateSettingsButtonState = {
-    labels: {
-      default: intl.formatMessage(messages.buttonSaveText),
-      pending: intl.formatMessage(messages.buttonSavingText),
-    },
-    disabledStates: ['pending'],
-  };
   const {
+    advancedSettingsData,
+    isLoading,
+    updateSettingsButtonState,
     proctoringErrors,
     mfeProctoredExamSettingsUrl,
-  } = proctoringExamErrors;
-
-  useEffect(() => {
-    if (savingStatus === RequestStatus.SUCCESSFUL) {
-      setIsQueryPending(false);
-      setShowSuccessAlert(true);
-      setIsEditableState(false);
-      setTimeout(() => setShowSuccessAlert(false), 15000);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      showSaveSettingsPrompt(false);
-    } else if (savingStatus === RequestStatus.FAILED && !hasInternetConnectionError) {
-      setErrorFields(settingsWithSendErrors);
-      showErrorModal(true);
-    }
-  }, [savingStatus]);
+    loadingSettingsStatus,
+    savingStatus,
+  } = useAdvancedSettings({
+    dispatch,
+    courseId,
+    intl,
+    setIsQueryPending,
+    setShowSuccessAlert,
+    setIsEditableState,
+    showSaveSettingsPrompt,
+    showErrorModal,
+    setErrorFields,
+    hasInternetConnectionError,
+  });
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
