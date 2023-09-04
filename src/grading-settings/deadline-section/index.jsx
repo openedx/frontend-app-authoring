@@ -1,46 +1,66 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Form } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import classNames from 'classnames';
 
+import { DEFAULT_TIME_STAMP, TIME_FORMAT } from '../../constants';
+import { formatTime, timerValidation } from './utils';
 import messages from './messages';
-
-const DEFAULT_TIME_STAMP = '00:00';
 
 const DeadlineSection = ({
   intl, setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert,
 }) => {
-  const formatTime = (time) => (time >= 10 ? time.toString() : `0${time}`);
   const timeStampValue = gracePeriod
-    ? `${formatTime(gracePeriod.hours) }:${ formatTime(gracePeriod.minutes)}` : DEFAULT_TIME_STAMP;
+    ? gracePeriod.hours && `${formatTime(gracePeriod.hours)}:${formatTime(gracePeriod.minutes)}`
+    : DEFAULT_TIME_STAMP;
+  const [newDeadlineValue, setNewDeadlineValue] = useState(timeStampValue);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    setNewDeadlineValue(timeStampValue);
+  }, [gracePeriod]);
 
   const handleDeadlineChange = (e) => {
-    const hoursAndMinutes = e.target.value.split(':');
-    setShowSavePrompt(true);
-    setGradingData(prevData => ({
-      ...prevData,
-      gracePeriod: {
-        hours: Number(hoursAndMinutes[0]),
-        minutes: parseInt(hoursAndMinutes[1] ?? 0, 10),
-      },
-    }));
-    setShowSuccessAlert(false);
+    const { value } = e.target;
+    const [hours, minutes] = value.split(':');
+
+    setNewDeadlineValue(value);
+
+    if (timerValidation(value, setShowSavePrompt, setIsError)) {
+      setGradingData(prevData => ({
+        ...prevData,
+        gracePeriod: {
+          hours: +hours,
+          minutes: +minutes,
+        },
+      }));
+      setShowSuccessAlert(false);
+    }
   };
 
   return (
-    <Form.Group className="w-50">
+    <Form.Group className={classNames('w-50 form-group-custom', {
+      'form-group-custom_isInvalid': isError,
+    })}
+    >
       <Form.Label className="grading-label">
         {intl.formatMessage(messages.gracePeriodOnDeadlineLabel)}
       </Form.Label>
       <Form.Control
         data-testid="deadline-period-input"
-        type="time"
-        value={timeStampValue}
+        value={newDeadlineValue}
         onChange={handleDeadlineChange}
+        placeholder={TIME_FORMAT.toUpperCase()}
       />
       <Form.Control.Feedback className="grading-description">
         {intl.formatMessage(messages.gracePeriodOnDeadlineDescription)}
       </Form.Control.Feedback>
+      {isError && (
+        <Form.Control.Feedback className="feedback-error" type="invalid">
+          {intl.formatMessage(messages.gracePeriodOnDeadlineErrorMsg, { timeFormat: TIME_FORMAT.toUpperCase() })}
+        </Form.Control.Feedback>
+      )}
     </Form.Group>
   );
 };
@@ -55,8 +75,8 @@ DeadlineSection.propTypes = {
   setGradingData: PropTypes.func.isRequired,
   setShowSuccessAlert: PropTypes.func.isRequired,
   gracePeriod: PropTypes.shape({
-    hours: PropTypes.number,
-    minutes: PropTypes.number,
+    hours: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    minutes: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }),
 };
 

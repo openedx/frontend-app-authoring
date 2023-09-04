@@ -39,6 +39,23 @@ export function convertObjectToSnakeCase(obj, unpacked = false) {
   }, {});
 }
 
+export function deepConvertingKeysToCamelCase(obj) {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map((item) => deepConvertingKeysToCamelCase(item));
+  }
+
+  const camelCaseObj = {};
+  Object.keys(obj).forEach((key) => {
+    const camelCaseKey = key.replace(/_([a-z])/g, (match, p1) => p1.toUpperCase());
+    camelCaseObj[camelCaseKey] = deepConvertingKeysToCamelCase(obj[key]);
+  });
+  return camelCaseObj;
+}
+
 export function deepConvertingKeysToSnakeCase(obj) {
   if (typeof obj !== 'object' || obj === null) {
     return obj;
@@ -49,9 +66,9 @@ export function deepConvertingKeysToSnakeCase(obj) {
   }
 
   const snakeCaseObj = {};
-  Object.keys(obj).forEach((key) => {
-    const snakeCaseKey = snakeCase(key);
-    snakeCaseObj[snakeCaseKey] = deepConvertingKeysToSnakeCase(obj[key]);
+  Object.entries(obj).forEach(([key, value]) => {
+    const snakeCaseKey = key.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
+    snakeCaseObj[snakeCaseKey] = key === 'gradeCutoffs' ? value : deepConvertingKeysToSnakeCase(value);
   });
   return snakeCaseObj;
 }
