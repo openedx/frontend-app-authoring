@@ -13,6 +13,7 @@ import { reducer as filesReducer } from './files-and-uploads/data/slice';
 import { reducer as courseTeamReducer } from './course-team/data/slice';
 import { reducer as CourseUpdatesReducer } from './course-updates/data/slice';
 import { reducer as processingNotificationReducer } from './generic/processing-notification/data/slice';
+import { reducer as helpUrlsReducer } from './help-urls/data/slice';
 
 export default function initializeStore(preloadedState = undefined) {
   return configureStore({
@@ -30,6 +31,7 @@ export default function initializeStore(preloadedState = undefined) {
       courseTeam: courseTeamReducer,
       courseUpdates: CourseUpdatesReducer,
       processingNotification: processingNotificationReducer,
+      helpUrls: helpUrlsReducer,
     },
     preloadedState,
   });
