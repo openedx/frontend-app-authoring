@@ -21,7 +21,6 @@ const slice = createSlice({
 
 export const {
   updatePages,
-  updateLocales,
   updateLoadingHelpUrlsStatus,
 } = slice.actions;
 
