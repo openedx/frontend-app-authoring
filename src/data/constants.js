@@ -11,6 +11,7 @@ export const RequestStatus = {
   FAILED: 'failed',
   DENIED: 'denied',
   PENDING: 'pending',
+  CLEAR: 'clear',
 };
 
 /**

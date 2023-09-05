@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
@@ -22,15 +22,17 @@ import {
   addAssetFile,
   deleteAssetFile,
   fetchAssets,
+  resetErrors,
   getUsagePaths,
   updateAssetLock,
   updateAssetOrder,
+  fetchAssetDownload,
 } from './data/thunks';
 import { sortFiles } from './data/utils';
 import messages from './messages';
 
 import FileInfo from './FileInfo';
-import FileInput, { fileInput } from './FileInput';
+import FileInput, { useFileInput } from './FileInput';
 import FilesAndUploadsProvider from './FilesAndUploadsProvider';
 import {
   GalleryCard,
@@ -38,6 +40,7 @@ import {
   TableActions,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
+import { clearErrors } from './data/slice';
 
 const FilesAndUploads = ({
   courseId,
@@ -72,7 +75,7 @@ const FilesAndUploads = ({
     usageStatus: usagePathStatus,
     errors: errorMessages,
   } = useSelector(state => state.assets);
-  const fileInputControl = fileInput({
+  const fileInputControl = useFileInput({
     onAddFile: (file) => dispatch(addAssetFile(courseId, file, totalCount)),
     setSelectedRows,
     setAddOpen,
@@ -95,25 +98,18 @@ const FilesAndUploads = ({
   const handleBulkDelete = () => {
     closeDeleteConfirmation();
     setDeleteOpen();
+    dispatch(resetErrors({ errorType: 'delete' }));
     const assetIdsToDelete = selectedRows.map(row => row.original.id);
     assetIdsToDelete.forEach(id => dispatch(deleteAssetFile(courseId, id, totalCount)));
   };
 
-  const handleBulkDownload = (selectedFlatRows) => {
-    selectedFlatRows.forEach(row => {
-      const { externalUrl } = row.original;
-      const link = document.createElement('a');
-      link.target = '_blank';
-      link.download = true;
-      link.href = externalUrl;
-      link.click();
-    });
-    /* ********** TODO ***********
-     * implement a zip file function when there are multiple files
-    */
-  };
+  const handleBulkDownload = useCallback(async (selectedFlatRows) => {
+    dispatch(resetErrors({ errorType: 'download' }));
+    dispatch(fetchAssetDownload({ selectedRows: selectedFlatRows, courseId }));
+  }, []);
 
   const handleLockedAsset = (assetId, locked) => {
+    dispatch(clearErrors({ errorType: 'lock' }));
     dispatch(updateAssetLock({ courseId, assetId, locked }));
   };
 
@@ -123,6 +119,7 @@ const FilesAndUploads = ({
   };
 
   const handleOpenAssetInfo = (original) => {
+    dispatch(resetErrors({ errorType: 'usageMetrics' }));
     setSelectedRows([{ original }]);
     dispatch(getUsagePaths({ asset: original, courseId, setSelectedRows }));
     openAssetInfo();
@@ -146,6 +143,7 @@ const FilesAndUploads = ({
         <GalleryCard
           {...{
             handleLockedAsset,
+            handleBulkDownload,
             handleOpenDeleteConfirmation,
             handleOpenAssetInfo,
             className,
@@ -158,6 +156,7 @@ const FilesAndUploads = ({
       <ListCard
         {...{
           handleLockedAsset,
+          handleBulkDownload,
           handleOpenDeleteConfirmation,
           handleOpenAssetInfo,
           className,
@@ -183,8 +182,8 @@ const FilesAndUploads = ({
             isError={addAssetStatus === RequestStatus.FAILED}
           >
             <ul className="p-0">
-              {errorMessages.upload.map(message => (
-                <li style={{ listStyle: 'none' }}>
+              {errorMessages.add.map(message => (
+                <li key={`add-error-${message}`} style={{ listStyle: 'none' }}>
                   {intl.formatMessage(messages.errorAlertMessage, { message })}
                 </li>
               ))}
@@ -196,7 +195,7 @@ const FilesAndUploads = ({
           >
             <ul className="p-0">
               {errorMessages.delete.map(message => (
-                <li style={{ listStyle: 'none' }}>
+                <li key={`delete-error-${message}`} style={{ listStyle: 'none' }}>
                   {intl.formatMessage(messages.errorAlertMessage, { message })}
                 </li>
               ))}
@@ -208,12 +207,16 @@ const FilesAndUploads = ({
           >
             <ul className="p-0">
               {errorMessages.lock.map(message => (
-                <li style={{ listStyle: 'none' }}>
+                <li key={`lock-error-${message}`} style={{ listStyle: 'none' }}>
+                  {intl.formatMessage(messages.errorAlertMessage, { message })}
+                </li>
+              ))}
+              {errorMessages.download.map(message => (
+                <li key={`download-error-${message}`} style={{ listStyle: 'none' }}>
                   {intl.formatMessage(messages.errorAlertMessage, { message })}
                 </li>
               ))}
             </ul>
-
           </ErrorAlert>
           <div className="h2">
             <FormattedMessage {...messages.heading} />

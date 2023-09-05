@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export const fileInput = ({
+export const useFileInput = ({
   onAddFile,
   setSelectedRows,
   setAddOpen,
 }) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const ref = React.useRef();
   const click = () => ref.current.click();
   const addFile = (e) => {

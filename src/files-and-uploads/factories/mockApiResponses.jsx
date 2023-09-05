@@ -15,9 +15,10 @@ export const initialState = {
     addingStatus: '',
     usageStatus: '',
     errors: {
-      upload: [],
+      add: [],
       delete: [],
       lock: [],
+      download: [],
       usageMetrics: [],
     },
   },
