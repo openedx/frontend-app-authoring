@@ -100,6 +100,7 @@ const AssignmentSection = ({
                 value={gradeField.weight}
                 onChange={(e) => handleAssignmentChange(e, gradeField.id)}
                 errorEffort={errorList[`${weight}-${gradeField.id}`]}
+                trailingElement="%"
               />
               <AssignmentItem
                 className="course-grading-assignment-total-number"
