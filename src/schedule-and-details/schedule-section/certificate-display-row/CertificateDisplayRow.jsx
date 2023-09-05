@@ -125,7 +125,7 @@ const CertificateDisplayRow = ({
           <Form.Label>
             {intl.formatMessage(messages.certificateBehaviorLabel)}
           </Form.Label>
-          <Dropdown>
+          <Dropdown claswsName="bg-white">
             <Dropdown.Toggle id="certificate-behavior-dropdown" variant="outline-primary">
               {certificateDisplayValue}
             </Dropdown.Toggle>
