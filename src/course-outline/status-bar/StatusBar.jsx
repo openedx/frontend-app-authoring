@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -32,7 +33,10 @@ const StatusBar = ({
 
   const checkListTitle = `${completedCourseLaunchChecks + completedCourseBestPracticesChecks}/${totalCourseLaunchChecks + totalCourseBestPracticesChecks}`;
   const checklistDestination = new URL(`checklists/${courseId}`, config.STUDIO_BASE_URL).href;
-  const scheduleDestination = new URL(`course/${courseId}/settings/details#schedule`, config.BASE_URL).href;
+
+  const {
+    contentHighlights: contentHighlightsUrl,
+  } = useHelpUrls(['contentHighlights']);
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -81,7 +85,7 @@ const StatusBar = ({
           )}
           <Hyperlink
             className="small ml-2"
-            // destination={highlightsDocUrl}
+            destination={contentHighlightsUrl}
             target="_blank"
             showLaunchIcon={false}
           >
