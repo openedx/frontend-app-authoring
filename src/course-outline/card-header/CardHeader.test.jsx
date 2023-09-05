@@ -11,6 +11,7 @@ const onClickMenuButtonMock = jest.fn();
 const onClickPublishMock = jest.fn();
 const onClickEditMock = jest.fn();
 const onClickDeleteMock = jest.fn();
+const onClickDuplicateMock = jest.fn();
 
 const cardHeaderProps = {
   title: 'Some title',
@@ -25,6 +26,7 @@ const cardHeaderProps = {
   closeForm: jest.fn(),
   isDisabledEditField: false,
   onClickDelete: onClickDeleteMock,
+  onClickDuplicate: onClickDuplicateMock,
 };
 
 const renderComponent = (props) => render(
@@ -165,5 +167,16 @@ describe('<CardHeader />', () => {
     const deleteMenuItem = getByText(messages.menuDelete.defaultMessage);
     fireEvent.click(deleteMenuItem);
     expect(onClickDeleteMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls onClickDuplicate when item is clicked', () => {
+    const { getByText, getByTestId } = renderComponent();
+
+    const menuButton = getByTestId('section-card-header__menu-button');
+    fireEvent.click(menuButton);
+
+    const duplicateMenuItem = getByText(messages.menuDuplicate.defaultMessage);
+    fireEvent.click(duplicateMenuItem);
+    expect(onClickDuplicateMock).toHaveBeenCalled();
   });
 });

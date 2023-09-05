@@ -7,11 +7,19 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
+import {
+  getCourseOutlineIndexApiUrl,
+  getCourseSectionDuplicateApiUrl,
+  getUpdateCourseSectionApiUrl,
+} from './data/api';
+import {
+  deleteCourseSectionQuery,
+  duplicateCourseSectionQuery,
+  editCourseSectionQuery,
+} from './data/thunk';
 import initializeStore from '../store';
 import { courseOutlineIndexMock, courseOutlineIndexWithoutSections } from './__mocks__';
 import { executeThunk } from '../utils';
-import { getCourseOutlineIndexApiUrl, getUpdateCourseSectionApiUrl } from './data/api';
-import { editCourseSectionQuery, deleteCourseSectionQuery } from './data/thunk';
 import CourseOutline from './CourseOutline';
 import messages from './messages';
 
@@ -113,6 +121,28 @@ describe('<CourseOutline />', () => {
 
     await waitFor(() => {
       expect(queryByText(section.displayName)).not.toBeInTheDocument();
+    });
+  });
+
+  it('check duplicate section when duplicate query is successfully', async () => {
+    axiosMock
+      .onGet(getCourseOutlineIndexApiUrl(courseId))
+      .reply(200, courseOutlineIndexMock);
+
+    const { getAllByTestId } = render(<RootWrapper />);
+    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+
+    axiosMock
+      .onPost(getCourseSectionDuplicateApiUrl())
+      .reply(200, {
+        duplicate_source_locator: section.id,
+        parent_locator: courseBlockId,
+      });
+    await executeThunk(duplicateCourseSectionQuery(section.id, courseBlockId), store.dispatch);
+
+    await waitFor(() => {
+      expect(getAllByTestId('section-card')).toHaveLength(4);
     });
   });
 });

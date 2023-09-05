@@ -70,6 +70,14 @@ const slice = createSlice({
     deleteSection: (state, { payload }) => {
       state.sectionsList = state.sectionsList.filter(({ id }) => id !== payload);
     },
+    duplicateSection: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.reduce((result, currentValue) => {
+        if (currentValue.id === payload.id) {
+          return [...result, currentValue, payload.duplicatedSection];
+        }
+        return [...result, currentValue];
+      }, []);
+    },
   },
 });
 
@@ -84,6 +92,7 @@ export const {
   updateSectionList,
   setCurrentSection,
   deleteSection,
+  duplicateSection,
 } = slice.actions;
 
 export const {

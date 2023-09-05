@@ -12,6 +12,7 @@ import {
 } from '../utils/getChecklistForStatusBar';
 import {
   deleteCourseSection,
+  duplicateCourseSection,
   editCourseSection,
   enableCourseHighlightsEmails,
   getCourseBestPractices,
@@ -31,6 +32,7 @@ import {
   updateSectionList,
   updateFetchSectionLoadingStatus,
   deleteSection,
+  duplicateSection,
 } from './slice';
 
 export function fetchCourseOutlineIndexQuery(courseId) {
@@ -223,6 +225,30 @@ export function deleteCourseSectionQuery(sectionId) {
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function duplicateCourseSectionQuery(sectionId, courseBlockId) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await duplicateCourseSection(sectionId, courseBlockId).then(async (result) => {
+        if (result) {
+          const duplicatedSection = await getCourseSection(result.locator);
+          dispatch(duplicateSection({ id: sectionId, duplicatedSection }));
+          dispatch(hideProcessingNotification());
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+        }
+      });
+
+      return true;
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+      return false;
     }
   };
 }

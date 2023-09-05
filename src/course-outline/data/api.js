@@ -20,6 +20,9 @@ const getEnableHighlightsEmailsApiUrl = (courseId) => {
   return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@course+block@course`;
 };
 export const getCourseReindexApiUrl = (reindexLink) => `${getApiBaseUrl()}${reindexLink}`;
+export const getUpdateCourseSectionApiUrl = (sectionId) => `${getApiBaseUrl()}/xblock/${sectionId}`;
+export const getCourseSectionApiUrl = (sectionId) => `${getApiBaseUrl()}/xblock/outline/${sectionId}`;
+export const getCourseSectionDuplicateApiUrl = () => `${getApiBaseUrl()}/xblock/`;
 
 /**
  * Get course outline index.
@@ -140,6 +143,22 @@ export async function editCourseSection(sectionId, displayName) {
 export async function deleteCourseSection(sectionId) {
   const { data } = await getAuthenticatedHttpClient()
     .delete(getUpdateCourseSectionApiUrl(sectionId));
+
+  return data;
+}
+
+/**
+ * Duplicate course section
+ * @param {string} sectionId
+ * @param {string} courseBlockId
+ * @returns {Promise<Object>}
+ */
+export async function duplicateCourseSection(sectionId, courseBlockId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getCourseSectionDuplicateApiUrl(), {
+      duplicate_source_locator: sectionId,
+      parent_locator: courseBlockId,
+    });
 
   return data;
 }
