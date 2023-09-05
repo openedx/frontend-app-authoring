@@ -31,43 +31,45 @@ export async function getAssets(courseId, totalCount) {
  */
 export async function getDownload(selectedRows, courseId) {
   const downloadErrors = [];
-  if (selectedRows.length > 1) {
+  if (selectedRows?.length > 1) {
     const zip = new JSZip();
     const date = new Date().toString();
     const folder = zip.folder(`${courseId}-assets-${date}`);
     const assetNames = [];
     const assetFetcher = await Promise.allSettled(
       selectedRows.map(async (row) => {
-        const asset = row.original;
-        assetNames.push(asset.displayName);
+        const asset = row?.original;
         try {
+          assetNames.push(asset.displayName);
           const res = await fetch(`${getApiBaseUrl()}/${asset.id}`);
           if (!res.ok) {
             throw new Error();
           }
           return res.blob();
         } catch (error) {
-          downloadErrors.push(`Failed to get usage metrics for ${asset.displayName}.`);
+          downloadErrors.push(`Failed to download ${asset?.displayName}.`);
           return null;
         }
       }),
     );
     const definedAssets = assetFetcher.filter(asset => asset.value !== null);
     if (definedAssets.length > 0) {
-      assetFetcher.forEach((assetBlob, index) => {
+      definedAssets.forEach((assetBlob, index) => {
         folder.file(assetNames[index], assetBlob.value, { blob: true });
       });
       zip.generateAsync({ type: 'blob' }).then(content => {
         saveAs(content, `${courseId}-assets-${date}.zip`);
       });
     }
-  } else {
+  } else if (selectedRows?.length === 1) {
     const asset = selectedRows[0].original;
     try {
       saveAs(`${getApiBaseUrl()}/${asset.id}`, asset.displayName);
     } catch (error) {
-      downloadErrors.push(`Failed to get usage metrics for ${asset.displayName}.`);
+      downloadErrors.push(`Failed to download ${asset?.displayName}.`);
     }
+  } else {
+    downloadErrors.push('No files were selected to download');
   }
   return downloadErrors;
 }
