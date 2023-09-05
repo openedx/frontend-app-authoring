@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   ActionRow,
@@ -79,7 +79,7 @@ const getHandlerUrl = async (blockId) => getXBlockHandlerUrl(blockId, XBLOCK_VIE
  */
 export const BlockPreviewBase = ({
   intl, block, view, canEdit, showPreviews, showDeleteModal,
-  setShowDeleteModal, showEditorModal, setShowEditorModal, library, previewKey, editView, isLtiUrlGenerating,
+  setShowDeleteModal, showEditorModal, setShowEditorModal, setUpdatedBlock, library, editView, isLtiUrlGenerating,
   ...props
 }) => (
   <Card className="w-auto m-2">
@@ -115,7 +115,12 @@ export const BlockPreviewBase = ({
         blockId={block.id}
         studioEndpointUrl={getConfig().STUDIO_BASE_URL}
         lmsEndpointUrl={getConfig().LMS_BASE_URL}
-        returnFunction={() => () => setShowEditorModal(false)}
+        returnFunction={() => (resp) => {
+          setShowEditorModal(false);
+          if (resp) {
+            setUpdatedBlock(true);
+          }
+        }}
       />
     </ModalDialog>
     <ModalDialog
@@ -144,7 +149,7 @@ export const BlockPreviewBase = ({
     {showPreviews && (
       <Card>
         <Card.Body>
-          <LibraryBlock getHandlerUrl={getHandlerUrl} view={view} key={previewKey} />
+          <LibraryBlock getHandlerUrl={getHandlerUrl} view={view} />
         </Card.Body>
       </Card>
     )}
@@ -163,8 +168,8 @@ BlockPreviewBase.propTypes = {
   setShowDeleteModal: PropTypes.func.isRequired,
   showEditorModal: PropTypes.bool.isRequired,
   setShowEditorModal: PropTypes.func.isRequired,
+  setUpdatedBlock: PropTypes.func.isRequired,
   deleteLibraryBlock: PropTypes.func.isRequired,
-  previewKey: PropTypes.string.isRequired,
   fetchBlockLtiUrl: PropTypes.func.isRequired,
   isLtiUrlGenerating: PropTypes.bool,
 };
@@ -191,6 +196,10 @@ const BlockPreviewContainerBase = ({
   // doing it more than once, or running them when the state can no longer support these actions.
   //
   // This problem feels like there should be some way to generalize it and wrap it to avoid this issue.
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditorModal, setShowEditorModal] = useState(false);
+  const [updatedBlock, setUpdatedBlock] = useState(false);
+
   useEffect(() => {
     props.initializeBlock({
       blockId: block.id,
@@ -203,22 +212,15 @@ const BlockPreviewContainerBase = ({
     if (needsMeta({ blockStates, id: block.id })) {
       props.fetchLibraryBlockMetadata({ blockId: block.id });
     }
-    if (needsView({ blockStates, id: block.id })) {
+    if (needsView({ blockStates, id: block.id }) || updatedBlock) {
       props.fetchLibraryBlockView({
         blockId: block.id,
         viewSystem: XBLOCK_VIEW_SYSTEM.Studio,
         viewName: 'student_view',
       });
+      setUpdatedBlock(false);
     }
-  }, [blockStates[block.id], showPreviews]);
-
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showEditorModal, setShowEditorModal] = useState(false);
-  // Need to force the iframe to be different if navigating away. Otherwise landing on the edit page
-  // will show the student view, and navigating back will show the edit view in the block list. React is smart enough
-  // to guess these iframes are the same between routes and will try to preserve rather than rerender, but that works
-  // against us here. Setting an explicit key prevents it from matching the two.
-  const previewKey = useMemo(() => `${uuid4()}`, [block.id]);
+  }, [blockStates[block.id], showPreviews, updatedBlock]);
 
   if (blockStates[block.id] === undefined) {
     return <LoadingPage loadingMessage={intl.formatMessage(messages['library.detail.loading.message'])} />;
@@ -261,9 +263,9 @@ const BlockPreviewContainerBase = ({
       setShowEditorModal={setShowEditorModal}
       deleteLibraryBlock={props.deleteLibraryBlock}
       library={library}
-      previewKey={previewKey}
       isLtiUrlGenerating={isLtiUrlGenerating}
       fetchBlockLtiUrl={props.fetchBlockLtiUrl}
+      setUpdatedBlock={setUpdatedBlock}
     />
   );
 };

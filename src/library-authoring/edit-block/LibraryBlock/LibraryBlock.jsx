@@ -24,6 +24,7 @@ class LibraryBlock extends React.Component {
     this.state = {
       html: null,
       iFrameHeight: 400,
+      iframeKey: 0,
     };
   }
 
@@ -93,7 +94,11 @@ class LibraryBlock extends React.Component {
       );
 
       // Load the XBlock HTML into the IFrame:
-      this.setState({ html });
+      //   iframe will only re-render in react when its property changes (key here)
+      this.setState(prevState => ({
+        html,
+        iframeKey: prevState.iframeKey + 1,
+      }));
     }
   }
 
@@ -114,6 +119,7 @@ class LibraryBlock extends React.Component {
       }}
       >
         <iframe
+          key={this.state.iframeKey}
           ref={this.iframeRef}
           title="block"
           src={getConfig().SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL}
