@@ -1,0 +1,68 @@
+.course-stepper {
+  .course-stepper__step {
+    display: flex;
+    gap: $spacer;
+    padding: 1.25rem 0;
+    opacity: .5;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid $gray-200;
+    }
+
+    .course-stepper__step-icon {
+      position: relative;
+
+      & svg {
+        position: absolute;
+        top: .875rem;
+        left: 1.25rem;
+      }
+    }
+
+    .course-stepper__step-info {
+      margin-left: 1.875rem;
+    }
+
+    .course-stepper__step-title {
+      margin-bottom: .25rem;
+    }
+
+    .course-stepper__step-percent {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .course-stepper__step-description {
+      margin: 0;
+      font-size: 1rem;
+      color: $gray-400;
+    }
+  }
+
+  .course-stepper__step.active {
+    opacity: 1;
+
+    & svg {
+      animation: rotate 2s infinite linear;
+    }
+  }
+
+  .course-stepper__step.done {
+    opacity: 1;
+
+    & svg,
+    .course-stepper__step-title {
+      color: $success-500;
+    }
+  }
+
+  .course-stepper__step.error {
+    opacity: 1;
+
+    .course-stepper__step-title,
+    .course-stepper__step-description,
+    & svg {
+      color: $danger-300;
+    }
+  }
+}
