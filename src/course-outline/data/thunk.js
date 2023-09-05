@@ -1,3 +1,4 @@
+/* eslint-disable import/named */
 /* eslint-disable no-undef */
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
@@ -10,6 +11,7 @@ import {
   getCourseLaunchChecklist,
 } from '../utils/getChecklistForStatusBar';
 import {
+  deleteCourseSection,
   editCourseSection,
   enableCourseHighlightsEmails,
   getCourseBestPractices,
@@ -26,6 +28,9 @@ import {
   fetchStatusBarChecklistSuccess,
   fetchStatusBarSelPacedSuccess,
   updateSavingStatus,
+  updateSectionList,
+  updateFetchSectionLoadingStatus,
+  deleteSection,
 } from './slice';
 
 export function fetchCourseOutlineIndexQuery(courseId) {
@@ -98,7 +103,6 @@ export function enableCourseHighlightsEmailsQuery(courseId) {
       dispatch(hideProcessingNotification());
       return true;
     } catch (error) {
-      dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }
@@ -165,16 +169,19 @@ export function updateCourseSectionHighlightsQuery(sectionId, highlights) {
 export function publishCourseSectionQuery(sectionId) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
       await publishCourseSection(sectionId).then(async (result) => {
         if (result) {
           await dispatch(fetchCourseSectionQuery(sectionId));
+          dispatch(hideProcessingNotification());
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         }
       });
       return true;
     } catch (error) {
+      dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }
@@ -184,18 +191,38 @@ export function publishCourseSectionQuery(sectionId) {
 export function editCourseSectionQuery(sectionId, displayName) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
       await editCourseSection(sectionId, displayName).then(async (result) => {
         if (result) {
           await dispatch(fetchCourseSectionQuery(sectionId));
+          dispatch(hideProcessingNotification());
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         }
       });
       return true;
     } catch (error) {
+      dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
+    }
+  };
+}
+
+export function deleteCourseSectionQuery(sectionId) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
+
+    try {
+      await deleteCourseSection(sectionId);
+      dispatch(deleteSection(sectionId));
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   };
 }

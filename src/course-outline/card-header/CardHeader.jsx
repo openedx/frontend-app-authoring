@@ -35,6 +35,7 @@ const CardHeader = ({
   onEditSubmit,
   closeForm,
   isDisabledEditField,
+  onClickDelete,
 }) => {
   const intl = useIntl();
   const [titleValue, setTitleValue] = useState(title);
@@ -136,7 +137,7 @@ const CardHeader = ({
             </Dropdown.Item>
             <Dropdown.Item>{intl.formatMessage(messages.menuConfigure)}</Dropdown.Item>
             <Dropdown.Item>{intl.formatMessage(messages.menuDuplicate)}</Dropdown.Item>
-            <Dropdown.Item>{intl.formatMessage(messages.menuDelete)}</Dropdown.Item>
+            <Dropdown.Item onClick={onClickDelete}>{intl.formatMessage(messages.menuDelete)}</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div>
@@ -156,6 +157,7 @@ CardHeader.propTypes = {
   onEditSubmit: PropTypes.func.isRequired,
   closeForm: PropTypes.func.isRequired,
   isDisabledEditField: PropTypes.bool.isRequired,
+  onClickDelete: PropTypes.func.isRequired,
 };
 
 export default CardHeader;

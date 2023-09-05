@@ -61,6 +61,15 @@ const slice = createSlice({
     updateSavingStatus: (state, { payload }) => {
       state.savingStatus = payload.status;
     },
+    updateSectionList: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.map((section) => (section.id === payload.id ? payload : section));
+    },
+    setCurrentSection: (state, { payload }) => {
+      state.currentSection = payload;
+    },
+    deleteSection: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.filter(({ id }) => id !== payload);
+    },
   },
 });
 
@@ -72,6 +81,9 @@ export const {
   fetchStatusBarChecklistSuccess,
   fetchStatusBarSelPacedSuccess,
   updateSavingStatus,
+  updateSectionList,
+  setCurrentSection,
+  deleteSection,
 } = slice.actions;
 
 export const {

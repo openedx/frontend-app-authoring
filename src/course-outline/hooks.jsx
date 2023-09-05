@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useToggle } from '@edx/paragon';
@@ -9,9 +10,10 @@ import {
   getOutlineIndexData,
   getSavingStatus,
   getStatusBarData,
-  getSectionsList,
+  // getSectionsList,
 } from './data/selectors';
 import {
+  // deleteCourseSectionQuery,
   editCourseSectionQuery,
   enableCourseHighlightsEmailsQuery,
   fetchCourseBestPracticesQuery,
@@ -27,7 +29,7 @@ const useCourseOutline = ({ courseId }) => {
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
-  const sectionsList = useSelector(getSectionsList);
+  // const sectionsList = useSelector(getSectionsList);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
   const [isSectionsExpanded, setSectionsExpanded] = useState(false);
@@ -35,6 +37,7 @@ const useCourseOutline = ({ courseId }) => {
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
+  const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
 
   const headerNavigationsActions = {
     handleNewSection: () => {
@@ -77,6 +80,11 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(editCourseSectionQuery(sectionId, displayName));
   };
 
+  const handleDeleteSectionSubmit = () => {
+    // dispatch(deleteCourseSectionQuery(currentSection.id));
+    closeDeleteModal();
+  };
+
   useEffect(() => {
     dispatch(fetchCourseOutlineIndexQuery(courseId));
     dispatch(fetchCourseBestPracticesQuery({ courseId }));
@@ -114,7 +122,14 @@ const useCourseOutline = ({ courseId }) => {
     closeEnableHighlightsModal,
     isInternetConnectionAlertFailed: savingStatus === RequestStatus.FAILED,
     handleInternetConnectionFailed,
-    sectionsList,
+    handleOpenHighlightsModal,
+    isHighlightsModalOpen,
+    closeHighlightsModal,
+    courseName: courseStructure?.displayName,
+    isDeleteModalOpen,
+    closeDeleteModal,
+    openDeleteModal,
+    handleDeleteSectionSubmit,
   };
 };
 
