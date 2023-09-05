@@ -181,10 +181,14 @@ const GradingSettings = ({ intl, courseId }) => {
                     />
                   </section>
                   <section>
-                    <SectionSubHeader
-                      title={intl.formatMessage(messages.assignmentTypeSectionTitle)}
-                      description={intl.formatMessage(messages.assignmentTypeSectionDescription)}
-                    />
+                    <header className="row justify-content-between align-items-center mt-4 mx-0 mb-2">
+                      <h2 className="lead">
+                        {intl.formatMessage(messages.assignmentTypeSectionTitle)}
+                      </h2>
+                      <span className="small text-gray-700">
+                        {intl.formatMessage(messages.assignmentTypeSectionDescription)}
+                      </span>
+                    </header>
                     <AssignmentSection
                       handleRemoveAssignment={handleRemoveAssignment}
                       setShowSavePrompt={setShowSavePrompt}
