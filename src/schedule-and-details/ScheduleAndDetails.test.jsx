@@ -22,7 +22,6 @@ import ScheduleAndDetails from '.';
 
 let axiosMock;
 let store;
-// const mockPathname = '/foo-bar';
 const courseId = '123';
 
 // Mock the tinymce lib
@@ -48,13 +47,6 @@ jest.mock('@edx/frontend-lib-content-components', () => ({
 jest.mock('react-textarea-autosize', () => jest.fn((props) => (
   <textarea {...props} onFocus={() => {}} onBlur={() => {}} />
 )));
-
-// jest.mock('react-router-dom', () => ({
-//   ...jest.requireActual('react-router-dom'),
-//   // useLocation: () => ({
-//   //   pathname: mockPathname,
-//   // }),
-// }));
 
 const RootWrapper = () => (
   <AppProvider store={store}>
@@ -85,7 +77,7 @@ describe('<ScheduleAndDetails />', () => {
       .reply(200, courseSettingsMock);
   });
 
-  fit('should render without errors', async () => {
+  it('should render without errors', async () => {
     const { getByText, getByRole, getAllByText } = render(<RootWrapper />);
     await waitFor(() => {
       const scheduleAndDetailElements = getAllByText(messages.headingTitle.defaultMessage);
