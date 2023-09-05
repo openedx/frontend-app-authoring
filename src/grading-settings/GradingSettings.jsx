@@ -194,7 +194,7 @@ const GradingSettings = ({ intl, courseId }) => {
                       setShowSuccessAlert={setShowSuccessAlert}
                     />
                     <Button
-                      variant="outline-success"
+                      variant="primary"
                       iconBefore={IconAdd}
                       onClick={handleAddAssignment}
                     >
