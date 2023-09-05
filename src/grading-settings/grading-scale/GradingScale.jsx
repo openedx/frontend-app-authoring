@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRanger } from 'react-ranger';
-import { Icon, IconButton } from '@edx/paragon';
+import { Icon, IconButtonWithTooltip } from '@edx/paragon';
 import { Add as IconAdd } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
@@ -187,7 +187,9 @@ const GradingScale = ({
 
   return (
     <div className="grading-scale">
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipPlacement="top"
+        tooltipContent={intl.formatMessage(messages.addNewSegmentButtonAltText)}
         disabled={gradingSegments.length >= 5}
         data-testid="grading-scale-btn-add-segment"
         className="mr-3"
