@@ -19,6 +19,10 @@ const cardHeaderProps = {
   onClickMenuButton: onClickMenuButtonMock,
   onClickPublish: onClickPublishMock,
   onClickEdit: onClickEditMock,
+  isFormOpen: false,
+  onEditSubmit: jest.fn(),
+  closeForm: jest.fn(),
+  isDisabledEditField: false,
 };
 
 const renderComponent = (props) => render(
@@ -32,12 +36,13 @@ const renderComponent = (props) => render(
 
 describe('<CardHeader />', () => {
   it('render CardHeader component correctly', () => {
-    const { getByText, getByTestId } = renderComponent();
+    const { getByText, getByTestId, queryByTestId } = renderComponent();
 
     expect(getByText(cardHeaderProps.title)).toBeInTheDocument();
     expect(getByTestId('section-card-header__expanded-btn')).toBeInTheDocument();
     expect(getByTestId('section-card-header__badge-status')).toBeInTheDocument();
     expect(getByTestId('section-card-header__menu')).toBeInTheDocument();
+    expect(queryByTestId('edit field')).not.toBeInTheDocument();
   });
 
   it('render status badge as live', () => {
@@ -119,5 +124,33 @@ describe('<CardHeader />', () => {
     const editButton = getByTestId('edit-button');
     fireEvent.click(editButton);
     expect(onClickEditMock).toHaveBeenCalled();
+  });
+
+  it('calls onClickEdit when the button is clicked', () => {
+    const { getByTestId } = renderComponent();
+
+    const editButton = getByTestId('edit-button');
+    fireEvent.click(editButton);
+    expect(onClickEditMock).toHaveBeenCalled();
+  });
+
+  it('check is field visible when isFormOpen is true', () => {
+    const { getByTestId, queryByTestId } = renderComponent({
+      ...cardHeaderProps,
+      isFormOpen: true,
+    });
+
+    expect(getByTestId('edit field')).toBeInTheDocument();
+    expect(queryByTestId('section-card-header__expanded-btn')).not.toBeInTheDocument();
+  });
+
+  it('check is field disabled when isDisabledEditField is true', () => {
+    const { getByTestId } = renderComponent({
+      ...cardHeaderProps,
+      isFormOpen: true,
+      isDisabledEditField: true,
+    });
+
+    expect(getByTestId('edit field')).toBeDisabled();
   });
 });

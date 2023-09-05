@@ -102,7 +102,7 @@ export async function restartIndexingOnCourse(reindexLink) {
   return camelCaseObject(data);
 }
 /**
- * Update publish course section
+ * Publish course section
  * @param {string} sectionId
  * @returns {Promise<Object>}
  */
@@ -110,6 +110,23 @@ export async function publishCourseSection(sectionId) {
   const { data } = await getAuthenticatedHttpClient()
     .post(getUpdateCourseSectionApiUrl(sectionId), {
       publish: 'make_public',
+    });
+
+  return data;
+}
+
+/**
+ * Edit course section
+ * @param {string} sectionId
+ * @param {string} displayName
+ * @returns {Promise<Object>}
+ */
+export async function editCourseSection(sectionId, displayName) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getUpdateCourseSectionApiUrl(sectionId), {
+      metadata: {
+        display_name: displayName,
+      },
     });
 
   return data;

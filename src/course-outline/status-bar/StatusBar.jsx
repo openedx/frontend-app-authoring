@@ -18,7 +18,7 @@ const StatusBar = ({
   const {
     courseReleaseDate,
     highlightsEnabledForMessaging,
-    highlightsDocUrl,
+    // highlightsDocUrl,
     checklist,
     isSelfPaced,
   } = statusBarData;
@@ -81,7 +81,7 @@ const StatusBar = ({
           )}
           <Hyperlink
             className="small ml-2"
-            destination={highlightsDocUrl}
+            // destination={highlightsDocUrl}
             target="_blank"
             showLaunchIcon={false}
           >
@@ -107,7 +107,6 @@ StatusBar.propTypes = {
       completedCourseBestPracticesChecks: PropTypes.number.isRequired,
     }),
     highlightsEnabledForMessaging: PropTypes.bool.isRequired,
-    highlightsDocUrl: PropTypes.string.isRequired,
   }).isRequired,
 };
 

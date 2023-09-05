@@ -12,6 +12,7 @@ import {
   getSectionsList,
 } from './data/selectors';
 import {
+  editCourseSectionQuery,
   enableCourseHighlightsEmailsQuery,
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
@@ -66,8 +67,14 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
   };
 
-  const handleSubmitPublishSection = () => {
+  const handlePublishSectionSubmit = () => {
+    // dispatch(publishCourseSectionQuery(currentSection.id));
+
     closePublishModal();
+  };
+
+  const handleEditSectionSubmit = (sectionId, displayName) => {
+    dispatch(editCourseSectionQuery(sectionId, displayName));
   };
 
   useEffect(() => {
@@ -99,7 +106,8 @@ const useCourseOutline = ({ courseId }) => {
     closePublishModal,
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
-    handleSubmitPublishSection,
+    handlePublishSectionSubmit,
+    handleEditSectionSubmit,
     statusBarData,
     isEnableHighlightsModalOpen,
     openEnableHighlightsModal,

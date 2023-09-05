@@ -49,7 +49,8 @@ const CourseOutline = ({ courseId }) => {
     handleEnableHighlightsSubmit,
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
-    handleSubmitPublishSection,
+    handlePublishSectionSubmit,
+    handleEditSectionSubmit,
   } = useCourseOutline({ courseId });
 
   if (isLoading) {
@@ -112,8 +113,10 @@ const CourseOutline = ({ courseId }) => {
                       {sectionsList.length ? sectionsList.map((section) => (
                         <SectionCard
                           section={section}
+                          savingStatus={savingStatus}
                           onOpenHighlightsModal={handleOpenHighlightsModal}
                           onOpenPublishModal={openPublishModal}
+                          onEditSectionSubmit={handleEditSectionSubmit}
                           // TODO add handler in Add new subsection feature
                           onClickNewSubsection={() => ({})}
                         />
@@ -139,7 +142,7 @@ const CourseOutline = ({ courseId }) => {
         <PublishModal
           isOpen={isPublishModalOpen}
           onClose={closePublishModal}
-          onPublishSubmit={handleSubmitPublishSection}
+          onPublishSubmit={handlePublishSectionSubmit}
         />
       </Container>
       <div className="alert-toast">

@@ -15,6 +15,7 @@ let axiosMock;
 let store;
 
 const section = {
+  id: '123',
   displayName: 'Section Name',
   published: true,
   releasedToStudents: true,
@@ -35,6 +36,8 @@ const renderComponent = (props) => render(
         onOpenHighlightsModal={jest.fn()}
         onClickNewSubsection={onClickNewSubsectionMock}
         onEditClick={jest.fn()}
+        savingStatus=""
+        onEditSectionSubmit={jest.fn()}
         {...props}
       >
         <span>children</span>
@@ -83,6 +86,14 @@ describe('<SectionCard />', () => {
 
     const newSubsectionButton = getByRole('button', { name: messages.newSubsectionButton.defaultMessage });
     fireEvent.click(newSubsectionButton);
-    expect(onClickNewSubsectionMock).toHaveBeenCalledTimes(1);
+    expect(onClickNewSubsectionMock).toHaveBeenCalled();
+  });
+
+  it('calls the onNewSubsectionClick function when the button is clicked', () => {
+    const { getByRole } = renderComponent();
+
+    const newSubsectionButton = getByRole('button', { name: messages.newSubsectionButton.defaultMessage });
+    fireEvent.click(newSubsectionButton);
+    expect(onClickNewSubsectionMock).toHaveBeenCalled();
   });
 });

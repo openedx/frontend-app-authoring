@@ -1,3 +1,4 @@
+/* eslint-disable import/named */
 import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -8,7 +9,9 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import initializeStore from '../store';
 import { courseOutlineIndexMock, courseOutlineIndexWithoutSections } from './__mocks__';
-import { getCourseOutlineIndexApiUrl } from './data/api';
+import { executeThunk } from '../utils';
+import { getCourseOutlineIndexApiUrl, getUpdateCourseSectionApiUrl } from './data/api';
+import { editCourseSectionQuery } from './data/thunk';
 import CourseOutline from './CourseOutline';
 import messages from './messages';
 
@@ -69,6 +72,31 @@ describe('<CourseOutline />', () => {
 
     await waitFor(() => {
       expect(getByTestId('empty-placeholder')).toBeInTheDocument();
+    });
+  });
+
+  it('check edit section when edit query is successfully', async () => {
+    axiosMock
+      .onGet(getCourseOutlineIndexApiUrl(courseId))
+      .reply(200, courseOutlineIndexMock);
+
+    const { getByText } = render(<RootWrapper />);
+    const newDisplayName = 'New section name';
+
+    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+
+    axiosMock
+      .onPost(getUpdateCourseSectionApiUrl(section.id, {
+        metadata: {
+          display_name: newDisplayName,
+        },
+      }))
+      .reply(200);
+
+    await executeThunk(editCourseSectionQuery(section.id, newDisplayName), store.dispatch);
+
+    await waitFor(() => {
+      expect(getByText(section.displayName)).toBeInTheDocument();
     });
   });
 });
