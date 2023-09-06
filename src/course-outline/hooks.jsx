@@ -26,7 +26,7 @@ import {
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
 
-  const { reindexLink } = useSelector(getOutlineIndexData);
+  const { reindexLink, courseStructure, lmsLink } = useSelector(getOutlineIndexData);
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
@@ -57,7 +57,7 @@ const useCourseOutline = ({ courseId }) => {
       setSectionsExpanded((prevState) => !prevState);
     },
     handleViewLive: () => {
-      // TODO add handler
+      window.open(lmsLink, '_blank');
     },
   };
 

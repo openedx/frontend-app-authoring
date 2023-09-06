@@ -35,7 +35,7 @@ describe('<HeaderNavigations />', () => {
     expect(getByRole('button', { name: messages.newSectionButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.reindexButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.expandAllButton.defaultMessage })).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.viewLiveButton.defaultMessage })).toBeInTheDocument();
+    expect(getByRole('link', { name: messages.viewLiveButton.defaultMessage })).toBeInTheDocument();
   });
 
   it('render HeaderNavigations component with isReIndexShow is false correctly', () => {
@@ -44,7 +44,7 @@ describe('<HeaderNavigations />', () => {
     expect(getByRole('button', { name: messages.newSectionButton.defaultMessage })).toBeInTheDocument();
     expect(queryByRole('button', { name: messages.reindexButton.defaultMessage })).not.toBeInTheDocument();
     expect(getByRole('button', { name: messages.expandAllButton.defaultMessage })).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.viewLiveButton.defaultMessage })).toBeInTheDocument();
+    expect(getByRole('link', { name: messages.viewLiveButton.defaultMessage })).toBeInTheDocument();
   });
 
   it('calls the correct handlers when clicking buttons', () => {
@@ -62,7 +62,7 @@ describe('<HeaderNavigations />', () => {
     fireEvent.click(expandAllButton);
     expect(handleExpandAllMock).toHaveBeenCalledTimes(1);
 
-    const viewLiveButton = getByRole('button', { name: messages.viewLiveButton.defaultMessage });
+    const viewLiveButton = getByRole('link', { name: messages.viewLiveButton.defaultMessage });
     fireEvent.click(viewLiveButton);
     expect(handleViewLiveMock).toHaveBeenCalledTimes(1);
   });

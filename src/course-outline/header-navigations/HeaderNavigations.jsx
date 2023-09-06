@@ -74,6 +74,7 @@ const HeaderNavigations = ({
         )}
       >
         <Button
+          role="link"
           onClick={handleViewLive}
           variant="outline-primary"
         >
