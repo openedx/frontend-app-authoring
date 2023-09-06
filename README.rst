@@ -76,9 +76,8 @@ Follw these steps to provision, run, and enable an instance of the Library Autho
    <https://github.com/openedx/devstack#getting-started>`_.
 
 
-
-#. Now set up blockstore for this devstack exactly as described in its README's `Using with Docker Devstack
-   <https://github.com/openedx/blockstore/#using-with-docker-devstack>`_ section.
+#. Now set up blockstore. Blockstore can be simply enabled by using the waffle **SWITCH** (NOT FLAG) using Blockstore's `Using in Production Or Locally
+   <https://github.com/openedx/blockstore/tree/master#using-in-production>`_ section. If you wish to modify devstack, follow the additional steps outlined in  its README's `Development in Devstack <https://github.com/openedx/blockstore/#using-with-docker-devstack>`_ section.
 
    This will setup the blockstore container, configure the LMS and the CMS to accept requests from it (and vice-versa),
    create a "Devstack Content Collection" in blockstore, and finally create a sample "DeveloperInc" organization in the
