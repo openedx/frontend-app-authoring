@@ -7,6 +7,7 @@ import {
 } from '@edx/paragon';
 import { CheckCircle, Warning, Add as IconAdd } from '@edx/paragon/icons';
 
+import { useModel } from '../generic/model-store';
 import AlertMessage from '../generic/alert-message';
 import { RequestStatus } from '../data/constants';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
@@ -28,6 +29,7 @@ import AssignmentSection from './assignment-section';
 import CreditSection from './credit-section';
 import DeadlineSection from './deadline-section';
 import { useConvertGradeCutoffs, useUpdateGradingData } from './hooks';
+import getPageHeadTitle from '../generic/utils';
 
 const GradingSettings = ({ intl, courseId }) => {
   const gradingSettingsData = useSelector(getGradingSettings);
@@ -41,6 +43,9 @@ const GradingSettings = ({ intl, courseId }) => {
   const [isQueryPending, setIsQueryPending] = useState(false);
   const [showOverrideInternetConnectionAlert, setOverrideInternetConnectionAlert] = useState(false);
   const [eligibleGrade, setEligibleGrade] = useState(null);
+
+  const courseDetails = useModel('courseDetails', courseId);
+  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
 
   const {
     graders,
