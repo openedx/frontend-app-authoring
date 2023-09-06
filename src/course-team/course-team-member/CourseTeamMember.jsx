@@ -1,8 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Badge, Button, MailtoLink } from '@edx/paragon';
-import { DeleteOutline as DeleteOutlineIcon } from '@edx/paragon/icons';
+import {
+  Badge,
+  Button,
+  Icon,
+  IconButtonWithTooltip,
+  MailtoLink,
+} from '@edx/paragon';
+import { DeleteOutline } from '@edx/paragon/icons';
 
 import messages from './messages';
 import { USER_ROLES, BADGE_STATES } from '../constants';
@@ -46,13 +52,12 @@ const CourseTeamMember = ({
             >
               {isAdminRole ? intl.formatMessage(messages.removeButton) : intl.formatMessage(messages.addButton)}
             </Button>
-            <Button
-              className="delete-button"
-              variant="tertiary"
-              size="sm"
-              data-testid="delete-button"
-              iconBefore={DeleteOutlineIcon}
+            <IconButtonWithTooltip
+              src={DeleteOutline}
+              tooltipContent={intl.formatMessage(messages.deleteUserButton)}
               onClick={() => onDelete(email)}
+              iconAs={Icon}
+              alt={intl.formatMessage(messages.deleteUserButton)}
             />
           </div>
         ) : (
