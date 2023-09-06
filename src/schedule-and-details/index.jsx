@@ -161,7 +161,7 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
 
   return (
     <>
-      <Container size="xl" className="m-4">
+      <Container size="xl" className="px-4">
         <div className="mt-5">
           <AlertMessage
             show={showSuccessfulAlert}
