@@ -10,7 +10,7 @@
   .pgn__pageBanner-component {
     @include pgn-box-shadow(1, "down");
 
-    background-color: $white;
+    background-color: var(--pgn-color-white);
     border-radius: .375rem;
   }
 

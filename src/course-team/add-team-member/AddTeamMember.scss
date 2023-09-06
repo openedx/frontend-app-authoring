@@ -2,9 +2,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: .0625rem solid $gray-200;
+  border: .0625rem solid var(--pgn-color-gray-200);
   border-radius: .375rem;
-  box-shadow: inset inset 0 1px .125rem 1px $gray-200;
+  box-shadow: inset inset 0 1px .125rem 1px var(--pgn-color-gray-200);
   padding: 1.25rem 1.875rem;
 
   .add-team-member-info {
@@ -12,6 +12,6 @@
   }
 
   .add-team-member-title {
-    font-size: $spacer;
+    font-size: var(--pgn-spacing-spacer-base);
   }
 }

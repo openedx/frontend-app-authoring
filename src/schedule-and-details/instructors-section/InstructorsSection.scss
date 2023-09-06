@@ -6,6 +6,6 @@
     gap: 1.875rem;
     padding-inline-start: 0;
     list-style-type: none;
-    padding-top: $spacer;
+    padding-top: var(--pgn-spacing-spacer-base);
   }
 }

@@ -1,6 +1,6 @@
 // legend styling should match label styling
 legend {
-  font-size: $spacer;
+  font-size: var(--pgn-spacing-spacer-base);
   font-weight: 700;
 }
 

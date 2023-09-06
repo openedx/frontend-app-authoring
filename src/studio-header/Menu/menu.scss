@@ -7,7 +7,7 @@
   position: absolute;
   top: 100%;
   z-index: 10;
-  background: $white;
+  background: var(--pgn-color-white);
   min-width: 10rem;
 
   &.pin-left {

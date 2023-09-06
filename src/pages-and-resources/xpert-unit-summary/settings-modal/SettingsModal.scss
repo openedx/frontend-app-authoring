@@ -2,9 +2,9 @@
   display: flex;
   align-items: center;
   width: 100%;
-  border-width: $border-width;
-  border-color: $border-color;
-  border-radius: $border-radius;
+  border-width: var(--pgn-size-border-width);
+  border-color: var(--pgn-color-border);
+  border-radius: var(--pgn-size-border-radius-base);
   border-style: solid;
 
   &:has(input:checked) {
@@ -24,10 +24,10 @@
 }
 
 .reset-units-button {
-  color: $link-color;
-  border-width: $border-width;
-  border-color: $border-color;
-  border-radius: $border-radius;
+  color: var(--pgn-color-link-base);
+  border-width: var(--pgn-size-border-width);
+  border-color: var(--pgn-color-border);
+  border-radius: var(--pgn-size-border-radius-base);
   border-style: solid;
 }
 

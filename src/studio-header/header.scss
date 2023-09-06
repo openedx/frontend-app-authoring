@@ -1,7 +1,7 @@
 // This SCSS was partly copied from edx/frontend-app-support-tools/src/support-header/index.scss.
-$spacer: 1rem;
-$blue: #007DB8;
-$white: #FFFFFF;
+$spacer: var(--pgn-spacing-spacer-base) !default;
+$blue: var(--pgn-color-blue) !default;
+$white: var(--pgn-color-white) !default;
 
 @import "./Menu/menu";
 
@@ -12,15 +12,14 @@ $white: #FFFFFF;
   }
 
   @media only screen and (min-width: 769px) {
-    padding: .5rem;
-    padding-right: $spacer;
+    padding: .5rem var(--pgn-spacing-spacer-base) .5rem .5rem;
     border-right: 1px solid #E5E5E5;
   }
 
   overflow: hidden;
 
   span {
-    color: #333333;
+    color: var(--pgn-color-gray-800);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -75,7 +74,7 @@ $white: #FFFFFF;
 .site-header-desktop {
   height: 3.75rem;
   box-shadow: 0 1px 0 0 rgb(0 0 0 / .1);
-  background: $white;
+  background: var(--pgn-color-white);
 
   .nav-link {
     text-decoration: none;
@@ -87,8 +86,8 @@ $white: #FFFFFF;
     position: relative;
     top: -.05em;
     height: 1.75rem;
-    padding: $spacer 0;
-    margin-right: $spacer;
+    padding: var(--pgn-spacing-spacer-base) 0;
+    margin-right: var(--pgn-spacing-spacer-base);
 
     img {
       display: block;
@@ -100,7 +99,7 @@ $white: #FFFFFF;
     flex-wrap: nowrap;
 
     .nav-link {
-      padding: $spacer;
+      padding: var(--pgn-spacing-spacer-base);
       text-decoration: none;
       font-weight: 500;
       letter-spacing: .01em;
@@ -110,19 +109,19 @@ $white: #FFFFFF;
     .nav-link:focus,
     .nav-link.active,
     .expanded .nav-link {
-      background: $component-active-bg;
-      color: $component-active-color;
+      background: var(--pgn-color-bg-active);
+      color: var(--pgn-color-active);
     }
 
     .menu {
       position: relative;
 
       .menu-content {
-        border-top: solid 2px $component-active-bg;
+        border-top: solid 2px var(--pgn-color-bg-active);
         box-shadow: 0 1px 2px rgb(0 0 0 / .25);
         border-bottom-left-radius: 2px;
         border-bottom-right-radius: 2px;
-        padding: $spacer;
+        padding: var(--pgn-spacing-spacer-base);
       }
     }
   }
