@@ -79,3 +79,14 @@
     color: $black;
   }
 }
+
+.dropdown-group-wrapper {
+  position: relative;
+  z-index: $zindex-dropdown;
+  margin-left: auto;
+
+  .dropdown-container {
+    position: absolute;
+    width: 100%;
+  }
+}
