@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -18,10 +20,16 @@ const SectionCard = ({
   savingStatus,
   onOpenDeleteModal,
   onDuplicateSubmit,
+  isSectionsExpanded,
 }) => {
   const intl = useIntl();
-  const [isExpanded, setIsExpanded] = useState(true);
+  const dispatch = useDispatch();
+  const [isExpanded, setIsExpanded] = useState(isSectionsExpanded);
   const [isFormOpen, openForm, closeForm] = useToggle(false);
+
+  useEffect(() => {
+    setIsExpanded(isSectionsExpanded);
+  }, [isSectionsExpanded]);
 
   const {
     id,
@@ -87,8 +95,8 @@ const SectionCard = ({
           <h4 className="h4 font-weight-normal">Section status</h4>
         </div>
       </div>
-      {isExpanded && children && (
-        <div className="section-card__subsections" data-testid="section-card__subsections">
+      {isExpanded && (
+        <div data-testid="section-card__subsections" className="section-card__subsections">
           {children}
         </div>
       )}
@@ -129,6 +137,7 @@ SectionCard.propTypes = {
   savingStatus: PropTypes.string.isRequired,
   onOpenDeleteModal: PropTypes.func.isRequired,
   onDuplicateSubmit: PropTypes.func.isRequired,
+  isSectionsExpanded: PropTypes.bool.isRequired,
 };
 
 export default SectionCard;

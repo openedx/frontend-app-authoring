@@ -33,7 +33,7 @@ const useCourseOutline = ({ courseId }) => {
   // const sectionsList = useSelector(getSectionsList);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
-  const [isSectionsExpanded, setSectionsExpanded] = useState(false);
+  const [isSectionsExpanded, setSectionsExpanded] = useState(true);
   const [isDisabledReindexButton, setDisableReindexButton] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);

@@ -1,6 +1,6 @@
 /* eslint-disable import/named */
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render, waitFor, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -62,12 +62,38 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexMock);
+  });
 
+  it('render CourseOutline component correctly', async () => {
     const { getByText } = render(<RootWrapper />);
 
     await waitFor(() => {
       expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
       expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+    });
+  });
+
+  it('should expand and collapse subsections, after click on subheader buttons', async () => {
+    axiosMock
+      .onGet(getCourseOutlineIndexApiUrl(courseId))
+      .reply(200, courseOutlineIndexMock);
+    const { queryAllByTestId, getByText } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const collapseBtn = getByText(messages.collapseAllButton.defaultMessage);
+      expect(collapseBtn).toBeInTheDocument();
+      fireEvent.click(collapseBtn);
+
+      const expendBtn = getByText(messages.expandAllButton.defaultMessage);
+      expect(expendBtn).toBeInTheDocument();
+
+      fireEvent.click(expendBtn);
+
+      const cardSubsections = queryAllByTestId('section-card__subsections');
+      cardSubsections.forEach(element => expect(element).toBeVisible());
+
+      fireEvent.click(collapseBtn);
+      cardSubsections.forEach(element => expect(element).not.toBeVisible());
     });
   });
 

@@ -40,6 +40,7 @@ const renderComponent = (props) => render(
         savingStatus=""
         onEditSectionSubmit={jest.fn()}
         onDuplicateSubmit={jest.fn()}
+        isSectionsExpanded
         {...props}
       >
         <span>children</span>

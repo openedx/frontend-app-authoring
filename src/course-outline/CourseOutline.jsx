@@ -95,6 +95,7 @@ const CourseOutline = ({ courseId }) => {
                 isSectionsExpanded={isSectionsExpanded}
                 headerNavigationsActions={headerNavigationsActions}
                 isDisabledReindexButton={isDisabledReindexButton}
+                hasSections={Boolean(sectionsList.length)}
               />
             )}
           />
@@ -128,6 +129,7 @@ const CourseOutline = ({ courseId }) => {
                           onDuplicateSubmit={handleDuplicateSectionSubmit}
                           // TODO add handler in Add new subsection feature
                           onClickNewSubsection={() => ({})}
+                          isSectionsExpanded={isSectionsExpanded}
                         />
                       )) : (
                         <EmptyPlaceholder onCreateNewSection={() => ({})} />

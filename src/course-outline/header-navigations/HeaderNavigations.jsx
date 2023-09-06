@@ -14,6 +14,7 @@ const HeaderNavigations = ({
   isReIndexShow,
   isSectionsExpanded,
   isDisabledReindexButton,
+  hasSections,
 }) => {
   const intl = useIntl();
   const {
@@ -55,16 +56,18 @@ const HeaderNavigations = ({
           </Button>
         </OverlayTrigger>
       )}
-      <Button
-        variant="outline-primary"
-        className={isSectionsExpanded ? 'expand-button-active' : ''}
-        iconBefore={ArrowDownIcon}
-        onClick={handleExpandAll}
-      >
-        {isSectionsExpanded
-          ? intl.formatMessage(messages.collapseAllButton)
-          : intl.formatMessage(messages.expandAllButton)}
-      </Button>
+      {hasSections ? (
+        <Button
+          variant="outline-primary"
+          className={isSectionsExpanded ? 'expand-button-active' : ''}
+          iconBefore={ArrowDownIcon}
+          onClick={handleExpandAll}
+        >
+          {isSectionsExpanded
+            ? intl.formatMessage(messages.collapseAllButton)
+            : intl.formatMessage(messages.expandAllButton)}
+        </Button>
+      ) : null}
       <OverlayTrigger
         placement="bottom"
         overlay={(
@@ -95,6 +98,7 @@ HeaderNavigations.propTypes = {
     handleExpandAll: PropTypes.func.isRequired,
     handleViewLive: PropTypes.func.isRequired,
   }).isRequired,
+  hasSections: PropTypes.bool.isRequired,
 };
 
 export default HeaderNavigations;

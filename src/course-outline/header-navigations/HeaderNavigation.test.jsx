@@ -23,6 +23,7 @@ const renderComponent = (props) => render(
       headerNavigationsActions={headerNavigationsActions}
       isSectionsExpanded={false}
       isReIndexShow
+      hasSections
       {...props}
     />
   </IntlProvider>,

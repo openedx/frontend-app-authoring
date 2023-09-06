@@ -104,6 +104,36 @@ export async function restartIndexingOnCourse(reindexLink) {
 
   return camelCaseObject(data);
 }
+
+/**
+ * Get course section
+ * @param {string} sectionId
+ * @returns {Promise<Object>}
+ */
+export async function getCourseSection(sectionId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getCourseSectionApiUrl(sectionId));
+  return camelCaseObject(data);
+}
+
+/**
+ * Update course section highlights
+ * @param {string} sectionId
+ * @param {Array<string>} highlights
+ * @returns {Promise<Object>}
+ */
+export async function updateCourseSectionHighlights(sectionId, highlights) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getUpdateCourseSectionApiUrl(sectionId), {
+      publish: 'republish',
+      metadata: {
+        highlights,
+      },
+    });
+
+  return data;
+}
+
 /**
  * Publish course section
  * @param {string} sectionId
