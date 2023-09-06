@@ -115,7 +115,7 @@ const GradingSettings = ({ intl, courseId }) => {
 
   return (
     <>
-      <Container size="xl" className="m-4">
+      <Container size="xl" className="px-4">
         <div className="mt-5">
           <AlertMessage
             show={showSuccessAlert}
@@ -186,10 +186,14 @@ const GradingSettings = ({ intl, courseId }) => {
                     />
                   </section>
                   <section>
-                    <SectionSubHeader
-                      title={intl.formatMessage(messages.assignmentTypeSectionTitle)}
-                      description={intl.formatMessage(messages.assignmentTypeSectionDescription)}
-                    />
+                    <header className="row justify-content-between align-items-center mt-4 mx-0 mb-2">
+                      <h2 className="lead">
+                        {intl.formatMessage(messages.assignmentTypeSectionTitle)}
+                      </h2>
+                      <span className="small text-gray-700">
+                        {intl.formatMessage(messages.assignmentTypeSectionDescription)}
+                      </span>
+                    </header>
                     <AssignmentSection
                       handleRemoveAssignment={handleRemoveAssignment}
                       setShowSavePrompt={setShowSavePrompt}
@@ -199,7 +203,7 @@ const GradingSettings = ({ intl, courseId }) => {
                       setShowSuccessAlert={setShowSuccessAlert}
                     />
                     <Button
-                      variant="outline-success"
+                      variant="primary"
                       iconBefore={IconAdd}
                       onClick={handleAddAssignment}
                     >
