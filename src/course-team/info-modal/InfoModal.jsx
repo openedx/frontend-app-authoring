@@ -45,7 +45,6 @@ const InfoModal = ({
           </Button>
           {modalType === MODAL_TYPES.delete && (
             <Button
-              variant="danger"
               onClick={(e) => {
                 e.preventDefault();
                 onDeleteSubmit();
