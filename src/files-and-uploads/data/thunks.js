@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import { RequestStatus } from '../../data/constants';
 import {
   addModel,
@@ -11,18 +12,17 @@ import {
   addAsset,
   deleteAsset,
   updateLockStatus,
+  getDownload,
 } from './api';
 import {
   setAssetIds,
   setTotalCount,
   updateLoadingStatus,
-  updateUpdatingStatus,
   deleteAssetSuccess,
-  updateDeletingStatus,
   addAssetSuccess,
-  updateAddingStatus,
   updateErrors,
-  updateUsageStatus,
+  clearErrors,
+  updateEditStatus,
 } from './slice';
 
 import { updateFileValues } from './utils';
@@ -61,24 +61,24 @@ export function updateAssetOrder(courseId, assetIds) {
 
 export function deleteAssetFile(courseId, id, totalCount) {
   return async (dispatch) => {
-    dispatch(updateDeletingStatus({ status: RequestStatus.IN_PROGRESS }));
+    dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.IN_PROGRESS }));
 
     try {
       await deleteAsset(courseId, id);
       dispatch(deleteAssetSuccess({ assetId: id }));
       dispatch(removeModel({ modelType: 'assets', id }));
       dispatch(setTotalCount({ totalCount: totalCount - 1 }));
-      dispatch(updateDeletingStatus({ status: RequestStatus.SUCCESSFUL }));
+      dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       dispatch(updateErrors({ error: 'delete', message: `Failed to delete file id ${id}.` }));
-      dispatch(updateDeletingStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.FAILED }));
     }
   };
 }
 
 export function addAssetFile(courseId, file, totalCount) {
   return async (dispatch) => {
-    dispatch(updateAddingStatus({ status: RequestStatus.IN_PROGRESS }));
+    dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
 
     try {
       const { asset } = await addAsset(courseId, file);
@@ -91,22 +91,22 @@ export function addAssetFile(courseId, file, totalCount) {
         assetId: asset.id,
       }));
       dispatch(setTotalCount({ totalCount: totalCount + 1 }));
-      dispatch(updateAddingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
+      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       if (error.response && error.response.status === 413) {
         const message = error.response.data.error;
-        dispatch(updateErrors({ error: 'upload', message }));
+        dispatch(updateErrors({ error: 'add', message }));
       } else {
-        dispatch(updateErrors({ error: 'upload', message: `Failed to add ${file.name}.` }));
+        dispatch(updateErrors({ error: 'add', message: `Failed to add ${file.name}.` }));
       }
-      dispatch(updateAddingStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
     }
   };
 }
 
 export function updateAssetLock({ assetId, courseId, locked }) {
   return async (dispatch) => {
-    dispatch(updateUpdatingStatus({ status: RequestStatus.IN_PROGRESS }));
+    dispatch(updateEditStatus({ editType: 'lock', status: RequestStatus.IN_PROGRESS }));
 
     try {
       await updateLockStatus({ assetId, courseId, locked });
@@ -117,26 +117,45 @@ export function updateAssetLock({ assetId, courseId, locked }) {
           locked,
         },
       }));
-      dispatch(updateUpdatingStatus({ status: RequestStatus.SUCCESSFUL }));
+      dispatch(updateEditStatus({ editType: 'lock', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       const lockStatus = locked ? 'lock' : 'unlock';
       dispatch(updateErrors({ error: 'lock', message: `Failed to ${lockStatus} file id ${assetId}.` }));
-      dispatch(updateUpdatingStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateEditStatus({ editType: 'lock', status: RequestStatus.FAILED }));
     }
   };
 }
 
+export function resetErrors({ errorType }) {
+  return (dispatch) => { dispatch(clearErrors({ error: errorType })); };
+}
+
 export function getUsagePaths({ asset, courseId, setSelectedRows }) {
   return async (dispatch) => {
-    dispatch(updateUsageStatus({ status: RequestStatus.IN_PROGRESS }));
+    dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.IN_PROGRESS }));
 
     try {
       const { usageLocations } = await getAssetUsagePaths({ assetId: asset.id, courseId });
       setSelectedRows([{ original: { ...asset, usageLocations } }]);
-      dispatch(updateUsageStatus({ status: RequestStatus.SUCCESSFUL }));
+      dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       dispatch(updateErrors({ error: 'usageMetrics', message: `Failed to get usage metrics for ${asset.displayName}.` }));
-      dispatch(updateUsageStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function fetchAssetDownload({ selectedRows, courseId }) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.IN_PROGRESS }));
+    const errors = await getDownload(selectedRows, courseId);
+    if (isEmpty(errors)) {
+      dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.SUCCESSFUL }));
+    } else {
+      errors.forEach(error => {
+        dispatch(updateErrors({ error: 'download', message: error }));
+      });
+      dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.FAILED }));
     }
   };
 }
