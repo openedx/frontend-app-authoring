@@ -62,7 +62,7 @@ const CourseTeam = ({ courseId }) => {
 
   return (
     <>
-      <Container size="xl" className="m-4">
+      <Container size="xl" className="px-4">
         <section className="course-team-container mb-4">
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
@@ -79,7 +79,7 @@ const CourseTeam = ({ courseId }) => {
                     subtitle={intl.formatMessage(messages.headingSubtitle)}
                     headerActions={isAllowActions && (
                       <Button
-                        variant="outline-success"
+                        variant="primary"
                         iconBefore={IconAdd}
                         size="sm"
                         onClick={openForm}
