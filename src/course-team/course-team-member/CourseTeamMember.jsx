@@ -58,6 +58,7 @@ const CourseTeamMember = ({
               onClick={() => onDelete(email)}
               iconAs={Icon}
               alt={intl.formatMessage(messages.deleteUserButton)}
+              data-testid="delete-button"
             />
           </div>
         ) : (
