@@ -1,8 +1,10 @@
 import { useContext, useEffect } from 'react';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery } from 'react-responsive';
 import * as Yup from 'yup';
+import { snakeCase } from 'lodash/string';
+import moment from 'moment';
+import { getConfig } from '@edx/frontend-platform';
 
 import { RequestStatus } from './data/constants';
 import { getCourseAppSettingValue, getLoadingStatus } from './pages-and-resources/data/selectors';
@@ -11,6 +13,7 @@ import { PagesAndResourcesContext } from './pages-and-resources/PagesAndResource
 import {
   hasValidDateFormat, hasValidTimeFormat, decodeDateTime, endOfDayTime, startOfDayTime,
 } from './pages-and-resources/discussions/app-config-form/utils';
+import { DATE_TIME_FORMAT } from './constants';
 
 export const executeThunk = async (thunk, dispatch, getState) => {
   await thunk(dispatch, getState);
@@ -23,6 +26,66 @@ export function useIsMobile() {
 
 export function useIsDesktop() {
   return useMediaQuery({ query: '(min-width: 992px)' });
+}
+
+export function convertObjectToSnakeCase(obj, unpacked = false) {
+  return Object.keys(obj).reduce((snakeCaseObj, key) => {
+    const snakeCaseKey = snakeCase(key);
+    const value = unpacked ? obj[key] : { value: obj[key] };
+    return {
+      ...snakeCaseObj,
+      [snakeCaseKey]: value,
+    };
+  }, {});
+}
+
+export function deepConvertingKeysToSnakeCase(obj) {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map((item) => deepConvertingKeysToSnakeCase(item));
+  }
+
+  const snakeCaseObj = {};
+  Object.keys(obj).forEach((key) => {
+    const snakeCaseKey = snakeCase(key);
+    snakeCaseObj[snakeCaseKey] = deepConvertingKeysToSnakeCase(obj[key]);
+  });
+  return snakeCaseObj;
+}
+
+export function transformKeysToCamelCase(obj) {
+  return obj.key.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
+}
+
+export function parseArrayOrObjectValues(obj) {
+  const result = {};
+
+  Object.entries(obj).forEach(([key, value]) => {
+    try {
+      if (!Number.isNaN(Number(value))) {
+        result[key] = value;
+      } else {
+        result[key] = JSON.parse(value);
+      }
+    } catch (e) {
+      result[key] = value;
+    }
+  });
+
+  return result;
+}
+
+export function getPagePath(courseId, isMfePageEnabled, urlParameter) {
+  if (isMfePageEnabled === 'true') {
+    if (urlParameter === 'tabs') {
+      return `${getConfig().BASE_URL}/course/${courseId}/pages-and-resources`;
+    }
+    return `${getConfig().BASE_URL}/course/${courseId}/${urlParameter}`;
+  }
+  return `${getConfig().STUDIO_BASE_URL}/${urlParameter}/${courseId}`;
 }
 
 export function useAppSetting(settingName) {
@@ -42,6 +105,11 @@ export function useAppSetting(settingName) {
   const saveSetting = async (value) => dispatch(updateCourseAppSetting(courseId, settingName, value));
   return [settingValue, saveSetting];
 }
+
+export const getLabelById = (options, id) => {
+  const foundOption = options.find((option) => option.id === id);
+  return foundOption ? foundOption.label : '';
+};
 
 /**
  * Adds additional validation methods to Yup.
@@ -149,3 +217,25 @@ export function setupYupExtensions() {
     });
   });
 }
+
+export const convertToDateFromString = (dateStr) => {
+  if (!dateStr) {
+    return '';
+  }
+
+  return moment(dateStr).utc().toDate();
+};
+
+export const convertToStringFromDate = (date) => {
+  if (!date) {
+    return '';
+  }
+
+  return moment(date).utc().format(DATE_TIME_FORMAT);
+};
+
+export const isValidDate = (date) => {
+  const formattedValue = convertToStringFromDate(date).split('T')[0];
+
+  return Boolean(formattedValue.length <= 10);
+};

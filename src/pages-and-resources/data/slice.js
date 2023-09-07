@@ -9,6 +9,7 @@ const slice = createSlice({
     courseAppIds: [],
     loadingStatus: RequestStatus.IN_PROGRESS,
     savingStatus: '',
+    resetStatus: '',
     courseAppsApiStatus: {},
     courseAppSettings: {},
   },
@@ -21,6 +22,9 @@ const slice = createSlice({
     },
     updateSavingStatus: (state, { payload }) => {
       state.savingStatus = payload.status;
+    },
+    updateResetStatus: (state, { payload }) => {
+      state.resetStatus = payload.status;
     },
     updateCourseAppsApiStatus: (state, { payload }) => {
       state.courseAppsApiStatus = payload.status;
@@ -38,6 +42,7 @@ export const {
   fetchCourseAppsSuccess,
   updateLoadingStatus,
   updateSavingStatus,
+  updateResetStatus,
   updateCourseAppsApiStatus,
   fetchCourseAppsSettingsSuccess,
   updateCourseAppsSettingsSuccess,

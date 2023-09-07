@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
- Form, TransitionReplace, Hyperlink, Alert,
+  Form, TransitionReplace, Hyperlink, Alert,
 } from '@edx/paragon';
 import { AppContext } from '@edx/frontend-platform/react';
 import { FieldArray, useFormikContext } from 'formik';
@@ -70,12 +70,12 @@ const DivisionByGroupFields = ({ intl }) => {
       </h5>
       {!cohortsEnabled
       && (
-      <Alert className="bg-light-200 font-weight-normal h5" id="alert">
-        {intl.formatMessage(messages.cohortsEnabled)}
-        <Hyperlink destination={learningCourseURL} target="_blank">
-          {intl.formatMessage(messages.instructorDashboard)}
-        </Hyperlink>
-      </Alert>
+        <Alert className="bg-light-200 font-weight-normal h5" id="alert">
+          {intl.formatMessage(messages.cohortsEnabled)}
+          <Hyperlink destination={learningCourseURL} target="_blank">
+            {intl.formatMessage(messages.instructorDashboard)}
+          </Hyperlink>
+        </Alert>
       )}
       <FormSwitchGroup
         onChange={handleChange}

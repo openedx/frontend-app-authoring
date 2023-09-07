@@ -7,6 +7,13 @@ import { PagesAndResources } from './pages-and-resources';
 import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettings';
 import EditorContainer from './editors/EditorContainer';
 import VideoSelectorContainer from './selectors/VideoSelectorContainer';
+import CustomPages from './custom-pages';
+import FilesAndUploads from './files-and-uploads';
+import { AdvancedSettings } from './advanced-settings';
+import ScheduleAndDetails from './schedule-and-details';
+import { GradingSettings } from './grading-settings';
+import CourseTeam from './course-team/CourseTeam';
+import { CourseUpdates } from './course-updates';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -36,11 +43,11 @@ const CourseAuthoringRoutes = () => {
         />
         <Route
           path="course_info"
-          element={process.env.ENABLE_NEW_UPDATES_PAGE === 'true' ? <PageWrap><Placeholder /></PageWrap> : null}
+          element={<CourseUpdates courseId={courseId} />}
         />
         <Route
           path="assets"
-          element={process.env.ENABLE_NEW_FILES_UPLOADS_PAGE === 'true' ? <PageWrap><Placeholder /></PageWrap> : null}
+          element={<FilesAndUploads courseId={courseId} />}
         />
         <Route
           path="videos"
@@ -55,15 +62,11 @@ const CourseAuthoringRoutes = () => {
           element={<PageWrap><ProctoredExamSettings courseId={courseId} /></PageWrap>}
         />
         <Route
-          path="custom_pages"
-          element={process.env.ENABLE_NEW_CUSTOM_PAGES === 'true' ? <PageWrap><Placeholder /></PageWrap> : null}
+          path="custom_pages/*"
+          element={<CustomPages courseId={courseId} />}
         />
         <Route
-          path="/:blockType"
-          element={process.env.ENABLE_UNIT_PAGE === 'true' ? <PageWrap><Placeholder /></PageWrap> : null}
-        />
-        <Route
-          path="/:blockType/:blockId?"
+          path="/container/:blockId"
           element={process.env.ENABLE_UNIT_PAGE === 'true' ? <PageWrap><Placeholder /></PageWrap> : null}
         />
         <Route
@@ -71,28 +74,24 @@ const CourseAuthoringRoutes = () => {
           element={process.env.ENABLE_NEW_EDITOR_PAGES === 'true' ? <PageWrap><VideoSelectorContainer courseId={courseId} /></PageWrap> : null}
         />
         <Route
-          path="editor/:blockType"
-          element={process.env.ENABLE_NEW_EDITOR_PAGES === 'true' ? <PageWrap><EditorContainer courseId={courseId} /></PageWrap> : null}
-        />
-        <Route
-          path="editor/:blockType/:blockId"
+          path="editor/:blockType/:blockId?"
           element={process.env.ENABLE_NEW_EDITOR_PAGES === 'true' ? <PageWrap><EditorContainer courseId={courseId} /></PageWrap> : null}
         />
         <Route
           path="settings/details"
-          element={process.env.ENABLE_NEW_SCHEDULE_DETAILS_PAGE === 'true' ? <PageWrap><Placeholder /></PageWrap> : null}
+          element={<ScheduleAndDetails courseId={courseId} />}
         />
         <Route
           path="settings/grading"
-          element={process.env.ENABLE_NEW_GRADING_PAGE === 'true' ? <PageWrap><Placeholder /></PageWrap> : null}
+          element={<GradingSettings courseId={courseId} />}
         />
         <Route
           path="course_team"
-          element={process.env.ENABLE_NEW_COURSE_TEAM_PAGE === 'true' ? <PageWrap><Placeholder /></PageWrap> : null}
+          element={<CourseTeam courseId={courseId} />}
         />
         <Route
           path="settings/advanced"
-          element={process.env.ENABLE_NEW_ADVANCED_SETTINGS_PAGE === 'true' ? <PageWrap><Placeholder /></PageWrap> : null}
+          element={<AdvancedSettings courseId={courseId} />}
         />
         <Route
           path="import"

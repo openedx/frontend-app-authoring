@@ -1,0 +1,81 @@
+.form-group-custom {
+  .pgn__form-label {
+    font: normal $font-weight-bold .75rem/1.25rem $font-family-base;
+    color: $gray-500;
+    margin-bottom: .5rem;
+  }
+
+  .pgn__form-control-description,
+  .pgn__form-text {
+    font: normal $font-weight-normal .75rem/1.25rem $font-family-base;
+    color: $gray-500;
+    margin-top: .5rem;
+  }
+
+  .dropdown-toggle {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .form-group-custom_isInvalid {
+    input {
+      border-color: $form-feedback-invalid-color;
+    }
+  }
+
+  .feedback-error {
+    color: $form-feedback-invalid-color;
+  }
+}
+
+.datepicker-custom {
+  margin: 0;
+
+  .datepicker-custom-control {
+    display: block;
+    width: 100%;
+    font-size: $input-font-size;
+    font-weight: $input-font-weight;
+    line-height: $input-line-height;
+    background: $input-bg;
+    border-color: $input-border-color;
+    border-width: $input-border-width;
+    box-shadow: $input-box-shadow;
+    border-radius: $input-border-radius;
+    color: $input-color;
+    padding: $input-padding-y $input-padding-x;
+    height: $input-height;
+    resize: none;
+
+    &:focus,
+    :focus-visible {
+      color: $input-focus-color;
+      background-color: $input-bg;
+      border-color: $input-focus-border-color;
+      box-shadow: $input-focus-box-shadow;
+      outline: 0;
+    }
+
+    &::placeholder {
+      color: $input-placeholder-color;
+    }
+  }
+
+  .datepicker-custom-control_readonly {
+    border-color: transparent;
+    background: $input-disabled-bg;
+  }
+
+  .datepicker-custom-control_isInvalid {
+    border-color: $form-feedback-invalid-color;
+  }
+
+  .datepicker-custom-control-icon {
+    position: absolute;
+    z-index: 2;
+    right: 1.188rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $black;
+  }
+}

@@ -51,8 +51,8 @@ describe('ProctoredExamSettings', () => {
       `${ExamsApiService.getExamsBaseUrl()}/api/v1/providers`,
     ).reply(200, [
       {
-          name: 'test_lti',
-          verbose_name: 'LTI Provider',
+        name: 'test_lti',
+        verbose_name: 'LTI Provider',
       },
     ]);
     axiosMock.onGet(

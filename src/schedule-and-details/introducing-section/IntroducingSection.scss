@@ -1,0 +1,7 @@
+@import "./introduction-video/IntroductionVideo";
+
+.introducing-section {
+  .form-group-custom:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+}

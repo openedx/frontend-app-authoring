@@ -1,0 +1,26 @@
+.image-preview {
+  @include pgn-box-shadow(1, "down");
+
+  display: block;
+  width: 23.4375rem;
+  height: 12.5rem;
+  overflow: hidden;
+  margin: 0 auto;
+  border: .0625rem solid $gray-300;
+  padding: .625rem;
+  background: $white;
+
+  img {
+    display: block;
+    width: 100%;
+    min-height: 100%;
+  }
+}
+
+.image-body {
+  text-align: center;
+
+  .pgn__dropzone {
+    background: $white;
+  }
+}

@@ -15,9 +15,11 @@ import Placeholder from '@edx/frontend-lib-content-components';
 import messages from './i18n';
 
 import initializeStore from './store';
-import './index.scss';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
+
+import 'react-datepicker/dist/react-datepicker.css';
+import './index.scss';
 
 const App = () => {
   useEffect(() => {

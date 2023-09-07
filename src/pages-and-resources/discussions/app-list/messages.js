@@ -239,6 +239,26 @@ const messages = defineMessages({
     defaultMessage: 'Commonly requested',
     description: 'The type of a discussions feature.',
   },
+  hideDiscussionTabTitle: {
+    id: 'authoring.discussions.hide-tab-title',
+    defaultMessage: 'Hide the discussion tab?',
+    description: 'Title message to hide discussion tab',
+  },
+  hideDiscussionTabMessage: {
+    id: 'authoring.discussions.hide-tab-message',
+    defaultMessage: 'The discussion tab will no longer be visible to learners in the LMS. Additionally, posting to the discussion forums will be disabled. Are you sure you want to proceed?',
+    description: 'Help message to hide discussion tab',
+  },
+  hideDiscussionOkButton: {
+    id: 'authoring.discussions.hide-ok-button',
+    defaultMessage: 'Ok',
+    description: 'Ok button title',
+  },
+  hideDiscussionCancelButton: {
+    id: 'authoring.discussions.hide-cancel-button',
+    defaultMessage: 'Cancel',
+    description: 'Cancel button title',
+  },
 });
 
 export default messages;

@@ -1,0 +1,16 @@
+.course-handouts {
+  .course-handouts-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: $spacer;
+
+    .course-handouts-header__title {
+      font-weight: 300;
+      color: $gray-800;
+    }
+
+    .course-handouts-header__btn {
+      align-self: flex-start;
+    }
+  }
+}

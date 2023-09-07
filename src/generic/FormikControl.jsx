@@ -39,7 +39,7 @@ const FormikControl = ({
 };
 
 FormikControl.propTypes = {
-  name: PropTypes.element.isRequired,
+  name: PropTypes.string.isRequired,
   label: PropTypes.element,
   help: PropTypes.element,
   className: PropTypes.string,

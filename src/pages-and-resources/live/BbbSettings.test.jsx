@@ -7,8 +7,8 @@ import {
 } from '@testing-library/react';
 
 import ReactDOM from 'react-dom';
-import { Routes, Route } from 'react-router-dom';
-import { initializeMockApp, history } from '@edx/frontend-platform';
+import { Routes, Route, MemoryRouter } from 'react-router-dom';
+import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider, PageWrap } from '@edx/frontend-platform/react';
@@ -41,11 +41,13 @@ ReactDOM.createPortal = jest.fn(node => node);
 const renderComponent = () => {
   const wrapper = render(
     <IntlProvider locale="en">
-      <AppProvider store={store}>
+      <AppProvider store={store} wrapWithRouter={false}>
         <PagesAndResourcesProvider courseId={courseId}>
-          <Routes>
-            <Route path={liveSettingsUrl} element={<PageWrap><LiveSettings onClose={() => {}} /></PageWrap>} />
-          </Routes>
+          <MemoryRouter initialEntries={[liveSettingsUrl]}>
+            <Routes>
+              <Route path={liveSettingsUrl} element={<PageWrap><LiveSettings onClose={() => {}} /></PageWrap>} />
+            </Routes>
+          </MemoryRouter>
         </PagesAndResourcesProvider>
       </AppProvider>
     </IntlProvider>,
@@ -54,11 +56,11 @@ const renderComponent = () => {
 };
 
 const mockStore = async ({
- usernameSharing = false,
- emailSharing = false,
- enabled = true,
- piiSharingAllowed = true,
- isFreeTier = false,
+  usernameSharing = false,
+  emailSharing = false,
+  enabled = true,
+  piiSharingAllowed = true,
+  isFreeTier = false,
 }) => {
   const fetchProviderConfigUrl = `${providersApiUrl}/${courseId}/`;
   const fetchLiveConfigUrl = `${providerConfigurationApiUrl}/${courseId}/`;
@@ -82,7 +84,6 @@ describe('BBB Settings', () => {
     });
     store = initializeStore(initialState);
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    history.push(liveSettingsUrl);
   });
 
   test('Plan dropdown to be visible and enabled in UI', async () => {
@@ -106,7 +107,7 @@ describe('BBB Settings', () => {
   });
 
   test(
-'Connect to support and PII sharing message is visible and plans selection is disabled, When pii sharing is disabled, ',
+    'Connect to support and PII sharing message is visible and plans selection is disabled, When pii sharing is disabled, ',
     async () => {
       await mockStore({ piiSharingAllowed: false });
       renderComponent();
@@ -120,7 +121,7 @@ describe('BBB Settings', () => {
       expect(helpRequestPiiText).toHaveTextContent(messages.piiSharingEnableHelpTextBbb.defaultMessage);
       expect(container.querySelector('select[name="tierType"]')).toBeDisabled();
     },
-);
+  );
 
   test('free plans message is visible when free plan is selected', async () => {
     await mockStore({ emailSharing: true, isFreeTier: true });
@@ -130,7 +131,7 @@ describe('BBB Settings', () => {
     const dropDown = container.querySelector('select[name="tierType"]');
     userEvent.selectOptions(
       dropDown,
-     getByRole(dropDown, 'option', { name: 'Free' }),
+      getByRole(dropDown, 'option', { name: 'Free' }),
     );
     expect(queryByTestId(container, 'free-plan-message')).toBeInTheDocument();
     expect(queryByTestId(container, 'free-plan-message')).toHaveTextContent(messages.freePlanMessage.defaultMessage);

@@ -1,0 +1,83 @@
+module.exports = {
+  id: 'block-v1:edX+DemoX+Demo_Course+type@course_info+block@handouts',
+  display_name: 'Text',
+  category: 'course_info',
+  has_children: false,
+  edited_on: 'Jul 12, 2023 at 17:52 UTC',
+  published: true,
+  published_on: 'Jul 12, 2023 at 17:52 UTC',
+  studio_url: null,
+  released_to_students: false,
+  release_date: null,
+  visibility_state: 'unscheduled',
+  has_explicit_staff_lock: false,
+  start: '2030-01-01T00:00:00Z',
+  graded: false,
+  due_date: '',
+  due: null,
+  relative_weeks_due: null,
+  format: null,
+  course_graders: [
+    'Homework',
+    'Exam',
+  ],
+  has_changes: null,
+  actions: {
+    deletable: true,
+    draggable: true,
+    childAddable: true,
+    duplicable: true,
+  },
+  explanatory_message: null,
+  group_access: {},
+  user_partitions: [
+    {
+      id: 50,
+      name: 'Enrollment Track Groups',
+      scheme: 'enrollment_track',
+      groups: [
+        {
+          id: 2,
+          name: 'Verified Certificate',
+          selected: false,
+          deleted: false,
+        },
+        {
+          id: 1,
+          name: 'Audit',
+          selected: false,
+          deleted: false,
+        },
+      ],
+    },
+  ],
+  show_correctness: 'always',
+  data: 'Some handouts',
+  metadata: {},
+  ancestor_has_staff_lock: false,
+  user_partition_info: {
+    selectable_partitions: [
+      {
+        id: 50,
+        name: 'Enrollment Track Groups',
+        scheme: 'enrollment_track',
+        groups: [
+          {
+            id: 2,
+            name: 'Verified Certificate',
+            selected: false,
+            deleted: false,
+          },
+          {
+            id: 1,
+            name: 'Audit',
+            selected: false,
+            deleted: false,
+          },
+        ],
+      },
+    ],
+    selected_partition_index: -1,
+    selected_groups_label: '',
+  },
+};

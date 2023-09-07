@@ -1,0 +1,11 @@
+.instructors-section {
+  .instructors-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.875rem;
+    padding-inline-start: 0;
+    list-style-type: none;
+    padding-top: $spacer;
+  }
+}

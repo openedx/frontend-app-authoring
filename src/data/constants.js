@@ -10,6 +10,7 @@ export const RequestStatus = {
   SUCCESSFUL: 'successful',
   FAILED: 'failed',
   DENIED: 'denied',
+  PENDING: 'pending',
 };
 
 /**

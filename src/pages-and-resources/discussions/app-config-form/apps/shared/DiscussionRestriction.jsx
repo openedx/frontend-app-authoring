@@ -40,6 +40,7 @@ const DiscussionRestriction = () => {
   const discussionRestrictionButtons = useMemo(() => discussionRestrictionOptions.map((restriction) => (
     <Button
       key={`restriction-${restriction.value}`}
+      data-testId={restriction.value}
       variant="plain"
       className={classNames('w-100 font-size-14 font-weight-500 line-height-20 py-7px border-light-400 unselected-button', {
         'text-white bg-primary-500 selected-button': selectedRestrictionOption === restriction.value,

@@ -11,8 +11,8 @@ import {
 } from '@testing-library/react';
 
 import ReactDOM from 'react-dom';
-import { Routes, Route } from 'react-router-dom';
-import { initializeMockApp, history } from '@edx/frontend-platform';
+import { Routes, Route, MemoryRouter } from 'react-router-dom';
+import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider, PageWrap } from '@edx/frontend-platform/react';
@@ -44,11 +44,13 @@ ReactDOM.createPortal = jest.fn(node => node);
 const renderComponent = () => {
   const wrapper = render(
     <IntlProvider locale="en">
-      <AppProvider store={store}>
+      <AppProvider store={store} wrapWithRouter={false}>
         <PagesAndResourcesProvider courseId={courseId}>
-          <Routes>
-            <Route path={liveSettingsUrl} element={<PageWrap><LiveSettings onClose={() => {}} /></PageWrap>} />
-          </Routes>
+          <MemoryRouter initialEntries={[liveSettingsUrl]}>
+            <Routes>
+              <Route path={liveSettingsUrl} element={<PageWrap><LiveSettings onClose={() => {}} /></PageWrap>} />
+            </Routes>
+          </MemoryRouter>
         </PagesAndResourcesProvider>
       </AppProvider>
     </IntlProvider>,
@@ -57,10 +59,10 @@ const renderComponent = () => {
 };
 
 const mockStore = async ({
- usernameSharing = false,
- emailSharing = false,
- enabled = true,
- piiSharingAllowed = true,
+  usernameSharing = false,
+  emailSharing = false,
+  enabled = true,
+  piiSharingAllowed = true,
 }) => {
   const fetchProviderConfigUrl = `${providersApiUrl}/${courseId}/`;
   const fetchLiveConfigUrl = `${providerConfigurationApiUrl}/${courseId}/`;
@@ -84,7 +86,6 @@ describe('LiveSettings', () => {
     });
     store = initializeStore(initialState);
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    history.push(liveSettingsUrl);
   });
 
   test('Live Configuration modal is visible', async () => {

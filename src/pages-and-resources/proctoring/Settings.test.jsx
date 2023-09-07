@@ -60,8 +60,8 @@ describe('ProctoredExamSettings', () => {
       `${ExamsApiService.getExamsBaseUrl()}/api/v1/providers`,
     ).reply(200, [
       {
-          name: 'test_lti',
-          verbose_name: 'LTI Provider',
+        name: 'test_lti',
+        verbose_name: 'LTI Provider',
       },
     ]);
     axiosMock.onGet(
@@ -462,7 +462,7 @@ describe('ProctoredExamSettings', () => {
       expect(providerOption.hasAttribute('disabled')).toEqual(false);
     });
 
-   it('Does not include lti_external as a selectable option', async () => {
+    it('Does not include lti_external as a selectable option', async () => {
       const courseData = {
         ...mockGetFutureCourseData,
         available_proctoring_providers: ['lti_external', 'proctortrack', 'mockproc'],
@@ -684,7 +684,7 @@ describe('ProctoredExamSettings', () => {
       expect(document.activeElement).toEqual(errorAlert);
     });
 
-   it('Successfully updates exam configuration and studio provider is set to "lti_external" for lti providers', async () => {
+    it('Successfully updates exam configuration and studio provider is set to "lti_external" for lti providers', async () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       // Make a change to the provider to proctortrack and set the email
       const selectElement = screen.getByDisplayValue('mockproc');

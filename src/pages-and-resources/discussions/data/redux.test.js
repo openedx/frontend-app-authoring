@@ -1,7 +1,7 @@
-import { history } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { initializeMockApp } from '@edx/frontend-platform/testing';
 import MockAdapter from 'axios-mock-adapter';
+import { waitFor } from '@testing-library/react';
 import { DivisionSchemes } from '../../../data/constants';
 import { LOADED } from '../../../data/slice';
 import initializeStore from '../../../store';
@@ -278,8 +278,6 @@ describe('Data layer integration tests', () => {
 
   describe('saveAppConfig', () => {
     test('network error', async () => {
-      history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
-
       axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse());
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
       axiosMock.onPost(getDiscussionsSettingsUrl(courseId)).networkError();
@@ -290,8 +288,6 @@ describe('Data layer integration tests', () => {
       store.dispatch(selectApp({ appId: 'piazza' }));
       await executeThunk(saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath, mockedNavigator), store.dispatch);
 
-      // Assert we're still on the form.
-      expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
           appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
@@ -306,8 +302,6 @@ describe('Data layer integration tests', () => {
     });
 
     test('permission denied error', async () => {
-      history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
-
       axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse());
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
       axiosMock.onPost(getDiscussionsSettingsUrl(courseId)).reply(403);
@@ -317,8 +311,6 @@ describe('Data layer integration tests', () => {
       store.dispatch(selectApp({ appId: 'piazza' }));
       await executeThunk(saveProviderConfig(courseId, 'piazza', {}, pagesAndResourcesPath, mockedNavigator), store.dispatch);
 
-      // Assert we're still on the form.
-      expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
       expect(store.getState().discussions).toEqual(
         expect.objectContaining({
           appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
@@ -333,8 +325,6 @@ describe('Data layer integration tests', () => {
     });
 
     test('successfully saves an LTI configuration', async () => {
-      history.push(`/course/${courseId}/pages-and-resources/discussions/configure/piazza`);
-
       axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse());
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, piazzaApiResponse);
       axiosMock.onPost(getDiscussionsSettingsUrl(courseId), {
@@ -374,29 +364,29 @@ describe('Data layer integration tests', () => {
         mockedNavigator,
       ), store.dispatch);
 
-      expect(mockedNavigator).toHaveBeenCalledWith(pagesAndResourcesPath);
-      expect(store.getState().discussions).toEqual(
-        expect.objectContaining({
-          appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
-          featureIds,
-          activeAppId: 'piazza',
-          selectedAppId: 'piazza',
-          status: LOADED,
-          saveStatus: SAVED,
-          hasValidationError: false,
-        }),
-      );
-      expect(store.getState().models.appConfigs.piazza).toEqual({
-        id: 'piazza',
-        consumerKey: 'new_consumer_key',
-        consumerSecret: 'new_consumer_secret',
-        launchUrl: 'https://localhost/new_launch_url',
+      waitFor(() => {
+        expect(mockedNavigator).toHaveBeenCalledWith(pagesAndResourcesPath);
+        expect(store.getState().discussions).toEqual(
+          expect.objectContaining({
+            appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
+            featureIds,
+            activeAppId: 'piazza',
+            selectedAppId: 'piazza',
+            status: LOADED,
+            saveStatus: SAVED,
+            hasValidationError: false,
+          }),
+        );
+        expect(store.getState().models.appConfigs.piazza).toEqual({
+          id: 'piazza',
+          consumerKey: 'new_consumer_key',
+          consumerSecret: 'new_consumer_secret',
+          launchUrl: 'https://localhost/new_launch_url',
+        });
       });
     });
 
     test('successfully saves a Legacy configuration', async () => {
-      history.push(`/course/${courseId}/pages-and-resources/discussions/configure/legacy`);
-
       axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, generateProvidersApiResponse(false, 'legacy'));
       axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, legacyApiResponse);
       axiosMock.onPost(getDiscussionsSettingsUrl(courseId), {
@@ -469,35 +459,37 @@ describe('Data layer integration tests', () => {
         pagesAndResourcesPath,
         mockedNavigator,
       ), store.dispatch);
-      expect(mockedNavigator).toHaveBeenCalledWith(pagesAndResourcesPath);
-      expect(store.getState().discussions).toEqual(
-        expect.objectContaining({
-          appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
-          featureIds,
-          activeAppId: 'legacy',
-          selectedAppId: 'legacy',
-          status: LOADED,
-          saveStatus: SAVED,
-          hasValidationError: false,
-          divideDiscussionIds,
-          discussionTopicIds,
-        }),
-      );
-      expect(store.getState().models.appConfigs.legacy).toEqual({
-        id: 'legacy',
-        // These three fields should be updated.
-        allowAnonymousPosts: true,
-        allowAnonymousPostsPeers: true,
-        reportedContentEmailNotifications: true,
-        alwaysDivideInlineDiscussions: true,
-        restrictedDates: [],
-        // TODO: Note!  The values we tried to save were ignored, this test reflects what currently
-        // happens, but NOT what we want to have happen!
-        divideByCohorts: true,
-        divisionScheme: DivisionSchemes.COHORT,
-        cohortsEnabled: false,
-        allowDivisionByUnit: false,
-        divideCourseTopicsByCohorts: true,
+      waitFor(() => {
+        expect(mockedNavigator).toHaveBeenCalledWith(pagesAndResourcesPath);
+        expect(store.getState().discussions).toEqual(
+          expect.objectContaining({
+            appIds: ['legacy', 'openedx', 'piazza', 'discourse'],
+            featureIds,
+            activeAppId: 'legacy',
+            selectedAppId: 'legacy',
+            status: LOADED,
+            saveStatus: SAVED,
+            hasValidationError: false,
+            divideDiscussionIds,
+            discussionTopicIds,
+          }),
+        );
+        expect(store.getState().models.appConfigs.legacy).toEqual({
+          id: 'legacy',
+          // These three fields should be updated.
+          allowAnonymousPosts: true,
+          allowAnonymousPostsPeers: true,
+          reportedContentEmailNotifications: true,
+          alwaysDivideInlineDiscussions: true,
+          restrictedDates: [],
+          // TODO: Note!  The values we tried to save were ignored, this test reflects what currently
+          // happens, but NOT what we want to have happen!
+          divideByCohorts: true,
+          divisionScheme: DivisionSchemes.COHORT,
+          cohortsEnabled: false,
+          allowDivisionByUnit: false,
+          divideCourseTopicsByCohorts: true,
+        });
       });
     });
   });

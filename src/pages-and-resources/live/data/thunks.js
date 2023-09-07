@@ -1,10 +1,10 @@
 import { addModel, addModels, updateModel } from '../../../generic/model-store';
 import {
- getLiveConfiguration,
- getLiveProviders,
- postLiveConfiguration,
- normalizeSettings,
- deNormalizeSettings,
+  getLiveConfiguration,
+  getLiveProviders,
+  postLiveConfiguration,
+  normalizeSettings,
+  deNormalizeSettings,
 } from './api';
 import { loadApps, updateStatus, updateSaveStatus } from './slice';
 import { RequestStatus } from '../../../data/constants';

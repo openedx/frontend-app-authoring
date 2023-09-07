@@ -37,7 +37,7 @@ const DiscussionRestrictionItem = ({
     return setCollapseOpen(isOpen);
   }, [hasError]);
 
-   const handleOnClose = useCallback(() => {
+  const handleOnClose = useCallback(() => {
     ['startDate', 'startTime', 'endDate', 'endTime'].forEach(field => (
       setFieldTouched(`${fieldNameCommonBase}.${field}`, true)
     ));
@@ -70,8 +70,8 @@ const DiscussionRestrictionItem = ({
     return (
       <ConfirmationPopup
         label={restrictedDate.status === constants.ACTIVE
-            ? intl.formatMessage(messages.activeRestrictedDatesDeletionLabel)
-            : intl.formatMessage(messages.restrictedDatesDeletionLabel)}
+          ? intl.formatMessage(messages.activeRestrictedDatesDeletionLabel)
+          : intl.formatMessage(messages.restrictedDatesDeletionLabel)}
         bodyText={intl.formatMessage(deleteRestrictedDatesHelperText[restrictedDate.status])}
         onConfirm={onDelete}
         confirmLabel={intl.formatMessage(messages.deleteButton)}
@@ -80,8 +80,8 @@ const DiscussionRestrictionItem = ({
         confirmVariant="plain"
         confirmButtonClass="text-danger-500 border-gray-300 rounded-0"
       />
-        );
-    }
+    );
+  }
 
   return (
     <CollapsableEditor
@@ -104,6 +104,7 @@ const DiscussionRestrictionItem = ({
           fieldName="startDate"
           formGroupClasses="pl-md-0"
           fieldClasses="pr-md-2"
+          dataTestId="startDate"
           fieldNameCommonBase={fieldNameCommonBase}
         />
         <RestrictDatesInput
@@ -115,6 +116,7 @@ const DiscussionRestrictionItem = ({
           formGroupClasses="pr-md-0"
           fieldClasses="ml-md-2"
           feedbackClasses="ml-md-2"
+          dataTestId="startTime"
           fieldNameCommonBase={fieldNameCommonBase}
         />
       </Form.Row>
@@ -128,6 +130,7 @@ const DiscussionRestrictionItem = ({
           fieldName="endDate"
           formGroupClasses="pl-md-0"
           fieldClasses="pr-md-2"
+          dataTestId="endDate"
           fieldNameCommonBase={fieldNameCommonBase}
         />
         <RestrictDatesInput
@@ -139,6 +142,7 @@ const DiscussionRestrictionItem = ({
           formGroupClasses="pr-md-0"
           fieldClasses="ml-md-2"
           feedbackClasses="ml-md-2"
+          dataTestId="endTime"
           fieldNameCommonBase={fieldNameCommonBase}
         />
       </Form.Row>
