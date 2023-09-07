@@ -3,7 +3,7 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   deleteModalTitle: {
     id: 'course-authoring.course-team.member.button.remove',
-    defaultMessage: 'Are you sure?',
+    defaultMessage: 'Delete course team member',
   },
   deleteModalMessage: {
     id: 'course-authoring.course-team.delete-modal.message',

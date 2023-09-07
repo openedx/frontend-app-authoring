@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   courseIntroductionVideoPlaceholder: {
     id: 'course-authoring.schedule-section.introducing.introduction-video.placeholder',
-    defaultMessage: 'your YouTube video\'s ID',
+    defaultMessage: 'YouTube video ID',
   },
 });
 

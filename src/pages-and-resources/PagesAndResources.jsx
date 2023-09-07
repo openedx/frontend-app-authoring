@@ -23,9 +23,13 @@ import { getCourseAppsApiStatus, getLoadingStatus } from './data/selectors';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 import { RequestStatus } from '../data/constants';
 import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
+import getPageHeadTitle from '../generic/utils';
 
 const PagesAndResources = ({ courseId, intl }) => {
   const { path, url } = useRouteMatch();
+
+  const courseDetails = useModel('courseDetails', courseId);
+  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
 
   const dispatch = useDispatch();
   useEffect(() => {

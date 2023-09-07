@@ -23,7 +23,7 @@ const getInfoModalSettings = (modalType, currentEmail, errorMessage, courseName,
     return {
       title: intl.formatMessage(messages.deleteModalTitle),
       message: intl.formatMessage(messages.deleteModalMessage, { email: currentEmail, courseName }),
-      variant: 'danger',
+      variant: '',
       closeButtonText: intl.formatMessage(messages.deleteModalCancelButton),
       submitButtonText: intl.formatMessage(messages.deleteModalDeleteButton),
       closeButtonVariant: 'tertiary',
@@ -34,7 +34,7 @@ const getInfoModalSettings = (modalType, currentEmail, errorMessage, courseName,
       message: errorMessage,
       variant: 'danger',
       closeButtonText: intl.formatMessage(messages.errorModalOkButton),
-      closeButtonVariant: 'danger',
+      closeButtonVariant: 'primary',
     };
   case MODAL_TYPES.warning:
     return {

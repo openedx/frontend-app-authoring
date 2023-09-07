@@ -17,6 +17,7 @@ import { getSrc } from '../data/utils';
 const GalleryCard = ({
   className,
   original,
+  handleBulkDownload,
   handleLockedAsset,
   handleOpenDeleteConfirmation,
   handleOpenAssetInfo,
@@ -43,6 +44,9 @@ const GalleryCard = ({
               portableUrl={original.portableUrl}
               iconSrc={MoreVert}
               id={original.id}
+              onDownload={() => handleBulkDownload(
+                [{ original: { id: original.id, displayName: original.displayName } }],
+              )}
               openDeleteConfirmation={() => handleOpenDeleteConfirmation([{ original }])}
             />
           </ActionRow>
@@ -87,6 +91,7 @@ GalleryCard.propTypes = {
     id: PropTypes.string.isRequired,
     portableUrl: PropTypes.string.isRequired,
   }).isRequired,
+  handleBulkDownload: PropTypes.func.isRequired,
   handleLockedAsset: PropTypes.func.isRequired,
   handleOpenDeleteConfirmation: PropTypes.func.isRequired,
   handleOpenAssetInfo: PropTypes.func.isRequired,

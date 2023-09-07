@@ -4,7 +4,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Dropdown, Form, Collapsible, Icon,
 } from '@edx/paragon';
-import { Info as InfoIcon } from '@edx/paragon/icons';
+import { InfoOutline } from '@edx/paragon/icons';
 
 import { getLabelById } from '../../../utils';
 import { DatepickerControl, DATEPICKER_TYPES } from '../../../generic/datepicker-control';
@@ -97,8 +97,8 @@ const CertificateDisplayRow = ({
 
     return (
       <Collapsible.Advanced>
-        <Collapsible.Trigger className="d-flex small text-info-500 align-items-center">
-          <Icon className="mr-1" src={InfoIcon} />
+        <Collapsible.Trigger className="d-flex small text-primary-500 align-items-center mt-3">
+          <Icon className="mr-1" src={InfoOutline} />
           {intl.formatMessage(messages.certificateDisplayBehaviorToggleTitle)}
         </Collapsible.Trigger>
         <Collapsible.Body className="mt-2.5">
@@ -125,7 +125,7 @@ const CertificateDisplayRow = ({
           <Form.Label>
             {intl.formatMessage(messages.certificateBehaviorLabel)}
           </Form.Label>
-          <Dropdown>
+          <Dropdown claswsName="bg-white">
             <Dropdown.Toggle id="certificate-behavior-dropdown" variant="outline-primary">
               {certificateDisplayValue}
             </Dropdown.Toggle>
@@ -140,29 +140,29 @@ const CertificateDisplayRow = ({
           <Form.Control.Feedback>
             {intl.formatMessage(messages.certificateBehaviorHelpText)}
           </Form.Control.Feedback>
+          {showAvailableDate && (
+            <DatepickerControl
+              label={intl.formatMessage(messages.certificateAvailableDateLabel)}
+              value={certificateAvailableDate}
+              type={DATEPICKER_TYPES.date}
+              onChange={(date) => onChange(date, 'certificateAvailableDate')}
+              isInvalid={!!availableDateErrorFeedback}
+              controlName="certificateAvailableDate"
+            />
+          )}
+          {availableDateErrorFeedback && (
+            <span className="schedule-date-item-error">
+              {availableDateErrorFeedback}
+            </span>
+          )}
+          {displayBehaviorErrorFeedback && (
+            <span className="schedule-date-item-error">
+              {displayBehaviorErrorFeedback}
+            </span>
+          )}
           {renderReadMoreToggle()}
         </Form.Group>
-        {showAvailableDate && (
-          <DatepickerControl
-            label={intl.formatMessage(messages.certificateAvailableDateLabel)}
-            value={certificateAvailableDate}
-            type={DATEPICKER_TYPES.date}
-            onChange={(date) => onChange(date, 'certificateAvailableDate')}
-            isInvalid={!!availableDateErrorFeedback}
-            controlName="certificateAvailableDate"
-          />
-        )}
       </div>
-      {availableDateErrorFeedback && (
-        <span className="schedule-date-item-error">
-          {availableDateErrorFeedback}
-        </span>
-      )}
-      {displayBehaviorErrorFeedback && (
-        <span className="schedule-date-item-error">
-          {displayBehaviorErrorFeedback}
-        </span>
-      )}
     </li>
   );
 };

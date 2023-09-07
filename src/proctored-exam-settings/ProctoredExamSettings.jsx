@@ -12,8 +12,9 @@ import {
   intlShape,
   FormattedMessage,
 } from '@edx/frontend-platform/i18n';
-
 import { getConfig } from '@edx/frontend-platform';
+
+import { useModel } from '../generic/model-store';
 import messages from './ProctoredExamSettings.messages';
 import ExamsApiService from '../data/services/ExamsApiService';
 import StudioApiService from '../data/services/StudioApiService';
@@ -25,6 +26,7 @@ import {
   fetchExamSettingsPending,
   fetchExamSettingsSuccess,
 } from './data/thunks';
+import getPageHeadTitle from '../generic/utils';
 
 const ProctoredExamSettings = ({ courseId, intl }) => {
   const dispatch = useDispatch();
@@ -50,6 +52,9 @@ const ProctoredExamSettings = ({ courseId, intl }) => {
     isValid: true,
     errors: {},
   });
+
+  const courseDetails = useModel('courseDetails', courseId);
+  document.title = getPageHeadTitle(courseDetails?.name, 'Proctored Exam Settings');
 
   const alertRef = React.createRef();
   const saveStatusAlertRef = React.createRef();

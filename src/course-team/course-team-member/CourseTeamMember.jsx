@@ -1,11 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Badge, Button, MailtoLink } from '@edx/paragon';
-import { DeleteOutline as DeleteOutlineIcon } from '@edx/paragon/icons';
+import {
+  Badge,
+  Button,
+  Icon,
+  IconButtonWithTooltip,
+  MailtoLink,
+} from '@edx/paragon';
+import { DeleteOutline } from '@edx/paragon/icons';
 
 import messages from './messages';
-import { USER_ROLES, BADGE_STATES } from '../../constants';
+import { USER_ROLES, BADGE_STATES } from '../constants';
 
 const CourseTeamMember = ({
   userName,
@@ -19,16 +25,17 @@ const CourseTeamMember = ({
 }) => {
   const intl = useIntl();
   const isAdminRole = role === USER_ROLES.admin;
+  const badgeColor = isAdminRole ? BADGE_STATES.admin : BADGE_STATES.staff;
 
   return (
     <div className="course-team-member" data-testid="course-team-member">
       <div className="member-info">
-        <Badge variant={isAdminRole ? BADGE_STATES.danger : BADGE_STATES.secondary} className="badge-current-user">
+        <Badge className={`badge-current-user bg-${badgeColor} text-light-100`}>
           {isAdminRole
             ? intl.formatMessage(messages.roleAdmin)
             : intl.formatMessage(messages.roleStaff)}
           {currentUserEmail === email && (
-            <span className="badge-current-user">{intl.formatMessage(messages.roleYou)}</span>
+            <span className="badge-current-user x-small text-light-500">{intl.formatMessage(messages.roleYou)}</span>
           )}
         </Badge>
         <span className="member-info-name font-weight-bold">{userName}</span>
@@ -45,13 +52,13 @@ const CourseTeamMember = ({
             >
               {isAdminRole ? intl.formatMessage(messages.removeButton) : intl.formatMessage(messages.addButton)}
             </Button>
-            <Button
-              className="delete-button"
-              variant="tertiary"
-              size="sm"
-              data-testid="delete-button"
-              iconBefore={DeleteOutlineIcon}
+            <IconButtonWithTooltip
+              src={DeleteOutline}
+              tooltipContent={intl.formatMessage(messages.deleteUserButton)}
               onClick={() => onDelete(email)}
+              iconAs={Icon}
+              alt={intl.formatMessage(messages.deleteUserButton)}
+              data-testid="delete-button"
             />
           </div>
         ) : (
