@@ -71,6 +71,7 @@ describe('<DeadlineSection />', () => {
       gracePeriod={gracePeriodDefaultTime}
       setGradingData={setGradingData}
     />);
+
     await waitFor(() => {
       const inputElement = getByPlaceholderText(TIME_FORMAT.toUpperCase());
       fireEvent.change(inputElement, { target: { value: '32:70' } });
