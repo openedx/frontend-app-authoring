@@ -17,7 +17,7 @@ export function formatTime(time) {
  * @returns {boolean} - returns `true` if `inputStr` is a valid time, else `false`.
  */
 export function timerValidation(inputStr, setShowSavePrompt, setIsError) {
-  const timePattern = /^\d{2,3}:\d{2}$/;
+  const timePattern = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 
   const isValid = timePattern.test(inputStr);
   setShowSavePrompt(isValid);

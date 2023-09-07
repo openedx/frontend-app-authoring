@@ -66,4 +66,15 @@ describe('<DeadlineSection />', () => {
       expect(getByText(`Grace period must be specified in ${TIME_FORMAT.toUpperCase()} format.`)).toBeInTheDocument();
     });
   });
+  it('checking deadline input time format validation error', async () => {
+    const { getByPlaceholderText, getByText } = render(<RootWrapper
+      gracePeriod={gracePeriodDefaultTime}
+      setGradingData={setGradingData}
+    />);
+    await waitFor(() => {
+      const inputElement = getByPlaceholderText(TIME_FORMAT.toUpperCase());
+      fireEvent.change(inputElement, { target: { value: '32:70' } });
+      expect(getByText(`Grace period must be specified in ${TIME_FORMAT.toUpperCase()} format.`)).toBeInTheDocument();
+    });
+  });
 });
