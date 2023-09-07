@@ -146,6 +146,11 @@ const messages = defineMessages({
     defaultMessage: 'BigBlueButton',
     description: 'The name of the Big Blue Button Teams app.',
   },
+  'zoom.global.creds.btn': {
+    id: 'zoom.global.creds.btn',
+    defaultMessage: 'Use Global Zoom Credentials',
+    description: 'Click this button to use zoom global credentials',
+  },
   requestPiiSharingEnableForBbb: {
     id: 'authoring.live.requestPiiSharingEnableForBbb',
     defaultMessage: 'This configuration will require sharing usernames of learners and the course team with {provider}.',

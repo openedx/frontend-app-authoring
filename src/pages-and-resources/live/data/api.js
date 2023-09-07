@@ -13,7 +13,6 @@ export const providersApiUrl = `${apiBaseUrl}/api/course_live/providers`;
 export const providerConfigurationApiUrl = `${apiBaseUrl}/api/course_live/course`;
 export const zoomConfigurationApiUrl = `${apiBaseUrl}/api/course_live/configure_zoom`;
 
-
 function normalizeProviders(data) {
   const apps = Object.entries(data.providers.available).map(([key, app]) => ({
     id: key,
@@ -127,6 +126,6 @@ export async function postLiveConfiguration(courseId, config) {
 
 export async function configureZoomGlobalSettingsIfExists(courseId) {
   await getAuthenticatedHttpClient().post(
-    `${zoomConfigurationApiUrl}/${courseId}/`
+    `${zoomConfigurationApiUrl}/${courseId}/`,
   );
 }

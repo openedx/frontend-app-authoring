@@ -1,11 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { camelCase } from 'lodash';
-import { SelectableBox, Icon } from '@edx/paragon';
+import { SelectableBox, Icon, StatefulButton } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import { configureZoomGlobalSettings, fetchLiveData, saveLiveConfiguration, saveLiveConfigurationAsDraft } from './data/thunks';
+import {
+  configureZoomGlobalSettings,
+  fetchLiveData, saveLiveConfiguration,
+  saveLiveConfigurationAsDraft,
+} from './data/thunks';
 import { selectApp } from './data/slice';
 import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
 import { useModel } from '../../generic/model-store';
@@ -20,6 +24,7 @@ const LiveSettings = ({
   intl,
   onClose,
 }) => {
+  const [isZoomBtnClicked, setIsZoomBtnClicked] = useState(false);
   const dispatch = useDispatch();
   const courseId = useSelector(state => state.courseDetail.courseId);
   const availableProviders = useSelector((state) => state.live.appIds);
@@ -70,10 +75,17 @@ const LiveSettings = ({
     await dispatch(saveLiveConfiguration(courseId, values));
   };
 
+  const configureZoomGlobalSettingsIfExists = async (id) => {
+    await dispatch(configureZoomGlobalSettings(id));
+  };
+
   useEffect(() => {
-    dispatch(configureZoomGlobalSettings(courseId))
+    if (isZoomBtnClicked) {
+      configureZoomGlobalSettingsIfExists(courseId);
+      setIsZoomBtnClicked(false);
+    }
     dispatch(fetchLiveData(courseId));
-  }, [courseId]);
+  }, [courseId, isZoomBtnClicked]);
 
   return (
     <AppSettingsModal
@@ -112,13 +124,33 @@ const LiveSettings = ({
                 </SelectableBox>
               ))}
             </SelectableBox.Set>
-            {values.provider === 'zoom' ? <ZoomSettings values={values} />
-              : (
-                <BBBSettings
-                  values={values}
-                  setFieldValue={setFieldValue}
+            {values.provider === 'zoom' ? (
+              <>
+                <ZoomSettings values={values} />
+                <StatefulButton
+                  name="zoom.global.creds.btn"
+                  id="zoom.global.creds.btn"
+                  // className={"nafath-authenticate-button"}
+                  variant="brand"
+                  state={
+                    // (setIsZoomBtnClicked && "pending") ||
+                    // (props.state.success && "complete") ||
+                    'default'
+                  }
+                  labels={{
+                    default: intl.formatMessage(
+                      messages['zoom.global.creds.btn'],
+                    ),
+                    pending: '',
+                  }}
+                  // disabled={registrationBtnClicked}
+                  onClick={() => setIsZoomBtnClicked(true)}
+                  // onMouseDown={(e) => e.preventDefault()}
                 />
-              )}
+              </>
+            ) : (
+              <BBBSettings values={values} setFieldValue={setFieldValue} />
+            )}
           </>
         )
       )}
