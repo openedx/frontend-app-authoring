@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useRanger } from 'react-ranger';
 import { Icon, IconButtonWithTooltip } from '@edx/paragon';
 import { Add as IconAdd } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
+import { useRanger } from './react-ranger';
 import messages from './messages';
 import { convertGradeData, MAXIMUM_SCALE_LENGTH } from './utils';
 import { GradingScaleTicks, GradingScaleHandle, GradingScaleSegment } from './components';
 
 const DEFAULT_LETTERS = ['A', 'B', 'C', 'D'];
+const getDefaultPassText = intl => intl.formatMessage(messages.defaultPassText);
 
 const GradingScale = ({
   intl,
@@ -144,7 +145,7 @@ const GradingScale = ({
       const updatedLetters = [...prevLetters];
       updatedLetters.splice(updatedLetters.length - 1, 1);
 
-      return updatedLetters.length === 1 ? ['pass'] : updatedLetters;
+      return updatedLetters.length === 1 ? [getDefaultPassText(intl)] : updatedLetters;
     });
   };
 

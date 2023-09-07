@@ -51,7 +51,7 @@ export const getLettersOnLongScale = (idx, letters, gradingSegments) => {
     return END_OF_SCALE_NAME;
   }
 
-  return letters[idx - 1].toUpperCase();
+  return letters[idx - 1];
 };
 
 /**
@@ -64,7 +64,7 @@ export const getLettersOnLongScale = (idx, letters, gradingSegments) => {
 export const getLettersOnShortScale = (idx, letters, intl) => {
   const END_OF_SCALE_NAME = intl.formatMessage(messages.segmentFailGradingText);
 
-  return (idx === 1 ? letters[idx - 1].toUpperCase() : END_OF_SCALE_NAME);
+  return (idx === 1 ? letters[idx - 1] : END_OF_SCALE_NAME);
 };
 
 /**

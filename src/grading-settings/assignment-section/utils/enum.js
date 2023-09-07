@@ -15,5 +15,5 @@ export const defaultAssignmentsPropTypes = {
   dropCount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   shortLabel: PropTypes.string,
   weight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  id: PropTypes.number,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };

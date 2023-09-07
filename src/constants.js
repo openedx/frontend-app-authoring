@@ -23,3 +23,5 @@ export const NOTIFICATION_MESSAGES = {
   duplicating: 'Duplicating',
   deleting: 'Deleting',
 };
+
+export const DEFAULT_TIME_STAMP = '00:00';

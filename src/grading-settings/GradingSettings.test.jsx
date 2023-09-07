@@ -61,7 +61,7 @@ describe('<GradingSettings />', () => {
       expect(segmentInputs).toHaveLength(5);
       const segmentInput = segmentInputs[1];
       fireEvent.change(segmentInput, { target: { value: 'Test' } });
-      expect(segmentInput).toHaveValue('TEST');
+      expect(segmentInput).toHaveValue('Test');
       expect(getByTestId('grading-settings-save-alert')).toBeVisible();
     });
   });
@@ -73,7 +73,7 @@ describe('<GradingSettings />', () => {
       const segmentInput = segmentInputs[1];
       fireEvent.change(segmentInput, { target: { value: 'Test' } });
       fireEvent.click(getByText(messages.buttonCancelText.defaultMessage));
-      expect(segmentInput).toHaveValue('A');
+      expect(segmentInput).toHaveValue('a');
     });
   });
   it('should save segment input changes and display saving message', async () => {

@@ -9,6 +9,10 @@ const messages = defineMessages({
     id: 'course-authoring.grading-settings.deadline.description',
     defaultMessage: 'Leeway on due dates',
   },
+  gracePeriodOnDeadlineErrorMsg: {
+    id: 'course-authoring.grading-settings.deadline.error.message',
+    defaultMessage: 'Grace period must be specified in {timeFormat} format.',
+  },
 });
 
 export default messages;
