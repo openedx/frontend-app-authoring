@@ -93,4 +93,15 @@ describe('<CourseStepper />', () => {
     expect(percentElement).toBeInTheDocument();
     expect(percentElement).toHaveTextContent(`${percent}%`);
   });
+
+  it('shows null when steps length equal to zero', () => {
+    const { queryByTestId } = render(
+      <IntlProvider locale="en">
+        <CourseStepper steps={[]} activeKey={0} />
+      </IntlProvider>,
+    );
+
+    const steps = queryByTestId('[data-testid="course-stepper__step"]');
+    expect(steps).toBe(null);
+  });
 });

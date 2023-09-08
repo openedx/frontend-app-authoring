@@ -1,5 +1,5 @@
 import React from 'react';
-import { initializeMockApp } from '@edx/frontend-platform';
+import { getConfig, initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -7,14 +7,19 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { Helmet } from 'react-helmet';
 
+import Cookies from 'universal-cookie';
 import initializeStore from '../store';
+import stepperMessages from './export-stepper/messages';
+import modalErrorMessages from './export-modal-error/messages';
+import { getExportStatusApiUrl, postExportCourseApiUrl } from './data/api';
+import { EXPORT_STAGES } from './data/constants';
 import { exportPageMock } from './__mocks__';
 import messages from './messages';
 import CourseExportPage from './CourseExportPage';
-import { postExportCourseApiUrl } from './data/api';
 
 let store;
 let axiosMock;
+let cookies;
 const courseId = '123';
 const courseName = 'About Node JS';
 
@@ -23,6 +28,14 @@ jest.mock('../generic/model-store', () => ({
     name: courseName,
   }),
 }));
+
+jest.mock('universal-cookie', () => {
+  const mCookie = {
+    get: jest.fn(),
+    set: jest.fn(),
+  };
+  return jest.fn(() => mCookie);
+});
 
 const RootWrapper = () => (
   <AppProvider store={store}>
@@ -47,6 +60,8 @@ describe('<CourseExportPage />', () => {
     axiosMock
       .onGet(postExportCourseApiUrl(courseId))
       .reply(200, exportPageMock);
+    cookies = new Cookies();
+    cookies.get.mockReturnValue(null);
   });
   it('should render page title correctly', async () => {
     render(<RootWrapper />);
@@ -74,6 +89,39 @@ describe('<CourseExportPage />', () => {
     const { getByText, container } = render(<RootWrapper />);
     const button = container.querySelector('.btn-primary');
     fireEvent.click(button);
-    expect(getByText(/Preparing to start the export/i)).toBeInTheDocument();
+    expect(getByText(stepperMessages.stepperPreparingDescription.defaultMessage)).toBeInTheDocument();
+  });
+  it('should show modal error', async () => {
+    axiosMock
+      .onGet(getExportStatusApiUrl(courseId))
+      .reply(200, { exportStatus: EXPORT_STAGES.EXPORTING, exportError: { rawErrorMsg: 'test error', editUnitUrl: 'http://test-url.test' } });
+    const { getByText, queryByText, container } = render(<RootWrapper />);
+    const startExportButton = container.querySelector('.btn-primary');
+    fireEvent.click(startExportButton);
+    // eslint-disable-next-line no-promise-executor-return
+    await new Promise((r) => setTimeout(r, 3500));
+    expect(getByText(/There has been a failure to export to XML at least one component. It is recommended that you go to the edit page and repair the error before attempting another export. Please check that all components on the page are valid and do not display any error messages. The raw error message is: test error/i));
+    const closeModalWindowButton = getByText('Return to export');
+    fireEvent.click(closeModalWindowButton);
+    expect(queryByText(modalErrorMessages.errorCancelButtonUnit.defaultMessage)).not.toBeInTheDocument();
+    fireEvent.click(closeModalWindowButton);
+  });
+  it('should fetch status without clicking when cookies has', async () => {
+    cookies.get.mockReturnValue({ date: 1679787000 });
+    const { getByText } = render(<RootWrapper />);
+    expect(getByText(stepperMessages.stepperPreparingDescription.defaultMessage)).toBeInTheDocument();
+  });
+  it('should show download path', async () => {
+    axiosMock
+      .onGet(getExportStatusApiUrl(courseId))
+      .reply(200, { exportStatus: EXPORT_STAGES.SUCCESS, exportOutput: '/test-download-path.test' });
+    const { getByText, container } = render(<RootWrapper />);
+    const startExportButton = container.querySelector('.btn-primary');
+    fireEvent.click(startExportButton);
+    // eslint-disable-next-line no-promise-executor-return
+    await new Promise((r) => setTimeout(r, 3500));
+    const downloadButton = getByText(stepperMessages.downloadCourseButtonTitle.defaultMessage);
+    expect(downloadButton).toBeInTheDocument();
+    expect(downloadButton.getAttribute('href')).toEqual(`${getConfig().STUDIO_BASE_URL}/test-download-path.test`);
   });
 });
