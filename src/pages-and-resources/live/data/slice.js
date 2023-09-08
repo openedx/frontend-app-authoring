@@ -14,6 +14,7 @@ const slice = createSlice({
     selectedAppId: null,
     status: RequestStatus.IN_PROGRESS,
     saveStatus: RequestStatus.SUCCESSFUL,
+    isZoomGlobalCredSet: false,
   },
   reducers: {
     loadApps: (state, { payload }) => {
@@ -33,6 +34,10 @@ const slice = createSlice({
       const { status } = payload;
       state.saveStatus = status;
     },
+    updateIsZoomGlobalCredSet: (state, { payload }) => {
+      const { isZoomGlobalCredSet } = payload;
+      state.isZoomGlobalCredSet = isZoomGlobalCredSet;
+    },
   },
 });
 
@@ -41,6 +46,7 @@ export const {
   selectApp,
   updateStatus,
   updateSaveStatus,
+  updateIsZoomGlobalCredSet,
 } = slice.actions;
 
 export const {

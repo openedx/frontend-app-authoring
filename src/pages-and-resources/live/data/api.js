@@ -49,6 +49,7 @@ export function normalizeSettings(data) {
     tier = data.free_tier === true ? bbbPlanTypes.free : bbbPlanTypes.commercial;
   }
   return {
+    isZoomGlobalCredSet: data.global_zoom_creds_enabled,
     enabled: data.enabled,
     piiSharingAllowed: data.pii_sharing_allowed,
     appConfig: {

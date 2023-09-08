@@ -10,7 +10,7 @@ import {
   fetchLiveData, saveLiveConfiguration,
   saveLiveConfigurationAsDraft,
 } from './data/thunks';
-import { selectApp } from './data/slice';
+import { selectApp, updateIsZoomGlobalCredSet } from './data/slice';
 import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
 import { useModel } from '../../generic/model-store';
 import Loading from '../../generic/Loading';
@@ -28,6 +28,7 @@ const LiveSettings = ({
   const dispatch = useDispatch();
   const courseId = useSelector(state => state.courseDetail.courseId);
   const availableProviders = useSelector((state) => state.live.appIds);
+  const isZoomGlobalCredSet = useSelector((state) => state.live.isZoomGlobalCredSet);
   const {
     piiSharingAllowed, selectedAppId, enabled, status,
   } = useSelector(state => state.live);
@@ -80,9 +81,10 @@ const LiveSettings = ({
   };
 
   useEffect(() => {
-    if (isZoomBtnClicked) {
+    if (!isZoomGlobalCredSet && isZoomBtnClicked) {
       configureZoomGlobalSettingsIfExists(courseId);
       setIsZoomBtnClicked(false);
+      dispatch(updateIsZoomGlobalCredSet({ isZoomGlobalCredSet: true }));
     }
     dispatch(fetchLiveData(courseId));
   }, [courseId, isZoomBtnClicked]);
@@ -127,26 +129,28 @@ const LiveSettings = ({
             {values.provider === 'zoom' ? (
               <>
                 <ZoomSettings values={values} />
-                <StatefulButton
-                  name="zoom.global.creds.btn"
-                  id="zoom.global.creds.btn"
-                  // className={"nafath-authenticate-button"}
-                  variant="brand"
-                  state={
-                    // (setIsZoomBtnClicked && "pending") ||
-                    // (props.state.success && "complete") ||
-                    'default'
-                  }
-                  labels={{
-                    default: intl.formatMessage(
-                      messages['zoom.global.creds.btn'],
-                    ),
-                    pending: '',
-                  }}
-                  // disabled={registrationBtnClicked}
-                  onClick={() => setIsZoomBtnClicked(true)}
-                  // onMouseDown={(e) => e.preventDefault()}
-                />
+                {!isZoomGlobalCredSet && (
+                  <StatefulButton
+                    name="zoom.global.creds.btn"
+                    id="zoom.global.creds.btn"
+                    // className={"nafath-authenticate-button"}
+                    variant="brand"
+                    state={
+                      // (setIsZoomBtnClicked && "pending") ||
+                      // (props.state.success && "complete") ||
+                      'default'
+                    }
+                    labels={{
+                      default: intl.formatMessage(
+                        messages['zoom.global.creds.btn'],
+                      ),
+                      pending: '',
+                    }}
+                    // disabled={registrationBtnClicked}
+                    onClick={() => setIsZoomBtnClicked(true)}
+                    // onMouseDown={(e) => e.preventDefault()}
+                  />
+                )}
               </>
             ) : (
               <BBBSettings values={values} setFieldValue={setFieldValue} />
