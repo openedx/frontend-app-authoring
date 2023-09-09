@@ -1,14 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Icon, IconButton, Spinner,
-} from '@edx/paragon';
-import { Close } from '@edx/paragon/icons';
+import { Spinner } from '@edx/paragon';
 import './index.scss';
 import messages from './messages';
 import { VideoUploader } from './VideoUploader';
-import * as editorHooks from '../EditorContainer/hooks';
 
 export const VideoUploadEditor = (
   {
@@ -16,22 +12,13 @@ export const VideoUploadEditor = (
   },
 ) => {
   const [loading, setLoading] = React.useState(false);
-  const handleCancel = editorHooks.handleCancel({ onClose });
   const intl = useIntl();
 
   return (
     <div>
       {(!loading) ? (
-        <div className="marked-area">
-          <div className="d-flex justify-content-end close-button-container">
-            <IconButton
-              alt={intl.formatMessage(messages.closeButtonAltText)}
-              src={Close}
-              iconAs={Icon}
-              onClick={handleCancel}
-            />
-          </div>
-          <VideoUploader setLoading={setLoading} />
+        <div className="d-flex marked-area flex-column p-3">
+          <VideoUploader setLoading={setLoading} onClose={onClose} />
         </div>
       ) : (
         <div className="text-center p-6">
