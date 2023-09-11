@@ -13,17 +13,26 @@ class ReactStateOLXParser {
         hex: false,
       },
       preserveOrder: true,
+      // Ensure whitespace inside <pre> tags is preserved
+      trimValues: false,
+      // Parse <br> correctly
+      unpairedTags: ['br'],
     };
     const richTextBuilderOptions = {
       ignoreAttributes: false,
       attributeNamePrefix: '@_',
       suppressBooleanAttributes: false,
-      format: true,
+      // Avoid formatting as it adds unwanted newlines and whitespace,
+      // breaking <pre> tags
+      format: false,
       numberParseOptions: {
         leadingZeros: false,
         hex: false,
       },
       preserveOrder: true,
+      unpairedTags: ['br'],
+      // Output <br/> rather than <br>
+      suppressUnpairedNode: false,
     };
 
     this.richTextParser = new XMLParser(richTextParserOptions);
