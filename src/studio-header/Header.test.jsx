@@ -79,6 +79,11 @@ describe('Header', () => {
       const maintenanceButton = screen.queryByText(messages['header.user.menu.maintenance'].defaultMessage);
       expect(maintenanceButton).toBeNull();
     });
+    it('user menu should use avatar icon', async () => {
+      renderComponent(1280);
+      const avatarIcon = screen.getByTestId('avatar-icon');
+      expect(avatarIcon).toBeVisible();
+    });
   });
   describe('mobile', () => {
     beforeEach(async () => {
@@ -88,6 +93,7 @@ describe('Header', () => {
           username: 'abc123',
           administrator: true,
           roles: [],
+          avatar: '/imges/test.png',
         },
       });
       store = initializeStore({});
@@ -116,6 +122,11 @@ describe('Header', () => {
       await waitFor(() => fireEvent.click(userMenu));
       const maintenanceButton = screen.getByText(messages['header.user.menu.maintenance'].defaultMessage);
       expect(maintenanceButton).toBeVisible();
+    });
+    it('user menu should use avatar image', async () => {
+      renderComponent(1280);
+      const avatarImage = screen.getByTestId('avatar-image');
+      expect(avatarImage).toBeVisible();
     });
   });
 });
