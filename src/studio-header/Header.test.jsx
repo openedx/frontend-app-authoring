@@ -1,151 +1,121 @@
-/* eslint-disable react/jsx-no-constructed-context-values */
-// This file was copied from edx/frontend-component-header-edx.
-import React from 'react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppContext } from '@edx/frontend-platform/react';
-import { Context as ResponsiveContext } from 'react-responsive';
 import {
-  cleanup,
-  fireEvent,
   render,
+  fireEvent,
   screen,
+  waitFor,
 } from '@testing-library/react';
 
+import { initializeMockApp } from '@edx/frontend-platform';
+import { AppProvider } from '@edx/frontend-platform/react';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { Context as ResponsiveContext } from 'react-responsive';
+
+import initializeStore from '../store';
 import Header from './Header';
+import messages from './messages';
 
-describe('<Header />', () => {
-  function createComponent(screenWidth, component) {
-    return (
-      <ResponsiveContext.Provider value={{ width: screenWidth }}>
-        <IntlProvider locale="en" messages={{}}>
-          <AppContext.Provider value={{
-            authenticatedUser: {
-              userId: 'abc123',
-              username: 'edX',
-              roles: [],
-              administrator: false,
-            },
-            config: {
-              STUDIO_BASE_URL: process.env.STUDIO_BASE_URL,
-              LMS_BASE_URL: process.env.LMS_BASE_URL,
-              LOGIN_URL: process.env.LOGIN_URL,
-              LOGOUT_URL: process.env.LOGOUT_URL,
-            },
-          }}
-          >
-            {component}
-          </AppContext.Provider>
-        </IntlProvider>
-      </ResponsiveContext.Provider>
-    );
-  }
+let store;
 
-  it('renders desktop header correctly with API call', async () => {
-    const component = createComponent(
-      1280, (
-        <Header
-          courseId="course-v1:edX+DemoX+Demo_Course"
-          courseNumber="DemoX"
-          courseOrg="edX"
-          courseTitle="Demonstration Course"
-        />
-      ),
-    );
+const courseId = 'testEd123';
+const courseNumber = '123';
+const courseOrg = 'Ed';
+const courseTitle = 'test';
 
-    render(component);
-    expect(screen.getByTestId('course-org-number').textContent).toEqual(expect.stringContaining('edX DemoX'));
-    expect(screen.getByTestId('course-title').textContent).toEqual(expect.stringContaining('Demonstration Course'));
+const renderComponent = (screenWidth) => {
+  render(
+    <ResponsiveContext.Provider value={{ width: screenWidth }}>
+      <IntlProvider locale="en">
+        <AppProvider store={store}>
+          <Header
+            {...{
+              courseId, courseNumber, courseOrg, courseTitle,
+            }}
+          />
+        </AppProvider>
+      </IntlProvider>
+    </ResponsiveContext.Provider>,
+  );
+};
+
+describe('Header', () => {
+  describe('desktop', () => {
+    beforeEach(async () => {
+      initializeMockApp({
+        authenticatedUser: {
+          userId: 3,
+          username: 'abc123',
+          administrator: false,
+          roles: [],
+        },
+      });
+      store = initializeStore({});
+    });
+    it('course lock up should be visible', () => {
+      renderComponent(1280);
+      const courseLockUpBlock = screen.getByTestId('course-lock-up-block');
+      expect(courseLockUpBlock).toBeVisible();
+    });
+    it('mobile menu should not be visible', () => {
+      renderComponent(1280);
+      const mobileMenuButton = screen.queryByTestId('mobile-menu-button');
+      expect(mobileMenuButton).toBeNull();
+    });
+    it('desktop menu should be visible', () => {
+      renderComponent(1280);
+      const desktopMenu = screen.getByTestId('desktop-menu');
+      expect(desktopMenu).toBeVisible();
+    });
+    it('video uploads should be in content menu', async () => {
+      renderComponent(1280);
+      const contentMenu = screen.getAllByRole('button')[0];
+      await waitFor(() => fireEvent.click(contentMenu));
+      const videoUploadButton = screen.getByText(messages['header.links.videoUploads'].defaultMessage);
+      expect(videoUploadButton).toBeVisible();
+    });
+    it('maintenance should not be in user menu', async () => {
+      renderComponent(1280);
+      const userMenu = screen.getAllByRole('button')[3];
+      await waitFor(() => fireEvent.click(userMenu));
+      const maintenanceButton = screen.queryByText(messages['header.user.menu.maintenance'].defaultMessage);
+      expect(maintenanceButton).toBeNull();
+    });
   });
-
-  it('renders mobile header correctly with API call', async () => {
-    const component = createComponent(
-      500, (
-        <Header
-          courseId="course-v1:edX+DemoX+Demo_Course"
-          courseNumber="DemoX"
-          courseOrg="edX"
-          courseTitle="Demonstration Course"
-        />
-      ),
-    );
-
-    render(component);
-    expect(screen.getByTestId('edx-header-logo'));
-  });
-
-  it('renders desktop header correctly with bad API call', async () => {
-    const component = createComponent(
-      1280, (
-        <Header
-          courseId="course-v1:edX+DemoX+Demo_Course"
-          courseNumber={null}
-          courseOrg={null}
-          courseTitle="course-v1:edX+DemoX+Demo_Course"
-        />
-      ),
-    );
-
-    render(component);
-    expect(screen.getByTestId('course-title').textContent).toEqual(expect.stringContaining('course-v1:edX+DemoX+Demo_Course'));
-  });
-
-  it('renders mobile header correctly with bad API call', async () => {
-    const component = createComponent(
-      500, (
-        <Header
-          courseId="course-v1:edX+DemoX+Demo_Course"
-          courseNumber={null}
-          courseOrg={null}
-          courseTitle="course-v1:edX+DemoX+Demo_Course"
-        />
-      ),
-    );
-
-    render(component);
-    expect(screen.getByTestId('edx-header-logo'));
-  });
-
-  it('renders Video Uploads link', () => {
-    process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN = 'true';
-
-    const component = createComponent(
-      1280, (
-        <Header
-          courseId="course-v1:edX+DemoX+Demo_Course"
-          courseNumber="DemoX"
-          courseOrg="edX"
-          courseTitle="Demonstration Course"
-        />
-      ),
-    );
-
-    render(component);
-    fireEvent.click(screen.getByText('Content'));
-
-    expect(screen.getByText('Video Uploads')).toBeInTheDocument();
-  });
-
-  it('does not render Video Uploads link', () => {
-    process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN = 'false';
-
-    const component = createComponent(
-      1280, (
-        <Header
-          courseId="course-v1:edX+DemoX+Demo_Course"
-          courseNumber="DemoX"
-          courseOrg="edX"
-          courseTitle="Demonstration Course"
-        />
-      ),
-    );
-
-    render(component);
-    fireEvent.click(screen.getByText('Content'));
-
-    expect(screen.queryByText('Video Uploads')).toBeNull();
-  });
-
-  afterEach(() => {
-    cleanup();
+  describe('mobile', () => {
+    beforeEach(async () => {
+      initializeMockApp({
+        authenticatedUser: {
+          userId: 3,
+          username: 'abc123',
+          administrator: true,
+          roles: [],
+        },
+      });
+      store = initializeStore({});
+    });
+    it('course lock up should not be visible', async () => {
+      renderComponent(500);
+      const courseLockUpBlock = screen.queryByTestId('course-lock-up-block');
+      expect(courseLockUpBlock).toBeNull();
+    });
+    it('mobile menu should be visible', async () => {
+      renderComponent(500);
+      const mobileMenuButton = screen.getByTestId('mobile-menu-button');
+      expect(mobileMenuButton).toBeVisible();
+      await waitFor(() => fireEvent.click(mobileMenuButton));
+      const mobileMenu = screen.getByTestId('mobile-menu');
+      expect(mobileMenu).toBeVisible();
+    });
+    it('desktop menu should not be visible', () => {
+      renderComponent(500);
+      const desktopMenu = screen.queryByTestId('desktop-menu');
+      expect(desktopMenu).toBeNull();
+    });
+    it('maintenance should be in user menu', async () => {
+      renderComponent(500);
+      const userMenu = screen.getAllByRole('button')[1];
+      await waitFor(() => fireEvent.click(userMenu));
+      const maintenanceButton = screen.getByText(messages['header.user.menu.maintenance'].defaultMessage);
+      expect(maintenanceButton).toBeVisible();
+    });
   });
 });

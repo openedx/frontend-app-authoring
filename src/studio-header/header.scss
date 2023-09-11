@@ -3,7 +3,10 @@ $spacer: 1rem;
 $blue: #007DB8;
 $white: #FFFFFF;
 
-@import "./Menu/menu";
+.btn-tertiary:hover {
+  color: white;
+  background-color: #00262B;
+}
 
 .course-title-lockup {
   @media only screen and (max-width: 768px) {
@@ -15,6 +18,7 @@ $white: #FFFFFF;
     padding: .5rem;
     padding-right: $spacer;
     border-right: 1px solid #E5E5E5;
+    min-width: 70%;
   }
 
   overflow: hidden;
@@ -28,32 +32,44 @@ $white: #FFFFFF;
   }
 }
 
-.mobile-lockup {
-  max-width: 50%;
+.mobile-menu-container {
+  background-color: white;
+
+  .pgn__modal-popup__arrow::after {
+    border-top-color: white;
+  }
 }
 
 .dropdown-item a {
   text-decoration: none;
 }
 
-.icon-button {
-  display: inline-flex;
-  line-height: 3rem;
-  background: transparent;
-  vertical-align: middle;
-  text-align: center;
-  border: none;
-  height: 3rem;
-  width: 3rem;
-  padding: .75rem;
-  justify-content: center;
-  align-items: center;
+.mobile-menu-item {
+  padding: 8px 0;
 
-  &:hover,
-  &:focus {
-    background: rgb(0 0 0 / .1);
+  a {
+    color: #454545;
   }
 }
+
+// .icon-button {
+//   display: inline-flex;
+//   line-height: 3rem;
+//   background: transparent;
+//   vertical-align: middle;
+//   text-align: center;
+//   border: none;
+//   height: 3rem;
+//   width: 3rem;
+//   padding: .75rem;
+//   justify-content: center;
+//   align-items: center;
+
+//   &:hover,
+//   &:focus {
+//     background: rgb(0 0 0 / .1);
+//   }
+// }
 
 .site-header-mobile,
 .site-header-desktop {
