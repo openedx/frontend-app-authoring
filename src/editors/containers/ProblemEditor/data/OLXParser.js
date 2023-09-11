@@ -181,6 +181,9 @@ export class OLXParser {
     if (_.keys(widget).some((tag) => !permissableTags.includes(tag))) {
       throw new Error('Misc Tags, reverting to Advanced Editor');
     }
+    if (_.get(this.problem, `${problemType}.@_partial_credit`)) {
+      throw new Error('Partial credit not supported by GUI, reverting to Advanced Editor');
+    }
     const choice = _.get(widget, option);
     const isComplexAnswer = RichTextProblems.includes(problemType);
     if (_.isEmpty(choice)) {
@@ -401,6 +404,9 @@ export class OLXParser {
       'correcthint',
     );
     const { numericalresponse } = this.problem;
+    if (_.get(numericalresponse, '@_partial_credit')) {
+      throw new Error('Partial credit not supported by GUI, reverting to Advanced Editor');
+    }
     let answerFeedback = '';
     const answers = [];
     let responseParam = {};
