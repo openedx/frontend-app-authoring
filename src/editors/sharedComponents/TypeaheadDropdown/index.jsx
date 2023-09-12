@@ -45,7 +45,7 @@ class TypeaheadDropdown extends React.Component {
       options = options.filter((option) => (option.toLowerCase().includes(strToFind.toLowerCase())));
     }
 
-    return options.map((opt) => {
+    return options.sort().map((opt) => {
       let value = opt;
       if (value.length > 30) {
         value = value.substring(0, 30).concat('...');

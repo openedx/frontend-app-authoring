@@ -3,6 +3,7 @@ import {
   fireEvent,
   render,
   screen,
+  waitFor,
   within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -50,11 +51,11 @@ describe('common/OrganizationDropdown.jsx', () => {
     fireEvent.focusOut(formInput);
     expect(mockHandleBlur).toHaveBeenCalled();
   });
-  it('renders component with options', () => {
-    const newProps = { ...defaultProps, options: ['opt1', 'opt2'] };
+  it('renders component with options', async () => {
+    const newProps = { ...defaultProps, options: ['opt2', 'opt1'] };
     renderComponent(newProps);
     const formInput = screen.getByTestId('formControl');
-    fireEvent.click(formInput);
+    await waitFor(() => fireEvent.click(formInput));
     const optionsList = within(screen.getByTestId('dropdown-container')).getAllByRole('button');
     expect(optionsList.length).toEqual(newProps.options.length);
   });
