@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 

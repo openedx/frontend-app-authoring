@@ -1,10 +1,10 @@
-/* eslint-disable no-undef */
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Hyperlink, Stack } from '@edx/paragon';
 import { AppContext } from '@edx/frontend-platform/react';
 
+import { useHelpUrls } from '../../help-urls/hooks';
 import messages from './messages';
 
 const StatusBar = ({
@@ -19,7 +19,6 @@ const StatusBar = ({
   const {
     courseReleaseDate,
     highlightsEnabledForMessaging,
-    // highlightsDocUrl,
     checklist,
     isSelfPaced,
   } = statusBarData;
@@ -33,6 +32,7 @@ const StatusBar = ({
 
   const checkListTitle = `${completedCourseLaunchChecks + completedCourseBestPracticesChecks}/${totalCourseLaunchChecks + totalCourseBestPracticesChecks}`;
   const checklistDestination = new URL(`checklists/${courseId}`, config.STUDIO_BASE_URL).href;
+  const scheduleDestination = new URL(`settings/details/${courseId}#schedule`, config.STUDIO_BASE_URL).href;
 
   const {
     contentHighlights: contentHighlightsUrl,

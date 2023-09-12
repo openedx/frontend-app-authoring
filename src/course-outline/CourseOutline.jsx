@@ -10,16 +10,21 @@ import {
   CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
 } from '@edx/paragon/icons';
+import { useSelector } from 'react-redux';
 
+import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import { RequestStatus } from '../data/constants';
 import SubHeader from '../generic/sub-header/SubHeader';
+import ProcessingNotification from '../generic/processing-notification';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import AlertMessage from '../generic/alert-message';
+import getPageHeadTitle from '../generic/utils';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
 import OutlineSideBar from './outline-sidebar/OutlineSidebar';
 import StatusBar from './status-bar/StatusBar';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
 import SectionCard from './section-card/SectionCard';
+import HighlightsModal from './highlights-modal/HighlightsModal';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import PublishModal from './publish-modal/PublishModal';
 import DeleteModal from './delete-modal/DeleteModal';
@@ -30,6 +35,7 @@ const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
 
   const {
+    courseName,
     savingStatus,
     statusBarData,
     sectionsList,
@@ -41,9 +47,10 @@ const CourseOutline = ({ courseId }) => {
     isEnableHighlightsModalOpen,
     isInternetConnectionAlertFailed,
     isDisabledReindexButton,
+    isHighlightsModalOpen,
     isPublishModalOpen,
     isDeleteModalOpen,
-    // closeHighlightsModal,
+    closeHighlightsModal,
     closePublishModal,
     closeDeleteModal,
     openPublishModal,
@@ -54,11 +61,19 @@ const CourseOutline = ({ courseId }) => {
     handleEnableHighlightsSubmit,
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
+    handleHighlightsFormSubmit,
     handlePublishSectionSubmit,
     handleEditSectionSubmit,
     handleDeleteSectionSubmit,
     handleDuplicateSectionSubmit,
   } = useCourseOutline({ courseId });
+
+  document.title = getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle));
+
+  const {
+    isShow: isShowProcessingNotification,
+    title: processingNotificationTitle,
+  } = useSelector(getProcessingNotification);
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -149,6 +164,11 @@ const CourseOutline = ({ courseId }) => {
             onEnableHighlightsSubmit={handleEnableHighlightsSubmit}
           />
         </section>
+        <HighlightsModal
+          isOpen={isHighlightsModalOpen}
+          onClose={closeHighlightsModal}
+          onSubmit={handleHighlightsFormSubmit}
+        />
         <PublishModal
           isOpen={isPublishModalOpen}
           onClose={closePublishModal}
@@ -161,6 +181,10 @@ const CourseOutline = ({ courseId }) => {
         />
       </Container>
       <div className="alert-toast">
+        <ProcessingNotification
+          isShow={isShowProcessingNotification}
+          title={processingNotificationTitle}
+        />
         <InternetConnectionAlert
           isFailed={isInternetConnectionAlertFailed}
           isQueryPending={savingStatus === RequestStatus.PENDING}

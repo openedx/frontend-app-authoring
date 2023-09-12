@@ -1,11 +1,11 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, useToggle } from '@edx/paragon';
+import { Badge, Button, useToggle } from '@edx/paragon';
 import { Add as IconAdd } from '@edx/paragon/icons';
 
+import { setCurrentSection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
 import { getSectionStatus } from '../utils';
@@ -14,6 +14,7 @@ import messages from './messages';
 const SectionCard = ({
   section,
   children,
+  onOpenHighlightsModal,
   onOpenPublishModal,
   onClickNewSubsection,
   onEditSectionSubmit,
@@ -39,6 +40,7 @@ const SectionCard = ({
     visibleToStaffOnly,
     visibilityState,
     staffOnlyMessage,
+    highlights,
   } = section;
 
   const sectionStatus = getSectionStatus({
@@ -54,6 +56,7 @@ const SectionCard = ({
   };
 
   const handleClickMenuButton = () => {
+    dispatch(setCurrentSection(section));
   };
 
   const handleEditSubmit = (titleValue) => {
@@ -91,8 +94,14 @@ const SectionCard = ({
       />
       <div className="section-card__content" data-testid="section-card__content">
         <div className="outline-section__status">
-          {/* TODO: add section highlight widget */}
-          <h4 className="h4 font-weight-normal">Section status</h4>
+          <Button
+            className="section-card__highlights"
+            variant="tertiary"
+            onClick={() => onOpenHighlightsModal(section)}
+          >
+            <Badge className="highlights-badge">{highlights.length}</Badge>
+            <p className="m-0 text-black">Section highlights</p>
+          </Button>
         </div>
       </div>
       {isExpanded && (
@@ -129,8 +138,10 @@ SectionCard.propTypes = {
     visibleToStaffOnly: PropTypes.bool.isRequired,
     visibilityState: PropTypes.string.isRequired,
     staffOnlyMessage: PropTypes.bool.isRequired,
+    highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
   }).isRequired,
   children: PropTypes.node,
+  onOpenHighlightsModal: PropTypes.func.isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,
   onClickNewSubsection: PropTypes.func.isRequired,
   onEditSectionSubmit: PropTypes.func.isRequired,

@@ -7,6 +7,8 @@ export const SECTION_BADGE_STATUTES = {
 
 export const STAFF_ONLY = 'staff_only';
 
+export const HIGHLIGHTS_FIELD_MAX_LENGTH = 250;
+
 export const CHECKLIST_FILTERS = {
   ALL: 'ALL',
   SELF_PACED: 'SELF_PACED',

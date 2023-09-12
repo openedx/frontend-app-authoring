@@ -9,13 +9,13 @@ const slice = createSlice({
     loadingStatus: {
       outlineIndexLoadingStatus: RequestStatus.IN_PROGRESS,
       reIndexLoadingStatus: RequestStatus.IN_PROGRESS,
+      fetchSectionLoadingStatus: RequestStatus.IN_PROGRESS,
     },
     outlineIndexData: {},
     savingStatus: '',
     statusBarData: {
       courseReleaseDate: '',
       highlightsEnabledForMessaging: false,
-      highlightsDocUrl: '',
       isSelfPaced: false,
       checklist: {
         totalCourseLaunchChecks: 0,
@@ -25,6 +25,7 @@ const slice = createSlice({
       },
     },
     sectionsList: [],
+    currentSection: {},
   },
   reducers: {
     fetchOutlineIndexSuccess: (state, { payload }) => {
@@ -41,6 +42,12 @@ const slice = createSlice({
       state.loadingStatus = {
         ...state.loadingStatus,
         reIndexLoadingStatus: payload.status,
+      };
+    },
+    updateFetchSectionLoadingStatus: (state, { payload }) => {
+      state.loadingStatus = {
+        ...state.loadingStatus,
+        fetchSectionLoadingStatus: payload.status,
       };
     },
     updateStatusBar: (state, { payload }) => {
@@ -88,6 +95,7 @@ export const {
   updateStatusBar,
   fetchStatusBarChecklistSuccess,
   fetchStatusBarSelPacedSuccess,
+  updateFetchSectionLoadingStatus,
   updateSavingStatus,
   updateSectionList,
   setCurrentSection,

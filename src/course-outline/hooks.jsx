@@ -1,19 +1,22 @@
-/* eslint-disable no-undef */
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useToggle } from '@edx/paragon';
 
 import { RequestStatus } from '../data/constants';
-import { updateSavingStatus } from './data/slice';
+import {
+  setCurrentSection,
+  updateSavingStatus,
+} from './data/slice';
 import {
   getLoadingStatus,
   getOutlineIndexData,
   getSavingStatus,
   getStatusBarData,
-  // getSectionsList,
+  getSectionsList,
+  getCurrentSection,
 } from './data/selectors';
 import {
-  // deleteCourseSectionQuery,
+  deleteCourseSectionQuery,
   editCourseSectionQuery,
   duplicateCourseSectionQuery,
   enableCourseHighlightsEmailsQuery,
@@ -21,6 +24,8 @@ import {
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery,
   fetchCourseReindexQuery,
+  publishCourseSectionQuery,
+  updateCourseSectionHighlightsQuery,
 } from './data/thunk';
 
 const useCourseOutline = ({ courseId }) => {
@@ -30,13 +35,15 @@ const useCourseOutline = ({ courseId }) => {
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
-  // const sectionsList = useSelector(getSectionsList);
+  const sectionsList = useSelector(getSectionsList);
+  const currentSection = useSelector(getCurrentSection);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
   const [isSectionsExpanded, setSectionsExpanded] = useState(true);
   const [isDisabledReindexButton, setDisableReindexButton] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [isHighlightsModalOpen, openHighlightsModal, closeHighlightsModal] = useToggle(false);
   const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
 
@@ -71,8 +78,20 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
   };
 
+  const handleOpenHighlightsModal = (section) => {
+    dispatch(setCurrentSection(section));
+    openHighlightsModal();
+  };
+
+  const handleHighlightsFormSubmit = (highlights) => {
+    const dataToSend = Object.values(highlights).filter(Boolean);
+    dispatch(updateCourseSectionHighlightsQuery(currentSection.id, dataToSend));
+
+    closeHighlightsModal();
+  };
+
   const handlePublishSectionSubmit = () => {
-    // dispatch(publishCourseSectionQuery(currentSection.id));
+    dispatch(publishCourseSectionQuery(currentSection.id));
 
     closePublishModal();
   };
@@ -82,7 +101,7 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleDeleteSectionSubmit = () => {
-    // dispatch(deleteCourseSectionQuery(currentSection.id));
+    dispatch(deleteCourseSectionQuery(currentSection.id));
     closeDeleteModal();
   };
 
@@ -108,6 +127,7 @@ const useCourseOutline = ({ courseId }) => {
 
   return {
     savingStatus,
+    sectionsList,
     isLoading: outlineIndexLoadingStatus === RequestStatus.IN_PROGRESS,
     isReIndexShow: Boolean(reindexLink),
     showSuccessAlert,
@@ -119,6 +139,7 @@ const useCourseOutline = ({ courseId }) => {
     closePublishModal,
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
+    handleHighlightsFormSubmit,
     handlePublishSectionSubmit,
     handleEditSectionSubmit,
     statusBarData,

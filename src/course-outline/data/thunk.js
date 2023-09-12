@@ -1,5 +1,3 @@
-/* eslint-disable import/named */
-/* eslint-disable no-undef */
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import {
@@ -18,8 +16,10 @@ import {
   getCourseBestPractices,
   getCourseLaunch,
   getCourseOutlineIndex,
+  getCourseSection,
   publishCourseSection,
   restartIndexingOnCourse,
+  updateCourseSectionHighlights,
 } from './api';
 import {
   fetchOutlineIndexSuccess,
@@ -41,9 +41,9 @@ export function fetchCourseOutlineIndexQuery(courseId) {
 
     try {
       const outlineIndex = await getCourseOutlineIndex(courseId);
-      const { courseReleaseDate, courseStructure: { highlightsEnabledForMessaging, highlightsDocUrl } } = outlineIndex;
+      const { courseReleaseDate, courseStructure: { highlightsEnabledForMessaging } } = outlineIndex;
       dispatch(fetchOutlineIndexSuccess(outlineIndex));
-      dispatch(updateStatusBar({ courseReleaseDate, highlightsEnabledForMessaging, highlightsDocUrl }));
+      dispatch(updateStatusBar({ courseReleaseDate, highlightsEnabledForMessaging }));
 
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
@@ -118,7 +118,6 @@ export function fetchCourseReindexQuery(courseId, reindexLink) {
     try {
       await restartIndexingOnCourse(reindexLink);
       dispatch(updateReindexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-      // dispatch(fetchCourseOutlineIndexQuery(courseId));
 
       return true;
     } catch (error) {
