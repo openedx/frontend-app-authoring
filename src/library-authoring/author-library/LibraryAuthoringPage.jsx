@@ -61,6 +61,7 @@ import {
   fetchLibraryBlockMetadata,
   fetchLibraryBlockView,
   initializeBlock,
+  setLibraryBlockDisplayName,
 } from '../edit-block/data';
 import { blockStatesShape, blockViewShape } from '../edit-block/data/shapes';
 import commonMessages from '../common/messages';
@@ -79,7 +80,7 @@ const getHandlerUrl = async (blockId) => getXBlockHandlerUrl(blockId, XBLOCK_VIE
  */
 export const BlockPreviewBase = ({
   intl, block, view, canEdit, showPreviews, showDeleteModal,
-  setShowDeleteModal, showEditorModal, setShowEditorModal, setUpdatedBlock, library, editView, isLtiUrlGenerating,
+  setShowDeleteModal, showEditorModal, setShowEditorModal, setIsBlockUpdated, library, editView, isLtiUrlGenerating,
   ...props
 }) => (
   <Card className="w-auto m-2">
@@ -115,10 +116,15 @@ export const BlockPreviewBase = ({
         blockId={block.id}
         studioEndpointUrl={getConfig().STUDIO_BASE_URL}
         lmsEndpointUrl={getConfig().LMS_BASE_URL}
-        returnFunction={() => (resp) => {
+        returnFunction={() => (response) => {
           setShowEditorModal(false);
-          if (resp) {
-            setUpdatedBlock(true);
+          if (response && response.metadata) {
+            props.setLibraryBlockDisplayName({
+              blockId: block.id,
+              displayName: response.metadata.display_name,
+            });
+            // This state change triggers the iframe to reload.
+            setIsBlockUpdated(true);
           }
         }}
       />
@@ -157,21 +163,22 @@ export const BlockPreviewBase = ({
 );
 
 BlockPreviewBase.propTypes = {
-  intl: intlShape.isRequired,
   block: libraryBlockShape.isRequired,
-  library: libraryShape.isRequired,
-  view: fetchable(blockViewShape).isRequired,
   canEdit: PropTypes.bool.isRequired,
-  editView: PropTypes.string.isRequired,
-  showPreviews: PropTypes.bool.isRequired,
-  showDeleteModal: PropTypes.bool.isRequired,
-  setShowDeleteModal: PropTypes.func.isRequired,
-  showEditorModal: PropTypes.bool.isRequired,
-  setShowEditorModal: PropTypes.func.isRequired,
-  setUpdatedBlock: PropTypes.func.isRequired,
   deleteLibraryBlock: PropTypes.func.isRequired,
+  editView: PropTypes.string.isRequired,
   fetchBlockLtiUrl: PropTypes.func.isRequired,
+  intl: intlShape.isRequired,
   isLtiUrlGenerating: PropTypes.bool,
+  library: libraryShape.isRequired,
+  setIsBlockUpdated: PropTypes.func.isRequired,
+  setLibraryBlockDisplayName: PropTypes.func.isRequired,
+  setShowDeleteModal: PropTypes.func.isRequired,
+  setShowEditorModal: PropTypes.func.isRequired,
+  showDeleteModal: PropTypes.bool.isRequired,
+  showEditorModal: PropTypes.bool.isRequired,
+  showPreviews: PropTypes.bool.isRequired,
+  view: fetchable(blockViewShape).isRequired,
 };
 
 BlockPreviewBase.defaultProps = {
@@ -198,7 +205,7 @@ const BlockPreviewContainerBase = ({
   // This problem feels like there should be some way to generalize it and wrap it to avoid this issue.
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditorModal, setShowEditorModal] = useState(false);
-  const [updatedBlock, setUpdatedBlock] = useState(false);
+  const [isBlockUpdated, setIsBlockUpdated] = useState(false);
 
   useEffect(() => {
     props.initializeBlock({
@@ -212,15 +219,15 @@ const BlockPreviewContainerBase = ({
     if (needsMeta({ blockStates, id: block.id })) {
       props.fetchLibraryBlockMetadata({ blockId: block.id });
     }
-    if (needsView({ blockStates, id: block.id }) || updatedBlock) {
+    if (needsView({ blockStates, id: block.id }) || isBlockUpdated) {
       props.fetchLibraryBlockView({
         blockId: block.id,
         viewSystem: XBLOCK_VIEW_SYSTEM.Studio,
         viewName: 'student_view',
       });
-      setUpdatedBlock(false);
+      setIsBlockUpdated(false);
     }
-  }, [blockStates[block.id], showPreviews, updatedBlock]);
+  }, [blockStates[block.id], showPreviews, isBlockUpdated]);
 
   if (blockStates[block.id] === undefined) {
     return <LoadingPage loadingMessage={intl.formatMessage(messages['library.detail.loading.message'])} />;
@@ -252,20 +259,21 @@ const BlockPreviewContainerBase = ({
 
   return (
     <BlockPreview
-      view={blockView(block)}
       block={block}
       canEdit={canEdit}
-      editView={editView}
-      showPreviews={showPreviews}
-      showDeleteModal={showDeleteModal}
-      setShowDeleteModal={setShowDeleteModal}
-      showEditorModal={showEditorModal}
-      setShowEditorModal={setShowEditorModal}
       deleteLibraryBlock={props.deleteLibraryBlock}
-      library={library}
-      isLtiUrlGenerating={isLtiUrlGenerating}
+      editView={editView}
       fetchBlockLtiUrl={props.fetchBlockLtiUrl}
-      setUpdatedBlock={setUpdatedBlock}
+      isLtiUrlGenerating={isLtiUrlGenerating}
+      library={library}
+      setIsBlockUpdated={setIsBlockUpdated}
+      setLibraryBlockDisplayName={props.setLibraryBlockDisplayName}
+      setShowDeleteModal={setShowDeleteModal}
+      setShowEditorModal={setShowEditorModal}
+      showDeleteModal={showDeleteModal}
+      showEditorModal={showEditorModal}
+      showPreviews={showPreviews}
+      view={blockView(block)}
     />
   );
 };
@@ -276,19 +284,20 @@ BlockPreviewContainerBase.defaultProps = {
 };
 
 BlockPreviewContainerBase.propTypes = {
-  intl: intlShape.isRequired,
   block: libraryBlockShape.isRequired,
   blockStates: blockStatesShape.isRequired,
   blockView: PropTypes.func,
+  deleteLibraryBlock: PropTypes.func.isRequired,
   fetchBlockLtiUrl: PropTypes.func.isRequired,
   fetchLibraryBlockView: PropTypes.func.isRequired,
   fetchLibraryBlockMetadata: PropTypes.func.isRequired,
   initializeBlock: PropTypes.func.isRequired,
-  showPreviews: PropTypes.bool.isRequired,
-  deleteLibraryBlock: PropTypes.func.isRequired,
+  intl: intlShape.isRequired,
   library: libraryShape.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   ltiUrlClipboard: fetchable(PropTypes.object),
+  setLibraryBlockDisplayName: PropTypes.func.isRequired,
+  showPreviews: PropTypes.bool.isRequired,
 };
 
 const ButtonTogglesBase = ({ setShowPreviews, showPreviews, intl }) => (
@@ -318,11 +327,12 @@ const ButtonToggles = injectIntl(ButtonTogglesBase);
 const BlockPreviewContainer = connect(
   selectLibraryDetail,
   {
+    deleteLibraryBlock,
     fetchBlockLtiUrl,
     fetchLibraryBlockView,
     fetchLibraryBlockMetadata,
     initializeBlock,
-    deleteLibraryBlock,
+    setLibraryBlockDisplayName,
   },
 )(injectIntl(BlockPreviewContainerBase));
 

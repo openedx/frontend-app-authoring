@@ -62,6 +62,13 @@ export const baseLibraryDetailReducers = {
     state.ltiUrlClipboard.status = LOADING_STATUS.LOADING;
     state.ltiUrlClipboard.value = { blockId: payload.blockId };
   },
+  libraryBlockUpdateDisplayName: (state, { payload }) => {
+    const { blockId, displayName } = payload;
+    state.blocks.value.data = state.blocks.value.data.map((block) => ({
+      ...block,
+      display_name: (block.id === blockId) ? displayName : block.display_name,
+    }));
+  },
 };
 
 const slice = createSlice({

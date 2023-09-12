@@ -51,6 +51,10 @@ const slice = createSlice({
         state.focusedBlock = null;
       }
     },
+    libraryBlockUpdateDisplayName: (state, { payload }) => {
+      const { blockId, displayName } = payload;
+      state.blocks[blockId].metadata.value.display_name = displayName;
+    },
   },
 });
 

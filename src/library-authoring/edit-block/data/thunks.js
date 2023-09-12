@@ -84,6 +84,11 @@ export const fetchLibraryBlockOlx = annotateThunk(({ blockId }) => async (dispat
   }
 });
 
+export const setLibraryBlockDisplayName = annotateThunk(({ blockId, displayName }) => async (dispatch) => {
+  dispatch(actions.libraryBlockUpdateDisplayName({ blockId, displayName }));
+  dispatch(detailActions.libraryBlockUpdateDisplayName({ blockId, displayName }));
+});
+
 export const setLibraryBlockOlx = annotateThunk(({ blockId, olx }) => async (dispatch) => {
   try {
     dispatch(actions.libraryBlockRequest({ blockId, attr: 'olx' }));
