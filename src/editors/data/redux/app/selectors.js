@@ -86,12 +86,15 @@ export const isRaw = createSelector(
 );
 
 export const isLibrary = createSelector(
-  [module.simpleSelectors.learningContextId],
-  (learningContextId) => {
-    if (!learningContextId) {
-      return null;
-    }
+  [
+    module.simpleSelectors.learningContextId,
+    module.simpleSelectors.blockId,
+  ],
+  (learningContextId, blockId) => {
     if (learningContextId && learningContextId.startsWith('library-v1')) {
+      return true;
+    }
+    if (blockId && blockId.startsWith('lb:')) {
       return true;
     }
     return false;

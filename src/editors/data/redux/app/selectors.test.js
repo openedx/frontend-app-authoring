@@ -153,16 +153,40 @@ describe('app selectors unit tests', () => {
     it('is memoized based on studioView', () => {
       expect(selectors.isLibrary.preSelectors).toEqual([
         simpleSelectors.learningContextId,
+        simpleSelectors.blockId,
       ]);
     });
-    it('returns null if blockId is null', () => {
-      expect(selectors.isLibrary.cb(null)).toEqual(null);
+    describe('blockId is null', () => {
+      it('should return false when learningContextId null', () => {
+        expect(selectors.isLibrary.cb(null, null)).toEqual(false);
+      });
+      it('should return false when learningContextId defined', () => {
+        expect(selectors.isLibrary.cb(learningContextIdCourse, null)).toEqual(false);
+      });
     });
-    it('returns true if blockId starts with lib', () => {
-      expect(selectors.isLibrary.cb(learningContextIdLibrary)).toEqual(true);
+    describe('blockId is a course block', () => {
+      it('should return false when learningContextId null', () => {
+        expect(selectors.isLibrary.cb(null, 'block-v1:')).toEqual(false);
+      });
+      it('should return false when learningContextId defined', () => {
+        expect(selectors.isLibrary.cb(learningContextIdCourse, 'block-v1:')).toEqual(false);
+      });
     });
-    it('returns false if the blockId does not start with lib', () => {
-      expect(selectors.isLibrary.cb(learningContextIdCourse)).toEqual(false);
+    describe('blockId is a v2 library block', () => {
+      it('should return true when learningContextId null', () => {
+        expect(selectors.isLibrary.cb(null, 'lb:')).toEqual(true);
+      });
+      it('should return false when learningContextId is a v1 library', () => {
+        expect(selectors.isLibrary.cb(learningContextIdLibrary, 'lb:')).toEqual(true);
+      });
+    });
+    describe('blockId is a v1 library block', () => {
+      it('should return false when learningContextId null', () => {
+        expect(selectors.isLibrary.cb(null, 'library-v1')).toEqual(false);
+      });
+      it('should return true when learningContextId a v1 library', () => {
+        expect(selectors.isLibrary.cb(learningContextIdLibrary, 'library-v1')).toEqual(true);
+      });
     });
   });
 });
