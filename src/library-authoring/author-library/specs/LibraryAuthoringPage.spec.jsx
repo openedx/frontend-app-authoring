@@ -291,26 +291,27 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
     }));
   });
 
-  it('Filters blocks by other types', async () => {
-    const library = libraryFactory({
-      blockTypes: [
-        { block_type: 'squirrel', display_name: 'Squirrel' },
-        { block_type: 'fox', display_name: 'Fox' },
-        VIDEO_TYPE,
-      ],
-    });
-    await render(library, genState(library));
-    const filter = screen.getByTestId('filter-dropdown');
-    act(() => {
-      fireEvent.change(filter, { target: { value: '^' } });
-    });
-    await waitFor(() => expect(searchLibrary.fn).toHaveBeenCalledWith({
-      libraryId: library.id,
-      query: '',
-      types: ['squirrel', 'fox'],
-      paginationParams,
-    }));
-  });
+  /* Test is commented out until Advanced blocks are allowed as other filter is not neccesary */
+  // it('Filters blocks by other types', async () => {
+  //   const library = libraryFactory({
+  //     blockTypes: [
+  //       { block_type: 'squirrel', display_name: 'Squirrel' },
+  //       { block_type: 'fox', display_name: 'Fox' },
+  //       VIDEO_TYPE,
+  //     ],
+  //   });
+  //   await render(library, genState(library));
+  //   const filter = screen.getByTestId('filter-dropdown');
+  //   act(() => {
+  //     fireEvent.change(filter, { target: { value: '^' } });
+  //   });
+  //   await waitFor(() => expect(searchLibrary.fn).toHaveBeenCalledWith({
+  //     libraryId: library.id,
+  //     query: '',
+  //     types: ['squirrel', 'fox'],
+  //     paginationParams,
+  //   }));
+  // });
 
   it('Commits changes', async () => {
     const library = libraryFactory({ has_unpublished_changes: true });

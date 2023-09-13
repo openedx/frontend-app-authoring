@@ -340,7 +340,10 @@ const deriveTypeOptions = (blockTypes, intl) => {
   let typeOptions = blockTypes.map((typeSpec) => (
     { value: typeSpec.block_type, label: typeSpec.display_name }
   ));
-  typeOptions.push({ value: '^', label: intl.formatMessage(messages['library.detail.other_component']) });
+
+  /* push is commented out until Advanced blocks are allowed as other filter is not neccesary */
+  // typeOptions.push({ value: '^', label: intl.formatMessage(messages['library.detail.other_component']) });
+
   typeOptions = typeOptions.filter((entry) => BLOCK_FILTER_ORDER.includes(entry.value));
   typeOptions.sort((a, b) => {
     const aOrder = BLOCK_FILTER_ORDER.indexOf(a.value);
