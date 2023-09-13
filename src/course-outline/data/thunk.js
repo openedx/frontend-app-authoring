@@ -46,10 +46,8 @@ export function fetchCourseOutlineIndexQuery(courseId) {
       dispatch(updateStatusBar({ courseReleaseDate, highlightsEnabledForMessaging }));
 
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-      return true;
     } catch (error) {
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.FAILED }));
-      return false;
     }
   };
 }
@@ -103,10 +101,8 @@ export function enableCourseHighlightsEmailsQuery(courseId) {
 
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       dispatch(hideProcessingNotification());
-      return true;
     } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-      return false;
     }
   };
 }
@@ -118,11 +114,8 @@ export function fetchCourseReindexQuery(courseId, reindexLink) {
     try {
       await restartIndexingOnCourse(reindexLink);
       dispatch(updateReindexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-
-      return true;
     } catch (error) {
       dispatch(updateReindexLoadingStatus({ status: RequestStatus.FAILED }));
-      return false;
     }
   };
 }
@@ -135,12 +128,8 @@ export function fetchCourseSectionQuery(sectionId) {
       const data = await getCourseSection(sectionId);
       dispatch(updateSectionList(data));
       dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-
-      return true;
     } catch (error) {
       dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.FAILED }));
-
-      return false;
     }
   };
 }
@@ -158,11 +147,9 @@ export function updateCourseSectionHighlightsQuery(sectionId, highlights) {
           dispatch(hideProcessingNotification());
         }
       });
-      return true;
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-      return false;
     }
   };
 }
@@ -180,11 +167,9 @@ export function publishCourseSectionQuery(sectionId) {
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         }
       });
-      return true;
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-      return false;
     }
   };
 }
@@ -202,11 +187,9 @@ export function editCourseSectionQuery(sectionId, displayName) {
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         }
       });
-      return true;
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-      return false;
     }
   };
 }
@@ -242,12 +225,9 @@ export function duplicateCourseSectionQuery(sectionId, courseBlockId) {
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         }
       });
-
-      return true;
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-      return false;
     }
   };
 }

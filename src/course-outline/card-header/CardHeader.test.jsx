@@ -12,6 +12,7 @@ const onClickPublishMock = jest.fn();
 const onClickEditMock = jest.fn();
 const onClickDeleteMock = jest.fn();
 const onClickDuplicateMock = jest.fn();
+const closeFormMock = jest.fn();
 
 const cardHeaderProps = {
   title: 'Some title',
@@ -23,7 +24,7 @@ const cardHeaderProps = {
   onClickEdit: onClickEditMock,
   isFormOpen: false,
   onEditSubmit: jest.fn(),
-  closeForm: jest.fn(),
+  closeForm: closeFormMock,
   isDisabledEditField: false,
   onClickDelete: onClickDeleteMock,
   onClickDuplicate: onClickDuplicateMock,
@@ -130,14 +131,6 @@ describe('<CardHeader />', () => {
     expect(onClickEditMock).toHaveBeenCalled();
   });
 
-  it('calls onClickEdit when the button is clicked', () => {
-    const { getByTestId } = renderComponent();
-
-    const editButton = getByTestId('edit-button');
-    fireEvent.click(editButton);
-    expect(onClickEditMock).toHaveBeenCalled();
-  });
-
   it('check is field visible when isFormOpen is true', () => {
     const { getByTestId, queryByTestId } = renderComponent({
       ...cardHeaderProps,
@@ -146,6 +139,7 @@ describe('<CardHeader />', () => {
 
     expect(getByTestId('edit field')).toBeInTheDocument();
     expect(queryByTestId('section-card-header__expanded-btn')).not.toBeInTheDocument();
+    expect(queryByTestId('edit-button')).not.toBeInTheDocument();
   });
 
   it('check is field disabled when isDisabledEditField is true', () => {

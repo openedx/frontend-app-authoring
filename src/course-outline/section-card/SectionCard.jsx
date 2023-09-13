@@ -16,7 +16,6 @@ const SectionCard = ({
   children,
   onOpenHighlightsModal,
   onOpenPublishModal,
-  onClickNewSubsection,
   onEditSectionSubmit,
   savingStatus,
   onOpenDeleteModal,
@@ -68,6 +67,10 @@ const SectionCard = ({
     closeForm();
   };
 
+  const handleOpenHighlightsModal = () => {
+    onOpenHighlightsModal(section);
+  };
+
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       closeForm();
@@ -96,8 +99,9 @@ const SectionCard = ({
         <div className="outline-section__status">
           <Button
             className="section-card__highlights"
+            data-destid="section-card-highlights-button"
             variant="tertiary"
-            onClick={() => onOpenHighlightsModal(section)}
+            onClick={handleOpenHighlightsModal}
           >
             <Badge className="highlights-badge">{highlights.length}</Badge>
             <p className="m-0 text-black">Section highlights</p>
@@ -115,7 +119,6 @@ const SectionCard = ({
           className="mt-4"
           variant="outline-primary"
           iconBefore={IconAdd}
-          onClick={onClickNewSubsection}
           block
         >
           {intl.formatMessage(messages.newSubsectionButton)}
@@ -143,7 +146,6 @@ SectionCard.propTypes = {
   children: PropTypes.node,
   onOpenHighlightsModal: PropTypes.func.isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,
-  onClickNewSubsection: PropTypes.func.isRequired,
   onEditSectionSubmit: PropTypes.func.isRequired,
   savingStatus: PropTypes.string.isRequired,
   onOpenDeleteModal: PropTypes.func.isRequired,

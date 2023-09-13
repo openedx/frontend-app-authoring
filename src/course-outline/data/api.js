@@ -14,7 +14,7 @@ export const getCourseLaunchApiUrl = ({
   validateOras,
   all,
 }) => `${getApiBaseUrl()}/api/courses/v1/validation/${courseId}/?graded_only=${gradedOnly}&validate_oras=${validateOras}&all=${all}`;
-const getEnableHighlightsEmailsApiUrl = (courseId) => {
+export const getEnableHighlightsEmailsApiUrl = (courseId) => {
   const formattedCourseId = courseId.split('course-v1:')[1];
   return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@course+block@course`;
 };

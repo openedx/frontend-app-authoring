@@ -142,8 +142,6 @@ const CourseOutline = ({ courseId }) => {
                           onOpenDeleteModal={openDeleteModal}
                           onEditSectionSubmit={handleEditSectionSubmit}
                           onDuplicateSubmit={handleDuplicateSectionSubmit}
-                          // TODO add handler in Add new subsection feature
-                          onClickNewSubsection={() => ({})}
                           isSectionsExpanded={isSectionsExpanded}
                         />
                       )) : (

@@ -23,6 +23,10 @@
     &.collapsed > .pgn__icon {
       transform: rotate(180deg);
     }
+
+    & span:first-child {
+      color: $black;
+    }
   }
 
   .section-card-header__badge-status {
@@ -34,6 +38,10 @@
     border-radius: .375rem;
     border: 1px solid $light-300;
     margin: 0 .75rem;
+
+    & span:last-child {
+      color: $primary-700;
+    }
   }
 
   .section-card-header__menu {
