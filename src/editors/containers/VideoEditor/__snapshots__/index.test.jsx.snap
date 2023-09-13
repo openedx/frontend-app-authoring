@@ -41,7 +41,9 @@ exports[`VideoEditor snapshots renders as expected with default behavior 2`] = `
     <div
       className="video-editor"
     >
-      <VideoEditorModal />
+      <VideoEditorModal
+        isLibrary={false}
+      />
     </div>
   </EditorContainer>
 </Component>

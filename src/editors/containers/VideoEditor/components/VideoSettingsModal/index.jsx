@@ -21,21 +21,24 @@ import messages from '../../messages';
 
 export const VideoSettingsModal = ({
   onReturn,
+  isLibrary,
 }) => (
   <>
-    <Button
-      variant="link"
-      className="text-primary-500"
-      size="sm"
-      onClick={onReturn}
-      style={{
-        textDecoration: 'none',
-        marginLeft: '3px',
-      }}
-    >
-      <Icon src={ArrowBackIos} style={{ height: '13px' }} />
-      <FormattedMessage {...messages.replaceVideoButtonLabel} />
-    </Button>
+    {!isLibrary && (
+      <Button
+        variant="link"
+        className="text-primary-500"
+        size="sm"
+        onClick={onReturn}
+        style={{
+          textDecoration: 'none',
+          marginLeft: '3px',
+        }}
+      >
+        <Icon src={ArrowBackIos} style={{ height: '13px' }} />
+        <FormattedMessage {...messages.replaceVideoButtonLabel} />
+      </Button>
+    )}
     <ErrorSummary />
     <VideoPreviewWidget />
     <VideoSourceWidget />
@@ -49,8 +52,8 @@ export const VideoSettingsModal = ({
 );
 
 VideoSettingsModal.propTypes = {
-  showReturn: PropTypes.bool.isRequired,
   onReturn: PropTypes.func.isRequired,
+  isLibrary: PropTypes.func.isRequired,
 };
 
 export default VideoSettingsModal;

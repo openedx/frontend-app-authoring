@@ -22,6 +22,7 @@ export const VideoEditor = ({
   intl,
   // redux
   studioViewFinished,
+  isLibrary,
 }) => {
   const {
     error,
@@ -37,7 +38,7 @@ export const VideoEditor = ({
       >
         {studioViewFinished ? (
           <div className="video-editor">
-            <VideoEditorModal />
+            <VideoEditorModal {...{ isLibrary }} />
           </div>
         ) : (
           <div style={{
@@ -70,10 +71,12 @@ VideoEditor.propTypes = {
   intl: intlShape.isRequired,
   // redux
   studioViewFinished: PropTypes.bool.isRequired,
+  isLibrary: PropTypes.bool.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
   studioViewFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchStudioView }),
+  isLibrary: selectors.app.isLibrary(state),
 });
 
 export const mapDispatchToProps = {};

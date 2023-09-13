@@ -30,6 +30,7 @@ export const hooks = {
 const VideoEditorModal = ({
   close,
   isOpen,
+  isLibrary,
 }) => {
   const dispatch = useDispatch();
   const searchParams = new URLSearchParams(document.location.search);
@@ -42,6 +43,7 @@ const VideoEditorModal = ({
       close,
       isOpen,
       onReturn,
+      isLibrary,
     }}
     />
   );
@@ -53,5 +55,6 @@ VideoEditorModal.defaultProps = {
 VideoEditorModal.propTypes = {
   close: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  isLibrary: PropTypes.bool.isRequired,
 };
 export default VideoEditorModal;

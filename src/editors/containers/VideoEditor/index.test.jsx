@@ -23,6 +23,9 @@ jest.mock('../../data/redux', () => ({
     requests: {
       isFinished: jest.fn((state, params) => ({ isFailed: { state, params } })),
     },
+    app: {
+      isLibrary: jest.fn(state => ({ isLibrary: state })),
+    },
   },
 }));
 
@@ -31,6 +34,7 @@ describe('VideoEditor', () => {
     onClose: jest.fn().mockName('props.onClose'),
     intl: { formatMessage },
     studioViewFinished: false,
+    isLibrary: false,
   };
   describe('snapshots', () => {
     test('renders as expected with default behavior', () => {
@@ -46,6 +50,11 @@ describe('VideoEditor', () => {
       expect(
         mapStateToProps(testState).studioViewFinished,
       ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchStudioView }));
+    });
+    test('isLibrary from app.isLibrary', () => {
+      expect(
+        mapStateToProps(testState).isLibrary,
+      ).toEqual(selectors.app.isLibrary(testState));
     });
   });
   describe('mapDispatchToProps', () => {
