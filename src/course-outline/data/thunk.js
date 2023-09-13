@@ -31,10 +31,8 @@ export function fetchCourseOutlineIndexQuery(courseId) {
       dispatch(updateStatusBar({ courseReleaseDate, highlightsEnabledForMessaging, highlightsDocUrl }));
 
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-      return true;
     } catch (error) {
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.FAILED }));
-      return false;
     }
   };
 }
@@ -86,10 +84,8 @@ export function enableCourseHighlightsEmailsQuery(courseId) {
       dispatch(fetchCourseOutlineIndexQuery(courseId));
 
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-      return true;
     } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-      return false;
     }
   };
 }
@@ -101,12 +97,8 @@ export function fetchCourseReindexQuery(courseId, reindexLink) {
     try {
       await restartIndexingOnCourse(reindexLink);
       dispatch(updateReindexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
-      // dispatch(fetchCourseOutlineIndexQuery(courseId));
-
-      return true;
     } catch (error) {
       dispatch(updateReindexLoadingStatus({ status: RequestStatus.FAILED }));
-      return false;
     }
   };
 }

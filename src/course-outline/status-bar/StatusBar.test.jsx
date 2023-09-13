@@ -101,4 +101,12 @@ describe('<StatusBar />', () => {
     fireEvent.click(enableHighlightsButton);
     expect(openEnableHighlightsModalMock).toHaveBeenCalledTimes(1);
   });
+
+  it('not render component when isLoading is true', () => {
+    const { queryByTestId } = renderComponent({
+      isLoading: true,
+    });
+
+    expect(queryByTestId('outline-status-bar')).not.toBeInTheDocument();
+  });
 });

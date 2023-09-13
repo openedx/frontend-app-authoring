@@ -66,4 +66,20 @@ describe('<HeaderNavigations />', () => {
     fireEvent.click(viewLiveButton);
     expect(handleViewLiveMock).toHaveBeenCalledTimes(1);
   });
+
+  it('render collapse button correctly', () => {
+    const { getByRole } = renderComponent({
+      isSectionsExpanded: true,
+    });
+
+    expect(getByRole('button', { name: messages.collapseAllButton.defaultMessage })).toBeInTheDocument();
+  });
+
+  it('render expand button correctly', () => {
+    const { getByRole } = renderComponent({
+      isSectionsExpanded: false,
+    });
+
+    expect(getByRole('button', { name: messages.expandAllButton.defaultMessage })).toBeInTheDocument();
+  });
 });

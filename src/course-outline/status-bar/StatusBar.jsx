@@ -40,7 +40,7 @@ const StatusBar = ({
   }
 
   return (
-    <Stack direction="horizontal" gap={3.5} className="outline-status-bar">
+    <Stack direction="horizontal" gap={3.5} className="outline-status-bar" data-testid="outline-status-bar">
       <div className="outline-status-bar__item">
         <h5 className="h5">{intl.formatMessage(messages.startDateTitle)}</h5>
         <Hyperlink
