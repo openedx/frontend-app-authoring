@@ -41,7 +41,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with default
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advanced problem
+          Blank problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -299,7 +299,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advanced problem
+          Blank problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -557,7 +557,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advanced problem
+          Blank problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -815,7 +815,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advanced problem
+          Blank problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -1073,7 +1073,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advanced problem
+          Blank problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -1331,7 +1331,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advanced problem
+          Blank problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -1589,7 +1589,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advanced problem
+          Blank problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
@@ -1847,7 +1847,7 @@ exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problem
           id="blankadvanced"
           value="blankadvanced"
         >
-          Blank advanced problem
+          Blank problem
         </Radio>
         <ActionRow.Spacer />
       </ActionRow>
