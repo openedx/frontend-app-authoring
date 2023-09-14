@@ -7,32 +7,24 @@
 }
 
 .pgn__dropzone {
-  height: 100vh;
+  height: 96vh;
   width: 100%;
-}
-
-.video-id-container {
-  width: 100%;
-  justify-content: center;
 }
 
 .url-submit-button {
   position: absolute;
-  left: 85%;
+  margin-left: 17rem;
+  font-size: 0.75rem;
 }
 
 .video-id-prompt {
-  position: absolute;
-  top: 65%;
-  left: 50%;
-  transform: translateX(-50%);
 
   input::placeholder {
     color: #454545;
     // color: #5E35B1;
-    font-family: 'Inter';
-    font-weight: 500;
-    word-wrap: break-word;
+    font-weight: '500';
+    word-wrap: 'break-word';
+    font-size: 0.875rem !important;
   }
 
   button {
@@ -45,8 +37,13 @@
   }
 }
 
-.close-button-container {
-  position: absolute;
-  top: 25px;
-  right: 30px;
+.form-control {
+  font-size: 0.875rem !important;
+  width: 308px !important;
+  height: 44px !important;
+}
+
+.pgn__icon.pgn__icon__lg {
+  width: 3.625rem !important;
+  height: 3.625rem !important;
 }
