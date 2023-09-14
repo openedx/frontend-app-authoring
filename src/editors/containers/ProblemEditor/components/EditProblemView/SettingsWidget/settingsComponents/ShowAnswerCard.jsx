@@ -18,6 +18,7 @@ export const ShowAnswerCard = ({
   // redux
   studioEndpointUrl,
   learningContextId,
+  isLibrary,
 }) => {
   const {
     handleShowAnswerChange,
@@ -32,11 +33,13 @@ export const ShowAnswerCard = ({
           <FormattedMessage {...messages.showAnswerSettingText} />
         </span>
       </div>
-      <div className="pb-4">
-        <Hyperlink destination={`${studioEndpointUrl}/settings/advanced/${learningContextId}#showanswer`} target="_blank">
-          <FormattedMessage {...messages.advancedSettingsLinkText} />
-        </Hyperlink>
-      </div>
+      {!isLibrary && (
+        <div className="pb-4">
+          <Hyperlink destination={`${studioEndpointUrl}/settings/advanced/${learningContextId}#showanswer`} target="_blank">
+            <FormattedMessage {...messages.advancedSettingsLinkText} />
+          </Hyperlink>
+        </div>
+      )}
       <Form.Group className="pb-0 mb-0">
         <Form.Control
           as="select"
@@ -90,16 +93,20 @@ ShowAnswerCard.propTypes = {
   solutionExplanation: PropTypes.string,
   updateSettings: PropTypes.func.isRequired,
   studioEndpointUrl: PropTypes.string.isRequired,
-  learningContextId: PropTypes.string.isRequired,
-  defaultValue: PropTypes.string.isRequired,
+  learningContextId: PropTypes.string,
+  isLibrary: PropTypes.bool.isRequired,
+  defaultValue: PropTypes.string,
 };
 ShowAnswerCard.defaultProps = {
   solutionExplanation: '',
+  learningContextId: null,
+  defaultValue: 'finished',
 };
 
 export const mapStateToProps = (state) => ({
   studioEndpointUrl: selectors.app.studioEndpointUrl(state),
   learningContextId: selectors.app.learningContextId(state),
+  isLibrary: selectors.app.isLibrary(state),
 });
 
 export const mapDispatchToProps = {};

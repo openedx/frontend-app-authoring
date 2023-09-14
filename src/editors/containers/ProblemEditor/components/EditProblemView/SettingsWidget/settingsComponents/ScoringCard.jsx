@@ -17,6 +17,7 @@ export const ScoringCard = ({
   // redux
   studioEndpointUrl,
   learningContextId,
+  isLibrary,
 }) => {
   const {
     handleUnlimitedChange,
@@ -76,9 +77,11 @@ export const ScoringCard = ({
           </div>
         </Form.Checkbox>
       </Form.Group>
-      <Hyperlink destination={`${studioEndpointUrl}/settings/advanced/${learningContextId}#max_attempts`} target="_blank">
-        <FormattedMessage {...messages.advancedSettingsLinkText} />
-      </Hyperlink>
+      {!isLibrary && (
+        <Hyperlink destination={`${studioEndpointUrl}/settings/advanced/${learningContextId}#max_attempts`} target="_blank">
+          <FormattedMessage {...messages.advancedSettingsLinkText} />
+        </Hyperlink>
+      )}
     </SettingsOption>
   );
 };
@@ -88,15 +91,22 @@ ScoringCard.propTypes = {
   // eslint-disable-next-line
   scoring: PropTypes.any.isRequired,
   updateSettings: PropTypes.func.isRequired,
-  defaultValue: PropTypes.number.isRequired,
+  defaultValue: PropTypes.number,
   // redux
   studioEndpointUrl: PropTypes.string.isRequired,
-  learningContextId: PropTypes.string.isRequired,
+  learningContextId: PropTypes.string,
+  isLibrary: PropTypes.bool.isRequired,
+};
+
+ScoringCard.defaultProps = {
+  learningContextId: null,
+  defaultValue: null,
 };
 
 export const mapStateToProps = (state) => ({
   studioEndpointUrl: selectors.app.studioEndpointUrl(state),
   learningContextId: selectors.app.learningContextId(state),
+  isLibrary: selectors.app.isLibrary(state),
 });
 
 export const mapDispatchToProps = {};

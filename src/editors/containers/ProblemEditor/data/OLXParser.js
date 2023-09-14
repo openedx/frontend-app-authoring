@@ -3,7 +3,7 @@
 
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import _ from 'lodash-es';
-import { ProblemTypeKeys, RichTextProblems } from '../../../data/constants/problem';
+import { ProblemTypeKeys, RichTextProblems, settingsOlxAttributes } from '../../../data/constants/problem';
 
 export const indexToLetterMap = [...Array(26)].map((val, i) => String.fromCharCode(i + 65));
 
@@ -619,7 +619,7 @@ export class OLXParser {
       return {};
     }
 
-    if (Object.keys(this.problem).some((key) => key.indexOf('@_') !== -1)) {
+    if (Object.keys(this.problem).some((key) => key.indexOf('@_') !== -1 && !settingsOlxAttributes.includes(key))) {
       throw new Error('Misc Attributes asscoiated with problem, opening in advanced editor');
     }
 

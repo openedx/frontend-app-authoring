@@ -16,13 +16,13 @@ describe('ScoringCard', () => {
       number: 5,
     },
     updateSettings: jest.fn().mockName('args.updateSettings'),
-    defaultValue: 1,
     intl: { formatMessage },
   };
 
   const props = {
     scoring,
     intl: { formatMessage },
+    defaultValue: 1,
   };
 
   const scoringCardHooksProps = {

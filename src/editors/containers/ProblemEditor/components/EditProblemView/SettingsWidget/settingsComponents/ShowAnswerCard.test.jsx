@@ -14,6 +14,7 @@ jest.mock('../../../../../../data/redux', () => ({
     app: {
       studioEndpointUrl: jest.fn(state => ({ studioEndpointUrl: state })),
       learningContextId: jest.fn(state => ({ learningContextId: state })),
+      isLibrary: jest.fn(state => ({ isLibrary: state })),
     },
   },
   thunkActions: {

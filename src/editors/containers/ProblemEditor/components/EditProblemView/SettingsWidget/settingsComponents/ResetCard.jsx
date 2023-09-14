@@ -14,6 +14,7 @@ export const ResetCard = ({
   // inject
   intl,
 }) => {
+  const isLibrary = useSelector(selectors.app.isLibrary);
   const { setResetTrue, setResetFalse } = resetCardHooks(updateSettings);
   const advancedSettingsLink = `${useSelector(selectors.app.studioEndpointUrl)}/settings/advanced/${useSelector(selectors.app.learningContextId)}#show_reset_button`;
   return (
@@ -28,11 +29,13 @@ export const ResetCard = ({
           <FormattedMessage {...messages.resetSettingText} />
         </span>
       </div>
-      <div className="spacedMessage">
-        <Hyperlink destination={advancedSettingsLink} target="_blank">
-          <FormattedMessage {...messages.advancedSettingsLinkText} />
-        </Hyperlink>
-      </div>
+      {!isLibrary && (
+        <div className="spacedMessage">
+          <Hyperlink destination={advancedSettingsLink} target="_blank">
+            <FormattedMessage {...messages.advancedSettingsLinkText} />
+          </Hyperlink>
+        </div>
+      )}
       <ButtonGroup size="sm" className="resetSettingsButtons mb-2">
         <Button variant={showResetButton ? 'outline-primary' : 'primary'} size="sm" onClick={setResetFalse}>
           <FormattedMessage {...messages.resetSettingsFalse} />

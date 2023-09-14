@@ -62,7 +62,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card 1`] = `
     </Form.Checkbox>
   </Form.Group>
   <Hyperlink
-    destination="undefined/settings/advanced/undefined#max_attempts"
+    destination="undefined/settings/advanced/null#max_attempts"
     target="_blank"
   >
     <FormattedMessage
@@ -136,7 +136,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card max attempts 1`] = 
     </Form.Checkbox>
   </Form.Group>
   <Hyperlink
-    destination="undefined/settings/advanced/undefined#max_attempts"
+    destination="undefined/settings/advanced/null#max_attempts"
     target="_blank"
   >
     <FormattedMessage
@@ -210,7 +210,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card zero zero weight 1`
     </Form.Checkbox>
   </Form.Group>
   <Hyperlink
-    destination="undefined/settings/advanced/undefined#max_attempts"
+    destination="undefined/settings/advanced/null#max_attempts"
     target="_blank"
   >
     <FormattedMessage
