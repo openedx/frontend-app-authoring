@@ -6,7 +6,7 @@ import {
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@edx/paragon';
-import { history } from '@edx/frontend-platform';
+import { getConfig } from '@edx/frontend-platform';
 
 import { getFormattedSuccessDate } from '../../export-page/utils';
 import { RequestStatus } from '../../data/constants';
@@ -50,7 +50,7 @@ const ImportStepper = ({ intl, courseId }) => {
     successTitle += formattedSuccessDate;
   }
 
-  const handleRedirectCourseOutline = () => history.push(`/course/${courseId}/outline`);
+  const handleRedirectCourseOutline = () => window.location.replace(`${getConfig().STUDIO_BASE_URL}/course/${courseId}`);
 
   const steps = [
     {
