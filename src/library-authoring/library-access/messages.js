@@ -156,6 +156,16 @@ const messages = defineMessages({
     defaultMessage: 'Are you sure you want to delete {email} from the library "{library}"?',
     description: 'Body of user removal confirmation modal.',
   },
+  'library.access.modal.remove.footer.cancel': {
+    id: 'library.access.modal.remove.footer.cancel',
+    defaultMessage: 'Cancel',
+    description: 'Label for cancel button in footer of remove modal',
+  },
+  'library.access.modal.remove.footer.delete': {
+    id: 'library.access.modal.remove.footer.delete',
+    defaultMessage: 'Delete',
+    description: 'Label for delete button in footer of remove modal',
+  },
   'library.access.modal.remove_admin.title': {
     id: 'library.access.modal.remove_admin.title',
     defaultMessage: 'Are you sure?',

@@ -54,7 +54,7 @@ const LibraryAccessPage = ({
           <ActionRow.Spacer />
           {isAdmin && (
             <Button
-              variant="success"
+              variant="primary"
               onClick={() => setShowAdd(true)}
             >
               <FontAwesomeIcon icon={faPlus} className="pr-1 icon-inline" />

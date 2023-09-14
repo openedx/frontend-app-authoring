@@ -4,10 +4,13 @@ Component for displaying and modifying a user's access level for a library.
 import {
   ActionRow,
   Badge,
-  Button, Card, ModalDialog,
+  Button,
+  Card,
+  Icon,
+  IconButton,
+  ModalDialog,
 } from '@edx/paragon';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { DeleteOutline } from '@edx/paragon/icons';
 import React, { useContext, useState } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { AppContext } from '@edx/frontend-platform/react';
@@ -21,7 +24,7 @@ import messages from './messages';
 
 export const UserAccessWidget = ({
   intl, library, user, multipleAdmins, setAccessLevel, isUser, showRemoveModal, setShowRemoveModal,
-  isAdmin, adminLocked,
+  isAdmin, adminLocked, removeAccess,
 }) => (
   <Card className="mb-4 p-3">
     <Badge className={`position-absolute ml-1 permy ${user.access_level}`}>
@@ -63,16 +66,14 @@ export const UserAccessWidget = ({
         )}
         {(!((user.access_level === LIBRARY_ACCESS.ADMIN) && adminLocked)) && (
         <>
-          <Button
-            size="lg"
-            variant="danger"
+          <IconButton
+            src={DeleteOutline}
+            iconAs={Icon}
             onClick={() => setShowRemoveModal(true)}
             aria-label={
               intl.formatMessage(messages['library.access.remove_user'])
             }
-          >
-            <FontAwesomeIcon icon={faTrash} />
-          </Button>
+          />
           <ModalDialog
             isOpen={showRemoveModal}
             onClose={() => setShowRemoveModal(false)}
@@ -90,9 +91,16 @@ export const UserAccessWidget = ({
             </ModalDialog.Body>
             <ModalDialog.Footer>
               <ActionRow>
-                <ModalDialog.CloseButton variant="link">
-                  Close
+                <ModalDialog.CloseButton variant="tertiary">
+                  {intl.formatMessage(
+                    messages['library.access.modal.remove.footer.cancel'],
+                  )}
                 </ModalDialog.CloseButton>
+                <Button onClick={removeAccess}>
+                  {intl.formatMessage(
+                    messages['library.access.modal.remove.footer.delete'],
+                  )}
+                </Button>
               </ActionRow>
             </ModalDialog.Footer>
           </ModalDialog>
@@ -110,10 +118,9 @@ export const UserAccessWidgetContainerBase = ({
   const isUser = authenticatedUser.username === user.username;
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const adminLocked = user.access_level === LIBRARY_ACCESS.ADMIN && !props.multipleAdmins;
-
-  const setAccessLevel = (level) => props.setUserAccess({ libraryId: props.library.id, user, level });
-
-  const removeAccess = () => props.removeUserAccess({ libraryId: props.library.id, user });
+  const libraryId = props.library.id;
+  const setAccessLevel = (level) => props.setUserAccess({ libraryId, user, level });
+  const removeAccess = () => props.removeUserAccess({ libraryId, user });
 
   const newProps = {
     ...props,
