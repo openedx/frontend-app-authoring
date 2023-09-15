@@ -15,6 +15,7 @@ import ScheduleAndDetails from './schedule-and-details';
 import { GradingSettings } from './grading-settings';
 import CourseTeam from './course-team/CourseTeam';
 import { CourseUpdates } from './course-updates';
+import CourseExportPage from './export-page/CourseExportPage';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -105,10 +106,7 @@ const CourseAuthoringRoutes = ({ courseId }) => {
             )}
         </PageRoute>
         <PageRoute path={`${path}/export`}>
-          {process.env.ENABLE_NEW_EXPORT_PAGE === 'true'
-            && (
-              <Placeholder />
-            )}
+          <CourseExportPage courseId={courseId} />
         </PageRoute>
       </Switch>
     </CourseAuthoringPage>
