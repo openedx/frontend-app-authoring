@@ -269,11 +269,11 @@ describe('video thunkActions', () => {
     it('dispatches actions.video.load with different selectedVideoId', () => {
       getState = jest.fn(() => ({
         app: {
-          blockId: 'soMEBloCk',
+          blockId: 'lb:soMEBloCk',
           studioEndpointUrl: 'soMEeNDPoiNT',
           blockValue: { data: { metadata: {} } },
           courseDetails: { data: { license: null } },
-          studioView: { data: { html: 'sOMeHTml' } },
+          studioView: { data: { content: 'sOMeHTml' } },
           videos: testVideosState,
         },
       }));

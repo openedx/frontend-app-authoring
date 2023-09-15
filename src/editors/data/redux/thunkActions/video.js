@@ -1,5 +1,5 @@
 /* eslint-disable import/no-cycle */
-import _ from 'lodash-es';
+import _, { isEmpty } from 'lodash-es';
 import { actions, selectors } from '..';
 import { removeItemOnce } from '../../../utils';
 import * as requests from './requests';
@@ -32,7 +32,11 @@ export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, g
   }
 
   const courseData = state.app.courseDetails.data ? state.app.courseDetails.data : {};
-  const studioView = state.app.studioView?.data?.html;
+  let studioView = state.app.studioView?.data?.html;
+  if (state.app.blockId.startsWith('lb:')) {
+    studioView = state.app.studioView?.data?.content;
+  }
+
   const {
     videoId,
     videoUrl,
@@ -46,6 +50,7 @@ export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, g
   // Use the selected video url first
   const videoSourceUrl = selectedVideoUrl != null ? selectedVideoUrl : videoUrl;
   const [licenseType, licenseOptions] = module.parseLicense({ licenseData: studioView, level: 'block' });
+  console.log(licenseType);
   const transcripts = rawVideoData.transcriptsFromSelected ? rawVideoData.transcriptsFromSelected
     : module.parseTranscripts({ transcriptsData: studioView });
 
@@ -282,7 +287,7 @@ export const importTranscript = () => (dispatch, getState) => {
   const state = getState();
   const { transcripts, videoSource } = state.video;
   // Remove the placeholder '' from the unset language from the list of transcripts.
-  const transcriptsPlaceholderRemoved = (transcripts === []) ? transcripts : removeItemOnce(transcripts, '');
+  const transcriptsPlaceholderRemoved = isEmpty(transcripts) ? transcripts : removeItemOnce(transcripts, '');
 
   dispatch(requests.importTranscript({
     youTubeId: parseYoutubeId(videoSource),
@@ -306,8 +311,7 @@ export const uploadTranscript = ({ language, file }) => (dispatch, getState) => 
   const state = getState();
   const { transcripts, videoId } = state.video;
   // Remove the placeholder '' from the unset language from the list of transcripts.
-  const transcriptsPlaceholderRemoved = (transcripts === []) ? transcripts : removeItemOnce(transcripts, '');
-
+  const transcriptsPlaceholderRemoved = isEmpty(transcripts) ? transcripts : removeItemOnce(transcripts, '');
   dispatch(requests.uploadTranscript({
     language,
     videoId,
