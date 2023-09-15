@@ -29,9 +29,9 @@ export const returnUrl = ({
 };
 
 export const block = ({ studioEndpointUrl, blockId }) => (
-  blockId.includes('block-v1')
-    ? `${studioEndpointUrl}/xblock/${blockId}`
-    : `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/fields/`
+  blockId.startsWith('lb:')
+    ? `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/fields/`
+    : `${studioEndpointUrl}/xblock/${blockId}`
 );
 
 export const blockAncestor = ({ studioEndpointUrl, blockId }) => {

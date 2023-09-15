@@ -22,7 +22,7 @@ import {
 describe('cms url methods', () => {
   const studioEndpointUrl = 'urLgoeStOstudiO';
   const blockId = 'block-v1-blOckIDTeST123';
-  const v2BlockId = 'blOckIDTeST123';
+  const v2BlockId = 'lb:blOckIDTeST123';
   const learningContextId = 'lEarnIngCOntextId123';
   const libraryLearningContextId = 'library-v1:libaryId123';
   const courseId = 'course-v1:courseId123';
