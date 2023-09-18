@@ -9,12 +9,12 @@ const messages = defineMessages({
   },
   'library.edit.page.heading': {
     id: 'library.edit.page.heading',
-    defaultMessage: 'Content Library',
+    defaultMessage: 'Content library',
     description: 'The page heading for the library edit page.',
   },
   'library.edit.title.label': {
     id: 'library.edit.title.label',
-    defaultMessage: 'Library Title *',
+    defaultMessage: 'Library title *',
     description: 'Label for the title field.',
   },
   'library.edit.title.placeholder': {
@@ -29,7 +29,7 @@ const messages = defineMessages({
   },
   'library.edit.description.label': {
     id: 'library.edit.description.label',
-    defaultMessage: 'Library Description *',
+    defaultMessage: 'Library description *',
     description: 'Label for the description field.',
   },
   'library.edit.description.placeholder': {
@@ -44,7 +44,7 @@ const messages = defineMessages({
   },
   'library.edit.type.label': {
     id: 'library.edit.type.label',
-    defaultMessage: 'Library Type *',
+    defaultMessage: 'Library type *',
     description: 'Label for the type field.',
   },
   'library.edit.type.help': {

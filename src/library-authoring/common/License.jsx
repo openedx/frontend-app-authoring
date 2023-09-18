@@ -1,13 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCreativeCommonsBy,
-  faCreativeCommonsNc,
-  faCreativeCommonsNd,
-  faCreativeCommonsSa,
-} from '@fortawesome/free-brands-svg-icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { Icon, Row } from '@edx/paragon';
+import {
+  Attribution,
+  Cc,
+  Copyright,
+  Nc,
+  Nd,
+  Sa,
+} from '@edx/paragon/icons';
 import { commonsOptionsFromSpec, commonsOptionsShape, linkFromSpec } from './data';
 import messages from './messages';
 
@@ -16,35 +18,62 @@ import messages from './messages';
  * Displays a Creative Commons license in an accessible manner.
  */
 export const CreativeCommonsLicenseBase = ({ intl, link, commonsOptions }) => (
-  <a href={link} target="_blank" rel="noopener noreferrer license">
-    <span className="sr-only">
-      {intl.formatMessage(messages['library.common.license.cc.preface'])}
-    </span>
-    {commonsOptions.attribution && (
+  <a href={link} target="_blank" rel="noopener noreferrer license" className="text-gray-700">
+    <Row className="m-0 align-items-center">
       <>
-        <span className="sr-only">{intl.formatMessage(messages['library.common.license.cc.attribution'])}</span>
-        <FontAwesomeIcon icon={faCreativeCommonsBy} className="aria-hidden mr-1" />
+        <span className="sr-only">
+          {intl.formatMessage(messages['library.common.license.cc.preface'])}
+        </span>
+        <Icon
+          src={Cc}
+          className="mr-1"
+          size="small"
+        />
       </>
-    )}
-    {commonsOptions.nonCommercial && (
-      <>
-        <span className="sr-only">{intl.formatMessage(messages['library.common.license.cc.noncommercial'])}</span>
-        <FontAwesomeIcon icon={faCreativeCommonsNc} className="aria-hidden mx-1" />
-      </>
-    )}
-    {commonsOptions.noDerivatives && (
-      <>
-        <span className="sr-only">{intl.formatMessage(messages['library.common.license.cc.no_derivatives'])}</span>
-        <FontAwesomeIcon icon={faCreativeCommonsNd} className="aria-hidden mx-1" />
-      </>
-    )}
-    {commonsOptions.shareAlike && (
-      <>
-        <span className="sr-only">{intl.formatMessage(messages['library.common.license.cc.share_alike'])}</span>
-        <FontAwesomeIcon icon={faCreativeCommonsSa} className="aria-hidden mx-1" />
-      </>
-    )}
-    <strong>{intl.formatMessage(messages['library.common.license.cc.postscript'])}</strong>
+      {commonsOptions.attribution && (
+        <>
+          <span className="sr-only">{intl.formatMessage(messages['library.common.license.cc.attribution'])}</span>
+          <Icon
+            src={Attribution}
+            className="mr-1"
+            size="small"
+          />
+        </>
+      )}
+      {commonsOptions.nonCommercial && (
+        <>
+          <span className="sr-only">{intl.formatMessage(messages['library.common.license.cc.noncommercial'])}</span>
+          <Icon
+            src={Nc}
+            className="mr-1"
+            size="small"
+          />
+        </>
+      )}
+      {commonsOptions.noDerivatives && (
+        <>
+          <span className="sr-only">{intl.formatMessage(messages['library.common.license.cc.no_derivatives'])}</span>
+          <Icon
+            src={Nd}
+            className="mr-1"
+            size="small"
+          />
+        </>
+      )}
+      {commonsOptions.shareAlike && (
+        <>
+          <span className="sr-only">{intl.formatMessage(messages['library.common.license.cc.share_alike'])}</span>
+          <Icon
+            src={Sa}
+            className="mr-1"
+            size="small"
+          />
+        </>
+      )}
+      <div>
+        {intl.formatMessage(messages['library.common.license.cc.postscript'])}
+      </div>
+    </Row>
   </a>
 );
 
@@ -59,7 +88,15 @@ export const CreativeCommonsLicense = injectIntl(CreativeCommonsLicenseBase);
 /**
  * Displays an 'All Rights Reserved' tag.
  */
-export const AllRightsReservedBase = ({ intl }) => <strong>{intl.formatMessage(messages['library.common.license.none'])}</strong>;
+export const AllRightsReservedBase = ({ intl }) => (
+  <Row className="m-0 align-items-center">
+    <Icon src={Copyright} size="inline" />
+    <div className="ml-1">
+      {intl.formatMessage(messages['library.common.license.none'])}
+    </div>
+  </Row>
+
+);
 
 AllRightsReservedBase.propTypes = {
   intl: intlShape.isRequired,

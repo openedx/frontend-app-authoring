@@ -14,13 +14,21 @@ import {
   Form,
   Pagination,
   ModalDialog,
+  SelectableBox,
+  Icon,
+  IconButtonWithTooltip,
 } from '@edx/paragon';
-import { Edit } from '@edx/paragon/icons';
+import {
+  Add,
+  DeleteOutline,
+  EditOutline,
+  HelpOutline,
+  Sync,
+  TextFields,
+  VideoCamera,
+} from '@edx/paragon/icons';
 import { EditorPage } from '@edx/frontend-lib-content-components';
 import { v4 as uuid4 } from 'uuid';
-import { faPlus, faSync } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { connect } from 'react-redux';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -89,20 +97,20 @@ export const BlockPreviewBase = ({
       title={block.display_name}
       actions={(
         <ActionRow>
-          <Button
+          <IconButtonWithTooltip
             aria-label={intl.formatMessage(messages['library.detail.block.edit'])}
             onClick={() => setShowEditorModal(true)}
-          >
-            <FontAwesomeIcon icon={faEdit} className="pr-1" />
-            {intl.formatMessage(messages['library.detail.block.edit'])}
-          </Button>
-          <Button
+            src={EditOutline}
+            iconAs={Icon}
+            tooltipContent={intl.formatMessage(messages['library.detail.block.edit'])}
+          />
+          <IconButtonWithTooltip
             aria-label={intl.formatMessage(messages['library.detail.block.delete'])}
-            variant="tertiary"
             onClick={() => setShowDeleteModal(true)}
-          >
-            <FontAwesomeIcon icon={faTrashAlt} />
-          </Button>
+            src={DeleteOutline}
+            iconAs={Icon}
+            tooltipContent={intl.formatMessage(messages['library.detail.block.delete'])}
+          />
         </ActionRow>
       )}
     />
@@ -143,8 +151,8 @@ export const BlockPreviewBase = ({
       </ModalDialog.Body>
       <ModalDialog.Footer>
         <ActionRow>
-          <ModalDialog.CloseButton variant="link">
-            Close
+          <ModalDialog.CloseButton variant="tertiary">
+            {intl.formatMessage(messages['library.detail.block.delete.modal.cancel.button'])}
           </ModalDialog.CloseButton>
           <Button onClick={() => props.deleteLibraryBlock({ blockId: block.id })} variant="primary">
             {intl.formatMessage(messages['library.detail.block.delete.modal.confirmation.button'])}
@@ -153,11 +161,9 @@ export const BlockPreviewBase = ({
       </ModalDialog.Footer>
     </ModalDialog>
     {showPreviews && (
-      <Card>
-        <Card.Body>
-          <LibraryBlock getHandlerUrl={getHandlerUrl} view={view} />
-        </Card.Body>
-      </Card>
+      <Card.Body>
+        <LibraryBlock getHandlerUrl={getHandlerUrl} view={view} />
+      </Card.Body>
     )}
   </Card>
 );
@@ -305,12 +311,16 @@ const ButtonTogglesBase = ({ setShowPreviews, showPreviews, intl }) => (
     {/* todo: either reimplement the scroll to the add components button functionality,
               figure out a better UX for the add component button at the top, or just
               remove it entirely */}
-    {/* <Button variant="success" className="mr-1" disabled={sending} onClick={quickAddBehavior}>
-      <FontAwesomeIcon icon={faPlus} className="pr-1" />
+    {/* <Button variant="primary" className="mr-1" disabled={sending} onClick={quickAddBehavior} iconBefore={Add}>
       {intl.formatMessage(messages[`library.detail.add_${library.type}`])}
     </Button> */}
-    <Button variant="primary" className="ml-1" onClick={() => setShowPreviews(!showPreviews)}>
-      <FontAwesomeIcon icon={faSync} className="pr-1" />
+    <Button
+      variant="primary"
+      className="ml-1"
+      onClick={() => setShowPreviews(!showPreviews)}
+      iconBefore={Sync}
+      size="sm"
+    >
       { intl.formatMessage(showPreviews ? messages['library.detail.hide_previews'] : messages['library.detail.show_previews']) }
     </Button>
   </>
@@ -380,7 +390,7 @@ const LibraryAuthoringPageHeaderBase = ({ intl, library, ...props }) => {
   };
 
   return (
-    <h1 className="page-header-title">
+    <h2 className="page-header-title">
       { inputIsActive
         ? (
           <Form.Control
@@ -397,19 +407,19 @@ const LibraryAuthoringPageHeaderBase = ({ intl, library, ...props }) => {
           />
         )
         : (
-          <>
+          <ActionRow>
             {library.title}
             <IconButton
               invertColors
               isActive
-              iconAs={Edit}
+              iconAs={EditOutline}
               alt="Edit name button"
               onClick={handleClick}
               className="ml-3"
             />
-          </>
+          </ActionRow>
         )}
-    </h1>
+    </h2>
   );
 };
 
@@ -463,7 +473,6 @@ export const LibraryAuthoringPageBase = ({
               {(library.type === LIBRARY_TYPES.COMPLEX) && (
               <>
                 <SearchField
-                  className="flex-grow-1"
                   value={query}
                   placeholder={intl.formatMessage(messages['library.detail.search'])}
                   onSubmit={(value) => changeQuery(value)}
@@ -528,22 +537,31 @@ export const LibraryAuthoringPageBase = ({
             <Col xs={12} className="text-center py-3 library-authoring-block-add-new">
               {library.type !== LIBRARY_TYPES.COMPLEX && (
               <Button
-                variant="success"
+                variant="primary"
                 disabled={sending}
                 onClick={() => addBlock(library.type)}
                 className="cta-button"
+                iconBefore={Add}
               >
-                <FontAwesomeIcon icon={faPlus} className="pr-1" />
                 {intl.formatMessage(messages[`library.detail.add_${library.type}`])}
               </Button>
               )}
               {library.type === LIBRARY_TYPES.COMPLEX && (
                 <Row>
                   <Col xs={12}>
-                    <h2>{intl.formatMessage(messages['library.detail.add_component_heading'])}</h2>
+                    <h3>{intl.formatMessage(messages['library.detail.add_component_heading'])}</h3>
                   </Col>
                   <Col xs={12} className="text-center">
-                    {/* <div className="d-inline-block">
+                    <SelectableBox.Set
+                      type="radio"
+                      value={null}
+                      onChange={(e) => addBlock(e.target.value)}
+                      columns={3}
+                      ariaLabel="component-selection"
+                      className="px-6"
+                    >
+                      {/* Update to use a SelectableBox that triggers a modal for options
+                      <div className="d-inline-block">
                       <Dropdown>
                         <Dropdown.Toggle
                           variant="success"
@@ -565,15 +583,40 @@ export const LibraryAuthoringPageBase = ({
                         </Dropdown.Menu>
                       </Dropdown>
                     </div> */}
-                    <Button variant="success" disabled={sending} onClick={() => addBlock('html')} className="cta-button">
-                      Text
-                    </Button>
-                    <Button variant="success" disabled={sending} onClick={() => addBlock('problem')} className="cta-button mx-2">
-                      Problem
-                    </Button>
-                    <Button variant="success" disabled={sending} onClick={() => addBlock('video')} className="cta-button">
-                      Video
-                    </Button>
+                      <SelectableBox
+                        disabled={sending}
+                        value="html"
+                        ariaLabel="html-radio"
+                        className="text-center"
+                      >
+                        <div className="row m-0 mb-1 justify-content-center">
+                          <Icon src={TextFields} />
+                        </div>
+                        <p>{intl.formatMessage(messages['library.detail.add.new.component.html'])}</p>
+                      </SelectableBox>
+                      <SelectableBox
+                        disabled={sending}
+                        value="problem"
+                        ariaLabel="problem-radio"
+                        className="text-center"
+                      >
+                        <div className="row m-0 mb-1 justify-content-center">
+                          <Icon src={HelpOutline} />
+                        </div>
+                        <p>{intl.formatMessage(messages['library.detail.add.new.component.problem'])}</p>
+                      </SelectableBox>
+                      <SelectableBox
+                        disabled={sending}
+                        value="video"
+                        ariaLabel="video-radio"
+                        className="text-center"
+                      >
+                        <div className="row m-0  mb-1 justify-content-center">
+                          <Icon src={VideoCamera} />
+                        </div>
+                        <p>{intl.formatMessage(messages['library.detail.add.new.component.video'])}</p>
+                      </SelectableBox>
+                    </SelectableBox.Set>
                   </Col>
                 </Row>
               )}
@@ -585,22 +628,23 @@ export const LibraryAuthoringPageBase = ({
         <aside>
           <Row>
             <Col xs={12} className="order-1 order-md-0">
-              <h3>{intl.formatMessage(messages['library.detail.sidebar.adding.heading'])}</h3>
-              <p>{intl.formatMessage(messages['library.detail.sidebar.adding.first'])}</p>
-              <p>{intl.formatMessage(messages['library.detail.sidebar.adding.second'])}</p>
-              <h3>{intl.formatMessage(messages['library.detail.sidebar.using.heading'])}</h3>
-              <p>{intl.formatMessage(messages['library.detail.sidebar.using.first'])}</p>
+              <h4>{intl.formatMessage(messages['library.detail.sidebar.adding.heading'])}</h4>
+              <p className="small">{intl.formatMessage(messages['library.detail.sidebar.adding.first'])}</p>
+              <p className="small">{intl.formatMessage(messages['library.detail.sidebar.adding.second'])}</p>
+              <hr />
+              <h4>{intl.formatMessage(messages['library.detail.sidebar.using.heading'])}</h4>
+              <p className="small">{intl.formatMessage(messages['library.detail.sidebar.using.first'])}</p>
             </Col>
             <Col xs={12} className="py-3 order-0 order-md-1">
               <Card>
                 <Card.Header
-                  title={intl.formatMessage(messages[`library.detail.aside.${hasChanges ? 'draft' : 'published'}`])}
+                  title={<div className="h4">{intl.formatMessage(messages[`library.detail.aside.${hasChanges ? 'draft' : 'published'}`])}</div>}
                 />
                 <Card.Footer>
-                  <Button block disabled={!hasChanges} onClick={commitChanges}>
+                  <Button block disabled={!hasChanges} onClick={commitChanges} size="sm">
                     {intl.formatMessage(messages['library.detail.aside.publish'])}
                   </Button>
-                  <Button variant="link" disabled={!hasChanges} onClick={revertChanges}>
+                  <Button variant="tertiary" disabled={!hasChanges} onClick={revertChanges} size="sm">
                     {intl.formatMessage(messages['library.detail.aside.discard'])}
                   </Button>
                 </Card.Footer>

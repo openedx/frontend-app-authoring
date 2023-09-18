@@ -73,7 +73,7 @@ class LibraryBlock extends React.Component {
       sendReply({ handlerUrl });
     } else if (method === 'update_frame_height') {
       this.setState({ iFrameHeight: args.height });
-    } else if (method.indexOf('xblock:') === 0) {
+    } else if (method?.indexOf('xblock:') === 0) {
       // This is a notification from the XBlock's frontend via 'runtime.notify(event, args)'
       if (this.props.onBlockNotification) {
         this.props.onBlockNotification({
@@ -116,6 +116,7 @@ class LibraryBlock extends React.Component {
         position: 'relative',
         overflow: 'hidden',
         minHeight: '200px',
+        margin: '16px',
       }}
       >
         <iframe

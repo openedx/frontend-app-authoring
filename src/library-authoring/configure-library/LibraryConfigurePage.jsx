@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { AppContext } from '@edx/frontend-platform/react';
+import { SpinnerSimple } from '@edx/paragon/icons';
 
 import { LoadingPage } from '../../generic';
 import {
@@ -185,7 +186,7 @@ class LibraryConfigurePage extends React.Component {
           <header className="mast has-actions has-navigation has-subtitle">
             <div className="page-header">
               <small className="subtitle">{intl.formatMessage(messages['library.edit.page.heading'])}</small>
-              <h1 className="page-header-title">{library.title}</h1>
+              <h2 className="page-header-title">{library.title}</h2>
             </div>
           </header>
         </div>
@@ -213,7 +214,7 @@ class LibraryConfigurePage extends React.Component {
                             isInvalid={this.hasFieldError(name)}
                             className="mb-0 mr-2"
                           >
-                            <Form.Label className="h6 d-block" htmlFor={name}>
+                            <Form.Label className="large d-block" htmlFor={name}>
                               {intl.formatMessage(messages[`library.edit.${name}.label`])}
                             </Form.Label>
                             <Form.Control
@@ -298,6 +299,13 @@ class LibraryConfigurePage extends React.Component {
                     </fieldset>
                     <div className="actions form-group">
                       <Card.Section>
+                        <Button
+                          variant="tertiary"
+                          className="action ml-n1"
+                          onClick={this.handleCancel}
+                        >
+                          {intl.formatMessage(messages['library.edit.button.cancel'])}
+                        </Button>
                         <StatefulButton
                           variant="primary"
                           type="submit"
@@ -308,18 +316,11 @@ class LibraryConfigurePage extends React.Component {
                             pending: intl.formatMessage(messages['library.edit.button.submitting']),
                           }}
                           icons={{
-                            pending: <Icon className="fa fa-spinner fa-spin" />,
+                            pending: <Icon src={SpinnerSimple} className="fa fa-spinner fa-spin" />,
                           }}
                           disabledStates={['disabled', 'pending']}
                           className="action"
                         />
-                        <Button
-                          variant="light"
-                          className="action ml-2"
-                          onClick={this.handleCancel}
-                        >
-                          {intl.formatMessage(messages['library.edit.button.cancel'])}
-                        </Button>
                       </Card.Section>
                     </div>
                   </Form>
@@ -328,10 +329,10 @@ class LibraryConfigurePage extends React.Component {
             </Col>
             <Col xs={12} md={4} xl={3}>
               <aside className="content-supplementary">
-                <div className="bit">
-                  <h3 className="title title-3">{intl.formatMessage(messages['library.edit.aside.title'])}</h3>
+                <div className="bit small">
+                  <h4>{intl.formatMessage(messages['library.edit.aside.title'])}</h4>
                   <p>{intl.formatMessage(messages['library.edit.aside.text'])}</p>
-                  <ul className="list-actions">
+                  <ul className="list-actions list-unstyled">
                     <li className="action-item">
                       <a
                         href="http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/course_components/libraries.html"

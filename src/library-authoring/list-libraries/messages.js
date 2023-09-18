@@ -9,7 +9,7 @@ const messages = defineMessages({
   },
   'library.list.new.library': {
     id: 'library.list.new.library',
-    defaultMessage: 'New Library',
+    defaultMessage: 'New library',
     description: 'Text on the new library button.',
   },
   'library.list.loading.message': {
@@ -119,9 +119,7 @@ const messages = defineMessages({
   },
   'library.list.aside.text': {
     id: 'library.list.aside.text',
-    defaultMessage: `Click Help in the upper-right corner to get more
-    information about the Studio page you are viewing. You can also use the
-    links at the bottom of the page to access our continually updated
+    defaultMessage: `Click "Looking for help with Studio" at the bottom of the page to access our continually updated
     documentation and other Studio resources.`,
     description: 'Text for the supplementary content.',
   },

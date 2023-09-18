@@ -9,12 +9,13 @@ import {
   Button,
   Col,
   Form,
+  Icon,
+  IconButton,
   Pagination,
   Row,
 } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { faSearch, faSync } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Search, Sync } from '@edx/paragon/icons';
 
 import { LoadingPage } from '../../generic';
 import {
@@ -47,10 +48,15 @@ export const CourseImportPageHeader = ({ intl, showCourses, ...props }) => {
       <header className="mast has-actions has-navigation has-subtitle">
         <small className="subtitle">{intl.formatMessage(messages['library.course_import.page.parent_heading'])}</small>
         <ActionRow>
-          <h1 className="page-header-title">{intl.formatMessage(messages['library.course_import.page.heading'])}</h1>
+          <h2 className="page-header-title">{intl.formatMessage(messages['library.course_import.page.heading'])}</h2>
           <ActionRow.Spacer />
-          <Button className="toggle-importable-courses" variant="primary" onClick={showCoursesHandler}>
-            <FontAwesomeIcon icon={faSync} className="pr-1" />
+          <Button
+            className="toggle-importable-courses"
+            variant="primary"
+            onClick={showCoursesHandler}
+            iconBefore={Sync}
+            size="sm"
+          >
             {showCourses
               ? intl.formatMessage(messages['library.course_import.importable_courses.hide'])
               : intl.formatMessage(messages['library.course_import.importable_courses.show'])}
@@ -110,7 +116,7 @@ export const CourseImportList = ({
               ))}
             </ul>
           )
-          : <h3 className="">{intl.formatMessage(messages['library.course_import.importable_courses.no_item'])}</h3>
+          : <div className="large">{intl.formatMessage(messages['library.course_import.importable_courses.no_item'])}</div>
       }
 
       {
@@ -198,8 +204,9 @@ export const CourseImportListFilter = ({
 
   return (
     <>
-      <div className="bit">
-        <h3 className="title title-3">{intl.formatMessage(messages['library.course_import.aside.course_list.title'])}</h3>
+      <hr />
+      <div className="bit small">
+        <h4 className="title title-3">{intl.formatMessage(messages['library.course_import.aside.course_list.title'])}</h4>
         <p>{intl.formatMessage(messages['library.course_import.aside.course_list.text.first'])}</p>
         <p>{intl.formatMessage(messages['library.course_import.aside.course_list.text.second'])}</p>
       </div>
@@ -216,14 +223,8 @@ export const CourseImportListFilter = ({
                   name="search_term"
                   placeholder={intl.formatMessage(messages['library.course_import.course_filter.input.default'])}
                   defaultValue={filterParams ? filterParams.search_term : null}
+                  trailingElement={<IconButton type="submit" src={Search} iconAs={Icon} size="inline" />}
                 />
-                <Button
-                  type="submit"
-                  variant="primary"
-                  className="ml-2 py-1 px-3 d-inline"
-                >
-                  <FontAwesomeIcon icon={faSearch} />
-                </Button>
               </div>
             </Form.Group>
           </Form.Row>
@@ -291,7 +292,7 @@ export const ImportTaskList = ({
               ))}
             </ul>
           )
-          : <h3 className="">{intl.formatMessage(messages['library.course_import.import_tasks.no_item'])}</h3>
+          : <div className="large">{intl.formatMessage(messages['library.course_import.importable_courses.no_item'])}</div>
       }
 
       {
@@ -420,9 +421,9 @@ export const CourseImportPage = ({
               </article>
             </Col>
             <Col xs={12} md={4} xl={3}>
-              <aside className="content-supplementary">
+              <aside className="content-supplementary small">
                 <div className="bit">
-                  <h3 className="title title-3">{intl.formatMessage(messages['library.course_import.aside.import_task_list.title'])}</h3>
+                  <h4>{intl.formatMessage(messages['library.course_import.aside.import_task_list.title'])}</h4>
                   <p>{intl.formatMessage(messages['library.course_import.aside.import_task_list.text.first'])}</p>
                   <p>{intl.formatMessage(messages['library.course_import.aside.import_task_list.text.second'])}</p>
                 </div>

@@ -9,7 +9,7 @@ const messages = defineMessages({
   },
   'library.block.page.back_to_library': {
     id: 'library.block.page.back_to_library',
-    defaultMessage: 'Back to Library',
+    defaultMessage: 'Back to library',
     description: 'Text for the button that takes you back to the library authoring page.',
   },
   'library.block.loading.message': {
@@ -24,7 +24,7 @@ const messages = defineMessages({
   },
   'library.block.block.unpublished_changes': {
     id: 'library.block.block.unpublished_changes',
-    defaultMessage: 'Unpublished Changes',
+    defaultMessage: 'Unpublished changes',
     description: 'Text for a block with unpublished changes.',
   },
   'library.block.block.view_link': {

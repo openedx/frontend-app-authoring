@@ -131,7 +131,7 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
     const blocks = [blockFactory(undefined, { library })];
     await render(library, genState(library, blocks));
     expect(screen.getByTestId('block-preview')).toBeTruthy();
-    screen.getAllByText('Hide Previews')[0].click();
+    screen.getAllByText('Hide previews')[0].click();
     await waitFor(() => expect(() => screen.getByTestId('block-preview')).toThrow());
     expect(localStorage.getItem('showPreviews')).toBe('false');
   });
@@ -199,7 +199,7 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
   it('Adds a predefined block type', async () => {
     const library = libraryFactory({ type: LIBRARY_TYPES.VIDEO });
     await render(library, genState(library));
-    const addButtons = screen.getAllByText('Add Video');
+    const addButtons = screen.getAllByText('Add a video');
     expect(addButtons.length).toBe(1);
     addButtons[0].click();
     expect(createBlock.fn).toHaveBeenCalledWith({

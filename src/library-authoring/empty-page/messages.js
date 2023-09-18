@@ -16,7 +16,7 @@ const messages = defineMessages({
   },
   'library.list.empty.new.library': {
     id: 'library.list.empty.new.library',
-    defaultMessage: 'New Library',
+    defaultMessage: 'New library',
     description: 'Text for the new library button on empty library listing page.',
   },
 });

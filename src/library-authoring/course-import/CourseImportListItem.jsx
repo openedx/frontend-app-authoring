@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Card, ActionRow, StatefulButton } from '@edx/paragon';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faPlus, faSync, faSpinner, faCheck,
-} from '@fortawesome/free-solid-svg-icons';
+  Card,
+  ActionRow,
+  StatefulButton,
+  Icon,
+} from '@edx/paragon';
+import {
+  Add,
+  Check,
+  SpinnerSimple,
+  Sync,
+} from '@edx/paragon/icons';
 
 import { paginationParamsShape } from '../common';
 import { courseShape } from './data';
@@ -34,10 +41,10 @@ const CourseImportListItem = ({
       error: intl.formatMessage(messages['library.course_import.import_schedule_failed.label']),
     },
     icons: {
-      default: <FontAwesomeIcon icon={faPlus} className="icon-inline" />,
-      pending: <FontAwesomeIcon icon={faSpinner} className="icon-inline fa-spin" />,
-      complete: <FontAwesomeIcon icon={faCheck} className="icon-inline" />,
-      error: <FontAwesomeIcon icon={faSync} className="icon-inline" />,
+      default: <Icon src={Add} />,
+      pending: <Icon src={SpinnerSimple} className="icon-spin" />,
+      complete: <Icon src={Check} />,
+      error: <Icon src={Sync} />,
     },
     disabledStates: ['pending', 'complete'],
     onClick: handleImport,
@@ -54,6 +61,7 @@ const CourseImportListItem = ({
             <StatefulButton {...importButtonProps} />
           </ActionRow>
         )}
+        size="sm"
       />
     </Card>
   );

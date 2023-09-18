@@ -138,7 +138,7 @@ const messages = defineMessages({
   },
   'library.access.remove_author': {
     id: 'library.access.remove_author',
-    defaultMessage: 'Remove Author Access',
+    defaultMessage: 'Remove author access',
     description: 'Label for button that removes a user\'s author access level.',
   },
   'library.access.remove_user': {

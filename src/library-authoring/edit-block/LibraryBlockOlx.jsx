@@ -53,7 +53,7 @@ class LibraryBlockOlx extends React.Component {
             }}
           />
           <br />
-          <Button variant="outline-secondary" onClick={this.cancelEditMode}>Cancel</Button>
+          <Button variant="tertiary" onClick={this.cancelEditMode}>Cancel</Button>
           <Button variant="primary" onClick={this.saveOlx}>Save Changes</Button>
         </>
       );

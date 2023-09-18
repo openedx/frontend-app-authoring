@@ -120,12 +120,12 @@ testSuite('<UserAccessWidgetContainer />', () => {
         { context: { authenticatedUser: currentUser } },
       );
       if (buttonsShown) {
-        const removeButton = getByRole(container, 'button', { name: /Remove Author/ });
+        const removeButton = getByRole(container, 'button', { name: /Remove author/ });
         expect(removeButton).toBeTruthy();
         const addButton = getByRole(container, 'button', { name: /Add Admin/ });
         expect(addButton).toBeTruthy();
       } else {
-        const buttonList = queryAllByRole(container, 'button', { name: /(Remove Author|Add Admin)/ });
+        const buttonList = queryAllByRole(container, 'button', { name: /(Remove author|Add Admin)/ });
         expect(buttonList.length).toBe(0);
       }
     });

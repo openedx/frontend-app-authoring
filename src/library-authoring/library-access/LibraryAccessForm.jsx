@@ -23,7 +23,7 @@ const LibraryAccessForm = ({
   intl, onSubmit, setShowAdd, hasFieldError, getFieldError, data,
   onValueChange, submitButtonState,
 }) => (
-  <Row className="mb-2">
+  <Row className="mb-4">
     <form className="col-12" onSubmit={onSubmit}>
       <Card>
         <Card.Header
@@ -32,14 +32,14 @@ const LibraryAccessForm = ({
         <Card.Section>
           <div className="form-create">
             <fieldset>
-              <ol className="list-input">
+              <ol className="list-input list-unstyled">
                 <li className="field">
                   <Form.Group
                     controlId="email"
                     isInvalid={hasFieldError('email')}
                     className="mb-0 mr-2"
                   >
-                    <Form.Label className="h6 d-block" htmlFor="email">
+                    <Form.Label className="large d-block" htmlFor="email">
                       {intl.formatMessage(messages['library.access.form.email.label'])}
                     </Form.Label>
                     <Form.Control
@@ -64,9 +64,10 @@ const LibraryAccessForm = ({
             </fieldset>
           </div>
         </Card.Section>
-      </Card>
-      <Card className="mb-5">
-        <Card.Section>
+        <Card.Section className="pt-0">
+          <Button size="sm" variant="tertiary" onClick={() => setShowAdd(false)}>
+            {intl.formatMessage(commonMessages['library.common.forms.button.cancel'])}
+          </Button>
           <StatefulButton
             variant="primary"
             type="submit"
@@ -81,11 +82,7 @@ const LibraryAccessForm = ({
               pending: <Icon className="fa fa-spinner fa-spin" />,
             }}
             disabledStates={['disabled', 'pending']}
-            className="font-weight-bold text-uppercase"
           />
-          <Button size="sm" variant="secondary" className="mx-3 font-weight-bold text-uppercase" onClick={() => setShowAdd(false)}>
-            {intl.formatMessage(commonMessages['library.common.forms.button.cancel'])}
-          </Button>
         </Card.Section>
       </Card>
     </form>

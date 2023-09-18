@@ -14,7 +14,7 @@ const messages = defineMessages({
   },
   'library.course_import.page.heading': {
     id: 'library.course_import.page.heading',
-    defaultMessage: 'Course Import',
+    defaultMessage: 'Course import',
     description: 'Title of course import settings page',
   },
   'library.course_import.aside.course_list.title': {
@@ -131,6 +131,11 @@ const messages = defineMessages({
     id: 'library.course_import.list_item.created_at',
     defaultMessage: 'Created at:',
     description: 'Label of the import task creation metadata item',
+  },
+  'library.course_import.list_item.title': {
+    id: 'library.course_import.list_item.title',
+    defaultMessage: 'Import of {courseId}',
+    description: 'Title of the import task item',
   },
 });
 

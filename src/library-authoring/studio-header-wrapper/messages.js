@@ -4,7 +4,7 @@ import { messageGuard } from '../common/data';
 const messages = defineMessages({
   'library.header.logo.alt': {
     id: 'library.header.logo.alt',
-    defaultMessage: 'Content Libraries',
+    defaultMessage: 'Content libraries',
     description: 'Alt text for the the header logo.',
   },
   'library.header.settings.menu': {
@@ -19,7 +19,7 @@ const messages = defineMessages({
   },
   'library.header.settings.access': {
     id: 'library.header.settings.access',
-    defaultMessage: 'User Access',
+    defaultMessage: 'User access',
     description: 'Text for the user access permissions item in the settings menu.',
   },
   'library.header.settings.import': {
@@ -29,7 +29,7 @@ const messages = defineMessages({
   },
   'library.header.nav.help.title': {
     id: 'library.header.nav.help.title',
-    defaultMessage: 'Online Help',
+    defaultMessage: 'Online help',
     description: 'Title text for the help link.',
   },
   'library.header.nav.help': {
@@ -44,7 +44,7 @@ const messages = defineMessages({
   },
   'library.header.account.navigation': {
     id: 'library.header.account.navigation',
-    defaultMessage: 'Account Navigation',
+    defaultMessage: 'Account navigation',
     description: 'Heading for account navigation.',
   },
   'library.header.account.signedinas': {
@@ -54,7 +54,7 @@ const messages = defineMessages({
   },
   'library.header.account.studiohome': {
     id: 'library.header.account.studiohome',
-    defaultMessage: 'Studio Home',
+    defaultMessage: 'Studio home',
     description: 'Text for link to studio.',
   },
   'library.header.account.maintenance': {
@@ -64,7 +64,7 @@ const messages = defineMessages({
   },
   'library.header.account.signout': {
     id: 'library.header.account.signout',
-    defaultMessage: 'Sign Out',
+    defaultMessage: 'Sign out',
     description: 'Text for link to sign out.',
   },
 });

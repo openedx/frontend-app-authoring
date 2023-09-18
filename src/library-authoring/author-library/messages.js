@@ -4,7 +4,7 @@ import { messageGuard } from '../common/data';
 const messages = defineMessages({
   'library.detail.page.heading': {
     id: 'library.detail.page.heading',
-    defaultMessage: 'Content Library',
+    defaultMessage: 'Content library',
     description: 'The page heading for the library detail page.',
   },
   'library.detail.loading.message': {
@@ -19,13 +19,28 @@ const messages = defineMessages({
   },
   'library.detail.new.component': {
     id: 'library.detail.new.component',
-    defaultMessage: 'New Component',
+    defaultMessage: 'New component',
     description: 'Text on the new component button.',
   },
   'library.detail.add.new.component': {
     id: 'library.detail.add.new.component',
-    defaultMessage: 'Add New Component',
+    defaultMessage: 'Add a new component',
     description: 'Header on the add new component box.',
+  },
+  'library.detail.add.new.component.html': {
+    id: 'library.detail.add.new.component.html',
+    defaultMessage: 'Text',
+    description: 'Title on the add new component html box.',
+  },
+  'library.detail.add.new.component.problem': {
+    id: 'library.detail.add.new.component.problem',
+    defaultMessage: 'Problem',
+    description: 'Title on the add new component problem box.',
+  },
+  'library.detail.add.new.component.video': {
+    id: 'library.detail.add.new.component.video',
+    defaultMessage: 'Video',
+    description: 'Title on the add new component video box.',
   },
   'library.detail.add.new.component.type': {
     id: 'library.detail.add.new.component.type',
@@ -39,12 +54,12 @@ const messages = defineMessages({
   },
   'library.detail.add.new.component.button': {
     id: 'library.detail.add.new.component.button',
-    defaultMessage: 'Add Component',
+    defaultMessage: 'Add component',
     description: 'Text for the add component button.',
   },
   'library.detail.block.unpublished_changes': {
     id: 'library.detail.block.unpublished_changes',
-    defaultMessage: 'Unpublished Changes',
+    defaultMessage: 'Unpublished changes',
     description: 'Text for a block with unpublished changes.',
   },
   'library.detail.block.view_link': {
@@ -127,6 +142,11 @@ const messages = defineMessages({
     defaultMessage: 'Deleting this component is permanent and cannot be undone.',
     description: 'Body for the block deletion modal.',
   },
+  'library.detail.block.delete.modal.cancel.button': {
+    id: 'library.detail.block.delete.modal.cancel.button',
+    defaultMessage: 'Cancel',
+    description: 'Message for delete cancel button',
+  },
   'library.detail.block.delete.modal.confirmation.button': {
     id: 'library.detail.block.delete.modal.confirmation.button',
     defaultMessage: 'Delete',
@@ -149,37 +169,37 @@ const messages = defineMessages({
   },
   'library.detail.other_component': {
     id: 'library.detail.other_component',
-    defaultMessage: 'Other Component',
+    defaultMessage: 'Other component',
     description: 'Label for all other components not listed in the filter.',
   },
   'library.detail.add_component_heading': {
     id: 'library.detail.add_component_heading',
-    defaultMessage: 'Add New Component',
+    defaultMessage: 'Add a new component',
     description: 'Heading placed above the varying add component buttons on complex libraries.',
   },
   'library.detail.add_video': {
     id: 'library.detail.add_video',
-    defaultMessage: 'Add Video',
-    description: 'Button text for the "Add Video" button on video libraries.',
+    defaultMessage: 'Add a video',
+    description: 'Button text for the "Add a video" button on video libraries.',
   },
   'library.detail.add_problem': {
     id: 'library.detail.add_problem',
-    defaultMessage: 'Add Problem',
-    description: 'Button text for the "Add Video" button on video libraries.',
+    defaultMessage: 'Add a problem',
+    description: 'Button text for the "Add a problem" button on problem libraries.',
   },
   'library.detail.add_complex': {
     id: 'library.detail.add_complex',
-    defaultMessage: 'Add Component',
-    description: 'Button text for the "Add Component" button on complex libraries.',
+    defaultMessage: 'Add a component',
+    description: 'Button text for the "Add a component" button on complex libraries.',
   },
   'library.detail.show_previews': {
     id: 'library.detail.show_previews',
-    defaultMessage: 'Show Previews',
+    defaultMessage: 'Show previews',
     description: 'Text for button which enables previews',
   },
   'library.detail.hide_previews': {
     id: 'library.detail.hide_previews',
-    defaultMessage: 'Hide Previews',
+    defaultMessage: 'Hide previews',
     description: 'Text for button which disables previews',
   },
   'library.detail.sidebar.adding.heading': {
@@ -230,7 +250,7 @@ const messages = defineMessages({
   },
   'library.detail.settings.access': {
     id: 'library.detail.settings.access',
-    defaultMessage: 'User Access',
+    defaultMessage: 'User access',
     description: 'Text for the user access permissions item in the settings menu.',
   },
   'library.detail.settings.import': {

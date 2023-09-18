@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
+  ButtonGroup,
   Col,
   Form,
   Row,
@@ -36,22 +37,15 @@ export const LicenceFieldBase = (
     <label htmlFor={name}>
       {intl.formatMessage(messages['library.common.fields.license.label'])}
     </label>
-    <Row className="flex-row">
-      <Col>
-        <Button name={name} className="text-uppercase mx-1" variant={reservedVariant} onClick={() => updateValue('')}>
+    <Row className="m-0">
+      <ButtonGroup>
+        <Button name={name} className="text-uppercase" variant={reservedVariant} onClick={() => updateValue('')}>
           {intl.formatMessage(messages['library.common.license.none'])}
         </Button>
-      </Col>
-      <Col>
-        <Button name={name} className="text-uppercase mx-1" variant={commonsVariant} onClick={() => updateValue(spec)}>
+        <Button name={name} className="text-uppercase" variant={commonsVariant} onClick={() => updateValue(spec)}>
           {intl.formatMessage(messages['library.common.license.cc'])}
         </Button>
-        <p className="small">
-          <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/about">
-            {intl.formatMessage(messages['library.common.fields.license.cc.learn_more'])}
-          </a>
-        </p>
-      </Col>
+      </ButtonGroup>
     </Row>
     {value && (
       <>
@@ -138,8 +132,8 @@ export const LicenceFieldBase = (
     )}
     <Row className="mt-2">
       <Col xs={12}>
-        <h3>License Preview</h3>
-        <p>The following message will be displayed where appropriate:</p>
+        <div className="mt-2">{intl.formatMessage(messages['library.common.license.preview.title'])}</div>
+        <div className="small my-2">{intl.formatMessage(messages['library.common.license.preview.message'])}</div>
       </Col>
       <Col xs={12}>
         <LicenseContainer spec={value} />
@@ -182,9 +176,9 @@ export const LicenseFieldContainerBase = ({ value, updateValue, name }) => {
   let reservedVariant;
   if (value) {
     commonVariant = 'primary';
-    reservedVariant = 'light';
+    reservedVariant = 'outline-primary';
   } else {
-    commonVariant = 'light';
+    commonVariant = 'outline-primary';
     reservedVariant = 'primary';
   }
 
