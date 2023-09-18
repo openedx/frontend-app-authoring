@@ -4,8 +4,9 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { convertObjectToSnakeCase } from '../../utils';
 
 export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-export const getCreateOrRerunCourseUrl = new URL('course/', getConfig().STUDIO_BASE_URL).href;
-export const getCourseRerunUrl = (courseId) => new URL(`/api/contentstore/v1/course_rerun/${courseId}`, getConfig().STUDIO_BASE_URL).href;
+export const getCreateOrRerunCourseUrl = new URL('course/', getApiBaseUrl()).href;
+export const getCourseRerunUrl = (courseId) => new URL(`/api/contentstore/v1/course_rerun/${courseId}`, getApiBaseUrl()).href;
+export const getOrganizationsUrl = new URL('organizations', getApiBaseUrl()).href;
 
 /**
  * Get's organizations data.
@@ -13,7 +14,7 @@ export const getCourseRerunUrl = (courseId) => new URL(`/api/contentstore/v1/cou
  */
 export async function getOrganizations() {
   const { data } = await getAuthenticatedHttpClient().get(
-    `${getApiBaseUrl()}/organizations`,
+    getOrganizationsUrl,
   );
   return camelCaseObject(data);
 }

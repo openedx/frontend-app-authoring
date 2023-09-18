@@ -43,17 +43,7 @@ const TabsSection = ({
         />
       </Tab>,
     );
-    if (librariesEnabled) {
-      tabs.push(
-        <Tab
-          key={TABS_LIST.libraries}
-          eventKey={TABS_LIST.libraries}
-          title={intl.formatMessage(messages.librariesTabTitle)}
-        >
-          {!redirectToLibraryAuthoringMfe && <LibrariesTab libraries={libraries} />}
-        </Tab>,
-      );
-    }
+
     if (archivedCourses?.length) {
       tabs.push(
         <Tab
@@ -62,6 +52,18 @@ const TabsSection = ({
           title={intl.formatMessage(messages.archivedTabTitle)}
         >
           <ArchivedTab archivedCoursesData={archivedCourses} />
+        </Tab>,
+      );
+    }
+
+    if (librariesEnabled) {
+      tabs.push(
+        <Tab
+          key={TABS_LIST.libraries}
+          eventKey={TABS_LIST.libraries}
+          title={intl.formatMessage(messages.librariesTabTitle)}
+        >
+          {!redirectToLibraryAuthoringMfe && <LibrariesTab libraries={libraries} />}
         </Tab>,
       );
     }

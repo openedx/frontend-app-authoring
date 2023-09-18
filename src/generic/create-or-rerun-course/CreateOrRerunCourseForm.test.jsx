@@ -8,11 +8,18 @@ import {
 } from '@testing-library/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
+import MockAdapter from 'axios-mock-adapter';
 
 import { studioHomeMock } from '../../studio-home/__mocks__';
+import { getStudioHomeApiUrl } from '../../studio-home/data/api';
+import { fetchStudioHomeData } from '../../studio-home/data/thunks';
 import { RequestStatus } from '../../data/constants';
 import initializeStore from '../../store';
+import { executeThunk } from '../../utils';
+import { updateCreateOrRerunCourseQuery } from '../data/thunks';
+import { getCreateOrRerunCourseUrl } from '../data/api';
 import messages from './messages';
 import { CreateOrRerunCourseForm } from '.';
 
@@ -30,6 +37,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
+let axiosMock;
 let store;
 
 const onClickCancelMock = jest.fn();
@@ -54,9 +62,9 @@ const props = {
   onClickCancel: onClickCancelMock,
 };
 
-describe('<CreateOrRerunCourseForm />', () => {
+describe('<CreateOrRerunCourseForm />', async () => {
   afterEach(() => jest.clearAllMocks());
-  beforeEach(() => {
+  beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
@@ -67,6 +75,12 @@ describe('<CreateOrRerunCourseForm />', () => {
     });
 
     store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+    axiosMock.onPost(getCreateOrRerunCourseUrl).reply(200);
+
+    await executeThunk(fetchStudioHomeData, store.dispatch);
+    await executeThunk(updateCreateOrRerunCourseQuery, store.dispatch);
     useSelector.mockReturnValue(studioHomeMock);
   });
 
@@ -200,5 +214,18 @@ describe('<CreateOrRerunCourseForm />', () => {
     });
     const { getByText } = render(<RootWrapper {...props} />);
     expect(getByText('aaa')).toBeInTheDocument();
+  });
+
+  it('shows error on field', () => {
+    const { getByPlaceholderText, getByText } = render(<RootWrapper {...props} />);
+    const numberInput = getByPlaceholderText(messages.courseNumberPlaceholder.defaultMessage);
+
+    act(() => {
+      fireEvent.change(numberInput, { target: { value: 'number with invalid (+) symbol' } });
+    });
+
+    waitFor(() => {
+      expect(getByText(messages.noSpaceError)).toBeInTheDocument();
+    });
   });
 });

@@ -4,12 +4,18 @@ import { act, fireEvent, render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { history, initializeMockApp } from '@edx/frontend-platform';
+import MockAdapter from 'axios-mock-adapter';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
+import { fetchOrganizationsQuery } from '../../generic/data/thunks';
+import { getOrganizationsUrl } from '../../generic/data/api';
 import initializeStore from '../../store';
+import { executeThunk } from '../../utils';
 import messages from '../messages';
 import OrganizationSection from '.';
 
 let store;
+let axiosMock;
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -24,8 +30,8 @@ const RootWrapper = () => (
   </AppProvider>
 );
 
-describe('<OrganizationSection />', () => {
-  beforeEach(() => {
+describe('<OrganizationSection />', async () => {
+  beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
@@ -35,6 +41,9 @@ describe('<OrganizationSection />', () => {
       },
     });
     store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock.onDelete(getOrganizationsUrl).reply(200);
+    await executeThunk(fetchOrganizationsQuery(), store.dispatch);
     useSelector.mockReturnValue(['edX', 'org']);
   });
 

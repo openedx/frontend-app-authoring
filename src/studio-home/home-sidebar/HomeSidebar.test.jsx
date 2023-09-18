@@ -47,7 +47,7 @@ describe('<HomeSidebar />', () => {
 
     const { getByText } = render(<RootWrapper />);
     expect(getByText(`New to ${studioName}?`)).toBeInTheDocument();
-    expect(getByText(`Click help in the upper-right corner to get more information about the ${studioShortName} page you are viewing. You can also use the links at the bottom of the page to access our continually updated documentation and other ${studioShortName} resources.`)).toBeInTheDocument();
+    expect(getByText(`Click "Looking for help with Studio" at the bottom of the page to access our continually updated documentation and other ${studioShortName} resources.`)).toBeInTheDocument();
   });
 
   it('shows mail to get instruction', () => {

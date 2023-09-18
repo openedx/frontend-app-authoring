@@ -4,9 +4,14 @@ import { render, fireEvent, waitFor } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
+import MockAdapter from 'axios-mock-adapter';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import { COURSE_CREATOR_STATES } from '../../constants';
 import initializeStore from '../../store';
+import { executeThunk } from '../../utils';
+import { requestCourseCreatorQuery } from '../data/thunks';
+import { getRequestCourseCreatorUrl } from '../data/api';
 import { studioHomeMock } from '../__mocks__';
 import messages from './messages';
 import CollapsibleStateWithAction from '.';
@@ -16,7 +21,9 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
-let store;
+let store; let
+  axiosMock;
+
 const {
   studioName,
   studioShortName,
@@ -34,8 +41,8 @@ const props = {
   state: COURSE_CREATOR_STATES.unrequested,
 };
 
-describe('<CollapsibleStateWithAction />', () => {
-  beforeEach(() => {
+describe('<CollapsibleStateWithAction />', async () => {
+  beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
@@ -45,6 +52,9 @@ describe('<CollapsibleStateWithAction />', () => {
       },
     });
     store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock.onPost(getRequestCourseCreatorUrl()).reply(200, studioHomeMock);
+    await executeThunk(requestCourseCreatorQuery(), store.dispatch);
   });
 
   it('renders collapsible unrequested state successfully closed', () => {

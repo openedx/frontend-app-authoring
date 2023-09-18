@@ -15,7 +15,7 @@ ensureConfig([
 ], 'Header component');
 
 const Header = ({
-  courseId, courseNumber, courseOrg, courseTitle, hideMainMenu,
+  courseId, courseNumber, courseOrg, courseTitle, isHiddenMainMenu,
 }) => {
   const { authenticatedUser, config } = useContext(AppContext);
 
@@ -31,7 +31,7 @@ const Header = ({
     authenticatedUserAvatar: authenticatedUser?.avatar,
     studioBaseUrl: config.STUDIO_BASE_URL,
     logoutUrl: config.LOGOUT_URL,
-    hideMainMenu,
+    isHiddenMainMenu,
   };
 
   return (
@@ -51,14 +51,14 @@ Header.propTypes = {
   courseNumber: PropTypes.string,
   courseOrg: PropTypes.string,
   courseTitle: PropTypes.string.isRequired,
-  hideMainMenu: PropTypes.bool,
+  isHiddenMainMenu: PropTypes.bool,
 };
 
 Header.defaultProps = {
   courseId: null,
   courseNumber: null,
   courseOrg: null,
-  hideMainMenu: false,
+  isHiddenMainMenu: false,
 };
 
 export default Header;

@@ -12,6 +12,7 @@ import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import Header from '../studio-header/Header';
 import SubHeader from '../generic/sub-header/SubHeader';
+import AppFooter from '../AppFooter';
 import HomeSidebar from './home-sidebar';
 import TabsSection from './tabs-section';
 import OrganizationSection from './organization-section';
@@ -75,7 +76,7 @@ const StudioHome = ({ intl }) => {
 
   return (
     <>
-      <Header hideMainMenu />
+      <Header isHiddenMainMenu />
       <Container size="xl" className="studio-home">
         <section className="mb-4">
           <article className="studio-home-sub-header">
@@ -123,6 +124,7 @@ const StudioHome = ({ intl }) => {
           isQueryPending={anyQueryIsPending}
         />
       </div>
+      <AppFooter />
     </>
   );
 };

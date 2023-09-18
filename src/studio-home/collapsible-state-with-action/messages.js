@@ -7,7 +7,7 @@ const messages = defineMessages({
   },
   deniedCollapsibleDescription: {
     id: 'course-authoring.studio-home.collapsible.denied.description',
-    defaultMessage: '{studioName} is a hosted solution for our xConsortium partners and selected guests. Courses for which you are a team member appear above for you to edit, while course creator privileges are granted by {platformName}. Our team is has completed evaluating your request.',
+    defaultMessage: '{studioName} is a hosted solution for our xConsortium partners and selected guests. Courses for which you are a team member appear above for you to edit, while course creator privileges are granted by {platformName}. Our team has completed evaluating your request.',
   },
   deniedCollapsibleActionTitle: {
     id: 'course-authoring.studio-home.collapsible.denied.action.title',

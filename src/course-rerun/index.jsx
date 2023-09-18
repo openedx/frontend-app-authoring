@@ -15,6 +15,7 @@ import Loading from '../generic/Loading';
 import { getLoadingStatuses } from '../generic/data/selectors';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { RequestStatus } from '../data/constants';
+import AppFooter from '../AppFooter';
 import CourseRerunForm from './course-rerun-form';
 import CourseRerunSideBar from './course-rerun-sidebar';
 import messages from './messages';
@@ -40,7 +41,7 @@ const CourseRerun = ({ courseId }) => {
 
   return (
     <>
-      <Header hideMainMenu />
+      <Header isHiddenMainMenu />
       <Container size="xl" className="m-4">
         <section className="mb-4">
           <article>
@@ -86,6 +87,7 @@ const CourseRerun = ({ courseId }) => {
           isQueryPending={savingStatus === RequestStatus.PENDING}
         />
       </div>
+      <AppFooter />
     </>
   );
 };

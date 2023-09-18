@@ -7,7 +7,7 @@ const messages = defineMessages({
   },
   aboutDescription: {
     id: 'course-authoring.studio-home.sidebar.about.description',
-    defaultMessage: 'Click help in the upper-right corner to get more information about the {studioShortName} page you are viewing. You can also use the links at the bottom of the page to access our continually updated documentation and other {studioShortName} resources.',
+    defaultMessage: 'Click "Looking for help with Studio" at the bottom of the page to access our continually updated documentation and other {studioShortName} resources.',
   },
   studioHomeLinkToGettingStarted: {
     id: 'course-authoring.studio-home.sidebar.about.getting-started',

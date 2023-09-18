@@ -12,8 +12,10 @@ import MockAdapter from 'axios-mock-adapter';
 import initializeStore from '../store';
 import { RequestStatus } from '../data/constants';
 import { COURSE_CREATOR_STATES } from '../constants';
+import { executeThunk } from '../utils';
 import { studioHomeMock } from './__mocks__';
 import { getStudioHomeApiUrl } from './data/api';
+import { fetchStudioHomeData } from './data/thunks';
 import messages from './messages';
 import createNewCourseMessages from './create-new-course-form/messages';
 import createOrRerunCourseMessages from '../generic/create-or-rerun-course/messages';
@@ -47,8 +49,8 @@ const RootWrapper = () => (
   </AppProvider>
 );
 
-describe('<StudioHome />', () => {
-  beforeEach(() => {
+describe('<StudioHome />', async () => {
+  beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
@@ -60,6 +62,7 @@ describe('<StudioHome />', () => {
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+    await executeThunk(fetchStudioHomeData(), store.dispatch);
     useSelector.mockReturnValue(studioHomeMock);
   });
 
@@ -145,5 +148,11 @@ describe('<StudioHome />', () => {
     waitFor(() => {
       expect(queryByText(createNewCourseMessages.createNewCourse.defaultMessage)).not.toBeInTheDocument();
     });
+  });
+
+  it('should show footer', () => {
+    const { getByText } = render(<RootWrapper />);
+    expect(getByText('Looking for help with Studio?')).toBeInTheDocument();
+    expect(getByText('LMS')).toHaveAttribute('href', process.env.LMS_BASE_URL);
   });
 });

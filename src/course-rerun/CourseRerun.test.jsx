@@ -84,4 +84,10 @@ describe('<CourseRerun />', () => {
       expect(spinner.textContent).toEqual('Loading...');
     });
   });
+
+  it('should show footer', () => {
+    const { getByText } = render(<RootWrapper />);
+    expect(getByText('Looking for help with Studio?')).toBeInTheDocument();
+    expect(getByText('LMS')).toHaveAttribute('href', process.env.LMS_BASE_URL);
+  });
 });

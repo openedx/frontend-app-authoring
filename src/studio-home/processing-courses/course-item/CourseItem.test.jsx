@@ -3,12 +3,18 @@ import { render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
+import MockAdapter from 'axios-mock-adapter';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import initializeStore from '../../../store';
+import { executeThunk } from '../../../utils';
+import { handleDeleteNotificationQuery } from '../../data/thunks';
+import { getCourseNotificationUrl } from '../../data/api';
 import messages from './messages';
 import CourseItem from '.';
 
 let store;
+let axiosMock;
 
 const RootWrapper = (props) => (
   <AppProvider store={store}>
@@ -31,8 +37,8 @@ const course = {
 
 const props = { course };
 
-describe('<CourseItem />', () => {
-  beforeEach(() => {
+describe('<CourseItem />', async () => {
+  beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
@@ -42,6 +48,9 @@ describe('<CourseItem />', () => {
       },
     });
     store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock.onDelete(getCourseNotificationUrl(course.dismissLink)).reply(200);
+    await executeThunk(handleDeleteNotificationQuery(course.dismissLink), store.dispatch);
   });
 
   it('renders successfully', () => {

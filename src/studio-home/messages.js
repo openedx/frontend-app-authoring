@@ -9,10 +9,6 @@ const messages = defineMessages({
     id: 'course-authoring.studio-home.add-new-course.btn.text',
     defaultMessage: 'New course',
   },
-  addNewLibraryBtnText: {
-    id: 'course-authoring.studio-home.add-new-library.btn.text',
-    defaultMessage: 'New library',
-  },
   emailStaffBtnText: {
     id: 'course-authoring.studio-home.email-staff.btn.text',
     defaultMessage: 'Email staff to create course',
@@ -27,7 +23,7 @@ const messages = defineMessages({
   },
   archivedTabTitle: {
     id: 'course-authoring.studio-home.archived.tab.title',
-    defaultMessage: 'Archived',
+    defaultMessage: 'Archived courses',
   },
   defaultSection_1_Title: {
     id: 'course-authoring.studio-home.default-section-1.title',
