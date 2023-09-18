@@ -2,7 +2,7 @@ import { history } from '@edx/frontend-platform';
 import classNames from 'classnames';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
-  Badge, Card, Icon, IconButton, Hyperlink,
+  Badge, Card, Icon, IconButton, Hyperlink, OverlayTrigger, Tooltip,
 } from '@edx/paragon';
 import { ArrowForward, Settings } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
@@ -75,8 +75,17 @@ const PageCard = ({
         size="sm"
       />
       <Card.Body>
-        <Card.Section>
-          {page.description}
+        <Card.Section className="card-description">
+          <OverlayTrigger
+            placement={isDesktop ? 'right' : 'top'}
+            overlay={(
+              <Tooltip id={`tooltip-${page.id}`}>{page.description}</Tooltip>
+            )}
+          >
+            <p>
+              {page.description}
+            </p>
+          </OverlayTrigger>
         </Card.Section>
       </Card.Body>
     </Card>
