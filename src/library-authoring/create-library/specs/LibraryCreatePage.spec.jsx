@@ -1,14 +1,13 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { withRouter, Router } from 'react-router';
-import { createMemoryHistory } from 'history';
 import { injectIntl } from '@edx/frontend-platform/i18n';
 import { LibraryCreatePage } from '../LibraryCreatePage';
 import { libraryCreateInitialState } from '../data';
 import { SUBMISSION_STATUS, ROUTES } from '../../common';
 import { ctxMount } from '../../common/specs/helpers';
+import { withNavigate } from '../../utils/hoc';
 
-const InjectedLibraryCreatePage = injectIntl(withRouter(LibraryCreatePage));
+const InjectedLibraryCreatePage = injectIntl(withNavigate(LibraryCreatePage));
 const config = { STUDIO_BASE_URL: 'STUDIO_BASE_URL' };
 const mockResetForm = jest.fn();
 const mockCreateLibrary = jest.fn();
@@ -19,6 +18,12 @@ const props = {
   createLibrary: mockCreateLibrary,
   fetchOrganizations: mockFetchOrganizations,
 };
+const mockNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 describe('create-library/LibraryCreatePage.jsx', () => {
   it('renders library create page without error', () => {
@@ -91,33 +96,22 @@ describe('create-library/LibraryCreatePage.jsx', () => {
   });
 
   it('cancels form', () => {
-    const history = createMemoryHistory({ initialEntries: [ROUTES.List.CREATE] });
-    jest.spyOn(history, 'push');
-
     const container = ctxMount(
       <BrowserRouter>
-        <Router history={history}>
-          <InjectedLibraryCreatePage {...props} />
-        </Router>
+        <InjectedLibraryCreatePage {...props} />
       </BrowserRouter>,
       { config },
     );
 
     const cancelPageButton = container.find('button.btn-light').at(0);
     cancelPageButton.simulate('click');
-    expect(history.push).toHaveBeenCalledWith(ROUTES.List.HOME);
+    expect(mockNavigate).toHaveBeenCalledWith(ROUTES.List.HOME);
   });
 
   it('shows leave modal and prevents leaving', () => {
-    const history = createMemoryHistory({ initialEntries: [ROUTES.List.CREATE] });
-    jest.spyOn(history, 'push');
-    jest.spyOn(history, 'block');
-
     const container = ctxMount(
       <BrowserRouter>
-        <Router history={history}>
-          <InjectedLibraryCreatePage {...props} />
-        </Router>
+        <InjectedLibraryCreatePage {...props} />
       </BrowserRouter>,
       { config },
     );
@@ -127,8 +121,7 @@ describe('create-library/LibraryCreatePage.jsx', () => {
     cancelPageButton.simulate('click');
 
     // The leave page modal was shown and history was updated but blocked
-    expect(history.push).toHaveBeenCalledWith(ROUTES.List.HOME);
-    expect(history.block).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(ROUTES.List.HOME);
     expect(container.find('.pgn__modal-title').text()).toEqual('Unsaved changes');
 
     // Reject the leave page modal
@@ -141,7 +134,6 @@ describe('create-library/LibraryCreatePage.jsx', () => {
     const SubmitModalButton = container.find('.pgn__modal .btn-primary');
     SubmitModalButton.simulate('click');
     expect(container.find('.pgn__modal-title').exists()).toEqual(false);
-    expect(history.push).toHaveBeenCalledWith(ROUTES.List.HOME);
-    expect(history.block).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(ROUTES.List.HOME);
   });
 });

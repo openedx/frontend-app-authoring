@@ -9,7 +9,7 @@ import {
   Button,
   Dropdown,
 } from '@edx/paragon';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import selectLibraryDetail from '../common/data/selectors';
 import {
   fetchLibraryDetail,
@@ -28,7 +28,7 @@ const StudioHeaderWrapperBase = ({ intl, ...props }) => {
   // where we have library details, so we can use that to
   // determine if we want to render the ContentTitleBlock or not
   const { loadingStatus, library } = props;
-  const { libraryId } = props.match.params;
+  const { libraryId } = useParams();
 
   const actionRowContent = (
     <>
@@ -72,11 +72,6 @@ const StudioHeaderWrapperBase = ({ intl, ...props }) => {
 StudioHeaderWrapperBase.propTypes = {
   intl: intlShape.isRequired,
   loadingStatus: PropTypes.string.isRequired,
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      libraryId: PropTypes.string.isRequired,
-    }).isRequired,
-  }).isRequired,
   library: PropTypes.shape({
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,

@@ -1,24 +1,27 @@
 import React from 'react';
-import { Router, withRouter } from 'react-router';
 import update from 'immutability-helper';
 import { BrowserRouter } from 'react-router-dom';
 import { injectIntl } from '@edx/frontend-platform/i18n';
-import { createMemoryHistory } from 'history';
 import { LibraryListPage } from '../LibraryListPage';
 import { libraryListInitialState } from '../data';
 import { LOADING_STATUS, ROUTES } from '../../common';
 import { ctxMount } from '../../common/specs/helpers';
 import { libraryFactory } from '../../common/specs/factories';
+import { withNavigate } from '../../utils/hoc';
 
-const InjectedLibraryListPage = injectIntl(withRouter(LibraryListPage));
-const history = createMemoryHistory();
-const historySpy = jest.spyOn(history, 'push');
+const mockNavigate = jest.fn();
+const InjectedLibraryListPage = injectIntl(withNavigate(LibraryListPage));
 const mockLibraryFetcher = jest.fn();
 const props = {
   ...libraryListInitialState,
   fetchLibraryList: mockLibraryFetcher,
   status: LOADING_STATUS.LOADED,
 };
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 describe('list-libraries/LibraryListPage.jsx', () => {
   afterEach(() => {
@@ -147,9 +150,7 @@ describe('list-libraries/LibraryListPage.jsx', () => {
   it('shows the create form when clicking the new library button on a empty page', () => {
     const container = ctxMount(
       <BrowserRouter>
-        <Router history={history}>
-          <InjectedLibraryListPage {...props} />
-        </Router>
+        <InjectedLibraryListPage {...props} />
       </BrowserRouter>,
     );
 
@@ -159,7 +160,7 @@ describe('list-libraries/LibraryListPage.jsx', () => {
     const newLibraryButton = emptyPage.find('button.btn-outline-primary');
     newLibraryButton.simulate('click');
 
-    expect(historySpy).toHaveBeenCalledWith(ROUTES.List.CREATE);
+    expect(mockNavigate).toHaveBeenCalledWith(ROUTES.List.CREATE);
   });
 
   it('handle click on library listing item', () => {
@@ -173,16 +174,14 @@ describe('list-libraries/LibraryListPage.jsx', () => {
 
     const container = ctxMount(
       <BrowserRouter>
-        <Router history={history}>
-          <InjectedLibraryListPage {...newProps} />
-        </Router>
+        <InjectedLibraryListPage {...newProps} />
       </BrowserRouter>,
     );
 
     const libraryItem = container.find('.library-item').at(0);
     libraryItem.simulate('click');
 
-    expect(historySpy).toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalled();
   });
 
   it('handle click create library page', () => {
@@ -196,15 +195,13 @@ describe('list-libraries/LibraryListPage.jsx', () => {
 
     const container = ctxMount(
       <BrowserRouter>
-        <Router history={history}>
-          <InjectedLibraryListPage {...newProps} />
-        </Router>
+        <InjectedLibraryListPage {...newProps} />
       </BrowserRouter>,
     );
 
     const newLibraryBtn = container.find('button.btn-outline-primary').at(0);
     newLibraryBtn.simulate('click');
 
-    expect(historySpy).toHaveBeenCalledWith(ROUTES.List.CREATE);
+    expect(mockNavigate).toHaveBeenCalledWith(ROUTES.List.CREATE);
   });
 });

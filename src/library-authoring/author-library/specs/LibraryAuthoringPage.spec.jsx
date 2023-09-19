@@ -81,7 +81,7 @@ const genState = (library, blocks = []) => (
 
 const render = (library, ctxSettings) => ctxRender(
   <LibraryAuthoringPageContainer
-    match={{ params: { libraryId: library.id } }}
+    libraryId={library.id}
   />,
   ctxSettings,
 );
@@ -90,7 +90,7 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
   it('Fetches a library when missing', async () => {
     await ctxRender(
       <LibraryAuthoringPageContainer
-        match={{ params: { libraryId: 'testtest' } }}
+        libraryId="testtest"
       />,
     );
     await waitFor(() => expect(clearLibrary.fn).toHaveBeenCalled());
@@ -101,7 +101,7 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
   it('Fetches a library when the current library does not match', async () => {
     await ctxRender(
       <LibraryAuthoringPageContainer
-        match={{ params: { libraryId: 'testtest' } }}
+        libraryId="testtest"
       />,
       genState(libraryFactory()),
     );

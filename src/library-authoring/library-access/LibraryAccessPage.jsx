@@ -6,7 +6,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
 import {
   ActionRow,
   Alert,
@@ -16,6 +15,7 @@ import {
 } from '@edx/paragon';
 import { Add } from '@edx/paragon/icons';
 import { AppContext } from '@edx/frontend-platform/react';
+import { useNavigate, useParams } from 'react-router-dom';
 import messages from './messages';
 import { LoadingPage } from '../../generic';
 import { fetchLibraryDetail } from '../author-library/data';
@@ -141,6 +141,8 @@ LibraryAccessPage.propTypes = {
 const LibraryAccessPageContainer = ({
   intl, users, errorMessage, ...props
 }) => {
+  const { libraryId } = useParams();
+  const navigate = useNavigate();
   const [showAdd, setShowAdd] = useState(false);
   const multipleAdmins = !!(users && users.filter((user) => user.access_level === 'admin').length >= 2);
   const { authenticatedUser } = useContext(AppContext);
@@ -154,7 +156,6 @@ const LibraryAccessPageContainer = ({
 
   // Explicit empty dependencies means on mount.
   useEffect(() => {
-    const { libraryId } = props.match.params;
     if (props.library === null) {
       props.fetchLibraryDetail({ libraryId });
     }
@@ -177,7 +178,7 @@ const LibraryAccessPageContainer = ({
     }
     const admin = users.filter((user) => user.username === authenticatedUser.username)[0];
     if ((admin === undefined) || admin.access_level === LIBRARY_ACCESS.READ) {
-      props.history.replace(ROUTES.List.HOME);
+      navigate(ROUTES.List.HOME, { replace: true });
     }
   });
 
@@ -227,14 +228,6 @@ LibraryAccessPageContainer.propTypes = {
   clearAccessErrors: PropTypes.func.isRequired,
   loadingStatus: PropTypes.oneOf(Object.values(LOADING_STATUS)).isRequired,
   users: PropTypes.arrayOf(libraryUserShape),
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      libraryId: PropTypes.string.isRequired,
-    }).isRequired,
-  }).isRequired,
-  history: PropTypes.shape({
-    replace: PropTypes.func.isRequired,
-  }).isRequired,
 };
 
 LibraryAccessPageContainer.defaultProps = { ...libraryAccessInitialState };
@@ -248,4 +241,4 @@ export default connect(
     fetchLibraryDetail,
     fetchUserList,
   },
-)(injectIntl(withRouter(LibraryAccessPageContainer)));
+)(injectIntl(LibraryAccessPageContainer));

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '@edx/frontend-platform/react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
 import {
   ActionRow,
   Alert,
@@ -16,6 +15,7 @@ import {
 } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Search, Sync } from '@edx/paragon/icons';
+import { useParams } from 'react-router-dom';
 
 import { LoadingPage } from '../../generic';
 import {
@@ -329,7 +329,7 @@ ImportTaskList.propTypes = {
 export const CourseImportPage = ({
   intl, courses, courseCount, importTasks, importTaskCount, ongoingImports, organizations, ...props
 }) => {
-  const { libraryId } = props.match.params;
+  const { libraryId } = useParams();
   const { authenticatedUser } = useContext(AppContext);
   const isCourseImportListLoading = (
     props.coursesLoadingStatus === LOADING_STATUS.LOADING
@@ -481,12 +481,6 @@ CourseImportPage.propTypes = {
 
   defaultPaginationParams: paginationParamsShape,
   defaultFilterParams: legacyFilterParamsShape,
-
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      libraryId: PropTypes.string.isRequired,
-    }).isRequired,
-  }).isRequired,
 };
 
 export default connect(selectCourseImport, {
@@ -495,4 +489,4 @@ export default connect(selectCourseImport, {
   fetchImportTasksList,
   fetchOrganizationList,
   importBlocks,
-})(injectIntl(withRouter(CourseImportPage)));
+})(injectIntl(CourseImportPage));

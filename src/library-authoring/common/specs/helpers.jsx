@@ -7,8 +7,7 @@ import { getDefaultMiddleware } from '@reduxjs/toolkit';
 import { initializeMockApp } from '@edx/frontend-platform';
 import AppContext from '@edx/frontend-platform/react/AppContext';
 import { Provider } from 'react-redux';
-import { createBrowserHistory } from 'history';
-import { Router } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import fetchMock from 'jest-fetch-mock';
 import { newMockXhr } from 'mock-xmlhttprequest';
 import { buildStore } from '../../../store';
@@ -141,13 +140,13 @@ export const spyMiddleware = () => (next) => (action) => {
 };
 
 export const ctxRender = async (ui, {
-  options, context, storeOptions, history = createBrowserHistory(),
+  options, context, storeOptions,
 } = {}) => {
   const store = buildStore({ middleware: [...getDefaultMiddleware(), spyMiddleware], ...storeOptions });
   await initializeMockApp({ messages: [appMessages] });
   return render(
     <Provider store={store}>
-      <Router history={history}>
+      <Router>
         <AppContext.Provider value={context}>
           <IntlProvider locale="en">
             {ui}

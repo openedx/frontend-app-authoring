@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  NavLink, Switch, Route, withRouter,
-} from 'react-router-dom';
+import { NavLink, Route, Routes } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
@@ -26,7 +24,7 @@ import {
   ROUTES,
   truncateMessage,
   XBLOCK_VIEW_SYSTEM,
-  getXBlockHandlerUrl, fetchable,
+  getXBlockHandlerUrl, fetchable, PAGE_TYPE,
 } from '../common';
 import {
   commitLibraryChanges,
@@ -55,20 +53,21 @@ import LibraryBlockOlx from './LibraryBlockOlx';
 import messages from './messages';
 
 import { blockViewShape } from './data/shapes';
+import { withNavigate, withParams, withPath } from '../utils/hoc';
 
 class LibraryBlockPage extends React.Component {
   componentDidMount() {
     this.loadData();
     /* This is required if the user reached the page directly. */
     if (this.props.library === null) {
-      const { libraryId } = this.props.match.params;
+      const { libraryId } = this.props;
       this.props.fetchLibraryDetail({ libraryId });
     }
-    this.props.initializeBlock(this.props.match.params.blockId);
+    this.props.initializeBlock(this.props.blockId);
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.match.path !== prevProps.match.path) {
+    if (this.props.path !== prevProps.path) {
       this.loadData();
     }
   }
@@ -88,7 +87,7 @@ class LibraryBlockPage extends React.Component {
    */
   getHandlerUrl = async (usageKey) => {
     const viewSystem = (
-      this.props.match.path === ROUTES.Block.Learn
+      this.props.path === ROUTES.Block.Learn
         ? XBLOCK_VIEW_SYSTEM.LMS
         : XBLOCK_VIEW_SYSTEM.Studio
     );
@@ -100,10 +99,10 @@ class LibraryBlockPage extends React.Component {
       event.eventType === 'cancel'
       || (event.eventType === 'save' && event.state === 'end')
     ) {
-      const { libraryId, blockId } = this.props.match.params;
-      this.props.history.push(ROUTES.Block.HOME_SLUG(libraryId, blockId));
+      const { libraryId, blockId } = this.props;
+      this.props.navigate(ROUTES.Block.HOME_SLUG(libraryId, blockId));
     } else if (event.eventType === 'error') {
-      const { blockId } = this.props.match.params;
+      const { blockId } = this.props;
       const errorMessage = `${event.title || 'Error'}: ${event.message}`;
       this.props.setLibraryBlockError({ errorMessage, blockId });
     } else {
@@ -112,27 +111,27 @@ class LibraryBlockPage extends React.Component {
   };
 
   handleDeleteBlock = () => {
-    const { blockId } = this.props.match.params;
+    const { blockId } = this.props;
     /* eslint-disable-next-line no-alert */
     if (window.confirm('Are you sure you want to delete this XBlock? There is no undo.')) {
       this.props.deleteLibraryBlock({ blockId }).then(() => {
-        this.props.history.push(ROUTES.Detail.HOME_SLUG(this.props.match.params.libraryId));
+        this.props.navigate(ROUTES.Detail.HOME_SLUG(this.props.libraryId));
       });
     }
   };
 
   handleSaveOlx = (olx) => {
-    const { blockId } = this.props.match.params;
+    const { blockId } = this.props;
     this.props.setLibraryBlockOlx({ blockId, olx });
   };
 
   handleDropFiles = (files) => {
-    const { blockId } = this.props.match.params;
+    const { blockId } = this.props;
     this.props.uploadLibraryBlockAssets({ blockId, files });
   };
 
   handleDeleteFile = (fileName) => {
-    const { blockId } = this.props.match.params;
+    const { blockId } = this.props;
     /* eslint-disable-next-line no-alert */
     if (window.confirm(`Are you sure you want to delete ${fileName}?`)) {
       this.props.deleteLibraryBlockAsset({ blockId, fileName });
@@ -140,7 +139,7 @@ class LibraryBlockPage extends React.Component {
   };
 
   handleCommitLibrary = async () => {
-    const { blockId, libraryId } = this.props.match.params;
+    const { blockId, libraryId } = this.props;
     await this.props.commitLibraryChanges({ libraryId });
 
     /* We fetch block metadata immediately, as its published status may have changed. */
@@ -148,7 +147,7 @@ class LibraryBlockPage extends React.Component {
   };
 
   handleRevertLibrary = async () => {
-    const { blockId, libraryId } = this.props.match.params;
+    const { blockId, libraryId } = this.props;
     await this.props.revertLibraryChanges({ libraryId });
 
     /* We fetch block metadata immediately, as its publication status may have changed. */
@@ -160,13 +159,13 @@ class LibraryBlockPage extends React.Component {
   };
 
   loadData() {
-    const { blockId } = this.props.match.params;
+    const { blockId } = this.props;
     this.props.focusBlock({ blockId });
 
     /* Always load block metadata. */
     this.props.fetchLibraryBlockMetadata({ blockId });
 
-    switch (this.props.match.path) {
+    switch (this.props.path) {
       case ROUTES.Block.HOME: {
         this.props.fetchLibraryBlockView({
           blockId,
@@ -209,7 +208,7 @@ class LibraryBlockPage extends React.Component {
       intl,
       metadata,
     } = this.props;
-    const { blockId, libraryId } = this.props.match.params;
+    const { blockId, libraryId } = this.props;
     const hasChanges = metadata ? metadata.has_unpublished_changes : false;
 
     return (
@@ -233,21 +232,21 @@ class LibraryBlockPage extends React.Component {
                   <div className="card-header">
                     <ul className="nav nav-tabs card-header-tabs">
                       <li className="nav-item">
-                        <NavLink exact to={ROUTES.Block.HOME_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">View</NavLink>
+                        <NavLink to={ROUTES.Block.HOME_SLUG(libraryId, blockId)} className="nav-link" end>View</NavLink>
                       </li>
                       <li className="nav-item">
                         {this.isEditable
-                          ? <NavLink to={ROUTES.Block.EDIT_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">Edit</NavLink>
+                          ? <NavLink to={ROUTES.Block.EDIT_SLUG(libraryId, blockId)} className="nav-link">Edit</NavLink>
                           : <span className="nav-link">Edit</span>}
                       </li>
                       <li className="nav-item">
-                        <NavLink to={ROUTES.Block.ASSETS_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">Assets</NavLink>
+                        <NavLink to={ROUTES.Block.ASSETS_SLUG(libraryId, blockId)} className="nav-link">Assets</NavLink>
                       </li>
                       <li className="nav-item">
-                        <NavLink to={ROUTES.Block.SOURCE_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">Source</NavLink>
+                        <NavLink to={ROUTES.Block.SOURCE_SLUG(libraryId, blockId)} className="nav-link">Source</NavLink>
                       </li>
                       <li className="nav-item">
-                        <NavLink to={ROUTES.Block.LEARN_SLUG(libraryId, blockId)} className="nav-link" activeClassName="active">Learn</NavLink>
+                        <NavLink to={ROUTES.Block.LEARN_SLUG(libraryId, blockId)} className="nav-link">Learn</NavLink>
                       </li>
                     </ul>
                   </div>
@@ -260,43 +259,61 @@ class LibraryBlockPage extends React.Component {
                         <Spinner animation="border" variant="primary" />
                       </div>
                     ) : (
-                      <Switch>
-                        <Route exact path={ROUTES.Block.HOME}>
-                          <LibraryBlock
-                            view={this.props.view}
-                            getHandlerUrl={this.getHandlerUrl}
-                          />
-                        </Route>
-                        <Route exact path={ROUTES.Block.EDIT}>
-                          <LibraryBlock
-                            view={this.props.view}
-                            getHandlerUrl={this.getHandlerUrl}
-                            onBlockNotification={this.handleBlockNotification}
-                          />
-                        </Route>
-                        <Route exact path={ROUTES.Block.ASSETS}>
-                          <LibraryBlockAssets
-                            assets={this.props.assets}
-                            onDropFiles={this.handleDropFiles}
-                            onDeleteFile={this.handleDeleteFile}
-                          />
-                        </Route>
-                        <Route exact path={ROUTES.Block.SOURCE}>
-                          <LibraryBlockOlx
-                            olx={this.props.olx}
-                            onSaveOlx={this.handleSaveOlx}
-                          />
-                        </Route>
-                        <Route exact path={ROUTES.Block.LEARN}>
-                          <p>
-                            This tab uses the LMS APIs so it shows the published version only and will save user state.
-                          </p>
-                          <LibraryBlock
-                            view={this.props.view}
-                            getHandlerUrl={this.getHandlerUrl}
-                          />
-                        </Route>
-                      </Switch>
+                      <Routes>
+                        <Route
+                          path={PAGE_TYPE.HOME}
+                          element={(
+                            <LibraryBlock
+                              view={this.props.view}
+                              getHandlerUrl={this.getHandlerUrl}
+                            />
+                          )}
+                        />
+                        <Route
+                          path={PAGE_TYPE.EDIT}
+                          element={(
+                            <LibraryBlock
+                              view={this.props.view}
+                              getHandlerUrl={this.getHandlerUrl}
+                              onBlockNotification={this.handleBlockNotification}
+                            />
+                          )}
+                        />
+                        <Route
+                          path={PAGE_TYPE.ASSETS}
+                          element={(
+                            <LibraryBlockAssets
+                              assets={this.props.assets}
+                              onDropFiles={this.handleDropFiles}
+                              onDeleteFile={this.handleDeleteFile}
+                            />
+                          )}
+                        />
+                        <Route
+                          path={PAGE_TYPE.SOURCE}
+                          element={(
+                            <LibraryBlockOlx
+                              olx={this.props.olx}
+                              onSaveOlx={this.handleSaveOlx}
+                            />
+                          )}
+                        />
+                        <Route
+                          path={PAGE_TYPE.LEARN}
+                          element={(
+                            <>
+                              <p>
+                                This tab uses the LMS APIs so it shows the published version only
+                                and will save user state.
+                              </p>
+                              <LibraryBlock
+                                view={this.props.view}
+                                getHandlerUrl={this.getHandlerUrl}
+                              />
+                            </>
+                          )}
+                        />
+                      </Routes>
                     )}
                   </div>
                 </Card>
@@ -393,17 +410,11 @@ LibraryBlockPage.propTypes = {
   fetchLibraryDetail: PropTypes.func.isRequired,
   initializeBlock: PropTypes.func.isRequired,
   focusBlock: PropTypes.func.isRequired,
-  history: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-  }),
+  navigate: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      libraryId: PropTypes.string.isRequired,
-      blockId: PropTypes.string.isRequired,
-    }).isRequired,
-    path: PropTypes.string.isRequired,
-  }).isRequired,
+  path: PropTypes.string.isRequired,
+  libraryId: PropTypes.string.isRequired,
+  blockId: PropTypes.string.isRequired,
   library: libraryShape,
   metadata: fetchable(libraryBlockShape).isRequired,
   olx: fetchable(PropTypes.string).isRequired,
@@ -435,4 +446,4 @@ export default connect(
     uploadLibraryBlockAssets,
     initializeBlock,
   },
-)(injectIntl(withRouter(LibraryBlockPage)));
+)(injectIntl(withNavigate(withParams(withPath(LibraryBlockPage)))));

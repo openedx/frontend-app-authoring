@@ -34,11 +34,6 @@ describe('course-import/CourseImportPage/CourseImportPage.jsx', () => {
       organizationsLoadingStatus: LOADING_STATUS.LOADED,
       clearErrors: mockClearErrors,
       importBlocks: mockImportBlocks,
-      match: {
-        params: {
-          libraryId: 'lib-id',
-        },
-      },
     };
   });
 

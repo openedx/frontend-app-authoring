@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
 import {
   Button, Pagination, ActionRow, Card,
 } from '@edx/paragon';
@@ -22,6 +21,7 @@ import {
 import messages from './messages';
 import commonMessages from '../common/messages';
 import emptyPageMessages from '../empty-page/messages';
+import { withNavigate } from '../utils/hoc';
 
 export class LibraryListPage extends React.Component {
   constructor(props) {
@@ -50,7 +50,7 @@ export class LibraryListPage extends React.Component {
   }
 
   goToCreateLibraryPage = () => {
-    this.props.history.push(ROUTES.List.CREATE);
+    this.props.navigate(ROUTES.List.CREATE);
   };
 
   handlePageChange = (selectedPage) => {
@@ -71,7 +71,7 @@ export class LibraryListPage extends React.Component {
   };
 
   goToLibraryItem = (library) => {
-    this.props.history.push(library.url);
+    this.props.navigate(library.url);
   };
 
   renderError() {
@@ -208,9 +208,7 @@ LibraryListPage.propTypes = {
   fetchLibraryList: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
   libraries: paginated(libraryShape).isRequired,
-  history: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-  }).isRequired,
+  navigate: PropTypes.func.isRequired,
   status: PropTypes.oneOf(Object.values(LOADING_STATUS)).isRequired,
 };
 
@@ -219,4 +217,4 @@ LibraryListPage.defaultProps = libraryListInitialState;
 export default connect(
   selectLibraryList,
   { fetchLibraryList },
-)(injectIntl(withRouter(LibraryListPage)));
+)(injectIntl(withNavigate(LibraryListPage)));
