@@ -72,7 +72,7 @@
     "@edx/frontend-build": "12.9.10",
     "@edx/reactifex": "^2.1.1",
     "@sheerun/mutationobserver-shim": "0.3.3",
-    "@testing-library/dom": "9.3.1",
+    "@testing-library/dom": "9.3.3",
     "@testing-library/react": "12.1.5",
     "@wojtekmaj/enzyme-adapter-react-17": "0.8.0",
     "copy-webpack-plugin": "^11.0.0",
