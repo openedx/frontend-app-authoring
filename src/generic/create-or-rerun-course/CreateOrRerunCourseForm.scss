@@ -1,0 +1,18 @@
+.create-or-rerun-course-form {
+  .form-group-custom {
+    &:not(:last-child) {
+      margin-bottom: $spacer;
+    }
+
+    .pgn__form-label {
+      font: normal 1.125rem/1.75rem $font-family-base;
+      color: $gray-700;
+      margin-bottom: .25rem;
+    }
+
+    .pgn__form-control-description,
+    .pgn__form-text {
+      margin-top: .62rem;
+    }
+  }
+}

@@ -6,7 +6,7 @@ import {
 } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 
-import HelpSidebar from '../../generic/help-sidebar';
+import { HelpSidebar } from '../../generic/help-sidebar';
 import messages from './messages';
 
 const SettingsSidebar = ({ intl, courseId, proctoredExamSettingsUrl }) => (

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ActionRow } from '@edx/paragon';
 
 const SubHeader = ({
   title, subtitle, contentTitle, description, instruction, headerActions,
@@ -11,9 +12,9 @@ const SubHeader = ({
         {title}
       </h2>
       {headerActions && (
-        <div className="ml-auto sub-header-actions">
+        <ActionRow className="ml-auto sub-header-actions">
           {headerActions}
-        </div>
+        </ActionRow>
       )}
     </header>
     <header className="sub-header-content">
@@ -28,12 +29,14 @@ const SubHeader = ({
 SubHeader.defaultProps = {
   instruction: '',
   description: '',
+  subtitle: '',
+  contentTitle: '',
   headerActions: null,
 };
 SubHeader.propTypes = {
   title: PropTypes.string.isRequired,
-  subtitle: PropTypes.string.isRequired,
-  contentTitle: PropTypes.string.isRequired,
+  subtitle: PropTypes.string,
+  contentTitle: PropTypes.string,
   description: PropTypes.string,
   instruction: PropTypes.oneOfType([
     PropTypes.element,

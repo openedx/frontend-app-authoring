@@ -6,4 +6,5 @@ export const otherLinkURLParams = {
   advancedSettings: 'settings/advanced',
   groupConfigurations: 'group_configurations',
   proctoredExamSettings: 'proctored-exam-settings',
+  studioHome: 'home',
 };

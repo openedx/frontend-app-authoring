@@ -66,14 +66,15 @@ const InternetConnectionAlert = ({
 
 InternetConnectionAlert.defaultProps = {
   isQueryPending: false,
-  onQueryProcessing: null,
+  onQueryProcessing: () => ({}),
+  onInternetConnectionFailed: () => ({}),
 };
 
 InternetConnectionAlert.propTypes = {
   isFailed: PropTypes.bool.isRequired,
   isQueryPending: PropTypes.bool,
   onQueryProcessing: PropTypes.func,
-  onInternetConnectionFailed: PropTypes.func.isRequired,
+  onInternetConnectionFailed: PropTypes.func,
 };
 
 export default InternetConnectionAlert;
