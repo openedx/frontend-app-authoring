@@ -25,20 +25,20 @@ const renderComponent = (props) => render(
 
 describe('<CourseUpdate />', () => {
   it('render CourseUpdate component correctly', () => {
-    const { getByText, getByRole } = renderComponent();
+    const { getByText, getByTestId } = renderComponent();
 
     expect(getByText(dateForUpdateMock)).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.editButton.defaultMessage })).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.deleteButton.defaultMessage })).toBeInTheDocument();
+    expect(getByTestId('course-update-edit-button')).toBeInTheDocument();
+    expect(getByTestId('course-update-delete-button')).toBeInTheDocument();
   });
 
   it('render CourseUpdate component without content correctly', () => {
-    const { getByText, queryByTestId, getByRole } = renderComponent({ contentForUpdate: '' });
+    const { getByText, queryByTestId, getByTestId } = renderComponent({ contentForUpdate: '' });
 
     expect(getByText(dateForUpdateMock)).toBeInTheDocument();
     expect(queryByTestId('course-update-content')).not.toBeInTheDocument();
-    expect(getByRole('button', { name: messages.editButton.defaultMessage })).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.deleteButton.defaultMessage })).toBeInTheDocument();
+    expect(getByTestId('course-update-edit-button')).toBeInTheDocument();
+    expect(getByTestId('course-update-delete-button')).toBeInTheDocument();
   });
 
   it('render error message when dateForUpdate is inValid', () => {
@@ -48,25 +48,25 @@ describe('<CourseUpdate />', () => {
   });
 
   it('calls the onEdit function when the "Edit" button is clicked', () => {
-    const { getByRole } = renderComponent();
+    const { getByTestId } = renderComponent();
 
-    const editButton = getByRole('button', { name: messages.editButton.defaultMessage });
+    const editButton = getByTestId('course-update-edit-button');
     fireEvent.click(editButton);
     expect(onEditMock).toHaveBeenCalledTimes(1);
   });
 
   it('calls the onDelete function when the "Delete" button is clicked', () => {
-    const { getByRole } = renderComponent();
+    const { getByTestId } = renderComponent();
 
-    const deleteButton = getByRole('button', { name: messages.deleteButton.defaultMessage });
+    const deleteButton = getByTestId('course-update-delete-button');
     fireEvent.click(deleteButton);
     expect(onDeleteMock).toHaveBeenCalledTimes(1);
   });
 
   it('"Edit" and "Delete" buttons is disabled when isDisabledButtons is true', () => {
-    const { getByRole } = renderComponent({ isDisabledButtons: true });
+    const { getByTestId } = renderComponent({ isDisabledButtons: true });
 
-    expect(getByRole('button', { name: messages.editButton.defaultMessage })).toBeDisabled();
-    expect(getByRole('button', { name: messages.deleteButton.defaultMessage })).toBeDisabled();
+    expect(getByTestId('course-update-edit-button')).toBeDisabled();
+    expect(getByTestId('course-update-delete-button')).toBeDisabled();
   });
 });

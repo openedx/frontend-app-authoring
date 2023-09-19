@@ -21,25 +21,25 @@ const renderComponent = (props) => render(
 
 describe('<CourseHandouts />', () => {
   it('render CourseHandouts component correctly', () => {
-    const { getByText, getByRole } = renderComponent();
+    const { getByText, getByTestId } = renderComponent();
 
     expect(getByText(messages.handoutsTitle.defaultMessage)).toBeInTheDocument();
     expect(getByText(handoutsContentMock)).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.editButton.defaultMessage })).toBeInTheDocument();
+    expect(getByTestId('course-handouts-edit-button')).toBeInTheDocument();
   });
 
   it('calls the onEdit function when the edit button is clicked', () => {
-    const { getByRole } = renderComponent();
+    const { getByTestId } = renderComponent();
 
-    const editButton = getByRole('button', { name: messages.editButton.defaultMessage });
+    const editButton = getByTestId('course-handouts-edit-button');
     fireEvent.click(editButton);
     expect(onEditMock).toHaveBeenCalledTimes(1);
   });
 
   it('"Edit" button is disabled when isDisabledButtons is true', () => {
-    const { getByRole } = renderComponent({ isDisabledButtons: true });
+    const { getByTestId } = renderComponent({ isDisabledButtons: true });
 
-    const editButton = getByRole('button', { name: messages.editButton.defaultMessage });
+    const editButton = getByTestId('course-handouts-edit-button');
     expect(editButton).toBeDisabled();
   });
 });
