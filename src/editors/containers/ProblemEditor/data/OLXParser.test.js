@@ -11,15 +11,18 @@ import {
   advancedProblemOlX,
   multipleTextInputProblemOlX,
   multipleNumericProblemOlX,
+  multiSelectPartialCredit,
   NumericAndTextInputProblemOlX,
   blankProblemOLX,
   blankQuestionOLX,
   styledQuestionOLX,
   shuffleProblemOLX,
   scriptProblemOlX,
+  singleSelectPartialCredit,
   labelDescriptionQuestionOLX,
   htmlEntityTestOLX,
   numberParseTestOLX,
+  numericalProblemPartialCredit,
   solutionExplanationTest,
   solutionExplanationWithoutDivTest,
   tablesInRichTextTest,
@@ -42,6 +45,9 @@ const multipleNumericOlxParser = new OLXParser(multipleNumericProblemOlX.rawOLX)
 const numericAndTextInputOlxParser = new OLXParser(NumericAndTextInputProblemOlX.rawOLX);
 const labelDescriptionQuestionOlxParser = new OLXParser(labelDescriptionQuestionOLX.rawOLX);
 const shuffleOlxParser = new OLXParser(shuffleProblemOLX.rawOLX);
+const multiSelectPartialCreditOlxParser = new OLXParser(multiSelectPartialCredit.rawOLX);
+const singleSelectPartialCreditParser = new OLXParser(singleSelectPartialCredit.rawOLX);
+const numericalProblemPartialCreditParser = new OLXParser(numericalProblemPartialCredit.rawOLX);
 
 describe('OLXParser', () => {
   describe('throws error and redirects to advanced editor', () => {
@@ -69,6 +75,36 @@ describe('OLXParser', () => {
       it('should throw error and contain message regarding opening advanced editor', () => {
         const olxparser = new OLXParser(scriptProblemOlX.rawOLX);
         expect(() => olxparser.parseQuestions('numericalresponse')).toThrow(new Error('Script Tag, reverting to Advanced Editor'));
+      });
+    });
+    describe('when multi select problem finds partial_credit attribute', () => {
+      it('should throw error and contain message regarding opening advanced editor', () => {
+        try {
+          multiSelectPartialCreditOlxParser.getParsedOLXData();
+        } catch (e) {
+          expect(e).toBeInstanceOf(Error);
+          expect(e.message).toBe('Partial credit not supported by GUI, reverting to Advanced Editor');
+        }
+      });
+    });
+    describe('when multi select problem finds partial_credit attribute', () => {
+      it('should throw error and contain message regarding opening advanced editor', () => {
+        try {
+          numericalProblemPartialCreditParser.getParsedOLXData();
+        } catch (e) {
+          expect(e).toBeInstanceOf(Error);
+          expect(e.message).toBe('Partial credit not supported by GUI, reverting to Advanced Editor');
+        }
+      });
+    });
+    describe('when multi select problem finds partial_credit attribute', () => {
+      it('should throw error and contain message regarding opening advanced editor', () => {
+        try {
+          singleSelectPartialCreditParser.getParsedOLXData();
+        } catch (e) {
+          expect(e).toBeInstanceOf(Error);
+          expect(e.message).toBe('Partial credit not supported by GUI, reverting to Advanced Editor');
+        }
       });
     });
   });

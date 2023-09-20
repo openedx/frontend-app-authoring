@@ -1112,3 +1112,43 @@ export const parseOutExplanationTests = {
         <p>solution meat</p>
       `
 };
+
+export const multiSelectPartialCredit = {
+  rawOLX: `<problem>
+    <choiceresponse partial_credit="EDC">
+      <label>Which of the following is a fruit?</label>
+      <description>Select all that apply.</description>
+      <checkboxgroup>
+        <choice correct="true">apple</choice>
+        <choice correct="true">pumpkin</choice>
+        <choice correct="false">potato</choice>
+        <choice correct="true">tomato</choice>
+      </checkboxgroup>
+    </choiceresponse>
+  </problem>`
+}
+
+export const singleSelectPartialCredit = {
+  rawOLX: `<problem>
+    <multiplechoiceresponse partial_credit="points">
+      <label>What Apple device competed with the portable CD player?</label>
+      <choicegroup type="MultipleChoice">
+        <choice correct="false">The iPad</choice>
+        <choice correct="false">Napster</choice>
+        <choice correct="true">The iPod</choice>
+        <choice correct="partial" point_value="0.25">The vegetable peeler</choice>
+      </choicegroup>
+    </multiplechoiceresponse>
+  </problem>`
+}
+
+export const numericalProblemPartialCredit = {
+  rawOLX: `<problem>
+    <numericalresponse answer="9.3*10^7" partial_credit="close">
+      <label>How many miles away from Earth is the sun?</label>
+      <description>Use scientific notation to answer.</description>
+      <formulaequationinput/>
+      <responseparam type="tolerance" default="1%" partial_range="3"/>
+    </numericalresponse>
+  </problem>`
+}
