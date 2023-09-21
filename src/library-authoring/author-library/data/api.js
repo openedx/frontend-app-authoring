@@ -5,7 +5,7 @@ import { annotateCall } from '../../common/data';
 
 ensureConfig(['STUDIO_BASE_URL'], 'library API service');
 
-export const getLibraryDetail = annotateCall(async (libraryId) => {
+export const getLibraryDetail = annotateCall(async (libraryId, controller) => {
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;
 
@@ -14,8 +14,8 @@ export const getLibraryDetail = annotateCall(async (libraryId) => {
    * This is temporary: in the future, block metadata will be fetched
    * separately so that it can be paginated. */
   const [detailResponse, blockTypeResponse] = await Promise.all([
-    client.get(`${baseUrl}/api/libraries/v2/${libraryId}/`),
-    client.get(`${baseUrl}/api/libraries/v2/${libraryId}/block_types/`),
+    client.get(`${baseUrl}/api/libraries/v2/${libraryId}/`, { signal: controller?.signal }),
+    client.get(`${baseUrl}/api/libraries/v2/${libraryId}/block_types/`, { signal: controller?.signal }),
   ]);
 
   const library = {
@@ -27,7 +27,7 @@ export const getLibraryDetail = annotateCall(async (libraryId) => {
 });
 
 export const getBlocks = annotateCall(async ({
-  libraryId, paginationParams, query = '', types = [],
+  libraryId, paginationParams, controller = {}, query = '', types = [],
 }) => {
   const client = getAuthenticatedHttpClient();
   const baseUrl = getConfig().STUDIO_BASE_URL;
@@ -49,9 +49,7 @@ export const getBlocks = annotateCall(async ({
     qs = `?${qs}`;
   }
 
-  const response = await client.get(
-    `${baseUrl}/api/libraries/v2/${libraryId}/blocks/${qs}`,
-  );
+  const response = await client.get(`${baseUrl}/api/libraries/v2/${libraryId}/blocks/${qs}`, { signal: controller?.signal });
 
   return {
     data: response.data.results,

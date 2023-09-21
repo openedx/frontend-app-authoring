@@ -6,6 +6,7 @@ import { useRealThunks } from '../../../common/data';
 import * as api from '../api';
 import { blockFactory, blockFactoryLine, libraryFactory } from '../../../common/specs/factories';
 import {
+  clearLibrary,
   commitLibraryChanges,
   createBlock, debouncedBlockSearch,
   fetchBlocks,
@@ -18,6 +19,7 @@ import { normalizeErrors } from '../../../common/helpers';
 testSuite('Library detail thunks', () => {
   const dispatch = jest.fn();
   beforeEach(() => {
+    jest.clearAllMocks();
     useRealThunks(true);
   });
   afterEach(() => {
@@ -48,11 +50,30 @@ testSuite('Library detail thunks', () => {
     expect(dispatch).toHaveBeenCalledWith(actions.libraryAuthoringSuccess({ attr, value }));
   };
 
+  describe('clearLibrary', () => {
+    const abortFn = jest.fn();
+    global.AbortController = jest.fn(() => ({
+      abort: abortFn,
+    }));
+
+    it('with no previous api calls should not call abort', async () => {
+      await clearLibrary(dispatch)();
+      expect(abortFn).not.toHaveBeenCalled();
+    });
+
+    it('with previous api calls should call abort', async () => {
+      const library = libraryFactory();
+      await fetchLibraryDetail(dispatch)({ libraryId: library.id });
+      await clearLibrary(dispatch)();
+      expect(abortFn).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it('Fetches library details', async () => {
     const library = libraryFactory();
     api.getLibraryDetail.fn.mockImplementation(() => immediate(library));
     await fetchLibraryDetail(dispatch)({ libraryId: library.id });
-    expect(api.getLibraryDetail.fn).toHaveBeenCalledWith(library.id);
+    expect(api.getLibraryDetail.fn).toHaveBeenCalledWith(library.id, new AbortController());
     checkRequested('library');
     checkSuccess('library', library);
   });
@@ -69,7 +90,7 @@ testSuite('Library detail thunks', () => {
     const blocks = makeN(blockFactoryLine([], { library }), 3);
     api.getBlocks.fn.mockImplementation(() => immediate(blocks));
     await fetchBlocks(dispatch)({ libraryId: library.id });
-    expect(api.getBlocks.fn).toHaveBeenCalledWith({ libraryId: library.id });
+    expect(api.getBlocks.fn).toHaveBeenCalledWith({ libraryId: library.id, controller: new AbortController() });
     checkRequested('blocks');
     checkSuccess('blocks', blocks);
   });
@@ -79,7 +100,7 @@ testSuite('Library detail thunks', () => {
     const blocks = makeN(blockFactoryLine([], { library }), 3);
     api.getBlocks.fn.mockImplementation(() => immediate(blocks));
     await fetchBlocks(dispatch)({ libraryId: library.id, query: 'test' });
-    expect(api.getBlocks.fn).toHaveBeenCalledWith({ libraryId: library.id, query: 'test' });
+    expect(api.getBlocks.fn).toHaveBeenCalledWith({ libraryId: library.id, query: 'test', controller: new AbortController() });
     checkRequested('blocks');
     checkSuccess('blocks', blocks);
   });
@@ -198,6 +219,11 @@ testSuite('Library detail thunks', () => {
     await searchLibrary(dispatch)({ libraryId: library.id, query: 'test', types: ['video'] });
     await waitFor(() => checkRequested('blocks'));
     checkSuccess('blocks', blocks);
-    expect(api.getBlocks.fn).toHaveBeenCalledWith({ libraryId: library.id, query: 'test', types: ['video'] });
+    expect(api.getBlocks.fn).toHaveBeenCalledWith({
+      libraryId: library.id,
+      query: 'test',
+      types: ['video'],
+      controller: new AbortController(),
+    });
   });
 });
