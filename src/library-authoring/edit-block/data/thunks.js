@@ -25,6 +25,16 @@ export const fetchLibraryBlockView = annotateThunk(({ blockId, viewSystem, viewN
   }
 });
 
+export const updateLibraryBlockView = annotateThunk(({ blockId }) => async (dispatch) => {
+  dispatch(actions.libraryBlockQueue({ blockId, attr: 'view' }));
+});
+
+export const updateAllLibraryBlockView = annotateThunk(({ blocks }) => async (dispatch) => {
+  blocks.value?.data?.forEach((block) => {
+    dispatch(actions.libraryBlockQueue({ blockId: block.id, attr: 'view' }));
+  });
+});
+
 export const fetchLibraryBlockAssets = annotateThunk(({ blockId }) => async (dispatch) => {
   try {
     dispatch(actions.libraryBlockRequest({ blockId, attr: 'assets' }));
@@ -84,11 +94,6 @@ export const fetchLibraryBlockOlx = annotateThunk(({ blockId }) => async (dispat
   }
 });
 
-export const setLibraryBlockDisplayName = annotateThunk(({ blockId, displayName }) => async (dispatch) => {
-  dispatch(actions.libraryBlockUpdateDisplayName({ blockId, displayName }));
-  dispatch(detailActions.libraryBlockUpdateDisplayName({ blockId, displayName }));
-});
-
 export const setLibraryBlockOlx = annotateThunk(({ blockId, olx }) => async (dispatch) => {
   try {
     dispatch(actions.libraryBlockRequest({ blockId, attr: 'olx' }));
@@ -100,6 +105,11 @@ export const setLibraryBlockOlx = annotateThunk(({ blockId, olx }) => async (dis
     dispatch(actions.libraryBlockFailed({ errorMessage: error.message, blockId }));
     logError(error);
   }
+});
+
+export const setLibraryBlockDisplayName = annotateThunk(({ blockId, displayName }) => async (dispatch) => {
+  dispatch(actions.libraryBlockUpdateDisplayName({ blockId, displayName }));
+  dispatch(detailActions.libraryBlockUpdate({ blockId, displayName }));
 });
 
 export const deleteLibraryBlock = annotateThunk(({ blockId }) => async (dispatch) => {

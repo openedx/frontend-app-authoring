@@ -109,6 +109,7 @@ testSuite('Library detail thunks', () => {
 
     expect(dispatch).toHaveBeenCalledWith(actions.libraryAuthoringRequest({ attr: 'blocks' }));
     expect(api.createLibraryBlock.fn).toHaveBeenCalledWith({ libraryId: 'testLibrary', data: blockSpec });
+    expect(api.getLibraryDetail.fn).toHaveBeenCalledWith('testLibrary');
     expect(api.getBlocks.fn).toHaveBeenCalledWith({
       libraryId: 'testLibrary',
       paginationParams,

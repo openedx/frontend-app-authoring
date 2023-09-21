@@ -40,7 +40,6 @@ import {
   clearLibrarySuccess,
   commitLibraryChanges,
   createBlock,
-  fetchBlockLtiUrl,
   fetchBlocks,
   fetchLibraryDetail,
   revertLibraryChanges,
@@ -71,6 +70,8 @@ import {
   fetchLibraryBlockView,
   initializeBlock,
   setLibraryBlockDisplayName,
+  updateAllLibraryBlockView,
+  updateLibraryBlockView,
 } from '../edit-block/data';
 import { blockStatesShape, blockViewShape } from '../edit-block/data/shapes';
 import commonMessages from '../common/messages';
@@ -89,7 +90,7 @@ const getHandlerUrl = async (blockId) => getXBlockHandlerUrl(blockId, XBLOCK_VIE
  */
 export const BlockPreviewBase = ({
   intl, block, view, canEdit, showPreviews, showDeleteModal,
-  setShowDeleteModal, showEditorModal, setShowEditorModal, setIsBlockUpdated, library, editView, isLtiUrlGenerating,
+  setShowDeleteModal, showEditorModal, setShowEditorModal, library, editView, isLtiUrlGenerating,
   ...props
 }) => (
   <Card className="w-auto m-2">
@@ -133,7 +134,7 @@ export const BlockPreviewBase = ({
               displayName: response.metadata.display_name,
             });
             // This state change triggers the iframe to reload.
-            setIsBlockUpdated(true);
+            props.updateLibraryBlockView({ blockId: block.id });
           }
         }}
       />
@@ -174,17 +175,16 @@ BlockPreviewBase.propTypes = {
   canEdit: PropTypes.bool.isRequired,
   deleteLibraryBlock: PropTypes.func.isRequired,
   editView: PropTypes.string.isRequired,
-  fetchBlockLtiUrl: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
   isLtiUrlGenerating: PropTypes.bool,
   library: libraryShape.isRequired,
-  setIsBlockUpdated: PropTypes.func.isRequired,
   setLibraryBlockDisplayName: PropTypes.func.isRequired,
   setShowDeleteModal: PropTypes.func.isRequired,
   setShowEditorModal: PropTypes.func.isRequired,
   showDeleteModal: PropTypes.bool.isRequired,
   showEditorModal: PropTypes.bool.isRequired,
   showPreviews: PropTypes.bool.isRequired,
+  updateLibraryBlockView: PropTypes.bool.isRequired,
   view: fetchable(blockViewShape).isRequired,
 };
 
@@ -212,7 +212,6 @@ const BlockPreviewContainerBase = ({
   // This problem feels like there should be some way to generalize it and wrap it to avoid this issue.
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditorModal, setShowEditorModal] = useState(false);
-  const [isBlockUpdated, setIsBlockUpdated] = useState(false);
 
   useEffect(() => {
     props.initializeBlock({
@@ -226,15 +225,14 @@ const BlockPreviewContainerBase = ({
     if (needsMeta({ blockStates, id: block.id })) {
       props.fetchLibraryBlockMetadata({ blockId: block.id });
     }
-    if (needsView({ blockStates, id: block.id }) || isBlockUpdated) {
+    if (needsView({ blockStates, id: block.id })) {
       props.fetchLibraryBlockView({
         blockId: block.id,
         viewSystem: XBLOCK_VIEW_SYSTEM.Studio,
         viewName: 'student_view',
       });
-      setIsBlockUpdated(false);
     }
-  }, [blockStates[block.id], showPreviews, isBlockUpdated]);
+  }, [blockStates[block.id], showPreviews]);
 
   if (blockStates[block.id] === undefined) {
     return <LoadingPage loadingMessage={intl.formatMessage(messages['library.detail.loading.message'])} />;
@@ -268,19 +266,16 @@ const BlockPreviewContainerBase = ({
     <BlockPreview
       block={block}
       canEdit={canEdit}
-      deleteLibraryBlock={props.deleteLibraryBlock}
       editView={editView}
-      fetchBlockLtiUrl={props.fetchBlockLtiUrl}
       isLtiUrlGenerating={isLtiUrlGenerating}
       library={library}
-      setIsBlockUpdated={setIsBlockUpdated}
-      setLibraryBlockDisplayName={props.setLibraryBlockDisplayName}
       setShowDeleteModal={setShowDeleteModal}
       setShowEditorModal={setShowEditorModal}
       showDeleteModal={showDeleteModal}
       showEditorModal={showEditorModal}
       showPreviews={showPreviews}
       view={blockView(block)}
+      {...props}
     />
   );
 };
@@ -294,8 +289,6 @@ BlockPreviewContainerBase.propTypes = {
   block: libraryBlockShape.isRequired,
   blockStates: blockStatesShape.isRequired,
   blockView: PropTypes.func,
-  deleteLibraryBlock: PropTypes.func.isRequired,
-  fetchBlockLtiUrl: PropTypes.func.isRequired,
   fetchLibraryBlockView: PropTypes.func.isRequired,
   fetchLibraryBlockMetadata: PropTypes.func.isRequired,
   initializeBlock: PropTypes.func.isRequired,
@@ -303,7 +296,6 @@ BlockPreviewContainerBase.propTypes = {
   library: libraryShape.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   ltiUrlClipboard: fetchable(PropTypes.object),
-  setLibraryBlockDisplayName: PropTypes.func.isRequired,
   showPreviews: PropTypes.bool.isRequired,
 };
 
@@ -339,11 +331,11 @@ const BlockPreviewContainer = connect(
   selectLibraryDetail,
   {
     deleteLibraryBlock,
-    fetchBlockLtiUrl,
     fetchLibraryBlockView,
     fetchLibraryBlockMetadata,
     initializeBlock,
     setLibraryBlockDisplayName,
+    updateLibraryBlockView,
   },
 )(injectIntl(BlockPreviewContainerBase));
 
@@ -844,6 +836,7 @@ export const LibraryAuthoringPageContainerBase = ({
     setSending(true);
     props.revertLibraryChanges({ libraryId, paginationParams }).finally(() => {
       setSending(false);
+      props.updateAllLibraryBlockView({ blocks });
     });
   };
 
@@ -910,41 +903,48 @@ export const LibraryAuthoringPageContainerBase = ({
 };
 
 LibraryAuthoringPageContainerBase.defaultProps = {
-  library: null,
   errorMessage: null,
-  successMessage: null,
+  library: null,
   libraryId: null,
+  successMessage: null,
 };
 
 LibraryAuthoringPageContainerBase.propTypes = {
-  intl: intlShape.isRequired,
-  library: libraryShape,
-  fetchLibraryDetail: PropTypes.func.isRequired,
-  fetchBlocks: PropTypes.func.isRequired,
-  searchLibrary: PropTypes.func.isRequired,
-  blockStates: blockStatesShape.isRequired,
   blocks: fetchable(paginated(libraryBlockShape)).isRequired,
-  createBlock: PropTypes.func.isRequired,
+  blockStates: blockStatesShape.isRequired,
   clearLibrary: PropTypes.func.isRequired,
   commitLibraryChanges: PropTypes.func.isRequired,
-  revertLibraryChanges: PropTypes.func.isRequired,
+  createBlock: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
-  successMessage: PropTypes.string,
+  fetchBlocks: PropTypes.func.isRequired,
+  fetchLibraryDetail: PropTypes.func.isRequired,
+  intl: intlShape.isRequired,
+  library: libraryShape,
   libraryId: PropTypes.string,
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      libraryId: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
+  revertLibraryChanges: PropTypes.func.isRequired,
+  searchLibrary: PropTypes.func.isRequired,
+  successMessage: PropTypes.string,
+  updateAllLibraryBlockView: PropTypes.func.isRequired,
 };
 
 const LibraryAuthoringPageContainer = connect(
   selectLibraryDetail,
   {
+    clearLibrary,
     clearLibraryError,
     clearLibrarySuccess,
-    clearLibrary,
-    createBlock,
     commitLibraryChanges,
-    revertLibraryChanges,
-    fetchLibraryDetail,
+    createBlock,
     fetchBlocks,
+    fetchLibraryDetail,
+    revertLibraryChanges,
     searchLibrary,
+    updateAllLibraryBlockView,
   },
 )(injectIntl(LibraryAuthoringPageContainerBase));
 

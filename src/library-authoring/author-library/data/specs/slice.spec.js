@@ -72,11 +72,15 @@ describe('library detail reducers', () => {
     expect(state.errorFields).toEqual({ block_type: ['Not cool enough.'] });
   });
 
-  it('Updates the display name of an XBlock', () => {
-    const state = { blocks: { value: { data: [{ id: 'blockone', display_name: 'im a display name' }] } } };
-    reducers.libraryBlockUpdateDisplayName(state, {
+  it('Handles the update of an XBlock', () => {
+    const state = {
+      blocks: { value: { data: [{ id: 'blockone', display_name: 'im a display name' }] } },
+      library: { value: { has_unpublished_changes: false } },
+    };
+    reducers.libraryBlockUpdate(state, {
       payload: { blockId: 'blockone', displayName: 'new display name' },
     });
     expect(state.blocks.value.data[0].display_name).toEqual('new display name');
+    expect(state.library.value.has_unpublished_changes).toBe(true);
   });
 });

@@ -49,9 +49,13 @@ export const createBlock = annotateThunk(({
   try {
     dispatch(actions.libraryAuthoringRequest({ attr: 'blocks' }));
     await api.createLibraryBlock({ libraryId, data }).catch(normalizeErrors);
-    const blocks = await api.getBlocks({
-      libraryId, paginationParams, query, types,
-    }).catch(normalizeErrors);
+    const [library, blocks] = await Promise.all([
+      api.getLibraryDetail(libraryId),
+      api.getBlocks({
+        libraryId, paginationParams, query, types,
+      }),
+    ]).catch(normalizeErrors);
+    dispatch(actions.libraryAuthoringSuccess({ value: library, attr: 'library' }));
     dispatch(actions.libraryAuthoringSuccess({ value: blocks, attr: 'blocks' }));
   } catch (error) {
     toError(dispatch, error, 'blocks');
