@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
-  CardGrid, Container, breakpoints, Form, ActionRow, AlertModal, Button, Spinner,
+  CardGrid, Container, breakpoints, Form, ActionRow, AlertModal, Button, StatefulButton,
 } from '@edx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 import Responsive from 'react-responsive';
@@ -28,7 +28,7 @@ const AppList = ({ intl }) => {
   const {
     appIds, featureIds, status, saveStatus, activeAppId, selectedAppId, enabled, postingRestrictions,
   } = useSelector(state => state.discussions);
-  const [toggleDiscussionEnabledAlert, setToggleDiscussionEnabledAlert] = useState(enabled);
+  const [discussionTabToggle, setDiscussionTabToggle] = useState(enabled);
   const apps = useModels('apps', appIds);
   const features = useModels('features', featureIds);
   const isGlobalStaff = getAuthenticatedUser().administrator;
@@ -53,7 +53,7 @@ const AppList = ({ intl }) => {
   }, [selectedAppId, activeAppId]);
 
   useEffect(() => {
-    setToggleDiscussionEnabledAlert(enabled);
+    setDiscussionTabToggle(enabled);
   }, [enabled]);
 
   useEffect(() => {
@@ -79,11 +79,11 @@ const AppList = ({ intl }) => {
   }, [courseId, selectedAppId, postingRestrictions]);
 
   const handleClose = useCallback(() => {
-    setToggleDiscussionEnabledAlert(enabled);
+    setDiscussionTabToggle(enabled);
   }, [enabled]);
 
   const handleOk = useCallback(() => {
-    setToggleDiscussionEnabledAlert(false);
+    setDiscussionTabToggle(false);
     updateSettings(false);
   }, [updateSettings]);
 
@@ -92,7 +92,7 @@ const AppList = ({ intl }) => {
     if (!toggleVal) {
       updateSettings(!toggleVal);
     } else {
-      setToggleDiscussionEnabledAlert(!toggleVal);
+      setDiscussionTabToggle(!toggleVal);
     }
   }, [updateSettings]);
 
@@ -161,7 +161,7 @@ const AppList = ({ intl }) => {
       </Responsive>
       <AlertModal
         title={intl.formatMessage(messages.hideDiscussionTabTitle)}
-        isOpen={enabled && !toggleDiscussionEnabledAlert}
+        isOpen={enabled && !discussionTabToggle}
         onClose={handleClose}
         isBlocking
         className="hide-discussion-modal"
@@ -170,10 +170,15 @@ const AppList = ({ intl }) => {
             <Button variant="link" className="text-decoration-none bg-black" onClick={handleClose}>
               {intl.formatMessage(messages.hideDiscussionCancelButton)}
             </Button>
-            <Button variant="primary" className="bg-primary-500 ml-1 rounded-0" onClick={handleOk}>
-              {intl.formatMessage(messages.hideDiscussionOkButton)}
-              {saveStatus === SAVING && <Spinner animation="border" size="sm" className="ml-2" />}
-            </Button>
+            <StatefulButton
+              labels={{
+                default: intl.formatMessage(messages.hideDiscussionOkButton),
+              }}
+              state={saveStatus === SAVING ? 'pending' : 'default'}
+              className="ml-2"
+              variant="primary"
+              onClick={handleOk}
+            />
           </ActionRow>
         )}
       >
