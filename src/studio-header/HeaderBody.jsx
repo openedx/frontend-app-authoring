@@ -102,20 +102,20 @@ const HeaderBody = ({
               />
             </Nav>
           )}
-          <ActionRow.Spacer />
-          <Nav>
-            <UserMenu
-              {...{
-                username,
-                studioBaseUrl,
-                logoutUrl,
-                authenticatedUserAvatar,
-                isAdmin,
-              }}
-            />
-          </Nav>
         </>
       )}
+      <ActionRow.Spacer />
+      <Nav>
+        <UserMenu
+          {...{
+            username,
+            studioBaseUrl,
+            logoutUrl,
+            authenticatedUserAvatar,
+            isAdmin,
+          }}
+        />
+      </Nav>
     </ActionRow>
   );
 };
