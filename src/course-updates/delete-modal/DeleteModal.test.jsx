@@ -26,14 +26,14 @@ describe('<DeleteModal />', () => {
     expect(getByText(messages.deleteModalTitle.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.deleteModalDescription.defaultMessage)).toBeInTheDocument();
     expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.okButton.defaultMessage })).toBeInTheDocument();
+    expect(getByRole('button', { name: messages.deleteButton.defaultMessage })).toBeInTheDocument();
   });
 
   it('calls onDeleteSubmit function when the "Ok" button is clicked', () => {
     const { getByRole } = renderComponent();
 
-    const okButton = getByRole('button', { name: messages.okButton.defaultMessage });
-    fireEvent.click(okButton);
+    const deleteButton = getByRole('button', { name: messages.deleteButton.defaultMessage });
+    fireEvent.click(deleteButton);
     expect(onDeleteSubmitMock).toHaveBeenCalledTimes(1);
   });
 
