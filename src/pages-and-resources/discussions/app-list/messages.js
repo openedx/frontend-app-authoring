@@ -239,6 +239,11 @@ const messages = defineMessages({
     defaultMessage: 'Commonly requested',
     description: 'The type of a discussions feature.',
   },
+  hideDiscussionTab: {
+    id: 'authoring.discussions.hide-discussion-tab',
+    defaultMessage: 'Hide discussion tab',
+    description: 'Title message to hide discussion tab',
+  },
   hideDiscussionTabTitle: {
     id: 'authoring.discussions.hide-tab-title',
     defaultMessage: 'Hide the discussion tab?',

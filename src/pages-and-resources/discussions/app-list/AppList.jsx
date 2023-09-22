@@ -3,15 +3,14 @@ import React, {
 } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
-  CardGrid, Container, breakpoints, Form, ActionRow, AlertModal, Button,
+  CardGrid, Container, breakpoints, Form, ActionRow, AlertModal, Button, StatefulButton,
 } from '@edx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 import Responsive from 'react-responsive';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useModels } from '../../../generic/model-store';
 import {
-  selectApp, LOADED, LOADING,
-  updateValidationStatus,
+  selectApp, LOADED, LOADING, SAVING, updateValidationStatus,
 } from '../data/slice';
 import AppCard from './AppCard';
 import messages from './messages';
@@ -27,9 +26,9 @@ const AppList = ({ intl }) => {
   const dispatch = useDispatch();
   const { courseId } = useContext(PagesAndResourcesContext);
   const {
-    appIds, featureIds, status, activeAppId, selectedAppId, enabled, postingRestrictions,
+    appIds, featureIds, status, saveStatus, activeAppId, selectedAppId, enabled, postingRestrictions,
   } = useSelector(state => state.discussions);
-  const [discussionEnabled, setDiscussionEnabled] = useState(enabled);
+  const [discussionTabToggle, setDiscussionTabToggle] = useState(enabled);
   const apps = useModels('apps', appIds);
   const features = useModels('features', featureIds);
   const isGlobalStaff = getAuthenticatedUser().administrator;
@@ -54,7 +53,7 @@ const AppList = ({ intl }) => {
   }, [selectedAppId, activeAppId]);
 
   useEffect(() => {
-    setDiscussionEnabled(enabled);
+    setDiscussionTabToggle(enabled);
   }, [enabled]);
 
   useEffect(() => {
@@ -80,19 +79,20 @@ const AppList = ({ intl }) => {
   }, [courseId, selectedAppId, postingRestrictions]);
 
   const handleClose = useCallback(() => {
-    setDiscussionEnabled(enabled);
+    setDiscussionTabToggle(enabled);
   }, [enabled]);
 
   const handleOk = useCallback(() => {
-    setDiscussionEnabled(false);
+    setDiscussionTabToggle(false);
     updateSettings(false);
   }, [updateSettings]);
 
   const handleChange = useCallback((e) => {
     const toggleVal = e.target.checked;
-    setDiscussionEnabled(!toggleVal);
     if (!toggleVal) {
       updateSettings(!toggleVal);
+    } else {
+      setDiscussionTabToggle(!toggleVal);
     }
   }, [updateSettings]);
 
@@ -131,10 +131,10 @@ const AppList = ({ intl }) => {
           className="text-primary-500 align-items-center"
           labelClassName="line-height-24"
           onChange={handleChange}
-          checked={!discussionEnabled}
+          checked={!enabled}
           data-testId="hide-discussion"
         >
-          Hide discussion tab
+          {intl.formatMessage(messages.hideDiscussionTab)}
         </Form.Switch>
       </div>
       <CardGrid
@@ -161,14 +161,24 @@ const AppList = ({ intl }) => {
       </Responsive>
       <AlertModal
         title={intl.formatMessage(messages.hideDiscussionTabTitle)}
-        isOpen={enabled && !discussionEnabled}
+        isOpen={enabled && !discussionTabToggle}
         onClose={handleClose}
         isBlocking
         className="hide-discussion-modal"
         footerNode={(
           <ActionRow>
-            <Button variant="link" className="text-decoration-none bg-black" onClick={handleClose}>Cancel</Button>
-            <Button variant="primary" className="bg-primary-500 ml-1 rounded-0" onClick={handleOk}>OK</Button>
+            <Button variant="link" className="text-decoration-none bg-black" onClick={handleClose}>
+              {intl.formatMessage(messages.hideDiscussionCancelButton)}
+            </Button>
+            <StatefulButton
+              labels={{
+                default: intl.formatMessage(messages.hideDiscussionOkButton),
+              }}
+              state={saveStatus === SAVING ? 'pending' : 'default'}
+              className="ml-2"
+              variant="primary"
+              onClick={handleOk}
+            />
           </ActionRow>
         )}
       >
