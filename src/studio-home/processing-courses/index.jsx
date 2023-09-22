@@ -13,7 +13,7 @@ const ProcessingCourses = () => {
 
   return (
     <>
-      <p className="text-gray-300">
+      <p className="text-gray-500">
         {intl.formatMessage(messages.processingTitle)}
       </p>
       <hr />

@@ -28,6 +28,7 @@ const CardItem = ({
   return (
     <Card className="card-item">
       <Card.Header
+        size="sm"
         title={!readOnlyItem ? (
           <Hyperlink
             className="card-item-title"

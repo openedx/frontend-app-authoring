@@ -31,18 +31,19 @@ const CourseItem = ({ course }) => {
       {isInProgress && (
         <Card className="card-item">
           <Card.Header
+            size="sm"
             title={<p className="card-item-title">{displayName}</p>}
             subtitle={subtitle}
             actions={(
               <ActionRow>
-                <Icon src={RotateRightIcon} className="spinner-icon text-gray-300" />
+                <Icon src={RotateRightIcon} className="spinner-icon" />
                 <ActionRow.Spacer />
-                <span className="small text-gray-300">{intl.formatMessage(messages.itemInProgressActionText)}</span>
+                <span className="small">{intl.formatMessage(messages.itemInProgressActionText)}</span>
               </ActionRow>
             )}
           />
           <Card.Divider />
-          <Card.Section className="p-3.5 small text-black bg-gray-100">
+          <Card.Section className="p-3.5 small text-gray-700 bg-light-200">
             {intl.formatMessage(messages.itemInProgressFooterText, {
               refresh: (
                 <Hyperlink destination="/home">
@@ -57,22 +58,23 @@ const CourseItem = ({ course }) => {
       {isFailed && (
         <Card className="card-item">
           <Card.Header
+            size="sm"
             title={<p className="card-item-title">{displayName}</p>}
             subtitle={subtitle}
             actions={(
               <ActionRow>
-                <Icon src={WarningIcon} className="text-danger-300" />
-                <span className="small text-danger-300">{intl.formatMessage(messages.itemIsFailedActionText)}</span>
+                <Icon src={WarningIcon} className="text-danger-500" />
+                <span className="small">{intl.formatMessage(messages.itemIsFailedActionText)}</span>
               </ActionRow>
             )}
           />
           <Card.Divider />
-          <Card.Footer className="p-3.5 small text-white bg-danger-300 align-content-between">
+          <Card.Footer className="p-3.5 small text-gray-700 bg-danger-100 align-content-between">
             <span className="w-75 mr-auto">{intl.formatMessage(messages.itemFailedFooterText)}</span>
             <Button
               onClick={() => dispatch(handleDeleteNotificationQuery(dismissLink))}
               iconBefore={CloseIcon}
-              variant="outline-danger"
+              variant="tertiary"
               size="sm"
             >
               {intl.formatMessage(messages.itemFailedFooterButton)}
