@@ -77,7 +77,7 @@ const StudioHome = ({ intl }) => {
   return (
     <>
       <Header isHiddenMainMenu />
-      <Container size="xl" className="studio-home">
+      <Container size="xl" className="p-4 mt-3">
         <section className="mb-4">
           <article className="studio-home-sub-header">
             <section>
