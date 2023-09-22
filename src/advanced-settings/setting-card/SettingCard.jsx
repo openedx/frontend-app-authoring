@@ -58,8 +58,9 @@ const SettingCard = ({
   return (
     <li className="field-group course-advanced-policy-list-item">
       <Card className="flex-column setting-card">
-        <Card.Body className="d-flex">
+        <Card.Body className="d-flex row m-0 align-items-center">
           <Card.Header
+            className="col-6"
             title={(
               <ActionRow>
                 {capitalize(displayName)}
@@ -86,10 +87,11 @@ const SettingCard = ({
                     dangerouslySetInnerHTML={{ __html: help }}
                   />
                 </ModalPopup>
+                <ActionRow.Spacer />
               </ActionRow>
             )}
           />
-          <Card.Section>
+          <Card.Section className="col-6 flex-grow-1">
             <Form.Group className="m-0">
               <Form.Control
                 as={TextareaAutosize}
