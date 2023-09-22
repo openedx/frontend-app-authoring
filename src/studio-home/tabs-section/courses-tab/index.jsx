@@ -8,11 +8,13 @@ import CardItem from '../../card-item';
 import CollapsibleStateWithAction from '../../collapsible-state-with-action';
 import { sortAlphabeticallyArray } from '../utils';
 import ContactAdministrator from './contact-administrator';
+import ProcessingCourses from '../../processing-courses';
 
 const CoursesTab = ({
   coursesDataItems,
   showNewCourseContainer,
   onClickNewCourse,
+  isShowProcessing,
 }) => {
   const {
     courseCreatorStatus,
@@ -27,6 +29,7 @@ const CoursesTab = ({
 
   return (
     <>
+      {isShowProcessing && <ProcessingCourses />}
       {coursesDataItems?.length ? (
         sortAlphabeticallyArray(coursesDataItems).map(
           ({
@@ -84,6 +87,7 @@ CoursesTab.propTypes = {
   ).isRequired,
   showNewCourseContainer: PropTypes.bool.isRequired,
   onClickNewCourse: PropTypes.func.isRequired,
+  isShowProcessing: PropTypes.bool.isRequired,
 };
 
 export default CoursesTab;

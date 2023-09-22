@@ -11,7 +11,7 @@ import ArchivedTab from './archived-tab';
 import CoursesTab from './courses-tab';
 
 const TabsSection = ({
-  intl, tabsData, showNewCourseContainer, onClickNewCourse,
+  intl, tabsData, showNewCourseContainer, onClickNewCourse, isShowProcessing,
 }) => {
   const TABS_LIST = {
     courses: 'courses',
@@ -40,6 +40,7 @@ const TabsSection = ({
           coursesDataItems={courses}
           showNewCourseContainer={showNewCourseContainer}
           onClickNewCourse={onClickNewCourse}
+          isShowProcessing={isShowProcessing}
         />
       </Tab>,
     );
@@ -123,6 +124,7 @@ TabsSection.propTypes = {
   }).isRequired,
   showNewCourseContainer: PropTypes.bool.isRequired,
   onClickNewCourse: PropTypes.func.isRequired,
+  isShowProcessing: PropTypes.bool.isRequired,
 };
 
 export default injectIntl(TabsSection);

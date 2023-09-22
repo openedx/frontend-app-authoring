@@ -17,7 +17,6 @@ import HomeSidebar from './home-sidebar';
 import TabsSection from './tabs-section';
 import OrganizationSection from './organization-section';
 import VerifyEmailLayout from './verify-email-layout';
-import ProcessingCourses from './processing-courses';
 import CreateNewCourseForm from './create-new-course-form';
 import messages from './messages';
 import { useStudioHome } from './hooks';
@@ -103,11 +102,11 @@ const StudioHome = ({ intl }) => {
                     <CreateNewCourseForm handleOnClickCancel={() => setShowNewCourseContainer(false)} />
                   )}
                   {isShowOrganizationDropdown && <OrganizationSection />}
-                  {isShowProcessing && <ProcessingCourses />}
                   <TabsSection
                     tabsData={studioHomeData}
                     showNewCourseContainer={showNewCourseContainer}
                     onClickNewCourse={() => setShowNewCourseContainer(true)}
+                    isShowProcessing={isShowProcessing}
                   />
                 </section>
               </Layout.Element>
