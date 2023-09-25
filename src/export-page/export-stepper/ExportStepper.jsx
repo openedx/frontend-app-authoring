@@ -68,7 +68,6 @@ const ExportStepper = ({ intl, courseId }) => {
   return (
     <div>
       <h3 className="mt-4">{intl.formatMessage(messages.stepperHeaderTitle)}</h3>
-      <hr />
       <CourseStepper
         courseId={courseId}
         steps={steps}
@@ -76,7 +75,7 @@ const ExportStepper = ({ intl, courseId }) => {
         errorMessage={errorMessage}
         hasError={!!errorMessage}
       />
-      {downloadPath && currentStage === EXPORT_STAGES.SUCCESS && <Button href={`${getConfig().STUDIO_BASE_URL}${downloadPath}`}>{intl.formatMessage(messages.downloadCourseButtonTitle)}</Button>}
+      {downloadPath && currentStage === EXPORT_STAGES.SUCCESS && <Button className="ml-5.5 mt-n2.5" href={`${getConfig().STUDIO_BASE_URL}${downloadPath}`}>{intl.formatMessage(messages.downloadCourseButtonTitle)}</Button>}
     </div>
   );
 };

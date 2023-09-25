@@ -79,7 +79,6 @@ const ImportStepper = ({ intl, courseId }) => {
   return (
     <section>
       <h3 className="mt-4">{intl.formatMessage(messages.stepperHeaderTitle)}</h3>
-      <hr />
       <CourseStepper
         courseId={courseId}
         percent={progress}
@@ -89,7 +88,7 @@ const ImportStepper = ({ intl, courseId }) => {
         errorMessage={formattedErrorMessage}
       />
       {currentStage === IMPORT_STAGES.SUCCESS && (
-        <Button onClick={handleRedirectCourseOutline}>{intl.formatMessage(messages.viewOutlineButton)}</Button>
+        <Button className="ml-5.5 mt-n2.5" onClick={handleRedirectCourseOutline}>{intl.formatMessage(messages.viewOutlineButton)}</Button>
       )}
     </section>
   );
