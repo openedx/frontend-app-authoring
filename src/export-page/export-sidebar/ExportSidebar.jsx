@@ -20,7 +20,7 @@ const ExportSidebar = ({ intl, courseId }) => {
       <hr />
       <h4 className="help-sidebar-about-title">{intl.formatMessage(messages.exportedContent)}</h4>
       <p className="help-sidebar-about-descriptions">{intl.formatMessage(messages.exportedContentHeading)}</p>
-      <ul className="export-sidebar-list">
+      <ul className="px-3">
         <li className="help-sidebar-about-descriptions">{intl.formatMessage(messages.content1)}</li>
         <li className="help-sidebar-about-descriptions">{intl.formatMessage(messages.content2)}</li>
         <li className="help-sidebar-about-descriptions">{intl.formatMessage(messages.content3)}</li>
@@ -28,7 +28,7 @@ const ExportSidebar = ({ intl, courseId }) => {
         <li className="help-sidebar-about-descriptions">{intl.formatMessage(messages.content5)}</li>
       </ul>
       <p className="help-sidebar-about-descriptions">{intl.formatMessage(messages.notExportedContent)}</p>
-      <ul className="export-sidebar-list">
+      <ul className="px-3">
         <li className="help-sidebar-about-descriptions">{intl.formatMessage(messages.content6)}</li>
         <li className="help-sidebar-about-descriptions">{intl.formatMessage(messages.content7)}</li>
       </ul>
