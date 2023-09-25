@@ -47,18 +47,18 @@ const CourseRerun = ({ courseId }) => {
           <article>
             <section>
               <header className="d-flex">
-                <h3 className="align-self-center font-weight-normal mb-0">{intl.formatMessage(messages.rerunTitle)}</h3>
+                <Stack>
+                  <h2>
+                    {intl.formatMessage(messages.rerunTitle)} {displayName}
+                  </h2>
+                  <span className="large">{originalCourseData}</span>
+                </Stack>
                 <ActionRow className="ml-auto">
-                  <Button variant="outline-primary" onClick={handleRerunCourseCancel}>
+                  <Button variant="outline-primary" size="sm" onClick={handleRerunCourseCancel}>
                     {intl.formatMessage(messages.cancelButton)}
                   </Button>
                 </ActionRow>
               </header>
-              <hr />
-              <Stack>
-                <h3>{originalCourseData}</h3>
-                <h2>{displayName}</h2>
-              </Stack>
               <hr />
             </section>
           </article>
