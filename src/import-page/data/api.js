@@ -3,8 +3,8 @@ import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-const postImportCourseApiUrl = (courseId) => `${getApiBaseUrl()}/import/${courseId}`;
-const getImportStatusApiUrl = (courseId, fileName) => `${getApiBaseUrl()}/import_status/${courseId}/${fileName}`;
+export const postImportCourseApiUrl = (courseId) => `${getApiBaseUrl()}/import/${courseId}`;
+export const getImportStatusApiUrl = (courseId, fileName) => `${getApiBaseUrl()}/import_status/${courseId}/${fileName}`;
 
 /**
  * Start import course.
