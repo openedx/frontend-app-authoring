@@ -4,7 +4,7 @@ import {
   intlShape,
 } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
-import { Button } from '@edx/paragon';
+import { Hyperlink } from '@edx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
 import { HelpSidebar } from '../../generic/help-sidebar';
@@ -36,7 +36,7 @@ const ExportSidebar = ({ intl, courseId }) => {
       <h4 className="help-sidebar-about-title">{intl.formatMessage(messages.openDownloadFile)}</h4>
       <p className="help-sidebar-about-descriptions">{intl.formatMessage(messages.openDownloadFileDescription)}</p>
       <hr />
-      <Button href={exportLearnMoreUrl} target="_blank" variant="outline-primary">{intl.formatMessage(messages.learnMoreButtonTitle)}</Button>
+      <Hyperlink className="small" href={exportLearnMoreUrl} target="_blank" variant="outline-primary">{intl.formatMessage(messages.learnMoreButtonTitle)}</Hyperlink>
     </HelpSidebar>
   );
 };
