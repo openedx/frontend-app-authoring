@@ -12,8 +12,8 @@ const ProgressSettings = ({ intl, onClose }) => {
   const [disableProgressGraph, saveSetting] = useAppSetting('disableProgressGraph');
   const showProgressGraphSetting = getConfig().ENABLE_PROGRESS_GRAPH_SETTINGS.toString().toLowerCase() === 'true';
 
-  const handleSettingsSave = (values) => {
-    if (showProgressGraphSetting) { saveSetting(!values.enableProgressGraph); }
+  const handleSettingsSave = async (values) => {
+    if (showProgressGraphSetting) { await saveSetting(!values.enableProgressGraph); }
   };
 
   return (
