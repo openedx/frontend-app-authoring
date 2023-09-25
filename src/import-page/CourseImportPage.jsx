@@ -54,7 +54,7 @@ const CourseImportPage = ({ intl, courseId }) => {
           })}
         </title>
       </Helmet>
-      <Container size="xl" className="m-4 import">
+      <Container size="xl" className="mt-4 px-4 import">
         <section className="setting-items mb-4">
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
@@ -69,9 +69,9 @@ const CourseImportPage = ({ intl, courseId }) => {
                   title={intl.formatMessage(messages.headingTitle)}
                   subtitle={intl.formatMessage(messages.headingSubtitle)}
                 />
-                <p>{intl.formatMessage(messages.description1)}</p>
-                <p>{intl.formatMessage(messages.description2)}</p>
-                <p>{intl.formatMessage(messages.description3)}</p>
+                <p className="small">{intl.formatMessage(messages.description1)}</p>
+                <p className="small">{intl.formatMessage(messages.description2)}</p>
+                <p className="small">{intl.formatMessage(messages.description3)}</p>
                 <FileSection courseId={courseId} />
                 {importTriggered && <ImportStepper courseId={courseId} />}
               </article>

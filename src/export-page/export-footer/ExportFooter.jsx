@@ -8,7 +8,7 @@ import { Layout } from '@edx/paragon';
 import messages from './messages';
 
 const ExportFooter = ({ intl }) => (
-  <footer className="mt-4">
+  <footer className="mt-4 small">
     <Layout
       lg={[{ span: 6 }, { span: 6 }]}
       md={[{ span: 6 }, { span: 6 }]}
