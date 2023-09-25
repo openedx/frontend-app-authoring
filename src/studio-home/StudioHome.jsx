@@ -7,6 +7,7 @@ import {
 } from '@edx/paragon';
 import { Add as AddIcon } from '@edx/paragon/icons/es5';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
@@ -39,6 +40,9 @@ const StudioHome = ({ intl }) => {
     userIsActive,
     studioShortName,
     studioRequestEmail,
+    libraryAuthoringMfeUrl,
+    redirectToLibraryAuthoringMfe,
+    splitStudioHome,
   } = studioHomeData;
 
   if (isLoadingPage) {
@@ -67,6 +71,25 @@ const StudioHome = ({ intl }) => {
         </Button>,
       );
     }
+
+    let libraryHref = `${getConfig().STUDIO_BASE_URL}/home#libraries-tab`;
+    if (splitStudioHome) {
+      libraryHref = `${getConfig().STUDIO_BASE_URL}/home_library`;
+    }
+    if (redirectToLibraryAuthoringMfe) {
+      libraryHref = `${libraryAuthoringMfeUrl}/create`;
+    }
+    headerButtons.push(
+      <Button
+        variant="outline-primary"
+        iconBefore={AddIcon}
+        size="sm"
+        disabled={showNewCourseContainer}
+        href={libraryHref}
+      >
+        {intl.formatMessage(messages.addNewLibraryBtnText)}
+      </Button>,
+    );
 
     return headerButtons;
   }
