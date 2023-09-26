@@ -3,14 +3,14 @@
     "config:base"
   ],
   "patch": {
-    "automerge": true
+    "automerge": false
   },
   "rebaseStalePrs": true,
   "packageRules": [
     {
       "matchPackagePatterns": ["@edx"],
       "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true
+      "automerge": false
     }
   ]
 }
