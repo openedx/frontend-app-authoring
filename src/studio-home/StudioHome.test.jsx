@@ -130,6 +130,17 @@ describe('<StudioHome />', async () => {
       useSelector.mockReturnValue({
         ...studioHomeMock,
         courseCreatorStatus: COURSE_CREATOR_STATES.granted,
+        splitStudioHome: true,
+      });
+
+      const { getByTestId } = render(<RootWrapper />);
+      const createNewLibraryButton = getByTestId('new-library-button');
+      expect(createNewLibraryButton.getAttribute('href')).toBe(`${getConfig().STUDIO_BASE_URL}/home_library`);
+    });
+    it('href should include create', async () => {
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        courseCreatorStatus: COURSE_CREATOR_STATES.granted,
         redirectToLibraryAuthoringMfe: true,
       });
       const libraryAuthoringMfeUrl = 'http://localhost:3001';
@@ -137,16 +148,6 @@ describe('<StudioHome />', async () => {
       const { getByTestId } = render(<RootWrapper />);
       const createNewLibraryButton = getByTestId('new-library-button');
       expect(createNewLibraryButton.getAttribute('href')).toBe(`${libraryAuthoringMfeUrl}/create`);
-    });
-    it('href should include create', async () => {
-      useSelector.mockReturnValue({
-        ...studioHomeMock,
-        courseCreatorStatus: COURSE_CREATOR_STATES.granted,
-      });
-
-      const { getByTestId } = render(<RootWrapper />);
-      const createNewLibraryButton = getByTestId('new-library-button');
-      expect(createNewLibraryButton.getAttribute('href')).toBe(`${getConfig().STUDIO_BASE_URL}/home#libraries-tab`);
     });
   });
 
