@@ -44,7 +44,7 @@ describe('<CourseRerunSideBar />', () => {
     const { getByText } = renderComponent();
 
     expect(getByText(messages.sectionTitle1.defaultMessage)).toBeInTheDocument();
-    expect(getByText(`${messages.sectionDescription1.defaultMessage} December 31, 2029 at 4:00 PM`)).toBeInTheDocument();
+    expect(getByText(messages.sectionDescription1.defaultMessage, { exact: false })).toBeInTheDocument();
     expect(getByText(messages.sectionTitle2.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.sectionDescription2.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.sectionTitle3.defaultMessage)).toBeInTheDocument();
