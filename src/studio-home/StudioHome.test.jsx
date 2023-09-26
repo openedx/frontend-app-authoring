@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { initializeMockApp } from '@edx/frontend-platform';
+import { getConfig, initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -105,12 +105,48 @@ describe('<StudioHome />', async () => {
   it('shows the spinner before the query is complete', async () => {
     useSelector.mockReturnValue({
       studioHomeLoadingStatus: RequestStatus.IN_PROGRESS,
+      userIsActive: true,
     });
 
     await act(async () => {
       const { getByRole } = render(<RootWrapper />);
       const spinner = getByRole('status');
       expect(spinner.textContent).toEqual('Loading...');
+    });
+  });
+
+  describe('render new library button', () => {
+    it('href should include #libraries-tab', async () => {
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        courseCreatorStatus: COURSE_CREATOR_STATES.granted,
+      });
+
+      const { getByTestId } = render(<RootWrapper />);
+      const createNewLibraryButton = getByTestId('new-library-button');
+      expect(createNewLibraryButton.getAttribute('href')).toBe(`${getConfig().STUDIO_BASE_URL}/home#libraries-tab`);
+    });
+    it('href should include home_library', async () => {
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        courseCreatorStatus: COURSE_CREATOR_STATES.granted,
+        redirectToLibraryAuthoringMfe: true,
+      });
+      const libraryAuthoringMfeUrl = 'http://localhost:3001';
+
+      const { getByTestId } = render(<RootWrapper />);
+      const createNewLibraryButton = getByTestId('new-library-button');
+      expect(createNewLibraryButton.getAttribute('href')).toBe(`${libraryAuthoringMfeUrl}/create`);
+    });
+    it('href should include create', async () => {
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        courseCreatorStatus: COURSE_CREATOR_STATES.granted,
+      });
+
+      const { getByTestId } = render(<RootWrapper />);
+      const createNewLibraryButton = getByTestId('new-library-button');
+      expect(createNewLibraryButton.getAttribute('href')).toBe(`${getConfig().STUDIO_BASE_URL}/home#libraries-tab`);
     });
   });
 

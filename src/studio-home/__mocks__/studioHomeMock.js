@@ -60,7 +60,7 @@ module.exports = {
     },
   ],
   librariesEnabled: true,
-  libraryAuthoringMfeUrl: 'http://somewhere',
+  libraryAuthoringMfeUrl: 'http://localhost:3001',
   optimizationEnabled: false,
   redirectToLibraryAuthoringMfe: false,
   requestCourseCreatorUrl: '/request_course_creator',

@@ -45,10 +45,6 @@ const StudioHome = ({ intl }) => {
     splitStudioHome,
   } = studioHomeData;
 
-  if (isLoadingPage) {
-    return <Loading />;
-  }
-
   function getHeaderButtons() {
     const headerButtons = [];
 
@@ -86,6 +82,7 @@ const StudioHome = ({ intl }) => {
         size="sm"
         disabled={showNewCourseContainer}
         href={libraryHref}
+        data-testid="new-library-button"
       >
         {intl.formatMessage(messages.addNewLibraryBtnText)}
       </Button>,
@@ -121,16 +118,22 @@ const StudioHome = ({ intl }) => {
             >
               <Layout.Element>
                 <section>
-                  {showNewCourseContainer && (
-                    <CreateNewCourseForm handleOnClickCancel={() => setShowNewCourseContainer(false)} />
+                  {isLoadingPage ? (
+                    <Loading />
+                  ) : (
+                    <>
+                      {showNewCourseContainer && (
+                        <CreateNewCourseForm handleOnClickCancel={() => setShowNewCourseContainer(false)} />
+                      )}
+                      {isShowOrganizationDropdown && <OrganizationSection />}
+                      <TabsSection
+                        tabsData={studioHomeData}
+                        showNewCourseContainer={showNewCourseContainer}
+                        onClickNewCourse={() => setShowNewCourseContainer(true)}
+                        isShowProcessing={isShowProcessing}
+                      />
+                    </>
                   )}
-                  {isShowOrganizationDropdown && <OrganizationSection />}
-                  <TabsSection
-                    tabsData={studioHomeData}
-                    showNewCourseContainer={showNewCourseContainer}
-                    onClickNewCourse={() => setShowNewCourseContainer(true)}
-                    isShowProcessing={isShowProcessing}
-                  />
                 </section>
               </Layout.Element>
               <Layout.Element>
