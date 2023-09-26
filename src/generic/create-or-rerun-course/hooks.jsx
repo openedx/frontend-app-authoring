@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { history } from '@edx/frontend-platform';
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -15,7 +15,6 @@ import {
 } from '../data/selectors';
 import { updateSavingStatus, updatePostErrors } from '../data/slice';
 import { fetchOrganizationsQuery } from '../data/thunks';
-import { redirectToCourseIndex } from './constants';
 import messages from './messages';
 
 const useCreateOrRerunCourse = (initialValues) => {
@@ -90,7 +89,7 @@ const useCreateOrRerunCourse = (initialValues) => {
       dispatch(updateSavingStatus({ status: '' }));
       const { url } = redirectUrlObj;
       if (url) {
-        history.push(redirectToCourseIndex(url));
+        window.location.href = `${getConfig().STUDIO_BASE_URL}${url}`;
       }
     } else if (createOrRerunCourseSavingStatus === RequestStatus.FAILED) {
       dispatch(updateSavingStatus({ status: '' }));
