@@ -1,5 +1,6 @@
 import Cookies from 'universal-cookie';
 import moment from 'moment';
+import { getConfig } from '@edx/frontend-platform';
 
 import { RequestStatus } from '../../data/constants';
 import { setExportCookie } from '../utils';
@@ -48,7 +49,11 @@ export function fetchExportStatus(courseId) {
       dispatch(updateCurrentStage(Math.abs(exportStatus)));
 
       if (exportOutput) {
-        dispatch(updateDownloadPath(exportOutput));
+        if (exportOutput.startsWith('/')) {
+          dispatch(updateDownloadPath(`${getConfig().STUDIO_BASE_URL}${exportOutput}`));
+        } else {
+          dispatch(updateDownloadPath(exportOutput));
+        }
         dispatch(updateSuccessDate(moment().valueOf()));
       }
 
