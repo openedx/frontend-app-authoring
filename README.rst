@@ -27,7 +27,7 @@ Tutor Installation
 
 Refer to the `tutor-contrib-library-authoring-mfe`_ plugin for instructions on how to deploy this using Tutor.
 
-.. _tutor-contrib-library-authoring-mfe: https://github.com/openedx/frontend-app-library-authoring/tree/master/tutor-contrib-library-authoring-mfe
+.. _tutor-contrib-library-authoring-mfe: https://github.com/openedx/openedx-tutor-plugins/tree/main/plugins/tutor-contrib-library-authoring-mfe
 
 Devstack Installation
 ---------------------
