@@ -7,6 +7,7 @@ import {
 } from '@edx/paragon';
 import { Add, ExpandLess, ExpandMore } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
+import { sortBy } from 'lodash-es';
 // eslint-disable-next-line import/no-unresolved
 import onClickOutside from 'react-onclickoutside';
 import FormGroup from './FormGroup';
@@ -45,7 +46,9 @@ class TypeaheadDropdown extends React.Component {
       options = options.filter((option) => (option.toLowerCase().includes(strToFind.toLowerCase())));
     }
 
-    return options.sort().map((opt) => {
+    const sortedOptions = sortBy(options, (option) => option.toLowerCase());
+
+    return sortedOptions.map((opt) => {
       let value = opt;
       if (value.length > 30) {
         value = value.substring(0, 30).concat('...');

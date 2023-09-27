@@ -37,13 +37,16 @@
   }
 }
 
-.form-control {
-  font-size: 0.875rem !important;
-  width: 308px !important;
-  height: 44px !important;
+.video-upload-input-group{
+  .form-control {
+    font-size: 0.875rem !important;
+    width: 308px !important;
+    height: 44px !important;
+  }
+  
+  .pgn__icon.pgn__icon__lg {
+    width: 3.625rem !important;
+    height: 3.625rem !important;
+  }
 }
 
-.pgn__icon.pgn__icon__lg {
-  width: 3.625rem !important;
-  height: 3.625rem !important;
-}

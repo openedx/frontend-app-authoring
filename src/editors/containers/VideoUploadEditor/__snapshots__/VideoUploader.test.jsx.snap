@@ -107,7 +107,7 @@ Object {
                 class="zindex-9 video-id-prompt p-4"
               >
                 <div
-                  class="input-group"
+                  class="video-upload-input-group input-group"
                 >
                   <div
                     class="pgn__form-control-decorator-group"
@@ -265,7 +265,7 @@ Object {
               class="zindex-9 video-id-prompt p-4"
             >
               <div
-                class="input-group"
+                class="video-upload-input-group input-group"
               >
                 <div
                   class="pgn__form-control-decorator-group"

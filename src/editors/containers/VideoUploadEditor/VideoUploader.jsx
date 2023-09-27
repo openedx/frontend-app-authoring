@@ -26,7 +26,7 @@ const URLUploader = () => {
       </div>
       <div className="x-small align-self-center justify-content-center mx-2 text-dark font-weight-normal">OR</div>
       <div className="zindex-9 video-id-prompt p-4">
-        <InputGroup>
+        <InputGroup className="video-upload-input-group">
           <FormControl
             placeholder={intl.formatMessage(messages.pasteURL)}
             aria-label={intl.formatMessage(messages.pasteURL)}
