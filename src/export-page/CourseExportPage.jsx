@@ -59,7 +59,7 @@ const CourseExportPage = ({ intl, courseId }) => {
           })}
         </title>
       </Helmet>
-      <Container size="xl" className="m-4 export">
+      <Container size="xl" className="mt-4 px-4 export">
         <section className="setting-items mb-4">
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
@@ -74,8 +74,8 @@ const CourseExportPage = ({ intl, courseId }) => {
                   title={intl.formatMessage(messages.headingTitle)}
                   subtitle={intl.formatMessage(messages.headingSubtitle)}
                 />
-                <p>{intl.formatMessage(messages.description1, { studioShortName: getConfig().STUDIO_SHORT_NAME })}</p>
-                <p>{intl.formatMessage(messages.description2)}</p>
+                <p className="small">{intl.formatMessage(messages.description1, { studioShortName: getConfig().STUDIO_SHORT_NAME })}</p>
+                <p className="small">{intl.formatMessage(messages.description2)}</p>
                 <Card>
                   <Card.Header
                     className="h3 px-3 text-black mb-4"

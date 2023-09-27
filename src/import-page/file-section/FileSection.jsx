@@ -28,8 +28,9 @@ const FileSection = ({ intl, courseId }) => {
       <Card.Header
         className="h3 px-3 text-black"
         title={intl.formatMessage(messages.headingTitle)}
+        subtitle={fileName && intl.formatMessage(messages.fileChosen, { fileName })}
       />
-      <Card.Section className="px-3 py-1">
+      <Card.Section className="px-3 pt-2 pb-4">
         {isShowedDropzone
           && (
             <Dropzone
@@ -47,11 +48,6 @@ const FileSection = ({ intl, courseId }) => {
             />
           )}
       </Card.Section>
-      {fileName && (
-        <div className="px-3 py-1">
-          {intl.formatMessage(messages.fileChosen, { fileName })}
-        </div>
-      )}
     </Card>
   );
 };

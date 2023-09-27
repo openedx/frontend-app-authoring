@@ -90,6 +90,8 @@ initialize({
         ENABLE_PROGRESS_GRAPH_SETTINGS: process.env.ENABLE_PROGRESS_GRAPH_SETTINGS || 'false',
         ENABLE_TEAM_TYPE_SETTING: process.env.ENABLE_TEAM_TYPE_SETTING === 'true',
         BBB_LEARN_MORE_URL: process.env.BBB_LEARN_MORE_URL || '',
+        STUDIO_BASE_URL: process.env.STUDIO_BASE_URL || null,
+        STUDIO_SHORT_NAME: process.env.STUDIO_SHORT_NAME || null,
       }, 'CourseAuthoringConfig');
     },
   },

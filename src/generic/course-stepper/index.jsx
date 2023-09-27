@@ -2,9 +2,9 @@ import React from 'react';
 import { injectIntl } from '@edx/frontend-platform/i18n';
 import {
   Settings as SettingsIcon,
-  CheckBoxOutlineBlank as SuccessIcon,
-  LibraryAddCheck as SuccessDoneIcon,
+  ManageHistory as SuccessIcon,
   Warning as ErrorIcon,
+  CheckCircle,
 } from '@edx/paragon/icons';
 import { Icon } from '@edx/paragon';
 import PropTypes from 'prop-types';
@@ -23,8 +23,12 @@ const CourseStepper = ({
     const isLastStep = index === lastStepIndex;
     const isErrorStep = isActiveStep && hasError;
     const isLastStepDone = isLastStep && isActiveStep;
+    const completedStep = index < activeKey && !hasError;
 
     const getStepIcon = () => {
+      if (completedStep) {
+        return CheckCircle;
+      }
       if (hasError && isActiveStep) {
         return ErrorIcon;
       }
@@ -32,7 +36,7 @@ const CourseStepper = ({
         return SuccessIcon;
       }
       if (isLastStepDone) {
-        return SuccessDoneIcon;
+        return CheckCircle;
       }
 
       return SettingsIcon;

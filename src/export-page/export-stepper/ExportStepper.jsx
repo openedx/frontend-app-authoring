@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import {
+  FormattedDate,
   injectIntl,
   intlShape,
 } from '@edx/frontend-platform/i18n';
@@ -14,7 +15,6 @@ import {
 } from '../data/selectors';
 import { fetchExportStatus } from '../data/thunks';
 import { EXPORT_STAGES } from '../data/constants';
-import { getFormattedSuccessDate } from '../utils';
 import { RequestStatus } from '../../data/constants';
 import messages from './messages';
 
@@ -41,10 +41,26 @@ const ExportStepper = ({ intl, courseId }) => {
   });
 
   let successTitle = intl.formatMessage(messages.stepperSuccessTitle);
-  const formattedSuccessDate = getFormattedSuccessDate(successDate);
-  if (formattedSuccessDate && currentStage === EXPORT_STAGES.SUCCESS) {
-    successTitle += formattedSuccessDate;
+  const localizedSuccessDate = successDate ? (
+    <FormattedDate
+      value={successDate}
+      year="2-digit"
+      month="2-digit"
+      day="2-digit"
+      hour="numeric"
+      minute="numeric"
+    />
+  ) : null;
+
+  if (localizedSuccessDate && currentStage === EXPORT_STAGES.SUCCESS) {
+    const successWithDate = (
+      <>
+        {successTitle} ({localizedSuccessDate})
+      </>
+    );
+    successTitle = successWithDate;
   }
+
   const steps = [
     {
       title: intl.formatMessage(messages.stepperPreparingTitle),
@@ -68,7 +84,6 @@ const ExportStepper = ({ intl, courseId }) => {
   return (
     <div>
       <h3 className="mt-4">{intl.formatMessage(messages.stepperHeaderTitle)}</h3>
-      <hr />
       <CourseStepper
         courseId={courseId}
         steps={steps}
@@ -76,7 +91,7 @@ const ExportStepper = ({ intl, courseId }) => {
         errorMessage={errorMessage}
         hasError={!!errorMessage}
       />
-      {downloadPath && currentStage === EXPORT_STAGES.SUCCESS && <Button href={`${getConfig().STUDIO_BASE_URL}${downloadPath}`}>{intl.formatMessage(messages.downloadCourseButtonTitle)}</Button>}
+      {downloadPath && currentStage === EXPORT_STAGES.SUCCESS && <Button className="ml-5.5 mt-n2.5" href={`${getConfig().STUDIO_BASE_URL}${downloadPath}`}>{intl.formatMessage(messages.downloadCourseButtonTitle)}</Button>}
     </div>
   );
 };

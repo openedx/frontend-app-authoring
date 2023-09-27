@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ActionRow, AlertModal, Button } from '@edx/paragon';
+import { Error } from '@edx/paragon/icons';
 
 const ModalError = ({
   isOpen, title, message, handleCancel, handleAction, cancelButtonText, actionButtonText,
@@ -9,6 +10,7 @@ const ModalError = ({
     title={title}
     isOpen={isOpen}
     variant="danger"
+    icon={Error}
     footerNode={(
       <ActionRow>
         <Button variant="tertiary" onClick={handleCancel}>{cancelButtonText}</Button>
