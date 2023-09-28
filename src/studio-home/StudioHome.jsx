@@ -121,7 +121,6 @@ const StudioHome = ({ intl }) => {
             >
               <Layout.Element>
                 <section>
-                  
                   {showNewCourseContainer && (
                     <CreateNewCourseForm handleOnClickCancel={() => setShowNewCourseContainer(false)} />
                   )}
