@@ -62,10 +62,8 @@ const props = {
 
 const mockStore = async () => {
   axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
-  // axiosMock.onPost(getCreateOrRerunCourseUrl).reply(200, { url: '/course' });
 
   await executeThunk(fetchStudioHomeData, store.dispatch);
-  // await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 };
 
 describe('<CreateOrRerunCourseForm />', () => {
