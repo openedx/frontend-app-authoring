@@ -93,9 +93,9 @@ const useCreateOrRerunCourse = (initialValues) => {
       // is in the destionationCourseKey attribute from the api.
       if (url) {
         if (destinationCourseKey) {
-          window.location.href = `${getConfig().STUDIO_BASE_URL}${url}${destinationCourseKey}`;
+          window.location.assign(`${getConfig().STUDIO_BASE_URL}${url}${destinationCourseKey}`);
         } else {
-          window.location.href = `${getConfig().STUDIO_BASE_URL}${url}`;
+          window.location.assign(`${getConfig().STUDIO_BASE_URL}${url}`);
         }
       }
     } else if (createOrRerunCourseSavingStatus === RequestStatus.FAILED) {

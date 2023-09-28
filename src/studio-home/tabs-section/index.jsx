@@ -74,7 +74,7 @@ const TabsSection = ({
 
   const handleSelectTab = (tab) => {
     if (tab === TABS_LIST.libraries && redirectToLibraryAuthoringMfe) {
-      window.location.href = libraryAuthoringMfeUrl;
+      window.location.assign(libraryAuthoringMfeUrl);
     }
   };
 

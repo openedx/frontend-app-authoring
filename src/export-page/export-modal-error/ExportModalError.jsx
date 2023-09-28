@@ -17,8 +17,8 @@ const ExportModalError = ({
   const isErrorModalOpen = useSelector(getIsErrorModalOpen);
   const { msg: errorMessage, unitUrl: unitErrorUrl } = useSelector(getError);
 
-  const handleUnitRedirect = () => { window.location.href = unitErrorUrl; };
-  const handleRedirectCourseHome = () => { window.location.href = `${getConfig().STUDIO_BASE_URL}/course/${courseId}`; };
+  const handleUnitRedirect = () => { window.location.assign(unitErrorUrl); };
+  const handleRedirectCourseHome = () => { window.location.assign(`${getConfig().STUDIO_BASE_URL}/course/${courseId}`); };
   return (
     <ModalError
       isOpen={isErrorModalOpen}
