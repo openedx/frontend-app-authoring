@@ -87,9 +87,16 @@ const useCreateOrRerunCourse = (initialValues) => {
   useEffect(() => {
     if (createOrRerunCourseSavingStatus === RequestStatus.SUCCESSFUL) {
       dispatch(updateSavingStatus({ status: '' }));
-      const { url } = redirectUrlObj;
+      const { url, destinationCourseKey } = redirectUrlObj;
+      // New courses' url to the outline page is provided in the url. However, for course
+      // re-runs the url is /course/. The actual destination for the rer-run's  outline
+      // is in the destionationCourseKey attribute from the api.
       if (url) {
-        window.location.href = `${getConfig().STUDIO_BASE_URL}${url}`;
+        if (destinationCourseKey) {
+          window.location.href = `${getConfig().STUDIO_BASE_URL}${url}${destinationCourseKey}`;
+        } else {
+          window.location.href = `${getConfig().STUDIO_BASE_URL}${url}`;
+        }
       }
     } else if (createOrRerunCourseSavingStatus === RequestStatus.FAILED) {
       dispatch(updateSavingStatus({ status: '' }));
