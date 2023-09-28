@@ -46,7 +46,7 @@ const OrganizationSection = ({ intl }) => {
         {intl.formatMessage(messages.organizationTitle)}
       </h3>
       <Form.Group className="organization-section-form d-flex align-items-baseline">
-        <FormLabel className="organization-section-form-label w-50">
+        <FormLabel isInline className="organization-section-form-label">
           {intl.formatMessage(messages.organizationLabel)}
         </FormLabel>
         <TypeaheadDropdown

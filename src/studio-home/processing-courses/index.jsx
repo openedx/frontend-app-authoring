@@ -13,11 +13,11 @@ const ProcessingCourses = () => {
 
   return (
     <>
-      <p className="text-gray-300">
+      <div className="text-gray-500 small">
         {intl.formatMessage(messages.processingTitle)}
-      </p>
+      </div>
       <hr />
-      <Stack gap={3}>
+      <Stack gap={3} className="border-bottom border-light-400 mb-4 px-4 pt-3">
         {inProcessCourseActions.map((course) => (
           <CourseItem
             course={course}

@@ -44,7 +44,7 @@ describe('<CourseRerunSideBar />', () => {
     const { getByText } = renderComponent();
 
     expect(getByText(messages.sectionTitle1.defaultMessage)).toBeInTheDocument();
-    expect(getByText(messages.sectionDescription1.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.sectionDescription1.defaultMessage, { exact: false })).toBeInTheDocument();
     expect(getByText(messages.sectionTitle2.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.sectionDescription2.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.sectionTitle3.defaultMessage)).toBeInTheDocument();

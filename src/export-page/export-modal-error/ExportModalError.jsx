@@ -1,7 +1,7 @@
 import React from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { useDispatch, useSelector } from 'react-redux';
-import { history } from '@edx/frontend-platform';
+import { getConfig } from '@edx/frontend-platform';
 import PropTypes from 'prop-types';
 
 import ModalError from '../../generic/modal-error/ModalError';
@@ -17,9 +17,8 @@ const ExportModalError = ({
   const isErrorModalOpen = useSelector(getIsErrorModalOpen);
   const { msg: errorMessage, unitUrl: unitErrorUrl } = useSelector(getError);
 
-  const handleUnitRedirect = () => { window.location.href = unitErrorUrl; };
-  const handleRedirectCourseHome = () => history.push(`/course/${courseId}/outline`);
-
+  const handleUnitRedirect = () => { window.location.assign(unitErrorUrl); };
+  const handleRedirectCourseHome = () => { window.location.assign(`${getConfig().STUDIO_BASE_URL}/course/${courseId}`); };
   return (
     <ModalError
       isOpen={isErrorModalOpen}

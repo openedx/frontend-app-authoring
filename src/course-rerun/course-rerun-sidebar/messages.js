@@ -7,7 +7,7 @@ const messages = defineMessages({
   },
   sectionDescription1: {
     id: 'course-authoring.course-rerun.sidebar.section-1.description',
-    defaultMessage: 'The new course is set to start on January 1, 2030 at midnight (UTC).',
+    defaultMessage: 'The new course is set to start on',
   },
   sectionTitle2: {
     id: 'course-authoring.course-rerun.sidebar.section-2.title',

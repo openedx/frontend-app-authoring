@@ -246,7 +246,7 @@ const CreateOrRerunCourseForm = ({
                 type="invalid"
                 hasIcon={false}
               >
-                <span className="x-small">{errors[field.name]}</span>
+                {errors[field.name]}
               </Form.Control.Feedback>
             )}
           </Form.Group>
