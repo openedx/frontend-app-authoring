@@ -74,19 +74,19 @@ const StudioHome = ({ intl }) => {
     }
     if (redirectToLibraryAuthoringMfe) {
       libraryHref = `${libraryAuthoringMfeUrl}/create`;
+      headerButtons.push(
+        <Button
+          variant="outline-primary"
+          iconBefore={AddIcon}
+          size="sm"
+          disabled={showNewCourseContainer}
+          href={libraryHref}
+          data-testid="new-library-button"
+        >
+          {intl.formatMessage(messages.addNewLibraryBtnText)}
+        </Button>,
+      );
     }
-    headerButtons.push(
-      <Button
-        variant="outline-primary"
-        iconBefore={AddIcon}
-        size="sm"
-        disabled={showNewCourseContainer}
-        href={libraryHref}
-        data-testid="new-library-button"
-      >
-        {intl.formatMessage(messages.addNewLibraryBtnText)}
-      </Button>,
-    );
 
     return headerButtons;
   }
