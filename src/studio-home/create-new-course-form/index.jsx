@@ -15,7 +15,7 @@ const CreateNewCourseForm = ({ handleOnClickCancel }) => {
   };
 
   return (
-    <div className="mb-4.5">
+    <div className="mb-4.5" data-testid="create-course-form">
       <CreateOrRerunCourseForm
         title={intl.formatMessage(messages.createNewCourse)}
         initialValues={initialNewCourseData}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { getConfig, initializeMockApp } from '@edx/frontend-platform';
+import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -116,31 +116,21 @@ describe('<StudioHome />', async () => {
   });
 
   describe('render new library button', () => {
-    it('href should include #libraries-tab', async () => {
+    it('should not show button', async () => {
       useSelector.mockReturnValue({
         ...studioHomeMock,
         courseCreatorStatus: COURSE_CREATOR_STATES.granted,
       });
 
-      const { getByTestId } = render(<RootWrapper />);
-      const createNewLibraryButton = getByTestId('new-library-button');
-      expect(createNewLibraryButton.getAttribute('href')).toBe(`${getConfig().STUDIO_BASE_URL}/home#libraries-tab`);
-    });
-    it('href should include home_library', async () => {
-      useSelector.mockReturnValue({
-        ...studioHomeMock,
-        courseCreatorStatus: COURSE_CREATOR_STATES.granted,
-        splitStudioHome: true,
-      });
-
-      const { getByTestId } = render(<RootWrapper />);
-      const createNewLibraryButton = getByTestId('new-library-button');
-      expect(createNewLibraryButton.getAttribute('href')).toBe(`${getConfig().STUDIO_BASE_URL}/home_library`);
+      const { queryByTestId } = render(<RootWrapper />);
+      const createNewLibraryButton = queryByTestId('new-library-button');
+      expect(createNewLibraryButton).toBeNull();
     });
     it('href should include create', async () => {
       useSelector.mockReturnValue({
         ...studioHomeMock,
         courseCreatorStatus: COURSE_CREATOR_STATES.granted,
+        splitStudioHome: true,
         redirectToLibraryAuthoringMfe: true,
       });
       const libraryAuthoringMfeUrl = 'http://localhost:3001';
@@ -160,10 +150,8 @@ describe('<StudioHome />', async () => {
     const { getByRole, getByText } = render(<RootWrapper />);
     const createNewCourseButton = getByRole('button', { name: messages.addNewCourseBtnText.defaultMessage });
 
-    fireEvent.click(createNewCourseButton);
-    waitFor(() => {
-      expect(getByText(createNewCourseMessages.createNewCourse.defaultMessage)).toBeInTheDocument();
-    });
+    await act(() => fireEvent.click(createNewCourseButton));
+    expect(getByText(createNewCourseMessages.createNewCourse.defaultMessage)).toBeInTheDocument();
   });
 
   it('should hide create new course container', async () => {
@@ -184,6 +172,45 @@ describe('<StudioHome />', async () => {
     fireEvent.click(cancelButton);
     waitFor(() => {
       expect(queryByText(createNewCourseMessages.createNewCourse.defaultMessage)).not.toBeInTheDocument();
+    });
+  });
+
+  describe('contact administrator card', () => {
+    it('should show contact administrator card with no add course buttons', () => {
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        courses: null,
+        courseCreatorStatus: COURSE_CREATOR_STATES.pending,
+      });
+      const { getByText, queryByText } = render(<RootWrapper />);
+      const defaultTitleMessage = messages.defaultSection_1_Title.defaultMessage;
+      const titleWithStudioName = defaultTitleMessage.replace('{studioShortName}', 'Studio');
+      const administratorCardTitle = getByText(titleWithStudioName);
+
+      expect(administratorCardTitle).toBeVisible();
+
+      const addCourseButton = queryByText(messages.btnAddNewCourseText.defaultMessage);
+      expect(addCourseButton).toBeNull();
+    });
+
+    it('should show contact administrator card with add course buttons', () => {
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        courses: null,
+        courseCreatorStatus: COURSE_CREATOR_STATES.granted,
+      });
+      const { getByText, getByTestId } = render(<RootWrapper />);
+      const defaultTitleMessage = messages.defaultSection_1_Title.defaultMessage;
+      const titleWithStudioName = defaultTitleMessage.replace('{studioShortName}', 'Studio');
+      const administratorCardTitle = getByText(titleWithStudioName);
+
+      expect(administratorCardTitle).toBeVisible();
+
+      const addCourseButton = getByTestId('contact-admin-create-course');
+      expect(addCourseButton).toBeVisible();
+
+      fireEvent.click(addCourseButton);
+      expect(getByTestId('create-course-form')).toBeVisible();
     });
   });
 
