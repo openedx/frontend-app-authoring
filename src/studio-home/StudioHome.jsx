@@ -74,24 +74,27 @@ const StudioHome = ({ intl }) => {
     }
     if (redirectToLibraryAuthoringMfe) {
       libraryHref = `${libraryAuthoringMfeUrl}/create`;
+      headerButtons.push(
+        <Button
+          variant="outline-primary"
+          iconBefore={AddIcon}
+          size="sm"
+          disabled={showNewCourseContainer}
+          href={libraryHref}
+          data-testid="new-library-button"
+        >
+          {intl.formatMessage(messages.addNewLibraryBtnText)}
+        </Button>,
+      );
     }
-    headerButtons.push(
-      <Button
-        variant="outline-primary"
-        iconBefore={AddIcon}
-        size="sm"
-        disabled={showNewCourseContainer}
-        href={libraryHref}
-        data-testid="new-library-button"
-      >
-        {intl.formatMessage(messages.addNewLibraryBtnText)}
-      </Button>,
-    );
 
     return headerButtons;
   }
 
   const headerButtons = userIsActive ? getHeaderButtons() : [];
+  if (isLoadingPage) {
+    return (<Loading />);
+  }
 
   return (
     <>
@@ -118,22 +121,16 @@ const StudioHome = ({ intl }) => {
             >
               <Layout.Element>
                 <section>
-                  {isLoadingPage ? (
-                    <Loading />
-                  ) : (
-                    <>
-                      {showNewCourseContainer && (
-                        <CreateNewCourseForm handleOnClickCancel={() => setShowNewCourseContainer(false)} />
-                      )}
-                      {isShowOrganizationDropdown && <OrganizationSection />}
-                      <TabsSection
-                        tabsData={studioHomeData}
-                        showNewCourseContainer={showNewCourseContainer}
-                        onClickNewCourse={() => setShowNewCourseContainer(true)}
-                        isShowProcessing={isShowProcessing}
-                      />
-                    </>
+                  {showNewCourseContainer && (
+                    <CreateNewCourseForm handleOnClickCancel={() => setShowNewCourseContainer(false)} />
                   )}
+                  {isShowOrganizationDropdown && <OrganizationSection />}
+                  <TabsSection
+                    tabsData={studioHomeData}
+                    showNewCourseContainer={showNewCourseContainer}
+                    onClickNewCourse={() => setShowNewCourseContainer(true)}
+                    isShowProcessing={isShowProcessing}
+                  />
                 </section>
               </Layout.Element>
               <Layout.Element>
