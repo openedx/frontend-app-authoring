@@ -8,6 +8,7 @@ import {
 import { Add as AddIcon } from '@edx/paragon/icons/es5';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { StudioFooter } from '@edx/frontend-component-footer';
+import { getConfig } from '@edx/frontend-platform';
 
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
@@ -17,7 +18,6 @@ import HomeSidebar from './home-sidebar';
 import TabsSection from './tabs-section';
 import OrganizationSection from './organization-section';
 import VerifyEmailLayout from './verify-email-layout';
-import ProcessingCourses from './processing-courses';
 import CreateNewCourseForm from './create-new-course-form';
 import messages from './messages';
 import { useStudioHome } from './hooks';
@@ -40,11 +40,10 @@ const StudioHome = ({ intl }) => {
     userIsActive,
     studioShortName,
     studioRequestEmail,
+    libraryAuthoringMfeUrl,
+    redirectToLibraryAuthoringMfe,
+    splitStudioHome,
   } = studioHomeData;
-
-  if (isLoadingPage) {
-    return <Loading />;
-  }
 
   function getHeaderButtons() {
     const headerButtons = [];
@@ -69,15 +68,38 @@ const StudioHome = ({ intl }) => {
       );
     }
 
+    let libraryHref = `${getConfig().STUDIO_BASE_URL}/home#libraries-tab`;
+    if (splitStudioHome) {
+      libraryHref = `${getConfig().STUDIO_BASE_URL}/home_library`;
+    }
+    if (redirectToLibraryAuthoringMfe) {
+      libraryHref = `${libraryAuthoringMfeUrl}/create`;
+      headerButtons.push(
+        <Button
+          variant="outline-primary"
+          iconBefore={AddIcon}
+          size="sm"
+          disabled={showNewCourseContainer}
+          href={libraryHref}
+          data-testid="new-library-button"
+        >
+          {intl.formatMessage(messages.addNewLibraryBtnText)}
+        </Button>,
+      );
+    }
+
     return headerButtons;
   }
 
   const headerButtons = userIsActive ? getHeaderButtons() : [];
+  if (isLoadingPage) {
+    return (<Loading />);
+  }
 
   return (
     <>
       <Header isHiddenMainMenu />
-      <Container size="xl" className="studio-home">
+      <Container size="xl" className="p-4 mt-3">
         <section className="mb-4">
           <article className="studio-home-sub-header">
             <section>
@@ -103,11 +125,11 @@ const StudioHome = ({ intl }) => {
                     <CreateNewCourseForm handleOnClickCancel={() => setShowNewCourseContainer(false)} />
                   )}
                   {isShowOrganizationDropdown && <OrganizationSection />}
-                  {isShowProcessing && <ProcessingCourses />}
                   <TabsSection
                     tabsData={studioHomeData}
                     showNewCourseContainer={showNewCourseContainer}
                     onClickNewCourse={() => setShowNewCourseContainer(true)}
+                    isShowProcessing={isShowProcessing}
                   />
                 </section>
               </Layout.Element>

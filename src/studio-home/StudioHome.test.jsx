@@ -105,12 +105,39 @@ describe('<StudioHome />', async () => {
   it('shows the spinner before the query is complete', async () => {
     useSelector.mockReturnValue({
       studioHomeLoadingStatus: RequestStatus.IN_PROGRESS,
+      userIsActive: true,
     });
 
     await act(async () => {
       const { getByRole } = render(<RootWrapper />);
       const spinner = getByRole('status');
       expect(spinner.textContent).toEqual('Loading...');
+    });
+  });
+
+  describe('render new library button', () => {
+    it('should not show button', async () => {
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        courseCreatorStatus: COURSE_CREATOR_STATES.granted,
+      });
+
+      const { queryByTestId } = render(<RootWrapper />);
+      const createNewLibraryButton = queryByTestId('new-library-button');
+      expect(createNewLibraryButton).toBeNull();
+    });
+    it('href should include create', async () => {
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        courseCreatorStatus: COURSE_CREATOR_STATES.granted,
+        splitStudioHome: true,
+        redirectToLibraryAuthoringMfe: true,
+      });
+      const libraryAuthoringMfeUrl = 'http://localhost:3001';
+
+      const { getByTestId } = render(<RootWrapper />);
+      const createNewLibraryButton = getByTestId('new-library-button');
+      expect(createNewLibraryButton.getAttribute('href')).toBe(`${libraryAuthoringMfeUrl}/create`);
     });
   });
 
@@ -123,10 +150,8 @@ describe('<StudioHome />', async () => {
     const { getByRole, getByText } = render(<RootWrapper />);
     const createNewCourseButton = getByRole('button', { name: messages.addNewCourseBtnText.defaultMessage });
 
-    fireEvent.click(createNewCourseButton);
-    waitFor(() => {
-      expect(getByText(createNewCourseMessages.createNewCourse.defaultMessage)).toBeInTheDocument();
-    });
+    await act(() => fireEvent.click(createNewCourseButton));
+    expect(getByText(createNewCourseMessages.createNewCourse.defaultMessage)).toBeInTheDocument();
   });
 
   it('should hide create new course container', async () => {
@@ -147,6 +172,45 @@ describe('<StudioHome />', async () => {
     fireEvent.click(cancelButton);
     waitFor(() => {
       expect(queryByText(createNewCourseMessages.createNewCourse.defaultMessage)).not.toBeInTheDocument();
+    });
+  });
+
+  describe('contact administrator card', () => {
+    it('should show contact administrator card with no add course buttons', () => {
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        courses: null,
+        courseCreatorStatus: COURSE_CREATOR_STATES.pending,
+      });
+      const { getByText, queryByText } = render(<RootWrapper />);
+      const defaultTitleMessage = messages.defaultSection_1_Title.defaultMessage;
+      const titleWithStudioName = defaultTitleMessage.replace('{studioShortName}', 'Studio');
+      const administratorCardTitle = getByText(titleWithStudioName);
+
+      expect(administratorCardTitle).toBeVisible();
+
+      const addCourseButton = queryByText(messages.btnAddNewCourseText.defaultMessage);
+      expect(addCourseButton).toBeNull();
+    });
+
+    it('should show contact administrator card with add course buttons', () => {
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        courses: null,
+        courseCreatorStatus: COURSE_CREATOR_STATES.granted,
+      });
+      const { getByText, getByTestId } = render(<RootWrapper />);
+      const defaultTitleMessage = messages.defaultSection_1_Title.defaultMessage;
+      const titleWithStudioName = defaultTitleMessage.replace('{studioShortName}', 'Studio');
+      const administratorCardTitle = getByText(titleWithStudioName);
+
+      expect(administratorCardTitle).toBeVisible();
+
+      const addCourseButton = getByTestId('contact-admin-create-course');
+      expect(addCourseButton).toBeVisible();
+
+      fireEvent.click(addCourseButton);
+      expect(getByTestId('create-course-form')).toBeVisible();
     });
   });
 

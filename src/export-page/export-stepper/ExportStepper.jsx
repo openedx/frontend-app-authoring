@@ -6,7 +6,6 @@ import {
 } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { getConfig } from '@edx/frontend-platform';
 import { Button } from '@edx/paragon';
 
 import CourseStepper from '../../generic/course-stepper';
@@ -91,7 +90,7 @@ const ExportStepper = ({ intl, courseId }) => {
         errorMessage={errorMessage}
         hasError={!!errorMessage}
       />
-      {downloadPath && currentStage === EXPORT_STAGES.SUCCESS && <Button className="ml-5.5 mt-n2.5" href={`${getConfig().STUDIO_BASE_URL}${downloadPath}`}>{intl.formatMessage(messages.downloadCourseButtonTitle)}</Button>}
+      {downloadPath && currentStage === EXPORT_STAGES.SUCCESS && <Button className="ml-5.5 mt-n2.5" href={downloadPath} download>{intl.formatMessage(messages.downloadCourseButtonTitle)}</Button>}
     </div>
   );
 };
