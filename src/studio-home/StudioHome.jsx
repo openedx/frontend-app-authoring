@@ -11,7 +11,7 @@ import { StudioFooter } from '@edx/frontend-component-footer';
 
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
-import Header from '../studio-header/Header';
+import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import HomeSidebar from './home-sidebar';
 import TabsSection from './tabs-section';

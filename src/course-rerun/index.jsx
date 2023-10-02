@@ -11,7 +11,7 @@ import {
 import { history } from '@edx/frontend-platform';
 import { StudioFooter } from '@edx/frontend-component-footer';
 
-import Header from '../studio-header/Header';
+import Header from '../header';
 import Loading from '../generic/Loading';
 import { getLoadingStatuses } from '../generic/data/selectors';
 import InternetConnectionAlert from '../generic/internet-connection-alert';

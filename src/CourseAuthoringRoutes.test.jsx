@@ -65,7 +65,7 @@ describe('<CourseAuthoringRoutes>', () => {
     store = initializeStore();
   });
 
-  it('renders the PagesAndResources component when the pages and resources route is active', () => {
+  fit('renders the PagesAndResources component when the pages and resources route is active', () => {
     render(
       <AppProvider store={store}>
         <MemoryRouter initialEntries={[`/course/${courseId}/pages-and-resources`]}>
@@ -74,7 +74,7 @@ describe('<CourseAuthoringRoutes>', () => {
       </AppProvider>,
     );
 
-    expect(screen.queryByText(pagesAndResourcesMockText)).toBeInTheDocument();
+    expect(screen.getByText(pagesAndResourcesMockText)).toBeVisible();
     expect(screen.queryByText(proctoredExamSeetingsMockText)).not.toBeInTheDocument();
     expect(mockComponentFn).toHaveBeenCalledWith(
       expect.objectContaining({

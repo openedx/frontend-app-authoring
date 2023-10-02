@@ -6,7 +6,7 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { StudioFooter } from '@edx/frontend-component-footer';
-import Header from './studio-header/Header';
+import Header from './header';
 import { fetchCourseDetail } from './data/thunks';
 import { useModel } from './generic/model-store';
 import PermissionDeniedAlert from './generic/PermissionDeniedAlert';
