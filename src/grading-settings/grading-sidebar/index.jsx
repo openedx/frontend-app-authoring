@@ -2,7 +2,7 @@ import React from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 
-import HelpSidebar from '../../generic/help-sidebar';
+import { HelpSidebar } from '../../generic/help-sidebar';
 import messages from './messages';
 
 const GradingSidebar = ({ intl, courseId, proctoredExamSettingsUrl }) => (

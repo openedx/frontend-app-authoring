@@ -111,7 +111,7 @@ describe('<CourseExportPage />', () => {
     const { getByText } = render(<RootWrapper />);
     expect(getByText(stepperMessages.stepperPreparingDescription.defaultMessage)).toBeInTheDocument();
   });
-  it('should show download path', async () => {
+  it('should show download path for relative path', async () => {
     axiosMock
       .onGet(getExportStatusApiUrl(courseId))
       .reply(200, { exportStatus: EXPORT_STAGES.SUCCESS, exportOutput: '/test-download-path.test' });
@@ -123,5 +123,18 @@ describe('<CourseExportPage />', () => {
     const downloadButton = getByText(stepperMessages.downloadCourseButtonTitle.defaultMessage);
     expect(downloadButton).toBeInTheDocument();
     expect(downloadButton.getAttribute('href')).toEqual(`${getConfig().STUDIO_BASE_URL}/test-download-path.test`);
+  });
+  it('should show download path for absolute path', async () => {
+    axiosMock
+      .onGet(getExportStatusApiUrl(courseId))
+      .reply(200, { exportStatus: EXPORT_STAGES.SUCCESS, exportOutput: 'http://test-download-path.test' });
+    const { getByText, container } = render(<RootWrapper />);
+    const startExportButton = container.querySelector('.btn-primary');
+    fireEvent.click(startExportButton);
+    // eslint-disable-next-line no-promise-executor-return
+    await new Promise((r) => setTimeout(r, 3500));
+    const downloadButton = getByText(stepperMessages.downloadCourseButtonTitle.defaultMessage);
+    expect(downloadButton).toBeInTheDocument();
+    expect(downloadButton.getAttribute('href')).toEqual('http://test-download-path.test');
   });
 });

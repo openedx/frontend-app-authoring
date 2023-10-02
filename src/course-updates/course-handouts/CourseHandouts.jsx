@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@edx/paragon';
+import { Icon, IconButtonWithTooltip } from '@edx/paragon';
+import { EditOutline } from '@edx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
@@ -12,16 +13,14 @@ const CourseHandouts = ({ contentForHandouts, onEdit, isDisabledButtons }) => {
     <div className="course-handouts" data-testid="course-handouts">
       <div className="course-handouts-header">
         <h2 className="course-handouts-header__title lead">{intl.formatMessage(messages.handoutsTitle)}</h2>
-        <Button
-          className="course-handouts-header__btn"
-          data-testid="course-handouts-edit-button"
-          variant="outline-primary"
-          size="sm"
-          onClick={onEdit}
+        <IconButtonWithTooltip
+          tooltipContent={intl.formatMessage(messages.editButton)}
+          src={EditOutline}
+          iconAs={Icon}
           disabled={isDisabledButtons}
-        >
-          {intl.formatMessage(messages.editButton)}
-        </Button>
+          data-testid="course-handouts-edit-button"
+          onClick={onEdit}
+        />
       </div>
       <div
         className="small"

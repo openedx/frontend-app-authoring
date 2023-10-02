@@ -63,7 +63,7 @@ const CourseUpdates = ({ courseId }) => {
 
   return (
     <>
-      <Container size="xl" className="m-4">
+      <Container size="xl" className="px-4">
         <section className="setting-items mb-4 mt-5">
           <Layout
             lg={[{ span: 12 }]}
@@ -81,7 +81,7 @@ const CourseUpdates = ({ courseId }) => {
                     instruction={intl.formatMessage(messages.sectionInfo)}
                     headerActions={(
                       <Button
-                        variant="outline-primary"
+                        variant="primary"
                         iconBefore={AddIcon}
                         size="sm"
                         onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}

@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Icon } from '@edx/paragon';
+import { Icon, IconButtonWithTooltip } from '@edx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Error as ErrorIcon } from '@edx/paragon/icons/es5';
+import { DeleteOutline, EditOutline, Error as ErrorIcon } from '@edx/paragon/icons';
 
 import { isDateForUpdateValid } from './utils';
 import messages from './messages';
@@ -27,18 +27,22 @@ const CourseUpdate = ({
           </div>
         )}
         <div className="course-update-header__action">
-          <Button
-            variant="outline-primary"
-            size="sm"
-            onClick={onEdit}
+          <IconButtonWithTooltip
+            tooltipContent={intl.formatMessage(messages.editButton)}
+            src={EditOutline}
+            iconAs={Icon}
             disabled={isDisabledButtons}
             data-testid="course-update-edit-button"
-          >
-            {intl.formatMessage(messages.editButton)}
-          </Button>
-          <Button variant="outline-primary" size="sm" onClick={onDelete} disabled={isDisabledButtons}>
-            {intl.formatMessage(messages.deleteButton)}
-          </Button>
+            onClick={onEdit}
+          />
+          <IconButtonWithTooltip
+            tooltipContent={intl.formatMessage(messages.deleteButton)}
+            src={DeleteOutline}
+            iconAs={Icon}
+            disabled={isDisabledButtons}
+            data-testid="course-update-delete-button"
+            onClick={onDelete}
+          />
         </div>
       </div>
       {Boolean(contentForUpdate) && (

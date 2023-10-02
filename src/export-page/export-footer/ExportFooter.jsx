@@ -8,13 +8,13 @@ import { Layout } from '@edx/paragon';
 import messages from './messages';
 
 const ExportFooter = ({ intl }) => (
-  <footer className="mt-4">
+  <footer className="mt-4 small">
     <Layout
-      lg={[{ span: 6 }, { span: 6 }]}
-      md={[{ span: 6 }, { span: 6 }]}
-      sm={[{ span: 6 }, { span: 6 }]}
-      xs={[{ span: 6 }, { span: 6 }]}
-      xl={[{ span: 6 }, { span: 6 }]}
+      lg={[{ span: 5 }, { span: 2 }, { span: 5 }]}
+      md={[{ span: 5 }, { span: 2 }, { span: 5 }]}
+      sm={[{ span: 5 }, { span: 2 }, { span: 5 }]}
+      xs={[{ span: 5 }, { span: 2 }, { span: 5 }]}
+      xl={[{ span: 5 }, { span: 2 }, { span: 5 }]}
     >
       <Layout.Element>
         <h4>{intl.formatMessage(messages.exportedDataTitle)}</h4>
@@ -28,6 +28,7 @@ const ExportFooter = ({ intl }) => (
           <li>{intl.formatMessage(messages.exportedDataItem7)}</li>
         </ul>
       </Layout.Element>
+      <Layout.Element />
       <Layout.Element>
         <h4>{intl.formatMessage(messages.notExportedDataTitle)}</h4>
         <ul className="export-footer-list">

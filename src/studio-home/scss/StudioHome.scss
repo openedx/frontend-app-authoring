@@ -1,0 +1,92 @@
+.studio-home {
+  margin: 3rem 1.5rem 1.5rem;
+
+  .help-sidebar {
+    margin-top: 0;
+  }
+
+  .studio-home-sub-header {
+    margin-bottom: 2rem;
+  }
+}
+
+.organization-section {
+  margin-bottom: 2.25rem;
+
+  .organization-section-title {
+    color: $black;
+  }
+
+  .organization-section-form {
+    margin: $spacer 0 -8px;
+
+    .organization-section-form-label {
+      color: $gray-700;
+      margin-bottom: 0;
+      margin-right: .75rem;
+    }
+
+    .organization-section-form-control {
+      border-color: $gray-500;
+
+      .form-control {
+        font-size: .875rem;
+        line-height: 1.5rem;
+        height: 2.75rem;
+      }
+    }
+  }
+}
+
+.studio-home-tabs {
+  border: none;
+  margin-bottom: 1.625rem;
+
+  .nav-link {
+    border-bottom: .125rem solid $light-400;
+  }
+
+  .nav-link.active {
+    background-color: transparent;
+  }
+}
+
+.courses-tab {
+  margin: 1.625rem 0;
+}
+
+.card-item {
+  margin-bottom: 1.5rem;
+
+  .pgn__card-header {
+    padding: .9375rem 1.25rem;
+
+    .pgn__card-header-content {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .pgn__card-header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+    }
+  }
+
+  .card-item-title {
+    font: normal $font-weight-normal 1.125rem/1.75rem $font-family-base;
+    color: $black;
+    margin-bottom: .1875rem;
+  }
+
+  .pgn__card-header-subtitle-md {
+    font: normal $font-weight-normal .75rem/1.25rem $font-family-base;
+    color: $gray-700;
+    margin: 0;
+  }
+}
+
+.spinner-icon {
+  animation: rotate 2s infinite linear;
+}

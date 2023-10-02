@@ -13,9 +13,9 @@ const messages = defineMessages({
     id: 'course-authoring.course-updates.actions.cancel',
     defaultMessage: 'Cancel',
   },
-  okButton: {
-    id: 'course-authoring.course-updates.button.ok',
-    defaultMessage: 'Ok',
+  deleteButton: {
+    id: 'course-authoring.course-updates.button.delete',
+    defaultMessage: 'Delete',
   },
 });
 

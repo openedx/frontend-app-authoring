@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/control-has-associated-label */
-/* eslint-disable jsx-a11y/anchor-has-content */
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import Responsive from 'react-responsive';
@@ -17,7 +15,7 @@ ensureConfig([
 ], 'Header component');
 
 const Header = ({
-  courseId, courseNumber, courseOrg, courseTitle,
+  courseId, courseNumber, courseOrg, courseTitle, isHiddenMainMenu,
 }) => {
   const { authenticatedUser, config } = useContext(AppContext);
 
@@ -33,6 +31,7 @@ const Header = ({
     authenticatedUserAvatar: authenticatedUser?.avatar,
     studioBaseUrl: config.STUDIO_BASE_URL,
     logoutUrl: config.LOGOUT_URL,
+    isHiddenMainMenu,
   };
 
   return (
@@ -48,15 +47,18 @@ const Header = ({
 };
 
 Header.propTypes = {
-  courseId: PropTypes.string.isRequired,
+  courseId: PropTypes.string,
   courseNumber: PropTypes.string,
   courseOrg: PropTypes.string,
   courseTitle: PropTypes.string.isRequired,
+  isHiddenMainMenu: PropTypes.bool,
 };
 
 Header.defaultProps = {
+  courseId: null,
   courseNumber: null,
   courseOrg: null,
+  isHiddenMainMenu: false,
 };
 
 export default Header;

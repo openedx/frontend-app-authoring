@@ -6,7 +6,11 @@ const HelpSidebarLink = ({ as, pathToPage, title }) => {
   const TagElement = as;
   return (
     <TagElement className="sidebar-link">
-      <Hyperlink destination={pathToPage}>
+      <Hyperlink
+        destination={pathToPage}
+        target="_blank"
+        showLaunchIcon={false}
+      >
         {title}
       </Hyperlink>
     </TagElement>

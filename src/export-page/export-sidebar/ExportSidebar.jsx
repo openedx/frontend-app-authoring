@@ -4,10 +4,10 @@ import {
   intlShape,
 } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
-import { Button } from '@edx/paragon';
+import { Hyperlink } from '@edx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
-import HelpSidebar from '../../generic/help-sidebar';
+import { HelpSidebar } from '../../generic/help-sidebar';
 import { useHelpUrls } from '../../help-urls/hooks';
 import messages from './messages';
 
@@ -20,7 +20,7 @@ const ExportSidebar = ({ intl, courseId }) => {
       <hr />
       <h4 className="help-sidebar-about-title">{intl.formatMessage(messages.exportedContent)}</h4>
       <p className="help-sidebar-about-descriptions">{intl.formatMessage(messages.exportedContentHeading)}</p>
-      <ul className="export-sidebar-list">
+      <ul className="px-3">
         <li className="help-sidebar-about-descriptions">{intl.formatMessage(messages.content1)}</li>
         <li className="help-sidebar-about-descriptions">{intl.formatMessage(messages.content2)}</li>
         <li className="help-sidebar-about-descriptions">{intl.formatMessage(messages.content3)}</li>
@@ -28,7 +28,7 @@ const ExportSidebar = ({ intl, courseId }) => {
         <li className="help-sidebar-about-descriptions">{intl.formatMessage(messages.content5)}</li>
       </ul>
       <p className="help-sidebar-about-descriptions">{intl.formatMessage(messages.notExportedContent)}</p>
-      <ul className="export-sidebar-list">
+      <ul className="px-3">
         <li className="help-sidebar-about-descriptions">{intl.formatMessage(messages.content6)}</li>
         <li className="help-sidebar-about-descriptions">{intl.formatMessage(messages.content7)}</li>
       </ul>
@@ -36,7 +36,7 @@ const ExportSidebar = ({ intl, courseId }) => {
       <h4 className="help-sidebar-about-title">{intl.formatMessage(messages.openDownloadFile)}</h4>
       <p className="help-sidebar-about-descriptions">{intl.formatMessage(messages.openDownloadFileDescription)}</p>
       <hr />
-      <Button href={exportLearnMoreUrl} target="_blank" variant="outline-primary">{intl.formatMessage(messages.learnMoreButtonTitle)}</Button>
+      <Hyperlink className="small" href={exportLearnMoreUrl} target="_blank" variant="outline-primary">{intl.formatMessage(messages.learnMoreButtonTitle)}</Hyperlink>
     </HelpSidebar>
   );
 };

@@ -15,7 +15,6 @@ const DeleteModal = ({ isOpen, close, onDeleteSubmit }) => {
   return (
     <AlertModal
       title={intl.formatMessage(messages.deleteModalTitle)}
-      variant="warning"
       isOpen={isOpen}
       onClose={close}
       footerNode={(
@@ -29,7 +28,7 @@ const DeleteModal = ({ isOpen, close, onDeleteSubmit }) => {
               onDeleteSubmit();
             }}
           >
-            {intl.formatMessage(messages.okButton)}
+            {intl.formatMessage(messages.deleteButton)}
           </Button>
         </ActionRow>
       )}

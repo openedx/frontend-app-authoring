@@ -32,84 +32,93 @@ const HeaderBody = ({
   setModalPopupTarget,
   toggleModalPopup,
   isModalPopupOpen,
+  isHiddenMainMenu,
   // injected
   intl,
-}) => (
-  <ActionRow as="header" className="site-header-desktop sticky-top px-4">
-    {isMobile ? (
-      <Button
-        ref={setModalPopupTarget}
-        className="d-inline-flex align-items-center"
-        variant="tertiary"
-        onClick={toggleModalPopup}
-        iconBefore={isModalPopupOpen ? Close : MenuIcon}
-        data-testid="mobile-menu-button"
-      >
-        Menu
-      </Button>
-    ) : (
-      <Row className="flex-nowrap m-0">
-        <BrandNav
+}) => {
+  const renderBrandNav = (
+    <BrandNav
+      {...{
+        studioBaseUrl,
+        logo,
+        logoAltText,
+      }}
+    />
+  );
+
+  return (
+    <ActionRow as="header" className="site-header-desktop sticky-top px-4 justify-content-start">
+      {isHiddenMainMenu ? (
+        <Row className="flex-nowrap ml-4">
+          {renderBrandNav}
+        </Row>
+      ) : (
+        <>
+          {isMobile ? (
+            <Button
+              ref={setModalPopupTarget}
+              className="d-inline-flex align-items-center"
+              variant="tertiary"
+              onClick={toggleModalPopup}
+              iconBefore={isModalPopupOpen ? Close : MenuIcon}
+              data-testid="mobile-menu-button"
+            >
+              Menu
+            </Button>
+          ) : (
+            <Row className="flex-nowrap m-0">
+              {renderBrandNav}
+              <CourseLockUp
+                {...{
+                  courseId,
+                  courseNumber,
+                  courseOrg,
+                  courseTitle,
+                }}
+              />
+            </Row>
+          )}
+          {isMobile ? (
+            <>
+              <ActionRow.Spacer />
+              {renderBrandNav}
+            </>
+          ) : (
+            <Nav data-testid="desktop-menu">
+              <NavDropdownMenu
+                id={`${intl.formatMessage(messages['header.links.content'])}-dropdown-menu`}
+                buttonTitle={intl.formatMessage(messages['header.links.content'])}
+                items={getContentMenuItem({ studioBaseUrl, courseId, intl })}
+              />
+              <NavDropdownMenu
+                id={`${intl.formatMessage(messages['header.links.settings'])}-dropdown-menu`}
+                buttonTitle={intl.formatMessage(messages['header.links.settings'])}
+                items={getSettingMenuItems({ studioBaseUrl, courseId, intl })}
+              />
+              <NavDropdownMenu
+                id={`${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`}
+                buttonTitle={intl.formatMessage(messages['header.links.tools'])}
+                items={getToolsMenuItems({ studioBaseUrl, courseId, intl })}
+              />
+            </Nav>
+          )}
+        </>
+      )}
+      <ActionRow.Spacer />
+      <Nav>
+        <UserMenu
           {...{
+            username,
             studioBaseUrl,
-            logo,
-            logoAltText,
+            logoutUrl,
+            authenticatedUserAvatar,
+            isAdmin,
           }}
-        />
-        <CourseLockUp
-          {...{
-            courseId,
-            courseNumber,
-            courseOrg,
-            courseTitle,
-          }}
-        />
-      </Row>
-    )}
-    {isMobile ? (
-      <>
-        <ActionRow.Spacer />
-        <BrandNav
-          {...{
-            studioBaseUrl,
-            logo,
-            logoAltText,
-          }}
-        />
-      </>
-    ) : (
-      <Nav data-testid="desktop-menu">
-        <NavDropdownMenu
-          id={`${intl.formatMessage(messages['header.links.content'])}-dropdown-menu`}
-          buttonTitle={intl.formatMessage(messages['header.links.content'])}
-          items={getContentMenuItem({ studioBaseUrl, courseId, intl })}
-        />
-        <NavDropdownMenu
-          id={`${intl.formatMessage(messages['header.links.settings'])}-dropdown-menu`}
-          buttonTitle={intl.formatMessage(messages['header.links.settings'])}
-          items={getSettingMenuItems({ studioBaseUrl, courseId, intl })}
-        />
-        <NavDropdownMenu
-          id={`${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`}
-          buttonTitle={intl.formatMessage(messages['header.links.tools'])}
-          items={getToolsMenuItems({ studioBaseUrl, courseId, intl })}
         />
       </Nav>
-    )}
-    <ActionRow.Spacer />
-    <Nav>
-      <UserMenu
-        {...{
-          username,
-          studioBaseUrl,
-          logoutUrl,
-          authenticatedUserAvatar,
-          isAdmin,
-        }}
-      />
-    </Nav>
-  </ActionRow>
-);
+    </ActionRow>
+  );
+};
 
 HeaderBody.propTypes = {
   studioBaseUrl: PropTypes.string.isRequired,
@@ -127,6 +136,7 @@ HeaderBody.propTypes = {
   username: PropTypes.string,
   isAdmin: PropTypes.bool,
   isMobile: PropTypes.bool,
+  isHiddenMainMenu: PropTypes.bool,
   // injected
   intl: intlShape.isRequired,
 };
@@ -142,6 +152,7 @@ HeaderBody.defaultProps = {
   username: null,
   isAdmin: false,
   isMobile: false,
+  isHiddenMainMenu: false,
 };
 
 export default injectIntl(HeaderBody);
