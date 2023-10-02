@@ -7,12 +7,12 @@ import {
 } from '@edx/paragon';
 import { Add as AddIcon } from '@edx/paragon/icons/es5';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { StudioFooter } from '@edx/frontend-component-footer';
 
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import Header from '../studio-header/Header';
 import SubHeader from '../generic/sub-header/SubHeader';
-import AppFooter from '../AppFooter';
 import HomeSidebar from './home-sidebar';
 import TabsSection from './tabs-section';
 import OrganizationSection from './organization-section';
@@ -124,7 +124,7 @@ const StudioHome = ({ intl }) => {
           isQueryPending={anyQueryIsPending}
         />
       </div>
-      <AppFooter />
+      <StudioFooter />
     </>
   );
 };
