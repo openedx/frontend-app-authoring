@@ -1,7 +1,7 @@
 import { getPagePath } from '../utils';
 import messages from './messages';
 
-export const getContentMenuItem = ({ studioBaseUrl, courseId, intl }) => {
+export const getContentMenuItems = ({ studioBaseUrl, courseId, intl }) => {
   const items = [
     {
       href: `${studioBaseUrl}/course/${courseId}`,
@@ -70,36 +70,3 @@ export const getToolsMenuItems = ({ studioBaseUrl, courseId, intl }) => ([
     title: intl.formatMessage(messages['header.links.checklists']),
   },
 ]);
-
-export const getUserMenuItems = ({
-  studioBaseUrl,
-  logoutUrl,
-  intl,
-  isAdmin,
-}) => {
-  let items = [
-    {
-      href: `${studioBaseUrl}}`,
-      title: intl.formatMessage(messages['header.user.menu.studio']),
-    }, {
-      href: `${logoutUrl}`,
-      title: intl.formatMessage(messages['header.user.menu.logout']),
-    },
-  ];
-  if (isAdmin) {
-    items = [
-      {
-        href: `${studioBaseUrl}}`,
-        title: intl.formatMessage(messages['header.user.menu.studio']),
-      }, {
-        href: `${studioBaseUrl}/maintenance`,
-        title: intl.formatMessage(messages['header.user.menu.maintenance']),
-      }, {
-        href: `${logoutUrl}`,
-        title: intl.formatMessage(messages['header.user.menu.logout']),
-      },
-    ];
-  }
-
-  return items;
-};

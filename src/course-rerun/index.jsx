@@ -9,13 +9,13 @@ import {
   Button,
 } from '@edx/paragon';
 import { history } from '@edx/frontend-platform';
+import { StudioFooter } from '@edx/frontend-component-footer';
 
-import Header from '../studio-header/Header';
+import Header from '../header';
 import Loading from '../generic/Loading';
 import { getLoadingStatuses } from '../generic/data/selectors';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { RequestStatus } from '../data/constants';
-import AppFooter from '../AppFooter';
 import CourseRerunForm from './course-rerun-form';
 import CourseRerunSideBar from './course-rerun-sidebar';
 import messages from './messages';
@@ -87,7 +87,7 @@ const CourseRerun = ({ courseId }) => {
           isQueryPending={savingStatus === RequestStatus.PENDING}
         />
       </div>
-      <AppFooter />
+      <StudioFooter />
     </>
   );
 };
