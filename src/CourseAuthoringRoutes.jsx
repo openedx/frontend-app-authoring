@@ -17,6 +17,7 @@ import CourseTeam from './course-team/CourseTeam';
 import { CourseUpdates } from './course-updates';
 import CourseExportPage from './export-page/CourseExportPage';
 import CourseImportPage from './import-page/CourseImportPage';
+import Videos from './files-and-uploads/videos/Videos';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -52,10 +53,7 @@ const CourseAuthoringRoutes = ({ courseId }) => {
           <FilesAndUploads courseId={courseId} />
         </PageRoute>
         <PageRoute path={`${path}/videos`}>
-          {process.env.ENABLE_NEW_VIDEO_UPLOAD_PAGE === 'true'
-            && (
-              <Placeholder />
-            )}
+          <Videos courseId={courseId} />
         </PageRoute>
         <PageRoute path={`${path}/pages-and-resources`}>
           <PagesAndResources courseId={courseId} />
