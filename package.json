@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "make build",
-    "i18n_extract": "BABEL_ENV=i18n fedx-scripts babel src --quiet > /dev/null",
+    "i18n_extract": "fedx-scripts formatjs extract",
     "lint": "fedx-scripts eslint --ext .js --ext .jsx .",
     "snapshot": "fedx-scripts jest --updateSnapshot",
     "start": "fedx-scripts webpack-dev-server --progress",
@@ -38,7 +38,7 @@
   "homepage": "https://github.com/edx/frontend-lib-content-components#readme",
   "devDependencies": {
     "@edx/browserslist-config": "^1.1.1",
-    "@edx/frontend-build": "12.8.27",
+    "@edx/frontend-build": "13.0.0",
     "@edx/frontend-platform": "5.0.0",
     "@edx/paragon": "^20.45.0",
     "@edx/reactifex": "^2.1.1",
