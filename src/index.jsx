@@ -7,7 +7,7 @@ import {
   APP_INIT_ERROR, APP_READY, initialize, mergeConfig, subscribe,
 } from '@edx/frontend-platform';
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
-import { Footer } from '@edx/frontend-lib-content-components';
+import { StudioFooter } from '@edx/frontend-component-footer';
 import messages from './i18n';
 import store from './store';
 import { NotFoundPage } from './generic';
@@ -27,9 +27,18 @@ import './index.scss';
 mergeConfig({
   LIB_AUTHORING_BASE_URL: process.env.BASE_URL,
   STUDIO_BASE_URL: process.env.STUDIO_BASE_URL,
-  LOGO_URL: process.env.LOGO_TRADEMARK_URL,
+  LOGO_URL: process.env.LOGO_URL,
   BLOCKSTORE_COLLECTION_UUID: process.env.BLOCKSTORE_COLLECTION_UUID,
   SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL: process.env.SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL,
+  SITE_NAME: process.env.SITE_NAME,
+  LOGOUT_URL: process.env.LOGOUT_URL,
+  LOGIN_URL: process.env.LOGIN_URL,
+  LMS_BASE_URL: process.env.LMS_BASE_URL,
+  MARKETING_SITE_BASE_URL: process.env.MARKETING_SITE_BASE_URL,
+  TERMS_OF_SERVICE_URL: process.env.TERMS_OF_SERVICE_URL,
+  PRIVACY_POLICY_URL: process.env.PRIVACY_POLICY_URL,
+  SUPPORT_EMAIL: process.env.SUPPORT_EMAIL,
+  SHOW_ACCESSIBILITY_PAGE: process.env.SHOW_ACCESSIBILITY_PAGE,
 });
 
 subscribe(APP_READY, () => {
@@ -56,18 +65,7 @@ subscribe(APP_READY, () => {
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
-      <div className="mt-6">
-        <Footer
-          marketingBaseUrl={process.env.MARKETING_SITE_BASE_URL}
-          termsOfServiceUrl={process.env.TERMS_OF_SERVICE_URL}
-          privacyPolicyUrl={process.env.PRIVACY_POLICY_URL}
-          supportEmail={process.env.SUPPORT_EMAIL}
-          platformName={process.env.SITE_NAME}
-          lmsBaseUrl={process.env.LMS_BASE_URL}
-          studioBaseUrl={process.env.STUDIO_BASE_URL}
-          showAccessibilityPage={process.env.ENABLE_ACCESSIBILITY_PAGE === 'true'}
-        />
-      </div>
+      <StudioFooter />
     </AppProvider>,
     document.getElementById('root'),
   );

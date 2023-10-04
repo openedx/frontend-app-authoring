@@ -551,6 +551,7 @@ export const LibraryAuthoringPageBase = ({
                       onChange={(e) => addBlock(e.target.value)}
                       columns={3}
                       ariaLabel="component-selection"
+                      name="components"
                       className="px-6"
                     >
                       {/* Update to use a SelectableBox that triggers a modal for options
@@ -579,7 +580,7 @@ export const LibraryAuthoringPageBase = ({
                       <SelectableBox
                         disabled={sending}
                         value="html"
-                        ariaLabel="html-radio"
+                        aria-label="html-radio"
                         className="text-center"
                       >
                         <div className="row m-0 mb-1 justify-content-center">
@@ -590,7 +591,7 @@ export const LibraryAuthoringPageBase = ({
                       <SelectableBox
                         disabled={sending}
                         value="problem"
-                        ariaLabel="problem-radio"
+                        aria-label="problem-radio"
                         className="text-center"
                       >
                         <div className="row m-0 mb-1 justify-content-center">
@@ -601,7 +602,7 @@ export const LibraryAuthoringPageBase = ({
                       <SelectableBox
                         disabled={sending}
                         value="video"
-                        ariaLabel="video-radio"
+                        aria-label="video-radio"
                         className="text-center"
                       >
                         <div className="row m-0  mb-1 justify-content-center">
