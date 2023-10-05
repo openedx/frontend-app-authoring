@@ -1,11 +1,6 @@
-import {
-  InsertDriveFile,
-  Terminal,
-  AudioFile,
-  VideoFile,
-} from '@edx/paragon/icons';
+import { InsertDriveFile, Terminal, AudioFile } from '@edx/paragon/icons';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
-import FILES_AND_UPLOAD_TYPE_FILTERS from './constant';
+// import FILES_AND_UPLOAD_TYPE_FILTERS from './constant';
 
 ensureConfig([
   'STUDIO_BASE_URL',
@@ -14,25 +9,15 @@ ensureConfig([
 export const updateFileValues = (files) => {
   const updatedFiles = [];
   files.forEach(file => {
-    let wrapperType = 'other';
-    if (FILES_AND_UPLOAD_TYPE_FILTERS.images.includes(file.contentType)) {
-      wrapperType = 'image';
-    } else if (FILES_AND_UPLOAD_TYPE_FILTERS.documents.includes(file.contentType)) {
-      wrapperType = 'document';
-    } else if (FILES_AND_UPLOAD_TYPE_FILTERS.code.includes(file.contentType)) {
-      wrapperType = 'code';
-    } else if (FILES_AND_UPLOAD_TYPE_FILTERS.audio.includes(file.contentType)) {
-      wrapperType = 'audio';
-    }
-
-    const { dateAdded } = file;
-    const utcDateString = dateAdded.replace(/\bat\b/g, '');
-    const utcDateTime = new Date(utcDateString).toString();
+    const { edxVideoId, clientVideoId, created } = file;
+    const wrapperType = 'video';
 
     updatedFiles.push({
       ...file,
+      displayName: clientVideoId,
+      id: edxVideoId,
       wrapperType,
-      dateAdded: utcDateTime,
+      dateAdded: created.toString(),
       usageLocations: [],
     });
   });
@@ -51,8 +36,6 @@ export const getSrc = ({ thumbnail, wrapperType, externalUrl }) => {
     return Terminal;
   case 'audio':
     return AudioFile;
-  case 'video':
-    return VideoFile;
   default:
     return InsertDriveFile;
   }
@@ -70,8 +53,6 @@ export const getFileSizeToClosestByte = (fileSize, numberOfDivides = 0) => {
     return `${fileSizeFixedDecimal} KB`;
   case 2:
     return `${fileSizeFixedDecimal} MB`;
-  case 3:
-    return `${fileSizeFixedDecimal} GB`;
   default:
     return `${fileSizeFixedDecimal} B`;
   }

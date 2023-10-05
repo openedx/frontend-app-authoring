@@ -10,7 +10,8 @@ ensureConfig([
 ], 'Course Apps API service');
 
 export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-export const getVideosUrl = (courseId) => `${getApiBaseUrl()}/videos/${courseId}`;
+export const getVideosUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/videos/${courseId}`;
+// export const getCourseTeamApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/course_team/${courseId}`;
 
 /**
  * Fetches the course custom pages for provided course

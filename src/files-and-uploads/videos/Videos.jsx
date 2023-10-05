@@ -70,34 +70,18 @@ const Videos = ({
   };
   const maxFileSize = 5 * 1073741824;
   const tableColumns = [
-    // {
-    //   Header: 'Name',
-    //   accessor: 'displayName',
-    // },
-    // {
-    //   Header: 'Type',
-    //   accessor: 'wrapperType',
-    //   Filter: CheckboxFilter,
-    //   filter: 'includesValue',
-    //   filterChoices: [
-    //     {
-    //       name: 'Code',
-    //       value: 'code',
-    //     },
-    //     {
-    //       name: 'Images',
-    //       value: 'image',
-    //     },
-    //     {
-    //       name: 'Documents',
-    //       value: 'document',
-    //     },
-    //     {
-    //       name: 'Audio',
-    //       value: 'audio',
-    //     },
-    //   ],
-    // },
+    {
+      Header: 'Name',
+      accessor: 'clientVideoId',
+    },
+    {
+      Header: 'Video length',
+      accessor: 'duration',
+    },
+    {
+      Header: 'Transcripts',
+      accessor: 'transcripts',
+    },
   ];
 
   if (loadingStatus === RequestStatus.DENIED) {

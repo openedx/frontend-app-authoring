@@ -20,20 +20,20 @@ import {
   // updateEditStatus,
 } from './slice';
 
-// import { updateFileValues } from './utils';
+import { updateFileValues } from './utils';
 
 export function fetchVideos(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
 
     try {
-      const { videos } = await getVideos(courseId);
-      // const parsedAssests = updateFileValues(assets);
-      dispatch(addModels({ modelType: 'videos', models: videos }));
+      const { previousUploads } = await getVideos(courseId);
+      const parsedVideos = updateFileValues(previousUploads);
+      dispatch(addModels({ modelType: 'videos', models: parsedVideos }));
       dispatch(setVideoIds({
-        videoIds: videos.map(video => video.id),
+        videoIds: parsedVideos.map(video => video.id),
       }));
-      dispatch(setTotalCount({ totalCount: videos.length }));
+      dispatch(setTotalCount({ totalCount: parsedVideos.length }));
       dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       if (error.response && error.response.status === 403) {

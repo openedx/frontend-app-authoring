@@ -23,7 +23,7 @@ const slice = createSlice({
   },
   reducers: {
     setVideoIds: (state, { payload }) => {
-      state.assetIds = payload.videoIds;
+      state.videoIds = payload.videoIds;
     },
     setTotalCount: (state, { payload }) => {
       state.totalCount = payload.totalCount;
