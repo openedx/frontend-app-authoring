@@ -89,8 +89,8 @@ describe('<CollapsibleStateWithAction />', async () => {
     const initialState = { ...props, state: COURSE_CREATOR_STATES.denied };
     const { getByText } = render(<RootWrapper {...initialState} />);
     const container = getByText(messages.deniedCollapsibleTitle.defaultMessage);
+
     fireEvent.click(container);
-    expect(true).toBe(true);
 
     act(async () => {
       await waitFor(() => {
