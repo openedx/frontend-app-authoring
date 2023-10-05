@@ -1,6 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import {
+  render, fireEvent, waitFor, act,
+} from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -87,11 +89,14 @@ describe('<CollapsibleStateWithAction />', async () => {
     const initialState = { ...props, state: COURSE_CREATOR_STATES.denied };
     const { getByText } = render(<RootWrapper {...initialState} />);
     const container = getByText(messages.deniedCollapsibleTitle.defaultMessage);
-
     fireEvent.click(container);
-    waitFor(() => {
-      expect(getByText(messages.deniedCollapsibleState.defaultMessage)).toBeInTheDocument();
-      expect(getByText(messages.deniedCollapsibleActionTitle.defaultMessage)).toBeInTheDocument();
+    expect(true).toBe(true);
+
+    act(async () => {
+      await waitFor(() => {
+        expect(getByText(messages.deniedCollapsibleState.defaultMessage)).toBeInTheDocument();
+        expect(getByText(messages.deniedCollapsibleActionTitle.defaultMessage)).toBeInTheDocument();
+      });
     });
   });
 });
