@@ -9,10 +9,7 @@ import selectLibraryDetail from '../common/data/selectors';
 import {
   fetchLibraryDetail,
 } from '../author-library/data';
-import messages from './messages';
-import {
-  ROUTES,
-} from '../common';
+import { getMainMenuDropdown, getOutlineLink } from './utils';
 
 const StudioHeaderWrapperBase = ({ intl, ...props }) => {
   // loadingStatus will only ever be 'loaded' on pages
@@ -20,28 +17,9 @@ const StudioHeaderWrapperBase = ({ intl, ...props }) => {
   // determine if we want to render the ContentTitleBlock or not
   const { loadingStatus, library } = props;
   const { libraryId } = useParams();
-  const isHiddenMainMenu = !libraryId && loadingStatus === 'loaded';
-  const outlineLink = `/library/${libraryId}`;
-  const mainMenuDropdowns = [
-    {
-      id: `${intl.formatMessage(messages['library.header.settings.menu'])}-dropdown-menu`,
-      buttonTitle: intl.formatMessage(messages['library.header.settings.menu']),
-      items: [
-        {
-          href: ROUTES.Detail.EDIT_SLUG(libraryId),
-          title: intl.formatMessage(messages['library.header.settings.details']),
-        },
-        {
-          href: ROUTES.Detail.ACCESS_SLUG(libraryId),
-          title: intl.formatMessage(messages['library.header.settings.access']),
-        },
-        {
-          href: ROUTES.Detail.IMPORT_SLUG(libraryId),
-          title: intl.formatMessage(messages['library.header.settings.import']),
-        },
-      ],
-    },
-  ];
+  const isHiddenMainMenu = !libraryId || !library?.id;
+  const outlineLink = getOutlineLink(loadingStatus, libraryId);
+  const mainMenuDropdowns = getMainMenuDropdown(loadingStatus, libraryId, intl);
 
   return (
     <div className="site-header-desktop">
