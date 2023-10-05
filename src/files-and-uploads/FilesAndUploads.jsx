@@ -2,9 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
-import {
-  CheckboxFilter,
-} from '@edx/paragon';
+import { CheckboxFilter } from '@edx/paragon';
 import Placeholder from '@edx/frontend-lib-content-components';
 
 import { RequestStatus } from '../data/constants';
@@ -21,6 +19,10 @@ import FilesAndUploadsProvider from './FilesAndUploadsProvider';
 import getPageHeadTitle from '../generic/utils';
 import FileTable from './FileTable';
 import EditFileErrors from './EditFileErrors';
+import { getFileSizeToClosestByte } from './data/utils';
+import ThumbnailColumn from './table-components/table-custom-columns/ThumbnailColumn';
+import ActiveColumn from './table-components/table-custom-columns/ActiveColumn';
+import AccessColumn from './table-components/table-custom-columns/AccessColumn';
 
 const FilesAndUploads = ({
   courseId,
@@ -60,11 +62,38 @@ const FilesAndUploads = ({
     usageErrorMessages: errorMessages.usageMetrics,
   };
   const maxFileSize = 20 * 1048576;
+
+  const activeColumn = {
+    id: 'usageLocations',
+    Header: 'Active',
+    Cell: ({ row }) => ActiveColumn({ row }),
+  };
+  const accessColumn = {
+    id: 'locked',
+    Header: 'Access',
+    Cell: ({ row }) => AccessColumn({ row }),
+  };
+  const thumbnailColumn = {
+    id: 'thumbnail',
+    Header: '',
+    Cell: ({ row }) => ThumbnailColumn({ row }),
+  };
+  const fileSizeColumn = {
+    id: 'fileSize',
+    Header: 'File size',
+    Cell: ({ row }) => {
+      const { fileSize } = row.original;
+      return getFileSizeToClosestByte(fileSize);
+    },
+  };
+
   const tableColumns = [
+    { ...thumbnailColumn },
     {
-      Header: 'Name',
+      Header: 'File name',
       accessor: 'displayName',
     },
+    { ...fileSizeColumn },
     {
       Header: 'Type',
       accessor: 'wrapperType',
@@ -89,6 +118,8 @@ const FilesAndUploads = ({
         },
       ],
     },
+    { ...activeColumn },
+    { ...accessColumn },
   ];
 
   if (loadingStatus === RequestStatus.DENIED) {

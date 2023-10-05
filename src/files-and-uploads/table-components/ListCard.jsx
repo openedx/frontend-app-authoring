@@ -8,9 +8,6 @@ import {
   Truncate,
   Image,
 } from '@edx/paragon';
-import {
-  MoreVert,
-} from '@edx/paragon/icons';
 import FileMenu from '../FileMenu';
 import { getSrc } from '../data/utils';
 
@@ -66,8 +63,8 @@ const ListCard = ({
             locked={original.locked}
             openAssetInfo={() => handleOpenAssetInfo(original)}
             portableUrl={original.portableUrl}
-            iconSrc={MoreVert}
             id={original.id}
+            wrapperType={original.wrapperType}
             onDownload={() => handleBulkDownload(
               [{ original: { id: original.id, displayName: original.displayName } }],
             )}

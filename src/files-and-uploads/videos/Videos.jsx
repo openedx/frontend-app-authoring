@@ -25,6 +25,9 @@ import VideosProvider from './VideosProvider';
 import getPageHeadTitle from '../../generic/utils';
 import FileTable from '../FileTable';
 import EditFileErrors from '../EditFileErrors';
+import ThumbnailColumn from '../table-components/table-custom-columns/ThumbnailColumn';
+import ActiveColumn from '../table-components/table-custom-columns/ActiveColumn';
+import StatusColumn from '../table-components/table-custom-columns/StatusColumn';
 
 const Videos = ({
   courseId,
@@ -69,19 +72,48 @@ const Videos = ({
     usageErrorMessages: errorMessages.usageMetrics,
   };
   const maxFileSize = 5 * 1073741824;
+  const transcriptColumn = {
+    id: 'transcripts',
+    Header: 'Transcript',
+    Cell: ({ row }) => {
+      const { transcripts } = row.original;
+      const numOfTranscripts = transcripts.length;
+      return numOfTranscripts > 0 ? `(${numOfTranscripts}) available` : null;
+    },
+  };
+  const activeColumn = {
+    id: 'usageLocations',
+    Header: 'Active',
+    Cell: ({ row }) => ActiveColumn({ row }),
+  };
+  const durationColumn = {
+    id: 'duration',
+    Header: 'Video length',
+    Cell: ({ row }) => {
+      const { duration } = row.original;
+      return duration;
+    },
+  };
+  const processingStatusColumn = {
+    id: 'status',
+    Header: '',
+    Cell: ({ row }) => StatusColumn({ row }),
+  };
+  const videoThumbnailColumn = {
+    id: 'courseVideoImageUrl',
+    Header: '',
+    Cell: ({ row }) => ThumbnailColumn({ row }),
+  };
   const tableColumns = [
+    { ...videoThumbnailColumn },
     {
-      Header: 'Name',
+      Header: 'File name',
       accessor: 'clientVideoId',
     },
-    {
-      Header: 'Video length',
-      accessor: 'duration',
-    },
-    {
-      Header: 'Transcripts',
-      accessor: 'transcripts',
-    },
+    { ...durationColumn },
+    { ...transcriptColumn },
+    { ...activeColumn },
+    { ...processingStatusColumn },
   ];
 
   if (loadingStatus === RequestStatus.DENIED) {

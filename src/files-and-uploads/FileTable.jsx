@@ -32,6 +32,7 @@ import {
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
 import { clearErrors } from './data/slice';
+import MoreInfoColumn from './table-components/table-custom-columns/MoreInfoColumn';
 
 const FileTable = ({
   courseId,
@@ -129,7 +130,7 @@ const FileTable = ({
   );
 
   const fileCard = ({ className, original }) => {
-    if (currentView === defaultVal) {
+    if (currentView === 'card') {
       return (
         <GalleryCard
           {...{
@@ -156,6 +157,22 @@ const FileTable = ({
       />
     );
   };
+  const moreInfoColumn = {
+    id: 'moreInfo',
+    Header: '',
+    Cell: ({ row }) => MoreInfoColumn({
+      row,
+      handleLock: handleLockedAsset,
+      onDownload: handleBulkDownload,
+      openAssetInfo: handleOpenAssetInfo,
+      openDeleteConfirmation: handleOpenDeleteConfirmation,
+    }),
+  };
+
+  const hasMoreInfoColumn = tableColumns.filter(col => col.id === 'moreInfo').length === 1;
+  if (!hasMoreInfoColumn) {
+    tableColumns.push({ ...moreInfoColumn });
+  }
 
   return (
     <>
@@ -196,7 +213,7 @@ const FileTable = ({
           <div data-testid="files-data-table" className="mr-4 ml-3">
             <DataTable.TableControlBar />
             { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={6} /> }
-            { currentView === 'list' && <CardView CardComponent={fileCard} columnSizes={{ xs: 12 }} selectionPlacement="left" skeletonCardCount={4} /> }
+            { currentView === 'list' && <DataTable.Table /> }
             <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
             <DataTable.TableFooter />
             <ApiStatusToast

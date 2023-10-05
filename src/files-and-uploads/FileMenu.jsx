@@ -6,6 +6,7 @@ import {
   IconButton,
   Icon,
 } from '@edx/paragon';
+import { MoreHoriz } from '@edx/paragon/icons';
 import messages from './messages';
 
 const FileMenu = ({
@@ -16,8 +17,8 @@ const FileMenu = ({
   openAssetInfo,
   openDeleteConfirmation,
   portableUrl,
-  iconSrc,
   id,
+  wrapperType,
   // injected
   intl,
 }) => (
@@ -25,27 +26,37 @@ const FileMenu = ({
     <Dropdown.Toggle
       id={`file-menu-dropdown-${id}`}
       as={IconButton}
-      src={iconSrc}
+      src={MoreHoriz}
       iconAs={Icon}
       variant="primary"
       alt="asset-menu-toggle"
     />
     <Dropdown.Menu>
-      <Dropdown.Item
-        onClick={() => navigator.clipboard.writeText(portableUrl)}
-      >
-        {intl.formatMessage(messages.copyStudioUrlTitle)}
-      </Dropdown.Item>
-      <Dropdown.Item
-        onClick={() => navigator.clipboard.writeText(externalUrl)}
-      >
-        {intl.formatMessage(messages.copyWebUrlTitle)}
-      </Dropdown.Item>
+      {wrapperType === 'video' ? (
+        <Dropdown.Item
+          onClick={() => navigator.clipboard.writeText(id)}
+        >
+          Copy video ID
+        </Dropdown.Item>
+      ) : (
+        <>
+          <Dropdown.Item
+            onClick={() => navigator.clipboard.writeText(portableUrl)}
+          >
+            {intl.formatMessage(messages.copyStudioUrlTitle)}
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => navigator.clipboard.writeText(externalUrl)}
+          >
+            {intl.formatMessage(messages.copyWebUrlTitle)}
+          </Dropdown.Item>
+          <Dropdown.Item onClick={handleLock}>
+            {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
+          </Dropdown.Item>
+        </>
+      )}
       <Dropdown.Item onClick={onDownload}>
         {intl.formatMessage(messages.downloadTitle)}
-      </Dropdown.Item>
-      <Dropdown.Item onClick={handleLock}>
-        {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
       </Dropdown.Item>
       <Dropdown.Item onClick={openAssetInfo}>
         {intl.formatMessage(messages.infoTitle)}
@@ -69,8 +80,8 @@ FileMenu.propTypes = {
   openAssetInfo: PropTypes.func.isRequired,
   openDeleteConfirmation: PropTypes.func.isRequired,
   portableUrl: PropTypes.string.isRequired,
-  iconSrc: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired,
+  wrapperType: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

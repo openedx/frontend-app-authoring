@@ -9,7 +9,12 @@ ensureConfig([
 export const updateFileValues = (files) => {
   const updatedFiles = [];
   files.forEach(file => {
-    const { edxVideoId, clientVideoId, created } = file;
+    const {
+      edxVideoId,
+      clientVideoId,
+      created,
+      courseVideoImageUrl,
+    } = file;
     const wrapperType = 'video';
 
     updatedFiles.push({
@@ -19,6 +24,8 @@ export const updateFileValues = (files) => {
       wrapperType,
       dateAdded: created.toString(),
       usageLocations: [],
+      fileSize: null,
+      thumbnail: courseVideoImageUrl,
     });
   });
 
