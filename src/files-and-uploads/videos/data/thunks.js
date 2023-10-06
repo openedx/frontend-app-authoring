@@ -1,14 +1,17 @@
-// import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { RequestStatus } from '../../../data/constants';
 import {
-  // addModel,
   addModels,
   removeModel,
+  updateModels,
   // updateModel,
 } from '../../../generic/model-store';
 import {
-  getVideos,
+  addVideo,
   deleteVideo,
+  fetchVideoList,
+  getVideos,
+  uploadVideo,
 } from './api';
 import {
   setVideoIds,
@@ -16,7 +19,7 @@ import {
   setTotalCount,
   updateLoadingStatus,
   deleteVideoSuccess,
-  // addAssetSuccess,
+  addVideoSuccess,
   updateErrors,
   // clearErrors,
   updateEditStatus,
@@ -74,33 +77,47 @@ export function deleteVideoFile(courseId, id, totalCount) {
   };
 }
 
-// export function addAssetFile(courseId, file, totalCount) {
-//   return async (dispatch) => {
-//     dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
-
-//     try {
-//       const { asset } = await addAsset(courseId, file);
-//       // const [parsedAssest] = updateFileValues([asset]);
-//       dispatch(addModel({
-//         modelType: 'videos',
-//         model: { ...parsedAssest },
-//       }));
-//       dispatch(addAssetSuccess({
-//         assetId: asset.id,
-//       }));
-//       dispatch(setTotalCount({ totalCount: totalCount + 1 }));
-//       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
-//     } catch (error) {
-//       if (error.response && error.response.status === 413) {
-//         const message = error.response.data.error;
-//         dispatch(updateErrors({ error: 'add', message }));
-//       } else {
-//         dispatch(updateErrors({ error: 'add', message: `Failed to add ${file.name}.` }));
-//       }
-//       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
-//     }
-//   };
-// }
+export function addVideoFile(courseId, file) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
+    try {
+      const { files } = await addVideo(courseId, file);
+      const { edxVideoId, uploadUrl } = files[0];
+      const errors = await uploadVideo(
+        courseId,
+        uploadUrl,
+        file,
+        edxVideoId,
+      );
+      if (isEmpty(errors)) {
+        const { videos } = await fetchVideoList(courseId);
+        const parsedVideos = updateFileValues(videos);
+        dispatch(updateModels({
+          modelType: 'videos',
+          models: parsedVideos,
+        }));
+        dispatch(addVideoSuccess({
+          videoId: '123id',
+        }));
+        dispatch(setTotalCount({ totalCount: parsedVideos.length }));
+        dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
+      } else {
+        errors.forEach(error => {
+          dispatch(updateErrors({ error: 'add', message: error }));
+        });
+        dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 413) {
+        const message = error.response.data.error;
+        dispatch(updateErrors({ error: 'add', message }));
+      } else {
+        dispatch(updateErrors({ error: 'add', message: `Failed to add ${file.name}.` }));
+      }
+      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
+    }
+  };
+}
 
 // export function updateAssetLock({ assetId, courseId, locked }) {
 //   return async (dispatch) => {

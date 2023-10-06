@@ -17,6 +17,7 @@ import Placeholder from '@edx/frontend-lib-content-components';
 import { RequestStatus } from '../../data/constants';
 import { useModels, useModel } from '../../generic/model-store';
 import {
+  addVideoFile,
   deleteVideoFile,
   fetchVideos,
 } from './data/thunks';
@@ -62,18 +63,21 @@ const Videos = ({
     transcriptAvailableLanguages,
     transcriptCredentials,
     encodingsDownloadUrl,
+    videoUploadMaxFileSize,
+    videoSupportedFileFormats,
   } = pageSettings;
 
-  // const handleAddFile = (file) => dispatch(addAssetFile(courseId, file, totalCount));
+  const supportedFileFormats = { 'video/*': videoSupportedFileFormats };
+
+  const handleAddFile = (file) => dispatch(addVideoFile(courseId, file));
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id, totalCount));
   // const handleDownloadFile = (selectedRows) => dispatch(fetchAssetDownload({ selectedRows, courseId }));
-  const handleAddFile = (file) => console.log(file);
   const handleDownloadFile = (selectedRows) => console.log(selectedRows);
   // const handleTranscriptCredentials = ({data, global, provider}) => {
   // dispatch(addTranscriptCredentials({data, global, provider}))}
-
   const videos = useModels('videos', videoIds);
   const data = {
+    supportedFileFormats,
     encodingsDownloadUrl,
     totalCount,
     fileIds: videoIds,
@@ -81,7 +85,7 @@ const Videos = ({
     usagePathStatus,
     usageErrorMessages: errorMessages.usageMetrics,
   };
-  const maxFileSize = 5 * 1073741824;
+  const maxFileSize = videoUploadMaxFileSize * 1073741824;
   const transcriptColumn = {
     id: 'transcripts',
     Header: 'Transcript',

@@ -61,7 +61,7 @@ const slice = createSlice({
       state.videoIds = state.videoIds.filter(id => id !== payload.videoId);
     },
     addVideoSuccess: (state, { payload }) => {
-      state.videoIds = [payload.assetId, ...state.videoIds];
+      state.videoIds = [payload.videoId, ...state.videoIds];
     },
     updateErrors: (state, { payload }) => {
       const { error, message } = payload;

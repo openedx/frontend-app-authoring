@@ -11,7 +11,7 @@ ensureConfig([
 
 export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getVideosUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/videos/${courseId}`;
-export const getCoursVideosApiUrl = (courseId) => `${getApiBaseUrl()}/videos/${courseId}/`;
+export const getCoursVideosApiUrl = (courseId) => `${getApiBaseUrl()}/videos/${courseId}`;
 
 /**
  * Fetches the course custom pages for provided course
@@ -21,6 +21,17 @@ export const getCoursVideosApiUrl = (courseId) => `${getApiBaseUrl()}/videos/${c
 export async function getVideos(courseId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(getVideosUrl(courseId));
+  return camelCaseObject(data);
+}
+
+/**
+ * Fetches the course custom pages for provided course
+ * @param {string} courseId
+ * @returns {Promise<[{}]>}
+ */
+export async function fetchVideoList(courseId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getCoursVideosApiUrl(courseId));
   return camelCaseObject(data);
 }
 
@@ -92,31 +103,54 @@ export async function getVideos(courseId) {
  */
 export async function deleteVideo(courseId, videoId) {
   await getAuthenticatedHttpClient()
-    .delete(`${getCoursVideosApiUrl(courseId)}${videoId}`);
+    .delete(`${getCoursVideosApiUrl(courseId)}/${videoId}`);
 }
 
-// /**
-//  * Add asset to course.
-//  * @param {blockId} courseId Course ID for the course to operate on
+/**
+ * Add asset to course.
+ * @param {blockId} courseId Course ID for the course to operate on
 
-//  */
-// export async function addAsset(courseId, file) {
-//   const formData = new FormData();
-//   formData.append('file', file);
-//   const { data } = await getAuthenticatedHttpClient()
-//     .post(getAssetsUrl(courseId), formData);
-//   return camelCaseObject(data);
-// }
+ */
+export async function addVideo(courseId, file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getCoursVideosApiUrl(courseId), formData);
+  return camelCaseObject(data);
+}
 
-// /**
-//  * Update locked attribute for provided asset.
-//  * @param {blockId} courseId Course ID for the course to operate on
-
-//  */
-// export async function updateLockStatus({ assetId, courseId, locked }) {
-//   const { data } = await getAuthenticatedHttpClient()
-//     .put(`${getAssetsUrl(courseId)}${assetId}`, {
-//       locked,
-//     });
-//   return camelCaseObject(data);
-// }
+export async function uploadVideo(
+  courseId,
+  uploadUrl,
+  uploadFile,
+  edxVideoId,
+) {
+  const formData = new FormData();
+  formData.append('uploaded-file', uploadFile);
+  const uploadErrors = [];
+  await fetch(uploadUrl, {
+    method: 'PUT',
+    body: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+    .then(async () => {
+      await getAuthenticatedHttpClient()
+        .post(getCoursVideosApiUrl(courseId), [{
+          edxVideoId,
+          message: 'Upload completed',
+          status: 'upload_completed',
+        }]);
+    })
+    .catch(async () => {
+      uploadErrors.push(`Failed to upload ${uploadFile.name}.`);
+      await getAuthenticatedHttpClient()
+        .post(getCoursVideosApiUrl(courseId), [{
+          edxVideoId,
+          message: 'Upload failed',
+          status: 'upload_failed',
+        }]);
+    });
+  return uploadErrors;
+}

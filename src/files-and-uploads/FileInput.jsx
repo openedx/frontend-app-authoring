@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { getSupportedFormats } from './videos/data/utils';
 
 export const useFileInput = ({
   onAddFile,
@@ -23,8 +24,9 @@ export const useFileInput = ({
   };
 };
 
-const FileInput = ({ fileInput: hook }) => (
+const FileInput = ({ fileInput: hook, supportedFileFormats }) => (
   <input
+    accept={getSupportedFormats(supportedFileFormats)}
     aria-label="file-input"
     className="upload d-none"
     onChange={hook.addFile}
@@ -44,6 +46,11 @@ FileInput.propTypes = {
       PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
     ]),
   }).isRequired,
+  supportedFileFormats: PropTypes.shape({}),
+};
+
+FileInput.defaultProps = {
+  supportedFileFormats: null,
 };
 
 export default FileInput;

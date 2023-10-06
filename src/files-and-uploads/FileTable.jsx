@@ -68,7 +68,9 @@ const FileTable = ({
     usagePathStatus,
     usageErrorMessages,
     encodingsDownloadUrl,
+    supportedFileFormats,
   } = data;
+
   const fileInputControl = useFileInput({
     onAddFile: (file) => handleAddFile(file),
     setSelectedRows,
@@ -127,6 +129,7 @@ const FileTable = ({
         handleSort,
         handleBulkDownload,
         handleOpenDeleteConfirmation,
+        supportedFileFormats,
       }}
     />
   );
@@ -204,6 +207,7 @@ const FileTable = ({
         {isEmpty(files) && loadingStatus !== RequestStatus.IN_PROGRESS ? (
           <Dropzone
             data-testid="files-dropzone"
+            accept={supportedFileFormats}
             onProcessUpload={handleDropzoneAsset}
             maxSize={maxFileSize}
             errorMessages={{
@@ -235,7 +239,7 @@ const FileTable = ({
           </div>
         )}
       </DataTable>
-      <FileInput fileInput={fileInputControl} />
+      <FileInput fileInput={fileInputControl} supportedFileFormats={supportedFileFormats} />
       {!isEmpty(selectedRows) && (
         <FileInfo
           file={selectedRows[0].original}
@@ -277,6 +281,7 @@ FileTable.propTypes = {
     usagePathStatus: PropTypes.string.isRequired,
     usageErrorMessages: PropTypes.arrayOf(PropTypes.string).isRequired,
     encodingsDownloadUrl: PropTypes.string,
+    supportedFileFormats: PropTypes.shape({}),
   }).isRequired,
   handleAddFile: PropTypes.func.isRequired,
   handleDeleteFile: PropTypes.func.isRequired,

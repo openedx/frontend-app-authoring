@@ -1,5 +1,6 @@
 import { InsertDriveFile, Terminal, AudioFile } from '@edx/paragon/icons';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
+import { isArray, isEmpty } from 'lodash';
 // import FILES_AND_UPLOAD_TYPE_FILTERS from './constant';
 
 ensureConfig([
@@ -96,4 +97,24 @@ export const sortFiles = (files, sortType) => {
     return sortedIds.reverse();
   }
   return sortedIds;
+};
+
+export const getSupportedFormats = (supportedFileFormats) => {
+  if (isEmpty(supportedFileFormats)) {
+    return null;
+  }
+  const supportedFormats = [];
+  Object.entries(supportedFileFormats).forEach(([key, value]) => {
+    let format;
+    if (isArray(value)) {
+      value.forEach(val => {
+        format = key.replace('*', val.substring(1));
+        supportedFormats.push(format);
+      });
+    } else {
+      format = key.replace('*', value?.substring(1));
+      supportedFormats.push(format);
+    }
+  });
+  return supportedFormats;
 };
