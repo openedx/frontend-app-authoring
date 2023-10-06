@@ -18,6 +18,7 @@ import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
 import { StudioHome } from './studio-home';
 import CourseRerun from './course-rerun';
+import { TaxonomyListPage } from './taxonomy';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
@@ -62,6 +63,13 @@ const App = () => {
             );
           }}
         />
+        {process.env.ENABLE_TAGGING_TAXONOMY_PAGES === 'true' &&
+          <Route
+            path="/taxonomy-list"
+          >
+            <TaxonomyListPage />
+          </Route>
+        }
       </Switch>
     </AppProvider>
   );
