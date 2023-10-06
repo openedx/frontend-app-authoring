@@ -3,21 +3,23 @@ import { RequestStatus } from '../../../data/constants';
 import {
   // addModel,
   addModels,
-  // removeModel,
+  removeModel,
   // updateModel,
 } from '../../../generic/model-store';
 import {
   getVideos,
+  deleteVideo,
 } from './api';
 import {
   setVideoIds,
+  setPageSettings,
   setTotalCount,
   updateLoadingStatus,
-  // deleteAssetSuccess,
+  deleteVideoSuccess,
   // addAssetSuccess,
-  // updateErrors,
+  updateErrors,
   // clearErrors,
-  // updateEditStatus,
+  updateEditStatus,
 } from './slice';
 
 import { updateFileValues } from './utils';
@@ -27,12 +29,13 @@ export function fetchVideos(courseId) {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
 
     try {
-      const { previousUploads } = await getVideos(courseId);
+      const { previousUploads, ...data } = await getVideos(courseId);
       const parsedVideos = updateFileValues(previousUploads);
       dispatch(addModels({ modelType: 'videos', models: parsedVideos }));
       dispatch(setVideoIds({
         videoIds: parsedVideos.map(video => video.id),
       }));
+      dispatch(setPageSettings({ ...data }));
       dispatch(setTotalCount({ totalCount: parsedVideos.length }));
       dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
@@ -53,22 +56,23 @@ export function updateAssetOrder(courseId, videoIds) {
   };
 }
 
-// export function deleteAssetFile(courseId, id, totalCount) {
-//   return async (dispatch) => {
-//     dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.IN_PROGRESS }));
+export function deleteVideoFile(courseId, id, totalCount) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.IN_PROGRESS }));
 
-//     try {
-//       await deleteAsset(courseId, id);
-//       dispatch(deleteAssetSuccess({ videoId: id }));
-//       dispatch(removeModel({ modelType: 'videos', id }));
-//       dispatch(setTotalCount({ totalCount: totalCount - 1 }));
-//       dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.SUCCESSFUL }));
-//     } catch (error) {
-//       dispatch(updateErrors({ error: 'delete', message: `Failed to delete file id ${id}.` }));
-//       dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.FAILED }));
-//     }
-//   };
-// }
+    try {
+      await deleteVideo(courseId, id);
+      dispatch(deleteVideoSuccess({ videoId: id }));
+      dispatch(removeModel({ modelType: 'videos', id }));
+      dispatch(setTotalCount({ totalCount: totalCount - 1 }));
+
+      dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateErrors({ error: 'delete', message: `Failed to delete file id ${id}.` }));
+      dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.FAILED }));
+    }
+  };
+}
 
 // export function addAssetFile(courseId, file, totalCount) {
 //   return async (dispatch) => {

@@ -11,7 +11,7 @@ ensureConfig([
 
 export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getVideosUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/videos/${courseId}`;
-// export const getCourseTeamApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/course_team/${courseId}`;
+export const getCoursVideosApiUrl = (courseId) => `${getApiBaseUrl()}/videos/${courseId}/`;
 
 /**
  * Fetches the course custom pages for provided course
@@ -85,15 +85,15 @@ export async function getVideos(courseId) {
 //   return camelCaseObject(data);
 // }
 
-// /**
-//  * Delete asset to course.
-//  * @param {blockId} courseId Course ID for the course to operate on
+/**
+ * Delete video from course.
+ * @param {blockId} courseId Course ID for the course to operate on
 
-//  */
-// export async function deleteAsset(courseId, assetId) {
-//   await getAuthenticatedHttpClient()
-//     .delete(`${getAssetsUrl(courseId)}${assetId}`);
-// }
+ */
+export async function deleteVideo(courseId, videoId) {
+  await getAuthenticatedHttpClient()
+    .delete(`${getCoursVideosApiUrl(courseId)}${videoId}`);
+}
 
 // /**
 //  * Add asset to course.

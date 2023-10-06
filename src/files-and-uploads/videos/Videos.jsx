@@ -11,13 +11,13 @@ import {
   useToggle,
   ActionRow,
   Button,
-  Sheet,
 } from '@edx/paragon';
 import Placeholder from '@edx/frontend-lib-content-components';
 
 import { RequestStatus } from '../../data/constants';
 import { useModels, useModel } from '../../generic/model-store';
 import {
+  deleteVideoFile,
   fetchVideos,
 } from './data/thunks';
 import messages from './messages';
@@ -28,6 +28,7 @@ import EditFileErrors from '../EditFileErrors';
 import ThumbnailColumn from '../table-components/table-custom-columns/ThumbnailColumn';
 import ActiveColumn from '../table-components/table-custom-columns/ActiveColumn';
 import StatusColumn from '../table-components/table-custom-columns/StatusColumn';
+import TranscriptSettings from './transcript-settings';
 
 const Videos = ({
   courseId,
@@ -52,16 +53,23 @@ const Videos = ({
     updatingStatus: updateVideoStatus,
     usageStatus: usagePathStatus,
     errors: errorMessages,
+    pageSettings,
   } = useSelector(state => state.videos);
 
+  const {
+    isVideoTranscriptEnabled,
+    activeTranscriptPreferences,
+    transcriptAvailableLanguages,
+    transcriptCredentials,
+  } = pageSettings;
+
   // const handleAddFile = (file) => dispatch(addAssetFile(courseId, file, totalCount));
-  // const handleDeleteFile = (id) => dispatch(deleteAssetFile(courseId, id, totalCount));
+  const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id, totalCount));
   // const handleDownloadFile = (selectedRows) => dispatch(fetchAssetDownload({ selectedRows, courseId }));
-  // const handleLockFile = ({ fileId, locked }) => dispatch(updateAssetLock({ courseId, assetId: fileId, locked }));
   const handleAddFile = (file) => console.log(file);
-  const handleDeleteFile = (id) => console.log(id);
   const handleDownloadFile = (selectedRows) => console.log(selectedRows);
-  const handleLockFile = ({ fileId, locked }) => console.log({ fileId, locked });
+  // const handleTranscriptCredentials = ({data, global, provider}) => {
+  // dispatch(addTranscriptCredentials({data, global, provider}))}
 
   const videos = useModels('videos', videoIds);
   const data = {
@@ -138,18 +146,24 @@ const Videos = ({
               <FormattedMessage {...messages.heading} />
             </div>
             <ActionRow.Spacer />
-            <Button variant="link" size="sm" onClick={openTranscriptSettngs}>
-              <FormattedMessage {...messages.transcriptSettingsButtonLabel} />
-            </Button>
+            {isVideoTranscriptEnabled ? (
+              <Button variant="link" size="sm" onClick={openTranscriptSettngs}>
+                <FormattedMessage {...messages.transcriptSettingsButtonLabel} />
+              </Button>
+            ) : null}
           </ActionRow>
         </div>
-        <Sheet
-          position="right"
-          show={isTranscriptSettngsOpen}
-          onClose={closeTranscriptSettngs}
-        >
-          temp!
-        </Sheet>
+        {isVideoTranscriptEnabled ? (
+          <TranscriptSettings
+            {...{
+              isTranscriptSettngsOpen,
+              closeTranscriptSettngs,
+              activeTranscriptPreferences,
+              transcriptAvailableLanguages,
+              transcriptCredentials,
+            }}
+          />
+        ) : null}
         <FileTable
           {...{
             courseId,
@@ -157,7 +171,6 @@ const Videos = ({
             handleAddFile,
             handleDeleteFile,
             handleDownloadFile,
-            handleLockFile,
             tableColumns,
             maxFileSize,
             files: videos,
