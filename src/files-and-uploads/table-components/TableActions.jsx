@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import _ from 'lodash';
 import { PropTypes } from 'prop-types';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 import {
   ActionRow,
   Button,
@@ -19,6 +20,7 @@ const TableActions = ({
   handleSort,
   handleBulkDownload,
   handleOpenDeleteConfirmation,
+  encodingsDownloadUrl,
   // injected
   intl,
 }) => {
@@ -41,6 +43,15 @@ const TableActions = ({
           <FormattedMessage {...messages.actionsButtonLabel} />
         </Dropdown.Toggle>
         <Dropdown.Menu>
+          {encodingsDownloadUrl ? (
+            <Dropdown.Item
+              // as={Button}
+              download
+              href={`${getConfig().STUDIO_BASE_URL}${encodingsDownloadUrl}`}
+            >
+              <FormattedMessage {...messages.downloadEncodingsTitle} />
+            </Dropdown.Item>
+          ) : null}
           <Dropdown.Item
             onClick={() => handleBulkDownload(selectedFlatRows)}
             disabled={_.isEmpty(selectedFlatRows)}
@@ -174,9 +185,14 @@ TableActions.propTypes = {
   }).isRequired,
   handleOpenDeleteConfirmation: PropTypes.func.isRequired,
   handleBulkDownload: PropTypes.func.isRequired,
+  encodingsDownloadUrl: PropTypes.string,
   handleSort: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
+};
+
+TableActions.defaultProps = {
+  encodingsDownloadUrl: null,
 };
 
 export default injectIntl(TableActions);

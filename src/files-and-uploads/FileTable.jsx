@@ -67,6 +67,7 @@ const FileTable = ({
     loadingStatus,
     usagePathStatus,
     usageErrorMessages,
+    encodingsDownloadUrl,
   } = data;
   const fileInputControl = useFileInput({
     onAddFile: (file) => handleAddFile(file),
@@ -122,6 +123,7 @@ const FileTable = ({
       {...{
         selectedFlatRows,
         fileInputControl,
+        encodingsDownloadUrl,
         handleSort,
         handleBulkDownload,
         handleOpenDeleteConfirmation,
@@ -236,7 +238,7 @@ const FileTable = ({
       <FileInput fileInput={fileInputControl} />
       {!isEmpty(selectedRows) && (
         <FileInfo
-          asset={selectedRows[0].original}
+          file={selectedRows[0].original}
           onClose={closeAssetinfo}
           isOpen={isAssetInfoOpen}
           handleLockedAsset={handleLockedAsset}
@@ -268,17 +270,18 @@ const FileTable = ({
 FileTable.propTypes = {
   courseId: PropTypes.string.isRequired,
   files: PropTypes.arrayOf(PropTypes.shape({})),
-  data: PropTypes.arrayOf(PropTypes.shape({
+  data: PropTypes.shape({
     totalCount: PropTypes.number.isRequired,
     fileIds: PropTypes.arrayOf(PropTypes.string).isRequired,
     loadingStatus: PropTypes.string.isRequired,
     usagePathStatus: PropTypes.string.isRequired,
     usageErrorMessages: PropTypes.arrayOf(PropTypes.string).isRequired,
-  })).isRequired,
+    encodingsDownloadUrl: PropTypes.string,
+  }).isRequired,
   handleAddFile: PropTypes.func.isRequired,
   handleDeleteFile: PropTypes.func.isRequired,
   handleDownloadFile: PropTypes.func.isRequired,
-  handleLockFile: PropTypes.func.isRequired,
+  handleLockFile: PropTypes.func,
   tableColumns: PropTypes.arrayOf(PropTypes.shape({
     Header: PropTypes.string,
     accessor: PropTypes.string,
@@ -290,6 +293,7 @@ FileTable.propTypes = {
 
 FileTable.defaultProps = {
   files: null,
+  handleLockFile: () => {},
 };
 
 export default injectIntl(FileTable);

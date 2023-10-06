@@ -61,6 +61,7 @@ const Videos = ({
     activeTranscriptPreferences,
     transcriptAvailableLanguages,
     transcriptCredentials,
+    encodingsDownloadUrl,
   } = pageSettings;
 
   // const handleAddFile = (file) => dispatch(addAssetFile(courseId, file, totalCount));
@@ -73,6 +74,7 @@ const Videos = ({
 
   const videos = useModels('videos', videoIds);
   const data = {
+    encodingsDownloadUrl,
     totalCount,
     fileIds: videoIds,
     loadingStatus,
