@@ -2,21 +2,31 @@ import _ from 'lodash-es';
 
 import { ShowAnswerTypes, RandomizationTypesKeys } from '../../../data/constants/problem';
 
-export const popuplateItem = (parentObject, itemName, statekey, metadata) => {
+export const popuplateItem = (parentObject, itemName, statekey, metadata, allowNull=false) => {
   let parent = parentObject;
   const item = _.get(metadata, itemName, null);
-  if (!_.isNil(item)) {
+  if (!_.isNil(item) || allowNull) {
     parent = { ...parentObject, [statekey]: item };
   }
   return parent;
 };
 
-export const parseScoringSettings = (metadata) => {
+export const parseScoringSettings = (metadata, defaultSettings) => {
   let scoring = {};
 
   let attempts = popuplateItem({}, 'max_attempts', 'number', metadata);
-  if (_.isEmpty(attempts) || _.isNaN(attempts.number)) {
+  // TODO: impove below condition handling
+  if ((_.isEmpty(attempts) || _.isNaN(attempts.number)) && _.isNaN(defaultSettings.max_attempts)) {
     attempts = { unlimited: true, number: '' };
+  } else if (!_.isEmpty(attempts) && !_.isNaN(attempts.number)) {
+    attempts.unlimited = false;
+    attempts.number = attempts.number;
+    if (attempts.number < 0) {
+      attempts.number = 0;
+    }
+  } else if (!_.isNaN(defaultSettings.max_attempts)) {
+    attempts.unlimited = false;
+    attempts.number = defaultSettings.max_attempts;
   } else {
     attempts.unlimited = false;
     if (attempts.number < 0) {
@@ -43,14 +53,14 @@ export const parseShowAnswer = (metadata) => {
   return showAnswer;
 };
 
-export const parseSettings = (metadata) => {
+export const parseSettings = (metadata, defaultSettings) => {
   let settings = {};
 
   if (_.isNil(metadata) || _.isEmpty(metadata)) {
     return settings;
   }
 
-  const scoring = parseScoringSettings(metadata);
+  const scoring = parseScoringSettings(metadata, defaultSettings);
   if (!_.isEmpty(scoring)) {
     settings = { ...settings, scoring };
   }

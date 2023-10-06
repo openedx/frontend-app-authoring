@@ -115,29 +115,29 @@ export const scoringCardHooks = (scoring, updateSettings, defaultValue) => {
     const isUnlimited = event.target.checked;
     if (isUnlimited) {
       setAttemptDisplayValue('');
-      updateSettings({ scoring: { ...scoring, attempts: { number: '', unlimited: true } } });
+      updateSettings({ scoring: { ...scoring, attempts: { number: null, unlimited: true } } });
     } else {
       setAttemptDisplayValue(`${defaultValue} (Default)`);
-      updateSettings({ scoring: { ...scoring, attempts: { number: defaultValue, unlimited: false } } });
+      updateSettings({ scoring: { ...scoring, attempts: { number: null, unlimited: false } } });
     }
   };
   const handleMaxAttemptChange = (event) => {
     let unlimitedAttempts = false;
     let attemptNumber = parseInt(event.target.value);
     const { value } = event.target;
+    // TODO: impove below condition handling
     if (_.isNaN(attemptNumber)) {
-      if (value === '') {
-        attemptNumber = defaultValue;
+      if (value === '' && !_.isNil(defaultValue)) {
+        attemptNumber = null;
         setAttemptDisplayValue(`${defaultValue} (Default)`);
-      } else {
-        attemptNumber = '';
+      } else if (_.isNil(defaultValue)) {
+        attemptNumber = null;
         unlimitedAttempts = true;
       }
     } else if (attemptNumber <= 0) {
       attemptNumber = 0;
     } else if (attemptNumber === defaultValue) {
-      const attemptNumberStr = value.replace(' (Default)');
-      attemptNumber = parseInt(attemptNumberStr);
+      attemptNumber = null;
     }
     updateSettings({ scoring: { ...scoring, attempts: { number: attemptNumber, unlimited: unlimitedAttempts } } });
   };

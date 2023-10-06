@@ -25,7 +25,7 @@ export const onSelect = ({ selected, updateField, setBlockTitle }) => () => {
     setBlockTitle(AdvanceProblems[selected].title);
   } else {
     const newOLX = ProblemTypes[selected].template;
-    const { settings, ...newState } = getDataFromOlx({ rawOLX: newOLX, rawSettings: {} });
+    const { settings, ...newState } = getDataFromOlx({ rawOLX: newOLX, rawSettings: {}, defaultSettings: {} });
     updateField({ ...newState });
     setBlockTitle(ProblemTypes[selected].title);
   }

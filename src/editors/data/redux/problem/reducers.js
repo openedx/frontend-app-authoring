@@ -21,8 +21,8 @@ const initialState = {
     scoring: {
       weight: 1,
       attempts: {
-        unlimited: true,
-        number: '',
+        unlimited: false,
+        number: null,
       },
     },
     hints: [],
@@ -210,9 +210,6 @@ const problem = createSlice({
     setEnableTypeSelection: (state, { payload }) => {
       const { maxAttempts, showanswer, showResetButton } = payload;
       const attempts = { number: maxAttempts, unlimited: false };
-      if (!maxAttempts) {
-        attempts.unlimited = true;
-      }
       return {
         ...state,
         settings: {
