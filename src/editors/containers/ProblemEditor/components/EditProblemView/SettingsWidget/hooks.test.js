@@ -155,13 +155,13 @@ describe('Problem settings hooks', () => {
       output.handleUnlimitedChange({ target: { checked: true } });
       expect(state.setState[state.keys.attemptDisplayValue]).toHaveBeenCalledWith('');
       expect(updateSettings)
-        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: '', unlimited: true } } });
+        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: null, unlimited: true } } });
     });
     test('test handleUnlimitedChange sets attempts.unlimited to false when unchecked', () => {
       output.handleUnlimitedChange({ target: { checked: false } });
       expect(state.setState[state.keys.attemptDisplayValue]).toHaveBeenCalledWith(`${defaultValue} (Default)`);
       expect(updateSettings)
-        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: defaultValue, unlimited: false } } });
+        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: null, unlimited: false } } });
     });
     test('test handleMaxAttemptChange', () => {
       const value = 6;
@@ -175,30 +175,30 @@ describe('Problem settings hooks', () => {
       expect(updateSettings)
         .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: value, unlimited: false } } });
     });
-    test('test handleMaxAttemptChange set attempts to null value', () => {
+    test('test handleMaxAttemptChange set attempts to null value when default max_attempts is present', () => {
       const value = null;
       output.handleMaxAttemptChange({ target: { value } });
       expect(updateSettings)
-        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: '', unlimited: true } } });
+        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: null, unlimited: false } } });
     });
-    test('test handleMaxAttemptChange set attempts to default value', () => {
+    test('test handleMaxAttemptChange set attempts to null when default value is inputted', () => {
       const value = '1 (Default)';
       output.handleMaxAttemptChange({ target: { value } });
       expect(updateSettings)
-        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: 1, unlimited: false } } });
+        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: null, unlimited: false } } });
     });
     test('test handleMaxAttemptChange set attempts to non-numeric value', () => {
       const value = 'abc';
       output.handleMaxAttemptChange({ target: { value } });
       expect(updateSettings)
-        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: '', unlimited: true } } });
+        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: null, unlimited: false } } });
     });
     test('test handleMaxAttemptChange set attempts to empty value', () => {
       const value = '';
       output.handleMaxAttemptChange({ target: { value } });
       expect(state.setState[state.keys.attemptDisplayValue]).toHaveBeenCalledWith(`${defaultValue} (Default)`);
       expect(updateSettings)
-        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: 1, unlimited: false } } });
+        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: null, unlimited: false } } });
     });
     test('test handleMaxAttemptChange set attempts to negative value', () => {
       const value = -1;
