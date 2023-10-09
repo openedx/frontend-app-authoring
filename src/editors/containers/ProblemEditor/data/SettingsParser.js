@@ -15,24 +15,23 @@ export const parseScoringSettings = (metadata, defaultSettings) => {
   let scoring = {};
 
   let attempts = popuplateItem({}, 'max_attempts', 'number', metadata);
-  // TODO: impove below condition handling
-  if ((_.isEmpty(attempts) || _.isNaN(attempts.number)) && (_.isEmpty(defaultSettings) || _.isNaN(defaultSettings.max_attempts))) {
-    attempts = { unlimited: true, number: '' };
-  } else if (!_.isEmpty(attempts) && !_.isNaN(attempts.number)) {
-    attempts.unlimited = false;
-    attempts.number = attempts.number;
-    if (attempts.number < 0) {
-      attempts.number = 0;
-    }
-  } else if (!_.isNaN(defaultSettings.max_attempts)) {
-    attempts.unlimited = false;
-    attempts.number = defaultSettings.max_attempts;
-  } else {
-    attempts.unlimited = false;
-    if (attempts.number < 0) {
-      attempts.number = 0;
-    }
+  attempts.unlimited = false;
+
+  // isFinite checks if value is a finite primitive number.
+  if (!_.isFinite(_.get(attempts, 'number', null))) {
+    attempts.number = _.get(defaultSettings, 'max_attempts', null);
   }
+
+  // if above statement was true and no default was found, set unlimited to true
+  if (_.isNil(attempts.number)) {
+    attempts.number = '';
+    attempts.unlimited = true;
+  }
+
+  if (attempts.number < 0) {
+    attempts.number = 0;
+  }
+
   scoring = { ...scoring, attempts };
 
   scoring = popuplateItem(scoring, 'weight', 'weight', metadata);

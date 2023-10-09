@@ -30,6 +30,11 @@ describe('Test Settings to State Parser', () => {
     expect(scoreSettings.attempts).toStrictEqual(singleSelectWithHints.state.settings.scoring.attempts);
   });
 
+  test('Test score settings attempts missing with default max_attempts', () => {
+    const scoreSettings = parseScoringSettings(singleSelectWithHints.metadata, defaultSettings);
+    expect(scoreSettings.attempts).toStrictEqual({number: 1, unlimited: false});
+  });
+
   test('Test negative attempts in score', () => {
     const scoreSettings = parseScoringSettings(negativeAttempts.metadata, defaultSettings);
     expect(scoreSettings.attempts).toStrictEqual(negativeAttempts.state.settings.scoring.attempts);
@@ -38,6 +43,16 @@ describe('Test Settings to State Parser', () => {
   test('Test score settings missing with no default', () => {
     const settings = parseSettings(singleSelectWithHints.metadata, {});
     expect(settings.scoring).toStrictEqual(singleSelectWithHints.state.settings.scoring);
+  });
+
+  test('Test score settings missing with default', () => {
+    const settings = parseSettings(singleSelectWithHints.metadata, defaultSettings);
+    expect(settings.scoring).toStrictEqual({attempts: {number: 1, unlimited: false}});
+  });
+
+  test('Test score settings missing with null default', () => {
+    const settings = parseSettings(singleSelectWithHints.metadata, {max_attempts: null});
+    expect(settings.scoring).toStrictEqual({attempts: {number: '', unlimited: true}});
   });
 
   test('Test invalid randomization', () => {
