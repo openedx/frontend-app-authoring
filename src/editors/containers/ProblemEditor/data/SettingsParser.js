@@ -15,16 +15,18 @@ export const parseScoringSettings = (metadata, defaultSettings) => {
   let scoring = {};
 
   const attempts = popuplateItem({}, 'max_attempts', 'number', metadata);
+  const initialAttempts = _.get(attempts, 'number', null);
+  const defaultAttempts = _.get(defaultSettings, 'max_attempts', null);
   attempts.unlimited = false;
 
   // isFinite checks if value is a finite primitive number.
-  if (!_.isFinite(_.get(attempts, 'number', null))) {
-    attempts.number = _.get(defaultSettings, 'max_attempts', null);
+  if (!_.isFinite(initialAttempts) || initialAttempts === defaultAttempts) {
+    // set number to null in any case as lms will pick default value if it exists.
+    attempts.number = null;
   }
 
-  // if above statement was true and no default was found, set unlimited to true
-  if (_.isNil(attempts.number)) {
-    attempts.number = '';
+  // if both block number and default number are null set unlimited to true.
+  if (_.isNil(initialAttempts) && _.isNil(defaultAttempts)) {
     attempts.unlimited = true;
   }
 

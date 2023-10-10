@@ -110,11 +110,13 @@ export const resetCardHooks = (updateSettings) => {
 
 export const scoringCardHooks = (scoring, updateSettings, defaultValue) => {
   let loadedAttemptsNumber = scoring.attempts.number;
-  if (scoring.attempts.number === defaultValue) {
-    loadedAttemptsNumber = `${scoring.attempts.number} (Default)`;
-    updateSettings({ scoring: { ...scoring, attempts: { number: null, unlimited: false } } });
+  if ((loadedAttemptsNumber === defaultValue || !_.isFinite(loadedAttemptsNumber)) && _.isFinite(defaultValue)) {
+    loadedAttemptsNumber = `${defaultValue} (Default)`;
+  } else if (loadedAttemptsNumber === defaultValue && _.isNil(defaultValue)) {
+    loadedAttemptsNumber = '';
   }
   const [attemptDisplayValue, setAttemptDisplayValue] = module.state.attemptDisplayValue(loadedAttemptsNumber);
+
   const handleUnlimitedChange = (event) => {
     const isUnlimited = event.target.checked;
     if (isUnlimited) {
