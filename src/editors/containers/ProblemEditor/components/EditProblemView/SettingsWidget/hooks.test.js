@@ -148,6 +148,26 @@ describe('Problem settings hooks', () => {
       },
     };
     const defaultValue = 1;
+    test('test scoringCardHooks initializes display value when attempts.number is null', () => {
+      const nilScoring = { ...scoring, attempts: { unlimited: false, number: null } };
+      output = hooks.scoringCardHooks(nilScoring, updateSettings, defaultValue);
+      expect(state.stateVals[state.keys.attemptDisplayValue]).toEqual(`${defaultValue} (Default)`);
+    });
+    test('test scoringCardHooks initializes display value when attempts.number is blank', () => {
+      const nilScoring = { ...scoring, attempts: { unlimited: false, number: '' } };
+      output = hooks.scoringCardHooks(nilScoring, updateSettings, defaultValue);
+      expect(state.stateVals[state.keys.attemptDisplayValue]).toEqual(`${defaultValue} (Default)`);
+    });
+    test('test scoringCardHooks initializes display value when attempts.number is not null', () => {
+      const nonNilScoring = { ...scoring, attempts: { unlimited: false, number: 2 } };
+      output = hooks.scoringCardHooks(nonNilScoring, updateSettings, defaultValue);
+      expect(state.stateVals[state.keys.attemptDisplayValue]).toEqual(2);
+    });
+    test('test scoringCardHooks initializes display value when attempts.number and defaultValue is null', () => {
+      const nonNilScoring = { ...scoring, attempts: { unlimited: false, number: null } };
+      output = hooks.scoringCardHooks(nonNilScoring, updateSettings, null);
+      expect(state.stateVals[state.keys.attemptDisplayValue]).toEqual('');
+    });
     beforeEach(() => {
       output = hooks.scoringCardHooks(scoring, updateSettings, defaultValue);
     });
