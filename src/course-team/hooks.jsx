@@ -135,5 +135,20 @@ const useCourseTeam = ({ courseId }) => {
   };
 };
 
+const useUserPermissions = () => {
+  const { userId } = getAuthenticatedUser();
+
+  const hasPermissions = (check) => {
+    // New endpoint for getting user permissions
+
+    console.log({ userId, check });
+    return true;
+  };
+
+  return {
+    hasPermissions,
+  };
+};
+
 // eslint-disable-next-line import/prefer-default-export
-export { useCourseTeam };
+export { useCourseTeam, useUserPermissions };
