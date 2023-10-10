@@ -109,7 +109,7 @@ const messages = defineMessages({
   },
   attemptsHint: {
     id: 'authoring.problemeditor.settings.scoring.attempts.hint',
-    defaultMessage: 'If a value is not set, unlimited attempts are allowed',
+    defaultMessage: 'If a default value is not set in advanced settings, unlimited attempts are allowed',
     description: 'Summary text for scoring weight',
   },
   weightHint: {

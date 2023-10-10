@@ -109,7 +109,11 @@ export const resetCardHooks = (updateSettings) => {
 };
 
 export const scoringCardHooks = (scoring, updateSettings, defaultValue) => {
-  const loadedAttemptsNumber = scoring.attempts.number === defaultValue ? `${scoring.attempts.number} (Default)` : scoring.attempts.number;
+  let loadedAttemptsNumber = scoring.attempts.number;
+  if (scoring.attempts.number === defaultValue) {
+    loadedAttemptsNumber = `${scoring.attempts.number} (Default)`;
+    updateSettings({ scoring: { ...scoring, attempts: { number: null, unlimited: false } } });
+  }
   const [attemptDisplayValue, setAttemptDisplayValue] = module.state.attemptDisplayValue(loadedAttemptsNumber);
   const handleUnlimitedChange = (event) => {
     const isUnlimited = event.target.checked;
@@ -117,27 +121,26 @@ export const scoringCardHooks = (scoring, updateSettings, defaultValue) => {
       setAttemptDisplayValue('');
       updateSettings({ scoring: { ...scoring, attempts: { number: null, unlimited: true } } });
     } else {
-      setAttemptDisplayValue(`${defaultValue} (Default)`);
       updateSettings({ scoring: { ...scoring, attempts: { number: null, unlimited: false } } });
     }
   };
+
   const handleMaxAttemptChange = (event) => {
     let unlimitedAttempts = false;
     let attemptNumber = parseInt(event.target.value);
-    const { value } = event.target;
-    // TODO: impove below condition handling
-    if (_.isNaN(attemptNumber) || _.isNil(attemptNumber)) {
+
+    if (!_.isFinite(attemptNumber) || attemptNumber === defaultValue) {
       attemptNumber = null;
-      if (value === '' && !_.isNil(defaultValue)) {
+      if (_.isFinite(defaultValue)) {
         setAttemptDisplayValue(`${defaultValue} (Default)`);
-      } else if (_.isNil(defaultValue)) {
+      } else {
+        setAttemptDisplayValue('');
         unlimitedAttempts = true;
       }
     } else if (attemptNumber <= 0) {
       attemptNumber = 0;
-    } else if (attemptNumber === defaultValue) {
-      attemptNumber = null;
     }
+
     updateSettings({ scoring: { ...scoring, attempts: { number: attemptNumber, unlimited: unlimitedAttempts } } });
   };
 

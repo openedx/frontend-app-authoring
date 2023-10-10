@@ -159,7 +159,6 @@ describe('Problem settings hooks', () => {
     });
     test('test handleUnlimitedChange sets attempts.unlimited to false when unchecked', () => {
       output.handleUnlimitedChange({ target: { checked: false } });
-      expect(state.setState[state.keys.attemptDisplayValue]).toHaveBeenCalledWith(`${defaultValue} (Default)`);
       expect(updateSettings)
         .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: null, unlimited: false } } });
     });
@@ -205,6 +204,14 @@ describe('Problem settings hooks', () => {
       output.handleMaxAttemptChange({ target: { value } });
       expect(updateSettings)
         .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: 0, unlimited: false } } });
+    });
+    test('test handleMaxAttemptChange set attempts to empty value with no default', () => {
+      const value = '';
+      output = hooks.scoringCardHooks(scoring, updateSettings, null);
+      output.handleMaxAttemptChange({ target: { value } });
+      expect(state.setState[state.keys.attemptDisplayValue]).toHaveBeenCalledWith('');
+      expect(updateSettings)
+        .toHaveBeenCalledWith({ scoring: { ...scoring, attempts: { number: null, unlimited: true } } });
     });
     test('test handleOnChange', () => {
       const value = 6;
