@@ -2,7 +2,7 @@ import _ from 'lodash-es';
 
 import { ShowAnswerTypes, RandomizationTypesKeys } from '../../../data/constants/problem';
 
-export const popuplateItem = (parentObject, itemName, statekey, metadata, allowNull=false) => {
+export const popuplateItem = (parentObject, itemName, statekey, metadata, allowNull = false) => {
   let parent = parentObject;
   const item = _.get(metadata, itemName, null);
   if (!_.isNil(item) || allowNull) {
@@ -14,7 +14,7 @@ export const popuplateItem = (parentObject, itemName, statekey, metadata, allowN
 export const parseScoringSettings = (metadata, defaultSettings) => {
   let scoring = {};
 
-  let attempts = popuplateItem({}, 'max_attempts', 'number', metadata);
+  const attempts = popuplateItem({}, 'max_attempts', 'number', metadata);
   attempts.unlimited = false;
 
   // isFinite checks if value is a finite primitive number.

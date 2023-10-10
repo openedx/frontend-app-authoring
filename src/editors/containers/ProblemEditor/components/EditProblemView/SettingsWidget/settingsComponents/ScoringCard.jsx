@@ -33,7 +33,7 @@ export const ScoringCard = ({
     summary += ` ${String.fromCharCode(183)} `;
     summary += unlimited
       ? intl.formatMessage(messages.unlimitedAttemptsSummary)
-      : intl.formatMessage(messages.attemptsSummary, { attempts: attempts ? attempts : defaultValue });
+      : intl.formatMessage(messages.attemptsSummary, { attempts: attempts || defaultValue });
     return summary;
   };
 
