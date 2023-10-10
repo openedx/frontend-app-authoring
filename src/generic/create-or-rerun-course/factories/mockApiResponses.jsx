@@ -16,6 +16,8 @@ export const initialState = {
     },
     organizations: ['krisEdx', 'krisEd', 'DeveloperInc', 'importMit', 'testX', 'edX', 'developerInb'],
     savingStatus: '',
+    userPermissions: [],
+    userPermissionsEnabled: false,
   },
   studioHome: {
     loadingStatuses: {

@@ -18,12 +18,14 @@ import AddUserForm from './add-user-form/AddUserForm';
 import AddTeamMember from './add-team-member/AddTeamMember';
 import CourseTeamMember from './course-team-member/CourseTeamMember';
 import InfoModal from './info-modal/InfoModal';
-import { useCourseTeam, useUserPermissions } from './hooks';
+import { useCourseTeam } from './hooks';
+import { useUserPermissions } from '../generic/hooks';
 import getPageHeadTitle from '../generic/utils';
 
 const CourseTeam = ({ courseId }) => {
   const intl = useIntl();
   const courseDetails = useModel('courseDetails', courseId);
+
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
 
   const {

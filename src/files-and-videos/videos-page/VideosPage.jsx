@@ -43,6 +43,9 @@ import VideoThumbnail from './VideoThumbnail';
 import { getFormattedDuration, resampleFile } from './data/utils';
 import FILES_AND_UPLOAD_TYPE_FILTERS from '../generic/constants';
 import VideoInfoModalSidebar from './info-sidebar';
+import { useUserPermissions } from '../../generic/hooks';
+import { getUserPermissionsEnabled } from '../../generic/data/selectors';
+import PermissionDeniedAlert from '../../generic/PermissionDeniedAlert';
 
 const VideosPage = ({
   courseId,
@@ -53,6 +56,9 @@ const VideosPage = ({
   const [isTranscriptSettingsOpen, openTranscriptSettings, closeTranscriptSettings] = useToggle(false);
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
+  const { hasPermissions } = useUserPermissions();
+  const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
+  const showPermissionDeniedAlert = userPermissionsEnabled && !hasPermissions('manage_content');
 
   useEffect(() => {
     dispatch(fetchVideos(courseId));
@@ -174,6 +180,11 @@ const VideosPage = ({
     { ...processingStatusColumn },
   ];
 
+  if (showPermissionDeniedAlert) {
+    return (
+      <PermissionDeniedAlert />
+    );
+  }
   if (loadingStatus === RequestStatus.DENIED) {
     return (
       <div data-testid="under-construction-placeholder" className="row justify-contnt-center m-6">

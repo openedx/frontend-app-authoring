@@ -39,10 +39,14 @@ import {
 import { getVideosUrl, getCourseVideosApiUrl, getApiBaseUrl } from './data/api';
 import videoMessages from './messages';
 import messages from '../generic/messages';
+import { getUserPermissionsUrl, getUserPermissionsEnabledFlagUrl } from '../../generic/data/api';
+import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../../generic/data/thunks';
 
 let axiosMock;
 let store;
 let file;
+const userId = 3;
+const wrongUserPermissionsData = { permissions: ['wrong_permission'] };
 jest.mock('file-saver');
 
 const renderComponent = () => {
@@ -55,13 +59,13 @@ const renderComponent = () => {
   );
 };
 
-const mockStore = async (
-  status,
-) => {
+const mockStore = async (status) => {
   const fetchVideosUrl = getVideosUrl(courseId);
   axiosMock.onGet(fetchVideosUrl).reply(getStatusValue(status), generateFetchVideosApiResponse());
   renderComponent();
   await executeThunk(fetchVideos(courseId), store.dispatch);
+  await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+  await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
 };
 
 const emptyMockStore = async (status) => {
@@ -69,6 +73,20 @@ const emptyMockStore = async (status) => {
   axiosMock.onGet(fetchVideosUrl).reply(getStatusValue(status), generateEmptyApiResponse());
   renderComponent();
   await executeThunk(fetchVideos(courseId), store.dispatch);
+  await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+  await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+};
+
+const wrongUserPermissionsMockStore = async () => {
+  axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, wrongUserPermissionsData);
+  axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+  await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+  await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+};
+
+const disabledUserPermissionsFlagMockStore = async () => {
+  axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: false });
+  await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
 };
 
 describe('FilesAndUploads', () => {
@@ -76,7 +94,7 @@ describe('FilesAndUploads', () => {
     beforeEach(async () => {
       initializeMockApp({
         authenticatedUser: {
-          userId: 3,
+          userId,
           username: 'abc123',
           administrator: false,
           roles: [],
@@ -140,13 +158,25 @@ describe('FilesAndUploads', () => {
 
       expect(screen.getByTestId('files-data-table')).toBeVisible();
     });
+
+    it('should shows PermissionDeniedAlert if there are no right User Permissions', async () => {
+      renderComponent();
+      await wrongUserPermissionsMockStore();
+      expect(screen.getByTestId('permissionDeniedAlert')).toBeVisible();
+    });
+
+    it('should not show PermissionDeniedAlert if User Permissions Flag is not enabled', async () => {
+      renderComponent();
+      await disabledUserPermissionsFlagMockStore();
+      expect(screen.queryByText('permissionDeniedAlert')).not.toBeInTheDocument();
+    });
   });
 
   describe('valid videos', () => {
     beforeEach(async () => {
       initializeMockApp({
         authenticatedUser: {
-          userId: 3,
+          userId,
           username: 'abc123',
           administrator: false,
           roles: [],

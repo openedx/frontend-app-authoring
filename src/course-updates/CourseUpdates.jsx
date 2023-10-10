@@ -8,12 +8,12 @@ import {
 } from '@edx/paragon';
 import { Add as AddIcon } from '@edx/paragon/icons';
 import { useSelector } from 'react-redux';
-
 import { useModel } from '../generic/model-store';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import ProcessingNotification from '../generic/processing-notification';
 import SubHeader from '../generic/sub-header/SubHeader';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
+import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 import { RequestStatus } from '../data/constants';
 import CourseHandouts from './course-handouts/CourseHandouts';
 import CourseUpdate from './course-update/CourseUpdate';
@@ -25,6 +25,8 @@ import { useCourseUpdates } from './hooks';
 import { getLoadingStatuses, getSavingStatuses } from './data/selectors';
 import { matchesAnyStatus } from './utils';
 import getPageHeadTitle from '../generic/utils';
+import { getUserPermissionsEnabled } from '../generic/data/selectors';
+import { useUserPermissions } from '../generic/hooks';
 
 const CourseUpdates = ({ courseId }) => {
   const intl = useIntl();
@@ -60,7 +62,15 @@ const CourseUpdates = ({ courseId }) => {
   const anyStatusFailed = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.FAILED);
   const anyStatusInProgress = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.IN_PROGRESS);
   const anyStatusPending = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.PENDING);
+  const { hasPermissions } = useUserPermissions();
+  const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
+  const showPermissionDeniedAlert = userPermissionsEnabled && !hasPermissions('manage_content');
 
+  if (showPermissionDeniedAlert) {
+    return (
+      <PermissionDeniedAlert />
+    );
+  }
   return (
     <>
       <Container size="xl" className="px-4">

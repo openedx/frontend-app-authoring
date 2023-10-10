@@ -192,11 +192,31 @@ describe('<CourseTeam />', () => {
       .onGet(getUserPermissionsEnabledFlagUrl)
       .reply(200, { enabled: false });
 
-    const { queryByRole, queryByTestId } = render(<RootWrapper />);
+    const { queryByRole, queryByText } = render(<RootWrapper />);
 
     await waitFor(() => {
       expect(queryByRole('button', { name: messages.addNewMemberButton.defaultMessage })).not.toBeInTheDocument();
-      expect(queryByTestId('add-team-member')).not.toBeInTheDocument();
+      expect(queryByText('add-team-member')).not.toBeInTheDocument();
+    });
+  });
+
+  it('not displays "Add New Member" and AddTeamMember component when hasManageAllUsersPerm is false', async () => {
+    cleanup();
+    axiosMock
+      .onGet(getCourseTeamApiUrl(courseId))
+      .reply(200, {
+        ...courseTeamWithOneUser,
+        allowActions: false,
+      });
+    axiosMock
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: false });
+
+    const { queryByRole, queryByText } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      expect(queryByRole('button', { name: messages.addNewMemberButton.defaultMessage })).not.toBeInTheDocument();
+      expect(queryByText('add-team-member')).not.toBeInTheDocument();
     });
   });
 
