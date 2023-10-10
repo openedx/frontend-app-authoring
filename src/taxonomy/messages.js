@@ -17,9 +17,13 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-list.select.org.default',
     defaultMessage: 'All taxonomies',
   },
-  paginationCountLabel: {
-    id: 'course-authoring.taxonomy-list.pagination.label',
-    defaultMessage: 'Showing {count} of {total}',
+  systemDefinedBadge: {
+    id: 'course-authoring.taxonomy-list.badge.system-defined.label',
+    defaultMessage: 'System-level',
+  },
+  assignedToOrgsLabel: {
+    id: 'course-authoring.taxonomy-list.orgs-count.label',
+    defaultMessage: 'Assigned to {orgsCount} orgs',
   },
 });
 
