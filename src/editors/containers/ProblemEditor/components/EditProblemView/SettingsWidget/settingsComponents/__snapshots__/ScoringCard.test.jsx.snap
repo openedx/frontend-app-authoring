@@ -41,7 +41,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card 1`] = `
     />
     <Form.Control.Feedback>
       <FormattedMessage
-        defaultMessage="If a value is not set, unlimited attempts are allowed"
+        defaultMessage="If a default value is not set in advanced settings, unlimited attempts are allowed"
         description="Summary text for scoring weight"
         id="authoring.problemeditor.settings.scoring.attempts.hint"
       />
@@ -116,7 +116,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card max attempts 1`] = 
     />
     <Form.Control.Feedback>
       <FormattedMessage
-        defaultMessage="If a value is not set, unlimited attempts are allowed"
+        defaultMessage="If a default value is not set in advanced settings, unlimited attempts are allowed"
         description="Summary text for scoring weight"
         id="authoring.problemeditor.settings.scoring.attempts.hint"
       />
@@ -191,7 +191,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card zero zero weight 1`
     />
     <Form.Control.Feedback>
       <FormattedMessage
-        defaultMessage="If a value is not set, unlimited attempts are allowed"
+        defaultMessage="If a default value is not set in advanced settings, unlimited attempts are allowed"
         description="Summary text for scoring weight"
         id="authoring.problemeditor.settings.scoring.attempts.hint"
       />
