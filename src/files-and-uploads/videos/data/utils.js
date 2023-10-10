@@ -1,7 +1,14 @@
 import { InsertDriveFile, Terminal, AudioFile } from '@edx/paragon/icons';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import { isArray, isEmpty } from 'lodash';
-// import FILES_AND_UPLOAD_TYPE_FILTERS from './constant';
+import {
+  ASPECT_RATIO,
+  ASPECT_RATIO_ERROR_MARGIN,
+  MAX_HEIGHT,
+  MAX_WIDTH,
+  MIN_HEIGHT,
+  MIN_WIDTH,
+} from './constants';
 
 ensureConfig([
   'STUDIO_BASE_URL',
@@ -18,6 +25,11 @@ export const updateFileValues = (files) => {
     } = file;
     const wrapperType = 'video';
 
+    let thumbnail = courseVideoImageUrl;
+    if (thumbnail.startsWith('/')) {
+      thumbnail = `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
+    }
+
     updatedFiles.push({
       ...file,
       displayName: clientVideoId,
@@ -26,7 +38,7 @@ export const updateFileValues = (files) => {
       dateAdded: created.toString(),
       usageLocations: [],
       fileSize: null,
-      thumbnail: courseVideoImageUrl,
+      thumbnail,
     });
   });
 
@@ -103,6 +115,9 @@ export const getSupportedFormats = (supportedFileFormats) => {
   if (isEmpty(supportedFileFormats)) {
     return null;
   }
+  if (isArray(supportedFileFormats)) {
+    return supportedFileFormats;
+  }
   const supportedFormats = [];
   Object.entries(supportedFileFormats).forEach(([key, value]) => {
     let format;
@@ -117,4 +132,97 @@ export const getSupportedFormats = (supportedFileFormats) => {
     }
   });
   return supportedFormats;
+};
+
+/** resampledFile({ canvasUrl, filename, mimeType })
+ * resampledFile takes a canvasUrl, filename, and a valid mimeType. The
+ * canvasUrl is parsed and written to an 8-bit array of unsigned integers. The
+ * new array is saved to  a new file with the same filename as the original image.
+ * @param {string} canvasUrl - string of base64 URL for new image canvas
+ * @param {string} filename - string of the original image's filename
+ * @param {string} mimeType - string of mimeType for the canvas
+ * @return {File} new File object
+ */
+export const createResampledFile = ({ canvasUrl, filename, mimeType }) => {
+  const arr = canvasUrl.split(',');
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mimeType });
+};
+
+/** resampleImage({ image, filename })
+ * resampledImage takes a canvasUrl, filename, and a valid mimeType. The
+ * canvasUrl is parsed and written to an 8-bit array of unsigned integers. The
+ * new array is saved to  a new file with the same filename as the original image.
+ * @param {File} canvasUrl - string of base64 URL for new image canvas
+ * @param {string} filename - string of the image's filename
+ * @return {array} array containing the base64 URL for the resampled image and the file containing the resampled image
+ */
+export const resampleImage = ({ image, filename }) => {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  // Determine new dimensions for image
+  if (image.naturalWidth > MAX_WIDTH) {
+    // Set dimensions to the maximum size
+    canvas.width = MAX_WIDTH;
+    canvas.height = MAX_HEIGHT;
+  } else if (image.naturalWidth < MIN_WIDTH) {
+    // Set dimensions to the minimum size
+    canvas.width = MIN_WIDTH;
+    canvas.height = MIN_HEIGHT;
+  } else {
+    // Set dimensions to the closest 16:9 ratio
+    const heightRatio = 9 / 16;
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalWidth * heightRatio;
+  }
+  const cropLeft = (image.naturalWidth - canvas.width) / 2;
+  const cropTop = (image.naturalHeight - canvas.height) / 2;
+
+  ctx.drawImage(image, cropLeft, cropTop, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+
+  const resampledFile = createResampledFile({ canvasUrl: canvas.toDataURL(), filename, mimeType: 'image/png' });
+  return resampledFile;
+};
+
+const hasValidDimensions = (image) => {
+  const width = image.naturalWidth;
+  const height = image.naturalHeight;
+  const imageAspectRatio = Math.abs(width / height) - ASPECT_RATIO;
+
+  if (width < MIN_HEIGHT || height < MIN_HEIGHT) {
+    return false;
+  }
+  if (imageAspectRatio >= ASPECT_RATIO_ERROR_MARGIN) {
+    return false;
+  }
+  return true;
+};
+
+export const resampleFile = ({
+  file,
+  dispatch,
+  videoId,
+  courseId,
+  addVideoThumbnail,
+}) => {
+  const reader = new FileReader();
+  const image = new Image();
+  reader.onload = () => {
+    image.src = reader.result;
+    image.onload = () => {
+      if (!hasValidDimensions(image)) {
+        const resampledFile = resampleImage({ image, filename: file.name });
+        dispatch(addVideoThumbnail({ courseId, videoId, file: resampledFile }));
+      } else {
+        dispatch(addVideoThumbnail({ courseId, videoId, file }));
+      }
+    };
+  };
+  reader.readAsDataURL(file);
 };

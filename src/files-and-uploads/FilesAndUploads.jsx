@@ -23,6 +23,7 @@ import { getFileSizeToClosestByte } from './data/utils';
 import ThumbnailColumn from './table-components/table-custom-columns/ThumbnailColumn';
 import ActiveColumn from './table-components/table-custom-columns/ActiveColumn';
 import AccessColumn from './table-components/table-custom-columns/AccessColumn';
+import AssetThumbnail from './assets/AssetThumbnail';
 
 const FilesAndUploads = ({
   courseId,
@@ -52,6 +53,7 @@ const FilesAndUploads = ({
   const handleDeleteFile = (id) => dispatch(deleteAssetFile(courseId, id, totalCount));
   const handleDownloadFile = (selectedRows) => dispatch(fetchAssetDownload({ selectedRows, courseId }));
   const handleLockFile = ({ fileId, locked }) => dispatch(updateAssetLock({ courseId, assetId: fileId, locked }));
+  const thumbnailPreview = (props) => AssetThumbnail(props);
 
   const assets = useModels('assets', assetIds);
   const data = {
@@ -76,7 +78,7 @@ const FilesAndUploads = ({
   const thumbnailColumn = {
     id: 'thumbnail',
     Header: '',
-    Cell: ({ row }) => ThumbnailColumn({ row }),
+    Cell: ({ row }) => ThumbnailColumn({ row, thumbnailPreview }),
   };
   const fileSizeColumn = {
     id: 'fileSize',
@@ -153,6 +155,7 @@ const FilesAndUploads = ({
             handleLockFile,
             tableColumns,
             maxFileSize,
+            thumbnailPreview,
             files: assets,
           }}
         />

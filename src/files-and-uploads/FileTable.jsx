@@ -27,7 +27,6 @@ import FileInfo from './FileInfo';
 import FileInput, { useFileInput } from './FileInput';
 import {
   GalleryCard,
-  ListCard,
   TableActions,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
@@ -44,6 +43,7 @@ const FileTable = ({
   handleDownloadFile,
   tableColumns,
   maxFileSize,
+  thumbnailPreview,
   // injected
   intl,
 }) => {
@@ -134,34 +134,20 @@ const FileTable = ({
     />
   );
 
-  const fileCard = ({ className, original }) => {
-    if (currentView === 'card') {
-      return (
-        <GalleryCard
-          {...{
-            handleLockedAsset,
-            handleBulkDownload,
-            handleOpenDeleteConfirmation,
-            handleOpenAssetInfo,
-            className,
-            original,
-          }}
-        />
-      );
-    }
-    return (
-      <ListCard
-        {...{
-          handleLockedAsset,
-          handleBulkDownload,
-          handleOpenDeleteConfirmation,
-          handleOpenAssetInfo,
-          className,
-          original,
-        }}
-      />
-    );
-  };
+  const fileCard = ({ className, original }) => (
+    <GalleryCard
+      {...{
+        handleLockedAsset,
+        handleBulkDownload,
+        handleOpenDeleteConfirmation,
+        handleOpenAssetInfo,
+        thumbnailPreview,
+        className,
+        original,
+      }}
+    />
+  );
+
   const moreInfoColumn = {
     id: 'moreInfo',
     Header: '',
@@ -239,13 +225,14 @@ const FileTable = ({
           </div>
         )}
       </DataTable>
-      <FileInput fileInput={fileInputControl} supportedFileFormats={supportedFileFormats} />
+      <FileInput key="generic-file-upload" fileInput={fileInputControl} supportedFileFormats={supportedFileFormats} />
       {!isEmpty(selectedRows) && (
         <FileInfo
           file={selectedRows[0].original}
           onClose={closeAssetinfo}
           isOpen={isAssetInfoOpen}
           handleLockedAsset={handleLockedAsset}
+          thumbnailPreview={thumbnailPreview}
           usagePathStatus={usagePathStatus}
           error={usageErrorMessages}
         />
@@ -292,6 +279,7 @@ FileTable.propTypes = {
     accessor: PropTypes.string,
   })).isRequired,
   maxFileSize: PropTypes.number.isRequired,
+  thumbnailPreview: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

@@ -1,12 +1,14 @@
 import { isEmpty } from 'lodash';
+import { getConfig } from '@edx/frontend-platform';
 import { RequestStatus } from '../../../data/constants';
 import {
   addModels,
   removeModel,
+  updateModel,
   updateModels,
-  // updateModel,
 } from '../../../generic/model-store';
 import {
+  addThumbnail,
   addVideo,
   deleteVideo,
   fetchVideoList,
@@ -119,27 +121,35 @@ export function addVideoFile(courseId, file) {
   };
 }
 
-// export function updateAssetLock({ assetId, courseId, locked }) {
-//   return async (dispatch) => {
-//     dispatch(updateEditStatus({ editType: 'lock', status: RequestStatus.IN_PROGRESS }));
+export function addVideoThumbnail({ file, videoId, courseId }) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'thumbnail', status: RequestStatus.IN_PROGRESS }));
 
-//     try {
-//       await updateLockStatus({ assetId, courseId, locked });
-//       dispatch(updateModel({
-//         modelType: 'assets',
-//         model: {
-//           id: assetId,
-//           locked,
-//         },
-//       }));
-//       dispatch(updateEditStatus({ editType: 'lock', status: RequestStatus.SUCCESSFUL }));
-//     } catch (error) {
-//       const lockStatus = locked ? 'lock' : 'unlock';
-//       dispatch(updateErrors({ error: 'lock', message: `Failed to ${lockStatus} file id ${assetId}.` }));
-//       dispatch(updateEditStatus({ editType: 'lock', status: RequestStatus.FAILED }));
-//     }
-//   };
-// }
+    try {
+      const { imageUrl } = await addThumbnail({ courseId, videoId, file });
+      let thumbnail = imageUrl;
+      if (thumbnail.startsWith('/')) {
+        thumbnail = `${getConfig().STUDIO_BASE_URL}${imageUrl}`;
+      }
+      dispatch(updateModel({
+        modelType: 'videos',
+        model: {
+          id: videoId,
+          thumbnail,
+        },
+      }));
+      dispatch(updateEditStatus({ editType: 'thumbnail', status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      if (error.response.data.error) {
+        const message = error.response.data.error;
+        dispatch(updateErrors({ error: 'thumbnail', message }));
+      } else {
+        dispatch(updateErrors({ error: 'thumbnail', message: `Failed to add thumbnail for video id ${videoId}.` }));
+      }
+      dispatch(updateEditStatus({ editType: 'thumbnail', status: RequestStatus.FAILED }));
+    }
+  };
+}
 
 // export function resetErrors({ errorType }) {
 //   return (dispatch) => { dispatch(clearErrors({ error: errorType })); };

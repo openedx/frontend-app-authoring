@@ -24,7 +24,7 @@ export const useFileInput = ({
   };
 };
 
-const FileInput = ({ fileInput: hook, supportedFileFormats }) => (
+const FileInput = ({ fileInput: hook, supportedFileFormats, allowMultiple }) => (
   <input
     accept={getSupportedFormats(supportedFileFormats)}
     aria-label="file-input"
@@ -32,7 +32,7 @@ const FileInput = ({ fileInput: hook, supportedFileFormats }) => (
     onChange={hook.addFile}
     ref={hook.ref}
     type="file"
-    multiple
+    multiple={allowMultiple}
   />
 );
 
@@ -46,11 +46,16 @@ FileInput.propTypes = {
       PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
     ]),
   }).isRequired,
-  supportedFileFormats: PropTypes.shape({}),
+  supportedFileFormats: PropTypes.oneOfType([
+    PropTypes.shape({}),
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+  allowMultiple: PropTypes.bool,
 };
 
 FileInput.defaultProps = {
   supportedFileFormats: null,
+  allowMultiple: true,
 };
 
 export default FileInput;

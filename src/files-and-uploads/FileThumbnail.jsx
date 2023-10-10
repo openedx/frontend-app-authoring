@@ -1,51 +1,48 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Icon,
-  Image,
-} from '@edx/paragon';
-import { getSrc } from './data/utils';
 
-const AssetThumbnail = ({
+const FileThumbnail = ({
   thumbnail,
   wrapperType,
   externalUrl,
   displayName,
-}) => {
-  const src = getSrc({
-    thumbnail,
-    externalUrl,
-    wrapperType,
-  });
-
-  return (
-    <div className="row justify-content-center align-itmes-center">
-      {thumbnail ? (
-        <Image
-          style={{ width: '503px', height: '281px' }}
-          className="border rounded p-1"
-          src={src}
-          alt={`Thumbnail of ${displayName}`}
-        />
-      ) : (
-        <div
-          className="row border justify-content-center align-items-center rounded m-0"
-          style={{ width: '503px', height: '281px' }}
-        >
-          <Icon src={src} style={{ height: '48px', width: '48px' }} />
-        </div>
-      )}
-    </div>
-  );
-};
-AssetThumbnail.defaultProps = {
+  imageSize,
+  id,
+  status,
+  thumbnailPreview,
+}) => (
+  <>
+    {thumbnailPreview({
+      thumbnail,
+      wrapperType,
+      externalUrl,
+      displayName,
+      imageSize,
+      id,
+      status,
+    })}
+  </>
+);
+FileThumbnail.defaultProps = {
   thumbnail: null,
+  wrapperType: null,
+  externalUrl: null,
+  displayName: null,
+  id: null,
+  status: null,
 };
-AssetThumbnail.propTypes = {
+FileThumbnail.propTypes = {
   thumbnail: PropTypes.string,
-  wrapperType: PropTypes.string.isRequired,
-  externalUrl: PropTypes.string.isRequired,
-  displayName: PropTypes.string.isRequired,
+  wrapperType: PropTypes.string,
+  externalUrl: PropTypes.string,
+  displayName: PropTypes.string,
+  id: PropTypes.string,
+  status: PropTypes.string,
+  thumbnailPreview: PropTypes.func.isRequired,
+  imageSize: PropTypes.shape({
+    height: PropTypes.string.isRequired,
+    width: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
-export default AssetThumbnail;
+export default FileThumbnail;

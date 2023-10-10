@@ -18,6 +18,7 @@ import { RequestStatus } from '../../data/constants';
 import { useModels, useModel } from '../../generic/model-store';
 import {
   addVideoFile,
+  addVideoThumbnail,
   deleteVideoFile,
   fetchVideos,
 } from './data/thunks';
@@ -30,6 +31,8 @@ import ThumbnailColumn from '../table-components/table-custom-columns/ThumbnailC
 import ActiveColumn from '../table-components/table-custom-columns/ActiveColumn';
 import StatusColumn from '../table-components/table-custom-columns/StatusColumn';
 import TranscriptSettings from './transcript-settings';
+import VideoThumbnail from './VideoThumbnail';
+import { resampleFile } from './data/utils';
 
 const Videos = ({
   courseId,
@@ -65,6 +68,7 @@ const Videos = ({
     encodingsDownloadUrl,
     videoUploadMaxFileSize,
     videoSupportedFileFormats,
+    videoImageSettings,
   } = pageSettings;
 
   const supportedFileFormats = { 'video/*': videoSupportedFileFormats };
@@ -75,6 +79,14 @@ const Videos = ({
   const handleDownloadFile = (selectedRows) => console.log(selectedRows);
   // const handleTranscriptCredentials = ({data, global, provider}) => {
   // dispatch(addTranscriptCredentials({data, global, provider}))}
+  const handleAddThumbnail = (file, videoId) => resampleFile({
+    file,
+    dispatch,
+    courseId,
+    videoId,
+    addVideoThumbnail,
+  });
+
   const videos = useModels('videos', videoIds);
   const data = {
     supportedFileFormats,
@@ -85,6 +97,7 @@ const Videos = ({
     usagePathStatus,
     usageErrorMessages: errorMessages.usageMetrics,
   };
+  const thumbnailPreview = (props) => VideoThumbnail({ ...props, handleAddThumbnail, videoImageSettings });
   const maxFileSize = videoUploadMaxFileSize * 1073741824;
   const transcriptColumn = {
     id: 'transcripts',
@@ -116,7 +129,7 @@ const Videos = ({
   const videoThumbnailColumn = {
     id: 'courseVideoImageUrl',
     Header: '',
-    Cell: ({ row }) => ThumbnailColumn({ row }),
+    Cell: ({ row }) => ThumbnailColumn({ row, thumbnailPreview }),
   };
   const tableColumns = [
     { ...videoThumbnailColumn },
@@ -179,6 +192,7 @@ const Videos = ({
             handleDownloadFile,
             tableColumns,
             maxFileSize,
+            thumbnailPreview,
             files: videos,
           }}
         />

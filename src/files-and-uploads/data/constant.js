@@ -33,6 +33,7 @@ const FILES_AND_UPLOAD_TYPE_FILTERS = {
     'application/java-vm', 'text/x-c++src', 'text/xml', 'text/x-scss', 'application/x-python-code',
     'application/java-archive', 'text/x-python-script', 'application/x-ruby', 'application/mathematica',
     'text/coffeescript', 'text/x-matlab', 'application/sql', 'text/php'],
+  video: ['.mp4', '.mov'],
 };
 
 export default FILES_AND_UPLOAD_TYPE_FILTERS;

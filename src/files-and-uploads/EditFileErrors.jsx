@@ -43,13 +43,18 @@ const EditFileErrors = ({
       isError={updateFileStatus === RequestStatus.FAILED}
     >
       <ul className="p-0">
-        {errorMessages.lock.map(message => (
+        {errorMessages.lock?.map(message => (
           <li key={`lock-error-${message}`} style={{ listStyle: 'none' }}>
             {intl.formatMessage(messages.errorAlertMessage, { message })}
           </li>
         ))}
         {errorMessages.download.map(message => (
           <li key={`download-error-${message}`} style={{ listStyle: 'none' }}>
+            {intl.formatMessage(messages.errorAlertMessage, { message })}
+          </li>
+        ))}
+        {errorMessages.thumbnail?.map(message => (
+          <li key={`add-thumbnail-error-${message}`} style={{ listStyle: 'none' }}>
             {intl.formatMessage(messages.errorAlertMessage, { message })}
           </li>
         ))}
@@ -62,9 +67,10 @@ EditFileErrors.propTypes = {
   errorMessages: PropTypes.shape({
     add: PropTypes.arrayOf(PropTypes.string).isRequired,
     delete: PropTypes.arrayOf(PropTypes.string).isRequired,
-    lock: PropTypes.arrayOf(PropTypes.string).isRequired,
+    lock: PropTypes.arrayOf(PropTypes.string),
     download: PropTypes.arrayOf(PropTypes.string).isRequired,
     usageMetrics: PropTypes.arrayOf(PropTypes.string).isRequired,
+    thumbnail: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   addFileStatus: PropTypes.string.isRequired,
   deleteFileStatus: PropTypes.string.isRequired,

@@ -107,7 +107,20 @@ export async function deleteVideo(courseId, videoId) {
 }
 
 /**
- * Add asset to course.
+ * Add thumbnail to video.
+ * @param {blockId} courseId Course ID for the course to operate on
+
+ */
+export async function addThumbnail({ courseId, videoId, file }) {
+  const formData = new FormData();
+  formData.append('file', file);
+  const { data } = await getAuthenticatedHttpClient()
+    .post(`${getApiBaseUrl()}/video_images/${courseId}/${videoId}`, formData);
+  return camelCaseObject(data);
+}
+
+/**
+ * Add video to course.
  * @param {blockId} courseId Course ID for the course to operate on
 
  */

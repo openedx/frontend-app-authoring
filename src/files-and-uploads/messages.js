@@ -105,6 +105,10 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-uploads.cardMenu.infoTitle',
     defaultMessage: 'Info',
   },
+  downloadEncodingsTitle: {
+    id: 'course-authoring.files-and-uploads.cardMenu.downloadEncodingsTitle',
+    defaultMessage: 'Download video list (.csv)',
+  },
   deleteTitle: {
     id: 'course-authoring.files-and-uploads.cardMenu.deleteTitle',
     defaultMessage: 'Delete',

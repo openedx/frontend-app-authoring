@@ -6,10 +6,10 @@ import {
   Card,
   Chip,
   Truncate,
-  Image,
 } from '@edx/paragon';
+import { ClosedCaption } from '@edx/paragon/icons';
 import FileMenu from '../FileMenu';
-import { getSrc } from '../data/utils';
+import FileThumbnail from '../FileThumbnail';
 
 const GalleryCard = ({
   className,
@@ -18,15 +18,12 @@ const GalleryCard = ({
   handleLockedAsset,
   handleOpenDeleteConfirmation,
   handleOpenAssetInfo,
+  thumbnailPreview,
 }) => {
   const lockAsset = () => {
-    const { locked } = original;
-    handleLockedAsset(original.id, !locked);
+    const { locked, id } = original;
+    handleLockedAsset(id, !locked);
   };
-  const src = getSrc({
-    thumbnail: original.thumbnail,
-    wrapperType: original.wrapperType,
-  });
 
   return (
     <Card className={className} data-testid={`grid-card-${original.id}`}>
@@ -51,13 +48,16 @@ const GalleryCard = ({
       />
       <Card.Section>
         <div className="row align-items-center justify-content-center m-0">
-          {original.thumbnail ? (
-            <Image src={src} style={{ height: '76px', width: '135.71px' }} className="border rounded p-1" />
-          ) : (
-            <div className="row border justify-content-center align-items-center rounded m-0" style={{ height: '76px', width: '135.71px' }}>
-              <Icon src={src} style={{ height: '48px', width: '48px' }} />
-            </div>
-          )}
+          <FileThumbnail
+            thumbnail={original.thumbnail}
+            wrapperType={original.wrapperType}
+            externalUrl={original.externalUrl}
+            displayName={original.displayName}
+            id={original.id}
+            status={original.status}
+            imageSize={{ height: '76px', width: '135.71px' }}
+            thumbnailPreview={thumbnailPreview}
+          />
         </div>
         <div style={{ wordBreak: 'break-word' }}>
           <Truncate lines={1} className="font-weight-bold small mt-3">
@@ -65,10 +65,11 @@ const GalleryCard = ({
           </Truncate>
         </div>
       </Card.Section>
-      <Card.Footer>
+      <Card.Footer className="row m-0 flex-row-reverse justify-content-between align-items-center">
         <Chip>
           {original.wrapperType}
         </Chip>
+        {original.transcripts?.length > 0 && <Icon size="lg" src={ClosedCaption} className="m-0 text-primary-500" />}
       </Card.Footer>
     </Card>
   );
@@ -82,16 +83,19 @@ GalleryCard.propTypes = {
   original: PropTypes.shape({
     displayName: PropTypes.string.isRequired,
     wrapperType: PropTypes.string.isRequired,
-    locked: PropTypes.bool.isRequired,
-    externalUrl: PropTypes.string.isRequired,
+    locked: PropTypes.bool,
+    externalUrl: PropTypes.string,
     thumbnail: PropTypes.string,
     id: PropTypes.string.isRequired,
-    portableUrl: PropTypes.string.isRequired,
+    portableUrl: PropTypes.string,
+    status: PropTypes.string,
+    transcripts: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   handleBulkDownload: PropTypes.func.isRequired,
   handleLockedAsset: PropTypes.func.isRequired,
   handleOpenDeleteConfirmation: PropTypes.func.isRequired,
   handleOpenAssetInfo: PropTypes.func.isRequired,
+  thumbnailPreview: PropTypes.func.isRequired,
 };
 
 export default GalleryCard;

@@ -1,19 +1,29 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
-import { Icon, Image } from '@edx/paragon';
-import { getSrc } from '../../data/utils';
+import FileThumbnail from '../../FileThumbnail';
 
-const ThumbnailColumn = ({ row }) => {
-  const { thumbnail, wrapperType } = row.original;
-  const src = getSrc({ thumbnail, wrapperType });
+const ThumbnailColumn = ({ row, thumbnailPreview }) => {
+  const {
+    thumbnail,
+    wrapperType,
+    externalUrl,
+    displayName,
+    id,
+    status,
+  } = row.original;
   return (
-    thumbnail ? (
-      <Image src={src} style={{ width: '96.43px', height: '54px' }} className="border rounded p-1" />
-    ) : (
-      <div className="row border justify-content-center align-items-center rounded m-0" style={{ width: '96.43px', height: '54px' }}>
-        <Icon src={src} style={{ height: '48px', width: '48px' }} />
-      </div>
-    )
+    <FileThumbnail
+      {...{
+        thumbnail,
+        wrapperType,
+        externalUrl,
+        displayName,
+        id,
+        status,
+        thumbnailPreview,
+        imageSize: { width: '120px', height: '67.5px' },
+      }}
+    />
   );
 };
 
@@ -24,6 +34,7 @@ ThumbnailColumn.propTypes = {
       wrapperType: PropTypes.string.isRequired,
     }.isRequired,
   }.isRequired,
+  thumbnailPreview: PropTypes.func.isRequired,
 };
 
 export default ThumbnailColumn;

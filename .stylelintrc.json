@@ -8,7 +8,7 @@
       "ignoreUnits": ["\\.5"]
     }],
     "property-no-vendor-prefix": [true, {
-      "ignoreProperties": ["animation", "filter"]
+      "ignoreProperties": ["animation", "filter", "transform", "transition"]
     }],
     "value-no-vendor-prefix": [true, {
       "ignoreValues": ["fill-available"]
