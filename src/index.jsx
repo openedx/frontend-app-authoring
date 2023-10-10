@@ -63,13 +63,13 @@ const App = () => {
             );
           }}
         />
-        {process.env.ENABLE_TAGGING_TAXONOMY_PAGES === 'true' &&
+        {process.env.ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
           <Route
             path="/taxonomy-list"
           >
             <TaxonomyListPage />
           </Route>
-        }
+        )}
       </Switch>
     </AppProvider>
   );
