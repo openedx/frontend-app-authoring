@@ -8,6 +8,10 @@ import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Route, Switch } from 'react-router-dom';
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
@@ -22,6 +26,8 @@ import { TaxonomyListPage } from './taxonomy';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
+
+const queryClient = new QueryClient()
 
 const App = () => {
   useEffect(() => {
@@ -40,37 +46,39 @@ const App = () => {
 
   return (
     <AppProvider store={initializeStore()}>
-      <Head />
-      <Switch>
-        <Route path="/home">
-          <StudioHome />
-        </Route>
-        <Route
-          path="/course/:courseId"
-          render={({ match }) => {
-            const { params: { courseId } } = match;
-            return (
-              <CourseAuthoringRoutes courseId={courseId} />
-            );
-          }}
-        />
-        <Route
-          path="/course_rerun/:courseId"
-          render={({ match }) => {
-            const { params: { courseId } } = match;
-            return (
-              <CourseRerun courseId={courseId} />
-            );
-          }}
-        />
-        {process.env.ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
-          <Route
-            path="/taxonomy-list"
-          >
-            <TaxonomyListPage />
+      <QueryClientProvider client={queryClient}>
+        <Head />
+        <Switch>
+          <Route path="/home">
+            <StudioHome />
           </Route>
-        )}
-      </Switch>
+          <Route
+            path="/course/:courseId"
+            render={({ match }) => {
+              const { params: { courseId } } = match;
+              return (
+                <CourseAuthoringRoutes courseId={courseId} />
+              );
+            }}
+          />
+          <Route
+            path="/course_rerun/:courseId"
+            render={({ match }) => {
+              const { params: { courseId } } = match;
+              return (
+                <CourseRerun courseId={courseId} />
+              );
+            }}
+          />
+          {process.env.ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
+            <Route
+              path="/taxonomy-list"
+            >
+              <TaxonomyListPage />
+            </Route>
+          )}
+        </Switch>
+      </QueryClientProvider>
     </AppProvider>
   );
 };
