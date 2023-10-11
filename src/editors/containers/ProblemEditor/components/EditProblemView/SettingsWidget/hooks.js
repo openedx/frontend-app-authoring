@@ -109,36 +109,40 @@ export const resetCardHooks = (updateSettings) => {
 };
 
 export const scoringCardHooks = (scoring, updateSettings, defaultValue) => {
-  const loadedAttemptsNumber = scoring.attempts.number === defaultValue ? `${scoring.attempts.number} (Default)` : scoring.attempts.number;
+  let loadedAttemptsNumber = scoring.attempts.number;
+  if ((loadedAttemptsNumber === defaultValue || !_.isFinite(loadedAttemptsNumber)) && _.isFinite(defaultValue)) {
+    loadedAttemptsNumber = `${defaultValue} (Default)`;
+  } else if (loadedAttemptsNumber === defaultValue && _.isNil(defaultValue)) {
+    loadedAttemptsNumber = '';
+  }
   const [attemptDisplayValue, setAttemptDisplayValue] = module.state.attemptDisplayValue(loadedAttemptsNumber);
+
   const handleUnlimitedChange = (event) => {
     const isUnlimited = event.target.checked;
     if (isUnlimited) {
       setAttemptDisplayValue('');
-      updateSettings({ scoring: { ...scoring, attempts: { number: '', unlimited: true } } });
+      updateSettings({ scoring: { ...scoring, attempts: { number: null, unlimited: true } } });
     } else {
-      setAttemptDisplayValue(`${defaultValue} (Default)`);
-      updateSettings({ scoring: { ...scoring, attempts: { number: defaultValue, unlimited: false } } });
+      updateSettings({ scoring: { ...scoring, attempts: { number: null, unlimited: false } } });
     }
   };
+
   const handleMaxAttemptChange = (event) => {
     let unlimitedAttempts = false;
     let attemptNumber = parseInt(event.target.value);
-    const { value } = event.target;
-    if (_.isNaN(attemptNumber)) {
-      if (value === '') {
-        attemptNumber = defaultValue;
+
+    if (!_.isFinite(attemptNumber) || attemptNumber === defaultValue) {
+      attemptNumber = null;
+      if (_.isFinite(defaultValue)) {
         setAttemptDisplayValue(`${defaultValue} (Default)`);
       } else {
-        attemptNumber = '';
+        setAttemptDisplayValue('');
         unlimitedAttempts = true;
       }
     } else if (attemptNumber <= 0) {
       attemptNumber = 0;
-    } else if (attemptNumber === defaultValue) {
-      const attemptNumberStr = value.replace(' (Default)');
-      attemptNumber = parseInt(attemptNumberStr);
     }
+
     updateSettings({ scoring: { ...scoring, attempts: { number: attemptNumber, unlimited: unlimitedAttempts } } });
   };
 

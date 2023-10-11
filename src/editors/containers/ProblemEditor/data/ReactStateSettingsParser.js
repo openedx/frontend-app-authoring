@@ -19,7 +19,7 @@ class ReactStateSettingsParser {
     let settings = {};
     const stateSettings = this.problem.settings;
 
-    settings = popuplateItem(settings, 'number', 'max_attempts', stateSettings.scoring.attempts);
+    settings = popuplateItem(settings, 'number', 'max_attempts', stateSettings.scoring.attempts, true);
     settings = popuplateItem(settings, 'weight', 'weight', stateSettings.scoring);
     settings = popuplateItem(settings, 'on', 'showanswer', stateSettings.showAnswer);
     settings = popuplateItem(settings, 'afterAttempts', 'attempts_before_showanswer_button', stateSettings.showAnswer);

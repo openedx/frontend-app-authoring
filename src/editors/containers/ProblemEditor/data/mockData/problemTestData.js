@@ -356,7 +356,7 @@ export const singleSelectWithHints = {
       scoring: {
         attempts: {
           unlimited: true,
-          number: '',
+          number: null,
         },
       },
       timeBetween: 0,

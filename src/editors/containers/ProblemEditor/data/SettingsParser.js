@@ -2,27 +2,38 @@ import _ from 'lodash-es';
 
 import { ShowAnswerTypes, RandomizationTypesKeys } from '../../../data/constants/problem';
 
-export const popuplateItem = (parentObject, itemName, statekey, metadata) => {
+export const popuplateItem = (parentObject, itemName, statekey, metadata, allowNull = false) => {
   let parent = parentObject;
   const item = _.get(metadata, itemName, null);
-  if (!_.isNil(item)) {
+  if (!_.isNil(item) || allowNull) {
     parent = { ...parentObject, [statekey]: item };
   }
   return parent;
 };
 
-export const parseScoringSettings = (metadata) => {
+export const parseScoringSettings = (metadata, defaultSettings) => {
   let scoring = {};
 
-  let attempts = popuplateItem({}, 'max_attempts', 'number', metadata);
-  if (_.isEmpty(attempts) || _.isNaN(attempts.number)) {
-    attempts = { unlimited: true, number: '' };
-  } else {
-    attempts.unlimited = false;
-    if (attempts.number < 0) {
-      attempts.number = 0;
-    }
+  const attempts = popuplateItem({}, 'max_attempts', 'number', metadata);
+  const initialAttempts = _.get(attempts, 'number', null);
+  const defaultAttempts = _.get(defaultSettings, 'max_attempts', null);
+  attempts.unlimited = false;
+
+  // isFinite checks if value is a finite primitive number.
+  if (!_.isFinite(initialAttempts) || initialAttempts === defaultAttempts) {
+    // set number to null in any case as lms will pick default value if it exists.
+    attempts.number = null;
   }
+
+  // if both block number and default number are null set unlimited to true.
+  if (_.isNil(initialAttempts) && _.isNil(defaultAttempts)) {
+    attempts.unlimited = true;
+  }
+
+  if (attempts.number < 0) {
+    attempts.number = 0;
+  }
+
   scoring = { ...scoring, attempts };
 
   scoring = popuplateItem(scoring, 'weight', 'weight', metadata);
@@ -43,14 +54,14 @@ export const parseShowAnswer = (metadata) => {
   return showAnswer;
 };
 
-export const parseSettings = (metadata) => {
+export const parseSettings = (metadata, defaultSettings) => {
   let settings = {};
 
   if (_.isNil(metadata) || _.isEmpty(metadata)) {
     return settings;
   }
 
-  const scoring = parseScoringSettings(metadata);
+  const scoring = parseScoringSettings(metadata, defaultSettings);
   if (!_.isEmpty(scoring)) {
     settings = { ...settings, scoring };
   }
