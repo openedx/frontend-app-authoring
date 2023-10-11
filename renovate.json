@@ -19,8 +19,8 @@
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true,
       "schedule": [
-        "after 1am",
-        "before 11pm"
+        "after 9am",
+        "before 5pm"
       ]
     }
   ]
