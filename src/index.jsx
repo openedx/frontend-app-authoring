@@ -11,7 +11,7 @@ import { Route, Switch } from 'react-router-dom';
 import {
   QueryClient,
   QueryClientProvider,
-} from '@tanstack/react-query'
+} from '@tanstack/react-query';
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
@@ -27,7 +27,7 @@ import { TaxonomyListPage } from './taxonomy';
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 const App = () => {
   useEffect(() => {

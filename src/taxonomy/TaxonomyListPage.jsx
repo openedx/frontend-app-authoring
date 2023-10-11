@@ -13,7 +13,7 @@ import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import messages from './messages';
 import TaxonomyCard from './TaxonomyCard';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './api/hooks/selectors';
+import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './api/hooks/selectors.ts';
 
 const TaxonomyListPage = ({ intl }) => {
   const orgDefaultValue = intl.formatMessage(messages.orgInputSelectDefaultValue);
@@ -22,7 +22,7 @@ const TaxonomyListPage = ({ intl }) => {
     const taxonomyListData = useTaxonomyListDataResponse();
     const isLoaded = useIsTaxonomyListDataLoaded();
     return { taxonomyListData, isLoaded };
-  }
+  };
 
   const { taxonomyListData, isLoaded } = useTaxonomyListData();
 
@@ -96,10 +96,10 @@ const TaxonomyListPage = ({ intl }) => {
           {!isLoaded && (
             <Container className="d-flex justify-content-center mt-6">
               <Spinner
-              animation="border"
-              size="xl"
-              screenReaderText={intl.formatMessage(messages.usageLoadingMessage)}
-            />
+                animation="border"
+                size="xl"
+                screenReaderText={intl.formatMessage(messages.usageLoadingMessage)}
+              />
             </Container>
           )}
         </Container>

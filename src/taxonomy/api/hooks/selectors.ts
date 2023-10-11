@@ -7,7 +7,7 @@ export const useTaxonomyListDataResponse = (): types.TaxonomyListData => {
         return response.data.data;
     }
     return undefined;
-}
+};
 
 export const useIsTaxonomyListDataLoaded = (): boolean => (
     api.useTaxonomyListData().status === 'success'
