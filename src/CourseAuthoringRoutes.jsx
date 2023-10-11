@@ -45,11 +45,11 @@ const CourseAuthoringRoutes = () => {
         />
         <Route
           path="course_info"
-          element={<CourseUpdates courseId={courseId} />}
+          element={<PageWrap><CourseUpdates courseId={courseId} /></PageWrap>}
         />
         <Route
           path="assets"
-          element={<FilesAndUploads courseId={courseId} />}
+          element={<PageWrap><FilesAndUploads courseId={courseId} /></PageWrap>}
         />
         <Route
           path="videos"
@@ -64,8 +64,8 @@ const CourseAuthoringRoutes = () => {
           element={<PageWrap><ProctoredExamSettings courseId={courseId} /></PageWrap>}
         />
         <Route
-          path="custom_pages/*"
-          element={<CustomPages courseId={courseId} />}
+          path="custom-pages/*"
+          element={<PageWrap><CustomPages courseId={courseId} /></PageWrap>}
         />
         <Route
           path="/container/:blockId"
@@ -81,27 +81,27 @@ const CourseAuthoringRoutes = () => {
         />
         <Route
           path="settings/details"
-          element={<ScheduleAndDetails courseId={courseId} />}
+          element={<PageWrap><ScheduleAndDetails courseId={courseId} /></PageWrap>}
         />
         <Route
           path="settings/grading"
-          element={<GradingSettings courseId={courseId} />}
+          element={<PageWrap><GradingSettings courseId={courseId} /></PageWrap>}
         />
         <Route
           path="course_team"
-          element={<CourseTeam courseId={courseId} />}
+          element={<PageWrap><CourseTeam courseId={courseId} /></PageWrap>}
         />
         <Route
           path="settings/advanced"
-          element={<AdvancedSettings courseId={courseId} />}
+          element={<PageWrap><AdvancedSettings courseId={courseId} /></PageWrap>}
         />
         <Route
           path="import"
-          element={<CourseImportPage courseId={courseId} />}
+          element={<PageWrap><CourseImportPage courseId={courseId} /></PageWrap>}
         />
         <Route
           path="export"
-          element={<CourseExportPage courseId={courseId} />}
+          element={<PageWrap><CourseExportPage courseId={courseId} /></PageWrap>}
         />
       </Routes>
     </CourseAuthoringPage>

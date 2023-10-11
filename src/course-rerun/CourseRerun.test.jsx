@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { history, initializeMockApp } from '@edx/frontend-platform';
+import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import {
@@ -71,7 +71,7 @@ describe('<CourseRerun />', () => {
 
     fireEvent.click(cancelButton);
     waitFor(() => {
-      expect(history.location.pathname).toBe('/home');
+      expect(window.location.pathname).toBe('/home');
     });
   });
 
