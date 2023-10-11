@@ -78,6 +78,7 @@
     "@edx/frontend-build": "13.0.1",
     "@edx/reactifex": "^1.0.3",
     "@edx/stylelint-config-edx": "^2.3.0",
+    "@edx/typescript-config": "^1.0.1",
     "@testing-library/jest-dom": "5.16.4",
     "@testing-library/react": "12.1.5",
     "@testing-library/user-event": "^13.2.1",
@@ -88,6 +89,7 @@
     "glob": "7.2.0",
     "husky": "7.0.4",
     "react-test-renderer": "17.0.2",
-    "reactifex": "1.1.1"
+    "reactifex": "1.1.1",
+    "ts-loader": "^9.5.0"
   }
 }

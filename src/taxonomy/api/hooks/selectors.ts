@@ -1,7 +1,7 @@
 import * as api from './api';
-import * as types from '../types';
+import { TaxonomyListData } from '../types';
 
-export const useTaxonomyListDataResponse = (): types.TaxonomyListData => {
+export const useTaxonomyListDataResponse = (): TaxonomyListData | undefined => {
     const response = api.useTaxonomyListData()
     if (response.status === 'success') {
         return response.data.data;

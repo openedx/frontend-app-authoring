@@ -18,3 +18,7 @@ export interface TaxonomyListData {
     start: number;
     results: TaxonomyData[];
 };
+
+export interface QueryTaxonomyListData {
+    data: TaxonomyListData;
+};
