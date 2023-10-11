@@ -3,7 +3,8 @@
     "config:base",
     "schedule:daily",
     ":rebaseStalePrs",
-    ":semanticCommits"
+    ":semanticCommits",
+    ":dependencyDashboard"
   ],
   "timezone": "America/New_York",
   "patch": {
