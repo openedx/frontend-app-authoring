@@ -2,8 +2,7 @@
 @import "~@edx/brand/paragon/variables";
 @import "~@edx/paragon/scss/core/core";
 @import "~@edx/brand/paragon/overrides";
-@import "studio-header/header";
-@import "~@edx/frontend-component-footer/dist/footer";
+@import "header/header";
 @import "assets/scss/variables";
 @import "assets/scss/form";
 @import "assets/scss/utilities";
@@ -12,8 +11,11 @@
 @import "pages-and-resources/discussions/app-list/AppList";
 @import "advanced-settings/scss/AdvancedSettings";
 @import "grading-settings/scss/GradingSettings";
+@import "studio-home/scss/StudioHome";
 @import "generic/styles";
 @import "schedule-and-details/ScheduleAndDetails";
 @import "pages-and-resources/PagesAndResources";
 @import "course-team/CourseTeam";
 @import "course-updates/CourseUpdates";
+@import "export-page/CourseExportPage";
+@import "import-page/CourseImportPage";

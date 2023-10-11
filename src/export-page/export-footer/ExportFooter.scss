@@ -1,0 +1,14 @@
+.export-footer-list {
+  list-style: none;
+  padding-left: 0;
+
+  li {
+    padding-bottom: .3125rem;
+    border-bottom: 1px solid #E5E5E5;
+    margin-bottom: .3125rem;
+  }
+
+  li:last-child {
+    border-bottom: none;
+  }
+}

@@ -24,8 +24,12 @@ import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 import { RequestStatus } from '../data/constants';
 import SettingsComponent from './SettingsComponent';
 import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
+import getPageHeadTitle from '../generic/utils';
 
 const PagesAndResources = ({ courseId, intl }) => {
+  const courseDetails = useModel('courseDetails', courseId);
+  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchCourseApps(courseId));

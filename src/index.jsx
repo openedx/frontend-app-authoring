@@ -11,12 +11,13 @@ import { Route, Routes } from 'react-router-dom';
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
-import Placeholder from '@edx/frontend-lib-content-components';
 import messages from './i18n';
 
 import initializeStore from './store';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
+import { StudioHome } from './studio-home';
+import CourseRerun from './course-rerun';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
@@ -40,8 +41,9 @@ const App = () => {
     <AppProvider store={initializeStore()}>
       <Head />
       <Routes>
-        <Route path="/home" element={process.env.ENABLE_NEW_HOME_PAGE === 'true' ? <Placeholder /> : null} />
+        <Route path="/home" element={<StudioHome />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
+        <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
       </Routes>
     </AppProvider>
   );
@@ -70,6 +72,8 @@ initialize({
         ENABLE_PROGRESS_GRAPH_SETTINGS: process.env.ENABLE_PROGRESS_GRAPH_SETTINGS || 'false',
         ENABLE_TEAM_TYPE_SETTING: process.env.ENABLE_TEAM_TYPE_SETTING === 'true',
         BBB_LEARN_MORE_URL: process.env.BBB_LEARN_MORE_URL || '',
+        STUDIO_BASE_URL: process.env.STUDIO_BASE_URL || null,
+        STUDIO_SHORT_NAME: process.env.STUDIO_SHORT_NAME || null,
       }, 'CourseAuthoringConfig');
     },
   },

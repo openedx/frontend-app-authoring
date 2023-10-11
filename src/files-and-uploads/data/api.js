@@ -2,6 +2,9 @@
 import { camelCaseObject, ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
+import JSZip from 'jszip';
+import saveAs from 'file-saver';
+
 ensureConfig([
   'STUDIO_BASE_URL',
 ], 'Course Apps API service');
@@ -20,6 +23,62 @@ export async function getAssets(courseId, totalCount) {
     .get(`${getAssetsUrl(courseId)}?page_size=${pageCount}`);
   return camelCaseObject(data);
 }
+
+/**
+ * Fetch asset file.
+ * @param {blockId} courseId Course ID for the course to operate on
+
+ */
+export async function getDownload(selectedRows, courseId) {
+  const downloadErrors = [];
+  if (selectedRows?.length > 1) {
+    const zip = new JSZip();
+    const date = new Date().toString();
+    const folder = zip.folder(`${courseId}-assets-${date}`);
+    const assetNames = [];
+    const assetFetcher = await Promise.allSettled(
+      selectedRows.map(async (row) => {
+        const asset = row?.original;
+        try {
+          assetNames.push(asset.displayName);
+          const res = await fetch(`${getApiBaseUrl()}/${asset.id}`);
+          if (!res.ok) {
+            throw new Error();
+          }
+          return res.blob();
+        } catch (error) {
+          downloadErrors.push(`Failed to download ${asset?.displayName}.`);
+          return null;
+        }
+      }),
+    );
+    const definedAssets = assetFetcher.filter(asset => asset.value !== null);
+    if (definedAssets.length > 0) {
+      definedAssets.forEach((assetBlob, index) => {
+        folder.file(assetNames[index], assetBlob.value, { blob: true });
+      });
+      zip.generateAsync({ type: 'blob' }).then(content => {
+        saveAs(content, `${courseId}-assets-${date}.zip`);
+      });
+    }
+  } else if (selectedRows?.length === 1) {
+    const asset = selectedRows[0].original;
+    try {
+      saveAs(`${getApiBaseUrl()}/${asset.id}`, asset.displayName);
+    } catch (error) {
+      downloadErrors.push(`Failed to download ${asset?.displayName}.`);
+    }
+  } else {
+    downloadErrors.push('No files were selected to download');
+  }
+  return downloadErrors;
+}
+
+/**
+ * Fetch where asset is used in a course.
+ * @param {blockId} courseId Course ID for the course to operate on
+
+ */
 export async function getAssetUsagePaths({ courseId, assetId }) {
   const { data } = await getAuthenticatedHttpClient()
     .get(`${getAssetsUrl(courseId)}${assetId}/usage`);
@@ -27,7 +86,7 @@ export async function getAssetUsagePaths({ courseId, assetId }) {
 }
 
 /**
- * Delete custom page for provided block.
+ * Delete asset to course.
  * @param {blockId} courseId Course ID for the course to operate on
 
  */
@@ -37,7 +96,7 @@ export async function deleteAsset(courseId, assetId) {
 }
 
 /**
- * Add custom page for provided block.
+ * Add asset to course.
  * @param {blockId} courseId Course ID for the course to operate on
 
  */

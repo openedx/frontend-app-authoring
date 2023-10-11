@@ -16,7 +16,7 @@ const AddTeamMember = ({ onFormOpen, isButtonDisable }) => {
         <span className="text-gray-500 small">{intl.formatMessage(messages.description)}</span>
       </div>
       <Button
-        variant="outline-success"
+        variant="primary"
         iconBefore={IconAdd}
         onClick={onFormOpen}
         disabled={isButtonDisable}

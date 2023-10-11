@@ -29,7 +29,6 @@
     }
 
     .badge-current-user {
-      color: $gray-100;
       margin-left: .25rem;
     }
 
@@ -49,15 +48,5 @@
   .member-actions {
     display: flex;
     gap: $spacer;
-
-    .delete-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      & > span {
-        margin: 0;
-      }
-    }
   }
 }

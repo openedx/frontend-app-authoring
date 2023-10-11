@@ -163,37 +163,39 @@ describe('<CourseUpdates />', () => {
   });
 
   it('Add new update form is visible after clicking "New update" button', async () => {
-    const { getByText, getByRole, getAllByRole } = render(<RootWrapper />);
+    const { getByText, getByRole, getAllByTestId } = render(<RootWrapper />);
 
     await waitFor(() => {
-      const editButtons = getAllByRole('button', { name: 'Edit' });
-      const deleteButtons = getAllByRole('button', { name: 'Delete' });
+      const editUpdateButtons = getAllByTestId('course-update-edit-button');
+      const deleteButtons = getAllByTestId('course-update-delete-button');
+      const editHandoutsButtons = getAllByTestId('course-handouts-edit-button');
       const newUpdateButton = getByRole('button', { name: messages.newUpdateButton.defaultMessage });
 
       fireEvent.click(newUpdateButton);
 
       expect(newUpdateButton).toBeDisabled();
-      editButtons.forEach((button) => expect(button).toBeDisabled());
+      editUpdateButtons.forEach((button) => expect(button).toBeDisabled());
+      editHandoutsButtons.forEach((button) => expect(button).toBeDisabled());
       deleteButtons.forEach((button) => expect(button).toBeDisabled());
       expect(getByText('Add new update')).toBeInTheDocument();
     });
   });
 
   it('Edit handouts form is visible after clicking "Edit" button', async () => {
-    const {
-      getByText, getByRole, getByTestId, getAllByRole,
-    } = render(<RootWrapper />);
+    const { getByText, getByRole, getAllByTestId } = render(<RootWrapper />);
 
     await waitFor(() => {
-      const editHandoutsButton = getByTestId('course-handouts-edit-button');
-      const editButtons = getAllByRole('button', { name: 'Edit' });
-      const deleteButtons = getAllByRole('button', { name: 'Delete' });
+      const editUpdateButtons = getAllByTestId('course-update-edit-button');
+      const deleteButtons = getAllByTestId('course-update-delete-button');
+      const editHandoutsButtons = getAllByTestId('course-handouts-edit-button');
+      const editHandoutsButton = editHandoutsButtons[0];
 
       fireEvent.click(editHandoutsButton);
 
       expect(editHandoutsButton).toBeDisabled();
       expect(getByRole('button', { name: messages.newUpdateButton.defaultMessage })).toBeDisabled();
-      editButtons.forEach((button) => expect(button).toBeDisabled());
+      editUpdateButtons.forEach((button) => expect(button).toBeDisabled());
+      editHandoutsButtons.forEach((button) => expect(button).toBeDisabled());
       deleteButtons.forEach((button) => expect(button).toBeDisabled());
       expect(getByText('Edit handouts')).toBeInTheDocument();
     });
@@ -201,18 +203,20 @@ describe('<CourseUpdates />', () => {
 
   it('Edit update form is visible after clicking "Edit" button', async () => {
     const {
-      getByText, getByRole, getAllByTestId, getAllByRole, queryByText,
+      getByText, getByRole, getAllByTestId, queryByText,
     } = render(<RootWrapper />);
 
     await waitFor(() => {
-      const editUpdateFirstButton = getAllByTestId('course-update-edit-button')[0];
-      const editButtons = getAllByRole('button', { name: 'Edit' });
-      const deleteButtons = getAllByRole('button', { name: 'Delete' });
+      const editUpdateButtons = getAllByTestId('course-update-edit-button');
+      const deleteButtons = getAllByTestId('course-update-delete-button');
+      const editHandoutsButtons = getAllByTestId('course-handouts-edit-button');
+      const editUpdateFirstButton = editUpdateButtons[0];
 
       fireEvent.click(editUpdateFirstButton);
       expect(getByText('Edit update')).toBeInTheDocument();
       expect(getByRole('button', { name: messages.newUpdateButton.defaultMessage })).toBeDisabled();
-      editButtons.forEach((button) => expect(button).toBeDisabled());
+      editUpdateButtons.forEach((button) => expect(button).toBeDisabled());
+      editHandoutsButtons.forEach((button) => expect(button).toBeDisabled());
       deleteButtons.forEach((button) => expect(button).toBeDisabled());
       expect(queryByText(courseUpdatesMock[0].content)).not.toBeInTheDocument();
     });

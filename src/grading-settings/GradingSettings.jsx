@@ -7,6 +7,7 @@ import {
 } from '@edx/paragon';
 import { CheckCircle, Warning, Add as IconAdd } from '@edx/paragon/icons';
 
+import { useModel } from '../generic/model-store';
 import AlertMessage from '../generic/alert-message';
 import { RequestStatus } from '../data/constants';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
@@ -28,6 +29,7 @@ import AssignmentSection from './assignment-section';
 import CreditSection from './credit-section';
 import DeadlineSection from './deadline-section';
 import { useConvertGradeCutoffs, useUpdateGradingData } from './hooks';
+import getPageHeadTitle from '../generic/utils';
 
 const GradingSettings = ({ intl, courseId }) => {
   const gradingSettingsData = useSelector(getGradingSettings);
@@ -41,6 +43,9 @@ const GradingSettings = ({ intl, courseId }) => {
   const [isQueryPending, setIsQueryPending] = useState(false);
   const [showOverrideInternetConnectionAlert, setOverrideInternetConnectionAlert] = useState(false);
   const [eligibleGrade, setEligibleGrade] = useState(null);
+
+  const courseDetails = useModel('courseDetails', courseId);
+  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
 
   const {
     graders,
@@ -110,7 +115,7 @@ const GradingSettings = ({ intl, courseId }) => {
 
   return (
     <>
-      <Container size="xl" className="m-4">
+      <Container size="xl" className="px-4">
         <div className="mt-5">
           <AlertMessage
             show={showSuccessAlert}
@@ -181,10 +186,14 @@ const GradingSettings = ({ intl, courseId }) => {
                     />
                   </section>
                   <section>
-                    <SectionSubHeader
-                      title={intl.formatMessage(messages.assignmentTypeSectionTitle)}
-                      description={intl.formatMessage(messages.assignmentTypeSectionDescription)}
-                    />
+                    <header className="row justify-content-between align-items-center mt-4 mx-0 mb-2">
+                      <h2 className="lead">
+                        {intl.formatMessage(messages.assignmentTypeSectionTitle)}
+                      </h2>
+                      <span className="small text-gray-700">
+                        {intl.formatMessage(messages.assignmentTypeSectionDescription)}
+                      </span>
+                    </header>
                     <AssignmentSection
                       handleRemoveAssignment={handleRemoveAssignment}
                       setShowSavePrompt={setShowSavePrompt}
@@ -194,7 +203,7 @@ const GradingSettings = ({ intl, courseId }) => {
                       setShowSuccessAlert={setShowSuccessAlert}
                     />
                     <Button
-                      variant="outline-success"
+                      variant="primary"
                       iconBefore={IconAdd}
                       onClick={handleAddAssignment}
                     >

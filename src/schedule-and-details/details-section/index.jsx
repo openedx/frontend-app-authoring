@@ -23,7 +23,7 @@ const DetailsSection = ({
       />
       <Form.Group className="form-group-custom dropdown-language">
         <Form.Label>{intl.formatMessage(messages.dropdownLabel)}</Form.Label>
-        <Dropdown>
+        <Dropdown className="bg-white">
           <Dropdown.Toggle variant="outline-primary" id="languageDropdown">
             {formattedLanguage()}
           </Dropdown.Toggle>

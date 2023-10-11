@@ -66,9 +66,7 @@ describe('<CourseAuthoringRoutes>', () => {
     store = initializeStore();
   });
 
-  // TODO: This test needs to be corrected.
-  // The problem arose after moving new commits (https://github.com/raccoongang/frontend-app-course-authoring/pull/25)
-  it.skip('renders the PagesAndResources component when the pages and resources route is active', () => {
+  fit('renders the PagesAndResources component when the pages and resources route is active', () => {
     render(
       <AppProvider store={store} wrapWithRouter={false}>
         <MemoryRouter initialEntries={['/pages-and-resources']}>
@@ -77,7 +75,7 @@ describe('<CourseAuthoringRoutes>', () => {
       </AppProvider>,
     );
 
-    expect(screen.queryByText(pagesAndResourcesMockText)).toBeInTheDocument();
+    expect(screen.getByText(pagesAndResourcesMockText)).toBeVisible();
     expect(screen.queryByText(proctoredExamSeetingsMockText)).not.toBeInTheDocument();
     expect(mockComponentFn).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -86,9 +84,7 @@ describe('<CourseAuthoringRoutes>', () => {
     );
   });
 
-  // TODO: This test needs to be corrected.
-  // The problem arose after moving new commits (https://github.com/raccoongang/frontend-app-course-authoring/pull/25)
-  it.skip('renders the ProctoredExamSettings component when the proctored exam settings route is active', () => {
+  it('renders the ProctoredExamSettings component when the proctored exam settings route is active', () => {
     render(
       <AppProvider store={store} wrapWithRouter={false}>
         <MemoryRouter initialEntries={['/proctored-exam-settings']}>

@@ -40,16 +40,11 @@
 
   .form-control {
     min-height: 2.75rem;
-    width: $setting-form-control-width;
-  }
-
-  .pgn__card-section {
-    max-width: $setting-form-control-width;
+    flex-grow: 1;
   }
 
   .pgn__card-header {
     padding: 0 0 0 1.5rem;
-    flex-grow: 1;
   }
 
   .pgn__card-status {
@@ -59,8 +54,6 @@
   .pgn__card-header-content {
     margin-top: 1.438rem;
     margin-bottom: 1.438rem;
-    display: flex;
-    flex-direction: revert;
   }
 }
 

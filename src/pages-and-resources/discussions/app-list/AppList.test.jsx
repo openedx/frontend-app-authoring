@@ -79,7 +79,7 @@ describe('AppList', () => {
     });
 
     test.each([
-      { title: 'OK', description: 'Enable the toggle state by clicking on OK button' },
+      { title: 'Ok', description: 'Enable the toggle state by clicking on OK button' },
       { title: 'Cancel', description: 'Disable the toggle state by clicking on Cancel button' },
     ])('%s of the hide discussion tab', async ({ title }) => {
       renderComponent();

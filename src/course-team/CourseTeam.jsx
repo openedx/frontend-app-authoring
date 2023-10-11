@@ -9,6 +9,7 @@ import {
 import { Add as IconAdd } from '@edx/paragon/icons';
 
 import InternetConnectionAlert from '../generic/internet-connection-alert';
+import { useModel } from '../generic/model-store';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { USER_ROLES } from '../constants';
 import messages from './messages';
@@ -18,9 +19,13 @@ import AddTeamMember from './add-team-member/AddTeamMember';
 import CourseTeamMember from './course-team-member/CourseTeamMember';
 import InfoModal from './info-modal/InfoModal';
 import { useCourseTeam } from './hooks';
+import getPageHeadTitle from '../generic/utils';
 
 const CourseTeam = ({ courseId }) => {
   const intl = useIntl();
+
+  const courseDetails = useModel('courseDetails', courseId);
+  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
 
   const {
     modalType,
@@ -57,7 +62,7 @@ const CourseTeam = ({ courseId }) => {
 
   return (
     <>
-      <Container size="xl" className="m-4">
+      <Container size="xl" className="px-4">
         <section className="course-team-container mb-4">
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
@@ -74,7 +79,7 @@ const CourseTeam = ({ courseId }) => {
                     subtitle={intl.formatMessage(messages.headingSubtitle)}
                     headerActions={isAllowActions && (
                       <Button
-                        variant="outline-success"
+                        variant="primary"
                         iconBefore={IconAdd}
                         size="sm"
                         onClick={openForm}

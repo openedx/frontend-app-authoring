@@ -1,0 +1,65 @@
+// This SCSS was partly copied from edx/frontend-app-support-tools/src/support-header/index.scss.
+$spacer: 1rem;
+$white: #FFFFFF;
+
+.btn-tertiary:hover {
+  color: white;
+  background-color: #00262B;
+}
+
+.course-title-lockup {
+  @media only screen and (max-width: 768px) {
+    padding-left: .5rem;
+    max-width: 70%;
+  }
+
+  @media only screen and (min-width: 769px) {
+    padding: .5rem;
+    padding-right: $spacer;
+    border-right: 1px solid #E5E5E5;
+    min-width: 70%;
+  }
+
+  overflow: hidden;
+
+  span {
+    color: #333333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.375rem;
+  }
+}
+
+.site-header-mobile,
+.site-header-desktop {
+  position: relative;
+  z-index: 1000;
+}
+
+.site-header-mobile {
+  img {
+    height: 1.5rem;
+  }
+}
+
+.site-header-desktop {
+  height: 3.75rem;
+  box-shadow: 0 1px 0 0 rgb(0 0 0 / .1);
+  background: $white;
+
+  .logo {
+    display: block;
+    box-sizing: content-box;
+    position: relative;
+    top: -.05em;
+    height: 1.75rem;
+    padding: $spacer 0;
+    margin-right: $spacer;
+
+    img {
+      display: block;
+      height: 100%;
+    }
+  }
+}

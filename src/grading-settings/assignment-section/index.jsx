@@ -100,6 +100,7 @@ const AssignmentSection = ({
                 value={gradeField.weight}
                 onChange={(e) => handleAssignmentChange(e, gradeField.id)}
                 errorEffort={errorList[`${weight}-${gradeField.id}`]}
+                trailingElement="%"
               />
               <AssignmentItem
                 className="course-grading-assignment-total-number"
@@ -176,7 +177,7 @@ const AssignmentSection = ({
             )}
             <Button
               className="course-grading-assignment-delete-btn"
-              variant="tertiary"
+              variant="outline-primary"
               size="sm"
               onClick={() => handleRemoveAssignment(gradeField.id)}
             >

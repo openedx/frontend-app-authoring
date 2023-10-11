@@ -9,6 +9,7 @@ import {
 import { Add as AddIcon } from '@edx/paragon/icons';
 import { useSelector } from 'react-redux';
 
+import { useModel } from '../generic/model-store';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import ProcessingNotification from '../generic/processing-notification';
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -23,9 +24,13 @@ import messages from './messages';
 import { useCourseUpdates } from './hooks';
 import { getLoadingStatuses, getSavingStatuses } from './data/selectors';
 import { matchesAnyStatus } from './utils';
+import getPageHeadTitle from '../generic/utils';
 
 const CourseUpdates = ({ courseId }) => {
   const intl = useIntl();
+
+  const courseDetails = useModel('courseDetails', courseId);
+  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
 
   const {
     requestType,
@@ -58,7 +63,7 @@ const CourseUpdates = ({ courseId }) => {
 
   return (
     <>
-      <Container size="xl" className="m-4">
+      <Container size="xl" className="px-4">
         <section className="setting-items mb-4 mt-5">
           <Layout
             lg={[{ span: 12 }]}
@@ -76,7 +81,7 @@ const CourseUpdates = ({ courseId }) => {
                     instruction={intl.formatMessage(messages.sectionInfo)}
                     headerActions={(
                       <Button
-                        variant="outline-primary"
+                        variant="primary"
                         iconBefore={AddIcon}
                         size="sm"
                         onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}

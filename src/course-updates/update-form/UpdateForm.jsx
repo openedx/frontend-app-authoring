@@ -91,7 +91,7 @@ const UpdateForm = ({
                 </div>
                 {!isValid && (
                   <div className="datepicker-field-error">
-                    <Icon src={ErrorIcon} alt={intl.formatMessage(messages.updateFormErrorAltText)} />
+                    <Icon src={ErrorIcon} className="text-danger-500" alt={intl.formatMessage(messages.updateFormErrorAltText)} />
                     <span className="message-error">{intl.formatMessage(messages.updateFormInValid)}</span>
                   </div>
                 )}

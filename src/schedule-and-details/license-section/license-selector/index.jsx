@@ -49,7 +49,7 @@ const LicenseSelector = ({ licenseType, onChangeLicenseType }) => {
       <p className="text-black mb-2.5">
         <FormattedMessage {...messages.licenseType} />
       </p>
-      <ButtonGroup>
+      <ButtonGroup className="bg-white">
         {renderButton(LICENSE_TYPE.allRightsReserved)}
         {renderButton(LICENSE_TYPE.creativeCommons)}
       </ButtonGroup>

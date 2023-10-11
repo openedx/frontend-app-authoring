@@ -12,6 +12,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import Placeholder from '@edx/frontend-lib-content-components';
 
 import { RequestStatus } from '../data/constants';
+import { useModel } from '../generic/model-store';
 import AlertMessage from '../generic/alert-message';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { STATEFUL_BUTTON_STATES } from '../constants';
@@ -39,6 +40,7 @@ import LicenseSection from './license-section';
 import ScheduleSidebar from './schedule-sidebar';
 import messages from './messages';
 import { useSaveValuesPrompt } from './hooks';
+import getPageHeadTitle from '../generic/utils';
 
 const ScheduleAndDetails = ({ intl, courseId }) => {
   const courseSettings = useSelector(getCourseSettings);
@@ -47,6 +49,9 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
   const loadingSettingsStatus = useSelector(getLoadingSettingsStatus);
   const isLoading = loadingDetailsStatus === RequestStatus.IN_PROGRESS
     || loadingSettingsStatus === RequestStatus.IN_PROGRESS;
+
+  const course = useModel('courseDetails', courseId);
+  document.title = getPageHeadTitle(course?.name, intl.formatMessage(messages.headingTitle));
 
   const {
     errorFields,
@@ -156,7 +161,7 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
 
   return (
     <>
-      <Container size="xl" className="m-4">
+      <Container size="xl" className="px-4">
         <div className="mt-5">
           <AlertMessage
             show={showSuccessfulAlert}

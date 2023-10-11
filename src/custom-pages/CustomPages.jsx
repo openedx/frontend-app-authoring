@@ -27,7 +27,7 @@ import Placeholder, {
 } from '@edx/frontend-lib-content-components';
 
 import { RequestStatus } from '../data/constants';
-import { useModels } from '../generic/model-store';
+import { useModels, useModel } from '../generic/model-store';
 import { getLoadingStatus, getSavingStatus } from './data/selectors';
 import {
   addSingleCustomPage,
@@ -41,6 +41,7 @@ import CustomPageCard from './CustomPageCard';
 import messages from './messages';
 import CustomPagesProvider from './CustomPagesProvider';
 import EditModal from './EditModal';
+import getPageHeadTitle from '../generic/utils';
 
 const CustomPages = ({
   courseId,
@@ -53,6 +54,9 @@ const CustomPages = ({
   const [currentPage, setCurrentPage] = useState();
   const [isOpen, open, close] = useToggle(false);
   const [isEditModalOpen, openEditModal, closeEditModal] = useToggle(false);
+
+  const courseDetails = useModel('courseDetails', courseId);
+  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
 
   const { config } = useContext(AppContext);
   const location = useLocation();

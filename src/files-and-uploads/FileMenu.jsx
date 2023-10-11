@@ -12,6 +12,7 @@ const FileMenu = ({
   externalUrl,
   handleLock,
   locked,
+  onDownload,
   openAssetInfo,
   openDeleteConfirmation,
   portableUrl,
@@ -40,7 +41,7 @@ const FileMenu = ({
       >
         {intl.formatMessage(messages.copyWebUrlTitle)}
       </Dropdown.Item>
-      <Dropdown.Item href={externalUrl} target="_blank" download>
+      <Dropdown.Item onClick={onDownload}>
         {intl.formatMessage(messages.downloadTitle)}
       </Dropdown.Item>
       <Dropdown.Item onClick={handleLock}>
@@ -64,6 +65,7 @@ FileMenu.propTypes = {
   externalUrl: PropTypes.string.isRequired,
   handleLock: PropTypes.func.isRequired,
   locked: PropTypes.bool.isRequired,
+  onDownload: PropTypes.func.isRequired,
   openAssetInfo: PropTypes.func.isRequired,
   openDeleteConfirmation: PropTypes.func.isRequired,
   portableUrl: PropTypes.string.isRequired,

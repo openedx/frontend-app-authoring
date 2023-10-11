@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   assignmentTypeNameErrorMessage2: {
     id: 'course-authoring.grading-settings.assignment.type-name.error.message-2',
-    defaultMessage: 'For grading to work, you must change all {initialAssignmentName} subsections to {value}',
+    defaultMessage: 'For grading to work, you must change all {initialAssignmentName} subsections to {value}.',
   },
   assignmentTypeNameErrorMessage3: {
     id: 'course-authoring.grading-settings.assignment.type-name.error.message-3',

@@ -13,6 +13,10 @@ const messages = defineMessages({
     id: 'course-authoring.grading-settings.fail-segment.text',
     defaultMessage: 'Fail',
   },
+  defaultPassText: {
+    id: 'course-authoring.grading-settings.default.pass.text',
+    defaultMessage: 'Pass',
+  },
 });
 
 export default messages;

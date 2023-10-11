@@ -25,6 +25,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-team.member.button.remove',
     defaultMessage: 'Remove admin access',
   },
+  deleteUserButton: {
+    id: 'course-authoring.course-team.member.button.delete',
+    defaultMessage: 'Delete user',
+  },
 });
 
 export default messages;
