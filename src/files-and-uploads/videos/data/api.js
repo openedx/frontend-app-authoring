@@ -2,8 +2,8 @@
 import { camelCaseObject, ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-// import JSZip from 'jszip';
-// import saveAs from 'file-saver';
+import JSZip from 'jszip';
+import saveAs from 'file-saver';
 
 ensureConfig([
   'STUDIO_BASE_URL',
@@ -35,64 +35,104 @@ export async function fetchVideoList(courseId) {
   return camelCaseObject(data);
 }
 
+export async function deleteTranscript({ videoId, language, apiUrl }) {
+  await getAuthenticatedHttpClient()
+    .delete(`${getApiBaseUrl()}${apiUrl}/${videoId}/${language}`);
+}
+
+export async function downloadTranscriipt({
+  videoId,
+  language,
+  apiUrl,
+  filename,
+}) {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(`${getApiBaseUrl()}${apiUrl}?edx_video_id=${videoId}&language_code=${language}`);
+  const file = new Blob([data], { type: 'text/plain;charset=utf-8' });
+  saveAs(file, filename);
+}
+
+export async function uploadTranscript({
+  videoId,
+  newLanguage,
+  apiUrl,
+  file,
+  language,
+}) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('edx_video_id', videoId);
+  formData.append('language_code', language);
+  formData.append('new_langage_code', newLanguage);
+  await getAuthenticatedHttpClient().post(`${getApiBaseUrl()}${apiUrl}`, formData);
+}
+
+export async function getDownloadLink(courseId, edxVideoId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(`${getVideosUrl(courseId)}/${edxVideoId}`);
+  return camelCaseObject(data);
+}
+
+/**
+ * Fetch video file.
+ * @param {blockId} courseId Course ID for the course to operate on
+
+ */
+export async function getDownload(selectedRows, courseId) {
+  const downloadErrors = [];
+  if (selectedRows?.length > 1) {
+    const zip = new JSZip();
+    const date = new Date().toString();
+    const folder = zip.folder(`${courseId}-videos-${date}`);
+    const videoNames = [];
+    const videoFetcher = await Promise.allSettled(
+      selectedRows.map(async (row) => {
+        const video = row?.original;
+        try {
+          videoNames.push(video.displayName);
+          const { downloadLink } = await getDownloadLink(courseId, video.id);
+          const res = await fetch(downloadLink);
+          if (!res.ok) {
+            throw new Error();
+          }
+          return res.blob();
+        } catch (error) {
+          downloadErrors.push(`Failed to download ${video?.displayName}.`);
+          return null;
+        }
+      }),
+    );
+    const definedVideos = videoFetcher.filter(video => video.value !== null);
+    if (definedVideos.length > 0) {
+      definedVideos.forEach((videoBlob, index) => {
+        folder.file(videoNames[index], videoBlob.value, { blob: true });
+      });
+      zip.generateAsync({ type: 'blob' }).then(content => {
+        saveAs(content, `${courseId}-videos-${date}.zip`);
+      });
+    }
+  } else if (selectedRows?.length === 1) {
+    const video = selectedRows[0].original;
+    try {
+      const { downloadLink } = await getDownloadLink(courseId, video.id);
+      saveAs(downloadLink, video.displayName);
+    } catch (error) {
+      downloadErrors.push(`Failed to download ${video?.displayName}.`);
+    }
+  } else {
+    downloadErrors.push('No files were selected to download');
+  }
+  return downloadErrors;
+}
+
 // /**
-//  * Fetch asset file.
+//  * Fetch where video is used in a course.
 //  * @param {blockId} courseId Course ID for the course to operate on
 
 //  */
-// export async function getDownload(selectedRows, courseId) {
-//   const downloadErrors = [];
-//   if (selectedRows?.length > 1) {
-//     const zip = new JSZip();
-//     const date = new Date().toString();
-//     const folder = zip.folder(`${courseId}-assets-${date}`);
-//     const assetNames = [];
-//     const assetFetcher = await Promise.allSettled(
-//       selectedRows.map(async (row) => {
-//         const asset = row?.original;
-//         try {
-//           assetNames.push(asset.displayName);
-//           const res = await fetch(`${getApiBaseUrl()}/${asset.id}`);
-//           if (!res.ok) {
-//             throw new Error();
-//           }
-//           return res.blob();
-//         } catch (error) {
-//           downloadErrors.push(`Failed to download ${asset?.displayName}.`);
-//           return null;
-//         }
-//       }),
-//     );
-//     const definedAssets = assetFetcher.filter(asset => asset.value !== null);
-//     if (definedAssets.length > 0) {
-//       definedAssets.forEach((assetBlob, index) => {
-//         folder.file(assetNames[index], assetBlob.value, { blob: true });
-//       });
-//       zip.generateAsync({ type: 'blob' }).then(content => {
-//         saveAs(content, `${courseId}-assets-${date}.zip`);
-//       });
-//     }
-//   } else if (selectedRows?.length === 1) {
-//     const asset = selectedRows[0].original;
-//     try {
-//       saveAs(`${getApiBaseUrl()}/${asset.id}`, asset.displayName);
-//     } catch (error) {
-//       downloadErrors.push(`Failed to download ${asset?.displayName}.`);
-//     }
-//   } else {
-//     downloadErrors.push('No files were selected to download');
-//   }
-//   return downloadErrors;
-// }
-
-// /**
-//  * Fetch where asset is used in a course.
-//  * @param {blockId} courseId Course ID for the course to operate on
-
-//  */
-// export async function getAssetUsagePaths({ courseId, assetId }) {
+// export async function getAssetUsagePaths({ courseId, videoId }) {
 //   const { data } = await getAuthenticatedHttpClient()
-//     .get(`${getAssetsUrl(courseId)}${assetId}/usage`);
+//     .get(`${getAssetsUrl(courseId)}${videoId}/usage`);
 //   return camelCaseObject(data);
 // }
 

@@ -14,6 +14,10 @@ import {
   fetchVideoList,
   getVideos,
   uploadVideo,
+  getDownload,
+  deleteTranscript,
+  downloadTranscriipt,
+  uploadTranscript,
 } from './api';
 import {
   setVideoIds,
@@ -23,7 +27,7 @@ import {
   deleteVideoSuccess,
   addVideoSuccess,
   updateErrors,
-  // clearErrors,
+  clearErrors,
   updateEditStatus,
 } from './slice';
 
@@ -151,9 +155,115 @@ export function addVideoThumbnail({ file, videoId, courseId }) {
   };
 }
 
-// export function resetErrors({ errorType }) {
-//   return (dispatch) => { dispatch(clearErrors({ error: errorType })); };
-// }
+export function deleteVideoTranscript({
+  language,
+  videoId,
+  transcripts,
+  apiUrl,
+}) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      await deleteTranscript({
+        videoId,
+        language,
+        apiUrl,
+      });
+      const updatedTranscripts = transcripts.filter(transcript => transcript !== language);
+      dispatch(updateModel({
+        modelType: 'videos',
+        model: {
+          id: videoId,
+          transcripts: updatedTranscripts,
+        },
+      }));
+
+      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateErrors({ error: 'transcript', message: `Failed to delete ${language} transcript.` }));
+      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function downloadVideoTranscript({
+  language,
+  videoId,
+  filename,
+  apiUrl,
+}) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      await downloadTranscriipt({
+        videoId,
+        language,
+        apiUrl,
+        filename,
+      });
+      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateErrors({ error: 'transcript', message: `Failed to download ${filename}.` }));
+      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function uploadVideoTranscript({
+  language,
+  newLanguage,
+  videoId,
+  file,
+  apiUrl,
+  transcripts,
+}) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.IN_PROGRESS }));
+    const isReplacement = !isEmpty(language);
+
+    try {
+      await uploadTranscript({
+        videoId,
+        language,
+        apiUrl,
+        file,
+        newLanguage,
+      });
+      let updatedTranscripts = transcripts;
+      if (isReplacement) {
+        const removeTranscript = transcripts.filter(transcript => transcript !== language);
+        updatedTranscripts = [...removeTranscript, newLanguage];
+      } else {
+        updatedTranscripts = [...transcripts, newLanguage];
+      }
+
+      dispatch(updateModel({
+        modelType: 'videos',
+        model: {
+          id: videoId,
+          transcripts: updatedTranscripts,
+        },
+      }));
+
+      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      if (error.response) {
+        const message = error.response.data.error;
+        dispatch(updateErrors({ error: 'transcript', message }));
+      } else {
+        const message = isReplacement ? `Failed to replace ${language} with ${newLanguage}.` : `Failed to add ${newLanguage}.`;
+        dispatch(updateErrors({ error: 'transcript', message }));
+      }
+      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function resetErrors({ errorType }) {
+  return (dispatch) => { dispatch(clearErrors({ error: errorType })); };
+}
 
 // export function getUsagePaths({ asset, courseId, setSelectedRows }) {
 //   return async (dispatch) => {
@@ -172,17 +282,17 @@ export function addVideoThumbnail({ file, videoId, courseId }) {
 //   };
 // }
 
-// export function fetchAssetDownload({ selectedRows, courseId }) {
-//   return async (dispatch) => {
-//     dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.IN_PROGRESS }));
-//     const errors = await getDownload(selectedRows, courseId);
-//     if (isEmpty(errors)) {
-//       dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.SUCCESSFUL }));
-//     } else {
-//       errors.forEach(error => {
-//         dispatch(updateErrors({ error: 'download', message: error }));
-//       });
-//       dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.FAILED }));
-//     }
-//   };
-// }
+export function fetchVideoDownload({ selectedRows, courseId }) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.IN_PROGRESS }));
+    const errors = await getDownload(selectedRows, courseId);
+    if (isEmpty(errors)) {
+      dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.SUCCESSFUL }));
+    } else {
+      errors.forEach(error => {
+        dispatch(updateErrors({ error: 'download', message: error }));
+      });
+      dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.FAILED }));
+    }
+  };
+}

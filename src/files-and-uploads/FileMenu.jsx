@@ -73,17 +73,24 @@ const FileMenu = ({
 );
 
 FileMenu.propTypes = {
-  externalUrl: PropTypes.string.isRequired,
-  handleLock: PropTypes.func.isRequired,
-  locked: PropTypes.bool.isRequired,
+  externalUrl: PropTypes.string,
+  handleLock: PropTypes.func,
+  locked: PropTypes.bool,
   onDownload: PropTypes.func.isRequired,
   openAssetInfo: PropTypes.func.isRequired,
   openDeleteConfirmation: PropTypes.func.isRequired,
-  portableUrl: PropTypes.string.isRequired,
+  portableUrl: PropTypes.string,
   id: PropTypes.string.isRequired,
   wrapperType: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
+};
+
+FileMenu.defaultProps = {
+  externalUrl: null,
+  handleLock: () => {},
+  locked: null,
+  portableUrl: null,
 };
 
 export default injectIntl(FileMenu);

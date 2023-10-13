@@ -45,7 +45,6 @@ const TableActions = ({
         <Dropdown.Menu>
           {encodingsDownloadUrl ? (
             <Dropdown.Item
-              // as={Button}
               download
               href={`${getConfig().STUDIO_BASE_URL}${encodingsDownloadUrl}`}
             >
@@ -172,11 +171,11 @@ TableActions.propTypes = {
       original: PropTypes.shape({
         displayName: PropTypes.string.isRequired,
         wrapperType: PropTypes.string.isRequired,
-        locked: PropTypes.bool.isRequired,
-        externalUrl: PropTypes.string.isRequired,
+        locked: PropTypes.bool,
+        externalUrl: PropTypes.string,
         thumbnail: PropTypes.string,
         id: PropTypes.string.isRequired,
-        portableUrl: PropTypes.string.isRequired,
+        portableUrl: PropTypes.string,
       }).isRequired,
     }),
   ),

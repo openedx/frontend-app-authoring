@@ -15,7 +15,7 @@ const FileInfoVideoSidebar = ({
     <Tab eventKey="fileInfo" title="Info">
       <InfoTab {...{ video }} />
     </Tab>
-    <Tab eventKey="fileTranscripts" title="Transcripts">
+    <Tab eventKey="fileTranscripts" title={`Transcripts (${video.transcripts.length})`}>
       <TranscriptTab {...{ video }} />
     </Tab>
   </Tabs>
@@ -28,6 +28,7 @@ FileInfoVideoSidebar.propTypes = {
     id: PropTypes.string.isRequired,
     dateAdded: PropTypes.string.isRequired,
     fileSize: PropTypes.number.isRequired,
+    transcripts: PropTypes.arrayOf(PropTypes.string),
   }),
 };
 

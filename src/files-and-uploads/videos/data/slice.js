@@ -13,12 +13,14 @@ const slice = createSlice({
     addingStatus: '',
     deletingStatus: '',
     usageStatus: '',
+    transcriptStatus: '',
     errors: {
       add: [],
       delete: [],
       thumbnail: [],
       download: [],
       usageMetrics: [],
+      transcript: [],
     },
     totalCount: 0,
   },
@@ -52,6 +54,9 @@ const slice = createSlice({
         break;
       case 'usageMetrics':
         state.usageStatus = status;
+        break;
+      case 'transcript':
+        state.transcriptStatus = status;
         break;
       default:
         break;

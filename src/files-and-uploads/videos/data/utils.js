@@ -1,4 +1,3 @@
-import { InsertDriveFile, Terminal, AudioFile } from '@edx/paragon/icons';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import { isArray, isEmpty } from 'lodash';
 import {
@@ -45,37 +44,24 @@ export const updateFileValues = (files) => {
   return updatedFiles;
 };
 
-export const getSrc = ({ thumbnail, wrapperType, externalUrl }) => {
-  if (thumbnail) {
-    return externalUrl || `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
+export const getFormattedDuration = (value) => {
+  if (!value || typeof value !== 'number' || value <= 0) {
+    return '00:00:00';
   }
-  switch (wrapperType) {
-  case 'document':
-    return InsertDriveFile;
-  case 'code':
-    return Terminal;
-  case 'audio':
-    return AudioFile;
-  default:
-    return InsertDriveFile;
-  }
+  const seconds = Math.floor(value % 60);
+  const minutes = Math.floor((value / 60) % 60);
+  const hours = Math.floor((value / 360) % 60);
+  const zeroPad = (num) => String(num).padStart(2, '0');
+  return [hours, minutes, seconds].map(zeroPad).join(':');
 };
 
-export const getFileSizeToClosestByte = (fileSize, numberOfDivides = 0) => {
-  if (fileSize > 1000) {
-    const updatedSize = fileSize / 1000;
-    const incrementNumberOfDivides = numberOfDivides + 1;
-    return getFileSizeToClosestByte(updatedSize, incrementNumberOfDivides);
-  }
-  const fileSizeFixedDecimal = Number.parseFloat(fileSize).toFixed(2);
-  switch (numberOfDivides) {
-  case 1:
-    return `${fileSizeFixedDecimal} KB`;
-  case 2:
-    return `${fileSizeFixedDecimal} MB`;
-  default:
-    return `${fileSizeFixedDecimal} B`;
-  }
+export const getLanguages = (availableLanguages) => {
+  const languages = {};
+  availableLanguages?.forEach(language => {
+    const { languageCode, languageText } = language;
+    languages[languageCode] = languageText;
+  });
+  return languages;
 };
 
 export const sortFiles = (files, sortType) => {

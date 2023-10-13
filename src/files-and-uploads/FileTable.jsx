@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
@@ -70,6 +70,17 @@ const FileTable = ({
     encodingsDownloadUrl,
     supportedFileFormats,
   } = data;
+  useEffect(() => {
+    if (selectedRows) {
+      const udpatedRows = [];
+      selectedRows.forEach(row => {
+        const currentFile = row.original;
+        const [updatedFile] = files.filter(file => file.id === currentFile.id);
+        udpatedRows.push({ original: updatedFile });
+      });
+      setSelectedRows(udpatedRows);
+    }
+  }, [files]);
 
   const fileInputControl = useFileInput({
     onAddFile: (file) => handleAddFile(file),
