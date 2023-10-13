@@ -32,7 +32,7 @@ const GalleryCard = ({
   });
 
   return (
-    <Card className={`${className} w-100`} data-testid={`grid-card-${original.id}`}>
+    <Card className={`${className} w-100 gallery-card`} data-testid={`grid-card-${original.id}`}>
       <Card.Header
         actions={(
           <ActionRow>
@@ -54,15 +54,10 @@ const GalleryCard = ({
       />
       <Card.Section>
         <div
-          className="row align-items-center justify-content-center m-0"
-          style={{
-            width: '100%',
-            background: 'black', // TODO: remove
-            aspectRatio: '1 / 1',
-          }}
+          className="row align-items-center justify-content-center m-0 thumbnail-container"
         >
           {original.thumbnail ? (
-            <Image src={src} style={{ maxHeight: '100%', maxWidth: '100%', width: 'auto' }} className="border rounded" />
+            <Image src={src} className="border rounded w-auto mw-100 mh-100 thumbnail-image" />
           ) : (
             <div className="row border justify-content-center align-items-center rounded m-0">
               <Icon src={src} style={{ height: '48px', width: '48px' }} />
