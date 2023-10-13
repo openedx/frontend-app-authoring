@@ -14,13 +14,13 @@ import './TaxonomyCard.scss';
 
 const TaxonomyCard = ({ className, original, intl }) => {
   const {
-    name, description, isSystemDefined, orgsCount,
+    name, description, systemDefined, orgsCount,
   } = original;
 
   const orgsCountEnabled = () => orgsCount !== undefined && orgsCount !== 0;
 
   const getHeaderSubtitle = () => {
-    if (isSystemDefined) {
+    if (systemDefined) {
       return (
         <Badge variant="light">
           {intl.formatMessage(messages.systemDefinedBadge)}
@@ -45,8 +45,8 @@ const TaxonomyCard = ({ className, original, intl }) => {
         actions={<Button variant="link"><Icon className="text-dark-900" src={MoreVert} /></Button>}
       />
       <Card.Body className={classNames('taxonomy-card-body', {
-        'taxonomy-card-body-overflow-m': !isSystemDefined && !orgsCountEnabled(),
-        'taxonomy-card-body-overflow-sm': isSystemDefined || orgsCountEnabled(),
+        'taxonomy-card-body-overflow-m': !systemDefined && !orgsCountEnabled(),
+        'taxonomy-card-body-overflow-sm': systemDefined || orgsCountEnabled(),
       })}
       >
         <Card.Section>
@@ -66,7 +66,7 @@ TaxonomyCard.propTypes = {
   original: PropTypes.shape({
     name: PropTypes.string,
     description: PropTypes.string,
-    isSystemDefined: PropTypes.bool,
+    systemDefined: PropTypes.bool,
     orgsCount: PropTypes.number,
   }).isRequired,
   intl: intlShape.isRequired,

@@ -78,12 +78,13 @@ const TaxonomyListPage = ({ intl }) => {
               data={taxonomyListData.results}
               columns={[
                 {
-                  Header: 'Name',
                   accessor: 'name',
                 },
                 {
-                  Header: 'Description',
                   accessor: 'description',
+                },
+                {
+                  accessor: 'systemDefined',
                 },
               ]}
             >

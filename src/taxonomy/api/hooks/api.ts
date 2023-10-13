@@ -5,7 +5,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { QueryTaxonomyListData } from '../types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-const getTaxonomyListApiUrl = new URL('api/content_tagging/v1/taxonomies/', getApiBaseUrl()).href;
+const getTaxonomyListApiUrl = new URL('api/content_tagging/v1/taxonomies/?enabled=true', getApiBaseUrl()).href;
 
 export const useTaxonomyListData = (): UseQueryResult<QueryTaxonomyListData> => (
   useQuery({

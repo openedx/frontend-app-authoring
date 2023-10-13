@@ -25,6 +25,10 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-list.orgs-count.label',
     defaultMessage: 'Assigned to {orgsCount} orgs',
   },
+  usageLoadingMessage: {
+    id: 'course-authoring.taxonomy-list.spinner.loading',
+    defaultMessage: 'Loading',
+  },
 });
 
 export default messages;
