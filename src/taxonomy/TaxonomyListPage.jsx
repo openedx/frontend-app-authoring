@@ -1,13 +1,10 @@
 import React from 'react';
 import {
-  Button,
   CardView,
   Container,
   DataTable,
-  FormControl,
   Spinner,
 } from '@edx/paragon';
-import { Add } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -16,8 +13,6 @@ import TaxonomyCard from './TaxonomyCard';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './api/hooks/selectors.ts';
 
 const TaxonomyListPage = ({ intl }) => {
-  const orgDefaultValue = intl.formatMessage(messages.orgInputSelectDefaultValue);
-
   const useTaxonomyListData = () => {
     const taxonomyListData = useTaxonomyListDataResponse();
     const isLoaded = useIsTaxonomyListDataLoaded();
@@ -26,28 +21,16 @@ const TaxonomyListPage = ({ intl }) => {
 
   const { taxonomyListData, isLoaded } = useTaxonomyListData();
 
-  const getHeaderButtons = () => [
-    (
-      <Button
-        variant="link"
-        className="text-dark-900"
-      >
-        {intl.formatMessage(messages.downloadTemplateButtonLabel)}
-      </Button>
-    ),
-    (
-      <Button
-        iconBefore={Add}
-      >
-        {intl.formatMessage(messages.importButtonLabel)}
-      </Button>
-    ),
-  ];
+  const getHeaderButtons = () => (
+    // Download template and import buttons.
+    // TODO Add functionality to this buttons.
+    undefined
+  );
 
   const getOrgSelect = () => (
-    <FormControl as="select" defaultValue={orgDefaultValue} controlClassName="border-0">
-      <option>{orgDefaultValue}</option>
-    </FormControl>
+    // Organization select component
+    // TODO Add functionality to this component
+    undefined
   );
 
   return (
