@@ -15,8 +15,8 @@ import { AppProvider, PageRoute } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import userEvent from '@testing-library/user-event';
-import initializeStore from '../../store';
-import { executeThunk } from '../../utils';
+import initializeStore from 'CourseAuthoring/store';
+import { executeThunk } from 'CourseAuthoring/utils';
 import LiveSettings from './Settings';
 import {
   generateLiveConfigurationApiResponse,

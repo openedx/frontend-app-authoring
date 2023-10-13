@@ -1,0 +1,9 @@
+{
+    "name": "@openedx-plugins/course-app-edxnotes",
+    "version": "0.1.0",
+    "description": "edxnotes configuration for courses using it",
+    "dependencies": {
+    },
+    "devDependencies": {}
+}
+  

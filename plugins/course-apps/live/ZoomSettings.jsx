@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import messages from './messages';
 import { providerNames } from './constants';
 import LiveCommonFields from './LiveCommonFields';
-import FormikControl from '../../generic/FormikControl';
+import FormikControl from 'CourseAuthoring/generic/FormikControl';
 
 const ZoomSettings = ({
   intl,

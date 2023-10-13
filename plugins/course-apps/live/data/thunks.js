@@ -1,5 +1,5 @@
 import { history } from '@edx/frontend-platform';
-import { addModel, addModels, updateModel } from '../../../generic/model-store';
+import { addModel, addModels, updateModel } from 'CourseAuthoring/generic/model-store';
 import {
   getLiveConfiguration,
   getLiveProviders,
@@ -8,7 +8,7 @@ import {
   deNormalizeSettings,
 } from './api';
 import { loadApps, updateStatus, updateSaveStatus } from './slice';
-import { RequestStatus } from '../../../data/constants';
+import { RequestStatus } from 'CourseAuthoring/data/constants';
 
 function updateLiveSettingsState({
   appConfig,

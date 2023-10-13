@@ -5,9 +5,9 @@ import { Form, Hyperlink } from '@edx/paragon';
 import PropTypes from 'prop-types';
 import messages from './messages';
 import { providerNames, bbbPlanTypes } from './constants';
-import AppConfigFormDivider from '../discussions/app-config-form/apps/shared/AppConfigFormDivider';
+import AppConfigFormDivider from 'CourseAuthoring/pages-and-resources/discussions/app-config-form/apps/shared/AppConfigFormDivider';
 import LiveCommonFields from './LiveCommonFields';
-import { useModel } from '../../generic/model-store';
+import { useModel } from 'CourseAuthoring/generic/model-store';
 
 const BbbSettings = ({
   intl,

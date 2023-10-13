@@ -125,6 +125,8 @@ const AppSettingsModal = ({
   const updateSettingsRequestStatus = useSelector(getSavingStatus);
   const alertRef = useRef(null);
   const [saveError, setSaveError] = useState(false);
+  // FIXME: open the "Live" settings, then refresh the page. The courseApps model is not loaded, and an error occurs
+  // when trying to access 'appInfo.documentationLinks'. This happens even before the refactor to use plugins.
   const appInfo = useModel('courseApps', appId);
   const dispatch = useDispatch();
   const submitButtonState = updateSettingsRequestStatus === RequestStatus.IN_PROGRESS ? 'pending' : 'default';

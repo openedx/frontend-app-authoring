@@ -120,7 +120,7 @@ const PagesAndResources = ({ courseId, intl }) => {
                     // if we use a template string here:
                     //     TypeError: Cannot read property 'range' of null with using template strings here.
                     // Ref: https://github.com/babel/babel-eslint/issues/530
-                    return await import('./' + match.params.appId + '/Settings.jsx'); // eslint-disable-line
+                    return await import('@openedx-plugins/course-app-' + match.params.appId + '/Settings.jsx'); // eslint-disable-line
                   } catch (error) {
                     console.trace(error); // eslint-disable-line no-console
                     return null;
