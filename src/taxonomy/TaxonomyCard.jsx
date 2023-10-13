@@ -14,7 +14,7 @@ import './TaxonomyCard.scss';
 
 const TaxonomyCard = ({ className, original, intl }) => {
   const {
-    name, description, systemDefined, orgsCount,
+    id, name, description, systemDefined, orgsCount,
   } = original;
 
   const orgsCountEnabled = () => orgsCount !== undefined && orgsCount !== 0;
@@ -38,7 +38,7 @@ const TaxonomyCard = ({ className, original, intl }) => {
   };
 
   return (
-    <Card className={classNames('taxonomy-card', className)}>
+    <Card className={classNames('taxonomy-card', className)} data-testid={`taxonomy-card-${id}`}>
       <Card.Header
         title={name}
         subtitle={getHeaderSubtitle()}
@@ -64,6 +64,7 @@ TaxonomyCard.defaultProps = {
 TaxonomyCard.propTypes = {
   className: PropTypes.string,
   original: PropTypes.shape({
+    id: PropTypes.number,
     name: PropTypes.string,
     description: PropTypes.string,
     systemDefined: PropTypes.bool,

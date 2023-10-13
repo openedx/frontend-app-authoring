@@ -61,6 +61,9 @@ const TaxonomyListPage = ({ intl }) => {
               data={taxonomyListData.results}
               columns={[
                 {
+                  accessor: 'id',
+                },
+                {
                   accessor: 'name',
                 },
                 {
