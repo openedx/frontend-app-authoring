@@ -16,7 +16,7 @@
   "library.detail.block.edit_link": "Editar",
   "library.detail.aside.title": "Agregando contenido a su librería",
   "library.detail.aside.text.1": "Agregar componentes a su biblioteca para usar en cursos, usando Agregar nuevo componente en la parte inferior de esta página. Tener en cuenta que el slug se convierte en parte del ID de uso y del ID de definición, y no se puede cambiar.",
-  "library.detail.aside.text.2": "Los componentes se enumeran en el orden en que se agregaron, con el agregado más reciente en la parte inferior. Use las flechas de paginación para navegar de una página a otra si tiene más de una página de componentes en su biblioteca.",
+  "library.detail.aside.text.2": "Los componentes son listados en el orden en el cual estos fueron añadidos, con el último agregado en la parte inferior. Utilice las flechas de paginación para navegar desde una página a otra si usted tienen más de una página de componentes en su librería.",
   "library.detail.aside.help.link": "Aprender más acerca de los contenidos de las Librerías",
   "library.detail.aside.draft": "Borrador (Cambios no publicados)",
   "library.detail.aside.published": "Publicado",
