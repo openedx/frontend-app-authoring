@@ -16,8 +16,6 @@ import {
 
 import { RequestStatus } from '../data/constants';
 import {
-  resetErrors,
-  getUsagePaths,
   updateAssetOrder,
 } from './data/thunks';
 import { sortFiles } from './data/utils';
@@ -30,7 +28,6 @@ import {
   TableActions,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
-import { clearErrors } from './data/slice';
 import MoreInfoColumn from './table-components/table-custom-columns/MoreInfoColumn';
 
 const FileTable = ({
@@ -41,6 +38,8 @@ const FileTable = ({
   handleLockFile,
   handleDeleteFile,
   handleDownloadFile,
+  handleUsagePaths,
+  handleErrorReset,
   tableColumns,
   maxFileSize,
   thumbnailPreview,
@@ -48,7 +47,7 @@ const FileTable = ({
   intl,
 }) => {
   const dispatch = useDispatch();
-  const defaultVal = 'card';
+  const defaultVal = 'list';
   const columnSizes = {
     xs: 12,
     sm: 6,
@@ -104,18 +103,18 @@ const FileTable = ({
   const handleBulkDelete = () => {
     closeDeleteConfirmation();
     setDeleteOpen();
-    dispatch(resetErrors({ errorType: 'delete' }));
+    handleErrorReset({ errorType: 'delete' });
     const fileIdsToDelete = selectedRows.map(row => row.original.id);
     fileIdsToDelete.forEach(id => handleDeleteFile(id));
   };
 
   const handleBulkDownload = useCallback(async (selectedFlatRows) => {
-    dispatch(resetErrors({ errorType: 'download' }));
+    handleErrorReset({ errorType: 'download' });
     handleDownloadFile(selectedFlatRows);
   }, []);
 
-  const handleLockedAsset = (fileId, locked) => {
-    dispatch(clearErrors({ errorType: 'lock' }));
+  const handleLockedFile = (fileId, locked) => {
+    handleErrorReset({ errorType: 'lock' });
     handleLockFile({ fileId, locked });
   };
 
@@ -124,10 +123,10 @@ const FileTable = ({
     openDeleteConfirmation();
   };
 
-  const handleOpenAssetInfo = (original) => {
-    dispatch(resetErrors({ errorType: 'usageMetrics' }));
+  const handleOpenFileInfo = (original) => {
+    handleErrorReset({ errorType: 'usageMetrics' });
     setSelectedRows([{ original }]);
-    dispatch(getUsagePaths({ asset: original, courseId, setSelectedRows }));
+    handleUsagePaths(original);
     openAssetInfo();
   };
 
@@ -148,10 +147,10 @@ const FileTable = ({
   const fileCard = ({ className, original }) => (
     <GalleryCard
       {...{
-        handleLockedAsset,
+        handleLockedFile,
         handleBulkDownload,
         handleOpenDeleteConfirmation,
-        handleOpenAssetInfo,
+        handleOpenFileInfo,
         thumbnailPreview,
         className,
         original,
@@ -164,10 +163,10 @@ const FileTable = ({
     Header: '',
     Cell: ({ row }) => MoreInfoColumn({
       row,
-      handleLock: handleLockedAsset,
-      onDownload: handleBulkDownload,
-      openAssetInfo: handleOpenAssetInfo,
-      openDeleteConfirmation: handleOpenDeleteConfirmation,
+      handleLock: handleLockedFile,
+      handleBulkDownload,
+      handleOpenFileInfo,
+      handleOpenDeleteConfirmation,
     }),
   };
 
@@ -242,7 +241,7 @@ const FileTable = ({
           file={selectedRows[0].original}
           onClose={closeAssetinfo}
           isOpen={isAssetInfoOpen}
-          handleLockedAsset={handleLockedAsset}
+          handleLockedFile={handleLockedFile}
           thumbnailPreview={thumbnailPreview}
           usagePathStatus={usagePathStatus}
           error={usageErrorMessages}
@@ -284,7 +283,9 @@ FileTable.propTypes = {
   handleAddFile: PropTypes.func.isRequired,
   handleDeleteFile: PropTypes.func.isRequired,
   handleDownloadFile: PropTypes.func.isRequired,
+  handleUsagePaths: PropTypes.func.isRequired,
   handleLockFile: PropTypes.func,
+  handleErrorReset: PropTypes.func.isRequired,
   tableColumns: PropTypes.arrayOf(PropTypes.shape({
     Header: PropTypes.string,
     accessor: PropTypes.string,

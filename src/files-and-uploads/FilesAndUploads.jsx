@@ -13,6 +13,8 @@ import {
   fetchAssets,
   updateAssetLock,
   fetchAssetDownload,
+  getUsagePaths,
+  resetErrors,
 } from './data/thunks';
 import messages from './messages';
 import FilesAndUploadsProvider from './FilesAndUploadsProvider';
@@ -53,6 +55,9 @@ const FilesAndUploads = ({
   const handleDeleteFile = (id) => dispatch(deleteAssetFile(courseId, id, totalCount));
   const handleDownloadFile = (selectedRows) => dispatch(fetchAssetDownload({ selectedRows, courseId }));
   const handleLockFile = ({ fileId, locked }) => dispatch(updateAssetLock({ courseId, assetId: fileId, locked }));
+  const handleUsagePaths = (asset) => dispatch(getUsagePaths({ asset, courseId }));
+  const handleErrorReset = (error) => dispatch(resetErrors(error));
+
   const thumbnailPreview = (props) => AssetThumbnail(props);
 
   const assets = useModels('assets', assetIds);
@@ -153,6 +158,8 @@ const FilesAndUploads = ({
             handleDeleteFile,
             handleDownloadFile,
             handleLockFile,
+            handleUsagePaths,
+            handleErrorReset,
             tableColumns,
             maxFileSize,
             thumbnailPreview,

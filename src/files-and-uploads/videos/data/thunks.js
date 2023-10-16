@@ -18,6 +18,7 @@ import {
   deleteTranscript,
   downloadTranscriipt,
   uploadTranscript,
+  getVideoUsagePaths,
 } from './api';
 import {
   setVideoIds,
@@ -55,6 +56,10 @@ export function fetchVideos(courseId) {
       }
     }
   };
+}
+
+export function resetErrors({ errorType }) {
+  return (dispatch) => { dispatch(clearErrors({ error: errorType })); };
 }
 
 export function updateAssetOrder(courseId, videoIds) {
@@ -128,7 +133,7 @@ export function addVideoFile(courseId, file) {
 export function addVideoThumbnail({ file, videoId, courseId }) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'thumbnail', status: RequestStatus.IN_PROGRESS }));
-
+    dispatch(resetErrors({ errorType: 'thumbnail' }));
     try {
       const { imageUrl } = await addThumbnail({ courseId, videoId, file });
       let thumbnail = imageUrl;
@@ -261,26 +266,26 @@ export function uploadVideoTranscript({
   };
 }
 
-export function resetErrors({ errorType }) {
-  return (dispatch) => { dispatch(clearErrors({ error: errorType })); };
+export function getUsagePaths({ video, courseId }) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      const { usageLocations } = await getVideoUsagePaths({ videoId: video.id, courseId });
+      dispatch(updateModel({
+        modelType: 'videos',
+        model: {
+          id: video.id,
+          usageLocations,
+        },
+      }));
+      dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateErrors({ error: 'usageMetrics', message: `Failed to get usage metrics for ${video.displayName}.` }));
+      dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.FAILED }));
+    }
+  };
 }
-
-// export function getUsagePaths({ asset, courseId, setSelectedRows }) {
-//   return async (dispatch) => {
-//     dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.IN_PROGRESS }));
-
-//     try {
-//       const { usageLocations } = await getAssetUsagePaths({ assetId: asset.id, courseId });
-//       setSelectedRows([{ original: { ...asset, usageLocations } }]);
-//       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.SUCCESSFUL }));
-//     } catch (error) {
-//       dispatch(updateErrors({
-// error: 'usageMetrics',
-// message: `Failed to get usage metrics for ${asset.displayName}.` }));
-//       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.FAILED }));
-//     }
-//   };
-// }
 
 export function fetchVideoDownload({ selectedRows, courseId }) {
   return async (dispatch) => {

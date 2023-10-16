@@ -125,16 +125,16 @@ export async function getDownload(selectedRows, courseId) {
   return downloadErrors;
 }
 
-// /**
-//  * Fetch where video is used in a course.
-//  * @param {blockId} courseId Course ID for the course to operate on
+/**
+ * Fetch where a video is used in a course.
+ * @param {blockId} courseId Course ID for the course to operate on
 
-//  */
-// export async function getAssetUsagePaths({ courseId, videoId }) {
-//   const { data } = await getAuthenticatedHttpClient()
-//     .get(`${getAssetsUrl(courseId)}${videoId}/usage`);
-//   return camelCaseObject(data);
-// }
+ */
+export async function getVideoUsagePaths({ courseId, videoId }) {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(`${getVideosUrl(courseId)}/${videoId}/usage`);
+  return camelCaseObject(data);
+}
 
 /**
  * Delete video from course.

@@ -130,13 +130,19 @@ export function resetErrors({ errorType }) {
   return (dispatch) => { dispatch(clearErrors({ error: errorType })); };
 }
 
-export function getUsagePaths({ asset, courseId, setSelectedRows }) {
+export function getUsagePaths({ asset, courseId }) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.IN_PROGRESS }));
 
     try {
       const { usageLocations } = await getAssetUsagePaths({ assetId: asset.id, courseId });
-      setSelectedRows([{ original: { ...asset, usageLocations } }]);
+      dispatch(updateModel({
+        modelType: 'assets',
+        model: {
+          id: asset.id,
+          usageLocations,
+        },
+      }));
       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       dispatch(updateErrors({ error: 'usageMetrics', message: `Failed to get usage metrics for ${asset.displayName}.` }));

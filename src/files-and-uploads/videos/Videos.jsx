@@ -20,7 +20,10 @@ import {
   addVideoFile,
   addVideoThumbnail,
   deleteVideoFile,
+  fetchVideoDownload,
   fetchVideos,
+  getUsagePaths,
+  resetErrors,
 } from './data/thunks';
 import messages from './messages';
 import VideosProvider from './VideosProvider';
@@ -32,7 +35,7 @@ import ActiveColumn from '../table-components/table-custom-columns/ActiveColumn'
 import StatusColumn from '../table-components/table-custom-columns/StatusColumn';
 import TranscriptSettings from './transcript-settings';
 import VideoThumbnail from './VideoThumbnail';
-import { resampleFile } from './data/utils';
+import { getFormattedDuration, resampleFile } from './data/utils';
 
 const Videos = ({
   courseId,
@@ -75,8 +78,10 @@ const Videos = ({
 
   const handleAddFile = (file) => dispatch(addVideoFile(courseId, file));
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id, totalCount));
-  // const handleDownloadFile = (selectedRows) => dispatch(fetchAssetDownload({ selectedRows, courseId }));
-  const handleDownloadFile = (selectedRows) => console.log(selectedRows);
+  const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
+  const handleUsagePaths = (video) => dispatch(getUsagePaths({ video, courseId }));
+  const handleErrorReset = (error) => dispatch(resetErrors(error));
+
   // const handleTranscriptCredentials = ({data, global, provider}) => {
   // dispatch(addTranscriptCredentials({data, global, provider}))}
   const handleAddThumbnail = (file, videoId) => resampleFile({
@@ -88,6 +93,7 @@ const Videos = ({
   });
 
   const videos = useModels('videos', videoIds);
+
   const data = {
     supportedFileFormats,
     encodingsDownloadUrl,
@@ -118,7 +124,7 @@ const Videos = ({
     Header: 'Video length',
     Cell: ({ row }) => {
       const { duration } = row.original;
-      return duration;
+      return getFormattedDuration(duration);
     },
   };
   const processingStatusColumn = {
@@ -190,6 +196,8 @@ const Videos = ({
             handleAddFile,
             handleDeleteFile,
             handleDownloadFile,
+            handleUsagePaths,
+            handleErrorReset,
             tableColumns,
             maxFileSize,
             thumbnailPreview,
