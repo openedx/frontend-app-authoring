@@ -55,12 +55,12 @@ const GalleryCard = ({
       />
       <Card.Section className="pr-3 pl-3 pt-0 pb-0">
         <div
-          className="row align-items-center justify-content-center m-0 thumbnail-container"
+          className="row align-items-center justify-content-center m-0 thumbnail-container border rounded p-1"
         >
           {original.thumbnail ? (
-            <Image src={src} className="border w-auto mw-100 mh-100 thumbnail-image" />
+            <Image src={src} className="w-auto mw-100 mh-100 thumbnail-image" />
           ) : (
-            <div className="row border justify-content-center align-items-center m-0">
+            <div className="row justify-content-center align-items-center m-0">
               <Icon src={src} style={{ height: '48px', width: '48px' }} />
             </div>
           )}
