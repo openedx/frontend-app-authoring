@@ -2,10 +2,10 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Button, Form, TransitionReplace } from '@edx/paragon';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import { GroupTypes, TeamSizes } from '../../data/constants';
+import { GroupTypes, TeamSizes } from 'CourseAuthoring/data/constants';
 
-import CollapsableEditor from '../../generic/CollapsableEditor';
-import FormikControl from '../../generic/FormikControl';
+import CollapsableEditor from 'CourseAuthoring/generic/CollapsableEditor';
+import FormikControl from 'CourseAuthoring/generic/FormikControl';
 import messages from './messages';
 
 // Maps a team type to its corresponding intl message

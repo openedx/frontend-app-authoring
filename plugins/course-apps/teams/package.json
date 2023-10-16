@@ -1,0 +1,8 @@
+{
+    "name": "@openedx-plugins/course-app-teams",
+    "version": "0.1.0",
+    "description": "Teams configuration for courses using it",
+    "dependencies": {
+    },
+    "devDependencies": {}
+}

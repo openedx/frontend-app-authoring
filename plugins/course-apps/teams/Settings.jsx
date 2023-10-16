@@ -7,10 +7,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { v4 as uuid } from 'uuid';
 import * as Yup from 'yup';
-import { GroupTypes, TeamSizes } from '../../data/constants';
-import FormikControl from '../../generic/FormikControl';
-import { setupYupExtensions, useAppSetting } from '../../utils';
-import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
+import { GroupTypes, TeamSizes } from 'CourseAuthoring/data/constants';
+import FormikControl from 'CourseAuthoring/generic/FormikControl';
+import { setupYupExtensions, useAppSetting } from 'CourseAuthoring/utils';
+import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
 import GroupEditor from './GroupEditor';
 import messages from './messages';
 

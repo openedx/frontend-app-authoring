@@ -52,6 +52,7 @@
     "@openedx-plugins/course-app-ora_settings": "file:plugins/course-apps/ora_settings",
     "@openedx-plugins/course-app-proctoring": "file:plugins/course-apps/proctoring",
     "@openedx-plugins/course-app-progress": "file:plugins/course-apps/progress",
+    "@openedx-plugins/course-app-teams": "file:plugins/course-apps/teams",
     "@reduxjs/toolkit": "1.5.0",
     "classnames": "2.2.6",
     "core-js": "3.8.1",
