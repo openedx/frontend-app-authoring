@@ -34,6 +34,7 @@ const GalleryCard = ({
   return (
     <Card className={`${className} w-100 gallery-card`} data-testid={`grid-card-${original.id}`}>
       <Card.Header
+        className="pr-0 pt-2 pb-2"
         actions={(
           <ActionRow>
             <FileMenu
@@ -52,25 +53,25 @@ const GalleryCard = ({
           </ActionRow>
         )}
       />
-      <Card.Section>
+      <Card.Section className="pr-3 pl-3 pt-0 pb-0">
         <div
           className="row align-items-center justify-content-center m-0 thumbnail-container"
         >
           {original.thumbnail ? (
-            <Image src={src} className="border rounded w-auto mw-100 mh-100 thumbnail-image" />
+            <Image src={src} className="border w-auto mw-100 mh-100 thumbnail-image" />
           ) : (
-            <div className="row border justify-content-center align-items-center rounded m-0">
+            <div className="row border justify-content-center align-items-center m-0">
               <Icon src={src} style={{ height: '48px', width: '48px' }} />
             </div>
           )}
         </div>
         <div style={{ wordBreak: 'break-word' }}>
-          <Truncate lines={1} className="font-weight-bold small mt-3">
+          <Truncate lines={1} className="font-weight-bold mt-2 picture-title">
             {original.displayName}
           </Truncate>
         </div>
       </Card.Section>
-      <Card.Footer>
+      <Card.Footer className="p-3 pt-4">
         <Chip>
           {original.wrapperType}
         </Chip>

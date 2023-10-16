@@ -8,4 +8,16 @@
       object-fit: contain;
     }
   }
+
+  &.pgn__card {
+    .pgn__card-header {
+      .pgn__card-header-actions {
+        margin-top: 0;
+      }
+    }
+  }
+
+  .picture-title {
+    font-size: 12px;
+  }
 }
