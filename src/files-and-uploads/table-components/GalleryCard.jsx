@@ -15,14 +15,14 @@ const GalleryCard = ({
   className,
   original,
   handleBulkDownload,
-  handleLockedAsset,
+  handleLockedFile,
   handleOpenDeleteConfirmation,
-  handleOpenAssetInfo,
+  handleOpenFileInfo,
   thumbnailPreview,
 }) => {
-  const lockAsset = () => {
+  const lockFile = () => {
     const { locked, id } = original;
-    handleLockedAsset(id, !locked);
+    handleLockedFile(id, !locked);
   };
 
   return (
@@ -32,9 +32,9 @@ const GalleryCard = ({
           <ActionRow>
             <FileMenu
               externalUrl={original.externalUrl}
-              handleLock={lockAsset}
+              handleLock={lockFile}
               locked={original.locked}
-              openAssetInfo={() => handleOpenAssetInfo(original)}
+              openAssetInfo={() => handleOpenFileInfo(original)}
               portableUrl={original.portableUrl}
               id={original.id}
               wrapperType={original.wrapperType}
@@ -92,9 +92,9 @@ GalleryCard.propTypes = {
     transcripts: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   handleBulkDownload: PropTypes.func.isRequired,
-  handleLockedAsset: PropTypes.func.isRequired,
+  handleLockedFile: PropTypes.func.isRequired,
   handleOpenDeleteConfirmation: PropTypes.func.isRequired,
-  handleOpenAssetInfo: PropTypes.func.isRequired,
+  handleOpenFileInfo: PropTypes.func.isRequired,
   thumbnailPreview: PropTypes.func.isRequired,
 };
 
