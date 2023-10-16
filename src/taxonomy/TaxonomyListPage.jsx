@@ -10,7 +10,7 @@ import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import messages from './messages';
 import TaxonomyCard from './TaxonomyCard';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './api/hooks/selectors.ts';
+import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './api/hooks/selectors';
 
 const TaxonomyListPage = ({ intl }) => {
   const useTaxonomyListData = () => {
