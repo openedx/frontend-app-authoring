@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import * as Yup from 'yup';
 
-import FormSwitchGroup from '../../generic/FormSwitchGroup';
-import { useAppSetting } from '../../utils';
-import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
+import FormSwitchGroup from 'CourseAuthoring/generic/FormSwitchGroup';
+import { useAppSetting } from 'CourseAuthoring/utils';
+import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
 import messages from './messages';
 
 const WikiSettings = ({ intl, onClose }) => {
