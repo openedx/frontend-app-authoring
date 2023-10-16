@@ -5,11 +5,11 @@ import * as Yup from 'yup';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { Hyperlink } from '@edx/paragon';
-import { useModel } from '../../generic/model-store';
+import { useModel } from 'CourseAuthoring/generic/model-store';
 
-import FormSwitchGroup from '../../generic/FormSwitchGroup';
-import { useAppSetting } from '../../utils';
-import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
+import FormSwitchGroup from 'CourseAuthoring/generic/FormSwitchGroup';
+import { useAppSetting } from 'CourseAuthoring/utils';
+import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
 import messages from './messages';
 
 const ORASettings = ({ intl, onClose }) => {

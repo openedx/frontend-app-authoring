@@ -9,14 +9,14 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
 jest.mock('yup', () => ({
   boolean: jest.fn().mockReturnValue('Yub.boolean'),
 }));
-jest.mock('../../generic/model-store', () => ({
+jest.mock('CourseAuthoring/generic/model-store', () => ({
   useModel: jest.fn().mockReturnValue({ documentationLinks: { learnMoreConfiguration: 'https://learnmore.test' } }),
 }));
-jest.mock('../../generic/FormSwitchGroup', () => 'FormSwitchGroup');
-jest.mock('../../utils', () => ({
+jest.mock('CourseAuthoring/generic/FormSwitchGroup', () => 'FormSwitchGroup');
+jest.mock('CourseAuthoring/utils', () => ({
   useAppSetting: jest.fn().mockReturnValue(['abitrary value', jest.fn().mockName('saveSetting')]),
 }));
-jest.mock('../app-settings-modal/AppSettingsModal', () => 'AppSettingsModal');
+jest.mock('CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal', () => 'AppSettingsModal');
 
 const props = {
   onClose: jest.fn().mockName('onClose'),
