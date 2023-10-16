@@ -13,15 +13,15 @@ import {
   ActionRow, Alert, Badge, Form, Hyperlink, ModalDialog, StatefulButton,
 } from '@edx/paragon';
 
-import ExamsApiService from '../../data/services/ExamsApiService';
-import StudioApiService from '../../data/services/StudioApiService';
-import Loading from '../../generic/Loading';
-import ConnectionErrorAlert from '../../generic/ConnectionErrorAlert';
-import FormSwitchGroup from '../../generic/FormSwitchGroup';
-import { useModel } from '../../generic/model-store';
-import PermissionDeniedAlert from '../../generic/PermissionDeniedAlert';
-import { useIsMobile } from '../../utils';
-import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
+import ExamsApiService from 'CourseAuthoring/data/services/ExamsApiService';
+import StudioApiService from 'CourseAuthoring/data/services/StudioApiService';
+import Loading from 'CourseAuthoring/generic/Loading';
+import ConnectionErrorAlert from 'CourseAuthoring/generic/ConnectionErrorAlert';
+import FormSwitchGroup from 'CourseAuthoring/generic/FormSwitchGroup';
+import { useModel } from 'CourseAuthoring/generic/model-store';
+import PermissionDeniedAlert from 'CourseAuthoring/generic/PermissionDeniedAlert';
+import { useIsMobile } from 'CourseAuthoring/utils';
+import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 import messages from './messages';
 
 const ProctoringSettings = ({ intl, onClose }) => {

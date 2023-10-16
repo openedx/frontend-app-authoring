@@ -50,6 +50,7 @@
     "@openedx-plugins/course-app-edxnotes": "file:plugins/course-apps/edxnotes",
     "@openedx-plugins/course-app-live": "file:plugins/course-apps/live",
     "@openedx-plugins/course-app-ora_settings": "file:plugins/course-apps/ora_settings",
+    "@openedx-plugins/course-app-proctoring": "file:plugins/course-apps/proctoring",
     "@reduxjs/toolkit": "1.5.0",
     "classnames": "2.2.6",
     "core-js": "3.8.1",

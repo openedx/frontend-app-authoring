@@ -9,10 +9,10 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 
-import StudioApiService from '../../data/services/StudioApiService';
-import ExamsApiService from '../../data/services/ExamsApiService';
-import initializeStore from '../../store';
-import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
+import StudioApiService from 'CourseAuthoring/data/services/StudioApiService';
+import ExamsApiService from 'CourseAuthoring/data/services/ExamsApiService';
+import initializeStore from 'CourseAuthoring/store';
+import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 import ProctoredExamSettings from './Settings';
 
 const defaultProps = {
