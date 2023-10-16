@@ -1,11 +1,8 @@
 import React from 'react';
 import {
   Badge,
-  Button,
   Card,
-  Icon,
 } from '@edx/paragon';
-import { MoreVert } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -37,12 +34,18 @@ const TaxonomyCard = ({ className, original, intl }) => {
     return undefined;
   };
 
+  const getHeaderActions = () => (
+    // Menu button
+    // TODO Add functionality to this menu
+    undefined
+  );
+
   return (
     <Card className={classNames('taxonomy-card', className)} data-testid={`taxonomy-card-${id}`}>
       <Card.Header
         title={name}
         subtitle={getHeaderSubtitle()}
-        actions={<Button variant="link"><Icon className="text-dark-900" src={MoreVert} /></Button>}
+        actions={getHeaderActions()}
       />
       <Card.Body className={classNames('taxonomy-card-body', {
         'taxonomy-card-body-overflow-m': !systemDefined && !orgsCountEnabled(),
