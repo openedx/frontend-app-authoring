@@ -168,7 +168,7 @@ describe('FilesAndUploads', () => {
 
         expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
 
-        expect(screen.queryByTestId('list-card-mOckID1')).toBeNull();
+        expect(screen.queryByRole('table')).toBeNull();
 
         const listButton = screen.getByLabelText('List');
         await act(async () => {
@@ -176,7 +176,7 @@ describe('FilesAndUploads', () => {
         });
         expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
 
-        expect(screen.getByTestId('list-card-mOckID1')).toBeVisible();
+        expect(screen.getByRole('table')).toBeVisible();
       });
     });
 
@@ -223,18 +223,27 @@ describe('FilesAndUploads', () => {
         expect(deleteButton).not.toHaveClass('disabled');
 
         axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
-        await waitFor(() => {
-          fireEvent.click(deleteButton);
-          expect(screen.getByText(messages.deleteConfirmationTitle.defaultMessage)).toBeVisible();
 
-          fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
-          expect(screen.queryByText(messages.deleteConfirmationTitle.defaultMessage)).toBeNull();
-
-          executeThunk(deleteAssetFile(courseId, 'mOckID1', 5), store.dispatch);
+        fireEvent.click(deleteButton);
+        expect(screen.getByText(messages.deleteConfirmationTitle.defaultMessage)).toBeVisible();
+        await act(async () => {
+          userEvent.click(deleteButton);
         });
+
+        // Wait for the delete confirmation button to appear
+        const confirmDeleteButton = await screen.findByRole('button', {
+          name: messages.deleteFileButtonLabel.defaultMessage,
+        });
+
+        await act(async () => {
+          userEvent.click(confirmDeleteButton);
+        });
+
+        expect(screen.queryByText(messages.deleteConfirmationTitle.defaultMessage)).toBeNull();
+
+        // Check if the asset is deleted in the store and UI
         const deleteStatus = store.getState().assets.deletingStatus;
         expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
-
         expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
       });
 

@@ -1,0 +1,23 @@
+.gallery-card {
+  .thumbnail-container {
+    aspect-ratio: 16 / 9;
+
+    .thumbnail-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &.pgn__card {
+    .pgn__card-header {
+      .pgn__card-header-actions {
+        margin-top: 0;
+      }
+    }
+  }
+
+  .picture-title {
+    font-size: 12px;
+  }
+}

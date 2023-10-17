@@ -47,7 +47,10 @@ const MoreInfoColumn = ({
 
         }}
       >
-        <Menu className="border border-light-400" style={{ overflowX: 'hidden', boxShadow: '0px 0px 0px #000' }}>
+        <Menu
+          className="border border-light-400"
+          style={{ overflowX: 'hidden', boxShadow: '0px 0px 0px #000', maxHeight: '500px' }}
+        >
           {wrapperType === 'video' ? (
             <MenuItem
               as={Button}

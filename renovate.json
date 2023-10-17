@@ -3,17 +3,28 @@
     "config:base",
     "schedule:daily",
     ":rebaseStalePrs",
-    ":semanticCommits"
+    ":semanticCommits",
+    ":dependencyDashboard"
   ],
+  "timezone": "America/New_York",
   "patch": {
-    "automerge": true
+    "automerge": false
   },
   "rebaseStalePrs": true,
   "packageRules": [
     {
       "matchPackagePatterns": ["@edx", "@openedx"],
       "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true
+      "automerge": false
+    },
+    {
+      "matchPackagePatterns": ["@edx/frontend-lib-content-components"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "schedule": [
+        "after 9am",
+        "before 5pm"
+      ]
     }
   ]
 }
