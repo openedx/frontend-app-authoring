@@ -98,10 +98,11 @@ describe('FilesAndUploads', () => {
       expect(screen.getByTestId('under-construction-placeholder')).toBeVisible();
     });
 
-    it('should have Files and uploads title', async () => {
+    it('should have Files title', async () => {
       renderComponent();
       await emptyMockStore(RequestStatus.SUCCESSFUL);
-      expect(screen.getByText('Files and uploads')).toBeVisible();
+      expect(screen.getByText('Files')).toBeVisible();
+      expect(screen.getByText('Files and uploads')).not.toBeVisible();
     });
 
     it('should render dropzone', async () => {

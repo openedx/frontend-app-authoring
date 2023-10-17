@@ -33,8 +33,8 @@ const messages = defineMessages({
   },
   'header.links.filesAndUploads': {
     id: 'header.links.filesAndUploads',
-    defaultMessage: 'Files & Uploads',
-    description: 'Link to Studio Files & Uploads page',
+    defaultMessage: 'Files',
+    description: 'Link to Studio Files page',
   },
   'header.links.textbooks': {
     id: 'header.links.textbooks',
