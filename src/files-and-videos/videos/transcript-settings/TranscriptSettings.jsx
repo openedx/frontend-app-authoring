@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
+import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Collapsible,
@@ -10,6 +11,7 @@ import {
 } from '@edx/paragon';
 import { ChevronLeft, ChevronRight, Close } from '@edx/paragon/icons';
 import OrderTranscriptForm from './OrderTranscriptForm';
+import messages from './messages';
 
 const TranscriptSettings = ({
   isTranscriptSettngsOpen,
@@ -46,7 +48,7 @@ const TranscriptSettings = ({
               />
             ) : (
               <div key="title" className="h3">
-                Transcript settings
+                <FormattedMessage {...messages.transcriptSettingsTitle} />
               </div>
             )}
           </TransitionReplace>
@@ -83,20 +85,10 @@ const TranscriptSettings = ({
                   className="row m-0 justify-content-between align-items-center"
                   onClick={() => setTranscriptType('order')}
                 >
-                  Order Transcripts
+                  <FormattedMessage {...messages.orderTranscriptsTitle} />
                   <Icon src={ChevronRight} />
                 </Collapsible.Trigger>
               </Collapsible.Advanced>
-              <hr />
-              {/* <Collapsible.Advanced>
-                <Collapsible.Trigger
-                  className="row m-0 justify-content-between align-items-center"
-                  onClick={() => setTranscriptType('expert')}
-                >
-                  Get free translations
-                  <Icon src={ChevronRight} />
-                </Collapsible.Trigger>
-              </Collapsible.Advanced> */}
             </div>
           )}
         </TransitionReplace>
@@ -115,4 +107,4 @@ TranscriptSettings.propTypes = {
   handleOrderTranscripts: PropTypes.func.isRequired,
 };
 
-export default TranscriptSettings;
+export default injectIntl(TranscriptSettings);

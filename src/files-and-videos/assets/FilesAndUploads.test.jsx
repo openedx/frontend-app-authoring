@@ -16,9 +16,9 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-import initializeStore from '../store';
-import { executeThunk } from '../utils';
-import { RequestStatus } from '../data/constants';
+import initializeStore from '../../store';
+import { executeThunk } from '../../utils';
+import { RequestStatus } from '../../data/constants';
 import FilesAndUploads from './FilesAndUploads';
 import {
   generateFetchAssetApiResponse,
@@ -27,7 +27,7 @@ import {
   getStatusValue,
   courseId,
   initialState,
-} from './factories/mockApiResponses';
+} from '../factories/mockApiResponses';
 
 import {
   fetchAssets,
@@ -35,9 +35,9 @@ import {
   deleteAssetFile,
   updateAssetLock,
   getUsagePaths,
-} from './data/thunks';
-import { getAssetsUrl } from './data/api';
-import messages from './messages';
+} from '../data/thunks';
+import { getAssetsUrl } from '../data/api';
+import messages from '../messages';
 
 let axiosMock;
 let store;

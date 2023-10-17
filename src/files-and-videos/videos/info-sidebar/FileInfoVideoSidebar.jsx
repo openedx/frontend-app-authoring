@@ -1,21 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Tabs,
   Tab,
 } from '@edx/paragon';
-
 import InfoTab from './InfoTab';
 import TranscriptTab from './TranscriptTab';
+import messages from './messages';
 
 const FileInfoVideoSidebar = ({
   video,
+  // injected
+  intl,
 }) => (
   <Tabs>
-    <Tab eventKey="fileInfo" title="Info">
+    <Tab eventKey="fileInfo" title={intl.formatMessage(messages.infoTabTitle)}>
       <InfoTab {...{ video }} />
     </Tab>
-    <Tab eventKey="fileTranscripts" title={`Transcripts (${video.transcripts.length})`}>
+    <Tab
+      eventKey="fileTranscripts"
+      title={intl.formatMessage(
+        messages.transcriptTabTitle,
+        { transcriptCount: video.transcripts.length },
+      )}
+    >
       <TranscriptTab {...{ video }} />
     </Tab>
   </Tabs>
@@ -30,10 +39,12 @@ FileInfoVideoSidebar.propTypes = {
     fileSize: PropTypes.number.isRequired,
     transcripts: PropTypes.arrayOf(PropTypes.string),
   }),
+  // injected
+  intl: intlShape.isRequired,
 };
 
 FileInfoVideoSidebar.defaultProps = {
   video: null,
 };
 
-export default FileInfoVideoSidebar;
+export default injectIntl(FileInfoVideoSidebar);

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
+import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Button, SelectableBox, Stack } from '@edx/paragon';
 import { ErrorAlert } from '@edx/frontend-lib-content-components';
 import Cielo24Form from './Cielo24Form';
 import ThreePlayMediaForm from './ThreePlayMediaForm';
 import { RequestStatus } from '../../../data/constants';
+import messages from './messages';
 
 const OrderTranscriptForm = ({
   setTranscriptType,
@@ -17,6 +19,8 @@ const OrderTranscriptForm = ({
   transcriptionPlans,
   errorMessages,
   transcriptStatus,
+  // injected
+  intl,
 }) => {
   const [data, setData] = useState({});
   const hasTranscriptCredentials = !isEmpty(transcriptCredentials);
@@ -63,7 +67,7 @@ const OrderTranscriptForm = ({
         <ul className="p-0">
           {errorMessages.transcript.map(message => (
             <li key={`add-error-${message}`} style={{ listStyle: 'none' }}>
-              {message}
+              {intl.formatMessage(messages.errorAlertMessage, { message })}
             </li>
           ))}
         </ul>
@@ -86,27 +90,31 @@ const OrderTranscriptForm = ({
           aria-label="none radio"
           className="text-center"
         >
-          None
+          <FormattedMessage {...messages.noneLabel} />
         </SelectableBox>
         <SelectableBox
           value="Cielo24"
           aria-label="Cielo24 radio"
           className="text-center"
         >
-          Cielo24
+          <FormattedMessage {...messages.cieloLabel} />
         </SelectableBox>
         <SelectableBox
           value="3PlayMedia"
           aria-label="3PlayMedia radio"
           className="text-center"
         >
-          3Play Media
+          <FormattedMessage {...messages.threePlayMediaLabel} />
         </SelectableBox>
       </SelectableBox.Set>
       {form}
       <Stack gap={3} className="mt-4">
-        <Button onClick={() => handleOrderTranscripts(data, transcriptType)}>Update Settings</Button>
-        <Button variant="tertiary" onClick={handleDiscard}>Discard Settings</Button>
+        <Button onClick={() => handleOrderTranscripts(data, transcriptType)}>
+          <FormattedMessage {...messages.updateSettingsLabel} />
+        </Button>
+        <Button variant="tertiary" onClick={handleDiscard}>
+          <FormattedMessage {...messages.discardSettingsLabel} />
+        </Button>
       </Stack>
     </>
   );
@@ -134,10 +142,12 @@ OrderTranscriptForm.propTypes = {
       languages: PropTypes.shape({}),
     }).isRequired,
   }).isRequired,
+  // injected
+  intl: intlShape.isRequired,
 };
 
 OrderTranscriptForm.defaultProps = {
   activeTranscriptPreferences: null,
 };
 
-export default OrderTranscriptForm;
+export default injectIntl(OrderTranscriptForm);

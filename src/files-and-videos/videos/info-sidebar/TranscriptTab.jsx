@@ -5,7 +5,7 @@ import { isEmpty } from 'lodash';
 import { ErrorAlert } from '@edx/frontend-lib-content-components';
 import { Button, Stack } from '@edx/paragon';
 import { Add } from '@edx/paragon/icons';
-import { injectIntl } from '@edx/frontend-platform/i18n';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { getLanguages } from '../data/utils';
 import Transcript from './transcript-item';
 import {
@@ -15,8 +15,13 @@ import {
   uploadVideoTranscript,
 } from '../data/thunks';
 import { RequestStatus } from '../../../data/constants';
+import messages from './messages';
 
-const TranscriptTab = ({ video }) => {
+const TranscriptTab = ({
+  video,
+  // injected
+  intl,
+}) => {
   const dispatch = useDispatch();
   const { transcriptStatus, errors } = useSelector(state => state.videos);
   const {
@@ -89,8 +94,7 @@ const TranscriptTab = ({ video }) => {
         <ul className="p-0">
           {errors.transcript.map(message => (
             <li key={`transcript-error-${message}`} style={{ listStyle: 'none' }}>
-              {message}
-              {/* {intl.formatMessage(messages.errorAlertMessage, { message })} */}
+              {intl.formatMessage(messages.errorAlertMessage, { message })}
             </li>
           ))}
         </ul>
@@ -112,7 +116,7 @@ const TranscriptTab = ({ video }) => {
         className="text-primary-500 justify-content-start pl-0"
         onClick={() => setPreviousSelection([...previousSelection, ''])}
       >
-        Add a transcript
+        {intl.formatMessage(messages.uploadButtonLabel)}
       </Button>
     </Stack>
   );
@@ -124,6 +128,8 @@ TranscriptTab.propTypes = {
     id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired,
   }).isRequired,
+  // injected
+  intl: intlShape.isRequired,
 };
 
 export default injectIntl(TranscriptTab);

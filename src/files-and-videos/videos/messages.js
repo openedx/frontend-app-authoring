@@ -5,10 +5,6 @@ const messages = defineMessages({
     id: 'course-authoring.video-uploads.heading',
     defaultMessage: 'Video uploads',
   },
-  subheading: {
-    id: 'course-authoring.video-uploads.subheading',
-    defaultMessage: 'Content',
-  },
   transcriptSettingsButtonLabel: {
     id: 'course-authoring.video-uploads.transcript-settings.button.toggle',
     defaultMessage: 'Transcript settings',

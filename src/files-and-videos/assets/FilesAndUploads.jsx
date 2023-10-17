@@ -5,8 +5,8 @@ import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/
 import { CheckboxFilter } from '@edx/paragon';
 import Placeholder from '@edx/frontend-lib-content-components';
 
-import { RequestStatus } from '../data/constants';
-import { useModels, useModel } from '../generic/model-store';
+import { RequestStatus } from '../../data/constants';
+import { useModels, useModel } from '../../generic/model-store';
 import {
   addAssetFile,
   deleteAssetFile,
@@ -15,17 +15,17 @@ import {
   fetchAssetDownload,
   getUsagePaths,
   resetErrors,
-} from './data/thunks';
+} from '../data/thunks';
 import messages from './messages';
 import FilesAndUploadsProvider from './FilesAndUploadsProvider';
-import getPageHeadTitle from '../generic/utils';
-import FileTable from './FileTable';
-import EditFileErrors from './EditFileErrors';
-import { getFileSizeToClosestByte } from './data/utils';
-import ThumbnailColumn from './table-components/table-custom-columns/ThumbnailColumn';
-import ActiveColumn from './table-components/table-custom-columns/ActiveColumn';
-import AccessColumn from './table-components/table-custom-columns/AccessColumn';
-import AssetThumbnail from './assets/AssetThumbnail';
+import getPageHeadTitle from '../../generic/utils';
+import FileTable from '../FileTable';
+import EditFileErrors from '../EditFileErrors';
+import { getFileSizeToClosestByte } from '../data/utils';
+import ThumbnailColumn from '../table-components/table-custom-columns/ThumbnailColumn';
+import ActiveColumn from '../table-components/table-custom-columns/ActiveColumn';
+import AccessColumn from '../table-components/table-custom-columns/AccessColumn';
+import AssetThumbnail from './AssetThumbnail';
 
 const FilesAndUploads = ({
   courseId,

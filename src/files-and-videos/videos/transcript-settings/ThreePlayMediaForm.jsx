@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
+import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Form,
   Icon,
@@ -10,12 +11,15 @@ import {
 import { Check } from '@edx/paragon/icons';
 import FormDropdown from './FormDropdown';
 import { getLanguageOptions } from '../data/utils';
+import messages from './messages';
 
 const ThreePlayMediaForm = ({
   hasTranscriptCredentials,
   data,
   setData,
   transcriptionPlan,
+  // injected
+  intl,
 }) => {
   const selectedLanguages = data.preferredLanguages ? data.preferredLanguages : [];
   const turnaroundOptions = transcriptionPlan.turnaround;
@@ -34,31 +38,31 @@ const ThreePlayMediaForm = ({
       <Stack gap={1}>
         <Form.Group size="sm">
           <Form.Label className="h5">
-            Transcript turnaround
+            <FormattedMessage {...messages.threePlayMediaTurnaroundLabel} />
           </Form.Label>
           <FormDropdown
             value={data.threePlayTurnaround}
             options={turnaroundOptions}
             handleSelect={(value) => setData({ ...data, threePlayTurnaround: value })}
-            placeholderText="Select turnaround"
+            placeholderText={intl.formatMessage(messages.threePlayMediaTurnaroundPlaceholder)}
           />
         </Form.Group>
         <Form.Group size="sm">
           <Form.Label className="h5">
-            Video Source Language
+            <FormattedMessage {...messages.threePlayMediaSourceLanguageLabel} />
           </Form.Label>
           <FormDropdown
             value={data.videoSourceLanguage}
             options={sourceLangaugeOptions}
             handleSelect={(value) => setData({ ...data, videoSourceLanguage: value, preferredLanguages: [] })}
-            placeholderText="Select language"
+            placeholderText={intl.formatMessage(messages.threePlayMediaSourceLanguagePlaceholder)}
           />
         </Form.Group>
         <TransitionReplace>
           {!isEmpty(data.videoSourceLanguage) ? (
             <Form.Group size="sm">
               <Form.Label className="h5">
-                Transcript language
+                <FormattedMessage {...messages.threePlayMediaTranscriptLanguageLabel} />
               </Form.Label>
               <FormDropdown
                 value={selectedLanguages}
@@ -77,7 +81,7 @@ const ThreePlayMediaForm = ({
                     }
                   }
                 }}
-                placeholderText="Select language(s)"
+                placeholderText={intl.formatMessage(messages.threePlayMediaTranscriptLanguagePlaceholder)}
               />
               <Form.Control.Feedback>
                 <ul className="m-0 p-0">
@@ -97,17 +101,17 @@ const ThreePlayMediaForm = ({
   return (
     <Stack gap={1}>
       <div className="small">
-        Enter the account information for your organization.
+        <FormattedMessage {...messages.threePlayMediaCredentialMessage} />
       </div>
       <Form.Group size="sm">
         <Form.Label className="h5">
-          API Key
+          <FormattedMessage {...messages.threePlayMediaApiKeyLabel} />
         </Form.Label>
         <Form.Control onBlur={(e) => setData({ ...data, apiKey: e.target.value })} />
       </Form.Group>
       <Form.Group size="sm">
         <Form.Label className="h5">
-          API Secret
+          <FormattedMessage {...messages.threePlayMediaApiSecretLabel} />
         </Form.Label>
         <Form.Control onBlur={(e) => setData({ ...data, apiSecretKey: e.target.value })} />
       </Form.Group>
@@ -130,6 +134,8 @@ ThreePlayMediaForm.propTypes = {
     translations: PropTypes.shape({}),
     languages: PropTypes.shape({}),
   }).isRequired,
+  // injected
+  intl: intlShape.isRequired,
 };
 
-export default ThreePlayMediaForm;
+export default injectIntl(ThreePlayMediaForm);

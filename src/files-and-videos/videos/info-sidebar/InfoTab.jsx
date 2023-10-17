@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Stack } from '@edx/paragon';
-import { injectIntl, FormattedDate } from '@edx/frontend-platform/i18n';
+import { injectIntl, FormattedDate, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getFileSizeToClosestByte } from '../../data/utils';
 import { getFormattedDuration } from '../data/utils';
+import messages from './messages';
 
 const InfoTab = ({ video }) => {
   const fileSize = getFileSizeToClosestByte(video?.fileSize);
@@ -12,7 +13,7 @@ const InfoTab = ({ video }) => {
   return (
     <Stack className="mt-3">
       <div className="font-weight-bold">
-        Date Added
+        <FormattedMessage {...messages.dateAddedTitle} />
       </div>
       <FormattedDate
         value={video?.dateAdded}
@@ -23,11 +24,11 @@ const InfoTab = ({ video }) => {
         minute="numeric"
       />
       <div className="font-weight-bold mt-3">
-        File size
+        <FormattedMessage {...messages.fileSizeTitle} />
       </div>
       {fileSize}
       <div className="font-weight-bold mt-3">
-        Video length
+        <FormattedMessage {...messages.videoLengthTitle} />
       </div>
       {duration}
     </Stack>

@@ -19,7 +19,7 @@ import {
 import { ContentCopy, InfoOutline } from '@edx/paragon/icons';
 
 import { getFileSizeToClosestByte } from '../data/utils';
-import messages from '../messages';
+import messages from './messages';
 
 const FileInfoAssetSidebar = ({
   asset,
