@@ -22,7 +22,13 @@ const AssetThumbnail = ({
     <div className="row justify-content-center align-itmes-center">
       {thumbnail ? (
         <Image
-          style={{ width: '503px', height: '281px' }}
+          style={{
+            width: '503px',
+            height: '281px',
+            objectFit: 'contain',
+            maxWidth: '100%',
+            maxHeight: '100%',
+          }}
           className="border rounded p-1"
           src={src}
           alt={`Thumbnail of ${displayName}`}
