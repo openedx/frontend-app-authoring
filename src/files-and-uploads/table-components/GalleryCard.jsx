@@ -48,7 +48,7 @@ const GalleryCard = ({
         )}
       />
       <Card.Section className="pr-3 pl-3 pt-0 pb-0">
-        <div className="row align-items-center justify-content-center m-0 thumbnail-container border rounded p-1">
+        <div className="row align-items-center justify-content-center m-0">
           <FileThumbnail
             thumbnail={original.thumbnail}
             wrapperType={original.wrapperType}

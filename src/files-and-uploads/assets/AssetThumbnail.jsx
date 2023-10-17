@@ -18,19 +18,25 @@ const AssetThumbnail = ({
     externalUrl,
     wrapperType,
   });
+  const { width, height } = imageSize;
 
   return (
-    <div className="row justify-content-center align-itmes-center">
+    <div className="row border rounded p-1 justify-content-center align-itmes-center">
       {thumbnail ? (
         <Image
-          style={imageSize}
-          className="border rounded p-1"
+          style={{
+            width,
+            height,
+            objectFit: 'contain',
+            maxWidth: '100%',
+            maxHeight: '100%',
+          }}
           src={src}
           alt={`Thumbnail of ${displayName}`}
         />
       ) : (
         <div
-          className="row border justify-content-center align-items-center rounded m-0"
+          className="row justify-content-center align-items-center m-0"
           style={imageSize}
         >
           <Icon src={src} style={{ height: '48px', width: '48px' }} />
