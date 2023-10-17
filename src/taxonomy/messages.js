@@ -29,6 +29,14 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-list.spinner.loading',
     defaultMessage: 'Loading',
   },
+  systemTaxonomyPopoverTitle: {
+    id: 'course-authoring.taxonomy-list.popover.system-defined.title',
+    defaultMessage: 'System taxonomy',
+  },
+  systemTaxonomyPopoverBody: {
+    id: 'course-authoring.taxonomy-list.popover.system-defined.body',
+    defaultMessage: 'This is a system-level taxonomy and is enabled by default.',
+  },
 });
 
 export default messages;

@@ -2,6 +2,8 @@ import React from 'react';
 import {
   Badge,
   Card,
+  OverlayTrigger,
+  Popover,
 } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
@@ -16,12 +18,29 @@ const TaxonomyCard = ({ className, original, intl }) => {
 
   const orgsCountEnabled = () => orgsCount !== undefined && orgsCount !== 0;
 
+  const getSystemBadgeToolTip = () => (
+    <Popover id={`system-defined-tooltip-${id}`}>
+      <Popover.Title as="h5">
+        {intl.formatMessage(messages.systemTaxonomyPopoverTitle)}
+      </Popover.Title>
+      <Popover.Content>
+        {intl.formatMessage(messages.systemTaxonomyPopoverBody)}
+      </Popover.Content>
+    </Popover>
+  );
+
   const getHeaderSubtitle = () => {
     if (systemDefined) {
       return (
-        <Badge variant="light">
-          {intl.formatMessage(messages.systemDefinedBadge)}
-        </Badge>
+        <OverlayTrigger
+          key={`system-defined-overlay-${id}`}
+          placement="top"
+          overlay={getSystemBadgeToolTip(id)}
+        >
+          <Badge variant="light">
+            {intl.formatMessage(messages.systemDefinedBadge)}
+          </Badge>
+        </OverlayTrigger>
       );
     }
     if (orgsCountEnabled()) {
