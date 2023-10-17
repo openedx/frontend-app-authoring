@@ -168,7 +168,7 @@ describe('FilesAndUploads', () => {
 
         expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
 
-        expect(screen.queryByTestId('list-card-mOckID1')).toBeNull();
+        expect(screen.queryByRole('table')).toBeNull();
 
         const listButton = screen.getByLabelText('List');
         await act(async () => {
@@ -176,7 +176,7 @@ describe('FilesAndUploads', () => {
         });
         expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
 
-        expect(screen.getByTestId('list-card-mOckID1')).toBeVisible();
+        expect(screen.getByRole('table')).toBeVisible();
       });
     });
 

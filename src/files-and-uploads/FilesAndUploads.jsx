@@ -28,7 +28,7 @@ import {
   updateAssetOrder,
   fetchAssetDownload,
 } from './data/thunks';
-import { sortFiles } from './data/utils';
+import { getFileSizeToClosestByte, sortFiles } from './data/utils';
 import messages from './messages';
 
 import FileInfo from './FileInfo';
@@ -36,9 +36,9 @@ import FileInput, { useFileInput } from './FileInput';
 import FilesAndUploadsProvider from './FilesAndUploadsProvider';
 import {
   GalleryCard,
-  ListCard,
   TableActions,
 } from './table-components';
+import { AccessColumn, MoreInfoColumn, ThumbnailColumn } from './table-components/table-custom-columns';
 import ApiStatusToast from './ApiStatusToast';
 import { clearErrors } from './data/slice';
 import getPageHeadTitle from '../generic/utils';
@@ -141,34 +141,83 @@ const FilesAndUploads = ({
     />
   );
 
-  const fileCard = ({ className, original }) => {
-    if (currentView === defaultVal) {
-      return (
-        <GalleryCard
-          {...{
-            handleLockedAsset,
-            handleBulkDownload,
-            handleOpenDeleteConfirmation,
-            handleOpenAssetInfo,
-            className,
-            original,
-          }}
-        />
-      );
-    }
-    return (
-      <ListCard
-        {...{
-          handleLockedAsset,
-          handleBulkDownload,
-          handleOpenDeleteConfirmation,
-          handleOpenAssetInfo,
-          className,
-          original,
-        }}
-      />
-    );
+  const fileCard = ({ className, original }) => (
+    <GalleryCard
+      {...{
+        handleLockedAsset,
+        handleBulkDownload,
+        handleOpenDeleteConfirmation,
+        handleOpenAssetInfo,
+        className,
+        original,
+      }}
+    />
+  );
+
+  const accessColumn = {
+    id: 'locked',
+    Header: 'Access',
+    Cell: ({ row }) => AccessColumn({ row }),
   };
+  const thumbnailColumn = {
+    id: 'thumbnail',
+    Header: '',
+    Cell: ({ row }) => ThumbnailColumn({ row }),
+  };
+  const fileSizeColumn = {
+    id: 'fileSize',
+    Header: 'File size',
+    Cell: ({ row }) => {
+      const { fileSize } = row.original;
+      return getFileSizeToClosestByte(fileSize);
+    },
+  };
+  const moreInfoColumn = {
+    id: 'moreInfo',
+    Header: '',
+    Cell: ({ row }) => MoreInfoColumn({
+      row,
+      handleLock: handleLockedAsset,
+      handleBulkDownload,
+      handleOpenAssetInfo,
+      handleOpenDeleteConfirmation,
+    }),
+  };
+
+  const tableColumns = [
+    { ...thumbnailColumn },
+    {
+      Header: 'File name',
+      accessor: 'displayName',
+    },
+    { ...fileSizeColumn },
+    {
+      Header: 'Type',
+      accessor: 'wrapperType',
+      Filter: CheckboxFilter,
+      filter: 'includesValue',
+      filterChoices: [
+        {
+          name: 'Code',
+          value: 'code',
+        },
+        {
+          name: 'Images',
+          value: 'image',
+        },
+        {
+          name: 'Documents',
+          value: 'document',
+        },
+        {
+          name: 'Audio',
+          value: 'audio',
+        },
+      ],
+    },
+    { ...accessColumn },
+    { ...moreInfoColumn },
+  ];
 
   if (loadingStatus === RequestStatus.DENIED) {
     return (
@@ -244,36 +293,7 @@ const FilesAndUploads = ({
           }}
           tableActions={headerActions}
           bulkActions={headerActions}
-          columns={[
-            {
-              Header: 'Name',
-              accessor: 'displayName',
-            },
-            {
-              Header: 'Type',
-              accessor: 'wrapperType',
-              Filter: CheckboxFilter,
-              filter: 'includesValue',
-              filterChoices: [
-                {
-                  name: 'Code',
-                  value: 'code',
-                },
-                {
-                  name: 'Images',
-                  value: 'image',
-                },
-                {
-                  name: 'Documents',
-                  value: 'document',
-                },
-                {
-                  name: 'Audio',
-                  value: 'audio',
-                },
-              ],
-            },
-          ]}
+          columns={tableColumns}
           itemCount={totalCount}
           pageCount={Math.ceil(totalCount / 50)}
           data={assets}
@@ -292,7 +312,7 @@ const FilesAndUploads = ({
             <div data-testid="files-data-table" className="mr-4 ml-3">
               <DataTable.TableControlBar />
               { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={6} /> }
-              { currentView === 'list' && <CardView CardComponent={fileCard} columnSizes={{ xs: 12 }} selectionPlacement="left" skeletonCardCount={4} /> }
+              { currentView === 'list' && <DataTable.Table /> }
               <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
               <DataTable.TableFooter />
               <ApiStatusToast
