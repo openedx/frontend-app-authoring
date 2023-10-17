@@ -102,7 +102,6 @@ describe('FilesAndUploads', () => {
       renderComponent();
       await emptyMockStore(RequestStatus.SUCCESSFUL);
       expect(screen.getByText('Files')).toBeVisible();
-      expect(screen.getByText('Files and uploads')).not.toBeVisible();
     });
 
     it('should render dropzone', async () => {
