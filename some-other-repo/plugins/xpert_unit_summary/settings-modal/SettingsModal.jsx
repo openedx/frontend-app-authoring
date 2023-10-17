@@ -24,21 +24,23 @@ import React, {
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 
-import { RequestStatus } from '../../../data/constants';
-import ConnectionErrorAlert from '../../../generic/ConnectionErrorAlert';
-import FormSwitchGroup from '../../../generic/FormSwitchGroup';
-import Loading from '../../../generic/Loading';
-import { useModel } from '../../../generic/model-store';
-import PermissionDeniedAlert from '../../../generic/PermissionDeniedAlert';
-import { useIsMobile } from '../../../utils';
-import { getLoadingStatus, getSavingStatus, getResetStatus } from '../../data/selectors';
-import { updateSavingStatus, updateResetStatus } from '../../data/slice';
+import { RequestStatus } from 'CourseAuthoring/data/constants';
+import ConnectionErrorAlert from 'CourseAuthoring/generic/ConnectionErrorAlert';
+import FormSwitchGroup from 'CourseAuthoring/generic/FormSwitchGroup';
+import Loading from 'CourseAuthoring/generic/Loading';
+import { useModel } from 'CourseAuthoring/generic/model-store';
+import PermissionDeniedAlert from 'CourseAuthoring/generic/PermissionDeniedAlert';
+import { useIsMobile } from 'CourseAuthoring/utils';
+import { getLoadingStatus, getSavingStatus, getResetStatus } from 'CourseAuthoring/pages-and-resources/data/selectors';
+import { updateSavingStatus, updateResetStatus } from 'CourseAuthoring/pages-and-resources/data/slice';
 import { updateXpertSettings, resetXpertSettings, removeXpertSettings } from '../data/thunks';
-import AppConfigFormDivider from '../../discussions/app-config-form/apps/shared/AppConfigFormDivider';
-import { PagesAndResourcesContext } from '../../PagesAndResourcesProvider';
+import AppConfigFormDivider from 'CourseAuthoring/pages-and-resources/discussions/app-config-form/apps/shared/AppConfigFormDivider';
+import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 import messages from './messages';
 import appInfo from '../appInfo';
 import ResetIcon from './ResetIcon';
+
+import './SettingsModal.scss';
 
 const AppSettingsForm = ({
   formikProps, children, showForm,

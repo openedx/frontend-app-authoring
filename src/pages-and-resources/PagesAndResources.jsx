@@ -9,12 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Hyperlink } from '@edx/paragon';
 import messages from './messages';
 import DiscussionsSettings from './discussions';
-import {
-  XpertUnitSummarySettings,
-  fetchXpertPluginConfigurable,
-  fetchXpertSettings,
-  appInfo as XpertAppInfo,
-} from './xpert-unit-summary';
+import { CourseAppPluginSettings } from './PluginSettingsComponent';
 
 import PageGrid from './pages/PageGrid';
 import { fetchCourseApps } from './data/thunks';
@@ -34,8 +29,6 @@ const PagesAndResources = ({ courseId, intl }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchCourseApps(courseId));
-    dispatch(fetchXpertPluginConfigurable(courseId));
-    dispatch(fetchXpertSettings(courseId));
   }, [courseId]);
 
   const courseAppIds = useSelector(state => state.pagesAndResources.courseAppIds);
@@ -47,12 +40,6 @@ const PagesAndResources = ({ courseId, intl }) => {
 
   // Each page here is driven by a course app
   const pages = useModels('courseApps', courseAppIds);
-  const xpertPluginConfigurable = useModel('XpertSettings.enabled', 'xpert-unit-summary');
-  const xpertSettings = useModel('XpertSettings', 'xpert-unit-summary');
-  const permissonPages = [{
-    ...XpertAppInfo,
-    enabled: xpertSettings?.enabled !== undefined,
-  }];
 
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -82,17 +69,6 @@ const PagesAndResources = ({ courseId, intl }) => {
 
         <PageGrid pages={pages} />
 
-        {
-          xpertPluginConfigurable?.enabled ? (
-            <>
-              <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
-                <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
-              </div>
-              <PageGrid pages={permissonPages} />
-            </>
-          ) : ''
-        }
-
         <Switch>
           <PageRoute
             path={[
@@ -103,35 +79,10 @@ const PagesAndResources = ({ courseId, intl }) => {
             <DiscussionsSettings courseId={courseId} />
           </PageRoute>
 
-          <PageRoute
-            path={[
-              `${path}/xpert-unit-summary/settings`,
-            ]}
-          >
-            <XpertUnitSummarySettings courseId={courseId} />
-          </PageRoute>
-
           <PageRoute path={`${path}/:appId/settings`}>
             {
-              ({ match, history }) => {
-                const SettingsComponent = React.lazy(async () => {
-                  try {
-                    // There seems to be a bug in babel-eslint that causes the checker to crash with the following error
-                    // if we use a template string here:
-                    //     TypeError: Cannot read property 'range' of null with using template strings here.
-                    // Ref: https://github.com/babel/babel-eslint/issues/530
-                    return await import('@openedx-plugins/course-app-' + match.params.appId + '/Settings.jsx'); // eslint-disable-line
-                  } catch (error) {
-                    console.trace(error); // eslint-disable-line no-console
-                    return null;
-                  }
-                });
-                return (
-                  <Suspense fallback="...">
-                    <SettingsComponent onClose={() => history.push(url)} />
-                  </Suspense>
-                );
-              }
+              ({ match, history }) =>
+                <CourseAppPluginSettings appId={match.params.appId} history={history} backUrl={url} />
             }
           </PageRoute>
         </Switch>

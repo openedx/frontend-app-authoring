@@ -3,7 +3,7 @@ import { history } from '@edx/frontend-platform';
 import { useDispatch } from 'react-redux';
 
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
+import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 
 import SettingsModal from './settings-modal/SettingsModal';
 import messages from './messages';
