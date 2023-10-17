@@ -19,6 +19,9 @@ import {
   downloadTranscriipt,
   uploadTranscript,
   getVideoUsagePaths,
+  deleteTranscriptPreferences,
+  setTranscriptCredentials,
+  setTranscriptPreferences,
 } from './api';
 import {
   setVideoIds,
@@ -30,6 +33,8 @@ import {
   updateErrors,
   clearErrors,
   updateEditStatus,
+  updateTranscriptCredentialsSuccess,
+  updateTranscriptPreferenceSuccess,
 } from './slice';
 
 import { updateFileValues } from './utils';
@@ -298,6 +303,50 @@ export function fetchVideoDownload({ selectedRows, courseId }) {
         dispatch(updateErrors({ error: 'download', message: error }));
       });
       dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function clearAutomatedTranscript({ courseId }) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      await deleteTranscriptPreferences(courseId);
+      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateErrors({ error: 'transcript', message: 'Failed to update order transcripts settings.' }));
+      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function updateTranscriptCredentials({ courseId, data }) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      const credentials = await setTranscriptCredentials(courseId, data);
+      dispatch(updateTranscriptCredentialsSuccess(credentials));
+      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateErrors({ error: 'transcript', message: `Failed to update ${data.provider} credentials.` }));
+      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function updateTranscriptPreference({ courseId, data }) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      const preferences = await setTranscriptPreferences(courseId, data);
+      dispatch(updateTranscriptPreferenceSuccess(preferences));
+      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateErrors({ error: 'transcript', message: `Failed to update ${data.provider} transcripts settings.` }));
+      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.FAILED }));
     }
   };
 }

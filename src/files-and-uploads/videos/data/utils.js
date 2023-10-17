@@ -212,3 +212,22 @@ export const resampleFile = ({
   };
   reader.readAsDataURL(file);
 };
+
+export const getLanguageOptions = (keys, languages) => {
+  const options = {};
+  if (keys) {
+    keys.forEach(key => {
+      options[key] = languages[key];
+    });
+  }
+  return options;
+};
+
+export const getFidelityOptions = (fidelities) => {
+  const options = {};
+  Object.entries(fidelities).forEach(([key, value]) => {
+    const { display_name: displayName } = value;
+    options[key] = displayName;
+  });
+  return options;
+};

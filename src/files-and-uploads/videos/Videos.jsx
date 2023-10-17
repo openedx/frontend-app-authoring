@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   injectIntl,
@@ -19,11 +20,14 @@ import { useModels, useModel } from '../../generic/model-store';
 import {
   addVideoFile,
   addVideoThumbnail,
+  clearAutomatedTranscript,
   deleteVideoFile,
   fetchVideoDownload,
   fetchVideos,
   getUsagePaths,
   resetErrors,
+  updateTranscriptCredentials,
+  updateTranscriptPreference,
 } from './data/thunks';
 import messages from './messages';
 import VideosProvider from './VideosProvider';
@@ -43,7 +47,7 @@ const Videos = ({
   intl,
 }) => {
   const dispatch = useDispatch();
-  const [isTranscriptSettngsOpen, openTranscriptSettngs, closeTranscriptSettngs] = useToggle(false);
+  const [isTranscriptSettngsOpen, openTranscriptSettings, closeTranscriptSettings] = useToggle(false);
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
 
@@ -55,6 +59,7 @@ const Videos = ({
     totalCount,
     videoIds,
     loadingStatus,
+    transcriptStatus,
     addingStatus: addVideoStatus,
     deletingStatus: deleteVideoStatus,
     updatingStatus: updateVideoStatus,
@@ -65,8 +70,6 @@ const Videos = ({
 
   const {
     isVideoTranscriptEnabled,
-    activeTranscriptPreferences,
-    transcriptAvailableLanguages,
     transcriptCredentials,
     encodingsDownloadUrl,
     videoUploadMaxFileSize,
@@ -81,9 +84,17 @@ const Videos = ({
   const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
   const handleUsagePaths = (video) => dispatch(getUsagePaths({ video, courseId }));
   const handleErrorReset = (error) => dispatch(resetErrors(error));
+  const handleOrderTranscripts = (data, provider) => {
+    handleErrorReset({ errorType: 'transcript' });
+    if (provider === 'order') {
+      dispatch(clearAutomatedTranscript({ courseId }));
+    } else if (isEmpty(transcriptCredentials)) {
+      dispatch(updateTranscriptCredentials({ courseId, data: { ...data, provider, global: false } }));
+    } else {
+      dispatch(updateTranscriptPreference({ courseId, data: { ...data, provider, global: false } }));
+    }
+  };
 
-  // const handleTranscriptCredentials = ({data, global, provider}) => {
-  // dispatch(addTranscriptCredentials({data, global, provider}))}
   const handleAddThumbnail = (file, videoId) => resampleFile({
     file,
     dispatch,
@@ -172,7 +183,14 @@ const Videos = ({
             </div>
             <ActionRow.Spacer />
             {isVideoTranscriptEnabled ? (
-              <Button variant="link" size="sm" onClick={openTranscriptSettngs}>
+              <Button
+                variant="link"
+                size="sm"
+                onClick={() => {
+                  openTranscriptSettings();
+                  handleErrorReset({ errorType: 'transcripts' });
+                }}
+              >
                 <FormattedMessage {...messages.transcriptSettingsButtonLabel} />
               </Button>
             ) : null}
@@ -182,10 +200,10 @@ const Videos = ({
           <TranscriptSettings
             {...{
               isTranscriptSettngsOpen,
-              closeTranscriptSettngs,
-              activeTranscriptPreferences,
-              transcriptAvailableLanguages,
-              transcriptCredentials,
+              closeTranscriptSettings,
+              handleOrderTranscripts,
+              errorMessages,
+              transcriptStatus,
             }}
           />
         ) : null}

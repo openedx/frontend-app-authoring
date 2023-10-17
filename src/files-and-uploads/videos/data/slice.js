@@ -68,6 +68,12 @@ const slice = createSlice({
     addVideoSuccess: (state, { payload }) => {
       state.videoIds = [payload.videoId, ...state.videoIds];
     },
+    updateTranscriptCredentialsSuccess: (state, { payload }) => {
+      state.pageSettings.transcriptCredentials = payload;
+    },
+    updateTranscriptPreferenceSuccess: (state, { payload }) => {
+      state.pageSettings.activeTranscriptPreferences = payload;
+    },
     updateErrors: (state, { payload }) => {
       const { error, message } = payload;
       const currentErrorState = state.errors[error];
@@ -90,6 +96,8 @@ export const {
   updateErrors,
   clearErrors,
   updateEditStatus,
+  updateTranscriptCredentialsSuccess,
+  updateTranscriptPreferenceSuccess,
 } = slice.actions;
 
 export const {

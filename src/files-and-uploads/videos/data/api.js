@@ -21,7 +21,15 @@ export const getCoursVideosApiUrl = (courseId) => `${getApiBaseUrl()}/videos/${c
 export async function getVideos(courseId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(getVideosUrl(courseId));
-  return camelCaseObject(data);
+  const { video_transcript_settings: videoTranscriptSettings } = data;
+  const { transcription_plans: transcriptionPlans } = videoTranscriptSettings;
+  return {
+    ...camelCaseObject(data),
+    videoTranscriptSettings: {
+      ...camelCaseObject(videoTranscriptSettings),
+      transcriptionPlans,
+    },
+  };
 }
 
 /**
@@ -206,4 +214,58 @@ export async function uploadVideo(
         }]);
     });
   return uploadErrors;
+}
+
+export async function deleteTranscriptPreferences(courseId) {
+  await getAuthenticatedHttpClient().delete(`${getApiBaseUrl()}/transcript_preferences/${courseId}`);
+}
+
+export async function setTranscriptPreferences(courseId, preferences) {
+  const {
+    cieloFidelity,
+    cieloTurnaround,
+    global,
+    preferredLanguages,
+    provider,
+    threePlayTurnaround,
+    videoSourceLanguage,
+  } = preferences;
+  const postJson = {
+    cielo24_fideltiy: cieloFidelity.toUpperCase(),
+    cielo24_turnaround: cieloTurnaround,
+    global,
+    preferred_languages: preferredLanguages,
+    provider,
+    video_source_language: videoSourceLanguage,
+    three_play_turnaround: threePlayTurnaround,
+  };
+
+  const { data } = await getAuthenticatedHttpClient()
+    .post(`${getApiBaseUrl()}/transcript_preferences/${courseId}`, postJson);
+  return camelCaseObject(data);
+}
+
+export async function setTranscriptCredentials(courseId, formFields) {
+  const {
+    apiKey,
+    global,
+    provider,
+    ...otherFields
+  } = formFields;
+  const postJson = {
+    api_key: apiKey,
+    global,
+    provider,
+  };
+
+  if (provider === '3PlayMedia') {
+    const { apiSecretKey } = otherFields;
+    postJson.api_secret_key = apiSecretKey;
+  } else {
+    const { username } = otherFields;
+    postJson.username = username;
+  }
+  const { data } = await getAuthenticatedHttpClient()
+    .post(`${getApiBaseUrl()}/transcript_credentials/${courseId}`, postJson);
+  return camelCaseObject(data);
 }
