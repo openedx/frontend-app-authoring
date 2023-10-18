@@ -89,7 +89,7 @@ FileInfo.propTypes = {
   }),
   onClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  handleLockedAsset: PropTypes.func.isRequired,
+  handleLockedFile: PropTypes.func.isRequired,
   usagePathStatus: PropTypes.string.isRequired,
   error: PropTypes.arrayOf(PropTypes.string).isRequired,
   thumbnailPreview: PropTypes.func.isRequired,
