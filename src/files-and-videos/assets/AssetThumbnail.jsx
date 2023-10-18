@@ -21,7 +21,7 @@ const AssetThumbnail = ({
   const { width, height } = imageSize;
 
   return (
-    <div className="row border rounded p-1 justify-content-center align-itmes-center">
+    <div className="row justify-content-center align-itmes-center">
       {thumbnail ? (
         <Image
           style={{
@@ -31,12 +31,13 @@ const AssetThumbnail = ({
             maxWidth: '100%',
             maxHeight: '100%',
           }}
+          className="border rounded p-1"
           src={src}
           alt={`Thumbnail of ${displayName}`}
         />
       ) : (
         <div
-          className="row justify-content-center align-items-center m-0"
+          className="row justify-content-center align-items-center m-0 border rounded"
           style={imageSize}
         >
           <Icon src={src} style={{ height: '48px', width: '48px' }} />

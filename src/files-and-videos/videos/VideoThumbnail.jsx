@@ -46,28 +46,22 @@ const VideoThumbnail = ({
     break;
   }
   const showThumbnail = videoImageSettings?.videoImageUploadEnabled && thumbnail && isUploaded;
-  const { width, height } = imageSize;
 
   return (
-    <div className="border rounded video-thumbnail row justify-content-center align-itmes-center">
+    <div className="video-thumbnail row justify-content-center align-itmes-center">
       <div className="thumbnail-overlay" />
       {showThumbnail ? (
         <Image
-          style={{
-            width,
-            height,
-            objectFit: 'contain',
-            maxWidth: '100%',
-            maxHeight: '100%',
-          }}
-          className="w-auto mw-100 mh-100 thumbnail-image"
+          style={imageSize}
+          className="border rounded p-1"
           src={thumbnail}
-          alt={`Thumbnail of ${displayName}`}
+          alt={`${displayName} thumbnail`}
+          onrror={() => this.src=VideoFile}
         />
       ) : (
         <>
           <div
-            className="row justify-content-center align-items-center m-0"
+            className="row justify-content-center align-items-center m-0 border rounded"
             style={imageSize}
           >
             <Icon src={VideoFile} style={{ height: '48px', width: '48px' }} />
