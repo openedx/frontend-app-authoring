@@ -20,7 +20,7 @@ const FileInfo = ({
   file,
   isOpen,
   onClose,
-  handleLockedAsset,
+  handleLockedFile,
   thumbnailPreview,
   usagePathStatus,
   error,
@@ -61,7 +61,7 @@ const FileInfo = ({
           {file?.wrapperType === 'video' ? (
             <FileInfoVideoSidebar video={file} />
           ) : (
-            <FileInfoAssetSidebar asset={file} handleLockedAsset={handleLockedAsset} />
+            <FileInfoAssetSidebar asset={file} handleLockedAsset={handleLockedFile} />
           )}
         </div>
       </div>
