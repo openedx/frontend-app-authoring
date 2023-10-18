@@ -10,7 +10,7 @@ import { StudioFooter } from '@edx/frontend-component-footer';
 import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import messages from './messages';
-import TaxonomyCard from './TaxonomyCard';
+import TaxonomyCard from './taxonomy-card/TaxonomyCard';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './api/hooks/selectors';
 
 const TaxonomyListPage = ({ intl }) => {

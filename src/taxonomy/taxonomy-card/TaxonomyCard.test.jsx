@@ -5,7 +5,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { render, fireEvent } from '@testing-library/react';
 import PropTypes from 'prop-types';
 
-import initializeStore from '../store';
+import initializeStore from '../../store';
 
 import TaxonomyCard from './TaxonomyCard';
 
@@ -92,7 +92,7 @@ describe('<TaxonomyCard />', async () => {
     // Click on the menu button to open
     fireEvent.click(getByTestId('taxonomy-card-menu-button-1'));
 
-    // Menu open
+    // Menu opened
     expect(getByTestId('taxonomy-card-menu-1')).toBeInTheDocument();
 
     // Click on any element to close the menu
@@ -100,5 +100,25 @@ describe('<TaxonomyCard />', async () => {
 
     // Menu closed
     expect(() => getByTestId('taxonomy-card-menu-1')).toThrow();
+  });
+
+  test('should open export modal on export menu click', () => {
+    const { getByTestId, getByText } = render(<TaxonomyCardComponent original={data} />);
+
+    // Modal closed
+    expect(() => getByText('Select format to export')).toThrow();
+
+    // Click on export menu
+    fireEvent.click(getByTestId('taxonomy-card-menu-button-1'));
+    fireEvent.click(getByText('Export'));
+
+    // Modal opened
+    expect(getByText('Select format to export')).toBeInTheDocument();
+
+    // Click on cancel button
+    fireEvent.click(getByText('Cancel'));
+
+    // Modal closed
+    expect(() => getByText('Select format to export')).toThrow();
   });
 });
