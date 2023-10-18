@@ -1,20 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Badge,
+  IconButton,
   Card,
   OverlayTrigger,
   Popover,
+  ModalPopup,
+  Menu,
+  Icon,
+  MenuItem,
 } from '@edx/paragon';
+import { MoreVert } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import messages from './messages';
-import './TaxonomyCard.scss';
 
 const TaxonomyCard = ({ className, original, intl }) => {
   const {
     id, name, description, systemDefined, orgsCount,
   } = original;
+
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [menuTarget, setMenuTarget] = useState(null);
 
   const orgsCountEnabled = () => orgsCount !== undefined && orgsCount !== 0;
 
@@ -53,10 +61,33 @@ const TaxonomyCard = ({ className, original, intl }) => {
     return undefined;
   };
 
+  const onClickExport = () => {
+    setMenuIsOpen(false);
+  };
+
   const getHeaderActions = () => (
-    // Menu button
-    // TODO Add functionality to this menu
-    undefined
+    <>
+      <IconButton
+        variant="primary"
+        onClick={() => setMenuIsOpen(true)}
+        ref={setMenuTarget}
+        src={MoreVert}
+        iconAs={Icon}
+        alt={intl.formatMessage(messages.taxonomyMenuAlt, { name })}
+        data-testid={`taxonomy-card-menu-button-${id}`}
+      />
+      <ModalPopup
+        positionRef={menuTarget}
+        isOpen={menuIsOpen}
+        onClose={() => setMenuIsOpen(false)}
+      >
+        <Menu data-testid={`taxonomy-card-menu-${id}`}>
+          <MenuItem className="taxonomy-menu-item" onClick={onClickExport}>
+            {intl.formatMessage(messages.taxonomyCardExportMenu)}
+          </MenuItem>
+        </Menu>
+      </ModalPopup>
+    </>
   );
 
   return (

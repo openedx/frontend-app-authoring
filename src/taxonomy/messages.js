@@ -37,6 +37,14 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-list.popover.system-defined.body',
     defaultMessage: 'This is a system-level taxonomy and is enabled by default.',
   },
+  taxonomyCardExportMenu: {
+    id: 'course-authoring.taxonomy-list.menu.export.label',
+    defaultMessage: 'Export',
+  },
+  taxonomyMenuAlt: {
+    id: 'course-authoring.taxonomy-list.menu.alt',
+    defaultMessage: '{name} menu',
+  },
 });
 
 export default messages;
