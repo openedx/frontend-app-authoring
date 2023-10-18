@@ -80,10 +80,11 @@ const TranscriptSettings = ({
             </div>
           ) : (
             <div key="transcript-type-selection" className="mt-3">
-              <Collapsible.Advanced>
+              <Collapsible.Advanced
+                onOpen={() => setTranscriptType('order')}
+              >
                 <Collapsible.Trigger
                   className="row m-0 justify-content-between align-items-center"
-                  onClick={() => setTranscriptType('order')}
                 >
                   <FormattedMessage {...messages.orderTranscriptsTitle} />
                   <Icon src={ChevronRight} />
