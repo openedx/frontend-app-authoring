@@ -40,6 +40,7 @@ import StatusColumn from '../table-components/table-custom-columns/StatusColumn'
 import TranscriptSettings from './transcript-settings';
 import VideoThumbnail from './VideoThumbnail';
 import { getFormattedDuration, resampleFile } from './data/utils';
+import FILES_AND_UPLOAD_TYPE_FILTERS from '../data/constant';
 
 const Videos = ({
   courseId,
@@ -77,8 +78,8 @@ const Videos = ({
     videoImageSettings,
   } = pageSettings;
 
-  const supportedFileFormats = { 'video/*': videoSupportedFileFormats };
-
+  const supportedFileFormats = { 'video/*': videoSupportedFileFormats || FILES_AND_UPLOAD_TYPE_FILTERS.video };
+  
   const handleAddFile = (file) => dispatch(addVideoFile(courseId, file));
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id, totalCount));
   const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
