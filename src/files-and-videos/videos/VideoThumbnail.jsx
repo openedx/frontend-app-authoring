@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { VideoFile } from '@edx/paragon/icons';
 import {
   Badge,
@@ -8,6 +9,7 @@ import {
   Image,
 } from '@edx/paragon';
 import FileInput, { useFileInput } from '../FileInput';
+import messages from './messages';
 
 const VideoThumbnail = ({
   thumbnail,
@@ -17,6 +19,8 @@ const VideoThumbnail = ({
   handleAddThumbnail,
   videoImageSettings,
   status,
+  // injected
+  intl,
 }) => {
   const fileInputControl = useFileInput({
     onAddFile: (file) => handleAddThumbnail(file, id),
@@ -55,8 +59,7 @@ const VideoThumbnail = ({
           style={imageSize}
           className="border rounded p-1"
           src={thumbnail}
-          alt={`${displayName} thumbnail`}
-          onrror={() => this.src=VideoFile}
+          alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
         />
       ) : (
         <>
@@ -108,6 +111,8 @@ VideoThumbnail.propTypes = {
     supportedFileFormats: PropTypes.shape({}),
   }).isRequired,
   status: PropTypes.string.isRequired,
+  // injected
+  intl: intlShape.isRequired,
 };
 
-export default VideoThumbnail;
+export default injectIntl(VideoThumbnail);

@@ -5,6 +5,10 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-uploads.heading',
     defaultMessage: 'Files and uploads',
   },
+  thumbnailAltMessage: {
+    id: 'course-authoring.files-and-uploads.thumbnail.alt',
+    defaultMessage: '{displayName} file preview',
+  },
   copyStudioUrlTitle: {
     id: 'course-authoring.files-and-uploads.file-info.copyStudioUrl.title',
     defaultMessage: 'Copy Studio Url',

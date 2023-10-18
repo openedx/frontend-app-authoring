@@ -9,6 +9,10 @@ const messages = defineMessages({
     id: 'course-authoring.video-uploads.transcript-settings.button.toggle',
     defaultMessage: 'Transcript settings',
   },
+  thumbnailAltMessage: {
+    id: 'course-authoring.video-uploads.thumbnail.alt',
+    defaultMessage: '{displayName} video thumbnail',
+  },
 });
 
 export default messages;

@@ -47,7 +47,7 @@ const FileTable = ({
   intl,
 }) => {
   const dispatch = useDispatch();
-  const defaultVal = 'list';
+  const defaultVal = 'card';
   const columnSizes = {
     xs: 12,
     sm: 6,

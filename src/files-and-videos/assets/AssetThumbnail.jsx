@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Icon,
   Image,
 } from '@edx/paragon';
 import { getSrc } from '../data/utils';
+import messages from './messages';
 
 const AssetThumbnail = ({
   thumbnail,
@@ -12,6 +14,8 @@ const AssetThumbnail = ({
   externalUrl,
   displayName,
   imageSize,
+  // injected
+  intl,
 }) => {
   const src = getSrc({
     thumbnail,
@@ -33,7 +37,7 @@ const AssetThumbnail = ({
           }}
           className="border rounded p-1"
           src={src}
-          alt={`Thumbnail of ${displayName}`}
+          alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
         />
       ) : (
         <div
@@ -61,6 +65,8 @@ AssetThumbnail.propTypes = {
     width: PropTypes.string,
     height: PropTypes.string.isRequired,
   }).isRequired,
+  // injected
+  intl: intlShape.isRequired,
 };
 
-export default AssetThumbnail;
+export default injectIntl(AssetThumbnail);
