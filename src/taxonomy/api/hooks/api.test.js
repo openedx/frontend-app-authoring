@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import useTaxonomyListData from './api';
+import { useTaxonomyListData } from './api';
 
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(),

@@ -8,17 +8,30 @@ import {
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from '../messages';
+import { useExportTaxonomyMutation } from '../api/hooks/selectors';
 
 const ExportModal = ({
   taxonomyId,
+  taxonomyName,
   isOpen,
   onClose,
   intl,
 }) => {
-  const [modalSize, setModalSize] = useState('csv');
+  const [outputFormat, setOutputFormat] = useState('csv');
+  const exportMutation = useExportTaxonomyMutation();
+
+  const onClickExport = () => {
+    onClose();
+    exportMutation.mutate({
+      pk: taxonomyId,
+      format: outputFormat,
+      name: taxonomyName,
+    });
+  };
 
   return (
     <ModalDialog
+      title={intl.formatMessage(messages.exportModalTitle)}
       isOpen={isOpen}
       onClose={onClose}
       size="lg"
@@ -37,8 +50,8 @@ const ExportModal = ({
           </Form.Label>
           <Form.RadioSet
             name="export-format"
-            value={modalSize}
-            onChange={(e) => setModalSize(e.target.value)}
+            value={outputFormat}
+            onChange={(e) => setOutputFormat(e.target.value)}
           >
             <Form.Radio
               key={`export-csv-format-${taxonomyId}`}
@@ -60,7 +73,7 @@ const ExportModal = ({
           <ModalDialog.CloseButton variant="tertiary">
             {intl.formatMessage(messages.taxonomyModalsCancelLabel)}
           </ModalDialog.CloseButton>
-          <Button variant="primary">
+          <Button variant="primary" onClick={onClickExport}>
             {intl.formatMessage(messages.exportModalSubmitButtonLabel)}
           </Button>
         </ActionRow>
@@ -71,6 +84,7 @@ const ExportModal = ({
 
 ExportModal.propTypes = {
   taxonomyId: PropTypes.number.isRequired,
+  taxonomyName: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   intl: intlShape.isRequired,

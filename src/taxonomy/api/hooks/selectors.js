@@ -1,5 +1,8 @@
 // @ts-check
-import useTaxonomyListData from './api';
+import {
+  useTaxonomyListData,
+  useExportTaxonomy,
+} from './api';
 
 /**
  * @returns {import("../types.mjs").TaxonomyListData | undefined}
@@ -17,4 +20,8 @@ export const useTaxonomyListDataResponse = () => {
  */
 export const useIsTaxonomyListDataLoaded = () => (
   useTaxonomyListData().status === 'success'
+);
+
+export const useExportTaxonomyMutation = () => (
+  useExportTaxonomy()
 );

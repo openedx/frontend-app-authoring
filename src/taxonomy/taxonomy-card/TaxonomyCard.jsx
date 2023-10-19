@@ -66,9 +66,24 @@ const TaxonomyCard = ({ className, original, intl }) => {
     return undefined;
   };
 
-  const getHeaderActions = () => (
-    <TaxonomyCardMenu id={id} name={name} onClickMenuItem={onClickMenuItem} />
-  );
+  const getHeaderActions = () => {
+    if (systemDefined) {
+      // We don't show the export menu, because the system-taxonomies
+      // can't be exported. The API returns and error.
+      // The entire menu has been hidden because currently only
+      // the export menu exists.
+      //
+      // TODO When adding more menus, change this logic to hide only the export menu.
+      return undefined;
+    }
+    return (
+      <TaxonomyCardMenu
+        id={id}
+        name={name}
+        onClickMenuItem={onClickMenuItem}
+      />
+    );
+  };
 
   const renderModals = () => (
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -77,6 +92,8 @@ const TaxonomyCard = ({ className, original, intl }) => {
         <ExportModal
           isOpen={isExportModalOpen}
           onClose={() => setIsExportModalOpen(false)}
+          taxonomyId={id}
+          taxonomyName={name}
         />
       )}
     </>

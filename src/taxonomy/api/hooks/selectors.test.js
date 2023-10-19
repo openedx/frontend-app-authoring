@@ -1,9 +1,9 @@
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './selectors';
-import useTaxonomyListData from './api';
+import { useTaxonomyListData } from './api';
 
 jest.mock('./api', () => ({
   __esModule: true,
-  default: jest.fn(),
+  useTaxonomyListData: jest.fn(),
 }));
 
 describe('useTaxonomyListDataResponse', () => {
