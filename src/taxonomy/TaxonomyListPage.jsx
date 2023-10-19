@@ -6,6 +6,7 @@ import {
   Spinner,
 } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { StudioFooter } from '@edx/frontend-component-footer';
 import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import messages from './messages';
@@ -91,6 +92,7 @@ const TaxonomyListPage = ({ intl }) => {
           )}
         </Container>
       </div>
+      <StudioFooter />
     </>
   );
 };
