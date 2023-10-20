@@ -7,7 +7,11 @@ import {
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
+<<<<<<< HEAD
 import { Route, Routes } from 'react-router-dom';
+=======
+import { Route, Switch } from 'react-router-dom';
+>>>>>>> origin/master
 import {
   QueryClient,
   QueryClientProvider,
