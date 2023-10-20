@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
 import {

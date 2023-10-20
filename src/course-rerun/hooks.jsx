@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { history } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useNavigate } from 'react-router-dom';
 
 import { RequestStatus } from '../data/constants';
 import { updateSavingStatus } from '../generic/data/slice';
@@ -17,6 +17,7 @@ import { fetchStudioHomeData } from '../studio-home/data/thunks';
 const useCourseRerun = (courseId) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const savingStatus = useSelector(getSavingStatus);
   const courseData = useSelector(getCourseData);
   const courseRerunData = useSelector(getCourseRerunData);
@@ -47,7 +48,7 @@ const useCourseRerun = (courseId) => {
       dispatch(updateSavingStatus({ status: '' }));
       const { url } = redirectUrlObj;
       if (url) {
-        history.push('/home');
+        navigate('/home');
       }
     }
   }, [savingStatus]);

@@ -1,9 +1,10 @@
 import React, { useEffect, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Switch, useRouteMatch } from 'react-router';
+import {
+  Routes, Route, useLocation, useNavigate,
+} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { history } from '@edx/frontend-platform';
-import { AppContext, PageRoute } from '@edx/frontend-platform/react';
+import { AppContext, PageWrap } from '@edx/frontend-platform/react';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -47,6 +48,7 @@ const CustomPages = ({
   // injected
   intl,
 }) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [orderedPages, setOrderedPages] = useState([]);
   const [currentPage, setCurrentPage] = useState();
@@ -57,7 +59,7 @@ const CustomPages = ({
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
 
   const { config } = useContext(AppContext);
-  const { path, url } = useRouteMatch();
+  const location = useLocation();
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
 
   useEffect(() => {
@@ -77,7 +79,7 @@ const CustomPages = ({
     dispatch(updatePageOrder(courseId, newPageOrder));
   };
   const handleEditClose = () => (content) => {
-    history.push(url);
+    navigate(location.pathname);
     if (!content?.metadata) {
       closeEditModal();
       return;
@@ -253,13 +255,21 @@ const CustomPages = ({
             </div>
           </ModalDialog.Body>
         </ModalDialog>
-        <Switch>
-          <PageRoute path={`${path}/editor`}>
-            {currentPage && (
-              <EditModal courseId={courseId} isOpen={isEditModalOpen} pageId={currentPage} onClose={handleEditClose} />
+        <Routes>
+          <Route
+            path="/editor"
+            element={currentPage && (
+              <PageWrap>
+                <EditModal
+                  courseId={courseId}
+                  isOpen={isEditModalOpen}
+                  pageId={currentPage}
+                  onClose={handleEditClose}
+                />
+              </PageWrap>
             )}
-          </PageRoute>
-        </Switch>
+          />
+        </Routes>
       </Container>
     </CustomPagesProvider>
   );

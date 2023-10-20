@@ -1,11 +1,11 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
-import { Switch } from 'react-router';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import {
-  getConfig, history, initializeMockApp, setConfig,
+  getConfig, initializeMockApp, setConfig,
 } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { AppProvider, PageRoute } from '@edx/frontend-platform/react';
+import { AppProvider, PageWrap } from '@edx/frontend-platform/react';
 import {
   queryByTestId, render, waitFor, getByText, fireEvent,
 } from '@testing-library/react';
@@ -27,25 +27,20 @@ ReactDOM.createPortal = jest.fn(node => node);
 
 function renderComponent() {
   const wrapper = render(
-    <AppProvider store={store}>
+    <AppProvider store={store} wrapWithRouter={false}>
       <PagesAndResourcesProvider courseId={courseId}>
-        <Switch>
-          <PageRoute
-            path={[
-              '/xpert-unit-summary/settings',
-            ]}
-          >
-            <XpertUnitSummarySettings courseId={courseId} />
-          </PageRoute>
-
-          <PageRoute
-            path={[
-              '/',
-            ]}
-          >
-            <div />
-          </PageRoute>
-        </Switch>
+        <MemoryRouter initialEntries={['/xpert-unit-summary/settings']}>
+          <Routes>
+            <Route
+              path="/xpert-unit-summary/settings"
+              element={<PageWrap><XpertUnitSummarySettings courseId={courseId} /></PageWrap>}
+            />
+            <Route
+              path="/"
+              element={<PageWrap><div /></PageWrap>}
+            />
+          </Routes>
+        </MemoryRouter>
       </PagesAndResourcesProvider>
     </AppProvider>,
   );
@@ -96,9 +91,6 @@ describe('XpertUnitSummarySettings', () => {
       },
     });
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-
-    // Go back to settings route
-    history.push('/xpert-unit-summary/settings');
   });
 
   describe('with successful network connections', () => {

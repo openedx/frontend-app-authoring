@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { history } from '@edx/frontend-platform';
 import { intlShape, injectIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -18,6 +17,7 @@ import {
   Visibility,
   VisibilityOff,
 } from '@edx/paragon/icons';
+import { useNavigate } from 'react-router-dom';
 import { deleteSingleCustomPage, updateCustomPageVisibility } from './data/thunks';
 import messages from './messages';
 import { CustomPagesContext } from './CustomPagesProvider';
@@ -32,6 +32,8 @@ const CustomPageCard = ({
 }) => {
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
   const { path: customPagesPath } = useContext(CustomPagesContext);
+  const navigate = useNavigate();
+
   const handleDelete = () => {
     dispatch(deleteSingleCustomPage({
       blockId: page.id,
@@ -47,7 +49,7 @@ const CustomPageCard = ({
   };
   const handleEditOpen = () => {
     setCurrentPage(page.id);
-    history.push(`${customPagesPath}/editor`);
+    navigate(`${customPagesPath}/editor`);
   };
 
   const deletePageStateProps = {

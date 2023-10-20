@@ -4,7 +4,7 @@ import React, {
 import PropTypes from 'prop-types';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { useRouteMatch } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
@@ -32,10 +32,11 @@ const AppConfigForm = ({
   courseId, intl,
 }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { formRef } = useContext(AppConfigFormContext);
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
-  const { params: { appId: routeAppId } } = useRouteMatch();
+  const { appId: routeAppId } = useParams();
   const [isLoading, setLoading] = useState(true);
   const {
     activeAppId, selectedAppId, status, saveStatus,
@@ -66,7 +67,7 @@ const AppConfigForm = ({
     } else {
       setConfirmationDialogVisible(false);
       // Note that when this action succeeds, we redirect to pagesAndResourcesPath in the thunk.
-      dispatch(saveProviderConfig(courseId, selectedAppId, values, pagesAndResourcesPath));
+      dispatch(saveProviderConfig(courseId, selectedAppId, values, pagesAndResourcesPath, navigate));
     }
   }, [activeAppId, confirmationDialogVisible, courseId, selectedAppId]);
 
