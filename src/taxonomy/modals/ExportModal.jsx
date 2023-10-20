@@ -8,25 +8,19 @@ import {
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from '../messages';
-import { useExportTaxonomyMutation } from '../api/hooks/selectors';
+import { callExportTaxonomy } from '../api/hooks/selectors';
 
 const ExportModal = ({
   taxonomyId,
-  taxonomyName,
   isOpen,
   onClose,
   intl,
 }) => {
   const [outputFormat, setOutputFormat] = useState('csv');
-  const exportMutation = useExportTaxonomyMutation();
 
   const onClickExport = () => {
     onClose();
-    exportMutation.mutate({
-      pk: taxonomyId,
-      format: outputFormat,
-      name: taxonomyName,
-    });
+    callExportTaxonomy(taxonomyId, outputFormat);
   };
 
   return (
@@ -84,7 +78,6 @@ const ExportModal = ({
 
 ExportModal.propTypes = {
   taxonomyId: PropTypes.number.isRequired,
-  taxonomyName: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   intl: intlShape.isRequired,

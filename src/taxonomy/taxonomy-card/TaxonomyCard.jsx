@@ -93,7 +93,6 @@ const TaxonomyCard = ({ className, original, intl }) => {
           isOpen={isExportModalOpen}
           onClose={() => setIsExportModalOpen(false)}
           taxonomyId={id}
-          taxonomyName={name}
         />
       )}
     </>

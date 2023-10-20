@@ -256,12 +256,3 @@ export const isValidDate = (date) => {
 
   return Boolean(formattedValue.length <= 10);
 };
-
-export const downloadDataAsFile = (data, contentType, fileName) => {
-  const url = window.URL.createObjectURL(new Blob([data], { type: contentType }));
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', fileName);
-  document.body.appendChild(link);
-  link.click();
-};

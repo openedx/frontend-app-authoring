@@ -1,7 +1,7 @@
 // @ts-check
 import {
   useTaxonomyListData,
-  useExportTaxonomy,
+  exportTaxonomy,
 } from './api';
 
 /**
@@ -22,6 +22,6 @@ export const useIsTaxonomyListDataLoaded = () => (
   useTaxonomyListData().status === 'success'
 );
 
-export const useExportTaxonomyMutation = () => (
-  useExportTaxonomy()
+export const callExportTaxonomy = (pk, format) => (
+  exportTaxonomy(pk, format)
 );

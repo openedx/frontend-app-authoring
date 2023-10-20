@@ -1,14 +1,14 @@
 import {
   useTaxonomyListDataResponse,
   useIsTaxonomyListDataLoaded,
-  useExportTaxonomyMutation,
+  callExportTaxonomy,
 } from './selectors';
-import { useTaxonomyListData, useExportTaxonomy } from './api';
+import { useTaxonomyListData, exportTaxonomy } from './api';
 
 jest.mock('./api', () => ({
   __esModule: true,
   useTaxonomyListData: jest.fn(),
-  useExportTaxonomy: jest.fn(),
+  exportTaxonomy: jest.fn(),
 }));
 
 describe('useTaxonomyListDataResponse', () => {
@@ -47,10 +47,10 @@ describe('useIsTaxonomyListDataLoaded', () => {
   });
 });
 
-describe('useExportTaxonomyMutation', () => {
-  it('should trigger useExportTaxonomy', () => {
-    useExportTaxonomyMutation();
+describe('callExportTaxonomy', () => {
+  it('should trigger exportTaxonomy', () => {
+    callExportTaxonomy(1, 'csv');
 
-    expect(useExportTaxonomy).toHaveBeenCalled();
+    expect(exportTaxonomy).toHaveBeenCalled();
   });
 });

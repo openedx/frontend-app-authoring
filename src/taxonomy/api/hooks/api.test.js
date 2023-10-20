@@ -1,6 +1,5 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { useTaxonomyListData, useExportTaxonomy } from './api';
-import { downloadDataAsFile } from '../../../utils';
+import { useQuery } from '@tanstack/react-query';
+import { useTaxonomyListData, exportTaxonomy } from './api';
 
 const mockHttpClient = {
   get: jest.fn(),
@@ -19,12 +18,12 @@ jest.mock('../../../utils', () => ({
   downloadDataAsFile: jest.fn(),
 }));
 
-describe('taxonomy API', () => {
+describe('useTaxonomyListData', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('useTaxonomyListData should call useQuery with the correct parameters', () => {
+  it('should call useQuery with the correct parameters', () => {
     useTaxonomyListData();
 
     expect(useQuery).toHaveBeenCalledWith({
@@ -32,40 +31,31 @@ describe('taxonomy API', () => {
       queryFn: expect.any(Function),
     });
   });
+});
 
-  it('useExportTaxonomy should export data correctly', async () => {
-    useMutation.mockImplementation((exportFunc) => exportFunc);
+describe('exportTaxonomy', () => {
+  const { location } = window;
 
-    const mockResponseJson = {
-      headers: {
-        'content-type': 'application/json',
-      },
-      data: { tags: 'tags' },
+  beforeAll(() => {
+    delete window.location;
+    window.location = {
+      href: '',
     };
-    const mockResponseCsv = {
-      headers: {
-        'content-type': 'text',
-      },
-      data: 'This is a CSV',
-    };
+  });
 
-    const exportTaxonomy = useExportTaxonomy();
+  afterAll(() => {
+    window.location = location;
+  });
 
-    mockHttpClient.get.mockResolvedValue(mockResponseJson);
-    await exportTaxonomy({ pk: 1, format: 'json', name: 'testFile' });
+  it('should set window.location.href correctly', () => {
+    const pk = 1;
+    const format = 'json';
 
-    expect(downloadDataAsFile).toHaveBeenCalledWith(
-      JSON.stringify(mockResponseJson.data, null, 2),
-      'application/json',
-      'testFile.json',
-    );
+    exportTaxonomy(pk, format);
 
-    mockHttpClient.get.mockResolvedValue(mockResponseCsv);
-    await exportTaxonomy({ pk: 1, format: 'csv', name: 'testFile' });
-    expect(downloadDataAsFile).toHaveBeenCalledWith(
-      mockResponseCsv.data,
-      'text',
-      'testFile.csv',
+    expect(window.location.href).toEqual(
+      'http://localhost:18010/api/content_tagging/'
+      + 'v1/taxonomies/1/export/?output_format=json&download=1',
     );
   });
 });
