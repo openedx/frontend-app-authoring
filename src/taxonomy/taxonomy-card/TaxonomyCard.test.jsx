@@ -9,10 +9,6 @@ import initializeStore from '../../store';
 
 import TaxonomyCard from './TaxonomyCard';
 
-jest.mock('../api/hooks/selectors', () => ({
-  useExportTaxonomyMutation: jest.fn(),
-}));
-
 let store;
 
 const data = {
