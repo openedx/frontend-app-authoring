@@ -1,4 +1,4 @@
-import { RequestStatus } from '../../data/constants';
+import { RequestStatus } from '../../../data/constants';
 
 export const courseId = 'course-v1:edX+DemoX+Demo_Course';
 

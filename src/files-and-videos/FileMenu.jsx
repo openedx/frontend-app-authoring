@@ -29,7 +29,7 @@ const FileMenu = ({
       src={MoreHoriz}
       iconAs={Icon}
       variant="primary"
-      alt="asset-menu-toggle"
+      alt="file-menu-toggle"
     />
     <Dropdown.Menu>
       {wrapperType === 'video' ? (

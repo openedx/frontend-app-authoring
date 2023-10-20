@@ -36,7 +36,13 @@ const MoreInfoColumn = ({
   } = row.original;
   return (
     <>
-      <IconButton src={MoreHoriz} iconAs={Icon} onClick={toggle} ref={setTarget} />
+      <IconButton
+        src={MoreHoriz}
+        iconAs={Icon}
+        onClick={toggle}
+        ref={setTarget}
+        alt="More info icon button"
+      />
       <ModalPopup
         placement="left"
         positionRef={target}
@@ -135,7 +141,7 @@ const MoreInfoColumn = ({
 };
 
 MoreInfoColumn.propTypes = {
-  row: {
+  row: PropTypes.shape({
     original: {
       externalUrl: PropTypes.string,
       locked: PropTypes.bool,
@@ -143,7 +149,7 @@ MoreInfoColumn.propTypes = {
       id: PropTypes.string.isRequired,
       wrapperType: PropTypes.string,
     }.isRequired,
-  }.isRequired,
+  }).isRequired,
   handleLock: PropTypes.func.isRequired,
   handleBulkDownload: PropTypes.func.isRequired,
   handleOpenFileInfo: PropTypes.func.isRequired,

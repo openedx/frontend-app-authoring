@@ -27,7 +27,7 @@ import {
   getStatusValue,
   courseId,
   initialState,
-} from '../factories/mockApiResponses';
+} from './factories/mockApiResponses';
 
 import {
   fetchAssets,
@@ -333,7 +333,7 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, { usageLocations: ['subsection - unit / block'] });
         await waitFor(() => {
-          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Info'));
           executeThunk(getUsagePaths({
             courseId,
@@ -358,7 +358,7 @@ describe('FilesAndUploads', () => {
         axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID1`).reply(201, { locked: false });
         axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, { usageLocations: [] });
         await waitFor(() => {
-          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Info'));
           executeThunk(getUsagePaths({
             courseId,
@@ -390,7 +390,7 @@ describe('FilesAndUploads', () => {
 
         await waitFor(() => {
           axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID1`).reply(201, { locked: false });
-          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Unlock'));
           executeThunk(updateAssetLock({
             courseId,
@@ -412,7 +412,7 @@ describe('FilesAndUploads', () => {
 
         await waitFor(() => {
           axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID3`).reply(201, { locked: true });
-          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Lock'));
           executeThunk(updateAssetLock({
             courseId,
@@ -433,7 +433,7 @@ describe('FilesAndUploads', () => {
         expect(assetMenuButton).toBeVisible();
 
         await waitFor(() => {
-          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Download'));
         });
         expect(saveAs).toHaveBeenCalled();
@@ -449,7 +449,7 @@ describe('FilesAndUploads', () => {
 
         await waitFor(() => {
           axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
-          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
           expect(screen.getByText(messages.deleteConfirmationTitle.defaultMessage)).toBeVisible();
 
@@ -507,7 +507,7 @@ describe('FilesAndUploads', () => {
 
         await waitFor(() => {
           axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(404);
-          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
           expect(screen.getByText(messages.deleteConfirmationTitle.defaultMessage)).toBeVisible();
 
@@ -534,7 +534,7 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID3/usage`).reply(404);
         await waitFor(() => {
-          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Info'));
           executeThunk(getUsagePaths({
             courseId,
@@ -556,7 +556,7 @@ describe('FilesAndUploads', () => {
 
         await waitFor(() => {
           axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID3`).reply(404);
-          fireEvent.click(within(assetMenuButton).getByLabelText('asset-menu-toggle'));
+          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Lock'));
           executeThunk(updateAssetLock({
             courseId,

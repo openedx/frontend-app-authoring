@@ -5,7 +5,7 @@ import { Check } from '@edx/paragon/icons';
 
 const ActiveColumn = ({ row }) => {
   const { usageLocations } = row.original;
-  const numOfUsageLocations = usageLocations.length;
+  const numOfUsageLocations = usageLocations?.length;
   return numOfUsageLocations > 0 ? <Icon src={Check} /> : null;
 };
 
