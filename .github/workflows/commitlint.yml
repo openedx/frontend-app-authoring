@@ -1,10 +1,43 @@
 # Run commitlint on the commit messages in a pull request.
+# 
+# This is the same worflow of 
+# https://github.com/openedx/.github/blob/master/.github/workflows/commitlint.yml
+# 
+# We are using typescript with react-query on this MFE, and it is necessary
+# to add one more step to remove tsconfig.json due to an issue in commitlint.
+# https://github.com/conventional-changelog/commitlint/issues/3256
+# 
+# We can return use the open edx workflow when the issue is fixed.
 
 name: Lint Commit Messages
 
 on:
   - pull_request
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   commitlint:
-    uses: openedx/.github/.github/workflows/commitlint.yml@master
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+        with:
+          # Fetch 100 commits.  Should be enough?
+          fetch-depth: 100
+
+      - name: Download a local configuration file if needed
+        run: |
+          if [[ ! -f commitlint.config.js ]]; then
+            echo "Downloading the default commitlint config from edx_lint"
+            wget --no-verbose -O commitlint.config.js https://raw.githubusercontent.com/openedx/edx-lint/HEAD/edx_lint/files/commitlint.config.js
+          fi
+
+      - name: remove tsconfig.json # see issue https://github.com/conventional-changelog/commitlint/issues/3256
+        run: |
+          rm -f tsconfig.json
+
+      - name: Run commitlint
+        uses: wagoid/commitlint-github-action@v5

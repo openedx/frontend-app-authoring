@@ -17,7 +17,8 @@
     "lint:fix": "npm run stylelint && fedx-scripts eslint --ext .js --ext .jsx . --fix",
     "snapshot": "fedx-scripts jest --updateSnapshot",
     "start": "fedx-scripts webpack-dev-server --progress",
-    "test": "fedx-scripts jest --coverage --passWithNoTests"
+    "test": "fedx-scripts jest --coverage --passWithNoTests",
+    "types": "tsc --noEmit"
   },
   "husky": {
     "hooks": {
@@ -47,6 +48,7 @@
     "@fortawesome/free-solid-svg-icons": "5.11.2",
     "@fortawesome/react-fontawesome": "0.2.0",
     "@reduxjs/toolkit": "1.5.0",
+    "@tanstack/react-query": "4.36.1",
     "classnames": "2.2.6",
     "core-js": "3.8.1",
     "email-validator": "2.0.4",
@@ -77,6 +79,7 @@
     "@edx/frontend-build": "13.0.1",
     "@edx/reactifex": "^1.0.3",
     "@edx/stylelint-config-edx": "^2.3.0",
+    "@edx/typescript-config": "^1.0.1",
     "@testing-library/jest-dom": "5.16.4",
     "@testing-library/react": "12.1.5",
     "@testing-library/user-event": "^13.2.1",
@@ -87,6 +90,7 @@
     "glob": "7.2.0",
     "husky": "7.0.4",
     "react-test-renderer": "17.0.2",
-    "reactifex": "1.1.1"
+    "reactifex": "1.1.1",
+    "ts-loader": "^9.5.0"
   }
 }

@@ -1,0 +1,12 @@
+{
+    "extends": "@edx/typescript-config",
+    "compilerOptions": {
+      "outDir": "dist",
+      "baseUrl": "./src",
+      "paths": {
+        "*": ["*"]
+      }
+    },
+    "include": ["src/**/*"],
+    "exclude": ["dist", "node_modules"]
+}
