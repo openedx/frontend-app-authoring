@@ -18,7 +18,8 @@ const LanguageSelect = ({
         variant="teritary"
         className="border border-gray-700 justify-content-between"
         style={{ minWidth: '100%' }}
-        id="language-select-dropdown"
+        id={`language-select-dropdown-${currentSelection}`}
+        data-testid='language-select-dropdown'
       >
         {currentSelection}
       </Dropdown.Toggle>

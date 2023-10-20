@@ -20,6 +20,7 @@ export const TranscriptActionMenu = ({
       iconAs={Icon}
       variant="primary"
       alt="Actions dropdown"
+      data-testid={`${language}-transcript-menu`}
     />
     <Dropdown.Menu className="video_transcript Action Menu">
       <Dropdown.Item

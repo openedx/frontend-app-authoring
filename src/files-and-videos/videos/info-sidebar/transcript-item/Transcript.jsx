@@ -28,11 +28,12 @@ const Transcript = ({
   const language = transcript;
 
   const input = useFileInput({
-    onAddFile: (file) => handleTranscript({
+    onAddFile: (file) => {
+      handleTranscript({
       file,
       language,
       newLanguage,
-    }, 'upload'),
+    }, 'upload')},
     setSelectedRows: () => {},
     setAddOpen: () => {},
   });
@@ -71,7 +72,11 @@ const Transcript = ({
           </Card.Body>
         </Card>
       ) : (
-        <div className="row m-0 align-items-center justify-content-between">
+        <div
+          className="row m-0 align-items-center justify-content-between"
+          key={`transcript-${language}`}
+          data-testid={`transcript-${language}`}
+        >
           <div className="col-10 p-0">
             <LanguageSelect
               options={languages}

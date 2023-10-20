@@ -41,7 +41,7 @@ const TranscriptTab = ({
     setPreviousSelection(transcripts);
   }, [transcripts]);
 
-  const handleTranscript = async (data, actionType) => {
+  const handleTranscript = (data, actionType) => {
     const {
       language,
       newLanguage,
@@ -54,7 +54,7 @@ const TranscriptTab = ({
         const updatedSelection = previousSelection.filter(selection => selection !== '');
         setPreviousSelection(updatedSelection);
       } else {
-        await dispatch(deleteVideoTranscript({
+        dispatch(deleteVideoTranscript({
           language,
           videoId: id,
           apiUrl: transcriptDeleteHandlerUrl,
@@ -63,7 +63,7 @@ const TranscriptTab = ({
       }
       break;
     case 'download':
-      await dispatch(downloadVideoTranscript({
+      dispatch(downloadVideoTranscript({
         filename: `${displayName}-${language}.srt`,
         language,
         videoId: id,
@@ -71,7 +71,7 @@ const TranscriptTab = ({
       }));
       break;
     case 'upload':
-      await dispatch(uploadVideoTranscript({
+      dispatch(uploadVideoTranscript({
         language,
         videoId: id,
         apiUrl: transcriptUploadHandlerUrl,
