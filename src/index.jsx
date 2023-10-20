@@ -8,6 +8,10 @@ import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Route, Routes } from 'react-router-dom';
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
@@ -18,9 +22,12 @@ import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
 import { StudioHome } from './studio-home';
 import CourseRerun from './course-rerun';
+import { TaxonomyListPage } from './taxonomy';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
+
+const queryClient = new QueryClient();
 
 const App = () => {
   useEffect(() => {
@@ -39,12 +46,20 @@ const App = () => {
 
   return (
     <AppProvider store={initializeStore()}>
-      <Head />
-      <Routes>
-        <Route path="/home" element={<StudioHome />} />
-        <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
-        <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
-      </Routes>
+      <QueryClientProvider client={queryClient}>
+        <Head />
+        <Routes>
+          <Route path="/home" element={<StudioHome />} />
+          <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
+          <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
+          {process.env.ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
+            <Route
+              path="/taxonomy-list"
+              element={<TaxonomyListPage />}
+            />
+          )}
+        </Routes>
+      </QueryClientProvider>
     </AppProvider>
   );
 };

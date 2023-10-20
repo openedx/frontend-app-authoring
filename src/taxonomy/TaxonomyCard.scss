@@ -1,0 +1,32 @@
+.taxonomy-card {
+  width: 400px;
+  height: 317px;
+
+  .taxonomy-card-body {
+    /*
+      Set overflow to description
+      I added '-webkit-box' to truncate multiple lines
+    */
+    font-size: 18px;
+    display: -webkit-box; /* stylelint-disable-line value-no-vendor-prefix */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .taxonomy-card-body-overflow-m {
+    max-height: 220px;
+    -webkit-line-clamp: 7;
+  }
+
+  .taxonomy-card-body-overflow-sm {
+    max-height: 190px;
+    -webkit-line-clamp: 6;
+  }
+
+  .pgn__card-header-title-md {
+    /* Set overflow to title of the card */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
