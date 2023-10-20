@@ -1,7 +1,7 @@
 {
   "extends": [
     "config:base",
-    "schedule:daily",
+    "schedule:weekly",
     ":rebaseStalePrs",
     ":semanticCommits",
     ":dependencyDashboard"
@@ -13,6 +13,9 @@
   "rebaseStalePrs": true,
   "packageRules": [
     {
+      "extends": [
+        "schedule:daily"
+      ],
       "matchPackagePatterns": ["@edx", "@openedx"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": false
@@ -20,10 +23,10 @@
     {
       "matchPackagePatterns": ["@edx/frontend-lib-content-components"],
       "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true,
+      "automerge": false,
       "schedule": [
-        "after 9am",
-        "before 5pm"
+        "after 1am",
+        "before 11pm"
       ]
     }
   ]
