@@ -28,13 +28,6 @@
  */
 
 /**
- * @typedef {Object} ExportRequestParams
- * @property {number} pk
- * @property {string} format
- * @property {string} name
- */
-
-/**
  * @typedef {Object} UseQueryResult
  * @property {Object} data
  * @property {string} status

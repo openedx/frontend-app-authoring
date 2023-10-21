@@ -7,15 +7,10 @@ const mockHttpClient = {
 
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(),
-  useMutation: jest.fn(),
 }));
 
 jest.mock('@edx/frontend-platform/auth', () => ({
   getAuthenticatedHttpClient: jest.fn(() => mockHttpClient),
-}));
-
-jest.mock('../../../utils', () => ({
-  downloadDataAsFile: jest.fn(),
 }));
 
 describe('useTaxonomyListData', () => {
