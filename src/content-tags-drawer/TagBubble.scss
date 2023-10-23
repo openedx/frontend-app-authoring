@@ -1,0 +1,13 @@
+.tag-bubble.btn-outline-dark {
+  border-color: $light-300;
+
+  &:hover {
+    color: $white;
+    background-color: $dark;
+    border-color: $dark;
+  }
+}
+
+.implicit > .implicit-tag-icon {
+  color: $dark;
+}

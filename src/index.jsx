@@ -23,6 +23,7 @@ import Head from './head/Head';
 import { StudioHome } from './studio-home';
 import CourseRerun from './course-rerun';
 import { TaxonomyListPage } from './taxonomy';
+import { ContentTagsDrawer } from './content-tags-drawer';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
@@ -53,10 +54,16 @@ const App = () => {
           <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
           <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
           {process.env.ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
-            <Route
-              path="/taxonomy-list"
-              element={<TaxonomyListPage />}
-            />
+            <>
+              <Route
+                path="/taxonomy-list"
+                element={<TaxonomyListPage />}
+              />
+              <Route
+                path="/tagging/components/widget/:contentId"
+                element={<ContentTagsDrawer />}
+              />
+            </>
           )}
         </Routes>
       </QueryClientProvider>

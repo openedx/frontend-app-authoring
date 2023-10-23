@@ -15,22 +15,24 @@ import { useQuery } from '@tanstack/react-query';
 import { getTaxonomyListData } from './api';
 
 /**
- * Builds the query yo get the taxonomy list
+ * Builds the query to get the taxonomy list
+ * @param {string} org Optional organization query param
  * @returns {import("./types.mjs").UseQueryResult}
  */
-const useTaxonomyListData = () => (
+const useTaxonomyListData = (org) => (
   useQuery({
     queryKey: ['taxonomyList'],
-    queryFn: getTaxonomyListData,
+    queryFn: () => getTaxonomyListData(org),
   })
 );
 
 /**
  * Gets the taxonomy list data
+ * @param {string} org Optional organization query param
  * @returns {import("./types.mjs").TaxonomyListData | undefined}
  */
-export const useTaxonomyListDataResponse = () => {
-  const response = useTaxonomyListData();
+export const useTaxonomyListDataResponse = (org) => {
+  const response = useTaxonomyListData(org);
   if (response.status === 'success') {
     return response.data;
   }
@@ -39,8 +41,9 @@ export const useTaxonomyListDataResponse = () => {
 
 /**
  * Returns the status of the taxonomy list query
+ * @param {string} org Optional organization param
  * @returns {boolean}
  */
-export const useIsTaxonomyListDataLoaded = () => (
-  useTaxonomyListData().status === 'success'
+export const useIsTaxonomyListDataLoaded = (org) => (
+  useTaxonomyListData(org).status === 'success'
 );
