@@ -30,10 +30,11 @@ const Transcript = ({
   const input = useFileInput({
     onAddFile: (file) => {
       handleTranscript({
-      file,
-      language,
-      newLanguage,
-    }, 'upload')},
+        file,
+        language,
+        newLanguage,
+      }, 'upload');
+    },
     setSelectedRows: () => {},
     setAddOpen: () => {},
   });

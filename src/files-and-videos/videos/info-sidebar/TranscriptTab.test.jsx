@@ -4,7 +4,6 @@ import {
   fireEvent,
   screen,
   waitFor,
-  within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ReactDOM from 'react-dom';
@@ -22,17 +21,16 @@ import { executeThunk } from '../../../utils';
 import { RequestStatus } from '../../../data/constants';
 import TranscriptTab from './TranscriptTab';
 import {
-  // generateUpdateVisiblityApiResponse,
   courseId,
   initialState,
-  // generateXblockData,
 } from '../factories/mockApiResponses';
 
 import { getApiBaseUrl } from '../data/api';
 import messages from './messages';
-import { default as transcriptRowMessages } from './transcript-item/messages';
+import transcriptRowMessages from './transcript-item/messages';
 import VideosProvider from '../VideosProvider';
-import { deleteVideoTranscript, downloadVideoTranscript } from '../data/thunks';
+import { deleteVideoTranscript } from '../data/thunks';
+
 ReactDOM.createPortal = jest.fn(node => node);
 
 const defaultProps = {
@@ -106,7 +104,7 @@ describe('TranscriptTab', () => {
   });
 
   it('should contain transcript row', () => {
-    const updatedProps = { ...defaultProps, transcripts: ['ar']}
+    const updatedProps = { ...defaultProps, transcripts: ['ar'] };
     renderComponent(updatedProps);
     const addButton = screen.getByText(messages.uploadButtonLabel.defaultMessage);
     const transcriptRow = screen.getByTestId('transcript-ar');
@@ -115,7 +113,7 @@ describe('TranscriptTab', () => {
   });
 
   it('should open delete confirmation modal and handle cancel', async () => {
-    const updatedProps = { ...defaultProps, transcripts: ['ar']}
+    const updatedProps = { ...defaultProps, transcripts: ['ar'] };
     renderComponent(updatedProps);
     const menuButton = screen.getByTestId('ar-transcript-menu');
     await waitFor(() => {
@@ -133,7 +131,7 @@ describe('TranscriptTab', () => {
   });
 
   it('should open delete confirmation modal and handle delete', async () => {
-    const updatedProps = { ...defaultProps, transcripts: ['ar']}
+    const updatedProps = { ...defaultProps, transcripts: ['ar'] };
     renderComponent(updatedProps);
     const menuButton = screen.getByTestId('ar-transcript-menu');
     await waitFor(() => {
@@ -163,7 +161,7 @@ describe('TranscriptTab', () => {
   });
 
   it('should download transcript', async () => {
-    const updatedProps = { ...defaultProps, transcripts: ['ar']}
+    const updatedProps = { ...defaultProps, transcripts: ['ar'] };
     renderComponent(updatedProps);
     const menuButton = screen.getByTestId('ar-transcript-menu');
     await waitFor(() => {
@@ -183,7 +181,7 @@ describe('TranscriptTab', () => {
     expect(downloadStatus).toEqual(RequestStatus.SUCCESSFUL);
   });
   it('should replace transcript', async () => {
-    const updatedProps = { ...defaultProps, transcripts: ['fr', 'ar']}
+    const updatedProps = { ...defaultProps, transcripts: ['fr', 'ar'] };
     renderComponent(updatedProps);
     const dropdownButton = screen.getAllByTestId('language-select-dropdown')[0];
     await waitFor(() => {

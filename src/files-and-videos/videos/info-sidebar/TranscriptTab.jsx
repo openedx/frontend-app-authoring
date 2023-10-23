@@ -38,6 +38,7 @@ const TranscriptTab = ({
 
   const [previousSelection, setPreviousSelection] = useState(transcripts);
   useEffect(() => {
+    dispatch(resetErrors({ errorType: 'transcript' }));
     setPreviousSelection(transcripts);
   }, [transcripts]);
 
