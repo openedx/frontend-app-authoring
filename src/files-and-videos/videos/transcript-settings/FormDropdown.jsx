@@ -35,7 +35,7 @@ const FormDropdown = ({
         {Object.entries(options).map(([valueKey, text]) => {
           if (allowMultiple) {
             return (
-              <Dropdown.Item as={Form.Checkbox} checked={value.includes(valueKey)} onClick={(e) => handleSelect([valueKey, e.target.checked])} key={`${valueKey}-item`}>
+              <Dropdown.Item as={Form.Checkbox} checked={value.includes(valueKey)} onChange={(e) => handleSelect([valueKey, e.target.checked])} key={`${valueKey}-item`}>
                 {text}
               </Dropdown.Item>
             );
@@ -59,7 +59,7 @@ const FormDropdown = ({
 };
 
 FormDropdown.propTypes = {
-  value: PropTypes.oneOf([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]).isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]).isRequired,
   allowMultiple: PropTypes.bool,
   options: PropTypes.shape({}).isRequired,
   handleSelect: PropTypes.func.isRequired,

@@ -69,7 +69,11 @@ const slice = createSlice({
       state.videoIds = [payload.videoId, ...state.videoIds];
     },
     updateTranscriptCredentialsSuccess: (state, { payload }) => {
-      state.pageSettings.transcriptCredentials = payload;
+      const { provider } = payload;
+      state.pageSettings.transcriptCredentials = {
+        ...state.pageSettings.transcriptCredentials,
+        [provider]: true,
+      };
     },
     updateTranscriptPreferenceSuccess: (state, { payload }) => {
       state.pageSettings.activeTranscriptPreferences = payload;

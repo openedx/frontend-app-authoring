@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { camelCase, isEmpty } from 'lodash';
 import { getConfig } from '@edx/frontend-platform';
 import { RequestStatus } from '../../../data/constants';
 import {
@@ -16,7 +16,7 @@ import {
   uploadVideo,
   getDownload,
   deleteTranscript,
-  downloadTranscriipt,
+  downloadTranscript,
   uploadTranscript,
   getVideoUsagePaths,
   deleteTranscriptPreferences,
@@ -96,6 +96,7 @@ export function deleteVideoFile(courseId, id, totalCount) {
 export function addVideoFile(courseId, file) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
+
     try {
       const { files } = await addVideo(courseId, file);
       const { edxVideoId, uploadUrl } = files[0];
@@ -105,19 +106,18 @@ export function addVideoFile(courseId, file) {
         file,
         edxVideoId,
       );
-      if (isEmpty(errors)) {
-        const { videos } = await fetchVideoList(courseId);
-        const parsedVideos = updateFileValues(videos);
-        dispatch(updateModels({
-          modelType: 'videos',
-          models: parsedVideos,
-        }));
-        dispatch(addVideoSuccess({
-          videoId: '123id',
-        }));
-        dispatch(setTotalCount({ totalCount: parsedVideos.length }));
-        dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
-      } else {
+      const { videos } = await fetchVideoList(courseId);
+      const parsedVideos = updateFileValues(videos);
+      dispatch(updateModels({
+        modelType: 'videos',
+        models: parsedVideos,
+      }));
+      dispatch(addVideoSuccess({
+        videoId: edxVideoId,
+      }));
+      dispatch(setTotalCount({ totalCount: parsedVideos.length }));
+      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
+      if (!isEmpty(errors)) {
         errors.forEach(error => {
           dispatch(updateErrors({ error: 'add', message: error }));
         });
@@ -154,7 +154,7 @@ export function addVideoThumbnail({ file, videoId, courseId }) {
       }));
       dispatch(updateEditStatus({ editType: 'thumbnail', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      if (error.response.data.error) {
+      if (error.response?.data?.error) {
         const message = error.response.data.error;
         dispatch(updateErrors({ error: 'thumbnail', message }));
       } else {
@@ -207,7 +207,7 @@ export function downloadVideoTranscript({
     dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.IN_PROGRESS }));
 
     try {
-      await downloadTranscriipt({
+      await downloadTranscript({
         videoId,
         language,
         apiUrl,
@@ -260,7 +260,7 @@ export function uploadVideoTranscript({
       dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       if (error.response) {
-        const message = error.response.data.error;
+        const message = error.response.data?.error;
         dispatch(updateErrors({ error: 'transcript', message }));
       } else {
         const message = isReplacement ? `Failed to replace ${language} with ${newLanguage}.` : `Failed to add ${newLanguage}.`;
@@ -326,8 +326,8 @@ export function updateTranscriptCredentials({ courseId, data }) {
     dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.IN_PROGRESS }));
 
     try {
-      const credentials = await setTranscriptCredentials(courseId, data);
-      dispatch(updateTranscriptCredentialsSuccess(credentials));
+      await setTranscriptCredentials(courseId, data);
+      dispatch(updateTranscriptCredentialsSuccess({ provider: camelCase(data.provider) }));
       dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       dispatch(updateErrors({ error: 'transcript', message: `Failed to update ${data.provider} credentials.` }));

@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Button, SelectableBox, Stack } from '@edx/paragon';
 import { ErrorAlert } from '@edx/frontend-lib-content-components';
@@ -8,6 +7,7 @@ import Cielo24Form from './Cielo24Form';
 import ThreePlayMediaForm from './ThreePlayMediaForm';
 import { RequestStatus } from '../../../data/constants';
 import messages from './messages';
+import { checkCredentials, validateForm } from '../data/utils';
 
 const OrderTranscriptForm = ({
   setTranscriptType,
@@ -22,12 +22,24 @@ const OrderTranscriptForm = ({
   // injected
   intl,
 }) => {
-  const [data, setData] = useState({});
-  const hasTranscriptCredentials = !isEmpty(transcriptCredentials);
+  const [data, setData] = useState(activeTranscriptPreferences || { videoSourceLanguage: '' });
+
+  let [cieloHasCredentials, threePlayHasCredentials] = checkCredentials(transcriptCredentials);
+  useEffect(() => {
+    [cieloHasCredentials, threePlayHasCredentials] = checkCredentials(transcriptCredentials);
+  }, [transcriptCredentials]);
+
+  let isFormValid = validateForm(cieloHasCredentials, threePlayHasCredentials, transcriptType, data);
+  useEffect(() => {
+    isFormValid = validateForm(cieloHasCredentials, threePlayHasCredentials, transcriptType, data);
+  }, [data]);
+
   const handleDiscard = () => {
     setTranscriptType(activeTranscriptPreferences);
     closeTranscriptSettings();
   };
+
+  const handleUpdate = () => handleOrderTranscripts(data, transcriptType);
 
   let form;
   switch (transcriptType) {
@@ -35,7 +47,7 @@ const OrderTranscriptForm = ({
     form = (
       <Cielo24Form
         {...{
-          hasTranscriptCredentials,
+          hasTranscriptCredentials: cieloHasCredentials,
           data,
           setData,
           transcriptionPlan: transcriptionPlans.Cielo24,
@@ -47,7 +59,7 @@ const OrderTranscriptForm = ({
     form = (
       <ThreePlayMediaForm
         {...{
-          hasTranscriptCredentials,
+          hasTranscriptCredentials: threePlayHasCredentials,
           data,
           setData,
           transcriptionPlan: transcriptionPlans['3PlayMedia'],
@@ -80,9 +92,6 @@ const OrderTranscriptForm = ({
         className="my-3"
         onChange={(e) => {
           setTranscriptType(e.target.value);
-          setData({
-            videoSourceLanguage: '',
-          });
         }}
       >
         <SelectableBox
@@ -109,7 +118,7 @@ const OrderTranscriptForm = ({
       </SelectableBox.Set>
       {form}
       <Stack gap={3} className="mt-4">
-        <Button onClick={() => handleOrderTranscripts(data, transcriptType)}>
+        <Button onClick={handleUpdate} disabled={!isFormValid}>
           <FormattedMessage {...messages.updateSettingsLabel} />
         </Button>
         <Button variant="tertiary" onClick={handleDiscard}>
@@ -124,7 +133,10 @@ OrderTranscriptForm.propTypes = {
   setTranscriptType: PropTypes.func.isRequired,
   activeTranscriptPreferences: PropTypes.shape({}),
   transcriptType: PropTypes.string.isRequired,
-  transcriptCredentials: PropTypes.isRequired,
+  transcriptCredentials: PropTypes.shape({
+    cielo24: PropTypes.bool.isRequired,
+    '3PlayMedia': PropTypes.bool.isRequired,
+  }).isRequired,
   closeTranscriptSettings: PropTypes.func.isRequired,
   transcriptStatus: PropTypes.string.isRequired,
   errorMessages: PropTypes.shape({

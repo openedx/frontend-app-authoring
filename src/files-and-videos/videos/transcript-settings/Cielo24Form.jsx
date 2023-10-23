@@ -19,8 +19,8 @@ const Cielo24Form = ({
   const selectedLanguage = data.preferredLanguages ? data.preferredLanguages : '';
   const turnaroundOptions = transcriptionPlan.turnaround;
   const fidelityOptions = getFidelityOptions(fidelity);
-  const sourceLanguageOptions = data.cieloFidelity ? fidelity[data.cieloFidelity]?.languages : {};
-  const languages = data.cieloFidelity === 'PROFESSIONAL' ? sourceLanguageOptions : {
+  const sourceLanguageOptions = data.cielo24Fidelity ? fidelity[data.cielo24Fidelity]?.languages : {};
+  const languages = data.cielo24Fidelity === 'PROFESSIONAL' ? sourceLanguageOptions : {
     [data.videoSourceLanguage]: sourceLanguageOptions[data.videoSourceLanguage],
   };
 
@@ -29,13 +29,13 @@ const Cielo24Form = ({
       <Stack gap={1}>
         <Form.Group size="sm">
           <Form.Label className="h5">
-            <FormattedMessage {...messages.cieloTranscriptLanguageLabel} />
+            <FormattedMessage {...messages.cieloTurnaroundLabel} />
           </Form.Label>
           <FormDropdown
-            value={data.cieloTurnaround}
+            value={data.cielo24Turnaround}
             options={turnaroundOptions}
-            handleSelect={(value) => setData({ ...data, cieloTurnaround: value })}
-            placeholderText={intl.formatMessage(messages.cieloTranscriptLanguagePlaceholder)}
+            handleSelect={(value) => setData({ ...data, cielo24Turnaround: value })}
+            placeholderText={intl.formatMessage(messages.cieloTurnaroundPlaceholder)}
           />
         </Form.Group>
         <Form.Group size="sm">
@@ -43,14 +43,14 @@ const Cielo24Form = ({
             <FormattedMessage {...messages.cieloFidelityLabel} />
           </Form.Label>
           <FormDropdown
-            value={data.cieloFidelity}
+            value={data.cielo24Fidelity}
             options={fidelityOptions}
-            handleSelect={(value) => setData({ ...data, cieloFidelity: value, videoSourceLanguage: '' })}
+            handleSelect={(value) => setData({ ...data, cielo24Fidelity: value, videoSourceLanguage: '' })}
             placeholderText={intl.formatMessage(messages.cieloFidelityPlaceholder)}
           />
         </Form.Group>
         <TransitionReplace>
-          {isEmpty(data.cieloFidelity) ? null : (
+          {isEmpty(data.cielo24Fidelity) ? null : (
             <Form.Group size="sm">
               <Form.Label className="h5">
                 <FormattedMessage {...messages.cieloSourceLanguageLabel} />
@@ -58,7 +58,7 @@ const Cielo24Form = ({
               <FormDropdown
                 value={data.videoSourceLanguage}
                 options={sourceLanguageOptions}
-                handleSelect={(value) => setData({ ...data, videoSourceLanguage: value, preferredLanguages: '' })}
+                handleSelect={(value) => setData({ ...data, videoSourceLanguage: value, preferredLanguages: [] })}
                 placeholderText={intl.formatMessage(messages.cieloSourceLanguagePlaceholder)}
               />
             </Form.Group>
@@ -85,7 +85,7 @@ const Cielo24Form = ({
 
   return (
     <Stack gap={1}>
-      <div className="small">
+      <div className="small" data-testid="cieloCredentialMessage">
         <FormattedMessage {...messages.cieloCredentialMessage} />
       </div>
       <Form.Group size="sm">
@@ -109,8 +109,8 @@ Cielo24Form.propTypes = {
   data: PropTypes.shape({
     apiKey: PropTypes.string,
     apiSecretKey: PropTypes.string,
-    cieloTurnaround: PropTypes.string,
-    cieloFidelity: PropTypes.string,
+    cielo24Turnaround: PropTypes.string,
+    cielo24Fidelity: PropTypes.string,
     preferredLanguages: PropTypes.arrayOf(PropTypes.string),
     videoSourceLanguage: PropTypes.string,
   }).isRequired,

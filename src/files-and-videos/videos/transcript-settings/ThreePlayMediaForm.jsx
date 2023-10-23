@@ -86,7 +86,7 @@ const ThreePlayMediaForm = ({
               <Form.Control.Feedback>
                 <ul className="m-0 p-0">
                   {selectedLanguages.map(language => (
-                    <li className="row align-items-center m-0 pt-2">
+                    <li className="row align-items-center m-0 pt-2" key={language}>
                       <Icon src={Check} size="xs" /> <span>{languages[language]}</span>
                     </li>
                   ))}
@@ -100,7 +100,7 @@ const ThreePlayMediaForm = ({
   }
   return (
     <Stack gap={1}>
-      <div className="small">
+      <div className="small" data-testid="threePlayMediaCredentialMessage">
         <FormattedMessage {...messages.threePlayMediaCredentialMessage} />
       </div>
       <Form.Group size="sm">

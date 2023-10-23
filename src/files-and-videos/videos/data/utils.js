@@ -25,7 +25,7 @@ export const updateFileValues = (files) => {
     const wrapperType = 'video';
 
     let thumbnail = courseVideoImageUrl;
-    if (thumbnail.startsWith('/')) {
+    if (thumbnail && thumbnail.startsWith('/')) {
       thumbnail = `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
     }
 
@@ -230,4 +230,41 @@ export const getFidelityOptions = (fidelities) => {
     options[key] = displayName;
   });
   return options;
+};
+
+export const checkCredentials = (transcriptCredentials) => {
+  const cieloHasCredentials = transcriptCredentials?.cielo24;
+  const threePlayHasCredentials = transcriptCredentials?.['3PlayMedia'];
+  return [cieloHasCredentials, threePlayHasCredentials];
+};
+
+export const validateForm = (cieloHasCredentials, threePlayHasCredentials, provider, data) => {
+  const {
+    apiKey,
+    apiSecretKey,
+    username,
+    cielo24Fidelity,
+    cielo24Turnaround,
+    preferredLanguages,
+    threePlayTurnaround,
+    videoSourceLanguage,
+  } = data;
+  switch (provider) {
+  case 'Cielo24':
+    if (cieloHasCredentials) {
+      return !isEmpty(cielo24Fidelity) && !isEmpty(cielo24Turnaround)
+        && !isEmpty(preferredLanguages) && !isEmpty(videoSourceLanguage);
+    }
+    return !isEmpty(apiKey) && !isEmpty(username);
+  case '3PlayMedia':
+    if (threePlayHasCredentials) {
+      return !isEmpty(threePlayTurnaround) && !isEmpty(preferredLanguages) && !isEmpty(videoSourceLanguage);
+    }
+    return !isEmpty(apiKey) && !isEmpty(apiSecretKey);
+  case 'order':
+    return true;
+  default:
+    break;
+  }
+  return false;
 };

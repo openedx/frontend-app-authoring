@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { isEmpty } from 'lodash';
+import { useDispatch, useSelector } from 'react-redux';
 import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -12,21 +13,38 @@ import {
 import { ChevronLeft, ChevronRight, Close } from '@edx/paragon/icons';
 import OrderTranscriptForm from './OrderTranscriptForm';
 import messages from './messages';
+import {
+  clearAutomatedTranscript,
+  resetErrors,
+  updateTranscriptCredentials,
+  updateTranscriptPreference,
+} from '../data/thunks';
 
 const TranscriptSettings = ({
   isTranscriptSettngsOpen,
   closeTranscriptSettings,
-  handleOrderTranscripts,
-  errorMessages,
-  transcriptStatus,
+  courseId,
 }) => {
+  const dispatch = useDispatch();
+  const { errors: errorMessages, pageSettings, transcriptStatus } = useSelector(state => state.videos);
   const {
     activeTranscriptPreferences,
     transcriptCredentials,
     videoTranscriptSettings,
-  } = useSelector(state => state.videos.pageSettings);
+  } = pageSettings;
   const { transcriptionPlans } = videoTranscriptSettings;
   const [transcriptType, setTranscriptType] = useState(activeTranscriptPreferences);
+  const handleOrderTranscripts = (data, provider) => {
+    const noCredentials = isEmpty(transcriptCredentials) || data.apiKey;
+    dispatch(resetErrors({ errorType: 'transcript' }));
+    if (provider === 'order') {
+      dispatch(clearAutomatedTranscript({ courseId }));
+    } else if (noCredentials) {
+      dispatch(updateTranscriptCredentials({ courseId, data: { ...data, provider, global: false } }));
+    } else {
+      dispatch(updateTranscriptPreference({ courseId, data: { ...data, provider, global: false } }));
+    }
+  };
 
   return (
     <Sheet
@@ -45,6 +63,7 @@ const TranscriptSettings = ({
                 iconAs={Icon}
                 src={ChevronLeft}
                 onClick={() => setTranscriptType(null)}
+                alt="back button to main transcript settings view"
               />
             ) : (
               <div key="title" className="h3">
@@ -53,30 +72,24 @@ const TranscriptSettings = ({
             )}
           </TransitionReplace>
           <ActionRow.Spacer />
-          <IconButton size="sm" iconAs={Icon} src={Close} onClick={closeTranscriptSettings} />
+          <IconButton size="sm" iconAs={Icon} src={Close} onClick={closeTranscriptSettings} alt="close settings" />
         </ActionRow>
         <TransitionReplace>
           {transcriptType ? (
             <div key="transcript-settings">
-              {
-                transcriptType === 'expert' ? (
-                  'Selected transcript type!'
-                ) : (
-                  <OrderTranscriptForm
-                    {...{
-                      setTranscriptType,
-                      transcriptType,
-                      activeTranscriptPreferences,
-                      transcriptCredentials,
-                      closeTranscriptSettings,
-                      handleOrderTranscripts,
-                      transcriptionPlans,
-                      errorMessages,
-                      transcriptStatus,
-                    }}
-                  />
-                )
-              }
+              <OrderTranscriptForm
+                {...{
+                  setTranscriptType,
+                  transcriptType,
+                  activeTranscriptPreferences,
+                  transcriptCredentials,
+                  closeTranscriptSettings,
+                  handleOrderTranscripts,
+                  transcriptionPlans,
+                  errorMessages,
+                  transcriptStatus,
+                }}
+              />
             </div>
           ) : (
             <div key="transcript-type-selection" className="mt-3">
@@ -101,11 +114,7 @@ const TranscriptSettings = ({
 TranscriptSettings.propTypes = {
   closeTranscriptSettings: PropTypes.func.isRequired,
   isTranscriptSettngsOpen: PropTypes.bool.isRequired,
-  transcriptStatus: PropTypes.string.isRequired,
-  errorMessages: PropTypes.shape({
-    transcript: PropTypes.arrayOf(PropTypes.string).isRequired,
-  }).isRequired,
-  handleOrderTranscripts: PropTypes.func.isRequired,
+  courseId: PropTypes.string.isRequired,
 };
 
 export default injectIntl(TranscriptSettings);

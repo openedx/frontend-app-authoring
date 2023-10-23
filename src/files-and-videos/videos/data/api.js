@@ -2,7 +2,6 @@
 import { camelCaseObject, ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-import JSZip from 'jszip';
 import saveAs from 'file-saver';
 
 ensureConfig([
@@ -48,7 +47,7 @@ export async function deleteTranscript({ videoId, language, apiUrl }) {
     .delete(`${getApiBaseUrl()}${apiUrl}/${videoId}/${language}`);
 }
 
-export async function downloadTranscriipt({
+export async function downloadTranscript({
   videoId,
   language,
   apiUrl,
@@ -71,7 +70,7 @@ export async function uploadTranscript({
   formData.append('file', file);
   formData.append('edx_video_id', videoId);
   formData.append('language_code', language);
-  formData.append('new_langage_code', newLanguage);
+  formData.append('new_language_code', newLanguage);
   await getAuthenticatedHttpClient().post(`${getApiBaseUrl()}${apiUrl}`, formData);
 }
 
@@ -88,45 +87,18 @@ export async function getDownloadLink(courseId, edxVideoId) {
  */
 export async function getDownload(selectedRows, courseId) {
   const downloadErrors = [];
-  if (selectedRows?.length > 1) {
-    const zip = new JSZip();
-    const date = new Date().toString();
-    const folder = zip.folder(`${courseId}-videos-${date}`);
-    const videoNames = [];
-    const videoFetcher = await Promise.allSettled(
-      selectedRows.map(async (row) => {
+  if (selectedRows?.length > 0) {
+    await Promise.allSettled(
+      selectedRows.map(async row => {
         const video = row?.original;
         try {
-          videoNames.push(video.displayName);
           const { downloadLink } = await getDownloadLink(courseId, video.id);
-          const res = await fetch(downloadLink);
-          if (!res.ok) {
-            throw new Error();
-          }
-          return res.blob();
+          saveAs(downloadLink, video.displayName);
         } catch (error) {
           downloadErrors.push(`Failed to download ${video?.displayName}.`);
-          return null;
         }
       }),
     );
-    const definedVideos = videoFetcher.filter(video => video.value !== null);
-    if (definedVideos.length > 0) {
-      definedVideos.forEach((videoBlob, index) => {
-        folder.file(videoNames[index], videoBlob.value, { blob: true });
-      });
-      zip.generateAsync({ type: 'blob' }).then(content => {
-        saveAs(content, `${courseId}-videos-${date}.zip`);
-      });
-    }
-  } else if (selectedRows?.length === 1) {
-    const video = selectedRows[0].original;
-    try {
-      const { downloadLink } = await getDownloadLink(courseId, video.id);
-      saveAs(downloadLink, video.displayName);
-    } catch (error) {
-      downloadErrors.push(`Failed to download ${video?.displayName}.`);
-    }
   } else {
     downloadErrors.push('No files were selected to download');
   }
@@ -173,10 +145,12 @@ export async function addThumbnail({ courseId, videoId, file }) {
 
  */
 export async function addVideo(courseId, file) {
-  const formData = new FormData();
-  formData.append('file', file);
+  const postJson = {
+    files: [{ file_name: file.name, content_type: file.type }],
+  };
+
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCoursVideosApiUrl(courseId), formData);
+    .post(getCoursVideosApiUrl(courseId), postJson);
   return camelCaseObject(data);
 }
 
@@ -205,7 +179,7 @@ export async function uploadVideo(
         }]);
     })
     .catch(async () => {
-      uploadErrors.push(`Failed to upload ${uploadFile.name}.`);
+      uploadErrors.push(`Failed to upload ${uploadFile.name} to server.`);
       await getAuthenticatedHttpClient()
         .post(getCoursVideosApiUrl(courseId), [{
           edxVideoId,
@@ -222,8 +196,8 @@ export async function deleteTranscriptPreferences(courseId) {
 
 export async function setTranscriptPreferences(courseId, preferences) {
   const {
-    cieloFidelity,
-    cieloTurnaround,
+    cielo24Fidelity,
+    cielo24Turnaround,
     global,
     preferredLanguages,
     provider,
@@ -231,8 +205,8 @@ export async function setTranscriptPreferences(courseId, preferences) {
     videoSourceLanguage,
   } = preferences;
   const postJson = {
-    cielo24_fideltiy: cieloFidelity.toUpperCase(),
-    cielo24_turnaround: cieloTurnaround,
+    cielo24_fideltiy: cielo24Fidelity?.toUpperCase(),
+    cielo24_turnaround: cielo24Turnaround,
     global,
     preferred_languages: preferredLanguages,
     provider,
@@ -265,7 +239,6 @@ export async function setTranscriptCredentials(courseId, formFields) {
     const { username } = otherFields;
     postJson.username = username;
   }
-  const { data } = await getAuthenticatedHttpClient()
+  await getAuthenticatedHttpClient()
     .post(`${getApiBaseUrl()}/transcript_credentials/${courseId}`, postJson);
-  return camelCaseObject(data);
 }
