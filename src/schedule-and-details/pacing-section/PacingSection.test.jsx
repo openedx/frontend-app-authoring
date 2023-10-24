@@ -5,8 +5,6 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import PacingSection from '.';
 
-jest.useFakeTimers('modern').setSystemTime(new Date('2023-09-14'));
-
 describe('<PacingSection />', () => {
   const onChangeMock = jest.fn();
   const RootWrapper = (props) => (

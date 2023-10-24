@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import {
   Container,
   Layout,
@@ -8,8 +7,8 @@ import {
   ActionRow,
   Button,
 } from '@edx/paragon';
-import { history } from '@edx/frontend-platform';
 import { StudioFooter } from '@edx/frontend-component-footer';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import Header from '../header';
 import Loading from '../generic/Loading';
@@ -21,7 +20,9 @@ import CourseRerunSideBar from './course-rerun-sidebar';
 import messages from './messages';
 import { useCourseRerun } from './hooks';
 
-const CourseRerun = ({ courseId }) => {
+const CourseRerun = () => {
+  const { courseId } = useParams();
+  const navigate = useNavigate();
   const {
     intl,
     displayName,
@@ -36,7 +37,7 @@ const CourseRerun = ({ courseId }) => {
   }
 
   const handleRerunCourseCancel = () => {
-    history.push('/home');
+    navigate('/home');
   };
 
   return (
@@ -90,10 +91,6 @@ const CourseRerun = ({ courseId }) => {
       <StudioFooter />
     </>
   );
-};
-
-CourseRerun.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default CourseRerun;

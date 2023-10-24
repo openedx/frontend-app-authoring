@@ -27,8 +27,8 @@ import messages from './messages';
 import { CreateOrRerunCourseForm } from '.';
 import { initialState } from './factories/mockApiResponses';
 
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({
     courseId: 'course-id-mock',
   }),

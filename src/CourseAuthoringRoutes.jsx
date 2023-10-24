@@ -1,7 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Switch, useRouteMatch } from 'react-router';
-import { PageRoute } from '@edx/frontend-platform/react';
+import { Routes, Route, useParams } from 'react-router-dom';
+import { PageWrap } from '@edx/frontend-platform/react';
 import Placeholder from '@edx/frontend-lib-content-components';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';
@@ -35,82 +34,79 @@ import Videos from './files-and-videos/videos';
  * can move the Header/Footer rendering to this component and likely pull the course detail loading
  * in as well, and it'd feel a bit better-factored and the roles would feel more clear.
  */
-const CourseAuthoringRoutes = ({ courseId }) => {
-  const { path } = useRouteMatch();
+const CourseAuthoringRoutes = () => {
+  const { courseId } = useParams();
+
   return (
     <CourseAuthoringPage courseId={courseId}>
-      <Switch>
-        <PageRoute path={`${path}/outline`}>
-          {process.env.ENABLE_NEW_COURSE_OUTLINE_PAGE === 'true'
-            && (
-              <Placeholder />
-            )}
-        </PageRoute>
-        <PageRoute path={`${path}/course_info`}>
-          <CourseUpdates courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/assets`}>
-          <FilesAndUploads courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/videos`}>
-          <Videos courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/pages-and-resources`}>
-          <PagesAndResources courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/proctored-exam-settings`}>
-          <ProctoredExamSettings courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/custom-pages`}>
-          <CustomPages courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/container/:blockId`}>
-          {process.env.ENABLE_UNIT_PAGE === 'true'
-            && (
-              <Placeholder />
-            )}
-        </PageRoute>
-        <PageRoute path={`${path}/editor/course-videos/:blockId`}>
-          {process.env.ENABLE_NEW_EDITOR_PAGES === 'true'
-            && (
-              <VideoSelectorContainer
-                courseId={courseId}
-              />
-            )}
-        </PageRoute>
-        <PageRoute path={`${path}/editor/:blockType/:blockId?`}>
-          {process.env.ENABLE_NEW_EDITOR_PAGES === 'true'
-            && (
-              <EditorContainer
-                courseId={courseId}
-              />
-            )}
-        </PageRoute>
-        <PageRoute path={`${path}/settings/details`}>
-          <ScheduleAndDetails courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/settings/grading`}>
-          <GradingSettings courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/course_team`}>
-          <CourseTeam courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/settings/advanced`}>
-          <AdvancedSettings courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/import`}>
-          <CourseImportPage courseId={courseId} />
-        </PageRoute>
-        <PageRoute path={`${path}/export`}>
-          <CourseExportPage courseId={courseId} />
-        </PageRoute>
-      </Switch>
+      <Routes>
+        <Route
+          path="outline"
+          element={process.env.ENABLE_NEW_COURSE_OUTLINE_PAGE === 'true' ? <PageWrap><Placeholder /></PageWrap> : null}
+        />
+        <Route
+          path="course_info"
+          element={<PageWrap><CourseUpdates courseId={courseId} /></PageWrap>}
+        />
+        <Route
+          path="assets"
+          element={<PageWrap><FilesAndUploads courseId={courseId} /></PageWrap>}
+        />
+        <Route
+          path="videos"
+          element={process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' ? <PageWrap><Videos courseId={courseId} /></PageWrap> : null}
+        />
+        <Route
+          path="pages-and-resources/*"
+          element={<PageWrap><PagesAndResources courseId={courseId} /></PageWrap>}
+        />
+        <Route
+          path="proctored-exam-settings"
+          element={<PageWrap><ProctoredExamSettings courseId={courseId} /></PageWrap>}
+        />
+        <Route
+          path="custom-pages/*"
+          element={<PageWrap><CustomPages courseId={courseId} /></PageWrap>}
+        />
+        <Route
+          path="/container/:blockId"
+          element={process.env.ENABLE_UNIT_PAGE === 'true' ? <PageWrap><Placeholder /></PageWrap> : null}
+        />
+        <Route
+          path="editor/course-videos/:blockId"
+          element={process.env.ENABLE_NEW_EDITOR_PAGES === 'true' ? <PageWrap><VideoSelectorContainer courseId={courseId} /></PageWrap> : null}
+        />
+        <Route
+          path="editor/:blockType/:blockId?"
+          element={process.env.ENABLE_NEW_EDITOR_PAGES === 'true' ? <PageWrap><EditorContainer courseId={courseId} /></PageWrap> : null}
+        />
+        <Route
+          path="settings/details"
+          element={<PageWrap><ScheduleAndDetails courseId={courseId} /></PageWrap>}
+        />
+        <Route
+          path="settings/grading"
+          element={<PageWrap><GradingSettings courseId={courseId} /></PageWrap>}
+        />
+        <Route
+          path="course_team"
+          element={<PageWrap><CourseTeam courseId={courseId} /></PageWrap>}
+        />
+        <Route
+          path="settings/advanced"
+          element={<PageWrap><AdvancedSettings courseId={courseId} /></PageWrap>}
+        />
+        <Route
+          path="import"
+          element={<PageWrap><CourseImportPage courseId={courseId} /></PageWrap>}
+        />
+        <Route
+          path="export"
+          element={<PageWrap><CourseExportPage courseId={courseId} /></PageWrap>}
+        />
+      </Routes>
     </CourseAuthoringPage>
   );
-};
-
-CourseAuthoringRoutes.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default CourseAuthoringRoutes;

@@ -6,11 +6,11 @@ import {
 } from '@testing-library/react';
 
 import ReactDOM from 'react-dom';
-import { Switch } from 'react-router-dom';
-import { initializeMockApp, history } from '@edx/frontend-platform';
+import { Routes, Route, MemoryRouter } from 'react-router-dom';
+import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { AppProvider, PageRoute } from '@edx/frontend-platform/react';
+import { AppProvider, PageWrap } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import initializeStore from '../../store';
@@ -39,13 +39,13 @@ ReactDOM.createPortal = jest.fn(node => node);
 const renderComponent = () => {
   const wrapper = render(
     <IntlProvider locale="en">
-      <AppProvider store={store}>
+      <AppProvider store={store} wrapWithRouter={false}>
         <PagesAndResourcesProvider courseId={courseId}>
-          <Switch>
-            <PageRoute path={liveSettingsUrl}>
-              <LiveSettings onClose={() => {}} />
-            </PageRoute>
-          </Switch>
+          <MemoryRouter initialEntries={[liveSettingsUrl]}>
+            <Routes>
+              <Route path={liveSettingsUrl} element={<PageWrap><LiveSettings onClose={() => {}} /></PageWrap>} />
+            </Routes>
+          </MemoryRouter>
         </PagesAndResourcesProvider>
       </AppProvider>
     </IntlProvider>,
@@ -81,7 +81,6 @@ describe('Zoom Settings', () => {
     });
     store = initializeStore(initialState);
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    history.push(liveSettingsUrl);
   });
 
   test('LTI fields are visible when pii sharing is enabled', async () => {
