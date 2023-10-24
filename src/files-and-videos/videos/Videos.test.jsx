@@ -37,6 +37,7 @@ import {
   addVideoThumbnail,
 } from './data/thunks';
 import { getVideosUrl, getCoursVideosApiUrl, getApiBaseUrl } from './data/api';
+import videoMessages from './messages';
 import messages from '../messages';
 
 let axiosMock;
@@ -98,10 +99,16 @@ describe('FilesAndUploads', () => {
       expect(screen.getByTestId('under-construction-placeholder')).toBeVisible();
     });
 
+    it('should not render transcript settings button', async () => {
+      renderComponent();
+      await emptyMockStore(RequestStatus.SUCCESSFUL);
+      expect(screen.queryByText(videoMessages.transcriptSettingsButtonLabel.defaultMessage));
+    });
+
     it('should have Video uploads title', async () => {
       renderComponent();
       await emptyMockStore(RequestStatus.SUCCESSFUL);
-      expect(screen.getByText('Video uploads')).toBeVisible();
+      expect(screen.getByText(videoMessages.heading.defaultMessage)).toBeVisible();
     });
 
     it('should render dropzone', async () => {
@@ -155,6 +162,19 @@ describe('FilesAndUploads', () => {
     });
 
     describe('table view', () => {
+      it('should render transcript settings button', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.SUCCESSFUL);
+        const transcriptSettingsButton = screen.getByText(videoMessages.transcriptSettingsButtonLabel.defaultMessage);
+        expect(transcriptSettingsButton).toBeVisible();
+
+        await act(async () => {
+          fireEvent.click(transcriptSettingsButton);
+        });
+
+        expect(screen.getByLabelText('close settings')).toBeVisible();
+      });
+
       it('should render table with gallery card', async () => {
         renderComponent();
         await mockStore(RequestStatus.SUCCESSFUL);

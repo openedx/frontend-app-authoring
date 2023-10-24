@@ -2,7 +2,6 @@ import {
   InsertDriveFile,
   Terminal,
   AudioFile,
-  VideoFile,
 } from '@edx/paragon/icons';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import FILES_AND_UPLOAD_TYPE_FILTERS from './constant';
@@ -51,8 +50,6 @@ export const getSrc = ({ thumbnail, wrapperType, externalUrl }) => {
     return Terminal;
   case 'audio':
     return AudioFile;
-  case 'video':
-    return VideoFile;
   default:
     return InsertDriveFile;
   }

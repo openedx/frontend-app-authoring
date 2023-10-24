@@ -173,7 +173,7 @@ const Videos = ({
                 size="sm"
                 onClick={() => {
                   openTranscriptSettings();
-                  handleErrorReset({ errorType: 'transcripts' });
+                  handleErrorReset({ errorType: 'transcript' });
                 }}
               >
                 <FormattedMessage {...messages.transcriptSettingsButtonLabel} />

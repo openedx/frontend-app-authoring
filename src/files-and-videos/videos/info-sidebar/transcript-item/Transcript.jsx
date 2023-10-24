@@ -92,6 +92,7 @@ const Transcript = ({
               iconAs={Icon}
               src={DeleteOutline}
               onClick={openConfirmation}
+              alt="delete empty transcript"
             />
           ) : (
             <TranscriptMenu

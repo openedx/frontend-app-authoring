@@ -42,7 +42,7 @@ const FormDropdown = ({
           }
           if (valueKey === value) {
             return (
-              <Dropdown.Item onClick={() => handleSelect(valueKey)} key={`${valueKey}-item`}>
+              <Dropdown.Item key={`${valueKey}-item`}>
                 <Icon size="inline" src={Check} className="m-n2" /><span className="pl-3">{text}</span>
               </Dropdown.Item>
             );

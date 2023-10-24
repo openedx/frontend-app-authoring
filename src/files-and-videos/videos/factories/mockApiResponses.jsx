@@ -15,6 +15,7 @@ export const initialState = {
         { languageCode: 'en', languageText: 'English' },
         { languageCode: 'fr', languageText: 'French' },
       ],
+      isVideoTranscriptEnabled: false,
       activeTranscriptPreferences: null,
       videoTranscriptSettings: {
         transcriptDownloadHandlerUrl: '/transcript_download/',

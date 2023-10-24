@@ -308,7 +308,7 @@ describe('TranscriptSettings', () => {
       expect(screen.getByText(messages.cieloFidelityLabel.defaultMessage)).toBeVisible();
     });
 
-    it('should handle 3Play Media credential update', async () => {
+    it('should handle 3Play Media credential update with english as source language', async () => {
       const apiResponse = {
         videoSourceLanguage: 'en',
         threePlayTurnaround: 'two_hour',
@@ -343,9 +343,56 @@ describe('TranscriptSettings', () => {
         userEvent.click(language);
         userEvent.click(screen.getByText('Arabic'));
         userEvent.click(screen.getByText('French'));
+        userEvent.click(screen.getAllByText('Arabic')[0]);
 
         expect(updateButton).not.toHaveAttribute('disabled');
       });
+
+      axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(200, apiResponse);
+      await waitFor(() => {
+        userEvent.click(updateButton);
+      });
+      const { transcriptStatus } = store.getState().videos;
+
+      expect(transcriptStatus).toEqual(RequestStatus.SUCCESSFUL);
+    });
+
+    it('should handle 3Play Media credential update with english as source language', async () => {
+      const apiResponse = {
+        videoSourceLanguage: 'en',
+        threePlayTurnaround: 'two_hour',
+        preferredLanguages: ['ar', 'fr'],
+        provider: '3PlayMedia',
+        global: false,
+      };
+
+      renderComponent(defaultProps);
+      const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
+      await act(async () => {
+        userEvent.click(orderButton);
+      });
+      const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
+      await act(async () => {
+        userEvent.click(threePlayButton);
+      });
+      const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
+
+      expect(updateButton).toHaveAttribute('disabled');
+
+      const turnaround = screen.getByText(messages.threePlayMediaTurnaroundPlaceholder.defaultMessage);
+      const source = screen.getByText(messages.threePlayMediaSourceLanguagePlaceholder.defaultMessage);
+      await waitFor(() => {
+        userEvent.click(turnaround);
+        userEvent.click(screen.getByText('2 hours'));
+
+        userEvent.click(source);
+        userEvent.click(screen.getByText('Spanish'));
+
+        const language = screen.getByText(messages.threePlayMediaTranscriptLanguagePlaceholder.defaultMessage);
+        userEvent.click(language);
+        userEvent.click(screen.getAllByText('English')[1]);
+      });
+      expect(updateButton).not.toHaveAttribute('disabled');
 
       axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(200, apiResponse);
       await waitFor(() => {

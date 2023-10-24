@@ -86,6 +86,22 @@ describe('TranscriptTab', () => {
     expect(transcriptRow).toBeNull();
   });
 
+  it('should delete empty transcrip row', async () => {
+    renderComponent(defaultProps);
+    const addButton = screen.getByText(messages.uploadButtonLabel.defaultMessage);
+    await act(async () => { fireEvent.click(addButton); });
+
+    const deleteButton = screen.getByLabelText('delete empty transcript');
+    await act(async () => { fireEvent.click(deleteButton); });
+
+    expect(screen.getByText(transcriptRowMessages.deleteConfirmationHeader.defaultMessage)).toBeVisible();
+
+    const confirmButton = screen.getByText(transcriptRowMessages.confirmDeleteLabel.defaultMessage);
+    await act(async () => { fireEvent.click(confirmButton); });
+
+    expect(screen.queryByTestId('transcript-')).toBeNull();
+  });
+
   it('should upload new transcript', async () => {
     renderComponent(defaultProps);
     const addButton = screen.getByText(messages.uploadButtonLabel.defaultMessage);
