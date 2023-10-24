@@ -40,7 +40,7 @@ const VideoThumbnail = ({
     ? Object.values(videoImageSettings.supportedFileFormats) : null;
   let isUploaded = false;
   switch (status) {
-  case 'Uploaded':
+  case 'Ready':
     isUploaded = true;
     break;
   case 'Imported':
@@ -52,15 +52,17 @@ const VideoThumbnail = ({
   const showThumbnail = videoImageSettings?.videoImageUploadEnabled && thumbnail && isUploaded;
 
   return (
-    <div className="video-thumbnail row justify-content-center align-itmes-center">
+    <div data-testid={`video-thumbnail-${id}`} className="video-thumbnail row justify-content-center align-itmes-center">
       <div className="thumbnail-overlay" />
       {showThumbnail ? (
-        <Image
-          style={imageSize}
-          className="border rounded p-1"
-          src={thumbnail}
-          alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
-        />
+        <div className="border rounded">
+          <Image
+            style={imageSize}
+            className="m-1 bg-light-300"
+            src={thumbnail}
+            alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
+          />
+        </div>
       ) : (
         <>
           <div
@@ -82,7 +84,6 @@ const VideoThumbnail = ({
           size="sm"
           onClick={fileInputControl.click}
           tabIndex="0"
-          disabled={!showThumbnail}
         >
           {addThumbnailMessage}
         </Button>
@@ -98,7 +99,7 @@ const VideoThumbnail = ({
 };
 
 VideoThumbnail.propTypes = {
-  thumbnail: PropTypes.string.isRequired,
+  thumbnail: PropTypes.string,
   displayName: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   imageSize: PropTypes.shape({
@@ -113,6 +114,10 @@ VideoThumbnail.propTypes = {
   status: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
+};
+
+VideoThumbnail.defaultProps = {
+  thumbnail: null,
 };
 
 export default injectIntl(VideoThumbnail);

@@ -1,7 +1,5 @@
-/* eslint-disable no-console */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   injectIntl,
@@ -20,14 +18,11 @@ import { useModels, useModel } from '../../generic/model-store';
 import {
   addVideoFile,
   addVideoThumbnail,
-  clearAutomatedTranscript,
   deleteVideoFile,
   fetchVideoDownload,
   fetchVideos,
   getUsagePaths,
   resetErrors,
-  updateTranscriptCredentials,
-  updateTranscriptPreference,
 } from './data/thunks';
 import messages from './messages';
 import VideosProvider from './VideosProvider';
@@ -71,7 +66,6 @@ const Videos = ({
 
   const {
     isVideoTranscriptEnabled,
-    transcriptCredentials,
     encodingsDownloadUrl,
     videoUploadMaxFileSize,
     videoSupportedFileFormats,
@@ -79,22 +73,12 @@ const Videos = ({
   } = pageSettings;
 
   const supportedFileFormats = { 'video/*': videoSupportedFileFormats || FILES_AND_UPLOAD_TYPE_FILTERS.video };
-  
+
   const handleAddFile = (file) => dispatch(addVideoFile(courseId, file));
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id, totalCount));
   const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
   const handleUsagePaths = (video) => dispatch(getUsagePaths({ video, courseId }));
   const handleErrorReset = (error) => dispatch(resetErrors(error));
-  const handleOrderTranscripts = (data, provider) => {
-    handleErrorReset({ errorType: 'transcript' });
-    if (provider === 'order') {
-      dispatch(clearAutomatedTranscript({ courseId }));
-    } else if (isEmpty(transcriptCredentials)) {
-      dispatch(updateTranscriptCredentials({ courseId, data: { ...data, provider, global: false } }));
-    } else {
-      dispatch(updateTranscriptPreference({ courseId, data: { ...data, provider, global: false } }));
-    }
-  };
 
   const handleAddThumbnail = (file, videoId) => resampleFile({
     file,
@@ -122,7 +106,7 @@ const Videos = ({
     Header: 'Transcript',
     Cell: ({ row }) => {
       const { transcripts } = row.original;
-      const numOfTranscripts = transcripts.length;
+      const numOfTranscripts = transcripts?.length;
       return numOfTranscripts > 0 ? `(${numOfTranscripts}) available` : null;
     },
   };
@@ -202,9 +186,10 @@ const Videos = ({
             {...{
               isTranscriptSettngsOpen,
               closeTranscriptSettings,
-              handleOrderTranscripts,
+              handleErrorReset,
               errorMessages,
               transcriptStatus,
+              courseId,
             }}
           />
         ) : null}

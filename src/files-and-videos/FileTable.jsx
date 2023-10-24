@@ -70,7 +70,7 @@ const FileTable = ({
     supportedFileFormats,
   } = data;
   useEffect(() => {
-    if (selectedRows) {
+    if (!isEmpty(selectedRows) && Object.keys(selectedRows[0]).length > 0) {
       const udpatedRows = [];
       selectedRows.forEach(row => {
         const currentFile = row.original;
@@ -106,6 +106,7 @@ const FileTable = ({
     handleErrorReset({ errorType: 'delete' });
     const fileIdsToDelete = selectedRows.map(row => row.original.id);
     fileIdsToDelete.forEach(id => handleDeleteFile(id));
+    setSelectedRows([]);
   };
 
   const handleBulkDownload = useCallback(async (selectedFlatRows) => {
@@ -218,22 +219,23 @@ const FileTable = ({
             { currentView === 'list' && <DataTable.Table /> }
             <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
             <DataTable.TableFooter />
-            <ApiStatusToast
-              actionType={intl.formatMessage(messages.apiStatusDeletingAction)}
-              selectedRowCount={selectedRows.length}
-              isOpen={isDeleteOpen}
-              setClose={setDeleteClose}
-              setSelectedRows={setSelectedRows}
-            />
-            <ApiStatusToast
-              actionType={intl.formatMessage(messages.apiStatusAddingAction)}
-              selectedRowCount={selectedRows.length}
-              isOpen={isAddOpen}
-              setClose={setAddClose}
-              setSelectedRows={setSelectedRows}
-            />
           </div>
         )}
+
+        <ApiStatusToast
+          actionType={intl.formatMessage(messages.apiStatusDeletingAction)}
+          selectedRowCount={selectedRows.length}
+          isOpen={isDeleteOpen}
+          setClose={setDeleteClose}
+          setSelectedRows={setSelectedRows}
+        />
+        <ApiStatusToast
+          actionType={intl.formatMessage(messages.apiStatusAddingAction)}
+          selectedRowCount={selectedRows.length}
+          isOpen={isAddOpen}
+          setClose={setAddClose}
+          setSelectedRows={setSelectedRows}
+        />
       </DataTable>
       <FileInput key="generic-file-upload" fileInput={fileInputControl} supportedFileFormats={supportedFileFormats} />
       {!isEmpty(selectedRows) && (
