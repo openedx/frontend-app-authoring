@@ -80,6 +80,52 @@ describe('TranscriptSettings', () => {
       expect(selectableButtons).toBeVisible();
     });
 
+    it('should delete transcript preferences', async () => {
+      renderComponent(defaultProps);
+      const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
+      await act(async () => {
+        userEvent.click(orderButton);
+      });
+      const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
+      await act(async () => {
+        userEvent.click(cielo24Button);
+      });
+      const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
+
+      expect(updateButton).toHaveAttribute('disabled');
+
+      const noneButton = screen.getAllByLabelText('none radio')[0];
+      await act(async () => {
+        userEvent.click(noneButton);
+      });
+
+      axiosMock.onDelete(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(204);
+      await waitFor(() => {
+        userEvent.click(updateButton);
+      });
+      const { transcriptStatus } = store.getState().videos;
+
+      expect(transcriptStatus).toEqual(RequestStatus.SUCCESSFUL);
+    });
+
+    it('should return to order transcript collapsible', async () => {
+      renderComponent(defaultProps);
+      const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
+      await act(async () => {
+        userEvent.click(orderButton);
+      });
+      const selectableButtons = screen.getAllByLabelText('none radio')[0];
+
+      expect(selectableButtons).toBeVisible();
+
+      const backButton = screen.getByLabelText('back button to main transcript settings view');
+      await waitFor(() => {
+        userEvent.click(backButton);
+
+        expect(screen.queryByLabelText('back button to main transcript settings view')).toBeNull();
+      });
+    });
+
     it('discard changes should call closeTranscriptSettings', async () => {
       renderComponent(defaultProps);
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);

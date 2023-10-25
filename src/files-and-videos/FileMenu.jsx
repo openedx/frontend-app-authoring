@@ -88,7 +88,7 @@ FileMenu.propTypes = {
 
 FileMenu.defaultProps = {
   externalUrl: null,
-  handleLock: () => {},
+  handleLock: null,
   locked: null,
   portableUrl: null,
 };

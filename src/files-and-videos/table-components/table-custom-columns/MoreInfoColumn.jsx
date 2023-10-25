@@ -150,12 +150,16 @@ MoreInfoColumn.propTypes = {
       wrapperType: PropTypes.string,
     }.isRequired,
   }).isRequired,
-  handleLock: PropTypes.func.isRequired,
+  handleLock: PropTypes.func,
   handleBulkDownload: PropTypes.func.isRequired,
   handleOpenFileInfo: PropTypes.func.isRequired,
   handleOpenDeleteConfirmation: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
+};
+
+MoreInfoColumn.defaultProps = {
+  handleLock: null,
 };
 
 export default injectIntl(MoreInfoColumn);
