@@ -15,6 +15,21 @@ export const initialState = {
         { languageCode: 'en', languageText: 'English' },
         { languageCode: 'fr', languageText: 'French' },
       ],
+      videoImageSettings: {
+        videoImageUploadEnabled: false,
+        maxSize: 2097152,
+        minSize: 2048,
+        maxWidth: 1280,
+        maxHeight: 720,
+        supportedFileFormats: {
+          '.bmp': 'image/bmp',
+          '.bmp2': 'image/x-ms-bmp',
+          '.gif': 'image/gif',
+          '.jpg': 'image/jpeg',
+          '.jpeg': 'image/jpeg',
+          '.png': 'image/png',
+        },
+      },
       isVideoTranscriptEnabled: false,
       activeTranscriptPreferences: null,
       videoTranscriptSettings: {

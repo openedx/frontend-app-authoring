@@ -27,13 +27,12 @@ const VideoThumbnail = ({
     setSelectedRows: () => {},
     setAddOpen: () => false,
   });
+  const allowThumbnailUpload = videoImageSettings?.videoImageUploadEnabled
 
-  let addThumbnailMessage = 'Enable thumbnail upload';
-  if (videoImageSettings?.videoImageUploadEnabled) {
+  let addThumbnailMessage = 'Add thumbnail';
+  if (allowThumbnailUpload) {
     if (thumbnail) {
       addThumbnailMessage = 'Edit thumbnail';
-    } else {
-      addThumbnailMessage = 'Add thumbnail';
     }
   }
   const supportedFiles = videoImageSettings?.supportedFileFormats
@@ -49,11 +48,11 @@ const VideoThumbnail = ({
   default:
     break;
   }
-  const showThumbnail = videoImageSettings?.videoImageUploadEnabled && thumbnail && isUploaded;
+  const showThumbnail = allowThumbnailUpload && thumbnail && isUploaded;
 
   return (
     <div data-testid={`video-thumbnail-${id}`} className="video-thumbnail row justify-content-center align-itmes-center">
-      <div className="thumbnail-overlay" />
+      {allowThumbnailUpload && <div className="thumbnail-overlay" />}
       {showThumbnail ? (
         <div className="border rounded">
           <Image
@@ -72,28 +71,35 @@ const VideoThumbnail = ({
             <Icon src={VideoFile} style={{ height: '48px', width: '48px' }} />
           </div>
           <div className="status-badge">
-            <Badge variant="light">
+            {!isUploaded && (
+              <Badge variant="light">
               {status}
             </Badge>
+            )}
           </div>
         </>
       )}
-      <div className="add-thumbnail">
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={fileInputControl.click}
-          tabIndex="0"
-        >
-          {addThumbnailMessage}
-        </Button>
-      </div>
-      <FileInput
-        key="video-thumbnail-upload"
-        fileInput={fileInputControl}
-        supportedFileFormats={supportedFiles}
-        allowMultiple={false}
-      />
+      {allowThumbnailUpload && (
+        <>
+          <div className="add-thumbnail">
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={fileInputControl.click}
+              tabIndex="0"
+            >
+              {addThumbnailMessage}
+            </Button>
+          </div>
+          <FileInput
+            key="video-thumbnail-upload"
+            fileInput={fileInputControl}
+            supportedFileFormats={supportedFiles}
+            allowMultiple={false}
+          />
+        </>
+      )}
+      
     </div>
   );
 };
