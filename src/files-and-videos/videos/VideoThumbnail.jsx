@@ -27,7 +27,7 @@ const VideoThumbnail = ({
     setSelectedRows: () => {},
     setAddOpen: () => false,
   });
-  const allowThumbnailUpload = videoImageSettings?.videoImageUploadEnabled
+  const allowThumbnailUpload = videoImageSettings?.videoImageUploadEnabled;
 
   let addThumbnailMessage = 'Add thumbnail';
   if (allowThumbnailUpload) {
@@ -73,8 +73,8 @@ const VideoThumbnail = ({
           <div className="status-badge">
             {!isUploaded && (
               <Badge variant="light">
-              {status}
-            </Badge>
+                {status}
+              </Badge>
             )}
           </div>
         </>
@@ -99,7 +99,6 @@ const VideoThumbnail = ({
           />
         </>
       )}
-      
     </div>
   );
 };
