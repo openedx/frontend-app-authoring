@@ -292,10 +292,10 @@ export function getUsagePaths({ video, courseId }) {
   };
 }
 
-export function fetchVideoDownload({ selectedRows, courseId }) {
+export function fetchVideoDownload({ selectedRows }) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.IN_PROGRESS }));
-    const errors = await getDownload(selectedRows, courseId);
+    const errors = await getDownload(selectedRows);
     if (isEmpty(errors)) {
       dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.SUCCESSFUL }));
     } else {

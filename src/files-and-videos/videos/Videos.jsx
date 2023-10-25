@@ -77,7 +77,7 @@ const Videos = ({
 
   const handleAddFile = (file) => dispatch(addVideoFile(courseId, file));
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id, totalCount));
-  const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
+  const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows }));
   const handleUsagePaths = (video) => dispatch(getUsagePaths({ video, courseId }));
   const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleFileOrder = ({ newFileIdOrder, sortType }) => {

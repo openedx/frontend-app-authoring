@@ -36,7 +36,6 @@ export const updateFileValues = (files) => {
       wrapperType,
       dateAdded: created.toString(),
       usageLocations: [],
-      fileSize: null,
       thumbnail,
     });
   });

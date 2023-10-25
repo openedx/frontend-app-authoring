@@ -74,26 +74,14 @@ export async function uploadTranscript({
   await getAuthenticatedHttpClient().post(`${getApiBaseUrl()}${apiUrl}`, formData);
 }
 
-export async function getDownloadLink(courseId, edxVideoId) {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(`${getVideosUrl(courseId)}/${edxVideoId}`);
-  return camelCaseObject(data);
-}
-
-/**
- * Fetch video file.
- * @param {blockId} courseId Course ID for the course to operate on
-
- */
-export async function getDownload(selectedRows, courseId) {
+export async function getDownload(selectedRows) {
   const downloadErrors = [];
   if (selectedRows?.length > 0) {
     await Promise.allSettled(
       selectedRows.map(async row => {
         const video = row?.original;
         try {
-          const { downloadLink } = await getDownloadLink(courseId, video.id);
-          saveAs(downloadLink, video.displayName);
+          saveAs(video.downloadLink, video.displayName);
         } catch (error) {
           downloadErrors.push(`Failed to download ${video?.displayName}.`);
         }

@@ -39,9 +39,14 @@ const GalleryCard = ({
               portableUrl={original.portableUrl}
               id={original.id}
               wrapperType={original.wrapperType}
-              onDownload={() => handleBulkDownload(
-                [{ original: { id: original.id, displayName: original.displayName } }],
-              )}
+              onDownload={() => handleBulkDownload([{
+                original: {
+                  id: original.id,
+                  displayName:
+                  original.displayName,
+                  downloadLink: original?.downloadLink,
+                },
+              }])}
               openDeleteConfirmation={() => handleOpenDeleteConfirmation([{ original }])}
             />
           </ActionRow>
@@ -91,6 +96,7 @@ GalleryCard.propTypes = {
     portableUrl: PropTypes.string,
     status: PropTypes.string,
     transcripts: PropTypes.arrayOf(PropTypes.string),
+    downloadLink: PropTypes.string,
   }).isRequired,
   handleBulkDownload: PropTypes.func.isRequired,
   handleLockedFile: PropTypes.func.isRequired,
