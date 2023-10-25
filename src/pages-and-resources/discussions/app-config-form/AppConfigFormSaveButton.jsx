@@ -27,7 +27,7 @@ const AppConfigFormSaveButton = ({ intl, labelText }) => {
     // cancelable: (optional) a Boolean indicating whether the event can be canceled. The default is false.
     // cancelable: true cancels the untrusted event and safari, chrome cancel the untrusted event by default
     formRef.current.dispatchEvent(new Event('submit', {
-      cancelable: true,
+      cancelable: true, bubbles: true,
     }));
   }, [formRef]);
 
