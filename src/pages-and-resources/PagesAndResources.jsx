@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { PageRoute, AppContext } from '@edx/frontend-platform/react';
+import { PageWrap, AppContext } from '@edx/frontend-platform/react';
 
-import { Switch, useRouteMatch } from 'react-router';
+import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Button, Hyperlink } from '@edx/paragon';
@@ -22,12 +22,11 @@ import { useModels, useModel } from '../generic/model-store';
 import { getCourseAppsApiStatus, getLoadingStatus } from './data/selectors';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 import { RequestStatus } from '../data/constants';
+import SettingsComponent from './SettingsComponent';
 import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 import getPageHeadTitle from '../generic/utils';
 
 const PagesAndResources = ({ courseId, intl }) => {
-  const { path, url } = useRouteMatch();
-
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
 
@@ -44,6 +43,7 @@ const PagesAndResources = ({ courseId, intl }) => {
 
   const { config } = useContext(AppContext);
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
+  const redirectUrl = `/course/${courseId}/pages-and-resources`;
 
   // Each page here is driven by a course app
   const pages = useModels('courseApps', courseAppIds);
@@ -93,48 +93,13 @@ const PagesAndResources = ({ courseId, intl }) => {
           ) : ''
         }
 
-        <Switch>
-          <PageRoute
-            path={[
-              `${path}/discussion/configure/:appId`,
-              `${path}/discussion`,
-            ]}
-          >
-            <DiscussionsSettings courseId={courseId} />
-          </PageRoute>
-
-          <PageRoute
-            path={[
-              `${path}/xpert-unit-summary/settings`,
-            ]}
-          >
-            <XpertUnitSummarySettings courseId={courseId} />
-          </PageRoute>
-
-          <PageRoute path={`${path}/:appId/settings`}>
-            {
-              ({ match, history }) => {
-                const SettingsComponent = React.lazy(async () => {
-                  try {
-                    // There seems to be a bug in babel-eslint that causes the checker to crash with the following error
-                    // if we use a template string here:
-                    //     TypeError: Cannot read property 'range' of null with using template strings here.
-                    // Ref: https://github.com/babel/babel-eslint/issues/530
-                    return await import('./' + match.params.appId + '/Settings.jsx'); // eslint-disable-line
-                  } catch (error) {
-                    console.trace(error); // eslint-disable-line no-console
-                    return null;
-                  }
-                });
-                return (
-                  <Suspense fallback="...">
-                    <SettingsComponent onClose={() => history.push(url)} />
-                  </Suspense>
-                );
-              }
-            }
-          </PageRoute>
-        </Switch>
+        <Routes>
+          <Route path="discussion/configure/:appId" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
+          <Route path="discussion" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
+          <Route path="discussion/settings" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
+          <Route path="xpert-unit-summary/settings" element={<PageWrap><XpertUnitSummarySettings courseId={courseId} /></PageWrap>} />
+          <Route path=":appId/settings" element={<PageWrap><Suspense fallback="..."><SettingsComponent url={redirectUrl} /></Suspense></PageWrap>} />
+        </Routes>
       </main>
     </PagesAndResourcesProvider>
   );
