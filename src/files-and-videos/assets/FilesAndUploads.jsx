@@ -15,6 +15,7 @@ import {
   fetchAssetDownload,
   getUsagePaths,
   resetErrors,
+  updateAssetOrder,
 } from '../data/thunks';
 import messages from './messages';
 import FilesAndUploadsProvider from './FilesAndUploadsProvider';
@@ -57,6 +58,9 @@ const FilesAndUploads = ({
   const handleLockFile = ({ fileId, locked }) => dispatch(updateAssetLock({ courseId, assetId: fileId, locked }));
   const handleUsagePaths = (asset) => dispatch(getUsagePaths({ asset, courseId }));
   const handleErrorReset = (error) => dispatch(resetErrors(error));
+  const handleFileOrder = ({ newFileIdOrder, sortType }) => {
+    dispatch(updateAssetOrder(courseId, newFileIdOrder, sortType));
+  };
 
   const thumbnailPreview = (props) => AssetThumbnail(props);
 
@@ -160,6 +164,7 @@ const FilesAndUploads = ({
             handleLockFile,
             handleUsagePaths,
             handleErrorReset,
+            handleFileOrder,
             tableColumns,
             maxFileSize,
             thumbnailPreview,

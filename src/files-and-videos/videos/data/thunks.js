@@ -67,7 +67,7 @@ export function resetErrors({ errorType }) {
   return (dispatch) => { dispatch(clearErrors({ error: errorType })); };
 }
 
-export function updateAssetOrder(courseId, videoIds) {
+export function updateVideoOrder(courseId, videoIds) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
     dispatch(setVideoIds({ videoIds }));

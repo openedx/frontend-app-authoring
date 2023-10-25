@@ -23,6 +23,7 @@ import {
   fetchVideos,
   getUsagePaths,
   resetErrors,
+  updateVideoOrder,
 } from './data/thunks';
 import messages from './messages';
 import VideosProvider from './VideosProvider';
@@ -79,7 +80,9 @@ const Videos = ({
   const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
   const handleUsagePaths = (video) => dispatch(getUsagePaths({ video, courseId }));
   const handleErrorReset = (error) => dispatch(resetErrors(error));
-
+  const handleFileOrder = ({ newFileIdOrder, sortType }) => {
+    dispatch(updateVideoOrder(courseId, newFileIdOrder, sortType));
+  };
   const handleAddThumbnail = (file, videoId) => resampleFile({
     file,
     dispatch,
@@ -202,6 +205,7 @@ const Videos = ({
             handleDownloadFile,
             handleUsagePaths,
             handleErrorReset,
+            handleFileOrder,
             tableColumns,
             maxFileSize,
             thumbnailPreview,

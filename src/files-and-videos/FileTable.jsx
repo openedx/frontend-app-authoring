@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
@@ -15,9 +14,6 @@ import {
 } from '@edx/paragon';
 
 import { RequestStatus } from '../data/constants';
-import {
-  updateAssetOrder,
-} from './data/thunks';
 import { sortFiles } from './data/utils';
 import messages from './messages';
 
@@ -31,7 +27,6 @@ import ApiStatusToast from './ApiStatusToast';
 import MoreInfoColumn from './table-components/table-custom-columns/MoreInfoColumn';
 
 const FileTable = ({
-  courseId,
   files,
   data,
   handleAddFile,
@@ -40,13 +35,13 @@ const FileTable = ({
   handleDownloadFile,
   handleUsagePaths,
   handleErrorReset,
+  handleFileOrder,
   tableColumns,
   maxFileSize,
   thumbnailPreview,
   // injected
   intl,
 }) => {
-  const dispatch = useDispatch();
   const defaultVal = 'card';
   const columnSizes = {
     xs: 12,
@@ -96,8 +91,8 @@ const FileTable = ({
   };
 
   const handleSort = (sortType) => {
-    const newAssetIdOrder = sortFiles(files, sortType);
-    dispatch(updateAssetOrder(courseId, newAssetIdOrder, sortType));
+    const newFileIdOrder = sortFiles(files, sortType);
+    handleFileOrder({ newFileIdOrder, sortType });
   };
 
   const handleBulkDelete = () => {
@@ -288,6 +283,7 @@ FileTable.propTypes = {
   handleUsagePaths: PropTypes.func.isRequired,
   handleLockFile: PropTypes.func,
   handleErrorReset: PropTypes.func.isRequired,
+  handleFileOrder: PropTypes.func.isRequired,
   tableColumns: PropTypes.arrayOf(PropTypes.shape({
     Header: PropTypes.string,
     accessor: PropTypes.string,
