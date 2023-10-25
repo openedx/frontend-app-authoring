@@ -1,8 +1,11 @@
-@import "./export-stepper/ExportStepper";
 @import "./export-footer/ExportFooter";
 
 .export {
   .help-sidebar {
     margin-top: 7.188rem;
+  }
+
+  .pgn__stepper-header-step-list {
+    flex-direction: column;
   }
 }
