@@ -83,22 +83,19 @@ export async function getDownload(selectedRows) {
         try {
           const video = row.original;
           const { downloadLink } = video;
-          console.log(downloadLink);
           if (!isEmpty(downloadLink)) {
             saveAs(downloadLink, video.displayName);
-          }
-          else {
+          } else {
             downloadErrors.push(`Cannot find download file for ${video?.displayName}.`);
           }
         } catch (error) {
-          downloadErrors.push(`Failed to download video.`);
+          downloadErrors.push('Failed to download video.');
         }
       }),
     );
   } else {
     downloadErrors.push('No files were selected to download.');
   }
-  console.log(downloadErrors);
   return downloadErrors;
 }
 
