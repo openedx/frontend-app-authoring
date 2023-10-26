@@ -100,6 +100,7 @@ export const initialState = {
         courseVideoImageUrl: '/video',
         transcripts: [],
         status: 'Imported',
+        downloadLink: 'http://mOckID0.mp4',
       },
     },
   },
@@ -119,6 +120,7 @@ export const generateFetchVideosApiResponse = () => ({
       transcripts: [],
       status: 'Imported',
       duration: 12333,
+      downloadLink: 'http://mOckID1.mp4',
     },
     {
       edx_video_id: 'mOckID5',
@@ -128,6 +130,7 @@ export const generateFetchVideosApiResponse = () => ({
       transcripts: ['en'],
       status: 'Failed',
       duration: 12,
+      downloadLink: 'http://mOckID5.mp4',
     },
     {
       edx_video_id: 'mOckID3',
@@ -137,6 +140,7 @@ export const generateFetchVideosApiResponse = () => ({
       transcripts: ['en'],
       status: 'Ready',
       duration: null,
+      downloadLink: '',
     },
   ],
   concurrent_upload_limit: 4,

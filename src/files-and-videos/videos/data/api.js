@@ -3,6 +3,7 @@ import { camelCaseObject, ensureConfig, getConfig } from '@edx/frontend-platform
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import saveAs from 'file-saver';
+import { isEmpty } from 'lodash';
 
 ensureConfig([
   'STUDIO_BASE_URL',
@@ -79,17 +80,25 @@ export async function getDownload(selectedRows) {
   if (selectedRows?.length > 0) {
     await Promise.allSettled(
       selectedRows.map(async row => {
-        const video = row?.original;
         try {
-          saveAs(video.downloadLink, video.displayName);
+          const video = row.original;
+          const { downloadLink } = video;
+          console.log(downloadLink);
+          if (!isEmpty(downloadLink)) {
+            saveAs(downloadLink, video.displayName);
+          }
+          else {
+            downloadErrors.push(`Cannot find download file for ${video?.displayName}.`);
+          }
         } catch (error) {
-          downloadErrors.push(`Failed to download ${video?.displayName}.`);
+          downloadErrors.push(`Failed to download video.`);
         }
       }),
     );
   } else {
-    downloadErrors.push('No files were selected to download');
+    downloadErrors.push('No files were selected to download.');
   }
+  console.log(downloadErrors);
   return downloadErrors;
 }
 

@@ -35,6 +35,7 @@ import {
   deleteVideoFile,
   getUsagePaths,
   addVideoThumbnail,
+  fetchVideoDownload,
 } from './data/thunks';
 import { getVideosUrl, getCoursVideosApiUrl, getApiBaseUrl } from './data/api';
 import videoMessages from './messages';
@@ -302,8 +303,6 @@ describe('FilesAndUploads', () => {
         });
         const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
         expect(downloadButton).not.toHaveClass('disabled');
-
-        axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1`).reply(200, { download_link: 'http://download.org' });
 
         await act(async () => {
           fireEvent.click(downloadButton);
@@ -610,7 +609,7 @@ describe('FilesAndUploads', () => {
         await mockStore(RequestStatus.SUCCESSFUL);
         const selectCardButtons = screen.getAllByTestId('datatable-select-column-checkbox-cell');
         fireEvent.click(selectCardButtons[0]);
-        fireEvent.click(selectCardButtons[1]);
+        fireEvent.click(selectCardButtons[2]);
         const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
         expect(actionsButton).toBeVisible();
 
@@ -620,9 +619,9 @@ describe('FilesAndUploads', () => {
         const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
         expect(downloadButton).not.toHaveClass('disabled');
 
-        axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1`).reply(404);
         await waitFor(() => {
           fireEvent.click(downloadButton);
+          executeThunk(fetchVideoDownload([{ original: { displayName: 'mOckID1', id: '2' } }]), store.dispatch);
         });
 
         const updateStatus = store.getState().videos.updatingStatus;
