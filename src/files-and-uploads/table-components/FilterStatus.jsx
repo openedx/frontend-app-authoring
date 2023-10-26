@@ -1,12 +1,14 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { DataTableContext, Button } from '@edx/paragon';
 
-function FilterStatus({
-  className, variant, size, clearFiltersText, buttonClassName, showFilteredFields,
-}) {
-  const { state, setAllFilters, RowStatusComponent, page, rows } = useContext(DataTableContext);
+const FilterStatus = ({
+  className, variant, size, clearFiltersText, buttonClassName,
+}) => {
+  const {
+    setAllFilters, RowStatusComponent, page, rows,
+  } = useContext(DataTableContext);
   if (!setAllFilters) {
     return null;
   }
@@ -41,7 +43,7 @@ function FilterStatus({
       </Button>
     </div>
   );
-}
+};
 
 FilterStatus.defaultProps = {
   /** Specifies class name to append to the base element. */
@@ -54,8 +56,6 @@ FilterStatus.defaultProps = {
   size: 'inline',
   /** A text that appears on the `Clear filters` button, defaults to 'Clear filters'. */
   clearFiltersText: undefined,
-  /** Whether to display applied filters. */
-  showFilteredFields: true,
 };
 
 FilterStatus.propTypes = {
@@ -64,7 +64,6 @@ FilterStatus.propTypes = {
   variant: PropTypes.string,
   size: PropTypes.string,
   clearFiltersText: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
-  showFilteredFields: PropTypes.bool,
 };
 
 export default FilterStatus;
