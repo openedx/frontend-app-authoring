@@ -46,7 +46,7 @@ describe('api.js', () => {
       it('should return error if row does not contain .original ancestor', async () => {
         const expected = ['Failed to download video.'];
         const actual = await getDownload([
-          { asset: { displayName: 'test1', id: '1', download_link: 'test1.com'} },
+          { asset: { displayName: 'test1', id: '1', download_link: 'test1.com' } },
         ]);
         expect(actual).toEqual(expected);
       });
