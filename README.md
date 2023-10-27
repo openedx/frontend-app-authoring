@@ -1,8 +1,11 @@
 # frontend-lib-content-components
 
+# Purpose
 A library of high-level components for content handling (viewing, editing, etc. of HTML, video, problems, etc.), to be shared by multiple MFEs.
 
-# How to set up development workflow of V2 content Editors in Studio and course Authoring MFE.
+# Getting Started
+
+## How to set up development workflow of V2 content Editors in Studio and course Authoring MFE.
 
 This guide presumes you have a functioning devstack.
 
@@ -60,7 +63,7 @@ This guide presumes you have a functioning devstack.
 6. Go to [studio](http://localhost:18010) and edit a course or add the Xblock with the developing editor, it should redirect to `frontend-app-course-authoring`
    MFE and the editor should load.
 
-# Using the gallery view.
+## Using the gallery view.
 
 The gallery view runs the editor components with mocked-out block data, and sometimes does not replicate all desired behaviors, but can be used for faster iteration on UI-related changes. To run the gallery view, from the root directory, run
 
@@ -69,7 +72,7 @@ $ npm start
 
 and now the gallery will be live at http://localhost:8080/index.html. use the toggle at the top to switch between available editors.
 
-# Creating Xblock Editor
+## Creating Xblock Editor
 
 To develop a custom Xblock editor, run the command:
 
@@ -85,7 +88,7 @@ It will also configure the editor to be viewable in the gallery view. Adding the
 5. Activate the flag.
 6. Follow steps 4 to 6 from [above](#how-to-set-up-development-workflow-of-v2-content-editors-in-studio-and-course-authoring-mfe)
 
-# Installing into a project
+## Installing into a project
 
 - `npm install @edx/frontend-lib-content-components`
 - For the Jest tests to work, a few config options are necessary. In jest.config.js, include:
@@ -97,3 +100,56 @@ It will also configure the editor to be viewable in the gallery view. Adding the
 - Some mocks for test setup are also necessary, specifically replacing `window.matchMedia`.
 - To make this easier, we provide example files for `jest.config.js` and `setupTest.js` that are known to work.
 You can find them in the example/ folder.
+
+## License
+
+The code in this repository is licensed under the AGPLv3 unless otherwise
+noted.
+
+Please see `LICENSE <LICENSE>`_ for details.
+
+## Contributing
+
+Contributions are very welcome.  Please read `How To Contribute`_ for details.
+
+.. _How To Contribute: https://openedx.org/r/how-to-contribute
+
+This project is currently accepting all types of contributions, bug fixes,
+security fixes, maintenance work, or new features.  However, please make sure
+to have a discussion about your new feature idea with the maintainers prior to
+beginning development to maximize the chances of your change being accepted.
+You can start a conversation by creating a new issue on this repo summarizing
+your idea.
+
+## Getting Help
+
+If you're having trouble, we have discussion forums at
+https://discuss.openedx.org where you can connect with others in the community.
+
+Our real-time conversations are on Slack. You can request a `Slack
+invitation`_, then join our `community Slack workspace`_.  Because this is a
+frontend repository, the best place to discuss it would be in the `#wg-frontend
+channel`_.
+
+For anything non-trivial, the best path is to open an issue in this repository
+with as many details about the issue you are facing as you can provide.
+
+https://github.com/openedx/frontend-lib-content-components/issues
+
+For more information about these options, see the `Getting Help`_ page.
+
+.. _Slack invitation: https://openedx.org/slack
+.. _community Slack workspace: https://openedx.slack.com/
+.. _#wg-frontend channel: https://openedx.slack.com/archives/C04BM6YC7A6
+.. _Getting Help: https://openedx.org/community/connect
+
+##  The Open edX Code of Conduct
+
+All community members are expected to follow the `Open edX Code of Conduct`_.
+
+.. _Open edX Code of Conduct: https://openedx.org/code-of-conduct/
+
+## Reporting Security Issues
+
+Please do not report security issues in public. Please email security@openedx.org.
+
