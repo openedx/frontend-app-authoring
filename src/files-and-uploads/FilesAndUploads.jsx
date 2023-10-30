@@ -42,6 +42,7 @@ import { AccessColumn, MoreInfoColumn, ThumbnailColumn } from './table-component
 import ApiStatusToast from './ApiStatusToast';
 import { clearErrors } from './data/slice';
 import getPageHeadTitle from '../generic/utils';
+import FilterStatus from './table-components/FilterStatus';
 
 const FilesAndUploads = ({
   courseId,
@@ -297,6 +298,7 @@ const FilesAndUploads = ({
           itemCount={totalCount}
           pageCount={Math.ceil(totalCount / 50)}
           data={assets}
+          FilterStatusComponent={FilterStatus}
         >
           {isEmpty(assets) && loadingStatus !== RequestStatus.IN_PROGRESS ? (
             <Dropzone

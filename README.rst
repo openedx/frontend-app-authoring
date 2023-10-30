@@ -12,7 +12,6 @@ This is the Course Authoring micro-frontend, currently under development by `2U 
 Its purpose is to provide both a framework and UI for new or replacement React-based authoring features outside ``edx-platform``.  You can find the current set described below.
 
 
-************
 Getting Started
 ************
 
@@ -31,6 +30,11 @@ to the `relevant tutor-mfe documentation`_ to get started using it.
 .. _Tutor: https://github.com/overhangio/tutor
 
 .. _relevant tutor-mfe documentation: https://github.com/overhangio/tutor-mfe#mfe-development
+
+Configuration
+=============
+
+All features that integrate into the edx-platform CMS require that the ``COURSE_AUTHORING_MICROFRONTEND_URL`` Django setting is set in the CMS environment and points to this MFE's deployment URL. This should be done automatically if you are using devstack or tutor-mfe.
 
 Cloning and Startup
 ===================
@@ -60,7 +64,7 @@ Cloning and Startup
 The dev server is running at `http://localhost:2001 <http://localhost:2001>`_.
 or whatever port you setup.
 
-********
+
 Features
 ********
 
@@ -69,14 +73,12 @@ Feature: Pages and Resources Studio Tab
 
 Enables a "Pages & Resources" menu item in Studio, under the "Content" menu.
 
+.. image:: ./docs/readme-images/feature-pages-resources.png
+
 Requirements
 ------------
 
-The following are external requirements for this feature to function correctly:
-
-* ``edx-platform`` Django settings:
-
-  * ``COURSE_AUTHORING_MICROFRONTEND_URL``: must be set in the CMS environment and point to this MFE's deployment URL.
+The following are requirements for this feature to function correctly:
 
 * ``edx-platform`` Waffle flags:
 
@@ -125,14 +127,12 @@ For a particular course, this page allows one to:
 Feature: New React XBlock Editors
 =================================
 
+.. image:: ./docs/readme-images/feature-problem-editor.png
+
 This allows an operator to enable the use of new React editors for the HTML, Video, and Problem XBlocks, all of which are provided here.
 
 Requirements
 ------------
-
-* ``edx-platform`` Django settings:
-
-  * ``COURSE_AUTHORING_MICROFRONTEND_URL``: must be set in the CMS environment and point to this MFE's deployment URL.
 
 * ``edx-platform`` Waffle flags:
 
@@ -145,7 +145,7 @@ Configuration
 
 In additional to the standard settings, the following local configuration item is required:
 
-* ``ENABLE_NEW_EDITOR_PAGES``: must be enabled in order to actually present the new XBlock editors
+* ``ENABLE_NEW_EDITOR_PAGES``: must be enabled in order to actually present the new XBlock editors (on by default)
 
 Feature Description
 -------------------
@@ -159,12 +159,13 @@ When a corresponding waffle flag is set, upon editing a block in Studio, the vie
 Feature: New Proctoring Exams View
 ==================================
 
+.. image:: ./docs/readme-images/feature-proctored-exams.png
+
 Requirements
 ------------
 
 * ``edx-platform`` Django settings:
 
-  * ``COURSE_AUTHORING_MICROFRONTEND_URL``: must be set in the CMS environment and point to this MFE's deployment URL.
   * ``ZENDESK_*``: necessary if automatic ZenDesk ticket creation is desired
 
 * ``edx-platform`` Feature flags:
@@ -190,8 +191,66 @@ In Studio, a new item ("Proctored Exam Settings") is added to "Other Course Sett
 * Select a proctoring provider
 * Enable automatic creation of Zendesk tickets for "suspicious" proctored exam attempts
 
+Feature: Advanced Settings
+==========================
 
-**********
+.. image:: ./docs/readme-images/feature-advanced-settings.png
+
+Requirements
+------------
+
+* ``edx-platform`` Waffle flags:
+
+  * ``contentstore.new_studio_mfe.use_new_advanced_settings_page``: this feature flag must be enabled for the link to the settings view to be shown. It can be enabled on a per-course basis.
+
+Feature Description
+-------------------
+
+In Studio, the "Advanced Settings" page for each enabled course will now be served by this frontend, instead of the UI built into edx-platform. The advanced settings page holds many different settings for the course, such as what features or XBlocks are enabled.
+
+Feature: Files & Uploads
+==========================
+
+.. image:: ./docs/readme-images/feature-files-uploads.png
+
+Requirements
+------------
+
+* ``edx-platform`` Waffle flags:
+
+  * ``contentstore.new_studio_mfe.use_new_files_uploads_page``: this feature flag must be enabled for the link to the Files & Uploads page to go to the MFE. It can be enabled on a per-course basis.
+
+Feature Description
+-------------------
+
+In Studio, the "Files & Uploads" page for each enabled course will now be served by this frontend, instead of the UI built into edx-platform. This page allows managing static asset files like PDFs, images, etc. used for the course.
+
+Feature: Course Updates
+==========================
+
+.. image:: ./docs/readme-images/feature-course-updates.png
+
+Requirements
+------------
+
+* ``edx-platform`` Waffle flags:
+
+  * ``contentstore.new_studio_mfe.use_new_updates_page``: this feature flag must be enabled.
+
+Feature: Import/Export Pages
+============================
+
+.. image:: ./docs/readme-images/feature-export.png
+
+Requirements
+------------
+
+* ``edx-platform`` Waffle flags:
+
+  * ``contentstore.new_studio_mfe.use_new_export_page``: this feature flag will change the CMS to link to the new export page.
+  * ``contentstore.new_studio_mfe.use_new_import_page``: this feature flag will change the CMS to link to the new import page.
+
+
 Developing
 **********
 
@@ -201,7 +260,7 @@ Developing
 If your devstack includes the default Demo course, you can visit the following URLs to see content:
 
 - `Proctored Exam Settings <http://localhost:2001/course/course-v1:edX+DemoX+Demo_Course/proctored-exam-settings>`_
-- `Pages and Resources <http://localhost:2001/course/course-v1:edX+DemoX+Demo_Course/pages-and-resources>`_ (work in progress)
+- `Pages and Resources <http://localhost:2001/course/course-v1:edX+DemoX+Demo_Course/pages-and-resources>`_
 
 Troubleshooting
 ========================
@@ -212,7 +271,7 @@ Troubleshooting
   If there is still an error, look for "no package [...] found" in the error message and install missing package via brew.
   (https://github.com/Automattic/node-canvas/issues/1733)
 
-*********
+
 Deploying
 *********
 
@@ -235,6 +294,7 @@ Please see refer to the `frontend-platform i18n howto`_ for documentation on
 internationalization.
 
 .. _frontend-platform i18n howto: https://github.com/openedx/frontend-platform/blob/master/docs/how_tos/i18n.rst
+
 
 Getting Help
 ************
@@ -259,6 +319,7 @@ For more information about these options, see the `Getting Help`_ page.
 .. _#wg-frontend channel: https://openedx.slack.com/archives/C04BM6YC7A6
 .. _Getting Help: https://openedx.org/community/connect
 
+
 License
 *******
 
@@ -266,6 +327,7 @@ The code in this repository is licensed under the AGPLv3 unless otherwise
 noted.
 
 Please see `LICENSE <LICENSE>`_ for details.
+
 
 Contributing
 ************
@@ -280,6 +342,7 @@ to have a discussion about your new feature idea with the maintainers prior to
 beginning development to maximize the chances of your change being accepted.
 You can start a conversation by creating a new issue on this repo summarizing
 your idea.
+
 
 The Open edX Code of Conduct
 ****************************
@@ -296,6 +359,7 @@ found in `Backstage`_. Backstage pulls this data from the ``catalog-info.yaml``
 file in this repo.
 
 .. _Backstage: https://open-edx-backstage.herokuapp.com/catalog/default/component/frontend-app-course-authoring
+
 
 Reporting Security Issues
 *************************
