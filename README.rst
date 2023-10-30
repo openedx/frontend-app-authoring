@@ -250,6 +250,25 @@ Requirements
   * ``contentstore.new_studio_mfe.use_new_export_page``: this feature flag will change the CMS to link to the new export page.
   * ``contentstore.new_studio_mfe.use_new_import_page``: this feature flag will change the CMS to link to the new import page.
 
+Feature: Tagging/Taxonomy Pages
+================================
+
+.. image:: ./docs/readme-images/feature-tagging-taxonomy-pages.png
+
+Requirements
+------------
+
+* ``edx-platform`` Waffle flags:
+
+  * ``contentstore.new_studio_mfe.use_tagging_taxonomy_list_page``: this feature flag must be enabled.
+
+Configuration
+-------------
+
+In additional to the standard settings, the following local configuration items are required:
+
+* ``ENABLE_TAGGING_TAXONOMY_PAGES``: must be enabled in order to actually present the new Tagging/Taxonomy pages.
+
 
 Developing
 **********
