@@ -376,7 +376,7 @@ export default function wrapBlockHtmlForIFrame(html, resources, lmsBaseUrl) {
     <!-- A Studio-served stylesheet will set the body min-height to 100% (a common strategy to allow for background
     images to fill the viewport), but this has the undesireable side-effect of causing an infinite loop via the
     onResize event listeners in certain situations.  Resetting it to the default "auto" skirts the problem. -->
-    <body style="min-height: auto">
+    <body style="min-height: auto; background-color: white">
       ${html}
       ${jsTags}
       <script>
