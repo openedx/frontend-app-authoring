@@ -120,7 +120,7 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
 
   it('Loads blocks', async () => {
     const library = libraryFactory();
-    const blocks = makeN(blockFactoryLine([], { library }), 2);
+    const blocks = makeN(blockFactoryLine([], { library }), 21);
     await render(library, genState(library, blocks));
     expect(screen.getByText(blocks[0].display_name)).toBeTruthy();
     expect(screen.getByText(blocks[1].display_name)).toBeTruthy();

@@ -92,7 +92,7 @@ export const BlockPreviewBase = ({
   setShowDeleteModal, showEditorModal, setShowEditorModal, library, editView, isLtiUrlGenerating,
   ...props
 }) => (
-  <Card className="w-auto m-2">
+  <Card className="w-auto my-3">
     <Card.Header
       className="library-authoring-block-card-header"
       title={block.display_name}
@@ -410,8 +410,6 @@ const LibraryAuthoringPageHeaderBase = ({ intl, library, ...props }) => {
           <ActionRow>
             {library.title}
             <IconButton
-              invertColors
-              isActive
               iconAs={EditOutline}
               alt="Edit name button"
               onClick={handleClick}
@@ -444,7 +442,7 @@ export const LibraryAuthoringPageBase = ({
   intl, library, blockView, showPreviews, setShowPreviews,
   sending, addBlock, revertChanges, commitChanges, hasChanges, errorMessage, successMessage,
   quickAddBehavior, otherTypes, blocks, changeQuery, changeType, changePage,
-  paginationOptions, typeOptions, query, type, ...props
+  paginationOptions, typeOptions, query, type, getCurrentViewRange, ...props
 }) => (
   <Container fluid>
     <header className="mast has-actions">
@@ -467,7 +465,7 @@ export const LibraryAuthoringPageBase = ({
       <ErrorAlert errorMessage={errorMessage} onClose={props.clearLibraryError} />
       <SuccessAlert successMessage={successMessage} onClose={props.clearLibrarySuccess} />
       <Col xs={12} md={8} xl={9}>
-        <ActionRow className="p-1 pl-2 pt-2">
+        <ActionRow>
           {(library.type === LIBRARY_TYPES.COMPLEX) && (
           <>
             <SearchField
@@ -478,7 +476,7 @@ export const LibraryAuthoringPageBase = ({
             />
             <ActionRow.Spacer />
             <Form.Control
-              className="flex-grow-0 flex-shrink-0 w-25"
+              className="flex-grow-0 flex-shrink-0 w-25 m-0"
               as="select"
               data-testid="filter-dropdown"
               value={type}
@@ -490,6 +488,29 @@ export const LibraryAuthoringPageBase = ({
             </Form.Control>
           </>
           )}
+        </ActionRow>
+        <ActionRow className="my-3">
+          <span className="text-primary-500 small">
+            {intl.formatMessage(
+              messages['library.detail.component.showingCount'],
+              {
+                currentViewRange: getCurrentViewRange(paginationOptions.currentPage, blocks.value.count),
+                total: blocks.value.count,
+              },
+            )}
+          </span>
+          <ActionRow.Spacer />
+          {paginationOptions.pageCount > 1 ? (
+            <Pagination
+              className="minimal-pagination"
+              paginationLabel="pagination navigation"
+              variant="minimal"
+              currentPage={paginationOptions.currentPage}
+              pageCount={paginationOptions.pageCount}
+              buttonLabels={paginationOptions.buttonLabels}
+              onPageSelect={(page) => changePage(page)}
+            />
+          ) : null}
         </ActionRow>
         {/* todo: figure out how we want to handle these at low screen widths.
                   mobile is currently unsupported: so it doesn't make sense
@@ -617,7 +638,7 @@ export const LibraryAuthoringPageBase = ({
             </Row>
           )}
         </Col>
-        {blocks.value.count > 0
+        {paginationOptions.pageCount > 1
           ? (
             <Col xs={12}>
               <Pagination
@@ -711,6 +732,7 @@ LibraryAuthoringPageBase.propTypes = {
   quickAddBehavior: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
+  getCurrentViewRange: PropTypes.func.isRequired,
   otherTypes: PropTypes.arrayOf(
     PropTypes.shape({
       block_type: PropTypes.string.isRequired,
@@ -796,6 +818,15 @@ export const LibraryAuthoringPageContainerBase = ({
 
   const changePage = (newPage) => {
     setPage(newPage);
+  };
+
+  const getCurrentViewRange = (currentPageNumber, totalBlockCount) => {
+    const startRange = currentPageNumber * 20 - 19;
+    let endRange = currentPageNumber * 20;
+    if (endRange > totalBlockCount) {
+      endRange = totalBlockCount;
+    }
+    return `${startRange} - ${endRange}`;
   };
 
   // If we end up needing this across components, or we end up needing more settings like this, we'll have to create
@@ -912,6 +943,7 @@ export const LibraryAuthoringPageContainerBase = ({
       type={type}
       otherTypes={otherTypes}
       blocks={blocks}
+      getCurrentViewRange={getCurrentViewRange}
       {...props}
     />
   );

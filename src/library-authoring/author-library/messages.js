@@ -17,6 +17,11 @@ const messages = defineMessages({
     defaultMessage: 'Error: {errorMessage}',
     description: 'Message when data failed to load',
   },
+  'library.detail.component.showingCount': {
+    id: 'library.detail.component.showingCount',
+    defaultMessage: 'Showing {currentViewRange} of {total} total, sorted by date added, ascending',
+    description: 'Text on the new component button.',
+  },
   'library.detail.new.component': {
     id: 'library.detail.new.component',
     defaultMessage: 'New component',
@@ -84,17 +89,15 @@ const messages = defineMessages({
   },
   'library.detail.aside.text.1': {
     id: 'library.detail.aside.text.1',
-    defaultMessage: `Add components to your library for use in courses, using
-    Add New Component at the bottom of this page. Note that the slug becomes
-    part of the usage ID and definition ID, and cannot be changed.`,
+    defaultMessage: `Add components to your library for use in courses.
+    Note that the slug becomes part of the usage ID and definition ID,
+    and cannot be changed.`,
     description: 'Text for the supplementary content.',
   },
   'library.detail.aside.text.2': {
     id: 'library.detail.aside.text.2',
     defaultMessage: `Components are listed in the order in which they are
-    added, with the most recently added at the bottom. Use the pagination
-    arrows to navigate from page to page if you have more than one page of
-    components in your library.`,
+    added, with the most recently added at the bottom.`,
     description: 'Text for the supplementary content.',
   },
   'library.detail.aside.help.link': {
@@ -214,15 +217,13 @@ const messages = defineMessages({
   },
   'library.detail.sidebar.adding.first': {
     id: 'library.detail.sidebar.adding.first',
-    defaultMessage: 'Add components to your library for use in courses, using the Add button at the bottom of '
-      + 'this page.',
+    defaultMessage: 'Add components to your library for use in courses.',
     description: 'First paragraph of instructional text about how to add content to a library.',
   },
   'library.detail.sidebar.adding.second': {
     id: 'library.detail.sidebar.adding.second',
     defaultMessage: 'Components are listed in the order in which they are added, with the most recently added at the '
-      + 'bottom. Use the pagination arrows to navigate from page to page if you have more than one page of components '
-      + 'in your library.',
+      + 'bottom.',
     description: 'Second paragraph of instructional text about how to add content to a library.',
   },
   'library.detail.sidebar.using.heading': {

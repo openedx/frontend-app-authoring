@@ -23,6 +23,12 @@
     }
 }
 
+.minimal-pagination {
+    ul.pagination {
+        margin: 0;
+    }
+}
+
 .library-authoring-block-add-new {
     h2 {
         font-size: 120%;
