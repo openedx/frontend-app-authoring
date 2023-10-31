@@ -5,14 +5,15 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { render, fireEvent } from '@testing-library/react';
 import ExportModal from '.';
 import initializeStore from '../../store';
-import { callExportTaxonomy } from '../api/hooks/selectors';
+import exportTaxonomy from '../data/thunks';
 
 const onClose = jest.fn();
 let store;
 const taxonomyId = 1;
 
-jest.mock('../api/hooks/selectors', () => ({
-  callExportTaxonomy: jest.fn(),
+jest.mock('../data/thunks', () => ({
+  __esModule: true,
+  default: jest.fn(),
 }));
 
 const ExportModalComponent = () => (
@@ -48,6 +49,6 @@ describe('<ExportModal />', async () => {
     fireEvent.click(getByText('Export'));
 
     expect(onClose).toHaveBeenCalled();
-    expect(callExportTaxonomy).toHaveBeenCalledWith(taxonomyId, 'json');
+    expect(exportTaxonomy).toHaveBeenCalledWith(taxonomyId, 'json');
   });
 });

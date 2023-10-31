@@ -1,27 +1,24 @@
+import { useQuery } from '@tanstack/react-query';
 import {
   useTaxonomyListDataResponse,
   useIsTaxonomyListDataLoaded,
-  callExportTaxonomy,
-} from './selectors';
-import { useTaxonomyListData, exportTaxonomy } from './api';
+} from './hooks';
 
-jest.mock('./api', () => ({
-  __esModule: true,
-  useTaxonomyListData: jest.fn(),
-  exportTaxonomy: jest.fn(),
+jest.mock('@tanstack/react-query', () => ({
+  useQuery: jest.fn(),
 }));
 
 describe('useTaxonomyListDataResponse', () => {
   it('should return data when status is success', () => {
-    useTaxonomyListData.mockReturnValueOnce({ status: 'success', data: { data: 'data' } });
+    useQuery.mockReturnValueOnce({ status: 'success', data: { data: 'data' } });
 
     const result = useTaxonomyListDataResponse();
 
-    expect(result).toEqual('data');
+    expect(result).toEqual({ data: 'data' });
   });
 
   it('should return undefined when status is not success', () => {
-    useTaxonomyListData.mockReturnValueOnce({ status: 'error' });
+    useQuery.mockReturnValueOnce({ status: 'error' });
 
     const result = useTaxonomyListDataResponse();
 
@@ -31,7 +28,7 @@ describe('useTaxonomyListDataResponse', () => {
 
 describe('useIsTaxonomyListDataLoaded', () => {
   it('should return true when status is success', () => {
-    useTaxonomyListData.mockReturnValueOnce({ status: 'success' });
+    useQuery.mockReturnValueOnce({ status: 'success' });
 
     const result = useIsTaxonomyListDataLoaded();
 
@@ -39,7 +36,7 @@ describe('useIsTaxonomyListDataLoaded', () => {
   });
 
   it('should return false when status is not success', () => {
-    useTaxonomyListData.mockReturnValueOnce({ status: 'error' });
+    useQuery.mockReturnValueOnce({ status: 'error' });
 
     const result = useIsTaxonomyListDataLoaded();
 
@@ -47,10 +44,11 @@ describe('useIsTaxonomyListDataLoaded', () => {
   });
 });
 
-describe('callExportTaxonomy', () => {
+/* describe('callExportTaxonomy', () => {
   it('should trigger exportTaxonomy', () => {
     callExportTaxonomy(1, 'csv');
 
     expect(exportTaxonomy).toHaveBeenCalled();
   });
 });
+*/
