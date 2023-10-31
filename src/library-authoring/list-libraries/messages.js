@@ -2,6 +2,16 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 import { messageGuard } from '../common/data';
 
 const messages = defineMessages({
+  'library.form.breadcrumbs.home': {
+    id: 'library.form.breadcrumbs.home',
+    defaultMessage: 'Studio',
+    description: 'Label for the breadcrumbs home link.',
+  },
+  'library.form.breadcrumbs.list': {
+    id: 'library.form.breadcrumbs.list',
+    defaultMessage: 'Libraries',
+    description: 'Label for the breadcrumbs parent link.',
+  },
   'library.list.page.heading': {
     id: 'library.list.page.heading',
     defaultMessage: 'Libraries',

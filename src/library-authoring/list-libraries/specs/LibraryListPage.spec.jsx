@@ -11,6 +11,7 @@ import { withNavigate } from '../../utils/hoc';
 
 const mockNavigate = jest.fn();
 const InjectedLibraryListPage = injectIntl(withNavigate(LibraryListPage));
+const config = { STUDIO_BASE_URL: 'STUDIO_BASE_URL' };
 const mockLibraryFetcher = jest.fn();
 const props = {
   ...libraryListInitialState,
@@ -33,6 +34,7 @@ describe('list-libraries/LibraryListPage.jsx', () => {
       <BrowserRouter>
         <InjectedLibraryListPage {...props} />
       </BrowserRouter>,
+      { config },
     );
   });
 
@@ -45,6 +47,7 @@ describe('list-libraries/LibraryListPage.jsx', () => {
       <BrowserRouter>
         <InjectedLibraryListPage {...newProps} />
       </BrowserRouter>,
+      { config },
     );
 
     const loading = container.find('.spinner-border');
@@ -63,6 +66,7 @@ describe('list-libraries/LibraryListPage.jsx', () => {
       <BrowserRouter>
         <InjectedLibraryListPage {...newProps} />
       </BrowserRouter>,
+      { config },
     );
 
     expect(container.childAt(0).text()).toEqual(`Error: ${errorMessage}`);
@@ -73,6 +77,7 @@ describe('list-libraries/LibraryListPage.jsx', () => {
       <BrowserRouter>
         <InjectedLibraryListPage {...props} />
       </BrowserRouter>,
+      { config },
     );
 
     expect(mockLibraryFetcher).toHaveBeenCalledWith({
@@ -91,6 +96,7 @@ describe('list-libraries/LibraryListPage.jsx', () => {
       <BrowserRouter>
         <InjectedLibraryListPage {...props} />
       </BrowserRouter>,
+      { config },
     );
 
     expect(container.find('.library-list-pagination').length).toBe(0);
@@ -105,6 +111,7 @@ describe('list-libraries/LibraryListPage.jsx', () => {
       <BrowserRouter>
         <InjectedLibraryListPage {...newProps} />
       </BrowserRouter>,
+      { config },
     );
 
     const paginationContainer = container.find('.library-list-pagination').at(1);
@@ -139,6 +146,7 @@ describe('list-libraries/LibraryListPage.jsx', () => {
       <BrowserRouter>
         <InjectedLibraryListPage {...newProps} />
       </BrowserRouter>,
+      { config },
     );
 
     expect(container.find('.library-list .library-item').length).toBe(0);
@@ -152,6 +160,7 @@ describe('list-libraries/LibraryListPage.jsx', () => {
       <BrowserRouter>
         <InjectedLibraryListPage {...props} />
       </BrowserRouter>,
+      { config },
     );
 
     const emptyPage = container.find('.pgn__card.horizontal');
@@ -176,6 +185,7 @@ describe('list-libraries/LibraryListPage.jsx', () => {
       <BrowserRouter>
         <InjectedLibraryListPage {...newProps} />
       </BrowserRouter>,
+      { config },
     );
 
     const libraryItem = container.find('.library-item').at(0);
@@ -197,9 +207,10 @@ describe('list-libraries/LibraryListPage.jsx', () => {
       <BrowserRouter>
         <InjectedLibraryListPage {...newProps} />
       </BrowserRouter>,
+      { config },
     );
 
-    const newLibraryBtn = container.find('button.btn-outline-primary').at(0);
+    const newLibraryBtn = container.find('button.btn-primary').at(0);
     newLibraryBtn.simulate('click');
 
     expect(mockNavigate).toHaveBeenCalledWith(ROUTES.List.CREATE);

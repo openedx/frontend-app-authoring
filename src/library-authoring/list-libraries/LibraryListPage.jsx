@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  Button, Pagination, ActionRow, Card,
+  Breadcrumb, Button, Pagination, ActionRow, Card,
 } from '@edx/paragon';
 import { Add } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -94,6 +94,7 @@ export class LibraryListPage extends React.Component {
 
   renderContent() {
     const { intl, libraries } = this.props;
+    const { config } = this.context;
 
     const paginationOptions = {
       currentPage: this.state.paginationParams.page,
@@ -111,14 +112,19 @@ export class LibraryListPage extends React.Component {
       <>
         {libraries.count !== 0 && (
           <div className="wrapper-mast wrapper">
+            <Breadcrumb
+              activeLabel={intl.formatMessage(messages['library.form.breadcrumbs.list'])}
+              links={[
+                { label: intl.formatMessage(messages['library.form.breadcrumbs.home']), url: config.STUDIO_BASE_URL },
+              ]}
+            />
             <header className="mast has-actions">
-              <ActionRow>
-                <h1 className="page-header">{intl.formatMessage(messages['library.list.page.heading'])}</h1>
+              <ActionRow className="mb-4">
+                <h2 className="page-header text-primary-500">{intl.formatMessage(messages['library.list.page.heading'])}</h2>
                 <ActionRow.Spacer />
                 <Button
-                  variant="outline-primary"
+                  variant="primary"
                   onClick={this.goToCreateLibraryPage}
-                  iconBefore={Add}
                   size="sm"
                 >
                   {intl.formatMessage(messages['library.list.new.library'])}
@@ -137,14 +143,14 @@ export class LibraryListPage extends React.Component {
                       <Card
                         isClickable
                         key={library.id}
-                        className="library-item mt-3"
+                        className="library-item mt-2 p-1"
                         onClick={() => this.goToLibraryItem(library)}
                       >
-                        <Card.Header
-                          className="library-title"
-                          title={library.title}
-                          subtitle={`${library.org} • ${library.slug}`}
-                        />
+                        <Card.Section title={<h4 className="text-primary-500">{library.title}</h4>}>
+                          <span className="small text-gray-500">
+                            {library.org} <span className="micro text-light-700">•</span> {library.slug}
+                          </span>
+                        </Card.Section>
                       </Card>
                     ))}
                   </ul>
