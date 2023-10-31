@@ -1,5 +1,7 @@
 import { RequestStatus } from '../../data/constants';
-import { createOrRerunCourse, getOrganizations, getCourseRerun } from './api';
+import {
+  createOrRerunCourse, getOrganizations, getCourseRerun, getUserPermissions,
+} from './api';
 import {
   fetchOrganizations,
   updatePostErrors,
@@ -7,6 +9,7 @@ import {
   updateRedirectUrlObj,
   updateCourseRerunData,
   updateSavingStatus,
+  updateUserPermissions,
 } from './slice';
 
 export function fetchOrganizationsQuery() {
@@ -46,6 +49,17 @@ export function updateCreateOrRerunCourseQuery(courseData) {
     } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
+    }
+  };
+}
+
+export function fetchUserPermissionsQuery(courseId) {
+  return async (dispatch) => {
+    try {
+      const userPermissions = await getUserPermissions(courseId);
+      dispatch(updateUserPermissions(userPermissions));
+    } catch (error) {
+      console.trace({ error }); // eslint-disable-line no-console
     }
   };
 }

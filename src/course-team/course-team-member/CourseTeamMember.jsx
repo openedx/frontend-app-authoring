@@ -9,7 +9,6 @@ import {
   MailtoLink,
 } from '@edx/paragon';
 import { DeleteOutline } from '@edx/paragon/icons';
-import { useUserPermissions } from '../hooks';
 
 import messages from './messages';
 import { USER_ROLES, BADGE_STATES } from '../constants';
@@ -28,18 +27,11 @@ const CourseTeamMember = ({
   const isAdminRole = role === USER_ROLES.admin;
   const badgeColor = isAdminRole ? BADGE_STATES.admin : BADGE_STATES.staff;
 
-  const {
-    hasPermissions,
-  } = useUserPermissions();
-
-  const hasManageAllUsersPerm = hasPermissions('manage-all-users');
-
-  console.log({ hasManageAllUsersPermission: hasPermissions('manage-all-users') });
   return (
     <div className="course-team-member" data-testid="course-team-member">
       <div className="member-info">
         <Badge className={`badge-current-user bg-${badgeColor} text-light-100`}>
-          {(hasManageAllUsersPerm || isAdminRole)
+          {(isAdminRole)
             ? intl.formatMessage(messages.roleAdmin)
             : intl.formatMessage(messages.roleStaff)}
           {currentUserEmail === email && (
@@ -54,11 +46,11 @@ const CourseTeamMember = ({
         !isHideActions ? (
           <div className="member-actions">
             <Button
-              variant={(hasManageAllUsersPerm || isAdminRole) ? 'tertiary' : 'primary'}
+              variant={(isAdminRole) ? 'tertiary' : 'primary'}
               size="sm"
               onClick={() => onChangeRole(email, isAdminRole ? USER_ROLES.staff : USER_ROLES.admin)}
             >
-              {(hasManageAllUsersPerm || isAdminRole)
+              {(isAdminRole)
                 ? intl.formatMessage(messages.removeButton)
                 : intl.formatMessage(messages.addButton)}
             </Button>

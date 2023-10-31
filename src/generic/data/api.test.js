@@ -9,9 +9,12 @@ import {
   getCreateOrRerunCourseUrl,
   getCourseRerunUrl,
   getCourseRerun,
+  getUserPermissions,
+  getUserPermissionsUrl,
 } from './api';
 
 let axiosMock;
+const courseId = 'course-123';
 
 describe('generic api calls', () => {
   beforeEach(() => {
@@ -22,6 +25,7 @@ describe('generic api calls', () => {
         administrator: true,
         roles: [],
       },
+      userPermissions: [],
     });
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
@@ -41,7 +45,6 @@ describe('generic api calls', () => {
   });
 
   it('should get course rerun', async () => {
-    const courseId = 'course-mock-id';
     const courseRerunData = {
       allowUnicodeCourseId: false,
       courseCreatorStatus: 'granted',
@@ -71,5 +74,15 @@ describe('generic api calls', () => {
 
     expect(axiosMock.history.post[0].url).toEqual(getCreateOrRerunCourseUrl());
     expect(result).toEqual(courseRerunData);
+  });
+
+  it('should get user permissions', async () => {
+    const permissionsData = { permissions: ['manage_all_users'] };
+    const queryUrl = getUserPermissionsUrl(courseId, 3);
+    axiosMock.onGet(queryUrl).reply(200, permissionsData);
+    const result = await getUserPermissions(courseId);
+
+    expect(axiosMock.history.get[0].url).toEqual(queryUrl);
+    expect(result).toEqual(permissionsData);
   });
 });

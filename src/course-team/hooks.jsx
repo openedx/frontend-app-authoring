@@ -6,6 +6,8 @@ import { useToggle } from '@edx/paragon';
 import { USER_ROLES } from '../constants';
 import { RequestStatus } from '../data/constants';
 import { useModel } from '../generic/model-store';
+import { fetchUserPermissionsQuery } from '../generic/data/thunks';
+import { getUserPermissions } from '../generic/data/selectors';
 import {
   changeRoleTeamUserQuery,
   createCourseTeamQuery,
@@ -96,6 +98,7 @@ const useCourseTeam = ({ courseId }) => {
 
   useEffect(() => {
     dispatch(fetchCourseTeamQuery(courseId));
+    dispatch(fetchUserPermissionsQuery(courseId));
   }, [courseId]);
 
   useEffect(() => {
@@ -136,14 +139,8 @@ const useCourseTeam = ({ courseId }) => {
 };
 
 const useUserPermissions = () => {
-  const { userId } = getAuthenticatedUser();
-
-  const hasPermissions = (check) => {
-    // New endpoint for getting user permissions
-
-    console.log({ userId, check });
-    return true;
-  };
+  const userPermissions = useSelector(getUserPermissions);
+  const hasPermissions = (checkPermissions) => userPermissions?.includes(checkPermissions);
 
   return {
     hasPermissions,
