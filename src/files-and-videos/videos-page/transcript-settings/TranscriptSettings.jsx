@@ -21,7 +21,7 @@ import {
 } from '../data/thunks';
 
 const TranscriptSettings = ({
-  isTranscriptSettngsOpen,
+  isTranscriptSettingsOpen,
   closeTranscriptSettings,
   courseId,
 }) => {
@@ -50,7 +50,7 @@ const TranscriptSettings = ({
     <Sheet
       position="right"
       blocking
-      show={isTranscriptSettngsOpen}
+      show={isTranscriptSettingsOpen}
       onClose={closeTranscriptSettings}
     >
       <div style={{ width: '225px' }}>
@@ -113,7 +113,7 @@ const TranscriptSettings = ({
 
 TranscriptSettings.propTypes = {
   closeTranscriptSettings: PropTypes.func.isRequired,
-  isTranscriptSettngsOpen: PropTypes.bool.isRequired,
+  isTranscriptSettingsOpen: PropTypes.bool.isRequired,
   courseId: PropTypes.string.isRequired,
 };
 

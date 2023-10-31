@@ -44,7 +44,7 @@ const Videos = ({
   intl,
 }) => {
   const dispatch = useDispatch();
-  const [isTranscriptSettngsOpen, openTranscriptSettings, closeTranscriptSettings] = useToggle(false);
+  const [isTranscriptSettingsOpen, openTranscriptSettings, closeTranscriptSettings] = useToggle(false);
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
 
@@ -187,7 +187,7 @@ const Videos = ({
         {isVideoTranscriptEnabled ? (
           <TranscriptSettings
             {...{
-              isTranscriptSettngsOpen,
+              isTranscriptSettingsOpen,
               closeTranscriptSettings,
               handleErrorReset,
               errorMessages,

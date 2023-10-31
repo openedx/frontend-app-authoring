@@ -17,5 +17,10 @@ describe('FilesAndUploads utils', () => {
       const actualSize = getFileSizeToClosestByte(2190000);
       expect(expectedSize).toEqual(actualSize);
     });
+    it('should return file size with GB for gigabytes', () => {
+      const expectedSize = '2.03 GB';
+      const actualSize = getFileSizeToClosestByte(2034190000);
+      expect(expectedSize).toEqual(actualSize);
+    });
   });
 });

@@ -44,7 +44,6 @@ import messages from '../messages';
 let axiosMock;
 let store;
 let file;
-ReactDOM.createPortal = jest.fn(node => node);
 jest.mock('file-saver');
 
 const renderComponent = () => {

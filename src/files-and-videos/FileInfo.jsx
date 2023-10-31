@@ -12,8 +12,8 @@ import {
 
 import messages from './messages';
 import UsageMetricsMessages from './UsageMetricsMessage';
-import FileInfoAssetSidebar from './assets/FileInfoAssetSidebar';
-import FileInfoVideoSidebar from './videos/info-sidebar/FileInfoVideoSidebar';
+import FileInfoAssetSidebar from './files-page/FileInfoAssetSidebar';
+import FileInfoVideoSidebar from './videos-page/info-sidebar/FileInfoVideoSidebar';
 import FileThumbnail from './FileThumbnail';
 
 const FileInfo = ({

@@ -8,7 +8,7 @@ import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettin
 import EditorContainer from './editors/EditorContainer';
 import VideoSelectorContainer from './selectors/VideoSelectorContainer';
 import CustomPages from './custom-pages';
-import FilesAndUploads from './files-and-videos/assets';
+import { FilesPage } from './files-and-videos';
 import { AdvancedSettings } from './advanced-settings';
 import ScheduleAndDetails from './schedule-and-details';
 import { GradingSettings } from './grading-settings';
@@ -16,7 +16,7 @@ import CourseTeam from './course-team/CourseTeam';
 import { CourseUpdates } from './course-updates';
 import CourseExportPage from './export-page/CourseExportPage';
 import CourseImportPage from './import-page/CourseImportPage';
-import Videos from './files-and-videos/videos';
+import { VideosPage } from './files-and-videos';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -50,11 +50,11 @@ const CourseAuthoringRoutes = () => {
         />
         <Route
           path="assets"
-          element={<PageWrap><FilesAndUploads courseId={courseId} /></PageWrap>}
+          element={<PageWrap><FilesPage courseId={courseId} /></PageWrap>}
         />
         <Route
           path="videos"
-          element={process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' ? <PageWrap><Videos courseId={courseId} /></PageWrap> : null}
+          element={process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' ? <PageWrap><VideosPage courseId={courseId} /></PageWrap> : null}
         />
         <Route
           path="pages-and-resources/*"

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { VideoFile } from '@edx/paragon/icons';
@@ -27,6 +27,7 @@ const VideoThumbnail = ({
     setSelectedRows: () => {},
     setAddOpen: () => false,
   });
+  const [thumbnailError, setThumbnailError] = useState(false);
   const allowThumbnailUpload = videoImageSettings?.videoImageUploadEnabled;
 
   let addThumbnailMessage = 'Add thumbnail';
@@ -38,6 +39,7 @@ const VideoThumbnail = ({
   const supportedFiles = videoImageSettings?.supportedFileFormats
     ? Object.values(videoImageSettings.supportedFileFormats) : null;
   let isUploaded = false;
+
   switch (status) {
   case 'Ready':
     isUploaded = true;
@@ -48,18 +50,20 @@ const VideoThumbnail = ({
   default:
     break;
   }
+
   const showThumbnail = allowThumbnailUpload && thumbnail && isUploaded;
 
   return (
     <div data-testid={`video-thumbnail-${id}`} className="video-thumbnail row justify-content-center align-itmes-center">
       {allowThumbnailUpload && <div className="thumbnail-overlay" />}
-      {showThumbnail ? (
+      {showThumbnail && !thumbnailError ? (
         <div className="border rounded">
           <Image
             style={imageSize}
             className="m-1 bg-light-300"
             src={thumbnail}
             alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
+            onError={() => setThumbnailError(true)}
           />
         </div>
       ) : (
