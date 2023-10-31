@@ -5,34 +5,20 @@ import {
   OverlayTrigger,
   Popover,
 } from '@edx/paragon';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from '../messages';
 import TaxonomyCardMenu from './TaxonomyCardMenu';
 import ExportModal from '../modals/ExportModal';
 
-const TaxonomyCard = ({ className, original, intl }) => {
-  const {
-    id, name, description, systemDefined, orgsCount,
-  } = original;
+const orgsCountEnabled = (orgsCount) => orgsCount !== undefined && orgsCount !== 0;
 
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-
-  const orgsCountEnabled = () => orgsCount !== undefined && orgsCount !== 0;
-
-  const onClickMenuItem = (menuName) => {
-    switch (menuName) {
-    case 'export':
-      setIsExportModalOpen(true);
-      break;
-    default:
-      /* istanbul ignore next */
-      break;
-    }
-  };
-
-  const getSystemBadgeToolTip = () => (
+const HeaderSubtitle = ({
+  id, showSystemBadge, orgsCount,
+}) => {
+  const intl = useIntl();
+  const getSystemToolTip = () => (
     <Popover id={`system-defined-tooltip-${id}`}>
       <Popover.Title as="h5">
         {intl.formatMessage(messages.systemTaxonomyPopoverTitle)}
@@ -43,28 +29,59 @@ const TaxonomyCard = ({ className, original, intl }) => {
     </Popover>
   );
 
-  const getHeaderSubtitle = () => {
-    if (systemDefined) {
-      return (
-        <OverlayTrigger
-          key={`system-defined-overlay-${id}`}
-          placement="top"
-          overlay={getSystemBadgeToolTip(id)}
-        >
-          <Badge variant="light">
-            {intl.formatMessage(messages.systemDefinedBadge)}
-          </Badge>
-        </OverlayTrigger>
-      );
+  // Show system defined badge
+  if (showSystemBadge) {
+    return (
+      <OverlayTrigger
+        key={`system-defined-overlay-${id}`}
+        placement="top"
+        overlay={getSystemToolTip()}
+      >
+        <Badge variant="light">
+          {intl.formatMessage(messages.systemDefinedBadge)}
+        </Badge>
+      </OverlayTrigger>
+    );
+  }
+
+  // Or show orgs count
+  if (orgsCountEnabled(orgsCount)) {
+    return (
+      <div className="font-italic">
+        {intl.formatMessage(messages.assignedToOrgsLabel, { orgsCount })}
+      </div>
+    );
+  }
+
+  // Or none
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  return <></>;
+};
+
+HeaderSubtitle.propTypes = {
+  id: PropTypes.number.isRequired,
+  showSystemBadge: PropTypes.bool.isRequired,
+  orgsCount: PropTypes.number.isRequired,
+};
+
+const TaxonomyCard = ({ className, original }) => {
+  const {
+    id, name, description, systemDefined, orgsCount,
+  } = original;
+
+  const intl = useIntl();
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+
+  const onClickMenuItem = (menuName) => {
+    switch (menuName) {
+    // Add here more menu items
+    case 'export':
+      setIsExportModalOpen(true);
+      break;
+    default:
+      /* istanbul ignore next */
+      break;
     }
-    if (orgsCountEnabled()) {
-      return (
-        <div className="font-italic">
-          {intl.formatMessage(messages.assignedToOrgsLabel, { orgsCount })}
-        </div>
-      );
-    }
-    return undefined;
   };
 
   const getHeaderActions = () => {
@@ -86,17 +103,12 @@ const TaxonomyCard = ({ className, original, intl }) => {
     );
   };
 
-  const renderModals = () => (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    <>
-      {isExportModalOpen && (
-        <ExportModal
-          isOpen={isExportModalOpen}
-          onClose={() => setIsExportModalOpen(false)}
-          taxonomyId={id}
-        />
-      )}
-    </>
+  const renderExportModal = () => isExportModalOpen && (
+    <ExportModal
+      isOpen={isExportModalOpen}
+      onClose={() => setIsExportModalOpen(false)}
+      taxonomyId={id}
+    />
   );
 
   return (
@@ -104,12 +116,19 @@ const TaxonomyCard = ({ className, original, intl }) => {
       <Card className={classNames('taxonomy-card', className)} data-testid={`taxonomy-card-${id}`}>
         <Card.Header
           title={name}
-          subtitle={getHeaderSubtitle()}
+          subtitle={(
+            <HeaderSubtitle
+              id={id}
+              showSystemBadge={systemDefined}
+              orgsCount={orgsCount}
+              intl={intl}
+            />
+          )}
           actions={getHeaderActions()}
         />
         <Card.Body className={classNames('taxonomy-card-body', {
-          'taxonomy-card-body-overflow-m': !systemDefined && !orgsCountEnabled(),
-          'taxonomy-card-body-overflow-sm': systemDefined || orgsCountEnabled(),
+          'taxonomy-card-body-overflow-m': !systemDefined && !orgsCountEnabled(orgsCount),
+          'taxonomy-card-body-overflow-sm': systemDefined || orgsCountEnabled(orgsCount),
         })}
         >
           <Card.Section>
@@ -117,7 +136,7 @@ const TaxonomyCard = ({ className, original, intl }) => {
           </Card.Section>
         </Card.Body>
       </Card>
-      {renderModals()}
+      {renderExportModal()}
     </>
   );
 };
@@ -135,7 +154,6 @@ TaxonomyCard.propTypes = {
     systemDefined: PropTypes.bool,
     orgsCount: PropTypes.number,
   }).isRequired,
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(TaxonomyCard);
+export default TaxonomyCard;
