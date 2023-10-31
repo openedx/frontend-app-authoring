@@ -3,7 +3,7 @@ import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { render, fireEvent } from '@testing-library/react';
-import ExportModal from './ExportModal';
+import ExportModal from '.';
 import initializeStore from '../../store';
 import { callExportTaxonomy } from '../api/hooks/selectors';
 

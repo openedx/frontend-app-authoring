@@ -9,7 +9,7 @@ import {
 import { MoreVert } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import messages from '../messages';
+import messages from './messages';
 
 const TaxonomyCardMenu = ({
   id, name, onClickMenuItem,

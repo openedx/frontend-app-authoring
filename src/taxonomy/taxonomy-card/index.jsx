@@ -8,9 +8,9 @@ import {
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import messages from '../messages';
+import messages from './messages';
 import TaxonomyCardMenu from './TaxonomyCardMenu';
-import ExportModal from '../modals/ExportModal';
+import ExportModal from '../export-modal';
 
 const orgsCountEnabled = (orgsCount) => orgsCount !== undefined && orgsCount !== 0;
 

@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 import initializeStore from '../../store';
 
-import TaxonomyCard from './TaxonomyCard';
+import TaxonomyCard from '.';
 
 let store;
 

@@ -10,7 +10,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import messages from './messages';
-import TaxonomyCard from './taxonomy-card/TaxonomyCard';
+import TaxonomyCard from './taxonomy-card';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './api/hooks/selectors';
 
 const TaxonomyListPage = () => {

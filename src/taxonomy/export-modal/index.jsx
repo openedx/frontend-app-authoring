@@ -7,7 +7,7 @@ import {
 } from '@edx/paragon';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import messages from '../messages';
+import messages from './messages';
 import { callExportTaxonomy } from '../api/hooks/selectors';
 
 const ExportModal = ({
