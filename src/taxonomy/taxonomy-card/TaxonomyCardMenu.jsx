@@ -8,12 +8,13 @@ import {
 } from '@edx/paragon';
 import { MoreVert } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from '../messages';
 
 const TaxonomyCardMenu = ({
-  id, name, onClickMenuItem, intl,
+  id, name, onClickMenuItem,
 }) => {
+  const intl = useIntl();
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const [menuTarget, setMenuTarget] = useState(null);
 
@@ -39,6 +40,7 @@ const TaxonomyCardMenu = ({
         onClose={() => setMenuIsOpen(false)}
       >
         <Menu data-testid={`taxonomy-card-menu-${id}`}>
+          {/* Add more menu items here */}
           <MenuItem className="taxonomy-menu-item" onClick={() => onClickItem('export')}>
             {intl.formatMessage(messages.taxonomyCardExportMenu)}
           </MenuItem>
@@ -52,7 +54,6 @@ TaxonomyCardMenu.propTypes = {
   id: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   onClickMenuItem: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(TaxonomyCardMenu);
+export default TaxonomyCardMenu;

@@ -6,7 +6,7 @@ import {
   ModalDialog,
 } from '@edx/paragon';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from '../messages';
 import { callExportTaxonomy } from '../api/hooks/selectors';
 
@@ -14,8 +14,8 @@ const ExportModal = ({
   taxonomyId,
   isOpen,
   onClose,
-  intl,
 }) => {
+  const intl = useIntl();
   const [outputFormat, setOutputFormat] = useState('csv');
 
   const onClickExport = () => {
@@ -80,7 +80,6 @@ ExportModal.propTypes = {
   taxonomyId: PropTypes.number.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(ExportModal);
+export default ExportModal;
