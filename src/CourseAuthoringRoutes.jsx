@@ -8,7 +8,7 @@ import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettin
 import EditorContainer from './editors/EditorContainer';
 import VideoSelectorContainer from './selectors/VideoSelectorContainer';
 import CustomPages from './custom-pages';
-import { FilesPage } from './files-and-videos';
+import { FilesPage, VideosPage } from './files-and-videos';
 import { AdvancedSettings } from './advanced-settings';
 import ScheduleAndDetails from './schedule-and-details';
 import { GradingSettings } from './grading-settings';
@@ -16,7 +16,6 @@ import CourseTeam from './course-team/CourseTeam';
 import { CourseUpdates } from './course-updates';
 import CourseExportPage from './export-page/CourseExportPage';
 import CourseImportPage from './import-page/CourseImportPage';
-import { VideosPage } from './files-and-videos';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
