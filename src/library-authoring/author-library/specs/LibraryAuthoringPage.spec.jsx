@@ -136,6 +136,16 @@ testSuite('<LibraryAuthoringPageContainer />', () => {
     expect(localStorage.getItem('showPreviews')).toBe('false');
   });
 
+  it('Add library button scrolls page', async () => {
+    const scrollIntoViewMock = jest.fn();
+    window.HTMLElement.prototype.scrollIntoView = scrollIntoViewMock;
+    const library = libraryFactory();
+    const blocks = [blockFactory(undefined, { library })];
+    await render(library, genState(library, blocks));
+    screen.getAllByText('Add library item')[0].click();
+    expect(scrollIntoViewMock).toHaveBeenCalled();
+  });
+
   it('Fetches block information', async () => {
     const library = libraryFactory();
     const blocks = [blockFactory({ id: 'testBlock' }, { library })];

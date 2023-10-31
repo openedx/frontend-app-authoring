@@ -22,6 +22,11 @@ const messages = defineMessages({
     defaultMessage: 'New component',
     description: 'Text on the new component button.',
   },
+  'library.detail.add.new.component.item': {
+    id: 'library.detail.add.new.component.item',
+    defaultMessage: 'Add library item',
+    description: 'Title on the add library item button',
+  },
   'library.detail.add.new.component': {
     id: 'library.detail.add.new.component',
     defaultMessage: 'Add a new component',
