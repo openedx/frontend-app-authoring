@@ -145,6 +145,7 @@ const FilesAndUploads = ({
       <main>
         <div className="p-4">
           <EditFileErrors
+            resetErrors={handleErrorReset}
             errorMessages={errorMessages}
             addFileStatus={addAssetStatus}
             deleteFileStatus={deleteAssetStatus}

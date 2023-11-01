@@ -65,15 +65,18 @@ const FileTable = ({
     encodingsDownloadUrl,
     supportedFileFormats,
   } = data;
+
   useEffect(() => {
     if (!isEmpty(selectedRows) && Object.keys(selectedRows[0]).length > 0) {
-      const udpatedRows = [];
+      const updatedRows = [];
       selectedRows.forEach(row => {
         const currentFile = row.original;
-        const [updatedFile] = files.filter(file => file.id === currentFile.id);
-        udpatedRows.push({ original: updatedFile });
+        if (currentFile) {
+          const [updatedFile] = files.filter(file => file.id === currentFile?.id);
+          updatedRows.push({ original: updatedFile });
+        }
       });
-      setSelectedRows(udpatedRows);
+      setSelectedRows(updatedRows);
     }
   }, [files]);
 
@@ -102,7 +105,6 @@ const FileTable = ({
     handleErrorReset({ errorType: 'delete' });
     const fileIdsToDelete = selectedRows.map(row => row.original.id);
     fileIdsToDelete.forEach(id => handleDeleteFile(id));
-    setSelectedRows([]);
   };
 
   const handleBulkDownload = useCallback(async (selectedFlatRows) => {

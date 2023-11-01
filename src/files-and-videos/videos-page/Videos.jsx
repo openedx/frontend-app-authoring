@@ -160,6 +160,7 @@ const Videos = ({
       <main>
         <div className="p-4">
           <EditFileErrors
+            resetErrors={handleErrorReset}
             errorMessages={errorMessages}
             addFileStatus={addVideoStatus}
             deleteFileStatus={deleteVideoStatus}

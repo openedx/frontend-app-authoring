@@ -6,6 +6,7 @@ import { RequestStatus } from '../data/constants';
 import messages from './messages';
 
 const EditFileErrors = ({
+  resetErrors,
   errorMessages,
   addFileStatus,
   deleteFileStatus,
@@ -16,6 +17,7 @@ const EditFileErrors = ({
   <>
     <ErrorAlert
       hideHeading={false}
+      dismissError={() => resetErrors({ errorType: 'add' })}
       isError={addFileStatus === RequestStatus.FAILED}
     >
       <ul className="p-0">
@@ -28,6 +30,7 @@ const EditFileErrors = ({
     </ErrorAlert>
     <ErrorAlert
       hideHeading={false}
+      dismissError={() => resetErrors({ errorType: 'delete' })}
       isError={deleteFileStatus === RequestStatus.FAILED}
     >
       <ul className="p-0">
@@ -40,6 +43,7 @@ const EditFileErrors = ({
     </ErrorAlert>
     <ErrorAlert
       hideHeading={false}
+      dismissError={() => resetErrors({ errorType: 'update' })}
       isError={updateFileStatus === RequestStatus.FAILED}
     >
       <ul className="p-0">
@@ -64,6 +68,7 @@ const EditFileErrors = ({
 );
 
 EditFileErrors.propTypes = {
+  resetErrors: PropTypes.func.isRequired,
   errorMessages: PropTypes.shape({
     add: PropTypes.arrayOf(PropTypes.string).isRequired,
     delete: PropTypes.arrayOf(PropTypes.string).isRequired,
