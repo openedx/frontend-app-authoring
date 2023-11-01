@@ -80,34 +80,6 @@ describe('TranscriptSettings', () => {
       expect(selectableButtons).toBeVisible();
     });
 
-    it('should delete transcript preferences', async () => {
-      renderComponent(defaultProps);
-      const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      await act(async () => {
-        userEvent.click(orderButton);
-      });
-      const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-      await act(async () => {
-        userEvent.click(cielo24Button);
-      });
-      const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
-
-      expect(updateButton).toHaveAttribute('disabled');
-
-      const noneButton = screen.getAllByLabelText('none radio')[0];
-      await act(async () => {
-        userEvent.click(noneButton);
-      });
-
-      axiosMock.onDelete(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(204);
-      await waitFor(() => {
-        userEvent.click(updateButton);
-      });
-      const { transcriptStatus } = store.getState().videos;
-
-      expect(transcriptStatus).toEqual(RequestStatus.SUCCESSFUL);
-    });
-
     it('should return to order transcript collapsible', async () => {
       renderComponent(defaultProps);
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
@@ -138,6 +110,61 @@ describe('TranscriptSettings', () => {
       });
 
       expect(defaultProps.closeTranscriptSettings).toHaveBeenCalled();
+    });
+  });
+
+  describe('delete transcript preferences', () => {
+    beforeEach(async () => {
+      initializeMockApp({
+        authenticatedUser: {
+          userId: 3,
+          username: 'abc123',
+          administrator: false,
+          roles: [],
+        },
+      });
+      store = initializeStore(initialState);
+      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+
+      renderComponent(defaultProps);
+      const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
+      await act(async () => {
+        userEvent.click(orderButton);
+      });
+      const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
+      await act(async () => {
+        userEvent.click(cielo24Button);
+      });
+      const noneButton = screen.getAllByLabelText('none radio')[0];
+      await act(async () => {
+        userEvent.click(noneButton);
+      });
+    });
+
+    it('api should succeed', async () => {
+      const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
+
+      axiosMock.onDelete(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(204);
+      await waitFor(() => {
+        userEvent.click(updateButton);
+      });
+      const { transcriptStatus } = store.getState().videos;
+
+      expect(transcriptStatus).toEqual(RequestStatus.SUCCESSFUL);
+    });
+
+    it('should show error alert', async () => {
+      const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
+
+      axiosMock.onDelete(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(404);
+      await waitFor(() => {
+        userEvent.click(updateButton);
+      });
+      const { transcriptStatus } = store.getState().videos;
+
+      expect(transcriptStatus).toEqual(RequestStatus.FAILED);
+
+      expect(screen.getByText('Failed to update order transcripts settings.')).toBeVisible();
     });
   });
 
@@ -179,65 +206,125 @@ describe('TranscriptSettings', () => {
       expect(threePlayMediaCredentialMessage).toBeVisible();
     });
 
-    it('should update cielo24 credentials ', async () => {
-      const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-      await act(async () => {
-        userEvent.click(cielo24Button);
+    describe('api succeeds', () => {
+      it('should update cielo24 credentials ', async () => {
+        const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
+        await act(async () => {
+          userEvent.click(cielo24Button);
+        });
+
+        const firstInput = screen.getByLabelText(messages.cieloApiKeyLabel.defaultMessage);
+        const secondInput = screen.getByLabelText(messages.cieloUsernameLabel.defaultMessage);
+        const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
+
+        await waitFor(() => {
+          userEvent.type(firstInput, 'apiKey');
+          userEvent.type(secondInput, 'username');
+
+          expect(updateButton).not.toHaveAttribute('disabled');
+        });
+
+        axiosMock.onPost(`${getApiBaseUrl()}/transcript_credentials/${courseId}`).reply(200);
+        await waitFor(() => {
+          userEvent.click(updateButton);
+        });
+
+        const { transcriptStatus } = store.getState().videos;
+
+        expect(transcriptStatus).toEqual(RequestStatus.SUCCESSFUL);
+
+        expect(screen.queryByTestId('cieloCredentialMessage')).toBeNull();
+
+        expect(screen.getByText(messages.cieloFidelityLabel.defaultMessage)).toBeVisible();
       });
 
-      const firstInput = screen.getByLabelText(messages.cieloApiKeyLabel.defaultMessage);
-      const secondInput = screen.getByLabelText(messages.cieloUsernameLabel.defaultMessage);
-      const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
+      it('should update 3Play Media credentials', async () => {
+        const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
+        await act(async () => {
+          userEvent.click(threePlayButton);
+        });
 
-      await waitFor(() => {
-        userEvent.type(firstInput, 'apiKey');
-        userEvent.type(secondInput, 'username');
+        const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
+        const firstInput = screen.getByLabelText(messages.threePlayMediaApiKeyLabel.defaultMessage);
+        const secondInput = screen.getByLabelText(messages.threePlayMediaApiSecretLabel.defaultMessage);
 
-        expect(updateButton).not.toHaveAttribute('disabled');
+        await waitFor(() => {
+          userEvent.type(firstInput, 'apiKey');
+          userEvent.type(secondInput, 'secretKey');
+
+          expect(updateButton).not.toHaveAttribute('disabled');
+        });
+
+        axiosMock.onPost(`${getApiBaseUrl()}/transcript_credentials/${courseId}`).reply(200);
+        await waitFor(() => {
+          userEvent.click(updateButton);
+        });
+        const { transcriptStatus } = store.getState().videos;
+
+        expect(transcriptStatus).toEqual(RequestStatus.SUCCESSFUL);
+
+        expect(screen.queryByTestId('threePlayCredentialMessage')).toBeNull();
+
+        expect(screen.getByText(messages.threePlayMediaTurnaroundLabel.defaultMessage)).toBeVisible();
       });
-
-      axiosMock.onPost(`${getApiBaseUrl()}/transcript_credentials/${courseId}`).reply(200);
-      await waitFor(() => {
-        userEvent.click(updateButton);
-      });
-
-      const { transcriptStatus } = store.getState().videos;
-
-      expect(transcriptStatus).toEqual(RequestStatus.SUCCESSFUL);
-
-      expect(screen.queryByTestId('cieloCredentialMessage')).toBeNull();
-
-      expect(screen.getByText(messages.cieloFidelityLabel.defaultMessage)).toBeVisible();
     });
 
-    it('should update 3Play Media credentials', async () => {
-      const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-      await act(async () => {
-        userEvent.click(threePlayButton);
+    describe('api fails', () => {
+      it('should show error alert on Cielo24 credentials update', async () => {
+        const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
+        await act(async () => {
+          userEvent.click(cielo24Button);
+        });
+
+        const firstInput = screen.getByLabelText(messages.cieloApiKeyLabel.defaultMessage);
+        const secondInput = screen.getByLabelText(messages.cieloUsernameLabel.defaultMessage);
+        const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
+
+        await waitFor(() => {
+          userEvent.type(firstInput, 'apiKey');
+          userEvent.type(secondInput, 'username');
+
+          expect(updateButton).not.toHaveAttribute('disabled');
+        });
+
+        axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(503);
+        await waitFor(() => {
+          userEvent.click(updateButton);
+        });
+        const { transcriptStatus } = store.getState().videos;
+
+        expect(transcriptStatus).toEqual(RequestStatus.FAILED);
+
+        expect(screen.getByText('Failed to update Cielo24 credentials.')).toBeVisible();
       });
 
-      const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
-      const firstInput = screen.getByLabelText(messages.threePlayMediaApiKeyLabel.defaultMessage);
-      const secondInput = screen.getByLabelText(messages.threePlayMediaApiSecretLabel.defaultMessage);
+      it('should show error alert on 3PlayMedia credentials update', async () => {
+        const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
+        await act(async () => {
+          userEvent.click(threePlayButton);
+        });
 
-      await waitFor(() => {
-        userEvent.type(firstInput, 'apiKey');
-        userEvent.type(secondInput, 'secretKey');
+        const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
+        const firstInput = screen.getByLabelText(messages.threePlayMediaApiKeyLabel.defaultMessage);
+        const secondInput = screen.getByLabelText(messages.threePlayMediaApiSecretLabel.defaultMessage);
 
-        expect(updateButton).not.toHaveAttribute('disabled');
+        await waitFor(() => {
+          userEvent.type(firstInput, 'apiKey');
+          userEvent.type(secondInput, 'secretKey');
+
+          expect(updateButton).not.toHaveAttribute('disabled');
+        });
+
+        axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(404);
+        await waitFor(() => {
+          userEvent.click(updateButton);
+        });
+        const { transcriptStatus } = store.getState().videos;
+
+        expect(transcriptStatus).toEqual(RequestStatus.FAILED);
+
+        expect(screen.getByText('Failed to update 3PlayMedia credentials.')).toBeVisible();
       });
-
-      axiosMock.onPost(`${getApiBaseUrl()}/transcript_credentials/${courseId}`).reply(200);
-      await waitFor(() => {
-        userEvent.click(updateButton);
-      });
-      const { transcriptStatus } = store.getState().videos;
-
-      expect(transcriptStatus).toEqual(RequestStatus.SUCCESSFUL);
-
-      expect(screen.queryByTestId('threePlayCredentialMessage')).toBeNull();
-
-      expect(screen.getByText(messages.threePlayMediaTurnaroundLabel.defaultMessage)).toBeVisible();
     });
   });
 
