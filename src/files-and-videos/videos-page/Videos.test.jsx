@@ -145,7 +145,7 @@ describe('FilesAndUploads', () => {
     });
   });
 
-  describe('valid assets', () => {
+  describe('valid videos', () => {
     beforeEach(async () => {
       initializeMockApp({
         authenticatedUser: {
@@ -602,7 +602,7 @@ describe('FilesAndUploads', () => {
         expect(usageStatus).toEqual(RequestStatus.FAILED);
       });
 
-      it('multiple asset file fetch failure should show error', async () => {
+      it('multiple video files fetch failure should show error', async () => {
         renderComponent();
         await mockStore(RequestStatus.SUCCESSFUL);
         const selectCardButtons = screen.getAllByTestId('datatable-select-column-checkbox-cell');
