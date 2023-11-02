@@ -86,8 +86,8 @@ export const getSupportedFormats = (supportedFileFormats) => {
   return supportedFormats;
 };
 
-/** resampledFile({ canvasUrl, filename, mimeType })
- * resampledFile takes a canvasUrl, filename, and a valid mimeType. The
+/** createResampledFile({ canvasUrl, filename, mimeType })
+ * createResampledFile takes a canvasUrl, filename, and a valid mimeType. The
  * canvasUrl is parsed and written to an 8-bit array of unsigned integers. The
  * new array is saved to  a new file with the same filename as the original image.
  * @param {string} canvasUrl - string of base64 URL for new image canvas
@@ -137,17 +137,14 @@ export const resampleImage = ({ image, filename }) => {
   const cropTop = (image.naturalHeight - canvas.height) / 2;
 
   ctx.drawImage(image, cropLeft, cropTop, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
-
   const resampledFile = createResampledFile({ canvasUrl: canvas.toDataURL(), filename, mimeType: 'image/png' });
   return resampledFile;
 };
 
-const hasValidDimensions = (image) => {
-  const width = image.naturalWidth;
-  const height = image.naturalHeight;
-  const imageAspectRatio = Math.abs(width / height) - ASPECT_RATIO;
+export const hasValidDimensions = ({ width, height }) => {
+  const imageAspectRatio = Math.abs((width / height) - ASPECT_RATIO);
 
-  if (width < MIN_HEIGHT || height < MIN_HEIGHT) {
+  if (width < MIN_WIDTH || height < MIN_HEIGHT) {
     return false;
   }
   if (imageAspectRatio >= ASPECT_RATIO_ERROR_MARGIN) {
@@ -168,7 +165,9 @@ export const resampleFile = ({
   reader.onload = () => {
     image.src = reader.result;
     image.onload = () => {
-      if (!hasValidDimensions(image)) {
+      const width = image.naturalWidth;
+      const height = image.naturalHeight;
+      if (!hasValidDimensions({ width, height })) {
         const resampledFile = resampleImage({ image, filename: file.name });
         dispatch(addVideoThumbnail({ courseId, videoId, file: resampledFile }));
       } else {
