@@ -21,19 +21,18 @@ const ThreePlayMediaForm = ({
   // injected
   intl,
 }) => {
-  const selectedLanguages = data.preferredLanguages ? data.preferredLanguages : [];
-  const turnaroundOptions = transcriptionPlan.turnaround;
-  const sourceLangaugeOptions = getLanguageOptions(
-    Object.keys(transcriptionPlan.translations),
-    transcriptionPlan.languages,
-  );
-  const languages = getLanguageOptions(
-    transcriptionPlan.translations[data.videoSourceLanguage],
-    transcriptionPlan.languages,
-  );
-  const allowMultiple = Object.keys(languages).length > 1;
-
   if (hasTranscriptCredentials) {
+    const selectedLanguages = data.preferredLanguages ? data.preferredLanguages : [];
+    const turnaroundOptions = transcriptionPlan.turnaround;
+    const sourceLangaugeOptions = getLanguageOptions(
+      Object.keys(transcriptionPlan.translations),
+      transcriptionPlan.languages,
+    );
+    const languages = getLanguageOptions(
+      transcriptionPlan.translations[data.videoSourceLanguage],
+      transcriptionPlan.languages,
+    );
+    const allowMultiple = Object.keys(languages).length > 1;
     return (
       <Stack gap={1}>
         <Form.Group size="sm">

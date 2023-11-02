@@ -7,7 +7,7 @@ import Cielo24Form from './Cielo24Form';
 import ThreePlayMediaForm from './ThreePlayMediaForm';
 import { RequestStatus } from '../../../data/constants';
 import messages from './messages';
-import { checkCredentials, validateForm } from '../data/utils';
+import { checkCredentials, checkTranscriptionPlans, validateForm } from '../data/utils';
 
 const OrderTranscriptForm = ({
   setTranscriptType,
@@ -23,6 +23,8 @@ const OrderTranscriptForm = ({
   intl,
 }) => {
   const [data, setData] = useState(activeTranscriptPreferences || { videoSourceLanguage: '' });
+
+  const [validCieloTranscriptionPlan, validThreePlayTranscriptionPlan] = checkTranscriptionPlans(transcriptionPlans);
 
   let [cieloHasCredentials, threePlayHasCredentials] = checkCredentials(transcriptCredentials);
   useEffect(() => {
@@ -74,11 +76,23 @@ const OrderTranscriptForm = ({
     <>
       <ErrorAlert
         hideHeading={false}
+        isError={!validCieloTranscriptionPlan && cieloHasCredentials}
+      >
+        <FormattedMessage {...messages.invalidCielo24TranscriptionPlanMessage} />
+      </ErrorAlert>
+      <ErrorAlert
+        hideHeading={false}
+        isError={!validThreePlayTranscriptionPlan && threePlayHasCredentials}
+      >
+        <FormattedMessage {...messages.invalid3PlayMediaTranscriptionPlanMessage} />
+      </ErrorAlert>
+      <ErrorAlert
+        hideHeading={false}
         isError={transcriptStatus === RequestStatus.FAILED}
       >
         <ul className="p-0">
           {errorMessages.transcript.map(message => (
-            <li key={`add-error-${message}`} style={{ listStyle: 'none' }}>
+            <li key={`order-transcript-error-${message}`} style={{ listStyle: 'none' }}>
               {intl.formatMessage(messages.errorAlertMessage, { message })}
             </li>
           ))}
@@ -105,6 +119,7 @@ const OrderTranscriptForm = ({
           value="Cielo24"
           aria-label="Cielo24 radio"
           className="text-center"
+          disabled={!validCieloTranscriptionPlan && cieloHasCredentials}
         >
           <FormattedMessage {...messages.cieloLabel} />
         </SelectableBox>
@@ -112,6 +127,7 @@ const OrderTranscriptForm = ({
           value="3PlayMedia"
           aria-label="3PlayMedia radio"
           className="text-center"
+          disabled={!validThreePlayTranscriptionPlan && threePlayHasCredentials}
         >
           <FormattedMessage {...messages.threePlayMediaLabel} />
         </SelectableBox>

@@ -6,6 +6,14 @@ const messages = defineMessages({
     defaultMessage: 'Transcript settings',
     description: 'Title for transcript settings sheet',
   },
+  invalidCielo24TranscriptionPlanMessage: {
+    id: 'course-authoring.video-uploads.transcriptSettings.cielo24.errorAlert.message',
+    defaultMessage: 'No transcription plans found for Cielo24.',
+  },
+  invalid3PlayMediaTranscriptionPlanMessage: {
+    id: 'course-authoring.video-uploads.transcriptSettings.3PlayMedia.errorAlert.message',
+    defaultMessage: 'No transcription plans found for 3PlayMedia.',
+  },
   errorAlertMessage: {
     id: 'course-authoring.video-uploads.transcriptSettings.errorAlert.message',
     defaultMessage: '{message}',

@@ -198,9 +198,26 @@ export const getFidelityOptions = (fidelities) => {
 };
 
 export const checkCredentials = (transcriptCredentials) => {
-  const cieloHasCredentials = transcriptCredentials?.cielo24;
-  const threePlayHasCredentials = transcriptCredentials?.['3PlayMedia'];
+  const cieloHasCredentials = transcriptCredentials.cielo24;
+  const threePlayHasCredentials = transcriptCredentials['3PlayMedia'];
   return [cieloHasCredentials, threePlayHasCredentials];
+};
+
+export const checkTranscriptionPlans = (transcriptionPlans) => {
+  let cieloIsValid = !isEmpty(transcriptionPlans.Cielo24);
+  let threePlayIsValid = !isEmpty(transcriptionPlans['3PlayMedia']);
+
+  if (cieloIsValid) {
+    const { fidelity, turnaround } = transcriptionPlans.Cielo24;
+    cieloIsValid = !isEmpty(fidelity) && !isEmpty(turnaround);
+  }
+
+  if (threePlayIsValid) {
+    const { languages, turnaround, translations } = transcriptionPlans['3PlayMedia'];
+    threePlayIsValid = !isEmpty(turnaround) && !isEmpty(languages) && !isEmpty(translations);
+  }
+
+  return [cieloIsValid, threePlayIsValid];
 };
 
 export const validateForm = (cieloHasCredentials, threePlayHasCredentials, provider, data) => {

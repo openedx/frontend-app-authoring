@@ -20,14 +20,12 @@ import {
   courseId,
   initialState,
 } from '../factories/mockApiResponses';
-import { getApiBaseUrl } from '../../data/api';
+import { getApiBaseUrl } from '../data/api';
 import messages from './messages';
 import VideosProvider from '../VideosProvider';
 
-ReactDOM.createPortal = jest.fn(node => node);
-
 const defaultProps = {
-  isTranscriptSettngsOpen: true,
+  isTranscriptSettingsOpen: true,
   closeTranscriptSettings: jest.fn(),
   courseId,
 };

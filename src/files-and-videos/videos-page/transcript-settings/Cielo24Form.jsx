@@ -15,16 +15,15 @@ const Cielo24Form = ({
   // injected
   intl,
 }) => {
-  const { fidelity } = transcriptionPlan;
-  const selectedLanguage = data.preferredLanguages ? data.preferredLanguages : '';
-  const turnaroundOptions = transcriptionPlan.turnaround;
-  const fidelityOptions = getFidelityOptions(fidelity);
-  const sourceLanguageOptions = data.cielo24Fidelity ? fidelity[data.cielo24Fidelity]?.languages : {};
-  const languages = data.cielo24Fidelity === 'PROFESSIONAL' ? sourceLanguageOptions : {
-    [data.videoSourceLanguage]: sourceLanguageOptions[data.videoSourceLanguage],
-  };
-
   if (hasTranscriptCredentials) {
+    const { fidelity } = transcriptionPlan;
+    const selectedLanguage = data.preferredLanguages ? data.preferredLanguages : '';
+    const turnaroundOptions = transcriptionPlan.turnaround;
+    const fidelityOptions = getFidelityOptions(fidelity);
+    const sourceLanguageOptions = data.cielo24Fidelity ? fidelity[data.cielo24Fidelity]?.languages : {};
+    const languages = data.cielo24Fidelity === 'PROFESSIONAL' ? sourceLanguageOptions : {
+      [data.videoSourceLanguage]: sourceLanguageOptions[data.videoSourceLanguage],
+    };
     return (
       <Stack gap={1}>
         <Form.Group size="sm">

@@ -5,6 +5,7 @@ import {
   resampleImage,
   createResampledFile,
   validateForm,
+  checkTranscriptionPlans,
 } from './utils';
 
 describe('getSupportedFormats', () => {
@@ -28,6 +29,7 @@ describe('getSupportedFormats', () => {
     expect(expected).toEqual(actual);
   });
 });
+
 describe('createResampledFile', () => {
   it('should return resampled file object', () => {
     const expected = new File([{ name: 'imageName', size: 20000 }], 'testVALUEVALIDIMAGE');
@@ -40,6 +42,7 @@ describe('createResampledFile', () => {
     expect(expected).toEqual(actual);
   });
 });
+
 describe('resampleImage', () => {
   it('should return filename and file', () => {
     const resampledFile = new File([{ name: 'testVALUEVALIDIMAGE', size: 20000 }], 'testVALUEVALIDIMAGE');
@@ -51,6 +54,7 @@ describe('resampleImage', () => {
     expect(actualImage).toEqual(resampledFile);
   });
 });
+
 describe('checkValidDimensions', () => {
   it('returns false for images less than min width and min height', () => {
     const image = { width: 500, height: 281 };
@@ -204,6 +208,52 @@ describe('validateForm', () => {
         {},
       );
       expect(isValid).toBeFalsy();
+    });
+  });
+});
+
+describe('checkTranscriptionPlans', () => {
+  describe('invalid Cielo24 plan', () => {
+    it('Cielo24 is empty should return [false, false]', () => {
+      const expected = [false, false];
+      const actual = checkTranscriptionPlans({ '3PlayMedia': {} });
+      expect(actual).toEqual(expected);
+    });
+    it('Cielo24 is missing required atrribute fidelity should return [false, true]', () => {
+      const expected = [false, true];
+      const actual = checkTranscriptionPlans({
+        '3PlayMedia': {
+          languages: ['en'],
+          turnaround: 'test',
+          translations: { en: 'English' },
+        },
+        Cielo24: {
+          turnaround: ['tomorrow'],
+        },
+      });
+      expect(actual).toEqual(expected);
+    });
+  });
+  describe('invalid 3PlayMedia plan', () => {
+    it('3PlayMedia is empty should return [false, false]', () => {
+      const expected = [false, false];
+      const actual = checkTranscriptionPlans({ Cielo24: {} });
+      expect(actual).toEqual(expected);
+    });
+    it('3PlayMedia atrribute languages is empty should return [true, false]', () => {
+      const expected = [true, false];
+      const actual = checkTranscriptionPlans({
+        Cielo24: {
+          turnaround: ['tomorrow'],
+          fidelity: 'test',
+        },
+        '3PlayMedia': {
+          languages: [],
+          turnaround: 'test',
+          translations: { en: 'English' },
+        },
+      });
+      expect(actual).toEqual(expected);
     });
   });
 });
