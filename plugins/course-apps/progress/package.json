@@ -1,8 +1,5 @@
 {
     "name": "@openedx-plugins/course-app-progress",
     "version": "0.1.0",
-    "description": "Progress configuration for courses using it",
-    "dependencies": {
-    },
-    "devDependencies": {}
+    "description": "Progress configuration for courses using it"
 }

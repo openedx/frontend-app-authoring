@@ -1,8 +1,5 @@
 {
     "name": "@openedx-plugins/course-app-wiki",
     "version": "0.1.0",
-    "description": "Wiki configuration for courses using it",
-    "dependencies": {
-    },
-    "devDependencies": {}
+    "description": "Wiki configuration for courses using it"
 }

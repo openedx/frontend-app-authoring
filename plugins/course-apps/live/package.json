@@ -1,8 +1,5 @@
 {
     "name": "@openedx-plugins/course-app-live",
     "version": "0.1.0",
-    "description": "Live course configuration for courses using it",
-    "dependencies": {
-    },
-    "devDependencies": {}
+    "description": "Live course configuration for courses using it"
 }

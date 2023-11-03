@@ -1,8 +1,5 @@
 {
     "name": "@openedx-plugins/course-app-calculator",
     "version": "0.1.0",
-    "description": "Calculator configuration for courses using it",
-    "dependencies": {
-    },
-    "devDependencies": {}
+    "description": "Calculator configuration for courses using it"
 }
