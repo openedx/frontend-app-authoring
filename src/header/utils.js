@@ -23,7 +23,7 @@ export const getContentMenuItems = ({ studioBaseUrl, courseId, intl }) => {
   if (process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true') {
     items.push({
       href: `${studioBaseUrl}/videos/${courseId}`,
-      title: intl.formatMessage(messages['header.links.videoUploads']),
+      title: intl.formatMessage(messages['header.links.videos']),
     });
   }
 

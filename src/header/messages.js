@@ -41,10 +41,10 @@ const messages = defineMessages({
     defaultMessage: 'Textbooks',
     description: 'Link to Studio Textbooks page',
   },
-  'header.links.videoUploads': {
-    id: 'header.links.videoUploads',
-    defaultMessage: 'Video Uploads',
-    description: 'Link to Studio Video Uploads page',
+  'header.links.videos': {
+    id: 'header.links.videos',
+    defaultMessage: 'Videos',
+    description: 'Link to Studio Videos page',
   },
   'header.links.scheduleAndDetails': {
     id: 'header.links.scheduleAndDetails',

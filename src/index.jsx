@@ -49,7 +49,7 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <Head />
         <Routes>
-          <Route path="/home" element={<StudioHome />} />
+          <Route path="/" element={<StudioHome />} />
           <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
           <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
           {process.env.ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
