@@ -2,11 +2,8 @@ import React, {
   useCallback, useContext, useEffect, useState,
 } from 'react';
 import PropTypes from 'prop-types';
-import {
-  useRouteMatch,
-} from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { history } from '@edx/frontend-platform';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Alert, Button, FullscreenModal, Stepper,
@@ -29,6 +26,7 @@ const SELECTION_STEP = 'selection';
 const SETTINGS_STEP = 'settings';
 
 const DiscussionsSettings = ({ courseId, intl }) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const { status, hasValidationError } = useSelector(state => state.discussions);
@@ -40,7 +38,7 @@ const DiscussionsSettings = ({ courseId, intl }) => {
   }, [courseId]);
 
   const discussionsPath = `${pagesAndResourcesPath}/discussion`;
-  const { params: { appId } } = useRouteMatch();
+  const { appId } = useParams();
 
   const startStep = appId ? SETTINGS_STEP : SELECTION_STEP;
   const [currentStep, setCurrentStep] = useState(startStep);
@@ -50,11 +48,11 @@ const DiscussionsSettings = ({ courseId, intl }) => {
   }, [appId]);
 
   const handleClose = useCallback(() => {
-    history.push(pagesAndResourcesPath);
+    navigate(pagesAndResourcesPath);
   }, [pagesAndResourcesPath]);
 
   const handleBack = useCallback(() => {
-    history.push(discussionsPath);
+    navigate(discussionsPath);
   }, [discussionsPath]);
 
   if (!courseDetail) {

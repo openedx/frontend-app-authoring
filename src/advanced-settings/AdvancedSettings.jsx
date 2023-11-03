@@ -130,7 +130,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
 
   return (
     <>
-      <Container size="xl" className="px-4">
+      <Container size="xl" className="advanced-settings px-4">
         <div className="setting-header mt-5">
           {(proctoringErrors?.length > 0) && (
             <AlertProctoringError
@@ -157,11 +157,6 @@ const AdvancedSettings = ({ intl, courseId }) => {
             ) : null}
           </TransitionReplace>
         </div>
-        <SubHeader
-          subtitle={intl.formatMessage(messages.headingSubtitle)}
-          title={intl.formatMessage(messages.headingTitle)}
-          contentTitle={intl.formatMessage(messages.policy)}
-        />
         <section className="setting-items mb-4">
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
@@ -171,6 +166,11 @@ const AdvancedSettings = ({ intl, courseId }) => {
             xl={[{ span: 9 }, { span: 3 }]}
           >
             <Layout.Element>
+              <SubHeader
+                subtitle={intl.formatMessage(messages.headingSubtitle)}
+                title={intl.formatMessage(messages.headingTitle)}
+                contentTitle={intl.formatMessage(messages.policy)}
+              />
               <article>
                 <div>
                   <section className="setting-items-policies">

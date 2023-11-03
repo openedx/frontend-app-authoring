@@ -5,6 +5,7 @@ import { SelectableBox, Icon } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 import { fetchLiveData, saveLiveConfiguration, saveLiveConfigurationAsDraft } from './data/thunks';
 import { selectApp } from './data/slice';
 import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
@@ -20,6 +21,7 @@ const LiveSettings = ({
   intl,
   onClose,
 }) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const courseId = useSelector(state => state.courseDetail.courseId);
   const availableProviders = useSelector((state) => state.live.appIds);
@@ -67,7 +69,7 @@ const LiveSettings = ({
   };
 
   const handleSettingsSave = async (values) => {
-    await dispatch(saveLiveConfiguration(courseId, values));
+    await dispatch(saveLiveConfiguration(courseId, values, navigate));
   };
 
   useEffect(() => {

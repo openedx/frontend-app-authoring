@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { act, fireEvent, render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { history, initializeMockApp } from '@edx/frontend-platform';
+import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
@@ -78,8 +78,8 @@ describe('<OrganizationSection />', async () => {
       fireEvent.click(submitButton);
     });
 
-    expect(history.location.pathname).toBe('/home');
-    expect(history.location.search).toBe(`?org=${selectedOrgStr}`);
+    expect(window.location.pathname).toBe('/home');
+    expect(window.location.search).toBe(`?org=${selectedOrgStr}`);
     expect(getByDisplayValue(selectedOrgStr)).toBeInTheDocument();
   });
 });

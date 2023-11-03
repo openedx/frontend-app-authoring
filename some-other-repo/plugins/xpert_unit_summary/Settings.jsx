@@ -1,9 +1,9 @@
 import React, { useCallback, useContext, useEffect } from 'react';
-import { history } from '@edx/frontend-platform';
 import { useDispatch } from 'react-redux';
 
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
+import { useNavigate } from 'react-router-dom';
 
 import SettingsModal from './settings-modal/SettingsModal';
 import messages from './messages';
@@ -13,13 +13,14 @@ import { fetchXpertSettings } from './data/thunks';
 const XpertUnitSummarySettings = ({ intl }) => {
   const { path: pagesAndResourcesPath, courseId } = useContext(PagesAndResourcesContext);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchXpertSettings(courseId));
   }, [courseId]);
 
   const handleClose = useCallback(() => {
-    history.push(pagesAndResourcesPath);
+    navigate(pagesAndResourcesPath);
   }, [pagesAndResourcesPath]);
 
   return (

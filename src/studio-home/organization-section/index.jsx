@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
-import { history } from '@edx/frontend-platform';
 import { Button, Form, FormLabel } from '@edx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { TypeaheadDropdown } from '@edx/frontend-lib-content-components';
@@ -14,6 +13,7 @@ import messages from '../messages';
 const OrganizationSection = ({ intl }) => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   const fieldName = 'org';
   const searchParams = new URLSearchParams(location.search);
   const orgURLValue = searchParams.get(fieldName) || '';
@@ -34,7 +34,7 @@ const OrganizationSection = ({ intl }) => {
   }, [orgURLValue, organizations]);
 
   const handleSubmit = () => {
-    history.push({
+    navigate({
       pathname: '/home',
       search: `?${fieldName}=${inputValue}`,
     });

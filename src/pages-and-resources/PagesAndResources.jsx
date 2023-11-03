@@ -1,15 +1,14 @@
 import React, { useContext, useEffect, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { PageRoute, AppContext } from '@edx/frontend-platform/react';
+import { PageWrap, AppContext } from '@edx/frontend-platform/react';
 
-import { Switch, useRouteMatch } from 'react-router';
+import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Button, Hyperlink } from '@edx/paragon';
 import messages from './messages';
 import DiscussionsSettings from './discussions';
-import { CourseAppPluginSettings } from './PluginSettingsComponent';
 
 import PageGrid from './pages/PageGrid';
 import { fetchCourseApps } from './data/thunks';
@@ -17,12 +16,11 @@ import { useModels, useModel } from '../generic/model-store';
 import { getCourseAppsApiStatus, getLoadingStatus } from './data/selectors';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 import { RequestStatus } from '../data/constants';
+import SettingsComponent from './SettingsComponent';
 import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 import getPageHeadTitle from '../generic/utils';
 
 const PagesAndResources = ({ courseId, intl }) => {
-  const { path, url } = useRouteMatch();
-
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
 
@@ -37,6 +35,7 @@ const PagesAndResources = ({ courseId, intl }) => {
 
   const { config } = useContext(AppContext);
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
+  const redirectUrl = `/course/${courseId}/pages-and-resources`;
 
   // Each page here is driven by a course app
   const pages = useModels('courseApps', courseAppIds);
@@ -69,23 +68,12 @@ const PagesAndResources = ({ courseId, intl }) => {
 
         <PageGrid pages={pages} />
 
-        <Switch>
-          <PageRoute
-            path={[
-              `${path}/discussion/configure/:appId`,
-              `${path}/discussion`,
-            ]}
-          >
-            <DiscussionsSettings courseId={courseId} />
-          </PageRoute>
-
-          <PageRoute path={`${path}/:appId/settings`}>
-            {
-              ({ match, history }) =>
-                <CourseAppPluginSettings appId={match.params.appId} history={history} backUrl={url} />
-            }
-          </PageRoute>
-        </Switch>
+        <Routes>
+          <Route path="discussion/configure/:appId" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
+          <Route path="discussion" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
+          <Route path="discussion/settings" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
+          <Route path=":appId/settings" element={<PageWrap><Suspense fallback="..."><SettingsComponent url={redirectUrl} /></Suspense></PageWrap>} />
+        </Routes>
       </main>
     </PagesAndResourcesProvider>
   );
