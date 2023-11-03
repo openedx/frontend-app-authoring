@@ -259,8 +259,8 @@ export function uploadVideoTranscript({
 
       dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      if (error.response) {
-        const message = error.response.data?.error;
+      if (error.response?.data?.error) {
+        const message = error.response.data.error;
         dispatch(updateErrors({ error: 'transcript', message }));
       } else {
         const message = isReplacement ? `Failed to replace ${language} with ${newLanguage}.` : `Failed to add ${newLanguage}.`;
