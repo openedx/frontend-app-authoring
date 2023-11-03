@@ -4,7 +4,7 @@ import { Icon, Row, Spinner } from '@edx/paragon';
 import { ErrorOutline } from '@edx/paragon/icons';
 import isEmpty from 'lodash/isEmpty';
 import { RequestStatus } from '../data/constants';
-import messages from './messages';
+import messages from '../files-and-videos/messages';
 
 const UsageMetricsMessage = ({
   usagePathStatus,

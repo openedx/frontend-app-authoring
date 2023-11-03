@@ -6,7 +6,7 @@ import {
   Image,
 } from '@edx/paragon';
 import { getSrc } from '../data/utils';
-import messages from './messages';
+import messages from '../files/messages';
 
 const AssetThumbnail = ({
   thumbnail,

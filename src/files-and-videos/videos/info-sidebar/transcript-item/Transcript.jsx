@@ -13,7 +13,7 @@ import { isEmpty } from 'lodash';
 import LanguageSelect from './LanguageSelect';
 import TranscriptMenu from './TranscriptMenu';
 import messages from './messages';
-import FileInput, { useFileInput } from '../../../FileInput';
+import FileInput, { useFileInput } from '../../../files/FileInput';
 
 const Transcript = ({
   languages,

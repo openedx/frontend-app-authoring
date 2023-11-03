@@ -4,7 +4,7 @@ import {
   AudioFile,
 } from '@edx/paragon/icons';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
-import FILES_AND_UPLOAD_TYPE_FILTERS from './constant';
+import FILES_AND_UPLOAD_TYPE_FILTERS from './constants';
 
 ensureConfig([
   'STUDIO_BASE_URL',

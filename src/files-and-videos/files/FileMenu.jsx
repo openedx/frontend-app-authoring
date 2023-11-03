@@ -7,7 +7,7 @@ import {
   Icon,
 } from '@edx/paragon';
 import { MoreHoriz } from '@edx/paragon/icons';
-import messages from './messages';
+import messages from '../messages';
 
 const FileMenu = ({
   externalUrl,

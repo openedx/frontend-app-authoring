@@ -8,8 +8,8 @@ import {
   Truncate,
 } from '@edx/paragon';
 import { ClosedCaption } from '@edx/paragon/icons';
-import FileMenu from '../FileMenu';
-import FileThumbnail from '../FileThumbnail';
+import FileMenu from '../files/FileMenu';
+import FileThumbnail from '../files/FileThumbnail';
 
 const GalleryCard = ({
   className,

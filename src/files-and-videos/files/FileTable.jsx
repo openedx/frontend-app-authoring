@@ -13,19 +13,19 @@ import {
   Button,
 } from '@edx/paragon';
 
-import { RequestStatus } from '../data/constants';
-import { sortFiles } from './data/utils';
-import messages from './messages';
+import { RequestStatus } from '../../data/constants';
+import { sortFiles } from '../data/utils';
+import messages from '../messages';
 
 import FileInfo from './FileInfo';
 import FileInput, { useFileInput } from './FileInput';
 import {
   GalleryCard,
   TableActions,
-} from './table-components';
-import ApiStatusToast from './ApiStatusToast';
-import FilterStatus from './table-components/FilterStatus';
-import MoreInfoColumn from './table-components/table-custom-columns/MoreInfoColumn';
+} from '../table-components';
+import ApiStatusToast from '../../generic/ApiStatusToast';
+import FilterStatus from '../table-components/FilterStatus';
+import MoreInfoColumn from '../table-components/table-custom-columns/MoreInfoColumn';
 
 const FileTable = ({
   files,

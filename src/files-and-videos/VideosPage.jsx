@@ -13,8 +13,8 @@ import {
 } from '@edx/paragon';
 import Placeholder from '@edx/frontend-lib-content-components';
 
-import { RequestStatus } from '../../data/constants';
-import { useModels, useModel } from '../../generic/model-store';
+import { RequestStatus } from '../data/constants';
+import { useModels, useModel } from '../generic/model-store';
 import {
   addVideoFile,
   addVideoThumbnail,
@@ -24,19 +24,14 @@ import {
   getUsagePaths,
   resetErrors,
   updateVideoOrder,
-} from './data/thunks';
-import messages from './messages';
-import VideosProvider from './VideosProvider';
-import getPageHeadTitle from '../../generic/utils';
-import FileTable from '../FileTable';
-import EditFileErrors from '../EditFileErrors';
-import ThumbnailColumn from '../table-components/table-custom-columns/ThumbnailColumn';
-import ActiveColumn from '../table-components/table-custom-columns/ActiveColumn';
-import StatusColumn from '../table-components/table-custom-columns/StatusColumn';
-import TranscriptSettings from './transcript-settings';
-import VideoThumbnail from './VideoThumbnail';
-import { getFormattedDuration, resampleFile } from './data/utils';
-import FILES_AND_UPLOAD_TYPE_FILTERS from '../data/constant';
+} from './videos/data/thunks';
+import messages from './videos/messages';
+import { VideosProvider, TranscriptSettings, VideoThumbnail } from './videos';
+import getPageHeadTitle from '../generic/utils';
+import { FileTable, EditFileErrors } from './files';
+import { ThumbnailColumn, ActiveColumn, StatusColumn } from './table-components';
+import { getFormattedDuration, resampleFile } from './videos/data/utils';
+import FILES_AND_UPLOAD_TYPE_FILTERS from './data/constants';
 
 const Videos = ({
   courseId,
