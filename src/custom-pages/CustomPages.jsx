@@ -1,8 +1,6 @@
 import React, { useEffect, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Routes, Route, useLocation, useNavigate,
-} from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppContext, PageWrap } from '@edx/frontend-platform/react';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
