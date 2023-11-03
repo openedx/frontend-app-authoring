@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { SUBMISSION_STATUS } from '../../common';
 import { STORE_NAMES } from '../../common/data';
+import messages from '../messages';
 
 export const libraryCreateInitialState = {
   createdLibrary: null,
@@ -32,7 +33,11 @@ const slice = createSlice({
     },
     libraryCreateFailed: (state, { payload }) => {
       state.errorMessage = payload.errorMessage;
-      state.errorFields = payload.errorFields;
+      const errorFields = {};
+      Object.keys(payload.errorFields).forEach(field => {
+        errorFields[field] = messages[`library.form.field.error.empty.${field}`].defaultMessage;
+      });
+      state.errorFields = errorFields;
       state.status = SUBMISSION_STATUS.FAILED;
     },
     libraryCreateClearError: (state) => {

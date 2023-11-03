@@ -17,6 +17,21 @@ const messages = defineMessages({
     defaultMessage: 'This field may not be blank.',
     description: 'Text to display when field is empty.',
   },
+  'library.form.field.error.empty.title': {
+    id: 'library.form.field.error.empty.title',
+    defaultMessage: 'Enter a library name',
+    description: 'Text to display when library name is empty.',
+  },
+  'library.form.field.error.empty.org': {
+    id: 'library.form.field.error.empty.org',
+    defaultMessage: 'Select an organization',
+    description: 'Text to display when organization is empty.',
+  },
+  'library.form.field.error.empty.slug': {
+    id: 'library.form.field.error.empty.slug',
+    defaultMessage: 'Enter a library ID',
+    description: 'Text to display when library ID is empty.',
+  },
   'library.form.field.error.mismatch.org': {
     id: 'library.form.field.error.mismatch.org',
     defaultMessage: 'The organization must be selected from the options list.',
@@ -111,7 +126,7 @@ const messages = defineMessages({
   },
   'library.organizations.list.empty': {
     id: 'library.organizations.list.empty',
-    defaultMessage: 'No options',
+    defaultMessage: 'No results found',
     description: 'Text for empty organizations options list.',
   },
 });

@@ -3,3 +3,16 @@
     font-family:  "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
 }
+.library-create-wrapper {
+  .pgn__form-group {
+    .pgn__form-control-decorator-group {
+      margin: 0
+    }
+  }
+  .pgn__form-text-invalid {
+    margin-left: -16px;
+    span.pgn__icon {
+    visibility: hidden;
+    }
+  }
+}

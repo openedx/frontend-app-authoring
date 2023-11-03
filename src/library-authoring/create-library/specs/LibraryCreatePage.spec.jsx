@@ -6,6 +6,7 @@ import { libraryCreateInitialState } from '../data';
 import { SUBMISSION_STATUS, ROUTES } from '../../common';
 import { ctxMount } from '../../common/specs/helpers';
 import { withNavigate } from '../../utils/hoc';
+import messages from '../messages';
 
 const InjectedLibraryCreatePage = injectIntl(withNavigate(LibraryCreatePage));
 const config = { STUDIO_BASE_URL: 'STUDIO_BASE_URL' };
@@ -65,21 +66,44 @@ describe('create-library/LibraryCreatePage.jsx', () => {
     expect(mockCreateLibrary).toHaveBeenCalled();
   });
 
-  it('shows form errors', () => {
-    const newProps = { ...props, errorFields: { slug: 'Error message' } };
-    const container = ctxMount(
-      <BrowserRouter>
-        <InjectedLibraryCreatePage {...newProps} />
-      </BrowserRouter>,
-      { config },
-    );
-    container.find('input').at(0).simulate('change');
-    container.find('input').at(1).simulate('change', { target: { value: 'org2', name: 'org' } });
-    container.find('input').at(1).simulate('blur');
-    container.find('input').at(2).simulate('change', { target: { value: '###', name: 'slug' } });
-    expect(container.find('.pgn__form-text-invalid').at(0).text()).toEqual('This field may not be blank.');
-    expect(container.find('.pgn__form-text-invalid').at(1).text()).toEqual('The organization must be selected from the options list.');
-    expect(container.find('.pgn__form-text-invalid').at(2).text()).toEqual('Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or hyphens.');
+  describe('form errors', () => {
+    let container;
+    beforeEach(() => {
+      const newProps = { ...props, errorFields: { slug: 'Error message' } };
+      container = ctxMount(
+        <BrowserRouter>
+          <InjectedLibraryCreatePage {...newProps} />
+        </BrowserRouter>,
+        { config },
+      );
+    });
+
+    it('shows empty title error', () => {
+      container.find('input').at(0).simulate('change');
+      expect(container.find('.pgn__form-text-invalid').at(0).text()).toEqual(messages['library.form.field.error.empty.title'].defaultMessage);
+    });
+
+    it('shows empty org error', () => {
+      container.find('input').at(1).simulate('change');
+      container.find('input').at(1).simulate('blur');
+      expect(container.find('.pgn__form-text-invalid').at(0).text()).toEqual(messages['library.form.field.error.empty.org'].defaultMessage);
+    });
+
+    it('shows empty slug error', () => {
+      container.find('input').at(2).simulate('change');
+      expect(container.find('.pgn__form-text-invalid').at(0).text()).toEqual(messages['library.form.field.error.empty.slug'].defaultMessage);
+    });
+
+    it('shows mismatch org error', () => {
+      container.find('input').at(1).simulate('change', { target: { value: 'org2', name: 'org' } });
+      container.find('input').at(1).simulate('blur');
+      expect(container.find('.pgn__form-text-invalid').at(0).text()).toEqual(messages['library.form.field.error.mismatch.org'].defaultMessage);
+    });
+
+    it('shows invlaid slug error', () => {
+      container.find('input').at(2).simulate('change', { target: { value: '###', name: 'slug' } });
+      expect(container.find('.pgn__form-text-invalid').at(0).text()).toEqual(messages['library.form.field.error.invalid.slug'].defaultMessage);
+    });
   });
 
   it('shows processing text on button', () => {

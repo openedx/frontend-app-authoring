@@ -29,13 +29,17 @@ const FormGroup = (props) => {
       </Form.Control>
 
       {props.helpText && !props.errorMessage && (
-        <Form.Control.Feedback type="default" key="help-text">
+        <Form.Control.Feedback type="default" key="help-text" className="x-small">
           {props.helpText}
         </Form.Control.Feedback>
       )}
 
       {props.errorMessage && (
-        <Form.Control.Feedback type="invalid" key="error" feedback-for={props.name}>
+        <Form.Control.Feedback
+          type="invalid"
+          key="error"
+          feedback-for={props.name}
+        >
           {props.errorMessage}
         </Form.Control.Feedback>
       )}

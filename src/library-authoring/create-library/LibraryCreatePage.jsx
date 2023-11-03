@@ -9,6 +9,7 @@ import {
   Alert,
   AlertModal,
   ActionRow,
+  Card,
 } from '@edx/paragon';
 import { Info } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -207,11 +208,10 @@ export class LibraryCreatePage extends React.Component {
     const { intl } = this.props;
     const { errors } = this.state;
     const slugRegex = new RegExp(VALID_SLUG_ID_REGEX);
-
     switch (fieldName) {
       case 'org':
         if (!value) {
-          errors[fieldName] = intl.formatMessage(messages['library.form.field.error.empty']);
+          errors[fieldName] = intl.formatMessage(messages['library.form.field.error.empty.org']);
         } else if (value && !data.org) {
           errors[fieldName] = intl.formatMessage(messages['library.form.field.error.mismatch.org']);
         } else {
@@ -220,7 +220,7 @@ export class LibraryCreatePage extends React.Component {
         break;
       case 'slug':
         if (!value) {
-          errors[fieldName] = intl.formatMessage(messages['library.form.field.error.empty']);
+          errors[fieldName] = intl.formatMessage(messages['library.form.field.error.empty.slug']);
         } else if (value && !value.match(slugRegex)) {
           errors[fieldName] = intl.formatMessage(messages['library.form.field.error.invalid.slug']);
         } else {
@@ -229,7 +229,7 @@ export class LibraryCreatePage extends React.Component {
         break;
       default:
         if (!value) {
-          errors[fieldName] = intl.formatMessage(messages['library.form.field.error.empty']);
+          errors[fieldName] = intl.formatMessage(messages['library.form.field.error.empty.title']);
         } else {
           errors[fieldName] = '';
         }
@@ -256,7 +256,7 @@ export class LibraryCreatePage extends React.Component {
             <Alert
               icon={Info}
               variant="danger"
-              className="form-create-alert"
+              className="form-create-alert mt-3 mb-4.5"
             >
               {errorTitle && <Alert.Heading>{errorTitle}</Alert.Heading>}
               <p>{truncateMessage(errorDescription)}</p>
@@ -271,87 +271,93 @@ export class LibraryCreatePage extends React.Component {
             ]}
           />
           <div className="wrapper-mast wrapper">
-            <header className="has-actions">
-              <h2 className="page-header h2">{intl.formatMessage(messages['library.form.create.library'])}</h2>
+            <header className="has-actions my-4">
+              <h2 className="page-header h2 text-primary-500">{intl.formatMessage(messages['library.form.create.library'])}</h2>
             </header>
           </div>
           <div className="wrapper-content wrapper">
             <section className="content mt-4">
-              <form onSubmit={this.onSubmit} className="form-create">
-                <fieldset>
-                  <ol className="list-input list-unstyled">
-                    <li className="field">
-                      <FormGroup
-                        name="title"
-                        type="text"
-                        readOnly={false}
-                        value={data.title}
-                        controlClassName="has-value"
-                        handleChange={this.onValueChange}
-                        errorMessage={this.getFieldError('title')}
-                        floatingLabel={intl.formatMessage(messages['library.form.title.label'])}
-                        placeholder={intl.formatMessage(messages['library.form.title.placeholder'])}
-                        helpText={intl.formatMessage(messages['library.form.title.help'])}
+              <Card>
+                <form onSubmit={this.onSubmit} className="form-create">
+                  <Card.Section className="mt-3.5">
+                    <fieldset>
+                      <ol className="list-input list-unstyled">
+                        <li className="field">
+                          <FormGroup
+                            name="title"
+                            type="text"
+                            readOnly={false}
+                            value={data.title}
+                            controlClassName="has-value"
+                            handleChange={this.onValueChange}
+                            errorMessage={this.getFieldError('title')}
+                            floatingLabel={intl.formatMessage(messages['library.form.title.label'])}
+                            placeholder={intl.formatMessage(messages['library.form.title.placeholder'])}
+                            helpText={intl.formatMessage(messages['library.form.title.help'])}
+                          />
+                        </li>
+                        <li className="field my-4.5">
+                          <TypeaheadDropdown
+                            type="text"
+                            name="org"
+                            readOnly={false}
+                            value={data.org}
+                            options={orgs}
+                            controlClassName="has-value"
+                            handleBlur={this.handleOnBlur}
+                            handleChange={this.handleOnChangeOrg}
+                            floatingLabel={intl.formatMessage(messages['library.form.org.label'])}
+                            placeholder={intl.formatMessage(messages['library.form.org.placeholder'])}
+                            errorMessage={this.getFieldError('org')}
+                            helpMessage={intl.formatMessage(messages['library.form.org.help'])}
+                            noOptionsMessage={intl.formatMessage(messages['library.organizations.list.empty'])}
+                          />
+                        </li>
+                        <li className="field">
+                          <FormGroup
+                            name="slug"
+                            type="text"
+                            readOnly={false}
+                            value={data.slug}
+                            controlClassName="has-value"
+                            handleChange={this.onValueChange}
+                            errorMessage={this.getFieldError('slug')}
+                            floatingLabel={intl.formatMessage(messages['library.form.slug.label'])}
+                            placeholder={intl.formatMessage(messages['library.form.slug.placeholder'])}
+                            helpText={intl.formatMessage(messages['library.form.slug.help'])}
+                          />
+                        </li>
+                      </ol>
+                    </fieldset>
+                  </Card.Section>
+                  <Card.Footer>
+                    <div className="actions form-group">
+                      <Button
+                        variant="tertiary"
+                        onClick={this.onCancel}
+                        className="mb-2 mb-sm-0 action btn-light"
+                      >
+                        {intl.formatMessage(commonMessages['library.common.forms.button.cancel'])}
+                      </Button>
+                      <StatefulButton
+                        type="submit"
+                        variant="primary"
+                        className="action btn-primary"
+                        state={this.getSubmitButtonState()}
+                        disabledStates={['disabled', 'pending']}
+                        icons={{
+                          pending: <Icon className="fa fa-spinner fa-spin" />,
+                        }}
+                        labels={{
+                          disabled: intl.formatMessage(commonMessages['library.common.forms.button.create']),
+                          enabled: intl.formatMessage(commonMessages['library.common.forms.button.create']),
+                          pending: intl.formatMessage(commonMessages['library.common.forms.button.creating']),
+                        }}
                       />
-                    </li>
-                    <li className="field">
-                      <TypeaheadDropdown
-                        type="text"
-                        name="org"
-                        readOnly={false}
-                        value={data.org}
-                        options={orgs}
-                        controlClassName="has-value"
-                        handleBlur={this.handleOnBlur}
-                        handleChange={this.handleOnChangeOrg}
-                        floatingLabel={intl.formatMessage(messages['library.form.org.label'])}
-                        placeholder={intl.formatMessage(messages['library.form.org.placeholder'])}
-                        errorMessage={this.getFieldError('org')}
-                        helpMessage={intl.formatMessage(messages['library.form.org.help'])}
-                        noOptionsMessage={intl.formatMessage(messages['library.organizations.list.empty'])}
-                      />
-                    </li>
-                    <li className="field">
-                      <FormGroup
-                        name="slug"
-                        type="text"
-                        readOnly={false}
-                        value={data.slug}
-                        controlClassName="has-value"
-                        handleChange={this.onValueChange}
-                        errorMessage={this.getFieldError('slug')}
-                        floatingLabel={intl.formatMessage(messages['library.form.slug.label'])}
-                        placeholder={intl.formatMessage(messages['library.form.slug.placeholder'])}
-                        helpText={intl.formatMessage(messages['library.form.slug.help'])}
-                      />
-                    </li>
-                  </ol>
-                </fieldset>
-                <div className="actions form-group">
-                  <Button
-                    variant="tertiary"
-                    onClick={this.onCancel}
-                    className="mb-2 mb-sm-0 action btn-light"
-                  >
-                    {intl.formatMessage(commonMessages['library.common.forms.button.cancel'])}
-                  </Button>
-                  <StatefulButton
-                    type="submit"
-                    variant="primary"
-                    className="action btn-primary"
-                    state={this.getSubmitButtonState()}
-                    disabledStates={['disabled', 'pending']}
-                    icons={{
-                      pending: <Icon className="fa fa-spinner fa-spin" />,
-                    }}
-                    labels={{
-                      disabled: intl.formatMessage(commonMessages['library.common.forms.button.create']),
-                      enabled: intl.formatMessage(commonMessages['library.common.forms.button.create']),
-                      pending: intl.formatMessage(commonMessages['library.common.forms.button.creating']),
-                    }}
-                  />
-                </div>
-              </form>
+                    </div>
+                  </Card.Footer>
+                </form>
+              </Card>
             </section>
           </div>
         </div>
