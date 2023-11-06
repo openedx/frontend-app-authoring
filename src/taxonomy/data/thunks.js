@@ -7,9 +7,9 @@ import { getTaxonomyExportFile } from './api';
  * @param {string} format
  * @returns {void}
  */
-/* istanbul ignore next */ 
+/* istanbul ignore next */
 const exportTaxonomy = (pk, format) => (
-  getTaxonomyExportFile(pk, format) 
+  getTaxonomyExportFile(pk, format)
 );
 
 export default exportTaxonomy;

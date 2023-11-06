@@ -78,7 +78,7 @@ const TaxonomyCard = ({ className, original }) => {
     case 'export':
       setIsExportModalOpen(true);
       break;
-    /* istanbul ignore next */ 
+    /* istanbul ignore next */
     default:
       break;
     }
