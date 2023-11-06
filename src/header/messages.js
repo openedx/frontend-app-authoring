@@ -43,7 +43,7 @@ const messages = defineMessages({
   },
   'header.links.videoUploads': {
     id: 'header.links.videoUploads',
-    defaultMessage: 'Video Uploads',
+    defaultMessage: 'Videos',
     description: 'Link to Studio Video Uploads page',
   },
   'header.links.scheduleAndDetails': {
