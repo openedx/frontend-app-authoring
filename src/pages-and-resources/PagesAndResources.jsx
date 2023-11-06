@@ -66,14 +66,14 @@ const PagesAndResources = ({ courseId, intl }) => {
           </Hyperlink>
         </div>
 
-        <PageGrid pages={pages} />
-
         <Routes>
           <Route path="discussion/configure/:appId" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
           <Route path="discussion" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
           <Route path="discussion/settings" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
           <Route path=":appId/settings" element={<PageWrap><Suspense fallback="..."><SettingsComponent url={redirectUrl} /></Suspense></PageWrap>} />
         </Routes>
+
+        <PageGrid pages={pages} />
       </main>
     </PagesAndResourcesProvider>
   );
