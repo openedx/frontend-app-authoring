@@ -6,20 +6,24 @@ import { ErrorAlert } from '@edx/frontend-lib-content-components';
 
 import messages from './messages';
 
+const PluginLoadFailedError = () => {
+  const intl = useIntl();
+  return <ErrorAlert isError>{intl.formatMessage(messages.errorShowingConfiguration)}</ErrorAlert>;
+};
+
 const SettingsComponent = ({ url }) => {
   const { appId } = useParams();
   const navigate = useNavigate();
-  const intl = useIntl();
 
-  const LazyLoadedComponent = React.useMemo(() => React.lazy(() => {
-    return import(`@openedx-plugins/course-app-${appId}/Settings.jsx`).catch((err) => { // eslint-disable-line
-      // If we couldn't load this plugin, log the details to the console.
-      console.trace(err);
-      return {
-        default: () => <ErrorAlert isError={true}>{intl.formatMessage(messages.errorShowingConfiguration)}</ErrorAlert>,
-      };
-    });
-  }), [appId]);
+  const LazyLoadedComponent = React.useMemo(
+    () => React.lazy(() =>
+      import(`@openedx-plugins/course-app-${appId}/Settings.jsx`).catch((err) => { // eslint-disable-line
+        // If we couldn't load this plugin, log the details to the console.
+        console.trace(err); // eslint-disable-line no-console
+        return { default: PluginLoadFailedError };
+      })),
+    [appId],
+  );
 
   return <LazyLoadedComponent onClose={() => navigate(url)} />;
 };

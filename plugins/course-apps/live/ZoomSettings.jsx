@@ -1,10 +1,11 @@
 import React from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
+import FormikControl from 'CourseAuthoring/generic/FormikControl';
+
 import messages from './messages';
 import { providerNames } from './constants';
 import LiveCommonFields from './LiveCommonFields';
-import FormikControl from 'CourseAuthoring/generic/FormikControl';
 
 const ZoomSettings = ({
   intl,

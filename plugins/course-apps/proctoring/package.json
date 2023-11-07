@@ -1,5 +1,15 @@
 {
     "name": "@openedx-plugins/course-app-proctoring",
     "version": "0.1.0",
-    "description": "Proctoring configuration for courses using it"
+    "description": "Proctoring configuration for courses using it",
+    "peerDependencies": {
+        "@edx/frontend-app-course-authoring": "*",
+        "@edx/frontend-platform": "*",
+        "@edx/paragon": "*",
+        "classnames": "*",
+        "email-validator": "*",
+        "react": "*",
+        "prop-types": "*",
+        "moment": "*"
+    }
 }

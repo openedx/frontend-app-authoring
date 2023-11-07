@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -7,8 +8,7 @@ import messages from './messages';
 
 /**
  * Settings widget for the "calculator" Course App.
- * @param {{onClose: () => void}} props 
- * @returns 
+ * @param {{onClose: () => void}} props
  */
 const CalculatorSettings = ({ onClose }) => {
   const intl = useIntl();
@@ -22,6 +22,10 @@ const CalculatorSettings = ({ onClose }) => {
       onClose={onClose}
     />
   );
+};
+
+CalculatorSettings.propTypes = {
+  onClose: PropTypes.func.isRequired,
 };
 
 export default CalculatorSettings;

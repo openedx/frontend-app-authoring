@@ -1,5 +1,17 @@
 {
     "name": "@openedx-plugins/course-app-live",
     "version": "0.1.0",
-    "description": "Live course configuration for courses using it"
+    "description": "Live course configuration for courses using it",
+    "peerDependencies": {
+        "@edx/frontend-app-course-authoring": "*",
+        "@edx/frontend-platform": "*",
+        "@edx/paragon": "*",
+        "@reduxjs/toolkit": "*",
+        "lodash": "*",
+        "prop-types": "*",
+        "react": "*",
+        "react-redux": "*",
+        "react-router-dom": "*",
+        "yup": "*"
+    }
 }

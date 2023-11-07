@@ -22,6 +22,7 @@ import { useModel } from 'CourseAuthoring/generic/model-store';
 import PermissionDeniedAlert from 'CourseAuthoring/generic/PermissionDeniedAlert';
 import { useIsMobile } from 'CourseAuthoring/utils';
 import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
+
 import messages from './messages';
 
 const ProctoringSettings = ({ intl, onClose }) => {

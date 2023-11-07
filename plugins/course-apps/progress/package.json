@@ -1,5 +1,13 @@
 {
     "name": "@openedx-plugins/course-app-progress",
     "version": "0.1.0",
-    "description": "Progress configuration for courses using it"
+    "description": "Progress configuration for courses using it",
+    "peerDependencies": {
+        "@edx/frontend-app-course-authoring": "*",
+        "@edx/frontend-platform": "*",
+        "@edx/paragon": "*",
+        "prop-types": "*",
+        "react": "*",
+        "yup": "*"
+    }
 }

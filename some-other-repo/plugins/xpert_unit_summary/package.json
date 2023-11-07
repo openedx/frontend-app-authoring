@@ -2,7 +2,15 @@
     "name": "@openedx-plugins/course-app-xpert_unit_summary",
     "version": "0.1.0",
     "description": "Xpert Unit Summaries configuration for courses using it",
-    "dependencies": {
-    },
-    "devDependencies": {}
+    "peerDependencies": {
+        "@edx/frontend-app-course-authoring": "*",
+        "@edx/frontend-platform": "*",
+        "@edx/paragon": "*",
+        "formik": "*",
+        "prop-types": "*",
+        "yup": "*",
+        "react": "*",
+        "react-redux": "*",
+        "react-router-dom": "*"
+    }
 }

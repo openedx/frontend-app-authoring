@@ -1,4 +1,6 @@
 import { addModel, addModels, updateModel } from 'CourseAuthoring/generic/model-store';
+import { RequestStatus } from 'CourseAuthoring/data/constants';
+
 import {
   getLiveConfiguration,
   getLiveProviders,
@@ -7,7 +9,6 @@ import {
   deNormalizeSettings,
 } from './api';
 import { loadApps, updateStatus, updateSaveStatus } from './slice';
-import { RequestStatus } from 'CourseAuthoring/data/constants';
 
 function updateLiveSettingsState({
   appConfig,

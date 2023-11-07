@@ -1,5 +1,15 @@
 {
     "name": "@openedx-plugins/course-app-teams",
     "version": "0.1.0",
-    "description": "Teams configuration for courses using it"
+    "description": "Teams configuration for courses using it",
+    "peerDependencies": {
+        "@edx/frontend-app-course-authoring": "*",
+        "@edx/frontend-platform": "*",
+        "@edx/paragon": "*",
+        "formik": "*",
+        "prop-types": "*",
+        "react": "*",
+        "uuid": "*",
+        "yup": "*"
+    }
 }

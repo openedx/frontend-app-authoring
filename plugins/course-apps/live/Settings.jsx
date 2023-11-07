@@ -6,13 +6,14 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
-import { fetchLiveData, saveLiveConfiguration, saveLiveConfigurationAsDraft } from './data/thunks';
-import { selectApp } from './data/slice';
 import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
 import { useModel } from 'CourseAuthoring/generic/model-store';
 import Loading from 'CourseAuthoring/generic/Loading';
-import { iconsSrc, bbbPlanTypes } from './constants';
 import { RequestStatus } from 'CourseAuthoring/data/constants';
+
+import { fetchLiveData, saveLiveConfiguration, saveLiveConfigurationAsDraft } from './data/thunks';
+import { selectApp } from './data/slice';
+import { iconsSrc, bbbPlanTypes } from './constants';
 import messages from './messages';
 import ZoomSettings from './ZoomSettings';
 import BBBSettings from './BBBSettings';

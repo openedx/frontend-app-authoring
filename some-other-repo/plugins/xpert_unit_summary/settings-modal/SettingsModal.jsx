@@ -33,9 +33,10 @@ import PermissionDeniedAlert from 'CourseAuthoring/generic/PermissionDeniedAlert
 import { useIsMobile } from 'CourseAuthoring/utils';
 import { getLoadingStatus, getSavingStatus, getResetStatus } from 'CourseAuthoring/pages-and-resources/data/selectors';
 import { updateSavingStatus, updateResetStatus } from 'CourseAuthoring/pages-and-resources/data/slice';
-import { updateXpertSettings, resetXpertSettings, removeXpertSettings } from '../data/thunks';
 import AppConfigFormDivider from 'CourseAuthoring/pages-and-resources/discussions/app-config-form/apps/shared/AppConfigFormDivider';
 import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
+
+import { updateXpertSettings, resetXpertSettings, removeXpertSettings } from '../data/thunks';
 import messages from './messages';
 import appInfo from '../appInfo';
 import ResetIcon from './ResetIcon';

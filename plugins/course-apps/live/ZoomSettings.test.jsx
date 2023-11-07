@@ -15,6 +15,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import initializeStore from 'CourseAuthoring/store';
 import { executeThunk } from 'CourseAuthoring/utils';
+import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 import LiveSettings from './Settings';
 import {
   generateLiveConfigurationApiResponse,
@@ -26,7 +27,6 @@ import {
 import { fetchLiveConfiguration, fetchLiveProviders } from './data/thunks';
 import { providerConfigurationApiUrl, providersApiUrl } from './data/api';
 import messages from './messages';
-import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 
 let axiosMock;
 let container;

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -7,8 +8,7 @@ import messages from './messages';
 
 /**
  * Settings widget for the "edxnotes" Course App.
- * @param {{onClose: () => void}} props 
- * @returns 
+ * @param {{onClose: () => void}} props
  */
 const NotesSettings = ({ onClose }) => {
   const intl = useIntl();
@@ -21,7 +21,11 @@ const NotesSettings = ({ onClose }) => {
       learnMoreText={intl.formatMessage(messages.enableNotesLink)}
       onClose={onClose}
     />
-    );
-  };
-  
-  export default NotesSettings;
+  );
+};
+
+NotesSettings.propTypes = {
+  onClose: PropTypes.func.isRequired,
+};
+
+export default NotesSettings;

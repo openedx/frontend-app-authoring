@@ -3,11 +3,12 @@ import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Form, Hyperlink } from '@edx/paragon';
 import PropTypes from 'prop-types';
-import messages from './messages';
-import { providerNames, bbbPlanTypes } from './constants';
 import AppConfigFormDivider from 'CourseAuthoring/pages-and-resources/discussions/app-config-form/apps/shared/AppConfigFormDivider';
-import LiveCommonFields from './LiveCommonFields';
 import { useModel } from 'CourseAuthoring/generic/model-store';
+
+import { providerNames, bbbPlanTypes } from './constants';
+import LiveCommonFields from './LiveCommonFields';
+import messages from './messages';
 
 const BbbSettings = ({
   intl,

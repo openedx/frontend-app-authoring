@@ -10,12 +10,13 @@ import {
   queryByTestId, render, waitFor, getByText, fireEvent,
 } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
-import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
-import { XpertUnitSummarySettings } from './index';
-import initializeStore from '../../store';
+import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
+import initializeStore from 'CourseAuthoring/store';
+import { executeThunk } from 'CourseAuthoring/utils';
+
+import XpertUnitSummarySettings from './Settings';
 import * as API from './data/api';
 import * as Thunks from './data/thunks';
-import { executeThunk } from '../../utils';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 let axiosMock;

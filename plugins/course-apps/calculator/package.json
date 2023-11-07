@@ -1,5 +1,12 @@
 {
     "name": "@openedx-plugins/course-app-calculator",
     "version": "0.1.0",
-    "description": "Calculator configuration for courses using it"
+    "description": "Calculator configuration for courses using it",
+    "peerDependencies": {
+        "@edx/frontend-app-course-authoring": "*",
+        "@edx/frontend-platform": "*",
+        "@edx/paragon": "*",
+        "prop-types": "*",
+        "react": "*"
+    }
 }

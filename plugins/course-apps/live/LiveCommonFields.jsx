@@ -1,8 +1,9 @@
 import React from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
-import messages from './messages';
 import FormikControl from 'CourseAuthoring/generic/FormikControl';
+
+import messages from './messages';
 
 const LiveCommonFields = ({
   intl,

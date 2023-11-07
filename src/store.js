@@ -1,5 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+// FIXME: because the 'live' plugin is using Redux, we have to hard-code a reference to it here.
+// If this app + the plugin were using React-query, there'd be no issues.
+import { reducer as liveReducer } from '@openedx-plugins/course-app-live/data/slice';
+
 import { reducer as modelsReducer } from './generic/model-store';
 import { reducer as courseDetailReducer } from './data/slice';
 import { reducer as discussionsReducer } from './pages-and-resources/discussions';
@@ -9,9 +13,6 @@ import { reducer as advancedSettingsReducer } from './advanced-settings/data/sli
 import { reducer as gradingSettingsReducer } from './grading-settings/data/slice';
 import { reducer as studioHomeReducer } from './studio-home/data/slice';
 import { reducer as scheduleAndDetailsReducer } from './schedule-and-details/data/slice';
-// FIXME: because the 'live' plugin is using Redux, we have to hard-code a reference to it here.
-// If this app + the plugin were using React-query, there'd be no issues.
-import { reducer as liveReducer } from '@openedx-plugins/course-app-live/data/slice';
 import { reducer as filesReducer } from './files-and-uploads/data/slice';
 import { reducer as courseTeamReducer } from './course-team/data/slice';
 import { reducer as CourseUpdatesReducer } from './course-updates/data/slice';

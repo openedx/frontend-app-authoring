@@ -60,6 +60,7 @@
     "classnames": "2.2.6",
     "core-js": "3.8.1",
     "email-validator": "2.0.4",
+    "eslint-import-resolver-webpack": "^0.13.8",
     "file-saver": "^2.0.5",
     "formik": "2.2.6",
     "jszip": "^3.10.1",

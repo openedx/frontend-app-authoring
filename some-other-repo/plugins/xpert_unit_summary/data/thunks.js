@@ -1,11 +1,10 @@
+import { updateSavingStatus, updateLoadingStatus, updateResetStatus } from 'CourseAuthoring/pages-and-resources/data/slice';
+import { RequestStatus } from 'CourseAuthoring/data/constants';
+import { addModel, updateModel } from 'CourseAuthoring/generic/model-store';
+
 import {
   getXpertSettings, postXpertSettings, getXpertPluginConfigurable, deleteXpertSettings,
 } from './api';
-
-import { updateSavingStatus, updateLoadingStatus, updateResetStatus } from 'CourseAuthoring/pages-and-resources/data/slice';
-import { RequestStatus } from 'CourseAuthoring/data/constants';
-
-import { addModel, updateModel } from 'CourseAuthoring/generic/model-store';
 
 export function updateXpertSettings(courseId, state) {
   return async (dispatch) => {
