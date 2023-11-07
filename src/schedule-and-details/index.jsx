@@ -54,22 +54,6 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
   document.title = getPageHeadTitle(course?.name, intl.formatMessage(messages.headingTitle));
 
   const {
-    errorFields,
-    savingStatus,
-    editedValues,
-    isQueryPending,
-    isEditableState,
-    showModifiedAlert,
-    showSuccessfulAlert,
-    dispatch,
-    handleResetValues,
-    handleValuesChange,
-    handleUpdateValues,
-    handleQueryProcessing,
-    handleInternetConnectionFailed,
-  } = useSaveValuesPrompt(courseId, updateCourseDetailsQuery, courseDetails);
-
-  const {
     platformName,
     isCreditCourse,
     upgradeDeadline,
@@ -90,6 +74,27 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     possiblePreRequisiteCourses,
     canShowCertificateAvailableDateField,
   } = courseSettings;
+
+  const {
+    errorFields,
+    savingStatus,
+    editedValues,
+    isQueryPending,
+    isEditableState,
+    showModifiedAlert,
+    showSuccessfulAlert,
+    dispatch,
+    handleResetValues,
+    handleValuesChange,
+    handleUpdateValues,
+    handleQueryProcessing,
+    handleInternetConnectionFailed,
+  } = useSaveValuesPrompt(
+    courseId,
+    updateCourseDetailsQuery,
+    canShowCertificateAvailableDateField,
+    courseDetails,
+  );
 
   const {
     org,

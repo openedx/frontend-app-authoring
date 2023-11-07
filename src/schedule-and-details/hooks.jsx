@@ -9,6 +9,7 @@ import { validateScheduleAndDetails, updateWithDefaultValues } from './utils';
 const useSaveValuesPrompt = (
   courseId,
   updateDataQuery,
+  canShowCertificateAvailableDateField,
   initialEditedData = {},
 ) => {
   const intl = useIntl();
@@ -28,7 +29,7 @@ const useSaveValuesPrompt = (
   }, [initialEditedData]);
 
   useEffect(() => {
-    const errors = validateScheduleAndDetails(editedValues, intl);
+    const errors = validateScheduleAndDetails(editedValues, canShowCertificateAvailableDateField, intl);
     setErrorFields(errors);
   }, [editedValues]);
 
