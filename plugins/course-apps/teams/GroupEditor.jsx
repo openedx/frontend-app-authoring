@@ -22,6 +22,10 @@ const TeamTypeNameMessage = {
     label: messages.groupTypePrivateManaged,
     description: messages.groupTypePrivateManagedDescription,
   },
+  [GroupTypes.OPEN_MANAGED]: {
+    label: messages.groupTypeOpenManaged,
+    description: messages.groupTypeOpenManagedDescription,
+  },
 };
 
 const GroupEditor = ({
