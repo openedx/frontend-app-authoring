@@ -18,7 +18,7 @@ const isDateBeforeOrEqual = (
   return new Date(dateFormer) <= new Date(dateLatter);
 };
 
-const validateScheduleAndDetails = (courseDetails, intl) => {
+const validateScheduleAndDetails = (courseDetails, canShowCertificateAvailableDate, intl) => {
   const errors = {};
   const {
     endDate,
@@ -34,7 +34,7 @@ const validateScheduleAndDetails = (courseDetails, intl) => {
     errors.startDate = intl.formatMessage(messages.errorMessage7);
   }
 
-  if (isDateBeforeOrEqual(certificateAvailableDate, endDate)) {
+  if (isDateBeforeOrEqual(certificateAvailableDate, endDate) && canShowCertificateAvailableDate) {
     errors.certificateAvailableDate = intl.formatMessage(messages.errorMessage6);
   }
 
