@@ -13,5 +13,6 @@ module.exports = createConfig('jest', {
   ],
   moduleNameMapper: {
     '^lodash-es$': 'lodash',
+    '^CourseAuthoring/(.*)$': '<rootDir>/src/$1',
   },
 });
