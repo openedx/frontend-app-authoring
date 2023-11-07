@@ -541,7 +541,7 @@ describe('TranscriptSettings', () => {
         expect(screen.getByText('Failed to update Cielo24 transcripts settings.')).toBeVisible();
       });
 
-      it('should show error alert wit default message on 3PlayMedia preferences update', async () => {
+      it('should show error alert with default message on 3PlayMedia preferences update', async () => {
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
         await act(async () => {
           userEvent.click(threePlayButton);
@@ -574,7 +574,7 @@ describe('TranscriptSettings', () => {
         expect(screen.getByText('Failed to update 3PlayMedia transcripts settings.')).toBeVisible();
       });
 
-      it('should show error alert wit default message on 3PlayMedia preferences update', async () => {
+      it('should show error alert with default message on 3PlayMedia preferences update', async () => {
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
         await act(async () => {
           userEvent.click(threePlayButton);
