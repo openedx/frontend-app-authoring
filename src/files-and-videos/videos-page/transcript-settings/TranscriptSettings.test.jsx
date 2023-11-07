@@ -541,7 +541,7 @@ describe('TranscriptSettings', () => {
         expect(screen.getByText('Failed to update Cielo24 transcripts settings.')).toBeVisible();
       });
 
-      it('should show error alert on 3PlayMedia preferences update', async () => {
+      it('should show error alert with default message on 3PlayMedia preferences update', async () => {
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
         await act(async () => {
           userEvent.click(threePlayButton);
@@ -572,6 +572,39 @@ describe('TranscriptSettings', () => {
         expect(transcriptStatus).toEqual(RequestStatus.FAILED);
 
         expect(screen.getByText('Failed to update 3PlayMedia transcripts settings.')).toBeVisible();
+      });
+
+      it('should show error alert with default message on 3PlayMedia preferences update', async () => {
+        const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
+        await act(async () => {
+          userEvent.click(threePlayButton);
+        });
+        const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
+        const turnaround = screen.getByText(messages.threePlayMediaTurnaroundPlaceholder.defaultMessage);
+        const source = screen.getByText(messages.threePlayMediaSourceLanguagePlaceholder.defaultMessage);
+
+        await waitFor(() => {
+          userEvent.click(turnaround);
+          userEvent.click(screen.getByText('2 hours'));
+
+          userEvent.click(source);
+          userEvent.click(screen.getByText('Spanish'));
+
+          const language = screen.getByText(messages.threePlayMediaTranscriptLanguagePlaceholder.defaultMessage);
+          userEvent.click(language);
+          userEvent.click(screen.getAllByText('English')[1]);
+        });
+        expect(updateButton).not.toHaveAttribute('disabled');
+
+        axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(404, { error: 'Invalid turnaround.' });
+        await waitFor(() => {
+          userEvent.click(updateButton);
+        });
+        const { transcriptStatus } = store.getState().videos;
+
+        expect(transcriptStatus).toEqual(RequestStatus.FAILED);
+
+        expect(screen.getByText('Invalid turnaround.')).toBeVisible();
       });
     });
   });

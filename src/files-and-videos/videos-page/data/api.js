@@ -199,7 +199,7 @@ export async function setTranscriptPreferences(courseId, preferences) {
     videoSourceLanguage,
   } = preferences;
   const postJson = {
-    cielo24_fideltiy: cielo24Fidelity?.toUpperCase(),
+    cielo24_fidelity: cielo24Fidelity?.toUpperCase(),
     cielo24_turnaround: cielo24Turnaround,
     global,
     preferred_languages: preferredLanguages,
