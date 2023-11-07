@@ -9,6 +9,11 @@
         "prop-types": "*",
         "react": "*",
         "yup": "*"
+    },
+    "peerDependenciesMeta": {
+        "@edx/frontend-app-course-authoring": {
+            "optional": true
+        }
     }
 }
   

@@ -8,5 +8,10 @@
         "@edx/paragon": "*",
         "prop-types": "*",
         "react": "*"
+    },
+    "peerDependenciesMeta": {
+        "@edx/frontend-app-course-authoring": {
+            "optional": true
+        }
     }
 }

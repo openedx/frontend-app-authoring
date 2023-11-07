@@ -11,5 +11,10 @@
         "react": "*",
         "uuid": "*",
         "yup": "*"
+    },
+    "peerDependenciesMeta": {
+        "@edx/frontend-app-course-authoring": {
+            "optional": true
+        }
     }
 }

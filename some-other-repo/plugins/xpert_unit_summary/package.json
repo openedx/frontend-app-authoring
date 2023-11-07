@@ -12,5 +12,10 @@
         "react": "*",
         "react-redux": "*",
         "react-router-dom": "*"
+    },
+    "peerDependenciesMeta": {
+        "@edx/frontend-app-course-authoring": {
+            "optional": true
+        }
     }
 }

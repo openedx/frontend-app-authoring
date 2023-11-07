@@ -11,5 +11,10 @@
         "react": "*",
         "prop-types": "*",
         "moment": "*"
+    },
+    "peerDependenciesMeta": {
+        "@edx/frontend-app-course-authoring": {
+            "optional": true
+        }
     }
 }
