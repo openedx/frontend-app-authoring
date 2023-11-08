@@ -38,7 +38,7 @@ import {
 import TranscriptSettings from './transcript-settings';
 import VideoThumbnail from './VideoThumbnail';
 import { getFormattedDuration, resampleFile } from './data/utils';
-import FILES_AND_UPLOAD_TYPE_FILTERS from '../generic/constant';
+import FILES_AND_UPLOAD_TYPE_FILTERS from '../generic/constants';
 import VideoInfoModalSidebar from './info-sidebar';
 
 const VideosPage = ({
