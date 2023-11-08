@@ -8,7 +8,6 @@ import initializeStore from './store';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const pagesAndResourcesMockText = 'Pages And Resources';
-const proctoredExamSeetingsMockText = 'Proctored Exam Settings';
 const editorContainerMockText = 'Editor Container';
 const videoSelectorContainerMockText = 'Video Selector Container';
 const customPagesMockText = 'Custom Pages';
@@ -35,10 +34,6 @@ jest.mock('@edx/frontend-lib-content-components', () => ({
 jest.mock('./pages-and-resources/PagesAndResources', () => (props) => {
   mockComponentFn(props);
   return pagesAndResourcesMockText;
-});
-jest.mock('./proctored-exam-settings/ProctoredExamSettings', () => (props) => {
-  mockComponentFn(props);
-  return proctoredExamSeetingsMockText;
 });
 jest.mock('./editors/EditorContainer', () => (props) => {
   mockComponentFn(props);
@@ -76,25 +71,6 @@ describe('<CourseAuthoringRoutes>', () => {
     );
 
     expect(screen.getByText(pagesAndResourcesMockText)).toBeVisible();
-    expect(screen.queryByText(proctoredExamSeetingsMockText)).not.toBeInTheDocument();
-    expect(mockComponentFn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        courseId,
-      }),
-    );
-  });
-
-  it('renders the ProctoredExamSettings component when the proctored exam settings route is active', () => {
-    render(
-      <AppProvider store={store} wrapWithRouter={false}>
-        <MemoryRouter initialEntries={['/proctored-exam-settings']}>
-          <CourseAuthoringRoutes />
-        </MemoryRouter>
-      </AppProvider>,
-    );
-
-    expect(screen.queryByText(proctoredExamSeetingsMockText)).toBeInTheDocument();
-    expect(screen.queryByText(pagesAndResourcesMockText)).not.toBeInTheDocument();
     expect(mockComponentFn).toHaveBeenCalledWith(
       expect.objectContaining({
         courseId,
