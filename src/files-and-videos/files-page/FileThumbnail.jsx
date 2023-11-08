@@ -5,10 +5,10 @@ import {
   Icon,
   Image,
 } from '@edx/paragon';
-import { getSrc } from '../data/utils';
+import { getSrc } from './data/utils';
 import messages from './messages';
 
-const AssetThumbnail = ({
+const FileThumbnail = ({
   thumbnail,
   wrapperType,
   externalUrl,
@@ -50,13 +50,13 @@ const AssetThumbnail = ({
     </div>
   );
 };
-AssetThumbnail.defaultProps = {
+FileThumbnail.defaultProps = {
   thumbnail: null,
   wrapperType: null,
   externalUrl: null,
   displayName: null,
 };
-AssetThumbnail.propTypes = {
+FileThumbnail.propTypes = {
   thumbnail: PropTypes.string,
   wrapperType: PropTypes.string,
   externalUrl: PropTypes.string,
@@ -69,4 +69,4 @@ AssetThumbnail.propTypes = {
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(AssetThumbnail);
+export default injectIntl(FileThumbnail);

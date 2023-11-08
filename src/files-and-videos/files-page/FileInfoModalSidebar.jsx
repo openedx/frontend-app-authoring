@@ -18,10 +18,10 @@ import {
 } from '@edx/paragon';
 import { ContentCopy, InfoOutline } from '@edx/paragon/icons';
 
-import { getFileSizeToClosestByte } from '../data/utils';
+import { getFileSizeToClosestByte } from '../generic/utils';
 import messages from './messages';
 
-const FileInfoAssetSidebar = ({
+const FileInfoModalSidebar = ({
   asset,
   handleLockedAsset,
   // injected
@@ -109,7 +109,7 @@ const FileInfoAssetSidebar = ({
     </Stack>
   );
 };
-FileInfoAssetSidebar.propTypes = {
+FileInfoModalSidebar.propTypes = {
   asset: PropTypes.shape({
     displayName: PropTypes.string.isRequired,
     wrapperType: PropTypes.string.isRequired,
@@ -127,4 +127,4 @@ FileInfoAssetSidebar.propTypes = {
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(FileInfoAssetSidebar);
+export default injectIntl(FileInfoModalSidebar);

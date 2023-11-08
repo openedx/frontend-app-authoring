@@ -1,6 +1,6 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
-import FileThumbnail from '../../FileThumbnail';
+import ThumbnailPreview from '../../ThumbnailPreview';
 
 const ThumbnailColumn = ({ row, thumbnailPreview }) => {
   const {
@@ -12,7 +12,7 @@ const ThumbnailColumn = ({ row, thumbnailPreview }) => {
     status,
   } = row.original;
   return (
-    <FileThumbnail
+    <ThumbnailPreview
       {...{
         thumbnail,
         wrapperType,

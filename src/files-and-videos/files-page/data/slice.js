@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 
-import { RequestStatus } from '../../data/constants';
+import { RequestStatus } from '../../../data/constants';
 
 const slice = createSlice({
   name: 'assets',

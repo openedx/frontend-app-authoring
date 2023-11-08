@@ -21,7 +21,7 @@ import {
 } from '../factories/mockApiResponses';
 import { getApiBaseUrl } from '../data/api';
 import messages from './messages';
-import VideosProvider from '../VideosProvider';
+import VideosProvider from '../VideosPageProvider';
 
 const defaultProps = {
   isTranscriptSettingsOpen: true,

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Icon, Row, Spinner } from '@edx/paragon';
 import { ErrorOutline } from '@edx/paragon/icons';
 import isEmpty from 'lodash/isEmpty';
-import { RequestStatus } from '../data/constants';
+import { RequestStatus } from '../../data/constants';
 import messages from './messages';
 
 const UsageMetricsMessage = ({

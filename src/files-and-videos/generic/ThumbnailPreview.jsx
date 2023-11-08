@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const FileThumbnail = ({
+const ThumbnailPreview = ({
   thumbnail,
   wrapperType,
   externalUrl,
@@ -23,7 +23,7 @@ const FileThumbnail = ({
     })}
   </>
 );
-FileThumbnail.defaultProps = {
+ThumbnailPreview.defaultProps = {
   thumbnail: null,
   wrapperType: null,
   externalUrl: null,
@@ -31,7 +31,7 @@ FileThumbnail.defaultProps = {
   id: null,
   status: null,
 };
-FileThumbnail.propTypes = {
+ThumbnailPreview.propTypes = {
   thumbnail: PropTypes.string,
   wrapperType: PropTypes.string,
   externalUrl: PropTypes.string,
@@ -45,4 +45,4 @@ FileThumbnail.propTypes = {
   }).isRequired,
 };
 
-export default FileThumbnail;
+export default ThumbnailPreview;

@@ -26,19 +26,22 @@ import {
   updateVideoOrder,
 } from './data/thunks';
 import messages from './messages';
-import VideosProvider from './VideosProvider';
+import VideosPageProvider from './VideosPageProvider';
 import getPageHeadTitle from '../../generic/utils';
-import FileTable from '../FileTable';
-import EditFileErrors from '../EditFileErrors';
-import ThumbnailColumn from '../table-components/table-custom-columns/ThumbnailColumn';
-import ActiveColumn from '../table-components/table-custom-columns/ActiveColumn';
-import StatusColumn from '../table-components/table-custom-columns/StatusColumn';
+import {
+  ActiveColumn,
+  EditFileErrors,
+  FileTable,
+  StatusColumn,
+  ThumbnailColumn,
+} from '../generic';
 import TranscriptSettings from './transcript-settings';
 import VideoThumbnail from './VideoThumbnail';
 import { getFormattedDuration, resampleFile } from './data/utils';
-import FILES_AND_UPLOAD_TYPE_FILTERS from '../data/constant';
+import FILES_AND_UPLOAD_TYPE_FILTERS from '../generic/constants';
+import VideoInfoModalSidebar from './info-sidebar';
 
-const Videos = ({
+const VideosPage = ({
   courseId,
   // injected
   intl,
@@ -103,6 +106,7 @@ const Videos = ({
     usageErrorMessages: errorMessages.usageMetrics,
   };
   const thumbnailPreview = (props) => VideoThumbnail({ ...props, handleAddThumbnail, videoImageSettings });
+  const infoModalSidebar = (video) => VideoInfoModalSidebar({ video });
   const maxFileSize = videoUploadMaxFileSize * 1073741824;
   const transcriptColumn = {
     id: 'transcripts',
@@ -156,7 +160,7 @@ const Videos = ({
     );
   }
   return (
-    <VideosProvider courseId={courseId}>
+    <VideosPageProvider courseId={courseId}>
       <main>
         <div className="p-4">
           <EditFileErrors
@@ -210,18 +214,19 @@ const Videos = ({
             tableColumns,
             maxFileSize,
             thumbnailPreview,
+            infoModalSidebar,
             files: videos,
           }}
         />
       </main>
-    </VideosProvider>
+    </VideosPageProvider>
   );
 };
 
-Videos.propTypes = {
+VideosPage.propTypes = {
   courseId: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(Videos);
+export default injectIntl(VideosPage);

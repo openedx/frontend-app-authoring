@@ -10,7 +10,7 @@ import { reducer as gradingSettingsReducer } from './grading-settings/data/slice
 import { reducer as studioHomeReducer } from './studio-home/data/slice';
 import { reducer as scheduleAndDetailsReducer } from './schedule-and-details/data/slice';
 import { reducer as liveReducer } from './pages-and-resources/live/data/slice';
-import { reducer as filesReducer } from './files-and-videos/data/slice';
+import { reducer as filesReducer } from './files-and-videos/files-page/data/slice';
 import { reducer as courseTeamReducer } from './course-team/data/slice';
 import { reducer as CourseUpdatesReducer } from './course-updates/data/slice';
 import { reducer as processingNotificationReducer } from './generic/processing-notification/data/slice';
