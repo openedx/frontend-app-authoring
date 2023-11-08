@@ -19,7 +19,7 @@ const messages = defineMessages({
   },
   cancelButton: {
     id: 'course-authoring.course-outline.status-bar.modal.cancelButton',
-    defaultMessage: 'Not yet',
+    defaultMessage: 'Cancel',
   },
   submitButton: {
     id: 'course-authoring.course-outline.status-bar.modal.submitButton',

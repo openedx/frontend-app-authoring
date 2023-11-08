@@ -8,13 +8,12 @@ import messages from './messages';
 const handleNewSectionMock = jest.fn();
 const handleReIndexMock = jest.fn();
 const handleExpandAllMock = jest.fn();
-const handleViewLiveMock = jest.fn();
 
 const headerNavigationsActions = {
   handleNewSection: handleNewSectionMock,
   handleReIndex: handleReIndexMock,
   handleExpandAll: handleExpandAllMock,
-  handleViewLive: handleViewLiveMock,
+  lmsLink: '',
 };
 
 const renderComponent = (props) => render(
@@ -22,6 +21,7 @@ const renderComponent = (props) => render(
     <HeaderNavigations
       headerNavigationsActions={headerNavigationsActions}
       isSectionsExpanded={false}
+      isDisabledReindexButton={false}
       isReIndexShow
       {...props}
     />
@@ -61,10 +61,6 @@ describe('<HeaderNavigations />', () => {
     const expandAllButton = getByRole('button', { name: messages.expandAllButton.defaultMessage });
     fireEvent.click(expandAllButton);
     expect(handleExpandAllMock).toHaveBeenCalledTimes(1);
-
-    const viewLiveButton = getByRole('button', { name: messages.viewLiveButton.defaultMessage });
-    fireEvent.click(viewLiveButton);
-    expect(handleViewLiveMock).toHaveBeenCalledTimes(1);
   });
 
   it('render collapse button correctly', () => {

@@ -5,6 +5,7 @@ import { Button, OverlayTrigger, Tooltip } from '@edx/paragon';
 import {
   Add as IconAdd,
   ArrowDropDown as ArrowDownIcon,
+  ArrowDropUp as ArrowUpIcon,
 } from '@edx/paragon/icons';
 
 import messages from './messages';
@@ -17,7 +18,7 @@ const HeaderNavigations = ({
 }) => {
   const intl = useIntl();
   const {
-    handleNewSection, handleReIndex, handleExpandAll, handleViewLive,
+    handleNewSection, handleReIndex, handleExpandAll, lmsLink,
   } = headerNavigationsActions;
 
   return (
@@ -57,8 +58,7 @@ const HeaderNavigations = ({
       )}
       <Button
         variant="outline-primary"
-        className={isSectionsExpanded ? 'expand-button-active' : ''}
-        iconBefore={ArrowDownIcon}
+        iconBefore={isSectionsExpanded ? ArrowUpIcon : ArrowDownIcon}
         onClick={handleExpandAll}
       >
         {isSectionsExpanded
@@ -74,7 +74,8 @@ const HeaderNavigations = ({
         )}
       >
         <Button
-          onClick={handleViewLive}
+          href={lmsLink}
+          target="_blank"
           variant="outline-primary"
         >
           {intl.formatMessage(messages.viewLiveButton)}
@@ -92,7 +93,7 @@ HeaderNavigations.propTypes = {
     handleNewSection: PropTypes.func.isRequired,
     handleReIndex: PropTypes.func.isRequired,
     handleExpandAll: PropTypes.func.isRequired,
-    handleViewLive: PropTypes.func.isRequired,
+    lmsLink: PropTypes.string.isRequired,
   }).isRequired,
 };
 

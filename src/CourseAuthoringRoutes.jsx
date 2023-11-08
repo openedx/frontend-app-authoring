@@ -42,7 +42,7 @@ const CourseAuthoringRoutes = () => {
     <CourseAuthoringPage courseId={courseId}>
       <Routes>
         <Route
-          path="outline"
+          path="/"
           element={<PageWrap><CourseOutline courseId={courseId} /></PageWrap>}
         />
         <Route

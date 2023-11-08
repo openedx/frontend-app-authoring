@@ -50,7 +50,7 @@ const CourseOutline = ({ courseId }) => {
 
   return (
     <>
-      <Container size="xl" className="m-4">
+      <Container size="xl" className="px-4">
         <section className="course-outline-container mb-4 mt-5">
           <TransitionReplace>
             {showSuccessAlert ? (
@@ -71,7 +71,6 @@ const CourseOutline = ({ courseId }) => {
             className="mt-5"
             title={intl.formatMessage(messages.headingTitle)}
             subtitle={intl.formatMessage(messages.headingSubtitle)}
-            withSubHeaderContent={false}
             headerActions={(
               <HeaderNavigations
                 isReIndexShow={isReIndexShow}
@@ -84,8 +83,8 @@ const CourseOutline = ({ courseId }) => {
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
             md={[{ span: 9 }, { span: 3 }]}
-            sm={[{ span: 9 }, { span: 3 }]}
-            xs={[{ span: 9 }, { span: 3 }]}
+            sm={[{ span: 12 }, { span: 12 }]}
+            xs={[{ span: 12 }, { span: 12 }]}
             xl={[{ span: 9 }, { span: 3 }]}
           >
             <Layout.Element>
@@ -94,7 +93,7 @@ const CourseOutline = ({ courseId }) => {
                   <section className="course-outline-section">
                     <StatusBar
                       courseId={courseId}
-                      isLaoding={isLoading}
+                      isLoading={isLoading}
                       statusBarData={statusBarData}
                       openEnableHighlightsModal={openEnableHighlightsModal}
                     />

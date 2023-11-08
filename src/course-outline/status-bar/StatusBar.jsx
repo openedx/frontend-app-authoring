@@ -42,7 +42,7 @@ const StatusBar = ({
   return (
     <Stack direction="horizontal" gap={3.5} className="outline-status-bar" data-testid="outline-status-bar">
       <div className="outline-status-bar__item">
-        <h5 className="h5">{intl.formatMessage(messages.startDateTitle)}</h5>
+        <h5>{intl.formatMessage(messages.startDateTitle)}</h5>
         <Hyperlink
           className="small"
           destination={scheduleDestination}
@@ -52,15 +52,15 @@ const StatusBar = ({
         </Hyperlink>
       </div>
       <div className="outline-status-bar__item">
-        <h5 className="h5">{intl.formatMessage(messages.pacingTypeTitle)}</h5>
+        <h5>{intl.formatMessage(messages.pacingTypeTitle)}</h5>
         <span className="small">
           {isSelfPaced
             ? intl.formatMessage(messages.pacingTypeSelfPaced)
             : intl.formatMessage(messages.pacingTypeInstructorPaced)}
         </span>
       </div>
-      <div className="outline-status-bar__item">
-        <h5 className="h5">{intl.formatMessage(messages.checklistTitle)}</h5>
+      <div className="outline-status-bar__item mr-4">
+        <h5>{intl.formatMessage(messages.checklistTitle)}</h5>
         <Hyperlink
           className="small"
           destination={checklistDestination}
@@ -69,11 +69,13 @@ const StatusBar = ({
           {checkListTitle} {intl.formatMessage(messages.checklistCompleted)}
         </Hyperlink>
       </div>
-      <div className="outline-status-bar__item">
-        <h5 className="h5">{intl.formatMessage(messages.highlightEmailsTitle)}</h5>
+      <div className="outline-status-bar__item ml-4">
+        <h5>{intl.formatMessage(messages.highlightEmailsTitle)}</h5>
         <div className="d-flex align-items-end">
           {highlightsEnabledForMessaging ? (
-            <span className="small">{intl.formatMessage(messages.highlightEmailsEnabled)}</span>
+            <span data-testid="highlights-enabled-span" className="small">
+              {intl.formatMessage(messages.highlightEmailsEnabled)}
+            </span>
           ) : (
             <Button size="sm" onClick={openEnableHighlightsModal}>
               {intl.formatMessage(messages.highlightEmailsButton)}

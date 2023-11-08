@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  render, waitFor, cleanup,
-} from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -127,9 +125,8 @@ describe('<CourseOutline />', () => {
     expect(getByText('4/9 completed')).toBeInTheDocument();
   });
 
-  it('check enable highlights when enable highlights query is successfully', async () => {
-    cleanup();
-    const { getByText } = render(<RootWrapper />);
+  it('check highlights are enabled after enable highlights query is successful', async () => {
+    const { findByTestId } = render(<RootWrapper />);
 
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
@@ -148,6 +145,6 @@ describe('<CourseOutline />', () => {
       .reply(200);
 
     await executeThunk(enableCourseHighlightsEmailsQuery(courseId), store.dispatch);
-    expect(getByText('Enabled')).toBeInTheDocument();
+    expect(await findByTestId('highlights-enabled-span')).toBeInTheDocument();
   });
 });

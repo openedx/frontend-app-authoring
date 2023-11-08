@@ -21,7 +21,7 @@ import {
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
 
-  const { reindexLink } = useSelector(getOutlineIndexData);
+  const { reindexLink, lmsLink } = useSelector(getOutlineIndexData);
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
@@ -48,13 +48,10 @@ const useCourseOutline = ({ courseId }) => {
     handleExpandAll: () => {
       setSectionsExpanded((prevState) => !prevState);
     },
-    handleViewLive: () => {
-      // TODO add handler
-    },
+    lmsLink,
   };
 
   const handleEnableHighlightsSubmit = () => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(enableCourseHighlightsEmailsQuery(courseId));
     closeEnableHighlightsModal();
   };
