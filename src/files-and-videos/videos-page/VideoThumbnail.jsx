@@ -8,7 +8,7 @@ import {
   Icon,
   Image,
 } from '@edx/paragon';
-import FileInput, { useFileInput } from '../FileInput';
+import { FileInput, useFileInput } from '../generic';
 import messages from './messages';
 
 const VideoThumbnail = ({

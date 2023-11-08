@@ -9,7 +9,7 @@ import InfoTab from './InfoTab';
 import TranscriptTab from './TranscriptTab';
 import messages from './messages';
 
-const FileInfoVideoSidebar = ({
+const VideoInfoModalSidebar = ({
   video,
   // injected
   intl,
@@ -30,7 +30,7 @@ const FileInfoVideoSidebar = ({
   </Tabs>
 );
 
-FileInfoVideoSidebar.propTypes = {
+VideoInfoModalSidebar.propTypes = {
   video: PropTypes.shape({
     displayName: PropTypes.string.isRequired,
     wrapperType: PropTypes.string.isRequired,
@@ -43,8 +43,8 @@ FileInfoVideoSidebar.propTypes = {
   intl: intlShape.isRequired,
 };
 
-FileInfoVideoSidebar.defaultProps = {
+VideoInfoModalSidebar.defaultProps = {
   video: null,
 };
 
-export default injectIntl(FileInfoVideoSidebar);
+export default injectIntl(VideoInfoModalSidebar);

@@ -13,11 +13,11 @@ import {
   Button,
 } from '@edx/paragon';
 
-import { RequestStatus } from '../data/constants';
-import { sortFiles } from './data/utils';
+import { RequestStatus } from '../../data/constants';
+import { sortFiles } from './utils';
 import messages from './messages';
 
-import FileInfo from './FileInfo';
+import InfoModal from './InfoModal';
 import FileInput, { useFileInput } from './FileInput';
 import {
   GalleryCard,
@@ -40,6 +40,7 @@ const FileTable = ({
   tableColumns,
   maxFileSize,
   thumbnailPreview,
+  infoModalSidebar,
   // injected
   intl,
 }) => {
@@ -112,11 +113,6 @@ const FileTable = ({
     handleDownloadFile(selectedFlatRows);
   }, []);
 
-  const handleLockedFile = (fileId, locked) => {
-    handleErrorReset({ errorType: 'lock' });
-    handleLockFile({ fileId, locked });
-  };
-
   const handleOpenDeleteConfirmation = (selectedFlatRows) => {
     setSelectedRows(selectedFlatRows);
     openDeleteConfirmation();
@@ -146,7 +142,7 @@ const FileTable = ({
   const fileCard = ({ className, original }) => (
     <GalleryCard
       {...{
-        handleLockedFile,
+        handleLockFile,
         handleBulkDownload,
         handleOpenDeleteConfirmation,
         handleOpenFileInfo,
@@ -162,7 +158,7 @@ const FileTable = ({
     Header: '',
     Cell: ({ row }) => MoreInfoColumn({
       row,
-      handleLock: handleLockedFile,
+      handleLock: handleLockFile,
       handleBulkDownload,
       handleOpenFileInfo,
       handleOpenDeleteConfirmation,
@@ -238,14 +234,14 @@ const FileTable = ({
       </DataTable>
       <FileInput key="generic-file-upload" fileInput={fileInputControl} supportedFileFormats={supportedFileFormats} />
       {!isEmpty(selectedRows) && (
-        <FileInfo
+        <InfoModal
           file={selectedRows[0].original}
           onClose={closeAssetinfo}
           isOpen={isAssetInfoOpen}
-          handleLockedFile={handleLockedFile}
           thumbnailPreview={thumbnailPreview}
           usagePathStatus={usagePathStatus}
           error={usageErrorMessages}
+          sidebar={infoModalSidebar}
         />
       )}
       <AlertModal
@@ -294,6 +290,7 @@ FileTable.propTypes = {
   })).isRequired,
   maxFileSize: PropTypes.number.isRequired,
   thumbnailPreview: PropTypes.func.isRequired,
+  infoModalSidebar: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

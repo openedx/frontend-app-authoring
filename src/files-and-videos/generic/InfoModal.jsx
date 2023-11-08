@@ -12,18 +12,16 @@ import {
 
 import messages from './messages';
 import UsageMetricsMessages from './UsageMetricsMessage';
-import FileInfoAssetSidebar from './files-page/FileInfoAssetSidebar';
-import FileInfoVideoSidebar from './videos-page/info-sidebar/FileInfoVideoSidebar';
-import FileThumbnail from './FileThumbnail';
+import FileThumbnail from './ThumbnailPreview';
 
-const FileInfo = ({
+const InfoModal = ({
   file,
   isOpen,
   onClose,
-  handleLockedFile,
   thumbnailPreview,
   usagePathStatus,
   error,
+  sidebar,
 }) => (
   <ModalDialog
     title={file?.displayName}
@@ -58,11 +56,7 @@ const FileInfo = ({
           />
         </div>
         <div className="col-5">
-          {file?.wrapperType === 'video' ? (
-            <FileInfoVideoSidebar video={file} />
-          ) : (
-            <FileInfoAssetSidebar asset={file} handleLockedAsset={handleLockedFile} />
-          )}
+          {sidebar(file)}
         </div>
       </div>
       <div className="row m-0 pt-3 font-weight-bold">
@@ -73,7 +67,7 @@ const FileInfo = ({
   </ModalDialog>
 );
 
-FileInfo.propTypes = {
+InfoModal.propTypes = {
   file: PropTypes.shape({
     displayName: PropTypes.string.isRequired,
     wrapperType: PropTypes.string.isRequired,
@@ -89,14 +83,14 @@ FileInfo.propTypes = {
   }),
   onClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  handleLockedFile: PropTypes.func.isRequired,
   usagePathStatus: PropTypes.string.isRequired,
   error: PropTypes.arrayOf(PropTypes.string).isRequired,
   thumbnailPreview: PropTypes.func.isRequired,
+  sidebar: PropTypes.func.isRequired,
 };
 
-FileInfo.defaultProps = {
+InfoModal.defaultProps = {
   file: null,
 };
 
-export default injectIntl(FileInfo);
+export default injectIntl(InfoModal);

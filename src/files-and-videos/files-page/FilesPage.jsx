@@ -16,19 +16,22 @@ import {
   getUsagePaths,
   resetErrors,
   updateAssetOrder,
-} from '../data/thunks';
+} from './data/thunks';
 import messages from './messages';
-import FilesAndUploadsProvider from './FilesAndUploadsProvider';
+import FilesPageProvider from './FilesPageProvider';
 import getPageHeadTitle from '../../generic/utils';
-import FileTable from '../FileTable';
-import EditFileErrors from '../EditFileErrors';
-import { getFileSizeToClosestByte } from '../data/utils';
-import ThumbnailColumn from '../table-components/table-custom-columns/ThumbnailColumn';
-import ActiveColumn from '../table-components/table-custom-columns/ActiveColumn';
-import AccessColumn from '../table-components/table-custom-columns/AccessColumn';
-import AssetThumbnail from './AssetThumbnail';
+import {
+  AccessColumn,
+  ActiveColumn,
+  EditFileErrors,
+  FileTable,
+  ThumbnailColumn,
+} from '../generic';
+import { getFileSizeToClosestByte } from '../generic/utils';
+import FileThumbnail from './FileThumbnail';
+import FileInfoModalSidebar from './FileInfoModalSidebar';
 
-const FilesAndUploads = ({
+const FilesPage = ({
   courseId,
   // injected
   intl,
@@ -52,17 +55,24 @@ const FilesAndUploads = ({
     errors: errorMessages,
   } = useSelector(state => state.assets);
 
+  const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleAddFile = (file) => dispatch(addAssetFile(courseId, file, totalCount));
   const handleDeleteFile = (id) => dispatch(deleteAssetFile(courseId, id, totalCount));
   const handleDownloadFile = (selectedRows) => dispatch(fetchAssetDownload({ selectedRows, courseId }));
-  const handleLockFile = ({ fileId, locked }) => dispatch(updateAssetLock({ courseId, assetId: fileId, locked }));
+  const handleLockFile = (fileId, locked) => {
+    handleErrorReset({ errorType: 'lock' });
+    dispatch(updateAssetLock({ courseId, assetId: fileId, locked }));
+  };
   const handleUsagePaths = (asset) => dispatch(getUsagePaths({ asset, courseId }));
-  const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleFileOrder = ({ newFileIdOrder, sortType }) => {
     dispatch(updateAssetOrder(courseId, newFileIdOrder, sortType));
   };
 
-  const thumbnailPreview = (props) => AssetThumbnail(props);
+  const thumbnailPreview = (props) => FileThumbnail(props);
+  const infoModalSidebar = (asset) => FileInfoModalSidebar({
+    asset,
+    handleLockedAsset: handleLockFile,
+  });
 
   const assets = useModels('assets', assetIds);
   const data = {
@@ -141,7 +151,7 @@ const FilesAndUploads = ({
     );
   }
   return (
-    <FilesAndUploadsProvider courseId={courseId}>
+    <FilesPageProvider courseId={courseId}>
       <main>
         <div className="p-4">
           <EditFileErrors
@@ -169,18 +179,19 @@ const FilesAndUploads = ({
             tableColumns,
             maxFileSize,
             thumbnailPreview,
+            infoModalSidebar,
             files: assets,
           }}
         />
       </main>
-    </FilesAndUploadsProvider>
+    </FilesPageProvider>
   );
 };
 
-FilesAndUploads.propTypes = {
+FilesPage.propTypes = {
   courseId: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(FilesAndUploads);
+export default injectIntl(FilesPage);

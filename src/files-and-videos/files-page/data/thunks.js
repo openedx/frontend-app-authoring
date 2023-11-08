@@ -1,11 +1,11 @@
 import { isEmpty } from 'lodash';
-import { RequestStatus } from '../../data/constants';
+import { RequestStatus } from '../../../data/constants';
 import {
   addModel,
   addModels,
   removeModel,
   updateModel,
-} from '../../generic/model-store';
+} from '../../../generic/model-store';
 import {
   getAssets,
   getAssetUsagePaths,

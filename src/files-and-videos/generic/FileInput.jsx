@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getSupportedFormats } from './videos-page/data/utils';
+import { getSupportedFormats } from '../videos-page/data/utils';
 
 export const useFileInput = ({
   onAddFile,

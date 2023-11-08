@@ -9,20 +9,20 @@ import {
 } from '@edx/paragon';
 import { ClosedCaption } from '@edx/paragon/icons';
 import FileMenu from '../FileMenu';
-import FileThumbnail from '../FileThumbnail';
+import FileThumbnail from '../ThumbnailPreview';
 
 const GalleryCard = ({
   className,
   original,
   handleBulkDownload,
-  handleLockedFile,
+  handleLockFile,
   handleOpenDeleteConfirmation,
   handleOpenFileInfo,
   thumbnailPreview,
 }) => {
   const lockFile = () => {
     const { locked, id } = original;
-    handleLockedFile(id, !locked);
+    handleLockFile(id, !locked);
   };
 
   return (
@@ -99,7 +99,7 @@ GalleryCard.propTypes = {
     downloadLink: PropTypes.string,
   }).isRequired,
   handleBulkDownload: PropTypes.func.isRequired,
-  handleLockedFile: PropTypes.func.isRequired,
+  handleLockFile: PropTypes.func.isRequired,
   handleOpenDeleteConfirmation: PropTypes.func.isRequired,
   handleOpenFileInfo: PropTypes.func.isRequired,
   thumbnailPreview: PropTypes.func.isRequired,

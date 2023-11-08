@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Stack } from '@edx/paragon';
 import { injectIntl, FormattedDate, FormattedMessage } from '@edx/frontend-platform/i18n';
-import { getFileSizeToClosestByte } from '../../data/utils';
+import { getFileSizeToClosestByte } from '../../generic/utils';
 import { getFormattedDuration } from '../data/utils';
 import messages from './messages';
 

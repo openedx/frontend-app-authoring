@@ -1,25 +1,25 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
-export const VideosContext = React.createContext({});
+export const FilesPageContext = React.createContext({});
 
-const VideosProvider = ({ courseId, children }) => {
+const FilesPageProvider = ({ courseId, children }) => {
   const contextValue = useMemo(() => ({
     courseId,
-    path: `/course/${courseId}/videos`,
+    path: `/course/${courseId}/assets`,
   }), []);
   return (
-    <VideosContext.Provider
+    <FilesPageContext.Provider
       value={contextValue}
     >
       {children}
-    </VideosContext.Provider>
+    </FilesPageContext.Provider>
   );
 };
 
-VideosProvider.propTypes = {
+FilesPageProvider.propTypes = {
   courseId: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
 };
 
-export default VideosProvider;
+export default FilesPageProvider;
