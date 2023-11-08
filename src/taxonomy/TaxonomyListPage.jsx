@@ -11,7 +11,7 @@ import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import messages from './messages';
 import TaxonomyCard from './taxonomy-card';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './hooks';
+import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
 
 const TaxonomyListPage = () => {
   const intl = useIntl();

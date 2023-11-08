@@ -72,17 +72,14 @@ const TaxonomyCard = ({ className, original }) => {
   const intl = useIntl();
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
-  const onClickMenuItem = (menuName) => {
-    switch (menuName) {
-    // Add here more menu items
-    case 'export':
-      setIsExportModalOpen(true);
-      break;
-    /* istanbul ignore next */
-    default:
-      break;
-    }
+  // Add here more menu item actions
+  const menuItemActions = {
+    export: () => setIsExportModalOpen(true),
   };
+
+  const onClickMenuItem = (menuName) => (
+    menuItemActions[menuName]?.()
+  );
 
   const getHeaderActions = () => {
     if (systemDefined) {

@@ -6,7 +6,7 @@ import { render, fireEvent } from '@testing-library/react';
 import PropTypes from 'prop-types';
 
 import initializeStore from '../../store';
-import exportTaxonomy from '../data/thunks';
+import { getTaxonomyExportFile } from '../data/api';
 import TaxonomyCard from '.';
 
 let store;
@@ -18,9 +18,8 @@ const data = {
   description: 'This is a description',
 };
 
-jest.mock('../data/thunks', () => ({
-  __esModule: true,
-  default: jest.fn(),
+jest.mock('../data/api', () => ({
+  getTaxonomyExportFile: jest.fn(),
 }));
 
 const TaxonomyCardComponent = ({ original }) => (
@@ -141,6 +140,6 @@ describe('<TaxonomyCard />', async () => {
 
     // Modal closed
     expect(() => getByText('Select format to export')).toThrow();
-    expect(exportTaxonomy).toHaveBeenCalledWith(taxonomyId, 'json');
+    expect(getTaxonomyExportFile).toHaveBeenCalledWith(taxonomyId, 'json');
   });
 });

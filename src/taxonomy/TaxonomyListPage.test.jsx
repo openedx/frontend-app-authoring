@@ -7,11 +7,11 @@ import { act, render } from '@testing-library/react';
 import initializeStore from '../store';
 
 import TaxonomyListPage from './TaxonomyListPage';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './hooks';
+import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
 
 let store;
 
-jest.mock('./hooks', () => ({
+jest.mock('./data/apiHooks', () => ({
   useTaxonomyListDataResponse: jest.fn(),
   useIsTaxonomyListDataLoaded: jest.fn(),
 }));

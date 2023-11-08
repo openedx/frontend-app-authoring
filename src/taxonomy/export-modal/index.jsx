@@ -8,7 +8,7 @@ import {
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import exportTaxonomy from '../data/thunks';
+import { getTaxonomyExportFile } from '../data/api';
 
 const ExportModal = ({
   taxonomyId,
@@ -20,7 +20,7 @@ const ExportModal = ({
 
   const onClickExport = () => {
     onClose();
-    exportTaxonomy(taxonomyId, outputFormat);
+    getTaxonomyExportFile(taxonomyId, outputFormat);
   };
 
   return (

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
   useTaxonomyListDataResponse,
   useIsTaxonomyListDataLoaded,
-} from './hooks';
+} from './apiHooks';
 
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(),
@@ -43,12 +43,3 @@ describe('useIsTaxonomyListDataLoaded', () => {
     expect(result).toBe(false);
   });
 });
-
-/* describe('callExportTaxonomy', () => {
-  it('should trigger exportTaxonomy', () => {
-    callExportTaxonomy(1, 'csv');
-
-    expect(exportTaxonomy).toHaveBeenCalled();
-  });
-});
-*/
