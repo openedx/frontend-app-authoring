@@ -1,7 +1,8 @@
 import messages from '../messages';
 import { importNewTaxonomy } from './api';
 
-const importTaxonomy = async (intl) => {
+// eslint-disable-next-line import/prefer-default-export
+export const importTaxonomy = async (intl) => {
   /*
     * This function is a temporary "Barebones" implementation of the import
     * functionality with `prompt` and `alert`. It is intended to be replaced
@@ -78,8 +79,4 @@ const importTaxonomy = async (intl) => {
       alert(intl.formatMessage(messages.importTaxonomyError));
       console.error(error.response);
     });
-};
-
-export default {
-  importTaxonomy,
 };

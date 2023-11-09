@@ -8,12 +8,17 @@ import initializeStore from '../store';
 
 import TaxonomyListPage from './TaxonomyListPage';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './api/hooks/selectors';
+import { importTaxonomy } from './import-tags/data/actions';
 
 let store;
 
 jest.mock('./api/hooks/selectors', () => ({
   useTaxonomyListDataResponse: jest.fn(),
   useIsTaxonomyListDataLoaded: jest.fn(),
+}));
+
+jest.mock('./import-tags/data/actions', () => ({
+  importTaxonomy: jest.fn(),
 }));
 
 const RootWrapper = () => (
@@ -63,6 +68,24 @@ describe('<TaxonomyListPage />', async () => {
     await act(async () => {
       const { getByTestId } = render(<RootWrapper />);
       expect(getByTestId('taxonomy-card-1')).toBeInTheDocument();
+    });
+  });
+
+  it('calls the import taxonomy action when the import button is clicked', async () => {
+    useIsTaxonomyListDataLoaded.mockReturnValue(true);
+    useTaxonomyListDataResponse.mockReturnValue({
+      results: [{
+        id: 1,
+        name: 'Taxonomy',
+        description: 'This is a description',
+      }],
+    });
+    await act(async () => {
+      const { getByTestId } = render(<RootWrapper />);
+      const importButton = getByTestId('taxonomy-import-button');
+      expect(importButton).toBeInTheDocument();
+      importButton.click();
+      expect(importTaxonomy).toHaveBeenCalled();
     });
   });
 });

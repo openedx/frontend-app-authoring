@@ -26,7 +26,11 @@ const TaxonomyListHeaderButtons = () => {
       <Button variant="outline-primary" disabled>
         {intl.formatMessage(messages.downloadTemplateButtonLabel)}
       </Button>
-      <Button iconBefore={Add} onClick={() => importActions.importTaxonomy(intl)}>
+      <Button
+        iconBefore={Add}
+        onClick={() => importActions.importTaxonomy(intl)}
+        data-testid="taxonomy-import-button"
+      >
         {intl.formatMessage(messages.importButtonLabel)}
       </Button>
     </>
