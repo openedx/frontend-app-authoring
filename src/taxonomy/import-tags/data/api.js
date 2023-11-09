@@ -4,7 +4,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-const getTaxonomyImportApiUrl = () => new URL(
+export const getTaxonomyImportApiUrl = () => new URL(
   'api/content_tagging/v1/taxonomies/import/',
   getApiBaseUrl(),
 ).href;
@@ -15,7 +15,7 @@ const getTaxonomyImportApiUrl = () => new URL(
  * @param {string} taxonomyDescription
  * @param {File} file
  * @returns {Promise<Object>}
- */ // eslint-disable-next-line import/prefer-default-export
+ */
 export async function importNewTaxonomy(taxonomyName, taxonomyDescription, file) {
   const formData = new FormData();
   formData.append('taxonomy_name', taxonomyName);

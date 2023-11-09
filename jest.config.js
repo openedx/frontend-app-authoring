@@ -14,4 +14,5 @@ module.exports = createConfig('jest', {
   moduleNameMapper: {
     '^lodash-es$': 'lodash',
   },
+  modulePathIgnorePatterns: ["<rootDir>/.*/__mocks__"],
 });
