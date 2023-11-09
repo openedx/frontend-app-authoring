@@ -95,7 +95,7 @@ const messages = defineMessages({
   },
   sortButtonLabel: {
     id: 'course-authoring.files-and-uploads.sortButton.label',
-    defaultMessage: 'Sort',
+    defaultMessage: 'Sort and Filter',
   },
   sortModalTitleLabel: {
     id: 'course-authoring.files-and-uploads.sortModal.title',

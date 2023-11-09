@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
 import { CheckboxFilter } from '@edx/paragon';
@@ -87,12 +88,24 @@ const FilesPage = ({
   const activeColumn = {
     id: 'usageLocations',
     Header: 'Active',
+    accessor: (({ usageLocations }) => !isEmpty(usageLocations)),
     Cell: ({ row }) => ActiveColumn({ row }),
+    Filter: CheckboxFilter,
+    filterChoices: [
+      { name: intl.formatMessage(messages.activeCheckboxLabel), value: true },
+      { name: intl.formatMessage(messages.inactiveCheckboxLabel), value: false },
+    ],
   };
   const accessColumn = {
     id: 'locked',
     Header: 'Access',
+    accessor: 'locked',
     Cell: ({ row }) => AccessColumn({ row }),
+    Filter: CheckboxFilter,
+    filterChoices: [
+      { name: intl.formatMessage(messages.lockedCheckboxLabel), value: true },
+      { name: intl.formatMessage(messages.publicCheckboxLabel), value: false },
+    ],
   };
   const thumbnailColumn = {
     id: 'thumbnail',
@@ -102,6 +115,7 @@ const FilesPage = ({
   const fileSizeColumn = {
     id: 'fileSize',
     Header: 'File size',
+    accessor: 'fileSize',
     Cell: ({ row }) => {
       const { fileSize } = row.original;
       return getFileSizeToClosestByte(fileSize);
@@ -122,20 +136,24 @@ const FilesPage = ({
       filter: 'includesValue',
       filterChoices: [
         {
-          name: 'Code',
+          name: intl.formatMessage(messages.codeCheckboxLabel),
           value: 'code',
         },
         {
-          name: 'Images',
+          name: intl.formatMessage(messages.imageCheckboxLabel),
           value: 'image',
         },
         {
-          name: 'Documents',
+          name: intl.formatMessage(messages.documentCheckboxLabel),
           value: 'document',
         },
         {
-          name: 'Audio',
+          name: intl.formatMessage(messages.audioCheckboxLabel),
           value: 'audio',
+        },
+        {
+          name: intl.formatMessage(messages.otherCheckboxLabel),
+          value: 'other',
         },
       ],
     },

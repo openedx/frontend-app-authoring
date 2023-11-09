@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   injectIntl,
@@ -10,6 +11,7 @@ import {
   useToggle,
   ActionRow,
   Button,
+  CheckboxFilter,
 } from '@edx/paragon';
 import Placeholder from '@edx/frontend-lib-content-components';
 
@@ -111,20 +113,33 @@ const VideosPage = ({
   const transcriptColumn = {
     id: 'transcripts',
     Header: 'Transcript',
+    accessor: (({ transcripts }) => !isEmpty(transcripts)),
     Cell: ({ row }) => {
       const { transcripts } = row.original;
       const numOfTranscripts = transcripts?.length;
       return numOfTranscripts > 0 ? `(${numOfTranscripts}) available` : null;
     },
+    Filter: CheckboxFilter,
+    filterChoices: [
+      { name: intl.formatMessage(messages.transcribedCheckboxLabel), value: true },
+      { name: intl.formatMessage(messages.notTranscribedCheckboxLabel), value: false },
+    ],
   };
   const activeColumn = {
     id: 'usageLocations',
     Header: 'Active',
+    accessor: (({ usageLocations }) => !isEmpty(usageLocations)),
     Cell: ({ row }) => ActiveColumn({ row }),
+    Filter: CheckboxFilter,
+    filterChoices: [
+      { name: intl.formatMessage(messages.activeCheckboxLabel), value: true },
+      { name: intl.formatMessage(messages.inactiveCheckboxLabel), value: false },
+    ],
   };
   const durationColumn = {
     id: 'duration',
     Header: 'Video length',
+    accessor: 'duration',
     Cell: ({ row }) => {
       const { duration } = row.original;
       return getFormattedDuration(duration);
@@ -134,6 +149,8 @@ const VideosPage = ({
     id: 'status',
     Header: '',
     Cell: ({ row }) => StatusColumn({ row }),
+    Filter: CheckboxFilter,
+    filterChoices: [{ name: intl.formatMessage(messages.processingCheckboxLabel), value: 'Processing' }],
   };
   const videoThumbnailColumn = {
     id: 'courseVideoImageUrl',
