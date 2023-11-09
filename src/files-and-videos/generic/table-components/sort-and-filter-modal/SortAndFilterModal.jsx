@@ -70,7 +70,7 @@ const SortAndFilterModal = ({
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
-        <div className="h4">
+        <div className="h4 mb-4">
           <FormattedMessage {...messages.sortByHeader} />
         </div>
         <SelectableBox.Set
@@ -80,6 +80,7 @@ const SortAndFilterModal = ({
           name="sort options"
           columns={3}
           ariaLabel="sort by selection"
+          className="mb-4.5"
         >
           <SelectableBox
             className="text-center"
@@ -131,7 +132,7 @@ const SortAndFilterModal = ({
           </SelectableBox>
         </SelectableBox.Set>
         <hr />
-        <div className="h4">
+        <div className="h4 my-4">
           <FormattedMessage {...messages.filterByHeader} />
         </div>
         <Form.Group>
