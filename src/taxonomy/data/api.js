@@ -2,7 +2,7 @@
 import { getConfig } from '@edx/frontend-platform';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-const getTaxonomyTemplateApiUrl = (format) => new URL(
+export const getTaxonomyTemplateApiUrl = (format) => new URL(
   `api/content_tagging/v1/taxonomies/import/template.${format}`,
   getApiBaseUrl(),
 ).href;
