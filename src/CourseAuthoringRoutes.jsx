@@ -1,10 +1,11 @@
 import React from 'react';
-import { Routes, Route, useParams } from 'react-router-dom';
+import {
+  Navigate, Routes, Route, useParams,
+} from 'react-router-dom';
 import { PageWrap } from '@edx/frontend-platform/react';
 import Placeholder from '@edx/frontend-lib-content-components';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';
-import ProctoredExamSettings from './proctored-exam-settings/ProctoredExamSettings';
 import EditorContainer from './editors/EditorContainer';
 import VideoSelectorContainer from './selectors/VideoSelectorContainer';
 import CustomPages from './custom-pages';
@@ -61,7 +62,7 @@ const CourseAuthoringRoutes = () => {
         />
         <Route
           path="proctored-exam-settings"
-          element={<PageWrap><ProctoredExamSettings courseId={courseId} /></PageWrap>}
+          element={<Navigate replace to={`/course/${courseId}/pages-and-resources`} />}
         />
         <Route
           path="custom-pages/*"
