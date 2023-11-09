@@ -1,14 +1,15 @@
 import { importTaxonomy } from './actions';
-
-jest.mock('./api', () => ({
-  importNewTaxonomy: jest.fn().mockResolvedValue({}),
-}));
+import { importNewTaxonomy } from './api';
 
 const mockAddEventListener = jest.fn();
 
 const intl = {
-  formatMessage: jest.fn(),
+  formatMessage: jest.fn().mockImplementation((message) => message.defaultMessage),
 };
+
+jest.mock('./api', () => ({
+  importNewTaxonomy: jest.fn().mockResolvedValue({}),
+}));
 
 describe('import taxonomy actions', () => {
   let createElement;
@@ -41,13 +42,16 @@ describe('import taxonomy actions', () => {
     document.body.removeChild = removeChild;
   });
 
-  it('should call the api', async () => {
+  it('should call the api and show success alert', async () => {
     jest.spyOn(window, 'prompt')
       .mockReturnValueOnce('test taxonomy name')
       .mockReturnValueOnce('test taxonomy description');
     jest.spyOn(window, 'alert').mockImplementation(() => {});
 
-    importTaxonomy(intl).then();
+    const promise = importTaxonomy(intl).then(() => {
+      expect(importNewTaxonomy).toHaveBeenCalledWith('test taxonomy name', 'test taxonomy description', 'mockFile');
+      expect(window.alert).toHaveBeenCalledWith('Taxonomy imported successfully');
+    });
 
     // Capture the onChange handler from the file input element
     const onChange = mockAddEventListener.mock.calls[0][1];
@@ -60,10 +64,39 @@ describe('import taxonomy actions', () => {
     };
 
     onChange(mockTarget);
+
+    return promise;
+  });
+
+  it('should call the api and return error alert', async () => {
+    jest.spyOn(window, 'prompt')
+      .mockReturnValueOnce('test taxonomy name')
+      .mockReturnValueOnce('test taxonomy description');
+    importNewTaxonomy.mockRejectedValue(new Error('test error'));
+
+    const promise = importTaxonomy(intl).then(() => {
+      expect(importNewTaxonomy).toHaveBeenCalledWith('test taxonomy name', 'test taxonomy description', 'mockFile');
+    });
+
+    // Capture the onChange handler from the file input element
+    const onChange = mockAddEventListener.mock.calls[0][1];
+    const mockTarget = {
+      target: {
+        files: [
+          'mockFile',
+        ],
+      },
+    };
+
+    onChange(mockTarget);
+
+    return promise;
   });
 
   it('should abort the call to the api without file', async () => {
-    importTaxonomy(intl).then();
+    const promise = importTaxonomy(intl).then(() => {
+      expect(importNewTaxonomy).not.toHaveBeenCalled();
+    });
 
     // Capture the onChange handler from the file input element
     const onChange = mockAddEventListener.mock.calls[0][1];
@@ -74,12 +107,15 @@ describe('import taxonomy actions', () => {
     };
 
     onChange(mockTarget);
+    return promise;
   });
 
-  it('should abort the call to the api without name', async () => {
+  it('should abort the call to the api when cancel name prompt', async () => {
     jest.spyOn(window, 'prompt').mockReturnValueOnce(null);
 
-    importTaxonomy(intl).then();
+    const promise = importTaxonomy(intl).then(() => {
+      expect(importNewTaxonomy).not.toHaveBeenCalled();
+    });
 
     // Capture the onChange handler from the file input element
     const onChange = mockAddEventListener.mock.calls[0][1];
@@ -92,5 +128,30 @@ describe('import taxonomy actions', () => {
     };
 
     onChange(mockTarget);
+
+    return promise;
+  });
+
+  it('should abort the call to the api when cancel description prompt', async () => {
+    jest.spyOn(window, 'prompt')
+      .mockReturnValueOnce('test taxonomy name')
+      .mockReturnValueOnce(null);
+
+    const promise = importTaxonomy(intl).then(() => {
+      expect(importNewTaxonomy).not.toHaveBeenCalled();
+    });
+
+    // Capture the onChange handler from the file input element
+    const onChange = mockAddEventListener.mock.calls[0][1];
+    const mockTarget = {
+      target: {
+        files: [
+          'mockFile',
+        ],
+      },
+    };
+
+    onChange(mockTarget);
+    return promise;
   });
 });
