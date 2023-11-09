@@ -1,11 +1,10 @@
-import React from 'react';
-import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
+import React from 'react'; import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { act, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 
 import initializeStore from '../store';
-
+import { getTaxonomyTemplateFile } from './data/api';
 import TaxonomyListPage from './TaxonomyListPage';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './api/hooks/selectors';
 
@@ -14,6 +13,10 @@ let store;
 jest.mock('./api/hooks/selectors', () => ({
   useTaxonomyListDataResponse: jest.fn(),
   useIsTaxonomyListDataLoaded: jest.fn(),
+}));
+
+jest.mock('./data/api', () => ({
+  getTaxonomyTemplateFile: jest.fn(),
 }));
 
 const RootWrapper = () => (
@@ -63,6 +66,48 @@ describe('<TaxonomyListPage />', async () => {
     await act(async () => {
       const { getByTestId } = render(<RootWrapper />);
       expect(getByTestId('taxonomy-card-1')).toBeInTheDocument();
+    });
+  });
+
+  it('downloads the taxonomy template csv', async () => {
+    useIsTaxonomyListDataLoaded.mockReturnValue(true);
+    useTaxonomyListDataResponse.mockReturnValue({
+      results: [{
+        id: 1,
+        name: 'Taxonomy',
+        description: 'This is a description',
+      }],
+    });
+    await act(async () => {
+      const { getByTestId } = render(<RootWrapper />);
+      const importMenu = getByTestId('taxonomy-download-template');
+      expect(importMenu).toBeInTheDocument();
+      fireEvent.click(importMenu);
+      const importButton = getByTestId('taxonomy-download-template-csv');
+      expect(importButton).toBeInTheDocument();
+      fireEvent.click(importButton);
+      expect(getTaxonomyTemplateFile).toHaveBeenCalled();
+    });
+  });
+
+  it('downloads the taxonomy template json', async () => {
+    useIsTaxonomyListDataLoaded.mockReturnValue(true);
+    useTaxonomyListDataResponse.mockReturnValue({
+      results: [{
+        id: 1,
+        name: 'Taxonomy',
+        description: 'This is a description',
+      }],
+    });
+    await act(async () => {
+      const { getByTestId } = render(<RootWrapper />);
+      const importMenu = getByTestId('taxonomy-download-template');
+      expect(importMenu).toBeInTheDocument();
+      fireEvent.click(importMenu);
+      const importButton = getByTestId('taxonomy-download-template-json');
+      expect(importButton).toBeInTheDocument();
+      fireEvent.click(importButton);
+      expect(getTaxonomyTemplateFile).toHaveBeenCalled();
     });
   });
 });

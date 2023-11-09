@@ -5,7 +5,6 @@ import {
   Container,
   DataTable,
   Dropdown,
-  DropdownButton,
   OverlayTrigger,
   Spinner,
   Tooltip,
@@ -35,17 +34,26 @@ const TaxonomyListHeaderButtons = () => {
           </Tooltip>
         )}
       >
-        <DropdownButton
-          variant="outline-primary"
-          title={intl.formatMessage(messages.downloadTemplateButtonLabel)}
-        >
-          <Dropdown.Item onClick={() => getTaxonomyTemplateFile('csv')}>
+        <Dropdown>
+          <Dropdown.Toggle
+            variant="outline-primary"
+            data-testid="taxonomy-download-template"
+          >
+            {intl.formatMessage(messages.downloadTemplateButtonLabel)}
+          </Dropdown.Toggle>
+          <Dropdown.Item
+            onClick={() => getTaxonomyTemplateFile('csv')}
+            data-testid="taxonomy-download-template-csv"
+          >
             {intl.formatMessage(messages.downloadTemplateButtonCSVLabel)}
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => getTaxonomyTemplateFile('json')}>
+          <Dropdown.Item
+            onClick={() => getTaxonomyTemplateFile('json')}
+            data-testid="taxonomy-download-template-json"
+          >
             {intl.formatMessage(messages.downloadTemplateButtonJSONLabel)}
           </Dropdown.Item>
-        </DropdownButton>
+        </Dropdown>
       </OverlayTrigger>
       <Button iconBefore={Add} disabled>
         {intl.formatMessage(messages.importButtonLabel)}
