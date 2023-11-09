@@ -1,17 +1,37 @@
 import React from 'react';
 import {
+  Button,
   CardView,
   Container,
   DataTable,
   Spinner,
 } from '@edx/paragon';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import {
+  Add,
+} from '@edx/paragon/icons';
+import { injectIntl, intlShape, useIntl } from '@edx/frontend-platform/i18n';
 import { StudioFooter } from '@edx/frontend-component-footer';
+
 import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
+import { actions as importActions } from './import-tags';
 import messages from './messages';
 import TaxonomyCard from './TaxonomyCard';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './api/hooks/selectors';
+
+const TaxonomyListHeaderButtons = () => {
+  const intl = useIntl();
+  return (
+    <>
+      <Button variant="outline-primary" disabled>
+        {intl.formatMessage(messages.downloadTemplateButtonLabel)}
+      </Button>
+      <Button iconBefore={Add} onClick={() => importActions.importTaxonomy(intl)}>
+        {intl.formatMessage(messages.importButtonLabel)}
+      </Button>
+    </>
+  );
+};
 
 const TaxonomyListPage = ({ intl }) => {
   const useTaxonomyListData = () => {
@@ -21,12 +41,6 @@ const TaxonomyListPage = ({ intl }) => {
   };
 
   const { taxonomyListData, isLoaded } = useTaxonomyListData();
-
-  const getHeaderButtons = () => (
-    // Download template and import buttons.
-    // TODO Add functionality to this buttons.
-    undefined
-  );
 
   const getOrgSelect = () => (
     // Organization select component
@@ -49,7 +63,7 @@ const TaxonomyListPage = ({ intl }) => {
           <SubHeader
             title={intl.formatMessage(messages.headerTitle)}
             titleActions={getOrgSelect()}
-            headerActions={getHeaderButtons()}
+            headerActions={<TaxonomyListHeaderButtons />}
             hideBorder
           />
         </Container>
