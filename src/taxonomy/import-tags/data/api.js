@@ -22,7 +22,10 @@ export async function importNewTaxonomy(taxonomyName, taxonomyDescription, file)
   formData.append('taxonomy_description', taxonomyDescription);
   formData.append('file', file);
 
-  const { data } = await getAuthenticatedHttpClient().post(getTaxonomyImportApiUrl(), formData);
+  const { data } = await getAuthenticatedHttpClient().post(
+    getTaxonomyImportApiUrl(),
+    formData,
+  );
 
   return camelCaseObject(data);
 }
