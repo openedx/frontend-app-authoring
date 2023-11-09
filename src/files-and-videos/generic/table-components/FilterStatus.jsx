@@ -1,46 +1,57 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { DataTableContext, Button } from '@edx/paragon';
+import {
+  DataTableContext, Button, Row, Chip,
+} from '@edx/paragon';
+import { Close } from '@edx/paragon/icons';
+import { getCurrentViewRange, getFilters, removeFilter } from './utils';
 
 const FilterStatus = ({
   className, variant, size, clearFiltersText, buttonClassName,
 }) => {
   const {
-    setAllFilters, RowStatusComponent, page, rows,
+    state, setAllFilters, setFilter, filteredRows, columns,
   } = useContext(DataTableContext);
+
   if (!setAllFilters) {
     return null;
   }
 
-  const RowStatus = RowStatusComponent;
-
-  const pageSize = page?.length || rows?.length;
+  const filters = getFilters(state, columns);
 
   return (
     <div className={className}>
-      <div className="pl-1">
-        <span>Filters applied</span>
-        {!!pageSize && ' ('}
-        <RowStatus className="d-inline" />
-        {!!pageSize && ')'}
+      <div>
+        <span>{getCurrentViewRange(filteredRows.length)}</span>
       </div>
-      <Button
-        className={buttonClassName}
-        variant={variant}
-        size={size}
-        onClick={() => setAllFilters([])}
-      >
-        {clearFiltersText === undefined
-          ? (
-            <FormattedMessage
-              id="pgn.DataTable.FilterStatus.clearFiltersText"
-              defaultMessage="Clear filters"
-              description="A text that appears on the `Clear filters` button"
-            />
-          )
-          : clearFiltersText}
-      </Button>
+      <Row className="m-0 align-items-center">
+        <span className="mr-2">Filters applied</span>
+        {filters.map(({ name, value }) => (
+          <Chip
+            iconAfter={Close}
+            onIconAfterClick={() => removeFilter(value, setFilter, setAllFilters, state)}
+          >
+            {name}
+          </Chip>
+        ))}
+        <Button
+          className={buttonClassName}
+          variant={variant}
+          size={size}
+          onClick={() => setAllFilters([])}
+        >
+          {clearFiltersText === undefined
+            ? (
+              <FormattedMessage
+                id="pgn.DataTable.FilterStatus.clearFiltersText"
+                defaultMessage="Clear filters"
+                description="A text that appears on the `Clear filters` button"
+              />
+            )
+            : clearFiltersText}
+        </Button>
+      </Row>
     </div>
   );
 };
