@@ -1,17 +1,58 @@
 import React from 'react';
 import {
+  Button,
   CardView,
   Container,
   DataTable,
+  Dropdown,
+  DropdownButton,
+  OverlayTrigger,
   Spinner,
+  Tooltip,
 } from '@edx/paragon';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import {
+  Add,
+} from '@edx/paragon/icons';
+import { injectIntl, intlShape, useIntl } from '@edx/frontend-platform/i18n';
 import { StudioFooter } from '@edx/frontend-component-footer';
+
+import { getTaxonomyTemplateFile } from './data/api';
 import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import messages from './messages';
 import TaxonomyCard from './TaxonomyCard';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './api/hooks/selectors';
+
+const TaxonomyListHeaderButtons = () => {
+  const intl = useIntl();
+  return (
+    <>
+      <OverlayTrigger
+        placement="top"
+        overlay={(
+          <Tooltip>
+            {intl.formatMessage(messages.downloadTemplateButtonHint)}
+          </Tooltip>
+        )}
+      >
+        <DropdownButton
+          variant="outline-primary"
+          title={intl.formatMessage(messages.downloadTemplateButtonLabel)}
+        >
+          <Dropdown.Item onClick={() => getTaxonomyTemplateFile('csv')}>
+            {intl.formatMessage(messages.downloadTemplateButtonCSVLabel)}
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => getTaxonomyTemplateFile('json')}>
+            {intl.formatMessage(messages.downloadTemplateButtonJSONLabel)}
+          </Dropdown.Item>
+        </DropdownButton>
+      </OverlayTrigger>
+      <Button iconBefore={Add} disabled>
+        {intl.formatMessage(messages.importButtonLabel)}
+      </Button>
+    </>
+  );
+};
 
 const TaxonomyListPage = ({ intl }) => {
   const useTaxonomyListData = () => {
@@ -21,12 +62,6 @@ const TaxonomyListPage = ({ intl }) => {
   };
 
   const { taxonomyListData, isLoaded } = useTaxonomyListData();
-
-  const getHeaderButtons = () => (
-    // Download template and import buttons.
-    // TODO Add functionality to this buttons.
-    undefined
-  );
 
   const getOrgSelect = () => (
     // Organization select component
@@ -49,7 +84,7 @@ const TaxonomyListPage = ({ intl }) => {
           <SubHeader
             title={intl.formatMessage(messages.headerTitle)}
             titleActions={getOrgSelect()}
-            headerActions={getHeaderButtons()}
+            headerActions={<TaxonomyListHeaderButtons />}
             hideBorder
           />
         </Container>
