@@ -30,7 +30,7 @@ describe('import taxonomy api calls', () => {
 
   it('should call import taxonomy', async () => {
     axiosMock.onPost(getTaxonomyImportApiUrl()).reply(201, taxonomyImportMock);
-    const result = await importNewTaxonomy('Taxonomy name', 'Taxonomy description', file);
+    const result = await importNewTaxonomy('Taxonomy name', 'Taxonomy description');
 
     expect(axiosMock.history.post[0].url).toEqual(getTaxonomyImportApiUrl());
     expect(result).toEqual(taxonomyImportMock);
