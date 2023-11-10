@@ -8,7 +8,7 @@ import initializeStore from '../store';
 
 import TaxonomyListPage from './TaxonomyListPage';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './api/hooks/selectors';
-import { importTaxonomy } from './import-tags/data/actions';
+import { importTaxonomy } from './import-tags/data/utils';
 
 let store;
 
@@ -17,7 +17,7 @@ jest.mock('./api/hooks/selectors', () => ({
   useIsTaxonomyListDataLoaded: jest.fn(),
 }));
 
-jest.mock('./import-tags/data/actions', () => ({
+jest.mock('./import-tags/data/utils', () => ({
   importTaxonomy: jest.fn(),
 }));
 

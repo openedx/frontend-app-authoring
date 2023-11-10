@@ -14,7 +14,7 @@ import { StudioFooter } from '@edx/frontend-component-footer';
 
 import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
-import { actions as importActions } from './import-tags';
+import { importTaxonomy } from './import-tags';
 import messages from './messages';
 import TaxonomyCard from './TaxonomyCard';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './api/hooks/selectors';
@@ -28,7 +28,7 @@ const TaxonomyListHeaderButtons = () => {
       </Button>
       <Button
         iconBefore={Add}
-        onClick={() => importActions.importTaxonomy(intl)}
+        onClick={() => importTaxonomy(intl)}
         data-testid="taxonomy-import-button"
       >
         {intl.formatMessage(messages.importButtonLabel)}

@@ -1,4 +1,4 @@
-import { importTaxonomy } from './actions';
+import { importTaxonomy } from './utils';
 import { importNewTaxonomy } from './api';
 
 const mockAddEventListener = jest.fn();
@@ -11,7 +11,7 @@ jest.mock('./api', () => ({
   importNewTaxonomy: jest.fn().mockResolvedValue({}),
 }));
 
-describe('import taxonomy actions', () => {
+describe('import taxonomy functions', () => {
   let createElement;
   let appendChild;
   let removeChild;

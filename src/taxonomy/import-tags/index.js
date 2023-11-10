@@ -1,5 +1,5 @@
-import * as actions from './data/actions';
+import { importTaxonomy } from './data/utils';
 
 export {
-  actions, // eslint-disable-line import/prefer-default-export
+  importTaxonomy, // eslint-disable-line import/prefer-default-export
 };
