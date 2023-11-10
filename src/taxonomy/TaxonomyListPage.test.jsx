@@ -78,16 +78,19 @@ describe('<TaxonomyListPage />', async () => {
         description: 'This is a description',
       }],
     });
+    const { getByTestId } = render(<RootWrapper />);
+    const importMenu = getByTestId('taxonomy-download-template');
+    expect(importMenu).toBeInTheDocument();
     await act(async () => {
-      const { getByTestId } = render(<RootWrapper />);
-      const importMenu = getByTestId('taxonomy-download-template');
-      expect(importMenu).toBeInTheDocument();
       fireEvent.click(importMenu);
-      const importButton = getByTestId('taxonomy-download-template-csv');
-      expect(importButton).toBeInTheDocument();
-      fireEvent.click(importButton);
-      expect(getTaxonomyTemplateFile).toHaveBeenCalled();
     });
+
+    const importButton = getByTestId('taxonomy-download-template-csv');
+    expect(importButton).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(importButton);
+    });
+    expect(getTaxonomyTemplateFile).toHaveBeenCalled();
   });
 
   it('downloads the taxonomy template json', async () => {
@@ -99,15 +102,18 @@ describe('<TaxonomyListPage />', async () => {
         description: 'This is a description',
       }],
     });
+    const { getByTestId } = render(<RootWrapper />);
+    const importMenu = getByTestId('taxonomy-download-template');
+    expect(importMenu).toBeInTheDocument();
     await act(async () => {
-      const { getByTestId } = render(<RootWrapper />);
-      const importMenu = getByTestId('taxonomy-download-template');
-      expect(importMenu).toBeInTheDocument();
       fireEvent.click(importMenu);
-      const importButton = getByTestId('taxonomy-download-template-json');
-      expect(importButton).toBeInTheDocument();
-      fireEvent.click(importButton);
-      expect(getTaxonomyTemplateFile).toHaveBeenCalled();
     });
+
+    const importButton = getByTestId('taxonomy-download-template-json');
+    expect(importButton).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(importButton);
+    });
+    expect(getTaxonomyTemplateFile).toHaveBeenCalled();
   });
 });
