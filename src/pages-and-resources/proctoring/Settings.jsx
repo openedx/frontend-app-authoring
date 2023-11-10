@@ -235,7 +235,7 @@ const ProctoringSettings = ({ intl, onClose }) => {
     );
   }
 
-  const learnMoreLink = appInfo.documentationLinks?.learnMoreConfiguration && (
+  const learnMoreLink = appInfo?.documentationLinks?.learnMoreConfiguration && (
     <Hyperlink
       className="text-primary-500"
       destination={appInfo.documentationLinks.learnMoreConfiguration}
