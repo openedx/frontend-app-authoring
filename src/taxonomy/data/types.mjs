@@ -1,6 +1,6 @@
 // @ts-check
 
-/** 
+/**
  * @typedef {Object} TaxonomyData
  * @property {number} id
  * @property {string} name
@@ -25,6 +25,13 @@
 /**
  * @typedef {Object} QueryTaxonomyListData
  * @property {TaxonomyListData} data
+ */
+
+/**
+ * @typedef {Object} ExportRequestParams
+ * @property {number} pk
+ * @property {string} format
+ * @property {string} name
  */
 
 /**

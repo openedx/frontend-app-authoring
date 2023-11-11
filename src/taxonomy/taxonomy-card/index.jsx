@@ -6,6 +6,7 @@ import {
   Popover,
 } from '@edx/paragon';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
@@ -110,7 +111,13 @@ const TaxonomyCard = ({ className, original }) => {
 
   return (
     <>
-      <Card className={classNames('taxonomy-card', className)} data-testid={`taxonomy-card-${id}`}>
+      <Card
+        isClickable
+        as={Link}
+        to={`${id}`}
+        className={classNames('taxonomy-card', className)}
+        data-testid={`taxonomy-card-${id}`}
+      >
         <Card.Header
           title={name}
           subtitle={(

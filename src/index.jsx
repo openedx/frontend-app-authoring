@@ -22,7 +22,7 @@ import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
 import { StudioHome } from './studio-home';
 import CourseRerun from './course-rerun';
-import { TaxonomyListPage } from './taxonomy';
+import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
@@ -53,10 +53,10 @@ const App = () => {
           <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
           <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
           {process.env.ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
-            <Route
-              path="/taxonomy-list"
-              element={<TaxonomyListPage />}
-            />
+            <Route path="/taxonomy-list" element={<TaxonomyLayout />}>
+              <Route index element={<TaxonomyListPage />} />
+              <Route path="/taxonomy-list/:taxonomyId" element={<TaxonomyDetailPage />} />
+            </Route>
           )}
         </Routes>
       </QueryClientProvider>

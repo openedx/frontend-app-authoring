@@ -18,7 +18,8 @@ const TaxonomyCardMenu = ({
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const [menuTarget, setMenuTarget] = useState(null);
 
-  const onClickItem = (menuName) => {
+  const onClickItem = (e, menuName) => {
+    e.preventDefault();
     setMenuIsOpen(false);
     onClickMenuItem(menuName);
   };
@@ -27,7 +28,10 @@ const TaxonomyCardMenu = ({
     <>
       <IconButton
         variant="primary"
-        onClick={() => setMenuIsOpen(true)}
+        onClick={(e) => {
+          e.preventDefault();
+          setMenuIsOpen(true);
+        }}
         ref={setMenuTarget}
         src={MoreVert}
         iconAs={Icon}
@@ -41,7 +45,7 @@ const TaxonomyCardMenu = ({
       >
         <Menu data-testid={`taxonomy-card-menu-${id}`}>
           {/* Add more menu items here */}
-          <MenuItem className="taxonomy-menu-item" onClick={() => onClickItem('export')}>
+          <MenuItem className="taxonomy-menu-item" onClick={(e) => onClickItem(e, 'export')}>
             {intl.formatMessage(messages.taxonomyCardExportMenu)}
           </MenuItem>
         </Menu>
