@@ -4,6 +4,12 @@ import { Badge } from '@edx/paragon';
 
 const StatusColumn = ({ row }) => {
   const { status } = row.original;
+  const isUploaded = status === 'Success';
+
+  if (isUploaded) {
+    return null;
+  }
+
   return (
     <Badge variant="light">
       {status}

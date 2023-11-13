@@ -22,10 +22,11 @@ import FileInput, { useFileInput } from './FileInput';
 import {
   GalleryCard,
   TableActions,
+  RowStatus,
+  MoreInfoColumn,
+  FilterStatus,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
-import FilterStatus from './table-components/FilterStatus';
-import MoreInfoColumn from './table-components/table-custom-columns/MoreInfoColumn';
 
 const FileTable = ({
   files,
@@ -171,7 +172,7 @@ const FileTable = ({
   }
 
   return (
-    <>
+    <div className="files-table">
       <DataTable
         isFilterable
         isLoading={loadingStatus === RequestStatus.IN_PROGRESS}
@@ -195,6 +196,7 @@ const FileTable = ({
         pageCount={pageCount}
         data={files}
         FilterStatusComponent={FilterStatus}
+        RowStatusComponent={RowStatus}
       >
         {isEmpty(files) && loadingStatus !== RequestStatus.IN_PROGRESS ? (
           <Dropzone
@@ -261,7 +263,7 @@ const FileTable = ({
       >
         {intl.formatMessage(messages.deleteConfirmationMessage, { fileNumber: selectedRows.length })}
       </AlertModal>
-    </>
+    </div>
   );
 };
 
