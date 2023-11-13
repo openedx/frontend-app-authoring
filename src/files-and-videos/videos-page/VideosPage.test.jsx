@@ -376,7 +376,7 @@ describe('FilesAndUploads', () => {
             expect(galleryCards).toHaveLength(2);
           });
 
-          fit('should clearAll selections', async () => {
+          it('should clearAll selections', async () => {
             const sortByNewest = screen.getByText(messages.sortByNewest.defaultMessage);
             const sortBySizeDescendingButton = screen.getByText(messages.sortBySizeDescending.defaultMessage);
             const transcribedCheckboxFilter = screen.getByLabelText(

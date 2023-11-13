@@ -218,9 +218,10 @@ describe('processFilters', () => {
     });
 
     it('should call setAllFilters with public filter', () => {
-      const filters = ['public'];
+      const filters = ['public', 'filter'];
       const columns = [
         { id: 'locked', filterChoices: [{ name: 'Public', value: false }] },
+        { id: 'test', filterChoices: [{ name: 'Filter', value: 'filter' }] },
       ];
       const expectedParameter = [{ id: 'locked', value: [false] }];
       processFilters(filters, columns, setAllFilters);
@@ -242,9 +243,10 @@ describe('processFilters', () => {
     });
 
     it('should call setAllFilters with inactive filter', () => {
-      const filters = ['inactive'];
+      const filters = ['inactive', 'filter'];
       const columns = [
         { id: 'usageLocations', filterChoices: [{ name: 'Inactive', value: false }] },
+        { id: 'test', filterChoices: [{ name: 'Filter', value: 'filter' }] },
       ];
       const expectedParameter = [{ id: 'usageLocations', value: [false] }];
       processFilters(filters, columns, setAllFilters);
@@ -255,9 +257,10 @@ describe('processFilters', () => {
 
   describe('switch case transcripts', () => {
     it('should call setAllFilters with transcribed filter', () => {
-      const filters = ['transcribed'];
+      const filters = ['transcribed', 'filter'];
       const columns = [
         { id: 'transcripts', filterChoices: [{ name: 'Transcribed', value: true }] },
+        { id: 'test', filterChoices: [{ name: 'Filter', value: 'filter' }] },
       ];
       const expectedParameter = [{ id: 'transcripts', value: [true] }];
       processFilters(filters, columns, setAllFilters);
