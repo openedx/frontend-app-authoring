@@ -10,7 +10,7 @@ import {
 } from '@edx/paragon';
 import { Add, Tune } from '@edx/paragon/icons';
 import messages from '../messages';
-import SortAndFilterModal from './sort-and-filter-modal/SortAndFilterModal';
+import SortAndFilterModal from './sort-and-filter-modal';
 
 const TableActions = ({
   selectedFlatRows,

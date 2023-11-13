@@ -29,6 +29,7 @@ const FilterStatus = ({
         <span className="mr-2">Filters applied</span>
         {filters.map(({ name, value }) => (
           <Chip
+            key={value}
             iconAfter={Close}
             onIconAfterClick={() => removeFilter(value, setFilter, setAllFilters, state)}
           >

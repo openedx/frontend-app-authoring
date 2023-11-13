@@ -336,38 +336,68 @@ describe('FilesAndUploads', () => {
         expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
       });
 
-      it('sort button should be enabled and sort files by name', async () => {
-        renderComponent();
-        await mockStore(RequestStatus.SUCCESSFUL);
-        const sortsButton = screen.getByText(messages.sortButtonLabel.defaultMessage);
-        expect(sortsButton).toBeVisible();
+      describe('Sort and filter button', () => {
+        beforeEach(async () => {
+          renderComponent();
+          await mockStore(RequestStatus.SUCCESSFUL);
+          const sortAndFilterButton = screen.getByText(messages.sortButtonLabel.defaultMessage);
 
-        await waitFor(() => {
-          fireEvent.click(sortsButton);
-          expect(screen.getByText(messages.sortModalTitleLabel.defaultMessage)).toBeVisible();
+          await waitFor(() => {
+            fireEvent.click(sortAndFilterButton);
+          });
         });
 
-        const sortNameAscendingButton = screen.getByText(messages.sortByNameAscending.defaultMessage);
-        fireEvent.click(sortNameAscendingButton);
-        fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
-        expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
-      });
+        describe('sort function', () => {
+          it('should be enabled and sort files by name', async () => {
+            const sortNameAscendingButton = screen.getByText(messages.sortByNameAscending.defaultMessage);
+            fireEvent.click(sortNameAscendingButton);
+            fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
 
-      it('sort button should be enabled and sort files by file size', async () => {
-        renderComponent();
-        await mockStore(RequestStatus.SUCCESSFUL);
-        const sortsButton = screen.getByText(messages.sortButtonLabel.defaultMessage);
-        expect(sortsButton).toBeVisible();
+            expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
+          });
 
-        await waitFor(() => {
-          fireEvent.click(sortsButton);
-          expect(screen.getByText(messages.sortModalTitleLabel.defaultMessage)).toBeVisible();
+          it('sort button should be enabled and sort files by file size', async () => {
+            const sortBySizeDescendingButton = screen.getByText(messages.sortBySizeDescending.defaultMessage);
+            fireEvent.click(sortBySizeDescendingButton);
+            fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+
+            expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
+          });
         });
 
-        const sortBySizeDescendingButton = screen.getByText(messages.sortBySizeDescending.defaultMessage);
-        fireEvent.click(sortBySizeDescendingButton);
-        fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
-        expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
+        describe('filter function', () => {
+          it('should filter videos with transcripts', async () => {
+            const transcribedCheckboxFilter = screen.getByText(videoMessages.transcribedCheckboxLabel.defaultMessage);
+            fireEvent.click(transcribedCheckboxFilter);
+            fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+
+            const galleryCards = screen.getAllByTestId('grid-card', { exact: false });
+
+            expect(galleryCards).toHaveLength(2);
+          });
+
+          fit('should clearAll selections', async () => {
+            const sortByNewest = screen.getByText(messages.sortByNewest.defaultMessage);
+            const sortBySizeDescendingButton = screen.getByText(messages.sortBySizeDescending.defaultMessage);
+            const transcribedCheckboxFilter = screen.getByLabelText(
+              videoMessages.transcribedCheckboxLabel.defaultMessage,
+            );
+
+            fireEvent.click(sortBySizeDescendingButton);
+            fireEvent.click(transcribedCheckboxFilter);
+
+            const clearAllButton = screen.getByText('Clear all');
+            await waitFor(() => fireEvent.click(clearAllButton));
+
+            expect(transcribedCheckboxFilter).toHaveProperty('checked', false);
+
+            expect(within(sortBySizeDescendingButton).getByLabelText('file size descending radio'))
+              .toHaveProperty('checked', false);
+
+            expect(within(sortByNewest).getByLabelText('date added descending radio'))
+              .toHaveProperty('checked', true);
+          });
+        });
       });
     });
 

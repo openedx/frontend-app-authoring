@@ -102,7 +102,7 @@ const SortAndFilterModal = ({
             className="text-center"
             value="fileSize,desc"
             type="radio"
-            aria-label="date added descending radio"
+            aria-label="file size descending radio"
           >
             <FormattedMessage {...messages.sortBySizeDescending} />
           </SelectableBox>
@@ -126,7 +126,7 @@ const SortAndFilterModal = ({
             className="text-center"
             value="fileSize,asc"
             type="radio"
-            aria-label="date added ascending radio"
+            aria-label="file size ascending radio"
           >
             <FormattedMessage {...messages.sortBySizeAscending} />
           </SelectableBox>
@@ -143,7 +143,7 @@ const SortAndFilterModal = ({
             isInline
           >
             {filterOptions.map(({ name, value }) => (
-              <Form.Checkbox {...{ value }}>{name}</Form.Checkbox>
+              <Form.Checkbox {...{ value, key: value }}>{name}</Form.Checkbox>
             ))}
           </Form.CheckboxSet>
         </Form.Group>
