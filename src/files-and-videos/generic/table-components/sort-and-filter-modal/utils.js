@@ -3,9 +3,11 @@ import { isEmpty } from 'lodash';
 export const getFilterOptions = (columns) => {
   const allOptions = [];
   const filterableColumns = columns.filter(column => column?.filterChoices);
+
   filterableColumns.forEach(column => {
     const { id, filterChoices } = column;
     let updatedChoices = filterChoices;
+
     switch (id) {
     case 'locked':
       updatedChoices = filterChoices.map(choice => (
@@ -25,17 +27,21 @@ export const getFilterOptions = (columns) => {
     default:
       break;
     }
+
     allOptions.push(...updatedChoices);
   });
+
   return allOptions;
 };
 
 export const getCheckedFilters = (state) => {
   const { filters } = state;
   const allFilters = [];
+
   filters.forEach(filter => {
     const { id, value } = filter;
     let updatedValues = value;
+
     switch (id) {
     case 'locked':
       updatedValues = value.map(val => (val ? 'locked' : 'public'));
@@ -49,17 +55,21 @@ export const getCheckedFilters = (state) => {
     default:
       break;
     }
+
     allFilters.push(...updatedValues);
   });
+
   return allFilters;
 };
 
 export const processFilters = (filters, columns, setAllFilters) => {
   const filterableColumns = columns.filter(column => column?.filterChoices);
   const allFilters = [];
+
   filterableColumns.forEach(({ id, filterChoices }) => {
     const filterValues = filterChoices.map(choice => choice.value);
     let processedFilters = filters;
+
     switch (id) {
     case 'locked':
       processedFilters = filters.map(match => {
@@ -97,10 +107,13 @@ export const processFilters = (filters, columns, setAllFilters) => {
     default:
       break;
     }
+
     const matchingFilters = filterValues.filter(value => processedFilters.includes(value));
+
     if (!isEmpty(matchingFilters)) {
       allFilters.push({ id, value: matchingFilters });
     }
   });
+
   setAllFilters(allFilters);
 };
