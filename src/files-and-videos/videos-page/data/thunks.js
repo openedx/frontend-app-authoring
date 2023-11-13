@@ -26,7 +26,6 @@ import {
 import {
   setVideoIds,
   setPageSettings,
-  setTotalCount,
   updateLoadingStatus,
   deleteVideoSuccess,
   addVideoSuccess,
@@ -51,7 +50,6 @@ export function fetchVideos(courseId) {
         videoIds: parsedVideos.map(video => video.id),
       }));
       dispatch(setPageSettings({ ...data }));
-      dispatch(setTotalCount({ totalCount: parsedVideos.length }));
       dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       if (error.response && error.response.status === 403) {
@@ -75,7 +73,7 @@ export function updateVideoOrder(courseId, videoIds) {
   };
 }
 
-export function deleteVideoFile(courseId, id, totalCount) {
+export function deleteVideoFile(courseId, id) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.IN_PROGRESS }));
 
@@ -83,8 +81,6 @@ export function deleteVideoFile(courseId, id, totalCount) {
       await deleteVideo(courseId, id);
       dispatch(deleteVideoSuccess({ videoId: id }));
       dispatch(removeModel({ modelType: 'videos', id }));
-      dispatch(setTotalCount({ totalCount: totalCount - 1 }));
-
       dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       dispatch(updateErrors({ error: 'delete', message: `Failed to delete file id ${id}.` }));
@@ -115,7 +111,6 @@ export function addVideoFile(courseId, file) {
       dispatch(addVideoSuccess({
         videoId: edxVideoId,
       }));
-      dispatch(setTotalCount({ totalCount: parsedVideos.length }));
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
       if (!isEmpty(errors)) {
         errors.forEach(error => {

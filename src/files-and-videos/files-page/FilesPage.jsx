@@ -45,7 +45,6 @@ const FilesPage = ({
   }, [courseId]);
 
   const {
-    totalCount,
     assetIds,
     loadingStatus,
     addingStatus: addAssetStatus,
@@ -56,8 +55,8 @@ const FilesPage = ({
   } = useSelector(state => state.assets);
 
   const handleErrorReset = (error) => dispatch(resetErrors(error));
-  const handleAddFile = (file) => dispatch(addAssetFile(courseId, file, totalCount));
-  const handleDeleteFile = (id) => dispatch(deleteAssetFile(courseId, id, totalCount));
+  const handleAddFile = (file) => dispatch(addAssetFile(courseId, file));
+  const handleDeleteFile = (id) => dispatch(deleteAssetFile(courseId, id));
   const handleDownloadFile = (selectedRows) => dispatch(fetchAssetDownload({ selectedRows, courseId }));
   const handleLockFile = (fileId, locked) => {
     handleErrorReset({ errorType: 'lock' });
@@ -76,7 +75,6 @@ const FilesPage = ({
 
   const assets = useModels('assets', assetIds);
   const data = {
-    totalCount,
     fileIds: assetIds,
     loadingStatus,
     usagePathStatus,

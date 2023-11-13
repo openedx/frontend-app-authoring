@@ -19,14 +19,10 @@ const slice = createSlice({
       download: [],
       usageMetrics: [],
     },
-    totalCount: 0,
   },
   reducers: {
     setAssetIds: (state, { payload }) => {
       state.assetIds = payload.assetIds;
-    },
-    setTotalCount: (state, { payload }) => {
-      state.totalCount = payload.totalCount;
     },
     updateLoadingStatus: (state, { payload }) => {
       state.loadingStatus = payload.status;
@@ -73,7 +69,6 @@ const slice = createSlice({
 
 export const {
   setAssetIds,
-  setTotalCount,
   updateLoadingStatus,
   deleteAssetSuccess,
   addAssetSuccess,

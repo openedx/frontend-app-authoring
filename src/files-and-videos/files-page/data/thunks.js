@@ -16,7 +16,6 @@ import {
 } from './api';
 import {
   setAssetIds,
-  setTotalCount,
   updateLoadingStatus,
   deleteAssetSuccess,
   addAssetSuccess,
@@ -39,7 +38,6 @@ export function fetchAssets(courseId) {
       dispatch(setAssetIds({
         assetIds: assets.map(asset => asset.id),
       }));
-      dispatch(setTotalCount({ totalCount }));
       dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       if (error.response && error.response.status === 403) {
@@ -59,7 +57,7 @@ export function updateAssetOrder(courseId, assetIds) {
   };
 }
 
-export function deleteAssetFile(courseId, id, totalCount) {
+export function deleteAssetFile(courseId, id) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.IN_PROGRESS }));
 
@@ -67,7 +65,6 @@ export function deleteAssetFile(courseId, id, totalCount) {
       await deleteAsset(courseId, id);
       dispatch(deleteAssetSuccess({ assetId: id }));
       dispatch(removeModel({ modelType: 'assets', id }));
-      dispatch(setTotalCount({ totalCount: totalCount - 1 }));
       dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       dispatch(updateErrors({ error: 'delete', message: `Failed to delete file id ${id}.` }));
@@ -76,7 +73,7 @@ export function deleteAssetFile(courseId, id, totalCount) {
   };
 }
 
-export function addAssetFile(courseId, file, totalCount) {
+export function addAssetFile(courseId, file) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
 
@@ -90,7 +87,6 @@ export function addAssetFile(courseId, file, totalCount) {
       dispatch(addAssetSuccess({
         assetId: asset.id,
       }));
-      dispatch(setTotalCount({ totalCount: totalCount + 1 }));
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       if (error.response && error.response.status === 413) {

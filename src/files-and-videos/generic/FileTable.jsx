@@ -45,6 +45,7 @@ const FileTable = ({
   intl,
 }) => {
   const defaultVal = 'card';
+  const pageCount = Math.ceil(files.length / 50);
   const columnSizes = {
     xs: 12,
     sm: 6,
@@ -59,7 +60,6 @@ const FileTable = ({
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
 
   const {
-    totalCount,
     loadingStatus,
     usagePathStatus,
     usageErrorMessages,
@@ -191,8 +191,8 @@ const FileTable = ({
         tableActions={headerActions}
         bulkActions={headerActions}
         columns={tableColumns}
-        itemCount={totalCount}
-        pageCount={Math.ceil(totalCount / 50)}
+        itemCount={files.length}
+        pageCount={pageCount}
         data={files}
         FilterStatusComponent={FilterStatus}
       >
@@ -269,7 +269,6 @@ FileTable.propTypes = {
   courseId: PropTypes.string.isRequired,
   files: PropTypes.arrayOf(PropTypes.shape({})),
   data: PropTypes.shape({
-    totalCount: PropTypes.number.isRequired,
     fileIds: PropTypes.arrayOf(PropTypes.string).isRequired,
     loadingStatus: PropTypes.string.isRequired,
     usagePathStatus: PropTypes.string.isRequired,
