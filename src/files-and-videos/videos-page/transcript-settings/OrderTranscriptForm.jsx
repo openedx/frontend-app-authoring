@@ -37,7 +37,7 @@ const OrderTranscriptForm = ({
   }, [data]);
 
   const handleDiscard = () => {
-    setTranscriptType(activeTranscriptPreferences);
+    setTranscriptType(activeTranscriptPreferences?.provider);
     closeTranscriptSettings();
   };
 
@@ -147,7 +147,14 @@ const OrderTranscriptForm = ({
 
 OrderTranscriptForm.propTypes = {
   setTranscriptType: PropTypes.func.isRequired,
-  activeTranscriptPreferences: PropTypes.shape({}),
+  activeTranscriptPreferences: PropTypes.shape({
+    provider: PropTypes.string.isRequired,
+    cielo24Turnaround: PropTypes.string,
+    cielo24Fidelity: PropTypes.string,
+    preferredLanguages: PropTypes.arrayOf(PropTypes.string),
+    turnaround: PropTypes.string,
+    videoSourceLanguage: PropTypes.string,
+  }),
   transcriptType: PropTypes.string.isRequired,
   transcriptCredentials: PropTypes.shape({
     cielo24: PropTypes.bool.isRequired,

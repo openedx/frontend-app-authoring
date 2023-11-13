@@ -3,6 +3,7 @@ import {
   act,
   screen,
   waitFor,
+  within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
@@ -120,26 +121,39 @@ describe('TranscriptSettings', () => {
           roles: [],
         },
       });
-      store = initializeStore(initialState);
+      store = initializeStore({
+        ...initialState,
+        videos: {
+          ...initialState.videos,
+          pageSettings: {
+            ...initialState.videos.pageSettings,
+            activeTranscriptPreferences: {
+              provider: 'Cielo24',
+              cielo24Fidelity: '',
+              cielo24Turnaround: '',
+              preferredLanguages: [],
+              threePlayTurnaround: '',
+              videoSourceLanguage: '',
+            },
+          },
+        },
+      });
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
       renderComponent(defaultProps);
-      const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      await act(async () => {
-        userEvent.click(orderButton);
-      });
-      const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-      await act(async () => {
-        userEvent.click(cielo24Button);
-      });
-      const noneButton = screen.getAllByLabelText('none radio')[0];
-      await act(async () => {
-        userEvent.click(noneButton);
-      });
     });
 
     it('api should succeed', async () => {
+      const cielo24Button = screen.getByText(messages.cieloLabel.defaultMessage);
+
+      expect(within(cielo24Button).getByLabelText('Cielo24 radio')).toHaveProperty('checked', true);
+
       const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
+      const noneButton = screen.getAllByLabelText('none radio')[0];
+
+      await act(async () => {
+        userEvent.click(noneButton);
+      });
 
       axiosMock.onDelete(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(204);
       await waitFor(() => {
@@ -152,6 +166,11 @@ describe('TranscriptSettings', () => {
 
     it('should show error alert', async () => {
       const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
+      const noneButton = screen.getAllByLabelText('none radio')[0];
+
+      await act(async () => {
+        userEvent.click(noneButton);
+      });
 
       axiosMock.onDelete(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(404);
       await waitFor(() => {
