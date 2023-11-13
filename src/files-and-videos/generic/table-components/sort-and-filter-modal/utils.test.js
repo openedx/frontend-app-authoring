@@ -223,7 +223,10 @@ describe('processFilters', () => {
         { id: 'locked', filterChoices: [{ name: 'Public', value: false }] },
         { id: 'test', filterChoices: [{ name: 'Filter', value: 'filter' }] },
       ];
-      const expectedParameter = [{ id: 'locked', value: [false] }];
+      const expectedParameter = [
+        { id: 'locked', value: [false] },
+        { id: 'test', value: ['filter'] },
+      ];
       processFilters(filters, columns, setAllFilters);
 
       expect(setAllFilters).toHaveBeenCalledWith(expectedParameter);
@@ -248,7 +251,10 @@ describe('processFilters', () => {
         { id: 'usageLocations', filterChoices: [{ name: 'Inactive', value: false }] },
         { id: 'test', filterChoices: [{ name: 'Filter', value: 'filter' }] },
       ];
-      const expectedParameter = [{ id: 'usageLocations', value: [false] }];
+      const expectedParameter = [
+        { id: 'usageLocations', value: [false] },
+        { id: 'test', value: ['filter'] },
+      ];
       processFilters(filters, columns, setAllFilters);
 
       expect(setAllFilters).toHaveBeenCalledWith(expectedParameter);
@@ -262,7 +268,10 @@ describe('processFilters', () => {
         { id: 'transcripts', filterChoices: [{ name: 'Transcribed', value: true }] },
         { id: 'test', filterChoices: [{ name: 'Filter', value: 'filter' }] },
       ];
-      const expectedParameter = [{ id: 'transcripts', value: [true] }];
+      const expectedParameter = [
+        { id: 'transcripts', value: [true] },
+        { id: 'test', value: ['filter'] },
+      ];
       processFilters(filters, columns, setAllFilters);
 
       expect(setAllFilters).toHaveBeenCalledWith(expectedParameter);
