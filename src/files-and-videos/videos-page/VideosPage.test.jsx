@@ -367,13 +367,18 @@ describe('FilesAndUploads', () => {
 
         describe('filter function', () => {
           it('should filter videos with transcripts', async () => {
+            const notTranscribedCheckboxFilter = screen.getByText(
+              videoMessages.notTranscribedCheckboxLabel.defaultMessage,
+            );
             const transcribedCheckboxFilter = screen.getByText(videoMessages.transcribedCheckboxLabel.defaultMessage);
+            fireEvent.click(transcribedCheckboxFilter);
+            fireEvent.click(notTranscribedCheckboxFilter);
             fireEvent.click(transcribedCheckboxFilter);
             fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
 
             const galleryCards = screen.getAllByTestId('grid-card', { exact: false });
 
-            expect(galleryCards).toHaveLength(2);
+            expect(galleryCards).toHaveLength(1);
           });
 
           it('should clearAll selections', async () => {
@@ -396,6 +401,17 @@ describe('FilesAndUploads', () => {
 
             expect(within(sortByNewest).getByLabelText('date added descending radio'))
               .toHaveProperty('checked', true);
+          });
+
+          it('should remove Transcribed filter chip', async () => {
+            const transcribedCheckboxFilter = screen.getByText(videoMessages.transcribedCheckboxLabel.defaultMessage);
+            fireEvent.click(transcribedCheckboxFilter);
+            fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+
+            const imageFilterChip = screen.getByTestId('icon-after');
+            fireEvent.click(imageFilterChip);
+
+            expect(screen.queryByText(videoMessages.transcribedCheckboxLabel.defaultMessage)).toBeNull();
           });
         });
       });
