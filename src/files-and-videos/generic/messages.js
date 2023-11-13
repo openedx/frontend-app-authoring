@@ -1,6 +1,10 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  rowStatusMessage: {
+    id: 'course-authoring.files-and-upload.rowStatus.message',
+    defaultMessage: 'Showing {fileCount} of {rowCount}',
+  },
   apiStatusToastMessage: {
     id: 'course-authoring.files-and-upload.apiStatus.message',
     defaultMessage: '{actionType} {selectedRowCount} file(s)',

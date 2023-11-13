@@ -5,13 +5,13 @@ import {
   DataTableContext, Button, Row, Chip,
 } from '@edx/paragon';
 import { Close } from '@edx/paragon/icons';
-import { getCurrentViewRange, getFilters, removeFilter } from './utils';
+import { getFilters, removeFilter } from './utils';
 
 const FilterStatus = ({
   className, variant, size, clearFiltersText, buttonClassName,
 }) => {
   const {
-    state, setAllFilters, setFilter, filteredRows, columns,
+    state, setAllFilters, setFilter, RowStatusComponent, columns,
   } = useContext(DataTableContext);
 
   if (!setAllFilters) {
@@ -22,9 +22,7 @@ const FilterStatus = ({
 
   return (
     <div className={className}>
-      <div>
-        <span>{getCurrentViewRange(filteredRows.length)}</span>
-      </div>
+      <RowStatusComponent />
       <Row className="m-0 align-items-center">
         <span className="mr-2">Filters applied</span>
         {filters.map(({ name, value }) => (

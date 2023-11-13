@@ -22,10 +22,11 @@ import FileInput, { useFileInput } from './FileInput';
 import {
   GalleryCard,
   TableActions,
+  RowStatus,
+  MoreInfoColumn,
+  FilterStatus,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
-import FilterStatus from './table-components/FilterStatus';
-import MoreInfoColumn from './table-components/table-custom-columns/MoreInfoColumn';
 
 const FileTable = ({
   files,
@@ -195,6 +196,7 @@ const FileTable = ({
         pageCount={Math.ceil(totalCount / 50)}
         data={files}
         FilterStatusComponent={FilterStatus}
+        RowStatusComponent={RowStatus}
       >
         {isEmpty(files) && loadingStatus !== RequestStatus.IN_PROGRESS ? (
           <Dropzone

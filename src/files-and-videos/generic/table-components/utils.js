@@ -1,4 +1,5 @@
 import { isEmpty } from 'lodash';
+import messages from '../messages';
 
 const getFilterDisplayName = (column, values) => {
   const displayNames = [];
@@ -35,9 +36,20 @@ export const removeFilter = (filter, setFilter, setAllFilters, state) => {
   }
 };
 
-export const getCurrentViewRange = (totalFileCount) => {
-  if (totalFileCount > 50) {
-    return `Showing 50 of ${totalFileCount}`;
+export const getCurrentViewRange = ({
+  filterRowCount,
+  initialRowCount,
+  fileCount,
+  intl,
+}) => {
+  if (filterRowCount === initialRowCount) {
+    return intl.formatMessage(
+      messages.rowStatusMessage,
+      { fileCount, rowCount: initialRowCount },
+    );
   }
-  return `Showing ${totalFileCount} of ${totalFileCount}`;
+  return intl.formatMessage(
+    messages.rowStatusMessage,
+    { fileCount, rowCount: filterRowCount },
+  );
 };
