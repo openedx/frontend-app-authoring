@@ -83,7 +83,6 @@ export const initialState = {
       usageMetrics: [],
       transcript: [],
     },
-    totalCount: 0,
   },
   models: {
     videos: {

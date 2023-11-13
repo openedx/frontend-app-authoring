@@ -56,7 +56,6 @@ const VideosPage = ({
   }, [courseId]);
 
   const {
-    totalCount,
     videoIds,
     loadingStatus,
     transcriptStatus,
@@ -79,7 +78,7 @@ const VideosPage = ({
   const supportedFileFormats = { 'video/*': videoSupportedFileFormats || FILES_AND_UPLOAD_TYPE_FILTERS.video };
 
   const handleAddFile = (file) => dispatch(addVideoFile(courseId, file));
-  const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id, totalCount));
+  const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id));
   const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows }));
   const handleUsagePaths = (video) => dispatch(getUsagePaths({ video, courseId }));
   const handleErrorReset = (error) => dispatch(resetErrors(error));
@@ -99,7 +98,6 @@ const VideosPage = ({
   const data = {
     supportedFileFormats,
     encodingsDownloadUrl,
-    totalCount,
     fileIds: videoIds,
     loadingStatus,
     usagePathStatus,
