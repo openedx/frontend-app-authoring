@@ -33,7 +33,7 @@ const TranscriptSettings = ({
     videoTranscriptSettings,
   } = pageSettings;
   const { transcriptionPlans } = videoTranscriptSettings || {};
-  const [transcriptType, setTranscriptType] = useState(activeTranscriptPreferences);
+  const [transcriptType, setTranscriptType] = useState(activeTranscriptPreferences?.provider);
 
   const handleOrderTranscripts = (data, provider) => {
     const noCredentials = isEmpty(transcriptCredentials) || data.apiKey;
