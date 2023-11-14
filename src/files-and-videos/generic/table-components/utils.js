@@ -20,7 +20,7 @@ export const getFilters = (state, columns) => {
     const { id, value } = filter;
     const [filterColumn] = filterableColumns.filter(column => column.id === id);
     let currentFilters;
-  
+
     if (filterColumn) {
       currentFilters = getFilterDisplayName(filterColumn, value);
     } else {

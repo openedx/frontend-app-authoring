@@ -6,6 +6,7 @@ describe('getCurrentViewRange', () => {
       `Showing ${fileCount} of ${rowCount}`
     ),
   };
+
   it('should return with intials row count', () => {
     const data = {
       filterRowCount: 25,
@@ -18,6 +19,7 @@ describe('getCurrentViewRange', () => {
 
     expect(actual).toEqual(expected);
   });
+
   it('should return with filter row count', () => {
     const data = {
       filterRowCount: 12,

@@ -93,7 +93,6 @@ describe('getCheckboxFilters', () => {
     });
   });
 
-
   describe('filter with serach bar', () => {
     it('should equal array in array with displayName and value', () => {
       const state = {
