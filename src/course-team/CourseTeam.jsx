@@ -24,7 +24,6 @@ import getPageHeadTitle from '../generic/utils';
 const CourseTeam = ({ courseId }) => {
   const intl = useIntl();
   const courseDetails = useModel('courseDetails', courseId);
-
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
 
   const {

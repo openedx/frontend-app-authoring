@@ -59,8 +59,9 @@ export function fetchUserPermissionsQuery(courseId) {
     try {
       const userPermissions = await getUserPermissions(courseId);
       dispatch(updateUserPermissions(userPermissions));
+      dispatch(updateLoadingStatuses({ userPermissionsLoadingStatus: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      console.trace({ error }); // eslint-disable-line no-console
+      dispatch(updateLoadingStatuses({ userPermissionsLoadingStatus: RequestStatus.FAILED }));
     }
   };
 }
@@ -70,9 +71,10 @@ export function fetchUserPermissionsEnabledFlag() {
     try {
       const data = await getUserPermissionsEnabledFlag();
       dispatch(updateUserPermissionsEnabled(data.enabled || false));
+      dispatch(updateLoadingStatuses({ userPermissionsEnabledLoadingStatus: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       dispatch(updateUserPermissionsEnabled(false));
-      console.trace({ error }); // eslint-disable-line no-console
+      dispatch(updateLoadingStatuses({ userPermissionsEnabledLoadingStatus: RequestStatus.FAILED }));
     }
   };
 }

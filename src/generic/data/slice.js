@@ -9,6 +9,8 @@ const slice = createSlice({
     loadingStatuses: {
       organizationLoadingStatus: RequestStatus.IN_PROGRESS,
       courseRerunLoadingStatus: RequestStatus.IN_PROGRESS,
+      userPermissionsLoadingStatus: RequestStatus.IN_PROGRESS,
+      userPermissionsEnabledLoadingStatus: RequestStatus.IN_PROGRESS,
     },
     savingStatus: '',
     organizations: [],
