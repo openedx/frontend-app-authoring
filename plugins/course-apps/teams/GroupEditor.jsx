@@ -25,7 +25,7 @@ const TeamTypeNameMessage = {
   [GroupTypes.PRIVATE_MANAGED]: {
     label: messages.groupTypePrivateManaged,
     description: messages.groupTypePrivateManagedDescription,
-  }
+  },
 };
 
 const GroupEditor = ({
