@@ -72,7 +72,7 @@ export function fetchUserPermissionsEnabledFlag() {
       dispatch(updateUserPermissionsEnabled(data.enabled || false));
     } catch (error) {
       dispatch(updateUserPermissionsEnabled(false));
-      console.trace({ error });
+      console.trace({ error }); // eslint-disable-line no-console
     }
   };
 }
