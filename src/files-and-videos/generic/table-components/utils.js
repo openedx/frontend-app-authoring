@@ -22,7 +22,8 @@ export const getFilters = (state, columns) => {
     if (filterColumn) {
       currentFilters = getFilterDisplayName(filterColumn, value);
     } else {
-      currentFilters = [{ name: value, value }];
+      const [serachValue] = value;
+      currentFilters = [{ name: serachValue, value: serachValue }];
     }
     allFilters.push(...currentFilters);
   });
@@ -32,12 +33,12 @@ export const getFilters = (state, columns) => {
 export const removeFilter = (filter, setFilter, setAllFilters, state) => {
   const { filters } = state;
   const [editedFilter] = filters.filter(currentFilter => currentFilter.value.includes(filter));
-
+  console.log(filters[0].value, filter);
   let updatedFilterValue;
-  if (isArray(editedFilter.value)) {
+  if (isArray(editedFilter?.value)) {
     updatedFilterValue = editedFilter.value.filter(value => value !== filter);
   } else {
-    updatedFilterValue = filter.includes(editedFilter.value) ? [] : editedFilter.value;
+    updatedFilterValue = filter.includes(editedFilter?.value) ? [] : editedFilter.value;
   }
 
   if (isEmpty(updatedFilterValue)) {
