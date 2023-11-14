@@ -26,6 +26,7 @@ describe('generic api calls', () => {
         roles: [],
       },
       userPermissions: [],
+      userPermissionsEnabled: false,
     });
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });

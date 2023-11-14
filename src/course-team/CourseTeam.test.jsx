@@ -14,7 +14,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import initializeStore from '../store';
 import { courseTeamMock, courseTeamWithOneUser, courseTeamWithoutUsers } from './__mocks__';
 import { getCourseTeamApiUrl, updateCourseTeamUserApiUrl } from './data/api';
-import { getUserPermissionsUrl } from '../generic/data/api';
+import { getUserPermissionsUrl, getUserPermissionsEnabledFlagUrl } from '../generic/data/api';
 import CourseTeam from './CourseTeam';
 import messages from './messages';
 import { USER_ROLES } from '../constants';
@@ -26,7 +26,7 @@ let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
 const userId = 3;
-const UserPermissionsData = { permissions: ['manage_all_users'] };
+const userPermissionsData = { permissions: ['manage_all_users'] };
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -57,8 +57,11 @@ describe('<CourseTeam />', () => {
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: true });
+    axiosMock
       .onGet(getUserPermissionsUrl(courseId, userId))
-      .reply(200, UserPermissionsData);
+      .reply(200, userPermissionsData);
   });
 
   it('render CourseTeam component with 3 team members correctly', async () => {
@@ -185,6 +188,9 @@ describe('<CourseTeam />', () => {
         ...courseTeamWithOneUser,
         allowActions: false,
       });
+    axiosMock
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: false });
 
     const { queryByRole, queryByText } = render(<RootWrapper />);
 
@@ -198,10 +204,13 @@ describe('<CourseTeam />', () => {
     cleanup();
     axiosMock
       .onGet(getCourseTeamApiUrl(courseId))
-      .reply(200, courseTeamWithOneUser);
+      .reply(200, {
+        ...courseTeamWithOneUser,
+        allowActions: false,
+      });
     axiosMock
-      .onGet(getUserPermissionsUrl(courseId, userId))
-      .reply(200, { permissions: [] });
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: false });
 
     const { queryByRole, queryByText } = render(<RootWrapper />);
 

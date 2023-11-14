@@ -8,7 +8,7 @@ export const getCreateOrRerunCourseUrl = () => new URL('course/', getApiBaseUrl(
 export const getCourseRerunUrl = (courseId) => new URL(`/api/contentstore/v1/course_rerun/${courseId}`, getApiBaseUrl()).href;
 export const getOrganizationsUrl = () => new URL('organizations', getApiBaseUrl()).href;
 export const getUserPermissionsUrl = (courseId, userId) => `${getApiBaseUrl()}/api/course_roles/v1/user_permissions/?course_id=${encodeURIComponent(courseId)}&user_id=${userId}`;
-
+export const getUserPermissionsEnabledFlagUrl = new URL('/api/course_roles/v1/user_permissions/enabled/', getApiBaseUrl()).href;
 /**
  * Get's organizations data.
  * @returns {Promise<Object>}
@@ -56,4 +56,10 @@ export async function getUserPermissions(courseId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(getUserPermissionsUrl(courseId, userId));
   return camelCaseObject(data);
+}
+
+export async function getUserPermissionsEnabledFlag() {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getUserPermissionsEnabledFlagUrl);
+  return data || false;
 }

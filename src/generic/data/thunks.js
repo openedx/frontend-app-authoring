@@ -1,6 +1,6 @@
 import { RequestStatus } from '../../data/constants';
 import {
-  createOrRerunCourse, getOrganizations, getCourseRerun, getUserPermissions,
+  createOrRerunCourse, getOrganizations, getCourseRerun, getUserPermissions, getUserPermissionsEnabledFlag,
 } from './api';
 import {
   fetchOrganizations,
@@ -10,6 +10,7 @@ import {
   updateCourseRerunData,
   updateSavingStatus,
   updateUserPermissions,
+  updateUserPermissionsEnabled,
 } from './slice';
 
 export function fetchOrganizationsQuery() {
@@ -60,6 +61,18 @@ export function fetchUserPermissionsQuery(courseId) {
       dispatch(updateUserPermissions(userPermissions));
     } catch (error) {
       console.trace({ error }); // eslint-disable-line no-console
+    }
+  };
+}
+
+export function fetchUserPermissionsEnabledFlag() {
+  return async (dispatch) => {
+    try {
+      const data = await getUserPermissionsEnabledFlag();
+      dispatch(updateUserPermissionsEnabled(data.enabled || false));
+    } catch (error) {
+      dispatch(updateUserPermissionsEnabled(false));
+      console.trace({ error });
     }
   };
 }

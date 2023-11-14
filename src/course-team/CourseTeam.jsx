@@ -83,7 +83,7 @@ const CourseTeam = ({ courseId }) => {
                   <SubHeader
                     title={intl.formatMessage(messages.headingTitle)}
                     subtitle={intl.formatMessage(messages.headingSubtitle)}
-                    headerActions={isAllowActions && hasManageAllUsersPerm && (
+                    headerActions={(isAllowActions || hasManageAllUsersPerm) && (
                       <Button
                         variant="primary"
                         iconBefore={IconAdd}
@@ -110,13 +110,13 @@ const CourseTeam = ({ courseId }) => {
                           role={role}
                           email={email}
                           currentUserEmail={currentUserEmail || ''}
-                          isAllowActions={isAllowActions && hasManageAllUsersPerm}
+                          isAllowActions={isAllowActions || hasManageAllUsersPerm}
                           isHideActions={role === USER_ROLES.admin && isSingleAdmin}
                           onChangeRole={handleChangeRoleUserSubmit}
                           onDelete={handleOpenDeleteModal}
                         />
                       )) : null}
-                      {isShowAddTeamMember && hasManageAllUsersPerm && (
+                      {(isShowAddTeamMember || hasManageAllUsersPerm) && (
                         <AddTeamMember
                           onFormOpen={openForm}
                           isButtonDisable={isFormVisible}

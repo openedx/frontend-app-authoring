@@ -6,3 +6,4 @@ export const getCourseRerunData = (state) => state.generic.createOrRerunCourse.c
 export const getRedirectUrlObj = (state) => state.generic.createOrRerunCourse.redirectUrlObj;
 export const getPostErrors = (state) => state.generic.createOrRerunCourse.postErrors;
 export const getUserPermissions = (state) => state.generic.userPermissions.permissions;
+export const getUserPermissionsEnabled = (state) => state.generic.userPermissionsEnabled;

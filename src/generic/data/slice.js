@@ -19,6 +19,7 @@ const slice = createSlice({
       postErrors: {},
     },
     userPermissions: [],
+    userPermissionsEnabled: false,
   },
   reducers: {
     fetchOrganizations: (state, { payload }) => {
@@ -45,6 +46,9 @@ const slice = createSlice({
     updateUserPermissions: (state, { payload }) => {
       state.userPermissions = payload;
     },
+    updateUserPermissionsEnabled: (state, { payload }) => {
+      state.userPermissionsEnabled = payload;
+    },
   },
 });
 
@@ -57,6 +61,7 @@ export const {
   updateCourseData,
   updateRedirectUrlObj,
   updateUserPermissions,
+  updateUserPermissionsEnabled,
 } = slice.actions;
 
 export const {
