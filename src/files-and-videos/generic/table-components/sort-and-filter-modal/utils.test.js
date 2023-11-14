@@ -92,6 +92,19 @@ describe('getCheckboxFilters', () => {
       expect(actual).toEqual(expected);
     });
   });
+
+
+  describe('filter with serach bar', () => {
+    it('should equal array in array with displayName and value', () => {
+      const state = {
+        filters: [{ id: 'displayName', value: 'filter' }],
+      };
+      const expected = [['displayName', 'filter']];
+      const actual = getCheckedFilters(state);
+
+      expect(actual).toEqual(expected);
+    });
+  });
 });
 
 describe('getFilterOptions', () => {

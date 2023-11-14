@@ -15,10 +15,12 @@ export const getFilters = (state, columns) => {
   const { filters } = state;
   const filterableColumns = columns.filter(column => column?.filterChoices);
   const allFilters = [];
+
   filters.forEach(filter => {
     const { id, value } = filter;
     const [filterColumn] = filterableColumns.filter(column => column.id === id);
     let currentFilters;
+  
     if (filterColumn) {
       currentFilters = getFilterDisplayName(filterColumn, value);
     } else {
@@ -27,6 +29,7 @@ export const getFilters = (state, columns) => {
     }
     allFilters.push(...currentFilters);
   });
+
   return allFilters;
 };
 

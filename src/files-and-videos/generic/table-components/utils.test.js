@@ -34,7 +34,7 @@ describe('getCurrentViewRange', () => {
 
 describe('getFilters', () => {
   it('should return filter when columns is empty', () => {
-    const state = { filters: [{ id: 'test', value: 'unknown' }] };
+    const state = { filters: [{ id: 'test', value: ['unknown'] }] };
     const columns = [];
     const expected = [{ name: 'unknown', value: 'unknown' }];
     const actual = getFilters(state, columns);

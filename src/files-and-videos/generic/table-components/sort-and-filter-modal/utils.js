@@ -58,7 +58,7 @@ export const getCheckedFilters = (state) => {
     if (isArray(updatedValues)) {
       allFilters.push(...updatedValues);
     } else {
-      allFilters.push(['displayName', updatedValues]);
+      allFilters.push([id, updatedValues]);
     }
   });
 
