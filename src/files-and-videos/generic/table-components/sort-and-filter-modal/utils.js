@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isArray, isEmpty } from 'lodash';
 
 export const getFilterOptions = (columns) => {
   const allOptions = [];
@@ -37,7 +37,6 @@ export const getFilterOptions = (columns) => {
 export const getCheckedFilters = (state) => {
   const { filters } = state;
   const allFilters = [];
-
   filters.forEach(filter => {
     const { id, value } = filter;
     let updatedValues = value;
@@ -56,7 +55,11 @@ export const getCheckedFilters = (state) => {
       break;
     }
 
-    allFilters.push(...updatedValues);
+    if (isArray(updatedValues)) {
+      allFilters.push(...updatedValues);
+    } else {
+      allFilters.push(['displayName', updatedValues]);
+    }
   });
 
   return allFilters;
@@ -65,6 +68,12 @@ export const getCheckedFilters = (state) => {
 export const processFilters = (filters, columns, setAllFilters) => {
   const filterableColumns = columns.filter(column => column?.filterChoices);
   const allFilters = [];
+
+  const [displayNameFilter] = filters.filter(filter => isArray(filter));
+  if (displayNameFilter) {
+    const [id, filterValue] = displayNameFilter;
+    allFilters.push({ id, value: [filterValue] });
+  }
 
   filterableColumns.forEach(({ id, filterChoices }) => {
     const filterValues = filterChoices.map(choice => choice.value);

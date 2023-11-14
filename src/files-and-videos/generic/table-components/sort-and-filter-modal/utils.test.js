@@ -301,4 +301,17 @@ describe('processFilters', () => {
       expect(setAllFilters).toHaveBeenCalledWith(expectedParameter);
     });
   });
+
+  describe('filter with serach bar', () => {
+    it('should call setAllFitlers with displayName filter', () => {
+      const filters = [['displayName', 'search']];
+      const columns = [
+        { id: 'test', filterChoices: [{ name: 'Filter', value: 'filter' }] },
+      ];
+      const expectedParameter = [{ id: 'displayName', value: ['search'] }];
+      processFilters(filters, columns, setAllFilters);
+
+      expect(setAllFilters).toHaveBeenCalledWith(expectedParameter);
+    });
+  });
 });

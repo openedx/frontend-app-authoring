@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isEmpty, isArray } from 'lodash';
 import messages from '../messages';
 
 const getFilterDisplayName = (column, values) => {
@@ -18,7 +18,12 @@ export const getFilters = (state, columns) => {
   filters.forEach(filter => {
     const { id, value } = filter;
     const [filterColumn] = filterableColumns.filter(column => column.id === id);
-    const currentFilters = getFilterDisplayName(filterColumn, value);
+    let currentFilters;
+    if (filterColumn) {
+      currentFilters = getFilterDisplayName(filterColumn, value);
+    } else {
+      currentFilters = [{ name: value, value }];
+    }
     allFilters.push(...currentFilters);
   });
   return allFilters;
@@ -27,7 +32,14 @@ export const getFilters = (state, columns) => {
 export const removeFilter = (filter, setFilter, setAllFilters, state) => {
   const { filters } = state;
   const [editedFilter] = filters.filter(currentFilter => currentFilter.value.includes(filter));
-  const updatedFilterValue = editedFilter.value.filter(value => value !== filter);
+
+  let updatedFilterValue;
+  if (isArray(editedFilter.value)) {
+    updatedFilterValue = editedFilter.value.filter(value => value !== filter);
+  } else {
+    updatedFilterValue = filter.includes(editedFilter.value) ? [] : editedFilter.value;
+  }
+
   if (isEmpty(updatedFilterValue)) {
     const updatedFilters = filters.filter(currentFilter => currentFilter.id !== editedFilter.id);
     setAllFilters(updatedFilters);
