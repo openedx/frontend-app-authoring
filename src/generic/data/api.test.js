@@ -11,6 +11,8 @@ import {
   getCourseRerun,
   getUserPermissions,
   getUserPermissionsUrl,
+  getUserPermissionsEnabledFlag,
+  getUserPermissionsEnabledFlagUrl,
 } from './api';
 
 let axiosMock;
@@ -85,5 +87,15 @@ describe('generic api calls', () => {
 
     expect(axiosMock.history.get[0].url).toEqual(queryUrl);
     expect(result).toEqual(permissionsData);
+  });
+
+  it('should get user permissions enabled flag', async () => {
+    const permissionsEnabledData = { enabled: true };
+    const queryUrl = getUserPermissionsEnabledFlagUrl;
+    axiosMock.onGet(queryUrl).reply(200, permissionsEnabledData);
+    const result = await getUserPermissionsEnabledFlag();
+
+    expect(axiosMock.history.get[0].url).toEqual(queryUrl);
+    expect(result).toEqual(permissionsEnabledData);
   });
 });
