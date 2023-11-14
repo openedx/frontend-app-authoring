@@ -148,7 +148,6 @@ describe('TranscriptSettings', () => {
 
       expect(within(cielo24Button).getByLabelText('Cielo24 radio')).toHaveProperty('checked', true);
     });
-
   });
 
   describe('delete transcript preferences', () => {
