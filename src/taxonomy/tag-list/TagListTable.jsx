@@ -8,7 +8,7 @@ import Proptypes from 'prop-types';
 import { useState } from 'react';
 
 import messages from './messages';
-import { useTagListDataResponse, useTagListDataStatus } from './data/selectors';
+import { useTagListDataResponse, useTagListDataStatus } from './data/apiHooks';
 
 const TagListTable = ({ taxonomyId }) => {
   const intl = useIntl();

@@ -16,7 +16,7 @@ import TaxonomyDetailMenu from './TaxonomyDetailMenu';
 import TaxonomyDetailSideCard from './TaxonomyDetailSideCard';
 import { TagListTable } from '../tag-list';
 import ExportModal from '../export-modal';
-import { useTaxonomyDetailDataResponse, useTaxonomyDetailDataStatus } from './data/selectors';
+import { useTaxonomyDetailDataResponse, useTaxonomyDetailDataStatus } from './data/apiHooks';
 
 const TaxonomyDetailPage = () => {
   const intl = useIntl();

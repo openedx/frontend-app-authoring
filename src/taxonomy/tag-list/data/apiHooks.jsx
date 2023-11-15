@@ -26,7 +26,6 @@ export const useTagListDataStatus = (taxonomyId, options) => {
   };
 };
 
-// ToDo: fix types
 /**
  * @param {number} taxonomyId
  * @param {import("./types.mjs").QueryOptions} options

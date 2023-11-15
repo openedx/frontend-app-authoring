@@ -1,14 +1,11 @@
-import {
-  useTaxonomyDetailData,
-} from './api';
+import { useQuery } from '@tanstack/react-query';
 import {
   useTaxonomyDetailDataStatus,
   useTaxonomyDetailDataResponse,
-} from './selectors';
+} from './apiHooks';
 
-jest.mock('./api', () => ({
-  __esModule: true,
-  useTaxonomyDetailData: jest.fn(),
+jest.mock('@tanstack/react-query', () => ({
+  useQuery: jest.fn(),
 }));
 
 describe('useTaxonomyDetailDataStatus', () => {
@@ -20,7 +17,7 @@ describe('useTaxonomyDetailDataStatus', () => {
       isSuccess: true,
     };
 
-    useTaxonomyDetailData.mockReturnValueOnce(status);
+    useQuery.mockReturnValueOnce(status);
 
     const result = useTaxonomyDetailDataStatus(0);
 
@@ -30,7 +27,7 @@ describe('useTaxonomyDetailDataStatus', () => {
 
 describe('useTaxonomyDetailDataResponse', () => {
   it('should return data when status is success', () => {
-    useTaxonomyDetailData.mockReturnValueOnce({ isSuccess: true, data: 'data' });
+    useQuery.mockReturnValueOnce({ isSuccess: true, data: 'data' });
 
     const result = useTaxonomyDetailDataResponse();
 
@@ -38,7 +35,7 @@ describe('useTaxonomyDetailDataResponse', () => {
   });
 
   it('should return undefined when status is not success', () => {
-    useTaxonomyDetailData.mockReturnValueOnce({ isSuccess: false });
+    useQuery.mockReturnValueOnce({ isSuccess: false });
 
     const result = useTaxonomyDetailDataResponse();
 

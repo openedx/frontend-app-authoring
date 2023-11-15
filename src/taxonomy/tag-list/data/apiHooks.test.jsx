@@ -1,13 +1,11 @@
+import { useQuery } from '@tanstack/react-query';
 import {
   useTagListDataStatus,
   useTagListDataResponse,
-} from './selectors';
-import {
-  useTagListData,
-} from './api';
+} from './apiHooks';
 
-jest.mock('./api', () => ({
-  useTagListData: jest.fn(),
+jest.mock('@tanstack/react-query', () => ({
+  useQuery: jest.fn(),
 }));
 
 describe('useTagListDataStatus', () => {
@@ -20,7 +18,7 @@ describe('useTagListDataStatus', () => {
       isSuccess: true,
     };
 
-    useTagListData.mockReturnValueOnce(status);
+    useQuery.mockReturnValueOnce(status);
 
     const result = useTagListDataStatus(0, {});
 
@@ -30,7 +28,7 @@ describe('useTagListDataStatus', () => {
 
 describe('useTagListDataResponse', () => {
   it('should return data when status is success', () => {
-    useTagListData.mockReturnValueOnce({ isSuccess: true, data: 'data' });
+    useQuery.mockReturnValueOnce({ isSuccess: true, data: 'data' });
 
     const result = useTagListDataResponse(0, {});
 
@@ -38,7 +36,7 @@ describe('useTagListDataResponse', () => {
   });
 
   it('should return undefined when status is not success', () => {
-    useTagListData.mockReturnValueOnce({ isSuccess: false });
+    useQuery.mockReturnValueOnce({ isSuccess: false });
 
     const result = useTagListDataResponse(0, {});
 
