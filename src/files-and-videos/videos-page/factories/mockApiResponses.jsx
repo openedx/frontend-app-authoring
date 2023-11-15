@@ -83,7 +83,6 @@ export const initialState = {
       usageMetrics: [],
       transcript: [],
     },
-    totalCount: 0,
   },
   models: {
     videos: {
@@ -99,7 +98,7 @@ export const initialState = {
         created: '',
         courseVideoImageUrl: '/video',
         transcripts: [],
-        status: 'Imported',
+        status: 'In Progress',
         downloadLink: 'http://mOckID0.mp4',
       },
     },

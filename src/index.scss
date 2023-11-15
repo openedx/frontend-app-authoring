@@ -7,7 +7,6 @@
 @import "assets/scss/form";
 @import "assets/scss/utilities";
 @import "assets/scss/animations";
-@import "proctored-exam-settings/proctoredExamSettings";
 @import "pages-and-resources/discussions/app-list/AppList";
 @import "advanced-settings/scss/AdvancedSettings";
 @import "grading-settings/scss/GradingSettings";
@@ -18,4 +17,5 @@
 @import "course-updates/CourseUpdates";
 @import "export-page/CourseExportPage";
 @import "import-page/CourseImportPage";
+@import "taxonomy/taxonomy-card/TaxonomyCard";
 @import "files-and-videos";

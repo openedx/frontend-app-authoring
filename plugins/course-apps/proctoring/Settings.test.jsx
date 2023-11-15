@@ -197,6 +197,7 @@ describe('ProctoredExamSettings', () => {
         fireEvent.change(selectElement, { target: { value: 'test_lti' } });
       });
       expect(screen.queryByTestId('escalationEmail')).toBeNull();
+      expect(screen.queryByTestId('allowOptingOutRadio')).toBeNull();
       expect(screen.queryByTestId('createZendeskTicketsYes')).toBeNull();
       expect(screen.queryByTestId('createZendeskTicketsNo')).toBeNull();
     });

@@ -22,7 +22,6 @@ const slice = createSlice({
       usageMetrics: [],
       transcript: [],
     },
-    totalCount: 0,
   },
   reducers: {
     setVideoIds: (state, { payload }) => {
@@ -30,9 +29,6 @@ const slice = createSlice({
     },
     setPageSettings: (state, { payload }) => {
       state.pageSettings = payload;
-    },
-    setTotalCount: (state, { payload }) => {
-      state.totalCount = payload.totalCount;
     },
     updateLoadingStatus: (state, { payload }) => {
       state.loadingStatus = payload.status;
@@ -93,7 +89,6 @@ const slice = createSlice({
 export const {
   setVideoIds,
   setPageSettings,
-  setTotalCount,
   updateLoadingStatus,
   deleteVideoSuccess,
   addVideoSuccess,
