@@ -84,7 +84,7 @@
     "@testing-library/react": "12.1.5",
     "@testing-library/user-event": "^13.2.1",
     "@wojtekmaj/enzyme-adapter-react-17": "0.8.0",
-    "axios-mock-adapter": "1.20.0",
+    "axios-mock-adapter": "1.22.0",
     "enzyme": "3.11.0",
     "enzyme-to-json": "^3.6.2",
     "glob": "7.2.3",
