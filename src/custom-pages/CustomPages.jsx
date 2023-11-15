@@ -1,8 +1,6 @@
 import React, { useEffect, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Routes, Route, useLocation, useNavigate,
-} from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppContext, PageWrap } from '@edx/frontend-platform/react';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
@@ -53,13 +51,11 @@ const CustomPages = ({
   const [orderedPages, setOrderedPages] = useState([]);
   const [currentPage, setCurrentPage] = useState();
   const [isOpen, open, close] = useToggle(false);
-  const [isEditModalOpen, openEditModal, closeEditModal] = useToggle(false);
 
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
 
   const { config } = useContext(AppContext);
-  const location = useLocation();
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
 
   useEffect(() => {
@@ -79,15 +75,14 @@ const CustomPages = ({
     dispatch(updatePageOrder(courseId, newPageOrder));
   };
   const handleEditClose = () => (content) => {
-    navigate(location.pathname);
+    navigate(`/course/${courseId}/custom-pages`);
     if (!content?.metadata) {
-      closeEditModal();
+      setCurrentPage(null);
       return;
     }
     dispatch(updateSingleCustomPage({
       blockId: currentPage,
       metadata: { displayName: content.metadata.display_name },
-      onClose: closeEditModal,
       setCurrentPage,
     }));
   };
@@ -192,7 +187,6 @@ const CustomPages = ({
                       deletePageStatus,
                       courseId,
                       setCurrentPage,
-                      openEditModal,
                     }}
                   />
                 </SortableItem>
@@ -262,7 +256,6 @@ const CustomPages = ({
               <PageWrap>
                 <EditModal
                   courseId={courseId}
-                  isOpen={isEditModalOpen}
                   pageId={currentPage}
                   onClose={handleEditClose}
                 />

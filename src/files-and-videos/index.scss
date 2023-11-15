@@ -1,3 +1,21 @@
 @import "files-and-videos/videos-page/transcript-settings/TranscriptSettings";
 @import "files-and-videos/videos-page/VideoThumbnail";
-@import "files-and-videos/table-components/GalleryCard"
+@import "files-and-videos/generic/table-components/GalleryCard";
+
+.files-table {
+  #table-filters-dropdown {
+    visibility: hidden;
+  }
+}
+
+.pgn__form-control-set-inline {
+  .pgn__form-checkbox {
+    margin: 0;
+  }
+
+  width: 90%;
+  display: inline-grid;
+  grid-auto-flow: row;
+  gap: 24px 16px;
+  grid-template-columns: repeat(3, 33%);
+}

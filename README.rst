@@ -278,7 +278,6 @@ Developing
 
 If your devstack includes the default Demo course, you can visit the following URLs to see content:
 
-- `Proctored Exam Settings <http://localhost:2001/course/course-v1:edX+DemoX+Demo_Course/proctored-exam-settings>`_
 - `Pages and Resources <http://localhost:2001/course/course-v1:edX+DemoX+Demo_Course/pages-and-resources>`_
 
 Troubleshooting

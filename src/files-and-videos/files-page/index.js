@@ -1,3 +1,5 @@
-import FilesAndUploads from './FilesAndUploads';
+import FilesPage from './FilesPage';
+import FileInfoModalSidebar from './FileInfoModalSidebar';
 
-export default FilesAndUploads;
+export default FilesPage;
+export { FileInfoModalSidebar };

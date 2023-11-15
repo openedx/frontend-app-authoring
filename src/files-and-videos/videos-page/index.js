@@ -1,6 +1,7 @@
 import TranscriptSettings from './transcript-settings';
-import Videos from './Videos';
+import VideosPage from './VideosPage';
 import VideoThumbnail from './VideoThumbnail';
+import VideoInfoModalSidebar from './info-sidebar';
 
-export default Videos;
-export { TranscriptSettings, VideoThumbnail };
+export default VideosPage;
+export { TranscriptSettings, VideoThumbnail, VideoInfoModalSidebar };

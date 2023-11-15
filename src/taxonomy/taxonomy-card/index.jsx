@@ -55,8 +55,7 @@ const HeaderSubtitle = ({
   }
 
   // Or none
-  // eslint-disable-next-line react/jsx-no-useless-fragment
-  return <></>;
+  return null;
 };
 
 HeaderSubtitle.propTypes = {

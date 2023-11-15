@@ -21,12 +21,20 @@ export const updateFileValues = (files) => {
       clientVideoId,
       created,
       courseVideoImageUrl,
+      status,
     } = file;
     const wrapperType = 'video';
 
     let thumbnail = courseVideoImageUrl;
     if (thumbnail && thumbnail.startsWith('/')) {
       thumbnail = `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
+    }
+
+    let uploadStatus = status;
+    if (status === 'Ready' || status === 'Imported') {
+      uploadStatus = 'Success';
+    } else if (status === 'In Progress' || status === 'Uploaded') {
+      uploadStatus = 'Processing';
     }
 
     updatedFiles.push({
@@ -36,6 +44,7 @@ export const updateFileValues = (files) => {
       wrapperType,
       dateAdded: created.toString(),
       usageLocations: [],
+      status: uploadStatus,
       thumbnail,
     });
   });

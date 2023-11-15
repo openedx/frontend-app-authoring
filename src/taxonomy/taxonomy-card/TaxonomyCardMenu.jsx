@@ -18,6 +18,11 @@ const TaxonomyCardMenu = ({
   const [menuIsOpen, setMenuIsOpen] = useState(false);
   const [menuTarget, setMenuTarget] = useState(null);
 
+  const onOpenMenu = (e) => {
+    e.preventDefault();
+    setMenuIsOpen(true);
+  };
+
   const onClickItem = (e, menuName) => {
     e.preventDefault();
     setMenuIsOpen(false);
@@ -28,10 +33,7 @@ const TaxonomyCardMenu = ({
     <>
       <IconButton
         variant="primary"
-        onClick={(e) => {
-          e.preventDefault();
-          setMenuIsOpen(true);
-        }}
+        onClick={(e) => onOpenMenu(e)}
         ref={setMenuTarget}
         src={MoreVert}
         iconAs={Icon}

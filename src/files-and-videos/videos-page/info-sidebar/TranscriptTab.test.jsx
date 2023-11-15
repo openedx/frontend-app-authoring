@@ -28,7 +28,7 @@ import {
 import { getApiBaseUrl } from '../data/api';
 import messages from './messages';
 import transcriptRowMessages from './transcript-item/messages';
-import VideosProvider from '../VideosProvider';
+import VideosPageProvider from '../VideosPageProvider';
 import { deleteVideoTranscript } from '../data/thunks';
 
 ReactDOM.createPortal = jest.fn(node => node);
@@ -56,9 +56,9 @@ const renderComponent = (props) => {
   render(
     <IntlProvider locale="en">
       <AppProvider store={store}>
-        <VideosProvider courseId={courseId}>
+        <VideosPageProvider courseId={courseId}>
           <TranscriptTab video={props} />
-        </VideosProvider>
+        </VideosPageProvider>
       </AppProvider>
     </IntlProvider>,
   );

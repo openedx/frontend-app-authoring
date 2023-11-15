@@ -235,7 +235,7 @@ const ProctoringSettings = ({ intl, onClose }) => {
     );
   }
 
-  const learnMoreLink = appInfo.documentationLinks?.learnMoreConfiguration && (
+  const learnMoreLink = appInfo?.documentationLinks?.learnMoreConfiguration && (
     <Hyperlink
       className="text-primary-500"
       destination={appInfo.documentationLinks.learnMoreConfiguration}
@@ -350,7 +350,7 @@ const ProctoringSettings = ({ intl, onClose }) => {
         )}
 
         {/* ALLOW OPTING OUT OF PROCTORED EXAMS */}
-        { isEdxStaff && formValues.enableProctoredExams && (
+        { isEdxStaff && formValues.enableProctoredExams && !isLtiProvider(formValues.proctoringProvider) && (
           <fieldset aria-describedby="allowOptingOutHelpText">
             <Form.Group controlId="formAllowingOptingOut">
               <Form.Label as="legend" className="font-weight-bold">
@@ -358,6 +358,7 @@ const ProctoringSettings = ({ intl, onClose }) => {
               </Form.Label>
               <Form.RadioSet
                 name="allowOptingOut"
+                data-testid="allowOptingOutRadio"
                 value={formValues.allowOptingOut.toString()}
                 onChange={handleChange}
               >
