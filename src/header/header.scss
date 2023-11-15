@@ -2,10 +2,10 @@
 $spacer: 1rem;
 $white: #FFFFFF;
 
-.btn-tertiary:hover {
-  color: white;
-  background-color: #00262B;
-}
+// .btn-tertiary:hover {
+//   color: white;
+//   background-color: #00262B;
+// }
 
 .course-title-lockup {
   @media only screen and (max-width: 768px) {
@@ -35,6 +35,11 @@ $white: #FFFFFF;
 .site-header-desktop {
   position: relative;
   z-index: 1000;
+
+  .btn-tertiary:hover {
+    color: white;
+    background-color: $primary-500;
+  }
 }
 
 .site-header-mobile {
