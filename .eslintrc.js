@@ -24,7 +24,7 @@ module.exports = createConfig(
     },
     overrides: [
       {
-        files: ['plugins/**/*.test.jsx', 'some-other-repo/plugins/**/*.test.jsx'],
+        files: ['plugins/**/*.test.jsx'],
         rules: {
           'import/no-extraneous-dependencies': 'off',
         },
