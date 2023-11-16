@@ -33,7 +33,7 @@ const AppList = ({ intl }) => {
   const features = useModels('features', featureIds);
   const isGlobalStaff = getAuthenticatedUser().administrator;
   const ltiProvider = !['openedx', 'legacy'].includes(activeAppId);
-  const isOnSmallcreen = useIsOnSmallScreen();
+  const isOnSmallScreen = useIsOnSmallScreen();
 
   const showOneEdxProvider = useMemo(() => apps.filter(app => (
     activeAppId === 'openedx' ? app.id !== 'legacy' : app.id !== 'openedx'
@@ -122,8 +122,8 @@ const AppList = ({ intl }) => {
 
   return (
     <div className="my-sm-4" data-testid="appList">
-      <div className={!isOnSmallcreen ? 'd-flex flex-row justify-content-between align-items-center' : 'mb-4'}>
-        <h3 className={isOnSmallcreen ? 'mb-3' : 'm-0'}>
+      <div className={!isOnSmallScreen ? 'd-flex flex-row justify-content-between align-items-center' : 'mb-4'}>
+        <h3 className={isOnSmallScreen ? 'mb-3' : 'm-0'}>
           {intl.formatMessage(messages.heading)}
         </h3>
         <Form.Switch
@@ -144,7 +144,7 @@ const AppList = ({ intl }) => {
           lg: 4,
           xl: 4,
         }}
-        className={!isOnSmallcreen && 'mt-5'}
+        className={!isOnSmallScreen && 'mt-5'}
       >
         {(isGlobalStaff || ltiProvider) ? showAppCard(apps) : showAppCard(showOneEdxProvider)}
       </CardGrid>
