@@ -22,17 +22,15 @@ const StudioHeaderWrapperBase = ({ intl, ...props }) => {
   const mainMenuDropdowns = getMainMenuDropdown(loadingStatus, libraryId, intl);
 
   return (
-    <div className="site-header-desktop">
-      <StudioHeader
-        {...{
-          org: library?.org,
-          title: library?.title,
-          isHiddenMainMenu,
-          mainMenuDropdowns,
-          outlineLink,
-        }}
-      />
-    </div>
+    <StudioHeader
+      {...{
+        org: library?.org,
+        title: library?.title,
+        isHiddenMainMenu,
+        mainMenuDropdowns,
+        outlineLink,
+      }}
+    />
   );
 };
 
