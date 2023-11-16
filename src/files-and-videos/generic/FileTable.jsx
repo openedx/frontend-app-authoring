@@ -66,6 +66,7 @@ const FileTable = ({
     usageErrorMessages,
     encodingsDownloadUrl,
     supportedFileFormats,
+    fileType,
   } = data;
 
   useEffect(() => {
@@ -136,6 +137,7 @@ const FileTable = ({
         handleBulkDownload,
         handleOpenDeleteConfirmation,
         supportedFileFormats,
+        fileType,
       }}
     />
   );
@@ -225,6 +227,7 @@ const FileTable = ({
           isOpen={isDeleteOpen}
           setClose={setDeleteClose}
           setSelectedRows={setSelectedRows}
+          fileType={fileType}
         />
         <ApiStatusToast
           actionType={intl.formatMessage(messages.apiStatusAddingAction)}
@@ -232,6 +235,7 @@ const FileTable = ({
           isOpen={isAddOpen}
           setClose={setAddClose}
           setSelectedRows={setSelectedRows}
+          fileType={fileType}
         />
       </DataTable>
       <FileInput key="generic-file-upload" fileInput={fileInputControl} supportedFileFormats={supportedFileFormats} />
@@ -247,7 +251,7 @@ const FileTable = ({
         />
       )}
       <AlertModal
-        title={intl.formatMessage(messages.deleteConfirmationTitle)}
+        title={intl.formatMessage(messages.deleteConfirmationTitle, { fileType })}
         isOpen={isDeleteConfirmationOpen}
         onClose={closeDeleteConfirmation}
         footerNode={(
@@ -261,7 +265,7 @@ const FileTable = ({
           </ActionRow>
         )}
       >
-        {intl.formatMessage(messages.deleteConfirmationMessage, { fileNumber: selectedRows.length })}
+        {intl.formatMessage(messages.deleteConfirmationMessage, { fileNumber: selectedRows.length, fileType })}
       </AlertModal>
     </div>
   );
@@ -277,6 +281,7 @@ FileTable.propTypes = {
     usageErrorMessages: PropTypes.arrayOf(PropTypes.string).isRequired,
     encodingsDownloadUrl: PropTypes.string,
     supportedFileFormats: PropTypes.shape({}),
+    fileType: PropTypes.string.isRequired,
   }).isRequired,
   handleAddFile: PropTypes.func.isRequired,
   handleDeleteFile: PropTypes.func.isRequired,

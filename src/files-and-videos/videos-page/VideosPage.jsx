@@ -104,6 +104,7 @@ const VideosPage = ({
     loadingStatus,
     usagePathStatus,
     usageErrorMessages: errorMessages.usageMetrics,
+    fileType: 'video',
   };
   const thumbnailPreview = (props) => VideoThumbnail({ ...props, handleAddThumbnail, videoImageSettings });
   const infoModalSidebar = (video) => VideoInfoModalSidebar({ video });

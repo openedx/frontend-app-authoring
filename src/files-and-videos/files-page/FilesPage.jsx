@@ -80,6 +80,7 @@ const FilesPage = ({
     loadingStatus,
     usagePathStatus,
     usageErrorMessages: errorMessages.usageMetrics,
+    fileType: 'file',
   };
   const maxFileSize = 20 * 1048576;
 

@@ -266,7 +266,7 @@ describe('FilesAndUploads', () => {
         axiosMock.onDelete(`${getCoursVideosApiUrl(courseId)}/mOckID1`).reply(204);
 
         fireEvent.click(deleteButton);
-        expect(screen.getByText(messages.deleteConfirmationTitle.defaultMessage)).toBeVisible();
+        expect(screen.getByText('Delete video(s) confirmation')).toBeVisible();
         await act(async () => {
           userEvent.click(deleteButton);
         });
@@ -280,7 +280,7 @@ describe('FilesAndUploads', () => {
           userEvent.click(confirmDeleteButton);
         });
 
-        expect(screen.queryByText(messages.deleteConfirmationTitle.defaultMessage)).toBeNull();
+        expect(screen.queryByText('Delete video(s) confirmation')).toBeNull();
 
         // Check if the video is deleted in the store and UI
         const deleteStatus = store.getState().videos.deletingStatus;
@@ -518,10 +518,10 @@ describe('FilesAndUploads', () => {
           axiosMock.onDelete(`${getCoursVideosApiUrl(courseId)}/mOckID1`).reply(204);
           fireEvent.click(within(fileMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
-          expect(screen.getByText(messages.deleteConfirmationTitle.defaultMessage)).toBeVisible();
+          expect(screen.getByText('Delete video(s) confirmation')).toBeVisible();
 
           fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
-          expect(screen.queryByText(messages.deleteConfirmationTitle.defaultMessage)).toBeNull();
+          expect(screen.queryByText('Delete video(s) confirmation')).toBeNull();
 
           executeThunk(deleteVideoFile(courseId, 'mOckID1', 5), store.dispatch);
         });
@@ -612,10 +612,10 @@ describe('FilesAndUploads', () => {
           axiosMock.onDelete(`${getCoursVideosApiUrl(courseId)}/mOckID1`).reply(404);
           fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
-          expect(screen.getByText(messages.deleteConfirmationTitle.defaultMessage)).toBeVisible();
+          expect(screen.getByText('Delete video(s) confirmation')).toBeVisible();
 
           fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
-          expect(screen.queryByText(messages.deleteConfirmationTitle.defaultMessage)).toBeNull();
+          expect(screen.queryByText('Delete video(s) confirmation')).toBeNull();
 
           executeThunk(deleteVideoFile(courseId, 'mOckID1', 5), store.dispatch);
         });
