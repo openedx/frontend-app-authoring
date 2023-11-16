@@ -51,7 +51,8 @@ const FileTable = ({
     xs: 12,
     sm: 6,
     md: 4,
-    lg: 2,
+    lg: 3,
+    xl: 2,
   };
   const [currentView, setCurrentView] = useState(defaultVal);
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
@@ -172,7 +173,7 @@ const FileTable = ({
   }
 
   return (
-    <div className="files-table">
+    <div className="files-table mt-2.5">
       <DataTable
         isFilterable
         isLoading={loadingStatus === RequestStatus.IN_PROGRESS}
@@ -210,9 +211,10 @@ const FileTable = ({
             }}
           />
         ) : (
-          <div data-testid="files-data-table" className="mr-4 ml-3">
+          <div data-testid="files-data-table" className="bg-light-200">
             <DataTable.TableControlBar />
-            { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={6} /> }
+            <hr className="mb-5 border-light-700" />
+            { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={5} /> }
             { currentView === 'list' && <DataTable.Table /> }
             <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
             <DataTable.TableFooter />

@@ -12,6 +12,7 @@ import {
   ActionRow,
   Button,
   CheckboxFilter,
+  Container,
 } from '@edx/paragon';
 import Placeholder from '@edx/frontend-lib-content-components';
 
@@ -176,34 +177,32 @@ const VideosPage = ({
   }
   return (
     <VideosPageProvider courseId={courseId}>
-      <main>
-        <div className="p-4">
-          <EditFileErrors
-            resetErrors={handleErrorReset}
-            errorMessages={errorMessages}
-            addFileStatus={addVideoStatus}
-            deleteFileStatus={deleteVideoStatus}
-            updateFileStatus={updateVideoStatus}
-          />
-          <ActionRow>
-            <div className="h2">
-              <FormattedMessage {...messages.heading} />
-            </div>
-            <ActionRow.Spacer />
-            {isVideoTranscriptEnabled ? (
-              <Button
-                variant="link"
-                size="sm"
-                onClick={() => {
-                  openTranscriptSettings();
-                  handleErrorReset({ errorType: 'transcript' });
-                }}
-              >
-                <FormattedMessage {...messages.transcriptSettingsButtonLabel} />
-              </Button>
-            ) : null}
-          </ActionRow>
-        </div>
+      <Container size="xl" className="p-4 pt-4.5">
+        <EditFileErrors
+          resetErrors={handleErrorReset}
+          errorMessages={errorMessages}
+          addFileStatus={addVideoStatus}
+          deleteFileStatus={deleteVideoStatus}
+          updateFileStatus={updateVideoStatus}
+        />
+        <ActionRow>
+          <div className="h2">
+            <FormattedMessage {...messages.heading} />
+          </div>
+          <ActionRow.Spacer />
+          {isVideoTranscriptEnabled ? (
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => {
+                openTranscriptSettings();
+                handleErrorReset({ errorType: 'transcript' });
+              }}
+            >
+              <FormattedMessage {...messages.transcriptSettingsButtonLabel} />
+            </Button>
+          ) : null}
+        </ActionRow>
         {isVideoTranscriptEnabled ? (
           <TranscriptSettings
             {...{
@@ -233,7 +232,7 @@ const VideosPage = ({
             files: videos,
           }}
         />
-      </main>
+      </Container>
     </VideosPageProvider>
   );
 };
