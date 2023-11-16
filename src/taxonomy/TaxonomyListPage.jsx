@@ -9,15 +9,16 @@ import {
 import {
   Add,
 } from '@edx/paragon/icons';
-import { injectIntl, intlShape, useIntl } from '@edx/frontend-platform/i18n';
+
 import { StudioFooter } from '@edx/frontend-component-footer';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { importTaxonomy } from './import-tags';
 import messages from './messages';
-import TaxonomyCard from './TaxonomyCard';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './api/hooks/selectors';
+import TaxonomyCard from './taxonomy-card';
+import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
 
 const TaxonomyListHeaderButtons = () => {
   const intl = useIntl();
@@ -37,7 +38,8 @@ const TaxonomyListHeaderButtons = () => {
   );
 };
 
-const TaxonomyListPage = ({ intl }) => {
+const TaxonomyListPage = () => {
+  const intl = useIntl();
   const useTaxonomyListData = () => {
     const taxonomyListData = useTaxonomyListDataResponse();
     const isLoaded = useIsTaxonomyListDataLoaded();
@@ -115,8 +117,6 @@ const TaxonomyListPage = ({ intl }) => {
   );
 };
 
-TaxonomyListPage.propTypes = {
-  intl: intlShape.isRequired,
-};
+TaxonomyListPage.propTypes = {};
 
-export default injectIntl(TaxonomyListPage);
+export default TaxonomyListPage;

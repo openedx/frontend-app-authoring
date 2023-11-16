@@ -45,6 +45,42 @@ const messages = defineMessages({
       you lock a file, the web URL only allows learners who are enrolled
       in your course and signed in to access the file.`,
   },
+  activeCheckboxLabel: {
+    id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.activeCheckbox.label',
+    defaultMessage: 'Active',
+  },
+  inactiveCheckboxLabel: {
+    id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.inactiveCheckbox.label',
+    defaultMessage: 'Inactive',
+  },
+  lockedCheckboxLabel: {
+    id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.lockedCheckbox.label',
+    defaultMessage: 'Locked',
+  },
+  publicCheckboxLabel: {
+    id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.publicCheckbox.label',
+    defaultMessage: 'Public',
+  },
+  codeCheckboxLabel: {
+    id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.codeCheckbox.label',
+    defaultMessage: 'Code',
+  },
+  imageCheckboxLabel: {
+    id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.imageCheckbox.label',
+    defaultMessage: 'Images',
+  },
+  documentCheckboxLabel: {
+    id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.documentCheckbox.label',
+    defaultMessage: 'Documents',
+  },
+  audioCheckboxLabel: {
+    id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.audioCheckbox.label',
+    defaultMessage: 'Audio',
+  },
+  otherCheckboxLabel: {
+    id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.otherCheckbox.label',
+    defaultMessage: 'Other',
+  },
 });
 
 export default messages;
