@@ -33,8 +33,8 @@ export function fetchAssets(courseId) {
     try {
       const { totalCount } = await getAssets(courseId);
       const { assets } = await getAssets(courseId, totalCount);
-      const parsedAssests = updateFileValues(assets);
-      dispatch(addModels({ modelType: 'assets', models: parsedAssests }));
+      const parsedAssets = updateFileValues(assets);
+      dispatch(addModels({ modelType: 'assets', models: parsedAssets }));
       dispatch(setAssetIds({
         assetIds: assets.map(asset => asset.id),
       }));
@@ -79,10 +79,10 @@ export function addAssetFile(courseId, file) {
 
     try {
       const { asset } = await addAsset(courseId, file);
-      const [parsedAssest] = updateFileValues([asset]);
+      const [parsedAssets] = updateFileValues([asset]);
       dispatch(addModel({
         modelType: 'assets',
-        model: { ...parsedAssest },
+        model: { ...parsedAssets },
       }));
       dispatch(addAssetSuccess({
         assetId: asset.id,
