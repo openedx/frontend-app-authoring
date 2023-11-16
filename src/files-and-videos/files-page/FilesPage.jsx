@@ -197,8 +197,7 @@ const FilesPage = ({
             files: assets,
           }}
         />
-
-        </Container>
+      </Container>
     </FilesPageProvider>
   );
 };
