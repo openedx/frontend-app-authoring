@@ -29,14 +29,6 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-list.select.org.default',
     defaultMessage: 'All taxonomies',
   },
-  systemDefinedBadge: {
-    id: 'course-authoring.taxonomy-list.badge.system-defined.label',
-    defaultMessage: 'System-level',
-  },
-  assignedToOrgsLabel: {
-    id: 'course-authoring.taxonomy-list.orgs-count.label',
-    defaultMessage: 'Assigned to {orgsCount} orgs',
-  },
   usageLoadingMessage: {
     id: 'course-authoring.taxonomy-list.spinner.loading',
     defaultMessage: 'Loading',

@@ -1,18 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import _ from 'lodash';
 import { PropTypes } from 'prop-types';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import {
-  ActionRow,
   Button,
   Dropdown,
-  ModalDialog,
-  SelectableBox,
   useToggle,
 } from '@edx/paragon';
-import { Add } from '@edx/paragon/icons';
+import { Add, Tune } from '@edx/paragon/icons';
 import messages from '../messages';
+import SortAndFilterModal from './sort-and-filter-modal';
 
 const TableActions = ({
   selectedFlatRows,
@@ -21,17 +19,11 @@ const TableActions = ({
   handleBulkDownload,
   handleOpenDeleteConfirmation,
   encodingsDownloadUrl,
-  // injected
-  intl,
 }) => {
   const [isSortOpen, openSort, closeSort] = useToggle(false);
-  const [sortBy, setSortBy] = useState('dateAdded,desc');
-  const handleChange = (e) => {
-    setSortBy(e.target.value);
-  };
   return (
     <>
-      <Button variant="outline-primary" onClick={openSort}>
+      <Button variant="outline-primary" onClick={openSort} iconBefore={Tune}>
         <FormattedMessage {...messages.sortButtonLabel} />
       </Button>
       <Dropdown className="mx-2">
@@ -70,94 +62,7 @@ const TableActions = ({
       <Button iconBefore={Add} onClick={fileInputControl.click}>
         <FormattedMessage {...messages.addFilesButtonLabel} />
       </Button>
-      <ModalDialog
-        title={intl.formatMessage(messages.sortModalTitleLabel)}
-        isOpen={isSortOpen}
-        onClose={closeSort}
-        size="lg"
-        hasCloseButton
-      >
-        <ModalDialog.Header>
-          <ModalDialog.Title>
-            <FormattedMessage {...messages.sortModalTitleLabel} />
-          </ModalDialog.Title>
-        </ModalDialog.Header>
-        <ModalDialog.Body>
-          <SelectableBox.Set
-            type="radio"
-            value={sortBy}
-            onChange={handleChange}
-            name="sort options"
-            columns={3}
-            ariaLabel="sort by selection"
-          >
-            <SelectableBox
-              className="text-center"
-              value="displayName,asc"
-              type="radio"
-              aria-label="name descending radio"
-            >
-              <FormattedMessage {...messages.sortByNameAscending} />
-            </SelectableBox>
-            <SelectableBox
-              className="text-center"
-              value="dateAdded,desc"
-              type="radio"
-              aria-label="date added descending radio"
-            >
-              <FormattedMessage {...messages.sortByNewest} />
-            </SelectableBox>
-            <SelectableBox
-              className="text-center"
-              value="fileSize,desc"
-              type="radio"
-              aria-label="date added descending radio"
-            >
-              <FormattedMessage {...messages.sortBySizeDescending} />
-            </SelectableBox>
-            <SelectableBox
-              className="text-center"
-              value="displayName,desc"
-              type="radio"
-              aria-label="name ascending radio"
-            >
-              <FormattedMessage {...messages.sortByNameDescending} />
-            </SelectableBox>
-            <SelectableBox
-              className="text-center"
-              value="dateAdded,asc"
-              type="radio"
-              aria-label="date added ascending radio"
-            >
-              <FormattedMessage {...messages.sortByOldest} />
-            </SelectableBox>
-            <SelectableBox
-              className="text-center"
-              value="fileSize,asc"
-              type="radio"
-              aria-label="date added ascending radio"
-            >
-              <FormattedMessage {...messages.sortBySizeAscending} />
-            </SelectableBox>
-          </SelectableBox.Set>
-        </ModalDialog.Body>
-        <ModalDialog.Footer>
-          <ActionRow>
-            <ModalDialog.CloseButton variant="tertiary">
-              <FormattedMessage {...messages.cancelButtonLabel} />
-            </ModalDialog.CloseButton>
-            <Button
-              variant="primary"
-              onClick={() => {
-                closeSort();
-                handleSort(sortBy);
-              }}
-            >
-              <FormattedMessage {...messages.applySortButton} />
-            </Button>
-          </ActionRow>
-        </ModalDialog.Footer>
-      </ModalDialog>
+      <SortAndFilterModal {...{ isSortOpen, closeSort, handleSort }} />
     </>
   );
 };
@@ -186,8 +91,6 @@ TableActions.propTypes = {
   handleBulkDownload: PropTypes.func.isRequired,
   encodingsDownloadUrl: PropTypes.string,
   handleSort: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
 TableActions.defaultProps = {

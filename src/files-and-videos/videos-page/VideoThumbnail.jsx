@@ -38,18 +38,7 @@ const VideoThumbnail = ({
   }
   const supportedFiles = videoImageSettings?.supportedFileFormats
     ? Object.values(videoImageSettings.supportedFileFormats) : null;
-  let isUploaded = false;
-
-  switch (status) {
-  case 'Ready':
-    isUploaded = true;
-    break;
-  case 'Imported':
-    isUploaded = true;
-    break;
-  default:
-    break;
-  }
+  const isUploaded = status === 'Success';
 
   const showThumbnail = allowThumbnailUpload && thumbnail && isUploaded;
 

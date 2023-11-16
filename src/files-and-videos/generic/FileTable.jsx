@@ -22,10 +22,11 @@ import FileInput, { useFileInput } from './FileInput';
 import {
   GalleryCard,
   TableActions,
+  RowStatus,
+  MoreInfoColumn,
+  FilterStatus,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
-import FilterStatus from './table-components/FilterStatus';
-import MoreInfoColumn from './table-components/table-custom-columns/MoreInfoColumn';
 
 const FileTable = ({
   files,
@@ -45,6 +46,7 @@ const FileTable = ({
   intl,
 }) => {
   const defaultVal = 'card';
+  const pageCount = Math.ceil(files.length / 50);
   const columnSizes = {
     xs: 12,
     sm: 6,
@@ -59,7 +61,6 @@ const FileTable = ({
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
 
   const {
-    totalCount,
     loadingStatus,
     usagePathStatus,
     usageErrorMessages,
@@ -171,7 +172,7 @@ const FileTable = ({
   }
 
   return (
-    <>
+    <div className="files-table">
       <DataTable
         isFilterable
         isLoading={loadingStatus === RequestStatus.IN_PROGRESS}
@@ -191,10 +192,11 @@ const FileTable = ({
         tableActions={headerActions}
         bulkActions={headerActions}
         columns={tableColumns}
-        itemCount={totalCount}
-        pageCount={Math.ceil(totalCount / 50)}
+        itemCount={files.length}
+        pageCount={pageCount}
         data={files}
         FilterStatusComponent={FilterStatus}
+        RowStatusComponent={RowStatus}
       >
         {isEmpty(files) && loadingStatus !== RequestStatus.IN_PROGRESS ? (
           <Dropzone
@@ -261,7 +263,7 @@ const FileTable = ({
       >
         {intl.formatMessage(messages.deleteConfirmationMessage, { fileNumber: selectedRows.length })}
       </AlertModal>
-    </>
+    </div>
   );
 };
 
@@ -269,7 +271,6 @@ FileTable.propTypes = {
   courseId: PropTypes.string.isRequired,
   files: PropTypes.arrayOf(PropTypes.shape({})),
   data: PropTypes.shape({
-    totalCount: PropTypes.number.isRequired,
     fileIds: PropTypes.arrayOf(PropTypes.string).isRequired,
     loadingStatus: PropTypes.string.isRequired,
     usagePathStatus: PropTypes.string.isRequired,

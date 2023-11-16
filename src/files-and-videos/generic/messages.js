@@ -1,6 +1,10 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  rowStatusMessage: {
+    id: 'course-authoring.files-and-upload.rowStatus.message',
+    defaultMessage: 'Showing {fileCount} of {rowCount}',
+  },
   apiStatusToastMessage: {
     id: 'course-authoring.files-and-upload.apiStatus.message',
     defaultMessage: '{actionType} {selectedRowCount} file(s)',
@@ -95,7 +99,7 @@ const messages = defineMessages({
   },
   sortButtonLabel: {
     id: 'course-authoring.files-and-uploads.sortButton.label',
-    defaultMessage: 'Sort',
+    defaultMessage: 'Sort and Filter',
   },
   sortModalTitleLabel: {
     id: 'course-authoring.files-and-uploads.sortModal.title',
