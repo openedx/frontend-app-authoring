@@ -173,7 +173,7 @@ const FileTable = ({
   }
 
   return (
-    <div className="files-table mt-2.5">
+    <div className="files-table">
       <DataTable
         isFilterable
         isLoading={loadingStatus === RequestStatus.IN_PROGRESS}
