@@ -49,6 +49,10 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-uploads.file-info.usage.notInUse.message',
     defaultMessage: 'Currently not in use',
   },
+  copyVideoIdTitle: {
+    id: 'course-authoring.files-and-uploads.cardMenu.copyVideoIdTitle',
+    defaultMessage: 'Copy video ID',
+  },
   copyStudioUrlTitle: {
     id: 'course-authoring.files-and-uploads.cardMenu.copyStudioUrlTitle',
     defaultMessage: 'Copy Studio Url',
