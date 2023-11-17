@@ -19,7 +19,7 @@ import { executeThunk } from '../utils';
 import { RequestStatus } from '../data/constants';
 import CustomPageCard from './CustomPageCard';
 import {
-  generateUpdateVisiblityApiResponse,
+  generateUpdateVisibilityApiResponse,
   courseId,
   initialState,
   generateXblockData,
@@ -64,7 +64,7 @@ const mockStore = async ({
   const xblockEditUrl = `${getApiBaseUrl()}/xblock/${blockId}`;
 
   axiosMock.onDelete(xblockEditUrl).reply(204);
-  axiosMock.onPut(xblockEditUrl).reply(200, generateUpdateVisiblityApiResponse(blockId, visibility));
+  axiosMock.onPut(xblockEditUrl).reply(200, generateUpdateVisibilityApiResponse(blockId, visibility));
   axiosMock.onGet(xblockEditUrl).reply(200, generateXblockData(blockId));
 
   await executeThunk(deleteSingleCustomPage({
