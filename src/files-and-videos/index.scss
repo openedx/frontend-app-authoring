@@ -3,13 +3,19 @@
 @import "files-and-videos/generic/table-components/GalleryCard";
 
 .files-table {
+
   #table-filters-dropdown {
     visibility: hidden;
   }
 
-  .pgn__data-table-layout-main {
-    background-color: $light-200;
+  .pgn__data-table-layout-wrapper {
+    overflow-x: visible;
+  }
 
+  .pgn__data-table-wrapper {
+    background-color: $light-200;
+    box-shadow: 0 0 0 #000;
+  
     .pgn__data-table-status-bar {
       padding: 12px 0;
 
@@ -25,6 +31,11 @@
         padding: 0 24px 24px 0;
         margin-bottom: 0;
       }
+    }
+
+    .pgn__data-table-footer {
+      border-top: none;
+      justify-content: center;
     }
   }
 

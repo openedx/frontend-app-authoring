@@ -27,6 +27,7 @@ import {
   FilterStatus,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
+import Footer from './table-components/Footer';
 
 const FileTable = ({
   files,
@@ -216,10 +217,10 @@ const FileTable = ({
           <div data-testid="files-data-table" className="bg-light-200">
             <DataTable.TableControlBar />
             <hr className="mb-5 border-light-700" />
-            { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={5} /> }
+            { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={6} /> }
             { currentView === 'list' && <DataTable.Table /> }
             <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
-            <DataTable.TableFooter />
+            <Footer />
           </div>
         )}
 
