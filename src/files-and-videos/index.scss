@@ -6,6 +6,25 @@
   #table-filters-dropdown {
     visibility: hidden;
   }
+
+  .more-info-menu {
+    padding: 8px 0;
+    overflow-x: hidden;
+    max-height: 500px;
+    width: 321px;
+
+    @include pgn-box-shadow(2, "down");
+
+    .pgn__menu-item {
+      width: 100%;
+      justify-content: start;
+
+      &.focus,
+      &:focus {
+        font-weight: 500;
+      }
+    }
+  }
 }
 
 .pgn__form-control-set-inline {
