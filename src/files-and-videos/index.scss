@@ -7,6 +7,27 @@
     visibility: hidden;
   }
 
+  .pgn__data-table-layout-main {
+    background-color: $light-200;
+
+    .pgn__data-table-status-bar {
+      padding: 12px 0;
+
+      .pgn__data-table-actions-left {
+        margin-top: 16px;
+      }
+    }
+
+    .pgn__data-table-card-view {
+      margin-left: 24px;
+
+      .pgn__card-grid__card-item {
+        padding: 0 24px 24px 0;
+        margin-bottom: 0;
+      }
+    }
+  }
+
   .more-info-menu {
     padding: 8px 0;
     overflow-x: hidden;
