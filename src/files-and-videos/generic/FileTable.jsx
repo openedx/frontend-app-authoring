@@ -25,9 +25,9 @@ import {
   RowStatus,
   MoreInfoColumn,
   FilterStatus,
+  Footer,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
-import Footer from './table-components/Footer';
 
 const FileTable = ({
   files,

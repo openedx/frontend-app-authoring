@@ -3,7 +3,6 @@
 @import "files-and-videos/generic/table-components/GalleryCard";
 
 .files-table {
-
   #table-filters-dropdown {
     visibility: hidden;
   }
@@ -14,8 +13,8 @@
 
   .pgn__data-table-wrapper {
     background-color: $light-200;
-    box-shadow: 0 0 0 #000;
-  
+    box-shadow: 0 0 0;
+
     .pgn__data-table-status-bar {
       padding: 12px 0;
 
