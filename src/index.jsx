@@ -89,6 +89,10 @@ initialize({
         BBB_LEARN_MORE_URL: process.env.BBB_LEARN_MORE_URL || '',
         STUDIO_BASE_URL: process.env.STUDIO_BASE_URL || null,
         STUDIO_SHORT_NAME: process.env.STUDIO_SHORT_NAME || null,
+        TERMS_OF_SERVICE_URL: process.env.TERMS_OF_SERVICE_URL || null,
+        PRIVACY_POLICY_URL: process.env.PRIVACY_POLICY_URL || null,
+        SHOW_ACCESSIBILITY_PAGE: process.env.SHOW_ACCESSIBILITY_PAGE || false,
+        NOTIFICATION_FEEDBACK_URL: process.env.NOTIFICATION_FEEDBACK_URL || null,
       }, 'CourseAuthoringConfig');
     },
   },

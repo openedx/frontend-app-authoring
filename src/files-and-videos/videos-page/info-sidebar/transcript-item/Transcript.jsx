@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Card,
@@ -27,6 +27,10 @@ const Transcript = ({
   const [newLanguage, setNewLanguage] = useState(transcript);
   const language = transcript;
 
+  useEffect(() => {
+    setNewLanguage(transcript);
+  }, [transcript]);
+
   const input = useFileInput({
     onAddFile: (file) => {
       handleTranscript({
@@ -49,7 +53,7 @@ const Transcript = ({
   return (
     <>
       {isConfirmationOpen ? (
-        <Card className="mb-2">
+        <Card className="my-2">
           <Card.Header title={(<FormattedMessage {...messages.deleteConfirmationHeader} />)} />
           <Card.Body>
             <Card.Section>
