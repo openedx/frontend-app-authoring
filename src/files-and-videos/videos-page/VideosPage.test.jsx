@@ -351,7 +351,10 @@ describe('FilesAndUploads', () => {
           it('should be enabled and sort files by name', async () => {
             const sortNameAscendingButton = screen.getByText(messages.sortByNameAscending.defaultMessage);
             fireEvent.click(sortNameAscendingButton);
-            fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+
+            await waitFor(() => {
+              fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+            });
 
             expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
           });
@@ -359,7 +362,10 @@ describe('FilesAndUploads', () => {
           it('sort button should be enabled and sort files by file size', async () => {
             const sortBySizeDescendingButton = screen.getByText(messages.sortBySizeDescending.defaultMessage);
             fireEvent.click(sortBySizeDescendingButton);
-            fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+
+            await waitFor(() => {
+              fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+            });
 
             expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
           });
@@ -374,7 +380,10 @@ describe('FilesAndUploads', () => {
             fireEvent.click(transcribedCheckboxFilter);
             fireEvent.click(notTranscribedCheckboxFilter);
             fireEvent.click(transcribedCheckboxFilter);
-            fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+
+            await waitFor(() => {
+              fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+            });
 
             const galleryCards = screen.getAllByTestId('grid-card', { exact: false });
 
@@ -406,7 +415,10 @@ describe('FilesAndUploads', () => {
           it('should remove Transcribed filter chip', async () => {
             const transcribedCheckboxFilter = screen.getByText(videoMessages.transcribedCheckboxLabel.defaultMessage);
             fireEvent.click(transcribedCheckboxFilter);
-            fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+
+            await waitFor(() => {
+              fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+            });
 
             const imageFilterChip = screen.getByTestId('icon-after');
             fireEvent.click(imageFilterChip);

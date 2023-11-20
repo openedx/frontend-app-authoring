@@ -67,7 +67,11 @@ const ExportModal = ({
           <ModalDialog.CloseButton variant="tertiary">
             {intl.formatMessage(messages.taxonomyModalsCancelLabel)}
           </ModalDialog.CloseButton>
-          <Button variant="primary" onClick={onClickExport}>
+          <Button
+            variant="primary"
+            onClick={onClickExport}
+            data-testid={`export-button-${taxonomyId}`}
+          >
             {intl.formatMessage(messages.exportModalSubmitButtonLabel)}
           </Button>
         </ActionRow>
