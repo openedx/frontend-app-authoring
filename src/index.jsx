@@ -7,7 +7,7 @@ import {
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import {
   QueryClient,
   QueryClientProvider,
@@ -22,7 +22,7 @@ import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
 import { StudioHome } from './studio-home';
 import CourseRerun from './course-rerun';
-import { TaxonomyListPage } from './taxonomy';
+import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy';
 import { ContentTagsDrawer } from './content-tags-drawer';
 
 import 'react-datepicker/dist/react-datepicker.css';
@@ -55,10 +55,14 @@ const App = () => {
           <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
           {process.env.ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
             <>
-              <Route
-                path="/taxonomy-list"
-                element={<TaxonomyListPage />}
-              />
+              {/* TODO: remove this redirect once Studio's link is updated */}
+              <Route path="/taxonomy-list" element={<Navigate to="/taxonomies" />} />
+              <Route path="/taxonomies" element={<TaxonomyLayout />}>
+                <Route index element={<TaxonomyListPage />} />
+              </Route>
+              <Route path="/taxonomy" element={<TaxonomyLayout />}>
+                <Route path="/taxonomy/:taxonomyId" element={<TaxonomyDetailPage />} />
+              </Route>
               <Route
                 path="/tagging/components/widget/:contentId"
                 element={<ContentTagsDrawer />}
