@@ -1,6 +1,6 @@
 // @ts-check
 
-/** 
+/**
  * @typedef {Object} TaxonomyData
  * @property {number} id
  * @property {string} name
