@@ -82,7 +82,7 @@ const Transcript = ({
           key={`transcript-${language}`}
           data-testid={`transcript-${language}`}
         >
-          <div className="col-10 p-0">
+          <div className="col-9 p-0">
             <LanguageSelect
               options={languages}
               value={newLanguage}
