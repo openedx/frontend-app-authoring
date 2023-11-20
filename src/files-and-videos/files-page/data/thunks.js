@@ -132,7 +132,6 @@ export function getUsagePaths({ asset, courseId }) {
 
     try {
       const { usageLocations } = await getAssetUsagePaths({ assetId: asset.id, courseId });
-      console.log(usageLocations);
       const assetLocations = usageLocations[asset.id];
       dispatch(updateModel({
         modelType: 'assets',
@@ -143,7 +142,6 @@ export function getUsagePaths({ asset, courseId }) {
       }));
       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      console.log(error);
       dispatch(updateErrors({ error: 'usageMetrics', message: `Failed to get usage metrics for ${asset.displayName}.` }));
       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.FAILED }));
     }
