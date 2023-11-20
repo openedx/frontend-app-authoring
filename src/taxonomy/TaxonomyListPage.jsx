@@ -9,11 +9,7 @@ import {
 import {
   Add,
 } from '@edx/paragon/icons';
-
-import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
-
-import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { importTaxonomy } from './import-tags';
 import messages from './messages';
@@ -56,14 +52,6 @@ const TaxonomyListPage = () => {
 
   return (
     <>
-      <style>
-        {`
-          body {
-              background-color: #E9E6E4; /* light-400 */
-          }
-        `}
-      </style>
-      <Header isHiddenMainMenu />
       <div className="pt-4.5 pr-4.5 pl-4.5 pb-2 bg-light-100 box-shadow-down-2">
         <Container size="xl">
           <SubHeader
@@ -112,7 +100,6 @@ const TaxonomyListPage = () => {
           )}
         </Container>
       </div>
-      <StudioFooter />
     </>
   );
 };

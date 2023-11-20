@@ -148,9 +148,14 @@ const VideosPage = ({
   const processingStatusColumn = {
     id: 'status',
     Header: '',
+    accessor: 'status',
     Cell: ({ row }) => StatusColumn({ row }),
     Filter: CheckboxFilter,
-    filterChoices: [{ name: intl.formatMessage(messages.processingCheckboxLabel), value: 'Processing' }],
+    filterChoices: [
+      { name: intl.formatMessage(messages.processingCheckboxLabel), value: 'Processing' },
+
+      { name: intl.formatMessage(messages.failedCheckboxLabel), value: 'Failed' },
+    ],
   };
   const videoThumbnailColumn = {
     id: 'courseVideoImageUrl',

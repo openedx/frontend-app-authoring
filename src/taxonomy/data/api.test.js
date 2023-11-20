@@ -50,6 +50,15 @@ describe('taxonomy api calls', () => {
     expect(result).toEqual(taxonomyListMock);
   });
 
+  it('should get taxonomy list data with org', async () => {
+    const org = 'testOrg';
+    axiosMock.onGet(getTaxonomyListApiUrl(org)).reply(200, taxonomyListMock);
+    const result = await getTaxonomyListData(org);
+
+    expect(axiosMock.history.get[0].url).toEqual(getTaxonomyListApiUrl(org));
+    expect(result).toEqual(taxonomyListMock);
+  });
+
   it('should set window.location.href correctly', () => {
     const pk = 1;
     const format = 'json';

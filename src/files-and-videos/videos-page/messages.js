@@ -33,6 +33,10 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.processingCheckbox.label',
     defaultMessage: 'Processing',
   },
+  failedCheckboxLabel: {
+    id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.failedCheckbox.label',
+    defaultMessage: 'Failed',
+  },
 });
 
 export default messages;

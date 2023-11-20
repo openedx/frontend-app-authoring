@@ -89,22 +89,27 @@ describe('<TaxonomyCard />', async () => {
   });
 
   test('should open and close menu on button click', () => {
-    const { getByTestId, getByText } = render(<TaxonomyCardComponent original={data} />);
+    const { getByTestId } = render(<TaxonomyCardComponent original={data} />);
 
-    // Menu closed
+    // Menu closed/doesn't exist yet
     expect(() => getByTestId('taxonomy-card-menu-1')).toThrow();
 
     // Click on the menu button to open
     fireEvent.click(getByTestId('taxonomy-card-menu-button-1'));
 
     // Menu opened
-    expect(getByTestId('taxonomy-card-menu-1')).toBeInTheDocument();
+    expect(getByTestId('taxonomy-card-menu-1')).toBeVisible();
 
-    // Click on any element to close the menu
-    fireEvent.click(getByText('Export'));
+    // Click on button again to close the menu
+    fireEvent.click(getByTestId('taxonomy-card-menu-button-1'));
 
     // Menu closed
-    expect(() => getByTestId('taxonomy-card-menu-1')).toThrow();
+    // Jest bug: toBeVisible() isn't checking opacity correctly
+    // expect(getByTestId('taxonomy-card-menu-1')).not.toBeVisible();
+    expect(getByTestId('taxonomy-card-menu-1').style.opacity).toEqual('0');
+
+    // Menu button still visible
+    expect(getByTestId('taxonomy-card-menu-button-1')).toBeVisible();
   });
 
   test('should open export modal on export menu click', () => {
@@ -115,7 +120,7 @@ describe('<TaxonomyCard />', async () => {
 
     // Click on export menu
     fireEvent.click(getByTestId('taxonomy-card-menu-button-1'));
-    fireEvent.click(getByText('Export'));
+    fireEvent.click(getByTestId('taxonomy-card-menu-export-1'));
 
     // Modal opened
     expect(getByText('Select format to export')).toBeInTheDocument();
@@ -132,11 +137,11 @@ describe('<TaxonomyCard />', async () => {
 
     // Click on export menu
     fireEvent.click(getByTestId('taxonomy-card-menu-button-1'));
-    fireEvent.click(getByText('Export'));
+    fireEvent.click(getByTestId('taxonomy-card-menu-export-1'));
 
     // Select JSON format and click on export
     fireEvent.click(getByText('JSON file'));
-    fireEvent.click(getByText('Export'));
+    fireEvent.click(getByTestId('export-button-1'));
 
     // Modal closed
     expect(() => getByText('Select format to export')).toThrow();
