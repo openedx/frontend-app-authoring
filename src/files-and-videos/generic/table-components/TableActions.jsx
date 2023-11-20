@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { PropTypes } from 'prop-types';
-import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import {
   Button,
@@ -19,6 +19,9 @@ const TableActions = ({
   handleBulkDownload,
   handleOpenDeleteConfirmation,
   encodingsDownloadUrl,
+  fileType,
+  // injected
+  intl,
 }) => {
   const [isSortOpen, openSort, closeSort] = useToggle(false);
   return (
@@ -60,7 +63,7 @@ const TableActions = ({
         </Dropdown.Menu>
       </Dropdown>
       <Button iconBefore={Add} onClick={fileInputControl.click}>
-        <FormattedMessage {...messages.addFilesButtonLabel} />
+        {intl.formatMessage(messages.addFilesButtonLabel, { fileType })}
       </Button>
       <SortAndFilterModal {...{ isSortOpen, closeSort, handleSort }} />
     </>
@@ -91,6 +94,8 @@ TableActions.propTypes = {
   handleBulkDownload: PropTypes.func.isRequired,
   encodingsDownloadUrl: PropTypes.string,
   handleSort: PropTypes.func.isRequired,
+  fileType: PropTypes.string.isRequired,
+  intl: intlShape.isRequired,
 };
 
 TableActions.defaultProps = {

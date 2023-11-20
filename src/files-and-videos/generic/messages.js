@@ -7,7 +7,7 @@ const messages = defineMessages({
   },
   apiStatusToastMessage: {
     id: 'course-authoring.files-and-upload.apiStatus.message',
-    defaultMessage: '{actionType} {selectedRowCount} file(s)',
+    defaultMessage: '{actionType} {selectedRowCount} {fileType}(s)',
   },
   apiStatusAddingAction: {
     id: 'course-authoring.files-and-upload.apiStatus.addingAction.message',
@@ -27,7 +27,7 @@ const messages = defineMessages({
   },
   addFilesButtonLabel: {
     id: 'course-authoring.files-and-upload.addFiles.button.label',
-    defaultMessage: 'Add files',
+    defaultMessage: 'Add {fileType}s',
   },
   actionsButtonLabel: {
     id: 'course-authoring.files-and-upload.action.button.label',
@@ -48,6 +48,10 @@ const messages = defineMessages({
   usageNotInUseMessage: {
     id: 'course-authoring.files-and-uploads.file-info.usage.notInUse.message',
     defaultMessage: 'Currently not in use',
+  },
+  copyVideoIdTitle: {
+    id: 'course-authoring.files-and-uploads.cardMenu.copyVideoIdTitle',
+    defaultMessage: 'Copy video ID',
   },
   copyStudioUrlTitle: {
     id: 'course-authoring.files-and-uploads.cardMenu.copyStudioUrlTitle',
@@ -83,11 +87,11 @@ const messages = defineMessages({
   },
   deleteConfirmationTitle: {
     id: 'course-authoring.files-and-uploads..deleteConfirmation.title',
-    defaultMessage: 'Delete File(s) Confirmation',
+    defaultMessage: 'Delete {fileType}(s) confirmation',
   },
   deleteConfirmationMessage: {
     id: 'course-authoring.files-and-uploads..deleteConfirmation.message',
-    defaultMessage: 'Are you sure you want to delete {fileNumber} file(s)? This action cannot be undone.',
+    defaultMessage: 'Are you sure you want to delete {fileNumber} {fileType}(s)? This action cannot be undone.',
   },
   deleteFileButtonLabel: {
     id: 'course-authoring.files-and-uploads.deleteConfirmation.deleteFile.label',
@@ -99,7 +103,7 @@ const messages = defineMessages({
   },
   sortButtonLabel: {
     id: 'course-authoring.files-and-uploads.sortButton.label',
-    defaultMessage: 'Sort and Filter',
+    defaultMessage: 'Sort and filter',
   },
   sortModalTitleLabel: {
     id: 'course-authoring.files-and-uploads.sortModal.title',

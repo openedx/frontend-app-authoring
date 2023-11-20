@@ -41,7 +41,7 @@ const CustomPageCard = ({
     }));
   };
 
-  const toggleVisibilty = () => {
+  const toggleVisibility = () => {
     dispatch(updateCustomPageVisibility({
       blockId: page.id,
       metadata: { course_staff_only: !page.courseStaffOnly },
@@ -87,7 +87,7 @@ const CustomPageCard = ({
           src={page.courseStaffOnly ? VisibilityOff : Visibility}
           iconAs={Icon}
           alt={intl.formatMessage(messages.visibilityTooltipContent)}
-          onClick={toggleVisibilty}
+          onClick={toggleVisibility}
           data-testid="visibility-toggle-icon"
         />
         <IconButtonWithTooltip
