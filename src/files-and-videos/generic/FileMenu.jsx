@@ -36,7 +36,7 @@ const FileMenu = ({
         <Dropdown.Item
           onClick={() => navigator.clipboard.writeText(id)}
         >
-          Copy video ID
+          {intl.formatMessage(messages.copyVideoIdTitle)}
         </Dropdown.Item>
       ) : (
         <>

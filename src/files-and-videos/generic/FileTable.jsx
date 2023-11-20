@@ -25,6 +25,7 @@ import {
   RowStatus,
   MoreInfoColumn,
   FilterStatus,
+  Footer,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
 
@@ -51,7 +52,8 @@ const FileTable = ({
     xs: 12,
     sm: 6,
     md: 4,
-    lg: 2,
+    lg: 3,
+    xl: 2,
   };
   const [currentView, setCurrentView] = useState(defaultVal);
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
@@ -66,6 +68,7 @@ const FileTable = ({
     usageErrorMessages,
     encodingsDownloadUrl,
     supportedFileFormats,
+    fileType,
   } = data;
 
   useEffect(() => {
@@ -136,6 +139,7 @@ const FileTable = ({
         handleBulkDownload,
         handleOpenDeleteConfirmation,
         supportedFileFormats,
+        fileType,
       }}
     />
   );
@@ -210,12 +214,13 @@ const FileTable = ({
             }}
           />
         ) : (
-          <div data-testid="files-data-table" className="mr-4 ml-3">
+          <div data-testid="files-data-table" className="bg-light-200">
             <DataTable.TableControlBar />
+            <hr className="mb-5 border-light-700" />
             { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={6} /> }
             { currentView === 'list' && <DataTable.Table /> }
             <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
-            <DataTable.TableFooter />
+            <Footer />
           </div>
         )}
 
@@ -225,6 +230,7 @@ const FileTable = ({
           isOpen={isDeleteOpen}
           setClose={setDeleteClose}
           setSelectedRows={setSelectedRows}
+          fileType={fileType}
         />
         <ApiStatusToast
           actionType={intl.formatMessage(messages.apiStatusAddingAction)}
@@ -232,6 +238,7 @@ const FileTable = ({
           isOpen={isAddOpen}
           setClose={setAddClose}
           setSelectedRows={setSelectedRows}
+          fileType={fileType}
         />
       </DataTable>
       <FileInput key="generic-file-upload" fileInput={fileInputControl} supportedFileFormats={supportedFileFormats} />
@@ -247,7 +254,7 @@ const FileTable = ({
         />
       )}
       <AlertModal
-        title={intl.formatMessage(messages.deleteConfirmationTitle)}
+        title={intl.formatMessage(messages.deleteConfirmationTitle, { fileType })}
         isOpen={isDeleteConfirmationOpen}
         onClose={closeDeleteConfirmation}
         footerNode={(
@@ -261,7 +268,7 @@ const FileTable = ({
           </ActionRow>
         )}
       >
-        {intl.formatMessage(messages.deleteConfirmationMessage, { fileNumber: selectedRows.length })}
+        {intl.formatMessage(messages.deleteConfirmationMessage, { fileNumber: selectedRows.length, fileType })}
       </AlertModal>
     </div>
   );
@@ -277,6 +284,7 @@ FileTable.propTypes = {
     usageErrorMessages: PropTypes.arrayOf(PropTypes.string).isRequired,
     encodingsDownloadUrl: PropTypes.string,
     supportedFileFormats: PropTypes.shape({}),
+    fileType: PropTypes.string.isRequired,
   }).isRequired,
   handleAddFile: PropTypes.func.isRequired,
   handleDeleteFile: PropTypes.func.isRequired,

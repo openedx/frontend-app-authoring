@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
@@ -6,7 +6,7 @@ import { ErrorAlert } from '@edx/frontend-lib-content-components';
 import { Button, Stack } from '@edx/paragon';
 import { Add } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { getLanguages } from '../data/utils';
+import { getLanguages, getSortedTranscripts } from '../data/utils';
 import Transcript from './transcript-item';
 import {
   deleteVideoTranscript,
@@ -23,6 +23,7 @@ const TranscriptTab = ({
   intl,
 }) => {
   const dispatch = useDispatch();
+  const divRef = useRef(null);
   const { transcriptStatus, errors } = useSelector(state => state.videos);
   const {
     transcriptAvailableLanguages,
@@ -35,12 +36,21 @@ const TranscriptTab = ({
   } = videoTranscriptSettings;
   const { transcripts, id, displayName } = video;
   const languages = getLanguages(transcriptAvailableLanguages);
+  let sortedTranscripts = getSortedTranscripts(languages, transcripts);
+  const [previousSelection, setPreviousSelection] = useState(sortedTranscripts);
 
-  const [previousSelection, setPreviousSelection] = useState(transcripts);
   useEffect(() => {
     dispatch(resetErrors({ errorType: 'transcript' }));
-    setPreviousSelection(transcripts);
+    sortedTranscripts = getSortedTranscripts(languages, transcripts);
+    setPreviousSelection(sortedTranscripts);
   }, [transcripts]);
+
+  const handleAddEmptyTranscript = () => {
+    setPreviousSelection(['', ...previousSelection]);
+    if (divRef?.current?.scrollTo) {
+      divRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   const handleTranscript = (data, actionType) => {
     const {
@@ -52,7 +62,8 @@ const TranscriptTab = ({
     switch (actionType) {
     case 'delete':
       if (isEmpty(language)) {
-        const updatedSelection = previousSelection.filter(selection => selection !== '');
+        const updatedSelection = previousSelection;
+        updatedSelection.shift();
         setPreviousSelection(updatedSelection);
       } else {
         dispatch(deleteVideoTranscript({
@@ -87,38 +98,42 @@ const TranscriptTab = ({
   };
 
   return (
-    <Stack gap={3} className="mt-3">
-      <ErrorAlert
-        hideHeading={false}
-        isError={transcriptStatus === RequestStatus.FAILED && !isEmpty(errors.transcript)}
-      >
-        <ul className="p-0">
-          {errors.transcript.map(message => (
-            <li key={`transcript-error-${message}`} style={{ listStyle: 'none' }}>
-              {intl.formatMessage(messages.errorAlertMessage, { message })}
-            </li>
-          ))}
-        </ul>
-      </ErrorAlert>
-      {previousSelection.map(transcript => (
-        <Transcript
-          {...{
-            languages,
-            transcript,
-            previousSelection,
-            handleTranscript,
-          }}
-        />
-      ))}
-      <Button
-        variant="link"
-        iconBefore={Add}
-        size="sm"
-        className="text-primary-500 justify-content-start pl-0"
-        onClick={() => setPreviousSelection([...previousSelection, ''])}
-      >
-        {intl.formatMessage(messages.uploadButtonLabel)}
-      </Button>
+    <Stack gap={3}>
+      <div ref={divRef} style={{ overflowY: 'auto', maxHeight: '310px' }} className="px-1 py-2">
+        <ErrorAlert
+          hideHeading={false}
+          isError={transcriptStatus === RequestStatus.FAILED && !isEmpty(errors.transcript)}
+        >
+          <ul className="p-0">
+            {errors.transcript.map(message => (
+              <li key={`transcript-error-${message}`} style={{ listStyle: 'none' }}>
+                {intl.formatMessage(messages.errorAlertMessage, { message })}
+              </li>
+            ))}
+          </ul>
+        </ErrorAlert>
+        {previousSelection.map(transcript => (
+          <Transcript
+            {...{
+              languages,
+              transcript,
+              previousSelection,
+              handleTranscript,
+            }}
+          />
+        ))}
+      </div>
+      <div className="border-top border-light-400">
+        <Button
+          variant="link"
+          iconBefore={Add}
+          size="sm"
+          className="text-primary-500 justify-content-start pl-0 pt-3"
+          onClick={handleAddEmptyTranscript}
+        >
+          {intl.formatMessage(messages.uploadButtonLabel)}
+        </Button>
+      </div>
     </Stack>
   );
 };

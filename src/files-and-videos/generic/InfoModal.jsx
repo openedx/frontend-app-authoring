@@ -7,6 +7,7 @@ import {
 } from '@edx/frontend-platform/i18n';
 import {
   ModalDialog,
+  Stack,
   Truncate,
 } from '@edx/paragon';
 
@@ -30,6 +31,7 @@ const InfoModal = ({
     size="lg"
     hasCloseButton
     data-testid="file-info-modal"
+    style={{ minHeight: '799px' }}
   >
     <ModalDialog.Header>
       <ModalDialog.Title>
@@ -44,25 +46,29 @@ const InfoModal = ({
       <hr />
       <div className="row flex-nowrap m-0 mt-4">
         <div className="col-7 mr-3">
-          <FileThumbnail
-            thumbnail={file?.thumbnail}
-            externalUrl={file?.externalUrl}
-            displayName={file?.displayName}
-            wrapperType={file?.wrapperType}
-            id={file?.id}
-            status={file?.status}
-            thumbnailPreview={thumbnailPreview}
-            imageSize={{ width: '503px', height: '281px' }}
-          />
+          <Stack gap={5}>
+            <FileThumbnail
+              thumbnail={file?.thumbnail}
+              externalUrl={file?.externalUrl}
+              displayName={file?.displayName}
+              wrapperType={file?.wrapperType}
+              id={file?.id}
+              status={file?.status}
+              thumbnailPreview={thumbnailPreview}
+              imageSize={{ width: '503px', height: '281px' }}
+            />
+            <div>
+              <div className="row m-0 font-weight-bold">
+                <FormattedMessage {...messages.usageTitle} />
+              </div>
+              <UsageMetricsMessages {...{ usageLocations: file?.usageLocations, usagePathStatus, error }} />
+            </div>
+          </Stack>
         </div>
         <div className="col-5">
           {sidebar(file)}
         </div>
       </div>
-      <div className="row m-0 pt-3 font-weight-bold">
-        <FormattedMessage {...messages.usageTitle} />
-      </div>
-      <UsageMetricsMessages {...{ usageLocations: file?.usageLocations, usagePathStatus, error }} />
     </ModalDialog.Body>
   </ModalDialog>
 );

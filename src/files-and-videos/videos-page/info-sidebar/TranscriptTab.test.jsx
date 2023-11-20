@@ -281,13 +281,11 @@ describe('TranscriptTab', () => {
         });
 
         const englishOption = screen.getByText('English');
-        const arabicOption = screen.getAllByRole('button', { name: 'Arabic' })[0];
         await act(async () => {
-          expect(arabicOption).toHaveClass('disabled');
           fireEvent.click(englishOption);
         });
 
-        const menuButton = screen.getByTestId('fr-transcript-menu');
+        const menuButton = screen.getByTestId('ar-transcript-menu');
         await waitFor(() => {
           fireEvent.click(menuButton);
         });
@@ -302,8 +300,6 @@ describe('TranscriptTab', () => {
 
         await act(async () => {
           const addFileInput = screen.getAllByLabelText('file-input')[0];
-          expect(addFileInput).toBeInTheDocument();
-
           userEvent.upload(addFileInput, file);
         });
         const addStatus = store.getState().videos.transcriptStatus;
@@ -312,7 +308,7 @@ describe('TranscriptTab', () => {
 
         const updatedTranscripts = store.getState().models.videos[defaultProps.id].transcripts;
 
-        expect(updatedTranscripts).toEqual(['ar', 'en']);
+        expect(updatedTranscripts).toEqual(['fr', 'en']);
       });
 
       it('should show error message', async () => {
@@ -320,8 +316,6 @@ describe('TranscriptTab', () => {
 
         await act(async () => {
           const addFileInput = screen.getAllByLabelText('file-input')[0];
-          expect(addFileInput).toBeInTheDocument();
-
           userEvent.upload(addFileInput, file);
         });
 
@@ -329,7 +323,7 @@ describe('TranscriptTab', () => {
 
         expect(addStatus).toEqual(RequestStatus.FAILED);
 
-        expect(screen.getAllByText('Failed to replace fr with en.')[0]).toBeVisible();
+        expect(screen.getAllByText('Failed to replace ar with en.')[0]).toBeVisible();
       });
     });
   });

@@ -10,6 +10,7 @@ const ApiStatusToast = ({
   isOpen,
   setClose,
   setSelectedRows,
+  fileType,
   // injected
   intl,
 }) => {
@@ -23,7 +24,7 @@ const ApiStatusToast = ({
       show={isOpen}
       onClose={handleClose}
     >
-      {intl.formatMessage(messages.apiStatusToastMessage, { actionType, selectedRowCount })}
+      {intl.formatMessage(messages.apiStatusToastMessage, { actionType, selectedRowCount, fileType })}
     </Toast>
   );
 };
@@ -34,6 +35,7 @@ ApiStatusToast.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   setClose: PropTypes.func.isRequired,
   setSelectedRows: PropTypes.func.isRequired,
+  fileType: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
 };
