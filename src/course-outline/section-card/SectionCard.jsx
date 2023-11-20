@@ -34,9 +34,10 @@ const SectionCard = ({
   const {
     id,
     displayName,
+    hasChanges,
     published,
     releasedToStudents,
-    visibleToStaffOnly,
+    visibleToStaffOnly = false,
     visibilityState,
     staffOnlyMessage,
     highlights,
@@ -83,6 +84,7 @@ const SectionCard = ({
         sectionId={id}
         title={displayName}
         sectionStatus={sectionStatus}
+        hasChanges={hasChanges}
         isExpanded={isExpanded}
         onExpand={handleExpandContent}
         onClickMenuButton={handleClickMenuButton}
@@ -104,7 +106,7 @@ const SectionCard = ({
             onClick={handleOpenHighlightsModal}
           >
             <Badge className="highlights-badge">{highlights.length}</Badge>
-            <p className="m-0 text-black">Section highlights</p>
+            <p className="m-0 text-black">{messages.sectionHighlightsBadge.defaultMessage}</p>
           </Button>
         </div>
       </div>
@@ -137,8 +139,9 @@ SectionCard.propTypes = {
     id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
+    hasChanges: PropTypes.bool.isRequired,
     releasedToStudents: PropTypes.bool.isRequired,
-    visibleToStaffOnly: PropTypes.bool.isRequired,
+    visibleToStaffOnly: PropTypes.bool,
     visibilityState: PropTypes.string.isRequired,
     staffOnlyMessage: PropTypes.bool.isRequired,
     highlights: PropTypes.arrayOf(PropTypes.string).isRequired,

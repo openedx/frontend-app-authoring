@@ -1,21 +1,26 @@
-export const SECTION_BADGE_STATUTES = {
+export const SECTION_BADGE_STATUTES = /** @type {const} */ ({
   live: 'live',
   publishedNotLive: 'published_not_live',
   staffOnly: 'staff_only',
   draft: 'draft',
-};
+});
 
 export const STAFF_ONLY = 'staff_only';
 
 export const HIGHLIGHTS_FIELD_MAX_LENGTH = 250;
 
-export const CHECKLIST_FILTERS = {
+export const CHECKLIST_FILTERS = /** @type {const} */ ({
   ALL: 'ALL',
   SELF_PACED: 'SELF_PACED',
   INSTRUCTOR_PACED: 'INSTRUCTOR_PACED',
-};
+});
 
-export const LAUNCH_CHECKLIST = {
+export const DEFAULT_NEW_DISPLAY_NAMES = /** @type {const} */ ({
+  chapter: 'Section',
+  subsection: 'Subsection',
+});
+
+export const LAUNCH_CHECKLIST = /** @type {const} */ ({
   data: [
     {
       id: 'welcomeMessage',
@@ -42,9 +47,9 @@ export const LAUNCH_CHECKLIST = {
       pacingTypeFilter: CHECKLIST_FILTERS.ALL,
     },
   ],
-};
+});
 
-export const BEST_PRACTICES_CHECKLIST = {
+export const BEST_PRACTICES_CHECKLIST = /** @type {const} */ ({
   data: [
     {
       id: 'videoDuration',
@@ -67,4 +72,4 @@ export const BEST_PRACTICES_CHECKLIST = {
       pacingTypeFilter: CHECKLIST_FILTERS.ALL,
     },
   ],
-};
+});

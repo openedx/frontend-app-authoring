@@ -23,7 +23,7 @@ const messages = defineMessages({
   },
   saveButton: {
     id: 'course-authoring.course-outline.highlights-modal.button.save',
-    defaultMessage: 'Save highlights',
+    defaultMessage: 'Save',
   },
 });
 

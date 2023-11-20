@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { SECTION_BADGE_STATUTES } from '../constants';
@@ -17,6 +17,7 @@ const closeFormMock = jest.fn();
 const cardHeaderProps = {
   title: 'Some title',
   sectionStatus: SECTION_BADGE_STATUTES.live,
+  hasChanges: false,
   isExpanded: true,
   onExpand: onExpandMock,
   onClickMenuButton: onClickMenuButtonMock,
@@ -40,137 +41,163 @@ const renderComponent = (props) => render(
 );
 
 describe('<CardHeader />', () => {
-  it('render CardHeader component correctly', () => {
-    const { getByText, getByTestId, queryByTestId } = renderComponent();
+  it('render CardHeader component correctly', async () => {
+    const { findByText, findByTestId, queryByTestId } = renderComponent();
 
-    expect(getByText(cardHeaderProps.title)).toBeInTheDocument();
-    expect(getByTestId('section-card-header__expanded-btn')).toBeInTheDocument();
-    expect(getByTestId('section-card-header__badge-status')).toBeInTheDocument();
-    expect(getByTestId('section-card-header__menu')).toBeInTheDocument();
-    expect(queryByTestId('edit field')).not.toBeInTheDocument();
+    expect(await findByText(cardHeaderProps.title)).toBeInTheDocument();
+    expect(await findByTestId('section-card-header__expanded-btn')).toBeInTheDocument();
+    expect(await findByTestId('section-card-header__badge-status')).toBeInTheDocument();
+    expect(await findByTestId('section-card-header__menu')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(queryByTestId('edit field')).not.toBeInTheDocument();
+    });
   });
 
-  it('render status badge as live', () => {
-    const { getByText } = renderComponent();
-    expect(getByText(messages.statusBadgeLive.defaultMessage)).toBeInTheDocument();
+  it('render status badge as live', async () => {
+    const { findByText } = renderComponent();
+    expect(await findByText(messages.statusBadgeLive.defaultMessage)).toBeInTheDocument();
   });
 
-  it('render status badge as published_not_live', () => {
-    const { getByText } = renderComponent({
+  it('render status badge as published_not_live', async () => {
+    const { findByText } = renderComponent({
       ...cardHeaderProps,
       sectionStatus: SECTION_BADGE_STATUTES.publishedNotLive,
     });
 
-    expect(getByText(messages.statusBadgePublishedNotLive.defaultMessage)).toBeInTheDocument();
+    expect(await findByText(messages.statusBadgePublishedNotLive.defaultMessage)).toBeInTheDocument();
   });
 
-  it('render status badge as staff_only', () => {
-    const { getByText } = renderComponent({
+  it('render status badge as staff_only', async () => {
+    const { findByText } = renderComponent({
       ...cardHeaderProps,
       sectionStatus: SECTION_BADGE_STATUTES.staffOnly,
     });
 
-    expect(getByText(messages.statusBadgeStuffOnly.defaultMessage)).toBeInTheDocument();
+    expect(await findByText(messages.statusBadgeStaffOnly.defaultMessage)).toBeInTheDocument();
   });
 
-  it('render status badge as draft', () => {
-    const { getByText } = renderComponent({
+  it('render status badge as draft', async () => {
+    const { findByText } = renderComponent({
       ...cardHeaderProps,
       sectionStatus: SECTION_BADGE_STATUTES.draft,
     });
 
-    expect(getByText(messages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();
+    expect(await findByText(messages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();
   });
 
-  it('check publish menu item is disabled when section status is live or published not live', async () => {
-    const { getByText, getByTestId } = renderComponent({
+  it('check publish menu item is disabled when section status is live or published not live and it has no changes', async () => {
+    const { findByText, findByTestId } = renderComponent({
       ...cardHeaderProps,
       sectionStatus: SECTION_BADGE_STATUTES.publishedNotLive,
     });
 
-    const menuButton = getByTestId('section-card-header__menu-button');
+    const menuButton = await findByTestId('section-card-header__menu-button');
     fireEvent.click(menuButton);
-    expect(getByText(messages.menuPublish.defaultMessage)).toHaveAttribute('aria-disabled', 'true');
+    expect(await findByText(messages.menuPublish.defaultMessage)).toHaveAttribute('aria-disabled', 'true');
   });
 
-  it('calls handleExpanded when button is clicked', () => {
-    const { getByTestId } = renderComponent();
+  it('check publish menu item is enabled when section status is live or published not live and it has changes', async () => {
+    const { findByText, findByTestId } = renderComponent({
+      ...cardHeaderProps,
+      sectionStatus: SECTION_BADGE_STATUTES.publishedNotLive,
+      hasChanges: true,
+    });
 
-    const expandButton = getByTestId('section-card-header__expanded-btn');
+    const menuButton = await findByTestId('section-card-header__menu-button');
+    fireEvent.click(menuButton);
+    expect(await findByText(messages.menuPublish.defaultMessage)).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('calls handleExpanded when button is clicked', async () => {
+    const { findByTestId } = renderComponent();
+
+    const expandButton = await findByTestId('section-card-header__expanded-btn');
     fireEvent.click(expandButton);
     expect(onExpandMock).toHaveBeenCalled();
   });
 
-  it('calls onClickMenuButton when menu is clicked', () => {
-    const { getByTestId } = renderComponent();
+  it('calls onClickMenuButton when menu is clicked', async () => {
+    const { findByTestId } = renderComponent();
 
-    const menuButton = getByTestId('section-card-header__menu-button');
+    const menuButton = await findByTestId('section-card-header__menu-button');
     fireEvent.click(menuButton);
-    expect(onClickMenuButtonMock).toHaveBeenCalled();
+    waitFor(() => {
+      expect(onClickMenuButtonMock).toHaveBeenCalled();
+    });
   });
 
-  it('calls onClickPublish when item is clicked', () => {
-    const { getByText, getByTestId } = renderComponent({
+  it('calls onClickPublish when item is clicked', async () => {
+    const { findByText, findByTestId } = renderComponent({
       ...cardHeaderProps,
       sectionStatus: SECTION_BADGE_STATUTES.draft,
     });
 
-    const menuButton = getByTestId('section-card-header__menu-button');
+    const menuButton = await findByTestId('section-card-header__menu-button');
     fireEvent.click(menuButton);
 
-    const publishMenuItem = getByText(messages.menuPublish.defaultMessage);
+    const publishMenuItem = await findByText(messages.menuPublish.defaultMessage);
     fireEvent.click(publishMenuItem);
-    expect(onClickPublishMock).toHaveBeenCalled();
+    waitFor(() => {
+      expect(onClickPublishMock).toHaveBeenCalled();
+    });
   });
 
-  it('calls onClickEdit when the button is clicked', () => {
-    const { getByTestId } = renderComponent();
+  it('calls onClickEdit when the button is clicked', async () => {
+    const { findByTestId } = renderComponent();
 
-    const editButton = getByTestId('edit-button');
+    const editButton = await findByTestId('edit-button');
     fireEvent.click(editButton);
-    expect(onClickEditMock).toHaveBeenCalled();
+    waitFor(() => {
+      expect(onClickEditMock).toHaveBeenCalled();
+    });
   });
 
-  it('check is field visible when isFormOpen is true', () => {
-    const { getByTestId, queryByTestId } = renderComponent({
+  it('check is field visible when isFormOpen is true', async () => {
+    const { findByTestId, queryByTestId } = renderComponent({
       ...cardHeaderProps,
       isFormOpen: true,
     });
 
-    expect(getByTestId('edit field')).toBeInTheDocument();
-    expect(queryByTestId('section-card-header__expanded-btn')).not.toBeInTheDocument();
-    expect(queryByTestId('edit-button')).not.toBeInTheDocument();
+    expect(await findByTestId('edit field')).toBeInTheDocument();
+    waitFor(() => {
+      expect(queryByTestId('section-card-header__expanded-btn')).not.toBeInTheDocument();
+      expect(queryByTestId('edit-button')).not.toBeInTheDocument();
+    });
   });
 
-  it('check is field disabled when isDisabledEditField is true', () => {
-    const { getByTestId } = renderComponent({
+  it('check is field disabled when isDisabledEditField is true', async () => {
+    const { findByTestId } = renderComponent({
       ...cardHeaderProps,
       isFormOpen: true,
       isDisabledEditField: true,
     });
 
-    expect(getByTestId('edit field')).toBeDisabled();
+    expect(await findByTestId('edit field')).toBeDisabled();
   });
 
-  it('calls onClickDelete when item is clicked', () => {
-    const { getByText, getByTestId } = renderComponent();
+  it('calls onClickDelete when item is clicked', async () => {
+    const { findByText, findByTestId } = renderComponent();
 
-    const menuButton = getByTestId('section-card-header__menu-button');
+    const menuButton = await findByTestId('section-card-header__menu-button');
     fireEvent.click(menuButton);
 
-    const deleteMenuItem = getByText(messages.menuDelete.defaultMessage);
+    const deleteMenuItem = await findByText(messages.menuDelete.defaultMessage);
     fireEvent.click(deleteMenuItem);
-    expect(onClickDeleteMock).toHaveBeenCalledTimes(1);
+    waitFor(() => {
+      expect(onClickDeleteMock).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('calls onClickDuplicate when item is clicked', () => {
-    const { getByText, getByTestId } = renderComponent();
+  it('calls onClickDuplicate when item is clicked', async () => {
+    const { findByText, findByTestId } = renderComponent();
 
-    const menuButton = getByTestId('section-card-header__menu-button');
+    const menuButton = await findByTestId('section-card-header__menu-button');
     fireEvent.click(menuButton);
 
-    const duplicateMenuItem = getByText(messages.menuDuplicate.defaultMessage);
+    const duplicateMenuItem = await findByText(messages.menuDuplicate.defaultMessage);
     fireEvent.click(duplicateMenuItem);
-    expect(onClickDuplicateMock).toHaveBeenCalled();
+    waitFor(() => {
+      expect(onClickDuplicateMock).toHaveBeenCalled();
+    });
   });
 });

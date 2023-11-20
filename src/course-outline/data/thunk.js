@@ -1,5 +1,6 @@
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
+import { DEFAULT_NEW_DISPLAY_NAMES } from '../constants';
 import {
   hideProcessingNotification,
   showProcessingNotification,
@@ -9,6 +10,7 @@ import {
   getCourseLaunchChecklist,
 } from '../utils/getChecklistForStatusBar';
 import {
+  addNewCourseItem,
   deleteCourseSection,
   duplicateCourseSection,
   editCourseSection,
@@ -22,6 +24,7 @@ import {
   updateCourseSectionHighlights,
 } from './api';
 import {
+  addSection,
   fetchOutlineIndexSuccess,
   updateOutlineIndexLoadingStatus,
   updateReindexLoadingStatus,
@@ -223,6 +226,31 @@ export function duplicateCourseSectionQuery(sectionId, courseBlockId) {
           dispatch(duplicateSection({ id: sectionId, duplicatedSection }));
           dispatch(hideProcessingNotification());
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+        }
+      });
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function addNewCourseSectionQuery(courseBlockId) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await addNewCourseItem(
+        courseBlockId,
+        'chapter',
+        DEFAULT_NEW_DISPLAY_NAMES.chapter,
+      ).then(async (result) => {
+        if (result) {
+          const data = await getCourseSection(result.locator);
+          dispatch(addSection(data));
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          dispatch(hideProcessingNotification());
         }
       });
     } catch (error) {

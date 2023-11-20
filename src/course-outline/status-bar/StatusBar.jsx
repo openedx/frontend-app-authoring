@@ -31,8 +31,8 @@ const StatusBar = ({
   } = checklist;
 
   const checkListTitle = `${completedCourseLaunchChecks + completedCourseBestPracticesChecks}/${totalCourseLaunchChecks + totalCourseBestPracticesChecks}`;
-  const checklistDestination = new URL(`checklists/${courseId}`, config.STUDIO_BASE_URL).href;
-  const scheduleDestination = new URL(`settings/details/${courseId}#schedule`, config.STUDIO_BASE_URL).href;
+  const checklistDestination = () => new URL(`checklists/${courseId}`, config.STUDIO_BASE_URL).href;
+  const scheduleDestination = () => new URL(`settings/details/${courseId}#schedule`, config.STUDIO_BASE_URL).href;
 
   const {
     contentHighlights: contentHighlightsUrl,
@@ -49,7 +49,7 @@ const StatusBar = ({
         <h5>{intl.formatMessage(messages.startDateTitle)}</h5>
         <Hyperlink
           className="small"
-          destination={scheduleDestination}
+          destination={scheduleDestination()}
           showLaunchIcon={false}
         >
           {courseReleaseDate}
@@ -67,7 +67,7 @@ const StatusBar = ({
         <h5>{intl.formatMessage(messages.checklistTitle)}</h5>
         <Hyperlink
           className="small"
-          destination={checklistDestination}
+          destination={checklistDestination()}
           showLaunchIcon={false}
         >
           {checkListTitle} {intl.formatMessage(messages.checklistCompleted)}

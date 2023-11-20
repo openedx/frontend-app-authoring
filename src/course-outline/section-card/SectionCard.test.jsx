@@ -21,6 +21,7 @@ const section = {
   visibleToStaffOnly: false,
   visibilityState: 'visible',
   staffOnlyMessage: false,
+  hasChanges: false,
   highlights: ['highlight 1', 'highlight 2'],
 };
 

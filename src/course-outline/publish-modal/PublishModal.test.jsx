@@ -35,28 +35,37 @@ const currentSectionMock = {
     children: [
       {
         displayName: 'Subsection 1',
+        id: 1,
+        hasChanges: true,
         childInfo: {
           displayName: 'Unit',
           children: [
             {
+              id: 11,
               displayName: 'Subsection_1 Unit 1',
+              hasChanges: true,
             },
           ],
         },
       },
       {
         displayName: 'Subsection 2',
+        id: 2,
+        hasChanges: true,
         childInfo: {
           displayName: 'Unit',
           children: [
             {
+              id: 21,
               displayName: 'Subsection_2 Unit 1',
+              hasChanges: true,
             },
           ],
         },
       },
       {
         displayName: 'Subsection 3',
+        id: 3,
         childInfo: {
           children: [],
         },

@@ -57,7 +57,7 @@ const HeaderNavigations = ({
           </Button>
         </OverlayTrigger>
       )}
-      {hasSections ? (
+      {hasSections && (
         <Button
           variant="outline-primary"
           iconBefore={isSectionsExpanded ? ArrowUpIcon : ArrowDownIcon}
@@ -67,7 +67,7 @@ const HeaderNavigations = ({
             ? intl.formatMessage(messages.collapseAllButton)
             : intl.formatMessage(messages.expandAllButton)}
         </Button>
-      ) : null}
+      )}
       <OverlayTrigger
         placement="bottom"
         overlay={(
