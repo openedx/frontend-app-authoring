@@ -45,7 +45,7 @@ describe('taxonomy api calls', () => {
     window.location = location;
   });
 
-it('should get taxonomy list data with org', async () => {
+  it('should get taxonomy list data with org', async () => {
     const org = 'testOrg';
     axiosMock.onGet(getTaxonomyListApiUrl(org)).reply(200, taxonomyListMock);
     const result = await getTaxonomyListData(org);
