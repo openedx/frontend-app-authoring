@@ -21,15 +21,8 @@ import { useTaxonomyDetailDataResponse, useTaxonomyDetailDataStatus } from './da
 const TaxonomyDetailPage = () => {
   const intl = useIntl();
   const { taxonomyId } = useParams();
-
-  const useTaxonomyDetailData = () => {
-    const { isError, isFetched } = useTaxonomyDetailDataStatus(taxonomyId);
-    const taxonomy = useTaxonomyDetailDataResponse(taxonomyId);
-    return { isError, isFetched, taxonomy };
-  };
-
-  const { isError, isFetched, taxonomy } = useTaxonomyDetailData(taxonomyId);
-
+  const { isError, isFetched } = useTaxonomyDetailDataStatus(taxonomyId);
+  const taxonomy = useTaxonomyDetailDataResponse(taxonomyId);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   if (!isFetched) {
@@ -44,18 +37,13 @@ const TaxonomyDetailPage = () => {
     );
   }
 
-  const renderModals = () => (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    <>
-      {isExportModalOpen && (
-        <ExportModal
-          isOpen={isExportModalOpen}
-          onClose={() => setIsExportModalOpen(false)}
-          taxonomyId={taxonomy.id}
-          taxonomyName={taxonomy.name}
-        />
-      )}
-    </>
+  const renderModals = () => isExportModalOpen && (
+    <ExportModal
+      isOpen={isExportModalOpen}
+      onClose={() => setIsExportModalOpen(false)}
+      taxonomyId={taxonomy.id}
+      taxonomyName={taxonomy.name}
+    />
   );
 
   const onClickMenuItem = (menuName) => {

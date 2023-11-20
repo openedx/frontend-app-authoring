@@ -19,8 +19,9 @@ export const useTagListData = (taxonomyId, options) => {
   const { pageIndex } = options;
   return useQuery({
     queryKey: ['tagList', taxonomyId, pageIndex],
-    queryFn: () => getAuthenticatedHttpClient().get(getTagListApiUrl(taxonomyId, pageIndex))
-      .then((response) => response.data)
-      .then(camelCaseObject),
+    queryFn: async () => {
+      const { data } = await getAuthenticatedHttpClient().get(getTagListApiUrl(taxonomyId, pageIndex));
+      return camelCaseObject(data);
+    },
   });
 };

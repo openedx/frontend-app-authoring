@@ -1,1 +1,2 @@
-export { default as TagListTable } from './TagListTable'; // eslint-disable-line import/prefer-default-export
+/* eslint-disable import/prefer-default-export */
+export { default as TagListTable } from './TagListTable';

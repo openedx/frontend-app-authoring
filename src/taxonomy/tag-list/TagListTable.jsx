@@ -12,23 +12,11 @@ import { useTagListDataResponse, useTagListDataStatus } from './data/apiHooks';
 
 const TagListTable = ({ taxonomyId }) => {
   const intl = useIntl();
-
   const [options, setOptions] = useState({
     pageIndex: 0,
   });
-
-  const useTagListData = () => {
-    const { isError, isFetched, isLoading } = useTagListDataStatus(taxonomyId, options);
-    const tagList = useTagListDataResponse(taxonomyId, options);
-    return {
-      isError,
-      isFetched,
-      isLoading,
-      tagList,
-    };
-  };
-
-  const { tagList, isLoading } = useTagListData();
+  const { isLoading } = useTagListDataStatus(taxonomyId, options);
+  const tagList = useTagListDataResponse(taxonomyId, options);
 
   const fetchData = (args) => {
     if (!_.isEqual(args, options)) {
