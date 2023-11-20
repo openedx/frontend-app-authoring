@@ -32,7 +32,6 @@ export const updateFileValues = (files) => {
       ...file,
       wrapperType,
       dateAdded: utcDateTime,
-      usageLocations: [],
     });
   });
 

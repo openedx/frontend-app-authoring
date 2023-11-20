@@ -43,7 +43,6 @@ export const updateFileValues = (files) => {
       id: edxVideoId,
       wrapperType,
       dateAdded: created.toString(),
-      usageLocations: [],
       status: uploadStatus,
       thumbnail,
     });
