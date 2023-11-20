@@ -23,6 +23,7 @@ import Head from './head/Head';
 import { StudioHome } from './studio-home';
 import CourseRerun from './course-rerun';
 import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy';
+import { ContentTagsDrawer } from './content-tags-drawer';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
@@ -62,6 +63,10 @@ const App = () => {
               <Route path="/taxonomy" element={<TaxonomyLayout />}>
                 <Route path="/taxonomy/:taxonomyId" element={<TaxonomyDetailPage />} />
               </Route>
+              <Route
+                path="/tagging/components/widget/:contentId"
+                element={<ContentTagsDrawer />}
+              />
             </>
           )}
         </Routes>

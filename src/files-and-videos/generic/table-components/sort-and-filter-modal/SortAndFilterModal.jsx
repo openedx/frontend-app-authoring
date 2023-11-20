@@ -44,11 +44,10 @@ const SortAndFilterModal = ({
       remove(e.target.value);
     }
   };
-
-  const handleApply = () => {
-    closeSort();
-    handleSort(sortBy);
+  const handleApply = async () => {
+    await handleSort(sortBy);
     processFilters(filterBy, columns, setAllFilters);
+    closeSort();
   };
 
   const handleClearAll = () => {

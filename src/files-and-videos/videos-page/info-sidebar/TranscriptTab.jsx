@@ -99,7 +99,7 @@ const TranscriptTab = ({
 
   return (
     <Stack gap={3}>
-      <div ref={divRef} style={{ overflowY: 'scroll', height: '310px' }} className="px-1 py-2">
+      <div ref={divRef} style={{ overflowY: 'auto', maxHeight: '310px' }} className="px-1 py-2">
         <ErrorAlert
           hideHeading={false}
           isError={transcriptStatus === RequestStatus.FAILED && !isEmpty(errors.transcript)}

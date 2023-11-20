@@ -300,7 +300,11 @@ describe('FilesAndUploads', () => {
 
         const sortNameAscendingButton = screen.getByText(messages.sortByNameAscending.defaultMessage);
         fireEvent.click(sortNameAscendingButton);
-        fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+
+        await waitFor(() => {
+          fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+        });
+
         expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
       });
 
@@ -317,7 +321,11 @@ describe('FilesAndUploads', () => {
 
         const sortBySizeDescendingButton = screen.getByText(messages.sortBySizeDescending.defaultMessage);
         fireEvent.click(sortBySizeDescendingButton);
-        fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+
+        await waitFor(() => {
+          fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+        });
+
         expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
       });
     });
