@@ -36,18 +36,16 @@ const Header = ({
   ];
   const outlineLink = `${studioBaseUrl}/course/${courseId}`;
   return (
-    <div className="site-header-desktop">
-      <StudioHeader
-        {...{
-          org: courseOrg,
-          number: courseNumber,
-          title: courseTitle,
-          isHiddenMainMenu,
-          mainMenuDropdowns,
-          outlineLink,
-        }}
-      />
-    </div>
+    <StudioHeader
+      {...{
+        org: courseOrg,
+        number: courseNumber,
+        title: courseTitle,
+        isHiddenMainMenu,
+        mainMenuDropdowns,
+        outlineLink,
+      }}
+    />
   );
 };
 

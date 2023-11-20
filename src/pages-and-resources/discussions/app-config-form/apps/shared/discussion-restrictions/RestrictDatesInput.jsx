@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import FieldFeedback from '../../../../../../generic/FieldFeedback';
 
-const RestictDatesInput = ({
+const RestrictDatesInput = ({
   value,
   type,
   label,
@@ -64,7 +64,7 @@ const RestictDatesInput = ({
   );
 };
 
-RestictDatesInput.propTypes = {
+RestrictDatesInput.propTypes = {
   value: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
@@ -77,7 +77,7 @@ RestictDatesInput.propTypes = {
   dataTestId: PropTypes.string,
 };
 
-RestictDatesInput.defaultProps = {
+RestrictDatesInput.defaultProps = {
   fieldClasses: '',
   helpText: '',
   feedbackClasses: '',
@@ -85,4 +85,4 @@ RestictDatesInput.defaultProps = {
   dataTestId: null,
 };
 
-export default React.memo(RestictDatesInput);
+export default React.memo(RestrictDatesInput);

@@ -85,7 +85,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
   }
   if (loadingSettingsStatus === RequestStatus.DENIED) {
     return (
-      <div className="row justify-contnt-center m-6">
+      <div className="row justify-content-center m-6">
         <Placeholder />
       </div>
     );

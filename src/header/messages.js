@@ -144,7 +144,7 @@ const messages = defineMessages({
   'header.label.secondary.nav': {
     id: 'header.label.secondary.nav',
     defaultMessage: 'Secondary',
-    description: 'The aria label for the seconary nav',
+    description: 'The aria label for the secondary nav',
   },
   'header.label.courseOutline': {
     id: 'header.label.courseOutline',

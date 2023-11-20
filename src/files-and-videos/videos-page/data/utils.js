@@ -72,6 +72,26 @@ export const getLanguages = (availableLanguages) => {
   return languages;
 };
 
+export const getSortedTranscripts = (languages, transcripts) => {
+  const transcriptDisplayNames = [];
+  transcripts.forEach(transcript => {
+    const displayName = languages[transcript];
+    transcriptDisplayNames.push(displayName);
+  });
+
+  const sortedTranscripts = transcriptDisplayNames.sort();
+  const sortedTranscriptCodes = [];
+  sortedTranscripts.forEach(transcript => {
+    Object.entries(languages).forEach(([key, value]) => {
+      if (value === transcript) {
+        sortedTranscriptCodes.push(key);
+      }
+    });
+  });
+
+  return sortedTranscriptCodes;
+};
+
 export const getSupportedFormats = (supportedFileFormats) => {
   if (isEmpty(supportedFileFormats)) {
     return null;
