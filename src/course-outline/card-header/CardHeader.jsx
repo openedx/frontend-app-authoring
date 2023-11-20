@@ -13,6 +13,7 @@ import {
 } from '@edx/paragon';
 import {
   ArrowDropDown as ArrowDownIcon,
+  ArrowDropUp as ArrowUpIcon,
   MoreVert as MoveVertIcon,
   EditOutline as EditIcon,
 } from '@edx/paragon/icons';
@@ -26,6 +27,7 @@ import messages from './messages';
 const CardHeader = ({
   title,
   sectionStatus,
+  hasChanges,
   isExpanded,
   onClickPublish,
   onClickMenuButton,
@@ -42,8 +44,8 @@ const CardHeader = ({
   const [titleValue, setTitleValue] = useState(title);
 
   const { badgeTitle, badgeIcon } = getSectionStatusBadgeContent(sectionStatus, messages, intl);
-  const isDisabledPublish = sectionStatus === SECTION_BADGE_STATUTES.live
-    || sectionStatus === SECTION_BADGE_STATUTES.publishedNotLive;
+  const isDisabledPublish = (sectionStatus === SECTION_BADGE_STATUTES.live
+    || sectionStatus === SECTION_BADGE_STATUTES.publishedNotLive) && !hasChanges;
 
   useEscapeClick({
     onEscape: () => {
@@ -86,12 +88,10 @@ const CardHeader = ({
           )}
         >
           <Button
-            iconBefore={ArrowDownIcon}
+            iconBefore={isExpanded ? ArrowUpIcon : ArrowDownIcon}
             variant="tertiary"
             data-testid="section-card-header__expanded-btn"
-            className={classNames('section-card-header__expanded-btn', {
-              collapsed: !isExpanded,
-            })}
+            className="section-card-header__expanded-btn"
             onClick={() => onExpand((prevState) => !prevState)}
           >
             <Truncate lines={1} className="h3 mb-0">{title}</Truncate>
@@ -149,6 +149,7 @@ const CardHeader = ({
 CardHeader.propTypes = {
   title: PropTypes.string.isRequired,
   sectionStatus: PropTypes.string.isRequired,
+  hasChanges: PropTypes.bool.isRequired,
   isExpanded: PropTypes.bool.isRequired,
   onExpand: PropTypes.func.isRequired,
   onClickPublish: PropTypes.func.isRequired,

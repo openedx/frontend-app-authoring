@@ -1,5 +1,7 @@
 import React from 'react';
-import { render, waitFor, fireEvent } from '@testing-library/react';
+import {
+  render, waitFor, cleanup, fireEvent,
+} from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -11,13 +13,13 @@ import {
   getCourseLaunchApiUrl,
   getCourseOutlineIndexApiUrl,
   getCourseReindexApiUrl,
-  getCourseReindexApiUrl,
-  getCourseSectionApiUrl,
-  getCourseSectionDuplicateApiUrl,
+  getXBlockApiUrl,
   getEnableHighlightsEmailsApiUrl,
   getUpdateCourseSectionApiUrl,
+  getXBlockBaseApiUrl,
 } from './data/api';
 import {
+  addNewCourseSectionQuery,
   deleteCourseSectionQuery,
   duplicateCourseSectionQuery,
   editCourseSectionQuery,
@@ -36,10 +38,12 @@ import {
   courseOutlineIndexWithoutSections,
   courseBestPracticesMock,
   courseLaunchMock,
+  courseSectionMock,
 } from './__mocks__';
 import { executeThunk } from '../utils';
 import CourseOutline from './CourseOutline';
 import messages from './messages';
+import headerMessages from './header-navigations/messages';
 
 let axiosMock;
 let store;
@@ -50,6 +54,15 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: () => ({
     pathname: mockPathname,
+  }),
+}));
+
+jest.mock('../help-urls/hooks', () => ({
+  useHelpUrls: () => ({
+    contentHighlights: 'some',
+    visibility: 'some',
+    grading: 'some',
+    outline: 'some',
   }),
 }));
 
@@ -98,6 +111,25 @@ describe('<CourseOutline />', () => {
     await executeThunk(fetchCourseReindexQuery(courseId, courseOutlineIndexMock.reindexLink), store.dispatch);
 
     expect(getByText(messages.alertSuccessDescription.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('adds new section correctly', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    let element = await findAllByTestId('section-card');
+    expect(element.length).toBe(4);
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl())
+      .reply(200, {
+        locator: courseSectionMock.id,
+      });
+    axiosMock
+      .onGet(getXBlockApiUrl(courseSectionMock.id))
+      .reply(200, courseSectionMock);
+    await executeThunk(addNewCourseSectionQuery(courseId), store.dispatch);
+
+    element = await findAllByTestId('section-card');
+    expect(element.length).toBe(5);
   });
 
   it('render error alert after failed reindex correctly', async () => {
@@ -163,11 +195,11 @@ describe('<CourseOutline />', () => {
     const { queryAllByTestId, getByText } = render(<RootWrapper />);
 
     await waitFor(() => {
-      const collapseBtn = getByText(messages.collapseAllButton.defaultMessage);
+      const collapseBtn = getByText(headerMessages.collapseAllButton.defaultMessage);
       expect(collapseBtn).toBeInTheDocument();
       fireEvent.click(collapseBtn);
 
-      const expendBtn = getByText(messages.expandAllButton.defaultMessage);
+      const expendBtn = getByText(headerMessages.expandAllButton.defaultMessage);
       expect(expendBtn).toBeInTheDocument();
 
       fireEvent.click(expendBtn);
@@ -210,7 +242,7 @@ describe('<CourseOutline />', () => {
     await executeThunk(editCourseSectionQuery(section.id, newDisplayName), store.dispatch);
 
     axiosMock
-      .onGet(getCourseSectionApiUrl(section.id))
+      .onGet(getXBlockApiUrl(section.id))
       .reply(200);
     await executeThunk(fetchCourseSectionQuery(section.id), store.dispatch);
 
@@ -237,7 +269,7 @@ describe('<CourseOutline />', () => {
     const courseBlockId = courseOutlineIndexMock.courseStructure.id;
 
     axiosMock
-      .onPost(getCourseSectionDuplicateApiUrl())
+      .onPost(getXBlockBaseApiUrl())
       .reply(200, {
         duplicate_source_locator: section.id,
         parent_locator: courseBlockId,
@@ -279,7 +311,7 @@ describe('<CourseOutline />', () => {
     await executeThunk(publishCourseSectionQuery(section.id), store.dispatch);
 
     axiosMock
-      .onGet(getCourseSectionApiUrl(section.id))
+      .onGet(getXBlockApiUrl(section.id))
       .reply(200, {
         ...section,
         published: true,
@@ -316,7 +348,7 @@ describe('<CourseOutline />', () => {
     await executeThunk(updateCourseSectionHighlightsQuery(section.id, highlights), store.dispatch);
 
     axiosMock
-      .onGet(getCourseSectionApiUrl(section.id))
+      .onGet(getXBlockApiUrl(section.id))
       .reply(200, {
         ...section,
         highlights,

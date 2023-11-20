@@ -74,6 +74,12 @@ const slice = createSlice({
     setCurrentSection: (state, { payload }) => {
       state.currentSection = payload;
     },
+    addSection: (state, { payload }) => {
+      state.sectionsList = [
+        ...state.sectionsList,
+        payload,
+      ];
+    },
     deleteSection: (state, { payload }) => {
       state.sectionsList = state.sectionsList.filter(({ id }) => id !== payload);
     },
@@ -89,6 +95,7 @@ const slice = createSlice({
 });
 
 export const {
+  addSection,
   fetchOutlineIndexSuccess,
   updateOutlineIndexLoadingStatus,
   updateReindexLoadingStatus,

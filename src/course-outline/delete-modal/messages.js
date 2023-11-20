@@ -11,7 +11,7 @@ const messages = defineMessages({
   },
   deleteButton: {
     id: 'course-authoring.course-outline.delete-modal.button.delete',
-    defaultMessage: 'Yes, delete this section',
+    defaultMessage: 'Delete',
   },
   cancelButton: {
     id: 'course-authoring.course-outline.delete-modal.button.cancel',

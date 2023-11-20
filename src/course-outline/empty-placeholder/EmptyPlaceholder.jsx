@@ -21,7 +21,8 @@ const EmptyPlaceholder = ({ onCreateNewSection }) => {
         )}
       >
         <Button
-          variant="outline-success"
+          variant="primary"
+          size="sm"
           iconBefore={IconAdd}
           onClick={onCreateNewSection}
         >

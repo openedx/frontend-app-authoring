@@ -29,13 +29,9 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.reindex.alert.error.title',
     defaultMessage: 'There were errors reindexing course.',
   },
-  expandAllButton: {
-    id: 'course-authoring.course-outline.header-navigations.button.expand-all',
-    defaultMessage: 'Expand all',
-  },
-  collapseAllButton: {
-    id: 'course-authoring.course-outline.header-navigations.button.collapse-all',
-    defaultMessage: 'Collapse all',
+  newSectionButton: {
+    id: 'course-authoring.course-outline.section-list.button.new-section',
+    defaultMessage: 'New section',
   },
 });
 

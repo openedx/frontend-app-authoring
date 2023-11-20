@@ -10,23 +10,7 @@
     height: 1.5rem;
     margin-right: .25rem;
     background: transparent;
-
-    &::before {
-      display: none;
-    }
-
-    & svg {
-      width: 1.5rem;
-      height: 1.5rem;
-    }
-
-    &.collapsed > .pgn__icon {
-      transform: rotate(180deg);
-    }
-
-    & span:first-child {
-      color: $black;
-    }
+    color: $black;
   }
 
   .section-card-header__badge-status {
@@ -42,11 +26,6 @@
     & span:last-child {
       color: $primary-700;
     }
-  }
-
-  .section-card-header__menu {
-    display: flex;
-    align-items: center;
   }
 
   .pgn__form-group {

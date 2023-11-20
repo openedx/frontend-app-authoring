@@ -36,8 +36,8 @@ const PublishModal = ({
       </ModalDialog.Header>
       <ModalDialog.Body>
         <p className="small">{intl.formatMessage(messages.description)}</p>
-        {subSections.length ? subSections.map((subSection) => {
-          const units = subSection.childInfo.children;
+        {subSections.filter(subSection => subSection.hasChanges).map((subSection) => {
+          const units = subSection.childInfo.children.filter(unit => unit.hasChanges);
 
           return units.length ? (
             <React.Fragment key={subSection.id}>
@@ -52,7 +52,7 @@ const PublishModal = ({
               ))}
             </React.Fragment>
           ) : null;
-        }) : null}
+        })}
       </ModalDialog.Body>
       <ModalDialog.Footer className="pt-1">
         <ActionRow>

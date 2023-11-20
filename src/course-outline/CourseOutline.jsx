@@ -2,11 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  Button,
   Container,
   Layout,
   TransitionReplace,
 } from '@edx/paragon';
+import { Helmet } from 'react-helmet';
 import {
+  Add as IconAdd,
   CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
 } from '@edx/paragon/icons';
@@ -66,9 +69,8 @@ const CourseOutline = ({ courseId }) => {
     handleEditSectionSubmit,
     handleDeleteSectionSubmit,
     handleDuplicateSectionSubmit,
+    handleNewSectionSubmit,
   } = useCourseOutline({ courseId });
-
-  document.title = getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle));
 
   const {
     isShow: isShowProcessingNotification,
@@ -82,6 +84,9 @@ const CourseOutline = ({ courseId }) => {
 
   return (
     <>
+      <Helmet>
+        <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
+      </Helmet>
       <Container size="xl" className="px-4">
         <section className="course-outline-container mb-4 mt-5">
           <TransitionReplace>
@@ -131,20 +136,34 @@ const CourseOutline = ({ courseId }) => {
                       openEnableHighlightsModal={openEnableHighlightsModal}
                     />
                     <div className="pt-4">
-                      {/* TODO add create new section handler in EmptyPlaceholder */}
-                      {sectionsList.length ? sectionsList.map((section) => (
-                        <SectionCard
-                          section={section}
-                          savingStatus={savingStatus}
-                          onOpenHighlightsModal={handleOpenHighlightsModal}
-                          onOpenPublishModal={openPublishModal}
-                          onOpenDeleteModal={openDeleteModal}
-                          onEditSectionSubmit={handleEditSectionSubmit}
-                          onDuplicateSubmit={handleDuplicateSectionSubmit}
-                          isSectionsExpanded={isSectionsExpanded}
-                        />
-                      )) : (
-                        <EmptyPlaceholder onCreateNewSection={() => ({})} />
+                      {sectionsList.length ? (
+                        <>
+                          {sectionsList.map((section) => (
+                            <SectionCard
+                              key={section.id}
+                              section={section}
+                              savingStatus={savingStatus}
+                              onOpenHighlightsModal={handleOpenHighlightsModal}
+                              onOpenPublishModal={openPublishModal}
+                              onOpenDeleteModal={openDeleteModal}
+                              onEditSectionSubmit={handleEditSectionSubmit}
+                              onDuplicateSubmit={handleDuplicateSectionSubmit}
+                              isSectionsExpanded={isSectionsExpanded}
+                            />
+                          ))}
+                          <Button
+                            data-testid="new-section-button"
+                            className="mt-4"
+                            variant="outline-primary"
+                            onClick={handleNewSectionSubmit}
+                            iconBefore={IconAdd}
+                            block
+                          >
+                            {intl.formatMessage(messages.newSectionButton)}
+                          </Button>
+                        </>
+                      ) : (
+                        <EmptyPlaceholder onCreateNewSection={handleNewSectionSubmit} />
                       )}
                     </div>
                   </section>

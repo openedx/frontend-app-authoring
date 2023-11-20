@@ -22,6 +22,12 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+jest.mock('../../help-urls/hooks', () => ({
+  useHelpUrls: () => ({
+    contentHighlights: 'some',
+  }),
+}));
+
 const onEnableHighlightsSubmitMock = jest.fn();
 const closeMock = jest.fn();
 

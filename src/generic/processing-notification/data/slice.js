@@ -1,9 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 
+import { NOTIFICATION_MESSAGES } from '../../../constants';
+
 const initialState = {
   isShow: false,
-  title: '',
+  title: NOTIFICATION_MESSAGES.empty,
 };
 
 const slice = createSlice({

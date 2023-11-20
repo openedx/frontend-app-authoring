@@ -21,6 +21,12 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+jest.mock('../../help-urls/hooks', () => ({
+  useHelpUrls: () => ({
+    contentHighlights: 'some',
+  }),
+}));
+
 const statusBarData = {
   courseReleaseDate: 'Feb 05, 2013 at 05:00 UTC',
   isSelfPaced: true,

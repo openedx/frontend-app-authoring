@@ -16,6 +16,7 @@ import {
   getCurrentSection,
 } from './data/selectors';
 import {
+  addNewCourseSectionQuery,
   deleteCourseSectionQuery,
   editCourseSectionQuery,
   duplicateCourseSectionQuery,
@@ -31,7 +32,7 @@ import {
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
 
-  const { reindexLink, lmsLink } = useSelector(getOutlineIndexData);
+  const { reindexLink, courseStructure, lmsLink } = useSelector(getOutlineIndexData);
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
@@ -47,10 +48,12 @@ const useCourseOutline = ({ courseId }) => {
   const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
 
+  const handleNewSectionSubmit = () => {
+    dispatch(addNewCourseSectionQuery(courseStructure.id));
+  };
+
   const headerNavigationsActions = {
-    handleNewSection: () => {
-      // TODO add handler
-    },
+    handleNewSection: handleNewSectionSubmit,
     handleReIndex: () => {
       setDisableReindexButton(true);
       setShowSuccessAlert(false);
@@ -154,6 +157,7 @@ const useCourseOutline = ({ courseId }) => {
     openDeleteModal,
     handleDeleteSectionSubmit,
     handleDuplicateSectionSubmit,
+    handleNewSectionSubmit,
   };
 };
 

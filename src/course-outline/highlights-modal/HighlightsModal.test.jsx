@@ -30,6 +30,12 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+jest.mock('../../help-urls/hooks', () => ({
+  useHelpUrls: () => ({
+    contentHighlights: 'some',
+  }),
+}));
+
 const currentSectionMock = {
   highlights: ['Highlight 1', 'Highlight 2'],
   displayName: 'Test Section',

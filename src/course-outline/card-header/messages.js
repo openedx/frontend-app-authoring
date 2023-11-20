@@ -13,7 +13,7 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.section.status-badge.published-not-live',
     defaultMessage: 'Published not live',
   },
-  statusBadgeStuffOnly: {
+  statusBadgeStaffOnly: {
     id: 'course-authoring.course-outline.section.status-badge.staff-only',
     defaultMessage: 'Staff only',
   },

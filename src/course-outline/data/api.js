@@ -1,3 +1,4 @@
+// @ts-check
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
@@ -24,14 +25,32 @@ export const getEnableHighlightsEmailsApiUrl = (courseId) => {
 };
 
 export const getCourseReindexApiUrl = (reindexLink) => `${getApiBaseUrl()}${reindexLink}`;
-export const getUpdateCourseSectionApiUrl = (sectionId) => `${getApiBaseUrl()}/xblock/${sectionId}`;
-export const getCourseSectionApiUrl = (sectionId) => `${getApiBaseUrl()}/xblock/outline/${sectionId}`;
-export const getCourseSectionDuplicateApiUrl = () => `${getApiBaseUrl()}/xblock/`;
+export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
+export const getUpdateCourseSectionApiUrl = (sectionId) => `${getXBlockBaseApiUrl()}${sectionId}`;
+export const getXBlockApiUrl = (blockId) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
+
+/**
+ * @typedef {Object} courseOutline
+ * @property {string} courseReleaseDate
+ * @property {Object} courseStructure
+ * @property {Object} deprecatedBlocksInfo
+ * @property {string} discussionsIncontextFeedbackUrl
+ * @property {string} discussionsIncontextLearnmoreUrl
+ * @property {Object} initialState
+ * @property {Object} initialUserClipboard
+ * @property {string} languageCode
+ * @property {string} lmsLink
+ * @property {string} mfeProctoredExamSettingsUrl
+ * @property {string} notificationDismissUrl
+ * @property {string[]} proctoringErrors
+ * @property {string} reindexLink
+ * @property {null} rerunNotificationId
+ */
 
 /**
  * Get course outline index.
  * @param {string} courseId
- * @returns {Promise<Object>}
+ * @returns {Promise<courseOutline>}
  */
 export async function getCourseOutlineIndex(courseId) {
   const { data } = await getAuthenticatedHttpClient()
@@ -42,10 +61,8 @@ export async function getCourseOutlineIndex(courseId) {
 
 /**
  * Get course best practices.
- * @param {string} courseId
- * @param {boolean} excludeGraded
- * @param {boolean} all
- * @returns {Promise<Object>}
+ * @param {{courseId: string, excludeGraded: boolean, all: boolean}} options
+ * @returns {Promise<{isSelfPaced: boolean, sections: any, subsection: any, units: any, videos: any }>}
  */
 export async function getCourseBestPractices({
   courseId,
@@ -58,13 +75,21 @@ export async function getCourseBestPractices({
   return camelCaseObject(data);
 }
 
+/** @typedef {object} courseLaunchData
+ * @property {boolean} isSelfPaced
+ * @property {object} dates
+ * @property {object} assignments
+ * @property {object} grades
+ * @property {number} grades.sum_of_weights
+ * @property {object} certificates
+ * @property {object} updates
+ * @property {object} proctoring
+ */
+
 /**
  * Get course launch.
- * @param {string} courseId
- * @param {boolean} gradedOnly
- * @param {boolean} validateOras
- * @param {boolean} all
- * @returns {Promise<Object>}
+ * @param {{courseId: string, gradedOnly: boolean, validateOras: boolean, all: boolean}} options
+ * @returns {Promise<courseLaunchData>}
  */
 export async function getCourseLaunch({
   courseId,
@@ -110,13 +135,51 @@ export async function restartIndexingOnCourse(reindexLink) {
 }
 
 /**
+ * @typedef {Object} section
+ * @property {string} id
+ * @property {string} displayName
+ * @property {string} category
+ * @property {boolean} hasChildren
+ * @property {string} editedOn
+ * @property {boolean} published
+ * @property {string} publishedOn
+ * @property {string} studioUrl
+ * @property {boolean} releasedToStudents
+ * @property {string} releaseDate
+ * @property {string} visibilityState
+ * @property {boolean} hasExplicitStaffLock
+ * @property {string} start
+ * @property {boolean} graded
+ * @property {string} dueDate
+ * @property {null} due
+ * @property {null} relativeWeeksDue
+ * @property {null} format
+ * @property {string[]} courseGraders
+ * @property {boolean} hasChanges
+ * @property {object} actions
+ * @property {null} explanatoryMessage
+ * @property {object[]} userPartitions
+ * @property {string} showCorrectness
+ * @property {string[]} highlights
+ * @property {boolean} highlightsEnabled
+ * @property {boolean} highlightsPreviewOnly
+ * @property {string} highlightsDocUrl
+ * @property {object} childInfo
+ * @property {boolean} ancestorHasStaffLock
+ * @property {boolean} staffOnlyMessage
+ * @property {boolean} hasPartitionGroupComponents
+ * @property {object} userPartitionInfo
+ * @property {boolean} enableCopyPasteUnits
+ */
+
+/**
  * Get course section
  * @param {string} sectionId
- * @returns {Promise<Object>}
+ * @returns {Promise<section>}
  */
 export async function getCourseSection(sectionId) {
   const { data } = await getAuthenticatedHttpClient()
-    .get(getCourseSectionApiUrl(sectionId));
+    .get(getXBlockApiUrl(sectionId));
   return camelCaseObject(data);
 }
 
@@ -189,9 +252,25 @@ export async function deleteCourseSection(sectionId) {
  */
 export async function duplicateCourseSection(sectionId, courseBlockId) {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseSectionDuplicateApiUrl(), {
+    .post(getXBlockBaseApiUrl(), {
       duplicate_source_locator: sectionId,
       parent_locator: courseBlockId,
+    });
+
+  return data;
+}
+
+/**
+ * Add new course item like section, subsection or unit.
+ * @param {string} courseBlockId
+ * @returns {Promise<Object>}
+ */
+export async function addNewCourseItem(courseBlockId, category, displayName) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getXBlockBaseApiUrl(), {
+      parent_locator: courseBlockId,
+      category,
+      display_name: displayName,
     });
 
   return data;
