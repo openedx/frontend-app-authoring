@@ -113,7 +113,7 @@ const TaxonomyCard = ({ className, original }) => {
       <Card
         isClickable
         as={Link}
-        to={`${id}`}
+        to={`/taxonomy/${id}`}
         className={classNames('taxonomy-card', className)}
         data-testid={`taxonomy-card-${id}`}
       >

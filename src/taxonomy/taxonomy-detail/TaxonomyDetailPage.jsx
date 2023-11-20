@@ -78,7 +78,7 @@ const TaxonomyDetailPage = () => {
         <Container size="xl">
           <Breadcrumb
             links={[
-              { label: intl.formatMessage(taxonomyMessages.headerTitle), to: '/taxonomy-list/' },
+              { label: intl.formatMessage(taxonomyMessages.headerTitle), to: '/taxonomies/' },
             ]}
             activeLabel={taxonomy.name}
             linkAs={Link}

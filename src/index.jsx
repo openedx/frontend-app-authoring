@@ -7,7 +7,7 @@ import {
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import {
   QueryClient,
   QueryClientProvider,
@@ -53,10 +53,16 @@ const App = () => {
           <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
           <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
           {process.env.ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
-            <Route path="/taxonomy-list" element={<TaxonomyLayout />}>
-              <Route index element={<TaxonomyListPage />} />
-              <Route path="/taxonomy-list/:taxonomyId" element={<TaxonomyDetailPage />} />
-            </Route>
+            <>
+              {/* TODO: remove this redirect once Studio's link is updated */}
+              <Route path="/taxonomy-list" element={<Navigate to="/taxonomies" />} />
+              <Route path="/taxonomies" element={<TaxonomyLayout />}>
+                <Route index element={<TaxonomyListPage />} />
+              </Route>
+              <Route path="/taxonomy" element={<TaxonomyLayout />}>
+                <Route path="/taxonomy/:taxonomyId" element={<TaxonomyDetailPage />} />
+              </Route>
+            </>
           )}
         </Routes>
       </QueryClientProvider>
