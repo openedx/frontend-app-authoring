@@ -42,7 +42,7 @@ describe('<OrganizationSection />', async () => {
     });
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock.onDelete(getOrganizationsUrl).reply(200);
+    axiosMock.onDelete(getOrganizationsUrl()).reply(200);
     await executeThunk(fetchOrganizationsQuery(), store.dispatch);
     useSelector.mockReturnValue(['edX', 'org']);
   });
