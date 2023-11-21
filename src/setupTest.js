@@ -152,3 +152,6 @@ jest.mock('react-redux', () => {
     useSelector: jest.fn((selector) => ({ useSelector: selector })),
   };
 });
+
+// Mock the plugins repo so jest will stop complaining about ES6 syntax
+jest.mock('frontend-components-tinymce-advanced-plugins', () => {});
