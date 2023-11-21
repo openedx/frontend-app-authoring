@@ -1,5 +1,6 @@
-import { importTaxonomy } from './data/utils';
+import { importTaxonomyTags, importTaxonomy } from './data/utils';
 
 export {
-  importTaxonomy, // eslint-disable-line import/prefer-default-export
+  importTaxonomyTags,
+  importTaxonomy,
 };

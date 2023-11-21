@@ -1,3 +1,4 @@
+// ts-check
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
@@ -20,6 +21,12 @@ const messages = defineMessages({
   importTaxonomyError: {
     id: 'course-authoring.import-tags.error',
     defaultMessage: 'Import failed - see details in the browser console',
+  },
+  confirmImportTags: {
+    id: 'course-authoring.import-tags.warning',
+    defaultMessage: 'Warning! You are about to overwrite all tags in this taxonomy. Any tags applied to course'
+      + ' content will be updated or removed. This cannot be undone.'
+      + '\n\nAre you sure you want to continue importing this file?',
   },
 });
 

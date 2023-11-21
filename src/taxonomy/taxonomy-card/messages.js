@@ -17,6 +17,10 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-list.orgs-count.label',
     defaultMessage: 'Assigned to {orgsCount} orgs',
   },
+  taxonomyCardImportMenu: {
+    id: 'course-authoring.taxonomy-list.menu.import.label',
+    defaultMessage: 'Re-import',
+  },
   taxonomyCardExportMenu: {
     id: 'course-authoring.taxonomy-list.menu.export.label',
     defaultMessage: 'Export',

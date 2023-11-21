@@ -31,7 +31,13 @@ const TaxonomyCardMenu = ({
         data-testid={`taxonomy-card-menu-button-${id}`}
       />
       <Dropdown.Menu data-testid={`taxonomy-card-menu-${id}`}>
-        {/* Add more menu items here */}
+        <Dropdown.Item
+          className="taxonomy-menu-item"
+          data-testid={`taxonomy-card-menu-import-${id}`}
+          onClick={(e) => onClickItem(e, 'import')}
+        >
+          {intl.formatMessage(messages.taxonomyCardImportMenu)}
+        </Dropdown.Item>
         <Dropdown.Item
           className="taxonomy-menu-item"
           data-testid={`taxonomy-card-menu-export-${id}`}
