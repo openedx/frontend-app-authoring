@@ -42,7 +42,6 @@ const StudioHome = ({ intl }) => {
     studioRequestEmail,
     libraryAuthoringMfeUrl,
     redirectToLibraryAuthoringMfe,
-    splitStudioHome,
   } = studioHomeData;
 
   function getHeaderButtons() {
@@ -68,25 +67,23 @@ const StudioHome = ({ intl }) => {
       );
     }
 
-    let libraryHref = `${getConfig().STUDIO_BASE_URL}/home#libraries-tab`;
-    if (splitStudioHome) {
-      libraryHref = `${getConfig().STUDIO_BASE_URL}/home_library`;
-    }
+    let libraryHref = `${getConfig().STUDIO_BASE_URL}/home_library`;
     if (redirectToLibraryAuthoringMfe) {
       libraryHref = `${libraryAuthoringMfeUrl}/create`;
-      headerButtons.push(
-        <Button
-          variant="outline-primary"
-          iconBefore={AddIcon}
-          size="sm"
-          disabled={showNewCourseContainer}
-          href={libraryHref}
-          data-testid="new-library-button"
-        >
-          {intl.formatMessage(messages.addNewLibraryBtnText)}
-        </Button>,
-      );
     }
+
+    headerButtons.push(
+      <Button
+        variant="outline-primary"
+        iconBefore={AddIcon}
+        size="sm"
+        disabled={showNewCourseContainer}
+        href={libraryHref}
+        data-testid="new-library-button"
+      >
+        {intl.formatMessage(messages.addNewLibraryBtnText)}
+      </Button>,
+    );
 
     return headerButtons;
   }
