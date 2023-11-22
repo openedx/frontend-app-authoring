@@ -34,15 +34,15 @@ describe('import taxonomy api calls', () => {
     axiosMock.onPost(getTaxonomyImportNewApiUrl()).reply(201, taxonomyImportMock);
     const result = await importNewTaxonomy('Taxonomy name', 'Taxonomy description');
 
-    expect(axiosMock.history.post[0].url).toEqual(getTaxonomyImportApiUrl());
+    expect(axiosMock.history.post[0].url).toEqual(getTaxonomyImportNewApiUrl());
     expect(result).toEqual(taxonomyImportMock);
   });
 
   it('should call import tags', async () => {
-    axiosMock.onPost(getTagsImportApiUrl(1)).reply(200, tagImportMock);
+    axiosMock.onPut(getTagsImportApiUrl(1)).reply(200, tagImportMock);
     const result = await importTags(1);
 
-    expect(axiosMock.history.post[0].url).toEqual(getTagsImportApiUrl(1));
+    expect(axiosMock.history.put[0].url).toEqual(getTagsImportApiUrl(1));
     expect(result).toEqual(tagImportMock);
   });
 });
