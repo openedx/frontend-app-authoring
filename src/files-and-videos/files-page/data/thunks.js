@@ -132,11 +132,12 @@ export function getUsagePaths({ asset, courseId }) {
 
     try {
       const { usageLocations } = await getAssetUsagePaths({ assetId: asset.id, courseId });
+      const assetLocations = usageLocations[asset.id];
       dispatch(updateModel({
         modelType: 'assets',
         model: {
           id: asset.id,
-          usageLocations,
+          usageLocations: assetLocations,
         },
       }));
       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.SUCCESSFUL }));
