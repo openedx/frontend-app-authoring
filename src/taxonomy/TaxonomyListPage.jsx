@@ -6,7 +6,10 @@ import {
   Spinner,
 } from '@edx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { Helmet } from 'react-helmet';
+
 import SubHeader from '../generic/sub-header/SubHeader';
+import getPageHeadTitle from '../generic/utils';
 import messages from './messages';
 import TaxonomyCard from './taxonomy-card';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
@@ -35,6 +38,9 @@ const TaxonomyListPage = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{getPageHeadTitle('', intl.formatMessage(messages.headerTitle))}</title>
+      </Helmet>
       <div className="pt-4.5 pr-4.5 pl-4.5 pb-2 bg-light-100 box-shadow-down-2">
         <Container size="xl">
           <SubHeader
