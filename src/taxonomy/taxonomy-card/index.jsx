@@ -75,7 +75,7 @@ const TaxonomyCard = ({ className, original }) => {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const menuItemActions = {
-    import: () => importTaxonomyTags(id, intl).then(() => console.log('resolved')),
+    import: () => importTaxonomyTags(id, intl).then(),
     export: () => setIsExportModalOpen(true),
   };
 

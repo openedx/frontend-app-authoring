@@ -20,6 +20,9 @@ const TaxonomyDetailMenu = ({
       alt={intl.formatMessage(messages.actionsButtonAlt, { name })}
       disabled={disabled}
     >
+      <Dropdown.Item onClick={() => onClickMenuItem('import')}>
+        {intl.formatMessage(messages.importMenu)}
+      </Dropdown.Item>
       <Dropdown.Item onClick={() => onClickMenuItem('export')}>
         {intl.formatMessage(messages.exportMenu)}
       </Dropdown.Item>
