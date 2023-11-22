@@ -116,15 +116,16 @@ describe('<StudioHome />', async () => {
   });
 
   describe('render new library button', () => {
-    it('should not show button', async () => {
+    it('href should include home_library', async () => {
       useSelector.mockReturnValue({
         ...studioHomeMock,
         courseCreatorStatus: COURSE_CREATOR_STATES.granted,
       });
+      const studioBaseUrl = 'http://localhost:18010';
 
-      const { queryByTestId } = render(<RootWrapper />);
-      const createNewLibraryButton = queryByTestId('new-library-button');
-      expect(createNewLibraryButton).toBeNull();
+      const { getByTestId } = render(<RootWrapper />);
+      const createNewLibraryButton = getByTestId('new-library-button');
+      expect(createNewLibraryButton.getAttribute('href')).toBe(`${studioBaseUrl}/home_library`);
     });
     it('href should include create', async () => {
       useSelector.mockReturnValue({
