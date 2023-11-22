@@ -53,6 +53,7 @@ const pluginConfig = ({ isLibrary, placeholder, editorType }) => {
         [imageUploadButton, buttons.link, buttons.unlink, buttons.blockQuote, buttons.codeBlock],
         [buttons.table, buttons.emoticons, buttons.charmap, buttons.hr],
         [buttons.removeFormat, codeButton],
+        [buttons.a11ycheck],
       ]) : false,
       imageToolbar: mapToolbars([
         // [buttons.rotate.left, buttons.rotate.right],
