@@ -12,7 +12,7 @@ import {
 import { useSelector } from 'react-redux';
 
 import { VisibilityTypes } from '../../data/constants';
-import { getCurrentSection } from '../data/selectors';
+import { getCurrentItem } from '../data/selectors';
 import messages from './messages';
 import BasicTab from './BasicTab';
 import VisibilityTab from './VisibilityTab';
@@ -23,7 +23,7 @@ const ConfigureModal = ({
   onConfigureSubmit,
 }) => {
   const intl = useIntl();
-  const { displayName, start: sectionStartDate, visibilityState } = useSelector(getCurrentSection);
+  const { displayName, start: sectionStartDate, visibilityState } = useSelector(getCurrentItem);
   const [releaseDate, setReleaseDate] = useState(sectionStartDate);
   const [isVisibleToStaffOnly, setIsVisibleToStaffOnly] = useState(visibilityState === VisibilityTypes.STAFF_ONLY);
   const [saveButtonDisabled, setSaveButtonDisabled] = useState(true);

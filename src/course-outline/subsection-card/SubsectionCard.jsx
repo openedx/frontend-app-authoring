@@ -1,41 +1,30 @@
-import {
-  forwardRef,
-  useEffect,
-  useState,
-} from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Badge, Button, useToggle } from '@edx/paragon';
+import { Button, useToggle } from '@edx/paragon';
 import { Add as IconAdd } from '@edx/paragon/icons';
 
-import { setCurrentItem, setCurrentSection } from '../data/slice';
+import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
 import { getItemStatus } from '../utils';
 import messages from './messages';
 
-const SectionCard = forwardRef(({
+const SubsectionCard = forwardRef(({
   section,
+  subsection,
   children,
-  onOpenHighlightsModal,
   onOpenPublishModal,
-  onOpenConfigureModal,
-  onEditSectionSubmit,
+  onEditSubmit,
   savingStatus,
   onOpenDeleteModal,
   onDuplicateSubmit,
-  isSectionsExpanded,
-  onNewSubsectionSubmit,
 }, lastItemRef) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const [isExpanded, setIsExpanded] = useState(isSectionsExpanded);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isFormOpen, openForm, closeForm] = useToggle(false);
-
-  useEffect(() => {
-    setIsExpanded(isSectionsExpanded);
-  }, [isSectionsExpanded]);
 
   const {
     id,
@@ -46,10 +35,9 @@ const SectionCard = forwardRef(({
     visibleToStaffOnly = false,
     visibilityState,
     staffOnlyMessage,
-    highlights,
-  } = section;
+  } = subsection;
 
-  const sectionStatus = getItemStatus({
+  const subsectionStatus = getItemStatus({
     published,
     releasedToStudents,
     visibleToStaffOnly,
@@ -62,26 +50,18 @@ const SectionCard = forwardRef(({
   };
 
   const handleClickMenuButton = () => {
-    dispatch(setCurrentItem(section));
     dispatch(setCurrentSection(section));
+    dispatch(setCurrentSubsection(subsection));
+    dispatch(setCurrentItem(subsection));
   };
 
   const handleEditSubmit = (titleValue) => {
     if (displayName !== titleValue) {
-      // both itemId and sectionId are same
-      onEditSectionSubmit(id, id, titleValue);
+      onEditSubmit(id, section.id, titleValue);
       return;
     }
 
     closeForm();
-  };
-
-  const handleOpenHighlightsModal = () => {
-    onOpenHighlightsModal(section);
-  };
-
-  const handleNewSubsectionSubmit = () => {
-    onNewSubsectionSubmit(id);
   };
 
   useEffect(() => {
@@ -91,17 +71,15 @@ const SectionCard = forwardRef(({
   }, [savingStatus]);
 
   return (
-    <div className="section-card" data-testid="section-card" ref={lastItemRef}>
+    <div className="subsection-card" data-testid="subsection-card" ref={lastItemRef}>
       <CardHeader
-        sectionId={id}
         title={displayName}
-        status={sectionStatus}
+        status={subsectionStatus}
         hasChanges={hasChanges}
         isExpanded={isExpanded}
         onExpand={handleExpandContent}
         onClickMenuButton={handleClickMenuButton}
         onClickPublish={onOpenPublishModal}
-        onClickConfigure={onOpenConfigureModal}
         onClickEdit={openForm}
         onClickDelete={onOpenDeleteModal}
         isFormOpen={isFormOpen}
@@ -109,35 +87,21 @@ const SectionCard = forwardRef(({
         onEditSubmit={handleEditSubmit}
         isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
         onClickDuplicate={onDuplicateSubmit}
-        namePrefix="section"
+        namePrefix="subsection"
       />
-      <div className="section-card__content" data-testid="section-card__content">
-        <div className="outline-section__status">
-          <Button
-            className="section-card__highlights"
-            data-destid="section-card-highlights-button"
-            variant="tertiary"
-            onClick={handleOpenHighlightsModal}
-          >
-            <Badge className="highlights-badge">{highlights.length}</Badge>
-            <p className="m-0 text-black">{messages.sectionHighlightsBadge.defaultMessage}</p>
-          </Button>
-        </div>
-      </div>
       {isExpanded && (
         <>
-          <div data-testid="section-card__subsections" className="section-card__subsections">
+          <div data-testid="subsection-card__units" className="subsection-card__units">
             {children}
           </div>
           <Button
-            data-testid="new-subsection-button"
+            data-testid="new-unit-button"
             className="mt-4"
             variant="outline-primary"
             iconBefore={IconAdd}
             block
-            onClick={handleNewSubsectionSubmit}
           >
-            {intl.formatMessage(messages.newSubsectionButton)}
+            {intl.formatMessage(messages.newUnitButton)}
           </Button>
         </>
       )}
@@ -145,11 +109,11 @@ const SectionCard = forwardRef(({
   );
 });
 
-SectionCard.defaultProps = {
+SubsectionCard.defaultProps = {
   children: null,
 };
 
-SectionCard.propTypes = {
+SubsectionCard.propTypes = {
   section: PropTypes.shape({
     id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired,
@@ -159,18 +123,23 @@ SectionCard.propTypes = {
     visibleToStaffOnly: PropTypes.bool,
     visibilityState: PropTypes.string.isRequired,
     staffOnlyMessage: PropTypes.bool.isRequired,
-    highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
+  }).isRequired,
+  subsection: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    displayName: PropTypes.string.isRequired,
+    published: PropTypes.bool.isRequired,
+    hasChanges: PropTypes.bool.isRequired,
+    releasedToStudents: PropTypes.bool.isRequired,
+    visibleToStaffOnly: PropTypes.bool,
+    visibilityState: PropTypes.string.isRequired,
+    staffOnlyMessage: PropTypes.bool.isRequired,
   }).isRequired,
   children: PropTypes.node,
-  onOpenHighlightsModal: PropTypes.func.isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,
-  onOpenConfigureModal: PropTypes.func.isRequired,
-  onEditSectionSubmit: PropTypes.func.isRequired,
+  onEditSubmit: PropTypes.func.isRequired,
   savingStatus: PropTypes.string.isRequired,
   onOpenDeleteModal: PropTypes.func.isRequired,
   onDuplicateSubmit: PropTypes.func.isRequired,
-  isSectionsExpanded: PropTypes.bool.isRequired,
-  onNewSubsectionSubmit: PropTypes.func.isRequired,
 };
 
-export default SectionCard;
+export default SubsectionCard;

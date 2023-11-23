@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-import { SECTION_BADGE_STATUTES } from '../constants';
+import { ITEM_BADGE_STATUS } from '../constants';
 import CardHeader from './CardHeader';
 import messages from './messages';
 
@@ -16,7 +16,7 @@ const closeFormMock = jest.fn();
 
 const cardHeaderProps = {
   title: 'Some title',
-  sectionStatus: SECTION_BADGE_STATUTES.live,
+  status: ITEM_BADGE_STATUS.live,
   hasChanges: false,
   isExpanded: true,
   onExpand: onExpandMock,
@@ -29,6 +29,7 @@ const cardHeaderProps = {
   isDisabledEditField: false,
   onClickDelete: onClickDeleteMock,
   onClickDuplicate: onClickDuplicateMock,
+  namePrefix: 'section',
 };
 
 const renderComponent = (props) => render(
@@ -61,7 +62,7 @@ describe('<CardHeader />', () => {
   it('render status badge as published_not_live', async () => {
     const { findByText } = renderComponent({
       ...cardHeaderProps,
-      sectionStatus: SECTION_BADGE_STATUTES.publishedNotLive,
+      status: ITEM_BADGE_STATUS.publishedNotLive,
     });
 
     expect(await findByText(messages.statusBadgePublishedNotLive.defaultMessage)).toBeInTheDocument();
@@ -70,7 +71,7 @@ describe('<CardHeader />', () => {
   it('render status badge as staff_only', async () => {
     const { findByText } = renderComponent({
       ...cardHeaderProps,
-      sectionStatus: SECTION_BADGE_STATUTES.staffOnly,
+      status: ITEM_BADGE_STATUS.staffOnly,
     });
 
     expect(await findByText(messages.statusBadgeStaffOnly.defaultMessage)).toBeInTheDocument();
@@ -79,7 +80,7 @@ describe('<CardHeader />', () => {
   it('render status badge as draft', async () => {
     const { findByText } = renderComponent({
       ...cardHeaderProps,
-      sectionStatus: SECTION_BADGE_STATUTES.draft,
+      status: ITEM_BADGE_STATUS.draft,
     });
 
     expect(await findByText(messages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();
@@ -88,7 +89,7 @@ describe('<CardHeader />', () => {
   it('check publish menu item is disabled when section status is live or published not live and it has no changes', async () => {
     const { findByText, findByTestId } = renderComponent({
       ...cardHeaderProps,
-      sectionStatus: SECTION_BADGE_STATUTES.publishedNotLive,
+      status: ITEM_BADGE_STATUS.publishedNotLive,
     });
 
     const menuButton = await findByTestId('section-card-header__menu-button');
@@ -99,7 +100,7 @@ describe('<CardHeader />', () => {
   it('check publish menu item is enabled when section status is live or published not live and it has changes', async () => {
     const { findByText, findByTestId } = renderComponent({
       ...cardHeaderProps,
-      sectionStatus: SECTION_BADGE_STATUTES.publishedNotLive,
+      status: ITEM_BADGE_STATUS.publishedNotLive,
       hasChanges: true,
     });
 
@@ -129,7 +130,7 @@ describe('<CardHeader />', () => {
   it('calls onClickPublish when item is clicked', async () => {
     const { findByText, findByTestId } = renderComponent({
       ...cardHeaderProps,
-      sectionStatus: SECTION_BADGE_STATUTES.draft,
+      status: ITEM_BADGE_STATUS.draft,
     });
 
     const menuButton = await findByTestId('section-card-header__menu-button');

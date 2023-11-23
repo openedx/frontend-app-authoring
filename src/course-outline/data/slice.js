@@ -26,6 +26,8 @@ const slice = createSlice({
     },
     sectionsList: [],
     currentSection: {},
+    currentSubsection: {},
+    currentItem: {},
   },
   reducers: {
     fetchOutlineIndexSuccess: (state, { payload }) => {
@@ -71,8 +73,14 @@ const slice = createSlice({
     updateSectionList: (state, { payload }) => {
       state.sectionsList = state.sectionsList.map((section) => (section.id === payload.id ? payload : section));
     },
+    setCurrentItem: (state, { payload }) => {
+      state.currentItem = payload;
+    },
     setCurrentSection: (state, { payload }) => {
       state.currentSection = payload;
+    },
+    setCurrentSubsection: (state, { payload }) => {
+      state.currentSubsection = payload;
     },
     addSection: (state, { payload }) => {
       state.sectionsList = [
@@ -80,13 +88,54 @@ const slice = createSlice({
         payload,
       ];
     },
+    addSubsection: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.map((section) => {
+        if (section.id === payload.parentLocator) {
+          section.childInfo.children = [
+            ...section.childInfo.children,
+            payload.data,
+          ];
+        }
+        return section;
+      });
+    },
     deleteSection: (state, { payload }) => {
-      state.sectionsList = state.sectionsList.filter(({ id }) => id !== payload);
+      state.sectionsList = state.sectionsList.filter(
+        ({ id }) => id !== payload.itemId,
+      );
+    },
+    deleteSubsection: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.map((section) => {
+        if (section.id !== payload.sectionId) {
+          return section;
+        }
+        section.childInfo.children = section.childInfo.children.filter(
+          ({ id }) => id !== payload.itemId,
+        );
+        return section;
+      });
+    },
+    deleteUnit: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.map((section) => {
+        if (section.id !== payload.sectionId) {
+          return section;
+        }
+        section.childInfo.children = section.childInfo.children.map((subsection) => {
+          if (subsection.id !== payload.subsectionId) {
+            return subsection;
+          }
+          subsection.childInfo.children = subsection.childInfo.children.filter(
+            ({ id }) => id !== payload.itemId,
+          );
+          return subsection;
+        });
+        return section;
+      });
     },
     duplicateSection: (state, { payload }) => {
       state.sectionsList = state.sectionsList.reduce((result, currentValue) => {
         if (currentValue.id === payload.id) {
-          return [...result, currentValue, payload.duplicatedSection];
+          return [...result, currentValue, payload.duplicatedItem];
         }
         return [...result, currentValue];
       }, []);
@@ -96,6 +145,7 @@ const slice = createSlice({
 
 export const {
   addSection,
+  addSubsection,
   fetchOutlineIndexSuccess,
   updateOutlineIndexLoadingStatus,
   updateReindexLoadingStatus,
@@ -105,8 +155,12 @@ export const {
   updateFetchSectionLoadingStatus,
   updateSavingStatus,
   updateSectionList,
+  setCurrentItem,
   setCurrentSection,
+  setCurrentSubsection,
   deleteSection,
+  deleteSubsection,
+  deleteUnit,
   duplicateSection,
 } = slice.actions;
 

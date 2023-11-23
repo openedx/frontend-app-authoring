@@ -1,4 +1,4 @@
-export const SECTION_BADGE_STATUTES = /** @type {const} */ ({
+export const ITEM_BADGE_STATUS = /** @type {const} */ ({
   live: 'live',
   publishedNotLive: 'published_not_live',
   staffOnly: 'staff_only',
@@ -15,9 +15,10 @@ export const CHECKLIST_FILTERS = /** @type {const} */ ({
   INSTRUCTOR_PACED: 'INSTRUCTOR_PACED',
 });
 
-export const DEFAULT_NEW_DISPLAY_NAMES = /** @type {const} */ ({
-  chapter: 'Section',
-  subsection: 'Subsection',
+export const COURSE_BLOCK_NAMES = /** @type {const} */ ({
+  chapter: { id: 'chapter', name: 'Section' },
+  sequential: { id: 'sequential', name: 'Subsection' },
+  vertical: { id: 'vertical', name: 'Unit' },
 });
 
 export const LAUNCH_CHECKLIST = /** @type {const} */ ({

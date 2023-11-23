@@ -1,25 +1,68 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { useSelector } from 'react-redux';
+import { initializeMockApp } from '@edx/frontend-platform';
+import MockAdapter from 'axios-mock-adapter';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { AppProvider } from '@edx/frontend-platform/react';
 
+import initializeStore from '../../store';
 import DeleteModal from './DeleteModal';
 import messages from './messages';
+
+// eslint-disable-next-line no-unused-vars
+let axiosMock;
+let store;
 
 const onDeleteSubmitMock = jest.fn();
 const closeMock = jest.fn();
 
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn(),
+}));
+
+jest.mock('@edx/frontend-platform/i18n', () => ({
+  ...jest.requireActual('@edx/frontend-platform/i18n'),
+  useIntl: () => ({
+    formatMessage: (message) => message.defaultMessage,
+  }),
+}));
+
+const currentItemMock = {
+  displayName: 'Delete',
+};
+
 const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <DeleteModal
-      isOpen
-      close={closeMock}
-      onDeleteSubmit={onDeleteSubmitMock}
-      {...props}
-    />
-  </IntlProvider>,
+  <AppProvider store={store}>
+    <IntlProvider locale="en">
+      <DeleteModal
+        isOpen
+        close={closeMock}
+        onDeleteSubmit={onDeleteSubmitMock}
+        {...props}
+      />
+    </IntlProvider>,
+  </AppProvider>,
 );
 
 describe('<DeleteModal />', () => {
+  beforeEach(() => {
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+
+    store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    useSelector.mockReturnValue(currentItemMock);
+  });
+
   it('render DeleteModal component correctly', () => {
     const { getByText, getByRole } = renderComponent();
 
