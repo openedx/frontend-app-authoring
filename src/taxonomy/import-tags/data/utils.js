@@ -99,7 +99,6 @@ export const importTaxonomyTags = async (taxonomyId, intl) => {
     */
   /* eslint-disable no-alert */
   /* eslint-disable no-console */
-  console.log(intl);
   const file = await selectFile();
 
   if (!file) {
