@@ -53,3 +53,6 @@ const mockStorage = {
 };
 
 Object.defineProperty(window, 'localStorage', { value: mockStorage });
+
+// Mock the plugins repo so jest will stop complaining about ES6 syntax
+jest.mock('frontend-components-tinymce-advanced-plugins', () => {});
