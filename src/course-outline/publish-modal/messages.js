@@ -7,7 +7,7 @@ const messages = defineMessages({
   },
   description: {
     id: 'course-authoring.course-outline.publish-modal.description',
-    defaultMessage: 'Publish all unpublished changes for this section?',
+    defaultMessage: 'Publish all unpublished changes for this {category}?',
   },
   cancelButton: {
     id: 'course-authoring.course-outline.publish-modal.button.cancel',

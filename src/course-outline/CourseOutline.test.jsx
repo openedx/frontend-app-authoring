@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  render, waitFor, cleanup, fireEvent,
+  render, waitFor, cleanup, fireEvent, within,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -15,21 +15,24 @@ import {
   getCourseReindexApiUrl,
   getXBlockApiUrl,
   getEnableHighlightsEmailsApiUrl,
-  getUpdateCourseSectionApiUrl,
+  getCourseItemApiUrl,
   getXBlockBaseApiUrl,
 } from './data/api';
 import {
-  addNewCourseSectionQuery,
+  addNewSectionQuery,
+  addNewSubsectionQuery,
   deleteCourseSectionQuery,
-  duplicateCourseSectionQuery,
-  editCourseSectionQuery,
+  deleteCourseSubsectionQuery,
+  duplicateSectionQuery,
+  duplicateSubsectionQuery,
+  editCourseItemQuery,
   enableCourseHighlightsEmailsQuery,
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery,
   fetchCourseReindexQuery,
   fetchCourseSectionQuery,
-  publishCourseSectionQuery,
+  publishCourseItemQuery,
   updateCourseSectionHighlightsQuery,
 } from './data/thunk';
 import initializeStore from '../store';
@@ -39,6 +42,7 @@ import {
   courseBestPracticesMock,
   courseLaunchMock,
   courseSectionMock,
+  courseSubsectionMock,
 } from './__mocks__';
 import { executeThunk } from '../utils';
 import CourseOutline from './CourseOutline';
@@ -129,11 +133,32 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getXBlockApiUrl(courseSectionMock.id))
       .reply(200, courseSectionMock);
-    await executeThunk(addNewCourseSectionQuery(courseId), store.dispatch);
+    await executeThunk(addNewSectionQuery(courseId), store.dispatch);
 
     element = await findAllByTestId('section-card');
     expect(element.length).toBe(5);
     expect(window.HTMLElement.prototype.scrollIntoView).toBeCalled();
+  });
+
+  it('adds new subsection correctly', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    const sectionId = courseOutlineIndexMock.courseStructure.childInfo.children[0].id;
+    const [section] = await findAllByTestId('section-card');
+    let subsections = await within(section).findAllByTestId('subsection-card');
+    expect(subsections.length).toBe(1);
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl())
+      .reply(200, {
+        locator: courseSubsectionMock.id,
+      });
+    axiosMock
+      .onGet(getXBlockApiUrl(courseSubsectionMock.id))
+      .reply(200, courseSubsectionMock);
+    await executeThunk(addNewSubsectionQuery(sectionId), store.dispatch);
+
+    subsections = await within(section).findAllByTestId('subsection-card');
+    expect(subsections.length).toBe(2);
   });
 
   it('render error alert after failed reindex correctly', async () => {
@@ -196,18 +221,17 @@ describe('<CourseOutline />', () => {
   });
 
   it('should expand and collapse subsections, after click on subheader buttons', async () => {
-    const { queryAllByTestId, getByText } = render(<RootWrapper />);
+    const { queryAllByTestId, findByText } = render(<RootWrapper />);
+
+    const collapseBtn = await findByText(headerMessages.collapseAllButton.defaultMessage);
+    expect(collapseBtn).toBeInTheDocument();
+    fireEvent.click(collapseBtn);
+
+    const expandBtn = await findByText(headerMessages.expandAllButton.defaultMessage);
+    expect(expandBtn).toBeInTheDocument();
+    fireEvent.click(expandBtn);
 
     await waitFor(() => {
-      const collapseBtn = getByText(headerMessages.collapseAllButton.defaultMessage);
-      expect(collapseBtn).toBeInTheDocument();
-      fireEvent.click(collapseBtn);
-
-      const expendBtn = getByText(headerMessages.expandAllButton.defaultMessage);
-      expect(expendBtn).toBeInTheDocument();
-
-      fireEvent.click(expendBtn);
-
       const cardSubsections = queryAllByTestId('section-card__subsections');
       cardSubsections.forEach(element => expect(element).toBeVisible());
 
@@ -236,14 +260,14 @@ describe('<CourseOutline />', () => {
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
 
     axiosMock
-      .onPost(getUpdateCourseSectionApiUrl(section.id, {
+      .onPost(getCourseItemApiUrl(section.id, {
         metadata: {
           display_name: newDisplayName,
         },
       }))
       .reply(200);
 
-    await executeThunk(editCourseSectionQuery(section.id, newDisplayName), store.dispatch);
+    await executeThunk(editCourseItemQuery(section.id, section.id, newDisplayName), store.dispatch);
 
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
@@ -255,11 +279,14 @@ describe('<CourseOutline />', () => {
     });
   });
 
-  it('check delete section when edit query is successfully', async () => {
+  it('check whether section is deleted when delete query is successfully', async () => {
     const { queryByText } = render(<RootWrapper />);
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[1];
+    await waitFor(() => {
+      expect(queryByText(section.displayName)).toBeInTheDocument();
+    });
 
-    axiosMock.onDelete(getUpdateCourseSectionApiUrl(section.id)).reply(200);
+    axiosMock.onDelete(getCourseItemApiUrl(section.id)).reply(200);
     await executeThunk(deleteCourseSectionQuery(section.id), store.dispatch);
 
     await waitFor(() => {
@@ -267,22 +294,72 @@ describe('<CourseOutline />', () => {
     });
   });
 
-  it('check duplicate section when duplicate query is successfully', async () => {
-    const { getAllByTestId } = render(<RootWrapper />);
+  it('check whether subsection is deleted when delete query is successfully', async () => {
+    const { queryByText } = render(<RootWrapper />);
+    const section = courseOutlineIndexMock.courseStructure.childInfo.children[1];
+    const [subsection] = section.childInfo.children;
+    await waitFor(() => {
+      expect(queryByText(subsection.displayName)).toBeInTheDocument();
+    });
+
+    axiosMock.onDelete(getCourseItemApiUrl(subsection.id)).reply(200);
+    await executeThunk(deleteCourseSubsectionQuery(subsection.id, section.id), store.dispatch);
+
+    await waitFor(() => {
+      expect(queryByText(subsection.displayName)).not.toBeInTheDocument();
+    });
+  });
+
+  it('check whether section is duplicated successfully', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    const sectionId = section.id;
     const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    expect(await findAllByTestId('section-card')).toHaveLength(4);
 
     axiosMock
       .onPost(getXBlockBaseApiUrl())
       .reply(200, {
-        duplicate_source_locator: section.id,
-        parent_locator: courseBlockId,
+        locator: courseSectionMock.id,
       });
-    await executeThunk(duplicateCourseSectionQuery(section.id, courseBlockId), store.dispatch);
+    section.id = courseSectionMock.id;
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, {
+        ...section,
+      });
+    await executeThunk(duplicateSectionQuery(sectionId, courseBlockId), store.dispatch);
 
-    await waitFor(() => {
-      expect(getAllByTestId('section-card')).toHaveLength(4);
-    });
+    expect(await findAllByTestId('section-card')).toHaveLength(5);
+  });
+
+  it('check whether subsection is duplicated successfully', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    let [sectionElement] = await findAllByTestId('section-card');
+    const [subsection] = section.childInfo.children;
+    const subsectionId = subsection.id;
+    let subsections = await within(sectionElement).findAllByTestId('subsection-card');
+    expect(subsections.length).toBe(1);
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl())
+      .reply(200, {
+        locator: courseSubsectionMock.id,
+      });
+    subsection.id = courseSubsectionMock.id;
+    section.childInfo.children = [...section.childInfo.children, subsection];
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, {
+        ...section,
+      });
+
+    await executeThunk(duplicateSubsectionQuery(subsectionId, section.id), store.dispatch);
+
+    [sectionElement] = await findAllByTestId('section-card');
+    subsections = await within(sectionElement).findAllByTestId('subsection-card');
+    expect(subsections.length).toBe(2);
   });
 
   it('check publish section when publish query is successfully', async () => {
@@ -307,12 +384,12 @@ describe('<CourseOutline />', () => {
       });
 
     axiosMock
-      .onPost(getUpdateCourseSectionApiUrl(section.id), {
+      .onPost(getCourseItemApiUrl(section.id), {
         publish: 'make_public',
       })
       .reply(200);
 
-    await executeThunk(publishCourseSectionQuery(section.id), store.dispatch);
+    await executeThunk(publishCourseItemQuery(section.id, section.id), store.dispatch);
 
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
@@ -325,7 +402,7 @@ describe('<CourseOutline />', () => {
     await executeThunk(fetchCourseSectionQuery(section.id), store.dispatch);
 
     const firstSection = getAllByTestId('section-card')[0];
-    expect(firstSection.querySelector('.section-card-header__badge-status')).toHaveTextContent('Published not live');
+    expect(firstSection.querySelector('.item-card-header__badge-status')).toHaveTextContent('Published not live');
   });
 
   it('check configure section when configure query is successful', async () => {
@@ -334,7 +411,7 @@ describe('<CourseOutline />', () => {
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const newReleaseDate = '2025-08-10T10:00:00Z';
     axiosMock
-      .onPost(getUpdateCourseSectionApiUrl(section.id), {
+      .onPost(getCourseItemApiUrl(section.id), {
         id: section.id,
         data: null,
         metadata: {
@@ -390,7 +467,7 @@ describe('<CourseOutline />', () => {
     ];
 
     axiosMock
-      .onPost(getUpdateCourseSectionApiUrl(section.id), {
+      .onPost(getCourseItemApiUrl(section.id), {
         publish: 'republish',
         metadata: {
           highlights,

@@ -4,7 +4,7 @@ import {
   EditOutline as EditOutlineIcon,
 } from '@edx/paragon/icons';
 
-import { SECTION_BADGE_STATUTES, STAFF_ONLY } from './constants';
+import { ITEM_BADGE_STATUS, STAFF_ONLY } from './constants';
 
 /**
  * Get section status depended on section info
@@ -13,9 +13,9 @@ import { SECTION_BADGE_STATUTES, STAFF_ONLY } from './constants';
  * @param {bool} visibleToStaffOnly - value from section info
  * @param {string} visibilityState - value from section info
  * @param {bool} staffOnlyMessage - value from section info
- * @returns {SECTION_BADGE_STATUTES[keyof SECTION_BADGE_STATUTES]}
+ * @returns {ITEM_BADGE_STATUS[keyof ITEM_BADGE_STATUS]}
  */
-const getSectionStatus = ({
+const getItemStatus = ({
   published,
   releasedToStudents,
   visibleToStaffOnly,
@@ -24,13 +24,13 @@ const getSectionStatus = ({
 }) => {
   switch (true) {
   case published && releasedToStudents:
-    return SECTION_BADGE_STATUTES.live;
+    return ITEM_BADGE_STATUS.live;
   case published && !releasedToStudents:
-    return SECTION_BADGE_STATUTES.publishedNotLive;
+    return ITEM_BADGE_STATUS.publishedNotLive;
   case visibleToStaffOnly && staffOnlyMessage && visibilityState === STAFF_ONLY:
-    return SECTION_BADGE_STATUTES.staffOnly;
+    return ITEM_BADGE_STATUS.staffOnly;
   case !published:
-    return SECTION_BADGE_STATUTES.draft;
+    return ITEM_BADGE_STATUS.draft;
   default:
     return '';
   }
@@ -38,30 +38,30 @@ const getSectionStatus = ({
 
 /**
  * Get section badge status content
- * @param {string} status - value from on getSectionStatus util
+ * @param {string} status - value from on getItemStatus util
  * @returns {
  *   badgeTitle: string,
  *   badgeIcon: node,
  * }
  */
-const getSectionStatusBadgeContent = (status, messages, intl) => {
+const getItemStatusBadgeContent = (status, messages, intl) => {
   switch (status) {
-  case SECTION_BADGE_STATUTES.live:
+  case ITEM_BADGE_STATUS.live:
     return {
       badgeTitle: intl.formatMessage(messages.statusBadgeLive),
       badgeIcon: CheckCircleIcon,
     };
-  case SECTION_BADGE_STATUTES.publishedNotLive:
+  case ITEM_BADGE_STATUS.publishedNotLive:
     return {
       badgeTitle: intl.formatMessage(messages.statusBadgePublishedNotLive),
       badgeIcon: '',
     };
-  case SECTION_BADGE_STATUTES.staffOnly:
+  case ITEM_BADGE_STATUS.staffOnly:
     return {
       badgeTitle: intl.formatMessage(messages.statusBadgeStaffOnly),
       badgeIcon: LockIcon,
     };
-  case SECTION_BADGE_STATUTES.draft:
+  case ITEM_BADGE_STATUS.draft:
     return {
       badgeTitle: intl.formatMessage(messages.statusBadgeDraft),
       badgeIcon: EditOutlineIcon,
@@ -110,12 +110,16 @@ const getHighlightsFormValues = (currentHighlights) => {
 };
 
 const scrollToElement = (ref) => {
-  ref.current?.scrollIntoView({ behavior: 'smooth' });
+  ref.current?.scrollIntoView({
+    block: 'end',
+    inline: 'nearest',
+    behavior: 'smooth',
+  });
 };
 
 export {
-  getSectionStatus,
-  getSectionStatusBadgeContent,
+  getItemStatus,
+  getItemStatusBadgeContent,
   getHighlightsFormValues,
   scrollToElement,
 };

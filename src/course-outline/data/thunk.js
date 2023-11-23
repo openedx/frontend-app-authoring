@@ -1,6 +1,6 @@
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
-import { DEFAULT_NEW_DISPLAY_NAMES } from '../constants';
+import { COURSE_BLOCK_NAMES } from '../constants';
 import {
   hideProcessingNotification,
   showProcessingNotification,
@@ -11,14 +11,14 @@ import {
 } from '../utils/getChecklistForStatusBar';
 import {
   addNewCourseItem,
-  deleteCourseSection,
-  duplicateCourseSection,
-  editCourseSection,
+  deleteCourseItem,
+  duplicateCourseItem,
+  editItemDisplayName,
   enableCourseHighlightsEmails,
   getCourseBestPractices,
   getCourseLaunch,
   getCourseOutlineIndex,
-  getCourseSection,
+  getCourseItem,
   publishCourseSection,
   configureCourseSection,
   restartIndexingOnCourse,
@@ -26,6 +26,7 @@ import {
 } from './api';
 import {
   addSection,
+  addSubsection,
   fetchOutlineIndexSuccess,
   updateOutlineIndexLoadingStatus,
   updateReindexLoadingStatus,
@@ -36,6 +37,8 @@ import {
   updateSectionList,
   updateFetchSectionLoadingStatus,
   deleteSection,
+  deleteSubsection,
+  deleteUnit,
   duplicateSection,
 } from './slice';
 
@@ -129,7 +132,7 @@ export function fetchCourseSectionQuery(sectionId) {
     dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
 
     try {
-      const data = await getCourseSection(sectionId);
+      const data = await getCourseItem(sectionId);
       dispatch(updateSectionList(data));
       dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
@@ -158,13 +161,13 @@ export function updateCourseSectionHighlightsQuery(sectionId, highlights) {
   };
 }
 
-export function publishCourseSectionQuery(sectionId) {
+export function publishCourseItemQuery(itemId, sectionId) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      await publishCourseSection(sectionId).then(async (result) => {
+      await publishCourseSection(itemId).then(async (result) => {
         if (result) {
           await dispatch(fetchCourseSectionQuery(sectionId));
           dispatch(hideProcessingNotification());
@@ -198,13 +201,13 @@ export function configureCourseSectionQuery(sectionId, isVisibleToStaffOnly, sta
   };
 }
 
-export function editCourseSectionQuery(sectionId, displayName) {
+export function editCourseItemQuery(itemId, sectionId, displayName) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      await editCourseSection(sectionId, displayName).then(async (result) => {
+      await editItemDisplayName(itemId, displayName).then(async (result) => {
         if (result) {
           await dispatch(fetchCourseSectionQuery(sectionId));
           dispatch(hideProcessingNotification());
@@ -218,14 +221,20 @@ export function editCourseSectionQuery(sectionId, displayName) {
   };
 }
 
-export function deleteCourseSectionQuery(sectionId) {
+/**
+ * Generic function to delete course item, see below wrapper funcs for specific implementations.
+ * @param {string} itemId
+ * @param {() => {}} deleteItemFn
+ * @returns {}
+ */
+function deleteCourseItemQuery(itemId, deleteItemFn) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
 
     try {
-      await deleteCourseSection(sectionId);
-      dispatch(deleteSection(sectionId));
+      await deleteCourseItem(itemId);
+      dispatch(deleteItemFn());
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
@@ -235,16 +244,49 @@ export function deleteCourseSectionQuery(sectionId) {
   };
 }
 
-export function duplicateCourseSectionQuery(sectionId, courseBlockId) {
+export function deleteCourseSectionQuery(sectionId) {
+  return async (dispatch) => {
+    dispatch(deleteCourseItemQuery(
+      sectionId,
+      () => deleteSection({ itemId: sectionId }),
+    ));
+  };
+}
+
+export function deleteCourseSubsectionQuery(subsectionId, sectionId) {
+  return async (dispatch) => {
+    dispatch(deleteCourseItemQuery(
+      subsectionId,
+      () => deleteSubsection({ itemId: subsectionId, sectionId }),
+    ));
+  };
+}
+
+export function deleteCourseUnitQuery(unitId, subsectionId, sectionId) {
+  return async (dispatch) => {
+    dispatch(deleteCourseItemQuery(
+      unitId,
+      () => deleteUnit({ itemId: unitId, subsectionId, sectionId }),
+    ));
+  };
+}
+
+/**
+ * Generic function to duplicate any course item. See wrapper functions below for specific implementations.
+ * @param {string} itemId
+ * @param {string} parentLocator
+ * @param {(locator) => Promise<any>} duplicateFn
+ * @returns {}
+ */
+function duplicateCourseItemQuery(itemId, parentLocator, duplicateFn) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      await duplicateCourseSection(sectionId, courseBlockId).then(async (result) => {
+      await duplicateCourseItem(itemId, parentLocator).then(async (result) => {
         if (result) {
-          const duplicatedSection = await getCourseSection(result.locator);
-          dispatch(duplicateSection({ id: sectionId, duplicatedSection }));
+          await duplicateFn(result.locator);
           dispatch(hideProcessingNotification());
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         }
@@ -256,20 +298,51 @@ export function duplicateCourseSectionQuery(sectionId, courseBlockId) {
   };
 }
 
-export function addNewCourseSectionQuery(courseBlockId) {
+export function duplicateSectionQuery(sectionId, courseBlockId) {
+  return async (dispatch) => {
+    dispatch(duplicateCourseItemQuery(
+      sectionId,
+      courseBlockId,
+      async (locator) => {
+        const duplicatedItem = await getCourseItem(locator);
+        dispatch(duplicateSection({ id: sectionId, duplicatedItem }));
+      },
+    ));
+  };
+}
+
+export function duplicateSubsectionQuery(subsectionId, sectionId) {
+  return async (dispatch) => {
+    dispatch(duplicateCourseItemQuery(
+      subsectionId,
+      sectionId,
+      async () => dispatch(fetchCourseSectionQuery(sectionId)),
+    ));
+  };
+}
+
+/**
+ * Generic function to add any course item. See wrapper functions below for specific implementations.
+ * @param {string} parentLocator
+ * @param {string} category
+ * @param {string} displayName
+ * @param {(data) => {}} addItemFn
+ * @returns {}
+ */
+function addNewCourseItemQuery(parentLocator, category, displayName, addItemFn) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
       await addNewCourseItem(
-        courseBlockId,
-        'chapter',
-        DEFAULT_NEW_DISPLAY_NAMES.chapter,
+        parentLocator,
+        category,
+        displayName,
       ).then(async (result) => {
         if (result) {
-          const data = await getCourseSection(result.locator);
-          dispatch(addSection(data));
+          const data = await getCourseItem(result.locator);
+          dispatch(addItemFn(data));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(hideProcessingNotification());
         }
@@ -278,5 +351,27 @@ export function addNewCourseSectionQuery(courseBlockId) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
+  };
+}
+
+export function addNewSectionQuery(parentLocator) {
+  return async (dispatch) => {
+    dispatch(addNewCourseItemQuery(
+      parentLocator,
+      COURSE_BLOCK_NAMES.chapter.id,
+      COURSE_BLOCK_NAMES.chapter.name,
+      (data) => addSection(data),
+    ));
+  };
+}
+
+export function addNewSubsectionQuery(parentLocator) {
+  return async (dispatch) => {
+    dispatch(addNewCourseItemQuery(
+      parentLocator,
+      COURSE_BLOCK_NAMES.sequential.id,
+      COURSE_BLOCK_NAMES.sequential.name,
+      (data) => addSubsection({ parentLocator, data }),
+    ));
   };
 }

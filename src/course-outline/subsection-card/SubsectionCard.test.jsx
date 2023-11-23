@@ -7,47 +7,45 @@ import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import initializeStore from '../../store';
-import SectionCard from './SectionCard';
+import SubsectionCard from './SubsectionCard';
 
 // eslint-disable-next-line no-unused-vars
 let axiosMock;
 let store;
 
-const section = {
+const subsection = {
   id: '123',
-  displayName: 'Section Name',
+  displayName: 'Subsection Name',
   published: true,
   releasedToStudents: true,
   visibleToStaffOnly: false,
   visibilityState: 'visible',
   staffOnlyMessage: false,
   hasChanges: false,
-  highlights: ['highlight 1', 'highlight 2'],
 };
 
 const renderComponent = (props) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
-      <SectionCard
-        section={section}
+      <SubsectionCard
+        subsection={subsection}
         onOpenPublishModal={jest.fn()}
         onOpenHighlightsModal={jest.fn()}
         onOpenDeleteModal={jest.fn()}
         onEditClick={jest.fn()}
         savingStatus=""
-        onEditSectionSubmit={jest.fn()}
+        onEditSubmit={jest.fn()}
         onDuplicateSubmit={jest.fn()}
-        isSectionsExpanded
-        namePrefix="section"
+        namePrefix="subsection"
         {...props}
       >
         <span>children</span>
-      </SectionCard>
+      </SubsectionCard>
     </IntlProvider>,
   </AppProvider>,
 );
 
-describe('<SectionCard />', () => {
+describe('<SubsectionCard />', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
@@ -62,23 +60,22 @@ describe('<SectionCard />', () => {
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
-  it('render SectionCard component correctly', () => {
+  it('render SubsectionCard component correctly', () => {
     const { getByTestId } = renderComponent();
 
-    expect(getByTestId('section-card-header')).toBeInTheDocument();
-    expect(getByTestId('section-card__content')).toBeInTheDocument();
+    expect(getByTestId('subsection-card-header')).toBeInTheDocument();
   });
 
-  it('expands/collapses the card when the expand button is clicked', () => {
-    const { queryByTestId, getByTestId } = renderComponent();
+  it('expands/collapses the card when the subsection button is clicked', async () => {
+    const { queryByTestId, findByTestId } = renderComponent();
 
-    const expandButton = getByTestId('section-card-header__expanded-btn');
+    const expandButton = await findByTestId('subsection-card-header__expanded-btn');
     fireEvent.click(expandButton);
-    expect(queryByTestId('section-card__subsections')).not.toBeInTheDocument();
-    expect(queryByTestId('new-subsection-button')).not.toBeInTheDocument();
+    expect(queryByTestId('subsection-card__units')).toBeInTheDocument();
+    expect(queryByTestId('new-unit-button')).toBeInTheDocument();
 
     fireEvent.click(expandButton);
-    expect(queryByTestId('section-card__subsections')).toBeInTheDocument();
-    expect(queryByTestId('new-subsection-button')).toBeInTheDocument();
+    expect(queryByTestId('subsection-card__units')).not.toBeInTheDocument();
+    expect(queryByTestId('new-unit-button')).not.toBeInTheDocument();
   });
 });

@@ -26,7 +26,7 @@ export const getEnableHighlightsEmailsApiUrl = (courseId) => {
 
 export const getCourseReindexApiUrl = (reindexLink) => `${getApiBaseUrl()}${reindexLink}`;
 export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
-export const getUpdateCourseSectionApiUrl = (sectionId) => `${getXBlockBaseApiUrl()}${sectionId}`;
+export const getCourseItemApiUrl = (itemId) => `${getXBlockBaseApiUrl()}${itemId}`;
 export const getXBlockApiUrl = (blockId) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
 
 /**
@@ -174,12 +174,12 @@ export async function restartIndexingOnCourse(reindexLink) {
 
 /**
  * Get course section
- * @param {string} sectionId
+ * @param {string} itemId
  * @returns {Promise<section>}
  */
-export async function getCourseSection(sectionId) {
+export async function getCourseItem(itemId) {
   const { data } = await getAuthenticatedHttpClient()
-    .get(getXBlockApiUrl(sectionId));
+    .get(getXBlockApiUrl(itemId));
   return camelCaseObject(data);
 }
 
@@ -191,7 +191,7 @@ export async function getCourseSection(sectionId) {
  */
 export async function updateCourseSectionHighlights(sectionId, highlights) {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getUpdateCourseSectionApiUrl(sectionId), {
+    .post(getCourseItemApiUrl(sectionId), {
       publish: 'republish',
       metadata: {
         highlights,
@@ -208,7 +208,7 @@ export async function updateCourseSectionHighlights(sectionId, highlights) {
  */
 export async function publishCourseSection(sectionId) {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getUpdateCourseSectionApiUrl(sectionId), {
+    .post(getCourseItemApiUrl(sectionId), {
       publish: 'make_public',
     });
 
@@ -222,7 +222,7 @@ export async function publishCourseSection(sectionId) {
  */
 export async function configureCourseSection(sectionId, isVisibleToStaffOnly, startDatetime) {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getUpdateCourseSectionApiUrl(sectionId), {
+    .post(getCourseItemApiUrl(sectionId), {
       publish: 'republish',
       metadata: {
         // The backend expects metadata.visible_to_staff_only to either true or null
@@ -236,13 +236,13 @@ export async function configureCourseSection(sectionId, isVisibleToStaffOnly, st
 
 /**
  * Edit course section
- * @param {string} sectionId
+ * @param {string} itemId
  * @param {string} displayName
  * @returns {Promise<Object>}
  */
-export async function editCourseSection(sectionId, displayName) {
+export async function editItemDisplayName(itemId, displayName) {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getUpdateCourseSectionApiUrl(sectionId), {
+    .post(getCourseItemApiUrl(itemId), {
       metadata: {
         display_name: displayName,
       },
@@ -253,27 +253,27 @@ export async function editCourseSection(sectionId, displayName) {
 
 /**
  * Delete course section
- * @param {string} sectionId
+ * @param {string} itemId
  * @returns {Promise<Object>}
  */
-export async function deleteCourseSection(sectionId) {
+export async function deleteCourseItem(itemId) {
   const { data } = await getAuthenticatedHttpClient()
-    .delete(getUpdateCourseSectionApiUrl(sectionId));
+    .delete(getCourseItemApiUrl(itemId));
 
   return data;
 }
 
 /**
  * Duplicate course section
- * @param {string} sectionId
- * @param {string} courseBlockId
+ * @param {string} itemId
+ * @param {string} parentId
  * @returns {Promise<Object>}
  */
-export async function duplicateCourseSection(sectionId, courseBlockId) {
+export async function duplicateCourseItem(itemId, parentId) {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXBlockBaseApiUrl(), {
-      duplicate_source_locator: sectionId,
-      parent_locator: courseBlockId,
+      duplicate_source_locator: itemId,
+      parent_locator: parentId,
     });
 
   return data;
@@ -281,13 +281,15 @@ export async function duplicateCourseSection(sectionId, courseBlockId) {
 
 /**
  * Add new course item like section, subsection or unit.
- * @param {string} courseBlockId
+ * @param {string} parentLocator
+ * @param {string} category
+ * @param {string} displayName
  * @returns {Promise<Object>}
  */
-export async function addNewCourseItem(courseBlockId, category, displayName) {
+export async function addNewCourseItem(parentLocator, category, displayName) {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXBlockBaseApiUrl(), {
-      parent_locator: courseBlockId,
+      parent_locator: parentLocator,
       category,
       display_name: displayName,
     });

@@ -1,9 +1,9 @@
-.section-card-header {
+.item-card-header {
   display: flex;
   align-items: center;
   margin-right: -.5rem;
 
-  .section-card-header__expanded-btn {
+  .item-card-header__expanded-btn {
     justify-content: flex-start;
     padding: 0;
     width: 80%;
@@ -13,7 +13,7 @@
     color: $black;
   }
 
-  .section-card-header__badge-status {
+  .item-card-header__badge-status {
     display: flex;
     padding: 1px .5rem;
     justify-content: center;
@@ -33,7 +33,7 @@
   }
 }
 
-.section-card-header-tooltip {
+.item-card-header-tooltip {
   .tooltip-inner {
     max-width: 18.75rem;
   }

@@ -36,7 +36,7 @@ jest.mock('../../help-urls/hooks', () => ({
   }),
 }));
 
-const currentSectionMock = {
+const currentItemMock = {
   highlights: ['Highlight 1', 'Highlight 2'],
   displayName: 'Test Section',
 };
@@ -69,13 +69,13 @@ describe('<HighlightsModal />', () => {
 
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    useSelector.mockReturnValue(currentSectionMock);
+    useSelector.mockReturnValue(currentItemMock);
   });
 
   it('renders HighlightsModal component correctly', () => {
     const { getByText, getByRole, getByLabelText } = renderComponent();
 
-    expect(getByText(`Highlights for ${currentSectionMock.displayName}`)).toBeInTheDocument();
+    expect(getByText(`Highlights for ${currentItemMock.displayName}`)).toBeInTheDocument();
     expect(getByText(/Enter 3-5 highlights to include in the email message that learners receive for this section/i)).toBeInTheDocument();
     expect(getByText(/For more information and an example of the email template, read our/i)).toBeInTheDocument();
     expect(getByText(messages.documentationLink.defaultMessage)).toBeInTheDocument();

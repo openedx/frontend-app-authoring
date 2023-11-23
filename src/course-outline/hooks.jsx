@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useToggle } from '@edx/paragon';
 
 import { RequestStatus } from '../data/constants';
+import { COURSE_BLOCK_NAMES } from './constants';
 import {
+  setCurrentItem,
   setCurrentSection,
   updateSavingStatus,
 } from './data/slice';
@@ -13,19 +15,25 @@ import {
   getSavingStatus,
   getStatusBarData,
   getSectionsList,
+  getCurrentItem,
   getCurrentSection,
+  getCurrentSubsection,
 } from './data/selectors';
 import {
-  addNewCourseSectionQuery,
+  addNewSectionQuery,
+  addNewSubsectionQuery,
   deleteCourseSectionQuery,
-  editCourseSectionQuery,
-  duplicateCourseSectionQuery,
+  deleteCourseSubsectionQuery,
+  deleteCourseUnitQuery,
+  editCourseItemQuery,
+  duplicateSectionQuery,
+  duplicateSubsectionQuery,
   enableCourseHighlightsEmailsQuery,
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery,
   fetchCourseReindexQuery,
-  publishCourseSectionQuery,
+  publishCourseItemQuery,
   updateCourseSectionHighlightsQuery,
   configureCourseSectionQuery,
 } from './data/thunk';
@@ -38,7 +46,9 @@ const useCourseOutline = ({ courseId }) => {
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
   const sectionsList = useSelector(getSectionsList);
+  const currentItem = useSelector(getCurrentItem);
   const currentSection = useSelector(getCurrentSection);
+  const currentSubsection = useSelector(getCurrentSubsection);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
   const [isSectionsExpanded, setSectionsExpanded] = useState(true);
@@ -51,7 +61,11 @@ const useCourseOutline = ({ courseId }) => {
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
 
   const handleNewSectionSubmit = () => {
-    dispatch(addNewCourseSectionQuery(courseStructure.id));
+    dispatch(addNewSectionQuery(courseStructure.id));
+  };
+
+  const handleNewSubsectionSubmit = (sectionId) => {
+    dispatch(addNewSubsectionQuery(sectionId));
   };
 
   const headerNavigationsActions = {
@@ -81,19 +95,20 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleOpenHighlightsModal = (section) => {
+    dispatch(setCurrentItem(section));
     dispatch(setCurrentSection(section));
     openHighlightsModal();
   };
 
   const handleHighlightsFormSubmit = (highlights) => {
     const dataToSend = Object.values(highlights).filter(Boolean);
-    dispatch(updateCourseSectionHighlightsQuery(currentSection.id, dataToSend));
+    dispatch(updateCourseSectionHighlightsQuery(currentItem.id, dataToSend));
 
     closeHighlightsModal();
   };
 
-  const handlePublishSectionSubmit = () => {
-    dispatch(publishCourseSectionQuery(currentSection.id));
+  const handlePublishItemSubmit = () => {
+    dispatch(publishCourseItemQuery(currentItem.id, currentSection.id));
 
     closePublishModal();
   };
@@ -104,17 +119,37 @@ const useCourseOutline = ({ courseId }) => {
     closeConfigureModal();
   };
 
-  const handleEditSectionSubmit = (sectionId, displayName) => {
-    dispatch(editCourseSectionQuery(sectionId, displayName));
+  const handleEditSubmit = (itemId, sectionId, displayName) => {
+    dispatch(editCourseItemQuery(itemId, sectionId, displayName));
   };
 
-  const handleDeleteSectionSubmit = () => {
-    dispatch(deleteCourseSectionQuery(currentSection.id));
+  const handleDeleteItemSubmit = () => {
+    switch (currentItem.category) {
+    case COURSE_BLOCK_NAMES.chapter.id:
+      dispatch(deleteCourseSectionQuery(currentItem.id));
+      break;
+    case COURSE_BLOCK_NAMES.sequential.id:
+      dispatch(deleteCourseSubsectionQuery(currentItem.id, currentSection.id));
+      break;
+    case COURSE_BLOCK_NAMES.vertical.id:
+      dispatch(deleteCourseUnitQuery(
+        currentItem.id,
+        currentSubsection.id,
+        currentSection.id,
+      ));
+      break;
+    default:
+      return;
+    }
     closeDeleteModal();
   };
 
   const handleDuplicateSectionSubmit = () => {
-    dispatch(duplicateCourseSectionQuery(currentSection.id, courseStructure.id));
+    dispatch(duplicateSectionQuery(currentSection.id, courseStructure.id));
+  };
+
+  const handleDuplicateSubsectionSubmit = () => {
+    dispatch(duplicateSubsectionQuery(currentSubsection.id, currentSection.id));
   };
 
   useEffect(() => {
@@ -151,9 +186,9 @@ const useCourseOutline = ({ courseId }) => {
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
     handleHighlightsFormSubmit,
-    handlePublishSectionSubmit,
     handleConfigureSectionSubmit,
-    handleEditSectionSubmit,
+    handlePublishItemSubmit,
+    handleEditSubmit,
     statusBarData,
     isEnableHighlightsModalOpen,
     openEnableHighlightsModal,
@@ -167,9 +202,11 @@ const useCourseOutline = ({ courseId }) => {
     isDeleteModalOpen,
     closeDeleteModal,
     openDeleteModal,
-    handleDeleteSectionSubmit,
+    handleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
+    handleDuplicateSubsectionSubmit,
     handleNewSectionSubmit,
+    handleNewSubsectionSubmit,
   };
 };
 

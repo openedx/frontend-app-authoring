@@ -9,7 +9,7 @@ import {
 } from '@edx/paragon';
 import { useSelector } from 'react-redux';
 
-import { getCurrentSection } from '../data/selectors';
+import { getCurrentItem } from '../data/selectors';
 import messages from './messages';
 
 const PublishModal = ({
@@ -18,8 +18,8 @@ const PublishModal = ({
   onPublishSubmit,
 }) => {
   const intl = useIntl();
-  const { displayName, childInfo } = useSelector(getCurrentSection);
-  const subSections = childInfo?.children || [];
+  const { displayName, childInfo, category } = useSelector(getCurrentItem);
+  const children = childInfo?.children || [];
 
   return (
     <ModalDialog
@@ -35,23 +35,31 @@ const PublishModal = ({
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
-        <p className="small">{intl.formatMessage(messages.description)}</p>
-        {subSections.filter(subSection => subSection.hasChanges).map((subSection) => {
-          const units = subSection.childInfo.children.filter(unit => unit.hasChanges);
+        <p className="small">{intl.formatMessage(messages.description, { category })}</p>
+        {children.filter(child => child.hasChanges).map((child) => {
+          let grandChildren = child.childInfo?.children || [];
+          grandChildren = grandChildren.filter(grandChild => grandChild.hasChanges);
 
-          return units.length ? (
-            <React.Fragment key={subSection.id}>
-              <span className="small text-gray-400">{subSection.displayName}</span>
-              {units.map((unit) => (
+          return grandChildren.length ? (
+            <React.Fragment key={child.id}>
+              <span className="small text-gray-400">{child.displayName}</span>
+              {grandChildren.map((grandChild) => (
                 <div
-                  key={unit.id}
+                  key={grandChild.id}
                   className="small border border-light-400 p-2 publish-modal__subsection"
                 >
-                  {unit.displayName}
+                  {grandChild.displayName}
                 </div>
               ))}
             </React.Fragment>
-          ) : null;
+          ) : (
+            <div
+              key={child.id}
+              className="small border border-light-400 p-2 publish-modal__subsection"
+            >
+              {child.displayName}
+            </div>
+          );
         })}
       </ModalDialog.Body>
       <ModalDialog.Footer className="pt-1">

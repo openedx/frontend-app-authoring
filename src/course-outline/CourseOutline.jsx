@@ -27,6 +27,7 @@ import OutlineSideBar from './outline-sidebar/OutlineSidebar';
 import StatusBar from './status-bar/StatusBar';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
 import SectionCard from './section-card/SectionCard';
+import SubsectionCard from './subsection-card/SubsectionCard';
 import HighlightsModal from './highlights-modal/HighlightsModal';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import PublishModal from './publish-modal/PublishModal';
@@ -71,12 +72,14 @@ const CourseOutline = ({ courseId }) => {
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
     handleHighlightsFormSubmit,
-    handlePublishSectionSubmit,
     handleConfigureSectionSubmit,
-    handleEditSectionSubmit,
-    handleDeleteSectionSubmit,
+    handlePublishItemSubmit,
+    handleEditSubmit,
+    handleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
+    handleDuplicateSubsectionSubmit,
     handleNewSectionSubmit,
+    handleNewSubsectionSubmit,
   } = useCourseOutline({ courseId });
 
   useEffect(() => {
@@ -158,11 +161,26 @@ const CourseOutline = ({ courseId }) => {
                               onOpenPublishModal={openPublishModal}
                               onOpenConfigureModal={openConfigureModal}
                               onOpenDeleteModal={openDeleteModal}
-                              onEditSectionSubmit={handleEditSectionSubmit}
+                              onEditSectionSubmit={handleEditSubmit}
                               onDuplicateSubmit={handleDuplicateSectionSubmit}
                               isSectionsExpanded={isSectionsExpanded}
+                              onNewSubsectionSubmit={handleNewSubsectionSubmit}
                               ref={listRef}
-                            />
+                            >
+                              {section.childInfo.children.map((subsection) => (
+                                <SubsectionCard
+                                  key={subsection.id}
+                                  section={section}
+                                  subsection={subsection}
+                                  savingStatus={savingStatus}
+                                  onOpenPublishModal={openPublishModal}
+                                  onOpenDeleteModal={openDeleteModal}
+                                  onEditSubmit={handleEditSubmit}
+                                  onDuplicateSubmit={handleDuplicateSubsectionSubmit}
+                                  ref={listRef}
+                                />
+                              ))}
+                            </SectionCard>
                           ))}
                           <Button
                             data-testid="new-section-button"
@@ -201,7 +219,7 @@ const CourseOutline = ({ courseId }) => {
         <PublishModal
           isOpen={isPublishModalOpen}
           onClose={closePublishModal}
-          onPublishSubmit={handlePublishSectionSubmit}
+          onPublishSubmit={handlePublishItemSubmit}
         />
         <ConfigureModal
           isOpen={isConfigureModalOpen}
@@ -211,7 +229,7 @@ const CourseOutline = ({ courseId }) => {
         <DeleteModal
           isOpen={isDeleteModalOpen}
           close={closeDeleteModal}
-          onDeleteSubmit={handleDeleteSectionSubmit}
+          onDeleteSubmit={handleDeleteItemSubmit}
         />
       </Container>
       <div className="alert-toast">

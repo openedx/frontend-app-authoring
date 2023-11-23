@@ -20,13 +20,13 @@ import {
 import classNames from 'classnames';
 
 import { useEscapeClick } from '../../hooks';
-import { SECTION_BADGE_STATUTES } from '../constants';
-import { getSectionStatusBadgeContent } from '../utils';
+import { ITEM_BADGE_STATUS } from '../constants';
+import { getItemStatusBadgeContent } from '../utils';
 import messages from './messages';
 
 const CardHeader = ({
   title,
-  sectionStatus,
+  status,
   hasChanges,
   isExpanded,
   onClickPublish,
@@ -40,13 +40,14 @@ const CardHeader = ({
   isDisabledEditField,
   onClickDelete,
   onClickDuplicate,
+  namePrefix,
 }) => {
   const intl = useIntl();
   const [titleValue, setTitleValue] = useState(title);
 
-  const { badgeTitle, badgeIcon } = getSectionStatusBadgeContent(sectionStatus, messages, intl);
-  const isDisabledPublish = (sectionStatus === SECTION_BADGE_STATUTES.live
-    || sectionStatus === SECTION_BADGE_STATUTES.publishedNotLive) && !hasChanges;
+  const { badgeTitle, badgeIcon } = getItemStatusBadgeContent(status, messages, intl);
+  const isDisabledPublish = (status === ITEM_BADGE_STATUS.live
+    || status === ITEM_BADGE_STATUS.publishedNotLive) && !hasChanges;
 
   useEscapeClick({
     onEscape: () => {
@@ -57,7 +58,7 @@ const CardHeader = ({
   });
 
   return (
-    <div className="section-card-header" data-testid="section-card-header">
+    <div className="item-card-header" data-testid={`${namePrefix}-card-header`}>
       {isFormOpen ? (
         <Form.Group className="m-0">
           <Form.Control
@@ -82,7 +83,7 @@ const CardHeader = ({
           overlay={(
             <Tooltip
               id={intl.formatMessage(messages.expandTooltip)}
-              className="section-card-header-tooltip"
+              className="item-card-header-tooltip"
             >
               {intl.formatMessage(messages.expandTooltip)}
             </Tooltip>
@@ -91,18 +92,18 @@ const CardHeader = ({
           <Button
             iconBefore={isExpanded ? ArrowUpIcon : ArrowDownIcon}
             variant="tertiary"
-            data-testid="section-card-header__expanded-btn"
-            className="section-card-header__expanded-btn"
+            data-testid={`${namePrefix}-card-header__expanded-btn`}
+            className="item-card-header__expanded-btn"
             onClick={() => onExpand((prevState) => !prevState)}
           >
-            <Truncate lines={1} className="h3 mb-0">{title}</Truncate>
+            <Truncate lines={1} className={`${namePrefix}-card-title mb-0`}>{title}</Truncate>
             {badgeTitle && (
-              <div className="section-card-header__badge-status" data-testid="section-card-header__badge-status">
+              <div className="item-card-header__badge-status" data-testid={`${namePrefix}-card-header__badge-status`}>
                 {badgeIcon && (
                   <Icon
                     src={badgeIcon}
                     size="sm"
-                    className={classNames({ 'text-success-500': sectionStatus === SECTION_BADGE_STATUTES.live })}
+                    className={classNames({ 'text-success-500': status === ITEM_BADGE_STATUS.live })}
                   />
                 )}
                 <span className="small">{badgeTitle}</span>
@@ -120,14 +121,14 @@ const CardHeader = ({
             onClick={onClickEdit}
           />
         )}
-        <Dropdown data-testid="section-card-header__menu" onClick={onClickMenuButton}>
+        <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
           <Dropdown.Toggle
-            className="section-card-header__menu"
-            id="section-card-header__menu"
-            data-testid="section-card-header__menu-button"
+            className="item-card-header__menu"
+            id={`${namePrefix}-card-header__menu`}
+            data-testid={`${namePrefix}-card-header__menu-button`}
             as={IconButton}
             src={MoveVertIcon}
-            alt="section-card-header__menu"
+            alt={`${namePrefix}-card-header__menu`}
             iconAs={Icon}
           />
           <Dropdown.Menu>
@@ -149,7 +150,7 @@ const CardHeader = ({
 
 CardHeader.propTypes = {
   title: PropTypes.string.isRequired,
-  sectionStatus: PropTypes.string.isRequired,
+  status: PropTypes.string.isRequired,
   hasChanges: PropTypes.bool.isRequired,
   isExpanded: PropTypes.bool.isRequired,
   onExpand: PropTypes.func.isRequired,
@@ -163,6 +164,7 @@ CardHeader.propTypes = {
   isDisabledEditField: PropTypes.bool.isRequired,
   onClickDelete: PropTypes.func.isRequired,
   onClickDuplicate: PropTypes.func.isRequired,
+  namePrefix: PropTypes.string.isRequired,
 };
 
 export default CardHeader;
