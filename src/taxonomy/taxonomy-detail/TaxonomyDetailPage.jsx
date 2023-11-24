@@ -11,6 +11,7 @@ import { Link, useParams } from 'react-router-dom';
 import ConnectionErrorAlert from '../../generic/ConnectionErrorAlert';
 import Loading from '../../generic/Loading';
 import SubHeader from '../../generic/sub-header/SubHeader';
+import { importTaxonomyTags } from '../import-tags';
 import taxonomyMessages from '../messages';
 import TaxonomyDetailMenu from './TaxonomyDetailMenu';
 import TaxonomyDetailSideCard from './TaxonomyDetailSideCard';
@@ -46,15 +47,14 @@ const TaxonomyDetailPage = () => {
     />
   );
 
-  const onClickMenuItem = (menuName) => {
-    switch (menuName) {
-    case 'export':
-      setIsExportModalOpen(true);
-      break;
-    default:
-      break;
-    }
+  const menuItemActions = {
+    import: () => importTaxonomyTags(taxonomyId, intl).then(),
+    export: () => setIsExportModalOpen(true),
   };
+
+  const onClickMenuItem = (menuName) => (
+    menuItemActions[menuName]?.()
+  );
 
   const getHeaderActions = () => (
     <TaxonomyDetailMenu

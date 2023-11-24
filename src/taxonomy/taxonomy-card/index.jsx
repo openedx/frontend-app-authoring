@@ -9,6 +9,8 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
+
+import { importTaxonomyTags } from '../import-tags';
 import messages from './messages';
 import TaxonomyCardMenu from './TaxonomyCardMenu';
 import ExportModal from '../export-modal';
@@ -72,8 +74,8 @@ const TaxonomyCard = ({ className, original }) => {
   const intl = useIntl();
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
-  // Add here more menu item actions
   const menuItemActions = {
+    import: () => importTaxonomyTags(id, intl).then(),
     export: () => setIsExportModalOpen(true),
   };
 

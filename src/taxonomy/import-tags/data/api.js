@@ -4,8 +4,17 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getTaxonomyImportApiUrl = () => new URL(
+export const getTaxonomyImportNewApiUrl = () => new URL(
   'api/content_tagging/v1/taxonomies/import/',
+  getApiBaseUrl(),
+).href;
+
+/**
+ * @param {number} taxonomyId
+ * @returns {string}
+ */
+export const getTagsImportApiUrl = (taxonomyId) => new URL(
+  `api/content_tagging/v1/taxonomies/${taxonomyId}/tags/import/`,
   getApiBaseUrl(),
 ).href;
 
@@ -23,7 +32,25 @@ export async function importNewTaxonomy(taxonomyName, taxonomyDescription, file)
   formData.append('file', file);
 
   const { data } = await getAuthenticatedHttpClient().post(
-    getTaxonomyImportApiUrl(),
+    getTaxonomyImportNewApiUrl(),
+    formData,
+  );
+
+  return camelCaseObject(data);
+}
+
+/**
+ * Import tags to an existing taxonomy, overwriting existing tags
+ * @param {number} taxonomyId
+ * @param {File} file
+ * @returns {Promise<Object>}
+ */
+export async function importTags(taxonomyId, file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const { data } = await getAuthenticatedHttpClient().put(
+    getTagsImportApiUrl(taxonomyId),
     formData,
   );
 

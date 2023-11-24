@@ -7,10 +7,15 @@ import PropTypes from 'prop-types';
 
 import initializeStore from '../../store';
 import { getTaxonomyExportFile } from '../data/api';
+import { importTaxonomyTags } from '../import-tags';
 import TaxonomyCard from '.';
 
 let store;
 const taxonomyId = 1;
+
+jest.mock('../import-tags', () => ({
+  importTaxonomyTags: jest.fn().mockResolvedValue({}),
+}));
 
 const data = {
   id: taxonomyId,
@@ -130,6 +135,16 @@ describe('<TaxonomyCard />', async () => {
 
     // Modal closed
     expect(() => getByText('Select format to export')).toThrow();
+  });
+
+  test('should call import tags when menu click', () => {
+    const { getByTestId } = render(<TaxonomyCardComponent original={data} />);
+
+    // Click on import menu
+    fireEvent.click(getByTestId('taxonomy-card-menu-button-1'));
+    fireEvent.click(getByTestId('taxonomy-card-menu-import-1'));
+
+    expect(importTaxonomyTags).toHaveBeenCalled();
   });
 
   test('should export a taxonomy', () => {
