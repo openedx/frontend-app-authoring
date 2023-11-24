@@ -9,6 +9,14 @@ const messages = defineMessages({
     id: 'course-authoring.tag-list.column.value.header',
     defaultMessage: 'Value',
   },
+  tagListColumnChildCountHeader: {
+    id: 'course-authoring.tag-list.column.value.header',
+    defaultMessage: '# child tags',
+  },
+  tagListError: {
+    id: 'course-authoring.tag-list.error',
+    defaultMessage: 'Error: unable to load child tags',
+  },
 });
 
 export default messages;

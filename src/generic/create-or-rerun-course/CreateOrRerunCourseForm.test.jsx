@@ -153,7 +153,7 @@ describe('<CreateOrRerunCourseForm />', () => {
         userEvent.type(runInput, '1');
         userEvent.click(createBtn);
       });
-      await axiosMock.onPost(getCreateOrRerunCourseUrl).reply(200, { url });
+      await axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { url });
       await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 
       expect(window.location.assign).toHaveBeenCalledWith(`${process.env.STUDIO_BASE_URL}${url}`);
@@ -168,7 +168,7 @@ describe('<CreateOrRerunCourseForm />', () => {
       const numberInput = screen.getByPlaceholderText(messages.courseNumberPlaceholder.defaultMessage);
       const runInput = screen.getByPlaceholderText(messages.courseRunPlaceholder.defaultMessage);
       const createBtn = screen.getByRole('button', { name: messages.createButton.defaultMessage });
-      await axiosMock.onPost(getCreateOrRerunCourseUrl).reply(200, { url, destinationCourseKey });
+      await axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { url, destinationCourseKey });
 
       await act(async () => {
         userEvent.type(displayNameInput, 'foo course name');
@@ -250,7 +250,7 @@ describe('<CreateOrRerunCourseForm />', () => {
   it('shows alert error if postErrors presents', async () => {
     render(<RootWrapper {...props} />);
     await mockStore();
-    await axiosMock.onPost(getCreateOrRerunCourseUrl).reply(200, { errMsg: 'aaa' });
+    await axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { errMsg: 'aaa' });
     await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 
     expect(screen.getByText('aaa')).toBeInTheDocument();

@@ -6,10 +6,12 @@ import {
   Container,
   Layout,
 } from '@edx/paragon';
+import { Helmet } from 'react-helmet';
 import { Link, useParams } from 'react-router-dom';
 
 import ConnectionErrorAlert from '../../generic/ConnectionErrorAlert';
 import Loading from '../../generic/Loading';
+import getPageHeadTitle from '../../generic/utils';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import { importTaxonomyTags } from '../import-tags';
 import taxonomyMessages from '../messages';
@@ -21,9 +23,12 @@ import { useTaxonomyDetailDataResponse, useTaxonomyDetailDataStatus } from './da
 
 const TaxonomyDetailPage = () => {
   const intl = useIntl();
-  const { taxonomyId } = useParams();
-  const { isError, isFetched } = useTaxonomyDetailDataStatus(taxonomyId);
+  const { taxonomyId: taxonomyIdString } = useParams();
+  const taxonomyId = Number(taxonomyIdString);
+
   const taxonomy = useTaxonomyDetailDataResponse(taxonomyId);
+  const { isError, isFetched } = useTaxonomyDetailDataStatus(taxonomyId);
+
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   if (!isFetched) {
@@ -74,6 +79,9 @@ const TaxonomyDetailPage = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{getPageHeadTitle(intl.formatMessage(taxonomyMessages.headerTitle), taxonomy.name)}</title>
+      </Helmet>
       <div className="pt-4.5 pr-4.5 pl-4.5 pb-2 bg-light-100 box-shadow-down-2">
         <Container size="xl">
           <Breadcrumb
