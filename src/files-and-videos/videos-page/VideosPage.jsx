@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   injectIntl,
@@ -114,25 +113,27 @@ const VideosPage = ({
   );
   const maxFileSize = videoUploadMaxFileSize * 1073741824;
   const transcriptColumn = {
-    id: 'transcripts',
+    id: 'transcriptStatus',
     Header: 'Transcript',
-    accessor: (({ transcripts }) => !isEmpty(transcripts)),
+    accessor: 'transcriptStatus',
     Cell: ({ row }) => TranscriptColumn({ row }),
     Filter: CheckboxFilter,
+    filter: 'exactTextCase',
     filterChoices: [
-      { name: intl.formatMessage(messages.transcribedCheckboxLabel), value: true },
-      { name: intl.formatMessage(messages.notTranscribedCheckboxLabel), value: false },
+      { name: intl.formatMessage(messages.transcribedCheckboxLabel), value: 'transcribed' },
+      { name: intl.formatMessage(messages.notTranscribedCheckboxLabel), value: 'notTranscribed' },
     ],
   };
   const activeColumn = {
-    id: 'usageLocations',
+    id: 'activeStatus',
     Header: 'Active',
-    accessor: (({ usageLocations }) => !isEmpty(usageLocations)),
+    accessor: 'activeStatus',
     Cell: ({ row }) => ActiveColumn({ row }),
     Filter: CheckboxFilter,
+    filter: 'exactTextCase',
     filterChoices: [
-      { name: intl.formatMessage(messages.activeCheckboxLabel), value: true },
-      { name: intl.formatMessage(messages.inactiveCheckboxLabel), value: false },
+      { name: intl.formatMessage(messages.activeCheckboxLabel), value: 'active' },
+      { name: intl.formatMessage(messages.inactiveCheckboxLabel), value: 'inactive' },
     ],
   };
   const durationColumn = {

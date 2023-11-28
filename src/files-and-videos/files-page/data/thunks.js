@@ -111,6 +111,7 @@ export function updateAssetLock({ assetId, courseId, locked }) {
         model: {
           id: assetId,
           locked,
+          lockStatus: locked,
         },
       }));
       dispatch(updateEditStatus({ editType: 'lock', status: RequestStatus.SUCCESSFUL }));
@@ -132,11 +133,14 @@ export function getUsagePaths({ asset, courseId }) {
 
     try {
       const { usageLocations } = await getAssetUsagePaths({ assetId: asset.id, courseId });
+      const assetLocations = usageLocations[asset.id];
+      const activeStatus = assetLocations?.length > 0 ? 'active' : 'inactive';
       dispatch(updateModel({
         modelType: 'assets',
         model: {
           id: asset.id,
-          usageLocations,
+          usageLocations: assetLocations,
+          activeStatus,
         },
       }));
       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.SUCCESSFUL }));

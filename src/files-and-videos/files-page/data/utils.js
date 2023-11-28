@@ -24,15 +24,18 @@ export const updateFileValues = (files) => {
       wrapperType = 'audio';
     }
 
-    const { dateAdded } = file;
+    const { dateAdded, locked, usageLocations } = file;
     const utcDateString = dateAdded.replace(/\bat\b/g, '');
     const utcDateTime = new Date(utcDateString).toString();
+    const lockStatus = locked ? 'locked' : 'public';
+    const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
 
     updatedFiles.push({
       ...file,
       wrapperType,
+      lockStatus,
+      activeStatus,
       dateAdded: utcDateTime,
-      usageLocations: [],
     });
   });
 
