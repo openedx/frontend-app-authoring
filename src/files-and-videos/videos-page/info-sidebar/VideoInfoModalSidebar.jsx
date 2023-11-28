@@ -12,10 +12,16 @@ import { TRANSCRIPT_FAILURE_STATUSES } from '../data/constants';
 
 const VideoInfoModalSidebar = ({
   video,
+  activeTab,
+  setActiveTab,
   // injected
   intl,
 }) => (
-  <Tabs>
+  <Tabs
+    id="controlled-info-sidebar-tab"
+    activeKey={activeTab}
+    onSelect={(tab) => setActiveTab(tab)}
+  >
     <Tab eventKey="fileInfo" title={intl.formatMessage(messages.infoTabTitle)}>
       <InfoTab {...{ video }} />
     </Tab>
@@ -46,6 +52,8 @@ VideoInfoModalSidebar.propTypes = {
     transcripts: PropTypes.arrayOf(PropTypes.string),
     transcriptionStatus: PropTypes.string.isRequired,
   }),
+  activeTab: PropTypes.string.isRequired,
+  setActiveTab: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

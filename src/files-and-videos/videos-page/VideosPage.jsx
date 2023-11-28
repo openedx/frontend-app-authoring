@@ -109,7 +109,9 @@ const VideosPage = ({
     fileType: 'video',
   };
   const thumbnailPreview = (props) => VideoThumbnail({ ...props, handleAddThumbnail, videoImageSettings });
-  const infoModalSidebar = (video) => VideoInfoModalSidebar({ video });
+  const infoModalSidebar = (video, activeTab, setActiveTab) => (
+    VideoInfoModalSidebar({ video, activeTab, setActiveTab })
+  );
   const maxFileSize = videoUploadMaxFileSize * 1073741824;
   const transcriptColumn = {
     id: 'transcripts',
