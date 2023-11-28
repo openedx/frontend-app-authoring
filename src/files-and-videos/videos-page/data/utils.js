@@ -7,6 +7,8 @@ import {
   MAX_WIDTH,
   MIN_HEIGHT,
   MIN_WIDTH,
+  VIDEO_PROCESSING_STATUSES,
+  VIDEO_SUCCESS_STATUSES,
 } from './constants';
 
 ensureConfig([
@@ -35,9 +37,9 @@ export const updateFileValues = (files) => {
     const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
 
     let uploadStatus = status;
-    if (status === 'Ready' || status === 'Imported') {
+    if (VIDEO_SUCCESS_STATUSES.includes(status)) {
       uploadStatus = 'Success';
-    } else if (status === 'In Progress' || status === 'Uploaded') {
+    } else if (VIDEO_PROCESSING_STATUSES.includes(status)) {
       uploadStatus = 'Processing';
     }
 

@@ -6,6 +6,7 @@ import {
   MoreInfoColumn,
   StatusColumn,
   ThumbnailColumn,
+  TranscriptColumn,
 } from './table-components';
 import FileInput, { useFileInput } from './FileInput';
 
@@ -19,6 +20,7 @@ export {
   ThumbnailColumn,
   FileInput,
   useFileInput,
+  TranscriptColumn,
 };
 export { default as FileTable } from './FileTable';
 export { default as EditFileErrors } from './EditFileErrors';

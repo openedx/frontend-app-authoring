@@ -36,6 +36,7 @@ import {
   FileTable,
   StatusColumn,
   ThumbnailColumn,
+  TranscriptColumn,
 } from '../generic';
 import TranscriptSettings from './transcript-settings';
 import VideoThumbnail from './VideoThumbnail';
@@ -107,17 +108,15 @@ const VideosPage = ({
     fileType: 'video',
   };
   const thumbnailPreview = (props) => VideoThumbnail({ ...props, handleAddThumbnail, videoImageSettings });
-  const infoModalSidebar = (video) => VideoInfoModalSidebar({ video });
+  const infoModalSidebar = (video, activeTab, setActiveTab) => (
+    VideoInfoModalSidebar({ video, activeTab, setActiveTab })
+  );
   const maxFileSize = videoUploadMaxFileSize * 1073741824;
   const transcriptColumn = {
     id: 'transcriptStatus',
     Header: 'Transcript',
     accessor: 'transcriptStatus',
-    Cell: ({ row }) => {
-      const { transcripts } = row.original;
-      const numOfTranscripts = transcripts?.length;
-      return numOfTranscripts > 0 ? `(${numOfTranscripts}) available` : null;
-    },
+    Cell: ({ row }) => TranscriptColumn({ row }),
     Filter: CheckboxFilter,
     filter: 'exactTextCase',
     filterChoices: [

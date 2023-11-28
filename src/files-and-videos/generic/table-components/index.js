@@ -9,6 +9,7 @@ import {
   MoreInfoColumn,
   StatusColumn,
   ThumbnailColumn,
+  TranscriptColumn,
 } from './table-custom-columns';
 
 export {
@@ -22,4 +23,5 @@ export {
   MoreInfoColumn,
   StatusColumn,
   ThumbnailColumn,
+  TranscriptColumn,
 };
