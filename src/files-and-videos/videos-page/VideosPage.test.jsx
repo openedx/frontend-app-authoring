@@ -500,9 +500,24 @@ describe('FilesAndUploads', () => {
           expect(transcriptTab).toHaveClass('active');
         });
 
-        // it('should show transcript error', () => {
+        it('should show transcript error', async () => {
+          renderComponent();
+          await mockStore(RequestStatus.SUCCESSFUL);
+          const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID3');
 
-        // });
+          axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID3/usage`).reply(201, { usageLocations: [] });
+          await waitFor(() => {
+            fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
+            fireEvent.click(screen.getByText('Info'));
+          });
+
+          const transcriptTab = screen.getAllByRole('tab')[1];
+          await act(async () => {
+            fireEvent.click(transcriptTab);
+          });
+
+          expect(screen.getByText('Transcript (1)')).toBeVisible();
+        });
       });
 
       it('download button should download file', async () => {
