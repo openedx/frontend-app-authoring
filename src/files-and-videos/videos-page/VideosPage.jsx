@@ -37,6 +37,7 @@ import {
   FileTable,
   StatusColumn,
   ThumbnailColumn,
+  TranscriptColumn,
 } from '../generic';
 import TranscriptSettings from './transcript-settings';
 import VideoThumbnail from './VideoThumbnail';
@@ -114,11 +115,7 @@ const VideosPage = ({
     id: 'transcripts',
     Header: 'Transcript',
     accessor: (({ transcripts }) => !isEmpty(transcripts)),
-    Cell: ({ row }) => {
-      const { transcripts } = row.original;
-      const numOfTranscripts = transcripts?.length;
-      return numOfTranscripts > 0 ? `(${numOfTranscripts}) available` : null;
-    },
+    Cell: ({ row }) => TranscriptColumn({ row }),
     Filter: CheckboxFilter,
     filterChoices: [
       { name: intl.formatMessage(messages.transcribedCheckboxLabel), value: true },

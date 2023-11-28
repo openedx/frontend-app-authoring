@@ -3,17 +3,22 @@ import PropTypes from 'prop-types';
 
 import {
   injectIntl,
+  intlShape,
   FormattedMessage,
 } from '@edx/frontend-platform/i18n';
 import {
+  Icon,
   ModalDialog,
   Stack,
   Truncate,
 } from '@edx/paragon';
+import { Error } from '@edx/paragon/icons';
 
 import messages from './messages';
 import UsageMetricsMessages from './UsageMetricsMessage';
 import FileThumbnail from './ThumbnailPreview';
+import { TRANSCRIPT_FAILURE_STATUSES } from '../videos-page/data/constants';
+import AlertMessage from '../../generic/alert-message';
 
 const InfoModal = ({
   file,
@@ -23,6 +28,8 @@ const InfoModal = ({
   usagePathStatus,
   error,
   sidebar,
+  // injected
+  intl,
 }) => (
   <ModalDialog
     title={file?.displayName}
@@ -44,6 +51,17 @@ const InfoModal = ({
     </ModalDialog.Header>
     <ModalDialog.Body className="pt-0 x-small">
       <hr />
+      {TRANSCRIPT_FAILURE_STATUSES.includes(file?.transcriptionStatus) && (
+        <AlertMessage
+          description={(
+            <div className="row m-0 align-itmes-center">
+              <Icon src={Error} className="text-danger-500 mr-2" />
+              {intl.formatMessage(messages.transcriptionErrorMessage, { error: file.errorDescription })}
+            </div>
+          )}
+          variant="danger"
+        />
+      )}
       <div className="row flex-nowrap m-0 mt-4">
         <div className="col-7 mr-3">
           <Stack gap={5}>
@@ -86,6 +104,8 @@ InfoModal.propTypes = {
     fileSize: PropTypes.number.isRequired,
     usageLocations: PropTypes.arrayOf(PropTypes.string),
     status: PropTypes.string,
+    transcriptionStatus: PropTypes.string,
+    errorDescription: PropTypes.string,
   }),
   onClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
@@ -93,6 +113,8 @@ InfoModal.propTypes = {
   error: PropTypes.arrayOf(PropTypes.string).isRequired,
   thumbnailPreview: PropTypes.func.isRequired,
   sidebar: PropTypes.func.isRequired,
+  // injected
+  intl: intlShape.isRequired,
 };
 
 InfoModal.defaultProps = {

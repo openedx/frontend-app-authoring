@@ -37,6 +37,10 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-upload.errorAlert.message',
     defaultMessage: '{message}',
   },
+  transcriptionErrorMessage: {
+    id: 'course-authoring.files-and-uploads.file-info.transcripts.error.alert',
+    defaultMessage: 'Transcript failed: "{error}"',
+  },
   usageTitle: {
     id: 'course-authoring.files-and-uploads.file-info.usage.title',
     defaultMessage: 'Usage',

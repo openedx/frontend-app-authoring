@@ -120,6 +120,7 @@ export const generateFetchVideosApiResponse = () => ({
       status: 'Imported',
       duration: 12333,
       downloadLink: 'http://mOckID1.mp4',
+      fileSize: 213456354,
     },
     {
       edx_video_id: 'mOckID5',
@@ -140,6 +141,8 @@ export const generateFetchVideosApiResponse = () => ({
       status: 'Ready',
       duration: null,
       downloadLink: '',
+      transcription_status: 'Transcript Failed',
+      error_description: 'Unable to process transcript request',
     },
   ],
   concurrent_upload_limit: 4,

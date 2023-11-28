@@ -430,73 +430,79 @@ describe('FilesAndUploads', () => {
     });
 
     describe('card menu actions', () => {
-      it('should open video info', async () => {
-        renderComponent();
-        await mockStore(RequestStatus.SUCCESSFUL);
-        expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
+      describe('Info', () => {
+        it('should open video info', async () => {
+          renderComponent();
+          await mockStore(RequestStatus.SUCCESSFUL);
+          expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
 
-        const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
-        expect(videoMenuButton).toBeVisible();
+          const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
+          expect(videoMenuButton).toBeVisible();
 
-        axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`)
-          .reply(201, { usageLocations: ['subsection - unit / block'] });
-        await waitFor(() => {
-          fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Info'));
+          axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`)
+            .reply(201, { usageLocations: ['subsection - unit / block'] });
+          await waitFor(() => {
+            fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
+            fireEvent.click(screen.getByText('Info'));
+          });
+
+          expect(screen.getByText(messages.infoTitle.defaultMessage)).toBeVisible();
+
+          const { usageStatus } = store.getState().videos;
+
+          expect(usageStatus).toEqual(RequestStatus.SUCCESSFUL);
+
+          expect(screen.getByText('subsection - unit / block')).toBeVisible();
         });
 
-        expect(screen.getByText(messages.infoTitle.defaultMessage)).toBeVisible();
+        it('should open video info modal and show info tab', async () => {
+          renderComponent();
+          await mockStore(RequestStatus.SUCCESSFUL);
+          expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
+          const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
+          expect(videoMenuButton).toBeVisible();
 
-        const { usageStatus } = store.getState().videos;
+          axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`).reply(201, { usageLocations: [] });
+          await waitFor(() => {
+            fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
+            fireEvent.click(screen.getByText('Info'));
+          });
 
-        expect(usageStatus).toEqual(RequestStatus.SUCCESSFUL);
+          expect(screen.getByText(messages.usageNotInUseMessage.defaultMessage)).toBeVisible();
 
-        expect(screen.getByText('subsection - unit / block')).toBeVisible();
-      });
+          const infoTab = screen.getAllByRole('tab')[0];
+          expect(infoTab).toBeVisible();
 
-      it('should open video info modal and show info tab', async () => {
-        renderComponent();
-        await mockStore(RequestStatus.SUCCESSFUL);
-        expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
-        const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
-        expect(videoMenuButton).toBeVisible();
-
-        axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`).reply(201, { usageLocations: [] });
-        await waitFor(() => {
-          fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Info'));
+          expect(infoTab).toHaveClass('active');
         });
 
-        expect(screen.getByText(messages.usageNotInUseMessage.defaultMessage)).toBeVisible();
+        it('should open video info modal and show transcript tab', async () => {
+          renderComponent();
+          await mockStore(RequestStatus.SUCCESSFUL);
+          expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
+          const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
+          expect(videoMenuButton).toBeVisible();
 
-        const infoTab = screen.getAllByRole('tab')[0];
-        expect(infoTab).toBeVisible();
+          axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`).reply(201, { usageLocations: [] });
+          await waitFor(() => {
+            fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
+            fireEvent.click(screen.getByText('Info'));
+          });
 
-        expect(infoTab).toHaveClass('active');
-      });
+          expect(screen.getByText(messages.usageNotInUseMessage.defaultMessage)).toBeVisible();
 
-      it('should open video info modal and show transcript tab', async () => {
-        renderComponent();
-        await mockStore(RequestStatus.SUCCESSFUL);
-        expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
-        const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
-        expect(videoMenuButton).toBeVisible();
+          const transcriptTab = screen.getAllByRole('tab')[1];
+          await act(async () => {
+            fireEvent.click(transcriptTab);
+          });
+          expect(transcriptTab).toBeVisible();
 
-        axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`).reply(201, { usageLocations: [] });
-        await waitFor(() => {
-          fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Info'));
+          expect(transcriptTab).toHaveClass('active');
         });
 
-        expect(screen.getByText(messages.usageNotInUseMessage.defaultMessage)).toBeVisible();
+        // it('should show transcript error', () => {
 
-        const transcriptTab = screen.getAllByRole('tab')[1];
-        await act(async () => {
-          fireEvent.click(transcriptTab);
-        });
-        expect(transcriptTab).toBeVisible();
-
-        expect(transcriptTab).toHaveClass('active');
+        // });
       });
 
       it('download button should download file', async () => {

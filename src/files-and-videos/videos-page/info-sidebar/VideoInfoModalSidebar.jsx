@@ -8,6 +8,7 @@ import {
 import InfoTab from './InfoTab';
 import TranscriptTab from './TranscriptTab';
 import messages from './messages';
+import { TRANSCRIPT_FAILURE_STATUSES } from '../data/constants';
 
 const VideoInfoModalSidebar = ({
   video,
@@ -24,6 +25,11 @@ const VideoInfoModalSidebar = ({
         messages.transcriptTabTitle,
         { transcriptCount: video.transcripts.length },
       )}
+      notification={TRANSCRIPT_FAILURE_STATUSES.includes(video.transcriptionStatus) && (
+        <span>
+          <span className="sr-only">{intl.formatMessage(messages.notificationScreenReaderText)}</span>
+        </span>
+      )}
     >
       <TranscriptTab {...{ video }} />
     </Tab>
@@ -38,6 +44,7 @@ VideoInfoModalSidebar.propTypes = {
     dateAdded: PropTypes.string.isRequired,
     fileSize: PropTypes.number.isRequired,
     transcripts: PropTypes.arrayOf(PropTypes.string),
+    transcriptionStatus: PropTypes.string.isRequired,
   }),
   // injected
   intl: intlShape.isRequired,
