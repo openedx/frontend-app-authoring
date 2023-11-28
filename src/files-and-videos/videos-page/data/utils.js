@@ -22,6 +22,8 @@ export const updateFileValues = (files) => {
       created,
       courseVideoImageUrl,
       status,
+      transcripts,
+      usageLocations,
     } = file;
     const wrapperType = 'video';
 
@@ -29,6 +31,8 @@ export const updateFileValues = (files) => {
     if (thumbnail && thumbnail.startsWith('/')) {
       thumbnail = `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
     }
+    const transcriptStatus = transcripts?.length > 0 ? 'transcribed' : 'notTranscribed';
+    const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
 
     let uploadStatus = status;
     if (status === 'Ready' || status === 'Imported') {
@@ -45,6 +49,8 @@ export const updateFileValues = (files) => {
       dateAdded: created.toString(),
       status: uploadStatus,
       thumbnail,
+      transcriptStatus,
+      activeStatus,
     });
   });
 
