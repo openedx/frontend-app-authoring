@@ -133,12 +133,13 @@ export function getUsagePaths({ asset, courseId }) {
 
     try {
       const { usageLocations } = await getAssetUsagePaths({ assetId: asset.id, courseId });
-      const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
+      const assetLocations = usageLocations[asset.id];
+      const activeStatus = assetLocations?.length > 0 ? 'active' : 'inactive';
       dispatch(updateModel({
         modelType: 'assets',
         model: {
           id: asset.id,
-          usageLocations,
+          usageLocations: assetLocations,
           activeStatus,
         },
       }));

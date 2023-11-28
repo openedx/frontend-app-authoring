@@ -339,7 +339,7 @@ describe('FilesAndUploads', () => {
         const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
         expect(assetMenuButton).toBeVisible();
 
-        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, { usageLocations: ['subsection - unit / block'] });
+        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, { usage_locations: { mOckID1: ['subsection - unit / block'] } });
         await waitFor(() => {
           fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Info'));
@@ -364,7 +364,7 @@ describe('FilesAndUploads', () => {
         expect(assetMenuButton).toBeVisible();
 
         axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID1`).reply(201, { locked: false });
-        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, { usageLocations: [] });
+        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, { usage_locations: { mOckID1: [] } });
         await waitFor(() => {
           fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Info'));

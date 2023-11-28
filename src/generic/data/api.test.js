@@ -66,10 +66,10 @@ describe('generic api calls', () => {
       org: 'edX',
       run: 'Demo_Course',
     };
-    axiosMock.onPost(getCreateOrRerunCourseUrl).reply(200, courseRerunData);
+    axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, courseRerunData);
     const result = await createOrRerunCourse(courseRerunData);
 
-    expect(axiosMock.history.post[0].url).toEqual(getCreateOrRerunCourseUrl);
+    expect(axiosMock.history.post[0].url).toEqual(getCreateOrRerunCourseUrl());
     expect(result).toEqual(courseRerunData);
   });
 });

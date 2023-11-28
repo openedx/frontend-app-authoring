@@ -36,7 +36,6 @@ export const updateFileValues = (files) => {
       lockStatus,
       activeStatus,
       dateAdded: utcDateTime,
-      usageLocations: [],
     });
   });
 
