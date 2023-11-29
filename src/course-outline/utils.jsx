@@ -109,8 +109,13 @@ const getHighlightsFormValues = (currentHighlights) => {
   return formValues;
 };
 
+const scrollToElement = (ref) => {
+  ref.current?.scrollIntoView({ behavior: 'smooth' });
+};
+
 export {
   getSectionStatus,
   getSectionStatusBadgeContent,
   getHighlightsFormValues,
+  scrollToElement,
 };

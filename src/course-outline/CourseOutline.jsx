@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -34,8 +34,10 @@ import ConfigureModal from './configure-modal/ConfigureModal';
 import DeleteModal from './delete-modal/DeleteModal';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
+import { scrollToElement } from './utils';
 
 const CourseOutline = ({ courseId }) => {
+  const listRef = useRef(null);
   const intl = useIntl();
 
   const {
@@ -76,6 +78,10 @@ const CourseOutline = ({ courseId }) => {
     handleDuplicateSectionSubmit,
     handleNewSectionSubmit,
   } = useCourseOutline({ courseId });
+
+  useEffect(() => {
+    scrollToElement(listRef);
+  }, [sectionsList]);
 
   const {
     isShow: isShowProcessingNotification,
@@ -155,6 +161,7 @@ const CourseOutline = ({ courseId }) => {
                               onEditSectionSubmit={handleEditSectionSubmit}
                               onDuplicateSubmit={handleDuplicateSectionSubmit}
                               isSectionsExpanded={isSectionsExpanded}
+                              ref={listRef}
                             />
                           ))}
                           <Button

@@ -51,6 +51,8 @@ let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
 
+window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: () => ({
@@ -131,6 +133,7 @@ describe('<CourseOutline />', () => {
 
     element = await findAllByTestId('section-card');
     expect(element.length).toBe(5);
+    expect(window.HTMLElement.prototype.scrollIntoView).toBeCalled();
   });
 
   it('render error alert after failed reindex correctly', async () => {
