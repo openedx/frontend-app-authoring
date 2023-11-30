@@ -163,13 +163,12 @@ describe('VideoGallery', () => {
         }],
       });
 
-      await act(async () => {
-        fireEvent.click(screen.getByRole('button', {
-          name: 'Video status',
-        }));
+      act(() => {
+        fireEvent.click(screen.getByTestId('dropdown-filter'));
       });
-      await act(async () => {
-        fireEvent.click(screen.getByRole('checkbox', {
+
+      act(() => {
+        fireEvent.click(screen.getByRole('button', {
           name: filterBy,
         }));
       });

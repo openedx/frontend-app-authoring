@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
-  ActionRow, Form, Icon, IconButton, SelectMenu, MenuItem,
+  ActionRow, Dropdown, Form, Icon, IconButton, SelectMenu, MenuItem,
 } from '@edx/paragon';
 import { Close, Search } from '@edx/paragon/icons';
 import {
@@ -11,7 +11,6 @@ import {
 } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
-import MultiSelectFilterDropdown from './MultiSelectFilterDropdown';
 import { sortKeys, sortMessages } from '../../containers/VideoGallery/utils';
 
 export const SearchSort = ({
@@ -22,6 +21,8 @@ export const SearchSort = ({
   onSortClick,
   filterBy,
   onFilterClick,
+  filterKeys,
+  filterMessages,
   showSwitch,
   switchMessage,
   onSwitchClick,
@@ -62,7 +63,25 @@ export const SearchSort = ({
         ))}
       </SelectMenu>
 
-      {onFilterClick && <MultiSelectFilterDropdown selected={filterBy} onSelectionChange={onFilterClick} />}
+      { onFilterClick && (
+      <Dropdown>
+        <Dropdown.Toggle
+          data-testid="dropdown-filter"
+          className="text-gray-700"
+          id="gallery-filter-button"
+          variant="tertiary"
+        >
+          <FormattedMessage {...filterMessages[filterBy]} />
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          {Object.keys(filterKeys).map(key => (
+            <Dropdown.Item data-testid={`dropdown-filter-${key}`} key={key} onClick={onFilterClick(key)}>
+              <FormattedMessage {...filterMessages[key]} />
+            </Dropdown.Item>
+          ))}
+        </Dropdown.Menu>
+      </Dropdown>
+      )}
 
       { showSwitch && (
         <>
@@ -86,6 +105,8 @@ export const SearchSort = ({
 SearchSort.defaultProps = {
   filterBy: '',
   onFilterClick: null,
+  filterKeys: null,
+  filterMessages: null,
   showSwitch: false,
   onSwitchClick: null,
 };
@@ -96,8 +117,10 @@ SearchSort.propTypes = {
   clearSearchString: PropTypes.func.isRequired,
   sortBy: PropTypes.string.isRequired,
   onSortClick: PropTypes.func.isRequired,
-  filterBy: PropTypes.arrayOf(PropTypes.string),
+  filterBy: PropTypes.string,
   onFilterClick: PropTypes.func,
+  filterKeys: PropTypes.shape({}),
+  filterMessages: PropTypes.shape({}),
   showSwitch: PropTypes.bool,
   switchMessage: PropTypes.shape({}).isRequired,
   onSwitchClick: PropTypes.func,

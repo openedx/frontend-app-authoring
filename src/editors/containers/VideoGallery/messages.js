@@ -55,10 +55,10 @@ export const messages = {
   },
 
   // Filter Dropdown
-  filterByVideoStatusNone: {
+  filterByVideoStatusAny: {
     id: 'authoring.selectvideomodal.filter.videostatusnone.label',
-    defaultMessage: 'Video status',
-    description: 'Dropdown label for filter by video status (none)',
+    defaultMessage: 'Any status',
+    description: 'Dropdown label for no filter (any status)',
   },
   filterByVideoStatusUploading: {
     id: 'authoring.selectvideomodal.filter.videostatusuploading.label',

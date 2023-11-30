@@ -22,6 +22,7 @@ export const sortMessages = StrictDict({
 });
 
 export const filterKeys = StrictDict({
+  anyStatus: 'anyStatus',
   uploading: 'Uploading',
   processing: 'In Progress',
   ready: 'Ready',
@@ -29,7 +30,7 @@ export const filterKeys = StrictDict({
 });
 
 export const filterMessages = StrictDict({
-  title: messages[messageKeys.filterByVideoStatusNone],
+  anyStatus: messages[messageKeys.filterByVideoStatusAny],
   uploading: messages[messageKeys.filterByVideoStatusUploading],
   processing: messages[messageKeys.filterByVideoStatusProcessing],
   ready: messages[messageKeys.filterByVideoStatusReady],
