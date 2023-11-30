@@ -64,6 +64,7 @@ export const problemDataProps = {
       max_attempts: PropTypes.number,
       showanswer: PropTypes.string,
       show_reset_button: PropTypes.bool,
+      rerandomize: PropTypes.string,
     }),
   }),
 };

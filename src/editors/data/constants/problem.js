@@ -193,7 +193,7 @@ export const ShowAnswerTypes = StrictDict({
 export const RandomizationTypesKeys = StrictDict({
   NEVER: 'never',
   ALWAYS: 'always',
-  ONRESET: 'on_reset',
+  ONRESET: 'onreset',
   PERSTUDENT: 'per_student',
 });
 

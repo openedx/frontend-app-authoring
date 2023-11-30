@@ -50,6 +50,7 @@ export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, g
   // Use the selected video url first
   const videoSourceUrl = selectedVideoUrl != null ? selectedVideoUrl : videoUrl;
   const [licenseType, licenseOptions] = module.parseLicense({ licenseData: studioView, level: 'block' });
+  // eslint-disable-next-line no-console
   console.log(licenseType);
   const transcripts = rawVideoData.transcriptsFromSelected ? rawVideoData.transcriptsFromSelected
     : module.parseTranscripts({ transcriptsData: studioView });
@@ -168,6 +169,7 @@ export const parseTranscripts = ({ transcriptsData }) => {
     return Object.keys(transcriptsObj.value);
   } catch (error) {
     if (error instanceof SyntaxError) {
+      // eslint-disable-next-line no-console
       console.error('Invalid JSON:', error.message);
     } else {
       throw error;
@@ -265,6 +267,7 @@ export const uploadThumbnail = ({ thumbnail, emptyCanvas }) => (dispatch, getSta
         }));
       }
     },
+    // eslint-disable-next-line no-console
     onFailure: (e) => console.log({ UploadFailure: e }, 'Resampling thumbnail upload'),
   }));
 };
@@ -404,6 +407,7 @@ export const uploadVideo = ({ supportedFiles, setLoadSpinner, postUploadRedirect
         const uploadUrl = fileObj.upload_url;
         const uploadFile = supportedFiles.find((file) => file.get('file').name === fileName);
         if (!uploadFile) {
+          // eslint-disable-next-line no-console
           console.error(`Could not find file object with name "${fileName}" in supportedFiles array.`);
           return;
         }
@@ -417,6 +421,7 @@ export const uploadVideo = ({ supportedFiles, setLoadSpinner, postUploadRedirect
           },
         })
           .then(() => postUploadRedirect(edxVideoId))
+          // eslint-disable-next-line no-console
           .catch((error) => console.error('Error uploading file:', error));
       }));
       setLoadSpinner(false);

@@ -11,6 +11,7 @@ jest.mock('./hooks', () => ({
 describe('RandomizationCard', () => {
   const props = {
     randomization: 'sOmE_vAlUE',
+    defaultValue: 'default_vAlUE',
     updateSettings: jest.fn().mockName('args.updateSettings'),
     intl: { formatMessage },
   };
@@ -32,11 +33,14 @@ describe('RandomizationCard', () => {
   });
 
   describe('snapshot', () => {
-    test('snapshot: renders randonmization setting card with randomization defined', () => {
+    test('snapshot: renders randomization setting card with randomization defined', () => {
       expect(shallow(<RandomizationCard {...props} />)).toMatchSnapshot();
     });
-    test('snapshot: renders randonmization setting card with randomization null', () => {
+    test('snapshot: renders randomization setting card with default randomization', () => {
       expect(shallow(<RandomizationCard {...props} randomization={null} />)).toMatchSnapshot();
+    });
+    test('snapshot: renders randomization setting card with randomization null', () => {
+      expect(shallow(<RandomizationCard {...props} randomization={null} defaultValue={null} />)).toMatchSnapshot();
     });
   });
 });

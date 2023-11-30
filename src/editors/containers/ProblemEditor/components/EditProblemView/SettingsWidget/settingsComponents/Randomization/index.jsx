@@ -9,11 +9,16 @@ import { RandomizationTypesKeys, RandomizationTypes } from '../../../../../../..
 
 export const RandomizationCard = ({
   randomization,
+  defaultValue,
   updateSettings,
   // inject
   intl,
 }) => {
-  const { summary, handleChange } = useRandomizationSettingStatus({ randomization, updateSettings });
+  const curretRandomization = randomization || defaultValue;
+  const { summary, handleChange } = useRandomizationSettingStatus({
+    randomization: curretRandomization,
+    updateSettings,
+  });
   return (
     <SettingsOption
       title={intl.formatMessage(messages.randomizationSettingTitle)}
@@ -27,7 +32,7 @@ export const RandomizationCard = ({
       <Form.Group>
         <Form.Control
           as="select"
-          value={randomization}
+          value={curretRandomization}
           onChange={handleChange}
         >
           {
@@ -48,6 +53,7 @@ export const RandomizationCard = ({
 };
 
 RandomizationCard.propTypes = {
+  defaultValue: PropTypes.string.isRequired,
   randomization: PropTypes.string.isRequired,
   updateSettings: PropTypes.func.isRequired,
   intl: intlShape.isRequired,

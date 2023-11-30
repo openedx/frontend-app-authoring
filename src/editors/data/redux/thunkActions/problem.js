@@ -32,6 +32,7 @@ export const getDataFromOlx = ({ rawOLX, rawSettings, defaultSettings }) => {
     olxParser = new OLXParser(rawOLX);
     parsedProblem = olxParser.getParsedOLXData();
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('The Problem Could Not Be Parsed from OLX. redirecting to Advanced editor.', error);
     return { problemType: ProblemTypeKeys.ADVANCED, rawOLX, settings: parseSettings(rawSettings, defaultSettings) };
   }
@@ -55,7 +56,7 @@ export const loadProblem = ({ rawOLX, rawSettings, defaultSettings }) => (dispat
 };
 
 export const fetchAdvancedSettings = ({ rawOLX, rawSettings }) => (dispatch) => {
-  const advancedProblemSettingKeys = ['max_attempts', 'showanswer', 'show_reset_button'];
+  const advancedProblemSettingKeys = ['max_attempts', 'showanswer', 'show_reset_button', 'rerandomize'];
   dispatch(requests.fetchAdvancedSettings({
     onSuccess: (response) => {
       const defaultSettings = {};
