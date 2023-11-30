@@ -30,6 +30,7 @@ const CardHeader = ({
   hasChanges,
   isExpanded,
   onClickPublish,
+  onClickConfigure,
   onClickMenuButton,
   onClickEdit,
   onExpand,
@@ -136,7 +137,7 @@ const CardHeader = ({
             >
               {intl.formatMessage(messages.menuPublish)}
             </Dropdown.Item>
-            <Dropdown.Item>{intl.formatMessage(messages.menuConfigure)}</Dropdown.Item>
+            <Dropdown.Item onClick={onClickConfigure}>{intl.formatMessage(messages.menuConfigure)}</Dropdown.Item>
             <Dropdown.Item onClick={onClickDuplicate}>{intl.formatMessage(messages.menuDuplicate)}</Dropdown.Item>
             <Dropdown.Item onClick={onClickDelete}>{intl.formatMessage(messages.menuDelete)}</Dropdown.Item>
           </Dropdown.Menu>
@@ -153,6 +154,7 @@ CardHeader.propTypes = {
   isExpanded: PropTypes.bool.isRequired,
   onExpand: PropTypes.func.isRequired,
   onClickPublish: PropTypes.func.isRequired,
+  onClickConfigure: PropTypes.func.isRequired,
   onClickMenuButton: PropTypes.func.isRequired,
   onClickEdit: PropTypes.func.isRequired,
   isFormOpen: PropTypes.bool.isRequired,

@@ -30,6 +30,7 @@ import SectionCard from './section-card/SectionCard';
 import HighlightsModal from './highlights-modal/HighlightsModal';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import PublishModal from './publish-modal/PublishModal';
+import ConfigureModal from './configure-modal/ConfigureModal';
 import DeleteModal from './delete-modal/DeleteModal';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
@@ -52,11 +53,14 @@ const CourseOutline = ({ courseId }) => {
     isDisabledReindexButton,
     isHighlightsModalOpen,
     isPublishModalOpen,
+    isConfigureModalOpen,
     isDeleteModalOpen,
     closeHighlightsModal,
     closePublishModal,
+    closeConfigureModal,
     closeDeleteModal,
     openPublishModal,
+    openConfigureModal,
     openDeleteModal,
     headerNavigationsActions,
     openEnableHighlightsModal,
@@ -66,6 +70,7 @@ const CourseOutline = ({ courseId }) => {
     handleOpenHighlightsModal,
     handleHighlightsFormSubmit,
     handlePublishSectionSubmit,
+    handleConfigureSectionSubmit,
     handleEditSectionSubmit,
     handleDeleteSectionSubmit,
     handleDuplicateSectionSubmit,
@@ -145,6 +150,7 @@ const CourseOutline = ({ courseId }) => {
                               savingStatus={savingStatus}
                               onOpenHighlightsModal={handleOpenHighlightsModal}
                               onOpenPublishModal={openPublishModal}
+                              onOpenConfigureModal={openConfigureModal}
                               onOpenDeleteModal={openDeleteModal}
                               onEditSectionSubmit={handleEditSectionSubmit}
                               onDuplicateSubmit={handleDuplicateSectionSubmit}
@@ -189,6 +195,11 @@ const CourseOutline = ({ courseId }) => {
           isOpen={isPublishModalOpen}
           onClose={closePublishModal}
           onPublishSubmit={handlePublishSectionSubmit}
+        />
+        <ConfigureModal
+          isOpen={isConfigureModalOpen}
+          onClose={closeConfigureModal}
+          onConfigureSubmit={handleConfigureSectionSubmit}
         />
         <DeleteModal
           isOpen={isDeleteModalOpen}

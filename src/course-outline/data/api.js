@@ -216,6 +216,25 @@ export async function publishCourseSection(sectionId) {
 }
 
 /**
+ * Configure course section
+ * @param {string} sectionId
+ * @returns {Promise<Object>}
+ */
+export async function configureCourseSection(sectionId, isVisibleToStaffOnly, startDatetime) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getUpdateCourseSectionApiUrl(sectionId), {
+      publish: 'republish',
+      metadata: {
+        // The backend expects metadata.visible_to_staff_only to either true or null
+        visible_to_staff_only: isVisibleToStaffOnly ? true : null,
+        start: startDatetime,
+      },
+    });
+
+  return data;
+}
+
+/**
  * Edit course section
  * @param {string} sectionId
  * @param {string} displayName
