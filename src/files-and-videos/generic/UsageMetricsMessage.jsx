@@ -1,6 +1,7 @@
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 import PropTypes from 'prop-types';
-import { Icon, Row, Spinner } from '@edx/paragon';
+import { Hyperlink, Icon, Row, Spinner } from '@edx/paragon';
 import { ErrorOutline } from '@edx/paragon/icons';
 import isEmpty from 'lodash/isEmpty';
 import { RequestStatus } from '../../data/constants';
@@ -19,11 +20,15 @@ const UsageMetricsMessage = ({
       <FormattedMessage {...messages.usageNotInUseMessage} />
     ) : (
       <ul className="p-0">
-        {usageLocations.map(location => (
-          <li key={`usage-location-${location}`} style={{ listStyle: 'none' }}>
-            {location}
+        {usageLocations.map(location => {
+          console.log(location);
+          return (
+          <li key={`usage-location-${location.displayLocation}`} style={{ listStyle: 'none' }}>
+            <Hyperlink destination={`${getConfig().STUDIO_BASE_URL}${location.url}`} target="_blank">
+              {location.displayLocation}
+            </Hyperlink>
           </li>
-        ))}
+        )})}
       </ul>
     );
   } else if (usagePathStatus === RequestStatus.FAILED) {
