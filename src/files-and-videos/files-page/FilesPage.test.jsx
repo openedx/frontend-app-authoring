@@ -339,7 +339,15 @@ describe('FilesAndUploads', () => {
         const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
         expect(assetMenuButton).toBeVisible();
 
-        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, { usage_locations: { mOckID1: ['subsection - unit / block'] } });
+        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`)
+          .reply(201, {
+            usage_locations: {
+              mOckID1: [{
+                display_location: 'subsection - unit / block',
+                url: 'base/unit_id#block_id',
+              }],
+            },
+          });
         await waitFor(() => {
           fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Info'));
