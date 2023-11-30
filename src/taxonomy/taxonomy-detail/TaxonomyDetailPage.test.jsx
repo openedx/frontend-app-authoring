@@ -2,9 +2,8 @@ import React from 'react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { fireEvent, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
-import { importTaxonomyTags } from '../import-tags';
 import { useTaxonomyDetailData } from './data/api';
 import initializeStore from '../../store';
 import TaxonomyDetailPage from './TaxonomyDetailPage';
@@ -13,9 +12,6 @@ let store;
 
 jest.mock('./data/api', () => ({
   useTaxonomyDetailData: jest.fn(),
-}));
-jest.mock('../import-tags', () => ({
-  importTaxonomyTags: jest.fn().mockResolvedValue({}),
 }));
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
@@ -80,57 +76,5 @@ describe('<TaxonomyDetailPage />', async () => {
     });
     const { getByRole } = render(<RootWrapper />);
     expect(getByRole('heading')).toHaveTextContent('Test taxonomy');
-  });
-
-  it('should open export modal on export menu click', () => {
-    useTaxonomyDetailData.mockReturnValue({
-      isSuccess: true,
-      isFetched: true,
-      isError: false,
-      data: {
-        id: 1,
-        name: 'Test taxonomy',
-        description: 'This is a description',
-      },
-    });
-
-    const { getByRole, getByText } = render(<RootWrapper />);
-
-    // Modal closed
-    expect(() => getByText('Select format to export')).toThrow();
-
-    // Click on export menu
-    fireEvent.click(getByRole('button'));
-    fireEvent.click(getByText('Export'));
-
-    // Modal opened
-    expect(getByText('Select format to export')).toBeInTheDocument();
-
-    // Click on cancel button
-    fireEvent.click(getByText('Cancel'));
-
-    // Modal closed
-    expect(() => getByText('Select format to export')).toThrow();
-  });
-
-  it('should call import tags when menu clicked', () => {
-    useTaxonomyDetailData.mockReturnValue({
-      isSuccess: true,
-      isFetched: true,
-      isError: false,
-      data: {
-        id: 1,
-        name: 'Test taxonomy',
-        description: 'This is a description',
-      },
-    });
-
-    const { getByRole, getByText } = render(<RootWrapper />);
-
-    // Click on import menu
-    fireEvent.click(getByRole('button'));
-    fireEvent.click(getByText('Re-import'));
-
-    expect(importTaxonomyTags).toHaveBeenCalled();
   });
 });

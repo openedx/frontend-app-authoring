@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+// ts-check
 import {
   Badge,
   Card,
@@ -10,10 +10,8 @@ import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { importTaxonomyTags } from '../import-tags';
+import { TaxonomyMenu } from '../taxonomy-menu';
 import messages from './messages';
-import TaxonomyCardMenu from './TaxonomyCardMenu';
-import ExportModal from '../export-modal';
 
 const orgsCountEnabled = (orgsCount) => orgsCount !== undefined && orgsCount !== 0;
 
@@ -72,77 +70,44 @@ const TaxonomyCard = ({ className, original }) => {
   } = original;
 
   const intl = useIntl();
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
-  const menuItemActions = {
-    import: () => importTaxonomyTags(id, intl).then(),
-    export: () => setIsExportModalOpen(true),
-  };
-
-  const onClickMenuItem = (menuName) => (
-    menuItemActions[menuName]?.()
-  );
-
-  const getHeaderActions = () => {
-    if (systemDefined) {
-      // We don't show the export menu, because the system-taxonomies
-      // can't be exported. The API returns and error.
-      // The entire menu has been hidden because currently only
-      // the export menu exists.
-      //
-      // TODO When adding more menus, change this logic to hide only the export menu.
-      return undefined;
-    }
-    return (
-      <TaxonomyCardMenu
-        id={id}
-        name={name}
-        onClickMenuItem={onClickMenuItem}
-      />
-    );
-  };
-
-  const renderExportModal = () => isExportModalOpen && (
-    <ExportModal
-      isOpen={isExportModalOpen}
-      onClose={() => setIsExportModalOpen(false)}
-      taxonomyId={id}
+  const getHeaderActions = () => (
+    <TaxonomyMenu
+      taxonomy={original}
+      iconMenu
     />
   );
 
   return (
-    <>
-      <Card
-        isClickable
-        as={Link}
-        to={`/taxonomy/${id}`}
-        className={classNames('taxonomy-card', className)}
-        data-testid={`taxonomy-card-${id}`}
+    <Card
+      isClickable
+      as={Link}
+      to={`/taxonomy/${id}`}
+      className={classNames('taxonomy-card', className)}
+      data-testid={`taxonomy-card-${id}`}
+    >
+      <Card.Header
+        title={name}
+        subtitle={(
+          <HeaderSubtitle
+            id={id}
+            showSystemBadge={systemDefined}
+            orgsCount={orgsCount}
+            intl={intl}
+          />
+        )}
+        actions={getHeaderActions()}
+      />
+      <Card.Body className={classNames('taxonomy-card-body', {
+        'taxonomy-card-body-overflow-m': !systemDefined && !orgsCountEnabled(orgsCount),
+        'taxonomy-card-body-overflow-sm': systemDefined || orgsCountEnabled(orgsCount),
+      })}
       >
-        <Card.Header
-          title={name}
-          subtitle={(
-            <HeaderSubtitle
-              id={id}
-              showSystemBadge={systemDefined}
-              orgsCount={orgsCount}
-              intl={intl}
-            />
-          )}
-          actions={getHeaderActions()}
-        />
-        <Card.Body className={classNames('taxonomy-card-body', {
-          'taxonomy-card-body-overflow-m': !systemDefined && !orgsCountEnabled(orgsCount),
-          'taxonomy-card-body-overflow-sm': systemDefined || orgsCountEnabled(orgsCount),
-        })}
-        >
-          <Card.Section>
-            {description}
-          </Card.Section>
-        </Card.Body>
-      </Card>
-      {renderExportModal()}
-    </>
+        <Card.Section>
+          {description}
+        </Card.Section>
+      </Card.Body>
+    </Card>
   );
 };
 

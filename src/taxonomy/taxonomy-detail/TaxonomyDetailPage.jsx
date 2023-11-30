@@ -1,5 +1,4 @@
 // ts-check
-import React, { useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Breadcrumb,
@@ -13,12 +12,10 @@ import ConnectionErrorAlert from '../../generic/ConnectionErrorAlert';
 import Loading from '../../generic/Loading';
 import getPageHeadTitle from '../../generic/utils';
 import SubHeader from '../../generic/sub-header/SubHeader';
-import { importTaxonomyTags } from '../import-tags';
 import taxonomyMessages from '../messages';
-import TaxonomyDetailMenu from './TaxonomyDetailMenu';
+import { TaxonomyMenu } from '../taxonomy-menu';
 import TaxonomyDetailSideCard from './TaxonomyDetailSideCard';
 import { TagListTable } from '../tag-list';
-import ExportModal from '../export-modal';
 import { useTaxonomyDetailDataResponse, useTaxonomyDetailDataStatus } from './data/apiHooks';
 
 const TaxonomyDetailPage = () => {
@@ -28,8 +25,6 @@ const TaxonomyDetailPage = () => {
 
   const taxonomy = useTaxonomyDetailDataResponse(taxonomyId);
   const { isError, isFetched } = useTaxonomyDetailDataStatus(taxonomyId);
-
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   if (!isFetched) {
     return (
@@ -43,37 +38,9 @@ const TaxonomyDetailPage = () => {
     );
   }
 
-  const renderModals = () => isExportModalOpen && (
-    <ExportModal
-      isOpen={isExportModalOpen}
-      onClose={() => setIsExportModalOpen(false)}
-      taxonomyId={taxonomy.id}
-      taxonomyName={taxonomy.name}
-    />
-  );
-
-  const menuItemActions = {
-    import: () => importTaxonomyTags(taxonomyId, intl).then(),
-    export: () => setIsExportModalOpen(true),
-  };
-
-  const onClickMenuItem = (menuName) => (
-    menuItemActions[menuName]?.()
-  );
-
   const getHeaderActions = () => (
-    <TaxonomyDetailMenu
-      id={taxonomy.id}
-      name={taxonomy.name}
-      disabled={
-        // We don't show the export menu, because the system-taxonomies
-        // can't be exported. The API returns and error.
-        // The entire menu has been disabled because currently only
-        // the export menu exists.
-        // ToDo: When adding more menus, change this logic to hide only the export menu.
-        taxonomy.systemDefined
-      }
-      onClickMenuItem={onClickMenuItem}
+    <TaxonomyMenu
+      taxonomy={taxonomy}
     />
   );
 
@@ -116,7 +83,6 @@ const TaxonomyDetailPage = () => {
           </Layout>
         </Container>
       </div>
-      {renderModals()}
     </>
   );
 };

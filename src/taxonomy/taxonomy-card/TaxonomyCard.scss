@@ -29,21 +29,4 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-
-  .taxonomy-menu-item:focus {
-    /**
-     * There is a bug in the menu that auto focus the first item.
-     * We convert the focus style to a normal style.
-     */
-    background-color: white !important;
-    font-weight: normal !important;
-  }
-
-  .taxonomy-menu-item:focus:hover {
-    /**
-     * Check the previous block about the focus.
-     * This enable a normal hover to focused items.
-     */
-    background-color: $light-500 !important;
-  }
 }
