@@ -75,7 +75,7 @@ export const ThumbnailWidget = ({
       >
         <FormattedMessage {...messages.fileSizeError} />
       </ErrorAlert>
-      {edxVideo ? null : (
+      {(allowThumbnailUpload && edxVideo) ? null : (
         <Alert variant="light">
           <FormattedMessage {...messages.unavailableMessage} />
         </Alert>
@@ -90,7 +90,7 @@ export const ThumbnailWidget = ({
             src={thumbnailSrc || thumbnail}
             alt={intl.formatMessage(messages.thumbnailAltText)}
           />
-          { (allowThumbnailUpload && edxVideo) ? (
+          {(allowThumbnailUpload && edxVideo) ? (
             <IconButtonWithTooltip
               tooltipPlacement="top"
               tooltipContent={intl.formatMessage(messages.deleteThumbnail)}
@@ -115,7 +115,7 @@ export const ThumbnailWidget = ({
             iconBefore={FileUpload}
             onClick={fileInput.click}
             variant="link"
-            disabled={!edxVideo}
+            disabled={!(allowThumbnailUpload && edxVideo)}
           >
             <FormattedMessage {...messages.uploadButtonLabel} />
           </Button>

@@ -24,7 +24,8 @@ const messages = defineMessages({
   },
   unavailableMessage: {
     id: 'authoring.videoeditor.thumbnail.unavailable.message',
-    defaultMessage: 'Select a video from your library to enable this feature',
+    defaultMessage:
+      'Select a video from your library to enable this feature (applies only to courses that run on the edx.org site).',
     description: 'Message for unavailable thumbnail widget',
   },
   uploadButtonLabel: {
