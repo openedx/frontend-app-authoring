@@ -41,3 +41,8 @@ export const DivisionSchemes = {
   NONE: 'none',
   COHORT: 'cohort',
 };
+
+export const VisibilityTypes = {
+  STAFF_ONLY: 'staff_only',
+  HIDE_AFTER_DUE: 'hide_after_due',
+};

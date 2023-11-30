@@ -20,6 +20,7 @@ import {
   getCourseOutlineIndex,
   getCourseSection,
   publishCourseSection,
+  configureCourseSection,
   restartIndexingOnCourse,
   updateCourseSectionHighlights,
 } from './api';
@@ -164,6 +165,26 @@ export function publishCourseSectionQuery(sectionId) {
 
     try {
       await publishCourseSection(sectionId).then(async (result) => {
+        if (result) {
+          await dispatch(fetchCourseSectionQuery(sectionId));
+          dispatch(hideProcessingNotification());
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+        }
+      });
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function configureCourseSectionQuery(sectionId, isVisibleToStaffOnly, startDatetime) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await configureCourseSection(sectionId, isVisibleToStaffOnly, startDatetime).then(async (result) => {
         if (result) {
           await dispatch(fetchCourseSectionQuery(sectionId));
           dispatch(hideProcessingNotification());

@@ -27,6 +27,7 @@ import {
   fetchCourseReindexQuery,
   publishCourseSectionQuery,
   updateCourseSectionHighlightsQuery,
+  configureCourseSectionQuery,
 } from './data/thunk';
 
 const useCourseOutline = ({ courseId }) => {
@@ -46,6 +47,7 @@ const useCourseOutline = ({ courseId }) => {
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [isHighlightsModalOpen, openHighlightsModal, closeHighlightsModal] = useToggle(false);
   const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
+  const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
 
   const handleNewSectionSubmit = () => {
@@ -96,6 +98,12 @@ const useCourseOutline = ({ courseId }) => {
     closePublishModal();
   };
 
+  const handleConfigureSectionSubmit = (isVisibleToStaffOnly, startDatetime) => {
+    dispatch(configureCourseSectionQuery(currentSection.id, isVisibleToStaffOnly, startDatetime));
+
+    closeConfigureModal();
+  };
+
   const handleEditSectionSubmit = (sectionId, displayName) => {
     dispatch(editCourseSectionQuery(sectionId, displayName));
   };
@@ -137,10 +145,14 @@ const useCourseOutline = ({ courseId }) => {
     isPublishModalOpen,
     openPublishModal,
     closePublishModal,
+    isConfigureModalOpen,
+    openConfigureModal,
+    closeConfigureModal,
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
     handleHighlightsFormSubmit,
     handlePublishSectionSubmit,
+    handleConfigureSectionSubmit,
     handleEditSectionSubmit,
     statusBarData,
     isEnableHighlightsModalOpen,

@@ -44,6 +44,7 @@ import { executeThunk } from '../utils';
 import CourseOutline from './CourseOutline';
 import messages from './messages';
 import headerMessages from './header-navigations/messages';
+import cardHeaderMessages from './card-header/messages';
 
 let axiosMock;
 let store;
@@ -322,6 +323,55 @@ describe('<CourseOutline />', () => {
 
     const firstSection = getAllByTestId('section-card')[0];
     expect(firstSection.querySelector('.section-card-header__badge-status')).toHaveTextContent('Published not live');
+  });
+
+  it('check configure section when configure query is successful', async () => {
+    cleanup();
+    const { getAllByTestId, getByText, getByPlaceholderText } = render(<RootWrapper />);
+    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    const newReleaseDate = '2025-08-10T10:00:00Z';
+    axiosMock
+      .onPost(getUpdateCourseSectionApiUrl(section.id), {
+        id: section.id,
+        data: null,
+        metadata: {
+          display_name: section.displayName,
+          start: newReleaseDate,
+          visible_to_staff_only: true,
+        },
+      })
+      .reply(200);
+
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
+
+    await executeThunk(fetchCourseSectionQuery(section.id), store.dispatch);
+
+    const firstSection = getAllByTestId('section-card')[0];
+
+    const sectionDropdownButton = firstSection.querySelector('#section-card-header__menu');
+    expect(sectionDropdownButton).toBeInTheDocument();
+    fireEvent.click(sectionDropdownButton);
+
+    const configureBtn = getByText(cardHeaderMessages.menuConfigure.defaultMessage);
+    fireEvent.click(configureBtn);
+
+    const datePicker = getByPlaceholderText('MM/DD/YYYY');
+    fireEvent.change(datePicker, { target: { value: '08/10/2025' } });
+
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, {
+        ...section,
+        start: newReleaseDate,
+      });
+
+    fireEvent.click(getByText('Save'));
+    fireEvent.click(sectionDropdownButton);
+    fireEvent.click(configureBtn);
+
+    expect(datePicker).toHaveValue('08/10/2025');
   });
 
   it('check update highlights when update highlights query is successfully', async () => {

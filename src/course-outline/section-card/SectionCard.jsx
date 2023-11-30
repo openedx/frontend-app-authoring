@@ -16,6 +16,7 @@ const SectionCard = ({
   children,
   onOpenHighlightsModal,
   onOpenPublishModal,
+  onOpenConfigureModal,
   onEditSectionSubmit,
   savingStatus,
   onOpenDeleteModal,
@@ -89,6 +90,7 @@ const SectionCard = ({
         onExpand={handleExpandContent}
         onClickMenuButton={handleClickMenuButton}
         onClickPublish={onOpenPublishModal}
+        onClickConfigure={onOpenConfigureModal}
         onClickEdit={openForm}
         onClickDelete={onOpenDeleteModal}
         isFormOpen={isFormOpen}
@@ -149,6 +151,7 @@ SectionCard.propTypes = {
   children: PropTypes.node,
   onOpenHighlightsModal: PropTypes.func.isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,
+  onOpenConfigureModal: PropTypes.func.isRequired,
   onEditSectionSubmit: PropTypes.func.isRequired,
   savingStatus: PropTypes.string.isRequired,
   onOpenDeleteModal: PropTypes.func.isRequired,
