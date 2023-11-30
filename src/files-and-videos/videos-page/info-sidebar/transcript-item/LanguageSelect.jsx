@@ -24,7 +24,7 @@ const LanguageSelect = ({
       >
         {currentSelection}
       </Dropdown.Toggle>
-      <Dropdown.Menu className="m-0">
+      <Dropdown.Menu className="m-0 position-fixed">
         <div style={{ height: '230px', overflowY: 'scroll' }}>
           {Object.entries(options).map(([valueKey, text]) => {
             if (valueKey === value) {
