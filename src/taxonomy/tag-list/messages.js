@@ -7,7 +7,7 @@ const messages = defineMessages({
   },
   tagListColumnValueHeader: {
     id: 'course-authoring.tag-list.column.value.header',
-    defaultMessage: 'Value',
+    defaultMessage: 'Tag name',
   },
   tagListColumnChildCountHeader: {
     id: 'course-authoring.tag-list.column.value.header',
