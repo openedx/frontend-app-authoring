@@ -73,16 +73,14 @@ const TagListTable = ({ taxonomyId }) => {
       columns={[
         {
           Header: intl.formatMessage(messages.tagListColumnValueHeader),
-          accessor: 'value',
+          Cell: ({ row }) => (
+            <>{`${row.original.value} (${row.original.childCount})`}</>
+          )
         },
         {
           id: 'expander',
           Header: DataTable.ExpandAll,
           Cell: OptionalExpandLink,
-        },
-        {
-          Header: intl.formatMessage(messages.tagListColumnChildCountHeader),
-          accessor: 'childCount',
         },
       ]}
     >
