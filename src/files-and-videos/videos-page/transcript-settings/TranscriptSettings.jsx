@@ -11,6 +11,7 @@ import {
   TransitionReplace,
 } from '@edx/paragon';
 import { ChevronLeft, ChevronRight, Close } from '@edx/paragon/icons';
+import AITranslationsComponent from '@edx/frontend-component-ai-translations';
 import OrderTranscriptForm from './OrderTranscriptForm';
 import messages from './messages';
 import {
@@ -31,9 +32,11 @@ const TranscriptSettings = ({
     activeTranscriptPreferences,
     transcriptCredentials,
     videoTranscriptSettings,
+    isAiTranslationsEnabled,
   } = pageSettings;
   const { transcriptionPlans } = videoTranscriptSettings || {};
   const [transcriptType, setTranscriptType] = useState(activeTranscriptPreferences?.provider);
+  const [isAiTranslations, setIsAiTranslations] = useState(false);
 
   const handleOrderTranscripts = (data, provider) => {
     const noCredentials = isEmpty(transcriptCredentials) || data.apiKey;
@@ -54,59 +57,73 @@ const TranscriptSettings = ({
       show={isTranscriptSettingsOpen}
       onClose={closeTranscriptSettings}
     >
-      <div style={{ width: '225px' }}>
-        <ActionRow>
+      <div>
+        {!isAiTranslations && (
+          <>
+            <ActionRow>
+              <TransitionReplace>
+                {transcriptType ? (
+                  <IconButton
+                    key="back-button"
+                    size="sm"
+                    iconAs={Icon}
+                    src={ChevronLeft}
+                    onClick={() => setTranscriptType(null)}
+                    alt="back button to main transcript settings view"
+                  />
+                ) : (
+                  <div key="title" className="h3">
+                    <FormattedMessage {...messages.transcriptSettingsTitle} />
+                  </div>
+                )}
+              </TransitionReplace>
+              <ActionRow.Spacer />
+              <IconButton size="sm" iconAs={Icon} src={Close} onClick={closeTranscriptSettings} alt="close settings" />
+            </ActionRow>
+            <TransitionReplace>
+              {transcriptType ? (
+                <div key="transcript-settings">
+                  <OrderTranscriptForm
+                    {...{
+                      setTranscriptType,
+                      transcriptType,
+                      activeTranscriptPreferences,
+                      transcriptCredentials,
+                      closeTranscriptSettings,
+                      handleOrderTranscripts,
+                      transcriptionPlans,
+                      errorMessages,
+                      transcriptStatus,
+                    }}
+                  />
+                </div>
+              ) : (
+                <div key="transcript-type-selection" className="mt-3">
+                  <Collapsible.Advanced
+                    onOpen={() => setTranscriptType('order')}
+                  >
+                    <Collapsible.Trigger
+                      className="row m-0 justify-content-between align-items-center"
+                    >
+                      <FormattedMessage {...messages.orderTranscriptsTitle} />
+                      <Icon src={ChevronRight} />
+                    </Collapsible.Trigger>
+                  </Collapsible.Advanced>
+                </div>
+              )}
+            </TransitionReplace>
+          </>
+        )}
+        {(!transcriptType && isAiTranslationsEnabled) && (
           <TransitionReplace>
-            {transcriptType ? (
-              <IconButton
-                key="back-button"
-                size="sm"
-                iconAs={Icon}
-                src={ChevronLeft}
-                onClick={() => setTranscriptType(null)}
-                alt="back button to main transcript settings view"
-              />
-            ) : (
-              <div key="title" className="h3">
-                <FormattedMessage {...messages.transcriptSettingsTitle} />
-              </div>
-            )}
+            <AITranslationsComponent
+              setIsAiTranslations={setIsAiTranslations}
+              closeTranscriptSettings={closeTranscriptSettings}
+              courseId={courseId}
+              key="ai-component"
+            />
           </TransitionReplace>
-          <ActionRow.Spacer />
-          <IconButton size="sm" iconAs={Icon} src={Close} onClick={closeTranscriptSettings} alt="close settings" />
-        </ActionRow>
-        <TransitionReplace>
-          {transcriptType ? (
-            <div key="transcript-settings">
-              <OrderTranscriptForm
-                {...{
-                  setTranscriptType,
-                  transcriptType,
-                  activeTranscriptPreferences,
-                  transcriptCredentials,
-                  closeTranscriptSettings,
-                  handleOrderTranscripts,
-                  transcriptionPlans,
-                  errorMessages,
-                  transcriptStatus,
-                }}
-              />
-            </div>
-          ) : (
-            <div key="transcript-type-selection" className="mt-3">
-              <Collapsible.Advanced
-                onOpen={() => setTranscriptType('order')}
-              >
-                <Collapsible.Trigger
-                  className="row m-0 justify-content-between align-items-center"
-                >
-                  <FormattedMessage {...messages.orderTranscriptsTitle} />
-                  <Icon src={ChevronRight} />
-                </Collapsible.Trigger>
-              </Collapsible.Advanced>
-            </div>
-          )}
-        </TransitionReplace>
+        )}
       </div>
     </Sheet>
   );
