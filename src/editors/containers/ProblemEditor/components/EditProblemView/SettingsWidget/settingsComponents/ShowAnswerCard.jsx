@@ -26,6 +26,8 @@ export const ShowAnswerCard = ({
     showAttempts,
   } = useAnswerSettings(showAnswer, updateSettings);
 
+  const currentShowAnswer = showAnswer.on || defaultValue;
+
   const showAnswerSection = (
     <>
       <div className="pb-2">
@@ -43,7 +45,7 @@ export const ShowAnswerCard = ({
       <Form.Group className="pb-0 mb-0">
         <Form.Control
           as="select"
-          value={showAnswer.on}
+          value={currentShowAnswer}
           onChange={handleShowAnswerChange}
         >
           {Object.values(ShowAnswerTypesKeys).map((answerType) => {
@@ -79,7 +81,7 @@ export const ShowAnswerCard = ({
   return (
     <SettingsOption
       title={intl.formatMessage(messages.showAnswerSettingsTitle)}
-      summary={intl.formatMessage(ShowAnswerTypes[showAnswer.on])}
+      summary={intl.formatMessage(ShowAnswerTypes[currentShowAnswer])}
     >
       {showAnswerSection}
     </SettingsOption>

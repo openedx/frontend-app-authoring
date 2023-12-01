@@ -10,6 +10,7 @@ import { selectors } from '../../../../../../data/redux';
 
 export const ResetCard = ({
   showResetButton,
+  defaultValue,
   updateSettings,
   // inject
   intl,
@@ -17,10 +18,11 @@ export const ResetCard = ({
   const isLibrary = useSelector(selectors.app.isLibrary);
   const { setResetTrue, setResetFalse } = resetCardHooks(updateSettings);
   const advancedSettingsLink = `${useSelector(selectors.app.studioEndpointUrl)}/settings/advanced/${useSelector(selectors.app.learningContextId)}#show_reset_button`;
+  const currentResetButton = showResetButton !== null ? showResetButton : defaultValue;
   return (
     <SettingsOption
       title={intl.formatMessage(messages.resetSettingsTitle)}
-      summary={showResetButton
+      summary={currentResetButton
         ? intl.formatMessage(messages.resetSettingsTrue) : intl.formatMessage(messages.resetSettingsFalse)}
       className="resetCard"
     >
@@ -37,10 +39,10 @@ export const ResetCard = ({
         </div>
       )}
       <ButtonGroup size="sm" className="resetSettingsButtons mb-2">
-        <Button variant={showResetButton ? 'outline-primary' : 'primary'} size="sm" onClick={setResetFalse}>
+        <Button variant={currentResetButton ? 'outline-primary' : 'primary'} size="sm" onClick={setResetFalse}>
           <FormattedMessage {...messages.resetSettingsFalse} />
         </Button>
-        <Button variant={showResetButton ? 'primary' : 'outline-primary'} size="sm" onClick={setResetTrue}>
+        <Button variant={currentResetButton ? 'primary' : 'outline-primary'} size="sm" onClick={setResetTrue}>
           <FormattedMessage {...messages.resetSettingsTrue} />
         </Button>
       </ButtonGroup>
@@ -50,6 +52,7 @@ export const ResetCard = ({
 
 ResetCard.propTypes = {
   showResetButton: PropTypes.bool.isRequired,
+  defaultValue: PropTypes.bool.isRequired,
   updateSettings: PropTypes.func.isRequired,
   // injected
   intl: intlShape.isRequired,
