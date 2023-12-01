@@ -95,6 +95,22 @@ describe('<TaxonomyDetailPage />', async () => {
     expect(getByRole('heading')).toHaveTextContent('Test taxonomy');
   });
 
+  it('should show system defined badge', async () => {
+    useTaxonomyDetailData.mockReturnValue({
+      isSuccess: true,
+      isFetched: true,
+      isError: false,
+      data: {
+        id: 1,
+        name: 'Test taxonomy',
+        description: 'This is a description',
+        systemDefined: true,
+      },
+    });
+    const { getByText } = render(<RootWrapper />);
+    expect(getByText('System-level')).toBeInTheDocument();
+  });
+
   it('should open export modal on export menu click', () => {
     useTaxonomyDetailData.mockReturnValue({
       isSuccess: true,

@@ -39,7 +39,7 @@ SubTagsExpanded.propTypes = {
 /**
  * An "Expand" toggle to show/hide subtags, but one which is hidden if the given tag row has no subtags.
  */
-const OptionalExpandLink = ({ row }) => (row.values.childCount > 0 ? <DataTable.ExpandRow row={row} /> : null);
+const OptionalExpandLink = ({ row }) => (row.original.childCount > 0 ? <DataTable.ExpandRow row={row} /> : null);
 OptionalExpandLink.propTypes = DataTable.ExpandRow.propTypes;
 
 /**
@@ -75,7 +75,9 @@ const TagListTable = ({ taxonomyId }) => {
       isExpandable
       // This is a temporary "bare bones" solution for brute-force loading all the child tags. In future we'll match
       // the Figma design and do something more sophisticated.
-      renderRowSubComponent={({ row }) => <SubTagsExpanded taxonomyId={taxonomyId} parentTagValue={row.values.value} />}
+      renderRowSubComponent={({ row }) => (
+        <SubTagsExpanded taxonomyId={taxonomyId} parentTagValue={row.original.value} />
+      )}
       columns={[
         {
           Header: intl.formatMessage(messages.tagListColumnValueHeader),
