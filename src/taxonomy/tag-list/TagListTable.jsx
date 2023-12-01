@@ -42,6 +42,12 @@ SubTagsExpanded.propTypes = {
 const OptionalExpandLink = ({ row }) => (row.values.childCount > 0 ? <DataTable.ExpandRow row={row} /> : null);
 OptionalExpandLink.propTypes = DataTable.ExpandRow.propTypes;
 
+/**
+ * Custom DataTable cell to join tag value with child count
+ */
+const TagValue = ({ row }) => (`${row.original.value} (${row.original.childCount})`);
+TagValue.propTypes = DataTable.TableCell.propTypes;
+
 const TagListTable = ({ taxonomyId }) => {
   const intl = useIntl();
   const [options, setOptions] = useState({
@@ -73,9 +79,7 @@ const TagListTable = ({ taxonomyId }) => {
       columns={[
         {
           Header: intl.formatMessage(messages.tagListColumnValueHeader),
-          Cell: ({ row }) => (
-            <>{`${row.original.value} (${row.original.childCount})`}</>
-          )
+          Cell: TagValue,
         },
         {
           id: 'expander',

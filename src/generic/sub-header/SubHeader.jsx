@@ -18,7 +18,7 @@ const SubHeader = ({
         <small className="sub-header-title-subtitle">{subtitle}</small>
         {title}
         {titleActions && (
-          <ActionRow className="ml-auto">
+          <ActionRow className="ml-auto sub-header-title-actions">
             {titleActions}
           </ActionRow>
         )}

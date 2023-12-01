@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Badge,
   Card,
-  OverlayTrigger,
-  Popover,
 } from '@edx/paragon';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -13,6 +10,7 @@ import messages from './messages';
 import TaxonomyCardMenu from './TaxonomyCardMenu';
 import ExportModal from '../export-modal';
 import DeleteDialog from '../delete-dialog';
+import SystemDefinedBadge from '../system-defined-badge';
 
 const orgsCountEnabled = (orgsCount) => orgsCount !== undefined && orgsCount !== 0;
 
@@ -20,30 +18,10 @@ const HeaderSubtitle = ({
   id, showSystemBadge, orgsCount,
 }) => {
   const intl = useIntl();
-  const getSystemToolTip = () => (
-    <Popover id={`system-defined-tooltip-${id}`}>
-      <Popover.Title as="h5">
-        {intl.formatMessage(messages.systemTaxonomyPopoverTitle)}
-      </Popover.Title>
-      <Popover.Content>
-        {intl.formatMessage(messages.systemTaxonomyPopoverBody)}
-      </Popover.Content>
-    </Popover>
-  );
 
   // Show system defined badge
   if (showSystemBadge) {
-    return (
-      <OverlayTrigger
-        key={`system-defined-overlay-${id}`}
-        placement="top"
-        overlay={getSystemToolTip()}
-      >
-        <Badge variant="light">
-          {intl.formatMessage(messages.systemDefinedBadge)}
-        </Badge>
-      </OverlayTrigger>
-    );
+    return <SystemDefinedBadge taxonomyId={id} />;
   }
 
   // Or show orgs count
