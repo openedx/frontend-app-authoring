@@ -296,3 +296,18 @@ export async function addNewCourseItem(parentLocator, category, displayName) {
 
   return data;
 }
+
+/**
+ * Set order for the list of the sections
+ * @param {string} courseId
+ * @param {Array<string>} children list of sections id's
+ * @returns {Promise<Object>}
+*/
+export async function setSectionOrderList(courseId, children) {
+  const { data } = await getAuthenticatedHttpClient()
+    .put(getEnableHighlightsEmailsApiUrl(courseId), {
+      children,
+    });
+
+  return data;
+}

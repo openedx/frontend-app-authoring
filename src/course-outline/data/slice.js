@@ -76,6 +76,12 @@ const slice = createSlice({
     setCurrentItem: (state, { payload }) => {
       state.currentItem = payload;
     },
+    reorderSectionList: (state, { payload }) => {
+      const sectionsList = [...state.sectionsList];
+      sectionsList.sort((a, b) => payload.indexOf(a.id) - payload.indexOf(b.id));
+
+      state.sectionsList = [...sectionsList];
+    },
     setCurrentSection: (state, { payload }) => {
       state.currentSection = payload;
     },
@@ -162,6 +168,7 @@ export const {
   deleteSubsection,
   deleteUnit,
   duplicateSection,
+  reorderSectionList,
 } = slice.actions;
 
 export const {
