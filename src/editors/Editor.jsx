@@ -31,9 +31,19 @@ export const Editor = ({
 
   const EditorComponent = supportedEditors[blockType];
   return (
-    <div className="d-flex flex-column">
+    <div
+      className="d-flex flex-column"
+      style={{
+        /* Positioned as a proper Paragon FullscreenModal should have been. */
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '100%',
+      }}
+    >
       <div
-        className="pgn__modal-fullscreen"
+        className="pgn__modal-fullscreen h-100"
         role="dialog"
         aria-label={blockType}
       >

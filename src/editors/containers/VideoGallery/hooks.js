@@ -137,10 +137,14 @@ export const useVideoListProps = ({
   };
 };
 
-export const useVideoUploadHandler = () => {
+export const useVideoUploadHandler = ({ replace }) => {
   const learningContextId = useSelector(selectors.app.learningContextId);
   const blockId = useSelector(selectors.app.blockId);
-  return () => navigateTo(`/course/${learningContextId}/editor/video_upload/${blockId}`);
+  const path = `/course/${learningContextId}/editor/video_upload/${blockId}`;
+  if (replace) {
+    return () => window.location.replace(path);
+  }
+  return () => navigateTo(path);
 };
 
 export const useCancelHandler = () => (
@@ -196,7 +200,7 @@ export const useVideoProps = ({ videos }) => {
     inputError,
     selectBtnProps,
   } = videoList;
-  const fileInput = { click: useVideoUploadHandler() };
+  const fileInput = { click: useVideoUploadHandler({ replace: false }) };
 
   return {
     galleryError,

@@ -31,8 +31,11 @@ export const useUploadVideo = async ({
   }));
 };
 
+export const useHistoryGoBack = () => (() => window.history.back());
+
 export default {
   postUploadRedirect,
   onVideoUpload,
   useUploadVideo,
+  useHistoryGoBack,
 };

@@ -2,7 +2,12 @@
 
 exports[`EditorContainer component render snapshot: initialized. enable save and pass to header 1`] = `
 <div
-  className="position-relative zindex-0"
+  className="d-flex flex-column position-relative zindex-0"
+  style={
+    Object {
+      "minHeight": "100%",
+    }
+  }
 >
   <BaseModal
     bodyStyle={null}
@@ -53,7 +58,7 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
     </div>
   </ModalDialog.Header>
   <ModalDialog.Body
-    className="pb-6"
+    className="pb-0 mb-6"
   >
     <h1>
       My test content
@@ -78,7 +83,12 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
 
 exports[`EditorContainer component render snapshot: not initialized. disable save and pass to header 1`] = `
 <div
-  className="position-relative zindex-0"
+  className="d-flex flex-column position-relative zindex-0"
+  style={
+    Object {
+      "minHeight": "100%",
+    }
+  }
 >
   <BaseModal
     bodyStyle={null}
@@ -129,7 +139,7 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
     </div>
   </ModalDialog.Header>
   <ModalDialog.Body
-    className="pb-6"
+    className="pb-0 mb-6"
   />
   <injectIntl(ShimmedIntlComponent)
     disableSave={true}

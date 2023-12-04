@@ -1,3 +1,5 @@
+@import "@edx/paragon/scss/core/core";
+
 .dropzone-middle {
   border: 2px dashed #ccc;
 
@@ -11,12 +13,6 @@
   width: 100%;
 }
 
-.url-submit-button {
-  position: absolute;
-  margin-left: 17rem;
-  font-size: 0.75rem;
-}
-
 .video-id-prompt {
 
   input::placeholder {
@@ -24,7 +20,6 @@
     // color: #5E35B1;
     font-weight: '500';
     word-wrap: 'break-word';
-    font-size: 0.875rem !important;
   }
 
   button {
@@ -32,21 +27,15 @@
     background-color: #FFFFFF;
   }
 
+  .btn-icon.url-submit-button {
+    &, &:active, &:hover {
+      background-color: transparent !important;
+      border: none !important;
+      color: $gray-500 !important;
+    }
+  }
+
   .prompt-button {
     background: rgba(239, 234, 247, 0.70);
   }
 }
-
-.video-upload-input-group{
-  .form-control {
-    font-size: 0.875rem !important;
-    width: 308px !important;
-    height: 44px !important;
-  }
-  
-  .pgn__icon.pgn__icon__lg {
-    width: 3.625rem !important;
-    height: 3.625rem !important;
-  }
-}
-

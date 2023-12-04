@@ -32,7 +32,7 @@ export const VideoPreviewWidget = ({
         <div className="d-flex flex-row">
           <Image
             thumbnail
-            className="mr-3 p-4"
+            className="mr-3 px-6 py-4.5"
             ref={imgRef}
             src={thumbnailImage}
             alt={intl.formatMessage(thumbnailMessages.thumbnailAltText)}

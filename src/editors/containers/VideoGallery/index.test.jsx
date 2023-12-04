@@ -80,7 +80,7 @@ describe('VideoGallery', () => {
     beforeAll(() => {
       oldLocation = window.location;
       delete window.location;
-      window.location = { assign: jest.fn() };
+      window.location = { replace: jest.fn() };
     });
     afterAll(() => {
       window.location = oldLocation;
@@ -118,10 +118,10 @@ describe('VideoGallery', () => {
       ));
     });
     it('navigates to video upload page when there are no videos', async () => {
-      expect(window.location.assign).not.toHaveBeenCalled();
+      expect(window.location.replace).not.toHaveBeenCalled();
       updateState({ videos: [] });
       await renderComponent();
-      expect(window.location.assign).toHaveBeenCalled();
+      expect(window.location.replace).toHaveBeenCalled();
     });
     it.each([
       [/newest/i, [2, 1, 3]],

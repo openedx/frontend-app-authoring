@@ -13,13 +13,12 @@ jest.unmock('@edx/paragon');
 jest.unmock('@edx/paragon/icons');
 
 describe('VideoUploadEditor', () => {
-  const onCloseMock = jest.fn();
   let store;
 
-  const renderComponent = async (storeParam, onCloseMockParam) => render(
+  const renderComponent = async (storeParam) => render(
     <AppProvider store={storeParam}>
       <IntlProvider locale="en">
-        <VideoUploadEditor onClose={onCloseMockParam} />
+        <VideoUploadEditor />
       </IntlProvider>,
     </AppProvider>,
   );
@@ -45,14 +44,20 @@ describe('VideoUploadEditor', () => {
   });
 
   it('renders as expected with default behavior', async () => {
-    expect(await renderComponent(store, onCloseMock)).toMatchSnapshot();
+    expect(await renderComponent(store)).toMatchSnapshot();
   });
 
-  it('calls onClose when close button is clicked', async () => {
-    const container = await renderComponent(store, onCloseMock);
+  it('calls window.history.back when close button is clicked', async () => {
+    const container = await renderComponent(store);
     const closeButton = container.getAllByRole('button', { name: /close/i });
+    const oldHistoryBack = window.history.back;
+    window.history.back = jest.fn();
+
     expect(closeButton).toHaveLength(1);
+    expect(window.history.back).not.toHaveBeenCalled();
     closeButton.forEach((button) => fireEvent.click(button));
-    expect(onCloseMock).toHaveBeenCalled();
+    expect(window.history.back).toHaveBeenCalled();
+
+    window.history.back = oldHistoryBack;
   });
 });

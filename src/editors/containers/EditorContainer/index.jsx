@@ -29,7 +29,8 @@ export const EditorContainer = ({
   const handleCancel = hooks.handleCancel({ onClose, returnFunction });
   return (
     <div
-      className="position-relative zindex-0"
+      className="d-flex flex-column position-relative zindex-0"
+      style={{ minHeight: '100%' }}
     >
       <BaseModal
         size="md"
@@ -64,7 +65,7 @@ export const EditorContainer = ({
           />
         </div>
       </ModalDialog.Header>
-      <ModalDialog.Body className="pb-6">
+      <ModalDialog.Body className="pb-0 mb-6">
         {isInitialized && children}
       </ModalDialog.Body>
       <EditorFooter

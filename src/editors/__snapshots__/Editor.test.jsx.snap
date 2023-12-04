@@ -3,10 +3,19 @@
 exports[`Editor render presents error message if no relevant editor found and ref ready 1`] = `
 <div
   className="d-flex flex-column"
+  style={
+    Object {
+      "height": "100%",
+      "left": 0,
+      "position": "fixed",
+      "right": 0,
+      "top": 0,
+    }
+  }
 >
   <div
     aria-label="fAkEBlock"
-    className="pgn__modal-fullscreen"
+    className="pgn__modal-fullscreen h-100"
     role="dialog"
   >
     <FormattedMessage
@@ -21,10 +30,19 @@ exports[`Editor render presents error message if no relevant editor found and re
 exports[`Editor render snapshot: renders correct editor given blockType (html -> TextEditor) 1`] = `
 <div
   className="d-flex flex-column"
+  style={
+    Object {
+      "height": "100%",
+      "left": 0,
+      "position": "fixed",
+      "right": 0,
+      "top": 0,
+    }
+  }
 >
   <div
     aria-label="html"
-    className="pgn__modal-fullscreen"
+    className="pgn__modal-fullscreen h-100"
     role="dialog"
   >
     <TextEditor

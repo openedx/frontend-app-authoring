@@ -19,7 +19,7 @@ export const VideoGallery = () => {
     (state) => selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadVideo }),
   );
   const videos = hooks.buildVideos({ rawVideos });
-  const handleVideoUpload = hooks.useVideoUploadHandler();
+  const handleVideoUpload = hooks.useVideoUploadHandler({ replace: true });
 
   useEffect(() => {
     // If no videos exists redirects to the video upload screen

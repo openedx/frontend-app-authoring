@@ -60,11 +60,11 @@ Object {
               class="d-flex flex-column"
             >
               <div
-                class="justify-content-center align-self-center rounded-circle p-5"
-                style="background-color: rgb(242, 240, 239);"
+                class="justify-content-center align-self-center rounded-circle bg-light-300 p-2.5"
               >
                 <span
-                  class="pgn__icon pgn__icon__lg text-muted"
+                  class="pgn__icon text-muted"
+                  style="height: 2rem; width: 2rem;"
                 >
                   <svg
                     aria-hidden="true"
@@ -84,33 +84,30 @@ Object {
                 </span>
               </div>
               <div
-                class="d-flex align-self-center justify-content-center flex-wrap flex-column pt-5"
+                class="d-flex align-self-center justify-content-center flex-wrap flex-column pt-3"
               >
-                <span
-                  class="small"
-                >
+                <span>
                   Drag and drop video here or click to upload
                 </span>
                 <span
-                  class="align-self-center"
-                  style="font-size: 0.8rem;"
+                  class="x-small align-self-center pt-2"
                 >
                   Upload MP4 or MOV files (5 GB max)
                 </span>
               </div>
               <div
-                class="x-small align-self-center justify-content-center mx-2 text-dark font-weight-normal"
+                class="small align-self-center justify-content-center mx-2 text-dark font-weight-normal pt-3"
               >
                 OR
               </div>
               <div
-                class="zindex-9 video-id-prompt p-4"
+                class="zindex-9 video-id-prompt py-3"
               >
                 <div
-                  class="video-upload-input-group input-group"
+                  class="input-group"
                 >
                   <div
-                    class="pgn__form-control-decorator-group"
+                    class="pgn__form-control-decorator-group has-appended-node has-trailing-element m-0"
                   >
                     <input
                       aria-describedby="basic-addon2"
@@ -119,39 +116,39 @@ Object {
                       placeholder="Paste your video ID or URL"
                       value=""
                     />
-                  </div>
-                  <div
-                    class="light-300 justify-content-center align-self-center bg-light rounded-circle p-0 x-small url-submit-button"
-                  >
-                    <button
-                      aria-label="Submit"
-                      class="btn-icon btn-icon-primary btn-icon-inline text-muted"
-                      type="button"
+                    <div
+                      class="pgn__form-control-decorator pgn__form-control-decorator-trailing"
                     >
-                      <span
-                        class="btn-icon__icon-container"
+                      <button
+                        aria-label="Submit"
+                        class="btn-icon btn-icon-primary btn-icon-inline url-submit-button"
+                        type="button"
                       >
                         <span
-                          class="pgn__icon btn-icon__icon"
+                          class="btn-icon__icon-container"
                         >
-                          <svg
-                            aria-hidden="true"
-                            fill="none"
-                            focusable="false"
-                            height="24"
-                            role="img"
-                            viewBox="0 0 24 24"
-                            width="24"
-                            xmlns="http://www.w3.org/2000/svg"
+                          <span
+                            class="pgn__icon btn-icon__icon"
                           >
-                            <path
-                              d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8Z"
-                              fill="currentColor"
-                            />
-                          </svg>
+                            <svg
+                              aria-hidden="true"
+                              fill="none"
+                              focusable="false"
+                              height="24"
+                              role="img"
+                              viewBox="0 0 24 24"
+                              width="24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8Z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          </span>
                         </span>
-                      </span>
-                    </button>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -218,11 +215,11 @@ Object {
             class="d-flex flex-column"
           >
             <div
-              class="justify-content-center align-self-center rounded-circle p-5"
-              style="background-color: rgb(242, 240, 239);"
+              class="justify-content-center align-self-center rounded-circle bg-light-300 p-2.5"
             >
               <span
-                class="pgn__icon pgn__icon__lg text-muted"
+                class="pgn__icon text-muted"
+                style="height: 2rem; width: 2rem;"
               >
                 <svg
                   aria-hidden="true"
@@ -242,33 +239,30 @@ Object {
               </span>
             </div>
             <div
-              class="d-flex align-self-center justify-content-center flex-wrap flex-column pt-5"
+              class="d-flex align-self-center justify-content-center flex-wrap flex-column pt-3"
             >
-              <span
-                class="small"
-              >
+              <span>
                 Drag and drop video here or click to upload
               </span>
               <span
-                class="align-self-center"
-                style="font-size: 0.8rem;"
+                class="x-small align-self-center pt-2"
               >
                 Upload MP4 or MOV files (5 GB max)
               </span>
             </div>
             <div
-              class="x-small align-self-center justify-content-center mx-2 text-dark font-weight-normal"
+              class="small align-self-center justify-content-center mx-2 text-dark font-weight-normal pt-3"
             >
               OR
             </div>
             <div
-              class="zindex-9 video-id-prompt p-4"
+              class="zindex-9 video-id-prompt py-3"
             >
               <div
-                class="video-upload-input-group input-group"
+                class="input-group"
               >
                 <div
-                  class="pgn__form-control-decorator-group"
+                  class="pgn__form-control-decorator-group has-appended-node has-trailing-element m-0"
                 >
                   <input
                     aria-describedby="basic-addon2"
@@ -277,39 +271,39 @@ Object {
                     placeholder="Paste your video ID or URL"
                     value=""
                   />
-                </div>
-                <div
-                  class="light-300 justify-content-center align-self-center bg-light rounded-circle p-0 x-small url-submit-button"
-                >
-                  <button
-                    aria-label="Submit"
-                    class="btn-icon btn-icon-primary btn-icon-inline text-muted"
-                    type="button"
+                  <div
+                    class="pgn__form-control-decorator pgn__form-control-decorator-trailing"
                   >
-                    <span
-                      class="btn-icon__icon-container"
+                    <button
+                      aria-label="Submit"
+                      class="btn-icon btn-icon-primary btn-icon-inline url-submit-button"
+                      type="button"
                     >
                       <span
-                        class="pgn__icon btn-icon__icon"
+                        class="btn-icon__icon-container"
                       >
-                        <svg
-                          aria-hidden="true"
-                          fill="none"
-                          focusable="false"
-                          height="24"
-                          role="img"
-                          viewBox="0 0 24 24"
-                          width="24"
-                          xmlns="http://www.w3.org/2000/svg"
+                        <span
+                          class="pgn__icon btn-icon__icon"
                         >
-                          <path
-                            d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8Z"
-                            fill="currentColor"
-                          />
-                        </svg>
+                          <svg
+                            aria-hidden="true"
+                            fill="none"
+                            focusable="false"
+                            height="24"
+                            role="img"
+                            viewBox="0 0 24 24"
+                            width="24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8Z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </span>
                       </span>
-                    </span>
-                  </button>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
