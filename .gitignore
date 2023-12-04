@@ -20,3 +20,24 @@ temp/babel-plugin-react-intl
 /temp
 /.vscode
 /module.config.js
+
+### Library-authoring ###
+/src/library-authoring/.DS_Store
+/src/library-authoring/.eslintcache
+/src/library-authoring/.idea
+/src/library-authoring/node_modules
+/src/library-authoring/npm-debug.log
+/src/library-authoring/coverage
+
+/src/library-authoring/dist/
+/src/library-authoring/src/i18n/transifex_input.json
+/src/library-authoring/temp/babel-plugin-react-intl
+
+### pyenv ###
+/src/library-authoring/.python-version
+
+### Emacs ###
+/src/library-authoring/*~
+/src/library-authoring//temp
+/src/library-authoring/.vscode
+/src/library-authoring/module.config.js

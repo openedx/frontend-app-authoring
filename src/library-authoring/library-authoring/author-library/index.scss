@@ -1,0 +1,36 @@
+.library-authoring-block-card-header {
+    .pgn__card-header-actions {
+        margin-top: 0.3rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .pgn__card-header-content {
+        margin-top: 20px !important;
+    }
+}
+
+.library-authoring-sidebar {
+    font-size: 90%;
+    h3 {
+      font-size: 100%;
+      font-weight: bold;
+    }
+}
+
+.library-blocks-pagination {
+    ul.pagination {
+        justify-content: center;
+    }
+}
+
+.minimal-pagination {
+    ul.pagination {
+        margin: 0;
+    }
+}
+
+.library-authoring-block-add-new {
+    h2 {
+        font-size: 120%;
+    }
+}
