@@ -36,6 +36,7 @@ import {
   publishCourseItemQuery,
   updateCourseSectionHighlightsQuery,
   configureCourseSectionQuery,
+  setSectionOrderListQuery,
 } from './data/thunk';
 
 const useCourseOutline = ({ courseId }) => {
@@ -152,6 +153,10 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(duplicateSubsectionQuery(currentSubsection.id, currentSection.id));
   };
 
+  const handleDragNDrop = (newListId, restoreCallback) => {
+    dispatch(setSectionOrderListQuery(courseId, newListId, restoreCallback));
+  };
+
   useEffect(() => {
     dispatch(fetchCourseOutlineIndexQuery(courseId));
     dispatch(fetchCourseBestPracticesQuery({ courseId }));
@@ -207,6 +212,7 @@ const useCourseOutline = ({ courseId }) => {
     handleDuplicateSubsectionSubmit,
     handleNewSectionSubmit,
     handleNewSubsectionSubmit,
+    handleDragNDrop,
   };
 };
 

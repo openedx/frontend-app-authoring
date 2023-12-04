@@ -1,4 +1,9 @@
-import { React, useEffect, useRef } from 'react';
+import {
+  React, useState, useCallback, useEffect, useRef,
+} from 'react';
+import update from 'immutability-helper';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -80,16 +85,47 @@ const CourseOutline = ({ courseId }) => {
     handleDuplicateSubsectionSubmit,
     handleNewSectionSubmit,
     handleNewSubsectionSubmit,
+    handleDragNDrop,
   } = useCourseOutline({ courseId });
 
-  useEffect(() => {
-    scrollToElement(listRef);
-  }, [sectionsList]);
+  document.title = getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle));
+  const [sections, setSections] = useState(sectionsList);
+
+  const initialSections = [...sectionsList];
 
   const {
     isShow: isShowProcessingNotification,
     title: processingNotificationTitle,
   } = useSelector(getProcessingNotification);
+
+  const moveSection = useCallback((dragIndex, hoverIndex) => {
+    setSections((prevSections) => {
+      const newList = update(prevSections, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, prevSections[dragIndex]],
+        ],
+      });
+      return newList;
+    });
+  }, []);
+
+  const finalizeSectionOrder = () => {
+    handleDragNDrop(sections.map((section) => section.id), () => {
+      setSections(() => initialSections);
+    });
+  };
+
+  useEffect(() => {
+    if (sectionsList) {
+      setSections((prevSections) => {
+        if (prevSections.length < sectionsList.length) {
+          scrollToElement(listRef);
+        }
+        return sectionsList;
+      });
+    }
+  }, [sectionsList]);
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -150,38 +186,45 @@ const CourseOutline = ({ courseId }) => {
                       openEnableHighlightsModal={openEnableHighlightsModal}
                     />
                     <div className="pt-4">
-                      {sectionsList.length ? (
+                      {sections.length ? (
                         <>
-                          {sectionsList.map((section) => (
-                            <SectionCard
-                              key={section.id}
-                              section={section}
-                              savingStatus={savingStatus}
-                              onOpenHighlightsModal={handleOpenHighlightsModal}
-                              onOpenPublishModal={openPublishModal}
-                              onOpenConfigureModal={openConfigureModal}
-                              onOpenDeleteModal={openDeleteModal}
-                              onEditSectionSubmit={handleEditSubmit}
-                              onDuplicateSubmit={handleDuplicateSectionSubmit}
-                              isSectionsExpanded={isSectionsExpanded}
-                              onNewSubsectionSubmit={handleNewSubsectionSubmit}
-                              ref={listRef}
-                            >
-                              {section.childInfo.children.map((subsection) => (
-                                <SubsectionCard
-                                  key={subsection.id}
-                                  section={section}
-                                  subsection={subsection}
-                                  savingStatus={savingStatus}
-                                  onOpenPublishModal={openPublishModal}
-                                  onOpenDeleteModal={openDeleteModal}
-                                  onEditSubmit={handleEditSubmit}
-                                  onDuplicateSubmit={handleDuplicateSubsectionSubmit}
-                                  ref={listRef}
-                                />
-                              ))}
-                            </SectionCard>
-                          ))}
+                          <DndProvider
+                            backend={HTML5Backend}
+                          >
+                            {sections.map((section, index) => (
+                              <SectionCard
+                                key={section.id}
+                                index={index}
+                                section={section}
+                                savingStatus={savingStatus}
+                                onOpenHighlightsModal={handleOpenHighlightsModal}
+                                onOpenPublishModal={openPublishModal}
+                                onOpenConfigureModal={openConfigureModal}
+                                onOpenDeleteModal={openDeleteModal}
+                                onEditSectionSubmit={handleEditSubmit}
+                                onDuplicateSubmit={handleDuplicateSectionSubmit}
+                                isSectionsExpanded={isSectionsExpanded}
+                                onNewSubsectionSubmit={handleNewSubsectionSubmit}
+                                moveSection={moveSection}
+                                finalizeSectionOrder={finalizeSectionOrder}
+                                ref={listRef}
+                              >
+                                {section.childInfo.children.map((subsection) => (
+                                  <SubsectionCard
+                                    key={subsection.id}
+                                    section={section}
+                                    subsection={subsection}
+                                    savingStatus={savingStatus}
+                                    onOpenPublishModal={openPublishModal}
+                                    onOpenDeleteModal={openDeleteModal}
+                                    onEditSubmit={handleEditSubmit}
+                                    onDuplicateSubmit={handleDuplicateSubsectionSubmit}
+                                    ref={listRef}
+                                  />
+                                ))}
+                              </SectionCard>
+                            ))}
+                          </DndProvider>
                           <Button
                             data-testid="new-section-button"
                             className="mt-4"

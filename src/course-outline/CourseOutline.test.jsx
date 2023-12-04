@@ -34,6 +34,7 @@ import {
   fetchCourseSectionQuery,
   publishCourseItemQuery,
   updateCourseSectionHighlightsQuery,
+  setSectionOrderListQuery,
 } from './data/thunk';
 import initializeStore from '../store';
 import {
@@ -487,5 +488,48 @@ describe('<CourseOutline />', () => {
     await executeThunk(fetchCourseSectionQuery(section.id), store.dispatch);
 
     expect(getByRole('button', { name: '5 Section highlights' })).toBeInTheDocument();
+  });
+
+  it('check section order list when set section order query is successful', async () => {
+    const { getAllByTestId } = render(<RootWrapper />);
+    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    let { children } = courseOutlineIndexMock.courseStructure.childInfo;
+    children = children.splice(2, 0, children.splice(0, 1)[0]);
+
+    axiosMock
+      .onPut(getEnableHighlightsEmailsApiUrl(courseBlockId), children)
+      .reply(200);
+
+    await executeThunk(setSectionOrderListQuery(courseBlockId, children, () => {}), store.dispatch);
+
+    await waitFor(() => {
+      expect(getAllByTestId('section-card')).toHaveLength(4);
+      const newSections = getAllByTestId('section-card');
+      for (let i; i < children.length; i++) {
+        expect(children[i].id === newSections[i].id);
+      }
+    });
+  });
+
+  it('check section order list when set section order query is unsuccessful', async () => {
+    const { getAllByTestId } = render(<RootWrapper />);
+    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    const { children } = courseOutlineIndexMock.courseStructure.childInfo;
+    const newChildren = children.splice(2, 0, children.splice(0, 1)[0]);
+
+    axiosMock
+      .onPut(getEnableHighlightsEmailsApiUrl(courseBlockId), undefined)
+      .reply(500);
+
+    await executeThunk(setSectionOrderListQuery(courseBlockId, undefined, () => children), store.dispatch);
+
+    await waitFor(() => {
+      expect(getAllByTestId('section-card')).toHaveLength(4);
+      const newSections = getAllByTestId('section-card');
+      for (let i; i < children.length; i++) {
+        expect(children[i].id === newSections[i].id);
+        expect(newChildren[i].id !== newSections[i].id);
+      }
+    });
   });
 });
