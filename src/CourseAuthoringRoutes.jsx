@@ -4,6 +4,7 @@ import {
 } from 'react-router-dom';
 import { PageWrap } from '@edx/frontend-platform/react';
 import Placeholder from '@edx/frontend-lib-content-components';
+import { libraryAuthoringRoutes } from './library-authoring';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';
 import EditorContainer from './editors/EditorContainer';
@@ -105,6 +106,7 @@ const CourseAuthoringRoutes = () => {
           element={<PageWrap><CourseExportPage courseId={courseId} /></PageWrap>}
         />
       </Routes>
+      {libraryAuthoringRoutes}
     </CourseAuthoringPage>
   );
 };
