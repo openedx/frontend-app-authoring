@@ -10,7 +10,7 @@ import messages from './messages';
 
 const SystemDefinedBadge = ({ taxonomyId }) => {
   const intl = useIntl();
-  const getSystemToolTip = () => (
+  const getToolTip = () => (
     <Popover id={`system-defined-tooltip-${taxonomyId}`} className="system-defined-tooltip">
       <Popover.Title as="h5">
         {intl.formatMessage(messages.systemTaxonomyPopoverTitle)}
@@ -25,7 +25,7 @@ const SystemDefinedBadge = ({ taxonomyId }) => {
     <OverlayTrigger
       key={`system-defined-overlay-${taxonomyId}`}
       placement="top"
-      overlay={getSystemToolTip()}
+      overlay={getToolTip()}
     >
       <Badge variant="light" className="system-defined-badge">
         {intl.formatMessage(messages.systemDefinedBadge)}

@@ -23,7 +23,7 @@
     -webkit-line-clamp: 6;
   }
 
-  .pgn__card-header-title-md {
+  .taxonomy-card-title {
     /* Set overflow to title of the card */
     overflow: hidden;
     text-overflow: ellipsis;
@@ -48,6 +48,6 @@
   }
 }
 
-.system-defined-tooltip {
+.taxonomy-card-title-tooltip {
   width: 300px;
 }

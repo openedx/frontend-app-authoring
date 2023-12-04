@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Card,
+  OverlayTrigger,
+  Popover,
 } from '@edx/paragon';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
@@ -41,6 +43,47 @@ HeaderSubtitle.propTypes = {
   id: PropTypes.number.isRequired,
   showSystemBadge: PropTypes.bool.isRequired,
   orgsCount: PropTypes.number.isRequired,
+};
+
+const HeaderTitle = ({ taxonomyId, title }) => {
+  const containerRef = useRef(null);
+  const textRef = useRef(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+
+  useEffect(() => {
+    const containerWidth = containerRef.current.clientWidth;
+    const textWidth = textRef.current.offsetWidth;
+    setIsTruncated(textWidth > containerWidth);
+  }, [title]);
+
+  const getToolTip = () => (
+    <Popover
+      id={`taxonomy-card-title-tooltip-${taxonomyId}`}
+      className="taxonomy-card-title-tooltip"
+    >
+      <Popover.Content>
+        {title}
+      </Popover.Content>
+    </Popover>
+  );
+
+  return (
+    <OverlayTrigger
+      key={`taxonomy-card-title-overlay-${taxonomyId}`}
+      placement="top"
+      overlay={getToolTip()}
+      show={!isTruncated ? false : undefined}
+    >
+      <div ref={containerRef} className="taxonomy-card-title">
+        <span ref={textRef}>{title}</span>
+      </div>
+    </OverlayTrigger>
+  );
+};
+
+HeaderTitle.propTypes = {
+  taxonomyId: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 const TaxonomyCard = ({ className, original, onDeleteTaxonomy }) => {
@@ -119,7 +162,7 @@ const TaxonomyCard = ({ className, original, onDeleteTaxonomy }) => {
         data-testid={`taxonomy-card-${id}`}
       >
         <Card.Header
-          title={name}
+          title={<HeaderTitle taxonomyId={id} title={name} />}
           subtitle={(
             <HeaderSubtitle
               id={id}
