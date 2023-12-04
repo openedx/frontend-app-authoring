@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Image } from '@edx/paragon';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../data/redux';
 import hooks from './hooks';
@@ -6,6 +7,7 @@ import SelectionModal from '../../sharedComponents/SelectionModal';
 import { acceptedImgKeys } from './utils';
 import messages from './messages';
 import { RequestKeys } from '../../data/constants/requests';
+import videoThumbnail from '../../data/images/videoThumbnail.svg';
 
 export const VideoGallery = () => {
   const rawVideos = useSelector(selectors.app.videos);
@@ -45,6 +47,14 @@ export const VideoGallery = () => {
     uploadError: messages.uploadVideoError,
   };
 
+  const thumbnailFallback = (
+    <Image
+      thumbnail
+      className="px-6 py-4.5 h-100"
+      src={videoThumbnail}
+    />
+  );
+
   return (
     <SelectionModal
       {...{
@@ -55,7 +65,10 @@ export const VideoGallery = () => {
         galleryError,
         inputError,
         fileInput,
-        galleryProps,
+        galleryProps: {
+          ...galleryProps,
+          thumbnailFallback,
+        },
         searchSortProps,
         selectBtnProps,
         acceptedFiles: acceptedImgKeys,

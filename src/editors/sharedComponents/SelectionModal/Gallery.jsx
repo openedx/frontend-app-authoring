@@ -23,6 +23,7 @@ export const Gallery = ({
   showIdsOnCards,
   height,
   isLoaded,
+  thumbnailFallback,
 }) => {
   const intl = useIntl();
   if (!isLoaded) {
@@ -66,7 +67,14 @@ export const Gallery = ({
           type="radio"
           value={highlighted}
         >
-          { displayList.map(asset => <GalleryCard key={asset.id} asset={asset} showId={showIdsOnCards} />) }
+          { displayList.map(asset => (
+            <GalleryCard
+              key={asset.id}
+              asset={asset}
+              showId={showIdsOnCards}
+              thumbnailFallback={thumbnailFallback}
+            />
+          )) }
         </SelectableBox.Set>
       </div>
     </Scrollable>
@@ -78,6 +86,7 @@ Gallery.defaultProps = {
   showIdsOnCards: false,
   height: '375px',
   show: true,
+  thumbnailFallback: undefined,
 };
 Gallery.propTypes = {
   show: PropTypes.bool,
@@ -90,6 +99,7 @@ Gallery.propTypes = {
   emptyGalleryLabel: PropTypes.shape({}).isRequired,
   showIdsOnCards: PropTypes.bool,
   height: PropTypes.string,
+  thumbnailFallback: PropTypes.element,
 };
 
 export default Gallery;

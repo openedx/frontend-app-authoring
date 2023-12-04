@@ -14,67 +14,81 @@ import LanguageNamesWidget from '../../containers/VideoEditor/components/VideoSe
 
 export const GalleryCard = ({
   asset,
-}) => (
-  <SelectableBox
-    className="card bg-white shadow-none border-0 py-0"
-    key={asset.externalUrl}
-    type="radio"
-    value={asset.id}
-  >
-    <div className="card-div d-flex flex-row flex-nowrap align-items-center">
-      <div
-        className="position-relative"
-        style={{
-          width: '200px',
-          height: '100px',
-        }}
-      >
-        <Image
-          style={{ border: 'none', width: '200px', height: '100px' }}
-          src={asset.externalUrl}
-        />
-        { asset.status && asset.statusBadgeVariant && (
-          <Badge variant={asset.statusBadgeVariant} style={{ position: 'absolute', left: '6px', top: '6px' }}>
-            {asset.status}
-          </Badge>
-        )}
-        { asset.duration >= 0 && (
-          <Badge
-            variant="dark"
-            style={{
-              position: 'absolute',
-              right: '6px',
-              bottom: '6px',
-              backgroundColor: 'black',
-            }}
-          >
-            {formatDuration(asset.duration)}
-          </Badge>
-        )}
-      </div>
-      <div className="card-text px-3 py-2" style={{ marginTop: '10px' }}>
-        <h3 className="text-primary-500">{asset.displayName}</h3>
-        { asset.transcripts && (
-          <div style={{ margin: '0 0 5px 0' }}>
-            <LanguageNamesWidget
-              transcripts={asset.transcripts}
+  thumbnailFallback,
+}) => {
+  const [thumbnailError, setThumbnailError] = React.useState(false);
+  return (
+    <SelectableBox
+      className="card bg-white shadow-none border-0 py-0"
+      key={asset.externalUrl}
+      type="radio"
+      value={asset.id}
+    >
+      <div className="card-div d-flex flex-row flex-nowrap align-items-center">
+        <div
+          className="position-relative"
+          style={{
+            width: '200px',
+            height: '100px',
+          }}
+        >
+          {(thumbnailError && thumbnailFallback) ? (
+            <div style={{ width: '200px', height: '100px' }}>
+              { thumbnailFallback }
+            </div>
+          ) : (
+            <Image
+              style={{ border: 'none', width: '200px', height: '100px' }}
+              src={asset.externalUrl}
+              onError={thumbnailFallback && (() => setThumbnailError(true))}
             />
-          </div>
-        )}
-        <p className="text-gray-500" style={{ fontSize: '11px' }}>
-          <FormattedMessage
-            {...messages.addedDate}
-            values={{
-              date: <FormattedDate value={asset.dateAdded} />,
-              time: <FormattedTime value={asset.dateAdded} />,
-            }}
-          />
-        </p>
+          )}
+          { asset.status && asset.statusBadgeVariant && (
+            <Badge variant={asset.statusBadgeVariant} style={{ position: 'absolute', left: '6px', top: '6px' }}>
+              {asset.status}
+            </Badge>
+          )}
+          { asset.duration >= 0 && (
+            <Badge
+              variant="dark"
+              style={{
+                position: 'absolute',
+                right: '6px',
+                bottom: '6px',
+                backgroundColor: 'black',
+              }}
+            >
+              {formatDuration(asset.duration)}
+            </Badge>
+          )}
+        </div>
+        <div className="card-text px-3 py-2" style={{ marginTop: '10px' }}>
+          <h3 className="text-primary-500">{asset.displayName}</h3>
+          { asset.transcripts && (
+            <div style={{ margin: '0 0 5px 0' }}>
+              <LanguageNamesWidget
+                transcripts={asset.transcripts}
+              />
+            </div>
+          )}
+          <p className="text-gray-500" style={{ fontSize: '11px' }}>
+            <FormattedMessage
+              {...messages.addedDate}
+              values={{
+                date: <FormattedDate value={asset.dateAdded} />,
+                time: <FormattedTime value={asset.dateAdded} />,
+              }}
+            />
+          </p>
+        </div>
       </div>
-    </div>
-  </SelectableBox>
-);
+    </SelectableBox>
+  );
+};
 
+GalleryCard.defaultProps = {
+  thumbnailFallback: undefined,
+};
 GalleryCard.propTypes = {
   asset: PropTypes.shape({
     contentType: PropTypes.string,
@@ -91,6 +105,7 @@ GalleryCard.propTypes = {
     statusBadgeVariant: PropTypes.string,
     transcripts: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
+  thumbnailFallback: PropTypes.element,
 };
 
 export default GalleryCard;
