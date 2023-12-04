@@ -9,6 +9,7 @@ import {
 } from '@edx/paragon';
 import { MoreVert } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import ExportModal from '../export-modal';
 import { importTaxonomyTags } from '../import-tags';
@@ -19,38 +20,29 @@ const TaxonomyMenu = ({
 }) => {
   const intl = useIntl();
 
+  const [isExportModalOpen, exportModalOpen, exportModalClose] = useToggle(false);
+
   const getTaxonomyMenuItems = () => {
-    const { systemDefined, allowFreeText } = taxonomy;
-    const menuItems = ['import', 'export'];
-    if (systemDefined) {
-      // System defined taxonomies cannot be imported
-      return menuItems.filter((item) => !['import'].includes(item));
-    }
-    if (allowFreeText) {
-      // Free text taxonomies cannot be imported
-      return menuItems.filter((item) => !['import'].includes(item));
-    }
+    let menuItems = {
+      import: {
+        title: intl.formatMessage(messages.importMenu),
+        action: () => importTaxonomyTags(taxonomy.id, intl),
+        // Hide import menu item if taxonomy is system defined or allows free text
+        hide: taxonomy.systemDefined || taxonomy.allowFreeText,
+      },
+      export: {
+        title: intl.formatMessage(messages.exportMenu),
+        action: exportModalOpen,
+      },
+    };
+
+    // Remove hidden menu items
+    menuItems = _.pickBy(menuItems, (value) => !value.hide);
+
     return menuItems;
   };
 
   const menuItems = getTaxonomyMenuItems();
-
-  const [isExportModalOpen, exportModalOpen, exportModalClose] = useToggle(false);
-
-  const menuItemActions = {
-    import: () => importTaxonomyTags(taxonomy.id, intl),
-    export: exportModalOpen,
-  };
-
-  const menuItemMessages = {
-    import: messages.importMenu,
-    export: messages.exportMenu,
-  };
-
-  const onClickMenuItem = (e, menuName) => {
-    e.preventDefault();
-    menuItemActions[menuName]?.();
-  };
 
   const renderModals = () => isExportModalOpen && (
     <ExportModal
@@ -75,13 +67,18 @@ const TaxonomyMenu = ({
         {intl.formatMessage(messages.actionsButtonLabel)}
       </Dropdown.Toggle>
       <Dropdown.Menu data-testid="taxonomy-menu">
-        {menuItems.map((item) => (
+        {Object.keys(menuItems).map((key) => (
           <Dropdown.Item
-            key={item}
-            data-testid={`taxonomy-menu-${item}`}
-            onClick={(e) => onClickMenuItem(e, item)}
+            key={key}
+            data-testid={`taxonomy-menu-${key}`}
+            onClick={
+              (e) => {
+                e.preventDefault();
+                menuItems[key].action?.();
+              }
+            }
           >
-            {intl.formatMessage(menuItemMessages[item])}
+            {menuItems[key].title}
           </Dropdown.Item>
         ))}
       </Dropdown.Menu>
