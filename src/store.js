@@ -20,6 +20,18 @@ import { reducer as genericReducer } from './generic/data/slice';
 import { reducer as courseImportReducer } from './import-page/data/slice';
 import { reducer as videosReducer } from './files-and-videos/videos-page/data/slice';
 
+/** ***** library-authoring imports ****** */
+
+import {
+  libraryBlockReducer,
+  libraryAuthoringReducer,
+  libraryEditReducer,
+  libraryCreateReducer,
+  libraryListReducer,
+  libraryAccessReducer,
+} from './library-authoring/library-authoring';
+import { STORE_NAMES } from './library-authoring/library-authoring/common/data';
+
 export default function initializeStore(preloadedState = undefined) {
   return configureStore({
     reducer: {
@@ -42,6 +54,12 @@ export default function initializeStore(preloadedState = undefined) {
       generic: genericReducer,
       courseImport: courseImportReducer,
       videos: videosReducer,
+      [STORE_NAMES.BLOCKS]: libraryBlockReducer,
+      [STORE_NAMES.AUTHORING]: libraryAuthoringReducer,
+      [STORE_NAMES.EDIT]: libraryEditReducer,
+      [STORE_NAMES.CREATE]: libraryCreateReducer,
+      [STORE_NAMES.LIST]: libraryListReducer,
+      [STORE_NAMES.ACCESS]: libraryAccessReducer,
     },
     preloadedState,
   });

@@ -41,48 +41,60 @@ mergeConfig({
   SHOW_ACCESSIBILITY_PAGE: process.env.SHOW_ACCESSIBILITY_PAGE,
 });
 
-const libraryAuthoringRoutes = (
-  <Routes>
-    <Route element={(
-      <main className="library-authoring__main-content">
-        <Outlet />
-      </main>
-    )}
-    >
-      <Route path={ROUTES.List.HOME} element={<LibraryListPage />} />
-      <Route path={ROUTES.List.CREATE} element={<LibraryCreatePage />} />
-      <Route path={ROUTES.Detail.HOME} element={<LibraryAuthoringPage />} />
-      <Route path={ROUTES.Detail.EDIT} element={<LibraryEditPage />} />
-      <Route path={ROUTES.Detail.ACCESS} element={<LibraryAccessPage />} />
-      <Route path={ROUTES.Detail.IMPORT} element={<CourseImportPage />} />
-      <Route path={`${ROUTES.Block.HOME}/*`} element={<LibraryBlockPage />} />
-      <Route path="*" element={<NotFoundPage />} />
-    </Route>
-  </Routes>
-);
+// const libraryAuthoringRoutes = (
+//   <>
+//     <Route path={ROUTES.List.HOME} element={<LibraryListPage />} />
+//     <Route path={ROUTES.List.CREATE} element={<LibraryCreatePage />} />
+//     <Route path={ROUTES.Detail.HOME} element={<LibraryAuthoringPage />} />
+//     <Route path={ROUTES.Detail.EDIT} element={<LibraryEditPage />} />
+//     <Route path={ROUTES.Detail.ACCESS} element={<LibraryAccessPage />} />
+//     <Route path={ROUTES.Detail.IMPORT} element={<CourseImportPage />} />
+//     <Route path={`${ROUTES.Block.HOME}/*`} element={<LibraryBlockPage />} />
+//   </>
+// );
 
-subscribe(APP_READY, () => {
-  ReactDOM.render(
-    <AppProvider store={store}>
-      <Routes>
-        <Route path={`${ROUTES.Detail.HOME}/*`} element={<StudioHeaderWrapper />} />
-        <Route path="*" element={<StudioHeaderWrapper />} />
-      </Routes>
-      {libraryAuthoringRoutes}
-      <StudioFooter />
-    </AppProvider>,
-    document.getElementById('root'),
-  );
-});
+// const libraryAuthoringRoutes = (
+//   <Routes>
+//     <Route element={(
+//       <main className="library-authoring__main-content">
+//         <Outlet />
+//       </main>
+//     )}
+//     >
+//       <Route path={ROUTES.List.HOME} element={<LibraryListPage />} />
+//       <Route path={ROUTES.List.CREATE} element={<LibraryCreatePage />} />
+//       <Route path={ROUTES.Detail.HOME} element={<LibraryAuthoringPage />} />
+//       <Route path={ROUTES.Detail.EDIT} element={<LibraryEditPage />} />
+//       <Route path={ROUTES.Detail.ACCESS} element={<LibraryAccessPage />} />
+//       <Route path={ROUTES.Detail.IMPORT} element={<CourseImportPage />} />
+//       <Route path={`${ROUTES.Block.HOME}/*`} element={<LibraryBlockPage />} />
+//       <Route path="*" element={<NotFoundPage />} />
+//     </Route>
+//   </Routes>
+// );
 
-subscribe(APP_INIT_ERROR, (error) => {
-  ReactDOM.render(<ErrorPage message={error.message} />, document.getElementById('root'));
-});
+// subscribe(APP_READY, () => {
+//   ReactDOM.render(
+//     <AppProvider store={store}>
+//       <Routes>
+//         <Route path={`${ROUTES.Detail.HOME}/*`} element={<StudioHeaderWrapper />} />
+//         <Route path="*" element={<StudioHeaderWrapper />} />
+//       </Routes>
+//       {libraryAuthoringRoutes}
+//       <StudioFooter />
+//     </AppProvider>,
+//     document.getElementById('root'),
+//   );
+// });
 
-initialize({
-  messages,
-  requireAuthenticatedUser: true,
-});
+// subscribe(APP_INIT_ERROR, (error) => {
+//   ReactDOM.render(<ErrorPage message={error.message} />, document.getElementById('root'));
+// });
+
+// initialize({
+//   messages,
+//   requireAuthenticatedUser: true,
+// });
 
 // eslint-disable-next-line import/prefer-default-export
-export { libraryAuthoringRoutes, LibraryAuthoringPage, ROUTES as LIBRARY_AUTHORING_ROUTES };
+export { LibraryAuthoringPage, LibraryListPage, ROUTES as LIBRARY_AUTHORING_ROUTES };

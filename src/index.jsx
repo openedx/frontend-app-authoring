@@ -24,6 +24,7 @@ import { StudioHome } from './studio-home';
 import CourseRerun from './course-rerun';
 import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy';
 import { ContentTagsDrawer } from './content-tags-drawer';
+import { LIBRARY_AUTHORING_ROUTES, LibraryListPage } from './library-authoring';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
@@ -67,6 +68,7 @@ const App = () => {
                 path="/tagging/components/widget/:contentId"
                 element={<ContentTagsDrawer />}
               />
+              <Route path="library-authoring" element={<LibraryListPage />} />
             </>
           )}
         </Routes>

@@ -7,7 +7,6 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { StudioFooter } from '@edx/frontend-component-footer';
-import { LIBRARY_AUTHORING_ROUTES } from './library-authoring';
 import Header from './header';
 import { fetchCourseDetail } from './data/thunks';
 import { useModel } from './generic/model-store';
@@ -78,7 +77,7 @@ const CourseAuthoringPage = ({ courseId, children }) => {
         )
         )}
       <h1>
-        <Link to={LIBRARY_AUTHORING_ROUTES.List.HOME}>Library Authoring</Link>
+        <Link to="/library-authoring">Library Authoring</Link>
       </h1>
       {children}
       {!inProgress && showHeader && <StudioFooter />}
