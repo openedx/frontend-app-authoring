@@ -25,32 +25,32 @@ export const messages = {
   // Sort Dropdown
   sortByDateNewest: {
     id: 'authoring.selectvideomodal.sort.datenewest.label',
-    defaultMessage: 'By date added (newest)',
+    defaultMessage: 'newest',
     description: 'Dropdown label for sorting by date (newest)',
   },
   sortByDateOldest: {
     id: 'authoring.selectvideomodal.sort.dateoldest.label',
-    defaultMessage: 'By date added (oldest)',
+    defaultMessage: 'oldest',
     description: 'Dropdown label for sorting by date (oldest)',
   },
   sortByNameAscending: {
     id: 'authoring.selectvideomodal.sort.nameascending.label',
-    defaultMessage: 'By name (ascending)',
+    defaultMessage: 'name A-Z',
     description: 'Dropdown label for sorting by name (ascending)',
   },
   sortByNameDescending: {
     id: 'authoring.selectvideomodal.sort.namedescending.label',
-    defaultMessage: 'By name (descending)',
+    defaultMessage: 'name Z-A',
     description: 'Dropdown label for sorting by name (descending)',
   },
   sortByDurationShortest: {
     id: 'authoring.selectvideomodal.sort.durationshortest.label',
-    defaultMessage: 'By duration (shortest)',
+    defaultMessage: 'shortest',
     description: 'Dropdown label for sorting by duration (shortest)',
   },
   sortByDurationLongest: {
     id: 'authoring.selectvideomodal.sort.durationlongest.label',
-    defaultMessage: 'By duration (longest)',
+    defaultMessage: 'longest',
     description: 'Dropdown label for sorting by duration (longest)',
   },
 

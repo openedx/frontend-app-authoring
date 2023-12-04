@@ -16,6 +16,8 @@ import ErrorAlert from '../ErrorAlerts/ErrorAlert';
 import FetchErrorAlert from '../ErrorAlerts/FetchErrorAlert';
 import UploadErrorAlert from '../ErrorAlerts/UploadErrorAlert';
 
+import './index.scss';
+
 export const SelectionModal = ({
   isOpen,
   close,
@@ -85,27 +87,32 @@ export const SelectionModal = ({
           <SearchSort {...searchSortProps} />
         </div>
       )}
+      className="selection-modal"
     >
-      {/* Error Alerts */}
-      <FetchErrorAlert isFetchError={isFetchError} message={fetchError} />
-      <UploadErrorAlert isUploadError={isUploadError} message={uploadError} />
-      <ErrorAlert
-        dismissError={inputError.dismiss}
-        hideHeading
-        isError={inputError.show}
-      >
-        <FormattedMessage {...inputError.message} />
-      </ErrorAlert>
+      {/*
+        If the modal dialog content is zero height, it shows a bottom shadow
+        as if there was content to scroll to, so make the min-height 1px.
+      */}
+      <Stack gap={2} style={{ minHeight: '1px' }}>
+        {/* Error Alerts */}
+        <FetchErrorAlert isFetchError={isFetchError} message={fetchError} />
+        <UploadErrorAlert isUploadError={isUploadError} message={uploadError} />
+        <ErrorAlert
+          dismissError={inputError.dismiss}
+          hideHeading
+          isError={inputError.show}
+        >
+          <FormattedMessage {...inputError.message} />
+        </ErrorAlert>
 
-      {/* User Feedback Alerts */}
-      <ErrorAlert
-        dismissError={galleryError.dismiss}
-        hideHeading
-        isError={galleryError.show}
-      >
-        <FormattedMessage {...galleryError.message} />
-      </ErrorAlert>
-      <Stack gap={2}>
+        {/* User Feedback Alerts */}
+        <ErrorAlert
+          dismissError={galleryError.dismiss}
+          hideHeading
+          isError={galleryError.show}
+        >
+          <FormattedMessage {...galleryError.message} />
+        </ErrorAlert>
         {showGallery && <Gallery {...galleryPropsValues} />}
         <FileInput fileInput={fileInput} acceptedFiles={Object.values(acceptedFiles).join()} />
       </Stack>

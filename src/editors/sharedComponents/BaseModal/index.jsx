@@ -20,6 +20,7 @@ export const BaseModal = ({
   size,
   isFullscreenScroll,
   bodyStyle,
+  className,
 }) => (
   <ModalDialog
     isOpen={isOpen}
@@ -30,6 +31,7 @@ export const BaseModal = ({
     isFullscreenOnMobile
     isFullscreenScroll={isFullscreenScroll}
     title={title}
+    className={className}
   >
     <ModalDialog.Header style={{ zIndex: 1, boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.3)' }}>
       <ModalDialog.Title>
@@ -59,6 +61,7 @@ BaseModal.defaultProps = {
   size: 'lg',
   isFullscreenScroll: true,
   bodyStyle: null,
+  className: undefined,
 };
 
 BaseModal.propTypes = {
@@ -72,6 +75,7 @@ BaseModal.propTypes = {
   size: PropTypes.string,
   isFullscreenScroll: PropTypes.bool,
   bodyStyle: PropTypes.shape({}),
+  className: PropTypes.string,
 };
 
 export default BaseModal;

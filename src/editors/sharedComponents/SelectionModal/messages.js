@@ -24,6 +24,11 @@ export const messages = {
     defaultMessage: 'Added {date} at {time}',
     description: 'File date-added string',
   },
+  sortBy: {
+    id: 'authoring.selectionmodal.sortBy',
+    defaultMessage: 'By',
+    description: '"By" before sort option',
+  },
 };
 
 export default messages;

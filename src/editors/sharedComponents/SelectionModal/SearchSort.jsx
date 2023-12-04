@@ -4,13 +4,14 @@ import PropTypes from 'prop-types';
 import {
   ActionRow, Dropdown, Form, Icon, IconButton, SelectMenu, MenuItem,
 } from '@edx/paragon';
-import { Close, Search } from '@edx/paragon/icons';
+import { Check, Close, Search } from '@edx/paragon/icons';
 import {
   FormattedMessage,
   useIntl,
 } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
+import './index.scss';
 import { sortKeys, sortMessages } from '../../containers/VideoGallery/utils';
 
 export const SearchSort = ({
@@ -55,9 +56,18 @@ export const SearchSort = ({
       </Form.Group>
 
       { !showSwitch && <ActionRow.Spacer /> }
-      <SelectMenu variant="link">
+      <SelectMenu variant="link" className="search-sort-menu">
         {Object.keys(sortKeys).map(key => (
-          <MenuItem key={key} onClick={onSortClick(key)} defaultSelected={key === sortBy}>
+          <MenuItem
+            key={key}
+            onClick={onSortClick(key)}
+            defaultSelected={key === sortBy}
+            iconAfter={(key === sortBy) ? Check : null}
+          >
+            <span className="search-sort-menu-by">
+              <FormattedMessage {...messages.sortBy} />
+              <span style={{ whiteSpace: 'pre-wrap' }}> </span>
+            </span>
             <FormattedMessage {...sortMessages[key]} />
           </MenuItem>
         ))}
