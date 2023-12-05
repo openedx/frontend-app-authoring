@@ -112,7 +112,7 @@ describe('<TagListTable />', () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
     const result = render(<RootWrapper />);
     await waitFor(() => {
-      expect(result.getByText('two level tag 1 (1)')).toBeInTheDocument();
+      expect(result.getByText('two level tag 1')).toBeInTheDocument();
     });
     const rows = result.getAllByRole('row');
     expect(rows.length).toBe(3 + 1); // 3 items plus header

@@ -24,7 +24,7 @@ const SubTagsExpanded = ({ taxonomyId, parentTagValue }) => {
     <ul style={{ listStyleType: 'none' }}>
       {subTagsData.data.results.map(tagData => (
         <li key={tagData.id} style={{ paddingLeft: `${(tagData.depth - 1) * 30}px` }}>
-          {tagData.value} <span className="text-light-900">{tagData.childCount > 0 ? `(${tagData.childCount})` : null}</span>
+          {tagData.value} <span className="text-secondary-500">{tagData.childCount > 0 ? `(${tagData.childCount})` : null}</span>
         </li>
       ))}
     </ul>
@@ -45,7 +45,12 @@ OptionalExpandLink.propTypes = DataTable.ExpandRow.propTypes;
 /**
  * Custom DataTable cell to join tag value with child count
  */
-const TagValue = ({ row }) => (`${row.original.value} (${row.original.childCount})`);
+const TagValue = ({ row }) => (
+  <>
+    <span>{row.original.value}</span>
+    <span className="text-secondary-500">{` (${row.original.childCount})`}</span>
+  </>
+);
 TagValue.propTypes = DataTable.TableCell.propTypes;
 
 const TagListTable = ({ taxonomyId }) => {
