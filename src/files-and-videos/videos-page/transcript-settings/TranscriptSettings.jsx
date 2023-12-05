@@ -11,7 +11,7 @@ import {
   TransitionReplace,
 } from '@edx/paragon';
 import { ChevronLeft, ChevronRight, Close } from '@edx/paragon/icons';
-import AITranslationsComponent from '@edx/frontend-component-ai-translations';
+import AITranslationsComponent from '@edx/frontend-component-ai-translations-edx';
 import OrderTranscriptForm from './OrderTranscriptForm';
 import messages from './messages';
 import {
