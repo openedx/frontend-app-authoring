@@ -57,6 +57,7 @@ const FileTable = ({
   };
   const [currentView, setCurrentView] = useState(defaultVal);
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
+  const [isDownloadOpen, setDownloadOpen, setDownloadClose] = useToggle(false);
   const [isAssetInfoOpen, openAssetInfo, closeAssetinfo] = useToggle(false);
   const [isAddOpen, setAddOpen, setAddClose] = useToggle(false);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -114,6 +115,8 @@ const FileTable = ({
 
   const handleBulkDownload = useCallback(async (selectedFlatRows) => {
     handleErrorReset({ errorType: 'download' });
+    setSelectedRows(selectedFlatRows);
+    setDownloadOpen();
     handleDownloadFile(selectedFlatRows);
   }, []);
 
@@ -237,6 +240,14 @@ const FileTable = ({
           selectedRowCount={selectedRows.length}
           isOpen={isAddOpen}
           setClose={setAddClose}
+          setSelectedRows={setSelectedRows}
+          fileType={fileType}
+        />
+        <ApiStatusToast
+          actionType={intl.formatMessage(messages.apiStatusDownloadingAction)}
+          selectedRowCount={selectedRows.length}
+          isOpen={isDownloadOpen}
+          setClose={setDownloadClose}
           setSelectedRows={setSelectedRows}
           fileType={fileType}
         />

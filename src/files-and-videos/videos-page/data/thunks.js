@@ -287,16 +287,20 @@ export function getUsagePaths({ video, courseId }) {
   };
 }
 
-export function fetchVideoDownload({ selectedRows }) {
+export function fetchVideoDownload({ selectedRows, courseId }) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.IN_PROGRESS }));
-    const errors = await getDownload(selectedRows);
-    if (isEmpty(errors)) {
+    try {
+      const errors = await getDownload(selectedRows, courseId);
       dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.SUCCESSFUL }));
-    } else {
-      errors.forEach(error => {
-        dispatch(updateErrors({ error: 'download', message: error }));
-      });
+      if (!isEmpty(errors)) {
+        errors.forEach(error => {
+          dispatch(updateErrors({ error: 'download', message: error }));
+        });
+        dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.FAILED }));
+      }
+    } catch (error) {
+      dispatch(updateErrors({ error: 'download', message: 'Failed to download zip file of videos.' }));
       dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.FAILED }));
     }
   };
