@@ -27,8 +27,8 @@ export const LIBRARY_ACCESS = {
 
 export const ROUTES = {
   List: {
+    CREATE: '/library-authoring/create',
     HOME: '/library-authoring',
-    CREATE: '/create',
   },
   Detail: {
     HOME: '/library/:libraryId',

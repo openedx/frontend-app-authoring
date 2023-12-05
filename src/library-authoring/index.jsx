@@ -53,25 +53,25 @@ mergeConfig({
 //   </>
 // );
 
-// const libraryAuthoringRoutes = (
-//   <Routes>
-//     <Route element={(
-//       <main className="library-authoring__main-content">
-//         <Outlet />
-//       </main>
-//     )}
-//     >
-//       <Route path={ROUTES.List.HOME} element={<LibraryListPage />} />
-//       <Route path={ROUTES.List.CREATE} element={<LibraryCreatePage />} />
-//       <Route path={ROUTES.Detail.HOME} element={<LibraryAuthoringPage />} />
-//       <Route path={ROUTES.Detail.EDIT} element={<LibraryEditPage />} />
-//       <Route path={ROUTES.Detail.ACCESS} element={<LibraryAccessPage />} />
-//       <Route path={ROUTES.Detail.IMPORT} element={<CourseImportPage />} />
-//       <Route path={`${ROUTES.Block.HOME}/*`} element={<LibraryBlockPage />} />
-//       <Route path="*" element={<NotFoundPage />} />
-//     </Route>
-//   </Routes>
-// );
+const libraryAuthoringRoutes = (
+  <Routes>
+    <Route element={(
+      <main className="library-authoring__main-content">
+        <Outlet />
+      </main>
+    )}
+    >
+      <Route path={ROUTES.List.HOME} element={<LibraryListPage />} />
+      <Route path={ROUTES.List.CREATE} element={<LibraryCreatePage />} />
+      <Route path={ROUTES.Detail.HOME} element={<LibraryAuthoringPage />} />
+      <Route path={ROUTES.Detail.EDIT} element={<LibraryEditPage />} />
+      <Route path={ROUTES.Detail.ACCESS} element={<LibraryAccessPage />} />
+      <Route path={ROUTES.Detail.IMPORT} element={<CourseImportPage />} />
+      <Route path={`${ROUTES.Block.HOME}/*`} element={<LibraryBlockPage />} />
+      <Route path="*" element={<NotFoundPage />} />
+    </Route>
+  </Routes>
+);
 
 // subscribe(APP_READY, () => {
 //   ReactDOM.render(
@@ -97,4 +97,6 @@ mergeConfig({
 // });
 
 // eslint-disable-next-line import/prefer-default-export
-export { LibraryAuthoringPage, LibraryListPage, ROUTES as LIBRARY_AUTHORING_ROUTES };
+export {
+  LibraryAuthoringPage, LibraryListPage, ROUTES as LIBRARY_AUTHORING_ROUTES, libraryAuthoringRoutes,
+};

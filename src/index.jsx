@@ -24,10 +24,11 @@ import { StudioHome } from './studio-home';
 import CourseRerun from './course-rerun';
 import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy';
 import { ContentTagsDrawer } from './content-tags-drawer';
-import { LIBRARY_AUTHORING_ROUTES, LibraryListPage } from './library-authoring';
+import { LIBRARY_AUTHORING_ROUTES, LibraryListPage, libraryAuthoringRoutes } from './library-authoring';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
+import { library } from '@fortawesome/fontawesome-svg-core';
 
 const queryClient = new QueryClient();
 
@@ -68,10 +69,10 @@ const App = () => {
                 path="/tagging/components/widget/:contentId"
                 element={<ContentTagsDrawer />}
               />
-              <Route path="library-authoring" element={<LibraryListPage />} />
             </>
           )}
         </Routes>
+        {libraryAuthoringRoutes}
       </QueryClientProvider>
     </AppProvider>
   );
