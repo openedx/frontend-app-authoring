@@ -1,15 +1,8 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Route, Routes, Outlet } from 'react-router-dom';
-import {
-  APP_INIT_ERROR, APP_READY, initialize, mergeConfig, subscribe,
-} from '@edx/frontend-platform';
-import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
-import { StudioFooter } from '@edx/frontend-component-footer';
-import messages from './i18n';
-import store from './store';
+import { mergeConfig } from '@edx/frontend-platform';
 import { NotFoundPage } from './generic';
 
 import { ROUTES } from './common';
