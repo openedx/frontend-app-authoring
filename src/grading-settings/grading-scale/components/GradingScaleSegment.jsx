@@ -42,7 +42,7 @@ const GradingScaleSegment = ({
         />
       )}
       <span className="grading-scale-segment-content-number m-0">
-        {gradingSegments[idx === 0 ? 0 : idx - 1]?.previous} - {value}
+        {gradingSegments[idx === 0 ? 0 : idx - 1]?.previous} - {value === 100 ? value : value - 1}
       </span>
     </div>
     {idx !== gradingSegments.length && idx - 1 !== 0 && (
