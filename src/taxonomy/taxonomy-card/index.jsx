@@ -39,10 +39,14 @@ const HeaderSubtitle = ({
   return null;
 };
 
+HeaderSubtitle.defaultProps = {
+  orgsCount: undefined,
+};
+
 HeaderSubtitle.propTypes = {
   id: PropTypes.number.isRequired,
   showSystemBadge: PropTypes.bool.isRequired,
-  orgsCount: PropTypes.number.isRequired,
+  orgsCount: PropTypes.number,
 };
 
 const HeaderTitle = ({ taxonomyId, title }) => {

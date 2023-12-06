@@ -16,6 +16,11 @@
     display: block;
     color: $text-color-base;
   }
+
+  .sub-header-title-actions {
+    margin-top: .5em;
+    justify-content: flex-start;
+  }
 }
 
 .sub-header-content-title {
