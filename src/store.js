@@ -19,6 +19,7 @@ import { reducer as courseExportReducer } from './export-page/data/slice';
 import { reducer as genericReducer } from './generic/data/slice';
 import { reducer as courseImportReducer } from './import-page/data/slice';
 import { reducer as videosReducer } from './files-and-videos/videos-page/data/slice';
+import { reducer as courseOutlineReducer } from './course-outline/data/slice';
 
 export default function initializeStore(preloadedState = undefined) {
   return configureStore({
@@ -42,6 +43,7 @@ export default function initializeStore(preloadedState = undefined) {
       generic: genericReducer,
       courseImport: courseImportReducer,
       videos: videosReducer,
+      courseOutline: courseOutlineReducer,
     },
     preloadedState,
   });
