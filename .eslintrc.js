@@ -13,5 +13,12 @@ module.exports = createConfig(
       indent: ['error', 2],
       'no-restricted-exports': 'off',
     },
+    settings: {
+      'import/resolver': {
+        webpack: {
+          config: 'webpack.dev.config.js',
+        },
+      },
+    },
   },
 );

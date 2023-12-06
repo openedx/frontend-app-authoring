@@ -11,17 +11,15 @@ import { StudioFooter } from '@edx/frontend-component-footer';
 import messages from './i18n';
 import store from './store';
 import { NotFoundPage } from './generic';
-import {
-  ROUTES,
-  CourseImportPage,
-  LibraryBlockPage,
-  LibraryEditPage,
-  LibraryListPage,
-  LibraryCreatePage,
-  LibraryAccessPage,
-  LibraryAuthoringPage,
-  StudioHeaderWrapper,
-} from './library-authoring';
+
+import { ROUTES } from './common';
+import { CourseImportPage } from '../library-course-import';
+import { LibraryBlockPage } from '../edit-library-block';
+import { LibraryEditPage } from '../configure-library';
+import { LibraryListPage } from '../list-libraries';
+import { LibraryCreatePage } from '../create-library';
+import { LibraryAccessPage } from '../library-access';
+import { LibraryAuthoringPage } from '../author-library';
 import './index.scss';
 
 mergeConfig({

@@ -1,5 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+import { libraryBlockReducer } from '@src/edit-library-block';
+import { libraryAuthoringReducer } from '@src/author-library';
+import { libraryEditReducer } from '@src/configure-library';
+import { libraryCreateReducer } from '@src/create-library';
+import { libraryListReducer } from '@src/list-libraries';
+import { libraryAccessReducer } from '@src/library-access';
+import { STORE_NAMES } from '@src/library-authoring/common/data';
 import { reducer as modelsReducer } from './generic/model-store';
 import { reducer as courseDetailReducer } from './data/slice';
 import { reducer as discussionsReducer } from './pages-and-resources/discussions';
@@ -21,16 +28,6 @@ import { reducer as courseImportReducer } from './import-page/data/slice';
 import { reducer as videosReducer } from './files-and-videos/videos-page/data/slice';
 
 /** ***** library-authoring imports ****** */
-
-import {
-  libraryBlockReducer,
-  libraryAuthoringReducer,
-  libraryEditReducer,
-  libraryCreateReducer,
-  libraryListReducer,
-  libraryAccessReducer,
-} from './library-authoring/library-authoring';
-import { STORE_NAMES } from './library-authoring/library-authoring/common/data';
 
 export default function initializeStore(preloadedState = undefined) {
   return configureStore({
