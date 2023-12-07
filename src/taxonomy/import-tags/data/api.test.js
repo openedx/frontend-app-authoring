@@ -1,6 +1,5 @@
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { useMutation } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
 
 import { tagImportMock, taxonomyImportMock } from '../__mocks__';
