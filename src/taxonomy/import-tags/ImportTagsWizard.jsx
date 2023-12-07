@@ -117,13 +117,7 @@ const PlanStep = ({ importPlan }) => {
   return (
     <Stepper.Step eventKey="plan">
       <Stack gap={3}>
-        <Container className="alert alert-warning">
-          <Stack gap={2} direction="horizontal">
-            <Icon src={Warning} className="text-warning" />
-            {intl.formatMessage(messages.importWizardStepPlanAlert, { changeCount: importPlan?.length })}
-          </Stack>
-        </Container>
-        {intl.formatMessage(messages.importWizardStepPlanBody)}
+        {intl.formatMessage(messages.importWizardStepPlanBody, { br: linebreak, changeCount: importPlan?.length })}
         <ul style={{ height: '200px', overflow: 'scroll' }}>
           {importPlan && importPlan.map((line) => <li key={line}>{line}</li>)}
         </ul>
@@ -180,6 +174,7 @@ const ImportTagsWizard = ({
         .filter((line) => !(line.includes('No changes'))) // Removes the "No changes" lines
         .map((line) => line.split(':')[1].trim()); // Get only the action message
       setImportPlan(planArray);
+      setImportPlanError(null);
       setCurrentStep('plan');
     } catch (error) {
       setImportPlanError(error.message);
@@ -268,7 +263,9 @@ const ImportTagsWizard = ({
               <Button variant="tertiary" onClick={close}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
-              <Button onClick={() => setCurrentStep('confirm')}>Apply</Button>
+              <Button onClick={() => setCurrentStep('confirm')}>
+                {intl.formatMessage(messages.importWizardButtonContinue)}
+              </Button>
             </Stepper.ActionRow>
 
             <Stepper.ActionRow eventKey="confirm">
@@ -279,8 +276,8 @@ const ImportTagsWizard = ({
               <Button variant="tertiary" onClick={close}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
-              <LoadingButton variant="danger" onClick={confirmImportTags}>
-                {intl.formatMessage(messages.importWizardStepConfirmButton)}
+              <LoadingButton onClick={confirmImportTags}>
+                {intl.formatMessage(messages.importWizardButtonConfirm)}
               </LoadingButton>
             </Stepper.ActionRow>
 

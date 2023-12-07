@@ -18,6 +18,14 @@ const messages = defineMessages({
     id: 'course-authoring.import-tags.wizard.button.import',
     defaultMessage: 'Import',
   },
+  importWizardButtonContinue: {
+    id: 'course-authoring.import-tags.wizard.button.continue',
+    defaultMessage: 'Continue',
+  },
+  importWizardButtonConfirm: {
+    id: 'course-authoring.import-tags.wizard.button.confirm',
+    defaultMessage: 'Yes, import file',
+  },
   importWizardStepExportTitle: {
     id: 'course-authoring.import-tags.wizard.step-export.title',
     defaultMessage: 'Update "{name}"',
@@ -52,14 +60,11 @@ const messages = defineMessages({
     id: 'course-authoring.import-tags.wizard.step-plan.title',
     defaultMessage: 'Differences between files',
   },
-  importWizardStepPlanAlert: {
-    id: 'course-authoring.import-tags.wizard.step-plan.alert',
-    defaultMessage: 'Importing this file will make {changeCount} updates to the existing taxonomy. '
-    + 'The content of the imported file will replace any existing values that do not match the new values.',
-  },
   importWizardStepPlanBody: {
     id: 'course-authoring.import-tags.wizard.step-plan.body',
-    defaultMessage: 'Importing this file will cause the following updates:',
+    defaultMessage: 'Importing this file will make {changeCount} updates to the existing taxonomy. '
+    + 'The content of the imported file will replace any existing values that do not match the new values.'
+    + '{br}Importing this file will cause the following updates:',
   },
   importWizardStepConfirmTitle: {
     id: 'course-authoring.import-tags.wizard.step-confirm.title',
@@ -67,13 +72,9 @@ const messages = defineMessages({
   },
   importWizardStepConfirmBody: {
     id: 'course-authoring.import-tags.wizard.step-confirm.body',
-    defaultMessage: 'Warning! You are about to make {changeCount} updates to tags. Any tags applied to course content '
-    + 'will be updated or removed. This cannot be undone.'
+    defaultMessage: 'Warning! You are about to make {changeCount} changes to the existing taxonomy. Any tags applied '
+    + 'to course content will be updated or removed. This cannot be undone.'
     + '{br}Are you sure you want to continue importing this file?',
-  },
-  importWizardStepConfirmButton: {
-    id: 'course-authoring.import-tags.wizard.step-confirm.button',
-    defaultMessage: 'Yes, import file',
   },
   promptTaxonomyName: {
     id: 'course-authoring.import-tags.prompt.taxonomy-name',
@@ -94,12 +95,6 @@ const messages = defineMessages({
   importTaxonomyError: {
     id: 'course-authoring.import-tags.error',
     defaultMessage: 'Import failed - see details in the browser console',
-  },
-  confirmImportTags: {
-    id: 'course-authoring.import-tags.warning',
-    defaultMessage: 'Warning! You are about to overwrite all tags in this taxonomy. Any tags applied to course'
-      + ' content will be updated or removed. This cannot be undone.'
-      + '\n\nAre you sure you want to continue importing this file?',
   },
 });
 
