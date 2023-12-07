@@ -1,6 +1,7 @@
-import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { useMutation } from '@tanstack/react-query';
+import MockAdapter from 'axios-mock-adapter';
 
 import { tagImportMock, taxonomyImportMock } from '../__mocks__';
 
@@ -8,7 +9,7 @@ import {
   getTaxonomyImportNewApiUrl,
   getTagsImportApiUrl,
   importNewTaxonomy,
-  importTags,
+  useImportTags,
 } from './api';
 
 let axiosMock;
@@ -40,9 +41,9 @@ describe('import taxonomy api calls', () => {
 
   it('should call import tags', async () => {
     axiosMock.onPut(getTagsImportApiUrl(1)).reply(200, tagImportMock);
-    const result = await importTags(1);
+    const mutation = useImportTags();
+    mutation.mutate(1);
 
     expect(axiosMock.history.put[0].url).toEqual(getTagsImportApiUrl(1));
-    expect(result).toEqual(tagImportMock);
   });
 });

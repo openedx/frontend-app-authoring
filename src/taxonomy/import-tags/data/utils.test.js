@@ -1,5 +1,5 @@
-import { importTaxonomy, importTaxonomyTags } from './utils';
-import { importNewTaxonomy, importTags } from './api';
+import { importTaxonomy } from './utils';
+import { importNewTaxonomy } from './api';
 
 const mockAddEventListener = jest.fn();
 
@@ -195,106 +195,6 @@ describe('import new taxonomy functions', () => {
       };
 
       onChange(mockTarget);
-      return promise;
-    });
-  });
-
-  describe('import tags', () => {
-    it('should call the api and show success alert', async () => {
-      jest.spyOn(window, 'confirm').mockReturnValueOnce(true);
-      jest.spyOn(window, 'alert').mockImplementation(() => {});
-
-      const promise = importTaxonomyTags(1, intl).then(() => {
-        expect(importTags).toHaveBeenCalledWith(1, 'mockFile');
-        expect(window.alert).toHaveBeenCalledWith('Taxonomy imported successfully');
-      });
-
-      // Capture the onChange handler from the file input element
-      const onChange = mockAddEventListener.mock.calls[0][1];
-      const mockTarget = {
-        target: {
-          files: [
-            'mockFile',
-          ],
-        },
-      };
-
-      onChange(mockTarget);
-
-      return promise;
-    });
-
-    it('should abort the call to the api without file', async () => {
-      const promise = importTaxonomyTags(1, intl).then(() => {
-        expect(importTags).not.toHaveBeenCalled();
-      });
-
-      // Capture the onChange handler from the file input element
-      const onChange = mockAddEventListener.mock.calls[0][1];
-      const mockTarget = {
-        target: {
-          files: [null],
-        },
-      };
-
-      onChange(mockTarget);
-      return promise;
-    });
-
-    it('should abort the call to the api if file closed', async () => {
-      const promise = importTaxonomyTags(1, intl).then(() => {
-        expect(importTags).not.toHaveBeenCalled();
-      });
-
-      // Capture the onCancel handler from the file input element
-      const onCancel = mockAddEventListener.mock.calls[1][1];
-
-      onCancel();
-      return promise;
-    });
-
-    it('should abort the call to the api when cancel the confirm dialog', async () => {
-      jest.spyOn(window, 'confirm').mockReturnValueOnce(null);
-
-      const promise = importTaxonomyTags(1, intl).then(() => {
-        expect(importTags).not.toHaveBeenCalled();
-      });
-
-      // Capture the onChange handler from the file input element
-      const onChange = mockAddEventListener.mock.calls[0][1];
-      const mockTarget = {
-        target: {
-          files: [
-            'mockFile',
-          ],
-        },
-      };
-
-      onChange(mockTarget);
-
-      return promise;
-    });
-
-    it('should call the api and return error alert', async () => {
-      jest.spyOn(window, 'confirm').mockReturnValueOnce(true);
-      importTags.mockRejectedValue(new Error('test error'));
-
-      const promise = importTaxonomyTags(1, intl).then(() => {
-        expect(importTags).toHaveBeenCalledWith(1, 'mockFile');
-      });
-
-      // Capture the onChange handler from the file input element
-      const onChange = mockAddEventListener.mock.calls[0][1];
-      const mockTarget = {
-        target: {
-          files: [
-            'mockFile',
-          ],
-        },
-      };
-
-      onChange(mockTarget);
-
       return promise;
     });
   });

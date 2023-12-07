@@ -2,6 +2,79 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  importWizardButtonCancel: {
+    id: 'course-authoring.import-tags.wizard.button.cancel',
+    defaultMessage: 'Cancel',
+  },
+  importWizardButtonNext: {
+    id: 'course-authoring.import-tags.wizard.button.next',
+    defaultMessage: 'Next',
+  },
+  importWizardButtonPrevious: {
+    id: 'course-authoring.import-tags.wizard.button.previous',
+    defaultMessage: 'Previous',
+  },
+  importWizardButtonImport: {
+    id: 'course-authoring.import-tags.wizard.button.import',
+    defaultMessage: 'Import',
+  },
+  importWizardStepExportTitle: {
+    id: 'course-authoring.import-tags.wizard.step-export.title',
+    defaultMessage: 'Update "{name}"',
+  },
+  importWizardStepExportBody: {
+    id: 'course-authoring.import-tags.wizard.step-export.body',
+    defaultMessage: 'To update this taxonomy you need to import a new CSV or JSON file. The current taxonomy will '
+      + 'be completely replaced by the contents of the imported file (e.g. if a tag in the current taxonomy is not '
+      + 'present in the imported file, it will be removed - both from the taxonomy and from any tagged course '
+      + 'content).'
+      + '{br}You may wish to download the taxonomy in its current state before importing the new file.',
+  },
+  importWizardStepExportCSVButton: {
+    id: 'course-authoring.import-tags.wizard.step-export.button-csv',
+    defaultMessage: 'CSV file',
+  },
+  importWizardStepExportJSONButton: {
+    id: 'course-authoring.import-tags.wizard.step-export.button-json',
+    defaultMessage: 'JSON file',
+  },
+  importWizardStepUploadTitle: {
+    id: 'course-authoring.import-tags.wizard.step-upload.title',
+    defaultMessage: 'Upload file',
+  },
+  importWizardStepUploadBody: {
+    id: 'course-authoring.import-tags.wizard.step-upload.body',
+    defaultMessage: 'You may use any spreadsheet tool (for CSV files), or any text editor (for JSON files) to create '
+    + 'the file that you wish to import.'
+    + '{br}Once the file is ready to be imported, drag and drop it into the box below, or click to upload.',
+  },
+  importWizardStepPlanTitle: {
+    id: 'course-authoring.import-tags.wizard.step-plan.title',
+    defaultMessage: 'Differences between files',
+  },
+  importWizardStepPlanAlert: {
+    id: 'course-authoring.import-tags.wizard.step-plan.alert',
+    defaultMessage: 'Importing this file will make {changeCount} updates to the existing taxonomy. '
+    + 'The content of the imported file will replace any existing values that do not match the new values.',
+  },
+  importWizardStepPlanBody: {
+    id: 'course-authoring.import-tags.wizard.step-plan.body',
+    defaultMessage: 'Importing this file will cause the following updates:',
+  },
+  importWizardStepConfirmTitle: {
+    id: 'course-authoring.import-tags.wizard.step-confirm.title',
+    defaultMessage: 'Import and replace tags',
+  },
+  importWizardStepConfirmBody: {
+    id: 'course-authoring.import-tags.wizard.step-confirm.body',
+    defaultMessage: 'Warning! You are about to make {changeCount} updates to tags. Any tags applied to course content '
+    + 'will be updated or removed. This cannot be undone.'
+    + '{br}Are you sure you want to continue importing this file?',
+  },
+  importWizardStepConfirmButton: {
+    id: 'course-authoring.import-tags.wizard.step-confirm.button',
+    defaultMessage: 'Yes, import file',
+  },
   promptTaxonomyName: {
     id: 'course-authoring.import-tags.prompt.taxonomy-name',
     defaultMessage: 'Enter a name for the new taxonomy',

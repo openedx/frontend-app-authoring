@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 
 import initializeStore from '../../store';
 import { getTaxonomyExportFile } from '../data/api';
-import { importTaxonomyTags } from '../import-tags';
 import { TaxonomyMenu } from '.';
 
 let store;
@@ -149,7 +148,8 @@ describe('<TaxonomyMenu />', async () => {
       fireEvent.click(getByTestId('taxonomy-menu-button'));
       fireEvent.click(getByTestId('taxonomy-menu-import'));
 
-      expect(importTaxonomyTags).toHaveBeenCalled();
+      // Modal opened
+      expect(getByTestId('import-tags-wizard')).toBeInTheDocument();
     });
 
     test('should export a taxonomy', () => {

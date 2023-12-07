@@ -1,6 +1,7 @@
-import { importTaxonomyTags, importTaxonomy } from './data/utils';
+import { importTaxonomy } from './data/utils';
+import ImportTagsWizard from './ImportTagsWizard';
 
 export {
-  importTaxonomyTags,
   importTaxonomy,
+  ImportTagsWizard,
 };

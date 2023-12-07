@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import ExportModal from '../export-modal';
-import { importTaxonomyTags } from '../import-tags';
+import { ImportTagsWizard } from '../import-tags';
 import messages from './messages';
 
 const TaxonomyMenu = ({
@@ -21,12 +21,13 @@ const TaxonomyMenu = ({
   const intl = useIntl();
 
   const [isExportModalOpen, exportModalOpen, exportModalClose] = useToggle(false);
+  const [isImportModalOpen, importModalOpen, importModalClose] = useToggle(false);
 
   const getTaxonomyMenuItems = () => {
     let menuItems = {
       import: {
         title: intl.formatMessage(messages.importMenu),
-        action: () => importTaxonomyTags(taxonomy.id, intl),
+        action: importModalOpen,
         // Hide import menu item if taxonomy is system defined or allows free text
         hide: taxonomy.systemDefined || taxonomy.allowFreeText,
       },
@@ -44,13 +45,24 @@ const TaxonomyMenu = ({
 
   const menuItems = getTaxonomyMenuItems();
 
-  const renderModals = () => isExportModalOpen && (
-    <ExportModal
-      isOpen={isExportModalOpen}
-      onClose={exportModalClose}
-      taxonomyId={taxonomy.id}
-      taxonomyName={taxonomy.name}
-    />
+  const renderModals = () => (
+    <>
+      {isExportModalOpen && (
+        <ExportModal
+          taxonomyId={taxonomy.id}
+          isOpen={isExportModalOpen}
+          onClose={exportModalClose}
+          taxonomyName={taxonomy.name}
+        />
+      )}
+      {isImportModalOpen && (
+        <ImportTagsWizard
+          taxonomy={taxonomy}
+          isOpen={isImportModalOpen}
+          close={importModalClose}
+        />
+      )}
+    </>
   );
 
   return (
