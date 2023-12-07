@@ -1,2 +1,1 @@
-export { default as taxonomyImportMock } from './taxonomyImportMock';
-export { default as tagImportMock } from './tagImportMock';
+export { default as taxonomyImportMock } from './taxonomyImportMock'; // eslint-disable-line import/prefer-default-export
