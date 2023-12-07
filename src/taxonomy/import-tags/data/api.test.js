@@ -9,7 +9,9 @@ import { taxonomyImportMock } from '../__mocks__';
 import {
   getTaxonomyImportNewApiUrl,
   getTagsImportApiUrl,
+  getTagsPlanImportApiUrl,
   importNewTaxonomy,
+  planImportTags,
   useImportTags,
 } from './api';
 
@@ -59,5 +61,11 @@ describe('import taxonomy api calls', () => {
       await mutationFn({ taxonomyId: 1 });
       expect(axiosMock.history.put[0].url).toEqual(getTagsImportApiUrl(1));
     });
+  });
+
+  it('should call plan import tags', async () => {
+    axiosMock.onPut(getTagsPlanImportApiUrl(1)).reply(200, { plan: 'plan' });
+    await planImportTags(1);
+    expect(axiosMock.history.put[0].url).toEqual(getTagsPlanImportApiUrl(1));
   });
 });
