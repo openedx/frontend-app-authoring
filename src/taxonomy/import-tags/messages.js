@@ -66,6 +66,10 @@ const messages = defineMessages({
     + 'The content of the imported file will replace any existing values that do not match the new values.'
     + '{br}Importing this file will cause the following updates:',
   },
+  importWizardStepPlanNoChanges: {
+    id: 'course-authoring.import-tags.wizard.step-plan.no-changes',
+    defaultMessage: 'No changes',
+  },
   importWizardStepConfirmTitle: {
     id: 'course-authoring.import-tags.wizard.step-confirm.title',
     defaultMessage: 'Import and replace tags',

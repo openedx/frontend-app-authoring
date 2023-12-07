@@ -5,14 +5,21 @@ import {
   Container,
   Dropzone,
   Icon,
+  IconButton,
   ModalDialog,
   Stack,
   Stepper,
 } from '@edx/paragon';
-import { Download, Warning } from '@edx/paragon/icons';
+import {
+  DeleteOutline,
+  Download,
+  InsertDriveFile,
+  Warning,
+} from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 
+import { getFileSizeToClosestByte } from '../../files-and-videos/generic/utils'; // ToDo: Check best approach
 import LoadingButton from '../../generic/loading-button';
 import { getTaxonomyExportFile } from '../data/api';
 import { planImportTags, useImportTags } from './data/api';
@@ -57,43 +64,58 @@ ExportStep.propTypes = {
   taxonomy: TaxonomyProp.isRequired,
 };
 
-const UploadStep = ({ setFile, importPlanError, setImportPlanError }) => {
+const UploadStep = ({
+  file,
+  setFile,
+  importPlanError,
+  setImportPlanError,
+}) => {
   const intl = useIntl();
-
-  const [filePreview, setFilePreview] = useState(null);
 
   const handleFileLoad = ({ fileData }) => {
     setFile(fileData.get('file'));
-    fileData.get('file').text().then((text) => {
-      setFilePreview(text);
-      setImportPlanError(null);
-    });
+    setImportPlanError(null);
+  };
+
+  const clearFile = (e) => {
+    e.stopPropagation();
+    setFile(null);
+    setImportPlanError(null);
   };
 
   return (
     <Stepper.Step eventKey="upload" hasError={importPlanError}>
       <Stack gap={3}>
         <p>{intl.formatMessage(messages.importWizardStepUploadBody, { br: linebreak })}</p>
-        <Dropzone
-          style={{ height: '200px', padding: 0 }}
-          maxSize={100 * 1024 * 1024 /* 100MB */}
-          accept={{
-            'text/csv': ['.csv'],
-            'application/json': ['.json'],
-          }}
-          onProcessUpload={handleFileLoad}
-          inputComponent={
-            filePreview && (
-              <pre
-                style={{
-                  height: '200px', width: '100%', overflow: 'scroll', margin: '1rem',
-                }}
-              >
-                {filePreview}
-              </pre>
-            )
-          }
-        />
+        <div>
+          {!file ? (
+            <Dropzone
+              style={{ height: '200px' }}
+              maxSize={100 * 1024 * 1024 /* 100MB */}
+              accept={{
+                'text/csv': ['.csv'],
+                'application/json': ['.json'],
+              }}
+              onProcessUpload={handleFileLoad}
+            />
+          ) : (
+            <Stack gap={3} direction="horizontal" className="border-top p-4 align-items-start flex-wrap" style={{ height: '200px' }}>
+              <Icon src={InsertDriveFile} style={{ height: '48px', width: '48px' }} />
+              <Stack gap={0} className="align-self-start">
+                <div>{file.name}</div>
+                <div className="x-small text-gray-500">{getFileSizeToClosestByte(file.size)}</div>
+              </Stack>
+              <IconButton
+                src={DeleteOutline}
+                iconAs={Icon}
+                variant="secondary"
+                className="ml-auto"
+                onClick={clearFile}
+              />
+            </Stack>
+          )}
+        </div>
+
         {importPlanError && <Container className="alert alert-danger">{importPlanError}</Container>}
       </Stack>
     </Stepper.Step>
@@ -101,13 +123,17 @@ const UploadStep = ({ setFile, importPlanError, setImportPlanError }) => {
 };
 
 UploadStep.propTypes = {
-  taxonomy: TaxonomyProp.isRequired,
+  file: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    size: PropTypes.number.isRequired,
+  }),
   setFile: PropTypes.func.isRequired,
   importPlanError: PropTypes.string,
   setImportPlanError: PropTypes.func.isRequired,
 };
 
 UploadStep.defaultProps = {
+  file: null,
   importPlanError: null,
 };
 
@@ -119,7 +145,11 @@ const PlanStep = ({ importPlan }) => {
       <Stack gap={3}>
         {intl.formatMessage(messages.importWizardStepPlanBody, { br: linebreak, changeCount: importPlan?.length })}
         <ul style={{ height: '200px', overflow: 'scroll' }}>
-          {importPlan && importPlan.map((line) => <li key={line}>{line}</li>)}
+          {importPlan?.length ? (
+            importPlan.map((line) => <li key={line}>{line}</li>)
+          ) : (
+            <li>{intl.formatMessage(messages.importWizardStepPlanNoChanges)}</li>
+          )}
         </ul>
       </Stack>
     </Stepper.Step>
@@ -211,6 +241,7 @@ const ImportTagsWizard = ({
     >
       <ModalDialog
         isOpen={isOpen}
+        isBlocking
         onClose={close}
         size="lg"
         data-testid="import-tags-wizard"
@@ -220,11 +251,18 @@ const ImportTagsWizard = ({
             {stepTitles[currentStep]}
           </ModalDialog.Title>
         </ModalDialog.Header>
+
         <hr className="mx-4" />
+
         <Stepper activeKey={currentStep}>
           <ModalDialog.Body>
             <ExportStep taxonomy={taxonomy} />
-            <UploadStep setFile={setFile} importPlanError={importPlanError} setImportPlanError={setImportPlanError} />
+            <UploadStep
+              file={file}
+              setFile={setFile}
+              importPlanError={importPlanError}
+              setImportPlanError={setImportPlanError}
+            />
             <PlanStep importPlan={importPlan} />
             <ConfirmStep importPlan={importPlan} />
           </ModalDialog.Body>
@@ -263,7 +301,7 @@ const ImportTagsWizard = ({
               <Button variant="tertiary" onClick={close}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
-              <Button onClick={() => setCurrentStep('confirm')}>
+              <Button disabled={!importPlan?.length} onClick={() => setCurrentStep('confirm')}>
                 {intl.formatMessage(messages.importWizardButtonContinue)}
               </Button>
             </Stepper.ActionRow>
