@@ -1,4 +1,6 @@
 import { isEmpty } from 'lodash';
+import { camelCaseObject } from '@edx/frontend-platform';
+
 import { RequestStatus } from '../../../data/constants';
 import {
   addModel,
@@ -139,7 +141,7 @@ export function getUsagePaths({ asset, courseId }) {
         modelType: 'assets',
         model: {
           id: asset.id,
-          usageLocations: assetLocations,
+          usageLocations: camelCaseObject(assetLocations),
           activeStatus,
         },
       }));

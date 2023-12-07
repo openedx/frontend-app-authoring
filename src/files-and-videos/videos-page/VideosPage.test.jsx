@@ -440,7 +440,12 @@ describe('FilesAndUploads', () => {
           expect(videoMenuButton).toBeVisible();
 
           axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`)
-            .reply(201, { usageLocations: ['subsection - unit / block'] });
+            .reply(201, {
+              usageLocations: [{
+                display_location: 'subsection - unit / block',
+                url: 'base/unit_id#block_id',
+              }],
+            });
           await waitFor(() => {
             fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
             fireEvent.click(screen.getByText('Info'));
