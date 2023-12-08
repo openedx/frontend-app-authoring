@@ -37,13 +37,14 @@ const ExportStep = ({ taxonomy }) => {
 
   return (
     <Stepper.Step eventKey="export">
-      <Stack gap={3}>
+      <Stack gap={3} data-testid="export-step">
         <p>{intl.formatMessage(messages.importWizardStepExportBody, { br: linebreak })}</p>
         <Stack gap={3} direction="horizontal">
           <Button
             iconBefore={Download}
             variant="outline-primary"
             onClick={() => getTaxonomyExportFile(taxonomy.id, 'csv')}
+            data-testid="export-csv-button"
           >
             {intl.formatMessage(messages.importWizardStepExportCSVButton)}
           </Button>
@@ -51,6 +52,7 @@ const ExportStep = ({ taxonomy }) => {
             iconBefore={Download}
             variant="outline-primary"
             onClick={() => getTaxonomyExportFile(taxonomy.id, 'json')}
+            data-testid="export-json-button"
           >
             {intl.formatMessage(messages.importWizardStepExportJSONButton)}
           </Button>
@@ -85,7 +87,7 @@ const UploadStep = ({
 
   return (
     <Stepper.Step eventKey="upload" hasError={importPlanError}>
-      <Stack gap={3}>
+      <Stack gap={3} data-testid="upload-step">
         <p>{intl.formatMessage(messages.importWizardStepUploadBody, { br: linebreak })}</p>
         <div>
           {!file ? (
@@ -142,7 +144,7 @@ const PlanStep = ({ importPlan }) => {
 
   return (
     <Stepper.Step eventKey="plan">
-      <Stack gap={3}>
+      <Stack gap={3} data-testid="plan-step">
         {intl.formatMessage(messages.importWizardStepPlanBody, { br: linebreak, changeCount: importPlan?.length })}
         <ul style={{ height: '200px', overflow: 'scroll' }}>
           {importPlan?.length ? (
@@ -165,10 +167,12 @@ const ConfirmStep = ({ importPlan }) => {
 
   return (
     <Stepper.Step eventKey="confirm">
-      {intl.formatMessage(
-        messages.importWizardStepConfirmBody,
-        { br: linebreak, changeCount: importPlan?.length },
-      )}
+      <Stack data-testid="confirm-step">
+        {intl.formatMessage(
+          messages.importWizardStepConfirmBody,
+          { br: linebreak, changeCount: importPlan?.length },
+        )}
+      </Stack>
     </Stepper.Step>
   );
 };
@@ -272,7 +276,7 @@ const ImportTagsWizard = ({
           <ModalDialog.Footer>
 
             <Stepper.ActionRow eventKey="export">
-              <Button variant="tertiary" onClick={close}>
+              <Button variant="tertiary" onClick={close} data-testid="cancel-button">
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
               <Button onClick={() => setCurrentStep('upload')}>

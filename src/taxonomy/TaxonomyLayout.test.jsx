@@ -39,7 +39,7 @@ describe('<TaxonomyLayout />', async () => {
     store = initializeStore();
   });
 
-  it('should render page correctly', async () => {
+  it('should render page correctly', () => {
     const { getByTestId } = render(<RootWrapper />);
     expect(getByTestId('mock-header')).toBeInTheDocument();
     expect(getByTestId('mock-content')).toBeInTheDocument();
