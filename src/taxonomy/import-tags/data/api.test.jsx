@@ -26,16 +26,6 @@ const queryClient = new QueryClient({
   },
 });
 
-const mockInvalidateQueries = jest.fn();
-
-jest.mock('@tanstack/react-query', () => ({
-  ...jest.requireActual('@tanstack/react-query'),
-  useQueryClient: () => ({
-    ...jest.requireActual('@tanstack/react-query').useQueryClient(),
-    invalidateQueries: mockInvalidateQueries,
-  }),
-}));
-
 const wrapper = ({ children }) => (
   <QueryClientProvider client={queryClient}>
     {children}
@@ -69,16 +59,12 @@ describe('import taxonomy api calls', () => {
 
   it('should call import tags', async () => {
     axiosMock.onPut(getTagsImportApiUrl(1)).reply(200);
+    const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
+
     const { result } = renderHook(() => useImportTags(), { wrapper });
 
     await result.current.mutateAsync({ taxonomyId: 1 });
     expect(axiosMock.history.put[0].url).toEqual(getTagsImportApiUrl(1));
-  });
-
-  it('should call plan import tags', async () => {
-    axiosMock.onPut(getTagsPlanImportApiUrl(1)).reply(200, { plan: 'plan' });
-    await planImportTags(1);
-    expect(axiosMock.history.put[0].url).toEqual(getTagsPlanImportApiUrl(1));
     expect(mockInvalidateQueries).toHaveBeenCalledWith({
       queryKey: ['tagList', 1],
     });
@@ -87,8 +73,16 @@ describe('import taxonomy api calls', () => {
     });
   });
 
+  it('should call plan import tags', async () => {
+    axiosMock.onPut(getTagsPlanImportApiUrl(1)).reply(200, { plan: 'plan' });
+    await planImportTags(1);
+    expect(axiosMock.history.put[0].url).toEqual(getTagsPlanImportApiUrl(1));
+  });
+
   it('should handle errors in plan import tags', async () => {
     axiosMock.onPut(getTagsPlanImportApiUrl(1)).reply(400, { error: 'test error' });
+    const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
+
     expect(planImportTags(1)).rejects.toEqual(Error('test error'));
     expect(axiosMock.history.put[0].url).toEqual(getTagsPlanImportApiUrl(1));
     expect(mockInvalidateQueries).not.toHaveBeenCalled();
