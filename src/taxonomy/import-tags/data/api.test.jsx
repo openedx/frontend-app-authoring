@@ -26,6 +26,16 @@ const queryClient = new QueryClient({
   },
 });
 
+const mockInvalidateQueries = jest.fn();
+
+jest.mock('@tanstack/react-query', () => ({
+  ...jest.requireActual('@tanstack/react-query'),
+  useQueryClient: () => ({
+    ...jest.requireActual('@tanstack/react-query').useQueryClient(),
+    invalidateQueries: mockInvalidateQueries,
+  }),
+}));
+
 const wrapper = ({ children }) => (
   <QueryClientProvider client={queryClient}>
     {children}
@@ -69,5 +79,18 @@ describe('import taxonomy api calls', () => {
     axiosMock.onPut(getTagsPlanImportApiUrl(1)).reply(200, { plan: 'plan' });
     await planImportTags(1);
     expect(axiosMock.history.put[0].url).toEqual(getTagsPlanImportApiUrl(1));
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+      queryKey: ['tagList', 1],
+    });
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+      queryKey: ['taxonomyDetail', 1],
+    });
+  });
+
+  it('should handle errors in plan import tags', async () => {
+    axiosMock.onPut(getTagsPlanImportApiUrl(1)).reply(400, { error: 'test error' });
+    expect(planImportTags(1)).rejects.toEqual(Error('test error'));
+    expect(axiosMock.history.put[0].url).toEqual(getTagsPlanImportApiUrl(1));
+    expect(mockInvalidateQueries).not.toHaveBeenCalled();
   });
 });
