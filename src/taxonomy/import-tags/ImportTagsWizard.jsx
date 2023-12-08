@@ -19,8 +19,8 @@ import {
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 
-import { getFileSizeToClosestByte } from '../../files-and-videos/generic/utils'; // ToDo: Check best approach
 import LoadingButton from '../../generic/loading-button';
+import { getFileSizeToClosestByte } from '../../utils';
 import { getTaxonomyExportFile } from '../data/api';
 import { planImportTags, useImportTags } from './data/api';
 import messages from './messages';

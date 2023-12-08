@@ -256,3 +256,22 @@ export const isValidDate = (date) => {
 
   return Boolean(formattedValue.length <= 10);
 };
+
+export const getFileSizeToClosestByte = (fileSize, numberOfDivides = 0) => {
+  if (fileSize > 1000) {
+    const updatedSize = fileSize / 1000;
+    const incrementNumberOfDivides = numberOfDivides + 1;
+    return getFileSizeToClosestByte(updatedSize, incrementNumberOfDivides);
+  }
+  const fileSizeFixedDecimal = Number.parseFloat(fileSize).toFixed(2);
+  switch (numberOfDivides) {
+  case 1:
+    return `${fileSizeFixedDecimal} KB`;
+  case 2:
+    return `${fileSizeFixedDecimal} MB`;
+  case 3:
+    return `${fileSizeFixedDecimal} GB`;
+  default:
+    return `${fileSizeFixedDecimal} B`;
+  }
+};

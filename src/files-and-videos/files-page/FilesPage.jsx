@@ -28,7 +28,7 @@ import {
   FileTable,
   ThumbnailColumn,
 } from '../generic';
-import { getFileSizeToClosestByte } from '../generic/utils';
+import { getFileSizeToClosestByte } from '../../utils';
 import FileThumbnail from './FileThumbnail';
 import FileInfoModalSidebar from './FileInfoModalSidebar';
 
