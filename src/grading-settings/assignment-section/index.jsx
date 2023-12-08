@@ -34,7 +34,12 @@ const AssignmentSection = ({
   }
 
   const handleAssignmentChange = (e, assignmentId) => {
-    const { name, value } = e.target;
+    const { name, value, type: inputType } = e.target;
+
+    let inputValue = value;
+    if (inputType === 'number') {
+      inputValue = parseInt(value, 10);
+    }
 
     setShowSavePrompt(true);
 
@@ -42,7 +47,7 @@ const AssignmentSection = ({
       ...prevState,
       graders: graders.map(grader => {
         if (grader.id === assignmentId) {
-          return { ...grader, [name]: value };
+          return { ...grader, [name]: inputValue };
         }
         return grader;
       }),
@@ -66,7 +71,7 @@ const AssignmentSection = ({
   return (
     <div className="assignment-items">
       {graders?.map((gradeField) => {
-        const courseAssignmentUsage = courseAssignmentLists[gradeField.type.toLowerCase()];
+        const courseAssignmentUsage = courseAssignmentLists[gradeField.type];
         const showDefinedCaseAlert = gradeField.minCount !== courseAssignmentUsage?.length
             && Boolean(courseAssignmentUsage?.length);
         const showNotDefinedCaseAlert = !courseAssignmentUsage?.length && Boolean(gradeField.type);
