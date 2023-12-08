@@ -15,7 +15,7 @@ const LoadingButton = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const loadingOnClick = async (e) => {
-    if (onClick === undefined) {
+    if (!onClick) {
       return;
     }
 
