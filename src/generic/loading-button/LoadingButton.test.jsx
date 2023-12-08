@@ -24,9 +24,9 @@ describe('<LoadingButton />', () => {
     const titleElement = getByText(buttonTitle);
     expect(titleElement).toBeInTheDocument();
     expect(() => getByTestId('button-loading-spinner')).toThrow('Unable to find an element');
-
     const buttonElement = getByRole('button');
-    expect(buttonElement.click()).not.toThrow();
+    buttonElement.click();
+    expect(() => getByTestId('button-loading-spinner')).toThrow('Unable to find an element');
   });
 
   it('renders the spinner correctly', () => {
