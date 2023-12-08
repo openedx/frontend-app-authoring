@@ -1,4 +1,3 @@
-// @ts-check
 import React, { useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -190,7 +189,11 @@ const ConfirmStep = ({ importPlan }) => {
 };
 
 ConfirmStep.propTypes = {
-  importPlan: PropTypes.arrayOf(PropTypes.string).isRequired,
+  importPlan: PropTypes.arrayOf(PropTypes.string),
+};
+
+ConfirmStep.defaultProps = {
+  importPlan: null,
 };
 
 const ImportTagsWizard = ({
@@ -222,7 +225,7 @@ const ImportTagsWizard = ({
       setImportPlan(planArray);
       setImportPlanError(null);
       setCurrentStep('plan');
-    } catch (error) {
+    } catch (/** @type {any} */ error) {
       setImportPlanError(error.message);
     }
   };

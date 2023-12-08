@@ -15,8 +15,8 @@ const selectFile = async () => new Promise((resolve) => {
   fileInput.type = 'file';
   fileInput.accept = '.json,.csv';
   fileInput.style.display = 'none';
-  fileInput.addEventListener('change', (event) => {
-    const file = event?.target?.files[0];
+  fileInput.addEventListener('change', (/** @type { Event & { target: HTMLInputElement} } */ event) => {
+    const file = event.target.files?.[0];
     if (!file) {
       resolve(null);
     }
