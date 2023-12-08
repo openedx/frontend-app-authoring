@@ -79,6 +79,9 @@ export const useImportTags = () => {
       queryClient.invalidateQueries({
         queryKey: ['tagList', variables.taxonomyId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['taxonomyDetail', variables.taxonomyId],
+      });
     },
   });
 };
