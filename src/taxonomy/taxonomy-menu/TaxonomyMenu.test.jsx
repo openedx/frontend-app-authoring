@@ -1,7 +1,7 @@
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import PropTypes from 'prop-types';
 
 import initializeStore from '../../store';
@@ -149,7 +149,7 @@ describe('<TaxonomyMenu />', async () => {
       fireEvent.click(getByTestId('taxonomy-menu-import'));
 
       // Modal opened
-      expect(getByTestId('import-tags-wizard')).toBeInTheDocument();
+      waitFor(() => expect(getByTestId('import-tags-wizard')).toBeInTheDocument());
     });
 
     test('should export a taxonomy', () => {
