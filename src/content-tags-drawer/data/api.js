@@ -9,7 +9,7 @@ export const getContentDataApiUrl = (contentId) => new URL(`/xblock/outline/${co
 
 /**
  * Get all tags that belong to taxonomy.
- * @param {string} taxonomyId The id of the taxonomy to fetch tags for
+ * @param {number} taxonomyId The id of the taxonomy to fetch tags for
  * @param {string} fullPathProvided Optional param that contains the full URL to fetch data
  *                 If provided, we use it instead of generating the URL. This is usually for fetching subTags
  * @returns {Promise<Object>}
@@ -39,4 +39,18 @@ export async function getContentTaxonomyTagsData(contentId) {
 export async function getContentData(contentId) {
   const { data } = await getAuthenticatedHttpClient().get(getContentDataApiUrl(contentId));
   return camelCaseObject(data);
+}
+
+/**
+ * Update content object's applied tags
+ * @param {string} contentId The id of the content object (unit/component)
+ * @param {number} taxonomyId The id of the taxonomy the tags belong to
+ * @param {string[]} tags The list of tags (values) to set on content object
+ * @returns {Promise<Object>}
+ */
+export async function updateContentTaxonomyTags(contentId, taxonomyId, tags) {
+  let url = getContentTaxonomyTagsApiUrl(contentId);
+  url = `${url}?taxonomy=${taxonomyId}`;
+  const { data } = await getAuthenticatedHttpClient().put(url, { tags });
+  return camelCaseObject(data[contentId]);
 }
