@@ -1,4 +1,4 @@
-// ts-check
+// @ts-check
 import messages from '../messages';
 import { importNewTaxonomy } from './api';
 
@@ -16,7 +16,7 @@ const selectFile = async () => new Promise((resolve) => {
   fileInput.accept = '.json,.csv';
   fileInput.style.display = 'none';
   fileInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
+    const file = event?.target?.files[0];
     if (!file) {
       resolve(null);
     }

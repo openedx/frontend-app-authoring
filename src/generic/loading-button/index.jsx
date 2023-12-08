@@ -1,4 +1,5 @@
-import { useState } from 'react';
+// @ts-check
+import React, { useState } from 'react';
 
 import {
   Button,
@@ -47,6 +48,7 @@ LoadingButton.propTypes = {
 
 LoadingButton.defaultProps = {
   ...Button.defaultProps,
+  disabled: null,
 };
 
 export default LoadingButton;

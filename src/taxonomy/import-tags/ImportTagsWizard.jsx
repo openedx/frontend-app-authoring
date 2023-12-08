@@ -1,4 +1,5 @@
-// ts-check
+// @ts-check
+import React, { useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -17,7 +18,6 @@ import {
   Warning,
 } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 
 import LoadingButton from '../../generic/loading-button';
 import { getFileSizeToClosestByte } from '../../utils';
@@ -99,9 +99,16 @@ const UploadStep = ({
                 'application/json': ['.json'],
               }}
               onProcessUpload={handleFileLoad}
+              data-testid="dropzone"
             />
           ) : (
-            <Stack gap={3} direction="horizontal" className="border-top p-4 align-items-start flex-wrap" style={{ height: '200px' }}>
+            <Stack
+              gap={3}
+              direction="horizontal"
+              className="border-top p-4 align-items-start flex-wrap"
+              style={{ height: '200px' }}
+              data-testid="file-info"
+            >
               <Icon src={InsertDriveFile} style={{ height: '48px', width: '48px' }} />
               <Stack gap={0} className="align-self-start">
                 <div>{file.name}</div>
@@ -113,6 +120,7 @@ const UploadStep = ({
                 variant="secondary"
                 className="ml-auto"
                 onClick={clearFile}
+                data-testid="clear-file-button"
               />
             </Stack>
           )}
@@ -148,7 +156,7 @@ const PlanStep = ({ importPlan }) => {
         {intl.formatMessage(messages.importWizardStepPlanBody, { br: linebreak, changeCount: importPlan?.length })}
         <ul style={{ height: '200px', overflow: 'scroll' }}>
           {importPlan?.length ? (
-            importPlan.map((line) => <li key={line}>{line}</li>)
+            importPlan.map((line) => <li key={line} data-testid="plan-action">{line}</li>)
           ) : (
             <li>{intl.formatMessage(messages.importWizardStepPlanNoChanges)}</li>
           )}
@@ -159,7 +167,11 @@ const PlanStep = ({ importPlan }) => {
 };
 
 PlanStep.propTypes = {
-  importPlan: PropTypes.arrayOf(PropTypes.string).isRequired,
+  importPlan: PropTypes.arrayOf(PropTypes.string),
+};
+
+PlanStep.defaultProps = {
+  importPlan: null,
 };
 
 const ConfirmStep = ({ importPlan }) => {
@@ -201,10 +213,10 @@ const ImportTagsWizard = ({
   const generatePlan = async () => {
     try {
       const plan = await planImportTags(taxonomy.id, file);
-      const planArray = plan
-        .split('\n')
-        .toSpliced(0, 2) // Removes the header in the first two lines
-        .toSpliced(-1) // Removes the empty last line
+      let planArrayTemp = plan.split('\n');
+      planArrayTemp = planArrayTemp.slice(2); // Removes the first two lines
+      planArrayTemp = planArrayTemp.slice(0, -1); // Removes the last line
+      const planArray = planArrayTemp
         .filter((line) => !(line.includes('No changes'))) // Removes the "No changes" lines
         .map((line) => line.split(':')[1].trim()); // Get only the action message
       setImportPlan(planArray);
@@ -222,8 +234,9 @@ const ImportTagsWizard = ({
         file,
       });
       close();
+      // ToDo: show success toast
     } catch (error) {
-      setImportPlanError(error.message);
+      // ToDo: show error message
     }
   };
 
@@ -279,46 +292,46 @@ const ImportTagsWizard = ({
               <Button variant="tertiary" onClick={close} data-testid="cancel-button">
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
-              <Button onClick={() => setCurrentStep('upload')}>
+              <Button onClick={() => setCurrentStep('upload')} data-testid="next-button">
                 {intl.formatMessage(messages.importWizardButtonNext)}
               </Button>
             </Stepper.ActionRow>
 
             <Stepper.ActionRow eventKey="upload">
-              <Button variant="outline-primary" onClick={() => setCurrentStep('export')}>
+              <Button variant="outline-primary" onClick={() => setCurrentStep('export')} data-testid="back-button">
                 {intl.formatMessage(messages.importWizardButtonPrevious)}
               </Button>
               <Stepper.ActionRow.Spacer />
               <Button variant="tertiary" onClick={close}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
-              <LoadingButton disabled={!file} onClick={generatePlan}>
+              <LoadingButton disabled={!file} onClick={generatePlan} data-testid="import-button">
                 {intl.formatMessage(messages.importWizardButtonImport)}
               </LoadingButton>
             </Stepper.ActionRow>
 
             <Stepper.ActionRow eventKey="plan">
-              <Button variant="outline-primary" onClick={() => setCurrentStep('upload')}>
-                Previous
+              <Button variant="outline-primary" onClick={() => setCurrentStep('upload')} data-testid="back-button">
+                {intl.formatMessage(messages.importWizardButtonPrevious)}
               </Button>
               <Stepper.ActionRow.Spacer />
               <Button variant="tertiary" onClick={close}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
-              <Button disabled={!importPlan?.length} onClick={() => setCurrentStep('confirm')}>
+              <Button disabled={!importPlan?.length} onClick={() => setCurrentStep('confirm')} data-testid="continue-button">
                 {intl.formatMessage(messages.importWizardButtonContinue)}
               </Button>
             </Stepper.ActionRow>
 
             <Stepper.ActionRow eventKey="confirm">
-              <Button variant="outline-primary" onClick={() => setCurrentStep('plan')}>
-                Previous
+              <Button variant="outline-primary" onClick={() => setCurrentStep('plan')} data-testid="back-button">
+                {intl.formatMessage(messages.importWizardButtonPrevious)}
               </Button>
               <Stepper.ActionRow.Spacer />
               <Button variant="tertiary" onClick={close}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
-              <LoadingButton onClick={confirmImportTags}>
+              <LoadingButton onClick={confirmImportTags} data-testid="confirm-button">
                 {intl.formatMessage(messages.importWizardButtonConfirm)}
               </LoadingButton>
             </Stepper.ActionRow>
