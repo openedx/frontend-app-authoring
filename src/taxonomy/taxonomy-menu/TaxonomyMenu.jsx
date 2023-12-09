@@ -1,4 +1,5 @@
-// ts-check
+// @ts-check
+import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   useToggle,
@@ -52,7 +53,6 @@ const TaxonomyMenu = ({
           taxonomyId={taxonomy.id}
           isOpen={isExportModalOpen}
           onClose={exportModalClose}
-          taxonomyName={taxonomy.name}
         />
       )}
       {isImportModalOpen && (
@@ -66,7 +66,7 @@ const TaxonomyMenu = ({
   );
 
   return (
-    <Dropdown onToggle={(isOpen, ev) => ev.preventDefault()}>
+    <Dropdown onToggle={(_isOpen, ev) => ev.preventDefault()}>
       <Dropdown.Toggle
         as={iconMenu ? IconButton : Button}
         src={MoreVert}

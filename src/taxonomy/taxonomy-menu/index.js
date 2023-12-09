@@ -1,3 +1,4 @@
+// @ts-check
 import TaxonomyMenu from './TaxonomyMenu';
 
 export {

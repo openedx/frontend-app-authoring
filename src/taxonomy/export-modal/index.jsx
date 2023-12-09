@@ -1,4 +1,5 @@
-import { useState } from 'react';
+// @ts-check
+import React, { useState } from 'react';
 import {
   ActionRow,
   Button,
