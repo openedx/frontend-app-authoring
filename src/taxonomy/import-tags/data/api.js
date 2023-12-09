@@ -51,7 +51,6 @@ export async function importNewTaxonomy(taxonomyName, taxonomyDescription, file)
 
 /**
  * Build the mutation to import tags to an existing taxonomy
- * @returns {import("@tanstack/react-query").UseMutationResult}
  */
 export const useImportTags = () => {
   const queryClient = useQueryClient();

@@ -73,6 +73,7 @@ const UploadStep = ({
 }) => {
   const intl = useIntl();
 
+  /** @type {(args: {fileData: FormData}) => void} */
   const handleFileLoad = ({ fileData }) => {
     setFile(fileData.get('file'));
     setImportPlanError(null);
@@ -206,7 +207,7 @@ const ImportTagsWizard = ({
   const steps = ['export', 'upload', 'plan', 'confirm'];
   const [currentStep, setCurrentStep] = useState(steps[0]);
 
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState(/** @type {null|File} */ (null));
 
   const [importPlan, setImportPlan] = useState(null);
   const [importPlanError, setImportPlanError] = useState(null);
