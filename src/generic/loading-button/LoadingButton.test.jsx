@@ -48,7 +48,7 @@ describe('<LoadingButton />', () => {
   });
 
   it('renders the spinner correctly even with error', () => {
-    const longFunction = () => new Promise((resolve, reject) => {
+    const longFunction = () => new Promise((_resolve, reject) => {
       setTimeout(reject, 1000);
     });
     const { getByRole, getByText, getByTestId } = render(RootWrapper(longFunction));

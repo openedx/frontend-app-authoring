@@ -58,8 +58,10 @@ describe('import taxonomy api calls', () => {
   });
 
   it('should call import tags', async () => {
-    axiosMock.onPut(getTagsImportApiUrl(1)).reply(200);
+    const taxonomy = { id: 1, name: 'taxonomy name' };
+    axiosMock.onPut(getTagsImportApiUrl(1)).reply(200, taxonomy);
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
+    const mockSetQueryData = jest.spyOn(queryClient, 'setQueryData');
 
     const { result } = renderHook(() => useImportTags(), { wrapper });
 
@@ -68,9 +70,7 @@ describe('import taxonomy api calls', () => {
     expect(mockInvalidateQueries).toHaveBeenCalledWith({
       queryKey: ['tagList', 1],
     });
-    expect(mockInvalidateQueries).toHaveBeenCalledWith({
-      queryKey: ['taxonomyDetail', 1],
-    });
+    expect(mockSetQueryData).toHaveBeenCalledWith(['taxonomyDetail', 1], taxonomy);
   });
 
   it('should call plan import tags', async () => {
@@ -81,10 +81,8 @@ describe('import taxonomy api calls', () => {
 
   it('should handle errors in plan import tags', async () => {
     axiosMock.onPut(getTagsPlanImportApiUrl(1)).reply(400, { error: 'test error' });
-    const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
 
     expect(planImportTags(1)).rejects.toEqual(Error('test error'));
     expect(axiosMock.history.put[0].url).toEqual(getTagsPlanImportApiUrl(1));
-    expect(mockInvalidateQueries).not.toHaveBeenCalled();
   });
 });

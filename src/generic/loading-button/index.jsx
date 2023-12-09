@@ -7,6 +7,14 @@ import {
   Stack,
 } from '@edx/paragon';
 
+/**
+  * A button that shows a loading spinner when clicked.
+  * @param {object} props
+  * @param {React.ReactNode=} props.children
+  * @param {boolean=} props.disabled
+  * @param {function=} props.onClick
+  * @returns {JSX.Element}
+  */
 const LoadingButton = ({
   onClick,
   children,
@@ -48,7 +56,6 @@ LoadingButton.propTypes = {
 
 LoadingButton.defaultProps = {
   ...Button.defaultProps,
-  disabled: null,
 };
 
 export default LoadingButton;

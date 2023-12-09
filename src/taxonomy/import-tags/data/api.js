@@ -33,9 +33,10 @@ export const getTagsPlanImportApiUrl = (taxonomyId) => new URL(
  * @param {string} taxonomyName
  * @param {string} taxonomyDescription
  * @param {File} file
- * @returns {Promise<Object>}
+ * @returns {Promise<import(../../taxonomy-detail/data/types).TaxonomyData}
  */
 export async function importNewTaxonomy(taxonomyName, taxonomyDescription, file) {
+  // ToDo: transform this to use react-query like useImportTags
   const formData = new FormData();
   formData.append('taxonomy_name', taxonomyName);
   formData.append('taxonomy_description', taxonomyDescription);
@@ -69,18 +70,18 @@ export const useImportTags = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      await getAuthenticatedHttpClient().put(
+      const { data } = await getAuthenticatedHttpClient().put(
         getTagsImportApiUrl(taxonomyId),
         formData,
       );
+
+      return camelCaseObject(data);
     },
-    onSuccess: (_data, variables) => {
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['tagList', variables.taxonomyId],
       });
-      queryClient.invalidateQueries({
-        queryKey: ['taxonomyDetail', variables.taxonomyId],
-      });
+      queryClient.setQueryData(['taxonomyDetail', variables.taxonomyId], data);
     },
   });
 };
@@ -89,7 +90,7 @@ export const useImportTags = () => {
  * Plan import tags to an existing taxonomy, overwriting existing tags
  * @param {number} taxonomyId
  * @param {File} file
- * @returns {Promise<Object>}
+ * @returns {Promise<string>}
  */
 export async function planImportTags(taxonomyId, file) {
   const formData = new FormData();
@@ -101,13 +102,8 @@ export async function planImportTags(taxonomyId, file) {
       formData,
     );
 
-    return camelCaseObject(data.plan);
-  } catch (err) {
-    // @ts-ignore
-    if (err.response?.data?.error) {
-      // @ts-ignore
-      throw new Error(err.response.data.error);
-    }
-    throw err;
+    return data.plan;
+  } catch (/** @type {any} */ err) {
+    throw new Error(err.response?.data?.error || err.message);
   }
 }

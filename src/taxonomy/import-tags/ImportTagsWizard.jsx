@@ -1,3 +1,4 @@
+// @ts-check
 import React, { useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -209,23 +210,25 @@ const ImportTagsWizard = ({
 
   const [file, setFile] = useState(/** @type {null|File} */ (null));
 
-  const [importPlan, setImportPlan] = useState(null);
+  const [importPlan, setImportPlan] = useState(/** @type {null|string[]} */ (null));
   const [importPlanError, setImportPlanError] = useState(null);
 
   const importTagsMutation = useImportTags();
 
   const generatePlan = async () => {
     try {
-      const plan = await planImportTags(taxonomy.id, file);
-      let planArrayTemp = plan.split('\n');
-      planArrayTemp = planArrayTemp.slice(2); // Removes the first two lines
-      planArrayTemp = planArrayTemp.slice(0, -1); // Removes the last line
-      const planArray = planArrayTemp
-        .filter((line) => !(line.includes('No changes'))) // Removes the "No changes" lines
-        .map((line) => line.split(':')[1].trim()); // Get only the action message
-      setImportPlan(planArray);
-      setImportPlanError(null);
-      setCurrentStep('plan');
+      if (file) {
+        const plan = await planImportTags(taxonomy.id, file);
+        let planArrayTemp = plan.split('\n');
+        planArrayTemp = planArrayTemp.slice(2); // Removes the first two lines
+        planArrayTemp = planArrayTemp.slice(0, -1); // Removes the last line
+        const planArray = planArrayTemp
+          .filter((line) => !(line.includes('No changes'))) // Removes the "No changes" lines
+          .map((line) => line.split(':')[1].trim()); // Get only the action message
+        setImportPlan(planArray);
+        setImportPlanError(null);
+        setCurrentStep('plan');
+      }
     } catch (/** @type {any} */ error) {
       setImportPlanError(error.message);
     }
@@ -233,11 +236,13 @@ const ImportTagsWizard = ({
 
   const confirmImportTags = async () => {
     try {
-      await importTagsMutation.mutateAsync({
-        taxonomyId: taxonomy.id,
-        file,
-      });
-      close();
+      if (file) {
+        await importTagsMutation.mutateAsync({
+          taxonomyId: taxonomy.id,
+          file,
+        });
+        close();
+      }
       // ToDo: show success toast
     } catch (error) {
       // ToDo: show error message
