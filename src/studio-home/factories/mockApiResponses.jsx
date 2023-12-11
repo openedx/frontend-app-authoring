@@ -19,30 +19,30 @@ export const initialState = {
 };
 
 export const generateGetStudioHomeDataApiResponse = () => ({
-    activeTab: 'courses',
-    allowCourseReruns: true,
-    allowedOrganizations: ['edx', 'org'],
-    archivedCourses: [],
-    canCreateOrganizations: true,
-    courseCreatorStatus: 'granted',
-    courses: [],
-    inProcessCourseActions: [],
-    libraries: [],
-    librariesEnabled: true,
-    libraryAuthoringMfeUrl: 'http://localhost:3001',
-    optimizationEnabled: false,
-    redirectToLibraryAuthoringMfe: false,
-    requestCourseCreatorUrl: '/request_course_creator',
-    rerunCreatorStatus: true,
-    showNewLibraryButton: true,
-    splitStudioHome: false,
-    studioName: 'Studio',
-    studioShortName: 'Studio',
-    studioRequestEmail: 'request@email.com',
-    techSupportEmail: 'technical@example.com',
-    platformName: 'Your Platform Name Here',
-    userIsActive: true,
-    allowToCreateNewOrg: false,
+  activeTab: 'courses',
+  allowCourseReruns: true,
+  allowedOrganizations: ['edx', 'org'],
+  archivedCourses: [],
+  canCreateOrganizations: true,
+  courseCreatorStatus: 'granted',
+  courses: [],
+  inProcessCourseActions: [],
+  libraries: [],
+  librariesEnabled: true,
+  libraryAuthoringMfeUrl: 'http://localhost:3001',
+  optimizationEnabled: false,
+  redirectToLibraryAuthoringMfe: false,
+  requestCourseCreatorUrl: '/request_course_creator',
+  rerunCreatorStatus: true,
+  showNewLibraryButton: true,
+  splitStudioHome: false,
+  studioName: 'Studio',
+  studioShortName: 'Studio',
+  studioRequestEmail: 'request@email.com',
+  techSupportEmail: 'technical@example.com',
+  platformName: 'Your Platform Name Here',
+  userIsActive: true,
+  allowToCreateNewOrg: false,
 });
 
 export const generateGetStudioCoursesApiResponse = () => ({
@@ -103,7 +103,7 @@ export const generateGetStuioHomeLibrariesApiResponse = () => ({
       number: '123',
       canEdit: true,
     },
-  ]
+  ],
 });
 
 export const generateNewVideoApiResponse = () => ({

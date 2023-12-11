@@ -2,7 +2,6 @@ import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-import { studioHomeMock } from '../__mocks__';
 import {
   getStudioHomeApiUrl,
   getRequestCourseCreatorUrl,
@@ -45,7 +44,7 @@ describe('studio-home api calls', () => {
   });
 
   fit('should get studio courses data', async () => {
-    const apiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/courses`
+    const apiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/courses`;
     axiosMock.onGet(apiLink).reply(200, generateGetStudioCoursesApiResponse());
     const result = await getStudioHomeCourses('');
     const expected = generateGetStudioCoursesApiResponse();
@@ -55,7 +54,7 @@ describe('studio-home api calls', () => {
   });
 
   it('should get studio libraries data', async () => {
-    const apiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/libraries`
+    const apiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/libraries`;
     axiosMock.onGet(apiLink).reply(200, generateGetStuioHomeLibrariesApiResponse());
     const result = await getStudioHomeLibraries();
     const expected = generateGetStuioHomeLibrariesApiResponse();
