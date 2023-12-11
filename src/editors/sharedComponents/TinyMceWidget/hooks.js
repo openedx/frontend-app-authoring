@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
 } from 'react';
+import { a11ycheckerCss } from 'frontend-components-tinymce-advanced-plugins';
 import tinyMCEStyles from '../../data/constants/tinyMCEStyles';
 import { StrictDict } from '../../utils';
 import pluginConfig from './pluginConfig';
@@ -250,7 +251,7 @@ export const editorConfig = ({
       ...config,
       skin: false,
       content_css: false,
-      content_style: tinyMCEStyles,
+      content_style: tinyMCEStyles + a11ycheckerCss,
       min_height: minHeight,
       contextmenu: 'link table',
       document_base_url: lmsEndpointUrl,
