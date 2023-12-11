@@ -53,7 +53,7 @@ describe('<TabsSection />', () => {
       `${studioHomeMock.courses[0].org} / ${studioHomeMock.courses[0].number} / ${studioHomeMock.courses[0].run}`,
     )).toBeVisible();
   });
-  fit('should switch to Libraries tab and render specific library details', () => {
+  it('should switch to Libraries tab and render specific library details', () => {
     const { getByText } = render(<RootWrapper />);
     const librariesTab = getByText(messages.librariesTabTitle.defaultMessage);
     fireEvent.click(librariesTab);
