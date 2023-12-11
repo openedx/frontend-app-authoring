@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon, Row} from '@edx/paragon';
-import { Error } from  '@edx/paragon/icons';
+import { Icon, Row } from '@edx/paragon';
+import { Error } from '@edx/paragon/icons';
 
 import { COURSE_CREATOR_STATES } from '../../../constants';
 import { getStudioHomeData } from '../../data/selectors';
@@ -12,7 +12,7 @@ import CollapsibleStateWithAction from '../../collapsible-state-with-action';
 import { sortAlphabeticallyArray } from '../utils';
 import ContactAdministrator from './contact-administrator';
 import ProcessingCourses from '../../processing-courses';
-import LoadingSpinner from '../../../generic/Loading';
+import { LoadingSpinner } from '../../../generic/Loading';
 import AlertMessage from '../../../generic/alert-message';
 import messages from '../messages';
 
@@ -24,7 +24,7 @@ const CoursesTab = ({
   isLoading,
   isFailed,
 }) => {
-  const intl = useIntl()
+  const intl = useIntl();
   const {
     courseCreatorStatus,
     optimizationEnabled,
@@ -37,7 +37,11 @@ const CoursesTab = ({
   ].includes(courseCreatorStatus);
 
   if (isLoading) {
-    return <LoadingSpinner />
+    return (
+      <Row className="m-0 mt-4 justify-content-center">
+        <LoadingSpinner />
+      </Row>
+    );
   }
 
   return (
@@ -113,7 +117,7 @@ CoursesTab.propTypes = {
   showNewCourseContainer: PropTypes.bool.isRequired,
   onClickNewCourse: PropTypes.func.isRequired,
   isShowProcessing: PropTypes.bool.isRequired,
-  isLoading:PropTypes.bool.isRequired,
+  isLoading: PropTypes.bool.isRequired,
   isFailed: PropTypes.bool.isRequired,
 };
 

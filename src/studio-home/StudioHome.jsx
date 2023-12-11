@@ -52,7 +52,7 @@ const StudioHome = ({ intl }) => {
   function getHeaderButtons() {
     const headerButtons = [];
 
-    if (isFailedLoadingPage) {
+    if (isFailedLoadingPage || !userIsActive) {
       return headerButtons;
     }
 
@@ -102,6 +102,53 @@ const StudioHome = ({ intl }) => {
     return (<Loading />);
   }
 
+  const getMainBody = () => {
+    if (isFailedLoadingPage) {
+      return (
+        <AlertMessage
+          variant="danger"
+          description={(
+            <Row className="m-0 align-items-center">
+              <Icon src={Error} className="text-danger-500 mr-1" />
+              <span>{intl.formatMessage(messages.homePageLoadFailedMessage)}</span>
+            </Row>
+          )}
+        />
+      );
+    }
+    if (!userIsActive) {
+      return <VerifyEmailLayout />;
+    }
+    return (
+      <Layout
+        lg={[{ span: 9 }, { span: 3 }]}
+        md={[{ span: 9 }, { span: 3 }]}
+        sm={[{ span: 9 }, { span: 3 }]}
+        xs={[{ span: 9 }, { span: 3 }]}
+        xl={[{ span: 9 }, { span: 3 }]}
+      >
+        <Layout.Element>
+          <section>
+            {showNewCourseContainer && (
+              <CreateNewCourseForm handleOnClickCancel={() => setShowNewCourseContainer(false)} />
+            )}
+            {isShowOrganizationDropdown && <OrganizationSection />}
+            <TabsSection
+              tabsData={studioHomeData}
+              showNewCourseContainer={showNewCourseContainer}
+              onClickNewCourse={() => setShowNewCourseContainer(true)}
+              isShowProcessing={isShowProcessing}
+              dispatch={dispatch}
+            />
+          </section>
+        </Layout.Element>
+        <Layout.Element>
+          <HomeSidebar />
+        </Layout.Element>
+      </Layout>
+    );
+  };
+
   return (
     <>
       <Header isHiddenMainMenu />
@@ -115,48 +162,7 @@ const StudioHome = ({ intl }) => {
               />
             </section>
           </article>
-          {isFailedLoadingPage ? (
-            <AlertMessage
-              variant="danger"
-              description={(
-                <Row className="m-0 align-items-center">
-                  <Icon src={Error} className="text-danger-500 mr-1" />
-                  <span>{intl.formatMessage(messages.homePageLoadFailedMessage)}</span>
-                </Row>
-              )}
-            />
-          ) : (
-            !userIsActive ? (
-              <VerifyEmailLayout />
-            ) : (
-              <Layout
-                lg={[{ span: 9 }, { span: 3 }]}
-                md={[{ span: 9 }, { span: 3 }]}
-                sm={[{ span: 9 }, { span: 3 }]}
-                xs={[{ span: 9 }, { span: 3 }]}
-                xl={[{ span: 9 }, { span: 3 }]}
-              >
-                <Layout.Element>
-                  <section>
-                    {showNewCourseContainer && (
-                      <CreateNewCourseForm handleOnClickCancel={() => setShowNewCourseContainer(false)} />
-                    )}
-                    {isShowOrganizationDropdown && <OrganizationSection />}
-                    <TabsSection
-                      tabsData={studioHomeData}
-                      showNewCourseContainer={showNewCourseContainer}
-                      onClickNewCourse={() => setShowNewCourseContainer(true)}
-                      isShowProcessing={isShowProcessing}
-                      dispatch={dispatch}
-                    />
-                  </section>
-                </Layout.Element>
-                <Layout.Element>
-                  <HomeSidebar />
-                </Layout.Element>
-              </Layout>
-            )
-          )}
+          {getMainBody()}
         </section>
       </Container>
       <div className="alert-toast">

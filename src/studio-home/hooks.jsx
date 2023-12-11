@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RequestStatus } from '../data/constants';
 import { COURSE_CREATOR_STATES } from '../constants';
 import { getCourseData, getSavingStatus } from '../generic/data/selectors';
-import { fetchStudioHomeData, fetchLibraryData } from './data/thunks';
+import { fetchStudioHomeData } from './data/thunks';
 import {
   getLoadingStatuses,
   getSavingStatuses,

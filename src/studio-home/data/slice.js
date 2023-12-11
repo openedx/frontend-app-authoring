@@ -34,10 +34,10 @@ const slice = createSlice({
       state.studioHomeData.archivedCourses = archivedCourses;
       state.studioHomeData.inProcessCourseActions = inProcessCourseActions;
     },
-    fetchLibraryDataSuccess: (state,  { payload }) => {
+    fetchLibraryDataSuccess: (state, { payload }) => {
       const { libraries } = payload;
       state.studioHomeData.libraries = libraries;
-    }
+    },
   },
 });
 

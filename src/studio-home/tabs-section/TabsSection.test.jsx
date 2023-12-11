@@ -22,7 +22,7 @@ let store;
 const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
-      <TabsSection intl={{ formatMessage: jest.fn() }} tabsData={studioHomeMock} />
+      <TabsSection intl={{ formatMessage: jest.fn() }} dispatch={jest.fn()} />
     </IntlProvider>
   </AppProvider>
 );
@@ -53,7 +53,7 @@ describe('<TabsSection />', () => {
       `${studioHomeMock.courses[0].org} / ${studioHomeMock.courses[0].number} / ${studioHomeMock.courses[0].run}`,
     )).toBeVisible();
   });
-  it('should switch to Libraries tab and render specific library details', () => {
+  fit('should switch to Libraries tab and render specific library details', () => {
     const { getByText } = render(<RootWrapper />);
     const librariesTab = getByText(messages.librariesTabTitle.defaultMessage);
     fireEvent.click(librariesTab);

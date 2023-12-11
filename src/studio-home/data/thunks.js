@@ -11,6 +11,7 @@ import {
   fetchCourseDataSuccess,
   updateLoadingStatuses,
   updateSavingStatuses,
+  fetchLibraryDataSuccess,
 } from './slice';
 
 function fetchStudioHomeData(search, hasHomeData) {
@@ -23,34 +24,33 @@ function fetchStudioHomeData(search, hasHomeData) {
         const studioHomeData = await getStudioHomeData(search || '');
         dispatch(fetchStudioHomeDataSuccess(studioHomeData));
         dispatch(updateLoadingStatuses({ studioHomeLoadingStatus: RequestStatus.SUCCESSFUL }));
+        try {
+          const coursesData = await getStudioHomeCourses(search || '');
+          dispatch(fetchCourseDataSuccess(coursesData));
+          dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.SUCCESSFUL }));
+        } catch (error) {
+          dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.FAILED }));
+        }
       } catch (error) {
         dispatch(updateLoadingStatuses({ studioHomeLoadingStatus: RequestStatus.FAILED }));
-        return false;
+        // return false;
       }
-    }
-    try {
-      const coursesData =  await getStudioHomeCourses(search || '');
-      dispatch(fetchCourseDataSuccess(coursesData));
-      dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.SUCCESSFUL }));
-    } catch (error) {
-      dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.FAILED }));
     }
   };
 }
 
 function fetchLibraryData() {
   return async (dispatch) => {
-    console.log('calling fetch');
     dispatch(updateLoadingStatuses({ libraryLoadingStatus: RequestStatus.IN_PROGRESS }));
 
     try {
       const libraryData = await getStudioHomeLibraries();
-      dispatch(fetchLibraryData(libraryData))
+      dispatch(fetchLibraryDataSuccess(libraryData));
       dispatch(updateLoadingStatuses({ libraryLoadingStatus: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       dispatch(updateLoadingStatuses({ libraryLoadingStatus: RequestStatus.FAILED }));
     }
-  }
+  };
 }
 
 function handleDeleteNotificationQuery(url) {
