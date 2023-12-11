@@ -13,6 +13,10 @@ const messages = defineMessages({
     id: 'course-authoring.studio-home.add-new-library.btn.text',
     defaultMessage: 'New library',
   },
+  homePageLoadFailedMessage: {
+    id: 'course-authoring.studio-home.page-load.failed.message',
+    defaultMessage: 'Failed to fetch courses. Please try again later.'
+  },
   emailStaffBtnText: {
     id: 'course-authoring.studio-home.email-staff.btn.text',
     defaultMessage: 'Email staff to create course',

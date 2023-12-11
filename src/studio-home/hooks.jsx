@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RequestStatus } from '../data/constants';
 import { COURSE_CREATOR_STATES } from '../constants';
 import { getCourseData, getSavingStatus } from '../generic/data/selectors';
-import { fetchStudioHomeData } from './data/thunks';
+import { fetchStudioHomeData, fetchLibraryData } from './data/thunks';
 import {
   getLoadingStatuses,
   getSavingStatuses,
@@ -26,6 +26,7 @@ const useStudioHome = () => {
   } = useSelector(getSavingStatuses);
   const [showNewCourseContainer, setShowNewCourseContainer] = useState(false);
   const isLoadingPage = studioHomeLoadingStatus === RequestStatus.IN_PROGRESS;
+  const isFailedLoadingPage = studioHomeLoadingStatus === RequestStatus.FAILED;
 
   useEffect(() => {
     dispatch(fetchStudioHomeData(location.search ?? ''));
@@ -59,7 +60,7 @@ const useStudioHome = () => {
 
   const isShowOrganizationDropdown = optimizationEnabled && courseCreatorStatus === COURSE_CREATOR_STATES.granted;
   const isShowEmailStaff = courseCreatorStatus === COURSE_CREATOR_STATES.disallowedForThisSite && !!studioRequestEmail;
-  const isShowProcessing = allowCourseReruns && rerunCreatorStatus && inProcessCourseActions.length > 0;
+  const isShowProcessing = allowCourseReruns && rerunCreatorStatus && inProcessCourseActions?.length > 0;
   const hasAbilityToCreateNewCourse = courseCreatorStatus === COURSE_CREATOR_STATES.granted;
   const anyQueryIsPending = [deleteNotificationSavingStatus, courseCreatorSavingStatus, savingCreateRerunStatus]
     .includes(RequestStatus.PENDING);
@@ -68,6 +69,7 @@ const useStudioHome = () => {
 
   return {
     isLoadingPage,
+    isFailedLoadingPage,
     newCourseData,
     studioHomeData,
     isShowProcessing,
@@ -78,7 +80,6 @@ const useStudioHome = () => {
     courseCreatorSavingStatus,
     isShowOrganizationDropdown,
     hasAbilityToCreateNewCourse,
-    deleteNotificationSavingStatus,
     dispatch,
     setShowNewCourseContainer,
   };

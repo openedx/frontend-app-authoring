@@ -2,10 +2,12 @@ import React from 'react';
 import {
   Button,
   Container,
+  Icon,
   Layout,
   MailtoLink,
+  Row,
 } from '@edx/paragon';
-import { Add as AddIcon } from '@edx/paragon/icons/es5';
+import { Add as AddIcon, Error } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { getConfig } from '@edx/frontend-platform';
@@ -21,10 +23,12 @@ import VerifyEmailLayout from './verify-email-layout';
 import CreateNewCourseForm from './create-new-course-form';
 import messages from './messages';
 import { useStudioHome } from './hooks';
+import AlertMessage from '../generic/alert-message';
 
 const StudioHome = ({ intl }) => {
   const {
     isLoadingPage,
+    isFailedLoadingPage,
     studioHomeData,
     isShowProcessing,
     anyQueryIsFailed,
@@ -34,6 +38,7 @@ const StudioHome = ({ intl }) => {
     isShowOrganizationDropdown,
     hasAbilityToCreateNewCourse,
     setShowNewCourseContainer,
+    dispatch,
   } = useStudioHome();
 
   const {
@@ -46,6 +51,10 @@ const StudioHome = ({ intl }) => {
 
   function getHeaderButtons() {
     const headerButtons = [];
+
+    if (isFailedLoadingPage) {
+      return headerButtons;
+    }
 
     if (isShowEmailStaff) {
       headerButtons.push(
@@ -101,39 +110,52 @@ const StudioHome = ({ intl }) => {
           <article className="studio-home-sub-header">
             <section>
               <SubHeader
-                title={intl.formatMessage(messages.headingTitle, { studioShortName })}
+                title={intl.formatMessage(messages.headingTitle, { studioShortName: studioShortName || 'Studio' })}
                 headerActions={headerButtons}
               />
             </section>
           </article>
-          {!userIsActive ? (
-            <VerifyEmailLayout />
+          {isFailedLoadingPage ? (
+            <AlertMessage
+              variant="danger"
+              description={(
+                <Row className="m-0 align-items-center">
+                  <Icon src={Error} className="text-danger-500 mr-1" />
+                  <span>{intl.formatMessage(messages.homePageLoadFailedMessage)}</span>
+                </Row>
+              )}
+            />
           ) : (
-            <Layout
-              lg={[{ span: 9 }, { span: 3 }]}
-              md={[{ span: 9 }, { span: 3 }]}
-              sm={[{ span: 9 }, { span: 3 }]}
-              xs={[{ span: 9 }, { span: 3 }]}
-              xl={[{ span: 9 }, { span: 3 }]}
-            >
-              <Layout.Element>
-                <section>
-                  {showNewCourseContainer && (
-                    <CreateNewCourseForm handleOnClickCancel={() => setShowNewCourseContainer(false)} />
-                  )}
-                  {isShowOrganizationDropdown && <OrganizationSection />}
-                  <TabsSection
-                    tabsData={studioHomeData}
-                    showNewCourseContainer={showNewCourseContainer}
-                    onClickNewCourse={() => setShowNewCourseContainer(true)}
-                    isShowProcessing={isShowProcessing}
-                  />
-                </section>
-              </Layout.Element>
-              <Layout.Element>
-                <HomeSidebar />
-              </Layout.Element>
-            </Layout>
+            !userIsActive ? (
+              <VerifyEmailLayout />
+            ) : (
+              <Layout
+                lg={[{ span: 9 }, { span: 3 }]}
+                md={[{ span: 9 }, { span: 3 }]}
+                sm={[{ span: 9 }, { span: 3 }]}
+                xs={[{ span: 9 }, { span: 3 }]}
+                xl={[{ span: 9 }, { span: 3 }]}
+              >
+                <Layout.Element>
+                  <section>
+                    {showNewCourseContainer && (
+                      <CreateNewCourseForm handleOnClickCancel={() => setShowNewCourseContainer(false)} />
+                    )}
+                    {isShowOrganizationDropdown && <OrganizationSection />}
+                    <TabsSection
+                      tabsData={studioHomeData}
+                      showNewCourseContainer={showNewCourseContainer}
+                      onClickNewCourse={() => setShowNewCourseContainer(true)}
+                      isShowProcessing={isShowProcessing}
+                      dispatch={dispatch}
+                    />
+                  </section>
+                </Layout.Element>
+                <Layout.Element>
+                  <HomeSidebar />
+                </Layout.Element>
+              </Layout>
+            )
           )}
         </section>
       </Container>

@@ -1,23 +1,56 @@
 import { RequestStatus } from '../../data/constants';
-import { getStudioHomeData, sendRequestForCourseCreator, handleCourseNotification } from './api';
+import {
+  getStudioHomeData,
+  sendRequestForCourseCreator,
+  handleCourseNotification,
+  getStudioHomeCourses,
+  getStudioHomeLibraries,
+} from './api';
 import {
   fetchStudioHomeDataSuccess,
+  fetchCourseDataSuccess,
   updateLoadingStatuses,
   updateSavingStatuses,
 } from './slice';
 
-function fetchStudioHomeData(search) {
+function fetchStudioHomeData(search, hasHomeData) {
   return async (dispatch) => {
     dispatch(updateLoadingStatuses({ studioHomeLoadingStatus: RequestStatus.IN_PROGRESS }));
+    dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.IN_PROGRESS }));
 
+    if (!hasHomeData) {
+      try {
+        const studioHomeData = await getStudioHomeData(search || '');
+        dispatch(fetchStudioHomeDataSuccess(studioHomeData));
+        dispatch(updateLoadingStatuses({ studioHomeLoadingStatus: RequestStatus.SUCCESSFUL }));
+      } catch (error) {
+        dispatch(updateLoadingStatuses({ studioHomeLoadingStatus: RequestStatus.FAILED }));
+        return false;
+      }
+    }
     try {
-      const studioHomeData = await getStudioHomeData(search || '');
-      dispatch(fetchStudioHomeDataSuccess(studioHomeData));
-      dispatch(updateLoadingStatuses({ studioHomeLoadingStatus: RequestStatus.SUCCESSFUL }));
+      const coursesData =  await getStudioHomeCourses(search || '');
+      dispatch(fetchCourseDataSuccess(coursesData));
+      dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateLoadingStatuses({ studioHomeLoadingStatus: RequestStatus.FAILED }));
+      dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.FAILED }));
     }
   };
+}
+
+function fetchLibraryData() {
+  return async (dispatch) => {
+    console.log('calling fetch');
+    dispatch(updateLoadingStatuses({ libraryLoadingStatus: RequestStatus.IN_PROGRESS }));
+
+    try {
+      const libraryData = await getStudioHomeLibraries();
+      dispatch(fetchLibraryData(libraryData))
+      dispatch(updateLoadingStatuses({ libraryLoadingStatus: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateLoadingStatuses({ libraryLoadingStatus: RequestStatus.FAILED }));
+    }
+  }
 }
 
 function handleDeleteNotificationQuery(url) {
@@ -50,6 +83,7 @@ function requestCourseCreatorQuery() {
 
 export {
   fetchStudioHomeData,
+  fetchLibraryData,
   requestCourseCreatorQuery,
   handleDeleteNotificationQuery,
 };
