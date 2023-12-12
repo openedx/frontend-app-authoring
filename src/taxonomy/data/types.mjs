@@ -19,7 +19,16 @@
  * @property {number} num_pages
  * @property {number} current_page
  * @property {number} start
- * @property {function} refetch
  * @property {TaxonomyData[]} results
  */
 
+/**
+ * @typedef {Object} QueryTaxonomyListData
+ * @property {TaxonomyListData} data
+ */
+
+/**
+ * @typedef {Object} UseQueryResult
+ * @property {Object} data
+ * @property {string} status
+ */

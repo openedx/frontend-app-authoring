@@ -1,50 +1,28 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { act, render, fireEvent } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 
 import initializeStore from '../store';
 
 import TaxonomyListPage from './TaxonomyListPage';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
-import { TaxonomyContext } from './common/context';
 
 let store;
-const mockSetToastMessage = jest.fn();
-const mockDeleteTaxonomy = jest.fn();
-const taxonomies = [{
-  id: 1,
-  name: 'Taxonomy',
-  description: 'This is a description',
-}];
 
 jest.mock('./data/apiHooks', () => ({
   useTaxonomyListDataResponse: jest.fn(),
   useIsTaxonomyListDataLoaded: jest.fn(),
-  useDeleteTaxonomy: () => mockDeleteTaxonomy,
 }));
-jest.mock('./taxonomy-card/TaxonomyCardMenu', () => jest.fn(({ onClickMenuItem }) => (
-  // eslint-disable-next-line jsx-a11y/control-has-associated-label
-  <button type="button" data-testid="test-delete-button" onClick={() => onClickMenuItem('delete')} />
-)));
 
-const RootWrapper = () => {
-  const context = useMemo(() => ({
-    toastMessage: null,
-    setToastMessage: mockSetToastMessage,
-  }), []);
-
-  return (
-    <AppProvider store={store}>
-      <IntlProvider locale="en" messages={{}}>
-        <TaxonomyContext.Provider value={context}>
-          <TaxonomyListPage intl={injectIntl} />
-        </TaxonomyContext.Provider>
-      </IntlProvider>
-    </AppProvider>
-  );
-};
+const RootWrapper = () => (
+  <AppProvider store={store}>
+    <IntlProvider locale="en" messages={{}}>
+      <TaxonomyListPage intl={injectIntl} />
+    </IntlProvider>
+  </AppProvider>
+);
 
 describe('<TaxonomyListPage />', async () => {
   beforeEach(async () => {
@@ -76,28 +54,15 @@ describe('<TaxonomyListPage />', async () => {
   it('shows the data table after the query is complete', async () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
-      results: taxonomies,
+      results: [{
+        id: 1,
+        name: 'Taxonomy',
+        description: 'This is a description',
+      }],
     });
     await act(async () => {
       const { getByTestId } = render(<RootWrapper />);
       expect(getByTestId('taxonomy-card-1')).toBeInTheDocument();
     });
-  });
-
-  it('should show the success toast after delete', async () => {
-    useIsTaxonomyListDataLoaded.mockReturnValue(true);
-    useTaxonomyListDataResponse.mockReturnValue({
-      results: taxonomies,
-    });
-    mockDeleteTaxonomy.mockImplementationOnce(async (params, callbacks) => {
-      callbacks.onSuccess();
-    });
-    const { getByTestId, getByLabelText } = render(<RootWrapper />);
-    fireEvent.click(getByTestId('test-delete-button'));
-    fireEvent.change(getByLabelText('Type DELETE to confirm'), { target: { value: 'DELETE' } });
-    fireEvent.click(getByTestId('delete-button'));
-
-    expect(mockDeleteTaxonomy).toBeCalledTimes(1);
-    expect(mockSetToastMessage).toBeCalledWith(`"${taxonomies[0].name}" deleted`);
   });
 });

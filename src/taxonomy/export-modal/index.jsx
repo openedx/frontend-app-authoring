@@ -18,10 +18,10 @@ const ExportModal = ({
   const intl = useIntl();
   const [outputFormat, setOutputFormat] = useState('csv');
 
-  const onClickExport = React.useCallback(() => {
+  const onClickExport = () => {
     onClose();
     getTaxonomyExportFile(taxonomyId, outputFormat);
-  }, [onClose, taxonomyId, outputFormat]);
+  };
 
   return (
     <ModalDialog
