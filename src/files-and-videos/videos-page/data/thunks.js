@@ -176,11 +176,14 @@ export function deleteVideoTranscript({
         apiUrl,
       });
       const updatedTranscripts = transcripts.filter(transcript => transcript !== language);
+      const transcriptStatus = updatedTranscripts?.length > 0 ? 'transcribed' : 'notTranscribed';
+
       dispatch(updateModel({
         modelType: 'videos',
         model: {
           id: videoId,
           transcripts: updatedTranscripts,
+          transcriptStatus,
         },
       }));
 
@@ -244,11 +247,14 @@ export function uploadVideoTranscript({
         updatedTranscripts = [...transcripts, newLanguage];
       }
 
+      const transcriptStatus = updatedTranscripts?.length > 0 ? 'transcribed' : 'notTranscribed';
+
       dispatch(updateModel({
         modelType: 'videos',
         model: {
           id: videoId,
           transcripts: updatedTranscripts,
+          transcriptStatus,
         },
       }));
 
@@ -272,11 +278,14 @@ export function getUsagePaths({ video, courseId }) {
 
     try {
       const { usageLocations } = await getVideoUsagePaths({ videoId: video.id, courseId });
+      const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
+
       dispatch(updateModel({
         modelType: 'videos',
         model: {
           id: video.id,
           usageLocations,
+          activeStatus,
         },
       }));
       dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.SUCCESSFUL }));
@@ -287,16 +296,20 @@ export function getUsagePaths({ video, courseId }) {
   };
 }
 
-export function fetchVideoDownload({ selectedRows }) {
+export function fetchVideoDownload({ selectedRows, courseId }) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.IN_PROGRESS }));
-    const errors = await getDownload(selectedRows);
-    if (isEmpty(errors)) {
+    try {
+      const errors = await getDownload(selectedRows, courseId);
       dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.SUCCESSFUL }));
-    } else {
-      errors.forEach(error => {
-        dispatch(updateErrors({ error: 'download', message: error }));
-      });
+      if (!isEmpty(errors)) {
+        errors.forEach(error => {
+          dispatch(updateErrors({ error: 'download', message: error }));
+        });
+        dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.FAILED }));
+      }
+    } catch (error) {
+      dispatch(updateErrors({ error: 'download', message: 'Failed to download zip file of videos.' }));
       dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.FAILED }));
     }
   };

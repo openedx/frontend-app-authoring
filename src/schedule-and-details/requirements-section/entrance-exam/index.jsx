@@ -19,7 +19,7 @@ const EntranceExam = ({
   const toggleEntranceExam = () => onChange((!showEntranceExam).toString(), 'entranceExamEnabled');
   const courseOutlineDestination = getPagePath(
     courseId,
-    process.env.ENABLE_NEW_COURSE_OUTLINE_PAGE,
+    'false',
     'course',
   );
 

@@ -1,13 +1,5 @@
-.tag-bubble.btn-outline-dark {
-  border-color: $light-300;
-
-  &:hover {
-    color: $white;
-    background-color: $dark;
-    border-color: $dark;
-  }
-}
-
-.implicit > .implicit-tag-icon {
-  color: $dark;
+.tag-bubble.pgn__chip {
+  border-style: solid;
+  border-width: 2px;
+  background-color: transparent;
 }

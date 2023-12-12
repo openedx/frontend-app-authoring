@@ -1,4 +1,5 @@
-// ts-check
+// @ts-check
+import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Breadcrumb,
@@ -13,9 +14,9 @@ import Loading from '../../generic/Loading';
 import getPageHeadTitle from '../../generic/utils';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import taxonomyMessages from '../messages';
+import { TagListTable } from '../tag-list';
 import { TaxonomyMenu } from '../taxonomy-menu';
 import TaxonomyDetailSideCard from './TaxonomyDetailSideCard';
-import { TagListTable } from '../tag-list';
 import { useTaxonomyDetailDataResponse, useTaxonomyDetailDataStatus } from './data/apiHooks';
 
 const TaxonomyDetailPage = () => {

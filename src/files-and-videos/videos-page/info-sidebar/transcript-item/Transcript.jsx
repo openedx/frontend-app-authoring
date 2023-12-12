@@ -54,18 +54,19 @@ const Transcript = ({
     <>
       {isConfirmationOpen ? (
         <Card className="my-2">
-          <Card.Header title={(<FormattedMessage {...messages.deleteConfirmationHeader} />)} />
+          <Card.Header className="h3" title={(<FormattedMessage {...messages.deleteConfirmationHeader} />)} />
           <Card.Body>
             <Card.Section>
               <FormattedMessage {...messages.deleteConfirmationMessage} />
             </Card.Section>
             <Card.Footer>
-              <Button variant="tertiary" className="mb-2 mb-sm-0" onClick={closeConfirmation}>
+              <Button size="sm" variant="tertiary" className="mb-2 mb-sm-0" onClick={closeConfirmation}>
                 <FormattedMessage {...messages.cancelDeleteLabel} />
               </Button>
               <Button
                 variant="danger"
                 className="mb-2 mb-sm-0"
+                size="sm"
                 onClick={() => {
                   handleTranscript({ language: transcript }, 'delete');
                   closeConfirmation();

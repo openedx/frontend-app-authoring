@@ -22,7 +22,7 @@ export const TranscriptActionMenu = ({
       alt="Actions dropdown"
       data-testid={`${language}-transcript-menu`}
     />
-    <Dropdown.Menu className="video_transcript Action Menu">
+    <Dropdown.Menu className="video_transcript position-fixed">
       <Dropdown.Item
         key={`transcript-actions-${language}-replace`}
         onClick={input.click}

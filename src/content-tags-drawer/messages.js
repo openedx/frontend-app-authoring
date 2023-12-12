@@ -17,6 +17,10 @@ const messages = defineMessages({
     id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.spinner.loading',
     defaultMessage: 'Loading tags',
   },
+  loadMoreTagsButtonText: {
+    id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.load-more-tags.button',
+    defaultMessage: 'Load more',
+  },
   taxonomyTagsAriaLabel: {
     id: 'course-authoring.content-tags-drawer.content-tags-collapsible.selectable-box.selection.aria.label',
     defaultMessage: 'taxonomy tags selection',

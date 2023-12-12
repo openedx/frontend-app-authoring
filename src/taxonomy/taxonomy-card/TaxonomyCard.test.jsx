@@ -1,5 +1,5 @@
 import React from 'react';
-import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { render } from '@testing-library/react';
@@ -10,6 +10,7 @@ import TaxonomyCard from '.';
 
 let store;
 const taxonomyId = 1;
+const onDeleteTaxonomy = jest.fn();
 
 const data = {
   id: taxonomyId,
@@ -24,7 +25,10 @@ jest.mock('../data/api', () => ({
 const TaxonomyCardComponent = ({ original }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
-      <TaxonomyCard intl={injectIntl} original={original} />
+      <TaxonomyCard
+        original={original}
+        onDeleteTaxonomy={onDeleteTaxonomy}
+      />
     </IntlProvider>
   </AppProvider>
 );
@@ -36,6 +40,7 @@ TaxonomyCardComponent.propTypes = {
     description: PropTypes.string,
     systemDefined: PropTypes.bool,
     orgsCount: PropTypes.number,
+    onDeleteTaxonomy: PropTypes.func,
   }).isRequired,
 };
 

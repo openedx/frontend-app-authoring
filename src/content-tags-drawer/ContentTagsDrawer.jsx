@@ -10,10 +10,8 @@ import messages from './messages';
 import ContentTagsCollapsible from './ContentTagsCollapsible';
 import { extractOrgFromContentId } from './utils';
 import {
-  useContentTaxonomyTagsDataResponse,
-  useIsContentTaxonomyTagsDataLoaded,
-  useContentDataResponse,
-  useIsContentDataLoaded,
+  useContentTaxonomyTagsData,
+  useContentData,
 } from './data/apiHooks';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from '../taxonomy/data/apiHooks';
 import Loading from '../generic/Loading';
@@ -24,26 +22,17 @@ const ContentTagsDrawer = () => {
 
   const org = extractOrgFromContentId(contentId);
 
-  const useContentData = () => {
-    const contentData = useContentDataResponse(contentId);
-    const isContentDataLoaded = useIsContentDataLoaded(contentId);
-    return { contentData, isContentDataLoaded };
-  };
-
-  const useContentTaxonomyTagsData = () => {
-    const contentTaxonomyTagsData = useContentTaxonomyTagsDataResponse(contentId);
-    const isContentTaxonomyTagsLoaded = useIsContentTaxonomyTagsDataLoaded(contentId);
-    return { contentTaxonomyTagsData, isContentTaxonomyTagsLoaded };
-  };
-
   const useTaxonomyListData = () => {
     const taxonomyListData = useTaxonomyListDataResponse(org);
     const isTaxonomyListLoaded = useIsTaxonomyListDataLoaded(org);
     return { taxonomyListData, isTaxonomyListLoaded };
   };
 
-  const { contentData, isContentDataLoaded } = useContentData();
-  const { contentTaxonomyTagsData, isContentTaxonomyTagsLoaded } = useContentTaxonomyTagsData();
+  const { data: contentData, isSuccess: isContentDataLoaded } = useContentData(contentId);
+  const {
+    data: contentTaxonomyTagsData,
+    isSuccess: isContentTaxonomyTagsLoaded,
+  } = useContentTaxonomyTagsData(contentId);
   const { taxonomyListData, isTaxonomyListLoaded } = useTaxonomyListData();
 
   const closeContentTagsDrawer = () => {
@@ -113,7 +102,8 @@ const ContentTagsDrawer = () => {
         { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded
           ? taxonomies.map((data) => (
             <div key={`taxonomy-tags-collapsible-${data.id}`}>
-              <ContentTagsCollapsible taxonomyAndTagsData={data} />
+              {/* TODO: Properly set whether tags should be editable or not based on permissions */}
+              <ContentTagsCollapsible contentId={contentId} taxonomyAndTagsData={data} editable />
               <hr />
             </div>
           ))

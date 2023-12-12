@@ -6,3 +6,12 @@
   box-shadow: none;
   padding: 0;
 }
+
+.pgn__selectable_box.taxonomy-tags-selectable-box:disabled,
+.pgn__selectable_box.taxonomy-tags-selectable-box[disabled] {
+  opacity: 1 !important;
+}
+
+.pgn__selectable_box-active.taxonomy-tags-selectable-box {
+  outline: none !important;
+}

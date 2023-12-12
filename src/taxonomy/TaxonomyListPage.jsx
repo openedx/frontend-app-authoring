@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Button,
   CardView,
@@ -11,13 +11,13 @@ import {
 } from '@edx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
-
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
 import { importTaxonomy } from './import-tags';
 import messages from './messages';
 import TaxonomyCard from './taxonomy-card';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
+import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded, useDeleteTaxonomy } from './data/apiHooks';
+import { TaxonomyContext } from './common/context';
 
 const TaxonomyListHeaderButtons = () => {
   const intl = useIntl();
@@ -39,12 +39,25 @@ const TaxonomyListHeaderButtons = () => {
 
 const TaxonomyListPage = () => {
   const intl = useIntl();
+  const deleteTaxonomy = useDeleteTaxonomy();
+  const { setToastMessage } = useContext(TaxonomyContext);
+
+  const onDeleteTaxonomy = React.useCallback((id, name) => {
+    deleteTaxonomy({ pk: id }, {
+      onSuccess: async () => {
+        setToastMessage(intl.formatMessage(messages.taxonomyDeleteToast, { name }));
+      },
+      onError: async () => {
+        // TODO: display the error to the user
+      },
+    });
+  }, [setToastMessage]);
+
   const useTaxonomyListData = () => {
     const taxonomyListData = useTaxonomyListDataResponse();
     const isLoaded = useIsTaxonomyListDataLoaded();
     return { taxonomyListData, isLoaded };
   };
-
   const { taxonomyListData, isLoaded } = useTaxonomyListData();
 
   const getOrgSelect = () => (
@@ -87,11 +100,14 @@ const TaxonomyListPage = () => {
                 {
                   accessor: 'systemDefined',
                 },
+                {
+                  accessor: 'tagsCount',
+                },
               ]}
             >
               <CardView
                 className="bg-light-400 p-5"
-                CardComponent={TaxonomyCard}
+                CardComponent={(row) => TaxonomyCard({ ...row, onDeleteTaxonomy })}
               />
             </DataTable>
           )}
