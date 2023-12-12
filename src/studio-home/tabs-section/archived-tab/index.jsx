@@ -31,7 +31,7 @@ const ArchivedTab = ({
         description={(
           <Row className="m-0 align-items-center">
             <Icon src={Error} className="text-danger-500 mr-1" />
-            <span>{intl.formatMessage(messages.courseTabErrorMessage)}</span>
+            <span>{intl.formatMessage(messages.archiveTabErrorMessage)}</span>
           </Row>
         )}
       />

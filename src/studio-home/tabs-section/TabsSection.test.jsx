@@ -1,23 +1,34 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { initializeMockApp } from '@edx/frontend-platform';
-import { waitFor, render, fireEvent } from '@testing-library/react';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import {
+  render, fireEvent, screen, act,
+} from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
+import MockAdapter from 'axios-mock-adapter';
 
 import initializeStore from '../../store';
 import { studioHomeMock } from '../__mocks__';
 import messages from '../messages';
+import tabMessages from './messages';
 import TabsSection from '.';
-
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: jest.fn(),
-}));
+import {
+  initialState,
+  generateGetStudioHomeDataApiResponse,
+  generateGetStudioCoursesApiResponse,
+  generateGetStuioHomeLibrariesApiResponse,
+} from '../factories/mockApiResponses';
+import { getApiBaseUrl, getStudioHomeApiUrl } from '../data/api';
+import { executeThunk } from '../../utils';
+import { fetchLibraryData, fetchStudioHomeData } from '../data/thunks';
 
 const { studioShortName } = studioHomeMock;
 
+let axiosMock;
 let store;
+const courseApiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/courses`;
+const libraryApiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/libraries`;
 
 const RootWrapper = () => (
   <AppProvider store={store}>
@@ -37,68 +48,172 @@ describe('<TabsSection />', () => {
         roles: [],
       },
     });
-    store = initializeStore();
-    useSelector.mockReturnValue(studioHomeMock);
+    store = initializeStore(initialState);
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
-  it('should render all tabs correctly', () => {
-    const { getByText } = render(<RootWrapper />);
-    expect(getByText(messages.coursesTabTitle.defaultMessage)).toBeInTheDocument();
-    expect(getByText(messages.librariesTabTitle.defaultMessage)).toBeInTheDocument();
-    expect(getByText(messages.archivedTabTitle.defaultMessage)).toBeInTheDocument();
+
+  it('should render all tabs correctly', async () => {
+    const data = generateGetStudioHomeDataApiResponse();
+    data.archivedCourses = [{
+      courseKey: 'course-v1:MachineLearning+123+2023',
+      displayName: 'Machine Learning',
+      lmsLink: '//localhost:18000/courses/course-v1:MachineLearning+123+2023/jump_to/block-v1:MachineLearning+123+2023+type@course+block@course',
+      number: '123',
+      org: 'LSE',
+      rerunLink: '/course_rerun/course-v1:MachineLearning+123+2023',
+      run: '2023',
+      url: '/course/course-v1:MachineLearning+123+2023',
+    }];
+
+    render(<RootWrapper />);
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
+    await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+    expect(screen.getByText(tabMessages.coursesTabTitle.defaultMessage)).toBeInTheDocument();
+
+    expect(screen.getByText(tabMessages.librariesTabTitle.defaultMessage)).toBeInTheDocument();
+
+    expect(screen.getByText(tabMessages.archivedTabTitle.defaultMessage)).toBeInTheDocument();
   });
-  it('should render specific course details', () => {
-    const { getByText } = render(<RootWrapper />);
-    expect(getByText(studioHomeMock.courses[0].displayName)).toBeVisible();
-    expect(getByText(
-      `${studioHomeMock.courses[0].org} / ${studioHomeMock.courses[0].number} / ${studioHomeMock.courses[0].run}`,
-    )).toBeVisible();
+
+  describe('course tab', () => {
+    it('should render specific course details', async () => {
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(courseApiLink).reply(200, generateGetStudioCoursesApiResponse());
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      expect(screen.getByText(studioHomeMock.courses[0].displayName)).toBeVisible();
+
+      expect(screen.getByText(
+        `${studioHomeMock.courses[0].org} / ${studioHomeMock.courses[0].number} / ${studioHomeMock.courses[0].run}`,
+      )).toBeVisible();
+    });
+
+    it('should render default sections when courses are empty', async () => {
+      const data = generateGetStudioCoursesApiResponse();
+      data.courses = [];
+
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(courseApiLink).reply(200, data);
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      expect(screen.getByText(`Are you staff on an existing ${studioShortName} course?`)).toBeInTheDocument();
+
+      expect(screen.getByText(messages.defaultSection_1_Description.defaultMessage)).toBeInTheDocument();
+
+      expect(screen.getByRole('button', { name: messages.defaultSection_2_Title.defaultMessage })).toBeInTheDocument();
+
+      expect(screen.getByText(messages.defaultSection_2_Description.defaultMessage)).toBeInTheDocument();
+    });
+
+    it('should render course fetch failure alert', async () => {
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(courseApiLink).reply(404);
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      expect(screen.getByText(tabMessages.courseTabErrorMessage.defaultMessage)).toBeVisible();
+    });
   });
-  it('should switch to Libraries tab and render specific library details', () => {
-    const { getByText } = render(<RootWrapper />);
-    const librariesTab = getByText(messages.librariesTabTitle.defaultMessage);
-    fireEvent.click(librariesTab);
-    expect(getByText(studioHomeMock.libraries[0].displayName)).toBeVisible();
-    expect(getByText(`${studioHomeMock.libraries[0].org} / ${studioHomeMock.libraries[0].number}`)).toBeVisible();
+
+  describe('archived tab', () => {
+    it('should switch to Archived tab and render specific archived course details', async () => {
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(courseApiLink).reply(200, generateGetStudioCoursesApiResponse());
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      const archivedTab = screen.getByText(tabMessages.archivedTabTitle.defaultMessage);
+      fireEvent.click(archivedTab);
+
+      expect(screen.getByText(studioHomeMock.archivedCourses[0].displayName)).toBeVisible();
+
+      expect(screen.getByText(
+        `${studioHomeMock.archivedCourses[0].org} / ${studioHomeMock.archivedCourses[0].number} / ${studioHomeMock.archivedCourses[0].run}`,
+      )).toBeVisible();
+    });
+
+    it('should hide Archived tab when archived courses are empty', async () => {
+      const data = generateGetStudioCoursesApiResponse();
+      data.archivedCourses = [];
+
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(courseApiLink).reply(200, data);
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      expect(screen.getByText(tabMessages.coursesTabTitle.defaultMessage)).toBeInTheDocument();
+
+      expect(screen.getByText(tabMessages.librariesTabTitle.defaultMessage)).toBeInTheDocument();
+
+      expect(screen.queryByText(tabMessages.archivedTabTitle.defaultMessage)).toBeNull();
+    });
   });
-  it('should switch to Archived tab and render specific archived course details', () => {
-    const { getByText } = render(<RootWrapper />);
-    const archivedTab = getByText(messages.archivedTabTitle.defaultMessage);
-    fireEvent.click(archivedTab);
-    expect(getByText(studioHomeMock.archivedCourses[0].displayName)).toBeVisible();
-    expect(getByText(
-      `${studioHomeMock.archivedCourses[0].org} / ${studioHomeMock.archivedCourses[0].number} / ${studioHomeMock.archivedCourses[0].run}`,
-    )).toBeVisible();
-  });
-  it('should hide Libraries tab when libraries are disabled', () => {
-    studioHomeMock.librariesEnabled = false;
-    const { queryByText, getByText } = render(<RootWrapper />);
-    expect(getByText(messages.coursesTabTitle.defaultMessage)).toBeInTheDocument();
-    expect(queryByText(messages.librariesTabTitle.defaultMessage)).toBeNull();
-    expect(getByText(messages.archivedTabTitle.defaultMessage)).toBeInTheDocument();
-  });
-  it('should hide Archived tab when archived courses are empty', () => {
-    studioHomeMock.librariesEnabled = true;
-    studioHomeMock.archivedCourses = [];
-    const { queryByText, getByText } = render(<RootWrapper />);
-    expect(getByText(messages.coursesTabTitle.defaultMessage)).toBeInTheDocument();
-    expect(getByText(messages.librariesTabTitle.defaultMessage)).toBeInTheDocument();
-    expect(queryByText(messages.archivedTabTitle.defaultMessage)).toBeNull();
-  });
-  it('should render default sections when courses are empty', () => {
-    studioHomeMock.courses = [];
-    const { getByText, getByRole } = render(<RootWrapper />);
-    expect(getByText(`Are you staff on an existing ${studioShortName} course?`)).toBeInTheDocument();
-    expect(getByText(messages.defaultSection_1_Description.defaultMessage)).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.defaultSection_2_Title.defaultMessage })).toBeInTheDocument();
-    expect(getByText(messages.defaultSection_2_Description.defaultMessage)).toBeInTheDocument();
-  });
-  it('should redirect to library authoring mfe', () => {
-    studioHomeMock.redirectToLibraryAuthoringMfe = true;
-    const { getByText } = render(<RootWrapper />);
-    const librariesTab = getByText(messages.librariesTabTitle.defaultMessage);
-    fireEvent.click(librariesTab);
-    waitFor(() => {
-      expect(window.location.href).toBe(studioHomeMock.libraryAuthoringMfeUrl);
+
+  describe('library tab', () => {
+    it('should switch to Libraries tab and render specific library details', async () => {
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(libraryApiLink).reply(200, generateGetStuioHomeLibrariesApiResponse());
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+      await executeThunk(fetchLibraryData(), store.dispatch);
+
+      const librariesTab = screen.getByText(tabMessages.librariesTabTitle.defaultMessage);
+      await act(async () => {
+        fireEvent.click(librariesTab);
+      });
+
+      expect(librariesTab).toHaveClass('active');
+
+      expect(screen.getByText(studioHomeMock.libraries[0].displayName)).toBeVisible();
+
+      expect(screen.getByText(`${studioHomeMock.libraries[0].org} / ${studioHomeMock.libraries[0].number}`)).toBeVisible();
+    });
+
+    it('should hide Libraries tab when libraries are disabled', async () => {
+      const data = generateGetStudioHomeDataApiResponse();
+      data.librariesEnabled = false;
+
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      expect(screen.getByText(tabMessages.coursesTabTitle.defaultMessage)).toBeInTheDocument();
+      expect(screen.queryByText(tabMessages.librariesTabTitle.defaultMessage)).toBeNull();
+    });
+
+    it('should redirect to library authoring mfe', async () => {
+      const data = generateGetStudioHomeDataApiResponse();
+      data.redirectToLibraryAuthoringMfe = true;
+
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      const librariesTab = screen.getByText(tabMessages.librariesTabTitle.defaultMessage);
+      fireEvent.click(librariesTab);
+      await act(async () => {
+        expect(window.location.href).toBe(data.libraryAuthoringMfeUrl);
+      });
+    });
+
+    it('should render libraries fetch failure alert', async () => {
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(libraryApiLink).reply(404);
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+      await executeThunk(fetchLibraryData(), store.dispatch);
+
+      const librariesTab = screen.getByText(tabMessages.librariesTabTitle.defaultMessage);
+      await act(async () => {
+        fireEvent.click(librariesTab);
+      });
+
+      expect(librariesTab).toHaveClass('active');
+
+      expect(screen.getByText(tabMessages.librariesTabErrorMessage.defaultMessage)).toBeVisible();
     });
   });
 });
