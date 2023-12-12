@@ -27,7 +27,7 @@ const SystemDefinedBadge = ({ taxonomyId }) => {
       placement="top"
       overlay={getToolTip()}
     >
-      <Badge variant="light" className="system-defined-badge">
+      <Badge variant="light" className="p-1.5 font-weight-normal system-defined-badge">
         {intl.formatMessage(messages.systemDefinedBadge)}
       </Badge>
     </OverlayTrigger>
