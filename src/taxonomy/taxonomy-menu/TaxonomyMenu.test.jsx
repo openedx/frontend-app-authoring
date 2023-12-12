@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, fireEvent } from '@testing-library/react';
 import PropTypes from 'prop-types';
 
-import { TaxonomyContext } from '..';
+import { TaxonomyContext } from '../common/context';
 import initializeStore from '../../store';
 import { getTaxonomyExportFile } from '../data/api';
 import { importTaxonomyTags } from '../import-tags';
