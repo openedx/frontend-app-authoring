@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Badge,
   Card,
@@ -12,6 +12,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import TaxonomyCardMenu from './TaxonomyCardMenu';
 import ExportModal from '../export-modal';
+import DeleteDialog from '../delete-dialog';
 
 const orgsCountEnabled = (orgsCount) => orgsCount !== undefined && orgsCount !== 0;
 
@@ -64,38 +65,50 @@ HeaderSubtitle.propTypes = {
   orgsCount: PropTypes.number.isRequired,
 };
 
-const TaxonomyCard = ({ className, original }) => {
+const TaxonomyCard = ({ className, original, onDeleteTaxonomy }) => {
   const {
-    id, name, description, systemDefined, orgsCount,
+    id, name, description, systemDefined, orgsCount, tagsCount,
   } = original;
 
   const intl = useIntl();
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isMenuEnalbed, setIsMenuEnabled] = useState(true);
+
+  useEffect(() => {
+    // Resets the card to the initial state
+    setIsMenuEnabled(true);
+  }, [id]);
 
   // Add here more menu item actions
   const menuItemActions = {
     export: () => setIsExportModalOpen(true),
+    delete: () => setIsDeleteDialogOpen(true),
   };
+  const menuItems = ['export', 'delete'];
+  const systemDefinedMenuItems = ['export'];
 
   const onClickMenuItem = (menuName) => (
     menuItemActions[menuName]?.()
   );
 
+  const onClickDeleteTaxonomy = () => {
+    setIsMenuEnabled(false);
+    onDeleteTaxonomy(id, name);
+  };
+
   const getHeaderActions = () => {
+    let enabledMenuItems = menuItems;
     if (systemDefined) {
-      // We don't show the export menu, because the system-taxonomies
-      // can't be exported. The API returns and error.
-      // The entire menu has been hidden because currently only
-      // the export menu exists.
-      //
-      // TODO When adding more menus, change this logic to hide only the export menu.
-      return undefined;
+      enabledMenuItems = systemDefinedMenuItems;
     }
     return (
       <TaxonomyCardMenu
         id={id}
         name={name}
         onClickMenuItem={onClickMenuItem}
+        disabled={!isMenuEnalbed}
+        menuItems={enabledMenuItems}
       />
     );
   };
@@ -105,6 +118,16 @@ const TaxonomyCard = ({ className, original }) => {
       isOpen={isExportModalOpen}
       onClose={() => setIsExportModalOpen(false)}
       taxonomyId={id}
+    />
+  );
+
+  const renderDeleteDialog = () => isDeleteDialogOpen && (
+    <DeleteDialog
+      isOpen={isDeleteDialogOpen}
+      onClose={() => setIsDeleteDialogOpen(false)}
+      onDelete={onClickDeleteTaxonomy}
+      taxonomyName={name}
+      tagsCount={tagsCount}
     />
   );
 
@@ -140,6 +163,7 @@ const TaxonomyCard = ({ className, original }) => {
         </Card.Body>
       </Card>
       {renderExportModal()}
+      {renderDeleteDialog()}
     </>
   );
 };
@@ -156,7 +180,9 @@ TaxonomyCard.propTypes = {
     description: PropTypes.string,
     systemDefined: PropTypes.bool,
     orgsCount: PropTypes.number,
+    tagsCount: PropTypes.number,
   }).isRequired,
+  onDeleteTaxonomy: PropTypes.func.isRequired,
 };
 
 export default TaxonomyCard;
