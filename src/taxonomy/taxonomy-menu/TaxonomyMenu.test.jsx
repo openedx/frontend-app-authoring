@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 
 import { TaxonomyContext } from '..';
 import initializeStore from '../../store';
-import { getTaxonomyExportFile, deleteTaxonomy } from '../data/api';
+import { getTaxonomyExportFile } from '../data/api';
 import { importTaxonomyTags } from '../import-tags';
 import { TaxonomyMenu } from '.';
 

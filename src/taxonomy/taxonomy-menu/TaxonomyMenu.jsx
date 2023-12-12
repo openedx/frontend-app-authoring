@@ -14,7 +14,8 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
 import ExportModal from '../export-modal';
-import { useDeleteTaxonomy, TaxonomyContext } from '..';
+import { useDeleteTaxonomy } from '../data/apiHooks';
+import { TaxonomyContext } from '../common/context';
 import DeleteDialog from '../delete-dialog';
 import { importTaxonomyTags } from '../import-tags';
 import messages from './messages';
