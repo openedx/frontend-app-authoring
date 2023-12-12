@@ -2,7 +2,7 @@ import React from 'react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import {
-  render, fireEvent, screen, act,
+  waitFor, render, fireEvent, screen, act,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -194,7 +194,8 @@ describe('<TabsSection />', () => {
 
       const librariesTab = screen.getByText(tabMessages.librariesTabTitle.defaultMessage);
       fireEvent.click(librariesTab);
-      await act(async () => {
+
+      waitFor(() => {
         expect(window.location.href).toBe(data.libraryAuthoringMfeUrl);
       });
     });
