@@ -196,6 +196,7 @@ describe('ProctoredExamSettings', () => {
       await act(async () => {
         fireEvent.change(selectElement, { target: { value: 'test_lti' } });
       });
+      expect(screen.queryByTestId('escalationEmail')).toBeNull();
       expect(screen.queryByTestId('allowOptingOutRadio')).toBeNull();
       expect(screen.queryByTestId('createZendeskTicketsYes')).toBeNull();
       expect(screen.queryByTestId('createZendeskTicketsNo')).toBeNull();
@@ -203,8 +204,6 @@ describe('ProctoredExamSettings', () => {
   });
 
   describe('Validation with invalid escalation email', () => {
-    const proctoringProvidersRequiringEscalationEmail = ['proctortrack', 'test_lti'];
-
     beforeEach(async () => {
       axiosMock.onGet(
         StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
@@ -216,13 +215,9 @@ describe('ProctoredExamSettings', () => {
           proctoring_escalation_email: 'test@example.com',
           create_zendesk_tickets: true,
         },
-        available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc', 'lti_external'],
+        available_proctoring_providers: ['software_secure', 'proctortrack', 'mockproc'],
         course_start_date: '2070-01-01T00:00:00Z',
       });
-
-      axiosMock.onPatch(
-        ExamsApiService.getExamConfigurationUrl(defaultProps.courseId),
-      ).reply(204, {});
 
       axiosMock.onPost(
         StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
@@ -231,183 +226,175 @@ describe('ProctoredExamSettings', () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
     });
 
-    proctoringProvidersRequiringEscalationEmail.forEach(provider => {
-      it(`Creates an alert when no proctoring escalation email is provided with ${provider} selected`, async () => {
-        await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
-        });
-        const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
-        await act(async () => {
-          fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
-        });
-        const selectButton = screen.getByTestId('submissionButton');
-        await act(async () => {
-          fireEvent.click(selectButton);
-        });
-
-        // verify alert content and focus management
-        const escalationEmailError = screen.getByTestId('escalationEmailError');
-        expect(escalationEmailError.textContent).not.toBeNull();
-        expect(document.activeElement).toEqual(escalationEmailError);
-
-        // verify alert link links to offending input
-        const errorLink = screen.getByTestId('escalationEmailErrorLink');
-        await act(async () => {
-          fireEvent.click(errorLink);
-        });
-        const escalationEmailInput = screen.getByTestId('escalationEmail');
-        expect(document.activeElement).toEqual(escalationEmailInput);
+    it('Creates an alert when no proctoring escalation email is provided with proctortrack selected', async () => {
+      await waitFor(() => {
+        screen.getByDisplayValue('proctortrack');
+      });
+      const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
+      await act(async () => {
+        fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
+      });
+      const selectButton = screen.getByTestId('submissionButton');
+      await act(async () => {
+        fireEvent.click(selectButton);
       });
 
-      it(`Creates an alert when invalid proctoring escalation email is provided with ${provider} selected`, async () => {
-        await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
-        });
+      // verify alert content and focus management
+      const escalationEmailError = screen.getByTestId('proctortrackEscalationEmailError');
+      expect(escalationEmailError.textContent).not.toBeNull();
+      expect(document.activeElement).toEqual(escalationEmailError);
 
-        const selectElement = screen.getByDisplayValue('proctortrack');
-        await act(async () => {
-          fireEvent.change(selectElement, { target: { value: provider } });
-        });
+      // verify alert link links to offending input
+      const errorLink = screen.getByTestId('proctorTrackEscalationEmailErrorLink');
+      await act(async () => {
+        fireEvent.click(errorLink);
+      });
+      const escalationEmailInput = screen.getByTestId('escalationEmail');
+      expect(document.activeElement).toEqual(escalationEmailInput);
+    });
 
-        const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
-        await act(async () => {
-          fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
-        });
-        const selectButton = screen.getByTestId('submissionButton');
-        await act(async () => {
-          fireEvent.click(selectButton);
-        });
-
-        // verify alert content and focus management
-        const escalationEmailError = screen.getByTestId('escalationEmailError');
-        expect(document.activeElement).toEqual(escalationEmailError);
-        expect(escalationEmailError.textContent).not.toBeNull();
-        expect(document.activeElement).toEqual(escalationEmailError);
-
-        // verify alert link links to offending input
-        const errorLink = screen.getByTestId('escalationEmailErrorLink');
-        await act(async () => {
-          fireEvent.click(errorLink);
-        });
-        const escalationEmailInput = screen.getByTestId('escalationEmail');
-        expect(document.activeElement).toEqual(escalationEmailInput);
+    it('Creates an alert when invalid proctoring escalation email is provided with proctortrack selected', async () => {
+      await waitFor(() => {
+        screen.getByDisplayValue('proctortrack');
+      });
+      const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
+      await act(async () => {
+        fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
+      });
+      const selectButton = screen.getByTestId('submissionButton');
+      await act(async () => {
+        fireEvent.click(selectButton);
       });
 
-      it('Creates an alert when invalid proctoring escalation email is provided with proctoring disabled', async () => {
-        await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
-        });
-        const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
-        await act(async () => {
-          fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
-        });
-        const enableProctoringElement = screen.getByText('Proctored exams');
-        await act(async () => fireEvent.click(enableProctoringElement));
-        const selectButton = screen.getByTestId('submissionButton');
-        await act(async () => {
-          fireEvent.click(selectButton);
-        });
+      // verify alert content and focus management
+      const escalationEmailError = screen.getByTestId('proctortrackEscalationEmailError');
+      expect(document.activeElement).toEqual(escalationEmailError);
+      expect(escalationEmailError.textContent).not.toBeNull();
+      expect(document.activeElement).toEqual(escalationEmailError);
 
-        // verify alert content and focus management
-        const escalationEmailError = screen.getByTestId('escalationEmailError');
-        expect(document.activeElement).toEqual(escalationEmailError);
-        expect(escalationEmailError.textContent).not.toBeNull();
-        expect(document.activeElement).toEqual(escalationEmailError);
+      // verify alert link links to offending input
+      const errorLink = screen.getByTestId('proctorTrackEscalationEmailErrorLink');
+      await act(async () => {
+        fireEvent.click(errorLink);
+      });
+      const escalationEmailInput = screen.getByTestId('escalationEmail');
+      expect(document.activeElement).toEqual(escalationEmailInput);
+    });
+
+    it('Creates an alert when invalid proctoring escalation email is provided with proctoring disabled', async () => {
+      await waitFor(() => {
+        screen.getByDisplayValue('proctortrack');
+      });
+      const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
+      await act(async () => {
+        fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
+      });
+      const enableProctoringElement = screen.getByText('Proctored exams');
+      await act(async () => fireEvent.click(enableProctoringElement));
+      const selectButton = screen.getByTestId('submissionButton');
+      await act(async () => {
+        fireEvent.click(selectButton);
       });
 
-      it('Has no error when empty proctoring escalation email is provided with proctoring disabled', async () => {
-        await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
-        });
-        const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
-        await act(async () => {
-          fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
-        });
-        const enableProctoringElement = screen.getByText('Proctored exams');
-        await act(async () => fireEvent.click(enableProctoringElement));
-        const selectButton = screen.getByTestId('submissionButton');
-        await act(async () => {
-          fireEvent.click(selectButton);
-        });
+      // verify alert content and focus management
+      const escalationEmailError = screen.getByTestId('proctortrackEscalationEmailError');
+      expect(document.activeElement).toEqual(escalationEmailError);
+      expect(escalationEmailError.textContent).not.toBeNull();
+      expect(document.activeElement).toEqual(escalationEmailError);
+    });
 
-        // verify there is no escalation email alert, and focus has been set on save success alert
-        expect(screen.queryByTestId('escalationEmailError')).toBeNull();
-
-        const errorAlert = screen.getByTestId('saveSuccess');
-        expect(errorAlert.textContent).toEqual(
-          expect.stringContaining('Proctored exam settings saved successfully.'),
-        );
-        expect(document.activeElement).toEqual(errorAlert);
+    it('Has no error when invalid proctoring escalation email is provided with proctoring disabled', async () => {
+      await waitFor(() => {
+        screen.getByDisplayValue('proctortrack');
+      });
+      const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
+      await act(async () => {
+        fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
+      });
+      const enableProctoringElement = screen.getByText('Proctored exams');
+      await act(async () => fireEvent.click(enableProctoringElement));
+      const selectButton = screen.getByTestId('submissionButton');
+      await act(async () => {
+        fireEvent.click(selectButton);
       });
 
-      it(`Has no error when valid proctoring escalation email is provided with ${provider} selected`, async () => {
-        await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
-        });
-        const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
-        await act(async () => {
-          fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo@bar.com' } });
-        });
-        const selectButton = screen.getByTestId('submissionButton');
-        await act(async () => {
-          fireEvent.click(selectButton);
-        });
+      // verify there is no escalation email alert, and focus has been set on save success alert
+      expect(screen.queryByTestId('proctortrackEscalationEmailError')).toBeNull();
 
-        // verify there is no escalation email alert, and focus has been set on save success alert
-        expect(screen.queryByTestId('escalationEmailError')).toBeNull();
+      const errorAlert = screen.getByTestId('saveSuccess');
+      expect(errorAlert.textContent).toEqual(
+        expect.stringContaining('Proctored exam settings saved successfully.'),
+      );
+      expect(document.activeElement).toEqual(errorAlert);
+    });
 
-        const errorAlert = screen.getByTestId('saveSuccess');
-        expect(errorAlert.textContent).toEqual(
-          expect.stringContaining('Proctored exam settings saved successfully.'),
-        );
-        expect(document.activeElement).toEqual(errorAlert);
+    it('Has no error when valid proctoring escalation email is provided with proctortrack selected', async () => {
+      await waitFor(() => {
+        screen.getByDisplayValue('proctortrack');
+      });
+      const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
+      await act(async () => {
+        fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo@bar.com' } });
+      });
+      const selectButton = screen.getByTestId('submissionButton');
+      await act(async () => {
+        fireEvent.click(selectButton);
       });
 
-      it(`Escalation email field hidden when proctoring backend is not ${provider}`, async () => {
-        await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
-        });
-        const proctoringBackendSelect = screen.getByDisplayValue('proctortrack');
-        const selectEscalationEmailElement = screen.getByTestId('escalationEmail');
-        expect(selectEscalationEmailElement.value).toEqual('test@example.com');
-        await act(async () => {
-          fireEvent.change(proctoringBackendSelect, { target: { value: 'software_secure' } });
-        });
-        expect(screen.queryByTestId('escalationEmail')).toBeNull();
-      });
+      // verify there is no escalation email alert, and focus has been set on save success alert
+      expect(screen.queryByTestId('proctortrackEscalationEmailError')).toBeNull();
 
-      it(`Escalation email Field Show when proctoring backend is switched back to ${provider}`, async () => {
-        await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
-        });
-        const proctoringBackendSelect = screen.getByDisplayValue('proctortrack');
-        let selectEscalationEmailElement = screen.getByTestId('escalationEmail');
-        await act(async () => {
-          fireEvent.change(proctoringBackendSelect, { target: { value: 'software_secure' } });
-        });
-        expect(screen.queryByTestId('escalationEmail')).toBeNull();
-        await act(async () => {
-          fireEvent.change(proctoringBackendSelect, { target: { value: 'proctortrack' } });
-        });
-        expect(screen.queryByTestId('escalationEmail')).toBeDefined();
-        selectEscalationEmailElement = screen.getByTestId('escalationEmail');
-        expect(selectEscalationEmailElement.value).toEqual('test@example.com');
-      });
+      const errorAlert = screen.getByTestId('saveSuccess');
+      expect(errorAlert.textContent).toEqual(
+        expect.stringContaining('Proctored exam settings saved successfully.'),
+      );
+      expect(document.activeElement).toEqual(errorAlert);
+    });
 
-      it('Submits form when "Enter" key is hit in the escalation email field', async () => {
-        await waitFor(() => {
-          screen.getByDisplayValue('proctortrack');
-        });
-        const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
-        await act(async () => {
-          fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
-        });
-        await act(async () => {
-          fireEvent.submit(selectEscalationEmailElement);
-        });
-        // if the error appears, the form has been submitted
-        expect(screen.getByTestId('escalationEmailError')).toBeDefined();
+    it('Escalation email field hidden when proctoring backend is not Proctortrack', async () => {
+      await waitFor(() => {
+        screen.getByDisplayValue('proctortrack');
       });
+      const proctoringBackendSelect = screen.getByDisplayValue('proctortrack');
+      const selectEscalationEmailElement = screen.getByTestId('escalationEmail');
+      expect(selectEscalationEmailElement.value).toEqual('test@example.com');
+      await act(async () => {
+        fireEvent.change(proctoringBackendSelect, { target: { value: 'software_secure' } });
+      });
+      expect(screen.queryByTestId('escalationEmail')).toBeNull();
+    });
+
+    it('Escalation email Field Show when proctoring backend is switched back to Proctortrack', async () => {
+      await waitFor(() => {
+        screen.getByDisplayValue('proctortrack');
+      });
+      const proctoringBackendSelect = screen.getByDisplayValue('proctortrack');
+      let selectEscalationEmailElement = screen.getByTestId('escalationEmail');
+      await act(async () => {
+        fireEvent.change(proctoringBackendSelect, { target: { value: 'software_secure' } });
+      });
+      expect(screen.queryByTestId('escalationEmail')).toBeNull();
+      await act(async () => {
+        fireEvent.change(proctoringBackendSelect, { target: { value: 'proctortrack' } });
+      });
+      expect(screen.queryByTestId('escalationEmail')).toBeDefined();
+      selectEscalationEmailElement = screen.getByTestId('escalationEmail');
+      expect(selectEscalationEmailElement.value).toEqual('test@example.com');
+    });
+
+    it('Submits form when "Enter" key is hit in the escalation email field', async () => {
+      await waitFor(() => {
+        screen.getByDisplayValue('proctortrack');
+      });
+      const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
+      await act(async () => {
+        fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
+      });
+      await act(async () => {
+        fireEvent.submit(selectEscalationEmailElement);
+      });
+      // if the error appears, the form has been submitted
+      expect(screen.getByTestId('proctortrackEscalationEmailError')).toBeDefined();
     });
   });
 
@@ -700,19 +687,11 @@ describe('ProctoredExamSettings', () => {
 
     it('Successfully updates exam configuration and studio provider is set to "lti_external" for lti providers', async () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
-      // Make a change to the provider to test_lti and set the email
+      // Make a change to the provider to proctortrack and set the email
       const selectElement = screen.getByDisplayValue('mockproc');
       await act(async () => {
         fireEvent.change(selectElement, { target: { value: 'test_lti' } });
       });
-
-      const escalationEmail = screen.getByTestId('escalationEmail');
-      expect(escalationEmail.value).toEqual('test@example.com');
-      await act(async () => {
-        fireEvent.change(escalationEmail, { target: { value: 'test_lti@example.com' } });
-      });
-      expect(escalationEmail.value).toEqual('test_lti@example.com');
-
       const submitButton = screen.getByTestId('submissionButton');
       await act(async () => {
         fireEvent.click(submitButton);
@@ -722,7 +701,6 @@ describe('ProctoredExamSettings', () => {
       expect(axiosMock.history.patch.length).toBe(1);
       expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
         provider: 'test_lti',
-        escalation_email: 'test_lti@example.com',
       });
 
       // update studio settings
@@ -753,7 +731,6 @@ describe('ProctoredExamSettings', () => {
       expect(axiosMock.history.patch.length).toBe(1);
       expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
         provider: null,
-        escalation_email: null,
       });
       expect(axiosMock.history.patch.length).toBe(1);
       expect(axiosMock.history.post.length).toBe(1);

@@ -1,6 +1,5 @@
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
-import { convertObjectToSnakeCase } from '../../utils';
 
 class ExamsApiService {
   static isAvailable() {
@@ -27,9 +26,8 @@ class ExamsApiService {
   }
 
   static saveCourseExamConfiguration(courseId, dataToSave) {
-    const snakecaseDataToSave = convertObjectToSnakeCase(dataToSave, true);
     const apiClient = getAuthenticatedHttpClient();
-    return apiClient.patch(this.getExamConfigurationUrl(courseId), snakecaseDataToSave);
+    return apiClient.patch(this.getExamConfigurationUrl(courseId), dataToSave);
   }
 }
 
