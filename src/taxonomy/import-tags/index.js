@@ -1,6 +1,2 @@
-import { importTaxonomyTags, importTaxonomy } from './data/utils';
-
-export {
-  importTaxonomyTags,
-  importTaxonomy,
-};
+// @ts-check
+export { importTaxonomyTags, importTaxonomy } from './data/utils';
