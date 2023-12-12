@@ -2,6 +2,7 @@ import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import PropTypes from 'prop-types';
 
@@ -10,7 +11,6 @@ import TaxonomyCard from '.';
 
 let store;
 const taxonomyId = 1;
-const onDeleteTaxonomy = jest.fn();
 
 const data = {
   id: taxonomyId,
@@ -18,17 +18,16 @@ const data = {
   description: 'This is a description',
 };
 
-jest.mock('../data/api', () => ({
-  getTaxonomyExportFile: jest.fn(),
-}));
+const queryClient = new QueryClient();
 
 const TaxonomyCardComponent = ({ original }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
-      <TaxonomyCard
-        original={original}
-        onDeleteTaxonomy={onDeleteTaxonomy}
-      />
+      <QueryClientProvider client={queryClient}>
+        <TaxonomyCard
+          original={original}
+        />
+      </QueryClientProvider>
     </IntlProvider>
   </AppProvider>
 );

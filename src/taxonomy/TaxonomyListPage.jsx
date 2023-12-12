@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   Button,
   CardView,
@@ -10,14 +10,14 @@ import {
   Add,
 } from '@edx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
+
 import { Helmet } from 'react-helmet';
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
 import { importTaxonomy } from './import-tags';
 import messages from './messages';
 import TaxonomyCard from './taxonomy-card';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded, useDeleteTaxonomy } from './data/apiHooks';
-import { TaxonomyContext } from './common/context';
+import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
 
 const TaxonomyListHeaderButtons = () => {
   const intl = useIntl();
@@ -39,19 +39,6 @@ const TaxonomyListHeaderButtons = () => {
 
 const TaxonomyListPage = () => {
   const intl = useIntl();
-  const deleteTaxonomy = useDeleteTaxonomy();
-  const { setToastMessage } = useContext(TaxonomyContext);
-
-  const onDeleteTaxonomy = React.useCallback((id, name) => {
-    deleteTaxonomy({ pk: id }, {
-      onSuccess: async () => {
-        setToastMessage(intl.formatMessage(messages.taxonomyDeleteToast, { name }));
-      },
-      onError: async () => {
-        // TODO: display the error to the user
-      },
-    });
-  }, [setToastMessage]);
 
   const useTaxonomyListData = () => {
     const taxonomyListData = useTaxonomyListDataResponse();
@@ -107,7 +94,7 @@ const TaxonomyListPage = () => {
             >
               <CardView
                 className="bg-light-400 p-5"
-                CardComponent={(row) => TaxonomyCard({ ...row, onDeleteTaxonomy })}
+                CardComponent={(row) => TaxonomyCard(row)}
               />
             </DataTable>
           )}
