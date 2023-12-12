@@ -11,11 +11,6 @@ export const apiMethods = {
   ),
   fetchByUnitId: ({ blockId, studioEndpointUrl }) => get(
     urls.blockAncestor({ studioEndpointUrl, blockId }),
-    {
-      headers: {
-        Accept: '*/*',
-      },
-    },
   ),
   fetchStudioView: ({ blockId, studioEndpointUrl }) => get(
     urls.blockStudioView({ studioEndpointUrl, blockId }),
