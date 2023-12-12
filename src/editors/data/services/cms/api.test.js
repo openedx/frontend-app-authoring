@@ -15,18 +15,18 @@ jest.mock('../../../utils', () => {
 });
 
 jest.mock('./urls', () => ({
-  block: jest.fn().mockName('urls.block'),
-  blockAncestor: jest.fn().mockName('urls.blockAncestor'),
-  blockStudioView: jest.fn().mockName('urls.StudioView'),
-  courseAssets: jest.fn().mockName('urls.courseAssets'),
-  videoTranscripts: jest.fn().mockName('urls.videoTranscripts'),
-  allowThumbnailUpload: jest.fn().mockName('urls.allowThumbnailUpload'),
-  thumbnailUpload: jest.fn().mockName('urls.thumbnailUpload'),
-  checkTranscriptsForImport: jest.fn().mockName('urls.checkTranscriptsForImport'),
-  courseDetailsUrl: jest.fn().mockName('urls.courseDetailsUrl'),
-  courseAdvanceSettings: jest.fn().mockName('urls.courseAdvanceSettings'),
-  replaceTranscript: jest.fn().mockName('urls.replaceTranscript'),
-  videoFeatures: jest.fn().mockName('urls.videoFeatures'),
+  block: jest.fn().mockReturnValue('urls.block'),
+  blockAncestor: jest.fn().mockReturnValue('urls.blockAncestor'),
+  blockStudioView: jest.fn().mockReturnValue('urls.StudioView'),
+  courseAssets: jest.fn().mockReturnValue('urls.courseAssets'),
+  videoTranscripts: jest.fn().mockReturnValue('urls.videoTranscripts'),
+  allowThumbnailUpload: jest.fn().mockReturnValue('urls.allowThumbnailUpload'),
+  thumbnailUpload: jest.fn().mockReturnValue('urls.thumbnailUpload'),
+  checkTranscriptsForImport: jest.fn().mockReturnValue('urls.checkTranscriptsForImport'),
+  courseDetailsUrl: jest.fn().mockReturnValue('urls.courseDetailsUrl'),
+  courseAdvanceSettings: jest.fn().mockReturnValue('urls.courseAdvanceSettings'),
+  replaceTranscript: jest.fn().mockReturnValue('urls.replaceTranscript'),
+  videoFeatures: jest.fn().mockReturnValue('urls.videoFeatures'),
   courseVideos: jest.fn()
     .mockName('urls.courseVideos')
     .mockImplementation(
@@ -64,7 +64,7 @@ describe('cms api', () => {
     describe('fetchByUnitId', () => {
       it('should call get with url.blockAncestor', () => {
         apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
-        expect(get).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }));
+        expect(get).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }), { headers: { Accept: '*/*' } });
       });
     });
 
