@@ -53,7 +53,7 @@ const messages = defineMessages({
   },
   'authoring.proctoring.escalationemail.label': {
     id: 'authoring.proctoring.escalationemail.label',
-    defaultMessage: 'Escalation email',
+    defaultMessage: 'Proctortrack escalation email',
     description: 'Label for escalation email text field',
   },
   'authoring.proctoring.escalationemail.help': {
@@ -63,12 +63,12 @@ const messages = defineMessages({
   },
   'authoring.proctoring.escalationemail.error.blank': {
     id: 'authoring.proctoring.escalationemail.error.blank',
-    defaultMessage: 'The Escalation Email field cannot be empty if {proctoringProviderName} is the selected provider.',
+    defaultMessage: 'The Proctortrack Escalation Email field cannot be empty if proctortrack is the selected provider.',
     description: 'Error message for missing required email field.',
   },
   'authoring.proctoring.escalationemail.error.invalid': {
     id: 'authoring.proctoring.escalationemail.error.invalid',
-    defaultMessage: 'The Escalation Email field is in the wrong format and is not valid.',
+    defaultMessage: 'The Proctortrack Escalation Email field is in the wrong format and is not valid.',
     description: 'Error message for a invalid email format.',
   },
   'authoring.proctoring.allowoptout.label': {

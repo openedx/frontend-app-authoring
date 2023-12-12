@@ -42,6 +42,7 @@ const ImportSidebar = ({ intl, courseId }) => {
         className="small"
         href={importLearnMoreUrl}
         target="_blank"
+        variant="outline-primary"
       >
         {intl.formatMessage(messages.learnMoreButtonTitle)}
       </Hyperlink>

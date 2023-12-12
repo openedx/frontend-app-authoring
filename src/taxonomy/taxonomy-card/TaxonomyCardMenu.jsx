@@ -9,17 +9,12 @@ import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
-const menuMessages = {
-  export: messages.taxonomyCardExportMenu,
-  delete: messages.taxonomyCardDeleteMenu,
-};
-
 const TaxonomyCardMenu = ({
-  id, name, onClickMenuItem, disabled, menuItems,
+  id, name, onClickMenuItem,
 }) => {
   const intl = useIntl();
 
-  const onClickItem = (menuName) => (e) => {
+  const onClickItem = (e, menuName) => {
     e.preventDefault();
     onClickMenuItem(menuName);
   };
@@ -34,18 +29,16 @@ const TaxonomyCardMenu = ({
         alt={intl.formatMessage(messages.taxonomyMenuAlt, { name })}
         id={`taxonomy-card-menu-button-${id}`}
         data-testid={`taxonomy-card-menu-button-${id}`}
-        disabled={disabled}
       />
       <Dropdown.Menu data-testid={`taxonomy-card-menu-${id}`}>
-        { menuItems.map(item => (
-          <Dropdown.Item
-            className="taxonomy-menu-item"
-            data-testid={`taxonomy-card-menu-${item}-${id}`}
-            onClick={onClickItem(item)}
-          >
-            {intl.formatMessage(menuMessages[item])}
-          </Dropdown.Item>
-        ))}
+        {/* Add more menu items here */}
+        <Dropdown.Item
+          className="taxonomy-menu-item"
+          data-testid={`taxonomy-card-menu-export-${id}`}
+          onClick={(e) => onClickItem(e, 'export')}
+        >
+          {intl.formatMessage(messages.taxonomyCardExportMenu)}
+        </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   );
@@ -55,8 +48,6 @@ TaxonomyCardMenu.propTypes = {
   id: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   onClickMenuItem: PropTypes.func.isRequired,
-  disabled: PropTypes.bool.isRequired,
-  menuItems: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default TaxonomyCardMenu;

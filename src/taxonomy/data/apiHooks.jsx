@@ -11,12 +11,13 @@
  * - Hooks that calls the query hook, prepare and return the data.
  *   Ex. useTaxonomyListDataResponse & useIsTaxonomyListDataLoaded.
  */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getTaxonomyListData, deleteTaxonomy } from './api';
+import { useQuery } from '@tanstack/react-query';
+import { getTaxonomyListData } from './api';
 
 /**
  * Builds the query to get the taxonomy list
  * @param {string} org Optional organization query param
+ * @returns {import("./types.mjs").UseQueryResult}
  */
 const useTaxonomyListData = (org) => (
   useQuery({
@@ -26,22 +27,6 @@ const useTaxonomyListData = (org) => (
 );
 
 /**
- * Builds the mutation to delete a taxonomy.
- * @returns An object with the mutation configuration.
- */
-export const useDeleteTaxonomy = () => {
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    /** @type {import("@tanstack/react-query").MutateFunction<any, any, {pk: number}>} */
-    mutationFn: async ({ pk }) => deleteTaxonomy(pk),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['taxonomyList'] });
-    },
-  });
-  return mutate;
-};
-
-/**
  * Gets the taxonomy list data
  * @param {string} org Optional organization query param
  * @returns {import("./types.mjs").TaxonomyListData | undefined}
@@ -49,7 +34,7 @@ export const useDeleteTaxonomy = () => {
 export const useTaxonomyListDataResponse = (org) => {
   const response = useTaxonomyListData(org);
   if (response.status === 'success') {
-    return { ...response.data, refetch: response.refetch };
+    return response.data;
   }
   return undefined;
 };

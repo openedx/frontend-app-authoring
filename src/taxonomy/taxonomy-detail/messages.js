@@ -26,10 +26,6 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-detail.action.export',
     defaultMessage: 'Export',
   },
-  deleteMenu: {
-    id: 'course-authoring.taxonomy-detail.action.delete',
-    defaultMessage: 'Delete',
-  },
 });
 
 export default messages;

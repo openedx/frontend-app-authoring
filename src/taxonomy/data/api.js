@@ -18,25 +18,15 @@ export const getExportTaxonomyApiUrl = (pk, format) => new URL(
   `api/content_tagging/v1/taxonomies/${pk}/export/?output_format=${format}&download=1`,
   getApiBaseUrl(),
 ).href;
-export const getTaxonomyApiUrl = (pk) => new URL(`api/content_tagging/v1/taxonomies/${pk}/`, getApiBaseUrl()).href;
 
 /**
  * Get list of taxonomies.
  * @param {string} org Optioanl organization query param
- * @returns {Promise<import("./types.mjs").TaxonomyListData>}
+ * @returns {Promise<Object>}
  */
 export async function getTaxonomyListData(org) {
   const { data } = await getAuthenticatedHttpClient().get(getTaxonomyListApiUrl(org));
   return camelCaseObject(data);
-}
-
-/**
- * Delete a Taxonomy
- * @param {number} pk
- * @returns {Promise<Object>}
- */
-export async function deleteTaxonomy(pk) {
-  await getAuthenticatedHttpClient().delete(getTaxonomyApiUrl(pk));
 }
 
 /**

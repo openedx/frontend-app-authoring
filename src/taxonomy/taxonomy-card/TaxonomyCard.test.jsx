@@ -1,5 +1,5 @@
 import React from 'react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { render, fireEvent } from '@testing-library/react';
@@ -11,7 +11,6 @@ import TaxonomyCard from '.';
 
 let store;
 const taxonomyId = 1;
-const onDeleteTaxonomy = jest.fn();
 
 const data = {
   id: taxonomyId,
@@ -26,10 +25,7 @@ jest.mock('../data/api', () => ({
 const TaxonomyCardComponent = ({ original }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
-      <TaxonomyCard
-        original={original}
-        onDeleteTaxonomy={onDeleteTaxonomy}
-      />
+      <TaxonomyCard intl={injectIntl} original={original} />
     </IntlProvider>
   </AppProvider>
 );
@@ -41,7 +37,6 @@ TaxonomyCardComponent.propTypes = {
     description: PropTypes.string,
     systemDefined: PropTypes.bool,
     orgsCount: PropTypes.number,
-    onDeleteTaxonomy: PropTypes.func,
   }).isRequired,
 };
 
@@ -151,52 +146,5 @@ describe('<TaxonomyCard />', async () => {
     // Modal closed
     expect(() => getByText('Select format to export')).toThrow();
     expect(getTaxonomyExportFile).toHaveBeenCalledWith(taxonomyId, 'json');
-  });
-
-  test('should open delete dialog on delete menu click', () => {
-    const { getByTestId, getByText } = render(<TaxonomyCardComponent original={data} />);
-
-    // Modal closed
-    expect(() => getByText(`Delete "${data.name}"`)).toThrow();
-
-    // Click on delete menu
-    fireEvent.click(getByTestId('taxonomy-card-menu-button-1'));
-    fireEvent.click(getByText('Delete'));
-
-    // Modal opened
-    expect(getByText(`Delete "${data.name}"`)).toBeInTheDocument();
-
-    // Click on cancel button
-    fireEvent.click(getByText('Cancel'));
-
-    // Modal closed
-    expect(() => getByText(`Delete "${data.name}"`)).toThrow();
-  });
-
-  test('should delete a taxonomy', () => {
-    const { getByTestId, getByText, getByLabelText } = render(<TaxonomyCardComponent original={data} />);
-
-    // Click on delete menu
-    fireEvent.click(getByTestId('taxonomy-card-menu-button-1'));
-    fireEvent.click(getByText('Delete'));
-
-    const deleteButton = getByTestId('delete-button');
-
-    // The delete button must to be disabled
-    expect(deleteButton).toBeDisabled();
-
-    // Testing delete button enabled/disabled changes
-    const input = getByLabelText('Type DELETE to confirm');
-    fireEvent.change(input, { target: { value: 'DELETE_INVALID' } });
-    expect(deleteButton).toBeDisabled();
-    fireEvent.change(input, { target: { value: 'DELETE' } });
-    expect(deleteButton).toBeEnabled();
-
-    // Click on delete button
-    fireEvent.click(deleteButton);
-
-    // Modal closed
-    expect(() => getByText(`Delete "${data.name}"`)).toThrow();
-    expect(onDeleteTaxonomy).toHaveBeenCalledWith(taxonomyId, data.name);
   });
 });

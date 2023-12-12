@@ -17,10 +17,6 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-upload.apiStatus.deletingAction.message',
     defaultMessage: 'Deleting',
   },
-  apiStatusDownloadingAction: {
-    id: 'course-authoring.files-and-upload.apiStatus.downloadingAction.message',
-    defaultMessage: 'Downloading',
-  },
   fileSizeError: {
     id: 'course-authoring.files-and-upload.addFiles.error.fileSize',
     defaultMessage: 'Uploaded file(s) must be 20 MB or less. Please resize file(s) and try again.',
