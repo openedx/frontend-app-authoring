@@ -109,12 +109,23 @@ const getHighlightsFormValues = (currentHighlights) => {
   return formValues;
 };
 
-const scrollToElement = (ref) => {
-  ref.current?.scrollIntoView({
-    block: 'end',
-    inline: 'nearest',
-    behavior: 'smooth',
-  });
+/**
+ * Method to scroll into view port, if it's outside the viewport
+ *
+ * @param {Object} target - DOM Element
+ * @returns {undefined}
+ */
+const scrollToElement = target => {
+  if (target.getBoundingClientRect().bottom > window.innerHeight) {
+    //  The bottom of the target will be aligned to the bottom of the visible area of the scrollable ancestor.
+    target.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+  }
+
+  // Target is outside the view from the top
+  if (target.getBoundingClientRect().top < 0) {
+    // The top of the target will be aligned to the top of the visible area of the scrollable ancestor
+    target.scrollIntoView({ behavior: 'smooth' });
+  }
 };
 
 export {

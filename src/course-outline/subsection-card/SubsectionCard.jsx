@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -8,10 +8,10 @@ import { Add as IconAdd } from '@edx/paragon/icons';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
-import { getItemStatus } from '../utils';
+import { getItemStatus, scrollToElement } from '../utils';
 import messages from './messages';
 
-const SubsectionCard = forwardRef(({
+const SubsectionCard = ({
   section,
   subsection,
   children,
@@ -20,7 +20,8 @@ const SubsectionCard = forwardRef(({
   savingStatus,
   onOpenDeleteModal,
   onDuplicateSubmit,
-}, lastItemRef) => {
+}) => {
+  const currentRef = useRef(null);
   const intl = useIntl();
   const dispatch = useDispatch();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -65,13 +66,22 @@ const SubsectionCard = forwardRef(({
   };
 
   useEffect(() => {
+    // if this items has been newly added, scroll to it.
+    // we need to check section.shouldScroll as whole section is fetched when a
+    // subsection is duplicated under it.
+    if (currentRef.current && (section.shouldScroll || subsection.shouldScroll)) {
+      scrollToElement(currentRef.current);
+    }
+  }, []);
+
+  useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       closeForm();
     }
   }, [savingStatus]);
 
   return (
-    <div className="subsection-card" data-testid="subsection-card" ref={lastItemRef}>
+    <div className="subsection-card" data-testid="subsection-card" ref={currentRef}>
       <CardHeader
         title={displayName}
         status={subsectionStatus}
@@ -107,7 +117,7 @@ const SubsectionCard = forwardRef(({
       )}
     </div>
   );
-});
+};
 
 SubsectionCard.defaultProps = {
   children: null,
@@ -123,6 +133,7 @@ SubsectionCard.propTypes = {
     visibleToStaffOnly: PropTypes.bool,
     visibilityState: PropTypes.string.isRequired,
     staffOnlyMessage: PropTypes.bool.isRequired,
+    shouldScroll: PropTypes.bool,
   }).isRequired,
   subsection: PropTypes.shape({
     id: PropTypes.string.isRequired,
@@ -133,6 +144,7 @@ SubsectionCard.propTypes = {
     visibleToStaffOnly: PropTypes.bool,
     visibilityState: PropTypes.string.isRequired,
     staffOnlyMessage: PropTypes.bool.isRequired,
+    shouldScroll: PropTypes.bool,
   }).isRequired,
   children: PropTypes.node,
   onOpenPublishModal: PropTypes.func.isRequired,

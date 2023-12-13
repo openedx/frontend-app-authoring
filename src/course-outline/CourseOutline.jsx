@@ -1,5 +1,5 @@
 import {
-  React, useState, useCallback, useEffect, useRef,
+  React, useState, useCallback, useEffect,
 } from 'react';
 import update from 'immutability-helper';
 import { DndProvider } from 'react-dnd';
@@ -40,10 +40,8 @@ import ConfigureModal from './configure-modal/ConfigureModal';
 import DeleteModal from './delete-modal/DeleteModal';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
-import { scrollToElement } from './utils';
 
 const CourseOutline = ({ courseId }) => {
-  const listRef = useRef(null);
   const intl = useIntl();
 
   const {
@@ -117,14 +115,7 @@ const CourseOutline = ({ courseId }) => {
   };
 
   useEffect(() => {
-    if (sectionsList) {
-      setSections((prevSections) => {
-        if (prevSections.length < sectionsList.length) {
-          scrollToElement(listRef);
-        }
-        return sectionsList;
-      });
-    }
+    setSections(sectionsList);
   }, [sectionsList]);
 
   if (isLoading) {
@@ -207,7 +198,6 @@ const CourseOutline = ({ courseId }) => {
                                 onNewSubsectionSubmit={handleNewSubsectionSubmit}
                                 moveSection={moveSection}
                                 finalizeSectionOrder={finalizeSectionOrder}
-                                ref={listRef}
                               >
                                 {section.childInfo.children.map((subsection) => (
                                   <SubsectionCard
@@ -219,7 +209,6 @@ const CourseOutline = ({ courseId }) => {
                                     onOpenDeleteModal={openDeleteModal}
                                     onEditSubmit={handleEditSubmit}
                                     onDuplicateSubmit={handleDuplicateSubsectionSubmit}
-                                    ref={listRef}
                                   />
                                 ))}
                               </SectionCard>
