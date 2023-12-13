@@ -31,9 +31,8 @@ const pluginConfig = ({ isLibrary, placeholder, editorType }) => {
         image,
         imageTools,
         quickToolbar,
-        // disable the paid plugins for now
-        // plugins.a11ychecker,
-        // plugins.powerpaste,
+        plugins.a11ychecker,
+        plugins.powerpaste,
       ].join(' '),
       menubar: false,
       toolbar: toolbar ? mapToolbars([
