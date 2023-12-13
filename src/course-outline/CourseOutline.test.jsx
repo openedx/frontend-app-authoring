@@ -124,6 +124,10 @@ describe('<CourseOutline />', () => {
   it('adds new section correctly', async () => {
     const { findAllByTestId } = render(<RootWrapper />);
     let element = await findAllByTestId('section-card');
+    window.HTMLElement.prototype.getBoundingClientRect = jest.fn(() => ({
+      top: 0,
+      bottom: 4000,
+    }));
     expect(element.length).toBe(4);
 
     axiosMock
@@ -147,6 +151,10 @@ describe('<CourseOutline />', () => {
     const [section] = await findAllByTestId('section-card');
     let subsections = await within(section).findAllByTestId('subsection-card');
     expect(subsections.length).toBe(1);
+    window.HTMLElement.prototype.getBoundingClientRect = jest.fn(() => ({
+      top: 0,
+      bottom: 4000,
+    }));
 
     axiosMock
       .onPost(getXBlockBaseApiUrl())
@@ -160,6 +168,7 @@ describe('<CourseOutline />', () => {
 
     subsections = await within(section).findAllByTestId('subsection-card');
     expect(subsections.length).toBe(2);
+    expect(window.HTMLElement.prototype.scrollIntoView).toBeCalled();
   });
 
   it('render error alert after failed reindex correctly', async () => {
@@ -490,7 +499,7 @@ describe('<CourseOutline />', () => {
     expect(getByRole('button', { name: '5 Section highlights' })).toBeInTheDocument();
   });
 
-  it('check section order list when set section order query is successful', async () => {
+  it('check section list is ordered successfully', async () => {
     const { getAllByTestId } = render(<RootWrapper />);
     const courseBlockId = courseOutlineIndexMock.courseStructure.id;
     let { children } = courseOutlineIndexMock.courseStructure.childInfo;
@@ -511,7 +520,7 @@ describe('<CourseOutline />', () => {
     });
   });
 
-  it('check section order list when set section order query is unsuccessful', async () => {
+  it('check section list is restored to original order when API call fails', async () => {
     const { getAllByTestId } = render(<RootWrapper />);
     const courseBlockId = courseOutlineIndexMock.courseStructure.id;
     const { children } = courseOutlineIndexMock.courseStructure.childInfo;

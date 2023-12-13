@@ -13,6 +13,18 @@ import SubsectionCard from './SubsectionCard';
 let axiosMock;
 let store;
 
+const section = {
+  id: '123',
+  displayName: 'Section Name',
+  published: true,
+  releasedToStudents: true,
+  visibleToStaffOnly: false,
+  visibilityState: 'visible',
+  staffOnlyMessage: false,
+  hasChanges: false,
+  highlights: ['highlight 1', 'highlight 2'],
+};
+
 const subsection = {
   id: '123',
   displayName: 'Subsection Name',
@@ -28,6 +40,7 @@ const renderComponent = (props) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
       <SubsectionCard
+        section={section}
         subsection={subsection}
         onOpenPublishModal={jest.fn()}
         onOpenHighlightsModal={jest.fn()}

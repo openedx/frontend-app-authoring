@@ -1,5 +1,5 @@
 import React, {
-  forwardRef, useEffect, useState, useRef,
+  useEffect, useState, useRef,
 } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import PropTypes from 'prop-types';
@@ -11,11 +11,11 @@ import { Add as IconAdd } from '@edx/paragon/icons';
 import { setCurrentItem, setCurrentSection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
-import { getItemStatus } from '../utils';
+import { getItemStatus, scrollToElement } from '../utils';
 import messages from './messages';
 import ItemTypes from './itemTypes';
 
-const SectionCard = forwardRef(({
+const SectionCard = ({
   section,
   index,
   children,
@@ -30,7 +30,8 @@ const SectionCard = forwardRef(({
   onNewSubsectionSubmit,
   moveSection,
   finalizeSectionOrder,
-}, lastItemRef) => {
+}) => {
+  const currentRef = useRef(null);
   const intl = useIntl();
   const dispatch = useDispatch();
   const [isExpanded, setIsExpanded] = useState(isSectionsExpanded);
@@ -39,6 +40,13 @@ const SectionCard = forwardRef(({
   useEffect(() => {
     setIsExpanded(isSectionsExpanded);
   }, [isSectionsExpanded]);
+
+  useEffect(() => {
+    // if this items has been newly added, scroll to it.
+    if (currentRef.current && section.shouldScroll) {
+      scrollToElement(currentRef.current);
+    }
+  }, []);
 
   const {
     id,
@@ -52,8 +60,6 @@ const SectionCard = forwardRef(({
     highlights,
   } = section;
 
-  const moveRef = useRef(null);
-
   const [{ handlerId }, drop] = useDrop({
     accept: ItemTypes.SECTION,
     collect(monitor) {
@@ -62,7 +68,7 @@ const SectionCard = forwardRef(({
       };
     },
     hover(item, monitor) {
-      if (!moveRef.current) {
+      if (!currentRef.current) {
         return;
       }
       const dragIndex = item.index;
@@ -72,7 +78,7 @@ const SectionCard = forwardRef(({
         return;
       }
       // Determine rectangle on screen
-      const hoverBoundingRect = moveRef.current?.getBoundingClientRect();
+      const hoverBoundingRect = currentRef.current?.getBoundingClientRect();
       // Get vertical middle
       const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
       // Determine mouse position
@@ -117,7 +123,7 @@ const SectionCard = forwardRef(({
     },
   });
   const opacity = isDragging ? 0 : 1;
-  drag(drop(moveRef));
+  drag(drop(currentRef));
 
   const sectionStatus = getItemStatus({
     published,
@@ -166,9 +172,9 @@ const SectionCard = forwardRef(({
       data-testid="section-card"
       data-handler-id={handlerId}
       style={{ opacity }}
-      ref={moveRef}
+      ref={currentRef}
     >
-      <div ref={lastItemRef}>
+      <div>
         <CardHeader
           sectionId={id}
           title={displayName}
@@ -222,7 +228,7 @@ const SectionCard = forwardRef(({
       </div>
     </div>
   );
-});
+};
 
 SectionCard.defaultProps = {
   children: null,
@@ -239,6 +245,7 @@ SectionCard.propTypes = {
     visibilityState: PropTypes.string.isRequired,
     staffOnlyMessage: PropTypes.bool.isRequired,
     highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
+    shouldScroll: PropTypes.bool,
   }).isRequired,
   index: PropTypes.number.isRequired,
   children: PropTypes.node,

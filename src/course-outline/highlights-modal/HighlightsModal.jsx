@@ -65,6 +65,7 @@ const HighlightsModal = ({
                   value={values[key]}
                   floatingLabel={intl.formatMessage(messages.highlight, { index: index + 1 })}
                   maxLength={HIGHLIGHTS_FIELD_MAX_LENGTH}
+                  as="textarea"
                 />
               ))}
             </ModalDialog.Body>

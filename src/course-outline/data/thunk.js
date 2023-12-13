@@ -129,12 +129,13 @@ export function fetchCourseReindexQuery(courseId, reindexLink) {
   };
 }
 
-export function fetchCourseSectionQuery(sectionId) {
+export function fetchCourseSectionQuery(sectionId, shouldScroll = false) {
   return async (dispatch) => {
     dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
 
     try {
       const data = await getCourseItem(sectionId);
+      data.shouldScroll = shouldScroll;
       dispatch(updateSectionList(data));
       dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
@@ -307,6 +308,8 @@ export function duplicateSectionQuery(sectionId, courseBlockId) {
       courseBlockId,
       async (locator) => {
         const duplicatedItem = await getCourseItem(locator);
+        // Page should scroll to newly duplicated item.
+        duplicatedItem.shouldScroll = true;
         dispatch(duplicateSection({ id: sectionId, duplicatedItem }));
       },
     ));
@@ -318,7 +321,7 @@ export function duplicateSubsectionQuery(subsectionId, sectionId) {
     dispatch(duplicateCourseItemQuery(
       subsectionId,
       sectionId,
-      async () => dispatch(fetchCourseSectionQuery(sectionId)),
+      async () => dispatch(fetchCourseSectionQuery(sectionId, true)),
     ));
   };
 }
@@ -344,6 +347,8 @@ function addNewCourseItemQuery(parentLocator, category, displayName, addItemFn) 
       ).then(async (result) => {
         if (result) {
           const data = await getCourseItem(result.locator);
+          // Page should scroll to newly created item.
+          data.shouldScroll = true;
           dispatch(addItemFn(data));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(hideProcessingNotification());
