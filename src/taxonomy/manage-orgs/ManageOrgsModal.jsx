@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActionRow,
   Button,
@@ -16,6 +16,7 @@ import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { useTaxonomyDetailDataResponse } from '../taxonomy-detail';
+import './ManageOrgsModal.scss';
 
 const ManageOrgsModal = ({
   taxonomyId,
@@ -40,6 +41,18 @@ const ManageOrgsModal = ({
     }
   }, [taxonomy]);
 
+  useEffect(() => {
+    if (selectedOrgs) {
+      // This is a hack to force the Form.Autosuggest to clear its value after a selection is made.
+      const inputRef = /** @type {null|HTMLInputElement} */ (document.querySelector('.pgn__form-group input'));
+      if (inputRef) {
+        inputRef.value = null;
+        const event = new Event('change', { bubbles: true });
+        inputRef.dispatchEvent(event);
+      }
+    }
+  }, [selectedOrgs]);
+
   if (!allOrgs || !selectedOrgs) {
     return null;
   }
@@ -47,6 +60,7 @@ const ManageOrgsModal = ({
   return (
     <Container onClick={(e) => e.stopPropagation() /* This prevents calling onClick handler from the parent */}>
       <ModalDialog
+        className="manage-orgs"
         title={intl.formatMessage(messages.headerTitle)}
         isOpen={isOpen}
         onClose={onClose}
