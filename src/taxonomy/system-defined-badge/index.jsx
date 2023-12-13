@@ -11,7 +11,7 @@ import messages from './messages';
 const SystemDefinedBadge = ({ taxonomyId }) => {
   const intl = useIntl();
   const getToolTip = () => (
-    <Popover id={`system-defined-tooltip-${taxonomyId}`} className="system-defined-tooltip">
+    <Popover id={`system-defined-tooltip-${taxonomyId}`} className="mw-300px">
       <Popover.Title as="h5">
         {intl.formatMessage(messages.systemTaxonomyPopoverTitle)}
       </Popover.Title>

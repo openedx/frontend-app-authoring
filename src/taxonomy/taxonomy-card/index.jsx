@@ -63,7 +63,7 @@ const HeaderTitle = ({ taxonomyId, title }) => {
   const getToolTip = () => (
     <Popover
       id={`taxonomy-card-title-tooltip-${taxonomyId}`}
-      className="taxonomy-card-title-tooltip"
+      className="mw-300px"
     >
       <Popover.Content>
         {title}
@@ -78,7 +78,7 @@ const HeaderTitle = ({ taxonomyId, title }) => {
       overlay={getToolTip()}
       show={!isTruncated ? false : undefined}
     >
-      <div ref={containerRef} className="taxonomy-card-title">
+      <div ref={containerRef} className="text-truncate">
         <span ref={textRef}>{title}</span>
       </div>
     </OverlayTrigger>

@@ -51,14 +51,12 @@ const ExportModal = ({
             <Form.Radio
               key={`export-csv-format-${taxonomyId}`}
               value="csv"
-              labelClassName="export-modal-radio"
             >
               {intl.formatMessage(messages.taxonomyCSVFormat)}
             </Form.Radio>
             <Form.Radio
               key={`export-json-format-${taxonomyId}`}
               value="json"
-              labelClassName="export-modal-radio"
             >
               {intl.formatMessage(messages.taxonomyJSONFormat)}
             </Form.Radio>

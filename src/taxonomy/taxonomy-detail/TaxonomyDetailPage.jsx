@@ -109,11 +109,11 @@ const TaxonomyDetailPage = () => {
     if (taxonomy.systemDefined) {
       return <SystemDefinedBadge taxonomyId={taxonomyId} />;
     }
-    return undefined;
+    return null;
   };
 
   return (
-    <div className="taxonomy-detail-page">
+    <>
       <Helmet>
         <title>{getPageHeadTitle(intl.formatMessage(taxonomyMessages.headerTitle), taxonomy.name)}</title>
       </Helmet>
@@ -154,7 +154,7 @@ const TaxonomyDetailPage = () => {
       </div>
       {renderModals()}
       {renderDeleteDialog()}
-    </div>
+    </>
   );
 };
 

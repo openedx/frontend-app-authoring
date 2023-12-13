@@ -23,13 +23,6 @@
     -webkit-line-clamp: 6;
   }
 
-  .taxonomy-card-title {
-    /* Set overflow to title of the card */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
   .taxonomy-menu-item:focus {
     /**
      * There is a bug in the menu that auto focus the first item.
@@ -46,8 +39,4 @@
      */
     background-color: $light-500 !important;
   }
-}
-
-.taxonomy-card-title-tooltip {
-  width: 300px;
 }
