@@ -17,10 +17,10 @@ export const getAssetsUrl = (courseId) => `${getApiBaseUrl()}/assets/${courseId}
  * @param {string} courseId
  * @returns {Promise<[{}]>}
  */
-export async function getAssets(courseId, totalCount) {
-  const pageCount = totalCount || 50;
+export async function getAssets(courseId, page) {
+  const nextPage = page || 0;
   const { data } = await getAuthenticatedHttpClient()
-    .get(`${getAssetsUrl(courseId)}?page_size=${pageCount}`);
+    .get(`${getAssetsUrl(courseId)}?page=${nextPage}`);
   return camelCaseObject(data);
 }
 

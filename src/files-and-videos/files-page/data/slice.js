@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
+import { isEmpty } from 'lodash';
 
 import { RequestStatus } from '../../../data/constants';
 
@@ -18,11 +19,16 @@ const slice = createSlice({
       lock: [],
       download: [],
       usageMetrics: [],
+      loading: '',
     },
   },
   reducers: {
     setAssetIds: (state, { payload }) => {
-      state.assetIds = payload.assetIds;
+      if (isEmpty(state.assetIds)) {
+        state.assetIds = payload.assetIds;
+      } else {
+        state.assetIds = [...state.assetIds, ...payload.assetIds];
+      }
     },
     updateLoadingStatus: (state, { payload }) => {
       state.loadingStatus = payload.status;
@@ -57,8 +63,12 @@ const slice = createSlice({
     },
     updateErrors: (state, { payload }) => {
       const { error, message } = payload;
-      const currentErrorState = state.errors[error];
-      state.errors[error] = [...currentErrorState, message];
+      if (error === 'loading') {
+        state.errors.loading = message;
+      } else {
+        const currentErrorState = state.errors[error];
+        state.errors[error] = [...currentErrorState, message];
+      }
     },
     clearErrors: (state, { payload }) => {
       const { error } = payload;
