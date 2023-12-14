@@ -190,6 +190,7 @@ const VideosPage = ({
           addFileStatus={addVideoStatus}
           deleteFileStatus={deleteVideoStatus}
           updateFileStatus={updateVideoStatus}
+          loadingStatus={loadingStatus}
         />
         <ActionRow>
           <div className="h2">

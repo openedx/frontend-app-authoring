@@ -167,6 +167,7 @@ const FilesPage = ({
       </div>
     );
   }
+
   return (
     <FilesPageProvider courseId={courseId}>
       <Container size="xl" className="p-4 pt-4.5">
@@ -176,6 +177,7 @@ const FilesPage = ({
           addFileStatus={addAssetStatus}
           deleteFileStatus={deleteAssetStatus}
           updateFileStatus={updateAssetStatus}
+          loadingStatus={loadingStatus}
         />
         <div className="h2">
           <FormattedMessage {...messages.heading} />

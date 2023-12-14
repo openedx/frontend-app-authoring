@@ -240,6 +240,8 @@ export const getStatusValue = (status) => {
   switch (status) {
   case RequestStatus.DENIED:
     return 403;
+  case RequestStatus.FAILED:
+    return 404;
   default:
     return 200;
   }

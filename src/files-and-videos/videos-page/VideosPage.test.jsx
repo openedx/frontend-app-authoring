@@ -569,6 +569,14 @@ describe('FilesAndUploads', () => {
     });
 
     describe('api errors', () => {
+      it('404 intitial fetch should show error', async () => {
+        renderComponent();
+        await mockStore(RequestStatus.FAILED);
+        const loadingStatus = store.getState().videos.loadingStatus;
+        expect(loadingStatus).toEqual(RequestStatus.FAILED);
+
+        expect(screen.getByText('Error')).toBeVisible();
+      });
       it('invalid file size should show error', async () => {
         const errorMessage = 'File download.png exceeds maximum size of 5 GB.';
         renderComponent();
