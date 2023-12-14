@@ -61,6 +61,7 @@ const FileTable = ({
   const [isAddOpen, setAddOpen, setAddClose] = useToggle(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
+  const [selectedFilters, setSelectedFilters] = useState([]);
 
   const {
     loadingStatus,
@@ -158,6 +159,21 @@ const FileTable = ({
     />
   );
 
+  const filterStatusComponent = ({
+    className, variant, size, clearFiltersText, buttonClassName,
+  }) => (
+    <FilterStatus
+      {...{
+        className,
+        variant,
+        size,
+        clearFiltersText,
+        buttonClassName,
+        setSelectedFilters,
+      }}
+    />
+  );
+
   const moreInfoColumn = {
     id: 'moreInfo',
     Header: '',
@@ -191,6 +207,7 @@ const FileTable = ({
           togglePlacement: 'left',
         }}
         initialState={{
+          filters: selectedFilters,
           pageSize: 50,
         }}
         tableActions={headerActions}
@@ -199,7 +216,7 @@ const FileTable = ({
         itemCount={files.length}
         pageCount={pageCount}
         data={files}
-        FilterStatusComponent={FilterStatus}
+        FilterStatusComponent={filterStatusComponent}
         RowStatusComponent={RowStatus}
       >
         {isEmpty(files) && loadingStatus !== RequestStatus.IN_PROGRESS ? (

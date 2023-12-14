@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
@@ -9,10 +9,17 @@ import { getFilters, removeFilter } from './utils';
 
 const FilterStatus = ({
   className, variant, size, clearFiltersText, buttonClassName,
+  setSelectedFilters,
 }) => {
   const {
     state, setAllFilters, setFilter, RowStatusComponent, columns,
   } = useContext(DataTableContext);
+
+  const filterState = state?.filters ?? [];
+
+  useEffect(() => {
+    setSelectedFilters(filterState);
+  }, [filterState]);
 
   if (!setAllFilters) {
     return null;
@@ -74,6 +81,7 @@ FilterStatus.propTypes = {
   variant: PropTypes.string,
   size: PropTypes.string,
   clearFiltersText: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
+  setSelectedFilters: PropTypes.func.isRequired,
 };
 
 export default FilterStatus;
