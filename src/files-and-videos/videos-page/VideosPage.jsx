@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   injectIntl,
@@ -12,6 +11,7 @@ import {
   ActionRow,
   Button,
   CheckboxFilter,
+  Container,
 } from '@edx/paragon';
 import Placeholder from '@edx/frontend-lib-content-components';
 
@@ -36,6 +36,7 @@ import {
   FileTable,
   StatusColumn,
   ThumbnailColumn,
+  TranscriptColumn,
 } from '../generic';
 import TranscriptSettings from './transcript-settings';
 import VideoThumbnail from './VideoThumbnail';
@@ -104,34 +105,35 @@ const VideosPage = ({
     loadingStatus,
     usagePathStatus,
     usageErrorMessages: errorMessages.usageMetrics,
+    fileType: 'video',
   };
   const thumbnailPreview = (props) => VideoThumbnail({ ...props, handleAddThumbnail, videoImageSettings });
-  const infoModalSidebar = (video) => VideoInfoModalSidebar({ video });
+  const infoModalSidebar = (video, activeTab, setActiveTab) => (
+    VideoInfoModalSidebar({ video, activeTab, setActiveTab })
+  );
   const maxFileSize = videoUploadMaxFileSize * 1073741824;
   const transcriptColumn = {
-    id: 'transcripts',
+    id: 'transcriptStatus',
     Header: 'Transcript',
-    accessor: (({ transcripts }) => !isEmpty(transcripts)),
-    Cell: ({ row }) => {
-      const { transcripts } = row.original;
-      const numOfTranscripts = transcripts?.length;
-      return numOfTranscripts > 0 ? `(${numOfTranscripts}) available` : null;
-    },
+    accessor: 'transcriptStatus',
+    Cell: ({ row }) => TranscriptColumn({ row }),
     Filter: CheckboxFilter,
+    filter: 'exactTextCase',
     filterChoices: [
-      { name: intl.formatMessage(messages.transcribedCheckboxLabel), value: true },
-      { name: intl.formatMessage(messages.notTranscribedCheckboxLabel), value: false },
+      { name: intl.formatMessage(messages.transcribedCheckboxLabel), value: 'transcribed' },
+      { name: intl.formatMessage(messages.notTranscribedCheckboxLabel), value: 'notTranscribed' },
     ],
   };
   const activeColumn = {
-    id: 'usageLocations',
+    id: 'activeStatus',
     Header: 'Active',
-    accessor: (({ usageLocations }) => !isEmpty(usageLocations)),
+    accessor: 'activeStatus',
     Cell: ({ row }) => ActiveColumn({ row }),
     Filter: CheckboxFilter,
+    filter: 'exactTextCase',
     filterChoices: [
-      { name: intl.formatMessage(messages.activeCheckboxLabel), value: true },
-      { name: intl.formatMessage(messages.inactiveCheckboxLabel), value: false },
+      { name: intl.formatMessage(messages.activeCheckboxLabel), value: 'active' },
+      { name: intl.formatMessage(messages.inactiveCheckboxLabel), value: 'inactive' },
     ],
   };
   const durationColumn = {
@@ -146,9 +148,14 @@ const VideosPage = ({
   const processingStatusColumn = {
     id: 'status',
     Header: '',
+    accessor: 'status',
     Cell: ({ row }) => StatusColumn({ row }),
     Filter: CheckboxFilter,
-    filterChoices: [{ name: intl.formatMessage(messages.processingCheckboxLabel), value: 'Processing' }],
+    filterChoices: [
+      { name: intl.formatMessage(messages.processingCheckboxLabel), value: 'Processing' },
+
+      { name: intl.formatMessage(messages.failedCheckboxLabel), value: 'Failed' },
+    ],
   };
   const videoThumbnailColumn = {
     id: 'courseVideoImageUrl',
@@ -176,34 +183,32 @@ const VideosPage = ({
   }
   return (
     <VideosPageProvider courseId={courseId}>
-      <main>
-        <div className="p-4">
-          <EditFileErrors
-            resetErrors={handleErrorReset}
-            errorMessages={errorMessages}
-            addFileStatus={addVideoStatus}
-            deleteFileStatus={deleteVideoStatus}
-            updateFileStatus={updateVideoStatus}
-          />
-          <ActionRow>
-            <div className="h2">
-              <FormattedMessage {...messages.heading} />
-            </div>
-            <ActionRow.Spacer />
-            {isVideoTranscriptEnabled ? (
-              <Button
-                variant="link"
-                size="sm"
-                onClick={() => {
-                  openTranscriptSettings();
-                  handleErrorReset({ errorType: 'transcript' });
-                }}
-              >
-                <FormattedMessage {...messages.transcriptSettingsButtonLabel} />
-              </Button>
-            ) : null}
-          </ActionRow>
-        </div>
+      <Container size="xl" className="p-4 pt-4.5">
+        <EditFileErrors
+          resetErrors={handleErrorReset}
+          errorMessages={errorMessages}
+          addFileStatus={addVideoStatus}
+          deleteFileStatus={deleteVideoStatus}
+          updateFileStatus={updateVideoStatus}
+        />
+        <ActionRow>
+          <div className="h2">
+            <FormattedMessage {...messages.heading} />
+          </div>
+          <ActionRow.Spacer />
+          {isVideoTranscriptEnabled ? (
+            <Button
+              variant="link"
+              size="sm"
+              onClick={() => {
+                openTranscriptSettings();
+                handleErrorReset({ errorType: 'transcript' });
+              }}
+            >
+              <FormattedMessage {...messages.transcriptSettingsButtonLabel} />
+            </Button>
+          ) : null}
+        </ActionRow>
         {isVideoTranscriptEnabled ? (
           <TranscriptSettings
             {...{
@@ -233,7 +238,7 @@ const VideosPage = ({
             files: videos,
           }}
         />
-      </main>
+      </Container>
     </VideosPageProvider>
   );
 };

@@ -44,37 +44,31 @@ const MoreInfoColumn = ({
         alt="More info icon button"
       />
       <ModalPopup
-        placement="left"
+        placement="bottom-end"
         positionRef={target}
         isOpen={isOpen}
         onClose={close}
         onEscapeKey={close}
-        style={{
-
-        }}
       >
         <Menu
-          className="border border-light-400"
-          style={{ overflowX: 'hidden', boxShadow: '0px 0px 0px #000', maxHeight: '500px' }}
+          className="more-info-menu"
         >
           {wrapperType === 'video' ? (
             <MenuItem
               as={Button}
               variant="tertiary"
-              size="inline"
               onClick={() => {
                 navigator.clipboard.writeText(id);
                 close();
               }}
             >
-              Copy video ID
+              {intl.formatMessage(messages.copyVideoIdTitle)}
             </MenuItem>
           ) : (
             <>
               <MenuItem
                 as={Button}
                 variant="tertiary"
-                size="inline"
                 onClick={() => {
                   navigator.clipboard.writeText(portableUrl);
                   close();
@@ -85,7 +79,6 @@ const MoreInfoColumn = ({
               <MenuItem
                 as={Button}
                 variant="tertiary"
-                size="inline"
                 onClick={() => {
                   navigator.clipboard.writeText(externalUrl);
                   close();
@@ -96,7 +89,6 @@ const MoreInfoColumn = ({
               <MenuItem
                 as={Button}
                 variant="tertiary"
-                size="inline"
                 onClick={() => handleLock(id, !locked)}
               >
                 {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
@@ -106,7 +98,6 @@ const MoreInfoColumn = ({
           <MenuItem
             as={Button}
             variant="tertiary"
-            size="inline"
             onClick={() => handleBulkDownload(
               [{ original: { id, displayName } }],
             )}
@@ -116,16 +107,14 @@ const MoreInfoColumn = ({
           <MenuItem
             as={Button}
             variant="tertiary"
-            size="inline"
             onClick={() => handleOpenFileInfo(row.original)}
           >
             {intl.formatMessage(messages.infoTitle)}
           </MenuItem>
-          <hr className="m-0" />
+          <hr className="my-2" />
           <MenuItem
             as={Button}
             variant="tertiary"
-            size="inline"
             data-testid="open-delete-confirmation-button"
             onClick={() => {
               handleOpenDeleteConfirmation([{ original: row.original }]);

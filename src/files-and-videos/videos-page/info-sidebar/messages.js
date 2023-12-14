@@ -11,6 +11,11 @@ const messages = defineMessages({
     defaultMessage: 'Transcript ({transcriptCount})',
     description: 'Title for info tab',
   },
+  notificationScreenReaderText: {
+    id: 'course-authoring.video-uploads.file-info.transcriptTab.notification.screenReader.text',
+    defaultMessage: 'Transcription error',
+    description: 'Scrren reader text for transcript tab notification',
+  },
   dateAddedTitle: {
     id: 'course-authoring.video-uploads.file-info.infoTab.dateAdded.title',
     defaultMessage: 'Date added',

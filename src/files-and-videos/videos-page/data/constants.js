@@ -6,3 +6,6 @@ export const MIN_WIDTH = 640;
 export const MIN_HEIGHT = 360;
 export const ASPECT_RATIO = 16 / 9;
 export const ASPECT_RATIO_ERROR_MARGIN = 0.1;
+export const TRANSCRIPT_FAILURE_STATUSES = ['Transcript Failed', 'Partial Failure'];
+export const VIDEO_PROCESSING_STATUSES = ['Uploading', 'In Progress', 'Uploaded'];
+export const VIDEO_SUCCESS_STATUSES = ['Ready', 'Imported'];

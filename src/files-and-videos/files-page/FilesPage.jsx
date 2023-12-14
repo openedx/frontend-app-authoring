@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
-import { CheckboxFilter } from '@edx/paragon';
+import { CheckboxFilter, Container } from '@edx/paragon';
 import Placeholder from '@edx/frontend-lib-content-components';
 
 import { RequestStatus } from '../../data/constants';
@@ -80,29 +79,31 @@ const FilesPage = ({
     loadingStatus,
     usagePathStatus,
     usageErrorMessages: errorMessages.usageMetrics,
+    fileType: 'file',
   };
   const maxFileSize = 20 * 1048576;
 
   const activeColumn = {
-    id: 'usageLocations',
+    id: 'activeStatus',
     Header: 'Active',
-    accessor: (({ usageLocations }) => !isEmpty(usageLocations)),
+    accessor: 'activeStatus',
     Cell: ({ row }) => ActiveColumn({ row }),
     Filter: CheckboxFilter,
+    filter: 'exactTextCase',
     filterChoices: [
-      { name: intl.formatMessage(messages.activeCheckboxLabel), value: true },
-      { name: intl.formatMessage(messages.inactiveCheckboxLabel), value: false },
+      { name: intl.formatMessage(messages.activeCheckboxLabel), value: 'active' },
+      { name: intl.formatMessage(messages.inactiveCheckboxLabel), value: 'inactive' },
     ],
   };
   const accessColumn = {
-    id: 'locked',
+    id: 'lockStatus',
     Header: 'Access',
-    accessor: 'locked',
+    accessor: 'lockStatus',
     Cell: ({ row }) => AccessColumn({ row }),
     Filter: CheckboxFilter,
     filterChoices: [
-      { name: intl.formatMessage(messages.lockedCheckboxLabel), value: true },
-      { name: intl.formatMessage(messages.publicCheckboxLabel), value: false },
+      { name: intl.formatMessage(messages.lockedCheckboxLabel), value: 'locked' },
+      { name: intl.formatMessage(messages.publicCheckboxLabel), value: 'public' },
     ],
   };
   const thumbnailColumn = {
@@ -168,18 +169,16 @@ const FilesPage = ({
   }
   return (
     <FilesPageProvider courseId={courseId}>
-      <main>
-        <div className="p-4">
-          <EditFileErrors
-            resetErrors={handleErrorReset}
-            errorMessages={errorMessages}
-            addFileStatus={addAssetStatus}
-            deleteFileStatus={deleteAssetStatus}
-            updateFileStatus={updateAssetStatus}
-          />
-          <div className="h2">
-            <FormattedMessage {...messages.heading} />
-          </div>
+      <Container size="xl" className="p-4 pt-4.5">
+        <EditFileErrors
+          resetErrors={handleErrorReset}
+          errorMessages={errorMessages}
+          addFileStatus={addAssetStatus}
+          deleteFileStatus={deleteAssetStatus}
+          updateFileStatus={updateAssetStatus}
+        />
+        <div className="h2">
+          <FormattedMessage {...messages.heading} />
         </div>
         <FileTable
           {...{
@@ -199,7 +198,7 @@ const FilesPage = ({
             files: assets,
           }}
         />
-      </main>
+      </Container>
     </FilesPageProvider>
   );
 };

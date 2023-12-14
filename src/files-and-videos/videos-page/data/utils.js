@@ -7,6 +7,8 @@ import {
   MAX_WIDTH,
   MIN_HEIGHT,
   MIN_WIDTH,
+  VIDEO_PROCESSING_STATUSES,
+  VIDEO_SUCCESS_STATUSES,
 } from './constants';
 
 ensureConfig([
@@ -22,6 +24,8 @@ export const updateFileValues = (files) => {
       created,
       courseVideoImageUrl,
       status,
+      transcripts,
+      usageLocations,
     } = file;
     const wrapperType = 'video';
 
@@ -29,11 +33,13 @@ export const updateFileValues = (files) => {
     if (thumbnail && thumbnail.startsWith('/')) {
       thumbnail = `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
     }
+    const transcriptStatus = transcripts?.length > 0 ? 'transcribed' : 'notTranscribed';
+    const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
 
     let uploadStatus = status;
-    if (status === 'Ready' || status === 'Imported') {
+    if (VIDEO_SUCCESS_STATUSES.includes(status)) {
       uploadStatus = 'Success';
-    } else if (status === 'In Progress' || status === 'Uploaded') {
+    } else if (VIDEO_PROCESSING_STATUSES.includes(status)) {
       uploadStatus = 'Processing';
     }
 
@@ -43,9 +49,10 @@ export const updateFileValues = (files) => {
       id: edxVideoId,
       wrapperType,
       dateAdded: created.toString(),
-      usageLocations: [],
       status: uploadStatus,
       thumbnail,
+      transcriptStatus,
+      activeStatus,
     });
   });
 
@@ -70,6 +77,26 @@ export const getLanguages = (availableLanguages) => {
     languages[languageCode] = languageText;
   });
   return languages;
+};
+
+export const getSortedTranscripts = (languages, transcripts) => {
+  const transcriptDisplayNames = [];
+  transcripts.forEach(transcript => {
+    const displayName = languages[transcript];
+    transcriptDisplayNames.push(displayName);
+  });
+
+  const sortedTranscripts = transcriptDisplayNames.sort();
+  const sortedTranscriptCodes = [];
+  sortedTranscripts.forEach(transcript => {
+    Object.entries(languages).forEach(([key, value]) => {
+      if (value === transcript) {
+        sortedTranscriptCodes.push(key);
+      }
+    });
+  });
+
+  return sortedTranscriptCodes;
 };
 
 export const getSupportedFormats = (supportedFileFormats) => {

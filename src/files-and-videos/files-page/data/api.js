@@ -82,7 +82,8 @@ export async function getDownload(selectedRows, courseId) {
 export async function getAssetUsagePaths({ courseId, assetId }) {
   const { data } = await getAuthenticatedHttpClient()
     .get(`${getAssetsUrl(courseId)}${assetId}/usage`);
-  return camelCaseObject(data);
+  const { usage_locations: usageLocations } = data;
+  return { usageLocations };
 }
 
 /**

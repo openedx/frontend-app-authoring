@@ -74,7 +74,6 @@ EditFileErrors.propTypes = {
     delete: PropTypes.arrayOf(PropTypes.string).isRequired,
     lock: PropTypes.arrayOf(PropTypes.string),
     download: PropTypes.arrayOf(PropTypes.string).isRequired,
-    usageMetrics: PropTypes.arrayOf(PropTypes.string).isRequired,
     thumbnail: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   addFileStatus: PropTypes.string.isRequired,

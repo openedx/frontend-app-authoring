@@ -36,10 +36,11 @@
   },
   "dependencies": {
     "@edx/brand": "npm:@openedx/brand-openedx@^1.2.2",
+    "@edx/frontend-component-ai-translations-edx": "^1.4.1",
     "@edx/frontend-component-footer": "^12.3.0",
     "@edx/frontend-component-header": "^4.7.0",
     "@edx/frontend-enterprise-hotjar": "^2.0.0",
-    "@edx/frontend-lib-content-components": "1.175.1",
+    "@edx/frontend-lib-content-components": "1.176.4",
     "@edx/frontend-platform": "5.6.1",
     "@edx/paragon": "^21.5.6",
     "@fortawesome/fontawesome-svg-core": "1.2.36",
@@ -55,7 +56,7 @@
     "@openedx-plugins/course-app-progress": "file:plugins/course-apps/progress",
     "@openedx-plugins/course-app-teams": "file:plugins/course-apps/teams",
     "@openedx-plugins/course-app-wiki": "file:plugins/course-apps/wiki",
-    "@reduxjs/toolkit": "1.5.0",
+    "@reduxjs/toolkit": "1.9.7",
     "@tanstack/react-query": "4.36.1",
     "classnames": "2.2.6",
     "core-js": "3.8.1",
@@ -102,5 +103,8 @@
     "react-test-renderer": "17.0.2",
     "reactifex": "1.1.1",
     "ts-loader": "^9.5.0"
+  },
+  "peerDependencies": {
+    "decode-uri-component": ">=0.2.2"
   }
 }

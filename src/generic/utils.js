@@ -1,10 +1,16 @@
 import { isEmpty } from 'lodash';
 
-const getPageHeadTitle = (courseName, pageName) => {
-  if (isEmpty(courseName)) {
+/**
+ * Generate the string for the page <title>
+ * @param {string} courseOrSectionName The name of the course, or the section of the MFE that the user is in currently
+ * @param {string} pageName The name of the current page
+ * @returns {string} The combined title
+ */
+const getPageHeadTitle = (courseOrSectionName, pageName) => {
+  if (isEmpty(courseOrSectionName)) {
     return `${pageName} | ${process.env.SITE_NAME}`;
   }
-  return `${pageName} | ${courseName} | ${process.env.SITE_NAME}`;
+  return `${pageName} | ${courseOrSectionName} | ${process.env.SITE_NAME}`;
 };
 
 export default getPageHeadTitle;

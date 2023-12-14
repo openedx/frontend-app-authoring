@@ -225,7 +225,7 @@ describe('FilesAndUploads', () => {
         axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
 
         fireEvent.click(deleteButton);
-        expect(screen.getByText(messages.deleteConfirmationTitle.defaultMessage)).toBeVisible();
+        expect(screen.getByText('Delete file(s) confirmation')).toBeVisible();
         await act(async () => {
           userEvent.click(deleteButton);
         });
@@ -239,7 +239,7 @@ describe('FilesAndUploads', () => {
           userEvent.click(confirmDeleteButton);
         });
 
-        expect(screen.queryByText(messages.deleteConfirmationTitle.defaultMessage)).toBeNull();
+        expect(screen.queryByText('Delete file(s) confirmation')).toBeNull();
 
         // Check if the asset is deleted in the store and UI
         const deleteStatus = store.getState().assets.deletingStatus;
@@ -300,7 +300,11 @@ describe('FilesAndUploads', () => {
 
         const sortNameAscendingButton = screen.getByText(messages.sortByNameAscending.defaultMessage);
         fireEvent.click(sortNameAscendingButton);
-        fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+
+        await waitFor(() => {
+          fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+        });
+
         expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
       });
 
@@ -317,7 +321,11 @@ describe('FilesAndUploads', () => {
 
         const sortBySizeDescendingButton = screen.getByText(messages.sortBySizeDescending.defaultMessage);
         fireEvent.click(sortBySizeDescendingButton);
-        fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+
+        await waitFor(() => {
+          fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+        });
+
         expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
       });
     });
@@ -331,7 +339,15 @@ describe('FilesAndUploads', () => {
         const assetMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
         expect(assetMenuButton).toBeVisible();
 
-        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, { usageLocations: ['subsection - unit / block'] });
+        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`)
+          .reply(201, {
+            usage_locations: {
+              mOckID1: [{
+                display_location: 'subsection - unit / block',
+                url: 'base/unit_id#block_id',
+              }],
+            },
+          });
         await waitFor(() => {
           fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Info'));
@@ -356,7 +372,7 @@ describe('FilesAndUploads', () => {
         expect(assetMenuButton).toBeVisible();
 
         axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID1`).reply(201, { locked: false });
-        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, { usageLocations: [] });
+        axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, { usage_locations: { mOckID1: [] } });
         await waitFor(() => {
           fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Info'));
@@ -451,10 +467,10 @@ describe('FilesAndUploads', () => {
           axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
           fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
-          expect(screen.getByText(messages.deleteConfirmationTitle.defaultMessage)).toBeVisible();
+          expect(screen.getByText('Delete file(s) confirmation')).toBeVisible();
 
           fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
-          expect(screen.queryByText(messages.deleteConfirmationTitle.defaultMessage)).toBeNull();
+          expect(screen.queryByText('Delete file(s) confirmation')).toBeNull();
 
           executeThunk(deleteAssetFile(courseId, 'mOckID1', 5), store.dispatch);
         });
@@ -509,10 +525,10 @@ describe('FilesAndUploads', () => {
           axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(404);
           fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
-          expect(screen.getByText(messages.deleteConfirmationTitle.defaultMessage)).toBeVisible();
+          expect(screen.getByText('Delete file(s) confirmation')).toBeVisible();
 
           fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
-          expect(screen.queryByText(messages.deleteConfirmationTitle.defaultMessage)).toBeNull();
+          expect(screen.queryByText('Delete file(s) confirmation')).toBeNull();
 
           executeThunk(deleteAssetFile(courseId, 'mOckID1', 5), store.dispatch);
         });

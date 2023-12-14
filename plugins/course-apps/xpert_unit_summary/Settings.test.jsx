@@ -48,7 +48,7 @@ function renderComponent() {
   container = wrapper.container;
 }
 
-function generateCourseLevelAPIRepsonse({
+function generateCourseLevelAPIResponse({
   success, enabled,
 }) {
   return {
@@ -97,7 +97,7 @@ describe('XpertUnitSummarySettings', () => {
   describe('with successful network connections', () => {
     beforeEach(() => {
       axiosMock.onGet(API.getXpertSettingsUrl(courseId))
-        .reply(200, generateCourseLevelAPIRepsonse({
+        .reply(200, generateCourseLevelAPIResponse({
           success: true,
           enabled: true,
         }));
@@ -112,7 +112,7 @@ describe('XpertUnitSummarySettings', () => {
 
     test('Shows switch on if disabled from backend', async () => {
       axiosMock.onGet(API.getXpertSettingsUrl(courseId))
-        .reply(200, generateCourseLevelAPIRepsonse({
+        .reply(200, generateCourseLevelAPIResponse({
           success: true,
           enabled: false,
         }));
@@ -130,7 +130,7 @@ describe('XpertUnitSummarySettings', () => {
 
     test('Shows disable radio selected if enabled from backend', async () => {
       axiosMock.onGet(API.getXpertSettingsUrl(courseId))
-        .reply(200, generateCourseLevelAPIRepsonse({
+        .reply(200, generateCourseLevelAPIResponse({
           success: true,
           enabled: false,
         }));
@@ -144,7 +144,7 @@ describe('XpertUnitSummarySettings', () => {
   describe('first time course configuration', () => {
     beforeEach(() => {
       axiosMock.onGet(API.getXpertSettingsUrl(courseId))
-        .reply(400, generateCourseLevelAPIRepsonse({
+        .reply(400, generateCourseLevelAPIResponse({
           success: false,
           enabled: undefined,
         }));
@@ -152,7 +152,7 @@ describe('XpertUnitSummarySettings', () => {
       renderComponent();
     });
 
-    test('Does not show as enabled if configuation does not exist', async () => {
+    test('Does not show as enabled if configuration does not exist', async () => {
       await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
       expect(container.querySelector('#enable-xpert-unit-summary-toggle').checked).not.toBeTruthy();
       expect(queryByTestId(container, 'enable-badge')).not.toBeTruthy();
@@ -162,13 +162,13 @@ describe('XpertUnitSummarySettings', () => {
   describe('saving configuration changes', () => {
     beforeEach(() => {
       axiosMock.onGet(API.getXpertSettingsUrl(courseId))
-        .reply(200, generateCourseLevelAPIRepsonse({
+        .reply(200, generateCourseLevelAPIResponse({
           success: true,
           enabled: false,
         }));
 
       axiosMock.onPost(API.getXpertSettingsUrl(courseId))
-        .reply(200, generateCourseLevelAPIRepsonse({
+        .reply(200, generateCourseLevelAPIResponse({
           success: true,
           enabled: true,
         }));
@@ -191,7 +191,7 @@ describe('XpertUnitSummarySettings', () => {
   describe('testing configurable gating', () => {
     beforeEach(async () => {
       axiosMock.onGet(API.getXpertConfigurationStatusUrl(courseId))
-        .reply(200, generateCourseLevelAPIRepsonse({
+        .reply(200, generateCourseLevelAPIResponse({
           success: true,
           enabled: true,
         }));
@@ -208,13 +208,13 @@ describe('XpertUnitSummarySettings', () => {
   describe('removing course configuration', () => {
     beforeEach(() => {
       axiosMock.onGet(API.getXpertSettingsUrl(courseId))
-        .reply(200, generateCourseLevelAPIRepsonse({
+        .reply(200, generateCourseLevelAPIResponse({
           success: true,
           enabled: true,
         }));
 
       axiosMock.onDelete(API.getXpertSettingsUrl(courseId))
-        .reply(200, generateCourseLevelAPIRepsonse({
+        .reply(200, generateCourseLevelAPIResponse({
           success: true,
           enabled: undefined,
         }));
@@ -236,13 +236,13 @@ describe('XpertUnitSummarySettings', () => {
   describe('resetting course units', () => {
     test('reset all units to be enabled', async () => {
       axiosMock.onGet(API.getXpertSettingsUrl(courseId))
-        .reply(200, generateCourseLevelAPIRepsonse({
+        .reply(200, generateCourseLevelAPIResponse({
           success: true,
           enabled: true,
         }));
 
       axiosMock.onPost(API.getXpertSettingsUrl(courseId))
-        .reply(200, generateCourseLevelAPIRepsonse({
+        .reply(200, generateCourseLevelAPIResponse({
           success: true,
           enabled: true,
         }));
@@ -258,13 +258,13 @@ describe('XpertUnitSummarySettings', () => {
 
     test('reset all units to be disabled', async () => {
       axiosMock.onGet(API.getXpertSettingsUrl(courseId))
-        .reply(200, generateCourseLevelAPIRepsonse({
+        .reply(200, generateCourseLevelAPIResponse({
           success: true,
           enabled: false,
         }));
 
       axiosMock.onPost(API.getXpertSettingsUrl(courseId))
-        .reply(200, generateCourseLevelAPIRepsonse({
+        .reply(200, generateCourseLevelAPIResponse({
           success: true,
           enabled: false,
         }));

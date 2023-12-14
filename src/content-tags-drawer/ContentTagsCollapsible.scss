@@ -1,0 +1,28 @@
+.taxonomy-tags-collapsible {
+  flex: 1;
+  border: none !important;
+
+  .collapsible-trigger {
+    border: none !important;
+  }
+}
+
+.taxonomy-tags-selector-menu {
+  button {
+    flex: 1;
+  }
+}
+
+.taxonomy-tags-selector-menu + div {
+  width: 100%;
+}
+
+.taxonomy-tags-selectable-box-set {
+  grid-auto-rows: unset !important;
+  overflow-y: scroll;
+  max-height: 20rem;
+}
+
+.pgn__modal-popup__arrow {
+  visibility: hidden;
+}
