@@ -25,6 +25,9 @@ const OrderTranscriptForm = ({
   const [data, setData] = useState(activeTranscriptPreferences || { videoSourceLanguage: '' });
 
   const [validCieloTranscriptionPlan, validThreePlayTranscriptionPlan] = checkTranscriptionPlans(transcriptionPlans);
+  useEffect(() => {
+    setTranscriptType(activeTranscriptPreferences?.provider || 'order');
+  }, []);
 
   let [cieloHasCredentials, threePlayHasCredentials] = checkCredentials(transcriptCredentials);
   useEffect(() => {

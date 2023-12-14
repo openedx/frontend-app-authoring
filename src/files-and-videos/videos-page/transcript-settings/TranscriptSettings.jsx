@@ -35,9 +35,8 @@ const TranscriptSettings = ({
     isAiTranslationsEnabled,
   } = pageSettings;
   const { transcriptionPlans } = videoTranscriptSettings || {};
-  const [transcriptType, setTranscriptType] = useState(activeTranscriptPreferences?.provider);
+  const [transcriptType, setTranscriptType] = useState(null);
   const [isAiTranslations, setIsAiTranslations] = useState(false);
-  const [isOrderComponentOpened, setIsOrderComponentOpened] = useState(false);
 
   const handleOrderTranscripts = (data, provider) => {
     const noCredentials = isEmpty(transcriptCredentials) || data.apiKey;
@@ -63,16 +62,13 @@ const TranscriptSettings = ({
           <>
             <ActionRow>
               <TransitionReplace>
-                {transcriptType && isOrderComponentOpened ? (
+                {transcriptType ? (
                   <IconButton
                     key="back-button"
                     size="sm"
                     iconAs={Icon}
                     src={ChevronLeft}
-                    onClick={() => {
-                      setTranscriptType(null);
-                      setIsOrderComponentOpened(false);
-                    }}
+                    onClick={() => setTranscriptType(null)}
                     alt="back button to main transcript settings view"
                   />
                 ) : (
@@ -85,7 +81,7 @@ const TranscriptSettings = ({
               <IconButton size="sm" iconAs={Icon} src={Close} onClick={closeTranscriptSettings} alt="close settings" />
             </ActionRow>
             <TransitionReplace>
-              { transcriptType && isOrderComponentOpened ? (
+              { transcriptType ? (
                 <div key="transcript-settings">
                   <OrderTranscriptForm
                     {...{
@@ -104,10 +100,7 @@ const TranscriptSettings = ({
               ) : (
                 <div key="transcript-type-selection" className="mt-3">
                   <Collapsible.Advanced
-                    onOpen={() => {
-                      setTranscriptType(transcriptType || 'order');
-                      setIsOrderComponentOpened(true);
-                    }}
+                    onOpen={() => setTranscriptType('order')}
                   >
                     <Collapsible.Trigger
                       className="row m-0 justify-content-between align-items-center"
@@ -121,7 +114,7 @@ const TranscriptSettings = ({
             </TransitionReplace>
           </>
         )}
-        {(!isOrderComponentOpened && isAiTranslationsEnabled) && (
+        {(!transcriptType && isAiTranslationsEnabled) && (
           <TransitionReplace>
             <AITranslationsComponent
               setIsAiTranslations={setIsAiTranslations}
