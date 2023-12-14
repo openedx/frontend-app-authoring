@@ -55,13 +55,13 @@ describe('taxonomy api calls', () => {
     expect(axiosMock.history.get[0].url).toEqual(getTaxonomyListApiUrl(org));
     expect(result).toEqual(taxonomyListMock);
   });
-  
+
   it('should delete a taxonomy', async () => {
     axiosMock.onDelete(getTaxonomyApiUrl()).reply(200);
     await deleteTaxonomy();
 
     expect(axiosMock.history.delete[0].url).toEqual(getTaxonomyApiUrl());
-  });  
+  });
 
   it('Export should set window.location.href correctly', () => {
     const pk = 1;
