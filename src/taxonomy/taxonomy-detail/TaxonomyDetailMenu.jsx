@@ -8,8 +8,13 @@ import PropTypes from 'prop-types';
 
 import messages from './messages';
 
+const menuMessages = {
+  export: messages.exportMenu,
+  delete: messages.deleteMenu,
+};
+
 const TaxonomyDetailMenu = ({
-  id, name, disabled, onClickMenuItem,
+  id, name, disabled, onClickMenuItem, menuItems,
 }) => {
   const intl = useIntl();
 
@@ -20,9 +25,13 @@ const TaxonomyDetailMenu = ({
       alt={intl.formatMessage(messages.actionsButtonAlt, { name })}
       disabled={disabled}
     >
-      <Dropdown.Item onClick={() => onClickMenuItem('export')}>
-        {intl.formatMessage(messages.exportMenu)}
-      </Dropdown.Item>
+      { menuItems.map(item => (
+        <Dropdown.Item
+          onClick={() => onClickMenuItem(item)}
+        >
+          {intl.formatMessage(menuMessages[item])}
+        </Dropdown.Item>
+      ))}
     </DropdownButton>
   );
 };
@@ -32,6 +41,7 @@ TaxonomyDetailMenu.propTypes = {
   name: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   onClickMenuItem: PropTypes.func.isRequired,
+  menuItems: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 TaxonomyDetailMenu.defaultProps = {

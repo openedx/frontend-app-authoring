@@ -33,6 +33,7 @@ const MoreInfoColumn = ({
     id,
     wrapperType,
     displayName,
+    downloadLink,
   } = row.original;
   return (
     <>
@@ -99,7 +100,7 @@ const MoreInfoColumn = ({
             as={Button}
             variant="tertiary"
             onClick={() => handleBulkDownload(
-              [{ original: { id, displayName } }],
+              [{ original: { id, displayName, downloadLink } }],
             )}
           >
             {intl.formatMessage(messages.downloadTitle)}
