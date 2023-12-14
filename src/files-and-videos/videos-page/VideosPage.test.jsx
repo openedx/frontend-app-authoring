@@ -36,7 +36,7 @@ import {
   addVideoThumbnail,
   fetchVideoDownload,
 } from './data/thunks';
-import { getVideosUrl, getCoursVideosApiUrl, getApiBaseUrl } from './data/api';
+import { getVideosUrl, getCourseVideosApiUrl, getApiBaseUrl } from './data/api';
 import videoMessages from './messages';
 import messages from '../generic/messages';
 
@@ -127,8 +127,8 @@ describe('FilesAndUploads', () => {
         const mockFetchResponse = Promise.resolve(mockResponseData);
         global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
 
-        axiosMock.onPost(getCoursVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
-        axiosMock.onGet(getCoursVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
+        axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
+        axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
         Object.defineProperty(dropzone, 'files', {
           value: [file],
@@ -223,8 +223,8 @@ describe('FilesAndUploads', () => {
         const mockFetchResponse = Promise.resolve(mockResponseData);
         global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
 
-        axiosMock.onPost(getCoursVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
-        axiosMock.onGet(getCoursVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
+        axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
+        axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
         await act(async () => {
@@ -263,7 +263,7 @@ describe('FilesAndUploads', () => {
         const deleteButton = screen.getByText(messages.deleteTitle.defaultMessage).closest('a');
         expect(deleteButton).not.toHaveClass('disabled');
 
-        axiosMock.onDelete(`${getCoursVideosApiUrl(courseId)}/mOckID1`).reply(204);
+        axiosMock.onDelete(`${getCourseVideosApiUrl(courseId)}/mOckID1`).reply(204);
 
         fireEvent.click(deleteButton);
         expect(screen.getByText('Delete video(s) confirmation')).toBeVisible();
@@ -322,8 +322,7 @@ describe('FilesAndUploads', () => {
         await waitFor(() => {
           fireEvent.click(actionsButton);
         });
-        axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1`).reply(200, { download_link: 'http://download.org' });
-        axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID5`).reply(200, { download_link: 'http://download.org' });
+        axiosMock.onPut(`${getVideosUrl(courseId)}/download`).reply(200, null);
 
         const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
         expect(downloadButton).not.toHaveClass('disabled');
@@ -533,7 +532,6 @@ describe('FilesAndUploads', () => {
         const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
         expect(videoMenuButton).toBeVisible();
 
-        axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1`).reply(200, { download_link: 'test' });
         await waitFor(() => {
           fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByText('Download'));
@@ -553,7 +551,7 @@ describe('FilesAndUploads', () => {
         expect(fileMenuButton).toBeVisible();
 
         await waitFor(() => {
-          axiosMock.onDelete(`${getCoursVideosApiUrl(courseId)}/mOckID1`).reply(204);
+          axiosMock.onDelete(`${getCourseVideosApiUrl(courseId)}/mOckID1`).reply(204);
           fireEvent.click(within(fileMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
           expect(screen.getByText('Delete video(s) confirmation')).toBeVisible();
@@ -575,7 +573,7 @@ describe('FilesAndUploads', () => {
         const errorMessage = 'File download.png exceeds maximum size of 5 GB.';
         renderComponent();
         await mockStore(RequestStatus.SUCCESSFUL);
-        axiosMock.onPost(getCoursVideosApiUrl(courseId)).reply(413, { error: errorMessage });
+        axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(413, { error: errorMessage });
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
         await act(async () => {
           userEvent.upload(addFilesButton, file);
@@ -590,7 +588,7 @@ describe('FilesAndUploads', () => {
       it('404 add file should show error', async () => {
         renderComponent();
         await mockStore(RequestStatus.SUCCESSFUL);
-        axiosMock.onPost(getCoursVideosApiUrl(courseId)).reply(404);
+        axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(404);
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
         await act(async () => {
           userEvent.upload(addFilesButton, file);
@@ -625,8 +623,8 @@ describe('FilesAndUploads', () => {
         const mockFetchResponse = Promise.reject(mockResponseData);
         global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
 
-        axiosMock.onPost(getCoursVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
-        axiosMock.onGet(getCoursVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
+        axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
+        axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
         await act(async () => {
           userEvent.upload(addFilesButton, file);
@@ -647,7 +645,7 @@ describe('FilesAndUploads', () => {
         expect(videoMenuButton).toBeVisible();
 
         await waitFor(() => {
-          axiosMock.onDelete(`${getCoursVideosApiUrl(courseId)}/mOckID1`).reply(404);
+          axiosMock.onDelete(`${getCourseVideosApiUrl(courseId)}/mOckID1`).reply(404);
           fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
           expect(screen.getByText('Delete video(s) confirmation')).toBeVisible();
@@ -701,9 +699,11 @@ describe('FilesAndUploads', () => {
         const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
         expect(downloadButton).not.toHaveClass('disabled');
 
+        axiosMock.onPut(`${getVideosUrl(courseId)}/download`).reply(404);
+
         await waitFor(() => {
           fireEvent.click(downloadButton);
-          executeThunk(fetchVideoDownload([{ original: { displayName: 'mOckID1', id: '2' } }]), store.dispatch);
+          executeThunk(fetchVideoDownload([{ original: { displayName: 'mOckID1', id: '2', downloadLink: 'test' } }]), store.dispatch);
         });
 
         const updateStatus = store.getState().videos.updatingStatus;

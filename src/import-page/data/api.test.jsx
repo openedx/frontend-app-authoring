@@ -25,11 +25,11 @@ describe('API Functions', () => {
   });
 
   it('should fetch status on start importing', async () => {
+    const file = new File(['(⌐□_□)'], 'download.tar.gz', { size: 20 });
     const data = { importStatus: 1 };
     axiosMock.onPost(postImportCourseApiUrl(courseId)).reply(200, data);
 
-    const result = await startCourseImporting(courseId);
-
+    const result = await startCourseImporting(courseId, file);
     expect(axiosMock.history.post[0].url).toEqual(postImportCourseApiUrl(courseId));
     expect(result).toEqual(data);
   });
