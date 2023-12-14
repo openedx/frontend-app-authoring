@@ -51,3 +51,6 @@ mergeConfig({
   ENABLE_PROGRESS_GRAPH_SETTINGS: process.env.ENABLE_PROGRESS_GRAPH_SETTINGS || 'false',
   ENABLE_TEAM_TYPE_SETTING: process.env.ENABLE_TEAM_TYPE_SETTING === 'true',
 }, 'CourseAuthoringConfig');
+
+// Mock the plugins repo so jest will stop complaining about ES6 syntax
+jest.mock('frontend-components-tinymce-advanced-plugins', () => {});

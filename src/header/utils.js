@@ -44,7 +44,7 @@ export const getSettingMenuItems = ({ studioBaseUrl, courseId, intl }) => ([
     title: intl.formatMessage(messages['header.links.courseTeam']),
   },
   {
-    href: `${studioBaseUrl}/group_configurations/course-v1:${courseId}`,
+    href: `${studioBaseUrl}/group_configurations/${courseId}`,
     title: intl.formatMessage(messages['header.links.groupConfigurations']),
   },
   {

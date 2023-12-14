@@ -1,0 +1,12 @@
+.outline-status-bar {
+  .outline-status-bar__item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    min-height: 3.75rem;
+
+    & h5 {
+      margin-bottom: 0;
+    }
+  }
+}

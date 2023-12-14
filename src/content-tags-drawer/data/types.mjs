@@ -100,8 +100,3 @@
  * @property {TaxonomyTagData[]} results
  */
 
-/**
- * @typedef {Object} UseQueryResult
- * @property {Object} data
- * @property {string} status
- */

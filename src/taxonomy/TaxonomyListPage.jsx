@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Button,
   CardView,
@@ -13,11 +13,14 @@ import {
   Add,
 } from '@edx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { Helmet } from 'react-helmet';
 import SubHeader from '../generic/sub-header/SubHeader';
+import getPageHeadTitle from '../generic/utils';
 import messages from './messages';
 import TaxonomyCard from './taxonomy-card';
 import { getTaxonomyTemplateFile } from './data/api';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
+import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded, useDeleteTaxonomy } from './data/apiHooks';
+import { TaxonomyContext } from './common/context';
 
 const TaxonomyListHeaderButtons = () => {
   const intl = useIntl();
@@ -63,12 +66,25 @@ const TaxonomyListHeaderButtons = () => {
 
 const TaxonomyListPage = () => {
   const intl = useIntl();
+  const deleteTaxonomy = useDeleteTaxonomy();
+  const { setToastMessage } = useContext(TaxonomyContext);
+
+  const onDeleteTaxonomy = React.useCallback((id, name) => {
+    deleteTaxonomy({ pk: id }, {
+      onSuccess: async () => {
+        setToastMessage(intl.formatMessage(messages.taxonomyDeleteToast, { name }));
+      },
+      onError: async () => {
+        // TODO: display the error to the user
+      },
+    });
+  }, [setToastMessage]);
+
   const useTaxonomyListData = () => {
     const taxonomyListData = useTaxonomyListDataResponse();
     const isLoaded = useIsTaxonomyListDataLoaded();
     return { taxonomyListData, isLoaded };
   };
-
   const { taxonomyListData, isLoaded } = useTaxonomyListData();
 
   const getOrgSelect = () => (
@@ -79,6 +95,9 @@ const TaxonomyListPage = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{getPageHeadTitle('', intl.formatMessage(messages.headerTitle))}</title>
+      </Helmet>
       <div className="pt-4.5 pr-4.5 pl-4.5 pb-2 bg-light-100 box-shadow-down-2">
         <Container size="xl">
           <SubHeader
@@ -108,11 +127,14 @@ const TaxonomyListPage = () => {
                 {
                   accessor: 'systemDefined',
                 },
+                {
+                  accessor: 'tagsCount',
+                },
               ]}
             >
               <CardView
                 className="bg-light-400 p-5"
-                CardComponent={TaxonomyCard}
+                CardComponent={(row) => TaxonomyCard({ ...row, onDeleteTaxonomy })}
               />
             </DataTable>
           )}

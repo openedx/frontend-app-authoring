@@ -1,121 +1,96 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { act } from '@testing-library/react';
 import {
-  useTaxonomyTagsDataResponse,
-  useIsTaxonomyTagsDataLoaded,
-  useContentTaxonomyTagsDataResponse,
-  useIsContentTaxonomyTagsDataLoaded,
-  useContentDataResponse,
-  useIsContentDataLoaded,
+  useTaxonomyTagsData,
+  useContentTaxonomyTagsData,
+  useContentData,
+  useContentTaxonomyTagsUpdater,
 } from './apiHooks';
+
+import { updateContentTaxonomyTags } from './api';
 
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(),
+  useMutation: jest.fn(),
+  useQueryClient: jest.fn(),
 }));
 
-describe('useTaxonomyTagsDataResponse', () => {
-  it('should return data when status is success', () => {
-    useQuery.mockReturnValueOnce({ status: 'success', data: { data: 'data' } });
-    const taxonomyId = '123';
-    const result = useTaxonomyTagsDataResponse(taxonomyId);
+jest.mock('./api', () => ({
+  updateContentTaxonomyTags: jest.fn(),
+}));
 
-    expect(result).toEqual({ data: 'data' });
+describe('useTaxonomyTagsData', () => {
+  it('should return success response', () => {
+    useQuery.mockReturnValueOnce({ isSuccess: true, data: 'data' });
+    const taxonomyId = 123;
+    const result = useTaxonomyTagsData(taxonomyId);
+
+    expect(result).toEqual({ isSuccess: true, data: 'data' });
   });
 
-  it('should return undefined when status is not success', () => {
-    useQuery.mockReturnValueOnce({ status: 'error' });
-    const taxonomyId = '123';
-    const result = useTaxonomyTagsDataResponse(taxonomyId);
+  it('should return failure response', () => {
+    useQuery.mockReturnValueOnce({ isSuccess: false });
+    const taxonomyId = 123;
+    const result = useTaxonomyTagsData(taxonomyId);
 
-    expect(result).toBeUndefined();
-  });
-});
-
-describe('useIsTaxonomyTagsDataLoaded', () => {
-  it('should return true when status is success', () => {
-    useQuery.mockReturnValueOnce({ status: 'success' });
-    const taxonomyId = '123';
-    const result = useIsTaxonomyTagsDataLoaded(taxonomyId);
-
-    expect(result).toBe(true);
-  });
-
-  it('should return false when status is not success', () => {
-    useQuery.mockReturnValueOnce({ status: 'error' });
-    const taxonomyId = '123';
-    const result = useIsTaxonomyTagsDataLoaded(taxonomyId);
-
-    expect(result).toBe(false);
+    expect(result).toEqual({ isSuccess: false });
   });
 });
 
-describe('useContentTaxonomyTagsDataResponse', () => {
-  it('should return data when status is success', () => {
-    useQuery.mockReturnValueOnce({ status: 'success', data: { data: 'data' } });
+describe('useContentTaxonomyTagsData', () => {
+  it('should return success response', () => {
+    useQuery.mockReturnValueOnce({ isSuccess: true, data: 'data' });
     const contentId = '123';
-    const result = useContentTaxonomyTagsDataResponse(contentId);
+    const result = useContentTaxonomyTagsData(contentId);
 
-    expect(result).toEqual({ data: 'data' });
+    expect(result).toEqual({ isSuccess: true, data: 'data' });
   });
 
-  it('should return undefined when status is not success', () => {
-    useQuery.mockReturnValueOnce({ status: 'error' });
+  it('should return failure response', () => {
+    useQuery.mockReturnValueOnce({ isSuccess: false });
     const contentId = '123';
-    const result = useContentTaxonomyTagsDataResponse(contentId);
+    const result = useContentTaxonomyTagsData(contentId);
 
-    expect(result).toBeUndefined();
-  });
-});
-
-describe('useIsContentTaxonomyTagsDataLoaded', () => {
-  it('should return true when status is success', () => {
-    useQuery.mockReturnValueOnce({ status: 'success' });
-    const contentId = '123';
-    const result = useIsContentTaxonomyTagsDataLoaded(contentId);
-
-    expect(result).toBe(true);
-  });
-
-  it('should return false when status is not success', () => {
-    useQuery.mockReturnValueOnce({ status: 'error' });
-    const contentId = '123';
-    const result = useIsContentTaxonomyTagsDataLoaded(contentId);
-
-    expect(result).toBe(false);
+    expect(result).toEqual({ isSuccess: false });
   });
 });
 
-describe('useContentDataResponse', () => {
-  it('should return data when status is success', () => {
-    useQuery.mockReturnValueOnce({ status: 'success', data: { data: 'data' } });
+describe('useContentData', () => {
+  it('should return success response', () => {
+    useQuery.mockReturnValueOnce({ isSuccess: true, data: 'data' });
     const contentId = '123';
-    const result = useContentDataResponse(contentId);
+    const result = useContentData(contentId);
 
-    expect(result).toEqual({ data: 'data' });
+    expect(result).toEqual({ isSuccess: true, data: 'data' });
   });
 
-  it('should return undefined when status is not success', () => {
-    useQuery.mockReturnValueOnce({ status: 'error' });
+  it('should return failure response', () => {
+    useQuery.mockReturnValueOnce({ isSuccess: false });
     const contentId = '123';
-    const result = useContentDataResponse(contentId);
+    const result = useContentData(contentId);
 
-    expect(result).toBeUndefined();
+    expect(result).toEqual({ isSuccess: false });
   });
 });
 
-describe('useIsContentDataLoaded', () => {
-  it('should return true when status is success', () => {
-    useQuery.mockReturnValueOnce({ status: 'success' });
-    const contentId = '123';
-    const result = useIsContentDataLoaded(contentId);
+describe('useContentTaxonomyTagsUpdater', () => {
+  it('should call the update content taxonomy tags function', async () => {
+    useMutation.mockReturnValueOnce({ mutate: jest.fn() });
 
-    expect(result).toBe(true);
-  });
+    const contentId = 'testerContent';
+    const taxonomyId = 123;
+    const mutation = useContentTaxonomyTagsUpdater(contentId, taxonomyId);
+    mutation.mutate({ tags: ['tag1', 'tag2'] });
 
-  it('should return false when status is not success', () => {
-    useQuery.mockReturnValueOnce({ status: 'error' });
-    const contentId = '123';
-    const result = useIsContentDataLoaded(contentId);
+    expect(useMutation).toBeCalled();
 
-    expect(result).toBe(false);
+    const [config] = useMutation.mock.calls[0];
+    const { mutationFn } = config;
+
+    await act(async () => {
+      const tags = ['tag1', 'tag2'];
+      await mutationFn({ tags });
+      expect(updateContentTaxonomyTags).toBeCalledWith(contentId, taxonomyId, tags);
+    });
   });
 });
