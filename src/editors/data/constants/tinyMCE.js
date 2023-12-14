@@ -67,7 +67,7 @@ export const plugins = listKeyStore([
   'image',
   'imagetools',
   'quickbars',
-  // We are disabling these plugins for now until local development and stubbed versions work
+  // temporarily disable these plugins since they throw a bug in local development
   // 'a11ychecker',
   // 'powerpaste',
 ]);
