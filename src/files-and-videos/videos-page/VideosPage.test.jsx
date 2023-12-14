@@ -572,7 +572,7 @@ describe('FilesAndUploads', () => {
       it('404 intitial fetch should show error', async () => {
         renderComponent();
         await mockStore(RequestStatus.FAILED);
-        const loadingStatus = store.getState().videos.loadingStatus;
+        const { loadingStatus } = store.getState().videos;
         expect(loadingStatus).toEqual(RequestStatus.FAILED);
 
         expect(screen.getByText('Error')).toBeVisible();
