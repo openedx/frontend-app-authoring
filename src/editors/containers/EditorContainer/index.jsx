@@ -13,6 +13,7 @@ import EditorFooter from './components/EditorFooter';
 import TitleHeader from './components/TitleHeader';
 import * as hooks from './hooks';
 import messages from './messages';
+import './index.scss';
 
 export const EditorContainer = ({
   children,
@@ -29,7 +30,7 @@ export const EditorContainer = ({
   const handleCancel = hooks.handleCancel({ onClose, returnFunction });
   return (
     <div
-      className="d-flex flex-column position-relative zindex-0"
+      className="editor-container d-flex flex-column position-relative zindex-0"
       style={{ minHeight: '100%' }}
     >
       <BaseModal

@@ -2,7 +2,7 @@
 
 exports[`EditorContainer component render snapshot: initialized. enable save and pass to header 1`] = `
 <div
-  className="d-flex flex-column position-relative zindex-0"
+  className="editor-container d-flex flex-column position-relative zindex-0"
   style={
     Object {
       "minHeight": "100%",
@@ -83,7 +83,7 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
 
 exports[`EditorContainer component render snapshot: not initialized. disable save and pass to header 1`] = `
 <div
-  className="d-flex flex-column position-relative zindex-0"
+  className="editor-container d-flex flex-column position-relative zindex-0"
   style={
     Object {
       "minHeight": "100%",

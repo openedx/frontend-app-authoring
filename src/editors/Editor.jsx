@@ -33,14 +33,6 @@ export const Editor = ({
   return (
     <div
       className="d-flex flex-column"
-      style={{
-        /* Positioned as a proper Paragon FullscreenModal should have been. */
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '100%',
-      }}
     >
       <div
         className="pgn__modal-fullscreen h-100"
