@@ -55,6 +55,7 @@ export function fetchVideos(courseId) {
       if (error.response && error.response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
       } else {
+        dispatch(updateErrors({ error: 'loading', message: 'Failed to load videos' }));
         dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
       }
     }
