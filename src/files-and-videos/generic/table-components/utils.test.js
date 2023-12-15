@@ -35,8 +35,8 @@ describe('getCurrentViewRange', () => {
 });
 
 describe('getFilters', () => {
-  it('should return filter when columns is empty', () => {
-    const state = { filters: [{ id: 'test', value: ['unknown'] }] };
+  it('should return filter object for text search with no filters', () => {
+    const state = { filters: [{ id: 'test', value: 'unknown' }] };
     const columns = [];
     const expected = [{ name: 'unknown', value: 'unknown' }];
     const actual = getFilters(state, columns);
@@ -44,7 +44,22 @@ describe('getFilters', () => {
     expect(actual).toEqual(expected);
   });
 
-  it('should return filtern for specific column', () => {
+  it('should return filter object for text search with filters', () => {
+    const state = { filters: [{ id: 'test', value: ['unknown'] }, { id: 'validColumn', value: ['filter1'] }] };
+    const columns = [{
+      id: 'validColumn',
+      filterChoices: [
+        { name: 'Filter 1', value: 'filter1' },
+        { name: 'Filter 2', value: 'filter2' },
+      ],
+    }];
+    const expected = [{ name: 'unknown', value: 'unknown' }, { name: 'Filter 1', value: 'filter1' }];
+    const actual = getFilters(state, columns);
+
+    expect(actual).toEqual(expected);
+  });
+
+  it('should return filter object for no text search with filters', () => {
     const state = { filters: [{ id: 'validColumn', value: ['filter1'] }] };
     const columns = [{
       id: 'validColumn',

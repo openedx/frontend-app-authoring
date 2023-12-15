@@ -24,8 +24,8 @@ export const getFilters = (state, columns) => {
     if (filterColumn) {
       currentFilters = getFilterDisplayName(filterColumn, value);
     } else {
-      const [serachValue] = value;
-      currentFilters = [{ name: serachValue, value: serachValue }];
+      const searchValue = Array.isArray(value) ? value[0] : value;
+      currentFilters = [{ name: searchValue, value: searchValue }];
     }
     allFilters.push(...currentFilters);
   });
