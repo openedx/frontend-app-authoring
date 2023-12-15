@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
@@ -74,7 +74,6 @@ FilterStatus.propTypes = {
   variant: PropTypes.string,
   size: PropTypes.string,
   clearFiltersText: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
-  setSelectedFilters: PropTypes.func.isRequired,
 };
 
 export default FilterStatus;
