@@ -100,6 +100,14 @@ const messages = defineMessages({
     id: 'course-authoring.import-tags.error',
     defaultMessage: 'Import failed - see details in the browser console',
   },
+  importTaxonomyToast: {
+    id: 'course-authoring.import-tags.toast.success',
+    defaultMessage: '"{name}" updated',
+  },
+  importTaxonomyErrorAlert: {
+    id: 'course-authoring.import-tags.error-alert.title',
+    defaultMessage: 'Import error',
+  },
 });
 
 export default messages;

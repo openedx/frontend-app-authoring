@@ -1,30 +1,39 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { render, act } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
 import initializeStore from '../store';
+import { TaxonomyContext } from './common/context';
 import TaxonomyLayout from './TaxonomyLayout';
 
 let store;
 const toastMessage = 'Hello, this is a toast!';
+
+const MockChildComponent = () => {
+  const { setToastMessage } = useContext(TaxonomyContext);
+
+  return (
+    <div data-testid="mock-content">
+      <button
+        type="button"
+        onClick={() => setToastMessage(toastMessage)}
+        data-testid="taxonomy-show-toast"
+      >
+        Show Toast
+      </button>
+    </div>
+  );
+};
+
 jest.mock('../header', () => jest.fn(() => <div data-testid="mock-header" />));
 jest.mock('@edx/frontend-component-footer', () => ({
   StudioFooter: jest.fn(() => <div data-testid="mock-footer" />),
 }));
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  Outlet: jest.fn(() => <div data-testid="mock-content" />),
-}));
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useState: jest.fn((initial) => {
-    if (initial === null) {
-      return [toastMessage, jest.fn()];
-    }
-    return [initial, jest.fn()];
-  }),
+  Outlet: () => <MockChildComponent />,
 }));
 
 const RootWrapper = () => (
@@ -55,11 +64,11 @@ describe('<TaxonomyLayout />', async () => {
     expect(getByTestId('mock-footer')).toBeInTheDocument();
   });
 
-  it('should show toast', async () => {
+  it('should show toast', () => {
     const { getByTestId, getByText } = render(<RootWrapper />);
-    act(() => {
-      expect(getByTestId('taxonomy-toast')).toBeInTheDocument();
-      expect(getByText(toastMessage)).toBeInTheDocument();
-    });
+    const button = getByTestId('taxonomy-show-toast');
+    button.click();
+    expect(getByTestId('taxonomy-toast')).toBeInTheDocument();
+    expect(getByText(toastMessage)).toBeInTheDocument();
   });
 });

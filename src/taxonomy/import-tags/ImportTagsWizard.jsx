@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -21,6 +21,7 @@ import PropTypes from 'prop-types';
 
 import LoadingButton from '../../generic/loading-button';
 import { getFileSizeToClosestByte } from '../../utils';
+import { TaxonomyContext } from '../common/context';
 import { getTaxonomyExportFile } from '../data/api';
 import { planImportTags, useImportTags } from './data/api';
 import messages from './messages';
@@ -204,6 +205,7 @@ const ImportTagsWizard = ({
   close,
 }) => {
   const intl = useIntl();
+  const { setToastMessage, setAlertMessageProps } = useContext(TaxonomyContext);
 
   const steps = ['export', 'upload', 'plan', 'confirm'];
   const [currentStep, setCurrentStep] = useState(steps[0]);
@@ -243,9 +245,15 @@ const ImportTagsWizard = ({
         });
         close();
       }
-      // ToDo: show success toast
+      setToastMessage(intl.formatMessage(messages.importTaxonomyToast, { name: taxonomy.name }));
     } catch (error) {
-      // ToDo: show error message
+      const alertProps = {
+        variant: 'danger',
+        icon: Error,
+        title: intl.formatMessage(messages.importTaxonomyErrorAlert),
+        description: error.message,
+      };
+      setAlertMessageProps(alertProps);
     }
   };
 

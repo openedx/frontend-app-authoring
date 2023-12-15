@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 
 import initializeStore from '../../store';
 import { getTaxonomyExportFile } from '../data/api';
+import { TaxonomyContext } from '../common/context';
 import { planImportTags } from './data/api';
 import ImportTagsWizard from './ImportTagsWizard';
 
@@ -34,6 +35,15 @@ jest.mock('./data/api', () => ({
   })),
 }));
 
+const mockSetToastMessage = jest.fn();
+const mockSetAlertMessageProps = jest.fn();
+const context = {
+  toastMessage: null,
+  setToastMessage: mockSetToastMessage,
+  alertMessageProps: null,
+  setAlertMessageProps: mockSetAlertMessageProps,
+};
+
 const taxonomy = {
   id: 1,
   name: 'Test Taxonomy',
@@ -43,7 +53,9 @@ const RootWrapper = ({ close }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
-        <ImportTagsWizard taxonomy={taxonomy} isOpen close={close} />
+        <TaxonomyContext.Provider value={context}>
+          <ImportTagsWizard taxonomy={taxonomy} isOpen close={close} />
+        </TaxonomyContext.Provider>
       </QueryClientProvider>
     </IntlProvider>
   </AppProvider>
@@ -95,7 +107,7 @@ describe('<ImportTagsWizard />', () => {
     expect(getTaxonomyExportFile).toHaveBeenCalledWith(taxonomy.id, 'csv');
   });
 
-  it('can upload taxonomies from the dialog', async () => {
+  it.each(['success', 'error'])('an upload taxonomies from the dialog (%p)', async (expectedResult) => {
     const close = jest.fn();
     const { getAllByTestId, getByTestId, getByText } = render(<RootWrapper close={close} />);
 
@@ -200,7 +212,11 @@ describe('<ImportTagsWizard />', () => {
     fireEvent.click(getByTestId('continue-button'));
     expect(getByTestId('confirm-step')).toBeInTheDocument();
 
-    mockUseImportTagsMutate.mockResolvedValueOnce({});
+    if (expectedResult === 'success') {
+      mockUseImportTagsMutate.mockResolvedValueOnce({});
+    } else {
+      mockUseImportTagsMutate.mockRejectedValueOnce(new Error('Test error'));
+    }
 
     fireEvent.click(getByTestId('confirm-button'));
 
@@ -208,6 +224,17 @@ describe('<ImportTagsWizard />', () => {
       expect(mockUseImportTagsMutate).toHaveBeenCalledWith({ taxonomyId: taxonomy.id, file: fileJson });
     });
 
-    // ToDo: Add test for success message
+    if (expectedResult === 'success') {
+      // Toast message shown
+      expect(mockSetToastMessage).toBeCalledWith(`"${taxonomy.name}" updated`);
+    } else {
+      expect(mockSetAlertMessageProps).toBeCalledWith(
+        expect.objectContaining({
+          variant: 'danger',
+          title: 'Import error',
+          description: 'Test error',
+        }),
+      );
+    }
   });
 });

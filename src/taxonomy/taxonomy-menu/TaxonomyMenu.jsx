@@ -17,7 +17,7 @@ import ExportModal from '../export-modal';
 import { useDeleteTaxonomy } from '../data/apiHooks';
 import { TaxonomyContext } from '../common/context';
 import DeleteDialog from '../delete-dialog';
-import { ImportTagsWizard, importTaxonomyTags } from '../import-tags';
+import { ImportTagsWizard } from '../import-tags';
 import messages from './messages';
 
 const TaxonomyMenu = ({
