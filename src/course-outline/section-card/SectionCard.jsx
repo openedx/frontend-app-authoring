@@ -10,6 +10,8 @@ import { Add as IconAdd } from '@edx/paragon/icons';
 import { setCurrentItem, setCurrentSection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
+import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
+import TitleButton from '../card-header/TitleButton';
 import { getItemStatus, scrollToElement } from '../utils';
 import messages from './messages';
 
@@ -31,6 +33,7 @@ const SectionCard = ({
   const dispatch = useDispatch();
   const [isExpanded, setIsExpanded] = useState(isSectionsExpanded);
   const [isFormOpen, openForm, closeForm] = useToggle(false);
+  const namePrefix = 'section';
 
   useEffect(() => {
     setIsExpanded(isSectionsExpanded);
@@ -96,6 +99,20 @@ const SectionCard = ({
     }
   }, [savingStatus]);
 
+  const titleComponent = (
+    <TitleButton
+      isExpanded={isExpanded}
+      onTitleClick={handleExpandContent}
+      namePrefix={namePrefix}
+    >
+      <BaseTitleWithStatusBadge
+        title={displayName}
+        status={sectionStatus}
+        namePrefix={namePrefix}
+      />
+    </TitleButton>
+  );
+
   return (
     <div
       className="section-card"
@@ -108,8 +125,6 @@ const SectionCard = ({
           title={displayName}
           status={sectionStatus}
           hasChanges={hasChanges}
-          isExpanded={isExpanded}
-          onExpand={handleExpandContent}
           onClickMenuButton={handleClickMenuButton}
           onClickPublish={onOpenPublishModal}
           onClickConfigure={onOpenConfigureModal}
@@ -120,7 +135,8 @@ const SectionCard = ({
           onEditSubmit={handleEditSubmit}
           isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
           onClickDuplicate={onDuplicateSubmit}
-          namePrefix="section"
+          titleComponent={titleComponent}
+          namePrefix={namePrefix}
         />
         <div className="section-card__content" data-testid="section-card__content">
           <div className="outline-section__status">

@@ -1,35 +1,30 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, useToggle } from '@edx/paragon';
-import { Add as IconAdd } from '@edx/paragon/icons';
+import { useToggle } from '@edx/paragon';
 
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
 import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
-import TitleButton from '../card-header/TitleButton';
+import TitleLink from '../card-header/TitleLink';
 import { getItemStatus, scrollToElement } from '../utils';
-import messages from './messages';
 
-const SubsectionCard = ({
-  section,
+const UnitCard = ({
+  unit,
   subsection,
-  children,
+  section,
   onOpenPublishModal,
   onEditSubmit,
   savingStatus,
   onOpenDeleteModal,
   onDuplicateSubmit,
-  onNewUnitSubmit,
+  getTitleLink,
 }) => {
   const currentRef = useRef(null);
-  const intl = useIntl();
   const dispatch = useDispatch();
-  const [isExpanded, setIsExpanded] = useState(false);
   const [isFormOpen, openForm, closeForm] = useToggle(false);
-  const namePrefix = 'subsection';
+  const namePrefix = 'unit';
 
   const {
     id,
@@ -40,9 +35,9 @@ const SubsectionCard = ({
     visibleToStaffOnly = false,
     visibilityState,
     staffOnlyMessage,
-  } = subsection;
+  } = unit;
 
-  const subsectionStatus = getItemStatus({
+  const unitStatus = getItemStatus({
     published,
     releasedToStudents,
     visibleToStaffOnly,
@@ -50,14 +45,10 @@ const SubsectionCard = ({
     staffOnlyMessage,
   });
 
-  const handleExpandContent = () => {
-    setIsExpanded((prevState) => !prevState);
-  };
-
   const handleClickMenuButton = () => {
+    dispatch(setCurrentItem(unit));
     dispatch(setCurrentSection(section));
     dispatch(setCurrentSubsection(subsection));
-    dispatch(setCurrentItem(subsection));
   };
 
   const handleEditSubmit = (titleValue) => {
@@ -69,27 +60,24 @@ const SubsectionCard = ({
     closeForm();
   };
 
-  const handleNewButtonClick = () => onNewUnitSubmit(id);
-
   const titleComponent = (
-    <TitleButton
-      isExpanded={isExpanded}
-      onTitleClick={handleExpandContent}
+    <TitleLink
+      titleLink={getTitleLink(id)}
       namePrefix={namePrefix}
     >
       <BaseTitleWithStatusBadge
         title={displayName}
-        status={subsectionStatus}
+        status={unitStatus}
         namePrefix={namePrefix}
       />
-    </TitleButton>
+    </TitleLink>
   );
 
   useEffect(() => {
     // if this items has been newly added, scroll to it.
     // we need to check section.shouldScroll as whole section is fetched when a
-    // subsection is duplicated under it.
-    if (currentRef.current && (section.shouldScroll || subsection.shouldScroll)) {
+    // unit is duplicated under it.
+    if (currentRef.current && (section.shouldScroll || unit.shouldScroll)) {
       scrollToElement(currentRef.current);
     }
   }, []);
@@ -101,10 +89,10 @@ const SubsectionCard = ({
   }, [savingStatus]);
 
   return (
-    <div className="subsection-card" data-testid="subsection-card" ref={currentRef}>
+    <div className="unit-card" data-testid="unit-card" ref={currentRef}>
       <CardHeader
         title={displayName}
-        status={subsectionStatus}
+        status={unitStatus}
         hasChanges={hasChanges}
         onClickMenuButton={handleClickMenuButton}
         onClickPublish={onOpenPublishModal}
@@ -118,31 +106,12 @@ const SubsectionCard = ({
         titleComponent={titleComponent}
         namePrefix={namePrefix}
       />
-      {isExpanded && (
-        <div data-testid="subsection-card__units" className="subsection-card__units">
-          {children}
-          <Button
-            data-testid="new-unit-button"
-            className="mt-4"
-            variant="outline-primary"
-            iconBefore={IconAdd}
-            block
-            onClick={handleNewButtonClick}
-          >
-            {intl.formatMessage(messages.newUnitButton)}
-          </Button>
-        </div>
-      )}
     </div>
   );
 };
 
-SubsectionCard.defaultProps = {
-  children: null,
-};
-
-SubsectionCard.propTypes = {
-  section: PropTypes.shape({
+UnitCard.propTypes = {
+  unit: PropTypes.shape({
     id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
@@ -164,13 +133,23 @@ SubsectionCard.propTypes = {
     staffOnlyMessage: PropTypes.bool.isRequired,
     shouldScroll: PropTypes.bool,
   }).isRequired,
-  children: PropTypes.node,
+  section: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    displayName: PropTypes.string.isRequired,
+    published: PropTypes.bool.isRequired,
+    hasChanges: PropTypes.bool.isRequired,
+    releasedToStudents: PropTypes.bool.isRequired,
+    visibleToStaffOnly: PropTypes.bool,
+    visibilityState: PropTypes.string.isRequired,
+    staffOnlyMessage: PropTypes.bool.isRequired,
+    shouldScroll: PropTypes.bool,
+  }).isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,
   onEditSubmit: PropTypes.func.isRequired,
   savingStatus: PropTypes.string.isRequired,
   onOpenDeleteModal: PropTypes.func.isRequired,
   onDuplicateSubmit: PropTypes.func.isRequired,
-  onNewUnitSubmit: PropTypes.func.isRequired,
+  getTitleLink: PropTypes.func.isRequired,
 };
 
-export default SubsectionCard;
+export default UnitCard;
