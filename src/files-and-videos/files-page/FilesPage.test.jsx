@@ -27,6 +27,7 @@ import {
   getStatusValue,
   courseId,
   initialState,
+  generateNextPageResponse,
 } from './factories/mockApiResponses';
 
 import {
@@ -63,7 +64,7 @@ const mockStore = async (
   axiosMock.onGet(fetchAssetsUrl).reply(getStatusValue(status), generateFetchAssetApiResponse());
   if (!skipNextPageFetch) {
     const nextPageUrl = `${getAssetsUrl(courseId)}?page=1`;
-    axiosMock.onGet(nextPageUrl).reply(getStatusValue(status), generateEmptyApiResponse());
+    axiosMock.onGet(nextPageUrl).reply(getStatusValue(status), generateNextPageResponse());
   }
   renderComponent();
   await executeThunk(fetchAssets(courseId), store.dispatch);

@@ -110,6 +110,21 @@ export const generateFetchAssetApiResponse = () => ({
   totalCount: 51,
 });
 
+export const generateNextPageResponse = () => ({
+  assets: [
+    {
+      id: 'mOckID6-3',
+      displayName: 'mOckID6-3',
+      locked: false,
+      externalUrl: 'static_tab_1',
+      portableUrl: 'May 17, 2023 at 22:08 UTC',
+      contentType: 'application/octet-stream',
+      dateAdded: '',
+      thumbnail: null,
+    },
+  ],
+});
+
 export const generateEmptyApiResponse = () => ({
   assets: [],
   totalCount: 0,
