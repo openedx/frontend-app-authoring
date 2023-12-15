@@ -30,6 +30,9 @@ const slice = createSlice({
         state.assetIds = [...state.assetIds, ...payload.assetIds];
       }
     },
+    setSortedAssetIds: (state, { payload }) => {
+      state.assetIds = payload.assetIds;
+    },
     updateLoadingStatus: (state, { payload }) => {
       state.loadingStatus = payload.status;
     },
@@ -79,6 +82,7 @@ const slice = createSlice({
 
 export const {
   setAssetIds,
+  setSortedAssetIds,
   updateLoadingStatus,
   deleteAssetSuccess,
   addAssetSuccess,

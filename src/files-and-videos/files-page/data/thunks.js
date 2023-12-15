@@ -18,6 +18,7 @@ import {
 } from './api';
 import {
   setAssetIds,
+  setSortedAssetIds,
   updateLoadingStatus,
   deleteAssetSuccess,
   addAssetSuccess,
@@ -82,7 +83,7 @@ export function fetchAssets(courseId) {
 export function updateAssetOrder(courseId, assetIds) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
-    dispatch(setAssetIds({ assetIds }));
+    dispatch(setSortedAssetIds({ assetIds }));
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
   };
 }
