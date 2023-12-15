@@ -1,18 +1,10 @@
-import React, { useContext, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
 import { DataTableContext, Pagination, TableFooter } from '@edx/paragon';
 
-const Footer = ({
-  setInitialState,
-}) => {
+const Footer = () => {
   const {
     pageOptions, pageCount, gotoPage, state,
   } = useContext(DataTableContext);
-
-  // This useEffect saves DataTable state so it can persist after table re-renders due to data reload.
-  useEffect(() => {
-    setInitialState(state);
-  }, [state]);
 
   if (pageOptions.length < 2) {
     return null;
@@ -31,10 +23,6 @@ const Footer = ({
       />
     </TableFooter>
   );
-};
-
-Footer.propTypes = {
-  setInitialState: PropTypes.func.isRequired,
 };
 
 export default Footer;

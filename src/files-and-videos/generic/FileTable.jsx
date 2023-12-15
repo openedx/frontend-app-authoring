@@ -148,6 +148,7 @@ const FileTable = ({
         handleOpenDeleteConfirmation,
         supportedFileFormats,
         fileType,
+        setInitialState,
       }}
     />
   );
@@ -226,7 +227,7 @@ const FileTable = ({
             { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={6} /> }
             { currentView === 'list' && <DataTable.Table /> }
             <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
-            <Footer setInitialState={setInitialState} />
+            <Footer />
           </div>
         )}
 

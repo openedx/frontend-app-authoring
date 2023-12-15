@@ -20,7 +20,7 @@ const SortAndFilterModal = ({
   // injected
   intl,
 }) => {
-  const { state, setAllFilters, columns } = useContext(DataTableContext);
+  const { state, setAllFilters, columns, gotoPage } = useContext(DataTableContext);
   const filterOptions = getFilterOptions(columns);
   const currentFilters = getCheckedFilters(state);
   const [sortBy, setSortBy] = useState('dateAdded,desc');
@@ -47,6 +47,7 @@ const SortAndFilterModal = ({
   const handleApply = async () => {
     await handleSort(sortBy);
     processFilters(filterBy, columns, setAllFilters);
+    gotoPage(0);
     closeSort();
   };
 
