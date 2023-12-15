@@ -19,6 +19,7 @@
 
 .taxonomy-tags-selectable-box-set {
   grid-auto-rows: unset !important;
+  grid-gap: unset !important;
   overflow-y: scroll;
   max-height: 20rem;
 }

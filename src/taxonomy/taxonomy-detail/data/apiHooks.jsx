@@ -24,7 +24,7 @@ export const useTaxonomyDetailDataStatus = (taxonomyId) => {
 
 /**
  * @param {number} taxonomyId
- * @returns {import("./types.mjs").TaxonomyData | undefined}
+ * @returns {import("../../data/types.mjs").TaxonomyData | undefined}
  */
 export const useTaxonomyDetailDataResponse = (taxonomyId) => {
   const { isSuccess, data } = useTaxonomyDetailData(taxonomyId);
