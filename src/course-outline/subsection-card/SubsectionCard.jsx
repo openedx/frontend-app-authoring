@@ -106,7 +106,7 @@ const SubsectionCard = ({
           </div>
           <Button
             data-testid="new-unit-button"
-            className="mt-4"
+            className="mt-4 bg-white"
             variant="outline-primary"
             iconBefore={IconAdd}
             block

@@ -1,17 +1,9 @@
 .section-card {
-  @include pgn-box-shadow(1, "centered");
-
-  padding: $spacer 1.5rem 1.5rem;
-  cursor: move;
-  margin-bottom: 1.5rem;
-  background: $light-100;
-
-  .section-card__content {
-    margin-top: $spacer;
-  }
+  flex-grow: 1;
 
   .section-card__subsections {
     margin-top: $spacer;
+    margin-right: -2.75rem;
   }
 
   .section-card-title {
