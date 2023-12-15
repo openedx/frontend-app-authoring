@@ -10,8 +10,8 @@ import {
   Add,
 } from '@edx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Helmet } from 'react-helmet';
 
+import { Helmet } from 'react-helmet';
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
 import { importTaxonomy } from './import-tags';
@@ -39,12 +39,12 @@ const TaxonomyListHeaderButtons = () => {
 
 const TaxonomyListPage = () => {
   const intl = useIntl();
+
   const useTaxonomyListData = () => {
     const taxonomyListData = useTaxonomyListDataResponse();
     const isLoaded = useIsTaxonomyListDataLoaded();
     return { taxonomyListData, isLoaded };
   };
-
   const { taxonomyListData, isLoaded } = useTaxonomyListData();
 
   const getOrgSelect = () => (
@@ -87,11 +87,14 @@ const TaxonomyListPage = () => {
                 {
                   accessor: 'systemDefined',
                 },
+                {
+                  accessor: 'tagsCount',
+                },
               ]}
             >
               <CardView
                 className="bg-light-400 p-5"
-                CardComponent={TaxonomyCard}
+                CardComponent={(row) => TaxonomyCard(row)}
               />
             </DataTable>
           )}

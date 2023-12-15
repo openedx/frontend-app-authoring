@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
 import { CheckboxFilter, Container } from '@edx/paragon';
@@ -85,25 +84,26 @@ const FilesPage = ({
   const maxFileSize = 20 * 1048576;
 
   const activeColumn = {
-    id: 'usageLocations',
+    id: 'activeStatus',
     Header: 'Active',
-    accessor: (({ usageLocations }) => !isEmpty(usageLocations)),
+    accessor: 'activeStatus',
     Cell: ({ row }) => ActiveColumn({ row }),
     Filter: CheckboxFilter,
+    filter: 'exactTextCase',
     filterChoices: [
-      { name: intl.formatMessage(messages.activeCheckboxLabel), value: true },
-      { name: intl.formatMessage(messages.inactiveCheckboxLabel), value: false },
+      { name: intl.formatMessage(messages.activeCheckboxLabel), value: 'active' },
+      { name: intl.formatMessage(messages.inactiveCheckboxLabel), value: 'inactive' },
     ],
   };
   const accessColumn = {
-    id: 'locked',
+    id: 'lockStatus',
     Header: 'Access',
-    accessor: 'locked',
+    accessor: 'lockStatus',
     Cell: ({ row }) => AccessColumn({ row }),
     Filter: CheckboxFilter,
     filterChoices: [
-      { name: intl.formatMessage(messages.lockedCheckboxLabel), value: true },
-      { name: intl.formatMessage(messages.publicCheckboxLabel), value: false },
+      { name: intl.formatMessage(messages.lockedCheckboxLabel), value: 'locked' },
+      { name: intl.formatMessage(messages.publicCheckboxLabel), value: 'public' },
     ],
   };
   const thumbnailColumn = {

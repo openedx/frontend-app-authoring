@@ -21,6 +21,10 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-list.spinner.loading',
     defaultMessage: 'Loading',
   },
+  taxonomyDeleteToast: {
+    id: 'course-authoring.taxonomy-list.toast.delete',
+    defaultMessage: '"{name}" deleted',
+  },
 });
 
 export default messages;

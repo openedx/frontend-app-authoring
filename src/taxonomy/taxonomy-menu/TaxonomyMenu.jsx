@@ -1,5 +1,5 @@
 // @ts-check
-import React from 'react';
+import React, { useCallback, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   useToggle,
@@ -9,18 +9,42 @@ import {
   IconButton,
 } from '@edx/paragon';
 import { MoreVert } from '@edx/paragon/icons';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 import ExportModal from '../export-modal';
-import { ImportTagsWizard } from '../import-tags';
+import { useDeleteTaxonomy } from '../data/apiHooks';
+import { TaxonomyContext } from '../common/context';
+import DeleteDialog from '../delete-dialog';
+import { ImportTagsWizard, importTaxonomyTags } from '../import-tags';
 import messages from './messages';
 
 const TaxonomyMenu = ({
   taxonomy, iconMenu,
 }) => {
   const intl = useIntl();
+  const navigate = useNavigate();
 
+  const deleteTaxonomy = useDeleteTaxonomy();
+  const { setToastMessage } = useContext(TaxonomyContext);
+
+  const onDeleteTaxonomy = useCallback(() => {
+    deleteTaxonomy({ pk: taxonomy.id }, {
+      onSuccess: () => {
+        if (setToastMessage) {
+          // @ts-ignore ToDo: fix type error
+          setToastMessage(intl.formatMessage(messages.taxonomyDeleteToast, { name: taxonomy.name }));
+        }
+        navigate('/taxonomies');
+      },
+      onError: () => {
+        // TODO: display the error to the user
+      },
+    });
+  }, [setToastMessage, taxonomy]);
+
+  const [isDeleteDialogOpen, deleteDialogOpen, deleteDialogClose] = useToggle(false);
   const [isExportModalOpen, exportModalOpen, exportModalClose] = useToggle(false);
   const [isImportModalOpen, importModalOpen, importModalClose] = useToggle(false);
 
@@ -36,10 +60,16 @@ const TaxonomyMenu = ({
         title: intl.formatMessage(messages.exportMenu),
         action: exportModalOpen,
       },
+      delete: {
+        title: intl.formatMessage(messages.deleteMenu),
+        action: deleteDialogOpen,
+        // Hide delete menu item if taxonomy is system defined
+        hide: taxonomy.systemDefined,
+      },
     };
 
     // Remove hidden menu items
-    menuItems = _.pickBy(menuItems, (value) => !value.hide);
+    menuItems = _.omitBy(menuItems, (value) => value.hide);
 
     return menuItems;
   };
@@ -48,11 +78,20 @@ const TaxonomyMenu = ({
 
   const renderModals = () => (
     <>
+      {isDeleteDialogOpen && (
+        <DeleteDialog
+          isOpen={isDeleteDialogOpen}
+          onClose={deleteDialogClose}
+          onDelete={onDeleteTaxonomy}
+          taxonomyName={taxonomy.name}
+          tagsCount={taxonomy.tagsCount}
+        />
+      )}
       {isExportModalOpen && (
         <ExportModal
-          taxonomyId={taxonomy.id}
           isOpen={isExportModalOpen}
           onClose={exportModalClose}
+          taxonomyId={taxonomy.id}
         />
       )}
       {isImportModalOpen && (
@@ -105,8 +144,13 @@ TaxonomyMenu.propTypes = {
     name: PropTypes.string.isRequired,
     systemDefined: PropTypes.bool.isRequired,
     allowFreeText: PropTypes.bool.isRequired,
+    tagsCount: PropTypes.number.isRequired,
   }).isRequired,
-  iconMenu: PropTypes.bool.isRequired,
+  iconMenu: PropTypes.bool,
+};
+
+TaxonomyMenu.defaultProps = {
+  iconMenu: false,
 };
 
 export default TaxonomyMenu;

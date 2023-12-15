@@ -18,6 +18,14 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-menu.export.label',
     defaultMessage: 'Export',
   },
+  deleteMenu: {
+    id: 'course-authoring.taxonomy-menu.delete.label',
+    defaultMessage: 'Delete',
+  },
+  taxonomyDeleteToast: {
+    id: 'course-authoring.taxonomy-list.toast.delete',
+    defaultMessage: '"{name}" deleted',
+  },
 });
 
 export default messages;

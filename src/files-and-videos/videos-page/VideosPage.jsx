@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   injectIntl,
@@ -37,6 +36,7 @@ import {
   FileTable,
   StatusColumn,
   ThumbnailColumn,
+  TranscriptColumn,
 } from '../generic';
 import TranscriptSettings from './transcript-settings';
 import VideoThumbnail from './VideoThumbnail';
@@ -82,7 +82,7 @@ const VideosPage = ({
 
   const handleAddFile = (file) => dispatch(addVideoFile(courseId, file));
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id));
-  const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows }));
+  const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
   const handleUsagePaths = (video) => dispatch(getUsagePaths({ video, courseId }));
   const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleFileOrder = ({ newFileIdOrder, sortType }) => {
@@ -108,32 +108,32 @@ const VideosPage = ({
     fileType: 'video',
   };
   const thumbnailPreview = (props) => VideoThumbnail({ ...props, handleAddThumbnail, videoImageSettings });
-  const infoModalSidebar = (video) => VideoInfoModalSidebar({ video });
+  const infoModalSidebar = (video, activeTab, setActiveTab) => (
+    VideoInfoModalSidebar({ video, activeTab, setActiveTab })
+  );
   const maxFileSize = videoUploadMaxFileSize * 1073741824;
   const transcriptColumn = {
-    id: 'transcripts',
+    id: 'transcriptStatus',
     Header: 'Transcript',
-    accessor: (({ transcripts }) => !isEmpty(transcripts)),
-    Cell: ({ row }) => {
-      const { transcripts } = row.original;
-      const numOfTranscripts = transcripts?.length;
-      return numOfTranscripts > 0 ? `(${numOfTranscripts}) available` : null;
-    },
+    accessor: 'transcriptStatus',
+    Cell: ({ row }) => TranscriptColumn({ row }),
     Filter: CheckboxFilter,
+    filter: 'exactTextCase',
     filterChoices: [
-      { name: intl.formatMessage(messages.transcribedCheckboxLabel), value: true },
-      { name: intl.formatMessage(messages.notTranscribedCheckboxLabel), value: false },
+      { name: intl.formatMessage(messages.transcribedCheckboxLabel), value: 'transcribed' },
+      { name: intl.formatMessage(messages.notTranscribedCheckboxLabel), value: 'notTranscribed' },
     ],
   };
   const activeColumn = {
-    id: 'usageLocations',
+    id: 'activeStatus',
     Header: 'Active',
-    accessor: (({ usageLocations }) => !isEmpty(usageLocations)),
+    accessor: 'activeStatus',
     Cell: ({ row }) => ActiveColumn({ row }),
     Filter: CheckboxFilter,
+    filter: 'exactTextCase',
     filterChoices: [
-      { name: intl.formatMessage(messages.activeCheckboxLabel), value: true },
-      { name: intl.formatMessage(messages.inactiveCheckboxLabel), value: false },
+      { name: intl.formatMessage(messages.activeCheckboxLabel), value: 'active' },
+      { name: intl.formatMessage(messages.inactiveCheckboxLabel), value: 'inactive' },
     ],
   };
   const durationColumn = {

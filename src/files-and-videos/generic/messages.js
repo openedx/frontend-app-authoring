@@ -17,6 +17,10 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-upload.apiStatus.deletingAction.message',
     defaultMessage: 'Deleting',
   },
+  apiStatusDownloadingAction: {
+    id: 'course-authoring.files-and-upload.apiStatus.downloadingAction.message',
+    defaultMessage: 'Downloading',
+  },
   fileSizeError: {
     id: 'course-authoring.files-and-upload.addFiles.error.fileSize',
     defaultMessage: 'Uploaded file(s) must be 20 MB or less. Please resize file(s) and try again.',
@@ -36,6 +40,10 @@ const messages = defineMessages({
   errorAlertMessage: {
     id: 'course-authoring.files-and-upload.errorAlert.message',
     defaultMessage: '{message}',
+  },
+  transcriptionErrorMessage: {
+    id: 'course-authoring.files-and-uploads.file-info.transcripts.error.alert',
+    defaultMessage: 'Transcript failed: "{error}"',
   },
   usageTitle: {
     id: 'course-authoring.files-and-uploads.file-info.usage.title',

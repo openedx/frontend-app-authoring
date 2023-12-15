@@ -2,17 +2,25 @@ import React from 'react';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
 
 import initializeStore from '../store';
-
 import TaxonomyListPage from './TaxonomyListPage';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
 import { importTaxonomy } from './import-tags';
+import { TaxonomyContext } from './common/context';
 
 let store;
 
+const taxonomies = [{
+  id: 1,
+  name: 'Taxonomy',
+  description: 'This is a description',
+}];
+
 jest.mock('./data/apiHooks', () => ({
+  ...jest.requireActual('./data/apiHooks'),
   useTaxonomyListDataResponse: jest.fn(),
   useIsTaxonomyListDataLoaded: jest.fn(),
 }));
@@ -21,10 +29,21 @@ jest.mock('./import-tags', () => ({
   importTaxonomy: jest.fn(),
 }));
 
+const context = {
+  toastMessage: null,
+  setToastMessage: jest.fn(),
+};
+
+const queryClient = new QueryClient();
+
 const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
-      <TaxonomyListPage intl={injectIntl} />
+      <QueryClientProvider client={queryClient}>
+        <TaxonomyContext.Provider value={context}>
+          <TaxonomyListPage intl={injectIntl} />
+        </TaxonomyContext.Provider>
+      </QueryClientProvider>
     </IntlProvider>
   </AppProvider>
 );
@@ -59,11 +78,7 @@ describe('<TaxonomyListPage />', async () => {
   it('shows the data table after the query is complete', async () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
-      results: [{
-        id: 1,
-        name: 'Taxonomy',
-        description: 'This is a description',
-      }],
+      results: taxonomies,
     });
     await act(async () => {
       const { getByTestId } = render(<RootWrapper />);

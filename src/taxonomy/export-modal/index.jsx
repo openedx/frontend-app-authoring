@@ -20,10 +20,10 @@ const ExportModal = ({
   const intl = useIntl();
   const [outputFormat, setOutputFormat] = useState('csv');
 
-  const onClickExport = () => {
+  const onClickExport = React.useCallback(() => {
     onClose();
     getTaxonomyExportFile(taxonomyId, outputFormat);
-  };
+  }, [onClose, taxonomyId, outputFormat]);
 
   return (
     <Container onClick={(e) => e.stopPropagation() /* This prevents calling onClick handler from the parent */}>

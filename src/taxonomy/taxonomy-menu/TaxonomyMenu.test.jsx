@@ -1,9 +1,12 @@
+import { useMemo } from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import PropTypes from 'prop-types';
 
+import { TaxonomyContext } from '../common/context';
 import initializeStore from '../../store';
 import { getTaxonomyExportFile } from '../data/api';
 import { TaxonomyMenu } from '.';
@@ -17,28 +20,53 @@ jest.mock('../import-tags', () => ({
 }));
 
 jest.mock('../data/api', () => ({
+  ...jest.requireActual('../data/api'),
   getTaxonomyExportFile: jest.fn(),
+  deleteTaxonomy: jest.fn(),
 }));
+
+const mockDeleteTaxonomy = jest.fn();
+
+jest.mock('../data/apiHooks', () => ({
+  ...jest.requireActual('../data/apiHooks'),
+  useDeleteTaxonomy: () => mockDeleteTaxonomy,
+}));
+
+const queryClient = new QueryClient();
+
+const mockSetToastMessage = jest.fn();
 
 const TaxonomyMenuComponent = ({
   systemDefined,
   allowFreeText,
   iconMenu,
-}) => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <TaxonomyMenu
-        taxonomy={{
-          id: taxonomyId,
-          name: taxonomyName,
-          systemDefined,
-          allowFreeText,
-        }}
-        iconMenu={iconMenu}
-      />
-    </IntlProvider>
-  </AppProvider>
-);
+}) => {
+  const context = useMemo(() => ({
+    toastMessage: null,
+    setToastMessage: mockSetToastMessage,
+  }), []);
+
+  return (
+    <AppProvider store={store}>
+      <IntlProvider locale="en" messages={{}}>
+        <QueryClientProvider client={queryClient}>
+          <TaxonomyContext.Provider value={context}>
+            <TaxonomyMenu
+              taxonomy={{
+                id: taxonomyId,
+                name: taxonomyName,
+                systemDefined,
+                allowFreeText,
+                tagsCount: 0,
+              }}
+              iconMenu={iconMenu}
+            />
+          </TaxonomyContext.Provider>
+        </QueryClientProvider>
+      </IntlProvider>
+    </AppProvider>
+  );
+};
 
 TaxonomyMenuComponent.propTypes = {
   iconMenu: PropTypes.bool.isRequired,
@@ -62,6 +90,10 @@ describe('<TaxonomyMenu />', async () => {
       },
     });
     store = initializeStore();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   [true, false].forEach((iconMenu) => {
@@ -166,6 +198,61 @@ describe('<TaxonomyMenu />', async () => {
       // Modal closed
       expect(() => getByText('Select format to export')).toThrow();
       expect(getTaxonomyExportFile).toHaveBeenCalledWith(taxonomyId, 'json');
+    });
+
+    test('should open delete dialog on delete menu click', () => {
+      const { getByTestId, getByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+
+      // Modal closed
+      expect(() => getByText(`Delete "${taxonomyName}"`)).toThrow();
+
+      // Click on delete menu
+      fireEvent.click(getByTestId('taxonomy-menu-button'));
+      fireEvent.click(getByTestId('taxonomy-menu-delete'));
+
+      // Modal opened
+      expect(getByText(`Delete "${taxonomyName}"`)).toBeInTheDocument();
+
+      // Click on cancel button
+      fireEvent.click(getByText('Cancel'));
+
+      // Modal closed
+      expect(() => getByText(`Delete "${taxonomyName}"`)).toThrow();
+    });
+
+    test('should delete a taxonomy', async () => {
+      const { getByTestId, getByText, getByLabelText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+
+      // Click on delete menu
+      fireEvent.click(getByTestId('taxonomy-menu-button'));
+      fireEvent.click(getByTestId('taxonomy-menu-delete'));
+
+      const deleteButton = getByTestId('delete-button');
+
+      // The delete button must to be disabled
+      expect(deleteButton).toBeDisabled();
+
+      // Testing delete button enabled/disabled changes
+      const input = getByLabelText('Type DELETE to confirm');
+      fireEvent.change(input, { target: { value: 'DELETE_INVALID' } });
+      expect(deleteButton).toBeDisabled();
+      fireEvent.change(input, { target: { value: 'DELETE' } });
+      expect(deleteButton).toBeEnabled();
+
+      mockDeleteTaxonomy.mockImplementationOnce(async (params, callbacks) => {
+        callbacks.onSuccess();
+      });
+
+      // Click on delete button
+      fireEvent.click(deleteButton);
+
+      // Modal closed
+      expect(() => getByText(`Delete "${taxonomyName}"`)).toThrow();
+
+      expect(mockDeleteTaxonomy).toBeCalledTimes(1);
+
+      // Toast message shown
+      expect(mockSetToastMessage).toBeCalledWith(`"${taxonomyName}" deleted`);
     });
   });
 });

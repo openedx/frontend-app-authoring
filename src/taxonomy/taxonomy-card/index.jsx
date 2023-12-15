@@ -1,4 +1,4 @@
-// ts-check
+import React from 'react';
 import {
   Badge,
   Card,
@@ -123,6 +123,7 @@ TaxonomyCard.propTypes = {
     description: PropTypes.string,
     systemDefined: PropTypes.bool,
     orgsCount: PropTypes.number,
+    tagsCount: PropTypes.number,
   }).isRequired,
 };
 

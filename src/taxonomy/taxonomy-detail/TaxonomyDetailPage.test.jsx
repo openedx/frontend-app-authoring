@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -7,8 +7,12 @@ import { render } from '@testing-library/react';
 import { useTaxonomyDetailData } from './data/api';
 import initializeStore from '../../store';
 import TaxonomyDetailPage from './TaxonomyDetailPage';
+import { TaxonomyContext } from '../common/context';
 
 let store;
+const mockNavigate = jest.fn();
+const mockMutate = jest.fn();
+const mockSetToastMessage = jest.fn();
 
 jest.mock('./data/api', () => ({
   useTaxonomyDetailData: jest.fn(),
@@ -18,18 +22,31 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({
     taxonomyId: '1',
   }),
+  useNavigate: () => mockNavigate,
+}));
+jest.mock('../data/apiHooks', () => ({
+  useDeleteTaxonomy: () => mockMutate,
 }));
 
 jest.mock('./TaxonomyDetailSideCard', () => jest.fn(() => <>Mock TaxonomyDetailSideCard</>));
 jest.mock('../tag-list/TagListTable', () => jest.fn(() => <>Mock TagListTable</>));
 
-const RootWrapper = () => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <TaxonomyDetailPage />
-    </IntlProvider>
-  </AppProvider>
-);
+const RootWrapper = () => {
+  const context = useMemo(() => ({
+    toastMessage: null,
+    setToastMessage: mockSetToastMessage,
+  }), []);
+
+  return (
+    <AppProvider store={store}>
+      <IntlProvider locale="en" messages={{}}>
+        <TaxonomyContext.Provider value={context}>
+          <TaxonomyDetailPage />
+        </TaxonomyContext.Provider>
+      </IntlProvider>
+    </AppProvider>
+  );
+};
 
 describe('<TaxonomyDetailPage />', async () => {
   beforeEach(async () => {
@@ -71,7 +88,7 @@ describe('<TaxonomyDetailPage />', async () => {
         id: 1,
         name: 'Test taxonomy',
         description: 'This is a description',
-        systemDefined: false,
+        systemDefined: true,
       },
     });
     const { getByRole } = render(<RootWrapper />);

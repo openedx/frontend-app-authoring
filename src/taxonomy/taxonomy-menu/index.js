@@ -1,6 +1,2 @@
 // @ts-check
-import TaxonomyMenu from './TaxonomyMenu';
-
-export {
-  TaxonomyMenu, // eslint-disable-line import/prefer-default-export
-};
+export { default as TaxonomyMenu } from './TaxonomyMenu'; // eslint-disable-line import/prefer-default-export

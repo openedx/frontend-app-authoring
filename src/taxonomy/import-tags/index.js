@@ -1,7 +1,3 @@
-import { importTaxonomy } from './data/utils';
-import ImportTagsWizard from './ImportTagsWizard';
-
-export {
-  importTaxonomy,
-  ImportTagsWizard,
-};
+// @ts-check
+export { importTaxonomy } from './data/utils';
+export { default as ImportTagsWizard } from './ImportTagsWizard';

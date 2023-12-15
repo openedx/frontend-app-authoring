@@ -1,7 +1,8 @@
 import React from 'react';
-import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import PropTypes from 'prop-types';
 
@@ -17,14 +18,16 @@ const data = {
   description: 'This is a description',
 };
 
-jest.mock('../data/api', () => ({
-  getTaxonomyExportFile: jest.fn(),
-}));
+const queryClient = new QueryClient();
 
 const TaxonomyCardComponent = ({ original }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
-      <TaxonomyCard intl={injectIntl} original={original} />
+      <QueryClientProvider client={queryClient}>
+        <TaxonomyCard
+          original={original}
+        />
+      </QueryClientProvider>
     </IntlProvider>
   </AppProvider>
 );
@@ -36,6 +39,7 @@ TaxonomyCardComponent.propTypes = {
     description: PropTypes.string,
     systemDefined: PropTypes.bool,
     orgsCount: PropTypes.number,
+    onDeleteTaxonomy: PropTypes.func,
   }).isRequired,
 };
 
