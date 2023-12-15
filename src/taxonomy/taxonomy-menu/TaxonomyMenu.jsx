@@ -60,7 +60,7 @@ const TaxonomyMenu = ({
       manageOrgs: {
         title: intl.formatMessage(messages.manageOrgsMenu),
         action: manageOrgsModalOpen,
-        hide: taxonomy.systemDefined,
+        // hide: taxonomy.systemDefined, ToDo: uncomment when manage orgs is implemented
       },
       export: {
         title: intl.formatMessage(messages.exportMenu),

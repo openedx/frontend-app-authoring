@@ -1,5 +1,6 @@
 // @ts-check
 import React, { useEffect, useState } from 'react';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Button,
@@ -13,9 +14,11 @@ import {
   Close,
 } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
-import { useIntl } from '@edx/frontend-platform/i18n';
-import messages from './messages';
+
+import { useOrganizationListData } from '../../generic/data/apiHooks';
 import { useTaxonomyDetailDataResponse } from '../taxonomy-detail';
+import { useManageOrgs } from './data/api';
+import messages from './messages';
 import './ManageOrgsModal.scss';
 
 const ManageOrgsModal = ({
@@ -24,20 +27,42 @@ const ManageOrgsModal = ({
   onClose,
 }) => {
   const intl = useIntl();
-  const [allOrgs, setAllOrgs] = useState(/** @type {null|string[]} */(null));
   const [selectedOrgs, setSelectedOrgs] = useState(/** @type {null|string[]} */(null));
+  const [allOrgs, setAllOrgs] = useState(/** @type {null|boolean} */(null));
+
+  const {
+    data: organizationListData,
+  } = useOrganizationListData();
 
   const taxonomy = useTaxonomyDetailDataResponse(taxonomyId);
 
-  useEffect(() => {
-    if (!allOrgs) {
-      setAllOrgs(Array.from(Array(100).keys()).map((i) => `org${i + 1}`));
+  const manageOrgMutation = useManageOrgs();
+
+  const saveOrgs = async () => {
+    if (selectedOrgs !== null && allOrgs !== null) {
+      try {
+        await manageOrgMutation.mutateAsync({
+          taxonomyId,
+          orgs: selectedOrgs,
+          allOrgs,
+        });
+        // ToDo: display a success message to the user
+      } catch (/** @type {any} */ error) {
+        // ToDo: display the error to the user
+      } finally {
+        onClose();
+      }
     }
-  }, []);
+  };
 
   useEffect(() => {
-    if (taxonomy && !selectedOrgs) {
-      setSelectedOrgs([...taxonomy.orgs]);
+    if (taxonomy) {
+      if (selectedOrgs === null) {
+        setSelectedOrgs([...taxonomy.orgs]);
+      }
+      if (allOrgs === null) {
+        setAllOrgs(taxonomy.allOrgs);
+      }
     }
   }, [taxonomy]);
 
@@ -53,7 +78,7 @@ const ManageOrgsModal = ({
     }
   }, [selectedOrgs]);
 
-  if (!allOrgs || !selectedOrgs) {
+  if (!selectedOrgs) {
     return null;
   }
 
@@ -76,37 +101,41 @@ const ManageOrgsModal = ({
 
         <hr className="mx-4" />
 
-        <ModalDialog.Body className="pb-5 mt-2">
+        <ModalDialog.Body>
+          <Form.Label>
+            <Stack>
+              <div>{intl.formatMessage(messages.bodyText)}</div>
+              <div>{intl.formatMessage(messages.currentAssignments)}</div>
+              <div className="col-9 d-inline-box overflow-auto">
+                {selectedOrgs.length ? selectedOrgs.map((org) => (
+                  <Chip
+                    key={org}
+                    iconAfter={Close}
+                    onIconAfterClick={() => setSelectedOrgs(selectedOrgs.filter((o) => o !== org))}
+                  >
+                    {org}
+                  </Chip>
+                )) : <span className="text-muted">{intl.formatMessage(messages.noOrganizationAssigned)}</span> }
+              </div>
+            </Stack>
+          </Form.Label>
           <Form.Group>
             <Form.Label>
-              <Stack>
-                <div>{intl.formatMessage(messages.bodyText)}</div>
-                <div>{intl.formatMessage(messages.currentAssignments)}</div>
-                <div className="col-9 d-inline-box overflow-auto">
-                  {selectedOrgs && selectedOrgs.map((org) => (
-                    <Chip
-                      key={org}
-                      iconAfter={Close}
-                      onIconAfterClick={() => setSelectedOrgs(selectedOrgs.filter((o) => o !== org))}
-                    >
-                      {org}
-                    </Chip>
-                  ))}
-                </div>
-              </Stack>
+              {intl.formatMessage(messages.addOrganizations)}
             </Form.Label>
             <Form.Autosuggest
-              loading={!allOrgs}
-              placeholder="Search for an organization"
-              aria-label="form autosuggest"
-              errorMessageText="Error, no selected value"
+              loading={!organizationListData}
+              placeholder={intl.formatMessage(messages.searchOrganizations)}
               onSelected={(org) => setSelectedOrgs([...selectedOrgs, org])}
             >
-              {allOrgs.filter(o => !selectedOrgs?.includes(o)).map((org) => (
+              {organizationListData.filter(o => !selectedOrgs?.includes(o)).map((org) => (
                 <Form.AutosuggestOption key={org}>{org}</Form.AutosuggestOption>
               ))}
             </Form.Autosuggest>
           </Form.Group>
+          <Form.Checkbox checked={allOrgs} onChange={(e) => setAllOrgs(e.target.checked)}>
+            {intl.formatMessage(messages.assignAll)}
+          </Form.Checkbox>
         </ModalDialog.Body>
 
         <hr className="mx-4" />
@@ -118,7 +147,7 @@ const ManageOrgsModal = ({
             </ModalDialog.CloseButton>
             <Button
               variant="primary"
-              // onClick={onClickExport}
+              onClick={saveOrgs}
               data-testid="save-button"
             >
               {intl.formatMessage(messages.saveButton)}

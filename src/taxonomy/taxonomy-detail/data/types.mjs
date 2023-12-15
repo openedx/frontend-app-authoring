@@ -11,6 +11,7 @@
  * @property {boolean} systemDefined
  * @property {boolean} visibleToAuthors
  * @property {string[]} orgs
+ * @property {boolean} allOrgs
  * @property {number} tagsCount
  */
 

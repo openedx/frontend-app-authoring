@@ -23,6 +23,14 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-manage-orgs.add-orgs',
     defaultMessage: 'Add another organization:',
   },
+  searchOrganizations: {
+    id: 'course-authoring.taxonomy-manage-orgs.search-orgs',
+    defaultMessage: 'Search for an organization',
+  },
+  noOrganizationAssigned: {
+    id: 'course-authoring.taxonomy-manage-orgs.no-orgs',
+    defaultMessage: 'No organizations assigned',
+  },
   assignAll: {
     id: 'course-authoring.taxonomy-manage-orgs.assign-all',
     defaultMessage: 'Assign to all organizations',
