@@ -9,17 +9,10 @@ import { getFilters, removeFilter } from './utils';
 
 const FilterStatus = ({
   className, variant, size, clearFiltersText, buttonClassName,
-  setSelectedFilters,
 }) => {
   const {
     state, setAllFilters, setFilter, RowStatusComponent, columns,
   } = useContext(DataTableContext);
-
-  const filterState = state?.filters ?? [];
-
-  useEffect(() => {
-    setSelectedFilters(filterState);
-  }, [filterState]);
 
   if (!setAllFilters) {
     return null;

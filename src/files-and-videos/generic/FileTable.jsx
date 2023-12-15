@@ -61,7 +61,14 @@ const FileTable = ({
   const [isAddOpen, setAddOpen, setAddClose] = useToggle(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
-  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [initialState, setInitialState] = useState({
+    filters: [],
+    hiddenColumns: [],
+    pageIndex: 0,
+    pageSize: 50,
+    selectedRowIds: {},
+    sortBy: [],
+  });
 
   const {
     loadingStatus,
@@ -159,21 +166,6 @@ const FileTable = ({
     />
   );
 
-  const filterStatusComponent = ({
-    className, variant, size, clearFiltersText, buttonClassName,
-  }) => (
-    <FilterStatus
-      {...{
-        className,
-        variant,
-        size,
-        clearFiltersText,
-        buttonClassName,
-        setSelectedFilters,
-      }}
-    />
-  );
-
   const moreInfoColumn = {
     id: 'moreInfo',
     Header: '',
@@ -206,17 +198,14 @@ const FileTable = ({
           defaultActiveStateValue: defaultVal,
           togglePlacement: 'left',
         }}
-        initialState={{
-          filters: selectedFilters,
-          pageSize: 50,
-        }}
+        initialState={initialState}
         tableActions={headerActions}
         bulkActions={headerActions}
         columns={tableColumns}
         itemCount={files.length}
         pageCount={pageCount}
         data={files}
-        FilterStatusComponent={filterStatusComponent}
+        FilterStatusComponent={FilterStatus}
         RowStatusComponent={RowStatus}
       >
         {isEmpty(files) && loadingStatus !== RequestStatus.IN_PROGRESS ? (
@@ -237,7 +226,7 @@ const FileTable = ({
             { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={6} /> }
             { currentView === 'list' && <DataTable.Table /> }
             <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
-            <Footer />
+            <Footer setInitialState={setInitialState} />
           </div>
         )}
 
