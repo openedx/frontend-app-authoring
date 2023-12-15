@@ -9,8 +9,6 @@ import {
   getTaxonomyExportFile,
   getTaxonomyListApiUrl,
   getTaxonomyListData,
-  getTaxonomyTemplateApiUrl,
-  getTaxonomyTemplateFile,
   getTaxonomyApiUrl,
   deleteTaxonomy,
 } from './api';
@@ -70,12 +68,5 @@ describe('taxonomy api calls', () => {
     getTaxonomyExportFile(pk, format);
 
     expect(window.location.href).toEqual(getExportTaxonomyApiUrl(pk, format));
-  });
-
-  it('Download template should set window.location.href correctly', () => {
-    ['json', 'csv'].forEach((format) => {
-      getTaxonomyTemplateFile(format);
-      expect(window.location.href).toEqual(getTaxonomyTemplateApiUrl(format));
-    });
   });
 });

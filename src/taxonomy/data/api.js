@@ -52,12 +52,3 @@ export async function deleteTaxonomy(pk) {
 export function getTaxonomyExportFile(pk, format) {
   window.location.href = getExportTaxonomyApiUrl(pk, format);
 }
-
-/**
- * Downloads the template file for import taxonomies
- * @param {('json'|'csv')} format
- * @returns {void}
- */
-export function getTaxonomyTemplateFile(format) {
-  window.location.href = getTaxonomyTemplateApiUrl(format);
-}

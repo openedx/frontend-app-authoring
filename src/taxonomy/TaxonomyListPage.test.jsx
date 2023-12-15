@@ -5,7 +5,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { act, render, fireEvent } from '@testing-library/react';
 
 import initializeStore from '../store';
-import { getTaxonomyTemplateFile } from './data/api';
+import { getTaxonomyTemplateApiUrl } from './data/api';
 import TaxonomyListPage from './TaxonomyListPage';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
 import { TaxonomyContext } from './common/context';
@@ -28,10 +28,6 @@ jest.mock('./taxonomy-card/TaxonomyCardMenu', () => jest.fn(({ onClickMenuItem }
   // eslint-disable-next-line jsx-a11y/control-has-associated-label
   <button type="button" data-testid="test-delete-button" onClick={() => onClickMenuItem('delete')} />
 )));
-
-jest.mock('./data/api', () => ({
-  getTaxonomyTemplateFile: jest.fn(),
-}));
 
 const RootWrapper = () => {
   const context = useMemo(() => ({
@@ -88,7 +84,7 @@ describe('<TaxonomyListPage />', async () => {
     });
   });
 
-  it('downloads the taxonomy template csv', async () => {
+  it.each(['CSV', 'JSON'])('downloads the taxonomy template %s', async (fileFormat) => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
       results: [{
@@ -97,43 +93,13 @@ describe('<TaxonomyListPage />', async () => {
         description: 'This is a description',
       }],
     });
-    const { getByTestId } = render(<RootWrapper />);
-    const importMenu = getByTestId('taxonomy-download-template');
-    expect(importMenu).toBeInTheDocument();
-    await act(async () => {
-      fireEvent.click(importMenu);
-    });
+    const { findByRole } = render(<RootWrapper />);
+    const templateMenu = await findByRole('button', { name: 'Download template' });
+    fireEvent.click(templateMenu);
+    const templateButton = await findByRole('link', { name: `${fileFormat} template` });
+    fireEvent.click(templateButton);
 
-    const importButton = getByTestId('taxonomy-download-template-csv');
-    expect(importButton).toBeInTheDocument();
-    await act(async () => {
-      fireEvent.click(importButton);
-    });
-    expect(getTaxonomyTemplateFile).toHaveBeenCalled();
-  });
-
-  it('downloads the taxonomy template json', async () => {
-    useIsTaxonomyListDataLoaded.mockReturnValue(true);
-    useTaxonomyListDataResponse.mockReturnValue({
-      results: [{
-        id: 1,
-        name: 'Taxonomy',
-        description: 'This is a description',
-      }],
-    });
-    const { getByTestId } = render(<RootWrapper />);
-    const importMenu = getByTestId('taxonomy-download-template');
-    expect(importMenu).toBeInTheDocument();
-    await act(async () => {
-      fireEvent.click(importMenu);
-    });
-
-    const importButton = getByTestId('taxonomy-download-template-json');
-    expect(importButton).toBeInTheDocument();
-    await act(async () => {
-      fireEvent.click(importButton);
-    });
-    expect(getTaxonomyTemplateFile).toHaveBeenCalled();
+    expect(templateButton.href).toBe(getTaxonomyTemplateApiUrl(fileFormat.toLowerCase()));
   });
 
   it('should show the success toast after delete', async () => {

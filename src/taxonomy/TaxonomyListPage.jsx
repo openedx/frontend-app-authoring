@@ -18,7 +18,7 @@ import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
 import messages from './messages';
 import TaxonomyCard from './taxonomy-card';
-import { getTaxonomyTemplateFile } from './data/api';
+import { getTaxonomyTemplateApiUrl } from './data/api';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded, useDeleteTaxonomy } from './data/apiHooks';
 import { TaxonomyContext } from './common/context';
 
@@ -43,13 +43,13 @@ const TaxonomyListHeaderButtons = () => {
           </Dropdown.Toggle>
           <Dropdown.Menu>
             <Dropdown.Item
-              onClick={() => getTaxonomyTemplateFile('csv')}
+              href={getTaxonomyTemplateApiUrl('csv')}
               data-testid="taxonomy-download-template-csv"
             >
               {intl.formatMessage(messages.downloadTemplateButtonCSVLabel)}
             </Dropdown.Item>
             <Dropdown.Item
-              onClick={() => getTaxonomyTemplateFile('json')}
+              href={getTaxonomyTemplateApiUrl('json')}
               data-testid="taxonomy-download-template-json"
             >
               {intl.formatMessage(messages.downloadTemplateButtonJSONLabel)}
