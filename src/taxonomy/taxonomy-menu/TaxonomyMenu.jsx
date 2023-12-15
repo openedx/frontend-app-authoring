@@ -33,7 +33,6 @@ const TaxonomyMenu = ({
     deleteTaxonomy({ pk: taxonomy.id }, {
       onSuccess: () => {
         if (setToastMessage) {
-          // @ts-ignore ToDo: fix type error
           setToastMessage(intl.formatMessage(messages.taxonomyDeleteToast, { name: taxonomy.name }));
         }
         navigate('/taxonomies');
