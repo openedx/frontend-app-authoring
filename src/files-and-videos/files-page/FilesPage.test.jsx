@@ -57,9 +57,14 @@ const renderComponent = () => {
 
 const mockStore = async (
   status,
+  skipNextPageFetch,
 ) => {
   const fetchAssetsUrl = `${getAssetsUrl(courseId)}?page=0`;
   axiosMock.onGet(fetchAssetsUrl).reply(getStatusValue(status), generateFetchAssetApiResponse());
+  if (!skipNextPageFetch) {
+    const nextPageUrl = `${getAssetsUrl(courseId)}?page=1`;
+    axiosMock.onGet(nextPageUrl).reply(getStatusValue(status), generateEmptyApiResponse());
+  }
   renderComponent();
   await executeThunk(fetchAssets(courseId), store.dispatch);
 };
@@ -480,6 +485,18 @@ describe('FilesAndUploads', () => {
         });
 
         expect(loadingStatus).toEqual(RequestStatus.FAILED);
+        expect(screen.getByText('Failed to load all files.')).toBeVisible();
+      });
+
+      it('404 intitial fetch should show error', async () => {
+        await mockStore(RequestStatus.SUCCESSFUL, true);
+        const { loadingStatus } = store.getState().assets;
+        await waitFor(() => {
+          expect(screen.getByText('Error')).toBeVisible();
+        });
+
+        expect(loadingStatus).toEqual(RequestStatus.PARTIAL);
+        expect(screen.getByText('Failed to load remaining files.')).toBeVisible();
       });
 
       it('invalid file size should show error', async () => {

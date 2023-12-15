@@ -30,7 +30,6 @@ import { updateFileValues } from './utils';
 
 export function fetchAddtionalAsstets(courseId, totalCount) {
   return async (dispatch) => {
-    dispatch(updateLoadingStatus({ status: RequestStatus.PARTIAL }));
     let remainingAssetCount = totalCount;
     let page = 1;
 
@@ -48,7 +47,7 @@ export function fetchAddtionalAsstets(courseId, totalCount) {
       } catch (error) {
         remainingAssetCount = 0;
         dispatch(updateErrors({ error: 'loading', message: 'Failed to load remaining files.' }));
-        dispatch(updateLoadingStatus({ status: RequestStatus.FAILED }));
+        dispatch(updateLoadingStatus({ status: RequestStatus.PARTIAL }));
       }
     }
   };

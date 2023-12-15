@@ -107,7 +107,7 @@ export const generateFetchAssetApiResponse = () => ({
       thumbnail: null,
     },
   ],
-  totalCount: 50,
+  totalCount: 51,
 });
 
 export const generateEmptyApiResponse = () => ({
