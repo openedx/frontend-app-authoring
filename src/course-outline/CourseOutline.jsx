@@ -1,9 +1,6 @@
 import {
-  React, useState, useCallback, useEffect,
+  React, useState, useEffect,
 } from 'react';
-import update from 'immutability-helper';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -19,6 +16,11 @@ import {
   Warning as WarningIcon,
 } from '@edx/paragon/icons';
 import { useSelector } from 'react-redux';
+import {
+  DraggableList,
+  SortableItem,
+  ErrorAlert,
+} from '@edx/frontend-lib-content-components';
 
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import { RequestStatus } from '../data/constants';
@@ -86,7 +88,6 @@ const CourseOutline = ({ courseId }) => {
     handleDragNDrop,
   } = useCourseOutline({ courseId });
 
-  document.title = getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle));
   const [sections, setSections] = useState(sectionsList);
 
   const initialSections = [...sectionsList];
@@ -96,20 +97,8 @@ const CourseOutline = ({ courseId }) => {
     title: processingNotificationTitle,
   } = useSelector(getProcessingNotification);
 
-  const moveSection = useCallback((dragIndex, hoverIndex) => {
-    setSections((prevSections) => {
-      const newList = update(prevSections, {
-        $splice: [
-          [dragIndex, 1],
-          [hoverIndex, 0, prevSections[dragIndex]],
-        ],
-      });
-      return newList;
-    });
-  }, []);
-
-  const finalizeSectionOrder = () => {
-    handleDragNDrop(sections.map((section) => section.id), () => {
+  const finalizeSectionOrder = () => (newSections) => {
+    handleDragNDrop(newSections.map((section) => section.id), () => {
       setSections(() => initialSections);
     });
   };
@@ -130,6 +119,9 @@ const CourseOutline = ({ courseId }) => {
       </Helmet>
       <Container size="xl" className="px-4">
         <section className="course-outline-container mb-4 mt-5">
+          <ErrorAlert hideHeading isError={savingStatus === RequestStatus.FAILED}>
+            {intl.formatMessage(messages.alertFailedGeneric, { actionName: 'save', type: 'changes' })}
+          </ErrorAlert>
           <TransitionReplace>
             {showSuccessAlert ? (
               <AlertMessage
@@ -179,41 +171,48 @@ const CourseOutline = ({ courseId }) => {
                     <div className="pt-4">
                       {sections.length ? (
                         <>
-                          <DndProvider
-                            backend={HTML5Backend}
-                          >
-                            {sections.map((section, index) => (
-                              <SectionCard
+                          <DraggableList itemList={sections} setState={setSections} updateOrder={finalizeSectionOrder}>
+                            {sections.map((section) => (
+                              <SortableItem
+                                id={section.id}
                                 key={section.id}
-                                index={index}
-                                section={section}
-                                savingStatus={savingStatus}
-                                onOpenHighlightsModal={handleOpenHighlightsModal}
-                                onOpenPublishModal={openPublishModal}
-                                onOpenConfigureModal={openConfigureModal}
-                                onOpenDeleteModal={openDeleteModal}
-                                onEditSectionSubmit={handleEditSubmit}
-                                onDuplicateSubmit={handleDuplicateSectionSubmit}
-                                isSectionsExpanded={isSectionsExpanded}
-                                onNewSubsectionSubmit={handleNewSubsectionSubmit}
-                                moveSection={moveSection}
-                                finalizeSectionOrder={finalizeSectionOrder}
+                                componentStyle={{
+                                  background: 'white',
+                                  borderRadius: '6px',
+                                  padding: '1.75rem',
+                                  marginBottom: '1.5rem',
+                                  boxShadow: '0px 1px 5px #ADADAD',
+                                }}
                               >
-                                {section.childInfo.children.map((subsection) => (
-                                  <SubsectionCard
-                                    key={subsection.id}
-                                    section={section}
-                                    subsection={subsection}
-                                    savingStatus={savingStatus}
-                                    onOpenPublishModal={openPublishModal}
-                                    onOpenDeleteModal={openDeleteModal}
-                                    onEditSubmit={handleEditSubmit}
-                                    onDuplicateSubmit={handleDuplicateSubsectionSubmit}
-                                  />
-                                ))}
-                              </SectionCard>
+                                <SectionCard
+                                  key={section.id}
+                                  section={section}
+                                  savingStatus={savingStatus}
+                                  onOpenHighlightsModal={handleOpenHighlightsModal}
+                                  onOpenPublishModal={openPublishModal}
+                                  onOpenConfigureModal={openConfigureModal}
+                                  onOpenDeleteModal={openDeleteModal}
+                                  onEditSectionSubmit={handleEditSubmit}
+                                  onDuplicateSubmit={handleDuplicateSectionSubmit}
+                                  isSectionsExpanded={isSectionsExpanded}
+                                  onNewSubsectionSubmit={handleNewSubsectionSubmit}
+                                >
+                                  {section.childInfo.children.map((subsection) => (
+                                    <SubsectionCard
+                                      key={subsection.id}
+                                      section={section}
+                                      subsection={subsection}
+                                      savingStatus={savingStatus}
+                                      onOpenPublishModal={openPublishModal}
+                                      onOpenDeleteModal={openDeleteModal}
+                                      onEditSubmit={handleEditSubmit}
+                                      onDuplicateSubmit={handleDuplicateSubsectionSubmit}
+                                    />
+                                  ))}
+                                </SectionCard>
+                              </SortableItem>
                             ))}
-                          </DndProvider>
+                          </DraggableList>
                           <Button
                             data-testid="new-section-button"
                             className="mt-4"

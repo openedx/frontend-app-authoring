@@ -1,6 +1,4 @@
 import React from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import { render, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -30,28 +28,23 @@ const section = {
 const renderComponent = (props) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
-      <DndProvider backend={HTML5Backend}>
-        <SectionCard
-          section={section}
-          index={0}
-          onOpenPublishModal={jest.fn()}
-          onOpenHighlightsModal={jest.fn()}
-          onOpenDeleteModal={jest.fn()}
-          onEditClick={jest.fn()}
-          savingStatus=""
-          onEditSectionSubmit={jest.fn()}
-          onDuplicateSubmit={jest.fn()}
-          isSectionsExpanded
-          namePrefix="section"
-          moveSection={jest.fn()}
-          finalizeSectionOrder={jest.fn()}
-          connectDragSource={(el) => el}
-          isDragging
-          {...props}
-        >
-          <span>children</span>
-        </SectionCard>
-      </DndProvider>
+      <SectionCard
+        section={section}
+        onOpenPublishModal={jest.fn()}
+        onOpenHighlightsModal={jest.fn()}
+        onOpenDeleteModal={jest.fn()}
+        onEditClick={jest.fn()}
+        savingStatus=""
+        onEditSectionSubmit={jest.fn()}
+        onDuplicateSubmit={jest.fn()}
+        isSectionsExpanded
+        namePrefix="section"
+        connectDragSource={(el) => el}
+        isDragging
+        {...props}
+      >
+        <span>children</span>
+      </SectionCard>
     </IntlProvider>,
   </AppProvider>,
 );

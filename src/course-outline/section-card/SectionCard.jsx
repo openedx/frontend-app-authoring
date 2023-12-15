@@ -1,7 +1,6 @@
 import React, {
   useEffect, useState, useRef,
 } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -13,11 +12,9 @@ import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
 import { getItemStatus, scrollToElement } from '../utils';
 import messages from './messages';
-import ItemTypes from './itemTypes';
 
 const SectionCard = ({
   section,
-  index,
   children,
   onOpenHighlightsModal,
   onOpenPublishModal,
@@ -28,8 +25,6 @@ const SectionCard = ({
   onDuplicateSubmit,
   isSectionsExpanded,
   onNewSubsectionSubmit,
-  moveSection,
-  finalizeSectionOrder,
 }) => {
   const currentRef = useRef(null);
   const intl = useIntl();
@@ -59,71 +54,6 @@ const SectionCard = ({
     staffOnlyMessage,
     highlights,
   } = section;
-
-  const [{ handlerId }, drop] = useDrop({
-    accept: ItemTypes.SECTION,
-    collect(monitor) {
-      return {
-        handlerId: monitor.getHandlerId(),
-      };
-    },
-    hover(item, monitor) {
-      if (!currentRef.current) {
-        return;
-      }
-      const dragIndex = item.index;
-      const hoverIndex = index;
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-      // Determine rectangle on screen
-      const hoverBoundingRect = currentRef.current?.getBoundingClientRect();
-      // Get vertical middle
-      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-      // Determine mouse position
-      const clientOffset = monitor.getClientOffset();
-      // Get pixels to the top
-      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-      // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
-      // Dragging downwards
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return;
-      }
-      // Dragging upwards
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return;
-      }
-      // Time to actually perform the action
-      moveSection(dragIndex, hoverIndex);
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
-      // eslint-disable-next-line no-param-reassign
-      item.index = hoverIndex;
-    },
-  });
-
-  const indexCopy = index;
-  const [{ isDragging }, drag] = useDrag({
-    type: ItemTypes.SECTION,
-    item: () => ({ id, index, startingIndex: indexCopy }),
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-    canDrag: () => !isFormOpen,
-    end: (item) => {
-      const { startingIndex } = item;
-      if (index !== startingIndex) {
-        finalizeSectionOrder();
-      }
-    },
-  });
-  const opacity = isDragging ? 0 : 1;
-  drag(drop(currentRef));
 
   const sectionStatus = getItemStatus({
     published,
@@ -170,8 +100,6 @@ const SectionCard = ({
     <div
       className="section-card"
       data-testid="section-card"
-      data-handler-id={handlerId}
-      style={{ opacity }}
       ref={currentRef}
     >
       <div>
@@ -193,7 +121,6 @@ const SectionCard = ({
           isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
           onClickDuplicate={onDuplicateSubmit}
           namePrefix="section"
-          className="nodrag"
         />
         <div className="section-card__content" data-testid="section-card__content">
           <div className="outline-section__status">
@@ -209,10 +136,8 @@ const SectionCard = ({
           </div>
         </div>
         {isExpanded && (
-          <>
-            <div data-testid="section-card__subsections" className="section-card__subsections">
-              {children}
-            </div>
+          <div data-testid="section-card__subsections" className="section-card__subsections">
+            {children}
             <Button
               data-testid="new-subsection-button"
               className="mt-4"
@@ -223,7 +148,7 @@ const SectionCard = ({
             >
               {intl.formatMessage(messages.newSubsectionButton)}
             </Button>
-          </>
+          </div>
         )}
       </div>
     </div>
@@ -247,7 +172,6 @@ SectionCard.propTypes = {
     highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
     shouldScroll: PropTypes.bool,
   }).isRequired,
-  index: PropTypes.number.isRequired,
   children: PropTypes.node,
   onOpenHighlightsModal: PropTypes.func.isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,
@@ -258,8 +182,6 @@ SectionCard.propTypes = {
   onDuplicateSubmit: PropTypes.func.isRequired,
   isSectionsExpanded: PropTypes.bool.isRequired,
   onNewSubsectionSubmit: PropTypes.func.isRequired,
-  moveSection: PropTypes.func.isRequired,
-  finalizeSectionOrder: PropTypes.func.isRequired,
 };
 
 export default SectionCard;
