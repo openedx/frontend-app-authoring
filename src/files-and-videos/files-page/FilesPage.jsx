@@ -182,24 +182,26 @@ const FilesPage = ({
         <div className="h2">
           <FormattedMessage {...messages.heading} />
         </div>
-        <FileTable
-          {...{
-            courseId,
-            data,
-            handleAddFile,
-            handleDeleteFile,
-            handleDownloadFile,
-            handleLockFile,
-            handleUsagePaths,
-            handleErrorReset,
-            handleFileOrder,
-            tableColumns,
-            maxFileSize,
-            thumbnailPreview,
-            infoModalSidebar,
-            files: assets,
-          }}
-        />
+        {loadingStatus !== RequestStatus.FAILED && (
+          <FileTable
+            {...{
+              courseId,
+              data,
+              handleAddFile,
+              handleDeleteFile,
+              handleDownloadFile,
+              handleLockFile,
+              handleUsagePaths,
+              handleErrorReset,
+              handleFileOrder,
+              tableColumns,
+              maxFileSize,
+              thumbnailPreview,
+              infoModalSidebar,
+              files: assets,
+            }}
+          />
+        )}
       </Container>
     </FilesPageProvider>
   );

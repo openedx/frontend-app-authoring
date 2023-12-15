@@ -20,6 +20,7 @@ export const initialState = {
       lock: [],
       download: [],
       usageMetrics: [],
+      loading: '',
     },
   },
   models: {
@@ -109,10 +110,10 @@ export const generateFetchAssetApiResponse = () => ({
   totalCount: 50,
 });
 
-export const generateEmptyApiResponse = () => ([{
+export const generateEmptyApiResponse = () => ({
   assets: [],
   totalCount: 0,
-}]);
+});
 
 export const generateNewAssetApiResponse = () => ({
   asset: {
