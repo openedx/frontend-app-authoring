@@ -1,4 +1,4 @@
-// @ts-check
+import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
