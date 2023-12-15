@@ -21,20 +21,20 @@ function fetchStudioHomeData(search, hasHomeData) {
 
     if (!hasHomeData) {
       try {
-        const studioHomeData = await getStudioHomeData(search || '');
+        const studioHomeData = await getStudioHomeData();
         dispatch(fetchStudioHomeDataSuccess(studioHomeData));
         dispatch(updateLoadingStatuses({ studioHomeLoadingStatus: RequestStatus.SUCCESSFUL }));
-        try {
-          const coursesData = await getStudioHomeCourses(search || '');
-          dispatch(fetchCourseDataSuccess(coursesData));
-          dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.SUCCESSFUL }));
-        } catch (error) {
-          dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.FAILED }));
-        }
       } catch (error) {
         dispatch(updateLoadingStatuses({ studioHomeLoadingStatus: RequestStatus.FAILED }));
-        // return false;
+        return;
       }
+    }
+    try {
+      const coursesData = await getStudioHomeCourses(search || '');
+      dispatch(fetchCourseDataSuccess(coursesData));
+      dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.FAILED }));
     }
   };
 }

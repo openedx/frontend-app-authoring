@@ -5,7 +5,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import {
-  act, fireEvent, render, waitFor, screen,
+  act, fireEvent, render, waitFor,
 } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 
@@ -14,13 +14,12 @@ import { RequestStatus } from '../data/constants';
 import { COURSE_CREATOR_STATES } from '../constants';
 import { executeThunk } from '../utils';
 import { studioHomeMock } from './__mocks__';
-import { getApiBaseUrl, getStudioHomeApiUrl } from './data/api';
+import { getStudioHomeApiUrl } from './data/api';
 import { fetchStudioHomeData } from './data/thunks';
 import messages from './messages';
 import createNewCourseMessages from './create-new-course-form/messages';
 import createOrRerunCourseMessages from '../generic/create-or-rerun-course/messages';
 import { StudioHome } from '.';
-import { generateGetStudioCoursesApiResponse, generateGetStudioHomeDataApiResponse, getStatusValue, initialState } from './factories/mockApiResponses';
 
 let axiosMock;
 let store;
@@ -30,10 +29,10 @@ const {
   studioRequestEmail,
 } = studioHomeMock;
 
-// jest.mock('react-redux', () => ({
-//   ...jest.requireActual('react-redux'),
-//   useSelector: jest.fn(),
-// }));
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn(),
+}));
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -43,75 +42,83 @@ jest.mock('react-router-dom', () => ({
 }));
 
 const RootWrapper = () => (
+  <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
-        <AppProvider store={store}>
-
       <StudioHome intl={injectIntl} />
-      </AppProvider>
-
     </IntlProvider>
+  </AppProvider>
 );
 
-const mockStore = async (status, responseData) => {
-  const courseApiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/courses`;
-  axiosMock.onGet(getStudioHomeApiUrl()).reply(200, responseData);
-  axiosMock.onGet(courseApiLink).reply(200, generateGetStudioCoursesApiResponse());
-  await executeThunk(fetchStudioHomeData(), store.dispatch);
-};
-
 describe('<StudioHome />', async () => {
-  beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore(initialState);
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-  });
-
-  it('should render failure alert', async () => {
-    render(<RootWrapper />);
-    await mockStore(RequestStatus.DENIED);
-    const errorMessage = screen.getByText(messages.homePageLoadFailedMessage.defaultMessage);
-
-    expect(errorMessage).toBeVisible();
-  });
-
-  // describe('successfully load page', () => {
-    fit('should render page and page title correctly', async () => {
-      console.log('before render');
-      render(<RootWrapper />);
-      console.log('after render');
-      const data = generateGetStudioHomeDataApiResponse();
-      await mockStore(RequestStatus.SUCCESSFUL, data);
-      console.log('after mock sotre');
-
-      expect(screen.getByText(messages.addNewCourseBtnText.defaultMessage)).toBeInTheDocument();
+  describe('api fetch fails', () => {
+    beforeEach(async () => {
+      initializeMockApp({
+        authenticatedUser: {
+          userId: 3,
+          username: 'abc123',
+          administrator: true,
+          roles: [],
+        },
+      });
+      store = initializeStore();
+      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(404);
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+      useSelector.mockReturnValue({ studioHomeLoadingStatus: RequestStatus.FAILED });
     });
 
-    it.skip('should render email staff header button', async () => {
-      const data = generateGetStudioHomeDataApiResponse();
-      data.courseCreatorStatus = COURSE_CREATOR_STATES.disallowedForThisSite;
+    it('should render fetch error', () => {
+      const { getByText } = render(<RootWrapper />);
+      expect(getByText(messages.homePageLoadFailedMessage.defaultMessage)).toBeInTheDocument();
+    });
 
-      render(<RootWrapper />);
-      await mockStore(RequestStatus.SUCCESSFUL, data);
+    it('should render Studio home title', () => {
+      const { getByText } = render(<RootWrapper />);
+      expect(getByText('Studio home')).toBeInTheDocument();
+    });
+  });
 
-      expect(screen.getByRole('link', { name: messages.emailStaffBtnText.defaultMessage }))
+  describe('api fetch succeeds', () => {
+    beforeEach(async () => {
+      initializeMockApp({
+        authenticatedUser: {
+          userId: 3,
+          username: 'abc123',
+          administrator: true,
+          roles: [],
+        },
+      });
+      store = initializeStore();
+      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+      useSelector.mockReturnValue(studioHomeMock);
+    });
+
+    it('should render page and page title correctly', () => {
+      const { getByText } = render(<RootWrapper />);
+      expect(getByText(`${studioShortName} home`)).toBeInTheDocument();
+    });
+
+    it('should render email staff header button', async () => {
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        courseCreatorStatus: COURSE_CREATOR_STATES.disallowedForThisSite,
+      });
+
+      const { getByRole } = render(<RootWrapper />);
+      expect(getByRole('link', { name: messages.emailStaffBtnText.defaultMessage }))
         .toHaveAttribute('href', `mailto:${studioRequestEmail}`);
     });
 
     it('should render create new course button', async () => {
-      console.log('testing');
-      render(<RootWrapper />);
-      const data = generateGetStudioHomeDataApiResponse();
-      data.courseCreatorStatus = COURSE_CREATOR_STATES.granted;
-      console.log(data);
-      await mockStore(RequestStatus.SUCCESSFUL, data);
-      expect(screen.getByRole('button', { name: messages.addNewCourseBtnText.defaultMessage })).toBeInTheDocument();
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        courseCreatorStatus: COURSE_CREATOR_STATES.granted,
+      });
+
+      const { getByRole } = render(<RootWrapper />);
+      expect(getByRole('button', { name: messages.addNewCourseBtnText.defaultMessage })).toBeInTheDocument();
     });
 
     it('should show verify email layout if user inactive', () => {
@@ -242,5 +249,5 @@ describe('<StudioHome />', async () => {
       expect(getByText('Looking for help with Studio?')).toBeInTheDocument();
       expect(getByText('LMS')).toHaveAttribute('href', process.env.LMS_BASE_URL);
     });
-  // });
+  });
 });
