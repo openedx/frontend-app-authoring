@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useToggle } from '@edx/paragon';
+import { useNavigate } from 'react-router-dom';
+import { getConfig } from '@edx/frontend-platform';
 
 import { RequestStatus } from '../data/constants';
 import { COURSE_BLOCK_NAMES } from './constants';
@@ -22,11 +24,14 @@ import {
 import {
   addNewSectionQuery,
   addNewSubsectionQuery,
+  addNewUnitQuery,
   deleteCourseSectionQuery,
   deleteCourseSubsectionQuery,
+  deleteCourseUnitQuery,
   editCourseItemQuery,
   duplicateSectionQuery,
   duplicateSubsectionQuery,
+  duplicateUnitQuery,
   enableCourseHighlightsEmailsQuery,
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
@@ -40,6 +45,7 @@ import {
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { reindexLink, courseStructure, lmsLink } = useSelector(getOutlineIndexData);
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
@@ -66,6 +72,26 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleNewSubsectionSubmit = (sectionId) => {
     dispatch(addNewSubsectionQuery(sectionId));
+  };
+
+  const getUnitUrl = (locator) => {
+    if (process.env.ENABLE_UNIT_PAGE === 'true') {
+      return `/course/container/${locator}`;
+    }
+    return `${getConfig().STUDIO_BASE_URL}/container/${locator}`;
+  };
+
+  const openUnitPage = (locator) => {
+    const url = getUnitUrl(locator);
+    if (process.env.ENABLE_UNIT_PAGE === 'true') {
+      navigate(url);
+    } else {
+      window.location.assign(url);
+    }
+  };
+
+  const handleNewUnitSubmit = (subsectionId) => {
+    dispatch(addNewUnitQuery(subsectionId, openUnitPage));
   };
 
   const headerNavigationsActions = {
@@ -132,7 +158,11 @@ const useCourseOutline = ({ courseId }) => {
       dispatch(deleteCourseSubsectionQuery(currentItem.id, currentSection.id));
       break;
     case COURSE_BLOCK_NAMES.vertical.id:
-      // delete unit
+      dispatch(deleteCourseUnitQuery(
+        currentItem.id,
+        currentSubsection.id,
+        currentSection.id,
+      ));
       break;
     default:
       return;
@@ -146,6 +176,10 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleDuplicateSubsectionSubmit = () => {
     dispatch(duplicateSubsectionQuery(currentSubsection.id, currentSection.id));
+  };
+
+  const handleDuplicateUnitSubmit = () => {
+    dispatch(duplicateUnitQuery(currentItem.id, currentSubsection.id, currentSection.id));
   };
 
   const handleDragNDrop = (newListId, restoreCallback) => {
@@ -205,8 +239,12 @@ const useCourseOutline = ({ courseId }) => {
     handleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
+    handleDuplicateUnitSubmit,
     handleNewSectionSubmit,
     handleNewSubsectionSubmit,
+    getUnitUrl,
+    openUnitPage,
+    handleNewUnitSubmit,
     handleDragNDrop,
   };
 };

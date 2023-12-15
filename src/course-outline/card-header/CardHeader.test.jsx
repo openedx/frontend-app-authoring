@@ -4,6 +4,8 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { ITEM_BADGE_STATUS } from '../constants';
 import CardHeader from './CardHeader';
+import BaseTitleWithStatusBadge from './BaseTitleWithStatusBadge';
+import TitleButton from './TitleButton';
 import messages from './messages';
 
 const onExpandMock = jest.fn();
@@ -18,8 +20,6 @@ const cardHeaderProps = {
   title: 'Some title',
   status: ITEM_BADGE_STATUS.live,
   hasChanges: false,
-  isExpanded: true,
-  onExpand: onExpandMock,
   onClickMenuButton: onClickMenuButtonMock,
   onClickPublish: onClickPublishMock,
   onClickEdit: onClickEditMock,
@@ -32,14 +32,33 @@ const cardHeaderProps = {
   namePrefix: 'section',
 };
 
-const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <CardHeader
-      {...cardHeaderProps}
+const renderComponent = (props) => {
+  const titleComponent = (
+    <TitleButton
+      isExpanded
+      onTitleClick={onExpandMock}
+      namePrefix={cardHeaderProps.namePrefix}
       {...props}
-    />
-  </IntlProvider>,
-);
+    >
+      <BaseTitleWithStatusBadge
+        title={cardHeaderProps.title}
+        status={cardHeaderProps.status}
+        namePrefix={cardHeaderProps.namePrefix}
+        {...props}
+      />
+    </TitleButton>
+  );
+
+  return render(
+    <IntlProvider locale="en">
+      <CardHeader
+        {...cardHeaderProps}
+        titleComponent={titleComponent}
+        {...props}
+      />
+    </IntlProvider>,
+  );
+};
 
 describe('<CardHeader />', () => {
   it('render CardHeader component correctly', async () => {
