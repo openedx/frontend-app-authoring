@@ -14,6 +14,7 @@ const TaxonomyLayout = () => {
   const intl = useIntl();
   // Use `setToastMessage` to show the toast.
   const [toastMessage, setToastMessage] = useState(null);
+  // Use `setToastMessage` to show the alert.
   const [alertProps, setAlertProps] = useState(null);
 
   const context = useMemo(() => ({
@@ -31,6 +32,7 @@ const TaxonomyLayout = () => {
             dismissible
             closeLabel={intl.formatMessage(messages.taxonomyDismissLabel)}
             onClose={() => setAlertProps(null)}
+            // @ts-ignore ToDo: fix object spread type error
             {...alertProps}
           />
         )}

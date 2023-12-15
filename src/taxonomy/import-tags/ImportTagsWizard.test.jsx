@@ -1,3 +1,4 @@
+// @ts-check
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -36,12 +37,12 @@ jest.mock('./data/api', () => ({
 }));
 
 const mockSetToastMessage = jest.fn();
-const mockSetAlertMessageProps = jest.fn();
+const mockSetAlertProps = jest.fn();
 const context = {
   toastMessage: null,
   setToastMessage: mockSetToastMessage,
-  alertMessageProps: null,
-  setAlertMessageProps: mockSetAlertMessageProps,
+  alertProps: null,
+  setAlertProps: mockSetAlertProps,
 };
 
 const taxonomy = {
@@ -228,7 +229,8 @@ describe('<ImportTagsWizard />', () => {
       // Toast message shown
       expect(mockSetToastMessage).toBeCalledWith(`"${taxonomy.name}" updated`);
     } else {
-      expect(mockSetAlertMessageProps).toBeCalledWith(
+      // Alert message shown
+      expect(mockSetAlertProps).toBeCalledWith(
         expect.objectContaining({
           variant: 'danger',
           title: 'Import error',

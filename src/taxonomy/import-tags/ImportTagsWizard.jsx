@@ -205,7 +205,7 @@ const ImportTagsWizard = ({
   close,
 }) => {
   const intl = useIntl();
-  const { setToastMessage, setAlertMessageProps } = useContext(TaxonomyContext);
+  const { setToastMessage, setAlertProps } = useContext(TaxonomyContext);
 
   const steps = ['export', 'upload', 'plan', 'confirm'];
   const [currentStep, setCurrentStep] = useState(steps[0]);
@@ -245,15 +245,20 @@ const ImportTagsWizard = ({
         });
         close();
       }
-      setToastMessage(intl.formatMessage(messages.importTaxonomyToast, { name: taxonomy.name }));
-    } catch (error) {
+      if (setToastMessage) {
+        setToastMessage(intl.formatMessage(messages.importTaxonomyToast, { name: taxonomy.name }));
+      }
+    } catch (/** @type {any} */ error) {
       const alertProps = {
         variant: 'danger',
         icon: Error,
         title: intl.formatMessage(messages.importTaxonomyErrorAlert),
         description: error.message,
       };
-      setAlertMessageProps(alertProps);
+
+      if (setAlertProps) {
+        setAlertProps(alertProps);
+      }
     }
   };
 
