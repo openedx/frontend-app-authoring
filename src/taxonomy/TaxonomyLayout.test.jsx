@@ -10,9 +10,11 @@ import TaxonomyLayout from './TaxonomyLayout';
 
 let store;
 const toastMessage = 'Hello, this is a toast!';
+const alertErrorTitle = 'Error title';
+const alertErrorDescription = 'Error description';
 
 const MockChildComponent = () => {
-  const { setToastMessage } = useContext(TaxonomyContext);
+  const { setToastMessage, setAlertProps } = useContext(TaxonomyContext);
 
   return (
     <div data-testid="mock-content">
@@ -20,6 +22,13 @@ const MockChildComponent = () => {
         type="button"
         onClick={() => setToastMessage(toastMessage)}
         data-testid="taxonomy-show-toast"
+      >
+        Show Toast
+      </button>
+      <button
+        type="button"
+        onClick={() => setAlertProps({ title: alertErrorTitle, description: alertErrorDescription })}
+        data-testid="taxonomy-show-alert"
       >
         Show Toast
       </button>
@@ -70,5 +79,18 @@ describe('<TaxonomyLayout />', async () => {
     button.click();
     expect(getByTestId('taxonomy-toast')).toBeInTheDocument();
     expect(getByText(toastMessage)).toBeInTheDocument();
+  });
+
+  it('should show alert', () => {
+    const { getByTestId, getByText, getByRole } = render(<RootWrapper />);
+    const button = getByTestId('taxonomy-show-alert');
+    button.click();
+    expect(getByTestId('taxonomy-alert')).toBeInTheDocument();
+    expect(getByText(alertErrorTitle)).toBeInTheDocument();
+    expect(getByText(alertErrorDescription)).toBeInTheDocument();
+
+    const closeAlertButton = getByRole('button', { name: 'Dismiss' });
+    closeAlertButton.click();
+    expect(() => getByTestId('taxonomy-alert')).toThrow();
   });
 });
