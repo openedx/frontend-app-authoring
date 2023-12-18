@@ -103,7 +103,7 @@ const UploadStep = ({
               onProcessUpload={handleFileLoad}
               data-testid="dropzone"
               /*
-                  className is working on Dropzone
+                  className is working on Dropzone: https://github.com/openedx/paragon/pull/2950
                   className="h-200px"
               */
               style={{ height: '200px' }}
