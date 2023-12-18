@@ -78,7 +78,7 @@
   },
   "devDependencies": {
     "@edx/browserslist-config": "1.2.0",
-    "@edx/frontend-build": "13.0.5",
+    "@edx/frontend-build": "13.0.14",
     "@edx/reactifex": "^1.0.3",
     "@edx/stylelint-config-edx": "^2.3.0",
     "@edx/typescript-config": "^1.0.1",
