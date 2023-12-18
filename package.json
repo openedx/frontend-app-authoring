@@ -71,7 +71,7 @@
   },
   "devDependencies": {
     "@edx/browserslist-config": "^1.2.0",
-    "@edx/frontend-build": "13.0.14",
+    "@edx/frontend-build": "13.0.3",
     "@edx/reactifex": "^2.1.1",
     "@sheerun/mutationobserver-shim": "0.3.3",
     "@testing-library/dom": "9.3.3",
