@@ -18,12 +18,11 @@ import AddUserForm from './add-user-form/AddUserForm';
 import AddTeamMember from './add-team-member/AddTeamMember';
 import CourseTeamMember from './course-team-member/CourseTeamMember';
 import InfoModal from './info-modal/InfoModal';
-import { useCourseTeam } from './hooks';
+import { useCourseTeam, useUserPermissions } from './hooks';
 import getPageHeadTitle from '../generic/utils';
 
 const CourseTeam = ({ courseId }) => {
   const intl = useIntl();
-
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
 
@@ -55,6 +54,12 @@ const CourseTeam = ({ courseId }) => {
     handleInternetConnectionFailed,
   } = useCourseTeam({ intl, courseId });
 
+  const {
+    hasPermissions,
+  } = useUserPermissions();
+
+  const hasManageAllUsersPerm = hasPermissions('manage_all_users');
+
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
@@ -77,7 +82,7 @@ const CourseTeam = ({ courseId }) => {
                   <SubHeader
                     title={intl.formatMessage(messages.headingTitle)}
                     subtitle={intl.formatMessage(messages.headingSubtitle)}
-                    headerActions={isAllowActions && (
+                    headerActions={(isAllowActions || hasManageAllUsersPerm) && (
                       <Button
                         variant="primary"
                         iconBefore={IconAdd}
@@ -104,13 +109,13 @@ const CourseTeam = ({ courseId }) => {
                           role={role}
                           email={email}
                           currentUserEmail={currentUserEmail || ''}
-                          isAllowActions={isAllowActions}
+                          isAllowActions={isAllowActions || hasManageAllUsersPerm}
                           isHideActions={role === USER_ROLES.admin && isSingleAdmin}
                           onChangeRole={handleChangeRoleUserSubmit}
                           onDelete={handleOpenDeleteModal}
                         />
                       )) : null}
-                      {isShowAddTeamMember && (
+                      {(isShowAddTeamMember || hasManageAllUsersPerm) && (
                         <AddTeamMember
                           onFormOpen={openForm}
                           isButtonDisable={isFormVisible}

@@ -1,5 +1,7 @@
 import { RequestStatus } from '../../data/constants';
-import { createOrRerunCourse, getOrganizations, getCourseRerun } from './api';
+import {
+  createOrRerunCourse, getOrganizations, getCourseRerun, getUserPermissions, getUserPermissionsEnabledFlag,
+} from './api';
 import {
   fetchOrganizations,
   updatePostErrors,
@@ -7,6 +9,8 @@ import {
   updateRedirectUrlObj,
   updateCourseRerunData,
   updateSavingStatus,
+  updateUserPermissions,
+  updateUserPermissionsEnabled,
 } from './slice';
 
 export function fetchOrganizationsQuery() {
@@ -46,6 +50,31 @@ export function updateCreateOrRerunCourseQuery(courseData) {
     } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
+    }
+  };
+}
+
+export function fetchUserPermissionsQuery(courseId) {
+  return async (dispatch) => {
+    try {
+      const userPermissions = await getUserPermissions(courseId);
+      dispatch(updateUserPermissions(userPermissions));
+      dispatch(updateLoadingStatuses({ userPermissionsLoadingStatus: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateLoadingStatuses({ userPermissionsLoadingStatus: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function fetchUserPermissionsEnabledFlag() {
+  return async (dispatch) => {
+    try {
+      const data = await getUserPermissionsEnabledFlag();
+      dispatch(updateUserPermissionsEnabled(data.enabled || false));
+      dispatch(updateLoadingStatuses({ userPermissionsEnabledLoadingStatus: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateUserPermissionsEnabled(false));
+      dispatch(updateLoadingStatuses({ userPermissionsEnabledLoadingStatus: RequestStatus.FAILED }));
     }
   };
 }
