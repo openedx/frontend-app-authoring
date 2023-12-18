@@ -35,7 +35,7 @@ const TranscriptSettings = ({
     isAiTranslationsEnabled,
   } = pageSettings;
   const { transcriptionPlans } = videoTranscriptSettings || {};
-  const [transcriptType, setTranscriptType] = useState(activeTranscriptPreferences?.provider);
+  const [transcriptType, setTranscriptType] = useState(null);
   const [isAiTranslations, setIsAiTranslations] = useState(false);
 
   const handleOrderTranscripts = (data, provider) => {
@@ -81,7 +81,7 @@ const TranscriptSettings = ({
               <IconButton size="sm" iconAs={Icon} src={Close} onClick={closeTranscriptSettings} alt="close settings" />
             </ActionRow>
             <TransitionReplace>
-              {transcriptType ? (
+              { transcriptType ? (
                 <div key="transcript-settings">
                   <OrderTranscriptForm
                     {...{

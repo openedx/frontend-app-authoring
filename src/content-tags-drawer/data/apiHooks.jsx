@@ -1,111 +1,146 @@
 // @ts-check
-import { useQuery } from '@tanstack/react-query';
-import { getTaxonomyTagsData, getContentTaxonomyTagsData, getContentData } from './api';
+import { useMemo } from 'react';
+import {
+  useQuery,
+  useQueries,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
+import {
+  getTaxonomyTagsData,
+  getContentTaxonomyTagsData,
+  getContentData,
+  updateContentTaxonomyTags,
+} from './api';
+
+/** @typedef {import("../../taxonomy/tag-list/data/types.mjs").TagListData} TagListData */
+/** @typedef {import("../../taxonomy/tag-list/data/types.mjs").TagData} TagData */
 
 /**
  * Builds the query to get the taxonomy tags
- * @param {string} taxonomyId The id of the taxonomy to fetch tags for
- * @param {string} fullPathProvided Optional param that contains the full URL to fetch data
- *                 If provided, we use it instead of generating the URL. This is usually for fetching subTags
- * @returns {import("./types.mjs").UseQueryResult}
+ * @param {number} taxonomyId The id of the taxonomy to fetch tags for
+ * @param {string|null} parentTag The tag whose children we're loading, if any
+ * @param {string} searchTerm The term passed in to perform search on tags
+ * @param {number} numPages How many pages of tags to load at this level
+ * @returns {{
+ *  hasMorePages: boolean,
+ *  tagPages: {
+ *    isLoading: boolean,
+ *    isError: boolean,
+ *    data: TagListData[],
+ *  }[],
+ * }}
  */
-const useTaxonomyTagsData = (taxonomyId, fullPathProvided) => (
-  useQuery({
-    queryKey: [`taxonomyTags${ fullPathProvided || taxonomyId }`],
-    queryFn: () => getTaxonomyTagsData(taxonomyId, fullPathProvided),
-  })
-);
+export const useTaxonomyTagsData = (taxonomyId, parentTag = null, numPages = 1, searchTerm = '') => {
+  const queryClient = useQueryClient();
 
-/**
- * Gets the taxonomy tags data
- * @param {string} taxonomyId The id of the taxonomy to fetch tags for
- * @param {string} fullPathProvided Optional param that contains the full URL to fetch data
- *                 If provided, we use it instead of generating the URL. This is usually for fetching subTags
- * @returns {import("./types.mjs").TaxonomyTagsData | undefined}
- */
-export const useTaxonomyTagsDataResponse = (taxonomyId, fullPathProvided) => {
-  const response = useTaxonomyTagsData(taxonomyId, fullPathProvided);
-  if (response.status === 'success') {
-    return response.data;
+  const queryFn = async ({ queryKey }) => {
+    const page = queryKey[3];
+    return getTaxonomyTagsData(taxonomyId, { parentTag: parentTag || '', searchTerm, page });
+  };
+
+  /** @type {{queryKey: any[], queryFn: typeof queryFn, staleTime: number}[]} */
+  const queries = [];
+  for (let page = 1; page <= numPages; page++) {
+    queries.push(
+      { queryKey: ['taxonomyTags', taxonomyId, parentTag, page, searchTerm], queryFn, staleTime: Infinity },
+    );
   }
-  return undefined;
+
+  const dataPages = useQueries({ queries });
+
+  const totalPages = dataPages[0]?.data?.numPages || 1;
+  const hasMorePages = numPages < totalPages;
+
+  const tagPages = useMemo(() => {
+    /** @type { { isLoading: boolean, isError: boolean, data: TagListData[] }[] } */
+    const newTags = [];
+
+    // Pre-load desendants if possible
+    const preLoadedData = new Map();
+
+    dataPages.forEach(result => {
+      /** @type {TagListData[]} */
+      const simplifiedTagsList = [];
+
+      result.data?.results?.forEach((tag) => {
+        if (tag.parentValue === parentTag) {
+          simplifiedTagsList.push(tag);
+        } else if (!preLoadedData.has(tag.parentValue)) {
+          preLoadedData.set(tag.parentValue, [tag]);
+        } else {
+          preLoadedData.get(tag.parentValue).push(tag);
+        }
+      });
+
+      newTags.push({ ...result, data: simplifiedTagsList });
+    });
+
+    // Store the pre-loaded descendants into the query cache:
+    preLoadedData.forEach((tags, parentValue) => {
+      const queryKey = ['taxonomyTags', taxonomyId, parentValue, 1, searchTerm];
+      /** @type {TagData} */
+      const cachedData = {
+        next: '',
+        previous: '',
+        count: tags.length,
+        numPages: 1,
+        currentPage: 1,
+        start: 0,
+        results: tags,
+      };
+      queryClient.setQueryData(queryKey, cachedData);
+    });
+
+    return newTags;
+  }, [dataPages]);
+
+  return { hasMorePages, tagPages };
 };
 
 /**
- * Returns the status of the taxonomy tags query
- * @param {string} taxonomyId The id of the taxonomy to fetch tags for
- * @param {string} fullPathProvided Optional param that contains the full URL to fetch data
- *                 If provided, we use it instead of generating the URL. This is usually for fetching subTags
- * @returns {boolean}
- */
-export const useIsTaxonomyTagsDataLoaded = (taxonomyId, fullPathProvided) => (
-  useTaxonomyTagsData(taxonomyId, fullPathProvided).status === 'success'
-);
-
-/**
  * Builds the query to get the taxonomy tags applied to the content object
- * @param {string} contentId The id of the content object to fetch the applied tags for
- * @returns {import("./types.mjs").UseQueryResult}
+ * @param {string} contentId The ID of the content object to fetch the applied tags for (e.g. an XBlock usage key)
  */
-const useContentTaxonomyTagsData = (contentId) => (
+export const useContentTaxonomyTagsData = (contentId) => (
   useQuery({
-    queryKey: ['contentTaxonomyTags'],
+    queryKey: ['contentTaxonomyTags', contentId],
     queryFn: () => getContentTaxonomyTagsData(contentId),
   })
 );
 
 /**
- * Gets the taxonomy tags applied to the content object
- * @param {string} contentId The id of the content object to fetch the applied tags for
- * @returns {import("./types.mjs").ContentTaxonomyTagsData | undefined}
- */
-export const useContentTaxonomyTagsDataResponse = (contentId) => {
-  const response = useContentTaxonomyTagsData(contentId);
-  if (response.status === 'success') {
-    return response.data;
-  }
-  return undefined;
-};
-
-/**
- * Gets the status of the content taxonomy tags query
- * @param {string} contentId The id of the content object to fetch the applied tags for
- * @returns {boolean}
- */
-export const useIsContentTaxonomyTagsDataLoaded = (contentId) => (
-  useContentTaxonomyTagsData(contentId).status === 'success'
-);
-
-/**
  * Builds the query to get meta data about the content object
  * @param {string} contentId The id of the content object (unit/component)
- * @returns {import("./types.mjs").UseQueryResult}
  */
-const useContentData = (contentId) => (
+export const useContentData = (contentId) => (
   useQuery({
-    queryKey: ['contentData'],
+    queryKey: ['contentData', contentId],
     queryFn: () => getContentData(contentId),
   })
 );
 
 /**
- * Gets the information about the content object
- * @param {string} contentId The id of the content object (unit/component)
- * @returns {import("./types.mjs").ContentData | undefined}
+ * Builds the mutation to update the tags applied to the content object
+ * @param {string} contentId The id of the content object to update tags for
+ * @param {number} taxonomyId The id of the taxonomy the tags belong to
  */
-export const useContentDataResponse = (contentId) => {
-  const response = useContentData(contentId);
-  if (response.status === 'success') {
-    return response.data;
-  }
-  return undefined;
-};
+export const useContentTaxonomyTagsUpdater = (contentId, taxonomyId) => {
+  const queryClient = useQueryClient();
 
-/**
- * Gets the status of the content data query
- * @param {string} contentId The id of the content object (unit/component)
- * @returns {boolean}
- */
-export const useIsContentDataLoaded = (contentId) => (
-  useContentData(contentId).status === 'success'
-);
+  return useMutation({
+    /**
+     * @type {import("@tanstack/react-query").MutateFunction<
+     *   any,
+     *   any,
+     *   {
+     *     tags: string[]
+     *   }
+     * >}
+     */
+    mutationFn: ({ tags }) => updateContentTaxonomyTags(contentId, taxonomyId, tags),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['contentTaxonomyTags', contentId] });
+    },
+  });
+};

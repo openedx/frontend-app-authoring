@@ -1,54 +1,61 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import PropTypes from 'prop-types';
 
 import TagBubble from './TagBubble';
 
 const data = {
   value: 'Tag 1',
+  lineage: [],
+  removeTagHandler: jest.fn(),
 };
 
-const TagBubbleComponent = ({ value, subTagsCount, implicit }) => (
+const TagBubbleComponent = ({
+  value, implicit, level, lineage, removeTagHandler, editable,
+}) => (
   <IntlProvider locale="en" messages={{}}>
-    <TagBubble value={value} subTagsCount={subTagsCount} implicit={implicit} />
+    <TagBubble
+      value={value}
+      implicit={implicit}
+      level={level}
+      lineage={lineage}
+      removeTagHandler={removeTagHandler}
+      editable={editable}
+    />
   </IntlProvider>
 );
 
 TagBubbleComponent.defaultProps = {
-  subTagsCount: 0,
   implicit: true,
+  level: 0,
 };
 
 TagBubbleComponent.propTypes = {
   value: PropTypes.string.isRequired,
-  subTagsCount: PropTypes.number,
   implicit: PropTypes.bool,
+  level: PropTypes.number,
+  lineage: PropTypes.arrayOf(PropTypes.string).isRequired,
+  removeTagHandler: PropTypes.func.isRequired,
+  editable: PropTypes.bool.isRequired,
 };
 
 describe('<TagBubble />', () => {
-  it('should render only value of the implicit tag with no sub tags', () => {
-    const { container, getByText } = render(<TagBubbleComponent value={data.value} />);
-    expect(getByText(data.value)).toBeInTheDocument();
-    expect(container.getElementsByClassName('implicit').length).toBe(1);
-  });
-
-  it('should render value of the implicit tag with sub tags', () => {
-    const tagBubbleData = {
-      subTagsCount: 5,
-      ...data,
-    };
+  it('should render implicit tag', () => {
     const { container, getByText } = render(
       <TagBubbleComponent
-        value={tagBubbleData.value}
-        subTagsCount={tagBubbleData.subTagsCount}
+        value={data.value}
+        editable
+        lineage={data.lineage}
+        removeTagHandler={data.removeTagHandler}
       />,
     );
-    expect(getByText(`${tagBubbleData.value} (${tagBubbleData.subTagsCount})`)).toBeInTheDocument();
+    expect(getByText(data.value)).toBeInTheDocument();
     expect(container.getElementsByClassName('implicit').length).toBe(1);
+    expect(container.getElementsByClassName('pgn__chip__icon-after').length).toBe(0);
   });
 
-  it('should render value of the explicit tag with no sub tags', () => {
+  it('should render explicit tag', () => {
     const tagBubbleData = {
       implicit: false,
       ...data,
@@ -56,11 +63,34 @@ describe('<TagBubble />', () => {
     const { container, getByText } = render(
       <TagBubbleComponent
         value={tagBubbleData.value}
+        editable
+        lineage={data.lineage}
         implicit={tagBubbleData.implicit}
+        removeTagHandler={tagBubbleData.removeTagHandler}
       />,
     );
     expect(getByText(`${tagBubbleData.value}`)).toBeInTheDocument();
     expect(container.getElementsByClassName('implicit').length).toBe(0);
-    expect(container.getElementsByClassName('btn-icon-after').length).toBe(1);
+    expect(container.getElementsByClassName('pgn__chip__icon-after').length).toBe(1);
+  });
+
+  it('should call removeTagHandler when "x" clicked on explicit tag', async () => {
+    const tagBubbleData = {
+      implicit: false,
+      ...data,
+    };
+    const { container } = render(
+      <TagBubbleComponent
+        value={tagBubbleData.value}
+        editable
+        lineage={data.lineage}
+        implicit={tagBubbleData.implicit}
+        removeTagHandler={tagBubbleData.removeTagHandler}
+      />,
+    );
+
+    const xButton = container.getElementsByClassName('pgn__chip__icon-after')[0];
+    fireEvent.click(xButton);
+    expect(data.removeTagHandler).toHaveBeenCalled();
   });
 });

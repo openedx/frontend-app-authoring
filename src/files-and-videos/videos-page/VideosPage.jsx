@@ -82,7 +82,7 @@ const VideosPage = ({
 
   const handleAddFile = (file) => dispatch(addVideoFile(courseId, file));
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id));
-  const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows }));
+  const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
   const handleUsagePaths = (video) => dispatch(getUsagePaths({ video, courseId }));
   const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleFileOrder = ({ newFileIdOrder, sortType }) => {
@@ -181,6 +181,7 @@ const VideosPage = ({
       </div>
     );
   }
+
   return (
     <VideosPageProvider courseId={courseId}>
       <Container size="xl" className="p-4 pt-4.5">
@@ -190,6 +191,7 @@ const VideosPage = ({
           addFileStatus={addVideoStatus}
           deleteFileStatus={deleteVideoStatus}
           updateFileStatus={updateVideoStatus}
+          loadingStatus={loadingStatus}
         />
         <ActionRow>
           <div className="h2">
@@ -209,35 +211,39 @@ const VideosPage = ({
             </Button>
           ) : null}
         </ActionRow>
-        {isVideoTranscriptEnabled ? (
-          <TranscriptSettings
-            {...{
-              isTranscriptSettingsOpen,
-              closeTranscriptSettings,
-              handleErrorReset,
-              errorMessages,
-              transcriptStatus,
-              courseId,
-            }}
-          />
-        ) : null}
-        <FileTable
-          {...{
-            courseId,
-            data,
-            handleAddFile,
-            handleDeleteFile,
-            handleDownloadFile,
-            handleUsagePaths,
-            handleErrorReset,
-            handleFileOrder,
-            tableColumns,
-            maxFileSize,
-            thumbnailPreview,
-            infoModalSidebar,
-            files: videos,
-          }}
-        />
+        {loadingStatus !== RequestStatus.FAILED && (
+          <>
+            {isVideoTranscriptEnabled && (
+              <TranscriptSettings
+                {...{
+                  isTranscriptSettingsOpen,
+                  closeTranscriptSettings,
+                  handleErrorReset,
+                  errorMessages,
+                  transcriptStatus,
+                  courseId,
+                }}
+              />
+            )}
+            <FileTable
+              {...{
+                courseId,
+                data,
+                handleAddFile,
+                handleDeleteFile,
+                handleDownloadFile,
+                handleUsagePaths,
+                handleErrorReset,
+                handleFileOrder,
+                tableColumns,
+                maxFileSize,
+                thumbnailPreview,
+                infoModalSidebar,
+                files: videos,
+              }}
+            />
+          </>
+        )}
       </Container>
     </VideosPageProvider>
   );

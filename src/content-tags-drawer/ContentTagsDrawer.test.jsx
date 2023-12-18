@@ -4,10 +4,8 @@ import { act, render, fireEvent } from '@testing-library/react';
 
 import ContentTagsDrawer from './ContentTagsDrawer';
 import {
-  useContentTaxonomyTagsDataResponse,
-  useIsContentTaxonomyTagsDataLoaded,
-  useContentDataResponse,
-  useIsContentDataLoaded,
+  useContentTaxonomyTagsData,
+  useContentData,
 } from './data/apiHooks';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from '../taxonomy/data/apiHooks';
 
@@ -19,12 +17,17 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock('./data/apiHooks', () => ({
-  useContentTaxonomyTagsDataResponse: jest.fn(),
-  useIsContentTaxonomyTagsDataLoaded: jest.fn(),
-  useContentDataResponse: jest.fn(),
-  useIsContentDataLoaded: jest.fn(),
-  useTaxonomyTagsDataResponse: jest.fn(),
-  useIsTaxonomyTagsDataLoaded: jest.fn(),
+  useContentTaxonomyTagsData: jest.fn(() => ({
+    isSuccess: false,
+    data: {},
+  })),
+  useContentData: jest.fn(() => ({
+    isSuccess: false,
+    data: {},
+  })),
+  useContentTaxonomyTagsUpdater: jest.fn(() => ({
+    isError: false,
+  })),
 }));
 
 jest.mock('../taxonomy/data/apiHooks', () => ({
@@ -45,7 +48,6 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('shows spinner before the content data query is complete', async () => {
-    useIsContentDataLoaded.mockReturnValue(false);
     await act(async () => {
       const { getAllByRole } = render(<RootWrapper />);
       const spinner = getAllByRole('status')[0];
@@ -55,7 +57,6 @@ describe('<ContentTagsDrawer />', () => {
 
   it('shows spinner before the taxonomy tags query is complete', async () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(false);
-    useIsContentTaxonomyTagsDataLoaded.mockReturnValue(false);
     await act(async () => {
       const { getAllByRole } = render(<RootWrapper />);
       const spinner = getAllByRole('status')[1];
@@ -64,9 +65,11 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('shows the content display name after the query is complete', async () => {
-    useIsContentDataLoaded.mockReturnValue(true);
-    useContentDataResponse.mockReturnValue({
-      displayName: 'Unit 1',
+    useContentData.mockReturnValue({
+      isSuccess: true,
+      data: {
+        displayName: 'Unit 1',
+      },
     });
     await act(async () => {
       const { getByText } = render(<RootWrapper />);
@@ -76,36 +79,38 @@ describe('<ContentTagsDrawer />', () => {
 
   it('shows the taxonomies data including tag numbers after the query is complete', async () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
-    useIsContentTaxonomyTagsDataLoaded.mockReturnValue(true);
-    useContentTaxonomyTagsDataResponse.mockReturnValue({
-      taxonomies: [
-        {
-          name: 'Taxonomy 1',
-          taxonomyId: 123,
-          editable: true,
-          tags: [
-            {
-              value: 'Tag 1',
-              lineage: ['Tag 1'],
-            },
-            {
-              value: 'Tag 2',
-              lineage: ['Tag 2'],
-            },
-          ],
-        },
-        {
-          name: 'Taxonomy 2',
-          taxonomyId: 124,
-          editable: true,
-          tags: [
-            {
-              value: 'Tag 3',
-              lineage: ['Tag 3'],
-            },
-          ],
-        },
-      ],
+    useContentTaxonomyTagsData.mockReturnValue({
+      isSuccess: true,
+      data: {
+        taxonomies: [
+          {
+            name: 'Taxonomy 1',
+            taxonomyId: 123,
+            editable: true,
+            tags: [
+              {
+                value: 'Tag 1',
+                lineage: ['Tag 1'],
+              },
+              {
+                value: 'Tag 2',
+                lineage: ['Tag 2'],
+              },
+            ],
+          },
+          {
+            name: 'Taxonomy 2',
+            taxonomyId: 124,
+            editable: true,
+            tags: [
+              {
+                value: 'Tag 3',
+                lineage: ['Tag 3'],
+              },
+            ],
+          },
+        ],
+      },
     });
     useTaxonomyListDataResponse.mockReturnValue({
       results: [{
@@ -135,9 +140,7 @@ describe('<ContentTagsDrawer />', () => {
 
     // Find the CloseButton element by its test ID and trigger a click event
     const closeButton = getByTestId('drawer-close-button');
-    await act(async () => {
-      fireEvent.click(closeButton);
-    });
+    fireEvent.click(closeButton);
 
     expect(postMessageSpy).toHaveBeenCalledWith('closeManageTagsDrawer', '*');
 
@@ -149,10 +152,8 @@ describe('<ContentTagsDrawer />', () => {
 
     const { container } = render(<RootWrapper />);
 
-    act(() => {
-      fireEvent.keyDown(container, {
-        key: 'Escape',
-      });
+    fireEvent.keyDown(container, {
+      key: 'Escape',
     });
 
     expect(postMessageSpy).toHaveBeenCalledWith('closeManageTagsDrawer', '*');
@@ -170,10 +171,8 @@ describe('<ContentTagsDrawer />', () => {
     selectableBox.setAttribute('data-selectable-box', 'taxonomy-tags');
     document.body.appendChild(selectableBox);
 
-    act(() => {
-      fireEvent.keyDown(container, {
-        key: 'Escape',
-      });
+    fireEvent.keyDown(container, {
+      key: 'Escape',
     });
 
     expect(postMessageSpy).not.toHaveBeenCalled();

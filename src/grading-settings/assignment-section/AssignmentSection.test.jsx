@@ -62,10 +62,10 @@ describe('<AssignmentSection />', () => {
   it('checking correct assignment weight of total grade value', async () => {
     const { getByTestId } = render(<RootWrapper setGradingData={setGradingData} />);
     await waitFor(() => {
-      const assignmentShortLabelInput = getByTestId('assignment-weight-input');
-      expect(assignmentShortLabelInput.value).toBe('100');
-      fireEvent.change(assignmentShortLabelInput, { target: { value: '123' } });
-      expect(testObj.graders[0].weight).toBe('123');
+      const assignmentWeightInput = getByTestId('assignment-weight-input');
+      expect(assignmentWeightInput.value).toBe('100');
+      fireEvent.change(assignmentWeightInput, { target: { value: '123' } });
+      expect(testObj.graders[0].weight).toBe(123);
     });
   });
   it('checking correct assignment total number value', async () => {
@@ -74,7 +74,7 @@ describe('<AssignmentSection />', () => {
       const assignmentTotalNumberInput = getByTestId('assignment-minCount-input');
       expect(assignmentTotalNumberInput.value).toBe('1');
       fireEvent.change(assignmentTotalNumberInput, { target: { value: '123' } });
-      expect(testObj.graders[0].minCount).toBe('123');
+      expect(testObj.graders[0].minCount).toBe(123);
     });
   });
   it('checking correct assignment number of droppable value', async () => {
@@ -83,7 +83,7 @@ describe('<AssignmentSection />', () => {
       const assignmentNumberOfDroppableInput = getByTestId('assignment-dropCount-input');
       expect(assignmentNumberOfDroppableInput.value).toBe('1');
       fireEvent.change(assignmentNumberOfDroppableInput, { target: { value: '2' } });
-      expect(testObj.graders[0].dropCount).toBe('2');
+      expect(testObj.graders[0].dropCount).toBe(2);
     });
   });
   it('checking correct error msg if dropCount have negative number or empty string', async () => {
@@ -100,20 +100,20 @@ describe('<AssignmentSection />', () => {
   it('checking correct error msg if minCount have negative number or empty string', async () => {
     const { getByText, getByTestId } = render(<RootWrapper />);
     await waitFor(() => {
-      const assignmentNumberOfDroppableInput = getByTestId('assignment-minCount-input');
-      expect(assignmentNumberOfDroppableInput.value).toBe('1');
-      fireEvent.change(assignmentNumberOfDroppableInput, { target: { value: '-2' } });
+      const assignmentMinCountInput = getByTestId('assignment-minCount-input');
+      expect(assignmentMinCountInput.value).toBe('1');
+      fireEvent.change(assignmentMinCountInput, { target: { value: '-2' } });
       expect(getByText(messages.totalNumberErrorMessage.defaultMessage)).toBeInTheDocument();
-      fireEvent.change(assignmentNumberOfDroppableInput, { target: { value: '' } });
+      fireEvent.change(assignmentMinCountInput, { target: { value: '' } });
       expect(getByText(messages.totalNumberErrorMessage.defaultMessage)).toBeInTheDocument();
     });
   });
   it('checking correct error msg if total weight have negative number', async () => {
     const { getByText, getByTestId } = render(<RootWrapper />);
     await waitFor(() => {
-      const assignmentNumberOfDroppableInput = getByTestId('assignment-weight-input');
-      expect(assignmentNumberOfDroppableInput.value).toBe('100');
-      fireEvent.change(assignmentNumberOfDroppableInput, { target: { value: '-100' } });
+      const assignmentWeightInput = getByTestId('assignment-weight-input');
+      expect(assignmentWeightInput.value).toBe('100');
+      fireEvent.change(assignmentWeightInput, { target: { value: '-100' } });
       expect(getByText(messages.weightOfTotalGradeErrorMessage.defaultMessage)).toBeInTheDocument();
     });
   });
