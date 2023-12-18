@@ -70,12 +70,16 @@ export const useImportTags = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const { data } = await getAuthenticatedHttpClient().put(
-        getTagsImportApiUrl(taxonomyId),
-        formData,
-      );
+      try {
+        const { data } = await getAuthenticatedHttpClient().put(
+          getTagsImportApiUrl(taxonomyId),
+          formData,
+        );
 
-      return camelCaseObject(data);
+        return camelCaseObject(data);
+      } catch (/** @type {any} */ err) {
+        throw new Error(err.response?.data || err.message);
+      }
     },
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({

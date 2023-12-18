@@ -14,6 +14,7 @@ import {
 import {
   DeleteOutline,
   Download,
+  Error as ErrorIcon,
   InsertDriveFile,
   Warning,
 } from '@edx/paragon/icons';
@@ -243,7 +244,6 @@ const ImportTagsWizard = ({
           taxonomyId: taxonomy.id,
           file,
         });
-        close();
       }
       if (setToastMessage) {
         setToastMessage(intl.formatMessage(messages.importTaxonomyToast, { name: taxonomy.name }));
@@ -251,7 +251,7 @@ const ImportTagsWizard = ({
     } catch (/** @type {any} */ error) {
       const alertProps = {
         variant: 'danger',
-        icon: Error,
+        icon: ErrorIcon,
         title: intl.formatMessage(messages.importTaxonomyErrorAlert),
         description: error.message,
       };
@@ -259,6 +259,8 @@ const ImportTagsWizard = ({
       if (setAlertProps) {
         setAlertProps(alertProps);
       }
+    } finally {
+      close();
     }
   };
 
