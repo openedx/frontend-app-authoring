@@ -9,6 +9,8 @@ const slice = createSlice({
     loadingStatuses: {
       organizationLoadingStatus: RequestStatus.IN_PROGRESS,
       courseRerunLoadingStatus: RequestStatus.IN_PROGRESS,
+      userPermissionsLoadingStatus: RequestStatus.IN_PROGRESS,
+      userPermissionsEnabledLoadingStatus: RequestStatus.IN_PROGRESS,
     },
     savingStatus: '',
     organizations: [],
@@ -18,6 +20,8 @@ const slice = createSlice({
       redirectUrlObj: {},
       postErrors: {},
     },
+    userPermissions: [],
+    userPermissionsEnabled: false,
   },
   reducers: {
     fetchOrganizations: (state, { payload }) => {
@@ -41,6 +45,12 @@ const slice = createSlice({
     updatePostErrors: (state, { payload }) => {
       state.createOrRerunCourse.postErrors = payload;
     },
+    updateUserPermissions: (state, { payload }) => {
+      state.userPermissions = payload;
+    },
+    updateUserPermissionsEnabled: (state, { payload }) => {
+      state.userPermissionsEnabled = payload;
+    },
   },
 });
 
@@ -52,6 +62,8 @@ export const {
   updateSavingStatus,
   updateCourseData,
   updateRedirectUrlObj,
+  updateUserPermissions,
+  updateUserPermissionsEnabled,
 } = slice.actions;
 
 export const {

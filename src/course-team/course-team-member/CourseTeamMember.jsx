@@ -31,7 +31,7 @@ const CourseTeamMember = ({
     <div className="course-team-member" data-testid="course-team-member">
       <div className="member-info">
         <Badge className={`badge-current-user bg-${badgeColor} text-light-100`}>
-          {isAdminRole
+          {(isAdminRole)
             ? intl.formatMessage(messages.roleAdmin)
             : intl.formatMessage(messages.roleStaff)}
           {currentUserEmail === email && (
@@ -46,11 +46,13 @@ const CourseTeamMember = ({
         !isHideActions ? (
           <div className="member-actions">
             <Button
-              variant={isAdminRole ? 'tertiary' : 'primary'}
+              variant={(isAdminRole) ? 'tertiary' : 'primary'}
               size="sm"
               onClick={() => onChangeRole(email, isAdminRole ? USER_ROLES.staff : USER_ROLES.admin)}
             >
-              {isAdminRole ? intl.formatMessage(messages.removeButton) : intl.formatMessage(messages.addButton)}
+              {(isAdminRole)
+                ? intl.formatMessage(messages.removeButton)
+                : intl.formatMessage(messages.addButton)}
             </Button>
             <IconButtonWithTooltip
               src={DeleteOutline}
