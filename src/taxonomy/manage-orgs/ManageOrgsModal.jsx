@@ -16,7 +16,7 @@ import {
 import PropTypes from 'prop-types';
 
 import { useOrganizationListData } from '../../generic/data/apiHooks';
-import { useTaxonomyDetailDataResponse } from '../taxonomy-detail';
+import { useTaxonomyDetailDataResponse } from '../data/apiHooks';
 import { useManageOrgs } from './data/api';
 import messages from './messages';
 import './ManageOrgsModal.scss';

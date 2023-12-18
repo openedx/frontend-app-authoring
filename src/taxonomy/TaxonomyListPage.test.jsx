@@ -61,6 +61,10 @@ describe('<TaxonomyListPage />', async () => {
     store = initializeStore();
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should render page and page title correctly', () => {
     const { getByText } = render(<RootWrapper />);
     expect(getByText('Taxonomies')).toBeInTheDocument();

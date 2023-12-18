@@ -4,11 +4,15 @@
  * @typedef {Object} TaxonomyData
  * @property {number} id
  * @property {string} name
+ * @property {string} description
  * @property {boolean} enabled
- * @property {boolean} allow_multiple
- * @property {boolean} allow_free_text
- * @property {boolean} system_defined
- * @property {boolean} visible_to_authors
+ * @property {boolean} allowMultiple
+ * @property {boolean} allowFreeText
+ * @property {boolean} systemDefined
+ * @property {boolean} visibleToAuthors
+ * @property {string[]} orgs
+ * @property {boolean} allOrgs
+ * @property {number} tagsCount
  */
 
 /**
@@ -22,4 +26,3 @@
  * @property {function} refetch
  * @property {TaxonomyData[]} results
  */
-

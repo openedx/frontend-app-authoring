@@ -1,22 +1,17 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { render } from '@testing-library/react';
 
-import { useTaxonomyDetailData } from './data/api';
+import { useTaxonomyDetailDataResponse, useTaxonomyDetailDataStatus } from '../data/apiHooks';
 import initializeStore from '../../store';
 import TaxonomyDetailPage from './TaxonomyDetailPage';
-import { TaxonomyContext } from '../common/context';
 
 let store;
 const mockNavigate = jest.fn();
 const mockMutate = jest.fn();
-const mockSetToastMessage = jest.fn();
 
-jest.mock('./data/api', () => ({
-  useTaxonomyDetailData: jest.fn(),
-}));
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
   useParams: () => ({
@@ -25,31 +20,25 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 jest.mock('../data/apiHooks', () => ({
+  ...jest.requireActual('../data/apiHooks'),
   useDeleteTaxonomy: () => mockMutate,
+  useTaxonomyDetailDataResponse: jest.fn(),
+  useTaxonomyDetailDataStatus: jest.fn(),
 }));
 
 jest.mock('./TaxonomyDetailSideCard', () => jest.fn(() => <>Mock TaxonomyDetailSideCard</>));
 jest.mock('../tag-list/TagListTable', () => jest.fn(() => <>Mock TagListTable</>));
 
-const RootWrapper = () => {
-  const context = useMemo(() => ({
-    toastMessage: null,
-    setToastMessage: mockSetToastMessage,
-  }), []);
+const RootWrapper = () => (
+  <AppProvider store={store}>
+    <IntlProvider locale="en" messages={{}}>
+      <TaxonomyDetailPage />
+    </IntlProvider>
+  </AppProvider>
+);
 
-  return (
-    <AppProvider store={store}>
-      <IntlProvider locale="en" messages={{}}>
-        <TaxonomyContext.Provider value={context}>
-          <TaxonomyDetailPage />
-        </TaxonomyContext.Provider>
-      </IntlProvider>
-    </AppProvider>
-  );
-};
-
-describe('<TaxonomyDetailPage />', async () => {
-  beforeEach(async () => {
+describe('<TaxonomyDetailPage />', () => {
+  beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
@@ -61,8 +50,8 @@ describe('<TaxonomyDetailPage />', async () => {
     store = initializeStore();
   });
 
-  it('shows the spinner before the query is complete', async () => {
-    useTaxonomyDetailData.mockReturnValue({
+  it('shows the spinner before the query is complete', () => {
+    useTaxonomyDetailDataStatus.mockReturnValue({
       isFetched: false,
     });
     const { getByRole } = render(<RootWrapper />);
@@ -71,25 +60,26 @@ describe('<TaxonomyDetailPage />', async () => {
   });
 
   it('shows the connector error component if got some error', async () => {
-    useTaxonomyDetailData.mockReturnValue({
+    useTaxonomyDetailDataStatus.mockReturnValue({
       isFetched: true,
       isError: true,
     });
     const { getByTestId } = render(<RootWrapper />);
+
     expect(getByTestId('connectionErrorAlert')).toBeInTheDocument();
   });
 
-  it('should render page and page title correctly', async () => {
-    useTaxonomyDetailData.mockReturnValue({
+  it('should render page and page title correctly', () => {
+    useTaxonomyDetailDataStatus.mockReturnValue({
       isSuccess: true,
       isFetched: true,
       isError: false,
-      data: {
-        id: 1,
-        name: 'Test taxonomy',
-        description: 'This is a description',
-        systemDefined: true,
-      },
+    });
+    useTaxonomyDetailDataResponse.mockReturnValue({
+      id: 1,
+      name: 'Test taxonomy',
+      description: 'This is a description',
+      systemDefined: true,
     });
     const { getByRole } = render(<RootWrapper />);
     expect(getByRole('heading')).toHaveTextContent('Test taxonomy');
