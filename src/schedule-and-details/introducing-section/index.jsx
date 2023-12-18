@@ -33,6 +33,7 @@ const IntroducingSection = ({
   enableExtendedCourseDetails,
   videoThumbnailImageAssetPath,
   onChange,
+  isEditable,
 }) => {
   const overviewHelpText = (
     <FormattedMessage
@@ -72,7 +73,7 @@ const IntroducingSection = ({
 
   return (
     <section className="section-container introducing-section">
-      {aboutPageEditable && (
+      {aboutPageEditable && isEditable && (
         <SectionSubHeader
           title={intl.formatMessage(messages.introducingTitle)}
           description={intl.formatMessage(messages.introducingDescription)}
@@ -87,7 +88,7 @@ const IntroducingSection = ({
           onChange={onChange}
         />
       )}
-      {shortDescriptionEditable && (
+      {shortDescriptionEditable && isEditable && (
         <Form.Group className="form-group-custom">
           <Form.Label>
             {intl.formatMessage(messages.courseShortDescriptionLabel)}
@@ -107,7 +108,7 @@ const IntroducingSection = ({
           </Form.Control.Feedback>
         </Form.Group>
       )}
-      {aboutPageEditable && (
+      {aboutPageEditable && isEditable && (
         <>
           <Form.Group className="form-group-custom">
             <Form.Label>{intl.formatMessage(messages.courseOverviewLabel)}</Form.Label>
@@ -160,7 +161,7 @@ const IntroducingSection = ({
           />
         </>
       )}
-      {aboutPageEditable && (
+      {aboutPageEditable && isEditable && (
         <IntroductionVideo introVideo={introVideo} onChange={onChange} />
       )}
     </section>
@@ -179,6 +180,7 @@ IntroducingSection.defaultProps = {
   bannerImageAssetPath: '',
   videoThumbnailImageAssetPath: '',
   overview: '',
+  isEditable: true,
 };
 
 IntroducingSection.propTypes = {
@@ -200,6 +202,7 @@ IntroducingSection.propTypes = {
   enableExtendedCourseDetails: PropTypes.bool.isRequired,
   videoThumbnailImageAssetPath: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  isEditable: PropTypes.bool,
 };
 
 export default injectIntl(IntroducingSection);
