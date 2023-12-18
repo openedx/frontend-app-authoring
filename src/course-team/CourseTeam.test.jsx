@@ -14,6 +14,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import initializeStore from '../store';
 import { courseTeamMock, courseTeamWithOneUser, courseTeamWithoutUsers } from './__mocks__';
 import { getCourseTeamApiUrl, updateCourseTeamUserApiUrl } from './data/api';
+import { getUserPermissionsUrl, getUserPermissionsEnabledFlagUrl } from '../generic/data/api';
 import CourseTeam from './CourseTeam';
 import messages from './messages';
 import { USER_ROLES } from '../constants';
@@ -24,6 +25,8 @@ let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
+const userId = 3;
+const userPermissionsData = { permissions: ['manage_all_users'] };
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -44,7 +47,7 @@ describe('<CourseTeam />', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
-        userId: 3,
+        userId,
         username: 'abc123',
         administrator: true,
         roles: [],
@@ -53,6 +56,12 @@ describe('<CourseTeam />', () => {
 
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: true });
+    axiosMock
+      .onGet(getUserPermissionsUrl(courseId, userId))
+      .reply(200, userPermissionsData);
   });
 
   it('render CourseTeam component with 3 team members correctly', async () => {
@@ -165,13 +174,13 @@ describe('<CourseTeam />', () => {
 
     await waitFor(() => {
       expect(queryByTestId('add-user-form')).not.toBeInTheDocument();
-      const addButton = getByRole('button', { name: 'Add a new team member' });
+      const addButton = getByRole('button', { name: messages.addNewMemberButton.defaultMessage });
       fireEvent.click(addButton);
       expect(queryByTestId('add-user-form')).toBeInTheDocument();
     });
   });
 
-  it('not displays "Add New Member" and AddTeamMember component when isAllowActions is false', async () => {
+  it('not displays "Add New Member" and AddTeamMember component when isAllowActions or hasManageAllUsersPerm is false', async () => {
     cleanup();
     axiosMock
       .onGet(getCourseTeamApiUrl(courseId))
@@ -179,6 +188,9 @@ describe('<CourseTeam />', () => {
         ...courseTeamWithOneUser,
         allowActions: false,
       });
+    axiosMock
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: false });
 
     const { queryByRole, queryByTestId } = render(<RootWrapper />);
 
