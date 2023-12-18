@@ -95,7 +95,6 @@ const UploadStep = ({
         <div>
           {!file ? (
             <Dropzone
-              style={{ height: '200px' }}
               maxSize={100 * 1024 * 1024 /* 100MB */}
               accept={{
                 'text/csv': ['.csv'],
@@ -103,13 +102,17 @@ const UploadStep = ({
               }}
               onProcessUpload={handleFileLoad}
               data-testid="dropzone"
+              /*
+                  className is working on Dropzone
+                  className="h-200px"
+              */
+              style={{ height: '200px' }}
             />
           ) : (
             <Stack
               gap={3}
               direction="horizontal"
-              className="border-top p-4 align-items-start flex-wrap"
-              style={{ height: '200px' }}
+              className="h-200px border-top p-4 align-items-start flex-wrap"
               data-testid="file-info"
             >
               <Icon src={InsertDriveFile} style={{ height: '48px', width: '48px' }} />
@@ -157,7 +160,7 @@ const PlanStep = ({ importPlan }) => {
     <Stepper.Step eventKey="plan">
       <Stack gap={3} data-testid="plan-step">
         {intl.formatMessage(messages.importWizardStepPlanBody, { br: linebreak, changeCount: importPlan?.length })}
-        <ul style={{ height: '200px', overflow: 'scroll' }}>
+        <ul className="h-200px" style={{ overflow: 'scroll' }}>
           {importPlan?.length ? (
             importPlan.map((line) => <li key={line} data-testid="plan-action">{line}</li>)
           ) : (
