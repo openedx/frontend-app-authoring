@@ -1,3 +1,4 @@
+// @ts-check
 import React from 'react';
 import {
   Badge,
@@ -6,10 +7,12 @@ import {
   Button,
   ModalPopup,
   useToggle,
+  SearchField,
 } from '@edx/paragon';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { debounce } from 'lodash';
 import messages from './messages';
 import './ContentTagsCollapsible.scss';
 
@@ -18,6 +21,9 @@ import ContentTagsDropDownSelector from './ContentTagsDropDownSelector';
 import ContentTagsTree from './ContentTagsTree';
 
 import useContentTagsCollapsibleHelper from './ContentTagsCollapsibleHelper';
+
+/** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
+/** @typedef {import("./data/types.mjs").Tag} ContentTagData */
 
 /**
  * Collapsible component that holds a Taxonomy along with Tags that belong to it.
@@ -89,22 +95,11 @@ import useContentTagsCollapsibleHelper from './ContentTagsCollapsibleHelper';
  * Here is an example of what the value of the "Virology" tag would be:
  *
  *  "Science%20and%20Research,Molecular%2C%20Cellular%2C%20and%20Microbiology,Virology"
- * @param {string} contentId - Id of the content object
- * @param {Object} taxonomyAndTagsData - Object containing Taxonomy meta data along with applied tags
- * @param {number} taxonomyAndTagsData.id - id of Taxonomy
- * @param {string} taxonomyAndTagsData.name - name of Taxonomy
- * @param {string} taxonomyAndTagsData.description - description of Taxonomy
- * @param {boolean} taxonomyAndTagsData.enabled - Whether Taxonomy is enabled/disabled
- * @param {boolean} taxonomyAndTagsData.allowMultiple - Whether Taxonomy allows multiple tags to be applied
- * @param {boolean} taxonomyAndTagsData.allowFreeText - Whether Taxonomy allows free text tags
- * @param {boolean} taxonomyAndTagsData.systemDefined - Whether Taxonomy is system defined or authored by user
- * @param {boolean} taxonomyAndTagsData.visibleToAuthors - Whether Taxonomy should be visible to object authors
- * @param {string[]} taxonomyAndTagsData.orgs - Array of orgs this Taxonomy belongs to
- * @param {boolean} taxonomyAndTagsData.allOrgs - Whether Taxonomy belongs to all orgs
- * @param {Object[]} taxonomyAndTagsData.contentTags - Array of taxonomy tags that are applied to the content
- * @param {string} taxonomyAndTagsData.contentTags.value - Value of applied Tag
- * @param {string} taxonomyAndTagsData.contentTags.lineage - Array of Tag's ancestors sorted (ancestor -> tag)
- * @param {boolean} editable - Whether the tags can be edited
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.contentId - Id of the content object
+ * @param {TaxonomyData & {contentTags: ContentTagData[]}} props.taxonomyAndTagsData - Taxonomy metadata & applied tags
+ * @param {boolean} props.editable - Whether the tags can be edited
  */
 const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData, editable }) => {
   const intl = useIntl();
@@ -117,9 +112,30 @@ const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData, editable }) =>
   const [isOpen, open, close] = useToggle(false);
   const [addTagsButtonRef, setAddTagsButtonRef] = React.useState(null);
 
+  const [searchTerm, setSearchTerm] = React.useState('');
+
   const handleSelectableBoxChange = React.useCallback((e) => {
     tagChangeHandler(e.target.value, e.target.checked);
-  });
+  }, []);
+
+  const handleSearch = debounce((term) => {
+    setSearchTerm(term.trim());
+  }, 500); // Perform search after 500ms
+
+  const handleSearchChange = React.useCallback((value) => {
+    if (value === '') {
+      // No need to debounce when search term cleared
+      setSearchTerm('');
+    } else {
+      handleSearch(value);
+    }
+  }, []);
+
+  const modalPopupOnCloseHandler = React.useCallback((event) => {
+    close(event);
+    // Clear search term
+    setSearchTerm('');
+  }, []);
 
   return (
     <div className="d-flex">
@@ -145,7 +161,7 @@ const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData, editable }) =>
           placement="bottom"
           positionRef={addTagsButtonRef}
           isOpen={isOpen}
-          onClose={close}
+          onClose={modalPopupOnCloseHandler}
         >
           <div className="bg-white p-3 shadow">
 
@@ -158,11 +174,18 @@ const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData, editable }) =>
               onChange={handleSelectableBoxChange}
               value={checkedTags}
             >
+              <SearchField
+                onSubmit={() => {}}
+                onChange={handleSearchChange}
+                className="mb-2"
+              />
+
               <ContentTagsDropDownSelector
                 key={`selector-${id}`}
                 taxonomyId={id}
                 level={0}
                 tagsTree={tagsTree}
+                searchTerm={searchTerm}
               />
             </SelectableBox.Set>
           </div>
