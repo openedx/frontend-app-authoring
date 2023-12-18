@@ -128,12 +128,3 @@ export const generateNewAssetApiResponse = () => ({
     fileSize: 1234,
   },
 });
-
-export const getStatusValue = (status) => {
-  switch (status) {
-  case RequestStatus.DENIED:
-    return 403;
-  default:
-    return 200;
-  }
-};
