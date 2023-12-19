@@ -3,12 +3,12 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import PropTypes from 'prop-types';
 
 import { TaxonomyContext } from '../common/context';
 import initializeStore from '../../store';
-import { getTaxonomyExportFile } from '../data/api';
+import { getTaxonomy, getTaxonomyExportFile } from '../data/api';
 import { importTaxonomyTags } from '../import-tags';
 import { TaxonomyMenu } from '.';
 
@@ -24,6 +24,7 @@ jest.mock('../data/api', () => ({
   ...jest.requireActual('../data/api'),
   getTaxonomyExportFile: jest.fn(),
   deleteTaxonomy: jest.fn(),
+  getTaxonomy: jest.fn(),
 }));
 
 const mockDeleteTaxonomy = jest.fn();
@@ -136,6 +137,7 @@ describe('<TaxonomyMenu />', async () => {
 
       // Check that the import menu is not show
       expect(() => getByTestId('taxonomy-menu-import')).toThrow();
+      expect(() => getByTestId('taxonomy-menu-manageOrgs')).toThrow();
     });
 
     test('doesnt show freeText taxonomies disabled menus', () => {
@@ -253,6 +255,33 @@ describe('<TaxonomyMenu />', async () => {
 
       // Toast message shown
       expect(mockSetToastMessage).toBeCalledWith(`"${taxonomyName}" deleted`);
+    });
+
+    it('should open manage orgs dialog menu click', async () => {
+      const { getByTestId, getByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+      // We need to provide a taxonomy or the modal will not open
+      getTaxonomy.mockResolvedValue({
+        id: 1,
+        name: 'Taxonomy 1',
+        orgs: [],
+        allOrgs: true,
+      });
+
+      // Modal closed
+      expect(() => getByText('Assign to organizations')).toThrow();
+
+      // Click on delete menu
+      fireEvent.click(getByTestId('taxonomy-menu-button'));
+      fireEvent.click(getByTestId('taxonomy-menu-manageOrgs'));
+
+      // Modal opened
+      await waitFor(() => expect(getByText('Assign to organizations')).toBeInTheDocument());
+
+      // Click on cancel button
+      fireEvent.click(getByText('Cancel'));
+
+      // Modal closed
+      expect(() => getByText('Assign to organizations')).toThrow();
     });
   });
 });
