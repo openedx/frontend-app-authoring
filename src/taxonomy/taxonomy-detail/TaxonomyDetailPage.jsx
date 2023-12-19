@@ -21,6 +21,7 @@ import { useTaxonomyDetailDataResponse, useTaxonomyDetailDataStatus } from './da
 import DeleteDialog from '../delete-dialog';
 import { useDeleteTaxonomy } from '../data/apiHooks';
 import { TaxonomyContext } from '../common/context';
+import SystemDefinedBadge from '../system-defined-badge';
 
 const TaxonomyDetailPage = () => {
   const intl = useIntl();
@@ -104,6 +105,13 @@ const TaxonomyDetailPage = () => {
     );
   };
 
+  const getSystemDefinedBadge = () => {
+    if (taxonomy.systemDefined) {
+      return <SystemDefinedBadge taxonomyId={taxonomyId} />;
+    }
+    return null;
+  };
+
   return (
     <>
       <Helmet>
@@ -120,6 +128,7 @@ const TaxonomyDetailPage = () => {
           />
           <SubHeader
             title={taxonomy.name}
+            titleActions={getSystemDefinedBadge()}
             hideBorder
             headerActions={getHeaderActions()}
           />

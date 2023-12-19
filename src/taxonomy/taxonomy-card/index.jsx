@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  Badge,
   Card,
   OverlayTrigger,
   Popover,
 } from '@edx/paragon';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import TaxonomyCardMenu from './TaxonomyCardMenu';
 import ExportModal from '../export-modal';
 import DeleteDialog from '../delete-dialog';
+import SystemDefinedBadge from '../system-defined-badge';
 
 const orgsCountEnabled = (orgsCount) => orgsCount !== undefined && orgsCount !== 0;
 
@@ -20,30 +20,10 @@ const HeaderSubtitle = ({
   id, showSystemBadge, orgsCount,
 }) => {
   const intl = useIntl();
-  const getSystemToolTip = () => (
-    <Popover id={`system-defined-tooltip-${id}`}>
-      <Popover.Title as="h5">
-        {intl.formatMessage(messages.systemTaxonomyPopoverTitle)}
-      </Popover.Title>
-      <Popover.Content>
-        {intl.formatMessage(messages.systemTaxonomyPopoverBody)}
-      </Popover.Content>
-    </Popover>
-  );
 
   // Show system defined badge
   if (showSystemBadge) {
-    return (
-      <OverlayTrigger
-        key={`system-defined-overlay-${id}`}
-        placement="top"
-        overlay={getSystemToolTip()}
-      >
-        <Badge variant="light">
-          {intl.formatMessage(messages.systemDefinedBadge)}
-        </Badge>
-      </OverlayTrigger>
-    );
+    return <SystemDefinedBadge taxonomyId={id} />;
   }
 
   // Or show orgs count
@@ -59,10 +39,55 @@ const HeaderSubtitle = ({
   return null;
 };
 
+HeaderSubtitle.defaultProps = {
+  orgsCount: undefined,
+};
+
 HeaderSubtitle.propTypes = {
   id: PropTypes.number.isRequired,
   showSystemBadge: PropTypes.bool.isRequired,
-  orgsCount: PropTypes.number.isRequired,
+  orgsCount: PropTypes.number,
+};
+
+const HeaderTitle = ({ taxonomyId, title }) => {
+  const containerRef = useRef(null);
+  const textRef = useRef(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+
+  useEffect(() => {
+    const containerWidth = containerRef.current.clientWidth;
+    const textWidth = textRef.current.offsetWidth;
+    setIsTruncated(textWidth > containerWidth);
+  }, [title]);
+
+  const getToolTip = () => (
+    <Popover
+      id={`taxonomy-card-title-tooltip-${taxonomyId}`}
+      className="mw-300px"
+    >
+      <Popover.Content>
+        {title}
+      </Popover.Content>
+    </Popover>
+  );
+
+  return (
+    <OverlayTrigger
+      key={`taxonomy-card-title-overlay-${taxonomyId}`}
+      placement="top"
+      overlay={getToolTip()}
+      show={!isTruncated ? false : undefined}
+    >
+      <div ref={containerRef} className="text-truncate">
+        <span ref={textRef}>{title}</span>
+      </div>
+    </OverlayTrigger>
+  );
+};
+
+HeaderTitle.propTypes = {
+  taxonomyId: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 const TaxonomyCard = ({ className, original, onDeleteTaxonomy }) => {
@@ -135,13 +160,13 @@ const TaxonomyCard = ({ className, original, onDeleteTaxonomy }) => {
     <>
       <Card
         isClickable
-        as={Link}
-        to={`/taxonomy/${id}`}
+        as={NavLink}
+        to={`/taxonomy/${id}/`}
         className={classNames('taxonomy-card', className)}
         data-testid={`taxonomy-card-${id}`}
       >
         <Card.Header
-          title={name}
+          title={<HeaderTitle taxonomyId={id} title={name} />}
           subtitle={(
             <HeaderSubtitle
               id={id}

@@ -114,17 +114,22 @@ const TaxonomyListPage = () => {
             <DataTable
               disableElevation
               data={taxonomyListData.results}
+              itemCount={taxonomyListData.results.length}
               columns={[
                 {
+                  Header: 'id',
                   accessor: 'id',
                 },
                 {
+                  Header: 'name',
                   accessor: 'name',
                 },
                 {
+                  Header: 'description',
                   accessor: 'description',
                 },
                 {
+                  Header: 'systemDefined',
                   accessor: 'systemDefined',
                 },
                 {

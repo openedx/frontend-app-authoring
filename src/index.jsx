@@ -7,7 +7,9 @@ import {
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import {
+  Navigate, Route, createRoutesFromElements, createBrowserRouter, RouterProvider,
+} from 'react-router-dom';
 import {
   QueryClient,
   QueryClientProvider,
@@ -45,31 +47,37 @@ const App = () => {
     }
   }, []);
 
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route>
+        <Route path="/home" element={<StudioHome />} />
+        <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
+        <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
+        {process.env.ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
+          <>
+            {/* TODO: remove this redirect once Studio's link is updated */}
+            <Route path="/taxonomy-list" element={<Navigate to="/taxonomies" />} />
+            <Route path="/taxonomies" element={<TaxonomyLayout />}>
+              <Route index element={<TaxonomyListPage />} />
+            </Route>
+            <Route path="/taxonomy" element={<TaxonomyLayout />}>
+              <Route path="/taxonomy/:taxonomyId" element={<TaxonomyDetailPage />} />
+            </Route>
+            <Route
+              path="/tagging/components/widget/:contentId"
+              element={<ContentTagsDrawer />}
+            />
+          </>
+        )}
+      </Route>,
+    ),
+  );
+
   return (
-    <AppProvider store={initializeStore()}>
+    <AppProvider store={initializeStore()} wrapWithRouter={false}>
       <QueryClientProvider client={queryClient}>
         <Head />
-        <Routes>
-          <Route path="/home" element={<StudioHome />} />
-          <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
-          <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
-          {process.env.ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
-            <>
-              {/* TODO: remove this redirect once Studio's link is updated */}
-              <Route path="/taxonomy-list" element={<Navigate to="/taxonomies" />} />
-              <Route path="/taxonomies" element={<TaxonomyLayout />}>
-                <Route index element={<TaxonomyListPage />} />
-              </Route>
-              <Route path="/taxonomy" element={<TaxonomyLayout />}>
-                <Route path="/taxonomy/:taxonomyId" element={<TaxonomyDetailPage />} />
-              </Route>
-              <Route
-                path="/tagging/components/widget/:contentId"
-                element={<ContentTagsDrawer />}
-              />
-            </>
-          )}
-        </Routes>
+        <RouterProvider router={router} />
       </QueryClientProvider>
     </AppProvider>
   );
