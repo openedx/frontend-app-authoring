@@ -39,7 +39,6 @@ import {
   updateFetchSectionLoadingStatus,
   deleteSection,
   deleteSubsection,
-  deleteUnit,
   duplicateSection,
   reorderSectionList,
 } from './slice';
@@ -261,15 +260,6 @@ export function deleteCourseSubsectionQuery(subsectionId, sectionId) {
     dispatch(deleteCourseItemQuery(
       subsectionId,
       () => deleteSubsection({ itemId: subsectionId, sectionId }),
-    ));
-  };
-}
-
-export function deleteCourseUnitQuery(unitId, subsectionId, sectionId) {
-  return async (dispatch) => {
-    dispatch(deleteCourseItemQuery(
-      unitId,
-      () => deleteUnit({ itemId: unitId, subsectionId, sectionId }),
     ));
   };
 }

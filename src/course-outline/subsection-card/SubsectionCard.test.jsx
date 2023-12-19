@@ -36,6 +36,8 @@ const subsection = {
   hasChanges: false,
 };
 
+const onEditSubectionSubmit = jest.fn();
+
 const renderComponent = (props) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
@@ -47,7 +49,7 @@ const renderComponent = (props) => render(
         onOpenDeleteModal={jest.fn()}
         onEditClick={jest.fn()}
         savingStatus=""
-        onEditSubmit={jest.fn()}
+        onEditSubmit={onEditSubectionSubmit}
         onDuplicateSubmit={jest.fn()}
         namePrefix="subsection"
         {...props}
@@ -90,5 +92,34 @@ describe('<SubsectionCard />', () => {
     fireEvent.click(expandButton);
     expect(queryByTestId('subsection-card__units')).not.toBeInTheDocument();
     expect(queryByTestId('new-unit-button')).not.toBeInTheDocument();
+  });
+
+  it('updates current section, subsection and item', async () => {
+    const { findByTestId } = renderComponent();
+
+    const menu = await findByTestId('subsection-card-header__menu');
+    fireEvent.click(menu);
+    const { currentSection, currentSubsection, currentItem } = store.getState().courseOutline;
+    expect(currentSection).toEqual(section);
+    expect(currentSubsection).toEqual(subsection);
+    expect(currentItem).toEqual(subsection);
+  });
+
+  it('title only updates if changed', async () => {
+    const { findByTestId } = renderComponent();
+
+    let editButton = await findByTestId('subsection-edit-button');
+    fireEvent.click(editButton);
+    let editField = await findByTestId('subsection-edit-field');
+    fireEvent.blur(editField);
+
+    expect(onEditSubectionSubmit).not.toHaveBeenCalled();
+
+    editButton = await findByTestId('subsection-edit-button');
+    fireEvent.click(editButton);
+    editField = await findByTestId('subsection-edit-field');
+    fireEvent.change(editField, { target: { value: 'some random value' } });
+    fireEvent.keyDown(editField, { key: 'Enter', keyCode: 13 });
+    expect(onEditSubectionSubmit).toHaveBeenCalled();
   });
 });

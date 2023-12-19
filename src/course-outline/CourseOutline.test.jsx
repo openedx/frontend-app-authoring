@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  render, waitFor, cleanup, fireEvent, within,
+  act, render, waitFor, cleanup, fireEvent, within,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -19,20 +19,10 @@ import {
   getXBlockBaseApiUrl,
 } from './data/api';
 import {
-  addNewSectionQuery,
-  addNewSubsectionQuery,
-  deleteCourseSectionQuery,
-  deleteCourseSubsectionQuery,
-  duplicateSectionQuery,
-  duplicateSubsectionQuery,
-  editCourseItemQuery,
-  enableCourseHighlightsEmailsQuery,
+  configureCourseSectionQuery,
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery,
-  fetchCourseReindexQuery,
-  fetchCourseSectionQuery,
-  publishCourseItemQuery,
   updateCourseSectionHighlightsQuery,
   setSectionOrderListQuery,
 } from './data/thunk';
@@ -50,6 +40,7 @@ import CourseOutline from './CourseOutline';
 import messages from './messages';
 import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
+import enableHighlightsModalMessages from './enable-highlights-modal/messages';
 
 let axiosMock;
 let store;
@@ -111,24 +102,39 @@ describe('<CourseOutline />', () => {
   });
 
   it('check reindex and render success alert is correctly', async () => {
-    const { getByText } = render(<RootWrapper />);
+    const { findByText, findByTestId } = render(<RootWrapper />);
 
     axiosMock
       .onGet(getCourseReindexApiUrl(courseOutlineIndexMock.reindexLink))
       .reply(200);
-    await executeThunk(fetchCourseReindexQuery(courseId, courseOutlineIndexMock.reindexLink), store.dispatch);
+    const reindexButton = await findByTestId('course-reindex');
+    fireEvent.click(reindexButton);
 
-    expect(getByText(messages.alertSuccessDescription.defaultMessage)).toBeInTheDocument();
+    expect(await findByText(messages.alertSuccessDescription.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('render error alert after failed reindex correctly', async () => {
+    const { findByText, findByTestId } = render(<RootWrapper />);
+
+    axiosMock
+      .onGet(getCourseReindexApiUrl(courseOutlineIndexMock.reindexLink))
+      .reply(500);
+    const reindexButton = await findByTestId('course-reindex');
+    await act(async () => {
+      fireEvent.click(reindexButton);
+    });
+
+    expect(await findByText(messages.alertErrorTitle.defaultMessage)).toBeInTheDocument();
   });
 
   it('adds new section correctly', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
-    let element = await findAllByTestId('section-card');
+    const { findAllByTestId, findByTestId } = render(<RootWrapper />);
+    let elements = await findAllByTestId('section-card');
     window.HTMLElement.prototype.getBoundingClientRect = jest.fn(() => ({
       top: 0,
       bottom: 4000,
     }));
-    expect(element.length).toBe(4);
+    expect(elements.length).toBe(4);
 
     axiosMock
       .onPost(getXBlockBaseApiUrl())
@@ -138,16 +144,18 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getXBlockApiUrl(courseSectionMock.id))
       .reply(200, courseSectionMock);
-    await executeThunk(addNewSectionQuery(courseId), store.dispatch);
+    const newSectionButton = await findByTestId('new-section-button');
+    await act(async () => {
+      fireEvent.click(newSectionButton);
+    });
 
-    element = await findAllByTestId('section-card');
-    expect(element.length).toBe(5);
+    elements = await findAllByTestId('section-card');
+    expect(elements.length).toBe(5);
     expect(window.HTMLElement.prototype.scrollIntoView).toBeCalled();
   });
 
   it('adds new subsection correctly', async () => {
     const { findAllByTestId } = render(<RootWrapper />);
-    const sectionId = courseOutlineIndexMock.courseStructure.childInfo.children[0].id;
     const [section] = await findAllByTestId('section-card');
     let subsections = await within(section).findAllByTestId('subsection-card');
     expect(subsections.length).toBe(1);
@@ -164,22 +172,14 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getXBlockApiUrl(courseSubsectionMock.id))
       .reply(200, courseSubsectionMock);
-    await executeThunk(addNewSubsectionQuery(sectionId), store.dispatch);
+    const newSubsectionButton = await within(section).findByTestId('new-subsection-button');
+    await act(async () => {
+      fireEvent.click(newSubsectionButton);
+    });
 
     subsections = await within(section).findAllByTestId('subsection-card');
     expect(subsections.length).toBe(2);
     expect(window.HTMLElement.prototype.scrollIntoView).toBeCalled();
-  });
-
-  it('render error alert after failed reindex correctly', async () => {
-    const { getByText } = render(<RootWrapper />);
-
-    axiosMock
-      .onGet(getCourseReindexApiUrl('some link'))
-      .reply(500);
-    await executeThunk(fetchCourseReindexQuery(courseId, 'some link'), store.dispatch);
-
-    expect(getByText(messages.alertErrorTitle.defaultMessage)).toBeInTheDocument();
   });
 
   it('render checklist value correctly', async () => {
@@ -208,15 +208,9 @@ describe('<CourseOutline />', () => {
   });
 
   it('check highlights are enabled after enable highlights query is successful', async () => {
-    const { findByTestId } = render(<RootWrapper />);
+    const { findByTestId, findByText } = render(<RootWrapper />);
 
-    axiosMock
-      .onGet(getCourseOutlineIndexApiUrl(courseId))
-      .reply(200, {
-        ...courseOutlineIndexMock,
-        highlightsEnabledForMessaging: false,
-      });
-
+    axiosMock.reset();
     axiosMock
       .onPost(getEnableHighlightsEmailsApiUrl(courseId), {
         publish: 'republish',
@@ -225,8 +219,22 @@ describe('<CourseOutline />', () => {
         },
       })
       .reply(200);
+    axiosMock
+      .onGet(getCourseOutlineIndexApiUrl(courseId))
+      .reply(200, {
+        ...courseOutlineIndexMock,
+        courseStructure: {
+          ...courseOutlineIndexMock.courseStructure,
+          highlightsEnabledForMessaging: true,
+        },
+      });
 
-    await executeThunk(enableCourseHighlightsEmailsQuery(courseId), store.dispatch);
+    const enableButton = await findByTestId('highlights-enable-button');
+    fireEvent.click(enableButton);
+    const saveButton = await findByText(enableHighlightsModalMessages.submitButton.defaultMessage);
+    await act(async () => {
+      fireEvent.click(saveButton);
+    });
     expect(await findByTestId('highlights-enabled-span')).toBeInTheDocument();
   });
 
@@ -264,10 +272,10 @@ describe('<CourseOutline />', () => {
   });
 
   it('check edit section when edit query is successfully', async () => {
-    const { getByText } = render(<RootWrapper />);
+    const { findAllByTestId, findByText } = render(<RootWrapper />);
     const newDisplayName = 'New section name';
 
-    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
 
     axiosMock
       .onPost(getCourseItemApiUrl(section.id, {
@@ -275,45 +283,70 @@ describe('<CourseOutline />', () => {
           display_name: newDisplayName,
         },
       }))
-      .reply(200);
-
-    await executeThunk(editCourseItemQuery(section.id, section.id, newDisplayName), store.dispatch);
-
+      .reply(200, { dummy: 'value' });
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
-      .reply(200);
-    await executeThunk(fetchCourseSectionQuery(section.id), store.dispatch);
+      .reply(200, {
+        ...section,
+        display_name: newDisplayName,
+      });
 
-    await waitFor(() => {
-      expect(getByText(section.displayName)).toBeInTheDocument();
+    const [sectionElement] = await findAllByTestId('section-card');
+    const editButton = await within(sectionElement).findByTestId('section-edit-button');
+    fireEvent.click(editButton);
+    const editField = await within(sectionElement).findByTestId('section-edit-field');
+    fireEvent.change(editField, { target: { value: newDisplayName } });
+    await act(async () => {
+      fireEvent.blur(editField);
     });
+
+    expect(await findByText(newDisplayName)).toBeInTheDocument();
   });
 
-  it('check whether section is deleted when delete query is successfully', async () => {
-    const { queryByText } = render(<RootWrapper />);
-    const section = courseOutlineIndexMock.courseStructure.childInfo.children[1];
+  it('check whether section is deleted when delete button is clicked', async () => {
+    const { findAllByTestId, findByTestId, queryByText } = render(<RootWrapper />);
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     await waitFor(() => {
       expect(queryByText(section.displayName)).toBeInTheDocument();
     });
 
     axiosMock.onDelete(getCourseItemApiUrl(section.id)).reply(200);
-    await executeThunk(deleteCourseSectionQuery(section.id), store.dispatch);
+
+    const [sectionElement] = await findAllByTestId('section-card');
+    const menu = await within(sectionElement).findByTestId('section-card-header__menu-button');
+    fireEvent.click(menu);
+    const deleteButton = await within(sectionElement).findByTestId('section-card-header__menu-delete-button');
+    fireEvent.click(deleteButton);
+    const confirmButton = await findByTestId('delete-confirm-button');
+    await act(async () => {
+      fireEvent.click(confirmButton);
+    });
 
     await waitFor(() => {
       expect(queryByText(section.displayName)).not.toBeInTheDocument();
     });
   });
 
-  it('check whether subsection is deleted when delete query is successfully', async () => {
-    const { queryByText } = render(<RootWrapper />);
-    const section = courseOutlineIndexMock.courseStructure.childInfo.children[1];
+  it('check whether subsection is deleted when delete button is clicked', async () => {
+    const { findAllByTestId, findByTestId, queryByText } = render(<RootWrapper />);
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [subsection] = section.childInfo.children;
     await waitFor(() => {
       expect(queryByText(subsection.displayName)).toBeInTheDocument();
     });
 
     axiosMock.onDelete(getCourseItemApiUrl(subsection.id)).reply(200);
-    await executeThunk(deleteCourseSubsectionQuery(subsection.id, section.id), store.dispatch);
+
+    const [sectionElement] = await findAllByTestId('section-card');
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const menu = await within(subsectionElement).findByTestId('subsection-card-header__menu-button');
+    fireEvent.click(menu);
+    const deleteButton = await within(subsectionElement).findByTestId('subsection-card-header__menu-delete-button');
+    fireEvent.click(deleteButton);
+    const confirmButton = await findByTestId('delete-confirm-button');
+    await act(async () => {
+      fireEvent.click(confirmButton);
+    });
 
     await waitFor(() => {
       expect(queryByText(subsection.displayName)).not.toBeInTheDocument();
@@ -322,9 +355,7 @@ describe('<CourseOutline />', () => {
 
   it('check whether section is duplicated successfully', async () => {
     const { findAllByTestId } = render(<RootWrapper />);
-    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
-    const sectionId = section.id;
-    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     expect(await findAllByTestId('section-card')).toHaveLength(4);
 
     axiosMock
@@ -338,8 +369,14 @@ describe('<CourseOutline />', () => {
       .reply(200, {
         ...section,
       });
-    await executeThunk(duplicateSectionQuery(sectionId, courseBlockId), store.dispatch);
 
+    const [sectionElement] = await findAllByTestId('section-card');
+    const menu = await within(sectionElement).findByTestId('section-card-header__menu-button');
+    fireEvent.click(menu);
+    const duplicateButton = await within(sectionElement).findByTestId('section-card-header__menu-duplicate-button');
+    await act(async () => {
+      fireEvent.click(duplicateButton);
+    });
     expect(await findAllByTestId('section-card')).toHaveLength(5);
   });
 
@@ -348,7 +385,6 @@ describe('<CourseOutline />', () => {
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     let [sectionElement] = await findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
-    const subsectionId = subsection.id;
     let subsections = await within(sectionElement).findAllByTestId('subsection-card');
     expect(subsections.length).toBe(1);
 
@@ -365,41 +401,27 @@ describe('<CourseOutline />', () => {
         ...section,
       });
 
-    await executeThunk(duplicateSubsectionQuery(subsectionId, section.id), store.dispatch);
+    const menu = await within(subsections[0]).findByTestId('subsection-card-header__menu-button');
+    fireEvent.click(menu);
+    const duplicateButton = await within(subsections[0]).findByTestId('subsection-card-header__menu-duplicate-button');
+    await act(async () => {
+      fireEvent.click(duplicateButton);
+    });
 
     [sectionElement] = await findAllByTestId('section-card');
     subsections = await within(sectionElement).findAllByTestId('subsection-card');
     expect(subsections.length).toBe(2);
   });
 
-  it('check publish section when publish query is successfully', async () => {
-    cleanup();
-    const { getAllByTestId } = render(<RootWrapper />);
-    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
-
-    axiosMock
-      .onGet(getCourseOutlineIndexApiUrl(courseId))
-      .reply(200, {
-        courseOutlineIndexMock,
-        courseStructure: {
-          childInfo: {
-            children: [
-              {
-                ...section,
-                published: false,
-              },
-            ],
-          },
-        },
-      });
+  it('check section is published when publish button is clicked', async () => {
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const { findAllByTestId, findByTestId } = render(<RootWrapper />);
 
     axiosMock
       .onPost(getCourseItemApiUrl(section.id), {
         publish: 'make_public',
       })
-      .reply(200);
-
-    await executeThunk(publishCourseItemQuery(section.id, section.id), store.dispatch);
+      .reply(200, { dummy: 'value' });
 
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
@@ -409,46 +431,41 @@ describe('<CourseOutline />', () => {
         releasedToStudents: false,
       });
 
-    await executeThunk(fetchCourseSectionQuery(section.id), store.dispatch);
+    const [sectionElement] = await findAllByTestId('section-card');
+    const menu = await within(sectionElement).findByTestId('section-card-header__menu-button');
+    fireEvent.click(menu);
+    const publishButton = await within(sectionElement).findByTestId('section-card-header__menu-publish-button');
+    await act(async () => fireEvent.click(publishButton));
+    const confirmButton = await findByTestId('publish-confirm-button');
+    await act(async () => fireEvent.click(confirmButton));
 
-    const firstSection = getAllByTestId('section-card')[0];
-    expect(firstSection.querySelector('.item-card-header__badge-status')).toHaveTextContent('Published not live');
+    expect(
+      sectionElement.querySelector('.item-card-header__badge-status'),
+    ).toHaveTextContent(cardHeaderMessages.statusBadgePublishedNotLive.defaultMessage);
   });
 
   it('check configure section when configure query is successful', async () => {
-    cleanup();
-    const { getAllByTestId, getByText, getByPlaceholderText } = render(<RootWrapper />);
+    const { findAllByTestId, findByPlaceholderText } = render(<RootWrapper />);
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const newReleaseDate = '2025-08-10T10:00:00Z';
     axiosMock
       .onPost(getCourseItemApiUrl(section.id), {
-        id: section.id,
-        data: null,
+        publish: 'republish',
         metadata: {
-          display_name: section.displayName,
-          start: newReleaseDate,
           visible_to_staff_only: true,
+          start: newReleaseDate,
         },
       })
-      .reply(200);
+      .reply(200, { dummy: 'value' });
 
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
       .reply(200, section);
 
-    await executeThunk(fetchCourseSectionQuery(section.id), store.dispatch);
+    const [firstSection] = await findAllByTestId('section-card');
 
-    const firstSection = getAllByTestId('section-card')[0];
-
-    const sectionDropdownButton = firstSection.querySelector('#section-card-header__menu');
-    expect(sectionDropdownButton).toBeInTheDocument();
+    const sectionDropdownButton = await within(firstSection).findByTestId('section-card-header__menu-button');
     fireEvent.click(sectionDropdownButton);
-
-    const configureBtn = getByText(cardHeaderMessages.menuConfigure.defaultMessage);
-    fireEvent.click(configureBtn);
-
-    const datePicker = getByPlaceholderText('MM/DD/YYYY');
-    fireEvent.change(datePicker, { target: { value: '08/10/2025' } });
 
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
@@ -457,10 +474,12 @@ describe('<CourseOutline />', () => {
         start: newReleaseDate,
       });
 
-    fireEvent.click(getByText('Save'));
+    await executeThunk(configureCourseSectionQuery(section.id, true, newReleaseDate), store.dispatch);
     fireEvent.click(sectionDropdownButton);
+    const configureBtn = await within(firstSection).findByTestId('section-card-header__menu-configure-button');
     fireEvent.click(configureBtn);
 
+    const datePicker = await findByPlaceholderText('MM/DD/YYYY');
     expect(datePicker).toHaveValue('08/10/2025');
   });
 
@@ -483,9 +502,7 @@ describe('<CourseOutline />', () => {
           highlights,
         },
       })
-      .reply(200);
-
-    await executeThunk(updateCourseSectionHighlightsQuery(section.id, highlights), store.dispatch);
+      .reply(200, { dummy: 'value' });
 
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
@@ -494,9 +511,11 @@ describe('<CourseOutline />', () => {
         highlights,
       });
 
-    await executeThunk(fetchCourseSectionQuery(section.id), store.dispatch);
+    await executeThunk(updateCourseSectionHighlightsQuery(section.id, highlights), store.dispatch);
 
-    expect(getByRole('button', { name: '5 Section highlights' })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(getByRole('button', { name: '5 Section highlights' })).toBeInTheDocument();
+    });
   });
 
   it('check section list is ordered successfully', async () => {
@@ -506,8 +525,8 @@ describe('<CourseOutline />', () => {
     children = children.splice(2, 0, children.splice(0, 1)[0]);
 
     axiosMock
-      .onPut(getEnableHighlightsEmailsApiUrl(courseBlockId), children)
-      .reply(200);
+      .onPut(getEnableHighlightsEmailsApiUrl(courseBlockId), { children })
+      .reply(200, { dummy: 'value' });
 
     await executeThunk(setSectionOrderListQuery(courseBlockId, children, () => {}), store.dispatch);
 
@@ -527,7 +546,7 @@ describe('<CourseOutline />', () => {
     const newChildren = children.splice(2, 0, children.splice(0, 1)[0]);
 
     axiosMock
-      .onPut(getEnableHighlightsEmailsApiUrl(courseBlockId), undefined)
+      .onPut(getEnableHighlightsEmailsApiUrl(courseBlockId), { children })
       .reply(500);
 
     await executeThunk(setSectionOrderListQuery(courseBlockId, undefined, () => children), store.dispatch);

@@ -50,6 +50,7 @@ const HeaderNavigations = ({
         >
           <Button
             onClick={handleReIndex}
+            data-testid="course-reindex"
             variant="outline-primary"
             disabled={isDisabledReindexButton}
           >

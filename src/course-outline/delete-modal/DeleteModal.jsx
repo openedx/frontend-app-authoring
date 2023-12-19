@@ -28,6 +28,7 @@ const DeleteModal = ({ isOpen, close, onDeleteSubmit }) => {
             {intl.formatMessage(messages.cancelButton)}
           </Button>
           <Button
+            data-testid="delete-confirm-button"
             onClick={(e) => {
               e.preventDefault();
               onDeleteSubmit();

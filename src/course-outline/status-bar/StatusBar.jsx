@@ -81,7 +81,7 @@ const StatusBar = ({
               {intl.formatMessage(messages.highlightEmailsEnabled)}
             </span>
           ) : (
-            <Button size="sm" onClick={openEnableHighlightsModal}>
+            <Button data-testid="highlights-enable-button" size="sm" onClick={openEnableHighlightsModal}>
               {intl.formatMessage(messages.highlightEmailsButton)}
             </Button>
           )}

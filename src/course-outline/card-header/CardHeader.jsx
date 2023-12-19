@@ -62,7 +62,7 @@ const CardHeader = ({
       {isFormOpen ? (
         <Form.Group className="m-0">
           <Form.Control
-            data-testid="edit field"
+            data-testid={`${namePrefix}-edit-field`}
             ref={(e) => e && e.focus()}
             value={titleValue}
             name="displayName"
@@ -115,7 +115,7 @@ const CardHeader = ({
       <div className="ml-auto d-flex">
         {!isFormOpen && (
           <IconButton
-            data-testid="edit-button"
+            data-testid={`${namePrefix}-edit-button`}
             alt={intl.formatMessage(messages.altButtonEdit)}
             iconAs={EditIcon}
             onClick={onClickEdit}
@@ -133,14 +133,30 @@ const CardHeader = ({
           />
           <Dropdown.Menu>
             <Dropdown.Item
+              data-testid={`${namePrefix}-card-header__menu-publish-button`}
               disabled={isDisabledPublish}
               onClick={onClickPublish}
             >
               {intl.formatMessage(messages.menuPublish)}
             </Dropdown.Item>
-            <Dropdown.Item onClick={onClickConfigure}>{intl.formatMessage(messages.menuConfigure)}</Dropdown.Item>
-            <Dropdown.Item onClick={onClickDuplicate}>{intl.formatMessage(messages.menuDuplicate)}</Dropdown.Item>
-            <Dropdown.Item onClick={onClickDelete}>{intl.formatMessage(messages.menuDelete)}</Dropdown.Item>
+            <Dropdown.Item
+              data-testid={`${namePrefix}-card-header__menu-configure-button`}
+              onClick={onClickConfigure}
+            >
+              {intl.formatMessage(messages.menuConfigure)}
+            </Dropdown.Item>
+            <Dropdown.Item
+              data-testid={`${namePrefix}-card-header__menu-duplicate-button`}
+              onClick={onClickDuplicate}
+            >
+              {intl.formatMessage(messages.menuDuplicate)}
+            </Dropdown.Item>
+            <Dropdown.Item
+              data-testid={`${namePrefix}-card-header__menu-delete-button`}
+              onClick={onClickDelete}
+            >
+              {intl.formatMessage(messages.menuDelete)}
+            </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div>
