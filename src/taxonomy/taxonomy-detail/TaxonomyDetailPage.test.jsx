@@ -86,16 +86,16 @@ describe('<TaxonomyDetailPage />', () => {
   });
 
   it('should show system defined badge', async () => {
-    useTaxonomyDetailData.mockReturnValue({
+    useTaxonomyDetailDataStatus.mockReturnValue({
       isSuccess: true,
       isFetched: true,
       isError: false,
-      data: {
-        id: 1,
-        name: 'Test taxonomy',
-        description: 'This is a description',
-        systemDefined: true,
-      },
+    });
+    useTaxonomyDetailDataResponse.mockReturnValue({
+      id: 1,
+      name: 'Test taxonomy',
+      description: 'This is a description',
+      systemDefined: true,
     });
     const { getByText } = render(<RootWrapper />);
     expect(getByText('System-level')).toBeInTheDocument();
