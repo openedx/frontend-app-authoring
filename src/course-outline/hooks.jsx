@@ -35,6 +35,7 @@ import {
   publishCourseItemQuery,
   updateCourseSectionHighlightsQuery,
   configureCourseSectionQuery,
+  configureCourseSubsectionQuery,
   setSectionOrderListQuery,
 } from './data/thunk';
 
@@ -119,6 +120,31 @@ const useCourseOutline = ({ courseId }) => {
     closeConfigureModal();
   };
 
+  const handleConfigureSubsectionSubmit = (
+    isVisibleToStaffOnly,
+    releaseDate,
+    graderType,
+    dueDateState,
+    isTimeLimitedState,
+    defaultTimeLimitMin,
+    hideAfterDueState,
+    showCorrectnessState,
+  ) => {
+    dispatch(configureCourseSubsectionQuery(
+      currentItem.id,
+      currentSection.id,
+      isVisibleToStaffOnly,
+      releaseDate,
+      graderType,
+      dueDateState,
+      isTimeLimitedState,
+      defaultTimeLimitMin,
+      hideAfterDueState,
+      showCorrectnessState,
+    ));
+    closeConfigureModal();
+  };
+
   const handleEditSubmit = (itemId, sectionId, displayName) => {
     dispatch(editCourseItemQuery(itemId, sectionId, displayName));
   };
@@ -187,6 +213,7 @@ const useCourseOutline = ({ courseId }) => {
     handleEnableHighlightsSubmit,
     handleHighlightsFormSubmit,
     handleConfigureSectionSubmit,
+    handleConfigureSubsectionSubmit,
     handlePublishItemSubmit,
     handleEditSubmit,
     statusBarData,

@@ -27,6 +27,7 @@ import messages from './messages';
 const CardHeader = ({
   title,
   status,
+  isSubsection,
   hasChanges,
   isExpanded,
   onClickPublish,
@@ -41,6 +42,7 @@ const CardHeader = ({
   onClickDelete,
   onClickDuplicate,
   namePrefix,
+  setIsSubsectionConfigure,
 }) => {
   const intl = useIntl();
   const [titleValue, setTitleValue] = useState(title);
@@ -56,6 +58,11 @@ const CardHeader = ({
     },
     dependency: title,
   });
+
+  const performClickConfigure = () => {
+    setIsSubsectionConfigure(isSubsection);
+    onClickConfigure();
+  };
 
   return (
     <div className="item-card-header" data-testid={`${namePrefix}-card-header`}>
@@ -141,7 +148,7 @@ const CardHeader = ({
             </Dropdown.Item>
             <Dropdown.Item
               data-testid={`${namePrefix}-card-header__menu-configure-button`}
-              onClick={onClickConfigure}
+              onClick={performClickConfigure}
             >
               {intl.formatMessage(messages.menuConfigure)}
             </Dropdown.Item>
@@ -167,6 +174,7 @@ const CardHeader = ({
 CardHeader.propTypes = {
   title: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
+  isSubsection: PropTypes.bool.isRequired,
   hasChanges: PropTypes.bool.isRequired,
   isExpanded: PropTypes.bool.isRequired,
   onExpand: PropTypes.func.isRequired,
@@ -181,6 +189,7 @@ CardHeader.propTypes = {
   onClickDelete: PropTypes.func.isRequired,
   onClickDuplicate: PropTypes.func.isRequired,
   namePrefix: PropTypes.string.isRequired,
+  setIsSubsectionConfigure: PropTypes.func.isRequired,
 };
 
 export default CardHeader;
