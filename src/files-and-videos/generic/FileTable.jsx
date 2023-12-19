@@ -62,6 +62,14 @@ const FileTable = ({
   const [isAddOpen, setAddOpen, setAddClose] = useToggle(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
+  const [initialState, setInitialState] = useState({
+    filters: [],
+    hiddenColumns: [],
+    pageIndex: 0,
+    pageSize: 50,
+    selectedRowIds: {},
+    sortBy: [],
+  });
 
   const {
     loadingStatus,
@@ -143,6 +151,7 @@ const FileTable = ({
         handleOpenDeleteConfirmation,
         supportedFileFormats,
         fileType,
+        setInitialState,
       }}
     />
   );
@@ -193,9 +202,7 @@ const FileTable = ({
           defaultActiveStateValue: defaultVal,
           togglePlacement: 'left',
         }}
-        initialState={{
-          pageSize: 50,
-        }}
+        initialState={initialState}
         tableActions={headerActions}
         bulkActions={headerActions}
         columns={tableColumns}

@@ -24,7 +24,7 @@ const SubTagsExpanded = ({ taxonomyId, parentTagValue }) => {
     <ul style={{ listStyleType: 'none' }}>
       {subTagsData.data.results.map(tagData => (
         <li key={tagData.id} style={{ paddingLeft: `${(tagData.depth - 1) * 30}px` }}>
-          {tagData.value} <span className="text-light-900">{tagData.childCount > 0 ? `(${tagData.childCount})` : null}</span>
+          {tagData.value} <span className="text-secondary-500">{tagData.childCount > 0 ? `(${tagData.childCount})` : null}</span>
         </li>
       ))}
     </ul>
@@ -39,8 +39,19 @@ SubTagsExpanded.propTypes = {
 /**
  * An "Expand" toggle to show/hide subtags, but one which is hidden if the given tag row has no subtags.
  */
-const OptionalExpandLink = ({ row }) => (row.values.childCount > 0 ? <DataTable.ExpandRow row={row} /> : null);
+const OptionalExpandLink = ({ row }) => (row.original.childCount > 0 ? <DataTable.ExpandRow row={row} /> : null);
 OptionalExpandLink.propTypes = DataTable.ExpandRow.propTypes;
+
+/**
+ * Custom DataTable cell to join tag value with child count
+ */
+const TagValue = ({ row }) => (
+  <>
+    <span>{row.original.value}</span>
+    <span className="text-secondary-500">{` (${row.original.childCount})`}</span>
+  </>
+);
+TagValue.propTypes = DataTable.TableCell.propTypes;
 
 const TagListTable = ({ taxonomyId }) => {
   const intl = useIntl();
@@ -69,20 +80,18 @@ const TagListTable = ({ taxonomyId }) => {
       isExpandable
       // This is a temporary "bare bones" solution for brute-force loading all the child tags. In future we'll match
       // the Figma design and do something more sophisticated.
-      renderRowSubComponent={({ row }) => <SubTagsExpanded taxonomyId={taxonomyId} parentTagValue={row.values.value} />}
+      renderRowSubComponent={({ row }) => (
+        <SubTagsExpanded taxonomyId={taxonomyId} parentTagValue={row.original.value} />
+      )}
       columns={[
         {
           Header: intl.formatMessage(messages.tagListColumnValueHeader),
-          accessor: 'value',
+          Cell: TagValue,
         },
         {
           id: 'expander',
           Header: DataTable.ExpandAll,
           Cell: OptionalExpandLink,
-        },
-        {
-          Header: intl.formatMessage(messages.tagListColumnChildCountHeader),
-          accessor: 'childCount',
         },
       ]}
     >

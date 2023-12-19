@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 
 import { TaxonomyContext } from '../common/context';
 import initializeStore from '../../store';
-import { getTaxonomy, getTaxonomyExportFile } from '../data/api';
+import { deleteTaxonomy, getTaxonomy, getTaxonomyExportFile } from '../data/api';
 import { importTaxonomyTags } from '../import-tags';
 import { TaxonomyMenu } from '.';
 
@@ -25,13 +25,6 @@ jest.mock('../data/api', () => ({
   getTaxonomyExportFile: jest.fn(),
   deleteTaxonomy: jest.fn(),
   getTaxonomy: jest.fn(),
-}));
-
-const mockDeleteTaxonomy = jest.fn();
-
-jest.mock('../data/apiHooks', () => ({
-  ...jest.requireActual('../data/apiHooks'),
-  useDeleteTaxonomy: () => mockDeleteTaxonomy,
 }));
 
 const queryClient = new QueryClient();
@@ -223,7 +216,12 @@ describe('<TaxonomyMenu />', async () => {
     });
 
     test('should delete a taxonomy', async () => {
-      const { getByTestId, getByText, getByLabelText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+      const {
+        getByTestId,
+        getByText,
+        getByLabelText,
+        getByRole,
+      } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
       // Click on delete menu
       fireEvent.click(getByTestId('taxonomy-menu-button'));
@@ -241,9 +239,7 @@ describe('<TaxonomyMenu />', async () => {
       fireEvent.change(input, { target: { value: 'DELETE' } });
       expect(deleteButton).toBeEnabled();
 
-      mockDeleteTaxonomy.mockImplementationOnce(async (params, callbacks) => {
-        callbacks.onSuccess();
-      });
+      deleteTaxonomy.mockResolvedValueOnce({});
 
       // Click on delete button
       fireEvent.click(deleteButton);
@@ -251,7 +247,9 @@ describe('<TaxonomyMenu />', async () => {
       // Modal closed
       expect(() => getByText(`Delete "${taxonomyName}"`)).toThrow();
 
-      expect(mockDeleteTaxonomy).toBeCalledTimes(1);
+      await waitFor(async () => {
+        expect(deleteTaxonomy).toBeCalledTimes(1);
+      });
 
       // Toast message shown
       expect(mockSetToastMessage).toBeCalledWith(`"${taxonomyName}" deleted`);

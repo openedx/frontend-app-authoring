@@ -19,6 +19,11 @@ export const getExportTaxonomyApiUrl = (pk, format) => new URL(
   getApiBaseUrl(),
 ).href;
 
+export const getTaxonomyTemplateApiUrl = (format) => new URL(
+  `api/content_tagging/v1/taxonomies/import/template.${format}`,
+  getApiBaseUrl(),
+).href;
+
 /**
   * Get the URL for a Taxonomy
   * @param {number} pk

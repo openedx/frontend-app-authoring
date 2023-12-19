@@ -22,11 +22,4 @@
     max-height: 190px;
     -webkit-line-clamp: 6;
   }
-
-  .pgn__card-header-title-md {
-    /* Set overflow to title of the card */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
 }

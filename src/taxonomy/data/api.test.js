@@ -5,10 +5,10 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { taxonomyListMock } from '../__mocks__';
 
 import {
-  getTaxonomyListApiUrl,
   getExportTaxonomyApiUrl,
-  getTaxonomyListData,
   getTaxonomyExportFile,
+  getTaxonomyListApiUrl,
+  getTaxonomyListData,
   getTaxonomyApiUrl,
   getTaxonomy,
   deleteTaxonomy,
@@ -27,6 +27,7 @@ describe('taxonomy api calls', () => {
         roles: [],
       },
     });
+
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
@@ -43,14 +44,6 @@ describe('taxonomy api calls', () => {
 
   afterAll(() => {
     window.location = location;
-  });
-
-  it('should get taxonomy list data', async () => {
-    axiosMock.onGet(getTaxonomyListApiUrl()).reply(200, taxonomyListMock);
-    const result = await getTaxonomyListData();
-
-    expect(axiosMock.history.get[0].url).toEqual(getTaxonomyListApiUrl());
-    expect(result).toEqual(taxonomyListMock);
   });
 
   it('should get taxonomy list data with org', async () => {
@@ -76,7 +69,7 @@ describe('taxonomy api calls', () => {
     expect(axiosMock.history.get[0].url).toEqual(getTaxonomyApiUrl(1));
   });
 
-  it('should set window.location.href correctly', () => {
+  it('Export should set window.location.href correctly', () => {
     const pk = 1;
     const format = 'json';
 

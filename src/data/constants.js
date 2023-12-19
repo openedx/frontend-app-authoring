@@ -12,6 +12,7 @@ export const RequestStatus = {
   DENIED: 'denied',
   PENDING: 'pending',
   CLEAR: 'clear',
+  PARTIAL: 'partial',
 };
 
 /**

@@ -10,9 +10,9 @@
  * @property {boolean} allowFreeText
  * @property {boolean} systemDefined
  * @property {boolean} visibleToAuthors
+ * @property {number} tagsCount
  * @property {string[]} orgs
  * @property {boolean} allOrgs
- * @property {number} tagsCount
  */
 
 /**
@@ -20,8 +20,8 @@
  * @property {string} next
  * @property {string} previous
  * @property {number} count
- * @property {number} num_pages
- * @property {number} current_page
+ * @property {number} numPages
+ * @property {number} currentPage
  * @property {number} start
  * @property {function} refetch
  * @property {TaxonomyData[]} results
