@@ -4,6 +4,7 @@
  * @typedef {Object} TaxonomyData
  * @property {number} id
  * @property {string} name
+ * @property {string} description
  * @property {boolean} enabled
  * @property {boolean} allowMultiple
  * @property {boolean} allowFreeText
