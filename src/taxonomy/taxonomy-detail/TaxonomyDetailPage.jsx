@@ -87,7 +87,7 @@ const TaxonomyDetailPage = () => {
             <Layout.Element>
               <TagListTable taxonomyId={taxonomyId} />
             </Layout.Element>
-            <Layout.Element>at
+            <Layout.Element>
               <TaxonomyDetailSideCard taxonomy={taxonomy} />
             </Layout.Element>
           </Layout>
