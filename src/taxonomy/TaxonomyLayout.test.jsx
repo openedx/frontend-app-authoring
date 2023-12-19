@@ -43,6 +43,7 @@ jest.mock('@edx/frontend-component-footer', () => ({
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   Outlet: () => <MockChildComponent />,
+  ScrollRestoration: jest.fn(() => <div />),
 }));
 
 const RootWrapper = () => (

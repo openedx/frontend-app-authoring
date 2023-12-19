@@ -144,6 +144,10 @@ describe('TranscriptSettings', () => {
     });
 
     it('should load page with Cielo24 selected', async () => {
+      const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
+      await act(async () => {
+        userEvent.click(orderButton);
+      });
       const cielo24Button = screen.getByText(messages.cieloLabel.defaultMessage);
 
       expect(within(cielo24Button).getByLabelText('Cielo24 radio')).toHaveProperty('checked', true);
@@ -180,6 +184,10 @@ describe('TranscriptSettings', () => {
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
       renderComponent(defaultProps);
+      const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
+      await act(async () => {
+        userEvent.click(orderButton);
+      });
       const noneButton = screen.getAllByLabelText('none radio')[0];
 
       await act(async () => {

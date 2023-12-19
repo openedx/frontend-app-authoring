@@ -1,6 +1,6 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { act, render, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import PropTypes from 'prop-types';
 
 import TagBubble from './TagBubble';
@@ -90,9 +90,7 @@ describe('<TagBubble />', () => {
     );
 
     const xButton = container.getElementsByClassName('pgn__chip__icon-after')[0];
-    await act(async () => {
-      fireEvent.click(xButton);
-    });
+    fireEvent.click(xButton);
     expect(data.removeTagHandler).toHaveBeenCalled();
   });
 });

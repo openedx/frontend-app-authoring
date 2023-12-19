@@ -4,7 +4,10 @@ import {
   CardView,
   Container,
   DataTable,
+  Dropdown,
+  OverlayTrigger,
   Spinner,
+  Tooltip,
 } from '@edx/paragon';
 import {
   Add,
@@ -14,18 +17,47 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
+import { getTaxonomyTemplateApiUrl } from './data/api';
+import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
 import { importTaxonomy } from './import-tags';
 import messages from './messages';
 import TaxonomyCard from './taxonomy-card';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
 
 const TaxonomyListHeaderButtons = () => {
   const intl = useIntl();
   return (
     <>
-      <Button variant="outline-primary" disabled>
-        {intl.formatMessage(messages.downloadTemplateButtonLabel)}
-      </Button>
+      <OverlayTrigger
+        placement="top"
+        overlay={(
+          <Tooltip>
+            {intl.formatMessage(messages.downloadTemplateButtonHint)}
+          </Tooltip>
+        )}
+      >
+        <Dropdown>
+          <Dropdown.Toggle
+            variant="outline-primary"
+            data-testid="taxonomy-download-template"
+          >
+            {intl.formatMessage(messages.downloadTemplateButtonLabel)}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item
+              href={getTaxonomyTemplateApiUrl('csv')}
+              data-testid="taxonomy-download-template-csv"
+            >
+              {intl.formatMessage(messages.downloadTemplateButtonCSVLabel)}
+            </Dropdown.Item>
+            <Dropdown.Item
+              href={getTaxonomyTemplateApiUrl('json')}
+              data-testid="taxonomy-download-template-json"
+            >
+              {intl.formatMessage(messages.downloadTemplateButtonJSONLabel)}
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      </OverlayTrigger>
       <Button
         iconBefore={Add}
         onClick={() => importTaxonomy(intl)}
@@ -74,17 +106,22 @@ const TaxonomyListPage = () => {
             <DataTable
               disableElevation
               data={taxonomyListData.results}
+              itemCount={taxonomyListData.results.length}
               columns={[
                 {
+                  Header: 'id',
                   accessor: 'id',
                 },
                 {
+                  Header: 'name',
                   accessor: 'name',
                 },
                 {
+                  Header: 'description',
                   accessor: 'description',
                 },
                 {
+                  Header: 'systemDefined',
                   accessor: 'systemDefined',
                 },
                 {

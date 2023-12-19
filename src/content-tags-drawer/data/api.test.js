@@ -1,3 +1,4 @@
+// @ts-check
 import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
@@ -47,13 +48,33 @@ describe('content tags drawer api calls', () => {
     expect(result).toEqual(taxonomyTagsMock);
   });
 
-  it('should get taxonomy tags data with fullPathProvided', async () => {
+  it('should get taxonomy tags data with parentTag', async () => {
     const taxonomyId = 123;
-    const fullPathProvided = 'http://example.com/';
+    const options = { parentTag: 'Sample Tag' };
     axiosMock.onGet().reply(200, taxonomyTagsMock);
-    const result = await getTaxonomyTagsData(taxonomyId, fullPathProvided);
+    const result = await getTaxonomyTagsData(taxonomyId, options);
 
-    expect(axiosMock.history.get[0].url).toEqual(new URL(`${fullPathProvided}`));
+    expect(axiosMock.history.get[0].url).toContain('parent_tag=Sample+Tag');
+    expect(result).toEqual(taxonomyTagsMock);
+  });
+
+  it('should get taxonomy tags data with page', async () => {
+    const taxonomyId = 123;
+    const options = { page: 2 };
+    axiosMock.onGet().reply(200, taxonomyTagsMock);
+    const result = await getTaxonomyTagsData(taxonomyId, options);
+
+    expect(axiosMock.history.get[0].url).toContain('page=2');
+    expect(result).toEqual(taxonomyTagsMock);
+  });
+
+  it('should get taxonomy tags data with searchTerm', async () => {
+    const taxonomyId = 123;
+    const options = { searchTerm: 'memo' };
+    axiosMock.onGet().reply(200, taxonomyTagsMock);
+    const result = await getTaxonomyTagsData(taxonomyId, options);
+
+    expect(axiosMock.history.get[0].url).toContain('search_term=memo');
     expect(result).toEqual(taxonomyTagsMock);
   });
 

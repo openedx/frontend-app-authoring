@@ -167,6 +167,7 @@ const FilesPage = ({
       </div>
     );
   }
+
   return (
     <FilesPageProvider courseId={courseId}>
       <Container size="xl" className="p-4 pt-4.5">
@@ -176,28 +177,31 @@ const FilesPage = ({
           addFileStatus={addAssetStatus}
           deleteFileStatus={deleteAssetStatus}
           updateFileStatus={updateAssetStatus}
+          loadingStatus={loadingStatus}
         />
         <div className="h2">
           <FormattedMessage {...messages.heading} />
         </div>
-        <FileTable
-          {...{
-            courseId,
-            data,
-            handleAddFile,
-            handleDeleteFile,
-            handleDownloadFile,
-            handleLockFile,
-            handleUsagePaths,
-            handleErrorReset,
-            handleFileOrder,
-            tableColumns,
-            maxFileSize,
-            thumbnailPreview,
-            infoModalSidebar,
-            files: assets,
-          }}
-        />
+        {loadingStatus !== RequestStatus.FAILED && (
+          <FileTable
+            {...{
+              courseId,
+              data,
+              handleAddFile,
+              handleDeleteFile,
+              handleDownloadFile,
+              handleLockFile,
+              handleUsagePaths,
+              handleErrorReset,
+              handleFileOrder,
+              tableColumns,
+              maxFileSize,
+              thumbnailPreview,
+              infoModalSidebar,
+              files: assets,
+            }}
+          />
+        )}
       </Container>
     </FilesPageProvider>
   );

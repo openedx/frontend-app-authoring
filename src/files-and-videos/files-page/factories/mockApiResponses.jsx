@@ -20,6 +20,7 @@ export const initialState = {
       lock: [],
       download: [],
       usageMetrics: [],
+      loading: '',
     },
   },
   models: {
@@ -106,13 +107,28 @@ export const generateFetchAssetApiResponse = () => ({
       thumbnail: null,
     },
   ],
-  totalCount: 50,
+  totalCount: 51,
 });
 
-export const generateEmptyApiResponse = () => ([{
+export const generateNextPageResponse = () => ({
+  assets: [
+    {
+      id: 'mOckID6-3',
+      displayName: 'mOckID6-3',
+      locked: false,
+      externalUrl: 'static_tab_1',
+      portableUrl: 'May 17, 2023 at 22:08 UTC',
+      contentType: 'application/octet-stream',
+      dateAdded: '',
+      thumbnail: null,
+    },
+  ],
+});
+
+export const generateEmptyApiResponse = () => ({
   assets: [],
   totalCount: 0,
-}]);
+});
 
 export const generateNewAssetApiResponse = () => ({
   asset: {
@@ -133,6 +149,8 @@ export const getStatusValue = (status) => {
   switch (status) {
   case RequestStatus.DENIED:
     return 403;
+  case RequestStatus.FAILED:
+    return 404;
   default:
     return 200;
   }

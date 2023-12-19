@@ -1,4 +1,9 @@
 // @ts-check
+
+// TODO: this file needs to be merged into src/taxonomy/data/api.js
+// We are creating a mess with so many different /data/[api|types].js files in subfolders.
+// There is only one tagging/taxonomy API, and it should be implemented via a single types.mjs and api.js file.
+
 import { useQuery } from '@tanstack/react-query';
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
@@ -9,7 +14,6 @@ const getTagListApiUrl = (taxonomyId, page) => new URL(
   getApiBaseUrl(),
 ).href;
 
-// ToDo: fix types
 /**
  * @param {number} taxonomyId
  * @param {import('./types.mjs').QueryOptions} options

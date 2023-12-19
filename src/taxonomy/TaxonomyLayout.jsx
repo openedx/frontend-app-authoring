@@ -2,8 +2,8 @@
 import React, { useMemo, useState } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { Toast } from '@edx/paragon';
-import { Outlet } from 'react-router-dom';
 
 import AlertMessage from '../generic/alert-message';
 import Header from '../header';
@@ -46,6 +46,7 @@ const TaxonomyLayout = () => {
           {toastMessage}
         </Toast>
       </div>
+      <ScrollRestoration />
     </TaxonomyContext.Provider>
   );
 };
