@@ -18,6 +18,10 @@ export const getExportTaxonomyApiUrl = (pk, format) => new URL(
   `api/content_tagging/v1/taxonomies/${pk}/export/?output_format=${format}&download=1`,
   getApiBaseUrl(),
 ).href;
+export const getTaxonomyTemplateApiUrl = (format) => new URL(
+  `api/content_tagging/v1/taxonomies/import/template.${format}`,
+  getApiBaseUrl(),
+).href;
 export const getTaxonomyApiUrl = (pk) => new URL(`api/content_tagging/v1/taxonomies/${pk}/`, getApiBaseUrl()).href;
 
 /**

@@ -5,7 +5,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { act, render, fireEvent } from '@testing-library/react';
 
 import initializeStore from '../store';
-
+import { getTaxonomyTemplateApiUrl } from './data/api';
 import TaxonomyListPage from './TaxonomyListPage';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
 import { TaxonomyContext } from './common/context';
@@ -82,6 +82,24 @@ describe('<TaxonomyListPage />', async () => {
       const { getByTestId } = render(<RootWrapper />);
       expect(getByTestId('taxonomy-card-1')).toBeInTheDocument();
     });
+  });
+
+  it.each(['CSV', 'JSON'])('downloads the taxonomy template %s', async (fileFormat) => {
+    useIsTaxonomyListDataLoaded.mockReturnValue(true);
+    useTaxonomyListDataResponse.mockReturnValue({
+      results: [{
+        id: 1,
+        name: 'Taxonomy',
+        description: 'This is a description',
+      }],
+    });
+    const { findByRole } = render(<RootWrapper />);
+    const templateMenu = await findByRole('button', { name: 'Download template' });
+    fireEvent.click(templateMenu);
+    const templateButton = await findByRole('link', { name: `${fileFormat} template` });
+    fireEvent.click(templateButton);
+
+    expect(templateButton.href).toBe(getTaxonomyTemplateApiUrl(fileFormat.toLowerCase()));
   });
 
   it('should show the success toast after delete', async () => {
