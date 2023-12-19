@@ -18,6 +18,7 @@ import { TagListTable } from '../tag-list';
 import { TaxonomyMenu } from '../taxonomy-menu';
 import TaxonomyDetailSideCard from './TaxonomyDetailSideCard';
 import { useTaxonomyDetailDataResponse, useTaxonomyDetailDataStatus } from './data/apiHooks';
+import SystemDefinedBadge from '../system-defined-badge';
 
 const TaxonomyDetailPage = () => {
   const intl = useIntl();
@@ -45,6 +46,13 @@ const TaxonomyDetailPage = () => {
     />
   );
 
+  const getSystemDefinedBadge = () => {
+    if (taxonomy.systemDefined) {
+      return <SystemDefinedBadge taxonomyId={taxonomyId} />;
+    }
+    return null;
+  };
+
   return (
     <>
       <Helmet>
@@ -61,6 +69,7 @@ const TaxonomyDetailPage = () => {
           />
           <SubHeader
             title={taxonomy.name}
+            titleActions={getSystemDefinedBadge()}
             hideBorder
             headerActions={getHeaderActions()}
           />
@@ -78,7 +87,7 @@ const TaxonomyDetailPage = () => {
             <Layout.Element>
               <TagListTable taxonomyId={taxonomyId} />
             </Layout.Element>
-            <Layout.Element>
+            <Layout.Element>at
               <TaxonomyDetailSideCard taxonomy={taxonomy} />
             </Layout.Element>
           </Layout>

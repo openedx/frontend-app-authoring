@@ -34,6 +34,7 @@ const ExportModal = ({
         size="lg"
         hasCloseButton
         isFullscreenOnMobile
+        className="taxonomy-export-modal"
       >
         <ModalDialog.Header>
           <ModalDialog.Title>

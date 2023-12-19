@@ -1,3 +1,4 @@
+// @ts-check
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -34,9 +35,13 @@ import TagBubble from './TagBubble';
  *   }
  * };
  *
- * @param {Object} tagsTree - Array of taxonomy tags that are applied to the content
- * @param {Func} removeTagHandler - Function that is called when removing tags from tree
- * @param {boolean} editable - Whether the tags appear with an 'x' allowing the user to remove them
+ * @param {Object} props - The component props.
+ * @param {Object} props.tagsTree - Array of taxonomy tags that are applied to the content.
+ * @param {(
+ *   tagSelectableBoxValue: string,
+ *   checked: boolean
+ * ) => void} props.removeTagHandler - Function that is called when removing tags from the tree.
+ * @param {boolean} props.editable - Whether the tags appear with an 'x' allowing the user to remove them.
  */
 const ContentTagsTree = ({ tagsTree, removeTagHandler, editable }) => {
   const renderTagsTree = (tag, level, lineage) => Object.keys(tag).map((key) => {
@@ -60,7 +65,7 @@ const ContentTagsTree = ({ tagsTree, removeTagHandler, editable }) => {
     return null;
   });
 
-  return renderTagsTree(tagsTree, 0, []);
+  return <>{renderTagsTree(tagsTree, 0, [])}</>;
 };
 
 ContentTagsTree.propTypes = {

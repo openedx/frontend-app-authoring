@@ -1,3 +1,4 @@
+// @ts-check
 import React, { useMemo, useEffect } from 'react';
 import {
   Container,
@@ -16,9 +17,12 @@ import {
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from '../taxonomy/data/apiHooks';
 import Loading from '../generic/Loading';
 
+/** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
+/** @typedef {import("./data/types.mjs").Tag} ContentTagData */
+
 const ContentTagsDrawer = () => {
   const intl = useIntl();
-  const { contentId } = useParams();
+  const { contentId } = /** @type {{contentId: string}} */(useParams());
 
   const org = extractOrgFromContentId(contentId);
 
@@ -58,11 +62,10 @@ const ContentTagsDrawer = () => {
   const taxonomies = useMemo(() => {
     if (taxonomyListData && contentTaxonomyTagsData) {
       // Initialize list of content tags in taxonomies to populate
-      const taxonomiesList = taxonomyListData.results.map((taxonomy) => {
-        // eslint-disable-next-line no-param-reassign
-        taxonomy.contentTags = [];
-        return taxonomy;
-      });
+      const taxonomiesList = taxonomyListData.results.map((taxonomy) => ({
+        ...taxonomy,
+        contentTags: /** @type {ContentTagData[]} */([]),
+      }));
 
       const contentTaxonomies = contentTaxonomyTagsData.taxonomies;
 

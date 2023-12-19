@@ -1,3 +1,4 @@
+// @ts-check
 import React from 'react';
 import { useCheckboxSetValues } from '@edx/paragon';
 import { cloneDeep } from 'lodash';
@@ -196,7 +197,7 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
 
     setAddedContentTags(addedTree);
     setUpdatingTags(true);
-  });
+  }, []);
 
   return {
     tagChangeHandler, tagsTree, contentTagsCount, checkedTags,
