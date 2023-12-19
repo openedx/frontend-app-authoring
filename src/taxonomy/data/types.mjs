@@ -10,6 +10,7 @@
  * @property {boolean} allowFreeText
  * @property {boolean} systemDefined
  * @property {boolean} visibleToAuthors
+ * @property {number} tagsCount
  * @property {string[]} orgs
  */
 
