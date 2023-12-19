@@ -214,12 +214,7 @@ describe('<TaxonomyMenu />', async () => {
     });
 
     test('should delete a taxonomy', async () => {
-      const {
-        getByTestId,
-        getByText,
-        getByLabelText,
-        getByRole,
-      } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+      const { getByTestId, getByText, getByLabelText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
       // Click on delete menu
       fireEvent.click(getByTestId('taxonomy-menu-button'));
