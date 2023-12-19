@@ -40,11 +40,11 @@ const ConfigureModal = ({
   const [isVisibleToStaffOnly, setIsVisibleToStaffOnly] = useState(visibilityState === VisibilityTypes.STAFF_ONLY);
   const [saveButtonDisabled, setSaveButtonDisabled] = useState(true);
   const [graderType, setGraderType] = useState('Not Graded');
-  const [dueDateState, setDueDateState] = useState(dueDate);
-  const [isTimeLimitedState, setIsTimeLimitedState] = useState(isTimeLimited);
-  const [defaultTimeLimitMin, setDefaultTimeLimitMin] = useState(defaultTimeLimitMinutes);
-  const [hideAfterDueState, setHideAfterDueState] = useState(hideAfterDue);
-  const [showCorrectnessState, setShowCorrectnessState] = useState(showCorrectness);
+  const [dueDateState, setDueDateState] = useState('');
+  const [isTimeLimitedState, setIsTimeLimitedState] = useState(false);
+  const [defaultTimeLimitMin, setDefaultTimeLimitMin] = useState(30);
+  const [hideAfterDueState, setHideAfterDueState] = useState(false);
+  const [showCorrectnessState, setShowCorrectnessState] = useState(false);
 
   useEffect(() => {
     setReleaseDate(sectionStartDate);
@@ -146,7 +146,7 @@ const ConfigureModal = ({
               setReleaseDate={setReleaseDate}
               isSubsection={isSubsection}
               graderType={graderType}
-              courseGraders={courseGraders}
+              courseGraders={courseGraders === 'undefined' ? [] : courseGraders}
               setGraderType={setGraderType}
               dueDate={dueDateState}
               setDueDate={setDueDateState}

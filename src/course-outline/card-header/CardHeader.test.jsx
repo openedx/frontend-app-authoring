@@ -30,6 +30,7 @@ const cardHeaderProps = {
   onClickDelete: onClickDeleteMock,
   onClickDuplicate: onClickDuplicateMock,
   namePrefix: 'section',
+  setIsSubsectionConfigure: jest.fn(),
 };
 
 const renderComponent = (props) => render(

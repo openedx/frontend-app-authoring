@@ -25,6 +25,7 @@ import {
   fetchCourseOutlineIndexQuery,
   updateCourseSectionHighlightsQuery,
   setSectionOrderListQuery,
+  configureCourseSubsectionQuery,
 } from './data/thunk';
 import initializeStore from '../store';
 import {
@@ -481,6 +482,67 @@ describe('<CourseOutline />', () => {
 
     const datePicker = await findByPlaceholderText('MM/DD/YYYY');
     expect(datePicker).toHaveValue('08/10/2025');
+  });
+
+  it('check configure subsection when configure subsection query is successful', async () => {
+    const { findAllByTestId, findByText, findAllByPlaceholderText } = render(<RootWrapper />);
+    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    const subsection = section.childInfo.children[0];
+    const newReleaseDate = '2025-08-10T10:00:00Z';
+
+    axiosMock
+      .onPost(getCourseItemApiUrl(subsection.id), {
+        publish: 'republish',
+        graderType: 'notgraded',
+        metadata: {
+          visible_to_staff_only: true,
+          due: null,
+          hide_after_due: false,
+          show_correctness: false,
+          is_practice_exam: false,
+          is_time_limited: false,
+          exam_review_rules: '',
+          is_proctored_enabled: false,
+          default_time_limit_minutes: null,
+          is_onboarding_exam: false,
+          start: newReleaseDate,
+        },
+      })
+      .reply(200, { dummy: 'value' });
+
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
+
+    const [currentSection] = await findAllByTestId('section-card');
+    const [firstSubsection] = await within(currentSection).findAllByTestId('subsection-card');
+    const subsectionDropdownButton = firstSubsection.querySelector('#subsection-card-header__menu');
+    expect(subsectionDropdownButton).toBeInTheDocument();
+
+    subsection.start = newReleaseDate;
+    section.childInfo.children[0] = subsection;
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
+
+    await executeThunk(configureCourseSubsectionQuery(
+      subsection.id,
+      section.id,
+      true,
+      newReleaseDate,
+      'notgraded',
+      null,
+      false,
+      null,
+      false,
+      false,
+    ), store.dispatch);
+    fireEvent.click(subsectionDropdownButton);
+    const configureBtn = await findByText(cardHeaderMessages.menuConfigure.defaultMessage);
+    fireEvent.click(configureBtn);
+
+    const datePicker = await findAllByPlaceholderText('MM/DD/YYYY');
+    expect(datePicker[0]).toHaveValue('08/10/2025');
   });
 
   it('check update highlights when update highlights query is successfully', async () => {

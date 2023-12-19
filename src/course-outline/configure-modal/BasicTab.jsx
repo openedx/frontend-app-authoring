@@ -63,6 +63,7 @@ const BasicTab = ({
               as="select"
               defaultValue={graderType}
               onChange={(value) => onChangeGraderType(value)}
+              data-testid="grader-type-select"
             >
               <option> Not Graded </option>
               {createOptions()}

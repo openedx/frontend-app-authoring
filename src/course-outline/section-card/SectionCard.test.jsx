@@ -41,6 +41,7 @@ const renderComponent = (props) => render(
         onDuplicateSubmit={jest.fn()}
         isSectionsExpanded
         onNewSubsectionSubmit={jest.fn()}
+        setIsSubsectionConfigure={jest.fn()}
         {...props}
       >
         <span>children</span>
