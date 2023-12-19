@@ -2,7 +2,6 @@ import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-import { studioHomeMock } from '../__mocks__';
 import {
   getStudioHomeApiUrl,
   getRequestCourseCreatorUrl,
@@ -10,7 +9,11 @@ import {
   getStudioHomeData,
   handleCourseNotification,
   sendRequestForCourseCreator,
+  getApiBaseUrl,
+  getStudioHomeCourses,
+  getStudioHomeLibraries,
 } from './api';
+import { generateGetStudioCoursesApiResponse, generateGetStudioHomeDataApiResponse, generateGetStuioHomeLibrariesApiResponse } from '../factories/mockApiResponses';
 
 let axiosMock;
 
@@ -32,11 +35,32 @@ describe('studio-home api calls', () => {
   });
 
   it('should get studio home data', async () => {
-    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
     const result = await getStudioHomeData();
+    const expected = generateGetStudioHomeDataApiResponse();
 
     expect(axiosMock.history.get[0].url).toEqual(getStudioHomeApiUrl());
-    expect(result).toEqual(studioHomeMock);
+    expect(result).toEqual(expected);
+  });
+
+  fit('should get studio courses data', async () => {
+    const apiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/courses`;
+    axiosMock.onGet(apiLink).reply(200, generateGetStudioCoursesApiResponse());
+    const result = await getStudioHomeCourses('');
+    const expected = generateGetStudioCoursesApiResponse();
+
+    expect(axiosMock.history.get[0].url).toEqual(apiLink);
+    expect(result).toEqual(expected);
+  });
+
+  it('should get studio libraries data', async () => {
+    const apiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/libraries`;
+    axiosMock.onGet(apiLink).reply(200, generateGetStuioHomeLibrariesApiResponse());
+    const result = await getStudioHomeLibraries();
+    const expected = generateGetStuioHomeLibrariesApiResponse();
+
+    expect(axiosMock.history.get[0].url).toEqual(apiLink);
+    expect(result).toEqual(expected);
   });
 
   it('should handle course notification request', async () => {
