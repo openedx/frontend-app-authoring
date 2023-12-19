@@ -36,17 +36,19 @@ export const useManageOrgs = () => {
         getManageOrgsApiUrl(taxonomyId),
         {
           all_orgs: allOrgs,
-          orgs: allOrgs ? [] : orgs,
+          orgs: allOrgs ? undefined : orgs,
         },
       );
 
       return camelCaseObject(data);
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['taxonomyList'],
       });
-      queryClient.setQueryData(['taxonomyDetail', variables.taxonomyId], data);
+      queryClient.invalidateQueries({
+        queryKey: ['taxonomyDetail', variables.taxonomyId],
+      });
     },
   });
 };

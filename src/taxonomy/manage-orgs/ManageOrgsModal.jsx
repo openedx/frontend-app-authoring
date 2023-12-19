@@ -2,7 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  useToggle,
   ActionRow,
+  AlertModal,
   Button,
   Chip,
   Container,
@@ -12,6 +14,7 @@ import {
 } from '@edx/paragon';
 import {
   Close,
+  Warning,
 } from '@edx/paragon/icons';
 import PropTypes from 'prop-types';
 
@@ -20,6 +23,45 @@ import { useTaxonomyDetailDataResponse } from '../data/apiHooks';
 import { useManageOrgs } from './data/api';
 import messages from './messages';
 import './ManageOrgsModal.scss';
+
+const ConfirmModal = ({
+  isOpen,
+  close,
+  confirm,
+  taxonomyName,
+}) => {
+  const intl = useIntl();
+  return (
+    <AlertModal
+      title={intl.formatMessage(messages.confirmUnassignTitle)}
+      isOpen={isOpen}
+      onClose={close}
+      variant="warning"
+      icon={Warning}
+      footerNode={(
+        <ActionRow>
+          <Button variant="tertiary" onClick={close}>
+            {intl.formatMessage(messages.cancelButton)}
+          </Button>
+          <Button variant="primary" onClick={confirm}>
+            {intl.formatMessage(messages.continueButton)}
+          </Button>
+        </ActionRow>
+      )}
+    >
+      <p>
+        {intl.formatMessage(messages.confirmUnassignText, { taxonomyName })}
+      </p>
+    </AlertModal>
+  );
+};
+
+ConfirmModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  close: PropTypes.func.isRequired,
+  confirm: PropTypes.func.isRequired,
+  taxonomyName: PropTypes.string.isRequired,
+};
 
 const ManageOrgsModal = ({
   taxonomyId,
@@ -30,6 +72,8 @@ const ManageOrgsModal = ({
   const [selectedOrgs, setSelectedOrgs] = useState(/** @type {null|string[]} */(null));
   const [allOrgs, setAllOrgs] = useState(/** @type {null|boolean} */(null));
 
+  const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
+
   const {
     data: organizationListData,
   } = useOrganizationListData();
@@ -39,6 +83,7 @@ const ManageOrgsModal = ({
   const manageOrgMutation = useManageOrgs();
 
   const saveOrgs = async () => {
+    closeConfirmModal();
     if (selectedOrgs !== null && allOrgs !== null) {
       try {
         await manageOrgMutation.mutateAsync({
@@ -52,6 +97,14 @@ const ManageOrgsModal = ({
       } finally {
         onClose();
       }
+    }
+  };
+
+  const confirmSave = async () => {
+    if (!selectedOrgs?.length && !allOrgs) {
+      openConfirmModal();
+    } else {
+      await saveOrgs();
     }
   };
 
@@ -71,14 +124,14 @@ const ManageOrgsModal = ({
       // This is a hack to force the Form.Autosuggest to clear its value after a selection is made.
       const inputRef = /** @type {null|HTMLInputElement} */ (document.querySelector('.pgn__form-group input'));
       if (inputRef) {
-        inputRef.value = null;
+        inputRef.value = '';
         const event = new Event('change', { bubbles: true });
         inputRef.dispatchEvent(event);
       }
     }
   }, [selectedOrgs]);
 
-  if (!selectedOrgs) {
+  if (!selectedOrgs || !taxonomy) {
     return null;
   }
 
@@ -128,7 +181,7 @@ const ManageOrgsModal = ({
               placeholder={intl.formatMessage(messages.searchOrganizations)}
               onSelected={(org) => setSelectedOrgs([...selectedOrgs, org])}
             >
-              {organizationListData.filter(o => !selectedOrgs?.includes(o)).map((org) => (
+              {organizationListData && organizationListData.filter(o => !selectedOrgs?.includes(o)).map((org) => (
                 <Form.AutosuggestOption key={org}>{org}</Form.AutosuggestOption>
               ))}
             </Form.Autosuggest>
@@ -147,7 +200,7 @@ const ManageOrgsModal = ({
             </ModalDialog.CloseButton>
             <Button
               variant="primary"
-              onClick={saveOrgs}
+              onClick={confirmSave}
               data-testid="save-button"
             >
               {intl.formatMessage(messages.saveButton)}
@@ -155,6 +208,12 @@ const ManageOrgsModal = ({
           </ActionRow>
         </ModalDialog.Footer>
       </ModalDialog>
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        close={closeConfirmModal}
+        confirm={saveOrgs}
+        taxonomyName={taxonomy.name}
+      />
     </Container>
   );
 };

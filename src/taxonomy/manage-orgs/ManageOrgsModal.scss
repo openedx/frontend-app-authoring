@@ -1,10 +1,7 @@
 .manage-orgs {
+  overflow: visible !important;
 
-  // .pgn__form-autosuggest__dropdown {
-  //   position: fixed !important;
-  //   top: auto !important;
-  //   left: auto !important;
-  //   width: inherit;
-  //   max-width: 744px;
-  // }
+  .pgn__modal-body {
+    overflow: visible;
+  }
 }

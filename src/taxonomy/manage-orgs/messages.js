@@ -43,6 +43,19 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-manage-orgs.button.save',
     defaultMessage: 'Save',
   },
+  confirmUnassignTitle: {
+    id: 'course-authoring.taxonomy-manage-orgs.confirm-dialog.title',
+    defaultMessage: 'Unassign taxonomy',
+  },
+  confirmUnassignText: {
+    id: 'course-authoring.taxonomy-manage-orgs.confirm-dialog.text',
+    defaultMessage: 'Content authors from unassigned organizations will not be able to tag course content with '
+    + '{taxonomyName}. Are you sure you want to continue?',
+  },
+  continueButton: {
+    id: 'course-authoring.taxonomy-manage-orgs.confirm-dialog.button.continue',
+    defaultMessage: 'Continue',
+  },
 });
 
 export default messages;
