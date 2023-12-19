@@ -235,6 +235,52 @@ export async function configureCourseSection(sectionId, isVisibleToStaffOnly, st
 }
 
 /**
+ * Configure course section
+ * @param {string} itemId
+ * @param {string} isVisibleToStaffOnly
+ * @param {string} releaseDate
+ * @param {string} graderType
+ * @param {string} dueDateState
+ * @param {string} isTimeLimitedState
+ * @param {string} defaultTimeLimitMin
+ * @param {string} hideAfterDueState
+ * @param {string} showCorrectnessState
+ * @returns {Promise<Object>}
+ */
+export async function configureCourseSubsection(
+  itemId,
+  isVisibleToStaffOnly,
+  releaseDate,
+  graderType,
+  dueDateState,
+  isTimeLimitedState,
+  defaultTimeLimitMin,
+  hideAfterDueState,
+  showCorrectnessState,
+) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getCourseItemApiUrl(itemId), {
+      publish: 'republish',
+      graderType,
+      metadata: {
+        // The backend expects metadata.visible_to_staff_only to either true or null
+        visible_to_staff_only: isVisibleToStaffOnly ? true : null,
+        due: dueDateState,
+        hide_after_due: hideAfterDueState,
+        show_correctness: showCorrectnessState,
+        is_practice_exam: false,
+        is_time_limited: isTimeLimitedState,
+        exam_review_rules: '',
+        is_proctored_enabled: false,
+        default_time_limit_minutes: defaultTimeLimitMin,
+        is_onboarding_exam: false,
+        start: releaseDate,
+      },
+    });
+  return data;
+}
+
+/**
  * Edit course section
  * @param {string} itemId
  * @param {string} displayName

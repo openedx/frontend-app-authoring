@@ -28,6 +28,7 @@ const SubsectionCard = ({
   onDuplicateSubmit,
   onNewUnitSubmit,
   onOrderChange,
+  onOpenConfigureModal,
 }) => {
   const currentRef = useRef(null);
   const intl = useIntl();
@@ -145,6 +146,7 @@ const SubsectionCard = ({
             onClickDelete={onOpenDeleteModal}
             onClickMoveUp={handleSubsectionMoveUp}
             onClickMoveDown={handleSubsectionMoveDown}
+            onClickConfigure={onOpenConfigureModal}
             isFormOpen={isFormOpen}
             closeForm={closeForm}
             onEditSubmit={handleEditSubmit}
@@ -218,6 +220,7 @@ SubsectionCard.propTypes = {
   index: PropTypes.number.isRequired,
   canMoveItem: PropTypes.func.isRequired,
   onOrderChange: PropTypes.func.isRequired,
+  onOpenConfigureModal: PropTypes.func.isRequired,
 };
 
 export default SubsectionCard;

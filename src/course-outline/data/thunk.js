@@ -21,6 +21,7 @@ import {
   getCourseItem,
   publishCourseSection,
   configureCourseSection,
+  configureCourseSubsection,
   restartIndexingOnCourse,
   updateCourseSectionHighlights,
   setSectionOrderList,
@@ -228,6 +229,47 @@ export function configureCourseSectionQuery(sectionId, isVisibleToStaffOnly, sta
 
     try {
       await configureCourseSection(sectionId, isVisibleToStaffOnly, startDatetime).then(async (result) => {
+        if (result) {
+          await dispatch(fetchCourseSectionQuery(sectionId));
+          dispatch(hideProcessingNotification());
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+        }
+      });
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function configureCourseSubsectionQuery(
+  itemId,
+  sectionId,
+  isVisibleToStaffOnly,
+  releaseDate,
+  graderType,
+  dueDateState,
+  isTimeLimitedState,
+  defaultTimeLimitMin,
+  hideAfterDueState,
+  showCorrectnessState,
+) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await configureCourseSubsection(
+        itemId,
+        isVisibleToStaffOnly,
+        releaseDate,
+        graderType,
+        dueDateState,
+        isTimeLimitedState,
+        defaultTimeLimitMin,
+        hideAfterDueState,
+        showCorrectnessState,
+      ).then(async (result) => {
         if (result) {
           await dispatch(fetchCourseSectionQuery(sectionId));
           dispatch(hideProcessingNotification());

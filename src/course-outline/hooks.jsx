@@ -41,6 +41,7 @@ import {
   publishCourseItemQuery,
   updateCourseSectionHighlightsQuery,
   configureCourseSectionQuery,
+  configureCourseSubsectionQuery,
   setSectionOrderListQuery,
   setVideoSharingOptionQuery,
   setSubsectionOrderListQuery,
@@ -146,7 +147,43 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleConfigureSectionSubmit = (isVisibleToStaffOnly, startDatetime) => {
     dispatch(configureCourseSectionQuery(currentSection.id, isVisibleToStaffOnly, startDatetime));
+  };
 
+  const handleConfigureSubsectionSubmit = (
+    isVisibleToStaffOnly,
+    releaseDate,
+    graderType,
+    dueDateState,
+    isTimeLimitedState,
+    defaultTimeLimitMin,
+    hideAfterDueState,
+    showCorrectnessState,
+  ) => {
+    dispatch(configureCourseSubsectionQuery(
+      currentItem.id,
+      currentSection.id,
+      isVisibleToStaffOnly,
+      releaseDate,
+      graderType,
+      dueDateState,
+      isTimeLimitedState,
+      defaultTimeLimitMin,
+      hideAfterDueState,
+      showCorrectnessState,
+    ));
+  };
+
+  const handleConfigureSubmit = (...args) => {
+    switch (currentItem.category) {
+    case COURSE_BLOCK_NAMES.chapter.id:
+      handleConfigureSectionSubmit(...args);
+      break;
+    case COURSE_BLOCK_NAMES.sequential.id:
+      handleConfigureSubsectionSubmit(...args);
+      break;
+    default:
+      return;
+    }
     closeConfigureModal();
   };
 
@@ -238,7 +275,7 @@ const useCourseOutline = ({ courseId }) => {
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
     handleHighlightsFormSubmit,
-    handleConfigureSectionSubmit,
+    handleConfigureSubmit,
     handlePublishItemSubmit,
     handleEditSubmit,
     statusBarData,
