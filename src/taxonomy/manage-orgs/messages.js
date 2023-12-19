@@ -56,6 +56,10 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-manage-orgs.confirm-dialog.button.continue',
     defaultMessage: 'Continue',
   },
+  assignOrgsSuccess: {
+    id: 'course-authoring.taxonomy-manage-orgs.toast.assign-orgs-success',
+    defaultMessage: 'Assigned organizations updated',
+  },
 });
 
 export default messages;

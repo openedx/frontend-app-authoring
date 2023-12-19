@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   useToggle,
@@ -19,6 +19,7 @@ import {
 import PropTypes from 'prop-types';
 
 import { useOrganizationListData } from '../../generic/data/apiHooks';
+import { TaxonomyContext } from '../common/context';
 import { useTaxonomyDetailDataResponse } from '../data/apiHooks';
 import { useManageOrgs } from './data/api';
 import messages from './messages';
@@ -69,6 +70,8 @@ const ManageOrgsModal = ({
   onClose,
 }) => {
   const intl = useIntl();
+  const { setToastMessage } = useContext(TaxonomyContext);
+
   const [selectedOrgs, setSelectedOrgs] = useState(/** @type {null|string[]} */(null));
   const [allOrgs, setAllOrgs] = useState(/** @type {null|boolean} */(null));
 
@@ -91,7 +94,7 @@ const ManageOrgsModal = ({
           orgs: selectedOrgs,
           allOrgs,
         });
-        // ToDo: display a success message to the user
+        setToastMessage(intl.formatMessage(messages.assignOrgsSuccess));
       } catch (/** @type {any} */ error) {
         // ToDo: display the error to the user
       } finally {
