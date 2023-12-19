@@ -146,7 +146,7 @@ describe('<CardHeader />', () => {
   it('calls onClickEdit when the button is clicked', async () => {
     const { findByTestId } = renderComponent();
 
-    const editButton = await findByTestId('edit-button');
+    const editButton = await findByTestId('section-edit-button');
     fireEvent.click(editButton);
     waitFor(() => {
       expect(onClickEditMock).toHaveBeenCalled();
@@ -159,7 +159,7 @@ describe('<CardHeader />', () => {
       isFormOpen: true,
     });
 
-    expect(await findByTestId('edit field')).toBeInTheDocument();
+    expect(await findByTestId('section-edit-field')).toBeInTheDocument();
     waitFor(() => {
       expect(queryByTestId('section-card-header__expanded-btn')).not.toBeInTheDocument();
       expect(queryByTestId('edit-button')).not.toBeInTheDocument();
@@ -173,7 +173,7 @@ describe('<CardHeader />', () => {
       isDisabledEditField: true,
     });
 
-    expect(await findByTestId('edit field')).toBeDisabled();
+    expect(await findByTestId('section-edit-field')).toBeDisabled();
   });
 
   it('calls onClickDelete when item is clicked', async () => {

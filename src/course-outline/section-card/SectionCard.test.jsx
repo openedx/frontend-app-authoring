@@ -8,6 +8,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import initializeStore from '../../store';
 import SectionCard from './SectionCard';
+import cardHeaderMessages from '../card-header/messages';
 
 // eslint-disable-next-line no-unused-vars
 let axiosMock;
@@ -25,6 +26,8 @@ const section = {
   highlights: ['highlight 1', 'highlight 2'],
 };
 
+const onEditSectionSubmit = jest.fn();
+
 const renderComponent = (props) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
@@ -33,14 +36,11 @@ const renderComponent = (props) => render(
         onOpenPublishModal={jest.fn()}
         onOpenHighlightsModal={jest.fn()}
         onOpenDeleteModal={jest.fn()}
-        onEditClick={jest.fn()}
         savingStatus=""
-        onEditSectionSubmit={jest.fn()}
+        onEditSectionSubmit={onEditSectionSubmit}
         onDuplicateSubmit={jest.fn()}
         isSectionsExpanded
-        namePrefix="section"
-        connectDragSource={(el) => el}
-        isDragging
+        onNewSubsectionSubmit={jest.fn()}
         {...props}
       >
         <span>children</span>
@@ -82,5 +82,70 @@ describe('<SectionCard />', () => {
     fireEvent.click(expandButton);
     expect(queryByTestId('section-card__subsections')).toBeInTheDocument();
     expect(queryByTestId('new-subsection-button')).toBeInTheDocument();
+  });
+
+  it('title only updates if changed', async () => {
+    const { findByTestId } = renderComponent();
+
+    let editButton = await findByTestId('section-edit-button');
+    fireEvent.click(editButton);
+    let editField = await findByTestId('section-edit-field');
+    fireEvent.blur(editField);
+
+    expect(onEditSectionSubmit).not.toHaveBeenCalled();
+
+    editButton = await findByTestId('section-edit-button');
+    fireEvent.click(editButton);
+    editField = await findByTestId('section-edit-field');
+    fireEvent.change(editField, { target: { value: 'some random value' } });
+    fireEvent.blur(editField);
+    expect(onEditSectionSubmit).toHaveBeenCalled();
+  });
+
+  it('renders live status', async () => {
+    const { findByText } = renderComponent();
+    expect(await findByText(cardHeaderMessages.statusBadgeLive.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('renders published but live status', async () => {
+    const { findByText } = renderComponent({
+      section: {
+        ...section,
+        published: true,
+        releasedToStudents: false,
+        visibleToStaffOnly: false,
+        visibilityState: 'visible',
+        staffOnlyMessage: false,
+      },
+    });
+    expect(await findByText(cardHeaderMessages.statusBadgePublishedNotLive.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('renders staff status', async () => {
+    const { findByText } = renderComponent({
+      section: {
+        ...section,
+        published: false,
+        releasedToStudents: false,
+        visibleToStaffOnly: true,
+        visibilityState: 'staff_only',
+        staffOnlyMessage: true,
+      },
+    });
+    expect(await findByText(cardHeaderMessages.statusBadgeStaffOnly.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('renders draft status', async () => {
+    const { findByText } = renderComponent({
+      section: {
+        ...section,
+        published: false,
+        releasedToStudents: false,
+        visibleToStaffOnly: false,
+        visibilityState: 'staff_only',
+        staffOnlyMessage: false,
+      },
+    });
+    expect(await findByText(cardHeaderMessages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();
   });
 });
