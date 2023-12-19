@@ -81,7 +81,7 @@ const CourseOutline = ({ courseId }) => {
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
     handleHighlightsFormSubmit,
-    handleConfigureSectionSubmit,
+    handleConfigureSubmit,
     handlePublishItemSubmit,
     handleEditSubmit,
     handleDeleteItemSubmit,
@@ -339,6 +339,7 @@ const CourseOutline = ({ courseId }) => {
                                       onOpenDeleteModal={openDeleteModal}
                                       onEditSubmit={handleEditSubmit}
                                       onDuplicateSubmit={handleDuplicateSubsectionSubmit}
+                                      onOpenConfigureModal={openConfigureModal}
                                       onNewUnitSubmit={handleNewUnitSubmit}
                                       onOrderChange={updateSubsectionOrderByIndex(
                                         sectionIndex,
@@ -428,7 +429,7 @@ const CourseOutline = ({ courseId }) => {
         <ConfigureModal
           isOpen={isConfigureModalOpen}
           onClose={closeConfigureModal}
-          onConfigureSubmit={handleConfigureSectionSubmit}
+          onConfigureSubmit={handleConfigureSubmit}
         />
         <DeleteModal
           isOpen={isDeleteModalOpen}

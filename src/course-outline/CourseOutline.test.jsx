@@ -25,6 +25,7 @@ import {
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery,
   updateCourseSectionHighlightsQuery,
+  configureCourseSubsectionQuery,
 } from './data/thunk';
 import initializeStore from '../store';
 import {
@@ -43,6 +44,7 @@ import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
 import statusBarMessages from './status-bar/messages';
+import configureModalMessages from './configure-modal/messages';
 
 let axiosMock;
 let store;
@@ -649,6 +651,94 @@ describe('<CourseOutline />', () => {
 
     const datePicker = await findByPlaceholderText('MM/DD/YYYY');
     expect(datePicker).toHaveValue('08/10/2025');
+  });
+
+  it('check configure subsection when configure subsection query is successful', async () => {
+    const {
+      findAllByTestId,
+      findByText,
+      findAllByRole,
+      findByRole,
+      findByTestId,
+    } = render(<RootWrapper />);
+    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    const subsection = section.childInfo.children[0];
+    const newReleaseDate = '2025-08-10T10:00:00Z';
+    const newGraderType = 'Homework';
+    const newDue = '2025-09-10T10:00:00Z';
+    const isTimeLimited = true;
+    const defaultTimeLimitMinutes = 210;
+
+    axiosMock
+      .onPost(getCourseItemApiUrl(subsection.id), {
+        publish: 'republish',
+        graderType: newGraderType,
+        metadata: {
+          visible_to_staff_only: true,
+          due: newDue,
+          hide_after_due: false,
+          show_correctness: false,
+          is_practice_exam: false,
+          is_time_limited: isTimeLimited,
+          exam_review_rules: '',
+          is_proctored_enabled: false,
+          default_time_limit_minutes: defaultTimeLimitMinutes,
+          is_onboarding_exam: false,
+          start: newReleaseDate,
+        },
+      })
+      .reply(200, { dummy: 'value' });
+
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
+
+    const [currentSection] = await findAllByTestId('section-card');
+    const [firstSubsection] = await within(currentSection).findAllByTestId('subsection-card');
+    const subsectionDropdownButton = firstSubsection.querySelector('#subsection-card-header__menu');
+    expect(subsectionDropdownButton).toBeInTheDocument();
+
+    subsection.start = newReleaseDate;
+    subsection.due = newDue;
+    subsection.format = newGraderType;
+    subsection.isTimeLimited = isTimeLimited;
+    subsection.defaultTimeLimitMinutes = defaultTimeLimitMinutes;
+    section.childInfo.children[0] = subsection;
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
+
+    await executeThunk(configureCourseSubsectionQuery(
+      subsection.id,
+      section.id,
+      true,
+      newReleaseDate,
+      newGraderType,
+      newDue,
+      true,
+      defaultTimeLimitMinutes,
+      false,
+      false,
+    ), store.dispatch);
+    fireEvent.click(subsectionDropdownButton);
+    const configureBtn = await within(firstSubsection).findByTestId('subsection-card-header__menu-configure-button');
+    fireEvent.click(configureBtn);
+
+    expect(await findByText(newGraderType)).toBeInTheDocument();
+    const releaseDateStack = await findByTestId('release-date-stack');
+    const releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
+    expect(releaseDatePicker).toHaveValue('08/10/2025');
+    const dueDateStack = await findByTestId('due-date-stack');
+    const dueDatePicker = await within(dueDateStack).findByPlaceholderText('MM/DD/YYYY');
+    expect(dueDatePicker).toHaveValue('09/10/2025');
+
+    const advancedTab = await findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
+    fireEvent.click(advancedTab);
+    const radioButtons = await findAllByRole('radio');
+    expect(radioButtons[0]).toHaveProperty('checked', false);
+    expect(radioButtons[1]).toHaveProperty('checked', true);
+    const hours = await findByTestId('hour-autosuggest');
+    expect(hours).toHaveValue('03:30');
   });
 
   it('check update highlights when update highlights query is successfully', async () => {
