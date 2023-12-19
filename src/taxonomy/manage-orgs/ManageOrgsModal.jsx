@@ -124,7 +124,8 @@ const ManageOrgsModal = ({
       // This is a hack to force the Form.Autosuggest to clear its value after a selection is made.
       const inputRef = /** @type {null|HTMLInputElement} */ (document.querySelector('.pgn__form-group input'));
       if (inputRef) {
-        inputRef.value = '';
+        //  @ts-ignore
+        inputRef.value = null;
         const event = new Event('change', { bubbles: true });
         inputRef.dispatchEvent(event);
       }
@@ -165,6 +166,7 @@ const ManageOrgsModal = ({
                     key={org}
                     iconAfter={Close}
                     onIconAfterClick={() => setSelectedOrgs(selectedOrgs.filter((o) => o !== org))}
+                    disabled={allOrgs}
                   >
                     {org}
                   </Chip>
@@ -180,6 +182,7 @@ const ManageOrgsModal = ({
               loading={!organizationListData}
               placeholder={intl.formatMessage(messages.searchOrganizations)}
               onSelected={(org) => setSelectedOrgs([...selectedOrgs, org])}
+              disabled={allOrgs}
             >
               {organizationListData && organizationListData.filter(o => !selectedOrgs?.includes(o)).map((org) => (
                 <Form.AutosuggestOption key={org}>{org}</Form.AutosuggestOption>
