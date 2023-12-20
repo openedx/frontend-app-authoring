@@ -50,12 +50,12 @@ const taxonomy = {
   name: 'Test Taxonomy',
 };
 
-const RootWrapper = ({ close }) => (
+const RootWrapper = ({ onClose }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
         <TaxonomyContext.Provider value={context}>
-          <ImportTagsWizard taxonomy={taxonomy} isOpen close={close} />
+          <ImportTagsWizard taxonomy={taxonomy} isOpen onClose={onClose} />
         </TaxonomyContext.Provider>
       </QueryClientProvider>
     </IntlProvider>
@@ -63,7 +63,7 @@ const RootWrapper = ({ close }) => (
 );
 
 RootWrapper.propTypes = {
-  close: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 describe('<ImportTagsWizard />', () => {
@@ -80,8 +80,8 @@ describe('<ImportTagsWizard />', () => {
   });
 
   it('render the dialog in the first step can close on cancel', async () => {
-    const close = jest.fn();
-    const { getByTestId } = render(<RootWrapper close={close} />);
+    const onClose = jest.fn();
+    const { getByTestId } = render(<RootWrapper onClose={onClose} />);
 
     await waitFor(() => {
       expect(getByTestId('export-step')).toBeInTheDocument();
@@ -89,12 +89,12 @@ describe('<ImportTagsWizard />', () => {
 
     const cancelButton = getByTestId('cancel-button');
     cancelButton.click();
-    expect(close).toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalled();
   });
 
   it('can export taxonomies from the dialog', async () => {
-    const close = jest.fn();
-    const { getByTestId } = render(<RootWrapper close={close} />);
+    const onClose = jest.fn();
+    const { getByTestId } = render(<RootWrapper onClose={onClose} />);
 
     await waitFor(() => {
       expect(getByTestId('export-step')).toBeInTheDocument();
@@ -109,8 +109,8 @@ describe('<ImportTagsWizard />', () => {
   });
 
   it.each(['success', 'error'])('an upload taxonomies from the dialog (%p)', async (expectedResult) => {
-    const close = jest.fn();
-    const { getAllByTestId, getByTestId, getByText } = render(<RootWrapper close={close} />);
+    const onClose = jest.fn();
+    const { getAllByTestId, getByTestId, getByText } = render(<RootWrapper onClose={onClose} />);
 
     await waitFor(() => {
       expect(getByTestId('export-step')).toBeInTheDocument();

@@ -97,7 +97,7 @@ const TaxonomyMenu = ({
         <ImportTagsWizard
           taxonomy={taxonomy}
           isOpen={isImportModalOpen}
-          close={importModalClose}
+          onClose={importModalClose}
         />
       )}
     </>

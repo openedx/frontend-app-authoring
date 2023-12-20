@@ -206,7 +206,7 @@ ConfirmStep.defaultProps = {
 const ImportTagsWizard = ({
   taxonomy,
   isOpen,
-  close,
+  onClose,
 }) => {
   const intl = useIntl();
   const { setToastMessage, setAlertProps } = useContext(TaxonomyContext);
@@ -263,7 +263,7 @@ const ImportTagsWizard = ({
         setAlertProps(alertProps);
       }
     } finally {
-      close();
+      onClose();
     }
   };
 
@@ -286,7 +286,7 @@ const ImportTagsWizard = ({
       <ModalDialog
         isOpen={isOpen}
         isBlocking
-        onClose={close}
+        onClose={onClose}
         size="lg"
         data-testid="import-tags-wizard"
       >
@@ -316,7 +316,7 @@ const ImportTagsWizard = ({
           <ModalDialog.Footer>
 
             <Stepper.ActionRow eventKey="export">
-              <Button variant="tertiary" onClick={close} data-testid="cancel-button">
+              <Button variant="tertiary" onClick={onClose} data-testid="cancel-button">
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
               <Button onClick={() => setCurrentStep('upload')} data-testid="next-button">
@@ -329,7 +329,7 @@ const ImportTagsWizard = ({
                 {intl.formatMessage(messages.importWizardButtonPrevious)}
               </Button>
               <Stepper.ActionRow.Spacer />
-              <Button variant="tertiary" onClick={close}>
+              <Button variant="tertiary" onClick={onClose}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
               <LoadingButton disabled={!file} onClick={generatePlan} data-testid="import-button">
@@ -342,7 +342,7 @@ const ImportTagsWizard = ({
                 {intl.formatMessage(messages.importWizardButtonPrevious)}
               </Button>
               <Stepper.ActionRow.Spacer />
-              <Button variant="tertiary" onClick={close}>
+              <Button variant="tertiary" onClick={onClose}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
               <Button disabled={!importPlan?.length} onClick={() => setCurrentStep('confirm')} data-testid="continue-button">
@@ -355,7 +355,7 @@ const ImportTagsWizard = ({
                 {intl.formatMessage(messages.importWizardButtonPrevious)}
               </Button>
               <Stepper.ActionRow.Spacer />
-              <Button variant="tertiary" onClick={close}>
+              <Button variant="tertiary" onClick={onClose}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
               <LoadingButton onClick={confirmImportTags} data-testid="confirm-button">
@@ -373,7 +373,7 @@ const ImportTagsWizard = ({
 ImportTagsWizard.propTypes = {
   taxonomy: TaxonomyProp.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  close: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default ImportTagsWizard;
