@@ -485,7 +485,7 @@ class ReactStateOLXParser {
 
   /** hasAttributeWithValue(obj, attr)
    * hasAttributeWithValue takes obj and atrr. The obj is checked for the attribute defined by attr.
-   * Returns true if atrribute is present, otherwise false.
+   * Returns true if attribute is present, otherwise false.
    * @param {object} obj - defined object
    * @param {string} attr - string of desired attribute
    * @return {bool}
