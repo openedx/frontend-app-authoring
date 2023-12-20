@@ -163,14 +163,14 @@ describe('<TaxonomyMenu />', async () => {
     });
 
     test('should call import tags when menu click', () => {
-      const { getByTestId } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+      const { getByTestId, getByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
       // Click on import menu
       fireEvent.click(getByTestId('taxonomy-menu-button'));
       fireEvent.click(getByTestId('taxonomy-menu-import'));
 
       // Modal opened
-      waitFor(() => expect(getByTestId('import-tags-wizard')).toBeInTheDocument());
+      expect(getByText('Update "Taxonomy 1"')).toBeInTheDocument();
     });
 
     test('should export a taxonomy', () => {

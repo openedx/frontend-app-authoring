@@ -288,7 +288,6 @@ const ImportTagsWizard = ({
         isBlocking
         onClose={onClose}
         size="lg"
-        data-testid="import-tags-wizard"
       >
         <ModalDialog.Header className={(currentStep === 'confirm') ? 'bg-warning-100' : undefined}>
           <ModalDialog.Title>
