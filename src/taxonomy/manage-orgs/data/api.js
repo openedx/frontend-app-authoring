@@ -26,7 +26,7 @@ export const useManageOrgs = () => {
     *   any,
     *   {
     *     taxonomyId: number,
-    *     orgs: string[],
+    *     orgs?: string[],
     *     allOrgs: boolean,
     *   }
     * >}

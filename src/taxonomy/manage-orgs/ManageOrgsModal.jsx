@@ -27,7 +27,7 @@ import './ManageOrgsModal.scss';
 
 const ConfirmModal = ({
   isOpen,
-  close,
+  onClose,
   confirm,
   taxonomyName,
 }) => {
@@ -36,7 +36,7 @@ const ConfirmModal = ({
     <AlertModal
       title={intl.formatMessage(messages.confirmUnassignTitle)}
       isOpen={isOpen}
-      onClose={close}
+      onClose={onClose}
       variant="warning"
       icon={Warning}
       footerNode={(
@@ -59,7 +59,7 @@ const ConfirmModal = ({
 
 ConfirmModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  close: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   confirm: PropTypes.func.isRequired,
   taxonomyName: PropTypes.string.isRequired,
 };
@@ -91,10 +91,12 @@ const ManageOrgsModal = ({
       try {
         await manageOrgMutation.mutateAsync({
           taxonomyId,
-          orgs: selectedOrgs,
+          orgs: allOrgs ? undefined : selectedOrgs,
           allOrgs,
         });
-        setToastMessage(intl.formatMessage(messages.assignOrgsSuccess));
+        if (setToastMessage) {
+          setToastMessage(intl.formatMessage(messages.assignOrgsSuccess));
+        }
       } catch (/** @type {any} */ error) {
         // ToDo: display the error to the user
       } finally {
@@ -201,14 +203,10 @@ const ManageOrgsModal = ({
 
         <ModalDialog.Footer>
           <ActionRow>
-            <ModalDialog.CloseButton variant="tertiary">
+            <ModalDialog.CloseButton onClick={onClose} variant="tertiary">
               {intl.formatMessage(messages.cancelButton)}
             </ModalDialog.CloseButton>
-            <Button
-              variant="primary"
-              onClick={confirmSave}
-              data-testid="save-button"
-            >
+            <Button variant="primary" onClick={confirmSave} data-testid="save-button">
               {intl.formatMessage(messages.saveButton)}
             </Button>
           </ActionRow>
@@ -216,7 +214,7 @@ const ManageOrgsModal = ({
       </ModalDialog>
       <ConfirmModal
         isOpen={isConfirmModalOpen}
-        close={closeConfirmModal}
+        onClose={closeConfirmModal}
         confirm={saveOrgs}
         taxonomyName={taxonomy.name}
       />

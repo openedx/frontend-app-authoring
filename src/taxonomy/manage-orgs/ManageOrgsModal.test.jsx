@@ -4,6 +4,7 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
+  fireEvent,
   render,
   waitFor,
 } from '@testing-library/react';
@@ -22,28 +23,27 @@ const taxonomy = {
   orgs: ['org1', 'org2'],
 };
 
-const orgs = ['org1', 'org2', 'org3'];
+const orgs = ['org1', 'org2', 'org3', 'org4', 'org5'];
 
 jest.mock('../data/api', () => ({
   ...jest.requireActual('../data/api'),
   getTaxonomy: jest.fn().mockResolvedValue(taxonomy),
 }));
 
-jest.mock('../../generic/data/apiHooks', () => ({
-  ...jest.requireActual('../../generic/data/apiHooks'),
+jest.mock('../../generic/data/api', () => ({
+  ...jest.requireActual('../../generic/data/api'),
   getOrganizations: jest.fn().mockResolvedValue(orgs),
 }));
 
-// const mockUseImportTagsMutate = jest.fn();
+const mockUseManageOrgsMutate = jest.fn();
 
-// jest.mock('./data/api', () => ({
-//   ...jest.requireActual('./data/api'),
-//   planImportTags: jest.fn(),
-//   useImportTags: jest.fn(() => ({
-//     ...jest.requireActual('./data/api').useImportTags(),
-//     mutateAsync: mockUseImportTagsMutate,
-//   })),
-// }));
+jest.mock('./data/api', () => ({
+  ...jest.requireActual('./data/api'),
+  useManageOrgs: jest.fn(() => ({
+    ...jest.requireActual('./data/api').useManageOrgs(),
+    mutateAsync: mockUseManageOrgsMutate,
+  })),
+}));
 
 const mockSetToastMessage = jest.fn();
 const mockSetAlertProps = jest.fn();
@@ -56,12 +56,12 @@ const context = {
 
 const queryClient = new QueryClient();
 
-const RootWrapper = ({ close }) => (
+const RootWrapper = ({ onClose }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
         <TaxonomyContext.Provider value={context}>
-          <ManageOrgsModal taxonomyId={taxonomy.id} isOpen close={close} />
+          <ManageOrgsModal taxonomyId={taxonomy.id} isOpen onClose={onClose} />
         </TaxonomyContext.Provider>
       </QueryClientProvider>
     </IntlProvider>
@@ -69,7 +69,7 @@ const RootWrapper = ({ close }) => (
 );
 
 RootWrapper.propTypes = {
-  close: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 describe('<ManageOrgsModal />', () => {
@@ -85,44 +85,92 @@ describe('<ManageOrgsModal />', () => {
     store = initializeStore();
   });
 
-  it('should render the dialog and close on cancel', async () => {
-    const close = jest.fn();
-    const { getByText, getByRole } = render(<RootWrapper close={close} />);
-
-    await waitFor(() => {
-      expect(getByText('Assign to organizations')).toBeInTheDocument();
-    });
-
-    const cancelButton = getByRole('button', { name: 'Cancel' });
-    cancelButton.click();
-    expect(close).toHaveBeenCalled();
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it.each(['success', 'error'])('can assign orgs to taxonomies from the dialog (%p)', async (expectedResult) => {
-    const close = jest.fn();
-    const { getByText } = render(<RootWrapper close={close} />);
+  const checkDialogRender = async (getByText) => {
+    await waitFor(() => {
+      // Dialog title
+      expect(getByText('Assign to organizations')).toBeInTheDocument();
+      // Orgs assigned to the taxonomy
+      expect(getByText('org1')).toBeInTheDocument();
+      expect(getByText('org2')).toBeInTheDocument();
+    });
+  };
+
+  it('should render the dialog and close on cancel', async () => {
+    const onClose = jest.fn();
+    const { getByText, getByRole } = render(<RootWrapper onClose={onClose} />);
+
+    await checkDialogRender(getByText);
+
+    const cancelButton = getByRole('button', { name: 'Cancel' });
+    fireEvent.click(cancelButton);
+
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('can assign orgs to taxonomies from the dialog', async () => {
+    const onClose = jest.fn();
+    const { queryAllByTestId, getByTestId, getByText } = render(<RootWrapper onClose={onClose} />);
+
+    await checkDialogRender(getByText);
+
+    const input = getByTestId('autosuggest-iconbutton');
+    fireEvent.click(input);
+
+    const list = queryAllByTestId('autosuggest-optionitem');
+    expect(list.length).toBe(3); // Show org3, org4, org5
+    expect(getByText('org3')).toBeInTheDocument();
+    expect(getByText('org4')).toBeInTheDocument();
+    expect(getByText('org5')).toBeInTheDocument();
+
+    // Select org3
+    fireEvent.click(list[0]);
+
+    fireEvent.click(getByTestId('save-button'));
 
     await waitFor(() => {
-      expect(getByText('Assign to organizations')).toBeInTheDocument();
+      expect(mockUseManageOrgsMutate).toHaveBeenCalledWith({
+        taxonomyId: taxonomy.id,
+        orgs: ['org1', 'org2', 'org3'],
+        allOrgs: false,
+      });
     });
-    //
-    // await waitFor(() => {
-    //   expect(mockUseImportTagsMutate).toHaveBeenCalledWith({ taxonomyId: taxonomy.id, file: fileJson });
-    // });
 
-    if (expectedResult === 'success') {
-      // Toast message shown
-      expect(mockSetToastMessage).toBeCalledWith('Assigned organizations updated');
-    } else {
-      // ToDo: check error
-      // Alert message shown
-      // expect(mockSetAlertProps).toBeCalledWith(
-      //   expect.objectContaining({
-      //     variant: 'danger',
-      //     title: 'Import error',
-      //     description: 'Test error',
-      //   }),
-      // );
-    }
+    // Toast message shown
+    expect(mockSetToastMessage).toBeCalledWith('Assigned organizations updated');
+    // ToDo: check error
+    // Alert message shown
+    // expect(mockSetAlertProps).toBeCalledWith(
+    //   expect.objectContaining({
+    //     variant: 'danger',
+    //     title: 'Import error',
+    //     description: 'Test error',
+    //   }),
+    // );
+  });
+
+  it('can assign all orgs to taxonomies from the dialog', async () => {
+    const onClose = jest.fn();
+    const { getByRole, getByTestId, getByText } = render(<RootWrapper onClose={onClose} />);
+
+    await checkDialogRender(getByText);
+
+    const checkbox = getByRole('checkbox', { name: 'Assign to all organizations' });
+    fireEvent.click(checkbox);
+
+    fireEvent.click(getByTestId('save-button'));
+
+    await waitFor(() => {
+      expect(mockUseManageOrgsMutate).toHaveBeenCalledWith({
+        taxonomyId: taxonomy.id,
+        allOrgs: true,
+      });
+    });
+
+    // Toast message shown
+    expect(mockSetToastMessage).toBeCalledWith('Assigned organizations updated');
   });
 });
