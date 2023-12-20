@@ -41,7 +41,7 @@ const ConfirmModal = ({
       icon={Warning}
       footerNode={(
         <ActionRow>
-          <Button variant="tertiary" onClick={close}>
+          <Button variant="tertiary" onClick={onClose}>
             {intl.formatMessage(messages.cancelButton)}
           </Button>
           <Button variant="primary" onClick={confirm}>
