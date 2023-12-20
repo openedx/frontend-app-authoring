@@ -187,9 +187,9 @@ const ManageOrgsModal = ({
               onSelected={(org) => setSelectedOrgs([...selectedOrgs, org])}
               disabled={allOrgs}
             >
-              {organizationListData && organizationListData.filter(o => !selectedOrgs?.includes(o)).map((org) => (
+              {organizationListData ? organizationListData.filter(o => !selectedOrgs?.includes(o)).map((org) => (
                 <Form.AutosuggestOption key={org}>{org}</Form.AutosuggestOption>
-              ))}
+              )) : [] }
             </Form.Autosuggest>
           </Form.Group>
           <Form.Checkbox checked={allOrgs} onChange={(e) => setAllOrgs(e.target.checked)}>
