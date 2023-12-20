@@ -79,7 +79,6 @@ describe('<TaxonomyDetailPage />', () => {
       id: 1,
       name: 'Test taxonomy',
       description: 'This is a description',
-      systemDefined: true,
     });
     const { getByRole } = render(<RootWrapper />);
     expect(getByRole('heading')).toHaveTextContent('Test taxonomy');

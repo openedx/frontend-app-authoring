@@ -113,43 +113,42 @@ describe('<ManageOrgsModal />', () => {
 
   it('can assign orgs to taxonomies from the dialog', async () => {
     const onClose = jest.fn();
-    const { queryAllByTestId, getByTestId, getByText } = render(<RootWrapper onClose={onClose} />);
+    const {
+      queryAllByTestId,
+      getByTestId,
+      getByText,
+    } = render(<RootWrapper onClose={onClose} />);
 
     await checkDialogRender(getByText);
+
+    // Remove org2
+    fireEvent.click(getByText('org2').nextSibling);
 
     const input = getByTestId('autosuggest-iconbutton');
     fireEvent.click(input);
 
     const list = queryAllByTestId('autosuggest-optionitem');
-    expect(list.length).toBe(3); // Show org3, org4, org5
+    expect(list.length).toBe(4); // Show org3, org4, org5
+    expect(getByText('org2')).toBeInTheDocument();
     expect(getByText('org3')).toBeInTheDocument();
     expect(getByText('org4')).toBeInTheDocument();
     expect(getByText('org5')).toBeInTheDocument();
 
     // Select org3
-    fireEvent.click(list[0]);
+    fireEvent.click(list[1]);
 
     fireEvent.click(getByTestId('save-button'));
 
     await waitFor(() => {
       expect(mockUseManageOrgsMutate).toHaveBeenCalledWith({
         taxonomyId: taxonomy.id,
-        orgs: ['org1', 'org2', 'org3'],
+        orgs: ['org1', 'org3'],
         allOrgs: false,
       });
     });
 
     // Toast message shown
     expect(mockSetToastMessage).toBeCalledWith('Assigned organizations updated');
-    // ToDo: check error
-    // Alert message shown
-    // expect(mockSetAlertProps).toBeCalledWith(
-    //   expect.objectContaining({
-    //     variant: 'danger',
-    //     title: 'Import error',
-    //     description: 'Test error',
-    //   }),
-    // );
   });
 
   it('can assign all orgs to taxonomies from the dialog', async () => {
@@ -167,6 +166,38 @@ describe('<ManageOrgsModal />', () => {
       expect(mockUseManageOrgsMutate).toHaveBeenCalledWith({
         taxonomyId: taxonomy.id,
         allOrgs: true,
+      });
+    });
+
+    // Toast message shown
+    expect(mockSetToastMessage).toBeCalledWith('Assigned organizations updated');
+  });
+
+  it('can assign no orgs to taxonomies from the dialog', async () => {
+    const onClose = jest.fn();
+    const { getByRole, getByTestId, getByText } = render(<RootWrapper onClose={onClose} />);
+
+    await checkDialogRender(getByText);
+
+    // Remove org1
+    fireEvent.click(getByText('org1').nextSibling);
+    // Remove org2
+    fireEvent.click(getByText('org2').nextSibling);
+
+    fireEvent.click(getByTestId('save-button'));
+
+    await waitFor(() => {
+      // Check confirm modal is open
+      expect(getByText('Unassign taxonomy')).toBeInTheDocument();
+    });
+
+    fireEvent.click(getByRole('button', { name: 'Continue' }));
+
+    await waitFor(() => {
+      expect(mockUseManageOrgsMutate).toHaveBeenCalledWith({
+        taxonomyId: taxonomy.id,
+        allOrgs: false,
+        orgs: [],
       });
     });
 
