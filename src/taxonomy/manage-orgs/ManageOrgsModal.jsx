@@ -161,7 +161,7 @@ const ManageOrgsModal = ({
         <ModalDialog.Body>
           <Form.Label>
             <Stack>
-              <div>{intl.formatMessage(messages.bodyText)}</div>
+              <div className="pb-5">{intl.formatMessage(messages.bodyText)}</div>
               <div>{intl.formatMessage(messages.currentAssignments)}</div>
               <div className="col-9 d-inline-box overflow-auto">
                 {selectedOrgs.length ? selectedOrgs.map((org) => (
