@@ -52,16 +52,48 @@ describe('Check React State OLXParser problem', () => {
     const buildOLX = stateParser.buildOLX();
     expect(buildOLX.replace(/\s/g, '')).toEqual(textInputWithFeedbackAndHintsOLX.buildOLX.replace(/\s/g, ''));
   });
-  test('Test multiple choice with feedback and hints problem type', () => {
+  describe('Multiple choice with feedback and hints problem type', () => {
     const olxparser = new OLXParser(multipleChoiceWithFeedbackAndHintsOLX.rawOLX);
     const problem = olxparser.getParsedOLXData();
     const stateParser = new ReactStateOLXParser({
       problem,
       editorObject: multipleChoiceWithFeedbackAndHints,
     });
-    const buildOLX = stateParser.buildOLX();
-    expect(buildOLX.replace(/\s/g, '')).toEqual(multipleChoiceWithFeedbackAndHintsOLX.buildOLX.replace(/\s/g, ''));
+
+    it('should parse correctly', () => {
+      const buildOLX = stateParser.buildOLX();
+      expect(buildOLX.replace(/\s/g, '')).toEqual(multipleChoiceWithFeedbackAndHintsOLX.buildOLX.replace(/\s/g, ''));
+    });
   });
+
+  describe('with label and em tag wrapped in div: ', () => {
+    const olxparser = new OLXParser(multipleChoiceWithFeedbackAndHintsOLX.rawOLX);
+    const problem = olxparser.getParsedOLXData();
+    const stateParser = new ReactStateOLXParser({
+      problem,
+      editorObject: multipleChoiceWithFeedbackAndHints,
+    });
+    stateParser.editorObject.question = '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>\n<div><label>Add the question text, or prompt, here. This text is required.</label> <em class="olx_description">You can add an optional tip or note related to the prompt like this. </em><em>Just a generic em tag</em></div>';
+
+    it('parser should not delete <em> tags', () => {
+      const buildOLX = stateParser.buildOLX();
+      expect(buildOLX.replace(/\s/g, '')).toEqual(multipleChoiceWithFeedbackAndHintsOLX.buildOLX.replace(/\s/g, ''));
+    });
+
+    it('addQuestion method should add a question to the problemState correctly', () => {
+      const received = stateParser.addQuestion();
+      expect(received).toEqual(
+        [
+          { p: [{ '#text': 'You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.' }] },
+          { label: [{ '#text': 'Add the question text, or prompt, here. This text is required.' }] },
+          { '#text': ' ' },
+          { em: [{ '#text': 'You can add an optional tip or note related to the prompt like this. ' }], ':@': { '@_class': 'olx_description' } },
+          { em: [{ '#text': 'Just a generic em tag' }] },
+        ],
+      );
+    });
+  });
+
   test('Test numerical response with feedback and hints problem type', () => {
     const olxparser = new OLXParser(numericInputWithFeedbackAndHintsOLX.rawOLX);
     const problem = olxparser.getParsedOLXData();

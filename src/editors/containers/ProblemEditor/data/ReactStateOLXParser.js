@@ -193,29 +193,31 @@ class ReactStateOLXParser {
 
   /** addQuestion()
    * The editorObject saved to the class constuctor is parsed for the attribute question. The question is parsed and
-   * checked for label tags. After the question is fully updated, the questionObject is returned.
+   * checked for label and em tags. After the question is fully updated, the questionObject is returned.
+   * TODO: this is very brittle and unreliable. Needs improvement.
    * @return {object} object representaion of question
    */
   addQuestion() {
     const { question } = this.editorObject;
     const questionObject = this.richTextParser.parse(question);
-    /* Removes block tags like <p> or <h1> that surround the <label> format.
+    /* Removes block tags like <p> or <h1> that surround the <label> or <em> format.
       Block tags are required by tinyMCE but have adverse effect on css in studio.
       */
-    questionObject.forEach((tag, ind) => {
-      const tagName = Object.keys(tag)[0];
-      let label = null;
-      tag[tagName].forEach(subTag => {
-        const subTagName = Object.keys(subTag)[0];
-        if (subTagName === 'label') {
-          label = subTag;
-        }
-      });
-      if (label) {
-        questionObject[ind] = label;
+    const resultQuestion = [];
+    const relevantSubnodes = ['label', 'em'];
+
+    questionObject.forEach((tag) => {
+      const subNodes = Object.values(tag)[0];
+      const containsRelevantSubnodes = subNodes.some(subNode => relevantSubnodes.includes(Object.keys(subNode)[0]));
+
+      if (!containsRelevantSubnodes) {
+        resultQuestion.push(tag);
+      } else {
+        resultQuestion.push(...subNodes);
       }
     });
-    return questionObject;
+
+    return resultQuestion;
   }
 
   /** buildMultiSelectProblem()
@@ -259,11 +261,20 @@ class ReactStateOLXParser {
       default:
         break;
     }
-    const updatedString = `${problemTypeTag}\n${questionString}`;
+    const questionStringWithEmDescriptionReplace = this.replaceEmWithDescriptionTag(questionString);
+    const updatedString = `${problemTypeTag}\n${questionStringWithEmDescriptionReplace}`;
     const problemBodyString = problemBody.replace(problemTypeTag, updatedString);
     const fullProblemString = `<problem>${problemBodyString}${hintString}\n</problem>`;
 
     return fullProblemString;
+  }
+
+  replaceEmWithDescriptionTag(xmlString) {
+    const regexPattern = /<em class="olx_description">(.*?)<\/em>/g;
+    const replacement = '<description>$1</description>';
+
+    const updatedHtml = xmlString.replace(regexPattern, replacement);
+    return updatedHtml;
   }
 
   /** buildTextInput()

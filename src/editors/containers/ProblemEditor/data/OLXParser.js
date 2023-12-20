@@ -487,7 +487,12 @@ export class OLXParser {
       }
     });
     const questionString = this.richTextBuilder.build(questionArray);
-    return questionString.replace(/<description>/gm, '<em>').replace(/<\/description>/gm, '</em>');
+    const res = this.replaceOlxDescriptionTag(questionString);
+    return res;
+  }
+
+  replaceOlxDescriptionTag(questionString) {
+    return questionString.replace(/<description>/gm, '<em class="olx_description">').replace(/<\/description>/gm, '</em>');
   }
 
   /** getHints()

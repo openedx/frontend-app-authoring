@@ -329,7 +329,7 @@ describe('OLXParser', () => {
       const olxparser = new OLXParser(labelDescriptionQuestionOLX.rawOLX);
       const problemType = olxparser.getProblemType();
       const question = olxparser.parseQuestions(problemType);
-      it('should append the label/description to the question', () => {
+      it('should append the label/description to the question, converting description to <em> with "olx_description" class', () => {
         expect(question.trim()).toBe(labelDescriptionQuestionOLX.question);
       });
     });

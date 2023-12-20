@@ -314,10 +314,11 @@ export const multipleChoiceWithFeedbackAndHintsOLX = {
   <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
 <label>Add the question text, or prompt, here. This text is required.</label>
 <description>You can add an optional tip or note related to the prompt like this. </description>
+<em>Just a generic em tag</em>
 <choicegroup type="MultipleChoice">
     <choice correct="false"><p>an incorrect answer</p><choicehint><p>You can specify optional feedback like this, which appears after this answer is submitted.</p></choicehint></choice>
     <choice correct="true"><p>the correct answer</p></choice>
-    <choice correct="false"><p>an incorrect answer</p><choicehint><p>You can specify optional feedback for none, a subset, or all of the answers.</></choicehint></choice>
+    <choice correct="false"><p>an incorrect answer</p><choicehint><p>You can specify optional feedback for none, a subset, or all of the answers.</p></choicehint></choice>
   </choicegroup>
   <solution>
     <p>You can add a solution</p>
@@ -359,12 +360,13 @@ export const multipleChoiceWithFeedbackAndHintsOLX = {
       },
     ],
   },
-  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em>You can add an optional tip or note related to the prompt like this.</em>',
+  question: '<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.</p><label>Add the question text, or prompt, here. This text is required.</label><em class="olx_description">You can add an optional tip or note related to the prompt like this.</em><em>Just a generic em tag</em>',
   buildOLX: `<problem>
   <multiplechoiceresponse>
     <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for multiple choice with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
     <label>Add the question text, or prompt, here. This text is required.</label>
-    <em>You can add an optional tip or note related to the prompt like this.</em>
+    <description>You can add an optional tip or note related to the prompt like this.</description>
+    <em>Just a generic em tag</em>
     <choicegroup>
       <choice correct="false">
 <p>an incorrect answer</p>        <choicehint><p>You can specify optional feedback like this, which appears after this answer is submitted.</p></choicehint>
@@ -541,7 +543,7 @@ export const textInputWithFeedbackAndHintsOLX = {
   },
   question: `<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
 <label>Add the question text, or prompt, here. This text is required.</label>
-<em>You can add an optional tip or note related to the prompt like this. </em>`,
+<em class="olx_description">You can add an optional tip or note related to the prompt like this. </em>`,
   buildOLX: `<problem>
   <stringresponse answer="the correct answer" type="ci">
     <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
@@ -773,7 +775,7 @@ export const labelDescriptionQuestionOLX = {
   question: `<p style="text-align: center;"><img height="274" width="" src="/static/boiling_eggs_water_system.png" alt="boiling eggs: water system"></img></p>
   
   <label>Taking the system as just the <b>water</b>, as indicated by the red dashed line, what would be the correct expression for the first law of thermodynamics applied to this system?</label>
-  <em>Watch out, boiling water is hot</em>`,
+  <em class="olx_description">Watch out, boiling water is hot</em>`,
 };
 
 export const htmlEntityTestOLX = {
