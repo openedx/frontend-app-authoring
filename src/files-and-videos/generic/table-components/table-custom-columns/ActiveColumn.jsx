@@ -26,7 +26,6 @@ const ActiveColumn = ({ row }) => {
       )}
     />
   );
-  
 };
 
 ActiveColumn.propTypes = {

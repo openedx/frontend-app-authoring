@@ -194,7 +194,7 @@ export async function uploadVideo(
           status: 'upload_completed',
         }]);
     })
-    .catch(async (error) => {
+    .catch(async () => {
       uploadErrors.push(`Failed to upload ${uploadFile.name} to server.`);
       await getAuthenticatedHttpClient()
         .post(getCourseVideosApiUrl(courseId), [{

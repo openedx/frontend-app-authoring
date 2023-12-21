@@ -5,7 +5,6 @@ import {
   addModels,
   removeModel,
   updateModel,
-  updateModels,
 } from '../../../generic/model-store';
 import {
   addThumbnail,
@@ -54,7 +53,7 @@ export function fetchVideos(courseId) {
       parsedVideos.forEach(async (video) => {
         const { usageLocations } = await getVideoUsagePaths({ videoId: video.id, courseId });
         const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
-  
+
         dispatch(updateModel({
           modelType: 'videos',
           model: {
@@ -63,7 +62,7 @@ export function fetchVideos(courseId) {
             activeStatus,
           },
         }));
-      })
+      });
     } catch (error) {
       if (error.response && error.response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
