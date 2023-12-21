@@ -2,6 +2,7 @@
 import React, { useState, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  useToggle,
   Button,
   Container,
   Dropzone,
@@ -219,9 +220,12 @@ const ImportTagsWizard = ({
   const [importPlan, setImportPlan] = useState(/** @type {null|string[]} */ (null));
   const [importPlanError, setImportPlanError] = useState(null);
 
+  const [isDialogDisabled, disableDialog, enableDialog] = useToggle(false);
+
   const importTagsMutation = useImportTags();
 
   const generatePlan = async () => {
+    disableDialog();
     try {
       if (file) {
         const plan = await planImportTags(taxonomy.id, file);
@@ -237,10 +241,13 @@ const ImportTagsWizard = ({
       }
     } catch (/** @type {any} */ error) {
       setImportPlanError(error.message);
+    } finally {
+      enableDialog();
     }
   };
 
   const confirmImportTags = async () => {
+    disableDialog();
     try {
       if (file) {
         await importTagsMutation.mutateAsync({
@@ -263,6 +270,7 @@ const ImportTagsWizard = ({
         setAlertProps(alertProps);
       }
     } finally {
+      enableDialog();
       onClose();
     }
   };
@@ -285,10 +293,15 @@ const ImportTagsWizard = ({
     >
       <ModalDialog
         isOpen={isOpen}
+        disabled={isDialogDisabled}
         isBlocking
         onClose={onClose}
         size="lg"
       >
+        {isDialogDisabled && (
+          // This div is used to prevent the user from interacting with the dialog while it is disabled
+          <div className="position-absolute w-100 h-100 d-block zindex-9" />
+        )}
         <ModalDialog.Header className={(currentStep === 'confirm') ? 'bg-warning-100' : undefined}>
           <ModalDialog.Title>
             {stepTitles[currentStep]}
