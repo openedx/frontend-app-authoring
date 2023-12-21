@@ -59,7 +59,13 @@ const mockStore = async (
   status,
 ) => {
   const fetchVideosUrl = getVideosUrl(courseId);
-  axiosMock.onGet(fetchVideosUrl).reply(getStatusValue(status), generateFetchVideosApiResponse());
+  const videosData = generateFetchVideosApiResponse();
+  axiosMock.onGet(fetchVideosUrl).reply(getStatusValue(status), videosData);
+
+  videosData.previous_uploads.forEach((video) => {
+    axiosMock.onGet(`${getVideosUrl(courseId)}/${video.edx_video_id}/usage`).reply(200, []);
+  });
+
   renderComponent();
   await executeThunk(fetchVideos(courseId), store.dispatch);
 };
@@ -219,9 +225,10 @@ describe('FilesAndUploads', () => {
         axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
+        const { videoIds } = store.getState().videos;
         await act(async () => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addVideoFile(courseId, file), store.dispatch);
+          await executeThunk(addVideoFile(courseId, file, videoIds), store.dispatch);
         });
         const addStatus = store.getState().videos.addingStatus;
         expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
