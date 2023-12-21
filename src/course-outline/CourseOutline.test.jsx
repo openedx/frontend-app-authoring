@@ -42,6 +42,7 @@ import messages from './messages';
 import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
+import configureModalMessages from './configure-modal/messages';
 
 let axiosMock;
 let store;
@@ -485,25 +486,37 @@ describe('<CourseOutline />', () => {
   });
 
   it('check configure subsection when configure subsection query is successful', async () => {
-    const { findAllByTestId, findByText, findAllByPlaceholderText } = render(<RootWrapper />);
+    const {
+      findAllByTestId,
+      findByText,
+      findAllByPlaceholderText,
+      getByText,
+      getByRole,
+      getAllByRole,
+      getByTestId,
+    } = render(<RootWrapper />);
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const subsection = section.childInfo.children[0];
     const newReleaseDate = '2025-08-10T10:00:00Z';
+    const newGraderType = 'Homework';
+    const newDue = '2025-09-10T10:00:00Z';
+    const isTimeLimited = true;
+    const defaultTimeLimitMinutes = 210;
 
     axiosMock
       .onPost(getCourseItemApiUrl(subsection.id), {
         publish: 'republish',
-        graderType: 'notgraded',
+        graderType: newGraderType,
         metadata: {
           visible_to_staff_only: true,
-          due: null,
+          due: newDue,
           hide_after_due: false,
           show_correctness: false,
           is_practice_exam: false,
-          is_time_limited: false,
+          is_time_limited: isTimeLimited,
           exam_review_rules: '',
           is_proctored_enabled: false,
-          default_time_limit_minutes: null,
+          default_time_limit_minutes: defaultTimeLimitMinutes,
           is_onboarding_exam: false,
           start: newReleaseDate,
         },
@@ -520,6 +533,10 @@ describe('<CourseOutline />', () => {
     expect(subsectionDropdownButton).toBeInTheDocument();
 
     subsection.start = newReleaseDate;
+    subsection.due = newDue;
+    subsection.format = newGraderType;
+    subsection.isTimeLimited = isTimeLimited;
+    subsection.defaultTimeLimitMinutes = defaultTimeLimitMinutes;
     section.childInfo.children[0] = subsection;
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
@@ -530,10 +547,10 @@ describe('<CourseOutline />', () => {
       section.id,
       true,
       newReleaseDate,
-      'notgraded',
-      null,
-      false,
-      null,
+      newGraderType,
+      newDue,
+      true,
+      defaultTimeLimitMinutes,
       false,
       false,
     ), store.dispatch);
@@ -543,6 +560,16 @@ describe('<CourseOutline />', () => {
 
     const datePicker = await findAllByPlaceholderText('MM/DD/YYYY');
     expect(datePicker[0]).toHaveValue('08/10/2025');
+    expect(datePicker[1]).toHaveValue('09/10/2025');
+
+    expect(getByText(newGraderType)).toBeInTheDocument();
+    const advancedTab = getByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
+    fireEvent.click(advancedTab);
+    const radioButtons = await getAllByRole('radio');
+    expect(radioButtons[0]).toHaveProperty('checked', false);
+    expect(radioButtons[1]).toHaveProperty('checked', true);
+    const hours = await getByTestId('hour-autosuggest');
+    expect(hours).toHaveValue('03:30');
   });
 
   it('check update highlights when update highlights query is successfully', async () => {

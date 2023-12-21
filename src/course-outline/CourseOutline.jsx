@@ -258,7 +258,6 @@ const CourseOutline = ({ courseId }) => {
           onPublishSubmit={handlePublishItemSubmit}
         />
         <ConfigureModal
-          isSubsection={isSubsectionConfigure}
           isOpen={isConfigureModalOpen}
           onClose={closeConfigureModal}
           onConfigureSubmit={

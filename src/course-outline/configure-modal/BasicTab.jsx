@@ -20,24 +20,21 @@ const BasicTab = ({
     setReleaseDate(value);
   };
 
-  const onChangeGraderType = (e) => {
-    const { value } = e.target;
-    return value === 'Not Graded' ? setGraderType('notgraded') : setGraderType(value);
-  };
+  const onChangeGraderType = (e) => setGraderType(e.target.value);
 
   const onChangeDueDate = (value) => {
     setDueDate(value);
   };
 
   const createOptions = () => courseGraders.map((option) => (
-    <option> {option} </option>
+    <option value={option}> {option} </option>
   ));
 
   return (
     <>
-      <h3 className="mt-3"><FormattedMessage {...messages.releaseDateAndTime} /></h3>
+      <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.releaseDateAndTime} /></h5>
       <hr />
-      <Stack direction="horizontal" gap={5}>
+      <Stack className="mt-3" direction="horizontal" gap={5}>
         <DatepickerControl
           type={DATEPICKER_TYPES.date}
           value={releaseDate}
@@ -56,7 +53,7 @@ const BasicTab = ({
       {
         isSubsection ? (
           <div>
-            <h3 className="mt-3"><FormattedMessage {...messages.grading} /></h3>
+            <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.grading} /></h5>
             <hr />
             <Form.Label><FormattedMessage {...messages.gradeAs} /></Form.Label>
             <Form.Control
@@ -65,7 +62,7 @@ const BasicTab = ({
               onChange={(value) => onChangeGraderType(value)}
               data-testid="grader-type-select"
             >
-              <option> Not Graded </option>
+              <option value="Not Graded"> Not Graded </option>
               {createOptions()}
             </Form.Control>
             <Stack direction="horizontal" gap={5}>

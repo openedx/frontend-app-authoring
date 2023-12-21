@@ -50,9 +50,9 @@ const VisibilityTab = ({
     <>
       {
         isSubsection ? (
-          <h3 className="mt-3"><FormattedMessage {...messages.subsectionVisibility} /></h3>
+          <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.subsectionVisibility} /></h5>
         ) : (
-          <h3 className="mt-3"><FormattedMessage {...messages.sectionVisibility} /></h3>
+          <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.sectionVisibility} /></h5>
         )
       }
       <hr />
@@ -77,7 +77,7 @@ const VisibilityTab = ({
               </Form.Radio>
               <Form.Text><FormattedMessage {...messages.hideEntireSubsectionDescription} /></Form.Text>
             </Form.RadioSet>
-            <h3 className="mt-3"><FormattedMessage {...messages.assessmentResultsVisibility} /></h3>
+            <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.assessmentResultsVisibility} /></h5>
             <Form.RadioSet
               name="assessmentResultsVisibility"
               onChange={correctnessChanged}

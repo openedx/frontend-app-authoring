@@ -50,7 +50,7 @@ const AdvancedTab = ({
 
   return (
     <>
-      <h3 className="mt-3"><FormattedMessage {...messages.setSpecialExam} /></h3>
+      <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.setSpecialExam} /></h5>
       <hr />
       <Form.RadioSet
         name="specialExam"
@@ -67,10 +67,11 @@ const AdvancedTab = ({
       </Form.RadioSet>
       { isTimeLimited && (
         <>
-          <h4 className="mt-3"><FormattedMessage {...messages.timeAllotted} /></h4>
+          <h6 className="mt-4 text-gray-700"><FormattedMessage {...messages.timeAllotted} /></h6>
           <Form.Autosuggest
             value={defaultTimeLimit === null ? formatHour(timeLimits[0]) : formatHour(defaultTimeLimit)}
             onSelected={(value) => setSelected(value)}
+            data-testid="hour-autosuggest"
           >
             {generateTimeLimits()}
           </Form.Autosuggest>

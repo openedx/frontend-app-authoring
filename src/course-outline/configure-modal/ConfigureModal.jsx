@@ -19,7 +19,6 @@ import VisibilityTab from './VisibilityTab';
 import AdvancedTab from './AdvancedTab';
 
 const ConfigureModal = ({
-  isSubsection,
   isOpen,
   onClose,
   onConfigureSubmit,
@@ -29,30 +28,41 @@ const ConfigureModal = ({
     displayName,
     start: sectionStartDate,
     visibilityState,
-    dueDate,
+    due,
     isTimeLimited,
     defaultTimeLimitMinutes,
     hideAfterDue,
     showCorrectness,
     courseGraders,
+    category,
+    format,
   } = useSelector(getCurrentItem);
   const [releaseDate, setReleaseDate] = useState(sectionStartDate);
   const [isVisibleToStaffOnly, setIsVisibleToStaffOnly] = useState(visibilityState === VisibilityTypes.STAFF_ONLY);
   const [saveButtonDisabled, setSaveButtonDisabled] = useState(true);
-  const [graderType, setGraderType] = useState('Not Graded');
+  const [graderType, setGraderType] = useState(format == null ? 'Not Graded' : format);
   const [dueDateState, setDueDateState] = useState('');
   const [isTimeLimitedState, setIsTimeLimitedState] = useState(false);
   const [defaultTimeLimitMin, setDefaultTimeLimitMin] = useState(30);
   const [hideAfterDueState, setHideAfterDueState] = useState(false);
   const [showCorrectnessState, setShowCorrectnessState] = useState(false);
+  const [isSubsection, setIsSubsection] = useState(category === 'sequential');
 
   useEffect(() => {
     setReleaseDate(sectionStartDate);
   }, [sectionStartDate]);
 
   useEffect(() => {
-    setDueDateState(dueDate);
-  }, [dueDate]);
+    setIsSubsection(category === 'sequential');
+  }, [category]);
+
+  useEffect(() => {
+    setGraderType(format == null ? 'Not Graded' : format);
+  }, [format]);
+
+  useEffect(() => {
+    setDueDateState(due);
+  }, [due]);
 
   useEffect(() => {
     setIsTimeLimitedState(isTimeLimited);
@@ -79,12 +89,12 @@ const ConfigureModal = ({
     setSaveButtonDisabled(
       visibilityUnchanged
       && releaseDate === sectionStartDate
-      && dueDateState === dueDate
+      && dueDateState === due
       && isTimeLimitedState === isTimeLimited
       && defaultTimeLimitMin === defaultTimeLimitMinutes
       && hideAfterDueState === hideAfterDue
       && showCorrectnessState === showCorrectness
-      && graderType === 'Not Graded',
+      && graderType === format,
     );
   }, [
     releaseDate,
@@ -116,13 +126,13 @@ const ConfigureModal = ({
 
   const handleClose = () => {
     setReleaseDate(sectionStartDate);
-    setDueDateState(dueDate);
+    setDueDateState(due);
     setIsTimeLimitedState(isTimeLimited);
     setDefaultTimeLimitMin(defaultTimeLimitMinutes);
     setHideAfterDueState(hideAfterDue);
     setShowCorrectnessState(showCorrectness);
     setIsVisibleToStaffOnly(visibilityState === VisibilityTypes.STAFF_ONLY);
-    setGraderType('Not Graded');
+    setGraderType(format);
   };
 
   return (
@@ -193,7 +203,6 @@ const ConfigureModal = ({
 };
 
 ConfigureModal.propTypes = {
-  isSubsection: PropTypes.bool.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onConfigureSubmit: PropTypes.func.isRequired,

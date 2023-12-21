@@ -30,12 +30,25 @@ jest.mock('react-router-dom', () => ({
 
 const currentSectionMock = {
   displayName: 'Section1',
+  category: 'chapter',
+  start: '2025-08-10T10:00:00Z',
+  visibilityState: true,
+  format: 'Not Graded',
   childInfo: {
     displayName: 'Subsection',
     children: [
       {
         displayName: 'Subsection 1',
         id: 1,
+        category: 'sequential',
+        due: '',
+        start: '2025-08-10T10:00:00Z',
+        visibilityState: true,
+        defaultTimeLimitMinutes: null,
+        hideAfterDue: false,
+        showCorrectness: false,
+        format: 'Homework',
+        courseGraders: ['Homework', 'Exam'],
         childInfo: {
           displayName: 'Unit',
           children: [
@@ -49,6 +62,15 @@ const currentSectionMock = {
       {
         displayName: 'Subsection 2',
         id: 2,
+        category: 'sequential',
+        due: '',
+        start: '2025-08-10T10:00:00Z',
+        visibilityState: true,
+        defaultTimeLimitMinutes: null,
+        hideAfterDue: false,
+        showCorrectness: false,
+        format: 'Homework',
+        courseGraders: ['Homework', 'Exam'],
         childInfo: {
           displayName: 'Unit',
           children: [
@@ -62,6 +84,15 @@ const currentSectionMock = {
       {
         displayName: 'Subsection 3',
         id: 3,
+        category: 'sequential',
+        due: '',
+        start: '2025-08-10T10:00:00Z',
+        visibilityState: true,
+        defaultTimeLimitMinutes: null,
+        hideAfterDue: false,
+        showCorrectness: false,
+        format: 'Homework',
+        courseGraders: ['Homework', 'Exam'],
         childInfo: {
           children: [],
         },
@@ -77,7 +108,6 @@ const renderComponent = () => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
       <ConfigureModal
-        isSubsection={false}
         isOpen
         onClose={onCloseMock}
         onConfigureSubmit={onConfigureSubmitMock}
@@ -142,6 +172,14 @@ describe('<ConfigureModal />', () => {
 const currentSubsectionMock = {
   displayName: 'Subsection 1',
   id: 1,
+  category: 'sequential',
+  due: '',
+  start: '2025-08-10T10:00:00Z',
+  visibilityState: true,
+  defaultTimeLimitMinutes: null,
+  hideAfterDue: false,
+  showCorrectness: false,
+  format: 'Homework',
   courseGraders: ['Homework', 'Exam'],
   childInfo: {
     displayName: 'Unit',
@@ -162,7 +200,6 @@ const renderSubsectionComponent = () => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
       <ConfigureModal
-        isSubsection
         isOpen
         onClose={onCloseMock}
         onConfigureSubmit={onConfigureSubmitMock}
@@ -242,7 +279,7 @@ describe('<ConfigureModal />', () => {
     expect(saveButton).toBeDisabled();
 
     const input = getByTestId('grader-type-select');
-    fireEvent.change(input, { target: { value: 'Homework' } });
+    fireEvent.change(input, { target: { value: 'Exam' } });
     expect(saveButton).not.toBeDisabled();
   });
 });
