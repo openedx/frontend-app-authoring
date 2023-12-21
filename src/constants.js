@@ -23,6 +23,7 @@ export const NOTIFICATION_MESSAGES = {
   saving: 'Saving',
   duplicating: 'Duplicating',
   deleting: 'Deleting',
+  empty: '',
 };
 
 export const DEFAULT_TIME_STAMP = '00:00';
