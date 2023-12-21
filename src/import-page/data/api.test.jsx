@@ -29,7 +29,7 @@ describe('API Functions', () => {
     const data = { importStatus: 1 };
     axiosMock.onPost(postImportCourseApiUrl(courseId)).reply(200, data);
 
-    const result = await startCourseImporting(courseId, file);
+    const result = await startCourseImporting(courseId, file, {}, jest.fn());
     expect(axiosMock.history.post[0].url).toEqual(postImportCourseApiUrl(courseId));
     expect(result).toEqual(data);
   });
