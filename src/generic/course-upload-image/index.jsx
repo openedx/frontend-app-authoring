@@ -31,8 +31,8 @@ const CourseUploadImage = ({
 }) => {
   const { courseId } = useParams();
   const intl = useIntl();
-  const imageAbsolutePath = new URL(assetImagePath, getConfig().LMS_BASE_URL);
-  const assetsUrl = new URL(`/assets/${courseId}`, getConfig().STUDIO_BASE_URL);
+  const imageAbsolutePath = () => new URL(assetImagePath, getConfig().LMS_BASE_URL);
+  const assetsUrl = () => new URL(`/assets/${courseId}`, getConfig().STUDIO_BASE_URL);
 
   const handleChangeImageAsset = (path) => {
     const assetPath = _.last(path.split('/'));
@@ -59,7 +59,7 @@ const CourseUploadImage = ({
   const inputComponent = assetImagePath ? (
     <div className="image-preview">
       <Image
-        src={imageAbsolutePath.href}
+        src={imageAbsolutePath().href}
         alt={intl.formatMessage(messages.uploadImageDropzoneAlt)}
         fluid
       />
@@ -88,7 +88,7 @@ const CourseUploadImage = ({
         values={{
           hyperlink: (
             <Hyperlink
-              destination={assetsUrl.href}
+              destination={assetsUrl().href}
               target="_blank"
               showLaunchIcon={false}
             >

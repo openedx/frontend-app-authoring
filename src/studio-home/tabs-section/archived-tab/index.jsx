@@ -1,27 +1,60 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { Icon, Row } from '@edx/paragon';
+import { Error } from '@edx/paragon/icons';
 
+import { LoadingSpinner } from '../../../generic/Loading';
 import CardItem from '../../card-item';
 import { sortAlphabeticallyArray } from '../utils';
+import AlertMessage from '../../../generic/alert-message';
+import messages from '../messages';
 
-const ArchivedTab = ({ archivedCoursesData }) => (
-  <div className="courses-tab">
-    {sortAlphabeticallyArray(archivedCoursesData).map(({
-      courseKey, displayName, lmsLink, org, rerunLink, number, run, url,
-    }) => (
-      <CardItem
-        key={courseKey}
-        displayName={displayName}
-        lmsLink={lmsLink}
-        rerunLink={rerunLink}
-        org={org}
-        number={number}
-        run={run}
-        url={url}
+const ArchivedTab = ({
+  archivedCoursesData,
+  isLoading,
+  isFailed,
+  // injected
+  intl,
+}) => {
+  if (isLoading) {
+    return (
+      <Row className="m-0 mt-4 justify-content-center">
+        <LoadingSpinner />
+      </Row>
+    );
+  }
+  return (
+    isFailed ? (
+      <AlertMessage
+        variant="danger"
+        description={(
+          <Row className="m-0 align-items-center">
+            <Icon src={Error} className="text-danger-500 mr-1" />
+            <span>{intl.formatMessage(messages.archiveTabErrorMessage)}</span>
+          </Row>
+        )}
       />
-    ))}
-  </div>
-);
+    ) : (
+      <div className="courses-tab">
+        {sortAlphabeticallyArray(archivedCoursesData).map(({
+          courseKey, displayName, lmsLink, org, rerunLink, number, run, url,
+        }) => (
+          <CardItem
+            key={courseKey}
+            displayName={displayName}
+            lmsLink={lmsLink}
+            rerunLink={rerunLink}
+            org={org}
+            number={number}
+            run={run}
+            url={url}
+          />
+        ))}
+      </div>
+    )
+  );
+};
 
 ArchivedTab.propTypes = {
   archivedCoursesData: PropTypes.arrayOf(
@@ -36,6 +69,10 @@ ArchivedTab.propTypes = {
       url: PropTypes.string.isRequired,
     }),
   ).isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  isFailed: PropTypes.bool.isRequired,
+  // injected
+  intl: intlShape.isRequired,
 };
 
-export default ArchivedTab;
+export default injectIntl(ArchivedTab);

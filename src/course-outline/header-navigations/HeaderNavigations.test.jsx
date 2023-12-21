@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import HeaderNavigations from './HeaderNavigations';
@@ -23,6 +24,7 @@ const renderComponent = (props) => render(
       isSectionsExpanded={false}
       isDisabledReindexButton={false}
       isReIndexShow
+      hasSections
       {...props}
     />
   </IntlProvider>,
@@ -77,5 +79,41 @@ describe('<HeaderNavigations />', () => {
     });
 
     expect(getByRole('button', { name: messages.expandAllButton.defaultMessage })).toBeInTheDocument();
+  });
+
+  it('render collapse button correctly', () => {
+    const { getByRole } = renderComponent({
+      isSectionsExpanded: true,
+    });
+
+    expect(getByRole('button', { name: messages.collapseAllButton.defaultMessage })).toBeInTheDocument();
+  });
+
+  it('render expand button correctly', () => {
+    const { getByRole } = renderComponent({
+      isSectionsExpanded: false,
+    });
+
+    expect(getByRole('button', { name: messages.expandAllButton.defaultMessage })).toBeInTheDocument();
+  });
+
+  it('render reindex button tooltip correctly', async () => {
+    const { getByText, getByRole } = renderComponent({
+      isDisabledReindexButton: false,
+    });
+    userEvent.hover(getByRole('button', { name: messages.reindexButton.defaultMessage }));
+    await waitFor(() => {
+      expect(getByText(messages.reindexButtonTooltip.defaultMessage)).toBeInTheDocument();
+    });
+  });
+
+  it('not render reindex button tooltip when button is disabled correctly', async () => {
+    const { queryByText, getByRole } = renderComponent({
+      isDisabledReindexButton: true,
+    });
+    userEvent.hover(getByRole('button', { name: messages.reindexButton.defaultMessage }));
+    await waitFor(() => {
+      expect(queryByText(messages.reindexButtonTooltip.defaultMessage)).not.toBeInTheDocument();
+    });
   });
 });
