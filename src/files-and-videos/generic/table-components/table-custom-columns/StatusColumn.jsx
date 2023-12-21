@@ -1,9 +1,9 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
-import { Badge } from '@edx/paragon';
+import { Badge, OverlayTrigger, Tooltip } from '@edx/paragon';
 
 const StatusColumn = ({ row }) => {
-  const { status } = row.original;
+  const { status, errorDescription } = row.original;
   const isUploaded = status === 'Success';
 
   if (isUploaded) {
@@ -11,9 +11,19 @@ const StatusColumn = ({ row }) => {
   }
 
   return (
-    <Badge variant="light">
-      {status}
-    </Badge>
+    // <OverlayTrigger
+    //   key="status error tooltip"
+    //   placement="left"
+    //   overlay={status === 'failed' && (
+    //     <Tooltip>
+    //       {errorDescription}
+    //     </Tooltip>
+    //   )}
+    // >
+      <Badge variant="light">
+        {status}
+      </Badge>
+    // </OverlayTrigger>
   );
 };
 

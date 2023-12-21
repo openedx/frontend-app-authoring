@@ -174,15 +174,17 @@ export async function uploadVideo(
   uploadFile,
   edxVideoId,
 ) {
-  const formData = new FormData();
-  formData.append('uploaded-file', uploadFile);
+  // const formData = new FormData();
+  // formData.append('uploaded-file', uploadFile);
   const uploadErrors = [];
+  const contentDisposition = `attachment; filename="${uploadFile.name}"`;
+  const headers = {
+    'Content-Disposition': contentDisposition,
+  };
   await fetch(uploadUrl, {
-    method: 'PUT',
-    body: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+    // method: 'PUT',
+    // body: formData,
+    headers,
   })
     .then(async () => {
       await getAuthenticatedHttpClient()
@@ -192,7 +194,7 @@ export async function uploadVideo(
           status: 'upload_completed',
         }]);
     })
-    .catch(async () => {
+    .catch(async (error) => {
       uploadErrors.push(`Failed to upload ${uploadFile.name} to server.`);
       await getAuthenticatedHttpClient()
         .post(getCourseVideosApiUrl(courseId), [{

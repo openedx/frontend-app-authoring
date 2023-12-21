@@ -1,12 +1,32 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
-import { Icon } from '@edx/paragon';
+import { isArray } from 'lodash';
+import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { Icon, Spinner } from '@edx/paragon';
 import { Check } from '@edx/paragon/icons';
 
 const ActiveColumn = ({ row }) => {
   const { usageLocations } = row.original;
-  const numOfUsageLocations = usageLocations?.length;
-  return numOfUsageLocations > 0 ? <Icon src={Check} /> : null;
+  if (isArray(usageLocations)) {
+    const numOfUsageLocations = usageLocations?.length;
+    return numOfUsageLocations > 0 ? <Icon src={Check} /> : null;
+  }
+  return (
+    <Spinner
+      animation="border"
+      role="status"
+      variant="primary"
+      size="sm"
+      screenReaderText={(
+        <FormattedMessage
+          id="authoring.loading"
+          defaultMessage="Loading..."
+          description="Screen-reader message for when a page is loading."
+        />
+      )}
+    />
+  );
+  
 };
 
 ActiveColumn.propTypes = {
@@ -17,4 +37,4 @@ ActiveColumn.propTypes = {
   }.isRequired,
 };
 
-export default ActiveColumn;
+export default injectIntl(ActiveColumn);
