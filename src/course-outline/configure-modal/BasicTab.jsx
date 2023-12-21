@@ -51,7 +51,7 @@ const BasicTab = ({
         />
       </Stack>
       {
-        isSubsection ? (
+        isSubsection && (
           <div>
             <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.grading} /></h5>
             <hr />
@@ -82,7 +82,7 @@ const BasicTab = ({
               />
             </Stack>
           </div>
-        ) : <div />
+        )
       }
     </>
   );

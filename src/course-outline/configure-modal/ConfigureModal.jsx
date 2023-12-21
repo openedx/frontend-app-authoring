@@ -175,7 +175,7 @@ const ConfigureModal = ({
             />
           </Tab>
           {
-            isSubsection ? (
+            isSubsection && (
               <Tab eventKey="advanced" title={intl.formatMessage(messages.advancedTabTitle)}>
                 <AdvancedTab
                   isTimeLimited={isTimeLimitedState}
@@ -184,7 +184,7 @@ const ConfigureModal = ({
                   setDefaultTimeLimit={setDefaultTimeLimitMin}
                 />
               </Tab>
-            ) : <div />
+            )
           }
         </Tabs>
       </ModalDialog.Body>
