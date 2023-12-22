@@ -77,8 +77,7 @@ const CourseOutline = ({ courseId }) => {
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
     handleHighlightsFormSubmit,
-    handleConfigureSectionSubmit,
-    handleConfigureSubsectionSubmit,
+    handleConfigureSubmit,
     handlePublishItemSubmit,
     handleEditSubmit,
     handleDeleteItemSubmit,
@@ -90,8 +89,6 @@ const CourseOutline = ({ courseId }) => {
   } = useCourseOutline({ courseId });
 
   const [sections, setSections] = useState(sectionsList);
-  const [isSubsectionConfigure, setIsSubsectionConfigure] = useState(false);
-
   const initialSections = [...sectionsList];
 
   const {
@@ -198,7 +195,6 @@ const CourseOutline = ({ courseId }) => {
                                   onDuplicateSubmit={handleDuplicateSectionSubmit}
                                   isSectionsExpanded={isSectionsExpanded}
                                   onNewSubsectionSubmit={handleNewSubsectionSubmit}
-                                  setIsSubsectionConfigure={setIsSubsectionConfigure}
                                 >
                                   {section.childInfo.children.map((subsection) => (
                                     <SubsectionCard
@@ -211,7 +207,6 @@ const CourseOutline = ({ courseId }) => {
                                       onEditSubmit={handleEditSubmit}
                                       onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                       onOpenConfigureModal={openConfigureModal}
-                                      setIsSubsectionConfigure={setIsSubsectionConfigure}
                                     />
                                   ))}
                                 </SectionCard>
@@ -260,9 +255,7 @@ const CourseOutline = ({ courseId }) => {
         <ConfigureModal
           isOpen={isConfigureModalOpen}
           onClose={closeConfigureModal}
-          onConfigureSubmit={
-            isSubsectionConfigure ? handleConfigureSubsectionSubmit : handleConfigureSectionSubmit
-          }
+          onConfigureSubmit={handleConfigureSubmit}
         />
         <DeleteModal
           isOpen={isDeleteModalOpen}

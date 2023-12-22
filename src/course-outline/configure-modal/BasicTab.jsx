@@ -65,7 +65,7 @@ const BasicTab = ({
               <option value="Not Graded"> Not Graded </option>
               {createOptions()}
             </Form.Control>
-            <Stack direction="horizontal" gap={5}>
+            <Stack className="mt-3" direction="horizontal" gap={5}>
               <DatepickerControl
                 type={DATEPICKER_TYPES.date}
                 value={dueDate}

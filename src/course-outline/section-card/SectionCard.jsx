@@ -25,7 +25,6 @@ const SectionCard = ({
   onDuplicateSubmit,
   isSectionsExpanded,
   onNewSubsectionSubmit,
-  setIsSubsectionConfigure,
 }) => {
   const currentRef = useRef(null);
   const intl = useIntl();
@@ -109,8 +108,6 @@ const SectionCard = ({
           title={displayName}
           status={sectionStatus}
           hasChanges={hasChanges}
-          isSubsection={false}
-          setIsSubsectionConfigure={setIsSubsectionConfigure}
           isExpanded={isExpanded}
           onExpand={handleExpandContent}
           onClickMenuButton={handleClickMenuButton}
@@ -185,7 +182,6 @@ SectionCard.propTypes = {
   onDuplicateSubmit: PropTypes.func.isRequired,
   isSectionsExpanded: PropTypes.bool.isRequired,
   onNewSubsectionSubmit: PropTypes.func.isRequired,
-  setIsSubsectionConfigure: PropTypes.func.isRequired,
 };
 
 export default SectionCard;

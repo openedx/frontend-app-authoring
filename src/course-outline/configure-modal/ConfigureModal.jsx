@@ -148,7 +148,7 @@ const ConfigureModal = ({
           {intl.formatMessage(messages.title, { title: displayName })}
         </ModalDialog.Title>
       </ModalDialog.Header>
-      <ModalDialog.Body className="configure-modal__body">
+      <ModalDialog.Body className={!isSubsection ? 'configure-modal__body' : ''}>
         <Tabs>
           <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
             <BasicTab

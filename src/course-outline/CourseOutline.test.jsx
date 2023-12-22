@@ -490,10 +490,9 @@ describe('<CourseOutline />', () => {
       findAllByTestId,
       findByText,
       findAllByPlaceholderText,
-      getByText,
-      getByRole,
-      getAllByRole,
-      getByTestId,
+      findAllByRole,
+      findByRole,
+      findByTestId,
     } = render(<RootWrapper />);
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const subsection = section.childInfo.children[0];
@@ -562,13 +561,13 @@ describe('<CourseOutline />', () => {
     expect(datePicker[0]).toHaveValue('08/10/2025');
     expect(datePicker[1]).toHaveValue('09/10/2025');
 
-    expect(getByText(newGraderType)).toBeInTheDocument();
-    const advancedTab = getByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
+    expect(await findByText(newGraderType)).toBeInTheDocument();
+    const advancedTab = await findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
     fireEvent.click(advancedTab);
-    const radioButtons = await getAllByRole('radio');
+    const radioButtons = await findAllByRole('radio');
     expect(radioButtons[0]).toHaveProperty('checked', false);
     expect(radioButtons[1]).toHaveProperty('checked', true);
-    const hours = await getByTestId('hour-autosuggest');
+    const hours = await findByTestId('hour-autosuggest');
     expect(hours).toHaveValue('03:30');
   });
 

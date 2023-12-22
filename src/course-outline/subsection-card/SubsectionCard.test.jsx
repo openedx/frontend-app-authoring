@@ -52,7 +52,6 @@ const renderComponent = (props) => render(
         onEditSubmit={onEditSubectionSubmit}
         onDuplicateSubmit={jest.fn()}
         namePrefix="subsection"
-        setIsSubsectionConfigure={jest.fn()}
         {...props}
       >
         <span>children</span>

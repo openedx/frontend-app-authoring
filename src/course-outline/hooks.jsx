@@ -116,8 +116,6 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleConfigureSectionSubmit = (isVisibleToStaffOnly, startDatetime) => {
     dispatch(configureCourseSectionQuery(currentSection.id, isVisibleToStaffOnly, startDatetime));
-
-    closeConfigureModal();
   };
 
   const handleConfigureSubsectionSubmit = (
@@ -142,6 +140,19 @@ const useCourseOutline = ({ courseId }) => {
       hideAfterDueState,
       showCorrectnessState,
     ));
+  };
+
+  const handleConfigureSubmit = (...args) => {
+    switch (currentItem.category) {
+    case COURSE_BLOCK_NAMES.chapter.id:
+      handleConfigureSectionSubmit(...args);
+      break;
+    case COURSE_BLOCK_NAMES.sequential.id:
+      handleConfigureSubsectionSubmit(...args);
+      break;
+    default:
+      return;
+    }
     closeConfigureModal();
   };
 
@@ -212,8 +223,7 @@ const useCourseOutline = ({ courseId }) => {
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
     handleHighlightsFormSubmit,
-    handleConfigureSectionSubmit,
-    handleConfigureSubsectionSubmit,
+    handleConfigureSubmit,
     handlePublishItemSubmit,
     handleEditSubmit,
     statusBarData,

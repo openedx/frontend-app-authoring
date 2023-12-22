@@ -21,7 +21,6 @@ const SubsectionCard = ({
   onOpenDeleteModal,
   onDuplicateSubmit,
   onOpenConfigureModal,
-  setIsSubsectionConfigure,
 }) => {
   const currentRef = useRef(null);
   const intl = useIntl();
@@ -87,7 +86,6 @@ const SubsectionCard = ({
       <CardHeader
         title={displayName}
         status={subsectionStatus}
-        isSubsection
         hasChanges={hasChanges}
         isExpanded={isExpanded}
         onExpand={handleExpandContent}
@@ -102,7 +100,6 @@ const SubsectionCard = ({
         isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
         onClickDuplicate={onDuplicateSubmit}
         namePrefix="subsection"
-        setIsSubsectionConfigure={setIsSubsectionConfigure}
       />
       {isExpanded && (
         <>
@@ -158,7 +155,6 @@ SubsectionCard.propTypes = {
   onOpenDeleteModal: PropTypes.func.isRequired,
   onDuplicateSubmit: PropTypes.func.isRequired,
   onOpenConfigureModal: PropTypes.func.isRequired,
-  setIsSubsectionConfigure: PropTypes.func.isRequired,
 };
 
 export default SubsectionCard;
