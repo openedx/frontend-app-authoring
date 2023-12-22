@@ -25,6 +25,7 @@ import {
   updateCourseSectionHighlights,
   setSectionOrderList,
   setVideoSharingOption,
+  setSubsectionOrderList,
 } from './api';
 import {
   addSection,
@@ -43,6 +44,7 @@ import {
   deleteUnit,
   duplicateSection,
   reorderSectionList,
+  reorderSubsectionList,
 } from './slice';
 
 export function fetchCourseOutlineIndexQuery(courseId) {
@@ -442,15 +444,36 @@ export function addNewUnitQuery(parentLocator, callback) {
   };
 }
 
-export function setSectionOrderListQuery(courseId, newListId, restoreCallback) {
+export function setSectionOrderListQuery(courseId, sectionListIds, restoreCallback) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      await setSectionOrderList(courseId, newListId).then(async (result) => {
+      await setSectionOrderList(courseId, sectionListIds).then(async (result) => {
         if (result) {
-          dispatch(reorderSectionList(newListId));
+          dispatch(reorderSectionList(sectionListIds));
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          dispatch(hideProcessingNotification());
+        }
+      });
+    } catch (error) {
+      restoreCallback();
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function setSubsectionOrderListQuery(courseId, sectionId, subsectionListIds, restoreCallback) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await setSubsectionOrderList(courseId, sectionId, subsectionListIds).then(async (result) => {
+        if (result) {
+          dispatch(reorderSubsectionList({ sectionId, subsectionListIds }));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(hideProcessingNotification());
         }
