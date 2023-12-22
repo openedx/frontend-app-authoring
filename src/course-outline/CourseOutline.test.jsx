@@ -525,7 +525,7 @@ describe('<CourseOutline />', () => {
     // check unit
     await checkDuplicateBtn(unit, subsectionElement, unitElement, 'unit', 2);
     // check subsection
-    await checkDuplicateBtn(subsection, sectionElement, subsectionElement, 'subsection', 2);
+    await checkDuplicateBtn(subsection, sectionElement, subsectionElement, 'subsection', 3);
     // check section
     await checkDuplicateBtn(section, null, sectionElement, 'section', 5);
   });
