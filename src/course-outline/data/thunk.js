@@ -24,6 +24,7 @@ import {
   restartIndexingOnCourse,
   updateCourseSectionHighlights,
   setSectionOrderList,
+  setSubsectionOrderList,
 } from './api';
 import {
   addSection,
@@ -411,15 +412,15 @@ export function addNewUnitQuery(parentLocator, callback) {
   };
 }
 
-export function setSectionOrderListQuery(courseId, newListId, restoreCallback) {
+export function setSectionOrderListQuery(courseId, sectionListIds, restoreCallback) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      await setSectionOrderList(courseId, newListId).then(async (result) => {
+      await setSectionOrderList(courseId, sectionListIds).then(async (result) => {
         if (result) {
-          dispatch(reorderSectionList(newListId));
+          dispatch(reorderSectionList(sectionListIds));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(hideProcessingNotification());
         }
@@ -427,6 +428,26 @@ export function setSectionOrderListQuery(courseId, newListId, restoreCallback) {
     } catch (error) {
       restoreCallback();
       dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function setSubsectionOrderListQuery(courseId, sectionId, newListId, restoreCallback) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await setSubsectionOrderList(courseId, sectionId, newListId).then(async (result) => {
+        if (result) {
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          dispatch(hideProcessingNotification());
+        }
+      });
+    } catch (error) {
+      restoreCallback();
+      dispatch(hideProcessingNotification()); 
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   };

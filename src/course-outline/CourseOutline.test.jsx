@@ -14,7 +14,7 @@ import {
   getCourseOutlineIndexApiUrl,
   getCourseReindexApiUrl,
   getXBlockApiUrl,
-  getEnableHighlightsEmailsApiUrl,
+  getCourseBlockApiUrl,
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
 } from './data/api';
@@ -235,7 +235,7 @@ describe('<CourseOutline />', () => {
 
     axiosMock.reset();
     axiosMock
-      .onPost(getEnableHighlightsEmailsApiUrl(courseId), {
+      .onPost(getCourseBlockApiUrl(courseId), {
         publish: 'republish',
         metadata: {
           highlights_enabled_for_messaging: true,
@@ -470,7 +470,7 @@ describe('<CourseOutline />', () => {
     // check unit
     await checkDuplicateBtn(unit, subsectionElement, unitElement, 'unit', 2);
     // check subsection
-    await checkDuplicateBtn(subsection, sectionElement, subsectionElement, 'subsection', 2);
+    await checkDuplicateBtn(subsection, sectionElement, subsectionElement, 'subsection', 3);
     // check section
     await checkDuplicateBtn(section, null, sectionElement, 'section', 5);
   });
@@ -641,7 +641,7 @@ describe('<CourseOutline />', () => {
     children = children.splice(2, 0, children.splice(0, 1)[0]);
 
     axiosMock
-      .onPut(getEnableHighlightsEmailsApiUrl(courseBlockId), { children })
+      .onPut(getCourseBlockApiUrl(courseBlockId), { children })
       .reply(200, { dummy: 'value' });
 
     await executeThunk(setSectionOrderListQuery(courseBlockId, children, () => {}), store.dispatch);
@@ -662,7 +662,7 @@ describe('<CourseOutline />', () => {
     const newChildren = children.splice(2, 0, children.splice(0, 1)[0]);
 
     axiosMock
-      .onPut(getEnableHighlightsEmailsApiUrl(courseBlockId), { children })
+      .onPut(getCourseBlockApiUrl(courseBlockId), { children })
       .reply(500);
 
     await executeThunk(setSectionOrderListQuery(courseBlockId, undefined, () => children), store.dispatch);
