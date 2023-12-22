@@ -19,9 +19,15 @@ export const getCourseLaunchApiUrl = ({
   all,
 }) => `${getApiBaseUrl()}/api/courses/v1/validation/${courseId}/?graded_only=${gradedOnly}&validate_oras=${validateOras}&all=${all}`;
 
-export const getEnableHighlightsEmailsApiUrl = (courseId) => {
+export const getCourseBlockApiUrl = (courseId) => {
   const formattedCourseId = courseId.split('course-v1:')[1];
   return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@course+block@course`;
+};
+
+export const getChapterBlockApiUrl = (courseId, chapterId) => {
+  const formattedCourseId = courseId.split('course-v1:')[1];
+  const formattedChapterId = chapterId.split('@').slice(-1)[0];
+  return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@chapter+block@${formattedChapterId}`;
 };
 
 export const getCourseReindexApiUrl = (reindexLink) => `${getApiBaseUrl()}${reindexLink}`;
@@ -112,7 +118,7 @@ export async function getCourseLaunch({
  */
 export async function enableCourseHighlightsEmails(courseId) {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getEnableHighlightsEmailsApiUrl(courseId), {
+    .post(getCourseBlockApiUrl(courseId), {
       publish: 'republish',
       metadata: {
         highlights_enabled_for_messaging: true,
@@ -305,7 +311,24 @@ export async function addNewCourseItem(parentLocator, category, displayName) {
 */
 export async function setSectionOrderList(courseId, children) {
   const { data } = await getAuthenticatedHttpClient()
-    .put(getEnableHighlightsEmailsApiUrl(courseId), {
+    .put(getCourseBlockApiUrl(courseId), {
+      children,
+    });
+
+  return data;
+}
+
+
+/**
+ * Set order for the list of the subsections
+ * @param {string} courseId
+ * @param {string} sectionId
+ * @param {Array<string>} children list of sections id's
+ * @returns {Promise<Object>}
+*/
+export async function setSubsectionOrderList(courseId, sectionId, children) {
+  const { data } = await getAuthenticatedHttpClient()
+    .put(getChapterBlockApiUrl(courseId, sectionId), {
       children,
     });
 

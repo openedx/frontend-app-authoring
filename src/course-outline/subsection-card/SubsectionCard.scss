@@ -1,13 +1,5 @@
 .subsection-card {
-  @include pgn-box-shadow(1, "centered");
-
-  padding: $spacer 2rem;
-  margin-bottom: 1.5rem;
-  background: $light-200;
-
-  .subsection-card__content {
-    margin: $spacer;
-  }
+  flex-grow: 1;
 
   .item-card-header__badge-status {
     background: $light-100;
