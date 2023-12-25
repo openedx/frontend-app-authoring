@@ -148,7 +148,7 @@ describe('<ConfigureModal />', () => {
 
     const visibilityTab = getByRole('tab', { name: messages.visibilityTabTitle.defaultMessage });
     fireEvent.click(visibilityTab);
-    expect(getByText(messages.sectionVisibility.defaultMessage)).toBeInTheDocument();
+    expect(getByText('Section Visibility')).toBeInTheDocument();
     expect(getByText(messages.hideFromLearners.defaultMessage)).toBeInTheDocument();
   });
 
@@ -245,7 +245,7 @@ describe('<ConfigureModal />', () => {
 
     const visibilityTab = getByRole('tab', { name: messages.visibilityTabTitle.defaultMessage });
     fireEvent.click(visibilityTab);
-    expect(getByText(messages.subsectionVisibility.defaultMessage)).toBeInTheDocument();
+    expect(getByText('Subsection Visibility')).toBeInTheDocument();
     expect(getByText(messages.showEntireSubsection.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.showEntireSubsectionDescription.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.hideContentAfterDue.defaultMessage)).toBeInTheDocument();

@@ -16,15 +16,8 @@ const BasicTab = ({
   setDueDate,
 }) => {
   const intl = useIntl();
-  const onChangeReleaseDate = (value) => {
-    setReleaseDate(value);
-  };
 
   const onChangeGraderType = (e) => setGraderType(e.target.value);
-
-  const onChangeDueDate = (value) => {
-    setDueDate(value);
-  };
 
   const createOptions = () => courseGraders.map((option) => (
     <option value={option}> {option} </option>
@@ -40,14 +33,15 @@ const BasicTab = ({
           value={releaseDate}
           label={intl.formatMessage(messages.releaseDate)}
           controlName="state-date"
-          onChange={(date) => onChangeReleaseDate(date)}
+          onChange={setReleaseDate}
+          data-testid="release-date-picker"
         />
         <DatepickerControl
           type={DATEPICKER_TYPES.time}
           value={releaseDate}
           label={intl.formatMessage(messages.releaseTimeUTC)}
           controlName="start-time"
-          onChange={(date) => onChangeReleaseDate(date)}
+          onChange={setReleaseDate}
         />
       </Stack>
       {
@@ -71,14 +65,15 @@ const BasicTab = ({
                 value={dueDate}
                 label={intl.formatMessage(messages.dueDate)}
                 controlName="state-date"
-                onChange={(date) => onChangeDueDate(date)}
+                onChange={setDueDate}
+                data-testid="due-date-picker"
               />
               <DatepickerControl
                 type={DATEPICKER_TYPES.time}
                 value={dueDate}
                 label={intl.formatMessage(messages.dueTimeUTC)}
                 controlName="start-time"
-                onChange={(date) => onChangeDueDate(date)}
+                onChange={setDueDate}
               />
             </Stack>
           </div>

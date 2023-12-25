@@ -17,6 +17,7 @@ import messages from './messages';
 import BasicTab from './BasicTab';
 import VisibilityTab from './VisibilityTab';
 import AdvancedTab from './AdvancedTab';
+import { COURSE_BLOCK_NAMES } from '../constants';
 
 const ConfigureModal = ({
   isOpen,
@@ -43,17 +44,17 @@ const ConfigureModal = ({
   const [graderType, setGraderType] = useState(format == null ? 'Not Graded' : format);
   const [dueDateState, setDueDateState] = useState('');
   const [isTimeLimitedState, setIsTimeLimitedState] = useState(false);
-  const [defaultTimeLimitMin, setDefaultTimeLimitMin] = useState(30);
+  const [defaultTimeLimitMin, setDefaultTimeLimitMin] = useState(defaultTimeLimitMinutes);
   const [hideAfterDueState, setHideAfterDueState] = useState(false);
   const [showCorrectnessState, setShowCorrectnessState] = useState(false);
-  const [isSubsection, setIsSubsection] = useState(category === 'sequential');
+  const [isSubsection, setIsSubsection] = useState(category === COURSE_BLOCK_NAMES.sequential.id);
 
   useEffect(() => {
     setReleaseDate(sectionStartDate);
   }, [sectionStartDate]);
 
   useEffect(() => {
-    setIsSubsection(category === 'sequential');
+    setIsSubsection(category === COURSE_BLOCK_NAMES.sequential.id);
   }, [category]);
 
   useEffect(() => {
@@ -133,13 +134,14 @@ const ConfigureModal = ({
     setShowCorrectnessState(showCorrectness);
     setIsVisibleToStaffOnly(visibilityState === VisibilityTypes.STAFF_ONLY);
     setGraderType(format);
+    onClose();
   };
 
   return (
     <ModalDialog
       className="configure-modal"
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       hasCloseButton
       isFullscreenOnMobile
     >
@@ -164,6 +166,7 @@ const ConfigureModal = ({
           </Tab>
           <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
             <VisibilityTab
+              category={category}
               isSubsection={isSubsection}
               isVisibleToStaffOnly={isVisibleToStaffOnly}
               setIsVisibleToStaffOnly={setIsVisibleToStaffOnly}
@@ -190,7 +193,7 @@ const ConfigureModal = ({
       </ModalDialog.Body>
       <ModalDialog.Footer className="pt-1">
         <ActionRow>
-          <ModalDialog.CloseButton variant="tertiary" onClick={handleClose}>
+          <ModalDialog.CloseButton variant="tertiary">
             {intl.formatMessage(messages.cancelButton)}
           </ModalDialog.CloseButton>
           <Button onClick={handleSave} disabled={saveButtonDisabled}>

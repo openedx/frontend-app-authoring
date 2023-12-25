@@ -25,9 +25,9 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.title',
     defaultMessage: 'Visibility',
   },
-  sectionVisibility: {
+  visibilitySectionTitle: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.section-visibility',
-    defaultMessage: 'Section Visibility',
+    defaultMessage: '{visibilityTitle} Visibility',
   },
   hideFromLearners: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.hide-from-learners',

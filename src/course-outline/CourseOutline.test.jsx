@@ -489,7 +489,6 @@ describe('<CourseOutline />', () => {
     const {
       findAllByTestId,
       findByText,
-      findAllByPlaceholderText,
       findAllByRole,
       findByRole,
       findByTestId,
@@ -554,12 +553,13 @@ describe('<CourseOutline />', () => {
       false,
     ), store.dispatch);
     fireEvent.click(subsectionDropdownButton);
-    const configureBtn = await findByText(cardHeaderMessages.menuConfigure.defaultMessage);
+    const configureBtn = await within(firstSubsection).findByTestId('subsection-card-header__menu-configure-button');
     fireEvent.click(configureBtn);
 
-    const datePicker = await findAllByPlaceholderText('MM/DD/YYYY');
-    expect(datePicker[0]).toHaveValue('08/10/2025');
-    expect(datePicker[1]).toHaveValue('09/10/2025');
+    const releaseDatePicker = await findByTestId('release-date-picker');
+    expect(releaseDatePicker).toHaveValue('08/10/2025');
+    const dueDatePicker = await findByTestId('release-date-picker');
+    expect(dueDatePicker).toHaveValue('09/10/2025');
 
     expect(await findByText(newGraderType)).toBeInTheDocument();
     const advancedTab = await findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });

@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert, Form } from '@edx/paragon';
-import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, injectIntl, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
+import { COURSE_BLOCK_NAMES } from '../constants';
 
 const VisibilityTab = ({
+  category,
   isVisibleToStaffOnly,
   setIsVisibleToStaffOnly,
   showWarning,
@@ -14,6 +16,8 @@ const VisibilityTab = ({
   showCorrectness,
   setShowCorrectness,
 }) => {
+  const intl = useIntl();
+  const visibilityTitle = COURSE_BLOCK_NAMES[category]?.name;
   const handleChange = (e) => {
     setIsVisibleToStaffOnly(e.target.checked);
   };
@@ -48,13 +52,9 @@ const VisibilityTab = ({
 
   return (
     <>
-      {
-        isSubsection ? (
-          <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.subsectionVisibility} /></h5>
-        ) : (
-          <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.sectionVisibility} /></h5>
-        )
-      }
+      <h5 className="mt-4 text-gray-700">
+        {intl.formatMessage(messages.visibilitySectionTitle, { visibilityTitle })}
+      </h5>
       <hr />
       {
         isSubsection ? (
@@ -117,6 +117,7 @@ const VisibilityTab = ({
 };
 
 VisibilityTab.propTypes = {
+  category: PropTypes.string.isRequired,
   isVisibleToStaffOnly: PropTypes.bool.isRequired,
   showWarning: PropTypes.bool.isRequired,
   setIsVisibleToStaffOnly: PropTypes.func.isRequired,

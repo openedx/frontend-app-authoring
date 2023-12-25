@@ -21,7 +21,7 @@ const AdvancedTab = ({
     }
   };
 
-  const setSelected = (valueString) => {
+  const setCurrentTimeLimit = (valueString) => {
     const value = valueString.split(':');
     setDefaultTimeLimit(Number.parseInt(value[0], 10) * 60 + Number.parseInt(value[1], 10));
   };
@@ -70,7 +70,8 @@ const AdvancedTab = ({
           <h6 className="mt-4 text-gray-700"><FormattedMessage {...messages.timeAllotted} /></h6>
           <Form.Autosuggest
             value={defaultTimeLimit === null ? formatHour(timeLimits[0]) : formatHour(defaultTimeLimit)}
-            onSelected={(value) => setSelected(value)}
+            onChange={setCurrentTimeLimit}
+            onSelected={setCurrentTimeLimit}
             data-testid="hour-autosuggest"
           >
             {generateTimeLimits()}
@@ -83,8 +84,6 @@ const AdvancedTab = ({
 };
 
 AdvancedTab.propTypes = {
-  releaseDate: PropTypes.string.isRequired,
-  setReleaseDate: PropTypes.func.isRequired,
   isTimeLimited: PropTypes.bool.isRequired,
   setIsTimeLimited: PropTypes.func.isRequired,
   defaultTimeLimit: PropTypes.string.isRequired,
