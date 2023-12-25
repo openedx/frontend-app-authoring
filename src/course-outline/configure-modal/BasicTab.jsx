@@ -28,21 +28,22 @@ const BasicTab = ({
       <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.releaseDateAndTime} /></h5>
       <hr />
       <Stack className="mt-3" direction="horizontal" gap={5}>
-        <DatepickerControl
-          type={DATEPICKER_TYPES.date}
-          value={releaseDate}
-          label={intl.formatMessage(messages.releaseDate)}
-          controlName="state-date"
-          onChange={setReleaseDate}
-          data-testid="release-date-picker"
-        />
-        <DatepickerControl
-          type={DATEPICKER_TYPES.time}
-          value={releaseDate}
-          label={intl.formatMessage(messages.releaseTimeUTC)}
-          controlName="start-time"
-          onChange={setReleaseDate}
-        />
+        <div data-testid="release-date-stack">
+          <DatepickerControl
+            type={DATEPICKER_TYPES.date}
+            value={releaseDate}
+            label={intl.formatMessage(messages.releaseDate)}
+            controlName="state-date"
+            onChange={setReleaseDate}
+          />
+          <DatepickerControl
+            type={DATEPICKER_TYPES.time}
+            value={releaseDate}
+            label={intl.formatMessage(messages.releaseTimeUTC)}
+            controlName="start-time"
+            onChange={setReleaseDate}
+          />
+        </div>
       </Stack>
       {
         isSubsection && (
@@ -60,21 +61,23 @@ const BasicTab = ({
               {createOptions()}
             </Form.Control>
             <Stack className="mt-3" direction="horizontal" gap={5}>
-              <DatepickerControl
-                type={DATEPICKER_TYPES.date}
-                value={dueDate}
-                label={intl.formatMessage(messages.dueDate)}
-                controlName="state-date"
-                onChange={setDueDate}
-                data-testid="due-date-picker"
-              />
-              <DatepickerControl
-                type={DATEPICKER_TYPES.time}
-                value={dueDate}
-                label={intl.formatMessage(messages.dueTimeUTC)}
-                controlName="start-time"
-                onChange={setDueDate}
-              />
+              <div data-testid="due-date-stack">
+                <DatepickerControl
+                  type={DATEPICKER_TYPES.date}
+                  value={dueDate}
+                  label={intl.formatMessage(messages.dueDate)}
+                  controlName="state-date"
+                  onChange={setDueDate}
+                  data-testid="due-date-picker"
+                />
+                <DatepickerControl
+                  type={DATEPICKER_TYPES.time}
+                  value={dueDate}
+                  label={intl.formatMessage(messages.dueTimeUTC)}
+                  controlName="start-time"
+                  onChange={setDueDate}
+                />
+              </div>
             </Stack>
           </div>
         )

@@ -556,12 +556,14 @@ describe('<CourseOutline />', () => {
     const configureBtn = await within(firstSubsection).findByTestId('subsection-card-header__menu-configure-button');
     fireEvent.click(configureBtn);
 
-    const releaseDatePicker = await findByTestId('release-date-picker');
+    expect(await findByText(newGraderType)).toBeInTheDocument();
+    const releaseDateStack = await findByTestId('release-date-stack');
+    const releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
     expect(releaseDatePicker).toHaveValue('08/10/2025');
-    const dueDatePicker = await findByTestId('release-date-picker');
+    const dueDateStack = await findByTestId('due-date-stack');
+    const dueDatePicker = await within(dueDateStack).findByPlaceholderText('MM/DD/YYYY');
     expect(dueDatePicker).toHaveValue('09/10/2025');
 
-    expect(await findByText(newGraderType)).toBeInTheDocument();
     const advancedTab = await findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
     fireEvent.click(advancedTab);
     const radioButtons = await findAllByRole('radio');
