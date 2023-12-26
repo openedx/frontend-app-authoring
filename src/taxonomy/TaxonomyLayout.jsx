@@ -38,13 +38,14 @@ const TaxonomyLayout = () => {
         )}
         <Outlet />
         <StudioFooter />
-        <Toast
-          show={toastMessage !== null}
-          onClose={() => setToastMessage(null)}
-          data-testid="taxonomy-toast"
-        >
-          {toastMessage}
-        </Toast>
+        {toastMessage && (
+          <Toast
+            onClose={() => setToastMessage(null)}
+            data-testid="taxonomy-toast"
+          >
+            {toastMessage}
+          </Toast>
+        )}
       </div>
       <ScrollRestoration />
     </TaxonomyContext.Provider>
