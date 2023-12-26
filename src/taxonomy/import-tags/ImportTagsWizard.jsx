@@ -35,11 +35,11 @@ const TaxonomyProp = PropTypes.shape({
   name: PropTypes.string.isRequired,
 });
 
-const ExportStep = ({ taxonomy }) => {
+const ExportStep = ({ taxonomy, title }) => {
   const intl = useIntl();
 
   return (
-    <Stepper.Step eventKey="export">
+    <Stepper.Step eventKey="export" title={title}>
       <Stack gap={3} data-testid="export-step">
         <p>{intl.formatMessage(messages.importWizardStepExportBody, { br: linebreak })}</p>
         <Stack gap={3} direction="horizontal">
@@ -67,6 +67,7 @@ const ExportStep = ({ taxonomy }) => {
 
 ExportStep.propTypes = {
   taxonomy: TaxonomyProp.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 const UploadStep = ({
@@ -74,6 +75,7 @@ const UploadStep = ({
   setFile,
   importPlanError,
   setImportPlanError,
+  title,
 }) => {
   const intl = useIntl();
 
@@ -90,7 +92,7 @@ const UploadStep = ({
   };
 
   return (
-    <Stepper.Step eventKey="upload" hasError={importPlanError}>
+    <Stepper.Step eventKey="upload" title={title} hasError={importPlanError}>
       <Stack gap={3} data-testid="upload-step">
         <p>{intl.formatMessage(messages.importWizardStepUploadBody, { br: linebreak })}</p>
         <div>
@@ -147,6 +149,7 @@ UploadStep.propTypes = {
   setFile: PropTypes.func.isRequired,
   importPlanError: PropTypes.string,
   setImportPlanError: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 UploadStep.defaultProps = {
@@ -154,11 +157,11 @@ UploadStep.defaultProps = {
   importPlanError: null,
 };
 
-const PlanStep = ({ importPlan }) => {
+const PlanStep = ({ importPlan, title }) => {
   const intl = useIntl();
 
   return (
-    <Stepper.Step eventKey="plan">
+    <Stepper.Step eventKey="plan" title={title}>
       <Stack gap={3} data-testid="plan-step">
         {intl.formatMessage(messages.importWizardStepPlanBody, { br: linebreak, changeCount: importPlan?.length })}
         <ul className="h-200px" style={{ overflow: 'scroll' }}>
@@ -175,17 +178,18 @@ const PlanStep = ({ importPlan }) => {
 
 PlanStep.propTypes = {
   importPlan: PropTypes.arrayOf(PropTypes.string),
+  title: PropTypes.string.isRequired,
 };
 
 PlanStep.defaultProps = {
   importPlan: null,
 };
 
-const ConfirmStep = ({ importPlan }) => {
+const ConfirmStep = ({ importPlan, title }) => {
   const intl = useIntl();
 
   return (
-    <Stepper.Step eventKey="confirm">
+    <Stepper.Step eventKey="confirm" title={title}>
       <Stack data-testid="confirm-step">
         {intl.formatMessage(
           messages.importWizardStepConfirmBody,
@@ -198,6 +202,7 @@ const ConfirmStep = ({ importPlan }) => {
 
 ConfirmStep.propTypes = {
   importPlan: PropTypes.arrayOf(PropTypes.string),
+  title: PropTypes.string.isRequired,
 };
 
 ConfirmStep.defaultProps = {
@@ -292,7 +297,7 @@ const ImportTagsWizard = ({
       onClick={(e) => e.stopPropagation() /* This prevents calling onClick handler from the parent */}
     >
       <ModalDialog
-        title={stepTitles[currentStep] || ''}
+        title={stepTitles[currentStep]}
         isOpen={isOpen}
         disabled={isDialogDisabled}
         isBlocking
@@ -313,15 +318,16 @@ const ImportTagsWizard = ({
 
         <Stepper activeKey={currentStep}>
           <ModalDialog.Body>
-            <ExportStep taxonomy={taxonomy} />
+            <ExportStep title={stepTitles[currentStep]} taxonomy={taxonomy} />
             <UploadStep
+              title={stepTitles[currentStep]}
               file={file}
               setFile={setFile}
               importPlanError={importPlanError}
               setImportPlanError={setImportPlanError}
             />
-            <PlanStep importPlan={importPlan} />
-            <ConfirmStep importPlan={importPlan} />
+            <PlanStep title={stepTitles[currentStep]} importPlan={importPlan} />
+            <ConfirmStep title={stepTitles[currentStep]} importPlan={importPlan} />
           </ModalDialog.Body>
 
           <hr className="mx-4" />
