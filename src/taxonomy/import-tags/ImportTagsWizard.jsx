@@ -292,6 +292,7 @@ const ImportTagsWizard = ({
       onClick={(e) => e.stopPropagation() /* This prevents calling onClick handler from the parent */}
     >
       <ModalDialog
+        title={stepTitles[currentStep] || ''}
         isOpen={isOpen}
         disabled={isDialogDisabled}
         isBlocking
