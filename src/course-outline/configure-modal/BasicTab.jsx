@@ -27,8 +27,8 @@ const BasicTab = ({
     <>
       <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.releaseDateAndTime} /></h5>
       <hr />
-      <Stack className="mt-3" direction="horizontal" gap={5}>
-        <div data-testid="release-date-stack">
+      <div data-testid="release-date-stack">
+        <Stack className="mt-3" direction="horizontal" gap={5}>
           <DatepickerControl
             type={DATEPICKER_TYPES.date}
             value={releaseDate}
@@ -43,8 +43,8 @@ const BasicTab = ({
             controlName="start-time"
             onChange={setReleaseDate}
           />
-        </div>
-      </Stack>
+        </Stack>
+      </div>
       {
         isSubsection && (
           <div>
@@ -60,8 +60,8 @@ const BasicTab = ({
               <option value="Not Graded"> Not Graded </option>
               {createOptions()}
             </Form.Control>
-            <Stack className="mt-3" direction="horizontal" gap={5}>
-              <div data-testid="due-date-stack">
+            <div data-testid="due-date-stack">
+              <Stack className="mt-3" direction="horizontal" gap={5}>
                 <DatepickerControl
                   type={DATEPICKER_TYPES.date}
                   value={dueDate}
@@ -77,8 +77,8 @@ const BasicTab = ({
                   controlName="start-time"
                   onChange={setDueDate}
                 />
-              </div>
-            </Stack>
+              </Stack>
+            </div>
           </div>
         )
       }

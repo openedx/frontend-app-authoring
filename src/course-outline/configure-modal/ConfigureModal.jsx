@@ -47,15 +47,13 @@ const ConfigureModal = ({
   const [defaultTimeLimitMin, setDefaultTimeLimitMin] = useState(defaultTimeLimitMinutes);
   const [hideAfterDueState, setHideAfterDueState] = useState(false);
   const [showCorrectnessState, setShowCorrectnessState] = useState(false);
-  const [isSubsection, setIsSubsection] = useState(category === COURSE_BLOCK_NAMES.sequential.id);
+  const isSubsection = category === COURSE_BLOCK_NAMES.sequential.id;
 
+  /* TODO: The use of these useEffects needs to be updated to use Formik, please see,
+  * https://github.com/open-craft/frontend-app-course-authoring/pull/22#discussion_r1435957797 as reference. */
   useEffect(() => {
     setReleaseDate(sectionStartDate);
   }, [sectionStartDate]);
-
-  useEffect(() => {
-    setIsSubsection(category === COURSE_BLOCK_NAMES.sequential.id);
-  }, [category]);
 
   useEffect(() => {
     setGraderType(format == null ? 'Not Graded' : format);

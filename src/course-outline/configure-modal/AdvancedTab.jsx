@@ -37,6 +37,12 @@ const AdvancedTab = ({
     if (mm < 10) {
       mms = `0${mm}`;
     }
+    if (Number.isNaN(hh)) {
+      hhs = '00';
+    }
+    if (Number.isNaN(mm)) {
+      mms = '00';
+    }
     return `${hhs}:${mms}`;
   };
 
