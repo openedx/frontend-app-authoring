@@ -17,14 +17,15 @@ import {
   getCourseBlockApiUrl,
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
+  getChapterBlockApiUrl,
 } from './data/api';
+import { RequestStatus } from '../data/constants';
 import {
   configureCourseSectionQuery,
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery,
   updateCourseSectionHighlightsQuery,
-  setSectionOrderListQuery,
 } from './data/thunk';
 import initializeStore from '../store';
 import {
@@ -210,7 +211,7 @@ describe('<CourseOutline />', () => {
     const { findAllByTestId } = render(<RootWrapper />);
     const [section] = await findAllByTestId('section-card');
     let subsections = await within(section).findAllByTestId('subsection-card');
-    expect(subsections.length).toBe(1);
+    expect(subsections.length).toBe(2);
     window.HTMLElement.prototype.getBoundingClientRect = jest.fn(() => ({
       top: 0,
       bottom: 4000,
@@ -230,7 +231,7 @@ describe('<CourseOutline />', () => {
     });
 
     subsections = await within(section).findAllByTestId('subsection-card');
-    expect(subsections.length).toBe(2);
+    expect(subsections.length).toBe(3);
     expect(window.HTMLElement.prototype.scrollIntoView).toBeCalled();
   });
 
@@ -689,46 +690,105 @@ describe('<CourseOutline />', () => {
     });
   });
 
-  it('check section list is ordered successfully', async () => {
-    const { getAllByTestId } = render(<RootWrapper />);
+  it('check that new section list is saved when dragged', async () => {
+    const { getAllByRole } = render(<RootWrapper />);
+
     const courseBlockId = courseOutlineIndexMock.courseStructure.id;
-    let { children } = courseOutlineIndexMock.courseStructure.childInfo;
-    children = children.splice(2, 0, children.splice(0, 1)[0]);
+    await waitFor(async () => {
+      const sectionsDraggers = await getAllByRole('button', { name: 'Drag to reorder' });
 
-    axiosMock
-      .onPut(getCourseBlockApiUrl(courseBlockId), { children })
-      .reply(200, { dummy: 'value' });
+      axiosMock
+        .onPut(getCourseBlockApiUrl(courseBlockId))
+        .reply(200, { dummy: 'value' });
 
-    await executeThunk(setSectionOrderListQuery(courseBlockId, children, () => {}), store.dispatch);
+      const section1 = store.getState().courseOutline.sectionsList[0].id;
+      const draggableButton = sectionsDraggers[7];
+      await act(async () => fireEvent.keyDown(draggableButton, { code: 'Space' }));
+      await act(async () => fireEvent.keyDown(draggableButton, { key: 'ArrowUp' }));
+      await act(async () => fireEvent.keyDown(draggableButton, { code: 'Space' }));
 
-    await waitFor(() => {
-      expect(getAllByTestId('section-card')).toHaveLength(4);
-      const newSections = getAllByTestId('section-card');
-      for (let i; i < children.length; i++) {
-        expect(children[i].id === newSections[i].id);
-      }
+      const saveStatus = store.getState().courseOutline.savingStatus;
+      expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
+
+      const section2 = store.getState().courseOutline.sectionsList[1].id;
+      expect(section1).toBe(section2);
     });
   });
 
   it('check section list is restored to original order when API call fails', async () => {
-    const { getAllByTestId } = render(<RootWrapper />);
+    const { getAllByRole } = render(<RootWrapper />);
+
     const courseBlockId = courseOutlineIndexMock.courseStructure.id;
-    const { children } = courseOutlineIndexMock.courseStructure.childInfo;
-    const newChildren = children.splice(2, 0, children.splice(0, 1)[0]);
+    await waitFor(async () => {
+      const sectionsDraggers = await getAllByRole('button', { name: 'Drag to reorder' });
+
+      axiosMock
+        .onPut(getCourseBlockApiUrl(courseBlockId))
+        .reply(500);
+
+      const section1 = store.getState().courseOutline.sectionsList[0].id;
+      const draggableButton = sectionsDraggers[6];
+      await act(async () => fireEvent.keyDown(draggableButton, { code: 'Space' }));
+      await act(async () => fireEvent.keyDown(draggableButton, { key: 'ArrowUp' }));
+      await act(async () => fireEvent.keyDown(draggableButton, { code: 'Space' }));
+
+      const saveStatus = store.getState().courseOutline.savingStatus;
+      expect(saveStatus).toEqual(RequestStatus.FAILED);
+
+      const section1New = store.getState().courseOutline.sectionsList[0].id;
+      expect(section1).toBe(section1New);
+    });
+  });
+
+  it('check that new subsection list is saved when dragged', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+
+    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    const [section] = await findAllByTestId('section-card');
+    const subsectionsDraggers = within(section).getAllByRole('button', { name: 'Drag to reorder' });
 
     axiosMock
-      .onPut(getCourseBlockApiUrl(courseBlockId), { children })
+      .onPut(getChapterBlockApiUrl(courseBlockId, store.getState().courseOutline.sectionsList[0].id))
+      .reply(200, { dummy: 'value' });
+
+    const subsection1 = store.getState().courseOutline.sectionsList[0].childInfo.children[0].id;
+
+    // Move the second subsection up
+    const draggableButton = subsectionsDraggers[1];
+    await act(async () => fireEvent.keyDown(draggableButton, { code: 'Space' }));
+    await act(async () => fireEvent.keyDown(draggableButton, { key: 'ArrowUp' }));
+    await act(async () => fireEvent.keyDown(draggableButton, { code: 'Space' }));
+
+    const saveStatus = store.getState().courseOutline.savingStatus;
+    expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
+
+    const subsection2 = store.getState().courseOutline.sectionsList[0].childInfo.children[1].id;
+    expect(subsection1).toBe(subsection2);
+  });
+
+  it('check that new subsection list is restored to original order when API call fails', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+
+    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    const [section] = await findAllByTestId('section-card');
+    const subsectionsDraggers = within(section).getAllByRole('button', { name: 'Drag to reorder' });
+
+    axiosMock
+      .onPut(getChapterBlockApiUrl(courseBlockId, store.getState().courseOutline.sectionsList[0].id))
       .reply(500);
 
-    await executeThunk(setSectionOrderListQuery(courseBlockId, undefined, () => children), store.dispatch);
+    const subsection1 = store.getState().courseOutline.sectionsList[0].childInfo.children[0].id;
 
-    await waitFor(() => {
-      expect(getAllByTestId('section-card')).toHaveLength(4);
-      const newSections = getAllByTestId('section-card');
-      for (let i; i < children.length; i++) {
-        expect(children[i].id === newSections[i].id);
-        expect(newChildren[i].id !== newSections[i].id);
-      }
-    });
+    // Move the second subsection up
+    const draggableButton = subsectionsDraggers[1];
+    await act(async () => fireEvent.keyDown(draggableButton, { code: 'Space' }));
+    await act(async () => fireEvent.keyDown(draggableButton, { key: 'ArrowUp' }));
+    await act(async () => fireEvent.keyDown(draggableButton, { code: 'Space' }));
+
+    const saveStatus = store.getState().courseOutline.savingStatus;
+    expect(saveStatus).toEqual(RequestStatus.FAILED);
+
+    const subsection1New = store.getState().courseOutline.sectionsList[0].childInfo.children[0].id;
+    expect(subsection1).toBe(subsection1New);
   });
 });
