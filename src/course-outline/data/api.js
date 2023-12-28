@@ -318,7 +318,6 @@ export async function setSectionOrderList(courseId, children) {
   return data;
 }
 
-
 /**
  * Set order for the list of the subsections
  * @param {string} courseId

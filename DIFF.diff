@@ -1,0 +1,883 @@
+diff --git a/src/course-outline/CourseOutline.jsx b/src/course-outline/CourseOutline.jsx
+index eabe680..678b721 100644
+--- a/src/course-outline/CourseOutline.jsx
++++ b/src/course-outline/CourseOutline.jsx
+@@ -1,4 +1,6 @@
+-import { React, useEffect, useRef } from 'react';
++import {
++  React, useState, useEffect,
++} from 'react';
+ import PropTypes from 'prop-types';
+ import { useIntl } from '@edx/frontend-platform/i18n';
+ import {
+@@ -14,6 +16,11 @@ import {
+   Warning as WarningIcon,
+ } from '@edx/paragon/icons';
+ import { useSelector } from 'react-redux';
++import {
++  DraggableList,
++  SortableItem,
++  ErrorAlert,
++} from '@edx/frontend-lib-content-components';
+ 
+ import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
+ import { RequestStatus } from '../data/constants';
+@@ -35,10 +42,8 @@ import ConfigureModal from './configure-modal/ConfigureModal';
+ import DeleteModal from './delete-modal/DeleteModal';
+ import { useCourseOutline } from './hooks';
+ import messages from './messages';
+-import { scrollToElement } from './utils';
+ 
+ const CourseOutline = ({ courseId }) => {
+-  const listRef = useRef(null);
+   const intl = useIntl();
+ 
+   const {
+@@ -80,17 +85,28 @@ const CourseOutline = ({ courseId }) => {
+     handleDuplicateSubsectionSubmit,
+     handleNewSectionSubmit,
+     handleNewSubsectionSubmit,
++    handleDragNDrop,
+   } = useCourseOutline({ courseId });
+ 
+-  useEffect(() => {
+-    scrollToElement(listRef);
+-  }, [sectionsList]);
++  const [sections, setSections] = useState(sectionsList);
++
++  const initialSections = [...sectionsList];
+ 
+   const {
+     isShow: isShowProcessingNotification,
+     title: processingNotificationTitle,
+   } = useSelector(getProcessingNotification);
+ 
++  const finalizeSectionOrder = () => (newSections) => {
++    handleDragNDrop(newSections.map((section) => section.id), () => {
++      setSections(() => initialSections);
++    });
++  };
++
++  useEffect(() => {
++    setSections(sectionsList);
++  }, [sectionsList]);
++
+   if (isLoading) {
+     // eslint-disable-next-line react/jsx-no-useless-fragment
+     return <></>;
+@@ -103,6 +119,9 @@ const CourseOutline = ({ courseId }) => {
+       </Helmet>
+       <Container size="xl" className="px-4">
+         <section className="course-outline-container mb-4 mt-5">
++          <ErrorAlert hideHeading isError={savingStatus === RequestStatus.FAILED}>
++            {intl.formatMessage(messages.alertFailedGeneric, { actionName: 'save', type: 'changes' })}
++          </ErrorAlert>
+           <TransitionReplace>
+             {showSuccessAlert ? (
+               <AlertMessage
+@@ -150,38 +169,50 @@ const CourseOutline = ({ courseId }) => {
+                       openEnableHighlightsModal={openEnableHighlightsModal}
+                     />
+                     <div className="pt-4">
+-                      {sectionsList.length ? (
++                      {sections.length ? (
+                         <>
+-                          {sectionsList.map((section) => (
+-                            <SectionCard
+-                              key={section.id}
+-                              section={section}
+-                              savingStatus={savingStatus}
+-                              onOpenHighlightsModal={handleOpenHighlightsModal}
+-                              onOpenPublishModal={openPublishModal}
+-                              onOpenConfigureModal={openConfigureModal}
+-                              onOpenDeleteModal={openDeleteModal}
+-                              onEditSectionSubmit={handleEditSubmit}
+-                              onDuplicateSubmit={handleDuplicateSectionSubmit}
+-                              isSectionsExpanded={isSectionsExpanded}
+-                              onNewSubsectionSubmit={handleNewSubsectionSubmit}
+-                              ref={listRef}
+-                            >
+-                              {section.childInfo.children.map((subsection) => (
+-                                <SubsectionCard
+-                                  key={subsection.id}
++                          <DraggableList itemList={sections} setState={setSections} updateOrder={finalizeSectionOrder}>
++                            {sections.map((section) => (
++                              <SortableItem
++                                id={section.id}
++                                key={section.id}
++                                componentStyle={{
++                                  background: 'white',
++                                  borderRadius: '6px',
++                                  padding: '1.75rem',
++                                  marginBottom: '1.5rem',
++                                  boxShadow: '0px 1px 5px #ADADAD',
++                                }}
++                              >
++                                <SectionCard
++                                  key={section.id}
+                                   section={section}
+-                                  subsection={subsection}
+                                   savingStatus={savingStatus}
++                                  onOpenHighlightsModal={handleOpenHighlightsModal}
+                                   onOpenPublishModal={openPublishModal}
++                                  onOpenConfigureModal={openConfigureModal}
+                                   onOpenDeleteModal={openDeleteModal}
+-                                  onEditSubmit={handleEditSubmit}
+-                                  onDuplicateSubmit={handleDuplicateSubsectionSubmit}
+-                                  ref={listRef}
+-                                />
+-                              ))}
+-                            </SectionCard>
+-                          ))}
++                                  onEditSectionSubmit={handleEditSubmit}
++                                  onDuplicateSubmit={handleDuplicateSectionSubmit}
++                                  isSectionsExpanded={isSectionsExpanded}
++                                  onNewSubsectionSubmit={handleNewSubsectionSubmit}
++                                >
++                                  {section.childInfo.children.map((subsection) => (
++                                    <SubsectionCard
++                                      key={subsection.id}
++                                      section={section}
++                                      subsection={subsection}
++                                      savingStatus={savingStatus}
++                                      onOpenPublishModal={openPublishModal}
++                                      onOpenDeleteModal={openDeleteModal}
++                                      onEditSubmit={handleEditSubmit}
++                                      onDuplicateSubmit={handleDuplicateSubsectionSubmit}
++                                    />
++                                  ))}
++                                </SectionCard>
++                              </SortableItem>
++                            ))}
++                          </DraggableList>
+                           <Button
+                             data-testid="new-section-button"
+                             className="mt-4"
+diff --git a/src/course-outline/CourseOutline.test.jsx b/src/course-outline/CourseOutline.test.jsx
+index fce1de1..eac6fa5 100644
+--- a/src/course-outline/CourseOutline.test.jsx
++++ b/src/course-outline/CourseOutline.test.jsx
+@@ -34,6 +34,7 @@ import {
+   fetchCourseSectionQuery,
+   publishCourseItemQuery,
+   updateCourseSectionHighlightsQuery,
++  setSectionOrderListQuery,
+ } from './data/thunk';
+ import initializeStore from '../store';
+ import {
+@@ -123,6 +124,10 @@ describe('<CourseOutline />', () => {
+   it('adds new section correctly', async () => {
+     const { findAllByTestId } = render(<RootWrapper />);
+     let element = await findAllByTestId('section-card');
++    window.HTMLElement.prototype.getBoundingClientRect = jest.fn(() => ({
++      top: 0,
++      bottom: 4000,
++    }));
+     expect(element.length).toBe(4);
+ 
+     axiosMock
+@@ -146,6 +151,10 @@ describe('<CourseOutline />', () => {
+     const [section] = await findAllByTestId('section-card');
+     let subsections = await within(section).findAllByTestId('subsection-card');
+     expect(subsections.length).toBe(1);
++    window.HTMLElement.prototype.getBoundingClientRect = jest.fn(() => ({
++      top: 0,
++      bottom: 4000,
++    }));
+ 
+     axiosMock
+       .onPost(getXBlockBaseApiUrl())
+@@ -159,6 +168,7 @@ describe('<CourseOutline />', () => {
+ 
+     subsections = await within(section).findAllByTestId('subsection-card');
+     expect(subsections.length).toBe(2);
++    expect(window.HTMLElement.prototype.scrollIntoView).toBeCalled();
+   });
+ 
+   it('render error alert after failed reindex correctly', async () => {
+@@ -488,4 +498,47 @@ describe('<CourseOutline />', () => {
+ 
+     expect(getByRole('button', { name: '5 Section highlights' })).toBeInTheDocument();
+   });
++
++  it('check section list is ordered successfully', async () => {
++    const { getAllByTestId } = render(<RootWrapper />);
++    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
++    let { children } = courseOutlineIndexMock.courseStructure.childInfo;
++    children = children.splice(2, 0, children.splice(0, 1)[0]);
++
++    axiosMock
++      .onPut(getEnableHighlightsEmailsApiUrl(courseBlockId), children)
++      .reply(200);
++
++    await executeThunk(setSectionOrderListQuery(courseBlockId, children, () => {}), store.dispatch);
++
++    await waitFor(() => {
++      expect(getAllByTestId('section-card')).toHaveLength(4);
++      const newSections = getAllByTestId('section-card');
++      for (let i; i < children.length; i++) {
++        expect(children[i].id === newSections[i].id);
++      }
++    });
++  });
++
++  it('check section list is restored to original order when API call fails', async () => {
++    const { getAllByTestId } = render(<RootWrapper />);
++    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
++    const { children } = courseOutlineIndexMock.courseStructure.childInfo;
++    const newChildren = children.splice(2, 0, children.splice(0, 1)[0]);
++
++    axiosMock
++      .onPut(getEnableHighlightsEmailsApiUrl(courseBlockId), undefined)
++      .reply(500);
++
++    await executeThunk(setSectionOrderListQuery(courseBlockId, undefined, () => children), store.dispatch);
++
++    await waitFor(() => {
++      expect(getAllByTestId('section-card')).toHaveLength(4);
++      const newSections = getAllByTestId('section-card');
++      for (let i; i < children.length; i++) {
++        expect(children[i].id === newSections[i].id);
++        expect(newChildren[i].id !== newSections[i].id);
++      }
++    });
++  });
+ });
+diff --git a/src/course-outline/card-header/messages.js b/src/course-outline/card-header/messages.js
+index 7e15632..0197722 100644
+--- a/src/course-outline/card-header/messages.js
++++ b/src/course-outline/card-header/messages.js
+@@ -2,43 +2,43 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
+ 
+ const messages = defineMessages({
+   expandTooltip: {
+-    id: 'course-authoring.course-outline.section.expandTooltip',
+-    defaultMessage: 'Collapse/Expand this section',
++    id: 'course-authoring.course-outline.card.expandTooltip',
++    defaultMessage: 'Collapse/Expand this card',
+   },
+   statusBadgeLive: {
+-    id: 'course-authoring.course-outline.section.status-badge.live',
++    id: 'course-authoring.course-outline.card.status-badge.live',
+     defaultMessage: 'Live',
+   },
+   statusBadgePublishedNotLive: {
+-    id: 'course-authoring.course-outline.section.status-badge.published-not-live',
++    id: 'course-authoring.course-outline.card.status-badge.published-not-live',
+     defaultMessage: 'Published not live',
+   },
+   statusBadgeStaffOnly: {
+-    id: 'course-authoring.course-outline.section.status-badge.staff-only',
++    id: 'course-authoring.course-outline.card.status-badge.staff-only',
+     defaultMessage: 'Staff only',
+   },
+   statusBadgeDraft: {
+-    id: 'course-authoring.course-outline.section.status-badge.draft',
++    id: 'course-authoring.course-outline.card.status-badge.draft',
+     defaultMessage: 'Draft',
+   },
+   altButtonEdit: {
+-    id: 'course-authoring.course-outline.section.button.edit.alt',
++    id: 'course-authoring.course-outline.card.button.edit.alt',
+     defaultMessage: 'Edit',
+   },
+   menuPublish: {
+-    id: 'course-authoring.course-outline.section.menu.publish',
++    id: 'course-authoring.course-outline.card.menu.publish',
+     defaultMessage: 'Publish',
+   },
+   menuConfigure: {
+-    id: 'course-authoring.course-outline.section.menu.configure',
++    id: 'course-authoring.course-outline.card.menu.configure',
+     defaultMessage: 'Configure',
+   },
+   menuDuplicate: {
+-    id: 'course-authoring.course-outline.section.menu.duplicate',
++    id: 'course-authoring.course-outline.card.menu.duplicate',
+     defaultMessage: 'Duplicate',
+   },
+   menuDelete: {
+-    id: 'course-authoring.course-outline.section.menu.delete',
++    id: 'course-authoring.course-outline.card.menu.delete',
+     defaultMessage: 'Delete',
+   },
+ });
+diff --git a/src/course-outline/data/api.js b/src/course-outline/data/api.js
+index 5714fa9..702715c 100644
+--- a/src/course-outline/data/api.js
++++ b/src/course-outline/data/api.js
+@@ -296,3 +296,18 @@ export async function addNewCourseItem(parentLocator, category, displayName) {
+ 
+   return data;
+ }
++
++/**
++ * Set order for the list of the sections
++ * @param {string} courseId
++ * @param {Array<string>} children list of sections id's
++ * @returns {Promise<Object>}
++*/
++export async function setSectionOrderList(courseId, children) {
++  const { data } = await getAuthenticatedHttpClient()
++    .put(getEnableHighlightsEmailsApiUrl(courseId), {
++      children,
++    });
++
++  return data;
++}
+diff --git a/src/course-outline/data/slice.js b/src/course-outline/data/slice.js
+index 72b1b41..edb8b1e 100644
+--- a/src/course-outline/data/slice.js
++++ b/src/course-outline/data/slice.js
+@@ -76,6 +76,12 @@ const slice = createSlice({
+     setCurrentItem: (state, { payload }) => {
+       state.currentItem = payload;
+     },
++    reorderSectionList: (state, { payload }) => {
++      const sectionsList = [...state.sectionsList];
++      sectionsList.sort((a, b) => payload.indexOf(a.id) - payload.indexOf(b.id));
++
++      state.sectionsList = [...sectionsList];
++    },
+     setCurrentSection: (state, { payload }) => {
+       state.currentSection = payload;
+     },
+@@ -162,6 +168,7 @@ export const {
+   deleteSubsection,
+   deleteUnit,
+   duplicateSection,
++  reorderSectionList,
+ } = slice.actions;
+ 
+ export const {
+diff --git a/src/course-outline/data/thunk.js b/src/course-outline/data/thunk.js
+index cd08ff7..8199679 100644
+--- a/src/course-outline/data/thunk.js
++++ b/src/course-outline/data/thunk.js
+@@ -23,6 +23,7 @@ import {
+   configureCourseSection,
+   restartIndexingOnCourse,
+   updateCourseSectionHighlights,
++  setSectionOrderList,
+ } from './api';
+ import {
+   addSection,
+@@ -40,6 +41,7 @@ import {
+   deleteSubsection,
+   deleteUnit,
+   duplicateSection,
++  reorderSectionList,
+ } from './slice';
+ 
+ export function fetchCourseOutlineIndexQuery(courseId) {
+@@ -127,12 +129,13 @@ export function fetchCourseReindexQuery(courseId, reindexLink) {
+   };
+ }
+ 
+-export function fetchCourseSectionQuery(sectionId) {
++export function fetchCourseSectionQuery(sectionId, shouldScroll = false) {
+   return async (dispatch) => {
+     dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
+ 
+     try {
+       const data = await getCourseItem(sectionId);
++      data.shouldScroll = shouldScroll;
+       dispatch(updateSectionList(data));
+       dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
+     } catch (error) {
+@@ -305,6 +308,8 @@ export function duplicateSectionQuery(sectionId, courseBlockId) {
+       courseBlockId,
+       async (locator) => {
+         const duplicatedItem = await getCourseItem(locator);
++        // Page should scroll to newly duplicated item.
++        duplicatedItem.shouldScroll = true;
+         dispatch(duplicateSection({ id: sectionId, duplicatedItem }));
+       },
+     ));
+@@ -316,7 +321,7 @@ export function duplicateSubsectionQuery(subsectionId, sectionId) {
+     dispatch(duplicateCourseItemQuery(
+       subsectionId,
+       sectionId,
+-      async () => dispatch(fetchCourseSectionQuery(sectionId)),
++      async () => dispatch(fetchCourseSectionQuery(sectionId, true)),
+     ));
+   };
+ }
+@@ -342,6 +347,8 @@ function addNewCourseItemQuery(parentLocator, category, displayName, addItemFn)
+       ).then(async (result) => {
+         if (result) {
+           const data = await getCourseItem(result.locator);
++          // Page should scroll to newly created item.
++          data.shouldScroll = true;
+           dispatch(addItemFn(data));
+           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+           dispatch(hideProcessingNotification());
+@@ -375,3 +382,24 @@ export function addNewSubsectionQuery(parentLocator) {
+     ));
+   };
+ }
++
++export function setSectionOrderListQuery(courseId, newListId, restoreCallback) {
++  return async (dispatch) => {
++    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
++    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
++
++    try {
++      await setSectionOrderList(courseId, newListId).then(async (result) => {
++        if (result) {
++          dispatch(reorderSectionList(newListId));
++          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
++          dispatch(hideProcessingNotification());
++        }
++      });
++    } catch (error) {
++      restoreCallback();
++      dispatch(hideProcessingNotification());
++      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
++    }
++  };
++}
+diff --git a/src/course-outline/highlights-modal/HighlightsModal.jsx b/src/course-outline/highlights-modal/HighlightsModal.jsx
+index 625cd4c..8d1a73e 100644
+--- a/src/course-outline/highlights-modal/HighlightsModal.jsx
++++ b/src/course-outline/highlights-modal/HighlightsModal.jsx
+@@ -65,6 +65,7 @@ const HighlightsModal = ({
+                   value={values[key]}
+                   floatingLabel={intl.formatMessage(messages.highlight, { index: index + 1 })}
+                   maxLength={HIGHLIGHTS_FIELD_MAX_LENGTH}
++                  as="textarea"
+                 />
+               ))}
+             </ModalDialog.Body>
+diff --git a/src/course-outline/hooks.jsx b/src/course-outline/hooks.jsx
+index 857090d..1b99460 100644
+--- a/src/course-outline/hooks.jsx
++++ b/src/course-outline/hooks.jsx
+@@ -36,6 +36,7 @@ import {
+   publishCourseItemQuery,
+   updateCourseSectionHighlightsQuery,
+   configureCourseSectionQuery,
++  setSectionOrderListQuery,
+ } from './data/thunk';
+ 
+ const useCourseOutline = ({ courseId }) => {
+@@ -152,6 +153,10 @@ const useCourseOutline = ({ courseId }) => {
+     dispatch(duplicateSubsectionQuery(currentSubsection.id, currentSection.id));
+   };
+ 
++  const handleDragNDrop = (newListId, restoreCallback) => {
++    dispatch(setSectionOrderListQuery(courseId, newListId, restoreCallback));
++  };
++
+   useEffect(() => {
+     dispatch(fetchCourseOutlineIndexQuery(courseId));
+     dispatch(fetchCourseBestPracticesQuery({ courseId }));
+@@ -207,6 +212,7 @@ const useCourseOutline = ({ courseId }) => {
+     handleDuplicateSubsectionSubmit,
+     handleNewSectionSubmit,
+     handleNewSubsectionSubmit,
++    handleDragNDrop,
+   };
+ };
+ 
+diff --git a/src/course-outline/messages.js b/src/course-outline/messages.js
+index b0851f4..b1ff8cd 100644
+--- a/src/course-outline/messages.js
++++ b/src/course-outline/messages.js
+@@ -33,6 +33,10 @@ const messages = defineMessages({
+     id: 'course-authoring.course-outline.section-list.button.new-section',
+     defaultMessage: 'New section',
+   },
++  alertFailedGeneric: {
++    id: 'course-authoring.course-outline.general.alert.error.description',
++    defaultMessage: 'Unable to {actionName} {type}. Please try again.',
++  },
+ });
+ 
+ export default messages;
+diff --git a/src/course-outline/section-card/SectionCard.jsx b/src/course-outline/section-card/SectionCard.jsx
+index 4612e85..8b6730d 100644
+--- a/src/course-outline/section-card/SectionCard.jsx
++++ b/src/course-outline/section-card/SectionCard.jsx
+@@ -1,7 +1,5 @@
+-import {
+-  forwardRef,
+-  useEffect,
+-  useState,
++import React, {
++  useEffect, useState, useRef,
+ } from 'react';
+ import PropTypes from 'prop-types';
+ import { useDispatch } from 'react-redux';
+@@ -12,10 +10,10 @@ import { Add as IconAdd } from '@edx/paragon/icons';
+ import { setCurrentItem, setCurrentSection } from '../data/slice';
+ import { RequestStatus } from '../../data/constants';
+ import CardHeader from '../card-header/CardHeader';
+-import { getItemStatus } from '../utils';
++import { getItemStatus, scrollToElement } from '../utils';
+ import messages from './messages';
+ 
+-const SectionCard = forwardRef(({
++const SectionCard = ({
+   section,
+   children,
+   onOpenHighlightsModal,
+@@ -27,7 +25,8 @@ const SectionCard = forwardRef(({
+   onDuplicateSubmit,
+   isSectionsExpanded,
+   onNewSubsectionSubmit,
+-}, lastItemRef) => {
++}) => {
++  const currentRef = useRef(null);
+   const intl = useIntl();
+   const dispatch = useDispatch();
+   const [isExpanded, setIsExpanded] = useState(isSectionsExpanded);
+@@ -37,6 +36,13 @@ const SectionCard = forwardRef(({
+     setIsExpanded(isSectionsExpanded);
+   }, [isSectionsExpanded]);
+ 
++  useEffect(() => {
++    // if this items has been newly added, scroll to it.
++    if (currentRef.current && section.shouldScroll) {
++      scrollToElement(currentRef.current);
++    }
++  }, []);
++
+   const {
+     id,
+     displayName,
+@@ -91,59 +97,63 @@ const SectionCard = forwardRef(({
+   }, [savingStatus]);
+ 
+   return (
+-    <div className="section-card" data-testid="section-card" ref={lastItemRef}>
+-      <CardHeader
+-        sectionId={id}
+-        title={displayName}
+-        status={sectionStatus}
+-        hasChanges={hasChanges}
+-        isExpanded={isExpanded}
+-        onExpand={handleExpandContent}
+-        onClickMenuButton={handleClickMenuButton}
+-        onClickPublish={onOpenPublishModal}
+-        onClickConfigure={onOpenConfigureModal}
+-        onClickEdit={openForm}
+-        onClickDelete={onOpenDeleteModal}
+-        isFormOpen={isFormOpen}
+-        closeForm={closeForm}
+-        onEditSubmit={handleEditSubmit}
+-        isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+-        onClickDuplicate={onDuplicateSubmit}
+-        namePrefix="section"
+-      />
+-      <div className="section-card__content" data-testid="section-card__content">
+-        <div className="outline-section__status">
+-          <Button
+-            className="section-card__highlights"
+-            data-destid="section-card-highlights-button"
+-            variant="tertiary"
+-            onClick={handleOpenHighlightsModal}
+-          >
+-            <Badge className="highlights-badge">{highlights.length}</Badge>
+-            <p className="m-0 text-black">{messages.sectionHighlightsBadge.defaultMessage}</p>
+-          </Button>
++    <div
++      className="section-card"
++      data-testid="section-card"
++      ref={currentRef}
++    >
++      <div>
++        <CardHeader
++          sectionId={id}
++          title={displayName}
++          status={sectionStatus}
++          hasChanges={hasChanges}
++          isExpanded={isExpanded}
++          onExpand={handleExpandContent}
++          onClickMenuButton={handleClickMenuButton}
++          onClickPublish={onOpenPublishModal}
++          onClickConfigure={onOpenConfigureModal}
++          onClickEdit={openForm}
++          onClickDelete={onOpenDeleteModal}
++          isFormOpen={isFormOpen}
++          closeForm={closeForm}
++          onEditSubmit={handleEditSubmit}
++          isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
++          onClickDuplicate={onDuplicateSubmit}
++          namePrefix="section"
++        />
++        <div className="section-card__content" data-testid="section-card__content">
++          <div className="outline-section__status">
++            <Button
++              className="section-card__highlights"
++              data-destid="section-card-highlights-button"
++              variant="tertiary"
++              onClick={handleOpenHighlightsModal}
++            >
++              <Badge className="highlights-badge">{highlights.length}</Badge>
++              <p className="m-0 text-black">{messages.sectionHighlightsBadge.defaultMessage}</p>
++            </Button>
++          </div>
+         </div>
+-      </div>
+-      {isExpanded && (
+-        <>
++        {isExpanded && (
+           <div data-testid="section-card__subsections" className="section-card__subsections">
+             {children}
++            <Button
++              data-testid="new-subsection-button"
++              className="mt-4"
++              variant="outline-primary"
++              iconBefore={IconAdd}
++              block
++              onClick={handleNewSubsectionSubmit}
++            >
++              {intl.formatMessage(messages.newSubsectionButton)}
++            </Button>
+           </div>
+-          <Button
+-            data-testid="new-subsection-button"
+-            className="mt-4"
+-            variant="outline-primary"
+-            iconBefore={IconAdd}
+-            block
+-            onClick={handleNewSubsectionSubmit}
+-          >
+-            {intl.formatMessage(messages.newSubsectionButton)}
+-          </Button>
+-        </>
+-      )}
++        )}
++      </div>
+     </div>
+   );
+-});
++};
+ 
+ SectionCard.defaultProps = {
+   children: null,
+@@ -160,6 +170,7 @@ SectionCard.propTypes = {
+     visibilityState: PropTypes.string.isRequired,
+     staffOnlyMessage: PropTypes.bool.isRequired,
+     highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
++    shouldScroll: PropTypes.bool,
+   }).isRequired,
+   children: PropTypes.node,
+   onOpenHighlightsModal: PropTypes.func.isRequired,
+diff --git a/src/course-outline/section-card/SectionCard.scss b/src/course-outline/section-card/SectionCard.scss
+index 40c0581..f386297 100644
+--- a/src/course-outline/section-card/SectionCard.scss
++++ b/src/course-outline/section-card/SectionCard.scss
+@@ -1,17 +1,9 @@
+ .section-card {
+-  @include pgn-box-shadow(1, "centered");
+-
+-  padding: $spacer 1.5rem 1.5rem;
+-  cursor: move;
+-  margin-bottom: 1.5rem;
+-  background: $light-100;
+-
+-  .section-card__content {
+-    margin-top: $spacer;
+-  }
++  flex-grow: 1;
+ 
+   .section-card__subsections {
+     margin-top: $spacer;
++    margin-right: -2.75rem;
+   }
+ 
+   .section-card-title {
+diff --git a/src/course-outline/section-card/SectionCard.test.jsx b/src/course-outline/section-card/SectionCard.test.jsx
+index 682bd2e..b1a6540 100644
+--- a/src/course-outline/section-card/SectionCard.test.jsx
++++ b/src/course-outline/section-card/SectionCard.test.jsx
+@@ -39,6 +39,8 @@ const renderComponent = (props) => render(
+         onDuplicateSubmit={jest.fn()}
+         isSectionsExpanded
+         namePrefix="section"
++        connectDragSource={(el) => el}
++        isDragging
+         {...props}
+       >
+         <span>children</span>
+diff --git a/src/course-outline/subsection-card/SubsectionCard.jsx b/src/course-outline/subsection-card/SubsectionCard.jsx
+index 817a905..2dbf1e5 100644
+--- a/src/course-outline/subsection-card/SubsectionCard.jsx
++++ b/src/course-outline/subsection-card/SubsectionCard.jsx
+@@ -1,4 +1,4 @@
+-import { forwardRef, useEffect, useState } from 'react';
++import { useEffect, useState, useRef } from 'react';
+ import PropTypes from 'prop-types';
+ import { useDispatch } from 'react-redux';
+ import { useIntl } from '@edx/frontend-platform/i18n';
+@@ -8,10 +8,10 @@ import { Add as IconAdd } from '@edx/paragon/icons';
+ import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
+ import { RequestStatus } from '../../data/constants';
+ import CardHeader from '../card-header/CardHeader';
+-import { getItemStatus } from '../utils';
++import { getItemStatus, scrollToElement } from '../utils';
+ import messages from './messages';
+ 
+-const SubsectionCard = forwardRef(({
++const SubsectionCard = ({
+   section,
+   subsection,
+   children,
+@@ -20,7 +20,8 @@ const SubsectionCard = forwardRef(({
+   savingStatus,
+   onOpenDeleteModal,
+   onDuplicateSubmit,
+-}, lastItemRef) => {
++}) => {
++  const currentRef = useRef(null);
+   const intl = useIntl();
+   const dispatch = useDispatch();
+   const [isExpanded, setIsExpanded] = useState(false);
+@@ -64,6 +65,15 @@ const SubsectionCard = forwardRef(({
+     closeForm();
+   };
+ 
++  useEffect(() => {
++    // if this items has been newly added, scroll to it.
++    // we need to check section.shouldScroll as whole section is fetched when a
++    // subsection is duplicated under it.
++    if (currentRef.current && (section.shouldScroll || subsection.shouldScroll)) {
++      scrollToElement(currentRef.current);
++    }
++  }, []);
++
+   useEffect(() => {
+     if (savingStatus === RequestStatus.SUCCESSFUL) {
+       closeForm();
+@@ -71,7 +81,7 @@ const SubsectionCard = forwardRef(({
+   }, [savingStatus]);
+ 
+   return (
+-    <div className="subsection-card" data-testid="subsection-card" ref={lastItemRef}>
++    <div className="subsection-card" data-testid="subsection-card" ref={currentRef}>
+       <CardHeader
+         title={displayName}
+         status={subsectionStatus}
+@@ -96,7 +106,7 @@ const SubsectionCard = forwardRef(({
+           </div>
+           <Button
+             data-testid="new-unit-button"
+-            className="mt-4"
++            className="mt-4 bg-white"
+             variant="outline-primary"
+             iconBefore={IconAdd}
+             block
+@@ -107,7 +117,7 @@ const SubsectionCard = forwardRef(({
+       )}
+     </div>
+   );
+-});
++};
+ 
+ SubsectionCard.defaultProps = {
+   children: null,
+@@ -123,6 +133,7 @@ SubsectionCard.propTypes = {
+     visibleToStaffOnly: PropTypes.bool,
+     visibilityState: PropTypes.string.isRequired,
+     staffOnlyMessage: PropTypes.bool.isRequired,
++    shouldScroll: PropTypes.bool,
+   }).isRequired,
+   subsection: PropTypes.shape({
+     id: PropTypes.string.isRequired,
+@@ -133,6 +144,7 @@ SubsectionCard.propTypes = {
+     visibleToStaffOnly: PropTypes.bool,
+     visibilityState: PropTypes.string.isRequired,
+     staffOnlyMessage: PropTypes.bool.isRequired,
++    shouldScroll: PropTypes.bool,
+   }).isRequired,
+   children: PropTypes.node,
+   onOpenPublishModal: PropTypes.func.isRequired,
+diff --git a/src/course-outline/subsection-card/SubsectionCard.scss b/src/course-outline/subsection-card/SubsectionCard.scss
+index adb64fc..c9c0afc 100644
+--- a/src/course-outline/subsection-card/SubsectionCard.scss
++++ b/src/course-outline/subsection-card/SubsectionCard.scss
+@@ -2,13 +2,16 @@
+   @include pgn-box-shadow(1, "centered");
+ 
+   padding: $spacer 2rem;
+-  cursor: move;
+   margin-bottom: 1.5rem;
++  background: $light-200;
+ 
+   .subsection-card__content {
+     margin: $spacer;
+   }
+ 
++  .item-card-header__badge-status {
++    background: $light-100;
++  }
+ 
+   .subsection-card-title {
+     font-size: $h4-font-size;
+diff --git a/src/course-outline/subsection-card/SubsectionCard.test.jsx b/src/course-outline/subsection-card/SubsectionCard.test.jsx
+index 4be6247..a0f8c68 100644
+--- a/src/course-outline/subsection-card/SubsectionCard.test.jsx
++++ b/src/course-outline/subsection-card/SubsectionCard.test.jsx
+@@ -13,6 +13,18 @@ import SubsectionCard from './SubsectionCard';
+ let axiosMock;
+ let store;
+ 
++const section = {
++  id: '123',
++  displayName: 'Section Name',
++  published: true,
++  releasedToStudents: true,
++  visibleToStaffOnly: false,
++  visibilityState: 'visible',
++  staffOnlyMessage: false,
++  hasChanges: false,
++  highlights: ['highlight 1', 'highlight 2'],
++};
++
+ const subsection = {
+   id: '123',
+   displayName: 'Subsection Name',
+@@ -28,6 +40,7 @@ const renderComponent = (props) => render(
+   <AppProvider store={store}>
+     <IntlProvider locale="en">
+       <SubsectionCard
++        section={section}
+         subsection={subsection}
+         onOpenPublishModal={jest.fn()}
+         onOpenHighlightsModal={jest.fn()}
+diff --git a/src/course-outline/utils.jsx b/src/course-outline/utils.jsx
+index 29b049c..7853eb3 100644
+--- a/src/course-outline/utils.jsx
++++ b/src/course-outline/utils.jsx
+@@ -109,12 +109,23 @@ const getHighlightsFormValues = (currentHighlights) => {
+   return formValues;
+ };
+ 
+-const scrollToElement = (ref) => {
+-  ref.current?.scrollIntoView({
+-    block: 'end',
+-    inline: 'nearest',
+-    behavior: 'smooth',
+-  });
++/**
++ * Method to scroll into view port, if it's outside the viewport
++ *
++ * @param {Object} target - DOM Element
++ * @returns {undefined}
++ */
++const scrollToElement = target => {
++  if (target.getBoundingClientRect().bottom > window.innerHeight) {
++    //  The bottom of the target will be aligned to the bottom of the visible area of the scrollable ancestor.
++    target.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
++  }
++
++  // Target is outside the view from the top
++  if (target.getBoundingClientRect().top < 0) {
++    // The top of the target will be aligned to the top of the visible area of the scrollable ancestor
++    target.scrollIntoView({ behavior: 'smooth' });
++  }
+ };
+ 
+ export {

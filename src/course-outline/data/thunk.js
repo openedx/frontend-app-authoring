@@ -43,6 +43,7 @@ import {
   deleteUnit,
   duplicateSection,
   reorderSectionList,
+  reorderSubsectionList,
 } from './slice';
 
 export function fetchCourseOutlineIndexQuery(courseId) {
@@ -433,21 +434,22 @@ export function setSectionOrderListQuery(courseId, sectionListIds, restoreCallba
   };
 }
 
-export function setSubsectionOrderListQuery(courseId, sectionId, newListId, restoreCallback) {
+export function setSubsectionOrderListQuery(courseId, sectionId, subsectionListIds, restoreCallback) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      await setSubsectionOrderList(courseId, sectionId, newListId).then(async (result) => {
+      await setSubsectionOrderList(courseId, sectionId, subsectionListIds).then(async (result) => {
         if (result) {
+          dispatch(reorderSubsectionList({ sectionId, subsectionListIds }));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(hideProcessingNotification());
         }
       });
     } catch (error) {
       restoreCallback();
-      dispatch(hideProcessingNotification()); 
+      dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   };

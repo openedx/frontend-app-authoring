@@ -97,7 +97,7 @@ const CourseOutline = ({ courseId }) => {
 
   const [sections, setSections] = useState(sectionsList);
 
-  const initialSections = [...sectionsList];
+  let initialSections = [...sectionsList];
 
   const {
     isShow: isShowProcessingNotification,
@@ -105,21 +105,21 @@ const CourseOutline = ({ courseId }) => {
   } = useSelector(getProcessingNotification);
 
   const finalizeSectionOrder = () => (newSections) => {
+    initialSections = [...sectionsList];
     handleSectionDragAndDrop(newSections.map(section => section.id), () => {
       setSections(() => initialSections);
     });
   };
 
-  const setSubsection = (index) => {
-    return (updatedSubsection) => {
-      const section = {...sections[index]}
-      section.childInfo = {...section.childInfo}
-      section.childInfo.children = updatedSubsection()
-      setSections([...sections.slice(0,index), section, ...sections.slice(index+1)])
-    }
-  }
+  const setSubsection = (index) => (updatedSubsection) => {
+    const section = { ...sections[index] };
+    section.childInfo = { ...section.childInfo };
+    section.childInfo.children = updatedSubsection();
+    setSections([...sections.slice(0, index), section, ...sections.slice(index + 1)]);
+  };
 
   const finalizeSubsectionOrder = (section) => () => (newSubsections) => {
+    initialSections = [...sectionsList];
     handleSubsectionDragAndDrop(section.id, newSubsections.map(subsection => subsection.id), () => {
       setSections(() => initialSections);
     });
@@ -210,6 +210,7 @@ const CourseOutline = ({ courseId }) => {
                                 }}
                               >
                                 <SectionCard
+                                  id={section.id}
                                   key={section.id}
                                   section={section}
                                   savingStatus={savingStatus}
@@ -222,7 +223,11 @@ const CourseOutline = ({ courseId }) => {
                                   isSectionsExpanded={isSectionsExpanded}
                                   onNewSubsectionSubmit={handleNewSubsectionSubmit}
                                 >
-                                  <DraggableList itemList={section.childInfo.children} setState={setSubsection(index)} updateOrder={finalizeSubsectionOrder(section)}>
+                                  <DraggableList
+                                    itemList={section.childInfo.children}
+                                    setState={setSubsection(index)}
+                                    updateOrder={finalizeSubsectionOrder(section)}
+                                  >
                                     {section.childInfo.children.map((subsection) => (
                                       <SortableItem
                                         id={subsection.id}
