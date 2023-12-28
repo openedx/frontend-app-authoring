@@ -9,7 +9,7 @@ import {
   IconButton,
 } from '@edx/paragon';
 import { MoreVert } from '@edx/paragon/icons';
-import _ from 'lodash';
+import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
@@ -46,33 +46,36 @@ const TaxonomyMenu = ({
   const [isDeleteDialogOpen, deleteDialogOpen, deleteDialogClose] = useToggle(false);
   const [isExportModalOpen, exportModalOpen, exportModalClose] = useToggle(false);
 
-  const getTaxonomyMenuItems = () => {
-    let menuItems = {
-      import: {
-        title: intl.formatMessage(messages.importMenu),
-        action: () => importTaxonomyTags(taxonomy.id, intl),
-        // Hide import menu item if taxonomy is system defined or allows free text
-        hide: taxonomy.systemDefined || taxonomy.allowFreeText,
-      },
-      export: {
-        title: intl.formatMessage(messages.exportMenu),
-        action: exportModalOpen,
-      },
-      delete: {
-        title: intl.formatMessage(messages.deleteMenu),
-        action: deleteDialogOpen,
-        // Hide delete menu item if taxonomy is system defined
-        hide: taxonomy.systemDefined,
-      },
-    };
-
-    // Remove hidden menu items
-    menuItems = _.omitBy(menuItems, (value) => value.hide);
-
-    return menuItems;
+  /**
+    * @typedef {Object} MenuItem
+    * @property {string} title - The title of the menu item
+    * @property {() => void} action - The action to perform when the menu item is clicked
+    * @property {boolean} [hide] - Whether or not to hide the menu item
+    *
+    * @constant
+    * @type {Record<string, MenuItem>}
+    */
+  let menuItems = {
+    import: {
+      title: intl.formatMessage(messages.importMenu),
+      action: () => importTaxonomyTags(taxonomy.id, intl),
+      // Hide import menu item if taxonomy is system defined or allows free text
+      hide: taxonomy.systemDefined || taxonomy.allowFreeText,
+    },
+    export: {
+      title: intl.formatMessage(messages.exportMenu),
+      action: exportModalOpen,
+    },
+    delete: {
+      title: intl.formatMessage(messages.deleteMenu),
+      action: deleteDialogOpen,
+      // Hide delete menu item if taxonomy is system defined
+      hide: taxonomy.systemDefined,
+    },
   };
 
-  const menuItems = getTaxonomyMenuItems();
+  // Remove hidden menu items
+  menuItems = omitBy(menuItems, (value) => value.hide);
 
   const renderModals = () => (
     <>
@@ -104,7 +107,7 @@ const TaxonomyMenu = ({
         variant="primary"
         alt={intl.formatMessage(messages.actionsButtonAlt, { name: taxonomy.name })}
         data-testid="taxonomy-menu-button"
-        disabled={menuItems.length === 0}
+        disabled={Object.keys(menuItems).length === 0}
       >
         {intl.formatMessage(messages.actionsButtonLabel)}
       </Dropdown.Toggle>
@@ -116,7 +119,7 @@ const TaxonomyMenu = ({
             onClick={
               (e) => {
                 e.preventDefault();
-                menuItems[key].action?.();
+                menuItems[key].action();
               }
             }
           >
