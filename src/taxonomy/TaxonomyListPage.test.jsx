@@ -114,12 +114,10 @@ describe('<TaxonomyListPage />', async () => {
         description: 'This is a description',
       }],
     });
-    await act(async () => {
-      const { getByTestId } = render(<RootWrapper />);
-      const importButton = getByTestId('taxonomy-import-button');
+      const { getByRole } = render(<RootWrapper />);
+      const importButton = getByRole('button', { name: 'Import' });
       expect(importButton).toBeInTheDocument();
-      importButton.click();
+      fireEvent.click(importButton);
       expect(importTaxonomy).toHaveBeenCalled();
-    });
   });
 });
