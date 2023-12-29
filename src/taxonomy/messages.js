@@ -29,6 +29,14 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-list.select.org.default',
     defaultMessage: 'All taxonomies',
   },
+  orgAllValue: {
+    id: 'course-authoring.taxonomy-list.select.org.all',
+    defaultMessage: 'All',
+  },
+  orgUnassignedValue: {
+    id: 'course-authoring.taxonomy-list.select.org.unassigned',
+    defaultMessage: 'Unassigned',
+  },
   usageLoadingMessage: {
     id: 'course-authoring.taxonomy-list.spinner.loading',
     defaultMessage: 'Loading',
