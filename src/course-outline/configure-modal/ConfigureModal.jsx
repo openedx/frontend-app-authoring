@@ -8,7 +8,7 @@ import {
   ActionRow,
   Tab,
   Tabs,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { useSelector } from 'react-redux';
 
 import { VisibilityTypes } from '../../data/constants';

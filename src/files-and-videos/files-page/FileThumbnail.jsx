@@ -4,7 +4,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Icon,
   Image,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { getSrc } from './data/utils';
 import messages from './messages';
 

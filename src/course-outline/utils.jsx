@@ -2,7 +2,7 @@ import {
   CheckCircle as CheckCircleIcon,
   Lock as LockIcon,
   EditOutline as EditOutlineIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 import { ITEM_BADGE_STATUS, STAFF_ONLY } from './constants';
 

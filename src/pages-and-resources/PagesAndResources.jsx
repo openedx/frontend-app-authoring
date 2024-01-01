@@ -6,7 +6,7 @@ import { PageWrap, AppContext } from '@edx/frontend-platform/react';
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Button, Hyperlink } from '@edx/paragon';
+import { Button, Hyperlink } from '@openedx/paragon';
 import messages from './messages';
 import DiscussionsSettings from './discussions';
 import {

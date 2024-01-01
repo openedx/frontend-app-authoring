@@ -1,6 +1,6 @@
 import React from 'react';
 import { v4 as uuid } from 'uuid';
-import { Hyperlink } from '@edx/paragon';
+import { Hyperlink } from '@openedx/paragon';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 
 import { useHelpUrls } from '../../help-urls/hooks';

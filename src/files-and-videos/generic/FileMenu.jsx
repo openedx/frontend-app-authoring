@@ -5,8 +5,8 @@ import {
   Dropdown,
   IconButton,
   Icon,
-} from '@edx/paragon';
-import { MoreHoriz } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { MoreHoriz } from '@openedx/paragon/icons';
 import messages from './messages';
 
 const FileMenu = ({

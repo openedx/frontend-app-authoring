@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { DataTableContext } from '@edx/paragon';
+import { DataTableContext } from '@openedx/paragon';
 import { getCurrentViewRange } from './utils';
 
 const RowStatus = ({

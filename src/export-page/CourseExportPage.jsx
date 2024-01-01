@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Container, Layout, Button, Card,
-} from '@edx/paragon';
-import { ArrowCircleDown as ArrowCircleDownIcon } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { ArrowCircleDown as ArrowCircleDownIcon } from '@openedx/paragon/icons';
 import Cookies from 'universal-cookie';
 import { getConfig } from '@edx/frontend-platform';
 import { Helmet } from 'react-helmet';

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { Outlet, ScrollRestoration } from 'react-router-dom';
-import { Toast } from '@edx/paragon';
+import { Toast } from '@openedx/paragon';
 
 import Header from '../header';
 import { TaxonomyContext } from './common/context';

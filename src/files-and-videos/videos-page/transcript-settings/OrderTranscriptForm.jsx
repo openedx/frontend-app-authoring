@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Button, SelectableBox, Stack } from '@edx/paragon';
+import { Button, SelectableBox, Stack } from '@openedx/paragon';
 import { ErrorAlert } from '@edx/frontend-lib-content-components';
 import Cielo24Form from './Cielo24Form';
 import ThreePlayMediaForm from './ThreePlayMediaForm';

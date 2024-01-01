@@ -8,7 +8,7 @@ import {
   ModalPopup,
   useToggle,
   SearchField,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';

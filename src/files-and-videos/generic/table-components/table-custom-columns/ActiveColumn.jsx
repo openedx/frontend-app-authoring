@@ -1,7 +1,7 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
-import { Icon } from '@edx/paragon';
-import { Check } from '@edx/paragon/icons';
+import { Icon } from '@openedx/paragon';
+import { Check } from '@openedx/paragon/icons';
 
 const ActiveColumn = ({ row }) => {
   const { usageLocations } = row.original;

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { VideoFile } from '@edx/paragon/icons';
+import { VideoFile } from '@openedx/paragon/icons';
 import {
   Badge,
   Button,
   Icon,
   Image,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { FileInput, useFileInput } from '../generic';
 import messages from './messages';
 

@@ -43,7 +43,7 @@
     "@edx/frontend-enterprise-hotjar": "^2.0.0",
     "@edx/frontend-lib-content-components": "^1.177.8",
     "@edx/frontend-platform": "5.6.1",
-    "@edx/paragon": "^21.5.6",
+    "@openedx/paragon": "^21.11.3",
     "@fortawesome/fontawesome-svg-core": "1.2.36",
     "@fortawesome/free-brands-svg-icons": "5.15.4",
     "@fortawesome/free-regular-svg-icons": "5.15.4",
@@ -78,7 +78,7 @@
   },
   "devDependencies": {
     "@edx/browserslist-config": "1.2.0",
-    "@edx/frontend-build": "13.0.5",
+    "@openedx/frontend-build": "13.0.19",
     "@edx/reactifex": "^1.0.3",
     "@edx/stylelint-config-edx": "^2.3.0",
     "@edx/typescript-config": "^1.0.1",

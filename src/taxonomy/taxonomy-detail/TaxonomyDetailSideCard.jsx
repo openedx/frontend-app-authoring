@@ -1,7 +1,7 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Card,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import Proptypes from 'prop-types';
 
 import messages from './messages';

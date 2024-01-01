@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   DataTableContext, Button, Row, Chip,
-} from '@edx/paragon';
-import { Close } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Close } from '@openedx/paragon/icons';
 import { getFilters, removeFilter } from './utils';
 
 const FilterStatus = ({

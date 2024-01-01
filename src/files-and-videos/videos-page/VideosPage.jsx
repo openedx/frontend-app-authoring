@@ -12,7 +12,7 @@ import {
   Button,
   CheckboxFilter,
   Container,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import Placeholder from '@edx/frontend-lib-content-components';
 
 import { RequestStatus } from '../../data/constants';

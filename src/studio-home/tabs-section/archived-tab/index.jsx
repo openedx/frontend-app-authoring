@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Icon, Row } from '@edx/paragon';
-import { Error } from '@edx/paragon/icons';
+import { Icon, Row } from '@openedx/paragon';
+import { Error } from '@openedx/paragon/icons';
 
 import { LoadingSpinner } from '../../../generic/Loading';
 import CardItem from '../../card-item';

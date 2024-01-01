@@ -10,13 +10,13 @@ import {
   OverlayTrigger,
   Tooltip,
   Truncate,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import {
   ArrowDropDown as ArrowDownIcon,
   ArrowDropUp as ArrowUpIcon,
   MoreVert as MoveVertIcon,
   EditOutline as EditIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 import classNames from 'classnames';
 
 import { useEscapeClick } from '../../hooks';

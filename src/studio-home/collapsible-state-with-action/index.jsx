@@ -7,11 +7,11 @@ import {
   Bubble,
   Icon,
   StatefulButton,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import {
   Add as AddIcon,
   Minus as MinusIcon,
-} from '@edx/paragon/icons/es5';
+} from '@openedx/paragon/icons/es5';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { RequestStatus } from '../../data/constants';

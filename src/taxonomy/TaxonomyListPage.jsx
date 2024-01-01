@@ -8,10 +8,10 @@ import {
   OverlayTrigger,
   Spinner,
   Tooltip,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import {
   Add,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
 import SubHeader from '../generic/sub-header/SubHeader';

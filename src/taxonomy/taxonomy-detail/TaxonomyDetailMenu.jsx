@@ -3,7 +3,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Dropdown,
   DropdownButton,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import PropTypes from 'prop-types';
 
 import messages from './messages';

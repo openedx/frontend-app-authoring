@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Form } from '@edx/paragon';
+import { Form } from '@openedx/paragon';
 import { useFormikContext, getIn } from 'formik';
 import PropTypes from 'prop-types';
 

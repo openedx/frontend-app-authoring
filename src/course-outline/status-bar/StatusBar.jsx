@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Hyperlink, Stack } from '@edx/paragon';
+import { Button, Hyperlink, Stack } from '@openedx/paragon';
 import { AppContext } from '@edx/frontend-platform/react';
 
 import { useHelpUrls } from '../../help-urls/hooks';

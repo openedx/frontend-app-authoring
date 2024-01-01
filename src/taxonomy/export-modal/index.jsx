@@ -4,7 +4,7 @@ import {
   Button,
   Form,
   ModalDialog,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';

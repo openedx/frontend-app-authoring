@@ -1,6 +1,6 @@
 // ts-check
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { DataTable } from '@edx/paragon';
+import { DataTable } from '@openedx/paragon';
 import _ from 'lodash';
 import Proptypes from 'prop-types';
 import { useState } from 'react';

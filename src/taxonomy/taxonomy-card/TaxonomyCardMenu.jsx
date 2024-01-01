@@ -3,8 +3,8 @@ import {
   Dropdown,
   IconButton,
   Icon,
-} from '@edx/paragon';
-import { MoreVert } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { MoreVert } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';

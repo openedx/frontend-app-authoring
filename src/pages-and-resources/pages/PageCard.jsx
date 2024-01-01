@@ -2,8 +2,8 @@ import classNames from 'classnames';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Badge, Card, Icon, IconButton, Hyperlink,
-} from '@edx/paragon';
-import { ArrowForward, Settings } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { ArrowForward, Settings } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';

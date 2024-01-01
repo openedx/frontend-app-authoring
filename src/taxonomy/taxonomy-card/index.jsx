@@ -3,7 +3,7 @@ import {
   Card,
   OverlayTrigger,
   Popover,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import classNames from 'classnames';

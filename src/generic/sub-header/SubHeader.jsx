@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ActionRow } from '@edx/paragon';
+import { ActionRow } from '@openedx/paragon';
 
 const SubHeader = ({
   title,

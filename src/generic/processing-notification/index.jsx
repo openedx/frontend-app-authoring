@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Badge, Icon } from '@edx/paragon';
-import { Settings as IconSettings } from '@edx/paragon/icons';
+import { Badge, Icon } from '@openedx/paragon';
+import { Settings as IconSettings } from '@openedx/paragon/icons';
 import { capitalize } from 'lodash';
 
 import { NOTIFICATION_MESSAGES } from '../../constants';

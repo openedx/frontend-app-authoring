@@ -5,7 +5,7 @@ import {
   Button,
   Form,
   ActionRow,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { Formik } from 'formik';
 
 import messages from './messages';

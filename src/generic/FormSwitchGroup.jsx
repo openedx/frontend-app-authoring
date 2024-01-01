@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form, SwitchControl } from '@edx/paragon';
+import { Form, SwitchControl } from '@openedx/paragon';
 
 import './FormSwitchGroup.scss';
 

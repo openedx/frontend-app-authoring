@@ -6,8 +6,8 @@ import {
   Icon,
   Row,
   Spinner,
-} from '@edx/paragon';
-import { ErrorOutline } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { ErrorOutline } from '@openedx/paragon/icons';
 import isEmpty from 'lodash/isEmpty';
 import { RequestStatus } from '../../data/constants';
 import messages from './messages';

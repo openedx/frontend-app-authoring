@@ -4,7 +4,7 @@ import {
   Breadcrumb,
   Container,
   Layout,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 
