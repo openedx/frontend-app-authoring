@@ -7,17 +7,18 @@ import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import initializeStore from './store';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
-const pagesAndResourcesMockText = 'Pages And Resources';
-const editorContainerMockText = 'Editor Container';
-const videoSelectorContainerMockText = 'Video Selector Container';
-const customPagesMockText = 'Custom Pages';
+const mockCourseId = courseId;
+const mockPageAndResourcesText = 'Pages And Resources';
+const mockEditorContainerText = 'Editor Container';
+const mockVideoSelectorContainerText = 'Video Selector Container';
+const mockCustomPagesText = 'Custom Pages';
 let store;
 const mockComponentFn = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({
-    courseId,
+    courseId: mockCourseId,
   }),
 }));
 
@@ -33,19 +34,19 @@ jest.mock('@edx/frontend-lib-content-components', () => ({
 
 jest.mock('./pages-and-resources/PagesAndResources', () => (props) => {
   mockComponentFn(props);
-  return pagesAndResourcesMockText;
+  return mockPageAndResourcesText;
 });
 jest.mock('./editors/EditorContainer', () => (props) => {
   mockComponentFn(props);
-  return editorContainerMockText;
+  return mockEditorContainerText;
 });
 jest.mock('./selectors/VideoSelectorContainer', () => (props) => {
   mockComponentFn(props);
-  return videoSelectorContainerMockText;
+  return mockVideoSelectorContainerText;
 });
 jest.mock('./custom-pages/CustomPages', () => (props) => {
   mockComponentFn(props);
-  return customPagesMockText;
+  return mockCustomPagesText;
 });
 
 describe('<CourseAuthoringRoutes>', () => {
@@ -70,7 +71,7 @@ describe('<CourseAuthoringRoutes>', () => {
       </AppProvider>,
     );
 
-    expect(screen.getByText(pagesAndResourcesMockText)).toBeVisible();
+    expect(screen.getByText(mockPageAndResourcesText)).toBeVisible();
     expect(mockComponentFn).toHaveBeenCalledWith(
       expect.objectContaining({
         courseId,
@@ -87,8 +88,8 @@ describe('<CourseAuthoringRoutes>', () => {
       </AppProvider>,
     );
 
-    expect(screen.queryByText(editorContainerMockText)).toBeInTheDocument();
-    expect(screen.queryByText(pagesAndResourcesMockText)).not.toBeInTheDocument();
+    expect(screen.queryByText(mockEditorContainerText)).toBeInTheDocument();
+    expect(screen.queryByText(mockPageAndResourcesText)).not.toBeInTheDocument();
     expect(mockComponentFn).toHaveBeenCalledWith(
       expect.objectContaining({
         courseId,
@@ -105,8 +106,8 @@ describe('<CourseAuthoringRoutes>', () => {
       </AppProvider>,
     );
 
-    expect(screen.queryByText(videoSelectorContainerMockText)).toBeInTheDocument();
-    expect(screen.queryByText(pagesAndResourcesMockText)).not.toBeInTheDocument();
+    expect(screen.queryByText(mockVideoSelectorContainerText)).toBeInTheDocument();
+    expect(screen.queryByText(mockPageAndResourcesText)).not.toBeInTheDocument();
     expect(mockComponentFn).toHaveBeenCalledWith(
       expect.objectContaining({
         courseId,

@@ -14,11 +14,11 @@ let store;
 
 const onDeleteMock = jest.fn();
 const onChangeMock = jest.fn();
-const courseIdMock = 'course-id-bar';
+const mockCourseId = 'course-id-bar';
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useParams: () => ({
-    courseId: courseIdMock,
+    courseId: mockCourseId,
   }),
 }));
 

@@ -18,7 +18,7 @@
     "snapshot": "fedx-scripts jest --updateSnapshot",
     "start": "fedx-scripts webpack-dev-server --progress",
     "start:with-theme": "paragon install-theme && npm start && npm install",
-    "test": "fedx-scripts jest --coverage --passWithNoTests",
+    "test": "fedx-scripts jest --coverage",
     "test:watch": "fedx-scripts jest --coverage --watchAll --watch",
     "clear-jest": "fedx-scripts jest --clearCache",
     "types": "tsc --noEmit"

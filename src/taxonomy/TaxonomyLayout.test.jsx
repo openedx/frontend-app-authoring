@@ -8,7 +8,7 @@ import initializeStore from '../store';
 import TaxonomyLayout from './TaxonomyLayout';
 
 let store;
-const toastMessage = 'Hello, this is a toast!';
+const mockToastMessage = 'Hello, this is a toast!';
 jest.mock('../header', () => jest.fn(() => <div data-testid="mock-header" />));
 jest.mock('@edx/frontend-component-footer', () => ({
   StudioFooter: jest.fn(() => <div data-testid="mock-footer" />),
@@ -22,7 +22,7 @@ jest.mock('react', () => ({
   ...jest.requireActual('react'),
   useState: jest.fn((initial) => {
     if (initial === null) {
-      return [toastMessage, jest.fn()];
+      return [mockToastMessage, jest.fn()];
     }
     return [initial, jest.fn()];
   }),

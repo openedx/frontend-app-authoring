@@ -10,7 +10,7 @@ import instructorMessages from './instructor-container/messages';
 import InstructorsSection from '.';
 
 const onChangeMock = jest.fn();
-const courseIdMock = 'course-id-bar';
+const mockCourseId = 'course-id-bar';
 
 // Mock the TextareaAutosize component
 jest.mock('react-textarea-autosize', () => jest.fn((props) => (
@@ -29,7 +29,7 @@ jest.mock('react-redux', () => ({
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useParams: () => ({
-    courseId: courseIdMock,
+    courseId: mockCourseId,
   }),
 }));
 

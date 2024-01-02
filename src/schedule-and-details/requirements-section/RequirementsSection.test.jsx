@@ -10,12 +10,12 @@ import entranceExamMessages from './entrance-exam/messages';
 import RequirementsSection from '.';
 
 const onChangeMock = jest.fn();
-const courseIdMock = 'course-id-bar';
+const mockCourseId = 'course-id-bar';
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'),
   useParams: () => ({
-    courseId: courseIdMock,
+    courseId: mockCourseId,
   }),
 }));
 

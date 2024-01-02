@@ -1,10 +1,8 @@
 const { createConfig } = require('@edx/frontend-build');
 
 module.exports = createConfig('jest', {
-  setupFiles: [
-    '<rootDir>/src/setupTest.js',
-  ],
   setupFilesAfterEnv: [
+    '<rootDir>/src/setupTest.js',
     '<rootDir>/src/setupTestEnv.js',
   ],
   coveragePathIgnorePatterns: [
@@ -26,13 +24,6 @@ module.exports = createConfig('jest', {
   ],
   roots: [
     '<rootDir>src/',
-  ],
-  coveragePathIgnorePatterns: [
-    'src/setupTest.js',
-    'jest.config.js',
-    'src/i18n',
-    '/node_modules/',
-    '/specs/'
   ],
   moduleNameMapper: {
     '^lodash-es$': 'lodash',
