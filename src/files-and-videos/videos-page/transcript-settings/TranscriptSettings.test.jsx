@@ -56,7 +56,7 @@ describe('TranscriptSettings', () => {
           roles: [],
         },
       });
-      store = initializeStore(initialState);
+      store = initializeStore({ preloadedState: initialState });
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     });
 
@@ -232,7 +232,7 @@ describe('TranscriptSettings', () => {
           roles: [],
         },
       });
-      store = initializeStore(initialState);
+      store = initializeStore({ preloadedState: initialState });
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
       renderComponent(defaultProps);

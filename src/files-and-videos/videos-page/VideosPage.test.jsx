@@ -152,7 +152,7 @@ describe('FilesAndUploads', () => {
           roles: [],
         },
       });
-      store = initializeStore(initialState);
+      store = initializeStore({ preloadedState: initialState });
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
     });

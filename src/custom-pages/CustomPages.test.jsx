@@ -70,7 +70,7 @@ describe('CustomPages', () => {
         roles: [],
       },
     });
-    store = initializeStore(initialState);
+    store = initializeStore({ preloadedState: initialState });
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
   it('should ', async () => {

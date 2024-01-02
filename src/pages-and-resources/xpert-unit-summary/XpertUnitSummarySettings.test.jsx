@@ -82,10 +82,12 @@ describe('XpertUnitSummarySettings', () => {
     });
 
     store = initializeStore({
-      models: {
-        courseDetails: {
-          [courseId]: {
-            start: Date(),
+      preloadedState: {
+        models: {
+          courseDetails: {
+            [courseId]: {
+              start: Date(),
+            },
           },
         },
       },

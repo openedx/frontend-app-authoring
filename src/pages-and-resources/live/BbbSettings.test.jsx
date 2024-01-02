@@ -82,7 +82,7 @@ describe('BBB Settings', () => {
         roles: [],
       },
     });
-    store = initializeStore(initialState);
+    store = initializeStore({ preloadedState: initialState });
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 

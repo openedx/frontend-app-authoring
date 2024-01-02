@@ -48,9 +48,11 @@ describe('ProctoredExamSettings', () => {
       },
     });
     store = initializeStore({
-      models: {
-        courseApps: {
-          proctoring: {},
+      preloadedState: {
+        models: {
+          courseApps: {
+            proctoring: {},
+          },
         },
       },
     });

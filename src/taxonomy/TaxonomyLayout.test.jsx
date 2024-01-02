@@ -60,7 +60,7 @@ describe('<TaxonomyLayout />', async () => {
     const { getByTestId, getByText } = render(<RootWrapper />);
     act(() => {
       expect(getByTestId('taxonomy-toast')).toBeInTheDocument();
-      expect(getByText(toastMessage)).toBeInTheDocument();
+      expect(getByText(mockToastMessage)).toBeInTheDocument();
     });
   });
 });

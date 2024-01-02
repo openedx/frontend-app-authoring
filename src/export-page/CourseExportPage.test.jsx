@@ -21,11 +21,11 @@ let store;
 let axiosMock;
 let cookies;
 const courseId = '123';
-const mockCourseName = 'About Node JS';
+const courseName = 'About Node JS';
 
 jest.mock('../generic/model-store', () => ({
   useModel: jest.fn().mockReturnValue({
-    name: mockCourseName,
+    name: courseName,
   }),
 }));
 
@@ -68,7 +68,7 @@ describe('<CourseExportPage />', () => {
     await waitFor(() => {
       const helmet = Helmet.peek();
       expect(helmet.title).toEqual(
-        `${messages.headingTitle.defaultMessage} | ${mockCourseName} | ${process.env.SITE_NAME}`,
+        `${messages.headingTitle.defaultMessage} | ${courseName} | ${process.env.SITE_NAME}`,
       );
     });
   });
