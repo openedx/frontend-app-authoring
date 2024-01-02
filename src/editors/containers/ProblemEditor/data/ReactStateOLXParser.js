@@ -2,6 +2,9 @@ import _ from 'lodash-es';
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import { ProblemTypeKeys } from '../../../data/constants/problem';
 import { ToleranceTypes } from '../components/EditProblemView/SettingsWidget/settingsComponents/Tolerance/constants';
+import { findNodesAndRemoveTheirParentNodes } from './reactStateOLXHelpers';
+
+const HtmlBlockTags = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'div', 'pre', 'blockquote', 'ol', 'ul', 'li', 'dl', 'dt', 'dd', 'hr', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'colgroup', 'col', 'address', 'fieldset', 'legend'];
 
 class ReactStateOLXParser {
   constructor(problemState) {
@@ -193,32 +196,28 @@ class ReactStateOLXParser {
 
   /** addQuestion()
    * The editorObject saved to the class constuctor is parsed for the attribute question. The question is parsed and
-   * checked for label and em tags. After the question is fully updated, the questionObject is returned.
-   * TODO: this is very brittle and unreliable. Needs improvement.
+   * checked for label tags. label tags are extracted from block-type tags like <p> or <h1>, and the block-type tag is
+   * deleted while label is kept. For example, <p><label>Question</label></p> becomes <label>Question</label>, while
+   * <p><span>Text</span></p> remains <p><span>Text</span></p>. The question is returned as an object representation.
    * @return {object} object representaion of question
    */
   addQuestion() {
     const { question } = this.editorObject;
-    const questionObject = this.richTextParser.parse(question);
-    /* Removes block tags like <p> or <h1> that surround the <label> or <em> format.
+    const questionObjectArray = this.richTextParser.parse(question);
+    /* Removes block tags like <p> or <h1> that surround the <label> format.
       Block tags are required by tinyMCE but have adverse effect on css in studio.
       */
-    const resultQuestion = [];
-    const relevantSubnodes = ['label', 'em'];
-
-    questionObject.forEach((tag) => {
-      const subNodes = Object.values(tag)[0];
-      const containsRelevantSubnodes = subNodes.some(subNode => relevantSubnodes.includes(Object.keys(subNode)[0]));
-
-      if (!containsRelevantSubnodes) {
-        resultQuestion.push(tag);
-      } else {
-        resultQuestion.push(...subNodes);
-      }
+    const result = findNodesAndRemoveTheirParentNodes({
+      arrayOfNodes: questionObjectArray,
+      nodesToFind: ['label'],
+      parentsToRemove: HtmlBlockTags,
     });
 
-    return resultQuestion;
+    return result;
   }
+
+  // findNodesWithChildTags(nodes, tagNames, recursive=false) {
+  //   const result = [];
 
   /** buildMultiSelectProblem()
    * OLX builder for multiple choice, checkbox, and dropdown problems. The question
