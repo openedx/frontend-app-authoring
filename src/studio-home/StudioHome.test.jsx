@@ -163,7 +163,7 @@ describe('<StudioHome />', async () => {
           splitStudioHome: true,
           redirectToLibraryAuthoringMfe: true,
         });
-        const libraryAuthoringMfeUrl = 'http://localhost:3001';
+        const libraryAuthoringMfeUrl = 'http://localhost:2001';
 
         const { getByTestId } = render(<RootWrapper />);
         const createNewLibraryButton = getByTestId('new-library-button');

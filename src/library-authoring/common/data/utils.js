@@ -16,7 +16,7 @@ export const initLibraryUrl = (library) => {
   if (library.type === LIBRARY_TYPES.LEGACY) {
     url = `${getConfig().STUDIO_BASE_URL}/library/${library.id}`;
   } else {
-    url = `/library/${library.id}`;
+    url = `/library-authoring/library/${library.id}`;
   }
 
   return {

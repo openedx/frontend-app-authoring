@@ -29,7 +29,7 @@ export const generateGetStudioHomeDataApiResponse = () => ({
   inProcessCourseActions: [],
   libraries: [],
   librariesEnabled: true,
-  libraryAuthoringMfeUrl: 'http://localhost:3001',
+  libraryAuthoringMfeUrl: 'http://localhost:2001',
   optimizationEnabled: false,
   redirectToLibraryAuthoringMfe: false,
   requestCourseCreatorUrl: '/request_course_creator',

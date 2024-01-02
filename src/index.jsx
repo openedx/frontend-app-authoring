@@ -8,7 +8,7 @@ import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import {
-  Navigate, Route, createRoutesFromElements, createBrowserRouter, RouterProvider,
+  Navigate, Route, Routes, Outlet, createRoutesFromElements, createBrowserRouter, RouterProvider,
 } from 'react-router-dom';
 import {
   QueryClient,
@@ -37,6 +37,7 @@ import {
   LibraryAuthoringPage,
   StudioHeaderWrapper,
 } from './library-authoring';
+import { NotFoundPage } from './generic';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
@@ -80,16 +81,16 @@ const App = () => {
             />
           </>
         )}
-        <Routes>
+        <Route>
           <Route path={`${ROUTES.Detail.HOME}/*`} element={<StudioHeaderWrapper />} />
           <Route path="*" element={<StudioHeaderWrapper />} />
-        </Routes>
-        <Routes>
+        </Route>
+        <Route>
           <Route element={(
             <main className="library-authoring__main-content">
               <Outlet />
             </main>
-            )}
+          )}
           >
             <Route path={ROUTES.List.HOME} element={<LibraryListPage />} />
             <Route path={ROUTES.List.CREATE} element={<LibraryCreatePage />} />
@@ -100,7 +101,7 @@ const App = () => {
             <Route path={`${ROUTES.Block.HOME}/*`} element={<LibraryBlockPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
-        </Routes>
+        </Route>
       </Route>,
     ),
   );

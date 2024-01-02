@@ -21,7 +21,7 @@ import { reducer as courseImportReducer } from './import-page/data/slice';
 import { reducer as videosReducer } from './files-and-videos/videos-page/data/slice';
 import { reducer as courseOutlineReducer } from './course-outline/data/slice';
 import {
-  courseImportReducer,
+  courseImportReducer as courseImportReducerLIB,
   libraryBlockReducer,
   libraryAuthoringReducer,
   libraryEditReducer,
@@ -29,8 +29,10 @@ import {
   libraryListReducer,
   libraryAccessReducer,
 } from './library-authoring';
+import { STORE_NAMES } from './library-authoring/common/data';
 
-export default const initializeStore = (preloadedState = {}) => configureStore({
+export default function initializeStore(overrides = {}) {
+  return configureStore({
     reducer: {
       courseDetail: courseDetailReducer,
       customPages: customPagesReducer,
@@ -56,11 +58,12 @@ export default const initializeStore = (preloadedState = {}) => configureStore({
       [STORE_NAMES.AUTHORING]: libraryAuthoringReducer,
       [STORE_NAMES.EDIT]: libraryEditReducer,
       [STORE_NAMES.CREATE]: libraryCreateReducer,
-      [STORE_NAMES.COURSE_IMPORT]: courseImportReducer,
+      [STORE_NAMES.COURSE_IMPORT]: courseImportReducerLIB,
       [STORE_NAMES.LIST]: libraryListReducer,
       [STORE_NAMES.ACCESS]: libraryAccessReducer,
     },
     ...overrides,
-});
+  });
+}
 
 export const buildStore = initializeStore;
