@@ -63,7 +63,7 @@ pull_translations:
 	            translations/frontend-component-footer/src/i18n/messages:frontend-component-footer \
 	            translations/frontend-app-course-authoring/src/i18n/messages:frontend-app-course-authoring
 
-	$(intl_imports) paragon frontend-component-footer paragon frontend-app-course-authoring
+	$(intl_imports) paragon frontend-component-footer frontend-app-course-authoring
 endif
 
 # This target is used by Travis.
