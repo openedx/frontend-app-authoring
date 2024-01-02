@@ -16,15 +16,6 @@ module.exports = createConfig('jest', {
   snapshotSerializers: [
     'enzyme-to-json/serializer',
   ],
-  collectCoverageFrom: [
-    "**/*.{js,jsx}",
-  ],
-  testMatch: [
-    '**/specs/**/*.spec.(js|jsx)|**/__tests__/*.(js|jsx)|**/specs/*.spec.(js|jsx)',
-  ],
-  roots: [
-    '<rootDir>src/',
-  ],
   moduleNameMapper: {
     '^lodash-es$': 'lodash',
   },
