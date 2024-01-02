@@ -10,12 +10,16 @@ transifex_input = $(i18n)/transifex_input.json
 # This directory must match .babelrc .
 transifex_temp = ./temp/babel-plugin-formatjs
 
+test:
+	npm run test
+
 precommit:
 	npm run lint
 	npm audit
 
 requirements:
 	npm ci
+	# npm ci --legacy-peer-deps
 
 i18n.extract:
 	# Pulling display strings from .jsx files into .json files...
@@ -59,7 +63,7 @@ pull_translations:
 	            translations/frontend-component-footer/src/i18n/messages:frontend-component-footer \
 	            translations/frontend-app-course-authoring/src/i18n/messages:frontend-app-course-authoring
 
-	$(intl_imports) paragon frontend-component-footer frontend-app-course-authoring
+	$(intl_imports) paragon frontend-component-footer paragon frontend-app-course-authoring
 endif
 
 # This target is used by Travis.

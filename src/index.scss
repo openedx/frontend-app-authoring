@@ -1,8 +1,13 @@
 @import "~@edx/brand/paragon/fonts";
+@import '~@edx/brand/paragon/overrides';
 @import "~@edx/brand/paragon/variables";
 @import "~@edx/paragon/scss/core/core";
+@import '~@edx/paragon/dist/Icon';
 @import "~@edx/brand/paragon/overrides";
 @import "~@edx/frontend-component-header/dist/index";
+@import '~@edx/frontend-component-footer/dist/footer';
+@import '~@openedx/paragon/scss/core/core';
+@import '~@openedx/paragon/dist/Icon';
 @import "assets/scss/variables";
 @import "assets/scss/form";
 @import "assets/scss/utilities";
@@ -22,3 +27,4 @@
 @import "files-and-videos";
 @import "content-tags-drawer/TagBubble";
 @import "course-outline/CourseOutline";
+@import './library-authoring/index.scss';

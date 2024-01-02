@@ -1,0 +1,19 @@
+.permy {
+  color: $white;
+  &.admin {
+    background-color: #082644;
+  }
+  &.author {
+    background-color: #00688D;
+  }
+  &.read {
+    background-color: #707070;
+  }
+}
+
+.library-access-wrapper .form-create {
+  border: none;
+  &:hover {
+    box-shadow: none;
+  }
+}

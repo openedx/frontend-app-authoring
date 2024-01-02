@@ -6,6 +6,7 @@ import '@testing-library/jest-dom/extend-expect';
 /* eslint-disable import/no-extraneous-dependencies */
 import Enzyme from 'enzyme';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+import MutationObserver from '@sheerun/mutationobserver-shim';
 import 'babel-polyfill';
 
 import { mergeConfig } from '@edx/frontend-platform';
@@ -50,7 +51,34 @@ mergeConfig({
   CALCULATOR_HELP_URL: process.env.CALCULATOR_HELP_URL || null,
   ENABLE_PROGRESS_GRAPH_SETTINGS: process.env.ENABLE_PROGRESS_GRAPH_SETTINGS || 'false',
   ENABLE_TEAM_TYPE_SETTING: process.env.ENABLE_TEAM_TYPE_SETTING === 'true',
+  STUDIO_BASE_URL: process.env.STUDIO_BASE_URL,
+  BLOCKSTORE_COLLECTION_UUID: process.env.BLOCKSTORE_COLLECTION_UUID,
+  SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL: process.env.SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL,
 }, 'CourseAuthoringConfig');
+
+window.MutationObserver = MutationObserver;
+
+let store = {};
+
+const mockStorage = {
+  getItem: (key) => {
+    if (key in store) {
+      return store[key];
+    }
+    return null;
+  },
+  setItem: (key, value) => {
+    store[key] = `${value}`;
+  },
+  removeItem: (key) => {
+    delete store[key];
+  },
+  reset() {
+    store = {};
+  },
+};
+
+Object.defineProperty(window, 'localStorage', { value: mockStorage });
 
 // Mock the plugins repo so jest will stop complaining about ES6 syntax
 jest.mock('frontend-components-tinymce-advanced-plugins', () => {});

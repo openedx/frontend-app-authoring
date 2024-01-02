@@ -26,6 +26,17 @@ import { StudioHome } from './studio-home';
 import CourseRerun from './course-rerun';
 import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy';
 import { ContentTagsDrawer } from './content-tags-drawer';
+import {
+  ROUTES,
+  CourseImportPage,
+  LibraryBlockPage,
+  LibraryEditPage,
+  LibraryListPage,
+  LibraryCreatePage,
+  LibraryAccessPage,
+  LibraryAuthoringPage,
+  StudioHeaderWrapper,
+} from './library-authoring';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
@@ -69,6 +80,27 @@ const App = () => {
             />
           </>
         )}
+        <Routes>
+          <Route path={`${ROUTES.Detail.HOME}/*`} element={<StudioHeaderWrapper />} />
+          <Route path="*" element={<StudioHeaderWrapper />} />
+        </Routes>
+        <Routes>
+          <Route element={(
+            <main className="library-authoring__main-content">
+              <Outlet />
+            </main>
+            )}
+          >
+            <Route path={ROUTES.List.HOME} element={<LibraryListPage />} />
+            <Route path={ROUTES.List.CREATE} element={<LibraryCreatePage />} />
+            <Route path={ROUTES.Detail.HOME} element={<LibraryAuthoringPage />} />
+            <Route path={ROUTES.Detail.EDIT} element={<LibraryEditPage />} />
+            <Route path={ROUTES.Detail.ACCESS} element={<LibraryAccessPage />} />
+            <Route path={ROUTES.Detail.IMPORT} element={<CourseImportPage />} />
+            <Route path={`${ROUTES.Block.HOME}/*`} element={<LibraryBlockPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
+        </Routes>
       </Route>,
     ),
   );
@@ -112,6 +144,15 @@ initialize({
         PRIVACY_POLICY_URL: process.env.PRIVACY_POLICY_URL || null,
         SHOW_ACCESSIBILITY_PAGE: process.env.SHOW_ACCESSIBILITY_PAGE || false,
         NOTIFICATION_FEEDBACK_URL: process.env.NOTIFICATION_FEEDBACK_URL || null,
+        LIB_AUTHORING_BASE_URL: process.env.BASE_URL,
+        LOGO_URL: process.env.LOGO_URL,
+        BLOCKSTORE_COLLECTION_UUID: process.env.BLOCKSTORE_COLLECTION_UUID,
+        SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL: process.env.SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL,
+        SITE_NAME: process.env.SITE_NAME,
+        LOGOUT_URL: process.env.LOGOUT_URL,
+        LOGIN_URL: process.env.LOGIN_URL,
+        LMS_BASE_URL: process.env.LMS_BASE_URL,
+        MARKETING_SITE_BASE_URL: process.env.MARKETING_SITE_BASE_URL,
       }, 'CourseAuthoringConfig');
     },
   },
