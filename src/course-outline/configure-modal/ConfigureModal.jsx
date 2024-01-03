@@ -42,10 +42,10 @@ const ConfigureModal = ({
   const [isVisibleToStaffOnly, setIsVisibleToStaffOnly] = useState(visibilityState === VisibilityTypes.STAFF_ONLY);
   const [saveButtonDisabled, setSaveButtonDisabled] = useState(true);
   const [graderType, setGraderType] = useState(format == null ? 'Not Graded' : format);
-  const [dueDateState, setDueDateState] = useState('');
+  const [dueDateState, setDueDateState] = useState(due == null ? '' : due);
   const [isTimeLimitedState, setIsTimeLimitedState] = useState(false);
   const [defaultTimeLimitMin, setDefaultTimeLimitMin] = useState(defaultTimeLimitMinutes);
-  const [hideAfterDueState, setHideAfterDueState] = useState(false);
+  const [hideAfterDueState, setHideAfterDueState] = useState(hideAfterDue === undefined ? false : hideAfterDue);
   const [showCorrectnessState, setShowCorrectnessState] = useState(false);
   const isSubsection = category === COURSE_BLOCK_NAMES.sequential.id;
 
@@ -60,7 +60,7 @@ const ConfigureModal = ({
   }, [format]);
 
   useEffect(() => {
-    setDueDateState(due);
+    setDueDateState(due == null ? '' : due);
   }, [due]);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const ConfigureModal = ({
   }, [defaultTimeLimitMinutes]);
 
   useEffect(() => {
-    setHideAfterDueState(hideAfterDue);
+    setHideAfterDueState(hideAfterDue === undefined ? false : hideAfterDue);
   }, [hideAfterDue]);
 
   useEffect(() => {
@@ -135,20 +135,9 @@ const ConfigureModal = ({
     onClose();
   };
 
-  return (
-    <ModalDialog
-      className="configure-modal"
-      isOpen={isOpen}
-      onClose={handleClose}
-      hasCloseButton
-      isFullscreenOnMobile
-    >
-      <ModalDialog.Header className="configure-modal__header">
-        <ModalDialog.Title>
-          {intl.formatMessage(messages.title, { title: displayName })}
-        </ModalDialog.Title>
-      </ModalDialog.Header>
-      <ModalDialog.Body className={!isSubsection ? 'configure-modal__body' : ''}>
+  const createTabs = () => {
+    if (isSubsection) {
+      return (
         <Tabs>
           <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
             <BasicTab
@@ -175,19 +164,63 @@ const ConfigureModal = ({
               setShowCorrectness={setShowCorrectnessState}
             />
           </Tab>
-          {
-            isSubsection && (
-              <Tab eventKey="advanced" title={intl.formatMessage(messages.advancedTabTitle)}>
-                <AdvancedTab
-                  isTimeLimited={isTimeLimitedState}
-                  setIsTimeLimited={setIsTimeLimitedState}
-                  defaultTimeLimit={defaultTimeLimitMin}
-                  setDefaultTimeLimit={setDefaultTimeLimitMin}
-                />
-              </Tab>
-            )
-          }
+          <Tab eventKey="advanced" title={intl.formatMessage(messages.advancedTabTitle)}>
+            <AdvancedTab
+              isTimeLimited={isTimeLimitedState}
+              setIsTimeLimited={setIsTimeLimitedState}
+              defaultTimeLimit={defaultTimeLimitMin}
+              setDefaultTimeLimit={setDefaultTimeLimitMin}
+            />
+          </Tab>
         </Tabs>
+      );
+    }
+    return (
+      <Tabs>
+        <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
+          <BasicTab
+            releaseDate={releaseDate}
+            setReleaseDate={setReleaseDate}
+            isSubsection={isSubsection}
+            graderType={graderType}
+            courseGraders={courseGraders === 'undefined' ? [] : courseGraders}
+            setGraderType={setGraderType}
+            dueDate={dueDateState}
+            setDueDate={setDueDateState}
+          />
+        </Tab>
+        <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
+          <VisibilityTab
+            category={category}
+            isSubsection={isSubsection}
+            isVisibleToStaffOnly={isVisibleToStaffOnly}
+            setIsVisibleToStaffOnly={setIsVisibleToStaffOnly}
+            showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
+            hideAfterDue={hideAfterDueState}
+            setHideAfterDue={setHideAfterDueState}
+            showCorrectness={showCorrectnessState}
+            setShowCorrectness={setShowCorrectnessState}
+          />
+        </Tab>
+      </Tabs>
+    );
+  };
+
+  return (
+    <ModalDialog
+      className="configure-modal"
+      isOpen={isOpen}
+      onClose={handleClose}
+      hasCloseButton
+      isFullscreenOnMobile
+    >
+      <ModalDialog.Header className="configure-modal__header">
+        <ModalDialog.Title>
+          {intl.formatMessage(messages.title, { title: displayName })}
+        </ModalDialog.Title>
+      </ModalDialog.Header>
+      <ModalDialog.Body className={!isSubsection ? 'configure-modal__body' : ''}>
+        {createTabs()}
       </ModalDialog.Body>
       <ModalDialog.Footer className="pt-1">
         <ActionRow>

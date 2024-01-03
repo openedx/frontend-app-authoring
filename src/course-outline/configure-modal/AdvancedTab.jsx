@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Form } from '@edx/paragon';
 import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
@@ -12,6 +12,8 @@ const AdvancedTab = ({
   defaultTimeLimit,
   setDefaultTimeLimit,
 }) => {
+  const [key, setKey] = useState(0);
+
   const handleChange = (e) => {
     if (e.target.value === 'timed') {
       setIsTimeLimited(true);
@@ -46,9 +48,19 @@ const AdvancedTab = ({
     return `${hhs}:${mms}`;
   };
 
+  const handleBlur = (e) => {
+    const isValid = /^\d\d:\d\d$/.test(e.target.value);
+    if (isValid) {
+      setCurrentTimeLimit(e.target.value);
+    } else {
+      // Ensure the component re-renders and reset the value to the previous state
+      setKey(key + 1);
+    }
+  };
+
   const generateTimeLimits = () => timeLimits.map(
     (hour) => (
-      <Form.AutosuggestOption>
+      <Form.AutosuggestOption key={hour}>
         {formatHour(hour)}
       </Form.AutosuggestOption>
     ),
@@ -75,8 +87,9 @@ const AdvancedTab = ({
         <>
           <h6 className="mt-4 text-gray-700"><FormattedMessage {...messages.timeAllotted} /></h6>
           <Form.Autosuggest
+            key={key}
             value={defaultTimeLimit === null ? formatHour(timeLimits[0]) : formatHour(defaultTimeLimit)}
-            onChange={setCurrentTimeLimit}
+            onBlur={handleBlur}
             onSelected={setCurrentTimeLimit}
             data-testid="hour-autosuggest"
           >
@@ -92,7 +105,7 @@ const AdvancedTab = ({
 AdvancedTab.propTypes = {
   isTimeLimited: PropTypes.bool.isRequired,
   setIsTimeLimited: PropTypes.func.isRequired,
-  defaultTimeLimit: PropTypes.string.isRequired,
+  defaultTimeLimit: PropTypes.number.isRequired,
   setDefaultTimeLimit: PropTypes.func.isRequired,
 };
 

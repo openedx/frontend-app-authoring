@@ -20,7 +20,7 @@ const BasicTab = ({
   const onChangeGraderType = (e) => setGraderType(e.target.value);
 
   const createOptions = () => courseGraders.map((option) => (
-    <option value={option}> {option} </option>
+    <option key={option} value={option}> {option} </option>
   ));
 
   return (
@@ -57,7 +57,7 @@ const BasicTab = ({
               onChange={(value) => onChangeGraderType(value)}
               data-testid="grader-type-select"
             >
-              <option value="Not Graded"> Not Graded </option>
+              <option key="notGraded" value="Not Graded"> Not Graded </option>
               {createOptions()}
             </Form.Control>
             <div data-testid="due-date-stack">
