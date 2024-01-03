@@ -85,15 +85,18 @@ const ConfigureModal = ({
 
   useEffect(() => {
     const visibilityUnchanged = isVisibleToStaffOnly === (visibilityState === VisibilityTypes.STAFF_ONLY);
+    const graderTypeUnchanged = graderType === (format == null ? 'Not Graded' : format);
+    const dueDateUnchanged = dueDateState === (due == null ? '' : due);
+    const hideAfterDueUnchanged = hideAfterDueState === (hideAfterDue === undefined ? false : hideAfterDue);
     setSaveButtonDisabled(
       visibilityUnchanged
       && releaseDate === sectionStartDate
-      && dueDateState === due
+      && dueDateUnchanged
       && isTimeLimitedState === isTimeLimited
       && defaultTimeLimitMin === defaultTimeLimitMinutes
-      && hideAfterDueState === hideAfterDue
+      && hideAfterDueUnchanged
       && showCorrectnessState === showCorrectness
-      && graderType === format,
+      && graderTypeUnchanged,
     );
   }, [
     releaseDate,
