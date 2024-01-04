@@ -100,10 +100,8 @@ const SubsectionCard = ({
         namePrefix="subsection"
       />
       {isExpanded && (
-        <>
-          <div data-testid="subsection-card__units" className="subsection-card__units">
-            {children}
-          </div>
+        <div data-testid="subsection-card__units" className="subsection-card__units">
+          {children}
           <Button
             data-testid="new-unit-button"
             className="mt-4 bg-white"
@@ -113,7 +111,7 @@ const SubsectionCard = ({
           >
             {intl.formatMessage(messages.newUnitButton)}
           </Button>
-        </>
+        </div>
       )}
     </div>
   );
