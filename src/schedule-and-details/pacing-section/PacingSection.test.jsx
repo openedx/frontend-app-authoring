@@ -43,7 +43,7 @@ describe('<PacingSection />', () => {
   });
 
   it('shows disabled radio inputs correctly', () => {
-    const pastDate = '2023-12-31';
+    const pastDate = '2024-12-31';
     const initialProps = { ...props, startDate: pastDate };
     const { getAllByRole, queryAllByText } = render(
       <RootWrapper {...initialProps} />,
