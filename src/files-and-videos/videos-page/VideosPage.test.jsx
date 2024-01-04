@@ -185,6 +185,13 @@ describe('FilesAndUploads', () => {
 
       it('should switch table to list view', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
+        axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`)
+          .reply(201, {
+            usageLocations: [{
+              display_location: 'subsection - unit / block',
+              url: 'base/unit_id#block_id',
+            }],
+          });
         expect(screen.getByTestId('files-data-table')).toBeVisible();
 
         expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
