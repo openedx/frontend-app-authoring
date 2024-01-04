@@ -15,18 +15,18 @@ jest.mock('../../../utils', () => {
 });
 
 jest.mock('./urls', () => ({
-  block: jest.fn().mockName('urls.block'),
-  blockAncestor: jest.fn().mockName('urls.blockAncestor'),
-  blockStudioView: jest.fn().mockName('urls.StudioView'),
-  courseAssets: jest.fn().mockName('urls.courseAssets'),
-  videoTranscripts: jest.fn().mockName('urls.videoTranscripts'),
-  allowThumbnailUpload: jest.fn().mockName('urls.allowThumbnailUpload'),
-  thumbnailUpload: jest.fn().mockName('urls.thumbnailUpload'),
-  checkTranscriptsForImport: jest.fn().mockName('urls.checkTranscriptsForImport'),
-  courseDetailsUrl: jest.fn().mockName('urls.courseDetailsUrl'),
-  courseAdvanceSettings: jest.fn().mockName('urls.courseAdvanceSettings'),
-  replaceTranscript: jest.fn().mockName('urls.replaceTranscript'),
-  videoFeatures: jest.fn().mockName('urls.videoFeatures'),
+  block: jest.fn().mockReturnValue('urls.block'),
+  blockAncestor: jest.fn().mockReturnValue('urls.blockAncestor'),
+  blockStudioView: jest.fn().mockReturnValue('urls.StudioView'),
+  courseAssets: jest.fn().mockReturnValue('urls.courseAssets'),
+  videoTranscripts: jest.fn().mockReturnValue('urls.videoTranscripts'),
+  allowThumbnailUpload: jest.fn().mockReturnValue('urls.allowThumbnailUpload'),
+  thumbnailUpload: jest.fn().mockReturnValue('urls.thumbnailUpload'),
+  checkTranscriptsForImport: jest.fn().mockReturnValue('urls.checkTranscriptsForImport'),
+  courseDetailsUrl: jest.fn().mockReturnValue('urls.courseDetailsUrl'),
+  courseAdvanceSettings: jest.fn().mockReturnValue('urls.courseAdvanceSettings'),
+  replaceTranscript: jest.fn().mockReturnValue('urls.replaceTranscript'),
+  videoFeatures: jest.fn().mockReturnValue('urls.videoFeatures'),
   courseVideos: jest.fn()
     .mockName('urls.courseVideos')
     .mockImplementation(
@@ -64,7 +64,58 @@ describe('cms api', () => {
     describe('fetchByUnitId', () => {
       it('should call get with url.blockAncestor', () => {
         apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
-        expect(get).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }));
+        expect(get).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }), {});
+      });
+
+      describe('when called in different contexts', () => {
+        // To mock env variables, you need to use dynamic imports for the tested methods
+        // and then reset the env variables afterwards.
+        const OLD_ENV = process.env;
+
+        beforeEach(() => {
+          jest.resetModules();
+          process.env = { ...OLD_ENV };
+        });
+
+        afterEach(() => {
+          process.env = OLD_ENV;
+        });
+
+        it('should call get with normal accept header for prod', async () => {
+          process.env.NODE_ENV = 'production';
+          process.env.MFE_NAME = 'frontend-app-library-authoring';
+          // eslint-disable-next-line no-shadow
+          const { apiMethods } = await import('./api');
+          // eslint-disable-next-line no-shadow
+          const utils = await import('./utils');
+          const getSpy = jest.spyOn(utils, 'get');
+          apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
+          expect(getSpy).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }), {});
+        });
+
+        it('should call get with normal accept header for course-authoring', async () => {
+          process.env.NODE_ENV = 'development';
+          process.env.MFE_NAME = 'frontend-app-course-authoring';
+          // eslint-disable-next-line no-shadow
+          const { apiMethods } = await import('./api');
+          // eslint-disable-next-line no-shadow
+          const utils = await import('./utils');
+          const getSpy = jest.spyOn(utils, 'get');
+          apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
+          expect(getSpy).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }), {});
+        });
+
+        it('should call get with special accept header "*/*" for course-authoring', async () => {
+          process.env.NODE_ENV = 'development';
+          process.env.MFE_NAME = 'frontend-app-library-authoring';
+          // eslint-disable-next-line no-shadow
+          const { apiMethods } = await import('./api');
+          // eslint-disable-next-line no-shadow
+          const utils = await import('./utils');
+          const getSpy = jest.spyOn(utils, 'get');
+          apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
+          expect(getSpy).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }), { headers: { Accept: '*/*' } });
+        });
       });
     });
 

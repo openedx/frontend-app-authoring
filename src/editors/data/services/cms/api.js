@@ -5,12 +5,23 @@ import * as module from './api';
 import * as mockApi from './mockApi';
 import { durationStringFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
 
+const fetchByUnitIdOptions = {};
+
+// For some reason, the local webpack-dev-server of library-authoring does not accept the normal Accept header.
+// This is a workaround only for that specific case; the idea is to only do this locally and only for library-authoring.
+if (process.env.NODE_ENV === 'development' && process.env.MFE_NAME === 'frontend-app-library-authoring') {
+  fetchByUnitIdOptions.headers = {
+    Accept: '*/*',
+  };
+}
+
 export const apiMethods = {
   fetchBlockById: ({ blockId, studioEndpointUrl }) => get(
     urls.block({ blockId, studioEndpointUrl }),
   ),
   fetchByUnitId: ({ blockId, studioEndpointUrl }) => get(
     urls.blockAncestor({ studioEndpointUrl, blockId }),
+    fetchByUnitIdOptions,
   ),
   fetchStudioView: ({ blockId, studioEndpointUrl }) => get(
     urls.blockStudioView({ studioEndpointUrl, blockId }),
