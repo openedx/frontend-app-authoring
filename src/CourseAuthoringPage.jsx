@@ -9,6 +9,7 @@ import { StudioFooter } from '@edx/frontend-component-footer';
 import Header from './header';
 import { fetchCourseDetail } from './data/thunks';
 import { useModel } from './generic/model-store';
+import NotFoundAlert from './generic/NotFoundAlert';
 import PermissionDeniedAlert from './generic/PermissionDeniedAlert';
 import { getCourseAppsApiStatus } from './pages-and-resources/data/selectors';
 import { RequestStatus } from './data/constants';
@@ -50,10 +51,16 @@ const CourseAuthoringPage = ({ courseId, children }) => {
   const courseOrg = courseDetail ? courseDetail.org : null;
   const courseTitle = courseDetail ? courseDetail.name : courseId;
   const courseAppsApiStatus = useSelector(getCourseAppsApiStatus);
-  const inProgress = useSelector(state => state.courseDetail.status) === RequestStatus.IN_PROGRESS;
+  const courseDetailStatus = useSelector(state => state.courseDetail.status);
+  const inProgress = courseDetailStatus === RequestStatus.IN_PROGRESS;
   const { pathname } = useLocation();
   const showHeader = !pathname.includes('/editor');
 
+  if (courseDetailStatus === RequestStatus.NOT_FOUND) {
+    return (
+      <NotFoundAlert />
+    );
+  }
   if (courseAppsApiStatus === RequestStatus.DENIED) {
     return (
       <PermissionDeniedAlert />

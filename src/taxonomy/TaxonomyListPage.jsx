@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Button,
   CardView,
@@ -8,13 +9,17 @@ import {
   OverlayTrigger,
   Spinner,
   Tooltip,
+  SelectMenu,
+  MenuItem,
 } from '@edx/paragon';
 import {
   Add,
+  Check,
 } from '@edx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { Helmet } from 'react-helmet';
+import { useOrganizationListData } from '../generic/data/apiHooks';
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
 import { getTaxonomyTemplateApiUrl } from './data/api';
@@ -22,6 +27,9 @@ import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data
 import { importTaxonomy } from './import-tags';
 import messages from './messages';
 import TaxonomyCard from './taxonomy-card';
+
+const ALL_TAXONOMIES = 'All taxonomies';
+const UNASSIGNED = 'Unassigned';
 
 const TaxonomyListHeaderButtons = () => {
   const intl = useIntl();
@@ -69,20 +77,93 @@ const TaxonomyListHeaderButtons = () => {
   );
 };
 
+const OrganizationFilterSelector = ({
+  isOrganizationListLoaded,
+  organizationListData,
+  selectedOrgFilter,
+  setSelectedOrgFilter,
+}) => {
+  const intl = useIntl();
+  const isOrgSelected = (value) => (value === selectedOrgFilter ? <Check /> : null);
+  const selectOptions = [
+    <MenuItem
+      key="all-orgs-taxonomies"
+      className="x-small"
+      iconAfter={() => isOrgSelected(ALL_TAXONOMIES)}
+      onClick={() => setSelectedOrgFilter(ALL_TAXONOMIES)}
+    >
+      { isOrgSelected(ALL_TAXONOMIES)
+        ? intl.formatMessage(messages.orgInputSelectDefaultValue)
+        : intl.formatMessage(messages.orgAllValue)}
+    </MenuItem>,
+    <MenuItem
+      key="unassigned-taxonomies"
+      className="x-small"
+      iconAfter={() => isOrgSelected(UNASSIGNED)}
+      onClick={() => setSelectedOrgFilter(UNASSIGNED)}
+    >
+      { intl.formatMessage(messages.orgUnassignedValue) }
+    </MenuItem>,
+  ];
+
+  if (isOrganizationListLoaded && organizationListData) {
+    organizationListData.forEach(org => (
+      selectOptions.push(
+        <MenuItem
+          key={`${org}-taxonomies`}
+          className="x-small"
+          iconAfter={() => isOrgSelected(org)}
+          onClick={() => setSelectedOrgFilter(org)}
+        >
+          {org}
+        </MenuItem>,
+      )
+    ));
+  }
+
+  return (
+    <SelectMenu
+      className="flex-d x-small taxonomy-orgs-filter-selector"
+      variant="tertiary"
+      defaultMessage={intl.formatMessage(messages.orgInputSelectDefaultValue)}
+      data-testid="taxonomy-orgs-filter-selector"
+    >
+      { isOrganizationListLoaded
+        ? selectOptions
+        : (
+          <Spinner
+            animation="border"
+            size="xl"
+            screenReaderText={intl.formatMessage(messages.usageLoadingMessage)}
+          />
+        )}
+    </SelectMenu>
+  );
+};
+
 const TaxonomyListPage = () => {
   const intl = useIntl();
 
+  const {
+    data: organizationListData,
+    isSuccess: isOrganizationListLoaded,
+  } = useOrganizationListData();
+
   const useTaxonomyListData = () => {
-    const taxonomyListData = useTaxonomyListDataResponse();
-    const isLoaded = useIsTaxonomyListDataLoaded();
+    const taxonomyListData = useTaxonomyListDataResponse(selectedOrgFilter);
+    const isLoaded = useIsTaxonomyListDataLoaded(selectedOrgFilter);
     return { taxonomyListData, isLoaded };
   };
   const { taxonomyListData, isLoaded } = useTaxonomyListData();
 
   const getOrgSelect = () => (
-    // Organization select component
-    // TODO Add functionality to this component
-    undefined
+    // Initialize organization select component
+    <OrganizationFilterSelector
+      isOrganizationListLoaded={isOrganizationListLoaded}
+      organizationListData={organizationListData}
+      selectedOrgFilter={selectedOrgFilter}
+      setSelectedOrgFilter={setSelectedOrgFilter}
+    />
   );
 
   return (
@@ -148,6 +229,13 @@ const TaxonomyListPage = () => {
       </div>
     </>
   );
+};
+
+OrganizationFilterSelector.propTypes = {
+  isOrganizationListLoaded: PropTypes.bool.isRequired,
+  organizationListData: PropTypes.arrayOf(PropTypes.string).isRequired,
+  selectedOrgFilter: PropTypes.string.isRequired,
+  setSelectedOrgFilter: PropTypes.func.isRequired,
 };
 
 TaxonomyListPage.propTypes = {};
