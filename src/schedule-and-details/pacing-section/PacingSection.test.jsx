@@ -7,13 +7,11 @@ import PacingSection from '.';
 
 describe('<PacingSection />', () => {
   const onChangeMock = jest.fn();
-  const RootWrapper = (props) => {
-    console.log(props);
-    return (
+  const RootWrapper = (props) => (
     <IntlProvider locale="en">
       <PacingSection {...props} />
     </IntlProvider>
-  )};
+  );
 
   const props = {
     intl: {},
