@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -17,8 +17,8 @@ import {
   Check,
 } from '@edx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-
 import { Helmet } from 'react-helmet';
+
 import { useOrganizationListData } from '../generic/data/apiHooks';
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
@@ -143,6 +143,7 @@ const OrganizationFilterSelector = ({
 
 const TaxonomyListPage = () => {
   const intl = useIntl();
+  const [selectedOrgFilter, setSelectedOrgFilter] = useState(ALL_TAXONOMIES);
 
   const {
     data: organizationListData,
