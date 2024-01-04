@@ -737,7 +737,8 @@ describe('<CourseOutline />', () => {
     const radioButtons = await findAllByRole('radio');
     expect(radioButtons[0]).toHaveProperty('checked', false);
     expect(radioButtons[1]).toHaveProperty('checked', true);
-    const hours = await findByTestId('hour-autosuggest');
+    const hoursWrapper = await findByTestId('advanced-tab-hours-picker-wrapper');
+    const hours = await within(hoursWrapper).findByRole('textbox');
     expect(hours).toHaveValue('03:30');
   });
 

@@ -222,7 +222,7 @@ const ConfigureModal = ({
           {intl.formatMessage(messages.title, { title: displayName })}
         </ModalDialog.Title>
       </ModalDialog.Header>
-      <ModalDialog.Body className={!isSubsection ? 'configure-modal__body' : ''}>
+      <ModalDialog.Body className="configure-modal__body">
         {createTabs()}
       </ModalDialog.Body>
       <ModalDialog.Footer className="pt-1">
