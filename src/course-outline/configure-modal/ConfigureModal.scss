@@ -9,4 +9,12 @@
   .configure-modal__body {
     overflow: visible;
   }
+
+  .react-datepicker__header {
+    display: none;
+  }
+
+  .react-datepicker-wrapper {
+    width: 100%;
+  }
 }

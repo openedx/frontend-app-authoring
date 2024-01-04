@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import { Form } from '@edx/paragon';
-import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
+import { useIntl, FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
+import { DatepickerControl, DATEPICKER_TYPES } from '../../generic/datepicker-control';
 import messages from './messages';
-
-const timeLimits = Array.from({ length: 48 }, (_, i) => 30 + 30 * i);
+import { convertToStringFromDate } from '../../utils';
 
 const AdvancedTab = ({
   isTimeLimited,
@@ -12,21 +13,7 @@ const AdvancedTab = ({
   defaultTimeLimit,
   setDefaultTimeLimit,
 }) => {
-  const [key, setKey] = useState(0);
-
-  const handleChange = (e) => {
-    if (e.target.value === 'timed') {
-      setIsTimeLimited(true);
-    } else {
-      setDefaultTimeLimit(null);
-      setIsTimeLimited(false);
-    }
-  };
-
-  const setCurrentTimeLimit = (valueString) => {
-    const value = valueString.split(':');
-    setDefaultTimeLimit(Number.parseInt(value[0], 10) * 60 + Number.parseInt(value[1], 10));
-  };
+  const intl = useIntl();
 
   const formatHour = (hour) => {
     const hh = Math.floor(hour / 60);
@@ -48,23 +35,24 @@ const AdvancedTab = ({
     return `${hhs}:${mms}`;
   };
 
-  const handleBlur = (e) => {
-    const isValid = /^\d\d:\d\d$/.test(e.target.value);
-    if (isValid) {
-      setCurrentTimeLimit(e.target.value);
+  const [timeLimit, setTimeLimit] = useState(convertToStringFromDate(moment(formatHour(defaultTimeLimit), 'HH:mm')));
+
+  const handleChange = (e) => {
+    if (e.target.value === 'timed') {
+      setIsTimeLimited(true);
     } else {
-      // Ensure the component re-renders and reset the value to the previous state
-      setKey(key + 1);
+      setDefaultTimeLimit(null);
+      setIsTimeLimited(false);
     }
   };
 
-  const generateTimeLimits = () => timeLimits.map(
-    (hour) => (
-      <Form.AutosuggestOption key={hour}>
-        {formatHour(hour)}
-      </Form.AutosuggestOption>
-    ),
-  );
+  const setCurrentTimeLimit = (dateStr) => {
+    if (dateStr) {
+      const minutes = moment.duration(moment(dateStr).format('HH:mm')).asMinutes();
+      setDefaultTimeLimit(minutes);
+      setTimeLimit(dateStr);
+    }
+  };
 
   return (
     <>
@@ -84,19 +72,16 @@ const AdvancedTab = ({
         <Form.Text><FormattedMessage {...messages.timedDescription} /></Form.Text>
       </Form.RadioSet>
       { isTimeLimited && (
-        <>
-          <h6 className="mt-4 text-gray-700"><FormattedMessage {...messages.timeAllotted} /></h6>
-          <Form.Autosuggest
-            key={key}
-            value={defaultTimeLimit === null ? formatHour(timeLimits[0]) : formatHour(defaultTimeLimit)}
-            onBlur={handleBlur}
-            onSelected={setCurrentTimeLimit}
-            data-testid="hour-autosuggest"
-          >
-            {generateTimeLimits()}
-          </Form.Autosuggest>
+        <div className="mt-3" data-testid="advanced-tab-hours-picker-wrapper">
+          <DatepickerControl
+            type={DATEPICKER_TYPES.time}
+            value={timeLimit}
+            label={intl.formatMessage(messages.timeAllotted)}
+            controlName="allotted-time"
+            onChange={setCurrentTimeLimit}
+          />
           <Form.Text><FormattedMessage {...messages.timeLimitDescription} /></Form.Text>
-        </>
+        </div>
       )}
     </>
   );
