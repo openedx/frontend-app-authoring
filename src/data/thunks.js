@@ -21,7 +21,11 @@ export function fetchCourseDetail(courseId) {
         canChangeProviders: getAuthenticatedUser().administrator || new Date(courseDetail.start) > new Date(),
       }));
     } catch (error) {
-      dispatch(updateStatus({ courseId, status: RequestStatus.FAILED }));
+      if (error.response && error.response.status === 404) {
+        dispatch(updateStatus({ courseId, status: RequestStatus.NOT_FOUND }));
+      } else {
+        dispatch(updateStatus({ courseId, status: RequestStatus.FAILED }));
+      }
     }
   };
 }
