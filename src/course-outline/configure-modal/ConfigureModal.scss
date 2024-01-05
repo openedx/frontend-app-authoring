@@ -10,11 +10,13 @@
     overflow: visible;
   }
 
-  .react-datepicker__header {
-    display: none;
-  }
+  .hide-header {
+    .react-datepicker__header {
+      display: none;
+    }
 
-  .react-datepicker-wrapper {
-    width: 100%;
+    .react-datepicker-wrapper {
+      width: 100%;
+    }
   }
 }

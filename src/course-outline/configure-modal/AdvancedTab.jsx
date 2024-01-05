@@ -72,7 +72,7 @@ const AdvancedTab = ({
         <Form.Text><FormattedMessage {...messages.timedDescription} /></Form.Text>
       </Form.RadioSet>
       { isTimeLimited && (
-        <div className="mt-3" data-testid="advanced-tab-hours-picker-wrapper">
+        <div className="hide-header mt-3" data-testid="advanced-tab-hours-picker-wrapper">
           <DatepickerControl
             type={DATEPICKER_TYPES.time}
             value={timeLimit}
