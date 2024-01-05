@@ -1,0 +1,7 @@
+.taxonomy-orgs-filter-selector {
+  // Without this, the default bold styling for the focused option
+  // in the org select menu is too thick
+  .pgn__menu-item:focus {
+    font-weight: bold;
+  }
+}

@@ -38,7 +38,6 @@ const OpenedXConfigForm = ({
     unitLevelVisibility: true,
     allowAnonymousPostsPeers: appConfigObj?.allowAnonymousPostsPeers || false,
     reportedContentEmailNotifications: appConfigObj?.reportedContentEmailNotifications || false,
-    enableReportedContentEmailNotifications: Boolean(appConfigObj?.enableReportedContentEmailNotifications) || false,
     restrictedDates: appConfigObj?.restrictedDates || [],
     discussionTopics: discussionTopicsModel || [],
     divideByCohorts: appConfigObj?.divideByCohorts || false,

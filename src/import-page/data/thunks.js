@@ -6,7 +6,7 @@ import { RequestStatus } from '../../data/constants';
 import { setImportCookie } from '../utils';
 import { getImportStatus, startCourseImporting } from './api';
 import {
-  reset, updateCurrentStage, updateError, updateFileName,
+  reset, updateCurrentStage, updateError, updateFileName, updateProgress,
   updateImportTriggered, updateLoadingStatus, updateSavingStatus, updateSuccessDate,
 } from './slice';
 import { IMPORT_STAGES, LAST_IMPORT_COOKIE_NAME } from './constants';
@@ -44,9 +44,14 @@ export function handleProcessUpload(courseId, fileData, requestConfig, handleErr
       const file = fileData.get('file');
       dispatch(reset());
       dispatch(updateSavingStatus(RequestStatus.PENDING));
-      dispatch(updateImportTriggered(true));
       dispatch(updateFileName(file.name));
-      const { importStatus } = await startCourseImporting(courseId, file, requestConfig);
+      dispatch(updateImportTriggered(true));
+      const { importStatus } = await startCourseImporting(
+        courseId,
+        file,
+        requestConfig,
+        (percent) => dispatch(updateProgress(percent)),
+      );
       dispatch(updateCurrentStage(importStatus));
       setImportCookie(moment().valueOf(), importStatus === IMPORT_STAGES.SUCCESS, file.name);
       dispatch(updateSavingStatus(RequestStatus.SUCCESSFUL));

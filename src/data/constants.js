@@ -13,6 +13,7 @@ export const RequestStatus = {
   PENDING: 'pending',
   CLEAR: 'clear',
   PARTIAL: 'partial',
+  NOT_FOUND: 'not-found',
 };
 
 /**
