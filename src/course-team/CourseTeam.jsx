@@ -57,10 +57,10 @@ const CourseTeam = ({ courseId }) => {
   } = useCourseTeam({ intl, courseId });
 
   const {
-    hasPermissions,
+    checkPermission,
   } = useUserPermissions();
 
-  const hasManageAllUsersPerm = hasPermissions('manage_all_users');
+  const hasManageAllUsersPerm = checkPermission('manage_all_users');
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment

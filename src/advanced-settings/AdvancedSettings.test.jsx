@@ -25,7 +25,7 @@ let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
 const userId = 3;
-let userPermissionsData = { permissions: ['view_course_settings', 'manage_advanced_settings'] };
+const userPermissionsData = { permissions: ['view_course_settings', 'manage_advanced_settings'] };
 
 // Mock the TextareaAutosize component
 jest.mock('react-textarea-autosize', () => jest.fn((props) => (
@@ -58,6 +58,11 @@ const permissionsMockStore = async (permissions) => {
   await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
 };
 
+const permissionDisabledMockStore = async () => {
+  axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: false });
+  await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+};
+
 describe('<AdvancedSettings />', () => {
   beforeEach(() => {
     initializeMockApp({
@@ -73,13 +78,9 @@ describe('<AdvancedSettings />', () => {
     axiosMock
       .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
       .reply(200, advancedSettingsMock);
-    axiosMock
-      .onGet(getUserPermissionsEnabledFlagUrl)
-      .reply(200, { enabled: true });
-    axiosMock
-      .onGet(getUserPermissionsUrl(courseId, userId))
-      .reply(200, userPermissionsData);
+    permissionsMockStore(userPermissionsData);
   });
+
   it('should render without errors', async () => {
     const { getByText } = render(<RootWrapper />);
     await waitFor(() => {
@@ -183,22 +184,28 @@ describe('<AdvancedSettings />', () => {
     expect(getByText('Your policy changes have been saved.')).toBeInTheDocument();
   });
   it('should shows the PermissionDeniedAlert when there are not the right user permissions', async () => {
-    userPermissionsData = { permissions: ['view_course_settings'] };
-    await permissionsMockStore(userPermissionsData);
-
-    const { getByTestId } = render(<RootWrapper />);
-    await waitFor(() => {
-      expect(getByTestId('permissionDeniedAlert')).toBeInTheDocument();
-    });
-  });
-  it('should not show the PermissionDeniedAlert when the User Permissions Flag is not enabled', async () => {
-    axiosMock
-      .onGet(getUserPermissionsEnabledFlagUrl)
-      .reply(200, { enabled: false });
+    const permissionsData = { permissions: ['view'] };
+    await permissionsMockStore(permissionsData);
 
     const { queryByText } = render(<RootWrapper />);
     await waitFor(() => {
-      expect(queryByText('permissionDeniedAlert')).not.toBeInTheDocument();
+      const permissionDeniedAlert = queryByText('You are not authorized to view this page. If you feel you should have access, please reach out to your course team admin to be given access.');
+      expect(permissionDeniedAlert).toBeInTheDocument();
+    });
+  });
+  it('should not show the PermissionDeniedAlert when the User Permissions Flag is not enabled', async () => {
+    await permissionDisabledMockStore();
+
+    const { queryByText } = render(<RootWrapper />);
+    const permissionDeniedAlert = queryByText('You are not authorized to view this page. If you feel you should have access, please reach out to your course team admin to be given access.');
+    expect(permissionDeniedAlert).not.toBeInTheDocument();
+  });
+  it('should be view only if the permission is set for viewOnly', async () => {
+    const permissions = { permissions: ['view_course_settings'] };
+    await permissionsMockStore(permissions);
+    const { getByLabelText } = render(<RootWrapper />);
+    await waitFor(() => {
+      expect(getByLabelText('Advanced Module List')).toBeDisabled();
     });
   });
 });

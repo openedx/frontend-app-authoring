@@ -21,14 +21,14 @@ const Header = ({
   intl,
 }) => {
   const dispatch = useDispatch();
-  const { hasPermissions } = useUserPermissions();
+  const { checkPermission } = useUserPermissions();
   const userPermissions = useSelector(getUserPermissions);
   const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
-  const hasContentPermissions = !userPermissionsEnabled || (userPermissionsEnabled && hasPermissions('manage_content'));
+  const hasContentPermissions = !userPermissionsEnabled || (userPermissionsEnabled && checkPermission('manage_content'));
   const hasSettingsPermissions = !userPermissionsEnabled
-    || (userPermissionsEnabled && (hasPermissions('manage_advanced_settings') || hasPermissions('view_course_settings')));
+    || (userPermissionsEnabled && (checkPermission('manage_advanced_settings') || checkPermission('view_course_settings')));
   const hasToolsPermissions = !userPermissionsEnabled
-  || (userPermissionsEnabled && (hasPermissions('manage_course_settings') || hasPermissions('view_course_settings')));
+  || (userPermissionsEnabled && (checkPermission('manage_course_settings') || checkPermission('view_course_settings')));
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const contentMenu = getContentMenuItems({
     studioBaseUrl,

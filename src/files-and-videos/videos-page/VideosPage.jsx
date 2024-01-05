@@ -56,9 +56,9 @@ const VideosPage = ({
   const [isTranscriptSettingsOpen, openTranscriptSettings, closeTranscriptSettings] = useToggle(false);
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
-  const { hasPermissions } = useUserPermissions();
+  const { checkPermission } = useUserPermissions();
   const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
-  const showPermissionDeniedAlert = userPermissionsEnabled && !hasPermissions('manage_content');
+  const showPermissionDeniedAlert = userPermissionsEnabled && !checkPermission('manage_content');
 
   useEffect(() => {
     dispatch(fetchVideos(courseId));

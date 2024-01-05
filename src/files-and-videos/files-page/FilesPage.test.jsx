@@ -47,6 +47,7 @@ let store;
 let file;
 const userId = 3;
 const wrongUserPermissionsData = { permissions: ['wrong_permission'] };
+const userPermissionsData = { permissions: ['manage_content'] };
 
 ReactDOM.createPortal = jest.fn(node => node);
 jest.mock('file-saver');
@@ -98,6 +99,13 @@ const disabledUserPermissionsFlagMockStore = async () => {
   await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
 };
 
+const userPermissionsMockStore = async () => {
+  axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, userPermissionsData);
+  axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+  await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+  await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+};
+
 describe('FilesAndUploads', () => {
   describe('empty state', () => {
     beforeEach(async () => {
@@ -129,6 +137,11 @@ describe('FilesAndUploads', () => {
     it('should not show PermissionDeniedAlert if User Permissions Flag is not enabled', async () => {
       renderComponent();
       await disabledUserPermissionsFlagMockStore();
+      expect(screen.queryByText('permissionDeniedAlert')).not.toBeInTheDocument();
+    });
+    it('should not show PermissionDeniedAlert if User Permissions Flag is enabled and permissions are correct', async () => {
+      renderComponent();
+      await userPermissionsMockStore();
       expect(screen.queryByText('permissionDeniedAlert')).not.toBeInTheDocument();
     });
     it('should return placeholder component', async () => {

@@ -24,7 +24,6 @@ import { StudioHome } from '.';
 let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
-const userId = 3;
 const {
   studioShortName,
   studioRequestEmail,

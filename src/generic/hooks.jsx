@@ -5,15 +5,15 @@ const useUserPermissions = () => {
   const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
   const userPermissions = useSelector(getUserPermissions);
 
-  const hasPermissions = (checkPermissions) => {
+  const checkPermission = (permission) => {
     if (!userPermissionsEnabled || !Array.isArray(userPermissions)) {
       return false;
     }
-    return userPermissions.includes(checkPermissions);
+    return userPermissions.includes(permission);
   };
 
   return {
-    hasPermissions,
+    checkPermission,
   };
 };
 

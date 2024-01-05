@@ -55,14 +55,14 @@ const PagesAndResources = ({ courseId, intl }) => {
     enabled: xpertSettings?.enabled !== undefined,
   }];
 
-  const { hasPermissions } = useUserPermissions();
+  const { checkPermission } = useUserPermissions();
 
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
 
-  if (courseAppsApiStatus === RequestStatus.DENIED || !hasPermissions('manage_content')) {
+  if (courseAppsApiStatus === RequestStatus.DENIED || !checkPermission('manage_content')) {
     return (
       <PermissionDeniedAlert />
     );

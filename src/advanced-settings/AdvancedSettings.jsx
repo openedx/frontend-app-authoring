@@ -44,11 +44,11 @@ const AdvancedSettings = ({ intl, courseId }) => {
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
 
-  const { hasPermissions } = useUserPermissions();
+  const { checkPermission } = useUserPermissions();
   const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
-  const viewOnly = hasPermissions('view_course_settings');
+  const viewOnly = checkPermission('view_course_settings');
   const showPermissionDeniedAlert = userPermissionsEnabled && (
-    !hasPermissions('manage_advanced_settings') || !hasPermissions('view_course_settings')
+    !checkPermission('manage_advanced_settings') && !checkPermission('view_course_settings')
   );
 
   useEffect(() => {

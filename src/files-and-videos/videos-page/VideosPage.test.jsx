@@ -47,6 +47,7 @@ let store;
 let file;
 const userId = 3;
 const wrongUserPermissionsData = { permissions: ['wrong_permission'] };
+const userPermissionsData = { permissions: ['manage_content'] };
 jest.mock('file-saver');
 
 const renderComponent = () => {
@@ -86,6 +87,13 @@ const wrongUserPermissionsMockStore = async () => {
 
 const disabledUserPermissionsFlagMockStore = async () => {
   axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: false });
+  await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+};
+
+const userPermissionsMockStore = async () => {
+  axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, userPermissionsData);
+  axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+  await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
   await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
 };
 
@@ -168,6 +176,12 @@ describe('FilesAndUploads', () => {
     it('should not show PermissionDeniedAlert if User Permissions Flag is not enabled', async () => {
       renderComponent();
       await disabledUserPermissionsFlagMockStore();
+      expect(screen.queryByText('permissionDeniedAlert')).not.toBeInTheDocument();
+    });
+
+    it('should not show PermissionDeniedAlert if User Permissions Flag is enabled and permission is correct', async () => {
+      renderComponent();
+      await userPermissionsMockStore();
       expect(screen.queryByText('permissionDeniedAlert')).not.toBeInTheDocument();
     });
   });

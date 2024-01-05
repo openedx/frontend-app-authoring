@@ -62,9 +62,9 @@ const CourseUpdates = ({ courseId }) => {
   const anyStatusFailed = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.FAILED);
   const anyStatusInProgress = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.IN_PROGRESS);
   const anyStatusPending = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.PENDING);
-  const { hasPermissions } = useUserPermissions();
+  const { checkPermission } = useUserPermissions();
   const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
-  const showPermissionDeniedAlert = userPermissionsEnabled && !hasPermissions('manage_content');
+  const showPermissionDeniedAlert = userPermissionsEnabled && !checkPermission('manage_content');
 
   if (showPermissionDeniedAlert) {
     return (
