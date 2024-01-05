@@ -1,6 +1,4 @@
-import {
-  React, useState, useEffect,
-} from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -43,7 +41,9 @@ import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import PublishModal from './publish-modal/PublishModal';
 import ConfigureModal from './configure-modal/ConfigureModal';
 import DeleteModal from './delete-modal/DeleteModal';
-import { useCourseOutline } from './hooks';
+import {
+  useCourseOutline, useScrollToLocatorElement,
+} from './hooks';
 import messages from './messages';
 
 const CourseOutline = ({ courseId }) => {
@@ -97,6 +97,8 @@ const CourseOutline = ({ courseId }) => {
     handleVideoSharingOptionChange,
     handleUnitDragAndDrop,
   } = useCourseOutline({ courseId });
+
+  useScrollToLocatorElement({ isLoading });
 
   const [sections, setSections] = useState(sectionsList);
 

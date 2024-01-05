@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, useToggle } from '@edx/paragon';
 import { Add as IconAdd } from '@edx/paragon/icons';
@@ -33,6 +34,9 @@ const SubsectionCard = ({
   const currentRef = useRef(null);
   const intl = useIntl();
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
+  const locatorId = searchParams.get('show');
+  const isScrolledToElement = locatorId === subsection.id;
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'subsection';
 
@@ -52,7 +56,7 @@ const SubsectionCard = ({
   actions.allowMoveUp = canMoveItem(index, -1);
   actions.allowMoveDown = canMoveItem(index, 1);
 
-  const [isExpanded, setIsExpanded] = useState(!isHeaderVisible);
+  const [isExpanded, setIsExpanded] = useState(locatorId ? isScrolledToElement : !isHeaderVisible);
   const subsectionStatus = getItemStatus({
     published,
     visibilityState,
@@ -134,7 +138,7 @@ const SubsectionCard = ({
         ...borderStyle,
       }}
     >
-      <div className="subsection-card" data-testid="subsection-card" ref={currentRef}>
+      <div className="subsection-card" data-testid="subsection-card" ref={currentRef} data-locator={subsection.id}>
         {isHeaderVisible && (
           <CardHeader
             title={displayName}

@@ -1,0 +1,11 @@
+.course-unit {
+  .sub-header-title .sub-header-breadcrumbs {
+    .dropdown-toggle::after {
+      display: none;
+    }
+
+    [aria-expanded="true"] .pgn__icon {
+      transform: scale(1, -1);
+    }
+  }
+}

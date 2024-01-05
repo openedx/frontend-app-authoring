@@ -1,1 +1,9 @@
-{}
+{
+  "course-authoring.course-unit.heading.icon.chevron.alt": "Toggle dropdown menu",
+  "course-authoring.course-unit.button.view-live": "View live version",
+  "course-authoring.course-unit.button.preview": "Preview",
+  "course-authoring.course-unit.heading.button.edit.alt": "Edit",
+  "course-authoring.course-unit.heading.button.edit.aria-label": "Edit field",
+  "course-authoring.course-unit.heading.button.settings.alt": "Settings",
+  "course-authoring.course-unit.general.alert.error.description": "Unable to {actionName} {type}. Please try again."
+}

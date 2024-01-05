@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   act, render, waitFor, cleanup, fireEvent, within,
 } from '@testing-library/react';
@@ -48,6 +47,7 @@ let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
+const locatorSectionId = 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@edx_introduction';
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
@@ -1336,6 +1336,20 @@ describe('<CourseOutline />', () => {
 
     await waitFor(() => {
       expect(within(sectionElement).queryByText(section.displayName)).toBeInTheDocument();
+    });
+  });
+
+  it('check correct scrolling to the locator section when URL has a "show" param', async () => {
+    const scrollIntoViewFn = jest.fn();
+    jest.spyOn(URLSearchParams.prototype, 'get')
+      .mockImplementation(() => locatorSectionId);
+    window.HTMLElement.prototype.scrollIntoView = scrollIntoViewFn;
+
+    render(<RootWrapper />);
+
+    await waitFor(() => {
+      expect(scrollIntoViewFn).toHaveBeenCalled();
+      expect(scrollIntoViewFn).toHaveBeenCalledWith({ behavior: 'smooth' });
     });
   });
 });

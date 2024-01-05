@@ -19,6 +19,7 @@ import messages from './messages';
 const CardHeader = ({
   title,
   status,
+  sectionId,
   hasChanges,
   onClickPublish,
   onClickConfigure,
@@ -51,7 +52,11 @@ const CardHeader = ({
   });
 
   return (
-    <div className="item-card-header" data-testid={`${namePrefix}-card-header`}>
+    <div
+      className="item-card-header"
+      data-locator={sectionId}
+      data-testid={`${namePrefix}-card-header`}
+    >
       {isFormOpen ? (
         <Form.Group className="m-0">
           <Form.Control
@@ -151,6 +156,7 @@ const CardHeader = ({
 CardHeader.propTypes = {
   title: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
+  sectionId: PropTypes.string.isRequired,
   hasChanges: PropTypes.bool.isRequired,
   onClickPublish: PropTypes.func.isRequired,
   onClickConfigure: PropTypes.func.isRequired,
