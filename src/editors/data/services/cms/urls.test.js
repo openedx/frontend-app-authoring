@@ -55,11 +55,11 @@ describe('cms url methods', () => {
       expect(returnUrl({ studioEndpointUrl, unitUrl, learningContextId: libraryV2Id }))
         .toEqual('');
     });
-    it('returns url with studioEndpointUrl and unitUrl', () => {
+    it('returnUrl function should return url with studioEndpointUrl, unitUrl, and blockId', () => {
       expect(returnUrl({
         studioEndpointUrl, unitUrl, learningContextId: courseId, blockId,
       }))
-        .toEqual(`${studioEndpointUrl}/container/${unitUrl.data.ancestors[0].id}`);
+        .toEqual(`${studioEndpointUrl}/container/${unitUrl.data.ancestors[0].id}#${blockId}`);
     });
     it('returns blank url for v2 block', () => {
       expect(returnUrl({
@@ -75,9 +75,9 @@ describe('cms url methods', () => {
       expect(libraryV1({ studioEndpointUrl, learningContextId: libraryV1Id }))
         .toEqual(`${studioEndpointUrl}/library/${libraryV1Id}`);
     });
-    it('returns url with studioEndpointUrl and unitUrl', () => {
-      expect(unit({ studioEndpointUrl, unitUrl }))
-        .toEqual(`${studioEndpointUrl}/container/${unitUrl.data.ancestors[0].id}`);
+    it('unit function should return url with studioEndpointUrl, unitUrl, and blockId', () => {
+      expect(unit({ studioEndpointUrl, unitUrl, blockId }))
+        .toEqual(`${studioEndpointUrl}/container/${unitUrl.data.ancestors[0].id}#${blockId}`);
     });
   });
   describe('block', () => {
