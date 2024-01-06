@@ -311,3 +311,20 @@ export async function setSectionOrderList(courseId, children) {
 
   return data;
 }
+
+/**
+ * Set video sharing setting
+ * @param {string} courseId
+ * @param {string} videoSharingOption
+ * @returns {Promise<Object>}
+*/
+export async function setVideoSharingOption(courseId, videoSharingOption) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getEnableHighlightsEmailsApiUrl(courseId), {
+      metadata: {
+        video_sharing_options: videoSharingOption,
+      },
+    });
+
+  return data;
+}

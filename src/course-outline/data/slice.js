@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 
+import { VIDEO_SHARING_OPTIONS } from '../constants';
 import { RequestStatus } from '../../data/constants';
 
 const slice = createSlice({
@@ -23,6 +24,8 @@ const slice = createSlice({
         totalCourseBestPracticesChecks: 0,
         completedCourseBestPracticesChecks: 0,
       },
+      videoSharingEnabled: false,
+      videoSharingOptions: VIDEO_SHARING_OPTIONS.perVideo.id,
     },
     sectionsList: [],
     currentSection: {},

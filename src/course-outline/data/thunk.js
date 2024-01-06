@@ -24,6 +24,7 @@ import {
   restartIndexingOnCourse,
   updateCourseSectionHighlights,
   setSectionOrderList,
+  setVideoSharingOption,
 } from './api';
 import {
   addSection,
@@ -50,9 +51,21 @@ export function fetchCourseOutlineIndexQuery(courseId) {
 
     try {
       const outlineIndex = await getCourseOutlineIndex(courseId);
-      const { courseReleaseDate, courseStructure: { highlightsEnabledForMessaging } } = outlineIndex;
+      const {
+        courseReleaseDate,
+        courseStructure: {
+          highlightsEnabledForMessaging,
+          videoSharingEnabled,
+          videoSharingOptions,
+        }
+      } = outlineIndex;
       dispatch(fetchOutlineIndexSuccess(outlineIndex));
-      dispatch(updateStatusBar({ courseReleaseDate, highlightsEnabledForMessaging }));
+      dispatch(updateStatusBar({
+        courseReleaseDate,
+        highlightsEnabledForMessaging,
+        videoSharingOptions,
+        videoSharingEnabled,
+      }));
 
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
@@ -112,6 +125,24 @@ export function enableCourseHighlightsEmailsQuery(courseId) {
       dispatch(hideProcessingNotification());
     } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function setVideoSharingOptionQuery(courseId, option) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await setVideoSharingOption(courseId, option);
+      dispatch(updateStatusBar({ videoSharingOptions: option }));
+
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+      dispatch(hideProcessingNotification());
+    } catch (error) {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+      dispatch(hideProcessingNotification());
     }
   };
 }

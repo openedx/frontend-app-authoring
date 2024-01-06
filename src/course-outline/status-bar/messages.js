@@ -41,6 +41,14 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.status-bar.highlight-emails.link',
     defaultMessage: 'Learn more',
   },
+  videoSharingTitle: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.title',
+    defaultMessage: 'Video Sharing',
+  },
+  videoSharingLink: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.title',
+    defaultMessage: 'Learn more',
+  },
 });
 
 export default messages;
