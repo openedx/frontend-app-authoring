@@ -42,6 +42,7 @@ import messages from './messages';
 import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
+import { VIDEO_SHARING_OPTIONS } from './constants';
 
 let axiosMock;
 let store;
@@ -112,6 +113,30 @@ describe('<CourseOutline />', () => {
     fireEvent.click(reindexButton);
 
     expect(await findByText(messages.alertSuccessDescription.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('check video sharing option udpates correctly', async () => {
+    const { findByTestId } = render(<RootWrapper />);
+
+    axiosMock
+      .onPost(getEnableHighlightsEmailsApiUrl(courseId), {
+        metadata: {
+          video_sharing_options: VIDEO_SHARING_OPTIONS.allOff.id,
+        },
+      })
+      .reply(200);
+    const optionDropdownWrapper = await findByTestId('video-sharing-wrapper');
+    const optionDropdown = await within(optionDropdownWrapper).findByRole('button');
+    await act(async () => fireEvent.click(optionDropdown));
+    const allOffOption = await within(optionDropdownWrapper).findByText(VIDEO_SHARING_OPTIONS.allOff.name);
+    await act(async () => fireEvent.click(allOffOption));
+
+    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+      metadata: {
+        video_sharing_options: VIDEO_SHARING_OPTIONS.allOff.id,
+      },
+    }));
   });
 
   it('render error alert after failed reindex correctly', async () => {

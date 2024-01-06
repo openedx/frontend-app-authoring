@@ -100,29 +100,33 @@ const StatusBar = ({
           </Hyperlink>
         </div>
       </div>
-      {videoSharingEnabled && <div className="outline-status-bar__item ml-2">
-        <h5>{intl.formatMessage(messages.videoSharingTitle)}</h5>
-        <div className="d-flex align-items-end">
-          <SelectMenu
-            variant="sm btn-outline-primary"
-            data-testid="video-sharing-dropdown"
-          >
-            {Object.values(VIDEO_SHARING_OPTIONS).map((option) => (
-              <MenuItem
-                value={option.id}
-                defaultSelected={option.id === videoSharingOptions}
-                onClick={() => handleVideoSharingOptionChange(option.id)}
-              >{option.name}</MenuItem>
-            ))}
-          </SelectMenu>
-          <Hyperlink
-            className="small ml-2"
-            destination={socialSharingUrl}
-            target="_blank"
-            showLaunchIcon={false}
-          >
-            {intl.formatMessage(messages.videoSharingLink)}
-          </Hyperlink>
+      {videoSharingEnabled && (
+        <div
+          data-testid="video-sharing-wrapper"
+          className="outline-status-bar__item ml-2"
+        >
+          <h5>{intl.formatMessage(messages.videoSharingTitle)}</h5>
+          <div className="d-flex align-items-end">
+            <SelectMenu variant="sm btn-outline-primary">
+              {Object.values(VIDEO_SHARING_OPTIONS).map((option) => (
+                <MenuItem
+                  key={option.id}
+                  value={option.id}
+                  defaultSelected={option.id === videoSharingOptions}
+                  onClick={() => handleVideoSharingOptionChange(option.id)}
+                >{option.name}
+                </MenuItem>
+              ))}
+            </SelectMenu>
+            <Hyperlink
+              className="small ml-2"
+              destination={socialSharingUrl}
+              target="_blank"
+              showLaunchIcon={false}
+            >
+              {intl.formatMessage(messages.videoSharingLink)}
+            </Hyperlink>
+          </div>
         </div>
       </div>}
     </Stack>
