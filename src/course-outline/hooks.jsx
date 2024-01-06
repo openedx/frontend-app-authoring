@@ -189,7 +189,7 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleVideoSharingOptionChange = (value) => {
     dispatch(setVideoSharingOptionQuery(courseId, value));
-  }
+  };
 
   useEffect(() => {
     dispatch(fetchCourseOutlineIndexQuery(courseId));

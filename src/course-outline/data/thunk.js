@@ -57,7 +57,7 @@ export function fetchCourseOutlineIndexQuery(courseId) {
           highlightsEnabledForMessaging,
           videoSharingEnabled,
           videoSharingOptions,
-        }
+        },
       } = outlineIndex;
       dispatch(fetchOutlineIndexSuccess(outlineIndex));
       dispatch(updateStatusBar({

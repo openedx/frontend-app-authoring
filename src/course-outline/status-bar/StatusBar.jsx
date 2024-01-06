@@ -1,7 +1,9 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Hyperlink, SelectMenu, MenuItem, Stack } from '@edx/paragon';
+import {
+  Button, Hyperlink, SelectMenu, MenuItem, Stack,
+} from '@edx/paragon';
 import { AppContext } from '@edx/frontend-platform/react';
 
 import { useHelpUrls } from '../../help-urls/hooks';
@@ -128,7 +130,7 @@ const StatusBar = ({
             </Hyperlink>
           </div>
         </div>
-      </div>}
+      )}
     </Stack>
   );
 };
@@ -148,6 +150,8 @@ StatusBar.propTypes = {
       completedCourseBestPracticesChecks: PropTypes.number.isRequired,
     }),
     highlightsEnabledForMessaging: PropTypes.bool.isRequired,
+    videoSharingEnabled: PropTypes.bool.isRequired,
+    videoSharingOptions: PropTypes.string.isRequired,
   }).isRequired,
 };
 
