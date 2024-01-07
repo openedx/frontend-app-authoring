@@ -31,7 +31,7 @@ import TaxonomyCard from './taxonomy-card';
 const ALL_TAXONOMIES = 'All taxonomies';
 const UNASSIGNED = 'Unassigned';
 
-const TaxonomyListHeaderButtons = () => {
+const TaxonomyListHeaderButtons = ({ canAdd }) => {
   const intl = useIntl();
   return (
     <>
@@ -70,6 +70,7 @@ const TaxonomyListHeaderButtons = () => {
         iconBefore={Add}
         onClick={() => importTaxonomy(intl)}
         data-testid="taxonomy-import-button"
+        disabled={!canAdd}
       >
         {intl.formatMessage(messages.importButtonLabel)}
       </Button>
@@ -156,6 +157,7 @@ const TaxonomyListPage = () => {
     return { taxonomyListData, isLoaded };
   };
   const { taxonomyListData, isLoaded } = useTaxonomyListData();
+  const canAdd = isLoaded ? taxonomyListData.canAdd : false;
 
   const getOrgSelect = () => (
     // Initialize organization select component
@@ -177,7 +179,7 @@ const TaxonomyListPage = () => {
           <SubHeader
             title={intl.formatMessage(messages.headerTitle)}
             titleActions={getOrgSelect()}
-            headerActions={<TaxonomyListHeaderButtons />}
+            headerActions={<TaxonomyListHeaderButtons canAdd={canAdd} />}
             hideBorder
           />
         </Container>
@@ -230,6 +232,10 @@ const TaxonomyListPage = () => {
       </div>
     </>
   );
+};
+
+TaxonomyListHeaderButtons.propTypes = {
+  canAdd: PropTypes.bool.isRequired,
 };
 
 OrganizationFilterSelector.propTypes = {

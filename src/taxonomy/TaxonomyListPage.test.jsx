@@ -21,6 +21,12 @@ const taxonomies = [{
   id: 1,
   name: 'Taxonomy',
   description: 'This is a description',
+  showSystemBadge: false,
+  tagsCount: 0,
+  userPermissions: {
+    canChange: true,
+    canDelete: true,
+  },
 }];
 const organizationsListUrl = 'http://localhost:18010/organizations';
 const organizations = ['Org 1', 'Org 2'];
@@ -99,11 +105,7 @@ describe('<TaxonomyListPage />', () => {
   it.each(['CSV', 'JSON'])('downloads the taxonomy template %s', async (fileFormat) => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
-      results: [{
-        id: 1,
-        name: 'Taxonomy',
-        description: 'This is a description',
-      }],
+      results: taxonomies,
     });
     const { findByRole } = render(<RootWrapper />);
     const templateMenu = await findByRole('button', { name: 'Download template' });
@@ -114,19 +116,28 @@ describe('<TaxonomyListPage />', () => {
     expect(templateButton.href).toBe(getTaxonomyTemplateApiUrl(fileFormat.toLowerCase()));
   });
 
-  it('calls the import taxonomy action when the import button is clicked', async () => {
+  it('disables the import taxonomy button if not permitted', async () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
-      results: [{
-        id: 1,
-        name: 'Taxonomy',
-        description: 'This is a description',
-      }],
+      results: [],
+      canAdd: false,
     });
 
     const { getByRole } = render(<RootWrapper />);
     const importButton = getByRole('button', { name: 'Import' });
-    expect(importButton).toBeInTheDocument();
+    expect(importButton).toBeDisabled();
+  });
+
+  it('calls the import taxonomy action when the import button is clicked', async () => {
+    useIsTaxonomyListDataLoaded.mockReturnValue(true);
+    useTaxonomyListDataResponse.mockReturnValue({
+      results: [],
+      canAdd: true,
+    });
+
+    const { getByRole } = render(<RootWrapper />);
+    const importButton = getByRole('button', { name: 'Import' });
+    expect(importButton).not.toBeDisabled();
     fireEvent.click(importButton);
     expect(importTaxonomy).toHaveBeenCalled();
   });

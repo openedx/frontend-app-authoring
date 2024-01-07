@@ -1,6 +1,12 @@
 // @ts-check
 
 /**
+ * @typedef {Object} UserPermissions
+ * @property {boolean} canChange
+ * @property {boolean} canDelete
+ **/
+
+/**
  * @typedef {Object} TaxonomyData
  * @property {number} id
  * @property {string} name
@@ -12,6 +18,7 @@
  * @property {boolean} visibleToAuthors
  * @property {number} tagsCount
  * @property {string[]} orgs
+ * @property {UserPermissions} userPermissions
  */
 
 /**
@@ -23,5 +30,6 @@
  * @property {number} currentPage
  * @property {number} start
  * @property {function} refetch
+ * @property {boolean} canAdd
  * @property {TaxonomyData[]} results
  */

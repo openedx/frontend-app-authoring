@@ -5,6 +5,7 @@ module.exports = {
   numPages: 1,
   currentPage: 1,
   start: 0,
+  canAdd: true,
   results: [
     {
       id: -2,
@@ -15,6 +16,10 @@ module.exports = {
       allowFreeText: false,
       systemDefined: true,
       visibleToAuthors: false,
+      userPermissions: {
+        canChange: false,
+        canDelete: false,
+      },
     },
     {
       id: -1,
@@ -25,6 +30,10 @@ module.exports = {
       allowFreeText: false,
       systemDefined: true,
       visibleToAuthors: true,
+      userPermissions: {
+        canChange: false,
+        canDelete: false,
+      },
     },
     {
       id: 1,
@@ -35,6 +44,10 @@ module.exports = {
       allowFreeText: false,
       systemDefined: false,
       visibleToAuthors: true,
+      userPermissions: {
+        canChange: true,
+        canDelete: true,
+      },
     },
     {
       id: 2,
@@ -45,6 +58,10 @@ module.exports = {
       allowFreeText: false,
       systemDefined: false,
       visibleToAuthors: true,
+      userPermissions: {
+        canChange: true,
+        canDelete: true,
+      },
     },
   ],
 };

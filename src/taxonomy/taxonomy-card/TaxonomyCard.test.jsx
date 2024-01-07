@@ -3,7 +3,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import PropTypes from 'prop-types';
 
 import initializeStore from '../../store';
@@ -16,6 +16,10 @@ const data = {
   id: taxonomyId,
   name: 'Taxonomy 1',
   description: 'This is a description',
+  userPermissions: {
+    canChange: true,
+    canDelete: true,
+  },
 };
 
 const queryClient = new QueryClient();
@@ -40,6 +44,10 @@ TaxonomyCardComponent.propTypes = {
     systemDefined: PropTypes.bool,
     orgsCount: PropTypes.number,
     onDeleteTaxonomy: PropTypes.func,
+    userPermissions: PropTypes.shape({
+      canChange: PropTypes.bool,
+      canDelete: PropTypes.bool,
+    }),
   }).isRequired,
 };
 
@@ -60,6 +68,33 @@ describe('<TaxonomyCard />', async () => {
     const { getByText } = render(<TaxonomyCardComponent original={data} />);
     expect(getByText(data.name)).toBeInTheDocument();
     expect(getByText(data.description)).toBeInTheDocument();
+  });
+
+  it('should show the ⋮ menu', () => {
+    const { getByTestId, queryByTestId } = render(<TaxonomyCardComponent original={data} />);
+
+    // Menu closed/doesn't exist yet
+    expect(queryByTestId('taxonomy-menu')).not.toBeInTheDocument();
+
+    // Click on the menu button to open
+    fireEvent.click(getByTestId('taxonomy-menu-button'));
+
+    // Menu opened
+    expect(getByTestId('taxonomy-menu')).toBeVisible();
+    expect(getByTestId('taxonomy-menu-import')).toBeVisible();
+    expect(getByTestId('taxonomy-menu-export')).toBeVisible();
+    expect(getByTestId('taxonomy-menu-delete')).toBeVisible();
+
+    // Click on button again to close the menu
+    fireEvent.click(getByTestId('taxonomy-menu-button'));
+
+    // Menu closed
+    // Jest bug: toBeVisible() isn't checking opacity correctly
+    // expect(getByTestId('taxonomy-menu')).not.toBeVisible();
+    expect(getByTestId('taxonomy-menu').style.opacity).toEqual('0');
+
+    // Menu button still visible
+    expect(getByTestId('taxonomy-menu-button')).toBeVisible();
   });
 
   it('not show the system-defined badge with normal taxonomies', () => {
