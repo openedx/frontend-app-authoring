@@ -17,7 +17,6 @@ import {
   Check,
 } from '@edx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-
 import { Helmet } from 'react-helmet';
 
 import { useOrganizationListData } from '../generic/data/apiHooks';

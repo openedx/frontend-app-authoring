@@ -131,11 +131,7 @@ describe('<TaxonomyListPage />', () => {
   it('should show all "All taxonomies", "Unassigned" and org names in taxonomy org filter', async () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
-      results: [{
-        id: 1,
-        name: 'Taxonomy',
-        description: 'This is a description',
-      }],
+      results: taxonomies,
     });
 
     const {
