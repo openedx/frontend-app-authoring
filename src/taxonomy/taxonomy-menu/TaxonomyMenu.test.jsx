@@ -162,7 +162,7 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
   });
 
   test('should call import tags when menu click', () => {
-    const { getByTestId } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+    const { getByTestId, getByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // Click on import menu
     fireEvent.click(getByTestId('taxonomy-menu-button'));
