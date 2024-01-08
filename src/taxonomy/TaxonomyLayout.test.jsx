@@ -30,7 +30,7 @@ const MockChildComponent = () => {
         onClick={() => setAlertProps({ title: alertErrorTitle, description: alertErrorDescription })}
         data-testid="taxonomy-show-alert"
       >
-        Show Toast
+        Show Alert
       </button>
     </div>
   );
