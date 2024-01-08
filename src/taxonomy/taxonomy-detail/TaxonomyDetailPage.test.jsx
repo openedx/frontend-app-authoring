@@ -101,7 +101,7 @@ describe('<TaxonomyDetailPage />', () => {
   });
 
   it('should not show system defined badge', async () => {
-    useTaxonomyDetailData.mockReturnValue({
+    useTaxonomyDetailDataResponse.mockReturnValue({
       isSuccess: true,
       isFetched: true,
       isError: false,
