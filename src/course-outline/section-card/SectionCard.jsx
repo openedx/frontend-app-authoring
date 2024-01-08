@@ -56,6 +56,9 @@ const SectionCard = ({
     visibilityState,
     staffOnlyMessage,
     highlights,
+    actions,
+    isHeaderVisible = true,
+    explanatoryMessage = '',
   } = section;
 
   const sectionStatus = getItemStatus({
@@ -120,25 +123,29 @@ const SectionCard = ({
       ref={currentRef}
     >
       <div>
-        <CardHeader
-          sectionId={id}
-          title={displayName}
-          status={sectionStatus}
-          hasChanges={hasChanges}
-          onClickMenuButton={handleClickMenuButton}
-          onClickPublish={onOpenPublishModal}
-          onClickConfigure={onOpenConfigureModal}
-          onClickEdit={openForm}
-          onClickDelete={onOpenDeleteModal}
-          isFormOpen={isFormOpen}
-          closeForm={closeForm}
-          onEditSubmit={handleEditSubmit}
-          isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
-          onClickDuplicate={onDuplicateSubmit}
-          titleComponent={titleComponent}
-          namePrefix={namePrefix}
-        />
+        {isHeaderVisible && (
+          <CardHeader
+            sectionId={id}
+            title={displayName}
+            status={sectionStatus}
+            hasChanges={hasChanges}
+            onClickMenuButton={handleClickMenuButton}
+            onClickPublish={onOpenPublishModal}
+            onClickConfigure={onOpenConfigureModal}
+            onClickEdit={openForm}
+            onClickDelete={onOpenDeleteModal}
+            isFormOpen={isFormOpen}
+            closeForm={closeForm}
+            onEditSubmit={handleEditSubmit}
+            isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+            onClickDuplicate={onDuplicateSubmit}
+            titleComponent={titleComponent}
+            namePrefix={namePrefix}
+            actions={actions}
+          />
+        )}
         <div className="section-card__content" data-testid="section-card__content">
+          {explanatoryMessage && <p className="text-secondary-400 x-small mb-1">{explanatoryMessage}</p>}
           <div className="outline-section__status">
             <Button
               className="section-card__highlights"
@@ -152,18 +159,20 @@ const SectionCard = ({
           </div>
         </div>
         {isExpanded && (
-          <div data-testid="section-card__subsections" className="section-card__subsections">
+          <div data-testid="section-card__subsections" className="item-children section-card__subsections">
             {children}
-            <Button
-              data-testid="new-subsection-button"
-              className="mt-4"
-              variant="outline-primary"
-              iconBefore={IconAdd}
-              block
-              onClick={handleNewSubsectionSubmit}
-            >
-              {intl.formatMessage(messages.newSubsectionButton)}
-            </Button>
+            {actions.childAddable && (
+              <Button
+                data-testid="new-subsection-button"
+                className="mt-4"
+                variant="outline-primary"
+                iconBefore={IconAdd}
+                block
+                onClick={handleNewSubsectionSubmit}
+              >
+                {intl.formatMessage(messages.newSubsectionButton)}
+              </Button>
+            )}
           </div>
         )}
       </div>
@@ -187,6 +196,14 @@ SectionCard.propTypes = {
     staffOnlyMessage: PropTypes.bool.isRequired,
     highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
     shouldScroll: PropTypes.bool,
+    explanatoryMessage: PropTypes.string,
+    actions: PropTypes.shape({
+      deletable: PropTypes.bool.isRequired,
+      draggable: PropTypes.bool.isRequired,
+      childAddable: PropTypes.bool.isRequired,
+      duplicable: PropTypes.bool.isRequired,
+    }).isRequired,
+    isHeaderVisible: PropTypes.bool,
   }).isRequired,
   children: PropTypes.node,
   onOpenHighlightsModal: PropTypes.func.isRequired,

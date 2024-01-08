@@ -34,6 +34,7 @@ import {
   updateOutlineIndexLoadingStatus,
   updateReindexLoadingStatus,
   updateStatusBar,
+  updateCourseActions,
   fetchStatusBarChecklistSuccess,
   fetchStatusBarSelPacedSuccess,
   updateSavingStatus,
@@ -59,6 +60,7 @@ export function fetchCourseOutlineIndexQuery(courseId) {
           highlightsEnabledForMessaging,
           videoSharingEnabled,
           videoSharingOptions,
+          actions,
         },
       } = outlineIndex;
       dispatch(fetchOutlineIndexSuccess(outlineIndex));
@@ -68,6 +70,7 @@ export function fetchCourseOutlineIndexQuery(courseId) {
         videoSharingOptions,
         videoSharingEnabled,
       }));
+      dispatch(updateCourseActions(actions));
 
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {

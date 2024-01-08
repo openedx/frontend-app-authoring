@@ -32,6 +32,7 @@ const CardHeader = ({
   onClickDuplicate,
   titleComponent,
   namePrefix,
+  actions,
 }) => {
   const intl = useIntl();
   const [titleValue, setTitleValue] = useState(title);
@@ -103,18 +104,22 @@ const CardHeader = ({
             >
               {intl.formatMessage(messages.menuConfigure)}
             </Dropdown.Item>
-            <Dropdown.Item
-              data-testid={`${namePrefix}-card-header__menu-duplicate-button`}
-              onClick={onClickDuplicate}
-            >
-              {intl.formatMessage(messages.menuDuplicate)}
-            </Dropdown.Item>
-            <Dropdown.Item
-              data-testid={`${namePrefix}-card-header__menu-delete-button`}
-              onClick={onClickDelete}
-            >
-              {intl.formatMessage(messages.menuDelete)}
-            </Dropdown.Item>
+            {actions.duplicable && (
+              <Dropdown.Item
+                data-testid={`${namePrefix}-card-header__menu-duplicate-button`}
+                onClick={onClickDuplicate}
+              >
+                {intl.formatMessage(messages.menuDuplicate)}
+              </Dropdown.Item>
+            )}
+            {actions.deletable && (
+              <Dropdown.Item
+                data-testid={`${namePrefix}-card-header__menu-delete-button`}
+                onClick={onClickDelete}
+              >
+                {intl.formatMessage(messages.menuDelete)}
+              </Dropdown.Item>
+            )}
           </Dropdown.Menu>
         </Dropdown>
       </div>
@@ -138,6 +143,12 @@ CardHeader.propTypes = {
   onClickDuplicate: PropTypes.func.isRequired,
   titleComponent: PropTypes.node.isRequired,
   namePrefix: PropTypes.string.isRequired,
+  actions: PropTypes.shape({
+    deletable: PropTypes.bool.isRequired,
+    draggable: PropTypes.bool.isRequired,
+    childAddable: PropTypes.bool.isRequired,
+    duplicable: PropTypes.bool.isRequired,
+  }).isRequired,
 };
 
 export default CardHeader;
