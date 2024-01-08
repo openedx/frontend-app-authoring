@@ -28,6 +28,12 @@ const slice = createSlice({
     currentSection: {},
     currentSubsection: {},
     currentItem: {},
+    actions: {
+      deletable: true,
+      draggable: true,
+      childAddable: true,
+      duplicable: true,
+    },
   },
   reducers: {
     fetchOutlineIndexSuccess: (state, { payload }) => {
@@ -55,6 +61,12 @@ const slice = createSlice({
     updateStatusBar: (state, { payload }) => {
       state.statusBarData = {
         ...state.statusBarData,
+        ...payload,
+      };
+    },
+    updateCourseActions: (state, { payload }) => {
+      state.actions = {
+        ...state.actions,
         ...payload,
       };
     },
@@ -163,6 +175,7 @@ export const {
   updateOutlineIndexLoadingStatus,
   updateReindexLoadingStatus,
   updateStatusBar,
+  updateCourseActions,
   fetchStatusBarChecklistSuccess,
   fetchStatusBarSelPacedSuccess,
   updateFetchSectionLoadingStatus,

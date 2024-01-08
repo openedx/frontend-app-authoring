@@ -17,6 +17,7 @@ import {
   getSavingStatus,
   getStatusBarData,
   getSectionsList,
+  getCourseActions,
   getCurrentItem,
   getCurrentSection,
   getCurrentSubsection,
@@ -52,6 +53,7 @@ const useCourseOutline = ({ courseId }) => {
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
+  const courseActions = useSelector(getCourseActions);
   const sectionsList = useSelector(getSectionsList);
   const currentItem = useSelector(getCurrentItem);
   const currentSection = useSelector(getCurrentSection);
@@ -208,6 +210,7 @@ const useCourseOutline = ({ courseId }) => {
   }, [reIndexLoadingStatus]);
 
   return {
+    courseActions,
     savingStatus,
     sectionsList,
     isLoading: outlineIndexLoadingStatus === RequestStatus.IN_PROGRESS,

@@ -35,6 +35,8 @@ const UnitCard = ({
     visibleToStaffOnly = false,
     visibilityState,
     staffOnlyMessage,
+    actions,
+    isHeaderVisible = true,
   } = unit;
 
   const unitStatus = getItemStatus({
@@ -88,6 +90,11 @@ const UnitCard = ({
     }
   }, [savingStatus]);
 
+  if (!isHeaderVisible) {
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <></>;
+  }
+
   return (
     <div className="unit-card" data-testid="unit-card" ref={currentRef}>
       <CardHeader
@@ -105,6 +112,7 @@ const UnitCard = ({
         onClickDuplicate={onDuplicateSubmit}
         titleComponent={titleComponent}
         namePrefix={namePrefix}
+        actions={actions}
       />
     </div>
   );
@@ -121,6 +129,13 @@ UnitCard.propTypes = {
     visibilityState: PropTypes.string.isRequired,
     staffOnlyMessage: PropTypes.bool.isRequired,
     shouldScroll: PropTypes.bool,
+    actions: PropTypes.shape({
+      deletable: PropTypes.bool.isRequired,
+      draggable: PropTypes.bool.isRequired,
+      childAddable: PropTypes.bool.isRequired,
+      duplicable: PropTypes.bool.isRequired,
+    }).isRequired,
+    isHeaderVisible: PropTypes.bool,
   }).isRequired,
   subsection: PropTypes.shape({
     id: PropTypes.string.isRequired,

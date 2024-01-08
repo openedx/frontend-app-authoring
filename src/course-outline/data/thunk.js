@@ -33,6 +33,7 @@ import {
   updateOutlineIndexLoadingStatus,
   updateReindexLoadingStatus,
   updateStatusBar,
+  updateCourseActions,
   fetchStatusBarChecklistSuccess,
   fetchStatusBarSelPacedSuccess,
   updateSavingStatus,
@@ -52,9 +53,15 @@ export function fetchCourseOutlineIndexQuery(courseId) {
 
     try {
       const outlineIndex = await getCourseOutlineIndex(courseId);
-      const { courseReleaseDate, courseStructure: { highlightsEnabledForMessaging } } = outlineIndex;
+      const {
+        courseReleaseDate, courseStructure: {
+          highlightsEnabledForMessaging,
+          actions,
+        },
+      } = outlineIndex;
       dispatch(fetchOutlineIndexSuccess(outlineIndex));
       dispatch(updateStatusBar({ courseReleaseDate, highlightsEnabledForMessaging }));
+      dispatch(updateCourseActions(actions));
 
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {

@@ -19,7 +19,6 @@ import {
 import { useSelector } from 'react-redux';
 import {
   DraggableList,
-  SortableItem,
   ErrorAlert,
 } from '@edx/frontend-lib-content-components';
 
@@ -43,6 +42,7 @@ import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import PublishModal from './publish-modal/PublishModal';
 import ConfigureModal from './configure-modal/ConfigureModal';
 import DeleteModal from './delete-modal/DeleteModal';
+import ConditionalSortableElement from './drag-helper/ConditionalSortableElement';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
 
@@ -53,6 +53,7 @@ const CourseOutline = ({ courseId }) => {
     courseName,
     savingStatus,
     statusBarData,
+    courseActions,
     sectionsList,
     isLoading,
     isReIndexShow,
@@ -174,6 +175,7 @@ const CourseOutline = ({ courseId }) => {
                 headerNavigationsActions={headerNavigationsActions}
                 isDisabledReindexButton={isDisabledReindexButton}
                 hasSections={Boolean(sectionsList.length)}
+                courseActions={courseActions}
               />
             )}
           />
@@ -199,9 +201,10 @@ const CourseOutline = ({ courseId }) => {
                         <>
                           <DraggableList itemList={sections} setState={setSections} updateOrder={finalizeSectionOrder}>
                             {sections.map((section, index) => (
-                              <SortableItem
+                              <ConditionalSortableElement
                                 id={section.id}
                                 key={section.id}
+                                draggable={section.actions.draggable}
                                 componentStyle={{
                                   background: 'white',
                                   padding: '1.75rem',
@@ -269,22 +272,27 @@ const CourseOutline = ({ courseId }) => {
                                     ))}
                                   </DraggableList>
                                 </SectionCard>
-                              </SortableItem>
+                              </ConditionalSortableElement>
                             ))}
                           </DraggableList>
-                          <Button
-                            data-testid="new-section-button"
-                            className="mt-4"
-                            variant="outline-primary"
-                            onClick={handleNewSectionSubmit}
-                            iconBefore={IconAdd}
-                            block
-                          >
-                            {intl.formatMessage(messages.newSectionButton)}
-                          </Button>
+                          {courseActions.childAddable && (
+                            <Button
+                              data-testid="new-section-button"
+                              className="mt-4"
+                              variant="outline-primary"
+                              onClick={handleNewSectionSubmit}
+                              iconBefore={IconAdd}
+                              block
+                            >
+                              {intl.formatMessage(messages.newSectionButton)}
+                            </Button>
+                          )}
                         </>
                       ) : (
-                        <EmptyPlaceholder onCreateNewSection={handleNewSectionSubmit} />
+                        <EmptyPlaceholder
+                          onCreateNewSection={handleNewSectionSubmit}
+                          childAddable={courseActions.childAddable}
+                        />
                       )}
                     </div>
                   </section>
