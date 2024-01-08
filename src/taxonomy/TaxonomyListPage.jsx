@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -18,14 +18,15 @@ import {
 } from '@edx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
+
+import { useOrganizationListData } from '../generic/data/apiHooks';
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
+import { getTaxonomyTemplateApiUrl } from './data/api';
+import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
+import { importTaxonomy } from './import-tags';
 import messages from './messages';
 import TaxonomyCard from './taxonomy-card';
-import { getTaxonomyTemplateApiUrl } from './data/api';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded, useDeleteTaxonomy } from './data/apiHooks';
-import { useOrganizationListData } from '../generic/data/apiHooks';
-import { TaxonomyContext } from './common/context';
 
 const ALL_TAXONOMIES = 'All taxonomies';
 const UNASSIGNED = 'Unassigned';
@@ -65,7 +66,11 @@ const TaxonomyListHeaderButtons = () => {
           </Dropdown.Menu>
         </Dropdown>
       </OverlayTrigger>
-      <Button iconBefore={Add} disabled>
+      <Button
+        iconBefore={Add}
+        onClick={() => importTaxonomy(intl)}
+        data-testid="taxonomy-import-button"
+      >
         {intl.formatMessage(messages.importButtonLabel)}
       </Button>
     </>
@@ -138,20 +143,7 @@ const OrganizationFilterSelector = ({
 
 const TaxonomyListPage = () => {
   const intl = useIntl();
-  const deleteTaxonomy = useDeleteTaxonomy();
-  const { setToastMessage } = useContext(TaxonomyContext);
   const [selectedOrgFilter, setSelectedOrgFilter] = useState(ALL_TAXONOMIES);
-
-  const onDeleteTaxonomy = React.useCallback((id, name) => {
-    deleteTaxonomy({ pk: id }, {
-      onSuccess: async () => {
-        setToastMessage(intl.formatMessage(messages.taxonomyDeleteToast, { name }));
-      },
-      onError: async () => {
-        // TODO: display the error to the user
-      },
-    });
-  }, [setToastMessage]);
 
   const {
     data: organizationListData,
@@ -221,7 +213,7 @@ const TaxonomyListPage = () => {
             >
               <CardView
                 className="bg-light-400 p-5"
-                CardComponent={(row) => TaxonomyCard({ ...row, onDeleteTaxonomy })}
+                CardComponent={(row) => TaxonomyCard(row)}
               />
             </DataTable>
           )}

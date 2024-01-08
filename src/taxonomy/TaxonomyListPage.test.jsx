@@ -1,24 +1,22 @@
-import React, { useMemo } from 'react';
-import MockAdapter from 'axios-mock-adapter';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-
 import { AppProvider } from '@edx/frontend-platform/react';
-import { act, render, fireEvent } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, fireEvent, render } from '@testing-library/react';
+import MockAdapter from 'axios-mock-adapter';
 
 import initializeStore from '../store';
 import { getTaxonomyTemplateApiUrl } from './data/api';
 import TaxonomyListPage from './TaxonomyListPage';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
+import { importTaxonomy } from './import-tags';
 import { TaxonomyContext } from './common/context';
 
 let store;
 let axiosMock;
-const queryClient = new QueryClient();
-const mockSetToastMessage = jest.fn();
-const mockDeleteTaxonomy = jest.fn();
+
 const taxonomies = [{
   id: 1,
   name: 'Taxonomy',
@@ -28,33 +26,35 @@ const organizationsListUrl = 'http://localhost:18010/organizations';
 const organizations = ['Org 1', 'Org 2'];
 
 jest.mock('./data/apiHooks', () => ({
+  ...jest.requireActual('./data/apiHooks'),
   useTaxonomyListDataResponse: jest.fn(),
   useIsTaxonomyListDataLoaded: jest.fn(),
-  useDeleteTaxonomy: () => mockDeleteTaxonomy,
 }));
-jest.mock('./taxonomy-card/TaxonomyCardMenu', () => jest.fn(({ onClickMenuItem }) => (
-  // eslint-disable-next-line jsx-a11y/control-has-associated-label
-  <button type="button" data-testid="test-delete-button" onClick={() => onClickMenuItem('delete')} />
-)));
 
-const RootWrapper = () => {
-  const context = useMemo(() => ({
-    toastMessage: null,
-    setToastMessage: mockSetToastMessage,
-  }), []);
+jest.mock('./import-tags', () => ({
+  importTaxonomy: jest.fn(),
+}));
 
-  return (
-    <AppProvider store={store}>
-      <IntlProvider locale="en" messages={{}}>
+const context = {
+  toastMessage: null,
+  setToastMessage: jest.fn(),
+};
+
+const queryClient = new QueryClient();
+
+const RootWrapper = () => (
+  <AppProvider store={store}>
+    <IntlProvider locale="en" messages={{}}>
+      <QueryClientProvider client={queryClient}>
         <TaxonomyContext.Provider value={context}>
           <QueryClientProvider client={queryClient}>
             <TaxonomyListPage intl={injectIntl} />
           </QueryClientProvider>
         </TaxonomyContext.Provider>
-      </IntlProvider>
-    </AppProvider>
-  );
-};
+      </QueryClientProvider>
+    </IntlProvider>
+  </AppProvider>
+);
 
 describe('<TaxonomyListPage />', () => {
   beforeEach(async () => {
@@ -114,21 +114,21 @@ describe('<TaxonomyListPage />', () => {
     expect(templateButton.href).toBe(getTaxonomyTemplateApiUrl(fileFormat.toLowerCase()));
   });
 
-  it('should show the success toast after delete', async () => {
+  it('calls the import taxonomy action when the import button is clicked', async () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
-      results: taxonomies,
+      results: [{
+        id: 1,
+        name: 'Taxonomy',
+        description: 'This is a description',
+      }],
     });
-    mockDeleteTaxonomy.mockImplementationOnce(async (params, callbacks) => {
-      callbacks.onSuccess();
-    });
-    const { getByTestId, getByLabelText } = render(<RootWrapper />);
-    fireEvent.click(getByTestId('test-delete-button'));
-    fireEvent.change(getByLabelText('Type DELETE to confirm'), { target: { value: 'DELETE' } });
-    fireEvent.click(getByTestId('delete-button'));
 
-    expect(mockDeleteTaxonomy).toBeCalledTimes(1);
-    expect(mockSetToastMessage).toBeCalledWith(`"${taxonomies[0].name}" deleted`);
+    const { getByRole } = render(<RootWrapper />);
+    const importButton = getByRole('button', { name: 'Import' });
+    expect(importButton).toBeInTheDocument();
+    fireEvent.click(importButton);
+    expect(importTaxonomy).toHaveBeenCalled();
   });
 
   it('should show all "All taxonomies", "Unassigned" and org names in taxonomy org filter', async () => {
