@@ -30,6 +30,12 @@ const cardHeaderProps = {
   onClickDelete: onClickDeleteMock,
   onClickDuplicate: onClickDuplicateMock,
   namePrefix: 'section',
+  actions: {
+    draggable: true,
+    childAddable: true,
+    deletable: true,
+    duplicable: true,
+  },
 };
 
 const renderComponent = (props) => {

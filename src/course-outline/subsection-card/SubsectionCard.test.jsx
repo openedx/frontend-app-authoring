@@ -1,5 +1,7 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import {
+  act, render, fireEvent, within,
+} from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -34,6 +36,13 @@ const subsection = {
   visibilityState: 'visible',
   staffOnlyMessage: false,
   hasChanges: false,
+  actions: {
+    draggable: true,
+    childAddable: true,
+    deletable: true,
+    duplicable: true,
+  },
+  isHeaderVisible: true,
 };
 
 const onEditSubectionSubmit = jest.fn();
@@ -121,5 +130,35 @@ describe('<SubsectionCard />', () => {
     fireEvent.change(editField, { target: { value: 'some random value' } });
     fireEvent.keyDown(editField, { key: 'Enter', keyCode: 13 });
     expect(onEditSubectionSubmit).toHaveBeenCalled();
+  });
+
+  it('hides header based on isHeaderVisible flag', async () => {
+    const { queryByTestId } = renderComponent({
+      subsection: {
+        ...subsection,
+        isHeaderVisible: false,
+      },
+    });
+    expect(queryByTestId('subsection-card-header')).not.toBeInTheDocument();
+  });
+
+  it('hides add new, duplicate & delete option based on childAddable, duplicable & deletable action flag', async () => {
+    const { findByTestId, queryByTestId } = renderComponent({
+      subsection: {
+        ...subsection,
+        actions: {
+          draggable: true,
+          childAddable: false,
+          deletable: false,
+          duplicable: false,
+        },
+      },
+    });
+    const element = await findByTestId('subsection-card');
+    const menu = await within(element).findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+    expect(within(element).queryByTestId('subsection-card-header__menu-duplicate-button')).not.toBeInTheDocument();
+    expect(within(element).queryByTestId('subsection-card-header__menu-delete-button')).not.toBeInTheDocument();
+    expect(queryByTestId('new-unit-button')).not.toBeInTheDocument();
   });
 });

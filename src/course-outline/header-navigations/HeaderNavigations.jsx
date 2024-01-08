@@ -16,6 +16,7 @@ const HeaderNavigations = ({
   isSectionsExpanded,
   isDisabledReindexButton,
   hasSections,
+  courseActions,
 }) => {
   const intl = useIntl();
   const {
@@ -24,21 +25,23 @@ const HeaderNavigations = ({
 
   return (
     <nav className="header-navigations ml-auto">
-      <OverlayTrigger
-        placement="bottom"
-        overlay={(
-          <Tooltip id={intl.formatMessage(messages.newSectionButtonTooltip)}>
-            {intl.formatMessage(messages.newSectionButtonTooltip)}
-          </Tooltip>
-        )}
-      >
-        <Button
-          iconBefore={IconAdd}
-          onClick={handleNewSection}
+      {courseActions.childAddable && (
+        <OverlayTrigger
+          placement="bottom"
+          overlay={(
+            <Tooltip id={intl.formatMessage(messages.newSectionButtonTooltip)}>
+              {intl.formatMessage(messages.newSectionButtonTooltip)}
+            </Tooltip>
+          )}
         >
-          {intl.formatMessage(messages.newSectionButton)}
-        </Button>
-      </OverlayTrigger>
+          <Button
+            iconBefore={IconAdd}
+            onClick={handleNewSection}
+          >
+            {intl.formatMessage(messages.newSectionButton)}
+          </Button>
+        </OverlayTrigger>
+      )}
       {isReIndexShow && (
         <OverlayTrigger
           placement="bottom"
@@ -100,6 +103,12 @@ HeaderNavigations.propTypes = {
     lmsLink: PropTypes.string.isRequired,
   }).isRequired,
   hasSections: PropTypes.bool.isRequired,
+  courseActions: PropTypes.shape({
+    deletable: PropTypes.bool.isRequired,
+    draggable: PropTypes.bool.isRequired,
+    childAddable: PropTypes.bool.isRequired,
+    duplicable: PropTypes.bool.isRequired,
+  }).isRequired,
 };
 
 export default HeaderNavigations;
