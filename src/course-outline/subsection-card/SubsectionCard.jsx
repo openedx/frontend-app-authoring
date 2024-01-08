@@ -27,7 +27,6 @@ const SubsectionCard = ({
   const currentRef = useRef(null);
   const intl = useIntl();
   const dispatch = useDispatch();
-  const [isExpanded, setIsExpanded] = useState(false);
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'subsection';
 
@@ -40,8 +39,11 @@ const SubsectionCard = ({
     visibleToStaffOnly = false,
     visibilityState,
     staffOnlyMessage,
+    actions,
+    isHeaderVisible = true,
   } = subsection;
 
+  const [isExpanded, setIsExpanded] = useState(!isHeaderVisible);
   const subsectionStatus = getItemStatus({
     published,
     releasedToStudents,
@@ -102,35 +104,40 @@ const SubsectionCard = ({
 
   return (
     <div className="subsection-card" data-testid="subsection-card" ref={currentRef}>
-      <CardHeader
-        title={displayName}
-        status={subsectionStatus}
-        hasChanges={hasChanges}
-        onClickMenuButton={handleClickMenuButton}
-        onClickPublish={onOpenPublishModal}
-        onClickEdit={openForm}
-        onClickDelete={onOpenDeleteModal}
-        isFormOpen={isFormOpen}
-        closeForm={closeForm}
-        onEditSubmit={handleEditSubmit}
-        isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
-        onClickDuplicate={onDuplicateSubmit}
-        titleComponent={titleComponent}
-        namePrefix={namePrefix}
-      />
+      {isHeaderVisible && (
+        <CardHeader
+          title={displayName}
+          status={subsectionStatus}
+          hasChanges={hasChanges}
+          onClickMenuButton={handleClickMenuButton}
+          onClickPublish={onOpenPublishModal}
+          onClickEdit={openForm}
+          onClickDelete={onOpenDeleteModal}
+          isFormOpen={isFormOpen}
+          closeForm={closeForm}
+          onEditSubmit={handleEditSubmit}
+          isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+          onClickDuplicate={onDuplicateSubmit}
+          titleComponent={titleComponent}
+          namePrefix={namePrefix}
+          actions={actions}
+        />
+      )}
       {isExpanded && (
         <div data-testid="subsection-card__units" className="subsection-card__units">
           {children}
-          <Button
-            data-testid="new-unit-button"
-            className="mt-4"
-            variant="outline-primary"
-            iconBefore={IconAdd}
-            block
-            onClick={handleNewButtonClick}
-          >
-            {intl.formatMessage(messages.newUnitButton)}
-          </Button>
+          {actions.childAddable && (
+            <Button
+              data-testid="new-unit-button"
+              className="mt-4"
+              variant="outline-primary"
+              iconBefore={IconAdd}
+              block
+              onClick={handleNewButtonClick}
+            >
+              {intl.formatMessage(messages.newUnitButton)}
+            </Button>
+          )}
         </div>
       )}
     </div>
@@ -163,6 +170,13 @@ SubsectionCard.propTypes = {
     visibilityState: PropTypes.string.isRequired,
     staffOnlyMessage: PropTypes.bool.isRequired,
     shouldScroll: PropTypes.bool,
+    actions: PropTypes.shape({
+      deletable: PropTypes.bool.isRequired,
+      draggable: PropTypes.bool.isRequired,
+      childAddable: PropTypes.bool.isRequired,
+      duplicable: PropTypes.bool.isRequired,
+    }).isRequired,
+    isHeaderVisible: PropTypes.bool,
   }).isRequired,
   children: PropTypes.node,
   onOpenPublishModal: PropTypes.func.isRequired,
