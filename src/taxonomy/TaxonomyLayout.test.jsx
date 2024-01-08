@@ -83,7 +83,13 @@ describe('<TaxonomyLayout />', async () => {
   });
 
   it('should show alert', () => {
-    const { getByTestId, getByText, getByRole } = render(<RootWrapper />);
+    const {
+      getByTestId,
+      getByText,
+      getByRole,
+      queryByTestId,
+    } = render(<RootWrapper />);
+
     const button = getByTestId('taxonomy-show-alert');
     button.click();
     expect(getByTestId('taxonomy-alert')).toBeInTheDocument();
@@ -92,6 +98,6 @@ describe('<TaxonomyLayout />', async () => {
 
     const closeAlertButton = getByRole('button', { name: 'Dismiss' });
     closeAlertButton.click();
-    expect(() => getByTestId('taxonomy-alert')).toThrow();
+    expect(queryByTestId('taxonomy-alert')).not.toBeInTheDocument();
   });
 });

@@ -13,20 +13,20 @@ const RootWrapper = (onClick) => (
 
 describe('<LoadingButton />', () => {
   it('renders the title and doesnt handle the spinner initially', () => {
-    const { getByText, getByTestId } = render(RootWrapper(() => { }));
+    const { getByText, queryByTestId } = render(RootWrapper(() => { }));
     const titleElement = getByText(buttonTitle);
     expect(titleElement).toBeInTheDocument();
-    expect(() => getByTestId('button-loading-spinner')).toThrow('Unable to find an element');
+    expect(queryByTestId('button-loading-spinner')).not.toBeInTheDocument();
   });
 
   it('doesnt render the spinner initially without onClick function', () => {
-    const { getByRole, getByText, getByTestId } = render(RootWrapper());
+    const { getByRole, getByText, queryByTestId } = render(RootWrapper());
     const titleElement = getByText(buttonTitle);
     expect(titleElement).toBeInTheDocument();
-    expect(() => getByTestId('button-loading-spinner')).toThrow('Unable to find an element');
+    expect(queryByTestId('button-loading-spinner')).not.toBeInTheDocument();
     const buttonElement = getByRole('button');
     buttonElement.click();
-    expect(() => getByTestId('button-loading-spinner')).toThrow('Unable to find an element');
+    expect(queryByTestId('button-loading-spinner')).not.toBeInTheDocument();
   });
 
   it('renders the spinner correctly', () => {
