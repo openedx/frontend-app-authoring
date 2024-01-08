@@ -5,7 +5,6 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import PropTypes from 'prop-types';
-import each from 'jest-each';
 
 import { TaxonomyContext } from '../common/context';
 import initializeStore from '../../store';
@@ -74,7 +73,7 @@ TaxonomyMenuComponent.defaultProps = {
   allowFreeText: false,
 };
 
-each([true, false]).describe('<TaxonomyMenu iconMenu=%s />', async (iconMenu) => {
+describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) => {
   beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
