@@ -6,14 +6,18 @@ import {
 } from '@edx/paragon';
 
 import messages from './messages';
+import { useHelpUrls } from '../../help-urls/hooks';
 
 const EnableHighlightsModal = ({
   onEnableHighlightsSubmit,
   isOpen,
   close,
-  highlightsDocUrl,
 }) => {
   const intl = useIntl();
+
+  const {
+    contentHighlights: contentHighlightsUrl,
+  } = useHelpUrls(['contentHighlights']);
 
   return (
     <AlertModal
@@ -38,7 +42,7 @@ const EnableHighlightsModal = ({
         {intl.formatMessage(messages.description_2)}
         <Hyperlink
           className="small ml-2 text-decoration-none"
-          destination={highlightsDocUrl}
+          destination={contentHighlightsUrl}
           target="_blank"
           showLaunchIcon={false}
         >
@@ -53,7 +57,6 @@ EnableHighlightsModal.propTypes = {
   onEnableHighlightsSubmit: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
-  highlightsDocUrl: PropTypes.string.isRequired,
 };
 
 export default EnableHighlightsModal;

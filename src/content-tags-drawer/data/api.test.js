@@ -13,7 +13,8 @@ import {
 import {
   getTaxonomyTagsApiUrl,
   getContentTaxonomyTagsApiUrl,
-  getContentDataApiUrl,
+  getXBlockContentDataApiURL,
+  getLibraryContentDataApiUrl,
   getTaxonomyTagsData,
   getContentTaxonomyTagsData,
   getContentData,
@@ -87,12 +88,21 @@ describe('content tags drawer api calls', () => {
     expect(result).toEqual(contentTaxonomyTagsMock[contentId]);
   });
 
-  it('should get content data', async () => {
+  it('should get content data for course component', async () => {
     const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@aaf8b8eb86b54281aeeab12499d2cb0b';
-    axiosMock.onGet(getContentDataApiUrl(contentId)).reply(200, contentDataMock);
+    axiosMock.onGet(getXBlockContentDataApiURL(contentId)).reply(200, contentDataMock);
     const result = await getContentData(contentId);
 
-    expect(axiosMock.history.get[0].url).toEqual(getContentDataApiUrl(contentId));
+    expect(axiosMock.history.get[0].url).toEqual(getXBlockContentDataApiURL(contentId));
+    expect(result).toEqual(contentDataMock);
+  });
+
+  it('should get content data for V2 library component', async () => {
+    const contentId = 'lb:SampleTaxonomyOrg1:NTL1:html:a3eded6b-2106-429a-98be-63533d563d79';
+    axiosMock.onGet(getLibraryContentDataApiUrl(contentId)).reply(200, contentDataMock);
+    const result = await getContentData(contentId);
+
+    expect(axiosMock.history.get[0].url).toEqual(getLibraryContentDataApiUrl(contentId));
     expect(result).toEqual(contentDataMock);
   });
 

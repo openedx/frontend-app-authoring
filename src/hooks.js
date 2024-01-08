@@ -16,3 +16,19 @@ export const useScrollToHashElement = ({ isLoading }) => {
     }
   }, [isLoading]);
 };
+
+export const useEscapeClick = ({ onEscape, dependency }) => {
+  useEffect(() => {
+    const handleEscapeClick = (event) => {
+      if (event.key === 'Escape') {
+        onEscape();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscapeClick);
+
+    return () => {
+      window.removeEventListener('keydown', handleEscapeClick);
+    };
+  }, [dependency]);
+};

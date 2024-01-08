@@ -11,6 +11,7 @@ const SubHeader = ({
   headerActions,
   titleActions,
   hideBorder,
+  withSubHeaderContent,
 }) => (
   <div className={`${!hideBorder && 'border-bottom border-light-400'} mb-3`}>
     <header className="sub-header">
@@ -29,7 +30,7 @@ const SubHeader = ({
         </ActionRow>
       )}
     </header>
-    {contentTitle && (
+    {contentTitle && withSubHeaderContent && (
       <header className="sub-header-content">
         <h2 className="sub-header-content-title">{contentTitle}</h2>
         <span className="small text-gray-700">{description}</span>
@@ -48,6 +49,7 @@ SubHeader.defaultProps = {
   headerActions: null,
   titleActions: null,
   hideBorder: false,
+  withSubHeaderContent: true,
 };
 SubHeader.propTypes = {
   title: PropTypes.string.isRequired,
@@ -61,5 +63,6 @@ SubHeader.propTypes = {
   headerActions: PropTypes.node,
   titleActions: PropTypes.node,
   hideBorder: PropTypes.bool,
+  withSubHeaderContent: PropTypes.bool,
 };
 export default SubHeader;

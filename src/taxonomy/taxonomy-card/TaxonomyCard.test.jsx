@@ -63,8 +63,8 @@ describe('<TaxonomyCard />', async () => {
   });
 
   it('not show the system-defined badge with normal taxonomies', () => {
-    const { getByText } = render(<TaxonomyCardComponent original={data} />);
-    expect(() => getByText('System-level')).toThrow();
+    const { queryByText } = render(<TaxonomyCardComponent original={data} />);
+    expect(queryByText('System-level')).not.toBeInTheDocument();
   });
 
   it('shows the system-defined badge with system taxonomies', () => {
@@ -78,8 +78,8 @@ describe('<TaxonomyCard />', async () => {
   });
 
   it('not show org count with taxonomies without orgs', () => {
-    const { getByText } = render(<TaxonomyCardComponent original={data} />);
-    expect(() => getByText('Assigned to 0 orgs')).toThrow();
+    const { queryByText } = render(<TaxonomyCardComponent original={data} />);
+    expect(queryByText('Assigned to 0 orgs')).not.toBeInTheDocument();
   });
 
   it('shows org count with taxonomies with orgs', () => {

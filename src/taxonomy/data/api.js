@@ -9,7 +9,11 @@ export const getTaxonomyListApiUrl = (org) => {
   url.searchParams.append('enabled', 'true');
   url.searchParams.append('page_size', '500'); // For the tagging MVP, we don't paginate the taxonomy list
   if (org !== undefined) {
-    url.searchParams.append('org', org);
+    if (org === 'Unassigned') {
+      url.searchParams.append('unassigned', 'true');
+    } else if (org !== 'All taxonomies') {
+      url.searchParams.append('org', org);
+    }
   }
   return url.href;
 };

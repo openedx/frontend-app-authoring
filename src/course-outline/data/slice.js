@@ -9,13 +9,13 @@ const slice = createSlice({
     loadingStatus: {
       outlineIndexLoadingStatus: RequestStatus.IN_PROGRESS,
       reIndexLoadingStatus: RequestStatus.IN_PROGRESS,
+      fetchSectionLoadingStatus: RequestStatus.IN_PROGRESS,
     },
     outlineIndexData: {},
     savingStatus: '',
     statusBarData: {
       courseReleaseDate: '',
       highlightsEnabledForMessaging: false,
-      highlightsDocUrl: '',
       isSelfPaced: false,
       checklist: {
         totalCourseLaunchChecks: 0,
@@ -24,10 +24,15 @@ const slice = createSlice({
         completedCourseBestPracticesChecks: 0,
       },
     },
+    sectionsList: [],
+    currentSection: {},
+    currentSubsection: {},
+    currentItem: {},
   },
   reducers: {
     fetchOutlineIndexSuccess: (state, { payload }) => {
       state.outlineIndexData = payload;
+      state.sectionsList = payload.courseStructure?.childInfo?.children || [];
     },
     updateOutlineIndexLoadingStatus: (state, { payload }) => {
       state.loadingStatus = {
@@ -39,6 +44,12 @@ const slice = createSlice({
       state.loadingStatus = {
         ...state.loadingStatus,
         reIndexLoadingStatus: payload.status,
+      };
+    },
+    updateFetchSectionLoadingStatus: (state, { payload }) => {
+      state.loadingStatus = {
+        ...state.loadingStatus,
+        fetchSectionLoadingStatus: payload.status,
       };
     },
     updateStatusBar: (state, { payload }) => {
@@ -59,17 +70,87 @@ const slice = createSlice({
     updateSavingStatus: (state, { payload }) => {
       state.savingStatus = payload.status;
     },
+    updateSectionList: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.map((section) => (section.id === payload.id ? payload : section));
+    },
+    setCurrentItem: (state, { payload }) => {
+      state.currentItem = payload;
+    },
+    reorderSectionList: (state, { payload }) => {
+      const sectionsList = [...state.sectionsList];
+      sectionsList.sort((a, b) => payload.indexOf(a.id) - payload.indexOf(b.id));
+
+      state.sectionsList = [...sectionsList];
+    },
+    setCurrentSection: (state, { payload }) => {
+      state.currentSection = payload;
+    },
+    setCurrentSubsection: (state, { payload }) => {
+      state.currentSubsection = payload;
+    },
+    addSection: (state, { payload }) => {
+      state.sectionsList = [
+        ...state.sectionsList,
+        payload,
+      ];
+    },
+    addSubsection: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.map((section) => {
+        if (section.id === payload.parentLocator) {
+          section.childInfo.children = [
+            ...section.childInfo.children,
+            payload.data,
+          ];
+        }
+        return section;
+      });
+    },
+    deleteSection: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.filter(
+        ({ id }) => id !== payload.itemId,
+      );
+    },
+    deleteSubsection: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.map((section) => {
+        if (section.id !== payload.sectionId) {
+          return section;
+        }
+        section.childInfo.children = section.childInfo.children.filter(
+          ({ id }) => id !== payload.itemId,
+        );
+        return section;
+      });
+    },
+    duplicateSection: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.reduce((result, currentValue) => {
+        if (currentValue.id === payload.id) {
+          return [...result, currentValue, payload.duplicatedItem];
+        }
+        return [...result, currentValue];
+      }, []);
+    },
   },
 });
 
 export const {
+  addSection,
+  addSubsection,
   fetchOutlineIndexSuccess,
   updateOutlineIndexLoadingStatus,
   updateReindexLoadingStatus,
   updateStatusBar,
   fetchStatusBarChecklistSuccess,
   fetchStatusBarSelPacedSuccess,
+  updateFetchSectionLoadingStatus,
   updateSavingStatus,
+  updateSectionList,
+  setCurrentItem,
+  setCurrentSection,
+  setCurrentSubsection,
+  deleteSection,
+  deleteSubsection,
+  duplicateSection,
+  reorderSectionList,
 } = slice.actions;
 
 export const {

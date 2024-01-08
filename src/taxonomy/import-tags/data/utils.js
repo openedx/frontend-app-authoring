@@ -1,4 +1,4 @@
-// ts-check
+// @ts-check
 import messages from '../messages';
 import { importNewTaxonomy, importTags } from './api';
 
@@ -10,13 +10,14 @@ import { importNewTaxonomy, importTags } from './api';
  * the change event is fired, and the file is resolved.
  * The file input element is then removed from the DOM.
 */
+/* istanbul ignore next */
 const selectFile = async () => new Promise((resolve) => {
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
   fileInput.accept = '.json,.csv';
   fileInput.style.display = 'none';
-  fileInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
+  fileInput.addEventListener('change', (/** @type { Event & { target: HTMLInputElement} } */ event) => {
+    const file = event.target.files?.[0];
     if (!file) {
       resolve(null);
     }
@@ -36,6 +37,7 @@ const selectFile = async () => new Promise((resolve) => {
   setTimeout(() => fileInput.click(), 0);
 });
 
+/* istanbul ignore next */
 export const importTaxonomy = async (intl) => {
   /*
     * This function is a temporary "Barebones" implementation of the import
@@ -90,6 +92,7 @@ export const importTaxonomy = async (intl) => {
     });
 };
 
+/* istanbul ignore next */
 export const importTaxonomyTags = async (taxonomyId, intl) => {
   /*
     * This function is a temporary "Barebones" implementation of the import

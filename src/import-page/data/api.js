@@ -12,13 +12,12 @@ export const getImportStatusApiUrl = (courseId, fileName) => `${getApiBaseUrl()}
  * @param {Object} requestConfig
  * @returns {Promise<Object>}
  */
-export async function startCourseImporting(courseId, fileData, requestConfig) {
+export async function startCourseImporting(courseId, fileData, requestConfig, updateProgress) {
   const chunkSize = 20 * 1000000; // 20 MB
   const fileSize = fileData.size || 0;
   const chunkLength = Math.ceil(fileSize / chunkSize);
   let resp;
-
-  const upload = async (blob, start, stop) => {
+  const upload = async (blob, start, stop, index) => {
     const contentRange = `bytes ${start}-${stop}/${fileSize}`;
     const contentDisposition = `attachment; filename="${fileData.name}"`;
     const headers = {
@@ -33,6 +32,8 @@ export async function startCourseImporting(courseId, fileData, requestConfig) {
         formData,
         { headers, ...requestConfig },
       );
+    const percent = Math.trunc(((1 / chunkLength) * (index + 1)) * 100);
+    updateProgress(percent);
     resp = camelCaseObject(data);
   };
 
@@ -40,7 +41,7 @@ export async function startCourseImporting(courseId, fileData, requestConfig) {
     const start = index * chunkSize;
     const stop = start + chunkSize < fileSize ? start + chunkSize : fileSize;
     const blob = file.slice(start, stop, file.type);
-    await upload(blob, start, stop - 1);
+    await upload(blob, start, stop - 1, index);
   };
 
   /* eslint-disable no-await-in-loop */
