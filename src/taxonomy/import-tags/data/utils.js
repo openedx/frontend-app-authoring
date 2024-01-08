@@ -10,6 +10,7 @@ import { importNewTaxonomy } from './api';
  * the change event is fired, and the file is resolved.
  * The file input element is then removed from the DOM.
 */
+/* istanbul ignore next */
 const selectFile = async () => new Promise((resolve) => {
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
@@ -36,8 +37,8 @@ const selectFile = async () => new Promise((resolve) => {
   setTimeout(() => fileInput.click(), 0);
 });
 
-// eslint-disable-next-line import/prefer-default-export
-export const importTaxonomy = async (intl) => {
+/* istanbul ignore next */
+export const importTaxonomy = async (intl) => { // eslint-disable-line import/prefer-default-export
   /*
     * This function is a temporary "Barebones" implementation of the import
     * functionality with `prompt` and `alert`. It is intended to be replaced

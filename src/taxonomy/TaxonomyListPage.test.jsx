@@ -1,9 +1,11 @@
 import React from 'react';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render } from '@testing-library/react';
+import MockAdapter from 'axios-mock-adapter';
 
 import initializeStore from '../store';
 import { getTaxonomyTemplateApiUrl } from './data/api';
@@ -13,12 +15,15 @@ import { importTaxonomy } from './import-tags';
 import { TaxonomyContext } from './common/context';
 
 let store;
+let axiosMock;
 
 const taxonomies = [{
   id: 1,
   name: 'Taxonomy',
   description: 'This is a description',
 }];
+const organizationsListUrl = 'http://localhost:18010/organizations';
+const organizations = ['Org 1', 'Org 2'];
 
 jest.mock('./data/apiHooks', () => ({
   ...jest.requireActual('./data/apiHooks'),
@@ -34,7 +39,6 @@ const context = {
   toastMessage: null,
   setToastMessage: jest.fn(),
 };
-
 const queryClient = new QueryClient();
 
 const RootWrapper = () => (
@@ -49,7 +53,7 @@ const RootWrapper = () => (
   </AppProvider>
 );
 
-describe('<TaxonomyListPage />', async () => {
+describe('<TaxonomyListPage />', () => {
   beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
@@ -60,6 +64,8 @@ describe('<TaxonomyListPage />', async () => {
       },
     });
     store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock.onGet(organizationsListUrl).reply(200, organizations);
   });
 
   it('should render page and page title correctly', () => {
@@ -114,12 +120,86 @@ describe('<TaxonomyListPage />', async () => {
         description: 'This is a description',
       }],
     });
-    await act(async () => {
-      const { getByTestId } = render(<RootWrapper />);
-      const importButton = getByTestId('taxonomy-import-button');
-      expect(importButton).toBeInTheDocument();
-      importButton.click();
-      expect(importTaxonomy).toHaveBeenCalled();
+
+    const { getByRole } = render(<RootWrapper />);
+    const importButton = getByRole('button', { name: 'Import' });
+    expect(importButton).toBeInTheDocument();
+    fireEvent.click(importButton);
+    expect(importTaxonomy).toHaveBeenCalled();
+  });
+
+  it('should show all "All taxonomies", "Unassigned" and org names in taxonomy org filter', async () => {
+    useIsTaxonomyListDataLoaded.mockReturnValue(true);
+    useTaxonomyListDataResponse.mockReturnValue({
+      results: [{
+        id: 1,
+        name: 'Taxonomy',
+        description: 'This is a description',
+      }],
     });
+
+    const {
+      getByTestId,
+      getByText,
+      getByRole,
+      getAllByText,
+    } = render(<RootWrapper />);
+
+    expect(getByTestId('taxonomy-orgs-filter-selector')).toBeInTheDocument();
+    // Check that the default filter is set to 'All taxonomies' when page is loaded
+    expect(getByText('All taxonomies')).toBeInTheDocument();
+
+    // Open the taxonomies org filter select menu
+    fireEvent.click(getByRole('button', { name: 'All taxonomies' }));
+
+    // Check that the select menu shows 'All taxonomies' option
+    // along with the default selected one
+    expect(getAllByText('All taxonomies').length).toBe(2);
+    // Check that the select manu shows 'Unassigned' option
+    expect(getByText('Unassigned')).toBeInTheDocument();
+    // Check that the select menu shows the 'Org 1' option
+    expect(getByText('Org 1')).toBeInTheDocument();
+    // Check that the select menu shows the 'Org 2' option
+    expect(getByText('Org 2')).toBeInTheDocument();
+  });
+
+  it('should fetch taxonomies with correct params for org filters', async () => {
+    useIsTaxonomyListDataLoaded.mockReturnValue(true);
+    useTaxonomyListDataResponse.mockReturnValue({
+      results: taxonomies,
+    });
+
+    const { getByRole } = render(<RootWrapper />);
+
+    // Open the taxonomies org filter select menu
+    const taxonomiesFilterSelectMenu = await getByRole('button', { name: 'All taxonomies' });
+    fireEvent.click(taxonomiesFilterSelectMenu);
+
+    // Check that the 'Unassigned' option is correctly called
+    fireEvent.click(getByRole('link', { name: 'Unassigned' }));
+
+    expect(useTaxonomyListDataResponse).toBeCalledWith('Unassigned');
+
+    // Open the taxonomies org filter select menu again
+    fireEvent.click(taxonomiesFilterSelectMenu);
+
+    // Check that the 'Org 1' option is correctly called
+    fireEvent.click(getByRole('link', { name: 'Org 1' }));
+    expect(useTaxonomyListDataResponse).toBeCalledWith('Org 1');
+
+    // Open the taxonomies org filter select menu again
+    fireEvent.click(taxonomiesFilterSelectMenu);
+
+    // Check that the 'Org 2' option is correctly called
+    fireEvent.click(getByRole('link', { name: 'Org 2' }));
+    expect(useTaxonomyListDataResponse).toBeCalledWith('Org 2');
+
+    // Open the taxonomies org filter select menu again
+    fireEvent.click(taxonomiesFilterSelectMenu);
+
+    // Check that the 'All' option is correctly called, it should show as
+    // 'All' rather than 'All taxonomies' in the select menu since its not selected
+    fireEvent.click(getByRole('link', { name: 'All' }));
+    expect(useTaxonomyListDataResponse).toBeCalledWith('All taxonomies');
   });
 });

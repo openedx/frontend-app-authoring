@@ -20,7 +20,7 @@ import { getTaxonomyListData, deleteTaxonomy } from './api';
  */
 const useTaxonomyListData = (org) => (
   useQuery({
-    queryKey: ['taxonomyList'],
+    queryKey: ['taxonomyList', org],
     queryFn: () => getTaxonomyListData(org),
   })
 );
