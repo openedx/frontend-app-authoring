@@ -29,7 +29,8 @@ export const getTaxonomyTagsApiUrl = (taxonomyId, options = {}) => {
   return url.href;
 };
 export const getContentTaxonomyTagsApiUrl = (contentId) => new URL(`api/content_tagging/v1/object_tags/${contentId}/`, getApiBaseUrl()).href;
-export const getContentDataApiUrl = (contentId) => new URL(`/xblock/outline/${contentId}`, getApiBaseUrl()).href;
+export const getXBlockContentDataApiURL = (contentId) => new URL(`/xblock/outline/${contentId}`, getApiBaseUrl()).href;
+export const getLibraryContentDataApiUrl = (contentId) => new URL(`/api/libraries/v2/blocks/${contentId}/`, getApiBaseUrl()).href;
 
 /**
  * Get all tags that belong to taxonomy.
@@ -59,7 +60,10 @@ export async function getContentTaxonomyTagsData(contentId) {
  * @returns {Promise<import("./types.mjs").ContentData>}
  */
 export async function getContentData(contentId) {
-  const { data } = await getAuthenticatedHttpClient().get(getContentDataApiUrl(contentId));
+  const url = contentId.startsWith('lb:')
+    ? getLibraryContentDataApiUrl(contentId)
+    : getXBlockContentDataApiURL(contentId);
+  const { data } = await getAuthenticatedHttpClient().get(url);
   return camelCaseObject(data);
 }
 
