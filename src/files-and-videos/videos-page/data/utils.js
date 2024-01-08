@@ -10,7 +10,6 @@ import {
   VIDEO_PROCESSING_STATUSES,
   VIDEO_SUCCESS_STATUSES,
 } from './constants';
-import { RequestStatus } from '../../../data/constants';
 
 ensureConfig([
   'STUDIO_BASE_URL',
@@ -48,7 +47,7 @@ export const updateFileValues = (files, isNewFile) => {
       id: edxVideoId,
       wrapperType,
       dateAdded: created.toString(),
-      usageLocations: isNewFile ? [] : RequestStatus.LOADING,
+      usageLocations: isNewFile ? [] : null,
       status: uploadStatus,
       thumbnail,
       transcriptStatus,

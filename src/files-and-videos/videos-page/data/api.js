@@ -174,17 +174,16 @@ export async function uploadVideo(
   uploadFile,
   edxVideoId,
 ) {
-  // const formData = new FormData();
-  // formData.append('uploaded-file', uploadFile);
+  const formData = new FormData();
+  formData.append('uploaded-file', uploadFile);
   const uploadErrors = [];
-  const contentDisposition = `attachment; filename="${uploadFile.name}"`;
-  const headers = {
-    'Content-Disposition': contentDisposition,
-  };
+
   await fetch(uploadUrl, {
-    // method: 'PUT',
-    // body: formData,
-    headers,
+    method: 'PUT',
+    body: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   })
     .then(async () => {
       await getAuthenticatedHttpClient()

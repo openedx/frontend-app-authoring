@@ -63,7 +63,7 @@ const mockStore = async (
   axiosMock.onGet(fetchVideosUrl).reply(getStatusValue(status), videosData);
 
   videosData.previous_uploads.forEach((video) => {
-    axiosMock.onGet(`${getVideosUrl(courseId)}/${video.edx_video_id}/usage`).reply(200, []);
+    axiosMock.onGet(`${getVideosUrl(courseId)}/${video.edx_video_id}/usage`).reply(200, { usageLocations: [] });
   });
 
   renderComponent();
@@ -77,7 +77,7 @@ const emptyMockStore = async (status) => {
   await executeThunk(fetchVideos(courseId), store.dispatch);
 };
 
-describe('FilesAndUploads', () => {
+describe('Videos page', () => {
   describe('empty state', () => {
     beforeEach(async () => {
       initializeMockApp({
@@ -427,18 +427,19 @@ describe('FilesAndUploads', () => {
 
     describe('card menu actions', () => {
       describe('Info', () => {
-        it('should open video info', async () => {
+        fit('should open video info', async () => {
           await mockStore(RequestStatus.SUCCESSFUL);
 
           const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
 
           axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`)
-            .reply(201, {
+            .reply(200, {
               usageLocations: [{
                 display_location: 'subsection - unit / block',
                 url: 'base/unit_id#block_id',
               }],
             });
+
           await waitFor(() => {
             fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
             fireEvent.click(screen.getByText('Info'));
