@@ -13,21 +13,13 @@ const messages = defineMessages({
     id: 'course-authoring.studio-home.add-new-library.btn.text',
     defaultMessage: 'New library',
   },
+  homePageLoadFailedMessage: {
+    id: 'course-authoring.studio-home.page-load.failed.message',
+    defaultMessage: 'Failed to load Studio home. Please try again later.',
+  },
   emailStaffBtnText: {
     id: 'course-authoring.studio-home.email-staff.btn.text',
     defaultMessage: 'Email staff to create course',
-  },
-  coursesTabTitle: {
-    id: 'course-authoring.studio-home.courses.tab.title',
-    defaultMessage: 'Courses',
-  },
-  librariesTabTitle: {
-    id: 'course-authoring.studio-home.libraries.tab.title',
-    defaultMessage: 'Libraries',
-  },
-  archivedTabTitle: {
-    id: 'course-authoring.studio-home.archived.tab.title',
-    defaultMessage: 'Archived courses',
   },
   defaultSection_1_Title: {
     id: 'course-authoring.studio-home.default-section-1.title',

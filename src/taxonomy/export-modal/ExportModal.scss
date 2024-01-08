@@ -1,0 +1,11 @@
+.taxonomy-export-modal {
+  .pgn__form-radio {
+    // Used to extend the clickable area to all the width of the modal
+    width: 100%;
+  }
+
+  .pgn__form-radio > div {
+    // Used to extend the clickable area to all the width of the modal
+    width: 100%;
+  }
+}

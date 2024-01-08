@@ -16,6 +16,7 @@ jest.mock('@edx/frontend-component-footer', () => ({
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   Outlet: jest.fn(() => <div data-testid="mock-content" />),
+  ScrollRestoration: jest.fn(() => <div />),
 }));
 jest.mock('react', () => ({
   ...jest.requireActual('react'),

@@ -1,33 +1,56 @@
-import React from 'react';
+import {
+  React, useState, useEffect,
+} from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  Button,
   Container,
   Layout,
   TransitionReplace,
 } from '@edx/paragon';
+import { Helmet } from 'react-helmet';
 import {
+  Add as IconAdd,
   CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
 } from '@edx/paragon/icons';
+import { useSelector } from 'react-redux';
+import {
+  DraggableList,
+  SortableItem,
+  ErrorAlert,
+} from '@edx/frontend-lib-content-components';
 
-import SubHeader from '../generic/sub-header/SubHeader';
+import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import { RequestStatus } from '../data/constants';
+import SubHeader from '../generic/sub-header/SubHeader';
+import ProcessingNotification from '../generic/processing-notification';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import AlertMessage from '../generic/alert-message';
+import getPageHeadTitle from '../generic/utils';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
 import OutlineSideBar from './outline-sidebar/OutlineSidebar';
-import messages from './messages';
-import { useCourseOutline } from './hooks';
 import StatusBar from './status-bar/StatusBar';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
+import SectionCard from './section-card/SectionCard';
+import SubsectionCard from './subsection-card/SubsectionCard';
+import HighlightsModal from './highlights-modal/HighlightsModal';
+import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
+import PublishModal from './publish-modal/PublishModal';
+import ConfigureModal from './configure-modal/ConfigureModal';
+import DeleteModal from './delete-modal/DeleteModal';
+import { useCourseOutline } from './hooks';
+import messages from './messages';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
 
   const {
+    courseName,
     savingStatus,
     statusBarData,
+    sectionsList,
     isLoading,
     isReIndexShow,
     showErrorAlert,
@@ -36,12 +59,53 @@ const CourseOutline = ({ courseId }) => {
     isEnableHighlightsModalOpen,
     isInternetConnectionAlertFailed,
     isDisabledReindexButton,
+    isHighlightsModalOpen,
+    isPublishModalOpen,
+    isConfigureModalOpen,
+    isDeleteModalOpen,
+    closeHighlightsModal,
+    closePublishModal,
+    closeConfigureModal,
+    closeDeleteModal,
+    openPublishModal,
+    openConfigureModal,
+    openDeleteModal,
     headerNavigationsActions,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
     handleEnableHighlightsSubmit,
     handleInternetConnectionFailed,
+    handleOpenHighlightsModal,
+    handleHighlightsFormSubmit,
+    handleConfigureSectionSubmit,
+    handlePublishItemSubmit,
+    handleEditSubmit,
+    handleDeleteItemSubmit,
+    handleDuplicateSectionSubmit,
+    handleDuplicateSubsectionSubmit,
+    handleNewSectionSubmit,
+    handleNewSubsectionSubmit,
+    handleDragNDrop,
   } = useCourseOutline({ courseId });
+
+  const [sections, setSections] = useState(sectionsList);
+
+  const initialSections = [...sectionsList];
+
+  const {
+    isShow: isShowProcessingNotification,
+    title: processingNotificationTitle,
+  } = useSelector(getProcessingNotification);
+
+  const finalizeSectionOrder = () => (newSections) => {
+    handleDragNDrop(newSections.map((section) => section.id), () => {
+      setSections(() => initialSections);
+    });
+  };
+
+  useEffect(() => {
+    setSections(sectionsList);
+  }, [sectionsList]);
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -50,8 +114,14 @@ const CourseOutline = ({ courseId }) => {
 
   return (
     <>
+      <Helmet>
+        <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
+      </Helmet>
       <Container size="xl" className="px-4">
         <section className="course-outline-container mb-4 mt-5">
+          <ErrorAlert hideHeading isError={savingStatus === RequestStatus.FAILED}>
+            {intl.formatMessage(messages.alertFailedGeneric, { actionName: 'save', type: 'changes' })}
+          </ErrorAlert>
           <TransitionReplace>
             {showSuccessAlert ? (
               <AlertMessage
@@ -77,6 +147,7 @@ const CourseOutline = ({ courseId }) => {
                 isSectionsExpanded={isSectionsExpanded}
                 headerNavigationsActions={headerNavigationsActions}
                 isDisabledReindexButton={isDisabledReindexButton}
+                hasSections={Boolean(sectionsList.length)}
               />
             )}
           />
@@ -97,6 +168,66 @@ const CourseOutline = ({ courseId }) => {
                       statusBarData={statusBarData}
                       openEnableHighlightsModal={openEnableHighlightsModal}
                     />
+                    <div className="pt-4">
+                      {sections.length ? (
+                        <>
+                          <DraggableList itemList={sections} setState={setSections} updateOrder={finalizeSectionOrder}>
+                            {sections.map((section) => (
+                              <SortableItem
+                                id={section.id}
+                                key={section.id}
+                                componentStyle={{
+                                  background: 'white',
+                                  borderRadius: '6px',
+                                  padding: '1.75rem',
+                                  marginBottom: '1.5rem',
+                                  boxShadow: '0px 1px 5px #ADADAD',
+                                }}
+                              >
+                                <SectionCard
+                                  key={section.id}
+                                  section={section}
+                                  savingStatus={savingStatus}
+                                  onOpenHighlightsModal={handleOpenHighlightsModal}
+                                  onOpenPublishModal={openPublishModal}
+                                  onOpenConfigureModal={openConfigureModal}
+                                  onOpenDeleteModal={openDeleteModal}
+                                  onEditSectionSubmit={handleEditSubmit}
+                                  onDuplicateSubmit={handleDuplicateSectionSubmit}
+                                  isSectionsExpanded={isSectionsExpanded}
+                                  onNewSubsectionSubmit={handleNewSubsectionSubmit}
+                                >
+                                  {section.childInfo.children.map((subsection) => (
+                                    <SubsectionCard
+                                      key={subsection.id}
+                                      section={section}
+                                      subsection={subsection}
+                                      savingStatus={savingStatus}
+                                      onOpenPublishModal={openPublishModal}
+                                      onOpenDeleteModal={openDeleteModal}
+                                      onEditSubmit={handleEditSubmit}
+                                      onDuplicateSubmit={handleDuplicateSubsectionSubmit}
+                                    />
+                                  ))}
+                                </SectionCard>
+                              </SortableItem>
+                            ))}
+                          </DraggableList>
+                          <Button
+                            data-testid="new-section-button"
+                            className="mt-4"
+                            variant="outline-primary"
+                            onClick={handleNewSectionSubmit}
+                            iconBefore={IconAdd}
+                            block
+                          >
+                            {intl.formatMessage(messages.newSectionButton)}
+                          </Button>
+                        </>
+                      ) : (
+                        <EmptyPlaceholder onCreateNewSection={handleNewSectionSubmit} />
+                      )}
+                    </div>
                   </section>
                 </div>
               </article>
@@ -109,11 +240,34 @@ const CourseOutline = ({ courseId }) => {
             isOpen={isEnableHighlightsModalOpen}
             close={closeEnableHighlightsModal}
             onEnableHighlightsSubmit={handleEnableHighlightsSubmit}
-            highlightsDocUrl={statusBarData.highlightsDocUrl}
           />
         </section>
+        <HighlightsModal
+          isOpen={isHighlightsModalOpen}
+          onClose={closeHighlightsModal}
+          onSubmit={handleHighlightsFormSubmit}
+        />
+        <PublishModal
+          isOpen={isPublishModalOpen}
+          onClose={closePublishModal}
+          onPublishSubmit={handlePublishItemSubmit}
+        />
+        <ConfigureModal
+          isOpen={isConfigureModalOpen}
+          onClose={closeConfigureModal}
+          onConfigureSubmit={handleConfigureSectionSubmit}
+        />
+        <DeleteModal
+          isOpen={isDeleteModalOpen}
+          close={closeDeleteModal}
+          onDeleteSubmit={handleDeleteItemSubmit}
+        />
       </Container>
       <div className="alert-toast">
+        <ProcessingNotification
+          isShow={isShowProcessingNotification}
+          title={processingNotificationTitle}
+        />
         <InternetConnectionAlert
           isFailed={isInternetConnectionAlertFailed}
           isQueryPending={savingStatus === RequestStatus.PENDING}

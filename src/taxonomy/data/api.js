@@ -9,13 +9,21 @@ export const getTaxonomyListApiUrl = (org) => {
   url.searchParams.append('enabled', 'true');
   url.searchParams.append('page_size', '500'); // For the tagging MVP, we don't paginate the taxonomy list
   if (org !== undefined) {
-    url.searchParams.append('org', org);
+    if (org === 'Unassigned') {
+      url.searchParams.append('unassigned', 'true');
+    } else if (org !== 'All taxonomies') {
+      url.searchParams.append('org', org);
+    }
   }
   return url.href;
 };
 
 export const getExportTaxonomyApiUrl = (pk, format) => new URL(
   `api/content_tagging/v1/taxonomies/${pk}/export/?output_format=${format}&download=1`,
+  getApiBaseUrl(),
+).href;
+export const getTaxonomyTemplateApiUrl = (format) => new URL(
+  `api/content_tagging/v1/taxonomies/import/template.${format}`,
   getApiBaseUrl(),
 ).href;
 export const getTaxonomyApiUrl = (pk) => new URL(`api/content_tagging/v1/taxonomies/${pk}/`, getApiBaseUrl()).href;

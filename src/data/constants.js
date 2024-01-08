@@ -13,6 +13,7 @@ export const RequestStatus = {
   PENDING: 'pending',
   CLEAR: 'clear',
   PARTIAL: 'partial',
+  NOT_FOUND: 'not-found',
 };
 
 /**
@@ -40,4 +41,9 @@ export const GroupTypes = {
 export const DivisionSchemes = {
   NONE: 'none',
   COHORT: 'cohort',
+};
+
+export const VisibilityTypes = {
+  STAFF_ONLY: 'staff_only',
+  HIDE_AFTER_DUE: 'hide_after_due',
 };

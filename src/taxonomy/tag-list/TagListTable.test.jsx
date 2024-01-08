@@ -77,7 +77,7 @@ const subTagsResponse = {
 };
 const subTagsUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&parent_tag=two+level+tag+1';
 
-describe('<TagListPage />', () => {
+describe('<TagListTable />', () => {
   beforeAll(async () => {
     initializeMockApp({
       authenticatedUser: {
