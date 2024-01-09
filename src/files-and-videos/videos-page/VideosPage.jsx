@@ -80,7 +80,7 @@ const VideosPage = ({
 
   const supportedFileFormats = { 'video/*': videoSupportedFileFormats || FILES_AND_UPLOAD_TYPE_FILTERS.video };
 
-  const handleAddFile = (file) => dispatch(addVideoFile(courseId, file));
+  const handleAddFile = (file) => dispatch(addVideoFile(courseId, file, videoIds));
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id));
   const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
   const handleUsagePaths = (video) => dispatch(getUsagePaths({ video, courseId }));

@@ -177,6 +177,7 @@ export async function uploadVideo(
   const formData = new FormData();
   formData.append('uploaded-file', uploadFile);
   const uploadErrors = [];
+
   await fetch(uploadUrl, {
     method: 'PUT',
     body: formData,

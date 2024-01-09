@@ -15,7 +15,7 @@ ensureConfig([
   'STUDIO_BASE_URL',
 ], 'Course Apps API service');
 
-export const updateFileValues = (files) => {
+export const updateFileValues = (files, isNewFile) => {
   const updatedFiles = [];
   files.forEach(file => {
     const {
@@ -25,7 +25,6 @@ export const updateFileValues = (files) => {
       courseVideoImageUrl,
       status,
       transcripts,
-      usageLocations,
     } = file;
     const wrapperType = 'video';
 
@@ -34,7 +33,6 @@ export const updateFileValues = (files) => {
       thumbnail = `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
     }
     const transcriptStatus = transcripts?.length > 0 ? 'transcribed' : 'notTranscribed';
-    const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
 
     let uploadStatus = status;
     if (VIDEO_SUCCESS_STATUSES.includes(status)) {
@@ -49,10 +47,11 @@ export const updateFileValues = (files) => {
       id: edxVideoId,
       wrapperType,
       dateAdded: created.toString(),
+      usageLocations: isNewFile ? [] : null,
       status: uploadStatus,
       thumbnail,
       transcriptStatus,
-      activeStatus,
+      activeStatus: 'inactive',
     });
   });
 
