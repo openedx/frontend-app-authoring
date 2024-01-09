@@ -124,7 +124,7 @@ const SubsectionCard = ({
         />
       )}
       {isExpanded && (
-        <div data-testid="subsection-card__units" className="subsection-card__units">
+        <div data-testid="subsection-card__units" className="item-children subsection-card__units">
           {children}
           {actions.childAddable && (
             <Button

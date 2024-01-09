@@ -232,9 +232,10 @@ const CourseOutline = ({ courseId }) => {
                                     updateOrder={finalizeSubsectionOrder(section)}
                                   >
                                     {section.childInfo.children.map((subsection) => (
-                                      <SortableItem
+                                      <ConditionalSortableElement
                                         id={subsection.id}
                                         key={subsection.id}
+                                        draggable={subsection.actions.draggable && !(subsection.isHeaderVisible == false)}
                                         componentStyle={{
                                           background: '#f8f7f6',
                                           padding: '1rem 1.5rem',
@@ -268,7 +269,7 @@ const CourseOutline = ({ courseId }) => {
                                             />
                                           ))}
                                         </SubsectionCard>
-                                      </SortableItem>
+                                      </ConditionalSortableElement>
                                     ))}
                                   </DraggableList>
                                 </SectionCard>
