@@ -427,7 +427,7 @@ describe('Videos page', () => {
 
     describe('card menu actions', () => {
       describe('Info', () => {
-        fit('should open video info', async () => {
+        it('should open video info', async () => {
           await mockStore(RequestStatus.SUCCESSFUL);
 
           const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
