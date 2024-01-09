@@ -9,14 +9,17 @@ import { getConfig, initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import {
+  getCourseSectionVerticalApiUrl,
   getCourseUnitApiUrl,
   getXBlockBaseApiUrl,
 } from './data/api';
 import {
+  fetchCourseSectionVerticalData,
   fetchCourseUnitQuery,
 } from './data/thunk';
 import initializeStore from '../store';
 import {
+  courseSectionVerticalMock,
   courseUnitIndexMock,
 } from './__mocks__';
 import { executeThunk } from '../utils';
@@ -63,6 +66,10 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseUnitApiUrl(courseId))
       .reply(200, courseUnitIndexMock);
     await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, courseSectionVerticalMock);
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
   });
 
   it('render CourseUnit component correctly', async () => {

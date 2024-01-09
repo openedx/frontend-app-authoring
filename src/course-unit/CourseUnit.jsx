@@ -12,6 +12,7 @@ import getPageHeadTitle from '../generic/utils';
 import ProcessingNotification from '../generic/processing-notification';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import Loading from '../generic/Loading';
+import AddComponent from './add-component/AddComponent';
 import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
@@ -87,9 +88,9 @@ const CourseUnit = ({ courseId }) => {
             xl={[{ span: 9 }, { span: 3 }]}
           >
             <Layout.Element>
-              {/* TODO: Unit content will be added in the following tasks. */}
-              Unit content
+              <AddComponent />
             </Layout.Element>
+            <Layout.Element />
           </Layout>
         </section>
       </Container>

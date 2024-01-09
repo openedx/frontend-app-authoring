@@ -1,0 +1,12 @@
+.course-unit {
+  .new-component-type {
+    gap: .75rem;
+  }
+
+  .add-component-button {
+    @include pgn-box-shadow(1, "down");
+
+    width: 11.63rem;
+    height: 6.875rem;
+  }
+}

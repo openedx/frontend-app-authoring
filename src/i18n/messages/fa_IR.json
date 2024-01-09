@@ -12,5 +12,7 @@
   "course-authoring.course-unit.sequence-nav-label-text": "Sequence navigation",
   "course-authoring.course-unit.sequence.load.failure": "There was an error loading this course.",
   "course-authoring.course-unit.sequence.no.content": "There is no content here.",
-  "course-authoring.course-unit.sequence.navigation.menu": "{current} of {total}"
+  "course-authoring.course-unit.sequence.navigation.menu": "{current} of {total}",
+  "course-authoring.course-unit.add.component.title": "Add a new component",
+  "course-authoring.course-unit.add.component.button.text": "Add Component:"
 }
