@@ -23,6 +23,7 @@ const ConditionalSortableElement = ({
   }
   return (
     <Row
+      data-testid="conditional-sortable-element--no-drag-handle"
       style={componentStyle}
       className="mx-0"
     >

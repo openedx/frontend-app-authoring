@@ -235,7 +235,9 @@ const CourseOutline = ({ courseId }) => {
                                       <ConditionalSortableElement
                                         id={subsection.id}
                                         key={subsection.id}
-                                        draggable={subsection.actions.draggable && !(subsection.isHeaderVisible == false)}
+                                        draggable={
+                                          subsection.actions.draggable && !(subsection.isHeaderVisible === false)
+                                        }
                                         componentStyle={{
                                           background: '#f8f7f6',
                                           padding: '1rem 1.5rem',
