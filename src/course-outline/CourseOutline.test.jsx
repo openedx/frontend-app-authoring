@@ -794,4 +794,36 @@ describe('<CourseOutline />', () => {
       expect(subsection1).toBe(subsection1New);
     });
   });
+
+  it('check that drag handle is not visible for non-draggable sections', async () => {
+    cleanup();
+    axiosMock
+      .onGet(getCourseOutlineIndexApiUrl(courseId))
+      .reply(200, {
+        ...courseOutlineIndexMock,
+        courseStructure: {
+          ...courseOutlineIndexMock.courseStructure,
+          childInfo: {
+            ...courseOutlineIndexMock.courseStructure.childInfo,
+            children: [
+              {
+                ...courseOutlineIndexMock.courseStructure.childInfo.children[0],
+                actions: {
+                  draggable: false,
+                  childAddable: true,
+                  deletable: true,
+                  duplicable: true,
+                },
+              },
+              ...courseOutlineIndexMock.courseStructure.childInfo.children.slice(1),
+            ],
+          },
+        },
+      });
+    const { queryByTestId } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      expect(queryByTestId('conditional-sortable-element--no-drag-handle')).toBeInTheDocument();
+    });
+  });
 });

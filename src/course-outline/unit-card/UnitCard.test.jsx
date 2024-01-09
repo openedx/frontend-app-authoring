@@ -1,5 +1,7 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import {
+  act, render, fireEvent, within,
+} from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -45,6 +47,13 @@ const unit = {
   visibilityState: 'visible',
   staffOnlyMessage: false,
   hasChanges: false,
+  actions: {
+    draggable: true,
+    childAddable: true,
+    deletable: true,
+    duplicable: true,
+  },
+  isHeaderVisible: true,
 };
 
 const renderComponent = (props) => render(
@@ -86,5 +95,34 @@ describe('<UnitCard />', () => {
 
     expect(await findByTestId('unit-card-header')).toBeInTheDocument();
     expect(await findByTestId('unit-card-header__title-link')).toHaveAttribute('href', '/some/123');
+  });
+
+  it('hides header based on isHeaderVisible flag', async () => {
+    const { queryByTestId } = renderComponent({
+      unit: {
+        ...unit,
+        isHeaderVisible: false,
+      },
+    });
+    expect(queryByTestId('unit-card-header')).not.toBeInTheDocument();
+  });
+
+  it('hides duplicate & delete option based on duplicable & deletable action flag', async () => {
+    const { findByTestId } = renderComponent({
+      unit: {
+        ...unit,
+        actions: {
+          draggable: true,
+          childAddable: false,
+          deletable: false,
+          duplicable: false,
+        },
+      },
+    });
+    const element = await findByTestId('unit-card');
+    const menu = await within(element).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+    expect(within(element).queryByTestId('unit-card-header__menu-duplicate-button')).not.toBeInTheDocument();
+    expect(within(element).queryByTestId('unit-card-header__menu-delete-button')).not.toBeInTheDocument();
   });
 });
