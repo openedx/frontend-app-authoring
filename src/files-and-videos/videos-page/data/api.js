@@ -186,7 +186,7 @@ export async function uploadVideo(
   })
     .then(async (response) => {
       if (!response.ok) {
-        throw new Error()
+        throw new Error();
       }
       await getAuthenticatedHttpClient()
         .post(getCourseVideosApiUrl(courseId), [{
