@@ -7,8 +7,9 @@ import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
 import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
+import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleLink from '../card-header/TitleLink';
-import { getItemStatus, scrollToElement } from '../utils';
+import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 
 const UnitCard = ({
   unit,
@@ -41,6 +42,7 @@ const UnitCard = ({
     visibilityState,
     hasChanges,
   });
+  const borderStyle = getItemStatusBorder(unitStatus);
 
   const handleClickMenuButton = () => {
     dispatch(setCurrentItem(unit));
@@ -91,25 +93,39 @@ const UnitCard = ({
   }
 
   return (
-    <div className="unit-card" data-testid="unit-card" ref={currentRef}>
-      <CardHeader
-        title={displayName}
-        status={unitStatus}
-        hasChanges={hasChanges}
-        onClickMenuButton={handleClickMenuButton}
-        onClickPublish={onOpenPublishModal}
-        onClickEdit={openForm}
-        onClickDelete={onOpenDeleteModal}
-        isFormOpen={isFormOpen}
-        closeForm={closeForm}
-        onEditSubmit={handleEditSubmit}
-        isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
-        onClickDuplicate={onDuplicateSubmit}
-        titleComponent={titleComponent}
-        namePrefix={namePrefix}
-        actions={actions}
-      />
-    </div>
+    <ConditionalSortableElement
+      id={id}
+      key={id}
+      draggable={false} // update to {actions.draggable} when unit drag-n-drop is implemented
+      componentStyle={{
+        background: '#fdfdfd',
+        ...borderStyle,
+      }}
+    >
+      <div
+        className="unit-card"
+        data-testid="unit-card"
+        ref={currentRef}
+      >
+        <CardHeader
+          title={displayName}
+          status={unitStatus}
+          hasChanges={hasChanges}
+          onClickMenuButton={handleClickMenuButton}
+          onClickPublish={onOpenPublishModal}
+          onClickEdit={openForm}
+          onClickDelete={onOpenDeleteModal}
+          isFormOpen={isFormOpen}
+          closeForm={closeForm}
+          onEditSubmit={handleEditSubmit}
+          isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+          onClickDuplicate={onDuplicateSubmit}
+          titleComponent={titleComponent}
+          namePrefix={namePrefix}
+          actions={actions}
+        />
+      </div>
+    </ConditionalSortableElement>
   );
 };
 

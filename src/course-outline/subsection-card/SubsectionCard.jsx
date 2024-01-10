@@ -9,8 +9,9 @@ import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
 import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
+import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleButton from '../card-header/TitleButton';
-import { getItemStatus, scrollToElement } from '../utils';
+import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
 
 const SubsectionCard = ({
@@ -46,6 +47,7 @@ const SubsectionCard = ({
     visibilityState,
     hasChanges,
   });
+  const borderStyle = getItemStatusBorder(subsectionStatus);
 
   const handleExpandContent = () => {
     setIsExpanded((prevState) => !prevState);
@@ -98,44 +100,56 @@ const SubsectionCard = ({
   }, [savingStatus]);
 
   return (
-    <div className="subsection-card" data-testid="subsection-card" ref={currentRef}>
-      {isHeaderVisible && (
-        <CardHeader
-          title={displayName}
-          status={subsectionStatus}
-          hasChanges={hasChanges}
-          onClickMenuButton={handleClickMenuButton}
-          onClickPublish={onOpenPublishModal}
-          onClickEdit={openForm}
-          onClickDelete={onOpenDeleteModal}
-          isFormOpen={isFormOpen}
-          closeForm={closeForm}
-          onEditSubmit={handleEditSubmit}
-          isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
-          onClickDuplicate={onDuplicateSubmit}
-          titleComponent={titleComponent}
-          namePrefix={namePrefix}
-          actions={actions}
-        />
-      )}
-      {isExpanded && (
-        <div data-testid="subsection-card__units" className="item-children subsection-card__units">
-          {children}
-          {actions.childAddable && (
-            <Button
-              data-testid="new-unit-button"
-              className="mt-4"
-              variant="outline-primary"
-              iconBefore={IconAdd}
-              block
-              onClick={handleNewButtonClick}
-            >
-              {intl.formatMessage(messages.newUnitButton)}
-            </Button>
-          )}
-        </div>
-      )}
-    </div>
+    <ConditionalSortableElement
+      id={id}
+      key={id}
+      draggable={
+        actions.draggable && !(isHeaderVisible === false)
+      }
+      componentStyle={{
+        background: '#f8f7f6',
+        ...borderStyle,
+      }}
+    >
+      <div className="subsection-card" data-testid="subsection-card" ref={currentRef}>
+        {isHeaderVisible && (
+          <CardHeader
+            title={displayName}
+            status={subsectionStatus}
+            hasChanges={hasChanges}
+            onClickMenuButton={handleClickMenuButton}
+            onClickPublish={onOpenPublishModal}
+            onClickEdit={openForm}
+            onClickDelete={onOpenDeleteModal}
+            isFormOpen={isFormOpen}
+            closeForm={closeForm}
+            onEditSubmit={handleEditSubmit}
+            isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+            onClickDuplicate={onDuplicateSubmit}
+            titleComponent={titleComponent}
+            namePrefix={namePrefix}
+            actions={actions}
+          />
+        )}
+        {isExpanded && (
+          <div data-testid="subsection-card__units" className="item-children subsection-card__units">
+            {children}
+            {actions.childAddable && (
+              <Button
+                data-testid="new-unit-button"
+                className="mt-4"
+                variant="outline-primary"
+                iconBefore={IconAdd}
+                block
+                onClick={handleNewButtonClick}
+              >
+                {intl.formatMessage(messages.newUnitButton)}
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+    </ConditionalSortableElement>
   );
 };
 
