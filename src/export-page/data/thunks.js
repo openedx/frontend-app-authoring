@@ -22,6 +22,21 @@ import {
   updateSavingStatus,
 } from './slice';
 
+function setExportDate({
+  date, exportStatus, exportOutput, dispatch,
+}) {
+  // If there is no cookie for the last export date, set it now.
+  const cookies = new Cookies();
+  const cookieData = cookies.get(LAST_EXPORT_COOKIE_NAME);
+  if (!cookieData?.completed) {
+    setExportCookie(date, exportStatus === EXPORT_STAGES.SUCCESS);
+  }
+  // If we don't have export date set yet via cookie, set success date to current date.
+  if (exportOutput && !cookieData?.completed) {
+    dispatch(updateSuccessDate(date));
+  }
+}
+
 export function startExportingCourse(courseId) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
@@ -50,11 +65,11 @@ export function fetchExportStatus(courseId) {
       } = await getExportStatus(courseId);
       dispatch(updateCurrentStage(Math.abs(exportStatus)));
 
-      const cookies = new Cookies();
-      const cookieData = cookies.get(LAST_EXPORT_COOKIE_NAME);
-      if (!cookieData?.completed) {
-        setExportCookie(moment().valueOf(), exportStatus === EXPORT_STAGES.SUCCESS);
-      }
+      const date = moment().valueOf();
+
+      setExportDate({
+        date, exportStatus, exportOutput, dispatch,
+      });
 
       if (exportError) {
         const errorMessage = exportError.rawErrorMsg || exportError;
@@ -63,13 +78,12 @@ export function fetchExportStatus(courseId) {
         dispatch(updateIsErrorModalOpen(true));
       }
 
-      if (exportOutput && !cookieData?.completed) {
+      if (exportOutput) {
         if (exportOutput.startsWith('/')) {
           dispatch(updateDownloadPath(`${getConfig().STUDIO_BASE_URL}${exportOutput}`));
         } else {
           dispatch(updateDownloadPath(exportOutput));
         }
-        dispatch(updateSuccessDate(moment().valueOf()));
       }
 
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));

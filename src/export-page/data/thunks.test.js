@@ -1,12 +1,21 @@
+import Cookies from 'universal-cookie';
 import { fetchExportStatus } from './thunks';
 import * as api from './api';
 import { EXPORT_STAGES } from './constants';
+
+jest.mock('universal-cookie', () => jest.fn().mockImplementation(() => ({
+  get: jest.fn().mockImplementation(() => ({ completed: false })),
+})));
+
+jest.mock('../utils', () => ({
+  setExportCookie: jest.fn(),
+}));
 
 describe('fetchExportStatus thunk', () => {
   const dispatch = jest.fn();
   const getState = jest.fn();
   const courseId = 'course-123';
-  const exportStatus = 2;
+  const exportStatus = EXPORT_STAGES.COMPRESSING;
   const exportOutput = 'export output';
   const exportError = 'export error';
   let mockGetExportStatus;
@@ -36,7 +45,7 @@ describe('fetchExportStatus thunk', () => {
     });
   });
 
-  it('should dispatch updateError with export error', async () => {
+  it('should dispatch updateError on export error', async () => {
     mockGetExportStatus.mockResolvedValue({
       exportStatus,
       exportOutput,
@@ -69,7 +78,7 @@ describe('fetchExportStatus thunk', () => {
     });
   });
 
-  it('should dispatch updateIsErrorModalOpen with false if no export error', async () => {
+  it('should not dispatch updateIsErrorModalOpen if no export error', async () => {
     mockGetExportStatus.mockResolvedValue({
       exportStatus,
       exportOutput,
@@ -78,13 +87,13 @@ describe('fetchExportStatus thunk', () => {
 
     await fetchExportStatus(courseId)(dispatch, getState);
 
-    expect(dispatch).toHaveBeenCalledWith({
+    expect(dispatch).not.toHaveBeenCalledWith({
       payload: false,
       type: 'exportPage/updateIsErrorModalOpen',
     });
   });
 
-  it('should dispatch updateDownloadPath with export output', async () => {
+  it("should dispatch updateDownloadPath if there's export output", async () => {
     mockGetExportStatus.mockResolvedValue({
       exportStatus,
       exportOutput,
@@ -111,6 +120,26 @@ describe('fetchExportStatus thunk', () => {
 
     expect(dispatch).toHaveBeenCalledWith({
       payload: expect.any(Number),
+      type: 'exportPage/updateSuccessDate',
+    });
+  });
+
+  it('should not dispatch updateSuccessDate with current date if last-export cookie is already set', async () => {
+    mockGetExportStatus.mockResolvedValue({
+      exportStatus:
+        EXPORT_STAGES.SUCCESS,
+      exportOutput,
+      exportError,
+    });
+
+    Cookies.mockImplementation(() => ({
+      get: jest.fn().mockReturnValueOnce({ completed: true }),
+    }));
+
+    await fetchExportStatus(courseId)(dispatch, getState);
+
+    expect(dispatch).not.toHaveBeenCalledWith({
+      payload: expect.any,
       type: 'exportPage/updateSuccessDate',
     });
   });
