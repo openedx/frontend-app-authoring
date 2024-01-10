@@ -42,7 +42,6 @@ import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import PublishModal from './publish-modal/PublishModal';
 import ConfigureModal from './configure-modal/ConfigureModal';
 import DeleteModal from './delete-modal/DeleteModal';
-import ConditionalSortableElement from './drag-helper/ConditionalSortableElement';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
 
@@ -203,83 +202,55 @@ const CourseOutline = ({ courseId }) => {
                         <>
                           <DraggableList itemList={sections} setState={setSections} updateOrder={finalizeSectionOrder}>
                             {sections.map((section, index) => (
-                              <ConditionalSortableElement
+                              <SectionCard
                                 id={section.id}
                                 key={section.id}
-                                draggable={section.actions.draggable}
-                                componentStyle={{
-                                  background: 'white',
-                                  padding: '1.75rem',
-                                  marginBottom: '1.5rem',
-                                  borderRadius: '0.35rem',
-                                  boxShadow: '0 0 .125rem rgba(0, 0, 0, .15), 0 0 .25rem rgba(0, 0, 0, .15)',
-                                }}
+                                section={section}
+                                savingStatus={savingStatus}
+                                onOpenHighlightsModal={handleOpenHighlightsModal}
+                                onOpenPublishModal={openPublishModal}
+                                onOpenConfigureModal={openConfigureModal}
+                                onOpenDeleteModal={openDeleteModal}
+                                onEditSectionSubmit={handleEditSubmit}
+                                onDuplicateSubmit={handleDuplicateSectionSubmit}
+                                isSectionsExpanded={isSectionsExpanded}
+                                onNewSubsectionSubmit={handleNewSubsectionSubmit}
                               >
-                                <SectionCard
-                                  id={section.id}
-                                  key={section.id}
-                                  section={section}
-                                  savingStatus={savingStatus}
-                                  onOpenHighlightsModal={handleOpenHighlightsModal}
-                                  onOpenPublishModal={openPublishModal}
-                                  onOpenConfigureModal={openConfigureModal}
-                                  onOpenDeleteModal={openDeleteModal}
-                                  onEditSectionSubmit={handleEditSubmit}
-                                  onDuplicateSubmit={handleDuplicateSectionSubmit}
-                                  isSectionsExpanded={isSectionsExpanded}
-                                  onNewSubsectionSubmit={handleNewSubsectionSubmit}
+                                <DraggableList
+                                  itemList={section.childInfo.children}
+                                  setState={setSubsection(index)}
+                                  updateOrder={finalizeSubsectionOrder(section)}
                                 >
-                                  <DraggableList
-                                    itemList={section.childInfo.children}
-                                    setState={setSubsection(index)}
-                                    updateOrder={finalizeSubsectionOrder(section)}
-                                  >
-                                    {section.childInfo.children.map((subsection) => (
-                                      <ConditionalSortableElement
-                                        id={subsection.id}
-                                        key={subsection.id}
-                                        draggable={
-                                          subsection.actions.draggable && !(subsection.isHeaderVisible === false)
-                                        }
-                                        componentStyle={{
-                                          background: '#f8f7f6',
-                                          padding: '1rem 1.5rem',
-                                          marginBottom: '1.5rem',
-                                          borderRadius: '0.35rem',
-                                          boxShadow: '0 0 .125rem rgba(0, 0, 0, .15), 0 0 .25rem rgba(0, 0, 0, .15)',
-                                        }}
-                                      >
-                                        <SubsectionCard
-                                          key={subsection.id}
-                                          section={section}
+                                  {section.childInfo.children.map((subsection) => (
+                                    <SubsectionCard
+                                      key={subsection.id}
+                                      section={section}
+                                      subsection={subsection}
+                                      savingStatus={savingStatus}
+                                      onOpenPublishModal={openPublishModal}
+                                      onOpenDeleteModal={openDeleteModal}
+                                      onEditSubmit={handleEditSubmit}
+                                      onDuplicateSubmit={handleDuplicateSubsectionSubmit}
+                                      onNewUnitSubmit={handleNewUnitSubmit}
+                                    >
+                                      {subsection.childInfo.children.map((unit) => (
+                                        <UnitCard
+                                          key={unit.id}
+                                          unit={unit}
                                           subsection={subsection}
+                                          section={section}
                                           savingStatus={savingStatus}
                                           onOpenPublishModal={openPublishModal}
                                           onOpenDeleteModal={openDeleteModal}
                                           onEditSubmit={handleEditSubmit}
-                                          onDuplicateSubmit={handleDuplicateSubsectionSubmit}
-                                          onNewUnitSubmit={handleNewUnitSubmit}
-                                        >
-                                          {subsection.childInfo.children.map((unit) => (
-                                            <UnitCard
-                                              key={unit.id}
-                                              unit={unit}
-                                              subsection={subsection}
-                                              section={section}
-                                              savingStatus={savingStatus}
-                                              onOpenPublishModal={openPublishModal}
-                                              onOpenDeleteModal={openDeleteModal}
-                                              onEditSubmit={handleEditSubmit}
-                                              onDuplicateSubmit={handleDuplicateUnitSubmit}
-                                              getTitleLink={getUnitUrl}
-                                            />
-                                          ))}
-                                        </SubsectionCard>
-                                      </ConditionalSortableElement>
-                                    ))}
-                                  </DraggableList>
-                                </SectionCard>
-                              </ConditionalSortableElement>
+                                          onDuplicateSubmit={handleDuplicateUnitSubmit}
+                                          getTitleLink={getUnitUrl}
+                                        />
+                                      ))}
+                                    </SubsectionCard>
+                                  ))}
+                                </DraggableList>
+                              </SectionCard>
                             ))}
                           </DraggableList>
                           {courseActions.childAddable && (

@@ -76,6 +76,40 @@ const getItemStatusBadgeContent = (status, messages, intl) => {
 };
 
 /**
+ * Get section border color
+ * @param {string} status - value from on getItemStatus util
+ * @returns {
+ *   borderLeft: string,
+ * }
+ */
+const getItemStatusBorder = (status) => {
+  switch (status) {
+  case ITEM_BADGE_STATUS.live:
+    return {
+      borderLeft: '5px solid #00688D',
+    };
+  case ITEM_BADGE_STATUS.publishedNotLive:
+    return {
+      borderLeft: '5px solid #0D7D4D',
+    };
+  case ITEM_BADGE_STATUS.staffOnly:
+    return {
+      borderLeft: '5px solid #000000',
+    };
+  case ITEM_BADGE_STATUS.unpublishedChanges:
+    return {
+      borderLeft: '5px solid #F0CC00',
+    };
+  case ITEM_BADGE_STATUS.draft:
+    return {
+      borderLeft: '5px solid #F0CC00',
+    };
+  default:
+    return {};
+  }
+};
+
+/**
  * Get formatted highlights form values
  * @param {Array<string>} currentHighlights - section highlights
  * @returns {
@@ -150,6 +184,7 @@ const getVideoSharingOptionText = (id, messages, intl) => {
 export {
   getItemStatus,
   getItemStatusBadgeContent,
+  getItemStatusBorder,
   getHighlightsFormValues,
   getVideoSharingOptionText,
   scrollToElement,

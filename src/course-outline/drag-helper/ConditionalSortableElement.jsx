@@ -9,11 +9,20 @@ const ConditionalSortableElement = ({
   children,
   componentStyle,
 }) => {
+  const style = {
+    background: 'white',
+    padding: '1rem 1.5rem',
+    marginBottom: '1.5rem',
+    borderRadius: '0.35rem',
+    boxShadow: '0 0 .125rem rgba(0, 0, 0, .15), 0 0 .25rem rgba(0, 0, 0, .15)',
+    ...componentStyle,
+  };
+
   if (draggable) {
     return (
       <SortableItem
         id={id}
-        componentStyle={componentStyle}
+        componentStyle={style}
       >
         <div className="extend-margin">
           {children}
@@ -24,7 +33,7 @@ const ConditionalSortableElement = ({
   return (
     <Row
       data-testid="conditional-sortable-element--no-drag-handle"
-      style={componentStyle}
+      style={style}
       className="mx-0"
     >
       {children}
