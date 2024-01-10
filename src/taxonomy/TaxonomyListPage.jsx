@@ -1,3 +1,4 @@
+// @ts-check
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -38,13 +39,14 @@ const TaxonomyListHeaderButtons = () => {
       <OverlayTrigger
         placement="top"
         overlay={(
-          <Tooltip>
+          <Tooltip id="download-template-tooltip">
             {intl.formatMessage(messages.downloadTemplateButtonHint)}
           </Tooltip>
         )}
       >
-        <Dropdown>
+        <Dropdown id="download-template-dropdown">
           <Dropdown.Toggle
+            id="download-template-dropdown-toggle"
             variant="outline-primary"
             data-testid="taxonomy-download-template"
           >
@@ -184,7 +186,7 @@ const TaxonomyListPage = () => {
       </div>
       <div className="bg-light-400 mt-1">
         <Container size="xl">
-          {isLoaded && (
+          {isLoaded && taxonomyListData && (
             <DataTable
               disableElevation
               data={taxonomyListData.results}
@@ -207,6 +209,7 @@ const TaxonomyListPage = () => {
                   accessor: 'systemDefined',
                 },
                 {
+                  Header: '',
                   accessor: 'tagsCount',
                 },
               ]}
@@ -234,9 +237,13 @@ const TaxonomyListPage = () => {
 
 OrganizationFilterSelector.propTypes = {
   isOrganizationListLoaded: PropTypes.bool.isRequired,
-  organizationListData: PropTypes.arrayOf(PropTypes.string).isRequired,
+  organizationListData: PropTypes.arrayOf(PropTypes.string),
   selectedOrgFilter: PropTypes.string.isRequired,
   setSelectedOrgFilter: PropTypes.func.isRequired,
+};
+
+OrganizationFilterSelector.defaultProps = {
+  organizationListData: null,
 };
 
 TaxonomyListPage.propTypes = {};

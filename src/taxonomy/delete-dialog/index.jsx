@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// @ts-check
+import React, { useCallback, useState } from 'react';
 import {
   ActionRow,
   Button,
@@ -23,13 +24,13 @@ const DeleteDialog = ({
   const [deleteButtonDisabled, setDeleteButtonDisabled] = useState(true);
   const deleteLabel = intl.formatMessage(messages.deleteDialogConfirmDeleteLabel);
 
-  const handleInputChange = React.useCallback((event) => {
+  const handleInputChange = useCallback((event) => {
     if (event.target.value === deleteLabel) {
       setDeleteButtonDisabled(false);
     } else {
       setDeleteButtonDisabled(true);
     }
-  });
+  }, []);
 
   const onClickDelete = React.useCallback(() => {
     onClose();
@@ -55,7 +56,7 @@ const DeleteDialog = ({
         </ModalDialog.Header>
         <ModalDialog.Body>
           <div className="mb-4">
-            {/* Delete `(?)` after implement get tags count of a taxonomy */}
+            {/* ToDo: Delete `(?)` after implement get tags count of a taxonomy */}
             {intl.formatMessage(messages.deleteDialogBody, {
               tagsCount: tagsCount !== undefined ? tagsCount : '(?)',
             })}
