@@ -411,16 +411,22 @@ export const uploadVideo = ({ supportedFiles, setLoadSpinner, postUploadRedirect
           console.error(`Could not find file object with name "${fileName}" in supportedFiles array.`);
           return;
         }
-        const formData = new FormData();
-        formData.append('uploaded-file', uploadFile.get('file'));
+        const file = uploadFile.get('file');
         await fetch(uploadUrl, {
           method: 'PUT',
-          body: formData,
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Disposition': `attachment; filename="${file.name}"`,
+            'Content-Type': file.type,
           },
+          multipart: false,
+          body: file,
         })
-          .then(() => postUploadRedirect(edxVideoId))
+          .then((resp) => {
+            if (!resp.ok) {
+              throw new Error('Failed to connect with server');
+            }
+            postUploadRedirect(edxVideoId);
+          })
           // eslint-disable-next-line no-console
           .catch((error) => console.error('Error uploading file:', error));
       }));
