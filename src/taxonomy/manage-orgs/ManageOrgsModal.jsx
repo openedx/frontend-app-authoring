@@ -77,6 +77,8 @@ const ManageOrgsModal = ({
 
   const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
 
+  const [isDialogDisabled, disableDialog, enableDialog] = useToggle(false);
+
   const {
     data: organizationListData,
   } = useOrganizationListData();
@@ -86,6 +88,7 @@ const ManageOrgsModal = ({
   const manageOrgMutation = useManageOrgs();
 
   const saveOrgs = async () => {
+    disableDialog();
     closeConfirmModal();
     if (selectedOrgs !== null && allOrgs !== null) {
       try {
@@ -100,6 +103,7 @@ const ManageOrgsModal = ({
       } catch (/** @type {any} */ error) {
         // ToDo: display the error to the user
       } finally {
+        enableDialog();
         onClose();
       }
     }
@@ -149,9 +153,15 @@ const ManageOrgsModal = ({
         isOpen={isOpen}
         onClose={onClose}
         size="lg"
+        disabled={isDialogDisabled}
         hasCloseButton
         isFullscreenOnMobile
       >
+        {isDialogDisabled && (
+          // This div is used to prevent the user from interacting with the dialog while it is disabled
+          <div className="position-absolute w-100 h-100 d-block zindex-9" />
+        )}
+
         <ModalDialog.Header>
           <ModalDialog.Title>
             {intl.formatMessage(messages.headerTitle)}
@@ -184,7 +194,6 @@ const ManageOrgsModal = ({
               {intl.formatMessage(messages.addOrganizations)}
             </Form.Label>
             <Form.Autosuggest
-              loading={!organizationListData}
               placeholder={intl.formatMessage(messages.searchOrganizations)}
               onSelected={(org) => setSelectedOrgs([...selectedOrgs, org])}
               disabled={allOrgs}
