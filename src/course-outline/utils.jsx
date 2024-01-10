@@ -4,7 +4,7 @@ import {
   EditOutline as EditOutlineIcon,
 } from '@edx/paragon/icons';
 
-import { ITEM_BADGE_STATUS, STAFF_ONLY } from './constants';
+import { ITEM_BADGE_STATUS, STAFF_ONLY, VIDEO_SHARING_OPTIONS } from './constants';
 
 /**
  * Get section status depended on section info
@@ -128,9 +128,28 @@ const scrollToElement = target => {
   }
 };
 
+/**
+ * Get video sharing dropdown translated options.
+ * @param {string} id - option id
+ * @returns {string} - text to display
+ */
+const getVideoSharingOptionText = (id, messages, intl) => {
+  switch (id) {
+  case VIDEO_SHARING_OPTIONS.perVideo:
+    return intl.formatMessage(messages.videoSharingPerVideoText);
+  case VIDEO_SHARING_OPTIONS.allOn:
+    return intl.formatMessage(messages.videoSharingAllOnText);
+  case VIDEO_SHARING_OPTIONS.allOff:
+    return intl.formatMessage(messages.videoSharingAllOffText);
+  default:
+    return '';
+  }
+};
+
 export {
   getItemStatus,
   getItemStatusBadgeContent,
   getHighlightsFormValues,
+  getVideoSharingOptionText,
   scrollToElement,
 };

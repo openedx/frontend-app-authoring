@@ -9,6 +9,7 @@ import { AppContext } from '@edx/frontend-platform/react';
 import { useHelpUrls } from '../../help-urls/hooks';
 import { VIDEO_SHARING_OPTIONS } from '../constants';
 import messages from './messages';
+import { getVideoSharingOptionText } from '../utils';
 
 const StatusBar = ({
   statusBarData,
@@ -112,11 +113,12 @@ const StatusBar = ({
             <SelectMenu variant="sm btn-outline-primary">
               {Object.values(VIDEO_SHARING_OPTIONS).map((option) => (
                 <MenuItem
-                  key={option.id}
-                  value={option.id}
-                  defaultSelected={option.id === videoSharingOptions}
-                  onClick={() => handleVideoSharingOptionChange(option.id)}
-                >{option.name}
+                  key={option}
+                  value={option}
+                  defaultSelected={option === videoSharingOptions}
+                  onClick={() => handleVideoSharingOptionChange(option)}
+                >
+                  {getVideoSharingOptionText(option, messages, intl)}
                 </MenuItem>
               ))}
             </SelectMenu>

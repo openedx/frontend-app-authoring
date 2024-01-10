@@ -42,7 +42,7 @@ const statusBarData = {
   highlightsEnabledForMessaging: true,
   highlightsDocUrl: 'https://example.com/highlights-doc',
   videoSharingEnabled: true,
-  videoSharingOptions: VIDEO_SHARING_OPTIONS.allOn.id,
+  videoSharingOptions: VIDEO_SHARING_OPTIONS.allOn,
 };
 
 const renderComponent = (props) => render(

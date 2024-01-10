@@ -25,7 +25,7 @@ const slice = createSlice({
         completedCourseBestPracticesChecks: 0,
       },
       videoSharingEnabled: false,
-      videoSharingOptions: VIDEO_SHARING_OPTIONS.perVideo.id,
+      videoSharingOptions: VIDEO_SHARING_OPTIONS.perVideo,
     },
     sectionsList: [],
     currentSection: {},

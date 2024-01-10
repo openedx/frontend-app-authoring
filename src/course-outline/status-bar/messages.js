@@ -49,6 +49,18 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.status-bar.video-sharing.title',
     defaultMessage: 'Learn more',
   },
+  videoSharingPerVideoText: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.perVideo.text',
+    defaultMessage: 'Per Video',
+  },
+  videoSharingAllOffText: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.allOff.text',
+    defaultMessage: 'No Videos',
+  },
+  videoSharingAllOnText: {
+    id: 'course-authoring.course-outline.status-bar.video-sharing.allOn.text',
+    defaultMessage: 'All Videos',
+  },
 });
 
 export default messages;

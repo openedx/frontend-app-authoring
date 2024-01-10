@@ -36,13 +36,13 @@ import {
   courseSubsectionMock,
 } from './__mocks__';
 import { executeThunk } from '../utils';
-import { COURSE_BLOCK_NAMES } from './constants';
+import { COURSE_BLOCK_NAMES, VIDEO_SHARING_OPTIONS } from './constants';
 import CourseOutline from './CourseOutline';
 import messages from './messages';
 import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
-import { VIDEO_SHARING_OPTIONS } from './constants';
+import statusBarMessages from './status-bar/messages';
 
 let axiosMock;
 let store;
@@ -121,20 +121,22 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPost(getEnableHighlightsEmailsApiUrl(courseId), {
         metadata: {
-          video_sharing_options: VIDEO_SHARING_OPTIONS.allOff.id,
+          video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
         },
       })
       .reply(200);
     const optionDropdownWrapper = await findByTestId('video-sharing-wrapper');
     const optionDropdown = await within(optionDropdownWrapper).findByRole('button');
     await act(async () => fireEvent.click(optionDropdown));
-    const allOffOption = await within(optionDropdownWrapper).findByText(VIDEO_SHARING_OPTIONS.allOff.name);
+    const allOffOption = await within(optionDropdownWrapper).findByText(
+      statusBarMessages.videoSharingAllOffText.defaultMessage,
+    );
     await act(async () => fireEvent.click(allOffOption));
 
     expect(axiosMock.history.post.length).toBe(1);
     expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
       metadata: {
-        video_sharing_options: VIDEO_SHARING_OPTIONS.allOff.id,
+        video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
       },
     }));
   });

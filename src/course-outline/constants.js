@@ -76,7 +76,7 @@ export const BEST_PRACTICES_CHECKLIST = /** @type {const} */ ({
 });
 
 export const VIDEO_SHARING_OPTIONS = /** @type {const} */ ({
-  perVideo: { id: 'per-video', name: 'Per Video' },
-  allOn: { id: 'all-on', name: 'All Videos' },
-  allOff: { id: 'all-off', name: 'No Videos' },
+  perVideo: 'per-video',
+  allOn: 'all-on',
+  allOff: 'all-off',
 });
