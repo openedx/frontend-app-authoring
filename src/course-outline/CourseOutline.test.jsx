@@ -554,21 +554,19 @@ describe('<CourseOutline />', () => {
         })
         .reply(200, { dummy: 'value' });
 
-      let mockReturnValue = { ...section, published: true };
-      if (elementName === 'subsection') {
-        mockReturnValue = {
-          ...section,
-          childInfo: {
-            children: [
-              {
-                ...section.childInfo.children[0],
-                published: true,
-              },
-              ...section.childInfo.children.slice(1),
-            ],
-          },
-        };
-      } else if (elementName === 'unit') {
+      let mockReturnValue = {
+        ...section,
+        childInfo: {
+          children: [
+            {
+              ...section.childInfo.children[0],
+              published: true,
+            },
+            ...section.childInfo.children.slice(1),
+          ],
+        },
+      };
+      if (elementName === 'unit') {
         mockReturnValue = {
           ...section,
           childInfo: {
@@ -612,8 +610,7 @@ describe('<CourseOutline />', () => {
     await checkPublishBtn(unit, unitElement, 'unit');
     // check subsection
     await checkPublishBtn(subsection, subsectionElement, 'subsection');
-    // check section
-    await checkPublishBtn(section, sectionElement, 'section');
+    // section doesn't display badges
   });
 
   it('check configure section when configure query is successful', async () => {

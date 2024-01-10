@@ -1,9 +1,5 @@
 .unit-card {
-  @include pgn-box-shadow(1, "centered");
-
-  padding: $spacer 2rem;
-  margin-bottom: 1.5rem;
-  background: $light-100;
+  flex-grow: 1;
 
   .unit-card__content {
     margin: $spacer;

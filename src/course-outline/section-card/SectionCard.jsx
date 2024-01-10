@@ -11,8 +11,9 @@ import { setCurrentItem, setCurrentSection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
 import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
+import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleButton from '../card-header/TitleButton';
-import { getItemStatus, scrollToElement } from '../utils';
+import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
 
 const SectionCard = ({
@@ -64,6 +65,9 @@ const SectionCard = ({
     hasChanges,
   });
 
+  // remove border when section is expanded
+  const borderStyle = getItemStatusBorder(!isExpanded ? sectionStatus : '');
+
   const handleExpandContent = () => {
     setIsExpanded((prevState) => !prevState);
   };
@@ -112,66 +116,79 @@ const SectionCard = ({
   );
 
   return (
-    <div
-      className="section-card"
-      data-testid="section-card"
-      ref={currentRef}
+    <ConditionalSortableElement
+      id={id}
+      draggable={actions.draggable}
+      componentStyle={{
+        background: 'white',
+        padding: '1.75rem',
+        marginBottom: '1.5rem',
+        borderRadius: '0.35rem',
+        boxShadow: '0 0 .125rem rgba(0, 0, 0, .15), 0 0 .25rem rgba(0, 0, 0, .15)',
+        ...borderStyle,
+      }}
     >
-      <div>
-        {isHeaderVisible && (
-          <CardHeader
-            sectionId={id}
-            title={displayName}
-            status={sectionStatus}
-            hasChanges={hasChanges}
-            onClickMenuButton={handleClickMenuButton}
-            onClickPublish={onOpenPublishModal}
-            onClickConfigure={onOpenConfigureModal}
-            onClickEdit={openForm}
-            onClickDelete={onOpenDeleteModal}
-            isFormOpen={isFormOpen}
-            closeForm={closeForm}
-            onEditSubmit={handleEditSubmit}
-            isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
-            onClickDuplicate={onDuplicateSubmit}
-            titleComponent={titleComponent}
-            namePrefix={namePrefix}
-            actions={actions}
-          />
-        )}
-        <div className="section-card__content" data-testid="section-card__content">
-          {explanatoryMessage && <p className="text-secondary-400 x-small mb-1">{explanatoryMessage}</p>}
-          <div className="outline-section__status">
-            <Button
-              className="section-card__highlights"
-              data-destid="section-card-highlights-button"
-              variant="tertiary"
-              onClick={handleOpenHighlightsModal}
-            >
-              <Badge className="highlights-badge">{highlights.length}</Badge>
-              <p className="m-0 text-black">{messages.sectionHighlightsBadge.defaultMessage}</p>
-            </Button>
-          </div>
-        </div>
-        {isExpanded && (
-          <div data-testid="section-card__subsections" className="item-children section-card__subsections">
-            {children}
-            {actions.childAddable && (
+      <div
+        className="section-card"
+        data-testid="section-card"
+        ref={currentRef}
+      >
+        <div>
+          {isHeaderVisible && (
+            <CardHeader
+              sectionId={id}
+              title={displayName}
+              status={sectionStatus}
+              hasChanges={hasChanges}
+              onClickMenuButton={handleClickMenuButton}
+              onClickPublish={onOpenPublishModal}
+              onClickConfigure={onOpenConfigureModal}
+              onClickEdit={openForm}
+              onClickDelete={onOpenDeleteModal}
+              isFormOpen={isFormOpen}
+              closeForm={closeForm}
+              onEditSubmit={handleEditSubmit}
+              isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+              onClickDuplicate={onDuplicateSubmit}
+              titleComponent={titleComponent}
+              namePrefix={namePrefix}
+              actions={actions}
+            />
+          )}
+          <div className="section-card__content" data-testid="section-card__content">
+            {explanatoryMessage && <p className="text-secondary-400 x-small mb-1">{explanatoryMessage}</p>}
+            <div className="outline-section__status">
               <Button
-                data-testid="new-subsection-button"
-                className="mt-4"
-                variant="outline-primary"
-                iconBefore={IconAdd}
-                block
-                onClick={handleNewSubsectionSubmit}
+                className="section-card__highlights"
+                data-destid="section-card-highlights-button"
+                variant="tertiary"
+                onClick={handleOpenHighlightsModal}
               >
-                {intl.formatMessage(messages.newSubsectionButton)}
+                <Badge className="highlights-badge">{highlights.length}</Badge>
+                <p className="m-0 text-black">{messages.sectionHighlightsBadge.defaultMessage}</p>
               </Button>
-            )}
+            </div>
           </div>
-        )}
+          {isExpanded && (
+            <div data-testid="section-card__subsections" className="item-children section-card__subsections">
+              {children}
+              {actions.childAddable && (
+                <Button
+                  data-testid="new-subsection-button"
+                  className="mt-4"
+                  variant="outline-primary"
+                  iconBefore={IconAdd}
+                  block
+                  onClick={handleNewSubsectionSubmit}
+                >
+                  {intl.formatMessage(messages.newSubsectionButton)}
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </ConditionalSortableElement>
   );
 };
 
