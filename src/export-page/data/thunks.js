@@ -45,17 +45,10 @@ export function fetchExportStatus(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
     try {
-      const { exportStatus, exportOutput, exportError } = await getExportStatus(courseId);
+      const {
+        exportStatus, exportOutput, exportError,
+      } = await getExportStatus(courseId);
       dispatch(updateCurrentStage(Math.abs(exportStatus)));
-
-      if (exportOutput) {
-        if (exportOutput.startsWith('/')) {
-          dispatch(updateDownloadPath(`${getConfig().STUDIO_BASE_URL}${exportOutput}`));
-        } else {
-          dispatch(updateDownloadPath(exportOutput));
-        }
-        dispatch(updateSuccessDate(moment().valueOf()));
-      }
 
       const cookies = new Cookies();
       const cookieData = cookies.get(LAST_EXPORT_COOKIE_NAME);
@@ -68,6 +61,15 @@ export function fetchExportStatus(courseId) {
         const errorUnitUrl = exportError.editUnitUrl || null;
         dispatch(updateError({ msg: errorMessage, unitUrl: errorUnitUrl }));
         dispatch(updateIsErrorModalOpen(true));
+      }
+
+      if (exportOutput && !cookieData?.completed) {
+        if (exportOutput.startsWith('/')) {
+          dispatch(updateDownloadPath(`${getConfig().STUDIO_BASE_URL}${exportOutput}`));
+        } else {
+          dispatch(updateDownloadPath(exportOutput));
+        }
+        dispatch(updateSuccessDate(moment().valueOf()));
       }
 
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
