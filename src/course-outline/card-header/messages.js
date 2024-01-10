@@ -21,6 +21,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.card.status-badge.draft',
     defaultMessage: 'Draft',
   },
+  statusBadgeUnpublishedChanges: {
+    id: 'course-authoring.course-outline.card.status-badge.draft-unpublished-changes',
+    defaultMessage: 'Draft (Unpublished changes)',
+  },
   altButtonEdit: {
     id: 'course-authoring.course-outline.card.button.edit.alt',
     defaultMessage: 'Edit',

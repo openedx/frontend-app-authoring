@@ -35,10 +35,7 @@ const SubsectionCard = ({
     displayName,
     hasChanges,
     published,
-    releasedToStudents,
-    visibleToStaffOnly = false,
     visibilityState,
-    staffOnlyMessage,
     actions,
     isHeaderVisible = true,
   } = subsection;
@@ -46,10 +43,8 @@ const SubsectionCard = ({
   const [isExpanded, setIsExpanded] = useState(!isHeaderVisible);
   const subsectionStatus = getItemStatus({
     published,
-    releasedToStudents,
-    visibleToStaffOnly,
     visibilityState,
-    staffOnlyMessage,
+    hasChanges,
   });
 
   const handleExpandContent = () => {
@@ -154,10 +149,7 @@ SubsectionCard.propTypes = {
     displayName: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
-    releasedToStudents: PropTypes.bool.isRequired,
-    visibleToStaffOnly: PropTypes.bool,
     visibilityState: PropTypes.string.isRequired,
-    staffOnlyMessage: PropTypes.bool.isRequired,
     shouldScroll: PropTypes.bool,
   }).isRequired,
   subsection: PropTypes.shape({
@@ -165,10 +157,7 @@ SubsectionCard.propTypes = {
     displayName: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
-    releasedToStudents: PropTypes.bool.isRequired,
-    visibleToStaffOnly: PropTypes.bool,
     visibilityState: PropTypes.string.isRequired,
-    staffOnlyMessage: PropTypes.bool.isRequired,
     shouldScroll: PropTypes.bool,
     actions: PropTypes.shape({
       deletable: PropTypes.bool.isRequired,
