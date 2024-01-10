@@ -10,6 +10,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import initializeStore from '../../store';
 import SubsectionCard from './SubsectionCard';
+import cardHeaderMessages from '../card-header/messages';
 
 // eslint-disable-next-line no-unused-vars
 let axiosMock;
@@ -19,10 +20,7 @@ const section = {
   id: '123',
   displayName: 'Section Name',
   published: true,
-  releasedToStudents: true,
-  visibleToStaffOnly: false,
-  visibilityState: 'visible',
-  staffOnlyMessage: false,
+  visibilityState: 'live',
   hasChanges: false,
   highlights: ['highlight 1', 'highlight 2'],
 };
@@ -31,10 +29,7 @@ const subsection = {
   id: '123',
   displayName: 'Subsection Name',
   published: true,
-  releasedToStudents: true,
-  visibleToStaffOnly: false,
-  visibilityState: 'visible',
-  staffOnlyMessage: false,
+  visibilityState: 'live',
   hasChanges: false,
   actions: {
     draggable: true,
@@ -160,5 +155,43 @@ describe('<SubsectionCard />', () => {
     expect(within(element).queryByTestId('subsection-card-header__menu-duplicate-button')).not.toBeInTheDocument();
     expect(within(element).queryByTestId('subsection-card-header__menu-delete-button')).not.toBeInTheDocument();
     expect(queryByTestId('new-unit-button')).not.toBeInTheDocument();
+  });
+
+  it('renders live status', async () => {
+    const { findByText } = renderComponent();
+    expect(await findByText(cardHeaderMessages.statusBadgeLive.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('renders published but live status', async () => {
+    const { findByText } = renderComponent({
+      subsection: {
+        ...subsection,
+        published: true,
+        visibilityState: 'ready',
+      },
+    });
+    expect(await findByText(cardHeaderMessages.statusBadgePublishedNotLive.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('renders staff status', async () => {
+    const { findByText } = renderComponent({
+      subsection: {
+        ...subsection,
+        published: false,
+        visibilityState: 'staff_only',
+      },
+    });
+    expect(await findByText(cardHeaderMessages.statusBadgeStaffOnly.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('renders draft status', async () => {
+    const { findByText } = renderComponent({
+      subsection: {
+        ...subsection,
+        published: false,
+        visibilityState: 'needs_attention',
+      },
+    });
+    expect(await findByText(cardHeaderMessages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();
   });
 });

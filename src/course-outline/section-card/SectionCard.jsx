@@ -51,10 +51,7 @@ const SectionCard = ({
     displayName,
     hasChanges,
     published,
-    releasedToStudents,
-    visibleToStaffOnly = false,
     visibilityState,
-    staffOnlyMessage,
     highlights,
     actions,
     isHeaderVisible = true,
@@ -63,10 +60,8 @@ const SectionCard = ({
 
   const sectionStatus = getItemStatus({
     published,
-    releasedToStudents,
-    visibleToStaffOnly,
     visibilityState,
-    staffOnlyMessage,
+    hasChanges,
   });
 
   const handleExpandContent = () => {
@@ -110,7 +105,7 @@ const SectionCard = ({
     >
       <BaseTitleWithStatusBadge
         title={displayName}
-        status={sectionStatus}
+        status=""
         namePrefix={namePrefix}
       />
     </TitleButton>
@@ -190,10 +185,7 @@ SectionCard.propTypes = {
     displayName: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
-    releasedToStudents: PropTypes.bool.isRequired,
-    visibleToStaffOnly: PropTypes.bool,
     visibilityState: PropTypes.string.isRequired,
-    staffOnlyMessage: PropTypes.bool.isRequired,
     highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
     shouldScroll: PropTypes.bool,
     explanatoryMessage: PropTypes.string,

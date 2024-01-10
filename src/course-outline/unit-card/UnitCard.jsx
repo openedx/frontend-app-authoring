@@ -31,20 +31,15 @@ const UnitCard = ({
     displayName,
     hasChanges,
     published,
-    releasedToStudents,
-    visibleToStaffOnly = false,
     visibilityState,
-    staffOnlyMessage,
     actions,
     isHeaderVisible = true,
   } = unit;
 
   const unitStatus = getItemStatus({
     published,
-    releasedToStudents,
-    visibleToStaffOnly,
     visibilityState,
-    staffOnlyMessage,
+    hasChanges,
   });
 
   const handleClickMenuButton = () => {
@@ -124,10 +119,7 @@ UnitCard.propTypes = {
     displayName: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
-    releasedToStudents: PropTypes.bool.isRequired,
-    visibleToStaffOnly: PropTypes.bool,
     visibilityState: PropTypes.string.isRequired,
-    staffOnlyMessage: PropTypes.bool.isRequired,
     shouldScroll: PropTypes.bool,
     actions: PropTypes.shape({
       deletable: PropTypes.bool.isRequired,
@@ -142,10 +134,7 @@ UnitCard.propTypes = {
     displayName: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
-    releasedToStudents: PropTypes.bool.isRequired,
-    visibleToStaffOnly: PropTypes.bool,
     visibilityState: PropTypes.string.isRequired,
-    staffOnlyMessage: PropTypes.bool.isRequired,
     shouldScroll: PropTypes.bool,
   }).isRequired,
   section: PropTypes.shape({
@@ -153,10 +142,7 @@ UnitCard.propTypes = {
     displayName: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
-    releasedToStudents: PropTypes.bool.isRequired,
-    visibleToStaffOnly: PropTypes.bool,
     visibilityState: PropTypes.string.isRequired,
-    staffOnlyMessage: PropTypes.bool.isRequired,
     shouldScroll: PropTypes.bool,
   }).isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,
