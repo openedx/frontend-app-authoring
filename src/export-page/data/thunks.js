@@ -22,6 +22,21 @@ import {
   updateSavingStatus,
 } from './slice';
 
+function setExportDate({
+  date, exportStatus, exportOutput, dispatch,
+}) {
+  // If there is no cookie for the last export date, set it now.
+  const cookies = new Cookies();
+  const cookieData = cookies.get(LAST_EXPORT_COOKIE_NAME);
+  if (!cookieData?.completed) {
+    setExportCookie(date, exportStatus === EXPORT_STAGES.SUCCESS);
+  }
+  // If we don't have export date set yet via cookie, set success date to current date.
+  if (exportOutput && !cookieData?.completed) {
+    dispatch(updateSuccessDate(date));
+  }
+}
+
 export function startExportingCourse(courseId) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
@@ -45,8 +60,23 @@ export function fetchExportStatus(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
     try {
-      const { exportStatus, exportOutput, exportError } = await getExportStatus(courseId);
+      const {
+        exportStatus, exportOutput, exportError,
+      } = await getExportStatus(courseId);
       dispatch(updateCurrentStage(Math.abs(exportStatus)));
+
+      const date = moment().valueOf();
+
+      setExportDate({
+        date, exportStatus, exportOutput, dispatch,
+      });
+
+      if (exportError) {
+        const errorMessage = exportError.rawErrorMsg || exportError;
+        const errorUnitUrl = exportError.editUnitUrl || null;
+        dispatch(updateError({ msg: errorMessage, unitUrl: errorUnitUrl }));
+        dispatch(updateIsErrorModalOpen(true));
+      }
 
       if (exportOutput) {
         if (exportOutput.startsWith('/')) {
@@ -54,20 +84,6 @@ export function fetchExportStatus(courseId) {
         } else {
           dispatch(updateDownloadPath(exportOutput));
         }
-        dispatch(updateSuccessDate(moment().valueOf()));
-      }
-
-      const cookies = new Cookies();
-      const cookieData = cookies.get(LAST_EXPORT_COOKIE_NAME);
-      if (!cookieData?.completed) {
-        setExportCookie(moment().valueOf(), exportStatus === EXPORT_STAGES.SUCCESS);
-      }
-
-      if (exportError) {
-        const errorMessage = exportError.rawErrorMsg || exportError;
-        const errorUnitUrl = exportError.editUnitUrl || null;
-        dispatch(updateError({ msg: errorMessage, unitUrl: errorUnitUrl }));
-        dispatch(updateIsErrorModalOpen(true));
       }
 
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
