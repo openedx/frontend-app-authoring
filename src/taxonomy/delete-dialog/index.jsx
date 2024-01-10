@@ -56,10 +56,7 @@ const DeleteDialog = ({
         </ModalDialog.Header>
         <ModalDialog.Body>
           <div className="mb-4">
-            {/* ToDo: Delete `(?)` after implement get tags count of a taxonomy */}
-            {intl.formatMessage(messages.deleteDialogBody, {
-              tagsCount: tagsCount !== undefined ? tagsCount : '(?)',
-            })}
+            {intl.formatMessage(messages.deleteDialogBody, { tagsCount })}
           </div>
           <Form.Group>
             <Form.Label>
