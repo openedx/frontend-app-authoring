@@ -27,7 +27,7 @@ import {
  *  tagPages: {
  *    isLoading: boolean,
  *    isError: boolean,
- *    data: TagListData[],
+ *    data: TagData[],
  *  }[],
  * }}
  */
@@ -53,14 +53,14 @@ export const useTaxonomyTagsData = (taxonomyId, parentTag = null, numPages = 1, 
   const hasMorePages = numPages < totalPages;
 
   const tagPages = useMemo(() => {
-    /** @type { { isLoading: boolean, isError: boolean, data: TagListData[] }[] } */
+    /** @type { { isLoading: boolean, isError: boolean, data: TagData[] }[] } */
     const newTags = [];
 
     // Pre-load desendants if possible
     const preLoadedData = new Map();
 
     dataPages.forEach(result => {
-      /** @type {TagListData[]} */
+      /** @type {TagData[]} */
       const simplifiedTagsList = [];
 
       result.data?.results?.forEach((tag) => {
@@ -79,7 +79,7 @@ export const useTaxonomyTagsData = (taxonomyId, parentTag = null, numPages = 1, 
     // Store the pre-loaded descendants into the query cache:
     preLoadedData.forEach((tags, parentValue) => {
       const queryKey = ['taxonomyTags', taxonomyId, parentValue, 1, searchTerm];
-      /** @type {TagData} */
+      /** @type {TagListData} */
       const cachedData = {
         next: '',
         previous: '',

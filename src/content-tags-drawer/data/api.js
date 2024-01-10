@@ -36,7 +36,7 @@ export const getLibraryContentDataApiUrl = (contentId) => new URL(`/api/librarie
  * Get all tags that belong to taxonomy.
  * @param {number} taxonomyId The id of the taxonomy to fetch tags for
  * @param {{page?: number, searchTerm?: string, parentTag?: string}} options
- * @returns {Promise<import("../../taxonomy/tag-list/data/types.mjs").TagData>}
+ * @returns {Promise<import("../../taxonomy/tag-list/data/types.mjs").TagListData>}
  */
 export async function getTaxonomyTagsData(taxonomyId, options = {}) {
   const url = getTaxonomyTagsApiUrl(taxonomyId, options);
