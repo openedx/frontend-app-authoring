@@ -4,35 +4,31 @@ import {
   EditOutline as EditOutlineIcon,
 } from '@edx/paragon/icons';
 
-import { ITEM_BADGE_STATUS, STAFF_ONLY, VIDEO_SHARING_OPTIONS } from './constants';
+import { ITEM_BADGE_STATUS, VIDEO_SHARING_OPTIONS } from './constants';
+import { VisibilityTypes } from '../data/constants';
 
 /**
  * Get section status depended on section info
  * @param {bool} published - value from section info
- * @param {bool} releasedToStudents - value from section info
- * @param {bool} visibleToStaffOnly - value from section info
  * @param {string} visibilityState - value from section info
- * @param {bool} staffOnlyMessage - value from section info
  * @returns {ITEM_BADGE_STATUS[keyof ITEM_BADGE_STATUS]}
  */
 const getItemStatus = ({
   published,
-  releasedToStudents,
-  visibleToStaffOnly,
   visibilityState,
-  staffOnlyMessage,
+  hasChanges,
 }) => {
   switch (true) {
-  case published && releasedToStudents:
-    return ITEM_BADGE_STATUS.live;
-  case published && !releasedToStudents:
-    return ITEM_BADGE_STATUS.publishedNotLive;
-  case visibleToStaffOnly && staffOnlyMessage && visibilityState === STAFF_ONLY:
+  case visibilityState === VisibilityTypes.STAFF_ONLY:
     return ITEM_BADGE_STATUS.staffOnly;
-  case !published:
-    return ITEM_BADGE_STATUS.draft;
+  case visibilityState === VisibilityTypes.LIVE:
+    return ITEM_BADGE_STATUS.live;
+  case published && !hasChanges:
+    return ITEM_BADGE_STATUS.publishedNotLive;
+  case published && hasChanges:
+    return ITEM_BADGE_STATUS.unpublishedChanges;
   default:
-    return '';
+    return ITEM_BADGE_STATUS.draft;
   }
 };
 
@@ -60,6 +56,11 @@ const getItemStatusBadgeContent = (status, messages, intl) => {
     return {
       badgeTitle: intl.formatMessage(messages.statusBadgeStaffOnly),
       badgeIcon: LockIcon,
+    };
+  case ITEM_BADGE_STATUS.unpublishedChanges:
+    return {
+      badgeTitle: intl.formatMessage(messages.statusBadgeUnpublishedChanges),
+      badgeIcon: EditOutlineIcon,
     };
   case ITEM_BADGE_STATUS.draft:
     return {

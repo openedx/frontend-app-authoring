@@ -211,6 +211,7 @@ const CourseOutline = ({ courseId }) => {
                                   background: 'white',
                                   padding: '1.75rem',
                                   marginBottom: '1.5rem',
+                                  borderRadius: '0.35rem',
                                   boxShadow: '0 0 .125rem rgba(0, 0, 0, .15), 0 0 .25rem rgba(0, 0, 0, .15)',
                                 }}
                               >
@@ -244,6 +245,7 @@ const CourseOutline = ({ courseId }) => {
                                           background: '#f8f7f6',
                                           padding: '1rem 1.5rem',
                                           marginBottom: '1.5rem',
+                                          borderRadius: '0.35rem',
                                           boxShadow: '0 0 .125rem rgba(0, 0, 0, .15), 0 0 .25rem rgba(0, 0, 0, .15)',
                                         }}
                                       >

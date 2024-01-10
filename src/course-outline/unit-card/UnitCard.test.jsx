@@ -19,10 +19,7 @@ const section = {
   id: '1',
   displayName: 'Section Name',
   published: true,
-  releasedToStudents: true,
-  visibleToStaffOnly: false,
-  visibilityState: 'visible',
-  staffOnlyMessage: false,
+  visibilityState: 'live',
   hasChanges: false,
   highlights: ['highlight 1', 'highlight 2'],
 };
@@ -31,10 +28,7 @@ const subsection = {
   id: '12',
   displayName: 'Subsection Name',
   published: true,
-  releasedToStudents: true,
-  visibleToStaffOnly: false,
-  visibilityState: 'visible',
-  staffOnlyMessage: false,
+  visibilityState: 'live',
   hasChanges: false,
 };
 
@@ -42,10 +36,7 @@ const unit = {
   id: '123',
   displayName: 'unit Name',
   published: true,
-  releasedToStudents: true,
-  visibleToStaffOnly: false,
-  visibilityState: 'visible',
-  staffOnlyMessage: false,
+  visibilityState: 'live',
   hasChanges: false,
   actions: {
     draggable: true,
