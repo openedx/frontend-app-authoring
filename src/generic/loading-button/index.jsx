@@ -1,5 +1,10 @@
 // @ts-check
-import React, { useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import {
   Button,
@@ -22,8 +27,14 @@ const LoadingButton = ({
   ...props
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  // This is used to prevent setting the isLoading state after the component has been unmounted.
+  const componentMounted = useRef(true);
 
-  const loadingOnClick = async (e) => {
+  useEffect(() => () => {
+    componentMounted.current = false;
+  }, []);
+
+  const loadingOnClick = useCallback(async (e) => {
     if (!onClick) {
       return;
     }
@@ -32,9 +43,11 @@ const LoadingButton = ({
     try {
       await onClick(e);
     } finally {
-      setIsLoading(false);
+      if (componentMounted.current) {
+        setIsLoading(false);
+      }
     }
-  };
+  }, [componentMounted, onClick]);
 
   return (
     <Button

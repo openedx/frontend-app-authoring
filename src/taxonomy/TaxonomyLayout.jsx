@@ -40,6 +40,7 @@ const TaxonomyLayout = () => {
         <StudioFooter />
         {toastMessage && (
           <Toast
+            show
             onClose={() => setToastMessage(null)}
             data-testid="taxonomy-toast"
           >

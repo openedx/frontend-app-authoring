@@ -35,11 +35,11 @@ const TaxonomyProp = PropTypes.shape({
   name: PropTypes.string.isRequired,
 });
 
-const ExportStep = ({ taxonomy, title }) => {
+const ExportStep = ({ taxonomy }) => {
   const intl = useIntl();
 
   return (
-    <Stepper.Step eventKey="export" title={title}>
+    <Stepper.Step eventKey="export" title="export">
       <Stack gap={3} data-testid="export-step">
         <p>{intl.formatMessage(messages.importWizardStepExportBody, { br: linebreak })}</p>
         <Stack gap={3} direction="horizontal">
@@ -67,7 +67,6 @@ const ExportStep = ({ taxonomy, title }) => {
 
 ExportStep.propTypes = {
   taxonomy: TaxonomyProp.isRequired,
-  title: PropTypes.string.isRequired,
 };
 
 const UploadStep = ({
@@ -75,7 +74,6 @@ const UploadStep = ({
   setFile,
   importPlanError,
   setImportPlanError,
-  title,
 }) => {
   const intl = useIntl();
 
@@ -92,7 +90,7 @@ const UploadStep = ({
   };
 
   return (
-    <Stepper.Step eventKey="upload" title={title} hasError={importPlanError}>
+    <Stepper.Step eventKey="upload" title="upload" hasError={!!importPlanError}>
       <Stack gap={3} data-testid="upload-step">
         <p>{intl.formatMessage(messages.importWizardStepUploadBody, { br: linebreak })}</p>
         <div>
@@ -126,6 +124,7 @@ const UploadStep = ({
               <IconButton
                 src={DeleteOutline}
                 iconAs={Icon}
+                alt={intl.formatMessage(messages.importWizardStepUploadClearFile)}
                 variant="secondary"
                 className="ml-auto"
                 onClick={clearFile}
@@ -149,7 +148,6 @@ UploadStep.propTypes = {
   setFile: PropTypes.func.isRequired,
   importPlanError: PropTypes.string,
   setImportPlanError: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired,
 };
 
 UploadStep.defaultProps = {
@@ -157,11 +155,11 @@ UploadStep.defaultProps = {
   importPlanError: null,
 };
 
-const PlanStep = ({ importPlan, title }) => {
+const PlanStep = ({ importPlan }) => {
   const intl = useIntl();
 
   return (
-    <Stepper.Step eventKey="plan" title={title}>
+    <Stepper.Step eventKey="plan" title="plan">
       <Stack gap={3} data-testid="plan-step">
         {intl.formatMessage(messages.importWizardStepPlanBody, { br: linebreak, changeCount: importPlan?.length })}
         <ul className="h-200px" style={{ overflow: 'scroll' }}>
@@ -178,18 +176,17 @@ const PlanStep = ({ importPlan, title }) => {
 
 PlanStep.propTypes = {
   importPlan: PropTypes.arrayOf(PropTypes.string),
-  title: PropTypes.string.isRequired,
 };
 
 PlanStep.defaultProps = {
   importPlan: null,
 };
 
-const ConfirmStep = ({ importPlan, title }) => {
+const ConfirmStep = ({ importPlan }) => {
   const intl = useIntl();
 
   return (
-    <Stepper.Step eventKey="confirm" title={title}>
+    <Stepper.Step eventKey="confirm" title="confirm">
       <Stack data-testid="confirm-step">
         {intl.formatMessage(
           messages.importWizardStepConfirmBody,
@@ -202,11 +199,20 @@ const ConfirmStep = ({ importPlan, title }) => {
 
 ConfirmStep.propTypes = {
   importPlan: PropTypes.arrayOf(PropTypes.string),
-  title: PropTypes.string.isRequired,
 };
 
 ConfirmStep.defaultProps = {
   importPlan: null,
+};
+
+const DefaultModalHeader = ({ children }) => (
+  <ModalDialog.Header>
+    <ModalDialog.Title>{children}</ModalDialog.Title>
+  </ModalDialog.Header>
+);
+
+DefaultModalHeader.propTypes = {
+  children: PropTypes.string.isRequired,
 };
 
 const ImportTagsWizard = ({
@@ -280,15 +286,31 @@ const ImportTagsWizard = ({
     }
   };
 
-  const stepTitles = {
-    export: intl.formatMessage(messages.importWizardStepExportTitle, { name: taxonomy.name }),
-    upload: intl.formatMessage(messages.importWizardStepUploadTitle),
-    plan: intl.formatMessage(messages.importWizardStepPlanTitle),
+  const stepHeaders = {
+    export: (
+      <DefaultModalHeader>
+        {intl.formatMessage(messages.importWizardStepExportTitle, { name: taxonomy.name })}
+      </DefaultModalHeader>
+    ),
+    upload: (
+      <DefaultModalHeader>
+        {intl.formatMessage(messages.importWizardStepUploadTitle)}
+      </DefaultModalHeader>
+    ),
+    plan: (
+      <DefaultModalHeader>
+        {intl.formatMessage(messages.importWizardStepPlanTitle)}
+      </DefaultModalHeader>
+    ),
     confirm: (
-      <Stack gap={2} direction="horizontal">
-        <Icon src={Warning} className="text-warning" />
-        {intl.formatMessage(messages.importWizardStepConfirmTitle, { changeCount: importPlan?.length })}
-      </Stack>
+      <ModalDialog.Header className="bg-warning-100">
+        <Stack gap={2} direction="horizontal">
+          <Icon src={Warning} className="text-warning" />
+          <ModalDialog.Title>
+            {intl.formatMessage(messages.importWizardStepConfirmTitle, { changeCount: importPlan?.length })}
+          </ModalDialog.Title>
+        </Stack>
+      </ModalDialog.Header>
     ),
   };
 
@@ -297,7 +319,7 @@ const ImportTagsWizard = ({
       onClick={(e) => e.stopPropagation() /* This prevents calling onClick handler from the parent */}
     >
       <ModalDialog
-        title={stepTitles[currentStep]}
+        title=""
         isOpen={isOpen}
         disabled={isDialogDisabled}
         isBlocking
@@ -308,26 +330,22 @@ const ImportTagsWizard = ({
           // This div is used to prevent the user from interacting with the dialog while it is disabled
           <div className="position-absolute w-100 h-100 d-block zindex-9" />
         )}
-        <ModalDialog.Header className={(currentStep === 'confirm') ? 'bg-warning-100' : undefined}>
-          <ModalDialog.Title>
-            {stepTitles[currentStep]}
-          </ModalDialog.Title>
-        </ModalDialog.Header>
+
+        {stepHeaders[currentStep]}
 
         <hr className="mx-4" />
 
         <Stepper activeKey={currentStep}>
           <ModalDialog.Body>
-            <ExportStep title={stepTitles[currentStep]} taxonomy={taxonomy} />
+            <ExportStep taxonomy={taxonomy} />
             <UploadStep
-              title={stepTitles[currentStep]}
               file={file}
               setFile={setFile}
               importPlanError={importPlanError}
               setImportPlanError={setImportPlanError}
             />
-            <PlanStep title={stepTitles[currentStep]} importPlan={importPlan} />
-            <ConfirmStep title={stepTitles[currentStep]} importPlan={importPlan} />
+            <PlanStep importPlan={importPlan} />
+            <ConfirmStep importPlan={importPlan} />
           </ModalDialog.Body>
 
           <hr className="mx-4" />

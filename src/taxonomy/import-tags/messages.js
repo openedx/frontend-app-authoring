@@ -50,6 +50,10 @@ const messages = defineMessages({
     id: 'course-authoring.import-tags.wizard.step-upload.title',
     defaultMessage: 'Upload file',
   },
+  importWizardStepUploadClearFile: {
+    id: 'course-authoring.import-tags.wizard.step-upload.clear-file',
+    defaultMessage: 'Clear file',
+  },
   importWizardStepUploadBody: {
     id: 'course-authoring.import-tags.wizard.step-upload.body',
     defaultMessage: 'You may use any spreadsheet tool (for CSV files), or any text editor (for JSON files) to create '
