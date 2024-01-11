@@ -141,6 +141,34 @@ describe('<CourseOutline />', () => {
     }));
   });
 
+  it('check video sharing option shows error on failure', async () => {
+    const { findByTestId, queryByRole } = render(<RootWrapper />);
+
+    axiosMock
+      .onPost(getEnableHighlightsEmailsApiUrl(courseId), {
+        metadata: {
+          video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
+        },
+      })
+      .reply(500);
+    const optionDropdownWrapper = await findByTestId('video-sharing-wrapper');
+    const optionDropdown = await within(optionDropdownWrapper).findByRole('button');
+    await act(async () => fireEvent.click(optionDropdown));
+    const allOffOption = await within(optionDropdownWrapper).findByText(
+      statusBarMessages.videoSharingAllOffText.defaultMessage,
+    );
+    await act(async () => fireEvent.click(allOffOption));
+
+    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+      metadata: {
+        video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
+      },
+    }));
+
+    expect(queryByRole('alert')).toBeInTheDocument();
+  });
+
   it('render error alert after failed reindex correctly', async () => {
     const { findByText, findByTestId } = render(<RootWrapper />);
 
