@@ -250,7 +250,10 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
   });
 
   it('should open manage orgs dialog menu click', async () => {
-    const { getByTestId, getByText, queryByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+    const {
+      findByText, getByTestId, getByText, queryByText,
+    } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+
     // We need to provide a taxonomy or the modal will not open
     getTaxonomy.mockResolvedValue({
       id: 1,
@@ -267,12 +270,12 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     fireEvent.click(getByTestId('taxonomy-menu-manageOrgs'));
 
     // Modal opened
-    await waitFor(() => expect(getByText('Assign to organizations')).toBeInTheDocument());
+    expect(await findByText('Assign to organizations')).toBeInTheDocument();
 
     // Click on cancel button
     fireEvent.click(getByText('Cancel'));
 
     // Modal closed
-    expect(() => getByText('Assign to organizations')).toThrow();
+    expect(queryByText('Assign to organizations')).not.toBeInTheDocument();
   });
 });

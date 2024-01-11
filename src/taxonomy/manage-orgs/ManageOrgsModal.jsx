@@ -100,7 +100,7 @@ const ManageOrgsModal = ({
         if (setToastMessage) {
           setToastMessage(intl.formatMessage(messages.assignOrgsSuccess));
         }
-      } catch (/** @type {any} */ error) {
+      } catch (error) {
         // ToDo: display the error to the user
       } finally {
         enableDialog();
@@ -131,9 +131,9 @@ const ManageOrgsModal = ({
   useEffect(() => {
     if (selectedOrgs) {
       // This is a hack to force the Form.Autosuggest to clear its value after a selection is made.
-      const inputRef = /** @type {null|HTMLInputElement} */ (document.querySelector('.pgn__form-group input'));
+      const inputRef = /** @type {null|HTMLInputElement} */ (document.querySelector('.manage-orgs .pgn__form-group input'));
       if (inputRef) {
-        //  @ts-ignore
+        //  @ts-ignore value can be null
         inputRef.value = null;
         const event = new Event('change', { bubbles: true });
         inputRef.dispatchEvent(event);
@@ -153,7 +153,6 @@ const ManageOrgsModal = ({
         isOpen={isOpen}
         onClose={onClose}
         size="lg"
-        disabled={isDialogDisabled}
         hasCloseButton
         isFullscreenOnMobile
       >
