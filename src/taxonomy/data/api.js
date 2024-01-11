@@ -5,7 +5,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const getTaxonomyListApiUrl = (org) => {
-  const url = new URL('api/content_tagging/v1/taxonomies/', getApiBaseUrl());
+  const url = new URL('api/content_tagging/v1/taxonomies/?include_perms', getApiBaseUrl());
   url.searchParams.append('enabled', 'true');
   if (org !== undefined) {
     if (org === 'Unassigned') {
@@ -32,7 +32,7 @@ export const getTaxonomyTemplateApiUrl = (format) => new URL(
   * @param {number} pk
   * @returns {string}
   */
-export const getTaxonomyApiUrl = (pk) => new URL(`api/content_tagging/v1/taxonomies/${pk}/`, getApiBaseUrl()).href;
+export const getTaxonomyApiUrl = (pk) => new URL(`api/content_tagging/v1/taxonomies/${pk}/?include_perms`, getApiBaseUrl()).href;
 
 /**
  * Get list of taxonomies.

@@ -12,7 +12,7 @@ const data = {
 };
 
 const TagBubbleComponent = ({
-  value, implicit, level, lineage, removeTagHandler, editable,
+  value, implicit, level, lineage, removeTagHandler, canDelete,
 }) => (
   <IntlProvider locale="en" messages={{}}>
     <TagBubble
@@ -21,7 +21,7 @@ const TagBubbleComponent = ({
       level={level}
       lineage={lineage}
       removeTagHandler={removeTagHandler}
-      editable={editable}
+      canDelete={canDelete}
     />
   </IntlProvider>
 );
@@ -37,7 +37,7 @@ TagBubbleComponent.propTypes = {
   level: PropTypes.number,
   lineage: PropTypes.arrayOf(PropTypes.string).isRequired,
   removeTagHandler: PropTypes.func.isRequired,
-  editable: PropTypes.bool.isRequired,
+  canDelete: PropTypes.bool.isRequired,
 };
 
 describe('<TagBubble />', () => {
@@ -45,7 +45,7 @@ describe('<TagBubble />', () => {
     const { container, getByText } = render(
       <TagBubbleComponent
         value={data.value}
-        editable
+        canDelete
         lineage={data.lineage}
         removeTagHandler={data.removeTagHandler}
       />,
@@ -63,7 +63,7 @@ describe('<TagBubble />', () => {
     const { container, getByText } = render(
       <TagBubbleComponent
         value={tagBubbleData.value}
-        editable
+        canDelete
         lineage={data.lineage}
         implicit={tagBubbleData.implicit}
         removeTagHandler={tagBubbleData.removeTagHandler}
@@ -82,7 +82,7 @@ describe('<TagBubble />', () => {
     const { container } = render(
       <TagBubbleComponent
         value={tagBubbleData.value}
-        editable
+        canDelete
         lineage={data.lineage}
         implicit={tagBubbleData.implicit}
         removeTagHandler={tagBubbleData.removeTagHandler}

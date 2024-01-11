@@ -46,13 +46,13 @@ const data = {
         lineage: ['Tag 2'],
       },
     ],
+    canTagObject: true,
   },
-  editable: true,
 };
 
-const ContentTagsCollapsibleComponent = ({ contentId, taxonomyAndTagsData, editable }) => (
+const ContentTagsCollapsibleComponent = ({ contentId, taxonomyAndTagsData }) => (
   <IntlProvider locale="en" messages={{}}>
-    <ContentTagsCollapsible contentId={contentId} taxonomyAndTagsData={taxonomyAndTagsData} editable={editable} />
+    <ContentTagsCollapsible contentId={contentId} taxonomyAndTagsData={taxonomyAndTagsData} />
   </IntlProvider>
 );
 
@@ -65,8 +65,8 @@ ContentTagsCollapsibleComponent.propTypes = {
       value: PropTypes.string,
       lineage: PropTypes.arrayOf(PropTypes.string),
     })),
+    canTagObjects: PropTypes.bool.isRequired,
   }).isRequired,
-  editable: PropTypes.bool.isRequired,
 };
 
 describe('<ContentTagsCollapsible />', () => {
@@ -85,7 +85,6 @@ describe('<ContentTagsCollapsible />', () => {
       <ContentTagsCollapsibleComponent
         contentId={componentData.contentId}
         taxonomyAndTagsData={componentData.taxonomyAndTagsData}
-        editable={componentData.editable}
       />,
     );
   }

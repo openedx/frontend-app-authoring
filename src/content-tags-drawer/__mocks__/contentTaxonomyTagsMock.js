@@ -4,7 +4,7 @@ module.exports = {
       {
         name: 'FlatTaxonomy',
         taxonomyId: 3,
-        editable: true,
+        canTagObject: true,
         tags: [
           {
             value: 'flat taxonomy tag 3856',
@@ -17,7 +17,7 @@ module.exports = {
       {
         name: 'HierarchicalTaxonomy',
         taxonomyId: 4,
-        editable: true,
+        canTagObject: true,
         tags: [
           {
             value: 'hierarchical taxonomy tag 1.7.59',

@@ -86,7 +86,7 @@ describe('<ContentTagsDrawer />', () => {
           {
             name: 'Taxonomy 1',
             taxonomyId: 123,
-            editable: true,
+            canTagObject: true,
             tags: [
               {
                 value: 'Tag 1',
@@ -101,7 +101,7 @@ describe('<ContentTagsDrawer />', () => {
           {
             name: 'Taxonomy 2',
             taxonomyId: 124,
-            editable: true,
+            canTagObject: true,
             tags: [
               {
                 value: 'Tag 3',

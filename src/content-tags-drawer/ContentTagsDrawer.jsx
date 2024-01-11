@@ -105,8 +105,7 @@ const ContentTagsDrawer = () => {
         { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded
           ? taxonomies.map((data) => (
             <div key={`taxonomy-tags-collapsible-${data.id}`}>
-              {/* TODO: Properly set whether tags should be editable or not based on permissions */}
-              <ContentTagsCollapsible contentId={contentId} taxonomyAndTagsData={data} editable />
+              <ContentTagsCollapsible contentId={contentId} taxonomyAndTagsData={data} />
               <hr />
             </div>
           ))

@@ -10,7 +10,7 @@
  * @typedef {Object} ContentTaxonomyTagData A list of the tags from one taxonomy that are applied to a content object.
  * @property {string} name
  * @property {number} taxonomyId
- * @property {boolean} editable
+ * @property {boolean} canTagObject
  * @property {Tag[]} tags
  */
 

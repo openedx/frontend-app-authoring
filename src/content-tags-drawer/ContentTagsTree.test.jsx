@@ -15,8 +15,10 @@ const data = {
           'DNA Sequencing': {
             explicit: true,
             children: {},
+            canDelete: true,
           },
         },
+        canDelete: false,
       },
       'Molecular, Cellular, and Microbiology': {
         explicit: false,
@@ -24,16 +26,18 @@ const data = {
           Virology: {
             explicit: true,
             children: {},
+            canDelete: true,
           },
         },
+        canDelete: false,
       },
     },
   },
 };
 
-const ContentTagsTreeComponent = ({ tagsTree, removeTagHandler, editable }) => (
+const ContentTagsTreeComponent = ({ tagsTree, removeTagHandler }) => (
   <IntlProvider locale="en" messages={{}}>
-    <ContentTagsTree tagsTree={tagsTree} removeTagHandler={removeTagHandler} editable={editable} />
+    <ContentTagsTree tagsTree={tagsTree} removeTagHandler={removeTagHandler} />
   </IntlProvider>
 );
 
@@ -42,16 +46,16 @@ ContentTagsTreeComponent.propTypes = {
     PropTypes.shape({
       explicit: PropTypes.bool.isRequired,
       children: PropTypes.shape({}).isRequired,
+      canDelete: PropTypes.bool.isRequired,
     }).isRequired,
   ).isRequired,
   removeTagHandler: PropTypes.func.isRequired,
-  editable: PropTypes.bool.isRequired,
 };
 
 describe('<ContentTagsTree />', () => {
   it('should render taxonomy tags data along content tags number badge', async () => {
     await act(async () => {
-      const { getByText } = render(<ContentTagsTreeComponent tagsTree={data} removeTagHandler={() => {}} editable />);
+      const { getByText } = render(<ContentTagsTreeComponent tagsTree={data} removeTagHandler={() => {}} />);
       expect(getByText('Science and Research')).toBeInTheDocument();
       expect(getByText('Genetics Subcategory')).toBeInTheDocument();
       expect(getByText('Molecular, Cellular, and Microbiology')).toBeInTheDocument();

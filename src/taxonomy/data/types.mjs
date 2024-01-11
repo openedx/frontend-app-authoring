@@ -15,6 +15,7 @@
  * @property {boolean} allOrgs
  * @property {boolean} canChange
  * @property {boolean} canDelete
+ * @property {boolean} canTagObject
  */
 
 /**

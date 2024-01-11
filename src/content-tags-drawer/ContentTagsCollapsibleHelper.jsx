@@ -74,7 +74,7 @@ const removeTags = (tree, tagsToRemove) => {
  */
 const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
   const {
-    id, contentTags,
+    id, contentTags, canTagObject,
   } = taxonomyAndTagsData;
   // State to determine whether the tags are being updating so we can make a call
   // to the update endpoint to the reflect those changes
@@ -101,7 +101,7 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
       const tags = checkedTags.map(t => decodeURIComponent(t.split(',').slice(-1)));
       updateTags.mutate({ tags });
     }
-  }, [contentId, id, checkedTags]);
+  }, [contentId, id, canTagObject, checkedTags]);
 
   // This converts the contentTags prop to the tree structure mentioned above
   const appliedContentTags = React.useMemo(() => {
@@ -128,6 +128,7 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
           currentLevel[key] = {
             explicit: isExplicit,
             children: {},
+            canDelete: item.canDelete,
           };
 
           // Populating the SelectableBox with "selected" (explicit) tags

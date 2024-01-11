@@ -11,7 +11,7 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
  * @returns {string} the URL
  */
 export const getTaxonomyTagsApiUrl = (taxonomyId, options = {}) => {
-  const url = new URL(`api/content_tagging/v1/taxonomies/${taxonomyId}/tags/`, getApiBaseUrl());
+  const url = new URL(`api/content_tagging/v1/taxonomies/${taxonomyId}/tags/?include_perms`, getApiBaseUrl());
   if (options.parentTag) {
     url.searchParams.append('parent_tag', options.parentTag);
   }
@@ -28,7 +28,7 @@ export const getTaxonomyTagsApiUrl = (taxonomyId, options = {}) => {
 
   return url.href;
 };
-export const getContentTaxonomyTagsApiUrl = (contentId) => new URL(`api/content_tagging/v1/object_tags/${contentId}/`, getApiBaseUrl()).href;
+export const getContentTaxonomyTagsApiUrl = (contentId) => new URL(`api/content_tagging/v1/object_tags/${contentId}/?include_perms`, getApiBaseUrl()).href;
 export const getXBlockContentDataApiURL = (contentId) => new URL(`/xblock/outline/${contentId}`, getApiBaseUrl()).href;
 export const getLibraryContentDataApiUrl = (contentId) => new URL(`/api/libraries/v2/blocks/${contentId}/`, getApiBaseUrl()).href;
 
@@ -76,7 +76,7 @@ export async function getContentData(contentId) {
  */
 export async function updateContentTaxonomyTags(contentId, taxonomyId, tags) {
   let url = getContentTaxonomyTagsApiUrl(contentId);
-  url = `${url}?taxonomy=${taxonomyId}`;
+  url = `${url}&taxonomy=${taxonomyId}`;
   const { data } = await getAuthenticatedHttpClient().put(url, { tags });
   return camelCaseObject(data[contentId]);
 }
