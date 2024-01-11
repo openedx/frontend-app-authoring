@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { RequestStatus } from '../data/constants';
 import {
+  createNewCourseXblock,
   fetchCourseUnitQuery,
   editCourseItemQuery,
   fetchSequence,
@@ -66,6 +67,10 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     }
   };
 
+  const handleCreateNewCourseXblock = (body) => (
+    dispatch(createNewCourseXblock(body))
+  );
+
   useEffect(() => {
     dispatch(fetchCourseUnitQuery(blockId));
     dispatch(fetchCourseSectionVerticalData(blockId));
@@ -85,5 +90,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     headerNavigationsActions,
     handleTitleEdit,
     handleTitleEditSubmit,
+    handleCreateNewCourseXblock,
   };
 };

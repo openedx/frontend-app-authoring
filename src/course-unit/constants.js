@@ -2,6 +2,7 @@ import {
   BackHand as BackHandIcon,
   BookOpen as BookOpenIcon,
   Edit as EditIcon,
+  EditNote as EditNoteIcon,
   FormatListBulleted as FormatListBulletedIcon,
   HelpOutline as HelpOutlineIcon,
   LibraryAdd as LibraryIcon,
@@ -14,7 +15,16 @@ import {
 
 export const UNIT_ICON_TYPES = ['video', 'other', 'vertical', 'problem', 'lock'];
 
-export const COMPONENT_ICON_TYPES = ['advanced', 'discussion', 'library', 'openassessment', 'problem', 'video', 'drag-and-drop-v2'];
+export const COMPONENT_ICON_TYPES = {
+  advanced: 'advanced',
+  discussion: 'discussion',
+  library: 'library',
+  html: 'html',
+  openassessment: 'openassessment',
+  problem: 'problem',
+  video: 'video',
+  dragAndDrop: 'drag-and-drop-v2',
+};
 
 export const TYPE_ICONS_MAP = {
   video: VideoCameraIcon,
@@ -25,12 +35,12 @@ export const TYPE_ICONS_MAP = {
 };
 
 export const COMPONENT_TYPE_ICON_MAP = {
-  advanced: ScienceIcon,
-  discussion: QuestionAnswerOutlineIcon,
-  library: LibraryIcon,
-  html: TextFieldsIcon,
-  openassessment: EditIcon,
-  problem: HelpOutlineIcon,
-  video: VideoCameraIcon,
-  'drag-and-drop-v2': BackHandIcon,
+  [COMPONENT_ICON_TYPES.advanced]: ScienceIcon,
+  [COMPONENT_ICON_TYPES.discussion]: QuestionAnswerOutlineIcon,
+  [COMPONENT_ICON_TYPES.library]: LibraryIcon,
+  [COMPONENT_ICON_TYPES.html]: TextFieldsIcon,
+  [COMPONENT_ICON_TYPES.openassessment]: EditNoteIcon,
+  [COMPONENT_ICON_TYPES.problem]: HelpOutlineIcon,
+  [COMPONENT_ICON_TYPES.video]: VideoCameraIcon,
+  [COMPONENT_ICON_TYPES.dragAndDrop]: BackHandIcon,
 };

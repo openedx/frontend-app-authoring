@@ -14,7 +14,10 @@ import {
   editUnitDisplayName,
   getSequenceMetadata,
   getCourseMetadata,
-  getLearningSequencesOutline, getCourseHomeCourseMetadata, getCourseSectionVerticalData,
+  getLearningSequencesOutline,
+  getCourseHomeCourseMetadata,
+  getCourseSectionVerticalData,
+  createCourseXblock,
 } from './api';
 import {
   updateLoadingCourseUnitStatus,
@@ -29,6 +32,7 @@ import {
   fetchCourseFailure,
   fetchCourseSectionVerticalDataSuccess,
   updateLoadingCourseSectionVerticalDataStatus,
+  updateLoadingCourseXblockStatus,
 } from './slice';
 
 export function fetchCourseUnitQuery(courseId) {
@@ -209,5 +213,28 @@ export function fetchCourse(courseId) {
       // Definitely an error happening
       dispatch(fetchCourseFailure({ courseId }));
     });
+  };
+}
+
+export function createNewCourseXblock(body) {
+  return async (dispatch) => {
+    dispatch(updateLoadingCourseXblockStatus({ status: RequestStatus.IN_PROGRESS }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.adding));
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+
+    try {
+      await createCourseXblock(body).then(async (result) => {
+        if (result) {
+          // ToDo: implement fetching (update) xblocks after success creating
+          dispatch(hideProcessingNotification());
+          dispatch(updateLoadingCourseXblockStatus({ status: RequestStatus.SUCCESSFUL }));
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+        }
+      });
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      dispatch(updateLoadingCourseXblockStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
   };
 }

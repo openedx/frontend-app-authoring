@@ -11,7 +11,7 @@ const ComponentIcon = ({ type }) => {
 };
 
 ComponentIcon.propTypes = {
-  type: PropTypes.oneOf(COMPONENT_ICON_TYPES).isRequired,
+  type: PropTypes.oneOf(Object.values(COMPONENT_ICON_TYPES)).isRequired,
 };
 
 export default ComponentIcon;

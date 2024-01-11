@@ -1,5 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
 import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -17,11 +18,16 @@ import messages from './messages';
 let store;
 let axiosMock;
 const blockId = '123';
+const handleCreateNewCourseXblockMock = jest.fn();
 
 const renderComponent = (props) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
-      <AddComponent {...props} />
+      <AddComponent
+        blockId={blockId}
+        handleCreateNewCourseXblock={handleCreateNewCourseXblockMock}
+        {...props}
+      />
     </IntlProvider>
   </AppProvider>,
 );
@@ -55,5 +61,35 @@ describe('<AddComponent />', () => {
         name: new RegExp(`${messages.buttonText.defaultMessage} ${componentTemplates[component].display_name}`, 'i'),
       })).toBeInTheDocument()
     ));
+  });
+
+  it('create new "Discussion" xblock on click', () => {
+    const { getByRole } = renderComponent();
+
+    const discussionButton = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Discussion`, 'i'),
+    });
+
+    userEvent.click(discussionButton);
+    expect(handleCreateNewCourseXblockMock).toHaveBeenCalled();
+    expect(handleCreateNewCourseXblockMock).toHaveBeenCalledWith({
+      parentLocator: '123',
+      type: 'discussion',
+    });
+  });
+
+  it('create new "Drag and Drop" xblock on click', () => {
+    const { getByRole } = renderComponent();
+
+    const discussionButton = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Drag and Drop`, 'i'),
+    });
+
+    userEvent.click(discussionButton);
+    expect(handleCreateNewCourseXblockMock).toHaveBeenCalled();
+    expect(handleCreateNewCourseXblockMock).toHaveBeenCalledWith({
+      parentLocator: '123',
+      type: 'drag-and-drop-v2',
+    });
   });
 });
