@@ -13,12 +13,15 @@ import CardHeader from '../card-header/CardHeader';
 import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
 import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleButton from '../card-header/TitleButton';
+import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
 
 const SubsectionCard = ({
   section,
   subsection,
+  isSelfPaced,
+  isCustomRelativeDatesActive,
   children,
   index,
   canMoveItem,
@@ -140,26 +143,35 @@ const SubsectionCard = ({
     >
       <div className="subsection-card" data-testid="subsection-card" ref={currentRef}>
         {isHeaderVisible && (
-          <CardHeader
-            title={displayName}
-            status={subsectionStatus}
-            hasChanges={hasChanges}
-            onClickMenuButton={handleClickMenuButton}
-            onClickPublish={onOpenPublishModal}
-            onClickEdit={openForm}
-            onClickDelete={onOpenDeleteModal}
-            onClickMoveUp={handleSubsectionMoveUp}
-            onClickMoveDown={handleSubsectionMoveDown}
-            onClickConfigure={onOpenConfigureModal}
-            isFormOpen={isFormOpen}
-            closeForm={closeForm}
-            onEditSubmit={handleEditSubmit}
-            isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
-            onClickDuplicate={onDuplicateSubmit}
-            titleComponent={titleComponent}
-            namePrefix={namePrefix}
-            actions={actions}
-          />
+          <>
+            <CardHeader
+              title={displayName}
+              status={subsectionStatus}
+              hasChanges={hasChanges}
+              onClickMenuButton={handleClickMenuButton}
+              onClickPublish={onOpenPublishModal}
+              onClickEdit={openForm}
+              onClickDelete={onOpenDeleteModal}
+              onClickMoveUp={handleSubsectionMoveUp}
+              onClickMoveDown={handleSubsectionMoveDown}
+              onClickConfigure={onOpenConfigureModal}
+              isFormOpen={isFormOpen}
+              closeForm={closeForm}
+              onEditSubmit={handleEditSubmit}
+              isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+              onClickDuplicate={onDuplicateSubmit}
+              titleComponent={titleComponent}
+              namePrefix={namePrefix}
+              actions={actions}
+            />
+            <div className="subsection-card__content item-children" data-testid="subsection-card__content">
+              <XBlockStatus
+                isSelfPaced={isSelfPaced}
+                isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+                blockData={subsection}
+              />
+            </div>
+          </>
         )}
         {isExpanded && (
           <div
@@ -215,6 +227,8 @@ SubsectionCard.propTypes = {
     isHeaderVisible: PropTypes.bool,
   }).isRequired,
   children: PropTypes.node,
+  isSelfPaced: PropTypes.bool.isRequired,
+  isCustomRelativeDatesActive: PropTypes.bool.isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,
   onEditSubmit: PropTypes.func.isRequired,
   savingStatus: PropTypes.string.isRequired,

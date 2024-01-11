@@ -53,6 +53,7 @@ const CourseOutline = ({ courseId }) => {
     statusBarData,
     courseActions,
     sectionsList,
+    isCustomRelativeDatesActive,
     isLoading,
     isReIndexShow,
     showErrorAlert,
@@ -309,6 +310,8 @@ const CourseOutline = ({ courseId }) => {
                                 section={section}
                                 index={sectionIndex}
                                 canMoveItem={canMoveItem(sections)}
+                                isSelfPaced={statusBarData.isSelfPaced}
+                                isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                 savingStatus={savingStatus}
                                 onOpenHighlightsModal={handleOpenHighlightsModal}
                                 onOpenPublishModal={openPublishModal}
@@ -332,6 +335,8 @@ const CourseOutline = ({ courseId }) => {
                                       subsection={subsection}
                                       index={subsectionIndex}
                                       canMoveItem={canMoveItem(section.childInfo.children)}
+                                      isSelfPaced={statusBarData.isSelfPaced}
+                                      isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                       savingStatus={savingStatus}
                                       onOpenPublishModal={openPublishModal}
                                       onOpenDeleteModal={openDeleteModal}
@@ -356,6 +361,8 @@ const CourseOutline = ({ courseId }) => {
                                             unit={unit}
                                             subsection={subsection}
                                             section={section}
+                                            isSelfPaced={statusBarData.isSelfPaced}
+                                            isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                             index={unitIndex}
                                             canMoveItem={canMoveItem(subsection.childInfo.children)}
                                             savingStatus={savingStatus}
