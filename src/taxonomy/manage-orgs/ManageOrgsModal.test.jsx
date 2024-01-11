@@ -87,6 +87,7 @@ describe('<ManageOrgsModal />', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    queryClient.clear();
   });
 
   const checkDialogRender = async (getByText) => {
