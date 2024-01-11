@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row } from '@edx/paragon';
+import { Col, Row } from '@edx/paragon';
 import { SortableItem } from '@edx/frontend-lib-content-components';
 
 const ConditionalSortableElement = ({
@@ -24,9 +24,9 @@ const ConditionalSortableElement = ({
         id={id}
         componentStyle={style}
       >
-        <div className="extend-margin">
+        <Col className="extend-margin px-0">
           {children}
-        </div>
+        </Col>
       </SortableItem>
     );
   }
@@ -36,7 +36,9 @@ const ConditionalSortableElement = ({
       style={style}
       className="mx-0"
     >
-      {children}
+      <Col className="px-0">
+        {children}
+      </Col>
     </Row>
   );
 };

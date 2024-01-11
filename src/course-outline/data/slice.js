@@ -28,6 +28,7 @@ const slice = createSlice({
       videoSharingOptions: VIDEO_SHARING_OPTIONS.perVideo,
     },
     sectionsList: [],
+    isCustomRelativeDatesActive: false,
     currentSection: {},
     currentSubsection: {},
     currentItem: {},
@@ -42,6 +43,7 @@ const slice = createSlice({
     fetchOutlineIndexSuccess: (state, { payload }) => {
       state.outlineIndexData = payload;
       state.sectionsList = payload.courseStructure?.childInfo?.children || [];
+      state.isCustomRelativeDatesActive = payload.isCustomRelativeDatesActive;
     },
     updateOutlineIndexLoadingStatus: (state, { payload }) => {
       state.loadingStatus = {

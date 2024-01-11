@@ -14,11 +14,14 @@ import CardHeader from '../card-header/CardHeader';
 import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
 import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleButton from '../card-header/TitleButton';
+import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
 
 const SectionCard = ({
   section,
+  isSelfPaced,
+  isCustomRelativeDatesActive,
   children,
   index,
   canMoveItem,
@@ -60,7 +63,6 @@ const SectionCard = ({
     highlights,
     actions: sectionActions,
     isHeaderVisible = true,
-    explanatoryMessage = '',
   } = section;
 
   // re-create actions object for customizations
@@ -174,18 +176,24 @@ const SectionCard = ({
             />
           )}
           <div className="section-card__content" data-testid="section-card__content">
-            {explanatoryMessage && <p className="text-secondary-400 x-small mb-1">{explanatoryMessage}</p>}
-            <div className="outline-section__status">
+            <div className="outline-section__status mb-1">
               <Button
-                className="section-card__highlights"
+                className="p-0 bg-transparent"
                 data-destid="section-card-highlights-button"
                 variant="tertiary"
                 onClick={handleOpenHighlightsModal}
               >
-                <Badge className="highlights-badge">{highlights.length}</Badge>
+                <Badge className="mr-1 d-flex justify-content-center align-items-center highlights-badge">
+                  {highlights.length}
+                </Badge>
                 <p className="m-0 text-black">{messages.sectionHighlightsBadge.defaultMessage}</p>
               </Button>
             </div>
+            <XBlockStatus
+              isSelfPaced={isSelfPaced}
+              isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+              blockData={section}
+            />
           </div>
           {isExpanded && (
             <div
@@ -226,7 +234,6 @@ SectionCard.propTypes = {
     visibilityState: PropTypes.string.isRequired,
     highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
     shouldScroll: PropTypes.bool,
-    explanatoryMessage: PropTypes.string,
     actions: PropTypes.shape({
       deletable: PropTypes.bool.isRequired,
       draggable: PropTypes.bool.isRequired,
@@ -235,6 +242,8 @@ SectionCard.propTypes = {
     }).isRequired,
     isHeaderVisible: PropTypes.bool,
   }).isRequired,
+  isSelfPaced: PropTypes.bool.isRequired,
+  isCustomRelativeDatesActive: PropTypes.bool.isRequired,
   children: PropTypes.node,
   onOpenHighlightsModal: PropTypes.func.isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,

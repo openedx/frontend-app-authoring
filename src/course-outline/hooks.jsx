@@ -21,6 +21,7 @@ import {
   getCurrentItem,
   getCurrentSection,
   getCurrentSubsection,
+  getCustomRelativeDatesActiveFlag,
 } from './data/selectors';
 import {
   addNewSectionQuery,
@@ -62,6 +63,7 @@ const useCourseOutline = ({ courseId }) => {
   const currentItem = useSelector(getCurrentItem);
   const currentSection = useSelector(getCurrentSection);
   const currentSubsection = useSelector(getCurrentSubsection);
+  const isCustomRelativeDatesActive = useSelector(getCustomRelativeDatesActiveFlag);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
   const [isSectionsExpanded, setSectionsExpanded] = useState(true);
@@ -242,6 +244,7 @@ const useCourseOutline = ({ courseId }) => {
     courseActions,
     savingStatus,
     sectionsList,
+    isCustomRelativeDatesActive,
     isLoading: outlineIndexLoadingStatus === RequestStatus.IN_PROGRESS,
     isReIndexShow: Boolean(reindexLink),
     showSuccessAlert,

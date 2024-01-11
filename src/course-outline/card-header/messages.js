@@ -9,6 +9,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.card.status-badge.live',
     defaultMessage: 'Live',
   },
+  statusBadgeGated: {
+    id: 'course-authoring.course-outline.card.status-badge.gated',
+    defaultMessage: 'Gated',
+  },
   statusBadgePublishedNotLive: {
     id: 'course-authoring.course-outline.card.status-badge.published-not-live',
     defaultMessage: 'Published not live',
