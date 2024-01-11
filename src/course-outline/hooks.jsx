@@ -42,6 +42,7 @@ import {
   updateCourseSectionHighlightsQuery,
   configureCourseSectionQuery,
   configureCourseSubsectionQuery,
+  configureCourseUnitQuery,
   setSectionOrderListQuery,
   setVideoSharingOptionQuery,
   setSubsectionOrderListQuery,
@@ -145,46 +146,27 @@ const useCourseOutline = ({ courseId }) => {
     closePublishModal();
   };
 
-  const handleConfigureSectionSubmit = (isVisibleToStaffOnly, startDatetime) => {
-    dispatch(configureCourseSectionQuery(currentSection.id, isVisibleToStaffOnly, startDatetime));
+  const handleConfigureModalClose = () => {
+    closeConfigureModal();
+    // reset the currentItem so the ConfigureModal's state is also reset
+    dispatch(setCurrentItem({}));
   };
 
-  const handleConfigureSubsectionSubmit = (
-    isVisibleToStaffOnly,
-    releaseDate,
-    graderType,
-    dueDateState,
-    isTimeLimitedState,
-    defaultTimeLimitMin,
-    hideAfterDueState,
-    showCorrectnessState,
-  ) => {
-    dispatch(configureCourseSubsectionQuery(
-      currentItem.id,
-      currentSection.id,
-      isVisibleToStaffOnly,
-      releaseDate,
-      graderType,
-      dueDateState,
-      isTimeLimitedState,
-      defaultTimeLimitMin,
-      hideAfterDueState,
-      showCorrectnessState,
-    ));
-  };
-
-  const handleConfigureSubmit = (...args) => {
+  const handleConfigureItemSubmit = (...arg) => {
     switch (currentItem.category) {
     case COURSE_BLOCK_NAMES.chapter.id:
-      handleConfigureSectionSubmit(...args);
+      dispatch(configureCourseSectionQuery(currentSection.id, ...arg));
       break;
     case COURSE_BLOCK_NAMES.sequential.id:
-      handleConfigureSubsectionSubmit(...args);
+      dispatch(configureCourseSubsectionQuery(currentItem.id, currentSection.id, ...arg));
+      break;
+    case COURSE_BLOCK_NAMES.vertical.id:
+      dispatch(configureCourseUnitQuery(currentItem.id, currentSection.id, ...arg));
       break;
     default:
       return;
     }
-    closeConfigureModal();
+    handleConfigureModalClose();
   };
 
   const handleEditSubmit = (itemId, sectionId, displayName) => {
@@ -271,11 +253,11 @@ const useCourseOutline = ({ courseId }) => {
     closePublishModal,
     isConfigureModalOpen,
     openConfigureModal,
-    closeConfigureModal,
+    handleConfigureModalClose,
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
     handleHighlightsFormSubmit,
-    handleConfigureSubmit,
+    handleConfigureItemSubmit,
     handlePublishItemSubmit,
     handleEditSubmit,
     statusBarData,

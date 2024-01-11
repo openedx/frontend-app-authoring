@@ -18,6 +18,7 @@ const UnitCard = ({
   index,
   canMoveItem,
   onOpenPublishModal,
+  onOpenConfigureModal,
   onEditSubmit,
   savingStatus,
   onOpenDeleteModal,
@@ -131,6 +132,7 @@ const UnitCard = ({
           hasChanges={hasChanges}
           onClickMenuButton={handleClickMenuButton}
           onClickPublish={onOpenPublishModal}
+          onClickConfigure={onOpenConfigureModal}
           onClickEdit={openForm}
           onClickDelete={onOpenDeleteModal}
           onClickMoveUp={handleUnitMoveUp}
@@ -182,6 +184,7 @@ UnitCard.propTypes = {
     shouldScroll: PropTypes.bool,
   }).isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,
+  onOpenConfigureModal: PropTypes.func.isRequired,
   onEditSubmit: PropTypes.func.isRequired,
   savingStatus: PropTypes.string.isRequired,
   onOpenDeleteModal: PropTypes.func.isRequired,

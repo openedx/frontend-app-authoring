@@ -218,6 +218,8 @@ export async function publishCourseSection(sectionId) {
 /**
  * Configure course section
  * @param {string} sectionId
+ * @param {boolean} isVisibleToStaffOnly
+ * @param {string} startDatetime
  * @returns {Promise<Object>}
  */
 export async function configureCourseSection(sectionId, isVisibleToStaffOnly, startDatetime) {
@@ -277,6 +279,27 @@ export async function configureCourseSubsection(
         start: releaseDate,
       },
     });
+  return data;
+}
+
+/**
+ * Configure course unit
+ * @param {string} unitId
+ * @param {boolean} isVisibleToStaffOnly
+ * @param {object} groupAccess
+ * @returns {Promise<Object>}
+ */
+export async function configureCourseUnit(unitId, isVisibleToStaffOnly, groupAccess) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getCourseItemApiUrl(unitId), {
+      publish: 'republish',
+      metadata: {
+        // The backend expects metadata.visible_to_staff_only to either true or null
+        visible_to_staff_only: isVisibleToStaffOnly ? true : null,
+        group_access: groupAccess,
+      },
+    });
+
   return data;
 }
 

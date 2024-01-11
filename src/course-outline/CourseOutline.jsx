@@ -69,7 +69,7 @@ const CourseOutline = ({ courseId }) => {
     isDeleteModalOpen,
     closeHighlightsModal,
     closePublishModal,
-    closeConfigureModal,
+    handleConfigureModalClose,
     closeDeleteModal,
     openPublishModal,
     openConfigureModal,
@@ -81,7 +81,7 @@ const CourseOutline = ({ courseId }) => {
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
     handleHighlightsFormSubmit,
-    handleConfigureSubmit,
+    handleConfigureItemSubmit,
     handlePublishItemSubmit,
     handleEditSubmit,
     handleDeleteItemSubmit,
@@ -362,6 +362,7 @@ const CourseOutline = ({ courseId }) => {
                                             canMoveItem={canMoveItem(subsection.childInfo.children)}
                                             savingStatus={savingStatus}
                                             onOpenPublishModal={openPublishModal}
+                                            onOpenConfigureModal={openConfigureModal}
                                             onOpenDeleteModal={openDeleteModal}
                                             onEditSubmit={handleEditSubmit}
                                             onDuplicateSubmit={handleDuplicateUnitSubmit}
@@ -428,8 +429,8 @@ const CourseOutline = ({ courseId }) => {
         />
         <ConfigureModal
           isOpen={isConfigureModalOpen}
-          onClose={closeConfigureModal}
-          onConfigureSubmit={handleConfigureSubmit}
+          onClose={handleConfigureModalClose}
+          onConfigureSubmit={handleConfigureItemSubmit}
         />
         <DeleteModal
           isOpen={isDeleteModalOpen}

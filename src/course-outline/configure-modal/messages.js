@@ -29,13 +29,37 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.section-visibility',
     defaultMessage: '{visibilityTitle} Visibility',
   },
+  unitVisibility: {
+    id: 'course-authoring.course-outline.configure-modal.visibility-tab.unit-visibility',
+    defaultMessage: 'Unit Visibility',
+  },
   hideFromLearners: {
-    id: 'course-authoring.course-outline.configure-modal.visibility-tab.hide-from-learners',
+    id: 'course-authoring.course-outline.configure-modal.visibility.hide-from-learners',
     defaultMessage: 'Hide from learners',
   },
-  visibilityWarning: {
-    id: 'course-authoring.course-outline.configure-modal.visibility-tab.visibility-warning',
+  restrictAccessTo: {
+    id: 'course-authoring.course-outline.configure-modal.visibility.restrict-access-to',
+    defaultMessage: 'Restrict access to',
+  },
+  sectionVisibilityWarning: {
+    id: 'course-authoring.course-outline.configure-modal.visibility-tab.section-visibility-warning',
     defaultMessage: 'If you make this section visible to learners, learners will be able to see its content after the release date has passed and you have published the unit. Only units that are explicitly hidden from learners will remain hidden after you clear this option for the section.',
+  },
+  unitVisibilityWarning: {
+    id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-visibility-warning',
+    defaultMessage: 'If the unit was previously published and released to learners, any changes you made to the unit when it was hidden will now be visible to learners.',
+  },
+  unitSelectGroup: {
+    id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-select-group',
+    defaultMessage: 'Select one or more groups:',
+  },
+  unitSelectGroupType: {
+    id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-select-group-type',
+    defaultMessage: 'Select a group type',
+  },
+  unitAllLearnersAndStaff: {
+    id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-all-learners-staff',
+    defaultMessage: 'All Learners and Staff',
   },
   cancelButton: {
     id: 'course-authoring.course-outline.configure-modal.button.cancel',
