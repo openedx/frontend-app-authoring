@@ -59,7 +59,7 @@ const TaxonomyMenu = ({
     import: {
       title: intl.formatMessage(messages.importMenu),
       action: () => importTaxonomyTags(taxonomy.id, intl),
-      show: taxonomy.userPermissions.canChange,
+      show: taxonomy.canChange,
     },
     export: {
       title: intl.formatMessage(messages.exportMenu),
@@ -69,7 +69,7 @@ const TaxonomyMenu = ({
     delete: {
       title: intl.formatMessage(messages.deleteMenu),
       action: deleteDialogOpen,
-      show: taxonomy.userPermissions.canDelete,
+      show: taxonomy.canDelete,
     },
   };
 
@@ -136,10 +136,8 @@ TaxonomyMenu.propTypes = {
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     tagsCount: PropTypes.number.isRequired,
-    userPermissions: PropTypes.shape({
-      canChange: PropTypes.bool.isRequired,
-      canDelete: PropTypes.bool.isRequired,
-    }).isRequired,
+    canChange: PropTypes.bool,
+    canDelete: PropTypes.bool,
   }).isRequired,
   iconMenu: PropTypes.bool,
 };

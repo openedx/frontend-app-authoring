@@ -50,9 +50,8 @@ const TaxonomyMenuComponent = ({
                 id: taxonomyId,
                 name: taxonomyName,
                 tagsCount: 0,
-                userPermissions: {
-                  canChange, canDelete,
-                },
+                canChange,
+                canDelete,
               }}
               iconMenu={iconMenu}
             />

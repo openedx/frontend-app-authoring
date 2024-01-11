@@ -16,10 +16,8 @@ const data = {
   id: taxonomyId,
   name: 'Taxonomy 1',
   description: 'This is a description',
-  userPermissions: {
-    canChange: true,
-    canDelete: true,
-  },
+  canChange: true,
+  canDelete: true,
 };
 
 const queryClient = new QueryClient();
@@ -44,10 +42,8 @@ TaxonomyCardComponent.propTypes = {
     systemDefined: PropTypes.bool,
     orgsCount: PropTypes.number,
     onDeleteTaxonomy: PropTypes.func,
-    userPermissions: PropTypes.shape({
-      canChange: PropTypes.bool,
-      canDelete: PropTypes.bool,
-    }),
+    canChange: PropTypes.bool,
+    canDelete: PropTypes.bool,
   }).isRequired,
 };
 

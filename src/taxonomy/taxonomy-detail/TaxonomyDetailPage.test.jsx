@@ -89,10 +89,8 @@ describe('<TaxonomyDetailPage />', async () => {
         name: 'Test taxonomy',
         description: 'This is a description',
         systemDefined: true,
-        userPermissions: {
-          canChange: true,
-          canDelete: true,
-        },
+        canChange: true,
+        canDelete: true,
       },
     });
     const { getByTestId, queryByTestId } = render(<RootWrapper />);
@@ -148,7 +146,6 @@ describe('<TaxonomyDetailPage />', async () => {
         name: 'Test taxonomy',
         description: 'This is a description',
         systemDefined: false,
-        userPermissions: {},
       },
     });
     const { queryByText } = render(<RootWrapper />);

@@ -23,10 +23,8 @@ const taxonomies = [{
   description: 'This is a description',
   showSystemBadge: false,
   tagsCount: 0,
-  userPermissions: {
-    canChange: true,
-    canDelete: true,
-  },
+  canChange: true,
+  canDelete: true,
 }];
 const organizationsListUrl = 'http://localhost:18010/organizations';
 const organizations = ['Org 1', 'Org 2'];
