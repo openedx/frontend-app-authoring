@@ -22,6 +22,7 @@ import {
   publishCourseSection,
   configureCourseSection,
   configureCourseSubsection,
+  configureCourseUnit,
   restartIndexingOnCourse,
   updateCourseSectionHighlights,
   setSectionOrderList,
@@ -222,13 +223,13 @@ export function publishCourseItemQuery(itemId, sectionId) {
   };
 }
 
-export function configureCourseSectionQuery(sectionId, isVisibleToStaffOnly, startDatetime) {
+export function configureCourseItemQuery(sectionId, configureFn) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      await configureCourseSection(sectionId, isVisibleToStaffOnly, startDatetime).then(async (result) => {
+      await configureFn().then(async (result) => {
         if (result) {
           await dispatch(fetchCourseSectionQuery(sectionId));
           dispatch(hideProcessingNotification());
@@ -239,6 +240,15 @@ export function configureCourseSectionQuery(sectionId, isVisibleToStaffOnly, sta
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
+  };
+}
+
+export function configureCourseSectionQuery(sectionId, isVisibleToStaffOnly, startDatetime) {
+  return async (dispatch) => {
+    dispatch(configureCourseItemQuery(
+      sectionId,
+      async () => configureCourseSection(sectionId, isVisibleToStaffOnly, startDatetime),
+    ));
   };
 }
 
@@ -255,11 +265,9 @@ export function configureCourseSubsectionQuery(
   showCorrectnessState,
 ) {
   return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
-
-    try {
-      await configureCourseSubsection(
+    dispatch(configureCourseItemQuery(
+      sectionId,
+      async () => configureCourseSubsection(
         itemId,
         isVisibleToStaffOnly,
         releaseDate,
@@ -269,17 +277,17 @@ export function configureCourseSubsectionQuery(
         defaultTimeLimitMin,
         hideAfterDueState,
         showCorrectnessState,
-      ).then(async (result) => {
-        if (result) {
-          await dispatch(fetchCourseSectionQuery(sectionId));
-          dispatch(hideProcessingNotification());
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-        }
-      });
-    } catch (error) {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
+      ),
+    ));
+  };
+}
+
+export function configureCourseUnitQuery(itemId, sectionId, isVisibleToStaffOnly, groupAccess) {
+  return async (dispatch) => {
+    dispatch(configureCourseItemQuery(
+      sectionId,
+      async () => configureCourseUnit(itemId, isVisibleToStaffOnly, groupAccess),
+    ));
   };
 }
 

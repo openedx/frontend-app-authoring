@@ -116,7 +116,7 @@ const renderComponent = () => render(
   </AppProvider>,
 );
 
-describe('<ConfigureModal />', () => {
+describe('<ConfigureModal /> for Section', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
@@ -208,7 +208,7 @@ const renderSubsectionComponent = () => render(
   </AppProvider>,
 );
 
-describe('<ConfigureModal />', () => {
+describe('<ConfigureModal /> for Subsection', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
@@ -280,6 +280,140 @@ describe('<ConfigureModal />', () => {
 
     const input = getByTestId('grader-type-select');
     fireEvent.change(input, { target: { value: 'Exam' } });
+    expect(saveButton).not.toBeDisabled();
+  });
+});
+
+const currentUnitMock = {
+  displayName: 'Unit 1',
+  id: 1,
+  category: 'vertical',
+  due: '',
+  start: '2025-08-10T10:00:00Z',
+  visibilityState: true,
+  defaultTimeLimitMinutes: null,
+  hideAfterDue: false,
+  showCorrectness: false,
+  userPartitionInfo: {
+    selectablePartitions: [
+      {
+        id: 50,
+        name: 'Enrollment Track Groups',
+        scheme: 'enrollment_track',
+        groups: [
+          {
+            id: 6,
+            name: 'Honor',
+            selected: false,
+            deleted: false,
+          },
+          {
+            id: 2,
+            name: 'Verified',
+            selected: false,
+            deleted: false,
+          },
+        ],
+      },
+      {
+        id: 1508065533,
+        name: 'Content Groups',
+        scheme: 'cohort',
+        groups: [
+          {
+            id: 1224170703,
+            name: 'Content Group 1',
+            selected: false,
+            deleted: false,
+          },
+        ],
+      },
+    ],
+    selectedPartitionIndex: -1,
+    selectedGroupsLabel: '',
+  },
+};
+
+const renderUnitComponent = () => render(
+  <AppProvider store={store}>
+    <IntlProvider locale="en">
+      <ConfigureModal
+        isOpen
+        onClose={onCloseMock}
+        onConfigureSubmit={onConfigureSubmitMock}
+      />
+    </IntlProvider>,
+  </AppProvider>,
+);
+
+describe('<ConfigureModal /> for Unit', () => {
+  beforeEach(() => {
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+
+    store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    useSelector.mockReturnValue(currentUnitMock);
+  });
+
+  it('renders unit ConfigureModal component correctly', () => {
+    const {
+      getByText, queryByText, getByRole, getByTestId,
+    } = renderUnitComponent();
+    expect(getByText(`${currentUnitMock.displayName} Settings`)).toBeInTheDocument();
+    expect(getByText(messages.unitVisibility.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.hideFromLearners.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.restrictAccessTo.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.unitSelectGroupType.defaultMessage)).toBeInTheDocument();
+
+    expect(queryByText(messages.unitSelectGroup.defaultMessage)).not.toBeInTheDocument();
+    const input = getByTestId('group-type-select');
+
+    [0, 1].forEach(groupeTypeIndex => {
+      fireEvent.change(input, { target: { value: groupeTypeIndex } });
+
+      expect(getByText(messages.unitSelectGroup.defaultMessage)).toBeInTheDocument();
+      currentUnitMock
+        .userPartitionInfo
+        .selectablePartitions[groupeTypeIndex].groups
+        .forEach(g => expect(getByText(g.name)).toBeInTheDocument());
+    });
+
+    expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
+    expect(getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
+  });
+
+  it('disables the Save button and enables it if there is a change', () => {
+    useSelector.mockReturnValue(
+      {
+        ...currentUnitMock,
+        userPartitionInfo: {
+          ...currentUnitMock.userPartitionInfo,
+          selectedPartitionIndex: 0,
+        },
+      },
+    );
+    const { getByRole, getByTestId } = renderUnitComponent();
+
+    const saveButton = getByRole('button', { name: messages.saveButton.defaultMessage });
+    expect(saveButton).toBeDisabled();
+
+    const input = getByTestId('group-type-select');
+    // unrestrict access
+    fireEvent.change(input, { target: { value: -1 } });
+    expect(saveButton).not.toBeDisabled();
+
+    fireEvent.change(input, { target: { value: 0 } });
+    expect(saveButton).toBeDisabled();
+
+    const checkbox = getByTestId('unit-visibility-checkbox');
+    fireEvent.click(checkbox);
     expect(saveButton).not.toBeDisabled();
   });
 });

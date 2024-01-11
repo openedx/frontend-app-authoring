@@ -8,16 +8,18 @@ import {
   ActionRow,
   Tab,
   Tabs,
+  useCheckboxSetValues,
 } from '@edx/paragon';
 import { useSelector } from 'react-redux';
 
 import { VisibilityTypes } from '../../data/constants';
+import { COURSE_BLOCK_NAMES } from '../constants';
 import { getCurrentItem } from '../data/selectors';
 import messages from './messages';
 import BasicTab from './BasicTab';
 import VisibilityTab from './VisibilityTab';
 import AdvancedTab from './AdvancedTab';
-import { COURSE_BLOCK_NAMES } from '../constants';
+import UnitTab from './UnitTab';
 
 const ConfigureModal = ({
   isOpen,
@@ -37,9 +39,13 @@ const ConfigureModal = ({
     courseGraders,
     category,
     format,
+    userPartitionInfo,
+    ancestorHasStaffLock,
   } = useSelector(getCurrentItem);
+
   const [releaseDate, setReleaseDate] = useState(sectionStartDate);
   const [isVisibleToStaffOnly, setIsVisibleToStaffOnly] = useState(visibilityState === VisibilityTypes.STAFF_ONLY);
+
   const [saveButtonDisabled, setSaveButtonDisabled] = useState(true);
   const [graderType, setGraderType] = useState(format == null ? 'Not Graded' : format);
   const [dueDateState, setDueDateState] = useState(due == null ? '' : due);
@@ -51,6 +57,29 @@ const ConfigureModal = ({
 
   /* TODO: The use of these useEffects needs to be updated to use Formik, please see,
   * https://github.com/open-craft/frontend-app-course-authoring/pull/22#discussion_r1435957797 as reference. */
+  // by default it is -1 i.e. accessible to all learners & staff
+  const [selectedPartitionIndex, setSelectedPartitionIndex] = useState(userPartitionInfo?.selectedPartitionIndex);
+  const getSelectedGroups = () => {
+    if (selectedPartitionIndex >= 0) {
+      return userPartitionInfo?.selectablePartitions[selectedPartitionIndex]
+        ?.groups
+        .filter(({ selected }) => selected)
+        .map(({ id }) => `${id}`)
+        || [];
+    }
+    return [];
+  };
+
+  const [selectedGroups, { add, remove, set }] = useCheckboxSetValues([]);
+
+  useEffect(() => {
+    setSelectedPartitionIndex(userPartitionInfo?.selectedPartitionIndex);
+  }, [userPartitionInfo]);
+
+  useEffect(() => {
+    set(getSelectedGroups());
+  }, [selectedPartitionIndex, userPartitionInfo]);
+
   useEffect(() => {
     setReleaseDate(sectionStartDate);
   }, [sectionStartDate]);
@@ -88,6 +117,10 @@ const ConfigureModal = ({
     const graderTypeUnchanged = graderType === (format == null ? 'Not Graded' : format);
     const dueDateUnchanged = dueDateState === (due == null ? '' : due);
     const hideAfterDueUnchanged = hideAfterDueState === (hideAfterDue === undefined ? false : hideAfterDue);
+    const selectedGroupsUnchanged = selectedGroups.sort().join(',') === getSelectedGroups().sort().join(',');
+    // handle the case of unrestricting access
+    const accessRestrictionUnchanged = selectedPartitionIndex !== -1
+                                         || userPartitionInfo?.selectedPartitionIndex === -1;
     setSaveButtonDisabled(
       visibilityUnchanged
       && releaseDate === sectionStartDate
@@ -96,7 +129,9 @@ const ConfigureModal = ({
       && defaultTimeLimitMin === defaultTimeLimitMinutes
       && hideAfterDueUnchanged
       && showCorrectnessState === showCorrectness
-      && graderTypeUnchanged,
+      && graderTypeUnchanged
+      && selectedGroupsUnchanged
+      && accessRestrictionUnchanged,
     );
   }, [
     releaseDate,
@@ -107,10 +142,16 @@ const ConfigureModal = ({
     hideAfterDueState,
     showCorrectnessState,
     graderType,
+    selectedGroups,
   ]);
 
   const handleSave = () => {
-    if (isSubsection) {
+    const groupAccess = {};
+    switch (category) {
+    case COURSE_BLOCK_NAMES.chapter.id:
+      onConfigureSubmit(isVisibleToStaffOnly, releaseDate);
+      break;
+    case COURSE_BLOCK_NAMES.sequential.id:
       onConfigureSubmit(
         isVisibleToStaffOnly,
         releaseDate,
@@ -121,25 +162,53 @@ const ConfigureModal = ({
         hideAfterDueState,
         showCorrectnessState,
       );
-    } else {
-      onConfigureSubmit(isVisibleToStaffOnly, releaseDate);
+      break;
+    case COURSE_BLOCK_NAMES.vertical.id:
+      // groupAccess should be {partitionId: [group1, group2]} or {} if selectedPartitionIndex === -1
+      if (selectedPartitionIndex >= 0) {
+        const partitionId = userPartitionInfo.selectablePartitions[selectedPartitionIndex].id;
+        groupAccess[partitionId] = selectedGroups.map(g => parseInt(g, 10));
+      }
+      onConfigureSubmit(isVisibleToStaffOnly, groupAccess);
+      break;
+    default:
+      break;
     }
   };
 
-  const handleClose = () => {
-    setReleaseDate(sectionStartDate);
-    setDueDateState(due);
-    setIsTimeLimitedState(isTimeLimited);
-    setDefaultTimeLimitMin(defaultTimeLimitMinutes);
-    setHideAfterDueState(hideAfterDue);
-    setShowCorrectnessState(showCorrectness);
-    setIsVisibleToStaffOnly(visibilityState === VisibilityTypes.STAFF_ONLY);
-    setGraderType(format);
-    onClose();
-  };
-
-  const createTabs = () => {
-    if (isSubsection) {
+  const renderModalBody = () => {
+    switch (category) {
+    case COURSE_BLOCK_NAMES.chapter.id:
+      return (
+        <Tabs>
+          <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
+            <BasicTab
+              releaseDate={releaseDate}
+              setReleaseDate={setReleaseDate}
+              isSubsection={isSubsection}
+              graderType={graderType}
+              courseGraders={courseGraders === 'undefined' ? [] : courseGraders}
+              setGraderType={setGraderType}
+              dueDate={dueDateState}
+              setDueDate={setDueDateState}
+            />
+          </Tab>
+          <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
+            <VisibilityTab
+              category={category}
+              isSubsection={isSubsection}
+              isVisibleToStaffOnly={isVisibleToStaffOnly}
+              setIsVisibleToStaffOnly={setIsVisibleToStaffOnly}
+              showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
+              hideAfterDue={hideAfterDueState}
+              setHideAfterDue={setHideAfterDueState}
+              showCorrectness={showCorrectnessState}
+              setShowCorrectness={setShowCorrectnessState}
+            />
+          </Tab>
+        </Tabs>
+      );
+    case COURSE_BLOCK_NAMES.sequential.id:
       return (
         <Tabs>
           <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
@@ -177,65 +246,55 @@ const ConfigureModal = ({
           </Tab>
         </Tabs>
       );
+    case COURSE_BLOCK_NAMES.vertical.id:
+      return (
+        <UnitTab
+          isVisibleToStaffOnly={isVisibleToStaffOnly}
+          setIsVisibleToStaffOnly={setIsVisibleToStaffOnly}
+          showWarning={visibilityState === VisibilityTypes.STAFF_ONLY && !ancestorHasStaffLock}
+          userPartitionInfo={userPartitionInfo}
+          selectedPartitionIndex={selectedPartitionIndex}
+          setSelectedPartitionIndex={setSelectedPartitionIndex}
+          selectedGroups={selectedGroups}
+          add={add}
+          remove={remove}
+        />
+      );
+    default:
+      return null;
     }
-    return (
-      <Tabs>
-        <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
-          <BasicTab
-            releaseDate={releaseDate}
-            setReleaseDate={setReleaseDate}
-            isSubsection={isSubsection}
-            graderType={graderType}
-            courseGraders={courseGraders === 'undefined' ? [] : courseGraders}
-            setGraderType={setGraderType}
-            dueDate={dueDateState}
-            setDueDate={setDueDateState}
-          />
-        </Tab>
-        <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
-          <VisibilityTab
-            category={category}
-            isSubsection={isSubsection}
-            isVisibleToStaffOnly={isVisibleToStaffOnly}
-            setIsVisibleToStaffOnly={setIsVisibleToStaffOnly}
-            showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
-            hideAfterDue={hideAfterDueState}
-            setHideAfterDue={setHideAfterDueState}
-            showCorrectness={showCorrectnessState}
-            setShowCorrectness={setShowCorrectnessState}
-          />
-        </Tab>
-      </Tabs>
-    );
   };
 
   return (
-    <ModalDialog
-      className="configure-modal"
-      isOpen={isOpen}
-      onClose={handleClose}
-      hasCloseButton
-      isFullscreenOnMobile
-    >
-      <ModalDialog.Header className="configure-modal__header">
-        <ModalDialog.Title>
-          {intl.formatMessage(messages.title, { title: displayName })}
-        </ModalDialog.Title>
-      </ModalDialog.Header>
-      <ModalDialog.Body className="configure-modal__body">
-        {createTabs()}
-      </ModalDialog.Body>
-      <ModalDialog.Footer className="pt-1">
-        <ActionRow>
-          <ModalDialog.CloseButton variant="tertiary">
-            {intl.formatMessage(messages.cancelButton)}
-          </ModalDialog.CloseButton>
-          <Button onClick={handleSave} disabled={saveButtonDisabled}>
-            {intl.formatMessage(messages.saveButton)}
-          </Button>
-        </ActionRow>
-      </ModalDialog.Footer>
-    </ModalDialog>
+    isOpen && (
+      <ModalDialog
+        className="configure-modal"
+        isOpen={isOpen}
+        onClose={onClose}
+        hasCloseButton
+        isFullscreenOnMobile
+        isFullscreenScroll
+      >
+        <ModalDialog.Header className="configure-modal__header">
+          <ModalDialog.Title>
+            {intl.formatMessage(messages.title, { title: displayName })}
+          </ModalDialog.Title>
+        </ModalDialog.Header>
+        <ModalDialog.Body className="configure-modal__body">
+          {renderModalBody(category)}
+        </ModalDialog.Body>
+        <ModalDialog.Footer className="pt-1">
+          <ActionRow>
+            <ModalDialog.CloseButton variant="tertiary">
+              {intl.formatMessage(messages.cancelButton)}
+            </ModalDialog.CloseButton>
+            <Button onClick={handleSave} disabled={saveButtonDisabled}>
+              {intl.formatMessage(messages.saveButton)}
+            </Button>
+          </ActionRow>
+        </ModalDialog.Footer>
+      </ModalDialog>
+    )
   );
 };
 

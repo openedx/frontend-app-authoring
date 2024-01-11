@@ -92,9 +92,13 @@ BasicTab.propTypes = {
   isSubsection: PropTypes.bool.isRequired,
   graderType: PropTypes.string.isRequired,
   setGraderType: PropTypes.func.isRequired,
-  dueDate: PropTypes.string.isRequired,
+  dueDate: PropTypes.string,
   setDueDate: PropTypes.func.isRequired,
   courseGraders: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
+
+BasicTab.defaultProps = {
+  dueDate: null,
 };
 
 export default injectIntl(BasicTab);

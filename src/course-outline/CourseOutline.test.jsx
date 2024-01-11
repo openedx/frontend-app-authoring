@@ -21,11 +21,12 @@ import {
 import { RequestStatus } from '../data/constants';
 import {
   configureCourseSectionQuery,
+  configureCourseSubsectionQuery,
+  configureCourseUnitQuery,
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery,
   updateCourseSectionHighlightsQuery,
-  configureCourseSubsectionQuery,
 } from './data/thunk';
 import initializeStore from '../store';
 import {
@@ -742,6 +743,90 @@ describe('<CourseOutline />', () => {
     expect(hours).toHaveValue('03:30');
   });
 
+  it('check configure unit when configure query is successful', async () => {
+    const { findAllByTestId, findByText, findByTestId } = render(<RootWrapper />);
+    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    const [subsection] = section.childInfo.children;
+    const [unit] = subsection.childInfo.children;
+    // Enrollment Track Groups : Audit
+    const newGroupAccess = { 50: [1] };
+    const isVisibleToStaffOnly = true;
+
+    axiosMock
+      .onPost(getCourseItemApiUrl(unit.id), {
+        publish: 'republish',
+        metadata: {
+          visible_to_staff_only: isVisibleToStaffOnly,
+          group_access: newGroupAccess,
+        },
+      })
+      .reply(200, { dummy: 'value' });
+
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
+
+    const [firstSection] = await findAllByTestId('section-card');
+    const [firstSubsection] = await within(firstSection).findAllByTestId('subsection-card');
+    const subsectionExpandButton = await within(firstSubsection).getByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(subsectionExpandButton);
+    const [firstUnit] = await within(firstSubsection).findAllByTestId('unit-card');
+    const unitDropdownButton = firstUnit.querySelector('#unit-card-header__menu');
+    expect(unitDropdownButton).toBeInTheDocument();
+
+    // after configuraiton response
+    unit.visibilityState = 'staff_only';
+    unit.userPartitionInfo = {
+      selectablePartitions: [
+        {
+          id: 50,
+          name: 'Enrollment Track Groups',
+          scheme: 'enrollment_track',
+          groups: [
+            {
+              id: 2,
+              name: 'Verified Certificate',
+              selected: false,
+              deleted: false,
+            },
+            {
+              id: 1,
+              name: 'Audit',
+              selected: true,
+              deleted: false,
+            },
+          ],
+        },
+      ],
+      selectedPartitionIndex: 0,
+    };
+
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
+
+    await executeThunk(
+      configureCourseUnitQuery(unit.id, section.id, isVisibleToStaffOnly, newGroupAccess),
+      store.dispatch,
+    );
+
+    fireEvent.click(unitDropdownButton);
+    const configureBtn = await within(firstUnit).getByTestId('unit-card-header__menu-configure-button');
+    // console.log('configureBtn', configureBtn);
+    fireEvent.click(configureBtn);
+
+    expect(await findByText(configureModalMessages.unitVisibility.defaultMessage)).toBeInTheDocument();
+    const visibilityCheckbox = await findByTestId('unit-visibility-checkbox');
+    expect(visibilityCheckbox).toBeChecked();
+
+    const groupeType = await findByTestId('group-type-select');
+    expect(groupeType).toHaveValue('0');
+
+    const checkboxes = await within(await findByTestId('group-checkboxes')).findAllByRole('checkbox');
+
+    expect(checkboxes[0]).not.toBeChecked();
+    expect(checkboxes[1]).toBeChecked();
+  });
   it('check update highlights when update highlights query is successfully', async () => {
     const { getByRole } = render(<RootWrapper />);
 

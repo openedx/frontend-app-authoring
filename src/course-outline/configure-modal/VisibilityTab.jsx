@@ -107,7 +107,7 @@ const VisibilityTab = ({
         <>
           <hr />
           <Alert variant="warning">
-            <FormattedMessage {...messages.visibilityWarning} />
+            <FormattedMessage {...messages.sectionVisibilityWarning} />
           </Alert>
         </>
 
