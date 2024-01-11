@@ -63,6 +63,16 @@ const PagesAndResources = ({ courseId, intl }) => {
     });
   }
 
+  // Xpert learning assistant
+  if (_.some(pages, (page) => page.id === 'learning_assistant')) {
+    const index = pages.findIndex(app => app.id === 'learning_assistant');
+
+    // We want the Xpert learning assistant page to appear in the "Content Permissions" section instead,
+    // so we remove it from pages and add it to contentPermissionsPages.
+    const [page] = pages.splice(index, 1);
+    contentPermissionsPages.push(page);
+  }
+
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
