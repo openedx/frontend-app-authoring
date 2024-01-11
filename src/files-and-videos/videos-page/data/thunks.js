@@ -339,6 +339,7 @@ export function clearAutomatedTranscript({ courseId }) {
 
     try {
       await deleteTranscriptPreferences(courseId);
+      dispatch(updateTranscriptPreferenceSuccess({ modified: new Date() }));
       dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       dispatch(updateErrors({ error: 'transcript', message: 'Failed to update order transcripts settings.' }));
