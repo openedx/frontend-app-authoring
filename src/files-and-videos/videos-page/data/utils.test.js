@@ -24,7 +24,7 @@ describe('getSupportedFormats', () => {
     expect(expected).toEqual(actual);
   });
   it('should return array of valid file types', () => {
-    const expected = ['video/mp4', 'video/mov'];
+    const expected = ['video/mp4', 'video/quicktime'];
     const actual = getSupportedFormats({ 'video/*': ['.mp4', '.mov'] });
     expect(expected).toEqual(actual);
   });
