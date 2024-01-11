@@ -107,9 +107,9 @@ const TaxonomyMenu = ({
   };
 
   return (
-    <Dropdown id="taxonomy-menu" onToggle={(_isOpen, ev) => ev.preventDefault()}>
+    <Dropdown id={`taxonomy-menu-${taxonomy.id}`} onToggle={(_isOpen, ev) => ev.preventDefault()}>
       <Dropdown.Toggle
-        id="taxonomy-menu-toggle"
+        id={`taxonomy-menu-toggle-${taxonomy.id}`}
         {...toggleProps}
         variant="primary"
         alt={intl.formatMessage(messages.actionsButtonAlt, { name: taxonomy.name })}
