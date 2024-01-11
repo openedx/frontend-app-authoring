@@ -18,6 +18,7 @@ import { useDeleteTaxonomy } from '../data/apiHooks';
 import { TaxonomyContext } from '../common/context';
 import DeleteDialog from '../delete-dialog';
 import { importTaxonomyTags } from '../import-tags';
+import { ManageOrgsModal } from '../manage-orgs';
 import messages from './messages';
 
 const TaxonomyMenu = ({
@@ -45,6 +46,7 @@ const TaxonomyMenu = ({
 
   const [isDeleteDialogOpen, deleteDialogOpen, deleteDialogClose] = useToggle(false);
   const [isExportModalOpen, exportModalOpen, exportModalClose] = useToggle(false);
+  const [isManageOrgsModalOpen, manageOrgsModalOpen, manageOrgsModalClose] = useToggle(false);
 
   /**
     * @typedef {Object} MenuItem
@@ -71,6 +73,11 @@ const TaxonomyMenu = ({
       action: deleteDialogOpen,
       show: taxonomy.canDelete,
     },
+    manageOrgs: {
+      title: intl.formatMessage(messages.manageOrgsMenu),
+      action: manageOrgsModalOpen,
+      show: taxonomy.canChange,
+    },
   };
 
   // Remove hidden menu items
@@ -91,6 +98,13 @@ const TaxonomyMenu = ({
         <ExportModal
           isOpen={isExportModalOpen}
           onClose={exportModalClose}
+          taxonomyId={taxonomy.id}
+        />
+      )}
+      {isManageOrgsModalOpen && (
+        <ManageOrgsModal
+          isOpen={isManageOrgsModalOpen}
+          onClose={manageOrgsModalClose}
           taxonomyId={taxonomy.id}
         />
       )}

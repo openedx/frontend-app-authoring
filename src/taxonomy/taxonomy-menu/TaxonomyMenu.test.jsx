@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 
 import { TaxonomyContext } from '../common/context';
 import initializeStore from '../../store';
-import { deleteTaxonomy, getTaxonomyExportFile } from '../data/api';
+import { deleteTaxonomy, getTaxonomy, getTaxonomyExportFile } from '../data/api';
 import { importTaxonomyTags } from '../import-tags';
 import { TaxonomyMenu } from '.';
 
@@ -24,6 +24,7 @@ jest.mock('../data/api', () => ({
   ...jest.requireActual('../data/api'),
   getTaxonomyExportFile: jest.fn(),
   deleteTaxonomy: jest.fn(),
+  getTaxonomy: jest.fn(),
 }));
 
 const queryClient = new QueryClient();
@@ -115,14 +116,24 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
   });
 
   test('Shows menu actions that user is permitted', () => {
-    const { getByTestId, queryByTestId } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+    const { getByTestId, queryByTestId } = render(
+      <TaxonomyMenuComponent
+        iconMenu={iconMenu}
+        canChange
+        canDelete
+      />,
+    );
 
     // Click on the menu button to open
     fireEvent.click(getByTestId('taxonomy-menu-button'));
 
-    // Ensure that the menu items are present
+    // Menu opened
+    expect(getByTestId('taxonomy-menu')).toBeVisible();
+
+    // Ensure expected menu items are found
     expect(queryByTestId('taxonomy-menu-export')).toBeInTheDocument();
     expect(queryByTestId('taxonomy-menu-import')).toBeInTheDocument();
+    expect(queryByTestId('taxonomy-menu-manageOrgs')).toBeInTheDocument();
     expect(queryByTestId('taxonomy-menu-delete')).toBeInTheDocument();
   });
 
@@ -141,6 +152,7 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     // Ensure expected menu items are found
     expect(queryByTestId('taxonomy-menu-export')).toBeInTheDocument();
     expect(queryByTestId('taxonomy-menu-import')).not.toBeInTheDocument();
+    expect(queryByTestId('taxonomy-menu-manageOrgs')).not.toBeInTheDocument();
     expect(queryByTestId('taxonomy-menu-delete')).not.toBeInTheDocument();
   });
 
@@ -243,5 +255,35 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
 
     // Toast message shown
     expect(mockSetToastMessage).toBeCalledWith(`"${taxonomyName}" deleted`);
+  });
+
+  it('should open manage orgs dialog menu click', async () => {
+    const {
+      findByText, getByTestId, getByText, queryByText,
+    } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+
+    // We need to provide a taxonomy or the modal will not open
+    getTaxonomy.mockResolvedValue({
+      id: 1,
+      name: 'Taxonomy 1',
+      orgs: [],
+      allOrgs: true,
+    });
+
+    // Modal closed
+    expect(queryByText('Assign to organizations')).not.toBeInTheDocument();
+
+    // Click on delete menu
+    fireEvent.click(getByTestId('taxonomy-menu-button'));
+    fireEvent.click(getByTestId('taxonomy-menu-manageOrgs'));
+
+    // Modal opened
+    expect(await findByText('Assign to organizations')).toBeInTheDocument();
+
+    // Click on cancel button
+    fireEvent.click(getByText('Cancel'));
+
+    // Modal closed
+    expect(queryByText('Assign to organizations')).not.toBeInTheDocument();
   });
 });

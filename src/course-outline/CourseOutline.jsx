@@ -7,6 +7,7 @@ import {
   Button,
   Container,
   Layout,
+  Row,
   TransitionReplace,
 } from '@edx/paragon';
 import { Helmet } from 'react-helmet';
@@ -22,6 +23,7 @@ import {
   ErrorAlert,
 } from '@edx/frontend-lib-content-components';
 
+import { LoadingSpinner } from '../generic/Loading';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import { RequestStatus } from '../data/constants';
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -35,6 +37,7 @@ import StatusBar from './status-bar/StatusBar';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
 import SectionCard from './section-card/SectionCard';
 import SubsectionCard from './subsection-card/SubsectionCard';
+import UnitCard from './unit-card/UnitCard';
 import HighlightsModal from './highlights-modal/HighlightsModal';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import PublishModal from './publish-modal/PublishModal';
@@ -83,8 +86,11 @@ const CourseOutline = ({ courseId }) => {
     handleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
+    handleDuplicateUnitSubmit,
     handleNewSectionSubmit,
     handleNewSubsectionSubmit,
+    handleNewUnitSubmit,
+    getUnitUrl,
     handleDragNDrop,
   } = useCourseOutline({ courseId });
 
@@ -109,7 +115,11 @@ const CourseOutline = ({ courseId }) => {
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
-    return <></>;
+    return (
+      <Row className="m-0 mt-4 justify-content-center">
+        <LoadingSpinner />
+      </Row>
+    );
   }
 
   return (
@@ -207,7 +217,23 @@ const CourseOutline = ({ courseId }) => {
                                       onOpenDeleteModal={openDeleteModal}
                                       onEditSubmit={handleEditSubmit}
                                       onDuplicateSubmit={handleDuplicateSubsectionSubmit}
-                                    />
+                                      onNewUnitSubmit={handleNewUnitSubmit}
+                                    >
+                                      {subsection.childInfo.children.map((unit) => (
+                                        <UnitCard
+                                          key={unit.id}
+                                          unit={unit}
+                                          subsection={subsection}
+                                          section={section}
+                                          savingStatus={savingStatus}
+                                          onOpenPublishModal={openPublishModal}
+                                          onOpenDeleteModal={openDeleteModal}
+                                          onEditSubmit={handleEditSubmit}
+                                          onDuplicateSubmit={handleDuplicateUnitSubmit}
+                                          getTitleLink={getUnitUrl}
+                                        />
+                                      ))}
+                                    </SubsectionCard>
                                   ))}
                                 </SectionCard>
                               </SortableItem>

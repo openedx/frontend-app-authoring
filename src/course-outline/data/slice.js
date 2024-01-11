@@ -121,6 +121,23 @@ const slice = createSlice({
         return section;
       });
     },
+    deleteUnit: (state, { payload }) => {
+      state.sectionsList = state.sectionsList.map((section) => {
+        if (section.id !== payload.sectionId) {
+          return section;
+        }
+        section.childInfo.children = section.childInfo.children.map((subsection) => {
+          if (subsection.id !== payload.subsectionId) {
+            return subsection;
+          }
+          subsection.childInfo.children = subsection.childInfo.children.filter(
+            ({ id }) => id !== payload.itemId,
+          );
+          return subsection;
+        });
+        return section;
+      });
+    },
     duplicateSection: (state, { payload }) => {
       state.sectionsList = state.sectionsList.reduce((result, currentValue) => {
         if (currentValue.id === payload.id) {
@@ -149,6 +166,7 @@ export const {
   setCurrentSubsection,
   deleteSection,
   deleteSubsection,
+  deleteUnit,
   duplicateSection,
   reorderSectionList,
 } = slice.actions;

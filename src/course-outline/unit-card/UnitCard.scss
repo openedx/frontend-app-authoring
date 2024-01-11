@@ -1,24 +1,23 @@
-.subsection-card {
+.unit-card {
   @include pgn-box-shadow(1, "centered");
 
   padding: $spacer 2rem;
   margin-bottom: 1.5rem;
-  background: $light-200;
+  background: $light-100;
 
-  .subsection-card__content {
+  .unit-card__content {
     margin: $spacer;
-  }
-
-  .subsection-card__units {
-    padding-top: $spacer;
   }
 
   .item-card-header__badge-status {
     background: $light-100;
   }
 
-  .subsection-card-title {
-    font-size: $h4-font-size;
+  // used in src/course-outline/card-header/TitleLink.jsx &
+  // src/course-outline/card-header/TitleButton.jsx as
+  // `${namePrefix}-card-title`
+  .unit-card-title {
+    font-size: $h5-font-size;
     font-family: $headings-font-family;
     font-weight: $headings-font-weight;
     line-height: $headings-line-height;

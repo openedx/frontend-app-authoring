@@ -12,6 +12,7 @@
  * @property {boolean} visibleToAuthors
  * @property {number} tagsCount
  * @property {string[]} orgs
+ * @property {boolean} allOrgs
  * @property {boolean} canChange
  * @property {boolean} canDelete
  */
