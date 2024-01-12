@@ -5,7 +5,6 @@ import {
   addModels,
   removeModel,
   updateModel,
-  updateModels,
 } from '../../../generic/model-store';
 import {
   addThumbnail,
@@ -38,6 +37,20 @@ import {
 
 import { updateFileValues } from './utils';
 
+async function fetchUsageLocation(videoId, dispatch, courseId) {
+  const { usageLocations } = await getVideoUsagePaths({ videoId, courseId });
+  const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
+
+  dispatch(updateModel({
+    modelType: 'videos',
+    model: {
+      id: videoId,
+      usageLocations,
+      activeStatus,
+    },
+  }));
+}
+
 export function fetchVideos(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
@@ -51,6 +64,9 @@ export function fetchVideos(courseId) {
       }));
       dispatch(setPageSettings({ ...data }));
       dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
+      parsedVideos.forEach(async (video) => {
+        fetchUsageLocation(video.id, dispatch, courseId);
+      });
     } catch (error) {
       if (error.response && error.response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
@@ -90,7 +106,7 @@ export function deleteVideoFile(courseId, id) {
   };
 }
 
-export function addVideoFile(courseId, file) {
+export function addVideoFile(courseId, file, videoIds) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
 
@@ -104,8 +120,9 @@ export function addVideoFile(courseId, file) {
         edxVideoId,
       );
       const { videos } = await fetchVideoList(courseId);
-      const parsedVideos = updateFileValues(videos);
-      dispatch(updateModels({
+      const newVideos = videos.filter(video => !videoIds.includes(video.edxVideoId));
+      const parsedVideos = updateFileValues(newVideos, true);
+      dispatch(addModels({
         modelType: 'videos',
         models: parsedVideos,
       }));

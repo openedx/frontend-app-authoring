@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 
 import { TaxonomyContext } from '../common/context';
 import initializeStore from '../../store';
-import { deleteTaxonomy, getTaxonomyExportFile } from '../data/api';
+import { deleteTaxonomy, getTaxonomy, getTaxonomyExportFile } from '../data/api';
 import { TaxonomyMenu } from '.';
 
 let store;
@@ -19,6 +19,7 @@ jest.mock('../data/api', () => ({
   ...jest.requireActual('../data/api'),
   getTaxonomyExportFile: jest.fn(),
   deleteTaxonomy: jest.fn(),
+  getTaxonomy: jest.fn(),
 }));
 
 const queryClient = new QueryClient();
@@ -123,6 +124,7 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
 
     // Check that the import menu is not show
     expect(queryByTestId('taxonomy-menu-import')).not.toBeInTheDocument();
+    expect(queryByTestId('taxonomy-menu-manageOrgs')).not.toBeInTheDocument();
   });
 
   test('doesnt show freeText taxonomies disabled menus', () => {
@@ -240,5 +242,35 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
 
     // Toast message shown
     expect(mockSetToastMessage).toBeCalledWith(`"${taxonomyName}" deleted`);
+  });
+
+  it('should open manage orgs dialog menu click', async () => {
+    const {
+      findByText, getByTestId, getByText, queryByText,
+    } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+
+    // We need to provide a taxonomy or the modal will not open
+    getTaxonomy.mockResolvedValue({
+      id: 1,
+      name: 'Taxonomy 1',
+      orgs: [],
+      allOrgs: true,
+    });
+
+    // Modal closed
+    expect(queryByText('Assign to organizations')).not.toBeInTheDocument();
+
+    // Click on delete menu
+    fireEvent.click(getByTestId('taxonomy-menu-button'));
+    fireEvent.click(getByTestId('taxonomy-menu-manageOrgs'));
+
+    // Modal opened
+    expect(await findByText('Assign to organizations')).toBeInTheDocument();
+
+    // Click on cancel button
+    fireEvent.click(getByText('Cancel'));
+
+    // Modal closed
+    expect(queryByText('Assign to organizations')).not.toBeInTheDocument();
   });
 });

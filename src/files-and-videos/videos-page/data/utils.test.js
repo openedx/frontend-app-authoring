@@ -23,8 +23,13 @@ describe('getSupportedFormats', () => {
     const actual = getSupportedFormats({ 'image/*': '.png' });
     expect(expected).toEqual(actual);
   });
+  it('should return video/quicktime for .mov', () => {
+    const expected = ['video/quicktime'];
+    const actual = getSupportedFormats({ 'video/*': '.mov' });
+    expect(expected).toEqual(actual);
+  });
   it('should return array of valid file types', () => {
-    const expected = ['video/mp4', 'video/mov'];
+    const expected = ['video/mp4', 'video/quicktime'];
     const actual = getSupportedFormats({ 'video/*': ['.mp4', '.mov'] });
     expect(expected).toEqual(actual);
   });

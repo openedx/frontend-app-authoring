@@ -174,17 +174,21 @@ export async function uploadVideo(
   uploadFile,
   edxVideoId,
 ) {
-  const formData = new FormData();
-  formData.append('uploaded-file', uploadFile);
   const uploadErrors = [];
+
   await fetch(uploadUrl, {
     method: 'PUT',
-    body: formData,
     headers: {
-      'Content-Type': 'multipart/form-data',
+      'Content-Disposition': `attachment; filename="${uploadFile.name}"`,
+      'Content-Type': uploadFile.type,
     },
+    multipart: false,
+    body: uploadFile,
   })
-    .then(async () => {
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error();
+      }
       await getAuthenticatedHttpClient()
         .post(getCourseVideosApiUrl(courseId), [{
           edxVideoId,

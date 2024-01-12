@@ -39,6 +39,7 @@ import {
   updateFetchSectionLoadingStatus,
   deleteSection,
   deleteSubsection,
+  deleteUnit,
   duplicateSection,
   reorderSectionList,
 } from './slice';
@@ -264,6 +265,15 @@ export function deleteCourseSubsectionQuery(subsectionId, sectionId) {
   };
 }
 
+export function deleteCourseUnitQuery(unitId, subsectionId, sectionId) {
+  return async (dispatch) => {
+    dispatch(deleteCourseItemQuery(
+      unitId,
+      () => deleteUnit({ itemId: unitId, subsectionId, sectionId }),
+    ));
+  };
+}
+
 /**
  * Generic function to duplicate any course item. See wrapper functions below for specific implementations.
  * @param {string} itemId
@@ -316,6 +326,16 @@ export function duplicateSubsectionQuery(subsectionId, sectionId) {
   };
 }
 
+export function duplicateUnitQuery(unitId, subsectionId, sectionId) {
+  return async (dispatch) => {
+    dispatch(duplicateCourseItemQuery(
+      unitId,
+      subsectionId,
+      async () => dispatch(fetchCourseSectionQuery(sectionId, true)),
+    ));
+  };
+}
+
 /**
  * Generic function to add any course item. See wrapper functions below for specific implementations.
  * @param {string} parentLocator
@@ -336,10 +356,7 @@ function addNewCourseItemQuery(parentLocator, category, displayName, addItemFn) 
         displayName,
       ).then(async (result) => {
         if (result) {
-          const data = await getCourseItem(result.locator);
-          // Page should scroll to newly created item.
-          data.shouldScroll = true;
-          dispatch(addItemFn(data));
+          await addItemFn(result);
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(hideProcessingNotification());
         }
@@ -357,7 +374,12 @@ export function addNewSectionQuery(parentLocator) {
       parentLocator,
       COURSE_BLOCK_NAMES.chapter.id,
       COURSE_BLOCK_NAMES.chapter.name,
-      (data) => addSection(data),
+      async (result) => {
+        const data = await getCourseItem(result.locator);
+        // Page should scroll to newly created section.
+        data.shouldScroll = true;
+        dispatch(addSection(data));
+      },
     ));
   };
 }
@@ -368,7 +390,23 @@ export function addNewSubsectionQuery(parentLocator) {
       parentLocator,
       COURSE_BLOCK_NAMES.sequential.id,
       COURSE_BLOCK_NAMES.sequential.name,
-      (data) => addSubsection({ parentLocator, data }),
+      async (result) => {
+        const data = await getCourseItem(result.locator);
+        // Page should scroll to newly created subsection.
+        data.shouldScroll = true;
+        dispatch(addSubsection({ parentLocator, data }));
+      },
+    ));
+  };
+}
+
+export function addNewUnitQuery(parentLocator, callback) {
+  return async (dispatch) => {
+    dispatch(addNewCourseItemQuery(
+      parentLocator,
+      COURSE_BLOCK_NAMES.vertical.id,
+      COURSE_BLOCK_NAMES.vertical.name,
+      async (result) => callback(result.locator),
     ));
   };
 }

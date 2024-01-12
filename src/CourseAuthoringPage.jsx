@@ -54,9 +54,9 @@ const CourseAuthoringPage = ({ courseId, children }) => {
   const courseDetailStatus = useSelector(state => state.courseDetail.status);
   const inProgress = courseDetailStatus === RequestStatus.IN_PROGRESS;
   const { pathname } = useLocation();
-  const showHeader = !pathname.includes('/editor');
+  const isEditor = pathname.includes('/editor');
 
-  if (courseDetailStatus === RequestStatus.NOT_FOUND) {
+  if (courseDetailStatus === RequestStatus.NOT_FOUND && !isEditor) {
     return (
       <NotFoundAlert />
     );
@@ -72,8 +72,8 @@ const CourseAuthoringPage = ({ courseId, children }) => {
       using url pattern containing /editor/,
       we shouldn't have the header and footer on these pages.
       This functionality will be removed in TNL-9591 */}
-      {inProgress ? showHeader && <Loading />
-        : (showHeader && (
+      {inProgress ? !isEditor && <Loading />
+        : (!isEditor && (
           <AppHeader
             courseNumber={courseNumber}
             courseOrg={courseOrg}
@@ -83,7 +83,7 @@ const CourseAuthoringPage = ({ courseId, children }) => {
         )
         )}
       {children}
-      {!inProgress && showHeader && <StudioFooter />}
+      {!inProgress && !isEditor && <StudioFooter />}
     </div>
   );
 };

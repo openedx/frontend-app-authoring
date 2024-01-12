@@ -17,7 +17,7 @@ import taxonomyMessages from '../messages';
 import { TagListTable } from '../tag-list';
 import { TaxonomyMenu } from '../taxonomy-menu';
 import TaxonomyDetailSideCard from './TaxonomyDetailSideCard';
-import { useTaxonomyDetailDataResponse, useTaxonomyDetailDataStatus } from './data/apiHooks';
+import { useTaxonomyDetailDataResponse, useTaxonomyDetailDataStatus } from '../data/apiHooks';
 import SystemDefinedBadge from '../system-defined-badge';
 
 const TaxonomyDetailPage = () => {

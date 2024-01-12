@@ -68,6 +68,10 @@ describe('<TaxonomyListPage />', () => {
     axiosMock.onGet(organizationsListUrl).reply(200, organizations);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should render page and page title correctly', () => {
     const { getByText } = render(<RootWrapper />);
     expect(getByText('Taxonomies')).toBeInTheDocument();
@@ -131,7 +135,11 @@ describe('<TaxonomyListPage />', () => {
   it('should show all "All taxonomies", "Unassigned" and org names in taxonomy org filter', async () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
-      results: taxonomies,
+      results: [{
+        id: 1,
+        name: 'Taxonomy',
+        description: 'This is a description',
+      }],
     });
 
     const {
