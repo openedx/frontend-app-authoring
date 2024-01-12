@@ -13,9 +13,9 @@ import messages from './messages';
 const TaxonomyLayout = () => {
   const intl = useIntl();
   // Use `setToastMessage` to show the toast.
-  const [toastMessage, setToastMessage] = useState(null);
+  const [toastMessage, setToastMessage] = useState(/** @type{null|string} */ (null));
   // Use `setToastMessage` to show the alert.
-  const [alertProps, setAlertProps] = useState(null);
+  const [alertProps, setAlertProps] = useState(/** @type {null|import('./common/context').AlertProps} */ (null));
 
   const context = useMemo(() => ({
     toastMessage, setToastMessage, alertProps, setAlertProps,
@@ -32,7 +32,6 @@ const TaxonomyLayout = () => {
             dismissible
             closeLabel={intl.formatMessage(messages.taxonomyDismissLabel)}
             onClose={() => setAlertProps(null)}
-            // @ts-ignore ToDo: fix object spread type error
             {...alertProps}
           />
         )}
