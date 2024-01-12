@@ -12,7 +12,7 @@
  *   Ex. useTaxonomyListDataResponse & useIsTaxonomyListDataLoaded.
  */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getTaxonomyListData, deleteTaxonomy } from './api';
+import { getTaxonomyListData, deleteTaxonomy, getTaxonomy } from './api';
 
 /**
  * Builds the query to get the taxonomy list
@@ -41,6 +41,16 @@ export const useDeleteTaxonomy = () => {
   return mutate;
 };
 
+/** Builds the query to get the taxonomy detail
+  * @param {number} taxonomyId
+  */
+const useTaxonomyDetailData = (taxonomyId) => (
+  useQuery({
+    queryKey: ['taxonomyDetail', taxonomyId],
+    queryFn: async () => getTaxonomy(taxonomyId),
+  })
+);
+
 /**
  * Gets the taxonomy list data
  * @param {string} org Optional organization query param
@@ -62,3 +72,35 @@ export const useTaxonomyListDataResponse = (org) => {
 export const useIsTaxonomyListDataLoaded = (org) => (
   useTaxonomyListData(org).status === 'success'
 );
+
+/**
+ * @param {number} taxonomyId
+ * @returns {Pick<import('@tanstack/react-query').UseQueryResult, "error" | "isError" | "isFetched" | "isSuccess">}
+ */
+export const useTaxonomyDetailDataStatus = (taxonomyId) => {
+  const {
+    isError,
+    error,
+    isFetched,
+    isSuccess,
+  } = useTaxonomyDetailData(taxonomyId);
+  return {
+    isError,
+    error,
+    isFetched,
+    isSuccess,
+  };
+};
+
+/**
+ * @param {number} taxonomyId
+ * @returns {import("./types.mjs").TaxonomyData | undefined}
+ */
+export const useTaxonomyDetailDataResponse = (taxonomyId) => {
+  const { isSuccess, data } = useTaxonomyDetailData(taxonomyId);
+  if (isSuccess) {
+    return data;
+  }
+
+  return undefined;
+};

@@ -1,0 +1,13 @@
+.manage-orgs {
+  /*
+    This style is needed to override the default overflow: scroll on the modal,
+    preventing the dropdown to overflow the modal.
+    This is being fixed here:
+    https://github.com/openedx/paragon/pull/2939
+  */
+  overflow: visible !important;
+
+  .pgn__modal-body {
+    overflow: visible;
+  }
+}

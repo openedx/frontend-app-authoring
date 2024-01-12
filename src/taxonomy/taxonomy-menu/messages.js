@@ -14,6 +14,10 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-menu.import.label',
     defaultMessage: 'Re-import',
   },
+  manageOrgsMenu: {
+    id: 'course-authoring.taxonomy-menu.assign-orgs.label',
+    defaultMessage: 'Manage Organizations',
+  },
   exportMenu: {
     id: 'course-authoring.taxonomy-menu.export.label',
     defaultMessage: 'Export',
