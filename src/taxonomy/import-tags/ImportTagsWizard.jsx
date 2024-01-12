@@ -321,7 +321,6 @@ const ImportTagsWizard = ({
       <ModalDialog
         title=""
         isOpen={isOpen}
-        disabled={isDialogDisabled}
         isBlocking
         onClose={onClose}
         size="lg"
