@@ -92,4 +92,19 @@ describe('<AddComponent />', () => {
       type: 'drag-and-drop-v2',
     });
   });
+
+  it('create new "Problem" xblock on click', () => {
+    const { getByRole } = renderComponent();
+
+    const discussionButton = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Problem`, 'i'),
+    });
+
+    userEvent.click(discussionButton);
+    expect(handleCreateNewCourseXblockMock).toHaveBeenCalled();
+    expect(handleCreateNewCourseXblockMock).toHaveBeenCalledWith({
+      parentLocator: '123',
+      type: 'problem',
+    }, expect.any(Function));
+  });
 });

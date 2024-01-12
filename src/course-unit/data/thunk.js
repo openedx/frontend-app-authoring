@@ -216,7 +216,7 @@ export function fetchCourse(courseId) {
   };
 }
 
-export function createNewCourseXblock(body) {
+export function createNewCourseXblock(body, callback) {
   return async (dispatch) => {
     dispatch(updateLoadingCourseXblockStatus({ status: RequestStatus.IN_PROGRESS }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.adding));
@@ -229,6 +229,9 @@ export function createNewCourseXblock(body) {
           dispatch(hideProcessingNotification());
           dispatch(updateLoadingCourseXblockStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          if (callback) {
+            callback(result);
+          }
         }
       });
     } catch (error) {
