@@ -13,8 +13,8 @@
  * @property {number} tagsCount
  * @property {string[]} orgs
  * @property {boolean} allOrgs
- * @property {boolean} canChange
- * @property {boolean} canDelete
+ * @property {boolean} canChangeTaxonomy
+ * @property {boolean} canDeleteTaxonomy
  * @property {boolean} canTagObject
  */
 
@@ -27,6 +27,6 @@
  * @property {number} currentPage
  * @property {number} start
  * @property {function} refetch
- * @property {boolean} canAdd
+ * @property {boolean} canAddTaxonomy
  * @property {TaxonomyData[]} results
  */

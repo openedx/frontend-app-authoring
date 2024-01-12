@@ -8,6 +8,7 @@ import ContentTagsTree from './ContentTagsTree';
 const data = {
   'Science and Research': {
     explicit: false,
+    canDeleteObjecttag: false,
     children: {
       'Genetics Subcategory': {
         explicit: false,
@@ -15,10 +16,10 @@ const data = {
           'DNA Sequencing': {
             explicit: true,
             children: {},
-            canDelete: true,
+            canDeleteObjecttag: true,
           },
         },
-        canDelete: false,
+        canDeleteObjecttag: false,
       },
       'Molecular, Cellular, and Microbiology': {
         explicit: false,
@@ -26,10 +27,10 @@ const data = {
           Virology: {
             explicit: true,
             children: {},
-            canDelete: true,
+            canDeleteObjecttag: true,
           },
         },
-        canDelete: false,
+        canDeleteObjecttag: false,
       },
     },
   },
@@ -46,7 +47,7 @@ ContentTagsTreeComponent.propTypes = {
     PropTypes.shape({
       explicit: PropTypes.bool.isRequired,
       children: PropTypes.shape({}).isRequired,
-      canDelete: PropTypes.bool.isRequired,
+      canDeleteObjecttag: PropTypes.bool.isRequired,
     }).isRequired,
   ).isRequired,
   removeTagHandler: PropTypes.func.isRequired,

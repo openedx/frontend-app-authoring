@@ -16,8 +16,10 @@ const data = {
   id: taxonomyId,
   name: 'Taxonomy 1',
   description: 'This is a description',
-  canChange: true,
-  canDelete: true,
+  systemDefined: false,
+  canChangeTaxonomy: true,
+  canDeleteTaxonomy: true,
+  tagsCount: 0,
 };
 
 const queryClient = new QueryClient();
@@ -42,8 +44,8 @@ TaxonomyCardComponent.propTypes = {
     systemDefined: PropTypes.bool,
     orgsCount: PropTypes.number,
     onDeleteTaxonomy: PropTypes.func,
-    canChange: PropTypes.bool,
-    canDelete: PropTypes.bool,
+    canChangeTaxonomy: PropTypes.bool,
+    canDeleteTaxonomy: PropTypes.bool,
   }).isRequired,
 };
 
@@ -99,10 +101,8 @@ describe('<TaxonomyCard />', async () => {
   });
 
   it('shows the system-defined badge with system taxonomies', () => {
-    const cardData = {
-      systemDefined: true,
-      ...data,
-    };
+    const cardData = { ...data };
+    cardData.systemDefined = true;
 
     const { getByText } = render(<TaxonomyCardComponent original={cardData} />);
     expect(getByText('System-level')).toBeInTheDocument();

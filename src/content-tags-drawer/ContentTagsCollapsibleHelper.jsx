@@ -128,7 +128,8 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
           currentLevel[key] = {
             explicit: isExplicit,
             children: {},
-            canDelete: item.canDelete,
+            canChangeObjecttag: item.canChangeObjecttag,
+            canDeleteObjecttag: item.canDeleteObjecttag,
           };
 
           // Populating the SelectableBox with "selected" (explicit) tags
@@ -163,7 +164,12 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
       const isExplicit = selectedTag === tag;
 
       if (!traversal[tag]) {
-        traversal[tag] = { explicit: isExplicit, children: {} };
+        traversal[tag] = {
+          explicit: isExplicit,
+          children: {},
+          canChangeObjecttag: false,
+          canDeleteObjecttag: false,
+        };
       } else {
         traversal[tag].explicit = isExplicit;
       }

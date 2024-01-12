@@ -55,7 +55,7 @@ const ContentTagsTree = ({ tagsTree, removeTagHandler }) => {
             level={level}
             lineage={updatedLineage}
             removeTagHandler={removeTagHandler}
-            canDelete={tag[key].canDelete}
+            canRemove={tag[key].canDeleteObjecttag}
           />
           { renderTagsTree(tag[key].children, level + 1, updatedLineage) }
         </div>
@@ -72,7 +72,7 @@ ContentTagsTree.propTypes = {
     PropTypes.shape({
       explicit: PropTypes.bool.isRequired,
       children: PropTypes.shape({}).isRequired,
-      canDelete: PropTypes.bool.isRequired,
+      canDeleteObjecttag: PropTypes.bool.isRequired,
     }).isRequired,
   ).isRequired,
   removeTagHandler: PropTypes.func.isRequired,

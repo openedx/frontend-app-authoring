@@ -91,10 +91,12 @@ describe('<ContentTagsDrawer />', () => {
               {
                 value: 'Tag 1',
                 lineage: ['Tag 1'],
+                canDeleteObjecttag: true,
               },
               {
                 value: 'Tag 2',
                 lineage: ['Tag 2'],
+                canDeleteObjecttag: true,
               },
             ],
           },
@@ -106,6 +108,7 @@ describe('<ContentTagsDrawer />', () => {
               {
                 value: 'Tag 3',
                 lineage: ['Tag 3'],
+                canDeleteObjecttag: true,
               },
             ],
           },
@@ -117,10 +120,12 @@ describe('<ContentTagsDrawer />', () => {
         id: 123,
         name: 'Taxonomy 1',
         description: 'This is a description 1',
+        canTagObject: false,
       }, {
         id: 124,
         name: 'Taxonomy 2',
         description: 'This is a description 2',
+        canTagObject: false,
       }],
     });
     await act(async () => {

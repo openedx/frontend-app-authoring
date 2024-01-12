@@ -22,9 +22,9 @@ const taxonomies = [{
   name: 'Taxonomy',
   description: 'This is a description',
   showSystemBadge: false,
+  canChangeTaxonomy: true,
+  canDeleteTaxonomy: true,
   tagsCount: 0,
-  canChange: true,
-  canDelete: true,
 }];
 const organizationsListUrl = 'http://localhost:18010/organizations';
 const organizations = ['Org 1', 'Org 2'];
@@ -95,6 +95,7 @@ describe('<TaxonomyListPage />', () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
       results: taxonomies,
+      canAddTaxonomy: false,
     });
     await act(async () => {
       const { getByTestId } = render(<RootWrapper />);
@@ -106,6 +107,7 @@ describe('<TaxonomyListPage />', () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
       results: taxonomies,
+      canAddTaxonomy: false,
     });
     const { findByRole } = render(<RootWrapper />);
     const templateMenu = await findByRole('button', { name: 'Download template' });
@@ -120,7 +122,7 @@ describe('<TaxonomyListPage />', () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
       results: [],
-      canAdd: false,
+      canAddTaxonomy: false,
     });
 
     const { getByRole } = render(<RootWrapper />);
@@ -132,7 +134,7 @@ describe('<TaxonomyListPage />', () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
       results: [],
-      canAdd: true,
+      canAddTaxonomy: true,
     });
 
     const { getByRole } = render(<RootWrapper />);
@@ -149,7 +151,12 @@ describe('<TaxonomyListPage />', () => {
         id: 1,
         name: 'Taxonomy',
         description: 'This is a description',
+        showSystemBadge: false,
+        canChangeTaxonomy: false,
+        canDeleteTaxonomy: false,
+        tagsCount: 0,
       }],
+      canAddTaxonomy: false,
     });
 
     const {
@@ -181,6 +188,7 @@ describe('<TaxonomyListPage />', () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
       results: taxonomies,
+      canAddTaxonomy: false,
     });
 
     const { getByRole } = render(<RootWrapper />);

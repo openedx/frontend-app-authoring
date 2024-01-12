@@ -149,8 +149,8 @@ TaxonomyCard.propTypes = {
     systemDefined: PropTypes.bool,
     orgsCount: PropTypes.number,
     tagsCount: PropTypes.number,
-    canChange: PropTypes.bool,
-    canDelete: PropTypes.bool,
+    canChangeTaxonomy: PropTypes.bool,
+    canDeleteTaxonomy: PropTypes.bool,
   }).isRequired,
 };
 

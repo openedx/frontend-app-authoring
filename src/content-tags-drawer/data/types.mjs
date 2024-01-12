@@ -4,6 +4,8 @@
  * @typedef {Object} Tag A tag that has been applied to some content.
  * @property {string} value The value of the tag, also its ID. e.g. "Biology"
  * @property {string[]} lineage The values of the tag and its parent(s) in the hierarchy
+ * @property {boolean} canChangeObjecttag
+ * @property {boolean} canDeleteObjecttag
  */
 
 /**

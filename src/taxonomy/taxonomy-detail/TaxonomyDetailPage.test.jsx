@@ -86,8 +86,9 @@ describe('<TaxonomyDetailPage />', () => {
       name: 'Test taxonomy',
       description: 'This is a description',
       system_defined: false,
-      canChange: true,
-      canDelete: true,
+      can_change_taxonomy: true,
+      can_delete_taxonomy: true,
+      tagsCount: 0,
     });
 
     const { getByTestId, queryByTestId, findByRole } = render(<RootWrapper />);
@@ -124,6 +125,8 @@ describe('<TaxonomyDetailPage />', () => {
       name: 'Test taxonomy',
       description: 'This is a description',
       system_defined: true,
+      can_change_taxonomy: false,
+      can_delete_taxonomy: false,
     });
 
     const { findByRole, getByText } = render(<RootWrapper />);
@@ -138,6 +141,8 @@ describe('<TaxonomyDetailPage />', () => {
       name: 'Test taxonomy',
       description: 'This is a description',
       system_defined: false,
+      can_change_taxonomy: false,
+      can_delete_taxonomy: false,
     });
 
     const { findByRole, queryByText } = render(<RootWrapper />);

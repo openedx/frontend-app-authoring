@@ -61,7 +61,7 @@ const TaxonomyMenu = ({
     import: {
       title: intl.formatMessage(messages.importMenu),
       action: () => importTaxonomyTags(taxonomy.id, intl),
-      show: taxonomy.canChange,
+      show: taxonomy.canChangeTaxonomy && !taxonomy.systemDefined,
     },
     export: {
       title: intl.formatMessage(messages.exportMenu),
@@ -71,12 +71,12 @@ const TaxonomyMenu = ({
     delete: {
       title: intl.formatMessage(messages.deleteMenu),
       action: deleteDialogOpen,
-      show: taxonomy.canDelete,
+      show: taxonomy.canDeleteTaxonomy && !taxonomy.systemDefined,
     },
     manageOrgs: {
       title: intl.formatMessage(messages.manageOrgsMenu),
       action: manageOrgsModalOpen,
-      show: taxonomy.canChange,
+      show: taxonomy.canChangeTaxonomy,
     },
   };
 
@@ -150,8 +150,9 @@ TaxonomyMenu.propTypes = {
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     tagsCount: PropTypes.number.isRequired,
-    canChange: PropTypes.bool,
-    canDelete: PropTypes.bool,
+    systemDefined: PropTypes.bool.isRequired,
+    canChangeTaxonomy: PropTypes.bool.isRequired,
+    canDeleteTaxonomy: PropTypes.bool.isRequired,
   }).isRequired,
   iconMenu: PropTypes.bool,
 };

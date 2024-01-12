@@ -3,7 +3,9 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import {
+  act, render, fireEvent, waitFor,
+} from '@testing-library/react';
 import PropTypes from 'prop-types';
 
 import { TaxonomyContext } from '../common/context';
@@ -33,8 +35,9 @@ const mockSetToastMessage = jest.fn();
 
 const TaxonomyMenuComponent = ({
   iconMenu,
-  canChange,
-  canDelete,
+  systemDefined,
+  canChangeTaxonomy,
+  canDeleteTaxonomy,
 }) => {
   const context = useMemo(() => ({
     toastMessage: null,
@@ -51,8 +54,9 @@ const TaxonomyMenuComponent = ({
                 id: taxonomyId,
                 name: taxonomyName,
                 tagsCount: 0,
-                canChange,
-                canDelete,
+                systemDefined,
+                canChangeTaxonomy,
+                canDeleteTaxonomy,
               }}
               iconMenu={iconMenu}
             />
@@ -65,13 +69,15 @@ const TaxonomyMenuComponent = ({
 
 TaxonomyMenuComponent.propTypes = {
   iconMenu: PropTypes.bool.isRequired,
-  canChange: PropTypes.bool,
-  canDelete: PropTypes.bool,
+  canChangeTaxonomy: PropTypes.bool,
+  systemDefined: PropTypes.bool,
+  canDeleteTaxonomy: PropTypes.bool,
 };
 
 TaxonomyMenuComponent.defaultProps = {
-  canChange: true,
-  canDelete: true,
+  systemDefined: false,
+  canChangeTaxonomy: true,
+  canDeleteTaxonomy: true,
 };
 
 describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) => {
@@ -91,20 +97,24 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     jest.clearAllMocks();
   });
 
-  test('should open and close menu on button click', () => {
+  test('should open and close menu on button click', async () => {
     const { getByTestId, queryByTestId } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // Menu closed/doesn't exist yet
     expect(queryByTestId('taxonomy-menu')).not.toBeInTheDocument();
 
     // Click on the menu button to open
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-button'));
+    });
 
     // Menu opened
     expect(getByTestId('taxonomy-menu')).toBeVisible();
 
     // Click on button again to close the menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-button'));
+    });
 
     // Menu closed
     // Jest bug: toBeVisible() isn't checking opacity correctly
@@ -115,17 +125,17 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     expect(getByTestId('taxonomy-menu-button')).toBeVisible();
   });
 
-  test('Shows menu actions that user is permitted', () => {
+  test('Shows menu actions that user is permitted', async () => {
     const { getByTestId, queryByTestId } = render(
       <TaxonomyMenuComponent
         iconMenu={iconMenu}
-        canChange
-        canDelete
       />,
     );
 
     // Click on the menu button to open
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-button'));
+    });
 
     // Menu opened
     expect(getByTestId('taxonomy-menu')).toBeVisible();
@@ -137,17 +147,20 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     expect(queryByTestId('taxonomy-menu-delete')).toBeInTheDocument();
   });
 
-  test('Hides menu actions that user is not permitted', () => {
+  test('Hides menu actions that user is not permitted', async () => {
     const { getByTestId, queryByTestId } = render(
       <TaxonomyMenuComponent
         iconMenu={iconMenu}
-        canChange={false}
-        canDelete={false}
+        systemDefined={false}
+        canChangeTaxonomy={false}
+        canDeleteTaxonomy={false}
       />,
     );
 
     // Click on the menu button to open
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-button'));
+    });
 
     // Ensure expected menu items are found
     expect(queryByTestId('taxonomy-menu-export')).toBeInTheDocument();
@@ -156,15 +169,40 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     expect(queryByTestId('taxonomy-menu-delete')).not.toBeInTheDocument();
   });
 
-  test('should open export modal on export menu click', () => {
+  test('Hides import/delete actions for system-defined taxonomies', async () => {
+    const systemDefined = true;
+    const { getByTestId, queryByTestId } = render(
+      <TaxonomyMenuComponent
+        iconMenu={iconMenu}
+        systemDefined={systemDefined}
+      />,
+    );
+
+    // Click on the menu button to open
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-button'));
+    });
+
+    // Ensure expected menu items are found
+    expect(queryByTestId('taxonomy-menu-export')).toBeInTheDocument();
+    expect(queryByTestId('taxonomy-menu-import')).not.toBeInTheDocument();
+    expect(queryByTestId('taxonomy-menu-manageOrgs')).toBeInTheDocument();
+    expect(queryByTestId('taxonomy-menu-delete')).not.toBeInTheDocument();
+  });
+
+  test('should open export modal on export menu click', async () => {
     const { getByTestId, getByText, queryByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // Modal closed
     expect(queryByText('Select format to export')).not.toBeInTheDocument();
 
     // Click on export menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
-    fireEvent.click(getByTestId('taxonomy-menu-export'));
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-button'));
+    });
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-export'));
+    });
 
     // Modal opened
     expect(getByText('Select format to export')).toBeInTheDocument();
@@ -176,41 +214,57 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     expect(queryByText('Select format to export')).not.toBeInTheDocument();
   });
 
-  test('should call import tags when menu click', () => {
+  test('should call import tags when menu click', async () => {
     const { getByTestId } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // Click on import menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
-    fireEvent.click(getByTestId('taxonomy-menu-import'));
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-button'));
+    });
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-import'));
+    });
 
     expect(importTaxonomyTags).toHaveBeenCalled();
   });
 
-  test('should export a taxonomy', () => {
+  test('should export a taxonomy', async () => {
     const { getByTestId, getByText, queryByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // Click on export menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
-    fireEvent.click(getByTestId('taxonomy-menu-export'));
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-button'));
+    });
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-export'));
+    });
 
     // Select JSON format and click on export
-    fireEvent.click(getByText('JSON file'));
-    fireEvent.click(getByTestId('export-button-1'));
+    await act(async () => {
+      fireEvent.click(getByText('JSON file'));
+    });
+    await act(async () => {
+      fireEvent.click(getByTestId('export-button-1'));
+    });
 
     // Modal closed
     expect(queryByText('Select format to export')).not.toBeInTheDocument();
     expect(getTaxonomyExportFile).toHaveBeenCalledWith(taxonomyId, 'json');
   });
 
-  test('should open delete dialog on delete menu click', () => {
+  test('should open delete dialog on delete menu click', async () => {
     const { getByTestId, getByText, queryByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // Modal closed
     expect(queryByText(`Delete "${taxonomyName}"`)).not.toBeInTheDocument();
 
     // Click on delete menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
-    fireEvent.click(getByTestId('taxonomy-menu-delete'));
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-button'));
+    });
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-delete'));
+    });
 
     // Modal opened
     expect(getByText(`Delete "${taxonomyName}"`)).toBeInTheDocument();
@@ -226,8 +280,12 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     const { getByTestId, getByLabelText, queryByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // Click on delete menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
-    fireEvent.click(getByTestId('taxonomy-menu-delete'));
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-button'));
+    });
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-delete'));
+    });
 
     const deleteButton = getByTestId('delete-button');
 
@@ -274,8 +332,12 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     expect(queryByText('Assign to organizations')).not.toBeInTheDocument();
 
     // Click on delete menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
-    fireEvent.click(getByTestId('taxonomy-menu-manageOrgs'));
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-button'));
+    });
+    await act(async () => {
+      fireEvent.click(getByTestId('taxonomy-menu-manageOrgs'));
+    });
 
     // Modal opened
     expect(await findByText('Assign to organizations')).toBeInTheDocument();

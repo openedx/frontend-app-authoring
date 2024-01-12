@@ -22,6 +22,7 @@ jest.mock('./data/apiHooks', () => ({
     tagPages: [{
       isLoading: true,
       isError: false,
+      canAddTag: false,
       data: [],
     }],
   })),
@@ -32,21 +33,24 @@ const data = {
   taxonomyAndTagsData: {
     id: 123,
     name: 'Taxonomy 1',
+    canTagObject: true,
     contentTags: [
       {
         value: 'Tag 1',
         lineage: ['Tag 1'],
+        canDeleteObjecttag: true,
       },
       {
         value: 'Tag 1.1',
         lineage: ['Tag 1', 'Tag 1.1'],
+        canDeleteObjecttag: true,
       },
       {
         value: 'Tag 2',
         lineage: ['Tag 2'],
+        canDeleteObjecttag: true,
       },
     ],
-    canTagObject: true,
   },
 };
 
@@ -61,11 +65,12 @@ ContentTagsCollapsibleComponent.propTypes = {
   taxonomyAndTagsData: PropTypes.shape({
     id: PropTypes.number,
     name: PropTypes.string,
+    canTagObject: PropTypes.bool.isRequired,
     contentTags: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.string,
       lineage: PropTypes.arrayOf(PropTypes.string),
+      canDeleteObjecttag: PropTypes.bool.isRequired,
     })),
-    canTagObjects: PropTypes.bool.isRequired,
   }).isRequired,
 };
 
@@ -92,6 +97,7 @@ describe('<ContentTagsCollapsible />', () => {
   function setupTaxonomyMock() {
     useTaxonomyTagsData.mockReturnValue({
       hasMorePages: false,
+      canAddTag: false,
       tagPages: [{
         isLoading: false,
         isError: false,
@@ -103,6 +109,8 @@ describe('<ContentTagsCollapsible />', () => {
           parentValue: null,
           id: 12345,
           subTagsUrl: null,
+          canChangeTag: false,
+          canDeleteTag: false,
         }, {
           value: 'Tag 2',
           externalId: null,
@@ -111,6 +119,8 @@ describe('<ContentTagsCollapsible />', () => {
           parentValue: null,
           id: 12346,
           subTagsUrl: null,
+          canChangeTag: false,
+          canDeleteTag: false,
         }, {
           value: 'Tag 3',
           externalId: null,
@@ -119,6 +129,8 @@ describe('<ContentTagsCollapsible />', () => {
           parentValue: null,
           id: 12347,
           subTagsUrl: null,
+          canChangeTag: false,
+          canDeleteTag: false,
         }],
       }],
     });

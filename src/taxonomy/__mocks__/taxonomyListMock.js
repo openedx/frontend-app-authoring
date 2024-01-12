@@ -5,7 +5,7 @@ module.exports = {
   numPages: 1,
   currentPage: 1,
   start: 0,
-  canAdd: true,
+  canAddTaxonomy: true,
   results: [
     {
       id: -2,
@@ -16,8 +16,8 @@ module.exports = {
       allowFreeText: false,
       systemDefined: true,
       visibleToAuthors: false,
-      canChange: false,
-      canDelete: false,
+      canChangeTaxonomy: false,
+      canDeleteTaxonomy: false,
     },
     {
       id: -1,
@@ -28,8 +28,8 @@ module.exports = {
       allowFreeText: false,
       systemDefined: true,
       visibleToAuthors: true,
-      canChange: false,
-      canDelete: false,
+      canChangeTaxonomy: false,
+      canDeleteTaxonomy: false,
     },
     {
       id: 1,
@@ -40,8 +40,8 @@ module.exports = {
       allowFreeText: false,
       systemDefined: false,
       visibleToAuthors: true,
-      canChange: true,
-      canDelete: true,
+      canChangeTaxonomy: true,
+      canDeleteTaxonomy: true,
     },
     {
       id: 2,
@@ -52,8 +52,8 @@ module.exports = {
       allowFreeText: false,
       systemDefined: false,
       visibleToAuthors: true,
-      canChange: true,
-      canDelete: true,
+      canChangeTaxonomy: true,
+      canDeleteTaxonomy: true,
     },
   ],
 };

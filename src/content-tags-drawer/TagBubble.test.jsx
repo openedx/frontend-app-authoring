@@ -12,7 +12,7 @@ const data = {
 };
 
 const TagBubbleComponent = ({
-  value, implicit, level, lineage, removeTagHandler, canDelete,
+  value, implicit, level, lineage, removeTagHandler, canRemove,
 }) => (
   <IntlProvider locale="en" messages={{}}>
     <TagBubble
@@ -21,7 +21,7 @@ const TagBubbleComponent = ({
       level={level}
       lineage={lineage}
       removeTagHandler={removeTagHandler}
-      canDelete={canDelete}
+      canRemove={canRemove}
     />
   </IntlProvider>
 );
@@ -29,6 +29,7 @@ const TagBubbleComponent = ({
 TagBubbleComponent.defaultProps = {
   implicit: true,
   level: 0,
+  canRemove: false,
 };
 
 TagBubbleComponent.propTypes = {
@@ -37,7 +38,7 @@ TagBubbleComponent.propTypes = {
   level: PropTypes.number,
   lineage: PropTypes.arrayOf(PropTypes.string).isRequired,
   removeTagHandler: PropTypes.func.isRequired,
-  canDelete: PropTypes.bool.isRequired,
+  canRemove: PropTypes.bool,
 };
 
 describe('<TagBubble />', () => {
@@ -45,7 +46,6 @@ describe('<TagBubble />', () => {
     const { container, getByText } = render(
       <TagBubbleComponent
         value={data.value}
-        canDelete
         lineage={data.lineage}
         removeTagHandler={data.removeTagHandler}
       />,
@@ -58,12 +58,13 @@ describe('<TagBubble />', () => {
   it('should render explicit tag', () => {
     const tagBubbleData = {
       implicit: false,
+      canRemove: true,
       ...data,
     };
     const { container, getByText } = render(
       <TagBubbleComponent
         value={tagBubbleData.value}
-        canDelete
+        canRemove={tagBubbleData.canRemove}
         lineage={data.lineage}
         implicit={tagBubbleData.implicit}
         removeTagHandler={tagBubbleData.removeTagHandler}
@@ -77,12 +78,13 @@ describe('<TagBubble />', () => {
   it('should call removeTagHandler when "x" clicked on explicit tag', async () => {
     const tagBubbleData = {
       implicit: false,
+      canRemove: true,
       ...data,
     };
     const { container } = render(
       <TagBubbleComponent
         value={tagBubbleData.value}
-        canDelete
+        canRemove={tagBubbleData.canRemove}
         lineage={data.lineage}
         implicit={tagBubbleData.implicit}
         removeTagHandler={tagBubbleData.removeTagHandler}
@@ -92,5 +94,23 @@ describe('<TagBubble />', () => {
     const xButton = container.getElementsByClassName('pgn__chip__icon-after')[0];
     fireEvent.click(xButton);
     expect(data.removeTagHandler).toHaveBeenCalled();
+  });
+
+  it('should not show "x" when canRemove is not allowed', async () => {
+    const tagBubbleData = {
+      implicit: false,
+      canRemove: false,
+      ...data,
+    };
+    const { container } = render(
+      <TagBubbleComponent
+        value={tagBubbleData.value}
+        lineage={data.lineage}
+        implicit={tagBubbleData.implicit}
+        removeTagHandler={tagBubbleData.removeTagHandler}
+      />,
+    );
+
+    expect(container.getElementsByClassName('pgn__chip__icon-after')[0]).toBeUndefined();
   });
 });
