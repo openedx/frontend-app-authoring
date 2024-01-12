@@ -171,7 +171,6 @@ describe('<ImportTagsWizard />', () => {
     expect(await findByTestId('file-info')).toBeInTheDocument();
     expect(importButton).not.toHaveAttribute('aria-disabled', 'true');
 
-    // FixMe: This will break after https://github.com/openedx/openedx-learning/pull/135 is merged
     const expectedPlan = 'Import plan for Test import taxonomy\n'
       + '--------------------------------\n'
       + '#1: Create a new tag with values (external_id=tag_1, value=Tag 1, parent_id=None).\n'
