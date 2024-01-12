@@ -1,67 +1,68 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import LoadingButton from '.';
 
 const buttonTitle = 'Button Title';
 
 const RootWrapper = (onClick) => (
-  <LoadingButton onClick={onClick}>
-    {buttonTitle}
-  </LoadingButton>
+  <LoadingButton label={buttonTitle} onClick={onClick} />
 );
 
 describe('<LoadingButton />', () => {
   it('renders the title and doesnt handle the spinner initially', () => {
-    const { getByText, queryByTestId } = render(RootWrapper(() => { }));
-    const titleElement = getByText(buttonTitle);
-    expect(titleElement).toBeInTheDocument();
-    expect(queryByTestId('button-loading-spinner')).not.toBeInTheDocument();
+    const { container, getByText } = render(RootWrapper(() => { }));
+    expect(getByText(buttonTitle)).toBeInTheDocument();
+
+    expect(container.getElementsByClassName('icon-spin').length).toBe(0);
   });
 
-  it('doesnt render the spinner initially without onClick function', () => {
-    const { getByRole, getByText, queryByTestId } = render(RootWrapper());
+  it('doesnt render the spinner without onClick function', () => {
+    const { container, getByRole, getByText } = render(RootWrapper());
     const titleElement = getByText(buttonTitle);
     expect(titleElement).toBeInTheDocument();
-    expect(queryByTestId('button-loading-spinner')).not.toBeInTheDocument();
-    const buttonElement = getByRole('button');
-    buttonElement.click();
-    expect(queryByTestId('button-loading-spinner')).not.toBeInTheDocument();
+    expect(container.getElementsByClassName('icon-spin').length).toBe(0);
+    fireEvent.click(getByRole('button'));
+    expect(container.getElementsByClassName('icon-spin').length).toBe(0);
   });
 
-  it('renders the spinner correctly', () => {
+  it('renders the spinner correctly', async () => {
     const longFunction = () => new Promise((resolve) => {
       setTimeout(resolve, 1000);
     });
-    const { getByRole, getByText, getByTestId } = render(RootWrapper(longFunction));
+    const { container, getByRole, getByText } = render(RootWrapper(longFunction));
     const buttonElement = getByRole('button');
-    buttonElement.click();
-    const spinnerElement = getByTestId('button-loading-spinner');
-    expect(spinnerElement).toBeInTheDocument();
-    const titleElement = getByText(buttonTitle);
-    expect(titleElement).toBeInTheDocument();
-    expect(buttonElement).toBeDisabled();
-    setTimeout(() => {
-      expect(buttonElement).toBeEnabled();
-      expect(spinnerElement).not.toBeInTheDocument();
-    }, 2000);
+    fireEvent.click(buttonElement);
+    expect(container.getElementsByClassName('icon-spin').length).toBe(1);
+    expect(getByText(buttonTitle)).toBeInTheDocument();
+    // StatefulButton only sets aria-disabled (not disabled) when the state is pending
+    // expect(buttonElement).toBeDisabled();
+    expect(buttonElement).toHaveAttribute('aria-disabled', 'true');
+    await waitFor(() => {
+      // StatefulButton only sets aria-disabled (not disabled) when the state is pending
+      // expect(buttonElement).toBeEnabled();
+      expect(buttonElement).not.toHaveAttribute('aria-disabled', 'true');
+      expect(container.getElementsByClassName('icon-spin').length).toBe(0);
+    });
   });
 
-  it('renders the spinner correctly even with error', () => {
+  it('renders the spinner correctly even with error', async () => {
     const longFunction = () => new Promise((_resolve, reject) => {
       setTimeout(reject, 1000);
     });
-    const { getByRole, getByText, getByTestId } = render(RootWrapper(longFunction));
+    const { container, getByRole, getByText } = render(RootWrapper(longFunction));
     const buttonElement = getByRole('button');
-    buttonElement.click();
-    const spinnerElement = getByTestId('button-loading-spinner');
-    expect(spinnerElement).toBeInTheDocument();
-    const titleElement = getByText(buttonTitle);
-    expect(titleElement).toBeInTheDocument();
-    expect(buttonElement).toBeDisabled();
-    setTimeout(() => {
-      expect(buttonElement).toBeEnabled();
-      expect(spinnerElement).not.toBeInTheDocument();
-    }, 2000);
+    fireEvent.click(buttonElement);
+    expect(container.getElementsByClassName('icon-spin').length).toBe(1);
+    expect(getByText(buttonTitle)).toBeInTheDocument();
+    // StatefulButton only sets aria-disabled (not disabled) when the state is pending
+    // expect(buttonElement).toBeDisabled();
+    expect(buttonElement).toHaveAttribute('aria-disabled', 'true');
+    await waitFor(() => {
+      // StatefulButton only sets aria-disabled (not disabled) when the state is pending
+      // expect(buttonElement).toBeEnabled();
+      expect(buttonElement).not.toHaveAttribute('aria-disabled', 'true');
+    expect(container.getElementsByClassName('icon-spin').length).toBe(0);
+    });
   });
 });

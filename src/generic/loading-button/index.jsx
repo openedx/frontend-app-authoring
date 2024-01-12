@@ -5,28 +5,25 @@ import React, {
   useRef,
   useState,
 } from 'react';
-
 import {
-  Button,
-  Spinner,
-  Stack,
+  StatefulButton,
 } from '@edx/paragon';
+import PropTypes from 'prop-types';
 
 /**
   * A button that shows a loading spinner when clicked.
   * @param {object} props
-  * @param {React.ReactNode=} props.children
-  * @param {boolean=} props.disabled
+  * @param {string} props.label
   * @param {function=} props.onClick
+  * @param {boolean=} props.disabled
   * @returns {JSX.Element}
   */
 const LoadingButton = ({
+  label,
   onClick,
-  children,
   disabled,
-  ...props
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [state, setState] = useState('');
   // This is used to prevent setting the isLoading state after the component has been unmounted.
   const componentMounted = useRef(true);
 
@@ -39,36 +36,35 @@ const LoadingButton = ({
       return;
     }
 
-    setIsLoading(true);
+    setState('pending');
     try {
       await onClick(e);
     } finally {
       if (componentMounted.current) {
-        setIsLoading(false);
+        setState('');
       }
     }
   }, [componentMounted, onClick]);
 
   return (
-    <Button
-      {...props}
-      disabled={!!isLoading || disabled}
+    <StatefulButton
+      disabledStates={disabled ? [state] : ['pending'] /* StatefulButton doesn't support disabled prop */}
       onClick={loadingOnClick}
-    >
-      <Stack gap={2} direction="horizontal">
-        {children}
-        {isLoading && <Spinner size="sm" animation="border" data-testid="button-loading-spinner" />}
-      </Stack>
-    </Button>
+      labels={{ default: label }}
+      state={state}
+    />
   );
 };
 
 LoadingButton.propTypes = {
-  ...Button.propTypes,
+  label: PropTypes.string.isRequired,
+  onClick: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 LoadingButton.defaultProps = {
-  ...Button.defaultProps,
+  onClick: undefined,
+  disabled: undefined,
 };
 
 export default LoadingButton;

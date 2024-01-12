@@ -251,6 +251,7 @@ const ImportTagsWizard = ({
         setCurrentStep('plan');
       }
     } catch (/** @type {any} */ error) {
+      setImportPlan(null);
       setImportPlanError(error.message);
     } finally {
       enableDialog();
@@ -368,9 +369,11 @@ const ImportTagsWizard = ({
               <Button variant="tertiary" onClick={onClose}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
-              <LoadingButton disabled={!file} onClick={generatePlan} data-testid="import-button">
-                {intl.formatMessage(messages.importWizardButtonImport)}
-              </LoadingButton>
+              <LoadingButton
+                label={intl.formatMessage(messages.importWizardButtonImport)}
+                disabled={!file || !!importPlanError}
+                onClick={generatePlan}
+              />
             </Stepper.ActionRow>
 
             <Stepper.ActionRow eventKey="plan">
@@ -394,9 +397,10 @@ const ImportTagsWizard = ({
               <Button variant="tertiary" onClick={onClose}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
-              <LoadingButton onClick={confirmImportTags} data-testid="confirm-button">
-                {intl.formatMessage(messages.importWizardButtonConfirm)}
-              </LoadingButton>
+              <LoadingButton
+                label={intl.formatMessage(messages.importWizardButtonConfirm)}
+                onClick={confirmImportTags}
+              />
             </Stepper.ActionRow>
 
           </ModalDialog.Footer>
