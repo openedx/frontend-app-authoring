@@ -26,7 +26,15 @@ export const updateFileValues = (files, isNewFile) => {
       status,
       transcripts,
     } = file;
-    const wrapperType = 'video';
+
+    let wrapperType;
+    if (clientVideoId.endsWith('.mov')) {
+      wrapperType = 'MOV';
+    } else if (clientVideoId.endsWith('.mp4')) {
+      wrapperType = 'MP4';
+    } else {
+      wrapperType = 'Unknown';
+    }
 
     let thumbnail = courseVideoImageUrl;
     if (thumbnail && thumbnail.startsWith('/')) {

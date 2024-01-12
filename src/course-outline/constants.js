@@ -74,3 +74,9 @@ export const BEST_PRACTICES_CHECKLIST = /** @type {const} */ ({
     },
   ],
 });
+
+export const VIDEO_SHARING_OPTIONS = /** @type {const} */ ({
+  perVideo: 'per-video',
+  allOn: 'all-on',
+  allOff: 'all-off',
+});

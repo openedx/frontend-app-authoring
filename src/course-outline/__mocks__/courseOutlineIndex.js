@@ -24,6 +24,8 @@ module.exports = {
       'Homework',
       'Exam',
     ],
+    videoSharingEnabled: true,
+    videoSharingOptions: 'per-video',
     hasChanges: false,
     actions: {
       deletable: true,

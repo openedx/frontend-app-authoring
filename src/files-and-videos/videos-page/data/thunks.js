@@ -37,7 +37,7 @@ import {
 
 import { updateFileValues } from './utils';
 
-async function fetchUsageLocation(videoId, dispatch, courseId) {
+async function fetchUsageLocation(videoId, dispatch, courseId, isLast) {
   const { usageLocations } = await getVideoUsagePaths({ videoId, courseId });
   const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
 
@@ -49,6 +49,9 @@ async function fetchUsageLocation(videoId, dispatch, courseId) {
       activeStatus,
     },
   }));
+  if (isLast) {
+    dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
+  }
 }
 
 export function fetchVideos(courseId) {
@@ -57,16 +60,23 @@ export function fetchVideos(courseId) {
 
     try {
       const { previousUploads, ...data } = await getVideos(courseId);
-      const parsedVideos = updateFileValues(previousUploads);
-      dispatch(addModels({ modelType: 'videos', models: parsedVideos }));
-      dispatch(setVideoIds({
-        videoIds: parsedVideos.map(video => video.id),
-      }));
       dispatch(setPageSettings({ ...data }));
-      dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
-      parsedVideos.forEach(async (video) => {
-        fetchUsageLocation(video.id, dispatch, courseId);
-      });
+      // Previous uploads are the current videos associated with a course.
+      // If previous uploads are empty there is no need to add an empty model
+      // or loop through and empty list so automatically set loading to successful
+      if (isEmpty(previousUploads)) {
+        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
+      } else {
+        const parsedVideos = updateFileValues(previousUploads);
+        dispatch(addModels({ modelType: 'videos', models: parsedVideos }));
+        dispatch(setVideoIds({
+          videoIds: parsedVideos.map(video => video.id),
+        }));
+        parsedVideos.forEach(async (video, indx) => {
+          const isLast = parsedVideos.length - 1 === indx;
+          fetchUsageLocation(video.id, dispatch, courseId, isLast);
+        });
+      }
     } catch (error) {
       if (error.response && error.response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
@@ -339,6 +349,7 @@ export function clearAutomatedTranscript({ courseId }) {
 
     try {
       await deleteTranscriptPreferences(courseId);
+      dispatch(updateTranscriptPreferenceSuccess({ modified: new Date() }));
       dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       dispatch(updateErrors({ error: 'transcript', message: 'Failed to update order transcripts settings.' }));

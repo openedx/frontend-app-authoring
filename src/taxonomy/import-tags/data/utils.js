@@ -1,6 +1,6 @@
 // @ts-check
 import messages from '../messages';
-import { importNewTaxonomy, importTags } from './api';
+import { importNewTaxonomy } from './api';
 
 /*
  * This function get a file from the user. It does this by creating a
@@ -38,7 +38,7 @@ const selectFile = async () => new Promise((resolve) => {
 });
 
 /* istanbul ignore next */
-export const importTaxonomy = async (intl) => {
+export const importTaxonomy = async (intl) => { // eslint-disable-line import/prefer-default-export
   /*
     * This function is a temporary "Barebones" implementation of the import
     * functionality with `prompt` and `alert`. It is intended to be replaced
@@ -83,36 +83,6 @@ export const importTaxonomy = async (intl) => {
   }
 
   importNewTaxonomy(taxonomyName, taxonomyDescription, file)
-    .then(() => {
-      alert(intl.formatMessage(messages.importTaxonomySuccess));
-    })
-    .catch((error) => {
-      alert(intl.formatMessage(messages.importTaxonomyError));
-      console.error(error.response);
-    });
-};
-
-/* istanbul ignore next */
-export const importTaxonomyTags = async (taxonomyId, intl) => {
-  /*
-    * This function is a temporary "Barebones" implementation of the import
-    * functionality with `confirm` and `alert`. It is intended to be replaced
-    * with a component that shows a `ModalDialog` in the future.
-    * See: https://github.com/openedx/modular-learning/issues/126
-    */
-  /* eslint-disable no-alert */
-  /* eslint-disable no-console */
-  const file = await selectFile();
-
-  if (!file) {
-    return;
-  }
-
-  if (!window.confirm(intl.formatMessage(messages.confirmImportTags))) {
-    return;
-  }
-
-  importTags(taxonomyId, file)
     .then(() => {
       alert(intl.formatMessage(messages.importTaxonomySuccess));
     })

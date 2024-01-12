@@ -17,7 +17,7 @@ import ExportModal from '../export-modal';
 import { useDeleteTaxonomy } from '../data/apiHooks';
 import { TaxonomyContext } from '../common/context';
 import DeleteDialog from '../delete-dialog';
-import { importTaxonomyTags } from '../import-tags';
+import { ImportTagsWizard } from '../import-tags';
 import { ManageOrgsModal } from '../manage-orgs';
 import messages from './messages';
 
@@ -46,6 +46,7 @@ const TaxonomyMenu = ({
 
   const [isDeleteDialogOpen, deleteDialogOpen, deleteDialogClose] = useToggle(false);
   const [isExportModalOpen, exportModalOpen, exportModalClose] = useToggle(false);
+  const [isImportModalOpen, importModalOpen, importModalClose] = useToggle(false);
   const [isManageOrgsModalOpen, manageOrgsModalOpen, manageOrgsModalClose] = useToggle(false);
 
   /**
@@ -60,7 +61,7 @@ const TaxonomyMenu = ({
   let menuItems = {
     import: {
       title: intl.formatMessage(messages.importMenu),
-      action: () => importTaxonomyTags(taxonomy.id, intl),
+      action: importModalOpen,
       show: taxonomy.canChangeTaxonomy && !taxonomy.systemDefined,
     },
     export: {
@@ -99,6 +100,13 @@ const TaxonomyMenu = ({
           isOpen={isExportModalOpen}
           onClose={exportModalClose}
           taxonomyId={taxonomy.id}
+        />
+      )}
+      {isImportModalOpen && (
+        <ImportTagsWizard
+          taxonomy={taxonomy}
+          isOpen={isImportModalOpen}
+          onClose={importModalClose}
         />
       )}
       {isManageOrgsModalOpen && (
