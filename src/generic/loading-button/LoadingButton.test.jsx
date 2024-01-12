@@ -62,7 +62,7 @@ describe('<LoadingButton />', () => {
       // StatefulButton only sets aria-disabled (not disabled) when the state is pending
       // expect(buttonElement).toBeEnabled();
       expect(buttonElement).not.toHaveAttribute('aria-disabled', 'true');
-    expect(container.getElementsByClassName('icon-spin').length).toBe(0);
+      expect(container.getElementsByClassName('icon-spin').length).toBe(0);
     });
   });
 });
