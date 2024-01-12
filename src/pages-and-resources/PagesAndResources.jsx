@@ -5,6 +5,7 @@ import { PageWrap, AppContext } from '@edx/frontend-platform/react';
 
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import _ from 'lodash';
 
 import { Button, Hyperlink } from '@edx/paragon';
 import messages from './messages';
@@ -45,14 +46,22 @@ const PagesAndResources = ({ courseId, intl }) => {
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
   const redirectUrl = `/course/${courseId}/pages-and-resources`;
 
-  // Each page here is driven by a course app
+  // Most pages here are driven by a course app. The one exception is the Xpert unit summaries page.
   const pages = useModels('courseApps', courseAppIds);
   const xpertPluginConfigurable = useModel('XpertSettings.enabled', 'xpert-unit-summary');
   const xpertSettings = useModel('XpertSettings', 'xpert-unit-summary');
-  const permissonPages = [{
-    ...XpertAppInfo,
-    enabled: xpertSettings?.enabled !== undefined,
-  }];
+
+  // These pages appear in a separate "Content Permissions" section at the bottom of the page.
+  // If there are no content permission pages, this section will not appear.
+  const contentPermissionsPages = [];
+
+  // Xpert unit summaries
+  if (xpertPluginConfigurable?.enabled) {
+    contentPermissionsPages.push({
+      ...XpertAppInfo,
+      enabled: xpertSettings?.enabled !== undefined,
+    });
+  }
 
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -83,14 +92,14 @@ const PagesAndResources = ({ courseId, intl }) => {
         <PageGrid pages={pages} />
 
         {
-          xpertPluginConfigurable?.enabled ? (
+          !_.isEmpty(contentPermissionsPages) && (
             <>
               <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
                 <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
               </div>
-              <PageGrid pages={permissonPages} />
+              <PageGrid pages={contentPermissionsPages} />
             </>
-          ) : ''
+          )
         }
 
         <Routes>
