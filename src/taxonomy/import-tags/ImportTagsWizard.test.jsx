@@ -81,40 +81,37 @@ describe('<ImportTagsWizard />', () => {
 
   it('render the dialog in the first step can close on cancel', async () => {
     const onClose = jest.fn();
-    const { getByTestId } = render(<RootWrapper onClose={onClose} />);
+    const { findByTestId, getByTestId } = render(<RootWrapper onClose={onClose} />);
 
-    await waitFor(() => {
-      expect(getByTestId('export-step')).toBeInTheDocument();
-    });
+    expect(await findByTestId('export-step')).toBeInTheDocument();
 
-    const cancelButton = getByTestId('cancel-button');
-    cancelButton.click();
+    fireEvent.click(getByTestId('cancel-button'));
+
     expect(onClose).toHaveBeenCalled();
   });
 
   it('can export taxonomies from the dialog', async () => {
     const onClose = jest.fn();
-    const { getByTestId } = render(<RootWrapper onClose={onClose} />);
+    const { findByTestId, getByTestId } = render(<RootWrapper onClose={onClose} />);
 
-    await waitFor(() => {
-      expect(getByTestId('export-step')).toBeInTheDocument();
-    });
+    expect(await findByTestId('export-step')).toBeInTheDocument();
 
-    const exportJsonButton = getByTestId('export-json-button');
-    exportJsonButton.click();
+    fireEvent.click(getByTestId('export-json-button'));
+
     expect(getTaxonomyExportFile).toHaveBeenCalledWith(taxonomy.id, 'json');
-    const exportCsvButton = getByTestId('export-csv-button');
-    exportCsvButton.click();
+
+    fireEvent.click(getByTestId('export-csv-button'));
+
     expect(getTaxonomyExportFile).toHaveBeenCalledWith(taxonomy.id, 'csv');
   });
 
-  it.each(['success', 'error'])('an upload taxonomies from the dialog (%p)', async (expectedResult) => {
+  it.each(['success', 'error'])('can upload taxonomies from the dialog (%p)', async (expectedResult) => {
     const onClose = jest.fn();
-    const { getAllByTestId, getByTestId, getByText } = render(<RootWrapper onClose={onClose} />);
+    const {
+      findByTestId, findByText, getAllByTestId, getByTestId, getByText,
+    } = render(<RootWrapper onClose={onClose} />);
 
-    await waitFor(() => {
-      expect(getByTestId('export-step')).toBeInTheDocument();
-    });
+    expect(await findByTestId('export-step')).toBeInTheDocument();
 
     fireEvent.click(getByTestId('next-button'));
 
@@ -126,6 +123,7 @@ describe('<ImportTagsWizard />', () => {
     fireEvent.click(getByTestId('next-button'));
     expect(getByTestId('upload-step')).toBeInTheDocument();
 
+    // Continue flow
     const importButton = getByTestId('import-button');
     expect(importButton).toBeDisabled();
 
@@ -138,42 +136,32 @@ describe('<ImportTagsWizard />', () => {
     // Correct file type
     const fileJson = new File(['file contents'], 'example.json', { type: 'application/gzip' });
     fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [fileJson], types: ['Files'] } });
-    await waitFor(() => {
-      expect(getByTestId('file-info')).toBeInTheDocument();
-    });
+    expect(await findByTestId('file-info')).toBeInTheDocument();
     expect(getByText('example.json')).toBeInTheDocument();
 
     // Clear file
-    const clearFileButton = getByTestId('clear-file-button');
-    clearFileButton.click();
-    await waitFor(() => {
-      expect(getByTestId('dropzone')).toBeInTheDocument();
-    });
+    fireEvent.click(getByTestId('clear-file-button'));
+    expect(await findByTestId('dropzone')).toBeInTheDocument();
 
     // Reselect file
     fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [fileJson], types: ['Files'] } });
-    await waitFor(() => {
-      expect(getByTestId('file-info')).toBeInTheDocument();
-    });
+    expect(await findByTestId('file-info')).toBeInTheDocument();
 
     planImportTags.mockRejectedValueOnce(new Error('Test error'));
-    importButton.click();
+    fireEvent.click(importButton);
 
     expect(planImportTags).toHaveBeenCalledWith(taxonomy.id, fileJson);
-    await waitFor(() => {
-      expect(getByText('Test error')).toBeInTheDocument();
-    });
-    const errorAlert = getByText('Test error');
+    const errorAlert = await findByText('Test error');
+    expect(errorAlert).toBeInTheDocument();
 
     // Reselect file to clear the error
     fireEvent.click(getByTestId('clear-file-button'));
     expect(errorAlert).not.toBeInTheDocument();
     fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [fileJson], types: ['Files'] } });
 
-    await waitFor(() => {
-      expect(getByTestId('file-info')).toBeInTheDocument();
-    });
+    expect(await findByTestId('file-info')).toBeInTheDocument();
 
+    // FixMe: This will break after https://github.com/openedx/openedx-learning/pull/135 is merged
     const expectedPlan = 'Import plan for Test import taxonomy\n'
       + '--------------------------------\n'
       + '#1: Create a new tag with values (external_id=tag_1, value=Tag 1, parent_id=None).\n'
@@ -186,20 +174,16 @@ describe('<ImportTagsWizard />', () => {
 
     expect(importButton).not.toBeDisabled();
 
-    importButton.click();
+    fireEvent.click(importButton);
 
-    await waitFor(() => {
-      expect(getByTestId('plan-step')).toBeInTheDocument();
-    });
+    expect(await findByTestId('plan-step')).toBeInTheDocument();
 
     // Test back button
     fireEvent.click(getByTestId('back-button'));
     expect(getByTestId('upload-step')).toBeInTheDocument();
     planImportTags.mockResolvedValueOnce(expectedPlan);
     fireEvent.click(getByTestId('import-button'));
-    await waitFor(() => {
-      expect(getByTestId('plan-step')).toBeInTheDocument();
-    });
+    expect(await findByTestId('plan-step')).toBeInTheDocument();
 
     expect(getAllByTestId('plan-action')).toHaveLength(6);
 
