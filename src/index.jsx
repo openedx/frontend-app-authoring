@@ -2,7 +2,7 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import {
-  APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig,
+  APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath,
 } from '@edx/frontend-platform';
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React, { useEffect } from 'react';
@@ -71,6 +71,9 @@ const App = () => {
         )}
       </Route>,
     ),
+    {
+      basename: getPath(getConfig().PUBLIC_PATH),
+    },
   );
 
   return (

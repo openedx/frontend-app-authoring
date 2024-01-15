@@ -36,6 +36,7 @@ import {
   courseSubsectionMock,
 } from './__mocks__';
 import { executeThunk } from '../utils';
+import { COURSE_BLOCK_NAMES } from './constants';
 import CourseOutline from './CourseOutline';
 import messages from './messages';
 import headerMessages from './header-navigations/messages';
@@ -120,9 +121,7 @@ describe('<CourseOutline />', () => {
       .onGet(getCourseReindexApiUrl(courseOutlineIndexMock.reindexLink))
       .reply(500);
     const reindexButton = await findByTestId('course-reindex');
-    await act(async () => {
-      fireEvent.click(reindexButton);
-    });
+    await act(async () => fireEvent.click(reindexButton));
 
     expect(await findByText(messages.alertErrorTitle.defaultMessage)).toBeInTheDocument();
   });
@@ -145,9 +144,7 @@ describe('<CourseOutline />', () => {
       .onGet(getXBlockApiUrl(courseSectionMock.id))
       .reply(200, courseSectionMock);
     const newSectionButton = await findByTestId('new-section-button');
-    await act(async () => {
-      fireEvent.click(newSectionButton);
-    });
+    await act(async () => fireEvent.click(newSectionButton));
 
     elements = await findAllByTestId('section-card');
     expect(elements.length).toBe(5);
@@ -180,6 +177,32 @@ describe('<CourseOutline />', () => {
     subsections = await within(section).findAllByTestId('subsection-card');
     expect(subsections.length).toBe(2);
     expect(window.HTMLElement.prototype.scrollIntoView).toBeCalled();
+  });
+
+  it('adds new unit correctly', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    const [sectionElement] = await findAllByTestId('section-card');
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandBtn);
+    const units = await within(subsectionElement).findAllByTestId('unit-card');
+    expect(units.length).toBe(1);
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl())
+      .reply(200, {
+        locator: 'some',
+      });
+    const newUnitButton = await within(subsectionElement).findByTestId('new-unit-button');
+    await act(async () => fireEvent.click(newUnitButton));
+    expect(axiosMock.history.post.length).toBe(1);
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [subsection] = section.childInfo.children;
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+      parent_locator: subsection.id,
+      category: COURSE_BLOCK_NAMES.vertical.id,
+      display_name: COURSE_BLOCK_NAMES.vertical.name,
+    }));
   });
 
   it('render checklist value correctly', async () => {
@@ -232,9 +255,7 @@ describe('<CourseOutline />', () => {
     const enableButton = await findByTestId('highlights-enable-button');
     fireEvent.click(enableButton);
     const saveButton = await findByText(enableHighlightsModalMessages.submitButton.defaultMessage);
-    await act(async () => {
-      fireEvent.click(saveButton);
-    });
+    await act(async () => fireEvent.click(saveButton));
     expect(await findByTestId('highlights-enabled-span')).toBeInTheDocument();
   });
 
@@ -271,177 +292,272 @@ describe('<CourseOutline />', () => {
     });
   });
 
-  it('check edit section when edit query is successfully', async () => {
-    const { findAllByTestId, findByText } = render(<RootWrapper />);
-    const newDisplayName = 'New section name';
+  it('check edit title works for section, subsection and unit', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    const checkEditTitle = async (section, element, item, newName, elementName) => {
+      axiosMock.reset();
+      axiosMock
+        .onPost(getCourseItemApiUrl(item.id, {
+          metadata: {
+            display_name: newName,
+          },
+        }))
+        .reply(200, { dummy: 'value' });
+      // mock section, subsection and unit name and check within the elements.
+      // this is done to avoid adding conditions to this mock.
+      axiosMock
+        .onGet(getXBlockApiUrl(section.id))
+        .reply(200, {
+          ...section,
+          display_name: newName,
+          childInfo: {
+            children: [
+              {
+                ...section.childInfo.children[0],
+                display_name: newName,
+                childInfo: {
+                  children: [
+                    {
+                      ...section.childInfo.children[0].childInfo.children[0],
+                      display_name: newName,
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        });
 
-    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
-
-    axiosMock
-      .onPost(getCourseItemApiUrl(section.id, {
+      const editButton = await within(element).findByTestId(`${elementName}-edit-button`);
+      fireEvent.click(editButton);
+      const editField = await within(element).findByTestId(`${elementName}-edit-field`);
+      fireEvent.change(editField, { target: { value: newName } });
+      await act(async () => fireEvent.blur(editField));
+      expect(
+        axiosMock.history.post[axiosMock.history.post.length - 1].data,
+        `Failed for ${elementName}!`,
+      ).toBe(JSON.stringify({
         metadata: {
-          display_name: newDisplayName,
+          display_name: newName,
         },
-      }))
-      .reply(200, { dummy: 'value' });
-    axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, {
-        ...section,
-        display_name: newDisplayName,
-      });
+      }));
+      const results = await within(element).findAllByText(newName);
+      expect(results.length, `Failed for ${elementName}!`).toBeGreaterThan(0);
+    };
 
-    const [sectionElement] = await findAllByTestId('section-card');
-    const editButton = await within(sectionElement).findByTestId('section-edit-button');
-    fireEvent.click(editButton);
-    const editField = await within(sectionElement).findByTestId('section-edit-field');
-    fireEvent.change(editField, { target: { value: newDisplayName } });
-    await act(async () => {
-      fireEvent.blur(editField);
-    });
-
-    expect(await findByText(newDisplayName)).toBeInTheDocument();
-  });
-
-  it('check whether section is deleted when delete button is clicked', async () => {
-    const { findAllByTestId, findByTestId, queryByText } = render(<RootWrapper />);
+    // check section
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
-    await waitFor(() => {
-      expect(queryByText(section.displayName)).toBeInTheDocument();
-    });
-
-    axiosMock.onDelete(getCourseItemApiUrl(section.id)).reply(200);
-
     const [sectionElement] = await findAllByTestId('section-card');
-    const menu = await within(sectionElement).findByTestId('section-card-header__menu-button');
-    fireEvent.click(menu);
-    const deleteButton = await within(sectionElement).findByTestId('section-card-header__menu-delete-button');
-    fireEvent.click(deleteButton);
-    const confirmButton = await findByTestId('delete-confirm-button');
-    await act(async () => {
-      fireEvent.click(confirmButton);
-    });
+    await checkEditTitle(section, sectionElement, section, 'New section name', 'section');
 
-    await waitFor(() => {
-      expect(queryByText(section.displayName)).not.toBeInTheDocument();
-    });
-  });
-
-  it('check whether subsection is deleted when delete button is clicked', async () => {
-    const { findAllByTestId, findByTestId, queryByText } = render(<RootWrapper />);
-    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    // check subsection
     const [subsection] = section.childInfo.children;
-    await waitFor(() => {
-      expect(queryByText(subsection.displayName)).toBeInTheDocument();
-    });
-
-    axiosMock.onDelete(getCourseItemApiUrl(subsection.id)).reply(200);
-
-    const [sectionElement] = await findAllByTestId('section-card');
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
-    const menu = await within(subsectionElement).findByTestId('subsection-card-header__menu-button');
-    fireEvent.click(menu);
-    const deleteButton = await within(subsectionElement).findByTestId('subsection-card-header__menu-delete-button');
-    fireEvent.click(deleteButton);
-    const confirmButton = await findByTestId('delete-confirm-button');
-    await act(async () => {
-      fireEvent.click(confirmButton);
-    });
+    await checkEditTitle(section, subsectionElement, subsection, 'New subsection name', 'subsection');
 
-    await waitFor(() => {
-      expect(queryByText(subsection.displayName)).not.toBeInTheDocument();
-    });
+    // check unit
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandBtn);
+    const [unit] = subsection.childInfo.children;
+    const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
+    await checkEditTitle(section, unitElement, unit, 'New unit name', 'unit');
   });
 
-  it('check whether section is duplicated successfully', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+  it('check whether section, subsection and unit is deleted when corresponding delete button is clicked', async () => {
+    const { findAllByTestId, findByTestId, queryByText } = render(<RootWrapper />);
+    // get section, subsection and unit
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
-    expect(await findAllByTestId('section-card')).toHaveLength(4);
-
-    axiosMock
-      .onPost(getXBlockBaseApiUrl())
-      .reply(200, {
-        locator: courseSectionMock.id,
-      });
-    section.id = courseSectionMock.id;
-    axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, {
-        ...section,
-      });
-
     const [sectionElement] = await findAllByTestId('section-card');
-    const menu = await within(sectionElement).findByTestId('section-card-header__menu-button');
-    fireEvent.click(menu);
-    const duplicateButton = await within(sectionElement).findByTestId('section-card-header__menu-duplicate-button');
-    await act(async () => {
-      fireEvent.click(duplicateButton);
-    });
-    expect(await findAllByTestId('section-card')).toHaveLength(5);
-  });
-
-  it('check whether subsection is duplicated successfully', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
-    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
-    let [sectionElement] = await findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
-    let subsections = await within(sectionElement).findAllByTestId('subsection-card');
-    expect(subsections.length).toBe(1);
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandBtn);
+    const [unit] = subsection.childInfo.children;
+    const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
-    axiosMock
-      .onPost(getXBlockBaseApiUrl())
-      .reply(200, {
-        locator: courseSubsectionMock.id,
-      });
-    subsection.id = courseSubsectionMock.id;
-    section.childInfo.children = [...section.childInfo.children, subsection];
-    axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, {
-        ...section,
+    const checkDeleteBtn = async (item, element, elementName) => {
+      await waitFor(() => {
+        expect(queryByText(item.displayName), `Failed for ${elementName}!`).toBeInTheDocument();
       });
 
-    const menu = await within(subsections[0]).findByTestId('subsection-card-header__menu-button');
-    fireEvent.click(menu);
-    const duplicateButton = await within(subsections[0]).findByTestId('subsection-card-header__menu-duplicate-button');
-    await act(async () => {
-      fireEvent.click(duplicateButton);
-    });
+      axiosMock.onDelete(getCourseItemApiUrl(item.id)).reply(200);
 
-    [sectionElement] = await findAllByTestId('section-card');
-    subsections = await within(sectionElement).findAllByTestId('subsection-card');
-    expect(subsections.length).toBe(2);
+      const menu = await within(element).findByTestId(`${elementName}-card-header__menu-button`);
+      fireEvent.click(menu);
+      const deleteButton = await within(element).findByTestId(`${elementName}-card-header__menu-delete-button`);
+      fireEvent.click(deleteButton);
+      const confirmButton = await findByTestId('delete-confirm-button');
+      await act(async () => fireEvent.click(confirmButton));
+
+      await waitFor(() => {
+        expect(queryByText(item.displayName), `Failed for ${elementName}!`).not.toBeInTheDocument();
+      });
+    };
+
+    // delete unit, subsection and then section in order.
+    // check unit
+    await checkDeleteBtn(unit, unitElement, 'unit');
+    // check subsection
+    await checkDeleteBtn(subsection, subsectionElement, 'subsection');
+    // check section
+    await checkDeleteBtn(section, sectionElement, 'section');
   });
 
-  it('check section is published when publish button is clicked', async () => {
+  it('check whether section, subsection and unit is duplicated successfully', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get section, subsection and unit
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
-    const { findAllByTestId, findByTestId } = render(<RootWrapper />);
-
-    axiosMock
-      .onPost(getCourseItemApiUrl(section.id), {
-        publish: 'make_public',
-      })
-      .reply(200, { dummy: 'value' });
-
-    axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, {
-        ...section,
-        published: true,
-        releasedToStudents: false,
-      });
-
     const [sectionElement] = await findAllByTestId('section-card');
-    const menu = await within(sectionElement).findByTestId('section-card-header__menu-button');
-    fireEvent.click(menu);
-    const publishButton = await within(sectionElement).findByTestId('section-card-header__menu-publish-button');
-    await act(async () => fireEvent.click(publishButton));
-    const confirmButton = await findByTestId('publish-confirm-button');
-    await act(async () => fireEvent.click(confirmButton));
+    const [subsection] = section.childInfo.children;
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandBtn);
+    const [unit] = subsection.childInfo.children;
+    const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
-    expect(
-      sectionElement.querySelector('.item-card-header__badge-status'),
-    ).toHaveTextContent(cardHeaderMessages.statusBadgePublishedNotLive.defaultMessage);
+    const checkDuplicateBtn = async (item, parentElement, element, elementName, expectedLength) => {
+      // baseline
+      if (parentElement) {
+        expect(
+          await within(parentElement).findAllByTestId(`${elementName}-card`),
+          `Failed for ${elementName}!`,
+        ).toHaveLength(expectedLength - 1);
+      } else {
+        expect(
+          await findAllByTestId(`${elementName}-card`),
+          `Failed for ${elementName}!`,
+        ).toHaveLength(expectedLength - 1);
+      }
+
+      const duplicatedItemId = item.id + elementName;
+      axiosMock
+        .onPost(getXBlockBaseApiUrl())
+        .reply(200, {
+          locator: duplicatedItemId,
+        });
+      if (elementName === 'section') {
+        section.id = duplicatedItemId;
+      } else if (elementName === 'subsection') {
+        section.childInfo.children = [...section.childInfo.children, { ...subsection, id: duplicatedItemId }];
+      } else if (elementName === 'unit') {
+        subsection.childInfo.children = [...subsection.childInfo.children, { ...unit, id: duplicatedItemId }];
+        section.childInfo.children = [subsection, ...section.childInfo.children.slice(1)];
+      }
+      axiosMock
+        .onGet(getXBlockApiUrl(section.id))
+        .reply(200, {
+          ...section,
+        });
+
+      const menu = await within(element).findByTestId(`${elementName}-card-header__menu-button`);
+      fireEvent.click(menu);
+      const duplicateButton = await within(element).findByTestId(`${elementName}-card-header__menu-duplicate-button`);
+      await act(async () => fireEvent.click(duplicateButton));
+      if (parentElement) {
+        expect(
+          await within(parentElement).findAllByTestId(`${elementName}-card`),
+          `Failed for ${elementName}!`,
+        ).toHaveLength(expectedLength);
+      } else {
+        expect(
+          await findAllByTestId(`${elementName}-card`),
+          `Failed for ${elementName}!`,
+        ).toHaveLength(expectedLength);
+      }
+    };
+
+    // duplicate unit, subsection and then section in order.
+    // check unit
+    await checkDuplicateBtn(unit, subsectionElement, unitElement, 'unit', 2);
+    // check subsection
+    await checkDuplicateBtn(subsection, sectionElement, subsectionElement, 'subsection', 2);
+    // check section
+    await checkDuplicateBtn(section, null, sectionElement, 'section', 5);
+  });
+
+  it('check section, subsection & unit is published when publish button is clicked', async () => {
+    const { findAllByTestId, findByTestId } = render(<RootWrapper />);
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [sectionElement] = await findAllByTestId('section-card');
+    const [subsection] = section.childInfo.children;
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandBtn);
+    const [unit] = subsection.childInfo.children;
+    const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
+
+    const checkPublishBtn = async (item, element, elementName) => {
+      expect(
+        await within(element).findByTestId(`${elementName}-card-header__badge-status`),
+        `Failed for ${elementName}!`,
+      ).toHaveTextContent(cardHeaderMessages.statusBadgeDraft.defaultMessage);
+
+      axiosMock
+        .onPost(getCourseItemApiUrl(item.id), {
+          publish: 'make_public',
+        })
+        .reply(200, { dummy: 'value' });
+
+      let mockReturnValue = { ...section, published: true };
+      if (elementName === 'subsection') {
+        mockReturnValue = {
+          ...section,
+          childInfo: {
+            children: [
+              {
+                ...section.childInfo.children[0],
+                published: true,
+              },
+              ...section.childInfo.children.slice(1),
+            ],
+          },
+        };
+      } else if (elementName === 'unit') {
+        mockReturnValue = {
+          ...section,
+          childInfo: {
+            children: [
+              {
+                ...section.childInfo.children[0],
+                childInfo: {
+                  children: [
+                    {
+                      ...section.childInfo.children[0].childInfo.children[0],
+                      published: true,
+                    },
+                    ...section.childInfo.children[0].childInfo.children.slice(1),
+                  ],
+                },
+              },
+              ...section.childInfo.children.slice(1),
+            ],
+          },
+        };
+      }
+      axiosMock
+        .onGet(getXBlockApiUrl(section.id))
+        .reply(200, mockReturnValue);
+
+      const menu = await within(element).findByTestId(`${elementName}-card-header__menu-button`);
+      fireEvent.click(menu);
+      const publishButton = await within(element).findByTestId(`${elementName}-card-header__menu-publish-button`);
+      await act(async () => fireEvent.click(publishButton));
+      const confirmButton = await findByTestId('publish-confirm-button');
+      await act(async () => fireEvent.click(confirmButton));
+
+      expect(
+        await within(element).findByTestId(`${elementName}-card-header__badge-status`),
+        `Failed for ${elementName}!`,
+      ).toHaveTextContent(cardHeaderMessages.statusBadgePublishedNotLive.defaultMessage);
+    };
+
+    // publish unit, subsection and then section in order.
+    // check unit
+    await checkPublishBtn(unit, unitElement, 'unit');
+    // check subsection
+    await checkPublishBtn(subsection, subsectionElement, 'subsection');
+    // check section
+    await checkPublishBtn(section, sectionElement, 'section');
   });
 
   it('check configure section when configure query is successful', async () => {

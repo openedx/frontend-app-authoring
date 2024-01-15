@@ -47,9 +47,7 @@ const RootWrapper = () => (
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
         <TaxonomyContext.Provider value={context}>
-          <QueryClientProvider client={queryClient}>
-            <TaxonomyListPage intl={injectIntl} />
-          </QueryClientProvider>
+          <TaxonomyListPage intl={injectIntl} />
         </TaxonomyContext.Provider>
       </QueryClientProvider>
     </IntlProvider>
@@ -69,6 +67,10 @@ describe('<TaxonomyListPage />', () => {
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock.onGet(organizationsListUrl).reply(200, organizations);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should render page and page title correctly', () => {
@@ -134,7 +136,11 @@ describe('<TaxonomyListPage />', () => {
   it('should show all "All taxonomies", "Unassigned" and org names in taxonomy org filter', async () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
-      results: taxonomies,
+      results: [{
+        id: 1,
+        name: 'Taxonomy',
+        description: 'This is a description',
+      }],
     });
 
     const {

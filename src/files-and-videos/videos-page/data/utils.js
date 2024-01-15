@@ -110,11 +110,19 @@ export const getSupportedFormats = (supportedFileFormats) => {
     let format;
     if (isArray(value)) {
       value.forEach(val => {
-        format = key.replace('*', val.substring(1));
+        if (val === '.mov') {
+          format = key.replace('*', 'quicktime');
+        } else {
+          format = key.replace('*', val.substring(1));
+        }
         supportedFormats.push(format);
       });
     } else {
-      format = key.replace('*', value?.substring(1));
+      if (value === '.mov') {
+        format = key.replace('*', 'quicktime');
+      } else {
+        format = key.replace('*', value.substring(1));
+      }
       supportedFormats.push(format);
     }
   });
