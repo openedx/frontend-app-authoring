@@ -62,8 +62,6 @@ const SectionCard = ({
     highlights,
     actions: sectionActions,
     isHeaderVisible = true,
-    explanatoryMessage = '',
-    staffOnlyMessage,
   } = section;
 
   // re-create actions object for customizations
@@ -178,23 +176,9 @@ const SectionCard = ({
           )}
           <div className="section-card__content" data-testid="section-card__content">
             <XBlockStatus
-              category={section.category}
-              explanatoryMessage={explanatoryMessage}
               isSelfPaced={isSelfPaced}
-              releasedToStudents={section.releasedToStudents}
-              releaseDate={section.releaseDate}
-              isProctoredExam={section.isProctoredExam}
-              isOnboardingExam={section.isOnboardingExam}
-              isPracticeExam={section.isPracticeExam}
-              staffOnlyMessage={staffOnlyMessage}
-              userPartitionInfo={section.userPartitionInfo}
-              hasPartitionGroupComponents={section.hasPartitionGroupComponents}
-              gradingType={section.format}
-              dueDate={section.dueDate}
-              relativeWeeksDue={section.relativeWeeksDue}
               isCustomRelativeDatesActive={false} // TODO
-              graded={section.graded}
-              courseGraders={section.courseGraders}
+              item={section}
               />
             <div className="outline-section__status">
               <Button
@@ -247,7 +231,6 @@ SectionCard.propTypes = {
     visibilityState: PropTypes.string.isRequired,
     highlights: PropTypes.arrayOf(PropTypes.string).isRequired,
     shouldScroll: PropTypes.bool,
-    explanatoryMessage: PropTypes.string,
     actions: PropTypes.shape({
       deletable: PropTypes.bool.isRequired,
       draggable: PropTypes.bool.isRequired,

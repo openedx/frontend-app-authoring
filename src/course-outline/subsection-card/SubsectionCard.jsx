@@ -46,8 +46,6 @@ const SubsectionCard = ({
     visibilityState,
     actions: subsectionActions,
     isHeaderVisible = true,
-    explanatoryMessage = '',
-    staffOnlyMessage,
   } = subsection;
 
   // re-create actions object for customizations
@@ -160,27 +158,9 @@ const SubsectionCard = ({
             />
             <div className="subsection-card__content" data-testid="subsection-card__content">
               <XBlockStatus
-                category={subsection.category}
-                explanatoryMessage={explanatoryMessage}
                 isSelfPaced={isSelfPaced}
-                releasedToStudents={subsection.releasedToStudents}
-                releaseDate={subsection.releaseDate}
-                isProctoredExam={subsection.isProctoredExam}
-                isOnboardingExam={subsection.isOnboardingExam}
-                isPracticeExam={subsection.isPracticeExam}
-                prereq={subsection.prereq}
-                prereqs={subsection.prereqs}
-                staffOnlyMessage={staffOnlyMessage}
-                userPartitionInfo={subsection.userPartitionInfo}
-                hasPartitionGroupComponents={subsection.hasPartitionGroupComponents}
-                gradingType={subsection.format}
-                dueDate={subsection.dueDate}
-                relativeWeeksDue={subsection.relativeWeeksDue}
                 isCustomRelativeDatesActive={false} // TODO
-                isTimeLimited={subsection.isTimeLimited}
-                graded={subsection.graded}
-                courseGraders={subsection.courseGraders}
-                hideAfterDue={subsection.hideAfterDue}
+                item={subsection}
               />
             </div>
           </>

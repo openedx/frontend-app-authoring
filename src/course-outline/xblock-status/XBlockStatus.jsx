@@ -16,29 +16,34 @@ import messages from './messages';
 import { COURSE_BLOCK_NAMES } from '../constants';
 
 const XBlockStatus = ({
-  category,
-  explanatoryMessage,
   isSelfPaced,
-  releasedToStudents,
-  releaseDate,
-  isProctoredExam,
-  isOnboardingExam,
-  isPracticeExam,
-  prereq,
-  prereqs,
-  staffOnlyMessage,
-  userPartitionInfo,
-  hasPartitionGroupComponents,
-  gradingType,
-  dueDate,
-  relativeWeeksDue,
   isCustomRelativeDatesActive,
-  isTimeLimited,
-  graded,
-  courseGraders,
-  hideAfterDue,
+  item,
 }) => {
   const intl = useIntl();
+
+  const {
+    category,
+    explanatoryMessage,
+    releasedToStudents,
+    releaseDate,
+    isProctoredExam,
+    isOnboardingExam,
+    isPracticeExam,
+    prereq,
+    prereqs,
+    staffOnlyMessage,
+    userPartitionInfo,
+    hasPartitionGroupComponents,
+    format: gradingType,
+    dueDate,
+    relativeWeeksDue,
+    isTimeLimited,
+    graded,
+    courseGraders,
+    hideAfterDue,
+  } = item;
+
   const isInstructorPaced = !isSelfPaced;
   const statusMessages = [];
 
@@ -136,37 +141,39 @@ const XBlockStatus = ({
   )
 
   const explanatoryMessageDiv = () => (
-    <div className="explanatory-message">
-      <p className="text-secondary-400 x-small mb-1">{explanatoryMessage}</p>
-    </div>
+      <span>{explanatoryMessage}</span>
   )
 
   const renderGradingTypeAndDueDate = () => {
     const showRelativeWeeks = isSelfPaced && isCustomRelativeDatesActive && relativeWeeksDue;
     if (isTimeLimited) {
       return (
-        <div className="d-flex align-items-center">
-          {gradingTypeDiv()} -
-          <span className="sr-only status-proctored-exam-label">{intl.formatMessage(examValue)}</span>
-          <span className="mx-2">{intl.formatMessage(examValue)}</span>
-          {dueDateDiv()}
+        <>
+          <div className="d-flex align-items-center">
+            {gradingTypeDiv()} -
+            <span className="sr-only status-proctored-exam-label">{intl.formatMessage(examValue)}</span>
+            <span className="mx-2">{intl.formatMessage(examValue)}</span>
+            {dueDateDiv()}
+          </div>
           {showRelativeWeeks && (selfPacedRelativeDueWeeksDiv())}
-        </div>
+        </>
       )
     } else if ((dueDate && !isSelfPaced) || graded) {
       return (
-        <div className="d-flex align-items-center">
-          {gradingTypeDiv()}
-          {dueDateDiv()}
+        <>
+          <div className="d-flex align-items-center">
+            {gradingTypeDiv()}
+            {dueDateDiv()}
+          </div>
           {showRelativeWeeks && (selfPacedRelativeDueWeeksDiv())}
-        </div>
+        </>
       )
     } else if (showRelativeWeeks) {
       return (
-        <div className="d-flex align-items-center">
+        <>
           {gradingTypeDiv()}
           {selfPacedRelativeDueWeeksDiv()}
-        </div>
+        </>
       )
     }
   }
@@ -182,7 +189,7 @@ const XBlockStatus = ({
     </div>
   )
 
-  const renderStatusMessages = () => {
+  const renderGradingPolicyAlert = () => {
     let gradingPolicyMismatch = false;
     if (graded) {
       if (gradingType) {
@@ -193,20 +200,28 @@ const XBlockStatus = ({
     }
 
     return (
-      <div className="status-messages">
+      <>
+        {gradingPolicyMismatch && (
+          <div className="border-top border-light h4 pt-1 mt-2 text-dark font-weight-bold">
+            <PageBanner variant="accentB">
+              <Icon className="mr-1" size="sm" src={WarningIcon} />
+              {intl.formatMessage(messages.gradingPolicyMismatchText, { gradingType })}
+            </PageBanner>
+          </div>
+        )}
+      </>
+    )
+  }
+  const renderStatusMessages = () => {
+    return (
+      <>
         {statusMessages.map(({ icon, text }) => (
-          <div className="d-flex align-items-center">
+          <div className="d-flex align-items-center border-top border-light pt-1 mt-2 text-dark">
             <Icon className="mr-1" size="sm" src={icon} />
             {text}
           </div>
         ))}
-        {gradingPolicyMismatch && (
-          <PageBanner variant="accentB">
-            <Icon className="mr-1" size="sm" src={WarningIcon} />
-            {intl.formatMessage(messages.gradingPolicyMismatchText, { gradingType })}
-          </PageBanner>
-        )}
-      </div>
+      </>
     )
   }
 
@@ -216,54 +231,45 @@ const XBlockStatus = ({
       {renderGradingTypeAndDueDate()}
       {hideAfterDue && hideAfterDueMessage()}
       {renderStatusMessages()}
+      {renderGradingPolicyAlert()}
     </div>
   )
 }
 
 XBlockStatus.defaultProps = {
-  explanatoryMessage: '',
-  prereq: '',
-  releaseDate: '',
-  userPartitionInfo: {},
-  prereqs: [],
-  dueDate: '',
-  gradingType: null,
-  relativeWeeksDue: null,
-  explanatoryMessage: '',
   isCustomRelativeDatesActive: false,
-  isTimeLimited: false,
-  graded: false,
-  hideAfterDue: false,
 };
 
 XBlockStatus.propTypes = {
-  category: PropTypes.string.isRequired,
-  explanatoryMessage: PropTypes.string,
   isSelfPaced: PropTypes.bool.isRequired,
-  releasedToStudents: PropTypes.string.isRequired,
-  releaseDate: PropTypes.string.isRequired,
-  isProctoredExam: PropTypes.bool.isRequired,
-  isOnboardingExam: PropTypes.bool.isRequired,
-  isPracticeExam: PropTypes.bool.isRequired,
-  prereq: PropTypes.string,
-  prereqs: PropTypes.arrayOf(PropTypes.shape({
-    blockUsageKey: PropTypes.string.isRequired,
-    blockDisplayName: PropTypes.string.isRequired,
-  })),
-  staffOnlyMessage: PropTypes.string,
-  userPartitionInfo: PropTypes.shape({
-    selectedPartitionIndex: PropTypes.number.isRequired,
-    selectedGroupsLabel: PropTypes.string.isRequired,
-  }),
-  hasPartitionGroupComponents: PropTypes.bool.isRequired,
-  gradingType: PropTypes.string,
-  dueDate: PropTypes.string,
-  relativeWeeksDue: PropTypes.number,
   isCustomRelativeDatesActive: PropTypes.bool,
-  isTimeLimited: PropTypes.bool,
-  graded: PropTypes.bool,
-  courseGraders: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-  hideAfterDue: PropTypes.bool,
+  item: PropTypes.shape({
+    category: PropTypes.string.isRequired,
+    explanatoryMessage: PropTypes.string,
+    releasedToStudents: PropTypes.bool.isRequired,
+    releaseDate: PropTypes.string.isRequired,
+    isProctoredExam: PropTypes.bool,
+    isOnboardingExam: PropTypes.bool,
+    isPracticeExam: PropTypes.bool,
+    prereq: PropTypes.string,
+    prereqs: PropTypes.arrayOf(PropTypes.shape({
+      blockUsageKey: PropTypes.string.isRequired,
+      blockDisplayName: PropTypes.string.isRequired,
+    })),
+    staffOnlyMessage: PropTypes.bool,
+    userPartitionInfo: PropTypes.shape({
+      selectedPartitionIndex: PropTypes.number.isRequired,
+      selectedGroupsLabel: PropTypes.string.isRequired,
+    }),
+    hasPartitionGroupComponents: PropTypes.bool.isRequired,
+    gradingType: PropTypes.string,
+    dueDate: PropTypes.string,
+    relativeWeeksDue: PropTypes.number,
+    isTimeLimited: PropTypes.bool,
+    graded: PropTypes.bool,
+    courseGraders: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+    hideAfterDue: PropTypes.bool,
+  })
 };
 
 export default XBlockStatus;

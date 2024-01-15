@@ -47,11 +47,11 @@ const messages = defineMessages({
   },
   customDueDateLabel: {
     id: 'course-authoring.course-outline.xblock-status.custom-due-date.label',
-    defaultMessage: 'Custom due date: {relativeWeeks} {relativeWeeks, plural, one {# week} other {# weeks}} from enrollment',
+    defaultMessage: 'Custom due date: {relativeWeeksDue, plural, one {# week} other {# weeks}} from enrollment',
   },
   prerequisiteLabel: {
     id: 'course-authoring.course-outline.xblock-status.prerequisite.label',
-    defaultMessage: 'Prerequisite: {prereq_display_name}',
+    defaultMessage: 'Prerequisite: {prereqDisplayName}',
   },
   restrictedUnitAccess: {
     id: 'course-authoring.course-outline.xblock-status.restrictedUnitAccess.text',
