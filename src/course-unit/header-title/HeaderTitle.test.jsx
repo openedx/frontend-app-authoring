@@ -1,28 +1,47 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { AppProvider } from '@edx/frontend-platform/react';
+import { initializeMockApp } from '@edx/frontend-platform';
 
+import initializeStore from '../../store';
 import HeaderTitle from './HeaderTitle';
 import messages from './messages';
 
 const unitTitle = 'Getting Started';
-const isTitleEditFormOpen = false;
+const isEditTitleFormOpen = false;
 const handleTitleEdit = jest.fn();
 const handleTitleEditSubmit = jest.fn();
+let store;
 
 const renderComponent = (props) => render(
-  <IntlProvider locale="en">
-    <HeaderTitle
-      unitTitle={unitTitle}
-      isTitleEditFormOpen={isTitleEditFormOpen}
-      handleTitleEdit={handleTitleEdit}
-      handleTitleEditSubmit={handleTitleEditSubmit}
-      {...props}
-    />
-  </IntlProvider>,
+  <AppProvider store={store}>
+    <IntlProvider locale="en">
+      <HeaderTitle
+        unitTitle={unitTitle}
+        isEditTitleFormOpen={isEditTitleFormOpen}
+        handleTitleEdit={handleTitleEdit}
+        handleTitleEditSubmit={handleTitleEditSubmit}
+        {...props}
+      />
+    </IntlProvider>
+  </AppProvider>,
 );
 
 describe('<HeaderTitle />', () => {
+  beforeEach(async () => {
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+
+    store = initializeStore();
+  });
+
   it('render HeaderTitle component correctly', () => {
     const { getByText, getByRole } = renderComponent();
 
@@ -33,7 +52,7 @@ describe('<HeaderTitle />', () => {
 
   it('render HeaderTitle with open edit form', () => {
     const { getByRole } = renderComponent({
-      isTitleEditFormOpen: true,
+      isEditTitleFormOpen: true,
     });
 
     expect(getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage })).toBeInTheDocument();
@@ -52,7 +71,7 @@ describe('<HeaderTitle />', () => {
 
   it('calls saving title by clicking outside or press Enter key', async () => {
     const { getByRole } = renderComponent({
-      isTitleEditFormOpen: true,
+      isEditTitleFormOpen: true,
     });
 
     const titleField = getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage });

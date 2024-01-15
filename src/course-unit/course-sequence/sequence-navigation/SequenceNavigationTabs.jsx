@@ -1,22 +1,39 @@
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { Button } from '@openedx/paragon';
 import { Plus as PlusIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useNavigate } from 'react-router-dom';
 
-import { useIndexOfLastVisibleChild } from '../hooks';
+import { changeEditTitleFormOpen, updateQueryPendingStatus } from '../../data/slice';
+import { getCourseId, getSequenceId } from '../../data/selectors';
+import { createCorrectInternalRoute } from '../../../utils';
 import messages from '../messages';
+import { useIndexOfLastVisibleChild } from '../hooks';
 import SequenceNavigationDropdown from './SequenceNavigationDropdown';
 import UnitButton from './UnitButton';
 
-const SequenceNavigationTabs = ({ unitIds, unitId }) => {
+const SequenceNavigationTabs = ({ unitIds, unitId, handleCreateNewCourseXblock }) => {
   const intl = useIntl();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const sequenceId = useSelector(getSequenceId);
+  const courseId = useSelector(getCourseId);
+
   const [
     indexOfLastVisibleChild,
     containerRef,
     invisibleStyle,
   ] = useIndexOfLastVisibleChild();
   const shouldDisplayDropdown = indexOfLastVisibleChild === -1;
+
+  const handleAddNewSequenceUnit = () => {
+    dispatch(updateQueryPendingStatus(true));
+    handleCreateNewCourseXblock({ parentLocator: sequenceId, category: 'vertical', displayName: 'Unit' }, ({ courseKey, locator }) => {
+      navigate(createCorrectInternalRoute(`/course/${courseKey}/container/${locator}/${sequenceId}`), courseId);
+      dispatch(changeEditTitleFormOpen(true));
+    });
+  };
 
   return (
     <div className="sequence-navigation-tabs-wrapper">
@@ -32,13 +49,11 @@ const SequenceNavigationTabs = ({ unitIds, unitId }) => {
               isActive={unitId === buttonUnitId}
             />
           ))}
-          {/* TODO: The functionality of the New unit button will be implemented in https://youtrack.raccoongang.com/issue/AXIMST-14 */}
           <Button
-            className="sequence-navigation-tabs-new-unit-btn disabled"
+            className="sequence-navigation-tabs-new-unit-btn"
             variant="outline-primary"
             iconBefore={PlusIcon}
-            as={Link}
-            to="/"
+            onClick={handleAddNewSequenceUnit}
           >
             {intl.formatMessage(messages.newUnitBtnText)}
           </Button>
@@ -48,6 +63,7 @@ const SequenceNavigationTabs = ({ unitIds, unitId }) => {
         <SequenceNavigationDropdown
           unitId={unitId}
           unitIds={unitIds}
+          handleClick={handleAddNewSequenceUnit}
         />
       )}
     </div>
@@ -57,6 +73,7 @@ const SequenceNavigationTabs = ({ unitIds, unitId }) => {
 SequenceNavigationTabs.propTypes = {
   unitId: PropTypes.string.isRequired,
   unitIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+  handleCreateNewCourseXblock: PropTypes.func.isRequired,
 };
 
 export default SequenceNavigationTabs;

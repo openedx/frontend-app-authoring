@@ -73,6 +73,7 @@ const CourseAuthoringRoutes = () => {
         />
         {DECODED_ROUTES.COURSE_UNIT.map((path) => (
           <Route
+            key={path}
             path={path}
             element={<PageWrap><CourseUnit courseId={courseId} /></PageWrap>}
           />

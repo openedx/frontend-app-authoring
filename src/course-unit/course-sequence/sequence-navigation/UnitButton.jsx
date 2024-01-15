@@ -4,12 +4,13 @@ import { Button } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
 import UnitIcon from './UnitIcon';
+import { getCourseId, getSequenceId } from '../../data/selectors';
 
 const UnitButton = ({
   title, contentType, isActive, unitId, className, showTitle,
 }) => {
-  const courseId = useSelector(state => state.courseUnit.courseId);
-  const sequenceId = useSelector(state => state.courseUnit.sequenceId);
+  const courseId = useSelector(getCourseId);
+  const sequenceId = useSelector(getSequenceId);
 
   return (
     <Button
@@ -18,6 +19,7 @@ const UnitButton = ({
       as={Link}
       title={title}
       to={`/course/${courseId}/container/${unitId}/${sequenceId}/`}
+      data-testid="course-unit-btn"
     >
       <UnitIcon type={contentType} />
       {showTitle && <span className="unit-title">{title}</span>}

@@ -27,8 +27,10 @@ const CourseUnit = ({ courseId }) => {
     isLoading,
     sequenceId,
     unitTitle,
+    isQueryPending,
     savingStatus,
-    isTitleEditFormOpen,
+    isEditTitleFormOpen,
+    isErrorAlert,
     isInternetConnectionAlertFailed,
     handleTitleEditSubmit,
     headerNavigationsActions,
@@ -52,7 +54,7 @@ const CourseUnit = ({ courseId }) => {
     <>
       <Container size="xl" className="course-unit px-4">
         <section className="course-unit-container mb-4 mt-5">
-          <ErrorAlert hideHeading isError={savingStatus === RequestStatus.FAILED}>
+          <ErrorAlert hideHeading isError={savingStatus === RequestStatus.FAILED && isErrorAlert}>
             {intl.formatMessage(messages.alertFailedGeneric, { actionName: 'save', type: 'changes' })}
           </ErrorAlert>
           <SubHeader
@@ -60,7 +62,7 @@ const CourseUnit = ({ courseId }) => {
             title={(
               <HeaderTitle
                 unitTitle={unitTitle}
-                isTitleEditFormOpen={isTitleEditFormOpen}
+                isEditTitleFormOpen={isEditTitleFormOpen}
                 handleTitleEdit={handleTitleEdit}
                 handleTitleEditSubmit={handleTitleEditSubmit}
               />
@@ -78,6 +80,7 @@ const CourseUnit = ({ courseId }) => {
             courseId={courseId}
             sequenceId={sequenceId}
             unitId={blockId}
+            handleCreateNewCourseXblock={handleCreateNewCourseXblock}
           />
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
@@ -101,11 +104,13 @@ const CourseUnit = ({ courseId }) => {
           isShow={isShowProcessingNotification}
           title={processingNotificationTitle}
         />
-        <InternetConnectionAlert
-          isFailed={isInternetConnectionAlertFailed}
-          isQueryPending={savingStatus === RequestStatus.PENDING}
-          onInternetConnectionFailed={handleInternetConnectionFailed}
-        />
+        {isQueryPending && (
+          <InternetConnectionAlert
+            isFailed={isInternetConnectionAlertFailed}
+            isQueryPending={savingStatus === RequestStatus.PENDING}
+            onInternetConnectionFailed={handleInternetConnectionFailed}
+          />
+        )}
       </div>
     </>
   );

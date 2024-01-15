@@ -189,3 +189,25 @@ export function normalizeCourseHomeCourseMetadata(metadata, rootSlug) {
     isMasquerading: data.originalUserIsStaff && !data.isStaff,
   };
 }
+
+export function normalizeCourseSectionVerticalData(metadata) {
+  const data = camelCaseObject(metadata);
+  return {
+    ...data,
+    sequence: {
+      id: data.subsectionLocation,
+      title: data.xblock.displayName,
+      unitIds: data.xblockInfo.ancestorInfo.ancestors[0].childInfo.children.map((item) => item.id),
+    },
+    units: data.xblockInfo.ancestorInfo.ancestors[0].childInfo.children.map((unit) => ({
+      id: unit.id,
+      sequenceId: data.subsectionLocation,
+      bookmarked: unit.bookmarked,
+      complete: unit.complete,
+      title: unit.displayName,
+      contentType: unit.xblockType,
+      graded: unit.graded,
+      containsContentTypeGatedContent: unit.contains_content_type_gated_content,
+    })),
+  };
+}
