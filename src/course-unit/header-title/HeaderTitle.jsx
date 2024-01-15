@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form, IconButton } from '@openedx/paragon';
@@ -7,24 +8,27 @@ import {
   Settings as SettingsIcon,
 } from '@openedx/paragon/icons';
 
+import { updateQueryPendingStatus } from '../data/slice';
 import messages from './messages';
 
 const HeaderTitle = ({
   unitTitle,
-  isTitleEditFormOpen,
+  isEditTitleFormOpen,
   handleTitleEdit,
   handleTitleEditSubmit,
 }) => {
   const intl = useIntl();
+  const dispatch = useDispatch();
   const [titleValue, setTitleValue] = useState(unitTitle);
 
   useEffect(() => {
     setTitleValue(unitTitle);
+    dispatch(updateQueryPendingStatus(true));
   }, [unitTitle]);
 
   return (
     <div className="d-flex align-items-center lead">
-      {isTitleEditFormOpen ? (
+      {isEditTitleFormOpen ? (
         <Form.Group className="m-0">
           <Form.Control
             ref={(e) => e && e.focus()}
@@ -59,7 +63,7 @@ const HeaderTitle = ({
 
 HeaderTitle.propTypes = {
   unitTitle: PropTypes.string.isRequired,
-  isTitleEditFormOpen: PropTypes.bool.isRequired,
+  isEditTitleFormOpen: PropTypes.bool.isRequired,
   handleTitleEdit: PropTypes.func.isRequired,
   handleTitleEditSubmit: PropTypes.func.isRequired,
 };

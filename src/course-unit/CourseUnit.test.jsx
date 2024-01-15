@@ -7,6 +7,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { cloneDeep, set } from 'lodash';
 
 import {
   getCourseSectionVerticalApiUrl,
@@ -23,11 +24,13 @@ import {
   courseCreateXblockMock,
   courseSectionVerticalMock,
   courseUnitIndexMock,
+  courseUnitMock,
 } from './__mocks__';
 import { executeThunk } from '../utils';
 import CourseUnit from './CourseUnit';
 import headerNavigationsMessages from './header-navigations/messages';
 import headerTitleMessages from './header-title/messages';
+import courseSequenceMessages from './course-sequence/messages';
 import messages from './add-component/messages';
 
 let axiosMock;
@@ -189,6 +192,93 @@ describe('<CourseUnit />', () => {
       userEvent.click(problemButton);
       expect(mockedUsedNavigate).toHaveBeenCalled();
       expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseKey}/editor/problem/${locator}`);
+    });
+  });
+
+  it('correct addition of a new course unit after click on the "Add new unit" button', async () => {
+    const { getByRole, getAllByTestId } = render(<RootWrapper />);
+    let units = null;
+    const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
+    const updatedAncestorsChild = updatedCourseSectionVerticalData.xblock_info.ancestor_info.ancestors[0];
+    set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].child_info.children', [
+      ...updatedAncestorsChild.child_info.children,
+      courseUnitMock,
+    ]);
+
+    await waitFor(async () => {
+      units = getAllByTestId('course-unit-btn');
+      const courseUnits = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[0].child_info.children;
+      expect(units.length).toEqual(courseUnits.length);
+    });
+
+    axiosMock
+      .onPost(postXBlockBaseApiUrl(), { parent_locator: blockId, category: 'vertical', display_name: 'Unit' })
+      .reply(200, { dummy: 'value' });
+    axiosMock.reset();
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...updatedCourseSectionVerticalData,
+      });
+
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+
+    const addNewUnitBtn = getByRole('button', { name: courseSequenceMessages.newUnitBtnText.defaultMessage });
+    units = getAllByTestId('course-unit-btn');
+    const updatedCourseUnits = updatedCourseSectionVerticalData
+      .xblock_info.ancestor_info.ancestors[0].child_info.children;
+
+    userEvent.click(addNewUnitBtn);
+    expect(units.length).toEqual(updatedCourseUnits.length);
+    expect(mockedUsedNavigate).toHaveBeenCalled();
+    expect(mockedUsedNavigate)
+      .toHaveBeenCalledWith(`/course/${courseId}/container/${blockId}/${updatedAncestorsChild.id}`, { replace: true });
+  });
+
+  it('the sequence unit is updated after changing the unit header', async () => {
+    const { getAllByTestId, getByRole } = render(<RootWrapper />);
+    const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
+    const updatedAncestorsChild = updatedCourseSectionVerticalData.xblock_info.ancestor_info.ancestors[0];
+    set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].child_info.children', [
+      ...updatedAncestorsChild.child_info.children,
+      courseUnitMock,
+    ]);
+
+    const newDisplayName = `${unitDisplayName} new`;
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(blockId, {
+        metadata: {
+          display_name: newDisplayName,
+        },
+      }))
+      .reply(200, { dummy: 'value' })
+      .onGet(getCourseUnitApiUrl(blockId))
+      .reply(200, {
+        ...courseUnitIndexMock,
+        metadata: {
+          ...courseUnitIndexMock.metadata,
+          display_name: newDisplayName,
+        },
+      })
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...updatedCourseSectionVerticalData,
+      });
+
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+
+    const editTitleButton = getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage });
+    fireEvent.click(editTitleButton);
+
+    const titleEditField = getByRole('textbox', { name: headerTitleMessages.ariaLabelButtonEdit.defaultMessage });
+    fireEvent.change(titleEditField, { target: { value: newDisplayName } });
+
+    await act(async () => fireEvent.blur(titleEditField));
+
+    await waitFor(async () => {
+      const units = getAllByTestId('course-unit-btn');
+      expect(units.some(unit => unit.title === newDisplayName)).toBe(true);
     });
   });
 
