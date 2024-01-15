@@ -7,11 +7,11 @@ const messages = defineMessages({
   },
   releasedLabel: {
     id: 'course-authoring.course-outline.xblock-status.released.label',
-    defaultMessage: 'Released:',
+    defaultMessage: 'Released: ',
   },
   scheduledLabel: {
     id: 'course-authoring.course-outline.xblock-status.scheduled.label',
-    defaultMessage: 'Scheduled:',
+    defaultMessage: 'Scheduled: ',
   },
   onboardingExam: {
     id: 'course-authoring.course-outline.xblock-status.onboardingExam.value',
@@ -37,6 +37,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.xblock-status.gradedAsScreenReader.label',
     defaultMessage: 'Graded as:',
   },
+  ungradedText: {
+    id: 'course-authoring.course-outline.xblock-status.ungraded.text',
+    defaultMessage: 'Ungraded',
+  },
   dueLabel: {
     id: 'course-authoring.course-outline.xblock-status.due.label',
     defaultMessage: 'Due:',
@@ -60,6 +64,14 @@ const messages = defineMessages({
   gradingPolicyMismatchText: {
     id: 'course-authoring.course-outline.xblock-status.gradingPolicyMismatch.text',
     defaultMessage: 'This subsection is configured as "{gradingType}", which doesn\'t exist in the current grading policy.',
+  },
+  hiddenAfterEndDate: {
+    id: 'course-authoring.course-outline.xblock-status.hiddenAfterEndDate.text',
+    defaultMessage: 'Subsection is hidden after course end date',
+  },
+  hiddenAfterDueDate: {
+    id: 'course-authoring.course-outline.xblock-status.hiddenAfterDueDate.text',
+    defaultMessage: 'Subsection is hidden after due date',
   },
 });
 

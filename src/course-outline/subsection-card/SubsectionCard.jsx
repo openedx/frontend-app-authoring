@@ -12,12 +12,14 @@ import CardHeader from '../card-header/CardHeader';
 import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
 import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleButton from '../card-header/TitleButton';
+import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
 
 const SubsectionCard = ({
   section,
   subsection,
+  isSelfPaced,
   children,
   index,
   canMoveItem,
@@ -44,6 +46,8 @@ const SubsectionCard = ({
     visibilityState,
     actions: subsectionActions,
     isHeaderVisible = true,
+    explanatoryMessage = '',
+    staffOnlyMessage,
   } = subsection;
 
   // re-create actions object for customizations
@@ -136,26 +140,50 @@ const SubsectionCard = ({
     >
       <div className="subsection-card" data-testid="subsection-card" ref={currentRef}>
         {isHeaderVisible && (
-          <CardHeader
-            title={displayName}
-            status={subsectionStatus}
-            hasChanges={hasChanges}
-            onClickMenuButton={handleClickMenuButton}
-            onClickPublish={onOpenPublishModal}
-            onClickEdit={openForm}
-            onClickDelete={onOpenDeleteModal}
-            onClickMoveUp={handleSubsectionMoveUp}
-            onClickMoveDown={handleSubsectionMoveDown}
-            onClickConfigure={onOpenConfigureModal}
-            isFormOpen={isFormOpen}
-            closeForm={closeForm}
-            onEditSubmit={handleEditSubmit}
-            isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
-            onClickDuplicate={onDuplicateSubmit}
-            titleComponent={titleComponent}
-            namePrefix={namePrefix}
-            actions={actions}
-          />
+          <>
+            <CardHeader
+              title={displayName}
+              status={subsectionStatus}
+              hasChanges={hasChanges}
+              onClickMenuButton={handleClickMenuButton}
+              onClickPublish={onOpenPublishModal}
+              onClickEdit={openForm}
+              onClickDelete={onOpenDeleteModal}
+              isFormOpen={isFormOpen}
+              closeForm={closeForm}
+              onEditSubmit={handleEditSubmit}
+              isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+              onClickDuplicate={onDuplicateSubmit}
+              titleComponent={titleComponent}
+              namePrefix={namePrefix}
+              actions={actions}
+            />
+            <div className="subsection-card__content" data-testid="subsection-card__content">
+              <XBlockStatus
+                category={subsection.category}
+                explanatoryMessage={explanatoryMessage}
+                isSelfPaced={isSelfPaced}
+                releasedToStudents={subsection.releasedToStudents}
+                releaseDate={subsection.releaseDate}
+                isProctoredExam={subsection.isProctoredExam}
+                isOnboardingExam={subsection.isOnboardingExam}
+                isPracticeExam={subsection.isPracticeExam}
+                prereq={subsection.prereq}
+                prereqs={subsection.prereqs}
+                staffOnlyMessage={staffOnlyMessage}
+                userPartitionInfo={subsection.userPartitionInfo}
+                hasPartitionGroupComponents={subsection.hasPartitionGroupComponents}
+                gradingType={subsection.format}
+                dueDate={subsection.dueDate}
+                relativeWeeksDue={subsection.relativeWeeksDue}
+                isCustomRelativeDatesActive={false} // TODO
+                isTimeLimited={subsection.isTimeLimited}
+                graded={subsection.graded}
+                courseGraders={subsection.courseGraders}
+                hideAfterDue={subsection.hideAfterDue}
+              />
+            </div>
+          </>
         )}
         {isExpanded && (
           <div
@@ -211,6 +239,7 @@ SubsectionCard.propTypes = {
     isHeaderVisible: PropTypes.bool,
   }).isRequired,
   children: PropTypes.node,
+  isSelfPaced: PropTypes.bool.isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,
   onEditSubmit: PropTypes.func.isRequired,
   savingStatus: PropTypes.string.isRequired,

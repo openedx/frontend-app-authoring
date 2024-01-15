@@ -14,11 +14,13 @@ import CardHeader from '../card-header/CardHeader';
 import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
 import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleButton from '../card-header/TitleButton';
+import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
 
 const SectionCard = ({
   section,
+  isSelfPaced,
   children,
   index,
   canMoveItem,
@@ -61,6 +63,7 @@ const SectionCard = ({
     actions: sectionActions,
     isHeaderVisible = true,
     explanatoryMessage = '',
+    staffOnlyMessage,
   } = section;
 
   // re-create actions object for customizations
@@ -174,7 +177,25 @@ const SectionCard = ({
             />
           )}
           <div className="section-card__content" data-testid="section-card__content">
-            {explanatoryMessage && <p className="text-secondary-400 x-small mb-1">{explanatoryMessage}</p>}
+            <XBlockStatus
+              category={section.category}
+              explanatoryMessage={explanatoryMessage}
+              isSelfPaced={isSelfPaced}
+              releasedToStudents={section.releasedToStudents}
+              releaseDate={section.releaseDate}
+              isProctoredExam={section.isProctoredExam}
+              isOnboardingExam={section.isOnboardingExam}
+              isPracticeExam={section.isPracticeExam}
+              staffOnlyMessage={staffOnlyMessage}
+              userPartitionInfo={section.userPartitionInfo}
+              hasPartitionGroupComponents={section.hasPartitionGroupComponents}
+              gradingType={section.format}
+              dueDate={section.dueDate}
+              relativeWeeksDue={section.relativeWeeksDue}
+              isCustomRelativeDatesActive={false} // TODO
+              graded={section.graded}
+              courseGraders={section.courseGraders}
+              />
             <div className="outline-section__status">
               <Button
                 className="section-card__highlights"
@@ -235,6 +256,7 @@ SectionCard.propTypes = {
     }).isRequired,
     isHeaderVisible: PropTypes.bool,
   }).isRequired,
+  isSelfPaced: PropTypes.bool.isRequired,
   children: PropTypes.node,
   onOpenHighlightsModal: PropTypes.func.isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,

@@ -311,6 +311,7 @@ const CourseOutline = ({ courseId }) => {
                                 section={section}
                                 index={sectionIndex}
                                 canMoveItem={canMoveItem(sections)}
+                                isSelfPaced={statusBarData.isSelfPaced}
                                 savingStatus={savingStatus}
                                 onOpenHighlightsModal={handleOpenHighlightsModal}
                                 onOpenPublishModal={openPublishModal}
@@ -334,6 +335,7 @@ const CourseOutline = ({ courseId }) => {
                                       subsection={subsection}
                                       index={subsectionIndex}
                                       canMoveItem={canMoveItem(section.childInfo.children)}
+                                      isSelfPaced={statusBarData.isSelfPaced}
                                       savingStatus={savingStatus}
                                       onOpenPublishModal={openPublishModal}
                                       onOpenDeleteModal={openDeleteModal}
