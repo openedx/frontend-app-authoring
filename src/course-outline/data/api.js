@@ -19,7 +19,7 @@ export const getCourseLaunchApiUrl = ({
   all,
 }) => `${getApiBaseUrl()}/api/courses/v1/validation/${courseId}/?graded_only=${gradedOnly}&validate_oras=${validateOras}&all=${all}`;
 
-export const getEnableHighlightsEmailsApiUrl = (courseId) => {
+export const getCourseBlockApiUrl = (courseId) => {
   const formattedCourseId = courseId.split('course-v1:')[1];
   return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@course+block@course`;
 };
@@ -112,7 +112,7 @@ export async function getCourseLaunch({
  */
 export async function enableCourseHighlightsEmails(courseId) {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getEnableHighlightsEmailsApiUrl(courseId), {
+    .post(getCourseBlockApiUrl(courseId), {
       publish: 'republish',
       metadata: {
         highlights_enabled_for_messaging: true,
@@ -305,7 +305,7 @@ export async function addNewCourseItem(parentLocator, category, displayName) {
 */
 export async function setSectionOrderList(courseId, children) {
   const { data } = await getAuthenticatedHttpClient()
-    .put(getEnableHighlightsEmailsApiUrl(courseId), {
+    .put(getCourseBlockApiUrl(courseId), {
       children,
     });
 
@@ -320,7 +320,7 @@ export async function setSectionOrderList(courseId, children) {
 */
 export async function setVideoSharingOption(courseId, videoSharingOption) {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getEnableHighlightsEmailsApiUrl(courseId), {
+    .post(getCourseBlockApiUrl(courseId), {
       metadata: {
         video_sharing_options: videoSharingOption,
       },

@@ -14,7 +14,7 @@ import {
   getCourseOutlineIndexApiUrl,
   getCourseReindexApiUrl,
   getXBlockApiUrl,
-  getEnableHighlightsEmailsApiUrl,
+  getCourseBlockApiUrl,
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
 } from './data/api';
@@ -119,7 +119,7 @@ describe('<CourseOutline />', () => {
     const { findByTestId } = render(<RootWrapper />);
 
     axiosMock
-      .onPost(getEnableHighlightsEmailsApiUrl(courseId), {
+      .onPost(getCourseBlockApiUrl(courseId), {
         metadata: {
           video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
         },
@@ -145,7 +145,7 @@ describe('<CourseOutline />', () => {
     const { findByTestId, queryByRole } = render(<RootWrapper />);
 
     axiosMock
-      .onPost(getEnableHighlightsEmailsApiUrl(courseId), {
+      .onPost(getCourseBlockApiUrl(courseId), {
         metadata: {
           video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
         },
@@ -290,7 +290,7 @@ describe('<CourseOutline />', () => {
 
     axiosMock.reset();
     axiosMock
-      .onPost(getEnableHighlightsEmailsApiUrl(courseId), {
+      .onPost(getCourseBlockApiUrl(courseId), {
         publish: 'republish',
         metadata: {
           highlights_enabled_for_messaging: true,
@@ -696,7 +696,7 @@ describe('<CourseOutline />', () => {
     children = children.splice(2, 0, children.splice(0, 1)[0]);
 
     axiosMock
-      .onPut(getEnableHighlightsEmailsApiUrl(courseBlockId), { children })
+      .onPut(getCourseBlockApiUrl(courseBlockId), { children })
       .reply(200, { dummy: 'value' });
 
     await executeThunk(setSectionOrderListQuery(courseBlockId, children, () => {}), store.dispatch);
@@ -717,7 +717,7 @@ describe('<CourseOutline />', () => {
     const newChildren = children.splice(2, 0, children.splice(0, 1)[0]);
 
     axiosMock
-      .onPut(getEnableHighlightsEmailsApiUrl(courseBlockId), { children })
+      .onPut(getCourseBlockApiUrl(courseBlockId), { children })
       .reply(500);
 
     await executeThunk(setSectionOrderListQuery(courseBlockId, undefined, () => children), store.dispatch);
