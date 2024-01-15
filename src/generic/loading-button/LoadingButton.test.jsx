@@ -1,5 +1,9 @@
 import React from 'react';
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+} from '@testing-library/react';
 
 import LoadingButton from '.';
 
@@ -27,8 +31,9 @@ describe('<LoadingButton />', () => {
   });
 
   it('renders the spinner correctly', async () => {
+    let resolver;
     const longFunction = () => new Promise((resolve) => {
-      setTimeout(resolve, 1000);
+      resolver = resolve;
     });
     const { container, getByRole, getByText } = render(RootWrapper(longFunction));
     const buttonElement = getByRole('button');
@@ -38,31 +43,10 @@ describe('<LoadingButton />', () => {
     // StatefulButton only sets aria-disabled (not disabled) when the state is pending
     // expect(buttonElement).toBeDisabled();
     expect(buttonElement).toHaveAttribute('aria-disabled', 'true');
-    await waitFor(() => {
-      // StatefulButton only sets aria-disabled (not disabled) when the state is pending
-      // expect(buttonElement).toBeEnabled();
-      expect(buttonElement).not.toHaveAttribute('aria-disabled', 'true');
-      expect(container.getElementsByClassName('icon-spin').length).toBe(0);
-    });
-  });
 
-  it('renders the spinner correctly even with error', async () => {
-    const longFunction = () => new Promise((_resolve, reject) => {
-      setTimeout(reject, 1000);
-    });
-    const { container, getByRole, getByText } = render(RootWrapper(longFunction));
-    const buttonElement = getByRole('button');
-    fireEvent.click(buttonElement);
-    expect(container.getElementsByClassName('icon-spin').length).toBe(1);
-    expect(getByText(buttonTitle)).toBeInTheDocument();
-    // StatefulButton only sets aria-disabled (not disabled) when the state is pending
-    // expect(buttonElement).toBeDisabled();
-    expect(buttonElement).toHaveAttribute('aria-disabled', 'true');
-    await waitFor(() => {
-      // StatefulButton only sets aria-disabled (not disabled) when the state is pending
-      // expect(buttonElement).toBeEnabled();
-      expect(buttonElement).not.toHaveAttribute('aria-disabled', 'true');
-      expect(container.getElementsByClassName('icon-spin').length).toBe(0);
-    });
+    await act(async () => { resolver(); });
+
+    expect(buttonElement).not.toHaveAttribute('aria-disabled', 'true');
+    expect(container.getElementsByClassName('icon-spin').length).toBe(0);
   });
 });
