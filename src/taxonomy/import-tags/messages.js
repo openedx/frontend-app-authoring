@@ -36,7 +36,7 @@ const messages = defineMessages({
       + 'be completely replaced by the contents of the imported file (e.g. if a tag in the current taxonomy is not '
       + 'present in the imported file, it will be removed - both from the taxonomy and from any tagged course '
       + 'content).'
-      + '{br}You may wish to download the taxonomy in its current state before importing the new file.',
+      + '{br}You may wish to export the taxonomy in its current state before importing the new file.',
   },
   importWizardStepExportCSVButton: {
     id: 'course-authoring.import-tags.wizard.step-export.button-csv',
