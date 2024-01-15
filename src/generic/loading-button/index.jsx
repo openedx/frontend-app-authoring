@@ -39,6 +39,8 @@ const LoadingButton = ({
     setState('pending');
     try {
       await onClick(e);
+    } catch (err) {
+      // Do nothing
     } finally {
       if (componentMounted.current) {
         setState('');
