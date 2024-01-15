@@ -21,6 +21,7 @@ import messages from './messages';
 const SectionCard = ({
   section,
   isSelfPaced,
+  isCustomRelativeDatesActive,
   children,
   index,
   canMoveItem,
@@ -177,7 +178,7 @@ const SectionCard = ({
           <div className="section-card__content" data-testid="section-card__content">
             <XBlockStatus
               isSelfPaced={isSelfPaced}
-              isCustomRelativeDatesActive={false} // TODO
+              isCustomRelativeDatesActive={isCustomRelativeDatesActive}
               item={section}
               />
             <div className="outline-section__status">
@@ -240,6 +241,7 @@ SectionCard.propTypes = {
     isHeaderVisible: PropTypes.bool,
   }).isRequired,
   isSelfPaced: PropTypes.bool.isRequired,
+  isCustomRelativeDatesActive: PropTypes.bool.isRequired,
   children: PropTypes.node,
   onOpenHighlightsModal: PropTypes.func.isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,

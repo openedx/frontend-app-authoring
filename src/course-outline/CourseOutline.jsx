@@ -55,6 +55,7 @@ const CourseOutline = ({ courseId }) => {
     statusBarData,
     courseActions,
     sectionsList,
+    isCustomRelativeDatesActive,
     isLoading,
     isReIndexShow,
     showErrorAlert,
@@ -312,6 +313,7 @@ const CourseOutline = ({ courseId }) => {
                                 index={sectionIndex}
                                 canMoveItem={canMoveItem(sections)}
                                 isSelfPaced={statusBarData.isSelfPaced}
+                                isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                 savingStatus={savingStatus}
                                 onOpenHighlightsModal={handleOpenHighlightsModal}
                                 onOpenPublishModal={openPublishModal}
@@ -336,6 +338,7 @@ const CourseOutline = ({ courseId }) => {
                                       index={subsectionIndex}
                                       canMoveItem={canMoveItem(section.childInfo.children)}
                                       isSelfPaced={statusBarData.isSelfPaced}
+                                      isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                       savingStatus={savingStatus}
                                       onOpenPublishModal={openPublishModal}
                                       onOpenDeleteModal={openDeleteModal}

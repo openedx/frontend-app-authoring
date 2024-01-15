@@ -20,6 +20,7 @@ const SubsectionCard = ({
   section,
   subsection,
   isSelfPaced,
+  isCustomRelativeDatesActive,
   children,
   index,
   canMoveItem,
@@ -159,7 +160,7 @@ const SubsectionCard = ({
             <div className="subsection-card__content" data-testid="subsection-card__content">
               <XBlockStatus
                 isSelfPaced={isSelfPaced}
-                isCustomRelativeDatesActive={false} // TODO
+                isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                 item={subsection}
               />
             </div>
@@ -220,6 +221,7 @@ SubsectionCard.propTypes = {
   }).isRequired,
   children: PropTypes.node,
   isSelfPaced: PropTypes.bool.isRequired,
+  isCustomRelativeDatesActive: PropTypes.bool.isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,
   onEditSubmit: PropTypes.func.isRequired,
   savingStatus: PropTypes.string.isRequired,
