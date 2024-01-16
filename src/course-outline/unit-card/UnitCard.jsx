@@ -96,7 +96,9 @@ const UnitCard = ({
     <ConditionalSortableElement
       id={id}
       key={id}
-      draggable={false} // update to {actions.draggable} when unit drag-n-drop is implemented
+      draggable={
+        actions.draggable && !(isHeaderVisible === false)
+      }
       componentStyle={{
         background: '#fdfdfd',
         ...borderStyle,

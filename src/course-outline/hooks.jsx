@@ -44,6 +44,7 @@ import {
   setSectionOrderListQuery,
   setVideoSharingOptionQuery,
   setSubsectionOrderListQuery,
+  setUnitOrderListQuery,
 } from './data/thunk';
 
 const useCourseOutline = ({ courseId }) => {
@@ -191,11 +192,15 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleSubsectionDragAndDrop = (sectionId, subsectionListIds, restoreCallback) => {
-    dispatch(setSubsectionOrderListQuery(courseId, sectionId, subsectionListIds, restoreCallback));
+    dispatch(setSubsectionOrderListQuery(sectionId, subsectionListIds, restoreCallback));
   };
 
   const handleVideoSharingOptionChange = (value) => {
     dispatch(setVideoSharingOptionQuery(courseId, value));
+  };
+
+  const handleUnitDragAndDrop = (sectionId, subsectionId, unitListIds, restoreCallback) => {
+    dispatch(setUnitOrderListQuery(sectionId, subsectionId, unitListIds, restoreCallback));
   };
 
   useEffect(() => {
@@ -261,6 +266,7 @@ const useCourseOutline = ({ courseId }) => {
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
     handleVideoSharingOptionChange,
+    handleUnitDragAndDrop,
   };
 };
 
