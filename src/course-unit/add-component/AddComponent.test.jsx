@@ -63,7 +63,47 @@ describe('<AddComponent />', () => {
     ));
   });
 
-  it('create new "Discussion" xblock on click', () => {
+  it('doesn\'t render AddComponent component when there aren\'t componentTemplates', async () => {
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        component_templates: [],
+      });
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+
+    const { queryByRole } = renderComponent();
+
+    expect(queryByRole('heading', { name: messages.title.defaultMessage })).not.toBeInTheDocument();
+  });
+
+  it('does\'t call handleCreateNewCourseXblock with custom component create button is clicked', async () => {
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        component_templates: [
+          {
+            type: 'custom',
+            templates: [],
+            display_name: 'Custom',
+            support_legend: {},
+          },
+        ],
+      });
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+
+    const { getByRole } = renderComponent();
+
+    const customComponentButton = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Custom`, 'i'),
+    });
+
+    userEvent.click(customComponentButton);
+    expect(handleCreateNewCourseXblockMock).not.toHaveBeenCalled();
+  });
+
+  it('calls handleCreateNewCourseXblock with correct parameters when Discussion xblock create button is clicked', () => {
     const { getByRole } = renderComponent();
 
     const discussionButton = getByRole('button', {
@@ -78,7 +118,7 @@ describe('<AddComponent />', () => {
     });
   });
 
-  it('create new "Drag and Drop" xblock on click', () => {
+  it('calls handleCreateNewCourseXblock with correct parameters when Drag-and-Drop xblock create button is clicked', () => {
     const { getByRole } = renderComponent();
 
     const discussionButton = getByRole('button', {
@@ -93,7 +133,7 @@ describe('<AddComponent />', () => {
     });
   });
 
-  it('create new "Problem" xblock on click', () => {
+  it('calls handleCreateNewCourseXblock with correct parameters when Problem xblock create button is clicked', () => {
     const { getByRole } = renderComponent();
 
     const discussionButton = getByRole('button', {
@@ -105,6 +145,21 @@ describe('<AddComponent />', () => {
     expect(handleCreateNewCourseXblockMock).toHaveBeenCalledWith({
       parentLocator: '123',
       type: 'problem',
+    }, expect.any(Function));
+  });
+
+  it('calls handleCreateNewCourseXblock with correct parameters when Video xblock create button is clicked', () => {
+    const { getByRole } = renderComponent();
+
+    const discussionButton = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Video`, 'i'),
+    });
+
+    userEvent.click(discussionButton);
+    expect(handleCreateNewCourseXblockMock).toHaveBeenCalled();
+    expect(handleCreateNewCourseXblockMock).toHaveBeenCalledWith({
+      parentLocator: '123',
+      type: 'video',
     }, expect.any(Function));
   });
 });

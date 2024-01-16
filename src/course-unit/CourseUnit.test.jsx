@@ -159,6 +159,23 @@ describe('<CourseUnit />', () => {
     expect(await findByText(newDisplayName)).toBeInTheDocument();
   });
 
+  it('doesn\'t handle creating xblock and displays an error message', async () => {
+    const { courseKey, locator } = courseCreateXblockMock;
+    axiosMock
+      .onPost(postXBlockBaseApiUrl({ type: 'video', category: 'video', parentLocator: blockId }))
+      .reply(500, {});
+    const { getByRole } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const videoButton = getByRole('button', {
+        name: new RegExp(`${messages.buttonText.defaultMessage} Video`, 'i'),
+      });
+
+      userEvent.click(videoButton);
+      expect(mockedUsedNavigate).not.toHaveBeenCalledWith(`/course/${courseKey}/editor/video/${locator}`);
+    });
+  });
+
   it('handle creating Problem xblock and navigate to editor page', async () => {
     const { courseKey, locator } = courseCreateXblockMock;
     axiosMock
@@ -167,13 +184,31 @@ describe('<CourseUnit />', () => {
     const { getByRole } = render(<RootWrapper />);
 
     await waitFor(() => {
-      const discussionButton = getByRole('button', {
+      const problemButton = getByRole('button', {
         name: new RegExp(`${messages.buttonText.defaultMessage} Problem`, 'i'),
       });
 
-      userEvent.click(discussionButton);
+      userEvent.click(problemButton);
       expect(mockedUsedNavigate).toHaveBeenCalled();
       expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseKey}/editor/problem/${locator}`);
+    });
+  });
+
+  it('handles creating Video xblock and navigates to editor page', async () => {
+    const { courseKey, locator } = courseCreateXblockMock;
+    axiosMock
+      .onPost(postXBlockBaseApiUrl({ type: 'video', category: 'video', parentLocator: blockId }))
+      .reply(200, courseCreateXblockMock);
+    const { getByRole } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const videoButton = getByRole('button', {
+        name: new RegExp(`${messages.buttonText.defaultMessage} Video`, 'i'),
+      });
+
+      userEvent.click(videoButton);
+      expect(mockedUsedNavigate).toHaveBeenCalled();
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseKey}/editor/video/${locator}`);
     });
   });
 });

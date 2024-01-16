@@ -21,8 +21,9 @@ const AddComponent = ({ blockId, handleCreateNewCourseXblock }) => {
       handleCreateNewCourseXblock({ type, parentLocator: blockId });
       break;
     case COMPONENT_ICON_TYPES.problem:
+    case COMPONENT_ICON_TYPES.video:
       handleCreateNewCourseXblock({ type, parentLocator: blockId }, ({ courseKey, locator }) => {
-        navigate(`/course/${courseKey}/editor/problem/${locator}`);
+        navigate(`/course/${courseKey}/editor/${type}/${locator}`);
       });
       break;
     default:
