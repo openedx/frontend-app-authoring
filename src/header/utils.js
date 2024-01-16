@@ -45,7 +45,7 @@ export const getSettingMenuItems = ({
   studioBaseUrl,
   courseId,
   intl,
-  hasSettingPermissions,
+  hasSettingsPermissions,
 }) => {
   const items = [];
 
@@ -67,7 +67,7 @@ export const getSettingMenuItems = ({
       title: intl.formatMessage(messages['header.links.groupConfigurations']),
     },
   );
-  if (hasSettingPermissions) {
+  if (hasSettingsPermissions) {
     items.push(
       {
         href: `${studioBaseUrl}/settings/advanced/${courseId}`,

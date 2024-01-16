@@ -8,7 +8,7 @@ const baseProps = {
   },
 };
 const contentProps = { ...baseProps, hasContentPermissions: true };
-const settingProps = { ...baseProps, hasSettingPermissions: true };
+const settingProps = { ...baseProps, hasSettingsPermissions: true };
 const toolsProps = { ...baseProps, hasToolsPermissions: true };
 
 describe('header utils', () => {
@@ -34,7 +34,7 @@ describe('header utils', () => {
       expect(actualItems).toHaveLength(6);
     });
     it('should not include Advanced Settings option', () => {
-      const actualItems = getSettingMenuItems({ ...baseProps, hasSettingPermissions: false });
+      const actualItems = getSettingMenuItems({ ...baseProps, hasSettingsPermissions: false });
       expect(actualItems).toHaveLength(5);
     });
   });
