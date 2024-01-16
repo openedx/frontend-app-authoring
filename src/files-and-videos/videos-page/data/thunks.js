@@ -60,6 +60,10 @@ export function fetchVideos(courseId) {
 
     try {
       const { previousUploads, ...data } = await getVideos(courseId);
+      dispatch(setPageSettings({ ...data }));
+      // Previous uploads are the current videos associated with a course.
+      // If previous uploads are empty there is no need to add an empty model
+      // or loop through and empty list so automatically set loading to successful
       if (isEmpty(previousUploads)) {
         dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
       } else {
@@ -68,7 +72,6 @@ export function fetchVideos(courseId) {
         dispatch(setVideoIds({
           videoIds: parsedVideos.map(video => video.id),
         }));
-        dispatch(setPageSettings({ ...data }));
         parsedVideos.forEach(async (video, indx) => {
           const isLast = parsedVideos.length - 1 === indx;
           fetchUsageLocation(video.id, dispatch, courseId, isLast);
