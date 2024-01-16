@@ -94,6 +94,7 @@ const CourseOutline = ({ courseId }) => {
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
     handleVideoSharingOptionChange,
+    handleUnitDragAndDrop,
   } = useCourseOutline({ courseId });
 
   const [sections, setSections] = useState(sectionsList);
@@ -122,6 +123,27 @@ const CourseOutline = ({ courseId }) => {
   const finalizeSubsectionOrder = (section) => () => (newSubsections) => {
     initialSections = [...sectionsList];
     handleSubsectionDragAndDrop(section.id, newSubsections.map(subsection => subsection.id), () => {
+      setSections(() => initialSections);
+    });
+  };
+
+  const setUnit = (sectionIndex, subsectionIndex) => (updatedUnits) => {
+    const section = { ...sections[sectionIndex] };
+    section.childInfo = { ...section.childInfo };
+
+    const subsection = { ...section.childInfo.children[subsectionIndex] };
+    subsection.childInfo = { ...subsection.childInfo };
+    subsection.childInfo.children = updatedUnits();
+
+    const updatedSubsection = [...subsection.childInfo.children];
+    updatedSubsection[subsectionIndex] = subsection;
+    section.childInfo.children = updatedSubsection;
+    setSections([...sections.slice(0, sectionIndex), section, ...sections.slice(sectionIndex + 1)]);
+  };
+
+  const finalizeUnitOrder = (section, subsection) => () => (newUnits) => {
+    initialSections = [...sectionsList];
+    handleUnitDragAndDrop(section.id, subsection.id, newUnits.map(unit => unit.id), () => {
       setSections(() => initialSections);
     });
   };
@@ -201,7 +223,7 @@ const CourseOutline = ({ courseId }) => {
                       {sections.length ? (
                         <>
                           <DraggableList itemList={sections} setState={setSections} updateOrder={finalizeSectionOrder}>
-                            {sections.map((section, index) => (
+                            {sections.map((section, sectionIndex) => (
                               <SectionCard
                                 id={section.id}
                                 key={section.id}
@@ -218,10 +240,10 @@ const CourseOutline = ({ courseId }) => {
                               >
                                 <DraggableList
                                   itemList={section.childInfo.children}
-                                  setState={setSubsection(index)}
+                                  setState={setSubsection(sectionIndex)}
                                   updateOrder={finalizeSubsectionOrder(section)}
                                 >
-                                  {section.childInfo.children.map((subsection) => (
+                                  {section.childInfo.children.map((subsection, subsectionIndex) => (
                                     <SubsectionCard
                                       key={subsection.id}
                                       section={section}
@@ -233,20 +255,28 @@ const CourseOutline = ({ courseId }) => {
                                       onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                       onNewUnitSubmit={handleNewUnitSubmit}
                                     >
-                                      {subsection.childInfo.children.map((unit) => (
-                                        <UnitCard
-                                          key={unit.id}
-                                          unit={unit}
-                                          subsection={subsection}
-                                          section={section}
-                                          savingStatus={savingStatus}
-                                          onOpenPublishModal={openPublishModal}
-                                          onOpenDeleteModal={openDeleteModal}
-                                          onEditSubmit={handleEditSubmit}
-                                          onDuplicateSubmit={handleDuplicateUnitSubmit}
-                                          getTitleLink={getUnitUrl}
-                                        />
-                                      ))}
+                                      {subsection.childInfo && (
+                                        <DraggableList
+                                          itemList={subsection.childInfo.children}
+                                          setState={setUnit(sectionIndex, subsectionIndex)}
+                                          updateOrder={finalizeUnitOrder(section, subsection)}
+                                        >
+                                          {subsection.childInfo.children.map((unit) => (
+                                            <UnitCard
+                                              key={unit.id}
+                                              unit={unit}
+                                              subsection={subsection}
+                                              section={section}
+                                              savingStatus={savingStatus}
+                                              onOpenPublishModal={openPublishModal}
+                                              onOpenDeleteModal={openDeleteModal}
+                                              onEditSubmit={handleEditSubmit}
+                                              onDuplicateSubmit={handleDuplicateUnitSubmit}
+                                              getTitleLink={getUnitUrl}
+                                            />
+                                          ))}
+                                        </DraggableList>
+                                      )}
                                     </SubsectionCard>
                                   ))}
                                 </DraggableList>

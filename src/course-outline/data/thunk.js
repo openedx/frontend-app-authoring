@@ -26,6 +26,7 @@ import {
   setSectionOrderList,
   setVideoSharingOption,
   setSubsectionOrderList,
+  setUnitOrderList,
 } from './api';
 import {
   addSection,
@@ -46,6 +47,7 @@ import {
   duplicateSection,
   reorderSectionList,
   reorderSubsectionList,
+  reorderUnitList,
 } from './slice';
 
 export function fetchCourseOutlineIndexQuery(courseId) {
@@ -477,6 +479,27 @@ export function setSubsectionOrderListQuery(courseId, sectionId, subsectionListI
       await setSubsectionOrderList(courseId, sectionId, subsectionListIds).then(async (result) => {
         if (result) {
           dispatch(reorderSubsectionList({ sectionId, subsectionListIds }));
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          dispatch(hideProcessingNotification());
+        }
+      });
+    } catch (error) {
+      restoreCallback();
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function setUnitOrderListQuery(courseId, sectionId, subsectionId, unitListIds, restoreCallback) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await setUnitOrderList(courseId, subsectionId, unitListIds).then(async (result) => {
+        if (result) {
+          dispatch(reorderUnitList({ sectionId, subsectionId, unitListIds }));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(hideProcessingNotification());
         }

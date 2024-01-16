@@ -44,6 +44,7 @@ import {
   setSectionOrderListQuery,
   setVideoSharingOptionQuery,
   setSubsectionOrderListQuery,
+  setUnitOrderListQuery,
 } from './data/thunk';
 
 const useCourseOutline = ({ courseId }) => {
@@ -198,6 +199,10 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(setVideoSharingOptionQuery(courseId, value));
   };
 
+  const handleUnitDragAndDrop = (sectionId, subsectionId, unitListIds, restoreCallback) => {
+    dispatch(setUnitOrderListQuery(courseId, sectionId, subsectionId, unitListIds, restoreCallback));
+  };
+
   useEffect(() => {
     dispatch(fetchCourseOutlineIndexQuery(courseId));
     dispatch(fetchCourseBestPracticesQuery({ courseId }));
@@ -261,6 +266,7 @@ const useCourseOutline = ({ courseId }) => {
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
     handleVideoSharingOptionChange,
+    handleUnitDragAndDrop,
   };
 };
 
