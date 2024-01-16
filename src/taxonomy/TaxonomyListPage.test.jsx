@@ -39,7 +39,6 @@ const context = {
   toastMessage: null,
   setToastMessage: jest.fn(),
 };
-
 const queryClient = new QueryClient();
 
 const RootWrapper = () => (

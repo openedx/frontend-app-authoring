@@ -256,3 +256,15 @@ export const isValidDate = (date) => {
 
   return Boolean(formattedValue.length <= 10);
 };
+
+export const getFileSizeToClosestByte = (fileSize) => {
+  let divides = 0;
+  let size = fileSize;
+  while (size > 1000 && divides < 4) {
+    size /= 1000;
+    divides += 1;
+  }
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const fileSizeFixedDecimal = Number.parseFloat(size).toFixed(2);
+  return `${fileSizeFixedDecimal} ${units[divides]}`;
+};

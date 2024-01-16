@@ -22,5 +22,15 @@ describe('FilesAndUploads utils', () => {
       const actualSize = getFileSizeToClosestByte(2034190000);
       expect(expectedSize).toEqual(actualSize);
     });
+    it('should return file size with TB for terabytes', () => {
+      const expectedSize = '1.99 TB';
+      const actualSize = getFileSizeToClosestByte(1988034190000);
+      expect(expectedSize).toEqual(actualSize);
+    });
+    it('should return file size with TB for larger numbers', () => {
+      const expectedSize = '1234.56 TB';
+      const actualSize = getFileSizeToClosestByte(1234560000000000);
+      expect(expectedSize).toEqual(actualSize);
+    });
   });
 });

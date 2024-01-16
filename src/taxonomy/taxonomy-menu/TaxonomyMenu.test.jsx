@@ -9,16 +9,11 @@ import PropTypes from 'prop-types';
 import { TaxonomyContext } from '../common/context';
 import initializeStore from '../../store';
 import { deleteTaxonomy, getTaxonomy, getTaxonomyExportFile } from '../data/api';
-import { importTaxonomyTags } from '../import-tags';
 import { TaxonomyMenu } from '.';
 
 let store;
 const taxonomyId = 1;
 const taxonomyName = 'Taxonomy 1';
-
-jest.mock('../import-tags', () => ({
-  importTaxonomyTags: jest.fn().mockResolvedValue({}),
-}));
 
 jest.mock('../data/api', () => ({
   ...jest.requireActual('../data/api'),
@@ -169,13 +164,13 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
   });
 
   test('should call import tags when menu click', () => {
-    const { getByTestId } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+    const { getByTestId, getByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // Click on import menu
     fireEvent.click(getByTestId('taxonomy-menu-button'));
     fireEvent.click(getByTestId('taxonomy-menu-import'));
 
-    expect(importTaxonomyTags).toHaveBeenCalled();
+    expect(getByText('Update "Taxonomy 1"')).toBeInTheDocument();
   });
 
   test('should export a taxonomy', () => {
