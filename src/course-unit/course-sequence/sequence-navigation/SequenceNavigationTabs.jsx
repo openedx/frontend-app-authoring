@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { changeEditTitleFormOpen, updateQueryPendingStatus } from '../../data/slice';
 import { getCourseId, getSequenceId } from '../../data/selectors';
-import { createCorrectInternalRoute } from '../../../utils';
 import messages from '../messages';
 import { useIndexOfLastVisibleChild } from '../hooks';
 import SequenceNavigationDropdown from './SequenceNavigationDropdown';
@@ -30,7 +29,7 @@ const SequenceNavigationTabs = ({ unitIds, unitId, handleCreateNewCourseXblock }
   const handleAddNewSequenceUnit = () => {
     dispatch(updateQueryPendingStatus(true));
     handleCreateNewCourseXblock({ parentLocator: sequenceId, category: 'vertical', displayName: 'Unit' }, ({ courseKey, locator }) => {
-      navigate(createCorrectInternalRoute(`/course/${courseKey}/container/${locator}/${sequenceId}`), courseId);
+      navigate(`/course/${courseKey}/container/${locator}/${sequenceId}`, courseId);
       dispatch(changeEditTitleFormOpen(true));
     });
   };
