@@ -30,6 +30,8 @@ const CardHeader = ({
   isDisabledEditField,
   onClickDelete,
   onClickDuplicate,
+  onClickMoveUp,
+  onClickMoveDown,
   titleComponent,
   namePrefix,
   actions,
@@ -112,8 +114,27 @@ const CardHeader = ({
                 {intl.formatMessage(messages.menuDuplicate)}
               </Dropdown.Item>
             )}
+            {actions.draggable && (
+              <>
+                <Dropdown.Item
+                  data-testid={`${namePrefix}-card-header__menu-move-up-button`}
+                  onClick={onClickMoveUp}
+                  disabled={!actions.allowMoveUp}
+                >
+                  {intl.formatMessage(messages.menuMoveUp)}
+                </Dropdown.Item>
+                <Dropdown.Item
+                  data-testid={`${namePrefix}-card-header__menu-move-down-button`}
+                  onClick={onClickMoveDown}
+                  disabled={!actions.allowMoveDown}
+                >
+                  {intl.formatMessage(messages.menuMoveDown)}
+                </Dropdown.Item>
+              </>
+            )}
             {actions.deletable && (
               <Dropdown.Item
+                className="border-top border-light"
                 data-testid={`${namePrefix}-card-header__menu-delete-button`}
                 onClick={onClickDelete}
               >
@@ -141,6 +162,8 @@ CardHeader.propTypes = {
   isDisabledEditField: PropTypes.bool.isRequired,
   onClickDelete: PropTypes.func.isRequired,
   onClickDuplicate: PropTypes.func.isRequired,
+  onClickMoveUp: PropTypes.func.isRequired,
+  onClickMoveDown: PropTypes.func.isRequired,
   titleComponent: PropTypes.node.isRequired,
   namePrefix: PropTypes.string.isRequired,
   actions: PropTypes.shape({
@@ -148,6 +171,8 @@ CardHeader.propTypes = {
     draggable: PropTypes.bool.isRequired,
     childAddable: PropTypes.bool.isRequired,
     duplicable: PropTypes.bool.isRequired,
+    allowMoveUp: PropTypes.bool,
+    allowMoveDown: PropTypes.bool,
   }).isRequired,
 };
 

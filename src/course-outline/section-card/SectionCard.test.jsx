@@ -38,6 +38,9 @@ const renderComponent = (props) => render(
     <IntlProvider locale="en">
       <SectionCard
         section={section}
+        index="1"
+        canMoveItem={jest.fn()}
+        onOrderChange={jest.fn()}
         onOpenPublishModal={jest.fn()}
         onOpenHighlightsModal={jest.fn()}
         onOpenDeleteModal={jest.fn()}

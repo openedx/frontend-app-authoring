@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, useToggle } from '@edx/paragon';
 import { Add as IconAdd } from '@edx/paragon/icons';
+import classNames from 'classnames';
 
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
@@ -18,12 +19,15 @@ const SubsectionCard = ({
   section,
   subsection,
   children,
+  index,
+  canMoveItem,
   onOpenPublishModal,
   onEditSubmit,
   savingStatus,
   onOpenDeleteModal,
   onDuplicateSubmit,
   onNewUnitSubmit,
+  onOrderChange,
 }) => {
   const currentRef = useRef(null);
   const intl = useIntl();
@@ -37,9 +41,15 @@ const SubsectionCard = ({
     hasChanges,
     published,
     visibilityState,
-    actions,
+    actions: subsectionActions,
     isHeaderVisible = true,
   } = subsection;
+
+  // re-create actions object for customizations
+  const actions = { ...subsectionActions };
+  // add actions to control display of move up & down menu buton.
+  actions.allowMoveUp = canMoveItem(index, -1);
+  actions.allowMoveDown = canMoveItem(index, 1);
 
   const [isExpanded, setIsExpanded] = useState(!isHeaderVisible);
   const subsectionStatus = getItemStatus({
@@ -66,6 +76,14 @@ const SubsectionCard = ({
     }
 
     closeForm();
+  };
+
+  const handleSubsectionMoveUp = () => {
+    onOrderChange(index, index - 1);
+  };
+
+  const handleSubsectionMoveDown = () => {
+    onOrderChange(index, index + 1);
   };
 
   const handleNewButtonClick = () => onNewUnitSubmit(id);
@@ -99,13 +117,17 @@ const SubsectionCard = ({
     }
   }, [savingStatus]);
 
+  const isDraggable = (
+    actions.draggable
+      && (actions.allowMoveUp || actions.allowMoveDown)
+      && !(isHeaderVisible === false)
+  );
+
   return (
     <ConditionalSortableElement
       id={id}
       key={id}
-      draggable={
-        actions.draggable && !(isHeaderVisible === false)
-      }
+      draggable={isDraggable}
       componentStyle={{
         background: '#f8f7f6',
         ...borderStyle,
@@ -121,6 +143,8 @@ const SubsectionCard = ({
             onClickPublish={onOpenPublishModal}
             onClickEdit={openForm}
             onClickDelete={onOpenDeleteModal}
+            onClickMoveUp={handleSubsectionMoveUp}
+            onClickMoveDown={handleSubsectionMoveDown}
             isFormOpen={isFormOpen}
             closeForm={closeForm}
             onEditSubmit={handleEditSubmit}
@@ -132,7 +156,10 @@ const SubsectionCard = ({
           />
         )}
         {isExpanded && (
-          <div data-testid="subsection-card__units" className="item-children subsection-card__units">
+          <div
+            data-testid="subsection-card__units"
+            className={classNames('subsection-card__units', { 'item-children': isDraggable })}
+          >
             {children}
             {actions.childAddable && (
               <Button
@@ -188,6 +215,9 @@ SubsectionCard.propTypes = {
   onOpenDeleteModal: PropTypes.func.isRequired,
   onDuplicateSubmit: PropTypes.func.isRequired,
   onNewUnitSubmit: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
+  canMoveItem: PropTypes.func.isRequired,
+  onOrderChange: PropTypes.func.isRequired,
 };
 
 export default SubsectionCard;

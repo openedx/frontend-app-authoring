@@ -15,12 +15,15 @@ const UnitCard = ({
   unit,
   subsection,
   section,
+  index,
+  canMoveItem,
   onOpenPublishModal,
   onEditSubmit,
   savingStatus,
   onOpenDeleteModal,
   onDuplicateSubmit,
   getTitleLink,
+  onOrderChange,
 }) => {
   const currentRef = useRef(null);
   const dispatch = useDispatch();
@@ -33,9 +36,15 @@ const UnitCard = ({
     hasChanges,
     published,
     visibilityState,
-    actions,
+    actions: unitActions,
     isHeaderVisible = true,
   } = unit;
+
+  // re-create actions object for customizations
+  const actions = { ...unitActions };
+  // add actions to control display of move up & down menu buton.
+  actions.allowMoveUp = canMoveItem(index, -1);
+  actions.allowMoveDown = canMoveItem(index, 1);
 
   const unitStatus = getItemStatus({
     published,
@@ -57,6 +66,14 @@ const UnitCard = ({
     }
 
     closeForm();
+  };
+
+  const handleUnitMoveUp = () => {
+    onOrderChange(index, index - 1);
+  };
+
+  const handleUnitMoveDown = () => {
+    onOrderChange(index, index + 1);
   };
 
   const titleComponent = (
@@ -88,17 +105,16 @@ const UnitCard = ({
   }, [savingStatus]);
 
   if (!isHeaderVisible) {
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    return <></>;
+    return null;
   }
+
+  const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
 
   return (
     <ConditionalSortableElement
       id={id}
       key={id}
-      draggable={
-        actions.draggable && !(isHeaderVisible === false)
-      }
+      draggable={isDraggable}
       componentStyle={{
         background: '#fdfdfd',
         ...borderStyle,
@@ -117,6 +133,8 @@ const UnitCard = ({
           onClickPublish={onOpenPublishModal}
           onClickEdit={openForm}
           onClickDelete={onOpenDeleteModal}
+          onClickMoveUp={handleUnitMoveUp}
+          onClickMoveDown={handleUnitMoveDown}
           isFormOpen={isFormOpen}
           closeForm={closeForm}
           onEditSubmit={handleEditSubmit}
@@ -169,6 +187,9 @@ UnitCard.propTypes = {
   onOpenDeleteModal: PropTypes.func.isRequired,
   onDuplicateSubmit: PropTypes.func.isRequired,
   getTitleLink: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
+  canMoveItem: PropTypes.func.isRequired,
+  onOrderChange: PropTypes.func.isRequired,
 };
 
 export default UnitCard;
