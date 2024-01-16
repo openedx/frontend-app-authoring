@@ -33,7 +33,7 @@ const VideoThumbnail = ({
   let addThumbnailMessage = 'Add thumbnail';
   if (allowThumbnailUpload) {
     if (thumbnail) {
-      addThumbnailMessage = 'Edit thumbnail';
+      addThumbnailMessage = 'Replace thumbnail';
     }
   }
   const supportedFiles = videoImageSettings?.supportedFileFormats
