@@ -14,7 +14,7 @@ import {
   getCourseOutlineIndexApiUrl,
   getCourseReindexApiUrl,
   getXBlockApiUrl,
-  getEnableHighlightsEmailsApiUrl,
+  getCourseBlockApiUrl,
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
 } from './data/api';
@@ -36,12 +36,13 @@ import {
   courseSubsectionMock,
 } from './__mocks__';
 import { executeThunk } from '../utils';
-import { COURSE_BLOCK_NAMES } from './constants';
+import { COURSE_BLOCK_NAMES, VIDEO_SHARING_OPTIONS } from './constants';
 import CourseOutline from './CourseOutline';
 import messages from './messages';
 import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
+import statusBarMessages from './status-bar/messages';
 
 let axiosMock;
 let store;
@@ -112,6 +113,60 @@ describe('<CourseOutline />', () => {
     fireEvent.click(reindexButton);
 
     expect(await findByText(messages.alertSuccessDescription.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('check video sharing option udpates correctly', async () => {
+    const { findByTestId } = render(<RootWrapper />);
+
+    axiosMock
+      .onPost(getCourseBlockApiUrl(courseId), {
+        metadata: {
+          video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
+        },
+      })
+      .reply(200);
+    const optionDropdownWrapper = await findByTestId('video-sharing-wrapper');
+    const optionDropdown = await within(optionDropdownWrapper).findByRole('button');
+    await act(async () => fireEvent.click(optionDropdown));
+    const allOffOption = await within(optionDropdownWrapper).findByText(
+      statusBarMessages.videoSharingAllOffText.defaultMessage,
+    );
+    await act(async () => fireEvent.click(allOffOption));
+
+    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+      metadata: {
+        video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
+      },
+    }));
+  });
+
+  it('check video sharing option shows error on failure', async () => {
+    const { findByTestId, queryByRole } = render(<RootWrapper />);
+
+    axiosMock
+      .onPost(getCourseBlockApiUrl(courseId), {
+        metadata: {
+          video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
+        },
+      })
+      .reply(500);
+    const optionDropdownWrapper = await findByTestId('video-sharing-wrapper');
+    const optionDropdown = await within(optionDropdownWrapper).findByRole('button');
+    await act(async () => fireEvent.click(optionDropdown));
+    const allOffOption = await within(optionDropdownWrapper).findByText(
+      statusBarMessages.videoSharingAllOffText.defaultMessage,
+    );
+    await act(async () => fireEvent.click(allOffOption));
+
+    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+      metadata: {
+        video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
+      },
+    }));
+
+    expect(queryByRole('alert')).toBeInTheDocument();
   });
 
   it('render error alert after failed reindex correctly', async () => {
@@ -235,7 +290,7 @@ describe('<CourseOutline />', () => {
 
     axiosMock.reset();
     axiosMock
-      .onPost(getEnableHighlightsEmailsApiUrl(courseId), {
+      .onPost(getCourseBlockApiUrl(courseId), {
         publish: 'republish',
         metadata: {
           highlights_enabled_for_messaging: true,
@@ -641,7 +696,7 @@ describe('<CourseOutline />', () => {
     children = children.splice(2, 0, children.splice(0, 1)[0]);
 
     axiosMock
-      .onPut(getEnableHighlightsEmailsApiUrl(courseBlockId), { children })
+      .onPut(getCourseBlockApiUrl(courseBlockId), { children })
       .reply(200, { dummy: 'value' });
 
     await executeThunk(setSectionOrderListQuery(courseBlockId, children, () => {}), store.dispatch);
@@ -662,7 +717,7 @@ describe('<CourseOutline />', () => {
     const newChildren = children.splice(2, 0, children.splice(0, 1)[0]);
 
     axiosMock
-      .onPut(getEnableHighlightsEmailsApiUrl(courseBlockId), { children })
+      .onPut(getCourseBlockApiUrl(courseBlockId), { children })
       .reply(500);
 
     await executeThunk(setSectionOrderListQuery(courseBlockId, undefined, () => children), store.dispatch);

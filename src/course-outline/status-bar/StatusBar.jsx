@@ -1,17 +1,22 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Hyperlink, Stack } from '@edx/paragon';
+import {
+  Button, Hyperlink, SelectMenu, MenuItem, Stack,
+} from '@edx/paragon';
 import { AppContext } from '@edx/frontend-platform/react';
 
 import { useHelpUrls } from '../../help-urls/hooks';
+import { VIDEO_SHARING_OPTIONS } from '../constants';
 import messages from './messages';
+import { getVideoSharingOptionText } from '../utils';
 
 const StatusBar = ({
   statusBarData,
   isLoading,
   courseId,
   openEnableHighlightsModal,
+  handleVideoSharingOptionChange,
 }) => {
   const intl = useIntl();
   const { config } = useContext(AppContext);
@@ -21,6 +26,8 @@ const StatusBar = ({
     highlightsEnabledForMessaging,
     checklist,
     isSelfPaced,
+    videoSharingEnabled,
+    videoSharingOptions,
   } = statusBarData;
 
   const {
@@ -36,7 +43,8 @@ const StatusBar = ({
 
   const {
     contentHighlights: contentHighlightsUrl,
-  } = useHelpUrls(['contentHighlights']);
+    socialSharing: socialSharingUrl,
+  } = useHelpUrls(['contentHighlights', 'socialSharing']);
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -95,6 +103,36 @@ const StatusBar = ({
           </Hyperlink>
         </div>
       </div>
+      {videoSharingEnabled && (
+        <div
+          data-testid="video-sharing-wrapper"
+          className="outline-status-bar__item ml-2"
+        >
+          <h5>{intl.formatMessage(messages.videoSharingTitle)}</h5>
+          <div className="d-flex align-items-end">
+            <SelectMenu variant="sm btn-outline-primary">
+              {Object.values(VIDEO_SHARING_OPTIONS).map((option) => (
+                <MenuItem
+                  key={option}
+                  value={option}
+                  defaultSelected={option === videoSharingOptions}
+                  onClick={() => handleVideoSharingOptionChange(option)}
+                >
+                  {getVideoSharingOptionText(option, messages, intl)}
+                </MenuItem>
+              ))}
+            </SelectMenu>
+            <Hyperlink
+              className="small ml-2"
+              destination={socialSharingUrl}
+              target="_blank"
+              showLaunchIcon={false}
+            >
+              {intl.formatMessage(messages.videoSharingLink)}
+            </Hyperlink>
+          </div>
+        </div>
+      )}
     </Stack>
   );
 };
@@ -103,6 +141,7 @@ StatusBar.propTypes = {
   courseId: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
   openEnableHighlightsModal: PropTypes.func.isRequired,
+  handleVideoSharingOptionChange: PropTypes.func.isRequired,
   statusBarData: PropTypes.shape({
     courseReleaseDate: PropTypes.string.isRequired,
     isSelfPaced: PropTypes.bool.isRequired,
@@ -113,6 +152,8 @@ StatusBar.propTypes = {
       completedCourseBestPracticesChecks: PropTypes.number.isRequired,
     }),
     highlightsEnabledForMessaging: PropTypes.bool.isRequired,
+    videoSharingEnabled: PropTypes.bool.isRequired,
+    videoSharingOptions: PropTypes.string.isRequired,
   }).isRequired,
 };
 

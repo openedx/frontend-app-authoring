@@ -41,6 +41,7 @@ import {
   updateCourseSectionHighlightsQuery,
   configureCourseSectionQuery,
   setSectionOrderListQuery,
+  setVideoSharingOptionQuery,
 } from './data/thunk';
 
 const useCourseOutline = ({ courseId }) => {
@@ -186,6 +187,10 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(setSectionOrderListQuery(courseId, newListId, restoreCallback));
   };
 
+  const handleVideoSharingOptionChange = (value) => {
+    dispatch(setVideoSharingOptionQuery(courseId, value));
+  };
+
   useEffect(() => {
     dispatch(fetchCourseOutlineIndexQuery(courseId));
     dispatch(fetchCourseBestPracticesQuery({ courseId }));
@@ -246,6 +251,7 @@ const useCourseOutline = ({ courseId }) => {
     openUnitPage,
     handleNewUnitSubmit,
     handleDragNDrop,
+    handleVideoSharingOptionChange,
   };
 };
 

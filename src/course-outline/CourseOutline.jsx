@@ -92,6 +92,7 @@ const CourseOutline = ({ courseId }) => {
     handleNewUnitSubmit,
     getUnitUrl,
     handleDragNDrop,
+    handleVideoSharingOptionChange,
   } = useCourseOutline({ courseId });
 
   const [sections, setSections] = useState(sectionsList);
@@ -177,6 +178,7 @@ const CourseOutline = ({ courseId }) => {
                       isLoading={isLoading}
                       statusBarData={statusBarData}
                       openEnableHighlightsModal={openEnableHighlightsModal}
+                      handleVideoSharingOptionChange={handleVideoSharingOptionChange}
                     />
                     <div className="pt-4">
                       {sections.length ? (
