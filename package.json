@@ -36,6 +36,7 @@
     "url": "https://github.com/openedx/frontend-app-course-authoring/issues"
   },
   "dependencies": {
+    "@dnd-kit/sortable": "^8.0.0",
     "@edx/brand": "npm:@openedx/brand-openedx@^1.2.2",
     "@edx/frontend-component-ai-translations-edx": "^1.4.2",
     "@edx/frontend-component-footer": "^12.3.0",

@@ -686,6 +686,241 @@ describe('<CourseOutline />', () => {
     });
   });
 
+  it('check whether section move up and down options work correctly', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get second section element
+    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    const [, secondSection] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [, sectionElement] = await findAllByTestId('section-card');
+
+    // mock api call
+    axiosMock
+      .onPut(getCourseBlockApiUrl(courseBlockId))
+      .reply(200, { dummy: 'value' });
+
+    // find menu button and click on it to open menu
+    const menu = await within(sectionElement).findByTestId('section-card-header__menu-button');
+    fireEvent.click(menu);
+
+    // move second section to first position to test move up option
+    const moveUpButton = await within(sectionElement).findByTestId('section-card-header__menu-move-up-button');
+    await act(async () => fireEvent.click(moveUpButton));
+    const firstSectionId = store.getState().courseOutline.sectionsList[0].id;
+    expect(secondSection.id).toBe(firstSectionId);
+
+    // move first section back to second position to test move down option
+    const moveDownButton = await within(sectionElement).findByTestId('section-card-header__menu-move-down-button');
+    await act(async () => fireEvent.click(moveDownButton));
+    const newSecondSectionId = store.getState().courseOutline.sectionsList[1].id;
+    expect(secondSection.id).toBe(newSecondSectionId);
+  });
+
+  it('check whether section move up & down option is rendered correctly based on index', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get first, second and last section element
+    const {
+      0: firstSection, 1: secondSection, length, [length - 1]: lastSection,
+    } = await findAllByTestId('section-card');
+
+    // find menu button and click on it to open menu in first section
+    const firstMenu = await within(firstSection).findByTestId('section-card-header__menu-button');
+    await act(async () => fireEvent.click(firstMenu));
+    // move down option should be enabled in first element
+    expect(
+      await within(firstSection).findByTestId('section-card-header__menu-move-down-button'),
+    ).not.toHaveAttribute('aria-disabled');
+    // move up option should not be enabled in first element
+    expect(
+      await within(firstSection).findByTestId('section-card-header__menu-move-up-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
+
+    // find menu button and click on it to open menu in second section
+    const secondMenu = await within(secondSection).findByTestId('section-card-header__menu-button');
+    await act(async () => fireEvent.click(secondMenu));
+    // both move down & up option should be enabled in second element
+    expect(
+      await within(secondSection).findByTestId('section-card-header__menu-move-down-button'),
+    ).not.toHaveAttribute('aria-disabled');
+    expect(
+      await within(secondSection).findByTestId('section-card-header__menu-move-up-button'),
+    ).not.toHaveAttribute('aria-disabled');
+
+    // find menu button and click on it to open menu in last section
+    const lastMenu = await within(lastSection).findByTestId('section-card-header__menu-button');
+    await act(async () => fireEvent.click(lastMenu));
+    // move down option should not be enabled in last element
+    expect(
+      await within(lastSection).findByTestId('section-card-header__menu-move-down-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
+    // move up option should be enabled in last element
+    expect(
+      await within(lastSection).findByTestId('section-card-header__menu-move-up-button'),
+    ).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('check whether subsection move up and down options work correctly', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get second section element
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [sectionElement] = await findAllByTestId('section-card');
+    const [, secondSubsection] = section.childInfo.children;
+    const [, subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+
+    // mock api call
+    axiosMock
+      .onPut(getCourseItemApiUrl(store.getState().courseOutline.sectionsList[0].id))
+      .reply(200, { dummy: 'value' });
+
+    // find menu button and click on it to open menu
+    const menu = await within(subsectionElement).findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+
+    // move second subsection to first position to test move up option
+    const moveUpButton = await within(subsectionElement).findByTestId('subsection-card-header__menu-move-up-button');
+    await act(async () => fireEvent.click(moveUpButton));
+    const firstSubsectionId = store.getState().courseOutline.sectionsList[0].childInfo.children[0].id;
+    expect(secondSubsection.id).toBe(firstSubsectionId);
+
+    // move first section back to second position to test move down option
+    const moveDownButton = await within(subsectionElement).findByTestId('subsection-card-header__menu-move-down-button');
+    await act(async () => fireEvent.click(moveDownButton));
+    const secondSubsectionId = store.getState().courseOutline.sectionsList[0].childInfo.children[1].id;
+    expect(secondSubsection.id).toBe(secondSubsectionId);
+  });
+
+  it('check whether subsection move up & down option is rendered correctly based on index', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // using second section as second section in mock has 3 subsections
+    const [, sectionElement] = await findAllByTestId('section-card');
+    // get first, second and last subsection element
+    const {
+      0: firstSubsection,
+      1: secondSubsection,
+      length,
+      [length - 1]: lastSubsection,
+    } = await within(sectionElement).findAllByTestId('subsection-card');
+
+    // find menu button and click on it to open menu in first section
+    const firstMenu = await within(firstSubsection).findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(firstMenu));
+    // move down option should be enabled in first element
+    expect(
+      await within(firstSubsection).findByTestId('subsection-card-header__menu-move-down-button'),
+    ).not.toHaveAttribute('aria-disabled');
+    // move up option should not be enabled in first element
+    expect(
+      await within(firstSubsection).findByTestId('subsection-card-header__menu-move-up-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
+
+    // find menu button and click on it to open menu in second section
+    const secondMenu = await within(secondSubsection).findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(secondMenu));
+    // both move down & up option should be enabled in second element
+    expect(
+      await within(secondSubsection).findByTestId('subsection-card-header__menu-move-down-button'),
+    ).not.toHaveAttribute('aria-disabled');
+    expect(
+      await within(secondSubsection).findByTestId('subsection-card-header__menu-move-up-button'),
+    ).not.toHaveAttribute('aria-disabled');
+
+    // find menu button and click on it to open menu in last section
+    const lastMenu = await within(lastSubsection).findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(lastMenu));
+    // move down option should not be enabled in last element
+    expect(
+      await within(lastSubsection).findByTestId('subsection-card-header__menu-move-down-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
+    // move up option should be enabled in last element
+    expect(
+      await within(lastSubsection).findByTestId('subsection-card-header__menu-move-up-button'),
+    ).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('check whether unit move up and down options work correctly', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get second section -> second subsection -> second unit element
+    const [, section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [, sectionElement] = await findAllByTestId('section-card');
+    const [, subsection] = section.childInfo.children;
+    const [, subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    await act(async () => fireEvent.click(expandBtn));
+    const [, secondUnit] = subsection.childInfo.children;
+    const [, unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
+
+    // mock api call
+    axiosMock
+      .onPut(getCourseItemApiUrl(store.getState().courseOutline.sectionsList[1].childInfo.children[1].id))
+      .reply(200, { dummy: 'value' });
+
+    // find menu button and click on it to open menu
+    const menu = await within(unitElement).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+
+    // move second unit to first position to test move up option
+    const moveUpButton = await within(unitElement).findByTestId('unit-card-header__menu-move-up-button');
+    await act(async () => fireEvent.click(moveUpButton));
+    const firstUnitId = store.getState().courseOutline.sectionsList[1].childInfo.children[1].childInfo.children[0].id;
+    expect(secondUnit.id).toBe(firstUnitId);
+
+    // move first unit back to second position to test move down option
+    const moveDownButton = await within(subsectionElement).findByTestId('unit-card-header__menu-move-down-button');
+    await act(async () => fireEvent.click(moveDownButton));
+    const secondUnitId = store.getState().courseOutline.sectionsList[1].childInfo.children[1].childInfo.children[1].id;
+    expect(secondUnit.id).toBe(secondUnitId);
+  });
+
+  it('check whether unit move up & down option is rendered correctly based on index', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // using second section -> second subsection as it has 5 units in mock.
+    const [, sectionElement] = await findAllByTestId('section-card');
+    const [, subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    await act(async () => fireEvent.click(expandBtn));
+    // get first, second and last unit element
+    const {
+      0: firstUnit,
+      1: secondUnit,
+      length,
+      [length - 1]: lastUnit,
+    } = await within(subsectionElement).findAllByTestId('unit-card');
+
+    // find menu button and click on it to open menu in first section
+    const firstMenu = await within(firstUnit).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(firstMenu));
+    // move down option should be enabled in first element
+    expect(
+      await within(firstUnit).findByTestId('unit-card-header__menu-move-down-button'),
+    ).not.toHaveAttribute('aria-disabled');
+    // move up option should not be enabled in first element
+    expect(
+      await within(firstUnit).findByTestId('unit-card-header__menu-move-up-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
+
+    // find menu button and click on it to open menu in second section
+    const secondMenu = await within(secondUnit).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(secondMenu));
+    // both move down & up option should be enabled in second element
+    expect(
+      await within(secondUnit).findByTestId('unit-card-header__menu-move-down-button'),
+    ).not.toHaveAttribute('aria-disabled');
+    expect(
+      await within(secondUnit).findByTestId('unit-card-header__menu-move-up-button'),
+    ).not.toHaveAttribute('aria-disabled');
+
+    // find menu button and click on it to open menu in last section
+    const lastMenu = await within(lastUnit).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(lastMenu));
+    // move down option should not be enabled in last element
+    expect(
+      await within(lastUnit).findByTestId('unit-card-header__menu-move-down-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
+    // move up option should be enabled in last element
+    expect(
+      await within(lastUnit).findByTestId('unit-card-header__menu-move-up-button'),
+    ).not.toHaveAttribute('aria-disabled');
+  });
+
   it('check that new section list is saved when dragged', async () => {
     const { findAllByRole } = render(<RootWrapper />);
     const courseBlockId = courseOutlineIndexMock.courseStructure.id;
@@ -865,10 +1100,12 @@ describe('<CourseOutline />', () => {
           },
         },
       });
-    const { queryByTestId } = render(<RootWrapper />);
+    const { findAllByTestId } = render(<RootWrapper />);
+    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    const [sectionElement] = await findAllByTestId('conditional-sortable-element--no-drag-handle')
 
     await waitFor(() => {
-      expect(queryByTestId('conditional-sortable-element--no-drag-handle')).toBeInTheDocument();
+      expect(within(sectionElement).queryByText(section.displayName)).toBeInTheDocument();
     });
   });
 });

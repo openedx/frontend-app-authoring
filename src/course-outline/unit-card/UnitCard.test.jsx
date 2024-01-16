@@ -54,6 +54,9 @@ const renderComponent = (props) => render(
         section={section}
         subsection={subsection}
         unit={unit}
+        index="1"
+        canMoveItem={jest.fn()}
+        onOrderChange={jest.fn()}
         onOpenPublishModal={jest.fn()}
         onOpenDeleteModal={jest.fn()}
         savingStatus=""

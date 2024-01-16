@@ -21,6 +21,7 @@ import {
   DraggableList,
   ErrorAlert,
 } from '@edx/frontend-lib-content-components';
+import { arrayMove } from '@dnd-kit/sortable';
 
 import { LoadingSpinner } from '../generic/Loading';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
@@ -148,6 +149,86 @@ const CourseOutline = ({ courseId }) => {
     });
   };
 
+  /**
+   * Check if item can be moved by given step.
+   * Inner function returns false if the new index after moving by given step
+   * is out of bounds of item length.
+   * If it is within bounds, returns draggable flag of the item in the new index.
+   * This helps us avoid moving the item to a position of unmovable item.
+   * @param {Array} items
+   * @returns {(id, step) => bool}
+   */
+  const canMoveItem = (items) => (id, step) => {
+    const newId = id + step;
+    const indexCheck = newId >= 0 && newId < items.length;
+    if (!indexCheck) {
+      return false;
+    }
+    const newItem = items[newId];
+    return newItem.actions.draggable;
+  };
+
+  /**
+   * Move section to new index
+   * @param {any} currentIndex
+   * @param {any} newIndex
+   */
+  const updateSectionOrderByIndex = (currentIndex, newIndex) => {
+    if (currentIndex === newIndex) {
+      return;
+    }
+    setSections((prevSections) => {
+      const newSections = arrayMove(prevSections, currentIndex, newIndex);
+      finalizeSectionOrder()(newSections);
+      return newSections;
+    });
+  };
+
+  /**
+   * Returns a function for given section which can move a subsection inside it
+   * to a new position
+   * @param {any} sectionIndex
+   * @param {any} section
+   * @param {any} subsections
+   * @returns {(currentIndex, newIndex) => void}
+   */
+  const updateSubsectionOrderByIndex = (sectionIndex, section, subsections) => (currentIndex, newIndex) => {
+    if (currentIndex === newIndex) {
+      return;
+    }
+    setSubsection(sectionIndex)(() => {
+      const newSubsections = arrayMove(subsections, currentIndex, newIndex);
+      finalizeSubsectionOrder(section)()(newSubsections);
+      return newSubsections;
+    });
+  };
+
+  /**
+   * Returns a function for given section & subsection which can move a unit
+   * inside it to a new position
+   * @param {any} sectionIndex
+   * @param {any} section
+   * @param {any} subsection
+   * @param {any} units
+   * @returns {(currentIndex, newIndex) => void}
+   */
+  const updateUnitOrderByIndex = (
+    sectionIndex,
+    subsectionIndex,
+    section,
+    subsection,
+    units,
+  ) => (currentIndex, newIndex) => {
+    if (currentIndex === newIndex) {
+      return;
+    }
+    setUnit(sectionIndex, subsectionIndex)(() => {
+      const newUnits = arrayMove(units, currentIndex, newIndex);
+      finalizeUnitOrder(section, subsection)()(newUnits);
+      return newUnits;
+    });
+  };
+
   useEffect(() => {
     setSections(sectionsList);
   }, [sectionsList]);
@@ -228,6 +309,8 @@ const CourseOutline = ({ courseId }) => {
                                 id={section.id}
                                 key={section.id}
                                 section={section}
+                                index={sectionIndex}
+                                canMoveItem={canMoveItem(sections)}
                                 savingStatus={savingStatus}
                                 onOpenHighlightsModal={handleOpenHighlightsModal}
                                 onOpenPublishModal={openPublishModal}
@@ -237,6 +320,7 @@ const CourseOutline = ({ courseId }) => {
                                 onDuplicateSubmit={handleDuplicateSectionSubmit}
                                 isSectionsExpanded={isSectionsExpanded}
                                 onNewSubsectionSubmit={handleNewSubsectionSubmit}
+                                onOrderChange={updateSectionOrderByIndex}
                               >
                                 <DraggableList
                                   itemList={section.childInfo.children}
@@ -248,30 +332,46 @@ const CourseOutline = ({ courseId }) => {
                                       key={subsection.id}
                                       section={section}
                                       subsection={subsection}
+                                      index={subsectionIndex}
+                                      canMoveItem={canMoveItem(section.childInfo.children)}
                                       savingStatus={savingStatus}
                                       onOpenPublishModal={openPublishModal}
                                       onOpenDeleteModal={openDeleteModal}
                                       onEditSubmit={handleEditSubmit}
                                       onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                       onNewUnitSubmit={handleNewUnitSubmit}
+                                      onOrderChange={updateSubsectionOrderByIndex(
+                                        sectionIndex,
+                                        section,
+                                        section.childInfo.children,
+                                      )}
                                     >
                                       <DraggableList
                                         itemList={subsection.childInfo.children}
                                         setState={setUnit(sectionIndex, subsectionIndex)}
                                         updateOrder={finalizeUnitOrder(section, subsection)}
                                       >
-                                        {subsection.childInfo.children.map((unit) => (
+                                        {subsection.childInfo.children.map((unit, unitIndex) => (
                                           <UnitCard
                                             key={unit.id}
                                             unit={unit}
                                             subsection={subsection}
                                             section={section}
+                                            index={unitIndex}
+                                            canMoveItem={canMoveItem(subsection.childInfo.children)}
                                             savingStatus={savingStatus}
                                             onOpenPublishModal={openPublishModal}
                                             onOpenDeleteModal={openDeleteModal}
                                             onEditSubmit={handleEditSubmit}
                                             onDuplicateSubmit={handleDuplicateUnitSubmit}
                                             getTitleLink={getUnitUrl}
+                                            onOrderChange={updateUnitOrderByIndex(
+                                              sectionIndex,
+                                              subsectionIndex,
+                                              section,
+                                              subsection,
+                                              subsection.childInfo.children,
+                                            )}
                                           />
                                         ))}
                                       </DraggableList>

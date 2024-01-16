@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Badge, Button, useToggle } from '@edx/paragon';
 import { Add as IconAdd } from '@edx/paragon/icons';
+import classNames from 'classnames';
 
 import { setCurrentItem, setCurrentSection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
@@ -19,6 +20,8 @@ import messages from './messages';
 const SectionCard = ({
   section,
   children,
+  index,
+  canMoveItem,
   onOpenHighlightsModal,
   onOpenPublishModal,
   onOpenConfigureModal,
@@ -28,6 +31,7 @@ const SectionCard = ({
   onDuplicateSubmit,
   isSectionsExpanded,
   onNewSubsectionSubmit,
+  onOrderChange,
 }) => {
   const currentRef = useRef(null);
   const intl = useIntl();
@@ -54,10 +58,16 @@ const SectionCard = ({
     published,
     visibilityState,
     highlights,
-    actions,
+    actions: sectionActions,
     isHeaderVisible = true,
     explanatoryMessage = '',
   } = section;
+
+  // re-create actions object for customizations
+  const actions = { ...sectionActions };
+  // add actions to control display of move up & down menu buton.
+  actions.allowMoveUp = canMoveItem(index, -1);
+  actions.allowMoveDown = canMoveItem(index, 1);
 
   const sectionStatus = getItemStatus({
     published,
@@ -95,6 +105,14 @@ const SectionCard = ({
     onNewSubsectionSubmit(id);
   };
 
+  const handleSectionMoveUp = () => {
+    onOrderChange(index, index - 1);
+  };
+
+  const handleSectionMoveDown = () => {
+    onOrderChange(index, index + 1);
+  };
+
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       closeForm();
@@ -115,10 +133,12 @@ const SectionCard = ({
     </TitleButton>
   );
 
+  const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
+
   return (
     <ConditionalSortableElement
       id={id}
-      draggable={actions.draggable}
+      draggable={isDraggable}
       componentStyle={{
         padding: '1.75rem',
         ...borderStyle,
@@ -141,6 +161,8 @@ const SectionCard = ({
               onClickConfigure={onOpenConfigureModal}
               onClickEdit={openForm}
               onClickDelete={onOpenDeleteModal}
+              onClickMoveUp={handleSectionMoveUp}
+              onClickMoveDown={handleSectionMoveDown}
               isFormOpen={isFormOpen}
               closeForm={closeForm}
               onEditSubmit={handleEditSubmit}
@@ -166,7 +188,10 @@ const SectionCard = ({
             </div>
           </div>
           {isExpanded && (
-            <div data-testid="section-card__subsections" className="item-children section-card__subsections">
+            <div
+              data-testid="section-card__subsections"
+              className={classNames('section-card__subsections', { 'item-children': isDraggable })}
+            >
               {children}
               {actions.childAddable && (
                 <Button
@@ -220,6 +245,9 @@ SectionCard.propTypes = {
   onDuplicateSubmit: PropTypes.func.isRequired,
   isSectionsExpanded: PropTypes.bool.isRequired,
   onNewSubsectionSubmit: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
+  canMoveItem: PropTypes.func.isRequired,
+  onOrderChange: PropTypes.func.isRequired,
 };
 
 export default SectionCard;

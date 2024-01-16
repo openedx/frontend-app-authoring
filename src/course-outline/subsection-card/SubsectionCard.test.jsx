@@ -48,6 +48,9 @@ const renderComponent = (props) => render(
       <SubsectionCard
         section={section}
         subsection={subsection}
+        index="1"
+        canMoveItem={jest.fn()}
+        onOrderChange={jest.fn()}
         onOpenPublishModal={jest.fn()}
         onOpenHighlightsModal={jest.fn()}
         onOpenDeleteModal={jest.fn()}

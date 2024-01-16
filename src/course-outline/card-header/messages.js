@@ -41,6 +41,14 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.card.menu.duplicate',
     defaultMessage: 'Duplicate',
   },
+  menuMoveUp: {
+    id: 'course-authoring.course-outline.card.menu.moveup',
+    defaultMessage: 'Move up',
+  },
+  menuMoveDown: {
+    id: 'course-authoring.course-outline.card.menu.movedown',
+    defaultMessage: 'Move down',
+  },
   menuDelete: {
     id: 'course-authoring.course-outline.card.menu.delete',
     defaultMessage: 'Delete',
