@@ -12,7 +12,7 @@ import messages from './messages';
 
 const URLUploader = () => {
   const [textInputValue, setTextInputValue] = React.useState('');
-  const onURLUpload = hooks.onVideoUpload();
+  const onURLUpload = hooks.onVideoUpload('selectedVideoUrl');
   const intl = useIntl();
   return (
     <div className="d-flex flex-column">
@@ -67,7 +67,7 @@ export const VideoUploader = ({ setLoading }) => {
     dispatch(thunkActions.video.uploadVideo({
       supportedFiles: [fileData],
       setLoadSpinner: setLoading,
-      postUploadRedirect: hooks.onVideoUpload(),
+      postUploadRedirect: hooks.onVideoUpload('selectedVideoId'),
     }));
   };
 
