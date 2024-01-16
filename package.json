@@ -41,7 +41,7 @@
     "@edx/frontend-component-footer": "^12.3.0",
     "@edx/frontend-component-header": "^4.7.0",
     "@edx/frontend-enterprise-hotjar": "^2.0.0",
-    "@edx/frontend-lib-content-components": "^1.178.1",
+    "@edx/frontend-lib-content-components": "^1.178.2",
     "@edx/frontend-platform": "5.6.1",
     "@edx/paragon": "^21.5.6",
     "@fortawesome/fontawesome-svg-core": "1.2.36",
