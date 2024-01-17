@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { StudioHeader } from '@edx/frontend-component-header';
 import { getContentMenuItems, getSettingMenuItems, getToolsMenuItems } from './utils';
+import { useUserPermissions } from '../generic/hooks';
+import { getUserPermissions, getUserPermissionsEnabled } from '../generic/data/selectors';
+import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
 import messages from './messages';
 
 const Header = ({
@@ -16,24 +20,63 @@ const Header = ({
   // injected
   intl,
 }) => {
+  const dispatch = useDispatch();
+  const { checkPermission } = useUserPermissions();
+  const userPermissions = useSelector(getUserPermissions);
+  const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
+  const hasContentPermissions = !userPermissionsEnabled || (userPermissionsEnabled && checkPermission('manage_content'));
+  const hasSettingsPermissions = !userPermissionsEnabled
+    || (userPermissionsEnabled && (checkPermission('manage_advanced_settings') || checkPermission('view_course_settings')));
+  const hasToolsPermissions = !userPermissionsEnabled
+  || (userPermissionsEnabled && (checkPermission('manage_course_settings') || checkPermission('view_course_settings')));
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
-  const mainMenuDropdowns = [
-    {
-      id: `${intl.formatMessage(messages['header.links.content'])}-dropdown-menu`,
-      buttonTitle: intl.formatMessage(messages['header.links.content']),
-      items: getContentMenuItems({ studioBaseUrl, courseId, intl }),
-    },
+  const contentMenu = getContentMenuItems({
+    studioBaseUrl,
+    courseId,
+    intl,
+    hasContentPermissions,
+  });
+  const mainMenuDropdowns = [];
+
+  useEffect(() => {
+    dispatch(fetchUserPermissionsEnabledFlag());
+    if (!userPermissions) {
+      dispatch(fetchUserPermissionsQuery(courseId));
+    }
+  }, [courseId]);
+
+  if (contentMenu.length > 0) {
+    mainMenuDropdowns.push(
+      {
+        id: `${intl.formatMessage(messages['header.links.content'])}-dropdown-menu`,
+        buttonTitle: intl.formatMessage(messages['header.links.content']),
+        items: contentMenu,
+      },
+    );
+  }
+  mainMenuDropdowns.push(
     {
       id: `${intl.formatMessage(messages['header.links.settings'])}-dropdown-menu`,
       buttonTitle: intl.formatMessage(messages['header.links.settings']),
-      items: getSettingMenuItems({ studioBaseUrl, courseId, intl }),
+      items: getSettingMenuItems({
+        studioBaseUrl,
+        courseId,
+        intl,
+        hasSettingsPermissions,
+      }),
     },
     {
       id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
       buttonTitle: intl.formatMessage(messages['header.links.tools']),
-      items: getToolsMenuItems({ studioBaseUrl, courseId, intl }),
+      items: getToolsMenuItems({
+        studioBaseUrl,
+        courseId,
+        intl,
+        hasToolsPermissions,
+      }),
     },
-  ];
+  );
+
   const outlineLink = `${studioBaseUrl}/course/${courseId}`;
   return (
     <StudioHeader
