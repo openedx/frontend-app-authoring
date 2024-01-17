@@ -22,11 +22,16 @@ import { executeThunk } from '../utils';
 import { courseUpdatesMock, courseHandoutsMock } from './__mocks__';
 import CourseUpdates from './CourseUpdates';
 import messages from './messages';
+import { getUserPermissionsUrl, getUserPermissionsEnabledFlagUrl } from '../generic/data/api';
+import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
 
 let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
+const userId = 3;
+const userPermissionsData = { permissions: ['manage_content'] };
+const wrongUserPermissionsData = { permissions: ['wrong_permission'] };
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -61,7 +66,7 @@ const RootWrapper = () => (
 );
 
 describe('<CourseUpdates />', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
@@ -79,6 +84,7 @@ describe('<CourseUpdates />', () => {
     axiosMock
       .onGet(getCourseHandoutApiUrl(courseId))
       .reply(200, courseHandoutsMock);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: false });
   });
 
   it('render CourseUpdates component correctly', async () => {
@@ -160,6 +166,26 @@ describe('<CourseUpdates />', () => {
     await executeThunk(editCourseHandoutsQuery(courseId, data), store.dispatch);
     expect(getByText('Some handouts 1')).toBeInTheDocument();
     expect(queryByText(courseHandoutsMock.data)).not.toBeInTheDocument();
+  });
+
+  it('should shows PermissionDeniedAlert if there are no right User Permissions', async () => {
+    const { getByTestId } = render(<RootWrapper />);
+
+    axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, wrongUserPermissionsData);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+    expect(getByTestId('permissionDeniedAlert')).toBeVisible();
+  });
+
+  it('should not show PermissionDeniedAlert if User Permissions are the correct ones', async () => {
+    const { queryByTestId } = render(<RootWrapper />);
+
+    axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, userPermissionsData);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+    expect(queryByTestId('permissionDeniedAlert')).not.toBeInTheDocument();
   });
 
   it('Add new update form is visible after clicking "New update" button', async () => {

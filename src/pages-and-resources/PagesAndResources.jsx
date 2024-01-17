@@ -25,6 +25,7 @@ import { RequestStatus } from '../data/constants';
 import SettingsComponent from './SettingsComponent';
 import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 import getPageHeadTitle from '../generic/utils';
+import { useUserPermissions } from '../generic/hooks';
 
 const PagesAndResources = ({ courseId, intl }) => {
   const courseDetails = useModel('courseDetails', courseId);
@@ -54,12 +55,14 @@ const PagesAndResources = ({ courseId, intl }) => {
     enabled: xpertSettings?.enabled !== undefined,
   }];
 
+  const { checkPermission } = useUserPermissions();
+
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
 
-  if (courseAppsApiStatus === RequestStatus.DENIED) {
+  if (courseAppsApiStatus === RequestStatus.DENIED || !checkPermission('manage_content')) {
     return (
       <PermissionDeniedAlert />
     );

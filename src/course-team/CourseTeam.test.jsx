@@ -15,6 +15,7 @@ import initializeStore from '../store';
 import { courseTeamMock, courseTeamWithOneUser, courseTeamWithoutUsers } from './__mocks__';
 import { getCourseTeamApiUrl, updateCourseTeamUserApiUrl } from './data/api';
 import { getUserPermissionsUrl, getUserPermissionsEnabledFlagUrl } from '../generic/data/api';
+import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
 import CourseTeam from './CourseTeam';
 import messages from './messages';
 import { USER_ROLES } from '../constants';
@@ -180,7 +181,7 @@ describe('<CourseTeam />', () => {
     });
   });
 
-  it('not displays "Add New Member" and AddTeamMember component when isAllowActions or hasManageAllUsersPerm is false', async () => {
+  it('not displays "Add New Member" and AddTeamMember component when isAllowActions is false and hasManageAllUsersPerm is false', async () => {
     cleanup();
     axiosMock
       .onGet(getCourseTeamApiUrl(courseId))
@@ -190,13 +191,37 @@ describe('<CourseTeam />', () => {
       });
     axiosMock
       .onGet(getUserPermissionsEnabledFlagUrl)
-      .reply(200, { enabled: false });
+      .reply(200, { enabled: true });
 
-    const { queryByRole, queryByTestId } = render(<RootWrapper />);
+    const { queryByRole, queryByText } = render(<RootWrapper />);
 
     await waitFor(() => {
       expect(queryByRole('button', { name: messages.addNewMemberButton.defaultMessage })).not.toBeInTheDocument();
-      expect(queryByTestId('add-team-member')).not.toBeInTheDocument();
+      expect(queryByText('add-team-member')).not.toBeInTheDocument();
+    });
+  });
+
+  it('displays "Add New Member" and AddTeamMember component when hasManageAllUsersPerm is true', async () => {
+    cleanup();
+    axiosMock
+      .onGet(getCourseTeamApiUrl(courseId))
+      .reply(200, {
+        ...courseTeamWithOneUser,
+        allowActions: false,
+      });
+    axiosMock
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: true });
+    axiosMock
+      .onGet(getUserPermissionsUrl(courseId, userId))
+      .reply(200, userPermissionsData);
+    await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+
+    const { getByRole } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      expect(getByRole('button', { name: messages.addNewMemberButton.defaultMessage })).toBeInTheDocument();
     });
   });
 
