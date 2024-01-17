@@ -1,5 +1,6 @@
 // @ts-check
 import { useMemo } from 'react';
+import { getConfig } from '@edx/frontend-platform';
 import {
   useQuery,
   useQueries,
@@ -11,6 +12,7 @@ import {
   getContentTaxonomyTagsData,
   getContentData,
   updateContentTaxonomyTags,
+  getContentTaxonomyTagsCount,
 } from './api';
 
 /** @typedef {import("../../taxonomy/tag-list/data/types.mjs").TagListData} TagListData */
@@ -144,6 +146,41 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
         contentPattern = contentId.replace(/\+type@.*$/, '*');
       }
       queryClient.invalidateQueries({ queryKey: ['contentTagsCount', contentPattern] });
+    },
+    onSuccess: /* istanbul ignore next */ () => {
+      /* istanbul ignore next */
+      if (window.top != null) {
+        // This send messages to the parent page if the drawer is called from a iframe.
+        // Is used on Studio to update tags data and counts.
+        // In the future, when the Course Outline Page and Unit Page are integrated into this MFE,
+        // they should just use React Query to load the tag counts, and React Query will automatically
+        // refresh those counts when the mutation invalidates them. So this postMessage is just a temporary
+        // feature to support the legacy Django template courseware page.
+
+        // Sends content tags.
+        getContentTaxonomyTagsData(contentId).then((data) => {
+          const contentData = {
+            contentId,
+            ...data,
+          };
+          window.top?.postMessage(
+            { type: 'authoring.events.tags.updated', data: contentData },
+            getConfig().STUDIO_BASE_URL,
+          );
+        });
+
+        // Sends tags count.
+        getContentTaxonomyTagsCount(contentId).then((data) => {
+          const contentData = {
+            contentId,
+            count: data,
+          };
+          window.top?.postMessage(
+            { type: 'authoring.events.tags.count.updated', data: contentData },
+            getConfig().STUDIO_BASE_URL,
+          );
+        });
+      }
     },
   });
 };
