@@ -159,6 +159,7 @@ const StudioHome = ({ intl }) => {
               <SubHeader
                 title={intl.formatMessage(messages.headingTitle, { studioShortName: studioShortName || 'Studio' })}
                 headerActions={headerButtons}
+                key={studioShortName}
               />
             </section>
           </article>

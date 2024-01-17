@@ -48,7 +48,6 @@ export async function createOrRerunCourse(courseData) {
 /**
  * Get user course roles permissions.
  * @param {string} courseId
- * @param {string} userId
  * @returns {Promise<Object>}
  */
 export async function getUserPermissions(courseId) {

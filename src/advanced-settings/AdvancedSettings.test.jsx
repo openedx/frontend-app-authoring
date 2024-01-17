@@ -3,7 +3,11 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import {
+  render,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 
 import initializeStore from '../store';
@@ -13,11 +17,15 @@ import { getCourseAdvancedSettingsApiUrl } from './data/api';
 import { updateCourseAppSetting } from './data/thunks';
 import AdvancedSettings from './AdvancedSettings';
 import messages from './messages';
+import { getUserPermissionsUrl, getUserPermissionsEnabledFlagUrl } from '../generic/data/api';
+import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
 
 let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
+const userId = 3;
+const userPermissionsData = { permissions: ['view_course_settings', 'manage_advanced_settings'] };
 
 // Mock the TextareaAutosize component
 jest.mock('react-textarea-autosize', () => jest.fn((props) => (
@@ -43,11 +51,23 @@ const RootWrapper = () => (
   </AppProvider>
 );
 
+const permissionsMockStore = async (permissions) => {
+  axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, permissions);
+  axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+  await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+  await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+};
+
+const permissionDisabledMockStore = async () => {
+  axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: false });
+  await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+};
+
 describe('<AdvancedSettings />', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
-        userId: 3,
+        userId,
         username: 'abc123',
         administrator: true,
         roles: [],
@@ -58,7 +78,9 @@ describe('<AdvancedSettings />', () => {
     axiosMock
       .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
       .reply(200, advancedSettingsMock);
+    permissionsMockStore(userPermissionsData);
   });
+
   it('should render without errors', async () => {
     const { getByText } = render(<RootWrapper />);
     await waitFor(() => {
@@ -160,5 +182,30 @@ describe('<AdvancedSettings />', () => {
     fireEvent.click(getByText('Save changes'));
     await executeThunk(updateCourseAppSetting(courseId, [3, 2, 1]), store.dispatch);
     expect(getByText('Your policy changes have been saved.')).toBeInTheDocument();
+  });
+  it('should shows the PermissionDeniedAlert when there are not the right user permissions', async () => {
+    const permissionsData = { permissions: ['view'] };
+    await permissionsMockStore(permissionsData);
+
+    const { queryByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      const permissionDeniedAlert = queryByText('You are not authorized to view this page. If you feel you should have access, please reach out to your course team admin to be given access.');
+      expect(permissionDeniedAlert).toBeInTheDocument();
+    });
+  });
+  it('should not show the PermissionDeniedAlert when the User Permissions Flag is not enabled', async () => {
+    await permissionDisabledMockStore();
+
+    const { queryByText } = render(<RootWrapper />);
+    const permissionDeniedAlert = queryByText('You are not authorized to view this page. If you feel you should have access, please reach out to your course team admin to be given access.');
+    expect(permissionDeniedAlert).not.toBeInTheDocument();
+  });
+  it('should be view only if the permission is set for viewOnly', async () => {
+    const permissions = { permissions: ['view_course_settings'] };
+    await permissionsMockStore(permissions);
+    const { getByLabelText } = render(<RootWrapper />);
+    await waitFor(() => {
+      expect(getByLabelText('Advanced Module List')).toBeDisabled();
+    });
   });
 });
