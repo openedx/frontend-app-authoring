@@ -24,12 +24,6 @@ export const getCourseBlockApiUrl = (courseId) => {
   return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@course+block@course`;
 };
 
-export const getChapterBlockApiUrl = (courseId, chapterId) => {
-  const formattedCourseId = courseId.split('course-v1:')[1];
-  const formattedChapterId = chapterId.split('@').slice(-1)[0];
-  return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@chapter+block@${formattedChapterId}`;
-};
-
 export const getCourseReindexApiUrl = (reindexLink) => `${getApiBaseUrl()}${reindexLink}`;
 export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
 export const getCourseItemApiUrl = (itemId) => `${getXBlockBaseApiUrl()}${itemId}`;
@@ -320,14 +314,13 @@ export async function setSectionOrderList(courseId, children) {
 
 /**
  * Set order for the list of the subsections
- * @param {string} courseId
- * @param {string} sectionId
+ * @param {string} itemId Subsection or unit ID
  * @param {Array<string>} children list of sections id's
  * @returns {Promise<Object>}
 */
-export async function setSubsectionOrderList(courseId, sectionId, children) {
+export async function setCourseItemOrderList(itemId, children) {
   const { data } = await getAuthenticatedHttpClient()
-    .put(getChapterBlockApiUrl(courseId, sectionId), {
+    .put(getCourseItemApiUrl(itemId), {
       children,
     });
 
