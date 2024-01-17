@@ -135,9 +135,9 @@ const CourseOutline = ({ courseId }) => {
     subsection.childInfo = { ...subsection.childInfo };
     subsection.childInfo.children = updatedUnits();
 
-    const updatedSubsection = [...subsection.childInfo.children];
-    updatedSubsection[subsectionIndex] = subsection;
-    section.childInfo.children = updatedSubsection;
+    const updatedSubsections = [...section.childInfo.children];
+    updatedSubsections[subsectionIndex] = subsection;
+    section.childInfo.children = updatedSubsections;
     setSections([...sections.slice(0, sectionIndex), section, ...sections.slice(sectionIndex + 1)]);
   };
 
@@ -255,28 +255,26 @@ const CourseOutline = ({ courseId }) => {
                                       onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                       onNewUnitSubmit={handleNewUnitSubmit}
                                     >
-                                      {subsection.childInfo && (
-                                        <DraggableList
-                                          itemList={subsection.childInfo.children}
-                                          setState={setUnit(sectionIndex, subsectionIndex)}
-                                          updateOrder={finalizeUnitOrder(section, subsection)}
-                                        >
-                                          {subsection.childInfo.children.map((unit) => (
-                                            <UnitCard
-                                              key={unit.id}
-                                              unit={unit}
-                                              subsection={subsection}
-                                              section={section}
-                                              savingStatus={savingStatus}
-                                              onOpenPublishModal={openPublishModal}
-                                              onOpenDeleteModal={openDeleteModal}
-                                              onEditSubmit={handleEditSubmit}
-                                              onDuplicateSubmit={handleDuplicateUnitSubmit}
-                                              getTitleLink={getUnitUrl}
-                                            />
-                                          ))}
-                                        </DraggableList>
-                                      )}
+                                      <DraggableList
+                                        itemList={subsection.childInfo.children}
+                                        setState={setUnit(sectionIndex, subsectionIndex)}
+                                        updateOrder={finalizeUnitOrder(section, subsection)}
+                                      >
+                                        {subsection.childInfo.children.map((unit) => (
+                                          <UnitCard
+                                            key={unit.id}
+                                            unit={unit}
+                                            subsection={subsection}
+                                            section={section}
+                                            savingStatus={savingStatus}
+                                            onOpenPublishModal={openPublishModal}
+                                            onOpenDeleteModal={openDeleteModal}
+                                            onEditSubmit={handleEditSubmit}
+                                            onDuplicateSubmit={handleDuplicateUnitSubmit}
+                                            getTitleLink={getUnitUrl}
+                                          />
+                                        ))}
+                                      </DraggableList>
                                     </SubsectionCard>
                                   ))}
                                 </DraggableList>

@@ -192,7 +192,7 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleSubsectionDragAndDrop = (sectionId, subsectionListIds, restoreCallback) => {
-    dispatch(setSubsectionOrderListQuery(courseId, sectionId, subsectionListIds, restoreCallback));
+    dispatch(setSubsectionOrderListQuery(sectionId, subsectionListIds, restoreCallback));
   };
 
   const handleVideoSharingOptionChange = (value) => {
@@ -200,7 +200,7 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const handleUnitDragAndDrop = (sectionId, subsectionId, unitListIds, restoreCallback) => {
-    dispatch(setUnitOrderListQuery(courseId, sectionId, subsectionId, unitListIds, restoreCallback));
+    dispatch(setUnitOrderListQuery(sectionId, subsectionId, unitListIds, restoreCallback));
   };
 
   useEffect(() => {

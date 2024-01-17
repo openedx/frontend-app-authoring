@@ -25,8 +25,7 @@ import {
   updateCourseSectionHighlights,
   setSectionOrderList,
   setVideoSharingOption,
-  setSubsectionOrderList,
-  setUnitOrderList,
+  setCourseItemOrderList,
 } from './api';
 import {
   addSection,
@@ -470,13 +469,13 @@ export function setSectionOrderListQuery(courseId, sectionListIds, restoreCallba
   };
 }
 
-export function setSubsectionOrderListQuery(courseId, sectionId, subsectionListIds, restoreCallback) {
+export function setSubsectionOrderListQuery(sectionId, subsectionListIds, restoreCallback) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      await setSubsectionOrderList(courseId, sectionId, subsectionListIds).then(async (result) => {
+      await setCourseItemOrderList(sectionId, subsectionListIds).then(async (result) => {
         if (result) {
           dispatch(reorderSubsectionList({ sectionId, subsectionListIds }));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
@@ -491,13 +490,13 @@ export function setSubsectionOrderListQuery(courseId, sectionId, subsectionListI
   };
 }
 
-export function setUnitOrderListQuery(courseId, sectionId, subsectionId, unitListIds, restoreCallback) {
+export function setUnitOrderListQuery(sectionId, subsectionId, unitListIds, restoreCallback) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      await setUnitOrderList(courseId, subsectionId, unitListIds).then(async (result) => {
+      await setCourseItemOrderList(subsectionId, unitListIds).then(async (result) => {
         if (result) {
           dispatch(reorderUnitList({ sectionId, subsectionId, unitListIds }));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
