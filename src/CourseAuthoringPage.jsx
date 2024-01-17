@@ -14,6 +14,8 @@ import PermissionDeniedAlert from './generic/PermissionDeniedAlert';
 import { getCourseAppsApiStatus } from './pages-and-resources/data/selectors';
 import { RequestStatus } from './data/constants';
 import Loading from './generic/Loading';
+import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from './generic/data/thunks';
+import { getUserPermissions } from './generic/data/selectors';
 
 const AppHeader = ({
   courseNumber, courseOrg, courseTitle, courseId,
@@ -40,9 +42,14 @@ AppHeader.defaultProps = {
 
 const CourseAuthoringPage = ({ courseId, children }) => {
   const dispatch = useDispatch();
+  const userPermissions = useSelector(getUserPermissions);
 
   useEffect(() => {
     dispatch(fetchCourseDetail(courseId));
+    dispatch(fetchUserPermissionsEnabledFlag());
+    if (!userPermissions) {
+      dispatch(fetchUserPermissionsQuery(courseId));
+    }
   }, [courseId]);
 
   const courseDetail = useModel('courseDetails', courseId);

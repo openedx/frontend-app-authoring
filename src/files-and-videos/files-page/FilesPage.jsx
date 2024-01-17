@@ -30,6 +30,9 @@ import {
 import { getFileSizeToClosestByte } from '../../utils';
 import FileThumbnail from './FileThumbnail';
 import FileInfoModalSidebar from './FileInfoModalSidebar';
+import { useUserPermissions } from '../../generic/hooks';
+import { getUserPermissionsEnabled } from '../../generic/data/selectors';
+import PermissionDeniedAlert from '../../generic/PermissionDeniedAlert';
 
 const FilesPage = ({
   courseId,
@@ -39,6 +42,9 @@ const FilesPage = ({
   const dispatch = useDispatch();
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
+  const { checkPermission } = useUserPermissions();
+  const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
+  const showPermissionDeniedAlert = userPermissionsEnabled && !checkPermission('manage_content');
 
   useEffect(() => {
     dispatch(fetchAssets(courseId));
@@ -160,6 +166,11 @@ const FilesPage = ({
     { ...accessColumn },
   ];
 
+  if (showPermissionDeniedAlert) {
+    return (
+      <PermissionDeniedAlert />
+    );
+  }
   if (loadingStatus === RequestStatus.DENIED) {
     return (
       <div data-testid="under-construction-placeholder" className="row justify-contnt-center m-6">

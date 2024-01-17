@@ -25,6 +25,9 @@ import validateAdvancedSettingsData from './utils';
 import messages from './messages';
 import ModalError from './modal-error/ModalError';
 import getPageHeadTitle from '../generic/utils';
+import { useUserPermissions } from '../generic/hooks';
+import { getUserPermissionsEnabled } from '../generic/data/selectors';
+import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 
 const AdvancedSettings = ({ intl, courseId }) => {
   const dispatch = useDispatch();
@@ -40,6 +43,13 @@ const AdvancedSettings = ({ intl, courseId }) => {
 
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
+
+  const { checkPermission } = useUserPermissions();
+  const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
+  const viewOnly = checkPermission('view_course_settings');
+  const showPermissionDeniedAlert = userPermissionsEnabled && (
+    !checkPermission('manage_advanced_settings') && !checkPermission('view_course_settings')
+  );
 
   useEffect(() => {
     dispatch(fetchCourseAppSettings(courseId));
@@ -82,6 +92,11 @@ const AdvancedSettings = ({ intl, courseId }) => {
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
+  }
+  if (showPermissionDeniedAlert) {
+    return (
+      <PermissionDeniedAlert />
+    );
   }
   if (loadingSettingsStatus === RequestStatus.DENIED) {
     return (
@@ -215,6 +230,7 @@ const AdvancedSettings = ({ intl, courseId }) => {
                             handleBlur={handleSettingBlur}
                             isEditableState={isEditableState}
                             setIsEditableState={setIsEditableState}
+                            disableForm={viewOnly}
                           />
                         );
                       })}

@@ -6,8 +6,6 @@ import { useToggle } from '@edx/paragon';
 import { USER_ROLES } from '../constants';
 import { RequestStatus } from '../data/constants';
 import { useModel } from '../generic/model-store';
-import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
-import { getUserPermissions, getUserPermissionsEnabled } from '../generic/data/selectors';
 import {
   changeRoleTeamUserQuery,
   createCourseTeamQuery,
@@ -98,8 +96,6 @@ const useCourseTeam = ({ courseId }) => {
 
   useEffect(() => {
     dispatch(fetchCourseTeamQuery(courseId));
-    dispatch(fetchUserPermissionsEnabledFlag());
-    dispatch(fetchUserPermissionsQuery(courseId));
   }, [courseId]);
 
   useEffect(() => {
@@ -139,20 +135,5 @@ const useCourseTeam = ({ courseId }) => {
   };
 };
 
-const useUserPermissions = () => {
-  const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
-  const userPermissions = useSelector(getUserPermissions);
-  const hasPermissions = (checkPermissions) => {
-    if (userPermissionsEnabled) {
-      return userPermissions?.includes(checkPermissions);
-    }
-    return false;
-  };
-
-  return {
-    hasPermissions,
-  };
-};
-
 // eslint-disable-next-line import/prefer-default-export
-export { useCourseTeam, useUserPermissions };
+export { useCourseTeam };

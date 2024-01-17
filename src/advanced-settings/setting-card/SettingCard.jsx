@@ -27,6 +27,7 @@ const SettingCard = ({
   setIsEditableState,
   // injected
   intl,
+  disableForm,
 }) => {
   const { deprecated, help, displayName } = settingData;
   const initialValue = JSON.stringify(settingData.value, null, 4);
@@ -100,6 +101,7 @@ const SettingCard = ({
                 onChange={handleSettingChange}
                 aria-label={displayName}
                 onBlur={handleCardBlur}
+                disabled={disableForm}
               />
             </Form.Group>
           </Card.Section>
@@ -135,6 +137,7 @@ SettingCard.propTypes = {
   saveSettingsPrompt: PropTypes.bool.isRequired,
   isEditableState: PropTypes.bool.isRequired,
   setIsEditableState: PropTypes.func.isRequired,
+  disableForm: PropTypes.bool.isRequired,
 };
 
 export default injectIntl(SettingCard);
