@@ -1,5 +1,6 @@
 // @ts-check
 import { useMemo } from 'react';
+import { getConfig } from '@edx/frontend-platform';
 import {
   useQuery,
   useQueries,
@@ -141,6 +142,17 @@ export const useContentTaxonomyTagsUpdater = (contentId, taxonomyId) => {
     mutationFn: ({ tags }) => updateContentTaxonomyTags(contentId, taxonomyId, tags),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['contentTaxonomyTags', contentId] });
+    },
+    onSuccess: () => {
+      if (window.top != null) {
+        // Sends content tags to the parent page if is called from a iframe.
+        getContentTaxonomyTagsData(contentId).then((data) => {
+          window.top?.postMessage(
+            `[Manage tags drawer] Tags updated: ${JSON.stringify(data)}`,
+            getConfig().STUDIO_BASE_URL,
+          );
+        });
+      }
     },
   });
 };
