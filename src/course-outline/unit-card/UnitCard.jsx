@@ -99,10 +99,6 @@ const UnitCard = ({
       draggable={false} // update to {actions.draggable} when unit drag-n-drop is implemented
       componentStyle={{
         background: '#fdfdfd',
-        padding: '1rem 1.5rem',
-        marginBottom: '1.5rem',
-        borderRadius: '0.35rem',
-        boxShadow: '0 0 .125rem rgba(0, 0, 0, .15), 0 0 .25rem rgba(0, 0, 0, .15)',
         ...borderStyle,
       }}
     >
