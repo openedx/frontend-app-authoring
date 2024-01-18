@@ -91,8 +91,7 @@ const UnitCard = ({
   }, [savingStatus]);
 
   if (!isHeaderVisible) {
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    return <></>;
+    return null;
   }
 
   return (
