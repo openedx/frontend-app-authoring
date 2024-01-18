@@ -10,6 +10,7 @@ import {
 import {
   getTaxonomyTagsData,
   getContentTaxonomyTagsData,
+  getContentTaxonomyTagsCountData,
   getContentData,
   updateContentTaxonomyTags,
 } from './api';
@@ -147,8 +148,22 @@ export const useContentTaxonomyTagsUpdater = (contentId, taxonomyId) => {
       if (window.top != null) {
         // Sends content tags to the parent page if is called from a iframe.
         getContentTaxonomyTagsData(contentId).then((data) => {
+          const messageJson = {
+            contentId,
+            ...data,
+          };
           window.top?.postMessage(
-            `[Manage tags drawer] Tags updated: ${JSON.stringify(data)}`,
+            `[Manage tags drawer] Tags updated: ${JSON.stringify(messageJson)}`,
+            getConfig().STUDIO_BASE_URL,
+          );
+        });
+        getContentTaxonomyTagsCountData(contentId).then((data) => {
+          const messageJson = {
+            contentId,
+            count: data,
+          };
+          window.top?.postMessage(
+            `[Manage tags drawer] Count updated: ${JSON.stringify(messageJson)}`,
             getConfig().STUDIO_BASE_URL,
           );
         });
