@@ -28,7 +28,7 @@ const Header = ({
   const hasSettingsPermissions = !userPermissionsEnabled
     || (userPermissionsEnabled && (checkPermission('manage_advanced_settings') || checkPermission('view_course_settings')));
   const hasToolsPermissions = !userPermissionsEnabled
-  || (userPermissionsEnabled && (checkPermission('manage_course_settings') || checkPermission('view_course_settings')));
+    || (userPermissionsEnabled && (checkPermission('manage_course_settings') || checkPermission('view_course_settings')));
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const contentMenu = getContentMenuItems({
     studioBaseUrl,

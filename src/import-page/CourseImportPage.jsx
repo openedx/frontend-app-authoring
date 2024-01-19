@@ -23,8 +23,7 @@ import ImportSidebar from './import-sidebar/ImportSidebar';
 import FileSection from './file-section/FileSection';
 import messages from './messages';
 import { useUserPermissions } from '../generic/hooks';
-import { getUserPermissions, getUserPermissionsEnabled } from '../generic/data/selectors';
-import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
+import { getUserPermissionsEnabled } from '../generic/data/selectors';
 import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 
 const CourseImportPage = ({ intl, courseId }) => {
@@ -37,7 +36,6 @@ const CourseImportPage = ({ intl, courseId }) => {
   const anyRequestFailed = savingStatus === RequestStatus.FAILED || loadingStatus === RequestStatus.FAILED;
   const anyRequestInProgress = savingStatus === RequestStatus.PENDING || loadingStatus === RequestStatus.IN_PROGRESS;
   const { checkPermission } = useUserPermissions();
-  const userPermissions = useSelector(getUserPermissions);
   const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
   const hasImportPermissions = !userPermissionsEnabled || (
     userPermissionsEnabled && (checkPermission('manage_course_settings') || checkPermission('view_course_settings'))
@@ -53,10 +51,6 @@ const CourseImportPage = ({ intl, courseId }) => {
       dispatch(updateImportTriggered(true));
       dispatch(updateFileName(cookieData.fileName));
       dispatch(updateSuccessDate(cookieData.date));
-    }
-    dispatch(fetchUserPermissionsEnabledFlag());
-    if (!userPermissions) {
-      dispatch(fetchUserPermissionsQuery(courseId));
     }
   }, []);
 
