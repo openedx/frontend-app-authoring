@@ -1,5 +1,6 @@
 export const ITEM_BADGE_STATUS = /** @type {const} */ ({
   live: 'live',
+  gated: 'gated',
   publishedNotLive: 'published_not_live',
   unpublishedChanges: 'unpublished_changes',
   staffOnly: 'staff_only',
