@@ -15,6 +15,8 @@ const ConditionalSortableElement = ({
     marginBottom: '1.5rem',
     borderRadius: '0.35rem',
     boxShadow: '0 0 .125rem rgba(0, 0, 0, .15), 0 0 .25rem rgba(0, 0, 0, .15)',
+    display: 'flex',
+    flexWrap: 'nowrap',
     ...componentStyle,
   };
 

@@ -9,7 +9,7 @@ import {
   VisibilityOff as HideIcon,
   Lock as LockIcon,
   Groups as GroupsIcon,
-  Warning as WarningIcon,
+  WarningFilled as WarningIcon,
 } from '@edx/paragon/icons';
 
 import messages from './messages';
@@ -199,18 +199,18 @@ const XBlockStatus = ({
       }
     }
 
-    return (
-      <>
-        {gradingPolicyMismatch && (
-          <div className="border-top border-light h4 pt-1 mt-2 text-dark font-weight-bold">
-            <PageBanner variant="accentB">
-              <Icon className="mr-1" size="sm" src={WarningIcon} />
-              {intl.formatMessage(messages.gradingPolicyMismatchText, { gradingType })}
-            </PageBanner>
-          </div>
-        )}
-      </>
-    )
+    if (gradingPolicyMismatch) {
+      return (
+        <div
+          className="grading-mismatch-alert d-flex align-items-center p-4 shadow text-wrap"
+        >
+          <Icon className="mr-1 text-warning" size="lg" src={WarningIcon} />
+          {intl.formatMessage(messages.gradingPolicyMismatchText, { gradingType })}
+        </div>
+      )
+    } else {
+      return null;
+    }
   }
   const renderStatusMessages = () => {
     return (

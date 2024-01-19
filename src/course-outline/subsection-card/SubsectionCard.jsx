@@ -157,7 +157,7 @@ const SubsectionCard = ({
               namePrefix={namePrefix}
               actions={actions}
             />
-            <div className="subsection-card__content" data-testid="subsection-card__content">
+            <div className="subsection-card__content item-children" data-testid="subsection-card__content">
               <XBlockStatus
                 isSelfPaced={isSelfPaced}
                 isCustomRelativeDatesActive={isCustomRelativeDatesActive}
