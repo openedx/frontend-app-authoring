@@ -202,7 +202,7 @@ const XBlockStatus = ({
     if (gradingPolicyMismatch) {
       return (
         <div
-          className="grading-mismatch-alert d-flex align-items-center p-4 shadow text-wrap"
+          className="grading-mismatch-alert d-flex align-items-center p-4 mt-2 shadow text-wrap"
         >
           <Icon className="mr-1 text-warning" size="lg" src={WarningIcon} />
           {intl.formatMessage(messages.gradingPolicyMismatchText, { gradingType })}

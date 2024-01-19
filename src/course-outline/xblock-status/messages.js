@@ -63,7 +63,7 @@ const messages = defineMessages({
   },
   gradingPolicyMismatchText: {
     id: 'course-authoring.course-outline.xblock-status.gradingPolicyMismatch.text',
-    defaultMessage: 'This subsection is configured as "{gradingType}", which doesn\'t exist in the current grading policycurrent grading policycurrent grading policycurrent grading policycurrent grading policy.',
+    defaultMessage: 'This subsection is configured as "{gradingType}", which doesn\'t exist in the current grading.',
   },
   hiddenAfterEndDate: {
     id: 'course-authoring.course-outline.xblock-status.hiddenAfterEndDate.text',
