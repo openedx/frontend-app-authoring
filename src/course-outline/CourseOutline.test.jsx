@@ -20,9 +20,6 @@ import {
 } from './data/api';
 import { RequestStatus } from '../data/constants';
 import {
-  configureCourseSectionQuery,
-  configureCourseSubsectionQuery,
-  configureCourseUnitQuery,
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery,
@@ -615,58 +612,69 @@ describe('<CourseOutline />', () => {
     // section doesn't display badges
   });
 
-  it('check configure section when configure query is successful', async () => {
-    const { findAllByTestId, findByPlaceholderText } = render(<RootWrapper />);
+  it('check configure modal for section', async () => {
+    const { findByTestId, findAllByTestId } = render(<RootWrapper />);
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
-    const newReleaseDate = '2025-08-10T10:00:00Z';
+    const newReleaseDateIso = '2025-09-10T22:00:00Z';
+    const newReleaseDate = '09/10/2025';
     axiosMock
       .onPost(getCourseItemApiUrl(section.id), {
         publish: 'republish',
         metadata: {
           visible_to_staff_only: true,
-          start: newReleaseDate,
+          start: newReleaseDateIso,
         },
       })
       .reply(200, { dummy: 'value' });
 
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
-      .reply(200, section);
+      .reply(200, {
+        ...section,
+        start: newReleaseDateIso,
+      });
 
     const [firstSection] = await findAllByTestId('section-card');
 
     const sectionDropdownButton = await within(firstSection).findByTestId('section-card-header__menu-button');
-    fireEvent.click(sectionDropdownButton);
-
-    axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, {
-        ...section,
-        start: newReleaseDate,
-      });
-
-    await executeThunk(configureCourseSectionQuery(section.id, true, newReleaseDate), store.dispatch);
-    fireEvent.click(sectionDropdownButton);
+    await act(async () => fireEvent.click(sectionDropdownButton));
     const configureBtn = await within(firstSection).findByTestId('section-card-header__menu-configure-button');
-    fireEvent.click(configureBtn);
+    await act(async () => fireEvent.click(configureBtn));
+    let releaseDateStack = await findByTestId('release-date-stack');
+    let releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
+    expect(releaseDatePicker).toHaveValue('08/10/2023');
 
-    const datePicker = await findByPlaceholderText('MM/DD/YYYY');
-    expect(datePicker).toHaveValue('08/10/2025');
+    await act(async () => fireEvent.change(releaseDatePicker, { target: { value: newReleaseDate } }));
+    expect(releaseDatePicker).toHaveValue(newReleaseDate);
+    const saveButton = await findByTestId('configure-save-button');
+    await act(async () => fireEvent.click(saveButton));
+
+    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+      publish: 'republish',
+      metadata: {
+        visible_to_staff_only: true,
+        start: newReleaseDateIso,
+      },
+    }));
+
+    await act(async () => fireEvent.click(sectionDropdownButton));
+    await act(async () => fireEvent.click(configureBtn));
+    releaseDateStack = await findByTestId('release-date-stack');
+    releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
+    expect(releaseDatePicker).toHaveValue(newReleaseDate);
   });
 
-  it('check configure subsection when configure subsection query is successful', async () => {
+  it('check configure modal for subsection', async () => {
     const {
       findAllByTestId,
-      findByText,
-      findAllByRole,
-      findByRole,
       findByTestId,
     } = render(<RootWrapper />);
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const subsection = section.childInfo.children[0];
-    const newReleaseDate = '2025-08-10T10:00:00Z';
+    const newReleaseDate = '2025-08-10T05:00:00Z';
     const newGraderType = 'Homework';
-    const newDue = '2025-09-10T10:00:00Z';
+    const newDue = '2025-09-10T00:00:00Z';
     const isTimeLimited = true;
     const defaultTimeLimitMinutes = 210;
 
@@ -675,10 +683,10 @@ describe('<CourseOutline />', () => {
         publish: 'republish',
         graderType: newGraderType,
         metadata: {
-          visible_to_staff_only: true,
+          visible_to_staff_only: null,
           due: newDue,
           hide_after_due: false,
-          show_correctness: false,
+          show_correctness: 'always',
           is_practice_exam: false,
           is_time_limited: isTimeLimited,
           exam_review_rules: '',
@@ -690,14 +698,9 @@ describe('<CourseOutline />', () => {
       })
       .reply(200, { dummy: 'value' });
 
-    axiosMock
-      .onGet(getXBlockApiUrl(section.id))
-      .reply(200, section);
-
     const [currentSection] = await findAllByTestId('section-card');
     const [firstSubsection] = await within(currentSection).findAllByTestId('subsection-card');
-    const subsectionDropdownButton = firstSubsection.querySelector('#subsection-card-header__menu');
-    expect(subsectionDropdownButton).toBeInTheDocument();
+    const subsectionDropdownButton = await within(firstSubsection).findByTestId('subsection-card-header__menu-button');
 
     subsection.start = newReleaseDate;
     subsection.due = newDue;
@@ -709,42 +712,78 @@ describe('<CourseOutline />', () => {
       .onGet(getXBlockApiUrl(section.id))
       .reply(200, section);
 
-    await executeThunk(configureCourseSubsectionQuery(
-      subsection.id,
-      section.id,
-      true,
-      newReleaseDate,
-      newGraderType,
-      newDue,
-      true,
-      defaultTimeLimitMinutes,
-      false,
-      false,
-    ), store.dispatch);
     fireEvent.click(subsectionDropdownButton);
     const configureBtn = await within(firstSubsection).findByTestId('subsection-card-header__menu-configure-button');
     fireEvent.click(configureBtn);
 
-    expect(await findByText(newGraderType)).toBeInTheDocument();
-    const releaseDateStack = await findByTestId('release-date-stack');
-    const releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
-    expect(releaseDatePicker).toHaveValue('08/10/2025');
-    const dueDateStack = await findByTestId('due-date-stack');
-    const dueDatePicker = await within(dueDateStack).findByPlaceholderText('MM/DD/YYYY');
-    expect(dueDatePicker).toHaveValue('09/10/2025');
+    // update fields
+    let configureModal = await findByTestId('configure-modal');
+    expect(await within(configureModal).findByText(newGraderType)).toBeInTheDocument();
+    let releaseDateStack = await within(configureModal).findByTestId('release-date-stack');
+    let releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
+    fireEvent.change(releaseDatePicker, { target: { value: '08/10/2025' } });
+    let dueDateStack = await within(configureModal).findByTestId('due-date-stack');
+    let dueDatePicker = await within(dueDateStack).findByPlaceholderText('MM/DD/YYYY');
+    fireEvent.change(dueDatePicker, { target: { value: '09/10/2025' } });
+    let graderTypeDropdown = await within(configureModal).findByTestId('grader-type-select');
+    fireEvent.change(graderTypeDropdown, { target: { value: newGraderType } });
 
-    const advancedTab = await findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
+    let advancedTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
     fireEvent.click(advancedTab);
-    const radioButtons = await findAllByRole('radio');
+    let radioButtons = await within(configureModal).findAllByRole('radio');
+    fireEvent.click(radioButtons[1]);
+    let hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
+    let hours = await within(hoursWrapper).findByRole('textbox');
+    fireEvent.change(hours, { target: { value: '03:30' } });
+    const saveButton = await within(configureModal).findByTestId('configure-save-button');
+    await act(async () => fireEvent.click(saveButton));
+
+    // verify request
+    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+      publish: 'republish',
+      graderType: newGraderType,
+      metadata: {
+        visible_to_staff_only: null,
+        due: newDue,
+        hide_after_due: false,
+        show_correctness: 'always',
+        is_practice_exam: false,
+        is_time_limited: isTimeLimited,
+        exam_review_rules: '',
+        is_proctored_enabled: false,
+        default_time_limit_minutes: defaultTimeLimitMinutes,
+        is_onboarding_exam: false,
+        start: newReleaseDate,
+      },
+    }));
+
+    // reopen modal and check values
+    await act(async () => fireEvent.click(subsectionDropdownButton));
+    await act(async () => fireEvent.click(configureBtn));
+
+    configureModal = await findByTestId('configure-modal');
+    releaseDateStack = await within(configureModal).findByTestId('release-date-stack');
+    releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
+    expect(releaseDatePicker).toHaveValue('08/10/2025');
+    dueDateStack = await await within(configureModal).findByTestId('due-date-stack');
+    dueDatePicker = await within(dueDateStack).findByPlaceholderText('MM/DD/YYYY');
+    expect(dueDatePicker).toHaveValue('09/10/2025');
+    graderTypeDropdown = await within(configureModal).findByTestId('grader-type-select');
+    expect(graderTypeDropdown).toHaveValue(newGraderType);
+
+    advancedTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
+    fireEvent.click(advancedTab);
+    radioButtons = await within(configureModal).findAllByRole('radio');
     expect(radioButtons[0]).toHaveProperty('checked', false);
     expect(radioButtons[1]).toHaveProperty('checked', true);
-    const hoursWrapper = await findByTestId('advanced-tab-hours-picker-wrapper');
-    const hours = await within(hoursWrapper).findByRole('textbox');
+    hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
+    hours = await within(hoursWrapper).findByRole('textbox');
     expect(hours).toHaveValue('03:30');
   });
 
-  it('check configure unit when configure query is successful', async () => {
-    const { findAllByTestId, findByText, findByTestId } = render(<RootWrapper />);
+  it('check configure modal for unit', async () => {
+    const { findAllByTestId, findByTestId } = render(<RootWrapper />);
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
     const [subsection] = section.childInfo.children;
     const [unit] = subsection.childInfo.children;
@@ -771,8 +810,7 @@ describe('<CourseOutline />', () => {
     const subsectionExpandButton = await within(firstSubsection).getByTestId('subsection-card-header__expanded-btn');
     fireEvent.click(subsectionExpandButton);
     const [firstUnit] = await within(firstSubsection).findAllByTestId('unit-card');
-    const unitDropdownButton = firstUnit.querySelector('#unit-card-header__menu');
-    expect(unitDropdownButton).toBeInTheDocument();
+    const unitDropdownButton = await within(firstUnit).findByTestId('unit-card-header__menu-button');
 
     // after configuraiton response
     unit.visibilityState = 'staff_only';
@@ -800,33 +838,49 @@ describe('<CourseOutline />', () => {
       ],
       selectedPartitionIndex: 0,
     };
+    subsection.childInfo.children[0] = unit;
+    section.childInfo.children[0] = subsection;
 
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
       .reply(200, section);
 
-    await executeThunk(
-      configureCourseUnitQuery(unit.id, section.id, isVisibleToStaffOnly, newGroupAccess),
-      store.dispatch,
-    );
-
     fireEvent.click(unitDropdownButton);
     const configureBtn = await within(firstUnit).getByTestId('unit-card-header__menu-configure-button');
-    // console.log('configureBtn', configureBtn);
     fireEvent.click(configureBtn);
 
-    expect(await findByText(configureModalMessages.unitVisibility.defaultMessage)).toBeInTheDocument();
-    const visibilityCheckbox = await findByTestId('unit-visibility-checkbox');
+    let configureModal = await findByTestId('configure-modal');
+    expect(await within(configureModal).findByText(
+      configureModalMessages.unitVisibility.defaultMessage,
+    )).toBeInTheDocument();
+    let visibilityCheckbox = await within(configureModal).findByTestId('unit-visibility-checkbox');
+    await act(async () => fireEvent.click(visibilityCheckbox));
+
+    let groupeType = await within(configureModal).findByTestId('group-type-select');
+    fireEvent.change(groupeType, { target: { value: '0' } });
+
+    let checkboxes = await within(await within(configureModal).findByTestId('group-checkboxes')).findAllByRole('checkbox');
+    fireEvent.click(checkboxes[1]);
+    const saveButton = await within(configureModal).findByTestId('configure-save-button');
+    await act(async () => fireEvent.click(saveButton));
+
+    // reopen modal and check values
+    await act(async () => fireEvent.click(unitDropdownButton));
+    await act(async () => fireEvent.click(configureBtn));
+
+    configureModal = await findByTestId('configure-modal');
+    visibilityCheckbox = await within(configureModal).findByTestId('unit-visibility-checkbox');
     expect(visibilityCheckbox).toBeChecked();
 
-    const groupeType = await findByTestId('group-type-select');
+    groupeType = await within(configureModal).findByTestId('group-type-select');
     expect(groupeType).toHaveValue('0');
 
-    const checkboxes = await within(await findByTestId('group-checkboxes')).findAllByRole('checkbox');
+    checkboxes = await within(await within(configureModal).findByTestId('group-checkboxes')).findAllByRole('checkbox');
 
     expect(checkboxes[0]).not.toBeChecked();
     expect(checkboxes[1]).toBeChecked();
   });
+
   it('check update highlights when update highlights query is successfully', async () => {
     const { getByRole } = render(<RootWrapper />);
 
