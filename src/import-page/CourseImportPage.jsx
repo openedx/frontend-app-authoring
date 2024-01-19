@@ -22,6 +22,10 @@ import { LAST_IMPORT_COOKIE_NAME } from './data/constants';
 import ImportSidebar from './import-sidebar/ImportSidebar';
 import FileSection from './file-section/FileSection';
 import messages from './messages';
+import { useUserPermissions } from '../generic/hooks';
+import { getUserPermissions, getUserPermissionsEnabled } from '../generic/data/selectors';
+import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
+import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 
 const CourseImportPage = ({ intl, courseId }) => {
   const dispatch = useDispatch();
@@ -32,6 +36,15 @@ const CourseImportPage = ({ intl, courseId }) => {
   const loadingStatus = useSelector(getLoadingStatus);
   const anyRequestFailed = savingStatus === RequestStatus.FAILED || loadingStatus === RequestStatus.FAILED;
   const anyRequestInProgress = savingStatus === RequestStatus.PENDING || loadingStatus === RequestStatus.IN_PROGRESS;
+  const { checkPermission } = useUserPermissions();
+  const userPermissions = useSelector(getUserPermissions);
+  const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
+  const hasImportPermissions = !userPermissionsEnabled || (
+    userPermissionsEnabled && (checkPermission('manage_course_settings') || checkPermission('view_course_settings'))
+  );
+  const viewOnly = !userPermissionsEnabled || (
+    userPermissionsEnabled && checkPermission('view_course_settings')
+  );
 
   useEffect(() => {
     const cookieData = cookies.get(LAST_IMPORT_COOKIE_NAME);
@@ -41,7 +54,17 @@ const CourseImportPage = ({ intl, courseId }) => {
       dispatch(updateFileName(cookieData.fileName));
       dispatch(updateSuccessDate(cookieData.date));
     }
+    dispatch(fetchUserPermissionsEnabledFlag());
+    if (!userPermissions) {
+      dispatch(fetchUserPermissionsQuery(courseId));
+    }
   }, []);
+
+  if (!hasImportPermissions) {
+    return (
+      <PermissionDeniedAlert />
+    );
+  }
 
   return (
     <>
@@ -72,7 +95,7 @@ const CourseImportPage = ({ intl, courseId }) => {
                 <p className="small">{intl.formatMessage(messages.description1)}</p>
                 <p className="small">{intl.formatMessage(messages.description2)}</p>
                 <p className="small">{intl.formatMessage(messages.description3)}</p>
-                <FileSection courseId={courseId} />
+                <FileSection courseId={courseId} viewOnly={viewOnly} />
                 {importTriggered && <ImportStepper courseId={courseId} />}
               </article>
             </Layout.Element>

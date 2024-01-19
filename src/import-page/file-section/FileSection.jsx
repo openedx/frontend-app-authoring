@@ -5,7 +5,7 @@ import {
 } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, Dropzone } from '@edx/paragon';
+import { Card, Dropzone, Button } from '@edx/paragon';
 
 import { IMPORT_STAGES } from '../data/constants';
 import {
@@ -14,7 +14,7 @@ import {
 import messages from './messages';
 import { handleProcessUpload } from '../data/thunks';
 
-const FileSection = ({ intl, courseId }) => {
+const FileSection = ({ intl, courseId, viewOnly }) => {
   const dispatch = useDispatch();
   const importTriggered = useSelector(getImportTriggered);
   const currentStage = useSelector(getCurrentStage);
@@ -30,8 +30,8 @@ const FileSection = ({ intl, courseId }) => {
         subtitle={fileName && intl.formatMessage(messages.fileChosen, { fileName })}
       />
       <Card.Section className="px-3 pt-2 pb-4">
-        {isShowedDropzone
-          && (
+        {viewOnly && isShowedDropzone && (
+          <Button disabled={viewOnly} block variant="outline-primary" style={{border: "none"}}>
             <Dropzone
               onProcessUpload={
                 ({ fileData, requestConfig, handleError }) => dispatch(handleProcessUpload(
@@ -44,7 +44,22 @@ const FileSection = ({ intl, courseId }) => {
               accept={{ 'application/gzip': ['.tar.gz'] }}
               data-testid="dropzone"
             />
-          )}
+          </Button>
+        )} 
+        {!viewOnly && isShowedDropzone && (
+          <Dropzone
+            onProcessUpload={
+              ({ fileData, requestConfig, handleError }) => dispatch(handleProcessUpload(
+                courseId,
+                fileData,
+                requestConfig,
+                handleError,
+              ))
+            }
+            accept={{ 'application/gzip': ['.tar.gz'] }}
+            data-testid="dropzone"
+          />
+        )}
       </Card.Section>
     </Card>
   );
@@ -53,6 +68,7 @@ const FileSection = ({ intl, courseId }) => {
 FileSection.propTypes = {
   intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
+  viewOnly: PropTypes.bool.isRequired,
 };
 
 export default injectIntl(FileSection);

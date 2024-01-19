@@ -37,6 +37,12 @@ const Header = ({
     hasContentPermissions,
   });
   const mainMenuDropdowns = [];
+  const toolsMenu = getToolsMenuItems({
+    studioBaseUrl,
+    courseId,
+    intl,
+    hasToolsPermissions,
+  });
 
   useEffect(() => {
     dispatch(fetchUserPermissionsEnabledFlag());
@@ -64,18 +70,17 @@ const Header = ({
         intl,
         hasSettingsPermissions,
       }),
-    },
-    {
-      id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
-      buttonTitle: intl.formatMessage(messages['header.links.tools']),
-      items: getToolsMenuItems({
-        studioBaseUrl,
-        courseId,
-        intl,
-        hasToolsPermissions,
-      }),
-    },
+    }
   );
+  if (toolsMenu.length > 0) {
+    mainMenuDropdowns.push(
+      {
+        id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
+        buttonTitle: intl.formatMessage(messages['header.links.tools']),
+        items: toolsMenu,
+      },
+    );
+  }
 
   const outlineLink = `${studioBaseUrl}/course/${courseId}`;
   return (
