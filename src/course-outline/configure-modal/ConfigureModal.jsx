@@ -275,24 +275,26 @@ const ConfigureModal = ({
         isFullscreenOnMobile
         isFullscreenScroll
       >
-        <ModalDialog.Header className="configure-modal__header">
-          <ModalDialog.Title>
-            {intl.formatMessage(messages.title, { title: displayName })}
-          </ModalDialog.Title>
-        </ModalDialog.Header>
-        <ModalDialog.Body className="configure-modal__body">
-          {renderModalBody(category)}
-        </ModalDialog.Body>
-        <ModalDialog.Footer className="pt-1">
-          <ActionRow>
-            <ModalDialog.CloseButton variant="tertiary">
-              {intl.formatMessage(messages.cancelButton)}
-            </ModalDialog.CloseButton>
-            <Button onClick={handleSave} disabled={saveButtonDisabled}>
-              {intl.formatMessage(messages.saveButton)}
-            </Button>
-          </ActionRow>
-        </ModalDialog.Footer>
+        <div data-testid="configure-modal">
+          <ModalDialog.Header className="configure-modal__header">
+            <ModalDialog.Title>
+              {intl.formatMessage(messages.title, { title: displayName })}
+            </ModalDialog.Title>
+          </ModalDialog.Header>
+          <ModalDialog.Body className="configure-modal__body">
+            {renderModalBody(category)}
+          </ModalDialog.Body>
+          <ModalDialog.Footer className="pt-1">
+            <ActionRow>
+              <ModalDialog.CloseButton variant="tertiary">
+                {intl.formatMessage(messages.cancelButton)}
+              </ModalDialog.CloseButton>
+              <Button data-testid="configure-save-button" onClick={handleSave} disabled={saveButtonDisabled}>
+                {intl.formatMessage(messages.saveButton)}
+              </Button>
+            </ActionRow>
+          </ModalDialog.Footer>
+        </div>
       </ModalDialog>
     )
   );
