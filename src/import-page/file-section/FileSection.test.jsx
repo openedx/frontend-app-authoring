@@ -21,11 +21,11 @@ const RootWrapper = () => (
 
 const RootWrapperViewOnly = () => (
   <AppProvider store={store}>
-      <IntlProvider locale="en" messages={{}}>
-        <FileSection intl={injectIntl} courseId={courseId} viewOnly={true} />
-      </IntlProvider>
-    </AppProvider>
-  );
+    <IntlProvider locale="en" messages={{}}>
+      <FileSection intl={injectIntl} courseId={courseId} viewOnly />
+    </IntlProvider>
+  </AppProvider>
+);
 
 describe('<FileSection />', () => {
   beforeEach(() => {
@@ -52,7 +52,7 @@ describe('<FileSection />', () => {
       expect(getByTestId('dropzone')).toBeInTheDocument();
     });
   });
-  it('should not render Dropzone when view is viewOnly', async () =>{
+  it('should not render Dropzone when view is viewOnly', async () => {
     const { queryByTestId, container } = render(<RootWrapperViewOnly />);
     await waitFor(() => {
       expect(queryByTestId(container, 'dropzone')).not.toBeInTheDocument();

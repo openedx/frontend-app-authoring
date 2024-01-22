@@ -70,7 +70,7 @@ const Header = ({
         intl,
         hasSettingsPermissions,
       }),
-    }
+    },
   );
   if (toolsMenu.length > 0) {
     mainMenuDropdowns.push(

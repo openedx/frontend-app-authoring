@@ -7,9 +7,6 @@ import { Helmet } from 'react-helmet';
 
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { getUserPermissionsUrl, getUserPermissionsEnabledFlagUrl } from '../generic/data/api';
-import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
-import { executeThunk } from '../utils';
 import Cookies from 'universal-cookie';
 import initializeStore from '../store';
 import messages from './messages';
@@ -17,6 +14,9 @@ import CourseImportPage from './CourseImportPage';
 import { getImportStatusApiUrl } from './data/api';
 import { IMPORT_STAGES } from './data/constants';
 import stepperMessages from './import-stepper/messages';
+import { getUserPermissionsUrl, getUserPermissionsEnabledFlagUrl } from '../generic/data/api';
+import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
+import { executeThunk } from '../utils';
 
 let store;
 let axiosMock;
@@ -52,7 +52,7 @@ describe('<CourseImportPage />', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
-        userId: userId,
+        userId,
         username: 'abc123',
         administrator: true,
         roles: [],
@@ -62,7 +62,7 @@ describe('<CourseImportPage />', () => {
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.test'))
-      .reply(200, { importStatus: 1, message: '' });  
+      .reply(200, { importStatus: 1, message: '' });
     axiosMock
       .onGet(getUserPermissionsEnabledFlagUrl)
       .reply(200, { enabled: false });
@@ -102,7 +102,7 @@ describe('<CourseImportPage />', () => {
   });
   it('should render without errors if correct permissions', async () => {
     const { getByText } = render(<RootWrapper />);
-    userPermissionsData = { permissions: ['manage_course_settings'] }
+    userPermissionsData = { permissions: ['manage_course_settings'] };
     axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
     axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, userPermissionsData);
     await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);

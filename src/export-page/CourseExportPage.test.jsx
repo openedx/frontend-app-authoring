@@ -26,7 +26,7 @@ let cookies;
 const courseId = '123';
 const courseName = 'About Node JS';
 const userId = 3;
-const userPermissionsData = { permissions: [] }
+let userPermissionsData = { permissions: [] };
 
 jest.mock('../generic/model-store', () => ({
   useModel: jest.fn().mockReturnValue({
@@ -54,7 +54,7 @@ describe('<CourseExportPage />', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
-        userId: userId,
+        userId,
         username: 'abc123',
         administrator: true,
         roles: [],
@@ -104,7 +104,7 @@ describe('<CourseExportPage />', () => {
   });
   it('should render without errors if correct permissions', async () => {
     const { getByText } = render(<RootWrapper />);
-    userPermissionsData = { permissions: ['manage_course_settings'] }
+    userPermissionsData = { permissions: ['manage_course_settings'] };
     axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
     axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, userPermissionsData);
     await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
