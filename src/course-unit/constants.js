@@ -12,6 +12,7 @@ import {
   TextFields as TextFieldsIcon,
   VideoCamera as VideoCameraIcon,
 } from '@openedx/paragon/icons';
+import messages from './sidebar/messages';
 
 export const UNIT_ICON_TYPES = ['video', 'other', 'vertical', 'problem', 'lock'];
 
@@ -43,4 +44,21 @@ export const COMPONENT_TYPE_ICON_MAP = {
   [COMPONENT_ICON_TYPES.problem]: HelpOutlineIcon,
   [COMPONENT_ICON_TYPES.video]: VideoCameraIcon,
   [COMPONENT_ICON_TYPES.dragAndDrop]: BackHandIcon,
+};
+
+export const getUnitReleaseStatus = (intl) => ({
+  release: intl.formatMessage(messages.releaseStatusTitle),
+  released: intl.formatMessage(messages.releasedStatusTitle),
+  scheduled: intl.formatMessage(messages.scheduledStatusTitle),
+});
+
+export const UNIT_VISIBILITY_STATES = {
+  staffOnly: 'staff_only',
+  live: 'live',
+  ready: 'ready',
+};
+
+export const COLORS = {
+  BLACK: '#000',
+  GREEN: '#0D7D4D',
 };
