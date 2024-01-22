@@ -9,12 +9,15 @@ import CardHeader from '../card-header/CardHeader';
 import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
 import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleLink from '../card-header/TitleLink';
+import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 
 const UnitCard = ({
   unit,
   subsection,
   section,
+  isSelfPaced,
+  isCustomRelativeDatesActive,
   index,
   canMoveItem,
   onOpenPublishModal,
@@ -146,6 +149,13 @@ const UnitCard = ({
           namePrefix={namePrefix}
           actions={actions}
         />
+        <div className="unit-card__content item-children" data-testid="unit-card__content">
+          <XBlockStatus
+            isSelfPaced={isSelfPaced}
+            isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+            item={unit}
+          />
+        </div>
       </div>
     </ConditionalSortableElement>
   );
@@ -193,6 +203,8 @@ UnitCard.propTypes = {
   index: PropTypes.number.isRequired,
   canMoveItem: PropTypes.func.isRequired,
   onOrderChange: PropTypes.func.isRequired,
+  isSelfPaced: PropTypes.bool.isRequired,
+  isCustomRelativeDatesActive: PropTypes.bool.isRequired,
 };
 
 export default UnitCard;

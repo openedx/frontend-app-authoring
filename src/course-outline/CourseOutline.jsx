@@ -363,6 +363,8 @@ const CourseOutline = ({ courseId }) => {
                                             unit={unit}
                                             subsection={subsection}
                                             section={section}
+                                            isSelfPaced={statusBarData.isSelfPaced}
+                                            isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                             index={unitIndex}
                                             canMoveItem={canMoveItem(subsection.childInfo.children)}
                                             savingStatus={savingStatus}

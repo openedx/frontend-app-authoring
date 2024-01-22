@@ -45,6 +45,7 @@ const XBlockStatus = ({
   } = item;
 
   const isInstructorPaced = !isSelfPaced;
+  const isVertical = category === COURSE_BLOCK_NAMES.vertical.id;
   const statusMessages = [];
 
   let releaseLabel = messages.unscheduledLabel;
@@ -83,12 +84,12 @@ const XBlockStatus = ({
 
   if (!staffOnlyMessage) {
     const { selectedPartitionIndex, selectedGroupsLabel } = userPartitionInfo;
-    if (selectedPartitionIndex !== -1 && !isNaN(selectedPartitionIndex) && category === COURSE_BLOCK_NAMES.vertical.id) {
+    if (selectedPartitionIndex !== -1 && !isNaN(selectedPartitionIndex) && isVertical) {
       statusMessages.push({
         icon: GroupsIcon,
         text: intl.formatMessage(messages.restrictedUnitAccess, { selectedGroupsLabel }),
       });
-    } else if (hasPartitionGroupComponents && category === COURSE_BLOCK_NAMES.vertical.id) {
+    } else if (hasPartitionGroupComponents && isVertical) {
       statusMessages.push({
         icon: GroupsIcon,
         text: intl.formatMessage(messages.restrictedUnitAccessToSomeContent),
@@ -97,16 +98,14 @@ const XBlockStatus = ({
   }
 
   const releaseStatusDiv = () => (
-    <>
+    <div className="d-flex align-items-center">
       <span className="sr-only status-release-label">
         {intl.formatMessage(messages.releaseStatusScreenReaderTitle)}
       </span>
-      <div className="d-flex align-items-center">
-        <Icon className="mr-1" size="sm" src={ClockIcon} />
-        {intl.formatMessage(releaseLabel)}
-        {releaseDate && releaseDate}
-      </div>
-    </>
+      <Icon className="mr-1" size="sm" src={ClockIcon} />
+      {intl.formatMessage(releaseLabel)}
+      {releaseDate && releaseDate}
+    </div>
   )
 
   const gradingTypeDiv = () => (
@@ -121,15 +120,15 @@ const XBlockStatus = ({
     </div>
   )
 
-  const dueDateDiv = () => (
-    <>
-      {dueDate && isInstructorPaced && (
+  const dueDateDiv = () => {
+    if (dueDate && isInstructorPaced) {
+      return (
         <div className="status-grading-date">
           {intl.formatMessage(messages.dueLabel)} {dueDate}
         </div>
-      )}
-    </>
-  )
+      )
+    }
+  }
 
   const selfPacedRelativeDueWeeksDiv = () => (
     <div className="d-flex align-items-center">
@@ -141,7 +140,7 @@ const XBlockStatus = ({
   )
 
   const explanatoryMessageDiv = () => (
-      <span>{explanatoryMessage}</span>
+    <span>{explanatoryMessage}</span>
   )
 
   const renderGradingTypeAndDueDate = () => {
@@ -202,34 +201,36 @@ const XBlockStatus = ({
     if (gradingPolicyMismatch) {
       return (
         <div
-          className="grading-mismatch-alert d-inline-flex p-4 mt-2 rounded shadow"
+          className="grading-mismatch-alert d-flex align-items-center p-4 mt-2 rounded shadow"
         >
           <Icon className="mr-1 text-warning" size="lg" src={WarningIcon} />
           {intl.formatMessage(messages.gradingPolicyMismatchText, { gradingType })}
         </div>
       )
-    } else {
-      return null;
     }
   }
 
   const renderStatusMessages = () => {
-    return (
-      <>
-        {statusMessages.map(({ icon, text }) => (
-          <div className="d-flex align-items-center border-top border-light pt-1 mt-2 text-dark">
-            <Icon className="mr-1" size="sm" src={icon} />
-            {text}
-          </div>
-        ))}
-      </>
-    )
+    if (statusMessages.length > 0) {
+      return (
+        <div className="border-top border-light mt-2 text-dark">
+          {statusMessages.map(({ icon, text }) => (
+            <div className="d-flex align-items-center pt-1">
+              <Icon className="mr-1" size="sm" src={icon} />
+              {text}
+            </div>
+          ))}
+        </div>
+      )
+    }
   }
 
   return (
     <div className="text-secondary-400 x-small mb-1">
-      {explanatoryMessage ? explanatoryMessageDiv(): isInstructorPaced && releaseStatusDiv()}
-      {renderGradingTypeAndDueDate()}
+      {!isVertical && (
+        explanatoryMessage ? explanatoryMessageDiv(): isInstructorPaced && releaseStatusDiv()
+      )}
+      {!isVertical && renderGradingTypeAndDueDate()}
       {hideAfterDue && hideAfterDueMessage()}
       {renderStatusMessages()}
       {renderGradingPolicyAlert()}
