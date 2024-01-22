@@ -144,9 +144,7 @@ export const useContentTaxonomyTagsUpdater = (contentId, taxonomyId) => {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['contentTaxonomyTags', contentId] });
     },
-    /* istanbul ignore next */
-    onSuccess: () => {
-      /* istanbul ignore next */
+    onSuccess: /* istanbul ignore next */  () => {
       if (window.top != null) {
         // This send messages to the parent page if the drawer is called from a iframe.
         // Is used on Studio to update tags data and counts.
