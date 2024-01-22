@@ -7,6 +7,9 @@ import { Helmet } from 'react-helmet';
 
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { getUserPermissionsUrl, getUserPermissionsEnabledFlagUrl } from '../generic/data/api';
+import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
+import { executeThunk } from '../utils';
 import Cookies from 'universal-cookie';
 import initializeStore from '../store';
 import messages from './messages';
@@ -20,6 +23,8 @@ let axiosMock;
 let cookies;
 const courseId = '123';
 const courseName = 'About Node JS';
+const userId = 3;
+let userPermissionsData = { permissions: [] };
 
 jest.mock('../generic/model-store', () => ({
   useModel: jest.fn().mockReturnValue({
@@ -47,7 +52,7 @@ describe('<CourseImportPage />', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
-        userId: 3,
+        userId: userId,
         username: 'abc123',
         administrator: true,
         roles: [],
@@ -57,7 +62,13 @@ describe('<CourseImportPage />', () => {
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
       .onGet(getImportStatusApiUrl(courseId, 'testFileName.test'))
-      .reply(200, { importStatus: 1, message: '' });
+      .reply(200, { importStatus: 1, message: '' });  
+    axiosMock
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: false });
+    axiosMock
+      .onGet(getUserPermissionsUrl(courseId, userId))
+      .reply(200, userPermissionsData);
     cookies = new Cookies();
     cookies.get.mockReturnValue(null);
   });
@@ -72,6 +83,30 @@ describe('<CourseImportPage />', () => {
   });
   it('should render without errors', async () => {
     const { getByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+      const importPageElement = getByText(messages.headingTitle.defaultMessage, {
+        selector: 'h2.sub-header-title',
+      });
+      expect(importPageElement).toBeInTheDocument();
+      expect(getByText(messages.description1.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.description2.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.description3.defaultMessage)).toBeInTheDocument();
+    });
+  });
+  it('should render permissionDenied if incorrect permissions', async () => {
+    const { getByTestId } = render(<RootWrapper />);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+    expect(getByTestId('permissionDeniedAlert')).toBeVisible();
+  });
+  it('should render without errors if correct permissions', async () => {
+    const { getByText } = render(<RootWrapper />);
+    userPermissionsData = { permissions: ['manage_course_settings'] }
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, userPermissionsData);
+    await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
     await waitFor(() => {
       expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
       const importPageElement = getByText(messages.headingTitle.defaultMessage, {

@@ -30,22 +30,6 @@ const FileSection = ({ intl, courseId, viewOnly }) => {
         subtitle={fileName && intl.formatMessage(messages.fileChosen, { fileName })}
       />
       <Card.Section className="px-3 pt-2 pb-4">
-        {viewOnly && isShowedDropzone && (
-          <Button disabled={viewOnly} block variant="outline-primary" style={{border: "none"}}>
-            <Dropzone
-              onProcessUpload={
-                ({ fileData, requestConfig, handleError }) => dispatch(handleProcessUpload(
-                  courseId,
-                  fileData,
-                  requestConfig,
-                  handleError,
-                ))
-              }
-              accept={{ 'application/gzip': ['.tar.gz'] }}
-              data-testid="dropzone"
-            />
-          </Button>
-        )} 
         {!viewOnly && isShowedDropzone && (
           <Dropzone
             onProcessUpload={

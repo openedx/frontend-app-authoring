@@ -12,6 +12,9 @@ import initializeStore from '../store';
 import stepperMessages from './export-stepper/messages';
 import modalErrorMessages from './export-modal-error/messages';
 import { getExportStatusApiUrl, postExportCourseApiUrl } from './data/api';
+import { getUserPermissionsUrl, getUserPermissionsEnabledFlagUrl } from '../generic/data/api';
+import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
+import { executeThunk } from '../utils';
 import { EXPORT_STAGES } from './data/constants';
 import { exportPageMock } from './__mocks__';
 import messages from './messages';
@@ -22,6 +25,8 @@ let axiosMock;
 let cookies;
 const courseId = '123';
 const courseName = 'About Node JS';
+const userId = 3;
+const userPermissionsData = { permissions: [] }
 
 jest.mock('../generic/model-store', () => ({
   useModel: jest.fn().mockReturnValue({
@@ -49,7 +54,7 @@ describe('<CourseExportPage />', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
-        userId: 3,
+        userId: userId,
         username: 'abc123',
         administrator: true,
         roles: [],
@@ -60,6 +65,12 @@ describe('<CourseExportPage />', () => {
     axiosMock
       .onGet(postExportCourseApiUrl(courseId))
       .reply(200, exportPageMock);
+    axiosMock
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: false });
+    axiosMock
+      .onGet(getUserPermissionsUrl(courseId, userId))
+      .reply(200, userPermissionsData);
     cookies = new Cookies();
     cookies.get.mockReturnValue(null);
   });
@@ -74,6 +85,30 @@ describe('<CourseExportPage />', () => {
   });
   it('should render without errors', async () => {
     const { getByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+      const exportPageElement = getByText(messages.headingTitle.defaultMessage, {
+        selector: 'h2.sub-header-title',
+      });
+      expect(exportPageElement).toBeInTheDocument();
+      expect(getByText(messages.titleUnderButton.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.description2.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.buttonTitle.defaultMessage)).toBeInTheDocument();
+    });
+  });
+  it('should render permissionDenied if incorrect permissions', async () => {
+    const { getByTestId } = render(<RootWrapper />);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+    expect(getByTestId('permissionDeniedAlert')).toBeVisible();
+  });
+  it('should render without errors if correct permissions', async () => {
+    const { getByText } = render(<RootWrapper />);
+    userPermissionsData = { permissions: ['manage_course_settings'] }
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, userPermissionsData);
+    await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
     await waitFor(() => {
       expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
       const exportPageElement = getByText(messages.headingTitle.defaultMessage, {
