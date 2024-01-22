@@ -1,0 +1,71 @@
+%base-font-params {
+  font-size: $font-size-sm;
+  line-height: $line-height-base;
+}
+
+.course-unit-sidebar {
+  .course-unit-sidebar-header {
+    padding: $spacer $spacer map-get($spacers, 3\.5);
+
+    .course-unit-sidebar-header-icon {
+      margin-right: map-get($spacers, 1);
+    }
+
+    .course-unit-sidebar-header-title {
+      font-size: $font-size-base;
+      line-height: $line-height-base;
+    }
+  }
+
+  .course-unit-sidebar-footer {
+    padding: 0 $spacer $spacer;
+
+    .course-unit-sidebar-visibility {
+      .course-unit-sidebar-visibility-title {
+        font-weight: $font-weight-normal;
+        color: $gray-700;
+
+        @extend %base-font-params;
+      }
+
+      .course-unit-sidebar-location-description {
+        font-size: $font-size-xs;
+        line-height: $line-height-base;
+      }
+
+      .course-unit-sidebar-visibility-copy {
+        font-weight: $font-weight-bold;
+        color: $gray-700;
+
+        @extend %base-font-params;
+      }
+
+      .course-unit-sidebar-visibility-checkbox .pgn__form-label {
+        font-size: $font-size-sm;
+        line-height: $headings-line-height;
+      }
+    }
+  }
+
+  .course-unit-sidebar-date {
+    padding: 0 $spacer $spacer;
+
+    @extend %base-font-params;
+
+    .course-unit-sidebar-date-stage {
+      font-weight: $font-weight-normal;
+
+      @extend %base-font-params;
+    }
+
+    .course-unit-sidebar-date-timestamp {
+      color: $gray-700;
+
+      @extend %base-font-params;
+    }
+  }
+
+  &.is-stuff-only .course-unit-sidebar-date-and-with {
+    text-decoration: line-through;
+  }
+}

@@ -18,6 +18,7 @@ import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
 import Sequence from './course-sequence';
+import Sidebar from './sidebar';
 import { useCourseUnit } from './hooks';
 import messages from './messages';
 
@@ -86,9 +87,9 @@ const CourseUnit = ({ courseId }) => {
             handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
           />
           <Layout
-            lg={[{ span: 9 }, { span: 3 }]}
-            md={[{ span: 9 }, { span: 3 }]}
-            sm={[{ span: 9 }, { span: 3 }]}
+            lg={[{ span: 8 }, { span: 4 }]}
+            md={[{ span: 8 }, { span: 4 }]}
+            sm={[{ span: 8 }, { span: 3 }]}
             xs={[{ span: 9 }, { span: 3 }]}
             xl={[{ span: 9 }, { span: 3 }]}
           >
@@ -110,7 +111,12 @@ const CourseUnit = ({ courseId }) => {
                 handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
               />
             </Layout.Element>
-            <Layout.Element />
+            <Layout.Element>
+              <Stack gap={3}>
+                <Sidebar />
+                <Sidebar isDisplayUnitLocation />
+              </Stack>
+            </Layout.Element>
           </Layout>
         </section>
       </Container>
