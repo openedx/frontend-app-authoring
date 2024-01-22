@@ -144,6 +144,7 @@ export const useContentTaxonomyTagsUpdater = (contentId, taxonomyId) => {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['contentTaxonomyTags', contentId] });
     },
+    /* istanbul ignore next */
     onSuccess: () => {
       /* istanbul ignore next */
       if (window.top != null) {
