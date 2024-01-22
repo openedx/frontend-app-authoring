@@ -145,8 +145,16 @@ export const useContentTaxonomyTagsUpdater = (contentId, taxonomyId) => {
       queryClient.invalidateQueries({ queryKey: ['contentTaxonomyTags', contentId] });
     },
     onSuccess: () => {
+      /* istanbul ignore next */
       if (window.top != null) {
-        // Sends content tags to the parent page if is called from a iframe.
+        // This send messages to the parent page if the drawer is called from a iframe.
+        // Is used on Studio to update tags data and counts.
+        // In the future, when the Course Outline Page and Unit Page are integrated into this MFE,
+        // they should just use React Query to load the tag counts, and React Query will automatically
+        // refresh those counts when the mutation invalidates them. So this postMessage is just a temporary
+        // feature to support the legacy Django template courseware page.
+
+        // Sends content tags.
         getContentTaxonomyTagsData(contentId).then((data) => {
           const messageJson = {
             contentId,
@@ -157,6 +165,7 @@ export const useContentTaxonomyTagsUpdater = (contentId, taxonomyId) => {
             getConfig().STUDIO_BASE_URL,
           );
         });
+        // Sends tags count.
         getContentTaxonomyTagsCountData(contentId).then((data) => {
           const messageJson = {
             contentId,
