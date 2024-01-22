@@ -12,7 +12,7 @@ import { useIndexOfLastVisibleChild } from '../hooks';
 import SequenceNavigationDropdown from './SequenceNavigationDropdown';
 import UnitButton from './UnitButton';
 
-const SequenceNavigationTabs = ({ unitIds, unitId, handleCreateNewCourseXblock }) => {
+const SequenceNavigationTabs = ({ unitIds, unitId, handleCreateNewCourseXBlock }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const SequenceNavigationTabs = ({ unitIds, unitId, handleCreateNewCourseXblock }
 
   const handleAddNewSequenceUnit = () => {
     dispatch(updateQueryPendingStatus(true));
-    handleCreateNewCourseXblock({ parentLocator: sequenceId, category: 'vertical', displayName: 'Unit' }, ({ courseKey, locator }) => {
+    handleCreateNewCourseXBlock({ parentLocator: sequenceId, category: 'vertical', displayName: 'Unit' }, ({ courseKey, locator }) => {
       navigate(`/course/${courseKey}/container/${locator}/${sequenceId}`, courseId);
       dispatch(changeEditTitleFormOpen(true));
     });
@@ -72,7 +72,7 @@ const SequenceNavigationTabs = ({ unitIds, unitId, handleCreateNewCourseXblock }
 SequenceNavigationTabs.propTypes = {
   unitId: PropTypes.string.isRequired,
   unitIds: PropTypes.arrayOf(PropTypes.string).isRequired,
-  handleCreateNewCourseXblock: PropTypes.func.isRequired,
+  handleCreateNewCourseXBlock: PropTypes.func.isRequired,
 };
 
 export default SequenceNavigationTabs;

@@ -36,7 +36,7 @@ const CourseUnit = ({ courseId }) => {
     headerNavigationsActions,
     handleTitleEdit,
     handleInternetConnectionFailed,
-    handleCreateNewCourseXblock,
+    handleCreateNewCourseXBlock,
   } = useCourseUnit({ courseId, blockId });
 
   document.title = getPageHeadTitle('', unitTitle);
@@ -80,7 +80,7 @@ const CourseUnit = ({ courseId }) => {
             courseId={courseId}
             sequenceId={sequenceId}
             unitId={blockId}
-            handleCreateNewCourseXblock={handleCreateNewCourseXblock}
+            handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
           />
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
@@ -92,7 +92,7 @@ const CourseUnit = ({ courseId }) => {
             <Layout.Element>
               <AddComponent
                 blockId={blockId}
-                handleCreateNewCourseXblock={handleCreateNewCourseXblock}
+                handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
               />
             </Layout.Element>
             <Layout.Element />
