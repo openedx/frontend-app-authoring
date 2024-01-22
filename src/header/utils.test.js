@@ -45,7 +45,7 @@ describe('header utils', () => {
     });
     it('should not include Checklist option', () => {
       const actualItems = getToolsMenuItems({ ...baseProps, hasToolsPermissions: false });
-      expect(actualItems).toHaveLength(2);
+      expect(actualItems).toHaveLength(0);
     });
   });
 });

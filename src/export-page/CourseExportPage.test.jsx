@@ -71,6 +71,8 @@ describe('<CourseExportPage />', () => {
     axiosMock
       .onGet(getUserPermissionsUrl(courseId, userId))
       .reply(200, userPermissionsData);
+    executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
     cookies = new Cookies();
     cookies.get.mockReturnValue(null);
   });
@@ -122,6 +124,8 @@ describe('<CourseExportPage />', () => {
   });
   it('should start exporting on click', async () => {
     const { getByText, container } = render(<RootWrapper />);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
     const button = container.querySelector('.btn-primary');
     fireEvent.click(button);
     expect(getByText(stepperMessages.stepperPreparingDescription.defaultMessage)).toBeInTheDocument();
@@ -131,6 +135,8 @@ describe('<CourseExportPage />', () => {
       .onGet(getExportStatusApiUrl(courseId))
       .reply(200, { exportStatus: EXPORT_STAGES.EXPORTING, exportError: { rawErrorMsg: 'test error', editUnitUrl: 'http://test-url.test' } });
     const { getByText, queryByText, container } = render(<RootWrapper />);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
     const startExportButton = container.querySelector('.btn-primary');
     fireEvent.click(startExportButton);
     // eslint-disable-next-line no-promise-executor-return
@@ -151,6 +157,8 @@ describe('<CourseExportPage />', () => {
       .onGet(getExportStatusApiUrl(courseId))
       .reply(200, { exportStatus: EXPORT_STAGES.SUCCESS, exportOutput: '/test-download-path.test' });
     const { getByText, container } = render(<RootWrapper />);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
     const startExportButton = container.querySelector('.btn-primary');
     fireEvent.click(startExportButton);
     // eslint-disable-next-line no-promise-executor-return
@@ -164,6 +172,8 @@ describe('<CourseExportPage />', () => {
       .onGet(getExportStatusApiUrl(courseId))
       .reply(200, { exportStatus: EXPORT_STAGES.SUCCESS, exportOutput: 'http://test-download-path.test' });
     const { getByText, container } = render(<RootWrapper />);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
     const startExportButton = container.querySelector('.btn-primary');
     fireEvent.click(startExportButton);
     // eslint-disable-next-line no-promise-executor-return
