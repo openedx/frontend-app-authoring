@@ -41,6 +41,7 @@ export function updateCourseDetailsQuery(courseId, details) {
       dispatch(updateCourseDetailsSuccess(detailsValues));
       return true;
     } catch (error) {
+      console.log('test',error)
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }

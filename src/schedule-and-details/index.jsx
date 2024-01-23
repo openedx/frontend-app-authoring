@@ -84,6 +84,7 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     isEditableState,
     showModifiedAlert,
     showSuccessfulAlert,
+    showFailedAlert,
     dispatch,
     handleResetValues,
     handleValuesChange,
@@ -182,6 +183,19 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
             )}
             aria-describedby={intl.formatMessage(
               messages.alertSuccessAriaDescribedby,
+            )}
+          />
+          <AlertMessage
+            show={showFailedAlert}
+            variant="danger"
+            icon={CheckCircleIcon}
+            title={intl.formatMessage(messages.alertFail)}
+            aria-hidden="true"
+            aria-labelledby={intl.formatMessage(
+              messages.alertFailAriaLabelledby,
+            )}
+            aria-describedby={intl.formatMessage(
+              messages.alertFailAriaDescribedby,
             )}
           />
           <header>

@@ -17,6 +17,7 @@ const useSaveValuesPrompt = (
   const savingStatus = useSelector(getSavingStatus);
   const [editedValues, setEditedValues] = useState(initialEditedData);
   const [showSuccessfulAlert, setShowSuccessfulAlert] = useState(false);
+  const [showFailedAlert, setShowFailedAlert] = useState(false);
   const [showModifiedAlert, setShowModifiedAlert] = useState(false);
   const [isQueryPending, setIsQueryPending] = useState(false);
   const [isEditableState, setIsEditableState] = useState(false);
@@ -36,6 +37,7 @@ const useSaveValuesPrompt = (
   const handleValuesChange = (value, fieldName) => {
     setIsEditableState(true);
     setShowSuccessfulAlert(false);
+    setShowFailedAlert(false);
 
     if (editedValues[fieldName] !== value) {
       setEditedValues((prevEditedValues) => ({
@@ -54,6 +56,7 @@ const useSaveValuesPrompt = (
     setEditedValues(initialEditedData || {});
     setShowModifiedAlert(false);
     setShowSuccessfulAlert(false);
+    setShowFailedAlert(false);
   };
 
   const handleUpdateValues = () => {
@@ -64,11 +67,13 @@ const useSaveValuesPrompt = (
   const handleInternetConnectionFailed = () => {
     setShowModifiedAlert(false);
     setShowSuccessfulAlert(false);
+    setShowFailedAlert(false);
     setIsQueryPending(false);
   };
 
   const handleQueryProcessing = () => {
     setShowSuccessfulAlert(false);
+    setShowFailedAlert(false);
     dispatch(updateDataQuery(courseId, updateWithDefaultValues(editedValues)));
   };
 
@@ -77,6 +82,15 @@ const useSaveValuesPrompt = (
       setIsQueryPending(false);
       setShowSuccessfulAlert(true);
       setTimeout(() => setShowSuccessfulAlert(false), 15000);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (!isEditableState) {
+        setShowModifiedAlert(false);
+      }
+    } else if (savingStatus === RequestStatus.FAILED) {
+      setIsQueryPending(false);
+      setShowFailedAlert(true);
+      setTimeout(() => setShowFailedAlert(false), 15000);
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       if (!isEditableState) {
@@ -93,6 +107,7 @@ const useSaveValuesPrompt = (
     isEditableState,
     showModifiedAlert,
     showSuccessfulAlert,
+    showFailedAlert,
     dispatch,
     setErrorFields,
     handleResetValues,
