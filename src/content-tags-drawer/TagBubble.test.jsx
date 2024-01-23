@@ -1,7 +1,6 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { render, fireEvent } from '@testing-library/react';
-import PropTypes from 'prop-types';
 
 import TagBubble from './TagBubble';
 
@@ -32,14 +31,7 @@ TagBubbleComponent.defaultProps = {
   canRemove: false,
 };
 
-TagBubbleComponent.propTypes = {
-  value: PropTypes.string.isRequired,
-  implicit: PropTypes.bool,
-  level: PropTypes.number,
-  lineage: PropTypes.arrayOf(PropTypes.string).isRequired,
-  removeTagHandler: PropTypes.func.isRequired,
-  canRemove: PropTypes.bool,
-};
+TagBubbleComponent.propTypes = TagBubble.propTypes;
 
 describe('<TagBubble />', () => {
   it('should render implicit tag', () => {
@@ -105,6 +97,7 @@ describe('<TagBubble />', () => {
     const { container } = render(
       <TagBubbleComponent
         value={tagBubbleData.value}
+        canRemove={tagBubbleData.canRemove}
         lineage={data.lineage}
         implicit={tagBubbleData.implicit}
         removeTagHandler={tagBubbleData.removeTagHandler}

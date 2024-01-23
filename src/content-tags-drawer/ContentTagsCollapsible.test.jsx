@@ -6,7 +6,6 @@ import {
   fireEvent,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import PropTypes from 'prop-types';
 
 import ContentTagsCollapsible from './ContentTagsCollapsible';
 import messages from './messages';
@@ -60,19 +59,7 @@ const ContentTagsCollapsibleComponent = ({ contentId, taxonomyAndTagsData }) => 
   </IntlProvider>
 );
 
-ContentTagsCollapsibleComponent.propTypes = {
-  contentId: PropTypes.string.isRequired,
-  taxonomyAndTagsData: PropTypes.shape({
-    id: PropTypes.number,
-    name: PropTypes.string,
-    canTagObject: PropTypes.bool.isRequired,
-    contentTags: PropTypes.arrayOf(PropTypes.shape({
-      value: PropTypes.string,
-      lineage: PropTypes.arrayOf(PropTypes.string),
-      canDeleteObjecttag: PropTypes.bool.isRequired,
-    })),
-  }).isRequired,
-};
+ContentTagsCollapsibleComponent.propTypes = ContentTagsCollapsible.propTypes;
 
 describe('<ContentTagsCollapsible />', () => {
   beforeAll(() => {

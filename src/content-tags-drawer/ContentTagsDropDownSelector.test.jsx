@@ -6,7 +6,6 @@ import {
   waitFor,
   fireEvent,
 } from '@testing-library/react';
-import PropTypes from 'prop-types';
 
 import ContentTagsDropDownSelector from './ContentTagsDropDownSelector';
 import { useTaxonomyTagsData } from './data/apiHooks';
@@ -47,18 +46,7 @@ ContentTagsDropDownSelectorComponent.defaultProps = {
   searchTerm: '',
 };
 
-ContentTagsDropDownSelectorComponent.propTypes = {
-  taxonomyId: PropTypes.number.isRequired,
-  level: PropTypes.number.isRequired,
-  lineage: PropTypes.arrayOf(PropTypes.string),
-  tagsTree: PropTypes.objectOf(
-    PropTypes.shape({
-      explicit: PropTypes.bool.isRequired,
-      children: PropTypes.shape({}).isRequired,
-    }).isRequired,
-  ).isRequired,
-  searchTerm: PropTypes.string,
-};
+ContentTagsDropDownSelectorComponent.propTypes = ContentTagsDropDownSelector.propTypes;
 
 describe('<ContentTagsDropDownSelector />', () => {
   afterEach(() => {

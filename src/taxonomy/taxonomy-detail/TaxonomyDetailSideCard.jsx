@@ -2,7 +2,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Card,
 } from '@edx/paragon';
-import Proptypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 import messages from './messages';
 
@@ -23,9 +23,9 @@ const TaxonomyDetailSideCard = ({ taxonomy }) => {
 };
 
 TaxonomyDetailSideCard.propTypes = {
-  taxonomy: Proptypes.shape({
-    name: Proptypes.string.isRequired,
-    description: Proptypes.string.isRequired,
+  taxonomy: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
   }).isRequired,
 };
 

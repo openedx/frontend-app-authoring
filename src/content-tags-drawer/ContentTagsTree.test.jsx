@@ -1,7 +1,6 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { act, render } from '@testing-library/react';
-import PropTypes from 'prop-types';
 
 import ContentTagsTree from './ContentTagsTree';
 
@@ -42,16 +41,7 @@ const ContentTagsTreeComponent = ({ tagsTree, removeTagHandler }) => (
   </IntlProvider>
 );
 
-ContentTagsTreeComponent.propTypes = {
-  tagsTree: PropTypes.objectOf(
-    PropTypes.shape({
-      explicit: PropTypes.bool.isRequired,
-      children: PropTypes.shape({}).isRequired,
-      canDeleteObjecttag: PropTypes.bool.isRequired,
-    }).isRequired,
-  ).isRequired,
-  removeTagHandler: PropTypes.func.isRequired,
-};
+ContentTagsTreeComponent.propTypes = ContentTagsTree.propTypes;
 
 describe('<ContentTagsTree />', () => {
   it('should render taxonomy tags data along content tags number badge', async () => {

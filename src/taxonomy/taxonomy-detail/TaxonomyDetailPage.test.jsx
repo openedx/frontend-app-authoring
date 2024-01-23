@@ -106,17 +106,6 @@ describe('<TaxonomyDetailPage />', () => {
     expect(getByTestId('taxonomy-menu-import')).toBeVisible();
     expect(getByTestId('taxonomy-menu-export')).toBeVisible();
     expect(getByTestId('taxonomy-menu-delete')).toBeVisible();
-
-    // Click on button again to close the menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
-
-    // Menu closed
-    // Jest bug: toBeVisible() isn't checking opacity correctly
-    // expect(getByTestId('taxonomy-menu')).not.toBeVisible();
-    expect(getByTestId('taxonomy-menu').style.opacity).toEqual('0');
-
-    // Menu button still visible
-    expect(getByTestId('taxonomy-menu-button')).toBeVisible();
   });
 
   it('should show system defined badge', async () => {

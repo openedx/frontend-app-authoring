@@ -4,7 +4,6 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render } from '@testing-library/react';
-import PropTypes from 'prop-types';
 
 import initializeStore from '../../store';
 import TaxonomyCard from '.';
@@ -36,18 +35,7 @@ const TaxonomyCardComponent = ({ original }) => (
   </AppProvider>
 );
 
-TaxonomyCardComponent.propTypes = {
-  original: PropTypes.shape({
-    id: PropTypes.number,
-    name: PropTypes.string,
-    description: PropTypes.string,
-    systemDefined: PropTypes.bool,
-    orgsCount: PropTypes.number,
-    onDeleteTaxonomy: PropTypes.func,
-    canChangeTaxonomy: PropTypes.bool,
-    canDeleteTaxonomy: PropTypes.bool,
-  }).isRequired,
-};
+TaxonomyCardComponent.propTypes = TaxonomyCard.propTypes;
 
 describe('<TaxonomyCard />', async () => {
   beforeEach(async () => {

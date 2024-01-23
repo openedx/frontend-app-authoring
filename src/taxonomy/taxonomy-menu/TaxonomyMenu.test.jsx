@@ -4,7 +4,6 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, fireEvent, waitFor } from '@testing-library/react';
-import PropTypes from 'prop-types';
 
 import { TaxonomyContext } from '../common/context';
 import initializeStore from '../../store';
@@ -60,14 +59,12 @@ const TaxonomyMenuComponent = ({
   );
 };
 
-TaxonomyMenuComponent.propTypes = {
-  iconMenu: PropTypes.bool.isRequired,
-  canChangeTaxonomy: PropTypes.bool,
-  systemDefined: PropTypes.bool,
-  canDeleteTaxonomy: PropTypes.bool,
-};
+TaxonomyMenuComponent.propTypes = TaxonomyMenu.propTypes;
 
 TaxonomyMenuComponent.defaultProps = {
+  id: taxonomyId,
+  name: taxonomyName,
+  tagsCount: 0,
   systemDefined: false,
   canChangeTaxonomy: true,
   canDeleteTaxonomy: true,
