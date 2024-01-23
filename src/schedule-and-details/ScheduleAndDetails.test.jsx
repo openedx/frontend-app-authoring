@@ -151,7 +151,7 @@ describe('<ScheduleAndDetails />', () => {
     expect(getByText(messages.alertSuccess.defaultMessage)).toBeInTheDocument();
   });
 
-  it('should display an error when course details fails to load', async () => {
+  it('should display an error when GET CourseDetails fails', async () => {
     axiosMock
       .onGet(getCourseDetailsApiUrl(courseId))
       .reply(404, 'error');
@@ -161,7 +161,7 @@ describe('<ScheduleAndDetails />', () => {
     });
   });
 
-  it('should display an error when course settings fails to load', async () => {
+  it('should display an error when GET CourseSettings fails', async () => {
     axiosMock
       .onGet(getCourseSettingsApiUrl(courseId))
       .reply(404, 'error');
@@ -171,7 +171,7 @@ describe('<ScheduleAndDetails />', () => {
     });
   });
 
-  it('should display an error when course details fails to save', async () => {
+  it('should display an error when PUT CourseDetails fails', async () => {
     axiosMock
       .onPut(getCourseDetailsApiUrl(courseId))
       .reply(404, 'error');
