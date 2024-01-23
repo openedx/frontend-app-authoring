@@ -156,7 +156,7 @@ describe('<ScheduleAndDetails />', () => {
       .onGet(getCourseDetailsApiUrl(courseId))
       .reply(404, 'error');
     const { getByText } = render(<RootWrapper />);
-      await waitFor(() => {
+    await waitFor(() => {
       expect(getByText(messages.alertLoadFail.defaultMessage)).toBeInTheDocument();
     });
   });
