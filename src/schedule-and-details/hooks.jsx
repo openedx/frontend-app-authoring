@@ -24,7 +24,6 @@ const useLoadValuesPrompt = (
   useEffect(() => {
     if (loadingDetailsStatus === RequestStatus.FAILED || loadingSettingsStatus === RequestStatus.FAILED) {
       setShowLoadFailedAlert(true);
-      setTimeout(() => setShowLoadFailedAlert(false), 15000);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [loadingDetailsStatus, loadingSettingsStatus]);
@@ -109,6 +108,7 @@ const useSaveValuesPrompt = (
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       setIsQueryPending(false);
       setShowSuccessfulAlert(true);
+      setShowFailedAlert(false);
       setTimeout(() => setShowSuccessfulAlert(false), 15000);
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -117,8 +117,8 @@ const useSaveValuesPrompt = (
       }
     } else if (savingStatus === RequestStatus.FAILED) {
       setIsQueryPending(false);
+      setShowSuccessfulAlert(false);
       setShowFailedAlert(true);
-      setTimeout(() => setShowFailedAlert(false), 15000);
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       if (!isEditableState) {
