@@ -57,6 +57,18 @@ const messages = defineMessages({
     id: 'course-authoring.schedule.alert.success',
     defaultMessage: 'Your changes have been saved.',
   },
+  alertLoadFailAriaLabelledby: {
+    id: 'course-authoring.schedule.alert.load.fail.aria.labelledby',
+    defaultMessage: 'alert-confirmation-title',
+  },
+  alertLoadFailAriaDescribedby: {
+    id: 'course-authoring.schedule.alert.load.fail.aria.describedby',
+    defaultMessage: 'alert-confirmation-description',
+  },
+  alertLoadFail: {
+    id: 'course-authoring.schedule.alert.load.fail',
+    defaultMessage: 'We encountered an error when loading your settings.',
+  },
   alertFailAriaLabelledby: {
     id: 'course-authoring.schedule.alert.fail.aria.labelledby',
     defaultMessage: 'alert-confirmation-title',
@@ -66,7 +78,7 @@ const messages = defineMessages({
     defaultMessage: 'alert-confirmation-description',
   },
   alertFail: {
-    id: 'course-authoring.schedule.alert.failed',
+    id: 'course-authoring.schedule.alert.fail',
     defaultMessage: 'We encountered an error when saving your changes.',
   },
   errorMessage1: {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import {
@@ -6,6 +6,7 @@ import {
 } from '@edx/paragon';
 import {
   CheckCircle as CheckCircleIcon,
+  ErrorOutline as ErrorOutlineIcon,
   Warning as WarningIcon,
 } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -41,7 +42,7 @@ import RequirementsSection from './requirements-section';
 import LicenseSection from './license-section';
 import ScheduleSidebar from './schedule-sidebar';
 import messages from './messages';
-import { useSaveValuesPrompt } from './hooks';
+import { useLoadValuesPrompt, useSaveValuesPrompt } from './hooks';
 
 const ScheduleAndDetails = ({ intl, courseId }) => {
   const courseSettings = useSelector(getCourseSettings);
@@ -77,6 +78,14 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
   } = courseSettings;
 
   const {
+    showLoadFailedAlert,
+  } = useLoadValuesPrompt(
+    courseId,
+    fetchCourseDetailsQuery,
+    fetchCourseSettingsQuery,
+  );
+
+  const {
     errorFields,
     savingStatus,
     editedValues,
@@ -85,7 +94,6 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     showModifiedAlert,
     showSuccessfulAlert,
     showFailedAlert,
-    dispatch,
     handleResetValues,
     handleValuesChange,
     handleUpdateValues,
@@ -129,11 +137,6 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
     certificatesDisplayBehavior,
     videoThumbnailImageAssetPath,
   } = editedValues;
-
-  useEffect(() => {
-    dispatch(fetchCourseSettingsQuery(courseId));
-    dispatch(fetchCourseDetailsQuery(courseId));
-  }, [courseId]);
 
   useScrollToHashElement({ isLoading });
 
@@ -186,9 +189,22 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
             )}
           />
           <AlertMessage
+            show={showLoadFailedAlert}
+            variant="danger"
+            icon={ErrorOutlineIcon}
+            title={intl.formatMessage(messages.alertLoadFail)}
+            aria-hidden="true"
+            aria-labelledby={intl.formatMessage(
+              messages.alertFailAriaLabelledby,
+            )}
+            aria-describedby={intl.formatMessage(
+              messages.alertFailAriaDescribedby,
+            )}
+          />
+          <AlertMessage
             show={showFailedAlert}
             variant="danger"
-            icon={CheckCircleIcon}
+            icon={ErrorOutlineIcon}
             title={intl.formatMessage(messages.alertFail)}
             aria-hidden="true"
             aria-labelledby={intl.formatMessage(
