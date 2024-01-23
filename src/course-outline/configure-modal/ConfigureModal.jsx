@@ -273,7 +273,6 @@ const ConfigureModal = ({
         onClose={onClose}
         hasCloseButton
         isFullscreenOnMobile
-        isFullscreenScroll
       >
         <div data-testid="configure-modal">
           <ModalDialog.Header className="configure-modal__header">

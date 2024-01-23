@@ -676,7 +676,7 @@ describe('<CourseOutline />', () => {
     const newGraderType = 'Homework';
     const newDue = '2025-09-10T00:00:00Z';
     const isTimeLimited = true;
-    const defaultTimeLimitMinutes = 210;
+    const defaultTimeLimitMinutes = 3270;
 
     axiosMock
       .onPost(getCourseItemApiUrl(subsection.id), {
@@ -733,8 +733,8 @@ describe('<CourseOutline />', () => {
     let radioButtons = await within(configureModal).findAllByRole('radio');
     fireEvent.click(radioButtons[1]);
     let hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
-    let hours = await within(hoursWrapper).findByRole('textbox');
-    fireEvent.change(hours, { target: { value: '03:30' } });
+    let hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
+    fireEvent.change(hours, { target: { value: '54:30' } });
     const saveButton = await within(configureModal).findByTestId('configure-save-button');
     await act(async () => fireEvent.click(saveButton));
 
@@ -778,8 +778,8 @@ describe('<CourseOutline />', () => {
     expect(radioButtons[0]).toHaveProperty('checked', false);
     expect(radioButtons[1]).toHaveProperty('checked', true);
     hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
-    hours = await within(hoursWrapper).findByRole('textbox');
-    expect(hours).toHaveValue('03:30');
+    hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
+    expect(hours).toHaveValue('54:30');
   });
 
   it('check configure modal for unit', async () => {
@@ -1332,7 +1332,7 @@ describe('<CourseOutline />', () => {
       });
     const { findAllByTestId } = render(<RootWrapper />);
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
-    const [sectionElement] = await findAllByTestId('conditional-sortable-element--no-drag-handle')
+    const [sectionElement] = await findAllByTestId('conditional-sortable-element--no-drag-handle');
 
     await waitFor(() => {
       expect(within(sectionElement).queryByText(section.displayName)).toBeInTheDocument();

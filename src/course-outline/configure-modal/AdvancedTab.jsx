@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Form } from '@edx/paragon';
-import { useIntl, FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
-import { DatepickerControl, DATEPICKER_TYPES } from '../../generic/datepicker-control';
+import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import { convertToStringFromDate } from '../../utils';
 
 const AdvancedTab = ({
   isTimeLimited,
@@ -13,8 +11,6 @@ const AdvancedTab = ({
   defaultTimeLimit,
   setDefaultTimeLimit,
 }) => {
-  const intl = useIntl();
-
   const formatHour = (hour) => {
     const hh = Math.floor(hour / 60);
     const mm = hour % 60;
@@ -35,7 +31,7 @@ const AdvancedTab = ({
     return `${hhs}:${mms}`;
   };
 
-  const [timeLimit, setTimeLimit] = useState(convertToStringFromDate(moment(formatHour(defaultTimeLimit), 'HH:mm')));
+  const [timeLimit, setTimeLimit] = useState(formatHour(defaultTimeLimit));
 
   const handleChange = (e) => {
     if (e.target.value === 'timed') {
@@ -46,12 +42,15 @@ const AdvancedTab = ({
     }
   };
 
-  const setCurrentTimeLimit = (dateStr) => {
-    if (dateStr) {
-      const minutes = moment.duration(moment(dateStr).format('HH:mm')).asMinutes();
+  const setCurrentTimeLimit = (event) => {
+    const { validity: { valid } } = event.target;
+    let { value } = event.target;
+    value = value.trim();
+    if (value && valid) {
+      const minutes = moment.duration(value).asMinutes();
       setDefaultTimeLimit(minutes);
-      setTimeLimit(dateStr);
     }
+    setTimeLimit(value);
   };
 
   return (
@@ -72,14 +71,18 @@ const AdvancedTab = ({
         <Form.Text><FormattedMessage {...messages.timedDescription} /></Form.Text>
       </Form.RadioSet>
       { isTimeLimited && (
-        <div className="hide-header mt-3" data-testid="advanced-tab-hours-picker-wrapper">
-          <DatepickerControl
-            type={DATEPICKER_TYPES.time}
-            value={timeLimit}
-            label={intl.formatMessage(messages.timeAllotted)}
-            controlName="allotted-time"
-            onChange={setCurrentTimeLimit}
-          />
+        <div className="mt-3" data-testid="advanced-tab-hours-picker-wrapper">
+          <Form.Group>
+            <Form.Label>
+              <FormattedMessage {...messages.timeAllotted} />
+            </Form.Label>
+            <Form.Control
+              onChange={setCurrentTimeLimit}
+              value={timeLimit}
+              placeholder="HH:MM"
+              pattern="^[0-9][0-9]:[0-5][0-9]$"
+            />
+          </Form.Group>
           <Form.Text><FormattedMessage {...messages.timeLimitDescription} /></Form.Text>
         </div>
       )}
