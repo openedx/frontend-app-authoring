@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { Container, Layout } from '@openedx/paragon';
+import { Container, Layout, Stack } from '@openedx/paragon';
 import { useIntl, injectIntl } from '@edx/frontend-platform/i18n';
 import { ErrorAlert } from '@edx/frontend-lib-content-components';
 
@@ -13,6 +13,7 @@ import ProcessingNotification from '../generic/processing-notification';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import Loading from '../generic/Loading';
 import AddComponent from './add-component/AddComponent';
+import CourseXBlock from './course-xblock/CourseXBlock';
 import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
@@ -32,11 +33,13 @@ const CourseUnit = ({ courseId }) => {
     isTitleEditFormOpen,
     isErrorAlert,
     isInternetConnectionAlertFailed,
+    unitXBlockActions,
     handleTitleEditSubmit,
     headerNavigationsActions,
     handleTitleEdit,
     handleInternetConnectionFailed,
     handleCreateNewCourseXBlock,
+    courseVerticalChildren,
   } = useCourseUnit({ courseId, blockId });
 
   document.title = getPageHeadTitle('', unitTitle);
@@ -90,6 +93,18 @@ const CourseUnit = ({ courseId }) => {
             xl={[{ span: 9 }, { span: 3 }]}
           >
             <Layout.Element>
+              <Stack gap={4} className="mb-4">
+                {courseVerticalChildren.children.map(({ name, blockId: id, shouldScroll }) => (
+                  <CourseXBlock
+                    id={id}
+                    key={id}
+                    title={name}
+                    shouldScroll={shouldScroll}
+                    unitXBlockActions={unitXBlockActions}
+                    data-testid="course-xblock"
+                  />
+                ))}
+              </Stack>
               <AddComponent
                 blockId={blockId}
                 handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}

@@ -19,6 +19,7 @@ export const getCourseSectionVerticalApiUrl = (itemId) => `${getStudioBaseUrl()}
 export const getLearningSequencesOutlineApiUrl = (courseId) => `${getLmsBaseUrl()}/api/learning_sequences/v1/course_outline/${courseId}`;
 export const getCourseMetadataApiUrl = (courseId) => `${getLmsBaseUrl()}/api/courseware/course/${courseId}`;
 export const getCourseHomeCourseMetadataApiUrl = (courseId) => `${getLmsBaseUrl()}/api/course_home/course_metadata/${courseId}`;
+export const getCourseVerticalChildrenApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container/vertical/${itemId}/children`;
 
 export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
 
@@ -125,6 +126,46 @@ export async function createCourseXblock({
 
   const { data } = await getAuthenticatedHttpClient()
     .post(postXBlockBaseApiUrl(), body);
+
+  return data;
+}
+
+/**
+ * Get an object containing course section vertical children data.
+ * @param {string} itemId
+ * @returns {Promise<Object>}
+ */
+export async function getCourseVerticalChildren(itemId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getCourseVerticalChildrenApiUrl(itemId));
+
+  return camelCaseObject(data);
+}
+
+/**
+ * Delete a unit item.
+ * @param {string} itemId
+ * @returns {Promise<Object>}
+ */
+export async function deleteUnitItem(itemId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .delete(getXBlockBaseApiUrl(itemId));
+
+  return data;
+}
+
+/**
+ * Duplicate a unit item.
+ * @param {string} itemId
+ * @param {string} XBlockId
+ * @returns {Promise<Object>}
+ */
+export async function duplicateUnitItem(itemId, XBlockId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(postXBlockBaseApiUrl(), {
+      parent_locator: itemId,
+      duplicate_source_locator: XBlockId,
+    });
 
   return data;
 }

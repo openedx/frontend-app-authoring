@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { useSelector } from 'react-redux';
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
@@ -30,16 +29,13 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   }),
 }));
 
-const currentItemMock = {
-  displayName: 'Delete',
-};
-
 const renderComponent = (props) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
       <DeleteModal
         isOpen
         close={closeMock}
+        category="Section"
         onDeleteSubmit={onDeleteSubmitMock}
         {...props}
       />
@@ -60,7 +56,6 @@ describe('<DeleteModal />', () => {
 
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    useSelector.mockReturnValue(currentItemMock);
   });
 
   it('render DeleteModal component correctly', () => {

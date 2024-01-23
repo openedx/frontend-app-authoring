@@ -1,21 +1,17 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import {
   ActionRow,
   Button,
   AlertModal,
 } from '@openedx/paragon';
-import { useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { COURSE_BLOCK_NAMES } from '../constants';
-import { getCurrentItem } from '../data/selectors';
 import messages from './messages';
 
-const DeleteModal = ({ isOpen, close, onDeleteSubmit }) => {
+const DeleteModal = ({
+  category, isOpen, close, onDeleteSubmit,
+}) => {
   const intl = useIntl();
-  let { category } = useSelector(getCurrentItem);
-  category = COURSE_BLOCK_NAMES[category]?.name.toLowerCase();
 
   return (
     <AlertModal
@@ -47,6 +43,7 @@ const DeleteModal = ({ isOpen, close, onDeleteSubmit }) => {
 DeleteModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
+  category: PropTypes.string.isRequired,
   onDeleteSubmit: PropTypes.func.isRequired,
 };
 

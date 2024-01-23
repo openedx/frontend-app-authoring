@@ -4,14 +4,18 @@ import { useNavigate } from 'react-router-dom';
 
 import { RequestStatus } from '../data/constants';
 import {
-  createNewCourseXblock,
+  createNewCourseXBlock,
   fetchCourseUnitQuery,
   editCourseItemQuery,
   fetchCourse,
   fetchCourseSectionVerticalData,
+  fetchCourseVerticalChildrenData,
+  deleteUnitItemQuery,
+  duplicateUnitItemQuery,
 } from './data/thunk';
 import {
   getCourseSectionVertical,
+  getCourseVerticalChildren,
   getCourseUnitData,
   getLoadingStatus,
   getSavingStatus,
@@ -28,6 +32,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const savingStatus = useSelector(getSavingStatus);
   const loadingStatus = useSelector(getLoadingStatus);
   const { draftPreviewLink, publishedPreviewLink } = useSelector(getCourseSectionVertical);
+  const courseVerticalChildren = useSelector(getCourseVerticalChildren);
   const navigate = useNavigate();
   const isTitleEditFormOpen = useSelector(state => state.courseUnit.isTitleEditFormOpen);
   const isQueryPending = useSelector(state => state.courseUnit.isQueryPending);
@@ -67,8 +72,17 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   };
 
   const handleCreateNewCourseXBlock = (body, callback) => (
-    dispatch(createNewCourseXblock(body, callback))
+    dispatch(createNewCourseXBlock(body, callback, blockId))
   );
+
+  const unitXBlockActions = {
+    handleDelete: (XBlockId) => {
+      dispatch(deleteUnitItemQuery(blockId, XBlockId));
+    },
+    handleDuplicate: (XBlockId) => {
+      dispatch(duplicateUnitItemQuery(blockId, XBlockId));
+    },
+  };
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
@@ -81,6 +95,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   useEffect(() => {
     dispatch(fetchCourseUnitQuery(blockId));
     dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
+    dispatch(fetchCourseVerticalChildrenData(blockId));
     dispatch(fetchCourse(courseId));
 
     handleNavigate(sequenceId);
@@ -98,9 +113,11 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     isTitleEditFormOpen,
     isInternetConnectionAlertFailed: savingStatus === RequestStatus.FAILED,
     handleInternetConnectionFailed,
+    unitXBlockActions,
     headerNavigationsActions,
     handleTitleEdit,
     handleTitleEditSubmit,
     handleCreateNewCourseXBlock,
+    courseVerticalChildren,
   };
 };
