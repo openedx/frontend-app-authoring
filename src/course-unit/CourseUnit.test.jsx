@@ -12,12 +12,14 @@ import { cloneDeep, set } from 'lodash';
 import {
   getCourseSectionVerticalApiUrl,
   getCourseUnitApiUrl,
+  getCourseVerticalChildrenApiUrl,
   getXBlockBaseApiUrl,
   postXBlockBaseApiUrl,
 } from './data/api';
 import {
   fetchCourseSectionVerticalData,
   fetchCourseUnitQuery,
+  fetchCourseVerticalChildrenData,
 } from './data/thunk';
 import initializeStore from '../store';
 import {
@@ -25,13 +27,17 @@ import {
   courseSectionVerticalMock,
   courseUnitIndexMock,
   courseUnitMock,
+  courseVerticalChildrenMock,
 } from './__mocks__';
 import { executeThunk } from '../utils';
 import CourseUnit from './CourseUnit';
 import headerNavigationsMessages from './header-navigations/messages';
 import headerTitleMessages from './header-title/messages';
 import courseSequenceMessages from './course-sequence/messages';
-import messages from './add-component/messages';
+
+import deleteModalMessages from '../generic/delete-modal/messages';
+import courseXBlockMessages from './course-xblock/messages';
+import addComponentMessages from './add-component/messages';
 
 let axiosMock;
 let store;
@@ -75,6 +81,10 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);
     await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+    axiosMock
+      .onGet(getCourseVerticalChildrenApiUrl(blockId))
+      .reply(200, courseVerticalChildrenMock);
+    await executeThunk(fetchCourseVerticalChildrenData(blockId), store.dispatch);
   });
 
   it('render CourseUnit component correctly', async () => {
@@ -169,7 +179,7 @@ describe('<CourseUnit />', () => {
 
     await waitFor(() => {
       const videoButton = getByRole('button', {
-        name: new RegExp(`${messages.buttonText.defaultMessage} Video`, 'i'),
+        name: new RegExp(`${addComponentMessages.buttonText.defaultMessage} Video`, 'i'),
       });
 
       userEvent.click(videoButton);
@@ -186,7 +196,7 @@ describe('<CourseUnit />', () => {
 
     await waitFor(() => {
       const problemButton = getByRole('button', {
-        name: new RegExp(`${messages.buttonText.defaultMessage} Problem`, 'i'),
+        name: new RegExp(`${addComponentMessages.buttonText.defaultMessage} Problem`, 'i'),
       });
 
       userEvent.click(problemButton);
@@ -291,12 +301,81 @@ describe('<CourseUnit />', () => {
 
     await waitFor(() => {
       const videoButton = getByRole('button', {
-        name: new RegExp(`${messages.buttonText.defaultMessage} Video`, 'i'),
+        name: new RegExp(`${addComponentMessages.buttonText.defaultMessage} Video`, 'i'),
       });
 
       userEvent.click(videoButton);
       expect(mockedUsedNavigate).toHaveBeenCalled();
       expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseKey}/editor/video/${locator}`);
+    });
+  });
+
+  it('checks whether xblock is deleted when corresponding delete button is clicked', async () => {
+    axiosMock
+      .onDelete(getXBlockBaseApiUrl(courseVerticalChildrenMock.children[0].block_id))
+      .replyOnce(200, { dummy: 'value' });
+
+    const {
+      getByText,
+      getAllByLabelText,
+      getByRole,
+      getAllByTestId,
+    } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      expect(getByText(unitDisplayName)).toBeInTheDocument();
+      const [xblockActionBtn] = getAllByLabelText(courseXBlockMessages.blockActionsDropdownAlt.defaultMessage);
+      userEvent.click(xblockActionBtn);
+
+      const deleteBtn = getByRole('button', { name: courseXBlockMessages.blockLabelButtonDelete.defaultMessage });
+      userEvent.click(deleteBtn);
+      expect(getByText(/Delete this component?/)).toBeInTheDocument();
+
+      const deleteConfirmBtn = getByRole('button', { name: deleteModalMessages.deleteButton.defaultMessage });
+      userEvent.click(deleteConfirmBtn);
+
+      expect(getAllByTestId('course-xblock')).toHaveLength(1);
+    });
+  });
+
+  it('checks whether xblock is duplicate when corresponding delete button is clicked', async () => {
+    axiosMock
+      .onPost(postXBlockBaseApiUrl({
+        parent_locator: blockId,
+        duplicate_source_locator: courseVerticalChildrenMock.children[0].block_id,
+      }))
+      .replyOnce(200, { locator: '1234567890' });
+
+    axiosMock
+      .onGet(getCourseVerticalChildrenApiUrl(blockId))
+      .reply(200, {
+        ...courseVerticalChildrenMock,
+        children: [
+          ...courseVerticalChildrenMock.children,
+          {
+            name: 'New Cloned XBlock',
+            block_id: '1234567890',
+            block_type: 'drag-and-drop-v2',
+          },
+        ],
+      });
+
+    const {
+      getByText,
+      getAllByLabelText,
+      getAllByTestId,
+    } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      expect(getByText(unitDisplayName)).toBeInTheDocument();
+      const [xblockActionBtn] = getAllByLabelText(courseXBlockMessages.blockActionsDropdownAlt.defaultMessage);
+      userEvent.click(xblockActionBtn);
+
+      const duplicateBtn = getByText(courseXBlockMessages.blockLabelButtonDuplicate.defaultMessage);
+      userEvent.click(duplicateBtn);
+
+      expect(getAllByTestId('course-xblock')).toHaveLength(3);
+      expect(getByText('New Cloned XBlock')).toBeInTheDocument();
     });
   });
 });
