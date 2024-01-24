@@ -43,7 +43,7 @@ describe('header utils', () => {
       const actualItems = getToolsMenuItems(toolsProps);
       expect(actualItems).toHaveLength(3);
     });
-    it('should not include Checklist option', () => {
+    it('should not include any items if there are no permissions', () => {
       const actualItems = getToolsMenuItems({ ...baseProps, hasToolsPermissions: false });
       expect(actualItems).toHaveLength(0);
     });
