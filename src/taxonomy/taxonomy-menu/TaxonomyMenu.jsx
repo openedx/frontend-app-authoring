@@ -121,12 +121,19 @@ const TaxonomyMenu = ({
     </>
   );
 
+  const toggleProps = iconMenu ? {
+    as: IconButton,
+    src: MoreVert,
+    iconAs: Icon,
+  } : {
+    as: Button,
+  };
+
   return (
-    <Dropdown onToggle={(_isOpen, ev) => ev.preventDefault()}>
+    <Dropdown id={`taxonomy-menu-${taxonomy.id}`} onToggle={(_isOpen, ev) => ev.preventDefault()}>
       <Dropdown.Toggle
-        as={iconMenu ? IconButton : Button}
-        src={MoreVert}
-        iconAs={Icon}
+        id={`taxonomy-menu-toggle-${taxonomy.id}`}
+        {...toggleProps}
         variant="primary"
         alt={intl.formatMessage(messages.actionsButtonAlt, { name: taxonomy.name })}
         data-testid="taxonomy-menu-button"
@@ -139,6 +146,7 @@ const TaxonomyMenu = ({
           <Dropdown.Item
             key={key}
             data-testid={`taxonomy-menu-${key}`}
+            as="button" // Prevents <a> cannot appear as a descendant of <a> warning
             onClick={
               (e) => {
                 e.preventDefault();

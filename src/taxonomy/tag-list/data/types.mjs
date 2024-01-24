@@ -9,9 +9,8 @@
  * @property {number} pageIndex
  */
 
-// FIXME: this should be renamed to TagData
 /**
- * @typedef {Object} TagListData
+ * @typedef {Object} TagData
  * @property {number} childCount
  * @property {number} depth
  * @property {string} externalId
@@ -23,14 +22,13 @@
  * @property {string?} _id Database ID. Don't rely on this, as it is not present for free-text tags.
  */
 
-// FIXME: this should be renamed to TagListData
 /**
- * @typedef {Object} TagData
+ * @typedef {Object} TagListData
  * @property {number} count
  * @property {number} currentPage
  * @property {string} next
  * @property {number} numPages
  * @property {string} previous
- * @property {TagListData[]} results
+ * @property {TagData[]} results
  * @property {number} start
  */
