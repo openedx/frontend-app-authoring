@@ -1,8 +1,15 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { Image } from '@edx/paragon';
 import { GalleryCard } from './GalleryCard';
+
+jest.mock('@edx/paragon', () => ({
+  ...jest.requireActual('@edx/paragon'),
+  Badge: 'Badge',
+  SelectableBox: 'SelectableBox',
+  Image: 'Image',
+}));
 
 describe('GalleryCard component', () => {
   const asset = {
@@ -16,30 +23,30 @@ describe('GalleryCard component', () => {
     el = shallow(<GalleryCard asset={asset} />);
   });
   test(`snapshot: dateAdded=${asset.dateAdded}`, () => {
-    expect(el).toMatchSnapshot();
+    expect(el.snapshot).toMatchSnapshot();
   });
   it('loads Image with src from image external url', () => {
-    expect(el.find(Image).props().src).toEqual(asset.externalUrl);
+    expect(el.instance.findByType(Image)[0].props.src).toEqual(asset.externalUrl);
   });
   it('snapshot with thumbnail fallback and load error', () => {
     el = shallow(<GalleryCard asset={asset} thumbnailFallback={thumbnailFallback} />);
-    el.find(Image).props().onError();
-    expect(el).toMatchSnapshot();
+    el.instance.findByType(Image)[0].props.onError();
+    expect(el.snapshot).toMatchSnapshot();
   });
   it('snapshot with thumbnail fallback and no error', () => {
     el = shallow(<GalleryCard asset={asset} thumbnailFallback={thumbnailFallback} />);
-    expect(el).toMatchSnapshot();
+    expect(el.snapshot).toMatchSnapshot();
   });
   it('snapshot with status badge', () => {
     el = shallow(<GalleryCard asset={{ ...asset, status: 'failed', statusBadgeVariant: 'danger' }} />);
-    expect(el).toMatchSnapshot();
+    expect(el.snapshot).toMatchSnapshot();
   });
   it('snapshot with duration badge', () => {
     el = shallow(<GalleryCard asset={{ ...asset, duration: 60 }} />);
-    expect(el).toMatchSnapshot();
+    expect(el.snapshot).toMatchSnapshot();
   });
   it('snapshot with duration transcripts', () => {
     el = shallow(<GalleryCard asset={{ ...asset, transcripts: ['es'] }} />);
-    expect(el).toMatchSnapshot();
+    expect(el.snapshot).toMatchSnapshot();
   });
 });

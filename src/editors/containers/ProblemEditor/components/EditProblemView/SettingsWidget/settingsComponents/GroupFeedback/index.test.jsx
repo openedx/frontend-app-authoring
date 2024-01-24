@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { formatMessage } from '../../../../../../../../testUtils';
 import { GroupFeedbackCard } from './index';
 import { groupFeedbackRowHooks, groupFeedbackCardHooks } from './hooks';
@@ -52,7 +52,7 @@ describe('HintsCard', () => {
       };
 
       groupFeedbackCardHooks.mockReturnValue(groupFeedbacksCardHooksProps);
-      expect(shallow(<GroupFeedbackCard {...props} />)).toMatchSnapshot();
+      expect(shallow(<GroupFeedbackCard {...props} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: renders groupFeedbacks setting card one groupFeedback', () => {
       const groupFeedbacksCardHooksProps = {
@@ -64,7 +64,7 @@ describe('HintsCard', () => {
       };
 
       groupFeedbackCardHooks.mockReturnValue(groupFeedbacksCardHooksProps);
-      expect(shallow(<GroupFeedbackCard {...props} groupFeedbacks={groupFeedbacks1} />)).toMatchSnapshot();
+      expect(shallow(<GroupFeedbackCard {...props} groupFeedbacks={groupFeedbacks1} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: renders groupFeedbacks setting card multiple groupFeedbacks', () => {
       const groupFeedbacksCardHooksProps = {
@@ -76,7 +76,7 @@ describe('HintsCard', () => {
       };
 
       groupFeedbackCardHooks.mockReturnValue(groupFeedbacksCardHooksProps);
-      expect(shallow(<GroupFeedbackCard {...props} groupFeedbacks={groupFeedbacks2} />)).toMatchSnapshot();
+      expect(shallow(<GroupFeedbackCard {...props} groupFeedbacks={groupFeedbacks2} />).snapshot).toMatchSnapshot();
     });
   });
 });

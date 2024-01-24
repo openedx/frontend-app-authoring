@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { RawEditor } from '.';
 
@@ -34,12 +34,12 @@ describe('RawEditor', () => {
   };
 
   test('renders as expected with default behavior', () => {
-    expect(shallow(<RawEditor {...defaultProps} />)).toMatchSnapshot();
+    expect(shallow(<RawEditor {...defaultProps} />).snapshot).toMatchSnapshot();
   });
   test('renders as expected with lang equal to xml', () => {
-    expect(shallow(<RawEditor {...xmlProps} />)).toMatchSnapshot();
+    expect(shallow(<RawEditor {...xmlProps} />).snapshot).toMatchSnapshot();
   });
   test('renders as expected with content equal to null', () => {
-    expect(shallow(<RawEditor {...noContentProps} />)).toMatchSnapshot();
+    expect(shallow(<RawEditor {...noContentProps} />).snapshot).toMatchSnapshot();
   });
 });

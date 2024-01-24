@@ -1,4 +1,4 @@
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import FeedbackControl from './FeedbackControl';
 
 const answerWithFeedback = {
@@ -21,6 +21,6 @@ const props = {
 
 describe('FeedbackControl component', () => {
   test('renders', () => {
-    expect(shallow(<FeedbackControl {...props} />)).toMatchSnapshot();
+    expect(shallow(<FeedbackControl {...props} />).snapshot).toMatchSnapshot();
   });
 });

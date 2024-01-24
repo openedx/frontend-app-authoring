@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { LicenseBlurb } from './LicenseBlurb';
 
@@ -12,32 +12,32 @@ describe('LicenseBlurb', () => {
   describe('snapshots', () => {
     test('snapshots: renders as expected with default props', () => {
       expect(
-        shallow(<LicenseBlurb {...props} />),
+        shallow(<LicenseBlurb {...props} />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with license equal to Creative Commons', () => {
       expect(
-        shallow(<LicenseBlurb {...props} license="creative-commons" />),
+        shallow(<LicenseBlurb {...props} license="creative-commons" />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected when details.attribution equal true', () => {
       expect(
-        shallow(<LicenseBlurb {...props} license="creative-commons" details={{ attribution: true }} />),
+        shallow(<LicenseBlurb {...props} license="creative-commons" details={{ attribution: true }} />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected when details.attribution and details.noncommercial equal true', () => {
       expect(
-        shallow(<LicenseBlurb {...props} license="creative-commons" details={{ attribution: true, noncommercial: true }} />),
+        shallow(<LicenseBlurb {...props} license="creative-commons" details={{ attribution: true, noncommercial: true }} />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected when details.attribution and details.noDerivatives equal true', () => {
       expect(
-        shallow(<LicenseBlurb {...props} license="creative-commons" details={{ attribution: true, noDerivatives: true }} />),
+        shallow(<LicenseBlurb {...props} license="creative-commons" details={{ attribution: true, noDerivatives: true }} />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected when details.attribution and details.shareAlike equal true', () => {
       expect(
-        shallow(<LicenseBlurb {...props} license="creative-commons" details={{ attribution: true, shareAlike: true }} />),
+        shallow(<LicenseBlurb {...props} license="creative-commons" details={{ attribution: true, shareAlike: true }} />).snapshot,
       ).toMatchSnapshot();
     });
   });

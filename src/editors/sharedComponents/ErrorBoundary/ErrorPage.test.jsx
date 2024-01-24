@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { selectors } from '../../data/redux';
 import { formatMessage } from '../../../testUtils';
 import { ErrorPage, mapStateToProps } from './ErrorPage';
@@ -33,8 +33,8 @@ describe('Editor Page', () => {
   describe('rendered with empty props', () => {
     it('should only have one button (try again)', () => {
       const wrapper = shallow(<ErrorPage {...emptyProps} />);
-      const buttonText = wrapper.find('Button').text();
-      expect(wrapper).toMatchSnapshot();
+      const buttonText = wrapper.instance.findByType('Button')[0].children[0].el;
+      expect(wrapper.snapshot).toMatchSnapshot();
       expect(buttonText).toEqual('Try again');
     });
   });
@@ -43,25 +43,25 @@ describe('Editor Page', () => {
     const wrapper = shallow(<ErrorPage {...passedProps} />);
     describe('shows two buttons', () => {
       it('the first button should correspond to returning to the course outline', () => {
-        const firstButtonText = wrapper.find('Button').at(0).text();
-        const secondButtonText = wrapper.find('Button').at(1).text();
-        expect(wrapper).toMatchSnapshot();
+        const firstButtonText = wrapper.instance.findByType('Button')[0].children[0].el;
+        const secondButtonText = wrapper.instance.findByType('Button')[1].children[0].el;
+        expect(wrapper.snapshot).toMatchSnapshot();
         expect(firstButtonText).toEqual('Return to course outline');
         expect(secondButtonText).toEqual('Try again');
       });
       it('the first button should correspond to returning to the unit page', () => {
         const returnToUnitPageWrapper = shallow(<ErrorPage {...passedProps} unitData={unitData} />);
-        expect(returnToUnitPageWrapper).toMatchSnapshot();
-        const firstButtonText = returnToUnitPageWrapper.find('Button').at(0).text();
-        const secondButtonText = returnToUnitPageWrapper.find('Button').at(1).text();
-        expect(returnToUnitPageWrapper).toMatchSnapshot();
+        expect(returnToUnitPageWrapper.snapshot).toMatchSnapshot();
+        const firstButtonText = returnToUnitPageWrapper.instance.findByType('Button')[0].children[0].el;
+        const secondButtonText = returnToUnitPageWrapper.instance.findByType('Button')[1].children[0].el;
+        expect(returnToUnitPageWrapper.snapshot).toMatchSnapshot();
         expect(firstButtonText).toEqual('Return to unit page');
         expect(secondButtonText).toEqual('Try again');
       });
     });
     it('should have custom message', () => {
-      const customMessageText = wrapper.find('div').children().at(0).text();
-      expect(wrapper).toMatchSnapshot();
+      const customMessageText = wrapper.instance.findByType('div')[0].children[0].children[0].el;
+      expect(wrapper.snapshot).toMatchSnapshot();
       expect(customMessageText).toEqual('cUStomMEssagE');
     });
   });

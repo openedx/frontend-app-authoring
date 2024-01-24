@@ -56,4 +56,4 @@ exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCar
 </Card>
 `;
 
-exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCard returns null 1`] = `""`;
+exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCard returns null 1`] = `null`;

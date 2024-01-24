@@ -1,6 +1,6 @@
 import React from 'react';
 import { dispatch } from 'react-redux';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { formatMessage } from '../../../../../../../testUtils';
 import { VideoSourceWidget } from '.';
@@ -72,13 +72,13 @@ describe('VideoSourceWidget', () => {
     describe('snapshots: renders as expected with', () => {
       it('default props', () => {
         expect(
-          shallow(<VideoSourceWidget {...props} />),
+          shallow(<VideoSourceWidget {...props} />).snapshot,
         ).toMatchSnapshot();
       });
       it('videoSharingEnabledForCourse=true', () => {
         const newProps = { ...props, videoSharingEnabledForCourse: true };
         expect(
-          shallow(<VideoSourceWidget {...newProps} />),
+          shallow(<VideoSourceWidget {...newProps} />).snapshot,
         ).toMatchSnapshot();
       });
     });
@@ -95,13 +95,13 @@ describe('VideoSourceWidget', () => {
       const expected = hook.updateVideoId;
       expect(el
         // eslint-disable-next-line
-        .children().at(1).children().at(0).children().at(0)
-        .props().onBlur).toEqual(expected);
+        .shallowWrapper.props.children[1].props.children[0].props.children[0]
+        .props.onBlur).toEqual(expected);
     });
     test('updateVideoURL is tied to url field onBlur', () => {
       const { onBlur } = el
         // eslint-disable-next-line
-        .children().at(1).children().at(0).children().at(2).props();
+        .shallowWrapper.props.children[1].props.children[0].props.children[2].props;
       onBlur('onBlur event');
       expect(hook.updateVideoURL).toHaveBeenCalledWith('onBlur event', '');
     });

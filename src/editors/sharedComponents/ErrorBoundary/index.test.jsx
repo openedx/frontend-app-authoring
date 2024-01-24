@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render } from '@testing-library/react';
 
 import {
   logError,
@@ -22,11 +22,11 @@ describe('ErrorBoundary', () => {
         <div>Yay</div>
       </ErrorBoundary>
     );
-    const wrapper = mount(component);
-    const element = wrapper.find('div');
+    const { container } = render(component);
+    const element = container.querySelector('div');
 
     expect(logError).toHaveBeenCalledTimes(0);
-    expect(element.text()).toEqual('Yay');
+    expect(element.textContent).toEqual('Yay');
   });
 
   it('should render ErrorPage if it has an error', () => {
@@ -38,8 +38,8 @@ describe('ErrorBoundary', () => {
         <ExplodingComponent />
       </ErrorBoundary>
     );
-    const wrapper = mount(component);
-    const element = wrapper.find('p');
+    const { container } = render(component);
+    const element = container.querySelector('p');
     expect(logError).toHaveBeenCalledTimes(1);
     expect(logError).toHaveBeenCalledWith(
       new Error('booyah'),
@@ -47,6 +47,6 @@ describe('ErrorBoundary', () => {
         stack: expect.stringContaining('ExplodingComponent'),
       }),
     );
-    expect(element.text()).toEqual('Error Page');
+    expect(element.textContent).toEqual('Error Page');
   });
 });

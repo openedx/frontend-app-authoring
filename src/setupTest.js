@@ -1,11 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
-import Enzyme from 'enzyme';
-import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import 'babel-polyfill';
 import 'jest-canvas-mock';
-
-Enzyme.configure({ adapter: new Adapter() });
 
 /* need to mock window for tinymce on import, as it is JSDOM incompatible */
 

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DimensionControls render null value: empty snapshot 1`] = `""`;
+exports[`DimensionControls render null value: empty snapshot 1`] = `false`;
 
 exports[`DimensionControls render snapshot 1`] = `
 <Form.Group>

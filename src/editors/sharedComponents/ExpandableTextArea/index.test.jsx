@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import ExpandableTextArea from '.';
 
 // Per https://github.com/tinymce/tinymce-react/issues/91 React unit testing in JSDOM is not supported by tinymce.
@@ -24,11 +24,11 @@ describe('ExpandableTextArea', () => {
   };
   describe('snapshots', () => {
     test('renders as expected with default behavior', () => {
-      expect(shallow(<ExpandableTextArea {...props} />)).toMatchSnapshot();
+      expect(shallow(<ExpandableTextArea {...props} />).snapshot).toMatchSnapshot();
     });
     test('renders error message', () => {
       const wrapper = shallow(<ExpandableTextArea {...props} error errorMessage="eRRormeSsaGE" />);
-      expect(wrapper).toMatchSnapshot();
+      expect(wrapper.snapshot).toMatchSnapshot();
     });
   });
 });

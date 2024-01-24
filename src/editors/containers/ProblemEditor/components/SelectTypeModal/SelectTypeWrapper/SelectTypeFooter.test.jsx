@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { Button } from '@edx/paragon';
 import { formatMessage } from '../../../../../../testUtils';
@@ -22,7 +22,7 @@ describe('SelectTypeFooter', () => {
   };
 
   test('snapshot', () => {
-    expect(shallow(<module.SelectTypeFooter {...props} />)).toMatchSnapshot();
+    expect(shallow(<module.SelectTypeFooter {...props} />).snapshot).toMatchSnapshot();
   });
 
   describe('behavior', () => {
@@ -32,12 +32,13 @@ describe('SelectTypeFooter', () => {
     });
     test('close behavior is linked to modal onCancel', () => {
       const expected = props.onCancel;
-      expect(el.find(Button).first().props().onClick)
+      expect(el.instance.findByType(Button)[0].props.onClick)
         .toEqual(expected);
     });
     test('select behavior is linked to modal onSelect', () => {
       const expected = hooks.onSelect(props.selected, props.updateField);
-      expect(el.find(Button).last().props().onClick)
+      const button = el.instance.findByType(Button);
+      expect(button[button.length - 1].props.onClick)
         .toEqual(expected);
     });
   });

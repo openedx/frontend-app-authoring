@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TextEditor Image Gallery component component snapshot: loaded but no images, show empty gallery 1`] = `
-<ContextProvider
+<[object Object]
   value={
     Object {
       "$t": [Function],
@@ -71,11 +71,11 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but no im
     show={true}
     showIdsOnCards={false}
   />
-</ContextProvider>
+</[object Object]>
 `;
 
 exports[`TextEditor Image Gallery component component snapshot: loaded but search returns no images, show 0 search result gallery 1`] = `
-<ContextProvider
+<[object Object]
   value={
     Object {
       "$t": [Function],
@@ -145,11 +145,11 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but searc
     show={true}
     showIdsOnCards={false}
   />
-</ContextProvider>
+</[object Object]>
 `;
 
 exports[`TextEditor Image Gallery component component snapshot: loaded, show gallery 1`] = `
-<ContextProvider
+<[object Object]
   value={
     Object {
       "$t": [Function],
@@ -219,11 +219,11 @@ exports[`TextEditor Image Gallery component component snapshot: loaded, show gal
     show={true}
     showIdsOnCards={false}
   />
-</ContextProvider>
+</[object Object]>
 `;
 
 exports[`TextEditor Image Gallery component component snapshot: not loaded, show spinner 1`] = `
-<ContextProvider
+<[object Object]
   value={
     Object {
       "$t": [Function],
@@ -293,5 +293,5 @@ exports[`TextEditor Image Gallery component component snapshot: not loaded, show
     show={true}
     showIdsOnCards={false}
   />
-</ContextProvider>
+</[object Object]>
 `;

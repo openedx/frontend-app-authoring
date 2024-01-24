@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Preview snapshots snapshots: renders as expected with default props 1`] = `""`;
+exports[`Preview snapshots snapshots: renders as expected with default props 1`] = `null`;
 
 exports[`Preview snapshots snapshots: renders as expected with problemType is choiceresponse 1`] = `
 <Container

@@ -1,4 +1,4 @@
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { FeedbackBox } from './FeedbackBox';
 
 const answerWithFeedback = {
@@ -17,12 +17,12 @@ const props = {
 
 describe('FeedbackBox component', () => {
   test('renders as expected with default props', () => {
-    expect(shallow(<FeedbackBox {...props} />)).toMatchSnapshot();
+    expect(shallow(<FeedbackBox {...props} />).snapshot).toMatchSnapshot();
   });
   test('renders as expected with a numeric input problem', () => {
-    expect(shallow(<FeedbackBox {...props} problemType="numericalresponse" />)).toMatchSnapshot();
+    expect(shallow(<FeedbackBox {...props} problemType="numericalresponse" />).snapshot).toMatchSnapshot();
   });
   test('renders as expected with a multi select problem', () => {
-    expect(shallow(<FeedbackBox {...props} problemType="choiceresponse" />)).toMatchSnapshot();
+    expect(shallow(<FeedbackBox {...props} problemType="choiceresponse" />).snapshot).toMatchSnapshot();
   });
 });

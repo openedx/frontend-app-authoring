@@ -28,7 +28,7 @@ exports[`GalleryCard component snapshot with duration badge 1`] = `
           }
         }
       />
-      <Component
+      <Badge
         style={
           Object {
             "backgroundColor": "black",
@@ -40,7 +40,7 @@ exports[`GalleryCard component snapshot with duration badge 1`] = `
         variant="dark"
       >
         01:00
-      </Component>
+      </Badge>
     </div>
     <div
       className="card-text px-3 py-2"
@@ -198,7 +198,7 @@ exports[`GalleryCard component snapshot with status badge 1`] = `
           }
         }
       />
-      <Component
+      <Badge
         style={
           Object {
             "left": "6px",
@@ -209,7 +209,7 @@ exports[`GalleryCard component snapshot with status badge 1`] = `
         variant="danger"
       >
         failed
-      </Component>
+      </Badge>
     </div>
     <div
       className="card-text px-3 py-2"
@@ -271,18 +271,17 @@ exports[`GalleryCard component snapshot with thumbnail fallback and load error 1
         }
       }
     >
-      <div
+      <Image
+        onError={[Function]}
+        src="props.img.externalUrl"
         style={
           Object {
+            "border": "none",
             "height": "100px",
             "width": "200px",
           }
         }
-      >
-        <span>
-          Image failed to load
-        </span>
-      </div>
+      />
     </div>
     <div
       className="card-text px-3 py-2"

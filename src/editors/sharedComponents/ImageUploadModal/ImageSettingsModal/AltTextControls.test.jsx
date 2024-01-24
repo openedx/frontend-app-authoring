@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { formatMessage } from '../../../../testUtils';
 import { AltTextControls } from './AltTextControls';
@@ -23,11 +23,11 @@ describe('AltTextControls', () => {
   });
   describe('render', () => {
     test('snapshot: isDecorative=true errorProps.showAltTextSubmissionError=true', () => {
-      expect(shallow(<AltTextControls {...props} />)).toMatchSnapshot();
+      expect(shallow(<AltTextControls {...props} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: isDecorative=true errorProps.showAltTextSubmissionError=false', () => {
       props.validation.show = false;
-      expect(shallow(<AltTextControls {...props} />)).toMatchSnapshot();
+      expect(shallow(<AltTextControls {...props} />).snapshot).toMatchSnapshot();
     });
   });
 });

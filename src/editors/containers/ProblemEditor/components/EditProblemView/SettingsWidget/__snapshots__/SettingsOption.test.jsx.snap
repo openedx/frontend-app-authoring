@@ -89,17 +89,21 @@ exports[`SettingsOption with additional sections snapshot: renders correct 1`] =
       First Section
     </h1>
   </CardSection>
-  <CardSection
-    isCardCollapsibleOpen={false}
-    key="settingsOption-Settings Option Title-0"
-    none={false}
-    summary={null}
-  />
-  <CardSection
-    isCardCollapsibleOpen={false}
-    key="settingsOption-Settings Option Title-1"
-    none={false}
-    summary={null}
-  />
+  <Fragment>
+    <CardSection
+      isCardCollapsibleOpen={false}
+      key="settingsOption-Settings Option Title-0"
+      none={false}
+      summary={null}
+    />
+  </Fragment>
+  <Fragment>
+    <CardSection
+      isCardCollapsibleOpen={false}
+      key="settingsOption-Settings Option Title-1"
+      none={false}
+      summary={null}
+    />
+  </Fragment>
 </Card>
 `;

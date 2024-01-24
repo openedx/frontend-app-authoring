@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`CardSection closed 1`] = `""`;
+exports[`CardSection closed 1`] = `null`;
 
 exports[`CardSection open 1`] = `
 <Card.Section

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { formatMessage } from '../../../../../../testUtils';
 import { selectors } from '../../../../../data/redux';
 import { ExplanationWidget, mapStateToProps } from '.';
@@ -35,7 +35,7 @@ describe('SolutionWidget', () => {
   };
   describe('render', () => {
     test('snapshot: renders correct default', () => {
-      expect(shallow(<ExplanationWidget {...props} />)).toMatchSnapshot();
+      expect(shallow(<ExplanationWidget {...props} />).snapshot).toMatchSnapshot();
     });
   });
   describe('mapStateToProps', () => {

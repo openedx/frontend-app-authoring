@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { actions } from '../../../../../../data/redux';
 import { LicenseDetails, mapStateToProps, mapDispatchToProps } from './LicenseDetails';
@@ -21,6 +21,18 @@ jest.mock('../../../../../../data/redux', () => ({
   },
 }));
 
+jest.mock('@edx/paragon', () => ({
+  ...jest.requireActual('@edx/paragon'),
+  CheckboxControl: 'CheckboxControl',
+  Stack: 'Stack',
+  Icon: 'Icon',
+  Form: {
+    Group: 'Form.Group',
+    Label: 'Form.Label',
+  },
+  ActionRow: { Spacer: 'ActionRow.Spacer' },
+}));
+
 describe('LicenseDetails', () => {
   const props = {
     license: null,
@@ -32,27 +44,27 @@ describe('LicenseDetails', () => {
   describe('snapshots', () => {
     test('snapshots: renders as expected with default props', () => {
       expect(
-        shallow(<LicenseDetails {...props} />),
+        shallow(<LicenseDetails {...props} />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with level set to library', () => {
       expect(
-        shallow(<LicenseDetails {...props} level="library" />),
+        shallow(<LicenseDetails {...props} level="library" />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with level set to block and license set to select', () => {
       expect(
-        shallow(<LicenseDetails {...props} level="block" license="select" />),
+        shallow(<LicenseDetails {...props} level="block" license="select" />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with level set to block and license set to all rights reserved', () => {
       expect(
-        shallow(<LicenseDetails {...props} level="block" license="all-rights-reserved" />),
+        shallow(<LicenseDetails {...props} level="block" license="all-rights-reserved" />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with level set to block and license set to Creative Commons', () => {
       expect(
-        shallow(<LicenseDetails {...props} level="block" license="creative-commons" />),
+        shallow(<LicenseDetails {...props} level="block" license="creative-commons" />).snapshot,
       ).toMatchSnapshot();
     });
   });

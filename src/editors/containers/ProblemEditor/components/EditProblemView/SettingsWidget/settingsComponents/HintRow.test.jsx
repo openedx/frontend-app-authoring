@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { formatMessage } from '../../../../../../../testUtils';
 import { HintRow } from './HintRow';
 
@@ -14,7 +14,7 @@ describe('HintRow', () => {
 
   describe('snapshot', () => {
     test('snapshot: renders hints row', () => {
-      expect(shallow(<HintRow {...props} />)).toMatchSnapshot();
+      expect(shallow(<HintRow {...props} />).snapshot).toMatchSnapshot();
     });
   });
 });

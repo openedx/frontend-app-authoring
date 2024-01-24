@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { formatMessage } from '../../../../testUtils';
 import { ImageSettingsModal } from '.';
@@ -43,7 +43,7 @@ describe('ImageSettingsModal', () => {
   });
   describe('render', () => {
     test('snapshot', () => {
-      expect(shallow(<ImageSettingsModal {...props} />)).toMatchSnapshot();
+      expect(shallow(<ImageSettingsModal {...props} />).snapshot).toMatchSnapshot();
     });
   });
 });

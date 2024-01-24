@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LicenseDetails snapshots snapshots: renders as expected with default props 1`] = `""`;
+exports[`LicenseDetails snapshots snapshots: renders as expected with default props 1`] = `null`;
 
 exports[`LicenseDetails snapshots snapshots: renders as expected with level set to block and license set to Creative Commons 1`] = `
 <div
@@ -25,7 +25,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
         className="border-primary-100 border-bottom pb-4"
       >
         <Form.Group>
-          <ActionRow>
+          <[object Object]>
             <Icon
               className="text-primary-500"
             />
@@ -39,12 +39,12 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
               />
             </Form.Label>
             <ActionRow.Spacer />
-            <Component
+            <CheckboxControl
               aria-label="Checkbox"
               checked={true}
               disabled={true}
             />
-          </ActionRow>
+          </[object Object]>
         </Form.Group>
         <div>
           <FormattedMessage
@@ -58,7 +58,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
         className="border-primary-100 border-bottom pb-4"
       >
         <Form.Group>
-          <ActionRow>
+          <[object Object]>
             <Icon />
             <Form.Label
               className="my-0 text-primary-500"
@@ -70,12 +70,12 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
               />
             </Form.Label>
             <ActionRow.Spacer />
-            <Component
+            <CheckboxControl
               aria-label="Checkbox"
               disabled={false}
               onChange={[Function]}
             />
-          </ActionRow>
+          </[object Object]>
         </Form.Group>
         <div>
           <FormattedMessage
@@ -89,7 +89,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
         className="border-primary-100 border-bottom pb-4"
       >
         <Form.Group>
-          <ActionRow>
+          <[object Object]>
             <Icon />
             <Form.Label
               className="my-0 text-primary-500"
@@ -101,12 +101,12 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
               />
             </Form.Label>
             <ActionRow.Spacer />
-            <Component
+            <CheckboxControl
               aria-label="Checkbox"
               disabled={false}
               onChange={[Function]}
             />
-          </ActionRow>
+          </[object Object]>
         </Form.Group>
         <div>
           <FormattedMessage
@@ -118,7 +118,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
       </div>
       <div>
         <Form.Group>
-          <ActionRow>
+          <[object Object]>
             <Icon />
             <Form.Label
               className="my-0 text-primary-500"
@@ -130,12 +130,12 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
               />
             </Form.Label>
             <ActionRow.Spacer />
-            <Component
+            <CheckboxControl
               aria-label="Checkbox"
               disabled={false}
               onChange={[Function]}
             />
-          </ActionRow>
+          </[object Object]>
         </Form.Group>
         <div>
           <FormattedMessage
@@ -179,7 +179,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
 </div>
 `;
 
-exports[`LicenseDetails snapshots snapshots: renders as expected with level set to block and license set to select 1`] = `""`;
+exports[`LicenseDetails snapshots snapshots: renders as expected with level set to block and license set to select 1`] = `null`;
 
 exports[`LicenseDetails snapshots snapshots: renders as expected with level set to library 1`] = `
 <div

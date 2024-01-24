@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import BaseModal from '.';
 
@@ -13,6 +13,6 @@ describe('BaseModal ImageUploadModal template component', () => {
       confirmAction: 'props.confirmAction node',
       footerAction: 'props.footerAction node',
     };
-    expect(shallow(<BaseModal {...props} />)).toMatchSnapshot();
+    expect(shallow(<BaseModal {...props} />).snapshot).toMatchSnapshot();
   });
 });

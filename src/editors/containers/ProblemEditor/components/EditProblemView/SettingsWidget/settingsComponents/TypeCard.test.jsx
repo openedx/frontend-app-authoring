@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { formatMessage } from '../../../../../../../testUtils';
 import { TypeCard } from './TypeCard';
 import { ProblemTypeKeys } from '../../../../../../data/constants/problem';
@@ -19,7 +19,7 @@ describe('TypeCard', () => {
 
   describe('snapshot', () => {
     test('snapshot: renders type setting card', () => {
-      expect(shallow(<TypeCard {...props} />)).toMatchSnapshot();
+      expect(shallow(<TypeCard {...props} />).snapshot).toMatchSnapshot();
     });
   });
 });

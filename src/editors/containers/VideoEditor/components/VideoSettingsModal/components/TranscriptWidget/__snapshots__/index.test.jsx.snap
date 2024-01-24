@@ -393,14 +393,16 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
   <Stack
     gap={3}
   >
-    <FormattedMessage
-      defaultMessage="Add video transcripts (.srt files only) for improved accessibility."
-      description="Message for adding first transcript"
-      id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
-    />
-    <injectIntl(ShimmedIntlComponent)
-      setOpen={[Function]}
-    />
+    <Fragment>
+      <FormattedMessage
+        defaultMessage="Add video transcripts (.srt files only) for improved accessibility."
+        description="Message for adding first transcript"
+        id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
+      />
+      <injectIntl(ShimmedIntlComponent)
+        setOpen={[Function]}
+      />
+    </Fragment>
     <div
       className="mt-2"
     >
@@ -453,11 +455,13 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
   <Stack
     gap={3}
   >
-    <FormattedMessage
-      defaultMessage="Add video transcripts (.srt files only) for improved accessibility."
-      description="Message for adding first transcript"
-      id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
-    />
+    <Fragment>
+      <FormattedMessage
+        defaultMessage="Add video transcripts (.srt files only) for improved accessibility."
+        description="Message for adding first transcript"
+        id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
+      />
+    </Fragment>
     <div
       className="mt-2"
     >
@@ -629,11 +633,13 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
   <Stack
     gap={3}
   >
-    <FormattedMessage
-      defaultMessage="Add video transcripts (.srt files only) for improved accessibility."
-      description="Message for adding first transcript"
-      id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
-    />
+    <Fragment>
+      <FormattedMessage
+        defaultMessage="Add video transcripts (.srt files only) for improved accessibility."
+        description="Message for adding first transcript"
+        id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
+      />
+    </Fragment>
     <div
       className="mt-2"
     >

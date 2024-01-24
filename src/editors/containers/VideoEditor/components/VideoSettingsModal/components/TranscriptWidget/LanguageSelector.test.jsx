@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { LanguageSelector } from './LanguageSelector';
 import { formatMessage } from '../../../../../../../testUtils';
 
@@ -30,14 +30,14 @@ describe('LanguageSelector', () => {
   describe('snapshot', () => {
     test('transcript option', () => {
       expect(
-        shallow(<LanguageSelector {...props} />),
+        shallow(<LanguageSelector {...props} />).snapshot,
       ).toMatchSnapshot();
     });
   });
   describe('snapshots -- no', () => {
     test('transcripts no Open Languages, all should be disabled', () => {
       expect(
-        shallow(<LanguageSelector {...props} openLanguages={[]} />),
+        shallow(<LanguageSelector {...props} openLanguages={[]} />).snapshot,
       ).toMatchSnapshot();
     });
   });

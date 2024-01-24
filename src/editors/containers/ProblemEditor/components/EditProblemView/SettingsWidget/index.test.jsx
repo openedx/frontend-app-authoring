@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { showAdvancedSettingsCards } from './hooks';
 import { SettingsWidget, mapDispatchToProps } from '.';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
@@ -50,7 +50,7 @@ describe('SettingsWidget', () => {
         setResetTrue: jest.fn().mockName('showAdvancedSettingsCards.setResetTrue'),
       };
       showAdvancedSettingsCards.mockReturnValue(showAdvancedSettingsCardsProps);
-      expect(shallow(<SettingsWidget {...props} />)).toMatchSnapshot();
+      expect(shallow(<SettingsWidget {...props} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: renders Settings widget page advanced settings visible', () => {
       const showAdvancedSettingsCardsProps = {
@@ -58,7 +58,7 @@ describe('SettingsWidget', () => {
         setResetTrue: jest.fn().mockName('showAdvancedSettingsCards.setResetTrue'),
       };
       showAdvancedSettingsCards.mockReturnValue(showAdvancedSettingsCardsProps);
-      expect(shallow(<SettingsWidget {...props} />)).toMatchSnapshot();
+      expect(shallow(<SettingsWidget {...props} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: renders Settings widget for Advanced Problem with correct widgets', () => {
       const showAdvancedSettingsCardsProps = {
@@ -66,7 +66,7 @@ describe('SettingsWidget', () => {
         setResetTrue: jest.fn().mockName('showAdvancedSettingsCards.setResetTrue'),
       };
       showAdvancedSettingsCards.mockReturnValue(showAdvancedSettingsCardsProps);
-      expect(shallow(<SettingsWidget problemType={ProblemTypeKeys.ADVANCED} {...props} />)).toMatchSnapshot();
+      expect(shallow(<SettingsWidget problemType={ProblemTypeKeys.ADVANCED} {...props} />).snapshot).toMatchSnapshot();
     });
   });
 

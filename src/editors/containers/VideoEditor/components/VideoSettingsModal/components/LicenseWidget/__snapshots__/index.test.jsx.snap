@@ -24,41 +24,45 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with default pro
   <Stack
     gap={4}
   >
-    <injectIntl(ShimmedIntlComponent)
-      level="course"
-      license="all-rights-reserved"
-    />
-    <injectIntl(ShimmedIntlComponent)
-      details={Object {}}
-      level="course"
-      license="all-rights-reserved"
-    />
-    <injectIntl(ShimmedIntlComponent)
-      details={Object {}}
-      license="all-rights-reserved"
-      licenseDescription={
-        <FormattedMessage
-          defaultMessage="Licenses set at the course level appear at the bottom of courseware pages within your course."
-          description="Message explaining where course level licenses are set"
-          id="authoring.videoeditor.license.courseLicenseDescription.message"
-        />
-      }
-    />
-    <div
-      className="border-primary-100 border-bottom my-2"
-    />
-    <Button
-      className="text-primary-500 font-weight-bold justify-content-start pl-0"
-      onClick={[Function]}
-      size="sm"
-      variant="link"
-    >
-      <FormattedMessage
-        defaultMessage="Add a license for this video"
-        description="Label for add license button"
-        id="authoring.videoeditor.license.add.label"
+    <Fragment>
+      <injectIntl(ShimmedIntlComponent)
+        level="course"
+        license="all-rights-reserved"
       />
-    </Button>
+      <injectIntl(ShimmedIntlComponent)
+        details={Object {}}
+        level="course"
+        license="all-rights-reserved"
+      />
+      <injectIntl(ShimmedIntlComponent)
+        details={Object {}}
+        license="all-rights-reserved"
+        licenseDescription={
+          <FormattedMessage
+            defaultMessage="Licenses set at the course level appear at the bottom of courseware pages within your course."
+            description="Message explaining where course level licenses are set"
+            id="authoring.videoeditor.license.courseLicenseDescription.message"
+          />
+        }
+      />
+    </Fragment>
+    <Fragment>
+      <div
+        className="border-primary-100 border-bottom my-2"
+      />
+      <Button
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
+        onClick={[Function]}
+        size="sm"
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a license for this video"
+          description="Label for add license button"
+          id="authoring.videoeditor.license.add.label"
+        />
+      </Button>
+    </Fragment>
   </Stack>
 </injectIntl(ShimmedIntlComponent)>
 `;
@@ -87,26 +91,28 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with isLibrary t
   <Stack
     gap={4}
   >
-    <injectIntl(ShimmedIntlComponent)
-      level="library"
-      license="all-rights-reserved"
-    />
-    <injectIntl(ShimmedIntlComponent)
-      details={Object {}}
-      level="library"
-      license="all-rights-reserved"
-    />
-    <injectIntl(ShimmedIntlComponent)
-      details={Object {}}
-      license="all-rights-reserved"
-      licenseDescription={
-        <FormattedMessage
-          defaultMessage="Licenses set at the library level appear at the specific library video."
-          description="Message explaining where library level licenses are set"
-          id="authoring.videoeditor.license.libraryLicenseDescription.message"
-        />
-      }
-    />
+    <Fragment>
+      <injectIntl(ShimmedIntlComponent)
+        level="library"
+        license="all-rights-reserved"
+      />
+      <injectIntl(ShimmedIntlComponent)
+        details={Object {}}
+        level="library"
+        license="all-rights-reserved"
+      />
+      <injectIntl(ShimmedIntlComponent)
+        details={Object {}}
+        license="all-rights-reserved"
+        licenseDescription={
+          <FormattedMessage
+            defaultMessage="Licenses set at the library level appear at the specific library video."
+            description="Message explaining where library level licenses are set"
+            id="authoring.videoeditor.license.libraryLicenseDescription.message"
+          />
+        }
+      />
+    </Fragment>
   </Stack>
 </injectIntl(ShimmedIntlComponent)>
 `;
@@ -135,26 +141,28 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with licenseType
   <Stack
     gap={4}
   >
-    <injectIntl(ShimmedIntlComponent)
-      level="block"
-      license="all-rights-reserved"
-    />
-    <injectIntl(ShimmedIntlComponent)
-      details={Object {}}
-      level="block"
-      license="all-rights-reserved"
-    />
-    <injectIntl(ShimmedIntlComponent)
-      details={Object {}}
-      license="all-rights-reserved"
-      licenseDescription={
-        <FormattedMessage
-          defaultMessage="When a video has a different license than the course as a whole, learners see the license at the bottom right of the video player."
-          description="Message explaining where video specific licenses are seen by users"
-          id="authoring.videoeditor.license.defaultLicenseDescription.message"
-        />
-      }
-    />
+    <Fragment>
+      <injectIntl(ShimmedIntlComponent)
+        level="block"
+        license="all-rights-reserved"
+      />
+      <injectIntl(ShimmedIntlComponent)
+        details={Object {}}
+        level="block"
+        license="all-rights-reserved"
+      />
+      <injectIntl(ShimmedIntlComponent)
+        details={Object {}}
+        license="all-rights-reserved"
+        licenseDescription={
+          <FormattedMessage
+            defaultMessage="When a video has a different license than the course as a whole, learners see the license at the bottom right of the video player."
+            description="Message explaining where video specific licenses are seen by users"
+            id="authoring.videoeditor.license.defaultLicenseDescription.message"
+          />
+        }
+      />
+    </Fragment>
   </Stack>
 </injectIntl(ShimmedIntlComponent)>
 `;

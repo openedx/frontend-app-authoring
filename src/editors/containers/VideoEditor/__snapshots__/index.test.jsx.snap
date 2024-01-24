@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`VideoEditor snapshots renders as expected with default behavior 1`] = `
-<Component
+<ErrorContext.Provider
   value="hooks.errorsHook.error"
 >
   <EditorContainer
@@ -26,11 +26,11 @@ exports[`VideoEditor snapshots renders as expected with default behavior 1`] = `
       />
     </div>
   </EditorContainer>
-</Component>
+</ErrorContext.Provider>
 `;
 
 exports[`VideoEditor snapshots renders as expected with default behavior 2`] = `
-<Component
+<ErrorContext.Provider
   value="hooks.errorsHook.error"
 >
   <EditorContainer
@@ -46,5 +46,5 @@ exports[`VideoEditor snapshots renders as expected with default behavior 2`] = `
       />
     </div>
   </EditorContainer>
-</Component>
+</ErrorContext.Provider>
 `;

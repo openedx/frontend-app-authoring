@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { selectors } from '../../data/redux';
 import SourceCodeModal from '../SourceCodeModal';
 import ImageUploadModal from '../ImageUploadModal';
@@ -56,6 +56,15 @@ jest.mock('./hooks', () => ({
   useImages: jest.fn(() => ({ imagesRef: { current: [{ externalUrl: staticUrl }] } })),
 }));
 
+jest.mock('react-redux', () => ({
+  Provider: 'Provider',
+  connect: (mapStateToProp, mapDispatchToProps) => (component) => ({
+    mapStateToProp,
+    mapDispatchToProps,
+    component,
+  }),
+}));
+
 describe('TinyMceWidget', () => {
   const props = {
     editorType: 'text',
@@ -80,17 +89,17 @@ describe('TinyMceWidget', () => {
       closeSourceCodeModal: jest.fn().mockName('modal.closeModal'),
     });
     test('renders as expected with default behavior', () => {
-      expect(shallow(<TinyMceWidget {...props} />)).toMatchSnapshot();
+      expect(shallow(<TinyMceWidget {...props} />).snapshot).toMatchSnapshot();
     });
     test('SourcecodeModal is not rendered', () => {
       const wrapper = shallow(<TinyMceWidget {...props} editorType="problem" />);
-      expect(wrapper).toMatchSnapshot();
-      expect(wrapper.find(SourceCodeModal).length).toBe(0);
+      expect(wrapper.snapshot).toMatchSnapshot();
+      expect(wrapper.instance.findByType(SourceCodeModal).length).toBe(0);
     });
     test('ImageUploadModal is not rendered', () => {
       const wrapper = shallow(<TinyMceWidget {...props} isLibrary />);
-      expect(wrapper).toMatchSnapshot();
-      expect(wrapper.find(ImageUploadModal).length).toBe(0);
+      expect(wrapper.snapshot).toMatchSnapshot();
+      expect(wrapper.instance.findByType(ImageUploadModal).length).toBe(0);
     });
   });
   describe('mapStateToProps', () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import * as module from './Transcript';
 
@@ -57,7 +57,7 @@ describe('Transcript Component', () => {
           cancelDelete: jest.fn().mockName('cancelDelete'),
         }));
         expect(
-          shallow(<module.Transcript {...props} />),
+          shallow(<module.Transcript {...props} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with default props: dont show confirm delete, language is blank so delete is shown instead of action menu', () => {
@@ -67,7 +67,7 @@ describe('Transcript Component', () => {
           cancelDelete: jest.fn().mockName('cancelDelete'),
         }));
         expect(
-          shallow(<module.Transcript {...props} language="" />),
+          shallow(<module.Transcript {...props} language="" />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with default props: show confirm delete', () => {
@@ -77,7 +77,7 @@ describe('Transcript Component', () => {
           cancelDelete: jest.fn().mockName('cancelDelete'),
         }));
         expect(
-          shallow(<module.Transcript {...props} />),
+          shallow(<module.Transcript {...props} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with transcriptUrl', () => {
@@ -87,7 +87,7 @@ describe('Transcript Component', () => {
           cancelDelete: jest.fn().mockName('cancelDelete'),
         }));
         expect(
-          shallow(<module.Transcript {...props} transcriptUrl="url" />),
+          shallow(<module.Transcript {...props} transcriptUrl="url" />).snapshot,
         ).toMatchSnapshot();
       });
     });

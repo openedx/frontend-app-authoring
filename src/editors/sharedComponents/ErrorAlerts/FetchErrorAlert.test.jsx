@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { FetchErrorAlert } from './FetchErrorAlert';
 
 jest.mock('../../data/redux', () => ({
@@ -13,7 +13,7 @@ jest.mock('../../data/redux', () => ({
 describe('FetchErrorAlert', () => {
   describe('Snapshots', () => {
     test('snapshot:  is ErrorAlert with Message error (ErrorAlert)', () => {
-      expect(shallow(<FetchErrorAlert isFetchError />)).toMatchSnapshot();
+      expect(shallow(<FetchErrorAlert isFetchError />).snapshot).toMatchSnapshot();
     });
   });
 });

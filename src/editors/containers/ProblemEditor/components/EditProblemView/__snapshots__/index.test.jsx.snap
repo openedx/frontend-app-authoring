@@ -5,7 +5,7 @@ exports[`EditorProblemView component renders raw editor 1`] = `
   getContent={[Function]}
   returnFunction={null}
 >
-  <Component
+  <AlertModal
     footerNode={
       <ActionRow>
         <Button
@@ -40,7 +40,7 @@ exports[`EditorProblemView component renders raw editor 1`] = `
       description="Explanation in body of mismatched settings modal"
       id="authoring.problemEditor.editProblemView.saveWarningModal.olxSettingDiscrepancy.body.explanation"
     />
-  </Component>
+  </AlertModal>
   <div
     className="editProblemView d-flex flex-row flex-nowrap justify-content-end"
   >
@@ -74,7 +74,7 @@ exports[`EditorProblemView component renders simple view 1`] = `
   getContent={[Function]}
   returnFunction={null}
 >
-  <Component
+  <AlertModal
     footerNode={
       <ActionRow>
         <Button
@@ -102,21 +102,23 @@ exports[`EditorProblemView component renders simple view 1`] = `
     onClose={[Function]}
     title="No answer specified"
   >
-    <div>
-      <FormattedMessage
-        defaultMessage="Are you sure you want to exit the editor?"
-        description="Question in body of save warning modal"
-        id="authoring.problemEditor.editProblemView.saveWarningModal.body.question"
-      />
-    </div>
-    <div>
-      <FormattedMessage
-        defaultMessage="No correct answer has been specified."
-        description="Explanation in body of no answer modal"
-        id="authoring.problemEditor.editProblemView.saveWarningModal.noAnswer.body.explanation"
-      />
-    </div>
-  </Component>
+    <Fragment>
+      <div>
+        <FormattedMessage
+          defaultMessage="Are you sure you want to exit the editor?"
+          description="Question in body of save warning modal"
+          id="authoring.problemEditor.editProblemView.saveWarningModal.body.question"
+        />
+      </div>
+      <div>
+        <FormattedMessage
+          defaultMessage="No correct answer has been specified."
+          description="Explanation in body of no answer modal"
+          id="authoring.problemEditor.editProblemView.saveWarningModal.noAnswer.body.explanation"
+        />
+      </div>
+    </Fragment>
+  </AlertModal>
   <div
     className="editProblemView d-flex flex-row flex-nowrap justify-content-end"
   >

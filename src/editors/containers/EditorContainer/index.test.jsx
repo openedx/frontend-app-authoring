@@ -1,4 +1,4 @@
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { useDispatch } from 'react-redux';
 
 import { EditorContainer } from '.';
@@ -35,12 +35,12 @@ describe('EditorContainer component', () => {
     test('snapshot: not initialized. disable save and pass to header', () => {
       hooks.isInitialized.mockReturnValueOnce(false);
       expect(
-        shallow(<EditorContainer {...props}>{testContent}</EditorContainer>),
+        shallow(<EditorContainer {...props}>{testContent}</EditorContainer>).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshot: initialized. enable save and pass to header', () => {
       expect(
-        shallow(<EditorContainer {...props}>{testContent}</EditorContainer>),
+        shallow(<EditorContainer {...props}>{testContent}</EditorContainer>).snapshot,
       ).toMatchSnapshot();
     });
     describe('behavior inspection', () => {
@@ -54,13 +54,13 @@ describe('EditorContainer component', () => {
           validateEntry: props.validateEntry,
           returnFunction: props.returnFunction,
         });
-        expect(el.children().at(3)
-          .props().onSave).toEqual(expected);
+        expect(el.shallowWrapper.props.children[3]
+          .props.onSave).toEqual(expected);
       });
       test('behavior is linked to clearSaveError', () => {
         const expected = hooks.clearSaveError({ dispatch: useDispatch() });
-        expect(el.children().at(3)
-          .props().clearSaveFailed).toEqual(expected);
+        expect(el.shallowWrapper.props.children[3]
+          .props.clearSaveFailed).toEqual(expected);
       });
     });
   });

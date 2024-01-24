@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import * as module from './ProblemTypeSelect';
 
@@ -13,27 +13,27 @@ describe('ProblemTypeSelect', () => {
     test('SINGLESELECT', () => {
       expect(shallow(
         <module.ProblemTypeSelect {...props} selected={ProblemTypeKeys.SINGLESELECT} />,
-      )).toMatchSnapshot();
+      ).snapshot).toMatchSnapshot();
     });
     test('MULTISELECT', () => {
       expect(shallow(
         <module.ProblemTypeSelect {...props} selected={ProblemTypeKeys.MULTISELECT} />,
-      )).toMatchSnapshot();
+      ).snapshot).toMatchSnapshot();
     });
     test('DROPDOWN', () => {
       expect(shallow(
         <module.ProblemTypeSelect {...props} selected={ProblemTypeKeys.DROPDOWN} />,
-      )).toMatchSnapshot();
+      ).snapshot).toMatchSnapshot();
     });
     test('NUMERIC', () => {
       expect(shallow(
         <module.ProblemTypeSelect {...props} selected={ProblemTypeKeys.NUMERIC} />,
-      )).toMatchSnapshot();
+      ).snapshot).toMatchSnapshot();
     });
     test('TEXTINPUT', () => {
       expect(shallow(
         <module.ProblemTypeSelect {...props} selected={ProblemTypeKeys.TEXTINPUT} />,
-      )).toMatchSnapshot();
+      ).snapshot).toMatchSnapshot();
     });
   });
 });

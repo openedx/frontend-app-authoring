@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import * as hooks from './hooks';
 import VideoSelector from './VideoSelector';
 
@@ -25,7 +25,7 @@ const initData = {
 describe('Video Selector', () => {
   describe('render', () => {
     test('rendering correctly with expected Input', () => {
-      expect(shallow(<VideoSelector {...props} />)).toMatchSnapshot();
+      expect(shallow(<VideoSelector {...props} />).snapshot).toMatchSnapshot();
     });
   });
   describe('behavior', () => {

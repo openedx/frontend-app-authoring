@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { actions, selectors } from '../../../../../../data/redux';
 import { formatMessage } from '../../../../../../../testUtils';
@@ -31,7 +31,7 @@ describe('DurationWidget', () => {
   describe('render', () => {
     test('snapshots: renders as expected with default props', () => {
       expect(
-        shallow(<DurationWidget {...props} />),
+        shallow(<DurationWidget {...props} />).snapshot,
       ).toMatchSnapshot();
     });
   });

@@ -1,7 +1,9 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { fireEvent, render } from '@testing-library/react';
 
 import { FileInput } from '.';
+
+const mockOnChange = jest.fn();
 
 describe('FileInput component', () => {
   let el;
@@ -12,22 +14,23 @@ describe('FileInput component', () => {
     props = {
       acceptedFiles: '.srt',
       fileInput: {
-        addFile: jest.fn().mockName('props.fileInput.addFile'),
+        addFile: () => mockOnChange(),
         ref: (input) => { container.ref = input; },
       },
     };
-    el = mount(<FileInput {...props} />);
+    el = render(<FileInput {...props} />);
   });
   test('snapshot', () => {
-    expect(el).toMatchSnapshot();
+    expect(el.container).toMatchSnapshot();
   });
   test('only accepts allowed file types', () => {
-    expect(el.find('input').props().accept).toEqual('.srt');
+    expect(el.container.querySelector('input').accept).toEqual('.srt');
   });
   test('calls fileInput.addFile onChange', () => {
-    expect(el.find('input').props().onChange).toEqual(props.fileInput.addFile);
+    fireEvent.change(el.container.querySelector('input'));
+    expect(mockOnChange).toHaveBeenCalled();
   });
   test('loads ref from fileInput.ref', () => {
-    expect(container.ref).toEqual(el.find('input').getDOMNode());
+    expect(container.ref).toEqual(el.container.querySelector('input'));
   });
 });

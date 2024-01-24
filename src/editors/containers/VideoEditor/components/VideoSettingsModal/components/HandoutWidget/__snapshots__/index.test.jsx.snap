@@ -162,4 +162,4 @@ exports[`HandoutWidget snapshots snapshots: renders as expected with handout 1`]
 </injectIntl(ShimmedIntlComponent)>
 `;
 
-exports[`HandoutWidget snapshots snapshots: renders as expected with isLibrary true 1`] = `""`;
+exports[`HandoutWidget snapshots snapshots: renders as expected with isLibrary true 1`] = `null`;

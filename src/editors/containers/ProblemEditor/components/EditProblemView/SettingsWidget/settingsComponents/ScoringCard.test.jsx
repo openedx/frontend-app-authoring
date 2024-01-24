@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { formatMessage } from '../../../../../../../testUtils';
 import { scoringCardHooks } from '../hooks';
 import { ScoringCard } from './ScoringCard';
@@ -43,7 +43,7 @@ describe('ScoringCard', () => {
 
   describe('snapshot', () => {
     test('snapshot: scoring setting card', () => {
-      expect(shallow(<ScoringCard {...props} />)).toMatchSnapshot();
+      expect(shallow(<ScoringCard {...props} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: scoring setting card zero zero weight', () => {
       expect(shallow(<ScoringCard
@@ -52,7 +52,7 @@ describe('ScoringCard', () => {
           ...scoring,
           weight: 0,
         }}
-      />)).toMatchSnapshot();
+      />).snapshot).toMatchSnapshot();
     });
     test('snapshot: scoring setting card max attempts', () => {
       expect(shallow(<ScoringCard
@@ -64,7 +64,7 @@ describe('ScoringCard', () => {
             number: 0,
           },
         }}
-      />)).toMatchSnapshot();
+      />).snapshot).toMatchSnapshot();
     });
   });
 });

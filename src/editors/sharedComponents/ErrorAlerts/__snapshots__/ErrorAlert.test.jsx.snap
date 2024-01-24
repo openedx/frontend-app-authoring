@@ -31,4 +31,4 @@ exports[`ErrorAlert component Component Snapshots snapshot: Loads children and c
 </Alert>
 `;
 
-exports[`ErrorAlert component Component Snapshots snapshot: is Null when no error (ErrorAlert) 1`] = `""`;
+exports[`ErrorAlert component Component Snapshots snapshot: is Null when no error (ErrorAlert) 1`] = `null`;

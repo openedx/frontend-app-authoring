@@ -1,6 +1,6 @@
 /* eslint-disable no-import-assign */
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { keyStore } from '../../utils';
 import tinyMCEKeys from '../../data/constants/tinyMCE';
@@ -168,13 +168,13 @@ describe('ImageUploadModal', () => {
       module.hooks = hooks;
     });
     test('snapshot: with selection content (ImageSettingsUpload)', () => {
-      expect(shallow(<ImageUploadModal {...props} />)).toMatchSnapshot();
+      expect(shallow(<ImageUploadModal {...props} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: selection has no externalUrl (Select Image Modal)', () => {
-      expect(shallow(<ImageUploadModal {...props} selection={null} />)).toMatchSnapshot();
+      expect(shallow(<ImageUploadModal {...props} selection={null} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: no selection (Select Image Modal)', () => {
-      expect(shallow(<ImageUploadModal {...props} selection={null} />)).toMatchSnapshot();
+      expect(shallow(<ImageUploadModal {...props} selection={null} />).snapshot).toMatchSnapshot();
     });
   });
 });

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import * as paragon from '@edx/paragon';
 import * as icons from '@edx/paragon/icons';
 
@@ -53,16 +53,16 @@ describe('DimensionControls', () => {
       jest.spyOn(hooks, 'onInputChange').mockRestore();
     });
     test('snapshot', () => {
-      expect(shallow(<DimensionControls {...props} />)).toMatchSnapshot();
+      expect(shallow(<DimensionControls {...props} />).snapshot).toMatchSnapshot();
     });
     test('null value: empty snapshot', () => {
       const el = shallow(<DimensionControls {...props} value={null} />);
-      expect(el).toMatchSnapshot();
+      expect(el.snapshot).toMatchSnapshot();
       expect(el.isEmptyRender()).toEqual(true);
     });
     test('unlocked dimensions', () => {
       const el = shallow(<DimensionControls {...props} isLocked={false} />);
-      expect(el).toMatchSnapshot();
+      expect(el.snapshot).toMatchSnapshot();
     });
   });
   describe('component tests for dimensions', () => {

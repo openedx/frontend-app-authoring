@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { formatMessage } from '../../../../../../../testUtils';
 import { actions, selectors } from '../../../../../../data/redux';
@@ -60,17 +60,17 @@ describe('LicenseWidget', () => {
     // });
     test('snapshots: renders as expected with default props', () => {
       expect(
-        shallow(<LicenseWidget {...props} />),
+        shallow(<LicenseWidget {...props} />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with isLibrary true', () => {
       expect(
-        shallow(<LicenseWidget {...props} isLibrary licenseType="all-rights-reserved" />),
+        shallow(<LicenseWidget {...props} isLibrary licenseType="all-rights-reserved" />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with licenseType defined', () => {
       expect(
-        shallow(<LicenseWidget {...props} licenseType="all-rights-reserved" />),
+        shallow(<LicenseWidget {...props} licenseType="all-rights-reserved" />).snapshot,
       ).toMatchSnapshot();
     });
   });

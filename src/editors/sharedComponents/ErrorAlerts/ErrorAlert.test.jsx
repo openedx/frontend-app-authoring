@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import * as module from './ErrorAlert';
 import { MockUseState } from '../../../testUtils';
 
@@ -70,13 +70,15 @@ describe('ErrorAlert component', () => {
         jest.clearAllMocks();
       });
       test('snapshot: is Null when no error (ErrorAlert)', () => {
-        expect(shallow(<ErrorAlert {...props}> <p> An Error Message </p> </ErrorAlert>)).toMatchSnapshot();
+        expect(shallow(<ErrorAlert {...props}> <p> An Error Message </p> </ErrorAlert>).snapshot).toMatchSnapshot();
       });
       test('snapshot: Loads children and component when error (ErrorAlert)', () => {
-        expect(shallow(<ErrorAlert {...props} isError hideHeading={false}>{msg}</ErrorAlert>)).toMatchSnapshot();
+        expect(
+          shallow(<ErrorAlert {...props} isError hideHeading={false}>{msg}</ErrorAlert>).snapshot,
+        ).toMatchSnapshot();
       });
       test('snapshot: Does not load heading when hideHeading is true', () => {
-        expect(shallow(<ErrorAlert {...props} isError hideHeading>{msg}</ErrorAlert>)).toMatchSnapshot();
+        expect(shallow(<ErrorAlert {...props} isError hideHeading>{msg}</ErrorAlert>).snapshot).toMatchSnapshot();
       });
     });
   });

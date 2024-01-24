@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { Editor } from './Editor';
 import supportedEditors from './supportedEditors';
 import * as hooks from './hooks';
@@ -32,14 +32,14 @@ let el;
 describe('Editor', () => {
   describe('render', () => {
     test('snapshot: renders correct editor given blockType (html -> TextEditor)', () => {
-      expect(shallow(<Editor {...props} />)).toMatchSnapshot();
+      expect(shallow(<Editor {...props} />).snapshot).toMatchSnapshot();
     });
     test('presents error message if no relevant editor found and ref ready', () => {
-      expect(shallow(<Editor {...props} blockType="fAkEBlock" />)).toMatchSnapshot();
+      expect(shallow(<Editor {...props} blockType="fAkEBlock" />).snapshot).toMatchSnapshot();
     });
     test.each(Object.values(blockTypes))('renders %p editor when ref is ready', (blockType) => {
       el = shallow(<Editor {...props} blockType={blockType} />);
-      expect(el.children().children().at(0).is(supportedEditors[blockType])).toBe(true);
+      expect(el.shallowWrapper.props.children.props.children.type).toBe(supportedEditors[blockType]);
     });
   });
   describe('behavior', () => {

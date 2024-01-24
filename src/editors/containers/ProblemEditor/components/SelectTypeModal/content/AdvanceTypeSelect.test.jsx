@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { formatMessage } from '../../../../../../testUtils';
 import * as module from './AdvanceTypeSelect';
@@ -13,42 +13,42 @@ describe('AdvanceTypeSelect', () => {
   describe('snapshots', () => {
     test('snapshots: renders as expected with default props', () => {
       expect(
-        shallow(<module.AdvanceTypeSelect {...props} />),
+        shallow(<module.AdvanceTypeSelect {...props} />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with problemType is circuitschematic', () => {
       expect(
-        shallow(<module.AdvanceTypeSelect {...props} selected="circuitschematic" />),
+        shallow(<module.AdvanceTypeSelect {...props} selected="circuitschematic" />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with problemType is customgrader', () => {
       expect(
-        shallow(<module.AdvanceTypeSelect {...props} selected="customgrader" />),
+        shallow(<module.AdvanceTypeSelect {...props} selected="customgrader" />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with problemType is drag_and_drop', () => {
       expect(
-        shallow(<module.AdvanceTypeSelect {...props} selected="drag_and_drop" />),
+        shallow(<module.AdvanceTypeSelect {...props} selected="drag_and_drop" />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with problemType is formularesponse', () => {
       expect(
-        shallow(<module.AdvanceTypeSelect {...props} selected="formularesponse" />),
+        shallow(<module.AdvanceTypeSelect {...props} selected="formularesponse" />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with problemType is imageresponse', () => {
       expect(
-        shallow(<module.AdvanceTypeSelect {...props} selected="imageresponse" />),
+        shallow(<module.AdvanceTypeSelect {...props} selected="imageresponse" />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with problemType is jsinput_response', () => {
       expect(
-        shallow(<module.AdvanceTypeSelect {...props} selected="jsinput_response" />),
+        shallow(<module.AdvanceTypeSelect {...props} selected="jsinput_response" />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with problemType is problem_with_hint', () => {
       expect(
-        shallow(<module.AdvanceTypeSelect {...props} selected="problem_with_hint" />),
+        shallow(<module.AdvanceTypeSelect {...props} selected="problem_with_hint" />).snapshot,
       ).toMatchSnapshot();
     });
   });

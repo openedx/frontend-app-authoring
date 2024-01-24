@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { formatMessage } from '../../../testUtils';
 import { actions, selectors } from '../../data/redux';
@@ -85,16 +85,16 @@ describe('TextEditor', () => {
   };
   describe('snapshots', () => {
     test('renders as expected with default behavior', () => {
-      expect(shallow(<TextEditor {...props} />)).toMatchSnapshot();
+      expect(shallow(<TextEditor {...props} />).snapshot).toMatchSnapshot();
     });
     test('not yet loaded, Spinner appears', () => {
-      expect(shallow(<TextEditor {...props} assetsFinished={false} />)).toMatchSnapshot();
+      expect(shallow(<TextEditor {...props} assetsFinished={false} />).snapshot).toMatchSnapshot();
     });
     test('loaded, raw editor', () => {
-      expect(shallow(<TextEditor {...props} isRaw />)).toMatchSnapshot();
+      expect(shallow(<TextEditor {...props} isRaw />).snapshot).toMatchSnapshot();
     });
     test('block failed to load, Toast is shown', () => {
-      expect(shallow(<TextEditor {...props} blockFailed />)).toMatchSnapshot();
+      expect(shallow(<TextEditor {...props} blockFailed />).snapshot).toMatchSnapshot();
     });
   });
 

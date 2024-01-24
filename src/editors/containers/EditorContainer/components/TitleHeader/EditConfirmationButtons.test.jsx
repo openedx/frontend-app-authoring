@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { formatMessage } from '../../../../../testUtils';
 import * as module from './EditConfirmationButtons';
 
@@ -11,7 +11,7 @@ describe('EditConfirmationButtons', () => {
   };
   describe('snapshot', () => {
     test('snapshot', () => {
-      expect(shallow(<module.EditConfirmationButtons {...props} />)).toMatchSnapshot();
+      expect(shallow(<module.EditConfirmationButtons {...props} />).snapshot).toMatchSnapshot();
     });
   });
 });

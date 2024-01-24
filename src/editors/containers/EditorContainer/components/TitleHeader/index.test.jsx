@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { formatMessage } from '../../../../../testUtils';
 import { localTitleHooks } from './hooks';
@@ -9,6 +9,13 @@ import * as module from '.';
 jest.mock('./hooks', () => ({
   localTitleHooks: jest.fn(),
 }));
+jest.mock('@edx/paragon', () => ({
+  ...jest.requireActual('@edx/paragon'),
+  Truncate: ({ children }) => <div>{children}</div>, // eslint-disable-line react/prop-types
+  IconButton: 'IconButton',
+  Icon: 'Icon',
+}));
+jest.mock('./EditableHeader');
 
 describe('TitleHeader', () => {
   const props = {
@@ -40,15 +47,15 @@ describe('TitleHeader', () => {
 
   describe('snapshots', () => {
     test('not initialized', () => {
-      expect(shallow(<module.TitleHeader {...props} />)).toMatchSnapshot();
+      expect(shallow(<module.TitleHeader {...props} />).snapshot).toMatchSnapshot();
     });
     test('initialized', () => {
       localTitleHooks.mockReturnValue(localTitleHooksProps);
-      expect(shallow(<module.TitleHeader {...props} isInitialized />)).toMatchSnapshot();
+      expect(shallow(<module.TitleHeader {...props} isInitialized />).shallowWrapper).toMatchSnapshot();
     });
     test('editing', () => {
       localTitleHooks.mockReturnValue({ ...localTitleHooksProps, isEditing: true });
-      expect(shallow(<module.TitleHeader {...props} isInitialized />)).toMatchSnapshot();
+      expect(shallow(<module.TitleHeader {...props} isInitialized />).snapshot).toMatchSnapshot();
     });
   });
 });

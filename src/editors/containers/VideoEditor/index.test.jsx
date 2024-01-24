@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { formatMessage } from '../../../testUtils';
 import { selectors } from '../../data/redux';
@@ -10,7 +10,9 @@ jest.mock('../EditorContainer', () => 'EditorContainer');
 jest.mock('./components/VideoEditorModal', () => 'VideoEditorModal');
 
 jest.mock('./hooks', () => ({
-  ErrorContext: jest.fn(),
+  ErrorContext: {
+    Provider: 'ErrorContext.Provider',
+  },
   errorsHook: jest.fn(() => ({
     error: 'hooks.errorsHook.error',
     validateEntry: jest.fn().mockName('validateEntry'),
@@ -29,6 +31,11 @@ jest.mock('../../data/redux', () => ({
   },
 }));
 
+jest.mock('@edx/paragon', () => ({
+  ...jest.requireActual('@edx/paragon'),
+  Spinner: 'Spinner',
+}));
+
 describe('VideoEditor', () => {
   const props = {
     onClose: jest.fn().mockName('props.onClose'),
@@ -38,10 +45,10 @@ describe('VideoEditor', () => {
   };
   describe('snapshots', () => {
     test('renders as expected with default behavior', () => {
-      expect(shallow(<VideoEditor {...props} />)).toMatchSnapshot();
+      expect(shallow(<VideoEditor {...props} />).snapshot).toMatchSnapshot();
     });
     test('renders as expected with default behavior', () => {
-      expect(shallow(<VideoEditor {...props} studioViewFinished />)).toMatchSnapshot();
+      expect(shallow(<VideoEditor {...props} studioViewFinished />).snapshot).toMatchSnapshot();
     });
   });
   describe('mapStateToProps', () => {

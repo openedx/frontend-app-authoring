@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { SwitchToAdvancedEditorCard, mapDispatchToProps } from './SwitchToAdvancedEditorCard';
 import { thunkActions } from '../../../../../../data/redux';
 
@@ -7,12 +7,12 @@ describe('SwitchToAdvancedEditorCard snapshot', () => {
   const mockSwitchToAdvancedEditor = jest.fn().mockName('switchToAdvancedEditor');
   test('snapshot: SwitchToAdvancedEditorCard', () => {
     expect(
-      shallow(<SwitchToAdvancedEditorCard switchToAdvancedEditor={mockSwitchToAdvancedEditor} problemType="stringresponse" />),
+      shallow(<SwitchToAdvancedEditorCard switchToAdvancedEditor={mockSwitchToAdvancedEditor} problemType="stringresponse" />).snapshot,
     ).toMatchSnapshot();
   });
   test('snapshot: SwitchToAdvancedEditorCard returns null', () => {
     expect(
-      shallow(<SwitchToAdvancedEditorCard switchToAdvancedEditor={mockSwitchToAdvancedEditor} problemType="advanced" />),
+      shallow(<SwitchToAdvancedEditorCard switchToAdvancedEditor={mockSwitchToAdvancedEditor} problemType="advanced" />).snapshot,
     ).toMatchSnapshot();
   });
 

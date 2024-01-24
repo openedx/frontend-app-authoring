@@ -120,7 +120,7 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with level set 
 </Stack>
 `;
 
-exports[`LicenseDisplay snapshots snapshots: renders as expected with level set to block and license set to select 1`] = `""`;
+exports[`LicenseDisplay snapshots snapshots: renders as expected with level set to block and license set to select 1`] = `null`;
 
 exports[`LicenseDisplay snapshots snapshots: renders as expected with level set to library 1`] = `
 <Stack

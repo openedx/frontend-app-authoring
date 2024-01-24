@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { formatMessage } from '../../../../../../testUtils';
 import { selectors } from '../../../../../data/redux';
 import { AnswerOption, mapStateToProps } from './AnswerOption';
@@ -51,16 +51,16 @@ describe('AnswerOption', () => {
   };
   describe('render', () => {
     test('snapshot: renders correct option with feedback', () => {
-      expect(shallow(<AnswerOption {...props} />)).toMatchSnapshot();
+      expect(shallow(<AnswerOption {...props} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: renders correct option with selected unselected feedback', () => {
-      expect(shallow(<AnswerOption {...props} problemType="choiceresponse" answer={answerWithSelectedUnselectedFeedback} />)).toMatchSnapshot();
+      expect(shallow(<AnswerOption {...props} problemType="choiceresponse" answer={answerWithSelectedUnselectedFeedback} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: renders correct option with numeric input problem', () => {
-      expect(shallow(<AnswerOption {...props} problemType="numericalresponse" />)).toMatchSnapshot();
+      expect(shallow(<AnswerOption {...props} problemType="numericalresponse" />).snapshot).toMatchSnapshot();
     });
     test('snapshot: renders correct option with numeric input problem and answer range', () => {
-      expect(shallow(<AnswerOption {...props} problemType="numericalresponse" answer={answerRange} />)).toMatchSnapshot();
+      expect(shallow(<AnswerOption {...props} problemType="numericalresponse" answer={answerRange} />).snapshot).toMatchSnapshot();
     });
   });
 

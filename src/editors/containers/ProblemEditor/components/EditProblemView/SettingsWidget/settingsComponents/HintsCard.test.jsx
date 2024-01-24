@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { formatMessage } from '../../../../../../../testUtils';
 import { HintsCard } from './HintsCard';
 import { hintsCardHooks, hintsRowHooks } from '../hooks';
@@ -49,7 +49,7 @@ describe('HintsCard', () => {
       };
 
       hintsCardHooks.mockReturnValue(hintsCardHooksProps);
-      expect(shallow(<HintsCard {...props} />)).toMatchSnapshot();
+      expect(shallow(<HintsCard {...props} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: renders hints setting card one hint', () => {
       const hintsCardHooksProps = {
@@ -61,7 +61,7 @@ describe('HintsCard', () => {
       };
 
       hintsCardHooks.mockReturnValue(hintsCardHooksProps);
-      expect(shallow(<HintsCard {...props} hints={hints1} />)).toMatchSnapshot();
+      expect(shallow(<HintsCard {...props} hints={hints1} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: renders hints setting card multiple hints', () => {
       const hintsCardHooksProps = {
@@ -73,7 +73,7 @@ describe('HintsCard', () => {
       };
 
       hintsCardHooks.mockReturnValue(hintsCardHooksProps);
-      expect(shallow(<HintsCard {...props} hints={hints2} />)).toMatchSnapshot();
+      expect(shallow(<HintsCard {...props} hints={hints2} />).snapshot).toMatchSnapshot();
     });
   });
 });

@@ -27,19 +27,21 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with block lev
         Creative Commons
       </option>
     </Form.Control>
-    <ActionRow.Spacer />
-    <IconButtonWithTooltip
-      iconAs="Icon"
-      onClick={[Function]}
-      tooltipContent={
-        <FormattedMessage
-          defaultMessage="Clear and apply the course-level license"
-          description="Message presented to user for action to delete license selection"
-          id="authoring.videoeditor.license.deleteLicenseSelection"
-        />
-      }
-      tooltipPlacement="top"
-    />
+    <Fragment>
+      <ActionRow.Spacer />
+      <IconButtonWithTooltip
+        iconAs="Icon"
+        onClick={[Function]}
+        tooltipContent={
+          <FormattedMessage
+            defaultMessage="Clear and apply the course-level license"
+            description="Message presented to user for action to delete license selection"
+            id="authoring.videoeditor.license.deleteLicenseSelection"
+          />
+        }
+        tooltipPlacement="top"
+      />
+    </Fragment>
   </ActionRow>
   <div
     className="x-small mt-3"
@@ -126,19 +128,21 @@ exports[`LicenseSelector snapshots snapshots: renders as expected with library l
         Creative Commons
       </option>
     </Form.Control>
-    <ActionRow.Spacer />
-    <IconButtonWithTooltip
-      iconAs="Icon"
-      onClick={[Function]}
-      tooltipContent={
-        <FormattedMessage
-          defaultMessage="Clear and apply the course-level license"
-          description="Message presented to user for action to delete license selection"
-          id="authoring.videoeditor.license.deleteLicenseSelection"
-        />
-      }
-      tooltipPlacement="top"
-    />
+    <Fragment>
+      <ActionRow.Spacer />
+      <IconButtonWithTooltip
+        iconAs="Icon"
+        onClick={[Function]}
+        tooltipContent={
+          <FormattedMessage
+            defaultMessage="Clear and apply the course-level license"
+            description="Message presented to user for action to delete license selection"
+            id="authoring.videoeditor.license.deleteLicenseSelection"
+          />
+        }
+        tooltipPlacement="top"
+      />
+    </Fragment>
   </ActionRow>
   <div
     className="x-small mt-3"

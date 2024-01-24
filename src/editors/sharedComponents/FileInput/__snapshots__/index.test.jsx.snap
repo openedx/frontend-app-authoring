@@ -1,20 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`FileInput component snapshot 1`] = `
-<FileInput
-  acceptedFiles=".srt"
-  fileInput={
-    Object {
-      "addFile": [MockFunction props.fileInput.addFile],
-      "ref": [Function],
-    }
-  }
->
+<div>
   <input
     accept=".srt"
-    className="upload d-none"
-    onChange={[MockFunction props.fileInput.addFile]}
+    class="upload d-none"
     type="file"
   />
-</FileInput>
+</div>
 `;

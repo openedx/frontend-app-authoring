@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { TypeRow } from './TypeRow';
 import { typeRowHooks } from '../hooks';
 
@@ -47,13 +47,13 @@ describe('TypeRow', () => {
 
   describe('snapshot', () => {
     test('snapshot: renders type row setting card', () => {
-      expect(shallow(<TypeRow {...props} />)).toMatchSnapshot();
+      expect(shallow(<TypeRow {...props} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: renders type row setting card not selected', () => {
-      expect(shallow(<TypeRow {...props} selected={false} />)).toMatchSnapshot();
+      expect(shallow(<TypeRow {...props} selected={false} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: renders type row setting card last row', () => {
-      expect(shallow(<TypeRow {...props} lastRow />)).toMatchSnapshot();
+      expect(shallow(<TypeRow {...props} lastRow />).snapshot).toMatchSnapshot();
     });
   });
 });

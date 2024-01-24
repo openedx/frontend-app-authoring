@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import * as module from './ErrorSummary';
 
@@ -17,11 +17,11 @@ describe('ErrorSummary', () => {
     });
     test('snapshots: renders as expected when there are no errors', () => {
       jest.spyOn(module, 'showAlert').mockReturnValue(false);
-      expect(shallow(<module.ErrorSummary />)).toMatchSnapshot();
+      expect(shallow(<module.ErrorSummary />).snapshot).toMatchSnapshot();
     });
     test('snapshots: renders as expected when there are errors', () => {
       jest.spyOn(module, 'showAlert').mockReturnValue(true);
-      expect(shallow(<module.ErrorSummary />)).toMatchSnapshot();
+      expect(shallow(<module.ErrorSummary />).snapshot).toMatchSnapshot();
     });
   });
   describe('hasNoError', () => {

@@ -15,7 +15,9 @@ exports[`TitleHeader snapshots initialized 1`] = `
   className="d-flex flex-row align-items-center mt-1"
 >
   <Truncate>
-    <Component />
+    Object {
+      "useSelector": [Function],
+    }
   </Truncate>
   <IconButton
     alt="Edit Title"

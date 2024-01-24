@@ -18,11 +18,12 @@ exports[`GroupFeedbackRow snapshot snapshot: renders hints row 1`] = `
         alt="Delete answer"
         iconAs="Icon"
         onClick={[MockFunction handleDelete]}
+        src="DeleteOutline"
         variant="primary"
       />
     </div>
   </ActionRow>
-  <Component
+  <Form.CheckboxSet
     onChange={[MockFunction handleAnswersSelectedChange]}
     value={
       Array [
@@ -34,7 +35,7 @@ exports[`GroupFeedbackRow snapshot snapshot: renders hints row 1`] = `
     <Row
       className="mx-0"
     >
-      <Form.Checkbox
+      <Form.CheckboxSet
         checked={-1}
         className="mr-4 mt-1"
         isValid={false}
@@ -42,8 +43,8 @@ exports[`GroupFeedbackRow snapshot snapshot: renders hints row 1`] = `
         <div
           className="x-small"
         />
-      </Form.Checkbox>
-      <Form.Checkbox
+      </Form.CheckboxSet>
+      <Form.CheckboxSet
         checked={-1}
         className="mr-4 mt-1"
         isValid={false}
@@ -51,8 +52,8 @@ exports[`GroupFeedbackRow snapshot snapshot: renders hints row 1`] = `
         <div
           className="x-small"
         />
-      </Form.Checkbox>
-      <Form.Checkbox
+      </Form.CheckboxSet>
+      <Form.CheckboxSet
         checked={-1}
         className="mr-4 mt-1"
         isValid={false}
@@ -60,8 +61,8 @@ exports[`GroupFeedbackRow snapshot snapshot: renders hints row 1`] = `
         <div
           className="x-small"
         />
-      </Form.Checkbox>
-      <Form.Checkbox
+      </Form.CheckboxSet>
+      <Form.CheckboxSet
         checked={-1}
         className="mr-4 mt-1"
         isValid={false}
@@ -69,8 +70,8 @@ exports[`GroupFeedbackRow snapshot snapshot: renders hints row 1`] = `
         <div
           className="x-small"
         />
-      </Form.Checkbox>
+      </Form.CheckboxSet>
     </Row>
-  </Component>
+  </Form.CheckboxSet>
 </div>
 `;

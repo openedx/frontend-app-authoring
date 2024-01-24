@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { formatMessage } from '../../../../../../../testUtils';
 import { actions, selectors } from '../../../../../../data/redux';
@@ -44,17 +44,17 @@ describe('HandoutWidget', () => {
   describe('snapshots', () => {
     test('snapshots: renders as expected with default props', () => {
       expect(
-        shallow(<HandoutWidget {...props} />),
+        shallow(<HandoutWidget {...props} />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with isLibrary true', () => {
       expect(
-        shallow(<HandoutWidget {...props} isLibrary />),
+        shallow(<HandoutWidget {...props} isLibrary />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with handout', () => {
       expect(
-        shallow(<HandoutWidget {...props} handout="sOMeUrl " />),
+        shallow(<HandoutWidget {...props} handout="sOMeUrl " />).snapshot,
       ).toMatchSnapshot();
     });
   });

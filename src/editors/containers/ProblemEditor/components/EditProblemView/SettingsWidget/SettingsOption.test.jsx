@@ -1,12 +1,12 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import SettingsOption from './SettingsOption';
 
 describe('SettingsOption', () => {
   describe('default with children', () => {
     const children = (<h1>My test content</h1>);
     test('snapshot: renders correct', () => {
-      expect(shallow(<SettingsOption title="Settings Option Title" summary="Settings Option Summary">{children}</SettingsOption>)).toMatchSnapshot();
+      expect(shallow(<SettingsOption title="Settings Option Title" summary="Settings Option Summary">{children}</SettingsOption>).snapshot).toMatchSnapshot();
     });
   });
   describe('with additional sections', () => {
@@ -17,7 +17,7 @@ describe('SettingsOption', () => {
         <SettingsOption title="Settings Option Title" summary="Settings Option Summary" extraSections={sections}>
           {children}
         </SettingsOption>,
-      )).toMatchSnapshot();
+      ).snapshot).toMatchSnapshot();
     });
   });
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { IconButton } from '@edx/paragon';
 import * as module from '.';
 import { handleCancel } from '../../../../EditorContainer/hooks';
@@ -16,7 +16,7 @@ describe('SelectTypeWrapper', () => {
   };
 
   test('snapshot', () => {
-    expect(shallow(<module.SelectTypeWrapper {...props} />)).toMatchSnapshot();
+    expect(shallow(<module.SelectTypeWrapper {...props} />).snapshot).toMatchSnapshot();
   });
 
   describe('behavior', () => {
@@ -26,7 +26,7 @@ describe('SelectTypeWrapper', () => {
     });
     test('close behavior is linked to modal onClose', () => {
       const expected = handleCancel({ onClose: props.onClose });
-      expect(el.find(IconButton).props().onClick)
+      expect(el.instance.findByType(IconButton)[0].props.onClick)
         .toEqual(expected);
     });
   });

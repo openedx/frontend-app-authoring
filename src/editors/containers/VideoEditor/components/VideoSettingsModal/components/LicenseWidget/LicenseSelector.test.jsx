@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { formatMessage } from '../../../../../../../testUtils';
 import { actions, selectors } from '../../../../../../data/redux';
@@ -47,22 +47,22 @@ describe('LicenseSelector', () => {
   describe('snapshots', () => {
     test('snapshots: renders as expected with default props', () => {
       expect(
-        shallow(<LicenseSelector {...props} />),
+        shallow(<LicenseSelector {...props} />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with library level', () => {
       expect(
-        shallow(<LicenseSelector {...props} level="library" />),
+        shallow(<LicenseSelector {...props} level="library" />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with block level', () => {
       expect(
-        shallow(<LicenseSelector {...props} level="block" />),
+        shallow(<LicenseSelector {...props} level="block" />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with no license', () => {
       expect(
-        shallow(<LicenseSelector {...props} license="" />),
+        shallow(<LicenseSelector {...props} license="" />).snapshot,
       ).toMatchSnapshot();
     });
   });

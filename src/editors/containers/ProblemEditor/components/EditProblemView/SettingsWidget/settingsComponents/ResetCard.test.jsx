@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { formatMessage } from '../../../../../../../testUtils';
 import { ResetCard } from './ResetCard';
 import { resetCardHooks } from '../hooks';
@@ -44,10 +44,10 @@ describe('ResetCard', () => {
 
   describe('snapshot', () => {
     test('snapshot: renders reset true setting card', () => {
-      expect(shallow(<ResetCard {...props} />)).toMatchSnapshot();
+      expect(shallow(<ResetCard {...props} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: renders reset true setting card', () => {
-      expect(shallow(<ResetCard {...props} showResetButton />)).toMatchSnapshot();
+      expect(shallow(<ResetCard {...props} showResetButton />).snapshot).toMatchSnapshot();
     });
   });
 });

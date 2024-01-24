@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { Form } from '@edx/paragon';
 import * as module from './EditableHeader';
 import EditConfirmationButtons from './EditConfirmationButtons';
@@ -20,11 +20,11 @@ describe('EditableHeader', () => {
 
   describe('snapshot', () => {
     test('snapshot', () => {
-      expect(el).toMatchSnapshot();
+      expect(el.snapshot).toMatchSnapshot();
     });
     test('displays Edit Icon', () => {
-      const formControl = el.find(Form.Control);
-      expect(formControl.props().trailingElement).toMatchObject(
+      const formControl = el.instance.findByType(Form.Control)[0];
+      expect(formControl.props.trailingElement).toMatchObject(
         <EditConfirmationButtons updateTitle={props.updateTitle} cancelEdit={props.cancelEdit} />,
       );
     });

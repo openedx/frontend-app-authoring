@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { thunkActions, selectors } from '../../../../../../data/redux';
 
@@ -71,13 +71,13 @@ describe('TranscriptActionMenu', () => {
     test('snapshots: renders as expected with default props: dont show confirm delete', () => {
       jest.spyOn(module.hooks, 'replaceFileCallback').mockImplementationOnce(() => jest.fn().mockName('module.hooks.replaceFileCallback'));
       expect(
-        shallow(<module.TranscriptActionMenu {...props} />),
+        shallow(<module.TranscriptActionMenu {...props} />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with transcriptUrl props: dont show confirm delete', () => {
       jest.spyOn(module.hooks, 'replaceFileCallback').mockImplementationOnce(() => jest.fn().mockName('module.hooks.replaceFileCallback'));
       expect(
-        shallow(<module.TranscriptActionMenu {...props} transcriptUrl="url" />),
+        shallow(<module.TranscriptActionMenu {...props} transcriptUrl="url" />).snapshot,
       ).toMatchSnapshot();
     });
   });

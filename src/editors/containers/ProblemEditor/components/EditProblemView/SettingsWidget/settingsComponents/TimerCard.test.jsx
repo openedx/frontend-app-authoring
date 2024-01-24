@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { formatMessage } from '../../../../../../../testUtils';
 import { TimerCard } from './TimerCard';
 import { timerCardHooks } from '../hooks';
@@ -30,7 +30,7 @@ describe('TimerCard', () => {
 
   describe('snapshot', () => {
     test('snapshot: renders reset true setting card', () => {
-      expect(shallow(<TimerCard {...props} />)).toMatchSnapshot();
+      expect(shallow(<TimerCard {...props} />).snapshot).toMatchSnapshot();
     });
   });
 });

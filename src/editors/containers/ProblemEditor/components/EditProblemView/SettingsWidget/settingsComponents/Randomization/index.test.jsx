@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { formatMessage } from '../../../../../../../../testUtils';
 import { RandomizationCard } from './index';
 import { useRandomizationSettingStatus } from './hooks';
@@ -34,13 +34,15 @@ describe('RandomizationCard', () => {
 
   describe('snapshot', () => {
     test('snapshot: renders randomization setting card with randomization defined', () => {
-      expect(shallow(<RandomizationCard {...props} />)).toMatchSnapshot();
+      expect(shallow(<RandomizationCard {...props} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: renders randomization setting card with default randomization', () => {
-      expect(shallow(<RandomizationCard {...props} randomization={null} />)).toMatchSnapshot();
+      expect(shallow(<RandomizationCard {...props} randomization={null} />).snapshot).toMatchSnapshot();
     });
     test('snapshot: renders randomization setting card with randomization null', () => {
-      expect(shallow(<RandomizationCard {...props} randomization={null} defaultValue={null} />)).toMatchSnapshot();
+      expect(
+        shallow(<RandomizationCard {...props} randomization={null} defaultValue={null} />).snapshot,
+      ).toMatchSnapshot();
     });
   });
 });

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { act, render, waitFor } from '@testing-library/react';
 
 import { actions, selectors } from '../../../../../data/redux';
@@ -44,7 +44,7 @@ describe('AnswersContainer', () => {
   describe('render', () => {
     test('snapshot: renders correct default', () => {
       act(() => {
-        expect(shallow(<module.AnswersContainer {...props} />)).toMatchSnapshot();
+        expect(shallow(<module.AnswersContainer {...props} />).snapshot).toMatchSnapshot();
       });
     });
     test('snapshot: renders correctly with answers', () => {
@@ -54,7 +54,7 @@ describe('AnswersContainer', () => {
             {...props}
             answers={[{ id: 'a', title: 'sOMetITlE', correct: true }, { id: 'b', title: 'sOMetITlE', correct: true }]}
           />,
-        )).toMatchSnapshot();
+        ).snapshot).toMatchSnapshot();
       });
     });
     test('snapshot: numeric problems: answer range/answer select button: empty', () => {
@@ -70,7 +70,7 @@ describe('AnswersContainer', () => {
           <module.AnswersContainer
             {...emptyAnswerProps}
           />,
-        )).toMatchSnapshot();
+        ).snapshot).toMatchSnapshot();
       });
     });
     test('snapshot: numeric problems: answer range/answer select button: Range disables the additon of more adds', () => {
@@ -93,7 +93,7 @@ describe('AnswersContainer', () => {
           <module.AnswersContainer
             {...answerRangeProps}
           />,
-        )).toMatchSnapshot();
+        ).snapshot).toMatchSnapshot();
       });
     });
     test('snapshot: numeric problems: answer range/answer select button: multiple answers disables range.', () => {
@@ -125,7 +125,7 @@ describe('AnswersContainer', () => {
           <module.AnswersContainer
             {...answersProps}
           />,
-        )).toMatchSnapshot();
+        ).snapshot).toMatchSnapshot();
       });
     });
 

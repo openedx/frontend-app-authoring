@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { Button, IconButton } from '@edx/paragon';
 
 import { thunkActions } from '../../../../../../data/redux';
@@ -27,7 +27,7 @@ describe('ImportTranscriptCard', () => {
   describe('snapshots', () => {
     test('snapshots: renders as expected with default props', () => {
       expect(
-        shallow(<module.ImportTranscriptCard {...props} />),
+        shallow(<module.ImportTranscriptCard {...props} />).snapshot,
       ).toMatchSnapshot();
     });
   });
@@ -36,12 +36,12 @@ describe('ImportTranscriptCard', () => {
       el = shallow(<module.ImportTranscriptCard {...props} />);
     });
     test('close behavior is linked to IconButton', () => {
-      expect(el.find(IconButton)
-        .props().onClick).toBeDefined();
+      expect(el.instance.findByType(IconButton)[0]
+        .props.onClick).toBeDefined();
     });
     test('import behavior is linked to Button onClick', () => {
-      expect(el.find(Button)
-        .props().onClick).toEqual(props.importTranscript);
+      expect(el.instance.findByType(Button)[0]
+        .props.onClick).toEqual(props.importTranscript);
     });
   });
   describe('mapStateToProps', () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import VideoSelectorPage from './VideoSelectorPage';
 
 const props = {
@@ -22,10 +22,10 @@ jest.mock('./VideoSelector', () => 'VideoSelector');
 describe('Video Selector Page', () => {
   describe('snapshots', () => {
     test('rendering correctly with expected Input', () => {
-      expect(shallow(<VideoSelectorPage {...props} />)).toMatchSnapshot();
+      expect(shallow(<VideoSelectorPage {...props} />).snapshot).toMatchSnapshot();
     });
     test('rendering with props to null', () => {
-      expect(shallow(<VideoSelectorPage />)).toMatchSnapshot();
+      expect(shallow(<VideoSelectorPage />).snapshot).toMatchSnapshot();
     });
   });
 });

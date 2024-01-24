@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import * as module from '.';
 
 jest.mock('./hooks', () => ({
@@ -16,6 +16,6 @@ describe('SelectTypeModal', () => {
   };
 
   test('snapshot', () => {
-    expect(shallow(<module.SelectTypeModal {...props} />)).toMatchSnapshot();
+    expect(shallow(<module.SelectTypeModal {...props} />).snapshot).toMatchSnapshot();
   });
 });

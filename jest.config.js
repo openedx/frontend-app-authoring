@@ -8,9 +8,6 @@ module.exports = createConfig('jest', {
     '<rootDir>/src/setupTest.js',
   ],
   modulePaths: ['<rootDir>/src/'],
-  snapshotSerializers: [
-    'enzyme-to-json/serializer',
-  ],
   moduleNameMapper: {
     '^lodash-es$': 'lodash',
   },

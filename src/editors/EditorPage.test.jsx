@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import EditorPage from './EditorPage';
 
 const props = {
@@ -23,10 +23,10 @@ jest.mock('./Editor', () => 'Editor');
 describe('Editor Page', () => {
   describe('snapshots', () => {
     test('rendering correctly with expected Input', () => {
-      expect(shallow(<EditorPage {...props} />)).toMatchSnapshot();
+      expect(shallow(<EditorPage {...props} />).snapshot).toMatchSnapshot();
     });
     test('props besides blockType default to null', () => {
-      expect(shallow(<EditorPage blockType={props.blockType} />)).toMatchSnapshot();
+      expect(shallow(<EditorPage blockType={props.blockType} />).snapshot).toMatchSnapshot();
     });
   });
 });

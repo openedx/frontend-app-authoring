@@ -1,4 +1,4 @@
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import Checker from '.';
 
 const props = {
@@ -13,14 +13,14 @@ const props = {
 };
 describe('Checker component', () => {
   test('with single answer', () => {
-    expect(shallow(<Checker {...props} />)).toMatchSnapshot();
+    expect(shallow(<Checker {...props} />).snapshot).toMatchSnapshot();
   });
 
   test('with multiple answers', () => {
-    expect(shallow(<Checker {...props} hasSingleAnswer={false} />)).toMatchSnapshot();
+    expect(shallow(<Checker {...props} hasSingleAnswer={false} />).snapshot).toMatchSnapshot();
   });
 
   test('with disabled', () => {
-    expect(shallow(<Checker {...props} disabled />)).toMatchSnapshot();
+    expect(shallow(<Checker {...props} disabled />).snapshot).toMatchSnapshot();
   });
 });

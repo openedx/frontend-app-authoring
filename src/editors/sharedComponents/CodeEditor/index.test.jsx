@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
@@ -171,7 +171,7 @@ describe('CodeEditor', () => {
       test('Renders and calls Hooks ', () => {
         jest.spyOn(hooks, 'prepareShowBtnEscapeHTML').mockImplementation(() => ({ showBtnEscapeHTML: true, hideBtn: mockHideBtn }));
         // Note: ref won't show up as it is not acutaly a DOM attribute.
-        expect(shallow(<module.CodeEditor {...props} />)).toMatchSnapshot();
+        expect(shallow(<module.CodeEditor {...props} />).snapshot).toMatchSnapshot();
         expect(hooks.createCodeMirrorDomNode).toHaveBeenCalled();
       });
     });

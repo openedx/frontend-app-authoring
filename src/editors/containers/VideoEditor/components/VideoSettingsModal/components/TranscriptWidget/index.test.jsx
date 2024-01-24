@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { RequestKeys } from '../../../../../../data/constants/requests';
 
@@ -101,47 +101,47 @@ describe('TranscriptWidget', () => {
     describe('snapshots', () => {
       test('snapshots: renders as expected with default props', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} />),
+          shallow(<module.TranscriptWidget {...props} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with allowTranscriptImport true', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} allowTranscriptImport />),
+          shallow(<module.TranscriptWidget {...props} allowTranscriptImport />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with transcripts', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} transcripts={['en']} />),
+          shallow(<module.TranscriptWidget {...props} transcripts={['en']} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with transcript urls', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} selectedVideoTranscriptUrls={{ en: 'url' }} />),
+          shallow(<module.TranscriptWidget {...props} selectedVideoTranscriptUrls={{ en: 'url' }} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with transcripts and urls', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} transcripts={['es']} selectedVideoTranscriptUrls={{ en: 'url' }} />),
+          shallow(<module.TranscriptWidget {...props} transcripts={['es']} selectedVideoTranscriptUrls={{ en: 'url' }} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with allowTranscriptDownloads true', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} allowTranscriptDownloads transcripts={['en']} />),
+          shallow(<module.TranscriptWidget {...props} allowTranscriptDownloads transcripts={['en']} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with showTranscriptByDefault true', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} showTranscriptByDefault transcripts={['en']} />),
+          shallow(<module.TranscriptWidget {...props} showTranscriptByDefault transcripts={['en']} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshot: renders ErrorAlert with upload error message', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} isUploadError transcripts={['en', 'fr']} />),
+          shallow(<module.TranscriptWidget {...props} isUploadError transcripts={['en', 'fr']} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshot: renders ErrorAlert with delete error message', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} isDeleteError transcripts={['en']} />),
+          shallow(<module.TranscriptWidget {...props} isDeleteError transcripts={['en']} />).snapshot,
         ).toMatchSnapshot();
       });
     });

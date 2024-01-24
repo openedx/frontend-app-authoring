@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import { formatMessage } from '../../../../../../../testUtils';
 import { selectors } from '../../../../../../data/redux';
 import { ShowAnswerCard, mapStateToProps, mapDispatchToProps } from './ShowAnswerCard';
@@ -55,7 +55,7 @@ describe('ShowAnswerCard', () => {
 
   describe('snapshot', () => {
     test('snapshot: show answer setting card', () => {
-      expect(shallow(<ShowAnswerCard {...props} />)).toMatchSnapshot();
+      expect(shallow(<ShowAnswerCard {...props} />).snapshot).toMatchSnapshot();
     });
   });
   describe('mapStateToProps', () => {

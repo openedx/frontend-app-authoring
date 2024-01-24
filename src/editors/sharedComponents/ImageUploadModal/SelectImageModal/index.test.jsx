@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 
 import { formatMessage } from '../../../../testUtils';
 import SelectionModal from '../../SelectionModal';
@@ -89,26 +89,26 @@ describe('SelectImageModal', () => {
       el = shallow(<SelectImageModal {...props} />);
     });
     test('snapshot', () => {
-      expect(el).toMatchSnapshot();
+      expect(el.snapshot).toMatchSnapshot();
     });
     it('provides confirm action, forwarding selectBtnProps from imgHooks', () => {
-      expect(el.find(SelectionModal).props().selectBtnProps).toEqual(
+      expect(el.instance.findByType(SelectionModal)[0].props.selectBtnProps).toEqual(
         expect.objectContaining({ ...hooks.imgHooks().selectBtnProps }),
       );
     });
     it('provides file upload button linked to fileInput.click', () => {
-      expect(el.find(SelectionModal).props().fileInput.click).toEqual(
+      expect(el.instance.findByType(SelectionModal)[0].props.fileInput.click).toEqual(
         imgHooks.fileInput.click,
       );
     });
     it('provides a SearchSort component with searchSortProps from imgHooks', () => {
-      expect(el.find(SelectionModal).props().searchSortProps).toEqual(imgHooks.searchSortProps);
+      expect(el.instance.findByType(SelectionModal)[0].props.searchSortProps).toEqual(imgHooks.searchSortProps);
     });
     it('provides a Gallery component with galleryProps from imgHooks', () => {
-      expect(el.find(SelectionModal).props().galleryProps).toEqual(imgHooks.galleryProps);
+      expect(el.instance.findByType(SelectionModal)[0].props.galleryProps).toEqual(imgHooks.galleryProps);
     });
     it('provides a FileInput component with fileInput props from imgHooks', () => {
-      expect(el.find(SelectionModal).props().fileInput).toMatchObject(imgHooks.fileInput);
+      expect(el.instance.findByType(SelectionModal)[0].props.fileInput).toMatchObject(imgHooks.fileInput);
     });
   });
 });

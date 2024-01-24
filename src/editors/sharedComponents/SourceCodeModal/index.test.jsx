@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import hooks from './hooks';
 import { formatMessage } from '../../../testUtils';
 
@@ -31,6 +31,6 @@ describe('SourceCodeModal', () => {
       value: mockvalue,
       ref: mockref,
     });
-    expect(shallow(<SourceCodeModal {...props} />)).toMatchSnapshot();
+    expect(shallow(<SourceCodeModal {...props} />).snapshot).toMatchSnapshot();
   });
 });
