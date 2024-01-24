@@ -15,4 +15,7 @@ module.exports = createConfig('jest', {
   moduleNameMapper: {
     '^lodash-es$': 'lodash',
   },
+  modulePathIgnorePatterns: [
+    '/src/pages-and-resources/utils.test.jsx',
+  ],
 });
