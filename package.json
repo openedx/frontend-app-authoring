@@ -80,6 +80,7 @@
   "devDependencies": {
     "@edx/browserslist-config": "1.2.0",
     "@edx/frontend-build": "13.0.5",
+    "@edx/react-unit-test-utils": "^1.7.0",
     "@edx/reactifex": "^1.0.3",
     "@edx/stylelint-config-edx": "^2.3.0",
     "@edx/typescript-config": "^1.0.1",
@@ -87,10 +88,7 @@
     "@testing-library/react": "12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "^13.2.1",
-    "@wojtekmaj/enzyme-adapter-react-17": "0.8.0",
     "axios-mock-adapter": "1.22.0",
-    "enzyme": "3.11.0",
-    "enzyme-to-json": "^3.6.2",
     "glob": "7.2.3",
     "husky": "7.0.4",
     "jest-canvas-mock": "^2.5.2",
