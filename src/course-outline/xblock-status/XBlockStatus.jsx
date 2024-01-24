@@ -1,7 +1,7 @@
-import React from 'react'
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon, PageBanner } from '@edx/paragon';
+import { Icon } from '@edx/paragon';
 import {
   Check as CheckIcon,
   AccessTime as ClockIcon,
@@ -50,9 +50,9 @@ const XBlockStatus = ({
 
   let releaseLabel = messages.unscheduledLabel;
   if (releasedToStudents) {
-    releaseLabel = messages.releasedLabel
+    releaseLabel = messages.releasedLabel;
   } else if (releaseDate) {
-    releaseLabel = messages.scheduledLabel
+    releaseLabel = messages.scheduledLabel;
   }
 
   let examValue = '';
@@ -73,18 +73,17 @@ const XBlockStatus = ({
     prereqs.forEach((block) => {
       if (block.blockUsageKey === prereq) {
         prereqDisplayName = block.blockDisplayName;
-        return;
       }
     });
     statusMessages.push({
       icon: LockIcon,
-      text: intl.formatMessage(messages.prerequisiteLabel, { prereqDisplayName })
-    })
+      text: intl.formatMessage(messages.prerequisiteLabel, { prereqDisplayName }),
+    });
   }
 
   if (!staffOnlyMessage && isVertical) {
     const { selectedPartitionIndex, selectedGroupsLabel } = userPartitionInfo;
-    if (selectedPartitionIndex !== -1 && !isNaN(selectedPartitionIndex)) {
+    if (selectedPartitionIndex !== -1 && !Number.isNaN(selectedPartitionIndex)) {
       statusMessages.push({
         icon: GroupsIcon,
         text: intl.formatMessage(messages.restrictedUnitAccess, { selectedGroupsLabel }),
@@ -106,7 +105,7 @@ const XBlockStatus = ({
       {intl.formatMessage(releaseLabel)}
       {releaseDate && releaseDate}
     </div>
-  )
+  );
 
   const gradingTypeDiv = () => (
     <div className="d-flex align-items-center mr-1" data-testid="grading-type-div">
@@ -118,7 +117,7 @@ const XBlockStatus = ({
         {gradingType || intl.formatMessage(messages.ungradedText)}
       </span>
     </div>
-  )
+  );
 
   const dueDateDiv = () => {
     if (dueDate && isInstructorPaced) {
@@ -126,9 +125,10 @@ const XBlockStatus = ({
         <div className="status-grading-date" data-testid="due-date-div">
           {intl.formatMessage(messages.dueLabel)} {dueDate}
         </div>
-      )
+      );
     }
-  }
+    return null;
+  };
 
   const selfPacedRelativeDueWeeksDiv = () => (
     <div className="d-flex align-items-center" data-testid="self-paced-relative-due-weeks-div">
@@ -137,13 +137,13 @@ const XBlockStatus = ({
         {intl.formatMessage(messages.customDueDateLabel, { relativeWeeksDue })}
       </span>
     </div>
-  )
+  );
 
   const explanatoryMessageDiv = () => (
-    <span data-testid='explanatory-message-span'>
+    <span data-testid="explanatory-message-span">
       {explanatoryMessage}
     </span>
-  )
+  );
 
   const renderGradingTypeAndDueDate = () => {
     const showRelativeWeeks = isSelfPaced && isCustomRelativeDatesActive && relativeWeeksDue;
@@ -160,8 +160,8 @@ const XBlockStatus = ({
           </div>
           {showRelativeWeeks && (selfPacedRelativeDueWeeksDiv())}
         </>
-      )
-    } else if ((dueDate && !isSelfPaced) || graded) {
+      );
+    } if ((dueDate && !isSelfPaced) || graded) {
       return (
         <>
           <div className="d-flex align-items-center">
@@ -170,16 +170,17 @@ const XBlockStatus = ({
           </div>
           {showRelativeWeeks && (selfPacedRelativeDueWeeksDiv())}
         </>
-      )
-    } else if (showRelativeWeeks) {
+      );
+    } if (showRelativeWeeks) {
       return (
         <>
           {gradingTypeDiv()}
           {selfPacedRelativeDueWeeksDiv()}
         </>
-      )
+      );
     }
-  }
+    return null;
+  };
 
   const hideAfterDueMessage = () => (
     <div className="d-flex align-items-center" data-testid="hide-after-due-message">
@@ -190,7 +191,7 @@ const XBlockStatus = ({
           : intl.formatMessage(messages.hiddenAfterDueDate)}
       </span>
     </div>
-  )
+  );
 
   const renderGradingPolicyAlert = () => {
     let gradingPolicyMismatch = false;
@@ -211,9 +212,10 @@ const XBlockStatus = ({
           <Icon className="mr-1 text-warning" size="lg" src={WarningIcon} />
           {intl.formatMessage(messages.gradingPolicyMismatchText, { gradingType })}
         </div>
-      )
+      );
     }
-  }
+    return null;
+  };
 
   const renderStatusMessages = () => {
     if (statusMessages.length > 0) {
@@ -226,22 +228,23 @@ const XBlockStatus = ({
             </div>
           ))}
         </div>
-      )
+      );
     }
-  }
+    return null;
+  };
 
   return (
     <div className="text-secondary-400 x-small mb-1">
       {!isVertical && (
-        explanatoryMessage ? explanatoryMessageDiv(): isInstructorPaced && releaseStatusDiv()
+        explanatoryMessage ? explanatoryMessageDiv() : isInstructorPaced && releaseStatusDiv()
       )}
       {!isVertical && renderGradingTypeAndDueDate()}
       {hideAfterDue && hideAfterDueMessage()}
       {renderStatusMessages()}
       {renderGradingPolicyAlert()}
     </div>
-  )
-}
+  );
+};
 
 XBlockStatus.defaultProps = {
   isCustomRelativeDatesActive: false,
@@ -269,14 +272,14 @@ XBlockStatus.propTypes = {
       selectedGroupsLabel: PropTypes.string.isRequired,
     }),
     hasPartitionGroupComponents: PropTypes.bool.isRequired,
-    gradingType: PropTypes.string,
+    format: PropTypes.string,
     dueDate: PropTypes.string,
     relativeWeeksDue: PropTypes.number,
     isTimeLimited: PropTypes.bool,
     graded: PropTypes.bool,
     courseGraders: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     hideAfterDue: PropTypes.bool,
-  })
+  }).isRequired,
 };
 
 export default XBlockStatus;

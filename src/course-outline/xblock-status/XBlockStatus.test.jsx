@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  act, render, fireEvent, within,
-} from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -40,7 +38,7 @@ const section = {
   staffOnlyMessage: false,
   userPartitionInfo: {
     selectedPartitionIndex: -1,
-    selectedGroupsLabel: "",
+    selectedGroupsLabel: '',
   },
   hasPartitionGroupComponents: false,
   format: 'Homework',
@@ -83,7 +81,7 @@ describe('<XBlockStatus /> for Instructor paced Section', () => {
       item: {
         ...section,
         explanatoryMessage: 'some explanatory message',
-      }
+      },
     });
 
     expect(queryByTestId('explanatory-message-span')).toBeInTheDocument();
@@ -99,7 +97,7 @@ describe('<XBlockStatus /> for Instructor paced Section', () => {
     const releaseStatusDiv = queryByTestId('release-status-div');
     expect(releaseStatusDiv).toBeInTheDocument();
     expect(releaseStatusDiv).toHaveTextContent(
-      `${messages.releasedLabel.defaultMessage}${section.releaseDate}`
+      `${messages.releasedLabel.defaultMessage}${section.releaseDate}`,
     );
 
     // check grading type
@@ -114,7 +112,7 @@ describe('<XBlockStatus /> for Instructor paced Section', () => {
     const dueDateDiv = queryByTestId('due-date-div');
     expect(dueDateDiv).toBeInTheDocument();
     expect(dueDateDiv).toHaveTextContent(
-      `${messages.dueLabel.defaultMessage} ${section.dueDate}`
+      `${messages.dueLabel.defaultMessage} ${section.dueDate}`,
     );
     // self paced weeks should not be visible as
     // isSelfPaced is false as well as isCustomRelativeDatesActive is false
@@ -170,7 +168,7 @@ describe('<XBlockStatus /> for self paced Section', () => {
     const selfPacedRelativeDueWeeksDiv = queryByTestId('self-paced-relative-due-weeks-div');
     expect(selfPacedRelativeDueWeeksDiv).toBeInTheDocument();
     expect(selfPacedRelativeDueWeeksDiv).toHaveTextContent(
-      messages.customDueDateLabel.defaultMessage
+      messages.customDueDateLabel.defaultMessage,
     );
 
     // check hide after due date message
@@ -225,7 +223,7 @@ const subsection = {
   staffOnlyMessage: false,
   userPartitionInfo: {
     selectedPartitionIndex: -1,
-    selectedGroupsLabel: "",
+    selectedGroupsLabel: '',
   },
   hasPartitionGroupComponents: false,
   format: 'Homework',
@@ -259,7 +257,7 @@ describe('<XBlockStatus /> for Instructor paced Subsection', () => {
     const releaseStatusDiv = queryByTestId('release-status-div');
     expect(releaseStatusDiv).toBeInTheDocument();
     expect(releaseStatusDiv).toHaveTextContent(
-      `${messages.scheduledLabel.defaultMessage}${subsection.releaseDate}`
+      `${messages.scheduledLabel.defaultMessage}${subsection.releaseDate}`,
     );
 
     // check grading type
@@ -274,7 +272,7 @@ describe('<XBlockStatus /> for Instructor paced Subsection', () => {
     const dueDateDiv = queryByTestId('due-date-div');
     expect(dueDateDiv).toBeInTheDocument();
     expect(dueDateDiv).toHaveTextContent(
-      `${messages.dueLabel.defaultMessage} ${subsection.dueDate}`
+      `${messages.dueLabel.defaultMessage} ${subsection.dueDate}`,
     );
     // self paced weeks should not be visible as
     // isSelfPaced is false as well as isCustomRelativeDatesActive is false
@@ -358,7 +356,7 @@ describe('<XBlockStatus /> for Instructor paced Subsection', () => {
     const dueDateDiv = queryByTestId('due-date-div');
     expect(dueDateDiv).toBeInTheDocument();
     expect(dueDateDiv).toHaveTextContent(
-      `${messages.dueLabel.defaultMessage} ${subsection.dueDate}`
+      `${messages.dueLabel.defaultMessage} ${subsection.dueDate}`,
     );
     // self paced weeks should not be visible as
     // isSelfPaced is false as well as isCustomRelativeDatesActive is false
@@ -405,7 +403,7 @@ describe('<XBlockStatus /> for self paced Subsection', () => {
     const selfPacedRelativeDueWeeksDiv = queryByTestId('self-paced-relative-due-weeks-div');
     expect(selfPacedRelativeDueWeeksDiv).toBeInTheDocument();
     expect(selfPacedRelativeDueWeeksDiv).toHaveTextContent(
-      messages.customDueDateLabel.defaultMessage
+      messages.customDueDateLabel.defaultMessage,
     );
 
     // check hide after due date message
@@ -437,7 +435,7 @@ const unit = {
   staffOnlyMessage: false,
   userPartitionInfo: {
     selectedPartitionIndex: 1,
-    selectedGroupsLabel: "Some label",
+    selectedGroupsLabel: 'Some label',
   },
   hasPartitionGroupComponents: false,
   format: 'Homework',
@@ -493,7 +491,7 @@ describe('<XBlockStatus /> for unit', () => {
         hasPartitionGroupComponents: true,
         userPartitionInfo: {
           selectedPartitionIndex: -1,
-          selectedGroupsLabel: "",
+          selectedGroupsLabel: '',
         },
       },
     });

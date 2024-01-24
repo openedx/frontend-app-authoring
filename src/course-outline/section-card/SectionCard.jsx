@@ -180,7 +180,7 @@ const SectionCard = ({
               isSelfPaced={isSelfPaced}
               isCustomRelativeDatesActive={isCustomRelativeDatesActive}
               item={section}
-              />
+            />
             <div className="outline-section__status">
               <Button
                 className="section-card__highlights"
