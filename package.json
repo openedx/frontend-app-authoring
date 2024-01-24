@@ -38,7 +38,7 @@
   "dependencies": {
     "@dnd-kit/sortable": "^8.0.0",
     "@edx/brand": "npm:@openedx/brand-openedx@^1.2.2",
-    "@edx/frontend-component-ai-translations-edx": "^1.4.2",
+    "@edx/frontend-component-ai-translations": "^1.4.0",
     "@edx/frontend-component-footer": "^12.3.0",
     "@edx/frontend-component-header": "^4.7.0",
     "@edx/frontend-enterprise-hotjar": "^2.0.0",

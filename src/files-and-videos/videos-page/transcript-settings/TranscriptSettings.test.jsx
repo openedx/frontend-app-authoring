@@ -691,7 +691,7 @@ describe('TranscriptSettings', () => {
     });
 
     it('doesn\'t display AI translations component if not enabled', () => {
-      expect(screen.queryByText('/Get free translations/')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('ai-translations-component')).not.toBeInTheDocument();
     });
   });
 
@@ -721,8 +721,8 @@ describe('TranscriptSettings', () => {
     });
 
     it('displays AI translations component if enabled', () => {
-      const component = screen.getByText(/Get free translations/);
-      expect(component).toBeVisible();
+      const component = screen.getByTestId('ai-translations-component');
+      expect(component).toBeInTheDocument();
     });
   });
 });
