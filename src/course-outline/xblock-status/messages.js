@@ -31,11 +31,11 @@ const messages = defineMessages({
   },
   releaseStatusScreenReaderTitle: {
     id: 'course-authoring.course-outline.xblock-status.releaseStatusScreenReader.title',
-    defaultMessage: 'Release Status:',
+    defaultMessage: 'Release Status: ',
   },
   gradedAsScreenReaderLabel: {
     id: 'course-authoring.course-outline.xblock-status.gradedAsScreenReader.label',
-    defaultMessage: 'Graded as:',
+    defaultMessage: 'Graded as: ',
   },
   ungradedText: {
     id: 'course-authoring.course-outline.xblock-status.ungraded.text',

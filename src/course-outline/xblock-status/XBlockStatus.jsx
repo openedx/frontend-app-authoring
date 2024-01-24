@@ -82,14 +82,14 @@ const XBlockStatus = ({
     })
   }
 
-  if (!staffOnlyMessage) {
+  if (!staffOnlyMessage && isVertical) {
     const { selectedPartitionIndex, selectedGroupsLabel } = userPartitionInfo;
-    if (selectedPartitionIndex !== -1 && !isNaN(selectedPartitionIndex) && isVertical) {
+    if (selectedPartitionIndex !== -1 && !isNaN(selectedPartitionIndex)) {
       statusMessages.push({
         icon: GroupsIcon,
         text: intl.formatMessage(messages.restrictedUnitAccess, { selectedGroupsLabel }),
       });
-    } else if (hasPartitionGroupComponents && isVertical) {
+    } else if (hasPartitionGroupComponents) {
       statusMessages.push({
         icon: GroupsIcon,
         text: intl.formatMessage(messages.restrictedUnitAccessToSomeContent),
@@ -98,7 +98,7 @@ const XBlockStatus = ({
   }
 
   const releaseStatusDiv = () => (
-    <div className="d-flex align-items-center">
+    <div className="d-flex align-items-center" data-testid="release-status-div">
       <span className="sr-only status-release-label">
         {intl.formatMessage(messages.releaseStatusScreenReaderTitle)}
       </span>
@@ -109,7 +109,7 @@ const XBlockStatus = ({
   )
 
   const gradingTypeDiv = () => (
-    <div className="d-flex align-items-center mr-1">
+    <div className="d-flex align-items-center mr-1" data-testid="grading-type-div">
       <span className="sr-only status-grading-label">
         {intl.formatMessage(messages.gradedAsScreenReaderLabel)}
       </span>
@@ -123,7 +123,7 @@ const XBlockStatus = ({
   const dueDateDiv = () => {
     if (dueDate && isInstructorPaced) {
       return (
-        <div className="status-grading-date">
+        <div className="status-grading-date" data-testid="due-date-div">
           {intl.formatMessage(messages.dueLabel)} {dueDate}
         </div>
       )
@@ -131,7 +131,7 @@ const XBlockStatus = ({
   }
 
   const selfPacedRelativeDueWeeksDiv = () => (
-    <div className="d-flex align-items-center">
+    <div className="d-flex align-items-center" data-testid="self-paced-relative-due-weeks-div">
       <Icon className="mr-1" size="sm" src={CalendarIcon} />
       <span className="status-custom-grading-date">
         {intl.formatMessage(messages.customDueDateLabel, { relativeWeeksDue })}
@@ -140,7 +140,9 @@ const XBlockStatus = ({
   )
 
   const explanatoryMessageDiv = () => (
-    <span>{explanatoryMessage}</span>
+    <span data-testid='explanatory-message-span'>
+      {explanatoryMessage}
+    </span>
   )
 
   const renderGradingTypeAndDueDate = () => {
@@ -150,8 +152,10 @@ const XBlockStatus = ({
         <>
           <div className="d-flex align-items-center">
             {gradingTypeDiv()} -
-            <span className="sr-only status-proctored-exam-label">{intl.formatMessage(examValue)}</span>
-            <span className="mx-2">{intl.formatMessage(examValue)}</span>
+            <span className="sr-only">{intl.formatMessage(examValue)}</span>
+            <span className="mx-2" data-testid="exam-value-span">
+              {intl.formatMessage(examValue)}
+            </span>
             {dueDateDiv()}
           </div>
           {showRelativeWeeks && (selfPacedRelativeDueWeeksDiv())}
@@ -178,7 +182,7 @@ const XBlockStatus = ({
   }
 
   const hideAfterDueMessage = () => (
-    <div className="d-flex align-items-center">
+    <div className="d-flex align-items-center" data-testid="hide-after-due-message">
       <Icon className="mr-1" size="sm" src={HideIcon} />
       <span className="status-hide-after-due-value">
         {isSelfPaced
@@ -202,6 +206,7 @@ const XBlockStatus = ({
       return (
         <div
           className="grading-mismatch-alert d-flex align-items-center p-4 mt-2 rounded shadow"
+          data-testid="grading-mismatch-alert"
         >
           <Icon className="mr-1 text-warning" size="lg" src={WarningIcon} />
           {intl.formatMessage(messages.gradingPolicyMismatchText, { gradingType })}
@@ -213,9 +218,9 @@ const XBlockStatus = ({
   const renderStatusMessages = () => {
     if (statusMessages.length > 0) {
       return (
-        <div className="border-top border-light mt-2 text-dark">
+        <div className="border-top border-light mt-2 text-dark" data-testid="status-messages-div">
           {statusMessages.map(({ icon, text }) => (
-            <div className="d-flex align-items-center pt-1">
+            <div key={text} className="d-flex align-items-center pt-1">
               <Icon className="mr-1" size="sm" src={icon} />
               {text}
             </div>
