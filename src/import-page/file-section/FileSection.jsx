@@ -46,7 +46,8 @@ const FileSection = ({ intl, courseId, viewOnly }) => {
         )}
         {viewOnly && (
           <Alert variant="info">
-            You have view only access to this page. If you feel you should have full access, please reach out to your course team admin to be given access.
+            You have view only access to this page.{' '}
+            If you feel you should have full access, please reach out to your course team admin to be given access.
           </Alert>
         )}
       </Card.Section>
