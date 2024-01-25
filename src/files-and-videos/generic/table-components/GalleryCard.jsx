@@ -19,6 +19,7 @@ const GalleryCard = ({
   handleOpenDeleteConfirmation,
   handleOpenFileInfo,
   thumbnailPreview,
+  fileType,
 }) => {
   const lockFile = () => {
     const { locked, id } = original;
@@ -38,7 +39,7 @@ const GalleryCard = ({
               openAssetInfo={() => handleOpenFileInfo(original)}
               portableUrl={original.portableUrl}
               id={original.id}
-              wrapperType={original.wrapperType}
+              fileType={fileType}
               onDownload={() => handleBulkDownload([{
                 original: {
                   id: original.id,
@@ -103,6 +104,7 @@ GalleryCard.propTypes = {
   handleOpenDeleteConfirmation: PropTypes.func.isRequired,
   handleOpenFileInfo: PropTypes.func.isRequired,
   thumbnailPreview: PropTypes.func.isRequired,
+  fileType: PropTypes.func.isRequired,
 };
 
 export default GalleryCard;
