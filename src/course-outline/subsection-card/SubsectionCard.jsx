@@ -9,11 +9,13 @@ import classNames from 'classnames';
 
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
+import { COURSE_BLOCK_NAMES } from '../constants';
 import CardHeader from '../card-header/CardHeader';
 import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
 import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
+import PasteButton from '../paste-button/PasteButton';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
 
@@ -33,6 +35,7 @@ const SubsectionCard = ({
   onNewUnitSubmit,
   onOrderChange,
   onOpenConfigureModal,
+  onPasteClick,
 }) => {
   const currentRef = useRef(null);
   const intl = useIntl();
@@ -51,6 +54,7 @@ const SubsectionCard = ({
     visibilityState,
     actions: subsectionActions,
     isHeaderVisible = true,
+    enableCopyPasteUnits = false,
   } = subsection;
 
   // re-create actions object for customizations
@@ -95,6 +99,7 @@ const SubsectionCard = ({
   };
 
   const handleNewButtonClick = () => onNewUnitSubmit(id);
+  const handlePasteButtonClick = () => onPasteClick(id, section.id);
 
   const titleComponent = (
     <TitleButton
@@ -180,16 +185,25 @@ const SubsectionCard = ({
           >
             {children}
             {actions.childAddable && (
-              <Button
-                data-testid="new-unit-button"
-                className="mt-4"
-                variant="outline-primary"
-                iconBefore={IconAdd}
-                block
-                onClick={handleNewButtonClick}
-              >
-                {intl.formatMessage(messages.newUnitButton)}
-              </Button>
+              <>
+                <Button
+                  data-testid="new-unit-button"
+                  className="mt-4"
+                  variant="outline-primary"
+                  iconBefore={IconAdd}
+                  block
+                  onClick={handleNewButtonClick}
+                >
+                  {intl.formatMessage(messages.newUnitButton)}
+                </Button>
+                {enableCopyPasteUnits && (
+                  <PasteButton
+                    text={intl.formatMessage(messages.pasteButton)}
+                    blockType={COURSE_BLOCK_NAMES.vertical.id}
+                    onClick={handlePasteButtonClick}
+                  />
+                )}
+              </>
             )}
           </div>
         )}
@@ -218,6 +232,7 @@ SubsectionCard.propTypes = {
     hasChanges: PropTypes.bool.isRequired,
     visibilityState: PropTypes.string.isRequired,
     shouldScroll: PropTypes.bool,
+    enableCopyPasteUnits: PropTypes.bool,
     actions: PropTypes.shape({
       deletable: PropTypes.bool.isRequired,
       draggable: PropTypes.bool.isRequired,
@@ -239,6 +254,7 @@ SubsectionCard.propTypes = {
   canMoveItem: PropTypes.func.isRequired,
   onOrderChange: PropTypes.func.isRequired,
   onOpenConfigureModal: PropTypes.func.isRequired,
+  onPasteClick: PropTypes.func.isRequired,
 };
 
 export default SubsectionCard;

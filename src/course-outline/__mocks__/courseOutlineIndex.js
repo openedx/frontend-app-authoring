@@ -261,6 +261,7 @@ module.exports = {
                       ancestorHasStaffLock: true,
                       staffOnlyMessage: false,
                       hasPartitionGroupComponents: false,
+                      enableCopyPasteUnits: true,
                       userPartitionInfo: {
                         selectablePartitions: [
                           {
@@ -292,6 +293,7 @@ module.exports = {
                 ancestorHasStaffLock: true,
                 staffOnlyMessage: false,
                 hasPartitionGroupComponents: false,
+                enableCopyPasteUnits: true,
                 userPartitionInfo: {
                   selectablePartitions: [
                     {
@@ -391,7 +393,7 @@ module.exports = {
                 },
                 ancestor_has_staff_lock: false,
                 staff_only_message: false,
-                enable_copy_paste_units: false,
+                enable_copy_paste_units: true,
                 has_partition_group_components: false,
                 user_partition_info: {
                   selectable_partitions: [

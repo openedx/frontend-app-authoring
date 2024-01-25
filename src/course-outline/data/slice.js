@@ -38,12 +38,19 @@ const slice = createSlice({
       childAddable: true,
       duplicable: true,
     },
+    initialUserClipboard: {
+      content: {},
+      sourceUsageKey: null,
+      sourceContexttitle: null,
+      sourceEditUrl: null,
+    },
   },
   reducers: {
     fetchOutlineIndexSuccess: (state, { payload }) => {
       state.outlineIndexData = payload;
       state.sectionsList = payload.courseStructure?.childInfo?.children || [];
       state.isCustomRelativeDatesActive = payload.isCustomRelativeDatesActive;
+      state.initialUserClipboard = payload.initialUserClipboard;
     },
     updateOutlineIndexLoadingStatus: (state, { payload }) => {
       state.loadingStatus = {
@@ -68,6 +75,9 @@ const slice = createSlice({
         ...state.statusBarData,
         ...payload,
       };
+    },
+    updateClipboardContent: (state, { payload }) => {
+      state.initialUserClipboard = payload;
     },
     updateCourseActions: (state, { payload }) => {
       state.actions = {
@@ -205,6 +215,7 @@ export const {
   reorderSectionList,
   reorderSubsectionList,
   reorderUnitList,
+  updateClipboardContent,
 } = slice.actions;
 
 export const {

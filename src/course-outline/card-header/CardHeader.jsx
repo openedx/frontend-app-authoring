@@ -35,9 +35,12 @@ const CardHeader = ({
   onClickDuplicate,
   onClickMoveUp,
   onClickMoveDown,
+  onClickCopy,
   titleComponent,
   namePrefix,
   actions,
+  enableCopyPasteUnits,
+  isVertical,
 }) => {
   const intl = useIntl();
   const [searchParams] = useSearchParams();
@@ -126,6 +129,11 @@ const CardHeader = ({
             >
               {intl.formatMessage(messages.menuConfigure)}
             </Dropdown.Item>
+            {isVertical && enableCopyPasteUnits && (
+              <Dropdown.Item onClick={onClickCopy}>
+                {intl.formatMessage(messages.menuCopy)}
+              </Dropdown.Item>
+            )}
             {actions.duplicable && (
               <Dropdown.Item
                 data-testid={`${namePrefix}-card-header__menu-duplicate-button`}
@@ -168,6 +176,12 @@ const CardHeader = ({
   );
 };
 
+CardHeader.defaultProps = {
+  enableCopyPasteUnits: false,
+  isVertical: false,
+  onClickCopy: null,
+};
+
 CardHeader.propTypes = {
   title: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
@@ -185,6 +199,7 @@ CardHeader.propTypes = {
   onClickDuplicate: PropTypes.func.isRequired,
   onClickMoveUp: PropTypes.func.isRequired,
   onClickMoveDown: PropTypes.func.isRequired,
+  onClickCopy: PropTypes.func,
   titleComponent: PropTypes.node.isRequired,
   namePrefix: PropTypes.string.isRequired,
   actions: PropTypes.shape({
@@ -195,6 +210,8 @@ CardHeader.propTypes = {
     allowMoveUp: PropTypes.bool,
     allowMoveDown: PropTypes.bool,
   }).isRequired,
+  enableCopyPasteUnits: PropTypes.bool,
+  isVertical: PropTypes.bool,
 };
 
 export default CardHeader;
