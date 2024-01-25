@@ -1,0 +1,57 @@
+import messages from './messages';
+
+/**
+ * Formats the given URL to a unit page URL.
+ * @param {string} url - The original part of URL.
+ * @param {string} courseId - The ID of the course.
+ * @returns {string} - The formatted unit page URL.
+ */
+const formatUrlToUnitPage = (url, courseId) => `/course/${courseId}${url}`;
+
+/**
+ * Retrieves a list of group count based on the number of items.
+ * @param {Array} items - The array of items to count.
+ * @param {function} formatMessage - The function for formatting localized messages.
+ * @returns {Array} - List of group count.
+ */
+const getGroupsCountMessage = (items, formatMessage) => {
+  if (!items?.length) {
+    return [];
+  }
+
+  const messageKey = items.length === 1 ? messages.containsGroup : messages.containsGroups;
+  const message = formatMessage(messageKey, { len: items.length });
+  return [message];
+};
+
+/**
+ * Retrieves a list of usage count based on the number of items.
+ * @param {Array} items - The array of items to count.
+ * @param {function} formatMessage - The function for formatting localized messages.
+ * @returns {Array} - List of usage count.
+ */
+const getUsageCountMessage = (items, formatMessage) => {
+  if (!items?.length) {
+    return [formatMessage(messages.notInUse)];
+  }
+
+  const message = items.length === 1
+    ? formatMessage(messages.usedInLocation)
+    : formatMessage(messages.usedInLocations, { len: items.length });
+  return [message];
+};
+
+/**
+ * Retrieves a combined list of badge messages based on usage and group information.
+ * @param {Array} usage - The array of items indicating usage.
+ * @param {Object} group - The group information.
+ * @param {boolean} isExperiment - Flag indicating whether it is an experiment group configurations.
+ * @param {function} formatMessage - The function for formatting localized messages.
+ * @returns {Array} - Combined list of badges.
+ */
+const getCombinedBadgeList = (usage, group, isExperiment, formatMessage) => [
+  ...(isExperiment ? getGroupsCountMessage(group.groups, formatMessage) : []),
+  ...getUsageCountMessage(usage, formatMessage),
+];
+
+export { formatUrlToUnitPage, getCombinedBadgeList };

@@ -1,0 +1,10 @@
+@import "./empty-placeholder/EmptyPlaceholder";
+@import "./group-configuration-container/GroupConfigurationContainer";
+
+.configuration-section-name {
+  text-transform: lowercase;
+
+  &::first-letter {
+    text-transform: capitalize;
+  }
+}
