@@ -10,6 +10,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import initializeStore from '../../store';
 import UnitCard from './UnitCard';
+import cardMessages from '../card-header/messages';
 
 // eslint-disable-next-line no-unused-vars
 let axiosMock;
@@ -118,5 +119,18 @@ describe('<UnitCard />', () => {
     await act(async () => fireEvent.click(menu));
     expect(within(element).queryByTestId('unit-card-header__menu-duplicate-button')).not.toBeInTheDocument();
     expect(within(element).queryByTestId('unit-card-header__menu-delete-button')).not.toBeInTheDocument();
+  });
+
+  it('shows copy option based on enableCopyPasteUnits flag', async () => {
+    const { findByTestId } = renderComponent({
+      unit: {
+        ...unit,
+        enableCopyPasteUnits: true,
+      },
+    });
+    const element = await findByTestId('unit-card');
+    const menu = await within(element).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+    expect(within(element).queryByText(cardMessages.menuCopy.defaultMessage)).toBeInTheDocument();
   });
 });

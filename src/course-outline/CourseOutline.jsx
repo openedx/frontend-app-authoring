@@ -97,6 +97,8 @@ const CourseOutline = ({ courseId }) => {
     handleSubsectionDragAndDrop,
     handleVideoSharingOptionChange,
     handleUnitDragAndDrop,
+    handleCopyToClipboardClick,
+    handlePasteClipboardClick,
   } = useCourseOutline({ courseId });
 
   const [sections, setSections] = useState(sectionsList);
@@ -351,6 +353,7 @@ const CourseOutline = ({ courseId }) => {
                                         section,
                                         section.childInfo.children,
                                       )}
+                                      onPasteClick={handlePasteClipboardClick}
                                     >
                                       <DraggableList
                                         itemList={subsection.childInfo.children}
@@ -381,6 +384,7 @@ const CourseOutline = ({ courseId }) => {
                                               subsection,
                                               subsection.childInfo.children,
                                             )}
+                                            onCopyToClipboardClick={handleCopyToClipboardClick}
                                           />
                                         ))}
                                       </DraggableList>
