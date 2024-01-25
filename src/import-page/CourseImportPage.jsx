@@ -41,7 +41,7 @@ const CourseImportPage = ({ intl, courseId }) => {
     userPermissionsEnabled && (checkPermission('manage_course_settings') || checkPermission('view_course_settings'))
   );
   const viewOnly = !userPermissionsEnabled || (
-    userPermissionsEnabled && checkPermission('view_course_settings')
+    userPermissionsEnabled && checkPermission('view_course_settings') && !checkPermission('manage_course_settings')
   );
 
   useEffect(() => {
