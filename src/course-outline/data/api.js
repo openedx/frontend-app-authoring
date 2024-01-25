@@ -28,6 +28,7 @@ export const getCourseReindexApiUrl = (reindexLink) => `${getApiBaseUrl()}${rein
 export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
 export const getCourseItemApiUrl = (itemId) => `${getXBlockBaseApiUrl()}${itemId}`;
 export const getXBlockApiUrl = (blockId) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
+export const getClipboardUrl = () => `${getApiBaseUrl()}/api/content-staging/v1/clipboard/`;
 
 /**
  * @typedef {Object} courseOutline
@@ -408,6 +409,35 @@ export async function setVideoSharingOption(courseId, videoSharingOption) {
       metadata: {
         video_sharing_options: videoSharingOption,
       },
+    });
+
+  return data;
+}
+
+/**
+ * Copy block to clipboard
+ * @param {string} usageKey
+ * @returns {Promise<Object>}
+*/
+export async function copyBlockToClipboard(usageKey) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getClipboardUrl(), {
+      usage_key: usageKey,
+    });
+
+  return data;
+}
+
+/**
+ * Paste block to clipboard
+ * @param {string} parentLocator
+ * @returns {Promise<Object>}
+*/
+export async function pasteBlock(parentLocator) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getXBlockBaseApiUrl(), {
+      parent_locator: parentLocator,
+      staged_content: "clipboard",
     });
 
   return data;

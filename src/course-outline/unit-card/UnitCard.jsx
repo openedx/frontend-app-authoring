@@ -28,6 +28,7 @@ const UnitCard = ({
   onDuplicateSubmit,
   getTitleLink,
   onOrderChange,
+  onCopyToClipboardClick,
 }) => {
   const currentRef = useRef(null);
   const dispatch = useDispatch();
@@ -42,6 +43,7 @@ const UnitCard = ({
     visibilityState,
     actions: unitActions,
     isHeaderVisible = true,
+    enableCopyPasteUnits = false,
   } = unit;
 
   // re-create actions object for customizations
@@ -79,6 +81,10 @@ const UnitCard = ({
   const handleUnitMoveDown = () => {
     onOrderChange(index, index + 1);
   };
+
+  const handleCopyClick = () => {
+    onCopyToClipboardClick(unit.id);
+  }
 
   const titleComponent = (
     <TitleLink
@@ -148,6 +154,9 @@ const UnitCard = ({
           titleComponent={titleComponent}
           namePrefix={namePrefix}
           actions={actions}
+          isVertical
+          enableCopyPasteUnits={enableCopyPasteUnits}
+          onClickCopy={handleCopyClick}
         />
         <div className="unit-card__content item-children" data-testid="unit-card__content">
           <XBlockStatus
@@ -176,6 +185,7 @@ UnitCard.propTypes = {
       duplicable: PropTypes.bool.isRequired,
     }).isRequired,
     isHeaderVisible: PropTypes.bool,
+    enableCopyPasteUnits: PropTypes.bool,
   }).isRequired,
   subsection: PropTypes.shape({
     id: PropTypes.string.isRequired,
@@ -205,6 +215,7 @@ UnitCard.propTypes = {
   onOrderChange: PropTypes.func.isRequired,
   isSelfPaced: PropTypes.bool.isRequired,
   isCustomRelativeDatesActive: PropTypes.bool.isRequired,
+  onCopyToClipboardClick: PropTypes.func.isRequired,
 };
 
 export default UnitCard;
