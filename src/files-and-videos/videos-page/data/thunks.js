@@ -21,6 +21,7 @@ import {
   deleteTranscriptPreferences,
   setTranscriptCredentials,
   setTranscriptPreferences,
+  getAllUsagePaths,
 } from './api';
 import {
   setVideoIds,
@@ -37,8 +38,7 @@ import {
 
 import { updateFileValues } from './utils';
 
-async function fetchUsageLocation(videoId, dispatch, courseId, isLast) {
-  const { usageLocations } = await getVideoUsagePaths({ videoId, courseId });
+function updateUsageLocation(videoId, dispatch, usageLocations) {
   const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
 
   dispatch(updateModel({
@@ -49,9 +49,6 @@ async function fetchUsageLocation(videoId, dispatch, courseId, isLast) {
       activeStatus,
     },
   }));
-  if (isLast) {
-    dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
-  }
 }
 
 export function fetchVideos(courseId) {
@@ -72,10 +69,13 @@ export function fetchVideos(courseId) {
         dispatch(setVideoIds({
           videoIds: parsedVideos.map(video => video.id),
         }));
-        parsedVideos.forEach(async (video, indx) => {
-          const isLast = parsedVideos.length - 1 === indx;
-          fetchUsageLocation(video.id, dispatch, courseId, isLast);
+        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.PARTIAL }));
+        await getAllUsagePaths({
+          courseId,
+          videos: parsedVideos,
+          updateModel: (apiData, videoId) => updateUsageLocation(videoId, dispatch, apiData.usageLocations),
         });
+        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
       }
     } catch (error) {
       if (error.response && error.response.status === 403) {

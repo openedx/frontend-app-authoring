@@ -31,6 +31,21 @@ export async function getVideos(courseId) {
   };
 }
 
+export async function getAllUsagePaths({ courseId, videos, updateModel }) {
+  const apiPromises = videos.map(video => getAuthenticatedHttpClient()
+    .get(`${getVideosUrl(courseId)}/${video.id}/usage`, { videoId: video.id }));
+  const results = await Promise.allSettled(apiPromises);
+  results.forEach(result => {
+    const data = camelCaseObject(result.value.data);
+    const { videoId } = result.value.config;
+    if (data) {
+      updateModel(data, videoId);
+    } else {
+      updateModel({ usageLocation: [] }, videoId);
+    }
+  });
+}
+
 /**
  * Fetches the course custom pages for provided course
  * @param {string} courseId
