@@ -496,7 +496,7 @@ describe('FilesAndUploads', () => {
           expect(screen.getByText('Error')).toBeVisible();
         });
 
-        expect(loadingStatus).toEqual(RequestStatus.PARTIAL);
+        expect(loadingStatus).toEqual(RequestStatus.PARTIAL_FAILURE);
         expect(screen.getByText('Failed to load remaining files.')).toBeVisible();
       });
 

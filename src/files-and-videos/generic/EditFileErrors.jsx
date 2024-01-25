@@ -19,7 +19,7 @@ const EditFileErrors = ({
     <ErrorAlert
       hideHeading={false}
       dismissError={() => resetErrors({ errorType: 'loading' })}
-      isError={loadingStatus === RequestStatus.FAILED || loadingStatus === RequestStatus.PARTIAL}
+      isError={loadingStatus === RequestStatus.FAILED || loadingStatus === RequestStatus.PARTIAL_FAILURE}
     >
       {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.loading })}
     </ErrorAlert>

@@ -18,7 +18,7 @@ const FileMenu = ({
   openDeleteConfirmation,
   portableUrl,
   id,
-  wrapperType,
+  fileType,
   // injected
   intl,
 }) => (
@@ -32,7 +32,7 @@ const FileMenu = ({
       alt="file-menu-toggle"
     />
     <Dropdown.Menu>
-      {wrapperType === 'video' ? (
+      {fileType === 'video' ? (
         <Dropdown.Item
           onClick={() => navigator.clipboard.writeText(id)}
         >
@@ -81,7 +81,7 @@ FileMenu.propTypes = {
   openDeleteConfirmation: PropTypes.func.isRequired,
   portableUrl: PropTypes.string,
   id: PropTypes.string.isRequired,
-  wrapperType: PropTypes.string.isRequired,
+  fileType: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
 };
