@@ -78,7 +78,7 @@ describe('<XBlockStatus /> for Instructor paced Section', () => {
 
   it('render XBlockStatus with explanatoryMessage', () => {
     const { queryByTestId } = renderComponent({
-      item: {
+      blockData: {
         ...section,
         explanatoryMessage: 'some explanatory message',
       },
@@ -90,7 +90,7 @@ describe('<XBlockStatus /> for Instructor paced Section', () => {
   });
 
   it('renders XBlockStatus with release status, grading type, due date etc.', () => {
-    const { queryByTestId } = renderComponent({ item: section });
+    const { queryByTestId } = renderComponent({ blockData: section });
 
     expect(queryByTestId('explanatory-message-span')).not.toBeInTheDocument();
     // when explanatory message is not displayed, release date should be visible
@@ -148,7 +148,7 @@ describe('<XBlockStatus /> for self paced Section', () => {
     const { queryByTestId } = renderComponent({
       isSelfPaced: true,
       isCustomRelativeDatesActive: true,
-      item: {
+      blockData: {
         ...section,
         relativeWeeksDue: 2,
       },
@@ -182,7 +182,7 @@ describe('<XBlockStatus /> for self paced Section', () => {
 
   it('renders XBlockStatus with grading mismatch alert', () => {
     const { queryByTestId } = renderComponent({
-      item: {
+      blockData: {
         ...section,
         format: 'Fun',
       },
@@ -250,7 +250,7 @@ describe('<XBlockStatus /> for Instructor paced Subsection', () => {
   });
 
   it('renders XBlockStatus with release status, grading type, due date etc.', () => {
-    const { queryByTestId } = renderComponent({ item: subsection });
+    const { queryByTestId } = renderComponent({ blockData: subsection });
 
     expect(queryByTestId('explanatory-message-span')).not.toBeInTheDocument();
     // when explanatory message is not displayed, release date should be visible
@@ -291,7 +291,7 @@ describe('<XBlockStatus /> for Instructor paced Subsection', () => {
 
   it('renders XBlockStatus with proctored exam info', () => {
     const { queryByTestId } = renderComponent({
-      item: {
+      blockData: {
         ...subsection,
         isProctoredExam: true,
         isOnboardingExam: false,
@@ -307,7 +307,7 @@ describe('<XBlockStatus /> for Instructor paced Subsection', () => {
 
   it('renders XBlockStatus with practice proctored exam info', () => {
     const { queryByTestId } = renderComponent({
-      item: {
+      blockData: {
         ...subsection,
         isProctoredExam: true,
         isOnboardingExam: false,
@@ -323,7 +323,7 @@ describe('<XBlockStatus /> for Instructor paced Subsection', () => {
 
   it('renders XBlockStatus with onboarding exam info', () => {
     const { queryByTestId } = renderComponent({
-      item: {
+      blockData: {
         ...subsection,
         isProctoredExam: true,
         isOnboardingExam: true,
@@ -339,7 +339,7 @@ describe('<XBlockStatus /> for Instructor paced Subsection', () => {
 
   it('renders XBlockStatus correctly for graded but not time limited subsection', () => {
     const { queryByTestId } = renderComponent({
-      item: {
+      blockData: {
         ...subsection,
         isTimeLimited: false,
         graded: true,
@@ -383,7 +383,7 @@ describe('<XBlockStatus /> for self paced Subsection', () => {
     const { queryByTestId } = renderComponent({
       isSelfPaced: true,
       isCustomRelativeDatesActive: true,
-      item: {
+      blockData: {
         ...subsection,
         relativeWeeksDue: 2,
       },
@@ -461,7 +461,7 @@ describe('<XBlockStatus /> for unit', () => {
   });
 
   it('renders XBlockStatus with status messages', () => {
-    const { queryByTestId } = renderComponent({ item: unit });
+    const { queryByTestId } = renderComponent({ blockData: unit });
 
     expect(queryByTestId('explanatory-message-span')).not.toBeInTheDocument();
     expect(queryByTestId('release-status-div')).not.toBeInTheDocument();
@@ -486,7 +486,7 @@ describe('<XBlockStatus /> for unit', () => {
 
   it('renders XBlockStatus with status messages', () => {
     const { queryByTestId } = renderComponent({
-      item: {
+      blockData: {
         ...unit,
         hasPartitionGroupComponents: true,
         userPartitionInfo: {

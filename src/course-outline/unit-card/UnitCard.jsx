@@ -153,7 +153,7 @@ const UnitCard = ({
           <XBlockStatus
             isSelfPaced={isSelfPaced}
             isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-            item={unit}
+            blockData={unit}
           />
         </div>
       </div>

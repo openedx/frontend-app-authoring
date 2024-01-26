@@ -164,7 +164,7 @@ const SubsectionCard = ({
               <XBlockStatus
                 isSelfPaced={isSelfPaced}
                 isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                item={subsection}
+                blockData={subsection}
               />
             </div>
           </>

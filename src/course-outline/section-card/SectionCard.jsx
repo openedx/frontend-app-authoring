@@ -179,16 +179,18 @@ const SectionCard = ({
             <XBlockStatus
               isSelfPaced={isSelfPaced}
               isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-              item={section}
+              blockData={section}
             />
             <div className="outline-section__status">
               <Button
-                className="section-card__highlights"
+                className="p-0 bg-transparent"
                 data-destid="section-card-highlights-button"
                 variant="tertiary"
                 onClick={handleOpenHighlightsModal}
               >
-                <Badge className="highlights-badge">{highlights.length}</Badge>
+                <Badge className="mr-1 d-flex justify-content-center align-items-center highlights-badge">
+                  {highlights.length}
+                </Badge>
                 <p className="m-0 text-black">{messages.sectionHighlightsBadge.defaultMessage}</p>
               </Button>
             </div>
