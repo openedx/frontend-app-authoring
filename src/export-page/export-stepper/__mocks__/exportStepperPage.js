@@ -1,5 +1,5 @@
 module.exports = {
-    exportStatus: 3,
-    exportOutput: "/test",
-  };
+  exportStatus: 3,
+  exportOutput: '/test',
+};
   
