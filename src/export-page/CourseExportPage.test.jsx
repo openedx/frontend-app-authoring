@@ -122,6 +122,29 @@ describe('<CourseExportPage />', () => {
       expect(getByText(messages.buttonTitle.defaultMessage)).toBeInTheDocument();
     });
   });
+  it('should render without errors if viewOnly permissions', async () => {
+    const { getByText } = render(<RootWrapper />);
+    userPermissionsData = { permissions: ['view_course_settings'] };
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, userPermissionsData);
+    await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+    await waitFor(() => {
+      expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+      const exportPageElement = getByText(messages.headingTitle.defaultMessage, {
+        selector: 'h2.sub-header-title',
+      });
+      const buttonElement = getByText(messages.buttonTitle.defaultMessage);
+      expect(exportPageElement).toBeInTheDocument();
+      expect(getByText(messages.titleUnderButton.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.description2.defaultMessage)).toBeInTheDocument();
+      expect(buttonElement).toBeInTheDocument();
+      expect(buttonElement.disabled).toEqual(true);
+    });
+    userPermissionsData = { permissions: ['manage_course_settings'] };
+    axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, userPermissionsData);
+    await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+  });
   it('should start exporting on click', async () => {
     const { getByText, container } = render(<RootWrapper />);
     axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });

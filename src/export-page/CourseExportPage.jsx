@@ -113,7 +113,7 @@ const CourseExportPage = ({ intl, courseId }) => {
                     </Card.Section>
                   )}
                 </Card>
-                {exportTriggered && <ExportStepper courseId={courseId} />}
+                {exportTriggered && <ExportStepper courseId={courseId} viewOnly={viewOnly} />}
                 <ExportFooter />
               </article>
             </Layout.Element>
