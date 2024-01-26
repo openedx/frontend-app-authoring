@@ -4,11 +4,13 @@ import { useParams } from 'react-router-dom';
 import { Container, Layout, Stack } from '@openedx/paragon';
 import { useIntl, injectIntl } from '@edx/frontend-platform/i18n';
 import { ErrorAlert } from '@edx/frontend-lib-content-components';
+import { Warning as WarningIcon } from '@openedx/paragon/icons';
 
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { RequestStatus } from '../data/constants';
 import getPageHeadTitle from '../generic/utils';
+import AlertMessage from '../generic/alert-message';
 import ProcessingNotification from '../generic/processing-notification';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import Loading from '../generic/Loading';
@@ -33,6 +35,7 @@ const CourseUnit = ({ courseId }) => {
     savingStatus,
     isTitleEditFormOpen,
     isErrorAlert,
+    isLastUnpublishedVersion,
     isInternetConnectionAlertFailed,
     unitXBlockActions,
     handleTitleEditSubmit,
@@ -94,6 +97,13 @@ const CourseUnit = ({ courseId }) => {
             xl={[{ span: 9 }, { span: 3 }]}
           >
             <Layout.Element>
+              {isLastUnpublishedVersion && (
+                <AlertMessage
+                  title={intl.formatMessage(messages.alertUnpublishedVersion)}
+                  variant="warning"
+                  icon={WarningIcon}
+                />
+              )}
               <Stack gap={4} className="mb-4">
                 {courseVerticalChildren.children.map(({ name, blockId: id, shouldScroll }) => (
                   <CourseXBlock

@@ -31,12 +31,13 @@ import {
   courseVerticalChildrenMock,
 } from './__mocks__';
 import { executeThunk } from '../utils';
-import CourseUnit from './CourseUnit';
 import headerNavigationsMessages from './header-navigations/messages';
 import headerTitleMessages from './header-title/messages';
 import courseSequenceMessages from './course-sequence/messages';
 import sidebarMessages from './sidebar/messages';
 import { extractCourseUnitId } from './sidebar/utils';
+import CourseUnit from './CourseUnit';
+import messages from './messages';
 
 import deleteModalMessages from '../generic/delete-modal/messages';
 import courseXBlockMessages from './course-xblock/messages';
@@ -350,6 +351,36 @@ describe('<CourseUnit />', () => {
       expect(getByText(courseUnitLocationId)).toBeInTheDocument();
       expect(getByText(sidebarMessages.unitLocationDescription.defaultMessage
         .replace('{id}', courseUnitLocationId))).toBeInTheDocument();
+    });
+  });
+
+  it('should display a warning alert for unpublished course unit version', async () => {
+    const { getByRole } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const unpublishedAlert = getByRole('alert', { class: 'course-unit-unpublished-alert' });
+      expect(unpublishedAlert).toHaveTextContent(messages.alertUnpublishedVersion.defaultMessage);
+      expect(unpublishedAlert).toHaveClass('alert-warning');
+    });
+  });
+
+  it('should not display an unpublished alert for a course unit with explicit staff lock and unpublished status', async () => {
+    const { queryByRole } = render(<RootWrapper />);
+
+    axiosMock
+      .onGet(getCourseUnitApiUrl(courseId))
+      .reply(200, {
+        ...courseUnitIndexMock,
+        has_explicit_staff_lock: true,
+        release_date: null,
+        published: false,
+      });
+
+    await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
+
+    await waitFor(() => {
+      const unpublishedAlert = queryByRole('alert', { class: 'course-unit-unpublished-alert' });
+      expect(unpublishedAlert).toBeNull();
     });
   });
 
