@@ -15,7 +15,6 @@ import { exportStepperPageMock } from './__mocks__';
 import { fetchExportStatus } from '../data/thunks';
 import { getExportStatusApiUrl } from '../data/api';
 
-
 const courseId = 'course-123';
 let axiosMock;
 let store;
@@ -31,7 +30,7 @@ const RootWrapper = () => (
 const ViewOnlyRootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
-      <ExportStepper intl={{ formatMessage: jest.fn() }} courseId={courseId} viewOnly={true} />
+      <ExportStepper intl={{ formatMessage: jest.fn() }} courseId={courseId} viewOnly />
     </IntlProvider>
   </AppProvider>
 );
