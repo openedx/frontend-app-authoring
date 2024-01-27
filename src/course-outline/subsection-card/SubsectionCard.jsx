@@ -10,13 +10,14 @@ import {
 import classNames from 'classnames';
 
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
-import { getInitialUserClipboard } from '../data/selectors';
 import { RequestStatus } from '../../data/constants';
+import { COURSE_BLOCK_NAMES } from '../constants';
 import CardHeader from '../card-header/CardHeader';
 import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
 import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
+import PasteButton from '../paste-button/PasteButton';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
 
@@ -43,7 +44,6 @@ const SubsectionCard = ({
   const dispatch = useDispatch();
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'subsection';
-  const initialUserClipboard = useSelector(getInitialUserClipboard);
 
   const {
     id,
@@ -55,9 +55,6 @@ const SubsectionCard = ({
     isHeaderVisible = true,
     enableCopyPasteUnits = false,
   } = subsection;
-
-  // Show paste button in copy paste waffle flag is enabled and clipboard has content
-  const showPasteButton = enableCopyPasteUnits && initialUserClipboard?.content?.status === 'ready';
 
   // re-create actions object for customizations
   const actions = { ...subsectionActions };
@@ -199,17 +196,12 @@ const SubsectionCard = ({
                 >
                   {intl.formatMessage(messages.newUnitButton)}
                 </Button>
-                {showPasteButton && (
-                  <Button
-                    data-testid="new-unit-button"
-                    className="mt-4"
-                    variant="outline-primary"
-                    iconBefore={IconPaste}
-                    block
+                {enableCopyPasteUnits && (
+                  <PasteButton
+                    text={intl.formatMessage(messages.pasteButton)}
+                    blockType={COURSE_BLOCK_NAMES.vertical.id}
                     onClick={handlePasteButtonClick}
-                  >
-                    {intl.formatMessage(messages.pasteButton)}
-                  </Button>
+                  />
                 )}
               </>
             )}
