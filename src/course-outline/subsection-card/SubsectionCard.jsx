@@ -56,6 +56,9 @@ const SubsectionCard = ({
     enableCopyPasteUnits = false,
   } = subsection;
 
+  // Show paste button in copy paste waffle flag is enabled and clipboard has content
+  const showPasteButton = enableCopyPasteUnits && initialUserClipboard?.content?.status === 'ready';
+
   // re-create actions object for customizations
   const actions = { ...subsectionActions };
   // add actions to control display of move up & down menu buton.
@@ -196,7 +199,7 @@ const SubsectionCard = ({
                 >
                   {intl.formatMessage(messages.newUnitButton)}
                 </Button>
-                {enableCopyPasteUnits && initialUserClipboard && (
+                {showPasteButton && (
                   <Button
                     data-testid="new-unit-button"
                     className="mt-4"
