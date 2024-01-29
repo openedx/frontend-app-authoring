@@ -266,7 +266,7 @@ const StatusMessages = ({
 StatusMessages.defaultProps = {
   staffOnlyMessage: false,
   prereq: '',
-  prereqs: {},
+  prereqs: [],
   userPartitionInfo: {},
 };
 
