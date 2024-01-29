@@ -3,8 +3,9 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { useDispatch, useSelector } from 'react-redux';
 import { getConfig } from '@edx/frontend-platform';
 import PropTypes from 'prop-types';
+import { Error as ErrorIcon } from '@openedx/paragon/icons';
 
-import ModalError from '../../generic/modal-error/ModalError';
+import ModalNotification from '../../generic/modal-notification';
 import { getError, getIsErrorModalOpen } from '../data/selectors';
 import { updateIsErrorModalOpen } from '../data/slice';
 import messages from './messages';
@@ -20,7 +21,7 @@ const ExportModalError = ({
   const handleUnitRedirect = () => { window.location.assign(unitErrorUrl); };
   const handleRedirectCourseHome = () => { window.location.assign(`${getConfig().STUDIO_BASE_URL}/course/${courseId}`); };
   return (
-    <ModalError
+    <ModalNotification
       isOpen={isErrorModalOpen}
       title={intl.formatMessage(messages.errorTitle)}
       message={
@@ -39,6 +40,8 @@ const ExportModalError = ({
       }
       handleCancel={() => dispatch(updateIsErrorModalOpen(false))}
       handleAction={unitErrorUrl ? handleUnitRedirect : handleRedirectCourseHome}
+      variant="danger"
+      icon={ErrorIcon}
     />
   );
 };

@@ -18,6 +18,7 @@ import {
   getCourseSectionVerticalData,
   createCourseXblock,
   getCourseVerticalChildren,
+  handleCourseUnitVisibilityAndData,
   deleteUnitItem,
   duplicateUnitItem,
 } from './api';
@@ -37,9 +38,11 @@ import {
   updateLoadingCourseXblockStatus,
   updateCourseVerticalChildren,
   updateCourseVerticalChildrenLoadingStatus,
+  updateQueryPendingStatus,
   deleteXBlock,
   duplicateXBlock,
 } from './slice';
+import { getNotificationMessage } from './utils';
 
 export function fetchCourseUnitQuery(courseId) {
   return async (dispatch) => {
@@ -106,6 +109,31 @@ export function editCourseItemQuery(itemId, displayName, sequenceId) {
           }));
           dispatch(fetchSequenceSuccess({ sequenceId }));
           dispatch(fetchCourseItemSuccess(courseUnit));
+          dispatch(hideProcessingNotification());
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+        }
+      });
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function editCourseUnitVisibilityAndData(itemId, type, isVisible) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(updateQueryPendingStatus(true));
+    const notificationMessage = getNotificationMessage(type, isVisible);
+    dispatch(showProcessingNotification(notificationMessage));
+
+    try {
+      await handleCourseUnitVisibilityAndData(itemId, type, isVisible).then(async (result) => {
+        if (result) {
+          const courseUnit = await getCourseUnitData(itemId);
+          dispatch(fetchCourseItemSuccess(courseUnit));
+          const courseVerticalChildrenData = await getCourseVerticalChildren(itemId);
+          dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
           dispatch(hideProcessingNotification());
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         }
@@ -221,6 +249,8 @@ export function createNewCourseXBlock(body, callback, blockId) {
             callback(result);
           }
         }
+        const courseUnit = await getCourseUnitData(blockId);
+        dispatch(fetchCourseItemSuccess(courseUnit));
       });
     } catch (error) {
       dispatch(hideProcessingNotification());

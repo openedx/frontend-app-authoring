@@ -105,6 +105,38 @@ const messages = defineMessages({
     id: 'course-authoring.course-unit.status.scheduled.title',
     defaultMessage: 'SCHEDULED',
   },
+  modalDiscardUnitChangesTitle: {
+    id: 'course-authoring.course-unit.modal.discard-unit-changes.title',
+    defaultMessage: 'Discard changes',
+  },
+  modalDiscardUnitChangesActionButtonText: {
+    id: 'course-authoring.course-unit.modal.discard-unit-changes.btn.action.text',
+    defaultMessage: 'Discard changes',
+  },
+  modalDiscardUnitChangesCancelButtonText: {
+    id: 'course-authoring.course-unit.modal.discard-unit-changes.btn.cancel.text',
+    defaultMessage: 'Cancel',
+  },
+  modalDiscardUnitChangesDescription: {
+    id: 'course-authoring.course-unit.modal.discard-unit-changes.description',
+    defaultMessage: 'Are you sure you want to revert to the last published version of the unit? You cannot undo this action.',
+  },
+  modalMakeVisibilityTitle: {
+    id: 'course-authoring.course-unit.modal.make-visibility.title',
+    defaultMessage: 'Make visible to students',
+  },
+  modalMakeVisibilityActionButtonText: {
+    id: 'course-authoring.course-unit.modal.make-visibility.btn.action.text',
+    defaultMessage: 'Make visible to students',
+  },
+  modalMakeVisibilityCancelButtonText: {
+    id: 'course-authoring.course-unit.modal.make-visibility.btn.cancel.text',
+    defaultMessage: 'Cancel',
+  },
+  modalMakeVisibilityDescription: {
+    id: 'course-authoring.course-unit.modal.make-visibility.description',
+    defaultMessage: 'If the unit was previously published and released to students, any changes you made to the unit when it was hidden will now be visible to students. Do you want to proceed?',
+  },
 });
 
 export default messages;

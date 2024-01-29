@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Button } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -5,7 +6,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { getCourseUnitData } from '../../../data/selectors';
 import messages from '../../messages';
 
-const ActionButtons = () => {
+const ActionButtons = ({ openDiscardModal, handlePublishing }) => {
   const intl = useIntl();
   const {
     published,
@@ -16,34 +17,27 @@ const ActionButtons = () => {
   return (
     <>
       {(!published || hasChanges) && (
-        <Button
-          className="mt-3.5"
-          variant="outline-primary"
-          size="sm"
-        >
+        <Button size="sm" className="mt-3.5" variant="outline-primary" onClick={handlePublishing}>
           {intl.formatMessage(messages.actionButtonPublishTitle)}
         </Button>
       )}
       {(published && hasChanges) && (
-        <Button
-          className="mt-2"
-          variant="link"
-          size="sm"
-        >
+        <Button size="sm" variant="link" onClick={openDiscardModal} className="mt-2">
           {intl.formatMessage(messages.actionButtonDiscardChangesTitle)}
         </Button>
       )}
       {enableCopyPasteUnits && (
-        <Button
-          className="mt-2"
-          variant="outline-primary"
-          size="sm"
-        >
+        <Button size="sm" className="mt-2" variant="outline-primary">
           {intl.formatMessage(messages.actionButtonCopyUnitTitle)}
         </Button>
       )}
     </>
   );
+};
+
+ActionButtons.propTypes = {
+  openDiscardModal: PropTypes.func.isRequired,
+  handlePublishing: PropTypes.func.isRequired,
 };
 
 export default ActionButtons;
