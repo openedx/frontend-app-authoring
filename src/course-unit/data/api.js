@@ -3,24 +3,15 @@ import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import { PUBLISH_TYPES } from '../constants';
-import {
-  normalizeLearningSequencesData,
-  normalizeMetadata,
-  normalizeCourseHomeCourseMetadata,
-  appendBrowserTimezoneToUrl,
-  normalizeCourseSectionVerticalData,
-} from './utils';
+import { normalizeCourseSectionVerticalData } from './utils';
 
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
-const getLmsBaseUrl = () => getConfig().LMS_BASE_URL;
 
 export const getCourseUnitApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/container/${itemId}`;
 export const getXBlockBaseApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/${itemId}`;
 export const getCourseSectionVerticalApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
-export const getLearningSequencesOutlineApiUrl = (courseId) => `${getLmsBaseUrl()}/api/learning_sequences/v1/course_outline/${courseId}`;
-export const getCourseMetadataApiUrl = (courseId) => `${getLmsBaseUrl()}/api/courseware/course/${courseId}`;
-export const getCourseHomeCourseMetadataApiUrl = (courseId) => `${getLmsBaseUrl()}/api/course_home/course_metadata/${courseId}`;
 export const getCourseVerticalChildrenApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container/vertical/${itemId}/children`;
+export const getClipboardUrl = () => `${getStudioBaseUrl()}/api/content-staging/v1/clipboard/`;
 
 export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
 
@@ -66,45 +57,6 @@ export async function getCourseSectionVerticalData(unitId) {
 }
 
 /**
- * Retrieves the outline of learning sequences for a specific course.
- * @param {string} courseId - The ID of the course.
- * @returns {Promise<Object>} A Promise that resolves to the normalized learning sequences outline data.
- */
-export async function getLearningSequencesOutline(courseId) {
-  const { href } = new URL(getLearningSequencesOutlineApiUrl(courseId));
-  const { data } = await getAuthenticatedHttpClient().get(href, {});
-
-  return normalizeLearningSequencesData(data);
-}
-
-/**
- * Retrieves metadata for a specific course.
- * @param {string} courseId - The ID of the course.
- * @returns {Promise<Object>} A Promise that resolves to the normalized course metadata.
- */
-export async function getCourseMetadata(courseId) {
-  let courseMetadataApiUrl = getCourseMetadataApiUrl(courseId);
-  courseMetadataApiUrl = appendBrowserTimezoneToUrl(courseMetadataApiUrl);
-  const metadata = await getAuthenticatedHttpClient().get(courseMetadataApiUrl);
-
-  return normalizeMetadata(metadata);
-}
-
-/**
- * Retrieves metadata for a course's home page.
- * @param {string} courseId - The ID of the course.
- * @param {string} rootSlug - The root slug for the course.
- * @returns {Promise<Object>} A Promise that resolves to the normalized course home page metadata.
- */
-export async function getCourseHomeCourseMetadata(courseId, rootSlug) {
-  let courseHomeCourseMetadataApiUrl = getCourseHomeCourseMetadataApiUrl(courseId);
-  courseHomeCourseMetadataApiUrl = appendBrowserTimezoneToUrl(courseHomeCourseMetadataApiUrl);
-  const { data } = await getAuthenticatedHttpClient().get(courseHomeCourseMetadataApiUrl);
-
-  return normalizeCourseHomeCourseMetadata(data, rootSlug);
-}
-
-/**
  * Creates a new course XBlock.
  * @param {Object} options - The options for creating the XBlock.
  * @param {string} options.type - The type of the XBlock.
@@ -129,6 +81,29 @@ export async function createCourseXblock({
     .post(postXBlockBaseApiUrl(), body);
 
   return data;
+}
+
+/**
+ * Retrieves user's clipboard.
+ * @returns {Promise<Object>} - A Promise that resolves clipboard data.
+ */
+export async function getClipboard() {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getClipboardUrl());
+
+  return camelCaseObject(data);
+}
+
+/**
+ * Updates user's clipboard.
+ * @param {string} usageKey - The ID of the block.
+ * @returns {Promise<Object>} - A Promise that resolves clipboard data.
+ */
+export async function updateClipboard(usageKey) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getClipboardUrl(), { usage_key: usageKey });
+
+  return camelCaseObject(data);
 }
 
 /**

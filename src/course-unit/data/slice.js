@@ -17,6 +17,7 @@ const slice = createSlice({
     unit: {},
     courseSectionVertical: {},
     courseVerticalChildren: [],
+    clipboardData: null,
   },
   reducers: {
     fetchCourseItemSuccess: (state, { payload }) => {
@@ -51,22 +52,6 @@ const slice = createSlice({
       state.sequenceId = payload.sequenceId;
       state.sequenceStatus = RequestStatus.FAILED;
       state.sequenceMightBeUnit = payload.sequenceMightBeUnit || false;
-    },
-    fetchCourseRequest: (state, { payload }) => {
-      state.courseId = payload.courseId;
-      state.courseStatus = RequestStatus.IN_PROGRESS;
-    },
-    fetchCourseSuccess: (state, { payload }) => {
-      state.courseId = payload.courseId;
-      state.courseStatus = RequestStatus.SUCCESSFUL;
-    },
-    fetchCourseFailure: (state, { payload }) => {
-      state.courseId = payload.courseId;
-      state.courseStatus = RequestStatus.FAILED;
-    },
-    fetchCourseDenied: (state, { payload }) => {
-      state.courseId = payload.courseId;
-      state.courseStatus = RequestStatus.DENIED;
     },
     fetchCourseSectionVerticalDataSuccess: (state, { payload }) => {
       state.courseSectionVertical = payload;
@@ -111,6 +96,9 @@ const slice = createSlice({
         }),
       };
     },
+    updateClipboardData: (state, { payload }) => {
+      state.clipboardData = payload;
+    },
   },
 });
 
@@ -122,10 +110,6 @@ export const {
   fetchSequenceRequest,
   fetchSequenceSuccess,
   fetchSequenceFailure,
-  fetchCourseRequest,
-  fetchCourseSuccess,
-  fetchCourseFailure,
-  fetchCourseDenied,
   fetchCourseSectionVerticalDataSuccess,
   updateLoadingCourseSectionVerticalDataStatus,
   changeEditTitleFormOpen,
@@ -135,6 +119,7 @@ export const {
   updateCourseVerticalChildrenLoadingStatus,
   deleteXBlock,
   duplicateXBlock,
+  updateClipboardData,
 } = slice.actions;
 
 export const {

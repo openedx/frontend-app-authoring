@@ -3,14 +3,21 @@ import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
-
-import { courseVerticalChildrenMock } from '../__mocks__';
-import CourseXBlock from './CourseXBlock';
+import MockAdapter from 'axios-mock-adapter';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import deleteModalMessages from '../../generic/delete-modal/messages';
+import initializeStore from '../../store';
+import { getCourseSectionVerticalApiUrl } from '../data/api';
+import { fetchCourseSectionVerticalData } from '../data/thunk';
+import { executeThunk } from '../../utils';
+import { courseSectionVerticalMock, courseVerticalChildrenMock } from '../__mocks__';
+import CourseXBlock from './CourseXBlock';
 import messages from './messages';
 
+let axiosMock;
 let store;
+const blockId = '567890';
 const handleDeleteMock = jest.fn();
 const handleDuplicateMock = jest.fn();
 const xblockData = courseVerticalChildrenMock.children[0];
@@ -42,6 +49,13 @@ describe('<CourseXBlock />', () => {
         roles: [],
       },
     });
+
+    store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, courseSectionVerticalMock);
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
   });
 
   it('render CourseXBlock component correctly', async () => {
@@ -59,7 +73,6 @@ describe('<CourseXBlock />', () => {
 
     await waitFor(() => {
       userEvent.click(getByLabelText(messages.blockActionsDropdownAlt.defaultMessage));
-      expect(getByRole('button', { name: messages.blockLabelButtonCopy.defaultMessage })).toBeInTheDocument();
       expect(getByRole('button', { name: messages.blockLabelButtonDuplicate.defaultMessage })).toBeInTheDocument();
       expect(getByRole('button', { name: messages.blockLabelButtonMove.defaultMessage })).toBeInTheDocument();
       expect(getByRole('button', { name: messages.blockLabelButtonManageAccess.defaultMessage })).toBeInTheDocument();

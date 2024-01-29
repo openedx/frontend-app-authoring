@@ -1,4 +1,4 @@
-import { logError, logInfo } from '@edx/frontend-platform/logging';
+import { logError } from '@edx/frontend-platform/logging';
 import { camelCaseObject } from '@edx/frontend-platform';
 
 import {
@@ -7,18 +7,15 @@ import {
 } from '../../generic/processing-notification/data/slice';
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
-import {
-  addModel, updateModel, updateModels, updateModelsMap, addModelsMap,
-} from '../../generic/model-store';
+import { updateModel, updateModels } from '../../generic/model-store';
 import {
   getCourseUnitData,
   editUnitDisplayName,
-  getCourseMetadata,
-  getLearningSequencesOutline,
-  getCourseHomeCourseMetadata,
   getCourseSectionVerticalData,
   createCourseXblock,
   getCourseVerticalChildren,
+  updateClipboard,
+  getClipboard,
   handleCourseUnitVisibilityAndData,
   deleteUnitItem,
   duplicateUnitItem,
@@ -30,19 +27,17 @@ import {
   fetchSequenceRequest,
   fetchSequenceFailure,
   fetchSequenceSuccess,
-  fetchCourseRequest,
-  fetchCourseSuccess,
-  fetchCourseDenied,
-  fetchCourseFailure,
   fetchCourseSectionVerticalDataSuccess,
   updateLoadingCourseSectionVerticalDataStatus,
   updateLoadingCourseXblockStatus,
   updateCourseVerticalChildren,
   updateCourseVerticalChildrenLoadingStatus,
+  updateClipboardData,
   updateQueryPendingStatus,
   deleteXBlock,
   duplicateXBlock,
 } from './slice';
+import { CLIPBOARD_STATUS } from '../constants';
 import { getNotificationMessage } from './utils';
 
 export function fetchCourseUnitQuery(courseId) {
@@ -78,6 +73,7 @@ export function fetchCourseSectionVerticalData(courseId, sequenceId) {
         modelType: 'units',
         models: courseSectionVerticalData.units,
       }));
+      dispatch(updateClipboardData(courseSectionVerticalData.userClipboard));
       dispatch(fetchSequenceSuccess({ sequenceId }));
       return true;
     } catch (error) {
@@ -143,88 +139,6 @@ export function editCourseUnitVisibilityAndData(itemId, type, isVisible) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
-  };
-}
-
-export function fetchCourse(courseId) {
-  return async (dispatch) => {
-    dispatch(fetchCourseRequest({ courseId }));
-    Promise.allSettled([
-      getCourseMetadata(courseId),
-      getLearningSequencesOutline(courseId),
-      getCourseHomeCourseMetadata(courseId, 'courseware'),
-    ]).then(([
-      courseMetadataResult,
-      learningSequencesOutlineResult,
-      courseHomeMetadataResult]) => {
-      if (courseMetadataResult.status === 'fulfilled') {
-        dispatch(addModel({
-          modelType: 'coursewareMeta',
-          model: courseMetadataResult.value,
-        }));
-      }
-
-      if (courseHomeMetadataResult.status === 'fulfilled') {
-        dispatch(addModel({
-          modelType: 'courseHomeMeta',
-          model: {
-            id: courseId,
-            ...courseHomeMetadataResult.value,
-          },
-        }));
-      }
-
-      if (learningSequencesOutlineResult.status === 'fulfilled') {
-        const { courses, sections } = learningSequencesOutlineResult.value;
-
-        // This updates the course with a sectionIds array from the Learning Sequence data.
-        dispatch(updateModelsMap({
-          modelType: 'coursewareMeta',
-          modelsMap: courses,
-        }));
-        dispatch(addModelsMap({
-          modelType: 'sections',
-          modelsMap: sections,
-        }));
-      }
-
-      const fetchedMetadata = courseMetadataResult.status === 'fulfilled';
-      const fetchedCourseHomeMetadata = courseHomeMetadataResult.status === 'fulfilled';
-      const fetchedOutline = learningSequencesOutlineResult.status === 'fulfilled';
-
-      // Log errors for each request if needed. Outline failures may occur
-      // even if the course metadata request is successful
-      if (!fetchedOutline) {
-        const { response } = learningSequencesOutlineResult.reason;
-        if (response && response.status === 403) {
-          // 403 responses are normal - they happen when the learner is logged out.
-          // We'll redirect them in a moment to the outline tab by calling fetchCourseDenied() below.
-          logInfo(learningSequencesOutlineResult.reason);
-        } else {
-          logError(learningSequencesOutlineResult.reason);
-        }
-      }
-      if (!fetchedMetadata) {
-        logError(courseMetadataResult.reason);
-      }
-      if (!fetchedCourseHomeMetadata) {
-        logError(courseHomeMetadataResult.reason);
-      }
-      if (fetchedMetadata && fetchedCourseHomeMetadata) {
-        if (courseHomeMetadataResult.value.courseAccess.hasAccess && fetchedOutline) {
-          // User has access
-          dispatch(fetchCourseSuccess({ courseId }));
-          return;
-        }
-        // User either doesn't have access or only has partial access
-        // (can't access course blocks)
-        dispatch(fetchCourseDenied({ courseId }));
-        return;
-      }
-
-      // Definitely an error happening
-      dispatch(fetchCourseFailure({ courseId }));
-    });
   };
 }
 
@@ -317,6 +231,39 @@ export function duplicateUnitItemQuery(itemId, xblockId) {
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function copyToClipboard(usageKey) {
+  const POLL_INTERVAL_MS = 1000; // Timeout duration for polling in milliseconds
+
+  return async (dispatch) => {
+    dispatch(updateClipboardData(null));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.copying));
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(updateQueryPendingStatus(true));
+
+    try {
+      let clipboardData = await updateClipboard(usageKey);
+
+      while (clipboardData.content?.status === CLIPBOARD_STATUS.loading) {
+        // eslint-disable-next-line no-await-in-loop,no-promise-executor-return
+        await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+        clipboardData = await getClipboard(); // eslint-disable-line no-await-in-loop
+      }
+
+      if (clipboardData.content?.status === CLIPBOARD_STATUS.ready) {
+        dispatch(updateClipboardData(clipboardData));
+        dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+      } else {
+        throw new Error(`Unexpected clipboard status "${clipboardData.content?.status}" in successful API response.`);
+      }
+    } catch (error) {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+      logError('Error copying to clipboard:', error);
+    } finally {
+      dispatch(hideProcessingNotification());
     }
   };
 }
