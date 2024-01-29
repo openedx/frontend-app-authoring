@@ -3,20 +3,14 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { useWindowSize } from '@openedx/paragon';
 
 import { useModel } from '../../generic/model-store';
-import {
-  getCourseSectionVertical,
-  getCourseUnit,
-  sequenceIdsSelector,
-} from '../data/selectors';
+import { getCourseSectionVertical, getSequenceIds } from '../data/selectors';
 
-export function useSequenceNavigationMetadata(currentSequenceId, currentUnitId) {
-  const sequenceIds = useSelector(sequenceIdsSelector);
+export function useSequenceNavigationMetadata(courseId, currentSequenceId, currentUnitId) {
   const { nextUrl, prevUrl } = useSelector(getCourseSectionVertical);
   const sequence = useModel('sequences', currentSequenceId);
-  const { courseId } = useSelector(getCourseUnit);
   const isFirstUnit = !prevUrl;
   const isLastUnit = !nextUrl;
-
+  const sequenceIds = useSelector(getSequenceIds);
   const sequenceIndex = sequenceIds.indexOf(currentSequenceId);
   const unitIndex = sequence.unitIds.indexOf(currentUnitId);
 
