@@ -1,5 +1,5 @@
 import { MemoryRouter } from 'react-router-dom';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import { act, render, fireEvent, waitFor } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { ITEM_BADGE_STATUS } from '../constants';
@@ -29,6 +29,8 @@ const cardHeaderProps = {
   onClickEdit: onClickEditMock,
   isFormOpen: false,
   onEditSubmit: jest.fn(),
+  onClickMoveUp: jest.fn(),
+  onClickMoveDown: jest.fn(),
   closeForm: closeFormMock,
   isDisabledEditField: false,
   onClickDelete: onClickDeleteMock,
@@ -155,10 +157,8 @@ describe('<CardHeader />', () => {
     const { findByTestId } = renderComponent();
 
     const menuButton = await findByTestId('section-card-header__menu-button');
-    fireEvent.click(menuButton);
-    waitFor(() => {
-      expect(onClickMenuButtonMock).toHaveBeenCalled();
-    });
+    await act(async () => fireEvent.click(menuButton));
+    expect(onClickMenuButtonMock).toHaveBeenCalled();
   });
 
   it('calls onClickPublish when item is clicked', async () => {
@@ -171,20 +171,16 @@ describe('<CardHeader />', () => {
     fireEvent.click(menuButton);
 
     const publishMenuItem = await findByText(messages.menuPublish.defaultMessage);
-    fireEvent.click(publishMenuItem);
-    waitFor(() => {
-      expect(onClickPublishMock).toHaveBeenCalled();
-    });
+    await act(async () => fireEvent.click(publishMenuItem));
+    expect(onClickPublishMock).toHaveBeenCalled();
   });
 
   it('calls onClickEdit when the button is clicked', async () => {
     const { findByTestId } = renderComponent();
 
     const editButton = await findByTestId('section-edit-button');
-    fireEvent.click(editButton);
-    waitFor(() => {
-      expect(onClickEditMock).toHaveBeenCalled();
-    });
+    await act(async () => fireEvent.click(editButton));
+    expect(onClickEditMock).toHaveBeenCalled();
   });
 
   it('check is field visible when isFormOpen is true', async () => {
@@ -214,13 +210,10 @@ describe('<CardHeader />', () => {
     const { findByText, findByTestId } = renderComponent();
 
     const menuButton = await findByTestId('section-card-header__menu-button');
-    fireEvent.click(menuButton);
-
+    await act(async () => fireEvent.click(menuButton));
     const deleteMenuItem = await findByText(messages.menuDelete.defaultMessage);
-    fireEvent.click(deleteMenuItem);
-    waitFor(() => {
-      expect(onClickDeleteMock).toHaveBeenCalledTimes(1);
-    });
+    await act(async () => fireEvent.click(deleteMenuItem));
+    expect(onClickDeleteMock).toHaveBeenCalledTimes(1);
   });
 
   it('calls onClickDuplicate when item is clicked', async () => {
@@ -231,8 +224,20 @@ describe('<CardHeader />', () => {
 
     const duplicateMenuItem = await findByText(messages.menuDuplicate.defaultMessage);
     fireEvent.click(duplicateMenuItem);
-    waitFor(() => {
-      expect(onClickDuplicateMock).toHaveBeenCalled();
+    await act(async () => fireEvent.click(duplicateMenuItem));
+    expect(onClickDuplicateMock).toHaveBeenCalled();
+  });
+
+  it('check if proctoringExamConfigurationLink is visible', async () => {
+    const { findByText, findByTestId } = renderComponent({
+      ...cardHeaderProps,
+      proctoringExamConfigurationLink: 'https://localhost:8000/',
+      isSequential: true,
     });
+
+    const menuButton = await findByTestId('section-card-header__menu-button');
+    await act(async () => fireEvent.click(menuButton));
+
+    expect(await findByText(messages.menuProctoringLinkText.defaultMessage)).toBeInTheDocument();
   });
 });

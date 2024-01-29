@@ -61,6 +61,14 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.card.menu.delete',
     defaultMessage: 'Copy to clipboard',
   },
+  menuProctoringLinkText: {
+    id: 'course-authoring.course-outline.card.menu.proctoring-settings',
+    defaultMessage: 'Proctoring Settings',
+  },
+  proctoringLinkTooltip: {
+    id: 'course-authoring.course-outline.card.menu.proctoring-settings-tooltip',
+    defaultMessage: 'Proctoring Settings',
+  },
 });
 
 export default messages;

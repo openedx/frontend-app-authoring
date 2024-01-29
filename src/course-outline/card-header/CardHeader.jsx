@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import {
   Dropdown,
   Form,
+  Hyperlink,
   Icon,
   IconButton,
 } from '@edx/paragon';
@@ -41,6 +42,8 @@ const CardHeader = ({
   actions,
   enableCopyPasteUnits,
   isVertical,
+  isSequential,
+  proctoringExamConfigurationLink,
 }) => {
   const intl = useIntl();
   const [searchParams] = useSearchParams();
@@ -116,6 +119,17 @@ const CardHeader = ({
             iconAs={Icon}
           />
           <Dropdown.Menu>
+            {isSequential && proctoringExamConfigurationLink && (
+              <Dropdown.Item
+                as={Hyperlink}
+                target="_blank"
+                destination={proctoringExamConfigurationLink}
+                href={proctoringExamConfigurationLink}
+                externalLinkTitle={intl.formatMessage(messages.proctoringLinkTooltip)}
+              >
+                {intl.formatMessage(messages.menuProctoringLinkText)}
+              </Dropdown.Item>
+            )}
             <Dropdown.Item
               data-testid={`${namePrefix}-card-header__menu-publish-button`}
               disabled={isDisabledPublish}
@@ -179,7 +193,9 @@ const CardHeader = ({
 CardHeader.defaultProps = {
   enableCopyPasteUnits: false,
   isVertical: false,
+  isSequential: false,
   onClickCopy: null,
+  proctoringExamConfigurationLink: null,
 };
 
 CardHeader.propTypes = {
@@ -202,6 +218,7 @@ CardHeader.propTypes = {
   onClickCopy: PropTypes.func,
   titleComponent: PropTypes.node.isRequired,
   namePrefix: PropTypes.string.isRequired,
+  proctoringExamConfigurationLink: PropTypes.string,
   actions: PropTypes.shape({
     deletable: PropTypes.bool.isRequired,
     draggable: PropTypes.bool.isRequired,
@@ -212,6 +229,7 @@ CardHeader.propTypes = {
   }).isRequired,
   enableCopyPasteUnits: PropTypes.bool,
   isVertical: PropTypes.bool,
+  isSequential: PropTypes.bool,
 };
 
 export default CardHeader;
