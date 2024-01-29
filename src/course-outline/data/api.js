@@ -425,7 +425,7 @@ export async function copyBlockToClipboard(usageKey) {
       usage_key: usageKey,
     });
 
-  return data;
+  return camelCaseObject(data);
 }
 
 /**

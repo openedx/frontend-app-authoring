@@ -1,19 +1,21 @@
 import { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { Icon, Button, OverlayTrigger } from '@edx/paragon';
+import { Hyperlink, Icon, Button, Popover, OverlayTrigger } from '@edx/paragon';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   FileCopy as PasteIcon,
   Question as QuestionIcon
 } from '@edx/paragon/icons';
 import { getInitialUserClipboard } from '../data/selectors';
+import messages from './messages';
 
 const PasteButton = ({
   text,
   blockType,
   onClick,
 }) => {
+  const intl = useIntl();
   const initialUserClipboard = useSelector(getInitialUserClipboard);
   const {
     content,
@@ -40,16 +42,31 @@ const PasteButton = ({
   }
 
   const renderBlockLink = (props) => (
-    <Button
-      as={Link}
-      to={sourceEditUrl}
-      variant="inverse-primary"
-      onMouseEnter={handleOnMouseEnter}
-      onMouseLeave={handleOnMouseLeave}
+    <Popover
+      className="p-0"
       {...props}
     >
-      <strong>{sourceContextTitle}</strong>
-    </Button>
+      <Hyperlink
+        className="d-flex bg-white p-3 text-decoration-none"
+        target="_blank"
+        destination={sourceEditUrl}
+        onMouseEnter={handleOnMouseEnter}
+        onMouseLeave={handleOnMouseLeave}
+      >
+        <div className="text-gray mr-5 mw-xs">
+          <h4>
+            {content?.displayName}<br/>
+            <span className="micro text-gray-400">
+              {content?.blockTypeDisplay}
+            </span>
+          </h4>
+          <span className="x-small">
+            {intl.formatMessage(messages.clipboardContentFromLabel)}
+            <em>{sourceContextTitle}</em>
+          </span>
+        </div>
+      </Hyperlink>
+    </Popover>
   );
 
   return (
@@ -65,18 +82,18 @@ const PasteButton = ({
       </Button>
       <OverlayTrigger
         show={show}
-        key='top'
-        placement='top-end'
+        placement='top'
         container={ref}
         overlay={renderBlockLink}
       >
         <span
-          className="d-inline-flex"
+          className="float-right d-inline-flex align-items-center x-small mt-2"
           ref={ref}
           onMouseEnter={handleOnMouseEnter}
           onMouseLeave={handleOnMouseLeave}
         >
-          <Icon src={QuestionIcon} />What's in my clipboard?
+          <Icon size="sm" src={QuestionIcon} />
+          {intl.formatMessage(messages.clipboardContentLabel)}
         </span>
       </OverlayTrigger>
     </>
