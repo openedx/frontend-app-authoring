@@ -7,7 +7,6 @@ import {
   createNewCourseXBlock,
   fetchCourseUnitQuery,
   editCourseItemQuery,
-  fetchCourse,
   fetchCourseSectionVerticalData,
   fetchCourseVerticalChildrenData,
   deleteUnitItemQuery,
@@ -19,6 +18,7 @@ import {
   getCourseUnitData,
   getLoadingStatus,
   getSavingStatus,
+  getSequenceStatus,
 } from './data/selectors';
 import { changeEditTitleFormOpen, updateQueryPendingStatus } from './data/slice';
 
@@ -31,6 +31,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const courseUnit = useSelector(getCourseUnitData);
   const savingStatus = useSelector(getSavingStatus);
   const loadingStatus = useSelector(getLoadingStatus);
+  const sequenceStatus = useSelector(getSequenceStatus);
   const { draftPreviewLink, publishedPreviewLink } = useSelector(getCourseSectionVertical);
   const courseVerticalChildren = useSelector(getCourseVerticalChildren);
   const navigate = useNavigate();
@@ -87,7 +88,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
-      dispatch(updateQueryPendingStatus(false));
+      dispatch(updateQueryPendingStatus(true));
     } else if (savingStatus === RequestStatus.FAILED && !hasInternetConnectionError) {
       toggleErrorAlert(true);
     }
@@ -97,7 +98,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     dispatch(fetchCourseUnitQuery(blockId));
     dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
     dispatch(fetchCourseVerticalChildrenData(blockId));
-    dispatch(fetchCourse(courseId));
 
     handleNavigate(sequenceId);
   }, [courseId, blockId, sequenceId]);
@@ -106,6 +106,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     sequenceId,
     courseUnit,
     unitTitle,
+    sequenceStatus,
     savingStatus,
     isQueryPending,
     isErrorAlert,
