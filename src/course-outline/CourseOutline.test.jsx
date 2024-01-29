@@ -17,6 +17,7 @@ import {
   getCourseBlockApiUrl,
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
+  getClipboardUrl,
 } from './data/api';
 import { RequestStatus } from '../data/constants';
 import {
@@ -43,6 +44,8 @@ import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
 import statusBarMessages from './status-bar/messages';
 import configureModalMessages from './configure-modal/messages';
+import pasteButtonMessages from './paste-button/messages';
+import subsectionMessages from './subsection-card/messages';
 
 let axiosMock;
 let store;
@@ -1337,5 +1340,79 @@ describe('<CourseOutline />', () => {
     await waitFor(() => {
       expect(within(sectionElement).queryByText(section.displayName)).toBeInTheDocument();
     });
+  });
+
+  it('check whether unit copy & paste option works correctly', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get first section -> first subsection -> first unit element
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [sectionElement] = await findAllByTestId('section-card');
+    const [subsection] = section.childInfo.children;
+    let [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    await act(async () => fireEvent.click(expandBtn));
+    const [unit] = subsection.childInfo.children;
+    const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
+
+    const expectedClipboardContent = {
+      content: {
+        blockType: 'vertical',
+        blockTypeDisplay: 'Unit',
+        created: '2024-01-29T07:58:36.844249Z',
+        displayName: unit.displayName,
+        id: 15,
+        olxUrl: 'http://localhost:18010/api/content-staging/v1/staged-content/15/olx',
+        purpose: 'clipboard',
+        status: 'ready',
+        userId: 3,
+      },
+      sourceUsageKey: unit.id,
+      sourceContexttitle: courseOutlineIndexMock.courseStructure.displayName,
+      sourceEditUrl: unit.studioUrl,
+    };
+    // mock api call
+    axiosMock
+      .onPost(getClipboardUrl(), {
+        usage_key: unit.id,
+      }).reply(200, expectedClipboardContent);
+    // check that initialUserClipboard state is empty
+    const { initialUserClipboard } = store.getState().courseOutline;
+    expect(initialUserClipboard).toBeUndefined();
+
+    // find menu button and click on it to open menu
+    const menu = await within(unitElement).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+
+    // move first unit back to second position to test move down option
+    const copyButton = await within(unitElement).findByText(cardHeaderMessages.menuCopy.defaultMessage);
+    await act(async () => fireEvent.click(copyButton));
+
+    // check that initialUserClipboard state is updated
+    expect(store.getState().courseOutline.initialUserClipboard).toEqual(expectedClipboardContent);
+
+    [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    // find clipboard content label
+    const clipboardLabel = await within(subsectionElement).findByText(
+      pasteButtonMessages.clipboardContentLabel.defaultMessage,
+    );
+    await act(async () => fireEvent.mouseOver(clipboardLabel));
+
+    // find clipboard content popup link
+    const clipboardPopover = await within(subsectionElement).findByRole('tooltip');
+    expect(clipboardPopover.querySelector('a')).toHaveAttribute('href', unit.studioUrl);
+
+    // check paste button functionality
+    // mock api call
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(), {
+        parent_locator: subsection.id,
+        staged_content: 'clipboard',
+      }).reply(200, { dummy: 'value' });
+    const pasteBtn = await within(subsectionElement).findByText(subsectionMessages.pasteButton.defaultMessage);
+    await act(async () => fireEvent.click(pasteBtn));
+
+    [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const lastUnitElement = (await within(subsectionElement).findAllByTestId('unit-card')).slice(-1)[0];
+    expect(lastUnitElement).toHaveTextContent(unit.displayName);
   });
 });

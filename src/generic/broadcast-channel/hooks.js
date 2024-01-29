@@ -1,6 +1,7 @@
 import {
   useCallback, useEffect, useMemo, useRef,
 } from 'react';
+import { BroadcastChannel } from 'broadcast-channel';
 
 const channelInstances = {};
 

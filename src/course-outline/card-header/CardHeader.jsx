@@ -110,10 +110,7 @@ const CardHeader = ({
               {intl.formatMessage(messages.menuConfigure)}
             </Dropdown.Item>
             {isVertical && enableCopyPasteUnits && (
-              <Dropdown.Item
-                data-testid={`${namePrefix}-card-header__menu-copy-unit-button`}
-                onClick={onClickCopy}
-              >
+              <Dropdown.Item onClick={onClickCopy}>
                 {intl.formatMessage(messages.menuCopy)}
               </Dropdown.Item>
             )}
