@@ -62,3 +62,9 @@ export const COLORS = {
   BLACK: '#000',
   GREEN: '#0D7D4D',
 };
+
+export const PUBLISH_TYPES = {
+  republish: 'republish',
+  discardChanges: 'discard_changes',
+  makePublic: 'make_public',
+};

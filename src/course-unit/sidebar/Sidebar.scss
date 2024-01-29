@@ -31,6 +31,7 @@
       .course-unit-sidebar-location-description {
         font-size: $font-size-xs;
         line-height: $line-height-base;
+        word-break: break-word;
       }
 
       .course-unit-sidebar-visibility-copy {

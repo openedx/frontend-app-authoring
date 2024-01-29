@@ -1,5 +1,8 @@
 import { camelCaseObject } from '@edx/frontend-platform';
 
+import { NOTIFICATION_MESSAGES } from '../../constants';
+import { PUBLISH_TYPES } from '../constants';
+
 export function getTimeOffsetMillis(headerDate, requestTime, responseTime) {
   // Time offset computation should move down into the HttpClient wrapper to maintain a global time correction reference
   // Requires 'Access-Control-Expose-Headers: Date' on the server response per https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#access-control-expose-headers
@@ -211,3 +214,25 @@ export function normalizeCourseSectionVerticalData(metadata) {
     })),
   };
 }
+
+/**
+ * Get the notification message based on the publishing type and visibility.
+ * @param {string} type - The publishing type.
+ * @param {boolean} isVisible - The visibility status.
+ * @returns {string} The corresponding notification message.
+ */
+export const getNotificationMessage = (type, isVisible) => {
+  let notificationMessage;
+
+  if (type === PUBLISH_TYPES.discardChanges) {
+    notificationMessage = NOTIFICATION_MESSAGES.discardChanges;
+  } else if (type === PUBLISH_TYPES.makePublic) {
+    notificationMessage = NOTIFICATION_MESSAGES.publishing;
+  } else if (type === PUBLISH_TYPES.republish && !isVisible) {
+    notificationMessage = NOTIFICATION_MESSAGES.makingVisibleToStudents;
+  } else if (type === PUBLISH_TYPES.republish && isVisible) {
+    notificationMessage = NOTIFICATION_MESSAGES.hidingFromStudents;
+  }
+
+  return notificationMessage;
+};

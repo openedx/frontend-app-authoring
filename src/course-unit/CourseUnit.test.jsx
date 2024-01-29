@@ -1,6 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
 import {
-  act, render, waitFor, fireEvent,
+  act, render, waitFor, fireEvent, within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -17,6 +17,7 @@ import {
   postXBlockBaseApiUrl,
 } from './data/api';
 import {
+  editCourseUnitVisibilityAndData,
   fetchCourseSectionVerticalData,
   fetchCourseUnitQuery,
   fetchCourseVerticalChildrenData,
@@ -40,6 +41,7 @@ import { extractCourseUnitId } from './sidebar/utils';
 import deleteModalMessages from '../generic/delete-modal/messages';
 import courseXBlockMessages from './course-xblock/messages';
 import addComponentMessages from './add-component/messages';
+import { PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from './constants';
 
 let axiosMock;
 let store;
@@ -47,6 +49,7 @@ const courseId = '123';
 const blockId = '567890';
 const unitDisplayName = courseUnitIndexMock.metadata.display_name;
 const mockedUsedNavigate = jest.fn();
+const userName = 'edx';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -417,5 +420,171 @@ describe('<CourseUnit />', () => {
       expect(getAllByTestId('course-xblock')).toHaveLength(3);
       expect(getByText('New Cloned XBlock')).toBeInTheDocument();
     });
+  });
+
+  it('should toggle visibility and update course unit state accordingly', async () => {
+    const { getByRole, getByTestId } = render(<RootWrapper />);
+    let courseUnitSidebar;
+    let draftUnpublishedChangesHeading;
+    let visibilityCheckbox;
+
+    await waitFor(() => {
+      courseUnitSidebar = getByTestId('course-unit-sidebar');
+
+      draftUnpublishedChangesHeading = within(courseUnitSidebar)
+        .getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage);
+      expect(draftUnpublishedChangesHeading).toBeInTheDocument();
+
+      visibilityCheckbox = within(courseUnitSidebar)
+        .getByLabelText(sidebarMessages.visibilityCheckboxTitle.defaultMessage);
+      expect(visibilityCheckbox).not.toBeChecked();
+
+      userEvent.click(visibilityCheckbox);
+    });
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(blockId), {
+        publish: PUBLISH_TYPES.republish,
+        metadata: { visible_to_staff_only: true },
+      })
+      .reply(200, { dummy: 'value' });
+    axiosMock
+      .onGet(getCourseUnitApiUrl(blockId))
+      .reply(200, {
+        ...courseUnitIndexMock,
+        visibility_state: UNIT_VISIBILITY_STATES.staffOnly,
+        has_explicit_staff_lock: true,
+      });
+
+    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, true), store.dispatch);
+
+    expect(visibilityCheckbox).toBeChecked();
+    expect(within(courseUnitSidebar)
+      .getByText(sidebarMessages.sidebarTitleVisibleToStaffOnly.defaultMessage)).toBeInTheDocument();
+    expect(within(courseUnitSidebar)
+      .getByText(sidebarMessages.visibilityStaffOnlyTitle.defaultMessage)).toBeInTheDocument();
+
+    userEvent.click(visibilityCheckbox);
+
+    const modalNotification = getByRole('dialog');
+    const makeVisibilityBtn = within(modalNotification).getByRole('button', { name: sidebarMessages.modalMakeVisibilityActionButtonText.defaultMessage });
+    const cancelBtn = within(modalNotification).getByRole('button', { name: sidebarMessages.modalMakeVisibilityCancelButtonText.defaultMessage });
+    const headingElement = within(modalNotification).getByRole('heading', { name: sidebarMessages.modalMakeVisibilityTitle.defaultMessage, class: 'pgn__modal-title' });
+
+    expect(makeVisibilityBtn).toBeInTheDocument();
+    expect(cancelBtn).toBeInTheDocument();
+    expect(headingElement).toBeInTheDocument();
+    expect(within(modalNotification)
+      .getByText(sidebarMessages.modalMakeVisibilityDescription.defaultMessage)).toBeInTheDocument();
+
+    userEvent.click(makeVisibilityBtn);
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(blockId), {
+        publish: PUBLISH_TYPES.republish,
+        metadata: { visible_to_staff_only: null },
+      })
+      .reply(200, { dummy: 'value' });
+    axiosMock
+      .onGet(getCourseUnitApiUrl(blockId))
+      .reply(200, courseUnitIndexMock);
+
+    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.republish, null), store.dispatch);
+
+    expect(within(courseUnitSidebar)
+      .getByText(sidebarMessages.visibilityStaffAndLearnersTitle.defaultMessage)).toBeInTheDocument();
+    expect(visibilityCheckbox).not.toBeChecked();
+    expect(draftUnpublishedChangesHeading).toBeInTheDocument();
+  });
+
+  it('should publish course unit after click on the "Publish" button', async () => {
+    const { getByTestId } = render(<RootWrapper />);
+    let courseUnitSidebar;
+    let publishBtn;
+
+    await waitFor(() => {
+      courseUnitSidebar = getByTestId('course-unit-sidebar');
+      publishBtn = within(courseUnitSidebar).queryByRole('button', { name: sidebarMessages.actionButtonPublishTitle.defaultMessage });
+      expect(publishBtn).toBeInTheDocument();
+
+      userEvent.click(publishBtn);
+    });
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(blockId), {
+        publish: PUBLISH_TYPES.makePublic,
+      })
+      .reply(200, { dummy: 'value' });
+    axiosMock
+      .onGet(getCourseUnitApiUrl(blockId))
+      .reply(200, {
+        ...courseUnitIndexMock,
+        visibility_state: UNIT_VISIBILITY_STATES.live,
+        has_changes: false,
+        published_by: userName,
+      });
+
+    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+
+    expect(within(courseUnitSidebar)
+      .getByText(sidebarMessages.sidebarTitlePublishedAndLive.defaultMessage)).toBeInTheDocument();
+    expect(within(courseUnitSidebar).getByText(
+      sidebarMessages.publishLastPublished.defaultMessage
+        .replace('{publishedOn}', courseUnitIndexMock.published_on)
+        .replace('{publishedBy}', userName),
+    )).toBeInTheDocument();
+    expect(publishBtn).not.toBeInTheDocument();
+  });
+
+  it('should discard changes after click on the "Discard changes" button', async () => {
+    const { getByTestId, getByRole } = render(<RootWrapper />);
+    let courseUnitSidebar;
+    let discardChangesBtn;
+
+    await waitFor(() => {
+      courseUnitSidebar = getByTestId('course-unit-sidebar');
+
+      const draftUnpublishedChangesHeading = within(courseUnitSidebar)
+        .getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage);
+      expect(draftUnpublishedChangesHeading).toBeInTheDocument();
+      discardChangesBtn = within(courseUnitSidebar).queryByRole('button', { name: sidebarMessages.actionButtonDiscardChangesTitle.defaultMessage });
+      expect(discardChangesBtn).toBeInTheDocument();
+
+      userEvent.click(discardChangesBtn);
+
+      const modalNotification = getByRole('dialog');
+      expect(modalNotification).toBeInTheDocument();
+      expect(within(modalNotification)
+        .getByText(sidebarMessages.modalDiscardUnitChangesDescription.defaultMessage)).toBeInTheDocument();
+      expect(within(modalNotification)
+        .getByText(sidebarMessages.modalDiscardUnitChangesCancelButtonText.defaultMessage)).toBeInTheDocument();
+      const headingElement = within(modalNotification).getByRole('heading', { name: sidebarMessages.modalDiscardUnitChangesTitle.defaultMessage, class: 'pgn__modal-title' });
+      expect(headingElement).toBeInTheDocument();
+      const actionBtn = within(modalNotification).getByRole('button', { name: sidebarMessages.modalDiscardUnitChangesActionButtonText.defaultMessage });
+      expect(actionBtn).toBeInTheDocument();
+
+      userEvent.click(actionBtn);
+    });
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(blockId), {
+        publish: PUBLISH_TYPES.discardChanges,
+      })
+      .reply(200, { dummy: 'value' });
+    axiosMock
+      .onGet(getCourseUnitApiUrl(blockId))
+      .reply(200, {
+        ...courseUnitIndexMock, published: true, has_changes: false,
+      });
+
+    await executeThunk(editCourseUnitVisibilityAndData(
+      blockId,
+      PUBLISH_TYPES.discardChanges,
+      true,
+    ), store.dispatch);
+
+    expect(within(courseUnitSidebar)
+      .getByText(sidebarMessages.sidebarTitlePublishedNotYetReleased.defaultMessage)).toBeInTheDocument();
+    expect(discardChangesBtn).not.toBeInTheDocument();
   });
 });
