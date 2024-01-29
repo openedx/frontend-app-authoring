@@ -1,12 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, useToggle } from '@edx/paragon';
-import {
-  Add as IconAdd,
-  FileCopy as IconPaste,
-} from '@edx/paragon/icons';
+import { Add as IconAdd } from '@edx/paragon/icons';
 import classNames from 'classnames';
 
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
@@ -99,7 +96,6 @@ const SubsectionCard = ({
 
   const handleNewButtonClick = () => onNewUnitSubmit(id);
   const handlePasteButtonClick = () => onPasteClick(id, section.id);
-
 
   const titleComponent = (
     <TitleButton
@@ -232,6 +228,7 @@ SubsectionCard.propTypes = {
     hasChanges: PropTypes.bool.isRequired,
     visibilityState: PropTypes.string.isRequired,
     shouldScroll: PropTypes.bool,
+    enableCopyPasteUnits: PropTypes.bool,
     actions: PropTypes.shape({
       deletable: PropTypes.bool.isRequired,
       draggable: PropTypes.bool.isRequired,

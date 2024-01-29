@@ -437,7 +437,7 @@ export async function pasteBlock(parentLocator) {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXBlockBaseApiUrl(), {
       parent_locator: parentLocator,
-      staged_content: "clipboard",
+      staged_content: 'clipboard',
     });
 
   return data;

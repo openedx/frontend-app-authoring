@@ -571,7 +571,7 @@ export function setClipboardContent(usageKey, broadcastClipboard) {
 
     try {
       await copyBlockToClipboard(usageKey).then(async (result) => {
-        const status = result?.content?.status
+        const status = result?.content?.status;
         if (status === 'ready') {
           dispatch(updateClipboardContent(result));
           broadcastClipboard(result);
@@ -596,7 +596,7 @@ export function pasteClipboardContent(parentLocator, sectionId) {
     try {
       await pasteBlock(parentLocator).then(async (result) => {
         if (result) {
-          dispatch(fetchCourseSectionQuery(sectionId, true))
+          dispatch(fetchCourseSectionQuery(sectionId, true));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(hideProcessingNotification());
         }

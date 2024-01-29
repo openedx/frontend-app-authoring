@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import {
+  useCallback, useEffect, useMemo, useRef,
+} from 'react';
 
 const channelInstances = {};
 
@@ -30,10 +32,10 @@ export const useBroadcastChannel = (channelName, onMessageReceived) => {
     (message) => {
       channel?.postMessage(message);
     },
-    [channel]
+    [channel],
   );
 
   return {
     postMessage,
   };
-}
+};

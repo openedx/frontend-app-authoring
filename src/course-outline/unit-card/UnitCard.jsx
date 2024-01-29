@@ -84,7 +84,7 @@ const UnitCard = ({
 
   const handleCopyClick = () => {
     onCopyToClipboardClick(unit.id);
-  }
+  };
 
   const titleComponent = (
     <TitleLink

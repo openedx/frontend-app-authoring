@@ -163,7 +163,7 @@ CardHeader.defaultProps = {
   enableCopyPasteUnits: false,
   isVertical: false,
   onClickCopy: null,
-}
+};
 
 CardHeader.propTypes = {
   title: PropTypes.string.isRequired,

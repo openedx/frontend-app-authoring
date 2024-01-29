@@ -1,11 +1,13 @@
 import { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import { Hyperlink, Icon, Button, Popover, OverlayTrigger } from '@edx/paragon';
+import {
+  Hyperlink, Icon, Button, Popover, OverlayTrigger,
+} from '@edx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   FileCopy as PasteIcon,
-  Question as QuestionIcon
+  Question as QuestionIcon,
 } from '@edx/paragon/icons';
 import { getInitialUserClipboard } from '../data/selectors';
 import messages from './messages';
@@ -26,15 +28,15 @@ const PasteButton = ({
   const showPasteButton = (
     content?.status === 'ready'
     && content?.blockType === blockType
-  )
+  );
 
   const [show, setShow] = useState(false);
   const handleOnMouseEnter = () => {
     setShow(true);
-  }
+  };
   const handleOnMouseLeave = () => {
     setShow(false);
-  }
+  };
   const ref = useRef(null);
 
   if (!showPasteButton) {
@@ -55,7 +57,7 @@ const PasteButton = ({
       >
         <div className="text-gray mr-5 mw-xs">
           <h4>
-            {content?.displayName}<br/>
+            {content?.displayName}<br />
             <span className="micro text-gray-400">
               {content?.blockTypeDisplay}
             </span>
@@ -82,7 +84,7 @@ const PasteButton = ({
       </Button>
       <OverlayTrigger
         show={show}
-        placement='top'
+        placement="top"
         container={ref}
         overlay={renderBlockLink}
       >
@@ -97,13 +99,13 @@ const PasteButton = ({
         </span>
       </OverlayTrigger>
     </>
-  )
-}
+  );
+};
 
 PasteButton.propTypes = {
   text: PropTypes.string.isRequired,
   blockType: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
-}
+};
 
 export default PasteButton;
