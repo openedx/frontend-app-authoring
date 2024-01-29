@@ -1,13 +1,13 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { act, render } from '@testing-library/react';
-import PropTypes from 'prop-types';
 
 import ContentTagsTree from './ContentTagsTree';
 
 const data = {
   'Science and Research': {
     explicit: false,
+    canDeleteObjecttag: false,
     children: {
       'Genetics Subcategory': {
         explicit: false,
@@ -15,8 +15,10 @@ const data = {
           'DNA Sequencing': {
             explicit: true,
             children: {},
+            canDeleteObjecttag: true,
           },
         },
+        canDeleteObjecttag: false,
       },
       'Molecular, Cellular, and Microbiology': {
         explicit: false,
@@ -24,34 +26,27 @@ const data = {
           Virology: {
             explicit: true,
             children: {},
+            canDeleteObjecttag: true,
           },
         },
+        canDeleteObjecttag: false,
       },
     },
   },
 };
 
-const ContentTagsTreeComponent = ({ tagsTree, removeTagHandler, editable }) => (
+const ContentTagsTreeComponent = ({ tagsTree, removeTagHandler }) => (
   <IntlProvider locale="en" messages={{}}>
-    <ContentTagsTree tagsTree={tagsTree} removeTagHandler={removeTagHandler} editable={editable} />
+    <ContentTagsTree tagsTree={tagsTree} removeTagHandler={removeTagHandler} />
   </IntlProvider>
 );
 
-ContentTagsTreeComponent.propTypes = {
-  tagsTree: PropTypes.objectOf(
-    PropTypes.shape({
-      explicit: PropTypes.bool.isRequired,
-      children: PropTypes.shape({}).isRequired,
-    }).isRequired,
-  ).isRequired,
-  removeTagHandler: PropTypes.func.isRequired,
-  editable: PropTypes.bool.isRequired,
-};
+ContentTagsTreeComponent.propTypes = ContentTagsTree.propTypes;
 
 describe('<ContentTagsTree />', () => {
   it('should render taxonomy tags data along content tags number badge', async () => {
     await act(async () => {
-      const { getByText } = render(<ContentTagsTreeComponent tagsTree={data} removeTagHandler={() => {}} editable />);
+      const { getByText } = render(<ContentTagsTreeComponent tagsTree={data} removeTagHandler={() => {}} />);
       expect(getByText('Science and Research')).toBeInTheDocument();
       expect(getByText('Genetics Subcategory')).toBeInTheDocument();
       expect(getByText('Molecular, Cellular, and Microbiology')).toBeInTheDocument();

@@ -1,11 +1,10 @@
-import React from 'react';
+import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render } from '@testing-library/react';
-import MockAdapter from 'axios-mock-adapter';
+import { fireEvent, render } from '@testing-library/react';
 
 import { getTaxonomyApiUrl } from '../data/api';
 import initializeStore from '../../store';
@@ -87,11 +86,26 @@ describe('<TaxonomyDetailPage />', () => {
       name: 'Test taxonomy',
       description: 'This is a description',
       system_defined: false,
+      can_change_taxonomy: true,
+      can_delete_taxonomy: true,
+      tagsCount: 0,
     });
 
-    const { findByRole } = render(<RootWrapper />);
+    const { getByTestId, queryByTestId, findByRole } = render(<RootWrapper />);
 
     expect(await findByRole('heading')).toHaveTextContent('Test taxonomy');
+
+    // Menu closed/doesn't exist yet
+    expect(queryByTestId('taxonomy-menu')).not.toBeInTheDocument();
+
+    // Click on the menu button to open
+    fireEvent.click(getByTestId('taxonomy-menu-button'));
+
+    // Menu opened
+    expect(getByTestId('taxonomy-menu')).toBeVisible();
+    expect(getByTestId('taxonomy-menu-import')).toBeVisible();
+    expect(getByTestId('taxonomy-menu-export')).toBeVisible();
+    expect(getByTestId('taxonomy-menu-delete')).toBeVisible();
   });
 
   it('should show system defined badge', async () => {
@@ -100,9 +114,12 @@ describe('<TaxonomyDetailPage />', () => {
       name: 'Test taxonomy',
       description: 'This is a description',
       system_defined: true,
+      can_change_taxonomy: false,
+      can_delete_taxonomy: false,
     });
 
     const { findByRole, getByText } = render(<RootWrapper />);
+
     expect(await findByRole('heading')).toHaveTextContent('Test taxonomy');
     expect(getByText('System-level')).toBeInTheDocument();
   });
@@ -113,6 +130,8 @@ describe('<TaxonomyDetailPage />', () => {
       name: 'Test taxonomy',
       description: 'This is a description',
       system_defined: false,
+      can_change_taxonomy: false,
+      can_delete_taxonomy: false,
     });
 
     const { findByRole, queryByText } = render(<RootWrapper />);

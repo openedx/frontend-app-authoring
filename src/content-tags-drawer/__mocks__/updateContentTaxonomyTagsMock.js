@@ -4,7 +4,7 @@ module.exports = {
       {
         name: 'FlatTaxonomy',
         taxonomyId: 3,
-        editable: true,
+        canTagObject: true,
         tags: [
           {
             value: 'flat taxonomy tag 100',

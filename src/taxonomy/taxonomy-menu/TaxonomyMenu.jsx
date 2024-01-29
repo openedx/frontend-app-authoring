@@ -9,7 +9,7 @@ import {
   IconButton,
 } from '@edx/paragon';
 import { MoreVert } from '@edx/paragon/icons';
-import { omitBy } from 'lodash';
+import { pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
@@ -53,7 +53,7 @@ const TaxonomyMenu = ({
     * @typedef {Object} MenuItem
     * @property {string} title - The title of the menu item
     * @property {() => void} action - The action to perform when the menu item is clicked
-    * @property {boolean} [hide] - Whether or not to hide the menu item
+    * @property {boolean} [show] - Whether or not to show the menu item
     *
     * @constant
     * @type {Record<string, MenuItem>}
@@ -62,29 +62,27 @@ const TaxonomyMenu = ({
     import: {
       title: intl.formatMessage(messages.importMenu),
       action: importModalOpen,
-      // Hide import menu item if taxonomy is system defined or allows free text
-      hide: taxonomy.systemDefined || taxonomy.allowFreeText,
+      show: taxonomy.canChangeTaxonomy && !taxonomy.systemDefined,
     },
     export: {
       title: intl.formatMessage(messages.exportMenu),
       action: exportModalOpen,
+      show: true, // if we can view the taxonomy, we can export it
     },
     delete: {
       title: intl.formatMessage(messages.deleteMenu),
       action: deleteDialogOpen,
-      // Hide delete menu item if taxonomy is system defined
-      hide: taxonomy.systemDefined,
+      show: taxonomy.canDeleteTaxonomy && !taxonomy.systemDefined,
     },
     manageOrgs: {
       title: intl.formatMessage(messages.manageOrgsMenu),
       action: manageOrgsModalOpen,
-      // Hide import menu item if taxonomy is system defined
-      hide: taxonomy.systemDefined,
+      show: taxonomy.canChangeTaxonomy,
     },
   };
 
   // Remove hidden menu items
-  menuItems = omitBy(menuItems, (value) => value.hide);
+  menuItems = pickBy(menuItems, (value) => value.show);
 
   const renderModals = () => (
     <>
@@ -167,9 +165,10 @@ TaxonomyMenu.propTypes = {
   taxonomy: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
-    systemDefined: PropTypes.bool.isRequired,
-    allowFreeText: PropTypes.bool.isRequired,
     tagsCount: PropTypes.number.isRequired,
+    systemDefined: PropTypes.bool.isRequired,
+    canChangeTaxonomy: PropTypes.bool.isRequired,
+    canDeleteTaxonomy: PropTypes.bool.isRequired,
   }).isRequired,
   iconMenu: PropTypes.bool,
 };
