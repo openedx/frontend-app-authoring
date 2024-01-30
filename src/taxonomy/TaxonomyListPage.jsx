@@ -154,13 +154,9 @@ const TaxonomyListPage = () => {
     isSuccess: isOrganizationListLoaded,
   } = useOrganizationListData();
 
-  const useTaxonomyListData = () => {
-    const taxonomyListData = useTaxonomyListDataResponse(selectedOrgFilter);
-    const isLoaded = useIsTaxonomyListDataLoaded(selectedOrgFilter);
-    return { taxonomyListData, isLoaded };
-  };
-  const { taxonomyListData, isLoaded } = useTaxonomyListData();
-  const canAddTaxonomy = isLoaded ? taxonomyListData.canAddTaxonomy : false;
+  const taxonomyListData = useTaxonomyListDataResponse(selectedOrgFilter);
+  const isLoaded = useIsTaxonomyListDataLoaded(selectedOrgFilter);
+  const canAddTaxonomy = taxonomyListData?.canAddTaxonomy ?? false;
 
   const getOrgSelect = () => (
     // Initialize organization select component
