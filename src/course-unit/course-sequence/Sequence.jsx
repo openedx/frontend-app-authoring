@@ -14,6 +14,7 @@ const Sequence = ({
   sequenceId,
   unitId,
   handleCreateNewCourseXBlock,
+  showPasteUnit,
 }) => {
   const intl = useIntl();
   const { IN_PROGRESS, FAILED, SUCCESSFUL } = RequestStatus;
@@ -28,6 +29,7 @@ const Sequence = ({
           unitId={unitId}
           courseId={courseId}
           handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
+          showPasteUnit={showPasteUnit}
         />
       </div>
     </div>
@@ -61,6 +63,7 @@ Sequence.propTypes = {
   courseId: PropTypes.string.isRequired,
   sequenceId: PropTypes.string,
   handleCreateNewCourseXBlock: PropTypes.func.isRequired,
+  showPasteUnit: PropTypes.bool.isRequired,
 };
 
 Sequence.defaultProps = {

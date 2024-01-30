@@ -1,0 +1,46 @@
+.whats-in-clipboard {
+  cursor: help;
+  width: fit-content;
+  margin-left: auto;
+
+  .whats-in-clipboard-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-bottom: 1px;
+  }
+
+  .whats-in-clipboard-text {
+    font-size: $font-size-sm;
+  }
+}
+
+
+.clipboard-popover {
+  min-width: 21.25rem;
+
+  .clipboard-popover-title {
+    &:hover {
+      text-decoration: none;
+      color: initial;
+    }
+
+    &.popover-header {
+      border: none;
+    }
+
+    .clipboard-popover-icon {
+      float: right;
+    }
+  }
+
+  .clipboard-popover-detail-block-type {
+    display: block;
+    font-size: $font-size-sm;
+    line-height: 1.313rem;
+    color: $gray-700;
+  }
+
+  .clipboard-popover-detail-course-name {
+    font-style: italic;
+  }
+}

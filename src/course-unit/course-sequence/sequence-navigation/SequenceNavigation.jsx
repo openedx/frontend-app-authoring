@@ -25,6 +25,7 @@ const SequenceNavigation = ({
   sequenceId,
   className,
   handleCreateNewCourseXBlock,
+  showPasteUnit,
 }) => {
   const sequenceStatus = useSelector(getSequenceStatus);
   const {
@@ -45,6 +46,7 @@ const SequenceNavigation = ({
         unitIds={sequence.unitIds || []}
         unitId={unitId}
         handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
+        showPasteUnit={showPasteUnit}
       />
     );
   };
@@ -110,6 +112,7 @@ SequenceNavigation.propTypes = {
   className: PropTypes.string,
   sequenceId: PropTypes.string,
   handleCreateNewCourseXBlock: PropTypes.func.isRequired,
+  showPasteUnit: PropTypes.bool.isRequired,
 };
 
 SequenceNavigation.defaultProps = {

@@ -5,7 +5,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform';
+import { camelCaseObject, initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { cloneDeep, set } from 'lodash';
 
@@ -17,6 +17,8 @@ import {
   postXBlockBaseApiUrl,
 } from './data/api';
 import {
+  copyToClipboard,
+  createNewCourseXBlock,
   deleteUnitItemQuery,
   editCourseUnitVisibilityAndData,
   fetchCourseSectionVerticalData,
@@ -25,13 +27,19 @@ import {
 } from './data/thunk';
 import initializeStore from '../store';
 import {
+  clipboardUnit,
+  clipboardXBlock,
   courseCreateXblockMock,
   courseSectionVerticalMock,
   courseUnitIndexMock,
   courseUnitMock,
   courseVerticalChildrenMock,
+  clipboardMockResponse,
 } from './__mocks__';
 import { executeThunk } from '../utils';
+import deleteModalMessages from '../generic/delete-modal/messages';
+import pasteComponentMessages from './clipboard/paste-component/messages';
+import pasteNotificationsMessages from './clipboard/paste-notification/messages';
 import headerNavigationsMessages from './header-navigations/messages';
 import headerTitleMessages from './header-title/messages';
 import courseSequenceMessages from './course-sequence/messages';
@@ -39,7 +47,6 @@ import sidebarMessages from './sidebar/messages';
 import { extractCourseUnitId } from './sidebar/utils';
 import CourseUnit from './CourseUnit';
 
-import deleteModalMessages from '../generic/delete-modal/messages';
 import configureModalMessages from '../generic/configure-modal/messages';
 import courseXBlockMessages from './course-xblock/messages';
 import addComponentMessages from './add-component/messages';
@@ -54,6 +61,11 @@ const blockId = '567890';
 const unitDisplayName = courseUnitIndexMock.metadata.display_name;
 const mockedUsedNavigate = jest.fn();
 const userName = 'openedx';
+
+const postXBlockBody = {
+  parent_locator: blockId,
+  staged_content: 'clipboard',
+};
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -86,6 +98,13 @@ jest.mock('@tanstack/react-query', () => ({
   })),
 }));
 
+const clipboardBroadcastChannelMock = {
+  postMessage: jest.fn(),
+  close: jest.fn(),
+};
+
+global.BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
+
 const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en">
@@ -104,7 +123,7 @@ describe('<CourseUnit />', () => {
         roles: [],
       },
     });
-
+    global.localStorage.clear();
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
@@ -311,7 +330,7 @@ describe('<CourseUnit />', () => {
     await waitFor(async () => {
       units = getAllByTestId('course-unit-btn');
       const courseUnits = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[0].child_info.children;
-      expect(units.length).toEqual(courseUnits.length);
+      expect(units).toHaveLength(courseUnits.length);
     });
 
     axiosMock
@@ -1011,6 +1030,419 @@ describe('<CourseUnit />', () => {
         .getByText(sidebarMessages.sidebarTitleVisibleToStaffOnly.defaultMessage)).toBeInTheDocument();
       expect(within(courseUnitSidebar)
         .getByText(sidebarMessages.visibilityStaffOnlyTitle.defaultMessage)).toBeInTheDocument();
+    });
+  });
+
+  describe('Copy paste functionality', () => {
+    it('should display "Copy Unit" action button after enabling copy-paste units', async () => {
+      const { queryByText, queryByRole } = render(<RootWrapper />);
+
+      await waitFor(() => {
+        expect(queryByText(sidebarMessages.actionButtonCopyUnitTitle.defaultMessage)).toBeNull();
+        expect(queryByRole('button', { name: pasteComponentMessages.pasteComponentButtonText.defaultMessage })).toBeNull();
+      });
+
+      axiosMock
+        .onGet(getCourseUnitApiUrl(courseId))
+        .reply(200, {
+          ...courseUnitIndexMock,
+          enable_copy_paste_units: true,
+        });
+
+      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
+      expect(queryByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage })).toBeInTheDocument();
+    });
+
+    it('should display clipboard information in popover when hovering over What\'s in clipboard text', async () => {
+      const {
+        queryByTestId, getByRole, getAllByLabelText, getByText,
+      } = render(<RootWrapper />);
+
+      await waitFor(() => {
+        const [xblockActionBtn] = getAllByLabelText(courseXBlockMessages.blockActionsDropdownAlt.defaultMessage);
+        userEvent.click(xblockActionBtn);
+        userEvent.click(getByRole('button', { name: courseXBlockMessages.blockLabelButtonCopyToClipboard.defaultMessage }));
+      });
+
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...courseSectionVerticalMock,
+          user_clipboard: clipboardXBlock,
+        });
+
+      await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+      expect(getByRole('button', { name: pasteComponentMessages.pasteComponentButtonText.defaultMessage })).toBeInTheDocument();
+
+      const whatsInClipboardText = getByText(
+        pasteComponentMessages.pasteComponentWhatsInClipboardText.defaultMessage,
+      );
+
+      userEvent.hover(whatsInClipboardText);
+
+      const popoverContent = queryByTestId('popover-content');
+      expect(popoverContent.tagName).toBe('A');
+      expect(popoverContent).toHaveAttribute('href', clipboardXBlock.sourceEditUrl);
+      expect(within(popoverContent).getByText(clipboardXBlock.content.displayName)).toBeInTheDocument();
+      expect(within(popoverContent).getByText(clipboardXBlock.sourceContextTitle)).toBeInTheDocument();
+      expect(within(popoverContent).getByText(clipboardXBlock.content.blockTypeDisplay)).toBeInTheDocument();
+
+      fireEvent.blur(whatsInClipboardText);
+      await waitFor(() => expect(queryByTestId('popover-content')).toBeNull());
+
+      fireEvent.focus(whatsInClipboardText);
+      await waitFor(() => expect(queryByTestId('popover-content')).toBeInTheDocument());
+
+      fireEvent.mouseLeave(whatsInClipboardText);
+      await waitFor(() => expect(queryByTestId('popover-content')).toBeNull());
+
+      fireEvent.mouseEnter(whatsInClipboardText);
+      await waitFor(() => expect(queryByTestId('popover-content')).toBeInTheDocument());
+    });
+
+    it('should increase the number of course XBlocks after copying and pasting a block', async () => {
+      const {
+        getAllByTestId, getByRole, getAllByLabelText,
+      } = render(<RootWrapper />);
+
+      await waitFor(() => {
+        const [xblockActionBtn] = getAllByLabelText(courseXBlockMessages.blockActionsDropdownAlt.defaultMessage);
+        userEvent.click(xblockActionBtn);
+        userEvent.click(getByRole('button', { name: courseXBlockMessages.blockLabelButtonCopyToClipboard.defaultMessage }));
+      });
+
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...courseSectionVerticalMock,
+          user_clipboard: clipboardXBlock,
+        });
+
+      axiosMock
+        .onGet(getCourseUnitApiUrl(courseId))
+        .reply(200, {
+          ...courseUnitIndexMock,
+          enable_copy_paste_units: true,
+        });
+
+      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
+      await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+
+      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
+      userEvent.click(getByRole('button', { name: pasteComponentMessages.pasteComponentButtonText.defaultMessage }));
+
+      expect(getAllByTestId('course-xblock')).toHaveLength(2);
+
+      axiosMock
+        .onGet(getCourseVerticalChildrenApiUrl(blockId))
+        .reply(200, {
+          ...courseVerticalChildrenMock,
+          children: [
+            ...courseVerticalChildrenMock.children,
+            {
+              name: 'Copy XBlock',
+              block_id: '1234567890',
+              block_type: 'drag-and-drop-v2',
+              user_partition_info: {
+                selectable_partitions: [],
+                selected_partition_index: -1,
+                selected_groups_label: '',
+              },
+            },
+          ],
+        });
+
+      await executeThunk(fetchCourseVerticalChildrenData(blockId), store.dispatch);
+      expect(getAllByTestId('course-xblock')).toHaveLength(3);
+    });
+
+    it('should display the "Paste component" button after copying a xblock to clipboard', async () => {
+      const { getByRole, getAllByLabelText } = render(<RootWrapper />);
+
+      await waitFor(() => {
+        const [xblockActionBtn] = getAllByLabelText(courseXBlockMessages.blockActionsDropdownAlt.defaultMessage);
+        userEvent.click(xblockActionBtn);
+        userEvent.click(getByRole('button', { name: courseXBlockMessages.blockLabelButtonCopyToClipboard.defaultMessage }));
+      });
+
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...courseSectionVerticalMock,
+          user_clipboard: clipboardXBlock,
+        });
+
+      await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+      await executeThunk(copyToClipboard(blockId), store.dispatch);
+      expect(getByRole('button', { name: pasteComponentMessages.pasteComponentButtonText.defaultMessage })).toBeInTheDocument();
+    });
+
+    it('should copy a unit, paste it as a new unit, and update the course section vertical data', async () => {
+      const {
+        getAllByTestId, getByRole,
+      } = render(<RootWrapper />);
+
+      axiosMock
+        .onGet(getCourseUnitApiUrl(courseId))
+        .reply(200, {
+          ...courseUnitIndexMock,
+          enable_copy_paste_units: true,
+        });
+
+      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
+
+      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
+
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...courseSectionVerticalMock,
+          user_clipboard: clipboardUnit,
+        });
+
+      await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+      await executeThunk(copyToClipboard(blockId), store.dispatch);
+
+      userEvent.click(getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
+
+      let units = null;
+      const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
+      const updatedAncestorsChild = updatedCourseSectionVerticalData.xblock_info.ancestor_info.ancestors[0];
+      set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].child_info.children', [
+        ...updatedAncestorsChild.child_info.children,
+        courseUnitMock,
+      ]);
+
+      units = getAllByTestId('course-unit-btn');
+      const courseUnits = courseSectionVerticalMock.xblock_info.ancestor_info.ancestors[0].child_info.children;
+      expect(units).toHaveLength(courseUnits.length);
+
+      axiosMock
+        .onPost(postXBlockBaseApiUrl(), postXBlockBody)
+        .reply(200, { dummy: 'value' });
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...updatedCourseSectionVerticalData,
+        });
+
+      await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+
+      units = getAllByTestId('course-unit-btn');
+      const updatedCourseUnits = updatedCourseSectionVerticalData
+        .xblock_info.ancestor_info.ancestors[0].child_info.children;
+
+      expect(units.length).toEqual(updatedCourseUnits.length);
+      expect(mockedUsedNavigate).toHaveBeenCalled();
+      expect(mockedUsedNavigate)
+        .toHaveBeenCalledWith(`/course/${courseId}/container/${blockId}/${updatedAncestorsChild.id}`, { replace: true });
+    });
+
+    it('displays a notification about new files after pasting a component', async () => {
+      const {
+        queryByTestId, getByTestId, getByRole,
+      } = render(<RootWrapper />);
+
+      axiosMock
+        .onGet(getCourseUnitApiUrl(courseId))
+        .reply(200, {
+          ...courseUnitIndexMock,
+          enable_copy_paste_units: true,
+        });
+
+      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
+
+      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
+
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...courseSectionVerticalMock,
+          user_clipboard: clipboardUnit,
+        });
+
+      await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+      await executeThunk(copyToClipboard(blockId), store.dispatch);
+
+      userEvent.click(getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
+
+      const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
+      const updatedAncestorsChild = updatedCourseSectionVerticalData.xblock_info.ancestor_info.ancestors[0];
+      set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].child_info.children', [
+        ...updatedAncestorsChild.child_info.children,
+        courseUnitMock,
+      ]);
+
+      axiosMock
+        .onPost(postXBlockBaseApiUrl(postXBlockBody))
+        .reply(200, clipboardMockResponse);
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...updatedCourseSectionVerticalData,
+        });
+
+      global.localStorage.setItem('staticFileNotices', JSON.stringify(clipboardMockResponse.staticFileNotices));
+      await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+      await executeThunk(createNewCourseXBlock(camelCaseObject(postXBlockBody), null, blockId), store.dispatch);
+      const newFilesAlert = getByTestId('has-new-files-alert');
+
+      expect(within(newFilesAlert)
+        .getByText(pasteNotificationsMessages.hasNewFilesTitle.defaultMessage)).toBeInTheDocument();
+      expect(within(newFilesAlert)
+        .getByText(pasteNotificationsMessages.hasNewFilesDescription.defaultMessage)).toBeInTheDocument();
+      expect(within(newFilesAlert)
+        .getByText(pasteNotificationsMessages.hasNewFilesButtonText.defaultMessage)).toBeInTheDocument();
+      clipboardMockResponse.staticFileNotices.newFiles.forEach((fileName) => {
+        expect(within(newFilesAlert).getByText(fileName)).toBeInTheDocument();
+      });
+
+      userEvent.click(within(newFilesAlert).getByText(/Dismiss/i));
+
+      expect(queryByTestId('has-new-files-alert')).toBeNull();
+    });
+
+    it('displays a notification about conflicting errors after pasting a component', async () => {
+      const {
+        queryByTestId, getByTestId, getByRole,
+      } = render(<RootWrapper />);
+
+      axiosMock
+        .onGet(getCourseUnitApiUrl(courseId))
+        .reply(200, {
+          ...courseUnitIndexMock,
+          enable_copy_paste_units: true,
+        });
+
+      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
+
+      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
+
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...courseSectionVerticalMock,
+          user_clipboard: clipboardUnit,
+        });
+
+      await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+      await executeThunk(copyToClipboard(blockId), store.dispatch);
+
+      userEvent.click(getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
+
+      const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
+      const updatedAncestorsChild = updatedCourseSectionVerticalData.xblock_info.ancestor_info.ancestors[0];
+      set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].child_info.children', [
+        ...updatedAncestorsChild.child_info.children,
+        courseUnitMock,
+      ]);
+
+      axiosMock
+        .onPost(postXBlockBaseApiUrl(postXBlockBody))
+        .reply(200, clipboardMockResponse);
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...updatedCourseSectionVerticalData,
+        });
+
+      global.localStorage.setItem('staticFileNotices', JSON.stringify(clipboardMockResponse.staticFileNotices));
+      await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+      await executeThunk(createNewCourseXBlock(camelCaseObject(postXBlockBody), null, blockId), store.dispatch);
+      const conflictingErrorsAlert = getByTestId('has-conflicting-errors-alert');
+
+      expect(within(conflictingErrorsAlert)
+        .getByText(pasteNotificationsMessages.hasConflictingErrorsTitle.defaultMessage)).toBeInTheDocument();
+      expect(within(conflictingErrorsAlert)
+        .getByText(pasteNotificationsMessages.hasConflictingErrorsDescription.defaultMessage)).toBeInTheDocument();
+      expect(within(conflictingErrorsAlert)
+        .getByText(pasteNotificationsMessages.hasConflictingErrorsButtonText.defaultMessage)).toBeInTheDocument();
+      clipboardMockResponse.staticFileNotices.conflictingFiles.forEach((fileName) => {
+        expect(within(conflictingErrorsAlert).getByText(fileName)).toBeInTheDocument();
+      });
+
+      userEvent.click(within(conflictingErrorsAlert).getByText(/Dismiss/i));
+
+      expect(queryByTestId('has-conflicting-errors-alert')).toBeNull();
+    });
+
+    it('displays a notification about error files after pasting a component', async () => {
+      const {
+        queryByTestId, getByTestId, getByRole,
+      } = render(<RootWrapper />);
+
+      axiosMock
+        .onGet(getCourseUnitApiUrl(courseId))
+        .reply(200, {
+          ...courseUnitIndexMock,
+          enable_copy_paste_units: true,
+        });
+
+      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
+
+      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
+
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...courseSectionVerticalMock,
+          user_clipboard: clipboardUnit,
+        });
+
+      await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+      await executeThunk(copyToClipboard(blockId), store.dispatch);
+
+      userEvent.click(getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
+
+      const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
+      const updatedAncestorsChild = updatedCourseSectionVerticalData.xblock_info.ancestor_info.ancestors[0];
+      set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].child_info.children', [
+        ...updatedAncestorsChild.child_info.children,
+        courseUnitMock,
+      ]);
+
+      axiosMock
+        .onPost(postXBlockBaseApiUrl(postXBlockBody))
+        .reply(200, clipboardMockResponse);
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...updatedCourseSectionVerticalData,
+        });
+
+      global.localStorage.setItem('staticFileNotices', JSON.stringify(clipboardMockResponse.staticFileNotices));
+      await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+      await executeThunk(createNewCourseXBlock(camelCaseObject(postXBlockBody), null, blockId), store.dispatch);
+      const errorFilesAlert = getByTestId('has-error-files-alert');
+
+      expect(within(errorFilesAlert)
+        .getByText(pasteNotificationsMessages.hasErrorsTitle.defaultMessage)).toBeInTheDocument();
+      expect(within(errorFilesAlert)
+        .getByText(pasteNotificationsMessages.hasErrorsDescription.defaultMessage)).toBeInTheDocument();
+
+      userEvent.click(within(errorFilesAlert).getByText(/Dismiss/i));
+
+      expect(queryByTestId('has-error-files')).toBeNull();
+    });
+
+    it('should hide the "Paste component" block if canPasteComponent is false', async () => {
+      const { queryByText, queryByRole } = render(<RootWrapper />);
+
+      axiosMock
+        .onGet(getCourseVerticalChildrenApiUrl(blockId))
+        .reply(200, {
+          ...courseVerticalChildrenMock,
+          canPasteComponent: false,
+        });
+
+      await executeThunk(fetchCourseVerticalChildrenData(blockId), store.dispatch);
+
+      expect(queryByRole('button', {
+        name: pasteComponentMessages.pasteComponentButtonText.defaultMessage,
+      })).not.toBeInTheDocument();
+      expect(queryByText(
+        pasteComponentMessages.pasteComponentWhatsInClipboardText.defaultMessage,
+      )).not.toBeInTheDocument();
     });
   });
 });
