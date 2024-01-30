@@ -169,6 +169,46 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.time-limit-description',
     defaultMessage: 'Select a time allotment for the exam. If it is over 24 hours, type in the amount of time. You can grant individual learners extra time to complete the exam through the Instructor Dashboard.',
   },
+  prereqTitle: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.prereqTitle',
+    defaultMessage: 'Use as a Prerequisite',
+  },
+  prereqCheckboxLabel: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.prereqCheckboxLabel',
+    defaultMessage: 'Make this subsection available as a prerequisite to other content',
+  },
+  limitAccessTitle: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.limitAccessTitle',
+    defaultMessage: 'Limit Access',
+  },
+  limitAccessDescription: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.limitAccessDescription',
+    defaultMessage: 'Select a prerequisite subsection and enter a minimum score percentage and minimum completion percentage to limit access to this subsection. Allowed values are 0-100',
+  },
+  noPrerequisiteOption: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.noPrerequisiteOption',
+    defaultMessage: 'No prerequisite',
+  },
+  prerequisiteSelectLabel: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.prerequisiteSelectLabel',
+    defaultMessage: 'Prerequisite:',
+  },
+  minScoreLabel: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.minScoreLabel',
+    defaultMessage: 'Minimum Score:',
+  },
+  minCompletionLabel: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.minCompletionLabel',
+    defaultMessage: 'Minimum Completion:',
+  },
+  minScoreError: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.minScoreError',
+    defaultMessage: 'The minimum score percentage must be a whole number between 0 and 100.',
+  },
+  minCompletionError: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.minCompletionError',
+    defaultMessage: 'The minimum completion percentage must be a whole number between 0 and 100.',
+  },
 });
 
 export default messages;

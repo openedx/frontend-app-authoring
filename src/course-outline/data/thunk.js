@@ -266,6 +266,10 @@ export function configureCourseSubsectionQuery(
   defaultTimeLimitMin,
   hideAfterDueState,
   showCorrectnessState,
+  isPrereqState,
+  prereqUsageKey,
+  prereqMinScoreState,
+  prereqMinCompletionState,
 ) {
   return async (dispatch) => {
     dispatch(configureCourseItemQuery(
@@ -280,6 +284,10 @@ export function configureCourseSubsectionQuery(
         defaultTimeLimitMin,
         hideAfterDueState,
         showCorrectnessState,
+        isPrereqState,
+        prereqUsageKey,
+        prereqMinScoreState,
+        prereqMinCompletionState,
       ),
     ));
   };

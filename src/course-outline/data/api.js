@@ -260,11 +260,19 @@ export async function configureCourseSubsection(
   defaultTimeLimitMin,
   hideAfterDueState,
   showCorrectnessState,
+  isPrereq,
+  prereqUsageKey,
+  prereqMinScore,
+  prereqMinCompletion,
 ) {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(itemId), {
       publish: 'republish',
       graderType,
+      isPrereq,
+      prereqUsageKey,
+      prereqMinScore,
+      prereqMinCompletion,
       metadata: {
         // The backend expects metadata.visible_to_staff_only to either true or null
         visible_to_staff_only: isVisibleToStaffOnly ? true : null,

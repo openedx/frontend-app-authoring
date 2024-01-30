@@ -41,6 +41,11 @@ const ConfigureModal = ({
     format,
     userPartitionInfo,
     ancestorHasStaffLock,
+    isPrereq,
+    prereqs,
+    prereq,
+    prereqMinScore,
+    prereqMinCompletion,
   } = useSelector(getCurrentItem);
 
   const [releaseDate, setReleaseDate] = useState(sectionStartDate);
@@ -54,6 +59,10 @@ const ConfigureModal = ({
   const [hideAfterDueState, setHideAfterDueState] = useState(hideAfterDue === undefined ? false : hideAfterDue);
   const [showCorrectnessState, setShowCorrectnessState] = useState(false);
   const isSubsection = category === COURSE_BLOCK_NAMES.sequential.id;
+  const [isPrereqState, setIsPrereqState] = useState(isPrereq);
+  const [prereqUsageKey, setPrereqUsageKey] = useState(prereq);
+  const [prereqMinScoreState, setPrereqMinScore] = useState(prereqMinScore);
+  const [prereqMinCompletionState, setPrereqMinCompletion] = useState(prereqMinCompletion);
 
   /* TODO: The use of these useEffects needs to be updated to use Formik, please see,
   * https://github.com/open-craft/frontend-app-course-authoring/pull/22#discussion_r1435957797 as reference. */
@@ -113,6 +122,22 @@ const ConfigureModal = ({
   }, [visibilityState]);
 
   useEffect(() => {
+    setIsPrereqState(isPrereq);
+  }, [isPrereq]);
+
+  useEffect(() => {
+    setPrereqUsageKey(prereq);
+  }, [prereq]);
+
+  useEffect(() => {
+    setPrereqMinScore(prereqMinScore);
+  }, [prereqMinScore]);
+
+  useEffect(() => {
+    setPrereqMinCompletion(prereqMinCompletion);
+  }, [prereqMinCompletion]);
+
+  useEffect(() => {
     const visibilityUnchanged = isVisibleToStaffOnly === (visibilityState === VisibilityTypes.STAFF_ONLY);
     const graderTypeUnchanged = graderType === (format == null ? 'Not Graded' : format);
     const dueDateUnchanged = dueDateState === (due == null ? '' : due);
@@ -131,7 +156,11 @@ const ConfigureModal = ({
       && showCorrectnessState === showCorrectness
       && graderTypeUnchanged
       && selectedGroupsUnchanged
-      && accessRestrictionUnchanged,
+      && accessRestrictionUnchanged
+      && isPrereqState === isPrereq
+      && prereqUsageKey === prereq
+      && prereqMinScoreState === prereqMinScore
+      && prereqMinCompletionState === prereqMinCompletion
     );
   }, [
     releaseDate,
@@ -143,6 +172,10 @@ const ConfigureModal = ({
     showCorrectnessState,
     graderType,
     selectedGroups,
+    isPrereqState,
+    prereqUsageKey,
+    prereqMinScoreState,
+    prereqMinCompletionState,
   ]);
 
   const handleSave = () => {
@@ -161,6 +194,10 @@ const ConfigureModal = ({
         defaultTimeLimitMin,
         hideAfterDueState,
         showCorrectnessState,
+        isPrereqState,
+        prereqUsageKey,
+        prereqMinScoreState,
+        prereqMinCompletionState,
       );
       break;
     case COURSE_BLOCK_NAMES.vertical.id:
@@ -242,6 +279,15 @@ const ConfigureModal = ({
               setIsTimeLimited={setIsTimeLimitedState}
               defaultTimeLimit={defaultTimeLimitMin}
               setDefaultTimeLimit={setDefaultTimeLimitMin}
+              isPrereq={isPrereqState}
+              setIsPrereq={setIsPrereqState}
+              prereqs={prereqs}
+              prereq={prereqUsageKey}
+              setPrereqUsageKey={setPrereqUsageKey || undefined}
+              prereqMinScore={prereqMinScoreState || undefined}
+              setPrereqMinScore={setPrereqMinScore}
+              prereqMinCompletion={prereqMinCompletionState || undefined}
+              setPrereqMinCompletion={setPrereqMinCompletion}
             />
           </Tab>
         </Tabs>
@@ -266,36 +312,35 @@ const ConfigureModal = ({
   };
 
   return (
-    isOpen && (
-      <ModalDialog
-        className="configure-modal"
-        isOpen={isOpen}
-        onClose={onClose}
-        hasCloseButton
-        isFullscreenOnMobile
-      >
-        <div data-testid="configure-modal">
-          <ModalDialog.Header className="configure-modal__header">
-            <ModalDialog.Title>
-              {intl.formatMessage(messages.title, { title: displayName })}
-            </ModalDialog.Title>
-          </ModalDialog.Header>
-          <ModalDialog.Body className="configure-modal__body">
-            {renderModalBody(category)}
-          </ModalDialog.Body>
-          <ModalDialog.Footer className="pt-1">
-            <ActionRow>
-              <ModalDialog.CloseButton variant="tertiary">
-                {intl.formatMessage(messages.cancelButton)}
-              </ModalDialog.CloseButton>
-              <Button data-testid="configure-save-button" onClick={handleSave} disabled={saveButtonDisabled}>
-                {intl.formatMessage(messages.saveButton)}
-              </Button>
-            </ActionRow>
-          </ModalDialog.Footer>
-        </div>
-      </ModalDialog>
-    )
+    <ModalDialog
+      className="configure-modal"
+      size="lg"
+      isOpen={isOpen}
+      onClose={onClose}
+      hasCloseButton
+      isFullscreenOnMobile
+    >
+      <div data-testid="configure-modal">
+        <ModalDialog.Header className="configure-modal__header">
+          <ModalDialog.Title>
+            {intl.formatMessage(messages.title, { title: displayName })}
+          </ModalDialog.Title>
+        </ModalDialog.Header>
+        <ModalDialog.Body className="configure-modal__body">
+          {renderModalBody(category)}
+        </ModalDialog.Body>
+        <ModalDialog.Footer className="pt-1">
+          <ActionRow>
+            <ModalDialog.CloseButton variant="tertiary">
+              {intl.formatMessage(messages.cancelButton)}
+            </ModalDialog.CloseButton>
+            <Button data-testid="configure-save-button" onClick={handleSave} disabled={saveButtonDisabled}>
+              {intl.formatMessage(messages.saveButton)}
+            </Button>
+          </ActionRow>
+        </ModalDialog.Footer>
+      </div>
+    </ModalDialog>
   );
 };
 
