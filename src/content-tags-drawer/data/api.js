@@ -76,7 +76,7 @@ export async function getContentData(contentId) {
  */
 export async function updateContentTaxonomyTags(contentId, taxonomyId, tags) {
   let url = getContentTaxonomyTagsApiUrl(contentId);
-  url = `${url}&taxonomy=${taxonomyId}`;
+  url = `${url}?taxonomy=${taxonomyId}`;
   const { data } = await getAuthenticatedHttpClient().put(url, { tags });
   return camelCaseObject(data[contentId]);
 }
