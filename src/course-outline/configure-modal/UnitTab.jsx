@@ -1,36 +1,33 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert, Form } from '@edx/paragon';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import {
+  FormattedMessage, injectIntl, useIntl,
+} from '@edx/frontend-platform/i18n';
+import { Field } from 'formik';
+
 import messages from './messages';
 
 const UnitTab = ({
-  intl,
-  isVisibleToStaffOnly,
-  setIsVisibleToStaffOnly,
+  values,
+  setFieldValue,
   showWarning,
   userPartitionInfo,
-  setSelectedPartitionIndex,
-  selectedPartitionIndex,
-  selectedGroups,
-  add,
-  remove,
 }) => {
+  const intl = useIntl();
+  const {
+    isVisibleToStaffOnly,
+    selectedPartitionIndex,
+  } = values;
+
   const handleChange = (e) => {
-    setIsVisibleToStaffOnly(e.target.checked);
+    setFieldValue('isVisibleToStaffOnly', e.target.checked);
   };
 
   const handleSelect = (e) => {
-    setSelectedPartitionIndex(parseInt(e.target.value, 10));
+    setFieldValue('selectedPartitionIndex', parseInt(e.target.value, 10));
   };
 
-  const handleCheckBoxChange = e => {
-    if (e.target.checked) {
-      add(e.target.value);
-    } else {
-      remove(e.target.value);
-    }
-  };
   return (
     <>
       <h3 className="mt-3"><FormattedMessage {...messages.unitVisibility} /></h3>
@@ -39,7 +36,7 @@ const UnitTab = ({
         <FormattedMessage {...messages.hideFromLearners} />
       </Form.Checkbox>
       {showWarning && (
-        <Alert variant="warning">
+        <Alert className="mt-2" variant="warning">
           <FormattedMessage {...messages.unitVisibilityWarning} />
         </Alert>
       )}
@@ -71,16 +68,33 @@ const UnitTab = ({
         </Form.Control>
 
         {selectedPartitionIndex >= 0 && userPartitionInfo.selectablePartitions.length && (
-          <Form.Group>
+          <Form.Group controlId="select-groups-checkboxes">
             <Form.Label><FormattedMessage {...messages.unitSelectGroup} /></Form.Label>
-            <Form.CheckboxSet
-              name="groups"
-              onChange={handleCheckBoxChange}
-              value={selectedGroups}
+            <div
+              role="group"
+              className="d-flex flex-column"
               data-testid="group-checkboxes"
+              aria-labelledby="select-groups-checkboxes"
             >
-              {userPartitionInfo.selectablePartitions[selectedPartitionIndex].groups.map((group) => (<Form.Checkbox key={group.id} value={`${group.id}`}>{group.name}</Form.Checkbox>))}
-            </Form.CheckboxSet>
+              {userPartitionInfo.selectablePartitions[selectedPartitionIndex].groups.map((group) => (
+                <Form.Group
+                  key={group.id}
+                  className="pgn__form-checkbox"
+                >
+                  <Field
+                    as={Form.Control}
+                    className="flex-grow-0 mr-1"
+                    controlClassName="pgn__form-checkbox-input mr-1"
+                    type="checkbox"
+                    value={`${group.id}`}
+                    name="selectedGroups"
+                  />
+                  <Form.Label isInline>
+                    {group.name}
+                  </Form.Label>
+                </Form.Group>
+              ))}
+            </div>
           </Form.Group>
         )}
       </Form.Group>
@@ -90,9 +104,14 @@ const UnitTab = ({
 };
 
 UnitTab.propTypes = {
-  intl: intlShape.isRequired,
-  isVisibleToStaffOnly: PropTypes.bool.isRequired,
-  setIsVisibleToStaffOnly: PropTypes.func.isRequired,
+  values: PropTypes.shape({
+    isVisibleToStaffOnly: PropTypes.bool.isRequired,
+    selectedPartitionIndex: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]).isRequired,
+  }).isRequired,
+  setFieldValue: PropTypes.func.isRequired,
   showWarning: PropTypes.bool.isRequired,
   userPartitionInfo: PropTypes.shape({
     selectablePartitions: PropTypes.arrayOf(PropTypes.shape({
@@ -109,17 +128,6 @@ UnitTab.propTypes = {
     selectedGroupsLabel: PropTypes.string.isRequired,
     selectedPartitionIndex: PropTypes.number.isRequired,
   }).isRequired,
-  setSelectedPartitionIndex: PropTypes.func.isRequired,
-  selectedPartitionIndex: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-  ]).isRequired,
-  selectedGroups: PropTypes.arrayOf(PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-  ])).isRequired,
-  add: PropTypes.func.isRequired,
-  remove: PropTypes.func.isRequired,
 };
 
 export default injectIntl(UnitTab);

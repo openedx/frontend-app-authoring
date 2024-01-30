@@ -9,6 +9,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.configure-modal.basic-tab.title',
     defaultMessage: 'Basic',
   },
+  notGradedTypeOption: {
+    id: 'course-authoring.course-outline.configure-modal.basic-tab.notGradedTypeOption',
+    defaultMessage: 'Not Graded',
+  },
   releaseDateAndTime: {
     id: 'course-authoring.course-outline.configure-modal.basic-tab.release-date-and-time',
     defaultMessage: 'Release Date and Time',
@@ -43,11 +47,15 @@ const messages = defineMessages({
   },
   sectionVisibilityWarning: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.section-visibility-warning',
-    defaultMessage: 'If you make this section visible to learners, learners will be able to see its content after the release date has passed and you have published the unit. Only units that are explicitly hidden from learners will remain hidden after you clear this option for the section.',
+    defaultMessage: 'If you make this section visible to learners, learners will be able to see its content after the release date has passed and you have published the section. Only units that are explicitly hidden from learners will remain hidden after you clear this option for the section.',
   },
   unitVisibilityWarning: {
     id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-visibility-warning',
     defaultMessage: 'If the unit was previously published and released to learners, any changes you made to the unit when it was hidden will now be visible to learners.',
+  },
+  subsectionVisibilityWarning: {
+    id: 'course-authoring.course-outline.configure-modal.unit-tab.subsection-visibility-warning',
+    defaultMessage: 'If you select an option other than "Hide entire subsection", published units in this subsection will become available to learners unless they are explicitly hidden.',
   },
   unitSelectGroup: {
     id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-select-group',
