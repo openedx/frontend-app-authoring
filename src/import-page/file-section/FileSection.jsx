@@ -5,8 +5,8 @@ import {
 } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
+import { FormattedMessage } from '@edx/frontend-platform/i18n'
 import { Alert, Card, Dropzone } from '@edx/paragon';
-
 import { IMPORT_STAGES } from '../data/constants';
 import {
   getCurrentStage, getError, getFileName, getImportTriggered,
@@ -46,8 +46,7 @@ const FileSection = ({ intl, courseId, viewOnly }) => {
         )}
         {viewOnly && (
           <Alert variant="info">
-            You have view only access to this page.{' '}
-            If you feel you should have full access, please reach out to your course team admin to be given access.
+            <FormattedMessage {...messages.viewOnlyAlert} />
           </Alert>
         )}
       </Card.Section>

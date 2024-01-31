@@ -53,9 +53,10 @@ describe('<FileSection />', () => {
     });
   });
   it('should not render Dropzone when view is viewOnly', async () => {
-    const { queryByTestId, container } = render(<RootWrapperViewOnly />);
+    const { getByText, queryByTestId, container } = render(<RootWrapperViewOnly />);
     await waitFor(() => {
       expect(queryByTestId(container, 'dropzone')).not.toBeInTheDocument();
+      expect(getByText(messages.viewOnlyAlert.defaultMessage)).toBeInTheDocument();
     });
   });
   it('should work Dropzone', async () => {
