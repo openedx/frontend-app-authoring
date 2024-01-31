@@ -77,7 +77,7 @@ export const importTaxonomy = async (intl) => { // eslint-disable-line import/pr
       if (!taxonomyExportId) {
         alert(intl.formatMessage(messages.promptTaxonomyExportIdRequired));
       }
-      if (!validationRegex.test(taxonomyExportId)) {
+      else if (!validationRegex.test(taxonomyExportId)) {
         alert(intl.formatMessage(messages.promptTaxonomyExportIdInvalid));
         taxonomyExportId = null;
       }
