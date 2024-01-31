@@ -18,7 +18,11 @@ export const useBroadcastChannel = (channelName, onMessageReceived) => {
 
   useEffect(() => {
     if (!isSubscribed.current || process.env.NODE_ENV !== 'development') {
-      channel.onmessage = (event) => onMessageReceived(event.data);
+      // BroadcastChannel api from npm has minor difference from native BroadcastChannel
+      // Native BroadcastChannel passes event to onmessage callback and to
+      // access data we need to use `event.data`, but npm BroadcastChannel
+      // directly passes data as seen below
+      channel.onmessage = (data) => onMessageReceived(data);
     }
     return () => {
       if (isSubscribed.current || process.env.NODE_ENV !== 'development') {

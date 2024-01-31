@@ -45,6 +45,7 @@ const PasteButton = ({
 
   const renderBlockLink = (props) => (
     <Popover
+      id={`${blockType}-paste-button-overlay`}
       className="p-0"
       {...props}
     >
@@ -83,6 +84,7 @@ const PasteButton = ({
         {text}
       </Button>
       <OverlayTrigger
+        key={`${blockType}-paste-button-overlay`}
         show={show}
         placement="top"
         container={ref}
