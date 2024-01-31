@@ -165,6 +165,30 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.timed-description',
     defaultMessage: 'Use a timed exam to limit the time learners can spend on problems in this subsection. Learners must submit answers before the time expires. You can allow additional time for individual learners through the instructor Dashboard.',
   },
+  proctoredExam: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.proctoredExam',
+    defaultMessage: 'Proctored',
+  },
+  proctoredExamDescription: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.timed-description',
+    defaultMessage: 'Proctored exams are timed and they record video of each learner taking the exam. The videos are then reviewed to ensure that learners follow all examination rules. Please note that setting this exam as proctored will change the visibility settings to "Hide content after due date."',
+  },
+  onboardingExam: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.onboardingExam',
+    defaultMessage: 'Onboarding',
+  },
+  onboardingExamDescription: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.timed-description',
+    defaultMessage: 'Use Onboarding to introduce learners to proctoring, verify their identity, and create an onboarding profile. Learners must complete the onboarding profile step prior to taking a proctored exam. Profile reviews take 2+ business days.',
+  },
+  practiceExam: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.practiceExam',
+    defaultMessage: 'Practice Proctored',
+  },
+  practiceExamDescription: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.timed-description',
+    defaultMessage: 'Use a practice proctored exam to introduce learners to the proctoring tools and processes. Results of a practice exam do not affect a learner\'s grade.',
+  },
   advancedTabTitle: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.title',
     defaultMessage: 'Advanced',
@@ -216,6 +240,30 @@ const messages = defineMessages({
   minCompletionError: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.minCompletionError',
     defaultMessage: 'The minimum completion percentage must be a whole number between 0 and 100.',
+  },
+  proctoredExamLockedAndisNotProctoredExamAlert: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.proctoredExamLockedAndisNotProctoredExamAlert',
+    defaultMessage: 'This subsection was released to learners as a proctored exam, but was reverted back to a basic or timed exam. You may not configure it as a proctored exam now. Contact edX Support for assistance.',
+  },
+  proctoredExamLockedAndisProctoredExamAlert: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.proctoredExamLockedAndisProctoredExamAlert',
+    defaultMessage: 'This proctored exam has been released to learners. You may not convert it to another type of special exam. You may revert this subsection back to being a basic exam by selecting \'None\', or a timed exam, but you will NOT be able to configure it as a proctored exam in the future.',
+  },
+  reviewRulesLabel: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.reviewRulesLabel',
+    defaultMessage: 'Review Rules',
+  },
+  reviewRulesDescription: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.reviewRulesDescription',
+    defaultMessage: 'Specify any rules or rule exceptions that the proctoring review team should enforce when reviewing the videos. For example, you could specify that calculators are allowed. These specified rules are visible to learners before the learners start the exam.',
+  },
+  reviewRulesDescriptionWithLink: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.reviewRulesDescriptionWithLink',
+    defaultMessage: 'Specify any rules or rule exceptions that the proctoring review team should enforce when reviewing the videos. For example, you could specify that calculators are allowed. These specified rules are visible to learners before the learners start the exam, along with the {hyperlink}.',
+  },
+  reviewRulesDescriptionLinkText: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.reviewRulesDescriptionLinkText',
+    defaultMessage: 'general proctored exam rules',
   },
 });
 

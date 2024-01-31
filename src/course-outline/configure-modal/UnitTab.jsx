@@ -125,7 +125,7 @@ UnitTab.propTypes = {
       name: PropTypes.string.isRequired,
       scheme: PropTypes.string.isRequired,
     }).isRequired).isRequired,
-    selectedGroupsLabel: PropTypes.string.isRequired,
+    selectedGroupsLabel: PropTypes.string,
     selectedPartitionIndex: PropTypes.number.isRequired,
   }).isRequired,
 };

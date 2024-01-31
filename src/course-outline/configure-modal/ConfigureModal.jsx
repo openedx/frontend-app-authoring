@@ -16,7 +16,7 @@ import { Formik } from 'formik';
 
 import { VisibilityTypes } from '../../data/constants';
 import { COURSE_BLOCK_NAMES } from '../constants';
-import { getCurrentItem } from '../data/selectors';
+import { getCurrentItem, getProctoredExamsFlag } from '../data/selectors';
 import messages from './messages';
 import BasicTab from './BasicTab';
 import VisibilityTab from './VisibilityTab';
@@ -48,7 +48,17 @@ const ConfigureModal = ({
     prereq,
     prereqMinScore,
     prereqMinCompletion,
+    releasedToStudents,
+    wasExamEverLinkedWithExternal,
+    isProctoredExam,
+    isOnboardingExam,
+    isPracticeExam,
+    examReviewRules,
+    supportsOnboarding,
+    showReviewRules,
+    onlineProctoringRules,
   } = useSelector(getCurrentItem);
+  const enableProctoredExams = useSelector(getProctoredExamsFlag);
 
   const getSelectedGroups = () => {
     if (userPartitionInfo?.selectedPartitionIndex >= 0) {
@@ -75,6 +85,10 @@ const ConfigureModal = ({
     graderType: format == null ? 'notgraded' : format,
     dueDate: due == null ? '' : due,
     isTimeLimited,
+    isProctoredExam,
+    isOnboardingExam,
+    isPracticeExam,
+    examReviewRules,
     defaultTimeLimitMinutes,
     hideAfterDue: hideAfterDue === undefined ? false : hideAfterDue,
     showCorrectness,
@@ -89,6 +103,10 @@ const ConfigureModal = ({
 
   const validationSchema = Yup.object().shape({
     isTimeLimited: Yup.boolean(),
+    isProctoredExam: Yup.boolean(),
+    isPracticeExam: Yup.boolean(),
+    isOnboardingExam: Yup.boolean(),
+    examReviewRules: Yup.string(),
     defaultTimeLimitMinutes: Yup.number().nullable(true),
     hideAfterDueState: Yup.boolean(),
     showCorrectness: Yup.string().required(),
@@ -127,6 +145,10 @@ const ConfigureModal = ({
         data.graderType,
         data.dueDate,
         data.isTimeLimited,
+        data.isProctoredExam,
+        data.isOnboardingExam,
+        data.isPracticeExam,
+        data.examReviewRules,
         data.isTimeLimited ? data.defaultTimeLimitMinutes : 0,
         data.hideAfterDue,
         data.showCorrectness,
@@ -198,6 +220,13 @@ const ConfigureModal = ({
               values={values}
               setFieldValue={setFieldValue}
               prereqs={prereqs}
+              releasedToStudents={releasedToStudents}
+              wasExamEverLinkedWithExternal={wasExamEverLinkedWithExternal}
+              enableProctoredExams={enableProctoredExams}
+              supportsOnboarding={supportsOnboarding}
+              showReviewRules={showReviewRules}
+              wasProctoredExam={isProctoredExam}
+              onlineProctoringRules={onlineProctoringRules}
             />
           </Tab>
         </Tabs>

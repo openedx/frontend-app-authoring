@@ -1,125 +1,48 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { Form, Icon } from '@edx/paragon';
-import { Percent as PercentIcon } from '@edx/paragon/icons';
-import { FormattedMessage, injectIntl, useIntl } from '@edx/frontend-platform/i18n';
+import { Alert, Form, Hyperlink } from '@edx/paragon';
+import {
+  Warning as WarningIcon,
+} from '@edx/paragon/icons';
+import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
-import FormikControl from '../../generic/FormikControl';
-
-const PrereqSettings = ({
-  values,
-  setFieldValue,
-  prereqs,
-}) => {
-  const intl = useIntl();
-  const {
-    isPrereq,
-    prereqUsageKey,
-    prereqMinScore,
-    prereqMinCompletion,
-  } = values;
-
-  if (isPrereq === null) {
-    return null;
-  }
-
-  const handleSelectChange = (e) => {
-    setFieldValue('prereqUsageKey', e.target.value);
-  };
-
-  const prereqSelectionForm = () => (
-    <>
-      <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.limitAccessTitle} /></h5>
-      <hr />
-      <Form>
-        <Form.Text><FormattedMessage {...messages.limitAccessDescription} /></Form.Text>
-        <Form.Group controlId="prereqForm.select">
-          <Form.Label>
-            {intl.formatMessage(messages.prerequisiteSelectLabel)}
-          </Form.Label>
-          <Form.Control
-            as="select"
-            defaultValue={prereqUsageKey}
-            onChange={handleSelectChange}
-          >
-            <option value="">
-              {intl.formatMessage(messages.noPrerequisiteOption)}
-            </option>
-            {prereqs.map((prereqOption) => (
-              <option
-                key={prereqOption.blockUsageKey}
-                value={prereqOption.blockUsageKey}
-              >
-                {prereqOption.blockDisplayName}
-              </option>
-            ))}
-          </Form.Control>
-        </Form.Group>
-        {prereqUsageKey && (
-          <>
-            <FormikControl
-              name="prereqMinScore"
-              value={prereqMinScore}
-              label={<Form.Label>{intl.formatMessage(messages.minScoreLabel)}</Form.Label>}
-              controlClassName="text-right"
-              controlClasses="w-7rem"
-              type="number"
-              trailingElement={<Icon src={PercentIcon} />}
-            />
-            <FormikControl
-              name="prereqMinCompletion"
-              value={prereqMinCompletion}
-              label={<Form.Label>{intl.formatMessage(messages.minCompletionLabel)}</Form.Label>}
-              controlClassName="text-right"
-              controlClasses="w-7rem"
-              type="number"
-              trailingElement={<Icon src={PercentIcon} />}
-            />
-          </>
-        )}
-      </Form>
-    </>
-  );
-
-  const handleCheckboxChange = e => setFieldValue('isPrereq', e.target.checked);
-
-  return (
-    <>
-      {prereqs.length > 0 && prereqSelectionForm()}
-      <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.prereqTitle} /></h5>
-      <hr />
-      <Form.Checkbox checked={isPrereq} onChange={handleCheckboxChange}>
-        <FormattedMessage {...messages.prereqCheckboxLabel} />
-      </Form.Checkbox>
-    </>
-  );
-};
-
-PrereqSettings.propTypes = {
-  values: PropTypes.shape({
-    isPrereq: PropTypes.bool,
-    prereqUsageKey: PropTypes.string,
-    prereqMinScore: PropTypes.number,
-    prereqMinCompletion: PropTypes.number,
-  }).isRequired,
-  prereqs: PropTypes.arrayOf(PropTypes.shape({
-    blockUsageKey: PropTypes.string.isRequired,
-    blockDisplayName: PropTypes.string.isRequired,
-  })),
-  setFieldValue: PropTypes.func.isRequired,
-};
+import PrereqSettings from './PrereqSettings';
 
 const AdvancedTab = ({
   values,
   setFieldValue,
   prereqs,
+  releasedToStudents,
+  wasExamEverLinkedWithExternal,
+  enableProctoredExams,
+  supportsOnboarding,
+  wasProctoredExam,
+  showReviewRules,
+  onlineProctoringRules,
 }) => {
   const {
     isTimeLimited,
+    isProctoredExam,
+    isOnboardingExam,
+    isPracticeExam,
     defaultTimeLimitMinutes,
+    examReviewRules,
   } = values;
+  let examTypeValue = 'none';
+
+  if (isTimeLimited && isProctoredExam) {
+    if (isOnboardingExam) {
+      examTypeValue = 'onboardingExam';
+    } else if (isPracticeExam) {
+      examTypeValue = 'practiceExam';
+    } else {
+      examTypeValue = 'proctoredExam';
+    }
+  } else if (isTimeLimited) {
+    examTypeValue = 'timed';
+  }
 
   const formatHour = (hour) => {
     const hh = Math.floor(hour / 60);
@@ -142,12 +65,34 @@ const AdvancedTab = ({
   };
 
   const [timeLimit, setTimeLimit] = useState(formatHour(defaultTimeLimitMinutes));
+  const showReviewRulesDiv = showReviewRules && isProctoredExam && !isPracticeExam && !isOnboardingExam;
 
   const handleChange = (e) => {
     if (e.target.value === 'timed') {
       setFieldValue('isTimeLimited', true);
+      setFieldValue('isOnboardingExam', false);
+      setFieldValue('isPracticeExam', false);
+      setFieldValue('isProctoredExam', false);
+    } else if (e.target.value === 'onboardingExam') {
+      setFieldValue('isOnboardingExam', true);
+      setFieldValue('isProctoredExam', true);
+      setFieldValue('isTimeLimited', true);
+      setFieldValue('isPracticeExam', false);
+    } else if (e.target.value === 'practiceExam') {
+      setFieldValue('isPracticeExam', true);
+      setFieldValue('isProctoredExam', true);
+      setFieldValue('isTimeLimited', true);
+      setFieldValue('isOnboardingExam', false);
+    } else if (e.target.value === 'proctoredExam') {
+      setFieldValue('isProctoredExam', true);
+      setFieldValue('isTimeLimited', true);
+      setFieldValue('isOnboardingExam', false);
+      setFieldValue('isPracticeExam', false);
     } else {
       setFieldValue('isTimeLimited', false);
+      setFieldValue('isOnboardingExam', false);
+      setFieldValue('isPracticeExam', false);
+      setFieldValue('isProctoredExam', false);
     }
   };
 
@@ -162,6 +107,24 @@ const AdvancedTab = ({
     setTimeLimit(value);
   };
 
+  const renderAlerts = () => {
+    const proctoredExamLockedIn = releasedToStudents && wasExamEverLinkedWithExternal;
+    return (
+      <>
+        {proctoredExamLockedIn && !wasProctoredExam && (
+          <Alert variant="warning" icon={WarningIcon}>
+            <FormattedMessage {...messages.proctoredExamLockedAndisNotProctoredExamAlert} />
+          </Alert>
+        )}
+        {proctoredExamLockedIn && wasProctoredExam && (
+          <Alert variant="warning" icon={WarningIcon}>
+            <FormattedMessage {...messages.proctoredExamLockedAndisProctoredExamAlert} />
+          </Alert>
+        )}
+      </>
+    );
+  };
+
   return (
     <>
       <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.setSpecialExam} /></h5>
@@ -169,15 +132,47 @@ const AdvancedTab = ({
       <Form.RadioSet
         name="specialExam"
         onChange={handleChange}
-        value={isTimeLimited ? 'timed' : 'none'}
+        value={examTypeValue}
       >
+        {renderAlerts()}
         <Form.Radio value="none">
           <FormattedMessage {...messages.none} />
         </Form.Radio>
-        <Form.Radio value="timed">
+        <Form.Radio
+          value="timed"
+          description={<FormattedMessage {...messages.timedDescription} />}
+          controlClassName="mw-1-25rem"
+        >
           <FormattedMessage {...messages.timed} />
         </Form.Radio>
-        <Form.Text><FormattedMessage {...messages.timedDescription} /></Form.Text>
+        {enableProctoredExams && (
+          <>
+            <Form.Radio
+              value="proctoredExam"
+              description={<FormattedMessage {...messages.proctoredExamDescription} />}
+              controlClassName="mw-1-25rem"
+            >
+              <FormattedMessage {...messages.proctoredExam} />
+            </Form.Radio>
+            {supportsOnboarding ? (
+              <Form.Radio
+                description={<FormattedMessage {...messages.onboardingExamDescription} />}
+                value="onboardingExam"
+                controlClassName="mw-1-25rem"
+              >
+                <FormattedMessage {...messages.onboardingExam} />
+              </Form.Radio>
+            ) : (
+              <Form.Radio
+                value="practiceExam"
+                controlClassName="mw-1-25rem"
+                description={<FormattedMessage {...messages.practiceExamDescription} />}
+              >
+                <FormattedMessage {...messages.practiceExam} />
+              </Form.Radio>
+            )}
+          </>
+        )}
       </Form.RadioSet>
       { isTimeLimited && (
         <div className="mt-3" data-testid="advanced-tab-hours-picker-wrapper">
@@ -195,6 +190,43 @@ const AdvancedTab = ({
           <Form.Text><FormattedMessage {...messages.timeLimitDescription} /></Form.Text>
         </div>
       )}
+      { showReviewRulesDiv && (
+        <div className="mt-3">
+          <Form.Group>
+            <Form.Label>
+              <FormattedMessage {...messages.reviewRulesLabel} />
+            </Form.Label>
+            <Form.Control
+              onChange={(e) => setFieldValue('examReviewRules', e.target.value)}
+              value={examReviewRules}
+              as="textarea"
+              rows="3"
+            />
+          </Form.Group>
+          <Form.Text>
+            { onlineProctoringRules ? (
+              <FormattedMessage
+                {...messages.reviewRulesDescriptionWithLink}
+                values={{
+                  hyperlink: (
+                    <Hyperlink
+                      destination={onlineProctoringRules}
+                      target="_blank"
+                      showLaunchIcon={false}
+                    >
+                      <FormattedMessage
+                        {...messages.reviewRulesDescriptionLinkText}
+                      />
+                    </Hyperlink>
+                  ),
+                }}
+              />
+            ) : (
+              <FormattedMessage {...messages.reviewRulesDescription} />
+            )}
+          </Form.Text>
+        </div>
+      )}
       <PrereqSettings
         values={values}
         setFieldValue={setFieldValue}
@@ -202,6 +234,16 @@ const AdvancedTab = ({
       />
     </>
   );
+};
+
+AdvancedTab.defaultProps = {
+  prereqs: [],
+  wasExamEverLinkedWithExternal: false,
+  enableProctoredExams: false,
+  supportsOnboarding: false,
+  wasProctoredExam: false,
+  showReviewRules: false,
+  onlineProctoringRules: '',
 };
 
 AdvancedTab.propTypes = {
@@ -212,12 +254,23 @@ AdvancedTab.propTypes = {
     prereqUsageKey: PropTypes.string,
     prereqMinScore: PropTypes.number,
     prereqMinCompletion: PropTypes.number,
+    isProctoredExam: PropTypes.bool,
+    isPracticeExam: PropTypes.bool,
+    isOnboardingExam: PropTypes.bool,
+    examReviewRules: PropTypes.string,
   }).isRequired,
   setFieldValue: PropTypes.func.isRequired,
   prereqs: PropTypes.arrayOf(PropTypes.shape({
     blockUsageKey: PropTypes.string.isRequired,
     blockDisplayName: PropTypes.string.isRequired,
   })),
+  releasedToStudents: PropTypes.bool.isRequired,
+  wasExamEverLinkedWithExternal: PropTypes.bool,
+  enableProctoredExams: PropTypes.bool,
+  supportsOnboarding: PropTypes.bool,
+  wasProctoredExam: PropTypes.bool,
+  showReviewRules: PropTypes.bool,
+  onlineProctoringRules: PropTypes.string,
 };
 
 export default injectIntl(AdvancedTab);
