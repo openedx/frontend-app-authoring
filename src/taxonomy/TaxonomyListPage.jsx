@@ -160,7 +160,7 @@ const TaxonomyListPage = () => {
     return { taxonomyListData, isLoaded };
   };
   const { taxonomyListData, isLoaded } = useTaxonomyListData();
-  const canAddTaxonomy = isLoaded ? taxonomyListData.canAddTaxonomy : false;
+  const canAddTaxonomy = isLoaded ? (taxonomyListData?.canAddTaxonomy || false) : false;
 
   const getOrgSelect = () => (
     // Initialize organization select component

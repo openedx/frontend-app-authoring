@@ -35,10 +35,11 @@ export const getTagsPlanImportApiUrl = (taxonomyId) => new URL(
  * @param {File} file
  * @returns {Promise<import('../../data/types.mjs').TaxonomyData>}
  */
-export async function importNewTaxonomy(taxonomyName, taxonomyDescription, file) {
+export async function importNewTaxonomy(taxonomyName, taxonomyExportId, taxonomyDescription, file) {
   // ToDo: transform this to use react-query like useImportTags
   const formData = new FormData();
   formData.append('taxonomy_name', taxonomyName);
+  formData.append('taxonomy_export_id', taxonomyExportId);
   formData.append('taxonomy_description', taxonomyDescription);
   formData.append('file', file);
 

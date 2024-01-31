@@ -64,6 +64,27 @@ export const importTaxonomy = async (intl) => { // eslint-disable-line import/pr
     return taxonomyName;
   };
 
+  const getTaxonomyExportId = () => {
+    let taxonomyExportId = null;
+    const validationRegex = /^[\p{L}\w\-.]+$/u;
+    while (!taxonomyExportId) {
+      taxonomyExportId = prompt(intl.formatMessage(messages.promptTaxonomyExportId));
+
+      if (taxonomyExportId == null) {
+        break;
+      }
+
+      if (!taxonomyExportId) {
+        alert(intl.formatMessage(messages.promptTaxonomyExportIdRequired));
+      }
+      if (!validationRegex.test(taxonomyExportId)) {
+        alert(intl.formatMessage(messages.promptTaxonomyExportIdInvalid));
+        taxonomyExportId = null;
+      }
+    }
+    return taxonomyExportId;
+  };
+
   const getTaxonomyDescription = () => prompt(intl.formatMessage(messages.promptTaxonomyDescription));
 
   const file = await selectFile();
@@ -77,12 +98,17 @@ export const importTaxonomy = async (intl) => { // eslint-disable-line import/pr
     return;
   }
 
+  const taxonomyExportId = getTaxonomyExportId();
+  if (taxonomyExportId == null) {
+    return;
+  }
+
   const taxonomyDescription = getTaxonomyDescription();
   if (taxonomyDescription == null) {
     return;
   }
 
-  importNewTaxonomy(taxonomyName, taxonomyDescription, file)
+  importNewTaxonomy(taxonomyName, taxonomyExportId, taxonomyDescription, file)
     .then(() => {
       alert(intl.formatMessage(messages.importTaxonomySuccess));
     })
