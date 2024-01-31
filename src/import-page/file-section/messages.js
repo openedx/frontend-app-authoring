@@ -11,8 +11,8 @@ const messages = defineMessages({
   },
   viewOnlyAlert: {
     id: 'course-authoring.import.file-section.view-only-alert',
-    defaultMessage: 'You have view only access to this page. If you feel you should have full access, please reach out to your course team admin to be given access.'
-  }
+    defaultMessage: 'You have view only access to this page. If you feel you should have full access, please reach out to your course team admin to be given access.',
+  },
 });
 
 export default messages;

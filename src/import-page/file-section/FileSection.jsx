@@ -1,11 +1,11 @@
 import React from 'react';
 import {
+  FormattedMessage,
   injectIntl,
   intlShape,
 } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { FormattedMessage } from '@edx/frontend-platform/i18n'
 import { Alert, Card, Dropzone } from '@edx/paragon';
 import { IMPORT_STAGES } from '../data/constants';
 import {
