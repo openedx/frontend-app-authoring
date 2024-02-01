@@ -46,6 +46,7 @@ import statusBarMessages from './status-bar/messages';
 import configureModalMessages from './configure-modal/messages';
 import pasteButtonMessages from './paste-button/messages';
 import subsectionMessages from './subsection-card/messages';
+import pageAlertMessages from './page-alerts/messages';
 
 let axiosMock;
 let store;
@@ -67,6 +68,13 @@ jest.mock('../help-urls/hooks', () => ({
     visibility: 'some',
     grading: 'some',
     outline: 'some',
+  }),
+}));
+
+jest.mock('@edx/frontend-platform/i18n', () => ({
+  ...jest.requireActual('@edx/frontend-platform/i18n'),
+  useIntl: () => ({
+    formatMessage: (message) => message.defaultMessage,
   }),
 }));
 
@@ -169,7 +177,10 @@ describe('<CourseOutline />', () => {
       },
     }));
 
-    expect(queryByRole('alert')).toBeInTheDocument();
+    const alertElement = queryByRole('alert');
+    expect(alertElement).toHaveTextContent(
+      pageAlertMessages.alertFailedGeneric.defaultMessage,
+    );
   });
 
   it('render error alert after failed reindex correctly', async () => {

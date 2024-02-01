@@ -52,13 +52,26 @@ import {
   setUnitOrderListQuery,
   setClipboardContent,
   pasteClipboardContent,
+  dismissNotificationQuery,
 } from './data/thunk';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { reindexLink, courseStructure, lmsLink } = useSelector(getOutlineIndexData);
+  const {
+    reindexLink,
+    courseStructure,
+    lmsLink,
+    notificationDismissUrl,
+    discussionsSettings,
+    discussionsIncontextFeedbackUrl,
+    discussionsIncontextLearnmoreUrl,
+    deprecatedBlocksInfo,
+    proctoringErrors,
+    mfeProctoredExamSettingsUrl,
+    advanceSettingsUrl,
+  } = useSelector(getOutlineIndexData);
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
@@ -239,6 +252,10 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(setUnitOrderListQuery(sectionId, subsectionId, unitListIds, restoreCallback));
   };
 
+  const handleDismissNotification = () => {
+    dispatch(dismissNotificationQuery(notificationDismissUrl));
+  };
+
   useEffect(() => {
     dispatch(fetchCourseOutlineIndexQuery(courseId));
     dispatch(fetchCourseBestPracticesQuery({ courseId }));
@@ -306,6 +323,15 @@ const useCourseOutline = ({ courseId }) => {
     handleUnitDragAndDrop,
     handleCopyToClipboardClick,
     handlePasteClipboardClick,
+    notificationDismissUrl,
+    discussionsSettings,
+    discussionsIncontextFeedbackUrl,
+    discussionsIncontextLearnmoreUrl,
+    deprecatedBlocksInfo,
+    proctoringErrors,
+    mfeProctoredExamSettingsUrl,
+    handleDismissNotification,
+    advanceSettingsUrl,
   };
 };
 

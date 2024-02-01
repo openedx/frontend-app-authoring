@@ -462,3 +462,13 @@ export async function pasteBlock(parentLocator) {
 
   return data;
 }
+
+/**
+ * Dismiss notification
+ * @param {string} url
+ * @returns void
+*/
+export async function dismissNotification(url) {
+  await getAuthenticatedHttpClient()
+    .delete(url);
+}

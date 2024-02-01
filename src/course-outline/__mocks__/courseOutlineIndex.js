@@ -3056,7 +3056,7 @@ module.exports = {
   languageCode: 'en',
   lmsLink: '//localhost:18000/courses/course-v1:edx+101+y76/jump_to/block-v1:edx+101+y76+type@course+block@course',
   mfeProctoredExamSettingsUrl: '',
-  notificationDismissUrl: '/course_notifications/course-v1:edx+101+y76/2',
+  notificationDismissUrl: '',
   proctoringErrors: [],
   reindexLink: '/course/course-v1:edx+101+y76/search_reindex',
   rerunNotificationId: 2,

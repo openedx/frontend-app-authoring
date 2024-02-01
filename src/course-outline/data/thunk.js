@@ -30,6 +30,7 @@ import {
   setCourseItemOrderList,
   copyBlockToClipboard,
   pasteBlock,
+  dismissNotification,
 } from './api';
 import {
   addSection,
@@ -619,6 +620,20 @@ export function pasteClipboardContent(parentLocator, sectionId) {
       });
     } catch (error) {
       dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function dismissNotificationQuery(url) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+
+    try {
+      await dismissNotification(url).then(async () => {
+        dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+      });
+    } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   };
