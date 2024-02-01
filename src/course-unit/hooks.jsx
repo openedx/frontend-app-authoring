@@ -36,8 +36,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const navigate = useNavigate();
   const isTitleEditFormOpen = useSelector(state => state.courseUnit.isTitleEditFormOpen);
   const isQueryPending = useSelector(state => state.courseUnit.isQueryPending);
-  const { hasExplicitStaffLock, published, releaseDate } = courseUnit;
-  const isLastUnpublishedVersion = !hasExplicitStaffLock && published && releaseDate;
+  const { currentlyVisibleToStudents } = courseUnit;
 
   const unitTitle = courseUnit.metadata?.displayName || '';
   const sequenceId = courseUnit.ancestorInfo?.ancestors[0].id;
@@ -110,7 +109,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     savingStatus,
     isQueryPending,
     isErrorAlert,
-    isLastUnpublishedVersion,
+    currentlyVisibleToStudents,
     isLoading: loadingStatus.fetchUnitLoadingStatus === RequestStatus.IN_PROGRESS
       || loadingStatus.courseSectionVerticalLoadingStatus === RequestStatus.IN_PROGRESS,
     isTitleEditFormOpen,

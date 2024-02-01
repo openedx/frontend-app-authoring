@@ -371,9 +371,7 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseUnitApiUrl(courseId))
       .reply(200, {
         ...courseUnitIndexMock,
-        has_explicit_staff_lock: true,
-        release_date: null,
-        published: false,
+        currently_visible_to_students: false,
       });
 
     await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
