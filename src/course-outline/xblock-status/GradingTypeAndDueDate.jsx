@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon } from '@edx/paragon';
+import { Icon } from '@openedx/paragon';
 import {
   Check as CheckIcon,
   CalendarMonth as CalendarIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 import messages from './messages';
 

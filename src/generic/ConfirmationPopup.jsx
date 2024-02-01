@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Card } from '@edx/paragon';
+import { Button, Card } from '@openedx/paragon';
 
 const ConfirmationPopup = ({
   label,

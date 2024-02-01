@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Stack, Form } from '@edx/paragon';
+import { Stack, Form } from '@openedx/paragon';
 import { FormattedMessage, injectIntl, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { DatepickerControl, DATEPICKER_TYPES } from '../../generic/datepicker-control';

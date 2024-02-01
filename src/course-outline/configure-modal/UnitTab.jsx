@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Form } from '@edx/paragon';
+import { Alert, Form } from '@openedx/paragon';
 import {
   FormattedMessage, injectIntl, useIntl,
 } from '@edx/frontend-platform/i18n';

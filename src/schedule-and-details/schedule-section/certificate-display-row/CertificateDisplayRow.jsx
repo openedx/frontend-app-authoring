@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Dropdown, Form, Collapsible, Icon,
-} from '@edx/paragon';
-import { InfoOutline } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { InfoOutline } from '@openedx/paragon/icons';
 
 import { getLabelById } from '../../../utils';
 import { DatepickerControl, DATEPICKER_TYPES } from '../../../generic/datepicker-control';

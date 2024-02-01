@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spinner } from '@edx/paragon';
+import { Spinner } from '@openedx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 export const LoadingSpinner = () => (

@@ -2,7 +2,7 @@ import {
   InsertDriveFile,
   Terminal,
   AudioFile,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import FILES_AND_UPLOAD_TYPE_FILTERS from '../../generic/constants';
 

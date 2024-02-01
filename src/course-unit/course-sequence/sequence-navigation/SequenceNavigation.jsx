@@ -5,11 +5,11 @@ import classNames from 'classnames';
 import {
   injectIntl, intlShape, isRtl, getLocale,
 } from '@edx/frontend-platform/i18n';
-import { Button, useWindowSize, breakpoints } from '@edx/paragon';
+import { Button, useWindowSize, breakpoints } from '@openedx/paragon';
 import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 import { useModel } from '../../../generic/model-store';
 import { RequestStatus } from '../../../data/constants';

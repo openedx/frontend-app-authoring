@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow, AlertModal, Button, Hyperlink,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import messages from './messages';
 import { useHelpUrls } from '../../help-urls/hooks';

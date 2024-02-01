@@ -6,7 +6,7 @@ import {
   Stack,
   ActionRow,
   Button,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useNavigate, useParams } from 'react-router-dom';
 

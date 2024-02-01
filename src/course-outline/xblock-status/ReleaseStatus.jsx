@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon } from '@edx/paragon';
+import { Icon } from '@openedx/paragon';
 import {
   AccessTime as ClockIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 import messages from './messages';
 

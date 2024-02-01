@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Remove, Check } from '@edx/paragon/icons';
-import { DataTable } from '@edx/paragon';
+import { Remove, Check } from '@openedx/paragon/icons';
+import { DataTable } from '@openedx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import _ from 'lodash';
 

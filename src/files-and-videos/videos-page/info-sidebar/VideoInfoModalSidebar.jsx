@@ -4,7 +4,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Tabs,
   Tab,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import InfoTab from './InfoTab';
 import TranscriptTab from './TranscriptTab';
 import messages from './messages';

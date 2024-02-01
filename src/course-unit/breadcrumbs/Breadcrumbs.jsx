@@ -1,10 +1,10 @@
 import { useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Dropdown, Icon } from '@edx/paragon';
+import { Dropdown, Icon } from '@openedx/paragon';
 import {
   ArrowDropDown as ArrowDropDownIcon,
   ChevronRight as ChevronRightIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 import { createCorrectInternalRoute } from '../../utils';
 import { getCourseSectionVertical } from '../data/selectors';

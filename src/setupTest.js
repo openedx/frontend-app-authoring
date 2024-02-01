@@ -48,5 +48,21 @@ mergeConfig({
   ENABLE_TEAM_TYPE_SETTING: process.env.ENABLE_TEAM_TYPE_SETTING === 'true',
 }, 'CourseAuthoringConfig');
 
+class ResizeObserver {
+  observe() {
+    // do nothing
+  }
+
+  unobserve() {
+    // do nothing
+  }
+
+  disconnect() {
+    // do nothing
+  }
+}
+
+window.ResizeObserver = ResizeObserver;
+
 // Mock the plugins repo so jest will stop complaining about ES6 syntax
 jest.mock('frontend-components-tinymce-advanced-plugins', () => {});

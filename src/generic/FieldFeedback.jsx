@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form, TransitionReplace } from '@edx/paragon';
+import { Form, TransitionReplace } from '@openedx/paragon';
 
 const FieldFeedback = ({
   feedbackClasses,

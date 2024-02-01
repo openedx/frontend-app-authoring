@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-useless-fragment */
-import { Form } from '@edx/paragon';
+import { Form } from '@openedx/paragon';
 import { getIn, useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
 import React from 'react';

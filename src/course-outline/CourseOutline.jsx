@@ -7,13 +7,13 @@ import {
   Layout,
   Row,
   TransitionReplace,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 import {
   Add as IconAdd,
   CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import { DraggableList } from '@edx/frontend-lib-content-components';
 import { arrayMove } from '@dnd-kit/sortable';

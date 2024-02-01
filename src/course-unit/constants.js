@@ -11,7 +11,7 @@ import {
   Science as ScienceIcon,
   TextFields as TextFieldsIcon,
   VideoCamera as VideoCameraIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 export const UNIT_ICON_TYPES = ['video', 'other', 'vertical', 'problem', 'lock'];
 

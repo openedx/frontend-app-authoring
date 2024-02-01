@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Card } from '@edx/paragon';
+import { Layout, Card } from '@openedx/paragon';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useIntl } from '@edx/frontend-platform/i18n';
 

@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment/moment';
 import { useEffect, useState } from 'react';
-import { useToggle } from '@edx/paragon';
+import { useToggle } from '@openedx/paragon';
 
 import { COMMA_SEPARATED_DATE_FORMAT } from '../constants';
 import { getCourseHandouts, getCourseUpdates } from './data/selectors';

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Button, Card } from '@edx/paragon';
-import { Add as AddIcon } from '@edx/paragon/icons/es5';
+import { Button, Card } from '@openedx/paragon';
+import { Add as AddIcon } from '@openedx/paragon/icons/es5';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { getStudioHomeData } from '../../../data/selectors';

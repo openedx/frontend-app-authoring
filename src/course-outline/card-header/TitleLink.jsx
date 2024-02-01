@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Button, Truncate } from '@edx/paragon';
+import { Button, Truncate } from '@openedx/paragon';
 
 const TitleLink = ({
   title,

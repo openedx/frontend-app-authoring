@@ -1,5 +1,5 @@
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Button, Form, TransitionReplace } from '@edx/paragon';
+import { Button, Form, TransitionReplace } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { GroupTypes, TeamSizes } from '../../data/constants';
