@@ -39,6 +39,7 @@ window.getComputedStyle = jest.fn(() => ({
 // Ensure app-specific configs are loaded during tests since
 // initialize() is not called.
 mergeConfig({
+  LMS_BASE_URL: process.env.LMS_BASE_URL || null,
   SUPPORT_URL: process.env.SUPPORT_URL || null,
   SUPPORT_EMAIL: process.env.SUPPORT_EMAIL || null,
   LEARNING_BASE_URL: process.env.LEARNING_BASE_URL,

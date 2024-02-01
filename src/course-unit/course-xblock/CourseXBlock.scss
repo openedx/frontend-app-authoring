@@ -1,3 +1,5 @@
+@import "xblock-content/XBlockContent";
+
 .course-unit {
   .course-unit__xblocks {
     .course-unit__xblock:not(:first-child) {
@@ -30,7 +32,7 @@
     }
   }
 
-  .unit-iframe__wrapper .alert-danger {
+  .unit-iframe-wrapper .alert-danger {
     margin-bottom: 0;
   }
 }

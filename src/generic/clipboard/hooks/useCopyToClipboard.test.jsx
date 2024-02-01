@@ -54,23 +54,6 @@ describe('useCopyToClipboard', () => {
   });
 
   describe('clipboard data update effect', () => {
-    it('returns falsy flags if canEdit = false', async () => {
-      const { result } = renderHook(() => useCopyToClipboard(false), { wrapper });
-
-      axiosMock
-        .onPost(getClipboardUrl())
-        .reply(200, clipboardUnit);
-      axiosMock
-        .onGet(getClipboardUrl())
-        .reply(200, clipboardUnit);
-
-      await act(async () => {
-        await executeThunk(copyToClipboard(unitId), store.dispatch);
-      });
-      expect(result.current.showPasteUnit).toBe(false);
-      expect(result.current.showPasteXBlock).toBe(false);
-    });
-
     it('returns flag to display the Paste Unit button', async () => {
       const { result } = renderHook(() => useCopyToClipboard(true), { wrapper });
 

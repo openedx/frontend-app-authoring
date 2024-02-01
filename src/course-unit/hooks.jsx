@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -13,6 +15,7 @@ import {
   duplicateUnitItemQuery,
   setXBlockOrderListQuery,
   editCourseUnitVisibilityAndData,
+  fetchCsrfTokenQuery,
 } from './data/thunk';
 import {
   getCourseSectionVertical,
@@ -22,7 +25,6 @@ import {
   getSavingStatus,
   getSequenceStatus,
   getStaticFileNotices,
-  getCanEdit,
 } from './data/selectors';
 import { changeEditTitleFormOpen, updateQueryPendingStatus } from './data/slice';
 import { PUBLISH_TYPES } from './constants';
@@ -33,6 +35,8 @@ import { useCopyToClipboard } from '../generic/clipboard';
 export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
+  const [isXBlocksExpanded, setXBlocksExpanded] = useState(false);
+  const [isXBlocksRendered, setIsXBlocksRendered] = useState(false);
 
   const [isErrorAlert, toggleErrorAlert] = useState(false);
   const [hasInternetConnectionError, setInternetConnectionError] = useState(false);
@@ -46,9 +50,8 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const navigate = useNavigate();
   const isTitleEditFormOpen = useSelector(state => state.courseUnit.isTitleEditFormOpen);
   const isQueryPending = useSelector(state => state.courseUnit.isQueryPending);
-  const canEdit = useSelector(getCanEdit);
   const { currentlyVisibleToStudents } = courseUnit;
-  const { sharedClipboardData, showPasteXBlock, showPasteUnit } = useCopyToClipboard(canEdit);
+  const { sharedClipboardData, showPasteXBlock, showPasteUnit } = useCopyToClipboard();
   const { canPasteComponent } = courseVerticalChildren;
 
   const unitTitle = courseUnit.metadata?.displayName || '';
@@ -71,10 +74,10 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     dispatch(changeEditTitleFormOpen(!isTitleEditFormOpen));
   };
 
-  const handleConfigureSubmit = (id, isVisible, groupAccess, closeModalFn) => {
+  const handleConfigureSubmit = useCallback((id, isVisible, groupAccess, closeModalFn) => {
     dispatch(editCourseUnitVisibilityAndData(id, PUBLISH_TYPES.republish, isVisible, groupAccess, true, blockId));
     closeModalFn();
-  };
+  }, [courseId, blockId]);
 
   const handleTitleEditSubmit = (displayName) => {
     if (unitTitle !== displayName) {
@@ -103,17 +106,22 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     dispatch(createNewCourseXBlock(body, callback, blockId))
   );
 
-  const unitXBlockActions = {
+  const unitXBlockActions = useMemo(() => ({
     handleDelete: (XBlockId) => {
       dispatch(deleteUnitItemQuery(blockId, XBlockId));
     },
     handleDuplicate: (XBlockId) => {
       dispatch(duplicateUnitItemQuery(blockId, XBlockId));
     },
-  };
+  }), [courseId, blockId]);
 
   const handleXBlockDragAndDrop = (xblockListIds, restoreCallback) => {
     dispatch(setXBlockOrderListQuery(blockId, xblockListIds, restoreCallback));
+  };
+
+  const handleExpandAll = () => {
+    setIsXBlocksRendered(true);
+    setXBlocksExpanded((prevState) => !prevState);
   };
 
   useEffect(() => {
@@ -128,7 +136,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     dispatch(fetchCourseUnitQuery(blockId));
     dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
     dispatch(fetchCourseVerticalChildrenData(blockId));
-
+    dispatch(fetchCsrfTokenQuery());
     handleNavigate(sequenceId);
   }, [courseId, blockId, sequenceId]);
 
@@ -158,5 +166,8 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     courseVerticalChildren,
     handleXBlockDragAndDrop,
     canPasteComponent,
+    isXBlocksExpanded,
+    isXBlocksRendered,
+    handleExpandAll,
   };
 };

@@ -1,0 +1,11 @@
+.wrapper-xblock.level-element .xblock-header:not(.is-hidden) {
+  display: none;
+}
+
+.wrapper-xblock {
+  border: none;
+}
+
+body .poll-block-form-wrapper {
+  display: block;
+}

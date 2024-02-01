@@ -18,6 +18,7 @@ import { executeThunk } from '../../utils';
 import { getCourseId } from '../data/selectors';
 import { PUBLISH_TYPES, COMPONENT_TYPES } from '../constants';
 import { courseSectionVerticalMock, courseVerticalChildrenMock } from '../__mocks__';
+import renderErrorAlertMessages from './render-error-alert/messages';
 import CourseXBlock from './CourseXBlock';
 import messages from './messages';
 
@@ -34,12 +35,14 @@ const {
   block_id: id,
   block_type: type,
   user_partition_info: userPartitionInfo,
+  actions,
 } = courseVerticalChildrenMock.children[0];
 const userPartitionInfoFormatted = camelCaseObject(userPartitionInfo);
 const unitXBlockActionsMock = {
   handleDelete: handleDeleteMock,
   handleDuplicate: handleDuplicateMock,
 };
+const xblockActions = camelCaseObject(actions);
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -63,6 +66,7 @@ const renderComponent = (props) => render(
         userPartitionInfo={userPartitionInfoFormatted}
         shouldScroll={false}
         handleConfigureSubmit={handleConfigureSubmitMock}
+        actions={xblockActions}
         {...props}
       />
     </IntlProvider>
@@ -309,5 +313,32 @@ describe('<CourseXBlock />', () => {
         .replace('{selectedGroupsLabel}', 'Visibility group 1');
       expect(getByText(visibilityMessage)).toBeInTheDocument();
     });
+  });
+
+  it('displays a render error message if item has error', () => {
+    const renderErrorMessage = 'Some error message';
+    const {
+      getByText, getByLabelText, queryByTestId, getByRole,
+    } = renderComponent(
+      {
+        renderError: renderErrorMessage,
+      },
+    );
+
+    userEvent.click(getByRole('button', { name }));
+
+    const errorAlertTitle = renderErrorAlertMessages.alertRenderErrorTitle.defaultMessage;
+    const errorAlertDescription = renderErrorAlertMessages.alertRenderErrorDescription.defaultMessage;
+    const errorAlertMessage = renderErrorAlertMessages.alertRenderErrorMessage.defaultMessage
+      .replace('{message}', renderErrorMessage);
+    const contentIFrame = queryByTestId('content-iframe-test-id');
+
+    expect(getByText(errorAlertTitle)).toBeInTheDocument();
+    expect(getByText(errorAlertDescription)).toBeInTheDocument();
+    expect(getByText(errorAlertMessage)).toBeInTheDocument();
+    expect(getByText(name)).toBeInTheDocument();
+    expect(getByLabelText(messages.blockAltButtonEdit.defaultMessage)).toBeInTheDocument();
+    expect(getByLabelText(messages.blockActionsDropdownAlt.defaultMessage)).toBeInTheDocument();
+    expect(contentIFrame).not.toBeInTheDocument();
   });
 });

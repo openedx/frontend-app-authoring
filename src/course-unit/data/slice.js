@@ -7,9 +7,10 @@ const slice = createSlice({
   name: 'courseUnit',
   initialState: {
     savingStatus: '',
+    errorMessage: '',
+    csrfToken: '',
     isQueryPending: false,
     isTitleEditFormOpen: false,
-    canEdit: true,
     loadingStatus: {
       fetchUnitLoadingStatus: RequestStatus.IN_PROGRESS,
       courseSectionVerticalLoadingStatus: RequestStatus.IN_PROGRESS,
@@ -19,6 +20,7 @@ const slice = createSlice({
     courseSectionVertical: {},
     courseVerticalChildren: { children: [], isPublished: true },
     staticFileNotices: {},
+    xblockIFrameHtmlAndResources: [],
   },
   reducers: {
     fetchCourseItemSuccess: (state, { payload }) => {
@@ -108,6 +110,12 @@ const slice = createSlice({
       // This avoids the need to copy the array beforehand
       state.courseVerticalChildren.children.sort((a, b) => (indexMap.get(a.id) || 0) - (indexMap.get(b.id) || 0));
     },
+    fetchXBlockIFrameResources: (state, { payload }) => {
+      state.xblockIFrameHtmlAndResources.push(payload);
+    },
+    fetchCsrfTokenSuccess: (state, { payload }) => {
+      state.csrfToken = payload;
+    },
   },
 });
 
@@ -130,6 +138,8 @@ export const {
   duplicateXBlock,
   fetchStaticFileNoticesSuccess,
   reorderXBlockList,
+  fetchXBlockIFrameResources,
+  fetchCsrfTokenSuccess,
 } = slice.actions;
 
 export const {

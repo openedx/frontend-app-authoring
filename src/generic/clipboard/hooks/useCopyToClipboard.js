@@ -7,13 +7,12 @@ import { getClipboardData } from '../../data/selectors';
 /**
  * Custom React hook for managing clipboard functionality.
  *
- * @param {boolean} canEdit - Flag indicating whether the clipboard is editable.
  * @returns {Object} - An object containing state variables and functions related to clipboard functionality.
  * @property {boolean} showPasteUnit - Flag indicating whether the "Paste Unit" button should be visible.
  * @property {boolean} showPasteXBlock - Flag indicating whether the "Paste XBlock" button should be visible.
  * @property {Object} sharedClipboardData - The shared clipboard data object.
  */
-const useCopyToClipboard = (canEdit = true) => {
+const useCopyToClipboard = () => {
   const [clipboardBroadcastChannel] = useState(() => new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL));
   const [showPasteUnit, setShowPasteUnit] = useState(false);
   const [showPasteXBlock, setShowPasteXBlock] = useState(false);
@@ -22,7 +21,7 @@ const useCopyToClipboard = (canEdit = true) => {
 
   // Function to refresh the paste button's visibility
   const refreshPasteButton = (data) => {
-    const isPasteable = canEdit && data?.content && data.content.status !== CLIPBOARD_STATUS.expired;
+    const isPasteable = data?.content && data.content.status !== CLIPBOARD_STATUS.expired;
     const isPasteableXBlock = isPasteable && !STRUCTURAL_XBLOCK_TYPES.includes(data.content.blockType);
     const isPasteableUnit = isPasteable && data.content.blockType === 'vertical';
 
@@ -32,15 +31,10 @@ const useCopyToClipboard = (canEdit = true) => {
 
   useEffect(() => {
     // Handle updates to clipboard data
-    if (canEdit) {
-      refreshPasteButton(clipboardData);
-      setSharedClipboardData(clipboardData);
-      clipboardBroadcastChannel.postMessage(clipboardData);
-    } else {
-      setShowPasteXBlock(false);
-      setShowPasteUnit(false);
-    }
-  }, [clipboardData, canEdit, clipboardBroadcastChannel]);
+    refreshPasteButton(clipboardData);
+    setSharedClipboardData(clipboardData);
+    clipboardBroadcastChannel.postMessage(clipboardData);
+  }, [clipboardData, clipboardBroadcastChannel]);
 
   useEffect(() => {
     // Handle messages from the broadcast channel

@@ -1,0 +1,15 @@
+.xblock-content {
+  box-sizing: content-box;
+  position: relative;
+  overflow: hidden;
+
+  .xblock-content-iframe {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border: 0 none;
+    background-color: $white;
+  }
+}

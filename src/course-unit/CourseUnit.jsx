@@ -2,10 +2,16 @@ import { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { Container, Layout, Stack } from '@openedx/paragon';
+import {
+  Container, Layout, Stack, Button,
+} from '@openedx/paragon';
 import { useIntl, injectIntl } from '@edx/frontend-platform/i18n';
 import { DraggableList, ErrorAlert } from '@edx/frontend-lib-content-components';
-import { Warning as WarningIcon } from '@openedx/paragon/icons';
+import {
+  Warning as WarningIcon,
+  ArrowDropDown as ArrowDownIcon,
+  ArrowDropUp as ArrowUpIcon,
+} from '@openedx/paragon/icons';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
@@ -60,6 +66,9 @@ const CourseUnit = ({ courseId }) => {
     courseVerticalChildren,
     handleXBlockDragAndDrop,
     canPasteComponent,
+    isXBlocksExpanded,
+    isXBlocksRendered,
+    handleExpandAll,
   } = useCourseUnit({ courseId, blockId });
 
   const initialXBlocksData = useMemo(() => courseVerticalChildren.children ?? [], [courseVerticalChildren.children]);
@@ -72,6 +81,10 @@ const CourseUnit = ({ courseId }) => {
   useEffect(() => {
     setUnitXBlocks(courseVerticalChildren.children);
   }, [courseVerticalChildren.children]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const {
     isShow: isShowProcessingNotification,
@@ -141,6 +154,7 @@ const CourseUnit = ({ courseId }) => {
               {currentlyVisibleToStudents && (
                 <AlertMessage
                   className="course-unit__alert"
+                  data-testid="course-unit-unpublished-alert"
                   title={intl.formatMessage(messages.alertUnpublishedVersion)}
                   variant="warning"
                   icon={WarningIcon}
@@ -158,19 +172,32 @@ const CourseUnit = ({ courseId }) => {
                   setState={setUnitXBlocks}
                   updateOrder={finalizeXBlockOrder}
                 >
+                  {unitXBlocks.length ? (
+                    <Button
+                      variant="outline-primary"
+                      iconBefore={isXBlocksExpanded ? ArrowUpIcon : ArrowDownIcon}
+                      onClick={handleExpandAll}
+                    >
+                      {isXBlocksExpanded
+                        ? intl.formatMessage(messages.collapseAllButton)
+                        : intl.formatMessage(messages.expandAllButton)}
+                    </Button>
+                  ) : null}
                   <SortableContext
                     id="root"
                     items={unitXBlocks}
                     strategy={verticalListSortingStrategy}
                   >
                     {unitXBlocks.map(({
-                      name, id, blockType: type, shouldScroll, userPartitionInfo, validationMessages,
+                      name, id, blockType: type, renderError, shouldScroll,
+                      userPartitionInfo, validationMessages, actions,
                     }) => (
                       <CourseXBlock
                         id={id}
                         key={id}
                         title={name}
                         type={type}
+                        renderError={renderError}
                         blockId={blockId}
                         validationMessages={validationMessages}
                         shouldScroll={shouldScroll}
@@ -178,6 +205,9 @@ const CourseUnit = ({ courseId }) => {
                         unitXBlockActions={unitXBlockActions}
                         data-testid="course-xblock"
                         userPartitionInfo={userPartitionInfo}
+                        actions={actions}
+                        isXBlocksExpanded={isXBlocksExpanded}
+                        isXBlocksRendered={isXBlocksRendered}
                       />
                     ))}
                   </SortableContext>

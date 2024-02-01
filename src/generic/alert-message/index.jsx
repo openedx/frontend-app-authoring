@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 const AlertMessage = ({ title, description, ...props }) => (
   <Alert {...props}>
     <Alert.Heading>{title}</Alert.Heading>
-    <span>{description}</span>
+    <div>{description}</div>
   </Alert>
 );
 

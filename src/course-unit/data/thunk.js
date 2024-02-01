@@ -8,6 +8,7 @@ import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import { updateModel, updateModels } from '../../generic/model-store';
 import { updateClipboardData } from '../../generic/data/slice';
+import { PUBLISH_TYPES } from '../constants';
 import {
   getCourseUnitData,
   editUnitDisplayName,
@@ -18,6 +19,8 @@ import {
   deleteUnitItem,
   duplicateUnitItem,
   setXBlockOrderList,
+  getXBlockIFrameData,
+  getCsrfTokenData,
 } from './api';
 import {
   updateLoadingCourseUnitStatus,
@@ -36,6 +39,8 @@ import {
   duplicateXBlock,
   fetchStaticFileNoticesSuccess,
   reorderXBlockList,
+  fetchXBlockIFrameResources,
+  fetchCsrfTokenSuccess,
 } from './slice';
 import { getNotificationMessage } from './utils';
 
@@ -134,6 +139,9 @@ export function editCourseUnitVisibilityAndData(itemId, type, isVisible, groupAc
           dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
           dispatch(hideProcessingNotification());
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          if (type === PUBLISH_TYPES.discardChanges) {
+            window.location.reload();
+          }
         }
       });
     } catch (error) {
@@ -265,6 +273,38 @@ export function setXBlockOrderListQuery(blockId, xblockListIds, restoreCallback)
       });
     } catch (error) {
       restoreCallback();
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    } finally {
+      dispatch(hideProcessingNotification());
+    }
+  };
+}
+
+export function fetchXBlockIFrameHtmlAndResourcesQuery(xblockId) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+
+    try {
+      const xblockIFrameData = await getXBlockIFrameData(xblockId);
+      dispatch(fetchXBlockIFrameResources({ xblockId, ...xblockIFrameData }));
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    } finally {
+      dispatch(hideProcessingNotification());
+    }
+  };
+}
+
+export function fetchCsrfTokenQuery() {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+
+    try {
+      const csrfTokenData = await getCsrfTokenData();
+      dispatch(fetchCsrfTokenSuccess(csrfTokenData.csrfToken));
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     } finally {
       dispatch(hideProcessingNotification());

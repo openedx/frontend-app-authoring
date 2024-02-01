@@ -520,10 +520,10 @@ describe('<CourseUnit />', () => {
   });
 
   it('should display a warning alert for unpublished course unit version', async () => {
-    const { getByRole } = render(<RootWrapper />);
+    const { getByTestId } = render(<RootWrapper />);
 
     await waitFor(() => {
-      const unpublishedAlert = getByRole('alert', { class: 'course-unit-unpublished-alert' });
+      const unpublishedAlert = getByTestId('course-unit-unpublished-alert');
       expect(unpublishedAlert).toHaveTextContent(messages.alertUnpublishedVersion.defaultMessage);
       expect(unpublishedAlert).toHaveClass('alert-warning');
     });
@@ -542,7 +542,7 @@ describe('<CourseUnit />', () => {
     await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
 
     await waitFor(() => {
-      const unpublishedAlert = queryByRole('alert', { class: 'course-unit-unpublished-alert' });
+      const unpublishedAlert = queryByRole('alert', { name: messages.alertUnpublishedVersion });
       expect(unpublishedAlert).toBeNull();
     });
   });
@@ -594,6 +594,7 @@ describe('<CourseUnit />', () => {
             block_id: '1234567890',
             block_type: 'drag-and-drop-v2',
             user_partition_info: {},
+            actions: courseVerticalChildrenMock.children[0].actions,
           },
         ],
       });
@@ -966,6 +967,55 @@ describe('<CourseUnit />', () => {
     )).toBeInTheDocument();
   });
 
+  it('should hide action buttons when their corresponding properties are set to false', async () => {
+    const {
+      getByText,
+      getAllByLabelText,
+      queryByRole,
+    } = render(<RootWrapper />);
+
+    const convertedXBlockActions = camelCaseObject(courseVerticalChildrenMock.children[0].actions);
+
+    const updatedXBlockActions = Object.keys(convertedXBlockActions).reduce((acc, key) => {
+      acc[key] = false;
+      return acc;
+    }, {});
+
+    axiosMock
+      .onGet(getCourseVerticalChildrenApiUrl(blockId))
+      .reply(200, {
+        children: [
+          {
+            ...courseVerticalChildrenMock.children[0],
+            actions: updatedXBlockActions,
+          },
+        ],
+      });
+
+    await executeThunk(fetchCourseVerticalChildrenData(blockId), store.dispatch);
+
+    await waitFor(() => {
+      expect(getByText(unitDisplayName)).toBeInTheDocument();
+      const [xblockActionBtn] = getAllByLabelText(courseXBlockMessages.blockActionsDropdownAlt.defaultMessage);
+      userEvent.click(xblockActionBtn);
+      const deleteBtn = queryByRole('button', { name: courseXBlockMessages.blockLabelButtonDelete.defaultMessage });
+      const duplicateBtn = queryByRole('button', { name: courseXBlockMessages.blockLabelButtonDuplicate.defaultMessage });
+      const moveBtn = queryByRole('button', { name: courseXBlockMessages.blockLabelButtonMove.defaultMessage });
+      const copyToClipboardBtn = queryByRole('button', { name: courseXBlockMessages.blockLabelButtonCopyToClipboard.defaultMessage });
+      const manageAccessBtn = queryByRole('button', { name: courseXBlockMessages.blockLabelButtonManageAccess.defaultMessage });
+      // ToDo: uncomment next lines when manage tags will be realized
+      // eslint-disable-next-line max-len
+      // const manageTagsBtn = queryByRole('button', { name: courseXBlockMessages.blockLabelButtonManageTags.defaultMessage });
+
+      expect(deleteBtn).not.toBeInTheDocument();
+      expect(duplicateBtn).not.toBeInTheDocument();
+      expect(moveBtn).not.toBeInTheDocument();
+      expect(copyToClipboardBtn).not.toBeInTheDocument();
+      expect(manageAccessBtn).not.toBeInTheDocument();
+      // expect(manageTagsBtn).not.toBeInTheDocument();
+    });
+  });
+
   it('should toggle visibility from header configure modal and update course unit state accordingly', async () => {
     const { getByRole, getByTestId } = render(<RootWrapper />);
     let courseUnitSidebar;
@@ -1152,6 +1202,7 @@ describe('<CourseUnit />', () => {
                 selected_partition_index: -1,
                 selected_groups_label: '',
               },
+              actions: courseVerticalChildrenMock.children[0].actions,
             },
           ],
         });
@@ -1497,6 +1548,37 @@ describe('<CourseUnit />', () => {
 
       const xBlock2 = store.getState().courseUnit.courseVerticalChildren.children[1].id;
       expect(xBlock1).toBe(xBlock2);
+    });
+  });
+
+  it('should expand xblocks when "Expand all" button is clicked', async () => {
+    const { getByRole, getAllByTestId } = render(<RootWrapper />);
+
+    axiosMock
+      .onGet(getCourseVerticalChildrenApiUrl(blockId))
+      .reply(200, courseVerticalChildrenMock);
+
+    await executeThunk(fetchCourseVerticalChildrenData(blockId), store.dispatch);
+
+    const expandAllXBlocksBtn = getByRole('button', { name: messages.expandAllButton.defaultMessage });
+    const unitXBlocks = getAllByTestId('course-xblock');
+
+    unitXBlocks.forEach((unitXBlock) => {
+      const unitXBlockContentSections = unitXBlock.querySelectorAll('.pgn__card-section');
+      expect(unitXBlockContentSections).toHaveLength(0);
+    });
+
+    userEvent.click(expandAllXBlocksBtn);
+
+    await waitFor(() => {
+      const collapseAllXBlocksBtn = getByRole('button', { name: messages.collapseAllButton.defaultMessage });
+      expect(collapseAllXBlocksBtn).toBeInTheDocument();
+
+      unitXBlocks.forEach((unitXBlock) => {
+        const unitXBlockContentSections = unitXBlock.querySelectorAll('.pgn__card-section');
+        // xblock content appears inside the xblock element
+        expect(unitXBlockContentSections.length).toBeGreaterThan(0);
+      });
     });
   });
 });

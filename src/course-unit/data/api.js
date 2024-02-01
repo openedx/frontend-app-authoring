@@ -11,6 +11,9 @@ export const getCourseUnitApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/con
 export const getXBlockBaseApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/${itemId}`;
 export const getCourseSectionVerticalApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
 export const getCourseVerticalChildrenApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container/vertical/${itemId}/children`;
+export const getXBlockContainerPreview = (itemId) => `${getStudioBaseUrl()}/xblock/${itemId}/container_preview`;
+export const getCsrfTokenApiUrl = () => `${getStudioBaseUrl()}/csrf/api/v1/token`;
+
 export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
 
 /**
@@ -160,4 +163,33 @@ export async function setXBlockOrderList(blockId, children) {
     .put(getXBlockBaseApiUrl(blockId), { children });
 
   return data;
+}
+
+/**
+ * Fetches XBlock iframe data.
+ * @param {string} itemId - The ID of the XBlock item.
+ * @returns {Promise<Object>} A Promise that resolves with the XBlock iframe data.
+ */
+export async function getXBlockIFrameData(itemId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getXBlockContainerPreview(itemId));
+
+  return camelCaseObject(data);
+}
+
+export const getHandlerUrl = async (blockId) => {
+  const baseUrl = getConfig().STUDIO_BASE_URL;
+
+  return `${baseUrl}/preview/xblock/${blockId}/handler/handler_name`;
+};
+
+/**
+ * Fetches CSRF token data from the server.
+ * @returns {Promise<Object>} A Promise that resolves to an object containing CSRF token data.
+ */
+export async function getCsrfTokenData() {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getCsrfTokenApiUrl());
+
+  return camelCaseObject(data);
 }

@@ -4,7 +4,7 @@ import { Button } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { Divider } from '../../../../generic/divider';
-import { getCanEdit, getCourseUnitData } from '../../../data/selectors';
+import { getCourseUnitData } from '../../../data/selectors';
 import { copyToClipboard } from '../../../../generic/data/thunks';
 import messages from '../../messages';
 
@@ -17,7 +17,6 @@ const ActionButtons = ({ openDiscardModal, handlePublishing }) => {
     hasChanges,
     enableCopyPasteUnits,
   } = useSelector(getCourseUnitData);
-  const canEdit = useSelector(getCanEdit);
 
   return (
     <>
@@ -36,7 +35,7 @@ const ActionButtons = ({ openDiscardModal, handlePublishing }) => {
           {intl.formatMessage(messages.actionButtonDiscardChangesTitle)}
         </Button>
       )}
-      {enableCopyPasteUnits && canEdit && (
+      {enableCopyPasteUnits && (
         <>
           <Divider className="course-unit-sidebar-footer__divider" />
           <Button
