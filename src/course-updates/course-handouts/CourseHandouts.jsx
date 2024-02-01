@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icon, IconButtonWithTooltip } from '@edx/paragon';
-import { EditOutline } from '@edx/paragon/icons';
+import { Icon, IconButtonWithTooltip } from '@openedx/paragon';
+import { EditOutline } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';

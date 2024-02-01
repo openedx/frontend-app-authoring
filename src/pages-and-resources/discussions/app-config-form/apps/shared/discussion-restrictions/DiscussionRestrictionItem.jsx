@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Form } from '@edx/paragon';
+import { Form } from '@openedx/paragon';
 import { useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
 import _ from 'lodash';

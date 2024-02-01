@@ -4,8 +4,8 @@ import React, {
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Bubble, Button, useToggle } from '@edx/paragon';
-import { Add as IconAdd } from '@edx/paragon/icons';
+import { Bubble, Button, useToggle } from '@openedx/paragon';
+import { Add as IconAdd } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 
 import { setCurrentItem, setCurrentSection } from '../data/slice';

@@ -1,4 +1,4 @@
-import { Button } from '@edx/paragon';
+import { Button } from '@openedx/paragon';
 import React from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';

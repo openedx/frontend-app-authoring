@@ -56,8 +56,8 @@ describe('<PageAlerts />', () => {
   });
 
   it('renders null when no alerts are present', () => {
-    const { container } = renderComponent();
-    expect(container).toBeEmptyDOMElement();
+    const { queryByTestId } = renderComponent();
+    expect(queryByTestId('browser-router')).toBeEmptyDOMElement();
   });
 
   it('renders configuration alerts', async () => {

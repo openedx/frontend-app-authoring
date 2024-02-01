@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Container, Layout, Button, StatefulButton,
-} from '@edx/paragon';
-import { CheckCircle, Warning, Add as IconAdd } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { CheckCircle, Warning, Add as IconAdd } from '@openedx/paragon/icons';
 
 import { useModel } from '../generic/model-store';
 import AlertMessage from '../generic/alert-message';

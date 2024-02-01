@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Form, Button } from '@edx/paragon';
-import { Add as AddIcon } from '@edx/paragon/icons';
+import { Form, Button } from '@openedx/paragon';
+import { Add as AddIcon } from '@openedx/paragon/icons';
 
 import SectionSubHeader from '../../generic/section-sub-header';
 import messages from './messages';

@@ -10,7 +10,7 @@ import {
   Form,
   Tab,
   Tabs,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { useSelector } from 'react-redux';
 import { Formik } from 'formik';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Form, Stack } from '@edx/paragon';
+import { Form, Stack } from '@openedx/paragon';
 
 import messages from './messages';
 

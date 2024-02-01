@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ActionRow, AlertModal, Button } from '@edx/paragon';
+import { ActionRow, AlertModal, Button } from '@openedx/paragon';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import ModalErrorListItem from './ModalErrorListItem';

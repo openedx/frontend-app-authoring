@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icon, IconButtonWithTooltip } from '@edx/paragon';
+import { Icon, IconButtonWithTooltip } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { DeleteOutline, EditOutline, Error as ErrorIcon } from '@edx/paragon/icons';
+import { DeleteOutline, EditOutline, Error as ErrorIcon } from '@openedx/paragon/icons';
 
 import { isDateForUpdateValid } from './utils';
 import messages from './messages';

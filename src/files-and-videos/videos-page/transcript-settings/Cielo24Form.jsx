@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Form, Stack, TransitionReplace } from '@edx/paragon';
+import { Form, Stack, TransitionReplace } from '@openedx/paragon';
 import FormDropdown from './FormDropdown';
 import { getFidelityOptions } from '../data/utils';
 import messages from './messages';

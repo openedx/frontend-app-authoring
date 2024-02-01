@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, ButtonGroup } from '@edx/paragon';
+import { Button, ButtonGroup } from '@openedx/paragon';
 import classNames from 'classnames';
 
 import { useFormikContext } from 'formik';

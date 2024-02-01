@@ -1,6 +1,6 @@
 // @ts-check
 import React from 'react';
-import { useCheckboxSetValues } from '@edx/paragon';
+import { useCheckboxSetValues } from '@openedx/paragon';
 import { cloneDeep } from 'lodash';
 
 import { useContentTaxonomyTagsUpdater } from './data/apiHooks';

@@ -15,8 +15,8 @@ import {
   Truncate,
   IconButtonWithTooltip,
   CheckboxControl,
-} from '@edx/paragon';
-import { ContentCopy, InfoOutline } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { ContentCopy, InfoOutline } from '@openedx/paragon/icons';
 
 import { getFileSizeToClosestByte } from '../../utils';
 import messages from './messages';

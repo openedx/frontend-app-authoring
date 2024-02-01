@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button, Hyperlink, Form, Stack,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { AppContext } from '@edx/frontend-platform/react';
 
 import { useHelpUrls } from '../../help-urls/hooks';

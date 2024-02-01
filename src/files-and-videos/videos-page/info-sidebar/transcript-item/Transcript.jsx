@@ -6,8 +6,8 @@ import {
   Icon,
   IconButton,
   useToggle,
-} from '@edx/paragon';
-import { DeleteOutline } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { DeleteOutline } from '@openedx/paragon/icons';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
 import { isEmpty } from 'lodash';
 import LanguageSelect from './LanguageSelect';

@@ -5,7 +5,7 @@ import {
   intlShape,
   FormattedMessage,
 } from '@edx/frontend-platform/i18n';
-import { Form, Hyperlink } from '@edx/paragon';
+import { Form, Hyperlink } from '@openedx/paragon';
 
 import CourseUploadImage from '../../generic/course-upload-image';
 import { WysiwygEditor } from '../../generic/WysiwygEditor';

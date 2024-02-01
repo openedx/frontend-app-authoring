@@ -10,8 +10,8 @@ import {
   ActionRow,
   StatefulButton,
   TransitionReplace,
-} from '@edx/paragon';
-import { Info as InfoIcon } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Info as InfoIcon } from '@openedx/paragon/icons';
 import { TypeaheadDropdown } from '@edx/frontend-lib-content-components';
 
 import AlertMessage from '../alert-message';

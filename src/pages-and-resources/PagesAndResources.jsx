@@ -7,7 +7,7 @@ import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 
-import { Button, Hyperlink } from '@edx/paragon';
+import { Button, Hyperlink } from '@openedx/paragon';
 import messages from './messages';
 import DiscussionsSettings from './discussions';
 import {

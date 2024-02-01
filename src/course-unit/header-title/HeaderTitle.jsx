@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Form, IconButton } from '@edx/paragon';
+import { Form, IconButton } from '@openedx/paragon';
 import {
   EditOutline as EditIcon,
   Settings as SettingsIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 import messages from './messages';
 

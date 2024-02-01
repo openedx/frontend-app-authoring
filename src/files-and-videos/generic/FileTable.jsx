@@ -11,7 +11,7 @@ import {
   AlertModal,
   ActionRow,
   Button,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import { RequestStatus } from '../../data/constants';
 import { sortFiles } from './utils';

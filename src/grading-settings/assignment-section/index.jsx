@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Button } from '@edx/paragon';
-import { CheckCircle, Warning } from '@edx/paragon/icons';
+import { Button } from '@openedx/paragon';
+import { CheckCircle, Warning } from '@openedx/paragon/icons';
 
 import AlertMessage from '../../generic/alert-message';
 import { validationAssignmentFields } from './utils/validation';

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Container, Layout,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import Cookies from 'universal-cookie';
 import { Helmet } from 'react-helmet';
 
