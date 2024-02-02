@@ -18,12 +18,12 @@ jest.mock('./data/apiHooks', () => ({
   })),
   useTaxonomyTagsData: jest.fn(() => ({
     hasMorePages: false,
-    tagPages: [{
+    tagPages: {
       isLoading: true,
       isError: false,
       canAddTag: false,
       data: [],
-    }],
+    },
   })),
 }));
 
@@ -85,7 +85,7 @@ describe('<ContentTagsCollapsible />', () => {
     useTaxonomyTagsData.mockReturnValue({
       hasMorePages: false,
       canAddTag: false,
-      tagPages: [{
+      tagPages: {
         isLoading: false,
         isError: false,
         data: [{
@@ -119,7 +119,7 @@ describe('<ContentTagsCollapsible />', () => {
           canChangeTag: false,
           canDeleteTag: false,
         }],
-      }],
+      },
     });
   }
 

@@ -22,14 +22,6 @@ import {
  * @param {string|null} parentTag The tag whose children we're loading, if any
  * @param {string} searchTerm The term passed in to perform search on tags
  * @param {number} numPages How many pages of tags to load at this level
- * @returns {{
- *  hasMorePages: boolean,
- *  tagPages: {
- *    isLoading: boolean,
- *    isError: boolean,
- *    data: TagData[],
- *  }[],
- * }}
  */
 export const useTaxonomyTagsData = (taxonomyId, parentTag = null, numPages = 1, searchTerm = '') => {
   const queryClient = useQueryClient();
@@ -53,13 +45,10 @@ export const useTaxonomyTagsData = (taxonomyId, parentTag = null, numPages = 1, 
   const hasMorePages = numPages < totalPages;
 
   const tagPages = useMemo(() => {
-    /** @type { { isLoading: boolean, isError: boolean, data: TagData[] }[] } */
-    const newTags = [];
-
     // Pre-load desendants if possible
     const preLoadedData = new Map();
 
-    dataPages.forEach(result => {
+    const newTags = dataPages.map(result => {
       /** @type {TagData[]} */
       const simplifiedTagsList = [];
 
@@ -73,7 +62,7 @@ export const useTaxonomyTagsData = (taxonomyId, parentTag = null, numPages = 1, 
         }
       });
 
-      newTags.push({ ...result, data: simplifiedTagsList });
+      return { ...result, data: simplifiedTagsList };
     });
 
     // Store the pre-loaded descendants into the query cache:
@@ -95,7 +84,14 @@ export const useTaxonomyTagsData = (taxonomyId, parentTag = null, numPages = 1, 
     return newTags;
   }, [dataPages]);
 
-  return { hasMorePages, tagPages };
+  const flatTagPages = {
+    isLoading: tagPages.some(page => page.isLoading),
+    isError: tagPages.some(page => page.isError),
+    isSuccess: tagPages.every(page => page.isSuccess),
+    data: tagPages.flatMap(page => page.data),
+  };
+
+  return { hasMorePages, tagPages: flatTagPages };
 };
 
 /**

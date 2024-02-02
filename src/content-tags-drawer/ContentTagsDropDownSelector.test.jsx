@@ -13,11 +13,11 @@ import { useTaxonomyTagsData } from './data/apiHooks';
 jest.mock('./data/apiHooks', () => ({
   useTaxonomyTagsData: jest.fn(() => ({
     hasMorePages: false,
-    tagPages: [{
+    tagPages: {
       isLoading: true,
       isError: false,
       data: [],
-    }],
+    },
   })),
 }));
 
@@ -70,7 +70,7 @@ describe('<ContentTagsDropDownSelector />', () => {
   it('should render taxonomy tags drop down selector with no sub tags', async () => {
     useTaxonomyTagsData.mockReturnValue({
       hasMorePages: false,
-      tagPages: [{
+      tagPages: {
         isLoading: false,
         isError: false,
         data: [{
@@ -82,7 +82,7 @@ describe('<ContentTagsDropDownSelector />', () => {
           id: 12345,
           subTagsUrl: null,
         }],
-      }],
+      },
     });
 
     await act(async () => {
@@ -104,7 +104,7 @@ describe('<ContentTagsDropDownSelector />', () => {
   it('should render taxonomy tags drop down selector with sub tags', async () => {
     useTaxonomyTagsData.mockReturnValue({
       hasMorePages: false,
-      tagPages: [{
+      tagPages: {
         isLoading: false,
         isError: false,
         data: [{
@@ -116,7 +116,7 @@ describe('<ContentTagsDropDownSelector />', () => {
           id: 12345,
           subTagsUrl: 'http://localhost:18010/api/content_tagging/v1/taxonomies/4/tags/?parent_tag=Tag%202',
         }],
-      }],
+      },
     });
 
     await act(async () => {
@@ -137,7 +137,7 @@ describe('<ContentTagsDropDownSelector />', () => {
   it('should expand on click taxonomy tags drop down selector with sub tags', async () => {
     useTaxonomyTagsData.mockReturnValueOnce({
       hasMorePages: false,
-      tagPages: [{
+      tagPages: {
         isLoading: false,
         isError: false,
         data: [{
@@ -149,7 +149,7 @@ describe('<ContentTagsDropDownSelector />', () => {
           id: 12345,
           subTagsUrl: 'http://localhost:18010/api/content_tagging/v1/taxonomies/4/tags/?parent_tag=Tag%202',
         }],
-      }],
+      },
     });
 
     await act(async () => {
@@ -177,7 +177,7 @@ describe('<ContentTagsDropDownSelector />', () => {
       // Mock useTaxonomyTagsData again since it gets called in the recursive call
       useTaxonomyTagsData.mockReturnValueOnce({
         hasMorePages: false,
-        tagPages: [{
+        tagPages: {
           isLoading: false,
           isError: false,
           data: [{
@@ -189,7 +189,7 @@ describe('<ContentTagsDropDownSelector />', () => {
             id: 12346,
             subTagsUrl: null,
           }],
-        }],
+        },
       });
 
       // Expand the dropdown to see the subtags selectors
@@ -205,7 +205,7 @@ describe('<ContentTagsDropDownSelector />', () => {
   it('should expand on enter key taxonomy tags drop down selector with sub tags', async () => {
     useTaxonomyTagsData.mockReturnValueOnce({
       hasMorePages: false,
-      tagPages: [{
+      tagPages: {
         isLoading: false,
         isError: false,
         data: [{
@@ -217,7 +217,7 @@ describe('<ContentTagsDropDownSelector />', () => {
           id: 12345,
           subTagsUrl: 'http://localhost:18010/api/content_tagging/v1/taxonomies/4/tags/?parent_tag=Tag%202',
         }],
-      }],
+      },
     });
 
     await act(async () => {
@@ -245,7 +245,7 @@ describe('<ContentTagsDropDownSelector />', () => {
       // Mock useTaxonomyTagsData again since it gets called in the recursive call
       useTaxonomyTagsData.mockReturnValueOnce({
         hasMorePages: false,
-        tagPages: [{
+        tagPages: {
           isLoading: false,
           isError: false,
           data: [{
@@ -257,7 +257,7 @@ describe('<ContentTagsDropDownSelector />', () => {
             id: 12346,
             subTagsUrl: null,
           }],
-        }],
+        },
       });
 
       // Expand the dropdown to see the subtags selectors
@@ -273,9 +273,10 @@ describe('<ContentTagsDropDownSelector />', () => {
   it('should render taxonomy tags drop down selector and change search term', async () => {
     useTaxonomyTagsData.mockReturnValueOnce({
       hasMorePages: false,
-      tagPages: [{
+      tagPages: {
         isLoading: false,
         isError: false,
+        isSuccess: true,
         data: [{
           value: 'Tag 1',
           externalId: null,
@@ -285,7 +286,7 @@ describe('<ContentTagsDropDownSelector />', () => {
           id: 12345,
           subTagsUrl: null,
         }],
-      }],
+      },
     });
 
     const initalSearchTerm = 'test 1';
@@ -316,6 +317,52 @@ describe('<ContentTagsDropDownSelector />', () => {
       await waitFor(() => {
         expect(useTaxonomyTagsData).toBeCalledWith(data.taxonomyId, null, 1, updatedSearchTerm);
       });
+
+      // Clean search term
+      const cleanSearchTerm = '';
+      rerender(<ContentTagsDropDownSelectorComponent
+        key={`selector-${data.taxonomyId}`}
+        taxonomyId={data.taxonomyId}
+        level={data.level}
+        tagsTree={data.tagsTree}
+        searchTerm={cleanSearchTerm}
+      />);
+
+      await waitFor(() => {
+        expect(useTaxonomyTagsData).toBeCalledWith(data.taxonomyId, null, 1, cleanSearchTerm);
+      });
+    });
+  });
+
+  it('should render "noTag" message if search doesnt return taxonomies', async () => {
+    useTaxonomyTagsData.mockReturnValueOnce({
+      hasMorePages: false,
+      tagPages: {
+        isLoading: false,
+        isError: false,
+        isSuccess: true,
+        data: [],
+      },
+    });
+
+    const searchTerm = 'uncommon search term';
+    await act(async () => {
+      const { getByText } = render(
+        <ContentTagsDropDownSelectorComponent
+          key={`selector-${data.taxonomyId}`}
+          taxonomyId={data.taxonomyId}
+          level={data.level}
+          tagsTree={data.tagsTree}
+          searchTerm={searchTerm}
+        />,
+      );
+
+      await waitFor(() => {
+        expect(useTaxonomyTagsData).toBeCalledWith(data.taxonomyId, null, 1, searchTerm);
+      });
+
+      const message = `No tags found with the search term "${searchTerm}"`;
+      expect(getByText(message)).toBeInTheDocument();
     });
   });
 });
