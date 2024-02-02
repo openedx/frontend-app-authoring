@@ -31,20 +31,19 @@ export async function getVideos(courseId) {
   };
 }
 
-export async function getAllUsagePaths({ courseId, videos }) {
-  const apiPromises = videos.map(video => getAuthenticatedHttpClient()
-    .get(`${getVideosUrl(courseId)}/${video.id}/usage`, { videoId: video.id }));
-  const results = await Promise.allSettled(apiPromises);
+export async function getAllUsagePaths({ courseId, videoIds }) {
+  const apiPromises = videoIds.map(id => getAuthenticatedHttpClient()
+    .get(`${getVideosUrl(courseId)}/${id}/usage`, { videoId: id }));
   const updatedUsageLocations = [];
+  const results = await Promise.allSettled(apiPromises);
+
   results.forEach(result => {
-    const data = camelCaseObject(result.value.data);
-    const activeStatus = data?.usageLocations?.length > 0 ? 'active' : 'inactive';
-    const { videoId } = result.value.config;
-    if (data) {
-      const { usageLocations } = data;
+    const value = camelCaseObject(result.value);
+    if (value) {
+      const { usageLocations } = value.data;
+      const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
+      const { videoId } = value.config;
       updatedUsageLocations.push({ id: videoId, usageLocations, activeStatus });
-    } else {
-      updatedUsageLocations.push({ id: videoId, usageLocations: [], activeStatus });
     }
   });
   return updatedUsageLocations;
