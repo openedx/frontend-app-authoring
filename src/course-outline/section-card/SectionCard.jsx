@@ -4,7 +4,7 @@ import React, {
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Badge, Button, useToggle } from '@edx/paragon';
+import { Bubble, Button, useToggle } from '@edx/paragon';
 import { Add as IconAdd } from '@edx/paragon/icons';
 import classNames from 'classnames';
 
@@ -183,9 +183,9 @@ const SectionCard = ({
                 variant="tertiary"
                 onClick={handleOpenHighlightsModal}
               >
-                <Badge className="mr-1 d-flex justify-content-center align-items-center highlights-badge">
+                <Bubble className="mr-1">
                   {highlights.length}
-                </Badge>
+                </Bubble>
                 <p className="m-0 text-black">{messages.sectionHighlightsBadge.defaultMessage}</p>
               </Button>
             </div>
