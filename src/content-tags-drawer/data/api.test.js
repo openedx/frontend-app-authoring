@@ -110,10 +110,11 @@ describe('content tags drawer api calls', () => {
     const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@aaf8b8eb86b54281aeeab12499d2cb0b';
     const taxonomyId = 3;
     const tags = ['flat taxonomy tag 100', 'flat taxonomy tag 3856'];
-    axiosMock.onPut(`${getContentTaxonomyTagsApiUrl(contentId)}&taxonomy=${taxonomyId}`).reply(200, updateContentTaxonomyTagsMock);
+    axiosMock.onPut(`${getContentTaxonomyTagsApiUrl(contentId)}`).reply(200, updateContentTaxonomyTagsMock);
     const result = await updateContentTaxonomyTags(contentId, taxonomyId, tags);
 
-    expect(axiosMock.history.put[0].url).toEqual(`${getContentTaxonomyTagsApiUrl(contentId)}&taxonomy=${taxonomyId}`);
+    expect(axiosMock.history.put[0].url).toEqual(`${getContentTaxonomyTagsApiUrl(contentId)}`);
+    expect(axiosMock.history.put[0].params).toEqual({ taxonomy: taxonomyId });
     expect(result).toEqual(updateContentTaxonomyTagsMock[contentId]);
   });
 });
