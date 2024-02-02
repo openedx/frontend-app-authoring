@@ -5,6 +5,7 @@ import {
   addModels,
   removeModel,
   updateModel,
+  updateModels,
 } from '../../../generic/model-store';
 import {
   addThumbnail,
@@ -70,11 +71,12 @@ export function fetchVideos(courseId) {
           videoIds: parsedVideos.map(video => video.id),
         }));
         dispatch(updateLoadingStatus({ courseId, status: RequestStatus.PARTIAL }));
-        await getAllUsagePaths({
+        const allUsageLocations = await getAllUsagePaths({
           courseId,
           videos: parsedVideos,
           updateModel: (apiData, videoId) => updateUsageLocation(videoId, dispatch, apiData.usageLocations),
         });
+        dispatch(updateModels({ modelType: 'videos', models: allUsageLocations }));
         dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
       }
     } catch (error) {
