@@ -31,6 +31,7 @@ const cardHeaderProps = {
   onEditSubmit: jest.fn(),
   onClickMoveUp: jest.fn(),
   onClickMoveDown: jest.fn(),
+  onClickConfigure: jest.fn(),
   closeForm: closeFormMock,
   isDisabledEditField: false,
   onClickDelete: onClickDeleteMock,
@@ -239,5 +240,23 @@ describe('<CardHeader />', () => {
     await act(async () => fireEvent.click(menuButton));
 
     expect(await findByText(messages.menuProctoringLinkText.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('check if discussion enabled badge is visible', async () => {
+    const { queryByText } = renderComponent({
+      ...cardHeaderProps,
+      isVertical: true,
+      discussionEnabled: true,
+      discussionsSettings: {
+        providerType: 'openedx',
+        enableGradedUnits: true,
+      },
+      parentInfo: {
+        isTimeLimited: false,
+        graded: false,
+      },
+    });
+
+    expect(queryByText(messages.discussionEnabledBadgeText.defaultMessage)).toBeInTheDocument();
   });
 });

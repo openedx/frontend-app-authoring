@@ -69,6 +69,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.card.menu.proctoring-settings-tooltip',
     defaultMessage: 'Proctoring Settings',
   },
+  discussionEnabledBadgeText: {
+    id: 'course-authoring.course-outline.card.badge.discussionEnabled',
+    defaultMessage: 'Discussions enabled',
+  },
 });
 
 export default messages;

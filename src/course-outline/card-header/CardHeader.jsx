@@ -44,6 +44,9 @@ const CardHeader = ({
   isVertical,
   isSequential,
   proctoringExamConfigurationLink,
+  discussionEnabled,
+  discussionsSettings,
+  parentInfo,
 }) => {
   const intl = useIntl();
   const [searchParams] = useSearchParams();
@@ -63,6 +66,17 @@ const CardHeader = ({
       scrollToElement(cardHeaderRef.current);
     }
   }, []);
+
+  const showDiscussionsEnabledBadge = (
+    isVertical
+      && !parentInfo?.isTimeLimited
+      && discussionEnabled
+      && discussionsSettings?.providerType === 'openedx'
+      && (
+        discussionsSettings?.enableGradedUnits
+          || (!discussionsSettings?.enableGradedUnits && !parentInfo.graded)
+      )
+  );
 
   useEscapeClick({
     onEscape: () => {
@@ -100,6 +114,11 @@ const CardHeader = ({
         titleComponent
       )}
       <div className="ml-auto d-flex">
+        {showDiscussionsEnabledBadge && (
+          <span className="px-2 py-1 align-self-center border-light-300 border rounded">
+            {intl.formatMessage(messages.discussionEnabledBadgeText)}
+          </span>
+        )}
         {!isFormOpen && (
           <IconButton
             data-testid={`${namePrefix}-edit-button`}
@@ -196,6 +215,9 @@ CardHeader.defaultProps = {
   isSequential: false,
   onClickCopy: null,
   proctoringExamConfigurationLink: null,
+  discussionEnabled: false,
+  discussionsSettings: {},
+  parentInfo: {},
 };
 
 CardHeader.propTypes = {
@@ -230,6 +252,15 @@ CardHeader.propTypes = {
   enableCopyPasteUnits: PropTypes.bool,
   isVertical: PropTypes.bool,
   isSequential: PropTypes.bool,
+  discussionEnabled: PropTypes.bool,
+  discussionsSettings: PropTypes.shape({
+    providerType: PropTypes.string,
+    enableGradedUnits: PropTypes.bool,
+  }),
+  parentInfo: PropTypes.shape({
+    isTimeLimited: PropTypes.bool,
+    graded: PropTypes.bool,
+  }),
 };
 
 export default CardHeader;

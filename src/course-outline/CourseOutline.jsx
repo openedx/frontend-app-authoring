@@ -399,6 +399,7 @@ const CourseOutline = ({ courseId }) => {
                                               subsection.childInfo.children,
                                             )}
                                             onCopyToClipboardClick={handleCopyToClipboardClick}
+                                            discussionsSettings={discussionsSettings}
                                           />
                                         ))}
                                       </DraggableList>
