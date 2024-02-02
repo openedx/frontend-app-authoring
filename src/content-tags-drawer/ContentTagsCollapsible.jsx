@@ -123,7 +123,8 @@ const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData }) => {
 
   const handleSearchChange = React.useCallback((value) => {
     if (value === '') {
-      // No need to debounce when search term cleared
+      // No need to debounce when search term cleared. Clear debounce function
+      handleSearch.cancel();
       setSearchTerm('');
     } else {
       handleSearch(value);

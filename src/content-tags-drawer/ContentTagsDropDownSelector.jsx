@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   SelectableBox,
   Icon,
@@ -14,6 +14,33 @@ import './ContentTagsDropDownSelector.scss';
 
 import { useTaxonomyTagsData } from './data/apiHooks';
 
+const HighlightedText = ({ text, highlight }) => {
+  if (!highlight) {
+    return <span>{text}</span>;
+  }
+
+  const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+  return (
+    <span>
+      {parts.map((part, index) => (
+        // eslint-disable-next-line react/no-array-index-key -- using index because part is not unique
+        <React.Fragment key={index}>
+          {part.toLowerCase() === highlight.toLowerCase() ? <b>{part}</b> : part}
+        </React.Fragment>
+      ))}
+    </span>
+  );
+};
+
+HighlightedText.propTypes = {
+  text: PropTypes.string.isRequired,
+  highlight: PropTypes.string,
+};
+
+HighlightedText.defaultProps = {
+  highlight: '',
+};
+
 const ContentTagsDropDownSelector = ({
   taxonomyId, level, lineage, tagsTree, searchTerm,
 }) => {
@@ -22,7 +49,7 @@ const ContentTagsDropDownSelector = ({
   // This object represents the states of the dropdowns on this level
   // The keys represent the index of the dropdown with
   // the value true (open) false (closed)
-  const [dropdownStates, setDropdownStates] = useState({});
+  const [dropdownStates, setDropdownStates] = useState(/** type Record<string, boolean> */ {});
   const isOpen = (tagValue) => dropdownStates[tagValue];
 
   const [numPages, setNumPages] = useState(1);
@@ -37,6 +64,23 @@ const ContentTagsDropDownSelector = ({
     setPrevSearchTerm(searchTerm);
     setNumPages(1);
   }
+
+  useEffect(() => {
+    if (tagPages.isSuccess) {
+      if (searchTerm) {
+        const expandAll = tagPages.data.reduce(
+          (acc, tagData) => ({
+            ...acc,
+            [tagData.value]: !!tagData.childCount,
+          }),
+          {},
+        );
+        setDropdownStates(expandAll);
+      } else {
+        setDropdownStates({});
+      }
+    }
+  }, [searchTerm, tagPages.isSuccess]);
 
   const clickAndEnterHandler = (tagValue) => {
     // This flips the state of the dropdown at index false (closed) -> true (open)
@@ -60,69 +104,62 @@ const ContentTagsDropDownSelector = ({
 
   return (
     <div style={{ marginLeft: `${level * 1 }rem` }}>
-      {tagPages.map((tagPage, pageNum) => (
-        // Array index represents the page number
-        // eslint-disable-next-line react/no-array-index-key
-        <React.Fragment key={`tag-page-${pageNum}`}>
-          {tagPage.isLoading ? (
-            <div className="d-flex justify-content-center align-items-center flex-row">
-              <Spinner
-                animation="border"
-                size="xl"
-                screenReaderText={intl.formatMessage(messages.loadingTagsDropdownMessage)}
-              />
-            </div>
-          ) : null }
-          {tagPage.isError ? 'Error...' : null /* TODO: show a proper error message */}
+      {tagPages.isLoading ? (
+        <div className="d-flex justify-content-center align-items-center flex-row">
+          <Spinner
+            animation="border"
+            size="xl"
+            screenReaderText={intl.formatMessage(messages.loadingTagsDropdownMessage)}
+          />
+        </div>
+      ) : null }
+      {tagPages.isError ? 'Error...' : null /* TODO: show a proper error message */}
 
-          {tagPage.data?.map((tagData) => (
-            <React.Fragment key={tagData.value}>
-              <div
-                className="d-flex flex-row"
-                style={{
-                  minHeight: '44px',
-                }}
+      {tagPages.data?.map((tagData) => (
+        <React.Fragment key={tagData.value}>
+          <div
+            className="d-flex flex-row"
+            style={{
+              minHeight: '44px',
+            }}
+          >
+            <div className="d-flex">
+              <SelectableBox
+                inputHidden={false}
+                type="checkbox"
+                className="d-flex align-items-center taxonomy-tags-selectable-box"
+                aria-label={intl.formatMessage(messages.taxonomyTagsCheckboxAriaLabel, { tag: tagData.value })}
+                data-selectable-box="taxonomy-tags"
+                value={[...lineage, tagData.value].map(t => encodeURIComponent(t)).join(',')}
+                isIndeterminate={isImplicit(tagData)}
+                disabled={isImplicit(tagData)}
               >
-                <div className="d-flex">
-                  <SelectableBox
-                    inputHidden={false}
-                    type="checkbox"
-                    className="d-flex align-items-center taxonomy-tags-selectable-box"
-                    aria-label={intl.formatMessage(messages.taxonomyTagsCheckboxAriaLabel, { tag: tagData.value })}
-                    data-selectable-box="taxonomy-tags"
-                    value={[...lineage, tagData.value].map(t => encodeURIComponent(t)).join(',')}
-                    isIndeterminate={isImplicit(tagData)}
-                    disabled={isImplicit(tagData)}
-                  >
-                    {tagData.value}
-                  </SelectableBox>
-                  { tagData.childCount > 0
-                    && (
-                      <div className="d-flex align-items-center taxonomy-tags-arrow-drop-down">
-                        <Icon
-                          src={isOpen(tagData.value) ? ArrowDropUp : ArrowDropDown}
-                          onClick={() => clickAndEnterHandler(tagData.value)}
-                          tabIndex="0"
-                          onKeyPress={(event) => (event.key === 'Enter' ? clickAndEnterHandler(tagData.value) : null)}
-                        />
-                      </div>
-                    )}
-                </div>
+                <HighlightedText text={tagData.value} highlight={searchTerm} />
+              </SelectableBox>
+              { tagData.childCount > 0
+                && (
+                  <div className="d-flex align-items-center taxonomy-tags-arrow-drop-down">
+                    <Icon
+                      src={isOpen(tagData.value) ? ArrowDropUp : ArrowDropDown}
+                      onClick={() => clickAndEnterHandler(tagData.value)}
+                      tabIndex="0"
+                      onKeyPress={(event) => (event.key === 'Enter' ? clickAndEnterHandler(tagData.value) : null)}
+                    />
+                  </div>
+                )}
+            </div>
 
-              </div>
+          </div>
 
-              { tagData.childCount > 0 && isOpen(tagData.value) && (
-                <ContentTagsDropDownSelector
-                  taxonomyId={taxonomyId}
-                  level={level + 1}
-                  lineage={[...lineage, tagData.value]}
-                  tagsTree={tagsTree}
-                  searchTerm={searchTerm}
-                />
-              )}
-
-            </React.Fragment>
-          ))}
+          { tagData.childCount > 0 && isOpen(tagData.value) && (
+            <ContentTagsDropDownSelector
+              taxonomyId={taxonomyId}
+              level={level + 1}
+              lineage={[...lineage, tagData.value]}
+              tagsTree={tagsTree}
+              searchTerm={searchTerm}
+            />
+          )}
 
         </React.Fragment>
       ))}
@@ -140,6 +177,12 @@ const ContentTagsDropDownSelector = ({
           </div>
         )
         : null}
+
+      { tagPages.data.length === 0 && !tagPages.isLoading && (
+        <div className="d-flex justify-content-center muted-text">
+          <FormattedMessage {...messages.noTagsFoundMessage} values={{ searchTerm }} />
+        </div>
+      )}
 
     </div>
   );
