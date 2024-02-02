@@ -5,6 +5,7 @@ import {
   addModels,
   removeModel,
   updateModel,
+  updateModels,
 } from '../../../generic/model-store';
 import {
   addThumbnail,
@@ -38,19 +39,6 @@ import {
 
 import { updateFileValues } from './utils';
 
-function updateUsageLocation(videoId, dispatch, usageLocations) {
-  const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
-
-  dispatch(updateModel({
-    modelType: 'videos',
-    model: {
-      id: videoId,
-      usageLocations,
-      activeStatus,
-    },
-  }));
-}
-
 export function fetchVideos(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
@@ -65,16 +53,12 @@ export function fetchVideos(courseId) {
         dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
       } else {
         const parsedVideos = updateFileValues(previousUploads);
+        const videoIds = parsedVideos.map(video => video.id);
         dispatch(addModels({ modelType: 'videos', models: parsedVideos }));
-        dispatch(setVideoIds({
-          videoIds: parsedVideos.map(video => video.id),
-        }));
+        dispatch(setVideoIds({ videoIds }));
         dispatch(updateLoadingStatus({ courseId, status: RequestStatus.PARTIAL }));
-        await getAllUsagePaths({
-          courseId,
-          videos: parsedVideos,
-          updateModel: (apiData, videoId) => updateUsageLocation(videoId, dispatch, apiData.usageLocations),
-        });
+        const allUsageLocations = await getAllUsagePaths({ courseId, videoIds });
+        dispatch(updateModels({ modelType: 'videos', models: allUsageLocations }));
         dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
       }
     } catch (error) {
