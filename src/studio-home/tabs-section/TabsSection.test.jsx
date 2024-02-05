@@ -27,13 +27,15 @@ const { studioShortName } = studioHomeMock;
 
 let axiosMock;
 let store;
-const courseApiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/courses`;
+const courseApiLink = `${getApiBaseUrl()}/api/contentstore/v2/home/courses`;
 const libraryApiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/libraries`;
+
+const mockDispatch = jest.fn();
 
 const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
-      <TabsSection intl={{ formatMessage: jest.fn() }} dispatch={jest.fn()} />
+      <TabsSection intl={{ formatMessage: jest.fn() }} dispatch={mockDispatch} />
     </IntlProvider>
   </AppProvider>
 );
@@ -92,7 +94,7 @@ describe('<TabsSection />', () => {
 
     it('should render default sections when courses are empty', async () => {
       const data = generateGetStudioCoursesApiResponse();
-      data.courses = [];
+      data.results.courses = [];
 
       render(<RootWrapper />);
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
@@ -116,6 +118,36 @@ describe('<TabsSection />', () => {
 
       expect(screen.getByText(tabMessages.courseTabErrorMessage.defaultMessage)).toBeVisible();
     });
+
+    it('should render pagination when there are courses', async () => {
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(courseApiLink).reply(200, generateGetStudioCoursesApiResponse());
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+      const data = generateGetStudioCoursesApiResponse();
+      const coursesLength = data.results.courses.length;
+      const totalItems = data.count;
+      const paginationInfoText = `Showing ${coursesLength} of ${totalItems}`;
+
+      expect(screen.getByText(studioHomeMock.courses[0].displayName)).toBeVisible();
+
+      const pagination = screen.getByRole('navigation');
+      const paginationInfo = screen.getByTestId('pagination-info');
+      expect(paginationInfo.textContent).toContain(paginationInfoText);
+      expect(pagination).toBeVisible();
+    });
+
+    it('should not render pagination when there are not courses', async () => {
+      const data = generateGetStudioCoursesApiResponse();
+      data.results.courses = [];
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(courseApiLink).reply(200, data);
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      const pagination = screen.queryByRole('navigation');
+      expect(pagination).not.toBeInTheDocument();
+    });
   });
 
   describe('archived tab', () => {
@@ -137,7 +169,7 @@ describe('<TabsSection />', () => {
 
     it('should hide Archived tab when archived courses are empty', async () => {
       const data = generateGetStudioCoursesApiResponse();
-      data.archivedCourses = [];
+      data.results.archivedCourses = [];
 
       render(<RootWrapper />);
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());

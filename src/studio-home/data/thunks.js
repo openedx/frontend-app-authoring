@@ -14,7 +14,7 @@ import {
   fetchLibraryDataSuccess,
 } from './slice';
 
-function fetchStudioHomeData(search, hasHomeData) {
+function fetchStudioHomeData(search, hasHomeData, customParams = {}) {
   return async (dispatch) => {
     dispatch(updateLoadingStatuses({ studioHomeLoadingStatus: RequestStatus.IN_PROGRESS }));
     dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.IN_PROGRESS }));
@@ -30,7 +30,7 @@ function fetchStudioHomeData(search, hasHomeData) {
       }
     }
     try {
-      const coursesData = await getStudioHomeCourses(search || '');
+      const coursesData = await getStudioHomeCourses(search || '', customParams);
       dispatch(fetchCourseDataSuccess(coursesData));
       dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.SUCCESSFUL }));
     } catch (error) {

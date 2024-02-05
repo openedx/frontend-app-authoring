@@ -1,7 +1,13 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { ActionRow, Card, Hyperlink } from '@edx/paragon';
+import {
+  Card,
+  Hyperlink,
+  Dropdown,
+  IconButton,
+} from '@edx/paragon';
+import { MoreHoriz } from '@edx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
@@ -10,7 +16,16 @@ import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
 
 const CardItem = ({
-  intl, displayName, lmsLink, rerunLink, org, number, run, isLibraries, url,
+  intl,
+  displayName,
+  lmsLink,
+  rerunLink,
+  org,
+  number,
+  run,
+  isLibraries,
+  url,
+  cmsLink,
 }) => {
   const {
     allowCourseReruns,
@@ -41,16 +56,29 @@ const CardItem = ({
         )}
         subtitle={subtitle}
         actions={showActions && (
-          <ActionRow>
-            {isShowRerunLink && (
-              <Hyperlink className="small" destination={rerunLink}>
-                {intl.formatMessage(messages.btnReRunText)}
-              </Hyperlink>
-            )}
-            <Hyperlink className="small ml-3" destination={lmsLink}>
-              {intl.formatMessage(messages.viewLiveBtnText)}
-            </Hyperlink>
-          </ActionRow>
+          <Dropdown>
+            <Dropdown.Toggle
+              as={IconButton}
+              iconAs={MoreHoriz}
+              variant="primary"
+              data-testid="toggle-dropdown"
+            />
+            <Dropdown.Menu>
+              {isShowRerunLink && (
+                <Dropdown.Item href={rerunLink}>
+                  {messages.btnReRunText.defaultMessage}
+                </Dropdown.Item>
+              )}
+              <Dropdown.Item href={lmsLink}>
+                {intl.formatMessage(messages.viewLiveBtnText)}
+              </Dropdown.Item>
+
+              <Dropdown.Item href={cmsLink}>
+                {intl.formatMessage(messages.editStudioBtnText)}
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+
         )}
       />
     </Card>
@@ -62,12 +90,14 @@ CardItem.defaultProps = {
   rerunLink: '',
   lmsLink: '',
   run: '',
+  cmsLink: '',
 };
 
 CardItem.propTypes = {
   intl: intlShape.isRequired,
   displayName: PropTypes.string.isRequired,
   lmsLink: PropTypes.string,
+  cmsLink: PropTypes.string,
   rerunLink: PropTypes.string,
   org: PropTypes.string.isRequired,
   run: PropTypes.string,

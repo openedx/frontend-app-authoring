@@ -10,6 +10,7 @@ import {
   getLoadingStatuses,
   getSavingStatuses,
   getStudioHomeData,
+  getStudioHomeCoursesParams,
 } from './data/selectors';
 import { updateSavingStatuses } from './data/slice';
 
@@ -17,6 +18,7 @@ const useStudioHome = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const studioHomeData = useSelector(getStudioHomeData);
+  const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
   const newCourseData = useSelector(getCourseData);
   const { studioHomeLoadingStatus } = useSelector(getLoadingStatuses);
   const savingCreateRerunStatus = useSelector(getSavingStatus);
@@ -32,6 +34,11 @@ const useStudioHome = () => {
     dispatch(fetchStudioHomeData(location.search ?? ''));
     setShowNewCourseContainer(false);
   }, [location.search]);
+
+  useEffect(() => {
+    const { currentPage } = studioHomeCoursesParams;
+    dispatch(fetchStudioHomeData(location.search ?? '', false, { page: currentPage }));
+  }, [studioHomeCoursesParams.currentPage]);
 
   useEffect(() => {
     if (courseCreatorSavingStatus === RequestStatus.SUCCESSFUL) {

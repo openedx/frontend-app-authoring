@@ -49,6 +49,10 @@ const messages = defineMessages({
     id: 'course-authoring.studio-home.btn.view-live.text',
     defaultMessage: 'View live',
   },
+  editStudioBtnText: {
+    id: 'course-authoring.studio-home.btn.edit.studio.text',
+    defaultMessage: 'Edit in Studio',
+  },
   organizationTitle: {
     id: 'course-authoring.studio-home.organization.title',
     defaultMessage: 'Organization and library settings',

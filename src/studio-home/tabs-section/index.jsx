@@ -25,6 +25,7 @@ const TabsSection = ({
     libraryAuthoringMfeUrl,
     redirectToLibraryAuthoringMfe,
     courses, librariesEnabled, libraries, archivedCourses,
+    numPages, coursesCount,
   } = useSelector(getStudioHomeData);
   const {
     courseLoadingStatus,
@@ -52,6 +53,9 @@ const TabsSection = ({
           isShowProcessing={isShowProcessing}
           isLoading={isLoadingCourses}
           isFailed={isFailedCoursesPage}
+          dispatch={dispatch}
+          numPages={numPages}
+          coursesCount={coursesCount}
         />
       </Tab>,
     );

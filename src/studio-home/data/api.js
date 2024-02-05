@@ -16,8 +16,8 @@ export async function getStudioHomeData() {
   return camelCaseObject(data);
 }
 
-export async function getStudioHomeCourses(search) {
-  const { data } = await getAuthenticatedHttpClient().get(`${getApiBaseUrl()}/api/contentstore/v1/home/courses${search}`);
+export async function getStudioHomeCourses(search, customParams) {
+  const { data } = await getAuthenticatedHttpClient().get(`${getApiBaseUrl()}/api/contentstore/v2/home/courses${search}`, { params: customParams });
   return camelCaseObject(data);
 }
 

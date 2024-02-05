@@ -12,6 +12,7 @@ module.exports = {
       rerunLink: '/course_rerun/course-v1:MachineLearning+123+2023',
       run: '2023',
       url: '/course/course-v1:MachineLearning+123+2023',
+      cmsLink: '//localhost:18010/courses/course-v1:MachineLearning+123+2023',
     },
     {
       courseKey: 'course-v1:Design+123+e.g.2025',
@@ -22,6 +23,7 @@ module.exports = {
       rerunLink: '/course_rerun/course-v1:Design+123+e.g.2025',
       run: 'e.g.2025',
       url: '/course/course-v1:Design+123+e.g.2025',
+      cmsLink: '//localhost:18010/courses/course-v1:Design+123+e.g.2025',
     },
   ],
   canCreateOrganizations: true,

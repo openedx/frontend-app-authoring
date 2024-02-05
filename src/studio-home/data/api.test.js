@@ -44,7 +44,7 @@ describe('studio-home api calls', () => {
   });
 
   fit('should get studio courses data', async () => {
-    const apiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/courses`;
+    const apiLink = `${getApiBaseUrl()}/api/contentstore/v2/home/courses`;
     axiosMock.onGet(apiLink).reply(200, generateGetStudioCoursesApiResponse());
     const result = await getStudioHomeCourses('');
     const expected = generateGetStudioCoursesApiResponse();
