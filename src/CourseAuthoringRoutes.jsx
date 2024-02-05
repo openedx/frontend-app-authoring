@@ -3,7 +3,6 @@ import {
   Navigate, Routes, Route, useParams,
 } from 'react-router-dom';
 import { PageWrap } from '@edx/frontend-platform/react';
-import Placeholder from '@edx/frontend-lib-content-components';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';
 import EditorContainer from './editors/EditorContainer';
@@ -16,6 +15,7 @@ import ScheduleAndDetails from './schedule-and-details';
 import { GradingSettings } from './grading-settings';
 import CourseTeam from './course-team/CourseTeam';
 import { CourseUpdates } from './course-updates';
+import { CourseUnit } from './course-unit';
 import CourseExportPage from './export-page/CourseExportPage';
 import CourseImportPage from './import-page/CourseImportPage';
 
@@ -71,7 +71,7 @@ const CourseAuthoringRoutes = () => {
         />
         <Route
           path="/container/:blockId"
-          element={process.env.ENABLE_UNIT_PAGE === 'true' ? <PageWrap><Placeholder /></PageWrap> : null}
+          element={<PageWrap><CourseUnit courseId={courseId} /></PageWrap>}
         />
         <Route
           path="editor/course-videos/:blockId"

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useSearchParams } from 'react-router-dom';
 import {
   Dropdown,
   Form,
@@ -14,11 +15,13 @@ import {
 
 import { useEscapeClick } from '../../hooks';
 import { ITEM_BADGE_STATUS } from '../constants';
+import { scrollToElement } from '../utils';
 import messages from './messages';
 
 const CardHeader = ({
   title,
   status,
+  cardId,
   hasChanges,
   onClickPublish,
   onClickConfigure,
@@ -37,10 +40,23 @@ const CardHeader = ({
   actions,
 }) => {
   const intl = useIntl();
+  const [searchParams] = useSearchParams();
   const [titleValue, setTitleValue] = useState(title);
+  const cardHeaderRef = useRef(null);
 
   const isDisabledPublish = (status === ITEM_BADGE_STATUS.live
     || status === ITEM_BADGE_STATUS.publishedNotLive) && !hasChanges;
+
+  useEffect(() => {
+    const locatorId = searchParams.get('show');
+    if (!locatorId) {
+      return;
+    }
+
+    if (cardHeaderRef.current && locatorId === cardId) {
+      scrollToElement(cardHeaderRef.current);
+    }
+  }, []);
 
   useEscapeClick({
     onEscape: () => {
@@ -51,7 +67,11 @@ const CardHeader = ({
   });
 
   return (
-    <div className="item-card-header" data-testid={`${namePrefix}-card-header`}>
+    <div
+      className="item-card-header"
+      data-testid={`${namePrefix}-card-header`}
+      ref={cardHeaderRef}
+    >
       {isFormOpen ? (
         <Form.Group className="m-0">
           <Form.Control
@@ -151,6 +171,7 @@ const CardHeader = ({
 CardHeader.propTypes = {
   title: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
+  cardId: PropTypes.string.isRequired,
   hasChanges: PropTypes.bool.isRequired,
   onClickPublish: PropTypes.func.isRequired,
   onClickConfigure: PropTypes.func.isRequired,

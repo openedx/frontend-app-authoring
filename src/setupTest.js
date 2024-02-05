@@ -46,6 +46,7 @@ mergeConfig({
   CALCULATOR_HELP_URL: process.env.CALCULATOR_HELP_URL || null,
   ENABLE_PROGRESS_GRAPH_SETTINGS: process.env.ENABLE_PROGRESS_GRAPH_SETTINGS || 'false',
   ENABLE_TEAM_TYPE_SETTING: process.env.ENABLE_TEAM_TYPE_SETTING === 'true',
+  PREVIEW_BASE_URL: process.env.PREVIEW_BASE_URL || '',
 }, 'CourseAuthoringConfig');
 
 // Mock the plugins repo so jest will stop complaining about ES6 syntax

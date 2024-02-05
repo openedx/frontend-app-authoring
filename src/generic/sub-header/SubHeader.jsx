@@ -5,6 +5,7 @@ import { ActionRow } from '@edx/paragon';
 const SubHeader = ({
   title,
   subtitle,
+  breadcrumbs,
   contentTitle,
   description,
   instruction,
@@ -17,6 +18,9 @@ const SubHeader = ({
     <header className="sub-header">
       <h2 className="sub-header-title">
         <small className="sub-header-title-subtitle">{subtitle}</small>
+        {breadcrumbs && (
+          <div className="sub-header-breadcrumbs">{breadcrumbs}</div>
+        )}
         {title}
         {titleActions && (
           <ActionRow className="ml-auto mt-2 justify-content-start">
@@ -25,7 +29,7 @@ const SubHeader = ({
         )}
       </h2>
       {headerActions && (
-        <ActionRow className="ml-auto sub-header-actions">
+        <ActionRow className="ml-auto flex-shrink-0 sub-header-actions">
           {headerActions}
         </ActionRow>
       )}
@@ -41,19 +45,29 @@ const SubHeader = ({
     )}
   </div>
 );
+
 SubHeader.defaultProps = {
   instruction: '',
   description: '',
   subtitle: '',
+  breadcrumbs: '',
   contentTitle: '',
   headerActions: null,
   titleActions: null,
   hideBorder: false,
   withSubHeaderContent: true,
 };
+
 SubHeader.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.string,
+  ]).isRequired,
   subtitle: PropTypes.string,
+  breadcrumbs: PropTypes.oneOfType([
+    PropTypes.node,
+    PropTypes.string,
+  ]),
   contentTitle: PropTypes.string,
   description: PropTypes.string,
   instruction: PropTypes.oneOfType([

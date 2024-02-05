@@ -1,6 +1,4 @@
-import {
-  React, useState, useEffect,
-} from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {

@@ -1,5 +1,6 @@
 .sub-header {
   display: flex;
+  gap: map-get($spacers, 4\.5);
 
   .sub-header-actions {
     margin-bottom: 1.75rem;
@@ -11,7 +12,8 @@
   font: normal $font-weight-bold 2rem/2.25rem $font-family-base;
   color: $black;
 
-  .sub-header-title-subtitle {
+  .sub-header-title-subtitle,
+  .sub-header-breadcrumbs {
     font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
     display: block;
     color: $text-color-base;

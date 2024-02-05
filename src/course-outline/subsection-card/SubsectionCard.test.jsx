@@ -1,4 +1,5 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import {
   act, render, fireEvent, within,
 } from '@testing-library/react';
@@ -15,6 +16,14 @@ import cardHeaderMessages from '../card-header/messages';
 // eslint-disable-next-line no-unused-vars
 let axiosMock;
 let store;
+const mockPathname = '/foo-bar';
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: mockPathname,
+  }),
+}));
 
 const section = {
   id: '123',
@@ -42,28 +51,30 @@ const subsection = {
 
 const onEditSubectionSubmit = jest.fn();
 
-const renderComponent = (props) => render(
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <SubsectionCard
-        section={section}
-        subsection={subsection}
-        index="1"
-        canMoveItem={jest.fn()}
-        onOrderChange={jest.fn()}
-        onOpenPublishModal={jest.fn()}
-        onOpenHighlightsModal={jest.fn()}
-        onOpenDeleteModal={jest.fn()}
-        onEditClick={jest.fn()}
-        savingStatus=""
-        onEditSubmit={onEditSubectionSubmit}
-        onDuplicateSubmit={jest.fn()}
-        namePrefix="subsection"
-        {...props}
-      >
-        <span>children</span>
-      </SubsectionCard>
-    </IntlProvider>,
+const renderComponent = (props, entry = '/') => render(
+  <AppProvider store={store} wrapWithRouter={false}>
+    <MemoryRouter initialEntries={[entry]}>
+      <IntlProvider locale="en">
+        <SubsectionCard
+          section={section}
+          subsection={subsection}
+          index="1"
+          canMoveItem={jest.fn()}
+          onOrderChange={jest.fn()}
+          onOpenPublishModal={jest.fn()}
+          onOpenHighlightsModal={jest.fn()}
+          onOpenDeleteModal={jest.fn()}
+          onEditClick={jest.fn()}
+          savingStatus=""
+          onEditSubmit={onEditSubectionSubmit}
+          onDuplicateSubmit={jest.fn()}
+          namePrefix="subsection"
+          {...props}
+        >
+          <span>children</span>
+        </SubsectionCard>
+      </IntlProvider>,
+    </MemoryRouter>,
   </AppProvider>,
 );
 
@@ -196,5 +207,14 @@ describe('<SubsectionCard />', () => {
       },
     });
     expect(await findByText(cardHeaderMessages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('check extended section when URL has a "show" param', async () => {
+    const { findByTestId } = renderComponent(null, `?show=${section.id}`);
+
+    const cardUnits = await findByTestId('subsection-card__units');
+    const newUnitButton = await findByTestId('new-unit-button');
+    expect(cardUnits).toBeInTheDocument();
+    expect(newUnitButton).toBeInTheDocument();
   });
 });
