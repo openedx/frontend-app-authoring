@@ -1076,5 +1076,9 @@
   "course-authoring.course-unit.modal.make-visibility.btn.action.text": "Make visible to students",
   "course-authoring.course-unit.modal.make-visibility.btn.cancel.text": "Cancel",
   "course-authoring.course-unit.modal.make-visibility.description": "If the unit was previously published and released to students, any changes you made to the unit when it was hidden will now be visible to students. Do you want to proceed?",
-  "course-authoring.course-unit.xblock.button.actions.alt": "Actions"
+  "course-authoring.course-unit.xblock.button.actions.alt": "Actions",
+  "course-authoring.course-unit.xblock.visibility.message": "Access restricted to: {selectedGroupsLabel}",
+  "course-authoring.course-unit.xblock.validation.summary": "This component has validation issues.",
+  "course-authoring.course-unit.heading.visibility.defined.message": "Access to this unit is restricted to: {selectedGroupsLabel}",
+  "course-authoring.course-unit.heading.visibility.common.message": "Access to some content in this unit is restricted to specific groups of learners."
 }

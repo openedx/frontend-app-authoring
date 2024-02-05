@@ -11,6 +11,7 @@ import {
   fetchCourseVerticalChildrenData,
   deleteUnitItemQuery,
   duplicateUnitItemQuery,
+  editCourseUnitVisibilityAndData,
 } from './data/thunk';
 import {
   getCourseSectionVertical,
@@ -21,6 +22,7 @@ import {
   getSequenceStatus,
 } from './data/selectors';
 import { changeEditTitleFormOpen, updateQueryPendingStatus } from './data/slice';
+import { PUBLISH_TYPES } from './constants';
 
 // eslint-disable-next-line import/prefer-default-export
 export const useCourseUnit = ({ courseId, blockId }) => {
@@ -57,6 +59,11 @@ export const useCourseUnit = ({ courseId, blockId }) => {
 
   const handleTitleEdit = () => {
     dispatch(changeEditTitleFormOpen(!isTitleEditFormOpen));
+  };
+
+  const handleConfigureSubmit = (id, isVisible, groupAccess, closeModalFn) => {
+    dispatch(editCourseUnitVisibilityAndData(id, PUBLISH_TYPES.republish, isVisible, groupAccess, true, blockId));
+    closeModalFn();
   };
 
   const handleTitleEditSubmit = (displayName) => {
@@ -121,6 +128,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handleTitleEdit,
     handleTitleEditSubmit,
     handleCreateNewCourseXBlock,
+    handleConfigureSubmit,
     courseVerticalChildren,
   };
 };

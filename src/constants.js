@@ -49,3 +49,10 @@ export const DECODED_ROUTES = {
     '/container/:blockId',
   ],
 };
+
+export const COURSE_BLOCK_NAMES = /** @type {const} */ ({
+  chapter: { id: 'chapter', name: 'Section' },
+  sequential: { id: 'sequential', name: 'Subsection' },
+  vertical: { id: 'vertical', name: 'Unit' },
+  component: { id: 'component', name: 'Component' },
+});

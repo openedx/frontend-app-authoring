@@ -29,6 +29,14 @@ const messages = defineMessages({
     id: 'course-authoring.course-unit.xblock.button.delete.label',
     defaultMessage: 'Delete',
   },
+  visibilityMessage: {
+    id: 'course-authoring.course-unit.xblock.visibility.message',
+    defaultMessage: 'Access restricted to: {selectedGroupsLabel}',
+  },
+  validationSummary: {
+    id: 'course-authoring.course-unit.xblock.validation.summary',
+    defaultMessage: 'This component has validation issues.',
+  },
 });
 
 export default messages;
