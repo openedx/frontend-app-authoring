@@ -30,15 +30,18 @@ export function normalizeCourseSectionVerticalData(metadata) {
  * Get the notification message based on the publishing type and visibility.
  * @param {string} type - The publishing type.
  * @param {boolean} isVisible - The visibility status.
+ * @param {boolean} isModalView - The modal view status.
  * @returns {string} The corresponding notification message.
  */
-export const getNotificationMessage = (type, isVisible) => {
+export const getNotificationMessage = (type, isVisible, isModalView) => {
   let notificationMessage;
 
   if (type === PUBLISH_TYPES.discardChanges) {
     notificationMessage = NOTIFICATION_MESSAGES.discardChanges;
   } else if (type === PUBLISH_TYPES.makePublic) {
     notificationMessage = NOTIFICATION_MESSAGES.publishing;
+  } else if (type === PUBLISH_TYPES.republish && isModalView) {
+    notificationMessage = NOTIFICATION_MESSAGES.saving;
   } else if (type === PUBLISH_TYPES.republish && !isVisible) {
     notificationMessage = NOTIFICATION_MESSAGES.makingVisibleToStudents;
   } else if (type === PUBLISH_TYPES.republish && isVisible) {

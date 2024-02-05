@@ -11,12 +11,10 @@ import {
   Tab,
   Tabs,
 } from '@openedx/paragon';
-import { useSelector } from 'react-redux';
 import { Formik } from 'formik';
 
 import { VisibilityTypes } from '../../data/constants';
-import { COURSE_BLOCK_NAMES } from '../constants';
-import { getCurrentItem, getProctoredExamsFlag } from '../data/selectors';
+import { COURSE_BLOCK_NAMES } from '../../constants';
 import messages from './messages';
 import BasicTab from './BasicTab';
 import VisibilityTab from './VisibilityTab';
@@ -27,6 +25,9 @@ const ConfigureModal = ({
   isOpen,
   onClose,
   onConfigureSubmit,
+  currentItemData,
+  enableProctoredExams,
+  isXBlockComponent,
 }) => {
   const intl = useIntl();
   const {
@@ -57,8 +58,7 @@ const ConfigureModal = ({
     supportsOnboarding,
     showReviewRules,
     onlineProctoringRules,
-  } = useSelector(getCurrentItem);
-  const enableProctoredExams = useSelector(getProctoredExamsFlag);
+  } = currentItemData;
 
   const getSelectedGroups = () => {
     if (userPartitionInfo?.selectedPartitionIndex >= 0) {
@@ -81,7 +81,6 @@ const ConfigureModal = ({
   const initialValues = {
     releaseDate: sectionStartDate,
     isVisibleToStaffOnly: visibilityState === VisibilityTypes.STAFF_ONLY,
-    saveButtonDisabled: true,
     graderType: format == null ? 'notgraded' : format,
     dueDate: due == null ? '' : due,
     isTimeLimited,
@@ -132,6 +131,10 @@ const ConfigureModal = ({
 
   const isSubsection = category === COURSE_BLOCK_NAMES.sequential.id;
 
+  const dialogTitle = isXBlockComponent
+    ? intl.formatMessage(messages.componentTitle, { title: displayName })
+    : intl.formatMessage(messages.title, { title: displayName });
+
   const handleSave = (data) => {
     const groupAccess = {};
     switch (category) {
@@ -159,6 +162,7 @@ const ConfigureModal = ({
       );
       break;
     case COURSE_BLOCK_NAMES.vertical.id:
+    case COURSE_BLOCK_NAMES.component.id:
       // groupAccess should be {partitionId: [group1, group2]} or {} if selectedPartitionIndex === -1
       if (data.selectedPartitionIndex >= 0) {
         const partitionId = userPartitionInfo.selectablePartitions[data.selectedPartitionIndex].id;
@@ -232,8 +236,10 @@ const ConfigureModal = ({
         </Tabs>
       );
     case COURSE_BLOCK_NAMES.vertical.id:
+    case COURSE_BLOCK_NAMES.component.id:
       return (
         <UnitTab
+          isXBlockComponent={COURSE_BLOCK_NAMES.component.id === category}
           values={values}
           setFieldValue={setFieldValue}
           showWarning={visibilityState === VisibilityTypes.STAFF_ONLY && !ancestorHasStaffLock}
@@ -257,7 +263,7 @@ const ConfigureModal = ({
       <div data-testid="configure-modal">
         <ModalDialog.Header className="configure-modal__header">
           <ModalDialog.Title>
-            {intl.formatMessage(messages.title, { title: displayName })}
+            {dialogTitle}
           </ModalDialog.Title>
         </ModalDialog.Header>
         <Formik
@@ -268,7 +274,7 @@ const ConfigureModal = ({
           validateOnChange
         >
           {({
-            values, handleSubmit, dirty, isValid, setFieldValue,
+            values, handleSubmit, setFieldValue,
           }) => (
             <>
               <ModalDialog.Body className="configure-modal__body">
@@ -281,7 +287,10 @@ const ConfigureModal = ({
                   <ModalDialog.CloseButton variant="tertiary">
                     {intl.formatMessage(messages.cancelButton)}
                   </ModalDialog.CloseButton>
-                  <Button data-testid="configure-save-button" onClick={handleSubmit} disabled={!(dirty && isValid)}>
+                  <Button
+                    data-testid="configure-save-button"
+                    onClick={handleSubmit}
+                  >
                     {intl.formatMessage(messages.saveButton)}
                   </Button>
                 </ActionRow>
@@ -294,10 +303,63 @@ const ConfigureModal = ({
   );
 };
 
+ConfigureModal.defaultProps = {
+  isXBlockComponent: false,
+  enableProctoredExams: false,
+};
+
 ConfigureModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onConfigureSubmit: PropTypes.func.isRequired,
+  enableProctoredExams: PropTypes.bool,
+  currentItemData: PropTypes.shape({
+    displayName: PropTypes.string,
+    start: PropTypes.string,
+    visibilityState: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+    due: PropTypes.string,
+    isTimeLimited: PropTypes.bool,
+    defaultTimeLimitMinutes: PropTypes.number,
+    hideAfterDue: PropTypes.bool,
+    showCorrectness: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+    courseGraders: PropTypes.arrayOf(PropTypes.string),
+    category: PropTypes.string,
+    format: PropTypes.string,
+    userPartitionInfo: PropTypes.shape({
+      selectablePartitions: PropTypes.arrayOf(PropTypes.shape({
+        groups: PropTypes.arrayOf(PropTypes.shape({
+          deleted: PropTypes.bool,
+          id: PropTypes.number,
+          name: PropTypes.string,
+          selected: PropTypes.bool,
+        })),
+        id: PropTypes.number,
+        name: PropTypes.string,
+        scheme: PropTypes.string,
+      })),
+      selectedPartitionIndex: PropTypes.number,
+      selectedGroupsLabel: PropTypes.string,
+    }),
+    ancestorHasStaffLock: PropTypes.bool,
+    isPrereq: PropTypes.bool,
+    prereqs: PropTypes.arrayOf({
+      blockDisplayName: PropTypes.string,
+      blockUsageKey: PropTypes.string,
+    }),
+    prereq: PropTypes.number,
+    prereqMinScore: PropTypes.number,
+    prereqMinCompletion: PropTypes.number,
+    releasedToStudents: PropTypes.bool,
+    wasExamEverLinkedWithExternal: PropTypes.bool,
+    isProctoredExam: PropTypes.bool,
+    isOnboardingExam: PropTypes.bool,
+    isPracticeExam: PropTypes.bool,
+    examReviewRules: PropTypes.string,
+    supportsOnboarding: PropTypes.bool,
+    showReviewRules: PropTypes.bool,
+    onlineProctoringRules: PropTypes.string,
+  }).isRequired,
+  isXBlockComponent: PropTypes.bool,
 };
 
 export default ConfigureModal;

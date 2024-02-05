@@ -16,7 +16,7 @@ const slice = createSlice({
     },
     unit: {},
     courseSectionVertical: {},
-    courseVerticalChildren: [],
+    courseVerticalChildren: {},
   },
   reducers: {
     fetchCourseItemSuccess: (state, { payload }) => {

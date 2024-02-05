@@ -1,15 +1,32 @@
 .course-unit {
-  .pgn__card .pgn__card-header {
-    border-bottom: 1px solid $light-400;
-    padding-bottom: map-get($spacers, 2);
+  .course-unit__xblocks {
+    .pgn__card-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid $light-400;
+      padding-bottom: map-get($spacers, 2);
 
-    .pgn__card-header-content {
-      margin-top: map-get($spacers, 3\.5);
+      &:not(:has(.pgn__card-header-subtitle-md)) {
+        align-items: center;
+      }
     }
 
-    .btn-icon .btn-icon__icon {
-      width: 1.5rem;
-      height: 1.5rem;
+    .pgn__card-header-subtitle-md {
+      margin-top: 0;
+      font-size: $font-size-sm;
     }
+
+    .pgn__card-header-title-md {
+      font: 700 1.375rem/1.75rem $font-family-sans-serif;
+      color: $black;
+    }
+
+    .pgn__card-section {
+      padding: map-get($spacers, 3\.5) 0;
+    }
+  }
+
+  .unit-iframe__wrapper .alert-danger {
+    margin-bottom: 0;
   }
 }

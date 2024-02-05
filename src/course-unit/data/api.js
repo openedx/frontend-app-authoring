@@ -88,14 +88,16 @@ export async function createCourseXblock({
  * @param {string} unitId - The ID of the course unit.
  * @param {string} type - The action type (e.g., PUBLISH_TYPES.discardChanges).
  * @param {boolean} isVisible - The visibility status for students.
+ * @param {boolean} groupAccess - Access group key set.
  * @returns {Promise<any>} A promise that resolves with the response data.
  */
-export async function handleCourseUnitVisibilityAndData(unitId, type, isVisible) {
+export async function handleCourseUnitVisibilityAndData(unitId, type, isVisible, groupAccess) {
   const body = {
-    publish: type,
+    publish: groupAccess ? null : type,
     ...(type === PUBLISH_TYPES.republish ? {
       metadata: {
-        visible_to_staff_only: isVisible,
+        visible_to_staff_only: isVisible ? true : null,
+        group_access: groupAccess || null,
       },
     } : {}),
   };
