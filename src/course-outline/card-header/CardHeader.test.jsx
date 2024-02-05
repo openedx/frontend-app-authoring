@@ -1,5 +1,7 @@
 import { MemoryRouter } from 'react-router-dom';
-import { act, render, fireEvent, waitFor } from '@testing-library/react';
+import {
+  act, render, fireEvent, waitFor,
+} from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { ITEM_BADGE_STATUS } from '../constants';
@@ -29,9 +31,6 @@ const cardHeaderProps = {
   onClickEdit: onClickEditMock,
   isFormOpen: false,
   onEditSubmit: jest.fn(),
-  onClickMoveUp: jest.fn(),
-  onClickMoveDown: jest.fn(),
-  onClickConfigure: jest.fn(),
   closeForm: closeFormMock,
   isDisabledEditField: false,
   onClickDelete: onClickDeleteMock,

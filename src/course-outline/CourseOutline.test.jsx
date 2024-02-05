@@ -127,7 +127,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check video sharing option udpates correctly', async () => {
-    const { findByTestId } = render(<RootWrapper />);
+    const { findByLabelText } = render(<RootWrapper />);
 
     axiosMock
       .onPost(getCourseBlockApiUrl(courseId), {
@@ -136,13 +136,10 @@ describe('<CourseOutline />', () => {
         },
       })
       .reply(200);
-    const optionDropdownWrapper = await findByTestId('video-sharing-wrapper');
-    const optionDropdown = await within(optionDropdownWrapper).findByRole('button');
-    await act(async () => fireEvent.click(optionDropdown));
-    const allOffOption = await within(optionDropdownWrapper).findByText(
-      statusBarMessages.videoSharingAllOffText.defaultMessage,
+    const optionDropdown = await findByLabelText(statusBarMessages.videoSharingTitle.defaultMessage);
+    await act(
+      async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
-    await act(async () => fireEvent.click(allOffOption));
 
     expect(axiosMock.history.post.length).toBe(1);
     expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
@@ -153,7 +150,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check video sharing option shows error on failure', async () => {
-    const { findByTestId, queryByRole } = render(<RootWrapper />);
+    const { findByLabelText, queryByRole } = render(<RootWrapper />);
 
     axiosMock
       .onPost(getCourseBlockApiUrl(courseId), {
@@ -162,13 +159,10 @@ describe('<CourseOutline />', () => {
         },
       })
       .reply(500);
-    const optionDropdownWrapper = await findByTestId('video-sharing-wrapper');
-    const optionDropdown = await within(optionDropdownWrapper).findByRole('button');
-    await act(async () => fireEvent.click(optionDropdown));
-    const allOffOption = await within(optionDropdownWrapper).findByText(
-      statusBarMessages.videoSharingAllOffText.defaultMessage,
+    const optionDropdown = await findByLabelText(statusBarMessages.videoSharingTitle.defaultMessage);
+    await act(
+      async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
-    await act(async () => fireEvent.click(allOffOption));
 
     expect(axiosMock.history.post.length).toBe(1);
     expect(axiosMock.history.post[0].data).toBe(JSON.stringify({

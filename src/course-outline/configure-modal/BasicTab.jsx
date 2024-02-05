@@ -52,18 +52,20 @@ const BasicTab = ({
           <div>
             <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.grading} /></h5>
             <hr />
-            <Form.Label><FormattedMessage {...messages.gradeAs} /></Form.Label>
-            <Form.Control
-              as="select"
-              defaultValue={graderType}
-              onChange={onChangeGraderType}
-              data-testid="grader-type-select"
-            >
-              <option key="notgraded" value="notgraded">
-                {intl.formatMessage(messages.notGradedTypeOption)}
-              </option>
-              {createOptions()}
-            </Form.Control>
+            <Form.Group>
+              <Form.Label><FormattedMessage {...messages.gradeAs} /></Form.Label>
+              <Form.Control
+                as="select"
+                defaultValue={graderType}
+                onChange={onChangeGraderType}
+                data-testid="grader-type-select"
+              >
+                <option key="notgraded" value="notgraded">
+                  {intl.formatMessage(messages.notGradedTypeOption)}
+                </option>
+                {createOptions()}
+              </Form.Control>
+            </Form.Group>
             <div data-testid="due-date-stack">
               <Stack className="mt-3" direction="horizontal" gap={5}>
                 <DatepickerControl
