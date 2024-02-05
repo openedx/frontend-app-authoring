@@ -41,9 +41,7 @@ import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import PublishModal from './publish-modal/PublishModal';
 import ConfigureModal from './configure-modal/ConfigureModal';
 import DeleteModal from './delete-modal/DeleteModal';
-import {
-  useCourseOutline, useScrollToLocatorElement,
-} from './hooks';
+import { useCourseOutline } from './hooks';
 import messages from './messages';
 
 const CourseOutline = ({ courseId }) => {
@@ -97,8 +95,6 @@ const CourseOutline = ({ courseId }) => {
     handleVideoSharingOptionChange,
     handleUnitDragAndDrop,
   } = useCourseOutline({ courseId });
-
-  useScrollToLocatorElement({ isLoading });
 
   const [sections, setSections] = useState(sectionsList);
 

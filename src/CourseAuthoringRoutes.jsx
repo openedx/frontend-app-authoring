@@ -71,7 +71,7 @@ const CourseAuthoringRoutes = () => {
         />
         <Route
           path="/container/:blockId"
-          element={process.env.ENABLE_UNIT_PAGE === 'true' ? <PageWrap><CourseUnit courseId={courseId} /></PageWrap> : null}
+          element={<PageWrap><CourseUnit courseId={courseId} /></PageWrap>}
         />
         <Route
           path="editor/course-videos/:blockId"

@@ -16,6 +16,14 @@ import cardHeaderMessages from '../card-header/messages';
 // eslint-disable-next-line no-unused-vars
 let axiosMock;
 let store;
+const mockPathname = '/foo-bar';
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: mockPathname,
+  }),
+}));
 
 const section = {
   id: '123',

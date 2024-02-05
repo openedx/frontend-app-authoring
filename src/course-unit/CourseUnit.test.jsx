@@ -28,7 +28,8 @@ import { getUnitPreviewPath, getUnitViewLivePath } from './utils';
 let axiosMock;
 let store;
 const courseId = '123';
-const sectionId = '19a30717eff543078a5d94ae9d6c18a5';
+const sectionId = 'graded_interactions';
+const subsectionId = '19a30717eff543078a5d94ae9d6c18a5';
 const blockId = '567890';
 const unitDisplayName = courseUnitIndexMock.metadata.display_name;
 
@@ -95,7 +96,8 @@ describe('<CourseUnit />', () => {
       const previewButton = getByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage });
       userEvent.click(previewButton);
       expect(window.open).toHaveBeenCalled();
-      const PREVIEW_LINK = getConfig().PREVIEW_BASE_URL + getUnitPreviewPath(courseId, sectionId, blockId);
+      // eslint-disable-next-line max-len
+      const PREVIEW_LINK = getConfig().PREVIEW_BASE_URL + getUnitPreviewPath(courseId, sectionId, subsectionId, blockId);
       expect(window.open).toHaveBeenCalledWith(PREVIEW_LINK, '_blank');
     });
 

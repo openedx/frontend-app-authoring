@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@edx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
@@ -289,24 +289,5 @@ const useCourseOutline = ({ courseId }) => {
   };
 };
 
-const useScrollToLocatorElement = ({ isLoading }) => {
-  const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    const locator = searchParams.get('show');
-    if (!locator) {
-      return;
-    }
-
-    const locatorToShow = document.querySelector(`[data-locator="${locator}"]`);
-    if (!locatorToShow) {
-      return;
-    }
-    locatorToShow.scrollIntoView({ behavior: 'smooth' });
-  }, [isLoading]);
-};
-
-export {
-  useCourseOutline,
-  useScrollToLocatorElement,
-};
+// eslint-disable-next-line import/prefer-default-export
+export { useCourseOutline };

@@ -18,6 +18,6 @@ export const getUnitViewLivePath = (courseId, blockId) => (
  * @param {string} blockId
  * @returns {string} {`/courses/${courseId}/courseware/interactive_demonstrations/${sectionId}/1?activate_block_id=${blockId}`}
  */
-export const getUnitPreviewPath = (courseId, sectionId, blockId) => (
-  `/courses/${courseId}/courseware/interactive_demonstrations/${sectionId}/1?activate_block_id=${blockId}`
+export const getUnitPreviewPath = (courseId, sectionId, subsectionId, blockId) => (
+  `/courses/${courseId}/courseware/${sectionId}/${subsectionId}/1?activate_block_id=${blockId}`
 );

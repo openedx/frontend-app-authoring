@@ -32,8 +32,9 @@ const useCourseUnit = ({ courseId, blockId }) => {
       window.open(config.LMS_BASE_URL + getUnitViewLivePath(courseId, blockId), '_blank');
     },
     handlePreview: () => {
-      const sectionId = courseUnit.ancestorInfo?.ancestors[0]?.id.split('@').pop();
-      window.open(config.PREVIEW_BASE_URL + getUnitPreviewPath(courseId, sectionId, blockId), '_blank');
+      const subsectionId = courseUnit.ancestorInfo?.ancestors[0]?.id.split('@').pop();
+      const sectionId = courseUnit.ancestorInfo?.ancestors[1]?.id.split('@').pop();
+      window.open(config.PREVIEW_BASE_URL + getUnitPreviewPath(courseId, sectionId, subsectionId, blockId), '_blank');
     },
   };
 

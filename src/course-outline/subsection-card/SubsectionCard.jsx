@@ -111,7 +111,7 @@ const SubsectionCard = ({
     // if this items has been newly added, scroll to it.
     // we need to check section.shouldScroll as whole section is fetched when a
     // subsection is duplicated under it.
-    if (currentRef.current && (section.shouldScroll || subsection.shouldScroll)) {
+    if (currentRef.current && (section.shouldScroll || subsection.shouldScroll || isScrolledToElement)) {
       scrollToElement(currentRef.current);
     }
   }, []);
@@ -138,7 +138,7 @@ const SubsectionCard = ({
         ...borderStyle,
       }}
     >
-      <div className="subsection-card" data-testid="subsection-card" ref={currentRef} data-locator={subsection.id}>
+      <div className="subsection-card" data-testid="subsection-card" ref={currentRef}>
         {isHeaderVisible && (
           <CardHeader
             title={displayName}

@@ -152,7 +152,7 @@ const SectionCard = ({
         <div>
           {isHeaderVisible && (
             <CardHeader
-              sectionId={id}
+              cardId={id}
               title={displayName}
               status={sectionStatus}
               hasChanges={hasChanges}
