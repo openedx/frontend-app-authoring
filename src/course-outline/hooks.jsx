@@ -113,7 +113,7 @@ const useCourseOutline = ({ courseId }) => {
 
   const getUnitUrl = (locator) => {
     if (getConfig().ENABLE_UNIT_PAGE === 'true') {
-      return `/course/container/${locator}`;
+      return `/course/${courseId}/container/${locator}`;
     }
     return `${getConfig().STUDIO_BASE_URL}/container/${locator}`;
   };
