@@ -1,3 +1,4 @@
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import { getContentMenuItems } from './utils';
 
 const props = {
@@ -11,11 +12,18 @@ const props = {
 describe('header utils', () => {
   describe('getContentMenuItems', () => {
     it('should include Video Uploads option', () => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: 'true',
+      });
       const actualItems = getContentMenuItems(props);
       expect(actualItems).toHaveLength(5);
     });
     it('should not include Video Uploads option', () => {
-      process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN = 'false';
+      setConfig({
+        ...getConfig(),
+        ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: 'false',
+      });
       const actualItems = getContentMenuItems(props);
       expect(actualItems).toHaveLength(4);
     });
