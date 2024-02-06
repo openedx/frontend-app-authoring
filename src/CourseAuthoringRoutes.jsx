@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Navigate, Routes, Route, useParams,
 } from 'react-router-dom';
+import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';
@@ -55,7 +56,7 @@ const CourseAuthoringRoutes = () => {
         />
         <Route
           path="videos"
-          element={process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' ? <PageWrap><VideosPage courseId={courseId} /></PageWrap> : null}
+          element={getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' ? <PageWrap><VideosPage courseId={courseId} /></PageWrap> : null}
         />
         <Route
           path="pages-and-resources/*"
@@ -75,11 +76,11 @@ const CourseAuthoringRoutes = () => {
         />
         <Route
           path="editor/course-videos/:blockId"
-          element={process.env.ENABLE_NEW_EDITOR_PAGES === 'true' ? <PageWrap><VideoSelectorContainer courseId={courseId} /></PageWrap> : null}
+          element={getConfig().ENABLE_NEW_EDITOR_PAGES === 'true' ? <PageWrap><VideoSelectorContainer courseId={courseId} /></PageWrap> : null}
         />
         <Route
           path="editor/:blockType/:blockId?"
-          element={process.env.ENABLE_NEW_EDITOR_PAGES === 'true' ? <PageWrap><EditorContainer courseId={courseId} /></PageWrap> : null}
+          element={getConfig().ENABLE_NEW_EDITOR_PAGES === 'true' ? <PageWrap><EditorContainer courseId={courseId} /></PageWrap> : null}
         />
         <Route
           path="settings/details"

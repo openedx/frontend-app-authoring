@@ -99,7 +99,7 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const getUnitUrl = (locator) => {
-    if (process.env.ENABLE_UNIT_PAGE === 'true') {
+    if (getConfig().ENABLE_UNIT_PAGE === 'true') {
       return `/course/container/${locator}`;
     }
     return `${getConfig().STUDIO_BASE_URL}/container/${locator}`;
@@ -107,7 +107,7 @@ const useCourseOutline = ({ courseId }) => {
 
   const openUnitPage = (locator) => {
     const url = getUnitUrl(locator);
-    if (process.env.ENABLE_UNIT_PAGE === 'true') {
+    if (getConfig().ENABLE_UNIT_PAGE === 'true') {
       navigate(url);
     } else {
       window.location.assign(url);
