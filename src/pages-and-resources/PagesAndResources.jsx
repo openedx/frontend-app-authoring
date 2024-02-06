@@ -76,8 +76,6 @@ const PagesAndResources = ({ courseId, intl }) => {
 
   const { checkPermission } = useUserPermissions();
 
-  const { checkPermission } = useUserPermissions();
-
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
