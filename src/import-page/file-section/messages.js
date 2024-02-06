@@ -9,6 +9,10 @@ const messages = defineMessages({
     id: 'course-authoring.import.file-section.chosen-file',
     defaultMessage: 'File chosen: {fileName}',
   },
+  viewOnlyAlert: {
+    id: 'course-authoring.import.file-section.view-only-alert',
+    defaultMessage: 'You have view only access to this page. If you feel you should have full access, please reach out to your course team admin to be given access.',
+  },
 });
 
 export default messages;

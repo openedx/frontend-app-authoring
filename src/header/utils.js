@@ -91,18 +91,16 @@ export const getToolsMenuItems = ({
   hasToolsPermissions,
 }) => {
   const items = [];
-  items.push(
-    {
-      href: `${studioBaseUrl}/import/${courseId}`,
-      title: intl.formatMessage(messages['header.links.import']),
-    },
-    {
-      href: `${studioBaseUrl}/export/${courseId}`,
-      title: intl.formatMessage(messages['header.links.export']),
-    },
-  );
   if (hasToolsPermissions) {
     items.push(
+      {
+        href: `${studioBaseUrl}/import/${courseId}`,
+        title: intl.formatMessage(messages['header.links.import']),
+      },
+      {
+        href: `${studioBaseUrl}/export/${courseId}`,
+        title: intl.formatMessage(messages['header.links.export']),
+      },
       {
         href: `${studioBaseUrl}/checklists/${courseId}`,
         title: intl.formatMessage(messages['header.links.checklists']),

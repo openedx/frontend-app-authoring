@@ -17,7 +17,7 @@ import { EXPORT_STAGES } from '../data/constants';
 import { RequestStatus } from '../../data/constants';
 import messages from './messages';
 
-const ExportStepper = ({ intl, courseId }) => {
+const ExportStepper = ({ intl, courseId, viewOnly }) => {
   const currentStage = useSelector(getCurrentStage);
   const downloadPath = useSelector(getDownloadPath);
   const successDate = useSelector(getSuccessDate);
@@ -90,7 +90,7 @@ const ExportStepper = ({ intl, courseId }) => {
         errorMessage={errorMessage}
         hasError={!!errorMessage}
       />
-      {downloadPath && currentStage === EXPORT_STAGES.SUCCESS && <Button className="ml-5.5 mt-n2.5" href={downloadPath} download>{intl.formatMessage(messages.downloadCourseButtonTitle)}</Button>}
+      {downloadPath && currentStage === EXPORT_STAGES.SUCCESS && <Button className="ml-5.5 mt-n2.5" href={downloadPath} download disabled={viewOnly}>{intl.formatMessage(messages.downloadCourseButtonTitle)}</Button>}
     </div>
   );
 };
@@ -98,6 +98,7 @@ const ExportStepper = ({ intl, courseId }) => {
 ExportStepper.propTypes = {
   intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
+  viewOnly: PropTypes.bool.isRequired,
 };
 
 export default injectIntl(ExportStepper);

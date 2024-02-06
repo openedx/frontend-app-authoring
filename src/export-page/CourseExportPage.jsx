@@ -25,6 +25,9 @@ import { updateExportTriggered, updateSavingStatus, updateSuccessDate } from './
 import ExportModalError from './export-modal-error/ExportModalError';
 import ExportFooter from './export-footer/ExportFooter';
 import ExportStepper from './export-stepper/ExportStepper';
+import { useUserPermissions } from '../generic/hooks';
+import { getUserPermissionsEnabled } from '../generic/data/selectors';
+import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 
 const CourseExportPage = ({ intl, courseId }) => {
   const dispatch = useDispatch();
@@ -38,6 +41,14 @@ const CourseExportPage = ({ intl, courseId }) => {
   const isShowExportButton = !exportTriggered || errorMessage || currentStage === EXPORT_STAGES.SUCCESS;
   const anyRequestFailed = savingStatus === RequestStatus.FAILED || loadingStatus === RequestStatus.FAILED;
   const anyRequestInProgress = savingStatus === RequestStatus.PENDING || loadingStatus === RequestStatus.IN_PROGRESS;
+  const { checkPermission } = useUserPermissions();
+  const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
+  const hasExportPermissions = !userPermissionsEnabled || (
+    userPermissionsEnabled && (checkPermission('manage_course_settings') || checkPermission('view_course_settings'))
+  );
+  const viewOnly = !userPermissionsEnabled || (
+    userPermissionsEnabled && checkPermission('view_course_settings') && !checkPermission('manage_course_settings')
+  );
 
   useEffect(() => {
     const cookieData = cookies.get(LAST_EXPORT_COOKIE_NAME);
@@ -47,6 +58,12 @@ const CourseExportPage = ({ intl, courseId }) => {
       dispatch(updateSuccessDate(cookieData.date));
     }
   }, []);
+
+  if (!hasExportPermissions) {
+    return (
+      <PermissionDeniedAlert />
+    );
+  }
 
   return (
     <>
@@ -89,13 +106,14 @@ const CourseExportPage = ({ intl, courseId }) => {
                         className="mb-4"
                         onClick={() => dispatch(startExportingCourse(courseId))}
                         iconBefore={ArrowCircleDownIcon}
+                        disabled={viewOnly}
                       >
                         {intl.formatMessage(messages.buttonTitle)}
                       </Button>
                     </Card.Section>
                   )}
                 </Card>
-                {exportTriggered && <ExportStepper courseId={courseId} />}
+                {exportTriggered && <ExportStepper courseId={courseId} viewOnly={viewOnly} />}
                 <ExportFooter />
               </article>
             </Layout.Element>

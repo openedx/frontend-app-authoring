@@ -1,12 +1,12 @@
 import React from 'react';
 import {
+  FormattedMessage,
   injectIntl,
   intlShape,
 } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, Dropzone } from '@edx/paragon';
-
+import { Alert, Card, Dropzone } from '@edx/paragon';
 import { IMPORT_STAGES } from '../data/constants';
 import {
   getCurrentStage, getError, getFileName, getImportTriggered,
@@ -14,7 +14,7 @@ import {
 import messages from './messages';
 import { handleProcessUpload } from '../data/thunks';
 
-const FileSection = ({ intl, courseId }) => {
+const FileSection = ({ intl, courseId, viewOnly }) => {
   const dispatch = useDispatch();
   const importTriggered = useSelector(getImportTriggered);
   const currentStage = useSelector(getCurrentStage);
@@ -30,21 +30,25 @@ const FileSection = ({ intl, courseId }) => {
         subtitle={fileName && intl.formatMessage(messages.fileChosen, { fileName })}
       />
       <Card.Section className="px-3 pt-2 pb-4">
-        {isShowedDropzone
-          && (
-            <Dropzone
-              onProcessUpload={
-                ({ fileData, requestConfig, handleError }) => dispatch(handleProcessUpload(
-                  courseId,
-                  fileData,
-                  requestConfig,
-                  handleError,
-                ))
-              }
-              accept={{ 'application/gzip': ['.tar.gz'] }}
-              data-testid="dropzone"
-            />
-          )}
+        {!viewOnly && isShowedDropzone && (
+          <Dropzone
+            onProcessUpload={
+              ({ fileData, requestConfig, handleError }) => dispatch(handleProcessUpload(
+                courseId,
+                fileData,
+                requestConfig,
+                handleError,
+              ))
+            }
+            accept={{ 'application/gzip': ['.tar.gz'] }}
+            data-testid="dropzone"
+          />
+        )}
+        {viewOnly && (
+          <Alert variant="info">
+            <FormattedMessage {...messages.viewOnlyAlert} />
+          </Alert>
+        )}
       </Card.Section>
     </Card>
   );
@@ -53,6 +57,7 @@ const FileSection = ({ intl, courseId }) => {
 FileSection.propTypes = {
   intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
+  viewOnly: PropTypes.bool.isRequired,
 };
 
 export default injectIntl(FileSection);
