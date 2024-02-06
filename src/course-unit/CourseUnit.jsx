@@ -11,19 +11,20 @@ import { RequestStatus } from '../data/constants';
 import getPageHeadTitle from '../generic/utils';
 import ProcessingNotification from '../generic/processing-notification';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
+import Loading from '../generic/Loading';
 import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
+import Sequence from './course-sequence';
 import { useCourseUnit } from './hooks';
 import messages from './messages';
-
-import './CourseUnit.scss';
 
 const CourseUnit = ({ courseId }) => {
   const { blockId } = useParams();
   const intl = useIntl();
   const {
     isLoading,
+    sequenceId,
     unitTitle,
     savingStatus,
     isTitleEditFormOpen,
@@ -42,7 +43,7 @@ const CourseUnit = ({ courseId }) => {
   } = useSelector(getProcessingNotification);
 
   if (isLoading) {
-    return null;
+    return <Loading />;
   }
 
   return (
@@ -73,6 +74,11 @@ const CourseUnit = ({ courseId }) => {
               />
             )}
           />
+          <Sequence
+            courseId={courseId}
+            sequenceId={sequenceId}
+            unitId={blockId}
+          />
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
             md={[{ span: 9 }, { span: 3 }]}
@@ -80,8 +86,10 @@ const CourseUnit = ({ courseId }) => {
             xs={[{ span: 9 }, { span: 3 }]}
             xl={[{ span: 9 }, { span: 3 }]}
           >
-            <Layout.Element />
-            <Layout.Element />
+            <Layout.Element>
+              {/* TODO: Unit content will be added in the following tasks. */}
+              Unit content
+            </Layout.Element>
           </Layout>
         </section>
       </Container>
