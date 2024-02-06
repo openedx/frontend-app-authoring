@@ -21,7 +21,7 @@ describe('PagesAndResources', () => {
 
   it('doesn\'t show content permissions section if relevant apps are not enabled', () => {
     jest.spyOn(pagesAndResourcesApi, 'getCourseApps').mockResolvedValue(camelCaseObject([]));
-    
+
     const apiResponse = { response: { enabled: true } };
     jest.spyOn(xpertUnitSummaryApi, 'getXpertSettings').mockResolvedValue(apiResponse);
     jest.spyOn(xpertUnitSummaryApi, 'getXpertPluginConfigurable').mockResolvedValue(apiResponse);
