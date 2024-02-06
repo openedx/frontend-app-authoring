@@ -41,9 +41,8 @@ import TagBubble from './TagBubble';
  *   tagSelectableBoxValue: string,
  *   checked: boolean
  * ) => void} props.removeTagHandler - Function that is called when removing tags from the tree.
- * @param {boolean} props.editable - Whether the tags appear with an 'x' allowing the user to remove them.
  */
-const ContentTagsTree = ({ tagsTree, removeTagHandler, editable }) => {
+const ContentTagsTree = ({ tagsTree, removeTagHandler }) => {
   const renderTagsTree = (tag, level, lineage) => Object.keys(tag).map((key) => {
     const updatedLineage = [...lineage, encodeURIComponent(key)];
     if (tag[key] !== undefined) {
@@ -56,7 +55,7 @@ const ContentTagsTree = ({ tagsTree, removeTagHandler, editable }) => {
             level={level}
             lineage={updatedLineage}
             removeTagHandler={removeTagHandler}
-            editable={editable}
+            canRemove={tag[key].canDeleteObjecttag}
           />
           { renderTagsTree(tag[key].children, level + 1, updatedLineage) }
         </div>
@@ -73,10 +72,10 @@ ContentTagsTree.propTypes = {
     PropTypes.shape({
       explicit: PropTypes.bool.isRequired,
       children: PropTypes.shape({}).isRequired,
+      canDeleteObjecttag: PropTypes.bool.isRequired,
     }).isRequired,
   ).isRequired,
   removeTagHandler: PropTypes.func.isRequired,
-  editable: PropTypes.bool.isRequired,
 };
 
 export default ContentTagsTree;

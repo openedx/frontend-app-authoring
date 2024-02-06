@@ -93,7 +93,7 @@ const FilesPage = ({
     id: 'activeStatus',
     Header: 'Active',
     accessor: 'activeStatus',
-    Cell: ({ row }) => ActiveColumn({ row }),
+    Cell: ({ row }) => ActiveColumn({ row, pageLoadStatus: loadingStatus }),
     Filter: CheckboxFilter,
     filter: 'exactTextCase',
     filterChoices: [

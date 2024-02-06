@@ -23,6 +23,8 @@ export const NOTIFICATION_MESSAGES = {
   saving: 'Saving',
   duplicating: 'Duplicating',
   deleting: 'Deleting',
+  copying: 'Copying',
+  pasting: 'Pasting',
   empty: '',
 };
 

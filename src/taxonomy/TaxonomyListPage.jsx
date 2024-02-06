@@ -1,3 +1,4 @@
+// @ts-check
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -32,20 +33,21 @@ import TaxonomyCard from './taxonomy-card';
 const ALL_TAXONOMIES = 'All taxonomies';
 const UNASSIGNED = 'Unassigned';
 
-const TaxonomyListHeaderButtons = () => {
+const TaxonomyListHeaderButtons = ({ canAddTaxonomy }) => {
   const intl = useIntl();
   return (
     <>
       <OverlayTrigger
         placement="top"
         overlay={(
-          <Tooltip>
+          <Tooltip id="download-template-tooltip">
             {intl.formatMessage(messages.downloadTemplateButtonHint)}
           </Tooltip>
         )}
       >
-        <Dropdown>
+        <Dropdown id="download-template-dropdown">
           <Dropdown.Toggle
+            id="download-template-dropdown-toggle"
             variant="outline-primary"
             data-testid="taxonomy-download-template"
           >
@@ -71,6 +73,7 @@ const TaxonomyListHeaderButtons = () => {
         iconBefore={Add}
         onClick={() => importTaxonomy(intl)}
         data-testid="taxonomy-import-button"
+        disabled={!canAddTaxonomy}
       >
         {intl.formatMessage(messages.importButtonLabel)}
       </Button>
@@ -151,12 +154,9 @@ const TaxonomyListPage = () => {
     isSuccess: isOrganizationListLoaded,
   } = useOrganizationListData();
 
-  const useTaxonomyListData = () => {
-    const taxonomyListData = useTaxonomyListDataResponse(selectedOrgFilter);
-    const isLoaded = useIsTaxonomyListDataLoaded(selectedOrgFilter);
-    return { taxonomyListData, isLoaded };
-  };
-  const { taxonomyListData, isLoaded } = useTaxonomyListData();
+  const taxonomyListData = useTaxonomyListDataResponse(selectedOrgFilter);
+  const isLoaded = useIsTaxonomyListDataLoaded(selectedOrgFilter);
+  const canAddTaxonomy = taxonomyListData?.canAddTaxonomy ?? false;
 
   const getOrgSelect = () => (
     // Initialize organization select component
@@ -178,14 +178,14 @@ const TaxonomyListPage = () => {
           <SubHeader
             title={intl.formatMessage(messages.headerTitle)}
             titleActions={getOrgSelect()}
-            headerActions={<TaxonomyListHeaderButtons />}
+            headerActions={<TaxonomyListHeaderButtons canAddTaxonomy={canAddTaxonomy} />}
             hideBorder
           />
         </Container>
       </div>
       <div className="bg-light-400 mt-1">
         <Container size="xl">
-          {isLoaded && (
+          {isLoaded && taxonomyListData && (
             <DataTable
               disableElevation
               data={taxonomyListData.results}
@@ -208,6 +208,7 @@ const TaxonomyListPage = () => {
                   accessor: 'systemDefined',
                 },
                 {
+                  Header: '',
                   accessor: 'tagsCount',
                 },
               ]}
@@ -233,11 +234,19 @@ const TaxonomyListPage = () => {
   );
 };
 
+TaxonomyListHeaderButtons.propTypes = {
+  canAddTaxonomy: PropTypes.bool.isRequired,
+};
+
 OrganizationFilterSelector.propTypes = {
   isOrganizationListLoaded: PropTypes.bool.isRequired,
-  organizationListData: PropTypes.arrayOf(PropTypes.string).isRequired,
+  organizationListData: PropTypes.arrayOf(PropTypes.string),
   selectedOrgFilter: PropTypes.string.isRequired,
   setSelectedOrgFilter: PropTypes.func.isRequired,
+};
+
+OrganizationFilterSelector.defaultProps = {
+  organizationListData: null,
 };
 
 TaxonomyListPage.propTypes = {};

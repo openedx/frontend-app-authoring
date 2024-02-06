@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useSearchParams } from 'react-router-dom';
 import {
   Dropdown,
   Form,
@@ -14,11 +15,13 @@ import {
 
 import { useEscapeClick } from '../../hooks';
 import { ITEM_BADGE_STATUS } from '../constants';
+import { scrollToElement } from '../utils';
 import messages from './messages';
 
 const CardHeader = ({
   title,
   status,
+  cardId,
   hasChanges,
   onClickPublish,
   onClickConfigure,
@@ -30,14 +33,33 @@ const CardHeader = ({
   isDisabledEditField,
   onClickDelete,
   onClickDuplicate,
+  onClickMoveUp,
+  onClickMoveDown,
+  onClickCopy,
   titleComponent,
   namePrefix,
+  actions,
+  enableCopyPasteUnits,
+  isVertical,
 }) => {
   const intl = useIntl();
+  const [searchParams] = useSearchParams();
   const [titleValue, setTitleValue] = useState(title);
+  const cardHeaderRef = useRef(null);
 
   const isDisabledPublish = (status === ITEM_BADGE_STATUS.live
     || status === ITEM_BADGE_STATUS.publishedNotLive) && !hasChanges;
+
+  useEffect(() => {
+    const locatorId = searchParams.get('show');
+    if (!locatorId) {
+      return;
+    }
+
+    if (cardHeaderRef.current && locatorId === cardId) {
+      scrollToElement(cardHeaderRef.current);
+    }
+  }, []);
 
   useEscapeClick({
     onEscape: () => {
@@ -48,7 +70,11 @@ const CardHeader = ({
   });
 
   return (
-    <div className="item-card-header" data-testid={`${namePrefix}-card-header`}>
+    <div
+      className="item-card-header"
+      data-testid={`${namePrefix}-card-header`}
+      ref={cardHeaderRef}
+    >
       {isFormOpen ? (
         <Form.Group className="m-0">
           <Form.Control
@@ -103,18 +129,46 @@ const CardHeader = ({
             >
               {intl.formatMessage(messages.menuConfigure)}
             </Dropdown.Item>
-            <Dropdown.Item
-              data-testid={`${namePrefix}-card-header__menu-duplicate-button`}
-              onClick={onClickDuplicate}
-            >
-              {intl.formatMessage(messages.menuDuplicate)}
-            </Dropdown.Item>
-            <Dropdown.Item
-              data-testid={`${namePrefix}-card-header__menu-delete-button`}
-              onClick={onClickDelete}
-            >
-              {intl.formatMessage(messages.menuDelete)}
-            </Dropdown.Item>
+            {isVertical && enableCopyPasteUnits && (
+              <Dropdown.Item onClick={onClickCopy}>
+                {intl.formatMessage(messages.menuCopy)}
+              </Dropdown.Item>
+            )}
+            {actions.duplicable && (
+              <Dropdown.Item
+                data-testid={`${namePrefix}-card-header__menu-duplicate-button`}
+                onClick={onClickDuplicate}
+              >
+                {intl.formatMessage(messages.menuDuplicate)}
+              </Dropdown.Item>
+            )}
+            {actions.draggable && (
+              <>
+                <Dropdown.Item
+                  data-testid={`${namePrefix}-card-header__menu-move-up-button`}
+                  onClick={onClickMoveUp}
+                  disabled={!actions.allowMoveUp}
+                >
+                  {intl.formatMessage(messages.menuMoveUp)}
+                </Dropdown.Item>
+                <Dropdown.Item
+                  data-testid={`${namePrefix}-card-header__menu-move-down-button`}
+                  onClick={onClickMoveDown}
+                  disabled={!actions.allowMoveDown}
+                >
+                  {intl.formatMessage(messages.menuMoveDown)}
+                </Dropdown.Item>
+              </>
+            )}
+            {actions.deletable && (
+              <Dropdown.Item
+                className="border-top border-light"
+                data-testid={`${namePrefix}-card-header__menu-delete-button`}
+                onClick={onClickDelete}
+              >
+                {intl.formatMessage(messages.menuDelete)}
+              </Dropdown.Item>
+            )}
           </Dropdown.Menu>
         </Dropdown>
       </div>
@@ -122,9 +176,16 @@ const CardHeader = ({
   );
 };
 
+CardHeader.defaultProps = {
+  enableCopyPasteUnits: false,
+  isVertical: false,
+  onClickCopy: null,
+};
+
 CardHeader.propTypes = {
   title: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
+  cardId: PropTypes.string.isRequired,
   hasChanges: PropTypes.bool.isRequired,
   onClickPublish: PropTypes.func.isRequired,
   onClickConfigure: PropTypes.func.isRequired,
@@ -136,8 +197,21 @@ CardHeader.propTypes = {
   isDisabledEditField: PropTypes.bool.isRequired,
   onClickDelete: PropTypes.func.isRequired,
   onClickDuplicate: PropTypes.func.isRequired,
+  onClickMoveUp: PropTypes.func.isRequired,
+  onClickMoveDown: PropTypes.func.isRequired,
+  onClickCopy: PropTypes.func,
   titleComponent: PropTypes.node.isRequired,
   namePrefix: PropTypes.string.isRequired,
+  actions: PropTypes.shape({
+    deletable: PropTypes.bool.isRequired,
+    draggable: PropTypes.bool.isRequired,
+    childAddable: PropTypes.bool.isRequired,
+    duplicable: PropTypes.bool.isRequired,
+    allowMoveUp: PropTypes.bool,
+    allowMoveDown: PropTypes.bool,
+  }).isRequired,
+  enableCopyPasteUnits: PropTypes.bool,
+  isVertical: PropTypes.bool,
 };
 
 export default CardHeader;

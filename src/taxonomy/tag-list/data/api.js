@@ -18,7 +18,7 @@ const getTagListApiUrl = (taxonomyId, page) => new URL(
  * @param {number} taxonomyId
  * @param {import('./types.mjs').QueryOptions} options
  * @returns {import('@tanstack/react-query').UseQueryResult<import('./types.mjs').TagListData>}
- */ // eslint-disable-next-line import/prefer-default-export
+ */
 export const useTagListData = (taxonomyId, options) => {
   const { pageIndex } = options;
   return useQuery({
@@ -36,7 +36,7 @@ export const useTagListData = (taxonomyId, options) => {
  * something more sophisticated later, as we improve the "taxonomy details" page.
  * @param {number} taxonomyId
  * @param {string} parentTagValue
- * @returns {import('@tanstack/react-query').UseQueryResult<import('./types.mjs').TagData>}
+ * @returns {import('@tanstack/react-query').UseQueryResult<import('./types.mjs').TagListData>}
  */
 export const useSubTags = (taxonomyId, parentTagValue) => useQuery({
   queryKey: ['subtagsList', taxonomyId, parentTagValue],

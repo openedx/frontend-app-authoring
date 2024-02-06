@@ -20,6 +20,7 @@ const MoreInfoColumn = ({
   handleBulkDownload,
   handleOpenFileInfo,
   handleOpenDeleteConfirmation,
+  fileType,
   // injected
   intl,
 }) => {
@@ -31,7 +32,6 @@ const MoreInfoColumn = ({
     locked,
     portableUrl,
     id,
-    wrapperType,
     displayName,
     downloadLink,
   } = row.original;
@@ -54,7 +54,7 @@ const MoreInfoColumn = ({
         <Menu
           className="more-info-menu"
         >
-          {wrapperType === 'video' ? (
+          {fileType === 'video' ? (
             <MenuItem
               as={Button}
               variant="tertiary"
@@ -137,13 +137,13 @@ MoreInfoColumn.propTypes = {
       locked: PropTypes.bool,
       portableUrl: PropTypes.string,
       id: PropTypes.string.isRequired,
-      wrapperType: PropTypes.string,
     }.isRequired,
   }).isRequired,
   handleLock: PropTypes.func,
   handleBulkDownload: PropTypes.func.isRequired,
   handleOpenFileInfo: PropTypes.func.isRequired,
   handleOpenDeleteConfirmation: PropTypes.func.isRequired,
+  fileType: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

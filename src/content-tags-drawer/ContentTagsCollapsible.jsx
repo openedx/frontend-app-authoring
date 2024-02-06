@@ -99,11 +99,10 @@ import useContentTagsCollapsibleHelper from './ContentTagsCollapsibleHelper';
  * @param {Object} props - The component props.
  * @param {string} props.contentId - Id of the content object
  * @param {TaxonomyData & {contentTags: ContentTagData[]}} props.taxonomyAndTagsData - Taxonomy metadata & applied tags
- * @param {boolean} props.editable - Whether the tags can be edited
  */
-const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData, editable }) => {
+const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData }) => {
   const intl = useIntl();
-  const { id, name } = taxonomyAndTagsData;
+  const { id, name, canTagObject } = taxonomyAndTagsData;
 
   const {
     tagChangeHandler, tagsTree, contentTagsCount, checkedTags,
@@ -124,7 +123,8 @@ const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData, editable }) =>
 
   const handleSearchChange = React.useCallback((value) => {
     if (value === '') {
-      // No need to debounce when search term cleared
+      // No need to debounce when search term cleared. Clear debounce function
+      handleSearch.cancel();
       setSearchTerm('');
     } else {
       handleSearch(value);
@@ -141,12 +141,12 @@ const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData, editable }) =>
     <div className="d-flex">
       <Collapsible title={name} styling="card-lg" className="taxonomy-tags-collapsible">
         <div key={id}>
-          <ContentTagsTree tagsTree={tagsTree} removeTagHandler={tagChangeHandler} editable={editable} />
+          <ContentTagsTree tagsTree={tagsTree} removeTagHandler={tagChangeHandler} />
         </div>
 
         <div className="d-flex taxonomy-tags-selector-menu">
 
-          {editable && (
+          {canTagObject && (
             <Button
               ref={setAddTagsButtonRef}
               variant="outline-primary"
@@ -216,8 +216,8 @@ ContentTagsCollapsible.propTypes = {
       value: PropTypes.string,
       lineage: PropTypes.arrayOf(PropTypes.string),
     })),
+    canTagObject: PropTypes.bool.isRequired,
   }).isRequired,
-  editable: PropTypes.bool.isRequired,
 };
 
 export default ContentTagsCollapsible;

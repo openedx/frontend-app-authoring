@@ -86,26 +86,29 @@ describe('<ContentTagsDrawer />', () => {
           {
             name: 'Taxonomy 1',
             taxonomyId: 123,
-            editable: true,
+            canTagObject: true,
             tags: [
               {
                 value: 'Tag 1',
                 lineage: ['Tag 1'],
+                canDeleteObjecttag: true,
               },
               {
                 value: 'Tag 2',
                 lineage: ['Tag 2'],
+                canDeleteObjecttag: true,
               },
             ],
           },
           {
             name: 'Taxonomy 2',
             taxonomyId: 124,
-            editable: true,
+            canTagObject: true,
             tags: [
               {
                 value: 'Tag 3',
                 lineage: ['Tag 3'],
+                canDeleteObjecttag: true,
               },
             ],
           },
@@ -117,10 +120,12 @@ describe('<ContentTagsDrawer />', () => {
         id: 123,
         name: 'Taxonomy 1',
         description: 'This is a description 1',
+        canTagObject: false,
       }, {
         id: 124,
         name: 'Taxonomy 2',
         description: 'This is a description 2',
+        canTagObject: false,
       }],
     });
     await act(async () => {

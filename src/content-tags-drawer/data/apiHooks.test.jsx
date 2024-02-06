@@ -67,9 +67,12 @@ describe('useTaxonomyTagsData', () => {
       ],
     };
 
-    useQueries.mockReturnValue([
-      { data: mockData, isLoading: false, isError: false },
-    ]);
+    useQueries.mockReturnValue([{
+      data: mockData,
+      isLoading: false,
+      isError: false,
+      isSuccess: true,
+    }]);
 
     const { result } = renderHook(() => useTaxonomyTagsData(taxonomyId));
 
@@ -83,10 +86,11 @@ describe('useTaxonomyTagsData', () => {
     expect(result.current.hasMorePages).toEqual(false);
     // Only includes the first 2 tags because the other 2 would be
     // in the nested dropdown
-    expect(result.current.tagPages).toEqual([
+    expect(result.current.tagPages).toEqual(
       {
         isLoading: false,
         isError: false,
+        isSuccess: true,
         data: [
           {
             value: 'tag 1',
@@ -108,7 +112,7 @@ describe('useTaxonomyTagsData', () => {
           },
         ],
       },
-    ]);
+    );
   });
 });
 

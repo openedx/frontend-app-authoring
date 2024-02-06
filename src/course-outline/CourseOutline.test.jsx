@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   act, render, waitFor, cleanup, fireEvent, within,
 } from '@testing-library/react';
@@ -17,14 +16,14 @@ import {
   getCourseBlockApiUrl,
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
+  getClipboardUrl,
 } from './data/api';
+import { RequestStatus } from '../data/constants';
 import {
-  configureCourseSectionQuery,
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
   fetchCourseOutlineIndexQuery,
   updateCourseSectionHighlightsQuery,
-  setSectionOrderListQuery,
 } from './data/thunk';
 import initializeStore from '../store';
 import {
@@ -43,6 +42,9 @@ import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
 import statusBarMessages from './status-bar/messages';
+import configureModalMessages from './configure-modal/messages';
+import pasteButtonMessages from './paste-button/messages';
+import subsectionMessages from './subsection-card/messages';
 
 let axiosMock;
 let store;
@@ -210,7 +212,7 @@ describe('<CourseOutline />', () => {
     const { findAllByTestId } = render(<RootWrapper />);
     const [section] = await findAllByTestId('section-card');
     let subsections = await within(section).findAllByTestId('subsection-card');
-    expect(subsections.length).toBe(1);
+    expect(subsections.length).toBe(2);
     window.HTMLElement.prototype.getBoundingClientRect = jest.fn(() => ({
       top: 0,
       bottom: 4000,
@@ -230,7 +232,7 @@ describe('<CourseOutline />', () => {
     });
 
     subsections = await within(section).findAllByTestId('subsection-card');
-    expect(subsections.length).toBe(2);
+    expect(subsections.length).toBe(3);
     expect(window.HTMLElement.prototype.scrollIntoView).toBeCalled();
   });
 
@@ -525,7 +527,7 @@ describe('<CourseOutline />', () => {
     // check unit
     await checkDuplicateBtn(unit, subsectionElement, unitElement, 'unit', 2);
     // check subsection
-    await checkDuplicateBtn(subsection, sectionElement, subsectionElement, 'subsection', 2);
+    await checkDuplicateBtn(subsection, sectionElement, subsectionElement, 'subsection', 3);
     // check section
     await checkDuplicateBtn(section, null, sectionElement, 'section', 5);
   });
@@ -553,21 +555,19 @@ describe('<CourseOutline />', () => {
         })
         .reply(200, { dummy: 'value' });
 
-      let mockReturnValue = { ...section, published: true };
-      if (elementName === 'subsection') {
-        mockReturnValue = {
-          ...section,
-          childInfo: {
-            children: [
-              {
-                ...section.childInfo.children[0],
-                published: true,
-              },
-              ...section.childInfo.children.slice(1),
-            ],
-          },
-        };
-      } else if (elementName === 'unit') {
+      let mockReturnValue = {
+        ...section,
+        childInfo: {
+          children: [
+            {
+              ...section.childInfo.children[0],
+              published: true,
+            },
+            ...section.childInfo.children.slice(1),
+          ],
+        },
+      };
+      if (elementName === 'unit') {
         mockReturnValue = {
           ...section,
           childInfo: {
@@ -611,20 +611,194 @@ describe('<CourseOutline />', () => {
     await checkPublishBtn(unit, unitElement, 'unit');
     // check subsection
     await checkPublishBtn(subsection, subsectionElement, 'subsection');
-    // check section
-    await checkPublishBtn(section, sectionElement, 'section');
+    // section doesn't display badges
   });
 
-  it('check configure section when configure query is successful', async () => {
-    const { findAllByTestId, findByPlaceholderText } = render(<RootWrapper />);
+  it('check configure modal for section', async () => {
+    const { findByTestId, findAllByTestId } = render(<RootWrapper />);
     const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
-    const newReleaseDate = '2025-08-10T10:00:00Z';
+    const newReleaseDateIso = '2025-09-10T22:00:00Z';
+    const newReleaseDate = '09/10/2025';
     axiosMock
       .onPost(getCourseItemApiUrl(section.id), {
         publish: 'republish',
         metadata: {
           visible_to_staff_only: true,
+          start: newReleaseDateIso,
+        },
+      })
+      .reply(200, { dummy: 'value' });
+
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, {
+        ...section,
+        start: newReleaseDateIso,
+      });
+
+    const [firstSection] = await findAllByTestId('section-card');
+
+    const sectionDropdownButton = await within(firstSection).findByTestId('section-card-header__menu-button');
+    await act(async () => fireEvent.click(sectionDropdownButton));
+    const configureBtn = await within(firstSection).findByTestId('section-card-header__menu-configure-button');
+    await act(async () => fireEvent.click(configureBtn));
+    let releaseDateStack = await findByTestId('release-date-stack');
+    let releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
+    expect(releaseDatePicker).toHaveValue('08/10/2023');
+
+    await act(async () => fireEvent.change(releaseDatePicker, { target: { value: newReleaseDate } }));
+    expect(releaseDatePicker).toHaveValue(newReleaseDate);
+    const saveButton = await findByTestId('configure-save-button');
+    await act(async () => fireEvent.click(saveButton));
+
+    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+      publish: 'republish',
+      metadata: {
+        visible_to_staff_only: true,
+        start: newReleaseDateIso,
+      },
+    }));
+
+    await act(async () => fireEvent.click(sectionDropdownButton));
+    await act(async () => fireEvent.click(configureBtn));
+    releaseDateStack = await findByTestId('release-date-stack');
+    releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
+    expect(releaseDatePicker).toHaveValue(newReleaseDate);
+  });
+
+  it('check configure modal for subsection', async () => {
+    const {
+      findAllByTestId,
+      findByTestId,
+    } = render(<RootWrapper />);
+    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    const subsection = section.childInfo.children[0];
+    const newReleaseDate = '2025-08-10T05:00:00Z';
+    const newGraderType = 'Homework';
+    const newDue = '2025-09-10T00:00:00Z';
+    const isTimeLimited = true;
+    const defaultTimeLimitMinutes = 3270;
+
+    axiosMock
+      .onPost(getCourseItemApiUrl(subsection.id), {
+        publish: 'republish',
+        graderType: newGraderType,
+        metadata: {
+          visible_to_staff_only: null,
+          due: newDue,
+          hide_after_due: false,
+          show_correctness: 'always',
+          is_practice_exam: false,
+          is_time_limited: isTimeLimited,
+          exam_review_rules: '',
+          is_proctored_enabled: false,
+          default_time_limit_minutes: defaultTimeLimitMinutes,
+          is_onboarding_exam: false,
           start: newReleaseDate,
+        },
+      })
+      .reply(200, { dummy: 'value' });
+
+    const [currentSection] = await findAllByTestId('section-card');
+    const [firstSubsection] = await within(currentSection).findAllByTestId('subsection-card');
+    const subsectionDropdownButton = await within(firstSubsection).findByTestId('subsection-card-header__menu-button');
+
+    subsection.start = newReleaseDate;
+    subsection.due = newDue;
+    subsection.format = newGraderType;
+    subsection.isTimeLimited = isTimeLimited;
+    subsection.defaultTimeLimitMinutes = defaultTimeLimitMinutes;
+    section.childInfo.children[0] = subsection;
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
+
+    fireEvent.click(subsectionDropdownButton);
+    const configureBtn = await within(firstSubsection).findByTestId('subsection-card-header__menu-configure-button');
+    fireEvent.click(configureBtn);
+
+    // update fields
+    let configureModal = await findByTestId('configure-modal');
+    expect(await within(configureModal).findByText(newGraderType)).toBeInTheDocument();
+    let releaseDateStack = await within(configureModal).findByTestId('release-date-stack');
+    let releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
+    fireEvent.change(releaseDatePicker, { target: { value: '08/10/2025' } });
+    let dueDateStack = await within(configureModal).findByTestId('due-date-stack');
+    let dueDatePicker = await within(dueDateStack).findByPlaceholderText('MM/DD/YYYY');
+    fireEvent.change(dueDatePicker, { target: { value: '09/10/2025' } });
+    let graderTypeDropdown = await within(configureModal).findByTestId('grader-type-select');
+    fireEvent.change(graderTypeDropdown, { target: { value: newGraderType } });
+
+    let advancedTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
+    fireEvent.click(advancedTab);
+    let radioButtons = await within(configureModal).findAllByRole('radio');
+    fireEvent.click(radioButtons[1]);
+    let hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
+    let hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
+    fireEvent.change(hours, { target: { value: '54:30' } });
+    const saveButton = await within(configureModal).findByTestId('configure-save-button');
+    await act(async () => fireEvent.click(saveButton));
+
+    // verify request
+    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+      publish: 'republish',
+      graderType: newGraderType,
+      metadata: {
+        visible_to_staff_only: null,
+        due: newDue,
+        hide_after_due: false,
+        show_correctness: 'always',
+        is_practice_exam: false,
+        is_time_limited: isTimeLimited,
+        exam_review_rules: '',
+        is_proctored_enabled: false,
+        default_time_limit_minutes: defaultTimeLimitMinutes,
+        is_onboarding_exam: false,
+        start: newReleaseDate,
+      },
+    }));
+
+    // reopen modal and check values
+    await act(async () => fireEvent.click(subsectionDropdownButton));
+    await act(async () => fireEvent.click(configureBtn));
+
+    configureModal = await findByTestId('configure-modal');
+    releaseDateStack = await within(configureModal).findByTestId('release-date-stack');
+    releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
+    expect(releaseDatePicker).toHaveValue('08/10/2025');
+    dueDateStack = await await within(configureModal).findByTestId('due-date-stack');
+    dueDatePicker = await within(dueDateStack).findByPlaceholderText('MM/DD/YYYY');
+    expect(dueDatePicker).toHaveValue('09/10/2025');
+    graderTypeDropdown = await within(configureModal).findByTestId('grader-type-select');
+    expect(graderTypeDropdown).toHaveValue(newGraderType);
+
+    advancedTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
+    fireEvent.click(advancedTab);
+    radioButtons = await within(configureModal).findAllByRole('radio');
+    expect(radioButtons[0]).toHaveProperty('checked', false);
+    expect(radioButtons[1]).toHaveProperty('checked', true);
+    hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
+    hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
+    expect(hours).toHaveValue('54:30');
+  });
+
+  it('check configure modal for unit', async () => {
+    const { findAllByTestId, findByTestId } = render(<RootWrapper />);
+    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    const [subsection] = section.childInfo.children;
+    const [unit] = subsection.childInfo.children;
+    // Enrollment Track Groups : Audit
+    const newGroupAccess = { 50: [1] };
+    const isVisibleToStaffOnly = true;
+
+    axiosMock
+      .onPost(getCourseItemApiUrl(unit.id), {
+        publish: 'republish',
+        metadata: {
+          visible_to_staff_only: isVisibleToStaffOnly,
+          group_access: newGroupAccess,
         },
       })
       .reply(200, { dummy: 'value' });
@@ -634,24 +808,79 @@ describe('<CourseOutline />', () => {
       .reply(200, section);
 
     const [firstSection] = await findAllByTestId('section-card');
+    const [firstSubsection] = await within(firstSection).findAllByTestId('subsection-card');
+    const subsectionExpandButton = await within(firstSubsection).getByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(subsectionExpandButton);
+    const [firstUnit] = await within(firstSubsection).findAllByTestId('unit-card');
+    const unitDropdownButton = await within(firstUnit).findByTestId('unit-card-header__menu-button');
 
-    const sectionDropdownButton = await within(firstSection).findByTestId('section-card-header__menu-button');
-    fireEvent.click(sectionDropdownButton);
+    // after configuraiton response
+    unit.visibilityState = 'staff_only';
+    unit.userPartitionInfo = {
+      selectablePartitions: [
+        {
+          id: 50,
+          name: 'Enrollment Track Groups',
+          scheme: 'enrollment_track',
+          groups: [
+            {
+              id: 2,
+              name: 'Verified Certificate',
+              selected: false,
+              deleted: false,
+            },
+            {
+              id: 1,
+              name: 'Audit',
+              selected: true,
+              deleted: false,
+            },
+          ],
+        },
+      ],
+      selectedPartitionIndex: 0,
+    };
+    subsection.childInfo.children[0] = unit;
+    section.childInfo.children[0] = subsection;
 
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
-      .reply(200, {
-        ...section,
-        start: newReleaseDate,
-      });
+      .reply(200, section);
 
-    await executeThunk(configureCourseSectionQuery(section.id, true, newReleaseDate), store.dispatch);
-    fireEvent.click(sectionDropdownButton);
-    const configureBtn = await within(firstSection).findByTestId('section-card-header__menu-configure-button');
+    fireEvent.click(unitDropdownButton);
+    const configureBtn = await within(firstUnit).getByTestId('unit-card-header__menu-configure-button');
     fireEvent.click(configureBtn);
 
-    const datePicker = await findByPlaceholderText('MM/DD/YYYY');
-    expect(datePicker).toHaveValue('08/10/2025');
+    let configureModal = await findByTestId('configure-modal');
+    expect(await within(configureModal).findByText(
+      configureModalMessages.unitVisibility.defaultMessage,
+    )).toBeInTheDocument();
+    let visibilityCheckbox = await within(configureModal).findByTestId('unit-visibility-checkbox');
+    await act(async () => fireEvent.click(visibilityCheckbox));
+
+    let groupeType = await within(configureModal).findByTestId('group-type-select');
+    fireEvent.change(groupeType, { target: { value: '0' } });
+
+    let checkboxes = await within(await within(configureModal).findByTestId('group-checkboxes')).findAllByRole('checkbox');
+    fireEvent.click(checkboxes[1]);
+    const saveButton = await within(configureModal).findByTestId('configure-save-button');
+    await act(async () => fireEvent.click(saveButton));
+
+    // reopen modal and check values
+    await act(async () => fireEvent.click(unitDropdownButton));
+    await act(async () => fireEvent.click(configureBtn));
+
+    configureModal = await findByTestId('configure-modal');
+    visibilityCheckbox = await within(configureModal).findByTestId('unit-visibility-checkbox');
+    expect(visibilityCheckbox).toBeChecked();
+
+    groupeType = await within(configureModal).findByTestId('group-type-select');
+    expect(groupeType).toHaveValue('0');
+
+    checkboxes = await within(await within(configureModal).findByTestId('group-checkboxes')).findAllByRole('checkbox');
+
+    expect(checkboxes[0]).not.toBeChecked();
+    expect(checkboxes[1]).toBeChecked();
   });
 
   it('check update highlights when update highlights query is successfully', async () => {
@@ -689,46 +918,501 @@ describe('<CourseOutline />', () => {
     });
   });
 
-  it('check section list is ordered successfully', async () => {
-    const { getAllByTestId } = render(<RootWrapper />);
+  it('check whether section move up and down options work correctly', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get second section element
     const courseBlockId = courseOutlineIndexMock.courseStructure.id;
-    let { children } = courseOutlineIndexMock.courseStructure.childInfo;
-    children = children.splice(2, 0, children.splice(0, 1)[0]);
+    const [, secondSection] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [, sectionElement] = await findAllByTestId('section-card');
 
+    // mock api call
     axiosMock
-      .onPut(getCourseBlockApiUrl(courseBlockId), { children })
+      .onPut(getCourseBlockApiUrl(courseBlockId))
       .reply(200, { dummy: 'value' });
 
-    await executeThunk(setSectionOrderListQuery(courseBlockId, children, () => {}), store.dispatch);
+    // find menu button and click on it to open menu
+    const menu = await within(sectionElement).findByTestId('section-card-header__menu-button');
+    fireEvent.click(menu);
 
-    await waitFor(() => {
-      expect(getAllByTestId('section-card')).toHaveLength(4);
-      const newSections = getAllByTestId('section-card');
-      for (let i; i < children.length; i++) {
-        expect(children[i].id === newSections[i].id);
-      }
+    // move second section to first position to test move up option
+    const moveUpButton = await within(sectionElement).findByTestId('section-card-header__menu-move-up-button');
+    await act(async () => fireEvent.click(moveUpButton));
+    const firstSectionId = store.getState().courseOutline.sectionsList[0].id;
+    expect(secondSection.id).toBe(firstSectionId);
+
+    // move first section back to second position to test move down option
+    const moveDownButton = await within(sectionElement).findByTestId('section-card-header__menu-move-down-button');
+    await act(async () => fireEvent.click(moveDownButton));
+    const newSecondSectionId = store.getState().courseOutline.sectionsList[1].id;
+    expect(secondSection.id).toBe(newSecondSectionId);
+  });
+
+  it('check whether section move up & down option is rendered correctly based on index', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get first, second and last section element
+    const {
+      0: firstSection, 1: secondSection, length, [length - 1]: lastSection,
+    } = await findAllByTestId('section-card');
+
+    // find menu button and click on it to open menu in first section
+    const firstMenu = await within(firstSection).findByTestId('section-card-header__menu-button');
+    await act(async () => fireEvent.click(firstMenu));
+    // move down option should be enabled in first element
+    expect(
+      await within(firstSection).findByTestId('section-card-header__menu-move-down-button'),
+    ).not.toHaveAttribute('aria-disabled');
+    // move up option should not be enabled in first element
+    expect(
+      await within(firstSection).findByTestId('section-card-header__menu-move-up-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
+
+    // find menu button and click on it to open menu in second section
+    const secondMenu = await within(secondSection).findByTestId('section-card-header__menu-button');
+    await act(async () => fireEvent.click(secondMenu));
+    // both move down & up option should be enabled in second element
+    expect(
+      await within(secondSection).findByTestId('section-card-header__menu-move-down-button'),
+    ).not.toHaveAttribute('aria-disabled');
+    expect(
+      await within(secondSection).findByTestId('section-card-header__menu-move-up-button'),
+    ).not.toHaveAttribute('aria-disabled');
+
+    // find menu button and click on it to open menu in last section
+    const lastMenu = await within(lastSection).findByTestId('section-card-header__menu-button');
+    await act(async () => fireEvent.click(lastMenu));
+    // move down option should not be enabled in last element
+    expect(
+      await within(lastSection).findByTestId('section-card-header__menu-move-down-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
+    // move up option should be enabled in last element
+    expect(
+      await within(lastSection).findByTestId('section-card-header__menu-move-up-button'),
+    ).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('check whether subsection move up and down options work correctly', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get second section element
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [sectionElement] = await findAllByTestId('section-card');
+    const [, secondSubsection] = section.childInfo.children;
+    const [, subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+
+    // mock api call
+    axiosMock
+      .onPut(getCourseItemApiUrl(store.getState().courseOutline.sectionsList[0].id))
+      .reply(200, { dummy: 'value' });
+
+    // find menu button and click on it to open menu
+    const menu = await within(subsectionElement).findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+
+    // move second subsection to first position to test move up option
+    const moveUpButton = await within(subsectionElement).findByTestId('subsection-card-header__menu-move-up-button');
+    await act(async () => fireEvent.click(moveUpButton));
+    const firstSubsectionId = store.getState().courseOutline.sectionsList[0].childInfo.children[0].id;
+    expect(secondSubsection.id).toBe(firstSubsectionId);
+
+    // move first section back to second position to test move down option
+    const moveDownButton = await within(subsectionElement).findByTestId('subsection-card-header__menu-move-down-button');
+    await act(async () => fireEvent.click(moveDownButton));
+    const secondSubsectionId = store.getState().courseOutline.sectionsList[0].childInfo.children[1].id;
+    expect(secondSubsection.id).toBe(secondSubsectionId);
+  });
+
+  it('check whether subsection move up & down option is rendered correctly based on index', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // using second section as second section in mock has 3 subsections
+    const [, sectionElement] = await findAllByTestId('section-card');
+    // get first, second and last subsection element
+    const {
+      0: firstSubsection,
+      1: secondSubsection,
+      length,
+      [length - 1]: lastSubsection,
+    } = await within(sectionElement).findAllByTestId('subsection-card');
+
+    // find menu button and click on it to open menu in first section
+    const firstMenu = await within(firstSubsection).findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(firstMenu));
+    // move down option should be enabled in first element
+    expect(
+      await within(firstSubsection).findByTestId('subsection-card-header__menu-move-down-button'),
+    ).not.toHaveAttribute('aria-disabled');
+    // move up option should not be enabled in first element
+    expect(
+      await within(firstSubsection).findByTestId('subsection-card-header__menu-move-up-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
+
+    // find menu button and click on it to open menu in second section
+    const secondMenu = await within(secondSubsection).findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(secondMenu));
+    // both move down & up option should be enabled in second element
+    expect(
+      await within(secondSubsection).findByTestId('subsection-card-header__menu-move-down-button'),
+    ).not.toHaveAttribute('aria-disabled');
+    expect(
+      await within(secondSubsection).findByTestId('subsection-card-header__menu-move-up-button'),
+    ).not.toHaveAttribute('aria-disabled');
+
+    // find menu button and click on it to open menu in last section
+    const lastMenu = await within(lastSubsection).findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(lastMenu));
+    // move down option should not be enabled in last element
+    expect(
+      await within(lastSubsection).findByTestId('subsection-card-header__menu-move-down-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
+    // move up option should be enabled in last element
+    expect(
+      await within(lastSubsection).findByTestId('subsection-card-header__menu-move-up-button'),
+    ).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('check whether unit move up and down options work correctly', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get second section -> second subsection -> second unit element
+    const [, section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [, sectionElement] = await findAllByTestId('section-card');
+    const [, subsection] = section.childInfo.children;
+    const [, subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    await act(async () => fireEvent.click(expandBtn));
+    const [, secondUnit] = subsection.childInfo.children;
+    const [, unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
+
+    // mock api call
+    axiosMock
+      .onPut(getCourseItemApiUrl(store.getState().courseOutline.sectionsList[1].childInfo.children[1].id))
+      .reply(200, { dummy: 'value' });
+
+    // find menu button and click on it to open menu
+    const menu = await within(unitElement).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+
+    // move second unit to first position to test move up option
+    const moveUpButton = await within(unitElement).findByTestId('unit-card-header__menu-move-up-button');
+    await act(async () => fireEvent.click(moveUpButton));
+    const firstUnitId = store.getState().courseOutline.sectionsList[1].childInfo.children[1].childInfo.children[0].id;
+    expect(secondUnit.id).toBe(firstUnitId);
+
+    // move first unit back to second position to test move down option
+    const moveDownButton = await within(subsectionElement).findByTestId('unit-card-header__menu-move-down-button');
+    await act(async () => fireEvent.click(moveDownButton));
+    const secondUnitId = store.getState().courseOutline.sectionsList[1].childInfo.children[1].childInfo.children[1].id;
+    expect(secondUnit.id).toBe(secondUnitId);
+  });
+
+  it('check whether unit move up & down option is rendered correctly based on index', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // using second section -> second subsection as it has 5 units in mock.
+    const [, sectionElement] = await findAllByTestId('section-card');
+    const [, subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    await act(async () => fireEvent.click(expandBtn));
+    // get first, second and last unit element
+    const {
+      0: firstUnit,
+      1: secondUnit,
+      length,
+      [length - 1]: lastUnit,
+    } = await within(subsectionElement).findAllByTestId('unit-card');
+
+    // find menu button and click on it to open menu in first section
+    const firstMenu = await within(firstUnit).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(firstMenu));
+    // move down option should be enabled in first element
+    expect(
+      await within(firstUnit).findByTestId('unit-card-header__menu-move-down-button'),
+    ).not.toHaveAttribute('aria-disabled');
+    // move up option should not be enabled in first element
+    expect(
+      await within(firstUnit).findByTestId('unit-card-header__menu-move-up-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
+
+    // find menu button and click on it to open menu in second section
+    const secondMenu = await within(secondUnit).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(secondMenu));
+    // both move down & up option should be enabled in second element
+    expect(
+      await within(secondUnit).findByTestId('unit-card-header__menu-move-down-button'),
+    ).not.toHaveAttribute('aria-disabled');
+    expect(
+      await within(secondUnit).findByTestId('unit-card-header__menu-move-up-button'),
+    ).not.toHaveAttribute('aria-disabled');
+
+    // find menu button and click on it to open menu in last section
+    const lastMenu = await within(lastUnit).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(lastMenu));
+    // move down option should not be enabled in last element
+    expect(
+      await within(lastUnit).findByTestId('unit-card-header__menu-move-down-button'),
+    ).toHaveAttribute('aria-disabled', 'true');
+    // move up option should be enabled in last element
+    expect(
+      await within(lastUnit).findByTestId('unit-card-header__menu-move-up-button'),
+    ).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('check that new section list is saved when dragged', async () => {
+    const { findAllByRole } = render(<RootWrapper />);
+    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    const sectionsDraggers = await findAllByRole('button', { name: 'Drag to reorder' });
+    const draggableButton = sectionsDraggers[7];
+
+    axiosMock
+      .onPut(getCourseBlockApiUrl(courseBlockId))
+      .reply(200, { dummy: 'value' });
+
+    const section1 = store.getState().courseOutline.sectionsList[0].id;
+
+    fireEvent.keyDown(draggableButton, { key: 'ArrowUp' });
+    await waitFor(async () => {
+      fireEvent.keyDown(draggableButton, { code: 'Space' });
+
+      const saveStatus = store.getState().courseOutline.savingStatus;
+      expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
     });
+
+    const section2 = store.getState().courseOutline.sectionsList[1].id;
+    expect(section1).toBe(section2);
   });
 
   it('check section list is restored to original order when API call fails', async () => {
-    const { getAllByTestId } = render(<RootWrapper />);
+    const { findAllByRole } = render(<RootWrapper />);
     const courseBlockId = courseOutlineIndexMock.courseStructure.id;
-    const { children } = courseOutlineIndexMock.courseStructure.childInfo;
-    const newChildren = children.splice(2, 0, children.splice(0, 1)[0]);
+    const sectionsDraggers = await findAllByRole('button', { name: 'Drag to reorder' });
+    const draggableButton = sectionsDraggers[6];
 
     axiosMock
-      .onPut(getCourseBlockApiUrl(courseBlockId), { children })
+      .onPut(getCourseBlockApiUrl(courseBlockId))
       .reply(500);
 
-    await executeThunk(setSectionOrderListQuery(courseBlockId, undefined, () => children), store.dispatch);
+    const section1 = store.getState().courseOutline.sectionsList[0].id;
+
+    fireEvent.keyDown(draggableButton, { key: 'ArrowUp' });
+    await waitFor(async () => {
+      fireEvent.keyDown(draggableButton, { code: 'Space' });
+
+      const saveStatus = store.getState().courseOutline.savingStatus;
+      expect(saveStatus).toEqual(RequestStatus.FAILED);
+    });
+
+    const section1New = store.getState().courseOutline.sectionsList[0].id;
+    expect(section1).toBe(section1New);
+  });
+
+  it('check that new subsection list is saved when dragged', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+
+    const [sectionElement] = await findAllByTestId('section-card');
+    const [section] = store.getState().courseOutline.sectionsList;
+    const subsectionsDraggers = within(sectionElement).getAllByRole('button', { name: 'Drag to reorder' });
+    const draggableButton = subsectionsDraggers[1];
+
+    axiosMock
+      .onPut(getCourseItemApiUrl(section.id))
+      .reply(200, { dummy: 'value' });
+
+    const subsection1 = section.childInfo.children[0].id;
+
+    fireEvent.keyDown(draggableButton, { key: 'ArrowUp' });
+    await waitFor(async () => {
+      fireEvent.keyDown(draggableButton, { code: 'Space' });
+
+      const saveStatus = store.getState().courseOutline.savingStatus;
+      expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
+    });
+
+    const subsection2 = store.getState().courseOutline.sectionsList[0].childInfo.children[1].id;
+    expect(subsection1).toBe(subsection2);
+  });
+
+  it('check that new subsection list is restored to original order when API call fails', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+
+    const [sectionElement] = await findAllByTestId('section-card');
+    const [section] = store.getState().courseOutline.sectionsList;
+    const subsectionsDraggers = within(sectionElement).getAllByRole('button', { name: 'Drag to reorder' });
+    const draggableButton = subsectionsDraggers[1];
+
+    axiosMock
+      .onPut(getCourseItemApiUrl(section.id))
+      .reply(500);
+
+    const subsection1 = section.childInfo.children[0].id;
+
+    fireEvent.keyDown(draggableButton, { key: 'ArrowUp' });
+    await waitFor(async () => {
+      fireEvent.keyDown(draggableButton, { code: 'Space' });
+
+      const saveStatus = store.getState().courseOutline.savingStatus;
+      expect(saveStatus).toEqual(RequestStatus.FAILED);
+    });
+
+    const subsection1New = store.getState().courseOutline.sectionsList[0].childInfo.children[0].id;
+    expect(subsection1).toBe(subsection1New);
+  });
+
+  it('check that new unit list is saved when dragged', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    const subsectionElement = (await findAllByTestId('subsection-card'))[3];
+    const [subsection] = store.getState().courseOutline.sectionsList[1].childInfo.children;
+    const expandBtn = within(subsectionElement).getByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandBtn);
+    const unitDraggers = await within(subsectionElement).findAllByRole('button', { name: 'Drag to reorder' });
+    const draggableButton = unitDraggers[1];
+
+    axiosMock
+      .onPut(getCourseItemApiUrl(subsection.id))
+      .reply(200, { dummy: 'value' });
+
+    const unit1 = subsection.childInfo.children[0].id;
+
+    fireEvent.keyDown(draggableButton, { key: 'ArrowUp' });
+    await waitFor(async () => {
+      fireEvent.keyDown(draggableButton, { code: 'Space' });
+
+      const saveStatus = store.getState().courseOutline.savingStatus;
+      expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
+    });
+
+    const unit2 = store.getState().courseOutline.sectionsList[1].childInfo.children[0].childInfo.children[1].id;
+    expect(unit1).toBe(unit2);
+  });
+
+  it('check that new unit list is restored to original order when API call fails', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    const subsectionElement = (await findAllByTestId('subsection-card'))[3];
+    const [subsection] = store.getState().courseOutline.sectionsList[1].childInfo.children;
+    const expandBtn = within(subsectionElement).getByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandBtn);
+    const unitDraggers = await within(subsectionElement).findAllByRole('button', { name: 'Drag to reorder' });
+    const draggableButton = unitDraggers[1];
+
+    axiosMock
+      .onPut(getCourseItemApiUrl(subsection.id))
+      .reply(500);
+
+    const unit1 = subsection.childInfo.children[0].id;
+
+    fireEvent.keyDown(draggableButton, { key: 'ArrowUp' });
+    await waitFor(async () => {
+      fireEvent.keyDown(draggableButton, { code: 'Space' });
+
+      const saveStatus = store.getState().courseOutline.savingStatus;
+      expect(saveStatus).toEqual(RequestStatus.FAILED);
+    });
+
+    const unit1New = store.getState().courseOutline.sectionsList[1].childInfo.children[0].childInfo.children[0].id;
+    expect(unit1).toBe(unit1New);
+  });
+
+  it('check that drag handle is not visible for non-draggable sections', async () => {
+    cleanup();
+    axiosMock
+      .onGet(getCourseOutlineIndexApiUrl(courseId))
+      .reply(200, {
+        ...courseOutlineIndexMock,
+        courseStructure: {
+          ...courseOutlineIndexMock.courseStructure,
+          childInfo: {
+            ...courseOutlineIndexMock.courseStructure.childInfo,
+            children: [
+              {
+                ...courseOutlineIndexMock.courseStructure.childInfo.children[0],
+                actions: {
+                  draggable: false,
+                  childAddable: true,
+                  deletable: true,
+                  duplicable: true,
+                },
+              },
+              ...courseOutlineIndexMock.courseStructure.childInfo.children.slice(1),
+            ],
+          },
+        },
+      });
+    const { findAllByTestId } = render(<RootWrapper />);
+    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
+    const [sectionElement] = await findAllByTestId('conditional-sortable-element--no-drag-handle');
 
     await waitFor(() => {
-      expect(getAllByTestId('section-card')).toHaveLength(4);
-      const newSections = getAllByTestId('section-card');
-      for (let i; i < children.length; i++) {
-        expect(children[i].id === newSections[i].id);
-        expect(newChildren[i].id !== newSections[i].id);
-      }
+      expect(within(sectionElement).queryByText(section.displayName)).toBeInTheDocument();
     });
+  });
+
+  it('check whether unit copy & paste option works correctly', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get first section -> first subsection -> first unit element
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [sectionElement] = await findAllByTestId('section-card');
+    const [subsection] = section.childInfo.children;
+    let [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    await act(async () => fireEvent.click(expandBtn));
+    const [unit] = subsection.childInfo.children;
+    const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
+
+    const expectedClipboardContent = {
+      content: {
+        blockType: 'vertical',
+        blockTypeDisplay: 'Unit',
+        created: '2024-01-29T07:58:36.844249Z',
+        displayName: unit.displayName,
+        id: 15,
+        olxUrl: 'http://localhost:18010/api/content-staging/v1/staged-content/15/olx',
+        purpose: 'clipboard',
+        status: 'ready',
+        userId: 3,
+      },
+      sourceUsageKey: unit.id,
+      sourceContexttitle: courseOutlineIndexMock.courseStructure.displayName,
+      sourceEditUrl: unit.studioUrl,
+    };
+    // mock api call
+    axiosMock
+      .onPost(getClipboardUrl(), {
+        usage_key: unit.id,
+      }).reply(200, expectedClipboardContent);
+    // check that initialUserClipboard state is empty
+    const { initialUserClipboard } = store.getState().courseOutline;
+    expect(initialUserClipboard).toBeUndefined();
+
+    // find menu button and click on it to open menu
+    const menu = await within(unitElement).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+
+    // move first unit back to second position to test move down option
+    const copyButton = await within(unitElement).findByText(cardHeaderMessages.menuCopy.defaultMessage);
+    await act(async () => fireEvent.click(copyButton));
+
+    // check that initialUserClipboard state is updated
+    expect(store.getState().courseOutline.initialUserClipboard).toEqual(expectedClipboardContent);
+
+    [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    // find clipboard content label
+    const clipboardLabel = await within(subsectionElement).findByText(
+      pasteButtonMessages.clipboardContentLabel.defaultMessage,
+    );
+    await act(async () => fireEvent.mouseOver(clipboardLabel));
+
+    // find clipboard content popup link
+    expect(
+      subsectionElement.querySelector('#vertical-paste-button-overlay'),
+    ).toHaveAttribute('href', unit.studioUrl);
+
+    // check paste button functionality
+    // mock api call
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(), {
+        parent_locator: subsection.id,
+        staged_content: 'clipboard',
+      }).reply(200, { dummy: 'value' });
+    const pasteBtn = await within(subsectionElement).findByText(subsectionMessages.pasteButton.defaultMessage);
+    await act(async () => fireEvent.click(pasteBtn));
+
+    [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const lastUnitElement = (await within(subsectionElement).findAllByTestId('unit-card')).slice(-1)[0];
+    expect(lastUnitElement).toHaveTextContent(unit.displayName);
   });
 });

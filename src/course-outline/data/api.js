@@ -28,6 +28,7 @@ export const getCourseReindexApiUrl = (reindexLink) => `${getApiBaseUrl()}${rein
 export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
 export const getCourseItemApiUrl = (itemId) => `${getXBlockBaseApiUrl()}${itemId}`;
 export const getXBlockApiUrl = (blockId) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
+export const getClipboardUrl = () => `${getApiBaseUrl()}/api/content-staging/v1/clipboard/`;
 
 /**
  * @typedef {Object} courseOutline
@@ -218,6 +219,8 @@ export async function publishCourseSection(sectionId) {
 /**
  * Configure course section
  * @param {string} sectionId
+ * @param {boolean} isVisibleToStaffOnly
+ * @param {string} startDatetime
  * @returns {Promise<Object>}
  */
 export async function configureCourseSection(sectionId, isVisibleToStaffOnly, startDatetime) {
@@ -228,6 +231,73 @@ export async function configureCourseSection(sectionId, isVisibleToStaffOnly, st
         // The backend expects metadata.visible_to_staff_only to either true or null
         visible_to_staff_only: isVisibleToStaffOnly ? true : null,
         start: startDatetime,
+      },
+    });
+
+  return data;
+}
+
+/**
+ * Configure course section
+ * @param {string} itemId
+ * @param {string} isVisibleToStaffOnly
+ * @param {string} releaseDate
+ * @param {string} graderType
+ * @param {string} dueDateState
+ * @param {string} isTimeLimitedState
+ * @param {string} defaultTimeLimitMin
+ * @param {string} hideAfterDueState
+ * @param {string} showCorrectnessState
+ * @returns {Promise<Object>}
+ */
+export async function configureCourseSubsection(
+  itemId,
+  isVisibleToStaffOnly,
+  releaseDate,
+  graderType,
+  dueDateState,
+  isTimeLimitedState,
+  defaultTimeLimitMin,
+  hideAfterDueState,
+  showCorrectnessState,
+) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getCourseItemApiUrl(itemId), {
+      publish: 'republish',
+      graderType,
+      metadata: {
+        // The backend expects metadata.visible_to_staff_only to either true or null
+        visible_to_staff_only: isVisibleToStaffOnly ? true : null,
+        due: dueDateState,
+        hide_after_due: hideAfterDueState,
+        show_correctness: showCorrectnessState,
+        is_practice_exam: false,
+        is_time_limited: isTimeLimitedState,
+        exam_review_rules: '',
+        is_proctored_enabled: false,
+        default_time_limit_minutes: defaultTimeLimitMin,
+        is_onboarding_exam: false,
+        start: releaseDate,
+      },
+    });
+  return data;
+}
+
+/**
+ * Configure course unit
+ * @param {string} unitId
+ * @param {boolean} isVisibleToStaffOnly
+ * @param {object} groupAccess
+ * @returns {Promise<Object>}
+ */
+export async function configureCourseUnit(unitId, isVisibleToStaffOnly, groupAccess) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getCourseItemApiUrl(unitId), {
+      publish: 'republish',
+      metadata: {
+        // The backend expects metadata.visible_to_staff_only to either true or null
+        visible_to_staff_only: isVisibleToStaffOnly ? true : null,
+        group_access: groupAccess,
       },
     });
 
@@ -313,6 +383,21 @@ export async function setSectionOrderList(courseId, children) {
 }
 
 /**
+ * Set order for the list of the subsections
+ * @param {string} itemId Subsection or unit ID
+ * @param {Array<string>} children list of sections id's
+ * @returns {Promise<Object>}
+*/
+export async function setCourseItemOrderList(itemId, children) {
+  const { data } = await getAuthenticatedHttpClient()
+    .put(getCourseItemApiUrl(itemId), {
+      children,
+    });
+
+  return data;
+}
+
+/**
  * Set video sharing setting
  * @param {string} courseId
  * @param {string} videoSharingOption
@@ -324,6 +409,35 @@ export async function setVideoSharingOption(courseId, videoSharingOption) {
       metadata: {
         video_sharing_options: videoSharingOption,
       },
+    });
+
+  return data;
+}
+
+/**
+ * Copy block to clipboard
+ * @param {string} usageKey
+ * @returns {Promise<Object>}
+*/
+export async function copyBlockToClipboard(usageKey) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getClipboardUrl(), {
+      usage_key: usageKey,
+    });
+
+  return camelCaseObject(data);
+}
+
+/**
+ * Paste block to clipboard
+ * @param {string} parentLocator
+ * @returns {Promise<Object>}
+*/
+export async function pasteBlock(parentLocator) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getXBlockBaseApiUrl(), {
+      parent_locator: parentLocator,
+      staged_content: 'clipboard',
     });
 
   return data;

@@ -7,19 +7,28 @@ import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
 import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
+import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleLink from '../card-header/TitleLink';
-import { getItemStatus, scrollToElement } from '../utils';
+import XBlockStatus from '../xblock-status/XBlockStatus';
+import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 
 const UnitCard = ({
   unit,
   subsection,
   section,
+  isSelfPaced,
+  isCustomRelativeDatesActive,
+  index,
+  canMoveItem,
   onOpenPublishModal,
+  onOpenConfigureModal,
   onEditSubmit,
   savingStatus,
   onOpenDeleteModal,
   onDuplicateSubmit,
   getTitleLink,
+  onOrderChange,
+  onCopyToClipboardClick,
 }) => {
   const currentRef = useRef(null);
   const dispatch = useDispatch();
@@ -31,19 +40,24 @@ const UnitCard = ({
     displayName,
     hasChanges,
     published,
-    releasedToStudents,
-    visibleToStaffOnly = false,
     visibilityState,
-    staffOnlyMessage,
+    actions: unitActions,
+    isHeaderVisible = true,
+    enableCopyPasteUnits = false,
   } = unit;
+
+  // re-create actions object for customizations
+  const actions = { ...unitActions };
+  // add actions to control display of move up & down menu buton.
+  actions.allowMoveUp = canMoveItem(index, -1);
+  actions.allowMoveDown = canMoveItem(index, 1);
 
   const unitStatus = getItemStatus({
     published,
-    releasedToStudents,
-    visibleToStaffOnly,
     visibilityState,
-    staffOnlyMessage,
+    hasChanges,
   });
+  const borderStyle = getItemStatusBorder(unitStatus);
 
   const handleClickMenuButton = () => {
     dispatch(setCurrentItem(unit));
@@ -58,6 +72,18 @@ const UnitCard = ({
     }
 
     closeForm();
+  };
+
+  const handleUnitMoveUp = () => {
+    onOrderChange(index, index - 1);
+  };
+
+  const handleUnitMoveDown = () => {
+    onOrderChange(index, index + 1);
+  };
+
+  const handleCopyClick = () => {
+    onCopyToClipboardClick(unit.id);
   };
 
   const titleComponent = (
@@ -88,25 +114,59 @@ const UnitCard = ({
     }
   }, [savingStatus]);
 
+  if (!isHeaderVisible) {
+    return null;
+  }
+
+  const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
+
   return (
-    <div className="unit-card" data-testid="unit-card" ref={currentRef}>
-      <CardHeader
-        title={displayName}
-        status={unitStatus}
-        hasChanges={hasChanges}
-        onClickMenuButton={handleClickMenuButton}
-        onClickPublish={onOpenPublishModal}
-        onClickEdit={openForm}
-        onClickDelete={onOpenDeleteModal}
-        isFormOpen={isFormOpen}
-        closeForm={closeForm}
-        onEditSubmit={handleEditSubmit}
-        isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
-        onClickDuplicate={onDuplicateSubmit}
-        titleComponent={titleComponent}
-        namePrefix={namePrefix}
-      />
-    </div>
+    <ConditionalSortableElement
+      id={id}
+      key={id}
+      draggable={isDraggable}
+      componentStyle={{
+        background: '#fdfdfd',
+        ...borderStyle,
+      }}
+    >
+      <div
+        className="unit-card"
+        data-testid="unit-card"
+        ref={currentRef}
+      >
+        <CardHeader
+          title={displayName}
+          status={unitStatus}
+          hasChanges={hasChanges}
+          onClickMenuButton={handleClickMenuButton}
+          onClickPublish={onOpenPublishModal}
+          onClickConfigure={onOpenConfigureModal}
+          onClickEdit={openForm}
+          onClickDelete={onOpenDeleteModal}
+          onClickMoveUp={handleUnitMoveUp}
+          onClickMoveDown={handleUnitMoveDown}
+          isFormOpen={isFormOpen}
+          closeForm={closeForm}
+          onEditSubmit={handleEditSubmit}
+          isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+          onClickDuplicate={onDuplicateSubmit}
+          titleComponent={titleComponent}
+          namePrefix={namePrefix}
+          actions={actions}
+          isVertical
+          enableCopyPasteUnits={enableCopyPasteUnits}
+          onClickCopy={handleCopyClick}
+        />
+        <div className="unit-card__content item-children" data-testid="unit-card__content">
+          <XBlockStatus
+            isSelfPaced={isSelfPaced}
+            isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+            blockData={unit}
+          />
+        </div>
+      </div>
+    </ConditionalSortableElement>
   );
 };
 
@@ -116,21 +176,23 @@ UnitCard.propTypes = {
     displayName: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
-    releasedToStudents: PropTypes.bool.isRequired,
-    visibleToStaffOnly: PropTypes.bool,
     visibilityState: PropTypes.string.isRequired,
-    staffOnlyMessage: PropTypes.bool.isRequired,
     shouldScroll: PropTypes.bool,
+    actions: PropTypes.shape({
+      deletable: PropTypes.bool.isRequired,
+      draggable: PropTypes.bool.isRequired,
+      childAddable: PropTypes.bool.isRequired,
+      duplicable: PropTypes.bool.isRequired,
+    }).isRequired,
+    isHeaderVisible: PropTypes.bool,
+    enableCopyPasteUnits: PropTypes.bool,
   }).isRequired,
   subsection: PropTypes.shape({
     id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
-    releasedToStudents: PropTypes.bool.isRequired,
-    visibleToStaffOnly: PropTypes.bool,
     visibilityState: PropTypes.string.isRequired,
-    staffOnlyMessage: PropTypes.bool.isRequired,
     shouldScroll: PropTypes.bool,
   }).isRequired,
   section: PropTypes.shape({
@@ -138,18 +200,22 @@ UnitCard.propTypes = {
     displayName: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
-    releasedToStudents: PropTypes.bool.isRequired,
-    visibleToStaffOnly: PropTypes.bool,
     visibilityState: PropTypes.string.isRequired,
-    staffOnlyMessage: PropTypes.bool.isRequired,
     shouldScroll: PropTypes.bool,
   }).isRequired,
   onOpenPublishModal: PropTypes.func.isRequired,
+  onOpenConfigureModal: PropTypes.func.isRequired,
   onEditSubmit: PropTypes.func.isRequired,
   savingStatus: PropTypes.string.isRequired,
   onOpenDeleteModal: PropTypes.func.isRequired,
   onDuplicateSubmit: PropTypes.func.isRequired,
   getTitleLink: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
+  canMoveItem: PropTypes.func.isRequired,
+  onOrderChange: PropTypes.func.isRequired,
+  isSelfPaced: PropTypes.bool.isRequired,
+  isCustomRelativeDatesActive: PropTypes.bool.isRequired,
+  onCopyToClipboardClick: PropTypes.func.isRequired,
 };
 
 export default UnitCard;

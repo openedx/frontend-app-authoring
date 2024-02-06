@@ -113,7 +113,12 @@ const VideosPage = ({
     usageErrorMessages: errorMessages.usageMetrics,
     fileType: 'video',
   };
-  const thumbnailPreview = (props) => VideoThumbnail({ ...props, handleAddThumbnail, videoImageSettings });
+  const thumbnailPreview = (props) => VideoThumbnail({
+    ...props,
+    pageLoadStatus: loadingStatus,
+    handleAddThumbnail,
+    videoImageSettings,
+  });
   const infoModalSidebar = (video, activeTab, setActiveTab) => (
     VideoInfoModalSidebar({ video, activeTab, setActiveTab })
   );
@@ -134,7 +139,7 @@ const VideosPage = ({
     id: 'activeStatus',
     Header: 'Active',
     accessor: 'activeStatus',
-    Cell: ({ row }) => ActiveColumn({ row }),
+    Cell: ({ row }) => ActiveColumn({ row, pageLoadStatus: loadingStatus }),
     Filter: CheckboxFilter,
     filter: 'exactTextCase',
     filterChoices: [
@@ -153,7 +158,7 @@ const VideosPage = ({
   };
   const processingStatusColumn = {
     id: 'status',
-    Header: '',
+    Header: 'Status',
     accessor: 'status',
     Cell: ({ row }) => StatusColumn({ row }),
     Filter: CheckboxFilter,

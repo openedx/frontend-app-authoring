@@ -17,6 +17,13 @@ const headerNavigationsActions = {
   lmsLink: '',
 };
 
+const courseActions = {
+  draggable: true,
+  childAddable: true,
+  deletable: true,
+  duplicable: true,
+};
+
 const renderComponent = (props) => render(
   <IntlProvider locale="en">
     <HeaderNavigations
@@ -25,6 +32,7 @@ const renderComponent = (props) => render(
       isDisabledReindexButton={false}
       isReIndexShow
       hasSections
+      courseActions={courseActions}
       {...props}
     />
   </IntlProvider>,

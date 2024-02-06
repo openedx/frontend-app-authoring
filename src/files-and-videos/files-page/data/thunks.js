@@ -48,7 +48,7 @@ export function fetchAddtionalAsstets(courseId, totalCount) {
       } catch (error) {
         remainingAssetCount = 0;
         dispatch(updateErrors({ error: 'loading', message: 'Failed to load remaining files.' }));
-        dispatch(updateLoadingStatus({ status: RequestStatus.PARTIAL }));
+        dispatch(updateLoadingStatus({ status: RequestStatus.PARTIAL_FAILURE }));
       }
     }
   };

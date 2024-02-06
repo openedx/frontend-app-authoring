@@ -5,6 +5,7 @@ import {
   addModels,
   removeModel,
   updateModel,
+  updateModels,
 } from '../../../generic/model-store';
 import {
   addThumbnail,
@@ -21,6 +22,7 @@ import {
   deleteTranscriptPreferences,
   setTranscriptCredentials,
   setTranscriptPreferences,
+  getAllUsagePaths,
 } from './api';
 import {
   setVideoIds,
@@ -37,23 +39,6 @@ import {
 
 import { updateFileValues } from './utils';
 
-async function fetchUsageLocation(videoId, dispatch, courseId, isLast) {
-  const { usageLocations } = await getVideoUsagePaths({ videoId, courseId });
-  const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
-
-  dispatch(updateModel({
-    modelType: 'videos',
-    model: {
-      id: videoId,
-      usageLocations,
-      activeStatus,
-    },
-  }));
-  if (isLast) {
-    dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
-  }
-}
-
 export function fetchVideos(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
@@ -68,14 +53,13 @@ export function fetchVideos(courseId) {
         dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
       } else {
         const parsedVideos = updateFileValues(previousUploads);
+        const videoIds = parsedVideos.map(video => video.id);
         dispatch(addModels({ modelType: 'videos', models: parsedVideos }));
-        dispatch(setVideoIds({
-          videoIds: parsedVideos.map(video => video.id),
-        }));
-        parsedVideos.forEach(async (video, indx) => {
-          const isLast = parsedVideos.length - 1 === indx;
-          fetchUsageLocation(video.id, dispatch, courseId, isLast);
-        });
+        dispatch(setVideoIds({ videoIds }));
+        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.PARTIAL }));
+        const allUsageLocations = await getAllUsagePaths({ courseId, videoIds });
+        dispatch(updateModels({ modelType: 'videos', models: allUsageLocations }));
+        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
       }
     } catch (error) {
       if (error.response && error.response.status === 403) {

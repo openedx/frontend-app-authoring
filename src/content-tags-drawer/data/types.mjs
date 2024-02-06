@@ -4,13 +4,15 @@
  * @typedef {Object} Tag A tag that has been applied to some content.
  * @property {string} value The value of the tag, also its ID. e.g. "Biology"
  * @property {string[]} lineage The values of the tag and its parent(s) in the hierarchy
+ * @property {boolean} canChangeObjecttag
+ * @property {boolean} canDeleteObjecttag
  */
 
 /**
  * @typedef {Object} ContentTaxonomyTagData A list of the tags from one taxonomy that are applied to a content object.
  * @property {string} name
  * @property {number} taxonomyId
- * @property {boolean} editable
+ * @property {boolean} canTagObject
  * @property {Tag[]} tags
  */
 

@@ -1,4 +1,4 @@
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import ORASettings from './Settings';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
@@ -28,6 +28,6 @@ const props = {
 describe('ORASettings', () => {
   it('should render', () => {
     const wrapper = shallow(<ORASettings {...props} />);
-    expect(wrapper).toMatchSnapshot();
+    expect(wrapper.snapshot).toMatchSnapshot();
   });
 });
