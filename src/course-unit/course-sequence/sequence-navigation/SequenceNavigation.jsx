@@ -48,40 +48,44 @@ const SequenceNavigation = ({
 
   const renderPreviousButton = () => {
     const buttonText = intl.formatMessage(messages.prevBtnText);
-    const disabled = isFirstUnit;
     const prevArrow = isRtl(getLocale()) ? ChevronRightIcon : ChevronLeftIcon;
 
-    return (
-      <Button
-        className="sequence-navigation-prev-btn"
-        variant="outline-primary"
-        iconBefore={prevArrow}
-        disabled={disabled}
-        as={disabled ? undefined : Link}
-        to={disabled ? undefined : previousLink}
-      >
-        {shouldDisplayNotificationTriggerInSequence ? null : buttonText}
-      </Button>
-    );
+    if (!isFirstUnit) {
+      return (
+        <Button
+          className="sequence-navigation-prev-btn"
+          variant="outline-primary"
+          iconBefore={prevArrow}
+          as={Link}
+          to={previousLink}
+        >
+          {shouldDisplayNotificationTriggerInSequence ? null : buttonText}
+        </Button>
+      );
+    }
+
+    return null;
   };
 
   const renderNextButton = () => {
     const buttonText = intl.formatMessage(messages.nextBtnText);
-    const disabled = isLastUnit;
     const nextArrow = isRtl(getLocale()) ? ChevronLeftIcon : ChevronRightIcon;
 
-    return (
-      <Button
-        className="sequence-navigation-next-btn"
-        variant="outline-primary"
-        iconAfter={nextArrow}
-        disabled={disabled}
-        as={disabled ? undefined : Link}
-        to={disabled ? undefined : nextLink}
-      >
-        {shouldDisplayNotificationTriggerInSequence ? null : buttonText}
-      </Button>
-    );
+    if (!isLastUnit) {
+      return (
+        <Button
+          className="sequence-navigation-next-btn"
+          variant="outline-primary"
+          iconAfter={nextArrow}
+          as={Link}
+          to={nextLink}
+        >
+          {shouldDisplayNotificationTriggerInSequence ? null : buttonText}
+        </Button>
+      );
+    }
+
+    return null;
   };
 
   return sequenceStatus === RequestStatus.SUCCESSFUL && (
