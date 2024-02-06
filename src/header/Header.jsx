@@ -28,7 +28,7 @@ const Header = ({
   const hasSettingsPermissions = !userPermissionsEnabled
     || (userPermissionsEnabled && (checkPermission('manage_advanced_settings') || checkPermission('view_course_settings')));
   const hasToolsPermissions = !userPermissionsEnabled
-  || (userPermissionsEnabled && (checkPermission('manage_course_settings') || checkPermission('view_course_settings')));
+    || (userPermissionsEnabled && (checkPermission('manage_course_settings') || checkPermission('view_course_settings')));
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const contentMenu = getContentMenuItems({
     studioBaseUrl,
@@ -37,6 +37,12 @@ const Header = ({
     hasContentPermissions,
   });
   const mainMenuDropdowns = [];
+  const toolsMenu = getToolsMenuItems({
+    studioBaseUrl,
+    courseId,
+    intl,
+    hasToolsPermissions,
+  });
 
   useEffect(() => {
     dispatch(fetchUserPermissionsEnabledFlag());
@@ -65,17 +71,16 @@ const Header = ({
         hasSettingsPermissions,
       }),
     },
-    {
-      id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
-      buttonTitle: intl.formatMessage(messages['header.links.tools']),
-      items: getToolsMenuItems({
-        studioBaseUrl,
-        courseId,
-        intl,
-        hasToolsPermissions,
-      }),
-    },
   );
+  if (toolsMenu.length > 0) {
+    mainMenuDropdowns.push(
+      {
+        id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
+        buttonTitle: intl.formatMessage(messages['header.links.tools']),
+        items: toolsMenu,
+      },
+    );
+  }
 
   const outlineLink = `${studioBaseUrl}/course/${courseId}`;
   return (

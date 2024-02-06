@@ -14,7 +14,15 @@ const courseId = '123';
 const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
-      <FileSection intl={injectIntl} courseId={courseId} />
+      <FileSection intl={injectIntl} courseId={courseId} viewOnly={false} />
+    </IntlProvider>
+  </AppProvider>
+);
+
+const RootWrapperViewOnly = () => (
+  <AppProvider store={store}>
+    <IntlProvider locale="en" messages={{}}>
+      <FileSection intl={injectIntl} courseId={courseId} viewOnly />
     </IntlProvider>
   </AppProvider>
 );
@@ -27,6 +35,7 @@ describe('<FileSection />', () => {
         username: 'abc123',
         administrator: true,
         roles: [],
+        permisions: [],
       },
     });
     store = initializeStore();
@@ -41,6 +50,13 @@ describe('<FileSection />', () => {
     const { getByTestId } = render(<RootWrapper />);
     await waitFor(() => {
       expect(getByTestId('dropzone')).toBeInTheDocument();
+    });
+  });
+  it('should not render Dropzone when view is viewOnly', async () => {
+    const { getByText, queryByTestId, container } = render(<RootWrapperViewOnly />);
+    await waitFor(() => {
+      expect(queryByTestId(container, 'dropzone')).not.toBeInTheDocument();
+      expect(getByText(messages.viewOnlyAlert.defaultMessage)).toBeInTheDocument();
     });
   });
   it('should work Dropzone', async () => {

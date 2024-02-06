@@ -8,6 +8,12 @@ import * as xpertUnitSummaryApi from './xpert-unit-summary/data/api';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 
+jest.mock('../generic/hooks', () => ({
+  useUserPermissions: jest.fn(() => ({
+    checkPermission: jest.fn(() => true),
+  })),
+}));
+
 describe('PagesAndResources', () => {
   beforeEach(() => {
     jest.clearAllMocks();

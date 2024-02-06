@@ -12,6 +12,9 @@ import initializeStore from '../store';
 import stepperMessages from './export-stepper/messages';
 import modalErrorMessages from './export-modal-error/messages';
 import { getExportStatusApiUrl, postExportCourseApiUrl } from './data/api';
+import { getUserPermissionsUrl, getUserPermissionsEnabledFlagUrl } from '../generic/data/api';
+import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
+import { executeThunk } from '../utils';
 import { EXPORT_STAGES } from './data/constants';
 import { exportPageMock } from './__mocks__';
 import messages from './messages';
@@ -22,6 +25,8 @@ let axiosMock;
 let cookies;
 const courseId = '123';
 const courseName = 'About Node JS';
+const userId = 3;
+let userPermissionsData = { permissions: [] };
 
 jest.mock('../generic/model-store', () => ({
   useModel: jest.fn().mockReturnValue({
@@ -49,7 +54,7 @@ describe('<CourseExportPage />', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
-        userId: 3,
+        userId,
         username: 'abc123',
         administrator: true,
         roles: [],
@@ -60,6 +65,14 @@ describe('<CourseExportPage />', () => {
     axiosMock
       .onGet(postExportCourseApiUrl(courseId))
       .reply(200, exportPageMock);
+    axiosMock
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: false });
+    axiosMock
+      .onGet(getUserPermissionsUrl(courseId, userId))
+      .reply(200, userPermissionsData);
+    executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
     cookies = new Cookies();
     cookies.get.mockReturnValue(null);
   });
@@ -85,8 +98,57 @@ describe('<CourseExportPage />', () => {
       expect(getByText(messages.buttonTitle.defaultMessage)).toBeInTheDocument();
     });
   });
+  it('should render permissionDenied if incorrect permissions', async () => {
+    const { getByTestId } = render(<RootWrapper />);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+    expect(getByTestId('permissionDeniedAlert')).toBeVisible();
+  });
+  it('should render without errors if correct permissions', async () => {
+    const { getByText } = render(<RootWrapper />);
+    userPermissionsData = { permissions: ['manage_course_settings'] };
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, userPermissionsData);
+    await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+    await waitFor(() => {
+      expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+      const exportPageElement = getByText(messages.headingTitle.defaultMessage, {
+        selector: 'h2.sub-header-title',
+      });
+      expect(exportPageElement).toBeInTheDocument();
+      expect(getByText(messages.titleUnderButton.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.description2.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.buttonTitle.defaultMessage)).toBeInTheDocument();
+    });
+  });
+  it('should render without errors if viewOnly permissions', async () => {
+    const { getByText } = render(<RootWrapper />);
+    userPermissionsData = { permissions: ['view_course_settings'] };
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, userPermissionsData);
+    await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+    await waitFor(() => {
+      expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+      const exportPageElement = getByText(messages.headingTitle.defaultMessage, {
+        selector: 'h2.sub-header-title',
+      });
+      const buttonElement = getByText(messages.buttonTitle.defaultMessage);
+      expect(exportPageElement).toBeInTheDocument();
+      expect(getByText(messages.titleUnderButton.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.description2.defaultMessage)).toBeInTheDocument();
+      expect(buttonElement).toBeInTheDocument();
+      expect(buttonElement.disabled).toEqual(true);
+    });
+    userPermissionsData = { permissions: ['manage_course_settings'] };
+    axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, userPermissionsData);
+    await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+  });
   it('should start exporting on click', async () => {
     const { getByText, container } = render(<RootWrapper />);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
     const button = container.querySelector('.btn-primary');
     fireEvent.click(button);
     expect(getByText(stepperMessages.stepperPreparingDescription.defaultMessage)).toBeInTheDocument();
@@ -96,6 +158,8 @@ describe('<CourseExportPage />', () => {
       .onGet(getExportStatusApiUrl(courseId))
       .reply(200, { exportStatus: EXPORT_STAGES.EXPORTING, exportError: { rawErrorMsg: 'test error', editUnitUrl: 'http://test-url.test' } });
     const { getByText, queryByText, container } = render(<RootWrapper />);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
     const startExportButton = container.querySelector('.btn-primary');
     fireEvent.click(startExportButton);
     // eslint-disable-next-line no-promise-executor-return
@@ -116,6 +180,8 @@ describe('<CourseExportPage />', () => {
       .onGet(getExportStatusApiUrl(courseId))
       .reply(200, { exportStatus: EXPORT_STAGES.SUCCESS, exportOutput: '/test-download-path.test' });
     const { getByText, container } = render(<RootWrapper />);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
     const startExportButton = container.querySelector('.btn-primary');
     fireEvent.click(startExportButton);
     // eslint-disable-next-line no-promise-executor-return
@@ -129,6 +195,8 @@ describe('<CourseExportPage />', () => {
       .onGet(getExportStatusApiUrl(courseId))
       .reply(200, { exportStatus: EXPORT_STAGES.SUCCESS, exportOutput: 'http://test-download-path.test' });
     const { getByText, container } = render(<RootWrapper />);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
     const startExportButton = container.querySelector('.btn-primary');
     fireEvent.click(startExportButton);
     // eslint-disable-next-line no-promise-executor-return
