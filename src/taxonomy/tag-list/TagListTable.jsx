@@ -24,7 +24,7 @@ const SubTagsExpanded = ({ taxonomyId, parentTagValue }) => {
     <ul style={{ listStyleType: 'none' }}>
       {subTagsData.data.results.map(tagData => (
         <li key={tagData.id} style={{ paddingLeft: `${(tagData.depth - 1) * 30}px` }}>
-          {tagData.value} <span className="text-secondary-500">{tagData.childCount > 0 ? `(${tagData.childCount})` : null}</span>
+          {tagData.value} <span className="text-secondary-500">{tagData.descendantCount > 0 ? `(${tagData.descendantCount})` : null}</span>
         </li>
       ))}
     </ul>
@@ -48,7 +48,7 @@ OptionalExpandLink.propTypes = DataTable.ExpandRow.propTypes;
 const TagValue = ({ row }) => (
   <>
     <span>{row.original.value}</span>
-    <span className="text-secondary-500">{` (${row.original.childCount})`}</span>
+    <span className="text-secondary-500">{` (${row.original.descendantCount})`}</span>
   </>
 );
 TagValue.propTypes = {
@@ -56,6 +56,7 @@ TagValue.propTypes = {
     original: Proptypes.shape({
       value: Proptypes.string.isRequired,
       childCount: Proptypes.number.isRequired,
+      descendantCount: Proptypes.number.isRequired,
     }).isRequired,
   }).isRequired,
 };
