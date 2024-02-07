@@ -1032,7 +1032,7 @@
   "course-authoring.course-unit.visibility.checkbox.title": "Hide from learners",
   "course-authoring.course-unit.visibility.staff-only.title": "Staff only",
   "course-authoring.course-unit.visibility.staff-and-learners.title": "Staff and learners",
-  "course-authoring.course-unit.visibility.has-explicit-staff-lock.text": "with {date} {sectionName}",
+  "course-authoring.course-unit.visibility.has-explicit-staff-lock.text": "with {sectionName}",
   "course-authoring.course-unit.action-buttons.publish.title": "Publish",
   "course-authoring.course-unit.action-button.discard-changes.title": "Discard changes",
   "course-authoring.course-unit.action-button.copy-unit.title": "Copy unit",

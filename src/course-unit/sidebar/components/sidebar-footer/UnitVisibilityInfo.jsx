@@ -18,7 +18,6 @@ const UnitVisibilityInfo = ({ openVisibleModal, visibleToStaffOnly }) => {
     published,
     hasChanges,
     staffLockFrom,
-    releaseDateFrom,
     releasedToStudents,
     hasExplicitStaffLock,
   } = useSelector(getCourseUnitData);
@@ -38,10 +37,8 @@ const UnitVisibilityInfo = ({ openVisibleModal, visibleToStaffOnly }) => {
             {intl.formatMessage(messages.visibilityStaffOnlyTitle)}
           </h6>
           {!hasExplicitStaffLock && (
-            <span>
-              {intl.formatMessage(messages.visibilityHasExplicitStaffLockText, {
-                date: releaseDateFrom, sectionName: staffLockFrom,
-              })}
+            <span className="course-unit-sidebar-visibility-section mb-2">
+              {intl.formatMessage(messages.visibilityHasExplicitStaffLockText, { sectionName: staffLockFrom })}
             </span>
           )}
         </>
