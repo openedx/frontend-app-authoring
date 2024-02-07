@@ -79,7 +79,7 @@ const messages = defineMessages({
   },
   visibilityHasExplicitStaffLockText: {
     id: 'course-authoring.course-unit.visibility.has-explicit-staff-lock.text',
-    defaultMessage: 'with {date} {sectionName}',
+    defaultMessage: 'with {sectionName}',
   },
   actionButtonPublishTitle: {
     id: 'course-authoring.course-unit.action-buttons.publish.title',
