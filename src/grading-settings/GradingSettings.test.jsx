@@ -12,9 +12,15 @@ import gradingSettings from './__mocks__/gradingSettings';
 import GradingSettings from './GradingSettings';
 import messages from './messages';
 
+import { getUserPermissionsUrl, getUserPermissionsEnabledFlagUrl } from '../generic/data/api';
+import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
+import { executeThunk } from '../utils';
+
 const courseId = '123';
+const userId = 3;
 let axiosMock;
 let store;
+let userPermissionsData = { permissions: [] };
 
 const RootWrapper = () => (
   <AppProvider store={store}>
@@ -28,7 +34,7 @@ describe('<GradingSettings />', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
-        userId: 3,
+        userId,
         username: 'abc123',
         administrator: true,
         roles: [],
@@ -40,6 +46,14 @@ describe('<GradingSettings />', () => {
     axiosMock
       .onGet(getGradingSettingsApiUrl(courseId))
       .reply(200, gradingSettings);
+    axiosMock
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: false });
+    axiosMock
+      .onGet(getUserPermissionsUrl(courseId, userId))
+      .reply(200, userPermissionsData);
+    executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
   });
 
   it('should render without errors', async () => {
@@ -52,6 +66,13 @@ describe('<GradingSettings />', () => {
       expect(getByText(messages.policy.defaultMessage)).toBeInTheDocument();
       expect(getByText(messages.policiesDescription.defaultMessage)).toBeInTheDocument();
     });
+  });
+
+  it('should render permissionDenied if incorrect permissions', async () => {
+    const { getByTestId } = render(<RootWrapper />);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+    expect(getByTestId('permissionDeniedAlert')).toBeVisible();
   });
 
   it('should update segment input value and show save alert', async () => {
@@ -76,6 +97,7 @@ describe('<GradingSettings />', () => {
       expect(segmentInput).toHaveValue('a');
     });
   });
+
   it('should save segment input changes and display saving message', async () => {
     const { getByText, getAllByTestId } = render(<RootWrapper />);
     await waitFor(() => {
