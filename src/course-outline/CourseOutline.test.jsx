@@ -1,5 +1,5 @@
 import {
-  act, render, waitFor, cleanup, fireEvent, within,
+  act, render, waitFor, fireEvent, within,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -343,7 +343,6 @@ describe('<CourseOutline />', () => {
   });
 
   it('render CourseOutline component without sections correctly', async () => {
-    cleanup();
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexWithoutSections);
@@ -353,6 +352,25 @@ describe('<CourseOutline />', () => {
     await waitFor(() => {
       expect(getByTestId('empty-placeholder')).toBeInTheDocument();
     });
+  });
+
+  it('render configuration alerts and check dismiss query', async () => {
+    axiosMock
+      .onGet(getCourseOutlineIndexApiUrl(courseId))
+      .reply(200, {
+        ...courseOutlineIndexMock,
+        notificationDismissUrl: '/some/url',
+      });
+
+    const { findByRole } = render(<RootWrapper />);
+    expect(await findByRole('alert')).toBeInTheDocument();
+    const dismissBtn = await findByRole('button', { name: 'Dismiss' });
+    axiosMock
+      .onDelete('/some/url')
+      .reply(204);
+    fireEvent.click(dismissBtn);
+
+    expect(axiosMock.history.delete.length).toBe(1);
   });
 
   it('check edit title works for section, subsection and unit', async () => {
@@ -688,7 +706,7 @@ describe('<CourseOutline />', () => {
       prereqMinCompletion: 100,
       metadata: {
         visible_to_staff_only: null,
-        due: '2025-09-10T00:00:00Z',
+        due: '2025-09-10T05:00:00Z',
         hide_after_due: true,
         show_correctness: 'always',
         is_practice_exam: false,
@@ -736,7 +754,7 @@ describe('<CourseOutline />', () => {
     let dueDatePicker = await within(dueDateStack).findByPlaceholderText('MM/DD/YYYY');
     fireEvent.change(dueDatePicker, { target: { value: '09/10/2025' } });
     let dueDateTimePicker = await within(dueDateStack).findByPlaceholderText('HH:MM');
-    fireEvent.change(dueDateTimePicker, { target: { value: '00:00' } });
+    fireEvent.change(dueDateTimePicker, { target: { value: '05:00' } });
     let graderTypeDropdown = await within(configureModal).findByTestId('grader-type-select');
     fireEvent.change(graderTypeDropdown, { target: { value: expectedRequestData.graderType } });
 
@@ -774,7 +792,7 @@ describe('<CourseOutline />', () => {
     dueDatePicker = await within(dueDateStack).findByPlaceholderText('MM/DD/YYYY');
     expect(dueDatePicker).toHaveValue('09/10/2025');
     dueDateTimePicker = await within(dueDateStack).findByPlaceholderText('HH:MM');
-    expect(dueDateTimePicker).toHaveValue('00:00');
+    expect(dueDateTimePicker).toHaveValue('05:00');
     graderTypeDropdown = await within(configureModal).findByTestId('grader-type-select');
     expect(graderTypeDropdown).toHaveValue(expectedRequestData.graderType);
 
@@ -1751,7 +1769,6 @@ describe('<CourseOutline />', () => {
   });
 
   it('check that drag handle is not visible for non-draggable sections', async () => {
-    cleanup();
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, {

@@ -22,7 +22,7 @@ const PrereqSettings = ({
     prereqMinCompletion,
   } = values;
 
-  if (isPrereq === null) {
+  if (isPrereq === null || isPrereq === undefined) {
     return null;
   }
 

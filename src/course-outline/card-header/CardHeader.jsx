@@ -124,7 +124,9 @@ const CardHeader = ({
         </>
       )}
       <div className="ml-auto d-flex">
-        <CardStatus status={status} showDiscussionsEnabledBadge={showDiscussionsEnabledBadge} />
+        {(isVertical || isSequential) && (
+          <CardStatus status={status} showDiscussionsEnabledBadge={showDiscussionsEnabledBadge} />
+        )}
         <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
           <Dropdown.Toggle
             className="item-card-header__menu"

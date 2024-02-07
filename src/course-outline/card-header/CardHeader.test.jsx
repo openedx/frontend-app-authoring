@@ -37,7 +37,8 @@ const cardHeaderProps = {
   onClickConfigure: onClickConfigureMock,
   onClickMoveUp: onClickMoveUpMock,
   onClickMoveDown: onClickMoveDownMock,
-  namePrefix: 'section',
+  isSequential: true,
+  namePrefix: 'subsection',
   actions: {
     draggable: true,
     childAddable: true,
@@ -75,8 +76,8 @@ describe('<CardHeader />', () => {
     const { findByText, findByTestId, queryByTestId } = renderComponent();
 
     expect(await findByText(cardHeaderProps.title)).toBeInTheDocument();
-    expect(await findByTestId('section-card-header__expanded-btn')).toBeInTheDocument();
-    expect(await findByTestId('section-card-header__menu')).toBeInTheDocument();
+    expect(await findByTestId('subsection-card-header__expanded-btn')).toBeInTheDocument();
+    expect(await findByTestId('subsection-card-header__menu')).toBeInTheDocument();
     await waitFor(() => {
       expect(queryByTestId('edit field')).not.toBeInTheDocument();
     });
@@ -114,25 +115,25 @@ describe('<CardHeader />', () => {
     expect(await findByText(messages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();
   });
 
-  it('check publish menu item is disabled when section status is live or published not live and it has no changes', async () => {
+  it('check publish menu item is disabled when subsection status is live or published not live and it has no changes', async () => {
     const { findByText, findByTestId } = renderComponent({
       ...cardHeaderProps,
       status: ITEM_BADGE_STATUS.publishedNotLive,
     });
 
-    const menuButton = await findByTestId('section-card-header__menu-button');
+    const menuButton = await findByTestId('subsection-card-header__menu-button');
     fireEvent.click(menuButton);
     expect(await findByText(messages.menuPublish.defaultMessage)).toHaveAttribute('aria-disabled', 'true');
   });
 
-  it('check publish menu item is enabled when section status is live or published not live and it has changes', async () => {
+  it('check publish menu item is enabled when subsection status is live or published not live and it has changes', async () => {
     const { findByText, findByTestId } = renderComponent({
       ...cardHeaderProps,
       status: ITEM_BADGE_STATUS.publishedNotLive,
       hasChanges: true,
     });
 
-    const menuButton = await findByTestId('section-card-header__menu-button');
+    const menuButton = await findByTestId('subsection-card-header__menu-button');
     fireEvent.click(menuButton);
     expect(await findByText(messages.menuPublish.defaultMessage)).not.toHaveAttribute('aria-disabled');
   });
@@ -140,7 +141,7 @@ describe('<CardHeader />', () => {
   it('calls handleExpanded when button is clicked', async () => {
     const { findByTestId } = renderComponent();
 
-    const expandButton = await findByTestId('section-card-header__expanded-btn');
+    const expandButton = await findByTestId('subsection-card-header__expanded-btn');
     fireEvent.click(expandButton);
     expect(onExpandMock).toHaveBeenCalled();
   });
@@ -148,7 +149,7 @@ describe('<CardHeader />', () => {
   it('calls onClickMenuButton when menu is clicked', async () => {
     const { findByTestId } = renderComponent();
 
-    const menuButton = await findByTestId('section-card-header__menu-button');
+    const menuButton = await findByTestId('subsection-card-header__menu-button');
     await act(async () => fireEvent.click(menuButton));
     expect(onClickMenuButtonMock).toHaveBeenCalled();
   });
@@ -159,7 +160,7 @@ describe('<CardHeader />', () => {
       status: ITEM_BADGE_STATUS.draft,
     });
 
-    const menuButton = await findByTestId('section-card-header__menu-button');
+    const menuButton = await findByTestId('subsection-card-header__menu-button');
     fireEvent.click(menuButton);
 
     const publishMenuItem = await findByText(messages.menuPublish.defaultMessage);
@@ -170,7 +171,7 @@ describe('<CardHeader />', () => {
   it('calls onClickEdit when the button is clicked', async () => {
     const { findByTestId } = renderComponent();
 
-    const editButton = await findByTestId('section-edit-button');
+    const editButton = await findByTestId('subsection-edit-button');
     await act(async () => fireEvent.click(editButton));
     expect(onClickEditMock).toHaveBeenCalled();
   });
@@ -181,9 +182,9 @@ describe('<CardHeader />', () => {
       isFormOpen: true,
     });
 
-    expect(await findByTestId('section-edit-field')).toBeInTheDocument();
+    expect(await findByTestId('subsection-edit-field')).toBeInTheDocument();
     waitFor(() => {
-      expect(queryByTestId('section-card-header__expanded-btn')).not.toBeInTheDocument();
+      expect(queryByTestId('subsection-card-header__expanded-btn')).not.toBeInTheDocument();
       expect(queryByTestId('edit-button')).not.toBeInTheDocument();
     });
   });
@@ -195,13 +196,13 @@ describe('<CardHeader />', () => {
       isDisabledEditField: true,
     });
 
-    expect(await findByTestId('section-edit-field')).toBeDisabled();
+    expect(await findByTestId('subsection-edit-field')).toBeDisabled();
   });
 
   it('calls onClickDelete when item is clicked', async () => {
     const { findByText, findByTestId } = renderComponent();
 
-    const menuButton = await findByTestId('section-card-header__menu-button');
+    const menuButton = await findByTestId('subsection-card-header__menu-button');
     await act(async () => fireEvent.click(menuButton));
     const deleteMenuItem = await findByText(messages.menuDelete.defaultMessage);
     await act(async () => fireEvent.click(deleteMenuItem));
@@ -211,7 +212,7 @@ describe('<CardHeader />', () => {
   it('calls onClickDuplicate when item is clicked', async () => {
     const { findByText, findByTestId } = renderComponent();
 
-    const menuButton = await findByTestId('section-card-header__menu-button');
+    const menuButton = await findByTestId('subsection-card-header__menu-button');
     fireEvent.click(menuButton);
 
     const duplicateMenuItem = await findByText(messages.menuDuplicate.defaultMessage);
@@ -227,7 +228,7 @@ describe('<CardHeader />', () => {
       isSequential: true,
     });
 
-    const menuButton = await findByTestId('section-card-header__menu-button');
+    const menuButton = await findByTestId('subsection-card-header__menu-button');
     await act(async () => fireEvent.click(menuButton));
 
     expect(await findByText(messages.menuProctoringLinkText.defaultMessage)).toBeInTheDocument();
