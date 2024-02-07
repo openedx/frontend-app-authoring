@@ -7,15 +7,20 @@ export const getContentMenuItems = ({
   courseId,
   intl,
   hasContentPermissions,
+  hasOutlinePermissions,
 }) => {
   const items = [];
 
-  if (hasContentPermissions) {
+  if (hasOutlinePermissions) {
     items.push(
       {
         href: `${studioBaseUrl}/course/${courseId}`,
         title: intl.formatMessage(messages['header.links.outline']),
       },
+    );
+  }
+  if (hasContentPermissions) {
+    items.push(
       {
         href: `${studioBaseUrl}/course_info/${courseId}`,
         title: intl.formatMessage(messages['header.links.updates']),
@@ -45,6 +50,7 @@ export const getSettingMenuItems = ({
   studioBaseUrl,
   courseId,
   intl,
+  hasAdvancedSettingsAccess,
   hasSettingsPermissions,
 }) => {
   const items = [];
@@ -54,20 +60,30 @@ export const getSettingMenuItems = ({
       href: `${studioBaseUrl}/settings/details/${courseId}`,
       title: intl.formatMessage(messages['header.links.scheduleAndDetails']),
     },
+  );
+  if (hasSettingsPermissions) {
+    items.push(
     {
       href: `${studioBaseUrl}/settings/grading/${courseId}`,
       title: intl.formatMessage(messages['header.links.grading']),
     },
+    );
+  }
+  items.push(
     {
       href: `${studioBaseUrl}/course_team/${courseId}`,
       title: intl.formatMessage(messages['header.links.courseTeam']),
     },
-    {
-      href: `${studioBaseUrl}/group_configurations/course-v1:${courseId}`,
-      title: intl.formatMessage(messages['header.links.groupConfigurations']),
-    },
   );
   if (hasSettingsPermissions) {
+    items.push(
+      {
+        href: `${studioBaseUrl}/group_configurations/course-v1:${courseId}`,
+        title: intl.formatMessage(messages['header.links.groupConfigurations']),
+      },
+    );
+  }
+  if (hasAdvancedSettingsAccess) {
     items.push(
       {
         href: `${studioBaseUrl}/settings/advanced/${courseId}`,

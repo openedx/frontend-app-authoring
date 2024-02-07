@@ -8,8 +8,8 @@ const baseProps = {
     formatMessage: jest.fn(),
   },
 };
-const contentProps = { ...baseProps, hasContentPermissions: true };
-const settingProps = { ...baseProps, hasSettingsPermissions: true };
+const contentProps = { ...baseProps, hasContentPermissions: true, hasOutlinePermissions: true };
+const settingProps = { ...baseProps, hasAdvancedSettingsAccess: true, hasSettingsPermissions: true };
 const toolsProps = { ...baseProps, hasToolsPermissions: true };
 
 describe('header utils', () => {
@@ -35,8 +35,18 @@ describe('header utils', () => {
         ...getConfig(),
         ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: 'true',
       });
-      const actualItems = getContentMenuItems({ ...baseProps, hasContentPermissions: false });
+      const actualItems = getContentMenuItems({ ...baseProps, hasContentPermissions: false, hasOutlinePermissions: false });
       expect(actualItems).toHaveLength(1);
+    });
+    it('should include Outline if outline permissions', () => {
+      process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN = 'false';
+      const actualItems = getContentMenuItems({ ...baseProps, hasContentPermissions: false, hasOutlinePermissions: true });
+      expect(actualItems).toHaveLength(1);
+    });
+    it('should include content sections if content permissions', () => {
+      process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN = 'false';
+      const actualItems = getContentMenuItems({ ...baseProps, hasContentPermissions: true, hasOutlinePermissions: false });
+      expect(actualItems).toHaveLength(3);
     });
   });
   describe('getSettingMenuItems', async () => {
@@ -44,9 +54,17 @@ describe('header utils', () => {
       const actualItems = getSettingMenuItems(settingProps);
       expect(actualItems).toHaveLength(6);
     });
-    it('should not include Advanced Settings option', () => {
-      const actualItems = getSettingMenuItems({ ...baseProps, hasSettingsPermissions: false });
+    it('should include Advanced Settings option, but not settings options', () => {
+      const actualItems = getSettingMenuItems({ ...baseProps, hasSettingsPermissions: false, hasAdvancedSettingsAccess: true });
+      expect(actualItems).toHaveLength(4);
+    });
+    it('should include settings, but not advanced settings', () => {
+      const actualItems = getSettingMenuItems({ ...baseProps, hasSettingsPermissions: true, hasAdvancedSettingsAccess: false });
       expect(actualItems).toHaveLength(5);
+    });
+    it('should only include default options', () => {
+      const actualItems = getSettingMenuItems({ ...baseProps, hasSettingsPermissions: false, hasAdvancedSettingsAccess: false });
+      expect(actualItems).toHaveLength(3);
     });
   });
   describe('getToolsMenuItems', async () => {
