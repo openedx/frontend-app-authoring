@@ -46,10 +46,15 @@ import configureModalMessages from './configure-modal/messages';
 import pasteButtonMessages from './paste-button/messages';
 import subsectionMessages from './subsection-card/messages';
 
+import { getUserPermissionsUrl, getUserPermissionsEnabledFlagUrl } from '../generic/data/api';
+import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
+
 let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
+const userId = 3;
+let userPermissionsData = { permissions: [] };
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
@@ -81,7 +86,7 @@ describe('<CourseOutline />', () => {
   beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
-        userId: 3,
+        userId,
         username: 'abc123',
         administrator: true,
         roles: [],
@@ -93,6 +98,14 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexMock);
+    axiosMock
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: false });
+    axiosMock
+      .onGet(getUserPermissionsUrl(courseId, userId))
+      .reply(200, userPermissionsData);
+    executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
     await executeThunk(fetchCourseOutlineIndexQuery(courseId), store.dispatch);
   });
 
@@ -103,6 +116,13 @@ describe('<CourseOutline />', () => {
       expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
       expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
     });
+  });
+
+  it('should render permissionDenied if incorrect permissions', async () => {
+    const { getByTestId } = render(<RootWrapper />);
+    axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+    expect(getByTestId('permissionDeniedAlert')).toBeVisible();
   });
 
   it('check reindex and render success alert is correctly', async () => {

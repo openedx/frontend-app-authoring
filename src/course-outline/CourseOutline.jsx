@@ -43,6 +43,9 @@ import ConfigureModal from './configure-modal/ConfigureModal';
 import DeleteModal from './delete-modal/DeleteModal';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
+import { useUserPermissions } from '../generic/hooks';
+import { getUserPermissionsEnabled } from '../generic/data/selectors';
+import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -100,6 +103,12 @@ const CourseOutline = ({ courseId }) => {
   } = useCourseOutline({ courseId });
 
   const [sections, setSections] = useState(sectionsList);
+  
+  const { checkPermission } = useUserPermissions();
+  const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
+  const hasOutlinePermissions = !userPermissionsEnabled || (
+    userPermissionsEnabled && (checkPermission('manage_libraries') || checkPermission('manage_content'))
+  );
 
   let initialSections = [...sectionsList];
 
@@ -233,6 +242,12 @@ const CourseOutline = ({ courseId }) => {
   useEffect(() => {
     setSections(sectionsList);
   }, [sectionsList]);
+
+  if (!hasOutlinePermissions) {
+    return (
+      <PermissionDeniedAlert />
+    );
+  }
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
