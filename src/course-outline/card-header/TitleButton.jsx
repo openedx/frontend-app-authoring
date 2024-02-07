@@ -4,6 +4,7 @@ import {
   Button,
   OverlayTrigger,
   Tooltip,
+  Truncate,
 } from '@edx/paragon';
 import {
   ArrowDropDown as ArrowDownIcon,
@@ -12,21 +13,20 @@ import {
 import messages from './messages';
 
 const TitleButton = ({
+  title,
   isExpanded,
   onTitleClick,
   namePrefix,
-  children,
 }) => {
   const intl = useIntl();
   const titleTooltipMessage = intl.formatMessage(messages.expandTooltip);
 
   return (
     <OverlayTrigger
-      placement="bottom-start"
+      placement="bottom"
       overlay={(
         <Tooltip
-          id={titleTooltipMessage}
-          className="item-card-header-tooltip"
+          id={`${title}-${titleTooltipMessage}`}
         >
           {titleTooltipMessage}
         </Tooltip>
@@ -39,21 +39,17 @@ const TitleButton = ({
         className="item-card-header__title-btn"
         onClick={onTitleClick}
       >
-        {children}
+        <Truncate lines={1} className={`${namePrefix}-card-title mb-0`}>{title}</Truncate>
       </Button>
     </OverlayTrigger>
   );
 };
 
-TitleButton.defaultProps = {
-  children: null,
-};
-
 TitleButton.propTypes = {
+  title: PropTypes.string.isRequired,
   isExpanded: PropTypes.bool.isRequired,
   onTitleClick: PropTypes.func.isRequired,
   namePrefix: PropTypes.string.isRequired,
-  children: PropTypes.node,
 };
 
 export default TitleButton;

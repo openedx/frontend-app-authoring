@@ -17,6 +17,7 @@ import {
 import { useEscapeClick } from '../../hooks';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
+import CardStatus from './CardStatus';
 import messages from './messages';
 
 const CardHeader = ({
@@ -93,7 +94,7 @@ const CardHeader = ({
       ref={cardHeaderRef}
     >
       {isFormOpen ? (
-        <Form.Group className="m-0">
+        <Form.Group className="m-0 w-75">
           <Form.Control
             data-testid={`${namePrefix}-edit-field`}
             ref={(e) => e && e.focus()}
@@ -111,22 +112,19 @@ const CardHeader = ({
           />
         </Form.Group>
       ) : (
-        titleComponent
-      )}
-      <div className="ml-auto d-flex">
-        {showDiscussionsEnabledBadge && (
-          <span className="px-2 py-1 align-self-center border-light-300 border rounded">
-            {intl.formatMessage(messages.discussionEnabledBadgeText)}
-          </span>
-        )}
-        {!isFormOpen && (
+        <>
+          {titleComponent}
           <IconButton
+            className="item-card-edit-icon"
             data-testid={`${namePrefix}-edit-button`}
             alt={intl.formatMessage(messages.altButtonEdit)}
             iconAs={EditIcon}
             onClick={onClickEdit}
           />
-        )}
+        </>
+      )}
+      <div className="ml-auto d-flex">
+        <CardStatus status={status} showDiscussionsEnabledBadge={showDiscussionsEnabledBadge} />
         <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
           <Dropdown.Toggle
             className="item-card-header__menu"

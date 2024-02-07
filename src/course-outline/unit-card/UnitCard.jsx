@@ -6,7 +6,6 @@ import { useToggle } from '@edx/paragon';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
-import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
 import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleLink from '../card-header/TitleLink';
 import XBlockStatus from '../xblock-status/XBlockStatus';
@@ -95,15 +94,10 @@ const UnitCard = ({
 
   const titleComponent = (
     <TitleLink
+      title={displayName}
       titleLink={getTitleLink(id)}
       namePrefix={namePrefix}
-    >
-      <BaseTitleWithStatusBadge
-        title={displayName}
-        status={unitStatus}
-        namePrefix={namePrefix}
-      />
-    </TitleLink>
+    />
   );
 
   useEffect(() => {

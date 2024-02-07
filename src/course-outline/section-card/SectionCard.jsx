@@ -11,7 +11,6 @@ import classNames from 'classnames';
 import { setCurrentItem, setCurrentSection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
-import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
 import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
@@ -123,16 +122,11 @@ const SectionCard = ({
 
   const titleComponent = (
     <TitleButton
+      title={displayName}
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-    >
-      <BaseTitleWithStatusBadge
-        title={displayName}
-        status=""
-        namePrefix={namePrefix}
-      />
-    </TitleButton>
+    />
   );
 
   const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);

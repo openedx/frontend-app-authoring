@@ -6,7 +6,6 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { ITEM_BADGE_STATUS } from '../constants';
 import CardHeader from './CardHeader';
-import BaseTitleWithStatusBadge from './BaseTitleWithStatusBadge';
 import TitleButton from './TitleButton';
 import messages from './messages';
 
@@ -51,17 +50,11 @@ const renderComponent = (props, entry = '/') => {
   const titleComponent = (
     <TitleButton
       isExpanded
+      title={cardHeaderProps.title}
       onTitleClick={onExpandMock}
       namePrefix={cardHeaderProps.namePrefix}
       {...props}
-    >
-      <BaseTitleWithStatusBadge
-        title={cardHeaderProps.title}
-        status={cardHeaderProps.status}
-        namePrefix={cardHeaderProps.namePrefix}
-        {...props}
-      />
-    </TitleButton>
+    />
   );
 
   return render(
@@ -83,7 +76,6 @@ describe('<CardHeader />', () => {
 
     expect(await findByText(cardHeaderProps.title)).toBeInTheDocument();
     expect(await findByTestId('section-card-header__expanded-btn')).toBeInTheDocument();
-    expect(await findByTestId('section-card-header__badge-status')).toBeInTheDocument();
     expect(await findByTestId('section-card-header__menu')).toBeInTheDocument();
     await waitFor(() => {
       expect(queryByTestId('edit field')).not.toBeInTheDocument();

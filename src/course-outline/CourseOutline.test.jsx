@@ -551,7 +551,7 @@ describe('<CourseOutline />', () => {
 
     const checkPublishBtn = async (item, element, elementName) => {
       expect(
-        await within(element).findByTestId(`${elementName}-card-header__badge-status`),
+        (await within(element).getAllByRole('status'))[0],
         `Failed for ${elementName}!`,
       ).toHaveTextContent(cardHeaderMessages.statusBadgeDraft.defaultMessage);
 
@@ -607,7 +607,7 @@ describe('<CourseOutline />', () => {
       await act(async () => fireEvent.click(confirmButton));
 
       expect(
-        await within(element).findByTestId(`${elementName}-card-header__badge-status`),
+        (await within(element).getAllByRole('status'))[0],
         `Failed for ${elementName}!`,
       ).toHaveTextContent(cardHeaderMessages.statusBadgePublishedNotLive.defaultMessage);
     };
