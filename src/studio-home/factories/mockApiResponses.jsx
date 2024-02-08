@@ -54,28 +54,6 @@ export const generateGetStudioCoursesApiResponse = () => ({
   previous: null,
   numPages: 2,
   results: {
-    archivedCourses: [
-      {
-        courseKey: 'course-v1:MachineLearning+123+2023',
-        displayName: 'Machine Learning',
-        lmsLink: '//localhost:18000/courses/course-v1:MachineLearning+123+2023/jump_to/block-v1:MachineLearning+123+2023+type@course+block@course',
-        number: '123',
-        org: 'LSE',
-        rerunLink: '/course_rerun/course-v1:MachineLearning+123+2023',
-        run: '2023',
-        url: '/course/course-v1:MachineLearning+123+2023',
-      },
-      {
-        courseKey: 'course-v1:Design+123+e.g.2025',
-        displayName: 'Design',
-        lmsLink: '//localhost:18000/courses/course-v1:Design+123+e.g.2025/jump_to/block-v1:Design+123+e.g.2025+type@course+block@course',
-        number: '123',
-        org: 'University of Cape Town',
-        rerunLink: '/course_rerun/course-v1:Design+123+e.g.2025',
-        run: 'e.g.2025',
-        url: '/course/course-v1:Design+123+e.g.2025',
-      },
-    ],
     courses: [
       {
         courseKey: 'course-v1:HarvardX+123+2023',
