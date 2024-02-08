@@ -45,7 +45,8 @@ const slice = createSlice({
       state.studioHomeData.libraries = libraries;
     },
     updateStudioHomeCoursesCustomParams: (state, { payload }) => {
-      state.studioHomeCoursesCustomParams = { ...state.studioHomeCoursesCustomParams, ...payload };
+      const { currentPage } = payload;
+      state.studioHomeCoursesCustomParams.currentPage = currentPage;
     },
   },
 });

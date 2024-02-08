@@ -72,7 +72,6 @@ const CardItem = ({
               <Dropdown.Item href={lmsLink}>
                 {intl.formatMessage(messages.viewLiveBtnText)}
               </Dropdown.Item>
-
               <Dropdown.Item href={cmsLink}>
                 {intl.formatMessage(messages.editStudioBtnText)}
               </Dropdown.Item>

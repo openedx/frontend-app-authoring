@@ -78,7 +78,6 @@ export const generateGetStudioCoursesApiResponse = () => ({
     ],
     inProcessCourseActions: [],
   },
-
 });
 
 export const generateGetStuioHomeLibrariesApiResponse = () => ({
