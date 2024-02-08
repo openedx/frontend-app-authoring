@@ -75,8 +75,8 @@ export async function getContentData(contentId) {
  * @returns {Promise<import("./types.mjs").ContentTaxonomyTagsData>}
  */
 export async function updateContentTaxonomyTags(contentId, taxonomyId, tags) {
-  let url = getContentTaxonomyTagsApiUrl(contentId);
-  url = `${url}&taxonomy=${taxonomyId}`;
-  const { data } = await getAuthenticatedHttpClient().put(url, { tags });
+  const url = getContentTaxonomyTagsApiUrl(contentId);
+  const params = { taxonomy: taxonomyId };
+  const { data } = await getAuthenticatedHttpClient().put(url, { tags }, { params });
   return camelCaseObject(data[contentId]);
 }
