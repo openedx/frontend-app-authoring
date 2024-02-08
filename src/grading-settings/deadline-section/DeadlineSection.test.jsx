@@ -22,6 +22,7 @@ const RootWrapper = (props = {}) => (
       setShowSavePrompt={jest.fn()}
       setGradingData={jest.fn()}
       setShowSuccessAlert={jest.fn()}
+      viewOnly={false}
       {...props}
     />
   </IntlProvider>
@@ -46,6 +47,7 @@ describe('<DeadlineSection />', () => {
       fireEvent.change(inputElement, { target: { value: '13:13' } });
       expect(testObj.gracePeriod.hours).toBe(13);
       expect(testObj.gracePeriod.minutes).toBe(13);
+      expect(inputElement.disabled).toEqual(false);
     });
   });
   it('checking deadline input value if grace Period equal null', async () => {
@@ -76,6 +78,13 @@ describe('<DeadlineSection />', () => {
       const inputElement = getByPlaceholderText(TIME_FORMAT.toUpperCase());
       fireEvent.change(inputElement, { target: { value: '32:70' } });
       expect(getByText(`Grace period must be specified in ${TIME_FORMAT.toUpperCase()} format.`)).toBeInTheDocument();
+    });
+  });
+  it('checking deadline input is disabled if viewOnly', async () => {
+    const { getByTestId } = render(<RootWrapper viewOnly={true} />);
+    await waitFor(() => {
+      const inputElement = getByTestId('deadline-period-input');
+      expect(inputElement.disabled).toEqual(true);
     });
   });
 });

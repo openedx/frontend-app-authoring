@@ -9,7 +9,7 @@ import { formatTime, timerValidation } from './utils';
 import messages from './messages';
 
 const DeadlineSection = ({
-  intl, setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert,
+  intl, setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert, viewOnly
 }) => {
   const timeStampValue = gracePeriod
     ? gracePeriod.hours && `${formatTime(gracePeriod.hours)}:${formatTime(gracePeriod.minutes)}`
@@ -52,6 +52,7 @@ const DeadlineSection = ({
         value={newDeadlineValue}
         onChange={handleDeadlineChange}
         placeholder={TIME_FORMAT.toUpperCase()}
+        disabled={viewOnly}
       />
       <Form.Control.Feedback className="grading-description">
         {intl.formatMessage(messages.gracePeriodOnDeadlineDescription)}
@@ -78,6 +79,7 @@ DeadlineSection.propTypes = {
     hours: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     minutes: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }),
+  viewOnly: PropTypes.bool.isRequired,
 };
 
 export default injectIntl(DeadlineSection);

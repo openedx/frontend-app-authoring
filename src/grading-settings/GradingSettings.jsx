@@ -51,9 +51,9 @@ const GradingSettings = ({ intl, courseId }) => {
   const hasGradingPermissions = !userPermissionsEnabled || (
     userPermissionsEnabled && (checkPermission('manage_course_settings') || checkPermission('view_course_settings'))
   );
-  // const viewOnly = !userPermissionsEnabled || (
-  //   userPermissionsEnabled && checkPermission('view_course_settings') && !checkPermission('manage_course_settings')
-  // );
+  const viewOnly = !userPermissionsEnabled || (
+    userPermissionsEnabled && checkPermission('view_course_settings') && !checkPermission('manage_course_settings')
+  );
 
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
@@ -173,6 +173,7 @@ const GradingSettings = ({ intl, courseId }) => {
                       resetDataRef={resetDataRef}
                       setOverrideInternetConnectionAlert={setOverrideInternetConnectionAlert}
                       setEligibleGrade={setEligibleGrade}
+                      viewOnly={viewOnly}
                     />
                   </section>
                   {courseSettingsData.creditEligibilityEnabled && courseSettingsData.isCreditCourse && (
@@ -187,6 +188,7 @@ const GradingSettings = ({ intl, courseId }) => {
                         minimumGradeCredit={minimumGradeCredit}
                         setGradingData={setGradingData}
                         setShowSuccessAlert={setShowSuccessAlert}
+                        viewOnly={viewOnly}
                       />
                     </section>
                   )}
@@ -200,6 +202,7 @@ const GradingSettings = ({ intl, courseId }) => {
                       gracePeriod={gracePeriod}
                       setGradingData={setGradingData}
                       setShowSuccessAlert={setShowSuccessAlert}
+                      viewOnly={viewOnly}
                     />
                   </section>
                   <section>
@@ -218,11 +221,13 @@ const GradingSettings = ({ intl, courseId }) => {
                       setGradingData={setGradingData}
                       courseAssignmentLists={courseAssignmentLists}
                       setShowSuccessAlert={setShowSuccessAlert}
+                      viewOnly={viewOnly}
                     />
                     <Button
                       variant="primary"
                       iconBefore={IconAdd}
                       onClick={handleAddAssignment}
+                      disabled={viewOnly}
                     >
                       {intl.formatMessage(messages.addNewAssignmentTypeBtn)}
                     </Button>

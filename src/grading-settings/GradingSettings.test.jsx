@@ -20,7 +20,7 @@ const courseId = '123';
 const userId = 3;
 let axiosMock;
 let store;
-let userPermissionsData = { permissions: [] };
+const userPermissionsData = { permissions: [] };
 
 const RootWrapper = () => (
   <AppProvider store={store}>
@@ -56,6 +56,17 @@ describe('<GradingSettings />', () => {
     executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
   });
 
+  afterEach(() => {
+    axiosMock
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: false });
+    axiosMock
+      .onGet(getUserPermissionsUrl(courseId, userId))
+      .reply(200, userPermissionsData);
+    executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+  });
+
   it('should render without errors', async () => {
     const { getByText, getAllByText } = render(<RootWrapper />);
     await waitFor(() => {
@@ -66,6 +77,32 @@ describe('<GradingSettings />', () => {
       expect(getByText(messages.policy.defaultMessage)).toBeInTheDocument();
       expect(getByText(messages.policiesDescription.defaultMessage)).toBeInTheDocument();
     });
+  });
+
+  it('should render without errors if access controlled by permissions', async () => {
+    const { getByText, getAllByText, getAllByTestId } = render(<RootWrapper />);
+    axiosMock
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: true });
+    const permissionsData = { permissions: ['manage_course_settings'] }
+    axiosMock
+      .onGet(getUserPermissionsUrl(courseId, userId))
+      .reply(200, permissionsData);
+    await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+    await waitFor(() => {
+      const gradingElements = getAllByText(messages.headingTitle.defaultMessage);
+      const gradingTitle = gradingElements[0];
+      const segmentButton = getAllByTestId('grading-scale-btn-add-segment');
+      expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+      expect(gradingTitle).toBeInTheDocument();
+      expect(getByText(messages.policy.defaultMessage)).toBeInTheDocument();
+      expect(getByText(messages.policiesDescription.defaultMessage)).toBeInTheDocument();
+      expect(segmentButton.length).toEqual(1);
+      expect(segmentButton[0]).toBeInTheDocument();
+      expect(segmentButton[0].disabled).toEqual(false);
+    });
+
   });
 
   it('should render permissionDenied if incorrect permissions', async () => {
@@ -108,6 +145,25 @@ describe('<GradingSettings />', () => {
       expect(saveBtn).toBeInTheDocument();
       fireEvent.click(saveBtn);
       expect(getByText(messages.buttonSavingText.defaultMessage)).toBeInTheDocument();
+    });
+  });
+
+  it('should show disabled button to update segments', async () => {
+    const { getAllByTestId } = render(<RootWrapper />);
+    axiosMock
+      .onGet(getUserPermissionsEnabledFlagUrl)
+      .reply(200, { enabled: true });
+    const permissionsData = { permissions: ['view_course_settings'] }
+    axiosMock
+      .onGet(getUserPermissionsUrl(courseId, userId))
+      .reply(200, permissionsData);
+    await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+    await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+    await waitFor(() => {
+      const segmentButton = getAllByTestId('grading-scale-btn-add-segment');
+      expect(segmentButton.length).toEqual(1);
+      expect(segmentButton[0]).toBeInTheDocument();
+      expect(segmentButton[0].disabled).toEqual(true);
     });
   });
 });

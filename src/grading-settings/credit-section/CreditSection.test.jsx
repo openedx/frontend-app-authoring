@@ -18,6 +18,7 @@ const RootWrapper = (props = {}) => (
       minimumGradeCredit={0.1}
       setGradingData={jest.fn()}
       setShowSuccessAlert={jest.fn()}
+      viewOnly={false}
       {...props}
     />
   </IntlProvider>
@@ -38,6 +39,14 @@ describe('<CreditSection />', () => {
       expect(inputElement.value).toBe('10');
       fireEvent.change(inputElement, { target: { value: '2' } });
       expect(testObj.minimumGradeCredit).toBe(0.02);
+      expect(inputElement.disabled).toBe(false);
     });
   });
+  it('should disable the fields if viewOnly', async () => {
+    const { getByTestId } = render(<RootWrapper viewOnly={true} />);
+    await waitFor(() => {
+      const inputElement = getByTestId('minimum-grade-credit-input');
+      expect(inputElement.disabled).toBe(true);
+    });
+  })
 });
