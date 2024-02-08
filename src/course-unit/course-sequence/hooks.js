@@ -43,8 +43,8 @@ export function useSequenceNavigationMetadata(currentSequenceId, currentUnitId) 
     const nextUnitId = sequence.unitIds[nextIndex];
     nextLink = `/course/${courseId}/container/${nextUnitId}/${currentSequenceId}`;
   } else if (nextSequenceId) {
-    const nextUnitId = decodeURIComponent(nextUrl);
-    nextLink = `/course/${courseId}${nextUnitId}/${nextSequenceId}`;
+    const pathToNextUnit = decodeURIComponent(nextUrl);
+    nextLink = `/course/${courseId}${pathToNextUnit}/${nextSequenceId}`;
   }
 
   let previousLink;
@@ -54,8 +54,8 @@ export function useSequenceNavigationMetadata(currentSequenceId, currentUnitId) 
     const previousUnitId = sequence.unitIds[previousIndex];
     previousLink = `/course/${courseId}/container/${previousUnitId}/${currentSequenceId}`;
   } else if (previousSequenceId) {
-    const previousUnitId = decodeURIComponent(prevUrl);
-    previousLink = `/course/${courseId}${previousUnitId}/${previousSequenceId}`;
+    const pathToPreviousUnit = decodeURIComponent(prevUrl);
+    previousLink = `/course/${courseId}${pathToPreviousUnit}/${previousSequenceId}`;
   }
 
   return {
