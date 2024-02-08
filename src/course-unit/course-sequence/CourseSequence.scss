@@ -1,0 +1,83 @@
+.sequence-container {
+  margin-bottom: 1.75rem;
+  width: 100%;
+}
+
+.sequence-load-failure-msg {
+  max-width: 30em;
+}
+
+.sequence-navigation {
+  .btn {
+    flex-grow: 1;
+    position: relative;
+    white-space: nowrap;
+    color: $gray-700;
+
+    &.btn-primary {
+      color: $white;
+    }
+
+    &:focus {
+      z-index: 1;
+    }
+  }
+
+  .sequence-navigation-tabs-wrapper {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+
+  .sequence-navigation-tabs-container {
+    flex: 1 1 100%;
+    // min-width 0 prevents the flex item from overflowing the parent container
+    // https://dev.to/martyhimmel/quick-tip-to-stop-flexbox-from-overflowing-peb
+    min-width: 0;
+  }
+
+  .sequence-navigation-tabs .btn:not(.sequence-navigation-tabs-new-unit-btn) {
+    flex-basis: 100%;
+    min-width: 2rem;
+  }
+
+  .sequence-navigation-dropdown {
+    .dropdown-menu .btn {
+      flex-basis: 100%;
+      min-width: 4rem;
+
+      .unit-title {
+        flex-grow: 1;
+        text-align: left;
+        overflow: hidden;
+        min-width: 0;
+        margin: map-get($spacers, 0) $spacer;
+        text-overflow: ellipsis;
+      }
+
+      &.btn-primary {
+        background-color: $primary-500;
+        color: $white;
+      }
+    }
+  }
+
+  .sequence-navigation-prev-btn,
+  .sequence-navigation-next-btn,
+  .sequence-navigation-tabs-new-unit-btn {
+    min-width: 12.5rem;
+  }
+
+  .sequence-navigation-prev-btn,
+  .sequence-navigation-next-btn {
+    @media (max-width: -1 + map-get($grid-breakpoints, "sm")) {
+      min-width: fit-content;
+      padding-top: $spacer;
+      padding-bottom: $spacer;
+    }
+
+    @media (min-width: map-get($grid-breakpoints, "sm")) {
+      padding-left: map-get($spacers, 4\.5);
+      padding-right: map-get($spacers, 4\.5);
+    }
+  }
+}

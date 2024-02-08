@@ -982,5 +982,12 @@
   "course-authoring.course-unit.heading.button.edit.alt": "Edit",
   "course-authoring.course-unit.heading.button.edit.aria-label": "Edit field",
   "course-authoring.course-unit.heading.button.settings.alt": "Settings",
-  "course-authoring.course-unit.general.alert.error.description": "Unable to {actionName} {type}. Please try again."
+  "course-authoring.course-unit.general.alert.error.description": "Unable to {actionName} {type}. Please try again.",
+  "course-authoring.course-unit.prev-btn-text": "Previous",
+  "course-authoring.course-unit.next-btn-text": "Next",
+  "course-authoring.course-unit.new-unit-btn-text": "New unit",
+  "course-authoring.course-unit.sequence-nav-label-text": "Sequence navigation",
+  "course-authoring.course-unit.sequence.load.failure": "There was an error loading this course.",
+  "course-authoring.course-unit.sequence.no.content": "There is no content here.",
+  "course-authoring.course-unit.sequence.navigation.menu": "{current} of {total}"
 }

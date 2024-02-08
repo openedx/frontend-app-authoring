@@ -19,6 +19,7 @@ import { CourseUpdates } from './course-updates';
 import { CourseUnit } from './course-unit';
 import CourseExportPage from './export-page/CourseExportPage';
 import CourseImportPage from './import-page/CourseImportPage';
+import { DECODED_ROUTES } from './constants';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -70,10 +71,12 @@ const CourseAuthoringRoutes = () => {
           path="custom-pages/*"
           element={<PageWrap><CustomPages courseId={courseId} /></PageWrap>}
         />
-        <Route
-          path="/container/:blockId"
-          element={<PageWrap><CourseUnit courseId={courseId} /></PageWrap>}
-        />
+        {DECODED_ROUTES.COURSE_UNIT.map((path) => (
+          <Route
+            path={path}
+            element={<PageWrap><CourseUnit courseId={courseId} /></PageWrap>}
+          />
+        ))}
         <Route
           path="editor/course-videos/:blockId"
           element={getConfig().ENABLE_NEW_EDITOR_PAGES === 'true' ? <PageWrap><VideoSelectorContainer courseId={courseId} /></PageWrap> : null}
