@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import {
   Button,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from './messages';

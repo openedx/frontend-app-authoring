@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Hyperlink, Image, Container } from '@edx/paragon';
+import { Hyperlink, Image, Container } from '@openedx/paragon';
 import {
   FormattedMessage,
   injectIntl,

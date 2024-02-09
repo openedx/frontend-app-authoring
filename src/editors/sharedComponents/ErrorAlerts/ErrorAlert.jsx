@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Alert } from '@edx/paragon';
-import { Error } from '@edx/paragon/icons';
+import { Alert } from '@openedx/paragon';
+import { Error } from '@openedx/paragon/icons';
 
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import messages from './messages';

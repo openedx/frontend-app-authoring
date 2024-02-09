@@ -42,9 +42,9 @@ This guide presumes you have a functioning devstack.
         **********************************************************************************************/
 
         // { moduleName: '@edx/brand', dir: '../brand-openedx' }, // replace with your brand checkout
-        // { moduleName: '@edx/paragon/scss/core', dir: '../paragon', dist: 'scss/core' },
-        // { moduleName: '@edx/paragon/icons', dir: '../paragon', dist: 'icons' },
-        // { moduleName: '@edx/paragon', dir: '../paragon', dist: 'dist' },
+        // { moduleName: '@openedx/paragon/scss/core', dir: '../paragon', dist: 'scss/core' },
+        // { moduleName: '@openedx/paragon/icons', dir: '../paragon', dist: 'icons' },
+        // { moduleName: '@openedx/paragon', dir: '../paragon', dist: 'dist' },
         // { moduleName: '@edx/frontend-platform', dir: '../frontend-platform', dist: 'dist' },
         // NOTE: This is the relative path of the frontend-lib-content-components in the frontend-app-course-authoring container.
         { moduleName: '@edx/frontend-lib-content-components', dir: '../src/frontend-lib-content-components', dist: 'dist' },

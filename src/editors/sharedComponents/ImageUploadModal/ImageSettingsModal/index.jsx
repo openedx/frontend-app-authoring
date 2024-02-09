@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Button, Image } from '@edx/paragon';
-import { ArrowBackIos } from '@edx/paragon/icons';
+import { Button, Image } from '@openedx/paragon';
+import { ArrowBackIos } from '@openedx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import './index.scss';

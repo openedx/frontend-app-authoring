@@ -9,7 +9,7 @@ import {
 import {
   Hyperlink,
   Form,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import { selectors, actions } from '../../../../../../data/redux';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';

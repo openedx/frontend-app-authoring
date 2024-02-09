@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Button, ButtonGroup, Hyperlink } from '@edx/paragon';
+import { Button, ButtonGroup, Hyperlink } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import SettingsOption from '../SettingsOption';

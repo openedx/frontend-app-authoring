@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { Col, Form } from '@edx/paragon';
+import { Col, Form } from '@openedx/paragon';
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { actions, selectors } from '../../../../../../data/redux';

@@ -3,7 +3,7 @@ import _ from 'lodash-es';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Form, Hyperlink } from '@edx/paragon';
+import { Form, Hyperlink } from '@openedx/paragon';
 import { selectors } from '../../../../../../data/redux';
 import SettingsOption from '../SettingsOption';
 import messages from '../messages';

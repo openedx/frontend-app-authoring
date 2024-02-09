@@ -4,8 +4,8 @@ import {
   IconButton,
   Button,
   ActionRow,
-} from '@edx/paragon';
-import { Add, ExpandLess, ExpandMore } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Add, ExpandLess, ExpandMore } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import { sortBy } from 'lodash-es';
 // eslint-disable-next-line import/no-unresolved

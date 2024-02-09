@@ -20,7 +20,7 @@ jest.mock('../../SettingsOption', () => function mockSettingsOption({ children, 
   return <div className="SettingsOption" data-testid="Settings-Option">{summary}{children}</div>;
 });
 
-jest.mock('@edx/paragon', () => ({
+jest.mock('@openedx/paragon', () => ({
   Alert: jest.fn(({ children }) => (
     <div className="PGN-Alert">{children}</div>)),
   Form: {

@@ -10,8 +10,8 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/extend-expect';
 import TypeaheadDropdown from '.';
 
-jest.unmock('@edx/paragon');
-jest.unmock('@edx/paragon/icons');
+jest.unmock('@openedx/paragon');
+jest.unmock('@openedx/paragon/icons');
 
 const defaultProps = {
   as: 'input',

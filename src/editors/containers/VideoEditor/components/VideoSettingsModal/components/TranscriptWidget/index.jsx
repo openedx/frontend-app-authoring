@@ -14,8 +14,8 @@ import {
   OverlayTrigger,
   Tooltip,
   ActionRow,
-} from '@edx/paragon';
-import { Add, InfoOutline } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Add, InfoOutline } from '@openedx/paragon/icons';
 
 import { actions, selectors } from '../../../../../../data/redux';
 import messages from './messages';

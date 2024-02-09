@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
-import { Alert, Form } from '@edx/paragon';
+import { Alert, Form } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import SettingsOption from '../../SettingsOption';
 import messages from './messages';

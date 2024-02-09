@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {
   ActionRow,
   ModalDialog,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 export const BaseModal = ({
   isOpen,

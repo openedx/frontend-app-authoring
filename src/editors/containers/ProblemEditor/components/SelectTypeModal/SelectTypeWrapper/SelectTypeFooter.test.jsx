@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
-import { Button } from '@edx/paragon';
+import { Button } from '@openedx/paragon';
 import { formatMessage } from '../../../../../../testUtils';
 import * as module from './SelectTypeFooter';
 import hooks from '../hooks';

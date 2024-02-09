@@ -1,5 +1,5 @@
 import React from 'react';
-import { Collapsible, Card } from '@edx/paragon';
+import { Collapsible, Card } from '@openedx/paragon';
 import {
   bool, string, node,
 } from 'prop-types';

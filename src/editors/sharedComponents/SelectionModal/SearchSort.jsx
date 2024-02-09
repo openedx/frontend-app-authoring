@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 import {
   ActionRow, Dropdown, Form, Icon, IconButton, SelectMenu, MenuItem,
-} from '@edx/paragon';
-import { Check, Close, Search } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Check, Close, Search } from '@openedx/paragon/icons';
 import {
   FormattedMessage,
   useIntl,

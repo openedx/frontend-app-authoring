@@ -4,7 +4,7 @@ import {
   FormattedMessage,
   injectIntl,
 } from '@edx/frontend-platform/i18n';
-import { Icon } from '@edx/paragon';
+import { Icon } from '@openedx/paragon';
 import {
   Attribution,
   Copyright,
@@ -12,7 +12,7 @@ import {
   Nd,
   Nc,
   Sa,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 import messages from './messages';
 import { LicenseTypes } from '../../../../../../data/constants/licenses';

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Icon } from '@edx/paragon';
+import { Icon } from '@openedx/paragon';
 import PropTypes from 'prop-types';
-import { Check } from '@edx/paragon/icons';
+import { Check } from '@openedx/paragon/icons';
 import { typeRowHooks } from '../hooks';
 
 import Button from '../../../../../../sharedComponents/Button';

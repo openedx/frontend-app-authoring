@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import * as paragon from '@edx/paragon';
-import * as icons from '@edx/paragon/icons';
+import * as paragon from '@openedx/paragon';
+import * as icons from '@openedx/paragon/icons';
 
 import {
   fireEvent, render, screen, waitFor,

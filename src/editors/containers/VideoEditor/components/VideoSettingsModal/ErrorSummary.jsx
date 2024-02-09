@@ -1,8 +1,8 @@
 import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
-import { Alert } from '@edx/paragon';
-import { InfoOutline } from '@edx/paragon/icons';
+import { Alert } from '@openedx/paragon';
+import { InfoOutline } from '@openedx/paragon/icons';
 
 import messages from './components/messages';
 import { ErrorContext } from '../../hooks';

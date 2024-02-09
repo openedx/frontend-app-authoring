@@ -12,16 +12,16 @@
   "dependencies": {
     "@edx/brand": "npm:@edx/brand-edx.org@^2.0.3",
     "@edx/browserslist-config": "1.0.0",
-    "@edx/frontend-build": "12.8.27",
+    "@openedx/frontend-build": "13.0.27",
     "@edx/frontend-lib-content-components": "file:..",
-    "@edx/frontend-platform": "4.2.0",
-    "@edx/paragon": "^20.32.0",
+    "@edx/frontend-platform": "7.0.1",
+    "@openedx/paragon": "^22.0.0",
     "core-js": "^3.21.1",
     "dotenv": "^16.0.0",
     "prop-types": "^15.5.10",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
-    "react-intl": "^5.24.6",
+    "react-intl": "^6.6.2",
     "react-redux": "^7.1.1",
     "regenerator-runtime": "^0.13.9"
   }

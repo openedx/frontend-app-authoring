@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Image } from '@edx/paragon';
+import { Image } from '@openedx/paragon';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../data/redux';
 import hooks from './hooks';

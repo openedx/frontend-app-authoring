@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import {
   Scrollable, SelectableBox, Spinner,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import {
   FormattedMessage,

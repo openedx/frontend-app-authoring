@@ -11,8 +11,8 @@ import {
   Form,
   Icon,
   IconButtonWithTooltip,
-} from '@edx/paragon';
-import { DeleteOutline } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { DeleteOutline } from '@openedx/paragon/icons';
 
 import { actions, selectors } from '../../../../../../data/redux';
 import hooks from './hooks';

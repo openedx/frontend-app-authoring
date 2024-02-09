@@ -1,7 +1,7 @@
 import React from 'react';
 import { string, node, arrayOf } from 'prop-types';
-import { Button as ParagonButton } from '@edx/paragon';
-import { Add } from '@edx/paragon/icons';
+import { Button as ParagonButton } from '@openedx/paragon';
+import { Add } from '@openedx/paragon/icons';
 
 import { getButtonProps } from './hooks';
 import './index.scss';

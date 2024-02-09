@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { IconButton } from '@edx/paragon';
+import { IconButton } from '@openedx/paragon';
 import * as module from '.';
 import { handleCancel } from '../../../../EditorContainer/hooks';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Spinner } from '@edx/paragon';
+import { Spinner } from '@openedx/paragon';
 import './index.scss';
 import messages from './messages';
 import { VideoUploader } from './VideoUploader';

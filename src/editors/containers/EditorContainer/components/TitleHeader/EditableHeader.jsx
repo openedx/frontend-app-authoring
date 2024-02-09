@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Form } from '@edx/paragon';
+import { Form } from '@openedx/paragon';
 import EditConfirmationButtons from './EditConfirmationButtons';
 
 export const EditableHeader = ({

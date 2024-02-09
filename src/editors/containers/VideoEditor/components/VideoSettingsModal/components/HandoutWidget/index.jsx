@@ -9,8 +9,8 @@ import {
   IconButton,
   Dropdown,
   ActionRow,
-} from '@edx/paragon';
-import { FileUpload, MoreHoriz } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { FileUpload, MoreHoriz } from '@openedx/paragon/icons';
 import {
   FormattedMessage,
   injectIntl,

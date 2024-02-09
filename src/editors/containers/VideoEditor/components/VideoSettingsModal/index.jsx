@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Icon } from '@edx/paragon';
-import { ArrowBackIos } from '@edx/paragon/icons';
+import { Button, Icon } from '@openedx/paragon';
+import { ArrowBackIos } from '@openedx/paragon/icons';
 import {
   FormattedMessage,
   injectIntl,

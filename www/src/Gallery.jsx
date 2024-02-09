@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { Form } from '@edx/paragon';
+import { Form } from '@openedx/paragon';
 // eslint-disable-next-line
 import { EditorPage } from '@edx/frontend-lib-content-components';
 // eslint-disable-next-line

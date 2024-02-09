@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { Button, IconButton } from '@edx/paragon';
+import { Button, IconButton } from '@openedx/paragon';
 
 import { thunkActions } from '../../../../../../data/redux';
 import * as module from './ImportTranscriptCard';

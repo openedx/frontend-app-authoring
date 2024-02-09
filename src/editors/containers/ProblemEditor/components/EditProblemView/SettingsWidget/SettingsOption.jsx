@@ -1,6 +1,6 @@
 import React from 'react';
-import { Collapsible, Icon, Card } from '@edx/paragon';
-import { KeyboardArrowUp, KeyboardArrowDown } from '@edx/paragon/icons';
+import { Collapsible, Icon, Card } from '@openedx/paragon';
+import { KeyboardArrowUp, KeyboardArrowDown } from '@openedx/paragon/icons';
 import {
   arrayOf,
   shape,

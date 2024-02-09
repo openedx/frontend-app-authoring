@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { Spinner } from '@edx/paragon';
+import { Spinner } from '@openedx/paragon';
 import { thunkActions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 import { ProblemEditor, mapStateToProps, mapDispatchToProps } from '.';

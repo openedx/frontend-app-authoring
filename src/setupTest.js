@@ -56,7 +56,7 @@ jest.mock('@edx/frontend-platform/i18n', () => {
   };
 });
 
-jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedComponents({
+jest.mock('@openedx/paragon', () => jest.requireActual('testUtils').mockNestedComponents({
   Alert: {
     Heading: 'Alert.Heading',
   },
@@ -127,7 +127,7 @@ jest.mock('@edx/paragon', () => jest.requireActual('testUtils').mockNestedCompon
   Truncate: 'Truncate',
 }));
 
-jest.mock('@edx/paragon/icons', () => ({
+jest.mock('@openedx/paragon/icons', () => ({
   Close: jest.fn().mockName('icons.Close'),
   Edit: jest.fn().mockName('icons.Edit'),
   Locked: jest.fn().mockName('icons.Locked'),

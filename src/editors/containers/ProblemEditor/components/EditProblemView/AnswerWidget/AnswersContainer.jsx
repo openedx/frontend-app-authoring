@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
-import { Dropdown, Icon } from '@edx/paragon';
-import { Add } from '@edx/paragon/icons';
+import { Dropdown, Icon } from '@openedx/paragon';
+import { Add } from '@openedx/paragon/icons';
 import messages from './messages';
 import { useAnswerContainer, isSingleAnswerProblem } from './hooks';
 import { actions, selectors } from '../../../../../data/redux';

@@ -5,8 +5,8 @@ import {
   Container,
   Icon,
   IconButton,
-} from '@edx/paragon';
-import { DeleteOutline } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { DeleteOutline } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import messages from '../messages';
 import ExpandableTextArea from '../../../../../../sharedComponents/ExpandableTextArea';

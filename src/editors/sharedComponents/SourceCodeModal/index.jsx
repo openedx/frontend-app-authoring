@@ -7,7 +7,7 @@ import {
   intlShape,
 } from '@edx/frontend-platform/i18n';
 
-import { Button } from '@edx/paragon';
+import { Button } from '@openedx/paragon';
 import messages from './messages';
 import hooks from './hooks';
 import BaseModal from '../BaseModal';

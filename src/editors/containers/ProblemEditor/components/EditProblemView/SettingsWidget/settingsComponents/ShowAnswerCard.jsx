@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
-import { Form, Hyperlink } from '@edx/paragon';
+import { Form, Hyperlink } from '@openedx/paragon';
 import SettingsOption from '../SettingsOption';
 import { ShowAnswerTypes, ShowAnswerTypesKeys } from '../../../../../../data/constants/problem';
 import { selectors } from '../../../../../../data/redux';

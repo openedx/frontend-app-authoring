@@ -8,7 +8,7 @@ import {
 import {
   Stack,
   Hyperlink,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import { LicenseTypes } from '../../../../../../data/constants/licenses';
 

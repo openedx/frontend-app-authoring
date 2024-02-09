@@ -9,8 +9,8 @@ import {
   Button,
   Tooltip,
   OverlayTrigger,
-} from '@edx/paragon';
-import { DeleteOutline, InfoOutline, Add } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { DeleteOutline, InfoOutline, Add } from '@openedx/paragon/icons';
 import {
   FormattedMessage,
   injectIntl,

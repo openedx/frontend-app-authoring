@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 
 import {
   Icon, ModalDialog, IconButton, Button,
-} from '@edx/paragon';
-import { Close } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Close } from '@openedx/paragon/icons';
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import BaseModal from '../../sharedComponents/BaseModal';

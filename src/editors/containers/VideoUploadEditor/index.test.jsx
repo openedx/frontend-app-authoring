@@ -9,8 +9,8 @@ import VideoUploadEditor from '.';
 
 jest.unmock('react-redux');
 jest.unmock('@edx/frontend-platform/i18n');
-jest.unmock('@edx/paragon');
-jest.unmock('@edx/paragon/icons');
+jest.unmock('@openedx/paragon');
+jest.unmock('@openedx/paragon/icons');
 
 describe('VideoUploadEditor', () => {
   let store;

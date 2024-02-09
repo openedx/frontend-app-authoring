@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Button, Stack } from '@edx/paragon';
-import { Add } from '@edx/paragon/icons';
+import { Button, Stack } from '@openedx/paragon';
+import { Add } from '@openedx/paragon/icons';
 import {
   FormattedMessage,
   useIntl,

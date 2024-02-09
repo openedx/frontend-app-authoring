@@ -5,7 +5,7 @@ import {
   Badge,
   Image,
   SelectableBox,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { FormattedMessage, FormattedDate, FormattedTime } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';

@@ -9,8 +9,8 @@ import * as module from '.';
 jest.mock('./hooks', () => ({
   localTitleHooks: jest.fn(),
 }));
-jest.mock('@edx/paragon', () => ({
-  ...jest.requireActual('@edx/paragon'),
+jest.mock('@openedx/paragon', () => ({
+  ...jest.requireActual('@openedx/paragon'),
   Truncate: ({ children }) => <div>{children}</div>, // eslint-disable-line react/prop-types
   IconButton: 'IconButton',
   Icon: 'Icon',

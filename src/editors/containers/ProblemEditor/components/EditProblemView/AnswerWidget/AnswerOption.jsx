@@ -6,8 +6,8 @@ import {
   Icon,
   IconButton,
   Form,
-} from '@edx/paragon';
-import { FeedbackOutline, DeleteOutline } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { FeedbackOutline, DeleteOutline } from '@openedx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { selectors } from '../../../../../data/redux';

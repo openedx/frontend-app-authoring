@@ -9,8 +9,8 @@ import {
 import {
   Button,
   Stack,
-} from '@edx/paragon';
-import { Add } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Add } from '@openedx/paragon/icons';
 
 import { actions, selectors } from '../../../../../../data/redux';
 import hooks from './hooks';

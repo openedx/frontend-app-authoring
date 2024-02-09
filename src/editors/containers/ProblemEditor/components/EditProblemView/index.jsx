@@ -8,7 +8,7 @@ import {
   Button,
   AlertModal,
   ActionRow,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import AnswerWidget from './AnswerWidget';
 import SettingsWidget from './SettingsWidget';
 import QuestionWidget from './QuestionWidget';

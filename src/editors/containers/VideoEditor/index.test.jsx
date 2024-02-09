@@ -31,8 +31,8 @@ jest.mock('../../data/redux', () => ({
   },
 }));
 
-jest.mock('@edx/paragon', () => ({
-  ...jest.requireActual('@edx/paragon'),
+jest.mock('@openedx/paragon', () => ({
+  ...jest.requireActual('@openedx/paragon'),
   Spinner: 'Spinner',
 }));
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Row, Stack } from '@edx/paragon';
+import { Row, Stack } from '@openedx/paragon';
 import ProblemTypeSelect from './content/ProblemTypeSelect';
 import Preview from './content/Preview';
 import AdvanceTypeSelect from './content/AdvanceTypeSelect';

@@ -9,7 +9,7 @@ import {
   ModalDialog,
   Toast,
   Hyperlink,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { selectors } from '../../../../data/redux';
 import { blockTypes } from '../../../../data/constants/app';

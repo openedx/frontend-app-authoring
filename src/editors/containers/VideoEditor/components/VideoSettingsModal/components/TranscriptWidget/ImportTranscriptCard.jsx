@@ -9,8 +9,8 @@ import {
   Icon,
   IconButton,
   Stack,
-} from '@edx/paragon';
-import { Close } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Close } from '@openedx/paragon/icons';
 
 import messages from './messages';
 import { thunkActions } from '../../../../../../data/redux';

@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Collapsible, Icon, IconButton } from '@edx/paragon';
-import { ExpandLess, ExpandMore, InfoOutline } from '@edx/paragon/icons';
+import { Collapsible, Icon, IconButton } from '@openedx/paragon';
+import { ExpandLess, ExpandMore, InfoOutline } from '@openedx/paragon/icons';
 
 import messages from './messages';
 

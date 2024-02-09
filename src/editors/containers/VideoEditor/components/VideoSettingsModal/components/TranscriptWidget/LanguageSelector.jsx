@@ -6,9 +6,9 @@ import {
   Dropdown,
   Button,
   Icon,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
-import { Check } from '@edx/paragon/icons';
+import { Check } from '@openedx/paragon/icons';
 import { connect, useDispatch } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { thunkActions, selectors } from '../../../../../../data/redux';

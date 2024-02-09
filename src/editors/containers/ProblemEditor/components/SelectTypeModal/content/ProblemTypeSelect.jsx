@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Container, SelectableBox } from '@edx/paragon';
+import { Button, Container, SelectableBox } from '@openedx/paragon';
 import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
 import { ProblemTypes, ProblemTypeKeys, AdvanceProblemKeys } from '../../../../../data/constants/problem';
 import messages from './messages';

@@ -2,8 +2,8 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { Icon, IconButton, Truncate } from '@edx/paragon';
-import { EditOutline } from '@edx/paragon/icons';
+import { Icon, IconButton, Truncate } from '@openedx/paragon';
+import { EditOutline } from '@openedx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { selectors } from '../../../../data/redux';

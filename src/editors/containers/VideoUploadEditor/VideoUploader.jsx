@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Icon, IconButton, Dropzone, InputGroup, FormControl,
-} from '@edx/paragon';
-import { ArrowForward, FileUpload, Close } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { ArrowForward, FileUpload, Close } from '@openedx/paragon/icons';
 import { useDispatch } from 'react-redux';
 import { thunkActions } from '../../data/redux';
 import * as hooks from './hooks';

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash-es';
-import { Form } from '@edx/paragon';
+import { Form } from '@openedx/paragon';
 
 const FormGroup = (props) => {
   const handleFocus = (e) => {

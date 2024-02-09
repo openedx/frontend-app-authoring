@@ -7,8 +7,8 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/extend-expect';
 import FormGroup from './FormGroup';
 
-jest.unmock('@edx/paragon');
-jest.unmock('@edx/paragon/icons');
+jest.unmock('@openedx/paragon');
+jest.unmock('@openedx/paragon/icons');
 
 const mockHandleChange = jest.fn();
 const mockHandleFocus = jest.fn();

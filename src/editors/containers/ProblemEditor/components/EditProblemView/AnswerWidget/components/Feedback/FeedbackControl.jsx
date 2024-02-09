@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
-import { Form } from '@edx/paragon';
+import { Form } from '@openedx/paragon';
 
 import { answerOptionProps } from '../../../../../../../data/services/cms/types';
 import ExpandableTextArea from '../../../../../../../sharedComponents/ExpandableTextArea';

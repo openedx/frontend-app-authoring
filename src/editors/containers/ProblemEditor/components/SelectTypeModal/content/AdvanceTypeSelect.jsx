@@ -10,8 +10,8 @@ import {
   Tooltip,
   Hyperlink,
   Col,
-} from '@edx/paragon';
-import { ArrowBack } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { ArrowBack } from '@openedx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { AdvanceProblems, ProblemTypeKeys } from '../../../../../data/constants/problem';
 import messages from './messages';

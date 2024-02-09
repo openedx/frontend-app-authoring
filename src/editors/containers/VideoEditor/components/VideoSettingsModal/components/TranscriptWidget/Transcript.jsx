@@ -9,8 +9,8 @@ import {
   IconButton,
   Icon,
   ActionRow,
-} from '@edx/paragon';
-import { DeleteOutline } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { DeleteOutline } from '@openedx/paragon/icons';
 
 import {
   FormattedMessage,

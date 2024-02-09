@@ -1,7 +1,7 @@
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Collapsible, Image, Stack, Hyperlink,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';

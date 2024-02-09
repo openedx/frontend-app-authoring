@@ -4,11 +4,11 @@ import {
   Form,
   Icon,
   IconButton,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import {
   Locked,
   Unlocked,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import hooks from './hooks';

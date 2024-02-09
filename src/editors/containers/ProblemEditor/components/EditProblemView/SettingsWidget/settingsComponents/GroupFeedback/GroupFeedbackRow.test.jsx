@@ -3,8 +3,8 @@ import { shallow } from '@edx/react-unit-test-utils';
 import { formatMessage } from '../../../../../../../../testUtils';
 import { GroupFeedbackRow } from './GroupFeedbackRow';
 
-jest.mock('@edx/paragon', () => ({
-  ...jest.requireActual('@edx/paragon'),
+jest.mock('@openedx/paragon', () => ({
+  ...jest.requireActual('@openedx/paragon'),
   Row: 'Row',
   IconButton: 'IconButton',
   Icon: 'Icon',
@@ -15,8 +15,8 @@ jest.mock('@edx/paragon', () => ({
   },
   ActionRow: 'ActionRow',
 }));
-jest.mock('@edx/paragon/icons', () => ({
-  ...jest.requireActual('@edx/paragon/icons'),
+jest.mock('@openedx/paragon/icons', () => ({
+  ...jest.requireActual('@openedx/paragon/icons'),
   DeleteOutline: 'DeleteOutline',
 }));
 

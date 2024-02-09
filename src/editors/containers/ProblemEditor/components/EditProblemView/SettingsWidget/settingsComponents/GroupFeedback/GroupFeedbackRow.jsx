@@ -2,8 +2,8 @@ import React from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   ActionRow, Form, Icon, IconButton, Row,
-} from '@edx/paragon';
-import { DeleteOutline } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { DeleteOutline } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import messages from '../../messages';
 

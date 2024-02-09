@@ -4,7 +4,7 @@ import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { connect } from 'react-redux';
 import {
   Button, Collapsible,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { selectors, actions } from '../../../../../data/redux';
 import ScoringCard from './settingsComponents/ScoringCard';
 import ShowAnswerCard from './settingsComponents/ShowAnswerCard';

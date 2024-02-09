@@ -13,8 +13,8 @@ import {
   Icon,
   IconButtonWithTooltip,
   Alert,
-} from '@edx/paragon';
-import { DeleteOutline, FileUpload } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { DeleteOutline, FileUpload } from '@openedx/paragon/icons';
 
 import { selectors } from '../../../../../../data/redux';
 import { isEdxVideo } from '../../../../../../data/services/cms/api';

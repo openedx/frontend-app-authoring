@@ -1,6 +1,6 @@
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Icon } from '@edx/paragon';
-import { ClosedCaptionOff, ClosedCaption } from '@edx/paragon/icons';
+import { Icon } from '@openedx/paragon';
+import { ClosedCaptionOff, ClosedCaption } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import React from 'react';
 import messages from '../messages';

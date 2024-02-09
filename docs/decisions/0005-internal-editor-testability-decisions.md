@@ -130,7 +130,7 @@ Because of the top-level mocks in setupTest, any integration tests will need to 
 Ex:
 ```javascript
 jest.unmock('@edx/frontend-platform/i18n');
-jest.unmock('@edx/paragon');
-jest.unmock('@edx/paragon/icons');
+jest.unmock('@openedx/paragon');
+jest.unmock('@openedx/paragon/icons');
 jest.unmock('react-redux');
 ```

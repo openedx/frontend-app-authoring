@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Icon, ModalDialog, IconButton } from '@edx/paragon';
-import { Close } from '@edx/paragon/icons';
+import { Icon, ModalDialog, IconButton } from '@openedx/paragon';
+import { Close } from '@openedx/paragon/icons';
 import SelectTypeFooter from './SelectTypeFooter';
 
 import * as hooks from '../../../../EditorContainer/hooks';

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { intlShape, injectIntl } from '@edx/frontend-platform/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Icon, IconButtonWithTooltip, Row } from '@edx/paragon';
-import { DragIndicator } from '@edx/paragon/icons';
+import { Icon, IconButtonWithTooltip, Row } from '@openedx/paragon';
+import { DragIndicator } from '@openedx/paragon/icons';
 import messages from './messages';
 
 const SortableItem = ({

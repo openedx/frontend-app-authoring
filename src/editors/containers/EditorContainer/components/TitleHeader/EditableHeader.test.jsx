@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { Form } from '@edx/paragon';
+import { Form } from '@openedx/paragon';
 import * as module from './EditableHeader';
 import EditConfirmationButtons from './EditConfirmationButtons';
 

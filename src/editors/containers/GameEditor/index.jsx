@@ -12,7 +12,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { Spinner } from '@edx/paragon';
+import { Spinner } from '@openedx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import EditorContainer from '../EditorContainer';

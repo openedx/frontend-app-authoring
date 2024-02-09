@@ -11,13 +11,13 @@ import {
   Form,
   Icon,
   Stack,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import {
   Attribution,
   Nd,
   Sa,
   Nc,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 import { actions } from '../../../../../../data/redux';
 import { LicenseLevel, LicenseTypes } from '../../../../../../data/constants/licenses';
