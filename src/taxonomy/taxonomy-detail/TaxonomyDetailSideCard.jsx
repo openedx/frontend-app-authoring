@@ -18,6 +18,9 @@ const TaxonomyDetailSideCard = ({ taxonomy }) => {
       <Card.Section title={intl.formatMessage(messages.taxonomyDetailsDescription)}>
         {taxonomy.description}
       </Card.Section>
+      <Card.Section title={intl.formatMessage(messages.taxonomyDetailsExportID)}>
+        {taxonomy.exportId}
+      </Card.Section>
     </Card>
   );
 };
@@ -25,6 +28,7 @@ const TaxonomyDetailSideCard = ({ taxonomy }) => {
 TaxonomyDetailSideCard.propTypes = {
   taxonomy: PropTypes.shape({
     name: PropTypes.string.isRequired,
+    exportId: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
   }).isRequired,
 };

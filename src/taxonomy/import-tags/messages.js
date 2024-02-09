@@ -92,6 +92,18 @@ const messages = defineMessages({
     id: 'course-authoring.import-tags.prompt.taxonomy-name.required',
     defaultMessage: 'You must enter a name for the new taxonomy',
   },
+  promptTaxonomyExportId: {
+    id: 'course-authoring.import-tags.prompt.taxonomy-export-id',
+    defaultMessage: "Enter a Export ID for the new taxonomy. Should only contain alphanumeric characters or '_' '-' '.'",
+  },
+  promptTaxonomyExportIdRequired: {
+    id: 'course-authoring.import-tags.prompt.taxonomy-export-id.required',
+    defaultMessage: 'You must enter an Export ID for the new taxonomy.',
+  },
+  promptTaxonomyExportIdInvalid: {
+    id: 'course-authoring.import-tags.prompt.taxonomy-export-id.invalid',
+    defaultMessage: "Invalid Export ID. Should only contain alphanumeric characters or '_' '-' '.'",
+  },
   promptTaxonomyDescription: {
     id: 'course-authoring.import-tags.prompt.taxonomy-description',
     defaultMessage: 'Enter a description for the new taxonomy',
