@@ -67,6 +67,12 @@ const slice = createSlice({
         courseSectionVerticalLoadingStatus: payload.status,
       };
     },
+    updateLoadingCourseXblockStatus: (state, { payload }) => {
+      state.loadingStatus = {
+        ...state.loadingStatus,
+        createUnitXblockLoadingStatus: payload.status,
+      };
+    },
   },
 });
 
@@ -84,6 +90,7 @@ export const {
   fetchCourseDenied,
   fetchCourseSectionVerticalDataSuccess,
   updateLoadingCourseSectionVerticalDataStatus,
+  updateLoadingCourseXblockStatus,
 } = slice.actions;
 
 export const {

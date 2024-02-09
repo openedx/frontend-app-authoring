@@ -20,6 +20,7 @@ export const BADGE_STATES = {
 };
 
 export const NOTIFICATION_MESSAGES = {
+  adding: 'Adding',
   saving: 'Saving',
   duplicating: 'Duplicating',
   deleting: 'Deleting',

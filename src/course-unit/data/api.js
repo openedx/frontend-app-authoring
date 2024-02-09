@@ -14,6 +14,7 @@ const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 const getLmsBaseUrl = () => getConfig().LMS_BASE_URL;
 
 export const getCourseUnitApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/container/${itemId}`;
+export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
 export const getXBlockBaseApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/${itemId}`;
 export const getCourseSectionVerticalApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
 export const getSequenceMetadataApiUrl = (sequenceId) => `${getLmsBaseUrl()}/api/courseware/sequence/${sequenceId}`;
@@ -111,4 +112,16 @@ export async function getCourseHomeCourseMetadata(courseId, rootSlug) {
   const { data } = await getAuthenticatedHttpClient().get(courseHomeCourseMetadataApiUrl);
 
   return normalizeCourseHomeCourseMetadata(data, rootSlug);
+}
+
+export async function createCourseXblock({ type, category, parentLocator }) {
+  const body = {
+    type,
+    category: category || type,
+    parent_locator: parentLocator,
+  };
+  const { data } = await getAuthenticatedHttpClient()
+    .post(postXBlockBaseApiUrl(), body);
+
+  return data;
 }
