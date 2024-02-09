@@ -43,10 +43,10 @@ describe('<CreditSection />', () => {
     });
   });
   it('should disable the fields if viewOnly', async () => {
-    const { getByTestId } = render(<RootWrapper viewOnly={true} />);
+    const { getByTestId } = render(<RootWrapper viewOnly />);
     await waitFor(() => {
       const inputElement = getByTestId('minimum-grade-credit-input');
       expect(inputElement.disabled).toBe(true);
     });
-  })
+  });
 });

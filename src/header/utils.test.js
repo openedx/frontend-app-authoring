@@ -35,17 +35,29 @@ describe('header utils', () => {
         ...getConfig(),
         ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: 'true',
       });
-      const actualItems = getContentMenuItems({ ...baseProps, hasContentPermissions: false, hasOutlinePermissions: false });
+      const actualItems = getContentMenuItems({
+        ...baseProps,
+        hasContentPermissions: false,
+        hasOutlinePermissions: false,
+      });
       expect(actualItems).toHaveLength(1);
     });
     it('should include Outline if outline permissions', () => {
       process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN = 'false';
-      const actualItems = getContentMenuItems({ ...baseProps, hasContentPermissions: false, hasOutlinePermissions: true });
+      const actualItems = getContentMenuItems({
+        ...baseProps,
+        hasContentPermissions: false,
+        hasOutlinePermissions: true,
+      });
       expect(actualItems).toHaveLength(1);
     });
     it('should include content sections if content permissions', () => {
       process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN = 'false';
-      const actualItems = getContentMenuItems({ ...baseProps, hasContentPermissions: true, hasOutlinePermissions: false });
+      const actualItems = getContentMenuItems({
+        ...baseProps,
+        hasContentPermissions: true,
+        hasOutlinePermissions: false,
+      });
       expect(actualItems).toHaveLength(3);
     });
   });
@@ -55,15 +67,27 @@ describe('header utils', () => {
       expect(actualItems).toHaveLength(6);
     });
     it('should include Advanced Settings option, but not settings options', () => {
-      const actualItems = getSettingMenuItems({ ...baseProps, hasSettingsPermissions: false, hasAdvancedSettingsAccess: true });
+      const actualItems = getSettingMenuItems({
+        ...baseProps,
+        hasSettingsPermissions: false,
+        hasAdvancedSettingsAccess: true,
+      });
       expect(actualItems).toHaveLength(4);
     });
     it('should include settings, but not advanced settings', () => {
-      const actualItems = getSettingMenuItems({ ...baseProps, hasSettingsPermissions: true, hasAdvancedSettingsAccess: false });
+      const actualItems = getSettingMenuItems({
+        ...baseProps,
+        hasSettingsPermissions: true,
+        hasAdvancedSettingsAccess: false,
+      });
       expect(actualItems).toHaveLength(5);
     });
     it('should only include default options', () => {
-      const actualItems = getSettingMenuItems({ ...baseProps, hasSettingsPermissions: false, hasAdvancedSettingsAccess: false });
+      const actualItems = getSettingMenuItems({
+        ...baseProps,
+        hasSettingsPermissions: false,
+        hasAdvancedSettingsAccess: false,
+      });
       expect(actualItems).toHaveLength(3);
     });
   });

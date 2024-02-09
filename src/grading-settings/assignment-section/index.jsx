@@ -22,7 +22,7 @@ const AssignmentSection = ({
   setGradingData,
   courseAssignmentLists,
   setShowSuccessAlert,
-  viewOnly
+  viewOnly,
 }) => {
   const [errorList, setErrorList] = useState({});
   const {

@@ -54,7 +54,7 @@ let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
 const userId = 3;
-let userPermissionsData = { permissions: [] };
+const userPermissionsData = { permissions: [] };
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 

@@ -84,7 +84,7 @@ describe('<GradingSettings />', () => {
     axiosMock
       .onGet(getUserPermissionsEnabledFlagUrl)
       .reply(200, { enabled: true });
-    const permissionsData = { permissions: ['manage_course_settings'] }
+    const permissionsData = { permissions: ['manage_course_settings'] };
     axiosMock
       .onGet(getUserPermissionsUrl(courseId, userId))
       .reply(200, permissionsData);
@@ -102,7 +102,6 @@ describe('<GradingSettings />', () => {
       expect(segmentButton[0]).toBeInTheDocument();
       expect(segmentButton[0].disabled).toEqual(false);
     });
-
   });
 
   it('should render permissionDenied if incorrect permissions', async () => {
@@ -153,7 +152,7 @@ describe('<GradingSettings />', () => {
     axiosMock
       .onGet(getUserPermissionsEnabledFlagUrl)
       .reply(200, { enabled: true });
-    const permissionsData = { permissions: ['view_course_settings'] }
+    const permissionsData = { permissions: ['view_course_settings'] };
     axiosMock
       .onGet(getUserPermissionsUrl(courseId, userId))
       .reply(200, permissionsData);

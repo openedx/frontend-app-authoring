@@ -103,7 +103,7 @@ const CourseOutline = ({ courseId }) => {
   } = useCourseOutline({ courseId });
 
   const [sections, setSections] = useState(sectionsList);
-  
+
   const { checkPermission } = useUserPermissions();
   const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
   const hasOutlinePermissions = !userPermissionsEnabled || (

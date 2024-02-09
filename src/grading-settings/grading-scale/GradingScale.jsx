@@ -23,7 +23,7 @@ const GradingScale = ({
   sortedGrades,
   setOverrideInternetConnectionAlert,
   setEligibleGrade,
-  viewOnly
+  viewOnly,
 }) => {
   const [gradingSegments, setGradingSegments] = useState(sortedGrades);
   const [letters, setLetters] = useState(gradeLetters);

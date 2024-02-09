@@ -8,7 +8,7 @@ import { ASSIGNMENT_TYPES, DUPLICATE_ASSIGNMENT_NAME } from '../utils/enum';
 import messages from '../messages';
 
 const AssignmentTypeName = ({
-  intl, value, errorEffort, onChange, viewOnly
+  intl, value, errorEffort, onChange, viewOnly,
 }) => {
   const initialAssignmentName = useRef(value);
 

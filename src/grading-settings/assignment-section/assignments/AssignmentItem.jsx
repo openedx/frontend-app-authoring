@@ -20,7 +20,7 @@ const AssignmentItem = ({
   secondErrorMsg,
   gradeField,
   trailingElement,
-  viewOnly
+  viewOnly,
 }) => (
   <li className={className}>
     <Form.Group className={classNames('form-group-custom', {

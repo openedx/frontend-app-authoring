@@ -63,10 +63,10 @@ export const getSettingMenuItems = ({
   );
   if (hasSettingsPermissions) {
     items.push(
-    {
-      href: `${studioBaseUrl}/settings/grading/${courseId}`,
-      title: intl.formatMessage(messages['header.links.grading']),
-    },
+      {
+        href: `${studioBaseUrl}/settings/grading/${courseId}`,
+        title: intl.formatMessage(messages['header.links.grading']),
+      },
     );
   }
   items.push(

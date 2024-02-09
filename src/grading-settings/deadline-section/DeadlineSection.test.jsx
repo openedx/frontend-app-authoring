@@ -81,7 +81,7 @@ describe('<DeadlineSection />', () => {
     });
   });
   it('checking deadline input is disabled if viewOnly', async () => {
-    const { getByTestId } = render(<RootWrapper viewOnly={true} />);
+    const { getByTestId } = render(<RootWrapper viewOnly />);
     await waitFor(() => {
       const inputElement = getByTestId('deadline-period-input');
       expect(inputElement.disabled).toEqual(true);

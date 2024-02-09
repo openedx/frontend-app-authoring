@@ -76,7 +76,7 @@ describe('<GradingScale />', () => {
   });
 
   it('should not disable new grading segment button when viewOnly=false', async () => {
-    const { getAllByTestId } = render(<RootWrapper viewOnly={ false } />);
+    const { getAllByTestId } = render(<RootWrapper viewOnly={false} />);
     await waitFor(() => {
       const addNewSegmentBtn = getAllByTestId('grading-scale-btn-add-segment');
       expect(addNewSegmentBtn).toHaveLength(1);
@@ -86,7 +86,7 @@ describe('<GradingScale />', () => {
   });
 
   it('should disable new grading segment button when viewOnly', async () => {
-    const { getAllByTestId } = render(<RootWrapper viewOnly={ true } />);
+    const { getAllByTestId } = render(<RootWrapper viewOnly />);
     await waitFor(() => {
       const addNewSegmentBtn = getAllByTestId('grading-scale-btn-add-segment');
       expect(addNewSegmentBtn).toHaveLength(1);

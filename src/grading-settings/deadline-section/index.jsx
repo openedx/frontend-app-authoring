@@ -9,7 +9,7 @@ import { formatTime, timerValidation } from './utils';
 import messages from './messages';
 
 const DeadlineSection = ({
-  intl, setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert, viewOnly
+  intl, setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert, viewOnly,
 }) => {
   const timeStampValue = gracePeriod
     ? gracePeriod.hours && `${formatTime(gracePeriod.hours)}:${formatTime(gracePeriod.minutes)}`

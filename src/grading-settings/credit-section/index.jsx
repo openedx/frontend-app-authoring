@@ -7,7 +7,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
 const CreditSection = ({
-  intl, eligibleGrade, setShowSavePrompt, minimumGradeCredit, setGradingData, setShowSuccessAlert, viewOnly
+  intl, eligibleGrade, setShowSavePrompt, minimumGradeCredit, setGradingData, setShowSuccessAlert, viewOnly,
 }) => {
   const [errorEffort, setErrorEffort] = useState(false);
 
