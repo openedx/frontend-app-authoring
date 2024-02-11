@@ -50,7 +50,7 @@ const PageAlerts = ({
         dismissible
         show={showConfigAlert}
         icon={CampaignIcon}
-        variant="primary"
+        variant="info"
         onClose={onDismiss}
       />
     );
@@ -71,7 +71,7 @@ const PageAlerts = ({
         dismissible
         show={showDiscussionAlert}
         icon={InfoOutlineIcon}
-        variant="secondary"
+        variant="info"
         onClose={onDismiss}
         actions={[
           <Button
@@ -82,8 +82,10 @@ const PageAlerts = ({
           </Button>,
         ]}
       >
-        <div className="font-weight-normal text-gray">
-          {intl.formatMessage(messages.discussionNotificationText)}
+        <div className="font-weight-normal text-gray mw-md">
+          {intl.formatMessage(messages.discussionNotificationText, {
+            platformName: process.env.SITE_NAME,
+          })}
         </div>
         <Hyperlink
           showLaunchIcon={false}

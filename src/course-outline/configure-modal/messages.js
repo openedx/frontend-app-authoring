@@ -183,7 +183,7 @@ const messages = defineMessages({
   },
   practiceExam: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.practiceExam',
-    defaultMessage: 'Practice Proctored',
+    defaultMessage: 'Practice proctored',
   },
   practiceExamDescription: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.timed-description',
@@ -211,7 +211,7 @@ const messages = defineMessages({
   },
   limitAccessTitle: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.limitAccessTitle',
-    defaultMessage: 'Limit Access',
+    defaultMessage: 'Limit access',
   },
   limitAccessDescription: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.limitAccessDescription',
@@ -227,11 +227,11 @@ const messages = defineMessages({
   },
   minScoreLabel: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.minScoreLabel',
-    defaultMessage: 'Minimum Score:',
+    defaultMessage: 'Minimum score:',
   },
   minCompletionLabel: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.minCompletionLabel',
-    defaultMessage: 'Minimum Completion:',
+    defaultMessage: 'Minimum completion:',
   },
   minScoreError: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.minScoreError',
@@ -251,7 +251,7 @@ const messages = defineMessages({
   },
   reviewRulesLabel: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.reviewRulesLabel',
-    defaultMessage: 'Review Rules',
+    defaultMessage: 'Review rules',
   },
   reviewRulesDescription: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.reviewRulesDescription',

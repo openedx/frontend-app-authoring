@@ -8,6 +8,13 @@ import PageAlerts from './PageAlerts';
 import messages from './messages';
 import initializeStore from '../../store';
 
+jest.mock('@edx/frontend-platform/i18n', () => ({
+  ...jest.requireActual('@edx/frontend-platform/i18n'),
+  useIntl: () => ({
+    formatMessage: (message) => message.defaultMessage,
+  }),
+}));
+
 let store;
 const handleDismissNotification = jest.fn();
 

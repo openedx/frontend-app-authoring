@@ -11,7 +11,7 @@ const messages = defineMessages({
   },
   discussionNotificationText: {
     id: 'course-authoring.course-outline.page-alerts.discussionNotificationText',
-    defaultMessage: 'This course run is using an upgraded version of edx discussion forum. In order to display the discussions sidebar, discussions xBlocks will no longer be visible to learners.',
+    defaultMessage: 'This course run is using an upgraded version of {platformName} discussion forum. In order to display the discussions sidebar, discussions xBlocks will no longer be visible to learners.',
   },
   discussionNotificationLearnMore: {
     id: 'course-authoring.course-outline.page-alerts.discussionNotificationLearnMore',

@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form, Icon } from '@edx/paragon';
-import {
-  Percent as PercentIcon,
-} from '@edx/paragon/icons';
+import { Form } from '@edx/paragon';
 import { FormattedMessage, injectIntl, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
@@ -68,7 +65,7 @@ const PrereqSettings = ({
               controlClassName="text-right"
               controlClasses="w-7rem"
               type="number"
-              trailingElement={<Icon src={PercentIcon} />}
+              trailingElement="%"
             />
             <FormikControl
               name="prereqMinCompletion"
@@ -77,7 +74,7 @@ const PrereqSettings = ({
               controlClassName="text-right"
               controlClasses="w-7rem"
               type="number"
-              trailingElement={<Icon src={PercentIcon} />}
+              trailingElement="%"
             />
           </>
         )}

@@ -63,11 +63,11 @@ const messages = defineMessages({
   },
   menuProctoringLinkText: {
     id: 'course-authoring.course-outline.card.menu.proctoring-settings',
-    defaultMessage: 'Proctoring Settings',
+    defaultMessage: 'Proctoring settings',
   },
   proctoringLinkTooltip: {
     id: 'course-authoring.course-outline.card.menu.proctoring-settings-tooltip',
-    defaultMessage: 'Proctoring Settings',
+    defaultMessage: 'Proctoring settings',
   },
   discussionEnabledBadgeText: {
     id: 'course-authoring.course-outline.card.badge.discussionEnabled',
