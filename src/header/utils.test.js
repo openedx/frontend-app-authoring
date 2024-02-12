@@ -43,7 +43,10 @@ describe('header utils', () => {
       expect(actualItems).toHaveLength(1);
     });
     it('should include Outline if outline permissions', () => {
-      process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN = 'false';
+      setConfig({
+        ...getConfig(),
+        ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: 'false',
+      });
       const actualItems = getContentMenuItems({
         ...baseProps,
         hasContentPermissions: false,
@@ -52,7 +55,10 @@ describe('header utils', () => {
       expect(actualItems).toHaveLength(1);
     });
     it('should include content sections if content permissions', () => {
-      process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN = 'false';
+      setConfig({
+        ...getConfig(),
+        ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: 'false',
+      });
       const actualItems = getContentMenuItems({
         ...baseProps,
         hasContentPermissions: true,
