@@ -16,7 +16,7 @@ const sortedGrades = [
   { current: 20, previous: 0 },
 ];
 
-const RootWrapper = (props = {}) => (
+const RootWrapper = (viewOnly = { viewOnly: false}) => (
   <IntlProvider locale="en" messages={{}}>
     <GradingScale
       intl={injectIntl}
@@ -29,8 +29,7 @@ const RootWrapper = (props = {}) => (
       setGradingData={jest.fn()}
       setOverrideInternetConnectionAlert={jest.fn()}
       setEligibleGrade={jest.fn()}
-      viewOnly={false}
-      {...props}
+      {...viewOnly}
     />
   </IntlProvider>
 );
@@ -76,7 +75,7 @@ describe('<GradingScale />', () => {
   });
 
   it('should not disable new grading segment button when viewOnly=false', async () => {
-    const { getAllByTestId } = render(<RootWrapper viewOnly={false} />);
+    const { getAllByTestId } = render(<RootWrapper />);
     await waitFor(() => {
       const addNewSegmentBtn = getAllByTestId('grading-scale-btn-add-segment');
       expect(addNewSegmentBtn).toHaveLength(1);
