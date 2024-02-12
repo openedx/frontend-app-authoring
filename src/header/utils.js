@@ -36,11 +36,12 @@ export const getContentMenuItems = ({
     );
   }
   if (getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true') {
-    items.push({
-      href: `${studioBaseUrl}/videos/${courseId}`,
-      title: intl.formatMessage(messages['header.links.videoUploads']),
-    }
-  );
+    items.push(
+      {
+        href: `${studioBaseUrl}/videos/${courseId}`,
+        title: intl.formatMessage(messages['header.links.videoUploads']),
+      },
+    );
   }
 
   return items;
