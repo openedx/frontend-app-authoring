@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import {
+  FormattedMessage,
+  FormattedDate,
+  injectIntl,
+  intlShape,
+} from '@edx/frontend-platform/i18n';
 import { Button, SelectableBox, Stack } from '@edx/paragon';
 import { ErrorAlert } from '@edx/frontend-lib-content-components';
 import Cielo24Form from './Cielo24Form';
@@ -143,6 +148,19 @@ const OrderTranscriptForm = ({
         <Button variant="tertiary" onClick={handleDiscard}>
           <FormattedMessage {...messages.discardSettingsLabel} />
         </Button>
+        {activeTranscriptPreferences?.modified && (
+          <div className="row m-0 x-small">
+            <div className="mr-1">
+              <FormattedMessage {...messages.lastUpdatedMessage} />
+            </div>
+            <FormattedDate
+              value={data.modified}
+              year="numeric"
+              month="long"
+              day="2-digit"
+            />
+          </div>
+        )}
       </Stack>
     </>
   );
@@ -157,6 +175,7 @@ OrderTranscriptForm.propTypes = {
     preferredLanguages: PropTypes.arrayOf(PropTypes.string),
     turnaround: PropTypes.string,
     videoSourceLanguage: PropTypes.string,
+    modified: PropTypes.instanceOf(Date),
   }),
   transcriptType: PropTypes.string.isRequired,
   transcriptCredentials: PropTypes.shape({

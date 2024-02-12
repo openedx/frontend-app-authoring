@@ -4,10 +4,11 @@ import { isNil } from 'lodash';
 import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Icon, Spinner } from '@edx/paragon';
 import { Check } from '@edx/paragon/icons';
+import { RequestStatus } from '../../../../data/constants';
 
-const ActiveColumn = ({ row }) => {
+const ActiveColumn = ({ row, pageLoadStatus }) => {
   const { usageLocations } = row.original;
-  if (isNil(usageLocations)) {
+  if (isNil(usageLocations) || pageLoadStatus !== RequestStatus.SUCCESSFUL) {
     return (
       <Spinner
         animation="border"
@@ -18,7 +19,7 @@ const ActiveColumn = ({ row }) => {
           <FormattedMessage
             id="authoring.loading"
             defaultMessage="Loading..."
-            description="Screen-reader message for when a page is loading."
+            description="Screen-reader message for when a active column is loading."
           />
         )}
       />
@@ -34,6 +35,7 @@ ActiveColumn.propTypes = {
       usageLocations: PropTypes.arrayOf(PropTypes.string).isRequired,
     }.isRequired,
   }.isRequired,
+  pageLoadStatus: PropTypes.string.isRequired,
 };
 
 export default injectIntl(ActiveColumn);

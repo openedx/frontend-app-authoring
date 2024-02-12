@@ -3,7 +3,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-import { getDownload, getVideosUrl } from './api';
+import { getDownload, getVideosUrl, getAllUsagePaths } from './api';
 
 jest.mock('file-saver');
 
@@ -70,6 +70,37 @@ describe('api.js', () => {
         ], 'SoMEiD');
         expect(actual).toEqual(expected);
       });
+    });
+  });
+  describe('getAllUsagePaths', () => {
+    const courseId = 'random-course-id';
+    const videoIds = ['test1'];
+    it('returns empty array when no videos are given', async () => {
+      const expected = [];
+      const actual = await getAllUsagePaths({ courseId, videoIds: [] });
+      expect(actual).toEqual(expected);
+    });
+    it('pushes an empty usageLocations field when video api call fails', async () => {
+      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`, { videoId: videoIds[0] }).reply(404);
+      const expected = [];
+      const actual = await getAllUsagePaths({ courseId, videoIds });
+      expect(actual).toEqual(expected);
+    });
+    it('sets activeStatus to active', async () => {
+      const usageLocations = [{ link: '/test', name: 'test' }];
+      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`, { videoId: videoIds[0] })
+        .reply(200, { usageLocations });
+      const expected = [{ id: videoIds[0], usageLocations, activeStatus: 'active' }];
+      const actual = await getAllUsagePaths({ courseId, videoIds });
+      expect(actual).toEqual(expected);
+    });
+    it('sets activeStatus to inactive', async () => {
+      const usageLocations = [];
+      axiosMock.onGet(`${getVideosUrl(courseId)}/${videoIds[0]}/usage`, { videoId: videoIds[0] })
+        .reply(200, { usageLocations });
+      const expected = [{ id: videoIds[0], usageLocations, activeStatus: 'inactive' }];
+      const actual = await getAllUsagePaths({ courseId, videoIds });
+      expect(actual).toEqual(expected);
     });
   });
 });

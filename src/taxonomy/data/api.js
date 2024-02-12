@@ -7,7 +7,6 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getTaxonomyListApiUrl = (org) => {
   const url = new URL('api/content_tagging/v1/taxonomies/', getApiBaseUrl());
   url.searchParams.append('enabled', 'true');
-  url.searchParams.append('page_size', '500'); // For the tagging MVP, we don't paginate the taxonomy list
   if (org !== undefined) {
     if (org === 'Unassigned') {
       url.searchParams.append('unassigned', 'true');

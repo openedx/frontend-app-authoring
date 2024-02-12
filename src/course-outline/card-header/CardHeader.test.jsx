@@ -1,4 +1,4 @@
-import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -14,11 +14,15 @@ const onClickPublishMock = jest.fn();
 const onClickEditMock = jest.fn();
 const onClickDeleteMock = jest.fn();
 const onClickDuplicateMock = jest.fn();
+const onClickConfigureMock = jest.fn();
+const onClickMoveUpMock = jest.fn();
+const onClickMoveDownMock = jest.fn();
 const closeFormMock = jest.fn();
 
 const cardHeaderProps = {
   title: 'Some title',
   status: ITEM_BADGE_STATUS.live,
+  cardId: '12345',
   hasChanges: false,
   onClickMenuButton: onClickMenuButtonMock,
   onClickPublish: onClickPublishMock,
@@ -29,10 +33,19 @@ const cardHeaderProps = {
   isDisabledEditField: false,
   onClickDelete: onClickDeleteMock,
   onClickDuplicate: onClickDuplicateMock,
+  onClickConfigure: onClickConfigureMock,
+  onClickMoveUp: onClickMoveUpMock,
+  onClickMoveDown: onClickMoveDownMock,
   namePrefix: 'section',
+  actions: {
+    draggable: true,
+    childAddable: true,
+    deletable: true,
+    duplicable: true,
+  },
 };
 
-const renderComponent = (props) => {
+const renderComponent = (props, entry = '/') => {
   const titleComponent = (
     <TitleButton
       isExpanded
@@ -51,11 +64,13 @@ const renderComponent = (props) => {
 
   return render(
     <IntlProvider locale="en">
-      <CardHeader
-        {...cardHeaderProps}
-        titleComponent={titleComponent}
-        {...props}
-      />
+      <MemoryRouter initialEntries={[entry]}>
+        <CardHeader
+          {...cardHeaderProps}
+          titleComponent={titleComponent}
+          {...props}
+        />
+      </MemoryRouter>,
     </IntlProvider>,
   );
 };

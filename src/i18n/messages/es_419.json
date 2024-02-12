@@ -975,5 +975,21 @@
   "course-authoring.studio-home.verify-email.banner.title": "Necesitamos verificar su dirección de correo electrónico",
   "course-authoring.studio-home.verify-email.banner.description": "¡Ya casi terminamos! Para completar su registro, necesitamos que verifique su dirección de correo electrónico ({email}). Un mensaje de activación y los pasos a seguir le estarán esperando allí.",
   "course-authoring.studio-home.verify-email.sidebar.title": "¿Necesita ayuda?",
-  "course-authoring.studio-home.verify-email.sidebar.description": "Por favor revise su correo no desado en caso de que nuestro correo no esté en su buzón de entrada. ¿Aún no encuentra el correo de verificación? Pida ayuda a través del vínculo siguiente."
+  "course-authoring.studio-home.verify-email.sidebar.description": "Por favor revise su correo no desado en caso de que nuestro correo no esté en su buzón de entrada. ¿Aún no encuentra el correo de verificación? Pida ayuda a través del vínculo siguiente.",
+  "course-authoring.course-unit.heading.icon.chevron.alt": "Toggle dropdown menu",
+  "course-authoring.course-unit.button.view-live": "View live version",
+  "course-authoring.course-unit.button.preview": "Preview",
+  "course-authoring.course-unit.heading.button.edit.alt": "Edit",
+  "course-authoring.course-unit.heading.button.edit.aria-label": "Edit field",
+  "course-authoring.course-unit.heading.button.settings.alt": "Settings",
+  "course-authoring.course-unit.general.alert.error.description": "Unable to {actionName} {type}. Please try again.",
+  "course-authoring.course-unit.prev-btn-text": "Previous",
+  "course-authoring.course-unit.next-btn-text": "Next",
+  "course-authoring.course-unit.new-unit-btn-text": "New unit",
+  "course-authoring.course-unit.sequence-nav-label-text": "Sequence navigation",
+  "course-authoring.course-unit.sequence.load.failure": "There was an error loading this course.",
+  "course-authoring.course-unit.sequence.no.content": "There is no content here.",
+  "course-authoring.course-unit.sequence.navigation.menu": "{current} of {total}",
+  "course-authoring.course-unit.add.component.title": "Add a new component",
+  "course-authoring.course-unit.add.component.button.text": "Add Component:"
 }

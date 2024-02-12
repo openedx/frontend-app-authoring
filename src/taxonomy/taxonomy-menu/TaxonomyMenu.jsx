@@ -9,7 +9,7 @@ import {
   IconButton,
 } from '@edx/paragon';
 import { MoreVert } from '@edx/paragon/icons';
-import { omitBy } from 'lodash';
+import { pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,7 +17,7 @@ import ExportModal from '../export-modal';
 import { useDeleteTaxonomy } from '../data/apiHooks';
 import { TaxonomyContext } from '../common/context';
 import DeleteDialog from '../delete-dialog';
-import { importTaxonomyTags } from '../import-tags';
+import { ImportTagsWizard } from '../import-tags';
 import { ManageOrgsModal } from '../manage-orgs';
 import messages from './messages';
 
@@ -46,13 +46,14 @@ const TaxonomyMenu = ({
 
   const [isDeleteDialogOpen, deleteDialogOpen, deleteDialogClose] = useToggle(false);
   const [isExportModalOpen, exportModalOpen, exportModalClose] = useToggle(false);
+  const [isImportModalOpen, importModalOpen, importModalClose] = useToggle(false);
   const [isManageOrgsModalOpen, manageOrgsModalOpen, manageOrgsModalClose] = useToggle(false);
 
   /**
     * @typedef {Object} MenuItem
     * @property {string} title - The title of the menu item
     * @property {() => void} action - The action to perform when the menu item is clicked
-    * @property {boolean} [hide] - Whether or not to hide the menu item
+    * @property {boolean} [show] - Whether or not to show the menu item
     *
     * @constant
     * @type {Record<string, MenuItem>}
@@ -60,30 +61,28 @@ const TaxonomyMenu = ({
   let menuItems = {
     import: {
       title: intl.formatMessage(messages.importMenu),
-      action: () => importTaxonomyTags(taxonomy.id, intl),
-      // Hide import menu item if taxonomy is system defined or allows free text
-      hide: taxonomy.systemDefined || taxonomy.allowFreeText,
+      action: importModalOpen,
+      show: taxonomy.canChangeTaxonomy && !taxonomy.systemDefined,
     },
     export: {
       title: intl.formatMessage(messages.exportMenu),
       action: exportModalOpen,
+      show: true, // if we can view the taxonomy, we can export it
     },
     delete: {
       title: intl.formatMessage(messages.deleteMenu),
       action: deleteDialogOpen,
-      // Hide delete menu item if taxonomy is system defined
-      hide: taxonomy.systemDefined,
+      show: taxonomy.canDeleteTaxonomy && !taxonomy.systemDefined,
     },
     manageOrgs: {
       title: intl.formatMessage(messages.manageOrgsMenu),
       action: manageOrgsModalOpen,
-      // Hide import menu item if taxonomy is system defined
-      hide: taxonomy.systemDefined,
+      show: taxonomy.canChangeTaxonomy,
     },
   };
 
   // Remove hidden menu items
-  menuItems = omitBy(menuItems, (value) => value.hide);
+  menuItems = pickBy(menuItems, (value) => value.show);
 
   const renderModals = () => (
     <>
@@ -103,6 +102,13 @@ const TaxonomyMenu = ({
           taxonomyId={taxonomy.id}
         />
       )}
+      {isImportModalOpen && (
+        <ImportTagsWizard
+          taxonomy={taxonomy}
+          isOpen={isImportModalOpen}
+          onClose={importModalClose}
+        />
+      )}
       {isManageOrgsModalOpen && (
         <ManageOrgsModal
           isOpen={isManageOrgsModalOpen}
@@ -113,12 +119,19 @@ const TaxonomyMenu = ({
     </>
   );
 
+  const toggleProps = iconMenu ? {
+    as: IconButton,
+    src: MoreVert,
+    iconAs: Icon,
+  } : {
+    as: Button,
+  };
+
   return (
-    <Dropdown onToggle={(_isOpen, ev) => ev.preventDefault()}>
+    <Dropdown id={`taxonomy-menu-${taxonomy.id}`} onToggle={(_isOpen, ev) => ev.preventDefault()}>
       <Dropdown.Toggle
-        as={iconMenu ? IconButton : Button}
-        src={MoreVert}
-        iconAs={Icon}
+        id={`taxonomy-menu-toggle-${taxonomy.id}`}
+        {...toggleProps}
         variant="primary"
         alt={intl.formatMessage(messages.actionsButtonAlt, { name: taxonomy.name })}
         data-testid="taxonomy-menu-button"
@@ -131,6 +144,7 @@ const TaxonomyMenu = ({
           <Dropdown.Item
             key={key}
             data-testid={`taxonomy-menu-${key}`}
+            as="button" // Prevents <a> cannot appear as a descendant of <a> warning
             onClick={
               (e) => {
                 e.preventDefault();
@@ -151,9 +165,10 @@ TaxonomyMenu.propTypes = {
   taxonomy: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
-    systemDefined: PropTypes.bool.isRequired,
-    allowFreeText: PropTypes.bool.isRequired,
     tagsCount: PropTypes.number.isRequired,
+    systemDefined: PropTypes.bool.isRequired,
+    canChangeTaxonomy: PropTypes.bool.isRequired,
+    canDeleteTaxonomy: PropTypes.bool.isRequired,
   }).isRequired,
   iconMenu: PropTypes.bool,
 };

@@ -1,16 +1,8 @@
 .subsection-card {
-  @include pgn-box-shadow(1, "centered");
-
-  padding: $spacer 2rem;
-  margin-bottom: 1.5rem;
-  background: $light-200;
-
-  .subsection-card__content {
-    margin: $spacer;
-  }
+  flex-grow: 1;
 
   .subsection-card__units {
-    padding-top: $spacer;
+    margin-top: $spacer;
   }
 
   .item-card-header__badge-status {
@@ -23,5 +15,9 @@
     font-weight: $headings-font-weight;
     line-height: $headings-line-height;
     color: $headings-color;
+  }
+
+  .subsection-card__content {
+    margin-left: 1.7rem;
   }
 }

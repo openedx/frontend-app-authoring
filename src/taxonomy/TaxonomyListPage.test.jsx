@@ -21,6 +21,10 @@ const taxonomies = [{
   id: 1,
   name: 'Taxonomy',
   description: 'This is a description',
+  showSystemBadge: false,
+  canChangeTaxonomy: true,
+  canDeleteTaxonomy: true,
+  tagsCount: 0,
 }];
 const organizationsListUrl = 'http://localhost:18010/organizations';
 const organizations = ['Org 1', 'Org 2'];
@@ -39,7 +43,6 @@ const context = {
   toastMessage: null,
   setToastMessage: jest.fn(),
 };
-
 const queryClient = new QueryClient();
 
 const RootWrapper = () => (
@@ -91,6 +94,7 @@ describe('<TaxonomyListPage />', () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
       results: taxonomies,
+      canAddTaxonomy: false,
     });
     await act(async () => {
       const { getByTestId } = render(<RootWrapper />);
@@ -101,11 +105,8 @@ describe('<TaxonomyListPage />', () => {
   it.each(['CSV', 'JSON'])('downloads the taxonomy template %s', async (fileFormat) => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
-      results: [{
-        id: 1,
-        name: 'Taxonomy',
-        description: 'This is a description',
-      }],
+      results: taxonomies,
+      canAddTaxonomy: false,
     });
     const { findByRole } = render(<RootWrapper />);
     const templateMenu = await findByRole('button', { name: 'Download template' });
@@ -116,19 +117,28 @@ describe('<TaxonomyListPage />', () => {
     expect(templateButton.href).toBe(getTaxonomyTemplateApiUrl(fileFormat.toLowerCase()));
   });
 
-  it('calls the import taxonomy action when the import button is clicked', async () => {
+  it('disables the import taxonomy button if not permitted', async () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
-      results: [{
-        id: 1,
-        name: 'Taxonomy',
-        description: 'This is a description',
-      }],
+      results: [],
+      canAddTaxonomy: false,
     });
 
     const { getByRole } = render(<RootWrapper />);
     const importButton = getByRole('button', { name: 'Import' });
-    expect(importButton).toBeInTheDocument();
+    expect(importButton).toBeDisabled();
+  });
+
+  it('calls the import taxonomy action when the import button is clicked', async () => {
+    useIsTaxonomyListDataLoaded.mockReturnValue(true);
+    useTaxonomyListDataResponse.mockReturnValue({
+      results: [],
+      canAddTaxonomy: true,
+    });
+
+    const { getByRole } = render(<RootWrapper />);
+    const importButton = getByRole('button', { name: 'Import' });
+    expect(importButton).not.toBeDisabled();
     fireEvent.click(importButton);
     expect(importTaxonomy).toHaveBeenCalled();
   });
@@ -140,7 +150,12 @@ describe('<TaxonomyListPage />', () => {
         id: 1,
         name: 'Taxonomy',
         description: 'This is a description',
+        showSystemBadge: false,
+        canChangeTaxonomy: false,
+        canDeleteTaxonomy: false,
+        tagsCount: 0,
       }],
+      canAddTaxonomy: false,
     });
 
     const {
@@ -172,6 +187,7 @@ describe('<TaxonomyListPage />', () => {
     useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useTaxonomyListDataResponse.mockReturnValue({
       results: taxonomies,
+      canAddTaxonomy: false,
     });
 
     const { getByRole } = render(<RootWrapper />);

@@ -21,9 +21,15 @@ import {
   getCourseItem,
   publishCourseSection,
   configureCourseSection,
+  configureCourseSubsection,
+  configureCourseUnit,
   restartIndexingOnCourse,
   updateCourseSectionHighlights,
   setSectionOrderList,
+  setVideoSharingOption,
+  setCourseItemOrderList,
+  copyBlockToClipboard,
+  pasteBlock,
 } from './api';
 import {
   addSection,
@@ -32,6 +38,7 @@ import {
   updateOutlineIndexLoadingStatus,
   updateReindexLoadingStatus,
   updateStatusBar,
+  updateCourseActions,
   fetchStatusBarChecklistSuccess,
   fetchStatusBarSelPacedSuccess,
   updateSavingStatus,
@@ -42,6 +49,9 @@ import {
   deleteUnit,
   duplicateSection,
   reorderSectionList,
+  reorderSubsectionList,
+  reorderUnitList,
+  updateClipboardContent,
 } from './slice';
 
 export function fetchCourseOutlineIndexQuery(courseId) {
@@ -50,9 +60,23 @@ export function fetchCourseOutlineIndexQuery(courseId) {
 
     try {
       const outlineIndex = await getCourseOutlineIndex(courseId);
-      const { courseReleaseDate, courseStructure: { highlightsEnabledForMessaging } } = outlineIndex;
+      const {
+        courseReleaseDate,
+        courseStructure: {
+          highlightsEnabledForMessaging,
+          videoSharingEnabled,
+          videoSharingOptions,
+          actions,
+        },
+      } = outlineIndex;
       dispatch(fetchOutlineIndexSuccess(outlineIndex));
-      dispatch(updateStatusBar({ courseReleaseDate, highlightsEnabledForMessaging }));
+      dispatch(updateStatusBar({
+        courseReleaseDate,
+        highlightsEnabledForMessaging,
+        videoSharingOptions,
+        videoSharingEnabled,
+      }));
+      dispatch(updateCourseActions(actions));
 
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
@@ -112,6 +136,24 @@ export function enableCourseHighlightsEmailsQuery(courseId) {
       dispatch(hideProcessingNotification());
     } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function setVideoSharingOptionQuery(courseId, option) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await setVideoSharingOption(courseId, option);
+      dispatch(updateStatusBar({ videoSharingOptions: option }));
+
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+      dispatch(hideProcessingNotification());
+    } catch (error) {
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+      dispatch(hideProcessingNotification());
     }
   };
 }
@@ -184,13 +226,13 @@ export function publishCourseItemQuery(itemId, sectionId) {
   };
 }
 
-export function configureCourseSectionQuery(sectionId, isVisibleToStaffOnly, startDatetime) {
+export function configureCourseItemQuery(sectionId, configureFn) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      await configureCourseSection(sectionId, isVisibleToStaffOnly, startDatetime).then(async (result) => {
+      await configureFn().then(async (result) => {
         if (result) {
           await dispatch(fetchCourseSectionQuery(sectionId));
           dispatch(hideProcessingNotification());
@@ -201,6 +243,54 @@ export function configureCourseSectionQuery(sectionId, isVisibleToStaffOnly, sta
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
+  };
+}
+
+export function configureCourseSectionQuery(sectionId, isVisibleToStaffOnly, startDatetime) {
+  return async (dispatch) => {
+    dispatch(configureCourseItemQuery(
+      sectionId,
+      async () => configureCourseSection(sectionId, isVisibleToStaffOnly, startDatetime),
+    ));
+  };
+}
+
+export function configureCourseSubsectionQuery(
+  itemId,
+  sectionId,
+  isVisibleToStaffOnly,
+  releaseDate,
+  graderType,
+  dueDateState,
+  isTimeLimitedState,
+  defaultTimeLimitMin,
+  hideAfterDueState,
+  showCorrectnessState,
+) {
+  return async (dispatch) => {
+    dispatch(configureCourseItemQuery(
+      sectionId,
+      async () => configureCourseSubsection(
+        itemId,
+        isVisibleToStaffOnly,
+        releaseDate,
+        graderType,
+        dueDateState,
+        isTimeLimitedState,
+        defaultTimeLimitMin,
+        hideAfterDueState,
+        showCorrectnessState,
+      ),
+    ));
+  };
+}
+
+export function configureCourseUnitQuery(itemId, sectionId, isVisibleToStaffOnly, groupAccess) {
+  return async (dispatch) => {
+    dispatch(configureCourseItemQuery(
+      sectionId,
+      async () => configureCourseUnit(itemId, isVisibleToStaffOnly, groupAccess),
+    ));
   };
 }
 
@@ -284,7 +374,7 @@ export function deleteCourseUnitQuery(unitId, subsectionId, sectionId) {
 function duplicateCourseItemQuery(itemId, parentLocator, duplicateFn) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.duplicating));
 
     try {
       await duplicateCourseItem(itemId, parentLocator).then(async (result) => {
@@ -411,21 +501,107 @@ export function addNewUnitQuery(parentLocator, callback) {
   };
 }
 
-export function setSectionOrderListQuery(courseId, newListId, restoreCallback) {
+export function setSectionOrderListQuery(courseId, sectionListIds, restoreCallback) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      await setSectionOrderList(courseId, newListId).then(async (result) => {
+      await setSectionOrderList(courseId, sectionListIds).then(async (result) => {
         if (result) {
-          dispatch(reorderSectionList(newListId));
+          dispatch(reorderSectionList(sectionListIds));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(hideProcessingNotification());
         }
       });
     } catch (error) {
       restoreCallback();
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function setSubsectionOrderListQuery(sectionId, subsectionListIds, restoreCallback) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await setCourseItemOrderList(sectionId, subsectionListIds).then(async (result) => {
+        if (result) {
+          dispatch(reorderSubsectionList({ sectionId, subsectionListIds }));
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          dispatch(hideProcessingNotification());
+        }
+      });
+    } catch (error) {
+      restoreCallback();
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function setUnitOrderListQuery(sectionId, subsectionId, unitListIds, restoreCallback) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await setCourseItemOrderList(subsectionId, unitListIds).then(async (result) => {
+        if (result) {
+          dispatch(reorderUnitList({ sectionId, subsectionId, unitListIds }));
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          dispatch(hideProcessingNotification());
+        }
+      });
+    } catch (error) {
+      restoreCallback();
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function setClipboardContent(usageKey, broadcastClipboard) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.copying));
+
+    try {
+      await copyBlockToClipboard(usageKey).then(async (result) => {
+        const status = result?.content?.status;
+        if (status === 'ready') {
+          dispatch(updateClipboardContent(result));
+          broadcastClipboard(result);
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          dispatch(hideProcessingNotification());
+        } else {
+          throw new Error(`Unexpected clipboard status "${status}" in successful API response.`);
+        }
+      });
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function pasteClipboardContent(parentLocator, sectionId) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.pasting));
+
+    try {
+      await pasteBlock(parentLocator).then(async (result) => {
+        if (result) {
+          dispatch(fetchCourseSectionQuery(sectionId, true));
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          dispatch(hideProcessingNotification());
+        }
+      });
+    } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }

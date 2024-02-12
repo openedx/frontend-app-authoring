@@ -4,13 +4,9 @@ import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
 
 /* eslint-disable import/no-extraneous-dependencies */
-import Enzyme from 'enzyme';
-import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import 'babel-polyfill';
 
 import { mergeConfig } from '@edx/frontend-platform';
-
-Enzyme.configure({ adapter: new Adapter() });
 
 /* need to mock window for tinymce on import, as it is JSDOM incompatible */
 
@@ -50,6 +46,7 @@ mergeConfig({
   CALCULATOR_HELP_URL: process.env.CALCULATOR_HELP_URL || null,
   ENABLE_PROGRESS_GRAPH_SETTINGS: process.env.ENABLE_PROGRESS_GRAPH_SETTINGS || 'false',
   ENABLE_TEAM_TYPE_SETTING: process.env.ENABLE_TEAM_TYPE_SETTING === 'true',
+  PREVIEW_BASE_URL: process.env.PREVIEW_BASE_URL || '',
 }, 'CourseAuthoringConfig');
 
 // Mock the plugins repo so jest will stop complaining about ES6 syntax

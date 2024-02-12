@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 
+import { VIDEO_SHARING_OPTIONS } from '../constants';
 import { RequestStatus } from '../../data/constants';
 
 const slice = createSlice({
@@ -23,16 +24,33 @@ const slice = createSlice({
         totalCourseBestPracticesChecks: 0,
         completedCourseBestPracticesChecks: 0,
       },
+      videoSharingEnabled: false,
+      videoSharingOptions: VIDEO_SHARING_OPTIONS.perVideo,
     },
     sectionsList: [],
+    isCustomRelativeDatesActive: false,
     currentSection: {},
     currentSubsection: {},
     currentItem: {},
+    actions: {
+      deletable: true,
+      draggable: true,
+      childAddable: true,
+      duplicable: true,
+    },
+    initialUserClipboard: {
+      content: {},
+      sourceUsageKey: null,
+      sourceContexttitle: null,
+      sourceEditUrl: null,
+    },
   },
   reducers: {
     fetchOutlineIndexSuccess: (state, { payload }) => {
       state.outlineIndexData = payload;
       state.sectionsList = payload.courseStructure?.childInfo?.children || [];
+      state.isCustomRelativeDatesActive = payload.isCustomRelativeDatesActive;
+      state.initialUserClipboard = payload.initialUserClipboard;
     },
     updateOutlineIndexLoadingStatus: (state, { payload }) => {
       state.loadingStatus = {
@@ -55,6 +73,15 @@ const slice = createSlice({
     updateStatusBar: (state, { payload }) => {
       state.statusBarData = {
         ...state.statusBarData,
+        ...payload,
+      };
+    },
+    updateClipboardContent: (state, { payload }) => {
+      state.initialUserClipboard = payload;
+    },
+    updateCourseActions: (state, { payload }) => {
+      state.actions = {
+        ...state.actions,
         ...payload,
       };
     },
@@ -81,6 +108,22 @@ const slice = createSlice({
       sectionsList.sort((a, b) => payload.indexOf(a.id) - payload.indexOf(b.id));
 
       state.sectionsList = [...sectionsList];
+    },
+    reorderSubsectionList: (state, { payload }) => {
+      const { sectionId, subsectionListIds } = payload;
+      const sections = [...state.sectionsList];
+      const i = sections.findIndex(section => section.id === sectionId);
+      sections[i].childInfo.children.sort((a, b) => subsectionListIds.indexOf(a.id) - subsectionListIds.indexOf(b.id));
+      state.sectionsList = [...sections];
+    },
+    reorderUnitList: (state, { payload }) => {
+      const { sectionId, subsectionId, unitListIds } = payload;
+      const sections = [...state.sectionsList];
+      const i = sections.findIndex(section => section.id === sectionId);
+      const j = sections[i].childInfo.children.findIndex(subsection => subsection.id === subsectionId);
+      const subsection = sections[i].childInfo.children[j];
+      subsection.childInfo.children.sort((a, b) => unitListIds.indexOf(a.id) - unitListIds.indexOf(b.id));
+      state.sectionsList = [...sections];
     },
     setCurrentSection: (state, { payload }) => {
       state.currentSection = payload;
@@ -156,6 +199,7 @@ export const {
   updateOutlineIndexLoadingStatus,
   updateReindexLoadingStatus,
   updateStatusBar,
+  updateCourseActions,
   fetchStatusBarChecklistSuccess,
   fetchStatusBarSelPacedSuccess,
   updateFetchSectionLoadingStatus,
@@ -169,6 +213,9 @@ export const {
   deleteUnit,
   duplicateSection,
   reorderSectionList,
+  reorderSubsectionList,
+  reorderUnitList,
+  updateClipboardContent,
 } = slice.actions;
 
 export const {

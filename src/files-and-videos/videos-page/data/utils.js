@@ -7,8 +7,6 @@ import {
   MAX_WIDTH,
   MIN_HEIGHT,
   MIN_WIDTH,
-  VIDEO_PROCESSING_STATUSES,
-  VIDEO_SUCCESS_STATUSES,
 } from './constants';
 
 ensureConfig([
@@ -23,23 +21,23 @@ export const updateFileValues = (files, isNewFile) => {
       clientVideoId,
       created,
       courseVideoImageUrl,
-      status,
       transcripts,
     } = file;
-    const wrapperType = 'video';
+
+    let wrapperType;
+    if (clientVideoId.endsWith('.mov')) {
+      wrapperType = 'MOV';
+    } else if (clientVideoId.endsWith('.mp4')) {
+      wrapperType = 'MP4';
+    } else {
+      wrapperType = 'Unknown';
+    }
 
     let thumbnail = courseVideoImageUrl;
     if (thumbnail && thumbnail.startsWith('/')) {
       thumbnail = `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
     }
     const transcriptStatus = transcripts?.length > 0 ? 'transcribed' : 'notTranscribed';
-
-    let uploadStatus = status;
-    if (VIDEO_SUCCESS_STATUSES.includes(status)) {
-      uploadStatus = 'Success';
-    } else if (VIDEO_PROCESSING_STATUSES.includes(status)) {
-      uploadStatus = 'Processing';
-    }
 
     updatedFiles.push({
       ...file,
@@ -48,7 +46,6 @@ export const updateFileValues = (files, isNewFile) => {
       wrapperType,
       dateAdded: created.toString(),
       usageLocations: isNewFile ? [] : null,
-      status: uploadStatus,
       thumbnail,
       transcriptStatus,
       activeStatus: 'inactive',

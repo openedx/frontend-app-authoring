@@ -9,8 +9,10 @@ import {
 import MockAdapter from 'axios-mock-adapter';
 
 import initializeStore from '../store';
+import { executeThunk } from '../utils';
 import { courseDetailsMock, courseSettingsMock } from './__mocks__';
 import { getCourseDetailsApiUrl, getCourseSettingsApiUrl } from './data/api';
+import { updateCourseDetailsQuery } from './data/thunks';
 import { DATE_FORMAT } from '../constants';
 import creditMessages from './credit-section/messages';
 import pacingMessages from './pacing-section/messages';
@@ -75,6 +77,12 @@ describe('<ScheduleAndDetails />', () => {
     axiosMock
       .onGet(getCourseSettingsApiUrl(courseId))
       .reply(200, courseSettingsMock);
+    axiosMock
+      .onPut(getCourseDetailsApiUrl(courseId))
+      .reply(200);
+  });
+  afterEach(() => {
+    axiosMock.reset();
   });
 
   it('should render without errors', async () => {
@@ -135,5 +143,40 @@ describe('<ScheduleAndDetails />', () => {
         getByText(messages.alertWarning.defaultMessage),
       ).toBeInTheDocument();
     });
+  });
+
+  it('should display a success message when course details saves', async () => {
+    const { getByText } = render(<RootWrapper />);
+    await executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
+    expect(getByText(messages.alertSuccess.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('should display an error when GET CourseDetails fails', async () => {
+    axiosMock
+      .onGet(getCourseDetailsApiUrl(courseId))
+      .reply(404, 'error');
+    const { getByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      expect(getByText(messages.alertLoadFail.defaultMessage)).toBeInTheDocument();
+    });
+  });
+
+  it('should display an error when GET CourseSettings fails', async () => {
+    axiosMock
+      .onGet(getCourseSettingsApiUrl(courseId))
+      .reply(404, 'error');
+    const { getByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      expect(getByText(messages.alertLoadFail.defaultMessage)).toBeInTheDocument();
+    });
+  });
+
+  it('should display an error when PUT CourseDetails fails', async () => {
+    axiosMock
+      .onPut(getCourseDetailsApiUrl(courseId))
+      .reply(404, 'error');
+    const { getByText } = render(<RootWrapper />);
+    await executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
+    expect(getByText(messages.alertFail.defaultMessage)).toBeInTheDocument();
   });
 });

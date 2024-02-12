@@ -1,11 +1,11 @@
 export const ITEM_BADGE_STATUS = /** @type {const} */ ({
   live: 'live',
+  gated: 'gated',
   publishedNotLive: 'published_not_live',
+  unpublishedChanges: 'unpublished_changes',
   staffOnly: 'staff_only',
   draft: 'draft',
 });
-
-export const STAFF_ONLY = 'staff_only';
 
 export const HIGHLIGHTS_FIELD_MAX_LENGTH = 250;
 
@@ -73,4 +73,10 @@ export const BEST_PRACTICES_CHECKLIST = /** @type {const} */ ({
       pacingTypeFilter: CHECKLIST_FILTERS.ALL,
     },
   ],
+});
+
+export const VIDEO_SHARING_OPTIONS = /** @type {const} */ ({
+  perVideo: 'per-video',
+  allOn: 'all-on',
+  allOff: 'all-off',
 });

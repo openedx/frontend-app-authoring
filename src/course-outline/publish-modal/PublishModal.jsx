@@ -10,6 +10,7 @@ import {
 import { useSelector } from 'react-redux';
 
 import { getCurrentItem } from '../data/selectors';
+import { COURSE_BLOCK_NAMES } from '../constants';
 import messages from './messages';
 
 const PublishModal = ({
@@ -19,6 +20,7 @@ const PublishModal = ({
 }) => {
   const intl = useIntl();
   const { displayName, childInfo, category } = useSelector(getCurrentItem);
+  const categoryName = COURSE_BLOCK_NAMES[category]?.name.toLowerCase();
   const children = childInfo?.children || [];
 
   return (
@@ -35,7 +37,9 @@ const PublishModal = ({
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
-        <p className="small">{intl.formatMessage(messages.description, { category })}</p>
+        <p className="small">
+          {intl.formatMessage(messages.description, { category: categoryName })}
+        </p>
         {children.filter(child => child.hasChanges).map((child) => {
           let grandChildren = child.childInfo?.children || [];
           grandChildren = grandChildren.filter(grandChild => grandChild.hasChanges);

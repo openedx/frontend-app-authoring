@@ -975,5 +975,21 @@
   "course-authoring.studio-home.verify-email.banner.title": "We need to verify your email address",
   "course-authoring.studio-home.verify-email.banner.description": "Almost there! In order to complete your sign up we need you to verify your email address ({email}). An activation message and next steps should be waiting for you there.",
   "course-authoring.studio-home.verify-email.sidebar.title": "Need help?",
-  "course-authoring.studio-home.verify-email.sidebar.description": "Please check your Junk or Spam folders in case our email isn't in your INBOX. Still can't find the verification email? Request help via the link below."
+  "course-authoring.studio-home.verify-email.sidebar.description": "Please check your Junk or Spam folders in case our email isn't in your INBOX. Still can't find the verification email? Request help via the link below.",
+  "course-authoring.course-unit.heading.icon.chevron.alt": "Toggle dropdown menu",
+  "course-authoring.course-unit.button.view-live": "View live version",
+  "course-authoring.course-unit.button.preview": "Preview",
+  "course-authoring.course-unit.heading.button.edit.alt": "Edit",
+  "course-authoring.course-unit.heading.button.edit.aria-label": "Edit field",
+  "course-authoring.course-unit.heading.button.settings.alt": "Settings",
+  "course-authoring.course-unit.general.alert.error.description": "Unable to {actionName} {type}. Please try again.",
+  "course-authoring.course-unit.prev-btn-text": "Previous",
+  "course-authoring.course-unit.next-btn-text": "Next",
+  "course-authoring.course-unit.new-unit-btn-text": "New unit",
+  "course-authoring.course-unit.sequence-nav-label-text": "Sequence navigation",
+  "course-authoring.course-unit.sequence.load.failure": "There was an error loading this course.",
+  "course-authoring.course-unit.sequence.no.content": "There is no content here.",
+  "course-authoring.course-unit.sequence.navigation.menu": "{current} of {total}",
+  "course-authoring.course-unit.add.component.title": "Add a new component",
+  "course-authoring.course-unit.add.component.button.text": "Add Component:"
 }

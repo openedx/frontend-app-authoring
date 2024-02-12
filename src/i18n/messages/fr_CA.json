@@ -975,5 +975,21 @@
   "course-authoring.studio-home.verify-email.banner.title": "Nous devons vérifier votre adresse courriel",
   "course-authoring.studio-home.verify-email.banner.description": "Presque là! Afin de finaliser votre inscription, nous avons besoin que vous vérifiiez votre adresse courriel ({email}). Un message d’activation et les prochaines étapes devraient vous y attendre.",
   "course-authoring.studio-home.verify-email.sidebar.title": "Besoin d'aide?",
-  "course-authoring.studio-home.verify-email.sidebar.description": "Merci de vérifier votre corbeille ou votre dossier de pourriel au cas où notre courriel ne se trouve pas dans votre boite de réception. Vous ne trouvez toujours pas le courriel de vérification? Demandez de l'aide via le lien ci-dessous."
+  "course-authoring.studio-home.verify-email.sidebar.description": "Merci de vérifier votre corbeille ou votre dossier de pourriel au cas où notre courriel ne se trouve pas dans votre boite de réception. Vous ne trouvez toujours pas le courriel de vérification? Demandez de l'aide via le lien ci-dessous.",
+  "course-authoring.course-unit.heading.icon.chevron.alt": "Toggle dropdown menu",
+  "course-authoring.course-unit.button.view-live": "View live version",
+  "course-authoring.course-unit.button.preview": "Preview",
+  "course-authoring.course-unit.heading.button.edit.alt": "Edit",
+  "course-authoring.course-unit.heading.button.edit.aria-label": "Edit field",
+  "course-authoring.course-unit.heading.button.settings.alt": "Settings",
+  "course-authoring.course-unit.general.alert.error.description": "Unable to {actionName} {type}. Please try again.",
+  "course-authoring.course-unit.prev-btn-text": "Previous",
+  "course-authoring.course-unit.next-btn-text": "Next",
+  "course-authoring.course-unit.new-unit-btn-text": "New unit",
+  "course-authoring.course-unit.sequence-nav-label-text": "Sequence navigation",
+  "course-authoring.course-unit.sequence.load.failure": "There was an error loading this course.",
+  "course-authoring.course-unit.sequence.no.content": "There is no content here.",
+  "course-authoring.course-unit.sequence.navigation.menu": "{current} of {total}",
+  "course-authoring.course-unit.add.component.title": "Add a new component",
+  "course-authoring.course-unit.add.component.button.text": "Add Component:"
 }

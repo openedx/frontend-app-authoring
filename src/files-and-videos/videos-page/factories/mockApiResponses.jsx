@@ -125,7 +125,7 @@ export const generateFetchVideosApiResponse = () => ({
     },
     {
       edx_video_id: 'mOckID5',
-      clientVideoId: 'mOckID5.mp4',
+      clientVideoId: 'mOckID5',
       created: '',
       courseVideoImageUrl: 'http:/video',
       transcripts: ['en'],

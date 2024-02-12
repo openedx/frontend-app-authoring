@@ -10,6 +10,8 @@ import {
 } from '@edx/paragon';
 import { FileInput, useFileInput } from '../generic';
 import messages from './messages';
+import { VIDEO_SUCCESS_STATUSES } from './data/constants';
+import { RequestStatus } from '../../data/constants';
 
 const VideoThumbnail = ({
   thumbnail,
@@ -19,6 +21,7 @@ const VideoThumbnail = ({
   handleAddThumbnail,
   videoImageSettings,
   status,
+  pageLoadStatus,
   // injected
   intl,
 }) => {
@@ -33,19 +36,19 @@ const VideoThumbnail = ({
   let addThumbnailMessage = 'Add thumbnail';
   if (allowThumbnailUpload) {
     if (thumbnail) {
-      addThumbnailMessage = 'Edit thumbnail';
+      addThumbnailMessage = 'Replace thumbnail';
     }
   }
   const supportedFiles = videoImageSettings?.supportedFileFormats
     ? Object.values(videoImageSettings.supportedFileFormats) : null;
-  const isUploaded = status === 'Success';
+  const isUploaded = VIDEO_SUCCESS_STATUSES.includes(status);
 
   const showThumbnail = allowThumbnailUpload && thumbnail && isUploaded;
 
   return (
     <div data-testid={`video-thumbnail-${id}`} className="video-thumbnail row justify-content-center align-itmes-center">
       {allowThumbnailUpload && <div className="thumbnail-overlay" />}
-      {showThumbnail && !thumbnailError ? (
+      {showThumbnail && !thumbnailError && pageLoadStatus === RequestStatus.SUCCESSFUL ? (
         <div className="border rounded">
           <Image
             style={imageSize}
@@ -110,6 +113,7 @@ VideoThumbnail.propTypes = {
     supportedFileFormats: PropTypes.shape({}),
   }).isRequired,
   status: PropTypes.string.isRequired,
+  pageLoadStatus: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

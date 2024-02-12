@@ -4,21 +4,15 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, fireEvent, waitFor } from '@testing-library/react';
-import PropTypes from 'prop-types';
 
 import { TaxonomyContext } from '../common/context';
 import initializeStore from '../../store';
 import { deleteTaxonomy, getTaxonomy, getTaxonomyExportFile } from '../data/api';
-import { importTaxonomyTags } from '../import-tags';
 import { TaxonomyMenu } from '.';
 
 let store;
 const taxonomyId = 1;
 const taxonomyName = 'Taxonomy 1';
-
-jest.mock('../import-tags', () => ({
-  importTaxonomyTags: jest.fn().mockResolvedValue({}),
-}));
 
 jest.mock('../data/api', () => ({
   ...jest.requireActual('../data/api'),
@@ -32,9 +26,10 @@ const queryClient = new QueryClient();
 const mockSetToastMessage = jest.fn();
 
 const TaxonomyMenuComponent = ({
-  systemDefined,
-  allowFreeText,
   iconMenu,
+  systemDefined,
+  canChangeTaxonomy,
+  canDeleteTaxonomy,
 }) => {
   const context = useMemo(() => ({
     toastMessage: null,
@@ -50,9 +45,10 @@ const TaxonomyMenuComponent = ({
               taxonomy={{
                 id: taxonomyId,
                 name: taxonomyName,
-                systemDefined,
-                allowFreeText,
                 tagsCount: 0,
+                systemDefined,
+                canChangeTaxonomy,
+                canDeleteTaxonomy,
               }}
               iconMenu={iconMenu}
             />
@@ -63,15 +59,15 @@ const TaxonomyMenuComponent = ({
   );
 };
 
-TaxonomyMenuComponent.propTypes = {
-  iconMenu: PropTypes.bool.isRequired,
-  systemDefined: PropTypes.bool,
-  allowFreeText: PropTypes.bool,
-};
+TaxonomyMenuComponent.propTypes = TaxonomyMenu.propTypes;
 
 TaxonomyMenuComponent.defaultProps = {
+  id: taxonomyId,
+  name: taxonomyName,
+  tagsCount: 0,
   systemDefined: false,
-  allowFreeText: false,
+  canChangeTaxonomy: true,
+  canDeleteTaxonomy: true,
 };
 
 describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) => {
@@ -91,20 +87,22 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     jest.clearAllMocks();
   });
 
-  test('should open and close menu on button click', () => {
-    const { getByTestId, queryByTestId } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+  test('should open and close menu on button click', async () => {
+    const { findByTestId, getByTestId, queryByTestId } = render(
+      <TaxonomyMenuComponent iconMenu={iconMenu} />,
+    );
 
     // Menu closed/doesn't exist yet
     expect(queryByTestId('taxonomy-menu')).not.toBeInTheDocument();
 
     // Click on the menu button to open
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
+    fireEvent.click(await findByTestId('taxonomy-menu-button'));
 
     // Menu opened
     expect(getByTestId('taxonomy-menu')).toBeVisible();
 
     // Click on button again to close the menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
+    fireEvent.click(await findByTestId('taxonomy-menu-button'));
 
     // Menu closed
     // Jest bug: toBeVisible() isn't checking opacity correctly
@@ -115,48 +113,76 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     expect(getByTestId('taxonomy-menu-button')).toBeVisible();
   });
 
-  test('doesnt show systemDefined taxonomies disabled menus', () => {
-    const { getByTestId, queryByTestId } = render(<TaxonomyMenuComponent iconMenu={iconMenu} systemDefined />);
-
-    // Menu closed/doesn't exist yet
-    expect(queryByTestId('taxonomy-menu')).not.toBeInTheDocument();
+  test('Shows menu actions that user is permitted', async () => {
+    const { findByTestId, getByTestId, queryByTestId } = render(
+      <TaxonomyMenuComponent
+        iconMenu={iconMenu}
+      />,
+    );
 
     // Click on the menu button to open
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
+    fireEvent.click(await findByTestId('taxonomy-menu-button'));
 
     // Menu opened
     expect(getByTestId('taxonomy-menu')).toBeVisible();
 
-    // Check that the import menu is not show
+    // Ensure expected menu items are found
+    expect(queryByTestId('taxonomy-menu-export')).toBeInTheDocument();
+    expect(queryByTestId('taxonomy-menu-import')).toBeInTheDocument();
+    expect(queryByTestId('taxonomy-menu-manageOrgs')).toBeInTheDocument();
+    expect(queryByTestId('taxonomy-menu-delete')).toBeInTheDocument();
+  });
+
+  test('Hides menu actions that user is not permitted', async () => {
+    const { findByTestId, queryByTestId } = render(
+      <TaxonomyMenuComponent
+        iconMenu={iconMenu}
+        systemDefined={false}
+        canChangeTaxonomy={false}
+        canDeleteTaxonomy={false}
+      />,
+    );
+
+    // Click on the menu button to open
+    fireEvent.click(await findByTestId('taxonomy-menu-button'));
+
+    // Ensure expected menu items are found
+    expect(queryByTestId('taxonomy-menu-export')).toBeInTheDocument();
     expect(queryByTestId('taxonomy-menu-import')).not.toBeInTheDocument();
     expect(queryByTestId('taxonomy-menu-manageOrgs')).not.toBeInTheDocument();
+    expect(queryByTestId('taxonomy-menu-delete')).not.toBeInTheDocument();
   });
 
-  test('doesnt show freeText taxonomies disabled menus', () => {
-    const { getByTestId, queryByTestId } = render(<TaxonomyMenuComponent iconMenu={iconMenu} allowFreeText />);
-
-    // Menu closed/doesn't exist yet
-    expect(queryByTestId('taxonomy-menu')).not.toBeInTheDocument();
+  test('Hides import/delete actions for system-defined taxonomies', async () => {
+    const systemDefined = true;
+    const { queryByTestId } = render(
+      <TaxonomyMenuComponent
+        iconMenu={iconMenu}
+        systemDefined={systemDefined}
+      />,
+    );
 
     // Click on the menu button to open
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
+    fireEvent.click(queryByTestId('taxonomy-menu-button'));
 
-    // Menu opened
-    expect(getByTestId('taxonomy-menu')).toBeVisible();
-
-    // Check that the import menu is not show
+    // Ensure expected menu items are found
+    expect(queryByTestId('taxonomy-menu-export')).toBeInTheDocument();
     expect(queryByTestId('taxonomy-menu-import')).not.toBeInTheDocument();
+    expect(queryByTestId('taxonomy-menu-manageOrgs')).toBeInTheDocument();
+    expect(queryByTestId('taxonomy-menu-delete')).not.toBeInTheDocument();
   });
 
-  test('should open export modal on export menu click', () => {
-    const { getByTestId, getByText, queryByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+  test('should open export modal on export menu click', async () => {
+    const { findByTestId, getByText, queryByText } = render(
+      <TaxonomyMenuComponent iconMenu={iconMenu} />,
+    );
 
     // Modal closed
     expect(queryByText('Select format to export')).not.toBeInTheDocument();
 
     // Click on export menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
-    fireEvent.click(getByTestId('taxonomy-menu-export'));
+    fireEvent.click(await findByTestId('taxonomy-menu-button'));
+    fireEvent.click(await findByTestId('taxonomy-menu-export'));
 
     // Modal opened
     expect(getByText('Select format to export')).toBeInTheDocument();
@@ -168,22 +194,24 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     expect(queryByText('Select format to export')).not.toBeInTheDocument();
   });
 
-  test('should call import tags when menu click', () => {
-    const { getByTestId } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+  test('should call import tags when menu click', async () => {
+    const { findByTestId, getByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // Click on import menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
-    fireEvent.click(getByTestId('taxonomy-menu-import'));
+    fireEvent.click(await findByTestId('taxonomy-menu-button'));
+    fireEvent.click(await findByTestId('taxonomy-menu-import'));
 
-    expect(importTaxonomyTags).toHaveBeenCalled();
+    expect(getByText('Update "Taxonomy 1"')).toBeInTheDocument();
   });
 
-  test('should export a taxonomy', () => {
-    const { getByTestId, getByText, queryByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+  test('should export a taxonomy', async () => {
+    const {
+      findByTestId, getByTestId, getByText, queryByText,
+    } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // Click on export menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
-    fireEvent.click(getByTestId('taxonomy-menu-export'));
+    fireEvent.click(await findByTestId('taxonomy-menu-button'));
+    fireEvent.click(await findByTestId('taxonomy-menu-export'));
 
     // Select JSON format and click on export
     fireEvent.click(getByText('JSON file'));
@@ -194,15 +222,17 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     expect(getTaxonomyExportFile).toHaveBeenCalledWith(taxonomyId, 'json');
   });
 
-  test('should open delete dialog on delete menu click', () => {
-    const { getByTestId, getByText, queryByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+  test('should open delete dialog on delete menu click', async () => {
+    const { findByTestId, getByText, queryByText } = render(
+      <TaxonomyMenuComponent iconMenu={iconMenu} />,
+    );
 
     // Modal closed
     expect(queryByText(`Delete "${taxonomyName}"`)).not.toBeInTheDocument();
 
     // Click on delete menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
-    fireEvent.click(getByTestId('taxonomy-menu-delete'));
+    fireEvent.click(await findByTestId('taxonomy-menu-button'));
+    fireEvent.click(await findByTestId('taxonomy-menu-delete'));
 
     // Modal opened
     expect(getByText(`Delete "${taxonomyName}"`)).toBeInTheDocument();
@@ -215,11 +245,13 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
   });
 
   test('should delete a taxonomy', async () => {
-    const { getByTestId, getByLabelText, queryByText } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
+    const {
+      getByTestId, getByLabelText, findByTestId, queryByText,
+    } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // Click on delete menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
-    fireEvent.click(getByTestId('taxonomy-menu-delete'));
+    fireEvent.click(await findByTestId('taxonomy-menu-button'));
+    fireEvent.click(await findByTestId('taxonomy-menu-delete'));
 
     const deleteButton = getByTestId('delete-button');
 
@@ -251,7 +283,7 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
 
   it('should open manage orgs dialog menu click', async () => {
     const {
-      findByText, getByTestId, getByText, queryByText,
+      findByTestId, findByText, getByText, queryByText,
     } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // We need to provide a taxonomy or the modal will not open
@@ -266,8 +298,8 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     expect(queryByText('Assign to organizations')).not.toBeInTheDocument();
 
     // Click on delete menu
-    fireEvent.click(getByTestId('taxonomy-menu-button'));
-    fireEvent.click(getByTestId('taxonomy-menu-manageOrgs'));
+    fireEvent.click(await findByTestId('taxonomy-menu-button'));
+    fireEvent.click(await findByTestId('taxonomy-menu-manageOrgs'));
 
     // Modal opened
     expect(await findByText('Assign to organizations')).toBeInTheDocument();

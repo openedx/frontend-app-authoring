@@ -3,7 +3,6 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { render } from '@testing-library/react';
-import PropTypes from 'prop-types';
 
 import initializeStore from '../../store';
 
@@ -25,12 +24,7 @@ const TaxonomyCardComponent = ({ taxonomy }) => (
   </AppProvider>
 );
 
-TaxonomyCardComponent.propTypes = {
-  taxonomy: PropTypes.shape({
-    name: PropTypes.string,
-    description: PropTypes.string,
-  }).isRequired,
-};
+TaxonomyCardComponent.propTypes = TaxonomyDetailSideCard.propTypes;
 
 describe('<TaxonomyDetailSideCard/>', async () => {
   beforeEach(async () => {

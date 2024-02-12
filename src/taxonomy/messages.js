@@ -45,6 +45,10 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-list.toast.delete',
     defaultMessage: '"{name}" deleted',
   },
+  taxonomyDismissLabel: {
+    id: 'course-authoring.taxonomy-list.alert.dismiss',
+    defaultMessage: 'Dismiss',
+  },
 });
 
 export default messages;
