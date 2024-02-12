@@ -19,7 +19,7 @@ describe('header utils', () => {
         ...getConfig(),
         ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: 'true',
       });
-      const actualItems = getContentMenuItems(props);
+      const actualItems = getContentMenuItems(contentProps);
       expect(actualItems).toHaveLength(5);
     });
     it('should not include Video Uploads option', () => {
@@ -27,11 +27,14 @@ describe('header utils', () => {
         ...getConfig(),
         ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: 'false',
       });
-      const actualItems = getContentMenuItems(props);
+      const actualItems = getContentMenuItems(contentProps);
       expect(actualItems).toHaveLength(4);
     });
     it('should include only Video Uploads option', () => {
-      process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN = 'true';
+      setConfig({
+        ...getConfig(),
+        ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: 'true',
+      });
       const actualItems = getContentMenuItems({ ...baseProps, hasContentPermissions: false });
       expect(actualItems).toHaveLength(1);
     });
