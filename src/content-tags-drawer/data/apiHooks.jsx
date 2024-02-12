@@ -151,23 +151,23 @@ export const useContentTaxonomyTagsUpdater = (contentId, taxonomyId) => {
 
         // Sends content tags.
         getContentTaxonomyTagsData(contentId).then((data) => {
-          const messageJson = {
+          const contentData = {
             contentId,
             ...data,
           };
           window.top?.postMessage(
-            `[Manage tags drawer] Tags updated: ${JSON.stringify(messageJson)}`,
+            { type: 'authoring.events.tags.updated', data: contentData },
             getConfig().STUDIO_BASE_URL,
           );
         });
         // Sends tags count.
         getContentTaxonomyTagsCountData(contentId).then((data) => {
-          const messageJson = {
+          const contentData = {
             contentId,
             count: data,
           };
           window.top?.postMessage(
-            `[Manage tags drawer] Count updated: ${JSON.stringify(messageJson)}`,
+            { type: 'authoring.events.tags.count.updated', data: contentData },
             getConfig().STUDIO_BASE_URL,
           );
         });
