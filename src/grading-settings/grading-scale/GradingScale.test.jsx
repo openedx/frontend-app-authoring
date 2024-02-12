@@ -16,7 +16,7 @@ const sortedGrades = [
   { current: 20, previous: 0 },
 ];
 
-const RootWrapper = (viewOnly = { viewOnly: false}) => (
+const RootWrapper = (viewOnly = { viewOnly: false }) => (
   <IntlProvider locale="en" messages={{}}>
     <GradingScale
       intl={injectIntl}
