@@ -11,7 +11,6 @@ import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data
 import { RequestStatus } from '../../data/constants';
 import { COURSE_BLOCK_NAMES } from '../constants';
 import CardHeader from '../card-header/CardHeader';
-import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
 import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
@@ -55,6 +54,7 @@ const SubsectionCard = ({
     actions: subsectionActions,
     isHeaderVisible = true,
     enableCopyPasteUnits = false,
+    proctoringExamConfigurationLink,
   } = subsection;
 
   // re-create actions object for customizations
@@ -103,16 +103,11 @@ const SubsectionCard = ({
 
   const titleComponent = (
     <TitleButton
+      title={displayName}
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-    >
-      <BaseTitleWithStatusBadge
-        title={displayName}
-        status={subsectionStatus}
-        namePrefix={namePrefix}
-      />
-    </TitleButton>
+    />
   );
 
   useEffect(() => {
@@ -168,6 +163,8 @@ const SubsectionCard = ({
               titleComponent={titleComponent}
               namePrefix={namePrefix}
               actions={actions}
+              proctoringExamConfigurationLink={proctoringExamConfigurationLink}
+              isSequential
             />
             <div className="subsection-card__content item-children" data-testid="subsection-card__content">
               <XBlockStatus
@@ -233,6 +230,7 @@ SubsectionCard.propTypes = {
     visibilityState: PropTypes.string.isRequired,
     shouldScroll: PropTypes.bool,
     enableCopyPasteUnits: PropTypes.bool,
+    proctoringExamConfigurationLink: PropTypes.string,
     actions: PropTypes.shape({
       deletable: PropTypes.bool.isRequired,
       draggable: PropTypes.bool.isRequired,

@@ -1,20 +1,22 @@
 /* eslint-disable import/named */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import * as Yup from 'yup';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ModalDialog,
   Button,
   ActionRow,
+  Form,
   Tab,
   Tabs,
-  useCheckboxSetValues,
 } from '@edx/paragon';
 import { useSelector } from 'react-redux';
+import { Formik } from 'formik';
 
 import { VisibilityTypes } from '../../data/constants';
 import { COURSE_BLOCK_NAMES } from '../constants';
-import { getCurrentItem } from '../data/selectors';
+import { getCurrentItem, getProctoredExamsFlag } from '../data/selectors';
 import messages from './messages';
 import BasicTab from './BasicTab';
 import VisibilityTab from './VisibilityTab';
@@ -41,27 +43,26 @@ const ConfigureModal = ({
     format,
     userPartitionInfo,
     ancestorHasStaffLock,
+    isPrereq,
+    prereqs,
+    prereq,
+    prereqMinScore,
+    prereqMinCompletion,
+    releasedToStudents,
+    wasExamEverLinkedWithExternal,
+    isProctoredExam,
+    isOnboardingExam,
+    isPracticeExam,
+    examReviewRules,
+    supportsOnboarding,
+    showReviewRules,
+    onlineProctoringRules,
   } = useSelector(getCurrentItem);
+  const enableProctoredExams = useSelector(getProctoredExamsFlag);
 
-  const [releaseDate, setReleaseDate] = useState(sectionStartDate);
-  const [isVisibleToStaffOnly, setIsVisibleToStaffOnly] = useState(visibilityState === VisibilityTypes.STAFF_ONLY);
-
-  const [saveButtonDisabled, setSaveButtonDisabled] = useState(true);
-  const [graderType, setGraderType] = useState(format == null ? 'Not Graded' : format);
-  const [dueDateState, setDueDateState] = useState(due == null ? '' : due);
-  const [isTimeLimitedState, setIsTimeLimitedState] = useState(false);
-  const [defaultTimeLimitMin, setDefaultTimeLimitMin] = useState(defaultTimeLimitMinutes);
-  const [hideAfterDueState, setHideAfterDueState] = useState(hideAfterDue === undefined ? false : hideAfterDue);
-  const [showCorrectnessState, setShowCorrectnessState] = useState(false);
-  const isSubsection = category === COURSE_BLOCK_NAMES.sequential.id;
-
-  /* TODO: The use of these useEffects needs to be updated to use Formik, please see,
-  * https://github.com/open-craft/frontend-app-course-authoring/pull/22#discussion_r1435957797 as reference. */
-  // by default it is -1 i.e. accessible to all learners & staff
-  const [selectedPartitionIndex, setSelectedPartitionIndex] = useState(userPartitionInfo?.selectedPartitionIndex);
   const getSelectedGroups = () => {
-    if (selectedPartitionIndex >= 0) {
-      return userPartitionInfo?.selectablePartitions[selectedPartitionIndex]
+    if (userPartitionInfo?.selectedPartitionIndex >= 0) {
+      return userPartitionInfo?.selectablePartitions[userPartitionInfo?.selectedPartitionIndex]
         ?.groups
         .filter(({ selected }) => selected)
         .map(({ id }) => `${id}`)
@@ -70,140 +71,126 @@ const ConfigureModal = ({
     return [];
   };
 
-  const [selectedGroups, { add, remove, set }] = useCheckboxSetValues([]);
+  const defaultPrereqScore = (val) => {
+    if (val === null || val === undefined) {
+      return 100;
+    }
+    return parseFloat(val);
+  };
 
-  useEffect(() => {
-    setSelectedPartitionIndex(userPartitionInfo?.selectedPartitionIndex);
-  }, [userPartitionInfo]);
+  const initialValues = {
+    releaseDate: sectionStartDate,
+    isVisibleToStaffOnly: visibilityState === VisibilityTypes.STAFF_ONLY,
+    saveButtonDisabled: true,
+    graderType: format == null ? 'notgraded' : format,
+    dueDate: due == null ? '' : due,
+    isTimeLimited,
+    isProctoredExam,
+    isOnboardingExam,
+    isPracticeExam,
+    examReviewRules,
+    defaultTimeLimitMinutes,
+    hideAfterDue: hideAfterDue === undefined ? false : hideAfterDue,
+    showCorrectness,
+    isPrereq,
+    prereqUsageKey: prereq,
+    prereqMinScore: defaultPrereqScore(prereqMinScore),
+    prereqMinCompletion: defaultPrereqScore(prereqMinCompletion),
+    // by default it is -1 i.e. accessible to all learners & staff
+    selectedPartitionIndex: userPartitionInfo?.selectedPartitionIndex,
+    selectedGroups: getSelectedGroups(),
+  };
 
-  useEffect(() => {
-    set(getSelectedGroups());
-  }, [selectedPartitionIndex, userPartitionInfo]);
+  const validationSchema = Yup.object().shape({
+    isTimeLimited: Yup.boolean(),
+    isProctoredExam: Yup.boolean(),
+    isPracticeExam: Yup.boolean(),
+    isOnboardingExam: Yup.boolean(),
+    examReviewRules: Yup.string(),
+    defaultTimeLimitMinutes: Yup.number().nullable(true),
+    hideAfterDueState: Yup.boolean(),
+    showCorrectness: Yup.string().required(),
+    isPrereq: Yup.boolean(),
+    prereqUsageKey: Yup.string().nullable(true),
+    prereqMinScore: Yup.number().min(
+      0,
+      intl.formatMessage(messages.minScoreError),
+    ).max(
+      100,
+      intl.formatMessage(messages.minScoreError),
+    ).nullable(true),
+    prereqMinCompletion: Yup.number().min(
+      0,
+      intl.formatMessage(messages.minScoreError),
+    ).max(
+      100,
+      intl.formatMessage(messages.minScoreError),
+    ).nullable(true),
+    selectedPartitionIndex: Yup.number().integer(),
+    selectedGroups: Yup.array().of(Yup.string()),
+  });
 
-  useEffect(() => {
-    setReleaseDate(sectionStartDate);
-  }, [sectionStartDate]);
+  const isSubsection = category === COURSE_BLOCK_NAMES.sequential.id;
 
-  useEffect(() => {
-    setGraderType(format == null ? 'Not Graded' : format);
-  }, [format]);
-
-  useEffect(() => {
-    setDueDateState(due == null ? '' : due);
-  }, [due]);
-
-  useEffect(() => {
-    setIsTimeLimitedState(isTimeLimited);
-  }, [isTimeLimited]);
-
-  useEffect(() => {
-    setDefaultTimeLimitMin(defaultTimeLimitMinutes);
-  }, [defaultTimeLimitMinutes]);
-
-  useEffect(() => {
-    setHideAfterDueState(hideAfterDue === undefined ? false : hideAfterDue);
-  }, [hideAfterDue]);
-
-  useEffect(() => {
-    setShowCorrectnessState(showCorrectness);
-  }, [showCorrectness]);
-
-  useEffect(() => {
-    setIsVisibleToStaffOnly(visibilityState === VisibilityTypes.STAFF_ONLY);
-  }, [visibilityState]);
-
-  useEffect(() => {
-    const visibilityUnchanged = isVisibleToStaffOnly === (visibilityState === VisibilityTypes.STAFF_ONLY);
-    const graderTypeUnchanged = graderType === (format == null ? 'Not Graded' : format);
-    const dueDateUnchanged = dueDateState === (due == null ? '' : due);
-    const hideAfterDueUnchanged = hideAfterDueState === (hideAfterDue === undefined ? false : hideAfterDue);
-    const selectedGroupsUnchanged = selectedGroups.sort().join(',') === getSelectedGroups().sort().join(',');
-    // handle the case of unrestricting access
-    const accessRestrictionUnchanged = selectedPartitionIndex !== -1
-                                         || userPartitionInfo?.selectedPartitionIndex === -1;
-    setSaveButtonDisabled(
-      visibilityUnchanged
-      && releaseDate === sectionStartDate
-      && dueDateUnchanged
-      && isTimeLimitedState === isTimeLimited
-      && defaultTimeLimitMin === defaultTimeLimitMinutes
-      && hideAfterDueUnchanged
-      && showCorrectnessState === showCorrectness
-      && graderTypeUnchanged
-      && selectedGroupsUnchanged
-      && accessRestrictionUnchanged,
-    );
-  }, [
-    releaseDate,
-    isVisibleToStaffOnly,
-    dueDateState,
-    isTimeLimitedState,
-    defaultTimeLimitMin,
-    hideAfterDueState,
-    showCorrectnessState,
-    graderType,
-    selectedGroups,
-  ]);
-
-  const handleSave = () => {
+  const handleSave = (data) => {
     const groupAccess = {};
     switch (category) {
     case COURSE_BLOCK_NAMES.chapter.id:
-      onConfigureSubmit(isVisibleToStaffOnly, releaseDate);
+      onConfigureSubmit(data.isVisibleToStaffOnly, data.releaseDate);
       break;
     case COURSE_BLOCK_NAMES.sequential.id:
       onConfigureSubmit(
-        isVisibleToStaffOnly,
-        releaseDate,
-        graderType === 'Not Graded' ? 'notgraded' : graderType,
-        dueDateState,
-        isTimeLimitedState,
-        defaultTimeLimitMin,
-        hideAfterDueState,
-        showCorrectnessState,
+        data.isVisibleToStaffOnly,
+        data.releaseDate,
+        data.graderType,
+        data.dueDate,
+        data.isTimeLimited,
+        data.isProctoredExam,
+        data.isOnboardingExam,
+        data.isPracticeExam,
+        data.examReviewRules,
+        data.isTimeLimited ? data.defaultTimeLimitMinutes : 0,
+        data.hideAfterDue,
+        data.showCorrectness,
+        data.isPrereq,
+        data.prereqUsageKey,
+        data.prereqMinScore,
+        data.prereqMinCompletion,
       );
       break;
     case COURSE_BLOCK_NAMES.vertical.id:
       // groupAccess should be {partitionId: [group1, group2]} or {} if selectedPartitionIndex === -1
-      if (selectedPartitionIndex >= 0) {
-        const partitionId = userPartitionInfo.selectablePartitions[selectedPartitionIndex].id;
-        groupAccess[partitionId] = selectedGroups.map(g => parseInt(g, 10));
+      if (data.selectedPartitionIndex >= 0) {
+        const partitionId = userPartitionInfo.selectablePartitions[data.selectedPartitionIndex].id;
+        groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
       }
-      onConfigureSubmit(isVisibleToStaffOnly, groupAccess);
+      onConfigureSubmit(data.isVisibleToStaffOnly, groupAccess);
       break;
     default:
       break;
     }
   };
 
-  const renderModalBody = () => {
+  const renderModalBody = (values, setFieldValue) => {
     switch (category) {
     case COURSE_BLOCK_NAMES.chapter.id:
       return (
         <Tabs>
           <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
             <BasicTab
-              releaseDate={releaseDate}
-              setReleaseDate={setReleaseDate}
+              values={values}
+              setFieldValue={setFieldValue}
               isSubsection={isSubsection}
-              graderType={graderType}
               courseGraders={courseGraders === 'undefined' ? [] : courseGraders}
-              setGraderType={setGraderType}
-              dueDate={dueDateState}
-              setDueDate={setDueDateState}
             />
           </Tab>
           <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
             <VisibilityTab
+              values={values}
+              setFieldValue={setFieldValue}
               category={category}
               isSubsection={isSubsection}
-              isVisibleToStaffOnly={isVisibleToStaffOnly}
-              setIsVisibleToStaffOnly={setIsVisibleToStaffOnly}
               showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
-              hideAfterDue={hideAfterDueState}
-              setHideAfterDue={setHideAfterDueState}
-              showCorrectness={showCorrectnessState}
-              setShowCorrectness={setShowCorrectnessState}
             />
           </Tab>
         </Tabs>
@@ -213,35 +200,33 @@ const ConfigureModal = ({
         <Tabs>
           <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
             <BasicTab
-              releaseDate={releaseDate}
-              setReleaseDate={setReleaseDate}
+              values={values}
+              setFieldValue={setFieldValue}
               isSubsection={isSubsection}
-              graderType={graderType}
               courseGraders={courseGraders === 'undefined' ? [] : courseGraders}
-              setGraderType={setGraderType}
-              dueDate={dueDateState}
-              setDueDate={setDueDateState}
             />
           </Tab>
           <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
             <VisibilityTab
+              values={values}
+              setFieldValue={setFieldValue}
               category={category}
               isSubsection={isSubsection}
-              isVisibleToStaffOnly={isVisibleToStaffOnly}
-              setIsVisibleToStaffOnly={setIsVisibleToStaffOnly}
               showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
-              hideAfterDue={hideAfterDueState}
-              setHideAfterDue={setHideAfterDueState}
-              showCorrectness={showCorrectnessState}
-              setShowCorrectness={setShowCorrectnessState}
             />
           </Tab>
           <Tab eventKey="advanced" title={intl.formatMessage(messages.advancedTabTitle)}>
             <AdvancedTab
-              isTimeLimited={isTimeLimitedState}
-              setIsTimeLimited={setIsTimeLimitedState}
-              defaultTimeLimit={defaultTimeLimitMin}
-              setDefaultTimeLimit={setDefaultTimeLimitMin}
+              values={values}
+              setFieldValue={setFieldValue}
+              prereqs={prereqs}
+              releasedToStudents={releasedToStudents}
+              wasExamEverLinkedWithExternal={wasExamEverLinkedWithExternal}
+              enableProctoredExams={enableProctoredExams}
+              supportsOnboarding={supportsOnboarding}
+              showReviewRules={showReviewRules}
+              wasProctoredExam={isProctoredExam}
+              onlineProctoringRules={onlineProctoringRules}
             />
           </Tab>
         </Tabs>
@@ -249,15 +234,10 @@ const ConfigureModal = ({
     case COURSE_BLOCK_NAMES.vertical.id:
       return (
         <UnitTab
-          isVisibleToStaffOnly={isVisibleToStaffOnly}
-          setIsVisibleToStaffOnly={setIsVisibleToStaffOnly}
+          values={values}
+          setFieldValue={setFieldValue}
           showWarning={visibilityState === VisibilityTypes.STAFF_ONLY && !ancestorHasStaffLock}
           userPartitionInfo={userPartitionInfo}
-          selectedPartitionIndex={selectedPartitionIndex}
-          setSelectedPartitionIndex={setSelectedPartitionIndex}
-          selectedGroups={selectedGroups}
-          add={add}
-          remove={remove}
         />
       );
     default:
@@ -266,36 +246,51 @@ const ConfigureModal = ({
   };
 
   return (
-    isOpen && (
-      <ModalDialog
-        className="configure-modal"
-        isOpen={isOpen}
-        onClose={onClose}
-        hasCloseButton
-        isFullscreenOnMobile
-      >
-        <div data-testid="configure-modal">
-          <ModalDialog.Header className="configure-modal__header">
-            <ModalDialog.Title>
-              {intl.formatMessage(messages.title, { title: displayName })}
-            </ModalDialog.Title>
-          </ModalDialog.Header>
-          <ModalDialog.Body className="configure-modal__body">
-            {renderModalBody(category)}
-          </ModalDialog.Body>
-          <ModalDialog.Footer className="pt-1">
-            <ActionRow>
-              <ModalDialog.CloseButton variant="tertiary">
-                {intl.formatMessage(messages.cancelButton)}
-              </ModalDialog.CloseButton>
-              <Button data-testid="configure-save-button" onClick={handleSave} disabled={saveButtonDisabled}>
-                {intl.formatMessage(messages.saveButton)}
-              </Button>
-            </ActionRow>
-          </ModalDialog.Footer>
-        </div>
-      </ModalDialog>
-    )
+    <ModalDialog
+      className="configure-modal"
+      size="lg"
+      isOpen={isOpen}
+      onClose={onClose}
+      hasCloseButton
+      isFullscreenOnMobile
+    >
+      <div data-testid="configure-modal">
+        <ModalDialog.Header className="configure-modal__header">
+          <ModalDialog.Title>
+            {intl.formatMessage(messages.title, { title: displayName })}
+          </ModalDialog.Title>
+        </ModalDialog.Header>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSave}
+          validationSchema={validationSchema}
+          validateOnBlur
+          validateOnChange
+        >
+          {({
+            values, handleSubmit, dirty, isValid, setFieldValue,
+          }) => (
+            <>
+              <ModalDialog.Body className="configure-modal__body">
+                <Form.Group size="sm" className="form-field">
+                  {renderModalBody(values, setFieldValue)}
+                </Form.Group>
+              </ModalDialog.Body>
+              <ModalDialog.Footer className="pt-1">
+                <ActionRow>
+                  <ModalDialog.CloseButton variant="tertiary">
+                    {intl.formatMessage(messages.cancelButton)}
+                  </ModalDialog.CloseButton>
+                  <Button data-testid="configure-save-button" onClick={handleSubmit} disabled={!(dirty && isValid)}>
+                    {intl.formatMessage(messages.saveButton)}
+                  </Button>
+                </ActionRow>
+              </ModalDialog.Footer>
+            </>
+          )}
+        </Formik>
+      </div>
+    </ModalDialog>
   );
 };
 

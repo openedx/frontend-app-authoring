@@ -30,6 +30,7 @@ import {
   setCourseItemOrderList,
   copyBlockToClipboard,
   pasteBlock,
+  dismissNotification,
 } from './api';
 import {
   addSection,
@@ -261,11 +262,19 @@ export function configureCourseSubsectionQuery(
   isVisibleToStaffOnly,
   releaseDate,
   graderType,
-  dueDateState,
-  isTimeLimitedState,
+  dueDate,
+  isTimeLimited,
+  isProctoredExam,
+  isOnboardingExam,
+  isPracticeExam,
+  examReviewRules,
   defaultTimeLimitMin,
-  hideAfterDueState,
-  showCorrectnessState,
+  hideAfterDue,
+  showCorrectness,
+  isPrereq,
+  prereqUsageKey,
+  prereqMinScore,
+  prereqMinCompletion,
 ) {
   return async (dispatch) => {
     dispatch(configureCourseItemQuery(
@@ -275,11 +284,19 @@ export function configureCourseSubsectionQuery(
         isVisibleToStaffOnly,
         releaseDate,
         graderType,
-        dueDateState,
-        isTimeLimitedState,
+        dueDate,
+        isTimeLimited,
+        isProctoredExam,
+        isOnboardingExam,
+        isPracticeExam,
+        examReviewRules,
         defaultTimeLimitMin,
-        hideAfterDueState,
-        showCorrectnessState,
+        hideAfterDue,
+        showCorrectness,
+        isPrereq,
+        prereqUsageKey,
+        prereqMinScore,
+        prereqMinCompletion,
       ),
     ));
   };
@@ -603,6 +620,20 @@ export function pasteClipboardContent(parentLocator, sectionId) {
       });
     } catch (error) {
       dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function dismissNotificationQuery(url) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+
+    try {
+      await dismissNotification(url).then(async () => {
+        dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+      });
+    } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   };

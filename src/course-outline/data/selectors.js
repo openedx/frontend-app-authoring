@@ -9,3 +9,4 @@ export const getCurrentSubsection = (state) => state.courseOutline.currentSubsec
 export const getCourseActions = (state) => state.courseOutline.actions;
 export const getCustomRelativeDatesActiveFlag = (state) => state.courseOutline.isCustomRelativeDatesActive;
 export const getInitialUserClipboard = (state) => state.courseOutline.initialUserClipboard;
+export const getProctoredExamsFlag = (state) => state.courseOutline.enableProctoredExams;

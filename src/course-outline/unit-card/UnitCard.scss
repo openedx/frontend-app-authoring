@@ -1,10 +1,6 @@
 .unit-card {
   flex-grow: 1;
 
-  .item-card-header__badge-status {
-    background: $light-100;
-  }
-
   // used in src/course-outline/card-header/TitleLink.jsx &
   // src/course-outline/card-header/TitleButton.jsx as
   // `${namePrefix}-card-title`
