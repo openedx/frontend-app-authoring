@@ -56,7 +56,16 @@ const mockTagsResponse = {
     },
   ],
 };
-const rootTagsListUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?page=1';
+const mockTagsPaginationResponse = {
+  next: null,
+  previous: null,
+  count: 103,
+  num_pages: 2,
+  current_page: 1,
+  start: 0,
+  results: [],
+};
+const rootTagsListUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?page=1&page_size=100';
 const subTagsResponse = {
   next: null,
   previous: null,
@@ -126,6 +135,22 @@ describe('<TagListTable />', () => {
     expandButton.click();
     await waitFor(() => {
       expect(result.getByText('the child tag')).toBeInTheDocument();
+    });
+  });
+
+  it('should not render pagination footer', async () => {
+    axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
+    const result = render(<RootWrapper />);
+    await waitFor(() => {
+      expect(result.queryByTestId('table-footer')).not.toBeInTheDocument();
+    });
+  });
+
+  it('should render pagination footer', async () => {
+    axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsPaginationResponse);
+    const result = render(<RootWrapper />);
+    await waitFor(() => {
+      expect(result.getByTestId('table-footer')).toBeInTheDocument();
     });
   });
 });

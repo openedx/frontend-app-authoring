@@ -93,23 +93,22 @@ const TagListTable = ({ taxonomyId }) => {
         renderRowSubComponent={({ row }) => (
           <SubTagsExpanded taxonomyId={taxonomyId} parentTagValue={row.original.value} />
         )}
-        additionalColumns={[
+        columns={[
+          {
+            Header: intl.formatMessage(messages.tagListColumnValueHeader),
+            Cell: TagValue,
+          },
           {
             id: 'expander',
             Header: DataTable.ExpandAll,
             Cell: OptionalExpandLink,
           },
         ]}
-        columns={[
-          {
-            Header: intl.formatMessage(messages.tagListColumnValueHeader),
-            Cell: TagValue,
-          },
-        ]}
       >
         <DataTable.Table />
         <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
-        <DataTable.TableFooter />
+        {tagList?.numPages !== undefined && tagList?.numPages > 1
+          && <DataTable.TableFooter />}
       </DataTable>
     </div>
   );

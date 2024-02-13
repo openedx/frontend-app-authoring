@@ -9,8 +9,8 @@ import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-const getTagListApiUrl = (taxonomyId, page) => new URL(
-  `api/content_tagging/v1/taxonomies/${taxonomyId}/tags/?page=${page + 1}`,
+const getTagListApiUrl = (taxonomyId, page, pageSize) => new URL(
+  `api/content_tagging/v1/taxonomies/${taxonomyId}/tags/?page=${page + 1}&page_size=${pageSize}`,
   getApiBaseUrl(),
 ).href;
 
@@ -21,10 +21,11 @@ const getTagListApiUrl = (taxonomyId, page) => new URL(
  */
 export const useTagListData = (taxonomyId, options) => {
   const { pageIndex } = options;
+  const pageSize = 100;
   return useQuery({
     queryKey: ['tagList', taxonomyId, pageIndex],
     queryFn: async () => {
-      const { data } = await getAuthenticatedHttpClient().get(getTagListApiUrl(taxonomyId, pageIndex));
+      const { data } = await getAuthenticatedHttpClient().get(getTagListApiUrl(taxonomyId, pageIndex, pageSize));
       return camelCaseObject(data);
     },
   });
