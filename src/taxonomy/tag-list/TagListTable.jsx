@@ -39,7 +39,9 @@ SubTagsExpanded.propTypes = {
 /**
  * An "Expand" toggle to show/hide subtags, but one which is hidden if the given tag row has no subtags.
  */
-const OptionalExpandLink = ({ row }) => (row.original.childCount > 0 ? <DataTable.ExpandRow row={row} /> : null);
+const OptionalExpandLink = ({ row }) => (
+  row.original.childCount > 0 ? <div className="tag-table-expand-row"><DataTable.ExpandRow row={row} /></div> : null
+);
 OptionalExpandLink.propTypes = DataTable.ExpandRow.propTypes;
 
 /**
@@ -75,38 +77,41 @@ const TagListTable = ({ taxonomyId }) => {
   };
 
   return (
-    <DataTable
-      isLoading={isLoading}
-      isPaginated
-      manualPagination
-      fetchData={fetchData}
-      data={tagList?.results || []}
-      itemCount={tagList?.count || 0}
-      pageCount={tagList?.numPages || 0}
-      initialState={options}
-      isExpandable
-      // This is a temporary "bare bones" solution for brute-force loading all the child tags. In future we'll match
-      // the Figma design and do something more sophisticated.
-      renderRowSubComponent={({ row }) => (
-        <SubTagsExpanded taxonomyId={taxonomyId} parentTagValue={row.original.value} />
-      )}
-      columns={[
-        {
-          Header: intl.formatMessage(messages.tagListColumnValueHeader),
-          Cell: TagValue,
-        },
-        {
-          id: 'expander',
-          Header: DataTable.ExpandAll,
-          Cell: OptionalExpandLink,
-        },
-      ]}
-    >
-      <DataTable.TableControlBar />
-      <DataTable.Table />
-      <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
-      <DataTable.TableFooter />
-    </DataTable>
+    <div className="tag-list-table">
+      <DataTable
+        isLoading={isLoading}
+        isPaginated
+        manualPagination
+        fetchData={fetchData}
+        data={tagList?.results || []}
+        itemCount={tagList?.count || 0}
+        pageCount={tagList?.numPages || 0}
+        initialState={options}
+        isExpandable
+        // This is a temporary "bare bones" solution for brute-force loading all the child tags. In future we'll match
+        // the Figma design and do something more sophisticated.
+        renderRowSubComponent={({ row }) => (
+          <SubTagsExpanded taxonomyId={taxonomyId} parentTagValue={row.original.value} />
+        )}
+        additionalColumns={[
+          {
+            id: 'expander',
+            Header: DataTable.ExpandAll,
+            Cell: OptionalExpandLink,
+          },
+        ]}
+        columns={[
+          {
+            Header: intl.formatMessage(messages.tagListColumnValueHeader),
+            Cell: TagValue,
+          },
+        ]}
+      >
+        <DataTable.Table />
+        <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
+        <DataTable.TableFooter />
+      </DataTable>
+    </div>
   );
 };
 
