@@ -91,17 +91,23 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
   // To handle checking/unchecking tags in the SelectableBox
   const [checkedTags, { add, remove, clear }] = useCheckboxSetValues();
 
-  // Handles making requests to the update endpoint whenever the checked tags change
-  React.useEffect(() => {
-    // We have this check because this hook is fired when the component first loads
-    // and reloads (on refocus). We only want to make a request to the update endpoint when
-    // the user is updating the tags.
-    if (updatingTags) {
-      setUpdatingTags(false);
-      const tags = checkedTags.map(t => decodeURIComponent(t.split(',').slice(-1)));
-      updateTags.mutate({ tags });
-    }
-  }, [contentId, id, canTagObject, checkedTags]);
+  // =================================================================
+
+  // TODO: Properly implement this based on feature/requirements
+
+  // // Handles making requests to the update endpoint whenever the checked tags change
+  // React.useEffect(() => {
+  //   // We have this check because this hook is fired when the component first loads
+  //   // and reloads (on refocus). We only want to make a request to the update endpoint when
+  //   // the user is updating the tags.
+  //   if (updatingTags) {
+  //     setUpdatingTags(false);
+  //     const tags = checkedTags.map(t => decodeURIComponent(t.split(',').slice(-1)));
+  //     updateTags.mutate({ tags });
+  //   }
+  // }, [contentId, id, canTagObject, checkedTags]);
+
+  // ==================================================================
 
   // This converts the contentTags prop to the tree structure mentioned above
   const appliedContentTags = React.useMemo(() => {
@@ -203,7 +209,7 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
     }
 
     setAddedContentTags(addedTree);
-    setUpdatingTags(true);
+    // setUpdatingTags(true);
   }, []);
 
   return {

@@ -1,5 +1,6 @@
 // @ts-check
 import React from 'react';
+import Select, { components, MenuProps } from 'react-select';
 import {
   Badge,
   Collapsible,
@@ -21,6 +22,34 @@ import ContentTagsDropDownSelector from './ContentTagsDropDownSelector';
 import ContentTagsTree from './ContentTagsTree';
 
 import useContentTagsCollapsibleHelper from './ContentTagsCollapsibleHelper';
+
+const CustomMenu = (props) => {
+  const { intl, handleSelectableBoxChange, checkedTags, taxonomyId, tagsTree, searchTerm } = props.selectProps;
+  return (
+    <components.Menu {...props}>
+      <div className="bg-white p-3 shadow">
+
+        <SelectableBox.Set
+          type="checkbox"
+          name="tags"
+          columns={1}
+          ariaLabel={intl.formatMessage(messages.taxonomyTagsAriaLabel)}
+          className="taxonomy-tags-selectable-box-set"
+          onChange={handleSelectableBoxChange}
+          value={checkedTags}
+        >
+          <ContentTagsDropDownSelector
+            key={`selector-${taxonomyId}`}
+            taxonomyId={taxonomyId}
+            level={0}
+            tagsTree={tagsTree}
+            searchTerm={searchTerm}
+          />
+        </SelectableBox.Set>
+      </div>
+    </components.Menu>
+  );
+};
 
 /** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
 /** @typedef {import("./data/types.mjs").Tag} ContentTagData */
@@ -102,14 +131,11 @@ import useContentTagsCollapsibleHelper from './ContentTagsCollapsibleHelper';
  */
 const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData }) => {
   const intl = useIntl();
-  const { id, name, canTagObject } = taxonomyAndTagsData;
+  const { id: taxonomyId, name, canTagObject } = taxonomyAndTagsData;
 
   const {
     tagChangeHandler, tagsTree, contentTagsCount, checkedTags,
   } = useContentTagsCollapsibleHelper(contentId, taxonomyAndTagsData);
-
-  const [isOpen, open, close] = useToggle(false);
-  const [addTagsButtonRef, setAddTagsButtonRef] = React.useState(null);
 
   const [searchTerm, setSearchTerm] = React.useState('');
 
@@ -121,7 +147,7 @@ const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData }) => {
     setSearchTerm(term.trim());
   }, 500); // Perform search after 500ms
 
-  const handleSearchChange = React.useCallback((value) => {
+  const handleSearchChange = React.useCallback((value, { action, prevInputValue }) => {
     if (value === '') {
       // No need to debounce when search term cleared. Clear debounce function
       handleSearch.cancel();
@@ -131,66 +157,40 @@ const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData }) => {
     }
   }, []);
 
-  const modalPopupOnCloseHandler = React.useCallback((event) => {
-    close(event);
-    // Clear search term
-    setSearchTerm('');
-  }, []);
-
   return (
     <div className="d-flex">
       <Collapsible title={name} styling="card-lg" className="taxonomy-tags-collapsible">
-        <div key={id}>
+        <div key={taxonomyId}>
           <ContentTagsTree tagsTree={tagsTree} removeTagHandler={tagChangeHandler} />
         </div>
 
         <div className="d-flex taxonomy-tags-selector-menu">
 
           {canTagObject && (
-            <Button
-              ref={setAddTagsButtonRef}
-              variant="outline-primary"
-              onClick={open}
-            >
-              <FormattedMessage {...messages.addTagsButtonText} />
-            </Button>
+            <Select
+              isMulti
+              name="colors"
+              isSearchable
+              className="d-flex flex-column flex-fill"
+              classNamePrefix="react-select"
+              onInputChange={handleSearchChange}
+              components={{ Menu: CustomMenu }}
+              closeMenuOnSelect={false}
+              blurInputOnSelect={false}
+              intl={intl}
+              handleSelectableBoxChange={handleSelectableBoxChange}
+              checkedTags={checkedTags}
+              taxonomyId={taxonomyId}
+              tagsTree={tagsTree}
+              searchTerm={searchTerm}
+              // value={[
+              //   { value: 'Administration,Administrative%20Support,Administrative%20Functions', label: 'Administrative Functions' },
+              //   { value: 'Administration,Administrative%20Support,Memos', label: 'Memos' },
+              //   { value: 'Another%20One', label: 'Another One' },
+              // ]} // TODO: this needs to be staged (not yet commited tags) in the above format
+            />
           )}
         </div>
-        <ModalPopup
-          hasArrow
-          placement="bottom"
-          positionRef={addTagsButtonRef}
-          isOpen={isOpen}
-          onClose={modalPopupOnCloseHandler}
-        >
-          <div className="bg-white p-3 shadow">
-
-            <SelectableBox.Set
-              type="checkbox"
-              name="tags"
-              columns={1}
-              ariaLabel={intl.formatMessage(messages.taxonomyTagsAriaLabel)}
-              className="taxonomy-tags-selectable-box-set"
-              onChange={handleSelectableBoxChange}
-              value={checkedTags}
-            >
-              <SearchField
-                onSubmit={() => {}}
-                onChange={handleSearchChange}
-                className="mb-2"
-              />
-
-              <ContentTagsDropDownSelector
-                key={`selector-${id}`}
-                taxonomyId={id}
-                level={0}
-                tagsTree={tagsTree}
-                searchTerm={searchTerm}
-              />
-            </SelectableBox.Set>
-          </div>
-        </ModalPopup>
-
       </Collapsible>
       <div className="d-flex">
         <Badge
