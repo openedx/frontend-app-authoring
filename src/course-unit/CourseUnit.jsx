@@ -66,9 +66,7 @@ const CourseUnit = ({ courseId }) => {
               />
             )}
             breadcrumbs={(
-              <Breadcrumbs
-                courseId={courseId}
-              />
+              <Breadcrumbs />
             )}
             headerActions={(
               <HeaderNavigations
