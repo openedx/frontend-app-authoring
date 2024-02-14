@@ -1,5 +1,5 @@
 import MockAdapter from 'axios-mock-adapter';
-import { render, waitFor } from '@testing-library/react';
+import { render, waitFor, within } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -49,23 +49,25 @@ describe('<GroupConfigurations />', () => {
   });
 
   it('renders component correctly', async () => {
-    const { getByText } = renderComponent();
+    const { getByText, getAllByText, getByTestId } = renderComponent();
 
     await waitFor(() => {
-      expect(
-        getByText(messages.headingTitle.defaultMessage),
-      ).toBeInTheDocument();
+      const mainContent = getByTestId('group-configurations-main-content-wrapper');
+      const groupConfigurationsElements = getAllByText(messages.headingTitle.defaultMessage);
+      const groupConfigurationsTitle = groupConfigurationsElements[0];
+
+      expect(groupConfigurationsTitle).toBeInTheDocument();
       expect(
         getByText(messages.headingSubtitle.defaultMessage),
       ).toBeInTheDocument();
       expect(
-        getByText(contentGroupsMessages.addNewGroup.defaultMessage),
+        within(mainContent).getByText(contentGroupsMessages.addNewGroup.defaultMessage),
       ).toBeInTheDocument();
       expect(
-        getByText(experimentMessages.addNewGroup.defaultMessage),
+        within(mainContent).getByText(experimentMessages.addNewGroup.defaultMessage),
       ).toBeInTheDocument();
       expect(
-        getByText(experimentMessages.title.defaultMessage),
+        within(mainContent).getByText(experimentMessages.title.defaultMessage),
       ).toBeInTheDocument();
       expect(getByText(contentGroups.name)).toBeInTheDocument();
       expect(getByText(enrollmentTrackGroups.name)).toBeInTheDocument();
