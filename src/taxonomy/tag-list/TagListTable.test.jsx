@@ -3,7 +3,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { render, waitFor } from '@testing-library/react';
+import { render, waitFor, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
 
@@ -108,49 +108,50 @@ describe('<TagListTable />', () => {
     let resolveResponse;
     const promise = new Promise(resolve => { resolveResponse = resolve; });
     axiosMock.onGet(rootTagsListUrl).reply(() => promise);
-    const result = render(<RootWrapper />);
-    const spinner = result.getByRole('status');
+    render(<RootWrapper />);
+    const spinner = screen.getByRole('status');
     expect(spinner.textContent).toEqual('loading');
     resolveResponse([200, {}]);
-    await waitFor(() => {
-      expect(result.getByText('No results found')).toBeInTheDocument();
-    });
+    const noFoundComponent = await screen.findByText('No results found');
+    expect(noFoundComponent).toBeInTheDocument();
   });
 
   it('should render page correctly', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-    const result = render(<RootWrapper />);
-    await waitFor(() => {
-      expect(result.getByText('two level tag 1')).toBeInTheDocument();
-    });
-    const rows = result.getAllByRole('row');
+    render(<RootWrapper />);
+    const tag = await screen.findByText('two level tag 1');
+    expect(tag).toBeInTheDocument();
+
+    const rows = screen.getAllByRole('row');
     expect(rows.length).toBe(3 + 1); // 3 items plus header
   });
 
   it('should render page correctly with subtags', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
     axiosMock.onGet(subTagsUrl).reply(200, subTagsResponse);
-    const result = render(<RootWrapper />);
-    const expandButton = result.getAllByLabelText('Expand row')[0];
+    render(<RootWrapper />);
+    const expandButton = screen.getAllByLabelText('Expand row')[0];
     expandButton.click();
-    await waitFor(() => {
-      expect(result.getByText('the child tag')).toBeInTheDocument();
-    });
+    const childTag = await screen.findByText('the child tag');
+    expect(childTag).toBeInTheDocument();
   });
 
   it('should not render pagination footer', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
-    const result = render(<RootWrapper />);
+    render(<RootWrapper />);
     await waitFor(() => {
-      expect(result.queryByTestId('table-footer')).not.toBeInTheDocument();
+      expect(screen.queryByRole('navigation', {
+        name: /table pagination/i,
+      })).not.toBeInTheDocument();
     });
   });
 
   it('should render pagination footer', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsPaginationResponse);
-    const result = render(<RootWrapper />);
-    await waitFor(() => {
-      expect(result.getByTestId('table-footer')).toBeInTheDocument();
+    render(<RootWrapper />);
+    const tableFooter = await screen.findByRole('navigation', {
+      name: /table pagination/i,
     });
+    expect(tableFooter).toBeInTheDocument();
   });
 });
