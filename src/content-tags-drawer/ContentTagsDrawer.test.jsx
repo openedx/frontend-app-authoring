@@ -1,13 +1,19 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { act, render, fireEvent } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  act,
+  fireEvent,
+  render,
+  waitFor,
+} from '@testing-library/react';
 
 import ContentTagsDrawer from './ContentTagsDrawer';
 import {
   useContentTaxonomyTagsData,
   useContentData,
 } from './data/apiHooks';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from '../taxonomy/data/apiHooks';
+import { getTaxonomyListData } from '../taxonomy/data/api';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -16,6 +22,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+// FIXME: replace these mocks with API mocks
 jest.mock('./data/apiHooks', () => ({
   useContentTaxonomyTagsData: jest.fn(() => ({
     isSuccess: false,
@@ -30,18 +37,29 @@ jest.mock('./data/apiHooks', () => ({
   })),
 }));
 
-jest.mock('../taxonomy/data/apiHooks', () => ({
-  useTaxonomyListDataResponse: jest.fn(),
-  useIsTaxonomyListDataLoaded: jest.fn(),
+jest.mock('../taxonomy/data/api', () => ({
+  // By default, the mock taxonomy list will never load (promise never resolves):
+  getTaxonomyListData: jest.fn(),
 }));
+
+const queryClient = new QueryClient();
 
 const RootWrapper = () => (
   <IntlProvider locale="en" messages={{}}>
-    <ContentTagsDrawer />
+    <QueryClientProvider client={queryClient}>
+      <ContentTagsDrawer />
+    </QueryClientProvider>
   </IntlProvider>
 );
 
 describe('<ContentTagsDrawer />', () => {
+  beforeEach(async () => {
+    await queryClient.resetQueries();
+    // By default, we mock the API call with a promise that never resolves.
+    // You can override this in specific test.
+    getTaxonomyListData.mockReturnValue(new Promise(() => {}));
+  });
+
   it('should render page and page title correctly', () => {
     const { getByText } = render(<RootWrapper />);
     expect(getByText('Manage tags')).toBeInTheDocument();
@@ -56,7 +74,6 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('shows spinner before the taxonomy tags query is complete', async () => {
-    useIsTaxonomyListDataLoaded.mockReturnValue(false);
     await act(async () => {
       const { getAllByRole } = render(<RootWrapper />);
       const spinner = getAllByRole('status')[1];
@@ -78,7 +95,6 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('shows the taxonomies data including tag numbers after the query is complete', async () => {
-    useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useContentTaxonomyTagsData.mockReturnValue({
       isSuccess: true,
       data: {
@@ -115,7 +131,7 @@ describe('<ContentTagsDrawer />', () => {
         ],
       },
     });
-    useTaxonomyListDataResponse.mockReturnValue({
+    getTaxonomyListData.mockResolvedValue({
       results: [{
         id: 123,
         name: 'Taxonomy 1',
@@ -130,6 +146,7 @@ describe('<ContentTagsDrawer />', () => {
     });
     await act(async () => {
       const { container, getByText } = render(<RootWrapper />);
+      await waitFor(() => { expect(getByText('Taxonomy 1')).toBeInTheDocument(); });
       expect(getByText('Taxonomy 1')).toBeInTheDocument();
       expect(getByText('Taxonomy 2')).toBeInTheDocument();
       const tagCountBadges = container.getElementsByClassName('badge');

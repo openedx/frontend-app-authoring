@@ -18,7 +18,7 @@ const ExportModal = ({
   onClose,
 }) => {
   const intl = useIntl();
-  const [outputFormat, setOutputFormat] = useState('csv');
+  const [outputFormat, setOutputFormat] = useState(/** @type {'csv'|'json'} */('csv'));
 
   const onClickExport = React.useCallback(() => {
     onClose();

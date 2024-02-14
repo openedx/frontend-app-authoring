@@ -14,7 +14,7 @@ import {
   useContentTaxonomyTagsData,
   useContentData,
 } from './data/apiHooks';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from '../taxonomy/data/apiHooks';
+import { useTaxonomyList } from '../taxonomy/data/apiHooks';
 import Loading from '../generic/Loading';
 
 /** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
@@ -26,18 +26,12 @@ const ContentTagsDrawer = () => {
 
   const org = extractOrgFromContentId(contentId);
 
-  const useTaxonomyListData = () => {
-    const taxonomyListData = useTaxonomyListDataResponse(org);
-    const isTaxonomyListLoaded = useIsTaxonomyListDataLoaded(org);
-    return { taxonomyListData, isTaxonomyListLoaded };
-  };
-
   const { data: contentData, isSuccess: isContentDataLoaded } = useContentData(contentId);
   const {
     data: contentTaxonomyTagsData,
     isSuccess: isContentTaxonomyTagsLoaded,
   } = useContentTaxonomyTagsData(contentId);
-  const { taxonomyListData, isTaxonomyListLoaded } = useTaxonomyListData();
+  const { data: taxonomyListData, isSuccess: isTaxonomyListLoaded } = useTaxonomyList(org);
 
   const closeContentTagsDrawer = () => {
     // "*" allows communication with any origin

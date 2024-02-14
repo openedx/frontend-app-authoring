@@ -20,7 +20,7 @@ import PropTypes from 'prop-types';
 
 import { useOrganizationListData } from '../../generic/data/apiHooks';
 import { TaxonomyContext } from '../common/context';
-import { useTaxonomyDetailDataResponse } from '../data/apiHooks';
+import { useTaxonomyDetails } from '../data/apiHooks';
 import { useManageOrgs } from './data/api';
 import messages from './messages';
 import './ManageOrgsModal.scss';
@@ -83,7 +83,7 @@ const ManageOrgsModal = ({
     data: organizationListData,
   } = useOrganizationListData();
 
-  const taxonomy = useTaxonomyDetailDataResponse(taxonomyId);
+  const { data: taxonomy } = useTaxonomyDetails(taxonomyId);
 
   const manageOrgMutation = useManageOrgs();
 

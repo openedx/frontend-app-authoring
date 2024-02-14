@@ -12,95 +12,178 @@
  *   Ex. useTaxonomyListDataResponse & useIsTaxonomyListDataLoaded.
  */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getTaxonomyListData, deleteTaxonomy, getTaxonomy } from './api';
+import { camelCaseObject } from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { apiUrls, ALL_TAXONOMIES } from './api';
+import * as api from './api';
+
+// Query key patterns. Allows an easy way to clear all data related to a given taxonomy.
+// https://github.com/openedx/frontend-app-admin-portal/blob/2ba315d/docs/decisions/0006-tanstack-react-query.rst
+// Inspired by https://tkdodo.eu/blog/effective-react-query-keys#use-query-key-factories.
+export const taxonomyQueryKeys = {
+  all: ['taxonomies'],
+  /**
+   * Key for the list of taxonomies, optionally filtered by org.
+   * @param {string} [org] Which org we fetched the taxonomy list for (optional)
+   */
+  taxonomyList: (org) => [
+    ...taxonomyQueryKeys.all, 'taxonomyList', ...(org && org !== ALL_TAXONOMIES ? [org] : []),
+  ],
+  /**
+   * Base key for data specific to a single taxonomy. No data is stored directly in this key.
+   * @param {number} taxonomyId ID of the taxonomy
+   */
+  taxonomy: (taxonomyId) => [...taxonomyQueryKeys.all, 'taxonomy', taxonomyId],
+  /**
+   * @param {number} taxonomyId ID of the taxonomy
+   */
+  taxonomyMetadata: (taxonomyId) => [...taxonomyQueryKeys.taxonomy(taxonomyId), 'metadata'],
+  /**
+   * @param {number} taxonomyId ID of the taxonomy
+   */
+  taxonomyTagList: (taxonomyId) => [...taxonomyQueryKeys.taxonomy(taxonomyId), 'tags'],
+  /**
+   * @param {string} fileId Some string to uniquely identify the file we want to upload
+   */
+  importPlan: (fileId) => [...taxonomyQueryKeys.all, 'importPlan', fileId],
+};
 
 /**
  * Builds the query to get the taxonomy list
- * @param {string} org Optional organization query param
+ * @param {string} [org] Filter the list to only show taxonomies assigned to this org
  */
-const useTaxonomyListData = (org) => (
+export const useTaxonomyList = (org) => (
   useQuery({
-    queryKey: ['taxonomyList', org],
-    queryFn: () => getTaxonomyListData(org),
+    queryKey: taxonomyQueryKeys.taxonomyList(org),
+    queryFn: () => api.getTaxonomyListData(org),
   })
 );
 
 /**
  * Builds the mutation to delete a taxonomy.
- * @returns An object with the mutation configuration.
+ * @returns A function that can be used to delete the taxonomy.
  */
 export const useDeleteTaxonomy = () => {
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
+  const { mutateAsync } = useMutation({
     /** @type {import("@tanstack/react-query").MutateFunction<any, any, {pk: number}>} */
-    mutationFn: async ({ pk }) => deleteTaxonomy(pk),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['taxonomyList'] });
+    mutationFn: async ({ pk }) => api.deleteTaxonomy(pk),
+    onSettled: (_d, _e, args) => {
+      queryClient.invalidateQueries({ queryKey: taxonomyQueryKeys.taxonomyList() });
+      queryClient.removeQueries({ queryKey: taxonomyQueryKeys.taxonomy(args.pk) });
     },
   });
-  return mutate;
+  return mutateAsync;
 };
 
 /** Builds the query to get the taxonomy detail
   * @param {number} taxonomyId
   */
-const useTaxonomyDetailData = (taxonomyId) => (
-  useQuery({
-    queryKey: ['taxonomyDetail', taxonomyId],
-    queryFn: async () => getTaxonomy(taxonomyId),
-  })
-);
+export const useTaxonomyDetails = (taxonomyId) => useQuery({
+  queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId),
+  queryFn: () => api.getTaxonomy(taxonomyId),
+});
 
 /**
- * Gets the taxonomy list data
- * @param {string} org Optional organization query param
- * @returns {import("./types.mjs").TaxonomyListData | undefined}
+ * Use this mutation to import a new taxonomy.
  */
-export const useTaxonomyListDataResponse = (org) => {
-  const response = useTaxonomyListData(org);
-  if (response.status === 'success') {
-    return { ...response.data, refetch: response.refetch };
-  }
-  return undefined;
+export const useImportNewTaxonomy = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    /**
+    * @type {import("@tanstack/react-query").MutateFunction<
+    *   import("./types.mjs").TaxonomyData,
+    *   any,
+    *   {
+    *     name: string,
+    *     exportId: string,
+    *     description: string,
+    *     file: File,
+    *   }
+    * >}
+    */
+    mutationFn: async ({
+      name, exportId, description, file,
+    }) => {
+      const formData = new FormData();
+      formData.append('taxonomy_name', name);
+      formData.append('taxonomy_export_id', exportId);
+      formData.append('taxonomy_description', description);
+      formData.append('file', file);
+
+      const { data } = await getAuthenticatedHttpClient().post(apiUrls.createTaxonomyFromImport(), formData);
+      return camelCaseObject(data);
+    },
+    onSuccess: (data) => {
+      // There's a new taxonomy, so the list of taxonomies needs to be refreshed:
+      queryClient.invalidateQueries({
+        queryKey: taxonomyQueryKeys.taxonomyList(),
+      });
+      queryClient.setQueryData(taxonomyQueryKeys.taxonomyMetadata(data.id), data);
+    },
+  });
 };
 
 /**
- * Returns the status of the taxonomy list query
- * @param {string} org Optional organization param
- * @returns {boolean}
+ * Build the mutation to import tags to an existing taxonomy
  */
-export const useIsTaxonomyListDataLoaded = (org) => (
-  useTaxonomyListData(org).status === 'success'
-);
+export const useImportTags = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    /**
+    * @type {import("@tanstack/react-query").MutateFunction<
+    *   import("./types.mjs").TaxonomyData,
+    *   any,
+    *   {
+    *     taxonomyId: number,
+    *     file: File,
+    *   }
+    * >}
+    */
+    mutationFn: async ({ taxonomyId, file }) => {
+      const formData = new FormData();
+      formData.append('file', file);
 
-/**
- * @param {number} taxonomyId
- * @returns {Pick<import('@tanstack/react-query').UseQueryResult, "error" | "isError" | "isFetched" | "isSuccess">}
- */
-export const useTaxonomyDetailDataStatus = (taxonomyId) => {
-  const {
-    isError,
-    error,
-    isFetched,
-    isSuccess,
-  } = useTaxonomyDetailData(taxonomyId);
-  return {
-    isError,
-    error,
-    isFetched,
-    isSuccess,
-  };
+      try {
+        const { data } = await getAuthenticatedHttpClient().put(apiUrls.tagsImport(taxonomyId), formData);
+        return camelCaseObject(data);
+      } catch (/** @type {any} */ err) {
+        throw new Error(err.response?.data.error || err.message);
+      }
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: taxonomyQueryKeys.taxonomyTagList(data.id),
+      });
+      // In the metadata, 'tagsCount' (and possibly other fields) will have changed:
+      queryClient.setQueryData(taxonomyQueryKeys.taxonomyMetadata(data.id), data);
+    },
+  });
 };
 
 /**
- * @param {number} taxonomyId
- * @returns {import("./types.mjs").TaxonomyData | undefined}
+ * Preview the results of importing the given file into an existing taxonomy.
+ * @param {number} taxonomyId The ID of the taxonomy whose tags we're updating.
+ * @param {File|null} file The file that we want to import
  */
-export const useTaxonomyDetailDataResponse = (taxonomyId) => {
-  const { isSuccess, data } = useTaxonomyDetailData(taxonomyId);
-  if (isSuccess) {
-    return data;
-  }
+export const useImportPlan = (taxonomyId, file) => useQuery({
+  queryKey: taxonomyQueryKeys.importPlan(file ? `${file.name}${file.lastModified}${file.size}` : ''),
+  /**
+  * @type {import("@tanstack/react-query").QueryFunction<string|null>}
+  */
+  queryFn: async () => {
+    if (file === null) {
+      return null;
+    }
+    const formData = new FormData();
+    formData.append('file', file);
 
-  return undefined;
-};
+    try {
+      const { data } = await getAuthenticatedHttpClient().put(apiUrls.tagsPlanImport(taxonomyId), formData);
+      return /** @type {string} */(data.plan);
+    } catch (/** @type {any} */ err) {
+      throw new Error(err.response?.data?.error || err.message);
+    }
+  },
+  retry: false, // If there's an error, it's probably a real problem with the file. Don't try again several times!
+});

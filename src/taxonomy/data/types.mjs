@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @typedef {Object} TaxonomyData
+ * @typedef {Object} TaxonomyData Metadata about a taxonomy
  * @property {number} id
  * @property {string} name
  * @property {string} description
@@ -20,14 +20,13 @@
  */
 
 /**
- * @typedef {Object} TaxonomyListData
+ * @typedef {Object} TaxonomyListData The list of taxonomies
  * @property {string} next
  * @property {string} previous
  * @property {number} count
  * @property {number} numPages
  * @property {number} currentPage
  * @property {number} start
- * @property {function} refetch
  * @property {boolean} canAddTaxonomy
  * @property {TaxonomyData[]} results
  */
