@@ -23,6 +23,7 @@ const GradingScale = ({
   sortedGrades,
   setOverrideInternetConnectionAlert,
   setEligibleGrade,
+  viewOnly,
 }) => {
   const [gradingSegments, setGradingSegments] = useState(sortedGrades);
   const [letters, setLetters] = useState(gradeLetters);
@@ -191,7 +192,7 @@ const GradingScale = ({
       <IconButtonWithTooltip
         tooltipPlacement="top"
         tooltipContent={intl.formatMessage(messages.addNewSegmentButtonAltText)}
-        disabled={gradingSegments.length >= 5}
+        disabled={gradingSegments.length >= 5 || viewOnly}
         data-testid="grading-scale-btn-add-segment"
         className="mr-3"
         src={IconAdd}
@@ -245,6 +246,7 @@ GradingScale.propTypes = {
     }),
   ).isRequired,
   setEligibleGrade: PropTypes.func.isRequired,
+  viewOnly: PropTypes.bool.isRequired,
 };
 
 export default injectIntl(GradingScale);

@@ -16,7 +16,7 @@ const sortedGrades = [
   { current: 20, previous: 0 },
 ];
 
-const RootWrapper = () => (
+const RootWrapper = (viewOnly = { viewOnly: false }) => (
   <IntlProvider locale="en" messages={{}}>
     <GradingScale
       intl={injectIntl}
@@ -29,6 +29,7 @@ const RootWrapper = () => (
       setGradingData={jest.fn()}
       setOverrideInternetConnectionAlert={jest.fn()}
       setEligibleGrade={jest.fn()}
+      {...viewOnly}
     />
   </IntlProvider>
 );
@@ -70,6 +71,26 @@ describe('<GradingScale />', () => {
       const segments = getAllByTestId('grading-scale-segment');
       expect(segments).toHaveLength(6);
       debug(addNewSegmentBtn);
+    });
+  });
+
+  it('should not disable new grading segment button when viewOnly=false', async () => {
+    const { getAllByTestId } = render(<RootWrapper />);
+    await waitFor(() => {
+      const addNewSegmentBtn = getAllByTestId('grading-scale-btn-add-segment');
+      expect(addNewSegmentBtn).toHaveLength(1);
+      expect(addNewSegmentBtn[0]).toBeInTheDocument();
+      expect(addNewSegmentBtn[0].disabled).toBe(false);
+    });
+  });
+
+  it('should disable new grading segment button when viewOnly', async () => {
+    const { getAllByTestId } = render(<RootWrapper viewOnly />);
+    await waitFor(() => {
+      const addNewSegmentBtn = getAllByTestId('grading-scale-btn-add-segment');
+      expect(addNewSegmentBtn).toHaveLength(1);
+      expect(addNewSegmentBtn[0]).toBeInTheDocument();
+      expect(addNewSegmentBtn[0].disabled).toBe(true);
     });
   });
 

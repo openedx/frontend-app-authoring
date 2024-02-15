@@ -30,6 +30,9 @@ import CreditSection from './credit-section';
 import DeadlineSection from './deadline-section';
 import { useConvertGradeCutoffs, useUpdateGradingData } from './hooks';
 import getPageHeadTitle from '../generic/utils';
+import { useUserPermissions } from '../generic/hooks';
+import { getUserPermissionsEnabled } from '../generic/data/selectors';
+import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 
 const GradingSettings = ({ intl, courseId }) => {
   const gradingSettingsData = useSelector(getGradingSettings);
@@ -43,6 +46,14 @@ const GradingSettings = ({ intl, courseId }) => {
   const [isQueryPending, setIsQueryPending] = useState(false);
   const [showOverrideInternetConnectionAlert, setOverrideInternetConnectionAlert] = useState(false);
   const [eligibleGrade, setEligibleGrade] = useState(null);
+  const { checkPermission } = useUserPermissions();
+  const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
+  const hasGradingPermissions = !userPermissionsEnabled || (
+    userPermissionsEnabled && (checkPermission('manage_course_settings') || checkPermission('view_course_settings'))
+  );
+  const viewOnly = !userPermissionsEnabled || (
+    userPermissionsEnabled && checkPermission('view_course_settings') && !checkPermission('manage_course_settings')
+  );
 
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
@@ -82,6 +93,12 @@ const GradingSettings = ({ intl, courseId }) => {
     dispatch(fetchGradingSettings(courseId));
     dispatch(fetchCourseSettingsQuery(courseId));
   }, [courseId]);
+
+  if (!hasGradingPermissions) {
+    return (
+      <PermissionDeniedAlert />
+    );
+  }
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -156,6 +173,7 @@ const GradingSettings = ({ intl, courseId }) => {
                       resetDataRef={resetDataRef}
                       setOverrideInternetConnectionAlert={setOverrideInternetConnectionAlert}
                       setEligibleGrade={setEligibleGrade}
+                      viewOnly={viewOnly}
                     />
                   </section>
                   {courseSettingsData.creditEligibilityEnabled && courseSettingsData.isCreditCourse && (
@@ -170,6 +188,7 @@ const GradingSettings = ({ intl, courseId }) => {
                         minimumGradeCredit={minimumGradeCredit}
                         setGradingData={setGradingData}
                         setShowSuccessAlert={setShowSuccessAlert}
+                        viewOnly={viewOnly}
                       />
                     </section>
                   )}
@@ -183,6 +202,7 @@ const GradingSettings = ({ intl, courseId }) => {
                       gracePeriod={gracePeriod}
                       setGradingData={setGradingData}
                       setShowSuccessAlert={setShowSuccessAlert}
+                      viewOnly={viewOnly}
                     />
                   </section>
                   <section>
@@ -201,11 +221,13 @@ const GradingSettings = ({ intl, courseId }) => {
                       setGradingData={setGradingData}
                       courseAssignmentLists={courseAssignmentLists}
                       setShowSuccessAlert={setShowSuccessAlert}
+                      viewOnly={viewOnly}
                     />
                     <Button
                       variant="primary"
                       iconBefore={IconAdd}
                       onClick={handleAddAssignment}
+                      disabled={viewOnly}
                     >
                       {intl.formatMessage(messages.addNewAssignmentTypeBtn)}
                     </Button>

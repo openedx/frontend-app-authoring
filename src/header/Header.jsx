@@ -25,8 +25,11 @@ const Header = ({
   const userPermissions = useSelector(getUserPermissions);
   const userPermissionsEnabled = useSelector(getUserPermissionsEnabled);
   const hasContentPermissions = !userPermissionsEnabled || (userPermissionsEnabled && checkPermission('manage_content'));
-  const hasSettingsPermissions = !userPermissionsEnabled
+  const hasOutlinePermissions = !userPermissionsEnabled || (userPermissionsEnabled && (checkPermission('manage_content') || checkPermission('manage_libraries')));
+  const hasAdvancedSettingsAccess = !userPermissionsEnabled
     || (userPermissionsEnabled && (checkPermission('manage_advanced_settings') || checkPermission('view_course_settings')));
+  const hasSettingsPermissions = !userPermissionsEnabled
+    || (userPermissionsEnabled && (checkPermission('manage_course_settings') || checkPermission('view_course_settings')));
   const hasToolsPermissions = !userPermissionsEnabled
     || (userPermissionsEnabled && (checkPermission('manage_course_settings') || checkPermission('view_course_settings')));
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
@@ -35,6 +38,7 @@ const Header = ({
     courseId,
     intl,
     hasContentPermissions,
+    hasOutlinePermissions,
   });
   const mainMenuDropdowns = [];
   const toolsMenu = getToolsMenuItems({
@@ -69,6 +73,7 @@ const Header = ({
         courseId,
         intl,
         hasSettingsPermissions,
+        hasAdvancedSettingsAccess,
       }),
     },
   );

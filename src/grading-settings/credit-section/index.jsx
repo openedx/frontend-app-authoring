@@ -7,7 +7,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
 const CreditSection = ({
-  intl, eligibleGrade, setShowSavePrompt, minimumGradeCredit, setGradingData, setShowSuccessAlert,
+  intl, eligibleGrade, setShowSavePrompt, minimumGradeCredit, setGradingData, setShowSuccessAlert, viewOnly,
 }) => {
   const [errorEffort, setErrorEffort] = useState(false);
 
@@ -46,6 +46,7 @@ const CreditSection = ({
         value={Math.round(parseFloat(minimumGradeCredit) * 100) || ''}
         name="minimum_grade_credit"
         onChange={handleCreditChange}
+        disabled={viewOnly}
       />
       <Form.Control.Feedback className="grading-description">
         {intl.formatMessage(messages.creditEligibilityDescription)}
@@ -66,6 +67,7 @@ CreditSection.propTypes = {
   setGradingData: PropTypes.func.isRequired,
   setShowSuccessAlert: PropTypes.func.isRequired,
   minimumGradeCredit: PropTypes.number.isRequired,
+  viewOnly: PropTypes.bool.isRequired,
 };
 
 export default injectIntl(CreditSection);

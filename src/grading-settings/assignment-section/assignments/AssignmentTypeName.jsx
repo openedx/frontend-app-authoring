@@ -8,7 +8,7 @@ import { ASSIGNMENT_TYPES, DUPLICATE_ASSIGNMENT_NAME } from '../utils/enum';
 import messages from '../messages';
 
 const AssignmentTypeName = ({
-  intl, value, errorEffort, onChange,
+  intl, value, errorEffort, onChange, viewOnly,
 }) => {
   const initialAssignmentName = useRef(value);
 
@@ -28,6 +28,7 @@ const AssignmentTypeName = ({
           onChange={onChange}
           value={value}
           isInvalid={Boolean(errorEffort)}
+          disabled={viewOnly}
         />
         <Form.Control.Feedback className="grading-description">
           {intl.formatMessage(messages.assignmentTypeNameDescription)}
@@ -64,6 +65,7 @@ AssignmentTypeName.propTypes = {
   onChange: PropTypes.func.isRequired,
   errorEffort: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
+  viewOnly: PropTypes.bool.isRequired,
 };
 
 export default injectIntl(AssignmentTypeName);
