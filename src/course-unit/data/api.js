@@ -3,7 +3,7 @@ import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import { PUBLISH_TYPES } from '../constants';
-import { normalizeCourseSectionVerticalData } from './utils';
+import { normalizeCourseSectionVerticalData, updateXBlockBlockIdToId } from './utils';
 
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
@@ -116,8 +116,9 @@ export async function handleCourseUnitVisibilityAndData(unitId, type, isVisible,
 export async function getCourseVerticalChildren(itemId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseVerticalChildrenApiUrl(itemId));
+  const camelCaseData = camelCaseObject(data);
 
-  return camelCaseObject(data);
+  return updateXBlockBlockIdToId(camelCaseData);
 }
 
 /**
@@ -144,6 +145,19 @@ export async function duplicateUnitItem(itemId, XBlockId) {
       parent_locator: itemId,
       duplicate_source_locator: XBlockId,
     });
+
+  return data;
+}
+
+/**
+ * Sets the order list of XBlocks.
+ * @param {string} blockId - The identifier of the course unit.
+ * @param {Object[]} children - The array of child elements representing the updated order of XBlocks.
+ * @returns {Promise<Object>} - A promise that resolves to the updated data after setting the XBlock order.
+ */
+export async function setXBlockOrderList(blockId, children) {
+  const { data } = await getAuthenticatedHttpClient()
+    .put(getXBlockBaseApiUrl(blockId), { children });
 
   return data;
 }

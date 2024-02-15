@@ -81,7 +81,7 @@ const slice = createSlice({
     },
     deleteXBlock: (state, { payload }) => {
       state.courseVerticalChildren.children = state.courseVerticalChildren.children.filter(
-        (component) => component.blockId !== payload,
+        (component) => component.id !== payload,
       );
     },
     duplicateXBlock: (state, { payload }) => {
@@ -94,6 +94,14 @@ const slice = createSlice({
           return component;
         }),
       };
+    },
+    reorderXBlockList: (state, { payload }) => {
+      // Create a map for payload IDs to their index for O(1) lookups
+      const indexMap = new Map(payload.map((id, index) => [id, index]));
+
+      // Directly sort the children based on the order defined in payload
+      // This avoids the need to copy the array beforehand
+      state.courseVerticalChildren.children.sort((a, b) => (indexMap.get(a.id) || 0) - (indexMap.get(b.id) || 0));
     },
   },
 });
@@ -115,6 +123,7 @@ export const {
   updateCourseVerticalChildrenLoadingStatus,
   deleteXBlock,
   duplicateXBlock,
+  reorderXBlockList,
 } = slice.actions;
 
 export const {

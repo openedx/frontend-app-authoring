@@ -8,6 +8,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
+import ConditionalSortableElement from '../../generic/drag-helper/ConditionalSortableElement';
 import { scrollToElement } from '../../course-outline/utils';
 import { COURSE_BLOCK_NAMES } from '../../constants';
 import XBlockMessages from './xblock-messages/XBlockMessages';
@@ -51,7 +52,7 @@ const CourseXBlock = ({
 
   return (
     <div ref={courseXBlockElementRef} {...props}>
-      <Card className="mb-1">
+      <Card as={ConditionalSortableElement} id={id} draggable className="mb-1">
         <Card.Header
           title={title}
           subtitle={visibilityMessage}
@@ -60,7 +61,6 @@ const CourseXBlock = ({
               <IconButton
                 alt={intl.formatMessage(messages.blockAltButtonEdit)}
                 iconAs={EditIcon}
-                size="md"
                 onClick={() => {}}
               />
               <Dropdown>
@@ -69,7 +69,6 @@ const CourseXBlock = ({
                   as={IconButton}
                   src={MoveVertIcon}
                   alt={intl.formatMessage(messages.blockActionsDropdownAlt)}
-                  size="sm"
                   iconAs={Icon}
                 />
                 <Dropdown.Menu>
@@ -105,7 +104,6 @@ const CourseXBlock = ({
               />
             </ActionRow>
           )}
-          size="md"
         />
         <Card.Section>
           <XBlockMessages validationMessages={validationMessages} />

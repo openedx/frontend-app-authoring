@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import { setCurrentItem, setCurrentSection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
-import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
+import ConditionalSortableElement from '../../generic/drag-helper/ConditionalSortableElement';
 import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
