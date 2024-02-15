@@ -64,13 +64,19 @@ export const getToolsMenuItems = ({ studioBaseUrl, courseId, intl }) => ([
     title: intl.formatMessage(messages['header.links.import']),
   },
   {
-    href: `${studioBaseUrl}/export/${courseId}`,
-    title: intl.formatMessage(messages['header.links.export']),
+    href: `${studioBaseUrl}/import/${courseId}`,
+    title: intl.formatMessage(
+      getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
+        ? messages['header.links.exportCourse']
+        : messages['header.links.export']
+    ),
   },
-  {
-    href: `${studioBaseUrl}/api/content_tagging/v1/object_tags/${courseId}/export/`,
-    title: intl.formatMessage(messages['header.links.exportTags']),
-  },
+  ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
+    ? [{
+      href: `${studioBaseUrl}/api/content_tagging/v1/object_tags/${courseId}/export/`,
+      title: intl.formatMessage(messages['header.links.exportTags']),
+    }] : []
+  ),
   {
     href: `${studioBaseUrl}/checklists/${courseId}`,
     title: intl.formatMessage(messages['header.links.checklists']),

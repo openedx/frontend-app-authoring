@@ -1,5 +1,5 @@
 import { getConfig, setConfig } from '@edx/frontend-platform';
-import { getContentMenuItems } from './utils';
+import { getContentMenuItems, getToolsMenuItems } from './utils';
 
 const props = {
   studioBaseUrl: 'UrLSTuiO',
@@ -26,6 +26,24 @@ describe('header utils', () => {
       });
       const actualItems = getContentMenuItems(props);
       expect(actualItems).toHaveLength(4);
+    });
+  });
+  describe('getToolsMenuItems', () => {
+    it('should include export tags option', () => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      });
+      const actualItems = getToolsMenuItems(props);
+      expect(actualItems).toHaveLength(4);
+    });
+    it('should not include export tags option', () => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_TAGGING_TAXONOMY_PAGES: 'false',
+      });
+      const actualItems = getToolsMenuItems(props);
+      expect(actualItems).toHaveLength(3);
     });
   });
 });
