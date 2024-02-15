@@ -50,3 +50,40 @@ export const getNotificationMessage = (type, isVisible, isModalView) => {
 
   return notificationMessage;
 };
+
+/**
+ * Updates the 'id' property of objects in the data structure using the 'blockId' value where present.
+ * @param {Object} data - The original data structure to be updated.
+ * @returns {Object} - The updated data structure with updated 'id' values.
+ */
+export const updateXBlockBlockIdToId = (data) => {
+  if (typeof data !== 'object' || data === null) {
+    return data;
+  }
+
+  if (Array.isArray(data)) {
+    return data.map(updateXBlockBlockIdToId);
+  }
+
+  const updatedData = {};
+
+  Object.keys(data).forEach(key => {
+    const value = data[key];
+
+    if (key === 'children' || key === 'selectablePartitions' || key === 'groups') {
+      updatedData[key] = updateXBlockBlockIdToId(value);
+    } else if (key === 'blockId') {
+      updatedData.id = value;
+    } else {
+      // Copy other properties unchanged
+      updatedData[key] = value;
+    }
+  });
+
+  // Special handling for objects with both 'id' and 'blockId' to ensure 'blockId' takes precedence
+  if ('blockId' in data) {
+    updatedData.id = data.blockId;
+  }
+
+  return updatedData;
+};

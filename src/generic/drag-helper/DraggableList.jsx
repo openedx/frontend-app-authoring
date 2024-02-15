@@ -16,7 +16,7 @@ import {
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 import DragContextProvider from './DragContextProvider';
-import { COURSE_BLOCK_NAMES } from '../constants';
+import { COURSE_BLOCK_NAMES } from '../../constants';
 import {
   moveSubsectionOver,
   moveUnitOver,

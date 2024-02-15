@@ -9,7 +9,7 @@ import { useSearchParams } from 'react-router-dom';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
-import SortableItem from '../drag-helper/SortableItem';
+import SortableItem from '../../generic/drag-helper/SortableItem';
 import TitleLink from '../card-header/TitleLink';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';

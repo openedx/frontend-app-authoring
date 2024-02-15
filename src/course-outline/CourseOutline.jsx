@@ -45,12 +45,12 @@ import HighlightsModal from './highlights-modal/HighlightsModal';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import PublishModal from './publish-modal/PublishModal';
 import PageAlerts from './page-alerts/PageAlerts';
-import DraggableList from './drag-helper/DraggableList';
+import DraggableList from '../generic/drag-helper/DraggableList';
 import {
   canMoveSection,
   possibleUnitMoves,
   possibleSubsectionMoves,
-} from './drag-helper/utils';
+} from '../generic/drag-helper/utils';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
 
