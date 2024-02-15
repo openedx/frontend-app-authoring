@@ -210,7 +210,7 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
 
     setAddedContentTags(addedTree);
     // setUpdatingTags(true);
-  }, []);
+  }, [addedContentTags, setAddedContentTags, addTags, removeTags, remove]);
 
   return {
     tagChangeHandler, tagsTree, contentTagsCount, checkedTags,

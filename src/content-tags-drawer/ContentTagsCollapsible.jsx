@@ -141,7 +141,7 @@ const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData }) => {
 
   const handleSelectableBoxChange = React.useCallback((e) => {
     tagChangeHandler(e.target.value, e.target.checked);
-  }, []);
+  }, [tagChangeHandler]);
 
   const handleSearch = debounce((term) => {
     setSearchTerm(term.trim());
