@@ -33,6 +33,7 @@ const pluginConfig = ({ isLibrary, placeholder, editorType }) => {
         quickToolbar,
         plugins.a11ychecker,
         plugins.powerpaste,
+        plugins.embediframe,
       ].join(' '),
       menubar: false,
       toolbar: toolbar ? mapToolbars([
@@ -54,7 +55,7 @@ const pluginConfig = ({ isLibrary, placeholder, editorType }) => {
         ],
         [imageUploadButton, buttons.link, buttons.unlink, buttons.blockQuote, buttons.codeBlock],
         [buttons.table, buttons.emoticons, buttons.charmap, buttons.hr],
-        [buttons.removeFormat, codeButton, buttons.a11ycheck],
+        [buttons.removeFormat, codeButton, buttons.a11ycheck, buttons.embediframe],
       ]) : false,
       imageToolbar: mapToolbars([
         // [buttons.rotate.left, buttons.rotate.right],

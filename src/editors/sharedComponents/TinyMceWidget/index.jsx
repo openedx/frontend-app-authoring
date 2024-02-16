@@ -14,6 +14,7 @@ import { selectors } from '../../data/redux';
 import ImageUploadModal from '../ImageUploadModal';
 import SourceCodeModal from '../SourceCodeModal';
 import * as hooks from './hooks';
+import './customTinyMcePlugins/embedIframePlugin';
 
 const editorConfigDefaultProps = {
   setEditorRef: undefined,
