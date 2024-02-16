@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
-import { CheckboxFilter, Container } from '@edx/paragon';
+import { CheckboxFilter, Container } from '@openedx/paragon';
 import Placeholder from '@edx/frontend-lib-content-components';
 
 import { RequestStatus } from '../../data/constants';

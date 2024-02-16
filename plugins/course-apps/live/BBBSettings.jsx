@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Form, Hyperlink } from '@edx/paragon';
+import { Form, Hyperlink } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import AppConfigFormDivider from 'CourseAuthoring/pages-and-resources/discussions/app-config-form/apps/shared/AppConfigFormDivider';
 import { useModel } from 'CourseAuthoring/generic/model-store';

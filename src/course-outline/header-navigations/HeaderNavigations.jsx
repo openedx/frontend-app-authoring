@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, OverlayTrigger, Tooltip } from '@edx/paragon';
+import { Button, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import {
   Add as IconAdd,
   ArrowDropDown as ArrowDownIcon,
   ArrowDropUp as ArrowUpIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 import messages from './messages';
 

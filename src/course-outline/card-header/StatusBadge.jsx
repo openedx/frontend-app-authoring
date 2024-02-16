@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from '@edx/paragon';
+import { Icon } from '@openedx/paragon';
 
 const StatusBadge = ({
   text,

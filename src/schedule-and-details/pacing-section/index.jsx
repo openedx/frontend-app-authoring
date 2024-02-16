@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Form } from '@edx/paragon';
+import { Form } from '@openedx/paragon';
 
 import SectionSubHeader from '../../generic/section-sub-header';
 import messages from './messages';

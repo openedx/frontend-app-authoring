@@ -1,6 +1,6 @@
 const path = require('path');
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { createConfig } = require('@edx/frontend-build');
+const { createConfig } = require('@openedx/frontend-build');
 
 module.exports = createConfig(
   'eslint',

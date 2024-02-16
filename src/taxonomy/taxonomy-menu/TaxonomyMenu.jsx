@@ -7,8 +7,8 @@ import {
   Dropdown,
   Icon,
   IconButton,
-} from '@edx/paragon';
-import { MoreVert } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { MoreVert } from '@openedx/paragon/icons';
 import { pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';

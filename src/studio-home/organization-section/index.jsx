@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
-import { Button, Form, FormLabel } from '@edx/paragon';
+import { Button, Form, FormLabel } from '@openedx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { TypeaheadDropdown } from '@edx/frontend-lib-content-components';
 

@@ -1,5 +1,5 @@
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Card, Form } from '@edx/paragon';
+import { Card, Form } from '@openedx/paragon';
 import { Formik } from 'formik';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';

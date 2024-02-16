@@ -11,7 +11,7 @@ import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   ActionRow, Alert, Badge, Form, Hyperlink, ModalDialog, StatefulButton,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import ExamsApiService from 'CourseAuthoring/data/services/ExamsApiService';
 import StudioApiService from 'CourseAuthoring/data/services/StudioApiService';

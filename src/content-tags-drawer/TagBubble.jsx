@@ -1,8 +1,8 @@
 import React from 'react';
 import {
   Chip,
-} from '@edx/paragon';
-import { Tag, Close } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Tag, Close } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 
 import TagOutlineIcon from './TagOutlineIcon';

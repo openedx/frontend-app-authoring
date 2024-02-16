@@ -7,8 +7,8 @@ import {
   IconButton,
   ModalPopup,
   useToggle,
-} from '@edx/paragon';
-import { InfoOutline, Warning } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { InfoOutline, Warning } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import { capitalize } from 'lodash';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dropdown, Icon } from '@edx/paragon';
-import { Check, ExpandMore } from '@edx/paragon/icons';
+import { Dropdown, Icon } from '@openedx/paragon';
+import { Check, ExpandMore } from '@openedx/paragon/icons';
 import { isEmpty } from 'lodash';
 
 const LanguageSelect = ({

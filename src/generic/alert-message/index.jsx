@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert } from '@edx/paragon';
+import { Alert } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 
 const AlertMessage = ({ title, description, ...props }) => (

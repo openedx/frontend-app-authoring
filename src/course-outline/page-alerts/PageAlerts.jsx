@@ -7,8 +7,8 @@ import {
   Campaign as CampaignIcon,
   InfoOutline as InfoOutlineIcon,
   Warning as WarningIcon,
-} from '@edx/paragon/icons';
-import { Alert, Button, Hyperlink } from '@edx/paragon';
+} from '@openedx/paragon/icons';
+import { Alert, Button, Hyperlink } from '@openedx/paragon';
 
 import { RequestStatus } from '../../data/constants';
 import AlertMessage from '../../generic/alert-message';

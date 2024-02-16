@@ -1,6 +1,6 @@
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Button, Form } from '@edx/paragon';
-import { Add } from '@edx/paragon/icons';
+import { Button, Form } from '@openedx/paragon';
+import { Add } from '@openedx/paragon/icons';
 
 import { FieldArray } from 'formik';
 import PropTypes from 'prop-types';

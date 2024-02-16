@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
-import { Dropdown, Icon, IconButton } from '@edx/paragon';
-import { MoreHoriz } from '@edx/paragon/icons';
+import { Dropdown, Icon, IconButton } from '@openedx/paragon';
+import { MoreHoriz } from '@openedx/paragon/icons';
 
 import messages from './messages';
 

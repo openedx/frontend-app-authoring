@@ -7,8 +7,8 @@ import {
   Icon,
   Stack,
   TransitionReplace,
-} from '@edx/paragon';
-import { Check } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Check } from '@openedx/paragon/icons';
 import FormDropdown from './FormDropdown';
 import { getLanguageOptions } from '../data/utils';
 import messages from './messages';

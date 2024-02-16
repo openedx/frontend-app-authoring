@@ -1,5 +1,5 @@
 import { messages as footerMessages } from '@edx/frontend-component-footer';
-import { messages as paragonMessages } from '@edx/paragon';
+import { messages as paragonMessages } from '@openedx/paragon';
 import arMessages from './messages/ar.json';
 import deMessages from './messages/de.json';
 import deDEMessages from './messages/de_DE.json';

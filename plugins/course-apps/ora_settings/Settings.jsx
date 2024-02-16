@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
-import { Hyperlink } from '@edx/paragon';
+import { Hyperlink } from '@openedx/paragon';
 import { useModel } from 'CourseAuthoring/generic/model-store';
 
 import FormSwitchGroup from 'CourseAuthoring/generic/FormSwitchGroup';

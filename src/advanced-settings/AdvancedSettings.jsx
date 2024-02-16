@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Container, Button, Layout, StatefulButton, TransitionReplace,
-} from '@edx/paragon';
-import { CheckCircle, Info, Warning } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { CheckCircle, Info, Warning } from '@openedx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import Placeholder from '@edx/frontend-lib-content-components';
 

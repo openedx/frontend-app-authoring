@@ -11,10 +11,10 @@ import {
   Tooltip,
   TransitionReplace,
   Hyperlink,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import {
   Info, CheckCircleOutline, SpinnerSimple,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 import { Formik } from 'formik';
 import PropTypes from 'prop-types';

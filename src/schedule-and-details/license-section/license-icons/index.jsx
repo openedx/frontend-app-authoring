@@ -2,10 +2,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Icon, Stack, Hyperlink } from '@edx/paragon';
+import { Icon, Stack, Hyperlink } from '@openedx/paragon';
 import {
   Attribution, Copyright, Cc, Nd, Nc, Sa,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 import ApplyWrapper from '../../../generic/ApplyWrapper';
 import { LICENSE_TYPE } from '../constants';

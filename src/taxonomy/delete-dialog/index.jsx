@@ -7,10 +7,10 @@ import {
   Form,
   ModalDialog,
   Icon,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Warning } from '@edx/paragon/icons';
+import { Warning } from '@openedx/paragon/icons';
 import messages from './messages';
 
 const DeleteDialog = ({

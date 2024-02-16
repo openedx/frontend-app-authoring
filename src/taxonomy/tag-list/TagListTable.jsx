@@ -1,7 +1,7 @@
 // @ts-check
 import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { DataTable } from '@edx/paragon';
+import { DataTable } from '@openedx/paragon';
 import { isEqual } from 'lodash';
 import Proptypes from 'prop-types';
 

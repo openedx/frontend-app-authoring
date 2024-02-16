@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { Alert, Form, Hyperlink } from '@edx/paragon';
+import { Alert, Form, Hyperlink } from '@openedx/paragon';
 import {
   Warning as WarningIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 

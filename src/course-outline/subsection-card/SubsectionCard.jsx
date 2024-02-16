@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, useToggle } from '@edx/paragon';
-import { Add as IconAdd } from '@edx/paragon/icons';
+import { Button, useToggle } from '@openedx/paragon';
+import { Add as IconAdd } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';

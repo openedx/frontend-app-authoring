@@ -5,7 +5,7 @@
     "peerDependencies": {
         "@edx/frontend-app-course-authoring": "*",
         "@edx/frontend-platform": "*",
-        "@edx/paragon": "*",
+        "@openedx/paragon": "*",
         "@reduxjs/toolkit": "*",
         "lodash": "*",
         "prop-types": "*",
