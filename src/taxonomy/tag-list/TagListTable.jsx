@@ -66,6 +66,7 @@ const TagListTable = ({ taxonomyId }) => {
   const intl = useIntl();
   const [options, setOptions] = useState({
     pageIndex: 0,
+    pageSize: 100,
   });
   const { isLoading } = useTagListDataStatus(taxonomyId, options);
   const tagList = useTagListDataResponse(taxonomyId, options);

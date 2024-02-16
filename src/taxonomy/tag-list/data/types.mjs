@@ -7,6 +7,7 @@
 /**
  * @typedef {Object} QueryOptions
  * @property {number} pageIndex
+ * @property {number} pageSize
  */
 
 /**

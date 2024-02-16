@@ -20,8 +20,7 @@ const getTagListApiUrl = (taxonomyId, page, pageSize) => new URL(
  * @returns {import('@tanstack/react-query').UseQueryResult<import('./types.mjs').TagListData>}
  */
 export const useTagListData = (taxonomyId, options) => {
-  const { pageIndex } = options;
-  const pageSize = 100;
+  const { pageIndex, pageSize } = options;
   return useQuery({
     queryKey: ['tagList', taxonomyId, pageIndex],
     queryFn: async () => {
