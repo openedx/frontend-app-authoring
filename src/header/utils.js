@@ -65,11 +65,7 @@ export const getToolsMenuItems = ({ studioBaseUrl, courseId, intl }) => ([
   },
   {
     href: `${studioBaseUrl}/import/${courseId}`,
-    title: intl.formatMessage(
-      getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
-        ? messages['header.links.exportCourse']
-        : messages['header.links.export'],
-    ),
+    title: intl.formatMessage(messages['header.links.exportCourse']),
   },
   ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
     ? [{

@@ -51,7 +51,7 @@ describe('header utils', () => {
       const actualItemsTitle = getToolsMenuItems(props).map((item) => item.title);
       expect(actualItemsTitle).toEqual([
         'Import',
-        'Export',
+        'Export Course',
         'Checklists',
       ]);
     });
