@@ -59,6 +59,8 @@
     "@openedx-plugins/course-app-progress": "file:plugins/course-apps/progress",
     "@openedx-plugins/course-app-teams": "file:plugins/course-apps/teams",
     "@openedx-plugins/course-app-wiki": "file:plugins/course-apps/wiki",
+    "@openedx-plugins/course-app-learning_assistant": "file:plugins/course-apps/learning_assistant",
+    "@openedx-plugins/course-app-xpert_unit_summary": "file:plugins/course-apps/xpert_unit_summary",
     "@reduxjs/toolkit": "1.9.7",
     "@tanstack/react-query": "4.36.1",
     "broadcast-channel": "^7.0.0",
