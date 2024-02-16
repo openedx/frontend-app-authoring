@@ -2,7 +2,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Card,
 } from '@edx/paragon';
-import Proptypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 import messages from './messages';
 
@@ -18,14 +18,18 @@ const TaxonomyDetailSideCard = ({ taxonomy }) => {
       <Card.Section title={intl.formatMessage(messages.taxonomyDetailsDescription)}>
         {taxonomy.description}
       </Card.Section>
+      <Card.Section title={intl.formatMessage(messages.taxonomyDetailsExportID)}>
+        {taxonomy.exportId}
+      </Card.Section>
     </Card>
   );
 };
 
 TaxonomyDetailSideCard.propTypes = {
-  taxonomy: Proptypes.shape({
-    name: Proptypes.string.isRequired,
-    description: Proptypes.string.isRequired,
+  taxonomy: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    exportId: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
   }).isRequired,
 };
 

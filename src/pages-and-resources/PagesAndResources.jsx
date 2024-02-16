@@ -37,8 +37,21 @@ const PagesAndResources = ({ courseId, intl }) => {
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
   const redirectUrl = `/course/${courseId}/pages-and-resources`;
 
-  // Each page here is driven by a course app
+  // The pages here are driven by course apps. The list of course app IDs comes from the LMS API.
+  // We display all enabled course apps regardless of whether or not the corresponding frontend plugin is available.
   const pages = useModels('courseApps', courseAppIds);
+
+  // We want the Xpert learning assistant and unit summaries to appear in the "Content Permissions" section instead,
+  // so we remove them from pages and add them to contentPermissionsPages.
+  const contentPermissionsPages = [];
+
+  ['xpert_unit_summary', 'learning_assistant'].forEach(separateAppId => {
+    const index = pages.findIndex(app => app.id === separateAppId);
+    if (index !== -1) {
+      const [page] = pages.splice(index, 1);
+      contentPermissionsPages.push(page);
+    }
+  });
 
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -74,6 +87,16 @@ const PagesAndResources = ({ courseId, intl }) => {
         </Routes>
 
         <PageGrid pages={pages} />
+        {
+          (contentPermissionsPages.length > 0) && (
+            <>
+              <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
+                <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
+              </div>
+              <PageGrid pages={contentPermissionsPages} />
+            </>
+          )
+        }
       </main>
     </PagesAndResourcesProvider>
   );

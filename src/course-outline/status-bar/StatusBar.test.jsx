@@ -7,17 +7,26 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import StatusBar from './StatusBar';
 import messages from './messages';
 import initializeStore from '../../store';
+import { VIDEO_SHARING_OPTIONS } from '../constants';
 
 let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
 const isLoading = false;
 const openEnableHighlightsModalMock = jest.fn();
+const handleVideoSharingOptionChange = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: () => ({
     pathname: mockPathname,
+  }),
+}));
+
+jest.mock('../../help-urls/hooks', () => ({
+  useHelpUrls: () => ({
+    contentHighlights: 'content-highlights-link',
+    socialSharing: 'social-sharing-link',
   }),
 }));
 
@@ -32,6 +41,8 @@ const statusBarData = {
   },
   highlightsEnabledForMessaging: true,
   highlightsDocUrl: 'https://example.com/highlights-doc',
+  videoSharingEnabled: true,
+  videoSharingOptions: VIDEO_SHARING_OPTIONS.allOn,
 };
 
 const renderComponent = (props) => render(
@@ -41,6 +52,7 @@ const renderComponent = (props) => render(
         courseId={courseId}
         isLoading={isLoading}
         openEnableHighlightsModal={openEnableHighlightsModalMock}
+        handleVideoSharingOptionChange={handleVideoSharingOptionChange}
         statusBarData={statusBarData}
         {...props}
       />
@@ -65,7 +77,7 @@ describe('<StatusBar />', () => {
     const { getByText } = renderComponent();
 
     expect(getByText(messages.startDateTitle.defaultMessage)).toBeInTheDocument();
-    expect(getByText(statusBarData.courseReleaseDate)).toBeInTheDocument();
+    expect(getByText('Feb 05, 2013, 5:00 AM')).toBeInTheDocument();
 
     expect(getByText(messages.pacingTypeTitle.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.pacingTypeSelfPaced.defaultMessage)).toBeInTheDocument();
@@ -74,8 +86,9 @@ describe('<StatusBar />', () => {
     expect(getByText(`2/9 ${messages.checklistCompleted.defaultMessage}`)).toBeInTheDocument();
 
     expect(getByText(messages.highlightEmailsTitle.defaultMessage)).toBeInTheDocument();
-    expect(getByText(messages.highlightEmailsLink.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.highlightEmailsEnabled.defaultMessage)).toBeInTheDocument();
+
+    expect(getByText(messages.videoSharingTitle.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders StatusBar when isSelfPaced is false', () => {
@@ -108,5 +121,16 @@ describe('<StatusBar />', () => {
     });
 
     expect(queryByTestId('outline-status-bar')).not.toBeInTheDocument();
+  });
+
+  it('does not render video sharing dropdown if not enabled', () => {
+    const { queryByTestId } = renderComponent({
+      statusBarData: {
+        ...statusBarData,
+        videoSharingEnabled: false,
+      },
+    });
+
+    expect(queryByTestId('video-sharing-wrapper')).not.toBeInTheDocument();
   });
 });

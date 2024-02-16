@@ -1,8 +1,7 @@
-/* eslint-disable import/prefer-default-export */
+import saveAs from 'file-saver';
 import { camelCaseObject, ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-import saveAs from 'file-saver';
 import { isEmpty } from 'lodash';
 
 ensureConfig([
@@ -11,7 +10,7 @@ ensureConfig([
 
 export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getVideosUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/videos/${courseId}`;
-export const getCoursVideosApiUrl = (courseId) => `${getApiBaseUrl()}/videos/${courseId}`;
+export const getCourseVideosApiUrl = (courseId) => `${getApiBaseUrl()}/videos/${courseId}`;
 
 /**
  * Fetches the course custom pages for provided course
@@ -32,6 +31,24 @@ export async function getVideos(courseId) {
   };
 }
 
+export async function getAllUsagePaths({ courseId, videoIds }) {
+  const apiPromises = videoIds.map(id => getAuthenticatedHttpClient()
+    .get(`${getVideosUrl(courseId)}/${id}/usage`, { videoId: id }));
+  const updatedUsageLocations = [];
+  const results = await Promise.allSettled(apiPromises);
+
+  results.forEach(result => {
+    const value = camelCaseObject(result.value);
+    if (value) {
+      const { usageLocations } = value.data;
+      const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
+      const { videoId } = value.config;
+      updatedUsageLocations.push({ id: videoId, usageLocations, activeStatus });
+    }
+  });
+  return updatedUsageLocations;
+}
+
 /**
  * Fetches the course custom pages for provided course
  * @param {string} courseId
@@ -39,7 +56,7 @@ export async function getVideos(courseId) {
  */
 export async function fetchVideoList(courseId) {
   const { data } = await getAuthenticatedHttpClient()
-    .get(getCoursVideosApiUrl(courseId));
+    .get(getCourseVideosApiUrl(courseId));
   return camelCaseObject(data);
 }
 
@@ -75,27 +92,48 @@ export async function uploadTranscript({
   await getAuthenticatedHttpClient().post(`${getApiBaseUrl()}${apiUrl}`, formData);
 }
 
-export async function getDownload(selectedRows) {
+export async function getDownload(selectedRows, courseId) {
   const downloadErrors = [];
-  if (selectedRows?.length > 0) {
-    await Promise.allSettled(
-      selectedRows.map(async row => {
-        try {
-          const video = row.original;
-          const { downloadLink } = video;
-          if (!isEmpty(downloadLink)) {
-            saveAs(downloadLink, video.displayName);
-          } else {
-            downloadErrors.push(`Cannot find download file for ${video?.displayName}.`);
-          }
-        } catch (error) {
-          downloadErrors.push('Failed to download video.');
-        }
-      }),
-    );
+  let file;
+  let filename;
+  if (selectedRows?.length > 1) {
+    const downloadLinks = selectedRows.map(row => {
+      const video = row.original;
+      try {
+        const url = video.downloadLink;
+        const name = video.displayName;
+        return { url, name };
+      } catch (error) {
+        downloadErrors.push(`Cannot find download file for ${video?.displayName || 'video'}.`);
+        return null;
+      }
+    });
+    if (!isEmpty(downloadLinks)) {
+      const json = { files: downloadLinks };
+      const { data } = await getAuthenticatedHttpClient()
+        .put(`${getVideosUrl(courseId)}/download`, json, { responseType: 'arraybuffer' });
+
+      const date = new Date().toString();
+      filename = `${courseId}-videos-${date}`;
+      file = new Blob([data], { type: 'application/zip' });
+      saveAs(file, filename);
+    }
+  } else if (selectedRows?.length === 1) {
+    try {
+      const video = selectedRows[0].original;
+      const { downloadLink } = video;
+      if (!isEmpty(downloadLink)) {
+        saveAs(downloadLink, video.displayName);
+      } else {
+        downloadErrors.push(`Cannot find download file for ${video?.displayName}.`);
+      }
+    } catch (error) {
+      downloadErrors.push('Failed to download video.');
+    }
   } else {
     downloadErrors.push('No files were selected to download.');
   }
+
   return downloadErrors;
 }
 
@@ -117,7 +155,7 @@ export async function getVideoUsagePaths({ courseId, videoId }) {
  */
 export async function deleteVideo(courseId, videoId) {
   await getAuthenticatedHttpClient()
-    .delete(`${getCoursVideosApiUrl(courseId)}/${videoId}`);
+    .delete(`${getCourseVideosApiUrl(courseId)}/${videoId}`);
 }
 
 /**
@@ -144,7 +182,7 @@ export async function addVideo(courseId, file) {
   };
 
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCoursVideosApiUrl(courseId), postJson);
+    .post(getCourseVideosApiUrl(courseId), postJson);
   return camelCaseObject(data);
 }
 
@@ -154,19 +192,23 @@ export async function uploadVideo(
   uploadFile,
   edxVideoId,
 ) {
-  const formData = new FormData();
-  formData.append('uploaded-file', uploadFile);
   const uploadErrors = [];
+
   await fetch(uploadUrl, {
     method: 'PUT',
-    body: formData,
     headers: {
-      'Content-Type': 'multipart/form-data',
+      'Content-Disposition': `attachment; filename="${uploadFile.name}"`,
+      'Content-Type': uploadFile.type,
     },
+    multipart: false,
+    body: uploadFile,
   })
-    .then(async () => {
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error();
+      }
       await getAuthenticatedHttpClient()
-        .post(getCoursVideosApiUrl(courseId), [{
+        .post(getCourseVideosApiUrl(courseId), [{
           edxVideoId,
           message: 'Upload completed',
           status: 'upload_completed',
@@ -175,7 +217,7 @@ export async function uploadVideo(
     .catch(async () => {
       uploadErrors.push(`Failed to upload ${uploadFile.name} to server.`);
       await getAuthenticatedHttpClient()
-        .post(getCoursVideosApiUrl(courseId), [{
+        .post(getCourseVideosApiUrl(courseId), [{
           edxVideoId,
           message: 'Upload failed',
           status: 'upload_failed',

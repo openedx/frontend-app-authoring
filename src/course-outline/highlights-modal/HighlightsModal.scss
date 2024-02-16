@@ -1,0 +1,15 @@
+.highlights-modal {
+  max-width: 33.6875rem;
+
+  .highlights-modal__header {
+    padding-top: 1.5rem;
+  }
+
+  .form-control {
+    color: $black;
+  }
+
+  .pgn__form-control-decorator-group {
+    margin-inline-end: 0;
+  }
+}

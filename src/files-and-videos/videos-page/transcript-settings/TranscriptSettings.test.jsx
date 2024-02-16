@@ -144,6 +144,10 @@ describe('TranscriptSettings', () => {
     });
 
     it('should load page with Cielo24 selected', async () => {
+      const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
+      await act(async () => {
+        userEvent.click(orderButton);
+      });
       const cielo24Button = screen.getByText(messages.cieloLabel.defaultMessage);
 
       expect(within(cielo24Button).getByLabelText('Cielo24 radio')).toHaveProperty('checked', true);
@@ -180,6 +184,10 @@ describe('TranscriptSettings', () => {
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
       renderComponent(defaultProps);
+      const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
+      await act(async () => {
+        userEvent.click(orderButton);
+      });
       const noneButton = screen.getAllByLabelText('none radio')[0];
 
       await act(async () => {
@@ -683,7 +691,7 @@ describe('TranscriptSettings', () => {
     });
 
     it('doesn\'t display AI translations component if not enabled', () => {
-      expect(screen.queryByText('/Get free translations/')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('ai-translations-component')).not.toBeInTheDocument();
     });
   });
 
@@ -713,8 +721,8 @@ describe('TranscriptSettings', () => {
     });
 
     it('displays AI translations component if enabled', () => {
-      const component = screen.getByText(/Get free translations/);
-      expect(component).toBeVisible();
+      const component = screen.getByTestId('ai-translations-component');
+      expect(component).toBeInTheDocument();
     });
   });
 });

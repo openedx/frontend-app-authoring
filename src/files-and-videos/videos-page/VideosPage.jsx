@@ -80,9 +80,9 @@ const VideosPage = ({
 
   const supportedFileFormats = { 'video/*': videoSupportedFileFormats || FILES_AND_UPLOAD_TYPE_FILTERS.video };
 
-  const handleAddFile = (file) => dispatch(addVideoFile(courseId, file));
+  const handleAddFile = (file) => dispatch(addVideoFile(courseId, file, videoIds));
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id));
-  const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows }));
+  const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
   const handleUsagePaths = (video) => dispatch(getUsagePaths({ video, courseId }));
   const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleFileOrder = ({ newFileIdOrder, sortType }) => {
@@ -107,7 +107,12 @@ const VideosPage = ({
     usageErrorMessages: errorMessages.usageMetrics,
     fileType: 'video',
   };
-  const thumbnailPreview = (props) => VideoThumbnail({ ...props, handleAddThumbnail, videoImageSettings });
+  const thumbnailPreview = (props) => VideoThumbnail({
+    ...props,
+    pageLoadStatus: loadingStatus,
+    handleAddThumbnail,
+    videoImageSettings,
+  });
   const infoModalSidebar = (video, activeTab, setActiveTab) => (
     VideoInfoModalSidebar({ video, activeTab, setActiveTab })
   );
@@ -128,7 +133,7 @@ const VideosPage = ({
     id: 'activeStatus',
     Header: 'Active',
     accessor: 'activeStatus',
-    Cell: ({ row }) => ActiveColumn({ row }),
+    Cell: ({ row }) => ActiveColumn({ row, pageLoadStatus: loadingStatus }),
     Filter: CheckboxFilter,
     filter: 'exactTextCase',
     filterChoices: [
@@ -147,7 +152,7 @@ const VideosPage = ({
   };
   const processingStatusColumn = {
     id: 'status',
-    Header: '',
+    Header: 'Status',
     accessor: 'status',
     Cell: ({ row }) => StatusColumn({ row }),
     Filter: CheckboxFilter,
@@ -181,6 +186,7 @@ const VideosPage = ({
       </div>
     );
   }
+
   return (
     <VideosPageProvider courseId={courseId}>
       <Container size="xl" className="p-4 pt-4.5">
@@ -190,6 +196,7 @@ const VideosPage = ({
           addFileStatus={addVideoStatus}
           deleteFileStatus={deleteVideoStatus}
           updateFileStatus={updateVideoStatus}
+          loadingStatus={loadingStatus}
         />
         <ActionRow>
           <div className="h2">
@@ -209,35 +216,39 @@ const VideosPage = ({
             </Button>
           ) : null}
         </ActionRow>
-        {isVideoTranscriptEnabled ? (
-          <TranscriptSettings
-            {...{
-              isTranscriptSettingsOpen,
-              closeTranscriptSettings,
-              handleErrorReset,
-              errorMessages,
-              transcriptStatus,
-              courseId,
-            }}
-          />
-        ) : null}
-        <FileTable
-          {...{
-            courseId,
-            data,
-            handleAddFile,
-            handleDeleteFile,
-            handleDownloadFile,
-            handleUsagePaths,
-            handleErrorReset,
-            handleFileOrder,
-            tableColumns,
-            maxFileSize,
-            thumbnailPreview,
-            infoModalSidebar,
-            files: videos,
-          }}
-        />
+        {loadingStatus !== RequestStatus.FAILED && (
+          <>
+            {isVideoTranscriptEnabled && (
+              <TranscriptSettings
+                {...{
+                  isTranscriptSettingsOpen,
+                  closeTranscriptSettings,
+                  handleErrorReset,
+                  errorMessages,
+                  transcriptStatus,
+                  courseId,
+                }}
+              />
+            )}
+            <FileTable
+              {...{
+                courseId,
+                data,
+                handleAddFile,
+                handleDeleteFile,
+                handleDownloadFile,
+                handleUsagePaths,
+                handleErrorReset,
+                handleFileOrder,
+                tableColumns,
+                maxFileSize,
+                thumbnailPreview,
+                infoModalSidebar,
+                files: videos,
+              }}
+            />
+          </>
+        )}
       </Container>
     </VideosPageProvider>
   );

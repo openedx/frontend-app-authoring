@@ -14,17 +14,9 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-detail.side-card.description',
     defaultMessage: 'Description',
   },
-  actionsButtonLabel: {
-    id: 'course-authoring.taxonomy-detail.action.button.label',
-    defaultMessage: 'Actions',
-  },
-  actionsButtonAlt: {
-    id: 'course-authoring.taxonomy-detail.action.button.alt',
-    defaultMessage: '{name} actions',
-  },
-  exportMenu: {
-    id: 'course-authoring.taxonomy-detail.action.export',
-    defaultMessage: 'Export',
+  taxonomyDetailsExportID: {
+    id: 'course-authoring.taxonomy-detail.side-card.exportID',
+    defaultMessage: 'Export ID',
   },
 });
 

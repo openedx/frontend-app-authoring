@@ -45,8 +45,13 @@ const messages = defineMessages({
   },
   discardSettingsLabel: {
     id: 'course-authoring.video-uploads.transcriptSettings.orderTranscripts.discardSettings.label',
-    defaultMessage: 'Discard settings',
+    defaultMessage: 'Discard changes',
     description: 'Label for order transcript discard settings button',
+  },
+  lastUpdatedMessage: {
+    id: 'course-authoring.video-uploads.transcriptSettings.orderTranscripts.lastUpdated.message',
+    defaultMessage: 'Last updated',
+    description: 'Message that lets user know when the update was made to transcript settings',
   },
   threePlayMediaTurnaroundLabel: {
     id: 'course-authoring.video-uploads.transcriptSettings.orderTranscripts.3PlayMedia.turnaround.label',

@@ -21,6 +21,7 @@ const slice = createSlice({
       download: [],
       usageMetrics: [],
       transcript: [],
+      loading: '',
     },
   },
   reducers: {
@@ -76,8 +77,12 @@ const slice = createSlice({
     },
     updateErrors: (state, { payload }) => {
       const { error, message } = payload;
-      const currentErrorState = state.errors[error];
-      state.errors[error] = [...currentErrorState, message];
+      if (error === 'loading') {
+        state.errors.loading = message;
+      } else {
+        const currentErrorState = state.errors[error];
+        state.errors[error] = [...currentErrorState, message];
+      }
     },
     clearErrors: (state, { payload }) => {
       const { error } = payload;

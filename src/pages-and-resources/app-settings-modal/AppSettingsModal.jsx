@@ -109,6 +109,7 @@ const AppSettingsModal = ({
   appId,
   title,
   children,
+  bodyChildren,
   configureBeforeEnable,
   initialValues,
   validationSchema,
@@ -245,6 +246,7 @@ const AppSettingsModal = ({
                   )}
                 />
               )}
+              {bodyChildren}
               {(formikProps.values.enabled || configureBeforeEnable) && children
                 && <AppConfigFormDivider marginAdj={{ default: 0, sm: 0 }} />}
               <AppSettingsForm formikProps={formikProps} showForm={formikProps.values.enabled || configureBeforeEnable}>
@@ -279,13 +281,14 @@ AppSettingsModal.propTypes = {
   title: PropTypes.string.isRequired,
   appId: PropTypes.string.isRequired,
   children: PropTypes.func,
+  bodyChildren: PropTypes.node,
   onSettingsSave: PropTypes.func,
   initialValues: PropTypes.shape({}),
   validationSchema: PropTypes.shape({}),
   onClose: PropTypes.func.isRequired,
   enableAppLabel: PropTypes.string.isRequired,
   enableAppHelp: PropTypes.string.isRequired,
-  learnMoreText: PropTypes.string.isRequired,
+  learnMoreText: PropTypes.string,
   configureBeforeEnable: PropTypes.bool,
   enableReinitialize: PropTypes.bool,
   hideAppToggle: PropTypes.bool,
@@ -293,9 +296,11 @@ AppSettingsModal.propTypes = {
 
 AppSettingsModal.defaultProps = {
   children: null,
+  bodyChildren: null,
   onSettingsSave: null,
   initialValues: {},
   validationSchema: {},
+  learnMoreText: null,
   configureBeforeEnable: false,
   enableReinitialize: false,
   hideAppToggle: false,

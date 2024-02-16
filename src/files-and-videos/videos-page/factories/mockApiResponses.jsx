@@ -69,7 +69,7 @@ export const initialState = {
       },
       transcriptCredentials: { cielo24: false, '3PlayMedia': false },
     },
-    loadingStatus: RequestStatus.SUCCESSFUL,
+    loadingStatus: RequestStatus.IN_PROGRESS,
     updatingStatus: '',
     addingStatus: '',
     deletingStatus: '',
@@ -82,6 +82,7 @@ export const initialState = {
       download: [],
       usageMetrics: [],
       transcript: [],
+      loading: '',
     },
   },
   models: {
@@ -124,7 +125,7 @@ export const generateFetchVideosApiResponse = () => ({
     },
     {
       edx_video_id: 'mOckID5',
-      clientVideoId: 'mOckID5.mp4',
+      clientVideoId: 'mOckID5',
       created: '',
       courseVideoImageUrl: 'http:/video',
       transcripts: ['en'],
@@ -225,9 +226,77 @@ export const generateAddVideoApiResponse = () => ({
   ],
 });
 
-export const generateEmptyApiResponse = () => ([{
+export const generateEmptyApiResponse = () => ({
   previousUploads: [],
-}]);
+  image_upload_url: '/video_images/course',
+  video_handler_url: '/videos/course',
+  encodings_download_url: '/video_encodings_download/course',
+  default_video_image_url: '/static/studio/images/video-images/default_video_image.png',
+  concurrent_upload_limit: 4,
+  video_supported_file_formats: ['.mp4', '.mov'],
+  video_upload_max_file_size: '5',
+  video_image_settings: {
+    video_image_upload_enabled: true,
+    max_size: 2097152,
+    min_size: 2048,
+    max_width: 1280,
+    max_height: 720,
+    supported_file_formats: {
+      '.bmp': 'image/bmp',
+      '.bmp2': 'image/x-ms-bmp',
+      '.gif': 'image/gif',
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.png': 'image/png',
+    },
+  },
+  is_video_transcript_enabled: false,
+  active_transcript_preferences: null,
+  transcript_credentials: {},
+  transcript_available_languages: [{ language_code: 'ab', language_text: 'Abkhazian' }],
+  video_transcript_settings: {
+    transcript_download_handler_url: '/transcript_download/',
+    transcript_upload_handler_url: '/transcript_upload/',
+    transcript_delete_handler_url: '/transcript_delete/course',
+    trancript_download_file_format: 'srt',
+    transcript_preferences_handler_url: '/transcript_preferences/course',
+    transcript_credentials_handler_url: '/transcript_credentials/course',
+    transcription_plans: {
+      Cielo24: {
+        display_name: 'Cielo24',
+        turnaround: { PRIORITY: 'Priority (24 hours)', STANDARD: 'Standard (48 hours)' },
+        fidelity: {
+          MECHANICAL: {
+            display_name: 'Mechanical (75% accuracy)',
+            languages: { nl: 'Dutch', en: 'English', fr: 'French' },
+          },
+          PREMIUM: { display_name: 'Premium (95% accuracy)', languages: { en: 'English' } },
+          PROFESSIONAL: {
+            display_name: 'Professional (99% accuracy)',
+            languages: { ar: 'Arabic', 'zh-tw': 'Chinese - Mandarin (Traditional)' },
+          },
+        },
+      },
+      '3PlayMedia': {
+        display_name: '3Play Media',
+        turnaround: {
+          two_hour: '2 hours',
+          same_day: 'Same day',
+          rush: '24 hours (rush)',
+          expedited: '2 days (expedited)',
+          standard: '4 days (standard)',
+          extended: '10 days (extended)',
+        },
+        languages: { en: 'English', el: 'Greek', zh: 'Chinese' },
+        translations: {
+          es: ['en'],
+          en: ['el', 'en', 'zh'],
+        },
+      },
+    },
+  },
+  pagination_context: {},
+});
 
 export const generateNewVideoApiResponse = () => ({
   files: [{
@@ -240,6 +309,8 @@ export const getStatusValue = (status) => {
   switch (status) {
   case RequestStatus.DENIED:
     return 403;
+  case RequestStatus.FAILED:
+    return 404;
   default:
     return 200;
   }

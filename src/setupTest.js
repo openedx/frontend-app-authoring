@@ -4,13 +4,9 @@ import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
 
 /* eslint-disable import/no-extraneous-dependencies */
-import Enzyme from 'enzyme';
-import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import 'babel-polyfill';
 
 import { mergeConfig } from '@edx/frontend-platform';
-
-Enzyme.configure({ adapter: new Adapter() });
 
 /* need to mock window for tinymce on import, as it is JSDOM incompatible */
 

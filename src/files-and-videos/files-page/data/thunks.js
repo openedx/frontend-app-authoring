@@ -18,6 +18,7 @@ import {
 } from './api';
 import {
   setAssetIds,
+  setSortedAssetIds,
   updateLoadingStatus,
   deleteAssetSuccess,
   addAssetSuccess,
@@ -28,23 +29,51 @@ import {
 
 import { updateFileValues } from './utils';
 
+export function fetchAddtionalAsstets(courseId, totalCount) {
+  return async (dispatch) => {
+    let remainingAssetCount = totalCount;
+    let page = 1;
+
+    /* eslint-disable no-await-in-loop */
+    while (remainingAssetCount > 0) {
+      try {
+        const { assets } = await getAssets(courseId, page);
+        const parsedAssets = updateFileValues(assets);
+        dispatch(addModels({ modelType: 'assets', models: parsedAssets }));
+        dispatch(setAssetIds({
+          assetIds: assets.map(asset => asset.id),
+        }));
+        remainingAssetCount -= 50;
+        page += 1;
+      } catch (error) {
+        remainingAssetCount = 0;
+        dispatch(updateErrors({ error: 'loading', message: 'Failed to load remaining files.' }));
+        dispatch(updateLoadingStatus({ status: RequestStatus.PARTIAL_FAILURE }));
+      }
+    }
+  };
+}
+
 export function fetchAssets(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
 
     try {
-      const { totalCount } = await getAssets(courseId);
-      const { assets } = await getAssets(courseId, totalCount);
+      const { assets, totalCount } = await getAssets(courseId);
       const parsedAssets = updateFileValues(assets);
       dispatch(addModels({ modelType: 'assets', models: parsedAssets }));
       dispatch(setAssetIds({
         assetIds: assets.map(asset => asset.id),
       }));
+      if (totalCount > 50) {
+        dispatch(fetchAddtionalAsstets(courseId, totalCount - 50));
+      }
       dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       if (error.response && error.response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
       } else {
+        dispatch(updateErrors({ error: 'loading', message: 'Failed to load all files.' }));
         dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
       }
     }
@@ -54,7 +83,7 @@ export function fetchAssets(courseId) {
 export function updateAssetOrder(courseId, assetIds) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
-    dispatch(setAssetIds({ assetIds }));
+    dispatch(setSortedAssetIds({ assetIds }));
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
   };
 }

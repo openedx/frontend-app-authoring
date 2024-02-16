@@ -36,6 +36,6 @@ exports[`ORASettings should render 1`] = `
     }
   }
 >
-  <Component />
+  [Function]
 </AppSettingsModal>
 `;

@@ -1,3 +1,4 @@
+// @ts-check
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -34,11 +35,14 @@ import TagBubble from './TagBubble';
  *   }
  * };
  *
- * @param {Object} tagsTree - Array of taxonomy tags that are applied to the content
- * @param {Func} removeTagHandler - Function that is called when removing tags from tree
- * @param {boolean} editable - Whether the tags appear with an 'x' allowing the user to remove them
+ * @param {Object} props - The component props.
+ * @param {Object} props.tagsTree - Array of taxonomy tags that are applied to the content.
+ * @param {(
+ *   tagSelectableBoxValue: string,
+ *   checked: boolean
+ * ) => void} props.removeTagHandler - Function that is called when removing tags from the tree.
  */
-const ContentTagsTree = ({ tagsTree, removeTagHandler, editable }) => {
+const ContentTagsTree = ({ tagsTree, removeTagHandler }) => {
   const renderTagsTree = (tag, level, lineage) => Object.keys(tag).map((key) => {
     const updatedLineage = [...lineage, encodeURIComponent(key)];
     if (tag[key] !== undefined) {
@@ -51,7 +55,7 @@ const ContentTagsTree = ({ tagsTree, removeTagHandler, editable }) => {
             level={level}
             lineage={updatedLineage}
             removeTagHandler={removeTagHandler}
-            editable={editable}
+            canRemove={tag[key].canDeleteObjecttag}
           />
           { renderTagsTree(tag[key].children, level + 1, updatedLineage) }
         </div>
@@ -60,7 +64,7 @@ const ContentTagsTree = ({ tagsTree, removeTagHandler, editable }) => {
     return null;
   });
 
-  return renderTagsTree(tagsTree, 0, []);
+  return <>{renderTagsTree(tagsTree, 0, [])}</>;
 };
 
 ContentTagsTree.propTypes = {
@@ -68,10 +72,10 @@ ContentTagsTree.propTypes = {
     PropTypes.shape({
       explicit: PropTypes.bool.isRequired,
       children: PropTypes.shape({}).isRequired,
+      canDeleteObjecttag: PropTypes.bool.isRequired,
     }).isRequired,
   ).isRequired,
   removeTagHandler: PropTypes.func.isRequired,
-  editable: PropTypes.bool.isRequired,
 };
 
 export default ContentTagsTree;

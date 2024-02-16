@@ -20,9 +20,13 @@ export const BADGE_STATES = {
 };
 
 export const NOTIFICATION_MESSAGES = {
+  adding: 'Adding',
   saving: 'Saving',
   duplicating: 'Duplicating',
   deleting: 'Deleting',
+  copying: 'Copying',
+  pasting: 'Pasting',
+  empty: '',
 };
 
 export const DEFAULT_TIME_STAMP = '00:00';
@@ -33,4 +37,11 @@ export const COURSE_CREATOR_STATES = {
   granted: 'granted',
   denied: 'denied',
   disallowedForThisSite: 'disallowed_for_this_site',
+};
+
+export const DECODED_ROUTES = {
+  COURSE_UNIT: [
+    '/container/:blockId/:sequenceId',
+    '/container/:blockId',
+  ],
 };

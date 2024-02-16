@@ -11,7 +11,7 @@ import {
   TransitionReplace,
 } from '@edx/paragon';
 import { ChevronLeft, ChevronRight, Close } from '@edx/paragon/icons';
-import AITranslationsComponent from '@edx/frontend-component-ai-translations-edx';
+import AITranslationsComponent from '@edx/frontend-component-ai-translations';
 import OrderTranscriptForm from './OrderTranscriptForm';
 import messages from './messages';
 import {
@@ -35,7 +35,7 @@ const TranscriptSettings = ({
     isAiTranslationsEnabled,
   } = pageSettings;
   const { transcriptionPlans } = videoTranscriptSettings || {};
-  const [transcriptType, setTranscriptType] = useState(activeTranscriptPreferences?.provider);
+  const [transcriptType, setTranscriptType] = useState(null);
   const [isAiTranslations, setIsAiTranslations] = useState(false);
 
   const handleOrderTranscripts = (data, provider) => {
@@ -81,7 +81,7 @@ const TranscriptSettings = ({
               <IconButton size="sm" iconAs={Icon} src={Close} onClick={closeTranscriptSettings} alt="close settings" />
             </ActionRow>
             <TransitionReplace>
-              {transcriptType ? (
+              { transcriptType ? (
                 <div key="transcript-settings">
                   <OrderTranscriptForm
                     {...{
@@ -116,12 +116,14 @@ const TranscriptSettings = ({
         )}
         {(!transcriptType && isAiTranslationsEnabled) && (
           <TransitionReplace>
-            <AITranslationsComponent
-              setIsAiTranslations={setIsAiTranslations}
-              closeTranscriptSettings={closeTranscriptSettings}
-              courseId={courseId}
-              key="ai-component"
-            />
+            <div data-testid="ai-translations-component">
+              <AITranslationsComponent
+                setIsAiTranslations={setIsAiTranslations}
+                closeTranscriptSettings={closeTranscriptSettings}
+                courseId={courseId}
+                key="ai-component"
+              />
+            </div>
           </TransitionReplace>
         )}
       </div>

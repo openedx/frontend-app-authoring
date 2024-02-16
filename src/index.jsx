@@ -2,12 +2,14 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import {
-  APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig,
+  APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath,
 } from '@edx/frontend-platform';
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import {
+  Navigate, Route, createRoutesFromElements, createBrowserRouter, RouterProvider,
+} from 'react-router-dom';
 import {
   QueryClient,
   QueryClientProvider,
@@ -45,31 +47,40 @@ const App = () => {
     }
   }, []);
 
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route>
+        <Route path="/home" element={<StudioHome />} />
+        <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
+        <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
+        {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
+          <>
+            {/* TODO: remove this redirect once Studio's link is updated */}
+            <Route path="/taxonomy-list" element={<Navigate to="/taxonomies" />} />
+            <Route path="/taxonomies" element={<TaxonomyLayout />}>
+              <Route index element={<TaxonomyListPage />} />
+            </Route>
+            <Route path="/taxonomy" element={<TaxonomyLayout />}>
+              <Route path="/taxonomy/:taxonomyId" element={<TaxonomyDetailPage />} />
+            </Route>
+            <Route
+              path="/tagging/components/widget/:contentId"
+              element={<ContentTagsDrawer />}
+            />
+          </>
+        )}
+      </Route>,
+    ),
+    {
+      basename: getPath(getConfig().PUBLIC_PATH),
+    },
+  );
+
   return (
-    <AppProvider store={initializeStore()}>
+    <AppProvider store={initializeStore()} wrapWithRouter={false}>
       <QueryClientProvider client={queryClient}>
         <Head />
-        <Routes>
-          <Route path="/home" element={<StudioHome />} />
-          <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
-          <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
-          {process.env.ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
-            <>
-              {/* TODO: remove this redirect once Studio's link is updated */}
-              <Route path="/taxonomy-list" element={<Navigate to="/taxonomies" />} />
-              <Route path="/taxonomies" element={<TaxonomyLayout />}>
-                <Route index element={<TaxonomyListPage />} />
-              </Route>
-              <Route path="/taxonomy" element={<TaxonomyLayout />}>
-                <Route path="/taxonomy/:taxonomyId" element={<TaxonomyDetailPage />} />
-              </Route>
-              <Route
-                path="/tagging/components/widget/:contentId"
-                element={<ContentTagsDrawer />}
-              />
-            </>
-          )}
-        </Routes>
+        <RouterProvider router={router} />
       </QueryClientProvider>
     </AppProvider>
   );
@@ -102,8 +113,12 @@ initialize({
         STUDIO_SHORT_NAME: process.env.STUDIO_SHORT_NAME || null,
         TERMS_OF_SERVICE_URL: process.env.TERMS_OF_SERVICE_URL || null,
         PRIVACY_POLICY_URL: process.env.PRIVACY_POLICY_URL || null,
-        SHOW_ACCESSIBILITY_PAGE: process.env.SHOW_ACCESSIBILITY_PAGE || false,
+        SHOW_ACCESSIBILITY_PAGE: process.env.SHOW_ACCESSIBILITY_PAGE || 'false',
         NOTIFICATION_FEEDBACK_URL: process.env.NOTIFICATION_FEEDBACK_URL || null,
+        ENABLE_NEW_EDITOR_PAGES: process.env.ENABLE_NEW_EDITOR_PAGES || 'false',
+        ENABLE_UNIT_PAGE: process.env.ENABLE_UNIT_PAGE || 'false',
+        ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN || 'false',
+        ENABLE_TAGGING_TAXONOMY_PAGES: process.env.ENABLE_TAGGING_TAXONOMY_PAGES || 'false',
       }, 'CourseAuthoringConfig');
     },
   },

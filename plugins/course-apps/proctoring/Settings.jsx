@@ -29,7 +29,7 @@ const ProctoringSettings = ({ intl, onClose }) => {
   const initialFormValues = {
     enableProctoredExams: false,
     proctoringProvider: false,
-    proctortrackEscalationEmail: '',
+    escalationEmail: '',
     allowOptingOut: false,
     createZendeskTickets: false,
   };
@@ -45,7 +45,7 @@ const ProctoringSettings = ({ intl, onClose }) => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState(false);
   const [submissionInProgress, setSubmissionInProgress] = useState(false);
-  const [showProctortrackEscalationEmail, setShowProctortrackEscalationEmail] = useState(false);
+  const [showEscalationEmail, setShowEscalationEmail] = useState(false);
   const isEdxStaff = getAuthenticatedUser().administrator;
   const [formStatus, setFormStatus] = useState({
     isValid: true,
@@ -53,6 +53,15 @@ const ProctoringSettings = ({ intl, onClose }) => {
   });
   const isMobile = useIsMobile();
   const modalVariant = isMobile ? 'dark' : 'default';
+
+  const isLtiProvider = (provider) => (
+    ltiProctoringProviders.some(p => p.name === provider)
+  );
+
+  function getProviderDisplayLabel(provider) {
+    // if a display label exists for this provider return it
+    return ltiProctoringProviders.find(p => p.name === provider)?.verbose_name || provider;
+  }
 
   const { courseId } = useContext(PagesAndResourcesContext);
   const appInfo = useModel('courseApps', 'proctoring');
@@ -74,38 +83,36 @@ const ProctoringSettings = ({ intl, onClose }) => {
 
       if (value === 'proctortrack') {
         setFormValues({ ...newFormValues, createZendeskTickets: false });
-        setShowProctortrackEscalationEmail(true);
+        setShowEscalationEmail(true);
+      } else if (value === 'software_secure') {
+        setFormValues({ ...newFormValues, createZendeskTickets: true });
+        setShowEscalationEmail(false);
+      } else if (isLtiProvider(value)) {
+        setFormValues(newFormValues);
+        setShowEscalationEmail(true);
       } else {
-        if (value === 'software_secure') {
-          setFormValues({ ...newFormValues, createZendeskTickets: true });
-        } else {
-          setFormValues(newFormValues);
-        }
-
-        setShowProctortrackEscalationEmail(false);
+        setFormValues(newFormValues);
+        setShowEscalationEmail(false);
       }
     } else {
       setFormValues({ ...formValues, [name]: value });
     }
   };
 
-  function isLtiProvider(provider) {
-    return ltiProctoringProviders.some(p => p.name === provider);
-  }
-
-  const setFocusToProctortrackEscalationEmailInput = () => {
+  const setFocusToEscalationEmailInput = () => {
     if (proctoringEscalationEmailInputRef && proctoringEscalationEmailInputRef.current) {
       proctoringEscalationEmailInputRef.current.focus();
     }
   };
 
   function postSettingsBackToServer() {
-    const providerIsLti = isLtiProvider(formValues.proctoringProvider);
+    const selectedProvider = formValues.proctoringProvider;
+    const isLtiProviderSelected = isLtiProvider(selectedProvider);
     const studioDataToPostBack = {
       proctored_exam_settings: {
         enable_proctored_exams: formValues.enableProctoredExams,
         // lti providers are managed outside edx-platform, lti_external indicates this
-        proctoring_provider: providerIsLti ? 'lti_external' : formValues.proctoringProvider,
+        proctoring_provider: isLtiProviderSelected ? 'lti_external' : selectedProvider,
         create_zendesk_tickets: formValues.createZendeskTickets,
       },
     };
@@ -114,17 +121,23 @@ const ProctoringSettings = ({ intl, onClose }) => {
     }
 
     if (formValues.proctoringProvider === 'proctortrack') {
-      studioDataToPostBack.proctored_exam_settings.proctoring_escalation_email = formValues.proctortrackEscalationEmail === '' ? null : formValues.proctortrackEscalationEmail;
+      studioDataToPostBack.proctored_exam_settings.proctoring_escalation_email = formValues.escalationEmail === '' ? null : formValues.escalationEmail;
     }
 
     // only save back to exam service if necessary
     setSubmissionInProgress(true);
+
     const saveOperations = [StudioApiService.saveProctoredExamSettingsData(courseId, studioDataToPostBack)];
     if (allowLtiProviders && ExamsApiService.isAvailable()) {
+      const selectedEscalationEmail = formValues.escalationEmail;
+
       saveOperations.push(
         ExamsApiService.saveCourseExamConfiguration(
           courseId,
-          { provider: providerIsLti ? formValues.proctoringProvider : null },
+          {
+            provider: isLtiProviderSelected ? formValues.proctoringProvider : null,
+            escalationEmail: (isLtiProviderSelected && selectedEscalationEmail !== '') ? selectedEscalationEmail : null,
+          },
         ),
       );
     }
@@ -142,20 +155,21 @@ const ProctoringSettings = ({ intl, onClose }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const isLtiProviderSelected = isLtiProvider(formValues.proctoringProvider);
     if (
-      formValues.proctoringProvider === 'proctortrack'
-      && !EmailValidator.validate(formValues.proctortrackEscalationEmail)
-      && !(formValues.proctortrackEscalationEmail === '' && !formValues.enableProctoredExams)
+      (formValues.proctoringProvider === 'proctortrack' || isLtiProviderSelected)
+      && !EmailValidator.validate(formValues.escalationEmail)
+      && !(formValues.escalationEmail === '' && !formValues.enableProctoredExams)
     ) {
-      if (formValues.proctortrackEscalationEmail === '') {
-        const errorMessage = intl.formatMessage(messages['authoring.proctoring.escalationemail.error.blank']);
+      if (formValues.escalationEmail === '') {
+        const errorMessage = intl.formatMessage(messages['authoring.proctoring.escalationemail.error.blank'], { proctoringProviderName: getProviderDisplayLabel(formValues.proctoringProvider) });
 
         setFormStatus({
           isValid: false,
           errors: {
-            formProctortrackEscalationEmail: {
+            formEscalationEmail: {
               dialogErrorMessage: (
-                <Alert.Link onClick={setFocusToProctortrackEscalationEmailInput} href="#formProctortrackEscalationEmail" data-testid="proctorTrackEscalationEmailErrorLink">
+                <Alert.Link onClick={setFocusToEscalationEmailInput} href="#formEscalationEmail" data-testid="escalationEmailErrorLink">
                   {errorMessage}
                 </Alert.Link>
               ),
@@ -169,8 +183,8 @@ const ProctoringSettings = ({ intl, onClose }) => {
         setFormStatus({
           isValid: false,
           errors: {
-            formProctortrackEscalationEmail: {
-              dialogErrorMessage: (<Alert.Link onClick={setFocusToProctortrackEscalationEmailInput} href="#formProctortrackEscalationEmail" data-testid="proctorTrackEscalationEmailErrorLink">{errorMessage}</Alert.Link>),
+            formEscalationEmail: {
+              dialogErrorMessage: (<Alert.Link onClick={setFocusToEscalationEmailInput} href="#formEscalationEmail" data-testid="escalationEmailErrorLink">{errorMessage}</Alert.Link>),
               inputErrorMessage: errorMessage,
             },
           },
@@ -179,7 +193,7 @@ const ProctoringSettings = ({ intl, onClose }) => {
     } else {
       postSettingsBackToServer();
       const errors = { ...formStatus.errors };
-      delete errors.formProctortrackEscalationEmail;
+      delete errors.formEscalationEmail;
       setFormStatus({
         isValid: true,
         errors,
@@ -201,11 +215,6 @@ const ProctoringSettings = ({ intl, onClose }) => {
       markDisabled = provider !== formValues.proctoringProvider;
     }
     return markDisabled;
-  }
-
-  function getProviderDisplayLabel(provider) {
-    // if a display label exists for this provider return it
-    return ltiProctoringProviders.find(p => p.name === provider)?.verbose_name || provider;
   }
 
   function getProctoringProviderOptions(providers) {
@@ -248,16 +257,18 @@ const ProctoringSettings = ({ intl, onClose }) => {
   );
 
   function renderContent() {
+    const isLtiProviderSelected = isLtiProvider(formValues.proctoringProvider);
+
     return (
       <>
-        {!formStatus.isValid && formStatus.errors.formProctortrackEscalationEmail
+        {!formStatus.isValid && formStatus.errors.formEscalationEmail
           && (
             // tabIndex="-1" to make non-focusable element focusable
             <Alert
-              id="proctortrackEscalationEmailError"
+              id="escalationEmailError"
               variant="danger"
               tabIndex="-1"
-              data-testid="proctortrackEscalationEmailError"
+              data-testid="escalationEmailError"
               ref={alertRef}
             >
               {getFormErrorMessage()}
@@ -320,30 +331,30 @@ const ProctoringSettings = ({ intl, onClose }) => {
           </>
         )}
 
-        {/* PROCTORTRACK ESCALATION EMAIL */}
-        {showProctortrackEscalationEmail && formValues.enableProctoredExams && (
-          <Form.Group controlId="formProctortrackEscalationEmail">
+        {/* ESCALATION EMAIL */}
+        {showEscalationEmail && formValues.enableProctoredExams && (
+          <Form.Group controlId="formEscalationEmail">
             <Form.Label className="font-weight-bold">
               {intl.formatMessage(messages['authoring.proctoring.escalationemail.label'])}
             </Form.Label>
             <Form.Control
               ref={proctoringEscalationEmailInputRef}
               type="email"
-              name="proctortrackEscalationEmail"
+              name="escalationEmail"
               data-testid="escalationEmail"
               onChange={handleChange}
-              value={formValues.proctortrackEscalationEmail}
-              isInvalid={Object.prototype.hasOwnProperty.call(formStatus.errors, 'formProctortrackEscalationEmail')}
-              aria-describedby="proctortrackEscalationEmailHelpText"
+              value={formValues.escalationEmail}
+              isInvalid={Object.prototype.hasOwnProperty.call(formStatus.errors, 'formEscalationEmail')}
+              aria-describedby="escalationEmailHelpText"
             />
-            <Form.Text id="proctortrackEscalationEmailHelpText">
+            <Form.Text id="escalationEmailHelpText">
               {intl.formatMessage(messages['authoring.proctoring.escalationemail.help'])}
             </Form.Text>
-            {Object.prototype.hasOwnProperty.call(formStatus.errors, 'formProctortrackEscalationEmail') && (
+            {Object.prototype.hasOwnProperty.call(formStatus.errors, 'formEscalationEmail') && (
               <Form.Control.Feedback type="invalid">
                 {
-                  formStatus.errors.formProctortrackEscalationEmail
-                  && formStatus.errors.formProctortrackEscalationEmail.inputErrorMessage
+                  formStatus.errors.formEscalationEmail
+                  && formStatus.errors.formEscalationEmail.inputErrorMessage
                 }
               </Form.Control.Feedback>
             )}
@@ -351,7 +362,7 @@ const ProctoringSettings = ({ intl, onClose }) => {
         )}
 
         {/* ALLOW OPTING OUT OF PROCTORED EXAMS */}
-        { isEdxStaff && formValues.enableProctoredExams && !isLtiProvider(formValues.proctoringProvider) && (
+        { isEdxStaff && formValues.enableProctoredExams && !isLtiProviderSelected && (
           <fieldset aria-describedby="allowOptingOutHelpText">
             <Form.Group controlId="formAllowingOptingOut">
               <Form.Label as="legend" className="font-weight-bold">
@@ -375,7 +386,7 @@ const ProctoringSettings = ({ intl, onClose }) => {
         )}
 
         {/* CREATE ZENDESK TICKETS */}
-        { isEdxStaff && formValues.enableProctoredExams && !isLtiProvider(formValues.proctoringProvider) && (
+        { isEdxStaff && formValues.enableProctoredExams && !isLtiProviderSelected && (
           <fieldset aria-describedby="createZendeskTicketsText">
             <Form.Group controlId="formCreateZendeskTickets">
               <Form.Label as="legend" className="font-weight-bold">
@@ -488,10 +499,7 @@ const ProctoringSettings = ({ intl, onClose }) => {
           setLoading(false);
           setSubmissionInProgress(false);
           setCourseStartDate(settingsResponse.data.course_start_date);
-          const isProctortrack = proctoredExamSettings.proctoring_provider === 'proctortrack';
-          setShowProctortrackEscalationEmail(isProctortrack);
           setAvailableProctoringProviders(settingsResponse.data.available_proctoring_providers);
-          const proctoringEscalationEmail = proctoredExamSettings.proctoring_escalation_email;
 
           // The list of providers returned by studio settings are the default behavior. If lti_external
           // is available as an option display the list of LTI providers returned by the exam service.
@@ -518,6 +526,18 @@ const ProctoringSettings = ({ intl, onClose }) => {
           } else {
             selectedProvider = proctoredExamSettings.proctoring_provider;
           }
+
+          const isProctortrack = selectedProvider === 'proctortrack';
+          const ltiProviderSelected = proctoringProvidersLti.some(p => p.name === selectedProvider);
+
+          if (isProctortrack || ltiProviderSelected) {
+            setShowEscalationEmail(true);
+          }
+
+          const proctoringEscalationEmail = ltiProviderSelected
+            ? examConfigResponse.data.escalation_email
+            : proctoredExamSettings.proctoring_escalation_email;
+
           setFormValues({
             ...formValues,
             proctoringProvider: selectedProvider,
@@ -527,7 +547,7 @@ const ProctoringSettings = ({ intl, onClose }) => {
             // The backend API may return null for the proctoringEscalationEmail value, which is the default.
             // In order to keep our email input component controlled, we use the empty string as the default
             // and perform this conversion during GETs and POSTs.
-            proctortrackEscalationEmail: proctoringEscalationEmail === null ? '' : proctoringEscalationEmail,
+            escalationEmail: proctoringEscalationEmail === null ? '' : proctoringEscalationEmail,
           });
         },
       ).catch(

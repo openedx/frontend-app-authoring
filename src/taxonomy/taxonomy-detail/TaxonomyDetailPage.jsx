@@ -1,5 +1,5 @@
-// ts-check
-import React, { useState } from 'react';
+// @ts-check
+import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Breadcrumb,
@@ -14,11 +14,11 @@ import Loading from '../../generic/Loading';
 import getPageHeadTitle from '../../generic/utils';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import taxonomyMessages from '../messages';
-import TaxonomyDetailMenu from './TaxonomyDetailMenu';
-import TaxonomyDetailSideCard from './TaxonomyDetailSideCard';
 import { TagListTable } from '../tag-list';
-import ExportModal from '../export-modal';
-import { useTaxonomyDetailDataResponse, useTaxonomyDetailDataStatus } from './data/apiHooks';
+import { TaxonomyMenu } from '../taxonomy-menu';
+import TaxonomyDetailSideCard from './TaxonomyDetailSideCard';
+import { useTaxonomyDetailDataResponse, useTaxonomyDetailDataStatus } from '../data/apiHooks';
+import SystemDefinedBadge from '../system-defined-badge';
 
 const TaxonomyDetailPage = () => {
   const intl = useIntl();
@@ -27,8 +27,6 @@ const TaxonomyDetailPage = () => {
 
   const taxonomy = useTaxonomyDetailDataResponse(taxonomyId);
   const { isError, isFetched } = useTaxonomyDetailDataStatus(taxonomyId);
-
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   if (!isFetched) {
     return (
@@ -42,40 +40,18 @@ const TaxonomyDetailPage = () => {
     );
   }
 
-  const renderModals = () => isExportModalOpen && (
-    <ExportModal
-      isOpen={isExportModalOpen}
-      onClose={() => setIsExportModalOpen(false)}
-      taxonomyId={taxonomy.id}
-      taxonomyName={taxonomy.name}
-    />
-  );
-
-  const onClickMenuItem = (menuName) => {
-    switch (menuName) {
-    case 'export':
-      setIsExportModalOpen(true);
-      break;
-    default:
-      break;
-    }
-  };
-
   const getHeaderActions = () => (
-    <TaxonomyDetailMenu
-      id={taxonomy.id}
-      name={taxonomy.name}
-      disabled={
-        // We don't show the export menu, because the system-taxonomies
-        // can't be exported. The API returns and error.
-        // The entire menu has been disabled because currently only
-        // the export menu exists.
-        // ToDo: When adding more menus, change this logic to hide only the export menu.
-        taxonomy.systemDefined
-      }
-      onClickMenuItem={onClickMenuItem}
+    <TaxonomyMenu
+      taxonomy={taxonomy}
     />
   );
+
+  const getSystemDefinedBadge = () => {
+    if (taxonomy.systemDefined) {
+      return <SystemDefinedBadge taxonomyId={taxonomyId} />;
+    }
+    return null;
+  };
 
   return (
     <>
@@ -93,6 +69,7 @@ const TaxonomyDetailPage = () => {
           />
           <SubHeader
             title={taxonomy.name}
+            titleActions={getSystemDefinedBadge()}
             hideBorder
             headerActions={getHeaderActions()}
           />
@@ -116,7 +93,6 @@ const TaxonomyDetailPage = () => {
           </Layout>
         </Container>
       </div>
-      {renderModals()}
     </>
   );
 };

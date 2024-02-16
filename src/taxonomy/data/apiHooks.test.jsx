@@ -1,13 +1,27 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { act } from '@testing-library/react';
+
 import {
   useTaxonomyListDataResponse,
   useIsTaxonomyListDataLoaded,
+  useDeleteTaxonomy,
 } from './apiHooks';
+import { deleteTaxonomy } from './api';
 
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(),
+  useMutation: jest.fn(),
+  useQueryClient: jest.fn(),
 }));
 
+jest.mock('./api', () => ({
+  deleteTaxonomy: jest.fn(),
+}));
+
+/*
+ * TODO: We can refactor this test: Mock the API response using axiosMock.
+ * Ref: https://github.com/openedx/frontend-app-course-authoring/pull/684#issuecomment-1847694090
+ */
 describe('useTaxonomyListDataResponse', () => {
   it('should return data when status is success', () => {
     useQuery.mockReturnValueOnce({ status: 'success', data: { data: 'data' } });
@@ -41,5 +55,24 @@ describe('useIsTaxonomyListDataLoaded', () => {
     const result = useIsTaxonomyListDataLoaded();
 
     expect(result).toBe(false);
+  });
+});
+
+describe('useDeleteTaxonomy', () => {
+  it('should call the delete function', async () => {
+    useMutation.mockReturnValueOnce({ mutate: jest.fn() });
+
+    const mutation = useDeleteTaxonomy();
+    mutation();
+
+    expect(useMutation).toBeCalled();
+
+    const [config] = useMutation.mock.calls[0];
+    const { mutationFn } = config;
+
+    await act(async () => {
+      await mutationFn({ pk: 1 });
+      expect(deleteTaxonomy).toBeCalledWith(1);
+    });
   });
 });

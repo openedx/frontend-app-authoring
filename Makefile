@@ -54,12 +54,15 @@ pull_translations:
 	rm -rf src/i18n/messages
 	mkdir src/i18n/messages
 	cd src/i18n/messages \
-	   && atlas pull --filter=$(transifex_langs) \
+	   && atlas pull $(ATLAS_OPTIONS) \
+	            translations/frontend-component-ai-translations/src/i18n/messages:frontend-component-ai-translations \
+	            translations/frontend-lib-content-components/src/i18n/messages:frontend-lib-content-components \
+	            translations/frontend-platform/src/i18n/messages:frontend-platform \
 	            translations/paragon/src/i18n/messages:paragon \
 	            translations/frontend-component-footer/src/i18n/messages:frontend-component-footer \
 	            translations/frontend-app-course-authoring/src/i18n/messages:frontend-app-course-authoring
 
-	$(intl_imports) paragon frontend-component-footer frontend-app-course-authoring
+	$(intl_imports) frontend-component-ai-translations frontend-lib-content-components frontend-platform paragon frontend-component-footer frontend-app-course-authoring
 endif
 
 # This target is used by Travis.

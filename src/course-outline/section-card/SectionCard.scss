@@ -1,0 +1,19 @@
+.section-card {
+  flex-grow: 1;
+
+  .section-card__subsections {
+    margin-top: $spacer;
+  }
+
+  .section-card-title {
+    font-size: $h3-font-size;
+    font-family: $headings-font-family;
+    font-weight: $headings-font-weight;
+    line-height: $headings-line-height;
+    color: $headings-color;
+  }
+
+  .section-card__content {
+    margin-left: 1.7rem;
+  }
+}

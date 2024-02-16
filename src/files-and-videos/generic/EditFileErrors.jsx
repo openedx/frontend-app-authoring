@@ -11,10 +11,18 @@ const EditFileErrors = ({
   addFileStatus,
   deleteFileStatus,
   updateFileStatus,
+  loadingStatus,
   // injected
   intl,
 }) => (
   <>
+    <ErrorAlert
+      hideHeading={false}
+      dismissError={() => resetErrors({ errorType: 'loading' })}
+      isError={loadingStatus === RequestStatus.FAILED || loadingStatus === RequestStatus.PARTIAL_FAILURE}
+    >
+      {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.loading })}
+    </ErrorAlert>
     <ErrorAlert
       hideHeading={false}
       dismissError={() => resetErrors({ errorType: 'add' })}
@@ -75,10 +83,12 @@ EditFileErrors.propTypes = {
     lock: PropTypes.arrayOf(PropTypes.string),
     download: PropTypes.arrayOf(PropTypes.string).isRequired,
     thumbnail: PropTypes.arrayOf(PropTypes.string),
+    loading: PropTypes.string.isRequired,
   }).isRequired,
   addFileStatus: PropTypes.string.isRequired,
   deleteFileStatus: PropTypes.string.isRequired,
   updateFileStatus: PropTypes.string.isRequired,
+  loadingStatus: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

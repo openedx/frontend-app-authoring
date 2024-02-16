@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow } from '@edx/react-unit-test-utils';
 import EditorContainer from './EditorContainer';
 
 jest.mock('@edx/frontend-lib-content-components', () => ({ EditorPage: () => 'HeaderTitle' }));
@@ -17,7 +17,7 @@ const props = { courseId: 'cOuRsEId' };
 describe('Editor Container', () => {
   describe('snapshots', () => {
     test('rendering correctly with expected Input', () => {
-      expect(shallow(<EditorContainer {...props} />)).toMatchSnapshot();
+      expect(shallow(<EditorContainer {...props} />).snapshot).toMatchSnapshot();
     });
   });
 });

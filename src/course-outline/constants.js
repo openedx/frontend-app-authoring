@@ -1,10 +1,27 @@
-export const CHECKLIST_FILTERS = {
+export const ITEM_BADGE_STATUS = /** @type {const} */ ({
+  live: 'live',
+  gated: 'gated',
+  publishedNotLive: 'published_not_live',
+  unpublishedChanges: 'unpublished_changes',
+  staffOnly: 'staff_only',
+  draft: 'draft',
+});
+
+export const HIGHLIGHTS_FIELD_MAX_LENGTH = 250;
+
+export const CHECKLIST_FILTERS = /** @type {const} */ ({
   ALL: 'ALL',
   SELF_PACED: 'SELF_PACED',
   INSTRUCTOR_PACED: 'INSTRUCTOR_PACED',
-};
+});
 
-export const LAUNCH_CHECKLIST = {
+export const COURSE_BLOCK_NAMES = /** @type {const} */ ({
+  chapter: { id: 'chapter', name: 'Section' },
+  sequential: { id: 'sequential', name: 'Subsection' },
+  vertical: { id: 'vertical', name: 'Unit' },
+});
+
+export const LAUNCH_CHECKLIST = /** @type {const} */ ({
   data: [
     {
       id: 'welcomeMessage',
@@ -31,9 +48,9 @@ export const LAUNCH_CHECKLIST = {
       pacingTypeFilter: CHECKLIST_FILTERS.ALL,
     },
   ],
-};
+});
 
-export const BEST_PRACTICES_CHECKLIST = {
+export const BEST_PRACTICES_CHECKLIST = /** @type {const} */ ({
   data: [
     {
       id: 'videoDuration',
@@ -56,4 +73,10 @@ export const BEST_PRACTICES_CHECKLIST = {
       pacingTypeFilter: CHECKLIST_FILTERS.ALL,
     },
   ],
-};
+});
+
+export const VIDEO_SHARING_OPTIONS = /** @type {const} */ ({
+  perVideo: 'per-video',
+  allOn: 'all-on',
+  allOff: 'all-off',
+});

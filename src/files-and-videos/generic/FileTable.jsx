@@ -57,10 +57,19 @@ const FileTable = ({
   };
   const [currentView, setCurrentView] = useState(defaultVal);
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
+  const [isDownloadOpen, setDownloadOpen, setDownloadClose] = useToggle(false);
   const [isAssetInfoOpen, openAssetInfo, closeAssetinfo] = useToggle(false);
   const [isAddOpen, setAddOpen, setAddClose] = useToggle(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
+  const [initialState, setInitialState] = useState({
+    filters: [],
+    hiddenColumns: [],
+    pageIndex: 0,
+    pageSize: 50,
+    selectedRowIds: {},
+    sortBy: [],
+  });
 
   const {
     loadingStatus,
@@ -114,6 +123,8 @@ const FileTable = ({
 
   const handleBulkDownload = useCallback(async (selectedFlatRows) => {
     handleErrorReset({ errorType: 'download' });
+    setSelectedRows(selectedFlatRows);
+    setDownloadOpen();
     handleDownloadFile(selectedFlatRows);
   }, []);
 
@@ -140,6 +151,7 @@ const FileTable = ({
         handleOpenDeleteConfirmation,
         supportedFileFormats,
         fileType,
+        setInitialState,
       }}
     />
   );
@@ -154,6 +166,7 @@ const FileTable = ({
         thumbnailPreview,
         className,
         original,
+        fileType,
       }}
     />
   );
@@ -167,6 +180,7 @@ const FileTable = ({
       handleBulkDownload,
       handleOpenFileInfo,
       handleOpenDeleteConfirmation,
+      fileType,
     }),
   };
 
@@ -190,9 +204,7 @@ const FileTable = ({
           defaultActiveStateValue: defaultVal,
           togglePlacement: 'left',
         }}
-        initialState={{
-          pageSize: 50,
-        }}
+        initialState={initialState}
         tableActions={headerActions}
         bulkActions={headerActions}
         columns={tableColumns}
@@ -237,6 +249,14 @@ const FileTable = ({
           selectedRowCount={selectedRows.length}
           isOpen={isAddOpen}
           setClose={setAddClose}
+          setSelectedRows={setSelectedRows}
+          fileType={fileType}
+        />
+        <ApiStatusToast
+          actionType={intl.formatMessage(messages.apiStatusDownloadingAction)}
+          selectedRowCount={selectedRows.length}
+          isOpen={isDownloadOpen}
+          setClose={setDownloadClose}
           setSelectedRows={setSelectedRows}
           fileType={fileType}
         />

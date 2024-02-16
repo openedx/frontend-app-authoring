@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  Badge,
   Card,
   OverlayTrigger,
   Popover,
 } from '@edx/paragon';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
+
+import { TaxonomyMenu } from '../taxonomy-menu';
 import messages from './messages';
-import TaxonomyCardMenu from './TaxonomyCardMenu';
-import ExportModal from '../export-modal';
+import SystemDefinedBadge from '../system-defined-badge';
 
 const orgsCountEnabled = (orgsCount) => orgsCount !== undefined && orgsCount !== 0;
 
@@ -19,30 +19,10 @@ const HeaderSubtitle = ({
   id, showSystemBadge, orgsCount,
 }) => {
   const intl = useIntl();
-  const getSystemToolTip = () => (
-    <Popover id={`system-defined-tooltip-${id}`}>
-      <Popover.Title as="h5">
-        {intl.formatMessage(messages.systemTaxonomyPopoverTitle)}
-      </Popover.Title>
-      <Popover.Content>
-        {intl.formatMessage(messages.systemTaxonomyPopoverBody)}
-      </Popover.Content>
-    </Popover>
-  );
 
   // Show system defined badge
   if (showSystemBadge) {
-    return (
-      <OverlayTrigger
-        key={`system-defined-overlay-${id}`}
-        placement="top"
-        overlay={getSystemToolTip()}
-      >
-        <Badge variant="light">
-          {intl.formatMessage(messages.systemDefinedBadge)}
-        </Badge>
-      </OverlayTrigger>
-    );
+    return <SystemDefinedBadge taxonomyId={id} />;
   }
 
   // Or show orgs count
@@ -58,10 +38,55 @@ const HeaderSubtitle = ({
   return null;
 };
 
+HeaderSubtitle.defaultProps = {
+  orgsCount: undefined,
+};
+
 HeaderSubtitle.propTypes = {
   id: PropTypes.number.isRequired,
   showSystemBadge: PropTypes.bool.isRequired,
-  orgsCount: PropTypes.number.isRequired,
+  orgsCount: PropTypes.number,
+};
+
+const HeaderTitle = ({ taxonomyId, title }) => {
+  const containerRef = useRef(null);
+  const textRef = useRef(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+
+  useEffect(() => {
+    const containerWidth = containerRef.current.clientWidth;
+    const textWidth = textRef.current.offsetWidth;
+    setIsTruncated(textWidth > containerWidth);
+  }, [title]);
+
+  const getToolTip = () => (
+    <Popover
+      id={`taxonomy-card-title-tooltip-${taxonomyId}`}
+      className="mw-300px"
+    >
+      <Popover.Content>
+        {title}
+      </Popover.Content>
+    </Popover>
+  );
+
+  return (
+    <OverlayTrigger
+      key={`taxonomy-card-title-overlay-${taxonomyId}`}
+      placement="top"
+      overlay={getToolTip()}
+      show={!isTruncated ? false : undefined}
+    >
+      <div ref={containerRef} className="text-truncate">
+        <span ref={textRef}>{title}</span>
+      </div>
+    </OverlayTrigger>
+  );
+};
+
+HeaderTitle.propTypes = {
+  taxonomyId: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 const TaxonomyCard = ({ className, original }) => {
@@ -70,77 +95,44 @@ const TaxonomyCard = ({ className, original }) => {
   } = original;
 
   const intl = useIntl();
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
-  // Add here more menu item actions
-  const menuItemActions = {
-    export: () => setIsExportModalOpen(true),
-  };
-
-  const onClickMenuItem = (menuName) => (
-    menuItemActions[menuName]?.()
-  );
-
-  const getHeaderActions = () => {
-    if (systemDefined) {
-      // We don't show the export menu, because the system-taxonomies
-      // can't be exported. The API returns and error.
-      // The entire menu has been hidden because currently only
-      // the export menu exists.
-      //
-      // TODO When adding more menus, change this logic to hide only the export menu.
-      return undefined;
-    }
-    return (
-      <TaxonomyCardMenu
-        id={id}
-        name={name}
-        onClickMenuItem={onClickMenuItem}
-      />
-    );
-  };
-
-  const renderExportModal = () => isExportModalOpen && (
-    <ExportModal
-      isOpen={isExportModalOpen}
-      onClose={() => setIsExportModalOpen(false)}
-      taxonomyId={id}
+  const getHeaderActions = () => (
+    <TaxonomyMenu
+      taxonomy={original}
+      iconMenu
     />
   );
 
   return (
-    <>
-      <Card
-        isClickable
-        as={Link}
-        to={`/taxonomy/${id}`}
-        className={classNames('taxonomy-card', className)}
-        data-testid={`taxonomy-card-${id}`}
+    <Card
+      isClickable
+      as={NavLink}
+      to={`/taxonomy/${id}/`}
+      className={classNames('taxonomy-card', className)}
+      data-testid={`taxonomy-card-${id}`}
+    >
+      <Card.Header
+        title={<HeaderTitle taxonomyId={id} title={name} />}
+        subtitle={(
+          <HeaderSubtitle
+            id={id}
+            showSystemBadge={systemDefined}
+            orgsCount={orgsCount}
+            intl={intl}
+          />
+        )}
+        actions={getHeaderActions()}
+      />
+      <Card.Body className={classNames('taxonomy-card-body', {
+        'taxonomy-card-body-overflow-m': !systemDefined && !orgsCountEnabled(orgsCount),
+        'taxonomy-card-body-overflow-sm': systemDefined || orgsCountEnabled(orgsCount),
+      })}
       >
-        <Card.Header
-          title={name}
-          subtitle={(
-            <HeaderSubtitle
-              id={id}
-              showSystemBadge={systemDefined}
-              orgsCount={orgsCount}
-              intl={intl}
-            />
-          )}
-          actions={getHeaderActions()}
-        />
-        <Card.Body className={classNames('taxonomy-card-body', {
-          'taxonomy-card-body-overflow-m': !systemDefined && !orgsCountEnabled(orgsCount),
-          'taxonomy-card-body-overflow-sm': systemDefined || orgsCountEnabled(orgsCount),
-        })}
-        >
-          <Card.Section>
-            {description}
-          </Card.Section>
-        </Card.Body>
-      </Card>
-      {renderExportModal()}
-    </>
+        <Card.Section>
+          {description}
+        </Card.Section>
+      </Card.Body>
+    </Card>
   );
 };
 
@@ -156,6 +148,9 @@ TaxonomyCard.propTypes = {
     description: PropTypes.string,
     systemDefined: PropTypes.bool,
     orgsCount: PropTypes.number,
+    tagsCount: PropTypes.number,
+    canChangeTaxonomy: PropTypes.bool,
+    canDeleteTaxonomy: PropTypes.bool,
   }).isRequired,
 };
 
