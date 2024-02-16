@@ -9,7 +9,10 @@ const onCreateNewSectionMock = jest.fn();
 
 const renderComponent = () => render(
   <IntlProvider locale="en">
-    <EmptyPlaceholder onCreateNewSection={onCreateNewSectionMock} />
+    <EmptyPlaceholder
+      onCreateNewSection={onCreateNewSectionMock}
+      childAddable
+    />
   </IntlProvider>,
 );
 

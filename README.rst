@@ -260,7 +260,7 @@ Requirements
 
 * ``edx-platform`` Waffle flags:
 
-  * ``contentstore.new_studio_mfe.use_tagging_taxonomy_list_page``: this feature flag must be enabled.
+  * ``new_studio_mfe.use_tagging_taxonomy_list_page``: this feature flag must be enabled.
 
 Configuration
 -------------

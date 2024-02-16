@@ -1,3 +1,4 @@
+// @ts-check
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
@@ -9,8 +10,8 @@ export const getCourseRerunUrl = (courseId) => new URL(`/api/contentstore/v1/cou
 export const getOrganizationsUrl = () => new URL('organizations', getApiBaseUrl()).href;
 
 /**
- * Get's organizations data.
- * @returns {Promise<Object>}
+ * Get's organizations data. Returns list of organization names.
+ * @returns {Promise<string[]>}
  */
 export async function getOrganizations() {
   const { data } = await getAuthenticatedHttpClient().get(
@@ -32,7 +33,7 @@ export async function getCourseRerun(courseId) {
 
 /**
  * Create or rerun course with data.
- * @param {object} data
+ * @param {object} courseData
  * @returns {Promise<Object>}
  */
 export async function createOrRerunCourse(courseData) {

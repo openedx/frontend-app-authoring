@@ -7,15 +7,13 @@ import {
   MAX_WIDTH,
   MIN_HEIGHT,
   MIN_WIDTH,
-  VIDEO_PROCESSING_STATUSES,
-  VIDEO_SUCCESS_STATUSES,
 } from './constants';
 
 ensureConfig([
   'STUDIO_BASE_URL',
 ], 'Course Apps API service');
 
-export const updateFileValues = (files) => {
+export const updateFileValues = (files, isNewFile) => {
   const updatedFiles = [];
   files.forEach(file => {
     const {
@@ -23,25 +21,23 @@ export const updateFileValues = (files) => {
       clientVideoId,
       created,
       courseVideoImageUrl,
-      status,
       transcripts,
-      usageLocations,
     } = file;
-    const wrapperType = 'video';
+
+    let wrapperType;
+    if (clientVideoId.endsWith('.mov')) {
+      wrapperType = 'MOV';
+    } else if (clientVideoId.endsWith('.mp4')) {
+      wrapperType = 'MP4';
+    } else {
+      wrapperType = 'Unknown';
+    }
 
     let thumbnail = courseVideoImageUrl;
     if (thumbnail && thumbnail.startsWith('/')) {
       thumbnail = `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
     }
     const transcriptStatus = transcripts?.length > 0 ? 'transcribed' : 'notTranscribed';
-    const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
-
-    let uploadStatus = status;
-    if (VIDEO_SUCCESS_STATUSES.includes(status)) {
-      uploadStatus = 'Success';
-    } else if (VIDEO_PROCESSING_STATUSES.includes(status)) {
-      uploadStatus = 'Processing';
-    }
 
     updatedFiles.push({
       ...file,
@@ -49,10 +45,10 @@ export const updateFileValues = (files) => {
       id: edxVideoId,
       wrapperType,
       dateAdded: created.toString(),
-      status: uploadStatus,
+      usageLocations: isNewFile ? [] : null,
       thumbnail,
       transcriptStatus,
-      activeStatus,
+      activeStatus: 'inactive',
     });
   });
 
@@ -111,11 +107,19 @@ export const getSupportedFormats = (supportedFileFormats) => {
     let format;
     if (isArray(value)) {
       value.forEach(val => {
-        format = key.replace('*', val.substring(1));
+        if (val === '.mov') {
+          format = key.replace('*', 'quicktime');
+        } else {
+          format = key.replace('*', val.substring(1));
+        }
         supportedFormats.push(format);
       });
     } else {
-      format = key.replace('*', value?.substring(1));
+      if (value === '.mov') {
+        format = key.replace('*', 'quicktime');
+      } else {
+        format = key.replace('*', value.substring(1));
+      }
       supportedFormats.push(format);
     }
   });

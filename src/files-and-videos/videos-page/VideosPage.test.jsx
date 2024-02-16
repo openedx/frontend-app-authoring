@@ -59,7 +59,13 @@ const mockStore = async (
   status,
 ) => {
   const fetchVideosUrl = getVideosUrl(courseId);
-  axiosMock.onGet(fetchVideosUrl).reply(getStatusValue(status), generateFetchVideosApiResponse());
+  const videosData = generateFetchVideosApiResponse();
+  axiosMock.onGet(fetchVideosUrl).reply(getStatusValue(status), videosData);
+
+  videosData.previous_uploads.forEach((video) => {
+    axiosMock.onGet(`${getVideosUrl(courseId)}/${video.edx_video_id}/usage`).reply(200, { usageLocations: [] });
+  });
+
   renderComponent();
   await executeThunk(fetchVideos(courseId), store.dispatch);
 };
@@ -71,7 +77,7 @@ const emptyMockStore = async (status) => {
   await executeThunk(fetchVideos(courseId), store.dispatch);
 };
 
-describe('FilesAndUploads', () => {
+describe('Videos page', () => {
   describe('empty state', () => {
     beforeEach(async () => {
       initializeMockApp({
@@ -179,6 +185,13 @@ describe('FilesAndUploads', () => {
 
       it('should switch table to list view', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
+        axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`)
+          .reply(201, {
+            usageLocations: [{
+              display_location: 'subsection - unit / block',
+              url: 'base/unit_id#block_id',
+            }],
+          });
         expect(screen.getByTestId('files-data-table')).toBeVisible();
 
         expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
@@ -219,9 +232,10 @@ describe('FilesAndUploads', () => {
         axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
+        const { videoIds } = store.getState().videos;
         await act(async () => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addVideoFile(courseId, file), store.dispatch);
+          await executeThunk(addVideoFile(courseId, file, videoIds), store.dispatch);
         });
         const addStatus = store.getState().videos.addingStatus;
         expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
@@ -419,12 +433,13 @@ describe('FilesAndUploads', () => {
           const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
 
           axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`)
-            .reply(201, {
+            .reply(200, {
               usageLocations: [{
                 display_location: 'subsection - unit / block',
                 url: 'base/unit_id#block_id',
               }],
             });
+
           await waitFor(() => {
             fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
             fireEvent.click(screen.getByText('Info'));

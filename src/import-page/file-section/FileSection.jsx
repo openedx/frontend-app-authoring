@@ -11,7 +11,6 @@ import { IMPORT_STAGES } from '../data/constants';
 import {
   getCurrentStage, getError, getFileName, getImportTriggered,
 } from '../data/selectors';
-import { updateProgress } from '../data/slice';
 import messages from './messages';
 import { handleProcessUpload } from '../data/thunks';
 
@@ -42,7 +41,6 @@ const FileSection = ({ intl, courseId }) => {
                   handleError,
                 ))
               }
-              onUploadProgress={(percent) => dispatch(updateProgress(percent))}
               accept={{ 'application/gzip': ['.tar.gz'] }}
               data-testid="dropzone"
             />

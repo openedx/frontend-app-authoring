@@ -57,6 +57,30 @@ const messages = defineMessages({
     id: 'course-authoring.schedule.alert.success',
     defaultMessage: 'Your changes have been saved.',
   },
+  alertLoadFailAriaLabelledby: {
+    id: 'course-authoring.schedule.alert.load.fail.aria.labelledby',
+    defaultMessage: 'alert-confirmation-title',
+  },
+  alertLoadFailAriaDescribedby: {
+    id: 'course-authoring.schedule.alert.load.fail.aria.describedby',
+    defaultMessage: 'alert-confirmation-description',
+  },
+  alertLoadFail: {
+    id: 'course-authoring.schedule.alert.load.fail',
+    defaultMessage: 'We encountered an error when loading your settings.',
+  },
+  alertFailAriaLabelledby: {
+    id: 'course-authoring.schedule.alert.fail.aria.labelledby',
+    defaultMessage: 'alert-confirmation-title',
+  },
+  alertFailAriaDescribedby: {
+    id: 'course-authoring.schedule.alert.fail.aria.describedby',
+    defaultMessage: 'alert-confirmation-description',
+  },
+  alertFail: {
+    id: 'course-authoring.schedule.alert.fail',
+    defaultMessage: 'We encountered an error when saving your changes.',
+  },
   errorMessage1: {
     id: 'course-authoring.schedule.schedule-section.error-message-1',
     defaultMessage: 'The certificates display behavior must be \'A date after the course end date\' if certificate available date is set.',

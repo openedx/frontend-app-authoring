@@ -10,6 +10,7 @@ const FormikControl = ({
   label,
   help,
   className,
+  controlClasses,
   ...params
 }) => {
   const {
@@ -25,7 +26,7 @@ const FormikControl = ({
       <Form.Control
         {...params}
         name={name}
-        className="pb-2"
+        className={controlClasses}
         onChange={handleChange}
         onBlur={handleBlur}
         onFocus={handleFocus}
@@ -43,6 +44,7 @@ FormikControl.propTypes = {
   label: PropTypes.element,
   help: PropTypes.element,
   className: PropTypes.string,
+  controlClasses: PropTypes.string,
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
@@ -53,6 +55,7 @@ FormikControl.defaultProps = {
   help: <></>,
   label: <></>,
   className: '',
+  controlClasses: 'pb-2',
 };
 
 export default FormikControl;

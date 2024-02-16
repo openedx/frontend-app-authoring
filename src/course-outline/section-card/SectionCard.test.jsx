@@ -1,5 +1,7 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import {
+  act, render, fireEvent, within,
+} from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -8,7 +10,6 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import initializeStore from '../../store';
 import SectionCard from './SectionCard';
-import cardHeaderMessages from '../card-header/messages';
 
 // eslint-disable-next-line no-unused-vars
 let axiosMock;
@@ -18,12 +19,16 @@ const section = {
   id: '123',
   displayName: 'Section Name',
   published: true,
-  releasedToStudents: true,
-  visibleToStaffOnly: false,
-  visibilityState: 'visible',
-  staffOnlyMessage: false,
+  visibilityState: 'live',
   hasChanges: false,
   highlights: ['highlight 1', 'highlight 2'],
+  actions: {
+    draggable: true,
+    childAddable: true,
+    deletable: true,
+    duplicable: true,
+  },
+  isHeaderVisible: true,
 };
 
 const onEditSectionSubmit = jest.fn();
@@ -33,6 +38,9 @@ const renderComponent = (props) => render(
     <IntlProvider locale="en">
       <SectionCard
         section={section}
+        index="1"
+        canMoveItem={jest.fn()}
+        onOrderChange={jest.fn()}
         onOpenPublishModal={jest.fn()}
         onOpenHighlightsModal={jest.fn()}
         onOpenDeleteModal={jest.fn()}
@@ -102,50 +110,33 @@ describe('<SectionCard />', () => {
     expect(onEditSectionSubmit).toHaveBeenCalled();
   });
 
-  it('renders live status', async () => {
-    const { findByText } = renderComponent();
-    expect(await findByText(cardHeaderMessages.statusBadgeLive.defaultMessage)).toBeInTheDocument();
-  });
-
-  it('renders published but live status', async () => {
-    const { findByText } = renderComponent({
+  it('hides header based on isHeaderVisible flag', async () => {
+    const { queryByTestId } = renderComponent({
       section: {
         ...section,
-        published: true,
-        releasedToStudents: false,
-        visibleToStaffOnly: false,
-        visibilityState: 'visible',
-        staffOnlyMessage: false,
+        isHeaderVisible: false,
       },
     });
-    expect(await findByText(cardHeaderMessages.statusBadgePublishedNotLive.defaultMessage)).toBeInTheDocument();
+    expect(queryByTestId('section-card-header')).not.toBeInTheDocument();
   });
 
-  it('renders staff status', async () => {
-    const { findByText } = renderComponent({
+  it('hides add new, duplicate & delete option based on childAddable, duplicable & deletable action flag', async () => {
+    const { findByTestId, queryByTestId } = renderComponent({
       section: {
         ...section,
-        published: false,
-        releasedToStudents: false,
-        visibleToStaffOnly: true,
-        visibilityState: 'staff_only',
-        staffOnlyMessage: true,
+        actions: {
+          draggable: true,
+          childAddable: false,
+          deletable: false,
+          duplicable: false,
+        },
       },
     });
-    expect(await findByText(cardHeaderMessages.statusBadgeStaffOnly.defaultMessage)).toBeInTheDocument();
-  });
-
-  it('renders draft status', async () => {
-    const { findByText } = renderComponent({
-      section: {
-        ...section,
-        published: false,
-        releasedToStudents: false,
-        visibleToStaffOnly: false,
-        visibilityState: 'staff_only',
-        staffOnlyMessage: false,
-      },
-    });
-    expect(await findByText(cardHeaderMessages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();
+    const element = await findByTestId('section-card');
+    const menu = await within(element).findByTestId('section-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+    expect(within(element).queryByTestId('section-card-header__menu-duplicate-button')).not.toBeInTheDocument();
+    expect(within(element).queryByTestId('section-card-header__menu-delete-button')).not.toBeInTheDocument();
+    expect(queryByTestId('new-subsection-button')).not.toBeInTheDocument();
   });
 });

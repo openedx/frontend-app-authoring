@@ -95,7 +95,7 @@ const ImportStepper = ({ intl, courseId }) => {
       <h3 className="mt-4">{intl.formatMessage(messages.stepperHeaderTitle)}</h3>
       <CourseStepper
         courseId={courseId}
-        percent={progress}
+        percent={currentStage === IMPORT_STAGES.UPLOADING ? progress : null}
         steps={steps}
         activeKey={currentStage}
         hasError={hasError}

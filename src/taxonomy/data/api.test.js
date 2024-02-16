@@ -10,6 +10,7 @@ import {
   getTaxonomyListApiUrl,
   getTaxonomyListData,
   getTaxonomyApiUrl,
+  getTaxonomy,
   deleteTaxonomy,
 } from './api';
 
@@ -45,8 +46,12 @@ describe('taxonomy api calls', () => {
     window.location = location;
   });
 
-  it('should get taxonomy list data with org', async () => {
-    const org = 'testOrg';
+  it.each([
+    undefined,
+    'All taxonomies',
+    'Unassigned',
+    'testOrg',
+  ])('should get taxonomy list data for \'%s\' org filter', async (org) => {
     axiosMock.onGet(getTaxonomyListApiUrl(org)).reply(200, taxonomyListMock);
     const result = await getTaxonomyListData(org);
 
@@ -59,6 +64,13 @@ describe('taxonomy api calls', () => {
     await deleteTaxonomy();
 
     expect(axiosMock.history.delete[0].url).toEqual(getTaxonomyApiUrl());
+  });
+
+  it('should call get taxonomy', async () => {
+    axiosMock.onGet(getTaxonomyApiUrl(1)).reply(200);
+    await getTaxonomy(1);
+
+    expect(axiosMock.history.get[0].url).toEqual(getTaxonomyApiUrl(1));
   });
 
   it('Export should set window.location.href correctly', () => {

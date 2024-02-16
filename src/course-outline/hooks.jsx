@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
+import { getConfig } from '@edx/frontend-platform';
 
 import { RequestStatus } from '../data/constants';
 import { COURSE_BLOCK_NAMES } from './constants';
+import { useBroadcastChannel } from '../generic/broadcast-channel/hooks';
 import {
   setCurrentItem,
   setCurrentSection,
   updateSavingStatus,
+  updateClipboardContent,
 } from './data/slice';
 import {
   getLoadingStatus,
@@ -15,18 +19,23 @@ import {
   getSavingStatus,
   getStatusBarData,
   getSectionsList,
+  getCourseActions,
   getCurrentItem,
   getCurrentSection,
   getCurrentSubsection,
+  getCustomRelativeDatesActiveFlag,
 } from './data/selectors';
 import {
   addNewSectionQuery,
   addNewSubsectionQuery,
+  addNewUnitQuery,
   deleteCourseSectionQuery,
   deleteCourseSubsectionQuery,
+  deleteCourseUnitQuery,
   editCourseItemQuery,
   duplicateSectionQuery,
   duplicateSubsectionQuery,
+  duplicateUnitQuery,
   enableCourseHighlightsEmailsQuery,
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
@@ -35,20 +44,43 @@ import {
   publishCourseItemQuery,
   updateCourseSectionHighlightsQuery,
   configureCourseSectionQuery,
+  configureCourseSubsectionQuery,
+  configureCourseUnitQuery,
   setSectionOrderListQuery,
+  setVideoSharingOptionQuery,
+  setSubsectionOrderListQuery,
+  setUnitOrderListQuery,
+  setClipboardContent,
+  pasteClipboardContent,
+  dismissNotificationQuery,
 } from './data/thunk';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const { reindexLink, courseStructure, lmsLink } = useSelector(getOutlineIndexData);
+  const {
+    reindexLink,
+    courseStructure,
+    lmsLink,
+    notificationDismissUrl,
+    discussionsSettings,
+    discussionsIncontextFeedbackUrl,
+    discussionsIncontextLearnmoreUrl,
+    deprecatedBlocksInfo,
+    proctoringErrors,
+    mfeProctoredExamSettingsUrl,
+    advanceSettingsUrl,
+  } = useSelector(getOutlineIndexData);
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
+  const courseActions = useSelector(getCourseActions);
   const sectionsList = useSelector(getSectionsList);
   const currentItem = useSelector(getCurrentItem);
   const currentSection = useSelector(getCurrentSection);
   const currentSubsection = useSelector(getCurrentSubsection);
+  const isCustomRelativeDatesActive = useSelector(getCustomRelativeDatesActiveFlag);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
   const [isSectionsExpanded, setSectionsExpanded] = useState(true);
@@ -59,6 +91,17 @@ const useCourseOutline = ({ courseId }) => {
   const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const clipboardBroadcastChannel = useBroadcastChannel('studio_clipboard_channel', (message) => {
+    dispatch(updateClipboardContent(message));
+  });
+
+  const handleCopyToClipboardClick = (usageKey) => {
+    dispatch(setClipboardContent(usageKey, clipboardBroadcastChannel.postMessage));
+  };
+
+  const handlePasteClipboardClick = (parentLocator, sectionId) => {
+    dispatch(pasteClipboardContent(parentLocator, sectionId));
+  };
 
   const handleNewSectionSubmit = () => {
     dispatch(addNewSectionQuery(courseStructure.id));
@@ -66,6 +109,26 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleNewSubsectionSubmit = (sectionId) => {
     dispatch(addNewSubsectionQuery(sectionId));
+  };
+
+  const getUnitUrl = (locator) => {
+    if (getConfig().ENABLE_UNIT_PAGE === 'true') {
+      return `/course/${courseId}/container/${locator}`;
+    }
+    return `${getConfig().STUDIO_BASE_URL}/container/${locator}`;
+  };
+
+  const openUnitPage = (locator) => {
+    const url = getUnitUrl(locator);
+    if (getConfig().ENABLE_UNIT_PAGE === 'true') {
+      navigate(url);
+    } else {
+      window.location.assign(url);
+    }
+  };
+
+  const handleNewUnitSubmit = (subsectionId) => {
+    dispatch(addNewUnitQuery(subsectionId, openUnitPage));
   };
 
   const headerNavigationsActions = {
@@ -113,10 +176,27 @@ const useCourseOutline = ({ courseId }) => {
     closePublishModal();
   };
 
-  const handleConfigureSectionSubmit = (isVisibleToStaffOnly, startDatetime) => {
-    dispatch(configureCourseSectionQuery(currentSection.id, isVisibleToStaffOnly, startDatetime));
-
+  const handleConfigureModalClose = () => {
     closeConfigureModal();
+    // reset the currentItem so the ConfigureModal's state is also reset
+    dispatch(setCurrentItem({}));
+  };
+
+  const handleConfigureItemSubmit = (...arg) => {
+    switch (currentItem.category) {
+    case COURSE_BLOCK_NAMES.chapter.id:
+      dispatch(configureCourseSectionQuery(currentSection.id, ...arg));
+      break;
+    case COURSE_BLOCK_NAMES.sequential.id:
+      dispatch(configureCourseSubsectionQuery(currentItem.id, currentSection.id, ...arg));
+      break;
+    case COURSE_BLOCK_NAMES.vertical.id:
+      dispatch(configureCourseUnitQuery(currentItem.id, currentSection.id, ...arg));
+      break;
+    default:
+      return;
+    }
+    handleConfigureModalClose();
   };
 
   const handleEditSubmit = (itemId, sectionId, displayName) => {
@@ -132,7 +212,11 @@ const useCourseOutline = ({ courseId }) => {
       dispatch(deleteCourseSubsectionQuery(currentItem.id, currentSection.id));
       break;
     case COURSE_BLOCK_NAMES.vertical.id:
-      // delete unit
+      dispatch(deleteCourseUnitQuery(
+        currentItem.id,
+        currentSubsection.id,
+        currentSection.id,
+      ));
       break;
     default:
       return;
@@ -148,8 +232,28 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(duplicateSubsectionQuery(currentSubsection.id, currentSection.id));
   };
 
-  const handleDragNDrop = (newListId, restoreCallback) => {
-    dispatch(setSectionOrderListQuery(courseId, newListId, restoreCallback));
+  const handleDuplicateUnitSubmit = () => {
+    dispatch(duplicateUnitQuery(currentItem.id, currentSubsection.id, currentSection.id));
+  };
+
+  const handleSectionDragAndDrop = (sectionListIds, restoreCallback) => {
+    dispatch(setSectionOrderListQuery(courseId, sectionListIds, restoreCallback));
+  };
+
+  const handleSubsectionDragAndDrop = (sectionId, subsectionListIds, restoreCallback) => {
+    dispatch(setSubsectionOrderListQuery(sectionId, subsectionListIds, restoreCallback));
+  };
+
+  const handleVideoSharingOptionChange = (value) => {
+    dispatch(setVideoSharingOptionQuery(courseId, value));
+  };
+
+  const handleUnitDragAndDrop = (sectionId, subsectionId, unitListIds, restoreCallback) => {
+    dispatch(setUnitOrderListQuery(sectionId, subsectionId, unitListIds, restoreCallback));
+  };
+
+  const handleDismissNotification = () => {
+    dispatch(dismissNotificationQuery(notificationDismissUrl));
   };
 
   useEffect(() => {
@@ -169,8 +273,10 @@ const useCourseOutline = ({ courseId }) => {
   }, [reIndexLoadingStatus]);
 
   return {
+    courseActions,
     savingStatus,
     sectionsList,
+    isCustomRelativeDatesActive,
     isLoading: outlineIndexLoadingStatus === RequestStatus.IN_PROGRESS,
     isReIndexShow: Boolean(reindexLink),
     showSuccessAlert,
@@ -182,11 +288,11 @@ const useCourseOutline = ({ courseId }) => {
     closePublishModal,
     isConfigureModalOpen,
     openConfigureModal,
-    closeConfigureModal,
+    handleConfigureModalClose,
     headerNavigationsActions,
     handleEnableHighlightsSubmit,
     handleHighlightsFormSubmit,
-    handleConfigureSectionSubmit,
+    handleConfigureItemSubmit,
     handlePublishItemSubmit,
     handleEditSubmit,
     statusBarData,
@@ -205,9 +311,27 @@ const useCourseOutline = ({ courseId }) => {
     handleDeleteItemSubmit,
     handleDuplicateSectionSubmit,
     handleDuplicateSubsectionSubmit,
+    handleDuplicateUnitSubmit,
     handleNewSectionSubmit,
     handleNewSubsectionSubmit,
-    handleDragNDrop,
+    getUnitUrl,
+    openUnitPage,
+    handleNewUnitSubmit,
+    handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
+    handleVideoSharingOptionChange,
+    handleUnitDragAndDrop,
+    handleCopyToClipboardClick,
+    handlePasteClipboardClick,
+    notificationDismissUrl,
+    discussionsSettings,
+    discussionsIncontextFeedbackUrl,
+    discussionsIncontextLearnmoreUrl,
+    deprecatedBlocksInfo,
+    proctoringErrors,
+    mfeProctoredExamSettingsUrl,
+    handleDismissNotification,
+    advanceSettingsUrl,
   };
 };
 

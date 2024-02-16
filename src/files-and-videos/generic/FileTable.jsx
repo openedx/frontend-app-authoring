@@ -166,6 +166,7 @@ const FileTable = ({
         thumbnailPreview,
         className,
         original,
+        fileType,
       }}
     />
   );
@@ -179,6 +180,7 @@ const FileTable = ({
       handleBulkDownload,
       handleOpenFileInfo,
       handleOpenDeleteConfirmation,
+      fileType,
     }),
   };
 

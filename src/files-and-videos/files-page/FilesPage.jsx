@@ -27,7 +27,7 @@ import {
   FileTable,
   ThumbnailColumn,
 } from '../generic';
-import { getFileSizeToClosestByte } from '../generic/utils';
+import { getFileSizeToClosestByte } from '../../utils';
 import FileThumbnail from './FileThumbnail';
 import FileInfoModalSidebar from './FileInfoModalSidebar';
 
@@ -87,7 +87,7 @@ const FilesPage = ({
     id: 'activeStatus',
     Header: 'Active',
     accessor: 'activeStatus',
-    Cell: ({ row }) => ActiveColumn({ row }),
+    Cell: ({ row }) => ActiveColumn({ row, pageLoadStatus: loadingStatus }),
     Filter: CheckboxFilter,
     filter: 'exactTextCase',
     filterChoices: [

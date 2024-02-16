@@ -29,13 +29,14 @@ export const getTaxonomyTagsApiUrl = (taxonomyId, options = {}) => {
   return url.href;
 };
 export const getContentTaxonomyTagsApiUrl = (contentId) => new URL(`api/content_tagging/v1/object_tags/${contentId}/`, getApiBaseUrl()).href;
-export const getContentDataApiUrl = (contentId) => new URL(`/xblock/outline/${contentId}`, getApiBaseUrl()).href;
+export const getXBlockContentDataApiURL = (contentId) => new URL(`/xblock/outline/${contentId}`, getApiBaseUrl()).href;
+export const getLibraryContentDataApiUrl = (contentId) => new URL(`/api/libraries/v2/blocks/${contentId}/`, getApiBaseUrl()).href;
 
 /**
  * Get all tags that belong to taxonomy.
  * @param {number} taxonomyId The id of the taxonomy to fetch tags for
  * @param {{page?: number, searchTerm?: string, parentTag?: string}} options
- * @returns {Promise<import("../../taxonomy/tag-list/data/types.mjs").TagData>}
+ * @returns {Promise<import("../../taxonomy/tag-list/data/types.mjs").TagListData>}
  */
 export async function getTaxonomyTagsData(taxonomyId, options = {}) {
   const url = getTaxonomyTagsApiUrl(taxonomyId, options);
@@ -59,7 +60,10 @@ export async function getContentTaxonomyTagsData(contentId) {
  * @returns {Promise<import("./types.mjs").ContentData>}
  */
 export async function getContentData(contentId) {
-  const { data } = await getAuthenticatedHttpClient().get(getContentDataApiUrl(contentId));
+  const url = contentId.startsWith('lb:')
+    ? getLibraryContentDataApiUrl(contentId)
+    : getXBlockContentDataApiURL(contentId);
+  const { data } = await getAuthenticatedHttpClient().get(url);
   return camelCaseObject(data);
 }
 
@@ -71,8 +75,8 @@ export async function getContentData(contentId) {
  * @returns {Promise<import("./types.mjs").ContentTaxonomyTagsData>}
  */
 export async function updateContentTaxonomyTags(contentId, taxonomyId, tags) {
-  let url = getContentTaxonomyTagsApiUrl(contentId);
-  url = `${url}?taxonomy=${taxonomyId}`;
-  const { data } = await getAuthenticatedHttpClient().put(url, { tags });
+  const url = getContentTaxonomyTagsApiUrl(contentId);
+  const params = { taxonomy: taxonomyId };
+  const { data } = await getAuthenticatedHttpClient().put(url, { tags }, { params });
   return camelCaseObject(data[contentId]);
 }

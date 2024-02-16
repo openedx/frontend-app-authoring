@@ -1,9 +1,9 @@
-// ts-check
+// @ts-check
+import React, { useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { DataTable } from '@openedx/paragon';
-import _ from 'lodash';
+import { isEqual } from 'lodash';
 import Proptypes from 'prop-types';
-import { useState } from 'react';
 
 import { LoadingSpinner } from '../../generic/Loading';
 import messages from './messages';
@@ -51,7 +51,14 @@ const TagValue = ({ row }) => (
     <span className="text-secondary-500">{` (${row.original.childCount})`}</span>
   </>
 );
-TagValue.propTypes = DataTable.TableCell.propTypes;
+TagValue.propTypes = {
+  row: Proptypes.shape({
+    original: Proptypes.shape({
+      value: Proptypes.string.isRequired,
+      childCount: Proptypes.number.isRequired,
+    }).isRequired,
+  }).isRequired,
+};
 
 const TagListTable = ({ taxonomyId }) => {
   const intl = useIntl();
@@ -62,7 +69,7 @@ const TagListTable = ({ taxonomyId }) => {
   const tagList = useTagListDataResponse(taxonomyId, options);
 
   const fetchData = (args) => {
-    if (!_.isEqual(args, options)) {
+    if (!isEqual(args, options)) {
       setOptions({ ...args });
     }
   };

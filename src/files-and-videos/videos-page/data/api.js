@@ -31,6 +31,24 @@ export async function getVideos(courseId) {
   };
 }
 
+export async function getAllUsagePaths({ courseId, videoIds }) {
+  const apiPromises = videoIds.map(id => getAuthenticatedHttpClient()
+    .get(`${getVideosUrl(courseId)}/${id}/usage`, { videoId: id }));
+  const updatedUsageLocations = [];
+  const results = await Promise.allSettled(apiPromises);
+
+  results.forEach(result => {
+    const value = camelCaseObject(result.value);
+    if (value) {
+      const { usageLocations } = value.data;
+      const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
+      const { videoId } = value.config;
+      updatedUsageLocations.push({ id: videoId, usageLocations, activeStatus });
+    }
+  });
+  return updatedUsageLocations;
+}
+
 /**
  * Fetches the course custom pages for provided course
  * @param {string} courseId
@@ -174,17 +192,21 @@ export async function uploadVideo(
   uploadFile,
   edxVideoId,
 ) {
-  const formData = new FormData();
-  formData.append('uploaded-file', uploadFile);
   const uploadErrors = [];
+
   await fetch(uploadUrl, {
     method: 'PUT',
-    body: formData,
     headers: {
-      'Content-Type': 'multipart/form-data',
+      'Content-Disposition': `attachment; filename="${uploadFile.name}"`,
+      'Content-Type': uploadFile.type,
     },
+    multipart: false,
+    body: uploadFile,
   })
-    .then(async () => {
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error();
+      }
       await getAuthenticatedHttpClient()
         .post(getCourseVideosApiUrl(courseId), [{
           edxVideoId,

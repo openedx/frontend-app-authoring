@@ -18,7 +18,7 @@ import {
 } from '@openedx/paragon';
 import { ContentCopy, InfoOutline } from '@openedx/paragon/icons';
 
-import { getFileSizeToClosestByte } from '../generic/utils';
+import { getFileSizeToClosestByte } from '../../utils';
 import messages from './messages';
 
 const FileInfoModalSidebar = ({
