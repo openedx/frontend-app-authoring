@@ -1,0 +1,19 @@
+{
+    "name": "@openedx-plugins/course-app-ora_settings",
+    "version": "0.1.0",
+    "description": "Open Response Assessment configuration for courses using it",
+    "peerDependencies": {
+        "@edx/frontend-app-course-authoring": "*",
+        "@edx/frontend-platform": "*",
+        "@edx/paragon": "*",
+        "prop-types": "*",
+        "react": "*",
+        "yup": "*"
+    },
+    "peerDependenciesMeta": {
+        "@edx/frontend-app-course-authoring": {
+            "optional": true
+        }
+    }
+}
+  

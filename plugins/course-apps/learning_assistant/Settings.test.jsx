@@ -1,9 +1,9 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 
+import { RequestStatus } from 'CourseAuthoring/data/constants';
+import { render } from 'CourseAuthoring/pages-and-resources/utils.test';
 import LearningAssistantSettings from './Settings';
-import { render } from '../utils.test';
-import { RequestStatus } from '../../data/constants';
 
 const onClose = () => { };
 

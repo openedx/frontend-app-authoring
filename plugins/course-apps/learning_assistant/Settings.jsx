@@ -1,16 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Hyperlink } from '@edx/paragon';
 
-import AppSettingsModal from '../app-settings-modal/AppSettingsModal';
-import messages from './messages';
-import { useModel } from '../../generic/model-store';
+import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
+import { useModel } from 'CourseAuthoring/generic/model-store';
 
-const LearningAssistantSettings = ({ intl, onClose }) => {
+import messages from './messages';
+
+const LearningAssistantSettings = ({ onClose }) => {
   const appId = 'learning_assistant';
   const appInfo = useModel('courseApps', appId);
+  const intl = useIntl();
 
   // We need to render more than one link, so we use the bodyChildren prop.
   const bodyChildren = (
@@ -55,8 +57,7 @@ const LearningAssistantSettings = ({ intl, onClose }) => {
 };
 
 LearningAssistantSettings.propTypes = {
-  intl: intlShape.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
-export default injectIntl(LearningAssistantSettings);
+export default LearningAssistantSettings;
