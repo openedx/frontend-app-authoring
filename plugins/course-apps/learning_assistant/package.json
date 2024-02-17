@@ -1,11 +1,11 @@
 {
-    "name": "@openedx-plugins/course-app-ora_settings",
+    "name": "@openedx-plugins/course-app-learning_assistant",
     "version": "0.1.0",
-    "description": "Open Response Assessment configuration for courses using it",
+    "description": "Learning Assistant configuration for courses using it",
     "peerDependencies": {
         "@edx/frontend-app-course-authoring": "*",
         "@edx/frontend-platform": "*",
-        "@edx/paragon": "*",
+        "@openedx/paragon": "*",
         "prop-types": "*",
         "react": "*",
         "yup": "*"
