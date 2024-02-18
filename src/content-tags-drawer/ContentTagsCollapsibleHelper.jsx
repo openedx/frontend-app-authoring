@@ -72,7 +72,12 @@ const removeTags = (tree, tagsToRemove) => {
 /*
  * Handles all the underlying logic for the ContentTagsCollapsible component
  */
-const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
+const useContentTagsCollapsibleHelper = (
+  contentId,
+  taxonomyAndTagsData,
+  addStagedContentTag,
+  removeStagedContentTag,
+) => {
   const {
     id, contentTags, canTagObject,
   } = taxonomyAndTagsData;
@@ -163,7 +168,7 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
 
   // Add tag to the tree, and while traversing remove any selected ancestor tags
   // as they should become implicit
-  const addTags = (tree, tagLineage, selectedTag) => {
+  const addTags = (tree, tagLineage, selectedTag, taxonomyId) => {
     const value = [];
     let traversal = tree;
     tagLineage.forEach(tag => {
@@ -178,6 +183,9 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
         };
       } else {
         traversal[tag].explicit = isExplicit;
+        if (!isExplicit) {
+          removeStagedContentTag(taxonomyId, tag);
+        }
       }
 
       // Clear out the ancestor tags leading to newly selected tag
@@ -197,7 +205,16 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
     const addedTree = { ...addedContentTags };
     if (checked) {
       // We "add" the tag to the SelectableBox.Set inside the addTags method
-      addTags(addedTree, tagLineage, selectedTag);
+      addTags(addedTree, tagLineage, selectedTag, id);
+
+      // Add content tag to taxonomy's staged tags
+      addStagedContentTag(
+        id,
+        {
+          value: tagSelectableBoxValue,
+          label: selectedTag,
+        },
+      );
     } else {
       // Remove tag from the SelectableBox.Set
       remove(tagSelectableBoxValue);
@@ -206,11 +223,17 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
       // existing applied Tag or a newly added one
       removeTags(addedTree, tagLineage);
       removeTags(appliedContentTags, tagLineage);
+
+      // Remove content tag from taxonomy's staged tags
+      removeStagedContentTag(id, selectedTag);
     }
 
     setAddedContentTags(addedTree);
     // setUpdatingTags(true);
-  }, [addedContentTags, setAddedContentTags, addTags, removeTags, remove]);
+  }, [
+    addedContentTags, setAddedContentTags, addTags, removeTags, remove,
+    id, addStagedContentTag, removeStagedContentTag,
+  ]);
 
   return {
     tagChangeHandler, tagsTree, contentTagsCount, checkedTags,

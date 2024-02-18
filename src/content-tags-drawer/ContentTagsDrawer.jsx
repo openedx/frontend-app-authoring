@@ -1,5 +1,10 @@
 // @ts-check
-import React, { useMemo, useEffect } from 'react';
+import React, {
+  useMemo,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 import PropTypes from 'prop-types';
 import {
   Container,
@@ -8,6 +13,7 @@ import {
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router-dom';
+import { cloneDeep } from 'lodash';
 import messages from './messages';
 import ContentTagsCollapsible from './ContentTagsCollapsible';
 import { extractOrgFromContentId } from './utils';
@@ -39,6 +45,33 @@ const ContentTagsDrawer = ({ id, onClose }) => {
   }
 
   const org = extractOrgFromContentId(contentId);
+
+  const [stagedContentTags, setStagedContentTags] = useState({});
+
+  // Add a content tags to the staged tags for a taxonomy
+  const addStagedContentTag = useCallback((taxonomyId, addedTag) => {
+    setStagedContentTags(prevStagedContentTags => {
+      const updatedStagedContentTags = cloneDeep(prevStagedContentTags);
+      if (!updatedStagedContentTags[taxonomyId]) {
+        updatedStagedContentTags[taxonomyId] = [];
+      }
+      updatedStagedContentTags[taxonomyId].push(addedTag);
+      return updatedStagedContentTags;
+    });
+  }, [setStagedContentTags]);
+
+  // Remove a content tag from the staged tags for a taxonomy
+  const removeStagedContentTag = useCallback((taxonomyId, tagLabel) => {
+    setStagedContentTags(prevStagedContentTags => {
+      const updatedStagedContentTags = cloneDeep(prevStagedContentTags);
+      let stagedTaxonomyTags = updatedStagedContentTags[taxonomyId];
+      if (stagedTaxonomyTags && stagedTaxonomyTags.length) {
+        stagedTaxonomyTags = stagedTaxonomyTags.filter((t) => t.label !== tagLabel);
+        updatedStagedContentTags[taxonomyId] = stagedTaxonomyTags;
+      }
+      return updatedStagedContentTags;
+    });
+  }, [setStagedContentTags]);
 
   const useTaxonomyListData = () => {
     const taxonomyListData = useTaxonomyListDataResponse(org);
@@ -122,7 +155,13 @@ const ContentTagsDrawer = ({ id, onClose }) => {
         { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded
           ? taxonomies.map((data) => (
             <div key={`taxonomy-tags-collapsible-${data.id}`}>
-              <ContentTagsCollapsible contentId={contentId} taxonomyAndTagsData={data} />
+              <ContentTagsCollapsible
+                contentId={contentId}
+                taxonomyAndTagsData={data}
+                stagedContentTags={stagedContentTags[data.id] || []}
+                addStagedContentTag={addStagedContentTag}
+                removeStagedContentTag={removeStagedContentTag}
+              />
               <hr />
             </div>
           ))

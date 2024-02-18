@@ -129,13 +129,17 @@ const CustomMenu = (props) => {
  * @param {string} props.contentId - Id of the content object
  * @param {TaxonomyData & {contentTags: ContentTagData[]}} props.taxonomyAndTagsData - Taxonomy metadata & applied tags
  */
-const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData }) => {
+const ContentTagsCollapsible = ({
+  contentId, taxonomyAndTagsData, stagedContentTags, addStagedContentTag, removeStagedContentTag,
+}) => {
   const intl = useIntl();
   const { id: taxonomyId, name, canTagObject } = taxonomyAndTagsData;
 
   const {
     tagChangeHandler, tagsTree, contentTagsCount, checkedTags,
-  } = useContentTagsCollapsibleHelper(contentId, taxonomyAndTagsData);
+  } = useContentTagsCollapsibleHelper(
+    contentId, taxonomyAndTagsData, addStagedContentTag, removeStagedContentTag,
+  );
 
   const [searchTerm, setSearchTerm] = React.useState('');
 
@@ -174,6 +178,7 @@ const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData }) => {
               className="d-flex flex-column flex-fill"
               classNamePrefix="react-select"
               onInputChange={handleSearchChange}
+              onChange={(e) => console.log('onChange', e)}
               components={{ Menu: CustomMenu }}
               closeMenuOnSelect={false}
               blurInputOnSelect={false}
@@ -183,6 +188,7 @@ const ContentTagsCollapsible = ({ contentId, taxonomyAndTagsData }) => {
               taxonomyId={taxonomyId}
               tagsTree={tagsTree}
               searchTerm={searchTerm}
+              value={stagedContentTags}
               // value={[
               //   { value: 'Administration,Administrative%20Support,Administrative%20Functions', label: 'Administrative Functions' },
               //   { value: 'Administration,Administrative%20Support,Memos', label: 'Memos' },
@@ -218,6 +224,12 @@ ContentTagsCollapsible.propTypes = {
     })),
     canTagObject: PropTypes.bool.isRequired,
   }).isRequired,
+  stagedContentTags: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.string,
+    label: PropTypes.string,
+  })).isRequired,
+  addStagedContentTag: PropTypes.func.isRequired,
+  removeStagedContentTag: PropTypes.func.isRequired,
 };
 
 export default ContentTagsCollapsible;
