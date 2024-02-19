@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Stack, Badge } from '@edx/paragon';
+import {
+  Button, Stack, Badge, Truncate,
+} from '@openedx/paragon';
 import {
   ArrowDropDown as ArrowDownIcon,
   ArrowRight as ArrowRightIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 import { getCombinedBadgeList } from './utils';
 import messages from './messages';
@@ -24,7 +26,7 @@ const TitleButton = ({
       onClick={onTitleClick}
     >
       <div className="configuration-card-header__title">
-        <h3>{name}</h3>
+        <h3><Truncate lines={1}>{name}</Truncate></h3>
         <span className="x-small text-gray-500">
           {formatMessage(messages.titleId, { id })}
         </span>

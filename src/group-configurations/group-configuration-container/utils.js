@@ -1,12 +1,13 @@
+import { getConfig } from '@edx/frontend-platform';
+
 import messages from './messages';
 
 /**
  * Formats the given URL to a unit page URL.
  * @param {string} url - The original part of URL.
- * @param {string} courseId - The ID of the course.
  * @returns {string} - The formatted unit page URL.
  */
-const formatUrlToUnitPage = (url, courseId) => `/course/${courseId}${url}`;
+const formatUrlToUnitPage = (url) => new URL(url, getConfig().STUDIO_BASE_URL).href;
 
 /**
  * Retrieves a list of group count based on the number of items.

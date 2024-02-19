@@ -7,7 +7,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import initializeStore from '../store';
 import { executeThunk } from '../utils';
-import { getGroupConfigurationsApiUrl } from './data/api';
+import { getContentStoreApiUrl } from './data/api';
 import { fetchGroupConfigurationsQuery } from './data/thunk';
 import { groupConfigurationResponseMock } from './__mocks__';
 import messages from './messages';
@@ -43,7 +43,7 @@ describe('<GroupConfigurations />', () => {
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
-      .onGet(getGroupConfigurationsApiUrl(courseId))
+      .onGet(getContentStoreApiUrl(courseId))
       .reply(200, groupConfigurationResponseMock);
     await executeThunk(fetchGroupConfigurationsQuery(courseId), store.dispatch);
   });
@@ -78,7 +78,7 @@ describe('<GroupConfigurations />', () => {
       shouldShowEnrollmentTrack: false,
     };
     axiosMock
-      .onGet(getGroupConfigurationsApiUrl(courseId))
+      .onGet(getContentStoreApiUrl(courseId))
       .reply(200, shouldNotShowEnrollmentTrackResponse);
 
     const { queryByTestId } = renderComponent();

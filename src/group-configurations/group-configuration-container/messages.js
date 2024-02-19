@@ -55,6 +55,14 @@ const messages = defineMessages({
     id: 'course-authoring.group-configurations.container.title-id',
     defaultMessage: 'ID: {id}',
   },
+  subtitleModalDelete: {
+    id: 'course-authoring.group-configurations.container.delete-modal.subtitle',
+    defaultMessage: 'content group',
+  },
+  deleteRestriction: {
+    id: 'course-authoring.group-configurations.container.delete-restriction',
+    defaultMessage: 'Cannot delete when in use by a unit',
+  },
 });
 
 export default messages;

@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { useParams } from 'react-router';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Hyperlink, Stack } from '@edx/paragon';
 
@@ -8,7 +7,6 @@ import messages from './messages';
 
 const UsageList = ({ className, itemList, isExperiment }) => {
   const { formatMessage } = useIntl();
-  const { courseId } = useParams();
   const usageDescription = isExperiment
     ? messages.experimentAccessTo
     : messages.accessTo;
@@ -22,8 +20,8 @@ const UsageList = ({ className, itemList, isExperiment }) => {
         {itemList.map(({ url, label }) => (
           <Hyperlink
             className="small text-info-500"
-            destination={formatUrlToUnitPage(url, courseId)}
-            key={url}
+            destination={formatUrlToUnitPage(url)}
+            key={`${label} - ${url}`}
           >
             {label}
           </Hyperlink>

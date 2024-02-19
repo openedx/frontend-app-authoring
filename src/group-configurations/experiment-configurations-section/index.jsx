@@ -12,7 +12,7 @@ const ExperimentConfigurationsSection = ({ availableGroups }) => {
 
   return (
     <div className="mt-2.5">
-      <p className="configuration-section-name lead text-black mb-3">{formatMessage(messages.title)}</p>
+      <p className="lead text-black mb-3 configuration-section-name">{formatMessage(messages.title)}</p>
       {availableGroups.length ? (
         <>
           {availableGroups.map((group) => (

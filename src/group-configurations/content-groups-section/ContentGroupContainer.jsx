@@ -1,0 +1,151 @@
+import PropTypes from 'prop-types';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import {
+  Alert,
+  ActionRow,
+  Button,
+  Form,
+  OverlayTrigger,
+  Tooltip,
+} from '@openedx/paragon';
+
+import { WarningFilled as WarningFilledIcon } from '@openedx/paragon/icons';
+
+import PromptIfDirty from '../../generic/PromptIfDirty';
+import { isAlreadyExistsGroup } from './utils';
+import messages from './messages';
+
+const ContentGroupContainer = ({
+  isEditMode,
+  groupNames,
+  isUsedInLocation,
+  overrideValue,
+  onCreateClick,
+  onCancelClick,
+  onDeleteClick,
+  onEditClick,
+}) => {
+  const { formatMessage } = useIntl();
+  const initialValues = { newGroupName: overrideValue };
+  const validationSchema = Yup.object().shape({
+    newGroupName: Yup.string()
+      .required(formatMessage(messages.requiredError))
+      .test(
+        'unique-name-restriction',
+        formatMessage(messages.invalidMessage),
+        (value) => overrideValue === value || !isAlreadyExistsGroup(groupNames, value),
+      ),
+  });
+  const onSubmitForm = isEditMode ? onEditClick : onCreateClick;
+
+  return (
+    <div className="configuration-card" data-testid="content-group-new">
+      <div className="configuration-card-header">
+        <h3>{formatMessage(messages.newGroupHeader)}</h3>
+      </div>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        validateOnChange={false}
+        validateOnBlur={false}
+        onSubmit={onSubmitForm}
+      >
+        {({
+          values, errors, dirty, handleChange, handleSubmit,
+        }) => {
+          const isInvalid = !!errors.newGroupName;
+
+          return (
+            <>
+              <Form.Group
+                className="mt-3 mb-4 content-group-new__input"
+                isInvalid={isInvalid}
+              >
+                <Form.Control
+                  value={values.newGroupName}
+                  name="newGroupName"
+                  onChange={handleChange}
+                  placeholder={formatMessage(messages.newGroupInputPlaceholder)}
+                />
+                {isInvalid && (
+                  <Form.Control.Feedback type="invalid">
+                    {errors.newGroupName}
+                  </Form.Control.Feedback>
+                )}
+              </Form.Group>
+              {isUsedInLocation && (
+                <Alert
+                  variant="warning"
+                  icon={WarningFilledIcon}
+                  className="my-3"
+                >
+                  <p>{formatMessage(messages.alertGroupInUsage)}</p>
+                </Alert>
+              )}
+              <ActionRow>
+                {isEditMode && (
+                  <OverlayTrigger
+                    overlay={(
+                      <Tooltip
+                        id={`delete-restriction-tooltip-${values.newGroupName}`}
+                      >
+                        {formatMessage(
+                          isUsedInLocation
+                            ? messages.deleteRestriction
+                            : messages.deleteButton,
+                        )}
+                      </Tooltip>
+                    )}
+                  >
+                    <Button
+                      disabled={isUsedInLocation}
+                      variant="outline-primary"
+                      onClick={onDeleteClick}
+                    >
+                      {formatMessage(messages.deleteButton)}
+                    </Button>
+                  </OverlayTrigger>
+                )}
+                <ActionRow.Spacer />
+                <Button onClick={onCancelClick} variant="tertiary">
+                  {formatMessage(messages.cancelButton)}
+                </Button>
+                <Button onClick={handleSubmit}>
+                  {formatMessage(
+                    isEditMode ? messages.saveButton : messages.createButton,
+                  )}
+                </Button>
+              </ActionRow>
+              <PromptIfDirty dirty={dirty} />
+            </>
+          );
+        }}
+      </Formik>
+    </div>
+  );
+};
+
+ContentGroupContainer.defaultProps = {
+  groupNames: [],
+  overrideValue: '',
+  isEditMode: false,
+  isUsedInLocation: false,
+  onCreateClick: null,
+  onDeleteClick: null,
+  onEditClick: null,
+};
+
+ContentGroupContainer.propTypes = {
+  groupNames: PropTypes.arrayOf(PropTypes.string),
+  isEditMode: PropTypes.bool,
+  isUsedInLocation: PropTypes.bool,
+  overrideValue: PropTypes.string,
+  onCreateClick: PropTypes.func,
+  onCancelClick: PropTypes.func.isRequired,
+  onDeleteClick: PropTypes.func,
+  onEditClick: PropTypes.func,
+};
+
+export default ContentGroupContainer;

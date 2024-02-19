@@ -8,9 +8,9 @@
 
   .configuration-card-header {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     align-content: center;
+    justify-content: space-between;
 
     .configuration-card-header__button {
       display: flex;
@@ -63,6 +63,10 @@
         color: $primary-700;
       }
     }
+
+    .configuration-card-header__delete-tooltip {
+      pointer-events: all;
+    }
   }
 
   .configuration-card-content {
@@ -74,10 +78,19 @@
       padding: map-get($spacers, 2\.5) 0;
       margin: 0;
       color: $primary-500;
+      gap: $spacer;
 
       &:not(:last-child) {
         border-bottom: .063rem solid $light-400;
       }
     }
+  }
+
+  .content-group-new__input .pgn__form-text-invalid .pgn__icon {
+    display: none;
+  }
+
+  .pgn__form-control-decorator-group {
+    margin-inline-end: 0;
   }
 }

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Stack } from '@edx/paragon';
+import { Stack, Truncate } from '@openedx/paragon';
 
 const ExperimentGroupStack = ({ itemList }) => (
   <Stack className="mb-3">
@@ -9,7 +9,7 @@ const ExperimentGroupStack = ({ itemList }) => (
         data-testid="configuration-card-content__experiment-stack"
         key={item.id}
       >
-        <span>{item.name}</span>
+        <Truncate lines={1}>{item.name}</Truncate>
         <span>25%</span>
       </div>
     ))}

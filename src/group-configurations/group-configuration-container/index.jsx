@@ -8,22 +8,36 @@ import {
   Hyperlink,
   Icon,
   IconButtonWithTooltip,
-} from '@edx/paragon';
+  useToggle,
+} from '@openedx/paragon';
 import {
   DeleteOutline as DeleteOutlineIcon,
   EditOutline as EditOutlineIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
+import DeleteModal from '../../generic/delete-modal/DeleteModal';
+import ContentGroupContainer from '../content-groups-section/ContentGroupContainer';
 import ExperimentGroupStack from './ExperimentGroupStack';
 import TitleButton from './TitleButton';
 import UsageList from './UsageList';
 import messages from './messages';
 
-const GroupConfigurationContainer = ({ group, isExperiment, readOnly }) => {
+const GroupConfigurationContainer = ({
+  group,
+  groupNames,
+  parentGroupId,
+  isExperiment,
+  readOnly,
+  groupConfigurationsActions,
+  handleEditGroup,
+}) => {
   const { formatMessage } = useIntl();
   const { courseId } = useParams();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isEditMode, switchOnEditMode, switchOffEditMode] = useToggle(false);
+  const [isOpenDeleteModal, openDeleteModal, closeDeleteModal] = useToggle(false);
   const { groups: groupsControl, description, usage } = group;
+  const isUsedInLocation = !!usage.length;
 
   const { href: outlineUrl } = new URL(
     `/course/${courseId}`,
@@ -60,64 +74,110 @@ const GroupConfigurationContainer = ({ group, isExperiment, readOnly }) => {
     setIsExpanded((prevState) => !prevState);
   };
 
+  const handleDeleteGroup = () => {
+    groupConfigurationsActions.handleDeleteContentGroup(
+      parentGroupId,
+      group.id,
+    );
+    closeDeleteModal();
+  };
+
   return (
-    <div className="configuration-card" data-testid="configuration-card">
-      <div className="configuration-card-header">
-        <TitleButton
-          group={group}
-          isExpanded={isExpanded}
-          isExperiment={isExperiment}
-          onTitleClick={handleExpandContent}
+    <>
+      {isEditMode ? (
+        <ContentGroupContainer
+          isEditMode={isEditMode}
+          groupNames={groupNames}
+          isUsedInLocation={isUsedInLocation}
+          overrideValue={group.name}
+          onCancelClick={switchOffEditMode}
+          onDeleteClick={openDeleteModal}
+          onEditClick={(values) => handleEditGroup(group.id, values, switchOffEditMode)}
         />
-        {!readOnly && (
-          <ActionRow className="ml-auto d-flex">
-            <IconButtonWithTooltip
-              tooltipContent={formatMessage(messages.actionEdit)}
-              alt={formatMessage(messages.actionEdit)}
-              src={EditOutlineIcon}
-              iconAs={Icon}
-              onClick={() => ({})}
-              data-testid="configuration-card-header-edit"
-            />
-            <IconButtonWithTooltip
-              tooltipContent={formatMessage(messages.actionDelete)}
-              alt={formatMessage(messages.actionDelete)}
-              src={DeleteOutlineIcon}
-              iconAs={Icon}
-              onClick={() => ({})}
-              data-testid="configuration-card-header-delete"
-            />
-          </ActionRow>
-        )}
-      </div>
-      {isExpanded && (
-        <div
-          className="configuration-card-content"
-          data-testid="configuration-card-content"
-        >
-          {isExperiment && (
-            <span className="x-small text-gray-500">{description}</span>
-          )}
-          {isExperiment && <ExperimentGroupStack itemList={groupsControl} />}
-          {usage?.length ? (
-            <UsageList
-              className="mt-2.5"
-              itemList={usage}
-              key={usage.label}
+      ) : (
+        <div className="configuration-card" data-testid="configuration-card">
+          <div className="configuration-card-header">
+            <TitleButton
+              group={group}
+              isExpanded={isExpanded}
               isExperiment={isExperiment}
+              onTitleClick={handleExpandContent}
             />
-          ) : (
-            displayGuide
+            {!readOnly && (
+              <ActionRow className="ml-auto d-flex">
+                <IconButtonWithTooltip
+                  tooltipContent={formatMessage(messages.actionEdit)}
+                  alt={formatMessage(messages.actionEdit)}
+                  src={EditOutlineIcon}
+                  iconAs={Icon}
+                  onClick={switchOnEditMode}
+                  data-testid="configuration-card-header-edit"
+                />
+                <IconButtonWithTooltip
+                  className="configuration-card-header__delete-tooltip"
+                  tooltipContent={formatMessage(
+                    isUsedInLocation
+                      ? messages.deleteRestriction
+                      : messages.actionDelete,
+                  )}
+                  alt={formatMessage(messages.actionDelete)}
+                  src={DeleteOutlineIcon}
+                  iconAs={Icon}
+                  onClick={openDeleteModal}
+                  data-testid="configuration-card-header-delete"
+                  disabled={isUsedInLocation}
+                />
+              </ActionRow>
+            )}
+          </div>
+          {isExpanded && (
+            <div
+              className="configuration-card-content"
+              data-testid="configuration-card-content"
+            >
+              {isExperiment && (
+                <span className="x-small text-gray-500">{description}</span>
+              )}
+              {isExperiment && (
+                <ExperimentGroupStack itemList={groupsControl} />
+              )}
+              {usage?.length ? (
+                <UsageList
+                  className="mt-2.5"
+                  itemList={usage}
+                  key={usage.label}
+                  isExperiment={isExperiment}
+                />
+              ) : (
+                displayGuide
+              )}
+            </div>
           )}
         </div>
       )}
-    </div>
+      <DeleteModal
+        category={formatMessage(messages.subtitleModalDelete)}
+        isOpen={isOpenDeleteModal}
+        close={closeDeleteModal}
+        onDeleteSubmit={handleDeleteGroup}
+      />
+    </>
   );
 };
 
 GroupConfigurationContainer.defaultProps = {
+  group: {
+    id: undefined,
+    name: '',
+    usage: [],
+    version: undefined,
+  },
   isExperiment: false,
   readOnly: false,
+  groupNames: [],
+  parentGroupId: null,
+  handleEditGroup: () => ({}),
+  groupConfigurationsActions: {},
 };
 
 GroupConfigurationContainer.propTypes = {
@@ -151,9 +211,17 @@ GroupConfigurationContainer.propTypes = {
     }),
     readOnly: PropTypes.bool,
     scheme: PropTypes.string,
-  }).isRequired,
+  }),
+  groupNames: PropTypes.arrayOf(PropTypes.string),
+  parentGroupId: PropTypes.number,
   isExperiment: PropTypes.bool,
   readOnly: PropTypes.bool,
+  handleEditGroup: PropTypes.func,
+  groupConfigurationsActions: PropTypes.shape({
+    handleCreateContentGroup: PropTypes.func,
+    handleDeleteContentGroup: PropTypes.func,
+    handleEditContentGroup: PropTypes.func,
+  }),
 };
 
 export default GroupConfigurationContainer;
