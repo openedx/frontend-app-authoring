@@ -45,6 +45,7 @@ const slice = createSlice({
       sourceEditUrl: null,
     },
     enableProctoredExams: false,
+    pasteFiles: {},
   },
   reducers: {
     fetchOutlineIndexSuccess: (state, { payload }) => {
@@ -191,6 +192,14 @@ const slice = createSlice({
         return [...result, currentValue];
       }, []);
     },
+    setPasteFiles: (state, { payload }) => {
+      state.pasteFiles = payload;
+    },
+    removePasteFiles: (state, { payload }) => {
+      const pasteFiles = { ...state.pasteFiles };
+      payload.forEach((key) => delete pasteFiles[key]);
+      state.pasteFiles = pasteFiles;
+    },
   },
 });
 
@@ -218,6 +227,8 @@ export const {
   reorderSubsectionList,
   reorderUnitList,
   updateClipboardContent,
+  setPasteFiles,
+  removePasteFiles,
 } = slice.actions;
 
 export const {

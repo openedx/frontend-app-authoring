@@ -591,6 +591,7 @@ describe('<CourseOutline />', () => {
             {
               ...section.childInfo.children[0],
               published: true,
+              visibilityState: 'live',
             },
             ...section.childInfo.children.slice(1),
           ],
@@ -608,6 +609,7 @@ describe('<CourseOutline />', () => {
                     {
                       ...section.childInfo.children[0].childInfo.children[0],
                       published: true,
+                      visibilityState: 'live',
                     },
                     ...section.childInfo.children[0].childInfo.children.slice(1),
                   ],
@@ -632,7 +634,7 @@ describe('<CourseOutline />', () => {
       expect(
         (await within(element).getAllByRole('status'))[0],
         `Failed for ${elementName}!`,
-      ).toHaveTextContent(cardHeaderMessages.statusBadgePublishedNotLive.defaultMessage);
+      ).toHaveTextContent(cardHeaderMessages.statusBadgeLive.defaultMessage);
     };
 
     // publish unit, subsection and then section in order.
@@ -1807,7 +1809,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit copy & paste option works correctly', async () => {
-    const { findAllByTestId } = render(<RootWrapper />);
+    const { findAllByTestId, findAllByRole } = render(<RootWrapper />);
     // get first section -> first subsection -> first unit element
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [sectionElement] = await findAllByTestId('section-card');
@@ -1872,12 +1874,44 @@ describe('<CourseOutline />', () => {
       .onPost(getXBlockBaseApiUrl(), {
         parent_locator: subsection.id,
         staged_content: 'clipboard',
-      }).reply(200, { dummy: 'value' });
+      }).reply(200, {
+        staticFileNotices: {
+          newFiles: ['some.css'],
+          conflictingFiles: ['con.css'],
+          errorFiles: ['error.css'],
+        },
+      });
     const pasteBtn = await within(subsectionElement).findByText(subsectionMessages.pasteButton.defaultMessage);
     await act(async () => fireEvent.click(pasteBtn));
 
     [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const lastUnitElement = (await within(subsectionElement).findAllByTestId('unit-card')).slice(-1)[0];
     expect(lastUnitElement).toHaveTextContent(unit.displayName);
+
+    // check pasteFiles in store
+    expect(store.getState().courseOutline.pasteFiles).toEqual({
+      newFiles: ['some.css'],
+      conflictingFiles: ['con.css'],
+      errorFiles: ['error.css'],
+    });
+
+    // 3 alerts should be present
+    const alerts = await findAllByRole('alert');
+    expect(alerts.length).toEqual(3);
+
+    // check alerts for errorFiles
+    let dismissBtn = await within(alerts[0]).findByText('Dismiss');
+    fireEvent.click(dismissBtn);
+
+    // check alerts for conflictingFiles
+    dismissBtn = await within(alerts[1]).findByText('Dismiss');
+    fireEvent.click(dismissBtn);
+
+    // check alerts for newFiles
+    dismissBtn = await within(alerts[2]).findByText('Dismiss');
+    fireEvent.click(dismissBtn);
+
+    // check pasteFiles in store
+    expect(store.getState().courseOutline.pasteFiles).toEqual({});
   });
 });

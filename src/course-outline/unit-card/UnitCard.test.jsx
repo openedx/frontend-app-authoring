@@ -133,4 +133,15 @@ describe('<UnitCard />', () => {
     await act(async () => fireEvent.click(menu));
     expect(within(element).queryByText(cardMessages.menuCopy.defaultMessage)).toBeInTheDocument();
   });
+
+  it('hides status badge for unscheduled units', async () => {
+    const { queryByRole } = renderComponent({
+      unit: {
+        ...unit,
+        visibilityState: 'unscheduled',
+        hasChanges: false,
+      },
+    });
+    expect(queryByRole('status')).not.toBeInTheDocument();
+  });
 });
