@@ -161,7 +161,7 @@ module.exports = {
                   'Homework',
                   'Exam',
                 ],
-                hasChanges: false,
+                hasChanges: true,
                 actions: {
                   deletable: true,
                   draggable: true,
@@ -231,7 +231,7 @@ module.exports = {
                         'Homework',
                         'Exam',
                       ],
-                      hasChanges: false,
+                      hasChanges: true,
                       actions: {
                         deletable: true,
                         draggable: true,

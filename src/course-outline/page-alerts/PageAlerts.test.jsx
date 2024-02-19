@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { act, render, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -15,10 +16,16 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   }),
 }));
 
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn(),
+}));
+
 let store;
 const handleDismissNotification = jest.fn();
 
 const pageAlertsData = {
+  courseId: 'course-id',
   notificationDismissUrl: '',
   handleDismissNotification: null,
   discussionsSettings: {},
@@ -53,6 +60,7 @@ describe('<PageAlerts />', () => {
       },
     });
     store = initializeStore();
+    useSelector.mockReturnValue({});
   });
 
   it('renders null when no alerts are present', () => {
@@ -150,6 +158,22 @@ describe('<PageAlerts />', () => {
     expect(queryByText(messages.advancedSettingLinkText.defaultMessage)).toHaveAttribute(
       'href',
       `${getConfig().STUDIO_BASE_URL}/some-url`,
+    );
+  });
+
+  it('renders new, conflicting & error files alert', async () => {
+    useSelector.mockReturnValue({
+      newFiles: ['periodic-table.css'],
+      conflictingFiles: ['some.css', 'some.js'],
+      errorFiles: ['error.css'],
+    });
+    const { queryByText } = renderComponent();
+    expect(queryByText(messages.newFileAlertTitle.defaultMessage)).toBeInTheDocument();
+    expect(queryByText(messages.conflictingFileAlertTitle.defaultMessage)).toBeInTheDocument();
+    expect(queryByText(messages.errorFileAlertTitle.defaultMessage)).toBeInTheDocument();
+    expect(queryByText(messages.newFileAlertAction.defaultMessage)).toHaveAttribute(
+      'href',
+      `${getConfig().STUDIO_BASE_URL}/assets/course-id`,
     );
   });
 });

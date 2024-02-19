@@ -204,6 +204,7 @@ describe('<SubsectionCard />', () => {
         ...subsection,
         published: false,
         visibilityState: 'needs_attention',
+        hasChanges: true,
       },
     });
     expect(await findByText(cardHeaderMessages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();

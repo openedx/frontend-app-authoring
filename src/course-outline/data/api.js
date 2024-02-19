@@ -461,7 +461,7 @@ export async function pasteBlock(parentLocator) {
       staged_content: 'clipboard',
     });
 
-  return data;
+  return camelCaseObject(data);
 }
 
 /**

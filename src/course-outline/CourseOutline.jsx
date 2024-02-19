@@ -285,6 +285,7 @@ const CourseOutline = ({ courseId }) => {
       <Container size="xl" className="px-4">
         <section className="course-outline-container mb-4 mt-5">
           <PageAlerts
+            courseId={courseId}
             notificationDismissUrl={notificationDismissUrl}
             handleDismissNotification={handleDismissNotification}
             discussionsSettings={discussionsSettings}
