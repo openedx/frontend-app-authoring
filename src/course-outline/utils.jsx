@@ -25,6 +25,10 @@ const getItemStatus = ({
     return ITEM_BADGE_STATUS.gated;
   case visibilityState === VisibilityTypes.LIVE:
     return ITEM_BADGE_STATUS.live;
+  case visibilityState === VisibilityTypes.UNSCHEDULED:
+    return ITEM_BADGE_STATUS.unscheduled;
+  case visibilityState === VisibilityTypes.NEEDS_ATTENTION && !hasChanges:
+    return ITEM_BADGE_STATUS.needs_attention;
   case published && !hasChanges:
     return ITEM_BADGE_STATUS.publishedNotLive;
   case published && hasChanges:
@@ -112,6 +116,14 @@ const getItemStatusBorder = (status) => {
       borderLeft: '5px solid #F0CC00',
     };
   case ITEM_BADGE_STATUS.draft:
+    return {
+      borderLeft: '5px solid #F0CC00',
+    };
+  case ITEM_BADGE_STATUS.unscheduled:
+    return {
+      borderLeft: '5px solid #ccc',
+    };
+  case ITEM_BADGE_STATUS.needs_attention:
     return {
       borderLeft: '5px solid #F0CC00',
     };
