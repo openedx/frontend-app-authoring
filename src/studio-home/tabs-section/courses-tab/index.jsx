@@ -7,8 +7,8 @@ import {
   Row,
   Pagination,
   Alert,
-} from '@edx/paragon';
-import { Error, WarningFilled } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Error, WarningFilled } from '@openedx/paragon/icons';
 
 import { COURSE_CREATOR_STATES } from '../../../constants';
 import { getStudioHomeData, getStudioHomeCoursesParams } from '../../data/selectors';

@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { SearchField } from '@edx/paragon';
+import { SearchField } from '@openedx/paragon';
 import { getStudioHomeCoursesParams } from '../../../data/selectors';
 import { updateStudioHomeCoursesCustomParams } from '../../../data/slice';
 import CoursesTypesFilterMenu from './courses-types-filter-menu';

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Icon, Dropdown } from '@edx/paragon';
-import { Check } from '@edx/paragon/icons';
+import { Icon, Dropdown } from '@openedx/paragon';
+import { Check } from '@openedx/paragon/icons';
 
 const CoursesFilterMenu = ({
   id: idProp,
