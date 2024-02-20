@@ -1,4 +1,4 @@
-import { camelCaseObject, getConfig } from '@edx/frontend-platform';
+import { camelCaseObject, snakeCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
@@ -26,7 +26,8 @@ export async function getStudioHomeData() {
  * Please refer to this PR for further details: https://github.com/openedx/edx-platform/pull/34173
  */
 export async function getStudioHomeCourses(search, customParams) {
-  const { data } = await getAuthenticatedHttpClient().get(`${getApiBaseUrl()}/api/contentstore/v2/home/courses${search}`, { params: customParams });
+  const customParamsFormat = snakeCaseObject(customParams);
+  const { data } = await getAuthenticatedHttpClient().get(`${getApiBaseUrl()}/api/contentstore/v2/home/courses${search}`, { params: customParamsFormat });
   return camelCaseObject(data);
 }
 

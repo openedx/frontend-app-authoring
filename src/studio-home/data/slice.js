@@ -19,6 +19,11 @@ const slice = createSlice({
     studioHomeData: {},
     studioHomeCoursesCustomParams: {
       currentPage: 1,
+      search: undefined,
+      order: 'display_name',
+      archivedOnly: false,
+      activeOnly: false,
+      isFiltered: false,
     },
   },
   reducers: {
@@ -45,8 +50,15 @@ const slice = createSlice({
       state.studioHomeData.libraries = libraries;
     },
     updateStudioHomeCoursesCustomParams: (state, { payload }) => {
-      const { currentPage } = payload;
+      const {
+        currentPage, isFiltered, search, order, archivedOnly, activeOnly,
+      } = payload;
       state.studioHomeCoursesCustomParams.currentPage = currentPage;
+      state.studioHomeCoursesCustomParams.isFiltered = isFiltered;
+      state.studioHomeCoursesCustomParams.search = search;
+      state.studioHomeCoursesCustomParams.order = order;
+      state.studioHomeCoursesCustomParams.archivedOnly = archivedOnly;
+      state.studioHomeCoursesCustomParams.activeOnly = activeOnly;
     },
   },
 });

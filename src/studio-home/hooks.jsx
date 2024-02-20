@@ -19,6 +19,7 @@ const useStudioHome = () => {
   const dispatch = useDispatch();
   const studioHomeData = useSelector(getStudioHomeData);
   const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
+  const { isFiltered } = studioHomeCoursesParams;
   const newCourseData = useSelector(getCourseData);
   const { studioHomeLoadingStatus } = useSelector(getLoadingStatuses);
   const savingCreateRerunStatus = useSelector(getSavingStatus);
@@ -36,9 +37,34 @@ const useStudioHome = () => {
   }, [location.search]);
 
   useEffect(() => {
-    const { currentPage } = studioHomeCoursesParams;
-    dispatch(fetchStudioHomeData(location.search ?? '', false, { page: currentPage }));
-  }, [studioHomeCoursesParams.currentPage]);
+    const { currentPage, search, order } = studioHomeCoursesParams;
+    dispatch(fetchStudioHomeData(location.search ?? '', false, { page: currentPage, order, search }));
+  }, [studioHomeCoursesParams.currentPage, isFiltered]);
+
+  useEffect(() => {
+    const {
+      currentPage,
+      search,
+      order,
+      archivedOnly,
+      activeOnly,
+    } = studioHomeCoursesParams;
+
+    if (isFiltered) {
+      dispatch(fetchStudioHomeData(location.search ?? '', false, {
+        page: currentPage,
+        order,
+        search,
+        archivedOnly,
+        activeOnly,
+      }));
+    }
+  }, [
+    studioHomeCoursesParams.search,
+    studioHomeCoursesParams.order,
+    studioHomeCoursesParams.archivedOnly,
+    studioHomeCoursesParams.activeOnly,
+  ]);
 
   useEffect(() => {
     if (courseCreatorSavingStatus === RequestStatus.SUCCESSFUL) {
@@ -87,6 +113,7 @@ const useStudioHome = () => {
     courseCreatorSavingStatus,
     isShowOrganizationDropdown,
     hasAbilityToCreateNewCourse,
+    isFiltered,
     dispatch,
     setShowNewCourseContainer,
   };

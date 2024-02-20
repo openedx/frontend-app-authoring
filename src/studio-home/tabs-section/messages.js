@@ -29,6 +29,14 @@ const messages = defineMessages({
     id: 'course-authoring.studio-home.archived.tab.error.message',
     defaultMessage: 'Failed to fetch archived courses. Please try again later.',
   },
+  coursesTabCourseNotFoundAlertTitle: {
+    id: 'course-authoring.studio-home.courses.tab.course.not.found.alert.title',
+    defaultMessage: 'Something went wrong',
+  },
+  coursesTabCourseNotFoundAlertMessage: {
+    id: 'course-authoring.studio-home.courses.tab.course.not.found.alert.message',
+    defaultMessage: 'Sorry, the course you are trying to search was not found',
+  },
 });
 
 export default messages;

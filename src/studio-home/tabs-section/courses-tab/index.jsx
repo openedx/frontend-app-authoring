@@ -2,16 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon, Row, Pagination } from '@edx/paragon';
-import { Error } from '@edx/paragon/icons';
+import {
+  Icon,
+  Row,
+  Pagination,
+  Alert,
+} from '@edx/paragon';
+import { Error, WarningFilled } from '@edx/paragon/icons';
 
 import { COURSE_CREATOR_STATES } from '../../../constants';
 import { getStudioHomeData, getStudioHomeCoursesParams } from '../../data/selectors';
 import { updateStudioHomeCoursesCustomParams } from '../../data/slice';
 import CardItem from '../../card-item';
 import CollapsibleStateWithAction from '../../collapsible-state-with-action';
-import { sortAlphabeticallyArray } from '../utils';
 import ContactAdministrator from './contact-administrator';
+import CoursesFilters from './courses-filters';
 import ProcessingCourses from '../../processing-courses';
 import { LoadingSpinner } from '../../../generic/Loading';
 import AlertMessage from '../../../generic/alert-message';
@@ -33,7 +38,12 @@ const CoursesTab = ({
     courseCreatorStatus,
     optimizationEnabled,
   } = useSelector(getStudioHomeData);
-  const { currentPage } = useSelector(getStudioHomeCoursesParams);
+  const {
+    currentPage,
+    search,
+    order,
+    isFiltered,
+  } = useSelector(getStudioHomeCoursesParams);
   const hasAbilityToCreateCourse = courseCreatorStatus === COURSE_CREATOR_STATES.granted;
   const showCollapsible = [
     COURSE_CREATOR_STATES.denied,
@@ -41,10 +51,16 @@ const CoursesTab = ({
     COURSE_CREATOR_STATES.unrequested,
   ].includes(courseCreatorStatus);
 
-  const handlePageSelected = (page) => dispatch(updateStudioHomeCoursesCustomParams({ currentPage: page }));
+  const handlePageSelected = (page) => {
+    dispatch(updateStudioHomeCoursesCustomParams({
+      currentPage: page, search, order, isFiltered,
+    }));
+  };
   const hasCourses = coursesDataItems?.length;
 
-  if (isLoading) {
+  const isNotFilteringCourses = !isFiltered && !isLoading;
+
+  if (isLoading && !isFiltered) {
     return (
       <Row className="m-0 mt-4 justify-content-center">
         <LoadingSpinner />
@@ -66,19 +82,22 @@ const CoursesTab = ({
     ) : (
       <>
         {isShowProcessing && <ProcessingCourses />}
-        {hasCourses && (
-          <div className="d-flex justify-content-end">
-            <p data-testid="pagination-info">
-              {intl.formatMessage(messages.coursesPaginationInfo, {
-                length: coursesDataItems.length,
-                total: coursesCount,
-              })}
-            </p>
-          </div>
-        )}
+        <div className="d-flex flex-row justify-content-between my-4">
+          <CoursesFilters dispatch={dispatch} />
+          {!isLoading && (
+            <div className="d-flex">
+              <p data-testid="pagination-info">
+                {intl.formatMessage(messages.coursesPaginationInfo, {
+                  length: coursesDataItems?.length ?? 0,
+                  total: coursesCount || 0,
+                })}
+              </p>
+            </div>
+          )}
+        </div>
         {hasCourses ? (
           <>
-            {sortAlphabeticallyArray(coursesDataItems).map(
+            {coursesDataItems.map(
               ({
                 courseKey,
                 displayName,
@@ -114,13 +133,29 @@ const CoursesTab = ({
               />
             )}
           </>
-        ) : (!optimizationEnabled && (
+        ) : (!optimizationEnabled && isNotFilteringCourses && (
           <ContactAdministrator
             hasAbilityToCreateCourse={hasAbilityToCreateCourse}
             showNewCourseContainer={showNewCourseContainer}
             onClickNewCourse={onClickNewCourse}
           />
         )
+        )}
+
+        {isLoading && isFiltered && (
+          <Row className="m-0 mt-4 justify-content-start">
+            <LoadingSpinner />
+          </Row>
+        )}
+        {isFiltered && !hasCourses && !isLoading && (
+          <Alert variant="warning" icon={WarningFilled} className="mt-4">
+            <Alert.Heading>
+              {intl.formatMessage(messages.coursesTabCourseNotFoundAlertTitle)}
+            </Alert.Heading>
+            <p>
+              {intl.formatMessage(messages.coursesTabCourseNotFoundAlertMessage)}
+            </p>
+          </Alert>
         )}
         {showCollapsible && (
           <CollapsibleStateWithAction
@@ -131,6 +166,10 @@ const CoursesTab = ({
       </>
     )
   );
+};
+
+CoursesTab.defaultProps = {
+  numPages: 0,
 };
 
 CoursesTab.propTypes = {
@@ -152,7 +191,7 @@ CoursesTab.propTypes = {
   isLoading: PropTypes.bool.isRequired,
   isFailed: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
-  numPages: PropTypes.number.isRequired,
+  numPages: PropTypes.number,
   coursesCount: PropTypes.number.isRequired,
 };
 
