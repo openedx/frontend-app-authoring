@@ -1,8 +1,10 @@
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { SearchField } from '@openedx/paragon';
 import { getStudioHomeCoursesParams } from '../../../data/selectors';
 import { updateStudioHomeCoursesCustomParams } from '../../../data/slice';
+import { useDebounce } from '../../../../hooks';
 import CoursesTypesFilterMenu from './courses-types-filter-menu';
 import CoursesOrderFilterMenu from './courses-order-filter-menu';
 
@@ -14,21 +16,10 @@ const CoursesFilters = ({ dispatch }) => {
     activeOnly,
     archivedOnly,
   } = useSelector(getStudioHomeCoursesParams);
+  const [inputSearchValue, setInputSearchValue] = useState('');
+  const searchValueDebounced = useDebounce(inputSearchValue);
 
-  const handleSearchCourses = (value) => {
-    const isSearchEmpty = !value.trim().length;
-
-    const params = {
-      page: isSearchEmpty ? 1 : currentPage,
-      search: isSearchEmpty ? undefined : value,
-      activeOnly,
-      archivedOnly,
-      order,
-      isFiltered: true,
-    };
-
-    dispatch(updateStudioHomeCoursesCustomParams(params));
-  };
+  const handleSearchCourses = (value) => setInputSearchValue(value);
 
   const getFilterTypeData = (baseFilters) => ({
     archivedCourses: { ...baseFilters, archivedOnly: true },
@@ -52,6 +43,26 @@ const CoursesFilters = ({ dispatch }) => {
     const filterParamsFormat = filterParams[filterType] || baseFilters;
     dispatch(updateStudioHomeCoursesCustomParams(filterParamsFormat));
   };
+
+  useEffect(() => {
+    const loadCoursesSearched = () => {
+      const valueFormatted = searchValueDebounced.trim();
+      const isSearchEmpty = !valueFormatted.length;
+
+      const params = {
+        page: isSearchEmpty ? 1 : currentPage,
+        search: isSearchEmpty ? undefined : valueFormatted,
+        activeOnly,
+        archivedOnly,
+        order,
+        isFiltered: true,
+      };
+
+      dispatch(updateStudioHomeCoursesCustomParams(params));
+    };
+
+    loadCoursesSearched();
+  }, [searchValueDebounced]);
 
   return (
     <div className="d-flex">
