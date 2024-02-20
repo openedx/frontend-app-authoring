@@ -77,7 +77,6 @@ const CardItem = ({
               </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
-
         )}
       />
     </Card>
