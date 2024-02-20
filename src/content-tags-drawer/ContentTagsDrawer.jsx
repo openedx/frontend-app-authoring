@@ -73,6 +73,15 @@ const ContentTagsDrawer = ({ id, onClose }) => {
     });
   }, [setStagedContentTags]);
 
+  // Sets the staged content tags for taxonomy to the provided list of tags
+  const setStagedTags = useCallback((taxonomyId, tagsList) => {
+    setStagedContentTags(prevStagedContentTags => {
+      const updatedStagedContentTags = cloneDeep(prevStagedContentTags);
+      updatedStagedContentTags[taxonomyId] = tagsList;
+      return updatedStagedContentTags;
+    });
+  }, [setStagedContentTags]);
+
   const useTaxonomyListData = () => {
     const taxonomyListData = useTaxonomyListDataResponse(org);
     const isTaxonomyListLoaded = useIsTaxonomyListDataLoaded(org);
@@ -161,6 +170,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
                 stagedContentTags={stagedContentTags[data.id] || []}
                 addStagedContentTag={addStagedContentTag}
                 removeStagedContentTag={removeStagedContentTag}
+                setStagedTags={setStagedTags}
               />
               <hr />
             </div>

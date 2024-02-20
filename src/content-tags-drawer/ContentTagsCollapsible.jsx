@@ -12,6 +12,7 @@ import {
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { SelectableBox } from '@edx/frontend-lib-content-components';
+import { cloneDeep } from 'lodash';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { debounce } from 'lodash';
 import messages from './messages';
@@ -24,7 +25,15 @@ import ContentTagsTree from './ContentTagsTree';
 import useContentTagsCollapsibleHelper from './ContentTagsCollapsibleHelper';
 
 const CustomMenu = (props) => {
-  const { intl, handleSelectableBoxChange, checkedTags, taxonomyId, tagsTree, searchTerm } = props.selectProps;
+  const {
+    intl,
+    handleSelectableBoxChange,
+    checkedTags,
+    taxonomyId,
+    appliedContentTagsTree,
+    stagedContentTagsTree,
+    searchTerm,
+  } = props.selectProps;
   return (
     <components.Menu {...props}>
       <div className="bg-white p-3 shadow">
@@ -42,7 +51,8 @@ const CustomMenu = (props) => {
             key={`selector-${taxonomyId}`}
             taxonomyId={taxonomyId}
             level={0}
-            tagsTree={tagsTree}
+            appliedContentTagsTree={appliedContentTagsTree}
+            stagedContentTagsTree={stagedContentTagsTree}
             searchTerm={searchTerm}
           />
         </SelectableBox.Set>
@@ -50,6 +60,8 @@ const CustomMenu = (props) => {
     </components.Menu>
   );
 };
+
+// TODO: Add props validation for CustomMenu
 
 /** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
 /** @typedef {import("./data/types.mjs").Tag} ContentTagData */
@@ -127,18 +139,25 @@ const CustomMenu = (props) => {
  *
  * @param {Object} props - The component props.
  * @param {string} props.contentId - Id of the content object
+ * @param {Array<Object>} props.stagedContentTags - Array of staged tags represented objects with value/label
+ * @param {Function} props.addStagedContentTag - Callback function to add a staged tag for a taxonomy
+ * @param {Function} props.removeStagedContentTag - Callback function to remove a staged tag from a taxonomy
+ * @param {Function} props.setStagedTags - Callback function to set staged tags for a taxonomy to provided tags list
  * @param {TaxonomyData & {contentTags: ContentTagData[]}} props.taxonomyAndTagsData - Taxonomy metadata & applied tags
  */
 const ContentTagsCollapsible = ({
-  contentId, taxonomyAndTagsData, stagedContentTags, addStagedContentTag, removeStagedContentTag,
+  contentId, taxonomyAndTagsData, stagedContentTags, addStagedContentTag, removeStagedContentTag, setStagedTags,
 }) => {
   const intl = useIntl();
   const { id: taxonomyId, name, canTagObject } = taxonomyAndTagsData;
 
   const {
-    tagChangeHandler, tagsTree, contentTagsCount, checkedTags,
+    tagChangeHandler, appliedContentTagsTree, stagedContentTagsTree, contentTagsCount, checkedTags,
   } = useContentTagsCollapsibleHelper(
-    contentId, taxonomyAndTagsData, addStagedContentTag, removeStagedContentTag,
+    contentId,
+    taxonomyAndTagsData,
+    addStagedContentTag,
+    removeStagedContentTag,
   );
 
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -161,11 +180,31 @@ const ContentTagsCollapsible = ({
     }
   }, []);
 
+  // onChange handler for react-select component, currently only called when
+  // staged tags in the react-select input are removed or fully cleared.
+  // The remaining staged tags are passed in as the parameter, so we set the state
+  // to the passed in tags
+  const handleStagedTagsMenuChange = React.useCallback((stagedTags) => {
+    const prevStagedContentTags = cloneDeep(stagedContentTags);
+    setStagedTags(taxonomyId, stagedTags);
+
+    // Get tags that were unstaged to remove them from checkbox selector
+    const unstagedTags = prevStagedContentTags.filter(
+      t1 => !stagedTags.some(t2 => t1.value === t2.value && t1.label === t2.label),
+    );
+
+    // Call the `tagChangeHandler` with the unstaged tags to unselect them from the selectbox
+    // and update the staged content tags tree. Since the `handleStagedTagsMenuChange` function is
+    // only called when a change occurs in the react-select menu component we know that tags can only be
+    // removed from there, hence the tagChangeHandler is always called with `checked=false`.
+    unstagedTags.forEach(unstagedTag => tagChangeHandler(unstagedTag.value, false));
+  }, [taxonomyId, setStagedTags, stagedContentTags, tagChangeHandler]);
+
   return (
     <div className="d-flex">
       <Collapsible title={name} styling="card-lg" className="taxonomy-tags-collapsible">
         <div key={taxonomyId}>
-          <ContentTagsTree tagsTree={tagsTree} removeTagHandler={tagChangeHandler} />
+          <ContentTagsTree tagsTree={appliedContentTagsTree} removeTagHandler={tagChangeHandler} />
         </div>
 
         <div className="d-flex taxonomy-tags-selector-menu">
@@ -178,7 +217,7 @@ const ContentTagsCollapsible = ({
               className="d-flex flex-column flex-fill"
               classNamePrefix="react-select"
               onInputChange={handleSearchChange}
-              onChange={(e) => console.log('onChange', e)}
+              onChange={handleStagedTagsMenuChange}
               components={{ Menu: CustomMenu }}
               closeMenuOnSelect={false}
               blurInputOnSelect={false}
@@ -186,14 +225,10 @@ const ContentTagsCollapsible = ({
               handleSelectableBoxChange={handleSelectableBoxChange}
               checkedTags={checkedTags}
               taxonomyId={taxonomyId}
-              tagsTree={tagsTree}
+              appliedContentTagsTree={appliedContentTagsTree}
+              stagedContentTagsTree={stagedContentTagsTree}
               searchTerm={searchTerm}
               value={stagedContentTags}
-              // value={[
-              //   { value: 'Administration,Administrative%20Support,Administrative%20Functions', label: 'Administrative Functions' },
-              //   { value: 'Administration,Administrative%20Support,Memos', label: 'Memos' },
-              //   { value: 'Another%20One', label: 'Another One' },
-              // ]} // TODO: this needs to be staged (not yet commited tags) in the above format
             />
           )}
         </div>
@@ -230,6 +265,7 @@ ContentTagsCollapsible.propTypes = {
   })).isRequired,
   addStagedContentTag: PropTypes.func.isRequired,
   removeStagedContentTag: PropTypes.func.isRequired,
+  setStagedTags: PropTypes.func.isRequired,
 };
 
 export default ContentTagsCollapsible;
