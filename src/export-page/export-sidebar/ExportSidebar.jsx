@@ -4,7 +4,7 @@ import {
   intlShape,
 } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
-import { Hyperlink } from '@edx/paragon';
+import { Hyperlink } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
 import { HelpSidebar } from '../../generic/help-sidebar';

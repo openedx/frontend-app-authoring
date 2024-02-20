@@ -5,8 +5,8 @@ import {
   Button,
   Container,
   Layout,
-} from '@edx/paragon';
-import { Add as AddIcon } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Add as AddIcon } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 
 import { useModel } from '../generic/model-store';

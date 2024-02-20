@@ -61,7 +61,7 @@ module.exports = {
     highlightsEnabled: true,
     highlightsPreviewOnly: false,
     highlightsDocUrl: 'http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_sections.html#set-section-highlights-for-weekly-course-highlight-messages',
-    enableProctoredExams: false,
+    enableProctoredExams: true,
     createZendeskTickets: true,
     enableTimedExams: true,
     childInfo: {
@@ -152,6 +152,11 @@ module.exports = {
                 due: null,
                 relativeWeeksDue: null,
                 format: null,
+                isPrereq: false,
+                prereqs: [{
+                  blockDisplayName: 'Sample Subsection',
+                  blockUsageKey: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@7f75de8dcc261249250b71925f49810f',
+                }],
                 courseGraders: [
                   'Homework',
                   'Exam',
@@ -261,6 +266,7 @@ module.exports = {
                       ancestorHasStaffLock: true,
                       staffOnlyMessage: false,
                       hasPartitionGroupComponents: false,
+                      enableCopyPasteUnits: true,
                       userPartitionInfo: {
                         selectablePartitions: [
                           {
@@ -292,6 +298,7 @@ module.exports = {
                 ancestorHasStaffLock: true,
                 staffOnlyMessage: false,
                 hasPartitionGroupComponents: false,
+                enableCopyPasteUnits: true,
                 userPartitionInfo: {
                   selectablePartitions: [
                     {
@@ -379,10 +386,11 @@ module.exports = {
                 is_practice_exam: false,
                 is_onboarding_exam: false,
                 is_time_limited: false,
+                isPrereq: true,
                 exam_review_rules: '',
                 default_time_limit_minutes: null,
                 proctoring_exam_configuration_link: null,
-                supports_onboarding: false,
+                supports_onboarding: true,
                 show_review_rules: true,
                 child_info: {
                   category: 'vertical',
@@ -391,7 +399,7 @@ module.exports = {
                 },
                 ancestor_has_staff_lock: false,
                 staff_only_message: false,
-                enable_copy_paste_units: false,
+                enable_copy_paste_units: true,
                 has_partition_group_components: false,
                 user_partition_info: {
                   selectable_partitions: [
@@ -569,12 +577,12 @@ module.exports = {
                 ],
                 showCorrectness: 'always',
                 hideAfterDue: false,
-                isProctoredExam: false,
+                isProctoredExam: true,
                 wasExamEverLinkedWithExternal: false,
                 onlineProctoringRules: '',
                 isPracticeExam: false,
                 isOnboardingExam: false,
-                isTimeLimited: false,
+                isTimeLimited: true,
                 examReviewRules: '',
                 defaultTimeLimitMinutes: null,
                 proctoringExamConfigurationLink: null,
@@ -3048,7 +3056,7 @@ module.exports = {
   languageCode: 'en',
   lmsLink: '//localhost:18000/courses/course-v1:edx+101+y76/jump_to/block-v1:edx+101+y76+type@course+block@course',
   mfeProctoredExamSettingsUrl: '',
-  notificationDismissUrl: '/course_notifications/course-v1:edx+101+y76/2',
+  notificationDismissUrl: '',
   proctoringErrors: [],
   reindexLink: '/course/course-v1:edx+101+y76/search_reindex',
   rerunNotificationId: 2,

@@ -5,8 +5,8 @@ import {
   ManageHistory as SuccessIcon,
   Warning as ErrorIcon,
   CheckCircle,
-} from '@edx/paragon/icons';
-import { Icon } from '@edx/paragon';
+} from '@openedx/paragon/icons';
+import { Icon } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 

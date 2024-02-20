@@ -6,7 +6,7 @@ import {
   ModalDialog,
   Button,
   ActionRow,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { useSelector } from 'react-redux';
 
 import { getCurrentItem } from '../data/selectors';

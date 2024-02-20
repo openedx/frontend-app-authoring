@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useToggle } from '@edx/paragon';
+import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
 import { RequestStatus } from '../data/constants';
 import { COURSE_BLOCK_NAMES } from './constants';
+import { useBroadcastChannel } from '../generic/broadcast-channel/hooks';
 import {
   setCurrentItem,
   setCurrentSection,
   updateSavingStatus,
+  updateClipboardContent,
 } from './data/slice';
 import {
   getLoadingStatus,
@@ -21,6 +23,7 @@ import {
   getCurrentItem,
   getCurrentSection,
   getCurrentSubsection,
+  getCustomRelativeDatesActiveFlag,
 } from './data/selectors';
 import {
   addNewSectionQuery,
@@ -47,13 +50,28 @@ import {
   setVideoSharingOptionQuery,
   setSubsectionOrderListQuery,
   setUnitOrderListQuery,
+  setClipboardContent,
+  pasteClipboardContent,
+  dismissNotificationQuery,
 } from './data/thunk';
 
 const useCourseOutline = ({ courseId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { reindexLink, courseStructure, lmsLink } = useSelector(getOutlineIndexData);
+  const {
+    reindexLink,
+    courseStructure,
+    lmsLink,
+    notificationDismissUrl,
+    discussionsSettings,
+    discussionsIncontextFeedbackUrl,
+    discussionsIncontextLearnmoreUrl,
+    deprecatedBlocksInfo,
+    proctoringErrors,
+    mfeProctoredExamSettingsUrl,
+    advanceSettingsUrl,
+  } = useSelector(getOutlineIndexData);
   const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
@@ -62,6 +80,7 @@ const useCourseOutline = ({ courseId }) => {
   const currentItem = useSelector(getCurrentItem);
   const currentSection = useSelector(getCurrentSection);
   const currentSubsection = useSelector(getCurrentSubsection);
+  const isCustomRelativeDatesActive = useSelector(getCustomRelativeDatesActiveFlag);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
   const [isSectionsExpanded, setSectionsExpanded] = useState(true);
@@ -72,6 +91,17 @@ const useCourseOutline = ({ courseId }) => {
   const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const clipboardBroadcastChannel = useBroadcastChannel('studio_clipboard_channel', (message) => {
+    dispatch(updateClipboardContent(message));
+  });
+
+  const handleCopyToClipboardClick = (usageKey) => {
+    dispatch(setClipboardContent(usageKey, clipboardBroadcastChannel.postMessage));
+  };
+
+  const handlePasteClipboardClick = (parentLocator, sectionId) => {
+    dispatch(pasteClipboardContent(parentLocator, sectionId));
+  };
 
   const handleNewSectionSubmit = () => {
     dispatch(addNewSectionQuery(courseStructure.id));
@@ -82,15 +112,15 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const getUnitUrl = (locator) => {
-    if (process.env.ENABLE_UNIT_PAGE === 'true') {
-      return `/course/container/${locator}`;
+    if (getConfig().ENABLE_UNIT_PAGE === 'true') {
+      return `/course/${courseId}/container/${locator}`;
     }
     return `${getConfig().STUDIO_BASE_URL}/container/${locator}`;
   };
 
   const openUnitPage = (locator) => {
     const url = getUnitUrl(locator);
-    if (process.env.ENABLE_UNIT_PAGE === 'true') {
+    if (getConfig().ENABLE_UNIT_PAGE === 'true') {
       navigate(url);
     } else {
       window.location.assign(url);
@@ -222,6 +252,10 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(setUnitOrderListQuery(sectionId, subsectionId, unitListIds, restoreCallback));
   };
 
+  const handleDismissNotification = () => {
+    dispatch(dismissNotificationQuery(notificationDismissUrl));
+  };
+
   useEffect(() => {
     dispatch(fetchCourseOutlineIndexQuery(courseId));
     dispatch(fetchCourseBestPracticesQuery({ courseId }));
@@ -242,6 +276,7 @@ const useCourseOutline = ({ courseId }) => {
     courseActions,
     savingStatus,
     sectionsList,
+    isCustomRelativeDatesActive,
     isLoading: outlineIndexLoadingStatus === RequestStatus.IN_PROGRESS,
     isReIndexShow: Boolean(reindexLink),
     showSuccessAlert,
@@ -286,6 +321,17 @@ const useCourseOutline = ({ courseId }) => {
     handleSubsectionDragAndDrop,
     handleVideoSharingOptionChange,
     handleUnitDragAndDrop,
+    handleCopyToClipboardClick,
+    handlePasteClipboardClick,
+    notificationDismissUrl,
+    discussionsSettings,
+    discussionsIncontextFeedbackUrl,
+    discussionsIncontextLearnmoreUrl,
+    deprecatedBlocksInfo,
+    proctoringErrors,
+    mfeProctoredExamSettingsUrl,
+    handleDismissNotification,
+    advanceSettingsUrl,
   };
 };
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Add as IconAdd } from '@edx/paragon/icons/es5';
-import { Button, OverlayTrigger, Tooltip } from '@edx/paragon';
+import { Add as IconAdd } from '@openedx/paragon/icons/es5';
+import { Button, OverlayTrigger, Tooltip } from '@openedx/paragon';
 
 import messages from './messages';
 

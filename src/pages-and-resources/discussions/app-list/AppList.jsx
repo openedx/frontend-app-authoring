@@ -4,7 +4,7 @@ import React, {
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   CardGrid, Container, breakpoints, Form, ActionRow, AlertModal, Button, StatefulButton,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { useDispatch, useSelector } from 'react-redux';
 import Responsive from 'react-responsive';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';

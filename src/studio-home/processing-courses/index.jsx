@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Stack } from '@edx/paragon';
+import { Stack } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { getStudioHomeData } from '../data/selectors';

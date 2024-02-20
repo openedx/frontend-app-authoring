@@ -2,8 +2,8 @@ import React from 'react';
 import DatePicker from 'react-datepicker/dist';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Form, Icon } from '@edx/paragon';
-import { Calendar } from '@edx/paragon/icons';
+import { Form, Icon } from '@openedx/paragon';
+import { Calendar } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { convertToDateFromString, convertToStringFromDate, isValidDate } from '../../utils';

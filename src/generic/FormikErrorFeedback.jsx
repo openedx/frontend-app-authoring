@@ -1,4 +1,4 @@
-import { Form, TransitionReplace } from '@edx/paragon';
+import { Form, TransitionReplace } from '@openedx/paragon';
 import { getIn, useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
 import React from 'react';

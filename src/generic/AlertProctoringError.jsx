@@ -1,10 +1,11 @@
-import { Alert } from '@edx/paragon';
+import { Alert } from '@openedx/paragon';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const AlertProctoringError = ({ proctoringErrorsData, ...props }) => (
+const AlertProctoringError = ({ proctoringErrorsData, children, ...props }) => (
   <ul className="alert-proctoring-error p-0">
     <Alert {...props}>
+      {children}
       {proctoringErrorsData.map(({ key, model, message }) => (
         <li key={key}>
           <Alert.Heading>{model.displayName}</Alert.Heading>
@@ -17,6 +18,7 @@ const AlertProctoringError = ({ proctoringErrorsData, ...props }) => (
 
 AlertProctoringError.propTypes = {
   variant: PropTypes.string,
+  children: PropTypes.node,
   proctoringErrorsData: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string,
     message: PropTypes.string,
@@ -32,6 +34,7 @@ AlertProctoringError.propTypes = {
 
 AlertProctoringError.defaultProps = {
   variant: 'danger',
+  children: null,
 };
 
 export default AlertProctoringError;

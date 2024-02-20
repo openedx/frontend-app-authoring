@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Tab, Tabs } from '@edx/paragon';
+import { Tab, Tabs } from '@openedx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { getLoadingStatuses, getStudioHomeData } from '../data/selectors';

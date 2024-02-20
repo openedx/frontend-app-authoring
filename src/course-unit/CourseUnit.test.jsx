@@ -5,37 +5,42 @@ import {
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { getConfig, initializeMockApp } from '@edx/frontend-platform';
+import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import {
+  getCourseSectionVerticalApiUrl,
   getCourseUnitApiUrl,
   getXBlockBaseApiUrl,
+  postXBlockBaseApiUrl,
 } from './data/api';
 import {
+  fetchCourseSectionVerticalData,
   fetchCourseUnitQuery,
 } from './data/thunk';
 import initializeStore from '../store';
 import {
+  courseCreateXblockMock,
+  courseSectionVerticalMock,
   courseUnitIndexMock,
 } from './__mocks__';
 import { executeThunk } from '../utils';
 import CourseUnit from './CourseUnit';
 import headerNavigationsMessages from './header-navigations/messages';
 import headerTitleMessages from './header-title/messages';
-import { getUnitPreviewPath, getUnitViewLivePath } from './utils';
+import messages from './add-component/messages';
 
 let axiosMock;
 let store;
 const courseId = '123';
-const sectionId = 'graded_interactions';
-const subsectionId = '19a30717eff543078a5d94ae9d6c18a5';
 const blockId = '567890';
 const unitDisplayName = courseUnitIndexMock.metadata.display_name;
+const mockedUsedNavigate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ blockId }),
+  useNavigate: () => mockedUsedNavigate,
 }));
 
 const RootWrapper = () => (
@@ -63,6 +68,10 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseUnitApiUrl(courseId))
       .reply(200, courseUnitIndexMock);
     await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, courseSectionVerticalMock);
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
   });
 
   it('render CourseUnit component correctly', async () => {
@@ -85,20 +94,21 @@ describe('<CourseUnit />', () => {
     const { open } = window;
     window.open = jest.fn();
     const { getByRole } = render(<RootWrapper />);
+    const {
+      draft_preview_link: draftPreviewLink,
+      published_preview_link: publishedPreviewLink,
+    } = courseSectionVerticalMock;
 
     await waitFor(() => {
       const viewLiveButton = getByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage });
       userEvent.click(viewLiveButton);
       expect(window.open).toHaveBeenCalled();
-      const VIEW_LIVE_LINK = getConfig().LMS_BASE_URL + getUnitViewLivePath(courseId, blockId);
-      expect(window.open).toHaveBeenCalledWith(VIEW_LIVE_LINK, '_blank');
+      expect(window.open).toHaveBeenCalledWith(publishedPreviewLink, '_blank');
 
       const previewButton = getByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage });
       userEvent.click(previewButton);
       expect(window.open).toHaveBeenCalled();
-      // eslint-disable-next-line max-len
-      const PREVIEW_LINK = getConfig().PREVIEW_BASE_URL + getUnitPreviewPath(courseId, sectionId, subsectionId, blockId);
-      expect(window.open).toHaveBeenCalledWith(PREVIEW_LINK, '_blank');
+      expect(window.open).toHaveBeenCalledWith(draftPreviewLink, '_blank');
     });
 
     window.open = open;
@@ -145,5 +155,58 @@ describe('<CourseUnit />', () => {
     titleEditField = queryByRole('textbox', { name: headerTitleMessages.ariaLabelButtonEdit.defaultMessage });
     expect(titleEditField).not.toBeInTheDocument();
     expect(await findByText(newDisplayName)).toBeInTheDocument();
+  });
+
+  it('doesn\'t handle creating xblock and displays an error message', async () => {
+    const { courseKey, locator } = courseCreateXblockMock;
+    axiosMock
+      .onPost(postXBlockBaseApiUrl({ type: 'video', category: 'video', parentLocator: blockId }))
+      .reply(500, {});
+    const { getByRole } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const videoButton = getByRole('button', {
+        name: new RegExp(`${messages.buttonText.defaultMessage} Video`, 'i'),
+      });
+
+      userEvent.click(videoButton);
+      expect(mockedUsedNavigate).not.toHaveBeenCalledWith(`/course/${courseKey}/editor/video/${locator}`);
+    });
+  });
+
+  it('handle creating Problem xblock and navigate to editor page', async () => {
+    const { courseKey, locator } = courseCreateXblockMock;
+    axiosMock
+      .onPost(postXBlockBaseApiUrl({ type: 'problem', category: 'problem', parentLocator: blockId }))
+      .reply(200, courseCreateXblockMock);
+    const { getByRole } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const problemButton = getByRole('button', {
+        name: new RegExp(`${messages.buttonText.defaultMessage} Problem`, 'i'),
+      });
+
+      userEvent.click(problemButton);
+      expect(mockedUsedNavigate).toHaveBeenCalled();
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseKey}/editor/problem/${locator}`);
+    });
+  });
+
+  it('handles creating Video xblock and navigates to editor page', async () => {
+    const { courseKey, locator } = courseCreateXblockMock;
+    axiosMock
+      .onPost(postXBlockBaseApiUrl({ type: 'video', category: 'video', parentLocator: blockId }))
+      .reply(200, courseCreateXblockMock);
+    const { getByRole } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const videoButton = getByRole('button', {
+        name: new RegExp(`${messages.buttonText.defaultMessage} Video`, 'i'),
+      });
+
+      userEvent.click(videoButton);
+      expect(mockedUsedNavigate).toHaveBeenCalled();
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseKey}/editor/video/${locator}`);
+    });
   });
 });

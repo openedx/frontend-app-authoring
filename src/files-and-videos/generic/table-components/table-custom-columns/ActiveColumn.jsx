@@ -2,8 +2,8 @@ import React from 'react';
 import { PropTypes } from 'prop-types';
 import { isNil } from 'lodash';
 import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Icon, Spinner } from '@edx/paragon';
-import { Check } from '@edx/paragon/icons';
+import { Icon, Spinner } from '@openedx/paragon';
+import { Check } from '@openedx/paragon/icons';
 import { RequestStatus } from '../../../../data/constants';
 
 const ActiveColumn = ({ row, pageLoadStatus }) => {

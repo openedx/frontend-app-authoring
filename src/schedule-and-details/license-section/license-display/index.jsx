@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Form } from '@edx/paragon';
+import { Form } from '@openedx/paragon';
 
 import { LICENSE_TYPE } from '../constants';
 import LicenseIcons from '../license-icons';

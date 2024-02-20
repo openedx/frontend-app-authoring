@@ -28,6 +28,7 @@ export const getCourseReindexApiUrl = (reindexLink) => `${getApiBaseUrl()}${rein
 export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
 export const getCourseItemApiUrl = (itemId) => `${getXBlockBaseApiUrl()}${itemId}`;
 export const getXBlockApiUrl = (blockId) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
+export const getClipboardUrl = () => `${getApiBaseUrl()}/api/content-staging/v1/clipboard/`;
 
 /**
  * @typedef {Object} courseOutline
@@ -242,11 +243,19 @@ export async function configureCourseSection(sectionId, isVisibleToStaffOnly, st
  * @param {string} isVisibleToStaffOnly
  * @param {string} releaseDate
  * @param {string} graderType
- * @param {string} dueDateState
- * @param {string} isTimeLimitedState
- * @param {string} defaultTimeLimitMin
- * @param {string} hideAfterDueState
- * @param {string} showCorrectnessState
+ * @param {string} dueDate
+ * @param {boolean} isProctoredExam,
+ * @param {boolean} isOnboardingExam,
+ * @param {boolean} isPracticeExam,
+ * @param {string} examReviewRules,
+ * @param {boolean} isTimeLimited
+ * @param {number} defaultTimeLimitMin
+ * @param {string} hideAfterDue
+ * @param {string} showCorrectness
+ * @param {boolean} isPrereq,
+ * @param {string} prereqUsageKey,
+ * @param {number} prereqMinScore,
+ * @param {number} prereqMinCompletion,
  * @returns {Promise<Object>}
  */
 export async function configureCourseSubsection(
@@ -254,28 +263,40 @@ export async function configureCourseSubsection(
   isVisibleToStaffOnly,
   releaseDate,
   graderType,
-  dueDateState,
-  isTimeLimitedState,
+  dueDate,
+  isTimeLimited,
+  isProctoredExam,
+  isOnboardingExam,
+  isPracticeExam,
+  examReviewRules,
   defaultTimeLimitMin,
-  hideAfterDueState,
-  showCorrectnessState,
+  hideAfterDue,
+  showCorrectness,
+  isPrereq,
+  prereqUsageKey,
+  prereqMinScore,
+  prereqMinCompletion,
 ) {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(itemId), {
       publish: 'republish',
       graderType,
+      isPrereq,
+      prereqUsageKey,
+      prereqMinScore,
+      prereqMinCompletion,
       metadata: {
         // The backend expects metadata.visible_to_staff_only to either true or null
         visible_to_staff_only: isVisibleToStaffOnly ? true : null,
-        due: dueDateState,
-        hide_after_due: hideAfterDueState,
-        show_correctness: showCorrectnessState,
-        is_practice_exam: false,
-        is_time_limited: isTimeLimitedState,
-        exam_review_rules: '',
-        is_proctored_enabled: false,
+        due: dueDate,
+        hide_after_due: hideAfterDue,
+        show_correctness: showCorrectness,
+        is_practice_exam: isPracticeExam,
+        is_time_limited: isTimeLimited,
+        is_proctored_enabled: isProctoredExam || isPracticeExam || isOnboardingExam,
+        exam_review_rules: examReviewRules,
         default_time_limit_minutes: defaultTimeLimitMin,
-        is_onboarding_exam: false,
+        is_onboarding_exam: isOnboardingExam,
         start: releaseDate,
       },
     });
@@ -411,4 +432,43 @@ export async function setVideoSharingOption(courseId, videoSharingOption) {
     });
 
   return data;
+}
+
+/**
+ * Copy block to clipboard
+ * @param {string} usageKey
+ * @returns {Promise<Object>}
+*/
+export async function copyBlockToClipboard(usageKey) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getClipboardUrl(), {
+      usage_key: usageKey,
+    });
+
+  return camelCaseObject(data);
+}
+
+/**
+ * Paste block to clipboard
+ * @param {string} parentLocator
+ * @returns {Promise<Object>}
+*/
+export async function pasteBlock(parentLocator) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getXBlockBaseApiUrl(), {
+      parent_locator: parentLocator,
+      staged_content: 'clipboard',
+    });
+
+  return data;
+}
+
+/**
+ * Dismiss notification
+ * @param {string} url
+ * @returns void
+*/
+export async function dismissNotification(url) {
+  await getAuthenticatedHttpClient()
+    .delete(url);
 }

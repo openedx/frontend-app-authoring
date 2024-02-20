@@ -8,8 +8,8 @@ import {
   DataTableContext,
   Dropdown,
   useToggle,
-} from '@edx/paragon';
-import { Add, Tune } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Add, Tune } from '@openedx/paragon/icons';
 import messages from '../messages';
 import SortAndFilterModal from './sort-and-filter-modal';
 

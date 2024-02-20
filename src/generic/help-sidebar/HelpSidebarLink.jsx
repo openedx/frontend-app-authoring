@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Hyperlink } from '@edx/paragon';
+import { Hyperlink } from '@openedx/paragon';
 
 const HelpSidebarLink = ({ as, pathToPage, title }) => {
   const TagElement = as;

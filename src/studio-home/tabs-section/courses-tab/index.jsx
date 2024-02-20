@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon, Row, Pagination } from '@edx/paragon';
-import { Error } from '@edx/paragon/icons';
+import { Icon, Row, Pagination } from '@openedx/paragon';
+import { Error } from '@openedx/paragon/icons';
 
 import { COURSE_CREATOR_STATES } from '../../../constants';
 import { getStudioHomeData, getStudioHomeCoursesParams } from '../../data/selectors';

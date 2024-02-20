@@ -12,11 +12,11 @@ import {
   Tooltip,
   SelectMenu,
   MenuItem,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import {
   Add,
   Check,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { Helmet } from 'react-helmet';

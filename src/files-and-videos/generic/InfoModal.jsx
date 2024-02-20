@@ -11,8 +11,8 @@ import {
   ModalDialog,
   Stack,
   Truncate,
-} from '@edx/paragon';
-import { Error } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Error } from '@openedx/paragon/icons';
 
 import messages from './messages';
 import UsageMetricsMessages from './UsageMetricsMessage';

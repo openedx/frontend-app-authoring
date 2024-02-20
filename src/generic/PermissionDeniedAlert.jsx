@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Alert } from '@edx/paragon';
+import { Alert } from '@openedx/paragon';
 
 const PermissionDeniedAlert = () => (
   <Alert variant="danger" data-testid="permissionDeniedAlert">

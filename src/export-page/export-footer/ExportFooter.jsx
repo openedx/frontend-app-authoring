@@ -3,7 +3,7 @@ import {
   injectIntl,
   intlShape,
 } from '@edx/frontend-platform/i18n';
-import { Layout } from '@edx/paragon';
+import { Layout } from '@openedx/paragon';
 
 import messages from './messages';
 

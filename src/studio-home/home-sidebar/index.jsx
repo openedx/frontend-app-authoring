@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { MailtoLink } from '@edx/paragon';
+import { MailtoLink } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { COURSE_CREATOR_STATES } from '../../constants';

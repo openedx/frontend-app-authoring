@@ -11,7 +11,7 @@ import {
   ActionRow,
   Container,
   ModalDialog,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import Loading from '../../../generic/Loading';
 import PermissionDeniedAlert from '../../../generic/PermissionDeniedAlert';
